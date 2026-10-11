@@ -4,17 +4,17 @@
     "title": "Set and reset chart domains without filtering rows",
     "slug": "axis-domain-controls",
     "scale": "feature",
-    "current_phase": "intent",
-    "last_updated": "2026-10-09",
+    "current_phase": "execution",
+    "last_updated": "2026-10-10",
     "summary": "Analysts should change the region of a numerical chart they see without unintentionally changing the record population.",
     "status": "active",
-    "next_action": "Explicit bounds shipped with in-place editing (#204). Remaining: limits on date axes, ECDF, heatmap, and map; true log scale; and checking limits across facets. Shape those before more gestures."
+    "next_action": "Finish Milestone 1 (scatter hidden-rows marker) and open its PR."
   },
   "artifacts": {
     "intent_brief": {
       "path": "intent-brief.md",
       "status": "current",
-      "updated_at": "2026-10-06"
+      "updated_at": "2026-10-10"
     },
     "brainstorm": {
       "path": "brainstorm.md",
@@ -23,13 +23,13 @@
     },
     "shape_brief": {
       "path": "shape-brief.md",
-      "status": "not-created",
-      "updated_at": null
+      "status": "current",
+      "updated_at": "2026-10-10"
     },
     "implementation_plan": {
       "path": "implementation-plan.md",
-      "status": "not-created",
-      "updated_at": null
+      "status": "current",
+      "updated_at": "2026-10-10"
     }
   },
   "sources": [
@@ -102,6 +102,48 @@
       "location": "../comparison-opportunities/resources/product-feedback-2026-10-06.json",
       "anchor": "Annotation 3: end users determine product choices",
       "authority": "Explicit human feedback; tentative answers remain tentative"
+    },
+    {
+      "id": "in-place-delivery",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/components/charts/InPlace/",
+      "anchor": "d743760: axisBounds.ts, AxisLimitFields.tsx, useAxisEditing.tsx, axisDrag.ts; PRs #203-#206",
+      "authority": "current repository reality; source inspection only"
+    },
+    {
+      "id": "reconcile-request",
+      "type": "direct-user-input",
+      "location": "chat 2026-10-10",
+      "anchor": "Reconcile against edit-in-place work; pare down to the essentials",
+      "authority": "explicit user direction"
+    },
+    {
+      "id": "product-answers-2026-10-10",
+      "type": "direct-user-input",
+      "location": "chat 2026-10-10",
+      "anchor": "Replies to five product questions: axis icon with count and reset; log on scatter and where common, not bars; warning icon for nonpositive values; split dates into a new initiative; asked for an example of domain population",
+      "authority": "explicit user direction"
+    },
+    {
+      "id": "stable-axes-decision",
+      "type": "direct-user-input",
+      "location": "chat 2026-10-10",
+      "anchor": "Option A: axis limits reflect all data before filtering unless the user changes them on that chart; other charts change available data, not limits. Stability and consistency are key.",
+      "authority": "explicit user decision"
+    },
+    {
+      "id": "plan-code-check",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/components/charts/",
+      "anchor": "d743760: barPlan.ts (aggregate domain from current result), seriesBarPlan.ts (current result), RowChart.tsx (liveIds), timeSeriesPlan.ts (liveIds for range and values), scatterAxis.ts and BoxPlot.tsx (all rows)",
+      "authority": "current repository reality; source inspection only"
+    },
+    {
+      "id": "grow-decision",
+      "type": "direct-user-input",
+      "location": "chat 2026-10-10",
+      "anchor": "Grow to fit, then start PR 1",
+      "authority": "explicit user decision"
     }
   ],
   "intent": {
@@ -151,7 +193,7 @@
       {
         "id": "claim-3",
         "type": "future possibility",
-        "statement": "Expand when an analysis repeatedly needs manual bounds, display-only zoom, or positive data spanning orders of magnitude.",
+        "statement": "Reopen per-panel free scales or ECDF bounds when an analysis needs them.",
         "commitment": "tentative",
         "importance": "supporting",
         "status": "active",
@@ -172,7 +214,7 @@
       {
         "id": "priority-1",
         "type": "desired experience",
-        "statement": "Separate display zoom from row selection.",
+        "statement": "Separate display zoom from row selection, and make clipped marks visible so a zoomed view is not mistaken for a filter.",
         "commitment": "derived",
         "importance": "supporting",
         "status": "active",
@@ -192,7 +234,7 @@
         "statement": "Preserve comparable facet domains when requested.",
         "commitment": "derived",
         "importance": "supporting",
-        "status": "active",
+        "status": "satisfied",
         "time_horizon": "first release",
         "source_anchors": [
           {
@@ -201,13 +243,13 @@
           }
         ],
         "confidence": "medium",
-        "notes": "Recovered candidate priority; no implementation approval."
+        "notes": "Facet panels share one settings object and full-source domains; not browser-checked."
       },
       {
         "id": "priority-3",
         "type": "desired experience",
-        "statement": "Explain nonpositive values under a true log scale.",
-        "commitment": "derived",
+        "statement": "Under true log, leave out nonpositive values and show a warning icon on the axis that names the problem and the count.",
+        "commitment": "explicit",
         "importance": "supporting",
         "status": "active",
         "time_horizon": "first release",
@@ -215,6 +257,10 @@
           {
             "source_id": "current-request",
             "anchor": "Worthwhile gaps against current features; seeds may expand later"
+          },
+          {
+            "source_id": "product-answers-2026-10-10",
+            "anchor": "reply 3"
           }
         ],
         "confidence": "medium",
@@ -240,7 +286,7 @@
       {
         "id": "current-foundation",
         "type": "current repository reality",
-        "statement": "numericScale.ts chooses symlog or linear. ECDF uses scaleLog through its own logX option. AxisSettings contains min and max but broad renderer support is not established. Existing brushes use numerical inversion. Calendar and map-specific controls do not establish a common 2D domain contract.",
+        "statement": "Shipped: limits on scatter, bar, histogram, line, row, and box, with clipping and no filtering; exact entry with reset in the Axes tab and an anchored editor; drag to pan and stretch with one undo step; symlog on the shared axis; positive-only log on ECDF. Missing: an indicator of clipped marks, true log on the shared axis, and limits on time-series dates and ECDF.",
         "commitment": "derived",
         "importance": "supporting",
         "status": "active",
@@ -265,16 +311,113 @@
           {
             "source_id": "ecdf-log",
             "anchor": "logX, logUnavailable, and scaleLog in current ECDF planning"
+          },
+          {
+            "source_id": "in-place-delivery",
+            "anchor": "d743760"
           }
         ],
         "confidence": "high",
         "notes": "Does not establish runtime or browser acceptance."
+      },
+      {
+        "id": "pared-scope",
+        "type": "scope",
+        "statement": "Remaining scope: an axis marker for hidden rows (count and reset at the clipped end), true log on scatter (both axes), line (value axis), and box plots, with a warning marker for nonpositive values. Cut: dates and times (moved to date-time-handling), ECDF bounds, heatmap/map/calendar limits, free facet scales, placeholder cleanup. Ruled out: axes that follow filtered rows (see stable-axes).",
+        "commitment": "derived",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "reconcile-request",
+            "anchor": "pare down"
+          },
+          {
+            "source_id": "in-place-delivery",
+            "anchor": "d743760"
+          },
+          {
+            "source_id": "product-answers-2026-10-10",
+            "anchor": "replies 1-4"
+          }
+        ],
+        "confidence": "medium",
+        "notes": "Awaiting product answers before shaping."
+      },
+      {
+        "id": "hidden-rows-marker",
+        "type": "desired experience",
+        "statement": "When a bound clips marks, a small icon sits at that end of the axis; hover or focus shows how many rows are hidden and a button to reset that bound.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-answers-2026-10-10",
+            "anchor": "reply 1"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Needs an interactive popover, not a plain tooltip, because it holds a button."
+      },
+      {
+        "id": "log-coverage",
+        "type": "scope",
+        "statement": "Offer true log on scatter (both axes), line value axis, and box plots; not on bar, histogram, or row charts.",
+        "commitment": "derived",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-answers-2026-10-10",
+            "anchor": "reply 2"
+          }
+        ],
+        "confidence": "medium",
+        "notes": "Scatter is explicit; line and box are agent-proposed as common uses."
+      },
+      {
+        "id": "stable-axes",
+        "type": "constraint",
+        "statement": "A chart's axes span all rows before filtering unless the user changes them on that chart. Actions on other charts change which rows show, never the axes or other chart settings.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "durable",
+        "source_anchors": [
+          {
+            "source_id": "stable-axes-decision",
+            "anchor": "Option A"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Rules out filtered-row domains. Recorded in docs/ui-defaults.md."
+      },
+      {
+        "id": "grow-to-fit",
+        "type": "constraint",
+        "statement": "When a filtered aggregate passes the all-rows domain, the axis grows to fit until the filter clears, and never shrinks below the all-rows domain.",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "grow-decision",
+            "anchor": "Grow to fit"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
       }
     ],
     "themes": [
-      "Separate display zoom from row selection.",
-      "Preserve comparable facet domains when requested.",
-      "Explain nonpositive values under a true log scale."
+      "An axis says when it hides rows.",
+      "True log where comparisons span orders of magnitude.",
+      "Log explains what it leaves out."
     ],
     "conflicts": [],
     "human_questions": []
@@ -286,35 +429,117 @@
     "selected_option": null
   },
   "shape": {
-    "status": "not-started",
-    "appetite": null,
-    "problem": null,
-    "recommended_shape": null,
-    "success_moves": [],
-    "first_proof": null,
-    "rabbit_holes": [],
+    "status": "current",
+    "appetite": "Small: five separable PRs on existing seams (axis plan, PlannedAxes, numericScale, axisDrag, Axes tab). No new chart types or renderer rewrites.",
+    "problem": "Bounds clip silently; log is listed but unavailable outside ECDF; four chart types rescale on brush, breaking the stable-axes rule.",
+    "recommended_shape": "One hidden-rows marker per axis side with a reason (bound or nonpositive), count in the chart's unit, and a one-side Reset; stable all-row domains on aggregate bars, series bars, row charts, and line values; true log on scatter, line values, and box plots via logAxes().",
+    "success_moves": [
+      "Put the marker in AxisPlan.hidden so every chart reports and one component draws.",
+      "Reuse the marker for log's nonpositive warning instead of a second indicator.",
+      "Prove the marker on scatter first, where exclusions and all-row domains already exist.",
+      "Gate log with logAxes() so saved 'log' on ineligible charts stays linear and rollback is one line.",
+      "Keep box statistics on all values and clip at the floor, so log stays view-only.",
+      "Split stable aggregate axes into its own PR because it changes existing behavior."
+    ],
+    "first_proof": {
+      "question": "Does a marker at the clipped axis end read clearly and get noticed?",
+      "artifact": "Scatter on the shop demo with an x maximum set; marker, count, and one-side Reset.",
+      "observation": "Icon noticed at the axis end; count matches rows beyond the bound; Reset restores the axis at 1280 and 390 px.",
+      "decision_rule": "Clear → extend to other charts. Missed or crowding ticks → move beside the axis title first."
+    },
+    "rabbit_holes": [
+      "Log tick density and labels.",
+      "Marker placement colliding with tick labels and drag grips.",
+      "Time-series date range follows filters; moved to date-time-handling."
+    ],
     "open_decisions": []
   },
   "implementation": {
-    "status": "not-started",
+    "status": "planned",
     "repository_snapshot": {
-      "root": "/Users/byronwall/.codex/worktrees/abcf/explorEDA",
-      "revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
-      "worktree_status": "clean before intent capture; detached HEAD",
+      "root": "/Users/byronwall/Projects/explorEDA/.claude/worktrees/chart-domain-controls-reconcile-fb6532",
+      "revision": "d743760",
+      "worktree_status": "clean",
       "subsystems": [
+        "packages/explorEDA/src/components/charts/Axis/axisBounds.ts",
         "packages/explorEDA/src/components/charts/Axis/numericScale.ts",
-        "packages/explorEDA/src/types/ChartTypes.ts",
+        "packages/explorEDA/src/components/charts/InPlace/",
         "packages/explorEDA/src/components/settings/AxisSettingsTab.tsx",
-        "packages/explorEDA/src/components/charts/ScatterPlot/scatterAxis.ts"
+        "packages/explorEDA/src/components/charts/Ecdf/ecdfPlan.ts",
+        "packages/explorEDA/src/components/charts/LineChart/timeSeriesPlan.ts"
       ],
       "test_commands": [],
       "deployment_surfaces": []
     },
     "dependencies": [],
-    "fast_local_loop": null,
-    "milestones": [],
-    "cut_line": [],
-    "open_decisions": []
+    "fast_local_loop": "vitest on chart plans plus pnpm --filter demo dev with the shop (positive revenue) and flights (signed delays) analyses.",
+    "milestones": [
+      {
+        "id": "m1",
+        "title": "Scatter says when a bound hides rows",
+        "proof": "Shop demo scatter with x max: marker, correct count, one-side Reset; browser at 1280/783/390 and dark.",
+        "status": "active",
+        "outcome": "Scatter shows a hidden-rows marker with count and one-side Reset.",
+        "valid_intermediate_state": "Other charts unchanged; scatter bounds work as before plus the marker.",
+        "rollback": "Revert the PR; AxisPlan.hidden is optional, so charts that omit it draw no marker.",
+        "evidence": [
+          "vitest: scatterPlan, axisBounds, hiddenNotice panel tests (58 pass)",
+          "Playwright on shop demo at 1280, 783, 390 px and dark: marker, count with field formatting, hover into details, one-side Reset; press and drag on the marker leave 500 of 500 rows while a control drag brushes to 129"
+        ]
+      },
+      {
+        "id": "m2",
+        "title": "Every bounded chart shows the marker",
+        "proof": "Bar, histogram, row, line, box show counts in their unit only when bounded.",
+        "status": "planned",
+        "outcome": "All six bounded charts report hidden marks in their own unit.",
+        "valid_intermediate_state": "Each chart either fills hidden or draws no marker.",
+        "rollback": "Stop filling hidden in a chart's plan."
+      },
+      {
+        "id": "m3",
+        "title": "Aggregate charts keep stable axes",
+        "proof": "Brushing in flights leaves bar, row, and line axes still.",
+        "status": "planned",
+        "outcome": "Aggregate bars, series bars, row charts, and line values keep all-row domains under brushing.",
+        "valid_intermediate_state": "Marks follow filters; axes do not.",
+        "rollback": "Revert per chart; each plan keeps its live aggregate for marks."
+      },
+      {
+        "id": "m4",
+        "title": "True log on scatter",
+        "proof": "Flights log delay axis with nonpositive warning; drag and bounds in log space.",
+        "status": "planned",
+        "outcome": "Scatter offers true log with a nonpositive warning.",
+        "valid_intermediate_state": "Log offered only where logAxes() allows; other charts linear.",
+        "rollback": "Remove scatter from logAxes(); saved log then draws linear."
+      },
+      {
+        "id": "m5",
+        "title": "Log on line values and box plots",
+        "proof": "Log offered; warning counts; quartiles unchanged.",
+        "status": "planned",
+        "outcome": "Line values and box plots offer log with honest counts.",
+        "valid_intermediate_state": "Area and stacked stay linear; box statistics unchanged.",
+        "rollback": "Remove the chart from logAxes()."
+      }
+    ],
+    "cut_line": [
+      "Use symlog instead button",
+      "Free facet scales",
+      "ECDF bounds",
+      "Heatmap/map/calendar limits",
+      "Filter-following color domains",
+      "min/max placeholder removal",
+      "Time-series date range (date-time-handling)"
+    ],
+    "open_decisions": [],
+    "test_commands": [
+      "pnpm --filter exploreda exec vitest run <files>",
+      "pnpm --filter exploreda check-types",
+      "pnpm check:ui",
+      "pnpm check (once per PR)"
+    ]
   },
   "history": [
     {
@@ -352,6 +577,49 @@
       "evidence": [
         "xAxis.limits and yAxis.limits honored by scatter, bar, histogram, line, row, and box (components/charts/Axis/axisBounds.ts, PR #204)"
       ]
+    },
+    {
+      "date": "2026-10-10",
+      "action": "Reconciled against delivered in-place editing and pared scope to three items.",
+      "reason": "User asked what remains after the edit-in-place work.",
+      "status": "active",
+      "evidence": "Source inspection at d743760 (axisBounds, AxisLimitFields, useAxisEditing, axisDrag, numericScale, Ecdf). No runtime checks."
+    },
+    {
+      "date": "2026-10-10",
+      "action": "Applied product answers; moved date and time work to date-time-handling.",
+      "reason": "Byron's replies to the five product questions.",
+      "status": "active",
+      "evidence": "Direct user input; scatter domains confirmed to come from all source rows (scatterAxis.ts planScatterAxis)."
+    },
+    {
+      "date": "2026-10-10",
+      "action": "Recorded the stable-axes decision and closed the domain-population question.",
+      "reason": "Byron chose option A: axes span all rows before filtering.",
+      "status": "active",
+      "evidence": "Direct user decision; matches current behavior (scatterAxis.ts planScatterAxis uses all source rows)."
+    },
+    {
+      "date": "2026-10-10",
+      "action": "Shaped and planned: marker, stable aggregate axes, log on scatter/line/box.",
+      "reason": "Byron asked to shape the work and write the implementation plan.",
+      "status": "active",
+      "evidence": "Source inspection found aggregate bars, series bars, row charts, and line values use filtered rows for domains."
+    },
+    {
+      "date": "2026-10-10",
+      "action": "Settled grow-to-fit; started Milestone 1.",
+      "reason": "Byron's decision.",
+      "status": "active",
+      "previous_status": "active",
+      "evidence": "Direct user decision."
+    },
+    {
+      "date": "2026-10-10",
+      "action": "Built Milestone 1 (scatter hidden-rows marker).",
+      "reason": "Byron asked to start PR 1.",
+      "status": "active",
+      "evidence": "Targeted tests and browser checks; PR pending."
     }
   ],
   "closure": null,
@@ -360,7 +628,8 @@
     "priority_basis": "Pro recommendations reconciled with current source; proposed priority, no implementation approval",
     "expand_when": "Expand when an analysis repeatedly needs manual bounds, display-only zoom, or positive data spanning orders of magnitude.",
     "related_initiatives": [
-      "in-place-chart-editing"
+      "in-place-chart-editing",
+      "date-time-handling"
     ],
     "audience": "End users; developers deliver their experience.",
     "priority": "Unranked candidate or future seed"

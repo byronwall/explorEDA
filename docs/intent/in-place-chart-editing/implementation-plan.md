@@ -47,6 +47,6 @@ What the browser checks covered: real mouse input at 1280 px for every milestone
 ## Cut line and follow-ups
 
 - **Subtitles** arrive with the editorial styling stack (`subtitle` setting, PR byronwall/explorEDA#192). Once it merges, the subtitle reuses `InlineTextEditor` and `useChartEdit` unchanged.
-- Axis limits on ECDF, time-series X, map, and calendar charts need their own domain rules. They are out of scope here; see [axis-domain-controls](../axis-domain-controls/intent-brief.md).
+- Axis limits on ECDF, map, and calendar charts need their own domain rules. They are out of scope here; see [axis-domain-controls](../axis-domain-controls/intent-brief.md). Time-series X limits belong to [date and time handling](../date-time-handling/intent-brief.md).
 - True log scales stay with the axis-domain initiative.
 - Every remaining item is a node under **In-place chart editing** in the Product Grid (`pgm/data`).
