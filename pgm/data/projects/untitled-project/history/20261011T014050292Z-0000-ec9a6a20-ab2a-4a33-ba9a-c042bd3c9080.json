@@ -1,0 +1,16 @@
+{
+  "id": "ec9a6a20-ab2a-4a33-ba9a-c042bd3c9080",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:40:50.292Z",
+  "summary": "Created \"Pew Meaning\" under \"Composition examples\".",
+  "nodeIds": [
+    "page-pew-meaning",
+    "page-composition-examples"
+  ],
+  "metadata": {
+    "clientMutationId": "93338ece-4e9a-4e08-a15a-d40bcd47c058"
+  }
+}

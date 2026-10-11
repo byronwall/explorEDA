@@ -1,6 +1,10 @@
+import {
+  isDateText,
+  numericExclusionReason,
+  parseNumber,
+} from "@/lib/valueParsing";
 import { Calculator } from "@/lib/calculations/engine/Calculator";
 import { parseExpression } from "@/lib/calculations/parser/semantics";
-import { numericExclusionReason } from "@/lib/numeric";
 import type {
   AnalysisDiagnostic,
   AnalysisEvaluation,
@@ -625,7 +629,7 @@ function aggregateFrame(
           values[measure.id] = undefined;
         else {
           const total = numeric.reduce<number>(
-            (sum, item) => sum + Number(item.value),
+            (sum, item) => sum + parseNumber(item.value),
             0
           );
           values[measure.id] =
@@ -768,7 +772,7 @@ export function evaluateAnalysisQuery(
     if (value === undefined) continue;
     const valid =
       parameter.type === "date"
-        ? typeof value === "string" && Number.isFinite(Date.parse(value))
+        ? typeof value === "string" && isDateText(value)
         : parameter.type === "number"
           ? typeof value === "number" && Number.isFinite(value)
           : typeof value === parameter.type;

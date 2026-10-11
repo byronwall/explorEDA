@@ -177,7 +177,7 @@ export function FacetTraceBody({ trace }: { trace: FacetTrace }) {
       )}
       <div>
         {trace.sourceIds.length} source rows belong to this facet ·{" "}
-        {trace.chartIds.length} pass other chart filters
+        {trace.chartIds.length} pass other filters
       </div>
       <div className="text-muted-foreground">
         Source row IDs: {trace.sourceIds.slice(0, 12).join(", ")}

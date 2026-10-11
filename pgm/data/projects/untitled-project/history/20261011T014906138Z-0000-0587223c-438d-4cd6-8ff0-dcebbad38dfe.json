@@ -1,0 +1,16 @@
+{
+  "id": "0587223c-438d-4cd6-8ff0-dcebbad38dfe",
+  "kind": "node.moved",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:49:06.138Z",
+  "summary": "Moved \"Banana yield is good\" under \"Examples to add\".",
+  "nodeIds": [
+    "page-banana-yield-is-good",
+    "page-examples-to-add"
+  ],
+  "metadata": {
+    "clientMutationId": "f7f00201-2f95-4885-a2f8-bae9d51309a9"
+  }
+}

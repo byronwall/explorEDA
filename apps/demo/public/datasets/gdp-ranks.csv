@@ -1,0 +1,741 @@
+Country,Code,Region,Year,GDP (current US$)
+United States,USA,North America,1980,2857307000000
+Japan,JPN,East Asia & Pacific,1980,1153159955513
+Germany,DEU,Europe & Central Asia,1980,953772499462
+France,FRA,Europe & Central Asia,1980,694529183483
+United Kingdom,GBR,Europe & Central Asia,1980,564947710899
+Italy,ITA,Europe & Central Asia,1980,478356755596
+Canada,CAN,North America,1980,274776566028
+Brazil,BRA,Latin America & Caribbean,1980,237393489893
+Spain,ESP,Europe & Central Asia,1980,232600556974
+Mexico,MEX,Latin America & Caribbean,1980,205577055466
+Netherlands,NLD,Europe & Central Asia,1980,195439301707
+China,CHN,East Asia & Pacific,1980,191487500000
+India,IND,South Asia,1980,186328579302
+Australia,AUS,East Asia & Pacific,1980,150200557103
+Iran,IRN,"Middle East, North Africa, Afghanistan & Pakistan",1980,94362275580
+South Korea,KOR,East Asia & Pacific,1980,66547970351
+United States,USA,North America,1981,3207041000000
+Japan,JPN,East Asia & Pacific,1981,1271443597067
+Germany,DEU,Europe & Central Asia,1981,803404797058
+France,FRA,Europe & Central Asia,1981,609184791792
+United Kingdom,GBR,Europe & Central Asia,1981,540765675241
+Italy,ITA,Europe & Central Asia,1981,431695533981
+Canada,CAN,North America,1981,307246642756
+Mexico,MEX,Latin America & Caribbean,1981,263797827860
+Brazil,BRA,Latin America & Caribbean,1981,258015174749
+Spain,ESP,Europe & Central Asia,1981,202663023968
+China,CHN,East Asia & Pacific,1981,196218253968
+India,IND,South Asia,1981,193491368446
+Australia,AUS,East Asia & Pacific,1981,177151979566
+Netherlands,NLD,Europe & Central Asia,1981,164375775854
+Iran,IRN,"Middle East, North Africa, Afghanistan & Pakistan",1981,100499312750
+South Korea,KOR,East Asia & Pacific,1981,74287368087
+United States,USA,North America,1982,3343789000000
+Japan,JPN,East Asia & Pacific,1982,1183132285328
+Germany,DEU,Europe & Central Asia,1982,779421633755
+France,FRA,Europe & Central Asia,1982,578152310610
+United Kingdom,GBR,Europe & Central Asia,1982,515048916841
+Italy,ITA,Europe & Central Asia,1982,428257421618
+Canada,CAN,North America,1982,314647807409
+Brazil,BRA,Latin America & Caribbean,1982,271314113768
+China,CHN,East Asia & Pacific,1982,205480916031
+India,IND,South Asia,1982,200715624831
+Spain,ESP,Europe & Central Asia,1982,195856752991
+Australia,AUS,East Asia & Pacific,1982,194323071831
+Mexico,MEX,Latin America & Caribbean,1982,184602611610
+Netherlands,NLD,Europe & Central Asia,1982,158712765536
+Iran,IRN,"Middle East, North Africa, Afghanistan & Pakistan",1982,125948756439
+South Korea,KOR,East Asia & Pacific,1982,79921300447
+United States,USA,North America,1983,3634038000000
+Japan,JPN,East Asia & Pacific,1983,1297622008229
+Germany,DEU,Europe & Central Asia,1983,773507930295
+France,FRA,Europe & Central Asia,1983,553356312936
+United Kingdom,GBR,Europe & Central Asia,1983,489618008186
+Italy,ITA,Europe & Central Asia,1983,444063496940
+Canada,CAN,North America,1983,341866277183
+China,CHN,East Asia & Pacific,1983,231130268199
+India,IND,South Asia,1983,218262146413
+Brazil,BRA,Latin America & Caribbean,1983,189656506321
+Australia,AUS,East Asia & Pacific,1983,177523719680
+Spain,ESP,Europe & Central Asia,1983,170829074246
+Iran,IRN,"Middle East, North Africa, Afghanistan & Pakistan",1983,156365156618
+Mexico,MEX,Latin America & Caribbean,1983,156167000433
+Netherlands,NLD,Europe & Central Asia,1983,153671294109
+South Korea,KOR,East Asia & Pacific,1983,89621208322
+United States,USA,North America,1984,4037613000000
+Japan,JPN,East Asia & Pacific,1984,1374165212365
+Germany,DEU,Europe & Central Asia,1984,727767760979
+France,FRA,Europe & Central Asia,1984,525033325828
+United Kingdom,GBR,Europe & Central Asia,1984,461487097632
+Italy,ITA,Europe & Central Asia,1984,438896930791
+Canada,CAN,North America,1984,356718400124
+China,CHN,East Asia & Pacific,1984,260442857143
+India,IND,South Asia,1984,212157645178
+Australia,AUS,East Asia & Pacific,1984,193749932078
+Brazil,BRA,Latin America & Caribbean,1984,188339974087
+Mexico,MEX,Latin America & Caribbean,1984,184230754105
+Spain,ESP,Europe & Central Asia,1984,171979977230
+Iran,IRN,"Middle East, North Africa, Afghanistan & Pakistan",1984,162276728620
+Netherlands,NLD,Europe & Central Asia,1984,144124462912
+South Korea,KOR,East Asia & Pacific,1984,99749645089
+United States,USA,North America,1985,4338979000000
+Japan,JPN,East Asia & Pacific,1985,1457070301468
+Germany,DEU,Europe & Central Asia,1985,735218723093
+France,FRA,Europe & Central Asia,1985,547220981165
+United Kingdom,GBR,Europe & Central Asia,1985,489285164271
+Italy,ITA,Europe & Central Asia,1985,453259761687
+Canada,CAN,North America,1985,366186012450
+China,CHN,East Asia & Pacific,1985,310064625850
+India,IND,South Asia,1985,232511554840
+Brazil,BRA,Latin America & Caribbean,1985,210879844639
+Mexico,MEX,Latin America & Caribbean,1985,195241069482
+Australia,AUS,East Asia & Pacific,1985,180861108959
+Spain,ESP,Europe & Central Asia,1985,180664322896
+Iran,IRN,"Middle East, North Africa, Afghanistan & Pakistan",1985,180183629600
+Netherlands,NLD,Europe & Central Asia,1985,144057523222
+South Korea,KOR,East Asia & Pacific,1985,103764281281
+United States,USA,North America,1986,4579631000000
+Japan,JPN,East Asia & Pacific,1986,2164729071349
+Germany,DEU,Europe & Central Asia,1986,1050092624516
+France,FRA,Europe & Central Asia,1986,764946585851
+Italy,ITA,Europe & Central Asia,1986,641862313287
+United Kingdom,GBR,Europe & Central Asia,1986,601452653181
+Canada,CAN,North America,1986,379006836992
+China,CHN,East Asia & Pacific,1986,301310144928
+Brazil,BRA,Latin America & Caribbean,1986,256480852471
+Spain,ESP,Europe & Central Asia,1986,251141555186
+India,IND,South Asia,1986,248985994041
+Iran,IRN,"Middle East, North Africa, Afghanistan & Pakistan",1986,209094561833
+Netherlands,NLD,Europe & Central Asia,1986,201157708221
+Australia,AUS,East Asia & Pacific,1986,182707050923
+Mexico,MEX,Latin America & Caribbean,1986,134556034673
+South Korea,KOR,East Asia & Pacific,1986,119965960795
+United States,USA,North America,1987,4855215000000
+Japan,JPN,East Asia & Pacific,1987,2635094473494
+Germany,DEU,Europe & Central Asia,1987,1302932318825
+France,FRA,Europe & Central Asia,1987,926320855615
+Italy,ITA,Europe & Central Asia,1987,807570134449
+United Kingdom,GBR,Europe & Central Asia,1987,745162608269
+Canada,CAN,North America,1987,433134238311
+Spain,ESP,Europe & Central Asia,1987,318520253335
+Brazil,BRA,Latin America & Caribbean,1987,283056836894
+India,IND,South Asia,1987,279033584092
+China,CHN,East Asia & Pacific,1987,273455156951
+Netherlands,NLD,Europe & Central Asia,1987,245406949521
+Australia,AUS,East Asia & Pacific,1987,189726707253
+South Korea,KOR,East Asia & Pacific,1987,152240393646
+Mexico,MEX,Latin America & Caribbean,1987,147542558209
+Iran,IRN,"Middle East, North Africa, Afghanistan & Pakistan",1987,134009995923
+United States,USA,North America,1988,5236438000000
+Japan,JPN,East Asia & Pacific,1988,3191546727316
+Germany,DEU,Europe & Central Asia,1988,1406367016372
+France,FRA,Europe & Central Asia,1988,1010827662152
+United Kingdom,GBR,Europe & Central Asia,1988,910122732124
+Italy,ITA,Europe & Central Asia,1988,893663934841
+Russia,RUS,Europe & Central Asia,1988,554828660436
+Canada,CAN,North America,1988,509380027627
+Spain,ESP,Europe & Central Asia,1988,375891716898
+China,CHN,East Asia & Pacific,1988,312888888889
+Brazil,BRA,Latin America & Caribbean,1988,307881930752
+India,IND,South Asia,1988,296589670896
+Netherlands,NLD,Europe & Central Asia,1988,262295966105
+Australia,AUS,East Asia & Pacific,1988,236461079970
+South Korea,KOR,East Asia & Pacific,1988,205477530605
+Mexico,MEX,Latin America & Caribbean,1988,181611150497
+Iran,IRN,"Middle East, North Africa, Afghanistan & Pakistan",1988,123057861334
+United States,USA,North America,1989,5641580000000
+Japan,JPN,East Asia & Pacific,1989,3174934735896
+Germany,DEU,Europe & Central Asia,1989,1404092925205
+France,FRA,Europe & Central Asia,1989,1016742237302
+Italy,ITA,Europe & Central Asia,1989,930801709004
+United Kingdom,GBR,Europe & Central Asia,1989,926884816754
+Canada,CAN,North America,1989,567211993243
+Russia,RUS,Europe & Central Asia,1989,506631299735
+Spain,ESP,Europe & Central Asia,1989,414460794097
+Brazil,BRA,Latin America & Caribbean,1989,412990820287
+China,CHN,East Asia & Pacific,1989,348380566802
+Australia,AUS,East Asia & Pacific,1989,300264309002
+India,IND,South Asia,1989,296042052945
+Netherlands,NLD,Europe & Central Asia,1989,258716904292
+South Korea,KOR,East Asia & Pacific,1989,254236243100
+Mexico,MEX,Latin America & Caribbean,1989,221403098267
+Iran,IRN,"Middle East, North Africa, Afghanistan & Pakistan",1989,120496362916
+United States,USA,North America,1990,5963144000000
+Japan,JPN,East Asia & Pacific,1990,3252994239867
+Germany,DEU,Europe & Central Asia,1990,1778162195860
+France,FRA,Europe & Central Asia,1990,1257649439827
+Italy,ITA,Europe & Central Asia,1990,1183945130899
+United Kingdom,GBR,Europe & Central Asia,1990,1093169389205
+Canada,CAN,North America,1990,596075591361
+Spain,ESP,Europe & Central Asia,1990,536175326477
+Russia,RUS,Europe & Central Asia,1990,517014446228
+Brazil,BRA,Latin America & Caribbean,1990,384959818182
+China,CHN,East Asia & Pacific,1990,361560229446
+India,IND,South Asia,1990,320979026420
+Netherlands,NLD,Europe & Central Asia,1990,318799003994
+Australia,AUS,East Asia & Pacific,1990,311840666465
+South Korea,KOR,East Asia & Pacific,1990,292064221389
+Mexico,MEX,Latin America & Caribbean,1990,261253675693
+Iran,IRN,"Middle East, North Africa, Afghanistan & Pakistan",1990,124813263926
+United States,USA,North America,1991,6158129000000
+Japan,JPN,East Asia & Pacific,1991,3724887648862
+Germany,DEU,Europe & Central Asia,1991,1875792575133
+France,FRA,Europe & Central Asia,1991,1258961748634
+Italy,ITA,Europe & Central Asia,1991,1249092439519
+United Kingdom,GBR,Europe & Central Asia,1991,1142797178131
+Canada,CAN,North America,1991,612527712316
+Spain,ESP,Europe & Central Asia,1991,576753902322
+Russia,RUS,Europe & Central Asia,1991,517962962963
+China,CHN,East Asia & Pacific,1991,384510452962
+Brazil,BRA,Latin America & Caribbean,1991,342534090909
+South Korea,KOR,East Asia & Pacific,1991,340851946804
+Netherlands,NLD,Europe & Central Asia,1991,327982316124
+Australia,AUS,East Asia & Pacific,1991,326416407861
+Mexico,MEX,Latin America & Caribbean,1991,313139656146
+India,IND,South Asia,1991,270105341879
+Iran,IRN,"Middle East, North Africa, Afghanistan & Pakistan",1991,131637664958
+United States,USA,North America,1992,6520327000000
+Japan,JPN,East Asia & Pacific,1992,4064529567505
+Germany,DEU,Europe & Central Asia,1992,2141377582968
+France,FRA,Europe & Central Asia,1992,1389663073110
+Italy,ITA,Europe & Central Asia,1992,1323204350354
+United Kingdom,GBR,Europe & Central Asia,1992,1179659529660
+Spain,ESP,Europe & Central Asia,1992,630465353486
+Canada,CAN,North America,1992,594387358319
+Russia,RUS,Europe & Central Asia,1992,460290556901
+China,CHN,East Asia & Pacific,1992,428502354788
+South Korea,KOR,East Asia & Pacific,1992,366921291825
+Netherlands,NLD,Europe & Central Asia,1992,363497050125
+Mexico,MEX,Latin America & Caribbean,1992,363157832924
+Brazil,BRA,Latin America & Caribbean,1992,328191909882
+Australia,AUS,East Asia & Pacific,1992,325982966981
+India,IND,South Asia,1992,288208070278
+Iran,IRN,"Middle East, North Africa, Afghanistan & Pakistan",1992,119768691217
+United States,USA,North America,1993,6858559000000
+Japan,JPN,East Asia & Pacific,1993,4632480515091
+Germany,DEU,Europe & Central Asia,1993,2078954217438
+France,FRA,Europe & Central Asia,1993,1314383368080
+Italy,ITA,Europe & Central Asia,1993,1067412587671
+United Kingdom,GBR,Europe & Central Asia,1993,1061388722256
+Canada,CAN,North America,1993,579053561739
+Mexico,MEX,Latin America & Caribbean,1993,530160763663
+Spain,ESP,Europe & Central Asia,1993,524700572624
+China,CHN,East Asia & Pacific,1993,446557291212
+Russia,RUS,Europe & Central Asia,1993,435083713851
+South Korea,KOR,East Asia & Pacific,1993,405705302846
+Brazil,BRA,Latin America & Caribbean,1993,368292034381
+Netherlands,NLD,Europe & Central Asia,1993,354070495966
+Australia,AUS,East Asia & Pacific,1993,312568858910
+India,IND,South Asia,1993,279295648983
+Iran,IRN,"Middle East, North Africa, Afghanistan & Pakistan",1993,63743623232
+United States,USA,North America,1994,7287236000000
+Japan,JPN,East Asia & Pacific,1994,5104063486348
+Germany,DEU,Europe & Central Asia,1994,2215282632277
+France,FRA,Europe & Central Asia,1994,1385822778828
+United Kingdom,GBR,Europe & Central Asia,1994,1140489745944
+Italy,ITA,Europe & Central Asia,1994,1101750159702
+Canada,CAN,North America,1994,579944346807
+China,CHN,East Asia & Pacific,1994,566929539493
+Mexico,MEX,Latin America & Caribbean,1994,553618247901
+Spain,ESP,Europe & Central Asia,1994,530183651720
+Brazil,BRA,Latin America & Caribbean,1994,525369467296
+South Korea,KOR,East Asia & Pacific,1994,479181794217
+Russia,RUS,Europe & Central Asia,1994,395077301248
+Netherlands,NLD,Europe & Central Asia,1994,379688232232
+India,IND,South Asia,1994,327274843459
+Australia,AUS,East Asia & Pacific,1994,323269456935
+Iran,IRN,"Middle East, North Africa, Afghanistan & Pakistan",1994,71841461173
+United States,USA,North America,1995,7639749000000
+Japan,JPN,East Asia & Pacific,1995,5639649753986
+Germany,DEU,Europe & Central Asia,1995,2593053091306
+France,FRA,Europe & Central Asia,1995,1595219345512
+United Kingdom,GBR,Europe & Central Asia,1995,1349094208616
+Italy,ITA,Europe & Central Asia,1995,1177369428266
+Brazil,BRA,Latin America & Caribbean,1995,769333050987
+China,CHN,East Asia & Pacific,1995,738190896228
+Spain,ESP,Europe & Central Asia,1995,614170002669
+Canada,CAN,North America,1995,605961090061
+South Korea,KOR,East Asia & Pacific,1995,586286469401
+Netherlands,NLD,Europe & Central Asia,1995,452967334614
+Russia,RUS,Europe & Central Asia,1995,395537185735
+Mexico,MEX,Latin America & Caribbean,1995,380157469867
+Australia,AUS,East Asia & Pacific,1995,368725126225
+India,IND,South Asia,1995,360281909643
+Iran,IRN,"Middle East, North Africa, Afghanistan & Pakistan",1995,96419225744
+United States,USA,North America,1996,8073122000000
+Japan,JPN,East Asia & Pacific,1996,5021441618840
+Germany,DEU,Europe & Central Asia,1996,2506576553158
+France,FRA,Europe & Central Asia,1996,1598889216566
+United Kingdom,GBR,Europe & Central Asia,1996,1425287051482
+Italy,ITA,Europe & Central Asia,1996,1314776508972
+China,CHN,East Asia & Pacific,1996,868523936530
+Brazil,BRA,Latin America & Caribbean,1996,850426432992
+Spain,ESP,Europe & Central Asia,1996,642251412058
+South Korea,KOR,East Asia & Pacific,1996,631196863758
+Canada,CAN,North America,1996,630607994133
+Netherlands,NLD,Europe & Central Asia,1996,451372549020
+Mexico,MEX,Latin America & Caribbean,1996,432157945024
+Australia,AUS,East Asia & Pacific,1996,401962517479
+India,IND,South Asia,1996,392896866205
+Russia,RUS,Europe & Central Asia,1996,391724890744
+Iran,IRN,"Middle East, North Africa, Afghanistan & Pakistan",1996,120403931885
+United States,USA,North America,1997,8577552000000
+Japan,JPN,East Asia & Pacific,1997,4579780793432
+Germany,DEU,Europe & Central Asia,1997,2218790886533
+United Kingdom,GBR,Europe & Central Asia,1997,1569317288802
+France,FRA,Europe & Central Asia,1997,1449392222971
+Italy,ITA,Europe & Central Asia,1997,1244988176444
+China,CHN,East Asia & Pacific,1997,967753570435
+Brazil,BRA,Latin America & Caribbean,1997,883206179730
+Canada,CAN,North America,1997,654987722086
+Spain,ESP,Europe & Central Asia,1997,589739772727
+South Korea,KOR,East Asia & Pacific,1997,589202526424
+Mexico,MEX,Latin America & Caribbean,1997,523449530464
+Australia,AUS,East Asia & Pacific,1997,436321902767
+Netherlands,NLD,Europe & Central Asia,1997,417506211882
+India,IND,South Asia,1997,415867563593
+Russia,RUS,Europe & Central Asia,1997,404928954192
+Iran,IRN,"Middle East, North Africa, Afghanistan & Pakistan",1997,113919163421
+United States,USA,North America,1998,9062817000000
+Japan,JPN,East Asia & Pacific,1998,4150359076370
+Germany,DEU,Europe & Central Asia,1998,2247760364566
+United Kingdom,GBR,Europe & Central Asia,1998,1660821464061
+France,FRA,Europe & Central Asia,1998,1496906382032
+Italy,ITA,Europe & Central Asia,1998,1272729786997
+China,CHN,East Asia & Pacific,1998,1037134141760
+Brazil,BRA,Latin America & Caribbean,1998,863710759256
+Canada,CAN,North America,1998,633999325918
+Spain,ESP,Europe & Central Asia,1998,618731484575
+Mexico,MEX,Latin America & Caribbean,1998,557461102631
+Netherlands,NLD,Europe & Central Asia,1998,438612530549
+India,IND,South Asia,1998,421351317225
+Australia,AUS,East Asia & Pacific,1998,400361527505
+South Korea,KOR,East Asia & Pacific,1998,397297216492
+Russia,RUS,Europe & Central Asia,1998,270955486862
+Iran,IRN,"Middle East, North Africa, Afghanistan & Pakistan",1998,110276913363
+United States,USA,North America,1999,9631172000000
+Japan,JPN,East Asia & Pacific,1999,4688983449627
+Germany,DEU,Europe & Central Asia,1999,2213873468587
+United Kingdom,GBR,Europe & Central Asia,1999,1693458987219
+France,FRA,Europe & Central Asia,1999,1486915879702
+Italy,ITA,Europe & Central Asia,1999,1255004736464
+China,CHN,East Asia & Pacific,1999,1103843203576
+Canada,CAN,North America,1999,678414215521
+Spain,ESP,Europe & Central Asia,1999,634394904387
+Mexico,MEX,Latin America & Caribbean,1999,631249359702
+Brazil,BRA,Latin America & Caribbean,1999,599642024320
+South Korea,KOR,East Asia & Pacific,1999,515697079289
+India,IND,South Asia,1999,458821052616
+Netherlands,NLD,Europe & Central Asia,1999,447778514140
+Australia,AUS,East Asia & Pacific,1999,390347787943
+Russia,RUS,Europe & Central Asia,1999,195907128351
+Iran,IRN,"Middle East, North Africa, Afghanistan & Pakistan",1999,113848450088
+United States,USA,North America,2000,10250952000000
+Japan,JPN,East Asia & Pacific,2000,5042381838343
+Germany,DEU,Europe & Central Asia,2000,1966980701145
+United Kingdom,GBR,Europe & Central Asia,2000,1671597821153
+France,FRA,Europe & Central Asia,2000,1360959069477
+China,CHN,East Asia & Pacific,2000,1223754919971
+Italy,ITA,Europe & Central Asia,2000,1149661363439
+Canada,CAN,North America,2000,744773415932
+Mexico,MEX,Latin America & Caribbean,2000,742061329749
+Brazil,BRA,Latin America & Caribbean,2000,655448231984
+Spain,ESP,Europe & Central Asia,2000,598102854756
+South Korea,KOR,East Asia & Pacific,2000,597487173479
+India,IND,South Asia,2000,468395521654
+Netherlands,NLD,Europe & Central Asia,2000,417649282154
+Australia,AUS,East Asia & Pacific,2000,416901962163
+Russia,RUS,Europe & Central Asia,2000,259710142197
+Iran,IRN,"Middle East, North Africa, Afghanistan & Pakistan",2000,109591707802
+United States,USA,North America,2001,10581929000000
+Japan,JPN,East Asia & Pacific,2001,4438792748062
+Germany,DEU,Europe & Central Asia,2001,1966381496642
+United Kingdom,GBR,Europe & Central Asia,2001,1656171009069
+France,FRA,Europe & Central Asia,2001,1370376677299
+China,CHN,East Asia & Pacific,2001,1355036590252
+Italy,ITA,Europe & Central Asia,2001,1172041488806
+Mexico,MEX,Latin America & Caribbean,2001,796064590549
+Canada,CAN,North America,2001,738981792355
+Spain,ESP,Europe & Central Asia,2001,627798682379
+South Korea,KOR,East Asia & Pacific,2001,567564806235
+Brazil,BRA,Latin America & Caribbean,2001,559983634799
+India,IND,South Asia,2001,485440139204
+Netherlands,NLD,Europe & Central Asia,2001,432536219669
+Australia,AUS,East Asia & Pacific,2001,380360222861
+Russia,RUS,Europe & Central Asia,2001,306602070621
+Iran,IRN,"Middle East, North Africa, Afghanistan & Pakistan",2001,126878750296
+United States,USA,North America,2002,10929108000000
+Japan,JPN,East Asia & Pacific,2002,4245946980572
+Germany,DEU,Europe & Central Asia,2002,2102350798306
+United Kingdom,GBR,Europe & Central Asia,2002,1790536570743
+France,FRA,Europe & Central Asia,2002,1492427756382
+China,CHN,East Asia & Pacific,2002,1489821682051
+Italy,ITA,Europe & Central Asia,2002,1281746271196
+Mexico,MEX,Latin America & Caribbean,2002,810666116402
+Canada,CAN,North America,2002,760650608552
+Spain,ESP,Europe & Central Asia,2002,708938227244
+South Korea,KOR,East Asia & Pacific,2002,650014391470
+India,IND,South Asia,2002,514939140319
+Brazil,BRA,Latin America & Caribbean,2002,509795273807
+Netherlands,NLD,Europe & Central Asia,2002,475529972123
+Australia,AUS,East Asia & Pacific,2002,396436967263
+Russia,RUS,Europe & Central Asia,2002,345470494418
+Iran,IRN,"Middle East, North Africa, Afghanistan & Pakistan",2002,128626917504
+United States,USA,North America,2003,11456450000000
+Japan,JPN,East Asia & Pacific,2003,4573413206709
+Germany,DEU,Europe & Central Asia,2003,2534715518349
+United Kingdom,GBR,Europe & Central Asia,2003,2061227755102
+France,FRA,Europe & Central Asia,2003,1835095983049
+China,CHN,East Asia & Pacific,2003,1683903309844
+Italy,ITA,Europe & Central Asia,2003,1582930016539
+Spain,ESP,Europe & Central Asia,2003,907963217058
+Canada,CAN,North America,2003,895542074085
+Mexico,MEX,Latin America & Caribbean,2003,765549967889
+South Korea,KOR,East Asia & Pacific,2003,728516494684
+India,IND,South Asia,2003,607700687237
+Netherlands,NLD,Europe & Central Asia,2003,582435617082
+Brazil,BRA,Latin America & Caribbean,2003,558233745652
+Australia,AUS,East Asia & Pacific,2003,468517181130
+Russia,RUS,Europe & Central Asia,2003,430347420185
+Iran,IRN,"Middle East, North Africa, Afghanistan & Pakistan",2003,151911222119
+United States,USA,North America,2004,12217196000000
+Japan,JPN,East Asia & Pacific,2004,4941485123807
+Germany,DEU,Europe & Central Asia,2004,2852317768062
+United Kingdom,GBR,Europe & Central Asia,2004,2429774807763
+France,FRA,Europe & Central Asia,2004,2109792297237
+China,CHN,East Asia & Pacific,2004,1984196551300
+Italy,ITA,Europe & Central Asia,2004,1812808753295
+Spain,ESP,Europe & Central Asia,2004,1069829382515
+Canada,CAN,North America,2004,1026691006918
+South Korea,KOR,East Asia & Pacific,2004,823251107639
+Mexico,MEX,Latin America & Caribbean,2004,819459227375
+India,IND,South Asia,2004,709152728831
+Brazil,BRA,Latin America & Caribbean,2004,669289424806
+Netherlands,NLD,Europe & Central Asia,2004,661224886143
+Australia,AUS,East Asia & Pacific,2004,615643050221
+Russia,RUS,Europe & Central Asia,2004,591016690732
+Iran,IRN,"Middle East, North Africa, Afghanistan & Pakistan",2004,187754571248
+United States,USA,North America,2005,13039197000000
+Japan,JPN,East Asia & Pacific,2005,4875648486366
+Germany,DEU,Europe & Central Asia,2005,2893393187362
+United Kingdom,GBR,Europe & Central Asia,2005,2551361818182
+China,CHN,East Asia & Pacific,2005,2317551298052
+France,FRA,Europe & Central Asia,2005,2192146403028
+Italy,ITA,Europe & Central Asia,2005,1864982261287
+Canada,CAN,North America,2005,1173118501403
+Spain,ESP,Europe & Central Asia,2005,1154667551776
+South Korea,KOR,East Asia & Pacific,2005,971740329984
+Mexico,MEX,Latin America & Caribbean,2005,917571853437
+Brazil,BRA,Latin America & Caribbean,2005,891633839894
+India,IND,South Asia,2005,820383763511
+Russia,RUS,Europe & Central Asia,2005,764015973481
+Australia,AUS,East Asia & Pacific,2005,696811489613
+Netherlands,NLD,Europe & Central Asia,2005,688133699636
+Iran,IRN,"Middle East, North Africa, Afghanistan & Pakistan",2005,224970371325
+United States,USA,North America,2006,13815583000000
+Japan,JPN,East Asia & Pacific,2006,4648058930707
+Germany,DEU,Europe & Central Asia,2006,3046308753671
+China,CHN,East Asia & Pacific,2006,2791498472804
+United Kingdom,GBR,Europe & Central Asia,2006,2719558417663
+France,FRA,Europe & Central Asia,2006,2317861544691
+Italy,ITA,Europe & Central Asia,2006,1958563654386
+Canada,CAN,North America,2006,1319291255289
+Spain,ESP,Europe & Central Asia,2006,1261846683275
+Brazil,BRA,Latin America & Caribbean,2006,1107626541435
+South Korea,KOR,East Asia & Pacific,2006,1095175538508
+Mexico,MEX,Latin America & Caribbean,2006,1020265057882
+Russia,RUS,Europe & Central Asia,2006,989932071353
+India,IND,South Asia,2006,940259888788
+Australia,AUS,East Asia & Pacific,2006,749708370333
+Netherlands,NLD,Europe & Central Asia,2006,737593995289
+Iran,IRN,"Middle East, North Africa, Afghanistan & Pakistan",2006,265602187404
+United States,USA,North America,2007,14474228000000
+Japan,JPN,East Asia & Pacific,2007,4624670179655
+China,CHN,East Asia & Pacific,2007,3604055822572
+Germany,DEU,Europe & Central Asia,2007,3484056680855
+United Kingdom,GBR,Europe & Central Asia,2007,3104699879952
+France,FRA,Europe & Central Asia,2007,2655816911867
+Italy,ITA,Europe & Central Asia,2007,2222524108128
+Spain,ESP,Europe & Central Asia,2007,1476746276855
+Canada,CAN,North America,2007,1468820407783
+Brazil,BRA,Latin America & Caribbean,2007,1397114486369
+Russia,RUS,Europe & Central Asia,2007,1299703478482
+South Korea,KOR,East Asia & Pacific,2007,1220911904593
+India,IND,South Asia,2007,1216736438835
+Mexico,MEX,Latin America & Caribbean,2007,1102355554880
+Australia,AUS,East Asia & Pacific,2007,856603595823
+Netherlands,NLD,Europe & Central Asia,2007,853499460873
+Iran,IRN,"Middle East, North Africa, Afghanistan & Pakistan",2007,349736591832
+United States,USA,North America,2008,14769862000000
+Japan,JPN,East Asia & Pacific,2008,5160197175876
+China,CHN,East Asia & Pacific,2008,4667346414522
+Germany,DEU,Europe & Central Asia,2008,3808197720125
+United Kingdom,GBR,Europe & Central Asia,2008,2945251838235
+France,FRA,Europe & Central Asia,2008,2926802941586
+Italy,ITA,Europe & Central Asia,2008,2417508414187
+Brazil,BRA,Latin America & Caribbean,2008,1695855083498
+Russia,RUS,Europe & Central Asia,2008,1660848058303
+Spain,ESP,Europe & Central Asia,2008,1636115447613
+Canada,CAN,North America,2008,1552993439550
+India,IND,South Asia,2008,1198895139006
+Mexico,MEX,Latin America & Caribbean,2008,1161553459985
+South Korea,KOR,East Asia & Pacific,2008,1091580692542
+Australia,AUS,East Asia & Pacific,2008,1058448244064
+Netherlands,NLD,Europe & Central Asia,2008,957901566041
+Iran,IRN,"Middle East, North Africa, Afghanistan & Pakistan",2008,406070949554
+United States,USA,North America,2009,14478067000000
+Japan,JPN,East Asia & Pacific,2009,5336765697589
+China,CHN,East Asia & Pacific,2009,5189577094998
+Germany,DEU,Europe & Central Asia,2009,3478545516684
+France,FRA,Europe & Central Asia,2009,2700075882519
+United Kingdom,GBR,Europe & Central Asia,2009,2429358155476
+Italy,ITA,Europe & Central Asia,2009,2209484319013
+Brazil,BRA,Latin America & Caribbean,2009,1666996438581
+Spain,ESP,Europe & Central Asia,2009,1496587590848
+Canada,CAN,North America,2009,1374627766600
+India,IND,South Asia,2009,1341888016995
+Russia,RUS,Europe & Central Asia,2009,1222645900056
+South Korea,KOR,East Asia & Pacific,2009,983065242417
+Mexico,MEX,Latin America & Caribbean,2009,943437414951
+Australia,AUS,East Asia & Pacific,2009,931761689771
+Netherlands,NLD,Europe & Central Asia,2009,878954223140
+Iran,IRN,"Middle East, North Africa, Afghanistan & Pakistan",2009,414059094949
+United States,USA,North America,2010,15048971000000
+China,CHN,East Asia & Pacific,2010,6192564874453
+Japan,JPN,East Asia & Pacific,2010,5811578109447
+Germany,DEU,Europe & Central Asia,2010,3467093769667
+France,FRA,Europe & Central Asia,2010,2646230027988
+United Kingdom,GBR,Europe & Central Asia,2010,2496740681057
+Brazil,BRA,Latin America & Caribbean,2010,2208837745101
+Italy,ITA,Europe & Central Asia,2010,2144936254535
+India,IND,South Asia,2010,1675615519485
+Canada,CAN,North America,2010,1617349192091
+Russia,RUS,Europe & Central Asia,2010,1524916715224
+Spain,ESP,Europe & Central Asia,2010,1427989078917
+South Korea,KOR,East Asia & Pacific,2010,1192830015738
+Australia,AUS,East Asia & Pacific,2010,1152566632022
+Mexico,MEX,Latin America & Caribbean,2010,1105424238652
+Netherlands,NLD,Europe & Central Asia,2010,852464982433
+Iran,IRN,"Middle East, North Africa, Afghanistan & Pakistan",2010,487069570464
+United States,USA,North America,2011,15599732000000
+China,CHN,East Asia & Pacific,2011,7671757207851
+Japan,JPN,East Asia & Pacific,2011,6279422550219
+Germany,DEU,Europe & Central Asia,2011,3823575803794
+France,FRA,Europe & Central Asia,2011,2870408553990
+United Kingdom,GBR,Europe & Central Asia,2011,2675590034129
+Brazil,BRA,Latin America & Caribbean,2011,2616156223918
+Italy,ITA,Europe & Central Asia,2011,2306974020278
+Russia,RUS,Europe & Central Asia,2011,2045922753398
+India,IND,South Asia,2011,1823051829895
+Canada,CAN,North America,2011,1793335727901
+Spain,ESP,Europe & Central Asia,2011,1487568659241
+Australia,AUS,East Asia & Pacific,2011,1402939868653
+South Korea,KOR,East Asia & Pacific,2011,1307103477219
+Mexico,MEX,Latin America & Caribbean,2011,1229013703417
+Netherlands,NLD,Europe & Central Asia,2011,913140741333
+Iran,IRN,"Middle East, North Africa, Afghanistan & Pakistan",2011,629082257472
+United States,USA,North America,2012,16253970000000
+China,CHN,East Asia & Pacific,2012,8673664713189
+Japan,JPN,East Asia & Pacific,2012,6333803928788
+Germany,DEU,Europe & Central Asia,2012,3596483233406
+United Kingdom,GBR,Europe & Central Asia,2012,2719715961540
+France,FRA,Europe & Central Asia,2012,2683007095787
+Brazil,BRA,Latin America & Caribbean,2012,2465227802807
+Russia,RUS,Europe & Central Asia,2012,2208293553878
+Italy,ITA,Europe & Central Asia,2012,2097929495122
+Canada,CAN,North America,2012,1828359477072
+India,IND,South Asia,2012,1827637590410
+Australia,AUS,East Asia & Pacific,2012,1552728401402
+South Korea,KOR,East Asia & Pacific,2012,1335343586438
+Spain,ESP,Europe & Central Asia,2012,1330994811670
+Mexico,MEX,Latin America & Caribbean,2012,1255110424742
+Netherlands,NLD,Europe & Central Asia,2012,845689017066
+Iran,IRN,"Middle East, North Africa, Afghanistan & Pakistan",2012,644019315004
+United States,USA,North America,2013,16880683000000
+China,CHN,East Asia & Pacific,2013,9743124247267
+Japan,JPN,East Asia & Pacific,2013,5272297037397
+Germany,DEU,Europe & Central Asia,2013,3807023797051
+France,FRA,Europe & Central Asia,2013,2816077607875
+United Kingdom,GBR,Europe & Central Asia,2013,2796908333283
+Brazil,BRA,Latin America & Caribbean,2013,2472819535557
+Russia,RUS,Europe & Central Asia,2013,2292470078346
+Italy,ITA,Europe & Central Asia,2013,2153225581941
+India,IND,South Asia,2013,1856721507622
+Canada,CAN,North America,2013,1846583831414
+Australia,AUS,East Asia & Pacific,2013,1583737461925
+South Korea,KOR,East Asia & Pacific,2013,1434669686502
+Spain,ESP,Europe & Central Asia,2013,1362186923158
+Mexico,MEX,Latin America & Caribbean,2013,1327436290439
+Netherlands,NLD,Europe & Central Asia,2013,883951539007
+Iran,IRN,"Middle East, North Africa, Afghanistan & Pakistan",2013,500399839840
+United States,USA,North America,2014,17608138000000
+China,CHN,East Asia & Pacific,2014,10674533168257
+Japan,JPN,East Asia & Pacific,2014,4985763289561
+Germany,DEU,Europe & Central Asia,2014,3964870735761
+United Kingdom,GBR,Europe & Central Asia,2014,3085362169410
+France,FRA,Europe & Central Asia,2014,2861236112552
+Brazil,BRA,Latin America & Caribbean,2014,2456043727199
+Italy,ITA,Europe & Central Asia,2014,2173255507986
+Russia,RUS,Europe & Central Asia,2014,2059241589895
+India,IND,South Asia,2014,2039126479155
+Canada,CAN,North America,2014,1805751688809
+South Korea,KOR,East Asia & Pacific,2014,1556252422020
+Australia,AUS,East Asia & Pacific,2014,1474677007566
+Spain,ESP,Europe & Central Asia,2014,1380244561362
+Mexico,MEX,Latin America & Caribbean,2014,1364507717689
+Netherlands,NLD,Europe & Central Asia,2014,901556501756
+Iran,IRN,"Middle East, North Africa, Afghanistan & Pakistan",2014,462284793281
+United States,USA,North America,2015,18295019000000
+China,CHN,East Asia & Pacific,2015,11280814787469
+Japan,JPN,East Asia & Pacific,2015,4534438580495
+Germany,DEU,Europe & Central Asia,2015,3425099578746
+United Kingdom,GBR,Europe & Central Asia,2015,2945579890258
+France,FRA,Europe & Central Asia,2015,2442483452643
+India,IND,South Asia,2015,2103588360045
+Italy,ITA,Europe & Central Asia,2015,1845428048839
+Brazil,BRA,Latin America & Caribbean,2015,1802212206815
+Canada,CAN,North America,2015,1556510380200
+South Korea,KOR,East Asia & Pacific,2015,1539212301136
+Russia,RUS,Europe & Central Asia,2015,1363482182198
+Australia,AUS,East Asia & Pacific,2015,1356805839936
+Mexico,MEX,Latin America & Caribbean,2015,1213294467654
+Spain,ESP,Europe & Central Asia,2015,1206164777553
+Netherlands,NLD,Europe & Central Asia,2015,775743675303
+Iran,IRN,"Middle East, North Africa, Afghanistan & Pakistan",2015,409191686497
+United States,USA,North America,2016,18804913000000
+China,CHN,East Asia & Pacific,2016,11456024084962
+Japan,JPN,East Asia & Pacific,2016,5110357383254
+Germany,DEU,Europe & Central Asia,2016,3536787895179
+United Kingdom,GBR,Europe & Central Asia,2016,2706807606539
+France,FRA,Europe & Central Asia,2016,2470407619777
+India,IND,South Asia,2016,2294796885663
+Italy,ITA,Europe & Central Asia,2016,1887111188177
+Brazil,BRA,Latin America & Caribbean,2016,1795693482853
+South Korea,KOR,East Asia & Pacific,2016,1579150518945
+Canada,CAN,North America,2016,1527996250641
+Russia,RUS,Europe & Central Asia,2016,1276786350881
+Spain,ESP,Europe & Central Asia,2016,1243015667917
+Australia,AUS,East Asia & Pacific,2016,1211588128418
+Mexico,MEX,Latin America & Caribbean,2016,1112233497453
+Netherlands,NLD,Europe & Central Asia,2016,797163949290
+Iran,IRN,"Middle East, North Africa, Afghanistan & Pakistan",2016,478618064871
+United States,USA,North America,2017,19612102000000
+China,CHN,East Asia & Pacific,2017,12537559062283
+Japan,JPN,East Asia & Pacific,2017,5038231631661
+Germany,DEU,Europe & Central Asia,2017,3765351626106
+United Kingdom,GBR,Europe & Central Asia,2017,2699118387873
+India,IND,South Asia,2017,2651474262755
+France,FRA,Europe & Central Asia,2017,2588868323335
+Brazil,BRA,Latin America & Caribbean,2017,2063514977366
+Italy,ITA,Europe & Central Asia,2017,1970720904585
+South Korea,KOR,East Asia & Pacific,2017,1710196756713
+Canada,CAN,North America,2017,1649269496515
+Russia,RUS,Europe & Central Asia,2017,1574199360089
+Australia,AUS,East Asia & Pacific,2017,1330890554614
+Spain,ESP,Europe & Central Asia,2017,1321754088819
+Mexico,MEX,Latin America & Caribbean,2017,1190721475853
+Netherlands,NLD,Europe & Central Asia,2017,848233537846
+Iran,IRN,"Middle East, North Africa, Afghanistan & Pakistan",2017,510239893418
+United States,USA,North America,2018,20656516000000
+China,CHN,East Asia & Pacific,2018,14147765772964
+Japan,JPN,East Asia & Pacific,2018,5154293721630
+Germany,DEU,Europe & Central Asia,2018,4055433215302
+United Kingdom,GBR,Europe & Central Asia,2018,2897028009916
+France,FRA,Europe & Central Asia,2018,2781576320884
+India,IND,South Asia,2018,2702929641649
+Italy,ITA,Europe & Central Asia,2018,2099435266459
+Brazil,BRA,Latin America & Caribbean,2018,1916933898011
+South Korea,KOR,East Asia & Pacific,2018,1824251454307
+Canada,CAN,North America,2018,1725330736238
+Russia,RUS,Europe & Central Asia,2018,1657328773461
+Australia,AUS,East Asia & Pacific,2018,1433144978762
+Spain,ESP,Europe & Central Asia,2018,1431642809327
+Mexico,MEX,Latin America & Caribbean,2018,1256300182984
+Netherlands,NLD,Europe & Central Asia,2018,929733599797
+Iran,IRN,"Middle East, North Africa, Afghanistan & Pakistan",2018,411903303606
+United States,USA,North America,2019,21539982000000
+China,CHN,East Asia & Pacific,2019,14560167101283
+Japan,JPN,East Asia & Pacific,2019,5245755000479
+Germany,DEU,Europe & Central Asia,2019,3959894794039
+United Kingdom,GBR,Europe & Central Asia,2019,2875710080015
+India,IND,South Asia,2019,2835606256558
+France,FRA,Europe & Central Asia,2019,2722793515172
+Italy,ITA,Europe & Central Asia,2019,2019606796584
+Brazil,BRA,Latin America & Caribbean,2019,1873288205060
+South Korea,KOR,East Asia & Pacific,2019,1751045752055
+Canada,CAN,North America,2019,1743728952157
+Russia,RUS,Europe & Central Asia,2019,1693115002708
+Spain,ESP,Europe & Central Asia,2019,1403496387686
+Australia,AUS,East Asia & Pacific,2019,1398349602956
+Mexico,MEX,Latin America & Caribbean,2019,1304106204006
+Netherlands,NLD,Europe & Central Asia,2019,928903005576
+Iran,IRN,"Middle East, North Africa, Afghanistan & Pakistan",2019,347988400958
+United States,USA,North America,2020,21375281000000
+China,CHN,East Asia & Pacific,2020,14996414166715
+Japan,JPN,East Asia & Pacific,2020,5189197543645
+Germany,DEU,Europe & Central Asia,2020,3941398957074
+United Kingdom,GBR,Europe & Central Asia,2020,2724001478305
+India,IND,South Asia,2020,2674851578587
+France,FRA,Europe & Central Asia,2020,2647926055110
+Italy,ITA,Europe & Central Asia,2020,1907481094079
+South Korea,KOR,East Asia & Pacific,2020,1744070276373
+Canada,CAN,North America,2020,1655686966882
+Russia,RUS,Europe & Central Asia,2020,1493075894362
+Brazil,BRA,Latin America & Caribbean,2020,1476107231310
+Australia,AUS,East Asia & Pacific,2020,1333336461648
+Spain,ESP,Europe & Central Asia,2020,1289783836971
+Mexico,MEX,Latin America & Caribbean,2020,1121064767169
+Netherlands,NLD,Europe & Central Asia,2020,932560861701
+Iran,IRN,"Middle East, North Africa, Afghanistan & Pakistan",2020,280934329280
+United States,USA,North America,2021,23725645000000
+China,CHN,East Asia & Pacific,2021,18201698719564
+Japan,JPN,East Asia & Pacific,2021,5225933520753
+Germany,DEU,Europe & Central Asia,2021,4355251953411
+United Kingdom,GBR,Europe & Central Asia,2021,3194559188926
+India,IND,South Asia,2021,3167270623260
+France,FRA,Europe & Central Asia,2021,2966433692008
+Italy,ITA,Europe & Central Asia,2021,2179207773596
+Canada,CAN,North America,2021,2022377950897
+South Korea,KOR,East Asia & Pacific,2021,1942313560966
+Russia,RUS,Europe & Central Asia,2021,1829186719575
+Brazil,BRA,Latin America & Caribbean,2021,1670647398905
+Australia,AUS,East Asia & Pacific,2021,1560617493203
+Spain,ESP,Europe & Central Asia,2021,1461244901853
+Mexico,MEX,Latin America & Caribbean,2021,1316569466834
+Netherlands,NLD,Europe & Central Asia,2021,1054472123450
+Iran,IRN,"Middle East, North Africa, Afghanistan & Pakistan",2021,407350685583
+United States,USA,North America,2022,26054614000000
+China,CHN,East Asia & Pacific,2022,18316765021690
+Japan,JPN,East Asia & Pacific,2022,4447976207315
+Germany,DEU,Europe & Central Asia,2022,4201021706479
+India,IND,South Asia,2022,3249938492013
+United Kingdom,GBR,Europe & Central Asia,2022,3181244350465
+France,FRA,Europe & Central Asia,2022,2794788137067
+Russia,RUS,Europe & Central Asia,2022,2292495097681
+Canada,CAN,North America,2022,2200562785046
+Italy,ITA,Europe & Central Asia,2022,2104067630319
+Brazil,BRA,Latin America & Caribbean,2022,1951923942083
+South Korea,KOR,East Asia & Pacific,2022,1799363116867
+Australia,AUS,East Asia & Pacific,2022,1695627535476
+Mexico,MEX,Latin America & Caribbean,2022,1466934724243
+Spain,ESP,Europe & Central Asia,2022,1448850658407
+Netherlands,NLD,Europe & Central Asia,2022,1046540797549
+Iran,IRN,"Middle East, North Africa, Afghanistan & Pakistan",2022,422662261526
+United States,USA,North America,2023,27811517000000
+China,CHN,East Asia & Pacific,2023,18270356654533
+Germany,DEU,Europe & Central Asia,2023,4562207532490
+Japan,JPN,East Asia & Pacific,2023,4384854269962
+India,IND,South Asia,2023,3500906030645
+United Kingdom,GBR,Europe & Central Asia,2023,3420796653789
+France,FRA,Europe & Central Asia,2023,3056250648138
+Italy,ITA,Europe & Central Asia,2023,2316882296366
+Canada,CAN,North America,2023,2196593836347
+Brazil,BRA,Latin America & Caribbean,2023,2191131765685
+Russia,RUS,Europe & Central Asia,2023,2046284838151
+South Korea,KOR,East Asia & Pacific,2023,1844800934392
+Mexico,MEX,Latin America & Caribbean,2023,1794410347718
+Australia,AUS,East Asia & Pacific,2023,1734451264656
+Spain,ESP,Europe & Central Asia,2023,1619481980720
+Netherlands,NLD,Europe & Central Asia,2023,1135475867551
+Iran,IRN,"Middle East, North Africa, Afghanistan & Pakistan",2023,457510482317

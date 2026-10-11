@@ -11,15 +11,184 @@ const AGGREGATION_TEXT: Record<string, string> = {
   average: "Average",
 };
 
+const SCALE_DOMAIN_TEXT = {
+  shared: "shared by every repeat",
+  instance: "fit to this repeat",
+};
+
 export function CompositionTraceBody({ trace }: { trace: CompositionTrace }) {
-  const { unit, glyph, labelValue, guide, anchor } = trace;
+  const { unit, glyph, path, band, labelValue, guide, anchor } = trace;
+  const point = glyph?.datum.point;
+  const summary = glyph?.datum.summary;
+  const stack = glyph?.datum.stack;
+  const waffle = glyph?.datum.waffle;
+  const bar = glyph?.datum.bar;
+  const span = glyph?.datum.span;
   return (
     <div className="space-y-2" aria-label="Composition trace">
-      {glyph && (
+      {glyph && span && (
+        <TraceSection heading={`${glyph.markName} · ${glyph.datum.bin.label}`}>
+          <TraceReadout label="From">
+            <TraceSwatch color={glyph.fill} /> {span.startField} ={" "}
+            {formatCalcValue(span.start, glyph.x ? "date" : "number")}
+          </TraceReadout>
+          <TraceReadout label="To">
+            {span.open
+              ? `no ${span.endField}; the span runs to the frame's edge`
+              : `${span.endField} = ${formatCalcValue(span.end!, glyph.x ? "date" : "number")}`}
+          </TraceReadout>
+          {span.category !== undefined && (
+            <TraceReadout label="Colored by">{span.category}</TraceReadout>
+          )}
+        </TraceSection>
+      )}
+      {glyph && bar && (
+        <TraceSection heading={`${glyph.markName} · ${glyph.datum.bin.label}`}>
+          <TraceReadout label="Length">
+            <TraceSwatch color={glyph.fill} />{" "}
+            {formatCalcValue(Math.abs(glyph.datum.value), "number")}
+            {bar.measureField ? ` ${bar.measureField}` : " rows"}
+            {bar.mirrored ? ", drawn leftward from the baseline" : ""}
+          </TraceReadout>
+          <TraceReadout label="Calculation">
+            {AGGREGATION_TEXT[bar.aggregation] ?? bar.aggregation}
+            {bar.measureField ? ` of ${bar.measureField}` : ""} over{" "}
+            {glyph.datum.rowIds.length.toLocaleString()}{" "}
+            {glyph.datum.rowIds.length === 1 ? "row" : "rows"} in this repeat
+            {bar.category !== undefined
+              ? ` where ${bar.categoryField} = ${bar.category}`
+              : ""}
+            , after the active filters
+          </TraceReadout>
+        </TraceSection>
+      )}
+      {glyph && waffle && (
+        <TraceSection heading={`${glyph.markName} · ${glyph.datum.bin.label}`}>
+          <TraceReadout label="Cell">
+            <TraceSwatch color={glyph.fill} /> {waffle.cell} of {waffle.cells}{" "}
+            for {waffle.categoryField} = {glyph.datum.bin.label}
+          </TraceReadout>
+          <TraceReadout label="Stands for">
+            {waffle.normalize
+              ? `1% of this repeat's ${formatCalcValue(waffle.total, "number")} rows, about ${formatCalcValue(glyph.datum.value, "number")} of them`
+              : waffle.each === 1
+                ? "one row"
+                : `${formatCalcValue(waffle.each, "number")} rows, rounded to whole cells`}
+          </TraceReadout>
+          <TraceReadout label="Category">
+            {formatCalcValue(waffle.count, "number")} of{" "}
+            {formatCalcValue(waffle.total, "number")} rows in this repeat (
+            {new Intl.NumberFormat("en-US", {
+              style: "percent",
+              maximumFractionDigits: 1,
+            }).format(waffle.count / waffle.total)}
+            ), after the active filters
+          </TraceReadout>
+        </TraceSection>
+      )}
+      {glyph && stack && (
+        <TraceSection heading={`${glyph.markName} · ${glyph.datum.bin.label}`}>
+          <TraceReadout label="Share">
+            <TraceSwatch color={glyph.fill} />{" "}
+            {new Intl.NumberFormat("en-US", {
+              style: "percent",
+              maximumFractionDigits: 1,
+            }).format(glyph.datum.value)}{" "}
+            of this repeat's total
+          </TraceReadout>
+          <TraceReadout label="Numerator">
+            {formatCalcValue(stack.count, "number")}{" "}
+            {stack.aggregation === "count"
+              ? "rows"
+              : `as the sum of ${stack.measureField}`}{" "}
+            where {stack.categoryField} = {glyph.datum.bin.label}
+          </TraceReadout>
+          <TraceReadout label="Denominator">
+            {formatCalcValue(stack.total, "number")} across{" "}
+            {stack.contributors.length} categories in this repeat, after the
+            active filters. Selecting a category fades the others; it does not
+            leave the total.
+          </TraceReadout>
+          <TraceReadout label="Contributors">
+            {stack.contributors
+              .map(
+                (item) =>
+                  `${item.category} ${formatCalcValue(item.count, "number")}`
+              )
+              .join(" · ")}
+          </TraceReadout>
+          <TraceReadout label="Stacked">
+            from{" "}
+            {new Intl.NumberFormat("en-US", {
+              style: "percent",
+              maximumFractionDigits: 1,
+            }).format(stack.lower)}{" "}
+            to{" "}
+            {new Intl.NumberFormat("en-US", {
+              style: "percent",
+              maximumFractionDigits: 1,
+            }).format(stack.upper)}
+          </TraceReadout>
+        </TraceSection>
+      )}
+      {glyph && summary && (
+        <TraceSection heading={`${glyph.markName} · ${glyph.datum.bin.label}`}>
+          <TraceReadout label="Median">
+            <TraceSwatch color={glyph.fill} />{" "}
+            {formatCalcValue(summary.median, "number")} {summary.measureField}
+          </TraceReadout>
+          <TraceReadout label="Quartiles">
+            {formatCalcValue(summary.q1, "number")} to{" "}
+            {formatCalcValue(summary.q3, "number")}, unweighted, from{" "}
+            {summary.count.toLocaleString()} values
+          </TraceReadout>
+          <TraceReadout label="Group">
+            {summary.groupField} = {glyph.datum.bin.label}, within this repeat,
+            after the active filters
+          </TraceReadout>
+          <TraceReadout label="Change in median">
+            {summary.change === undefined
+              ? "Undefined: the first group has no median or a median of zero, so the marker stays neutral"
+              : `${summary.changeText} from the first group to the last, which sets the marker color`}
+          </TraceReadout>
+        </TraceSection>
+      )}
+      {glyph && point && (
+        <TraceSection heading={`${glyph.markName} · ${glyph.datum.bin.label}`}>
+          <TraceReadout label={point.xField}>
+            <TraceSwatch color={glyph.fill} />{" "}
+            {formatCalcValue(point.x, "number")}
+          </TraceReadout>
+          <TraceReadout label={point.yField}>
+            {formatCalcValue(point.y, "number")}
+          </TraceReadout>
+          {point.series !== undefined && (
+            <TraceReadout label="Series">{point.series}</TraceReadout>
+          )}
+          <TraceReadout label="Calculation">
+            One point per row; no aggregation
+          </TraceReadout>
+          {glyph.x && (
+            <TraceReadout label="X scale">
+              {describeNumericScale(glyph.x)}
+            </TraceReadout>
+          )}
+          {glyph.y && (
+            <TraceReadout label="Y scale">
+              {describeNumericScale(glyph.y)}
+            </TraceReadout>
+          )}
+        </TraceSection>
+      )}
+      {glyph && !point && !summary && !stack && !waffle && !bar && !span && (
         <TraceSection heading={`${glyph.markName} · ${glyph.datum.bin.label}`}>
           <TraceReadout label="Value">
             <TraceSwatch color={glyph.fill} />{" "}
-            {formatCalcValue(glyph.datum.value, "number")}
+            {glyph.datum.missing
+              ? `No value: ${glyph.datum.rowIds.length.toLocaleString()} ${
+                  glyph.datum.rowIds.length === 1 ? "row" : "rows"
+                } in this bin, none with a value, so the cell is drawn as missing`
+              : formatCalcValue(glyph.datum.value, "number")}
           </TraceReadout>
           <TraceReadout label="Calculation">
             {AGGREGATION_TEXT[glyph.aggregation] ?? glyph.aggregation}
@@ -48,8 +217,146 @@ export function CompositionTraceBody({ trace }: { trace: CompositionTrace }) {
           )}
         </TraceSection>
       )}
+      {path && (
+        <TraceSection
+          heading={
+            path.datum.series === undefined
+              ? path.markName
+              : `${path.markName} · ${path.datum.series}`
+          }
+        >
+          {path.datum.series !== undefined && (
+            <TraceReadout label="Series">
+              {path.datum.series}
+              {path.datum.focused === false
+                ? ", muted behind the focused series"
+                : path.datum.focused
+                  ? ", in focus"
+                  : ""}
+            </TraceReadout>
+          )}
+          {path.datum.category !== undefined && (
+            <TraceReadout label="Colored by">
+              <TraceSwatch color={path.stroke} /> {path.datum.category}
+            </TraceReadout>
+          )}
+          <TraceReadout label="Order">
+            <TraceSwatch color={path.stroke} /> {path.datum.orderField},
+            ascending; ties keep row order
+          </TraceReadout>
+          <TraceReadout label="Vertices">
+            {path.vertices.length.toLocaleString()} in{" "}
+            {path.datum.segments === 1
+              ? "one run"
+              : `${path.datum.segments} runs`}
+            {path.datum.skipped.length
+              ? `; ${path.datum.skipped.length} ${
+                  path.datum.skipped.length === 1 ? "row" : "rows"
+                } skipped for a missing value (${path.datum.skipped
+                  .slice(0, 6)
+                  .join(", ")}${path.datum.skipped.length > 6 ? ", …" : ""})`
+              : "; no gaps"}
+          </TraceReadout>
+          {path.x && (
+            <TraceReadout label="X scale">
+              {describeNumericScale(path.x)}
+            </TraceReadout>
+          )}
+          {path.y && (
+            <TraceReadout label="Y scale">
+              {path.rank
+                ? `Rank among the rows at each x by ${
+                    path.rank === "asc" ? "smallest" : "largest"
+                  } ${path.y.name}, from the live rows; `
+                : ""}
+              {describeNumericScale(path.y)}
+            </TraceReadout>
+          )}
+          <TraceReadout label="Endpoints">
+            rows {path.vertices[0]?.rowId} →{" "}
+            {path.vertices[path.vertices.length - 1]?.rowId}
+          </TraceReadout>
+        </TraceSection>
+      )}
+      {band && band.datum.stack && (
+        <TraceSection
+          heading={`${band.markName} · ${band.datum.stack.category}`}
+        >
+          <TraceReadout label="Share">
+            <TraceSwatch color={band.fill} />{" "}
+            {describeShareRange(band.datum.stack.points)} of each{" "}
+            {band.datum.orderField}'s total, across{" "}
+            {band.datum.stack.points.length.toLocaleString()} values of{" "}
+            {band.datum.orderField}
+          </TraceReadout>
+          <TraceReadout label="Numerator">
+            {band.datum.stack.aggregation === "count"
+              ? "Rows"
+              : `Sum of ${band.datum.stack.measureField}`}{" "}
+            where {band.datum.stack.categoryField} = {band.datum.stack.category}
+            , at each {band.datum.orderField}
+          </TraceReadout>
+          <TraceReadout label="Denominator">
+            Every category at that {band.datum.orderField}, after the active
+            filters: {band.datum.stack.categories.join(", ")}
+          </TraceReadout>
+          <TraceReadout label="Largest share">
+            {describeLargest(band.datum.stack.points, band.datum.orderField)}
+          </TraceReadout>
+        </TraceSection>
+      )}
+      {band && !band.datum.stack && (
+        <TraceSection heading={band.markName}>
+          <TraceReadout label="Bounds">
+            <TraceSwatch color={band.fill} /> {band.datum.lowerField} to{" "}
+            {band.datum.upperField}, supplied by the data
+          </TraceReadout>
+          <TraceReadout label="Order">
+            {band.datum.orderField}, ascending; ties keep row order
+          </TraceReadout>
+          <TraceReadout label="Vertices">
+            {band.vertices.length.toLocaleString()} in{" "}
+            {band.datum.segments === 1
+              ? "one run"
+              : `${band.datum.segments} runs`}
+            {band.datum.skipped.length
+              ? `; ${band.datum.skipped.length} ${
+                  band.datum.skipped.length === 1 ? "row" : "rows"
+                } skipped for a missing bound`
+              : "; no gaps"}
+          </TraceReadout>
+          {band.vertices.length > 0 && (
+            <TraceReadout label="Ends">
+              {formatCalcValue(band.vertices[0]!.lower, "number")} to{" "}
+              {formatCalcValue(band.vertices[0]!.upper, "number")} at the start;{" "}
+              {formatCalcValue(
+                band.vertices[band.vertices.length - 1]!.lower,
+                "number"
+              )}{" "}
+              to{" "}
+              {formatCalcValue(
+                band.vertices[band.vertices.length - 1]!.upper,
+                "number"
+              )}{" "}
+              at the end
+            </TraceReadout>
+          )}
+          {band.x && (
+            <TraceReadout label="X scale">
+              {describeNumericScale(band.x)}
+            </TraceReadout>
+          )}
+          {band.y && (
+            <TraceReadout label="Y scale">
+              {describeNumericScale(band.y)}
+            </TraceReadout>
+          )}
+        </TraceSection>
+      )}
       {unit && (
-        <TraceSection heading={`Repeat: ${unit.instanceKey === "all" ? "the one unit" : unit.instanceKey}`}>
+        <TraceSection
+          heading={`Repeat: ${unit.instanceKey === "all" ? "the one unit" : unit.instanceKey}`}
+        >
           <TraceReadout label="Template">{trace.elementName}</TraceReadout>
           {unit.repeatField && (
             <TraceReadout label="Subset">
@@ -61,7 +368,9 @@ export function CompositionTraceBody({ trace }: { trace: CompositionTrace }) {
             {unit.rowCount.toLocaleString()} pass the filters
           </TraceReadout>
           <TraceReadout label="Override">
-            {unit.override ? describeOverride(unit.override) : "None; drawn from the template"}
+            {unit.override
+              ? describeOverride(unit.override)
+              : "None; drawn from the template"}
           </TraceReadout>
         </TraceSection>
       )}
@@ -116,7 +425,50 @@ export function CompositionTraceBody({ trace }: { trace: CompositionTrace }) {
   );
 }
 
-function describeOverride(override: NonNullable<CompositionTrace["unit"]>["override"]) {
+const percent = new Intl.NumberFormat("en-US", {
+  style: "percent",
+  maximumFractionDigits: 1,
+});
+
+function describeShareRange(points: { share: number }[]) {
+  const shares = points.map((point) => point.share);
+  const low = Math.min(...shares);
+  const high = Math.max(...shares);
+  return low === high
+    ? percent.format(low)
+    : `${percent.format(low)} to ${percent.format(high)}`;
+}
+
+function describeLargest(
+  points: { x: number; count: number; total: number; share: number }[],
+  xField: string
+) {
+  const best = points.reduce((top, point) =>
+    point.share > top.share ? point : top
+  );
+  return `${percent.format(best.share)} at ${xField} ${best.x}: ${formatCalcValue(
+    best.count,
+    "number"
+  )} of ${formatCalcValue(best.total, "number")}`;
+}
+
+function describeNumericScale(
+  scale: NonNullable<CompositionTrace["glyph"]>["x"] & object
+) {
+  const limits =
+    scale.min !== undefined || scale.max !== undefined
+      ? ` · fixed ${scale.min ?? "…"} to ${scale.max ?? "…"}`
+      : scale.nice
+        ? " · rounded to ticks"
+        : "";
+  return `${scale.name} · ${scale.field} · ${SCALE_DOMAIN_TEXT[scale.domain]}${
+    scale.zero ? " · includes zero" : ""
+  }${limits}`;
+}
+
+function describeOverride(
+  override: NonNullable<CompositionTrace["unit"]>["override"]
+) {
   if (!override) return "";
   const parts = [];
   if (override.dx || override.dy)
@@ -137,7 +489,10 @@ function TraceRows({ ids, fields }: { ids: number[]; fields: string[] }) {
         <p className="text-muted-foreground">No source rows.</p>
       </TraceSection>
     );
-  const columns = fields.map((field) => ({ field, values: getColumnData(field) }));
+  const columns = fields.map((field) => ({
+    field,
+    values: getColumnData(field),
+  }));
   return (
     <TraceSection heading={`Source rows · ${ids.length.toLocaleString()}`}>
       <table className="eda-composition-trace-rows">

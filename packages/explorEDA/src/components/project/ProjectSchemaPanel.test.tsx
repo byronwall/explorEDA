@@ -201,3 +201,24 @@ describe("ProjectSchemaPanel", () => {
     );
   });
 });
+
+describe("ProjectSchemaPanel diagram", () => {
+  it("opens the diagram when the host offers one", () => {
+    const { project, sources } = createShopFixture();
+    const onOpenDiagram = vi.fn();
+    render(
+      <DataLayerProvider data={sources.orders!} charts={[]}>
+        <ProjectSchemaPanel
+          project={project}
+          queryId="orders-by-customer"
+          tables={sources}
+          readOnly={false}
+          onProjectChange={vi.fn()}
+          onOpenDiagram={onOpenDiagram}
+        />
+      </DataLayerProvider>
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Open diagram" }));
+    expect(onOpenDiagram).toHaveBeenCalledOnce();
+  });
+});

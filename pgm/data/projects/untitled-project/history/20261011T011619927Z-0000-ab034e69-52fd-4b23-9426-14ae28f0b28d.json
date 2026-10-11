@@ -1,0 +1,16 @@
+{
+  "id": "ab034e69-52fd-4b23-9426-14ae28f0b28d",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:16:19.927Z",
+  "summary": "Created \"How each state voted is weak and hard to read\" under \"Composition examples\".",
+  "nodeIds": [
+    "page-how-each-state-voted-is-weak-and-hard-to-read",
+    "page-composition-examples"
+  ],
+  "metadata": {
+    "clientMutationId": "db257e57-0c86-414b-88fa-398c8a3be8f7"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "id": "782e9cd5-4d07-4056-bccb-13d6694b7578",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:22:10.141Z",
+  "summary": "Created \"No x-axis label, so had to guess it was age\" under \"Causes by age\".",
+  "nodeIds": [
+    "page-no-x-axis-label-so-had-to-guess-it-was-age",
+    "page-causes-by-age"
+  ],
+  "metadata": {
+    "clientMutationId": "91996944-c632-4f10-ac4b-78f4d35c6475"
+  }
+}

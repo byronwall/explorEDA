@@ -1,7 +1,7 @@
 import { applyFilter } from "@/hooks/applyFilter";
 import { categoryKey, categoryLabel, categoryValue } from "@/lib/categories";
 import { makeColorScale } from "@/lib/colorScaleMath";
-import { finiteNumber } from "@/lib/numeric";
+import { finiteNumber } from "@/lib/valueParsing";
 import type { datum } from "@/types/ChartTypes";
 import type { ColorScaleType } from "@/types/ColorScaleTypes";
 import type { Filter, RangeFilter, ValueFilter } from "@/types/FilterTypes";
@@ -17,7 +17,7 @@ export interface ParallelSnapshot {
   revision: string;
   /** Every source row. Axis domains use them so axes hold still while other charts filter. */
   allIds: number[];
-  /** Rows after other charts' filters. */
+  /** Rows after other filters. */
   liveIds: number[];
   columns: Record<string, Record<number, datum>>;
   kinds: Record<string, ParallelAxisKind>;
@@ -448,7 +448,7 @@ export function planParallelCoordinates({
     lineOpacity: settings.lineOpacity,
     lineWidth: settings.lineWidth,
     scopeNote:
-      "Lines are rows after other chart filters. Axis ranges cover all rows, so they hold still while you filter.",
+      "Lines are rows after other filters. Axis ranges cover all rows, so they hold still while you filter.",
   };
 }
 

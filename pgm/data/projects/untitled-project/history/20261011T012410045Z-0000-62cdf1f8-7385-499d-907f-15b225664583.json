@@ -1,0 +1,16 @@
+{
+  "id": "62cdf1f8-7385-499d-907f-15b225664583",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:24:10.045Z",
+  "summary": "Added 1 images to \"Measles\".",
+  "nodeIds": [
+    "page-measles"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "c6a8a32f-96ae-49aa-91f1-7d21226f9583"
+  }
+}

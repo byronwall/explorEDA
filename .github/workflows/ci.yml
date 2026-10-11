@@ -1,0 +1,43 @@
+name: CI
+
+# Runs on every pull request: the branch checks (changeset, commit authors)
+# and `pnpm check` (UI conventions, build, types, tests).
+on:
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: "pnpm"
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Branch checks
+        run: pnpm check:pr origin/${{ github.base_ref }}
+
+      - name: Check
+        run: pnpm check
+
+      # The docs browser check runs every live example's steps against the
+      # demo that `pnpm check` just built, so a docs regression fails the PR
+      # before it can stop a deploy.
+      - name: Install Chromium for the docs check
+        run: pnpm --filter demo exec playwright install --with-deps chromium
+
+      - name: Check docs in a browser
+        run: pnpm --filter demo docs:verify

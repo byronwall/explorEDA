@@ -1,0 +1,14 @@
+{
+  "id": "7e6bd143-12ef-49e7-8e01-59a1978300f6",
+  "kind": "node.status.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:b149ae",
+    "label": "Agent token ...b149ae"
+  },
+  "createdAt": "2026-10-11T02:17:06.366Z",
+  "summary": "Changed \"Missing the color legend - what is color?\" status to implemented.",
+  "nodeIds": [
+    "page-missing-the-color-legend-what-is-color"
+  ]
+}

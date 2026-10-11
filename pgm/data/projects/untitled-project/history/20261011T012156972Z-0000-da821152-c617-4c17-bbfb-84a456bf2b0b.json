@@ -1,0 +1,16 @@
+{
+  "id": "da821152-c617-4c17-bbfb-84a456bf2b0b",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:21:56.972Z",
+  "summary": "Created \"Causes by age\" under \"Composition examples\".",
+  "nodeIds": [
+    "page-causes-by-age",
+    "page-composition-examples"
+  ],
+  "metadata": {
+    "clientMutationId": "e8aedb4c-b5f9-4263-bb0c-c298c298d1f5"
+  }
+}

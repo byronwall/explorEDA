@@ -130,3 +130,23 @@ describe("dragDomain", () => {
     expect(Number.isInteger(high)).toBe(true);
   });
 });
+
+describe("dragDomain on a log axis", () => {
+  const log = {
+    domain: [1, 1000] as [number, number],
+    range: [0, 300] as [number, number],
+    scaleType: "log",
+  };
+
+  it("pans by equal ratios, so a decade of travel moves a decade", () => {
+    // 100 px is one decade on this axis.
+    expect(
+      dragDomain({ ...log, mode: "pan", start: 150, current: 250 })
+    ).toEqual([0.1, 100]);
+  });
+
+  it("never pans past zero", () => {
+    const [low] = dragDomain({ ...log, mode: "pan", start: 0, current: 900 })!;
+    expect(low).toBeGreaterThan(0);
+  });
+});

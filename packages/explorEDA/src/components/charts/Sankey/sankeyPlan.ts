@@ -3,7 +3,11 @@ import { applyFilter } from "@/hooks/applyFilter";
 import type { AggregateContributor } from "@/lib/aggregates";
 import { categoryKey, categoryLabel, categoryValue } from "@/lib/categories";
 import { defaultCategoricalColors, makeColorScale } from "@/lib/colorScaleMath";
-import { isMissingValue, numericExclusionReason } from "@/lib/numeric";
+import {
+  isMissingValue,
+  numericExclusionReason,
+  parseNumber,
+} from "@/lib/valueParsing";
 import type { datum } from "@/types/ChartTypes";
 import type { ColorScaleType } from "@/types/ColorScaleTypes";
 import type { Filter, ValueFilter } from "@/types/FilterTypes";
@@ -13,7 +17,7 @@ export interface SankeySnapshot {
   revision: string;
   /** Every source row. Node ranking uses them so order holds while filtering. */
   allIds: number[];
-  /** Rows after other charts' filters. */
+  /** Rows after other filters. */
   liveIds: number[];
   stageData: Record<string, Record<number, datum>>;
   measureData: Record<number, datum>;
@@ -293,7 +297,7 @@ export function planSankey({
     if (reason) {
       excludedReasons.set(reason, (excludedReasons.get(reason) ?? 0) + 1);
     }
-    const weight = reason ? 0 : sum ? Number(input) : 1;
+    const weight = reason ? 0 : sum ? parseNumber(input) : 1;
     const selected =
       hasSelection &&
       ownFilters.every(({ filter, data }) => applyFilter(data[id], filter));
@@ -564,7 +568,7 @@ export function planSankey({
           }))
         : [],
     scopeNote:
-      "Rows after other chart filters. Each row is one path, so it counts once at every stage.",
+      "Rows after other filters. Each row is one path, so it counts once at every stage.",
   };
 }
 

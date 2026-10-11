@@ -8,6 +8,7 @@ import { MapTraceBody } from "../Map/MapTraceBody";
 import { useState } from "react";
 import { BarTraceBody } from "../BarChart/BarTraceBody";
 import { SankeyTraceBody } from "../Sankey/SankeyTraceBody";
+import { HierarchyTraceBody } from "../Hierarchy/HierarchyTraceBody";
 import { ParallelTraceBody } from "../ParallelCoordinates/ParallelTraceBody";
 import { MatrixTraceBody } from "../ScatterMatrix/MatrixTraceBody";
 import { CalendarTraceBody } from "../Calendar/CalendarTraceBody";
@@ -29,6 +30,12 @@ import {
   TitleTraceBody,
 } from "./TraceBodies";
 import type { ChartTrace } from "./traceTypes";
+import {
+  formatFilterLabel,
+  isActiveFilter,
+  useFieldFormatting,
+} from "@/components/ActiveFilterStatus";
+import { useDataLayer } from "@/providers/DataLayerProvider";
 
 function TraceBody({ trace }: { trace: ChartTrace }) {
   switch (trace.kind) {
@@ -68,6 +75,8 @@ function TraceBody({ trace }: { trace: ChartTrace }) {
     case "sankey-node":
     case "sankey-link":
       return <SankeyTraceBody trace={trace} />;
+    case "hierarchy-node":
+      return <HierarchyTraceBody trace={trace} />;
     case "polyline":
     case "pc-axis":
       return <ParallelTraceBody trace={trace} />;
@@ -93,6 +102,26 @@ function TraceBody({ trace }: { trace: ChartTrace }) {
     default:
       return <ScatterTraceBody trace={trace} />;
   }
+}
+
+/** Names the workspace filters, which narrow this chart without owning it. */
+function WorkspaceFilterNote() {
+  const filters = useDataLayer((state) => state.workspaceFilters);
+  const formatting = useFieldFormatting();
+  const active = filters.filter(isActiveFilter);
+  if (!active.length) return null;
+  return (
+    <p className="text-muted-foreground">
+      Workspace {active.length === 1 ? "filter" : "filters"}:{" "}
+      <span className="text-foreground">
+        {active
+          .map((filter) => formatFilterLabel(filter, formatting))
+          .join(" · ")}
+      </span>
+      . {active.length === 1 ? "It narrows" : "They narrow"} every chart,
+      including this one.
+    </p>
+  );
 }
 
 /** In a project workspace, opens the query flow on the rows behind a mark. */
@@ -144,6 +173,7 @@ export function ChartTracePanel() {
   return (
     <div className="space-y-3 text-xs">
       {trace.trace && <TraceBody trace={trace.trace} />}
+      {trace.trace && <WorkspaceFilterNote />}
       {trace.trace && <QueryRowsLink trace={trace.trace} />}
       <section
         className="eda-trace-finder"

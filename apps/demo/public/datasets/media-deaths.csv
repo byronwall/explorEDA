@@ -1,0 +1,61 @@
+Source,Cause,Year,Measure,Count
+Deaths,Accidents,2023,Deaths,181146
+Deaths,Alzheimer's,2023,Deaths,114034
+Deaths,Cancer,2023,Deaths,613352
+Deaths,COVID-19,2023,Deaths,49932
+Deaths,Diabetes,2023,Deaths,95190
+Deaths,Drug overdose,2023,Deaths,41552
+Deaths,Heart disease,2023,Deaths,680981
+Deaths,Homicide,2023,Deaths,22390
+Deaths,Influenza,2023,Deaths,45185
+Deaths,Kidney disease,2023,Deaths,55253
+Deaths,Liver disease,2023,Deaths,52222
+Deaths,Respiratory disease,2023,Deaths,145357
+Deaths,Stroke,2023,Deaths,162639
+Deaths,Suicide,2023,Deaths,49316
+Deaths,Terrorism,2023,Deaths,16
+The New York Times,Accidents,2023,Articles,1489
+The New York Times,Alzheimer's,2023,Articles,131
+The New York Times,Cancer,2023,Articles,625
+The New York Times,COVID-19,2023,Articles,822
+The New York Times,Diabetes,2023,Articles,220
+The New York Times,Drug overdose,2023,Articles,1152
+The New York Times,Heart disease,2023,Articles,436
+The New York Times,Homicide,2023,Articles,6469
+The New York Times,Influenza,2023,Articles,241
+The New York Times,Kidney disease,2023,Articles,63
+The New York Times,Liver disease,2023,Articles,49
+The New York Times,Respiratory disease,2023,Articles,212
+The New York Times,Stroke,2023,Articles,119
+The New York Times,Suicide,2023,Articles,580
+The New York Times,Terrorism,2023,Articles,2813
+The Washington Post,Accidents,2023,Articles,697
+The Washington Post,Alzheimer's,2023,Articles,161
+The Washington Post,Cancer,2023,Articles,554
+The Washington Post,COVID-19,2023,Articles,932
+The Washington Post,Diabetes,2023,Articles,158
+The Washington Post,Drug overdose,2023,Articles,1119
+The Washington Post,Heart disease,2023,Articles,337
+The Washington Post,Homicide,2023,Articles,5418
+The Washington Post,Influenza,2023,Articles,235
+The Washington Post,Kidney disease,2023,Articles,51
+The Washington Post,Liver disease,2023,Articles,38
+The Washington Post,Respiratory disease,2023,Articles,148
+The Washington Post,Stroke,2023,Articles,119
+The Washington Post,Suicide,2023,Articles,394
+The Washington Post,Terrorism,2023,Articles,1451
+Fox News,Accidents,2023,Articles,1189
+Fox News,Alzheimer's,2023,Articles,185
+Fox News,Cancer,2023,Articles,735
+Fox News,COVID-19,2023,Articles,1160
+Fox News,Diabetes,2023,Articles,112
+Fox News,Drug overdose,2023,Articles,1896
+Fox News,Heart disease,2023,Articles,446
+Fox News,Homicide,2023,Articles,10170
+Fox News,Influenza,2023,Articles,232
+Fox News,Kidney disease,2023,Articles,32
+Fox News,Liver disease,2023,Articles,41
+Fox News,Respiratory disease,2023,Articles,115
+Fox News,Stroke,2023,Articles,153
+Fox News,Suicide,2023,Articles,801
+Fox News,Terrorism,2023,Articles,2140

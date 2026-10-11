@@ -14,6 +14,7 @@ export const pendingTargets: readonly string[] = [
   "chart:data-table",
   "chart:ecdf",
   "chart:heatmap",
+  "chart:hierarchy",
   "chart:line",
   "chart:map",
   "chart:markdown",
@@ -79,4 +80,4 @@ export const pendingTargets: readonly string[] = [
 ];
 
 /** Raising this is the only way to add a gap, and shows up in review. */
-export const PENDING_LIMIT = 71;
+export const PENDING_LIMIT = 72;

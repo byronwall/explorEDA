@@ -13,7 +13,7 @@ import { FilterX } from "lucide-react";
 import isEqual from "react-fast-compare";
 import { Slider } from "@/components/ui/slider";
 import { ActionTooltip } from "@/components/ui/tooltip";
-import { dateTimestamp } from "@/lib/dateTime";
+import { timestampOf } from "@/lib/valueParsing";
 import { datePresets, type DatePresetGroup } from "@/lib/datePresets";
 import {
   summarizeField,
@@ -70,11 +70,8 @@ function presetsFor(profile: FieldProfile): DatePresetGroup[] {
   let first = Infinity;
   let last = -Infinity;
   for (const { value } of profile.categories?.distribution ?? []) {
-    const time =
-      typeof value === "string"
-        ? dateTimestamp(value)
-        : Date.parse(String(value));
-    if (!Number.isFinite(time)) continue;
+    const time = timestampOf(value);
+    if (time === undefined) continue;
     first = Math.min(first, time);
     last = Math.max(last, time);
   }
