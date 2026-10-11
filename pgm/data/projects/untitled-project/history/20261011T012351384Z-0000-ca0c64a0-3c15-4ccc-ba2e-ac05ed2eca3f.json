@@ -1,0 +1,16 @@
+{
+  "id": "ca0c64a0-3c15-4ccc-ba2e-ac05ed2eca3f",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:23:51.384Z",
+  "summary": "Created \"Measles\" under \"Composition examples\".",
+  "nodeIds": [
+    "page-measles",
+    "page-composition-examples"
+  ],
+  "metadata": {
+    "clientMutationId": "b12f5b80-03d6-4826-aee4-6e9b78c7c1f7"
+  }
+}

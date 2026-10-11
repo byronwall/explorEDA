@@ -1,0 +1,16 @@
+{
+  "id": "9424a747-b9b9-40c8-80df-2916dfcd14e9",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:36:55.521Z",
+  "summary": "Created \"Where are the axis labels?\" under \"Driving shifts\".",
+  "nodeIds": [
+    "page-where-are-the-axis-labels",
+    "page-driving-shifts"
+  ],
+  "metadata": {
+    "clientMutationId": "86779610-3a51-4423-8641-dd99b94c20e1"
+  }
+}

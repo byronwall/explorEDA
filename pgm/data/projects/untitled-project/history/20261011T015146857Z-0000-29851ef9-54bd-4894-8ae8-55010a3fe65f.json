@@ -1,0 +1,16 @@
+{
+  "id": "29851ef9-54bd-4894-8ae8-55010a3fe65f",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:51:46.857Z",
+  "summary": "Created \"Income and expenditure\" under \"Examples to add\".",
+  "nodeIds": [
+    "page-income-and-expenditure",
+    "page-examples-to-add"
+  ],
+  "metadata": {
+    "clientMutationId": "9810fdf5-f557-4838-b2a8-e071dfa02dfd"
+  }
+}
