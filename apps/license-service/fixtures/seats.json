@@ -1,0 +1,6 @@
+{
+  "type": "seats-changed",
+  "eventId": "evt_local_seats",
+  "subscriptionId": "sub_local_1",
+  "seats": 5
+}

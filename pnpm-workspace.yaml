@@ -4,6 +4,8 @@ packages:
 
 allowBuilds:
   esbuild: true
+  # Wrangler's local Workers runtime, for the license service.
+  workerd: true
 
 minimumReleaseAgeExclude:
   - '@byronwallrus/product-grid-cli@0.2.0 || 0.3.0'

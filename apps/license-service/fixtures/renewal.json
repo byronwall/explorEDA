@@ -1,0 +1,7 @@
+{
+  "type": "renewal",
+  "eventId": "evt_local_renewal",
+  "transactionId": "txn_local_2",
+  "subscriptionId": "sub_local_1",
+  "periodEnd": "2028-12-31T00:00:00Z"
+}
