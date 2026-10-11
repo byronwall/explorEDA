@@ -45,6 +45,9 @@ export const CHART_SETTINGS: Readonly<
     minRowHeight:
       "Smallest row height in pixels. When rows would be shorter, the chart shows fewer categories.",
     maxRowHeight: "Largest row height in pixels, so a few rows stay compact.",
+    aggregateId:
+      "Grouped summary to rank instead of counting rows. Its group field must match `field`.",
+    topN: "Number of categories to show, with the rest gathered in Other. Leave unset to fit as many rows as the height allows.",
   },
   line: {
     field: "Not read by this chart type.",
