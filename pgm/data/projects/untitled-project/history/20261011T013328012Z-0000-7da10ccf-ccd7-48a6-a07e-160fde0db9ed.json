@@ -1,0 +1,16 @@
+{
+  "id": "7da10ccf-ccd7-48a6-a07e-160fde0db9ed",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:33:28.012Z",
+  "summary": "Created \"2% line crosses both charts, probably an accident\" under \"Forecast Fan\".",
+  "nodeIds": [
+    "page-2-line-crosses-both-charts-probably-an-accident",
+    "page-forecast-fan"
+  ],
+  "metadata": {
+    "clientMutationId": "fe297da3-53a6-4ce3-b049-33f65251f9b7"
+  }
+}

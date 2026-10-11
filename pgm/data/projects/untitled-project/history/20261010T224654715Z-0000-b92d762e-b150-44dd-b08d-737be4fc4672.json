@@ -1,0 +1,14 @@
+{
+  "id": "b92d762e-b150-44dd-b08d-737be4fc4672",
+  "kind": "node.context.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:150340",
+    "label": "Agent token ...150340"
+  },
+  "createdAt": "2026-10-10T22:46:54.715Z",
+  "summary": "Updated context for \"In-place chart editing\".",
+  "nodeIds": [
+    "page-in-place-chart-editing"
+  ]
+}

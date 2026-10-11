@@ -1,0 +1,16 @@
+{
+  "id": "63d3aa2e-1200-4c30-b5d0-420eb2879b8d",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:21:36.246Z",
+  "summary": "Added 1 images to \"The retirement line is hard to read\".",
+  "nodeIds": [
+    "page-the-retirement-line-is-hard-to-read"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "3ce20bdf-f554-46e8-aefd-57eb2ea2b597"
+  }
+}

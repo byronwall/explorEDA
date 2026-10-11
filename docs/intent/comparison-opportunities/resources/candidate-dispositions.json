@@ -105,7 +105,7 @@
     "title": "Clarify filter scope and inline legend behavior",
     "disposition": "partial",
     "current_assessment": "Manual chart filters, local restrictions, and legend filtering exist; top-level controls and inline hide/isolate remain.",
-    "intent": "../filter-and-series-controls/intent-brief.md",
+    "intent": "../../application-feature-inventory.md#filter-representations",
     "evidence_revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
     "evidence_scope": "Current source inspection and current chart guide; no fresh browser test"
   },

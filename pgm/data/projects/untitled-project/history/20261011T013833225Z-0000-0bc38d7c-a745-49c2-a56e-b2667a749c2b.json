@@ -1,0 +1,16 @@
+{
+  "id": "0bc38d7c-a745-49c2-a56e-b2667a749c2b",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:38:33.225Z",
+  "summary": "Created \"Dragging the annotation around does not update until release\" under \"Driving shifts\".",
+  "nodeIds": [
+    "page-dragging-the-annotation-around-does-not-update-until-release",
+    "page-driving-shifts"
+  ],
+  "metadata": {
+    "clientMutationId": "b0512b00-8dba-4187-a597-c690b07929ca"
+  }
+}

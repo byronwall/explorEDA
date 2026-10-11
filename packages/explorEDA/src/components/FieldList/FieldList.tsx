@@ -131,7 +131,7 @@ export function FieldList({
       ),
     [profiles, query, getFieldLabel]
   );
-  const scope = `Values describe ${scopeRows.toLocaleString()} of ${data.length.toLocaleString()} rows after chart filters`;
+  const scope = `Values describe ${scopeRows.toLocaleString()} of ${data.length.toLocaleString()} rows after filters`;
   const collapse = () => {
     onOverviewChange(false);
     requestAnimationFrame(() =>

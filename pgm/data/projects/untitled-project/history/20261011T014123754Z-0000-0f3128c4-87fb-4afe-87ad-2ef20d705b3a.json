@@ -1,0 +1,16 @@
+{
+  "id": "0f3128c4-87fb-4afe-87ad-2ef20d705b3a",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:41:23.754Z",
+  "summary": "Created \"Original had a computation for the delta\" under \"Pew Meaning\".",
+  "nodeIds": [
+    "page-original-had-a-computation-for-the-delta",
+    "page-pew-meaning"
+  ],
+  "metadata": {
+    "clientMutationId": "d28c407f-51cd-4fb1-bb6b-94d1486fc6c0"
+  }
+}

@@ -12,6 +12,7 @@ import {
 import type { FacetLayoutPlan } from "../FacetRelated/facetLayout";
 import type { BarTrace } from "../BarChart/barTrace";
 import type { SankeyTrace } from "../Sankey/sankeyTrace";
+import type { HierarchyTrace } from "../Hierarchy/hierarchyTrace";
 import type { ParallelTrace } from "../ParallelCoordinates/parallelTrace";
 import type { MatrixTrace } from "../ScatterMatrix/matrixTrace";
 import type { CalendarTrace } from "../Calendar/calendarTrace";
@@ -117,6 +118,7 @@ export type ChartTrace =
   | ScatterTrace
   | BarTrace
   | SankeyTrace
+  | HierarchyTrace
   | ParallelTrace
   | MatrixTrace
   | CalendarTrace

@@ -1,0 +1,16 @@
+{
+  "id": "ee361746-0d2f-4bad-921d-55b5524eb4fd",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:15:39.060Z",
+  "summary": "Added 1 images to \"Consumer confidence has an average that only appears in first row\".",
+  "nodeIds": [
+    "page-consumer-confidence-has-an-average-that-only-appears-in-first-row"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "21286090-7b00-4043-a1d7-177afcf53858"
+  }
+}

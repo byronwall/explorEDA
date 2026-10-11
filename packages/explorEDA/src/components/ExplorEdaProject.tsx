@@ -33,6 +33,7 @@ import {
   unresolvedAnalysisRowKeys,
 } from "./project/analysisRowKeys";
 import { incompatibleSettingsFields } from "./project/settingsCompatibility";
+import { projectSchemaGraph } from "@/lib/schema/schemaGraph";
 
 export interface ExplorEdaProjectChange {
   project: AnalysisProject;
@@ -44,6 +45,18 @@ export interface ExplorEdaProjectProps {
   /** Source rows by source ID. Pass a new array when a table changes. */
   tables: Record<string, readonly AnalysisSourceRow[]>;
   view: AnalysisView;
+  /**
+   * Every saved view of the project, so the Schema diagram can show what
+   * each one reads. Without it, the diagram shows only the current view.
+   */
+  views?: AnalysisView[];
+  /**
+   * Shows Add source in the Schema diagram. The host picks a file and adds
+   * it, for example with `addSourceFromRows` from `exploreda/analysis`.
+   */
+  onAddSource?: () => void;
+  /** Open the Schema diagram with this source selected, such as one just added. */
+  schemaFocus?: string;
   sidePanels?: ExplorEdaSidePanel[];
   /** Starting charts for a view of a query that has no settings yet. */
   queryPresets?: Record<string, SavedDataStructure>;
@@ -90,6 +103,9 @@ export const ExplorEdaProject = forwardRef<
     project,
     tables,
     view,
+    views,
+    onAddSource,
+    schemaFocus,
     sidePanels = [],
     queryPresets,
     onProjectChange,
@@ -104,6 +120,8 @@ export const ExplorEdaProject = forwardRef<
 ) {
   const chartRef = useRef<ExplorEdaHandle>(null);
   const [openPanel, setOpenPanel] = useState<"schema" | "query">();
+  const [diagramOpen, setDiagramOpen] = useState(Boolean(schemaFocus));
+
   const [schemaWide, setSchemaWide] = useState(false);
   const [queryWide, setQueryWide] = useState(false);
   const [focusRowKeys, setFocusRowKeys] = useState<string[]>();
@@ -141,6 +159,39 @@ export const ExplorEdaProject = forwardRef<
   );
 
   const settings = shownView.settings ?? queryPresets?.[shownView.queryId];
+  const schemaViews = useMemo(
+    () => [
+      {
+        id: shownView.id,
+        name: shownView.name,
+        queryId: shownView.queryId,
+        settings,
+        current: true,
+        othersHidden: !views,
+      },
+      // Other views, with the starting charts a view without settings gets.
+      ...(views ?? [])
+        .filter((item) => item.id !== shownView.id)
+        .map((item) => ({
+          id: item.id,
+          name: item.name,
+          queryId: item.queryId,
+          settings: item.settings ?? queryPresets?.[item.queryId],
+        })),
+    ],
+    [
+      shownView.id,
+      shownView.name,
+      shownView.queryId,
+      settings,
+      views,
+      queryPresets,
+    ]
+  );
+  const schemaGraph = useMemo(
+    () => projectSchemaGraph(project, tables, schemaViews),
+    [project, tables, schemaViews]
+  );
   const incompatibleFields = useMemo(
     () => incompatibleSettingsFields(settings, new Set(fieldNames)),
     [settings, fieldNames]
@@ -212,6 +263,10 @@ export const ExplorEdaProject = forwardRef<
         readOnly={readOnly}
         onProjectChange={(next) => update(next, shownView)}
         onOpenView={readOnly ? undefined : onOpenView}
+        onOpenDiagram={() => {
+          setOpenPanel(undefined);
+          setDiagramOpen(true);
+        }}
       />
     ),
   };
@@ -304,6 +359,23 @@ export const ExplorEdaProject = forwardRef<
               : (next) => onStateChange?.(encodeAnalysisRowKeys(next, keysById))
           }
           sidePanels={[...sidePanels, schemaPanel, queryPanel]}
+          schema={{
+            graph: schemaGraph,
+            editing: readOnly
+              ? undefined
+              : {
+                  project,
+                  tables,
+                  onChange: (next) => update(next, shownView),
+                  views: schemaViews,
+                  onOpenView,
+                },
+            viewId: shownView.id,
+            onAddSource,
+            focusNodeId: schemaFocus ? `table:${schemaFocus}` : undefined,
+            open: diagramOpen,
+            onOpenChange: setDiagramOpen,
+          }}
           readOnly={readOnly}
           toolbarStart={toolbarStart}
           toolbarEnd={toolbarEnd}

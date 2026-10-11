@@ -1,0 +1,14 @@
+{
+  "id": "596207bf-e2f4-4f8b-a444-27532772853c",
+  "kind": "node.status.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:470824",
+    "label": "Agent token ...470824"
+  },
+  "createdAt": "2026-10-11T03:20:47.639Z",
+  "summary": "Changed \"Media deaths\" status to implemented.",
+  "nodeIds": [
+    "page-media-deaths"
+  ]
+}

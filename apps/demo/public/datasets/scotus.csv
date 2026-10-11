@@ -1,0 +1,122 @@
+Justice,Surname,Number,Position,State,Seat,Seat name,Start,End,Years served,Left by,Appointer,Party
+John Jay,Jay,1,Chief Justice,NY,0,Chief Justice,1789-10-19,1795-06-29,5.7,Resigned,George Washington,Federalist
+John Rutledge,Rutledge,2,Associate Justice,SC,1,Seat 1,1790-02-15,1791-03-05,1,Resigned,George Washington,Federalist
+William Cushing,Cushing,3,Associate Justice,MA,2,Seat 2,1790-02-02,1810-09-13,20.6,Died,George Washington,Federalist
+James Wilson,Wilson,4,Associate Justice,PA,3,Seat 3,1789-10-05,1798-08-21,8.9,Died,George Washington,Federalist
+John Blair,Blair,5,Associate Justice,VA,4,Seat 4,1790-02-02,1795-10-25,5.7,Resigned,George Washington,Federalist
+James Iredell,Iredell,6,Associate Justice,NC,5,Seat 5,1790-05-12,1799-10-20,9.4,Died,George Washington,Federalist
+Thomas Johnson,Johnson,7,Associate Justice,MD,1,Seat 1,1791-09-19,1793-01-16,1.3,Resigned,George Washington,Federalist
+William Paterson,Paterson,8,Associate Justice,NJ,1,Seat 1,1793-03-11,1806-09-09,13.5,Died,George Washington,Federalist
+John Rutledge,Rutledge,2,Chief Justice,SC,0,Chief Justice,1795-08-12,1795-12-15,0.3,"Resigned, nomination having been rejected",George Washington,Federalist
+Samuel Chase,Chase,9,Associate Justice,MD,4,Seat 4,1796-02-04,1811-06-19,15.4,Died,George Washington,Federalist
+Oliver Ellsworth,Ellsworth,10,Chief Justice,CT,0,Chief Justice,1796-03-08,1800-12-15,4.8,Resigned,George Washington,Federalist
+Bushrod Washington,Washington,11,Associate Justice,VA,3,Seat 3,1798-11-09,1829-11-26,31,Died,John Adams,Federalist
+Alfred Moore,Moore,12,Associate Justice,NC,5,Seat 5,1800-04-21,1804-01-26,3.8,Resigned,John Adams,Federalist
+John Marshall,Marshall,13,Chief Justice,VA,0,Chief Justice,1801-02-04,1835-07-06,34.4,Died,John Adams,Federalist
+William Johnson,Johnson,14,Associate Justice,SC,5,Seat 5,1804-05-07,1834-08-04,30.2,Died,Thomas Jefferson,Democratic-Republican
+Henry Brockholst Livingston,Livingston,15,Associate Justice,NY,1,Seat 1,1807-01-20,1823-03-18,16.2,Died,Thomas Jefferson,Democratic-Republican
+Thomas Todd,Todd,16,Associate Justice,KY,6,Seat 6,1807-05-04,1826-02-07,18.8,Died,Thomas Jefferson,Democratic-Republican
+Gabriel Duvall,Duvall,17,Associate Justice,MD,4,Seat 4,1811-11-23,1835-01-14,23.1,Resigned,James Madison,Democratic-Republican
+Joseph Story,Story,18,Associate Justice,MA,2,Seat 2,1812-02-03,1845-09-10,33.6,Died,James Madison,Democratic-Republican
+Smith Thompson,Thompson,19,Associate Justice,NY,1,Seat 1,1823-09-01,1843-12-18,20.3,Died,James Monroe,Democratic-Republican
+Robert Trimble,Trimble,20,Associate Justice,KY,6,Seat 6,1826-06-16,1828-08-25,2.2,Died,John Quincy Adams,Democratic-Republican
+John McLean,McLean,21,Associate Justice,OH,6,Seat 6,1829-03-12,1861-04-04,32.1,Died,Andrew Jackson,Democratic
+Henry Baldwin,Baldwin,22,Associate Justice,PA,3,Seat 3,1830-01-18,1844-04-21,14.3,Died,Andrew Jackson,Democratic
+James M. Wayne,Wayne,23,Associate Justice,GA,5,Seat 5,1835-01-14,1867-07-05,32.5,Died,Andrew Jackson,Democratic
+Roger B. Taney,Taney,24,Chief Justice,MD,0,Chief Justice,1836-03-28,1864-10-12,28.5,Died,Andrew Jackson,Democratic
+Philip P. Barbour,Barbour,25,Associate Justice,VA,4,Seat 4,1836-05-12,1841-02-25,4.8,Died,Andrew Jackson,Democratic
+John Catron,Catron,26,Associate Justice,TN,7,Seat 7,1837-05-01,1865-05-30,28.1,Died,Andrew Jackson,Democratic
+John McKinley,McKinley,27,Associate Justice,AL,8,Seat 8,1838-01-09,1852-07-19,14.5,Died,Martin Van Buren,Democratic
+Peter V. Daniel,Daniel,28,Associate Justice,VA,4,Seat 4,1842-01-10,1860-05-31,18.4,Died,Martin Van Buren,Democratic
+Samuel Nelson,Nelson,29,Associate Justice,NY,1,Seat 1,1845-02-27,1872-11-28,27.8,Retired,John Tyler,Whig
+Levi Woodbury,Woodbury,30,Associate Justice,NH,2,Seat 2,1845-09-23,1851-09-04,5.9,Died,James K. Polk,Democratic
+Robert Cooper Grier,Grier,31,Associate Justice,PA,3,Seat 3,1846-08-10,1870-01-31,23.5,Retired,James K. Polk,Democratic
+Benjamin Robbins Curtis,Curtis,32,Associate Justice,MA,2,Seat 2,1851-10-10,1857-09-30,6,Resigned,Millard Fillmore,Whig
+John Archibald Campbell,Campbell,33,Associate Justice,AL,8,Seat 8,1853-04-11,1861-04-30,8.1,Resigned,Franklin Pierce,Democratic
+Nathan Clifford,Clifford,34,Associate Justice,ME,2,Seat 2,1858-01-21,1881-07-25,23.5,Died,James Buchanan,Democratic
+Noah Haynes Swayne,Swayne,35,Associate Justice,OH,6,Seat 6,1862-01-27,1881-01-24,19,Retired,Abraham Lincoln,Republican
+Samuel Freeman Miller,Miller,36,Associate Justice,IA,4,Seat 4,1862-07-21,1890-10-13,28.2,Died,Abraham Lincoln,Republican
+David Davis,Davis,37,Associate Justice,IL,8,Seat 8,1862-12-10,1877-03-04,14.2,Resigned,Abraham Lincoln,Republican
+Stephen Johnson Field,Field,38,Associate Justice,CA,9,Seat 9,1863-05-20,1897-12-01,34.5,Retired,Abraham Lincoln,Republican
+Salmon P. Chase,Chase,39,Chief Justice,OH,0,Chief Justice,1864-12-15,1873-05-07,8.4,Died,Abraham Lincoln,Republican
+William Strong,Strong,40,Associate Justice,PA,3,Seat 3,1870-03-14,1880-12-14,10.8,Retired,Ulysses S. Grant,Republican
+Joseph P. Bradley,Bradley,41,Associate Justice,NJ,10,Seat 10,1870-03-23,1892-01-22,21.8,Died,Ulysses S. Grant,Republican
+Ward Hunt,Hunt,42,Associate Justice,NY,1,Seat 1,1873-01-09,1882-01-27,9,Retired,Ulysses S. Grant,Republican
+Morrison Waite,Waite,43,Chief Justice,OH,0,Chief Justice,1874-03-04,1888-03-23,14.1,Died,Ulysses S. Grant,Republican
+John Marshall Harlan,Harlan,44,Associate Justice,KY,8,Seat 8,1877-12-10,1911-10-14,33.8,Died,Rutherford B. Hayes,Republican
+William Burnham Woods,Woods,45,Associate Justice,GA,3,Seat 3,1881-01-05,1887-05-14,6.4,Died,Rutherford B. Hayes,Republican
+Stanley Matthews,Matthews,46,Associate Justice,OH,6,Seat 6,1881-05-17,1889-03-22,7.8,Died,James A. Garfield,Republican
+Horace Gray,Gray,47,Associate Justice,MA,2,Seat 2,1882-01-09,1902-09-15,20.7,Died,Chester A. Arthur,Republican
+Samuel Blatchford,Blatchford,48,Associate Justice,NY,1,Seat 1,1882-04-03,1893-07-07,11.3,Died,Chester A. Arthur,Republican
+Lucius Quintus Cincinnatus Lamar,Lamar,49,Associate Justice,MS,3,Seat 3,1888-01-18,1893-01-23,5,Died,Grover Cleveland,Democratic
+Melville Fuller,Fuller,50,Chief Justice,IL,0,Chief Justice,1888-10-08,1910-07-04,21.7,Died,Grover Cleveland,Democratic
+David J. Brewer,Brewer,51,Associate Justice,KS,6,Seat 6,1890-01-06,1910-03-28,20.2,Died,Benjamin Harrison,Republican
+Henry Billings Brown,Brown,52,Associate Justice,MI,4,Seat 4,1891-01-05,1906-05-28,15.4,Retired,Benjamin Harrison,Republican
+George Shiras Jr.,Shiras,53,Associate Justice,PA,10,Seat 10,1892-10-10,1903-02-23,10.4,Retired,Benjamin Harrison,Republican
+Howell E. Jackson,Jackson,54,Associate Justice,TN,3,Seat 3,1893-03-04,1895-08-08,2.4,Died,Benjamin Harrison,Republican
+Edward Douglass White,White,55,Associate Justice,LA,1,Seat 1,1894-03-12,1910-12-18,16.8,Continued as chief justice,Grover Cleveland,Democratic
+Rufus W. Peckham,Peckham,56,Associate Justice,NY,3,Seat 3,1896-01-06,1909-10-24,13.8,Died,Grover Cleveland,Democratic
+Joseph McKenna,McKenna,57,Associate Justice,CA,9,Seat 9,1898-01-26,1925-01-05,26.9,Retired,William McKinley,Republican
+Oliver Wendell Holmes Jr.,Holmes,58,Associate Justice,MA,2,Seat 2,1902-12-08,1932-01-12,29.1,Retired,Theodore Roosevelt,Republican
+William R. Day,Day,59,Associate Justice,OH,10,Seat 10,1903-03-02,1922-11-13,19.7,Retired,Theodore Roosevelt,Republican
+William Henry Moody,Moody,60,Associate Justice,MA,4,Seat 4,1906-12-17,1910-11-20,3.9,Retired,Theodore Roosevelt,Republican
+Horace Harmon Lurton,Lurton,61,Associate Justice,TN,3,Seat 3,1910-01-03,1914-07-12,4.5,Died,William Howard Taft,Republican
+Charles Evans Hughes,Hughes,62,Associate Justice,NY,6,Seat 6,1910-10-10,1916-06-10,5.7,Resigned,William Howard Taft,Republican
+Edward Douglass White,White,55,Chief Justice,LA,0,Chief Justice,1910-12-19,1921-05-19,10.4,Died,William Howard Taft,Republican
+Willis Van Devanter,Devanter,63,Associate Justice,WY,1,Seat 1,1911-01-03,1937-06-02,26.4,Retired,William Howard Taft,Republican
+Joseph Rucker Lamar,Lamar,64,Associate Justice,GA,4,Seat 4,1911-01-03,1916-01-02,5,Died,William Howard Taft,Republican
+Mahlon Pitney,Pitney,65,Associate Justice,NJ,8,Seat 8,1912-03-18,1922-12-31,10.8,Resigned,William Howard Taft,Republican
+James Clark McReynolds,McReynolds,66,Associate Justice,TN,3,Seat 3,1914-10-12,1941-01-31,26.3,Retired,Woodrow Wilson,Democratic
+Louis Brandeis,Brandeis,67,Associate Justice,MA,4,Seat 4,1916-06-05,1939-02-13,22.7,Retired,Woodrow Wilson,Democratic
+John Hessin Clarke,Clarke,68,Associate Justice,OH,6,Seat 6,1916-10-09,1922-09-18,5.9,Retired,Woodrow Wilson,Democratic
+William Howard Taft,Taft,69,Chief Justice,CT,0,Chief Justice,1921-07-11,1930-02-03,8.6,Retired,Warren G. Harding,Republican
+George Sutherland,Sutherland,70,Associate Justice,UT,6,Seat 6,1922-10-02,1938-01-17,15.3,Retired,Warren G. Harding,Republican
+Pierce Butler,Butler,71,Associate Justice,MN,10,Seat 10,1923-01-02,1939-11-16,16.9,Died,Warren G. Harding,Republican
+Edward Terry Sanford,Sanford,72,Associate Justice,TN,8,Seat 8,1923-02-19,1930-03-08,7,Died,Warren G. Harding,Republican
+Harlan F. Stone,Stone,73,Associate Justice,NY,9,Seat 9,1925-03-02,1941-07-02,16.3,Continued as chief justice,Calvin Coolidge,Republican
+Charles Evans Hughes,Hughes,62,Chief Justice,NY,0,Chief Justice,1930-02-24,1941-06-30,11.3,Retired,Herbert Hoover,Republican
+Owen Roberts,Roberts,74,Associate Justice,PA,8,Seat 8,1930-06-02,1945-07-31,15.2,Resigned,Herbert Hoover,Republican
+Benjamin N. Cardozo,Cardozo,75,Associate Justice,NY,2,Seat 2,1932-03-14,1938-07-09,6.3,Died,Herbert Hoover,Republican
+Hugo Black,Black,76,Associate Justice,AL,1,Seat 1,1937-08-19,1971-09-17,34.1,Retired,Franklin D. Roosevelt,Democratic
+Stanley Forman Reed,Reed,77,Associate Justice,KY,6,Seat 6,1938-01-31,1957-02-25,19.1,Retired,Franklin D. Roosevelt,Democratic
+Felix Frankfurter,Frankfurter,78,Associate Justice,MA,2,Seat 2,1939-01-30,1962-08-28,23.6,Retired,Franklin D. Roosevelt,Democratic
+William O. Douglas,Douglas,79,Associate Justice,CT,4,Seat 4,1939-04-17,1975-11-12,36.6,Retired,Franklin D. Roosevelt,Democratic
+Frank Murphy,Murphy,80,Associate Justice,MI,10,Seat 10,1940-02-05,1949-07-19,9.5,Died,Franklin D. Roosevelt,Democratic
+Harlan F. Stone,Stone,73,Chief Justice,NY,0,Chief Justice,1941-07-03,1946-04-22,4.8,Died,Franklin D. Roosevelt,Democratic
+James F. Byrnes,Byrnes,81,Associate Justice,SC,3,Seat 3,1941-07-08,1942-10-03,1.2,Resigned,Franklin D. Roosevelt,Democratic
+Robert H. Jackson,Jackson,82,Associate Justice,NY,9,Seat 9,1941-07-11,1954-10-09,13.2,Died,Franklin D. Roosevelt,Democratic
+Wiley Rutledge,Rutledge,83,Associate Justice,IA,3,Seat 3,1943-02-15,1949-09-10,6.6,Died,Franklin D. Roosevelt,Democratic
+Harold H. Burton,Burton,84,Associate Justice,OH,8,Seat 8,1945-10-01,1958-10-13,13,Retired,Harry S. Truman,Democratic
+Fred M. Vinson,Vinson,85,Chief Justice,KY,0,Chief Justice,1946-06-24,1953-09-08,7.2,Died,Harry S. Truman,Democratic
+Tom C. Clark,Clark,86,Associate Justice,TX,10,Seat 10,1949-08-24,1967-06-12,17.8,Retired,Harry S. Truman,Democratic
+Sherman Minton,Minton,87,Associate Justice,IN,3,Seat 3,1949-10-12,1956-10-15,7,Retired,Harry S. Truman,Democratic
+Earl Warren,Warren,88,Chief Justice,CA,0,Chief Justice,1953-10-05,1969-06-23,15.7,Retired,Dwight D. Eisenhower,Republican
+John Marshall Harlan II,Harlan,89,Associate Justice,NY,9,Seat 9,1955-03-28,1971-09-23,16.5,Retired,Dwight D. Eisenhower,Republican
+William J. Brennan Jr.,Brennan,90,Associate Justice,NJ,3,Seat 3,1956-10-16,1990-07-20,33.8,Retired,Dwight D. Eisenhower,Republican
+Charles Evans Whittaker,Whittaker,91,Associate Justice,MO,6,Seat 6,1957-03-25,1962-03-31,5,Retired,Dwight D. Eisenhower,Republican
+Potter Stewart,Stewart,92,Associate Justice,OH,8,Seat 8,1958-10-14,1981-07-03,22.7,Retired,Dwight D. Eisenhower,Republican
+Byron White,White,93,Associate Justice,CO,6,Seat 6,1962-04-16,1993-06-28,31.2,Retired,John F. Kennedy,Democratic
+Arthur Goldberg,Goldberg,94,Associate Justice,IL,2,Seat 2,1962-10-01,1965-07-25,2.8,Resigned,John F. Kennedy,Democratic
+Abe Fortas,Fortas,95,Associate Justice,TN,2,Seat 2,1965-10-04,1969-05-14,3.6,Resigned,Lyndon B. Johnson,Democratic
+Thurgood Marshall,Marshall,96,Associate Justice,NY,10,Seat 10,1967-10-02,1991-10-01,24,Retired,Lyndon B. Johnson,Democratic
+Warren E. Burger,Burger,97,Chief Justice,VA,0,Chief Justice,1969-06-23,1986-09-26,17.3,Retired,Richard Nixon,Republican
+Harry Blackmun,Blackmun,98,Associate Justice,MN,2,Seat 2,1970-06-09,1994-08-03,24.2,Retired,Richard Nixon,Republican
+Lewis F. Powell Jr.,Powell,99,Associate Justice,VA,1,Seat 1,1972-01-07,1987-06-26,15.5,Retired,Richard Nixon,Republican
+William Rehnquist,Rehnquist,100,Associate Justice,AZ,9,Seat 9,1972-01-07,1986-09-26,14.7,Continued as chief justice,Richard Nixon,Republican
+John Paul Stevens,Stevens,101,Associate Justice,IL,4,Seat 4,1975-12-19,2010-06-29,34.5,Retired,Gerald Ford,Republican
+Sandra Day O'Connor,O'Connor,102,Associate Justice,AZ,8,Seat 8,1981-09-25,2006-01-31,24.4,Retired,Ronald Reagan,Republican
+William Rehnquist,Rehnquist,100,Chief Justice,VA,0,Chief Justice,1986-09-26,2005-09-03,18.9,Died,Ronald Reagan,Republican
+Antonin Scalia,Scalia,103,Associate Justice,VA,9,Seat 9,1986-09-26,2016-02-13,29.4,Died,Ronald Reagan,Republican
+Anthony Kennedy,Kennedy,104,Associate Justice,CA,1,Seat 1,1988-02-18,2018-07-31,30.4,Retired,Ronald Reagan,Republican
+David Souter,Souter,105,Associate Justice,NH,3,Seat 3,1990-10-09,2009-06-29,18.7,Retired,George H. W. Bush,Republican
+Clarence Thomas,Thomas,106,Associate Justice,GA,10,Seat 10,1991-10-23,,35,Sitting,George H. W. Bush,Republican
+Ruth Bader Ginsburg,Ginsburg,107,Associate Justice,NY,6,Seat 6,1993-08-10,2020-09-18,27.1,Died,Bill Clinton,Democratic
+Stephen Breyer,Breyer,108,Associate Justice,MA,2,Seat 2,1994-08-03,2022-06-30,27.9,Retired,Bill Clinton,Democratic
+John Roberts,Roberts,109,Chief Justice,MD,0,Chief Justice,2005-09-29,,21,Sitting,George W. Bush,Republican
+Samuel Alito,Alito,110,Associate Justice,NJ,8,Seat 8,2006-01-31,,20.7,Sitting,George W. Bush,Republican
+Sonia Sotomayor,Sotomayor,111,Associate Justice,NY,3,Seat 3,2009-08-08,,17.2,Sitting,Barack Obama,Democratic
+Elena Kagan,Kagan,112,Associate Justice,MA,4,Seat 4,2010-08-07,,16.2,Sitting,Barack Obama,Democratic
+Neil Gorsuch,Gorsuch,113,Associate Justice,CO,9,Seat 9,2017-04-10,,9.5,Sitting,Donald Trump,Republican
+Brett Kavanaugh,Kavanaugh,114,Associate Justice,MD,1,Seat 1,2018-10-06,,8,Sitting,Donald Trump,Republican
+Amy Coney Barrett,Barrett,115,Associate Justice,IN,6,Seat 6,2020-10-27,,6,Sitting,Donald Trump,Republican
+Ketanji Brown Jackson,Jackson,116,Associate Justice,DC,2,Seat 2,2022-06-30,,4.3,Sitting,Joe Biden,Democratic

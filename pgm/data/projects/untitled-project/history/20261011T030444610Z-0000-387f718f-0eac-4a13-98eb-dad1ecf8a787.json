@@ -1,0 +1,14 @@
+{
+  "id": "387f718f-0eac-4a13-98eb-dad1ecf8a787",
+  "kind": "node.status.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:d50456",
+    "label": "Agent token ...d50456"
+  },
+  "createdAt": "2026-10-11T03:04:44.610Z",
+  "summary": "Changed \"Income and expenditure\" status to implemented.",
+  "nodeIds": [
+    "page-income-and-expenditure"
+  ]
+}

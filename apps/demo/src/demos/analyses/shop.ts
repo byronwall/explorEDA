@@ -74,6 +74,9 @@ row Category @mix-category at=8,6,4,5 color=Category title="Filter by category"
 chart pivot @mix-pivot at=0,11,12,5 title="Revenue by region and channel"
 + rowFields[]=Region columnField=Channel valueFields[]=
 + valueFields.0.field=Revenue valueFields.0.aggregation=sum valueFields.0.label=Revenue
+chart hierarchy @mix-hierarchy at=0,16,12,6 levels[]=Region,Category
++ aggregation=sum measureField=Revenue
++ title="How does revenue divide across regions and categories?"
 
 view "Calendar"
 chart calendar field="Order Date" @cal-daily at=0,0,12,4

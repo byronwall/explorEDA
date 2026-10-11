@@ -6,7 +6,7 @@ The [initiative history](initiative-history.json) records closure; no follow-up 
 
 ## Chart families
 
-The [registry](../packages/explorEDA/src/charts/registerAllCharts.ts) registers 19 view types.
+The [registry](../packages/explorEDA/src/charts/registerAllCharts.ts) registers 20 view types.
 Histogram and Distribution use existing saved types. Line, bar, scatter, and map modes do not create separate registry entries.
 
 | Family | Delivered behavior | Selection and source inspection |
@@ -21,11 +21,13 @@ Histogram and Distribution use existing saved types. Line, bar, scatter, and map
 | Metric Card | Count, sum, or average for rows passing active filters. | Source inspection. Filtered cards compare the same metric with all source rows. |
 | Map | Point coordinates with area/color encoding, or Region mode with shared local GeoJSON assets and typed joins. | Exact point rows or region keys; traces report omissions, joins, projections, and contributors. |
 | Sankey | Two to six ordered categorical stages per row, count or nonnegative sum, missing-stage policy, and bounded Other nodes. | Nodes select stage values. A link selects its adjacent stage pair. Traces retain path/link contributors and excluded measure reasons. |
+| Hierarchy | One to three nested category fields drawn as a squarified treemap, an icicle (one column per level), or a sunburst (one ring per level), switched from the chart without losing setup, sized by row count or a nonnegative sum, with a missing-level policy. Every child with a size is drawn; boxes too small for a label stay unlabeled but hoverable, and sub-pixel slivers are counted in the status line. Boxes color by branch, by level, or one color, and Alt-click traces a box to its rows. Double-click (or Shift+Enter) zooms a parent to fill the chart; breadcrumbs step back, and the zoom is saved as a value path. | A node selects its branch: one value filter per level down to it. Shift adds siblings under the same parent only, so selections never include unwanted pairs. |
 | Parallel Coordinates | Two to twelve numeric or bounded categorical axes, reorder, inversion, and one line per complete row. | Axis filters intersect. Bounds stay in data units; traces identify source rows and vertices. |
 | Scatter Matrix | Two to ten fields of any type. Off-diagonal cells show points, Pearson r, box plots, count tiles, or share bars by pair type; diagonals show a density, histogram, or category bars. An optional color field colors points, distributions, and per-group r. | A brush or mark click sets filters on the cell's fields and replaces the previous selection. Traces follow a row through every field or explain a cell's rows. |
 | ECDF | At-or-below and at-or-above curves, optional color groups, quantiles, and an overall curve. | Threshold or range on source values. Traces name valid denominators, ties, exclusions, and IDs. |
 
 Pivot, source table, Summary, Color Legend, Markdown, and 3D Scatter complete the registry.
+The `composition` view builds one report graphic from repeated units; see [Composition mode](composition-mode.md).
 See the [feature inventory](application-feature-inventory.md#chart-and-view-catalogue) for their existing behavior.
 
 ## Shared analytical rules

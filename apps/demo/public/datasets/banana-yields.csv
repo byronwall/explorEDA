@@ -1,0 +1,815 @@
+Country,Year,Decade,Yield
+"Mali",1960,1960s,58.99
+"Mali",1961,1960s,61.52
+"Mali",1962,1960s,57.40
+"Mali",1963,1960s,63.26
+"Mali",1964,1960s,57.11
+"Mali",1965,1960s,61.32
+"Mali",1966,1960s,59.08
+"Mali",1967,1960s,59.19
+"Mali",1968,1960s,56.07
+"Mali",1969,1960s,66.05
+"Mali",1970,1970s,65.29
+"Mali",1971,1970s,57.71
+"Mali",1972,1970s,59.98
+"Mali",1973,1970s,66.72
+"Mali",1974,1970s,57.92
+"Mali",1975,1970s,62.44
+"Mali",1976,1970s,55.98
+"Mali",1977,1970s,60.06
+"Mali",1978,1970s,58.95
+"Mali",1979,1970s,62.95
+"Mali",1980,1980s,59.58
+"Mali",1981,1980s,58.94
+"Mali",1982,1980s,63.22
+"Mali",1983,1980s,61.69
+"Mali",1984,1980s,56.50
+"Mali",1985,1980s,62.23
+"Mali",1986,1980s,55.41
+"Mali",1987,1980s,62.09
+"Mali",1988,1980s,63.35
+"Mali",1989,1980s,61.99
+"Mali",1990,1990s,59.52
+"Mali",1991,1990s,63.28
+"Mali",1992,1990s,60.98
+"Mali",1993,1990s,62.55
+"Mali",1994,1990s,59.11
+"Mali",1995,1990s,65.86
+"Mali",1996,1990s,58.56
+"Mali",1997,1990s,59.23
+"Mali",1998,1990s,66.06
+"Mali",1999,1990s,65.83
+"Mali",2000,2000s,51.26
+"Mali",2001,2000s,57.49
+"Mali",2002,2000s,56.49
+"Mali",2003,2000s,52.40
+"Mali",2004,2000s,56.44
+"Mali",2005,2000s,56.00
+"Mali",2006,2000s,52.63
+"Mali",2007,2000s,52.67
+"Mali",2008,2000s,54.34
+"Mali",2009,2000s,57.28
+"Mali",2010,2010s,34.99
+"Mali",2011,2010s,36.81
+"Mali",2012,2010s,34.35
+"Mali",2013,2010s,35.50
+"Mali",2014,2010s,34.81
+"Mali",2015,2010s,34.68
+"Mali",2016,2010s,34.43
+"Mali",2017,2010s,36.34
+"Mali",2018,2010s,36.69
+"Nicaragua",1960,1960s,38.90
+"Nicaragua",1961,1960s,37.78
+"Nicaragua",1962,1960s,37.82
+"Nicaragua",1963,1960s,42.66
+"Nicaragua",1964,1960s,38.19
+"Nicaragua",1965,1960s,43.36
+"Nicaragua",1966,1960s,39.81
+"Nicaragua",1967,1960s,42.75
+"Nicaragua",1968,1960s,43.50
+"Nicaragua",1969,1960s,43.23
+"Nicaragua",1970,1970s,56.82
+"Nicaragua",1971,1970s,56.34
+"Nicaragua",1972,1970s,59.74
+"Nicaragua",1973,1970s,60.56
+"Nicaragua",1974,1970s,56.06
+"Nicaragua",1975,1970s,59.80
+"Nicaragua",1976,1970s,61.78
+"Nicaragua",1977,1970s,58.86
+"Nicaragua",1978,1970s,54.43
+"Nicaragua",1979,1970s,58.62
+"Nicaragua",1980,1980s,41.96
+"Nicaragua",1981,1980s,48.72
+"Nicaragua",1982,1980s,41.45
+"Nicaragua",1983,1980s,44.50
+"Nicaragua",1984,1980s,46.20
+"Nicaragua",1985,1980s,41.25
+"Nicaragua",1986,1980s,47.06
+"Nicaragua",1987,1980s,42.05
+"Nicaragua",1988,1980s,45.37
+"Nicaragua",1989,1980s,45.46
+"Nicaragua",1990,1990s,42.86
+"Nicaragua",1991,1990s,43.08
+"Nicaragua",1992,1990s,45.11
+"Nicaragua",1993,1990s,44.88
+"Nicaragua",1994,1990s,47.27
+"Nicaragua",1995,1990s,45.85
+"Nicaragua",1996,1990s,42.78
+"Nicaragua",1997,1990s,46.74
+"Nicaragua",1998,1990s,44.55
+"Nicaragua",1999,1990s,40.89
+"Nicaragua",2000,2000s,46.92
+"Nicaragua",2001,2000s,50.22
+"Nicaragua",2002,2000s,45.69
+"Nicaragua",2003,2000s,48.89
+"Nicaragua",2004,2000s,49.23
+"Nicaragua",2005,2000s,53.60
+"Nicaragua",2006,2000s,50.31
+"Nicaragua",2007,2000s,52.50
+"Nicaragua",2008,2000s,53.88
+"Nicaragua",2009,2000s,50.77
+"Nicaragua",2010,2010s,60.19
+"Nicaragua",2011,2010s,53.99
+"Nicaragua",2012,2010s,55.76
+"Nicaragua",2013,2010s,55.00
+"Nicaragua",2014,2010s,60.09
+"Nicaragua",2015,2010s,58.43
+"Nicaragua",2016,2010s,57.67
+"Nicaragua",2017,2010s,52.58
+"Nicaragua",2018,2010s,54.81
+"Panama",1960,1960s,45.64
+"Panama",1961,1960s,45.81
+"Panama",1962,1960s,44.52
+"Panama",1963,1960s,46.95
+"Panama",1964,1960s,43.70
+"Panama",1965,1960s,48.82
+"Panama",1966,1960s,43.28
+"Panama",1967,1960s,45.26
+"Panama",1968,1960s,46.10
+"Panama",1969,1960s,41.92
+"Panama",1970,1970s,49.59
+"Panama",1971,1970s,48.72
+"Panama",1972,1970s,46.02
+"Panama",1973,1970s,47.26
+"Panama",1974,1970s,46.04
+"Panama",1975,1970s,48.84
+"Panama",1976,1970s,48.75
+"Panama",1977,1970s,46.87
+"Panama",1978,1970s,42.82
+"Panama",1979,1970s,49.08
+"Panama",1980,1980s,52.71
+"Panama",1981,1980s,46.86
+"Panama",1982,1980s,45.36
+"Panama",1983,1980s,47.08
+"Panama",1984,1980s,50.39
+"Panama",1985,1980s,47.69
+"Panama",1986,1980s,45.95
+"Panama",1987,1980s,46.41
+"Panama",1988,1980s,46.95
+"Panama",1989,1980s,48.59
+"Panama",1990,1990s,43.15
+"Panama",1991,1990s,40.38
+"Panama",1992,1990s,45.31
+"Panama",1993,1990s,47.06
+"Panama",1994,1990s,45.84
+"Panama",1995,1990s,43.64
+"Panama",1996,1990s,41.36
+"Panama",1997,1990s,39.57
+"Panama",1998,1990s,45.02
+"Panama",1999,1990s,44.69
+"Panama",2000,2000s,45.51
+"Panama",2001,2000s,44.03
+"Panama",2002,2000s,40.79
+"Panama",2003,2000s,42.05
+"Panama",2004,2000s,43.20
+"Panama",2005,2000s,47.66
+"Panama",2006,2000s,44.71
+"Panama",2007,2000s,46.25
+"Panama",2008,2000s,42.21
+"Panama",2009,2000s,41.59
+"Panama",2010,2010s,39.89
+"Panama",2011,2010s,41.40
+"Panama",2012,2010s,37.24
+"Panama",2013,2010s,36.55
+"Panama",2014,2010s,37.41
+"Panama",2015,2010s,36.35
+"Panama",2016,2010s,39.31
+"Panama",2017,2010s,36.26
+"Panama",2018,2010s,36.68
+"Costa Rica",1960,1960s,18.96
+"Costa Rica",1961,1960s,19.82
+"Costa Rica",1962,1960s,21.31
+"Costa Rica",1963,1960s,21.35
+"Costa Rica",1964,1960s,21.48
+"Costa Rica",1965,1960s,20.10
+"Costa Rica",1966,1960s,20.65
+"Costa Rica",1967,1960s,20.98
+"Costa Rica",1968,1960s,19.41
+"Costa Rica",1969,1960s,19.95
+"Costa Rica",1970,1970s,32.32
+"Costa Rica",1971,1970s,33.70
+"Costa Rica",1972,1970s,32.43
+"Costa Rica",1973,1970s,35.60
+"Costa Rica",1974,1970s,34.15
+"Costa Rica",1975,1970s,34.25
+"Costa Rica",1976,1970s,35.61
+"Costa Rica",1977,1970s,36.67
+"Costa Rica",1978,1970s,33.10
+"Costa Rica",1979,1970s,34.16
+"Costa Rica",1980,1980s,53.16
+"Costa Rica",1981,1980s,48.50
+"Costa Rica",1982,1980s,47.46
+"Costa Rica",1983,1980s,47.21
+"Costa Rica",1984,1980s,50.78
+"Costa Rica",1985,1980s,53.22
+"Costa Rica",1986,1980s,49.46
+"Costa Rica",1987,1980s,45.73
+"Costa Rica",1988,1980s,46.08
+"Costa Rica",1989,1980s,51.40
+"Costa Rica",1990,1990s,47.12
+"Costa Rica",1991,1990s,48.00
+"Costa Rica",1992,1990s,48.24
+"Costa Rica",1993,1990s,48.33
+"Costa Rica",1994,1990s,46.23
+"Costa Rica",1995,1990s,44.80
+"Costa Rica",1996,1990s,46.41
+"Costa Rica",1997,1990s,42.09
+"Costa Rica",1998,1990s,44.50
+"Costa Rica",1999,1990s,46.29
+"Costa Rica",2000,2000s,49.92
+"Costa Rica",2001,2000s,49.41
+"Costa Rica",2002,2000s,46.65
+"Costa Rica",2003,2000s,46.48
+"Costa Rica",2004,2000s,48.94
+"Costa Rica",2005,2000s,45.11
+"Costa Rica",2006,2000s,51.88
+"Costa Rica",2007,2000s,49.76
+"Costa Rica",2008,2000s,50.10
+"Costa Rica",2009,2000s,43.76
+"Costa Rica",2010,2010s,54.23
+"Costa Rica",2011,2010s,51.69
+"Costa Rica",2012,2010s,53.28
+"Costa Rica",2013,2010s,52.72
+"Costa Rica",2014,2010s,49.08
+"Costa Rica",2015,2010s,52.77
+"Costa Rica",2016,2010s,52.16
+"Costa Rica",2017,2010s,57.86
+"Costa Rica",2018,2010s,50.53
+"South Korea",,1960s,
+"South Korea",,1970s,
+"South Korea",1980,1980s,31.39
+"South Korea",1981,1980s,32.68
+"South Korea",1982,1980s,33.20
+"South Korea",1983,1980s,33.91
+"South Korea",1984,1980s,30.56
+"South Korea",1985,1980s,31.03
+"South Korea",1986,1980s,29.80
+"South Korea",1987,1980s,29.25
+"South Korea",1988,1980s,31.82
+"South Korea",1989,1980s,30.36
+"South Korea",1990,1990s,48.64
+"South Korea",1991,1990s,52.01
+"South Korea",1992,1990s,46.97
+"South Korea",1993,1990s,48.33
+"South Korea",1994,1990s,50.94
+"South Korea",1995,1990s,47.47
+"South Korea",1996,1990s,51.47
+"South Korea",1997,1990s,53.62
+"South Korea",1998,1990s,51.51
+"South Korea",1999,1990s,45.05
+"South Korea",,2000s,
+"South Korea",,2010s,
+"Honduras",1960,1960s,29.00
+"Honduras",1961,1960s,29.70
+"Honduras",1962,1960s,29.43
+"Honduras",1963,1960s,29.58
+"Honduras",1964,1960s,28.33
+"Honduras",1965,1960s,28.89
+"Honduras",1966,1960s,29.88
+"Honduras",1967,1960s,26.80
+"Honduras",1968,1960s,30.00
+"Honduras",1969,1960s,28.40
+"Honduras",1970,1970s,31.67
+"Honduras",1971,1970s,35.14
+"Honduras",1972,1970s,32.66
+"Honduras",1973,1970s,35.11
+"Honduras",1974,1970s,35.78
+"Honduras",1975,1970s,33.45
+"Honduras",1976,1970s,35.43
+"Honduras",1977,1970s,31.39
+"Honduras",1978,1970s,35.80
+"Honduras",1979,1970s,34.58
+"Honduras",1980,1980s,50.57
+"Honduras",1981,1980s,45.44
+"Honduras",1982,1980s,48.33
+"Honduras",1983,1980s,46.76
+"Honduras",1984,1980s,46.74
+"Honduras",1985,1980s,49.93
+"Honduras",1986,1980s,47.26
+"Honduras",1987,1980s,44.50
+"Honduras",1988,1980s,47.82
+"Honduras",1989,1980s,45.65
+"Honduras",1990,1990s,41.08
+"Honduras",1991,1990s,43.92
+"Honduras",1992,1990s,43.65
+"Honduras",1993,1990s,43.69
+"Honduras",1994,1990s,42.08
+"Honduras",1995,1990s,41.08
+"Honduras",1996,1990s,44.81
+"Honduras",1997,1990s,42.92
+"Honduras",1998,1990s,44.28
+"Honduras",1999,1990s,42.48
+"Honduras",2000,2000s,35.67
+"Honduras",2001,2000s,32.46
+"Honduras",2002,2000s,30.59
+"Honduras",2003,2000s,32.95
+"Honduras",2004,2000s,35.32
+"Honduras",2005,2000s,34.57
+"Honduras",2006,2000s,33.43
+"Honduras",2007,2000s,30.70
+"Honduras",2008,2000s,29.95
+"Honduras",2009,2000s,34.37
+"Honduras",2010,2010s,45.82
+"Honduras",2011,2010s,43.64
+"Honduras",2012,2010s,43.17
+"Honduras",2013,2010s,41.21
+"Honduras",2014,2010s,48.23
+"Honduras",2015,2010s,43.67
+"Honduras",2016,2010s,48.50
+"Honduras",2017,2010s,47.46
+"Honduras",2018,2010s,43.30
+"Spain",1960,1960s,36.97
+"Spain",1961,1960s,34.25
+"Spain",1962,1960s,37.52
+"Spain",1963,1960s,36.48
+"Spain",1964,1960s,37.11
+"Spain",1965,1960s,35.28
+"Spain",1966,1960s,37.46
+"Spain",1967,1960s,33.67
+"Spain",1968,1960s,38.06
+"Spain",1969,1960s,35.21
+"Spain",1970,1970s,33.63
+"Spain",1971,1970s,29.80
+"Spain",1972,1970s,30.89
+"Spain",1973,1970s,31.72
+"Spain",1974,1970s,31.70
+"Spain",1975,1970s,31.08
+"Spain",1976,1970s,32.77
+"Spain",1977,1970s,30.76
+"Spain",1978,1970s,29.62
+"Spain",1979,1970s,31.04
+"Spain",1980,1980s,37.04
+"Spain",1981,1980s,36.77
+"Spain",1982,1980s,35.55
+"Spain",1983,1980s,38.64
+"Spain",1984,1980s,38.40
+"Spain",1985,1980s,36.52
+"Spain",1986,1980s,38.79
+"Spain",1987,1980s,40.06
+"Spain",1988,1980s,35.76
+"Spain",1989,1980s,40.47
+"Spain",1990,1990s,44.42
+"Spain",1991,1990s,38.30
+"Spain",1992,1990s,43.10
+"Spain",1993,1990s,42.33
+"Spain",1994,1990s,45.74
+"Spain",1995,1990s,43.89
+"Spain",1996,1990s,42.46
+"Spain",1997,1990s,43.75
+"Spain",1998,1990s,41.05
+"Spain",1999,1990s,38.96
+"Spain",2000,2000s,38.21
+"Spain",2001,2000s,40.70
+"Spain",2002,2000s,39.40
+"Spain",2003,2000s,44.78
+"Spain",2004,2000s,39.82
+"Spain",2005,2000s,42.53
+"Spain",2006,2000s,42.87
+"Spain",2007,2000s,40.64
+"Spain",2008,2000s,40.41
+"Spain",2009,2000s,39.65
+"Spain",2010,2010s,45.21
+"Spain",2011,2010s,44.48
+"Spain",2012,2010s,40.00
+"Spain",2013,2010s,42.18
+"Spain",2014,2010s,38.97
+"Spain",2015,2010s,41.09
+"Spain",2016,2010s,40.33
+"Spain",2017,2010s,43.69
+"Spain",2018,2010s,42.05
+"Israel",1960,1960s,20.69
+"Israel",1961,1960s,21.16
+"Israel",1962,1960s,23.67
+"Israel",1963,1960s,23.23
+"Israel",1964,1960s,23.29
+"Israel",1965,1960s,20.48
+"Israel",1966,1960s,21.49
+"Israel",1967,1960s,21.55
+"Israel",1968,1960s,22.51
+"Israel",1969,1960s,20.93
+"Israel",1970,1970s,28.27
+"Israel",1971,1970s,30.26
+"Israel",1972,1970s,31.16
+"Israel",1973,1970s,30.86
+"Israel",1974,1970s,31.82
+"Israel",1975,1970s,27.10
+"Israel",1976,1970s,27.27
+"Israel",1977,1970s,29.62
+"Israel",1978,1970s,32.20
+"Israel",1979,1970s,30.43
+"Israel",1980,1980s,40.14
+"Israel",1981,1980s,41.17
+"Israel",1982,1980s,40.59
+"Israel",1983,1980s,41.17
+"Israel",1984,1980s,43.49
+"Israel",1985,1980s,41.53
+"Israel",1986,1980s,43.34
+"Israel",1987,1980s,41.81
+"Israel",1988,1980s,40.10
+"Israel",1989,1980s,40.65
+"Israel",1990,1990s,41.96
+"Israel",1991,1990s,44.05
+"Israel",1992,1990s,40.87
+"Israel",1993,1990s,43.14
+"Israel",1994,1990s,38.81
+"Israel",1995,1990s,43.97
+"Israel",1996,1990s,40.01
+"Israel",1997,1990s,43.05
+"Israel",1998,1990s,39.09
+"Israel",1999,1990s,41.06
+"Israel",2000,2000s,43.27
+"Israel",2001,2000s,42.89
+"Israel",2002,2000s,45.30
+"Israel",2003,2000s,41.35
+"Israel",2004,2000s,46.50
+"Israel",2005,2000s,44.33
+"Israel",2006,2000s,43.90
+"Israel",2007,2000s,40.52
+"Israel",2008,2000s,41.13
+"Israel",2009,2000s,39.81
+"Israel",2010,2010s,50.14
+"Israel",2011,2010s,51.63
+"Israel",2012,2010s,47.49
+"Israel",2013,2010s,54.37
+"Israel",2014,2010s,49.39
+"Israel",2015,2010s,46.45
+"Israel",2016,2010s,50.47
+"Israel",2017,2010s,48.75
+"Israel",2018,2010s,49.51
+"Palestine",,1960s,
+"Palestine",,1970s,
+"Palestine",,1980s,
+"Palestine",1990,1990s,37.40
+"Palestine",1991,1990s,35.38
+"Palestine",1992,1990s,36.83
+"Palestine",1993,1990s,39.65
+"Palestine",1994,1990s,37.72
+"Palestine",1995,1990s,37.74
+"Palestine",1996,1990s,38.19
+"Palestine",1997,1990s,38.62
+"Palestine",1998,1990s,39.93
+"Palestine",1999,1990s,38.55
+"Palestine",2000,2000s,31.83
+"Palestine",2001,2000s,30.78
+"Palestine",2002,2000s,31.77
+"Palestine",2003,2000s,28.76
+"Palestine",2004,2000s,29.24
+"Palestine",2005,2000s,29.77
+"Palestine",2006,2000s,30.79
+"Palestine",2007,2000s,31.44
+"Palestine",2008,2000s,29.84
+"Palestine",2009,2000s,29.79
+"Palestine",2010,2010s,24.45
+"Palestine",2011,2010s,27.71
+"Palestine",2012,2010s,27.65
+"Palestine",2013,2010s,27.03
+"Palestine",2014,2010s,26.89
+"Palestine",2015,2010s,26.04
+"Palestine",2016,2010s,27.09
+"Palestine",2017,2010s,26.05
+"Palestine",2018,2010s,26.49
+"Colombia",1960,1960s,24.60
+"Colombia",1961,1960s,25.11
+"Colombia",1962,1960s,23.51
+"Colombia",1963,1960s,22.13
+"Colombia",1964,1960s,23.34
+"Colombia",1965,1960s,24.28
+"Colombia",1966,1960s,21.18
+"Colombia",1967,1960s,24.36
+"Colombia",1968,1960s,23.63
+"Colombia",1969,1960s,22.87
+"Colombia",1970,1970s,29.40
+"Colombia",1971,1970s,31.63
+"Colombia",1972,1970s,31.37
+"Colombia",1973,1970s,29.48
+"Colombia",1974,1970s,32.84
+"Colombia",1975,1970s,28.83
+"Colombia",1976,1970s,29.78
+"Colombia",1977,1970s,32.17
+"Colombia",1978,1970s,31.56
+"Colombia",1979,1970s,32.94
+"Colombia",1980,1980s,44.53
+"Colombia",1981,1980s,43.24
+"Colombia",1982,1980s,43.33
+"Colombia",1983,1980s,44.43
+"Colombia",1984,1980s,38.83
+"Colombia",1985,1980s,40.79
+"Colombia",1986,1980s,45.61
+"Colombia",1987,1980s,42.39
+"Colombia",1988,1980s,43.96
+"Colombia",1989,1980s,39.88
+"Colombia",1990,1990s,35.51
+"Colombia",1991,1990s,35.54
+"Colombia",1992,1990s,32.69
+"Colombia",1993,1990s,35.55
+"Colombia",1994,1990s,32.14
+"Colombia",1995,1990s,33.95
+"Colombia",1996,1990s,32.15
+"Colombia",1997,1990s,32.74
+"Colombia",1998,1990s,35.69
+"Colombia",1999,1990s,34.05
+"Colombia",2000,2000s,27.11
+"Colombia",2001,2000s,28.89
+"Colombia",2002,2000s,28.60
+"Colombia",2003,2000s,26.15
+"Colombia",2004,2000s,26.04
+"Colombia",2005,2000s,28.23
+"Colombia",2006,2000s,30.08
+"Colombia",2007,2000s,27.24
+"Colombia",2008,2000s,29.13
+"Colombia",2009,2000s,27.53
+"Colombia",2010,2010s,26.97
+"Colombia",2011,2010s,28.00
+"Colombia",2012,2010s,27.65
+"Colombia",2013,2010s,30.16
+"Colombia",2014,2010s,27.04
+"Colombia",2015,2010s,28.44
+"Colombia",2016,2010s,27.85
+"Colombia",2017,2010s,28.04
+"Colombia",2018,2010s,27.86
+"Egypt",1960,1960s,18.90
+"Egypt",1961,1960s,20.95
+"Egypt",1962,1960s,19.71
+"Egypt",1963,1960s,20.58
+"Egypt",1964,1960s,17.59
+"Egypt",1965,1960s,17.77
+"Egypt",1966,1960s,21.22
+"Egypt",1967,1960s,18.95
+"Egypt",1968,1960s,20.93
+"Egypt",1969,1960s,19.39
+"Egypt",1970,1970s,22.56
+"Egypt",1971,1970s,22.55
+"Egypt",1972,1970s,22.62
+"Egypt",1973,1970s,21.52
+"Egypt",1974,1970s,21.96
+"Egypt",1975,1970s,22.26
+"Egypt",1976,1970s,22.78
+"Egypt",1977,1970s,20.75
+"Egypt",1978,1970s,23.04
+"Egypt",1979,1970s,21.96
+"Egypt",1980,1980s,22.28
+"Egypt",1981,1980s,21.67
+"Egypt",1982,1980s,22.34
+"Egypt",1983,1980s,22.43
+"Egypt",1984,1980s,22.83
+"Egypt",1985,1980s,22.10
+"Egypt",1986,1980s,21.58
+"Egypt",1987,1980s,19.21
+"Egypt",1988,1980s,19.16
+"Egypt",1989,1980s,22.40
+"Egypt",1990,1990s,34.34
+"Egypt",1991,1990s,31.14
+"Egypt",1992,1990s,31.43
+"Egypt",1993,1990s,34.26
+"Egypt",1994,1990s,32.03
+"Egypt",1995,1990s,35.08
+"Egypt",1996,1990s,32.54
+"Egypt",1997,1990s,31.77
+"Egypt",1998,1990s,32.36
+"Egypt",1999,1990s,32.05
+"Egypt",2000,2000s,45.73
+"Egypt",2001,2000s,43.54
+"Egypt",2002,2000s,39.21
+"Egypt",2003,2000s,40.14
+"Egypt",2004,2000s,43.83
+"Egypt",2005,2000s,45.43
+"Egypt",2006,2000s,39.35
+"Egypt",2007,2000s,41.39
+"Egypt",2008,2000s,40.41
+"Egypt",2009,2000s,40.97
+"Egypt",2010,2010s,48.97
+"Egypt",2011,2010s,43.40
+"Egypt",2012,2010s,45.63
+"Egypt",2013,2010s,47.52
+"Egypt",2014,2010s,46.09
+"Egypt",2015,2010s,43.83
+"Egypt",2016,2010s,48.70
+"Egypt",2017,2010s,44.29
+"Egypt",2018,2010s,41.96
+"Guatemala",1960,1960s,16.52
+"Guatemala",1961,1960s,17.37
+"Guatemala",1962,1960s,17.26
+"Guatemala",1963,1960s,15.34
+"Guatemala",1964,1960s,15.86
+"Guatemala",1965,1960s,15.40
+"Guatemala",1966,1960s,16.16
+"Guatemala",1967,1960s,17.28
+"Guatemala",1968,1960s,16.56
+"Guatemala",1969,1960s,16.25
+"Guatemala",1970,1970s,18.16
+"Guatemala",1971,1970s,18.17
+"Guatemala",1972,1970s,17.50
+"Guatemala",1973,1970s,18.12
+"Guatemala",1974,1970s,16.49
+"Guatemala",1975,1970s,18.85
+"Guatemala",1976,1970s,19.07
+"Guatemala",1977,1970s,17.79
+"Guatemala",1978,1970s,18.78
+"Guatemala",1979,1970s,18.07
+"Guatemala",1980,1980s,23.07
+"Guatemala",1981,1980s,20.64
+"Guatemala",1982,1980s,22.24
+"Guatemala",1983,1980s,21.88
+"Guatemala",1984,1980s,22.74
+"Guatemala",1985,1980s,21.59
+"Guatemala",1986,1980s,23.03
+"Guatemala",1987,1980s,23.29
+"Guatemala",1988,1980s,23.02
+"Guatemala",1989,1980s,21.49
+"Guatemala",1990,1990s,35.29
+"Guatemala",1991,1990s,34.31
+"Guatemala",1992,1990s,32.89
+"Guatemala",1993,1990s,35.74
+"Guatemala",1994,1990s,32.36
+"Guatemala",1995,1990s,35.37
+"Guatemala",1996,1990s,34.09
+"Guatemala",1997,1990s,34.22
+"Guatemala",1998,1990s,34.32
+"Guatemala",1999,1990s,34.39
+"Guatemala",2000,2000s,44.62
+"Guatemala",2001,2000s,44.55
+"Guatemala",2002,2000s,44.88
+"Guatemala",2003,2000s,44.39
+"Guatemala",2004,2000s,48.47
+"Guatemala",2005,2000s,46.30
+"Guatemala",2006,2000s,43.92
+"Guatemala",2007,2000s,46.94
+"Guatemala",2008,2000s,43.97
+"Guatemala",2009,2000s,47.96
+"Guatemala",2010,2010s,46.70
+"Guatemala",2011,2010s,44.10
+"Guatemala",2012,2010s,47.19
+"Guatemala",2013,2010s,47.76
+"Guatemala",2014,2010s,44.46
+"Guatemala",2015,2010s,44.43
+"Guatemala",2016,2010s,50.01
+"Guatemala",2017,2010s,49.44
+"Guatemala",2018,2010s,47.11
+"Indonesia",1960,1960s,6.41
+"Indonesia",1961,1960s,6.10
+"Indonesia",1962,1960s,5.79
+"Indonesia",1963,1960s,5.62
+"Indonesia",1964,1960s,6.57
+"Indonesia",1965,1960s,5.93
+"Indonesia",1966,1960s,6.37
+"Indonesia",1967,1960s,6.40
+"Indonesia",1968,1960s,5.82
+"Indonesia",1969,1960s,6.00
+"Indonesia",1970,1970s,6.86
+"Indonesia",1971,1970s,7.53
+"Indonesia",1972,1970s,7.53
+"Indonesia",1973,1970s,7.71
+"Indonesia",1974,1970s,7.29
+"Indonesia",1975,1970s,7.03
+"Indonesia",1976,1970s,7.37
+"Indonesia",1977,1970s,7.56
+"Indonesia",1978,1970s,7.21
+"Indonesia",1979,1970s,7.90
+"Indonesia",1980,1980s,12.25
+"Indonesia",1981,1980s,12.90
+"Indonesia",1982,1980s,12.92
+"Indonesia",1983,1980s,12.18
+"Indonesia",1984,1980s,12.57
+"Indonesia",1985,1980s,13.43
+"Indonesia",1986,1980s,12.60
+"Indonesia",1987,1980s,12.16
+"Indonesia",1988,1980s,13.92
+"Indonesia",1989,1980s,14.06
+"Indonesia",1990,1990s,43.50
+"Indonesia",1991,1990s,43.46
+"Indonesia",1992,1990s,44.86
+"Indonesia",1993,1990s,42.58
+"Indonesia",1994,1990s,41.79
+"Indonesia",1995,1990s,46.85
+"Indonesia",1996,1990s,42.73
+"Indonesia",1997,1990s,46.23
+"Indonesia",1998,1990s,43.67
+"Indonesia",1999,1990s,45.34
+"Indonesia",2000,2000s,53.38
+"Indonesia",2001,2000s,55.33
+"Indonesia",2002,2000s,51.06
+"Indonesia",2003,2000s,51.15
+"Indonesia",2004,2000s,55.73
+"Indonesia",2005,2000s,50.62
+"Indonesia",2006,2000s,51.24
+"Indonesia",2007,2000s,55.73
+"Indonesia",2008,2000s,55.74
+"Indonesia",2009,2000s,55.02
+"Indonesia",2010,2010s,62.93
+"Indonesia",2011,2010s,61.01
+"Indonesia",2012,2010s,61.07
+"Indonesia",2013,2010s,61.86
+"Indonesia",2014,2010s,56.11
+"Indonesia",2015,2010s,56.14
+"Indonesia",2016,2010s,59.44
+"Indonesia",2017,2010s,61.70
+"Indonesia",2018,2010s,56.14
+"Morocco",,1960s,
+"Morocco",1970,1970s,16.14
+"Morocco",1971,1970s,17.69
+"Morocco",1972,1970s,15.57
+"Morocco",1973,1970s,16.06
+"Morocco",1974,1970s,17.60
+"Morocco",1975,1970s,18.13
+"Morocco",1976,1970s,15.00
+"Morocco",1977,1970s,17.66
+"Morocco",1978,1970s,16.53
+"Morocco",1979,1970s,16.62
+"Morocco",1980,1980s,18.78
+"Morocco",1981,1980s,18.28
+"Morocco",1982,1980s,20.97
+"Morocco",1983,1980s,21.71
+"Morocco",1984,1980s,18.36
+"Morocco",1985,1980s,18.53
+"Morocco",1986,1980s,21.51
+"Morocco",1987,1980s,21.36
+"Morocco",1988,1980s,18.76
+"Morocco",1989,1980s,20.74
+"Morocco",1990,1990s,32.98
+"Morocco",1991,1990s,33.90
+"Morocco",1992,1990s,30.30
+"Morocco",1993,1990s,30.16
+"Morocco",1994,1990s,32.71
+"Morocco",1995,1990s,31.90
+"Morocco",1996,1990s,28.93
+"Morocco",1997,1990s,29.94
+"Morocco",1998,1990s,32.08
+"Morocco",1999,1990s,29.10
+"Morocco",2000,2000s,37.14
+"Morocco",2001,2000s,36.94
+"Morocco",2002,2000s,36.55
+"Morocco",2003,2000s,33.06
+"Morocco",2004,2000s,34.51
+"Morocco",2005,2000s,33.37
+"Morocco",2006,2000s,35.32
+"Morocco",2007,2000s,37.00
+"Morocco",2008,2000s,38.02
+"Morocco",2009,2000s,37.09
+"Morocco",2010,2010s,40.87
+"Morocco",2011,2010s,39.07
+"Morocco",2012,2010s,43.11
+"Morocco",2013,2010s,41.99
+"Morocco",2014,2010s,37.34
+"Morocco",2015,2010s,37.87
+"Morocco",2016,2010s,37.39
+"Morocco",2017,2010s,40.75
+"Morocco",2018,2010s,38.90
+"Cote d'Ivoire",1960,1960s,14.34
+"Cote d'Ivoire",1961,1960s,13.30
+"Cote d'Ivoire",1962,1960s,12.58
+"Cote d'Ivoire",1963,1960s,12.52
+"Cote d'Ivoire",1964,1960s,13.16
+"Cote d'Ivoire",1965,1960s,13.27
+"Cote d'Ivoire",1966,1960s,13.14
+"Cote d'Ivoire",1967,1960s,14.32
+"Cote d'Ivoire",1968,1960s,13.19
+"Cote d'Ivoire",1969,1960s,13.18
+"Cote d'Ivoire",1970,1970s,13.38
+"Cote d'Ivoire",1971,1970s,15.20
+"Cote d'Ivoire",1972,1970s,14.19
+"Cote d'Ivoire",1973,1970s,14.36
+"Cote d'Ivoire",1974,1970s,13.45
+"Cote d'Ivoire",1975,1970s,14.64
+"Cote d'Ivoire",1976,1970s,13.68
+"Cote d'Ivoire",1977,1970s,13.77
+"Cote d'Ivoire",1978,1970s,14.72
+"Cote d'Ivoire",1979,1970s,13.61
+"Cote d'Ivoire",1980,1980s,17.63
+"Cote d'Ivoire",1981,1980s,18.55
+"Cote d'Ivoire",1982,1980s,19.25
+"Cote d'Ivoire",1983,1980s,17.76
+"Cote d'Ivoire",1984,1980s,19.58
+"Cote d'Ivoire",1985,1980s,17.63
+"Cote d'Ivoire",1986,1980s,18.47
+"Cote d'Ivoire",1987,1980s,18.44
+"Cote d'Ivoire",1988,1980s,18.47
+"Cote d'Ivoire",1989,1980s,17.22
+"Cote d'Ivoire",1990,1990s,33.17
+"Cote d'Ivoire",1991,1990s,30.83
+"Cote d'Ivoire",1992,1990s,31.48
+"Cote d'Ivoire",1993,1990s,34.32
+"Cote d'Ivoire",1994,1990s,32.09
+"Cote d'Ivoire",1995,1990s,34.02
+"Cote d'Ivoire",1996,1990s,32.20
+"Cote d'Ivoire",1997,1990s,34.14
+"Cote d'Ivoire",1998,1990s,29.50
+"Cote d'Ivoire",1999,1990s,33.26
+"Cote d'Ivoire",2000,2000s,45.97
+"Cote d'Ivoire",2001,2000s,44.13
+"Cote d'Ivoire",2002,2000s,45.48
+"Cote d'Ivoire",2003,2000s,46.50
+"Cote d'Ivoire",2004,2000s,44.81
+"Cote d'Ivoire",2005,2000s,42.93
+"Cote d'Ivoire",2006,2000s,41.39
+"Cote d'Ivoire",2007,2000s,39.46
+"Cote d'Ivoire",2008,2000s,42.00
+"Cote d'Ivoire",2009,2000s,39.34
+"Cote d'Ivoire",2010,2010s,46.24
+"Cote d'Ivoire",2011,2010s,42.20
+"Cote d'Ivoire",2012,2010s,47.88
+"Cote d'Ivoire",2013,2010s,46.52
+"Cote d'Ivoire",2014,2010s,41.17
+"Cote d'Ivoire",2015,2010s,44.59
+"Cote d'Ivoire",2016,2010s,42.56
+"Cote d'Ivoire",2017,2010s,45.95
+"Cote d'Ivoire",2018,2010s,42.49

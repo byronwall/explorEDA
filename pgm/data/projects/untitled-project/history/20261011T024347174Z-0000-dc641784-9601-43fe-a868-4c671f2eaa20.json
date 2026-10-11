@@ -1,0 +1,14 @@
+{
+  "id": "dc641784-9601-43fe-a868-4c671f2eaa20",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:29840c",
+    "label": "Agent token ...29840c"
+  },
+  "createdAt": "2026-10-11T02:43:47.174Z",
+  "summary": "Updated metadata for \"This is a fairly boring plot\".",
+  "nodeIds": [
+    "page-this-is-a-fairly-boring-plot"
+  ]
+}

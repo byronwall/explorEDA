@@ -29,10 +29,10 @@ The demo dev server runs React in StrictMode and development mode. StrictMode re
 
 ## Script a run
 
-`scripts/perf-clicks.mjs` clicks marks with real mouse input in headless Chromium, reports the long tasks after each click, and with `--profile` prints the functions with the most self and total time. It saves each CPU profile under `tmp/perf/`; open one in Chrome DevTools' Performance panel for the full call tree. Install Playwright in your scratch directory first (`npm i playwright`), then:
+`scripts/perf-clicks.mjs` clicks marks with real mouse input in headless Chromium, reports the long tasks after each click, and with `--profile` prints the functions with the most self and total time. It saves each CPU profile under `tmp/perf/`; open one in Chrome DevTools' Performance panel for the full call tree. It uses the repo's pinned Playwright, and `pnpm -s dev:agent` starts or reuses the demo server and prints its URL:
 
 ```bash
-PLAYWRIGHT_DIR=<scratch dir> node scripts/perf-clicks.mjs --url http://localhost:5291/examples/january-flights --view "When delays happened" --click '[data-chart-id="flights-days-band"] rect.chart-mark@2' --click '[data-chart-id="flights-daily"] circle.cursor-pointer@10' --click 'view:Delays carry through' --click 'view:When delays happened' --profile
+node scripts/perf-clicks.mjs --url $(pnpm -s dev:agent)/examples/january-flights --view "When delays happened" --click '[data-chart-id="flights-days-band"] rect.chart-mark@2' --click '[data-chart-id="flights-daily"] circle.cursor-pointer@10' --click 'view:Delays carry through' --click 'view:When delays happened' --profile
 ```
 
 - A click is a CSS selector with an optional `@index`, or `view:<tab name>`. Marks carry `rect.chart-mark`, heatmap cells `rect.eda-heat-cell`, and line points `circle.cursor-pointer`, under `[data-chart-id="<chart id>"]`.

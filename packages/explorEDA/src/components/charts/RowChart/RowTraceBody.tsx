@@ -69,8 +69,8 @@ export function RowTraceBody({ trace }: { trace: RowTrace }) {
           {trace.categories.length === 1 ? "category" : "categories"}
         </TraceReadout>
         <p className="text-muted-foreground">
-          Counts follow other chart filters. Selection stores category values
-          and stays the same when the chart is resized.
+          Counts follow other filters. Selection stores category values and
+          stays the same when the chart is resized.
         </p>
       </TraceSection>
       <TraceSection heading="Category members">
