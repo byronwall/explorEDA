@@ -457,7 +457,23 @@ function isElement(value: unknown) {
         value.fontSize > 0 &&
         isString(value.color) &&
         (value.width === undefined ||
-          (isNumber(value.width) && value.width > 0))
+          (isNumber(value.width) && value.width > 0)) &&
+        (value.items === undefined ||
+          (Array.isArray(value.items) &&
+            value.items.every(
+              (item) =>
+                isRecord(item) &&
+                isString(item.markId) &&
+                isString(item.label) &&
+                (item.part === undefined ||
+                  oneOf(item.part, [
+                    "main",
+                    "muted",
+                    "band",
+                    "median",
+                    "missing",
+                  ]))
+            )))
       );
     default:
       return false;

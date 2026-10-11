@@ -5,6 +5,8 @@ import {
   type BandMark,
   type CompositionDefinition,
   type GuideElement,
+  type LegendElement,
+  type LegendPart,
   type NumericScale,
   type UnitElement,
 } from "./compositionTypes";
@@ -296,6 +298,69 @@ describe("axis titles", () => {
     expect(
       isCompositionDefinition(
         fan({ axisTitles: { x: 4 as unknown as string } })
+      )
+    ).toBe(false);
+  });
+});
+
+describe("key legends", () => {
+  const withKey = (items: LegendElement["items"]) => {
+    const base = fan();
+    const unit = base.elements[0] as UnitElement;
+    const inner: BandMark = {
+      ...band,
+      id: "mark-3",
+      name: "40% band",
+      opacity: 0.5,
+    };
+    const legend: LegendElement = {
+      id: "legend-1",
+      kind: "legend",
+      name: "Key",
+      x: 10,
+      y: 10,
+      unitId: "unit-1",
+      markId: "mark-1",
+      direction: "column",
+      fontSize: 11,
+      color: "#000",
+      items,
+    };
+    return {
+      ...base,
+      elements: [{ ...unit, marks: [...unit.marks, inner] }, legend],
+    };
+  };
+  const glyphs = (definition: CompositionDefinition) =>
+    scene(definition).nodes.filter(
+      (node) => node.elementId === "legend-1" && node.type !== "text"
+    );
+
+  it("draws each chosen mark's glyph, a nested band over the bands under it", () => {
+    const definition = withKey([
+      { markId: "mark-3", label: "40%" },
+      { markId: "mark-2", label: "Central" },
+      { markId: "mark-2", part: "muted", label: "Others" },
+    ]);
+    expect(isCompositionDefinition(definition)).toBe(true);
+    const [inner, central, muted] = glyphs(definition);
+    // 1 - (1 - 0.2) * (1 - 0.5): the inner band over the outer one.
+    expect(inner?.type === "rect" && inner.opacity).toBeCloseTo(0.6);
+    expect(central?.type === "line" && central.stroke).toBe("#000");
+    expect(muted?.type === "line" && muted.stroke).toBe("#c9ccd1");
+    const labels = scene(definition)
+      .nodes.filter(
+        (node): node is TextNode =>
+          node.type === "text" && node.elementId === "legend-1"
+      )
+      .map((node) => node.lines[0]!.text);
+    expect(labels).toEqual(["40%", "Central", "Others"]);
+  });
+
+  it("rejects an entry with an unknown part", () => {
+    expect(
+      isCompositionDefinition(
+        withKey([{ markId: "mark-1", label: "x", part: "edge" as LegendPart }])
       )
     ).toBe(false);
   });

@@ -1,0 +1,14 @@
+{
+  "id": "3700a07d-4f9c-4d9c-aad7-5ab9e98846ef",
+  "kind": "node.status.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:844d30",
+    "label": "Agent token ...844d30"
+  },
+  "createdAt": "2026-10-11T02:17:05.468Z",
+  "summary": "Changed \"It'd be really nice to get a legend example showing how the bands are determined\" status to implemented.",
+  "nodeIds": [
+    "page-it-d-be-really-nice-to-get-a-legend-example-showing-how-the-bands-qhdqf4"
+  ]
+}

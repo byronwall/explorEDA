@@ -85,7 +85,25 @@ export interface LegendElement extends ElementBase {
   color: string;
   /** A row wraps to the next line past this width; the artboard's edge unless set. */
   width?: number;
+  /**
+   * A key of chosen marks instead of categories or a ramp: each entry draws
+   * a mark's glyph, such as a band's fill or a muted path, beside its label.
+   */
+  items?: LegendItem[];
 }
+
+/** One entry of a key legend: a mark's glyph and what it stands for. */
+export interface LegendItem {
+  markId: string;
+  label: string;
+  /**
+   * The part of the mark to show: its own color, its muted series, a
+   * summary's quartile band or median, or a strip's missing cell.
+   */
+  part?: LegendPart;
+}
+
+export type LegendPart = "main" | "muted" | "band" | "median" | "missing";
 
 export type CompositionElementKind = CompositionElement["kind"];
 
