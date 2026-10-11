@@ -34,9 +34,19 @@ if (packageChanges.length && !changesets.length) {
   );
 }
 
-const badAuthors = git("log", "--format=%h %an <%ae>", `${mergeBase}..HEAD`)
+// Commits authored before the bad "--worktree" identity was fixed are mapped
+// in .mailmap instead; only later commits must carry a real author.
+const authorCheckFrom = "2026-10-11";
+const badAuthors = git(
+  "log",
+  "--date=short",
+  "--format=%ad %h %an <%ae>",
+  `${mergeBase}..HEAD`
+)
   .split("\n")
   .filter(Boolean)
+  .filter((line) => line.slice(0, 10) >= authorCheckFrom)
+  .map((line) => line.slice(11))
   .filter((line) => {
     const [, name, email] = line.match(/^\S+ (.*) <(.*)>$/) ?? [];
     return (
