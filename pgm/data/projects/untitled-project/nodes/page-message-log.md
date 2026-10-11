@@ -2,6 +2,8 @@
 id: page-message-log
 label: Message log
 type: page
-status: planned
+status: implemented
 parent: page-composition-examples
+metadata:
+  implementation: Now a finished graphic (#276).
 ---
