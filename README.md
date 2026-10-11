@@ -131,6 +131,10 @@ charts you need.
 - **Browser:** DOM and Canvas 2D. The 3D scatter chart also needs WebGL.
 - **Storage:** none built in. Settings and full analysis exports are JSON your
   app stores.
+- **License:** free for evaluation, non-commercial use, and small teams under
+  the [explorEDA License](LICENSE). Commercial use needs a
+  [license key](https://exploreda.dev/pricing), checked offline. See
+  [Support](SUPPORT.md) and [Security](SECURITY.md).
 
 ## Develop
 
