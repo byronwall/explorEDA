@@ -32,3 +32,12 @@ jobs:
 
       - name: Check
         run: pnpm check
+
+      # The docs browser check runs every live example's steps against the
+      # demo that `pnpm check` just built, so a docs regression fails the PR
+      # before it can stop a deploy.
+      - name: Install Chromium for the docs check
+        run: pnpm --filter demo exec playwright install --with-deps chromium
+
+      - name: Check docs in a browser
+        run: pnpm --filter demo docs:verify
