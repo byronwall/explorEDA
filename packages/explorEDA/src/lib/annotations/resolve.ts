@@ -7,13 +7,17 @@ import type { IdType } from "@/providers/DataLayerProvider";
 import type { datum } from "@/types/ChartTypes";
 import type {
   AnnotationKeyValue,
+  AnnotationPopulation,
+  AnnotationStatistic,
   AnnotationYAxis,
   BandAnnotation,
   CalloutAnnotation,
   ChartAnnotation,
   IntervalAnnotation,
   RecordAttachment,
+  RecordSetAnnotation,
   ReferenceLineAnnotation,
+  RegionAnnotation,
 } from "./types";
 
 export type ColumnGetter = (field: string) => Record<IdType, datum>;
@@ -37,7 +41,8 @@ export type AnnotationStatus =
   | "ambiguous"
   | "invalid"
   | "offscreen"
-  | "unsupported";
+  | "unsupported"
+  | "empty";
 
 export const ANNOTATION_STATUS_TEXT: Record<
   Exclude<AnnotationStatus, "shown">,
@@ -66,6 +71,10 @@ export const ANNOTATION_STATUS_TEXT: Record<
   offscreen: {
     label: "Outside the view",
     help: "Its position is outside the axis range. Widen the axis limits to see it.",
+  },
+  empty: {
+    label: "No rows",
+    help: "The rows it reads are all filtered out or have no value for its field.",
   },
   unsupported: {
     label: "Not on this chart",
@@ -97,6 +106,28 @@ function matchingRows(
     if (compositeKey(values) === wanted) found.push(id);
   }
   return found;
+}
+
+/**
+ * Rows by key for one set of key fields, so many keys resolve in one pass.
+ */
+export function recordIndex(
+  keyFields: string[],
+  getColumn: ColumnGetter,
+  ids: IdType[]
+) {
+  const columns = keyFields.map((field) => getColumn(field));
+  const index = new Map<string, IdType[]>();
+  for (const id of ids) {
+    const values = columns.map((column) => column[id]);
+    if (values.some(isMissingValue)) continue;
+    const key = compositeKey(values);
+    const rows = index.get(key);
+    if (rows) rows.push(id);
+    else index.set(key, [id]);
+  }
+  return (key: (datum | AnnotationKeyValue)[]) =>
+    index.get(compositeKey(key)) ?? [];
 }
 
 /**
@@ -186,6 +217,66 @@ export interface AnnotationFrame {
   /** Rows drawn and selected now, with the field that places them on x. */
   visibleIds?: IdType[];
   xField?: string;
+  /** The measure on the y axis, for calculations and largest-value picks. */
+  yField?: string;
+  /**
+   * The rows calculations read: every row the chart can draw, and those that
+   * pass the current filters. Charts of grouped values leave it out.
+   */
+  population?: Record<AnnotationPopulation, IdType[]>;
+}
+
+/** A statistic of a field over some rows, or undefined without values. */
+export function calculate(
+  statistic: AnnotationStatistic,
+  field: string,
+  ids: IdType[],
+  getColumn: ColumnGetter
+) {
+  const column = getColumn(field);
+  const values = ids
+    .map((id) => finiteNumber(column[id]))
+    .filter((value): value is number => value !== undefined);
+  if (!values.length) return undefined;
+  if (statistic === "mean")
+    return values.reduce((sum, value) => sum + value, 0) / values.length;
+  if (statistic === "min") return Math.min(...values);
+  if (statistic === "max") return Math.max(...values);
+  values.sort((a, b) => a - b);
+  const middle = values.length / 2;
+  return values.length % 2
+    ? values[Math.floor(middle)]!
+    : (values[middle - 1]! + values[middle]!) / 2;
+}
+
+/** The row with the largest or smallest value of a field. */
+function pickRow(
+  pick: "max" | "min",
+  field: string,
+  ids: IdType[],
+  getColumn: ColumnGetter
+) {
+  const column = getColumn(field);
+  let best: IdType | undefined;
+  let bestValue = pick === "max" ? -Infinity : Infinity;
+  for (const id of ids) {
+    const value = finiteNumber(column[id]);
+    if (value === undefined) continue;
+    if (pick === "max" ? value > bestValue : value < bestValue) {
+      best = id;
+      bestValue = value;
+    }
+  }
+  return best;
+}
+
+/** How a record set's members fared on this draw. */
+export interface RecordSetCounts {
+  total: number;
+  shown: number;
+  filtered: number;
+  missing: number;
+  ambiguous: number;
 }
 
 /** One point of a supplied interval, in plot pixels. */
@@ -206,8 +297,17 @@ export type ProjectedAnnotation =
       status: Exclude<AnnotationStatus, "shown">;
     }
   | Shown<CalloutAnnotation, { x: number; y: number }>
-  /** Pixel position along the annotation's axis. */
-  | Shown<ReferenceLineAnnotation, { position: number }>
+  /** Pixel position along the annotation's axis, and the value it marks. */
+  | Shown<ReferenceLineAnnotation, { position: number; value: number }>
+  /** The region's box in plot pixels, which may extend past the plot. */
+  | Shown<
+      RegionAnnotation,
+      { left: number; top: number; width: number; height: number }
+    >
+  | Shown<
+      RecordSetAnnotation,
+      { points: { x: number; y: number }[]; counts: RecordSetCounts }
+    >
   /** Pixel span along the annotation's axis, clamped to the plot. */
   | Shown<BandAnnotation, { start: number; end: number }>
   | Shown<
@@ -240,7 +340,10 @@ function projectOne(
   frame: AnnotationFrame
 ): ProjectedAnnotation {
   if (annotation.hidden) return { annotation, status: "hidden" };
-  const yScale = yScaleFor(frame, annotation.yAxis);
+  const yScale = yScaleFor(
+    frame,
+    "yAxis" in annotation ? annotation.yAxis : undefined
+  );
   if (annotation.type === "reference-line" || annotation.type === "band") {
     const vertical = annotation.axis === "x";
     const descriptor = vertical ? frame.xScale : yScale;
@@ -248,10 +351,24 @@ function projectOne(
       return { annotation, status: "unsupported" };
     const size = vertical ? frame.plotWidth : frame.plotHeight;
     if (annotation.type === "reference-line") {
-      const position = numericPosition(descriptor, annotation.value);
+      let value = annotation.value;
+      if (annotation.calculated) {
+        const field = vertical ? frame.xField : frame.yField;
+        if (!frame.population || !field)
+          return { annotation, status: "unsupported" };
+        const result = calculate(
+          annotation.calculated.statistic,
+          field,
+          frame.population[annotation.calculated.population],
+          frame.getColumn
+        );
+        if (result === undefined) return { annotation, status: "empty" };
+        value = result;
+      }
+      const position = numericPosition(descriptor, value);
       if (position === undefined || !inside(position, size))
         return { annotation, status: "offscreen" };
-      return { annotation, status: "shown", position };
+      return { annotation, status: "shown", position, value };
     }
     const a = numericPosition(descriptor, annotation.from);
     const b = numericPosition(descriptor, annotation.to);
@@ -261,6 +378,74 @@ function projectOne(
     const end = Math.min(size, Math.max(a, b));
     if (end <= start) return { annotation, status: "offscreen" };
     return { annotation, status: "shown", start, end };
+  }
+  if (annotation.type === "region") {
+    if (frame.xScale.type === "band" || yScale.type === "band")
+      return { annotation, status: "unsupported" };
+    const xs = [annotation.x0, annotation.x1].map((v) =>
+      numericPosition(frame.xScale, v)
+    );
+    const ys = [annotation.y0, annotation.y1].map((v) =>
+      numericPosition(yScale, v)
+    );
+    if ([...xs, ...ys].some((v) => v === undefined))
+      return { annotation, status: "offscreen" };
+    const [a, b] = xs as number[];
+    const [c, d] = ys as number[];
+    const left = Math.min(a!, b!);
+    const top = Math.min(c!, d!);
+    const width = Math.abs(b! - a!);
+    const height = Math.abs(d! - c!);
+    if (
+      left > frame.plotWidth ||
+      top > frame.plotHeight ||
+      left + width < 0 ||
+      top + height < 0
+    )
+      return { annotation, status: "offscreen" };
+    return { annotation, status: "shown", left, top, width, height };
+  }
+  if (annotation.type === "record-set") {
+    if (!frame.plotted) return { annotation, status: "unsupported" };
+    if (!annotation.keyFields.length || !annotation.keys.length)
+      return { annotation, status: "invalid" };
+    const rowsFor = recordIndex(
+      annotation.keyFields,
+      frame.getColumn,
+      frame.ids
+    );
+    const counts: RecordSetCounts = {
+      total: annotation.keys.length,
+      shown: 0,
+      filtered: 0,
+      missing: 0,
+      ambiguous: 0,
+    };
+    const points: { x: number; y: number }[] = [];
+    const attach: RecordAttachment = {
+      kind: "record",
+      keyFields: annotation.keyFields,
+      key: [],
+      yField: annotation.yField,
+    };
+    for (const key of annotation.keys) {
+      const rows = rowsFor(key);
+      if (rows.length === 0) counts.missing++;
+      else if (rows.length > 1) counts.ambiguous++;
+      else {
+        const point = frame.plotted(rows[0]!, attach);
+        if (point?.selected) {
+          counts.shown++;
+          points.push({ x: point.x, y: point.y });
+        } else counts.filtered++;
+      }
+    }
+    if (points.length) return { annotation, status: "shown", points, counts };
+    if (counts.filtered) return { annotation, status: "filtered" };
+    return {
+      annotation,
+      status: counts.ambiguous ? "ambiguous" : "missing",
+    };
   }
   if (annotation.type === "interval") {
     if (!frame.visibleIds || !frame.xField || yScale.type === "band")
@@ -304,6 +489,26 @@ function projectOne(
     return { annotation, status: "shown", x, y };
   }
   if (!frame.plotted) return { annotation, status: "unsupported" };
+  if (attach.kind === "query") {
+    const field = attach.field ?? frame.yField;
+    if (!frame.population || !field)
+      return { annotation, status: "unsupported" };
+    const id = pickRow(
+      attach.pick,
+      field,
+      frame.population[attach.population],
+      frame.getColumn
+    );
+    if (id === undefined) return { annotation, status: "empty" };
+    const point = frame.plotted(id, {
+      kind: "record",
+      keyFields: [],
+      key: [],
+      yField: attach.field,
+    });
+    if (!point || !point.selected) return { annotation, status: "filtered" };
+    return { annotation, status: "shown", x: point.x, y: point.y };
+  }
   const resolution = resolveRecord(attach, frame.getColumn, frame.ids);
   if (resolution.status !== "found")
     return { annotation, status: resolution.status };

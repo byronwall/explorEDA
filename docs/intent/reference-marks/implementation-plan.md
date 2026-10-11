@@ -83,6 +83,8 @@ Add coordinate rectangles/ellipses, saved record-set highlights, and a small set
 - Distinguish a fixed record from a query such as “largest value among filtered rows.” A query may change subjects by design.
 - Verify partial record-set visibility, empty selections, missing keys, and changed query winners. Include duplicate-key failure cases.
 
+**Delivered (M3):** `region` (rectangle or ellipse in data units) and `record-set` (keys copied from the current selection, capped at 500, drawn as squares with a shown-of-total count) are separate kinds. Reference lines take `calculated: { statistic, population }`; callouts take a `query` attachment (largest or smallest value). Frames carry `population.all` (rows the chart can draw, ignoring interactive filters, within the chart's local limits and facet) and `population.filtered`. Calculated labels always name their rows. Time series charts have no row population, so calculations and record sets report unsupported there. Record sets edit only by "Use selection"; per-member editing stays below the line.
+
 ### Desired end state
 
 - A saved group cannot silently become whatever falls inside a rectangle.

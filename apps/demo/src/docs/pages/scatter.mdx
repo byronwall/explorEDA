@@ -80,18 +80,22 @@ The **Fit** tab draws a regression for each color group in each facet: linear, p
   caption="Points sized by a value, from the bubble scatter example."
 />
 
-## Callouts and reference lines
+## Annotations
 
 The **Notes** tab adds annotations that save with the chart.
 
 - A **callout** is a label on one record. It finds the record by a key field, such as `Day`, whose values identify every row once. Reordered or replaced rows keep the callout on the same record. If no row has the key, or more than one does, the list says so and the chart draws nothing for it.
 - A callout can instead sit at a **fixed point**, given in X and Y values. **Arrowhead** ends its leader line with an arrow at the subject.
 - A **line** marks a fixed X or Y value, such as a target, and a **band** shades or brackets a span between two values. Filters never move them.
+- A callout set to **Extreme** follows whichever row has the largest or smallest value, so its subject can change as filters change.
+- A **region** is a rectangle or ellipse in X and Y values. It means "this area": filtering changes which points fall inside it.
+- **Saved records** copies the rows your current selection holds, by key. It means "these records": the squares stay on the same rows when the selection changes, and the label counts how many show.
+- A line's **Value from** can be **Calculated**: the mean, median, minimum, or maximum of the axis field over **All rows** (every row the chart can draw) or **Filtered rows** (those that pass the current filters). Its label names the rows and shows the result.
 - Each annotation has a name, and **Duplicate** copies it below.
 
 Drag a callout's label, or focus it and use the arrow keys, to move the label without moving its record. Each drag is one undo step, and Escape puts the label back. When filters leave out a callout's record, the callout hides and the list marks it **Filtered out** until the record returns. An annotation past the axis range stays in the list as **Outside the view**.
 
-The bubble scatter example has a callout on day 31 and a conversion target.
+The bubble scatter example has a callout on day 31, a conversion target, a mean response time over filtered rows, and a region around the fastest days.
 
 ## Saved settings
 

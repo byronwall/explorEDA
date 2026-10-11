@@ -15,7 +15,9 @@ import {
   createBand,
   createCallout,
   createInterval,
+  createRecordSet,
   createReferenceLine,
+  createRegion,
   duplicateAnnotation,
 } from "@/lib/annotations/create";
 import {
@@ -35,8 +37,13 @@ import {
   BandFields,
   CalloutFields,
   IntervalFields,
+  RecordSetFields,
   ReferenceFields,
+  RegionFields,
 } from "./AnnotationFields";
+
+/** More saved records than this would bloat every saved analysis. */
+const MAX_SAVED_RECORDS = 500;
 
 interface AnnotationsSettingsTabProps {
   settings: ChartSettings;
@@ -95,6 +102,25 @@ export function AnnotationsSettingsTab({
     onSettingChange("annotations", next.length ? next : undefined);
   const add = (annotation: ChartAnnotation) =>
     write([...annotations, annotation]);
+  // Saved records copy the rows the filters select now, by key.
+  const selectionSize = visible.size;
+  const selecting = selectionSize > 0 && selectionSize < ids.length;
+  const canSave =
+    context.records &&
+    keyFields.length > 0 &&
+    selecting &&
+    selectionSize <= MAX_SAVED_RECORDS;
+  const saveHelp = !context.records
+    ? "This chart draws grouped values, not single records."
+    : !keyFields.length
+      ? "No field identifies every row once, so records can't be saved by key."
+      : !selecting
+        ? "Select rows first, by brushing or clicking marks in any chart. Saved records keep that membership after the selection changes."
+        : selectionSize > MAX_SAVED_RECORDS
+          ? `The selection has ${selectionSize.toLocaleString()} rows. Narrow it to ${MAX_SAVED_RECORDS} or fewer to save them.`
+          : `Save the ${selectionSize.toLocaleString()} selected rows by key. Their membership stays fixed when filters change.`;
+  const selectedRecords = () =>
+    createRecordSet(keyFields[0]!, [...visible], getColumn);
 
   return (
     <div className="space-y-2.5">
@@ -140,6 +166,23 @@ export function AnnotationsSettingsTab({
         >
           Band
         </Button>
+        <Button
+          size="sm"
+          variant="outline"
+          tooltip="Add a rectangle or ellipse in data units, which marks an area of the plot. Change its bounds below."
+          onClick={() => add(createRegion(source))}
+        >
+          Region
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
+          disabled={!canSave}
+          tooltip={saveHelp}
+          onClick={() => add(selectedRecords())}
+        >
+          Saved records
+        </Button>
         {context.intervals && (
           <Button
             size="sm"
@@ -174,6 +217,24 @@ export function AnnotationsSettingsTab({
                   annotations.map((item) => (item.id === next.id ? next : item))
                 )
               }
+              onReplaceRecords={
+                canSave && annotation.type === "record-set"
+                  ? () =>
+                      write(
+                        annotations.map((item) =>
+                          item.id === annotation.id
+                            ? {
+                                ...selectedRecords(),
+                                id: item.id,
+                                label: annotation.label,
+                                name: annotation.name,
+                              }
+                            : item
+                        )
+                      )
+                  : undefined
+              }
+              replaceHelp={saveHelp}
               onDuplicate={() =>
                 write([
                   ...annotations.slice(0, index + 1),
@@ -200,6 +261,8 @@ function AnnotationCard({
   getColumn,
   ids,
   onChange,
+  onReplaceRecords,
+  replaceHelp,
   onDuplicate,
   onRemove,
 }: {
@@ -210,6 +273,8 @@ function AnnotationCard({
   getColumn: ColumnGetter;
   ids: IdType[];
   onChange: (next: ChartAnnotation) => void;
+  onReplaceRecords?: () => void;
+  replaceHelp: string;
   onDuplicate: () => void;
   onRemove: () => void;
 }) {
@@ -313,6 +378,15 @@ function AnnotationCard({
         <ReferenceFields annotation={annotation} {...fieldProps} />
       ) : annotation.type === "band" ? (
         <BandFields annotation={annotation} {...fieldProps} />
+      ) : annotation.type === "region" ? (
+        <RegionFields annotation={annotation} {...fieldProps} />
+      ) : annotation.type === "record-set" ? (
+        <RecordSetFields
+          annotation={annotation}
+          {...fieldProps}
+          onReplace={onReplaceRecords}
+          replaceHelp={replaceHelp}
+        />
       ) : (
         <IntervalFields annotation={annotation} {...fieldProps} />
       )}

@@ -7,7 +7,9 @@ import type {
   CalloutAnnotation,
   ChartAnnotation,
   IntervalAnnotation,
+  RecordSetAnnotation,
   ReferenceLineAnnotation,
+  RegionAnnotation,
 } from "./types";
 
 export interface AnnotationSource extends Partial<AnnotationContext> {
@@ -149,6 +151,40 @@ export function createInterval(source: AnnotationSource): IntervalAnnotation {
     lowerField: numeric.find((field) => LOWER.test(field)) ?? "",
     upperField: numeric.find((field) => UPPER.test(field)) ?? "",
     meaning: "Supplied range",
+  };
+}
+
+/** A new rectangle around the middle half of the chart's values. */
+export function createRegion(source: AnnotationSource): RegionAnnotation {
+  const xs = sortedValues(source, source.xField, source.xDate);
+  const ys = sortedValues(source, source.yField);
+  return {
+    id: newId(),
+    type: "region",
+    shape: "rect",
+    x0: quantile(xs, 0.25),
+    x1: quantile(xs, 0.75),
+    y0: quantile(ys, 0.25),
+    y1: quantile(ys, 0.75),
+    label: "Region",
+  };
+}
+
+/** Saved records, keyed by a field that identifies every row. */
+export function createRecordSet(
+  keyField: string,
+  ids: IdType[],
+  getColumn: ColumnGetter
+): RecordSetAnnotation {
+  return {
+    id: newId(),
+    type: "record-set",
+    keyFields: [keyField],
+    keys: ids.flatMap((id) => {
+      const key = recordKey([keyField], getColumn, id);
+      return key ? [key] : [];
+    }),
+    label: "Saved records",
   };
 }
 

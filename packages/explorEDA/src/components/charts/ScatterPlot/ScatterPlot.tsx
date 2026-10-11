@@ -13,6 +13,7 @@ import {
 import type { ScatterPlotSettings } from "./definition";
 import { CalculatedFieldBadge } from "@/components/calculations/CalculatedFieldBadge";
 import { ScatterSvg } from "./ScatterSvg";
+import type { IdType } from "@/providers/DataLayerProvider";
 import {
   annotationSlot,
   type ChartAnnotationFrame,
@@ -110,9 +111,19 @@ function ScatterPoints({
   const annotationFrame = useMemo((): ChartAnnotationFrame | undefined => {
     if (!settings.annotations?.length) return undefined;
     const points = new Map(plan.points.map((point) => [point.sourceId, point]));
+    // A facet's calculations read only that facet's rows.
+    const facet = snapshot.facetIds && new Set(snapshot.facetIds);
+    const inFacet = (ids: IdType[]) =>
+      facet ? ids.filter((id) => facet.has(id)) : ids;
     return {
       xScale: plan.xScale,
       yScale: plan.yScale,
+      xField: settings.xField,
+      yField: settings.yField,
+      population: {
+        all: inFacet(snapshot.allIds),
+        filtered: inFacet(snapshot.filteredIds),
+      },
       plotWidth: plan.plotWidth,
       plotHeight: plan.plotHeight,
       plotted: (id) => {
@@ -122,7 +133,7 @@ function ScatterPoints({
         );
       },
     };
-  }, [settings.annotations, plan]);
+  }, [settings.annotations, settings.xField, settings.yField, plan, snapshot]);
   const marginals = useMemo(
     () => planMarginals(settings, plan),
     [settings, plan]

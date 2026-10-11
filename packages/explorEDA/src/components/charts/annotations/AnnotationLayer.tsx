@@ -9,6 +9,8 @@ import { useChartEdit } from "../InPlace/useChartEdit";
 import type { ProjectedAnnotation } from "@/lib/annotations/resolve";
 import {
   annotationLabel,
+  POPULATION_NAMES,
+  STATISTIC_NAMES,
   type CalloutAnnotation,
   type ChartAnnotation,
 } from "@/lib/annotations/types";
@@ -182,6 +184,120 @@ function Intervals({
   );
 }
 
+/** A rule's label; a calculated rule says what it read and the result. */
+function ruleText(
+  annotation: Shown<"reference-line">["annotation"],
+  value: number
+) {
+  const label = annotation.label?.trim();
+  if (!annotation.calculated) return label;
+  const { statistic, population } = annotation.calculated;
+  const what = label
+    ? `${label} (${POPULATION_NAMES[population]})`
+    : `${STATISTIC_NAMES[statistic]} of ${POPULATION_NAMES[population]}`;
+  return `${what}: ${Number(value.toPrecision(4)).toLocaleString()}`;
+}
+
+/** Rectangles and ellipses in data units, under the marks' labels. */
+function Regions({
+  regions,
+  clipPath,
+}: {
+  regions: Shown<"region">[];
+  clipPath: string;
+}) {
+  return (
+    <>
+      <g clipPath={clipPath} pointerEvents="none">
+        {regions.map(({ annotation, left, top, width, height }) => {
+          const color = colorOf(annotation);
+          const shared = {
+            fill: color,
+            fillOpacity: 0.06,
+            stroke: color,
+            strokeWidth: 1.5,
+          };
+          return annotation.shape === "ellipse" ? (
+            <ellipse
+              key={annotation.id}
+              data-annotation-id={annotation.id}
+              cx={left + width / 2}
+              cy={top + height / 2}
+              rx={width / 2}
+              ry={height / 2}
+              {...shared}
+            />
+          ) : (
+            <rect
+              key={annotation.id}
+              data-annotation-id={annotation.id}
+              x={left}
+              y={top}
+              width={width}
+              height={height}
+              rx={2}
+              {...shared}
+            />
+          );
+        })}
+      </g>
+      {regions.map(({ annotation, left, top }) => {
+        const text = annotation.label?.trim();
+        if (!text) return null;
+        return (
+          <Label
+            key={`${annotation.id}:label`}
+            x={Math.max(2, left + 4)}
+            y={Math.max(10, top - 4)}
+            color={colorOf(annotation)}
+          >
+            {text}
+          </Label>
+        );
+      })}
+    </>
+  );
+}
+
+/**
+ * Rings on saved records. Squares, not circles, so a saved set never reads
+ * as the chart's own selection.
+ */
+function RecordSets({ sets }: { sets: Shown<"record-set">[] }) {
+  return (
+    <g pointerEvents="none">
+      {sets.map(({ annotation, points, counts }) => {
+        const color = colorOf(annotation);
+        const text = annotation.label?.trim();
+        const top = points.reduce((best, p) => (p.y < best.y ? p : best));
+        return (
+          <g key={annotation.id} data-annotation-id={annotation.id}>
+            {points.map((point, index) => (
+              <rect
+                key={index}
+                x={point.x - 6}
+                y={point.y - 6}
+                width={12}
+                height={12}
+                fill="none"
+                stroke={color}
+                strokeWidth={1.5}
+              />
+            ))}
+            {text && (
+              <Label x={top.x + 9} y={top.y - 9} color={color}>
+                {counts.shown < counts.total
+                  ? `${text} (${counts.shown} of ${counts.total})`
+                  : text}
+              </Label>
+            )}
+          </g>
+        );
+      })}
+    </g>
+  );
+}
+
 function Rules({
   rules,
   plotWidth,
@@ -215,8 +331,8 @@ function Rules({
           );
         })}
       </g>
-      {rules.map(({ annotation, position }) => {
-        const text = annotation.label?.trim();
+      {rules.map(({ annotation, position, value }) => {
+        const text = ruleText(annotation, value);
         if (!text) return null;
         const vertical = annotation.axis === "x";
         return (
@@ -361,6 +477,7 @@ export function AnnotationLayer({
         plotHeight={plotHeight}
         clipPath={clipPath}
       />
+      <Regions regions={of("region")} clipPath={clipPath} />
       <Intervals intervals={of("interval")} clipPath={clipPath} />
       <Rules
         rules={of("reference-line")}
@@ -368,6 +485,7 @@ export function AnnotationLayer({
         plotHeight={plotHeight}
         clipPath={clipPath}
       />
+      <RecordSets sets={of("record-set")} />
       {of("callout").map(({ annotation, x, y }) => {
         const color = colorOf(annotation);
         const lx = x + annotation.offset.dx;

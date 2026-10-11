@@ -12,19 +12,40 @@ const optionalString = (value: unknown) =>
 const optionalBoolean = (value: unknown) =>
   value === undefined || typeof value === "boolean";
 
+const isPopulation = (value: unknown) =>
+  value === "all" || value === "filtered";
+
+const isStringList = (value: unknown) =>
+  Array.isArray(value) && value.every((item) => typeof item === "string");
+
+const isKey = (value: unknown) =>
+  Array.isArray(value) &&
+  value.every((item) => typeof item === "string" || isFiniteNumber(item));
+
 function isAttachment(value: unknown) {
   if (!isRecord(value)) return false;
   if (value.kind === "coordinate")
     return isFiniteNumber(value.x) && isFiniteNumber(value.y);
+  if (value.kind === "query")
+    return (
+      (value.pick === "max" || value.pick === "min") &&
+      optionalString(value.field) &&
+      isPopulation(value.population)
+    );
   return (
     value.kind === "record" &&
-    Array.isArray(value.keyFields) &&
-    value.keyFields.every((field) => typeof field === "string") &&
-    Array.isArray(value.key) &&
-    value.key.every(
-      (item) => typeof item === "string" || isFiniteNumber(item)
-    ) &&
+    isStringList(value.keyFields) &&
+    isKey(value.key) &&
     optionalString(value.yField)
+  );
+}
+
+function isCalculated(value: unknown) {
+  return (
+    value === undefined ||
+    (isRecord(value) &&
+      ["mean", "median", "min", "max"].includes(value.statistic as string) &&
+      isPopulation(value.population))
   );
 }
 
@@ -55,6 +76,7 @@ export function isChartAnnotation(value: unknown): value is ChartAnnotation {
     return (
       (value.axis === "x" || value.axis === "y") &&
       isFiniteNumber(value.value) &&
+      isCalculated(value.calculated) &&
       optionalString(value.label) &&
       (value.lineStyle === undefined ||
         value.lineStyle === "solid" ||
@@ -75,6 +97,20 @@ export function isChartAnnotation(value: unknown): value is ChartAnnotation {
       typeof value.lowerField === "string" &&
       typeof value.upperField === "string" &&
       typeof value.meaning === "string"
+    );
+  if (value.type === "region")
+    return (
+      (value.shape === "rect" || value.shape === "ellipse") &&
+      [value.x0, value.x1, value.y0, value.y1].every(isFiniteNumber) &&
+      optionalString(value.label)
+    );
+  if (value.type === "record-set")
+    return (
+      isStringList(value.keyFields) &&
+      Array.isArray(value.keys) &&
+      value.keys.every(isKey) &&
+      optionalString(value.label) &&
+      optionalString(value.yField)
     );
   return false;
 }

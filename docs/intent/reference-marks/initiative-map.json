@@ -8,7 +8,7 @@
     "last_updated": "2026-10-11",
     "summary": "Users can author and preserve meaningful labels, callouts, targets, intervals, events, regions, and record highlights on live charts.",
     "status": "active",
-    "next_action": "Start m3: coordinate rectangles/ellipses, saved record-set highlights, and declared calculated references."
+    "next_action": "Start m4: extend annotations to bar and row charts with aggregate identities, facet keys, and reconcile composition behavior."
   },
   "artifacts": {
     "intent_brief": {
@@ -698,13 +698,15 @@
       {
         "id": "m3",
         "title": "Highlights and derived references retain their meaning",
-        "status": "planned",
+        "status": "completed",
         "outcome": "Record sets, geometric regions, and scoped calculations have distinct filter behavior.",
         "proof": "Filter sets partially; remove keys; change the query winner; confirm no history steps from filtering.",
         "valid_intermediate_state": "Live annotations explain groups and calculated comparisons.",
         "rollback": "Remove the region or derived reference; fixed annotations remain valid.",
         "dependencies_introduced": [],
-        "evidence": []
+        "evidence": [
+          "Regions, saved record sets, calculated references, extreme callouts. Tests: resolve.test.ts (set vs region meaning, partial visibility counts, all vs filtered means, empty population, extreme winner changes), annotations.test.tsx (Saved records from selection survive clearing filters). Browser screenshots: bubble scatter mean moves 387.5 -> 425 under the Baseline filter while the region stays. pnpm check passed."
+        ]
       },
       {
         "id": "m4",

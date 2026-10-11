@@ -38,7 +38,7 @@ import {
   useGetColumnDataForIds,
   useGetColumnDataForMultipleIds,
 } from "../useGetColumnData";
-import { useGetLiveIds } from "../useGetLiveData";
+import { useGetAllIds, useGetLiveIds } from "../useGetLiveData";
 import { type LineChartSettings, DEFAULT_SERIES_SETTINGS } from "./definition";
 import { TimeSeriesChart } from "./TimeSeriesChart";
 
@@ -95,6 +95,14 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
     [liveIds, facetIds]
   );
   const liveXData = useGetColumnDataForIds(settings.xField, selectedIds);
+  // Every row this panel can draw, whatever the filters: what "all rows"
+  // calculations read.
+  const allIds = useGetAllIds(settings);
+  const panelIds = useMemo(() => {
+    if (!facetIds) return allIds;
+    const facet = new Set(facetIds);
+    return allIds.filter((id) => facet.has(id));
+  }, [allIds, facetIds]);
   const allSeriesData = useGetColumnDataForMultipleIds(settings.seriesField);
 
   // Get all series data using the new hook
@@ -378,7 +386,11 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
       plotWidth: innerWidth,
       plotHeight: innerHeight,
       xField: settings.xField,
+      yField: settings.seriesField.find(
+        (field) => !settings.seriesSettings[field]?.useRightAxis
+      ),
       visibleIds: selectedIds,
+      population: { all: panelIds, filtered: selectedIds },
       plotted: (id, attach) => {
         const field =
           attach.yField && settings.seriesField.includes(attach.yField)

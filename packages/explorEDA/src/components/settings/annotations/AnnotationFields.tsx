@@ -5,16 +5,22 @@ import {
   resolveRecord,
   type ColumnGetter,
 } from "@/lib/annotations/resolve";
-import type {
-  AnnotationYAxis,
-  BandAnnotation,
-  CalloutAnnotation,
-  ChartAnnotation,
-  IntervalAnnotation,
-  ReferenceLineAnnotation,
+import {
+  STATISTIC_NAMES,
+  type AnnotationPopulation,
+  type AnnotationStatistic,
+  type AnnotationYAxis,
+  type RecordSetAnnotation,
+  type RegionAnnotation,
+  type BandAnnotation,
+  type CalloutAnnotation,
+  type ChartAnnotation,
+  type IntervalAnnotation,
+  type ReferenceLineAnnotation,
 } from "@/lib/annotations/types";
 import { FieldSelector } from "../../FieldSelector";
 import { NumericInputEnter } from "../../NumericInputEnter";
+import { Button } from "../../ui/button";
 import { Label } from "../../ui/label";
 import { Switch } from "../../ui/switch";
 import { Choice, HeldInput, ValueInput } from "./annotationInputs";
@@ -39,6 +45,35 @@ const AXIS_OPTIONS = (context: AnnotationContext) => [
       : "Up the plot at an X value, such as a threshold.",
   },
 ];
+
+/** Which rows a calculation or pick reads. */
+function PopulationChoice({
+  value,
+  onChange,
+}: {
+  value: AnnotationPopulation;
+  onChange: (value: AnnotationPopulation) => void;
+}) {
+  return (
+    <Choice
+      label="Rows read"
+      value={value}
+      onChange={onChange}
+      options={[
+        {
+          value: "all",
+          label: "All rows",
+          help: "Every row the chart can draw. Selections in other charts don't change it.",
+        },
+        {
+          value: "filtered",
+          label: "Filtered rows",
+          help: "Only rows that pass the current filters, so it updates as the selection changes.",
+        },
+      ]}
+    />
+  );
+}
 
 /** The vertical axis a value reads on, when the chart has a right axis. */
 function YAxisChoice({
@@ -130,6 +165,11 @@ export function CalloutFields({
               ...callout,
               attach: { kind: "coordinate", x: 0, y: 0 },
             });
+          else if (kind === "query" && attach.kind !== "query")
+            onChange({
+              ...callout,
+              attach: { kind: "query", pick: "max", population: "filtered" },
+            });
         }}
         options={[
           {
@@ -147,9 +187,61 @@ export function CalloutFields({
             label: "Fixed point",
             help: "Stay at fixed X and Y values, whatever the rows do.",
           },
+          {
+            value: "query",
+            label: "Extreme",
+            help: context.records
+              ? "Follow whichever row has the largest or smallest value. The row can change as data or filters change."
+              : "This chart draws grouped values, not single records.",
+            disabled: !context.records && attach.kind !== "query",
+          },
         ]}
       />
-      {attach.kind === "record" ? (
+      {attach.kind === "query" ? (
+        <>
+          <span className="eda-setting-label">Pick</span>
+          <Choice
+            label="Pick"
+            value={attach.pick}
+            onChange={(pick) =>
+              onChange({ ...callout, attach: { ...attach, pick } })
+            }
+            options={[
+              {
+                value: "max",
+                label: "Largest",
+                help: "The row with the largest value.",
+              },
+              {
+                value: "min",
+                label: "Smallest",
+                help: "The row with the smallest value.",
+              },
+            ]}
+          />
+          {context.measureFields.length > 1 && (
+            <>
+              <span className="eda-setting-label">Of</span>
+              <FieldSelector
+                label=""
+                value={attach.field ?? context.measureFields[0]!}
+                fields={context.measureFields}
+                onChange={(field) =>
+                  field &&
+                  onChange({ ...callout, attach: { ...attach, field } })
+                }
+              />
+            </>
+          )}
+          <span className="eda-setting-label">Among</span>
+          <PopulationChoice
+            value={attach.population}
+            onChange={(population) =>
+              onChange({ ...callout, attach: { ...attach, population } })
+            }
+          />
+        </>
+      ) : attach.kind === "record" ? (
         <>
           <span className="eda-setting-label">Key field</span>
           <FieldSelector
@@ -268,13 +360,82 @@ export function ReferenceFields({
         onChange={(axis) => onChange({ ...reference, axis })}
         options={AXIS_OPTIONS(context)}
       />
-      <Label htmlFor={`${reference.id}-value`}>{date ? "Date" : "Value"}</Label>
-      <ValueInput
-        id={`${reference.id}-value`}
-        date={date}
-        value={reference.value}
-        onChange={(value) => onChange({ ...reference, value })}
-      />
+      {context.records && (
+        <>
+          <span className="eda-setting-label">Value from</span>
+          <Choice
+            label="Value from"
+            value={reference.calculated ? "calculated" : "fixed"}
+            onChange={(kind) =>
+              onChange({
+                ...reference,
+                calculated:
+                  kind === "calculated"
+                    ? { statistic: "mean", population: "all" }
+                    : undefined,
+              })
+            }
+            options={[
+              {
+                value: "fixed",
+                label: "Fixed",
+                help: "A value you type, which filters never move.",
+              },
+              {
+                value: "calculated",
+                label: "Calculated",
+                help: "A statistic of this axis's field over the rows you choose. Its label shows the result.",
+              },
+            ]}
+          />
+        </>
+      )}
+      {reference.calculated ? (
+        <>
+          <span className="eda-setting-label">Statistic</span>
+          <Choice
+            label="Statistic"
+            value={reference.calculated.statistic}
+            onChange={(statistic: AnnotationStatistic) =>
+              onChange({
+                ...reference,
+                calculated: { ...reference.calculated!, statistic },
+              })
+            }
+            options={(
+              Object.keys(STATISTIC_NAMES) as AnnotationStatistic[]
+            ).map((statistic) => ({
+              value: statistic,
+              label: { mean: "Mean", median: "Median", min: "Min", max: "Max" }[
+                statistic
+              ],
+              help: `The ${STATISTIC_NAMES[statistic].toLowerCase()} of the field on this axis.`,
+            }))}
+          />
+          <span className="eda-setting-label">Rows read</span>
+          <PopulationChoice
+            value={reference.calculated.population}
+            onChange={(population) =>
+              onChange({
+                ...reference,
+                calculated: { ...reference.calculated!, population },
+              })
+            }
+          />
+        </>
+      ) : (
+        <>
+          <Label htmlFor={`${reference.id}-value`}>
+            {date ? "Date" : "Value"}
+          </Label>
+          <ValueInput
+            id={`${reference.id}-value`}
+            date={date}
+            value={reference.value}
+            onChange={(value) => onChange({ ...reference, value })}
+          />
+        </>
+      )}
       <Label htmlFor={`${reference.id}-label`}>Label</Label>
       <HeldInput
         id={`${reference.id}-label`}
@@ -435,6 +596,128 @@ export function IntervalFields({
         value={interval.yAxis}
         onChange={(yAxis) => onChange({ ...interval, yAxis })}
       />
+    </div>
+  );
+}
+
+export function RegionFields({
+  annotation: region,
+  context,
+  onChange,
+}: FieldsProps<RegionAnnotation>) {
+  return (
+    <div className="eda-setting-grid">
+      <span className="eda-setting-label">Shape</span>
+      <Choice
+        label="Region shape"
+        value={region.shape}
+        onChange={(shape) => onChange({ ...region, shape })}
+        options={[
+          {
+            value: "rect",
+            label: "Rectangle",
+            help: "A box between two X values and two Y values.",
+          },
+          {
+            value: "ellipse",
+            label: "Ellipse",
+            help: "An ellipse inside the box between two X values and two Y values.",
+          },
+        ]}
+      />
+      <span className="eda-setting-label">
+        {context.xDate ? "Dates" : "X from, to"}
+      </span>
+      <div className="grid grid-cols-2 gap-2">
+        <ValueInput
+          aria-label="Region X start"
+          date={context.xDate}
+          value={region.x0}
+          onChange={(x0) => onChange({ ...region, x0 })}
+        />
+        <ValueInput
+          aria-label="Region X end"
+          date={context.xDate}
+          value={region.x1}
+          onChange={(x1) => onChange({ ...region, x1 })}
+        />
+      </div>
+      <span className="eda-setting-label">Y from, to</span>
+      <div className="grid grid-cols-2 gap-2">
+        <ValueInput
+          aria-label="Region Y start"
+          value={region.y0}
+          onChange={(y0) => onChange({ ...region, y0 })}
+        />
+        <ValueInput
+          aria-label="Region Y end"
+          value={region.y1}
+          onChange={(y1) => onChange({ ...region, y1 })}
+        />
+      </div>
+      <Label htmlFor={`${region.id}-label`}>Label</Label>
+      <HeldInput
+        id={`${region.id}-label`}
+        value={region.label ?? ""}
+        placeholder="What this region means"
+        onChange={(label) => onChange({ ...region, label: label || undefined })}
+      />
+      <YAxisChoice
+        context={context}
+        value={region.yAxis}
+        onChange={(yAxis) => onChange({ ...region, yAxis })}
+      />
+    </div>
+  );
+}
+
+export function RecordSetFields({
+  annotation: set,
+  context,
+  onChange,
+  onReplace,
+  replaceHelp,
+}: FieldsProps<RecordSetAnnotation> & {
+  /** Replaces the members with the rows the filters select now. */
+  onReplace?: () => void;
+  replaceHelp: string;
+}) {
+  return (
+    <div className="eda-setting-grid">
+      <span className="eda-setting-label">Records</span>
+      <div className="flex min-w-0 items-center gap-2 text-xs">
+        <span className="min-w-0 flex-1 truncate">
+          {set.keys.length.toLocaleString()} by {set.keyFields.join(", ")}
+        </span>
+        <Button
+          size="sm"
+          variant="outline"
+          className="h-7"
+          disabled={!onReplace}
+          tooltip={replaceHelp}
+          onClick={onReplace}
+        >
+          Use selection
+        </Button>
+      </div>
+      <Label htmlFor={`${set.id}-label`}>Label</Label>
+      <HeldInput
+        id={`${set.id}-label`}
+        value={set.label ?? ""}
+        placeholder="What these records share"
+        onChange={(label) => onChange({ ...set, label: label || undefined })}
+      />
+      {context.measureFields.length > 1 && (
+        <>
+          <span className="eda-setting-label">On series</span>
+          <FieldSelector
+            label=""
+            value={set.yField ?? context.measureFields[0]!}
+            fields={context.measureFields}
+            onChange={(yField) => yField && onChange({ ...set, yField })}
+          />
+        </>
+      )}
     </div>
   );
 }

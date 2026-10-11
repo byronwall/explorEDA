@@ -34,7 +34,37 @@ export interface CoordinateAttachment {
   y: number;
 }
 
-export type CalloutAttachment = RecordAttachment | CoordinateAttachment;
+/**
+ * Which rows a calculation reads. "all" is every row the chart can draw,
+ * whatever the interactive filters say; "filtered" follows the current
+ * selection. Both respect the chart's own row limits.
+ */
+export type AnnotationPopulation = "all" | "filtered";
+
+/**
+ * Whichever row currently has the largest or smallest value. Unlike a record
+ * attachment, its subject may change as rows or filters change, by design.
+ */
+export interface QueryAttachment {
+  kind: "query";
+  pick: "max" | "min";
+  /** The measure compared; the chart's y measure when unset. */
+  field?: string;
+  population: AnnotationPopulation;
+}
+
+export type CalloutAttachment =
+  | RecordAttachment
+  | CoordinateAttachment
+  | QueryAttachment;
+
+export type AnnotationStatistic = "mean" | "median" | "min" | "max";
+
+/** A value calculated from the chart's rows instead of typed in. */
+export interface CalculatedValue {
+  statistic: AnnotationStatistic;
+  population: AnnotationPopulation;
+}
 
 /** Which vertical axis a y value reads on, for charts with a right axis. */
 export type AnnotationYAxis = "left" | "right";
@@ -71,7 +101,10 @@ export interface CalloutAnnotation extends AnnotationBase {
 export interface ReferenceLineAnnotation extends AnnotationBase {
   type: "reference-line";
   axis: "x" | "y";
+  /** The fixed value; ignored while `calculated` is set. */
   value: number;
+  /** Calculate the value from the field on this axis instead. */
+  calculated?: CalculatedValue;
   label?: string;
   lineStyle?: "solid" | "dashed";
   yAxis?: AnnotationYAxis;
@@ -106,11 +139,41 @@ export interface IntervalAnnotation extends AnnotationBase {
   yAxis?: AnnotationYAxis;
 }
 
+/**
+ * An area of the plot in data units. It means "this region": filtering can
+ * change which marks fall inside it, unlike a record set.
+ */
+export interface RegionAnnotation extends AnnotationBase {
+  type: "region";
+  shape: "rect" | "ellipse";
+  x0: number;
+  x1: number;
+  y0: number;
+  y1: number;
+  label?: string;
+  yAxis?: AnnotationYAxis;
+}
+
+/**
+ * Saved records, each found by its key. It means "these records": membership
+ * never changes with filters or with where the records are drawn.
+ */
+export interface RecordSetAnnotation extends AnnotationBase {
+  type: "record-set";
+  keyFields: string[];
+  keys: AnnotationKeyValue[][];
+  label?: string;
+  /** The measure that places each record, as for a record callout. */
+  yField?: string;
+}
+
 export type ChartAnnotation =
   | CalloutAnnotation
   | ReferenceLineAnnotation
   | BandAnnotation
-  | IntervalAnnotation;
+  | IntervalAnnotation
+  | RegionAnnotation
+  | RecordSetAnnotation;
 export type ChartAnnotationType = ChartAnnotation["type"];
 
 export const ANNOTATION_TYPE_NAMES: Record<ChartAnnotationType, string> = {
@@ -118,6 +181,8 @@ export const ANNOTATION_TYPE_NAMES: Record<ChartAnnotationType, string> = {
   "reference-line": "Reference line",
   band: "Band",
   interval: "Supplied interval",
+  region: "Region",
+  "record-set": "Saved records",
 };
 
 /** Charts that can draw saved annotations. */
@@ -137,6 +202,18 @@ export function chartDrawsAnnotations(settings: {
 
 const AXIS_NAME = { x: "X", y: "Y" };
 
+export const STATISTIC_NAMES: Record<AnnotationStatistic, string> = {
+  mean: "Mean",
+  median: "Median",
+  min: "Minimum",
+  max: "Maximum",
+};
+
+export const POPULATION_NAMES: Record<AnnotationPopulation, string> = {
+  all: "all rows",
+  filtered: "filtered rows",
+};
+
 /** The words the list and readers use for an annotation. */
 export function annotationLabel(annotation: ChartAnnotation) {
   if (annotation.name?.trim()) return annotation.name.trim();
@@ -146,7 +223,9 @@ export function annotationLabel(annotation: ChartAnnotation) {
     case "reference-line":
       return (
         annotation.label?.trim() ||
-        `${AXIS_NAME[annotation.axis]} = ${annotation.value}`
+        (annotation.calculated
+          ? `${STATISTIC_NAMES[annotation.calculated.statistic]} of ${AXIS_NAME[annotation.axis]}`
+          : `${AXIS_NAME[annotation.axis]} = ${annotation.value}`)
       );
     case "band":
       return (
@@ -157,6 +236,16 @@ export function annotationLabel(annotation: ChartAnnotation) {
       return (
         annotation.meaning.trim() ||
         `${annotation.lowerField} to ${annotation.upperField}`
+      );
+    case "region":
+      return (
+        annotation.label?.trim() ||
+        (annotation.shape === "ellipse" ? "Ellipse" : "Rectangle")
+      );
+    case "record-set":
+      return (
+        annotation.label?.trim() ||
+        `${annotation.keys.length.toLocaleString()} saved records`
       );
   }
 }

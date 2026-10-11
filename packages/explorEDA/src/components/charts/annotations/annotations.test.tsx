@@ -187,3 +187,44 @@ it("adds a callout on the largest value and a target from the Notes tab", async 
     screen.getByRole("list", { name: "Annotations" }).children
   ).toHaveLength(2);
 });
+
+it("saves the selected rows by key and keeps them when the selection changes", async () => {
+  const { ChartSettingsContent } = await import("../../ChartSettingsContent");
+  const chart = {
+    ...scatterPlotDefinition.createDefaultSettings({ x: 0, y: 0, w: 6, h: 4 }),
+    xField: "x",
+    yField: "y",
+    filters: [{ type: "range" as const, field: "y", min: 25, max: 100 }],
+  };
+  const onStateChange = vi.fn<(state: SavedDataStructure) => void>();
+  let clearFilters = () => {};
+  function Settings() {
+    const charts = useDataLayer((s) => s.charts);
+    const updateChart = useDataLayer((s) => s.updateChart);
+    clearFilters = () => updateChart(chart.id, { filters: [] });
+    return <ChartSettingsContent settings={charts[0]!} />;
+  }
+  render(
+    <DataLayerProvider
+      data={rows}
+      charts={[chart]}
+      onStateChange={onStateChange}
+    >
+      <Settings />
+    </DataLayerProvider>
+  );
+  const notes = screen.getByRole("tab", { name: "Notes" });
+  fireEvent.mouseDown(notes);
+  fireEvent.click(notes);
+  fireEvent.click(await screen.findByRole("button", { name: "Saved records" }));
+  const saved = () =>
+    onStateChange.mock.calls.at(-1)![0].charts[0]!.annotations![0]!;
+  expect(saved()).toMatchObject({
+    type: "record-set",
+    keyFields: ["sample_id"],
+    keys: [["E-16"], ["E-17"]],
+  });
+  const { act } = await import("@testing-library/react");
+  act(() => clearFilters());
+  expect(saved()).toMatchObject({ keys: [["E-16"], ["E-17"]] });
+});

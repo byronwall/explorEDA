@@ -3,6 +3,7 @@ import type { IdType } from "@/providers/DataLayerProvider";
 import type { datum } from "@/types/ChartTypes";
 import type { ScaleDescriptor } from "@/components/charts/Axis/axisPlan";
 import {
+  calculate,
   projectAnnotations,
   resolveRecord,
   uniqueKeyFields,
@@ -14,7 +15,9 @@ import type {
   BandAnnotation,
   CalloutAnnotation,
   IntervalAnnotation,
+  RecordSetAnnotation,
   ReferenceLineAnnotation,
+  RegionAnnotation,
 } from "./types";
 
 type Row = Record<string, datum>;
@@ -341,5 +344,120 @@ describe("bands, intervals, and axes", () => {
       lowerField: "forecast_lower",
       upperField: "forecast_upper",
     });
+  });
+});
+
+describe("highlights and calculated references", () => {
+  const all = [0, 1, 2, 3];
+  const population = { all, filtered: [0, 1, 3] };
+  const withRows = (plottedSelected = (id: IdType) => id !== 2) => ({
+    ...frame(rows, (id) => ({
+      x: Number(rows[id as number]!.x) * 10,
+      y: 100 - Number(rows[id as number]!.y),
+      selected: plottedSelected(id),
+    })),
+    xField: "x",
+    yField: "y",
+    population,
+  });
+
+  it("keeps a saved set's members while a region keeps its bounds", () => {
+    const set: RecordSetAnnotation = {
+      id: "s",
+      type: "record-set",
+      keyFields: ["sample_id"],
+      keys: [["E-15"], ["E-17"], ["E-99"]],
+      label: "Odd runs",
+    };
+    const region: RegionAnnotation = {
+      id: "r",
+      type: "region",
+      shape: "ellipse",
+      x0: 2,
+      x1: 4,
+      y0: 0,
+      y1: 40,
+    };
+    const [saved, area] = projectAnnotations([set, region], withRows());
+    // E-17 is filtered out and E-99 no longer exists; E-15 still shows.
+    expect(saved).toMatchObject({
+      status: "shown",
+      points: [{ x: 10, y: 90 }],
+      counts: { total: 3, shown: 1, filtered: 1, missing: 1, ambiguous: 0 },
+    });
+    expect(area).toMatchObject({
+      status: "shown",
+      left: 20,
+      top: 60,
+      width: 20,
+      height: 40,
+    });
+    expect(
+      projectAnnotations(
+        [set],
+        withRows(() => false)
+      )[0]!.status
+    ).toBe("filtered");
+  });
+
+  it("calculates a reference from the population it names", () => {
+    const mean = (population: "all" | "filtered"): ReferenceLineAnnotation => ({
+      id: population,
+      type: "reference-line",
+      axis: "y",
+      value: 0,
+      calculated: { statistic: "mean", population },
+    });
+    const [allRows, filtered] = projectAnnotations(
+      [mean("all"), mean("filtered")],
+      withRows()
+    );
+    expect(allRows).toMatchObject({ status: "shown", value: 37.5 });
+    expect(filtered).toMatchObject({ status: "shown", value: 20 });
+    expect(calculate("median", "y", all, columns(rows).getColumn)).toBe(25);
+    expect(
+      projectAnnotations([mean("filtered")], {
+        ...withRows(),
+        population: { all, filtered: [] },
+      })[0]!.status
+    ).toBe("empty");
+  });
+
+  it("lets an extreme callout change subjects with the filters", () => {
+    const top: CalloutAnnotation = {
+      ...callout("unused"),
+      attach: { kind: "query", pick: "max", population: "filtered" },
+    };
+    expect(projectAnnotations([top], withRows())[0]).toMatchObject({
+      status: "shown",
+      x: 20,
+      y: 70,
+    });
+    expect(
+      projectAnnotations(
+        [{ ...top, attach: { ...top.attach, population: "all" } as never }],
+        withRows(() => true)
+      )[0]
+    ).toMatchObject({ status: "shown", x: 30, y: 10 });
+  });
+
+  it("validates the new kinds", () => {
+    expect(
+      isChartAnnotation({
+        id: "s",
+        type: "record-set",
+        keyFields: ["id"],
+        keys: [[1], ["a"]],
+      })
+    ).toBe(true);
+    expect(
+      isChartAnnotation({
+        id: "q",
+        type: "callout",
+        text: "",
+        attach: { kind: "query", pick: "max", population: "some" },
+        offset: { dx: 0, dy: 0 },
+      })
+    ).toBe(false);
   });
 });
