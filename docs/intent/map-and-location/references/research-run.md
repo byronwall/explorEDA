@@ -32,6 +32,8 @@ Run the Sleuth validator. Run the required repository check before opening a doc
 
 - Initial Sleuth validation passed with zero warnings.
 - Source packet comparison passed: 39 exact baseline files, five new planning files, zero mismatches.
-- Targeted tests have not run. The fresh checkout has no installed dependencies.
+- Installed the locked dependencies with pnpm 11.9.0 under Node 24.21.0.
+- Targeted map tests passed: two files, five tests. See local `tmp/map-location-handoff/map-tests.log`.
+- `pnpm check` passed the UI rule check and library build, then failed at the existing demo documentation gate. Eight assertions reported missing descriptions for `row.aggregateId` and `row.topN`. No application files changed in this branch. The full check did not reach its later type and test stages. See local `tmp/map-location-handoff/pnpm-check.log`.
 
 The screenshot of the submitted run is local evidence at `tmp/map-location-handoff/pro-submitted.jpg`. It is not part of the documentation commit.
