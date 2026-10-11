@@ -120,6 +120,11 @@ function aggregateValues(
   };
 }
 
+const MISSING_ID = "Missing ID";
+const CONFLICTING_ID = "Values differ for this ID";
+const REPEATED_ID = "Repeats an ID already counted";
+const IDENTITY_REASONS = new Set([MISSING_ID, CONFLICTING_ID, REPEATED_ID]);
+
 /**
  * Reduces one group of source rows and records why any row was left out.
  * With an entity field, each entity counts once and contributes one measure
@@ -165,7 +170,7 @@ export function summarizeGroup(
       const entityKey = row[entityField];
       if (entityKey === undefined || entityKey === null) {
         identityIssues.push({ reason: "missing-id" });
-        contributors.push(contributor(row, false, "Missing ID"));
+        contributors.push(contributor(row, false, MISSING_ID));
         continue;
       }
       const key = categoryKey(entityKey);
@@ -184,9 +189,7 @@ export function summarizeGroup(
         reason: "conflicting-values",
       });
       contributors.push(
-        ...rows.map((row) =>
-          contributor(row, false, "Values differ for this ID")
-        )
+        ...rows.map((row) => contributor(row, false, CONFLICTING_ID))
       );
     }
   }
@@ -203,7 +206,7 @@ export function summarizeGroup(
     rows.forEach((row, position) =>
       contributors.push(
         included && position > 0
-          ? contributor(row, false, "Repeats an ID already counted")
+          ? contributor(row, false, REPEATED_ID)
           : contributor(row, included, exclusionByIndex.get(index))
       )
     );
@@ -249,4 +252,37 @@ export function calculateGroupedAggregate(
   })) satisfies AggregateResultRow[];
 
   return { spec, rows: resultRows, sourceRowCount: rows.length };
+}
+
+/**
+ * One value for several groups together, such as a chart's Other row. It
+ * reduces the groups' rows again rather than combining their values, so an
+ * average weighs every row and an ID shared by two groups counts once.
+ */
+export function poolAggregateRows(
+  rows: readonly AggregateResultRow[],
+  spec: Pick<AggregateSpec, "aggregation" | "measureField" | "entityField">
+): Pick<
+  AggregateResultRow,
+  "value" | "rowCount" | "contributors" | "identityIssues"
+> {
+  const inputs: AggregateInputRow[] = [];
+  const rawInputs: Record<number, datum> = {};
+  const exclusionReasons: Record<number, string> = {};
+  for (const row of rows) {
+    for (const item of row.contributors) {
+      inputs.push({
+        __ID: item.sourceId,
+        ...(spec.measureField ? { [spec.measureField]: item.input } : {}),
+        ...(spec.entityField ? { [spec.entityField]: item.entityKey } : {}),
+      });
+      if ("rawInput" in item) rawInputs[item.sourceId] = item.rawInput;
+      // Identity reasons depend on the pooled rows, so they are worked out again.
+      if (item.exclusionReason && !IDENTITY_REASONS.has(item.exclusionReason)) {
+        exclusionReasons[item.sourceId] = item.exclusionReason;
+      }
+    }
+  }
+  inputs.sort((a, b) => a.__ID - b.__ID);
+  return summarizeGroup(inputs, spec, rawInputs, exclusionReasons);
 }

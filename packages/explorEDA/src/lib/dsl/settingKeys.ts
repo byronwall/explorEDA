@@ -40,6 +40,7 @@ function keys<T extends ChartType>() {
 /** Every saved setting of every chart type, reachable as a text path. */
 export const CHART_SETTING_KEYS: Record<ChartType, readonly string[]> = {
   row: keys<"row">()([
+    "aggregateId",
     "colorField",
     "colorScaleId",
     "facet",
@@ -54,6 +55,7 @@ export const CHART_SETTING_KEYS: Record<ChartType, readonly string[]> = {
     "style",
     "subtitle",
     "title",
+    "topN",
     "xAxis",
     "xAxisLabel",
     "xGridLines",

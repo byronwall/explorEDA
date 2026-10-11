@@ -123,7 +123,8 @@ export const coverageFeatures = [
     id: "chart:row",
     label: "Row chart",
     family: "Chart types",
-    description: "Compare category counts in horizontal rows.",
+    description:
+      "Rank category counts or a grouped summary, such as revenue, in horizontal rows.",
     required: true,
     status: "supported",
     chartType: "row",

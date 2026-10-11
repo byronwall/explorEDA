@@ -128,6 +128,10 @@ export interface RowChartSettings extends BaseChartSettings {
   type: "row";
   minRowHeight: number;
   maxRowHeight: number;
+  /** Rank a grouped summary of `field` instead of counting rows. */
+  aggregateId?: string;
+  /** Show this many categories and gather the rest in Other; unset fits the height. */
+  topN?: number;
 }
 
 export type ChartSettings =

@@ -390,7 +390,12 @@ function isChart(value: unknown): boolean {
   switch (value.type) {
     case "row":
       return (
-        isFiniteNumber(value.minRowHeight) && isFiniteNumber(value.maxRowHeight)
+        isFiniteNumber(value.minRowHeight) &&
+        isFiniteNumber(value.maxRowHeight) &&
+        (value.aggregateId === undefined ||
+          typeof value.aggregateId === "string") &&
+        (value.topN === undefined ||
+          (Number.isInteger(value.topN) && (value.topN as number) > 0))
       );
     case "bar":
       return (
