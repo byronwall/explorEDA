@@ -149,7 +149,8 @@ function isMark(value: unknown) {
       isNumber(value.opacity) &&
       value.opacity > 0 &&
       value.opacity <= 1 &&
-      (value.stroke === undefined || isString(value.stroke))
+      (value.stroke === undefined || isString(value.stroke)) &&
+      (value.colorScaleId === undefined || isString(value.colorScaleId))
     );
   if (value.type === "stack")
     return (
@@ -287,6 +288,8 @@ function isUnitElement(value: Value) {
     isNumber(label.width) &&
     isNumber(label.fontSize) &&
     (label.valueCalcId === undefined || isString(label.valueCalcId)) &&
+    (label.every === undefined ||
+      (isNumber(label.every) && label.every >= 1)) &&
     typeof value.axis === "boolean" &&
     (value.axisTitles === undefined ||
       (isRecord(value.axisTitles) &&

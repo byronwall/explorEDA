@@ -2,8 +2,10 @@
 id: page-honestly-other-example-is-better
 label: Honestly, other example is better
 type: page
-status: planned
+status: implemented
 parent: page-examples-to-add
+metadata:
+  implementation: "Added the climate-ridgeline example after the BBC graphic: 84 yearly ridges of daily temperature differences shaded through a diverging scale, every fifth year named, El Niño years and 2023 called out. The daily values are illustrative, shaped after ERA5."
 images:
   - id: daac45f0-aa3f-4dad-b844-d1574bc57425
     src: /api/projects/untitled-project/images/page-honestly-other-example-is-better/daac45f0-aa3f-4dad-b844-d1574bc57425.png

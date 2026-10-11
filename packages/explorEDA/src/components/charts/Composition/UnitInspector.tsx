@@ -544,6 +544,22 @@ export function UnitProperties({
               </select>
             </>
           )}
+          {unit.label.show && (
+            <NumberSetting
+              label="Name every"
+              min={1}
+              max={100}
+              value={unit.label.every ?? 1}
+              onChange={(every) =>
+                onChange({
+                  label: {
+                    ...unit.label,
+                    every: every > 1 ? every : undefined,
+                  },
+                })
+              }
+            />
+          )}
           {unit.label.show && unit.repeat.arrangement === "rows" && (
             <NumberSetting
               label="Label width"
@@ -1357,6 +1373,37 @@ function DensityFields({
         <span className="text-muted-foreground">
           {mark.bandwidth ? "in field units" : "0 = span over 12"}
         </span>
+      </div>
+      <Label htmlFor={`${id}-shade`}>Shade by</Label>
+      <div className="eda-composition-scale-select">
+        <select
+          id={`${id}-shade`}
+          className="eda-composition-select"
+          value={mark.colorScaleId ?? ""}
+          onChange={(event) =>
+            onChange({ colorScaleId: event.target.value || undefined })
+          }
+        >
+          <option value="">One fill</option>
+          {scales
+            .filter((scale) => scale.kind === "value")
+            .map((scale) => (
+              <option key={scale.id} value={scale.id}>
+                {scale.name} along x
+              </option>
+            ))}
+        </select>
+        {mark.colorScaleId && (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-7 px-2"
+            tooltip="Open this scale's settings below. Its colors run low to high across the x axis, or around zero when it has a middle color."
+            onClick={() => onEditScale(mark.colorScaleId!)}
+          >
+            Edit
+          </Button>
+        )}
       </div>
       <ColorSetting
         label="Fill"

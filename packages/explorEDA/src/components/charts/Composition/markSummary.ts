@@ -107,6 +107,8 @@ export function describeMark(
       break;
     case "density":
       parts.push(`${scaleName(mark.xScaleId) ?? "?"} · ${mark.height} height`);
+      if (mark.colorScaleId)
+        parts.push(`shaded by ${scaleName(mark.colorScaleId) ?? "?"}`);
       break;
   }
   if (isXyMark(mark) && mark.frameId) parts.push("in an inset");

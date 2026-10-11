@@ -1121,6 +1121,16 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId: "climate-ridgeline",
+    intent:
+      "Overlap 84 yearly densities of daily temperatures, shaded along x through a diverging scale, with every fifth year named.",
+    features: {
+      "chart:composition": "shown",
+      "chart:scatter": "shown",
+      "chart:bar": "shown",
+    },
+  },
+  {
     exampleId: "tax-slope",
     intent:
       "Join each country's two readings with a line named at both ends, colored by whether the share rose or fell.",

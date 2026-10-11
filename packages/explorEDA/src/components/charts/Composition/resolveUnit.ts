@@ -778,9 +778,7 @@ export function resolveUnit(
     });
   }
 
-  const sliceStarts: number[] = [];
   subsets.forEach((subset, index) => {
-    sliceStarts[index] = nodes.length;
     const cell = tiles?.get(subset.key) ?? {
       row: Math.floor(index / columns),
       column: index % columns,
@@ -818,7 +816,16 @@ export function resolveUnit(
       (calc) => calc.id === unit.label.valueCalcId
     );
     const labelValue = labelCalc && evaluateCalc(labelCalc, data, subset);
-    if (unit.label.show && labelValue && labelLeft) {
+    // A ridge rises from its baseline, so its name sits on that line;
+    // other rows center their names.
+    const labelRowY = (bounds: Bounds) =>
+      densities.length
+        ? bounds.y + bounds.height - 3
+        : bounds.y + bounds.height / 2 + labelSize * 0.35;
+    // Rows too dense to name each can name every nth.
+    const named =
+      unit.label.show && index % Math.max(1, unit.label.every ?? 1) === 0;
+    if (named && labelValue && labelLeft) {
       nodes.push({
         type: "text",
         key: `${unit.id}:${subset.key}:value`,
@@ -828,7 +835,7 @@ export function resolveUnit(
         lines: [
           {
             text: labelValue.text,
-            y: frame.y + frame.height / 2 + labelSize * 0.35,
+            y: labelRowY(frame),
           },
         ],
         fontSize: labelSize,
@@ -837,7 +844,7 @@ export function resolveUnit(
         anchor: "end",
       });
     }
-    if (unit.label.show && subset.label) {
+    if (named && subset.label) {
       nodes.push({
         type: "text",
         key: `${unit.id}:${subset.key}:label`,
@@ -850,9 +857,7 @@ export function resolveUnit(
               labelValue && !labelLeft
                 ? `${subset.label} · ${labelValue.text}`
                 : subset.label,
-            y: labelLeft
-              ? frame.y + frame.height / 2 + labelSize * 0.35
-              : y + labelSize,
+            y: labelLeft ? labelRowY(frame) : y + labelSize,
           },
         ],
         fontSize: labelSize,
@@ -1133,6 +1138,7 @@ export function resolveUnit(
         mark.height === "instance"
           ? curve.peak
           : (densityMax.get(mark.id) ?? curve.peak);
+      const shade = scale(mark.colorScaleId ?? "");
       nodes.push(
         ...densityNodes(
           unit,
@@ -1141,7 +1147,8 @@ export function resolveUnit(
           curve,
           axis,
           frame,
-          peak
+          peak,
+          shade?.kind === "value" && !override?.accent ? shade : undefined
         )
       );
     });
@@ -1312,19 +1319,18 @@ export function resolveUnit(
     });
   });
 
-  // Rows that overlap through a negative gap draw bottom first, so the
-  // upper ridge sits in front of the one below it.
+  // Rows that overlap through a negative gap draw top first, so each lower
+  // ridge sits in front of the one above it, as a ridgeline reads; their
+  // names go over every ridge.
+  const isRowLabel = (node: SceneNode) =>
+    node.type === "text" &&
+    (node.key.endsWith(":label") || node.key.endsWith(":value"));
   const ordered =
     unit.repeat.gap < 0 && instances.length > 1
-      ? instances
-          .map((_, index) =>
-            nodes.slice(
-              sliceStarts[index],
-              sliceStarts[index + 1] ?? nodes.length
-            )
-          )
-          .reverse()
-          .flat()
+      ? [
+          ...nodes.filter((node) => !isRowLabel(node)),
+          ...nodes.filter(isRowLabel),
+        ]
       : nodes;
   return { nodes: ordered, bounds: unionBounds(instances, unit), instances };
 }
@@ -2526,9 +2532,11 @@ function densityNodes(
   curve: DensityCurve,
   axis: NumericAxis,
   frame: Bounds,
-  peak: number
+  peak: number,
+  shade?: ValueScale
 ): SceneNode[] {
   if (!curve.rowIds.length || peak <= 0) return [];
+  const gradient = shade ? densityGradient(shade, axis, frame) : undefined;
   const baseline = frame.y + frame.height;
   const run = curve.xs.map((x, index) => ({
     x: numericPixel(axis, x),
@@ -2546,6 +2554,7 @@ function densityNodes(
       fill: mark.fill,
       fillOpacity: mark.opacity,
       stroke: mark.stroke,
+      gradient,
       band: {
         instanceKey: subset.key,
         markId: mark.id,
@@ -2558,6 +2567,37 @@ function densityNodes(
       },
     },
   ];
+}
+
+/**
+ * The color of an x value on a density's shading scale: its place between
+ * the axis ends, or its signed share of the larger end when the scale
+ * diverges around zero.
+ */
+export function shadeColor(
+  scale: ValueScale,
+  value: number,
+  domain: [number, number]
+) {
+  if (scale.center !== undefined)
+    return valueColorSigned(
+      scale,
+      value,
+      Math.max(Math.abs(domain[0]), Math.abs(domain[1]))
+    );
+  const span = domain[1] - domain[0];
+  return valueColor(scale, span > 0 ? (value - domain[0]) / span : 0);
+}
+
+/** A gradient across the frame that shades a density by its x values. */
+function densityGradient(scale: ValueScale, axis: NumericAxis, frame: Bounds) {
+  const steps = 16;
+  const stops = Array.from({ length: steps + 1 }, (_, index) => {
+    const offset = index / steps;
+    const value = axis.domain[0] + offset * (axis.domain[1] - axis.domain[0]);
+    return { offset, color: shadeColor(scale, value, axis.domain) };
+  });
+  return { x1: frame.x, x2: frame.x + frame.width, stops };
 }
 
 const orderFormat = new Intl.NumberFormat("en-US", {

@@ -581,6 +581,12 @@ export interface DensityMark {
   fill: string;
   opacity: number;
   stroke?: string;
+  /**
+   * A value scale that shades the fill along x by the field's value, such
+   * as cold to warm: low to high across the x scale, or around zero when the
+   * scale diverges. The plain fill when unset.
+   */
+  colorScaleId?: string;
 }
 
 export type MarkDefinition =
@@ -624,8 +630,11 @@ export function markScaleIds(mark: MarkDefinition): string[] {
       ? [mark.yScaleId, mark.valueScaleId]
       : [mark.yScaleId];
   if (mark.type === "stack") return mark.xScaleId ? [mark.xScaleId] : [];
-  if (mark.type === "density" || mark.type === "horizon")
-    return [mark.xScaleId];
+  if (mark.type === "density")
+    return mark.colorScaleId
+      ? [mark.xScaleId, mark.colorScaleId]
+      : [mark.xScaleId];
+  if (mark.type === "horizon") return [mark.xScaleId];
   if (mark.type === "waffle" || mark.type === "bar") return [];
   if (mark.type === "band") return [mark.xScaleId, mark.yScaleId];
   return mark.yScaleId ? [mark.xScaleId, mark.yScaleId] : [mark.xScaleId];
@@ -791,6 +800,8 @@ export interface UnitElement extends ElementBase {
     fontSize: number;
     /** A calculation shown beside each repeat's name. */
     valueCalcId?: string;
+    /** Name every nth repeat in order, such as every fifth year; every one unless set. */
+    every?: number;
   };
   /** Draw position labels under the units. */
   axis: boolean;

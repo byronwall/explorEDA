@@ -2,7 +2,12 @@ import { area as shapeArea, curveMonotoneX, line as shapeLine } from "d3-shape";
 import type { ReactNode } from "react";
 import type { ArtboardView } from "./artboardZoom";
 import { COMPOSITION_FONT } from "./compositionTypes";
-import type { Bounds, CompositionScene, SceneNode } from "./resolveComposition";
+import type {
+  AreaNode,
+  Bounds,
+  CompositionScene,
+  SceneNode,
+} from "./resolveComposition";
 
 /** A stable ID for a clip box, shared by every node clipped to it. */
 export function clipId(clip: Bounds) {
@@ -46,6 +51,9 @@ export function CompositionSvg({
   // Nodes group by element, so moving one element is one transform.
   const groups: { elementId: string; nodes: SceneNode[] }[] = [];
   const clips = new Map<string, Bounds>();
+  const gradients = scene.nodes.filter(
+    (node): node is AreaNode => node.type === "area" && Boolean(node.gradient)
+  );
   for (const node of scene.nodes) {
     const last = groups[groups.length - 1];
     if (last?.elementId === node.elementId) last.nodes.push(node);
@@ -68,8 +76,27 @@ export function CompositionSvg({
       fontFamily={COMPOSITION_FONT}
       {...props}
     >
-      {clips.size > 0 && (
+      {(clips.size > 0 || gradients.length > 0) && (
         <defs>
+          {gradients.map((node) => (
+            <linearGradient
+              key={node.key}
+              id={gradientId(node.key)}
+              gradientUnits="userSpaceOnUse"
+              x1={node.gradient!.x1}
+              x2={node.gradient!.x2}
+              y1={0}
+              y2={0}
+            >
+              {node.gradient!.stops.map((stop) => (
+                <stop
+                  key={stop.offset}
+                  offset={stop.offset}
+                  stopColor={stop.color}
+                />
+              ))}
+            </linearGradient>
+          ))}
           {[...clips].map(([id, clip]) => (
             <clipPath key={id} id={id}>
               <rect
@@ -195,7 +222,7 @@ function SceneNodeView({ node }: { node: SceneNode }) {
                 return `${upper.join("")}${lower.join("")}Z`;
               })
               .join("")}
-            fill={node.fill}
+            fill={node.gradient ? `url(#${gradientId(node.key)})` : node.fill}
             fillOpacity={node.fillOpacity}
             stroke="none"
             opacity={node.opacity}
@@ -291,6 +318,11 @@ function SceneNodeView({ node }: { node: SceneNode }) {
         />
       );
   }
+}
+
+/** A stable, URL-safe ID for an area's gradient. */
+function gradientId(key: string) {
+  return `eda-gradient-${key.replace(/[^a-zA-Z0-9_-]/g, "_")}`;
 }
 
 /** A monotone cubic curve through points, which never overshoots them. */

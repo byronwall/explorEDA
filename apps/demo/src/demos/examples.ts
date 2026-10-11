@@ -31,6 +31,7 @@ import {
   covidCompareDashboard,
   electionsDashboard,
   lincolnRidgelineDashboard,
+  climateRidgelineDashboard,
   taxSlopeDashboard,
   titanicWaffleDashboard,
   unemploymentStreamDashboard,
@@ -90,6 +91,7 @@ import {
   ScatterChart,
   ShoppingCart,
   Tags,
+  Thermometer,
   ThermometerSun,
   Trophy,
   Wine,
@@ -902,6 +904,21 @@ export const examples: ExampleData[] = [
     icon: Mountain,
     data: "/datasets/lincoln-weather.csv",
     savedData: lincolnRidgelineDashboard,
+  },
+  {
+    id: "climate-ridgeline",
+    title: "More days at the highest temperatures",
+    description:
+      "Eighty-four overlapping ridges, one per year since 1940: the spread of each year's daily global temperatures against the 1991–2020 average, shaded from colder to warmer, with El Niño years and 2023 called out.",
+    dataset: { rows: "30,660 days", fields: 3, source: "Synthetic" },
+    shows: [
+      "Shaded density ridges",
+      "Diverging fill along x",
+      "Every fifth year named",
+    ],
+    icon: Thermometer,
+    data: "/datasets/daily-global-temperature.csv",
+    savedData: climateRidgelineDashboard,
   },
   {
     id: "tax-slope",

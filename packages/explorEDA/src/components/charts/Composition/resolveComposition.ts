@@ -25,6 +25,7 @@ import {
   numericPixel,
   readNumber,
   periodKey,
+  shadeColor,
   valueColor,
   valueColorSigned,
   valueShare,
@@ -139,6 +140,12 @@ export interface AreaNode extends NodeBase {
   stroke?: string;
   /** Smooth curves along both edges instead of straight runs. */
   curve?: "smooth";
+  /** A horizontal gradient that replaces the fill, from x1 to x2 in artboard pixels. */
+  gradient?: {
+    x1: number;
+    x2: number;
+    stops: { offset: number; color: string }[];
+  };
   band: BandDatum;
 }
 
@@ -687,8 +694,18 @@ function resolveRampLegend(
   let max = 0;
   let min = Infinity;
   let changes = false;
+  // A density shaded by this scale keys its x axis's extent.
+  let shaded: [number, number] | undefined;
   for (const element of definition.elements) {
     if (element.kind !== "unit") continue;
+    if (
+      element.marks.some(
+        (mark) => mark.type === "density" && mark.colorScaleId === scale.id
+      )
+    ) {
+      const domain = units.get(element.id)?.instances[0]?.xy?.x.domain;
+      if (domain) shaded = domain;
+    }
     const markIds = new Set(
       element.marks
         .filter(
@@ -714,6 +731,13 @@ function resolveRampLegend(
     }
   }
   if (min === Infinity) min = 0;
+  if (shaded && max === 0) {
+    min = shaded[0];
+    max =
+      scale.center !== undefined
+        ? Math.max(Math.abs(shaded[0]), Math.abs(shaded[1]))
+        : shaded[1];
+  }
   const format = (value: number) =>
     changes ? `${Math.round(value * 100)}%` : formatCalcValue(value, "number");
   const diverging = scale.center !== undefined;
@@ -729,9 +753,11 @@ function resolveRampLegend(
     const value = diverging
       ? -max + share * 2 * max
       : min + share * (max - min);
-    const fill = diverging
-      ? valueColorSigned(scale, value, max)
-      : valueColor(scale, valueShare(scale, value, max));
+    const fill = shaded
+      ? shadeColor(scale, value, shaded)
+      : diverging
+        ? valueColorSigned(scale, value, max)
+        : valueColor(scale, valueShare(scale, value, max));
     nodes.push({
       type: "rect",
       key: `${legend.id}:${index}:swatch`,
