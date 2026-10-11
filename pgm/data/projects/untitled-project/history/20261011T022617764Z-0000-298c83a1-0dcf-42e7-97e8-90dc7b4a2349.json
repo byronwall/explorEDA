@@ -1,0 +1,14 @@
+{
+  "id": "298c83a1-0dcf-42e7-97e8-90dc7b4a2349",
+  "kind": "node.status.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:9ee3f9",
+    "label": "Agent token ...9ee3f9"
+  },
+  "createdAt": "2026-10-11T02:26:17.764Z",
+  "summary": "Changed \"Dragging the annotation around does not update until release\" status to implemented.",
+  "nodeIds": [
+    "page-dragging-the-annotation-around-does-not-update-until-release"
+  ]
+}

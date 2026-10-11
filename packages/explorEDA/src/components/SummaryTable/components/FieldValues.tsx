@@ -44,7 +44,7 @@ const shareLabel = (part: number, whole: number) => {
   return `${Math.round(share * 100)}%`;
 };
 
-const FILTERED_LABEL = "After chart filters";
+const FILTERED_LABEL = "After filters";
 const ALL_LABEL = "All rows";
 
 type Range = "core" | "full";
@@ -598,7 +598,7 @@ function Histogram({
               `. ${count(hiddenAll)} far ${
                 hiddenAll === 1 ? "outlier sits" : "outliers sit"
               } outside this range${
-                filtered ? `, ${count(hiddenFiltered)} after chart filters` : ""
+                filtered ? `, ${count(hiddenFiltered)} after filters` : ""
               }.`}
           </span>
         )}
@@ -904,7 +904,7 @@ export function FieldValues({
         )}
         {noFilteredRows && (
           <p className="eda-dist-note">
-            No rows remain after chart filters. Bars show all rows.
+            No rows remain after filters. Bars show all rows.
           </p>
         )}
       </div>

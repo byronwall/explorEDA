@@ -1,0 +1,16 @@
+{
+  "id": "7913d582-ea5d-49fd-bce9-53dd05cd25f0",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:48:09.204Z",
+  "summary": "Added 1 images to \"Yield gap is really nice\".",
+  "nodeIds": [
+    "page-yield-gap-is-really-nice"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "2f93f18b-cc92-4f03-97b6-8db9ddcf2c39"
+  }
+}

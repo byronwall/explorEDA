@@ -66,7 +66,44 @@ export type CompositionElement =
   | TextElement
   | UnitElement
   | GuideElement
-  | AnnotationElement;
+  | AnnotationElement
+  | LegendElement;
+
+/**
+ * A key for a mark's categories: the colors of a point mark's color field,
+ * a stack's categories, or a summary's change ramp ends. Entries sit in a
+ * row or a column from the element's position.
+ */
+export interface LegendElement extends ElementBase {
+  kind: "legend";
+  unitId: string;
+  markId: string;
+  /** A value scale to key instead of a mark's categories: its ramp with the drawn extent's ends. */
+  scaleId?: string;
+  direction: "row" | "column";
+  fontSize: number;
+  color: string;
+  /** A row wraps to the next line past this width; the artboard's edge unless set. */
+  width?: number;
+  /**
+   * A key of chosen marks instead of categories or a ramp: each entry draws
+   * a mark's glyph, such as a band's fill or a muted path, beside its label.
+   */
+  items?: LegendItem[];
+}
+
+/** One entry of a key legend: a mark's glyph and what it stands for. */
+export interface LegendItem {
+  markId: string;
+  label: string;
+  /**
+   * The part of the mark to show: its own color, its muted series, a
+   * summary's quartile band or median, or a strip's missing cell.
+   */
+  part?: LegendPart;
+}
+
+export type LegendPart = "main" | "muted" | "band" | "median" | "missing";
 
 export type CompositionElementKind = CompositionElement["kind"];
 
@@ -115,11 +152,54 @@ export interface ValueScale {
   name: string;
   domain: ScaleDomain;
   transform: "linear" | "sqrt" | "log";
-  /** The low and high ends of the color ramp. */
-  colors: [string, string];
+  /**
+   * The color ramp, low to high. Two colors blend end to end; more colors
+   * blend through each stop, evenly spaced unless `stops` places them.
+   */
+  colors: string[];
+  /** Where each color sits along the ramp, from 0 to 1, in the same order. */
+  stops?: number[];
+  /**
+   * A middle color makes the scale diverge around zero: negative values run
+   * from this color toward the low end, positive values toward the high
+   * end, each by their share of the largest absolute value.
+   */
+  center?: string;
+  /**
+   * A fixed end for the ramp, in the value's units: magnitudes past it take
+   * the end color, so one extreme value does not wash out the rest.
+   */
+  max?: number;
 }
 
-export type CompositionScale = PositionScale | ValueScale;
+/**
+ * Maps a numeric field along a frame's width or height. Point and path marks
+ * bind one numeric scale to x and one to y, so a circle and a path vertex for
+ * the same row always land on the same spot.
+ */
+export interface NumericScale {
+  id: string;
+  kind: "numeric";
+  name: string;
+  field: string;
+  /** Shared: every repeat uses one extent. Per unit: each fits its own rows. */
+  domain: ScaleDomain;
+  /** Extend the extent to include zero. */
+  zero: boolean;
+  /** Round the extent out to tidy tick values. */
+  nice: boolean;
+  /** Fixed limits replace the data's extent when set. */
+  min?: number;
+  max?: number;
+  /** Log spacing for values that span orders of magnitude; linear unless set. */
+  transform?: "linear" | "log";
+  /** Which ticks to label: tidy steps, only the two ends, or none. */
+  ticks?: NumericTicks;
+}
+
+export type NumericTicks = "auto" | "ends" | "none";
+
+export type CompositionScale = PositionScale | ValueScale | NumericScale;
 export type ScaleDomain = "shared" | "instance";
 
 export type MarkShape = "rect" | "circle";
@@ -130,7 +210,8 @@ export type MarkAggregation = "count" | "sum" | "average";
  * Draws one glyph per position bin in each repeated unit, from the rows of
  * that unit and bin. The definition is edited once for every repeat.
  */
-export interface MarkDefinition {
+export interface StripMark {
+  type: "strip";
   id: string;
   name: string;
   shape: MarkShape;
@@ -143,9 +224,541 @@ export interface MarkDefinition {
   fill: string;
   /** Space between neighboring glyphs, in artboard pixels. */
   inset: number;
+  /**
+   * Draw a cell in this color for a bin whose rows have no value, such as a
+   * year a state did not report. A bin with no rows at all stays blank, so
+   * "not reported" and "no record" read differently.
+   */
+  missing?: string;
+  /** Write each cell's value inside it, in ink that reads on its color, as in a heat table. */
+  valueLabels?: boolean;
+  /** Text for a missing cell when values are written, such as NA. */
+  missingLabel?: string;
 }
 
-export type RepeatArrangement = "rows" | "columns" | "grid";
+/**
+ * Draws one circle per row at numeric x and y. Points share their scales with
+ * a path in the same frame, so the path runs through its points.
+ */
+export interface PointMark {
+  type: "point";
+  id: string;
+  name: string;
+  /** The inset the mark draws in; the main frame when unset. */
+  frameId?: string;
+  xScaleId: string;
+  /** Without a y scale, points sit on the frame's middle line: a dot row. */
+  yScaleId?: string;
+  /** Orders the rows for `first`/`last` picks and every-nth labels; row order otherwise. */
+  orderField?: string;
+  radius: number;
+  fill: string;
+  /** Label each point with this field's value. */
+  labelField?: string;
+  /** Label every nth point in order; 1 labels all, 0 labels none. */
+  labelEvery: number;
+  /** Label only the points whose label matches one of these comma-separated values. */
+  labelValues?: string;
+  /** Size each point's area by this field, up to `radius` for the largest. */
+  sizeField?: string;
+  /** The smallest radius a sized point draws at, so tiny values stay visible; 1 unless set. */
+  minRadius?: number;
+  /** Which rows draw: every row, or only the first, last, lowest, or highest. */
+  show?: PointShow;
+  /** Pick `show` within each value of this field, such as the last point of every country. */
+  seriesField?: string;
+  /** Series in focus take the fill; the rest take the muted fill. */
+  focus?: MarkFocus;
+  mutedFill?: string;
+  /** The rows the mark draws from: the repeat's own, or every row in the graphic. */
+  population?: MarkPopulation;
+  /** Fill each point by this field's value, through `colors` in label order across the graphic. */
+  colorField?: string;
+  /** One color per category of `colorField`, cycling when there are more. */
+  colors?: string[];
+  /** Fill each point by this numeric field's value, through `valueScaleId`. */
+  valueField?: string;
+  valueScaleId?: string;
+  /**
+   * Plot each row's rank among the rows at the same x, by the y field,
+   * instead of its value: largest first or smallest first. Rank 1 sits at
+   * the top of the frame.
+   */
+  rank?: RankOrder;
+  /**
+   * On a dot row, push points off the middle line so none overlap, each
+   * as close to the line as it can get: a beeswarm.
+   */
+  spread?: "swarm";
+}
+
+export type RankOrder = "desc" | "asc";
+
+export type PointShow = "all" | "first" | "last" | "min" | "max";
+
+/**
+ * Connects a repeat's rows in the order of one field, such as year, into one
+ * path. A row with a missing x, y, or order value breaks the path there.
+ */
+export interface PathMark {
+  type: "path";
+  id: string;
+  name: string;
+  /** The inset the mark draws in; the main frame when unset. */
+  frameId?: string;
+  xScaleId: string;
+  /** Without a y scale, the path runs along the frame's middle line. */
+  yScaleId?: string;
+  orderField: string;
+  stroke: string;
+  strokeWidth: number;
+  /** One path per value of this field within the repeat, such as a country. */
+  seriesField?: string;
+  /**
+   * Which series draw in the stroke color; the rest take the muted color
+   * and sit underneath. Repeat: the series whose value equals the repeat's
+   * key. Values: a comma-separated list.
+   */
+  focus?: MarkFocus;
+  mutedStroke?: string;
+  /**
+   * The rows the mark draws from: the repeat's own, or every row in the
+   * graphic, so each panel can show the whole field behind its own series.
+   */
+  population?: MarkPopulation;
+  /** Name the path at its start, its end, or both, with its series or the repeat. */
+  labels?: PathLabels;
+  /** Add the y value at that end to each label. */
+  labelValue?: boolean;
+  /** Stroke each path by this field's value, through `colors` in label order across the graphic. */
+  colorField?: string;
+  /** One color per category of `colorField`, cycling when there are more. */
+  colors?: string[];
+  /**
+   * Stroke each path by a numeric field's value on its first row, through a
+   * value scale, such as a job's share of women from mostly men to mostly women.
+   */
+  valueField?: string;
+  valueScaleId?: string;
+  /** Join the points with a smooth curve rather than straight runs. */
+  curve?: MarkCurve;
+  /** Plot ranks at each x by the y field instead of values, as a bump chart. */
+  rank?: RankOrder;
+}
+
+export type PathLabels = "none" | "start" | "end" | "both";
+
+/**
+ * One bar per row from a start field to an end field along x: a term, a
+ * project phase, a stay. Spans fill the frame's height, so a unit repeated
+ * as rows reads as a timeline with one lane per repeat.
+ */
+export interface SpanMark {
+  type: "span";
+  id: string;
+  name: string;
+  /** The inset the mark draws in; the main frame when unset. */
+  frameId?: string;
+  xScaleId: string;
+  /** Spans fill the frame's height and ignore y; the field exists so the mark fits the x–y family. */
+  yScaleId?: string;
+  startField: string;
+  endField: string;
+  /** A row without an end runs to the frame's right edge; otherwise it is left out. */
+  openEnd: boolean;
+  fill: string;
+  /** Fill each span by this field's value, through `colors` in label order across the graphic. */
+  colorField?: string;
+  colors?: string[];
+  /** Write this field's value inside spans at least `labelMinWidth` wide. */
+  labelField?: string;
+  labelMinWidth: number;
+  /** Space above and below each span, in artboard pixels. */
+  inset: number;
+}
+
+export type MarkPopulation = "repeat" | "composition";
+
+export type MarkFocus = { kind: "repeat" } | { kind: "values"; values: string };
+
+/** The muted color for series outside a mark's focus. */
+export const MUTED_MARK = "#c9ccd1";
+
+/** True when a series value is in the mark's focus; every series without one. */
+export function isFocused(
+  focus: MarkFocus | undefined,
+  series: string | undefined,
+  repeatKey: string
+) {
+  if (!focus) return true;
+  if (series === undefined) return true;
+  if (focus.kind === "repeat") return series === repeatKey;
+  return focus.values
+    .split(",")
+    .map((value) => value.trim().toLowerCase())
+    .filter(Boolean)
+    .includes(series.trim().toLowerCase());
+}
+
+/**
+ * Fills the area between two fields along x, in the order of one field: a
+ * supplied interval such as a forecast's 10th to 90th percentile. Several
+ * bands layer in drawing order, so the widest goes first. A row with a
+ * missing bound breaks the band there.
+ */
+export interface BandMark {
+  type: "band";
+  id: string;
+  name: string;
+  /** The inset the mark draws in; the main frame when unset. */
+  frameId?: string;
+  xScaleId: string;
+  yScaleId: string;
+  orderField: string;
+  lowerField: string;
+  upperField: string;
+  fill: string;
+  /** From 0.05 to 1. */
+  opacity: number;
+}
+
+/**
+ * Summarizes a measure for each group in a repeat: the quartiles as a band
+ * joined across the groups, and the median as a marked path. The groups sit
+ * side by side across the frame, in label order, so the first is the prior
+ * cohort and the last the latest. Each repeat's change in median from the
+ * first group to the last colors its markers through a value scale.
+ */
+export interface SummaryMark {
+  type: "summary";
+  id: string;
+  name: string;
+  /** The cohort field, such as a year; one group per value. */
+  groupField: string;
+  /** The numeric field summarized in each group. */
+  measureField: string;
+  /** A numeric scale for the measure; it spans the quartiles drawn. */
+  yScaleId: string;
+  /** Colors the median markers by the repeat's change in median; a diverging scale fits. */
+  valueScaleId?: string;
+  /** The quartile band's fill. */
+  fill: string;
+  opacity: number;
+  /** Which parts draw: the quartile band, the line joining the medians, the median dots. All unless set. */
+  parts?: SummaryParts;
+}
+
+export interface SummaryParts {
+  band: boolean;
+  line: boolean;
+  points: boolean;
+}
+
+/**
+ * Stacks the categories of a repeat into one column, from the bottom up.
+ * Each segment's share is its count or sum over the repeat's total across
+ * every category, so the denominator is explicit: filtering the population
+ * recomputes it, while selecting a category only fades the others.
+ */
+export interface StackMark {
+  type: "stack";
+  id: string;
+  name: string;
+  categoryField: string;
+  aggregation: "count" | "sum";
+  measureField?: string;
+  /** Every column spans the frame as 100%; otherwise heights follow each repeat's total against the largest. */
+  normalize: boolean;
+  /** Category order from the bottom: by label, largest total first, or as they first appear in the rows. */
+  order: "label" | "total" | "first";
+  /** One color per category in that order, cycling when there are more categories. */
+  colors: string[];
+  /** Label segments at least this tall (or wide, across), in artboard pixels. */
+  labelMinHeight: number;
+  /** What a segment's label says: its category and share, or the share alone. */
+  labelContent?: "both" | "share";
+  /** Stack upward in a column, or left to right across a bar. */
+  direction?: "up" | "across";
+  /** Join each category's edge from one repeat to the next with a thin line. */
+  connect?: boolean;
+  /** A hand-colored look: uneven edges and grain, as in a painted chart. */
+  texture?: "hand";
+  /** Space between segments. */
+  inset: number;
+  /**
+   * A numeric x scale spreads the stack across the frame: rows group by
+   * their x value, categories stack at each x, and each category draws as
+   * one area across x instead of a segment in a single column.
+   */
+  xScaleId?: string;
+  /**
+   * Where a spread stack rests when heights follow totals: on zero, centered
+   * on the frame's middle, or on the wiggle baseline that keeps the layers'
+   * slopes smallest, as a streamgraph.
+   */
+  baseline?: StackBaseline;
+  /** Join the layers' edges with smooth curves rather than straight runs. */
+  curve?: MarkCurve;
+}
+
+export type StackBaseline = "zero" | "center" | "wiggle";
+export type MarkCurve = "linear" | "smooth";
+
+/**
+ * One bar per repeat, or per category of a field, whose length along x is an
+ * aggregate of the repeat's rows: a bar chart when the unit repeats as rows.
+ * Lengths share one axis across repeats, from zero to the longest bar or to
+ * a fixed length. One category can draw leftward from the baseline, as the
+ * two sexes of a population pyramid.
+ */
+export interface BarMark {
+  type: "bar";
+  id: string;
+  name: string;
+  aggregation: MarkAggregation;
+  measureField?: string;
+  /** One bar per value of this field within the repeat, in an order shared across repeats. */
+  categoryField?: string;
+  /** The category drawn leftward from the baseline, mirroring the rest. */
+  mirror?: string;
+  /** Category order: by label, or largest total first across the whole graphic. */
+  order: "label" | "total";
+  /** One color per category in that order, cycling when there are more. */
+  colors: string[];
+  /** The length of the axis in the measure; the longest drawn bar, rounded out, when unset. */
+  max?: number;
+  /** Space between a repeat's bars, in artboard pixels. */
+  inset: number;
+  /** Label a bar's value at its end when the bar is at least this long, in pixels; 0 never. */
+  labelMinWidth: number;
+}
+
+/**
+ * A grid of cells for a repeat's rows: one cell per row, one per `each`
+ * rows, or a hundred cells of shares. Cells fill row by row from one
+ * corner, grouped by a category field in an order shared across repeats,
+ * so each category reads as a block and the blocks compare across repeats.
+ */
+export interface WaffleMark {
+  type: "waffle";
+  id: string;
+  name: string;
+  categoryField: string;
+  /** Rows per cell; 1 draws every row as its own cell. */
+  each: number;
+  /** Draw a hundred cells of shares instead of counted cells. */
+  normalize: boolean;
+  /** Cells per row across the frame; the cell size follows from the frame's width. */
+  columns: number;
+  /** Space between cells, in artboard pixels. */
+  gap: number;
+  /** Fill from the top left downward, or the bottom left upward. */
+  from: "top" | "bottom";
+  /** Category order: by label, or largest total first across the whole graphic. */
+  order: "label" | "total";
+  /** One color per category in that order, cycling when there are more. */
+  colors: string[];
+  /**
+   * A numeric scale that bins the rows by their whole value along x, with
+   * one small waffle per bin standing on the baseline: a unit histogram,
+   * such as countries counted by yield gap.
+   */
+  xScaleId?: string;
+}
+
+/**
+ * A horizon chart layer: a measure across x in each repeat, read from a
+ * baseline and cut into bands of equal height that stack over one another,
+ * so a short frame holds a wide range. Values below the baseline mirror
+ * upward in a second color, deeper bands in deeper tints.
+ */
+export interface HorizonMark {
+  type: "horizon";
+  id: string;
+  name: string;
+  xScaleId: string;
+  /** The measure drawn across x. */
+  field: string;
+  /** Orders the rows along x; usually the x scale's own field. */
+  orderField: string;
+  /** What the measure is read from: zero, the repeat's first value, or its mean. */
+  baseline: "zero" | "first" | "mean";
+  /** Draw the change from the baseline as a share of it, such as a price's growth. */
+  relative: boolean;
+  /** Bands stacked over one another; each takes the frame's full height. */
+  bands: number;
+  /** The band height follows the largest magnitude across every repeat, or each repeat's own. */
+  domain: ScaleDomain;
+  /** The deepest tint above the baseline, and below it. */
+  positive: string;
+  negative: string;
+}
+
+/**
+ * The distribution of a numeric field in each repeat, as a smoothed density
+ * curve along x filled down to the frame's baseline. Densities share one
+ * height so repeats compare, or each fills its own frame. Rows that overlap
+ * through a negative repeat gap make a ridgeline.
+ */
+export interface DensityMark {
+  type: "density";
+  id: string;
+  name: string;
+  /** The numeric scale along x; its field is the one summarized. */
+  xScaleId: string;
+  /** Kernel width in the field's units; the data's spread over 12 when unset. */
+  bandwidth?: number;
+  /** Shared: the tallest density across repeats fills the frame. Per unit: each repeat's peak does. */
+  height: ScaleDomain;
+  fill: string;
+  opacity: number;
+  stroke?: string;
+  /**
+   * A value scale that shades the fill along x by the field's value, such
+   * as cold to warm: low to high across the x scale, or around zero when the
+   * scale diverges. The plain fill when unset.
+   */
+  colorScaleId?: string;
+}
+
+export type MarkDefinition =
+  | StripMark
+  | PointMark
+  | PathMark
+  | BandMark
+  | SpanMark
+  | SummaryMark
+  | StackMark
+  | WaffleMark
+  | BarMark
+  | HorizonMark
+  | DensityMark;
+
+/** A categorical palette for stacks, distinct and readable on paper. */
+export const STACK_COLORS = [
+  "#4e79a7",
+  "#f28e2b",
+  "#e15759",
+  "#76b7b2",
+  "#59a14f",
+  "#edc948",
+  "#b07aa1",
+  "#ff9da7",
+  "#9c755f",
+  "#bab0ac",
+  "#1f77b4",
+  "#8c564b",
+  "#17becf",
+  "#bcbd22",
+  "#7f7f7f",
+];
+export type MarkType = MarkDefinition["type"];
+
+/** The scales a mark reads, by ID. */
+export function markScaleIds(mark: MarkDefinition): string[] {
+  if (mark.type === "strip") return [mark.positionScaleId, mark.valueScaleId];
+  if (mark.type === "summary")
+    return mark.valueScaleId
+      ? [mark.yScaleId, mark.valueScaleId]
+      : [mark.yScaleId];
+  if (mark.type === "stack") return mark.xScaleId ? [mark.xScaleId] : [];
+  if (mark.type === "density")
+    return mark.colorScaleId
+      ? [mark.xScaleId, mark.colorScaleId]
+      : [mark.xScaleId];
+  if (mark.type === "horizon") return [mark.xScaleId];
+  if (mark.type === "waffle") return mark.xScaleId ? [mark.xScaleId] : [];
+  if (mark.type === "bar") return [];
+  if (mark.type === "band") return [mark.xScaleId, mark.yScaleId];
+  const shade =
+    (mark.type === "point" || mark.type === "path") && mark.valueScaleId
+      ? [mark.valueScaleId]
+      : [];
+  return mark.yScaleId
+    ? [mark.xScaleId, mark.yScaleId, ...shade]
+    : [mark.xScaleId, ...shade];
+}
+
+/**
+ * Marks that draw in an x–y frame: they name numeric scales, can sit in an
+ * inset, and can be converted among one another. Every other mark type is
+ * either strip-based or builds its own axis.
+ */
+export function isXyMark(
+  mark: MarkDefinition
+): mark is PointMark | PathMark | BandMark | SpanMark {
+  return (
+    mark.type === "point" ||
+    mark.type === "path" ||
+    mark.type === "band" ||
+    mark.type === "span"
+  );
+}
+
+/** True when a mark's colors stand for the values of a category field, so a legend can list them. */
+export function markHasCategories(mark: MarkDefinition): boolean {
+  switch (mark.type) {
+    case "stack":
+    case "waffle":
+      return true;
+    case "bar":
+      return Boolean(mark.categoryField);
+    case "point":
+    case "path":
+    case "span":
+      return Boolean(mark.colorField);
+    default:
+      return false;
+  }
+}
+
+/** The fields a mark reads, beyond its scales. */
+export function markFields(mark: MarkDefinition): string[] {
+  switch (mark.type) {
+    case "strip":
+      return mark.measureField ? [mark.measureField] : [];
+    case "point":
+      return [
+        mark.orderField,
+        mark.labelField,
+        mark.colorField,
+        mark.seriesField,
+        mark.sizeField,
+        mark.valueField,
+      ].filter((field): field is string => Boolean(field));
+    case "path":
+      return [mark.orderField, mark.colorField, mark.valueField].filter(
+        (field): field is string => Boolean(field)
+      );
+    case "band":
+      return [mark.orderField, mark.lowerField, mark.upperField];
+    case "span":
+      return [
+        mark.startField,
+        mark.endField,
+        mark.colorField,
+        mark.labelField,
+      ].filter((field): field is string => Boolean(field));
+    case "summary":
+      return [mark.groupField, mark.measureField];
+    case "stack":
+      return mark.measureField
+        ? [mark.categoryField, mark.measureField]
+        : [mark.categoryField];
+    case "waffle":
+      return [mark.categoryField];
+    case "bar":
+      return [mark.measureField, mark.categoryField].filter(
+        (field): field is string => Boolean(field)
+      );
+    case "horizon":
+      return [mark.field, mark.orderField];
+    case "density":
+      return [];
+  }
+}
+
+export type RepeatArrangement = "rows" | "columns" | "grid" | "tiles";
 
 /** Splits rows into subsets and draws the unit once for each. */
 export interface RepeatRule {
@@ -154,16 +767,74 @@ export interface RepeatRule {
   arrangement: RepeatArrangement;
   /** Units per row in a grid. */
   columns: number;
+  /**
+   * For tiles: a field holding each subset's cell as "row,column", counted
+   * from the top left, such as a state's place on a tile map. A subset
+   * without an address goes below the grid.
+   */
+  tileField?: string;
   gap: number;
-  order: "count" | "label";
+  /** Most rows first, A–Z by label, or by a per-repeat calculation's value. */
+  order: RepeatOrder;
+  /** The calculation whose value orders the repeats, for the value order. */
+  orderCalcId?: string;
+  /** Ascending unless set. */
+  direction?: "asc" | "desc";
   /** Most units to draw, in order. */
   limit: number;
+  /** Comma-separated subset values not to repeat, such as a national total drawn as a comparison. */
+  skip?: string;
+  /**
+   * A per-repeat calculation that sizes each repeat along the arrangement:
+   * row heights, or column widths, in proportion to its value, keeping the
+   * unit's total extent. Grids and tiles keep one size.
+   */
+  weightCalcId?: string;
+}
+
+export type RepeatOrder = "count" | "label" | "value";
+
+/**
+ * A display window on a frame: only rows whose field falls between the
+ * bounds draw there, and a numeric scale on that field spans the bounds.
+ * It is not a filter: calculations and other frames still see every row.
+ */
+export interface FrameWindow {
+  field: string;
+  /** Bounds as the field's text, such as a date; an open end spans the data. */
+  min?: string;
+  max?: string;
+}
+
+/**
+ * A smaller frame inside a repeat, placed from the main frame's top-left
+ * corner, with its own window: an overview beside a recent-window detail.
+ * Marks name the inset they draw in; scales are referenced as usual.
+ */
+export interface InsetFrame {
+  id: string;
+  name: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  window?: FrameWindow;
+  /** Draw tick labels inside the inset. */
+  axis: boolean;
+  /** Paper behind the inset, so it reads over the main frame's marks. */
+  background?: string;
+  /** Draw a thin border around the inset; on unless set to false. */
+  outline?: boolean;
 }
 
 /** A chart template: a frame, its marks, and the rule that repeats it. */
 export interface UnitElement extends ElementBase {
   kind: "unit";
   frame: { width: number; height: number };
+  /** A display window on the main frame. */
+  window?: FrameWindow;
+  /** Smaller frames inside each repeat, drawn after the main frame's marks. */
+  insets?: InsetFrame[];
   /** Each repeat's subset name, beside a row or above a column. */
   label: {
     show: boolean;
@@ -171,14 +842,41 @@ export interface UnitElement extends ElementBase {
     fontSize: number;
     /** A calculation shown beside each repeat's name. */
     valueCalcId?: string;
+    /** Name every nth repeat in order, such as every fifth year; every one unless set. */
+    every?: number;
+    /**
+     * Writes the calculation's magnitude with a sign's own text and color,
+     * such as +14R in red and +6D in blue for a difference between parties.
+     */
+    valueSigns?: { positive: ValueSign; negative: ValueSign };
+    /** Shows the calculation in a column after the frame, tinted, under a header. */
+    valueColumn?: { width: number; header?: string; fill?: string };
   };
   /** Draw position labels under the units. */
   axis: boolean;
+  /** Titles naming what each numeric axis measures, under x and beside y. */
+  axisTitles?: { x?: string; y?: string };
   marks: MarkDefinition[];
   repeat: RepeatRule;
 }
 
-export type CalcAggregation = "count" | "sum" | "average" | "min" | "max";
+/** How a signed calculation reads on one side of zero. */
+export interface ValueSign {
+  prefix: string;
+  suffix: string;
+  color: string;
+}
+
+export type CalcAggregation =
+  | "count"
+  | "sum"
+  | "average"
+  | "min"
+  | "max"
+  | "first"
+  | "last"
+  | "change"
+  | "difference";
 
 /**
  * One value from the data. Population and filter policy are separate
@@ -190,6 +888,13 @@ export interface CompositionCalculation {
   name: string;
   aggregation: CalcAggregation;
   field?: string;
+  /**
+   * Orders the rows for first, last, change, and difference: the field's
+   * value in the first row, in the last row, the change from first to last
+   * as a share of the first, or the plain difference last minus first. Row
+   * order when unset.
+   */
+  orderField?: string;
   /** Each repeat's own rows, or every row in the composition. */
   population: "repeat" | "composition";
   filters: "follow" | "ignore";
@@ -209,6 +914,27 @@ export interface GuideElement extends ElementBase {
   value: GuideValue;
   label: string;
   color: string;
+  /** A vertical rule at an x value, or a horizontal rule at a numeric y value. */
+  axis?: "x" | "y";
+  /** Tint the frame on one side of the rule, such as a projection period. */
+  shade?: "none" | "after" | "before";
+  /** Comma-separated repeat values the rule draws in; every repeat unless set. */
+  repeats?: string;
+}
+
+/** The repeats a guide draws in: those its `repeats` list names, or all. */
+export function guideRepeats<T extends { key: string }>(
+  guide: Pick<GuideElement, "repeats">,
+  instances: T[]
+): T[] {
+  const wanted = (guide.repeats ?? "")
+    .split(",")
+    .map((value) => value.trim().toLowerCase())
+    .filter(Boolean);
+  if (!wanted.length) return instances;
+  return instances.filter((instance) =>
+    wanted.includes(instance.key.trim().toLowerCase())
+  );
 }
 
 /** Where an annotation attaches. */
@@ -216,15 +942,25 @@ export type AnnotationAnchor =
   /** A fixed point on the page: the element's x and y. */
   | { kind: "page" }
   /** A point in one repeat's frame, as fractions of its width and height. */
-  | { kind: "frame"; unitId: string; instanceKey: string; fx: number; fy: number }
+  | {
+      kind: "frame";
+      unitId: string;
+      instanceKey: string;
+      fx: number;
+      fy: number;
+    }
   /** A glyph chosen from the data, which the annotation follows as data change. */
   | {
       kind: "data";
       unitId: string;
       instanceKey: string;
       markId: string;
-      pick: "max" | "min" | "first" | "last";
+      pick: AnchorPick;
+      /** The glyph whose label equals this, for the `at` pick, such as a year. */
+      at?: string;
     };
+
+export type AnchorPick = "max" | "min" | "first" | "last" | "at";
 
 /**
  * Text attached to the page, a frame, or a data mark. For frame and data
@@ -262,14 +998,39 @@ export function createEmptyComposition(): CompositionDefinition {
 export function normalizeComposition(
   definition: CompositionDefinition
 ): CompositionDefinition {
-  return definition.scales && definition.calculations && definition.overrides
-    ? definition
-    : {
-        ...definition,
-        scales: definition.scales ?? [],
-        calculations: definition.calculations ?? [],
-        overrides: definition.overrides ?? [],
-      };
+  // Marks saved before point and path marks existed are strips.
+  const untyped = definition.elements.some(
+    (element) =>
+      element.kind === "unit" &&
+      element.marks.some((mark) => !(mark as Partial<MarkDefinition>).type)
+  );
+  if (
+    definition.scales &&
+    definition.calculations &&
+    definition.overrides &&
+    !untyped
+  )
+    return definition;
+  return {
+    ...definition,
+    elements: untyped
+      ? definition.elements.map((element) =>
+          element.kind === "unit"
+            ? {
+                ...element,
+                marks: element.marks.map((mark) =>
+                  (mark as Partial<MarkDefinition>).type
+                    ? mark
+                    : ({ ...mark, type: "strip" } as StripMark)
+                ),
+              }
+            : element
+        )
+      : definition.elements,
+    scales: definition.scales ?? [],
+    calculations: definition.calculations ?? [],
+    overrides: definition.overrides ?? [],
+  };
 }
 
 const TEXT_DEFAULTS: Record<
@@ -335,7 +1096,10 @@ export function createTextElement(
   };
 }
 
-export function newElementId(definition: CompositionDefinition, prefix: string) {
+export function newElementId(
+  definition: CompositionDefinition,
+  prefix: string
+) {
   const ids = new Set(definition.elements.map((element) => element.id));
   let index = 1;
   while (ids.has(`${prefix}-${index}`)) index += 1;
@@ -435,6 +1199,7 @@ export function createUnitElement(
     axis: true,
     marks: [
       {
+        type: "strip",
         id: "mark-1",
         name: "Squares",
         shape: "rect",
@@ -455,6 +1220,144 @@ export function createUnitElement(
     },
   };
   return { definition: { ...definition, scales }, element };
+}
+
+export function newMarkId(unit: Pick<UnitElement, "marks">) {
+  const ids = new Set(unit.marks.map((mark) => mark.id));
+  let index = 1;
+  while (ids.has(`mark-${index}`)) index += 1;
+  return `mark-${index}`;
+}
+
+/** Finds the numeric scale on a field, or adds one, and returns both. */
+export function ensureNumericScale(
+  definition: CompositionDefinition,
+  field: string
+): { definition: CompositionDefinition; scale: NumericScale } {
+  const existing = definition.scales.find(
+    (scale): scale is NumericScale =>
+      scale.kind === "numeric" && scale.field === field
+  );
+  if (existing) return { definition, scale: existing };
+  const scale: NumericScale = {
+    id: newScaleId(definition, "n"),
+    kind: "numeric",
+    name: field,
+    field,
+    domain: "shared",
+    zero: false,
+    nice: true,
+  };
+  return {
+    definition: { ...definition, scales: [...definition.scales, scale] },
+    scale,
+  };
+}
+
+/**
+ * A new x–y unit draws a path through the rows in the order of one numeric
+ * field, with a point on every row: a connected scatterplot. It takes the
+ * first numeric field as the order and x, and the next as y.
+ */
+export function createXyUnitElement(
+  definition: CompositionDefinition,
+  fields: FieldChoice[]
+): { definition: CompositionDefinition; element: UnitElement } | undefined {
+  const numeric = fields.filter((field) => field.dataType === "numeric");
+  // A sequence field such as year orders the path; the other two are x and y.
+  const order =
+    numeric.find((field) =>
+      /year|date|time|index|order|seq/i.test(field.name)
+    ) ?? numeric[0];
+  const rest = numeric.filter((field) => field !== order);
+  const xField = rest[0] ?? order;
+  const yField = rest[1] ?? rest[0] ?? order;
+  if (!order || !xField || !yField || numeric.length < 2) return undefined;
+  const withX = ensureNumericScale(definition, xField.name);
+  const withY = ensureNumericScale(withX.definition, yField.name);
+  const margin = 32;
+  const bottom = definition.elements.reduce(
+    (max, element) =>
+      element.kind === "text" && element.role !== "note"
+        ? Math.max(max, element.y + Math.round(element.fontSize * 1.3))
+        : element.kind === "unit"
+          ? Math.max(max, element.y + element.frame.height)
+          : max,
+    margin
+  );
+  // Room on the left for y-axis labels and below for x-axis labels.
+  const axisGutter = 56;
+  const element: UnitElement = {
+    id: newElementId(definition, "unit"),
+    kind: "unit",
+    name: uniqueName(definition, "X–Y unit"),
+    x: margin + axisGutter,
+    y: bottom + 24,
+    frame: {
+      width: definition.artboard.width - margin * 2 - axisGutter,
+      height: Math.max(
+        120,
+        definition.artboard.height - bottom - 24 - margin - 40
+      ),
+    },
+    label: { show: false, width: 0, fontSize: 12 },
+    axis: true,
+    marks: [
+      {
+        type: "path",
+        id: "mark-1",
+        name: "Path",
+        xScaleId: withX.scale.id,
+        yScaleId: withY.scale.id,
+        orderField: order.name,
+        stroke: INK,
+        strokeWidth: 1.5,
+      },
+      {
+        type: "point",
+        id: "mark-2",
+        name: "Points",
+        xScaleId: withX.scale.id,
+        yScaleId: withY.scale.id,
+        orderField: order.name,
+        radius: 3.5,
+        fill: INK,
+        labelField: order.name,
+        labelEvery: 0,
+      },
+    ],
+    repeat: {
+      arrangement: "rows",
+      columns: 3,
+      gap: 6,
+      order: "count",
+      limit: 24,
+    },
+  };
+  return { definition: withY.definition, element };
+}
+
+export function newInsetId(unit: UnitElement) {
+  const ids = new Set((unit.insets ?? []).map((inset) => inset.id));
+  let index = 1;
+  while (ids.has(`inset-${index}`)) index += 1;
+  return `inset-${index}`;
+}
+
+/** A new inset sits in the main frame's top-right corner at a third of its size. */
+export function createInset(unit: UnitElement): InsetFrame {
+  const width = Math.round(unit.frame.width * 0.36);
+  const height = Math.round(unit.frame.height * 0.36);
+  return {
+    id: newInsetId(unit),
+    name: `Inset ${(unit.insets?.length ?? 0) + 1}`,
+    x: unit.frame.width - width - 8,
+    y: 8,
+    width,
+    height,
+    axis: false,
+    background: PAPER,
+  };
 }
 
 export function newCalculationId(definition: CompositionDefinition) {
@@ -481,12 +1384,37 @@ export function createGuideElement(
   };
 }
 
+export function createLegendElement(
+  definition: CompositionDefinition,
+  unit: UnitElement
+): LegendElement {
+  const mark =
+    unit.marks.find(
+      (item) =>
+        item.type === "stack" || (item.type === "point" && item.colorField)
+    ) ?? unit.marks[0];
+  return {
+    id: newElementId(definition, "legend"),
+    kind: "legend",
+    name: uniqueName(definition, "Legend"),
+    x: unit.x,
+    y: Math.max(8, unit.y - 28),
+    unitId: unit.id,
+    markId: mark?.id ?? "",
+    direction: "row",
+    fontSize: 11,
+    color: INK,
+  };
+}
+
 export function createAnnotationElement(
   definition: CompositionDefinition,
   unit: UnitElement | undefined,
   instanceKey: string | undefined
 ): AnnotationElement {
-  const mark = unit?.marks[0];
+  // A path has no glyphs to follow, so prefer a strip or point mark.
+  const mark =
+    unit?.marks.find((item) => item.type !== "path") ?? unit?.marks[0];
   const base = {
     id: newElementId(definition, "note"),
     kind: "annotation" as const,
@@ -498,7 +1426,10 @@ export function createAnnotationElement(
   if (unit && mark && instanceKey !== undefined)
     return {
       ...base,
-      text: "Busiest month: {label} ({value})",
+      text:
+        mark.type === "point"
+          ? "Highest point: {label} ({x}, {y})"
+          : "Busiest month: {label} ({value})",
       x: 14,
       y: -20,
       anchor: {

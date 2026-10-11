@@ -1,0 +1,1310 @@
+Name,Class,Sex,Age,Age group,Embarked,Fare,Fate
+"Allen, Miss. Elisabeth Walton",First class,Female,29,Adult,Southampton,211.3375,Survived
+"Allison, Master. Hudson Trevor",First class,Male,0.92,Child,Southampton,151.55,Survived
+"Allison, Miss. Helen Loraine",First class,Female,2,Child,Southampton,151.55,Died
+"Allison, Mr. Hudson Joshua Creighton",First class,Male,30,Adult,Southampton,151.55,Died
+"Allison, Mrs. Hudson J C (Bessie Waldo Daniels)",First class,Female,25,Adult,Southampton,151.55,Died
+"Anderson, Mr. Harry",First class,Male,48,Adult,Southampton,26.55,Survived
+"Andrews, Miss. Kornelia Theodosia",First class,Female,63,Adult,Southampton,77.9583,Survived
+"Andrews, Mr. Thomas Jr",First class,Male,39,Adult,Southampton,0,Died
+"Appleton, Mrs. Edward Dale (Charlotte Lamson)",First class,Female,53,Adult,Southampton,51.4792,Survived
+"Artagaveytia, Mr. Ramon",First class,Male,71,Adult,Cherbourg,49.5042,Died
+"Astor, Col. John Jacob",First class,Male,47,Adult,Cherbourg,227.525,Died
+"Astor, Mrs. John Jacob (Madeleine Talmadge Force)",First class,Female,18,Adult,Cherbourg,227.525,Survived
+"Aubart, Mme. Leontine Pauline",First class,Female,24,Adult,Cherbourg,69.3,Survived
+"Barber, Miss. Ellen ""Nellie""",First class,Female,26,Adult,Southampton,78.85,Survived
+"Barkworth, Mr. Algernon Henry Wilson",First class,Male,80,Adult,Southampton,30,Survived
+"Baumann, Mr. John D",First class,Male,,Unknown,Southampton,25.925,Died
+"Baxter, Mr. Quigg Edmond",First class,Male,24,Adult,Cherbourg,247.5208,Died
+"Baxter, Mrs. James (Helene DeLaudeniere Chaput)",First class,Female,50,Adult,Cherbourg,247.5208,Survived
+"Bazzani, Miss. Albina",First class,Female,32,Adult,Cherbourg,76.2917,Survived
+"Beattie, Mr. Thomson",First class,Male,36,Adult,Cherbourg,75.2417,Died
+"Beckwith, Mr. Richard Leonard",First class,Male,37,Adult,Southampton,52.5542,Survived
+"Beckwith, Mrs. Richard Leonard (Sallie Monypeny)",First class,Female,47,Adult,Southampton,52.5542,Survived
+"Behr, Mr. Karl Howell",First class,Male,26,Adult,Cherbourg,30,Survived
+"Bidois, Miss. Rosalie",First class,Female,42,Adult,Cherbourg,227.525,Survived
+"Bird, Miss. Ellen",First class,Female,29,Adult,Southampton,221.7792,Survived
+"Birnbaum, Mr. Jakob",First class,Male,25,Adult,Cherbourg,26,Died
+"Bishop, Mr. Dickinson H",First class,Male,25,Adult,Cherbourg,91.0792,Survived
+"Bishop, Mrs. Dickinson H (Helen Walton)",First class,Female,19,Adult,Cherbourg,91.0792,Survived
+"Bissette, Miss. Amelia",First class,Female,35,Adult,Southampton,135.6333,Survived
+"Bjornstrom-Steffansson, Mr. Mauritz Hakan",First class,Male,28,Adult,Southampton,26.55,Survived
+"Blackwell, Mr. Stephen Weart",First class,Male,45,Adult,Southampton,35.5,Died
+"Blank, Mr. Henry",First class,Male,40,Adult,Cherbourg,31,Survived
+"Bonnell, Miss. Caroline",First class,Female,30,Adult,Southampton,164.8667,Survived
+"Bonnell, Miss. Elizabeth",First class,Female,58,Adult,Southampton,26.55,Survived
+"Borebank, Mr. John James",First class,Male,42,Adult,Southampton,26.55,Died
+"Bowen, Miss. Grace Scott",First class,Female,45,Adult,Cherbourg,262.375,Survived
+"Bowerman, Miss. Elsie Edith",First class,Female,22,Adult,Southampton,55,Survived
+"Bradley, Mr. George (""George Arthur Brayton"")",First class,Male,,Unknown,Southampton,26.55,Survived
+"Brady, Mr. John Bertram",First class,Male,41,Adult,Southampton,30.5,Died
+"Brandeis, Mr. Emil",First class,Male,48,Adult,Cherbourg,50.4958,Died
+"Brewe, Dr. Arthur Jackson",First class,Male,,Unknown,Cherbourg,39.6,Died
+"Brown, Mrs. James Joseph (Margaret Tobin)",First class,Female,44,Adult,Cherbourg,27.7208,Survived
+"Brown, Mrs. John Murray (Caroline Lane Lamson)",First class,Female,59,Adult,Southampton,51.4792,Survived
+"Bucknell, Mrs. William Robert (Emma Eliza Ward)",First class,Female,60,Adult,Cherbourg,76.2917,Survived
+"Burns, Miss. Elizabeth Margaret",First class,Female,41,Adult,Cherbourg,134.5,Survived
+"Butt, Major. Archibald Willingham",First class,Male,45,Adult,Southampton,26.55,Died
+"Cairns, Mr. Alexander",First class,Male,,Unknown,Southampton,31,Died
+"Calderhead, Mr. Edward Pennington",First class,Male,42,Adult,Southampton,26.2875,Survived
+"Candee, Mrs. Edward (Helen Churchill Hungerford)",First class,Female,53,Adult,Cherbourg,27.4458,Survived
+"Cardeza, Mr. Thomas Drake Martinez",First class,Male,36,Adult,Cherbourg,512.3292,Survived
+"Cardeza, Mrs. James Warburton Martinez (Charlotte Wardle Drake)",First class,Female,58,Adult,Cherbourg,512.3292,Survived
+"Carlsson, Mr. Frans Olof",First class,Male,33,Adult,Southampton,5,Died
+"Carrau, Mr. Francisco M",First class,Male,28,Adult,Southampton,47.1,Died
+"Carrau, Mr. Jose Pedro",First class,Male,17,Child,Southampton,47.1,Died
+"Carter, Master. William Thornton II",First class,Male,11,Child,Southampton,120,Survived
+"Carter, Miss. Lucile Polk",First class,Female,14,Child,Southampton,120,Survived
+"Carter, Mr. William Ernest",First class,Male,36,Adult,Southampton,120,Survived
+"Carter, Mrs. William Ernest (Lucile Polk)",First class,Female,36,Adult,Southampton,120,Survived
+"Case, Mr. Howard Brown",First class,Male,49,Adult,Southampton,26,Died
+"Cassebeer, Mrs. Henry Arthur Jr (Eleanor Genevieve Fosdick)",First class,Female,,Unknown,Cherbourg,27.7208,Survived
+"Cavendish, Mr. Tyrell William",First class,Male,36,Adult,Southampton,78.85,Died
+"Cavendish, Mrs. Tyrell William (Julia Florence Siegel)",First class,Female,76,Adult,Southampton,78.85,Survived
+"Chaffee, Mr. Herbert Fuller",First class,Male,46,Adult,Southampton,61.175,Died
+"Chaffee, Mrs. Herbert Fuller (Carrie Constance Toogood)",First class,Female,47,Adult,Southampton,61.175,Survived
+"Chambers, Mr. Norman Campbell",First class,Male,27,Adult,Southampton,53.1,Survived
+"Chambers, Mrs. Norman Campbell (Bertha Griggs)",First class,Female,33,Adult,Southampton,53.1,Survived
+"Chaudanson, Miss. Victorine",First class,Female,36,Adult,Cherbourg,262.375,Survived
+"Cherry, Miss. Gladys",First class,Female,30,Adult,Southampton,86.5,Survived
+"Chevre, Mr. Paul Romaine",First class,Male,45,Adult,Cherbourg,29.7,Survived
+"Chibnall, Mrs. (Edith Martha Bowerman)",First class,Female,,Unknown,Southampton,55,Survived
+"Chisholm, Mr. Roderick Robert Crispin",First class,Male,,Unknown,Southampton,0,Died
+"Clark, Mr. Walter Miller",First class,Male,27,Adult,Cherbourg,136.7792,Died
+"Clark, Mrs. Walter Miller (Virginia McDowell)",First class,Female,26,Adult,Cherbourg,136.7792,Survived
+"Cleaver, Miss. Alice",First class,Female,22,Adult,Southampton,151.55,Survived
+"Clifford, Mr. George Quincy",First class,Male,,Unknown,Southampton,52,Died
+"Colley, Mr. Edward Pomeroy",First class,Male,47,Adult,Southampton,25.5875,Died
+"Compton, Miss. Sara Rebecca",First class,Female,39,Adult,Cherbourg,83.1583,Survived
+"Compton, Mr. Alexander Taylor Jr",First class,Male,37,Adult,Cherbourg,83.1583,Died
+"Compton, Mrs. Alexander Taylor (Mary Eliza Ingersoll)",First class,Female,64,Adult,Cherbourg,83.1583,Survived
+"Cornell, Mrs. Robert Clifford (Malvina Helen Lamson)",First class,Female,55,Adult,Southampton,25.7,Survived
+"Crafton, Mr. John Bertram",First class,Male,,Unknown,Southampton,26.55,Died
+"Crosby, Capt. Edward Gifford",First class,Male,70,Adult,Southampton,71,Died
+"Crosby, Miss. Harriet R",First class,Female,36,Adult,Southampton,71,Survived
+"Crosby, Mrs. Edward Gifford (Catherine Elizabeth Halstead)",First class,Female,64,Adult,Southampton,26.55,Survived
+"Cumings, Mr. John Bradley",First class,Male,39,Adult,Cherbourg,71.2833,Died
+"Cumings, Mrs. John Bradley (Florence Briggs Thayer)",First class,Female,38,Adult,Cherbourg,71.2833,Survived
+"Daly, Mr. Peter Denis ",First class,Male,51,Adult,Southampton,26.55,Survived
+"Daniel, Mr. Robert Williams",First class,Male,27,Adult,Southampton,30.5,Survived
+"Daniels, Miss. Sarah",First class,Female,33,Adult,Southampton,151.55,Survived
+"Davidson, Mr. Thornton",First class,Male,31,Adult,Southampton,52,Died
+"Davidson, Mrs. Thornton (Orian Hays)",First class,Female,27,Adult,Southampton,52,Survived
+"Dick, Mr. Albert Adrian",First class,Male,31,Adult,Southampton,57,Survived
+"Dick, Mrs. Albert Adrian (Vera Gillespie)",First class,Female,17,Child,Southampton,57,Survived
+"Dodge, Dr. Washington",First class,Male,53,Adult,Southampton,81.8583,Survived
+"Dodge, Master. Washington",First class,Male,4,Child,Southampton,81.8583,Survived
+"Dodge, Mrs. Washington (Ruth Vidaver)",First class,Female,54,Adult,Southampton,81.8583,Survived
+"Douglas, Mr. Walter Donald",First class,Male,50,Adult,Cherbourg,106.425,Died
+"Douglas, Mrs. Frederick Charles (Mary Helene Baxter)",First class,Female,27,Adult,Cherbourg,247.5208,Survived
+"Douglas, Mrs. Walter Donald (Mahala Dutton)",First class,Female,48,Adult,Cherbourg,106.425,Survived
+"Duff Gordon, Lady. (Lucille Christiana Sutherland) (""Mrs Morgan"")",First class,Female,48,Adult,Cherbourg,39.6,Survived
+"Duff Gordon, Sir. Cosmo Edmund (""Mr Morgan"")",First class,Male,49,Adult,Cherbourg,56.9292,Survived
+"Dulles, Mr. William Crothers",First class,Male,39,Adult,Cherbourg,29.7,Died
+"Earnshaw, Mrs. Boulton (Olive Potter)",First class,Female,23,Adult,Cherbourg,83.1583,Survived
+"Endres, Miss. Caroline Louise",First class,Female,38,Adult,Cherbourg,227.525,Survived
+"Eustis, Miss. Elizabeth Mussey",First class,Female,54,Adult,Cherbourg,78.2667,Survived
+"Evans, Miss. Edith Corse",First class,Female,36,Adult,Cherbourg,31.6792,Died
+"Farthing, Mr. John",First class,Male,,Unknown,Southampton,221.7792,Died
+"Flegenheim, Mrs. Alfred (Antoinette)",First class,Female,,Unknown,Southampton,31.6833,Survived
+"Fleming, Miss. Margaret",First class,Female,,Unknown,Cherbourg,110.8833,Survived
+"Flynn, Mr. John Irwin (""Irving"")",First class,Male,36,Adult,Southampton,26.3875,Survived
+"Foreman, Mr. Benjamin Laventall",First class,Male,30,Adult,Cherbourg,27.75,Died
+"Fortune, Miss. Alice Elizabeth",First class,Female,24,Adult,Southampton,263,Survived
+"Fortune, Miss. Ethel Flora",First class,Female,28,Adult,Southampton,263,Survived
+"Fortune, Miss. Mabel Helen",First class,Female,23,Adult,Southampton,263,Survived
+"Fortune, Mr. Charles Alexander",First class,Male,19,Adult,Southampton,263,Died
+"Fortune, Mr. Mark",First class,Male,64,Adult,Southampton,263,Died
+"Fortune, Mrs. Mark (Mary McDougald)",First class,Female,60,Adult,Southampton,263,Survived
+"Francatelli, Miss. Laura Mabel",First class,Female,30,Adult,Cherbourg,56.9292,Survived
+"Franklin, Mr. Thomas Parham",First class,Male,,Unknown,Southampton,26.55,Died
+"Frauenthal, Dr. Henry William",First class,Male,50,Adult,Southampton,133.65,Survived
+"Frauenthal, Mr. Isaac Gerald",First class,Male,43,Adult,Cherbourg,27.7208,Survived
+"Frauenthal, Mrs. Henry William (Clara Heinsheimer)",First class,Female,,Unknown,Southampton,133.65,Survived
+"Frolicher, Miss. Hedwig Margaritha",First class,Female,22,Adult,Cherbourg,49.5,Survived
+"Frolicher-Stehli, Mr. Maxmillian",First class,Male,60,Adult,Cherbourg,79.2,Survived
+"Frolicher-Stehli, Mrs. Maxmillian (Margaretha Emerentia Stehli)",First class,Female,48,Adult,Cherbourg,79.2,Survived
+"Fry, Mr. Richard",First class,Male,,Unknown,Southampton,0,Died
+"Futrelle, Mr. Jacques Heath",First class,Male,37,Adult,Southampton,53.1,Died
+"Futrelle, Mrs. Jacques Heath (Lily May Peel)",First class,Female,35,Adult,Southampton,53.1,Survived
+"Gee, Mr. Arthur H",First class,Male,47,Adult,Southampton,38.5,Died
+"Geiger, Miss. Amalie",First class,Female,35,Adult,Cherbourg,211.5,Survived
+"Gibson, Miss. Dorothy Winifred",First class,Female,22,Adult,Cherbourg,59.4,Survived
+"Gibson, Mrs. Leonard (Pauline C Boeson)",First class,Female,45,Adult,Cherbourg,59.4,Survived
+"Giglio, Mr. Victor",First class,Male,24,Adult,Cherbourg,79.2,Died
+"Goldenberg, Mr. Samuel L",First class,Male,49,Adult,Cherbourg,89.1042,Survived
+"Goldenberg, Mrs. Samuel L (Edwiga Grabowska)",First class,Female,,Unknown,Cherbourg,89.1042,Survived
+"Goldschmidt, Mr. George B",First class,Male,71,Adult,Cherbourg,34.6542,Died
+"Gracie, Col. Archibald IV",First class,Male,53,Adult,Cherbourg,28.5,Survived
+"Graham, Miss. Margaret Edith",First class,Female,19,Adult,Southampton,30,Survived
+"Graham, Mr. George Edward",First class,Male,38,Adult,Southampton,153.4625,Died
+"Graham, Mrs. William Thompson (Edith Junkins)",First class,Female,58,Adult,Southampton,153.4625,Survived
+"Greenfield, Mr. William Bertram",First class,Male,23,Adult,Cherbourg,63.3583,Survived
+"Greenfield, Mrs. Leo David (Blanche Strouse)",First class,Female,45,Adult,Cherbourg,63.3583,Survived
+"Guggenheim, Mr. Benjamin",First class,Male,46,Adult,Cherbourg,79.2,Died
+"Harder, Mr. George Achilles",First class,Male,25,Adult,Cherbourg,55.4417,Survived
+"Harder, Mrs. George Achilles (Dorothy Annan)",First class,Female,25,Adult,Cherbourg,55.4417,Survived
+"Harper, Mr. Henry Sleeper",First class,Male,48,Adult,Cherbourg,76.7292,Survived
+"Harper, Mrs. Henry Sleeper (Myna Haxtun)",First class,Female,49,Adult,Cherbourg,76.7292,Survived
+"Harrington, Mr. Charles H",First class,Male,,Unknown,Southampton,42.4,Died
+"Harris, Mr. Henry Birkhardt",First class,Male,45,Adult,Southampton,83.475,Died
+"Harris, Mrs. Henry Birkhardt (Irene Wallach)",First class,Female,35,Adult,Southampton,83.475,Survived
+"Harrison, Mr. William",First class,Male,40,Adult,Southampton,0,Died
+"Hassab, Mr. Hammad",First class,Male,27,Adult,Cherbourg,76.7292,Survived
+"Hawksford, Mr. Walter James",First class,Male,,Unknown,Southampton,30,Survived
+"Hays, Miss. Margaret Bechstein",First class,Female,24,Adult,Cherbourg,83.1583,Survived
+"Hays, Mr. Charles Melville",First class,Male,55,Adult,Southampton,93.5,Died
+"Hays, Mrs. Charles Melville (Clara Jennings Gregg)",First class,Female,52,Adult,Southampton,93.5,Survived
+"Head, Mr. Christopher",First class,Male,42,Adult,Southampton,42.5,Died
+"Hilliard, Mr. Herbert Henry",First class,Male,,Unknown,Southampton,51.8625,Died
+"Hipkins, Mr. William Edward",First class,Male,55,Adult,Southampton,50,Died
+"Hippach, Miss. Jean Gertrude",First class,Female,16,Child,Cherbourg,57.9792,Survived
+"Hippach, Mrs. Louis Albert (Ida Sophia Fischer)",First class,Female,44,Adult,Cherbourg,57.9792,Survived
+"Hogeboom, Mrs. John C (Anna Andrews)",First class,Female,51,Adult,Southampton,77.9583,Survived
+"Holverson, Mr. Alexander Oskar",First class,Male,42,Adult,Southampton,52,Died
+"Holverson, Mrs. Alexander Oskar (Mary Aline Towner)",First class,Female,35,Adult,Southampton,52,Survived
+"Homer, Mr. Harry (""Mr E Haven"")",First class,Male,35,Adult,Cherbourg,26.55,Survived
+"Hoyt, Mr. Frederick Maxfield",First class,Male,38,Adult,Southampton,90,Survived
+"Hoyt, Mr. William Fisher",First class,Male,,Unknown,Cherbourg,30.6958,Died
+"Hoyt, Mrs. Frederick Maxfield (Jane Anne Forby)",First class,Female,35,Adult,Southampton,90,Survived
+"Icard, Miss. Amelie",First class,Female,38,Adult,Unknown,80,Survived
+"Isham, Miss. Ann Elizabeth",First class,Female,50,Adult,Cherbourg,28.7125,Died
+"Ismay, Mr. Joseph Bruce",First class,Male,49,Adult,Southampton,0,Survived
+"Jones, Mr. Charles Cresson",First class,Male,46,Adult,Southampton,26,Died
+"Julian, Mr. Henry Forbes",First class,Male,50,Adult,Southampton,26,Died
+"Keeping, Mr. Edwin",First class,Male,32.5,Adult,Cherbourg,211.5,Died
+"Kent, Mr. Edward Austin",First class,Male,58,Adult,Cherbourg,29.7,Died
+"Kenyon, Mr. Frederick R",First class,Male,41,Adult,Southampton,51.8625,Died
+"Kenyon, Mrs. Frederick R (Marion)",First class,Female,,Unknown,Southampton,51.8625,Survived
+"Kimball, Mr. Edwin Nelson Jr",First class,Male,42,Adult,Southampton,52.5542,Survived
+"Kimball, Mrs. Edwin Nelson Jr (Gertrude Parsons)",First class,Female,45,Adult,Southampton,52.5542,Survived
+"Klaber, Mr. Herman",First class,Male,,Unknown,Southampton,26.55,Died
+"Kreuchen, Miss. Emilie",First class,Female,39,Adult,Southampton,211.3375,Survived
+"Leader, Dr. Alice (Farnham)",First class,Female,49,Adult,Southampton,25.9292,Survived
+"LeRoy, Miss. Bertha",First class,Female,30,Adult,Cherbourg,106.425,Survived
+"Lesurer, Mr. Gustave J",First class,Male,35,Adult,Cherbourg,512.3292,Survived
+"Lewy, Mr. Ervin G",First class,Male,,Unknown,Cherbourg,27.7208,Died
+"Lindeberg-Lind, Mr. Erik Gustaf (""Mr Edward Lingrey"")",First class,Male,42,Adult,Southampton,26.55,Died
+"Lindstrom, Mrs. Carl Johan (Sigrid Posse)",First class,Female,55,Adult,Cherbourg,27.7208,Survived
+"Lines, Miss. Mary Conover",First class,Female,16,Child,Southampton,39.4,Survived
+"Lines, Mrs. Ernest H (Elizabeth Lindsey James)",First class,Female,51,Adult,Southampton,39.4,Survived
+"Long, Mr. Milton Clyde",First class,Male,29,Adult,Southampton,30,Died
+"Longley, Miss. Gretchen Fiske",First class,Female,21,Adult,Southampton,77.9583,Survived
+"Loring, Mr. Joseph Holland",First class,Male,30,Adult,Southampton,45.5,Died
+"Lurette, Miss. Elise",First class,Female,58,Adult,Cherbourg,146.5208,Survived
+"Madill, Miss. Georgette Alexandra",First class,Female,15,Child,Southampton,211.3375,Survived
+"Maguire, Mr. John Edward",First class,Male,30,Adult,Southampton,26,Died
+"Maioni, Miss. Roberta",First class,Female,16,Child,Southampton,86.5,Survived
+"Marechal, Mr. Pierre",First class,Male,,Unknown,Cherbourg,29.7,Survived
+"Marvin, Mr. Daniel Warner",First class,Male,19,Adult,Southampton,53.1,Died
+"Marvin, Mrs. Daniel Warner (Mary Graham Carmichael Farquarson)",First class,Female,18,Adult,Southampton,53.1,Survived
+"Mayne, Mlle. Berthe Antonine (""Mrs de Villiers"")",First class,Female,24,Adult,Cherbourg,49.5042,Survived
+"McCaffry, Mr. Thomas Francis",First class,Male,46,Adult,Cherbourg,75.2417,Died
+"McCarthy, Mr. Timothy J",First class,Male,54,Adult,Southampton,51.8625,Died
+"McGough, Mr. James Robert",First class,Male,36,Adult,Southampton,26.2875,Survived
+"Meyer, Mr. Edgar Joseph",First class,Male,28,Adult,Cherbourg,82.1708,Died
+"Meyer, Mrs. Edgar Joseph (Leila Saks)",First class,Female,,Unknown,Cherbourg,82.1708,Survived
+"Millet, Mr. Francis Davis",First class,Male,65,Adult,Southampton,26.55,Died
+"Minahan, Dr. William Edward",First class,Male,44,Adult,Queenstown,90,Died
+"Minahan, Miss. Daisy E",First class,Female,33,Adult,Queenstown,90,Survived
+"Minahan, Mrs. William Edward (Lillian E Thorpe)",First class,Female,37,Adult,Queenstown,90,Survived
+"Mock, Mr. Philipp Edmund",First class,Male,30,Adult,Cherbourg,57.75,Survived
+"Molson, Mr. Harry Markland",First class,Male,55,Adult,Southampton,30.5,Died
+"Moore, Mr. Clarence Bloomfield",First class,Male,47,Adult,Southampton,42.4,Died
+"Natsch, Mr. Charles H",First class,Male,37,Adult,Cherbourg,29.7,Died
+"Newell, Miss. Madeleine",First class,Female,31,Adult,Cherbourg,113.275,Survived
+"Newell, Miss. Marjorie",First class,Female,23,Adult,Cherbourg,113.275,Survived
+"Newell, Mr. Arthur Webster",First class,Male,58,Adult,Cherbourg,113.275,Died
+"Newsom, Miss. Helen Monypeny",First class,Female,19,Adult,Southampton,26.2833,Survived
+"Nicholson, Mr. Arthur Ernest",First class,Male,64,Adult,Southampton,26,Died
+"Oliva y Ocana, Dona. Fermina",First class,Female,39,Adult,Cherbourg,108.9,Survived
+"Omont, Mr. Alfred Fernand",First class,Male,,Unknown,Cherbourg,25.7417,Survived
+"Ostby, Miss. Helene Ragnhild",First class,Female,22,Adult,Cherbourg,61.9792,Survived
+"Ostby, Mr. Engelhart Cornelius",First class,Male,65,Adult,Cherbourg,61.9792,Died
+"Ovies y Rodriguez, Mr. Servando",First class,Male,28.5,Adult,Cherbourg,27.7208,Died
+"Parr, Mr. William Henry Marsh",First class,Male,,Unknown,Southampton,0,Died
+"Partner, Mr. Austen",First class,Male,45.5,Adult,Southampton,28.5,Died
+"Payne, Mr. Vivian Ponsonby",First class,Male,23,Adult,Southampton,93.5,Died
+"Pears, Mr. Thomas Clinton",First class,Male,29,Adult,Southampton,66.6,Died
+"Pears, Mrs. Thomas (Edith Wearne)",First class,Female,22,Adult,Southampton,66.6,Survived
+"Penasco y Castellana, Mr. Victor de Satode",First class,Male,18,Adult,Cherbourg,108.9,Died
+"Penasco y Castellana, Mrs. Victor de Satode (Maria Josefa Perez de Soto y Vallejo)",First class,Female,17,Child,Cherbourg,108.9,Survived
+"Perreault, Miss. Anne",First class,Female,30,Adult,Southampton,93.5,Survived
+"Peuchen, Major. Arthur Godfrey",First class,Male,52,Adult,Southampton,30.5,Survived
+"Porter, Mr. Walter Chamberlain",First class,Male,47,Adult,Southampton,52,Died
+"Potter, Mrs. Thomas Jr (Lily Alexenia Wilson)",First class,Female,56,Adult,Cherbourg,83.1583,Survived
+"Reuchlin, Jonkheer. John George",First class,Male,38,Adult,Southampton,0,Died
+"Rheims, Mr. George Alexander Lucien",First class,Male,,Unknown,Southampton,39.6,Survived
+"Ringhini, Mr. Sante",First class,Male,22,Adult,Cherbourg,135.6333,Died
+"Robbins, Mr. Victor",First class,Male,,Unknown,Cherbourg,227.525,Died
+"Robert, Mrs. Edward Scott (Elisabeth Walton McMillan)",First class,Female,43,Adult,Southampton,211.3375,Survived
+"Roebling, Mr. Washington Augustus II",First class,Male,31,Adult,Southampton,50.4958,Died
+"Romaine, Mr. Charles Hallace (""Mr C Rolmane"")",First class,Male,45,Adult,Southampton,26.55,Survived
+"Rood, Mr. Hugh Roscoe",First class,Male,,Unknown,Southampton,50,Died
+"Rosenbaum, Miss. Edith Louise",First class,Female,33,Adult,Cherbourg,27.7208,Survived
+"Rosenshine, Mr. George (""Mr George Thorne"")",First class,Male,46,Adult,Cherbourg,79.2,Died
+"Ross, Mr. John Hugo",First class,Male,36,Adult,Cherbourg,40.125,Died
+"Rothes, the Countess. of (Lucy Noel Martha Dyer-Edwards)",First class,Female,33,Adult,Southampton,86.5,Survived
+"Rothschild, Mr. Martin",First class,Male,55,Adult,Cherbourg,59.4,Died
+"Rothschild, Mrs. Martin (Elizabeth L. Barrett)",First class,Female,54,Adult,Cherbourg,59.4,Survived
+"Rowe, Mr. Alfred G",First class,Male,33,Adult,Southampton,26.55,Died
+"Ryerson, Master. John Borie",First class,Male,13,Child,Cherbourg,262.375,Survived
+"Ryerson, Miss. Emily Borie",First class,Female,18,Adult,Cherbourg,262.375,Survived
+"Ryerson, Miss. Susan Parker ""Suzette""",First class,Female,21,Adult,Cherbourg,262.375,Survived
+"Ryerson, Mr. Arthur Larned",First class,Male,61,Adult,Cherbourg,262.375,Died
+"Ryerson, Mrs. Arthur Larned (Emily Maria Borie)",First class,Female,48,Adult,Cherbourg,262.375,Survived
+"Saalfeld, Mr. Adolphe",First class,Male,,Unknown,Southampton,30.5,Survived
+"Sagesser, Mlle. Emma",First class,Female,24,Adult,Cherbourg,69.3,Survived
+"Salomon, Mr. Abraham L",First class,Male,,Unknown,Southampton,26,Survived
+"Schabert, Mrs. Paul (Emma Mock)",First class,Female,35,Adult,Cherbourg,57.75,Survived
+"Serepeca, Miss. Augusta",First class,Female,30,Adult,Cherbourg,31,Survived
+"Seward, Mr. Frederic Kimber",First class,Male,34,Adult,Southampton,26.55,Survived
+"Shutes, Miss. Elizabeth W",First class,Female,40,Adult,Southampton,153.4625,Survived
+"Silverthorne, Mr. Spencer Victor",First class,Male,35,Adult,Southampton,26.2875,Survived
+"Silvey, Mr. William Baird",First class,Male,50,Adult,Southampton,55.9,Died
+"Silvey, Mrs. William Baird (Alice Munger)",First class,Female,39,Adult,Southampton,55.9,Survived
+"Simonius-Blumer, Col. Oberst Alfons",First class,Male,56,Adult,Cherbourg,35.5,Survived
+"Sloper, Mr. William Thompson",First class,Male,28,Adult,Southampton,35.5,Survived
+"Smart, Mr. John Montgomery",First class,Male,56,Adult,Southampton,26.55,Died
+"Smith, Mr. James Clinch",First class,Male,56,Adult,Cherbourg,30.6958,Died
+"Smith, Mr. Lucien Philip",First class,Male,24,Adult,Southampton,60,Died
+"Smith, Mr. Richard William",First class,Male,,Unknown,Southampton,26,Died
+"Smith, Mrs. Lucien Philip (Mary Eloise Hughes)",First class,Female,18,Adult,Southampton,60,Survived
+"Snyder, Mr. John Pillsbury",First class,Male,24,Adult,Southampton,82.2667,Survived
+"Snyder, Mrs. John Pillsbury (Nelle Stevenson)",First class,Female,23,Adult,Southampton,82.2667,Survived
+"Spedden, Master. Robert Douglas",First class,Male,6,Child,Cherbourg,134.5,Survived
+"Spedden, Mr. Frederic Oakley",First class,Male,45,Adult,Cherbourg,134.5,Survived
+"Spedden, Mrs. Frederic Oakley (Margaretta Corning Stone)",First class,Female,40,Adult,Cherbourg,134.5,Survived
+"Spencer, Mr. William Augustus",First class,Male,57,Adult,Cherbourg,146.5208,Died
+"Spencer, Mrs. William Augustus (Marie Eugenie)",First class,Female,,Unknown,Cherbourg,146.5208,Survived
+"Stahelin-Maeglin, Dr. Max",First class,Male,32,Adult,Cherbourg,30.5,Survived
+"Stead, Mr. William Thomas",First class,Male,62,Adult,Southampton,26.55,Died
+"Stengel, Mr. Charles Emil Henry",First class,Male,54,Adult,Cherbourg,55.4417,Survived
+"Stengel, Mrs. Charles Emil Henry (Annie May Morris)",First class,Female,43,Adult,Cherbourg,55.4417,Survived
+"Stephenson, Mrs. Walter Bertram (Martha Eustis)",First class,Female,52,Adult,Cherbourg,78.2667,Survived
+"Stewart, Mr. Albert A",First class,Male,,Unknown,Cherbourg,27.7208,Died
+"Stone, Mrs. George Nelson (Martha Evelyn)",First class,Female,62,Adult,Unknown,80,Survived
+"Straus, Mr. Isidor",First class,Male,67,Adult,Southampton,221.7792,Died
+"Straus, Mrs. Isidor (Rosalie Ida Blun)",First class,Female,63,Adult,Southampton,221.7792,Died
+"Sutton, Mr. Frederick",First class,Male,61,Adult,Southampton,32.3208,Died
+"Swift, Mrs. Frederick Joel (Margaret Welles Barron)",First class,Female,48,Adult,Southampton,25.9292,Survived
+"Taussig, Miss. Ruth",First class,Female,18,Adult,Southampton,79.65,Survived
+"Taussig, Mr. Emil",First class,Male,52,Adult,Southampton,79.65,Died
+"Taussig, Mrs. Emil (Tillie Mandelbaum)",First class,Female,39,Adult,Southampton,79.65,Survived
+"Taylor, Mr. Elmer Zebley",First class,Male,48,Adult,Southampton,52,Survived
+"Taylor, Mrs. Elmer Zebley (Juliet Cummins Wright)",First class,Female,,Unknown,Southampton,52,Survived
+"Thayer, Mr. John Borland",First class,Male,49,Adult,Cherbourg,110.8833,Died
+"Thayer, Mr. John Borland Jr",First class,Male,17,Child,Cherbourg,110.8833,Survived
+"Thayer, Mrs. John Borland (Marian Longstreth Morris)",First class,Female,39,Adult,Cherbourg,110.8833,Survived
+"Thorne, Mrs. Gertrude Maybelle",First class,Female,,Unknown,Cherbourg,79.2,Survived
+"Tucker, Mr. Gilbert Milligan Jr",First class,Male,31,Adult,Cherbourg,28.5375,Survived
+"Uruchurtu, Don. Manuel E",First class,Male,40,Adult,Cherbourg,27.7208,Died
+"Van der hoef, Mr. Wyckoff",First class,Male,61,Adult,Southampton,33.5,Died
+"Walker, Mr. William Anderson",First class,Male,47,Adult,Southampton,34.0208,Died
+"Ward, Miss. Anna",First class,Female,35,Adult,Cherbourg,512.3292,Survived
+"Warren, Mr. Frank Manley",First class,Male,64,Adult,Cherbourg,75.25,Died
+"Warren, Mrs. Frank Manley (Anna Sophia Atkinson)",First class,Female,60,Adult,Cherbourg,75.25,Survived
+"Weir, Col. John",First class,Male,60,Adult,Southampton,26.55,Died
+"White, Mr. Percival Wayland",First class,Male,54,Adult,Southampton,77.2875,Died
+"White, Mr. Richard Frasar",First class,Male,21,Adult,Southampton,77.2875,Died
+"White, Mrs. John Stuart (Ella Holmes)",First class,Female,55,Adult,Cherbourg,135.6333,Survived
+"Wick, Miss. Mary Natalie",First class,Female,31,Adult,Southampton,164.8667,Survived
+"Wick, Mr. George Dennick",First class,Male,57,Adult,Southampton,164.8667,Died
+"Wick, Mrs. George Dennick (Mary Hitchcock)",First class,Female,45,Adult,Southampton,164.8667,Survived
+"Widener, Mr. George Dunton",First class,Male,50,Adult,Cherbourg,211.5,Died
+"Widener, Mr. Harry Elkins",First class,Male,27,Adult,Cherbourg,211.5,Died
+"Widener, Mrs. George Dunton (Eleanor Elkins)",First class,Female,50,Adult,Cherbourg,211.5,Survived
+"Willard, Miss. Constance",First class,Female,21,Adult,Southampton,26.55,Survived
+"Williams, Mr. Charles Duane",First class,Male,51,Adult,Cherbourg,61.3792,Died
+"Williams, Mr. Richard Norris II",First class,Male,21,Adult,Cherbourg,61.3792,Survived
+"Williams-Lambert, Mr. Fletcher Fellows",First class,Male,,Unknown,Southampton,35,Died
+"Wilson, Miss. Helen Alice",First class,Female,31,Adult,Cherbourg,134.5,Survived
+"Woolner, Mr. Hugh",First class,Male,,Unknown,Southampton,35.5,Survived
+"Wright, Mr. George",First class,Male,62,Adult,Southampton,26.55,Died
+"Young, Miss. Marie Grice",First class,Female,36,Adult,Cherbourg,135.6333,Survived
+"Abelson, Mr. Samuel",Second class,Male,30,Adult,Cherbourg,24,Died
+"Abelson, Mrs. Samuel (Hannah Wizosky)",Second class,Female,28,Adult,Cherbourg,24,Survived
+"Aldworth, Mr. Charles Augustus",Second class,Male,30,Adult,Southampton,13,Died
+"Andrew, Mr. Edgardo Samuel",Second class,Male,18,Adult,Southampton,11.5,Died
+"Andrew, Mr. Frank Thomas",Second class,Male,25,Adult,Southampton,10.5,Died
+"Angle, Mr. William A",Second class,Male,34,Adult,Southampton,26,Died
+"Angle, Mrs. William A (Florence ""Mary"" Agnes Hughes)",Second class,Female,36,Adult,Southampton,26,Survived
+"Ashby, Mr. John",Second class,Male,57,Adult,Southampton,13,Died
+"Bailey, Mr. Percy Andrew",Second class,Male,18,Adult,Southampton,11.5,Died
+"Baimbrigge, Mr. Charles Robert",Second class,Male,23,Adult,Southampton,10.5,Died
+"Ball, Mrs. (Ada E Hall)",Second class,Female,36,Adult,Southampton,13,Survived
+"Banfield, Mr. Frederick James",Second class,Male,28,Adult,Southampton,10.5,Died
+"Bateman, Rev. Robert James",Second class,Male,51,Adult,Southampton,12.525,Died
+"Beane, Mr. Edward",Second class,Male,32,Adult,Southampton,26,Survived
+"Beane, Mrs. Edward (Ethel Clarke)",Second class,Female,19,Adult,Southampton,26,Survived
+"Beauchamp, Mr. Henry James",Second class,Male,28,Adult,Southampton,26,Died
+"Becker, Master. Richard F",Second class,Male,1,Child,Southampton,39,Survived
+"Becker, Miss. Marion Louise",Second class,Female,4,Child,Southampton,39,Survived
+"Becker, Miss. Ruth Elizabeth",Second class,Female,12,Child,Southampton,39,Survived
+"Becker, Mrs. Allen Oliver (Nellie E Baumgardner)",Second class,Female,36,Adult,Southampton,39,Survived
+"Beesley, Mr. Lawrence",Second class,Male,34,Adult,Southampton,13,Survived
+"Bentham, Miss. Lilian W",Second class,Female,19,Adult,Southampton,13,Survived
+"Berriman, Mr. William John",Second class,Male,23,Adult,Southampton,13,Died
+"Botsford, Mr. William Hull",Second class,Male,26,Adult,Southampton,13,Died
+"Bowenur, Mr. Solomon",Second class,Male,42,Adult,Southampton,13,Died
+"Bracken, Mr. James H",Second class,Male,27,Adult,Southampton,13,Died
+"Brown, Miss. Amelia ""Mildred""",Second class,Female,24,Adult,Southampton,13,Survived
+"Brown, Miss. Edith Eileen",Second class,Female,15,Child,Southampton,39,Survived
+"Brown, Mr. Thomas William Solomon",Second class,Male,60,Adult,Southampton,39,Died
+"Brown, Mrs. Thomas William Solomon (Elizabeth Catherine Ford)",Second class,Female,40,Adult,Southampton,39,Survived
+"Bryhl, Miss. Dagmar Jenny Ingeborg ",Second class,Female,20,Adult,Southampton,26,Survived
+"Bryhl, Mr. Kurt Arnold Gottfrid",Second class,Male,25,Adult,Southampton,26,Died
+"Buss, Miss. Kate",Second class,Female,36,Adult,Southampton,13,Survived
+"Butler, Mr. Reginald Fenton",Second class,Male,25,Adult,Southampton,13,Died
+"Byles, Rev. Thomas Roussel Davids",Second class,Male,42,Adult,Southampton,13,Died
+"Bystrom, Mrs. (Karolina)",Second class,Female,42,Adult,Southampton,13,Survived
+"Caldwell, Master. Alden Gates",Second class,Male,0.83,Child,Southampton,29,Survived
+"Caldwell, Mr. Albert Francis",Second class,Male,26,Adult,Southampton,29,Survived
+"Caldwell, Mrs. Albert Francis (Sylvia Mae Harbaugh)",Second class,Female,22,Adult,Southampton,29,Survived
+"Cameron, Miss. Clear Annie",Second class,Female,35,Adult,Southampton,21,Survived
+"Campbell, Mr. William",Second class,Male,,Unknown,Southampton,0,Died
+"Carbines, Mr. William",Second class,Male,19,Adult,Southampton,13,Died
+"Carter, Mrs. Ernest Courtenay (Lilian Hughes)",Second class,Female,44,Adult,Southampton,26,Died
+"Carter, Rev. Ernest Courtenay",Second class,Male,54,Adult,Southampton,26,Died
+"Chapman, Mr. Charles Henry",Second class,Male,52,Adult,Southampton,13.5,Died
+"Chapman, Mr. John Henry",Second class,Male,37,Adult,Southampton,26,Died
+"Chapman, Mrs. John Henry (Sara Elizabeth Lawry)",Second class,Female,29,Adult,Southampton,26,Died
+"Christy, Miss. Julie Rachel",Second class,Female,25,Adult,Southampton,30,Survived
+"Christy, Mrs. (Alice Frances)",Second class,Female,45,Adult,Southampton,30,Survived
+"Clarke, Mr. Charles Valentine",Second class,Male,29,Adult,Southampton,26,Died
+"Clarke, Mrs. Charles V (Ada Maria Winfield)",Second class,Female,28,Adult,Southampton,26,Survived
+"Coleridge, Mr. Reginald Charles",Second class,Male,29,Adult,Southampton,10.5,Died
+"Collander, Mr. Erik Gustaf",Second class,Male,28,Adult,Southampton,13,Died
+"Collett, Mr. Sidney C Stuart",Second class,Male,24,Adult,Southampton,10.5,Survived
+"Collyer, Miss. Marjorie ""Lottie""",Second class,Female,8,Child,Southampton,26.25,Survived
+"Collyer, Mr. Harvey",Second class,Male,31,Adult,Southampton,26.25,Died
+"Collyer, Mrs. Harvey (Charlotte Annie Tate)",Second class,Female,31,Adult,Southampton,26.25,Survived
+"Cook, Mrs. (Selena Rogers)",Second class,Female,22,Adult,Southampton,10.5,Survived
+"Corbett, Mrs. Walter H (Irene Colvin)",Second class,Female,30,Adult,Southampton,13,Died
+"Corey, Mrs. Percy C (Mary Phyllis Elizabeth Miller)",Second class,Female,,Unknown,Southampton,21,Died
+"Cotterill, Mr. Henry ""Harry""",Second class,Male,21,Adult,Southampton,11.5,Died
+"Cunningham, Mr. Alfred Fleming",Second class,Male,,Unknown,Southampton,0,Died
+"Davies, Master. John Morgan Jr",Second class,Male,8,Child,Southampton,36.75,Survived
+"Davies, Mr. Charles Henry",Second class,Male,18,Adult,Southampton,73.5,Died
+"Davies, Mrs. John Morgan (Elizabeth Agnes Mary White) ",Second class,Female,48,Adult,Southampton,36.75,Survived
+"Davis, Miss. Mary",Second class,Female,28,Adult,Southampton,13,Survived
+"de Brito, Mr. Jose Joaquim",Second class,Male,32,Adult,Southampton,13,Died
+"Deacon, Mr. Percy William",Second class,Male,17,Child,Southampton,73.5,Died
+"del Carlo, Mr. Sebastiano",Second class,Male,29,Adult,Cherbourg,27.7208,Died
+"del Carlo, Mrs. Sebastiano (Argenia Genovesi)",Second class,Female,24,Adult,Cherbourg,27.7208,Survived
+"Denbury, Mr. Herbert",Second class,Male,25,Adult,Southampton,31.5,Died
+"Dibden, Mr. William",Second class,Male,18,Adult,Southampton,73.5,Died
+"Doling, Miss. Elsie",Second class,Female,18,Adult,Southampton,23,Survived
+"Doling, Mrs. John T (Ada Julia Bone)",Second class,Female,34,Adult,Southampton,23,Survived
+"Downton, Mr. William James",Second class,Male,54,Adult,Southampton,26,Died
+"Drew, Master. Marshall Brines",Second class,Male,8,Child,Southampton,32.5,Survived
+"Drew, Mr. James Vivian",Second class,Male,42,Adult,Southampton,32.5,Died
+"Drew, Mrs. James Vivian (Lulu Thorne Christian)",Second class,Female,34,Adult,Southampton,32.5,Survived
+"Duran y More, Miss. Asuncion",Second class,Female,27,Adult,Cherbourg,13.8583,Survived
+"Duran y More, Miss. Florentina",Second class,Female,30,Adult,Cherbourg,13.8583,Survived
+"Eitemiller, Mr. George Floyd",Second class,Male,23,Adult,Southampton,13,Died
+"Enander, Mr. Ingvar",Second class,Male,21,Adult,Southampton,13,Died
+"Fahlstrom, Mr. Arne Jonas",Second class,Male,18,Adult,Southampton,13,Died
+"Faunthorpe, Mr. Harry",Second class,Male,40,Adult,Southampton,26,Died
+"Faunthorpe, Mrs. Lizzie (Elizabeth Anne Wilkinson)",Second class,Female,29,Adult,Southampton,26,Survived
+"Fillbrook, Mr. Joseph Charles",Second class,Male,18,Adult,Southampton,10.5,Died
+"Fox, Mr. Stanley Hubert",Second class,Male,36,Adult,Southampton,13,Died
+"Frost, Mr. Anthony Wood ""Archie""",Second class,Male,,Unknown,Southampton,0,Died
+"Funk, Miss. Annie Clemmer",Second class,Female,38,Adult,Southampton,13,Died
+"Fynney, Mr. Joseph J",Second class,Male,35,Adult,Southampton,26,Died
+"Gale, Mr. Harry",Second class,Male,38,Adult,Southampton,21,Died
+"Gale, Mr. Shadrach",Second class,Male,34,Adult,Southampton,21,Died
+"Garside, Miss. Ethel",Second class,Female,34,Adult,Southampton,13,Survived
+"Gaskell, Mr. Alfred",Second class,Male,16,Child,Southampton,26,Died
+"Gavey, Mr. Lawrence",Second class,Male,26,Adult,Southampton,10.5,Died
+"Gilbert, Mr. William",Second class,Male,47,Adult,Southampton,10.5,Died
+"Giles, Mr. Edgar",Second class,Male,21,Adult,Southampton,11.5,Died
+"Giles, Mr. Frederick Edward",Second class,Male,21,Adult,Southampton,11.5,Died
+"Giles, Mr. Ralph",Second class,Male,24,Adult,Southampton,13.5,Died
+"Gill, Mr. John William",Second class,Male,24,Adult,Southampton,13,Died
+"Gillespie, Mr. William Henry",Second class,Male,34,Adult,Southampton,13,Died
+"Givard, Mr. Hans Kristensen",Second class,Male,30,Adult,Southampton,13,Died
+"Greenberg, Mr. Samuel",Second class,Male,52,Adult,Southampton,13,Died
+"Hale, Mr. Reginald",Second class,Male,30,Adult,Southampton,13,Died
+"Hamalainen, Master. Viljo",Second class,Male,0.67,Child,Southampton,14.5,Survived
+"Hamalainen, Mrs. William (Anna)",Second class,Female,24,Adult,Southampton,14.5,Survived
+"Harbeck, Mr. William H",Second class,Male,44,Adult,Southampton,13,Died
+"Harper, Miss. Annie Jessie ""Nina""",Second class,Female,6,Child,Southampton,33,Survived
+"Harper, Rev. John",Second class,Male,28,Adult,Southampton,33,Died
+"Harris, Mr. George",Second class,Male,62,Adult,Southampton,10.5,Survived
+"Harris, Mr. Walter",Second class,Male,30,Adult,Southampton,10.5,Died
+"Hart, Miss. Eva Miriam",Second class,Female,7,Child,Southampton,26.25,Survived
+"Hart, Mr. Benjamin",Second class,Male,43,Adult,Southampton,26.25,Died
+"Hart, Mrs. Benjamin (Esther Ada Bloomfield)",Second class,Female,45,Adult,Southampton,26.25,Survived
+"Herman, Miss. Alice",Second class,Female,24,Adult,Southampton,65,Survived
+"Herman, Miss. Kate",Second class,Female,24,Adult,Southampton,65,Survived
+"Herman, Mr. Samuel",Second class,Male,49,Adult,Southampton,65,Died
+"Herman, Mrs. Samuel (Jane Laver)",Second class,Female,48,Adult,Southampton,65,Survived
+"Hewlett, Mrs. (Mary D Kingcome) ",Second class,Female,55,Adult,Southampton,16,Survived
+"Hickman, Mr. Leonard Mark",Second class,Male,24,Adult,Southampton,73.5,Died
+"Hickman, Mr. Lewis",Second class,Male,32,Adult,Southampton,73.5,Died
+"Hickman, Mr. Stanley George",Second class,Male,21,Adult,Southampton,73.5,Died
+"Hiltunen, Miss. Marta",Second class,Female,18,Adult,Southampton,13,Died
+"Hocking, Miss. Ellen ""Nellie""",Second class,Female,20,Adult,Southampton,23,Survived
+"Hocking, Mr. Richard George",Second class,Male,23,Adult,Southampton,11.5,Died
+"Hocking, Mr. Samuel James Metcalfe",Second class,Male,36,Adult,Southampton,13,Died
+"Hocking, Mrs. Elizabeth (Eliza Needs)",Second class,Female,54,Adult,Southampton,23,Survived
+"Hodges, Mr. Henry Price",Second class,Male,50,Adult,Southampton,13,Died
+"Hold, Mr. Stephen",Second class,Male,44,Adult,Southampton,26,Died
+"Hold, Mrs. Stephen (Annie Margaret Hill)",Second class,Female,29,Adult,Southampton,26,Survived
+"Hood, Mr. Ambrose Jr",Second class,Male,21,Adult,Southampton,73.5,Died
+"Hosono, Mr. Masabumi",Second class,Male,42,Adult,Southampton,13,Survived
+"Howard, Mr. Benjamin",Second class,Male,63,Adult,Southampton,26,Died
+"Howard, Mrs. Benjamin (Ellen Truelove Arman)",Second class,Female,60,Adult,Southampton,26,Died
+"Hunt, Mr. George Henry",Second class,Male,33,Adult,Southampton,12.275,Died
+"Ilett, Miss. Bertha",Second class,Female,17,Child,Southampton,10.5,Survived
+"Jacobsohn, Mr. Sidney Samuel",Second class,Male,42,Adult,Southampton,27,Died
+"Jacobsohn, Mrs. Sidney Samuel (Amy Frances Christy)",Second class,Female,24,Adult,Southampton,27,Survived
+"Jarvis, Mr. John Denzil",Second class,Male,47,Adult,Southampton,15,Died
+"Jefferys, Mr. Clifford Thomas",Second class,Male,24,Adult,Southampton,31.5,Died
+"Jefferys, Mr. Ernest Wilfred",Second class,Male,22,Adult,Southampton,31.5,Died
+"Jenkin, Mr. Stephen Curnow",Second class,Male,32,Adult,Southampton,10.5,Died
+"Jerwan, Mrs. Amin S (Marie Marthe Thuillard)",Second class,Female,23,Adult,Cherbourg,13.7917,Survived
+"Kantor, Mr. Sinai",Second class,Male,34,Adult,Southampton,26,Died
+"Kantor, Mrs. Sinai (Miriam Sternin)",Second class,Female,24,Adult,Southampton,26,Survived
+"Karnes, Mrs. J Frank (Claire Bennett)",Second class,Female,22,Adult,Southampton,21,Died
+"Keane, Miss. Nora A",Second class,Female,,Unknown,Queenstown,12.35,Survived
+"Keane, Mr. Daniel",Second class,Male,35,Adult,Queenstown,12.35,Died
+"Kelly, Mrs. Florence ""Fannie""",Second class,Female,45,Adult,Southampton,13.5,Survived
+"Kirkland, Rev. Charles Leonard",Second class,Male,57,Adult,Queenstown,12.35,Died
+"Knight, Mr. Robert J",Second class,Male,,Unknown,Southampton,0,Died
+"Kvillner, Mr. Johan Henrik Johannesson",Second class,Male,31,Adult,Southampton,10.5,Died
+"Lahtinen, Mrs. William (Anna Sylfven)",Second class,Female,26,Adult,Southampton,26,Died
+"Lahtinen, Rev. William",Second class,Male,30,Adult,Southampton,26,Died
+"Lamb, Mr. John Joseph",Second class,Male,,Unknown,Queenstown,10.7083,Died
+"Laroche, Miss. Louise",Second class,Female,1,Child,Cherbourg,41.5792,Survived
+"Laroche, Miss. Simonne Marie Anne Andree",Second class,Female,3,Child,Cherbourg,41.5792,Survived
+"Laroche, Mr. Joseph Philippe Lemercier",Second class,Male,25,Adult,Cherbourg,41.5792,Died
+"Laroche, Mrs. Joseph (Juliette Marie Louise Lafargue)",Second class,Female,22,Adult,Cherbourg,41.5792,Survived
+"Lehmann, Miss. Bertha",Second class,Female,17,Child,Cherbourg,12,Survived
+"Leitch, Miss. Jessie Wills",Second class,Female,,Unknown,Southampton,33,Survived
+"Lemore, Mrs. (Amelia Milley)",Second class,Female,34,Adult,Southampton,10.5,Survived
+"Levy, Mr. Rene Jacques",Second class,Male,36,Adult,Cherbourg,12.875,Died
+"Leyson, Mr. Robert William Norman",Second class,Male,24,Adult,Southampton,10.5,Died
+"Lingane, Mr. John",Second class,Male,61,Adult,Queenstown,12.35,Died
+"Louch, Mr. Charles Alexander",Second class,Male,50,Adult,Southampton,26,Died
+"Louch, Mrs. Charles Alexander (Alice Adelaide Slow)",Second class,Female,42,Adult,Southampton,26,Survived
+"Mack, Mrs. (Mary)",Second class,Female,57,Adult,Southampton,10.5,Died
+"Malachard, Mr. Noel",Second class,Male,,Unknown,Cherbourg,15.0458,Died
+"Mallet, Master. Andre",Second class,Male,1,Child,Cherbourg,37.0042,Survived
+"Mallet, Mr. Albert",Second class,Male,31,Adult,Cherbourg,37.0042,Died
+"Mallet, Mrs. Albert (Antoinette Magnin)",Second class,Female,24,Adult,Cherbourg,37.0042,Survived
+"Mangiavacchi, Mr. Serafino Emilio",Second class,Male,,Unknown,Cherbourg,15.5792,Died
+"Matthews, Mr. William John",Second class,Male,30,Adult,Southampton,13,Died
+"Maybery, Mr. Frank Hubert",Second class,Male,40,Adult,Southampton,16,Died
+"McCrae, Mr. Arthur Gordon",Second class,Male,32,Adult,Southampton,13.5,Died
+"McCrie, Mr. James Matthew",Second class,Male,30,Adult,Southampton,13,Died
+"McKane, Mr. Peter David",Second class,Male,46,Adult,Southampton,26,Died
+"Mellinger, Miss. Madeleine Violet",Second class,Female,13,Child,Southampton,19.5,Survived
+"Mellinger, Mrs. (Elizabeth Anne Maidment)",Second class,Female,41,Adult,Southampton,19.5,Survived
+"Mellors, Mr. William John",Second class,Male,19,Adult,Southampton,10.5,Survived
+"Meyer, Mr. August",Second class,Male,39,Adult,Southampton,13,Died
+"Milling, Mr. Jacob Christian",Second class,Male,48,Adult,Southampton,13,Died
+"Mitchell, Mr. Henry Michael",Second class,Male,70,Adult,Southampton,10.5,Died
+"Montvila, Rev. Juozas",Second class,Male,27,Adult,Southampton,13,Died
+"Moraweck, Dr. Ernest",Second class,Male,54,Adult,Southampton,14,Died
+"Morley, Mr. Henry Samuel (""Mr Henry Marshall"")",Second class,Male,39,Adult,Southampton,26,Died
+"Mudd, Mr. Thomas Charles",Second class,Male,16,Child,Southampton,10.5,Died
+"Myles, Mr. Thomas Francis",Second class,Male,62,Adult,Queenstown,9.6875,Died
+"Nasser, Mr. Nicholas",Second class,Male,32.5,Adult,Cherbourg,30.0708,Died
+"Nasser, Mrs. Nicholas (Adele Achem)",Second class,Female,14,Child,Cherbourg,30.0708,Survived
+"Navratil, Master. Edmond Roger",Second class,Male,2,Child,Southampton,26,Survived
+"Navratil, Master. Michel M",Second class,Male,3,Child,Southampton,26,Survived
+"Navratil, Mr. Michel (""Louis M Hoffman"")",Second class,Male,36.5,Adult,Southampton,26,Died
+"Nesson, Mr. Israel",Second class,Male,26,Adult,Southampton,13,Died
+"Nicholls, Mr. Joseph Charles",Second class,Male,19,Adult,Southampton,36.75,Died
+"Norman, Mr. Robert Douglas",Second class,Male,28,Adult,Southampton,13.5,Died
+"Nourney, Mr. Alfred (""Baron von Drachstedt"")",Second class,Male,20,Adult,Cherbourg,13.8625,Survived
+"Nye, Mrs. (Elizabeth Ramell)",Second class,Female,29,Adult,Southampton,10.5,Survived
+"Otter, Mr. Richard",Second class,Male,39,Adult,Southampton,13,Died
+"Oxenham, Mr. Percy Thomas",Second class,Male,22,Adult,Southampton,10.5,Survived
+"Padro y Manent, Mr. Julian",Second class,Male,,Unknown,Cherbourg,13.8625,Survived
+"Pain, Dr. Alfred",Second class,Male,23,Adult,Southampton,10.5,Died
+"Pallas y Castello, Mr. Emilio",Second class,Male,29,Adult,Cherbourg,13.8583,Survived
+"Parker, Mr. Clifford Richard",Second class,Male,28,Adult,Southampton,10.5,Died
+"Parkes, Mr. Francis ""Frank""",Second class,Male,,Unknown,Southampton,0,Died
+"Parrish, Mrs. (Lutie Davis)",Second class,Female,50,Adult,Southampton,26,Survived
+"Pengelly, Mr. Frederick William",Second class,Male,19,Adult,Southampton,10.5,Died
+"Pernot, Mr. Rene",Second class,Male,,Unknown,Cherbourg,15.05,Died
+"Peruschitz, Rev. Joseph Maria",Second class,Male,41,Adult,Southampton,13,Died
+"Phillips, Miss. Alice Frances Louisa",Second class,Female,21,Adult,Southampton,21,Survived
+"Phillips, Miss. Kate Florence (""Mrs Kate Louise Phillips Marshall"")",Second class,Female,19,Adult,Southampton,26,Survived
+"Phillips, Mr. Escott Robert",Second class,Male,43,Adult,Southampton,21,Died
+"Pinsky, Mrs. (Rosa)",Second class,Female,32,Adult,Southampton,13,Survived
+"Ponesell, Mr. Martin",Second class,Male,34,Adult,Southampton,13,Died
+"Portaluppi, Mr. Emilio Ilario Giuseppe",Second class,Male,30,Adult,Cherbourg,12.7375,Survived
+"Pulbaum, Mr. Franz",Second class,Male,27,Adult,Cherbourg,15.0333,Died
+"Quick, Miss. Phyllis May",Second class,Female,2,Child,Southampton,26,Survived
+"Quick, Miss. Winifred Vera",Second class,Female,8,Child,Southampton,26,Survived
+"Quick, Mrs. Frederick Charles (Jane Richards)",Second class,Female,33,Adult,Southampton,26,Survived
+"Reeves, Mr. David",Second class,Male,36,Adult,Southampton,10.5,Died
+"Renouf, Mr. Peter Henry",Second class,Male,34,Adult,Southampton,21,Died
+"Renouf, Mrs. Peter Henry (Lillian Jefferys)",Second class,Female,30,Adult,Southampton,21,Survived
+"Reynaldo, Ms. Encarnacion",Second class,Female,28,Adult,Southampton,13,Survived
+"Richard, Mr. Emile",Second class,Male,23,Adult,Cherbourg,15.0458,Died
+"Richards, Master. George Sibley",Second class,Male,0.83,Child,Southampton,18.75,Survived
+"Richards, Master. William Rowe",Second class,Male,3,Child,Southampton,18.75,Survived
+"Richards, Mrs. Sidney (Emily Hocking)",Second class,Female,24,Adult,Southampton,18.75,Survived
+"Ridsdale, Miss. Lucy",Second class,Female,50,Adult,Southampton,10.5,Survived
+"Rogers, Mr. Reginald Harry",Second class,Male,19,Adult,Southampton,10.5,Died
+"Rugg, Miss. Emily",Second class,Female,21,Adult,Southampton,10.5,Survived
+"Schmidt, Mr. August",Second class,Male,26,Adult,Southampton,13,Died
+"Sedgwick, Mr. Charles Frederick Waddington",Second class,Male,25,Adult,Southampton,13,Died
+"Sharp, Mr. Percival James R",Second class,Male,27,Adult,Southampton,26,Died
+"Shelley, Mrs. William (Imanita Parrish Hall)",Second class,Female,25,Adult,Southampton,26,Survived
+"Silven, Miss. Lyyli Karoliina",Second class,Female,18,Adult,Southampton,13,Survived
+"Sincock, Miss. Maude",Second class,Female,20,Adult,Southampton,36.75,Survived
+"Sinkkonen, Miss. Anna",Second class,Female,30,Adult,Southampton,13,Survived
+"Sjostedt, Mr. Ernst Adolf",Second class,Male,59,Adult,Southampton,13.5,Died
+"Slayter, Miss. Hilda Mary",Second class,Female,30,Adult,Queenstown,12.35,Survived
+"Slemen, Mr. Richard James",Second class,Male,35,Adult,Southampton,10.5,Died
+"Smith, Miss. Marion Elsie",Second class,Female,40,Adult,Southampton,13,Survived
+"Sobey, Mr. Samuel James Hayden",Second class,Male,25,Adult,Southampton,13,Died
+"Stanton, Mr. Samuel Ward",Second class,Male,41,Adult,Cherbourg,15.0458,Died
+"Stokes, Mr. Philip Joseph",Second class,Male,25,Adult,Southampton,10.5,Died
+"Swane, Mr. George",Second class,Male,18.5,Adult,Southampton,13,Died
+"Sweet, Mr. George Frederick",Second class,Male,14,Child,Southampton,65,Died
+"Toomey, Miss. Ellen",Second class,Female,50,Adult,Southampton,10.5,Survived
+"Troupiansky, Mr. Moses Aaron",Second class,Male,23,Adult,Southampton,13,Died
+"Trout, Mrs. William H (Jessie L)",Second class,Female,28,Adult,Southampton,12.65,Survived
+"Troutt, Miss. Edwina Celia ""Winnie""",Second class,Female,27,Adult,Southampton,10.5,Survived
+"Turpin, Mr. William John Robert",Second class,Male,29,Adult,Southampton,21,Died
+"Turpin, Mrs. William John Robert (Dorothy Ann Wonnacott)",Second class,Female,27,Adult,Southampton,21,Died
+"Veal, Mr. James",Second class,Male,40,Adult,Southampton,13,Died
+"Walcroft, Miss. Nellie",Second class,Female,31,Adult,Southampton,21,Survived
+"Ware, Mr. John James",Second class,Male,30,Adult,Southampton,21,Died
+"Ware, Mr. William Jeffery",Second class,Male,23,Adult,Southampton,10.5,Died
+"Ware, Mrs. John James (Florence Louise Long)",Second class,Female,31,Adult,Southampton,21,Survived
+"Watson, Mr. Ennis Hastings",Second class,Male,,Unknown,Southampton,0,Died
+"Watt, Miss. Bertha J",Second class,Female,12,Child,Southampton,15.75,Survived
+"Watt, Mrs. James (Elizabeth ""Bessie"" Inglis Milne)",Second class,Female,40,Adult,Southampton,15.75,Survived
+"Webber, Miss. Susan",Second class,Female,32.5,Adult,Southampton,13,Survived
+"Weisz, Mr. Leopold",Second class,Male,27,Adult,Southampton,26,Died
+"Weisz, Mrs. Leopold (Mathilde Francoise Pede)",Second class,Female,29,Adult,Southampton,26,Survived
+"Wells, Master. Ralph Lester",Second class,Male,2,Child,Southampton,23,Survived
+"Wells, Miss. Joan",Second class,Female,4,Child,Southampton,23,Survived
+"Wells, Mrs. Arthur Henry (""Addie"" Dart Trevaskis)",Second class,Female,29,Adult,Southampton,23,Survived
+"West, Miss. Barbara J",Second class,Female,0.92,Child,Southampton,27.75,Survived
+"West, Miss. Constance Mirium",Second class,Female,5,Child,Southampton,27.75,Survived
+"West, Mr. Edwy Arthur",Second class,Male,36,Adult,Southampton,27.75,Died
+"West, Mrs. Edwy Arthur (Ada Mary Worth)",Second class,Female,33,Adult,Southampton,27.75,Survived
+"Wheadon, Mr. Edward H",Second class,Male,66,Adult,Southampton,10.5,Died
+"Wheeler, Mr. Edwin ""Frederick""",Second class,Male,,Unknown,Southampton,12.875,Died
+"Wilhelms, Mr. Charles",Second class,Male,31,Adult,Southampton,13,Survived
+"Williams, Mr. Charles Eugene",Second class,Male,,Unknown,Southampton,13,Survived
+"Wright, Miss. Marion",Second class,Female,26,Adult,Southampton,13.5,Survived
+"Yrois, Miss. Henriette (""Mrs Harbeck"")",Second class,Female,24,Adult,Southampton,13,Died
+"Abbing, Mr. Anthony",Third class,Male,42,Adult,Southampton,7.55,Died
+"Abbott, Master. Eugene Joseph",Third class,Male,13,Child,Southampton,20.25,Died
+"Abbott, Mr. Rossmore Edward",Third class,Male,16,Child,Southampton,20.25,Died
+"Abbott, Mrs. Stanton (Rosa Hunt)",Third class,Female,35,Adult,Southampton,20.25,Survived
+"Abelseth, Miss. Karen Marie",Third class,Female,16,Child,Southampton,7.65,Survived
+"Abelseth, Mr. Olaus Jorgensen",Third class,Male,25,Adult,Southampton,7.65,Survived
+"Abrahamsson, Mr. Abraham August Johannes",Third class,Male,20,Adult,Southampton,7.925,Survived
+"Abrahim, Mrs. Joseph (Sophie Halaut Easu)",Third class,Female,18,Adult,Cherbourg,7.2292,Survived
+"Adahl, Mr. Mauritz Nils Martin",Third class,Male,30,Adult,Southampton,7.25,Died
+"Adams, Mr. John",Third class,Male,26,Adult,Southampton,8.05,Died
+"Ahlin, Mrs. Johan (Johanna Persdotter Larsson)",Third class,Female,40,Adult,Southampton,9.475,Died
+"Aks, Master. Philip Frank",Third class,Male,0.83,Child,Southampton,9.35,Survived
+"Aks, Mrs. Sam (Leah Rosen)",Third class,Female,18,Adult,Southampton,9.35,Survived
+"Albimona, Mr. Nassef Cassem",Third class,Male,26,Adult,Cherbourg,18.7875,Survived
+"Alexander, Mr. William",Third class,Male,26,Adult,Southampton,7.8875,Died
+"Alhomaki, Mr. Ilmari Rudolf",Third class,Male,20,Adult,Southampton,7.925,Died
+"Ali, Mr. Ahmed",Third class,Male,24,Adult,Southampton,7.05,Died
+"Ali, Mr. William",Third class,Male,25,Adult,Southampton,7.05,Died
+"Allen, Mr. William Henry",Third class,Male,35,Adult,Southampton,8.05,Died
+"Allum, Mr. Owen George",Third class,Male,18,Adult,Southampton,8.3,Died
+"Andersen, Mr. Albert Karvin",Third class,Male,32,Adult,Southampton,22.525,Died
+"Andersen-Jensen, Miss. Carla Christine Nielsine",Third class,Female,19,Adult,Southampton,7.8542,Survived
+"Andersson, Master. Sigvard Harald Elias",Third class,Male,4,Child,Southampton,31.275,Died
+"Andersson, Miss. Ebba Iris Alfrida",Third class,Female,6,Child,Southampton,31.275,Died
+"Andersson, Miss. Ellis Anna Maria",Third class,Female,2,Child,Southampton,31.275,Died
+"Andersson, Miss. Erna Alexandra",Third class,Female,17,Child,Southampton,7.925,Survived
+"Andersson, Miss. Ida Augusta Margareta",Third class,Female,38,Adult,Southampton,7.775,Died
+"Andersson, Miss. Ingeborg Constanzia",Third class,Female,9,Child,Southampton,31.275,Died
+"Andersson, Miss. Sigrid Elisabeth",Third class,Female,11,Child,Southampton,31.275,Died
+"Andersson, Mr. Anders Johan",Third class,Male,39,Adult,Southampton,31.275,Died
+"Andersson, Mr. August Edvard (""Wennerstrom"")",Third class,Male,27,Adult,Southampton,7.7958,Survived
+"Andersson, Mr. Johan Samuel",Third class,Male,26,Adult,Southampton,7.775,Died
+"Andersson, Mrs. Anders Johan (Alfrida Konstantia Brogren)",Third class,Female,39,Adult,Southampton,31.275,Died
+"Andreasson, Mr. Paul Edvin",Third class,Male,20,Adult,Southampton,7.8542,Died
+"Angheloff, Mr. Minko",Third class,Male,26,Adult,Southampton,7.8958,Died
+"Arnold-Franchi, Mr. Josef",Third class,Male,25,Adult,Southampton,17.8,Died
+"Arnold-Franchi, Mrs. Josef (Josefine Franchi)",Third class,Female,18,Adult,Southampton,17.8,Died
+"Aronsson, Mr. Ernst Axel Algot",Third class,Male,24,Adult,Southampton,7.775,Died
+"Asim, Mr. Adola",Third class,Male,35,Adult,Southampton,7.05,Died
+"Asplund, Master. Carl Edgar",Third class,Male,5,Child,Southampton,31.3875,Died
+"Asplund, Master. Clarence Gustaf Hugo",Third class,Male,9,Child,Southampton,31.3875,Died
+"Asplund, Master. Edvin Rojj Felix",Third class,Male,3,Child,Southampton,31.3875,Survived
+"Asplund, Master. Filip Oscar",Third class,Male,13,Child,Southampton,31.3875,Died
+"Asplund, Miss. Lillian Gertrud",Third class,Female,5,Child,Southampton,31.3875,Survived
+"Asplund, Mr. Carl Oscar Vilhelm Gustafsson",Third class,Male,40,Adult,Southampton,31.3875,Died
+"Asplund, Mr. Johan Charles",Third class,Male,23,Adult,Southampton,7.7958,Survived
+"Asplund, Mrs. Carl Oscar (Selma Augusta Emilia Johansson)",Third class,Female,38,Adult,Southampton,31.3875,Survived
+"Assaf Khalil, Mrs. Mariana (""Miriam"")",Third class,Female,45,Adult,Cherbourg,7.225,Survived
+"Assaf, Mr. Gerios",Third class,Male,21,Adult,Cherbourg,7.225,Died
+"Assam, Mr. Ali",Third class,Male,23,Adult,Southampton,7.05,Died
+"Attalah, Miss. Malake",Third class,Female,17,Child,Cherbourg,14.4583,Died
+"Attalah, Mr. Sleiman",Third class,Male,30,Adult,Cherbourg,7.225,Died
+"Augustsson, Mr. Albert",Third class,Male,23,Adult,Southampton,7.8542,Died
+"Ayoub, Miss. Banoura",Third class,Female,13,Child,Cherbourg,7.2292,Survived
+"Baccos, Mr. Raffull",Third class,Male,20,Adult,Cherbourg,7.225,Died
+"Backstrom, Mr. Karl Alfred",Third class,Male,32,Adult,Southampton,15.85,Died
+"Backstrom, Mrs. Karl Alfred (Maria Mathilda Gustafsson)",Third class,Female,33,Adult,Southampton,15.85,Survived
+"Baclini, Miss. Eugenie",Third class,Female,0.75,Child,Cherbourg,19.2583,Survived
+"Baclini, Miss. Helene Barbara",Third class,Female,0.75,Child,Cherbourg,19.2583,Survived
+"Baclini, Miss. Marie Catherine",Third class,Female,5,Child,Cherbourg,19.2583,Survived
+"Baclini, Mrs. Solomon (Latifa Qurban)",Third class,Female,24,Adult,Cherbourg,19.2583,Survived
+"Badman, Miss. Emily Louisa",Third class,Female,18,Adult,Southampton,8.05,Survived
+"Badt, Mr. Mohamed",Third class,Male,40,Adult,Cherbourg,7.225,Died
+"Balkic, Mr. Cerin",Third class,Male,26,Adult,Southampton,7.8958,Died
+"Barah, Mr. Hanna Assi",Third class,Male,20,Adult,Cherbourg,7.2292,Survived
+"Barbara, Miss. Saiide",Third class,Female,18,Adult,Cherbourg,14.4542,Died
+"Barbara, Mrs. (Catherine David)",Third class,Female,45,Adult,Cherbourg,14.4542,Died
+"Barry, Miss. Julia",Third class,Female,27,Adult,Queenstown,7.8792,Died
+"Barton, Mr. David John",Third class,Male,22,Adult,Southampton,8.05,Died
+"Beavan, Mr. William Thomas",Third class,Male,19,Adult,Southampton,8.05,Died
+"Bengtsson, Mr. John Viktor",Third class,Male,26,Adult,Southampton,7.775,Died
+"Berglund, Mr. Karl Ivar Sven",Third class,Male,22,Adult,Southampton,9.35,Died
+"Betros, Master. Seman",Third class,Male,,Unknown,Cherbourg,7.2292,Died
+"Betros, Mr. Tannous",Third class,Male,20,Adult,Cherbourg,4.0125,Died
+"Bing, Mr. Lee",Third class,Male,32,Adult,Southampton,56.4958,Survived
+"Birkeland, Mr. Hans Martin Monsen",Third class,Male,21,Adult,Southampton,7.775,Died
+"Bjorklund, Mr. Ernst Herbert",Third class,Male,18,Adult,Southampton,7.75,Died
+"Bostandyeff, Mr. Guentcho",Third class,Male,26,Adult,Southampton,7.8958,Died
+"Boulos, Master. Akar",Third class,Male,6,Child,Cherbourg,15.2458,Died
+"Boulos, Miss. Nourelain",Third class,Female,9,Child,Cherbourg,15.2458,Died
+"Boulos, Mr. Hanna",Third class,Male,,Unknown,Cherbourg,7.225,Died
+"Boulos, Mrs. Joseph (Sultana)",Third class,Female,,Unknown,Cherbourg,15.2458,Died
+"Bourke, Miss. Mary",Third class,Female,,Unknown,Queenstown,7.75,Died
+"Bourke, Mr. John",Third class,Male,40,Adult,Queenstown,15.5,Died
+"Bourke, Mrs. John (Catherine)",Third class,Female,32,Adult,Queenstown,15.5,Died
+"Bowen, Mr. David John ""Dai""",Third class,Male,21,Adult,Southampton,16.1,Died
+"Bradley, Miss. Bridget Delia",Third class,Female,22,Adult,Queenstown,7.725,Survived
+"Braf, Miss. Elin Ester Maria",Third class,Female,20,Adult,Southampton,7.8542,Died
+"Braund, Mr. Lewis Richard",Third class,Male,29,Adult,Southampton,7.0458,Died
+"Braund, Mr. Owen Harris",Third class,Male,22,Adult,Southampton,7.25,Died
+"Brobeck, Mr. Karl Rudolf",Third class,Male,22,Adult,Southampton,7.7958,Died
+"Brocklebank, Mr. William Alfred",Third class,Male,35,Adult,Southampton,8.05,Died
+"Buckley, Miss. Katherine",Third class,Female,18.5,Adult,Queenstown,7.2833,Died
+"Buckley, Mr. Daniel",Third class,Male,21,Adult,Queenstown,7.8208,Survived
+"Burke, Mr. Jeremiah",Third class,Male,19,Adult,Queenstown,6.75,Died
+"Burns, Miss. Mary Delia",Third class,Female,18,Adult,Queenstown,7.8792,Died
+"Cacic, Miss. Manda",Third class,Female,21,Adult,Southampton,8.6625,Died
+"Cacic, Miss. Marija",Third class,Female,30,Adult,Southampton,8.6625,Died
+"Cacic, Mr. Jego Grga",Third class,Male,18,Adult,Southampton,8.6625,Died
+"Cacic, Mr. Luka",Third class,Male,38,Adult,Southampton,8.6625,Died
+"Calic, Mr. Jovo",Third class,Male,17,Child,Southampton,8.6625,Died
+"Calic, Mr. Petar",Third class,Male,17,Child,Southampton,8.6625,Died
+"Canavan, Miss. Mary",Third class,Female,21,Adult,Queenstown,7.75,Died
+"Canavan, Mr. Patrick",Third class,Male,21,Adult,Queenstown,7.75,Died
+"Cann, Mr. Ernest Charles",Third class,Male,21,Adult,Southampton,8.05,Died
+"Caram, Mr. Joseph",Third class,Male,,Unknown,Cherbourg,14.4583,Died
+"Caram, Mrs. Joseph (Maria Elias)",Third class,Female,,Unknown,Cherbourg,14.4583,Died
+"Carlsson, Mr. August Sigfrid",Third class,Male,28,Adult,Southampton,7.7958,Died
+"Carlsson, Mr. Carl Robert",Third class,Male,24,Adult,Southampton,7.8542,Died
+"Carr, Miss. Helen ""Ellen""",Third class,Female,16,Child,Queenstown,7.75,Survived
+"Carr, Miss. Jeannie",Third class,Female,37,Adult,Queenstown,7.75,Died
+"Carver, Mr. Alfred John",Third class,Male,28,Adult,Southampton,7.25,Died
+"Celotti, Mr. Francesco",Third class,Male,24,Adult,Southampton,8.05,Died
+"Charters, Mr. David",Third class,Male,21,Adult,Queenstown,7.7333,Died
+"Chip, Mr. Chang",Third class,Male,32,Adult,Southampton,56.4958,Survived
+"Christmann, Mr. Emil",Third class,Male,29,Adult,Southampton,8.05,Died
+"Chronopoulos, Mr. Apostolos",Third class,Male,26,Adult,Cherbourg,14.4542,Died
+"Chronopoulos, Mr. Demetrios",Third class,Male,18,Adult,Cherbourg,14.4542,Died
+"Coelho, Mr. Domingos Fernandeo",Third class,Male,20,Adult,Southampton,7.05,Died
+"Cohen, Mr. Gurshon ""Gus""",Third class,Male,18,Adult,Southampton,8.05,Survived
+"Colbert, Mr. Patrick",Third class,Male,24,Adult,Queenstown,7.25,Died
+"Coleff, Mr. Peju",Third class,Male,36,Adult,Southampton,7.4958,Died
+"Coleff, Mr. Satio",Third class,Male,24,Adult,Southampton,7.4958,Died
+"Conlon, Mr. Thomas Henry",Third class,Male,31,Adult,Queenstown,7.7333,Died
+"Connaghton, Mr. Michael",Third class,Male,31,Adult,Queenstown,7.75,Died
+"Connolly, Miss. Kate",Third class,Female,22,Adult,Queenstown,7.75,Survived
+"Connolly, Miss. Kate",Third class,Female,30,Adult,Queenstown,7.6292,Died
+"Connors, Mr. Patrick",Third class,Male,70.5,Adult,Queenstown,7.75,Died
+"Cook, Mr. Jacob",Third class,Male,43,Adult,Southampton,8.05,Died
+"Cor, Mr. Bartol",Third class,Male,35,Adult,Southampton,7.8958,Died
+"Cor, Mr. Ivan",Third class,Male,27,Adult,Southampton,7.8958,Died
+"Cor, Mr. Liudevit",Third class,Male,19,Adult,Southampton,7.8958,Died
+"Corn, Mr. Harry",Third class,Male,30,Adult,Southampton,8.05,Died
+"Coutts, Master. Eden Leslie ""Neville""",Third class,Male,9,Child,Southampton,15.9,Survived
+"Coutts, Master. William Loch ""William""",Third class,Male,3,Child,Southampton,15.9,Survived
+"Coutts, Mrs. William (Winnie ""Minnie"" Treanor)",Third class,Female,36,Adult,Southampton,15.9,Survived
+"Coxon, Mr. Daniel",Third class,Male,59,Adult,Southampton,7.25,Died
+"Crease, Mr. Ernest James",Third class,Male,19,Adult,Southampton,8.1583,Died
+"Cribb, Miss. Laura Alice",Third class,Female,17,Child,Southampton,16.1,Survived
+"Cribb, Mr. John Hatfield",Third class,Male,44,Adult,Southampton,16.1,Died
+"Culumovic, Mr. Jeso",Third class,Male,17,Child,Southampton,8.6625,Died
+"Daher, Mr. Shedid",Third class,Male,22.5,Adult,Cherbourg,7.225,Died
+"Dahl, Mr. Karl Edwart",Third class,Male,45,Adult,Southampton,8.05,Survived
+"Dahlberg, Miss. Gerda Ulrika",Third class,Female,22,Adult,Southampton,10.5167,Died
+"Dakic, Mr. Branko",Third class,Male,19,Adult,Southampton,10.1708,Died
+"Daly, Miss. Margaret Marcella ""Maggie""",Third class,Female,30,Adult,Queenstown,6.95,Survived
+"Daly, Mr. Eugene Patrick",Third class,Male,29,Adult,Queenstown,7.75,Survived
+"Danbom, Master. Gilbert Sigvard Emanuel",Third class,Male,0.33,Child,Southampton,14.4,Died
+"Danbom, Mr. Ernst Gilbert",Third class,Male,34,Adult,Southampton,14.4,Died
+"Danbom, Mrs. Ernst Gilbert (Anna Sigrid Maria Brogren)",Third class,Female,28,Adult,Southampton,14.4,Died
+"Danoff, Mr. Yoto",Third class,Male,27,Adult,Southampton,7.8958,Died
+"Dantcheff, Mr. Ristiu",Third class,Male,25,Adult,Southampton,7.8958,Died
+"Davies, Mr. Alfred J",Third class,Male,24,Adult,Southampton,24.15,Died
+"Davies, Mr. Evan",Third class,Male,22,Adult,Southampton,8.05,Died
+"Davies, Mr. John Samuel",Third class,Male,21,Adult,Southampton,24.15,Died
+"Davies, Mr. Joseph",Third class,Male,17,Child,Southampton,8.05,Died
+"Davison, Mr. Thomas Henry",Third class,Male,,Unknown,Southampton,16.1,Died
+"Davison, Mrs. Thomas Henry (Mary E Finck)",Third class,Female,,Unknown,Southampton,16.1,Survived
+"de Messemaeker, Mr. Guillaume Joseph",Third class,Male,36.5,Adult,Southampton,17.4,Survived
+"de Messemaeker, Mrs. Guillaume Joseph (Emma)",Third class,Female,36,Adult,Southampton,17.4,Survived
+"de Mulder, Mr. Theodore",Third class,Male,30,Adult,Southampton,9.5,Survived
+"de Pelsmaeker, Mr. Alfons",Third class,Male,16,Child,Southampton,9.5,Died
+"Dean, Master. Bertram Vere",Third class,Male,1,Child,Southampton,20.575,Survived
+"Dean, Miss. Elizabeth Gladys ""Millvina""",Third class,Female,0.17,Child,Southampton,20.575,Survived
+"Dean, Mr. Bertram Frank",Third class,Male,26,Adult,Southampton,20.575,Died
+"Dean, Mrs. Bertram (Eva Georgetta Light)",Third class,Female,33,Adult,Southampton,20.575,Survived
+"Delalic, Mr. Redjo",Third class,Male,25,Adult,Southampton,7.8958,Died
+"Demetri, Mr. Marinko",Third class,Male,,Unknown,Southampton,7.8958,Died
+"Denkoff, Mr. Mitto",Third class,Male,,Unknown,Southampton,7.8958,Died
+"Dennis, Mr. Samuel",Third class,Male,22,Adult,Southampton,7.25,Died
+"Dennis, Mr. William",Third class,Male,36,Adult,Southampton,7.25,Died
+"Devaney, Miss. Margaret Delia",Third class,Female,19,Adult,Queenstown,7.8792,Survived
+"Dika, Mr. Mirko",Third class,Male,17,Child,Southampton,7.8958,Died
+"Dimic, Mr. Jovan",Third class,Male,42,Adult,Southampton,8.6625,Died
+"Dintcheff, Mr. Valtcho",Third class,Male,43,Adult,Southampton,7.8958,Died
+"Doharr, Mr. Tannous",Third class,Male,,Unknown,Cherbourg,7.2292,Died
+"Dooley, Mr. Patrick",Third class,Male,32,Adult,Queenstown,7.75,Died
+"Dorking, Mr. Edward Arthur",Third class,Male,19,Adult,Southampton,8.05,Survived
+"Dowdell, Miss. Elizabeth",Third class,Female,30,Adult,Southampton,12.475,Survived
+"Doyle, Miss. Elizabeth",Third class,Female,24,Adult,Queenstown,7.75,Died
+"Drapkin, Miss. Jennie",Third class,Female,23,Adult,Southampton,8.05,Survived
+"Drazenoic, Mr. Jozef",Third class,Male,33,Adult,Cherbourg,7.8958,Died
+"Duane, Mr. Frank",Third class,Male,65,Adult,Queenstown,7.75,Died
+"Duquemin, Mr. Joseph",Third class,Male,24,Adult,Southampton,7.55,Survived
+"Dyker, Mr. Adolf Fredrik",Third class,Male,23,Adult,Southampton,13.9,Died
+"Dyker, Mrs. Adolf Fredrik (Anna Elisabeth Judith Andersson)",Third class,Female,22,Adult,Southampton,13.9,Survived
+"Edvardsson, Mr. Gustaf Hjalmar",Third class,Male,18,Adult,Southampton,7.775,Died
+"Eklund, Mr. Hans Linus",Third class,Male,16,Child,Southampton,7.775,Died
+"Ekstrom, Mr. Johan",Third class,Male,45,Adult,Southampton,6.975,Died
+"Elias, Mr. Dibo",Third class,Male,,Unknown,Cherbourg,7.225,Died
+"Elias, Mr. Joseph",Third class,Male,39,Adult,Cherbourg,7.2292,Died
+"Elias, Mr. Joseph Jr",Third class,Male,17,Child,Cherbourg,7.2292,Died
+"Elias, Mr. Tannous",Third class,Male,15,Child,Cherbourg,7.2292,Died
+"Elsbury, Mr. William James",Third class,Male,47,Adult,Southampton,7.25,Died
+"Emanuel, Miss. Virginia Ethel",Third class,Female,5,Child,Southampton,12.475,Survived
+"Emir, Mr. Farred Chehab",Third class,Male,,Unknown,Cherbourg,7.225,Died
+"Everett, Mr. Thomas James",Third class,Male,40.5,Adult,Southampton,15.1,Died
+"Farrell, Mr. James",Third class,Male,40.5,Adult,Queenstown,7.75,Died
+"Finoli, Mr. Luigi",Third class,Male,,Unknown,Southampton,7.05,Survived
+"Fischer, Mr. Eberhard Thelander",Third class,Male,18,Adult,Southampton,7.7958,Died
+"Fleming, Miss. Honora",Third class,Female,,Unknown,Queenstown,7.75,Died
+"Flynn, Mr. James",Third class,Male,,Unknown,Queenstown,7.75,Died
+"Flynn, Mr. John",Third class,Male,,Unknown,Queenstown,6.95,Died
+"Foley, Mr. Joseph",Third class,Male,26,Adult,Queenstown,7.8792,Died
+"Foley, Mr. William",Third class,Male,,Unknown,Queenstown,7.75,Died
+"Foo, Mr. Choong",Third class,Male,,Unknown,Southampton,56.4958,Survived
+"Ford, Miss. Doolina Margaret ""Daisy""",Third class,Female,21,Adult,Southampton,34.375,Died
+"Ford, Miss. Robina Maggie ""Ruby""",Third class,Female,9,Child,Southampton,34.375,Died
+"Ford, Mr. Arthur",Third class,Male,,Unknown,Southampton,8.05,Died
+"Ford, Mr. Edward Watson",Third class,Male,18,Adult,Southampton,34.375,Died
+"Ford, Mr. William Neal",Third class,Male,16,Child,Southampton,34.375,Died
+"Ford, Mrs. Edward (Margaret Ann Watson)",Third class,Female,48,Adult,Southampton,34.375,Died
+"Fox, Mr. Patrick",Third class,Male,,Unknown,Queenstown,7.75,Died
+"Franklin, Mr. Charles (Charles Fardon)",Third class,Male,,Unknown,Southampton,7.25,Died
+"Gallagher, Mr. Martin",Third class,Male,25,Adult,Queenstown,7.7417,Died
+"Garfirth, Mr. John",Third class,Male,,Unknown,Southampton,14.5,Died
+"Gheorgheff, Mr. Stanio",Third class,Male,,Unknown,Cherbourg,7.8958,Died
+"Gilinski, Mr. Eliezer",Third class,Male,22,Adult,Southampton,8.05,Died
+"Gilnagh, Miss. Katherine ""Katie""",Third class,Female,16,Child,Queenstown,7.7333,Survived
+"Glynn, Miss. Mary Agatha",Third class,Female,,Unknown,Queenstown,7.75,Survived
+"Goldsmith, Master. Frank John William ""Frankie""",Third class,Male,9,Child,Southampton,20.525,Survived
+"Goldsmith, Mr. Frank John",Third class,Male,33,Adult,Southampton,20.525,Died
+"Goldsmith, Mr. Nathan",Third class,Male,41,Adult,Southampton,7.85,Died
+"Goldsmith, Mrs. Frank John (Emily Alice Brown)",Third class,Female,31,Adult,Southampton,20.525,Survived
+"Goncalves, Mr. Manuel Estanslas",Third class,Male,38,Adult,Southampton,7.05,Died
+"Goodwin, Master. Harold Victor",Third class,Male,9,Child,Southampton,46.9,Died
+"Goodwin, Master. Sidney Leonard",Third class,Male,1,Child,Southampton,46.9,Died
+"Goodwin, Master. William Frederick",Third class,Male,11,Child,Southampton,46.9,Died
+"Goodwin, Miss. Jessie Allis",Third class,Female,10,Child,Southampton,46.9,Died
+"Goodwin, Miss. Lillian Amy",Third class,Female,16,Child,Southampton,46.9,Died
+"Goodwin, Mr. Charles Edward",Third class,Male,14,Child,Southampton,46.9,Died
+"Goodwin, Mr. Charles Frederick",Third class,Male,40,Adult,Southampton,46.9,Died
+"Goodwin, Mrs. Frederick (Augusta Tyler)",Third class,Female,43,Adult,Southampton,46.9,Died
+"Green, Mr. George Henry",Third class,Male,51,Adult,Southampton,8.05,Died
+"Gronnestad, Mr. Daniel Danielsen",Third class,Male,32,Adult,Southampton,8.3625,Died
+"Guest, Mr. Robert",Third class,Male,,Unknown,Southampton,8.05,Died
+"Gustafsson, Mr. Alfred Ossian",Third class,Male,20,Adult,Southampton,9.8458,Died
+"Gustafsson, Mr. Anders Vilhelm",Third class,Male,37,Adult,Southampton,7.925,Died
+"Gustafsson, Mr. Johan Birger",Third class,Male,28,Adult,Southampton,7.925,Died
+"Gustafsson, Mr. Karl Gideon",Third class,Male,19,Adult,Southampton,7.775,Died
+"Haas, Miss. Aloisia",Third class,Female,24,Adult,Southampton,8.85,Died
+"Hagardon, Miss. Kate",Third class,Female,17,Child,Queenstown,7.7333,Died
+"Hagland, Mr. Ingvald Olai Olsen",Third class,Male,,Unknown,Southampton,19.9667,Died
+"Hagland, Mr. Konrad Mathias Reiersen",Third class,Male,,Unknown,Southampton,19.9667,Died
+"Hakkarainen, Mr. Pekka Pietari",Third class,Male,28,Adult,Southampton,15.85,Died
+"Hakkarainen, Mrs. Pekka Pietari (Elin Matilda Dolck)",Third class,Female,24,Adult,Southampton,15.85,Survived
+"Hampe, Mr. Leon",Third class,Male,20,Adult,Southampton,9.5,Died
+"Hanna, Mr. Mansour",Third class,Male,23.5,Adult,Cherbourg,7.2292,Died
+"Hansen, Mr. Claus Peter",Third class,Male,41,Adult,Southampton,14.1083,Died
+"Hansen, Mr. Henrik Juul",Third class,Male,26,Adult,Southampton,7.8542,Died
+"Hansen, Mr. Henry Damsgaard",Third class,Male,21,Adult,Southampton,7.8542,Died
+"Hansen, Mrs. Claus Peter (Jennie L Howard)",Third class,Female,45,Adult,Southampton,14.1083,Survived
+"Harknett, Miss. Alice Phoebe",Third class,Female,,Unknown,Southampton,7.55,Died
+"Harmer, Mr. Abraham (David Lishin)",Third class,Male,25,Adult,Southampton,7.25,Died
+"Hart, Mr. Henry",Third class,Male,,Unknown,Queenstown,6.8583,Died
+"Hassan, Mr. Houssein G N",Third class,Male,11,Child,Cherbourg,18.7875,Died
+"Healy, Miss. Hanora ""Nora""",Third class,Female,,Unknown,Queenstown,7.75,Survived
+"Hedman, Mr. Oskar Arvid",Third class,Male,27,Adult,Southampton,6.975,Survived
+"Hee, Mr. Ling",Third class,Male,,Unknown,Southampton,56.4958,Survived
+"Hegarty, Miss. Hanora ""Nora""",Third class,Female,18,Adult,Queenstown,6.75,Died
+"Heikkinen, Miss. Laina",Third class,Female,26,Adult,Southampton,7.925,Survived
+"Heininen, Miss. Wendla Maria",Third class,Female,23,Adult,Southampton,7.925,Died
+"Hellstrom, Miss. Hilda Maria",Third class,Female,22,Adult,Southampton,8.9625,Survived
+"Hendekovic, Mr. Ignjac",Third class,Male,28,Adult,Southampton,7.8958,Died
+"Henriksson, Miss. Jenny Lovisa",Third class,Female,28,Adult,Southampton,7.775,Died
+"Henry, Miss. Delia",Third class,Female,,Unknown,Queenstown,7.75,Died
+"Hirvonen, Miss. Hildur E",Third class,Female,2,Child,Southampton,12.2875,Survived
+"Hirvonen, Mrs. Alexander (Helga E Lindqvist)",Third class,Female,22,Adult,Southampton,12.2875,Survived
+"Holm, Mr. John Fredrik Alexander",Third class,Male,43,Adult,Southampton,6.45,Died
+"Holthen, Mr. Johan Martin",Third class,Male,28,Adult,Southampton,22.525,Died
+"Honkanen, Miss. Eliina",Third class,Female,27,Adult,Southampton,7.925,Survived
+"Horgan, Mr. John",Third class,Male,,Unknown,Queenstown,7.75,Died
+"Howard, Miss. May Elizabeth",Third class,Female,,Unknown,Southampton,8.05,Survived
+"Humblen, Mr. Adolf Mathias Nicolai Olsen",Third class,Male,42,Adult,Southampton,7.65,Died
+"Hyman, Mr. Abraham",Third class,Male,,Unknown,Southampton,7.8875,Survived
+"Ibrahim Shawah, Mr. Yousseff",Third class,Male,30,Adult,Cherbourg,7.2292,Died
+"Ilieff, Mr. Ylio",Third class,Male,,Unknown,Southampton,7.8958,Died
+"Ilmakangas, Miss. Ida Livija",Third class,Female,27,Adult,Southampton,7.925,Died
+"Ilmakangas, Miss. Pieta Sofia",Third class,Female,25,Adult,Southampton,7.925,Died
+"Ivanoff, Mr. Kanio",Third class,Male,,Unknown,Southampton,7.8958,Died
+"Jalsevac, Mr. Ivan",Third class,Male,29,Adult,Cherbourg,7.8958,Survived
+"Jansson, Mr. Carl Olof",Third class,Male,21,Adult,Southampton,7.7958,Survived
+"Jardin, Mr. Jose Neto",Third class,Male,,Unknown,Southampton,7.05,Died
+"Jensen, Mr. Hans Peder",Third class,Male,20,Adult,Southampton,7.8542,Died
+"Jensen, Mr. Niels Peder",Third class,Male,48,Adult,Southampton,7.8542,Died
+"Jensen, Mr. Svend Lauritz",Third class,Male,17,Child,Southampton,7.0542,Died
+"Jermyn, Miss. Annie",Third class,Female,,Unknown,Queenstown,7.75,Survived
+"Johannesen-Bratthammer, Mr. Bernt",Third class,Male,,Unknown,Southampton,8.1125,Survived
+"Johanson, Mr. Jakob Alfred",Third class,Male,34,Adult,Southampton,6.4958,Died
+"Johansson Palmquist, Mr. Oskar Leander",Third class,Male,26,Adult,Southampton,7.775,Survived
+"Johansson, Mr. Erik",Third class,Male,22,Adult,Southampton,7.7958,Died
+"Johansson, Mr. Gustaf Joel",Third class,Male,33,Adult,Southampton,8.6542,Died
+"Johansson, Mr. Karl Johan",Third class,Male,31,Adult,Southampton,7.775,Died
+"Johansson, Mr. Nils",Third class,Male,29,Adult,Southampton,7.8542,Died
+"Johnson, Master. Harold Theodor",Third class,Male,4,Child,Southampton,11.1333,Survived
+"Johnson, Miss. Eleanor Ileen",Third class,Female,1,Child,Southampton,11.1333,Survived
+"Johnson, Mr. Alfred",Third class,Male,49,Adult,Southampton,0,Died
+"Johnson, Mr. Malkolm Joackim",Third class,Male,33,Adult,Southampton,7.775,Died
+"Johnson, Mr. William Cahoone Jr",Third class,Male,19,Adult,Southampton,0,Died
+"Johnson, Mrs. Oscar W (Elisabeth Vilhelmina Berg)",Third class,Female,27,Adult,Southampton,11.1333,Survived
+"Johnston, Master. William Arthur ""Willie""",Third class,Male,,Unknown,Southampton,23.45,Died
+"Johnston, Miss. Catherine Helen ""Carrie""",Third class,Female,,Unknown,Southampton,23.45,Died
+"Johnston, Mr. Andrew G",Third class,Male,,Unknown,Southampton,23.45,Died
+"Johnston, Mrs. Andrew G (Elizabeth ""Lily"" Watson)",Third class,Female,,Unknown,Southampton,23.45,Died
+"Jonkoff, Mr. Lalio",Third class,Male,23,Adult,Southampton,7.8958,Died
+"Jonsson, Mr. Carl",Third class,Male,32,Adult,Southampton,7.8542,Survived
+"Jonsson, Mr. Nils Hilding",Third class,Male,27,Adult,Southampton,7.8542,Died
+"Jussila, Miss. Katriina",Third class,Female,20,Adult,Southampton,9.825,Died
+"Jussila, Miss. Mari Aina",Third class,Female,21,Adult,Southampton,9.825,Died
+"Jussila, Mr. Eiriik",Third class,Male,32,Adult,Southampton,7.925,Survived
+"Kallio, Mr. Nikolai Erland",Third class,Male,17,Child,Southampton,7.125,Died
+"Kalvik, Mr. Johannes Halvorsen",Third class,Male,21,Adult,Southampton,8.4333,Died
+"Karaic, Mr. Milan",Third class,Male,30,Adult,Southampton,7.8958,Died
+"Karlsson, Mr. Einar Gervasius",Third class,Male,21,Adult,Southampton,7.7958,Survived
+"Karlsson, Mr. Julius Konrad Eugen",Third class,Male,33,Adult,Southampton,7.8542,Died
+"Karlsson, Mr. Nils August",Third class,Male,22,Adult,Southampton,7.5208,Died
+"Karun, Miss. Manca",Third class,Female,4,Child,Cherbourg,13.4167,Survived
+"Karun, Mr. Franz",Third class,Male,39,Adult,Cherbourg,13.4167,Survived
+"Kassem, Mr. Fared",Third class,Male,,Unknown,Cherbourg,7.2292,Died
+"Katavelas, Mr. Vassilios (""Catavelas Vassilios"")",Third class,Male,18.5,Adult,Cherbourg,7.2292,Died
+"Keane, Mr. Andrew ""Andy""",Third class,Male,,Unknown,Queenstown,7.75,Died
+"Keefe, Mr. Arthur",Third class,Male,,Unknown,Southampton,7.25,Died
+"Kelly, Miss. Anna Katherine ""Annie Kate""",Third class,Female,,Unknown,Queenstown,7.75,Survived
+"Kelly, Miss. Mary",Third class,Female,,Unknown,Queenstown,7.75,Survived
+"Kelly, Mr. James",Third class,Male,34.5,Adult,Queenstown,7.8292,Died
+"Kelly, Mr. James",Third class,Male,44,Adult,Southampton,8.05,Died
+"Kennedy, Mr. John",Third class,Male,,Unknown,Queenstown,7.75,Survived
+"Khalil, Mr. Betros",Third class,Male,,Unknown,Cherbourg,14.4542,Died
+"Khalil, Mrs. Betros (Zahie ""Maria"" Elias)",Third class,Female,,Unknown,Cherbourg,14.4542,Died
+"Kiernan, Mr. John",Third class,Male,,Unknown,Queenstown,7.75,Died
+"Kiernan, Mr. Philip",Third class,Male,,Unknown,Queenstown,7.75,Died
+"Kilgannon, Mr. Thomas J",Third class,Male,,Unknown,Queenstown,7.7375,Died
+"Kink, Miss. Maria",Third class,Female,22,Adult,Southampton,8.6625,Died
+"Kink, Mr. Vincenz",Third class,Male,26,Adult,Southampton,8.6625,Died
+"Kink-Heilmann, Miss. Luise Gretchen",Third class,Female,4,Child,Southampton,22.025,Survived
+"Kink-Heilmann, Mr. Anton",Third class,Male,29,Adult,Southampton,22.025,Survived
+"Kink-Heilmann, Mrs. Anton (Luise Heilmann)",Third class,Female,26,Adult,Southampton,22.025,Survived
+"Klasen, Miss. Gertrud Emilia",Third class,Female,1,Child,Southampton,12.1833,Died
+"Klasen, Mr. Klas Albin",Third class,Male,18,Adult,Southampton,7.8542,Died
+"Klasen, Mrs. (Hulda Kristina Eugenia Lofqvist)",Third class,Female,36,Adult,Southampton,12.1833,Died
+"Kraeff, Mr. Theodor",Third class,Male,,Unknown,Cherbourg,7.8958,Died
+"Krekorian, Mr. Neshan",Third class,Male,25,Adult,Cherbourg,7.2292,Survived
+"Lahoud, Mr. Sarkis",Third class,Male,,Unknown,Cherbourg,7.225,Died
+"Laitinen, Miss. Kristina Sofia",Third class,Female,37,Adult,Southampton,9.5875,Died
+"Laleff, Mr. Kristo",Third class,Male,,Unknown,Southampton,7.8958,Died
+"Lam, Mr. Ali",Third class,Male,,Unknown,Southampton,56.4958,Survived
+"Lam, Mr. Len",Third class,Male,,Unknown,Southampton,56.4958,Died
+"Landergren, Miss. Aurora Adelia",Third class,Female,22,Adult,Southampton,7.25,Survived
+"Lane, Mr. Patrick",Third class,Male,,Unknown,Queenstown,7.75,Died
+"Lang, Mr. Fang",Third class,Male,26,Adult,Southampton,56.4958,Survived
+"Larsson, Mr. August Viktor",Third class,Male,29,Adult,Southampton,9.4833,Died
+"Larsson, Mr. Bengt Edvin",Third class,Male,29,Adult,Southampton,7.775,Died
+"Larsson-Rondberg, Mr. Edvard A",Third class,Male,22,Adult,Southampton,7.775,Died
+"Leeni, Mr. Fahim (""Philip Zenni"")",Third class,Male,22,Adult,Cherbourg,7.225,Survived
+"Lefebre, Master. Henry Forbes",Third class,Male,,Unknown,Southampton,25.4667,Died
+"Lefebre, Miss. Ida",Third class,Female,,Unknown,Southampton,25.4667,Died
+"Lefebre, Miss. Jeannie",Third class,Female,,Unknown,Southampton,25.4667,Died
+"Lefebre, Miss. Mathilde",Third class,Female,,Unknown,Southampton,25.4667,Died
+"Lefebre, Mrs. Frank (Frances)",Third class,Female,,Unknown,Southampton,25.4667,Died
+"Leinonen, Mr. Antti Gustaf",Third class,Male,32,Adult,Southampton,7.925,Died
+"Lemberopolous, Mr. Peter L",Third class,Male,34.5,Adult,Cherbourg,6.4375,Died
+"Lennon, Miss. Mary",Third class,Female,,Unknown,Queenstown,15.5,Died
+"Lennon, Mr. Denis",Third class,Male,,Unknown,Queenstown,15.5,Died
+"Leonard, Mr. Lionel",Third class,Male,36,Adult,Southampton,0,Died
+"Lester, Mr. James",Third class,Male,39,Adult,Southampton,24.15,Died
+"Lievens, Mr. Rene Aime",Third class,Male,24,Adult,Southampton,9.5,Died
+"Lindahl, Miss. Agda Thorilda Viktoria",Third class,Female,25,Adult,Southampton,7.775,Died
+"Lindblom, Miss. Augusta Charlotta",Third class,Female,45,Adult,Southampton,7.75,Died
+"Lindell, Mr. Edvard Bengtsson",Third class,Male,36,Adult,Southampton,15.55,Died
+"Lindell, Mrs. Edvard Bengtsson (Elin Gerda Persson)",Third class,Female,30,Adult,Southampton,15.55,Died
+"Lindqvist, Mr. Eino William",Third class,Male,20,Adult,Southampton,7.925,Survived
+"Linehan, Mr. Michael",Third class,Male,,Unknown,Queenstown,7.8792,Died
+"Ling, Mr. Lee",Third class,Male,28,Adult,Southampton,56.4958,Died
+"Lithman, Mr. Simon",Third class,Male,,Unknown,Southampton,7.55,Died
+"Lobb, Mr. William Arthur",Third class,Male,30,Adult,Southampton,16.1,Died
+"Lobb, Mrs. William Arthur (Cordelia K Stanlick)",Third class,Female,26,Adult,Southampton,16.1,Died
+"Lockyer, Mr. Edward",Third class,Male,,Unknown,Southampton,7.8792,Died
+"Lovell, Mr. John Hall (""Henry"")",Third class,Male,20.5,Adult,Southampton,7.25,Died
+"Lulic, Mr. Nikola",Third class,Male,27,Adult,Southampton,8.6625,Survived
+"Lundahl, Mr. Johan Svensson",Third class,Male,51,Adult,Southampton,7.0542,Died
+"Lundin, Miss. Olga Elida",Third class,Female,23,Adult,Southampton,7.8542,Survived
+"Lundstrom, Mr. Thure Edvin",Third class,Male,32,Adult,Southampton,7.5792,Survived
+"Lyntakoff, Mr. Stanko",Third class,Male,,Unknown,Southampton,7.8958,Died
+"MacKay, Mr. George William",Third class,Male,,Unknown,Southampton,7.55,Died
+"Madigan, Miss. Margaret ""Maggie""",Third class,Female,,Unknown,Queenstown,7.75,Survived
+"Madsen, Mr. Fridtjof Arne",Third class,Male,24,Adult,Southampton,7.1417,Survived
+"Maenpaa, Mr. Matti Alexanteri",Third class,Male,22,Adult,Southampton,7.125,Died
+"Mahon, Miss. Bridget Delia",Third class,Female,,Unknown,Queenstown,7.8792,Died
+"Mahon, Mr. John",Third class,Male,,Unknown,Queenstown,7.75,Died
+"Maisner, Mr. Simon",Third class,Male,,Unknown,Southampton,8.05,Died
+"Makinen, Mr. Kalle Edvard",Third class,Male,29,Adult,Southampton,7.925,Died
+"Mamee, Mr. Hanna",Third class,Male,,Unknown,Cherbourg,7.2292,Survived
+"Mangan, Miss. Mary",Third class,Female,30.5,Adult,Queenstown,7.75,Died
+"Mannion, Miss. Margareth",Third class,Female,,Unknown,Queenstown,7.7375,Survived
+"Mardirosian, Mr. Sarkis",Third class,Male,,Unknown,Cherbourg,7.2292,Died
+"Markoff, Mr. Marin",Third class,Male,35,Adult,Cherbourg,7.8958,Died
+"Markun, Mr. Johann",Third class,Male,33,Adult,Southampton,7.8958,Died
+"Masselmani, Mrs. Fatima",Third class,Female,,Unknown,Cherbourg,7.225,Survived
+"Matinoff, Mr. Nicola",Third class,Male,,Unknown,Cherbourg,7.8958,Died
+"McCarthy, Miss. Catherine ""Katie""",Third class,Female,,Unknown,Queenstown,7.75,Survived
+"McCormack, Mr. Thomas Joseph",Third class,Male,,Unknown,Queenstown,7.75,Survived
+"McCoy, Miss. Agnes",Third class,Female,,Unknown,Queenstown,23.25,Survived
+"McCoy, Miss. Alicia",Third class,Female,,Unknown,Queenstown,23.25,Survived
+"McCoy, Mr. Bernard",Third class,Male,,Unknown,Queenstown,23.25,Survived
+"McDermott, Miss. Brigdet Delia",Third class,Female,,Unknown,Queenstown,7.7875,Survived
+"McEvoy, Mr. Michael",Third class,Male,,Unknown,Queenstown,15.5,Died
+"McGovern, Miss. Mary",Third class,Female,,Unknown,Queenstown,7.8792,Survived
+"McGowan, Miss. Anna ""Annie""",Third class,Female,15,Child,Queenstown,8.0292,Survived
+"McGowan, Miss. Katherine",Third class,Female,35,Adult,Queenstown,7.75,Died
+"McMahon, Mr. Martin",Third class,Male,,Unknown,Queenstown,7.75,Died
+"McNamee, Mr. Neal",Third class,Male,24,Adult,Southampton,16.1,Died
+"McNamee, Mrs. Neal (Eileen O'Leary)",Third class,Female,19,Adult,Southampton,16.1,Died
+"McNeill, Miss. Bridget",Third class,Female,,Unknown,Queenstown,7.75,Died
+"Meanwell, Miss. (Marion Ogden)",Third class,Female,,Unknown,Southampton,8.05,Died
+"Meek, Mrs. Thomas (Annie Louise Rowley)",Third class,Female,,Unknown,Southampton,8.05,Died
+"Meo, Mr. Alfonzo",Third class,Male,55.5,Adult,Southampton,8.05,Died
+"Mernagh, Mr. Robert",Third class,Male,,Unknown,Queenstown,7.75,Died
+"Midtsjo, Mr. Karl Albert",Third class,Male,21,Adult,Southampton,7.775,Survived
+"Miles, Mr. Frank",Third class,Male,,Unknown,Southampton,8.05,Died
+"Mineff, Mr. Ivan",Third class,Male,24,Adult,Southampton,7.8958,Died
+"Minkoff, Mr. Lazar",Third class,Male,21,Adult,Southampton,7.8958,Died
+"Mionoff, Mr. Stoytcho",Third class,Male,28,Adult,Southampton,7.8958,Died
+"Mitkoff, Mr. Mito",Third class,Male,,Unknown,Southampton,7.8958,Died
+"Mockler, Miss. Helen Mary ""Ellie""",Third class,Female,,Unknown,Queenstown,7.8792,Survived
+"Moen, Mr. Sigurd Hansen",Third class,Male,25,Adult,Southampton,7.65,Died
+"Moor, Master. Meier",Third class,Male,6,Child,Southampton,12.475,Survived
+"Moor, Mrs. (Beila)",Third class,Female,27,Adult,Southampton,12.475,Survived
+"Moore, Mr. Leonard Charles",Third class,Male,,Unknown,Southampton,8.05,Died
+"Moran, Miss. Bertha",Third class,Female,,Unknown,Queenstown,24.15,Survived
+"Moran, Mr. Daniel J",Third class,Male,,Unknown,Queenstown,24.15,Died
+"Moran, Mr. James",Third class,Male,,Unknown,Queenstown,8.4583,Died
+"Morley, Mr. William",Third class,Male,34,Adult,Southampton,8.05,Died
+"Morrow, Mr. Thomas Rowan",Third class,Male,,Unknown,Queenstown,7.75,Died
+"Moss, Mr. Albert Johan",Third class,Male,,Unknown,Southampton,7.775,Survived
+"Moubarek, Master. Gerios",Third class,Male,,Unknown,Cherbourg,15.2458,Survived
+"Moubarek, Master. Halim Gonios (""William George"")",Third class,Male,,Unknown,Cherbourg,15.2458,Survived
+"Moubarek, Mrs. George (Omine ""Amenia"" Alexander)",Third class,Female,,Unknown,Cherbourg,15.2458,Survived
+"Moussa, Mrs. (Mantoura Boulos)",Third class,Female,,Unknown,Cherbourg,7.2292,Survived
+"Moutal, Mr. Rahamin Haim",Third class,Male,,Unknown,Southampton,8.05,Died
+"Mullens, Miss. Katherine ""Katie""",Third class,Female,,Unknown,Queenstown,7.7333,Survived
+"Mulvihill, Miss. Bertha E",Third class,Female,24,Adult,Queenstown,7.75,Survived
+"Murdlin, Mr. Joseph",Third class,Male,,Unknown,Southampton,8.05,Died
+"Murphy, Miss. Katherine ""Kate""",Third class,Female,,Unknown,Queenstown,15.5,Survived
+"Murphy, Miss. Margaret Jane",Third class,Female,,Unknown,Queenstown,15.5,Survived
+"Murphy, Miss. Nora",Third class,Female,,Unknown,Queenstown,15.5,Survived
+"Myhrman, Mr. Pehr Fabian Oliver Malkolm",Third class,Male,18,Adult,Southampton,7.75,Died
+"Naidenoff, Mr. Penko",Third class,Male,22,Adult,Southampton,7.8958,Died
+"Najib, Miss. Adele Kiamie ""Jane""",Third class,Female,15,Child,Cherbourg,7.225,Survived
+"Nakid, Miss. Maria (""Mary"")",Third class,Female,1,Child,Cherbourg,15.7417,Survived
+"Nakid, Mr. Sahid",Third class,Male,20,Adult,Cherbourg,15.7417,Survived
+"Nakid, Mrs. Said (Waika ""Mary"" Mowad)",Third class,Female,19,Adult,Cherbourg,15.7417,Survived
+"Nancarrow, Mr. William Henry",Third class,Male,33,Adult,Southampton,8.05,Died
+"Nankoff, Mr. Minko",Third class,Male,,Unknown,Southampton,7.8958,Died
+"Nasr, Mr. Mustafa",Third class,Male,,Unknown,Cherbourg,7.2292,Died
+"Naughton, Miss. Hannah",Third class,Female,,Unknown,Queenstown,7.75,Died
+"Nenkoff, Mr. Christo",Third class,Male,,Unknown,Southampton,7.8958,Died
+"Nicola-Yarred, Master. Elias",Third class,Male,12,Child,Cherbourg,11.2417,Survived
+"Nicola-Yarred, Miss. Jamila",Third class,Female,14,Child,Cherbourg,11.2417,Survived
+"Nieminen, Miss. Manta Josefina",Third class,Female,29,Adult,Southampton,7.925,Died
+"Niklasson, Mr. Samuel",Third class,Male,28,Adult,Southampton,8.05,Died
+"Nilsson, Miss. Berta Olivia",Third class,Female,18,Adult,Southampton,7.775,Survived
+"Nilsson, Miss. Helmina Josefina",Third class,Female,26,Adult,Southampton,7.8542,Survived
+"Nilsson, Mr. August Ferdinand",Third class,Male,21,Adult,Southampton,7.8542,Died
+"Nirva, Mr. Iisakki Antino Aijo",Third class,Male,41,Adult,Southampton,7.125,Died
+"Niskanen, Mr. Juha",Third class,Male,39,Adult,Southampton,7.925,Survived
+"Nosworthy, Mr. Richard Cater",Third class,Male,21,Adult,Southampton,7.8,Died
+"Novel, Mr. Mansouer",Third class,Male,28.5,Adult,Cherbourg,7.2292,Died
+"Nysten, Miss. Anna Sofia",Third class,Female,22,Adult,Southampton,7.75,Survived
+"Nysveen, Mr. Johan Hansen",Third class,Male,61,Adult,Southampton,6.2375,Died
+"O'Brien, Mr. Thomas",Third class,Male,,Unknown,Queenstown,15.5,Died
+"O'Brien, Mr. Timothy",Third class,Male,,Unknown,Queenstown,7.8292,Died
+"O'Brien, Mrs. Thomas (Johanna ""Hannah"" Godfrey)",Third class,Female,,Unknown,Queenstown,15.5,Survived
+"O'Connell, Mr. Patrick D",Third class,Male,,Unknown,Queenstown,7.7333,Died
+"O'Connor, Mr. Maurice",Third class,Male,,Unknown,Queenstown,7.75,Died
+"O'Connor, Mr. Patrick",Third class,Male,,Unknown,Queenstown,7.75,Died
+"Odahl, Mr. Nils Martin",Third class,Male,23,Adult,Southampton,9.225,Died
+"O'Donoghue, Ms. Bridget",Third class,Female,,Unknown,Queenstown,7.75,Died
+"O'Driscoll, Miss. Bridget",Third class,Female,,Unknown,Queenstown,7.75,Survived
+"O'Dwyer, Miss. Ellen ""Nellie""",Third class,Female,,Unknown,Queenstown,7.8792,Survived
+"Ohman, Miss. Velin",Third class,Female,22,Adult,Southampton,7.775,Survived
+"O'Keefe, Mr. Patrick",Third class,Male,,Unknown,Queenstown,7.75,Survived
+"O'Leary, Miss. Hanora ""Norah""",Third class,Female,,Unknown,Queenstown,7.8292,Survived
+"Olsen, Master. Artur Karl",Third class,Male,9,Child,Southampton,3.1708,Survived
+"Olsen, Mr. Henry Margido",Third class,Male,28,Adult,Southampton,22.525,Died
+"Olsen, Mr. Karl Siegwart Andreas",Third class,Male,42,Adult,Southampton,8.4042,Died
+"Olsen, Mr. Ole Martin",Third class,Male,,Unknown,Southampton,7.3125,Died
+"Olsson, Miss. Elina",Third class,Female,31,Adult,Southampton,7.8542,Died
+"Olsson, Mr. Nils Johan Goransson",Third class,Male,28,Adult,Southampton,7.8542,Died
+"Olsson, Mr. Oscar Wilhelm",Third class,Male,32,Adult,Southampton,7.775,Survived
+"Olsvigen, Mr. Thor Anderson",Third class,Male,20,Adult,Southampton,9.225,Died
+"Oreskovic, Miss. Jelka",Third class,Female,23,Adult,Southampton,8.6625,Died
+"Oreskovic, Miss. Marija",Third class,Female,20,Adult,Southampton,8.6625,Died
+"Oreskovic, Mr. Luka",Third class,Male,20,Adult,Southampton,8.6625,Died
+"Osen, Mr. Olaf Elon",Third class,Male,16,Child,Southampton,9.2167,Died
+"Osman, Mrs. Mara",Third class,Female,31,Adult,Southampton,8.6833,Survived
+"O'Sullivan, Miss. Bridget Mary",Third class,Female,,Unknown,Queenstown,7.6292,Died
+"Palsson, Master. Gosta Leonard",Third class,Male,2,Child,Southampton,21.075,Died
+"Palsson, Master. Paul Folke",Third class,Male,6,Child,Southampton,21.075,Died
+"Palsson, Miss. Stina Viola",Third class,Female,3,Child,Southampton,21.075,Died
+"Palsson, Miss. Torborg Danira",Third class,Female,8,Child,Southampton,21.075,Died
+"Palsson, Mrs. Nils (Alma Cornelia Berglund)",Third class,Female,29,Adult,Southampton,21.075,Died
+"Panula, Master. Eino Viljami",Third class,Male,1,Child,Southampton,39.6875,Died
+"Panula, Master. Juha Niilo",Third class,Male,7,Child,Southampton,39.6875,Died
+"Panula, Master. Urho Abraham",Third class,Male,2,Child,Southampton,39.6875,Died
+"Panula, Mr. Ernesti Arvid",Third class,Male,16,Child,Southampton,39.6875,Died
+"Panula, Mr. Jaako Arnold",Third class,Male,14,Child,Southampton,39.6875,Died
+"Panula, Mrs. Juha (Maria Emilia Ojala)",Third class,Female,41,Adult,Southampton,39.6875,Died
+"Pasic, Mr. Jakob",Third class,Male,21,Adult,Southampton,8.6625,Died
+"Patchett, Mr. George",Third class,Male,19,Adult,Southampton,14.5,Died
+"Paulner, Mr. Uscher",Third class,Male,,Unknown,Cherbourg,8.7125,Died
+"Pavlovic, Mr. Stefo",Third class,Male,32,Adult,Southampton,7.8958,Died
+"Peacock, Master. Alfred Edward",Third class,Male,0.75,Child,Southampton,13.775,Died
+"Peacock, Miss. Treasteall",Third class,Female,3,Child,Southampton,13.775,Died
+"Peacock, Mrs. Benjamin (Edith Nile)",Third class,Female,26,Adult,Southampton,13.775,Died
+"Pearce, Mr. Ernest",Third class,Male,,Unknown,Southampton,7,Died
+"Pedersen, Mr. Olaf",Third class,Male,,Unknown,Southampton,7.775,Died
+"Peduzzi, Mr. Joseph",Third class,Male,,Unknown,Southampton,8.05,Died
+"Pekoniemi, Mr. Edvard",Third class,Male,21,Adult,Southampton,7.925,Died
+"Peltomaki, Mr. Nikolai Johannes",Third class,Male,25,Adult,Southampton,7.925,Died
+"Perkin, Mr. John Henry",Third class,Male,22,Adult,Southampton,7.25,Died
+"Persson, Mr. Ernst Ulrik",Third class,Male,25,Adult,Southampton,7.775,Survived
+"Peter, Master. Michael J",Third class,Male,,Unknown,Cherbourg,22.3583,Survived
+"Peter, Miss. Anna",Third class,Female,,Unknown,Cherbourg,22.3583,Survived
+"Peter, Mrs. Catherine (Catherine Rizk)",Third class,Female,,Unknown,Cherbourg,22.3583,Survived
+"Peters, Miss. Katie",Third class,Female,,Unknown,Queenstown,8.1375,Died
+"Petersen, Mr. Marius",Third class,Male,24,Adult,Southampton,8.05,Died
+"Petranec, Miss. Matilda",Third class,Female,28,Adult,Southampton,7.8958,Died
+"Petroff, Mr. Nedelio",Third class,Male,19,Adult,Southampton,7.8958,Died
+"Petroff, Mr. Pastcho (""Pentcho"")",Third class,Male,,Unknown,Southampton,7.8958,Died
+"Petterson, Mr. Johan Emil",Third class,Male,25,Adult,Southampton,7.775,Died
+"Pettersson, Miss. Ellen Natalia",Third class,Female,18,Adult,Southampton,7.775,Died
+"Pickard, Mr. Berk (Berk Trembisky)",Third class,Male,32,Adult,Southampton,8.05,Survived
+"Plotcharsky, Mr. Vasil",Third class,Male,,Unknown,Southampton,7.8958,Died
+"Pokrnic, Mr. Mate",Third class,Male,17,Child,Southampton,8.6625,Died
+"Pokrnic, Mr. Tome",Third class,Male,24,Adult,Southampton,8.6625,Died
+"Radeff, Mr. Alexander",Third class,Male,,Unknown,Southampton,7.8958,Died
+"Rasmussen, Mrs. (Lena Jacobsen Solvang)",Third class,Female,,Unknown,Southampton,8.1125,Died
+"Razi, Mr. Raihed",Third class,Male,,Unknown,Cherbourg,7.2292,Died
+"Reed, Mr. James George",Third class,Male,,Unknown,Southampton,7.25,Died
+"Rekic, Mr. Tido",Third class,Male,38,Adult,Southampton,7.8958,Died
+"Reynolds, Mr. Harold J",Third class,Male,21,Adult,Southampton,8.05,Died
+"Rice, Master. Albert",Third class,Male,10,Child,Queenstown,29.125,Died
+"Rice, Master. Arthur",Third class,Male,4,Child,Queenstown,29.125,Died
+"Rice, Master. Eric",Third class,Male,7,Child,Queenstown,29.125,Died
+"Rice, Master. Eugene",Third class,Male,2,Child,Queenstown,29.125,Died
+"Rice, Master. George Hugh",Third class,Male,8,Child,Queenstown,29.125,Died
+"Rice, Mrs. William (Margaret Norton)",Third class,Female,39,Adult,Queenstown,29.125,Died
+"Riihivouri, Miss. Susanna Juhantytar ""Sanni""",Third class,Female,22,Adult,Southampton,39.6875,Died
+"Rintamaki, Mr. Matti",Third class,Male,35,Adult,Southampton,7.125,Died
+"Riordan, Miss. Johanna ""Hannah""",Third class,Female,,Unknown,Queenstown,7.7208,Survived
+"Risien, Mr. Samuel Beard",Third class,Male,,Unknown,Southampton,14.5,Died
+"Risien, Mrs. Samuel (Emma)",Third class,Female,,Unknown,Southampton,14.5,Died
+"Robins, Mr. Alexander A",Third class,Male,50,Adult,Southampton,14.5,Died
+"Robins, Mrs. Alexander A (Grace Charity Laury)",Third class,Female,47,Adult,Southampton,14.5,Died
+"Rogers, Mr. William John",Third class,Male,,Unknown,Southampton,8.05,Died
+"Rommetvedt, Mr. Knud Paust",Third class,Male,,Unknown,Southampton,7.775,Died
+"Rosblom, Miss. Salli Helena",Third class,Female,2,Child,Southampton,20.2125,Died
+"Rosblom, Mr. Viktor Richard",Third class,Male,18,Adult,Southampton,20.2125,Died
+"Rosblom, Mrs. Viktor (Helena Wilhelmina)",Third class,Female,41,Adult,Southampton,20.2125,Died
+"Roth, Miss. Sarah A",Third class,Female,,Unknown,Southampton,8.05,Survived
+"Rouse, Mr. Richard Henry",Third class,Male,50,Adult,Southampton,8.05,Died
+"Rush, Mr. Alfred George John",Third class,Male,16,Child,Southampton,8.05,Died
+"Ryan, Mr. Edward",Third class,Male,,Unknown,Queenstown,7.75,Survived
+"Ryan, Mr. Patrick",Third class,Male,,Unknown,Queenstown,24.15,Died
+"Saad, Mr. Amin",Third class,Male,,Unknown,Cherbourg,7.2292,Died
+"Saad, Mr. Khalil",Third class,Male,25,Adult,Cherbourg,7.225,Died
+"Saade, Mr. Jean Nassr",Third class,Male,,Unknown,Cherbourg,7.225,Died
+"Sadlier, Mr. Matthew",Third class,Male,,Unknown,Queenstown,7.7292,Died
+"Sadowitz, Mr. Harry",Third class,Male,,Unknown,Southampton,7.575,Died
+"Saether, Mr. Simon Sivertsen",Third class,Male,38.5,Adult,Southampton,7.25,Died
+"Sage, Master. Thomas Henry",Third class,Male,,Unknown,Southampton,69.55,Died
+"Sage, Master. William Henry",Third class,Male,14.5,Child,Southampton,69.55,Died
+"Sage, Miss. Ada",Third class,Female,,Unknown,Southampton,69.55,Died
+"Sage, Miss. Constance Gladys",Third class,Female,,Unknown,Southampton,69.55,Died
+"Sage, Miss. Dorothy Edith ""Dolly""",Third class,Female,,Unknown,Southampton,69.55,Died
+"Sage, Miss. Stella Anna",Third class,Female,,Unknown,Southampton,69.55,Died
+"Sage, Mr. Douglas Bullen",Third class,Male,,Unknown,Southampton,69.55,Died
+"Sage, Mr. Frederick",Third class,Male,,Unknown,Southampton,69.55,Died
+"Sage, Mr. George John Jr",Third class,Male,,Unknown,Southampton,69.55,Died
+"Sage, Mr. John George",Third class,Male,,Unknown,Southampton,69.55,Died
+"Sage, Mrs. John (Annie Bullen)",Third class,Female,,Unknown,Southampton,69.55,Died
+"Salander, Mr. Karl Johan",Third class,Male,24,Adult,Southampton,9.325,Died
+"Salkjelsvik, Miss. Anna Kristine",Third class,Female,21,Adult,Southampton,7.65,Survived
+"Salonen, Mr. Johan Werner",Third class,Male,39,Adult,Southampton,7.925,Died
+"Samaan, Mr. Elias",Third class,Male,,Unknown,Cherbourg,21.6792,Died
+"Samaan, Mr. Hanna",Third class,Male,,Unknown,Cherbourg,21.6792,Died
+"Samaan, Mr. Youssef",Third class,Male,,Unknown,Cherbourg,21.6792,Died
+"Sandstrom, Miss. Beatrice Irene",Third class,Female,1,Child,Southampton,16.7,Survived
+"Sandstrom, Mrs. Hjalmar (Agnes Charlotta Bengtsson)",Third class,Female,24,Adult,Southampton,16.7,Survived
+"Sandstrom, Miss. Marguerite Rut",Third class,Female,4,Child,Southampton,16.7,Survived
+"Sap, Mr. Julius",Third class,Male,25,Adult,Southampton,9.5,Survived
+"Saundercock, Mr. William Henry",Third class,Male,20,Adult,Southampton,8.05,Died
+"Sawyer, Mr. Frederick Charles",Third class,Male,24.5,Adult,Southampton,8.05,Died
+"Scanlan, Mr. James",Third class,Male,,Unknown,Queenstown,7.725,Died
+"Sdycoff, Mr. Todor",Third class,Male,,Unknown,Southampton,7.8958,Died
+"Shaughnessy, Mr. Patrick",Third class,Male,,Unknown,Queenstown,7.75,Died
+"Sheerlinck, Mr. Jan Baptist",Third class,Male,29,Adult,Southampton,9.5,Survived
+"Shellard, Mr. Frederick William",Third class,Male,,Unknown,Southampton,15.1,Died
+"Shine, Miss. Ellen Natalia",Third class,Female,,Unknown,Queenstown,7.7792,Survived
+"Shorney, Mr. Charles Joseph",Third class,Male,,Unknown,Southampton,8.05,Died
+"Simmons, Mr. John",Third class,Male,,Unknown,Southampton,8.05,Died
+"Sirayanian, Mr. Orsen",Third class,Male,22,Adult,Cherbourg,7.2292,Died
+"Sirota, Mr. Maurice",Third class,Male,,Unknown,Southampton,8.05,Died
+"Sivic, Mr. Husein",Third class,Male,40,Adult,Southampton,7.8958,Died
+"Sivola, Mr. Antti Wilhelm",Third class,Male,21,Adult,Southampton,7.925,Died
+"Sjoblom, Miss. Anna Sofia",Third class,Female,18,Adult,Southampton,7.4958,Survived
+"Skoog, Master. Harald",Third class,Male,4,Child,Southampton,27.9,Died
+"Skoog, Master. Karl Thorsten",Third class,Male,10,Child,Southampton,27.9,Died
+"Skoog, Miss. Mabel",Third class,Female,9,Child,Southampton,27.9,Died
+"Skoog, Miss. Margit Elizabeth",Third class,Female,2,Child,Southampton,27.9,Died
+"Skoog, Mr. Wilhelm",Third class,Male,40,Adult,Southampton,27.9,Died
+"Skoog, Mrs. William (Anna Bernhardina Karlsson)",Third class,Female,45,Adult,Southampton,27.9,Died
+"Slabenoff, Mr. Petco",Third class,Male,,Unknown,Southampton,7.8958,Died
+"Slocovski, Mr. Selman Francis",Third class,Male,,Unknown,Southampton,8.05,Died
+"Smiljanic, Mr. Mile",Third class,Male,,Unknown,Southampton,8.6625,Died
+"Smith, Mr. Thomas",Third class,Male,,Unknown,Queenstown,7.75,Died
+"Smyth, Miss. Julia",Third class,Female,,Unknown,Queenstown,7.7333,Survived
+"Soholt, Mr. Peter Andreas Lauritz Andersen",Third class,Male,19,Adult,Southampton,7.65,Died
+"Somerton, Mr. Francis William",Third class,Male,30,Adult,Southampton,8.05,Died
+"Spector, Mr. Woolf",Third class,Male,,Unknown,Southampton,8.05,Died
+"Spinner, Mr. Henry John",Third class,Male,32,Adult,Southampton,8.05,Died
+"Staneff, Mr. Ivan",Third class,Male,,Unknown,Southampton,7.8958,Died
+"Stankovic, Mr. Ivan",Third class,Male,33,Adult,Cherbourg,8.6625,Died
+"Stanley, Miss. Amy Zillah Elsie",Third class,Female,23,Adult,Southampton,7.55,Survived
+"Stanley, Mr. Edward Roland",Third class,Male,21,Adult,Southampton,8.05,Died
+"Storey, Mr. Thomas",Third class,Male,60.5,Adult,Southampton,,Died
+"Stoytcheff, Mr. Ilia",Third class,Male,19,Adult,Southampton,7.8958,Died
+"Strandberg, Miss. Ida Sofia",Third class,Female,22,Adult,Southampton,9.8375,Died
+"Stranden, Mr. Juho",Third class,Male,31,Adult,Southampton,7.925,Survived
+"Strilic, Mr. Ivan",Third class,Male,27,Adult,Southampton,8.6625,Died
+"Strom, Miss. Telma Matilda",Third class,Female,2,Child,Southampton,10.4625,Died
+"Strom, Mrs. Wilhelm (Elna Matilda Persson)",Third class,Female,29,Adult,Southampton,10.4625,Died
+"Sunderland, Mr. Victor Francis",Third class,Male,16,Child,Southampton,8.05,Survived
+"Sundman, Mr. Johan Julian",Third class,Male,44,Adult,Southampton,7.925,Survived
+"Sutehall, Mr. Henry Jr",Third class,Male,25,Adult,Southampton,7.05,Died
+"Svensson, Mr. Johan",Third class,Male,74,Adult,Southampton,7.775,Died
+"Svensson, Mr. Johan Cervin",Third class,Male,14,Child,Southampton,9.225,Survived
+"Svensson, Mr. Olof",Third class,Male,24,Adult,Southampton,7.7958,Died
+"Tenglin, Mr. Gunnar Isidor",Third class,Male,25,Adult,Southampton,7.7958,Survived
+"Theobald, Mr. Thomas Leonard",Third class,Male,34,Adult,Southampton,8.05,Died
+"Thomas, Master. Assad Alexander",Third class,Male,0.42,Child,Cherbourg,8.5167,Survived
+"Thomas, Mr. Charles P",Third class,Male,,Unknown,Cherbourg,6.4375,Died
+"Thomas, Mr. John",Third class,Male,,Unknown,Cherbourg,6.4375,Died
+"Thomas, Mr. Tannous",Third class,Male,,Unknown,Cherbourg,7.225,Died
+"Thomas, Mrs. Alexander (Thamine ""Thelma"")",Third class,Female,16,Child,Cherbourg,8.5167,Survived
+"Thomson, Mr. Alexander Morrison",Third class,Male,,Unknown,Southampton,8.05,Died
+"Thorneycroft, Mr. Percival",Third class,Male,,Unknown,Southampton,16.1,Died
+"Thorneycroft, Mrs. Percival (Florence Kate White)",Third class,Female,,Unknown,Southampton,16.1,Survived
+"Tikkanen, Mr. Juho",Third class,Male,32,Adult,Southampton,7.925,Died
+"Tobin, Mr. Roger",Third class,Male,,Unknown,Queenstown,7.75,Died
+"Todoroff, Mr. Lalio",Third class,Male,,Unknown,Southampton,7.8958,Died
+"Tomlin, Mr. Ernest Portage",Third class,Male,30.5,Adult,Southampton,8.05,Died
+"Torber, Mr. Ernst William",Third class,Male,44,Adult,Southampton,8.05,Died
+"Torfa, Mr. Assad",Third class,Male,,Unknown,Cherbourg,7.2292,Died
+"Tornquist, Mr. William Henry",Third class,Male,25,Adult,Southampton,0,Survived
+"Toufik, Mr. Nakli",Third class,Male,,Unknown,Cherbourg,7.2292,Died
+"Touma, Master. Georges Youssef",Third class,Male,7,Child,Cherbourg,15.2458,Survived
+"Touma, Miss. Maria Youssef",Third class,Female,9,Child,Cherbourg,15.2458,Survived
+"Touma, Mrs. Darwis (Hanne Youssef Razi)",Third class,Female,29,Adult,Cherbourg,15.2458,Survived
+"Turcin, Mr. Stjepan",Third class,Male,36,Adult,Southampton,7.8958,Died
+"Turja, Miss. Anna Sofia",Third class,Female,18,Adult,Southampton,9.8417,Survived
+"Turkula, Mrs. (Hedwig)",Third class,Female,63,Adult,Southampton,9.5875,Survived
+"van Billiard, Master. James William",Third class,Male,,Unknown,Southampton,14.5,Died
+"van Billiard, Master. Walter John",Third class,Male,11.5,Child,Southampton,14.5,Died
+"van Billiard, Mr. Austin Blyler",Third class,Male,40.5,Adult,Southampton,14.5,Died
+"Van Impe, Miss. Catharina",Third class,Female,10,Child,Southampton,24.15,Died
+"Van Impe, Mr. Jean Baptiste",Third class,Male,36,Adult,Southampton,24.15,Died
+"Van Impe, Mrs. Jean Baptiste (Rosalie Paula Govaert)",Third class,Female,30,Adult,Southampton,24.15,Died
+"van Melkebeke, Mr. Philemon",Third class,Male,,Unknown,Southampton,9.5,Died
+"Vande Velde, Mr. Johannes Joseph",Third class,Male,33,Adult,Southampton,9.5,Died
+"Vande Walle, Mr. Nestor Cyriel",Third class,Male,28,Adult,Southampton,9.5,Died
+"Vanden Steen, Mr. Leo Peter",Third class,Male,28,Adult,Southampton,9.5,Died
+"Vander Cruyssen, Mr. Victor",Third class,Male,47,Adult,Southampton,9,Died
+"Vander Planke, Miss. Augusta Maria",Third class,Female,18,Adult,Southampton,18,Died
+"Vander Planke, Mr. Julius",Third class,Male,31,Adult,Southampton,18,Died
+"Vander Planke, Mr. Leo Edmondus",Third class,Male,16,Child,Southampton,18,Died
+"Vander Planke, Mrs. Julius (Emelia Maria Vandemoortele)",Third class,Female,31,Adult,Southampton,18,Died
+"Vartanian, Mr. David",Third class,Male,22,Adult,Cherbourg,7.225,Survived
+"Vendel, Mr. Olof Edvin",Third class,Male,20,Adult,Southampton,7.8542,Died
+"Vestrom, Miss. Hulda Amanda Adolfina",Third class,Female,14,Child,Southampton,7.8542,Died
+"Vovk, Mr. Janko",Third class,Male,22,Adult,Southampton,7.8958,Died
+"Waelens, Mr. Achille",Third class,Male,22,Adult,Southampton,9,Died
+"Ware, Mr. Frederick",Third class,Male,,Unknown,Southampton,8.05,Died
+"Warren, Mr. Charles William",Third class,Male,,Unknown,Southampton,7.55,Died
+"Webber, Mr. James",Third class,Male,,Unknown,Southampton,8.05,Died
+"Wenzel, Mr. Linhart",Third class,Male,32.5,Adult,Southampton,9.5,Died
+"Whabee, Mrs. George Joseph (Shawneene Abi-Saab)",Third class,Female,38,Adult,Cherbourg,7.2292,Survived
+"Widegren, Mr. Carl/Charles Peter",Third class,Male,51,Adult,Southampton,7.75,Died
+"Wiklund, Mr. Jakob Alfred",Third class,Male,18,Adult,Southampton,6.4958,Died
+"Wiklund, Mr. Karl Johan",Third class,Male,21,Adult,Southampton,6.4958,Died
+"Wilkes, Mrs. James (Ellen Needs)",Third class,Female,47,Adult,Southampton,7,Survived
+"Willer, Mr. Aaron (""Abi Weller"")",Third class,Male,,Unknown,Southampton,8.7125,Died
+"Willey, Mr. Edward",Third class,Male,,Unknown,Southampton,7.55,Died
+"Williams, Mr. Howard Hugh ""Harry""",Third class,Male,,Unknown,Southampton,8.05,Died
+"Williams, Mr. Leslie",Third class,Male,28.5,Adult,Southampton,16.1,Died
+"Windelov, Mr. Einar",Third class,Male,21,Adult,Southampton,7.25,Died
+"Wirz, Mr. Albert",Third class,Male,27,Adult,Southampton,8.6625,Died
+"Wiseman, Mr. Phillippe",Third class,Male,,Unknown,Southampton,7.25,Died
+"Wittevrongel, Mr. Camille",Third class,Male,36,Adult,Southampton,9.5,Died
+"Yasbeck, Mr. Antoni",Third class,Male,27,Adult,Cherbourg,14.4542,Died
+"Yasbeck, Mrs. Antoni (Selini Alexander)",Third class,Female,15,Child,Cherbourg,14.4542,Survived
+"Youseff, Mr. Gerious",Third class,Male,45.5,Adult,Cherbourg,7.225,Died
+"Yousif, Mr. Wazli",Third class,Male,,Unknown,Cherbourg,7.225,Died
+"Yousseff, Mr. Gerious",Third class,Male,,Unknown,Cherbourg,14.4583,Died
+"Zabour, Miss. Hileni",Third class,Female,14.5,Child,Cherbourg,14.4542,Died
+"Zabour, Miss. Thamine",Third class,Female,,Unknown,Cherbourg,14.4542,Died
+"Zakarian, Mr. Mapriededer",Third class,Male,26.5,Adult,Cherbourg,7.225,Died
+"Zakarian, Mr. Ortin",Third class,Male,27,Adult,Cherbourg,7.225,Died
+"Zimmerman, Mr. Leo",Third class,Male,29,Adult,Southampton,7.875,Died

@@ -117,6 +117,29 @@ describe("history change descriptions", () => {
     ]);
   });
 
+  it("names workspace filter changes as filter steps", () => {
+    const before = [view("Sales")];
+    const filtered = [
+      view("Sales", {
+        workspaceFilters: [
+          { type: "value", field: "region", values: ["West"] },
+        ],
+      }),
+    ];
+    expect(classifyChange(before, filtered)).toBe("Filter");
+    expect(describeChanges(before, filtered)).toMatchObject([
+      {
+        kind: "filter",
+        text: "Filtered the workspace",
+        after: "region is West",
+        subject: "Workspace",
+      },
+    ]);
+    expect(describeChanges(filtered, before)).toMatchObject([
+      { text: "Cleared workspace filters", before: "region is West" },
+    ]);
+  });
+
   it("reports layout only when no chart was placed or removed", () => {
     const before = [view("Sales", { charts: [chart()] })];
     const moved = [

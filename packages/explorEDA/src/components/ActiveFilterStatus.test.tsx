@@ -1,4 +1,10 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 import { registerAllCharts } from "@/charts/registerAllCharts";
 import { DataLayerProvider } from "@/providers/DataLayerProvider";
@@ -264,5 +270,136 @@ describe("ActiveFilterStatus", () => {
     expect(
       screen.queryByRole("button", { name: "Clear all filters" })
     ).not.toBeInTheDocument();
+  });
+
+  describe("workspace filters", () => {
+    beforeAll(() => {
+      Element.prototype.scrollIntoView ??= () => {};
+    });
+
+    const renderBar = () =>
+      render(
+        <DataLayerProvider data={data} charts={[makeChart([])]}>
+          <ActiveFilterStatus />
+        </DataLayerProvider>
+      );
+
+    const addCategoryX = async () => {
+      fireEvent.click(screen.getByRole("button", { name: "Add filter" }));
+      const dialog = await screen.findByRole("dialog", {
+        name: "Add a workspace filter",
+      });
+      fireEvent.click(within(dialog).getByRole("option", { name: /category/ }));
+      fireEvent.click(await screen.findByRole("checkbox", { name: /^x/ }));
+    };
+
+    it("adds a filter from the bar that narrows the row count", async () => {
+      renderBar();
+      expect(screen.getByRole("status")).toHaveTextContent(
+        "Showing 3 of 3 rows"
+      );
+      await addCategoryX();
+      expect(screen.getByRole("status")).toHaveTextContent(
+        "Showing 2 of 3 rows"
+      );
+      expect(
+        screen.getByRole("button", {
+          name: "Edit workspace filter category: x",
+        })
+      ).toHaveTextContent("Workspace · category: x");
+    });
+
+    it("edits the field's one filter from its chip and removes it with ×", async () => {
+      renderBar();
+      await addCategoryX();
+      fireEvent.keyDown(document.activeElement ?? document.body, {
+        key: "Escape",
+      });
+      await waitFor(() =>
+        expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
+      );
+
+      fireEvent.click(
+        screen.getByRole("button", {
+          name: "Edit workspace filter category: x",
+        })
+      );
+      const dialog = await screen.findByRole("dialog", {
+        name: "Edit workspace filter",
+      });
+      fireEvent.click(within(dialog).getByRole("checkbox", { name: /^y/ }));
+      expect(screen.getByRole("status")).toHaveTextContent(
+        "Showing 3 of 3 rows"
+      );
+      expect(
+        screen.getByRole("button", {
+          name: "Edit workspace filter category: x, y",
+        })
+      ).toBeInTheDocument();
+
+      fireEvent.click(
+        screen.getByRole("button", {
+          name: "Remove workspace filter category: x, y",
+        })
+      );
+      expect(
+        screen.queryByRole("button", { name: /Edit workspace filter/ })
+      ).not.toBeInTheDocument();
+    });
+
+    it("reports one state change per editing session", async () => {
+      const onStateChange = vi.fn();
+      render(
+        <DataLayerProvider
+          data={data}
+          charts={[makeChart([])]}
+          onStateChange={onStateChange}
+        >
+          <ActiveFilterStatus />
+        </DataLayerProvider>
+      );
+      await addCategoryX();
+      fireEvent.click(screen.getByRole("checkbox", { name: /^y/ }));
+      fireEvent.click(screen.getByRole("checkbox", { name: /^y/ }));
+      expect(onStateChange).not.toHaveBeenCalled();
+      fireEvent.keyDown(document.activeElement ?? document.body, {
+        key: "Escape",
+      });
+      await waitFor(() => expect(onStateChange).toHaveBeenCalledTimes(1));
+      expect(onStateChange.mock.calls[0]![0].workspaceFilters).toEqual([
+        { type: "value", field: "category", values: ["x"] },
+      ]);
+    });
+
+    it("marks a field that has a filter and edits it instead of adding one", async () => {
+      renderBar();
+      await addCategoryX();
+      fireEvent.keyDown(document.activeElement ?? document.body, {
+        key: "Escape",
+      });
+      await waitFor(() =>
+        expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
+      );
+      fireEvent.click(screen.getByRole("button", { name: "Add filter" }));
+      const dialog = await screen.findByRole("dialog");
+      const option = within(dialog).getByRole("option", { name: /category/ });
+      expect(option).toHaveTextContent("Filtered");
+      fireEvent.click(option);
+      expect(await screen.findByRole("checkbox", { name: /^x/ })).toBeChecked();
+    });
+
+    it("clears workspace filters with every other filter", async () => {
+      renderBar();
+      await addCategoryX();
+      fireEvent.click(
+        screen.getByRole("button", { name: "Clear all filters" })
+      );
+      expect(screen.getByRole("status")).toHaveTextContent(
+        "Showing 3 of 3 rows"
+      );
+      expect(
+        screen.queryByRole("button", { name: /Edit workspace filter/ })
+      ).not.toBeInTheDocument();
+    });
   });
 });

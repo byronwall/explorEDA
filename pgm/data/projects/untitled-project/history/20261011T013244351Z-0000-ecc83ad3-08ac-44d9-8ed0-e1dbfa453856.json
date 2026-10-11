@@ -1,0 +1,16 @@
+{
+  "id": "ecc83ad3-08ac-44d9-8ed0-e1dbfa453856",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:32:44.351Z",
+  "summary": "Created \"An icon would be nice for types\" under \"Composition examples\".",
+  "nodeIds": [
+    "page-an-icon-would-be-nice-for-types",
+    "page-composition-examples"
+  ],
+  "metadata": {
+    "clientMutationId": "f9304efd-79d9-4cb4-9421-aeaac09490cb"
+  }
+}

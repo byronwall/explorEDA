@@ -35,6 +35,7 @@ import {
   getFieldLabel as resolveFieldLabel,
 } from "@/lib/fieldSettings";
 import { ChartLayout, ChartSettings, datum } from "@/types/ChartTypes";
+import type { Filter } from "@/types/FilterTypes";
 import { ColorScaleType } from "@/types/ColorScaleTypes";
 import {
   GridSettings,
@@ -327,6 +328,14 @@ interface DataLayerState<T extends DatumObject> extends DataLayerProps<T> {
   removeColorScale: (id: string) => void;
   updateColorScale: (id: string, updates: Partial<ColorScaleType>) => void;
 
+  /**
+   * Linked filters no chart owns, at most one per field. They narrow every
+   * chart, the row count, and Rows.
+   */
+  workspaceFilters: Filter[];
+  /** Sets or replaces the field's workspace filter; no filter removes it. */
+  setWorkspaceFilter: (field: string, filter?: Filter) => void;
+
   // Filter state (placeholder)
   clearAllFilters: () => void;
   filterReset: number;
@@ -463,6 +472,7 @@ const getInitialStoreState = <T extends DatumObject>(
     | "nonce"
     | "fileName"
     | "rowsSettings"
+    | "workspaceFilters"
     | "metadata"
     | "fieldSettings"
     | "aggregates"
@@ -543,6 +553,7 @@ const getInitialStoreState = <T extends DatumObject>(
           fieldProfiles.map((profile) => profile.name),
           newCalculations.map((calculation) => calculation.resultColumnName)
         ),
+      workspaceFilters: savedData.workspaceFilters ?? [],
       metadata: savedData.metadata,
       columnCache: {},
       calcColumnCache: {},
@@ -576,6 +587,7 @@ const getInitialStoreState = <T extends DatumObject>(
     rowsSettings: getDefaultRowsSettings(
       fieldProfiles.map((profile) => profile.name)
     ),
+    workspaceFilters: [],
     metadata: {
       name: "Untitled",
       version: 1,
@@ -675,6 +687,7 @@ const createDataLayerStore = <T extends DatumObject>(
           rowsSettings: getDefaultRowsSettings(
             fieldProfiles.map((profile) => profile.name)
           ),
+          workspaceFilters: [],
           liveItems: newCrossfilter.getAllData(),
           columnCache: {},
           calcColumnCache: {},
@@ -759,6 +772,10 @@ const createDataLayerStore = <T extends DatumObject>(
               : chart.facet,
         })) as ChartSettings[];
         nextCharts.forEach((chart) => nextCrossfilter.addChart(chart));
+        // A new type reads the field's values differently, so its filters go.
+        const nextWorkspaceFilters = get().workspaceFilters.filter(
+          (filter) => filter.field !== field
+        );
         const nextManager = new CalculationManager(
           nextData.dataWithIds,
           get().calculations
@@ -781,6 +798,7 @@ const createDataLayerStore = <T extends DatumObject>(
               (filter) => filter.field !== field
             ),
           },
+          workspaceFilters: nextWorkspaceFilters,
           columnCache: {},
           calcColumnCache: {},
           liveItems: {},
@@ -791,6 +809,7 @@ const createDataLayerStore = <T extends DatumObject>(
         nextCharts.forEach((chart) =>
           nextCrossfilter.updateChartFilters(chart)
         );
+        nextCrossfilter.setWorkspaceFilters(nextWorkspaceFilters);
         set({ liveItems: nextCrossfilter.getAllData() });
       },
 
@@ -1060,10 +1079,12 @@ const createDataLayerStore = <T extends DatumObject>(
         for (const chart of newCharts) {
           crossfilterWrapper.updateChart(chart);
         }
+        crossfilterWrapper.setWorkspaceFilters([]);
 
         // Update all live items in a single update
         set((state) => ({
           charts: newCharts,
+          workspaceFilters: [],
           rowsSettings: {
             ...state.rowsSettings,
             filters: [],
@@ -1072,6 +1093,28 @@ const createDataLayerStore = <T extends DatumObject>(
           liveItems: crossfilterWrapper.getAllData(),
           filterReset: state.filterReset + 1,
         }));
+      },
+
+      setWorkspaceFilter: (field, filter) => {
+        const { crossfilterWrapper, workspaceFilters } = get();
+        const index = workspaceFilters.findIndex(
+          (item) => item.field === field
+        );
+        const current = index === -1 ? undefined : workspaceFilters[index];
+        if (isEqual(current, filter)) return;
+        // Editing keeps the filter's place in the list; a new one goes last.
+        const next = filter
+          ? index === -1
+            ? [...workspaceFilters, { ...filter, field }]
+            : workspaceFilters.map((item, i) =>
+                i === index ? { ...filter, field } : item
+              )
+          : workspaceFilters.filter((item) => item.field !== field);
+        crossfilterWrapper.setWorkspaceFilters(next);
+        set({
+          workspaceFilters: next,
+          liveItems: crossfilterWrapper.getAllData(),
+        });
       },
 
       clearFilter: (chart) => {
@@ -1225,6 +1268,9 @@ const createDataLayerStore = <T extends DatumObject>(
           },
           colorScales: serializedColorScales,
           rowsSettings: state.rowsSettings,
+          ...(state.workspaceFilters.length
+            ? { workspaceFilters: state.workspaceFilters }
+            : {}),
           fieldSettings: state.fieldSettings,
           aggregates: state.aggregates,
           geometryAssets: state.geometryAssets,
@@ -1328,6 +1374,8 @@ const createDataLayerStore = <T extends DatumObject>(
         };
         nextCrossfilter.setFieldGetter(fieldGetter);
         charts.forEach((chart) => nextCrossfilter.addChart(chart));
+        const workspaceFilters = savedData.settings.workspaceFilters ?? [];
+        nextCrossfilter.setWorkspaceFilters(workspaceFilters);
         const colorScales: ColorScaleType[] =
           savedData.settings.colorScales.map((scale) =>
             scale.type === "categorical"
@@ -1352,6 +1400,7 @@ const createDataLayerStore = <T extends DatumObject>(
               fieldProfiles.map((profile) => profile.name),
               calculations.map((calculation) => calculation.resultColumnName)
             ),
+          workspaceFilters,
           metadata: savedData.settings.metadata,
           liveItems: nextCrossfilter.getAllData(),
           columnCache: {},
@@ -1369,7 +1418,12 @@ const createDataLayerStore = <T extends DatumObject>(
   });
 
   function assertUnusedCalculation(name: string) {
-    const { charts, aggregates } = store.getState();
+    const { charts, aggregates, workspaceFilters } = store.getState();
+    if (workspaceFilters.some((filter) => filter.field === name)) {
+      throw new Error(
+        `Remove the workspace filter on ${name} before renaming or deleting it`
+      );
+    }
     if (
       aggregates.some(
         (aggregate) =>
@@ -1396,7 +1450,8 @@ const createDataLayerStore = <T extends DatumObject>(
   }
 
   function refreshCalculations() {
-    const { calculationManager, crossfilterWrapper, charts } = store.getState();
+    const { calculationManager, crossfilterWrapper, charts, workspaceFilters } =
+      store.getState();
     const previousCalculations = store.getState().calculations;
     const calculations = calculationManager.getCalculations();
     const previousNames = new Set(
@@ -1430,6 +1485,7 @@ const createDataLayerStore = <T extends DatumObject>(
       },
     }));
     charts.forEach((chart) => crossfilterWrapper.updateChartFilters(chart));
+    crossfilterWrapper.setWorkspaceFilters(workspaceFilters, true);
     store.setState((state) => ({
       liveItems: crossfilterWrapper.getAllData(),
       nonce: state.nonce + 1,
@@ -1448,6 +1504,7 @@ const createDataLayerStore = <T extends DatumObject>(
   store.getState().charts.forEach((chart) => {
     crossfilterWrapper.addChart(chart);
   });
+  crossfilterWrapper.setWorkspaceFilters(store.getState().workspaceFilters);
 
   // set the live items
   store.setState({ liveItems: crossfilterWrapper.getAllData() });

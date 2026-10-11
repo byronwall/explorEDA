@@ -1,0 +1,16 @@
+{
+  "id": "8fda7f08-ad43-4cb7-ac3d-acbfbd7ebe53",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:19:10.130Z",
+  "summary": "Created \"Hard to tell what the focused line refers to\" under \"Consumer confidence\".",
+  "nodeIds": [
+    "page-hard-to-tell-what-the-focused-line-refers-to",
+    "page-consumer-confidewnce"
+  ],
+  "metadata": {
+    "clientMutationId": "cf6a1a58-5216-4ff0-9d69-18994b476f9e"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "id": "efbfafcc-c1ae-4cb4-bdf4-299f28972ce9",
+  "kind": "node.deleted",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:14:21.846Z",
+  "summary": "Deleted \"10-06\" and 16 children.",
+  "nodeIds": [
+    "page-10-06",
+    "page-was-there-a-regression-on-table-column-width",
+    "page-tooltip-covers-column-header",
+    "page-tooltip-blocks-the-data-beneath",
+    "page-rework-header-to-single-line-of-top-controls-and-footer",
+    "page-remove-the-react-integration-guide-button",
+    "page-move-facet-info-up-to-avoid-extra-line",
+    "page-marginal-distributions-need-to-respect-color-field",
+    "page-marginal-distributions-need-to-clear-filter-on-dead-click",
+    "page-loading-home-page-returns-to-previous-chart-demo",
+    "page-improve-the-filter-hover-card",
+    "page-history-view-is-really-nice-tighten-the-colors-and-overall-visuals",
+    "page-ensure-we-have-some-sort-of-tight-check-between-available-chart-63ppx8",
+    "page-dsl-view-needs-syntax-highlighting",
+    "page-density-dots-are-too-small-and-cannot-be-controlled",
+    "page-dead-click-on-bar-empty-area-should-clear-filters",
+    "page-add-chart-controls-cut-off-all-charts"
+  ],
+  "metadata": {
+    "clientMutationId": "913158e6-2ef7-49a0-988f-c3da34ea6131"
+  }
+}

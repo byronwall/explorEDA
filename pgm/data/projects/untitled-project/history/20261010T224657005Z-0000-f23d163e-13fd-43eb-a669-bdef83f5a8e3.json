@@ -1,0 +1,14 @@
+{
+  "id": "f23d163e-13fd-43eb-a669-bdef83f5a8e3",
+  "kind": "node.context.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:2a13b3",
+    "label": "Agent token ...2a13b3"
+  },
+  "createdAt": "2026-10-10T22:46:57.005Z",
+  "summary": "Updated context for \"Hide or isolate a series from the legend\".",
+  "nodeIds": [
+    "page-hide-or-isolate-a-series-from-the-legend"
+  ]
+}

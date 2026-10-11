@@ -16,9 +16,11 @@ export function registerArtboard(chartId: string, svg: SVGSVGElement | null) {
 export function artboardMarkup(svg: SVGSVGElement) {
   const copy = svg.cloneNode(true) as SVGSVGElement;
   copy.querySelectorAll("[data-overlay]").forEach((node) => node.remove());
-  const [, , width, height] = (copy.getAttribute("viewBox") ?? "0 0 0 0")
-    .split(/\s+/)
-    .map(Number);
+  // The paper rect holds the artboard's own size, whatever part is in view.
+  const paper = copy.querySelector("[data-artboard]");
+  const width = Number(paper?.getAttribute("width") ?? 0);
+  const height = Number(paper?.getAttribute("height") ?? 0);
+  copy.setAttribute("viewBox", `0 0 ${width} ${height}`);
   copy.setAttribute("width", String(width));
   copy.setAttribute("height", String(height));
   for (const name of ["class", "tabindex", "aria-description"])
@@ -46,7 +48,8 @@ export async function artboardPng(
     image.decoding = "async";
     await new Promise<void>((resolve, reject) => {
       image.onload = () => resolve();
-      image.onerror = () => reject(new Error("The graphic could not be drawn."));
+      image.onerror = () =>
+        reject(new Error("The graphic could not be drawn."));
       image.src = url;
     });
     const canvas = document.createElement("canvas");

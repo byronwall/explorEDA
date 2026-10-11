@@ -81,7 +81,7 @@ describe("planHeatmap", () => {
     expect(result.omitted).toEqual({ rows: 1, columns: 0, sourceRows: 1 });
   });
 
-  it("keeps category order and cell values from other charts' filters apart", () => {
+  it("keeps category order and cell values from other filters apart", () => {
     const result = plan({}, [0, 3]);
     expect(result.rows.map((row) => row.label)).toEqual(["North", "South", "East"]);
     expect(cell(result, "North", "Web").value).toBe(1);

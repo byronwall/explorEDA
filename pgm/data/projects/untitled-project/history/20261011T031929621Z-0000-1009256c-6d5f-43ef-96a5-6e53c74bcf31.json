@@ -1,0 +1,14 @@
+{
+  "id": "1009256c-6d5f-43ef-96a5-6e53c74bcf31",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:3b1786",
+    "label": "Agent token ...3b1786"
+  },
+  "createdAt": "2026-10-11T03:19:29.621Z",
+  "summary": "Updated metadata for \"Changing nature of jobs\".",
+  "nodeIds": [
+    "page-changing-nature-of-jobs"
+  ]
+}

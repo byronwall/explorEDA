@@ -1,0 +1,34 @@
+Class,Order,Average income,Category,Share
+"$100–200",1,139.1,Rent,19
+"$100–200",1,139.1,Food,43
+"$100–200",1,139.1,Clothes,28
+"$100–200",1,139.1,Direct taxes,0.1
+"$100–200",1,139.1,Other expenses and savings,9.9
+"$200–300",2,249.45,Rent,22
+"$200–300",2,249.45,Food,47
+"$200–300",2,249.45,Clothes,23
+"$200–300",2,249.45,Direct taxes,4
+"$200–300",2,249.45,Other expenses and savings,4
+"$300–400",3,335.66,Rent,23
+"$300–400",3,335.66,Food,43
+"$300–400",3,335.66,Clothes,18
+"$300–400",3,335.66,Direct taxes,4.5
+"$300–400",3,335.66,Other expenses and savings,11.5
+"$400–500",4,433.82,Rent,18
+"$400–500",4,433.82,Food,37
+"$400–500",4,433.82,Clothes,15
+"$400–500",4,433.82,Direct taxes,5.5
+"$400–500",4,433.82,Other expenses and savings,24.5
+"$500–750",5,547,Rent,13
+"$500–750",5,547,Food,31
+"$500–750",5,547,Clothes,17
+"$500–750",5,547,Direct taxes,5
+"$500–750",5,547,Other expenses and savings,34
+"$750–1,000",6,880,Food,37
+"$750–1,000",6,880,Clothes,19
+"$750–1,000",6,880,Direct taxes,8
+"$750–1,000",6,880,Other expenses and savings,36
+"$1,000 and over",7,1125,Food,29
+"$1,000 and over",7,1125,Clothes,16
+"$1,000 and over",7,1125,Direct taxes,4.5
+"$1,000 and over",7,1125,Other expenses and savings,50.5

@@ -1,0 +1,15 @@
+{
+  "id": "9b42ab6c-836d-4579-885a-486f7852d9ee",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:91929b",
+    "label": "Agent token ...91929b"
+  },
+  "createdAt": "2026-10-10T22:46:36.848Z",
+  "summary": "Created \"Named segments and more ways to add workspace filters\" under \"Retired initiative follow-ups\".",
+  "nodeIds": [
+    "page-named-segments-and-more-ways-to-add-workspace-filters",
+    "page-retired-initiative-follow-ups"
+  ]
+}

@@ -59,6 +59,7 @@ const COMPLETE: Record<string, Record<string, unknown>> = {
   "data-table": { columns: [{ id: "Revenue", field: "Revenue" }] },
   line: { xField: "Day", seriesField: ["Revenue", "Cost"] },
   sankey: { stages: ["Region", "Channel"] },
+  hierarchy: { levels: ["Region", "Channel"] },
   "parallel-coordinates": {
     axes: [
       { field: "Revenue", inverted: false },
@@ -167,6 +168,7 @@ describe("dashboard text coverage", () => {
         aggregates: 1,
         geometryAssets: 1,
         theme: 1,
+        workspaceFilters: 1,
       }).sort()
     );
   });
@@ -186,6 +188,7 @@ describe("dashboard text coverage", () => {
       "color-legend",
       "line",
       "sankey",
+      "hierarchy",
       "parallel-coordinates",
       "scatter-matrix",
       "calendar",

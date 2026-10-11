@@ -1,0 +1,16 @@
+{
+  "id": "2e937b62-6012-443a-8918-802be2daaf3b",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:24:16.562Z",
+  "summary": "Created \"Missing the color legend - what is color?\" under \"Measles\".",
+  "nodeIds": [
+    "page-missing-the-color-legend-what-is-color",
+    "page-measles"
+  ],
+  "metadata": {
+    "clientMutationId": "fd305a3a-eb3a-4bff-93c9-36951b27ea79"
+  }
+}
