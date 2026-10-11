@@ -1,3 +1,4 @@
+import { parseNumber } from "@/lib/valueParsing";
 import { bisectRight } from "d3-array";
 import { categoryKey } from "@/lib/categories";
 import type { IdType } from "@/providers/DataLayerProvider";
@@ -99,7 +100,7 @@ export function planMarginals(
       groups: new Map<string, { color: string; count: number }>(),
     }));
     for (const point of plan.points) {
-      const value = Number(axis === "x" ? point.xValue : point.yValue);
+      const value = parseNumber(axis === "x" ? point.xValue : point.yValue);
       // Interior edges belong to the bin on their right; the last edge closes.
       const index = Math.max(
         0,

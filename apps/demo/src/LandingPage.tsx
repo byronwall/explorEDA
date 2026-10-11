@@ -52,6 +52,8 @@ import { LandingFooter } from "./landing/LandingFooter";
 import { SampleDataButtons } from "./landing/SampleDataButtons";
 import { PageFileDrop } from "./landing/PageFileDrop";
 import { SectionHeading } from "./landing/SectionHeading";
+import { ReportGraphics } from "./landing/ReportGraphics";
+import { ExamplesIndex } from "./examples/ExamplesIndex";
 import {
   readSavedViewsSessionResult,
   removeSavedSession,
@@ -60,7 +62,12 @@ import {
   STORAGE_KEY,
   type SavedViewsSession,
 } from "./savedViewsSession";
-import { examplePath, PROJECT_VIEWER_PATH, VIEWER_PATH } from "./routes";
+import {
+  EXAMPLES_PATH,
+  examplePath,
+  PROJECT_VIEWER_PATH,
+  VIEWER_PATH,
+} from "./routes";
 
 // The hero's live order book opens the full order book.
 const featuredExample = examples.find(
@@ -172,7 +179,10 @@ export function LandingPage() {
   // Links from before examples had their own URLs.
   const legacyExampleId =
     location.pathname === "/" ? searchParams.get("example") : null;
-  const isHome = !isViewer && routeExampleId === null;
+  const isExamplesIndex =
+    location.pathname === EXAMPLES_PATH ||
+    location.pathname === `${EXAMPLES_PATH}/`;
+  const isHome = !isViewer && routeExampleId === null && !isExamplesIndex;
   const showCoverage =
     CoverageMatrix !== null && searchParams.get("view") === "coverage";
   const showDocs = searchParams.get("view") === "docs";
@@ -418,6 +428,15 @@ export function LandingPage() {
     navigate(PROJECT_VIEWER_PATH);
   };
 
+  // Add source in a single-table workspace opens it as a project, with the
+  // new table selected in the Schema diagram. The single-table session stays
+  // saved and restorable.
+  const [schemaFocus, setSchemaFocus] = useState<string>();
+  const openPromotedProject = (file: AnalysisProjectFile, sourceId: string) => {
+    setSchemaFocus(sourceId);
+    handleProjectImport(file);
+  };
+
   const handleAnalysisJson = () => {
     try {
       if (JSON.parse(analysisJson).format === "exploreda-project") {
@@ -504,7 +523,9 @@ export function LandingPage() {
                     : "landing mx-auto w-full max-w-6xl"
               }
             >
-              {showDocs ? (
+              {isExamplesIndex ? (
+                <ExamplesIndex />
+              ) : showDocs ? (
                 <ChartDocs />
               ) : showCoverage && CoverageMatrix ? (
                 <Suspense fallback={null}>
@@ -563,7 +584,15 @@ export function LandingPage() {
                       </div>
                       <LearningLinks />
                       <ExampleSelector onSelect={handleExampleSelect} />
+                      <Link
+                        to={EXAMPLES_PATH}
+                        className="mt-4 inline-flex items-center gap-1 rounded-sm text-sm font-medium text-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      >
+                        Browse all {examples.length} examples
+                        <ArrowRight className="size-4" aria-hidden="true" />
+                      </Link>
                     </section>
+                    <ReportGraphics />
                     <section
                       aria-labelledby="your-data-heading"
                       id="your-data"
@@ -698,6 +727,7 @@ export function LandingPage() {
                     initialSession={workspace.session}
                     viewName="Analysis"
                     initialTab={initialTab}
+                    schemaFocus={schemaFocus}
                   />
                 ) : workspace?.kind === "rows" ? (
                   <SavedViewsWorkspace
@@ -705,6 +735,7 @@ export function LandingPage() {
                     data={workspace.rows}
                     initialSettings={workspace.savedData}
                     viewName="Analysis"
+                    onPromoteToProject={openPromotedProject}
                   />
                 ) : workspace?.kind === "example" ? (
                   <SavedViewsWorkspace
@@ -721,6 +752,7 @@ export function LandingPage() {
                     exampleId={workspace.example.id}
                     tablesFromExample={Boolean(workspace.example.analysis)}
                     initialTab={initialTab}
+                    onPromoteToProject={openPromotedProject}
                   />
                 ) : null}
               </Suspense>

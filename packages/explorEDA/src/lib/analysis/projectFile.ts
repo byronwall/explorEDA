@@ -1,3 +1,4 @@
+import { isDateText } from "@/lib/valueParsing";
 import type {
   AnalysisProject,
   AnalysisSourceRow,
@@ -572,7 +573,7 @@ export function validateAnalysisProjectFile(value: AnalysisProjectFile): void {
         throw new Error(`View ${view.id} references a missing parameter`);
       const valid =
         parameter.type === "date"
-          ? typeof binding === "string" && Number.isFinite(Date.parse(binding))
+          ? typeof binding === "string" && isDateText(binding)
           : parameter.type === "number"
             ? typeof binding === "number" && Number.isFinite(binding)
             : typeof binding === parameter.type;

@@ -250,8 +250,8 @@ export function getChartSummary(
   }
   if (settings.type === "metric-card") {
     return settings.aggregation === "count" && !settings.entityField
-      ? "Metric card showing the count of rows that match the chart filters."
-      : `${getChartTitle({ ...settings, title: "" }, getFieldLabel)} for rows that match the chart filters.`;
+      ? "Metric card showing the count of rows that match the active filters."
+      : `${getChartTitle({ ...settings, title: "" }, getFieldLabel)} for rows that match the active filters.`;
   }
   const fields = getChartFields(settings);
   return fields.length

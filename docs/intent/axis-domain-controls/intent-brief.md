@@ -44,7 +44,7 @@ Expand when an analysis repeatedly needs manual bounds, display-only zoom, or po
 
 ## Next step after confirmation
 
-The [editing-in-place initiative](../in-place-chart-editing/intent-brief.md) owns access to axis editing and candidate drag gestures. This initiative owns domain meaning, accepted bounds, and reset behavior. One shared proof can check both without creating two limit models.
+Axis editing in place and axis drag are delivered; see [UI defaults](../../ui-defaults.md#popovers-and-dialogs). This initiative owns domain meaning, accepted bounds, and reset behavior. One shared proof can check both without creating two limit models.
 
 Use a positive fixture and one scatter chart. Change bounds without changing row IDs, brush, reset, and restore. Add zero and negative values before deciding true-log behavior. Verify facet comparison separately.
 

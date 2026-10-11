@@ -1,6 +1,6 @@
 import { applyFilter } from "@/hooks/applyFilter";
 import { categoryKey, categoryValue } from "@/lib/categories";
-import { finiteNumber } from "@/lib/numeric";
+import { finiteNumber } from "@/lib/valueParsing";
 import type { datum } from "@/types/ChartTypes";
 import type { TraceTarget } from "../trace/traceTypes";
 import type {

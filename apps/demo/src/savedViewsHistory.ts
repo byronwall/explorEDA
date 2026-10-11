@@ -53,6 +53,7 @@ function signatures(tabs: SavedView[]) {
       charts: settings?.charts
         .filter((chart) => chart.filters.length > 0)
         .map(({ id: chartId, filters }) => ({ id: chartId, filters })),
+      workspace: settings?.workspaceFilters ?? [],
       rows: {
         filters: settings?.rowsSettings?.filters ?? [],
         globalSearch: settings?.rowsSettings?.globalSearch ?? "",
@@ -74,8 +75,13 @@ function signatures(tabs: SavedView[]) {
           return { id, name, queryId, bindings, inspection, selectedRowKeys };
         }
         const { charts, rowsSettings, ...rest } = settings;
-        // Metadata changes on every save, and shared keys have their own signature.
-        for (const key of ["metadata", ...SHARED_KEYS] as const) {
+        // Metadata changes on every save, and shared keys and filters have
+        // their own signatures.
+        for (const key of [
+          "metadata",
+          "workspaceFilters",
+          ...SHARED_KEYS,
+        ] as const) {
           delete (rest as Partial<SavedDataStructure>)[key];
         }
         const rowsView = rowsSettings && {
@@ -458,6 +464,32 @@ function describeChartChanges(
   return changes;
 }
 
+function describeWorkspaceChanges(
+  before: SavedFilter[] = [],
+  after: SavedFilter[] = [],
+  view: string
+): HistoryChange[] {
+  if (same(before, after)) {
+    return [];
+  }
+  const oldText = describeFilters(before);
+  const newText = describeFilters(after);
+  return [
+    {
+      kind: "filter",
+      text: !oldText
+        ? "Filtered the workspace"
+        : !newText
+          ? "Cleared workspace filters"
+          : "Changed a workspace filter",
+      before: oldText,
+      after: newText,
+      subject: "Workspace",
+      view,
+    },
+  ];
+}
+
 function describeRowsChanges(
   before: SavedDataStructure["rowsSettings"],
   after: SavedDataStructure["rowsSettings"],
@@ -699,6 +731,11 @@ export function describeChanges(
       ...describeRowsChanges(
         old.settings.rowsSettings,
         tab.settings.rowsSettings,
+        tab.name
+      ),
+      ...describeWorkspaceChanges(
+        old.settings.workspaceFilters,
+        tab.settings.workspaceFilters,
         tab.name
       )
     );

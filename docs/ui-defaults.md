@@ -98,6 +98,7 @@ Keep a confirmation small and centered: a short question, one sentence that name
 - The expanded Rows drawer covers the toolbar and status bar, so its header carries the row count and active filters. Beside the narrow drawer the status bar keeps its own, and the controls it would cover move beside it. Table tools and the close action stay in the drawer header while rows scroll.
 - Give every side inspector a narrow and a wide size: the field list and its full view, workspace settings, and Rows.
 - Label local Rows filters and table searches separately from chart filters.
+- Add a workspace filter from the status bar's Filter button: a field search, then the field's filter control, in a nonmodal popover beside the button or chip. A field has one workspace filter, so picking a filtered field edits it. Its chip reads "Workspace · Region: West" with the owner muted.
 - Keep a clear-filter control visible on every chart with an active filter.
 - Chart settings have a Filters tab with a manual control for every filter the chart sets: the fields its marks select, then any other filtered field. Each control matches the field's type and shows its distribution. A selection on the chart and the control stay in step.
 - Show the values under the pointer in the chart panel header, beside the title, in one line. A crosshair or highlight marks the point. Do not float a readout over the plot. Under a headline theme the readout covers the end of the subtitle line while the pointer is on the plot, so a reading never moves the header.

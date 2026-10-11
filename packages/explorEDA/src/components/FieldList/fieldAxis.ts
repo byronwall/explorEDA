@@ -1,6 +1,6 @@
 import { getChartAxisFields } from "@/components/charts/chartAccessibility";
 import type { FieldProfile } from "@/lib/fieldProfiles";
-import { finiteNumber } from "@/lib/numeric";
+import { finiteNumber } from "@/lib/valueParsing";
 import type { ChartSettings, datum } from "@/types/ChartTypes";
 
 export type AxisName = "x" | "y";

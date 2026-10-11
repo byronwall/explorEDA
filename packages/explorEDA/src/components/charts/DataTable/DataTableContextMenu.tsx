@@ -23,7 +23,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { isMissingValue } from "@/lib/numeric";
+import { isMissingValue } from "@/lib/valueParsing";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { Filter } from "@/types/FilterTypes";
 import { hideColumn, moveColumn, pickColumns } from "./columnOps";

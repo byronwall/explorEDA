@@ -1,0 +1,15 @@
+{
+  "id": "d84f531a-3bac-4ecc-b5c8-a4d3fc7ee41a",
+  "kind": "node.moved",
+  "actor": {
+    "kind": "agent",
+    "id": "token:914e81",
+    "label": "Agent token ...914e81"
+  },
+  "createdAt": "2026-10-10T22:46:55.467Z",
+  "summary": "Moved \"In-place chart editing\" under \"Retired initiative follow-ups\".",
+  "nodeIds": [
+    "page-in-place-chart-editing",
+    "page-retired-initiative-follow-ups"
+  ]
+}

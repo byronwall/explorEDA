@@ -1,3 +1,4 @@
+import { isDateText } from "@/lib/valueParsing";
 import { isCompositionDefinition } from "@/components/charts/Composition/validateComposition";
 import { isGeometryAsset } from "@/lib/geometryAssets";
 import { isSavedTheme } from "@/lib/themes";
@@ -174,9 +175,7 @@ function isFilter(value: unknown): boolean {
   }
   if (value.type === "date-range") {
     const isIsoDate = (date: unknown) =>
-      typeof date === "string" &&
-      /^\d{4}-\d{2}-\d{2}(?:T.*)?$/.test(date) &&
-      !Number.isNaN(Date.parse(date));
+      typeof date === "string" && isDateText(date, "iso");
 
     return (
       (value.min === undefined || isIsoDate(value.min)) &&
@@ -670,7 +669,9 @@ function isChart(value: unknown): boolean {
               )) &&
             (value.time.display !== "stacked-area" ||
               value.time.aggregation !== "average") &&
-            ["day", "week", "month", "year"].includes(value.time.interval as string) &&
+            ["day", "week", "month", "year"].includes(
+              value.time.interval as string
+            ) &&
             ["monday", "sunday"].includes(value.time.weekStart as string) &&
             ["count", "sum", "average"].includes(
               value.time.aggregation as string
@@ -849,6 +850,20 @@ export function validateSavedData(data: unknown): data is SavedDataStructure {
     ) {
       return false;
     }
+  }
+
+  // One workspace filter per field.
+  if (
+    data.workspaceFilters !== undefined &&
+    (!Array.isArray(data.workspaceFilters) ||
+      !data.workspaceFilters.every(isFilter) ||
+      new Set(
+        (data.workspaceFilters as { field: string }[]).map(
+          (filter) => filter.field
+        )
+      ).size !== data.workspaceFilters.length)
+  ) {
+    return false;
   }
 
   if (

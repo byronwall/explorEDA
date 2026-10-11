@@ -1,5 +1,5 @@
 import type { ThemeColors } from "@/lib/themePalettes";
-import { finiteNumber, isMissingValue } from "@/lib/numeric";
+import { finiteNumber, isMissingValue } from "@/lib/valueParsing";
 import {
   getFieldLabel,
   formatFieldValue,
@@ -434,9 +434,7 @@ export function planScatter(
         ? ("invalid-x" as const)
         : unplotted(yAxis, snapshot.yData[sourceId])
           ? ("invalid-y" as const)
-          : size &&
-              (finiteNumber(snapshot.sizeData?.[sourceId]) === undefined ||
-                Number(snapshot.sizeData?.[sourceId]) < 0)
+          : size && (finiteNumber(snapshot.sizeData?.[sourceId]) ?? -1) < 0
             ? ("invalid-size" as const)
             : ("nonfinite-position" as const),
     }));

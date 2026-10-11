@@ -1,4 +1,4 @@
-import { finiteNumber } from "@/lib/numeric";
+import { finiteNumber } from "@/lib/valueParsing";
 import type { ScatterPlotSettings } from "./definition";
 import { facetLabel, groupScatterRows, type ScatterFitGroup } from "./fitPlan";
 import type { ScatterPlan, ScatterSnapshot } from "./scatterPlan";
@@ -9,7 +9,7 @@ export interface PairedStats {
   label: string;
   color: string;
   kind: "pooled" | "group";
-  /** Rows in this group and facet that pass the other charts' filters. */
+  /** Rows in this group and facet that pass the other filters. */
   eligible: number;
   pairs: number;
   missingX: number;

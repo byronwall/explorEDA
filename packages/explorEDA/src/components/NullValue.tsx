@@ -1,4 +1,4 @@
-import { isMissingValue } from "@/lib/numeric";
+import { isMissingValue } from "@/lib/valueParsing";
 import type { datum } from "@/types/ChartTypes";
 
 /**

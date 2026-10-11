@@ -72,8 +72,16 @@ Format only the files you changed: `npx prettier --write <files>`. Formatting a 
 - **`onStateChange` is not coalesced** unless something holds it. A settings input that calls `updateChart` on each keystroke records one demo undo step per keystroke. For a continuous edit, wrap it in `useChartEdit` (or `holdStateChanges`) so it is one step.
 - **Don't subscribe a per-chart hook to the whole chart list.** `useDataLayer((state) => state.charts)` in a hook that every panel or field row uses re-renders all of them on any chart's edit. Subscribe to one chart or a derived fact, or read the list when an action runs with `useDataLayerSnapshot()`. See [Performance checks](performance-checks.md#patterns-that-keep-edits-cheap).
 - **Hosts can echo `onStateChange` back as `savedData`.** `ExplorEdaProject` and the demo's project examples do this on every edit. The provider skips a `savedData` whose fingerprint matches its own state; any other change runs a full restore, which rebuilds every row, profile, and chart. Keep `saveToStructure()` output stable through a save and restore round trip, or each echo becomes a full rebuild. See [Performance checks](performance-checks.md#patterns-that-keep-edits-cheap).
+- **Read raw values only through `src/lib/valueParsing.ts`.** `parseNumber`, `finiteNumber`, `parseBoolean`, `parseDateText`, `timestampOf`, and `dateBound` hold every rule for missing values, numbers, booleans, and dates. Do not call `Date.parse`, `new Date(text)`, or `Number(value)` on row data. V8's `Date.parse` reads "Depot 2" as 2001, rolls 2025-02-30 into March, and reads slash dates in local time; `Number` reads "0x1A" as 26.
 - **A chart's filter function runs once per row.** Call `fieldGetter` before you return the row test. A lookup inside it is quadratic: 34 s for one click at 27,000 rows.
 - **Axis labels and tick labels take the pointer** (`pointerEvents="auto"` with `data-field`), so they sit above anything drawn under them in `PlannedAxes`, such as the axis bands. Map a label back to its band, as `axisEditTarget` in `useAxisEditing.tsx` does.
+
+## Editing a composition quickly
+
+- [Composition mode](composition-mode.md) describes the model, marks, scopes, and limits. Read it before adding a mark or option.
+- **Right-click any drawn object** on a composition's artboard for a menu of what it is made of: the mark under the pointer with a one-line summary, each scale it uses, the unit and the repeat, a trace, the workspace filter for that repeat, and removal while editing. Each line opens that part of the editor and scrolls to it, opening the details view when no editor is showing. Shift+F10 or the menu key does the same for the selected element.
+- Inspector parts carry stable hooks for scripts: `[data-element-id]` and `[data-element-kind]` on the selected element's properties, `[data-mark-id]` and `[data-mark-type]` on each mark card, and `[data-action]` on each quick-menu item.
+- `describeMark` in `markSummary.ts` is the one-line summary under each mark's name; keep it in step when a mark type gains a field that changes what it draws.
 
 ## Tests
 

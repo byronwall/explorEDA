@@ -29,6 +29,12 @@ import {
   TitleTraceBody,
 } from "./TraceBodies";
 import type { ChartTrace } from "./traceTypes";
+import {
+  formatFilterLabel,
+  isActiveFilter,
+  useFieldFormatting,
+} from "@/components/ActiveFilterStatus";
+import { useDataLayer } from "@/providers/DataLayerProvider";
 
 function TraceBody({ trace }: { trace: ChartTrace }) {
   switch (trace.kind) {
@@ -95,6 +101,26 @@ function TraceBody({ trace }: { trace: ChartTrace }) {
   }
 }
 
+/** Names the workspace filters, which narrow this chart without owning it. */
+function WorkspaceFilterNote() {
+  const filters = useDataLayer((state) => state.workspaceFilters);
+  const formatting = useFieldFormatting();
+  const active = filters.filter(isActiveFilter);
+  if (!active.length) return null;
+  return (
+    <p className="text-muted-foreground">
+      Workspace {active.length === 1 ? "filter" : "filters"}:{" "}
+      <span className="text-foreground">
+        {active
+          .map((filter) => formatFilterLabel(filter, formatting))
+          .join(" · ")}
+      </span>
+      . {active.length === 1 ? "It narrows" : "They narrow"} every chart,
+      including this one.
+    </p>
+  );
+}
+
 /** In a project workspace, opens the query flow on the rows behind a mark. */
 function QueryRowsLink({ trace }: { trace: ChartTrace }) {
   const analysis = useAnalysisChartContext();
@@ -144,6 +170,7 @@ export function ChartTracePanel() {
   return (
     <div className="space-y-3 text-xs">
       {trace.trace && <TraceBody trace={trace.trace} />}
+      {trace.trace && <WorkspaceFilterNote />}
       {trace.trace && <QueryRowsLink trace={trace.trace} />}
       <section
         className="eda-trace-finder"

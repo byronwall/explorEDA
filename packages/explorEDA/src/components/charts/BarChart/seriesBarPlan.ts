@@ -356,7 +356,7 @@ export function planSeriesBars({
       domain,
     },
     scopeNote:
-      "Rows after other chart filters and facet selection. This chart's own selection keeps the surrounding bars visible.",
+      "Rows after other filters and facet selection. This chart's own selection keeps the surrounding bars visible.",
   };
   return {
     ...plan,

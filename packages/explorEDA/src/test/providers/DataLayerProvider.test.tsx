@@ -1162,4 +1162,162 @@ describe("DataLayerProvider", () => {
       screen.queryByRole("columnheader", { name: /double/i })
     ).not.toBeInTheDocument();
   });
+
+  describe("workspace filters", () => {
+    const regions = [
+      { region: "West", units: 5 },
+      { region: "East", units: 15 },
+      { region: "West", units: 25 },
+    ];
+
+    function WorkspaceProbe() {
+      const filters = useDataLayer((state) => state.workspaceFilters);
+      const setWorkspaceFilter = useDataLayer(
+        (state) => state.setWorkspaceFilter
+      );
+      const clearAllFilters = useDataLayer((state) => state.clearAllFilters);
+      const updateFieldSettings = useDataLayer(
+        (state) => state.updateFieldSettings
+      );
+      const count = useDataLayer((state) =>
+        state.crossfilterWrapper.getFilteredRowCount()
+      );
+      return (
+        <>
+          <output data-testid="count">{count}</output>
+          <output data-testid="filters">{JSON.stringify(filters)}</output>
+          <button
+            onClick={() =>
+              setWorkspaceFilter("region", {
+                type: "value",
+                field: "region",
+                values: ["West"],
+              })
+            }
+          >
+            west
+          </button>
+          <button
+            onClick={() =>
+              setWorkspaceFilter("region", {
+                type: "value",
+                field: "region",
+                values: ["East"],
+              })
+            }
+          >
+            east
+          </button>
+          <button onClick={() => setWorkspaceFilter("region")}>remove</button>
+          <button onClick={clearAllFilters}>clear</button>
+          <button
+            onClick={() =>
+              updateFieldSettings("region", { type: "categorical" })
+            }
+          >
+            retype
+          </button>
+        </>
+      );
+    }
+
+    it("saves one filter per field and narrows a workspace with no charts", () => {
+      const changes: SavedDataStructure[] = [];
+      render(
+        <DataLayerProvider
+          data={regions}
+          savedData={savedData()}
+          onStateChange={(state) => changes.push(state)}
+        >
+          <WorkspaceProbe />
+        </DataLayerProvider>
+      );
+      expect(screen.getByTestId("count")).toHaveTextContent("3");
+      fireEvent.click(screen.getByRole("button", { name: "west" }));
+      expect(screen.getByTestId("count")).toHaveTextContent("2");
+      fireEvent.click(screen.getByRole("button", { name: "east" }));
+      expect(screen.getByTestId("count")).toHaveTextContent("1");
+      expect(changes.at(-1)?.workspaceFilters).toEqual([
+        { type: "value", field: "region", values: ["East"] },
+      ]);
+      fireEvent.click(screen.getByRole("button", { name: "remove" }));
+      expect(screen.getByTestId("count")).toHaveTextContent("3");
+      expect(changes.at(-1)).not.toHaveProperty("workspaceFilters");
+    });
+
+    it("restores saved filters, and loads older saves with none", () => {
+      const { unmount } = render(
+        <DataLayerProvider
+          data={regions}
+          savedData={{
+            ...savedData(),
+            workspaceFilters: [
+              { type: "value", field: "region", values: ["West"] },
+            ],
+          }}
+        >
+          <WorkspaceProbe />
+        </DataLayerProvider>
+      );
+      expect(screen.getByTestId("count")).toHaveTextContent("2");
+      unmount();
+      render(
+        <DataLayerProvider data={regions} savedData={savedData()}>
+          <WorkspaceProbe />
+        </DataLayerProvider>
+      );
+      expect(screen.getByTestId("count")).toHaveTextContent("3");
+      expect(screen.getByTestId("filters")).toHaveTextContent("[]");
+    });
+
+    it("round-trips through a saved analysis", () => {
+      const text = stringifySavedAnalysis({
+        format: "exploreda-analysis",
+        version: 1,
+        data: regions,
+        settings: {
+          ...savedData(),
+          workspaceFilters: [{ type: "range", field: "units", min: 10 }],
+        },
+      });
+      expect(parseSavedAnalysis(text).settings.workspaceFilters).toEqual([
+        { type: "range", field: "units", min: 10 },
+      ]);
+    });
+
+    it("clears with every other filter and when the field changes type", () => {
+      render(
+        <DataLayerProvider data={regions} savedData={savedData()}>
+          <WorkspaceProbe />
+        </DataLayerProvider>
+      );
+      fireEvent.click(screen.getByRole("button", { name: "west" }));
+      fireEvent.click(screen.getByRole("button", { name: "clear" }));
+      expect(screen.getByTestId("count")).toHaveTextContent("3");
+      expect(screen.getByTestId("filters")).toHaveTextContent("[]");
+
+      fireEvent.click(screen.getByRole("button", { name: "west" }));
+      fireEvent.click(screen.getByRole("button", { name: "retype" }));
+      expect(screen.getByTestId("count")).toHaveTextContent("3");
+      expect(screen.getByTestId("filters")).toHaveTextContent("[]");
+    });
+
+    it("narrows Rows", () => {
+      render(
+        <DataLayerProvider
+          data={regions}
+          savedData={{
+            ...savedData(),
+            workspaceFilters: [
+              { type: "value", field: "region", values: ["East"] },
+            ],
+          }}
+        >
+          <RowsView width={800} height={600} toolbarTarget={null} />
+        </DataLayerProvider>
+      );
+      expect(screen.getAllByText("East").length).toBeGreaterThan(0);
+      expect(screen.queryByText("West")).not.toBeInTheDocument();
+    });
+  });
 });
