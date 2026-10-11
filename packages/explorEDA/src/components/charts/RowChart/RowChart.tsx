@@ -19,10 +19,17 @@ import { useId, useMemo, useState } from "react";
 import { useGetColumnData } from "../useGetColumnData";
 import { BaseChart } from "../BaseChart";
 import { getChartAxisFields, getChartAxisLabel } from "../chartAccessibility";
-import { useGetLiveIds } from "../useGetLiveData";
-import { hasFieldDisplayFormat } from "@/lib/fieldSettings";
+import { useGetAllIds, useGetLiveIds } from "../useGetLiveData";
+import {
+  formatFieldValue as formatValue,
+  hasFieldDisplayFormat,
+} from "@/lib/fieldSettings";
 
-import { planRowCategories } from "./rowChartPlan";
+import {
+  planRowCategories,
+  planRowSummary,
+  type RowSummaryPlan,
+} from "./rowChartPlan";
 import {
   useChartTraceApi,
   useTraceRevision,
@@ -53,7 +60,70 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
   const getFieldLabel = useDataLayer((s) => s.getFieldLabel);
   const fieldSettings = useDataLayer((s) => s.fieldSettings);
   const [hovered, setHovered] = useState<string | null>(null);
-  void fieldSettings;
+
+  // A grouped summary ranks its value instead of the row count. Its order and
+  // context come from every row; the bars show rows that pass other filters.
+  const allIds = useGetAllIds(settings);
+  const aggregates = useDataLayer((s) => s.aggregates);
+  const nonce = useDataLayer((s) => s.nonce);
+  const getAggregateResult = useDataLayer((s) => s.getAggregateResult);
+  const spec = settings.aggregateId
+    ? aggregates.find((item) => item.id === settings.aggregateId)
+    : undefined;
+  const summaryMismatch = settings.aggregateId
+    ? !spec
+      ? "This chart's grouped summary no longer exists."
+      : spec.groupField !== settings.field
+        ? `${spec.name} groups by ${getFieldLabel(spec.groupField)}, not ${getFieldLabel(settings.field)}.`
+        : undefined
+    : undefined;
+  const summarized = Boolean(spec) && !summaryMismatch;
+  const allSummary = useMemo(() => {
+    void nonce;
+    void fieldSettings;
+    return summarized && settings.aggregateId
+      ? getAggregateResult(settings.aggregateId, allIds)
+      : undefined;
+  }, [
+    summarized,
+    settings.aggregateId,
+    getAggregateResult,
+    allIds,
+    aggregates,
+    fieldSettings,
+    nonce,
+  ]);
+  const liveSummary = useMemo(() => {
+    void nonce;
+    void fieldSettings;
+    return summarized && settings.aggregateId
+      ? getAggregateResult(settings.aggregateId, liveIds)
+      : undefined;
+  }, [
+    summarized,
+    settings.aggregateId,
+    getAggregateResult,
+    liveIds,
+    aggregates,
+    fieldSettings,
+    nonce,
+  ]);
+  const measureField =
+    spec && spec.aggregation !== "count" ? spec.measureField : undefined;
+  const formatMeasure = (value: number | undefined) =>
+    value === undefined
+      ? "—"
+      : measureField
+        ? formatValue(
+            measureField,
+            value,
+            // Zero reads as $0 beside $20K, not $0.00, as on vertical bars.
+            value === 0
+              ? { ...fieldSettings[measureField], precision: 0 }
+              : fieldSettings[measureField],
+            { compact: true }
+          )
+        : value.toLocaleString();
 
   const valueFilter = settings.filters.find(
     (f: Filter): f is ValueFilter =>
@@ -109,17 +179,21 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
   // Chart dimensions
   const baseMargin = settings.margin;
 
-  const plan = useMemo(() => {
+  const plan = useMemo((): RowSummaryPlan => {
     const available =
       chartHeight - baseMargin.top - Math.max(baseMargin.bottom, 42);
     const maxRows = Math.max(
       2,
       Math.floor(available / Math.max(1, settings.minRowHeight))
     );
+    if (liveSummary && allSummary)
+      return planRowSummary(liveSummary, allSummary, maxRows);
     return planRowCategories(column, liveIds, maxRows);
   }, [
     column,
     liveIds,
+    liveSummary,
+    allSummary,
     chartHeight,
     baseMargin.top,
     baseMargin.bottom,
@@ -134,7 +208,7 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
           hasFieldDisplayFormat(fieldSettings[settings.field])
             ? formatFieldValue(settings.field, item.value)
             : categoryLabel(item.value),
-        count: item.sourceIds.length,
+        count: summarized ? item.current : item.sourceIds.length,
         other: false,
         members: [item],
       })),
@@ -144,21 +218,25 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
               key: "__other",
               value: undefined,
               label: "Other categories",
-              count: plan.other.reduce(
-                (sum, item) => sum + item.sourceIds.length,
-                0
-              ),
-              total: plan.other.reduce((sum, item) => sum + item.total, 0),
+              count: plan.otherSummary
+                ? plan.otherSummary.current
+                : plan.other.reduce(
+                    (sum, item) => sum + item.sourceIds.length,
+                    0
+                  ),
+              total: plan.otherSummary
+                ? plan.otherSummary.total
+                : plan.other.reduce((sum, item) => sum + (item.total ?? 0), 0),
               other: true,
               members: plan.other,
             },
           ]
         : []),
     ],
-    [plan, fieldSettings, settings.field, formatFieldValue]
+    [plan, summarized, fieldSettings, settings.field, formatFieldValue]
   );
   const source = useMemo((): TraceSource => {
-    const currentRevision = `${revision.split(":")[0]}:${settings.field}:${chartHeight}:${plan.other.length}:${plan.categories.map((item) => item.sourceIds.join(",")).join(";")}`;
+    const currentRevision = `${revision.split(":")[0]}:${settings.field}:${settings.aggregateId ?? ""}:${chartHeight}:${plan.other.length}:${plan.categories.map((item) => item.sourceIds.join(",")).join(";")}`;
     return {
       role: "chart",
       revision: currentRevision,
@@ -213,11 +291,12 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
   const themeColors = useThemeColors();
   const yLabels = displayCounts.map((d) => d.label);
   const axisFields = getChartAxisFields(settings);
-  const xAxisLabel = getChartAxisLabel(
-    axisFields.x,
-    settings.xAxisLabel,
-    getFieldLabel
-  );
+  const xAxisLabel =
+    summarized && spec && !settings.xAxisLabel
+      ? measureField
+        ? getFieldLabel(measureField)
+        : "Count"
+      : getChartAxisLabel(axisFields.x, settings.xAxisLabel, getFieldLabel);
   const tickSize = settings.yAxis.tickFontSize ?? typography.tickSize;
   // Category names claim their measured width, never less than the estimate.
   const requestedLabelMargin = Math.max(
@@ -265,7 +344,15 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
 
   // Create scales with synchronized limits if in a facet
   const xScale = useMemo(() => {
-    const maxValue = Math.max(1, ...displayCounts.map((d) => d.total));
+    const maxValue = Math.max(
+      summarized ? Number.MIN_VALUE : 1,
+      ...displayCounts.flatMap((d) =>
+        [d.total, d.count].filter(
+          (value): value is number =>
+            value !== undefined && Number.isFinite(value)
+        )
+      )
+    );
 
     const scale = numericScale(settings.xAxis)
       .domain(boundedDomain([0, maxValue], settings.xAxis))
@@ -281,12 +368,13 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
       .padding(0.3);
   }, [displayCounts, innerHeight]);
 
-  if (displayCounts.length === 0) {
+  if (summaryMismatch || displayCounts.length === 0) {
     return (
       <ChartMessage width={width} height={height}>
-        {settings.field
-          ? NO_MATCHING_ROWS
-          : "Choose a field in chart settings."}
+        {summaryMismatch ??
+          (settings.field
+            ? NO_MATCHING_ROWS
+            : "Choose a field in chart settings.")}
       </ChartMessage>
     );
   }
@@ -316,18 +404,31 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
             <span>{fieldLabel}</span>
             <b>{hoveredItem.label}</b>
           </span>
-          <span className="eda-readout-item">
-            <span>Rows</span>
-            <b>
-              {hoveredItem.count.toLocaleString()} of{" "}
-              {hoveredItem.total.toLocaleString()}
-            </b>
-          </span>
-          {liveRows > 0 && (
+          {summarized && spec ? (
+            <>
+              <span className="eda-readout-item">
+                <span>{spec.name}</span>
+                <b>{formatMeasure(hoveredItem.count)}</b>
+              </span>
+              <span className="eda-readout-item">
+                <span>All rows</span>
+                <b>{formatMeasure(hoveredItem.total)}</b>
+              </span>
+            </>
+          ) : (
+            <span className="eda-readout-item">
+              <span>Rows</span>
+              <b>
+                {(hoveredItem.count ?? 0).toLocaleString()} of{" "}
+                {(hoveredItem.total ?? 0).toLocaleString()}
+              </b>
+            </span>
+          )}
+          {!summarized && liveRows > 0 && (
             <span className="eda-readout-item">
               <span>Share</span>
               <b>
-                {(hoveredItem.count / liveRows).toLocaleString("en-US", {
+                {((hoveredItem.count ?? 0) / liveRows).toLocaleString("en-US", {
                   style: "percent",
                   maximumFractionDigits: 1,
                 })}
@@ -354,13 +455,13 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
             {displayCounts.map(({ key, count }) => (
               <text
                 key={key}
-                x={xScale(count) + 5}
+                x={xScale(count ?? 0) + 5}
                 y={yScale(key)! + yScale.bandwidth() / 2}
                 dominantBaseline="middle"
                 className="fill-foreground"
                 fontSize={11}
               >
-                {count.toLocaleString()}
+                {formatMeasure(count)}
               </text>
             ))}
           </g>
@@ -369,7 +470,7 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
         <g className="select-none">
           {!facetIds &&
             displayCounts.map((item) =>
-              item.total > item.count ? (
+              item.total !== undefined && item.total !== (item.count ?? 0) ? (
                 <rect
                   key={`${item.key}:total`}
                   x={0}
@@ -404,9 +505,13 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
             const color =
               valueFilter && !isFiltered
                 ? "rgb(156 163 175)" // gray-400 for filtered out points
-                : getColorForValue(settings.colorScaleId, value, themeColors.mark);
+                : getColorForValue(
+                    settings.colorScaleId,
+                    value,
+                    themeColors.mark
+                  );
 
-            const barWidth = xScale(count);
+            const barWidth = xScale(count ?? 0);
             const barHeight = yScale.bandwidth();
 
             if (barHeight < 1) {
@@ -422,7 +527,11 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
                 rx={2}
                 role="button"
                 tabIndex={0}
-                aria-label={`${label}: ${count.toLocaleString()} rows`}
+                aria-label={
+                  summarized && spec
+                    ? `${label}, ${spec.name}: ${formatMeasure(count)}`
+                    : `${label}: ${(count ?? 0).toLocaleString()} rows`
+                }
                 aria-pressed={
                   other
                     ? members.every((item) =>
