@@ -1,0 +1,170 @@
+{
+  "date": "2026-10-06",
+  "authority": "Direct human feedback. Uncertainty and tentative terms are retained.",
+  "annotations": [
+    {
+      "annotation_index": 1,
+      "question_context": "Which two real datasets or analysis tasks should drive the next round of features?",
+      "user_feedback": "We should be pushing in several directions: deep engineering and technical analysis (imagine analysis on data collected from a science or engineering experiment). I may not have great datasets in place. I had a separate worktree that is looking into that right now.",
+      "affected_initiatives": [
+        "comparison-opportunities",
+        "scatter-plot-matrix"
+      ],
+      "resolution": "Prioritize engineering and scientific end-user work. Dataset availability is uncertain; user reports separate investigation."
+    },
+    {
+      "annotation_index": 2,
+      "question_context": "If we could deliver only three improvements, which would you choose?",
+      "user_feedback": "editorial style, edit in place, scatter matrix, and table usability. time is important but cuts across a couple things, so would improve in a second pass",
+      "affected_initiatives": [
+        "comparison-opportunities",
+        "editorial-chart-styling",
+        "in-place-chart-editing",
+        "scatter-plot-matrix",
+        "table-content-fit",
+        "calendar-period-analysis"
+      ],
+      "resolution": "Accept four first-pass priorities without forcing a three-feature limit. Time is second-pass."
+    },
+    {
+      "annotation_index": 3,
+      "question_context": "When priorities conflict, should your own investigations, charts you publish, or developers embedding explorEDA win?",
+      "user_feedback": "The goal is to produce the most powerful platform for END USERS. Developers use the tool to deliver an experience to end users. We work for the user.",
+      "affected_initiatives": [
+        "comparison-opportunities"
+      ],
+      "resolution": "End users determine product choices; developers deliver the experience."
+    },
+    {
+      "annotation_index": 4,
+      "question_context": "Where do you want finished editorial charts to go?",
+      "user_feedback": "We need the interative workspace to \"feel\" editorial. So all the current features with a little better types and layout. I also wnat to be able to export to images and possibly slides or a PDF report. Think through how to handle export sutff... but that should really be a new intent with a dedicated scope: please create that too",
+      "affected_initiatives": [
+        "editorial-chart-styling",
+        "analysis-export"
+      ],
+      "resolution": "Editorial experience is live. Create dedicated image-export intent; slide and PDF outputs remain possibilities."
+    },
+    {
+      "annotation_index": 5,
+      "question_context": "Which existing charts or design systems best represent the look you want?",
+      "user_feedback": "Newspapers: financial times, economist, washington post, NY Times. From there, I am thinking abotu the pretty things put together by consulatnts in end of year or investor relation docs.",
+      "affected_initiatives": [
+        "editorial-chart-styling",
+        "analysis-export"
+      ],
+      "resolution": "Record named visual references. No specific page, font, or layout is selected."
+    },
+    {
+      "annotation_index": 6,
+      "question_context": "When a host’s theme changes, should saved charts follow that change or retain their original authored appearance?",
+      "user_feedback": "Yes, things should be linked to a global set of colors or theme. They update automatically (unless intentioanlly overridden). Make iti easy to spot overrides too on some screen",
+      "affected_initiatives": [
+        "editorial-chart-styling"
+      ],
+      "resolution": "Automatic global theme links, intentional local overrides, and a findable override view are selected behavior."
+    },
+    {
+      "annotation_index": 7,
+      "question_context": "Which three edits would save you the most time?",
+      "user_feedback": "Text and axis. Text supports readability and \"creating a quick dashboard\". Basically, opening the settings menu is a chore, so any \"direct\" edit is a huge time savings.",
+      "affected_initiatives": [
+        "in-place-chart-editing"
+      ],
+      "resolution": "Prioritize direct text and axis edits for readability and quick dashboard creation."
+    },
+    {
+      "annotation_index": 8,
+      "question_context": "Should edits change the chart immediately?",
+      "user_feedback": "Change immediately. we have robust undo, so there's minimal risk there",
+      "affected_initiatives": [
+        "in-place-chart-editing"
+      ],
+      "resolution": "Apply valid changes immediately and reuse existing undo. Do not impose a preview acceptance stage."
+    },
+    {
+      "annotation_index": 9,
+      "question_context": "What is the matrix’s main job?",
+      "user_feedback": "Making sense of a multivaraiate data set where you may not know how things are related at the start. It's a very nice \"start here\" sort of data viz.",
+      "affected_initiatives": [
+        "scatter-plot-matrix"
+      ],
+      "resolution": "Matrix is an exploration starting point for unfamiliar multivariate data."
+    },
+    {
+      "annotation_index": 10,
+      "question_context": "With missing values, should each cell show every usable observation, or should every cell use the same complete records?",
+      "user_feedback": "idk, please clarify",
+      "affected_initiatives": [
+        "scatter-plot-matrix"
+      ],
+      "resolution": "Explain pairwise versus complete-case populations with an example. Recommend pairwise use provisionally; no user selection inferred."
+    },
+    {
+      "annotation_index": 11,
+      "question_context": "What row count and number of fields would you normally put in a matrix?",
+      "user_feedback": "idk, 10k-100k rows. Presuambly we need to go to a canvas renderer at some point (if not already?).",
+      "affected_initiatives": [
+        "scatter-plot-matrix"
+      ],
+      "resolution": "Record tentative row target and verify current Canvas renderer. Field count and latency remain unspecified."
+    },
+    {
+      "annotation_index": 12,
+      "question_context": "Comparisons, metrics, and time: which baseline and how should it change with the source?",
+      "user_feedback": "I think I hve minimal interest in this comparison thing. Let's de-rate it.",
+      "affected_initiatives": [
+        "population-baselines",
+        "comparison-opportunities"
+      ],
+      "resolution": "Lower named-comparison priority; do not pause or cancel the initiative."
+    },
+    {
+      "annotation_index": 13,
+      "question_context": "Which calculation currently sends you to another tool?",
+      "user_feedback": "Not sure yet, havent used tool enough.",
+      "affected_initiatives": [
+        "reusable-analysis-metrics"
+      ],
+      "resolution": "Demand for additional measures remains unconfirmed. Keep as a seed."
+    },
+    {
+      "annotation_index": 14,
+      "question_context": "After brushing one matrix cell, should the other cells show only matching records or retain all observations and highlight matches?",
+      "user_feedback": "Brushing one cell should probably dim the unrelated cells. Basically brushing = setting a filter on 2 dims.",
+      "affected_initiatives": [
+        "scatter-plot-matrix"
+      ],
+      "resolution": "Record tentative preference for two-field filtering with dimmed nonmatching context. Interpret observations rather than whole cells provisionally."
+    },
+    {
+      "annotation_index": 15,
+      "question_context": "Which missing selection capability matters first?",
+      "user_feedback": "Lasso would be really nice. The filters without a chart would also be really nice.",
+      "affected_initiatives": [
+        "precise-composite-selection",
+        "filter-and-series-controls"
+      ],
+      "resolution": "Lasso and chart-free filters have direct expressed interest. Other selection proposals do not inherit the same priority."
+    },
+    {
+      "annotation_index": 16,
+      "question_context": "When reusing an analysis, which choices should carry forward?",
+      "user_feedback": "I think all of those? idk",
+      "affected_initiatives": [
+        "saved-view-templates"
+      ],
+      "resolution": "Tentatively preserve full analysis state. Do not infer a filter-free template requirement."
+    },
+    {
+      "annotation_index": 17,
+      "question_context": "Which result would you most want to use as another chart’s input?",
+      "user_feedback": "idk, not sure hwat this impacts",
+      "affected_initiatives": [
+        "reusable-analysis-outputs"
+      ],
+      "resolution": "Explain derived-table reuse with an experiment-level mean example. Demand remains unconfirmed."
+    }
+  ],
+  "overall_direction": "Unclear or unanswered topics have lower current demonstrated interest; they are not rejected automatically."
+}

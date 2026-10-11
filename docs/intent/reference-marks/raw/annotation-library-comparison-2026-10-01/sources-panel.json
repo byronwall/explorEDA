@@ -1,0 +1,1446 @@
+[
+  {
+    "href": "https://www.ag-grid.com/charts/javascript/annotations/",
+    "text": "AG Gridhttps://www.ag-grid.com/charts/javascript/annotations/Ctrl⌘ Command + Z will undo any drawing and annotation actions. ^ Ctrl⌘ Command + Y will redo any undo actions."
+  },
+  {
+    "href": "https://www.highcharts.com/docs/stock/stock-tools",
+    "text": "Highchartshttps://www.highcharts.com/docs/stock/stock-toolsTotal lines: 154\n"
+  },
+  {
+    "href": "https://apexcharts.com/docs/annotation-authoring/",
+    "text": "ApexCharts.jshttps://apexcharts.com/docs/annotation-authoring/Make ApexCharts annotations directly editable with the Ink layer: drag points, click to create, snap to gridlines, and open a floating editor to rename, ..."
+  },
+  {
+    "href": "https://www.amcharts.com/docs/v5/charts/stock/serializing-indicators-annotations/",
+    "text": "amChartshttps://www.amcharts.com/docs/v5/charts/stock/serializing-indicators-annotations/Stock chart provides two events which can be used to dynamically monitor to any changes in drawings and/or indicators: drawingsupdated and indicatorsupdated ."
+  },
+  {
+    "href": "https://raw.githubusercontent.com/plotly/plotly.js/master/src/plot_api/plot_config.js",
+    "text": "GitHubhttps://raw.githubusercontent.com/plotly/plotly.js/master/src/plot_api/plot_config.jsTotal lines: 442\n"
+  },
+  {
+    "href": "https://www.microsoft.com/en-us/research/publication/chartaccent-annotation-data-driven-storytelling/",
+    "text": "Microsofthttps://www.microsoft.com/en-us/research/publication/chartaccent-annotation-data-driven-storytelling/ChartAccent, a tool that allows people to quickly and easily augment charts via a palette of annotation interactions that generate manual and ..."
+  },
+  {
+    "href": "https://arxiv.org/html/2604.07691v1",
+    "text": "arXivhttps://arxiv.org/html/2604.07691v1The sketches illustrate six annotation design considerations derived from interviews with practitioners (P1–P10) and educators (E1–E7)."
+  },
+  {
+    "href": "https://raw.githubusercontent.com/rough-stuff/rough-notation/master/README.md",
+    "text": "GitHubhttps://raw.githubusercontent.com/rough-stuff/rough-notation/master/README.mdTotal lines: 168\n"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/d3/d3/main/package.json",
+    "text": "GitHubhttps://raw.githubusercontent.com/d3/d3/main/package.jsonTotal lines: 92\n"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/susielu/d3-annotation/master/package.json",
+    "text": "GitHubhttps://raw.githubusercontent.com/susielu/d3-annotation/master/package.jsonTotal lines: 92\n"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/susielu/d3-annotation/master/README.md",
+    "text": "GitHubhttps://raw.githubusercontent.com/susielu/d3-annotation/master/README.mdTotal lines: 42\n"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/vega/vega/main/packages/vega/package.json",
+    "text": "GitHubhttps://raw.githubusercontent.com/vega/vega/main/packages/vega/package.jsonTotal lines: 81\n"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/vega/vega-lite/main/package.json",
+    "text": "GitHubhttps://raw.githubusercontent.com/vega/vega-lite/main/package.jsonTotal lines: 151\n"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/observablehq/plot/main/package.json",
+    "text": "GitHubhttps://raw.githubusercontent.com/observablehq/plot/main/package.jsonTotal lines: 90\n"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/plotly/plotly.js/master/package.json",
+    "text": "GitHubhttps://raw.githubusercontent.com/plotly/plotly.js/master/package.jsonTotal lines: 184\n"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/apache/echarts/master/package.json",
+    "text": "GitHubhttps://raw.githubusercontent.com/apache/echarts/master/package.jsonTotal lines: 244\n"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/highcharts/highcharts/master/package.json",
+    "text": "GitHubhttps://raw.githubusercontent.com/highcharts/highcharts/master/package.jsonTotal lines: 208\n"
+  },
+  {
+    "href": "https://api.highcharts.com/",
+    "text": "Highchartshttps://api.highcharts.com/A collection of annotations to add to the chart. The basic annotation allows adding custom labels or shapes. The items can be tied to points, axis coordinates ..."
+  },
+  {
+    "href": "https://www.highcharts.com/license",
+    "text": "Highchartshttps://www.highcharts.com/licenseTotal lines: 694\n"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/chartjs/Chart.js/master/package.json",
+    "text": "GitHubhttps://raw.githubusercontent.com/chartjs/Chart.js/master/package.jsonTotal lines: 139\n"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/chartjs/chartjs-plugin-annotation/master/package.json",
+    "text": "GitHubhttps://raw.githubusercontent.com/chartjs/chartjs-plugin-annotation/master/package.jsonTotal lines: 90\n"
+  },
+  {
+    "href": "https://apexcharts.com/blog/releases/",
+    "text": "ApexCharts.jshttps://apexcharts.com/blog/releases/Total lines: 243\n"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/apexcharts/apexcharts.js/main/package.json",
+    "text": "GitHubhttps://raw.githubusercontent.com/apexcharts/apexcharts.js/main/package.jsonTotal lines: 395\n"
+  },
+  {
+    "href": "https://apexcharts.com/license/",
+    "text": "ApexCharts.jshttps://apexcharts.com/license/ApexCharts is offered under a dual-license model to support individuals, startups, and commercial products of all sizes."
+  },
+  {
+    "href": "https://raw.githubusercontent.com/apexcharts/apexcharts.js/main/src/features/ink.js",
+    "text": "GitHubhttps://raw.githubusercontent.com/apexcharts/apexcharts.js/main/src/features/ink.jsTotal lines: 17\n"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/apexcharts/apexcharts.js/main/src/features/history.js",
+    "text": "GitHubhttps://raw.githubusercontent.com/apexcharts/apexcharts.js/main/src/features/history.jsTotal lines: 18\n"
+  },
+  {
+    "href": "https://github.com/recharts/recharts/releases",
+    "text": "GitHubhttps://github.com/recharts/recharts/releasesfix: show editor cursor in dark mode by @PavelVanecek in #7673; [docs] Annotation controls dark theme support by @PavelVanecek in #7682. New Contributors."
+  },
+  {
+    "href": "https://raw.githubusercontent.com/recharts/recharts/main/package.json",
+    "text": "GitHubhttps://raw.githubusercontent.com/recharts/recharts/main/package.jsonTotal lines: 217\n"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/airbnb/visx/master/packages/visx-annotation/package.json",
+    "text": "GitHubhttps://raw.githubusercontent.com/airbnb/visx/master/packages/visx-annotation/package.jsonTotal lines: 60\n"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/plouc/nivo/master/packages/annotations/package.json",
+    "text": "GitHubhttps://raw.githubusercontent.com/plouc/nivo/master/packages/annotations/package.jsonTotal lines: 50\n"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/amcharts/amcharts5/master/package.json",
+    "text": "GitHubhttps://raw.githubusercontent.com/amcharts/amcharts5/master/package.jsonTotal lines: 86\n"
+  },
+  {
+    "href": "https://www.amcharts.com/online-store/",
+    "text": "amChartshttps://www.amcharts.com/online-store/Total lines: 823\n"
+  },
+  {
+    "href": "https://d3-annotation.susielu.com/",
+    "text": "D3 Annotationhttps://d3-annotation.susielu.com/Let's annotate all the things. This is a component for d3 that allows you add annotations to your visualizations."
+  },
+  {
+    "href": "https://raw.githubusercontent.com/susielu/d3-annotation/master/src/Adapter-d3.js",
+    "text": "GitHubhttps://raw.githubusercontent.com/susielu/d3-annotation/master/src/Adapter-d3.jsTotal lines: 250\n"
+  },
+  {
+    "href": "https://vega.github.io/vega/docs/marks/",
+    "text": "Vegahttps://vega.github.io/vega/docs/marks/Total lines: 159\n"
+  },
+  {
+    "href": "https://vega.github.io/vega-lite/docs/layer.html",
+    "text": "Vegahttps://vega.github.io/vega-lite/docs/layer.htmlTotal lines: 56\n"
+  },
+  {
+    "href": "https://vega.github.io/vega-lite/docs/image.html",
+    "text": "Vegahttps://vega.github.io/vega-lite/docs/image.htmlImage marks allow external images, such as ... An image mark definition can contain any standard mark properties and the following special properties: ..."
+  },
+  {
+    "href": "https://old.observablehq.com/plot/marks/arrow",
+    "text": "Observablehttps://old.observablehq.com/plot/marks/arrow"
+  },
+  {
+    "href": "https://old.observablehq.com/plot/marks/rect",
+    "text": "Observablehttps://old.observablehq.com/plot/marks/rect"
+  },
+  {
+    "href": "https://old.observablehq.com/plot/marks/text",
+    "text": "Observablehttps://old.observablehq.com/plot/marks/text"
+  },
+  {
+    "href": "https://observablehq.com/plot/marks/image",
+    "text": "Observablehttps://observablehq.com/plot/marks/imageThe image mark draws images centered at the given position in x and y. It is often used to construct scatterplots in place of a dot mark."
+  },
+  {
+    "href": "https://plotly.com/javascript/reference/layout/annotations/",
+    "text": "Plotlyhttps://plotly.com/javascript/reference/layout/annotations/An annotation is a text element that can be placed anywhere in the plot. Annotations can be shown with or without an arrow."
+  },
+  {
+    "href": "https://plotly.com/javascript/shapes/",
+    "text": "Plotlyhttps://plotly.com/javascript/shapes/Total lines: 931\n"
+  },
+  {
+    "href": "https://echarts.apache.org/en/cheat-sheet.html",
+    "text": "Apache EChartshttps://echarts.apache.org/en/cheat-sheet.htmlApache ECharts, a powerful, interactive charting and visualization library for browser."
+  },
+  {
+    "href": "https://echarts.apache.org/handbook/en/how-to/interaction/drag/",
+    "text": "Apache EChartshttps://echarts.apache.org/handbook/en/how-to/interaction/drag/An Example: Implement Dragging. This is a tiny example, introducing how to implement dragging of graphic elements in Apache EChartsTM."
+  },
+  {
+    "href": "https://www.highcharts.com/docs/advanced-chart-features/annotations-module",
+    "text": "Highchartshttps://www.highcharts.com/docs/advanced-chart-features/annotations-moduleThe annotations module allows users to annotate a chart freely with labels and shapes. The Annotations creates a declarative API for adding ..."
+  },
+  {
+    "href": "https://api.highcharts.com/highcharts/annotations.labels.point",
+    "text": "Highchartshttps://api.highcharts.com/highcharts/annotations.labels.pointTotal lines: 55\n"
+  },
+  {
+    "href": "https://api.highcharts.com/highcharts/annotations.shapes.src",
+    "text": "Highchartshttps://api.highcharts.com/highcharts/annotations.shapes.srcAn array of shapes for the annotation. The URL for an image to use as the annotation shape."
+  },
+  {
+    "href": "https://www.chartjs.org/chartjs-plugin-annotation/latest/guide/",
+    "text": "Chart.jshttps://www.chartjs.org/chartjs-plugin-annotation/latest/guide/An annotation plugin for Chart.js >= 4.0.0. This plugin draws lines, boxes, labels, points, polygons and ellipses on the chart area."
+  },
+  {
+    "href": "https://www.chartjs.org/chartjs-plugin-annotation/latest/guide/configuration.html",
+    "text": "Chart.jshttps://www.chartjs.org/chartjs-plugin-annotation/latest/guide/configuration.htmlTotal lines: 121\n"
+  },
+  {
+    "href": "https://www.chartjs.org/chartjs-plugin-annotation/latest/guide/types/label.html",
+    "text": "Chart.jshttps://www.chartjs.org/chartjs-plugin-annotation/latest/guide/types/label.htmlTotal lines: 245\n"
+  },
+  {
+    "href": "https://apexcharts.com/docs/options/annotations/",
+    "text": "ApexCharts.jshttps://apexcharts.com/docs/options/annotations/Annotations in ApexCharts allows you to write custom text on specific values as well as you can create xaxis and yaxis annotations."
+  },
+  {
+    "href": "https://apexcharts.com/docs/options/chart/events/",
+    "text": "ApexCharts.jshttps://apexcharts.com/docs/options/chart/events/annotationDragged Fires after an annotation is dragged or resized. options carries the annotation type , id and index , and the new data coordinates: x and y , ..."
+  },
+  {
+    "href": "https://recharts.github.io/en-US/api/ReferenceLine/",
+    "text": "Rechartshttps://recharts.github.io/en-US/api/ReferenceLine/Total lines: 423\n"
+  },
+  {
+    "href": "https://recharts.github.io/en-US/api/usePlotArea/",
+    "text": "Rechartshttps://recharts.github.io/en-US/api/usePlotArea/"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/airbnb/visx/master/packages/visx-annotation/Readme.md",
+    "text": "GitHubhttps://raw.githubusercontent.com/airbnb/visx/master/packages/visx-annotation/Readme.mdTotal lines: 66\n"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/airbnb/visx/master/packages/visx-annotation/src/components/EditableAnnotation.tsx",
+    "text": "GitHubhttps://raw.githubusercontent.com/airbnb/visx/master/packages/visx-annotation/src/components/EditableAnnotation.tsxTotal lines: 188\n"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/plouc/nivo/master/packages/annotations/src/types.ts",
+    "text": "GitHubhttps://raw.githubusercontent.com/plouc/nivo/master/packages/annotations/src/types.tsTotal lines: 131\n"
+  },
+  {
+    "href": "https://nivo.rocks/line/",
+    "text": "nivohttps://nivo.rocks/line/Line chart with stacking ability. Given an array of data series ・ adding markers holes in data different serie lengths ・ adding custom layers area gradients ..."
+  },
+  {
+    "href": "https://www.amcharts.com/docs/v5/charts/stock/stock-annotations/",
+    "text": "amChartshttps://www.amcharts.com/docs/v5/charts/stock/stock-annotations/Stock chart can be annotated using a vast array of tools ranging from simple shapes and doodles, to complex calculated indicators."
+  },
+  {
+    "href": "https://raw.githubusercontent.com/amcharts/amcharts5/master/src/.internal/charts/stock/toolbar/DrawingControl.ts",
+    "text": "GitHubhttps://raw.githubusercontent.com/amcharts/amcharts5/master/src/.internal/charts/stock/toolbar/DrawingControl.tsTotal lines: 16\n"
+  },
+  {
+    "href": "https://www.amcharts.com/docs/v5/concepts/exporting/annotator/",
+    "text": "amChartshttps://www.amcharts.com/docs/v5/concepts/exporting/annotator/Total lines: 321\n"
+  },
+  {
+    "href": "https://vega.github.io/vega/docs/signals/",
+    "text": "Vegahttps://vega.github.io/vega/docs/signals/Total lines: 148\n"
+  },
+  {
+    "href": "https://vega.github.io/vega/docs/api/view/",
+    "text": "Vegahttps://vega.github.io/vega/docs/api/view/Total lines: 336\n"
+  },
+  {
+    "href": "https://observablehq.com/framework/lib/plot",
+    "text": "Observablehttps://observablehq.com/framework/lib/plot"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/plotly/plotly.js/master/src/lib/queue.js",
+    "text": "GitHubhttps://raw.githubusercontent.com/plotly/plotly.js/master/src/lib/queue.jsTotal lines: 178\n"
+  },
+  {
+    "href": "https://plotly.com/javascript/plotlyjs-events/",
+    "text": "Plotlyhttps://plotly.com/javascript/plotlyjs-events/Total lines: 494\n"
+  },
+  {
+    "href": "https://www.highcharts.com/docs/advanced-chart-features/annotations-gui",
+    "text": "Highchartshttps://www.highcharts.com/docs/advanced-chart-features/annotations-guiThe API of the annotations module allows you to build a custom user interface for adding annotations to your charts. Automatic binding and built-in actions"
+  },
+  {
+    "href": "https://api.highcharts.com/highcharts/annotations.events.afterUpdate",
+    "text": "Highchartshttps://api.highcharts.com/highcharts/annotations.events.afterUpdateEvent callback when annotation is updated (e.g. drag and dropped or resized by control points). Defaults to undefined . click: Highcharts.EventCallbackFunction."
+  },
+  {
+    "href": "https://api.highcharts.com/highcharts/annotations.labelOptions.accessibility.description",
+    "text": "Highchartshttps://api.highcharts.com/highcharts/annotations.labelOptions.accessibility.descriptionTotal lines: 55\n"
+  },
+  {
+    "href": "https://www.chartjs.org/chartjs-plugin-annotation/latest/samples/interaction/dragging.html",
+    "text": "Chart.jshttps://www.chartjs.org/chartjs-plugin-annotation/latest/samples/interaction/dragging.htmlTotal lines: 198\n"
+  },
+  {
+    "href": "https://apexcharts.com/docs/options/chart/ink/",
+    "text": "ApexCharts.jshttps://apexcharts.com/docs/options/chart/ink/Total lines: 94\n"
+  },
+  {
+    "href": "https://www.amcharts.com/docs/v5/reference/drawingcontrol/",
+    "text": "amChartshttps://www.amcharts.com/docs/v5/reference/drawingcontrol/A drawing tools control for StockChart . Should drawings snap to the nearest data point? control can be toggle on and off by clicking on it."
+  },
+  {
+    "href": "https://www.ag-grid.com/charts/javascript/api-state/",
+    "text": "AG Gridhttps://www.ag-grid.com/charts/javascript/api-state/Total lines: 920\n"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/plotly/plotly.js/master/src/components/shapes/attributes.js",
+    "text": "GitHubhttps://raw.githubusercontent.com/plotly/plotly.js/master/src/components/shapes/attributes.jsTotal lines: 413\n"
+  },
+  {
+    "href": "https://www.ag-grid.com/charts/javascript/events/",
+    "text": "AG Gridhttps://www.ag-grid.com/charts/javascript/events/Total lines: 1736\n"
+  },
+  {
+    "href": "https://apexcharts.com/docs/history-undo-redo/",
+    "text": "ApexCharts.jshttps://apexcharts.com/docs/history-undo-redo/Total lines: 109\n"
+  },
+  {
+    "href": "https://www.scichart.com/documentation/js/v5/typedoc/classes/svglineannotation.html",
+    "text": "SciCharthttps://www.scichart.com/documentation/js/v5/typedoc/classes/svglineannotation.htmlThe X-Coordinate mode. See ECoordinateMode for a list ... Calculate drag distance and update annotation coordinates. Parameters. xyValues: Point. Returns void ..."
+  },
+  {
+    "href": "https://www.scichart.com/documentation/js/current/2d-charts/annotations-api/text-annotation/",
+    "text": "SciCharthttps://www.scichart.com/documentation/js/current/2d-charts/annotations-api/text-annotation/Coordinates may be relative, absolute or data-value based, to both xCoordinateMode  , yCoordinateMode   properties as values of ECoordinateMode ..."
+  },
+  {
+    "href": "https://www.scichart.com/licensing-scichart-js/",
+    "text": "SciCharthttps://www.scichart.com/licensing-scichart-js/Starting from version 3.2 SciChart.js starts up with a FREE Community License. No need to sign up, start a trial, or enter a license key."
+  },
+  {
+    "href": "https://www.tradingview.com/charting-library-docs/latest/releases/release-notes",
+    "text": "TradingViewhttps://www.tradingview.com/charting-library-docs/latest/releases/release-notesWelcome to Version 31.1.0. This release introduces CSP nonce support for stricter security compliance, adds save/load context to enable globally shared drawings ..."
+  },
+  {
+    "href": "https://www.tradingview.com/free-charting-libraries/",
+    "text": "TradingViewhttps://www.tradingview.com/free-charting-libraries/80+ smart drawing tools at your disposal Highly customizable Free with TradingView 's open-source under the Apache 2.0 license."
+  },
+  {
+    "href": "https://www.tradingview.com/charting-library-docs/latest/ui_elements/drawings/drawings-api/",
+    "text": "TradingViewhttps://www.tradingview.com/charting-library-docs/latest/ui_elements/drawings/drawings-api/This article describes how to manage drawings using the API. Saving and loading charts. This article describes how to manage drawings using the API."
+  },
+  {
+    "href": "https://www.tradingview.com/charting-library-docs/latest/saving_loading/",
+    "text": "TradingViewhttps://www.tradingview.com/charting-library-docs/latest/saving_loading/Users can save and load the layouts. By default, drawings are saved within the chart layout through the built-in Save layout button. optimizing load times and ..."
+  },
+  {
+    "href": "https://raw.githubusercontent.com/tradingview/lightweight-charts/master/package.json",
+    "text": "GitHubhttps://raw.githubusercontent.com/tradingview/lightweight-charts/master/package.jsonTotal lines: 164\n"
+  },
+  {
+    "href": "https://tradingview.github.io/lightweight-charts/plugin-examples/",
+    "text": "TradingViewhttps://tradingview.github.io/lightweight-charts/plugin-examples/Lightweight Charts™ Plugin Examples ... Plugins marked with a package name are published to npm as @tradingview/lwc-plugin-* packages; their example pages here ..."
+  },
+  {
+    "href": "https://github.com/deepentropy/lightweight-charts-drawing",
+    "text": "GitHubhttps://github.com/deepentropy/lightweight-charts-drawing68 drawing tools for TradingView's lightweight-charts library. Includes trend lines, Fibonacci tools, Gann analysis, channels, pitchforks, shapes, annotations, ..."
+  },
+  {
+    "href": "https://raw.githubusercontent.com/tldraw/tldraw/main/packages/tldraw/package.json",
+    "text": "GitHubhttps://raw.githubusercontent.com/tldraw/tldraw/main/packages/tldraw/package.jsonTotal lines: 99\n"
+  },
+  {
+    "href": "https://tldraw.dev/quick-start",
+    "text": "tldrawhttps://tldraw.dev/quick-start(undo/redo) You can draw, write, add images and video, zoom, pan, copy and paste, undo and redo—everything you'd expect from a canvas. The persistenceKey prop ..."
+  },
+  {
+    "href": "https://tldraw.dev/docs/persistence",
+    "text": "tldrawhttps://tldraw.dev/docs/persistencePersistence means storing the editor's state to a database and restoring it later. History (undo/redo) Persistence means storing the editor's state to a ..."
+  },
+  {
+    "href": "https://tldraw.dev/sdk-features/accessibility",
+    "text": "tldrawhttps://tldraw.dev/sdk-features/accessibilityTldraw includes accessibility features for keyboards and assistive technologies. Highlighting History (undo/redo) Tldraw includes accessibility features for ..."
+  },
+  {
+    "href": "https://tldraw.dev/community/license",
+    "text": "tldrawhttps://tldraw.dev/community/licensePersistence Assets. History (undo/redo) The license key will stop working when the trial ends. a hobby license."
+  },
+  {
+    "href": "https://raw.githubusercontent.com/excalidraw/excalidraw/master/packages/excalidraw/package.json",
+    "text": "GitHubhttps://raw.githubusercontent.com/excalidraw/excalidraw/master/packages/excalidraw/package.jsonTotal lines: 140\n"
+  },
+  {
+    "href": "https://docs.excalidraw.com/docs/%40excalidraw/excalidraw/api/props",
+    "text": "Excalidraw Docshttps://docs.excalidraw.com/docs/%40excalidraw/excalidraw/api/propsThe initial data with which app loads. This indicates if the app is in collaboration mode onChange function. This prop indicates if the app is in collaboration ..."
+  },
+  {
+    "href": "https://www.fabricjs.com/",
+    "text": "Fabric.jshttps://www.fabricjs.com/Fabric.js is a powerful and simple Javascript. Fabric also provide serialization ・ text editing with rich styling, IME and curve support. On-canvas controls ..."
+  },
+  {
+    "href": "https://fabricjs.com/docs/old-docs/fabric-intro-part-1/",
+    "text": "Fabric.jshttps://fabricjs.com/docs/old-docs/fabric-intro-part-1/Today I'd like to introduce you to Fabric.js - a powerful Javascript library that makes working with HTML5 canvas a breeze. Fabric provides a missing object ..."
+  },
+  {
+    "href": "https://fabricjs.com/api/classes/canvas/",
+    "text": "Fabric.jshttps://fabricjs.com/api/classes/canvas/When true, mouse events on canvas (mousedown/mousemove/mouseup) result in free drawing. After mousedown, mousemove creates a shape, and then mouseup ..."
+  },
+  {
+    "href": "https://raw.githubusercontent.com/konvajs/konva/master/package.json",
+    "text": "GitHubhttps://raw.githubusercontent.com/konvajs/konva/master/package.jsonTotal lines: 140\n"
+  },
+  {
+    "href": "https://konvajs.org/docs/sandbox/Canvas_Editor.html",
+    "text": "Konva.jshttps://konvajs.org/docs/sandbox/Canvas_Editor.htmlThis page builds a working editor with selection, movement, resize controls, undo, redo, and PNG export. ... Keep text editing in a real input or textarea ..."
+  },
+  {
+    "href": "https://konvajs.org/docs/react/Transformer.html",
+    "text": "Konva.jshttps://konvajs.org/docs/react/Transformer.htmlLearn how to resize and rotate canvas shapes in React with react-konva Transformer. Add interactive selection handles to shapes."
+  },
+  {
+    "href": "https://raw.githubusercontent.com/rough-stuff/rough-notation/master/package.json",
+    "text": "GitHubhttps://raw.githubusercontent.com/rough-stuff/rough-notation/master/package.jsonTotal lines: 36\n"
+  },
+  {
+    "href": "https://www.w3.org/TR/annotation-model/",
+    "text": "W3Chttps://www.w3.org/TR/annotation-model/Annotations have 1 or more Targets. The content of the Body resources is related to, and typically \"about\", the content of the Target resources."
+  },
+  {
+    "href": "https://docs.yjs.dev/api/undo-manager",
+    "text": "Yjs Documentationhttps://docs.yjs.dev/api/undo-managerThe UndoManager merges edits that are created within a certain captureTimeout (defaults to 500ms). Set it to 0 to capture each change ..."
+  },
+  {
+    "href": "https://www.w3.org/WAI/WCAG22/Understanding/dragging-movements.html",
+    "text": "W3Chttps://www.w3.org/WAI/WCAG22/Understanding/dragging-movements.htmlThis success criterion applies to dragging movements in general, which involve the user \"grabbing\" an element and moving it to another position."
+  },
+  {
+    "href": "https://api.highcharts.com/highcharts/annotations.shapes",
+    "text": "Highchartshttps://api.highcharts.com/highcharts/annotations.shapessrc: string Since 6.0.0 The URL for an image to use as the annotation shape. Note, type has to be set to 'image' ."
+  },
+  {
+    "href": "https://nivo.rocks/scatterplot/",
+    "text": "nivohttps://nivo.rocks/scatterplot/Total lines: 48\n"
+  },
+  {
+    "href": "https://x.com/saprmarks/status/2097570226804011302",
+    "text": "x.comSamuel Marks on X: \"[Writing this in a personal capacity, not on ...September 7, 2026 — AI developers believe their technology could cause human extinction (or similarly bad outcomes). AIs frequently severely misbehave."
+  },
+  {
+    "href": "https://apexcharts.com/blog/apexcharts-ink-measure-authoring/",
+    "text": "apexcharts.comApexCharts Ink and Measure: On-Chart AnnotationJuly 17, 2026 — Ink makes annotations authorable: drag a note, click it to open an inline editor, or drop a new one from the palette by clicking the plot."
+  },
+  {
+    "href": "https://handsondataviz.org/annotated-datawrapper.html",
+    "text": "handsondataviz.org- Annotated Charts | Hands-On Data VisualizationMay 31, 2026 — An annotated chart is best to highlight specific data or add contextual notes inside the visualization. Well-designed annotations can help answer the “so what?” ..."
+  },
+  {
+    "href": "https://faculty.cc.gatech.edu/~john.stasko/papers/eurovis25-dataweaver.pdf",
+    "text": "faculty.cc.gatech.edu[PDF] DataWeaver: Authoring Data-Driven Narratives through the ...March 28, 2025 — DATAWEAVER enables users to create data narratives anchored to data facts derived from “call-out” interactions, i.e., user-initiated highlights of visualization ..."
+  },
+  {
+    "href": "https://www.tradingview.com/blog/en/tradingview-lightweight-charts-version-5-50837/",
+    "text": "www.tradingview.comWelcome the newest Lightweight Charts™ — version 5March 3, 2025 — We've enhanced our plugin system to streamline workflows and improve customization. Improved plugin system: attach plugins directly to panes ..."
+  },
+  {
+    "href": "https://medium.com/%40aleksej.gudkov/chart-js-annotation-a-complete-guide-to-adding-context-to-your-charts-5098a269566a",
+    "text": "medium.comChart.js Annotation: A Complete Guide to Adding Context to ...November 24, 2024 — This guide covers everything you need to know about using Chart.js annotations, including setup, configuration, and practical examples."
+  },
+  {
+    "href": "https://aclanthology.org/2024.eacl-demo.12.pdf",
+    "text": "aclanthology.org[PDF] AnnoPlot: Interactive Visualizations of Text AnnotationsMarch 1, 2024 — This paper presents AnnoPlot, a web applica- tion designed to analyze, manage, and visual- ize annotated text data. Users can configure."
+  },
+  {
+    "href": "https://www.amcharts.com/saving-and-restoring-of-stock-charts-annotations/",
+    "text": "www.amcharts.comSaving and Restoring of Stock Chart's Annotations - amChartsDecember 19, 2023 — Stock Chart by amCharts comes bundled with a lot of tools to annotate and analyze stock data – indicators and drawing tools."
+  },
+  {
+    "href": "https://community.weweb.io/t/help-with-chart-js-annotation-plugin/4781",
+    "text": "community.weweb.ioHelp with Chart JS Annotation Plugin - WeWeb CommunityOctober 6, 2023 — I've tried installing the Chart JS Annotation plugin but having trouble with it performing consistently. Sometimes it shows and sometimes it ..."
+  },
+  {
+    "href": "https://github.com/apexcharts/apexcharts.js/issues/3640",
+    "text": "github.comDrag and Drop annotation in xAxis? · Issue #3640 - GitHubFebruary 7, 2023 — Annotation position can move dynamically with an input range slider. Currently working on clicking/dragging. Here's a codesandbox example: https ..."
+  },
+  {
+    "href": "https://community.openhab.org/t/oh3-charts-using-markline-different-symbols/127904",
+    "text": "community.openhab.orgOH3 Charts using markLine - different symbolsOctober 25, 2021 — How do you define the area to be marked. Not seeing any examples of this at all. Want to just mark an area between two yAxis values in a colour?"
+  },
+  {
+    "href": "https://medium.com/nerd-for-tech/enriching-data-visualizations-with-annotations-in-plotly-using-python-6127ff6e0f80",
+    "text": "medium.comEnriching Data Visualizations with Annotations in Plotly using ...October 3, 2021 — Tip: there are many options for how text in annotations can be presented. There are options for font size, type and color. There are options ..."
+  },
+  {
+    "href": "https://flatlogic.com/blog/top-30-open-source-and-paid-react-charts-examples/",
+    "text": "flatlogic.comTop 30 Open Source and Paid React Charts + ExamplesApril 13, 2021 — Annotation: ... Gradient stacked area chart from Echars for react. a React Chart by echarts Source: https://echarts.apache.org/examples/en/editor."
+  },
+  {
+    "href": "https://github.com/highcharts/highcharts/issues/12890",
+    "text": "github.comDocs: annotations.shapes missing \"src\" option. #12890 - GitHubFebruary 4, 2020 — annotations.shapes should list src property to allow rendering images. Ref: https://api.highcharts.com/highcharts/annotations.shapes. Actual ..."
+  },
+  {
+    "href": "https://community.plotly.com/t/dcc-graph-config-options/14672",
+    "text": "community.plotly.comdcc.Graph config options - Plotly Community ForumOctober 17, 2018 — queueLength (number; optional): set the length of the undo/redo queue; fillFrame (boolean; optional): if we DO autosize, do we fill the ..."
+  },
+  {
+    "href": "https://discourse.bokeh.org/t/visualization-of-text-annotations/2932",
+    "text": "discourse.bokeh.orgVisualization of text annotations - Bokeh DiscourseApril 29, 2018 — Basically, the goal is to create such graphs (text, some spans, and their edges), for a given text and its annotation on the fly. If you have ..."
+  },
+  {
+    "href": "https://community.plotly.com/t/events-editable-true/5842",
+    "text": "community.plotly.comEvents (editable: true) - plotly.js - Plotly Community ForumSeptember 19, 2017 — When editable: true is set then it is possible to move annotations, legend with drag drop, to change chart title, annotation text etc."
+  },
+  {
+    "href": "https://community.plotly.com/t/is-it-possible-to-hide-the-floating-toolbar/4911",
+    "text": "community.plotly.comIs it possible to hide the floating toolbar? - Dash PythonJuly 13, 2017 — Hi, I'm trying to get rid of the undo/redo buttons, I can't seem to find the argument, is that possible? Thanks. chriddyp ..."
+  },
+  {
+    "href": "https://chartaccent.github.io/publications/chartaccent-pacificvis2017.pdf",
+    "text": "chartaccent.github.io[PDF] Annotation for Data-Driven Storytelling - ChartAccentFebruary 14, 2017 — In this work, we introduce ways to help presenters quickly and easily augment their charts with various annotations. We charac- terize a design space of chart ..."
+  },
+  {
+    "href": "https://community.plotly.com/t/can-we-edit-the-annotations-in-the-graph/507",
+    "text": "community.plotly.comCan we edit the annotations in the graph - plotly.jsFebruary 11, 2016 — Im using plotly.js to add a graph… this would have annotations added. Can i somehow edit those annotation text or the position by dragging them ..."
+  },
+  {
+    "href": "https://www.scichart.com/educational-discount-programme/",
+    "text": "www.scichart.comEducational, Research and University licensing ... - SciChartJanuary 24, 2016 — Typically our commercial licenses come with 1-year of support & updates. An educational license will probably have 90 days of updates so you can ..."
+  },
+  {
+    "href": "https://lists.w3.org/Archives/Public/public-annotation/2015Nov/0135.html",
+    "text": "lists.w3.orgRe: Question on annotation of HTML content from Ivan Herman on ...November 5, 2015 — >>> >>> >>> the target should be a selector selecting the string „Berlin“. The annotation body should contain a tripe like >>> >>> \"body\": { >>> >>> \"itsrdf ..."
+  },
+  {
+    "href": "https://lists.w3.org/Archives/Public/public-annotation/2015Oct/0085.html",
+    "text": "lists.w3.orgRe: [DPUB-ANNOTATION-UC] 2.1.3 general observation about ...October 14, 2015 — They talk about annotations having a body and a target. ... selector section > http://www.w3.org/TR/annotation-model/#selectors <http://www.w3.org/TR/annotation- ..."
+  },
+  {
+    "href": "https://d3js.org/",
+    "text": "d3js.orgD3.jsThe JavaScript library for bespoke data visualization. Create custom dynamic visualizations with unparalleled flexibility."
+  },
+  {
+    "href": "https://d3js.org/what-is-d3",
+    "text": "d3js.orgWhat is D3? | D3 by Observable - D3.jsD3 is a low-level toolbox ​ · a CSV parser to load data, · a time scale for horizontal position (x), · a linear scale for vertical position (y), · an ordinal scale ..."
+  },
+  {
+    "href": "https://d3js.org/d3-axis",
+    "text": "d3js.orgd3-axis | D3 by Observable - D3.jsThe axis component renders human-readable reference marks for position scales. It works with most scale types, including linear, log, band, and time scales ..."
+  },
+  {
+    "href": "https://d3js.org/getting-started",
+    "text": "d3js.orgGetting started | D3 by Observable - D3.jsGetting started ​. D3 works in any JavaScript environment. Try D3 online ​. The fastest way to get started (and get help) with D3 is on Observable!"
+  },
+  {
+    "href": "https://vega.github.io/vega-lite/",
+    "text": "vega.github.ioA High-Level Grammar of Interactive Graphics | Vega-LiteVega-Lite is a high-level grammar of interactive graphics. It provides a concise, declarative JSON syntax to create an expressive range of visualizations ..."
+  },
+  {
+    "href": "https://vega.github.io/vega-lite/docs/rule.html",
+    "text": "vega.github.ioRule | Vega-LiteThe fact that rule marks span the width or the height of a single view make them useful as an annotation layer. For example, we can use rules to show ..."
+  },
+  {
+    "href": "https://vega.github.io/vega-lite/docs/spec.html",
+    "text": "vega.github.ioVega-Lite View SpecificationBy simply providing the mark type and the encoding mapping, Vega-Lite automatically produces other visualization components including axes, legends, and scales."
+  },
+  {
+    "href": "https://vega.github.io/vega-lite-v3/",
+    "text": "vega.github.ioA High-Level Grammar of Interactive Graphics | Vega-LiteVega-Lite is a high-level grammar of interactive graphics. It provides a concise JSON syntax for rapidly generating visualizations to support analysis."
+  },
+  {
+    "href": "https://vega.github.io/vega-lite/examples/",
+    "text": "vega.github.ioExample Gallery | Vega-LiteVega-Lite provides a higher-level grammar for visual analysis, comparable to ggplot or Tableau, that generates complete Vega specifications. Vega-Lite ..."
+  },
+  {
+    "href": "https://vega.github.io/vega-lite/docs/line.html",
+    "text": "vega.github.ioLine | Vega-LiteVega-Lite - a high-level grammar for statistical graphics. Vega-Lite provides a higher-level grammar for visual analysis, comparable to ggplot or Tableau, ..."
+  },
+  {
+    "href": "https://vega.github.io/",
+    "text": "vega.github.ioVega-LiteVega-Lite is a high-level visualization grammar. It provides a concise JSON syntax for supporting rapid generation of visualizations to support analysis. Vega- ..."
+  },
+  {
+    "href": "https://vega.github.io/editor/",
+    "text": "vega.github.ioVega EditorCompiled Vega; Extended Vega-Lite Spec. Vega 6.4.0, Vega-Lite 6.4.3, Vega-Tooltip 1.1.0, Editor 68c2703. Logs(10); Data Viewer; Signal Viewer; Dataflow Viewer."
+  },
+  {
+    "href": "https://plotly.com/javascript/text-and-annotations/",
+    "text": "plotly.comText and annotations in JavaScript - PlotlyOver 31 examples of Text and Annotations including changing color, size, log axes, and more in JavaScript. How to add text labels and annotations to D3.js- ... ·"
+  },
+  {
+    "href": "https://plotly.com/python/text-and-annotations/",
+    "text": "plotly.comText and annotations in Python - PlotlyOver 25 examples of Text and Annotations including changing color, size, log axes, and more in Python. How to add text labels and annotations to plots in ..."
+  },
+  {
+    "href": "https://plotly.com/javascript/reference/",
+    "text": "plotly.comSingle-page reference in JavaScript - PlotlyAssigns extra meta information associated with this trace that can be used in various text attributes. Attributes such as trace `name`, graph, axis and colorbar ..."
+  },
+  {
+    "href": "https://plotly.com/r/text-and-annotations/",
+    "text": "plotly.comText and annotations in R - PlotlyOver 16 examples of Text and Annotations including changing color, size, log axes, and more in R."
+  },
+  {
+    "href": "https://plotly.com/javascript/configuration-options/",
+    "text": "plotly.comConfiguration options in JavaScriptTotal lines: 455\n"
+  },
+  {
+    "href": "https://www.highcharts.com/docs/advanced-chart-features/boost-module",
+    "text": "www.highcharts.comBoost module | HighchartsThe Boost module is a stripped down renderer and a set of data handling modifications for Highcharts. It bypasses some of the standard Highcharts features,"
+  },
+  {
+    "href": "https://www.highcharts.com/docs/stock/advanced-annotations",
+    "text": "www.highcharts.comAdvanced Annotations module | HighchartsThe advanced annotations module simplifies this process, enabling users to add complex yet practical annotations to charts — particularly valuable for technical ..."
+  },
+  {
+    "href": "https://www.highcharts.com/docs/index",
+    "text": "www.highcharts.comHighcharts DocumentationAdvanced chart features How to use the SVG Renderer Annotations module Creating custom annotations Annotations GUI Boost module Breadcrumbs Data sorting Marker ..."
+  },
+  {
+    "href": "https://www.highcharts.com/docs/advanced-chart-features/creating-advanced-annotations",
+    "text": "www.highcharts.comCreating custom annotations - HighchartsAdvanced Annotations module. We will focus on creating a more complex annotation, specifically Fibonacci retracement, a tool used in technical analysis which ..."
+  },
+  {
+    "href": "https://www.highcharts.com/",
+    "text": "www.highcharts.comJavaScript charting library for web apps, dashboards, grids ...Highcharts Annotations feature to place labels at various points of interest. Highcharts includes one of the most robust accessibility modules available in any ..."
+  },
+  {
+    "href": "https://www.highcharts.com/forum/viewtopic.php?start=15&t=39748",
+    "text": "www.highcharts.comchart.update() function and annotations - Page 2 - Highchartshi haiku, First, I've to point out there are two Annotations modules which you could use in your chart. First one is an old version, and that is the one ..."
+  },
+  {
+    "href": "https://www.highcharts.com/forum/viewtopic.php?t=46739",
+    "text": "www.highcharts.comAdd image in label HighStock - Highcharts official support forumHi, everyone. Currently I want to add an image inside the sticker but it doesn't work. I have researched and read the documentation but have not been able ..."
+  },
+  {
+    "href": "https://d3-graph-gallery.com/graph/custom_annotation.html",
+    "text": "d3-graph-gallery.comAnnotating charts with d3.js - The D3 Graph GalleryAnnotating a chart is a crucial step for an insightful dataviz. Learn how to do it with d3.js and d3-annotation through several reproducible example."
+  },
+  {
+    "href": "https://en.wikipedia.org/wiki/D3.js",
+    "text": "en.wikipedia.orgD3.js"
+  },
+  {
+    "href": "https://en.wikipedia.org/wiki/RAWGraphs",
+    "text": "en.wikipedia.orgRAWGraphs"
+  },
+  {
+    "href": "https://en.wikipedia.org/wiki/Kibana",
+    "text": "en.wikipedia.orgKibana"
+  },
+  {
+    "href": "https://en.wikipedia.org/wiki/PathVisio",
+    "text": "en.wikipedia.orgPathVisio"
+  },
+  {
+    "href": "https://en.wikipedia.org/wiki/RGraph",
+    "text": "en.wikipedia.orgRGraph"
+  },
+  {
+    "href": "https://en.wikipedia.org/wiki/Apache_Superset",
+    "text": "en.wikipedia.orgApache Superset"
+  },
+  {
+    "href": "https://en.wikipedia.org/wiki/Apache_Pivot",
+    "text": "en.wikipedia.orgApache Pivot"
+  },
+  {
+    "href": "https://stackoverflow.com/questions/75748949/how-can-i-add-text-annotations-dynamically-and-make-them-draggable-in-plotly-das",
+    "text": "stackoverflow.comHow can I add text annotations dynamically and make them ...Draggable annotations are very much possible with Plotly. these annotations on page refresh by using dcc.Store. Check out the example here"
+  },
+  {
+    "href": "https://stackoverflow.com/questions/76208988/add-rule-mark-on-top-of-multiple-layers",
+    "text": "stackoverflow.comvega lite - Add rule mark on top of multiple layers - Stack OverflowWhen I add it as a new layer, it displays a rule mark for each bar (see code below) Can somebody help? Many thanks ! { \"$schema\": \"https://vega."
+  },
+  {
+    "href": "https://stackoverflow.com/questions/72686838/dragging-vertical-marklines-in-apache-echarts",
+    "text": "stackoverflow.comDragging vertical markLines in Apache echarts - Stack OverflowHowever, how can I allow the whole vertical line to be dragged on the horizontal line, rather than using the button at the botton as shown below ..."
+  },
+  {
+    "href": "https://stackoverflow.com/questions/67122606/use-chartjs-annotation-plugin-without-using-import",
+    "text": "stackoverflow.comUse Chartjs-Annotation-Plugin without using \"import\"Here are the docs for the annotation plugin: https://www.chartjs.org/chartjs-plugin-annotation/guide/integration.html. Any help is greatly ..."
+  },
+  {
+    "href": "https://stackoverflow.com/questions/75032740/markers-not-working-in-a-nivo-responsivelinecanvas",
+    "text": "stackoverflow.comMarkers not working in a Nivo ResponsiveLineCanvasI'm trying to switch from a ResponsiveLine to a ResponsiveLineCanvas using Javascript library Nivo version 0.80.0 and React 18.2.0, but markers are ..."
+  },
+  {
+    "href": "https://stackoverflow.com/questions/56231178/angular-ag-grid-undo-selected-row-changes-on-button-click",
+    "text": "stackoverflow.comAngular Ag-Grid: Undo selected row changes on button clickApplication built on Angular and Javascript. AG-Grid editable records having 1st column as Checkbox. After making any changes say on 5 records, ..."
+  },
+  {
+    "href": "https://stackoverflow.com/questions/72259738/do-we-have-undo-option-in-high-charts",
+    "text": "stackoverflow.comDo we have undo option in high charts? - Stack OverflowThis is a very general question, but 'undo' in the meaning of a special option is not available from the API."
+  },
+  {
+    "href": "https://stackoverflow.com/questions/36924522/changing-font-in-pdf-file-exported-by-amcharts",
+    "text": "stackoverflow.comChanging font in PDF file exported by AmCharts - Stack Overflow... drawing', menu : [{ label : translations['ADD'] + ' ...', menu ... UNDO', 'REDO'] }, {... etc}. Am I on the right track at all with this ..."
+  },
+  {
+    "href": "https://api.highcharts.com/highstock/navigation.annotationsOptions.events",
+    "text": "api.highcharts.comnavigation.annotationsOptions.events | highstock ... - Highcharts APIEvent callback when annotation is updated (e.g. drag and dropped or resized by control points). Defaults to undefined . click: Highcharts.EventCallbackFunction."
+  },
+  {
+    "href": "https://api.highcharts.com/highcharts/annotations.controlPointOptions.events",
+    "text": "api.highcharts.comannotations.controlPointOptions.events - Highcharts APIThese pages outline the chart configuration options, and the methods and properties of Highcharts objects."
+  },
+  {
+    "href": "https://api.highcharts.com/gantt/navigation.annotationsOptions.controlPointOptions.events",
+    "text": "api.highcharts.comnavigation.annotationsOptions | gantt API Reference - Highcharts APIWelcome to the Highcharts Gantt JS (gantt) Options Reference. These pages outline the chart configuration options, and the methods and properties of Highcharts ..."
+  },
+  {
+    "href": "https://api.highcharts.com/highcharts/annotations.draggable",
+    "text": "api.highcharts.comannotations.draggable | Highcharts Core JS API ReferenceTotal lines: 55\n"
+  },
+  {
+    "href": "https://api.highcharts.com/highcharts/annotations.typeOptions.background.src",
+    "text": "api.highcharts.comannotations.typeOptions.background.src - Highcharts APIsrc: string Since 6.0.0 The URL for an image to use as the annotation shape. Note, type has to be set to 'image' ."
+  },
+  {
+    "href": "https://api.highcharts.com/highstock/navigation.bindings.infinityLine.annotationsOptions.shapeOptions.src",
+    "text": "api.highcharts.comnavigation.bindings.infinityLine.annotationsOptions ...src: string Since 6.0.0 The URL for an image to use as the annotation shape. This option is used for rect shape height, circle shape radius, ellipse y ..."
+  },
+  {
+    "href": "https://api.highcharts.com/highcharts/annotations.shapeOptions.src",
+    "text": "api.highcharts.comannotations.shapeOptions.src - Highcharts APIThese pages outline the chart configuration options, and the methods and properties of Highcharts objects. The URL for an image to use as the annotation shape. ..."
+  },
+  {
+    "href": "https://api.highcharts.com/highmaps/annotations.typeOptions.line.src",
+    "text": "api.highcharts.comannotations | highmaps API Reference - Highcharts APIsrc. The URL for an image to use as the annotation shape. Note, type has to be set to 'image' ."
+  },
+  {
+    "href": "https://api.highcharts.com/highcharts/navigation.bindings.labelAnnotation.annotationsOptions.typeOptions.line",
+    "text": "api.highcharts.comnavigation.bindings | highcharts API Referencesrc: string Since 6.0.0 The URL for an image to use as the annotation shape. Basic shape annotation type: rect , ellipse and path ."
+  },
+  {
+    "href": "https://api.highcharts.com/gantt/navigation.annotationsOptions.typeOptions.background.snap",
+    "text": "api.highcharts.comnavigation.annotationsOptions.typeOptions.background.snapsrc: string Since 6.0.0 The URL for an image to use as the annotation shape. This option is used for rect shape width, This option is used for rect shape ..."
+  },
+  {
+    "href": "https://api.highcharts.com/highstock/navigation.bindings.verticalCounter.annotationsOptions.shapes.markerEnd",
+    "text": "api.highcharts.comnavigation.bindings.verticalCounter.annotationsOptions.shapesAn array of shapes for the annotation. src: string Since 6.0.0 The URL for an image to use as the annotation shape."
+  },
+  {
+    "href": "https://api.highcharts.com/highstock/navigation.bindings.measureX.annotationsOptions.shapeOptions.ry",
+    "text": "api.highcharts.comnavigation.bindings.measureX.annotationsOptions.shapeOptionsOptions for annotation's shapes. Each shape inherits options from the shapeOptions object. An option from the shapeOptions can be overwritten by config for a ..."
+  },
+  {
+    "href": "https://api.highcharts.com/highstock/navigation.bindings.measureY.annotationsOptions.shapeOptions",
+    "text": "api.highcharts.comnavigation.bindings.measureY.annotationsOptions.shapeOptionsOptions for annotation's shapes. Each shape inherits options from the shapeOptions object. An option from the shapeOptions can be overwritten by config for a ..."
+  },
+  {
+    "href": "https://observablehq.com/%40d3/gallery",
+    "text": "observablehq.comD3 gallery - Observable NotebooksAnnotation. Labels, legends, axes, titles, guides, and keys help a visualization communicate effectively. Here are a few strategies. Inline labels · Directly ..."
+  },
+  {
+    "href": "https://github.com/rahatzamancse/vega-lite-annotation",
+    "text": "github.comrahatzamancse/vega-lite-annotation - GitHubVega-Lite Annotation is a library and playground for adding custom annotations to Vega-Lite visualizations. This project extends the capabilities of ..."
+  },
+  {
+    "href": "https://github.com/susielu/d3-annotation",
+    "text": "github.comsusielu/d3-annotation - GitHubUse d3-annotation with built-in annotation types, or extend it to make custom annotations. It is made for d3-v4 in SVG. - susielu/d3-annotation."
+  },
+  {
+    "href": "https://github.com/plotly/plotly.js/issues/5385",
+    "text": "github.comAllow user annotations · Issue #5385 · plotly/plotly.js - GitHubAllow user annotations … if the user could also annotate the graph, e.g. similar how you would do it in Power Point by adding a text field."
+  },
+  {
+    "href": "https://github.com/chartjs/chartjs-plugin-annotation/discussions/928",
+    "text": "github.comRetrieving y-value on drag interaction #928 - GitHubThe current example provided only supports dragging of annotations when the mouse is directly on the annotation, so if the graph itself."
+  },
+  {
+    "href": "https://github.com/apexcharts/apexcharts.js/blob/main/LICENSE",
+    "text": "github.comapexcharts.js/LICENSE at main · apexcharts ... - GitHubLicense Options for ApexCharts ApexCharts is offered under a **dual-license model** to support individuals, startups, and commercial products of all sizes."
+  },
+  {
+    "href": "https://github.com/apache/echarts/issues/18395",
+    "text": "github.com[Feature] markLine and markArea attached to a single categoryUnless there's another way of doing this, currently markArea and markLine options always span the full width/height of the chart. ... Apache ..."
+  },
+  {
+    "href": "https://github.com/plouc/nivo/issues/1782",
+    "text": "github.comRender order of Marker layer places text label behind other ...Sep 22, 2021 — Render order of Marker layer places text label behind other elements #1782. New issue."
+  },
+  {
+    "href": "https://github.com/Textagent/textagent.github.io",
+    "text": "github.comTextAgent - Write with AI Agents - GitHubFeatures. Editor, Live preview, split/editor/preview/page modes, sync ... annotation overlay (freehand pen/highlighter/eraser/shapes, @text: mode renders ..."
+  },
+  {
+    "href": "https://github.com/sorrycc/awesome-javascript",
+    "text": "github.comsorrycc/awesome-javascript - GitHubmedium-editor - Medium.com WYSIWYG editor clone. pen - enjoy live editing (+ ... js - API documentation generator with support for ES2015+ and flow annotation."
+  },
+  {
+    "href": "https://github.com/topics/ai-ready?l=typescript",
+    "text": "github.comai-ready · GitHub TopicsIdeal when you have multiple VS Code instances, use VS Live Share, or use VS Code's Remote features, and you want to quickly identify your editor. ... annotation, ..."
+  },
+  {
+    "href": "https://github.com/mika-f/awesome-stars/blob/master/README.md",
+    "text": "github.comawesome-stars/README.md at master - GitHubMoved to https://github.com/microsoft/monaco-editor, microsoft, 482. 32, vscode ... Custom de/serialization functions for Rust's serde using the with-annotation ..."
+  },
+  {
+    "href": "https://github.com/DavidWells/stars",
+    "text": "github.comDavidWells/stars: Automatically indexed GitHub starsDemo Page Generator & Live Editor Component, JavaScript, 1, Jan 06, 2025 ... annotation #annotation-tool #annotations #react, JavaScript, 332, Dec 21, 2024."
+  },
+  {
+    "href": "https://github.com/tradingview/lightweight-charts",
+    "text": "github.comTradingView Lightweight Charts - GitHubTradingView Lightweight Charts™ are one of the smallest and fastest financial HTML5 charts. The Lightweight Charts™ library is the best choice for you if you ..."
+  },
+  {
+    "href": "https://github.com/tradingview/lightweight-charts/discussions/categories/plugins",
+    "text": "github.comtradingview lightweight-charts Plugins · Discussions - GitHubExplore the GitHub Discussions forum for tradingview lightweight-charts in the Plugins category."
+  },
+  {
+    "href": "https://jkunst.com/highcharter/reference/hc_annotations.html",
+    "text": "jkunst.comAnnotations options for highcharter objects — hc_annotationsA collection of annotations to add to the chart. The basic annotation allows adding custom labels or shapes. The items can be tied to points, ..."
+  },
+  {
+    "href": "https://cdnjs.com/libraries/d3-annotation",
+    "text": "cdnjs.comd3-annotation @ 2.5.1 - Libraries - cdnjsUse d3-annotation with built-in annotation types, or extend it to make custom annotations. It is made for d3-v4 in SVG. Apache-2.0 licensed. GitHub repository."
+  },
+  {
+    "href": "https://echarts.apache.org/en/option.html",
+    "text": "echarts.apache.orgDocumentation - Apache EChartsApache ECharts, a powerful, interactive charting and visualization library for browser."
+  },
+  {
+    "href": "https://echarts.apache.org/examples/en/index.html",
+    "text": "echarts.apache.orgExamples - Apache EChartsApache ECharts, a powerful, interactive charting and visualization library for browser."
+  },
+  {
+    "href": "https://echarts.apache.org/en/changelog.html",
+    "text": "echarts.apache.orgChangelog - Apache EChartsApache ECharts, a powerful, interactive charting and visualization library for browser."
+  },
+  {
+    "href": "https://www.chartjs.org/chartjs-plugin-annotation/latest/samples/interaction/interaction.html",
+    "text": "www.chartjs.orgInteraction | chartjs-plugin-annotationRelease notes (5 latest) · Interaction · Dragging annotations · Selecting annotations · Cartesian plane."
+  },
+  {
+    "href": "https://www.chartjs.org/chartjs-plugin-annotation/master/samples/interaction/dragging.html",
+    "text": "www.chartjs.orgDragging annotations | chartjs-plugin-annotationAnnotations for Chart.js. Release notes (5 latest) Interaction Dragging annotations Selecting annotations # Dragging annotations ・ annotation4 ..."
+  },
+  {
+    "href": "https://www.chartjs.org/chartjs-plugin-annotation/1.1.0/",
+    "text": "www.chartjs.orgchartjs-plugin-annotationAnnotations for Chart.js. Release notes (5 latest) Home Guide Samples. Annotations for Chart.js. Copyright © 2016-2021 chartjs-plugin-annotation"
+  },
+  {
+    "href": "https://www.chartjs.org/chartjs-plugin-annotation/2.2.1/api/",
+    "text": "www.chartjs.orgv2.2.1 | chartjs-plugin-annotationChart.js annotation - v2.2.1. # Interfaces. AnnotationBoxModel · AnnotationElement · AnnotationEvents · AnnotationHooks · AnnotationPluginOptions ..."
+  },
+  {
+    "href": "https://apexcharts.com/docs/annotations/",
+    "text": "apexcharts.comA guide to annotating the charts - ApexCharts.jsLicensingWhat each plan permits. Annotations in ApexCharts allows you to write custom text on specific data-points or on axes values."
+  },
+  {
+    "href": "https://apexcharts.com/",
+    "text": "apexcharts.comApexCharts.js - JavaScript Charts for your websiteApexCharts.js is a modern JavaScript charting library to build interactive charts and visualizations with simple API."
+  },
+  {
+    "href": "https://apexcharts.com/apexmaps/docs/annotations/",
+    "text": "apexcharts.comEditorial Annotations in ApexMaps - Callouts, Outlines, and ...Editorial annotations is a Premium feature. Annotations work without a key for evaluation, with a watermark on the map; call ApexMaps.setLicense(key) to remove ..."
+  },
+  {
+    "href": "https://apexcharts.com/apexgantt/docs/annotations-gantt/",
+    "text": "apexcharts.comAnnotations in ApexGantt | ApexCharts.jsAnnotations overlay vertical markers and shaded regions on the timeline. Use them to call out deadlines, sprints, milestones, holidays, or any point or range"
+  },
+  {
+    "href": "https://apexcharts.com/legal/renewal/",
+    "text": "apexcharts.comLicense Renewal Terms - ApexChartsApexCharts licenses are structured as annual subscriptions. This page explains how renewals work, what happens at expiry, and how to manage your subscription."
+  },
+  {
+    "href": "https://apexcharts.com/docs/options/yaxis/",
+    "text": "apexcharts.comOptions (Reference) > yaxis | ApexCharts.jsIn a multiple y-axis chart, you can target the scale of a y-axis to a particular series by referencing through the seriesName . The series item which have ..."
+  },
+  {
+    "href": "https://apexcharts.com/docs/options/chart/toolbar/",
+    "text": "apexcharts.comChart Toolbar - ApexCharts.jsConfigure the ApexCharts toolbar: show or hide it, choose which tools appear (download, zoom, pan, reset, selection), and customize SVG/PNG/CSV export."
+  },
+  {
+    "href": "https://apexcharts.com/docs/context-menu/",
+    "text": "apexcharts.comApexCharts Context Menu (Radial Actions) - Right-Click ActionsThe Peak and Watch callouts are draggable (Ink); grab one and move it, and its new position is written back to annotations.points in data coordinates. Right- ..."
+  },
+  {
+    "href": "https://apexcharts.com/apexgantt/docs/inline-editing/",
+    "text": "apexcharts.comInline Editing in ApexGantt | ApexCharts.jsEnable inline editing in ApexGantt. Covers task drag, resize, progress drag, cell editing, the dialog form, veral layers of interactive editing. enableTaskDrag ..."
+  },
+  {
+    "href": "https://apexcharts.com/docs/interactivity/",
+    "text": "apexcharts.comInteractivity - ApexCharts DocsExplore the Interactive options available in ApexCharts toolbar such as zoom-in, zoom-out, panning as well as exporting SVG to allow downloading the chart."
+  },
+  {
+    "href": "https://apexcharts.com/react-chart-demos/interactivity/annotation-authoring/",
+    "text": "apexcharts.comAnnotation Authoring (Ink) - React Interactivity - ApexCharts.jsThe ink feature drives the chart instance directly (drag / edit // annotations), so no React state changes and the chart is not re-rendered."
+  },
+  {
+    "href": "https://apexcharts.com/javascript-chart-demos/",
+    "text": "apexcharts.comJavaScript Chart Demos | ApexCharts.jsTurn a chart into a surface you can author and share: scroll-driven storyboards, shareable view state, and undo and redo. Scrollytelling (Storyboard)."
+  },
+  {
+    "href": "https://apexcharts.com/javascript-chart-demos/interactivity/annotation-authoring/",
+    "text": "apexcharts.comAnnotation Authoring (Ink) - JavaScript Interactivity | ApexCharts.jsTotal lines: 167\n"
+  },
+  {
+    "href": "https://apexcharts.com/docs/events/",
+    "text": "apexcharts.comEvents - ApexCharts DocsHook into ApexCharts events such as click, hover, zoom, and data point selection to build interactive, responsive chart experiences."
+  },
+  {
+    "href": "https://apexcharts.com/docs/options/chart/",
+    "text": "apexcharts.comchart configuration - ApexCharts.jsChart configuration options for ApexCharts - set width, height, type, animations, toolbar, zoom, selection, events, and more."
+  },
+  {
+    "href": "https://apexcharts.com/apexgantt/docs/angular-apexgantt/",
+    "text": "apexcharts.comAngular wrapper for ApexGantt | ApexCharts.jsLearn how to use ApexGantt using \"ngx-apexgantt\" wrapper that easily integrates with your Angular applications."
+  },
+  {
+    "href": "https://apexcharts.com/docs/options/datalabels/",
+    "text": "apexcharts.comdataLabels - ApexCharts DocsConfiguration reference for the dataLabels option in ApexCharts: toggle, position, format, and style the labels shown on data points."
+  },
+  {
+    "href": "https://apexcharts.com/docs/chart-types/bar-chart/",
+    "text": "apexcharts.comBar Chart Guide & Documentation - ApexCharts.jsRead this guide on how to create different types of horizontal bar charts. The guide contains examples and options available in Bar Chart."
+  },
+  {
+    "href": "https://www.amcharts.com/stock-chart/",
+    "text": "www.amcharts.comJavaScript Stock Chart Library with 34 Indicators - amChartsCandlestick, OHLC and line stock charts for web apps: 34 technical indicators, 22 drawing tools, comparison, period selector and data grouping. Free to use."
+  },
+  {
+    "href": "https://www.amcharts.com/docs/v5/",
+    "text": "www.amcharts.comamCharts 5 DocumentationWelcome to documentation website for amCharts 5! Use the navigation on the left to select a topic. Most contain multiple sub-pages."
+  },
+  {
+    "href": "https://www.amcharts.com/demos/annotating-charts/",
+    "text": "www.amcharts.comAnnotating Charts - amChartsEnable the amCharts Exporting plugin with an Annotator tool so that users can toggle annotation mode from the export menu, then draw callout markers, arrow ..."
+  },
+  {
+    "href": "https://www.amcharts.com/docs/v5/reference/stockchart/",
+    "text": "www.amcharts.comStockChart – amCharts 5 DocumentationIt allows users to TAB-through chart elements quickly without the need to TAB into each and every element. It's up to implementer of the charts to provide ..."
+  },
+  {
+    "href": "https://www.amcharts.com/docs/v5/charts/stock/",
+    "text": "www.amcharts.comStock chart – amCharts 5 DocumentationSeries, indicators, annotations - plotted info using data or user-drawn interactions. Tools - a toolbar with stock tools: drawing, comparisons, indicators, ..."
+  },
+  {
+    "href": "https://www.amcharts.com/docs/v5/reference/istockchartsettings/",
+    "text": "www.amcharts.comIStockChartSettings – amCharts 5 DocumentationY coordinate of the center of the element relative to itself. Center coordinates will affect placement as well as rotation pivot point. clickAnnounceText #."
+  },
+  {
+    "href": "https://www.amcharts.com/docs/v5/reference/drawingseries/",
+    "text": "www.amcharts.comDrawingSeries – amCharts 5 DocumentationValue field to use when snapping data or calculating averages/regressions/etc. fill #. Type Color. Inherited from ISeriesSettings. Series fill color. Click here ..."
+  },
+  {
+    "href": "https://www.amcharts.com/docs/v5/charts/stock/translating-stock-chart/",
+    "text": "www.amcharts.comTranslating Stock Chart – amCharts 5 DocumentationThis tutorial will show how amCharts 5 built-in locale functionality can be used to apply custom translations to a Stock Chart."
+  },
+  {
+    "href": "https://www.amcharts.com/docs/v5/charts/xy-chart/cursor/",
+    "text": "www.amcharts.comCursor – amCharts 5 DocumentationA cursor can be made to snap to actual series data items. To enable it we need to assign actual series objects we want cursor to snap to into cursor's. ANT ..."
+  },
+  {
+    "href": "https://www.amcharts.com/docs/v5/charts/xy-chart/axes/",
+    "text": "www.amcharts.comAxes – amCharts 5 DocumentationThis tutorial looks into how to get the most of the axes on an XY chart. Creating axes, assigning them to charts and series, Documentation is available at: com ..."
+  },
+  {
+    "href": "https://www.amcharts.com/demos/stock-chart/",
+    "text": "www.amcharts.comJavaScript Stock Chart Demo — 34 Indicators, Drawing ToolsStock Chart is well suited for visualizing stock, financial, and other time-based data. drawing tools, data export, reset, and settings. com/docs/v5/charts/ ..."
+  },
+  {
+    "href": "https://www.amcharts.com/docs/v5/charts/gantt/",
+    "text": "www.amcharts.comGantt Chart – amCharts 5 DocumentationSnapping behavior# When manually resizing or moving the task bars, they will snap to either start or beginning of the target period (e.g. day)."
+  },
+  {
+    "href": "https://www.amcharts.com/docs/v5/reference/axis/",
+    "text": "www.amcharts.comAxis – amCharts 5 DocumentationV5 Reference Classes. If set to true , an element will try to draw itself in such way, that it looks crisp on screen, with minimal anti-aliasing. a repaint of ..."
+  },
+  {
+    "href": "https://www.amcharts.com/docs/v5/concepts/common-elements/tooltips/",
+    "text": "www.amcharts.comTooltips – amCharts 5 DocumentationThis tutorial will look at various ways how we can enable, configure, and trigger tooltips in amCharts 5. Enabling#. Common elements#."
+  },
+  {
+    "href": "https://www.amcharts.com/docs/v5/reference/xycursor/",
+    "text": "www.amcharts.comXYCursor – amCharts 5 DocumentationCursor's Y axis. If set, cursor will snap to that axis' cells. There are 92 inherited items currently hidden from this list. Private ..."
+  },
+  {
+    "href": "https://apache.github.io/echarts-handbook/en/concepts/event/",
+    "text": "apache.github.ioEvent and Action - Concepts - Handbook - Apache EChartsEvent and Action. Users can trigger corresponding events by their operation. The developer can handle the callback function by listening to these events, ..."
+  },
+  {
+    "href": "https://www.componentsource.com/product/amcharts-stock-chart",
+    "text": "www.componentsource.comamCharts 5: Stock Chart - ComponentSourceAnnotations and Drawing Tools. The component supports user-drawn annotations such as lines, shapes, and text bound to specific timestamps and ..."
+  },
+  {
+    "href": "https://www.npmjs.com/package/apexcharts",
+    "text": "www.npmjs.comapexcharts - NPMPremium features & licensing Most of ApexCharts is free and open source. A small set of advanced features are premium and require a license key:"
+  },
+  {
+    "href": "https://www.npmjs.com/package/apexcharts?client_id=1681577000.1772928002&session_id=1772928002",
+    "text": "www.npmjs.comapexcharts - NPMmakes annotations draggable and resizable, adds click-to-create, snap, and a floating editor card (rename, recolor, restyle, delete), all wired ..."
+  },
+  {
+    "href": "https://www.youtube.com/watch?v=RHjO-XofC6Q",
+    "text": "www.youtube.com1. How to install the Annotation Plugin chartjs-plugin ... - YouTubeHow to install the Annotation Plugin chartjs-plugin-annotation in Chart.js In this video we will explore how to install the annotation ..."
+  },
+  {
+    "href": "https://www.youtube.com/watch?v=kUsMslHD_YE",
+    "text": "www.youtube.comSciChart.js Tutorial 06 | Adding Annotations to JavaScript Charts... annotations Resources: SciChart.js Documentation: https://www.scichart.com/documentation/js/v4/intro/ SciChart.js Features: https://www.scichart ..."
+  },
+  {
+    "href": "https://www.youtube.com/watch?v=x7hnqNYE2GE&vl=en",
+    "text": "www.youtube.comGetting started with TradingView lightweight charts - YouTubeShare your videos with friends, family, and the world."
+  },
+  {
+    "href": "https://lists.apache.org/thread/9qy6msrwm0m535kjynv71x3kn7whj422",
+    "text": "lists.apache.orgEcharts markline events-Apache Mail ArchivesHi Echarts devs! I'm running into a brick wall with documentation and finding no similar question online to what I'm looking for so I hope you have an ..."
+  },
+  {
+    "href": "https://www.marks.com/en.html",
+    "text": "www.marks.comMark's: Canada's Work & Casual Apparel StoreMark's, Formerly Known As Mark's Work Wearhouse, Is Canada's Top Apparel And Workwear Destination. Shop Men's And Women's Jeans, Shoes, Shirts, ..."
+  },
+  {
+    "href": "https://nivo.rocks/storybook/",
+    "text": "nivo.rocksBar - Docs ⋅ Storybook - NivoBasic · Stacked · Stacked Horizontal · Grouped · Grouped Horizontal · With Marker · Using Custom Color · Diverging Stacked."
+  },
+  {
+    "href": "https://nivo.rocks/bar/",
+    "text": "nivo.rocksBar chart - NivoBar chart which can display multiple data series, stacked or side by side. Also supports both vertical and horizontal layout, with negative values"
+  },
+  {
+    "href": "https://nivo.rocks/",
+    "text": "nivo.rocksHome | nivonivo provides a rich set of dataviz components, built on top of D3 and React. Calendar · Radar Chart · Voronoi Tesselation · Tree Map · Sunburst Chart."
+  },
+  {
+    "href": "https://www.markspizzeria.com/",
+    "text": "www.markspizzeria.comMark's Pizzeria | Rochester's Best Pizza | Fast DeliveryMark's Pizzeria has been committed to delicious food, quality ingredients, and convenient delivery since 1982. Our pizza is fresh, never frozen!"
+  },
+  {
+    "href": "https://www.facebook.com/corymarksmusic/",
+    "text": "www.facebook.comCory Marks | Nashville TN - FacebookCory Marks, Nashville. New album \"Sorry For Nothing V.2\" Out Now! music platform and check out my new album “Sorry For Nothing Vol.2”!! image of text that says ..."
+  },
+  {
+    "href": "https://www.facebook.com/groups/392678574938393/posts/1942223026650599/",
+    "text": "www.facebook.comWhat tools offer flexibility for custom map design? - Facebook... undo my other land colors). It's a pretty neat tool. Chanel Briscoe ... drawing app like Adobe Illustrator or Affinity Designer, you'll ..."
+  },
+  {
+    "href": "https://www.instagram.com/cjmarks/?hl=en",
+    "text": "www.instagram.comCatherine Marks (@cjmarks) • Instagram photos and videosWinning Producer + Mixer. Catherine Marks 22.1K followers 7,852 following Grammy Winning Producer + Mixer @manchesterorchestra"
+  },
+  {
+    "href": "https://www.linkedin.com/in/raphaelcm",
+    "text": "www.linkedin.comRaphael Crawford-Marks - Founder, builder | LinkedInRaphael Crawford-Marks - Founder, builder. I've spent most of my career building systems that help people work, learn, and perform more effectively."
+  },
+  {
+    "href": "https://velt.dev/docs/async-collaboration/comments/setup/chart-comments-setup/nivo-charts",
+    "text": "velt.devNivoCharts Comments Setup - VeltAdd a custom function as a layer inside your Nivo Chart component and return VeltNivoChartComments component. · Set a unique id in the VeltNivoChartComments ..."
+  },
+  {
+    "href": "https://www.unnecessaryquotes.com/",
+    "text": "www.unnecessaryquotes.comThe “Blog” of “Unnecessary” Quotation MarksNew Quotation Marks for Monday › Ok another day another post with a few mystifying quotation marks. The first one was sent by Drew. Jared for the above image)"
+  },
+  {
+    "href": "https://airbnb.io/visx/annotation",
+    "text": "airbnb.iovisx.airbnb.techTotal lines: 0\n"
+  },
+  {
+    "href": "https://raw.githubusercontent.com/QuantConnect/Documentation/master/single-page/Quantconnect-Cloud-Platform-Python.pdf",
+    "text": "raw.githubusercontent.com[PDF] Learn to use QuantConnect and Explore Our Features - GitHubYou own all your intellectual property and your code. Your code is private by default unless you explicitly share it."
+  },
+  {
+    "href": "https://raw.githubusercontent.com/apexcharts/apexcharts.js/main/src/modules/ink/InkLayer.js",
+    "text": "raw.githubusercontent.comraw.githubusercontent.comTotal lines: 1170\n"
+  },
+  {
+    "href": "https://www.semanticscholar.org/paper/ChartAccent%3A-Annotation-for-data-driven-Ren-Brehmer/58410da56a7ae9cac486ed288f1ebef9091c59a6",
+    "text": "www.semanticscholar.orgChartAccent: Annotation for data-driven storytelling - Semantic ScholarChartAccent, a tool that allows people to quickly and easily augment charts via a palette of annotation interactions that generate manual and data-driven ..."
+  },
+  {
+    "href": "https://arxiv.org/html/2608.03464v2",
+    "text": "arxiv.orgChartAnno: Benchmarking Multimodal Large Language Models for ...Chart annotations are an important component of communicative visualization and data-driven storytelling, helping explain data, emphasize key findings, guide ..."
+  },
+  {
+    "href": "https://www.scichart.com/documentation/js/current/EditableAnnotations.html",
+    "text": "www.scichart.comEditable Annotations | JavaScript Chart Documentation - SciChartEditable annotations can be selected and dragged, and some can be resized. This page describes how you can respond to a user's interaction with an annotation ..."
+  },
+  {
+    "href": "https://www.scichart.com/documentation/js/current/typedoc/interfaces/icustomresizableannotationoptions.html",
+    "text": "www.scichart.comICustomResizableAnnotationOpti...annotation is editable (can be dragged and manipulated by the user) The ECoordinateMode enum has options which allow for relative, absolute or pixel ..."
+  },
+  {
+    "href": "https://www.scichart.com/documentation/js/v5/typedoc/interfaces/icompositeannotationoptions.html",
+    "text": "www.scichart.comICompositeAnnotationOptions | API Documentation for SciChart.jsthe annotation is editable (can be dragged and manipulated by the user) The X2 coordinate obeys xCoordinateMode which defines whether the X2 coordinate is a ..."
+  },
+  {
+    "href": "https://www.scichart.com/demo/javascript/chart-annotations",
+    "text": "www.scichart.comJavaScript Chart Annotations - SciChartDemonstrates how to place Annotations (lines, arrows, markers, text) over a JavaScript Chart using SciChart.js Annotations API."
+  },
+  {
+    "href": "https://www.scichart.com/documentation/js/current/typedoc/classes/annotationbase.html",
+    "text": "www.scichart.comAnnotationBase | API Documentation for SciChart.js - v3.5.790SciChart provides fully reactive components, changing any property or changing data will cause the AnnotationBase to redraw where necessary."
+  },
+  {
+    "href": "https://www.scichart.com/documentation/js/current/user-manual/what-chart-types/",
+    "text": "www.scichart.comFeatures, Chart Types and more supported by SciChart.jsAnnotations such as labels, lines, boxes … coordinates via ECoordinateMode. Annotations may also be clicked, selected, edited (dragged or ..."
+  },
+  {
+    "href": "https://www.scichart.com/changelog/scichart-js/",
+    "text": "www.scichart.comSciChart.JS ChangelogFix Annotation dragging when using vertical charts / flipped coordinates. Fixed. Option to drag horizontal and vertical line annotations by their axis label."
+  },
+  {
+    "href": "https://www.scichart.com/demo/javascript/overview",
+    "text": "www.scichart.comZoom and Pan with Overview Chart | Javascript Charts - SciChartIt also implements annotations using NativeTextAnnotation in relative coordinate mode to overlay instructional text on the chart. The Overview chart allows ..."
+  },
+  {
+    "href": "https://www.scichart.com/licensing-scichart/",
+    "text": "www.scichart.comLicensing SciChartAll instructions on how to start a trial, activate the license, license troubleshooting, registering your domain and deploy to live site for SciChart.js ( ..."
+  },
+  {
+    "href": "https://www.scichart.com/community-licensing/",
+    "text": "www.scichart.comCommunity Licensing Terms SciChart.jsCommunity Licensing is now available for SciChart.js (JavaScript) post version 3.2! Find out below the following information: Terms & who can use it ..."
+  },
+  {
+    "href": "https://www.scichart.com/frequently-asked-questions/licensing/",
+    "text": "www.scichart.comSciChart Licensing FAQs | Support & ResourcesPurchasing a commercial license will remove the watermark in SciChart.js and allow you to distribute the application with or without an internet connection."
+  },
+  {
+    "href": "https://www.scichart.com/shop/",
+    "text": "www.scichart.comShop - SciChartSciChart Advanced Licensing can be activated and used for non-domain locked permissive licensing on JavaScript, small scale OEM licensing and scaled to millions ..."
+  },
+  {
+    "href": "https://www.scichart.com/scichart-pricing-licensing-guide/",
+    "text": "www.scichart.comSciChart Licensing & Pricing Guide | Support & ResourcesGet all the information you need on SciChart's licensing and pricing. Includes details on Developer, Standard, Advanced, Site, Global and Bundle Licenses."
+  },
+  {
+    "href": "https://www.scichart.com/documentation/js/v5/user-manual/licensing-scichart-js/getting-started-for-free/",
+    "text": "www.scichart.comGet Started here | SciChart JS DocsFor enterprise and commercial use, SciChart.js is paid software, however, version 3.2 - 4.x and upwards of SciChart.js has a FREE Community License, which is ..."
+  },
+  {
+    "href": "https://www.ag-grid.com/javascript-data-grid/undo-redo-edits/",
+    "text": "www.ag-grid.comJavaScript Grid: Undo / Redo EditsThis section covers how to allow users to undo / redo their cell edits. This Undo / Redo feature is designed to be a recovery mechanism for user editing ..."
+  },
+  {
+    "href": "https://www.ag-grid.com/javascript-data-grid/grid-options/",
+    "text": "www.ag-grid.comJavaScript Grid: Grid Options Reference - AG GridSet the size of the undo / redo stack. Enabling Undo / Redo ... Callback to be used to customise the chart toolbar items. IntegratedChartsModule."
+  },
+  {
+    "href": "https://www.ag-grid.com/javascript-data-grid/integrated-charts-menu/",
+    "text": "www.ag-grid.comJavaScript Grid: Chart MenuEdit Chart ( 'chartEdit' ) - Displays the Chart Tool Panels, which allow users to change the selected chart type, and customise the data and chart formatting."
+  },
+  {
+    "href": "https://www.ag-grid.com/javascript-data-grid/tool-panel/",
+    "text": "www.ag-grid.comJavaScript Grid: Tool PanelsThis section covers Tool Panels, available via the grid's Side Bar, which allow for easy access to powerful grid operations such as grouping, pivoting, ..."
+  },
+  {
+    "href": "https://www.ag-grid.com/studio/javascript/undo-redo/",
+    "text": "www.ag-grid.comUndo & Redo - JavaScript Studio - AG GridUndo and redo cover the durable document: widgets, layout, filters and schema. Undo the last change to the durable document state (widgets, layout, filters, ..."
+  },
+  {
+    "href": "https://www.ag-grid.com/react-data-grid/integrated-charts-menu/",
+    "text": "www.ag-grid.comReact Grid: Chart Menu - AG GridThe Chart Menu provides options to edit the chart, as well as actions such as unlinking the chart from the grid, and downloading the current chart."
+  },
+  {
+    "href": "https://www.ag-grid.com/javascript-data-grid/view-refresh/",
+    "text": "www.ag-grid.comJavaScript Grid: View RefreshThe grid has change detection. So as long as you are updating the data via the grid's API, the values displayed should be the most recent up to date values."
+  },
+  {
+    "href": "https://www.ag-grid.com/javascript-data-grid/integrated-charts-chart-tool-panels/",
+    "text": "www.ag-grid.comJavaScript Grid: Chart Tool PanelsThe Chart Tool Panels allow users to change the selected chart type and customise the data and chart formatting. Download AG Grid ... Undo / Redo EditsFull Row ..."
+  },
+  {
+    "href": "https://cspaul.com/a-qualitative-analysis-of-common-practices-in-annotations-a-taxonomy-and-design-space/",
+    "text": "cspaul.comA Qualitative Analysis Of Common Practices In AnnotationsAnnotations play a vital role in highlighting critical aspects of visualizations, aiding in data externalization and exploration, collaborative ..."
+  },
+  {
+    "href": "https://chartaccent.github.io/",
+    "text": "chartaccent.github.ioChartAccentChart Data-driven annotations. You can also add text, image, and shape annotations to chart elements; ChartAccent: Annotation for Data-Driven Storytelling ..."
+  },
+  {
+    "href": "https://www.researchgate.net/publication/384771051_A_Survey_on_Annotations_in_Information_Visualization_Empirical_Insights_Applications_and_Challenges",
+    "text": "www.researchgate.netA Survey on Annotations in Information Visualization - ResearchGateWe present a comprehensive survey on the use of annotations in information visualizations, highlighting their crucial role in improving ..."
+  },
+  {
+    "href": "https://www.researchgate.net/publication/343041524_Visual_Narrative_Data-Driven_Storytelling_Seminar_Paper",
+    "text": "www.researchgate.netVisual Narrative Data-Driven Storytelling (Seminar Paper)ChartAccent, a tool that provides palette of annotations and interactions for generating annotations, both in manual and data-driven fashion, ..."
+  },
+  {
+    "href": "https://data.europa.eu/apps/data-visualisation-guide/visual-annotations-icons-and-images",
+    "text": "data.europa.euVisual annotations: icons and imagesVisual annotations can also take the form of icons, images and illustrations. Consider the following chart, taken from a study describing the behaviour of ..."
+  },
+  {
+    "href": "https://www.thetableaustudentguide.com/back-2-viz-basics/week-9-standout-viz-viz-in-tooltip-y66al-f5kct-hcztz",
+    "text": "www.thetableaustudentguide.comWeek 13 Standout Viz – Use an AnnotationsWhat is an Annotation? Annotations are one of the simplest yet most powerful storytelling tools in data visualization."
+  },
+  {
+    "href": "https://www.computer.org/csdl/journal/tg/2025/01/10670067/206qjobhrQk",
+    "text": "www.computer.orgA Qualitative Analysis of Common Practices in AnnotationsRen et al.'s study in ChartAccent explored textual and graphical annotations in limited chart types bar charts, line charts, and scatterplots) for visual ..."
+  },
+  {
+    "href": "https://www.onemodel.co/product-innovation-blog/highlighting-key-annotations",
+    "text": "www.onemodel.coHighlighting Key Insights with Data Annotations - One ModelEnhance your data storytelling with annotations. Learn how to highlight key insights, provide context, and improve accessibility in your visualizations."
+  },
+  {
+    "href": "https://dl.acm.org/doi/fullHtml/10.1145/3613904.3641916",
+    "text": "dl.acm.orgDesign Patterns for Data-Driven News Articles - ACM Digital LibraryChart Descriptions indicates news articles with an explicit narrative structure, depicts the development of events with analysis of more than one aspect."
+  },
+  {
+    "href": "https://par.nsf.gov/servlets/purl/10544115",
+    "text": "par.nsf.gov[PDF] A Qualitative Analysis of Common Practices in AnnotationsResearch in the existing visualization literature has examined anno- tation design spaces with a limited focus on certain annotation types, chart formats, or ..."
+  },
+  {
+    "href": "https://mattbrehmer.ca/talks/ubc171024/",
+    "text": "mattbrehmer.caData-Driven Storytelling @ UBC: 17-10-24ChartAccent. Create annotated & accentuated charts with a few clicks. chartaccent.github.io. By Donghao Ren (UCSB), Matthew Brehmer, Bongshin Lee, Tobias ..."
+  },
+  {
+    "href": "https://amcharts5.rssing.com/chan-51216586/all_p1.html",
+    "text": "amcharts5.rssing.comTutorials – amCharts Version 3 Documentation - RSSing.com... drawing icons, <g>, StockPanel. amcharts-pencil, pencil image of drawing icons ... UNDO\", \"REDO\", \"CANCEL\" ] }, { \"label\": \"Save\", \"format\": \"PNG ..."
+  },
+  {
+    "href": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6324012/",
+    "text": "pmc.ncbi.nlm.nih.govCMAUP: a database of collective molecular activities of useful ...... undo/redo operations. The search options of SMILES strings and user-drawing structures are particularly useful for searching ingredients of ..."
+  },
+  {
+    "href": "https://datastorm-open.github.io/introduction_ramcharts/www/docs/export.html",
+    "text": "datastorm-open.github.ioamCharts Export - L'Open-Source de Datastorm... UNDO\", \"REDO\", \"CANCEL\" ] }, { \"label\": \"Save\", \"format\": \"PNG ... Fixed: Issue hiding drawing container on “drawing.done”; Fixed: Legend ..."
+  },
+  {
+    "href": "https://docs.aws.amazon.com/quick/latest/userguide/saving-changes-to-an-analysis.html",
+    "text": "docs.aws.amazon.comSaving changes to analyses - Amazon QuickIn either Autosave mode, you can undo or redo up to 200 changes that you make by choosing Undo or Redo on the application bar. Changing the Autosave mode."
+  },
+  {
+    "href": "https://doc.cuba-platform.com/charts-latest/charts.html",
+    "text": "doc.cuba-platform.comCUBA Platform. Displaying Charts And MapskeyListener – if true , observes the pressed keys to undo/redo the annotations. ... Drawing polygons. map demo polygon draw. Figure 37 ..."
+  },
+  {
+    "href": "https://docs.cloud.google.com/looker/docs/release-notes",
+    "text": "docs.cloud.google.comLooker release notes | Google Cloud DocumentationThis change replicates the behavior of MySQL 8.0 and earlier. To undo this change for a MySQL connection, add the following parameter to the Additional JDBC ..."
+  },
+  {
+    "href": "https://help.walnut.io/help/updates/april-2026",
+    "text": "help.walnut.ioApril 2026 | Walnut KBThis month introduces new capabilities that make demo building faster and more intuitive. What's new: Undo capability - Revert any edit made through the agent ..."
+  },
+  {
+    "href": "https://www.tradingview.com/support/solutions/43000703396-drawing-tools-available-on-tradingview/",
+    "text": "www.tradingview.comDrawing tools available on TradingViewIf an accidental drawing replacement happens, you can always press Ctrl + Z or Cmd + Z to undo it. Hide options: Sometimes it's easy to overdo it with ..."
+  },
+  {
+    "href": "https://www.tradingview.com/lightweight-charts/",
+    "text": "www.tradingview.comLightweight Charts™ library - TradingViewOpen-source. Maintained by TradingView, hosted on GitHub, and Apache 2.0 licensed — Lightweight Charts is open-source and welcomes contributions."
+  },
+  {
+    "href": "https://www.tradingview.com/charting-library-docs/latest/saving_loading/saving_drawings_separately",
+    "text": "www.tradingview.comSave drawings separately | Advanced Charts DocumentationThe library still supports loading chart layouts with drawings even when separate storage is enabled through saveload_separate_drawings_storage"
+  },
+  {
+    "href": "https://www.tradingview.com/charting-library-docs/latest/customization/",
+    "text": "www.tradingview.comCustomization overview | Advanced Charts DocumentationSaving and loading charts. Customize elements on the chart. If you need a different loader, render your own element above the chart and hide it once the data ..."
+  },
+  {
+    "href": "https://www.tradingview.com/charting-library-docs/latest/api/interfaces/Charting_Library.ChartingLibraryWidgetOptions/",
+    "text": "www.tradingview.comInterface: ChartingLibraryWidgetOptions | Advanced Charts ...high-level saving/loading chart API. Refer to Save and load REST API for more information. the library tries to load the favorites from localStorage first,"
+  },
+  {
+    "href": "https://www.tradingview.com/charting-library-docs/latest/customization/Featuresets/",
+    "text": "www.tradingview.comFeaturesets | Advanced Charts Documentation - TradingViewEnables an alternative saving and loading mode for the library. This mode saves the state of the drawings separately from the chart layout."
+  },
+  {
+    "href": "https://www.tradingview.com/charting-library-docs/latest/saving_loading/save-load-rest-api/",
+    "text": "www.tradingview.comSave and load REST API | Advanced Charts DocumentationThe library provides a predefined REST API to save chart layouts and indicator templates on your server. When users click the save or load buttons in the UI, ..."
+  },
+  {
+    "href": "https://www.tradingview.com/charting-library-docs/latest/ui_elements/drawings/",
+    "text": "www.tradingview.comDrawings | Advanced Charts Documentation - TradingViewDrawings (shapes) are the tools that can help you analyze the charts and make clear annotations to them. The drawings toolbar is located on the left panel."
+  },
+  {
+    "href": "https://www.reddit.com/r/programming/comments/c8h5a/have_you_used_the_google_charts_api_yet_it_is/",
+    "text": "www.reddit.comHave you used the Google Charts API yet? It is ... - RedditI need exactly this, API or JavaScript library for drawing graphs. I used pygooglechart as Python wrapper, and it works like a charm. On the ..."
+  },
+  {
+    "href": "https://www.mapchart.net/japan.html",
+    "text": "www.mapchart.netJapan | MapChartUse Undo to go back to the previous state. Restore Autosave. Export to app ... The map drawing engine has been improved, after noticing various performance and ..."
+  },
+  {
+    "href": "https://www.jobs.dws.nm.gov/",
+    "text": "www.jobs.dws.nm.govNew Mexico Jobs○ Undo ○ Redo Label Text: ○Add Graphics: ○Point ○Multi Point ○Line ... This site is best viewed using these recommended settings for your system and ..."
+  },
+  {
+    "href": "https://es.wordpress.org/plugins/templatehouse-block-toolkit/",
+    "text": "es.wordpress.orgGutenberg Block Toolkit – Page Builder for Gutenberg Blocks ...... Drawing Canvas A fully interactive freehand drawing canvas with multiple tools, undo, and download — right in your page. Business Hours Display business ..."
+  },
+  {
+    "href": "https://semji.com/changelog",
+    "text": "semji.comChangelog and release notes - Semji... undo / redo save behavior. Raise context to 1M tokens in from-scratch agent. Remove explicit calls to azure openai. 19.2.3Patch. 17 November 2025. 4 changes ..."
+  },
+  {
+    "href": "https://www.sixthsense.rakuten.com/static/documents/Rakuten_SixthSense_OS_Third-Party_License.pdf",
+    "text": "www.sixthsense.rakuten.com[PDF] Final SixthSense-OSS Listhttps://github.com/chairuosen/vue2-ace-editor/blob/master/LICENSE ... https://github.com/javaee/javax.annotation/blob/master/LICENSE. CDDL ..."
+  },
+  {
+    "href": "https://forum.affinity.serif.com/index.php?%2Fprofile%2F55880-garryp%2Freputation%2F=&page=233&type=forums_topic_post",
+    "text": "forum.affinity.serif.comReputation from GarryP - Page 233 - Affinity | ForumThis vector drawing of a tiger is part of an other design. The fur texture (which will be drawn with my Huion tablet) is still to be done for a separate ..."
+  },
+  {
+    "href": "https://datamatic-public.github.io/echarts-2.1.10/doc/example-en.html",
+    "text": "datamatic-public.github.ioECharts · Example - GitHub Pageslabel, annotation ... Instead, we would strongly recommend that you use a local editor to customize your theme, and the code editing area to debug it."
+  },
+  {
+    "href": "https://kb.kentik.com/docs/release-notes-2024",
+    "text": "kb.kentik.comRelease Notes 2024 - Kentik Knowledge BaseUndo sudo restriction. GCP NAT Gateways. AWS remove unnecessary eks cluster service. Kentik Kube 1.1 UI upgrade. OCI metadata fetching expanded."
+  },
+  {
+    "href": "https://sqlrooms.org/examples.html",
+    "text": "sqlrooms.orgExample Applications - SQLRoomsReal-time commenting and annotation system ... A browser-based SQL query editor that connects directly to MotherDuck's cloud-hosted DuckDB using the WASM ..."
+  },
+  {
+    "href": "https://www.jsdelivr.com/package/npm/lightweight-charts-drawing",
+    "text": "www.jsdelivr.comlightweight-charts-drawing CDN by jsDelivrTradingView-style drawing tools for lightweight-charts v5: 86 tools with TradingView's factory defaults, labels, hit tests, placement and anchor rules (trend ..."
+  },
+  {
+    "href": "https://www.x-cmd.com/install/lightweight-charts/",
+    "text": "www.x-cmd.comWeb K-line charts lagging? TradingView Lightweight ... - X-CMDLightweight Charts is TradingView's official open-source financial charting library, built on HTML5 canvas with TypeScript. Near-static-image bundle size ..."
+  },
+  {
+    "href": "https://tldraw.dev/sdk-features/license-key",
+    "text": "tldraw.devLicense key • tldraw DocsHistory (undo/redo) If you deploy to a domain not covered by your license, the SDK treats it as unlicensed."
+  },
+  {
+    "href": "https://tldraw.dev/releases",
+    "text": "tldraw.devReleases • tldraw DocsHistory (undo/redo) accessibility improvements v3.14. Accessibility focus, keyboard navigation"
+  },
+  {
+    "href": "https://tldraw.dev/installation",
+    "text": "tldraw.devInstallation • tldraw DocsHighlighting History (undo/redo) License If you have a license key, you can pass your key to the licenseKey prop. learn more about the license and license key, ..."
+  },
+  {
+    "href": "https://tldraw.dev/sdk-features/readonly",
+    "text": "tldraw.devReadonly mode • tldraw DocsUI actions like undo and redo are also disabled in readonly mode. What readonly mode allows Navigation and viewing operations work normally."
+  },
+  {
+    "href": "https://tldraw.dev/sdk-features/user-preferences",
+    "text": "tldraw.devUser preferences • tldraw DocsUser preferences store per-user settings that persist across sessions and synchronize across browser tabs. Access them through editor.user, ..."
+  },
+  {
+    "href": "https://tldraw.dev/features/programmatic-control/runtime-editor-api",
+    "text": "tldraw.devtldraw: Infinite Canvas SDK for React - Runtime editor APIGroup multiple operations into atomic changes with clean undo/redo boundaries. Real-time queries. Access live canvas state through reactive queries that ..."
+  },
+  {
+    "href": "https://konvajs.org/docs/react/index.html",
+    "text": "konvajs.orgReact Canvas Library — Getting Started with react-konvareact-konva is a React canvas library for drawing 2D graphics with React components. Build interactive canvas apps with shapes, drag-and-drop, events, ..."
+  },
+  {
+    "href": "https://konvajs.org/docs/vue/index.html",
+    "text": "konvajs.orgGetting started with Vue and Canvas via KonvaIt ships templates, text editing, and export, and has a Vue integration guide. ... Undo, Redo, Brush, Eraser, and Paint-Bucket. I've attempted this, but ..."
+  },
+  {
+    "href": "https://konvajs.org/docs/vue/Transformer.html",
+    "text": "konvajs.orgHow to resize and rotate canvas shapes with Vue and Konva?Instructions: Click on a shape to select it. You can then resize and rotate it using the transformer handles. The shape will change color after transformation."
+  },
+  {
+    "href": "https://konvajs.org/docs/angular/index.html",
+    "text": "konvajs.orgGetting started with Angular and Canvas via Konvang2-konva is a JavaScript library for drawing complex canvas graphics using Angular. It provides declarative and reactive bindings to the Konva Framework."
+  },
+  {
+    "href": "https://konvajs.org/docs/sandbox/Drop_DOM_Element.html",
+    "text": "konvajs.orgHow to drag and drop DOM image into the canvas - Konva.jsHow to drag and drop DOM image into the canvas. In this demo we will demonstrate how drop DOM element that is placed outside of canvas into the stage."
+  },
+  {
+    "href": "https://fabric5.fabricjs.com/test/unit/?coverage=&hidepassed=&testId=322ac55f",
+    "text": "fabric5.fabricjs.comAll Unit Tests | Fabric.js DemosAll Unit Tests | Fabric.js … copy/pasting text, making 124 * pasted text use destination style. For apps that make heavy usage of pencil drawing probably ..."
+  },
+  {
+    "href": "https://www.w3.org/TR/2014/WD-annotation-model-20141211/",
+    "text": "www.w3.orgWeb Annotation Data Model - W3CIn the Web Annotation model, the tag is represented as the Body of the Annotation, and the resource being tagged is the Target. For example, one ..."
+  },
+  {
+    "href": "https://www.w3.org/TR/WCAG22/",
+    "text": "www.w3.orgWeb Content Accessibility Guidelines (WCAG) 2.2 - W3Cs Understanding Dragging Movements. All functionality that uses a dragging movement for operation can be achieved by a single pointer without ..."
+  },
+  {
+    "href": "https://www.w3.org/TR/2015/WD-annotation-model-20151015/",
+    "text": "www.w3.orgWeb Annotation Data Model - W3CAnnotations have 0 or more Bodies. own properties and relationships, has a Selector for each of the Body and the Target."
+  },
+  {
+    "href": "https://www.w3.org/WAI/WCAG22/Techniques/general/G219",
+    "text": "www.w3.orgTechnique G219: Ensuring that an alternative is available for ...The objective of this technique is to ensure that people with motor impairments who cannot carry out dragging movements are presented with an alternative single ..."
+  },
+  {
+    "href": "https://www.w3.org/TR/annotation-vocab/",
+    "text": "www.w3.orgWeb Annotation Vocabulary - W3CThe Web Annotation Vocabulary specifies the set of RDF classes, Annotation, or the inclusion of the body or target,"
+  },
+  {
+    "href": "https://www.w3.org/WAI/WCAG22/Understanding/pointer-gestures.html",
+    "text": "www.w3.orgUnderstanding Success Criterion 2.5.1: Pointer Gestures | WAIDragging movements, on the other hand, generally involve \"picking up\" or \"grabbing\" an object with a pointer (such as mouse cursor or a finger) and moving it ..."
+  },
+  {
+    "href": "https://www.w3.org/TR/epub-anno-10/",
+    "text": "www.w3.orgEPUB Annotations 1.0 - W3CIn the Web Annotation model, the core structure is the Annotation object, which contains properties defining the annotation's Body and Target."
+  },
+  {
+    "href": "https://www.w3.org/WAI/WCAG22/Techniques/failures/F108",
+    "text": "www.w3.orgF108: Failure of Success Criterion 2.5.7 Dragging Movements ...Failure techniques show examples of how content can fail particular WCAG success criteria. However, content may still satisfy those criteria if it includes ..."
+  },
+  {
+    "href": "https://www.w3.org/TR/selectors-states/",
+    "text": "www.w3.orgSelectors and States - W3CWeb Annotation Data Model [ annotation-model ], where it is used to select targets of annotations. where it is used to select targets of ..."
+  },
+  {
+    "href": "https://www.w3.org/WAI/WCAG22/quickref/",
+    "text": "www.w3.orgHow to Meet WCAG (Quick Reference) - W3CDragging Movements Level. All functionality that uses a dragging movement for operation can be achieved by a single pointer without dragging, unless dragging ..."
+  },
+  {
+    "href": "https://www.w3.org/WAI/WCAG22/Understanding/",
+    "text": "www.w3.orgUnderstanding WCAG 2.2 | WAI - W3CUnderstanding documents provide detailed explanations for Web Content Accessibility Guidelines (WCAG) guidelines and success criteria."
+  },
+  {
+    "href": "https://www.w3.org/TR/2017/PR-annotation-vocab-20170117/diff.html",
+    "text": "www.w3.orgWeb Annotation Vocabulary - W3CThe Web Annotation Vocabulary specifies the set of RDF classes, predicates and named entities that are used by the Web Annotation Data Model [ ..."
+  },
+  {
+    "href": "https://www.w3.org/WAI/WCAG22/implementation-report/implementation%3Fimplementation_id%3D194.html",
+    "text": "www.w3.org[Archived] WCAG 2.2 Implementation Details for Trello - W3CWCAG 2.2 Implementation Details for Trello - dragging movements. Dragging Movements. Strategies, standards, and supporting resources to make the Web accessible ..."
+  },
+  {
+    "href": "https://www.w3.org/WAI/standards-guidelines/wcag/new-in-22/",
+    "text": "www.w3.orgWhat's New in WCAG 2.2 | Web Accessibility Initiative (WAI)Understanding Dragging Movements. 2.5.8 Target Size (Minimum) (AA). In brief: What to do: Ensure targets meet a minimum size or have sufficient spacing around ..."
+  },
+  {
+    "href": "https://www.w3.org/TR/epub-anno-vocab-10/",
+    "text": "www.w3.orgEPUB Annotations Vocabulary 1.0 - W3CAbstract. This document defines the RDFS [ rdf-schema ] vocabulary for the EPUB Annotations 1.0 specification."
+  },
+  {
+    "href": "https://www.w3.org/WAI/WCAG22/Understanding/input-modalities.html",
+    "text": "www.w3.orgUnderstanding Guideline 2.5: Input Modalities | WAI - W3CPeople operating pointer input devices may not be able to carry out timed or complex gestures. Examples are drag-and-drop gestures and on touchscreens, swiping ..."
+  },
+  {
+    "href": "https://dash.plotly.com/dash-core-components/graph",
+    "text": "dash.plotly.comGraph - Plotly DashqueueLength (number; optional): Set the length of the undo/redo queue. responsive (boolean; optional): Whether to change layout size when the window size ..."
+  },
+  {
+    "href": "https://dash.plotly.com/dash-ag-grid/javascript-and-the-grid",
+    "text": "dash.plotly.comJavaScript and Dash AG GridThe Dash AG Grid component wraps AG Grid and lets you build rich grids with AG Grid using Python. AG Grid itself is built with JavaScript, but for most AG Grid ..."
+  },
+  {
+    "href": "https://dash.plotly.com/clientside-callbacks",
+    "text": "dash.plotly.comClientside Callbacks | Plotly DashClientside callbacks allow you to write your callbacks in JavaScript that runs in the browser ... Undo and Redo Cell EditsFull Row Editing. Import and Export. CSV ..."
+  },
+  {
+    "href": "https://dash.plotly.com/dash-ag-grid",
+    "text": "dash.plotly.comDash AG GridUndo and Redo Cell Edits — Allow users to undo / redo their cell edits. Full Row Editing — Make all cells in a row editable at the same time. Import and ..."
+  },
+  {
+    "href": "https://dash.plotly.com/faqs",
+    "text": "dash.plotly.comFAQs - Plotly DashQ: How can I add JavaScript to my Dash app? A: You can add your own scripts to your Dash app, just like you would add a JavaScript file to an HTML document. See ..."
+  },
+  {
+    "href": "https://dash.plotly.com/external-resources",
+    "text": "dash.plotly.comAdding CSS & JS and Overriding the Page-Load TemplateThis chapter covers everything that you need to know about configuring this HTML file and about including external CSS and JavaScript in Dash apps. Adding Your ..."
+  },
+  {
+    "href": "https://dash.plotly.com/dash-core-components/store",
+    "text": "dash.plotly.comStore | Plotly Dashdcc.Store is a component for storing JSON-serializable data inside the user's browser."
+  },
+  {
+    "href": "https://dash.plotly.com/dash-1-0-migration",
+    "text": "dash.plotly.comDash 1.0 Migration | Plotly DashRemoved undo/redo buttons. The undo & redo buttons in the corner of every app are removed by default, but if you want to re-enable them, set: app = dash.Dash ..."
+  },
+  {
+    "href": "https://support.scichart.com/support/solutions/articles/101000385263-scichart-licensing-faq",
+    "text": "support.scichart.comSciChart Licensing FAQFor SciChart.js (JavaScript) - we have launched community licensing for non-commercial projects. See the Community Licensing page for more ..."
+  },
+  {
+    "href": "https://support.scichart.com/support/solutions/articles/101000482630-community-licensing-terms",
+    "text": "support.scichart.comCommunity Licensing Terms - SciChart Technical SupportWhen you npm install SciChart, or include SciChart.js as a script via JSDelivr, no license is required. You are downloading the Community ..."
+  }
+]
