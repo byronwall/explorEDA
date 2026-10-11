@@ -306,8 +306,26 @@ export function planTimeSeries(
       ? []
       : [point.band?.upper ?? point.value]
   );
-  const yLow = Math.min(0, ...values);
-  const yHigh = Math.max(0, ...values);
+  // Every row the chart can draw sets the value axis, so filtering elsewhere
+  // never rescales it. A current value past it grows it to fit.
+  const allValues =
+    snapshot.liveIds.length === snapshot.allIds.length
+      ? []
+      : planTimeSeries(
+          settings,
+          { ...snapshot, liveIds: snapshot.allIds },
+          width,
+          height,
+          getLabel,
+          format,
+          typography
+        ).domainValues;
+  let yLow = 0;
+  let yHigh = 0;
+  for (const value of [...allValues, ...values]) {
+    if (value < yLow) yLow = value;
+    if (value > yHigh) yHigh = value;
+  }
   // Y labels claim their measured width, never less than the old estimate.
   const yTickSize = settings.yAxis.tickFontSize ?? typography.tickSize;
   const yLabelWidth = Math.max(
@@ -396,6 +414,8 @@ export function planTimeSeries(
     filled,
     stacked,
     incompletePeriods,
+    /** The values this plan's own rows draw, which set the value axis. */
+    domainValues: values,
     yScaleType,
     // Points past a bound are cut off at the edge; the axis says how many.
     yHidden: labelHidden(

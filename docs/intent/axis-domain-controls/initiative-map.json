@@ -8,7 +8,7 @@
     "last_updated": "2026-10-10",
     "summary": "Analysts should change the region of a numerical chart they see without unintentionally changing the record population.",
     "status": "active",
-    "next_action": "Milestone 3: stable axes on aggregate bars, series bars, row charts, and line values."
+    "next_action": "Milestone 4: true log on scatter."
   },
   "artifacts": {
     "intent_brief": {
@@ -498,17 +498,23 @@
         "rollback": "Stop filling hidden in a chart's plan.",
         "evidence": [
           "hiddenNoticeCharts.test.tsx: count bars, histogram rows, row bars, box rows, numeric line rows and points, time-series points",
-          "Playwright on shop demo: histogram x bound (1280, 783) and aggregate bar y bound (1280, 390); counts, unchanged row totals after clicking the marker, no tick overlap, reset"
+          "Playwright on shop demo: histogram x bound (1280, 783) and aggregate bar y bound (1280, 390); counts, unchanged row totals after clicking the marker, no tick overlap, reset",
+          "PR #272"
         ]
       },
       {
         "id": "m3",
         "title": "Aggregate charts keep stable axes",
         "proof": "Brushing in flights leaves bar, row, and line axes still.",
-        "status": "planned",
-        "outcome": "Aggregate bars, series bars, row charts, and line values keep all-row domains under brushing.",
+        "status": "completed",
+        "outcome": "Aggregate bars, series bars, and time-series values keep all-row domains under brushing and grow to fit filtered values past them.",
         "valid_intermediate_state": "Marks follow filters; axes do not.",
-        "rollback": "Revert per chart; each plan keeps its live aggregate for marks."
+        "rollback": "Revert per chart; each plan keeps its live aggregate for marks.",
+        "evidence": [
+          "stableAxes.test.tsx: four cases fail without the change and pass with it",
+          "Playwright on shop demo: brushing the scatter to 56 of 500 rows left every chart's axis domains unchanged",
+          "Row charts already sized from all-row totals (rowChartPlan.ts); the plan's earlier claim was wrong"
+        ]
       },
       {
         "id": "m4",
@@ -632,6 +638,13 @@
       "reason": "Continue the plan.",
       "status": "active",
       "evidence": "Targeted tests and browser checks."
+    },
+    {
+      "date": "2026-10-10",
+      "action": "Built Milestone 3 (stable aggregate axes, grow to fit).",
+      "reason": "Continue the plan.",
+      "status": "active",
+      "evidence": "Targeted tests, mutation check, and browser check."
     }
   ],
   "closure": null,

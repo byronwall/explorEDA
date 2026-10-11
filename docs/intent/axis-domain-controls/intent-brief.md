@@ -27,7 +27,7 @@ Analysts should be able to change the part of a numeric chart they see without c
 2. **True log where it is useful.** Offer log on scatter (both axes), on the value axis of line charts, and on box plots. Do not offer it on bar, histogram, or row charts, where bars lose their zero baseline.
 3. **Log explains what it leaves out.** Zeros and negatives cannot sit on a log axis. They are left out, and a warning icon on that axis says why and how many rows are affected. Log never switches to symlog on its own.
 
-4. **Every chart keeps stable axes.** Aggregate bars, series bars, row charts, and the line value axis still rescale when other charts filter. They should set their domain from all rows, as scatter, box, histogram, and count bars already do.
+4. **Every chart keeps stable axes.** Aggregate bars, series bars, and the time series value axis still rescale when other charts filter. They should set their domain from all rows, as scatter, box, histogram, row, and count bars already do.
 
 Items 1 and 3 are the same idea: an axis that is not showing every row carries one marker that names the reason, the count, and the fix.
 

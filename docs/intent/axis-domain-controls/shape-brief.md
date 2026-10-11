@@ -23,8 +23,8 @@ Axis domain controls
 │   │   ├── "Reset" clears that side's bound only
 │   │   └── Scatter, bar, histogram, row, line, and box charts
 │   ├── Stable axes on every chart that honors limits
-│   │   └── Aggregate bars, series bars, row charts, and line values join
-│   │       scatter, box, histogram, and count bars in using all rows
+│   │   └── Aggregate bars, series bars, and time-series values join scatter,
+│   │       box, histogram, row, and count bars in using all rows
 │   └── True log scale
 │       ├── Scatter (both axes), line value axis, box plots
 │       ├── Not on bar, histogram, row, area, or stacked charts
@@ -52,7 +52,7 @@ Axis domain controls
 
 **Appetite:** Small. Five separable PRs on existing seams: the axis plan, `PlannedAxes`, `numericScale`, the axis drag transforms, and the Axes tab. No new chart types or renderer rewrites.
 
-**Key decision — stable axes come first in meaning, not just in docs.** The code check found that aggregate bars, series bars, row charts, and the line chart's value axis set their domain from rows other charts leave in. They rescale on every brush, which breaks the rule you set. Fixing that belongs here because this initiative owns what an axis domain means. The time-series date axis has the same problem and moves to the [date and time initiative](../date-time-handling/intent-brief.md). Heatmap and map color domains also follow filters; they are not axes, so they are noted there and left alone.
+**Key decision — stable axes come first in meaning, not just in docs.** The code check found that aggregate bars, series bars, and the time series value axis set their domain from rows other charts leave in. They rescale on every brush, which breaks the rule you set. Fixing that belongs here because this initiative owns what an axis domain means. The time-series date axis has the same problem and moves to the [date and time initiative](../date-time-handling/intent-brief.md). Heatmap and map color domains also follow filters; they are not axes, so they are noted there and left alone.
 
 **Key decision — one marker for every reason.** A bound and a log scale hide rows for different reasons, but the user needs the same three facts: where, how many, and the fix. One marker type with a reason keeps the two consistent and halves the UI work. It opens a small nonmodal popover rather than a tooltip, because it holds a button.
 

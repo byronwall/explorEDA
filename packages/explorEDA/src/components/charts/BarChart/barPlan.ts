@@ -56,6 +56,11 @@ export interface BarSnapshot {
   fieldType?: string;
   /** The grouped aggregate result for an aggregate bar chart. */
   aggregate?: AggregateResult;
+  /**
+   * The same aggregate over every row the chart can draw, before other
+   * filters. It sets the Y domain, so filtering elsewhere never rescales it.
+   */
+  domainAggregate?: AggregateResult;
 }
 
 export interface BarPlanInput {
@@ -129,7 +134,10 @@ export interface BarMark {
 }
 
 export interface BarDomain {
-  population: "current result" | "all source rows";
+  population:
+    | "current result"
+    | "all source rows"
+    | "all source rows and the current result";
   values: { id: string; label: string; value: number }[];
   lower: { source: "zero" | "bar"; id?: string; label?: string; value: number };
   upper: { source: "zero" | "bar"; id?: string; label?: string; value: number };
@@ -334,15 +342,27 @@ export function planBarChart({
         ? sortByLabel(result?.rows ?? [], (row) => row.groupValue)
         : (result?.rows ?? []);
 
-  // Y domain: an aggregate uses its current values; counts use every source row
-  // so bars keep their scale while other charts filter.
+  // Y domain: every source row, so bars keep their scale while other charts
+  // filter. An aggregate also takes its current values, so a filtered value
+  // past the all-row domain, such as a higher average, grows it to fit.
   let domainValues: BarDomain["values"];
   if (mode === "aggregate") {
-    domainValues = rows.flatMap((row) =>
-      typeof row.value === "number" && Number.isFinite(row.value)
-        ? [{ id: row.id, label: row.groupLabel, value: row.value }]
-        : []
-    );
+    const values = (items: AggregateResultRow[], prefix = "") =>
+      items.flatMap((row) =>
+        typeof row.value === "number" && Number.isFinite(row.value)
+          ? [
+              {
+                id: `${prefix}${row.id}`,
+                label: row.groupLabel,
+                value: row.value,
+              },
+            ]
+          : []
+      );
+    domainValues = [
+      ...values(snapshot.domainAggregate?.rows ?? [], "all:"),
+      ...values(rows),
+    ];
   } else if (mode === "bin") {
     const all = finiteNumbers(snapshot.allValues);
     domainValues = numericBins(all, all, settings.binCount || 20).map(
@@ -530,7 +550,9 @@ export function planBarChart({
       domainSource: {
         population:
           mode === "aggregate"
-            ? "the current aggregate result"
+            ? snapshot.domainAggregate
+              ? "all source rows and the current aggregate result"
+              : "the current aggregate result"
             : "all source rows",
         rows: domainValues.length,
         bounds: [lower.value, upper.value],
@@ -673,7 +695,12 @@ export function planBarChart({
     groupOrder: rows.map((row) => row.groupLabel),
     unplotted,
     domain: {
-      population: mode === "aggregate" ? "current result" : "all source rows",
+      population:
+        mode !== "aggregate"
+          ? "all source rows"
+          : snapshot.domainAggregate
+            ? "all source rows and the current result"
+            : "current result",
       values: domainValues,
       lower,
       upper,

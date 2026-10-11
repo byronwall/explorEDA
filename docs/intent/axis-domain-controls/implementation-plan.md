@@ -59,17 +59,17 @@ The smallest visible proof of the marker. It excludes other charts and log.
 
 ## Milestone 3: Aggregate charts keep stable axes
 
-Brings aggregate bars, series bars, row charts, and the line value axis in line with the stable-axes rule in `docs/ui-defaults.md`.
+Brings aggregate bars, series bars, and the time series value axis in line with the stable-axes rule in `docs/ui-defaults.md`. Row charts already size from all rows.
 
 - **Change — compute the domain from all rows**
   - In each plan, compute the same aggregate over all rows (or all rows in the facet) for the domain, and keep the live result for the marks. Reuse `calculateGroupedAggregate` and `rollupByPeriod`.
   - Set `domainSource.population` to "all source rows" so the trace says so.
   - When a live aggregate passes the all-rows domain, grow the domain to fit. Never shrink below the all-rows domain.
-- **Change — tests:** brushing another chart leaves the domain unchanged in `barPlan.test.ts`, `SeriesBarChart.test.tsx`, `RowChart.test.tsx`, and `TimeSeriesChart.test.tsx`.
+- **Change — tests:** brushing another chart leaves the domain unchanged in `stableAxes.test.tsx`, for aggregate bars, series bars, and time series, including an average that grows the axis.
 
 ### Desired end state
 
-- In the flights demo, brushing a scatter leaves the axes of every bar, row, and line chart still. Only the marks change.
+- In the shop demo, brushing the scatter leaves the axes of every bar, row, and line chart still. Only the marks change.
 - The time-series date axis is unchanged here; it belongs to the date initiative.
 
 ## Milestone 4: True log on scatter

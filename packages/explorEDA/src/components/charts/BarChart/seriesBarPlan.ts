@@ -28,6 +28,7 @@ export function selectSeriesBar(settings: BarChartSettings, bar: BarMark) {
 export function planSeriesBars({
   settings,
   summaries,
+  domainSummaries,
   revision,
   width,
   height,
@@ -40,6 +41,11 @@ export function planSeriesBars({
 }: {
   settings: BarChartSettings;
   summaries: SeriesSummary[];
+  /**
+   * The same series over every row the chart can draw. They set the Y domain,
+   * so filtering elsewhere never rescales it; current values past it grow it.
+   */
+  domainSummaries?: SeriesSummary[];
   revision: string;
   width: number;
   height: number;
@@ -142,11 +148,29 @@ export function planSeriesBars({
           },
         ]
   );
-  const low = values.reduce(
+  // Bar ends over every row set the domain; current ends past them grow it.
+  const allValues =
+    domainSummaries && !percent
+      ? planSeriesBars({
+          settings,
+          summaries: domainSummaries,
+          revision,
+          width,
+          height,
+          getColor,
+          getLabel,
+          format,
+          facetFilters,
+          categoryOrder,
+          typography,
+        }).domain.values.map((item) => ({ ...item, id: `all:${item.id}` }))
+      : [];
+  const domainValues = [...allValues, ...values];
+  const low = domainValues.reduce(
     (best, item) => (item.value < best.value ? item : best),
     { id: "", label: "zero", value: 0 }
   );
-  const high = values.reduce(
+  const high = domainValues.reduce(
     (best, item) => (item.value > best.value ? item : best),
     { id: "", label: "zero", value: 0 }
   );
@@ -354,8 +378,10 @@ export function planSeriesBars({
     unplotted: [],
     zeroBaseline: y(0),
     domain: {
-      population: "current result",
-      values,
+      population: allValues.length
+        ? "all source rows and the current result"
+        : "current result",
+      values: domainValues,
       lower: low.id ? { source: "bar", ...low } : { source: "zero", value: 0 },
       upper: high.id
         ? { source: "bar", ...high }
