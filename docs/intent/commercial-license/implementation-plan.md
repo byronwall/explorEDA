@@ -3,10 +3,14 @@ title: "Sell explorEDA commercial licenses — implementation plan"
 slug: "commercial-license"
 phase: plan
 status: current
-last_updated: "2026-10-11"
+last_updated: "2026-10-12"
 ---
 
 # Sell explorEDA commercial licenses — implementation plan
+
+## Delivery so far
+
+The code for milestones 1–5 is in stacked PRs: [#311](https://github.com/byronwall/explorEDA/pull/311) keys and package states, [#312](https://github.com/byronwall/explorEDA/pull/312) license and legal drafts, [#313](https://github.com/byronwall/explorEDA/pull/313) the license service, [#315](https://github.com/byronwall/explorEDA/pull/315) pricing and license pages. Everything that needs an account, a lawyer, or a real purchase is in [For Byron](for-byron.md). Byron confirmed the single package, and Paddle is the merchant of record.
 
 ## Plan at a glance
 
@@ -21,8 +25,8 @@ The main pushback against the earlier research is the license model: one package
 ## Implementation strategy
 
 - **First proof:** The demo, run locally, shows the four license states (none, valid, updates-ended, tampered) with keys signed by a dev keypair, and `exploreda license check` returns the matching exit codes.
-- **Primary seam:** `packages/license` (new, private workspace package): `signLicense`, `verifyLicense`, `LicensePayload`, test vectors. The library bundles verify-only code; the service uses sign and verify. The service talks to the MoR through a `PaymentEvents` adapter that turns provider webhooks into `licensePurchased`, `seatsChanged`, `renewed`, `refunded`, and to email through a `Mailer` port.
-- **Fast local loop:** `pnpm --filter @exploreda/license test` and `pnpm --filter license-service test`, then `pnpm --filter license-service dev` (Wrangler with a local database) with `pnpm --filter license-service replay <fixture>`.
+- **Primary seam:** `packages/explorEDA/src/license/` holds the key format (`token.ts`, verify) and the signer (`sign.ts`, which no package entry exports). The service imports both. It talks to the MoR through a `PaymentProvider` adapter that turns provider webhooks into `purchase`, `renewal`, `seats-changed`, `canceled`, and `refunded` events, and to email through a `Mailer` port.
+- **Fast local loop:** `pnpm --filter exploreda exec vitest run src/license` and `pnpm --filter license-service test`, then `pnpm --filter license-service dev` (Wrangler with a local database) with `pnpm --filter license-service replay <fixture>`.
 - **Local dependencies:** Dev Ed25519 keypair checked in as a fixture and marked as such; Wrangler's local D1; fake MoR fixtures; a mailer that writes `.eml` files to `tmp/`.
 - **Provider/live confirmation:** MoR sandbox checkout and invoice to a staging Worker; one real purchase with a 100% discount code in production.
 - **Rollout and rollback:** The package treats any key failure as "unlicensed with a notice," so a bad release cannot break hosts. The site hides checkout unless live MoR settings are present. Signing keys carry a key id, and the package embeds a list of public keys, so a leaked key can be rotated in a patch release.
@@ -42,7 +46,7 @@ The MoR protocol (signature scheme, event order, retries, invoice events) is tru
 
 The purchaser's daily experience, proven with no server and no account.
 
-- **Change — `packages/license` codec**
+- **Change — license codec in `packages/explorEDA/src/license/`**
   - Payload: `v`, `kid`, `id`, `licensee`, `email`, `plan` (`commercial`, `oem`, `trial`, `community`), `seats`, `scope`, `issued`, `updatesUntil`, optional `expires`. Encoding `EDA1.<base64url JSON>.<base64url sig>`, Ed25519 via `@noble/ed25519` (small, audited, no Node crypto in the browser).
   - Test vectors: valid, tampered payload, wrong `kid`, trial expired, updates ended before and after a release date, malformed text.
 - **Change — package enforcement in `packages/explorEDA`**
@@ -93,7 +97,7 @@ Every fulfilment path works on a laptop against fakes.
 
 - **Change — `apps/license-service`** (Cloudflare Worker, D1, Hono)
   - Tables: `customers` (email, company), `licenses` (id, plan, seats, scope, updatesUntil, status, MoR subscription id), `keys` (license id, kid, token, issued), `events` (provider event id, unique, for idempotency).
-  - `POST /webhooks/mor`: verify signature, store event id, map through `PaymentEvents`, sign key, email. Duplicate ids return 200 without effect.
+  - `POST /webhooks/payments`: verify signature, store event id, map through `PaymentProvider`, sign key, email. Duplicate ids return 200 without effect.
   - `POST /trial`: email verification link, then a 30-day trial key; one per email and domain per 90 days; Turnstile on the form.
   - `GET /c/:licenseId/:token`: printable certificate (licensee, plan, seats, scope, update end, order id, license version, issue date).
   - `GET /portal` by emailed magic link: licenses, keys, certificates, links to the MoR's billing portal and "add seats."
@@ -168,13 +172,11 @@ Production accounts, production keys, and a release that includes them.
 
 ## Cross-cutting verification
 
-- The same test vectors run in `packages/license`, the package, and the service, so a signer and verifier can never disagree.
+- The package tests and the service tests sign and verify with the same codec module, and the service tests check every issued key with the package's own `checkLicenseKey`, so a signer and verifier cannot disagree.
 - A bundle check fails if the private key or `signLicense` reaches `dist/`.
 
 ## Open decisions and spikes
 
-- **Spike — MoR choice.** Decision: Paddle or Polar. Evidence: account approval for a solo seller of a source-available library, a sandbox invoice paid by bank transfer, and whether the invoice accepts a purchase order number. Fallback: Polar for card sales with Paddle or manual invoicing for quotes; the `PaymentEvents` adapter keeps either swap local.
-- **Decision — license model.** Single source-available package (this plan) or MIT core plus paid package. Evidence: Byron's call. Fallback: if open core is chosen, insert a milestone after M1 that moves the paid chart families and project mode into `exploreda-pro`; M3–M6 are unchanged.
 - **Decision — selling entity and lawyer.** Needed before M6; does not block M1–M5.
 
 ## Below the cut line

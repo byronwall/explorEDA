@@ -3,7 +3,7 @@ title: "Sell explorEDA commercial licenses — shape brief"
 slug: "commercial-license"
 phase: shape
 status: current
-last_updated: "2026-10-11"
+last_updated: "2026-10-12"
 ---
 
 # Sell explorEDA commercial licenses — what we are adding
@@ -45,8 +45,6 @@ Commercial licensing
 │       ├── SECURITY.md, support and stability policy, security page
 │       ├── PR CI; internal notes moved out of the public tree
 │       └── Next.js and browser-support notes
-├── EVALUATE BEFORE COMMITTING
-│   └── Paddle versus Polar as merchant of record, after account approval and an invoice trial
 └── LATER POSSIBILITIES
     ├── VPAT and accessibility conformance report
     ├── Published row-count performance envelope
@@ -82,6 +80,6 @@ Provisional key shape: `EDA1.<base64url JSON>.<Ed25519 signature>`, where the JS
 
 **First proof:** **Try:** Sign keys with a local dev keypair and render the demo with no key, a valid key, an expired-updates key, and a tampered key. **Observe:** Each state shows the expected notice, console line, settings status, and CLI exit code, with no network request. **Decide:** If the four states read clearly at wide and narrow widths, build the service against the same codec; if the notice is intrusive or ambiguous, fix the UI before any payment work.
 
-**Open choices:** Confirm the single-package license model. Name the selling entity and lawyer.
+**Open choices:** Name the selling entity and lawyer. Byron confirmed the single package; Paddle is the merchant of record behind a one-file adapter.
 
 Intent: [intent brief](intent-brief.md). Plan: [implementation plan](implementation-plan.md).
