@@ -1,5 +1,5 @@
 import { Copy, Eye, EyeOff, Trash2 } from "lucide-react";
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useDataLayer, type IdType } from "@/providers/DataLayerProvider";
 import type { ChartSettings } from "@/types/ChartTypes";
 import { useAnnotationRows } from "../../charts/annotations/useAnnotationRows";
@@ -89,6 +89,23 @@ export function AnnotationsSettingsTab({
     [settings.annotations]
   );
   const context = annotationContext(settings);
+  // After a removal, focus moves to the card that took its place, or to
+  // the add buttons, rather than falling back to the page.
+  const rootRef = useRef<HTMLDivElement>(null);
+  const focusAfterRemove = useRef<number | null>(null);
+  useEffect(() => {
+    const index = focusAfterRemove.current;
+    if (index === null) return;
+    focusAfterRemove.current = null;
+    const cards = rootRef.current?.querySelectorAll<HTMLElement>(
+      "li[data-annotation-id]"
+    );
+    const card = cards?.[Math.min(index, (cards?.length ?? 1) - 1)];
+    (
+      card?.querySelector<HTMLElement>("button") ??
+      rootRef.current?.querySelector<HTMLElement>("button")
+    )?.focus();
+  }, [annotations]);
   const { ids, getColumn } = useAnnotationRows();
   const drawn = useAnnotationStatuses(settings.id);
   const getColumnNames = useDataLayer((state) => state.getColumnNames);
@@ -149,7 +166,7 @@ export function AnnotationsSettingsTab({
     createRecordSet(keyFields[0]!, [...visible], getColumn);
 
   return (
-    <div className="space-y-2.5">
+    <div className="space-y-2.5" ref={rootRef}>
       <p className="text-xs text-muted-foreground">
         Annotations save with this chart. A callout on a record follows that
         record through filters and data updates.
@@ -275,9 +292,10 @@ export function AnnotationsSettingsTab({
                   ...annotations.slice(index + 1),
                 ])
               }
-              onRemove={() =>
-                write(annotations.filter((item) => item.id !== annotation.id))
-              }
+              onRemove={() => {
+                focusAfterRemove.current = index;
+                write(annotations.filter((item) => item.id !== annotation.id));
+              }}
             />
           ))}
         </ul>

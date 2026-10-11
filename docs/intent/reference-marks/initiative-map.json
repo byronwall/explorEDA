@@ -8,7 +8,7 @@
     "last_updated": "2026-10-11",
     "summary": "Users can author and preserve meaningful labels, callouts, targets, intervals, events, regions, and record highlights on live charts.",
     "status": "active",
-    "next_action": "Start m5: dashboard text round-trip limits, saved views/duplication, annotation-aware image output, label edges and keyboard access."
+    "next_action": "M1-M4 delivered in stacked PRs #314, #317, #318, #319; M5 PR covers persistence and edges. Remaining: close M5 once analysis-export ships an ordinary-chart image export and it is checked with annotations; then evaluate snapping, presets, and automatic placement."
   },
   "artifacts": {
     "intent_brief": {
@@ -724,7 +724,7 @@
       {
         "id": "m5",
         "title": "Annotated graphics remain useful when saved and shared",
-        "status": "planned",
+        "status": "active",
         "outcome": "Persistence, dashboard text, keyboard management, and image export preserve annotations.",
         "proof": "Full-analysis/host echo round trips; inspect actual output; keyboard and focus checks at required widths.",
         "valid_intermediate_state": "The complete proposed core scope saves and shares correctly on supported charts.",
@@ -732,7 +732,9 @@
         "dependencies_introduced": [
           "shared-output"
         ],
-        "evidence": []
+        "evidence": [
+          "Partial: persistence.test.ts round-trips every kind through Dashboard text and saved data with a stable save; duplication copies annotations; placeLabel edge handling and focus return tested; pnpm check passed. Open: ordinary-chart image export is owned by analysis-export and does not exist yet."
+        ]
       }
     ],
     "cut_line": [
@@ -818,6 +820,15 @@
       "evidence": [
         "New src/lib/annotations module, AnnotationLayer, and Notes settings tab.",
         "Targeted tests and pnpm check passed; browser check on the bubble scatter example."
+      ]
+    },
+    {
+      "date": "2026-10-11",
+      "action": "Delivered milestones 1-4 and most of milestone 5 as stacked PRs #314, #317, #318, #319, and the M5 PR.",
+      "reason": "User asked to implement the initiative with stacked PRs and updated docs.",
+      "evidence": [
+        "Each milestone PR passed pnpm check and carries screenshots.",
+        "M5 stays active: ordinary-chart image export is an open dependency on analysis-export."
       ]
     }
   ],

@@ -228,3 +228,29 @@ it("saves the selected rows by key and keeps them when the selection changes", a
   act(() => clearFilters());
   expect(saved()).toMatchObject({ keys: [["E-16"], ["E-17"]] });
 });
+
+it("moves focus to the next card when an annotation is removed", async () => {
+  const { ChartSettingsContent } = await import("../../ChartSettingsContent");
+  const chart = {
+    ...scatterPlotDefinition.createDefaultSettings({ x: 0, y: 0, w: 6, h: 4 }),
+    xField: "x",
+    yField: "y",
+    annotations,
+  };
+  function Settings() {
+    const charts = useDataLayer((s) => s.charts);
+    return <ChartSettingsContent settings={charts[0]!} />;
+  }
+  render(
+    <DataLayerProvider data={rows} charts={[chart]}>
+      <Settings />
+    </DataLayerProvider>
+  );
+  const notes = screen.getByRole("tab", { name: "Notes" });
+  fireEvent.mouseDown(notes);
+  fireEvent.click(notes);
+  fireEvent.click(
+    await screen.findByRole("button", { name: "Remove Hot run" })
+  );
+  expect(document.activeElement).toHaveAccessibleName("Hide Limit");
+});

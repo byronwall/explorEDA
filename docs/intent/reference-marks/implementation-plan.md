@@ -121,6 +121,8 @@ Complete persistence coverage, output integration, label readability, and keyboa
 - Check labels at plot edges, dense marks, theme changes, and export size. Keep manual offsets; automatic placement remains an evaluation candidate.
 - Verify create, select, edit, hide, repair, remove, cancel, undo, and focus return with keyboard and form controls.
 
+**Delivered (M5, partial):** `persistence.test.ts` round-trips every annotation kind through Dashboard text (generic setting paths, no omissions, numeric-looking text keys stay text) and saved data, and the stringified save is stable through restore, so host echoes don't trigger full restores. Chart duplication copies annotations. Callout labels flip their reading side at the plot edge and stop at the top and bottom (`placeLabel.ts`); manual offsets are otherwise kept, and automatic placement stays an evaluation candidate. Removing an annotation moves focus to the card that takes its place. **Open dependency:** ordinary charts still have no image export; it belongs to [analysis export](../analysis-export/intent-brief.md), whose brief now notes that annotations are plain SVG with no editor overlays. This milestone stays active until that export exists and is checked with annotations.
+
 ### Desired end state
 
 - Saved and copied graphics preserve the user's explanation.

@@ -6,6 +6,8 @@ import {
   type ReactNode,
 } from "react";
 import { useChartEdit } from "../InPlace/useChartEdit";
+import { useAxisTypography } from "../chartTypography";
+import { placeLabel } from "@/lib/annotations/placeLabel";
 import type { ProjectedAnnotation } from "@/lib/annotations/resolve";
 import {
   annotationLabel,
@@ -375,6 +377,7 @@ export function AnnotationLayer({
   clipPath: string;
 }) {
   const edit = useChartEdit(chartId);
+  const typography = useAxisTypography();
   const ownId = useId();
   const arrowId = `${ownId}-arrow`;
   useReportAnnotationStatus(chartId, panelId ?? ownId, projected);
@@ -488,12 +491,22 @@ export function AnnotationLayer({
       <RecordSets sets={of("record-set")} />
       {of("callout").map(({ annotation, x, y }) => {
         const color = colorOf(annotation);
-        const lx = x + annotation.offset.dx;
-        const ly = y + annotation.offset.dy;
+        const lines = annotation.text.split("\n");
+        const { lx, ly, anchor } = placeLabel(
+          x + annotation.offset.dx,
+          y + annotation.offset.dy,
+          annotation.offset.dx < 0 ? "end" : "start",
+          Math.max(
+            ...lines.map((line) => typography.measure(line, LABEL_FONT_SIZE))
+          ),
+          lines.length,
+          plotWidth,
+          plotHeight,
+          LABEL_FONT_SIZE
+        );
         const leader =
           annotation.leader !== false &&
           Math.hypot(annotation.offset.dx, annotation.offset.dy) > 10;
-        const lines = annotation.text.split("\n");
         return (
           <g key={annotation.id} data-annotation-id={annotation.id}>
             {annotation.arrow && (
@@ -562,7 +575,7 @@ export function AnnotationLayer({
                 fontSize={LABEL_FONT_SIZE}
                 fontWeight={600}
                 fill={color}
-                textAnchor={annotation.offset.dx < 0 ? "end" : "start"}
+                textAnchor={anchor}
                 dominantBaseline="middle"
               >
                 {lines.map((line, index) => (
