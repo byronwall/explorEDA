@@ -2,7 +2,7 @@
 title: Useful, configurable maps for location data
 slug: map-and-location
 phase: intent
-status: draft
+status: current
 last_updated: 2026-10-11
 ---
 
@@ -10,50 +10,58 @@ last_updated: 2026-10-11
 
 ## My read
 
-People should turn location data into useful dashboards without first becoming GIS specialists. The point and region maps need clearer behavior, better defaults, and enough control to suit the question. A world outline can explain a global pattern. A local service dashboard can need roads, street names, and neighborhood context. Both are valid analytical views.
+People should turn location data into useful dashboards without becoming GIS specialists. Point and region maps need clearer behavior, useful geography, and control over visible content. A world outline can explain a global pattern. A local service dashboard can need roads, street names, and neighborhood context.
 
-The goal is control over what the map renders. Users should choose suitable geography, data marks, labels, and context without losing linked selection or source records. They should have useful geography ready to select. They should also be able to bring their own boundaries when standard geography does not fit their work.
+The research supports improving the existing analytical maps, then testing optional street context. GeoJSON import already exists. The main task is to make importing, joining, configuring, and saving geography dependable. Leaflet remains a candidate. The desired outcome is useful local context; the renderer is still an open choice.
 
-The current product already accepts polygon GeoJSON. This initiative should make that path useful and dependable, then identify what it still lacks. It should not restart a feature that already exists. Leaflet, or a similar library, is a proposed way to provide detailed maps. The durable requirement is recognizable local context. The rendering library and the choice between simple and detailed views remain open.
-
-The immediate deliverable is a researched intent brief for review. A broad comparison should identify valuable capabilities, sensible limits, and small proofs. It must not turn a dashboard library into a full GIS product.
+This brief incorporates the completed Pro research. Its recommendations remain proposals for Byron's review. The initiative is planned; implementation has not started.
 
 ## What matters most
 
-- Make both point and region maps useful for real dashboard questions.
-- Give users clear control over the geography, marks, labels, and context they see.
-- Improve the existing custom GeoJSON path and provide more ready-made geography.
-- Support detailed context, including street names, where the task needs it.
-- Keep the resulting product small enough for a personal developer to build and maintain.
+- Make both map modes useful for comparisons, local sites, and custom territories.
+- Give users control over data marks, reference boundaries, labels, and map context.
+- Support custom GeoJSON and more ready-made geography with clear coverage and identifiers.
+- Add street and place context where users need it.
+- Preserve exact selections, source traces, and understandable values within a small maintenance budget.
 
 ## The experience or behavior you appear to want
 
-A user starts with coordinates or region identifiers and chooses the geographic view that fits their data. They can use supplied geography or import their own boundaries. They can see whether the locations or joins are valid before trusting the map. They choose the visible data and context, then adjust the view without changing which records belong to the analysis.
+A user starts with coordinates or region identifiers. They choose supplied geography or import their own boundaries. Before trusting the map, they can inspect excluded coordinates, unmatched keys, and grouped geometry. Labels can use readable names while joins use stable identifiers.
 
-For a regional comparison, a restrained boundary map may be enough. For local operations, the same workspace may need streets and place labels. The user should understand which content is analytical data and which content only provides context. Switching the presentation should preserve the meaning of values, selections, and source traces.
+Users control analytical marks, reference boundaries, basemap context, and data labels separately. Street labels are a separate concern from record names. A small set of controls should cover common tasks. One nonselectable boundary overlay beneath points is a useful first proposal. Multiple analytical layers remain an option to assess when a dashboard needs them.
 
-Useful examples include comparing values across countries, reviewing sites within a city, and joining records to custom service districts. These examples guide research. They do not require routing, boundary editing, or a universal layer editor.
+Changing context, visibility, or camera must preserve data meaning, selections, and source traces. Hidden selected records must remain discoverable. Changing the analytical mode or join can change the analysis and needs explicit behavior. Users must select, inspect, clear, and navigate with practical keyboard and touch controls.
+
+Regional values must distinguish zero, no rows, invalid measures, and unmatched records. Averages use valid measure inputs. Color scales should stay stable through filters and facets. Prepared rates need clear units, periods, and denominators. The map must not invent normalization from polygon area.
+
+## Custom and supplied geography
+
+Keep the current Polygon and MultiPolygon FeatureCollection path as the first supported subset. Improve errors with useful feature and coordinate locations. Show import complexity and measure practical limits. Preserve original geometry when adapting it for display. Automatic repair, reprojection, and silent key conversion are outside the first slice.
+
+Strengthen the existing join preview with mismatch samples, types, and duplicate-key details. Define what happens to reusable assets when assignment fails or a draft closes. An unused shared asset is not necessarily an error.
+
+Start with one audited country pack, then add useful national or regional packs. This is a proposed sequence, not a permanent catalog limit. Compare existing World Atlas countries with a fresh Natural Earth source before choosing. Audit identifiers against real dashboard data. Retain source, version, geographic date, coverage, terms, and preparation details. Saved boundaries must not silently change with catalog updates.
+
+## Detailed local context
+
+Keep D3/SVG as the default while comparing Leaflet with raster tiles and MapLibre with vector styles. Use the same small dashboard tasks and local fixtures. Choose at most one additional engine if it preserves analytical behavior and earns its maintenance cost.
+
+Raster street labels are part of the tile image. Vector label controls depend on the chosen style and data. The author should see only controls that work. The host supplies approved context presets and provider configuration. Provider rights, attribution, request behavior, and image export need separate checks.
+
+Preserve saved geographic views without treating the existing zoom number as tile zoom. Keep credentials out of saved analyses. Confirm uploaded geometry and analytical rows stay local. Distinguish portable saved analysis from text DSL and image output. Detailed export remains unproven.
 
 ## Boundaries
 
-The product remains an embedded React and TypeScript analysis workspace. Maps must fit its existing chart settings, linked filters, facets, saved analyses, and source traces. Missing coordinates, unmatched keys, empty regions, invalid measures, and valid zero values must remain distinguishable.
+Keep the existing React and TypeScript library, host contract, linked filters, facets, and shared geometry. Use small proofs before setting workload limits or adding rendering infrastructure.
 
-Detailed context can require an external map provider. Research must separate the renderer from tiles, data, styles, credentials, attribution, and usage terms. A library choice alone cannot supply street data or permission to use it. The design should make external requests and their consequences understandable to the host application.
-
-This work does not authorize feature implementation, deployment, paid services, or a full GIS workbench. Spatial databases, editing tools, routing, geocoding infrastructure, arbitrary coordinate systems, and advanced spatial analysis are outside the default scope. Research may recommend a narrow exception when it solves a common dashboard task with modest cost.
+Defer clustering, heatmaps, advanced classification, and offline street archives until a concrete task justifies them. Routing, geocoding infrastructure, spatial joins, geometry editing, arbitrary coordinate systems, and a full GIS workbench remain outside scope. This work authorizes research and a documentation PR, not implementation, deployment, or paid services.
 
 ## What seems settled
 
-Both current map modes belong in this initiative. Custom GeoJSON and supplied geography deserve direct attention. Detailed local context is a desired capability. The exact renderer, map catalog, layer model, and delivery order remain research questions.
+Both map modes, custom geography, supplied geography, and local context remain core goals. The research favors bounded controls and staged delivery. It does not select a renderer, provider, catalog membership, or final control layout.
 
-Byron has authorized the Pro handoff and collection of its results. Completion of this planning task means Pro has finished, all artifacts are retained, findings are reconciled into this initiative, and a PR is ready. Implementation waits for review.
-
-## Current reality that matters
-
-There is one Map chart with Point and Region modes. Points use latitude and longitude, with optional color, size, and labels. Regions import Polygon or MultiPolygon FeatureCollections by file or pasted text. Records join by exact typed keys. Geometry is shared through saved assets.
-
-The renderer uses D3 geographic projections and bundled World Atlas land. Equal Earth and equirectangular views have saved geographic centers and zoom. There is no tile renderer in the current package manifest. The existing tests cover several important selection, geometry, and restore cases. These are source findings, not a fresh browser acceptance result.
+The [research review](references/research-reconciliation.md) records all 20 recommendation dispositions and links the complete evidence. Source inspection found possible background-clear and draft-Escape faults. Browser reproduction remains pending. Five existing map tests passed locally; they do not establish the eight proposed proofs.
 
 ## Next step after confirmation
 
-Run the authorized Pro research using the [handoff prompt](chatgpt-pro-map-research-prompt.md). Compare dashboard products, declarative chart tools, and map renderers. Reconcile each useful recommendation against current code. Record what to adopt, investigate, defer, or reject. Update this brief, retain the original evidence, and open a documentation PR for review.
+Review this intent and its proposed limits in the PR. After review, shape the smallest useful release and its proofs. Begin with analytical correctness and import behavior, then geography and content controls, then the street-context comparison. Accessibility applies throughout. The research proof plan supplies candidates; it is not an approved implementation plan.

@@ -8,12 +8,12 @@
     "last_updated": "2026-10-11",
     "summary": "Improve point and region maps, custom and supplied geography, render controls, and detailed local context without building a full GIS.",
     "status": "planned",
-    "next_action": "Check the submitted Pro conversation after about one hour; collect all artifacts, reconcile intent, and open a PR."
+    "next_action": "Review the researched intent and complete Pro package in the documentation PR; shape implementation only after Byron reviews."
   },
   "artifacts": {
     "intent_brief": {
       "path": "intent-brief.md",
-      "status": "draft",
+      "status": "current",
       "updated_at": "2026-10-11"
     },
     "brainstorm": {
@@ -46,6 +46,27 @@
       "location": "references/repository-baseline.md",
       "anchor": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
       "authority": "source inspection; no browser proof"
+    },
+    {
+      "id": "pro-research",
+      "type": "external-research",
+      "location": "resources/pro-map-location-research/README.md",
+      "anchor": "Completed October 11, 2026; ZIP SHA-256 635eecd640f189a91f0a8e647635a5470b6a0d5d478c3d066c54b62ee731f9f1",
+      "authority": "Research evidence and proposals; not user approval or runtime proof"
+    },
+    {
+      "id": "research-reconciliation",
+      "type": "repository-review",
+      "location": "references/research-reconciliation.md",
+      "anchor": "All MAP-001 through MAP-020 dispositions",
+      "authority": "Agent synthesis for user review"
+    },
+    {
+      "id": "primary-source-checks",
+      "type": "primary-source-verification",
+      "location": "references/primary-source-checks.md",
+      "anchor": "October 11 independent checks",
+      "authority": "Selected publisher claims verified; no provider acceptance"
     }
   ],
   "intent": {
@@ -184,7 +205,7 @@
           }
         ],
         "confidence": "high",
-        "notes": ""
+        "notes": "Research completed and all ten companion artifacts collected. Reconciliation is complete; documentation PR is the final handoff. Implementation remains unstarted."
       },
       {
         "id": "map-9",
@@ -202,6 +223,153 @@
         ],
         "confidence": "high",
         "notes": ""
+      },
+      {
+        "id": "map-10",
+        "type": "desired experience",
+        "statement": "Separate analytical marks, reference boundaries, basemap context, and data labels.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "pro-research",
+            "anchor": "MAP-005"
+          },
+          {
+            "source_id": "research-reconciliation",
+            "anchor": "MAP-005"
+          }
+        ],
+        "confidence": "medium",
+        "notes": "One reference overlay and one analytical family are first-slice hypotheses, not permanent limits."
+      },
+      {
+        "id": "map-11",
+        "type": "sequence",
+        "statement": "Audit one country pack first, then expand supplied geography for concrete dashboard jobs.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "pro-research",
+            "anchor": "MAP-006, MAP-007, MAP-017"
+          },
+          {
+            "source_id": "research-reconciliation",
+            "anchor": "MAP-006, MAP-007, MAP-017"
+          }
+        ],
+        "confidence": "medium",
+        "notes": "No country source, national priority, pack membership, or delivery schedule is approved."
+      },
+      {
+        "id": "map-12",
+        "type": "implementation hypothesis",
+        "statement": "Keep D3/SVG as the starting default and compare Leaflet/raster with MapLibre/vector for one optional street engine.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "pro-research",
+            "anchor": "MAP-001, MAP-009, MAP-020"
+          },
+          {
+            "source_id": "research-reconciliation",
+            "anchor": "MAP-001, MAP-009, MAP-020"
+          }
+        ],
+        "confidence": "medium",
+        "notes": "No renderer winner. Avoid a universal scene model or permanent competing street engines."
+      },
+      {
+        "id": "map-13",
+        "type": "required behavior",
+        "statement": "Preserve exact source identity, typed joins, metric states, valid-input denominators, stable scales, and accessible analytical actions.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "pro-research",
+            "anchor": "MAP-001, MAP-002, MAP-004, MAP-008, MAP-012"
+          },
+          {
+            "source_id": "research-reconciliation",
+            "anchor": "MAP-001, MAP-002, MAP-004, MAP-008, MAP-012"
+          }
+        ],
+        "confidence": "medium",
+        "notes": "Candidate source faults need runtime reproduction. Five existing tests passed; P01-P08 remain unrun."
+      },
+      {
+        "id": "map-14",
+        "type": "required behavior",
+        "statement": "Make polygon import diagnostics and asset retention understandable without silent repair or key conversion.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "pro-research",
+            "anchor": "MAP-003, MAP-004"
+          },
+          {
+            "source_id": "research-reconciliation",
+            "anchor": "MAP-003, MAP-004"
+          }
+        ],
+        "confidence": "medium",
+        "notes": "Atomic assignment versus reusable import is unresolved; state-hold is not rollback."
+      },
+      {
+        "id": "map-15",
+        "type": "required behavior",
+        "statement": "Separate provider configuration, saved geometry, geographic views, text DSL, and image export.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "pro-research",
+            "anchor": "MAP-007, MAP-010, MAP-011, MAP-014"
+          },
+          {
+            "source_id": "research-reconciliation",
+            "anchor": "MAP-007, MAP-010, MAP-011, MAP-014"
+          }
+        ],
+        "confidence": "medium",
+        "notes": "Specific camera structure, provider fallback, export route, rights, and workload limits remain unproven."
+      },
+      {
+        "id": "map-16",
+        "type": "anti-goal",
+        "statement": "Defer advanced density, classification, offline street archives, and broad GIS infrastructure until a concrete task justifies scope.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "pro-research",
+            "anchor": "MAP-013, MAP-015, MAP-016, MAP-018, MAP-019"
+          },
+          {
+            "source_id": "research-reconciliation",
+            "anchor": "MAP-013, MAP-015, MAP-016, MAP-018, MAP-019"
+          }
+        ],
+        "confidence": "medium",
+        "notes": "Retain exact coincident-record access as a smaller density investigation."
       }
     ],
     "themes": [
@@ -210,7 +378,23 @@
       "Custom and supplied geography",
       "Local context without GIS scope"
     ],
-    "conflicts": [],
+    "conflicts": [
+      {
+        "id": "catalog-sequence",
+        "description": "Research proposes one country pack first; the user wants more supplied geography.",
+        "resolution": "Treat one pack as sequencing. Retain national and regional expansion as desired scope; membership awaits review."
+      },
+      {
+        "id": "renderer-hypothesis",
+        "description": "Leaflet was a user hypothesis. Research identifies vector label controls as a possible reason to choose MapLibre.",
+        "resolution": "Keep local street context as the requirement. Select neither renderer before a bounded comparison."
+      },
+      {
+        "id": "proof-scope",
+        "description": "The Pro proof plan includes checkout, camera, fallback, and compatibility proposals beyond settled intent.",
+        "resolution": "Apply the limits in references/research-reconciliation.md. No new worktree, compatibility platform, or unapproved implementation follows from the report."
+      }
+    ],
     "human_questions": []
   },
   "brainstorm": {
@@ -259,6 +443,12 @@
       "action": "Created initial intent and Pro handoff prompt.",
       "reason": "User requested autonomous map research and an intent PR.",
       "evidence": "Direct request and source inspection at 12bd64d; implementation has not started."
+    },
+    {
+      "date": "2026-10-11",
+      "action": "Collected the complete Pro research and reconciled the intent.",
+      "reason": "User requested autonomous research through a review PR.",
+      "evidence": "Ten standalone downloads match the ZIP; all 20 recommendation dispositions recorded. Pro progress reports 4/4 completed. Final chat delivery interrupted; file library collection succeeded. Eight proposed proofs remain unrun. Initiative stays planned."
     }
   ],
   "closure": null
