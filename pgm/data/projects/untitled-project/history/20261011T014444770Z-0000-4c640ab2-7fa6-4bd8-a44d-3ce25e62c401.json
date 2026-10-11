@@ -1,0 +1,16 @@
+{
+  "id": "4c640ab2-7fa6-4bd8-a44d-3ce25e62c401",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:44:44.770Z",
+  "summary": "Created \"Overall, I don't really like the \"rows\" listing at the bottom of all the examples.\" under \"Composition examples\".",
+  "nodeIds": [
+    "page-overall-i-don-t-really-like-the-rows-listing-at-the-bottom-of-all-qrgqhs",
+    "page-composition-examples"
+  ],
+  "metadata": {
+    "clientMutationId": "7e6b8303-b19b-4f99-b08d-a5499a12a8a2"
+  }
+}

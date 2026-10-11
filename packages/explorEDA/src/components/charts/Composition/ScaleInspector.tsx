@@ -632,6 +632,22 @@ function ValueScaleProperties({
         options={DOMAINS}
         onChange={(domain) => onChange({ domain })}
       />
+      <Label htmlFor={`${scale.id}-max`}>Ramp end</Label>
+      <div className="eda-composition-color">
+        <NumericInputEnter
+          id={`${scale.id}-max`}
+          value={scale.max ?? 0}
+          min={0}
+          onChange={(max) =>
+            Number.isFinite(max) && onChange({ max: max > 0 ? max : undefined })
+          }
+        />
+        <span className="text-muted-foreground">
+          {scale.max
+            ? "larger values share the end color"
+            : "0 = the largest value"}
+        </span>
+      </div>
     </div>
   );
 }

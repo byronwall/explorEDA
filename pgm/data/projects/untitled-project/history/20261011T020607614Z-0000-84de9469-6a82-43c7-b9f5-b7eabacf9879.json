@@ -1,0 +1,14 @@
+{
+  "id": "84de9469-6a82-43c7-b9f5-b7eabacf9879",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:f089c8",
+    "label": "Agent token ...f089c8"
+  },
+  "createdAt": "2026-10-11T02:06:07.614Z",
+  "summary": "Updated metadata for \"Hard to read \"vaccine\" line\".",
+  "nodeIds": [
+    "page-hard-to-read-vaccine-line"
+  ]
+}

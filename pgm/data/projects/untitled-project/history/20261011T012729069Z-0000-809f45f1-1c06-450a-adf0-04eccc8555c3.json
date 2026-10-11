@@ -1,0 +1,16 @@
+{
+  "id": "809f45f1-1c06-450a-adf0-04eccc8555c3",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:27:29.069Z",
+  "summary": "Created \"Where are the color scales?\" under \"Media deaths\".",
+  "nodeIds": [
+    "page-where-are-the-color-scales",
+    "page-media-deaths"
+  ],
+  "metadata": {
+    "clientMutationId": "64734219-0bdf-436c-bc25-8fb0ba34e8d4"
+  }
+}

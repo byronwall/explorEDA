@@ -1,0 +1,16 @@
+{
+  "id": "4f16593e-0f94-4d6a-af7d-36bbdb3c62d0",
+  "kind": "node.created",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:44:05.514Z",
+  "summary": "Created \"Changing nature of jobs\" under \"Composition examples\".",
+  "nodeIds": [
+    "page-changing-nature-of-jobs",
+    "page-composition-examples"
+  ],
+  "metadata": {
+    "clientMutationId": "a268e62e-42bb-4a40-bbd3-cb4ffe90dba3"
+  }
+}

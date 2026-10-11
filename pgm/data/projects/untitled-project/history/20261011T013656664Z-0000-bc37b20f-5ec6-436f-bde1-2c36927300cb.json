@@ -1,0 +1,16 @@
+{
+  "id": "bc37b20f-5ec6-436f-bde1-2c36927300cb",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:36:56.664Z",
+  "summary": "Added 1 images to \"Driving shifts\".",
+  "nodeIds": [
+    "page-driving-shifts"
+  ],
+  "metadata": {
+    "imageCount": "1",
+    "clientMutationId": "80a29c89-80aa-416e-bc6d-cd6f0175f06e"
+  }
+}

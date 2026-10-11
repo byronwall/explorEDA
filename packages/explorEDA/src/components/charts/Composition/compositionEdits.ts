@@ -26,6 +26,49 @@ import {
   type ValueScale,
 } from "./compositionTypes";
 
+/**
+ * Sizes the artboard to what is drawn: source notes move under the lowest
+ * other element, stacked in their order, and the artboard ends a margin
+ * below them. The width stays.
+ */
+export function fitArtboard(
+  definition: CompositionDefinition,
+  drawn: { id: string; bounds: { y: number; height: number } }[],
+  margin = 24
+): CompositionDefinition {
+  const isNote = (id: string) =>
+    definition.elements.some(
+      (element) =>
+        element.id === id && element.kind === "text" && element.role === "note"
+    );
+  const content = drawn.filter((element) => !isNote(element.id));
+  if (!content.length) return definition;
+  let bottom = Math.max(
+    ...content.map((element) => element.bounds.y + element.bounds.height)
+  );
+  const notes = drawn
+    .filter((element) => isNote(element.id))
+    .sort((a, b) => a.bounds.y - b.bounds.y);
+  const moved = new Map<string, number>();
+  for (const note of notes) {
+    const y = Math.round(bottom + margin);
+    moved.set(note.id, y);
+    bottom = y + note.bounds.height;
+  }
+  return {
+    ...definition,
+    artboard: {
+      ...definition.artboard,
+      height: Math.max(120, Math.round(bottom + margin)),
+    },
+    elements: definition.elements.map((element) =>
+      moved.has(element.id)
+        ? { ...element, y: moved.get(element.id)! }
+        : element
+    ),
+  };
+}
+
 export function updateElement<T extends CompositionElement>(
   definition: CompositionDefinition,
   id: string,

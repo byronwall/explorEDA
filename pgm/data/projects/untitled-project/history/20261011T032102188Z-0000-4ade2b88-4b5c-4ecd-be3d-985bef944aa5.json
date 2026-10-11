@@ -1,0 +1,14 @@
+{
+  "id": "4ade2b88-4b5c-4ecd-be3d-985bef944aa5",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:0535cb",
+    "label": "Agent token ...0535cb"
+  },
+  "createdAt": "2026-10-11T03:21:02.188Z",
+  "summary": "Updated metadata for \"Composition examples\".",
+  "nodeIds": [
+    "page-composition-examples"
+  ]
+}

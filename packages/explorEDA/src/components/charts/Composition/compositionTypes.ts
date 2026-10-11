@@ -85,7 +85,25 @@ export interface LegendElement extends ElementBase {
   color: string;
   /** A row wraps to the next line past this width; the artboard's edge unless set. */
   width?: number;
+  /**
+   * A key of chosen marks instead of categories or a ramp: each entry draws
+   * a mark's glyph, such as a band's fill or a muted path, beside its label.
+   */
+  items?: LegendItem[];
 }
+
+/** One entry of a key legend: a mark's glyph and what it stands for. */
+export interface LegendItem {
+  markId: string;
+  label: string;
+  /**
+   * The part of the mark to show: its own color, its muted series, a
+   * summary's quartile band or median, or a strip's missing cell.
+   */
+  part?: LegendPart;
+}
+
+export type LegendPart = "main" | "muted" | "band" | "median" | "missing";
 
 export type CompositionElementKind = CompositionElement["kind"];
 
@@ -147,6 +165,11 @@ export interface ValueScale {
    * end, each by their share of the largest absolute value.
    */
   center?: string;
+  /**
+   * A fixed end for the ramp, in the value's units: magnitudes past it take
+   * the end color, so one extreme value does not wash out the rest.
+   */
+  max?: number;
 }
 
 /**
@@ -207,6 +230,10 @@ export interface StripMark {
    * "not reported" and "no record" read differently.
    */
   missing?: string;
+  /** Write each cell's value inside it, in ink that reads on its color, as in a heat table. */
+  valueLabels?: boolean;
+  /** Text for a missing cell when values are written, such as NA. */
+  missingLabel?: string;
 }
 
 /**
@@ -249,6 +276,9 @@ export interface PointMark {
   colorField?: string;
   /** One color per category of `colorField`, cycling when there are more. */
   colors?: string[];
+  /** Fill each point by this numeric field's value, through `valueScaleId`. */
+  valueField?: string;
+  valueScaleId?: string;
   /**
    * Plot each row's rank among the rows at the same x, by the y field,
    * instead of its value: largest first or smallest first. Rank 1 sits at
@@ -304,6 +334,12 @@ export interface PathMark {
   colorField?: string;
   /** One color per category of `colorField`, cycling when there are more. */
   colors?: string[];
+  /**
+   * Stroke each path by a numeric field's value on its first row, through a
+   * value scale, such as a job's share of women from mostly men to mostly women.
+   */
+  valueField?: string;
+  valueScaleId?: string;
   /** Join the points with a smooth curve rather than straight runs. */
   curve?: MarkCurve;
   /** Plot ranks at each x by the y field instead of values, as a bump chart. */
@@ -408,6 +444,14 @@ export interface SummaryMark {
   /** The quartile band's fill. */
   fill: string;
   opacity: number;
+  /** Which parts draw: the quartile band, the line joining the medians, the median dots. All unless set. */
+  parts?: SummaryParts;
+}
+
+export interface SummaryParts {
+  band: boolean;
+  line: boolean;
+  points: boolean;
 }
 
 /**
@@ -425,12 +469,20 @@ export interface StackMark {
   measureField?: string;
   /** Every column spans the frame as 100%; otherwise heights follow each repeat's total against the largest. */
   normalize: boolean;
-  /** Category order from the bottom: by label, or largest total first across the whole graphic. */
-  order: "label" | "total";
+  /** Category order from the bottom: by label, largest total first, or as they first appear in the rows. */
+  order: "label" | "total" | "first";
   /** One color per category in that order, cycling when there are more categories. */
   colors: string[];
-  /** Label segments at least this tall, in artboard pixels, with the category and share. */
+  /** Label segments at least this tall (or wide, across), in artboard pixels. */
   labelMinHeight: number;
+  /** What a segment's label says: its category and share, or the share alone. */
+  labelContent?: "both" | "share";
+  /** Stack upward in a column, or left to right across a bar. */
+  direction?: "up" | "across";
+  /** Join each category's edge from one repeat to the next with a thin line. */
+  connect?: boolean;
+  /** A hand-colored look: uneven edges and grain, as in a painted chart. */
+  texture?: "hand";
   /** Space between segments. */
   inset: number;
   /**
@@ -506,6 +558,12 @@ export interface WaffleMark {
   order: "label" | "total";
   /** One color per category in that order, cycling when there are more. */
   colors: string[];
+  /**
+   * A numeric scale that bins the rows by their whole value along x, with
+   * one small waffle per bin standing on the baseline: a unit histogram,
+   * such as countries counted by yield gap.
+   */
+  xScaleId?: string;
 }
 
 /**
@@ -555,6 +613,12 @@ export interface DensityMark {
   fill: string;
   opacity: number;
   stroke?: string;
+  /**
+   * A value scale that shades the fill along x by the field's value, such
+   * as cold to warm: low to high across the x scale, or around zero when the
+   * scale diverges. The plain fill when unset.
+   */
+  colorScaleId?: string;
 }
 
 export type MarkDefinition =
@@ -598,11 +662,21 @@ export function markScaleIds(mark: MarkDefinition): string[] {
       ? [mark.yScaleId, mark.valueScaleId]
       : [mark.yScaleId];
   if (mark.type === "stack") return mark.xScaleId ? [mark.xScaleId] : [];
-  if (mark.type === "density" || mark.type === "horizon")
-    return [mark.xScaleId];
-  if (mark.type === "waffle" || mark.type === "bar") return [];
+  if (mark.type === "density")
+    return mark.colorScaleId
+      ? [mark.xScaleId, mark.colorScaleId]
+      : [mark.xScaleId];
+  if (mark.type === "horizon") return [mark.xScaleId];
+  if (mark.type === "waffle") return mark.xScaleId ? [mark.xScaleId] : [];
+  if (mark.type === "bar") return [];
   if (mark.type === "band") return [mark.xScaleId, mark.yScaleId];
-  return mark.yScaleId ? [mark.xScaleId, mark.yScaleId] : [mark.xScaleId];
+  const shade =
+    (mark.type === "point" || mark.type === "path") && mark.valueScaleId
+      ? [mark.valueScaleId]
+      : [];
+  return mark.yScaleId
+    ? [mark.xScaleId, mark.yScaleId, ...shade]
+    : [mark.xScaleId, ...shade];
 }
 
 /**
@@ -650,9 +724,10 @@ export function markFields(mark: MarkDefinition): string[] {
         mark.colorField,
         mark.seriesField,
         mark.sizeField,
+        mark.valueField,
       ].filter((field): field is string => Boolean(field));
     case "path":
-      return [mark.orderField, mark.colorField].filter(
+      return [mark.orderField, mark.colorField, mark.valueField].filter(
         (field): field is string => Boolean(field)
       );
     case "band":
@@ -748,6 +823,8 @@ export interface InsetFrame {
   axis: boolean;
   /** Paper behind the inset, so it reads over the main frame's marks. */
   background?: string;
+  /** Draw a thin border around the inset; on unless set to false. */
+  outline?: boolean;
 }
 
 /** A chart template: a frame, its marks, and the rule that repeats it. */
@@ -765,11 +842,29 @@ export interface UnitElement extends ElementBase {
     fontSize: number;
     /** A calculation shown beside each repeat's name. */
     valueCalcId?: string;
+    /** Name every nth repeat in order, such as every fifth year; every one unless set. */
+    every?: number;
+    /**
+     * Writes the calculation's magnitude with a sign's own text and color,
+     * such as +14R in red and +6D in blue for a difference between parties.
+     */
+    valueSigns?: { positive: ValueSign; negative: ValueSign };
+    /** Shows the calculation in a column after the frame, tinted, under a header. */
+    valueColumn?: { width: number; header?: string; fill?: string };
   };
   /** Draw position labels under the units. */
   axis: boolean;
+  /** Titles naming what each numeric axis measures, under x and beside y. */
+  axisTitles?: { x?: string; y?: string };
   marks: MarkDefinition[];
   repeat: RepeatRule;
+}
+
+/** How a signed calculation reads on one side of zero. */
+export interface ValueSign {
+  prefix: string;
+  suffix: string;
+  color: string;
 }
 
 export type CalcAggregation =
@@ -823,6 +918,23 @@ export interface GuideElement extends ElementBase {
   axis?: "x" | "y";
   /** Tint the frame on one side of the rule, such as a projection period. */
   shade?: "none" | "after" | "before";
+  /** Comma-separated repeat values the rule draws in; every repeat unless set. */
+  repeats?: string;
+}
+
+/** The repeats a guide draws in: those its `repeats` list names, or all. */
+export function guideRepeats<T extends { key: string }>(
+  guide: Pick<GuideElement, "repeats">,
+  instances: T[]
+): T[] {
+  const wanted = (guide.repeats ?? "")
+    .split(",")
+    .map((value) => value.trim().toLowerCase())
+    .filter(Boolean);
+  if (!wanted.length) return instances;
+  return instances.filter((instance) =>
+    wanted.includes(instance.key.trim().toLowerCase())
+  );
 }
 
 /** Where an annotation attaches. */

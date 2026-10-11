@@ -293,6 +293,43 @@
 .eda-axis-edit[data-dragging] .eda-axis-grip {
   opacity: 0.55;
 }
+/* A marker inside the plot at an axis end that hides marks past a bound. */
+.eda-axis-hidden {
+  cursor: pointer;
+  outline: none;
+}
+.eda-axis-hidden rect {
+  fill: var(--card);
+  stroke: var(--border);
+  transition: stroke 120ms ease;
+}
+.eda-axis-hidden path {
+  fill: none;
+  stroke: var(--muted-foreground);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.eda-axis-hidden:hover rect,
+.eda-axis-hidden[data-open] rect {
+  stroke: var(--primary);
+}
+.eda-axis-hidden:hover path,
+.eda-axis-hidden[data-open] path {
+  stroke: var(--primary);
+}
+/* A log axis warns about rows at or below zero. */
+.eda-axis-hidden[data-hidden-reason="nonpositive"] path {
+  stroke: var(--warning);
+  stroke-width: 1.75;
+}
+.eda-axis-hidden[data-hidden-reason="nonpositive"] rect {
+  stroke: color-mix(in oklab, var(--warning) 55%, var(--border));
+}
+.eda-axis-hidden:focus-visible rect {
+  stroke: var(--ring);
+  stroke-width: 2;
+}
 .chart-guide[data-inplace-editing] text {
   opacity: 0;
 }
@@ -6523,7 +6560,8 @@ td[data-null] {
   color: var(--foreground);
 }
 .eda-segmented-item[aria-selected="true"],
-.eda-segmented-item[aria-checked="true"] {
+.eda-segmented-item[aria-checked="true"],
+.eda-segmented-item[aria-pressed="true"] {
   background: var(--background);
   color: var(--foreground);
   box-shadow:
@@ -7113,6 +7151,7 @@ td[data-null] {
 /* Composition: an artboard of report graphics. Editing shows the paper on a
    muted canvas with selectable element boxes; viewing shows the paper only. */
 .eda-composition {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -7459,4 +7498,92 @@ td[data-null] {
 }
 .eda-composition-copy-status[data-state="failed"] {
   color: var(--destructive);
+}
+
+/* Colors defined inside compositions, listed under the workspace scales. */
+.eda-composition-scales {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+.eda-composition-scales h3 {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.eda-composition-swatch {
+  display: flex;
+  height: 10px;
+  overflow: hidden;
+  border-radius: 3px;
+}
+.eda-composition-swatch > span {
+  flex: 1 1 0;
+}
+.eda-composition-scale-colors {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+.eda-composition-color-row {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8125rem;
+}
+.eda-composition-color-row input[type="color"] {
+  width: 28px;
+  height: 22px;
+  padding: 0;
+  border: 1px solid var(--input);
+  border-radius: 4px;
+  background: none;
+}
+
+/* Zoom buttons over a composition's corner: on hover, focus, or while zoomed. */
+.eda-composition-zoom {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--background);
+  opacity: 0;
+  transition: opacity 120ms ease-out;
+}
+.eda-composition:hover .eda-composition-zoom,
+.eda-composition-zoom:focus-within,
+.eda-composition-zoom[data-zoomed] {
+  opacity: 1;
+}
+.eda-composition-artboard[data-zoomed] {
+  cursor: grab;
+}
+.eda-composition-artboard[data-zoomed]:active {
+  cursor: grabbing;
+}
+.eda-composition[data-mode="edit"] .eda-composition-artboard[data-zoomed] {
+  cursor: default;
+}
+
+/* A sign's prefix, a sample value, its suffix, and its color in one row. */
+.eda-composition-sign {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.eda-composition-sign input[type="color"] {
+  width: 28px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid var(--input);
+  border-radius: 4px;
+  background: none;
 }

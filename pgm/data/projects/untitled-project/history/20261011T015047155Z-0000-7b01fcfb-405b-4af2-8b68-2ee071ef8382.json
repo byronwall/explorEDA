@@ -1,0 +1,16 @@
+{
+  "id": "7b01fcfb-405b-4af2-8b68-2ee071ef8382",
+  "kind": "node.moved",
+  "actor": {
+    "kind": "human"
+  },
+  "createdAt": "2026-10-11T01:50:47.155Z",
+  "summary": "Moved \"Changing nature of jobs\" under \"Examples to add\".",
+  "nodeIds": [
+    "page-changing-nature-of-jobs",
+    "page-examples-to-add"
+  ],
+  "metadata": {
+    "clientMutationId": "b4633ab3-9ec7-4e98-b612-9941ba24104b"
+  }
+}

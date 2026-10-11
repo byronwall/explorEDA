@@ -48,6 +48,8 @@ function isMark(value: unknown) {
     return false;
   if (value.type === "point")
     return (
+      (value.valueField === undefined || isString(value.valueField)) &&
+      (value.valueScaleId === undefined || isString(value.valueScaleId)) &&
       (value.frameId === undefined || isString(value.frameId)) &&
       isString(value.xScaleId) &&
       (value.yScaleId === undefined || isString(value.yScaleId)) &&
@@ -123,7 +125,8 @@ function isMark(value: unknown) {
       oneOf(value.order, ["label", "total"]) &&
       Array.isArray(value.colors) &&
       value.colors.length > 0 &&
-      value.colors.every(isString)
+      value.colors.every(isString) &&
+      (value.xScaleId === undefined || isString(value.xScaleId))
     );
   if (value.type === "horizon")
     return (
@@ -149,7 +152,8 @@ function isMark(value: unknown) {
       isNumber(value.opacity) &&
       value.opacity > 0 &&
       value.opacity <= 1 &&
-      (value.stroke === undefined || isString(value.stroke))
+      (value.stroke === undefined || isString(value.stroke)) &&
+      (value.colorScaleId === undefined || isString(value.colorScaleId))
     );
   if (value.type === "stack")
     return (
@@ -157,12 +161,18 @@ function isMark(value: unknown) {
       oneOf(value.aggregation, ["count", "sum"]) &&
       (value.aggregation === "count" || isString(value.measureField)) &&
       typeof value.normalize === "boolean" &&
-      oneOf(value.order, ["label", "total"]) &&
+      oneOf(value.order, ["label", "total", "first"]) &&
       Array.isArray(value.colors) &&
       value.colors.length > 0 &&
       value.colors.every(isString) &&
       isNumber(value.labelMinHeight) &&
       isNumber(value.inset) &&
+      (value.labelContent === undefined ||
+        oneOf(value.labelContent, ["both", "share"])) &&
+      (value.direction === undefined ||
+        oneOf(value.direction, ["up", "across"])) &&
+      (value.connect === undefined || typeof value.connect === "boolean") &&
+      (value.texture === undefined || oneOf(value.texture, ["hand"])) &&
       (value.xScaleId === undefined || isString(value.xScaleId)) &&
       (value.baseline === undefined ||
         oneOf(value.baseline, ["zero", "center", "wiggle"])) &&
@@ -177,7 +187,12 @@ function isMark(value: unknown) {
       isString(value.fill) &&
       isNumber(value.opacity) &&
       value.opacity > 0 &&
-      value.opacity <= 1
+      value.opacity <= 1 &&
+      (value.parts === undefined ||
+        (isRecord(value.parts) &&
+          typeof value.parts.band === "boolean" &&
+          typeof value.parts.line === "boolean" &&
+          typeof value.parts.points === "boolean"))
     );
   if (value.type === "band")
     return (
@@ -194,6 +209,8 @@ function isMark(value: unknown) {
     );
   if (value.type === "path")
     return (
+      (value.valueField === undefined || isString(value.valueField)) &&
+      (value.valueScaleId === undefined || isString(value.valueScaleId)) &&
       (value.frameId === undefined || isString(value.frameId)) &&
       isString(value.xScaleId) &&
       (value.yScaleId === undefined || isString(value.yScaleId)) &&
@@ -227,7 +244,10 @@ function isMark(value: unknown) {
     oneOf(value.encoding, ["color", "size", "height"]) &&
     isString(value.fill) &&
     isNumber(value.inset) &&
-    (value.missing === undefined || isString(value.missing))
+    (value.missing === undefined || isString(value.missing)) &&
+    (value.valueLabels === undefined ||
+      typeof value.valueLabels === "boolean") &&
+    (value.missingLabel === undefined || isString(value.missingLabel))
   );
 }
 
@@ -254,7 +274,17 @@ function isInset(value: unknown) {
     value.height > 0 &&
     isWindow(value.window) &&
     typeof value.axis === "boolean" &&
-    (value.background === undefined || isString(value.background))
+    (value.background === undefined || isString(value.background)) &&
+    (value.outline === undefined || typeof value.outline === "boolean")
+  );
+}
+
+function isValueSign(value: unknown) {
+  return (
+    isRecord(value) &&
+    isString(value.prefix) &&
+    isString(value.suffix) &&
+    isString(value.color)
   );
 }
 
@@ -282,7 +312,25 @@ function isUnitElement(value: Value) {
     isNumber(label.width) &&
     isNumber(label.fontSize) &&
     (label.valueCalcId === undefined || isString(label.valueCalcId)) &&
+    (label.every === undefined ||
+      (isNumber(label.every) && label.every >= 1)) &&
+    (label.valueSigns === undefined ||
+      (isRecord(label.valueSigns) &&
+        isValueSign(label.valueSigns.positive) &&
+        isValueSign(label.valueSigns.negative))) &&
+    (label.valueColumn === undefined ||
+      (isRecord(label.valueColumn) &&
+        isNumber(label.valueColumn.width) &&
+        label.valueColumn.width > 0 &&
+        (label.valueColumn.header === undefined ||
+          isString(label.valueColumn.header)) &&
+        (label.valueColumn.fill === undefined ||
+          isString(label.valueColumn.fill)))) &&
     typeof value.axis === "boolean" &&
+    (value.axisTitles === undefined ||
+      (isRecord(value.axisTitles) &&
+        (value.axisTitles.x === undefined || isString(value.axisTitles.x)) &&
+        (value.axisTitles.y === undefined || isString(value.axisTitles.y)))) &&
     Array.isArray(marks) &&
     marks.every(isMark) &&
     isRecord(repeat) &&
@@ -337,7 +385,8 @@ function isScale(value: unknown) {
         value.stops.every(
           (stop: unknown) => isNumber(stop) && stop >= 0 && stop <= 1
         ))) &&
-    (value.center === undefined || isString(value.center))
+    (value.center === undefined || isString(value.center)) &&
+    (value.max === undefined || (isNumber(value.max) && value.max > 0))
   );
 }
 
@@ -389,6 +438,7 @@ function isGuideElement(value: Value) {
     (value.axis === undefined || oneOf(value.axis, ["x", "y"])) &&
     (value.shade === undefined ||
       oneOf(value.shade, ["none", "after", "before"])) &&
+    (value.repeats === undefined || isString(value.repeats)) &&
     isRecord(guide) &&
     ((guide.kind === "constant" && isString(guide.value)) ||
       (guide.kind === "calc" && isString(guide.calcId)))
@@ -452,7 +502,23 @@ function isElement(value: unknown) {
         value.fontSize > 0 &&
         isString(value.color) &&
         (value.width === undefined ||
-          (isNumber(value.width) && value.width > 0))
+          (isNumber(value.width) && value.width > 0)) &&
+        (value.items === undefined ||
+          (Array.isArray(value.items) &&
+            value.items.every(
+              (item) =>
+                isRecord(item) &&
+                isString(item.markId) &&
+                isString(item.label) &&
+                (item.part === undefined ||
+                  oneOf(item.part, [
+                    "main",
+                    "muted",
+                    "band",
+                    "median",
+                    "missing",
+                  ]))
+            )))
       );
     default:
       return false;
