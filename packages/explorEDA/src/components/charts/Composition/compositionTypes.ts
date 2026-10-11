@@ -802,6 +802,13 @@ export interface UnitElement extends ElementBase {
     valueCalcId?: string;
     /** Name every nth repeat in order, such as every fifth year; every one unless set. */
     every?: number;
+    /**
+     * Writes the calculation's magnitude with a sign's own text and color,
+     * such as +14R in red and +6D in blue for a difference between parties.
+     */
+    valueSigns?: { positive: ValueSign; negative: ValueSign };
+    /** Shows the calculation in a column after the frame, tinted, under a header. */
+    valueColumn?: { width: number; header?: string; fill?: string };
   };
   /** Draw position labels under the units. */
   axis: boolean;
@@ -809,6 +816,13 @@ export interface UnitElement extends ElementBase {
   axisTitles?: { x?: string; y?: string };
   marks: MarkDefinition[];
   repeat: RepeatRule;
+}
+
+/** How a signed calculation reads on one side of zero. */
+export interface ValueSign {
+  prefix: string;
+  suffix: string;
+  color: string;
 }
 
 export type CalcAggregation =

@@ -2,8 +2,10 @@
 id: page-i-don-t-really-understand-this-one
 label: I don't really understand this one
 type: page
-status: planned
+status: implemented
 parent: page-tech-sparklines
+metadata:
+  implementation: Each panel now uses its own dollar scale so every shape shows; low and high are labeled with their prices, the label gives the first-to-last change, and the subtitle says how to read it.
 images:
   - id: 11a59410-10a0-4c1c-8037-d1c21099f53f
     src: /api/projects/untitled-project/images/page-i-don-t-really-understand-this-one/11a59410-10a0-4c1c-8037-d1c21099f53f.png

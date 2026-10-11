@@ -1,0 +1,14 @@
+{
+  "id": "d0654aae-67c6-43fb-bd26-2b8637976f34",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:410c95",
+    "label": "Agent token ...410c95"
+  },
+  "createdAt": "2026-10-11T02:50:56.139Z",
+  "summary": "Updated metadata for \"Pew Meaning\".",
+  "nodeIds": [
+    "page-pew-meaning"
+  ]
+}

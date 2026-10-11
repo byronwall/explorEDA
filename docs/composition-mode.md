@@ -31,6 +31,7 @@ A unit is a frame plus its marks. Its repeat rule splits rows by a field and dra
 - **Tiles:** a prepared field gives each repeat's cell as `row,column`. Repeats without a cell queue below the grid.
 - **Weights:** a per-repeat calculation sizes row heights or column widths in proportion to its value while the unit keeps its total extent.
 - **Names:** a unit can name every nth repeat, such as every fifth year down a dense ridgeline.
+- **Values beside names:** a calculation can show beside each name or in a tinted column after the frame under a header, and a signed value can read by sign, such as +14R in red and +6D in blue.
 - **Skip and limit:** listed values can be left out, for example a national series drawn as a comparison instead of a repeat.
 - **Insets:** a unit can hold smaller frames placed from its main frame's corner. Marks name the frame they draw in.
 - **Display windows:** a frame can show only rows between two bounds on a field. A window is not a filter: calculations, labels, and sibling frames still see every row.

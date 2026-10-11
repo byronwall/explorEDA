@@ -6,6 +6,7 @@ import {
   findOverride,
   isFocused,
   MUTED_INK,
+  PAPER,
   MUTED_MARK,
   INK,
   type CompositionDefinition,
@@ -41,7 +42,7 @@ import type {
   SceneNode,
   TextNode,
 } from "./resolveComposition";
-import { evaluateCalc, type CalcResult } from "./calculations";
+import { evaluateCalc, formatCalcValue, type CalcResult } from "./calculations";
 import { dodgePositions } from "./labelDodge";
 import { swarmOffsets } from "./swarm";
 import { MISSING, orderedRows } from "./ordering";
@@ -825,23 +826,59 @@ export function resolveUnit(
     // Rows too dense to name each can name every nth.
     const named =
       unit.label.show && index % Math.max(1, unit.label.every ?? 1) === 0;
+    const valueColumn = labelLeft ? unit.label.valueColumn : undefined;
+    if (valueColumn) {
+      // A tint behind the column runs through the gaps, so the rows join.
+      const half = Math.max(0, unit.repeat.gap) / 2;
+      const header = index === 0 && valueColumn.header ? labelSize * 2 : 0;
+      if (valueColumn.fill)
+        nodes.push({
+          type: "rect",
+          key: `${unit.id}:${subset.key}:value-column`,
+          elementId: unit.id,
+          instanceKey: subset.key,
+          x: frame.x + frame.width + 12,
+          y: frame.y - half - header,
+          width: valueColumn.width,
+          // One pixel more, so neighboring rows leave no seam.
+          height: frame.height + half * 2 + header + 1,
+          fill: valueColumn.fill,
+        });
+      if (index === 0 && valueColumn.header)
+        nodes.push({
+          type: "text",
+          key: `${unit.id}:value-header`,
+          elementId: unit.id,
+          x: frame.x + frame.width + 12 + valueColumn.width / 2,
+          lines: [
+            { text: valueColumn.header, y: frame.y - half - labelSize * 0.6 },
+          ],
+          fontSize: labelSize,
+          fontWeight: 700,
+          fill: INK,
+          anchor: "middle",
+        });
+    }
     if (named && labelValue && labelLeft) {
+      const signed = signedLabel(labelValue, unit.label.valueSigns);
       nodes.push({
         type: "text",
         key: `${unit.id}:${subset.key}:value`,
         elementId: unit.id,
         instanceKey: subset.key,
-        x: x + labelWidth - 10,
+        x: valueColumn
+          ? frame.x + frame.width + 12 + valueColumn.width / 2
+          : x + labelWidth - 10,
         lines: [
           {
-            text: labelValue.text,
+            text: signed.text,
             y: labelRowY(frame),
           },
         ],
         fontSize: labelSize,
-        fontWeight: 400,
-        fill: MUTED_INK,
-        anchor: "end",
+        fontWeight: signed.color ? 700 : 400,
+        fill: signed.color ?? MUTED_INK,
+        anchor: valueColumn ? "middle" : "end",
       });
     }
     if (named && subset.label) {
@@ -1333,6 +1370,25 @@ export function resolveUnit(
         ]
       : nodes;
   return { nodes: ordered, bounds: unionBounds(instances, unit), instances };
+}
+
+/** A calculation as its sign reads: the magnitude in that sign's text and color. */
+function signedLabel(
+  value: CalcResult,
+  signs: UnitElement["label"]["valueSigns"]
+): { text: string; color?: string } {
+  if (!signs || value.value === undefined || value.kind === "date")
+    return { text: value.text };
+  if (value.value === 0) return { text: "0" };
+  const sign = value.value > 0 ? signs.positive : signs.negative;
+  const magnitude = formatCalcValue(
+    Math.abs(value.value),
+    value.kind === "signed" ? "number" : value.kind
+  );
+  return {
+    text: `${sign.prefix}${magnitude}${sign.suffix}`,
+    color: sign.color,
+  };
 }
 
 /**
@@ -3489,6 +3545,8 @@ function pointNodes(
           fontWeight: 400,
           fill: MUTED_INK,
           anchor: "start",
+          // A paper outline keeps the label legible where it crosses a path.
+          halo: PAPER,
         });
     }
     drawn += 1;

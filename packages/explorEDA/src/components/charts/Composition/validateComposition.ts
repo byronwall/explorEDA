@@ -264,6 +264,15 @@ function isInset(value: unknown) {
   );
 }
 
+function isValueSign(value: unknown) {
+  return (
+    isRecord(value) &&
+    isString(value.prefix) &&
+    isString(value.suffix) &&
+    isString(value.color)
+  );
+}
+
 function isUnitElement(value: Value) {
   const { frame, label, repeat, marks } = value;
   const insets = value.insets;
@@ -290,6 +299,18 @@ function isUnitElement(value: Value) {
     (label.valueCalcId === undefined || isString(label.valueCalcId)) &&
     (label.every === undefined ||
       (isNumber(label.every) && label.every >= 1)) &&
+    (label.valueSigns === undefined ||
+      (isRecord(label.valueSigns) &&
+        isValueSign(label.valueSigns.positive) &&
+        isValueSign(label.valueSigns.negative))) &&
+    (label.valueColumn === undefined ||
+      (isRecord(label.valueColumn) &&
+        isNumber(label.valueColumn.width) &&
+        label.valueColumn.width > 0 &&
+        (label.valueColumn.header === undefined ||
+          isString(label.valueColumn.header)) &&
+        (label.valueColumn.fill === undefined ||
+          isString(label.valueColumn.fill)))) &&
     typeof value.axis === "boolean" &&
     (value.axisTitles === undefined ||
       (isRecord(value.axisTitles) &&

@@ -22,7 +22,7 @@ import {
   Waves,
   type LucideIcon,
 } from "lucide-react";
-import { useEffect, useId, useRef, useState } from "react";
+import { Fragment, useEffect, useId, useRef, useState } from "react";
 import {
   createInset,
   MUTED_MARK,
@@ -49,6 +49,7 @@ import {
   type StripMark,
   type SummaryMark,
   type SummaryParts,
+  type ValueSign,
   type UnitElement,
   isXyMark,
 } from "./compositionTypes";
@@ -544,6 +545,14 @@ export function UnitProperties({
               </select>
             </>
           )}
+          {unit.label.show &&
+            unit.label.valueCalcId &&
+            unit.repeat.arrangement === "rows" && (
+              <LabelValueFields
+                unit={unit}
+                onChange={(label) => onChange({ label })}
+              />
+            )}
           {unit.label.show && (
             <NumberSetting
               label="Name every"
@@ -622,6 +631,152 @@ export function UnitProperties({
         onEditScale={onEditScale}
         revealedMark={revealedMark}
       />
+    </>
+  );
+}
+
+const NO_SIGNS = {
+  positive: { prefix: "+", suffix: "", color: "#1f2328" },
+  negative: { prefix: "−", suffix: "", color: "#1f2328" },
+};
+
+/**
+ * Where a row's calculated value shows and how its sign reads: beside the
+ * name or in a tinted column after the frame, with each sign's own text
+ * and color, such as +14R in red and +6D in blue.
+ */
+function LabelValueFields({
+  unit,
+  onChange,
+}: {
+  unit: UnitElement;
+  onChange: (label: UnitElement["label"]) => void;
+}) {
+  const id = useId();
+  const label = unit.label;
+  const column = label.valueColumn;
+  const signs = label.valueSigns;
+  const setSign = (
+    side: "positive" | "negative",
+    patch: Partial<ValueSign>
+  ) => {
+    const current = signs ?? NO_SIGNS;
+    onChange({
+      ...label,
+      valueSigns: { ...current, [side]: { ...current[side], ...patch } },
+    });
+  };
+  return (
+    <>
+      <span className="eda-setting-label">Value at</span>
+      <Segmented
+        label="Label value place"
+        value={column ? "column" : "name"}
+        options={[
+          {
+            value: "name" as const,
+            label: "Name",
+            tooltip: "Right-aligned in the label column, beside each name",
+          },
+          {
+            value: "column" as const,
+            label: "Column",
+            tooltip: "In its own tinted column after the frame, under a header",
+          },
+        ]}
+        onChange={(place) =>
+          onChange({
+            ...label,
+            valueColumn:
+              place === "column"
+                ? { width: 64, header: "", fill: "#f1efe9" }
+                : undefined,
+          })
+        }
+      />
+      {column && (
+        <>
+          <Label htmlFor={`${id}-header`}>Header</Label>
+          <Input
+            id={`${id}-header`}
+            placeholder="Such as Diff"
+            value={column.header ?? ""}
+            onChange={(event) =>
+              onChange({
+                ...label,
+                valueColumn: {
+                  ...column,
+                  header: event.target.value || undefined,
+                },
+              })
+            }
+          />
+          <ColorSetting
+            label="Tint"
+            value={column.fill ?? "#ffffff"}
+            onChange={(fill) =>
+              onChange({ ...label, valueColumn: { ...column, fill } })
+            }
+          />
+        </>
+      )}
+      <span className="eda-setting-label">Signs</span>
+      <Segmented
+        label="Signed value text"
+        value={Boolean(signs)}
+        options={[
+          {
+            value: false as const,
+            label: "Plain",
+            tooltip: "Show the value as calculated",
+          },
+          {
+            value: true as const,
+            label: "By sign",
+            tooltip:
+              "Write the size of the value with each sign's own text and color, such as +14R and +6D",
+          },
+        ]}
+        onChange={(bySign) =>
+          onChange({ ...label, valueSigns: bySign ? NO_SIGNS : undefined })
+        }
+      />
+      {signs &&
+        (["positive", "negative"] as const).map((side) => (
+          <Fragment key={side}>
+            <Label htmlFor={`${id}-${side}`}>
+              {side === "positive" ? "Above zero" : "Below zero"}
+            </Label>
+            <div className="eda-composition-sign">
+              <Input
+                id={`${id}-${side}`}
+                aria-label={`${side === "positive" ? "Above zero" : "Below zero"} prefix`}
+                className="w-12"
+                value={signs[side].prefix}
+                onChange={(event) =>
+                  setSign(side, { prefix: event.target.value })
+                }
+              />
+              <span className="text-muted-foreground">14</span>
+              <Input
+                aria-label={`${side === "positive" ? "Above zero" : "Below zero"} suffix`}
+                className="w-12"
+                value={signs[side].suffix}
+                onChange={(event) =>
+                  setSign(side, { suffix: event.target.value })
+                }
+              />
+              <input
+                type="color"
+                aria-label={`${side === "positive" ? "Above zero" : "Below zero"} color`}
+                value={signs[side].color}
+                onChange={(event) =>
+                  setSign(side, { color: event.target.value })
+                }
+              />
+            </div>
+          </Fragment>
+        ))}
     </>
   );
 }
