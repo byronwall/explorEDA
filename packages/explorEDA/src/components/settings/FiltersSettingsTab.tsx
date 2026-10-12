@@ -62,6 +62,7 @@ export function chartFilterFields(
         ];
       case "row":
       case "waterfall":
+      case "donut":
         return [{ field: settings.field, valuesOnly: true }];
       case "boxplot":
         return [{ field: settings.colorField ?? "" }];

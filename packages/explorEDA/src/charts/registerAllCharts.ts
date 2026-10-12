@@ -20,6 +20,7 @@ import { scatterPlotDefinition } from "@/components/charts/ScatterPlot/definitio
 import { summaryTableDefinition } from "@/components/charts/SummaryTable/definition";
 import { threeDScatterDefinition } from "@/components/charts/ThreeDScatter/definition";
 import { waterfallDefinition } from "@/components/charts/Waterfall/definition";
+import { donutDefinition } from "@/components/charts/Donut/definition";
 import { chartRegistry } from "./registry";
 
 export function registerAllCharts() {
@@ -45,4 +46,5 @@ export function registerAllCharts() {
   chartRegistry.register(mapDefinition);
   chartRegistry.register(compositionDefinition);
   chartRegistry.register(waterfallDefinition);
+  chartRegistry.register(donutDefinition);
 }

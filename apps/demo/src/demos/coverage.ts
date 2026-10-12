@@ -288,6 +288,16 @@ export const coverageFeatures = [
     chartType: "ecdf",
   },
   {
+    id: "chart:donut",
+    label: "Donut",
+    family: "Chart types",
+    description:
+      "Show each category's share of a small whole, with the smaller categories pooled into Other.",
+    required: true,
+    status: "supported",
+    chartType: "donut",
+  },
+  {
     id: "chart:waterfall",
     label: "Waterfall",
     family: "Chart types",
@@ -1092,6 +1102,18 @@ export const exampleCoverage = [
     features: {
       "chart:waterfall": "shown",
       "chart:row": "shown",
+      "chart:data-table": "shown",
+      "interaction:cross-filter": "shown",
+    },
+  },
+  {
+    exampleId: "channel-share",
+    intent:
+      "Show revenue's share by channel beside 100% bars of the same mix by region, in shared colors, and pool smaller products into Other.",
+    features: {
+      "chart:donut": "shown",
+      "chart:bar": "shown",
+      "mode:stacked-bars": "shown",
       "chart:data-table": "shown",
       "interaction:cross-filter": "shown",
     },

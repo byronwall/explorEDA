@@ -649,6 +649,15 @@ function isChart(value: unknown): boolean {
       );
     case "composition":
       return isCompositionDefinition(value.composition);
+    case "donut":
+      return (
+        (value.aggregation === "count" || value.aggregation === "sum") &&
+        (value.measureField === undefined ||
+          typeof value.measureField === "string") &&
+        (value.aggregation === "count" || Boolean(value.measureField)) &&
+        (value.topN === undefined ||
+          (Number.isInteger(value.topN) && (value.topN as number) > 0))
+      );
     case "waterfall":
       return (
         (value.mode === "bridge" || value.mode === "accumulate") &&

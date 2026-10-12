@@ -8,6 +8,8 @@ export function traceRowIds(trace: ChartTrace): number[] | undefined {
   switch (trace.kind) {
     case "metric-card":
       return trace.plan.contributors.map((item) => item.sourceId);
+    case "donut-slice":
+      return trace.slice.row.contributors.map((item) => item.sourceId);
     case "waterfall-bar":
       return [
         ...(trace.bar.states ?? []),

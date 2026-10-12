@@ -90,7 +90,7 @@ interface PlotChartPanelProps {
   height: number;
 }
 
-const CATEGORY_LABELED_CHART_TYPES = new Set(["row", "boxplot"]);
+const CATEGORY_LABELED_CHART_TYPES = new Set(["row", "boxplot", "donut"]);
 
 const TRACE_COPY = {
   row: {
@@ -115,6 +115,12 @@ const TRACE_COPY = {
     emptyText:
       "Alt-click a point to inspect its period's calculation and source rows.",
     ariaLabel: "Time series trace inspector",
+  },
+  donut: {
+    heading: "Donut trace",
+    emptyText:
+      "Alt-click a slice to see its share of the whole and its source rows.",
+    ariaLabel: "Donut trace inspector",
   },
   waterfall: {
     heading: "Waterfall trace",
@@ -546,8 +552,8 @@ export function PlotChartPanel({
   const fieldStripHeight =
     (settings.type !== "scatter" && calculatedFields.length ? 28 : 0) +
     (localFilters.length ? LOCAL_FILTER_STRIP_HEIGHT : 0);
-  // Row charts and box plots color marks by their own labeled category, so a
-  // legend repeats them.
+  // Row charts, box plots, and donuts color marks by their own labeled
+  // category, so a legend repeats them.
   const autoLegendHeight =
     settings.colorField &&
     settings.colorScaleId &&

@@ -28,6 +28,7 @@ import type { HexTrace } from "../ScatterPlot/hexPlan";
 import type { ContourTrace } from "../ScatterPlot/contourPlan";
 import type { CompositionTrace } from "../Composition/compositionTrace";
 import type { WaterfallTrace } from "../Waterfall/WaterfallTraceBody";
+import type { DonutTrace } from "../Donut/DonutTraceBody";
 
 /** A selected object. The owner's source resolves it against its current plan. */
 export interface TraceSelection {
@@ -127,6 +128,7 @@ export type ChartTrace =
   | EcdfTrace
   | MetricCardTrace
   | WaterfallTrace
+  | DonutTrace
   | TimeSeriesTrace
   | GuideTrace
   | TitleTrace

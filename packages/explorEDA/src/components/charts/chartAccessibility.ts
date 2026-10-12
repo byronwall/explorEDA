@@ -24,6 +24,7 @@ const chartNames: Record<string, string> = {
   "metric-card": "Metric card",
   composition: "Composition",
   waterfall: "Waterfall",
+  donut: "Donut",
 };
 
 export function getChartTitle(
@@ -62,6 +63,13 @@ export function getChartTitle(
     return settings.measureField
       ? `${metric} of ${getFieldLabel(settings.measureField)}${once}`
       : "Metric card";
+  }
+  if (settings.type === "donut") {
+    if (!settings.field) return getChartDefinition(settings.type).name;
+    const field = getFieldLabel(settings.field);
+    return settings.aggregation === "sum" && settings.measureField
+      ? `Share of ${getFieldLabel(settings.measureField)} by ${field}`
+      : `Share of rows by ${field}`;
   }
   if (settings.type === "waterfall") {
     const [start, end] = settings.states;
@@ -205,6 +213,11 @@ export function getChartFields(settings: ChartSettings): string[] {
         return [
           settings.aggregation === "count" ? undefined : settings.measureField,
           settings.entityField,
+        ];
+      case "donut":
+        return [
+          settings.field,
+          settings.aggregation === "sum" ? settings.measureField : undefined,
         ];
       case "waterfall":
         return [

@@ -1,4 +1,5 @@
 import type { SavedDataStructure } from "exploreda";
+import { groupedBarsDashboard } from "./dashboardSettings";
 
 type Chart = SavedDataStructure["charts"][number];
 
@@ -154,5 +155,74 @@ export const batteryDayDashboard: SavedDataStructure = {
   metadata: {
     ...budgetBridgeDashboard.metadata,
     name: "A day in the battery",
+  },
+};
+
+const SHARED_CHANNEL_SCALE = groupedBarsDashboard.colorScales.find(
+  (scale) => scale.id === "grouped-channel"
+)!;
+const ordersByCategory = groupedBarsDashboard.charts.find(
+  (chart) => chart.id === "grouped-count"
+)!;
+
+/** Revenue's share by channel, in the channel colors the bars use. */
+const channelShare: Chart = {
+  ...base,
+  id: "share-channel",
+  type: "donut",
+  title: "Web brings in over half of revenue",
+  subtitle: "Share of revenue by sales channel",
+  field: "Channel",
+  layout: layout(0, 0, 5, 4),
+  aggregation: "sum",
+  measureField: "Revenue",
+  colorField: "Channel",
+  colorScaleId: SHARED_CHANNEL_SCALE.id,
+};
+
+/** The same channel mix within each region, as 100% bars. */
+const regionMix: Chart = {
+  ...ordersByCategory,
+  id: "share-region-mix",
+  title: "Channel mix in each region",
+  field: "Region",
+  layout: layout(5, 0, 7, 4),
+  seriesLayout: "percent",
+  yAxisLabel: "Share of orders (%)",
+} as Chart;
+
+/** Orders by product, with the smaller products pooled into Other. */
+const productShare: Chart = {
+  ...base,
+  id: "share-product",
+  type: "donut",
+  title: "Orders split almost evenly across products",
+  subtitle: "Share of orders by product; the two smallest pool into Other",
+  field: "Product",
+  layout: layout(0, 4, 5, 4),
+  aggregation: "count",
+  topN: 4,
+};
+
+const shareRows: Chart = {
+  ...base,
+  id: "share-orders",
+  type: "data-table",
+  title: "Orders in view",
+  layout: layout(5, 4, 7, 4),
+  columns: ["Order Date", "Region", "Channel", "Product", "Revenue"].map(
+    (field) => ({ id: field, field })
+  ),
+  sortDirection: "asc",
+  globalSearch: "",
+};
+
+export const channelShareDashboard: SavedDataStructure = {
+  ...budgetBridgeDashboard,
+  charts: [channelShare, regionMix, productShare, shareRows],
+  colorScales: [SHARED_CHANNEL_SCALE],
+  metadata: {
+    ...budgetBridgeDashboard.metadata,
+    name: "Shares of the order book",
   },
 };

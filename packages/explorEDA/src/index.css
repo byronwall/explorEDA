@@ -7669,3 +7669,95 @@ td[data-null] {
   stroke: var(--foreground);
   stroke-width: 2;
 }
+
+/* Donut: the ring and its legend, side by side or stacked on narrow charts. */
+.eda-donut {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 12px;
+}
+.eda-donut-side {
+  flex-direction: row;
+  justify-content: center;
+}
+.eda-donut-stacked {
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 8px;
+}
+.eda-donut svg {
+  flex: none;
+}
+/* Under the ring, entries wrap into rows so the ring keeps its size. */
+.eda-donut-stacked .eda-donut-legend {
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  min-height: 0;
+}
+.eda-donut-stacked .eda-donut-legend-item {
+  width: auto;
+}
+.eda-donut-slice {
+  stroke: var(--card);
+  stroke-width: 1;
+  transition: opacity 120ms;
+}
+.eda-donut-slice[data-selected] {
+  stroke: var(--foreground);
+  stroke-width: 1.5;
+}
+.eda-donut-total {
+  fill: var(--foreground);
+  font-weight: 600;
+}
+.eda-donut-measure {
+  fill: var(--muted-foreground);
+  font-size: 11px;
+}
+.eda-donut-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  max-height: 100%;
+  overflow: auto;
+}
+.eda-donut-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  text-align: left;
+}
+.eda-donut-legend-item:hover,
+.eda-donut-legend-item:focus-visible {
+  background: var(--muted);
+}
+.eda-donut-legend-item[data-dimmed] {
+  opacity: 0.45;
+}
+.eda-donut-legend-item[aria-pressed="true"] {
+  font-weight: 600;
+}
+.eda-donut-swatch {
+  width: 10px;
+  height: 10px;
+  flex: none;
+  border-radius: 2px;
+}
+.eda-donut-legend-label {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.eda-donut-legend-share {
+  color: var(--muted-foreground);
+  font-variant-numeric: tabular-nums;
+}

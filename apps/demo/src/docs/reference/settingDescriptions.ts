@@ -209,6 +209,14 @@ export const CHART_SETTINGS: Readonly<
     showOverall:
       "Draws a dashed curve for all rows together when curves are split by color.",
   },
+  donut: {
+    field:
+      "The category field. Each category gets a slice of the filtered whole.",
+    aggregation:
+      "A count of rows, or the sum of a measure with no negative values.",
+    measureField: "Field each slice sums, when the measure is a sum.",
+    topN: "How many of the largest categories get their own slice. The rest pool into Other. Blank shows six.",
+  },
   waterfall: {
     field:
       "The step field: one step per category, in the order the categories first appear in the data.",

@@ -23,6 +23,7 @@ import type { MetricCardSettings } from "@/components/charts/MetricCard/definiti
 import type { ColorLegendSettings } from "@/components/charts/ColorLegend/definition";
 import type { CompositionSettings } from "@/components/charts/Composition/definition";
 import type { WaterfallSettings } from "@/components/charts/Waterfall/waterfallTypes";
+import type { DonutSettings } from "@/components/charts/Donut/definition";
 
 export interface ChartLayout {
   x: number;
@@ -160,7 +161,8 @@ export type ChartSettings =
   | MetricCardSettings
   | ColorLegendSettings
   | CompositionSettings
-  | WaterfallSettings;
+  | WaterfallSettings
+  | DonutSettings;
 
 export type ChartType = ChartSettings["type"];
 export type ScatterChartSettings = ScatterPlotSettings;

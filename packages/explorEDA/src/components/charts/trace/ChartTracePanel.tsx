@@ -23,6 +23,7 @@ import { MarginalTraceBody } from "../ScatterPlot/MarginalTraceBody";
 import { SurfaceTraceBody } from "../ScatterPlot/SurfaceTraceBody";
 import { CompositionTraceBody } from "../Composition/CompositionTraceBody";
 import { WaterfallTraceBody } from "../Waterfall/WaterfallTraceBody";
+import { DonutTraceBody } from "../Donut/DonutTraceBody";
 import { useChartTrace, useChartTraceApi } from "./ChartTraceScope";
 import {
   FacetTraceBody,
@@ -73,6 +74,8 @@ function TraceBody({ trace }: { trace: ChartTrace }) {
       return <MetricCardTraceBody trace={trace} />;
     case "waterfall-bar":
       return <WaterfallTraceBody trace={trace} />;
+    case "donut-slice":
+      return <DonutTraceBody trace={trace} />;
     case "bar":
       return <BarTraceBody trace={trace} />;
     case "sankey-node":

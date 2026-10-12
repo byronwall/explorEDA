@@ -63,6 +63,7 @@ export const CHART_QUESTIONS: readonly ChartQuestion[] = [
       ["hierarchy", "Nested categories as a treemap, icicle, or sunburst."],
       ["sankey", "How rows flow through a sequence of categories."],
       ["bar", "Stacked or 100% bars split by a second field."],
+      ["donut", "A few categories' shares of one small whole."],
     ],
   },
   {

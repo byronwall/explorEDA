@@ -67,6 +67,7 @@ import {
   TableProperties,
   AreaChart,
   BatteryCharging,
+  Donut as DonutIcon,
   LayoutGrid as GridIcon,
   Columns3,
   Grid3x3,
@@ -108,7 +109,11 @@ import { earthquakesAnalysis } from "./analyses/earthquakes";
 import { flightsAnalysis } from "./analyses/flights";
 import { shopText } from "./analyses/shop";
 import { wineText } from "./analyses/wine";
-import { batteryDayDashboard, budgetBridgeDashboard } from "./budgetDashboards";
+import {
+  batteryDayDashboard,
+  budgetBridgeDashboard,
+  channelShareDashboard,
+} from "./partsAndChangeDashboards";
 import { worldBankAnalysis } from "./analyses/worldbank";
 import type { ExampleAnalysis } from "./analyses/types";
 import { categoricalChartSettings } from "./categoricalChartSettings";
@@ -842,6 +847,17 @@ export const examples: ExampleData[] = [
     icon: BatteryCharging,
     data: "/datasets/battery-day.csv",
     savedData: batteryDayDashboard,
+  },
+  {
+    id: "channel-share",
+    title: "Shares of the order book",
+    description:
+      "500 orders split by sales channel and product. A donut shows each channel's share of revenue beside 100% bars of the same mix in each region, in the same colors; a second donut pools the smaller products into Other. Click a slice and every view narrows.",
+    dataset: { rows: "500 orders", fields: 15, source: "Synthetic" },
+    shows: ["Donut shares", "Other slice", "Shared channel colors"],
+    icon: DonutIcon,
+    data: "/datasets/shop-operations.csv",
+    savedData: channelShareDashboard,
   },
   {
     id: "consumer-confidence",

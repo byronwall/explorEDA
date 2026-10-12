@@ -8,7 +8,7 @@
     "last_updated": "2026-10-12",
     "summary": "Waterfall (Bridge and Accumulate) then donut as chart types, then Composition marks.",
     "status": "active",
-    "next_action": "Finish M2 PR; then M3 donut."
+    "next_action": "Finish M3 PR; then M4 Composition marks."
   },
   "artifacts": {
     "intent_brief": {
@@ -607,8 +607,10 @@
         "proof": "Vitest for accumulate plan; DSL round trip; docs:verify.",
         "valid_intermediate_state": "Waterfall with Bridge and Accumulate modes.",
         "rollback": "Hide the mode toggle; Bridge unaffected.",
-        "status": "active",
-        "evidence": []
+        "status": "completed",
+        "evidence": [
+          "byronwall/explorEDA#354; planAccumulate tests; battery-day example"
+        ]
       },
       {
         "id": "m3",
@@ -618,7 +620,7 @@
         "proof": "Vitest for donutPlan; browser check of clicks and filtered whole; docs:verify.",
         "valid_intermediate_state": "Donut chart type registered alongside the waterfall.",
         "rollback": "Remove donut registry entry, page, and example.",
-        "status": "planned",
+        "status": "active",
         "evidence": []
       },
       {
@@ -695,6 +697,12 @@
       "action": "Created implementation plan with four milestones.",
       "reason": "User asked for an implementation plan.",
       "evidence": "Inspected registry, ChartTypes union, saveDataUtils, DSL compile/export, chartAccessibility, useCreateCharts, docs gate, catalogue, coverage, examples."
+    },
+    {
+      "date": "2026-10-12",
+      "action": "Restyled waterfall totals and subtotals.",
+      "reason": "User found the gray subtotal and total bars heavy and confusing beside the step bars.",
+      "evidence": "byronwall/explorEDA#356: subtotals as hollow checkpoints with group dividers; start and end as a line from zero to a filled dot, chosen by consider-contrast over slim bars, hollow checkpoints, and tinted bars."
     }
   ],
   "closure": null,

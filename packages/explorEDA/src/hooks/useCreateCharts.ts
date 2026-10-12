@@ -40,7 +40,10 @@ export function useCreateCharts() {
       .map((profile) => profile.name);
     const selectedField =
       field ||
-      (type === "row" || type === "heatmap" || type === "waterfall"
+      (type === "row" ||
+      type === "heatmap" ||
+      type === "waterfall" ||
+      type === "donut"
         ? categories[0]
         : numeric[0]) ||
       profiles[0]?.name ||

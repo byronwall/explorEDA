@@ -21,7 +21,8 @@ import { demoSettings as lorenzSettings } from "@/demos/lorenz";
 import {
   batteryDayDashboard,
   budgetBridgeDashboard,
-} from "@/demos/budgetDashboards";
+  channelShareDashboard,
+} from "@/demos/partsAndChangeDashboards";
 import type { SavedDataStructure } from "exploreda";
 
 /**
@@ -346,6 +347,24 @@ export const liveExamples = {
       { click: "Solar: 13 rows" },
       { expectRows: 13 },
       { expectChip: "Flow" },
+    ],
+  },
+  donut: {
+    label: "Live revenue donut",
+    data: "/datasets/shop-operations.csv",
+    savedData: focus(channelShareDashboard, {
+      "share-channel": [0, 0, 5, 4],
+      "share-region-mix": [5, 0, 7, 4],
+    }),
+    exampleId: "channel-share",
+    shotAlt:
+      "A donut of revenue by sales channel beside 100% bars of the channel mix in each region, in the same colors.",
+    steps: [
+      { expectRows: 500 },
+      { expectMark: "Web: 102.7K, 56%" },
+      { click: "Store: 46.7K, 25%" },
+      { expectChip: "Channel" },
+      { expectRows: 167 },
     ],
   },
   composition: {
