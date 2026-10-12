@@ -95,6 +95,20 @@ describe("Waterfall", () => {
     ]);
   });
 
+  it("marks a subtotal as a checkpoint on the running total, not a bar", () => {
+    const { container } = renderBridge();
+    const subtotal = screen.getByRole("button", {
+      name: "Income, subtotal 570",
+    });
+    expect(subtotal).toHaveClass("eda-waterfall-checkpoint-hit");
+    expect(
+      container.querySelectorAll(".eda-waterfall-checkpoint circle")
+    ).toHaveLength(2);
+    expect(container.querySelectorAll(".eda-waterfall-divider")).toHaveLength(
+      1
+    );
+  });
+
   it("selects a step's rows in both states, and a subtotal's whole group", () => {
     renderBridge();
     fireEvent.click(screen.getByRole("button", { name: "Grants, change -30" }));

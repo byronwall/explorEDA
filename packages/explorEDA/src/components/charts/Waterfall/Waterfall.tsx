@@ -386,7 +386,11 @@ export function Waterfall({
   const xScale = useMemo(() => {
     const values = bars.flatMap((bar) => [bar.from, bar.to]);
     let min = Math.min(0, ...values);
-    const max = Math.max(0, ...values, Number.MIN_VALUE);
+    let max = Math.max(0, ...values, Number.MIN_VALUE);
+    // Room past each extreme, so a checkpoint there draws whole.
+    const pad = (max - min) * 0.03;
+    if (max > 0) max += pad;
+    if (min < 0) min -= pad;
     // Labels of falling steps can sit left of the lowest bar.
     if (min < 0 && innerWidth > valueLabelRoom * 2) {
       min -= (valueLabelRoom / (innerWidth - valueLabelRoom)) * (max - min);
@@ -415,10 +419,20 @@ export function Waterfall({
 
   const labelsByKey = new Map(bars.map((bar) => [bar.key, axisLabel(bar)]));
   const hoveredBar = bars.find((bar) => bar.key === hovered);
+  const band = yScale.bandwidth();
+  // Steps carry the story at full height. Start and end anchor it in a
+  // slimmer neutral bar, and a subtotal is only a checkpoint on the running
+  // total, so neither competes with the steps.
   const span = (bar: WaterfallBar) => {
     const a = xScale(bar.from);
     const b = xScale(bar.to);
-    return { x: Math.min(a, b), width: Math.max(1, Math.abs(b - a)) };
+    const height = bar.kind === "step" ? band : band * 0.56;
+    return {
+      x: Math.min(a, b),
+      width: Math.max(1, Math.abs(b - a)),
+      y: yScale(bar.key)! + (band - height) / 2,
+      height,
+    };
   };
   const statusParts = [
     valueFilter &&
@@ -476,17 +490,21 @@ export function Waterfall({
           <g pointerEvents="none">
             {bars.map((bar) => {
               const left = bar.kind === "step" ? bar.amount < 0 : bar.to < 0;
-              const edge = left
-                ? Math.min(xScale(bar.from), xScale(bar.to))
-                : Math.max(xScale(bar.from), xScale(bar.to));
+              const edge =
+                bar.kind === "subtotal"
+                  ? xScale(bar.to)
+                  : left
+                    ? Math.min(xScale(bar.from), xScale(bar.to))
+                    : Math.max(xScale(bar.from), xScale(bar.to));
+              const gap = bar.kind === "subtotal" ? 9 : 5;
               return (
                 <text
                   key={bar.key}
-                  x={left ? edge - 5 : edge + 5}
-                  y={yScale(bar.key)! + yScale.bandwidth() / 2}
+                  x={left ? edge - gap : edge + gap}
+                  y={yScale(bar.key)! + band / 2}
                   dominantBaseline="middle"
                   textAnchor={left ? "end" : "start"}
-                  className="eda-waterfall-value"
+                  className={`eda-waterfall-value${bar.kind === "subtotal" ? " eda-waterfall-checkpoint-value" : ""}`}
                   fontWeight={bar.kind === "step" ? undefined : 600}
                 >
                   {amountText(bar)}
@@ -519,11 +537,24 @@ export function Waterfall({
                   className="eda-waterfall-connector"
                   x1={x}
                   x2={x}
-                  y1={yScale(previous.key)! + yScale.bandwidth()}
-                  y2={yScale(bar.key)!}
+                  y1={span(previous).y + span(previous).height}
+                  y2={span(bar).y}
                 />
               );
             })}
+            {/* A hairline closes each group under its checkpoint. */}
+            {bars.map((bar, index) =>
+              bar.kind === "subtotal" && index < bars.length - 2 ? (
+                <line
+                  key={`${bar.key}:divider`}
+                  className="eda-waterfall-divider"
+                  x1={0}
+                  x2={innerWidth}
+                  y1={yScale(bar.key)! + band + (yScale.step() - band) / 2}
+                  y2={yScale(bar.key)! + band + (yScale.step() - band) / 2}
+                />
+              ) : null
+            )}
           </g>
           {bars.map((bar) => {
             const selected = isSelected(bar);
@@ -538,39 +569,73 @@ export function Waterfall({
                 : bar.kind === "subtotal"
                   ? `subtotal ${amountText(bar)}`
                   : `total ${amountText(bar)}`;
+            const checkpoint = bar.kind === "subtotal";
+            const markX = xScale(bar.to);
             return (
-              <rect
-                key={bar.key}
-                {...box}
-                y={yScale(bar.key)}
-                height={yScale.bandwidth()}
-                rx={2}
-                role="button"
-                tabIndex={0}
-                aria-label={`${bar.label}, ${kindText}`}
-                aria-pressed={selectable ? selected : undefined}
-                data-waterfall-kind={bar.kind}
-                className={`chart-mark ${selectable ? "cursor-pointer" : ""}`}
-                style={{
-                  fill: BAR_FILL[barTone(bar)],
-                  opacity: dimmed ? 0.3 : 1,
-                }}
-                onPointerEnter={() => setHovered(bar.key)}
-                onPointerLeave={() => setHovered(null)}
-                onFocus={() => setHovered(bar.key)}
-                onBlur={() => setHovered(null)}
-                onClick={(event) => {
-                  if (event.altKey) inspect(bar.key);
-                  else select(bar);
-                }}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter" || event.key === " ") {
-                    event.preventDefault();
+              <g key={bar.key}>
+                {checkpoint && (
+                  <g
+                    aria-hidden="true"
+                    pointerEvents="none"
+                    className="eda-waterfall-checkpoint"
+                    data-selected={selected || undefined}
+                    style={{ opacity: dimmed ? 0.35 : 1 }}
+                  >
+                    <line
+                      x1={markX}
+                      x2={markX}
+                      y1={yScale(bar.key)! + band * 0.12}
+                      y2={yScale(bar.key)! + band * 0.88}
+                    />
+                    <circle
+                      cx={markX}
+                      cy={yScale(bar.key)! + band / 2}
+                      r={3.5}
+                    />
+                  </g>
+                )}
+                <rect
+                  {...(checkpoint
+                    ? // A checkpoint selects its group from anywhere on its row.
+                      {
+                        x: 0,
+                        width: innerWidth,
+                        y: yScale(bar.key)!,
+                        height: band,
+                      }
+                    : box)}
+                  rx={2}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`${bar.label}, ${kindText}`}
+                  aria-pressed={selectable ? selected : undefined}
+                  data-waterfall-kind={bar.kind}
+                  className={`chart-mark ${selectable ? "cursor-pointer" : ""}${checkpoint ? " eda-waterfall-checkpoint-hit" : ""}`}
+                  style={
+                    checkpoint
+                      ? undefined
+                      : {
+                          fill: BAR_FILL[barTone(bar)],
+                          opacity: dimmed ? 0.3 : 1,
+                        }
+                  }
+                  onPointerEnter={() => setHovered(bar.key)}
+                  onPointerLeave={() => setHovered(null)}
+                  onFocus={() => setHovered(bar.key)}
+                  onBlur={() => setHovered(null)}
+                  onClick={(event) => {
                     if (event.altKey) inspect(bar.key);
                     else select(bar);
-                  }
-                }}
-              />
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      if (event.altKey) inspect(bar.key);
+                      else select(bar);
+                    }
+                  }}
+                />
+              </g>
             );
           })}
         </g>

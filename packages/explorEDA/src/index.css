@@ -7622,3 +7622,34 @@ td[data-null] {
   stroke-width: 3px;
   stroke-linejoin: round;
 }
+
+/* A subtotal is a checkpoint on the running total, not another bar. */
+.eda-waterfall-checkpoint line {
+  stroke: var(--eda-waterfall-total);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.eda-waterfall-checkpoint circle {
+  fill: var(--card);
+  stroke: var(--eda-waterfall-total);
+  stroke-width: 2;
+}
+.eda-waterfall-checkpoint[data-selected] circle {
+  fill: var(--eda-waterfall-total);
+}
+.eda-waterfall-checkpoint-value {
+  fill: var(--muted-foreground);
+}
+/* The row behind a checkpoint takes its clicks and shows only on hover or focus. */
+.eda-waterfall-checkpoint-hit {
+  fill: var(--muted);
+  fill-opacity: 0;
+}
+.eda-waterfall-checkpoint-hit:hover,
+.eda-waterfall-checkpoint-hit:focus-visible {
+  fill-opacity: 0.6;
+}
+.eda-waterfall-divider {
+  stroke: var(--border);
+  stroke-width: 1;
+}
