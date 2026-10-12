@@ -1,0 +1,38 @@
+# Proposed syntax, hand-converted from the 205-line export of middle-class-jobs.
+# Illustrative: grammar, defaults, and inference rules are not final.
+dashboard "Middle-class jobs"
+grid rowHeight=76 padding=0 markers=false
+
+composition @jobs height=704 {
+  title "The Changing Nature of Middle-Class Jobs" size=26
+  subtitle "Jobs per 1,000 middle-class jobs in 1980 and 2012, by occupation. Fewer are now in production work held mostly by men; a greater share are in occupations more open to women. Each label gives the group's change." color=#3c4043
+  footnote "Illustrative values read approximately from Gregor Aisch and Robert Gebeloff's graphic for The New York Times (2015); middle-class jobs paid $40,000 to $80,000 in 2014 dollars. Unnamed lines are other occupations in each group." at=32,668
+
+  scale Year ticks=ends zero=false nice=false
+  scale "Jobs per 1000" label="Jobs per 1,000 middle-class jobs" max=85 nice=false
+  scale @gap diverging=#1a8fd0,#e3173b center=#b9b9b9 max=100 {
+    label="Share of women minus share of men, points"
+  }
+
+  unit @groups at=56,176 size=120x180 axis {
+    repeat Group grid columns=5 gap=46 limit=10 order=max("Group order")
+    label value=max("Group change") size=11 positive="+{} jobs" negative="−{} jobs"
+    path  @occupations x=Year y="Jobs per 1000" series=Occupation color=gap("Women minus men") width=1.5
+    point @ends        x=Year y="Jobs per 1000" color=gap("Women minus men") radius=2.5 labels=none
+  }
+
+  legend groups.occupations at=620,130 row size=10 "Gender key"
+  note "Registered\nnurses"      on=groups[Professionals]            at=.5,.656 offset=-62,-46 leader
+  note "Health\ntechnologists"   on=groups[Technicians]              at=.5,.829 offset=-30,-60 leader
+  note "Police and\ndetectives"  on=groups["Police, fire, military"] at=.5,.812 offset=-20,-52 leader
+  note "Secretaries"             on=groups["Admin support"]          at=.5,.696 offset=-30,-36 leader
+  note "Production\nsupervisors" on=groups["Skilled production"]     at=.4,.715 offset=30,-50  leader
+}
+
+row  Group title="Rows by group"
+hist @share "Women share" title="Share of women"
+
+layout {
+  10: jobs
+  5:  Group share
+}
