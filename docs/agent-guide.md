@@ -67,6 +67,8 @@ pnpm --filter demo docs:check
 pnpm --filter demo build && pnpm --filter demo docs:verify
 ```
 
+`docs:verify` logs each page and example as it starts. A page that runs past 2 minutes fails with its name, and the whole check stops after 12 minutes, so a hang shows where it stuck instead of running to the CI timeout. `DOCS_VERIFY_PAGE_MS` and `DOCS_VERIFY_TOTAL_MS` change those limits. CI jobs also carry `timeout-minutes`.
+
 ```bash
 pnpm check
 ```
