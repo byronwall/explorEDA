@@ -71,13 +71,13 @@ No changesets or application screenshots are needed for documentation-only chang
 - `git diff --check`: passed before checkpoint.
 - Application tests: not run during preparation. No application files changed.
 - Pro results and Sleuth shaping: complete. Four planned initiatives and 64 recommendation dispositions validated.
-- PRs: organizing four scoped review branches. Preparation branch remains the durable source checkpoint.
+- PRs: all four open, verified, and attached. See completion record below.
 - Preparation commits: shared sources `8ec797d`; query `8136506`; transport `ad7cba4`; adapters `de7eff2`; hosting `ad98f4b`.
 - Hosting visibly confirmed baseline f01ff0f, started provider research, and reported no outputs yet.
 - Submission screenshot: `tmp/database-research/hosting-submitted.png` (local evidence, not committed).
-- Heartbeat: `collect-database-architecture-research`, ACTIVE, hourly, attached to this chat.
+- Heartbeat: `collect-database-architecture-research`, PAUSED after completion.
 - Schedule verified from the saved automation. Created Oct 11 at 23:26:21 EDT. First hourly check is due about Oct 12 at 00:26 EDT.
-- The monitor continues collection and PR work; it does not merely remind Byron.
+- The monitor completed collection and PR work, then stopped.
 - Goal: none created. The user requested a monitored workflow, not a goal record.
 - Blockers: none.
 
@@ -96,3 +96,27 @@ The [shared reconciliation](reconciliation.md) selects complete source snapshots
 Query customer-instance ownership is explicit; no material gap required a Pro follow-up. All counters remain 0/2.
 All four Sleuth validators passed with zero warnings. See [validation](validation.md) for the full-suite failure and focused pass.
 The app source is unchanged from the research baseline. No provider, database, or codec proof was executed.
+
+## Completion record — October 12, 2026
+
+The full research and initial shaping workflow is complete. No implementation began.
+
+| Track | Review PR | Head | Base |
+| --- | --- | --- | --- |
+| Query demands | [#344](https://github.com/byronwall/explorEDA/pull/344) | `codex/database-query-contract-review` | `main` |
+| Columnar transport | [#345](https://github.com/byronwall/explorEDA/pull/345) | `codex/columnar-data-transport-review` | `codex/database-query-contract-review` |
+| Database adapters | [#346](https://github.com/byronwall/explorEDA/pull/346) | `codex/database-adapters-review` | `codex/columnar-data-transport-review` |
+| Customer hosting | [#347](https://github.com/byronwall/explorEDA/pull/347) | `codex/customer-instance-hosting-review` | `codex/database-adapters-review` |
+
+Review in table order. Each PR contains its prompt, unchanged report/JSON/ZIP, collection manifest, intent, map, shape, and recommendation review.
+The first PR owns the shared notebook material, reconciliation, and validation. The last PR records this final completion state.
+All saved PR bodies, files, bases, heads, and open states were verified with `gh`. All four are attached to this chat.
+The current checkout is on `codex/customer-instance-hosting-review`; no new worktree was created.
+The preparation branch `codex/database-query-research` remains pushed with the full research checkpoint.
+
+`pnpm check:pr` passed. All four Sleuth validators passed, and all raw hashes and companion comparisons passed.
+`pnpm check` had four demo failures; the focused rerun passed all 67 tests. See the exact [validation record](validation.md).
+No database, codec, or hosting performance results are claimed. All initiatives remain planned.
+
+The heartbeat was changed to PAUSED after the four PRs were verified. No further automatic checks are scheduled.
+No production access, paid provisioning, deployment, or merge occurred. No user action blocks this research deliverable.

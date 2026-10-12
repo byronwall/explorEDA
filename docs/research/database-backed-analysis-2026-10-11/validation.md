@@ -30,6 +30,8 @@ The corrected invocation above completed. No source or test changes were made to
 The full-suite failure remains recorded; the focused pass does not turn it into a full-suite pass.
 Local logs: `tmp/database-research/pnpm-check.log` and `tmp/database-research/demo-targeted.log`.
 
+`pnpm check:pr` passed for the assembled stack. GitHub verification confirmed each PR is open with its expected base, head, and files.
+
 ## Evidence limits
 
 Research integrity checks are not runtime proofs. Provider facts were checked against current official documentation.
