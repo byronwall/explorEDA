@@ -596,7 +596,7 @@
         "rollback": "Revert PR.",
         "status": "completed",
         "evidence": [
-          "M3 PR; exportChartPng.test.ts; export-proof right-click download"
+          "PR #350; exportChartPng.test.ts; export-proof right-click download"
         ]
       }
     ],

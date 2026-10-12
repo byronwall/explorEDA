@@ -10,7 +10,7 @@ last_updated: "2026-10-11"
 
 ## Plan at a glance
 
-**Status (2026-10-12):** all three milestones are implemented, as stacked PRs byronwall/explorEDA#340 (M1), byronwall/explorEDA#341 (M2), and the M3 PR on `claude/chart-export-m3`. The host method shipped on both `ExplorEda` and `ExplorEdaProject` refs. Right-click items also joined the axis and title menus, so every chart menu ends with them.
+**Status (2026-10-12):** all three milestones are implemented, as stacked PRs byronwall/explorEDA#340 (M1), byronwall/explorEDA#341 (M2), and byronwall/explorEDA#350 (M3). The host method shipped on both `ExplorEda` and `ExplorEdaProject` refs. Right-click items also joined the axis and title menus, so every chart menu ends with them.
 
 The [first proof](references/first-proof/README.md) settled the mechanism. A generic panel rasterizer matched the screen within 0.3% for scatter, parallel coordinates, maps, and light and dark themes. It does this by inlining computed styles, swapping canvases for bitmaps, and drawing a `foreignObject` SVG through a `data:` URL. Only WebGL needs its own hook. So the work is one capture core plus thin entry points, in three stacked PRs:
 
