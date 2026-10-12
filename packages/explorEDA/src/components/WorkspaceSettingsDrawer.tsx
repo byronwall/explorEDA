@@ -1,5 +1,6 @@
 import { useEffect, useRef, type CSSProperties, type RefObject } from "react";
 import {
+  BadgeCheck,
   Calculator,
   Braces,
   Grid,
@@ -19,13 +20,15 @@ import { GridSettingsPanel } from "./settings/GridSettingsPanel";
 import { ThemeSettingsPanel } from "./settings/ThemeSettingsPanel";
 import { ChartSpecPanel } from "./ChartSpecPanel";
 import { useEscapeOutside } from "@/hooks/useEscapeOutside";
+import { LicensePanel } from "@/license/LicensePanel";
 
 export type WorkspaceSettingsTab =
   | "calculations"
   | "theme"
   | "colors"
   | "grid"
-  | "spec";
+  | "spec"
+  | "license";
 
 const TABS = [
   {
@@ -57,6 +60,12 @@ const TABS = [
     label: "Chart spec",
     icon: Braces,
     tooltip: "Inspect what each chart saves: fields, layout, and settings",
+  },
+  {
+    value: "license",
+    label: "License",
+    icon: BadgeCheck,
+    tooltip: "See who this copy of explorEDA is licensed to",
   },
 ] as const;
 
@@ -184,6 +193,9 @@ export function WorkspaceSettingsDrawer({
         </TabsContent>
         <TabsContent value="spec" forceMount>
           <ChartSpecPanel />
+        </TabsContent>
+        <TabsContent value="license" forceMount>
+          <LicensePanel />
         </TabsContent>
       </Tabs>
     </aside>

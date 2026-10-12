@@ -66,6 +66,7 @@ import {
 import { PlotManager, type ExplorEdaSchema } from "./PlotManager";
 import type { ExplorEdaSidePanel } from "./WorkspaceSidePanel";
 import { registerAllCharts } from "@/charts/registerAllCharts";
+import { LicenseProvider } from "@/license/LicenseContext";
 import { Toaster } from "./ui/sonner";
 import { GlobalAlertDialog } from "./GlobalAlertDialog";
 
@@ -107,6 +108,12 @@ export interface ExplorEdaProps {
    * `addSourceFromRows` from `exploreda/analysis`.
    */
   onAddSource?: () => void;
+  /**
+   * The license key from your purchase or trial email. Commercial use needs
+   * one; without it the workspace works fully and shows an unlicensed notice.
+   * `setLicenseKey` from `exploreda/license` sets it for every workspace.
+   */
+  licenseKey?: string;
 }
 
 export const ExplorEda = forwardRef<ExplorEdaHandle, ExplorEdaProps>(
@@ -122,29 +129,32 @@ export const ExplorEda = forwardRef<ExplorEdaHandle, ExplorEdaProps>(
       toolbarEnd,
       schema,
       onAddSource,
+      licenseKey,
     },
     ref
   ) {
     return (
-      <DataLayerProvider
-        data={data}
-        fieldNames={fieldNames}
-        savedData={savedData}
-        onStateChange={onStateChange}
-      >
-        <Workspace
-          ref={ref}
-          sidePanels={sidePanels}
-          readOnly={readOnly}
-          toolbarStart={toolbarStart}
-          toolbarEnd={toolbarEnd}
-          schema={
-            onAddSource && !schema?.onAddSource
-              ? { ...schema, onAddSource }
-              : schema
-          }
-        />
-      </DataLayerProvider>
+      <LicenseProvider licenseKey={licenseKey}>
+        <DataLayerProvider
+          data={data}
+          fieldNames={fieldNames}
+          savedData={savedData}
+          onStateChange={onStateChange}
+        >
+          <Workspace
+            ref={ref}
+            sidePanels={sidePanels}
+            readOnly={readOnly}
+            toolbarStart={toolbarStart}
+            toolbarEnd={toolbarEnd}
+            schema={
+              onAddSource && !schema?.onAddSource
+                ? { ...schema, onAddSource }
+                : schema
+            }
+          />
+        </DataLayerProvider>
+      </LicenseProvider>
     );
   }
 );

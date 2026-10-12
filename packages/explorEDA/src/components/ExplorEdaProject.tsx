@@ -81,6 +81,8 @@ export interface ExplorEdaProjectProps {
   toolbarStart?: ReactNode;
   /** Host actions that end the toolbar line, like `ExplorEda`'s prop. */
   toolbarEnd?: ReactNode;
+  /** The license key from your purchase or trial email, like `ExplorEda`'s prop. */
+  licenseKey?: string;
 }
 
 const FIELD_TYPES = {
@@ -115,6 +117,7 @@ export const ExplorEdaProject = forwardRef<
     createWorker,
     toolbarStart,
     toolbarEnd,
+    licenseKey,
   },
   ref
 ) {
@@ -351,6 +354,7 @@ export const ExplorEdaProject = forwardRef<
           ref={chartRef}
           key={`${shownView.id}:${shownView.queryId}`}
           data={data}
+          licenseKey={licenseKey}
           fieldNames={fieldNames}
           savedData={settingsCompatible ? renderedSettings : undefined}
           onStateChange={

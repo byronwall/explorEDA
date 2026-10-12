@@ -1918,6 +1918,53 @@ html {
   background: var(--background);
   border-top: 1px solid var(--border);
 }
+.eda-workspace-status .eda-license-notice {
+  flex-shrink: 0;
+  margin-left: auto;
+  border-color: var(--border);
+}
+.eda-workspace-status .eda-license-notice[data-state="invalid"],
+.eda-workspace-status .eda-license-notice[data-state="updates-ended"] {
+  border-color: var(--warning);
+}
+.eda-license-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  font-size: 13px;
+}
+.eda-license-panel h3 {
+  font-size: 14px;
+  font-weight: 600;
+}
+.eda-license-panel p {
+  color: var(--muted-foreground);
+}
+.eda-license-panel dl {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 4px 12px;
+  margin: 0;
+}
+.eda-license-panel dt {
+  color: var(--muted-foreground);
+}
+.eda-license-panel dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.eda-license-panel code {
+  font-size: 12px;
+}
+.eda-license-links {
+  display: flex;
+  gap: 16px;
+}
+.eda-license-links a {
+  color: var(--foreground);
+  text-decoration: underline;
+}
 .eda-toolbar-group {
   display: flex;
   flex-shrink: 0;
