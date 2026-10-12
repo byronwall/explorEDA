@@ -1,8 +1,17 @@
+import { cn } from "@/lib/utils";
+import {
+  CircleAlert,
+  Info,
+  Lightbulb,
+  Link2,
+  type LucideIcon,
+} from "lucide-react";
 import type { MDXComponents } from "mdx/types";
 import { isValidElement, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { docsPath, slugify } from "../paths";
-import { inlineLinkClass, proseClass } from "./chrome";
+import { inlineCodeClass, inlineLinkClass, proseClass } from "./chrome";
+import { CodeBlock } from "./code";
 import { WorkedOrder } from "./workedOrder";
 import {
   DashboardTextReference,
@@ -40,6 +49,40 @@ export function DocsLink({
   );
 }
 
+/** A section heading with a link to itself that shows on hover. */
+export function Heading({
+  level,
+  children,
+}: {
+  level: 2 | 3;
+  children?: ReactNode;
+}) {
+  const text = textOf(children);
+  const id = slugify(text);
+  const Tag = level === 2 ? "h2" : "h3";
+  return (
+    <Tag
+      id={id}
+      className={cn(
+        "group/heading scroll-mt-20 font-semibold tracking-tight text-foreground",
+        level === 2 ? "mt-14 text-2xl first:mt-0" : "mt-9 text-lg [h2+&]:mt-5"
+      )}
+    >
+      {children}
+      {/* Pointer only: the page contents give keyboard users the same links,
+          and a named link here would join the heading's own name. */}
+      <a
+        href={`#${id}`}
+        aria-hidden="true"
+        tabIndex={-1}
+        className="ml-2 inline-flex translate-y-[-1px] align-middle text-muted-foreground opacity-0 transition-opacity hover:text-docs-accent group-hover/heading:opacity-100"
+      >
+        <Link2 aria-hidden="true" className="size-4" />
+      </a>
+    </Tag>
+  );
+}
+
 export function Figure({
   src,
   alt,
@@ -67,18 +110,52 @@ export function Figure({
   );
 }
 
+const CALLOUTS: Record<
+  "note" | "tip" | "warning",
+  { icon: LucideIcon; label: string; box: string; tint: string }
+> = {
+  note: {
+    icon: Info,
+    label: "Note",
+    box: "border-docs-accent/25 bg-docs-accent/[0.04]",
+    tint: "text-docs-accent",
+  },
+  tip: {
+    icon: Lightbulb,
+    label: "Tip",
+    box: "border-border bg-muted/50",
+    tint: "text-[var(--eda-dsl-string)]",
+  },
+  warning: {
+    icon: CircleAlert,
+    label: "Watch out",
+    box: "border-warning/40 bg-warning/[0.07]",
+    tint: "text-warning",
+  },
+};
+
+/** A boxed aside: a note, a tip, or something to watch out for. */
 export function Callout({
   title,
+  type = "note",
   children,
 }: {
   title?: string;
+  type?: keyof typeof CALLOUTS;
   children: ReactNode;
 }) {
+  const { icon: Icon, label, box, tint } = CALLOUTS[type];
   return (
-    <div className="mt-4 rounded-lg border border-border bg-muted/50 px-4 py-3 text-sm leading-6 text-muted-foreground [&>p]:m-0 [&>p]:text-sm [&>p]:leading-6">
-      {title && <span className="font-medium text-foreground">{title} </span>}
-      {children}
-    </div>
+    <aside
+      aria-label={title ?? label}
+      className={cn("mt-6 flex gap-3 rounded-lg border px-4 py-3.5", box)}
+    >
+      <Icon aria-hidden="true" className={cn("mt-0.5 size-4 shrink-0", tint)} />
+      <div className="min-w-0 text-sm leading-6 text-foreground/80 [&>p]:m-0 [&>p+p]:mt-2 [&>p]:text-sm [&>p]:leading-6">
+        {title && <p className="font-semibold text-foreground">{title}</p>}
+        {children}
+      </div>
+    </aside>
   );
 }
 
@@ -89,10 +166,18 @@ export function Terms({
   items: readonly (readonly [name: string, body: string])[];
 }) {
   return (
-    <dl className="mt-4 grid gap-3 sm:grid-cols-3">
+    <dl
+      className={cn(
+        "mt-5 grid gap-3",
+        items.length % 3 === 0 ? "sm:grid-cols-3" : "sm:grid-cols-2"
+      )}
+    >
       {items.map(([name, body]) => (
-        <div key={name} className="rounded-lg border border-border bg-card p-4">
-          <dt className="text-sm font-semibold">{name}</dt>
+        <div
+          key={name}
+          className="rounded-lg border border-border bg-card p-4 shadow-[inset_0_2px_0_0_color-mix(in_oklab,var(--docs-accent)_55%,transparent)]"
+        >
+          <dt className="text-sm font-semibold text-foreground">{name}</dt>
           <dd className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
             {body}
           </dd>
@@ -109,18 +194,20 @@ export function CalcChain({
   rows: readonly { name: string; expression: string; value?: string }[];
 }) {
   return (
-    <ol className="mt-4 divide-y divide-border overflow-hidden rounded-lg border border-border bg-card font-mono text-sm">
+    <ol className="mt-5 divide-y divide-border overflow-hidden rounded-lg border border-border bg-card font-mono text-sm">
       {rows.map((row) => (
         <li
           key={row.name}
           className="flex flex-wrap items-baseline gap-x-2 gap-y-1 px-4 py-2.5"
         >
-          <span className="font-semibold text-foreground">{row.name}</span>
+          <span className="font-semibold text-[var(--eda-dsl-key)]">
+            {row.name}
+          </span>
           <span aria-hidden="true" className="text-muted-foreground">
             =
           </span>
           <span className="sr-only">equals</span>
-          <span className="text-muted-foreground">{row.expression}</span>
+          <span className="text-foreground/80">{row.expression}</span>
           {row.value && (
             <span className="ml-auto rounded-md bg-muted px-2 py-0.5 text-xs font-medium tabular-nums text-foreground">
               {row.value}
@@ -141,27 +228,24 @@ export function Steps({
   steps: readonly { title: string; detail: string }[];
 }) {
   return (
-    <ol
-      aria-label={label}
-      className="mt-4 rounded-xl border border-border bg-card p-5 sm:p-6"
-    >
+    <ol aria-label={label} className="mt-6">
       {steps.map((step, index) => (
         <li key={step.title} className="relative flex gap-4 pb-6 last:pb-0">
           {index < steps.length - 1 && (
             <span
               aria-hidden="true"
-              className="absolute left-[15px] top-9 h-[calc(100%-2.5rem)] w-px bg-border"
+              className="absolute left-[13px] top-8 h-[calc(100%-2rem)] w-px bg-border"
             />
           )}
           <span
             aria-hidden="true"
-            className="flex size-8 shrink-0 items-center justify-center rounded-full border border-border bg-background text-sm font-semibold text-primary shadow-sm"
+            className="flex size-7 shrink-0 items-center justify-center rounded-full bg-docs-accent/10 text-xs font-semibold text-docs-accent ring-4 ring-background"
           >
             {index + 1}
           </span>
-          <div className="pt-1">
-            <p className="font-semibold">{step.title}</p>
-            <p className="mt-0.5 text-sm text-muted-foreground">
+          <div className="pt-0.5">
+            <p className="font-semibold text-foreground">{step.title}</p>
+            <p className="mt-0.5 text-sm leading-6 text-muted-foreground">
               {step.detail}
             </p>
           </div>
@@ -201,71 +285,54 @@ function Anchor({
 
 /** How Markdown elements render on a docs page. */
 export const mdxComponents: MDXComponents = {
-  h2: ({ children }) => {
-    const id = slugify(textOf(children));
-    return (
-      <h2
-        id={id}
-        className="mt-12 scroll-mt-8 border-t border-border pt-6 text-xl font-semibold tracking-tight first:mt-0 sm:text-2xl"
-      >
-        {children}
-      </h2>
-    );
-  },
+  h2: ({ children }) => <Heading level={2}>{children}</Heading>,
   // Imported Markdown, such as the package README, starts with its own h1.
-  h1: ({ children }) => (
-    <h2
-      id={slugify(textOf(children))}
-      className="mt-12 scroll-mt-8 border-t border-border pt-6 text-xl font-semibold tracking-tight first:mt-0 sm:text-2xl"
-    >
-      {children}
-    </h2>
-  ),
-  pre: ({ children }) => (
-    <pre className="mt-4 overflow-x-auto rounded-lg border border-border bg-muted/50 p-4 font-mono text-[0.8rem] leading-6 text-foreground [&_code]:bg-transparent [&_code]:p-0">
-      {children}
-    </pre>
-  ),
+  h1: ({ children }) => <Heading level={2}>{children}</Heading>,
+  h3: ({ children }) => <Heading level={3}>{children}</Heading>,
+  pre: CodeBlock,
   table: ({ children }) => (
-    <div className="mt-4 overflow-x-auto rounded-lg border border-border">
-      <table className="w-full border-collapse text-sm">{children}</table>
+    <div className="mt-5 overflow-x-auto rounded-lg border border-border bg-card">
+      <table className="w-full border-collapse text-sm [&_tbody_tr:first-child>td]:border-t-0">
+        {children}
+      </table>
     </div>
   ),
   th: ({ children }) => (
-    <th className="bg-muted/50 px-3 py-2 text-left font-medium">{children}</th>
+    <th className="border-b border-border bg-muted/50 px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-foreground/70">
+      {children}
+    </th>
   ),
   td: ({ children }) => (
-    <td className="border-t border-border px-3 py-2 align-top text-muted-foreground">
+    <td className="border-t border-border px-3 py-2 align-top leading-6 text-foreground/80">
       {children}
     </td>
   ),
-  h3: ({ children }) => (
-    <h3 className="mt-8 text-lg font-semibold">{children}</h3>
-  ),
   p: ({ children }) => <p className={`mt-4 ${proseClass}`}>{children}</p>,
   ul: ({ children }) => (
-    <ul className="mt-4 list-disc space-y-2 pl-5 text-base leading-7 text-muted-foreground marker:text-border">
+    <ul
+      className={`mt-4 list-disc space-y-2 pl-5 ${proseClass} marker:text-docs-accent/50`}
+    >
       {children}
     </ul>
   ),
   ol: ({ children }) => (
-    <ol className="mt-4 list-decimal space-y-2 pl-5 text-base leading-7 text-muted-foreground">
+    <ol
+      className={`mt-4 list-decimal space-y-2 pl-5 ${proseClass} marker:font-medium marker:text-docs-accent/70`}
+    >
       {children}
     </ol>
   ),
-  code: ({ children }) => (
-    <code className="rounded bg-muted px-1 py-0.5 font-mono text-[0.9em] text-foreground">
-      {children}
-    </code>
-  ),
+  li: ({ children }) => <li className="pl-1">{children}</li>,
+  code: ({ children }) => <code className={inlineCodeClass}>{children}</code>,
   kbd: ({ children }) => (
-    <kbd className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[0.85em] text-foreground">
+    <kbd className="rounded border border-border border-b-2 bg-card px-1.5 py-px font-mono text-[0.8em] text-foreground">
       {children}
     </kbd>
   ),
   strong: ({ children }) => (
-    <strong className="font-medium text-foreground">{children}</strong>
+    <strong className="font-semibold text-foreground">{children}</strong>
   ),
+  hr: () => <hr className="my-10 border-border" />,
   a: Anchor,
   // Blocks a page can use without importing them.
   Callout,

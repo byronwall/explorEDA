@@ -1,9 +1,8 @@
 import { copyFile } from "node:fs/promises";
 import path from "path";
 import { defineConfig, type Plugin } from "vite";
-import mdx from "@mdx-js/rollup";
-import remarkGfm from "remark-gfm";
 import react from "@vitejs/plugin-react";
+import { docsMdx } from "./mdxPlugin";
 import tailwindcss from "@tailwindcss/vite";
 import {
   docsKitDistAlias,
@@ -38,7 +37,7 @@ export default defineConfig(({ command }) => ({
   plugins: [
     ...(command === "serve" && useLibrarySource ? [exploredaSource()] : []),
     // Docs pages are MDX; compile them before the React plugin sees them.
-    { enforce: "pre", ...mdx({ remarkPlugins: [remarkGfm] }) },
+    docsMdx(),
     react({ include: /\.(mdx|js|jsx|ts|tsx)$/ }),
     tailwindcss(),
     spaFallback(),

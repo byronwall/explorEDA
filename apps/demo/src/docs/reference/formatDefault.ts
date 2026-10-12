@@ -11,3 +11,31 @@ export function formatDefault(value: unknown): string {
   }
   return String(value);
 }
+
+/** The kind of value a setting holds, judged from its default. */
+export function kindOf(
+  value: unknown
+): "number" | "boolean" | "text" | "list" | "object" | "unset" {
+  // Names that start with "__" are the library's own placeholders.
+  if (
+    value === undefined ||
+    value === null ||
+    value === "" ||
+    (typeof value === "string" && value.startsWith("__"))
+  ) {
+    return "unset";
+  }
+  if (Array.isArray(value)) {
+    return "list";
+  }
+  switch (typeof value) {
+    case "number":
+      return "number";
+    case "boolean":
+      return "boolean";
+    case "string":
+      return "text";
+    default:
+      return "object";
+  }
+}
