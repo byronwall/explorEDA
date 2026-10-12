@@ -15,6 +15,8 @@ permissions:
 jobs:
   check:
     runs-on: ubuntu-latest
+    # A hung step fails the PR in minutes instead of GitHub's 6-hour limit.
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
         with:
@@ -28,9 +30,11 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - name: Branch checks
+        timeout-minutes: 2
         run: pnpm check:pr origin/${{ github.base_ref }}
 
       - name: Check
+        timeout-minutes: 20
         run: pnpm check
 
       # The docs browser check runs every live example's steps against the
@@ -40,4 +44,5 @@ jobs:
         run: pnpm --filter demo exec playwright install --with-deps chromium
 
       - name: Check docs in a browser
+        timeout-minutes: 15
         run: pnpm --filter demo docs:verify
