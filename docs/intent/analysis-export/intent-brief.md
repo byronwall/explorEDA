@@ -50,7 +50,7 @@ Start with one chart exported as PNG. A size preset or a simple width control co
 
 ## Current reality that matters
 
-Current exports cover records and serialized analysis settings. The `composition` view copies its artboard to the clipboard as a 2x PNG (PR #214); hand-pasting into a report or slide is unchecked. Other chart panels have no image-export action. Ordinary scatter uses Canvas points with SVG guides; other views also use HTML and WebGL. These paths need an output proof before choosing one export mechanism for every family.
+Current exports cover records and serialized analysis settings. The `composition` view copies its artboard to the clipboard as a 2x PNG (PR #214); hand-pasting into a report or slide is unchecked. Other chart panels have no image-export action. Ordinary scatter uses Canvas points with SVG guides; other views also use HTML and WebGL. These paths need an output proof before choosing one export mechanism for every family. Saved chart annotations ([reference marks](../reference-marks/implementation-plan.md)) draw as plain SVG inside each chart's SVG, in `g.eda-annotations`. They have no editor handles to strip: a label is its own drag target, and its focus underline shows only under `:focus-visible`. An ordinary-chart PNG that rasterizes the chart SVG over its canvas carries them as drawn.
 
 ## Next step after confirmation
 

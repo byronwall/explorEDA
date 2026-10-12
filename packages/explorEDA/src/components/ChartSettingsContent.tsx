@@ -8,6 +8,8 @@ import { AxisSettingsTab } from "./settings/AxisSettingsTab";
 import { FacetSettingsTab } from "./settings/FacetSettingsTab";
 import { LabelsSettingsTab } from "./settings/LabelsSettingsTab";
 import { MainSettingsTab } from "./settings/MainSettingsTab";
+import { AnnotationsSettingsTab } from "./settings/annotations/AnnotationsSettingsTab";
+import { chartDrawsAnnotations } from "@/lib/annotations/types";
 import { TabContainer } from "./settings/TabContainer";
 import { Button } from "./ui/button";
 import { RegressionSettings } from "./charts/ScatterPlot/RegressionSettings";
@@ -68,6 +70,7 @@ export function ChartSettingsContent({ settings }: ChartSettingsContentProps) {
   );
   const hasFitTab =
     localSettings.type === "scatter" && localSettings.display !== "density";
+  const hasAnnotations = chartDrawsAnnotations(localSettings);
   const tabs = [
     {
       value: "main",
@@ -88,6 +91,7 @@ export function ChartSettingsContent({ settings }: ChartSettingsContentProps) {
       ? [{ value: "filters", label: "Filters" }]
       : []),
     { value: "labels", label: "Labels" },
+    ...(hasAnnotations ? [{ value: "annotations", label: "Notes" }] : []),
     ...(hasAxes ? [{ value: "advanced", label: "Spacing" }] : []),
   ];
   const invalidRange = hasInvertedRange(localSettings);
@@ -178,6 +182,12 @@ export function ChartSettingsContent({ settings }: ChartSettingsContentProps) {
               onSettingChange={handleSettingChange}
             />
           ),
+          annotations: hasAnnotations ? (
+            <AnnotationsSettingsTab
+              settings={localSettings}
+              onSettingChange={handleSettingChange}
+            />
+          ) : null,
           advanced: (
             <AdvancedSettingsTab
               settings={localSettings}

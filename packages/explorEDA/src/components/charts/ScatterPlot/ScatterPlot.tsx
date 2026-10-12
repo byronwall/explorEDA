@@ -13,6 +13,11 @@ import {
 import type { ScatterPlotSettings } from "./definition";
 import { CalculatedFieldBadge } from "@/components/calculations/CalculatedFieldBadge";
 import { ScatterSvg } from "./ScatterSvg";
+import type { IdType } from "@/providers/DataLayerProvider";
+import {
+  annotationSlot,
+  type ChartAnnotationFrame,
+} from "../annotations/ChartAnnotations";
 import { BubbleLegend } from "./BubbleLegend";
 import { DensityScatter } from "./DensityScatter";
 import { FitLabels } from "./FitLabels";
@@ -71,6 +76,7 @@ function ScatterPoints({
   width,
   height,
   facetIds,
+  facetKey,
 }: ScatterPlotProps) {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const trace = useChartTrace();
@@ -103,6 +109,40 @@ function ScatterPoints({
     [settings, snapshot, width, height, typography]
   );
   const fits = useScatterFits(settings, snapshot, plan);
+  const annotationFrame = useMemo((): ChartAnnotationFrame | undefined => {
+    if (!settings.annotations?.length) return undefined;
+    const points = new Map(plan.points.map((point) => [point.sourceId, point]));
+    // A facet's calculations read only that facet's rows.
+    const facet = snapshot.facetIds && new Set(snapshot.facetIds);
+    const inFacet = (ids: IdType[]) =>
+      facet ? ids.filter((id) => facet.has(id)) : ids;
+    return {
+      xScale: plan.xScale,
+      yScale: plan.yScale,
+      xField: settings.xField,
+      yField: settings.yField,
+      facetKey,
+      population: {
+        all: inFacet(snapshot.allIds),
+        filtered: inFacet(snapshot.filteredIds),
+      },
+      plotWidth: plan.plotWidth,
+      plotHeight: plan.plotHeight,
+      plotted: (id) => {
+        const point = points.get(id);
+        return (
+          point && { x: point.x, y: point.y, selected: point.passesAllFilters }
+        );
+      },
+    };
+  }, [
+    settings.annotations,
+    settings.xField,
+    settings.yField,
+    plan,
+    snapshot,
+    facetKey,
+  ]);
   const marginals = useMemo(
     () => planMarginals(settings, plan),
     [settings, plan]
@@ -431,6 +471,7 @@ function ScatterPoints({
               if (!point) return false;
               return Boolean(choose("point", point.id));
             }}
+            annotations={annotationSlot(settings, annotationFrame)}
             fitMarks={fits.marks}
             bubblePoints={plan.size ? plan.points : undefined}
             surface={

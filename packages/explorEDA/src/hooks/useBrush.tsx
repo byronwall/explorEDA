@@ -68,6 +68,8 @@ export function useBrush({
     if (mode === "none" || event.button !== 0 || !svgRef.current) return;
     // A marker drawn over the plot is a control, not a place to brush.
     if ((event.target as Element).closest?.("[data-axis-hidden]")) return;
+    // So is an annotation label, which drags on its own.
+    if ((event.target as Element).closest?.("[data-annotation-handle]")) return;
     const [x, y] = position(event);
     if (x < 0 || x > innerWidth || y < 0 || y > innerHeight) return;
     event.stopPropagation();

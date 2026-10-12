@@ -388,13 +388,32 @@ export const activityDashboard = dashboard(
       layout(8, 0, 4, 5),
       "phase-colors"
     ),
-    line(
-      "activity-conversion",
-      "Trial conversion over time",
-      ["Conversion (%)"],
-      layout(0, 5, 4),
-      "Conversion (%)"
-    ),
+    {
+      ...line(
+        "activity-conversion",
+        "Trial conversion over time",
+        ["Conversion (%)"],
+        layout(0, 5, 4),
+        "Conversion (%)"
+      ),
+      annotations: [
+        {
+          id: "activity-release",
+          type: "band",
+          axis: "x",
+          from: 31,
+          to: 60,
+          label: "Release",
+        },
+        {
+          id: "activity-target",
+          type: "reference-line",
+          axis: "y",
+          value: 4,
+          label: "Target 4%",
+        },
+      ],
+    },
     scatter(
       "activity-speed",
       "Does speed relate to conversion?",
@@ -480,6 +499,40 @@ export const bubbleDashboard: SavedDataStructure = {
       sizeField: "Trials",
       maxBubbleRadius: 20,
       pointOpacity: 0.5,
+      annotations: [
+        {
+          id: "bubble-slow-day",
+          type: "callout",
+          text: "Day 31: slowest response",
+          attach: { kind: "record", keyFields: ["Day"], key: [31] },
+          offset: { dx: -24, dy: -28 },
+        },
+        {
+          id: "bubble-target",
+          type: "reference-line",
+          axis: "y",
+          value: 4,
+          label: "Conversion target 4%",
+        },
+        {
+          id: "bubble-mean-speed",
+          type: "reference-line",
+          axis: "x",
+          value: 0,
+          calculated: { statistic: "mean", population: "filtered" },
+          label: "Mean response",
+        },
+        {
+          id: "bubble-fast-days",
+          type: "region",
+          shape: "ellipse",
+          x0: 275,
+          x1: 345,
+          y0: 4.1,
+          y1: 5.15,
+          label: "Fast, high-converting days",
+        },
+      ],
     },
     {
       ...base,
@@ -923,6 +976,18 @@ export const timeSeriesDashboard = dashboard(
         splitField: "Channel",
         missingPeriods: "gap",
       },
+      annotations: [
+        {
+          id: "time-summer-sale",
+          type: "band",
+          axis: "x",
+          // 2024-06-01 to 2024-08-31, UTC.
+          from: 1717200000000,
+          to: 1725062400000,
+          label: "Summer sale",
+          display: "bracket",
+        },
+      ],
     },
     {
       ...base,
@@ -1347,6 +1412,25 @@ export const scatterRegressionDashboard = dashboard(
         rowVariable: "sex",
         columnCount: 1,
       },
+      annotations: [
+        {
+          // Each panel reads its own rows, so each draws its own median.
+          id: "fit-sex-median",
+          type: "reference-line",
+          axis: "y",
+          value: 0,
+          calculated: { statistic: "median", population: "all" },
+          label: "Median depth",
+        },
+        {
+          id: "fit-sex-gentoo",
+          type: "callout",
+          text: "Gentoo males",
+          attach: { kind: "coordinate", x: 50, y: 15.7 },
+          offset: { dx: 18, dy: 22 },
+          facet: JSON.stringify(['["string","male"]', null]),
+        },
+      ],
     },
     row("fit-island", "Filter by island", "island", layout(0, 6, 3, 5)),
     {

@@ -21,6 +21,11 @@ import { scaleLinear } from "d3-scale";
 import { curveLinear, curveMonotoneX, curveStepAfter, line } from "d3-shape";
 import { useEffect, useMemo, useState, type FC } from "react";
 import { BaseChart } from "../BaseChart";
+import { describeScale } from "../Axis/axisPlan";
+import {
+  annotationSlot,
+  type ChartAnnotationFrame,
+} from "../annotations/ChartAnnotations";
 import { ChartReadout } from "../ChartReadout";
 import {
   ChartStatusLine,
@@ -33,7 +38,7 @@ import {
   useGetColumnDataForIds,
   useGetColumnDataForMultipleIds,
 } from "../useGetColumnData";
-import { useGetLiveIds } from "../useGetLiveData";
+import { useGetAllIds, useGetLiveIds } from "../useGetLiveData";
 import { type LineChartSettings, DEFAULT_SERIES_SETTINGS } from "./definition";
 import { TimeSeriesChart } from "./TimeSeriesChart";
 
@@ -64,6 +69,7 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
   width,
   height,
   facetIds,
+  facetKey,
 }) => {
   // The x value under the pointer; every series reads its value there.
   const [hoverX, setHoverX] = useState<number | null>(null);
@@ -72,6 +78,7 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
   const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
   const formatFieldValue = useDataLayer((state) => state.formatFieldValue);
   const fieldSettings = useDataLayer((state) => state.fieldSettings);
+  const getColumnData = useDataLayer((state) => state.getColumnData);
   void fieldSettings;
   const displayValue = (field: string, value: number) =>
     hasFieldDisplayFormat(fieldSettings[field])
@@ -89,6 +96,14 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
     [liveIds, facetIds]
   );
   const liveXData = useGetColumnDataForIds(settings.xField, selectedIds);
+  // Every row this panel can draw, whatever the filters: what "all rows"
+  // calculations read.
+  const allIds = useGetAllIds(settings);
+  const panelIds = useMemo(() => {
+    if (!facetIds) return allIds;
+    const facet = new Set(facetIds);
+    return allIds.filter((id) => facet.has(id));
+  }, [allIds, facetIds]);
   const allSeriesData = useGetColumnDataForMultipleIds(settings.seriesField);
 
   // Get all series data using the new hook
@@ -357,6 +372,44 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
     .range([innerHeight, 0])
     .nice();
 
+  // Annotations place a record by its x and one series' value. A record
+  // outside the selection reads as filtered.
+  const annotationFrame = ((): ChartAnnotationFrame | undefined => {
+    if (!settings.annotations?.length) return undefined;
+    const selected = new Set(selectedIds);
+    const xs = getColumnData(settings.xField);
+    return {
+      xScale: describeScale(xScale, settings.xAxis.scaleType),
+      yScale: describeScale(leftYScale, settings.yAxis.scaleType),
+      yRightScale: rightAxisSeries.length
+        ? describeScale(rightYScale, settings.yAxis.scaleType)
+        : undefined,
+      plotWidth: innerWidth,
+      plotHeight: innerHeight,
+      xField: settings.xField,
+      yField: settings.seriesField.find(
+        (field) => !settings.seriesSettings[field]?.useRightAxis
+      ),
+      visibleIds: selectedIds,
+      population: { all: panelIds, filtered: selectedIds },
+      facetKey,
+      plotted: (id, attach) => {
+        const field =
+          attach.yField && settings.seriesField.includes(attach.yField)
+            ? attach.yField
+            : settings.seriesField[0];
+        const x = finiteNumber(xs[id]);
+        const y = field ? finiteNumber(getColumnData(field)[id]) : undefined;
+        if (x === undefined || y === undefined || offScale(field!, y))
+          return undefined;
+        const yScale = settings.seriesSettings[field!]?.useRightAxis
+          ? rightYScale
+          : leftYScale;
+        return { x: xScale(x), y: yScale(y), selected: selected.has(id) };
+      },
+    };
+  })();
+
   // Create line generator with dynamic y-accessor
   const createLineGenerator = (yField: string) =>
     line<(typeof processedLiveSeriesData)[0]["data"][0]>()
@@ -549,6 +602,7 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
         height={height}
         xScale={xScale}
         yScale={leftYScale}
+        annotations={annotationSlot(settings, annotationFrame)}
         hidden={{
           x: hiddenByBounds(
             settings.xAxis,

@@ -4237,6 +4237,18 @@ html {
   transform-origin: top left;
   transform: rotate(-90deg) translateY(-50%);
 }
+
+/* Saved annotation text reads over marks and grid lines. */
+.eda-annotation-label {
+  paint-order: stroke;
+  stroke: var(--background);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+
+[data-annotation-handle]:focus-visible .eda-annotation-label {
+  text-decoration: underline;
+}
 /* Matches the field details tooltip: a name line, then label and value
    pairs in two columns, with the formula kept small. */
 .eda-calc-peek {
