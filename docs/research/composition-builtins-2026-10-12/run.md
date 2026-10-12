@@ -21,22 +21,29 @@ Completion requires readable Pro outputs, checked findings, integrated Sleuth ar
 
 ## Current state
 
-- Phase: prepared; awaiting access to the correct signed-in browser profile.
-- Pro round: initial submission pending. Follow-ups used: 0 of 2.
-- Pro conversation URL: none. Nothing submitted.
-- Model or mode: not yet selected or verified.
-- Submission and next check: none.
-- Heartbeat: none. An access action is required before submission.
+- Phase: submitted; Pro is working.
+- Pro round: initial submission sent. Follow-ups used: 0 of 2.
+- [Pro conversation](https://chatgpt.com/c/6acd1f36-150c-83ea-98f1-4d05946a051b).
+- Mode: Pro, power 5 of 5, verified in the live selector before sending.
+- Submission: 2026-10-12 at about 17:56 UTC (13:56 EDT).
+- First scheduled check: about 18:57 UTC (14:57 EDT), then hourly while needed.
+- Heartbeat: `collect-composition-chart-review`, active on this chat.
 - Goal: none. The user requested a process, not a goal record.
-- PR: none. Research has not run.
+- PR: none. Research results are pending.
 
-The task's Codex in-app browser opened ChatGPT signed out. Its profile identity was not verified.
-Byron says ChatGPT should already be signed in and asked whether the correct profile was used.
-The renewed browser inventory exposes only the in-app browser and empty MCP Apps. No named Chrome or Edge profile is available through that inventory.
-The in-app browser exposes visibility and viewport controls, with no profile switch.
-Native surface discovery still reports that the Mac is locked. Inspect the existing signed-in profile when native access is available.
-The earlier request to sign in again was premature; the observed logout applies only to the task's in-app browser session.
-This is an access blocker, not an approval-review rejection. Branch creation passed approval review after the sandbox blocked its shared Git metadata write.
+Chrome's native window confirmed the signed-in profile `Byron (byroni.us)`.
+Use `cua.getApp("com.google.Chrome")` when Chrome is absent from the browser inventory.
+The prior signed-out result belonged to the Codex in-app browser. The login request was premature.
+
+The sent message contains `source-packet(3).zip` and `prompt(4).md`; ChatGPT added the suffixes during upload.
+Both attachments and the complete instruction were verified before sending.
+After sending, the conversation showed the user message, both attachments, `ChatGPT is responding`, and then `Working`.
+The stable URL above replaced a temporary local URL. Do not resubmit.
+
+The heartbeat was created at 17:56:44 UTC. Its saved configuration confirms this chat, active status, and an hourly interval.
+It owns later collection, bounded follow-ups, Sleuth integration, validation, and the review PR.
+The handoff skill now documents the verified Chrome workflow in `references/chrome-workflow.md`.
+Skill validation and relative reference checks passed.
 
 ## Prepared artifacts
 
@@ -49,7 +56,7 @@ This is an access blocker, not an approval-review rejection. Branch creation pas
 
 The packet contains composition definitions, source datasets, built-in chart code, shared settings and data logic, tests, docs, and relevant intent.
 It excludes credentials, unrelated private files, dependencies, build output, and raw prior research.
-Upload the prompt separately as well as the ZIP. Verify both attachments before sending.
+The prompt and ZIP were uploaded separately. Preserve these exact source artifacts for later comparison.
 
 ## Grounding and checks
 
@@ -76,12 +83,12 @@ Preparation checks:
 ## Resume and complete
 
 1. Read this record and inspect Git status. Preserve unrelated edits and this existing branch.
-2. Locate the user's existing signed-in browser profile before requesting another login. Verify ChatGPT access and inspect the live model selector. Select Pro; do not substitute an API or cloud Codex task.
-3. Before sending, verify no conversation was recorded or submitted in a later checkpoint. Never duplicate an uncertain send.
-4. Upload the prompt and ZIP. Verify both, send a short instruction to execute the prompt, then verify processing started.
-5. Record conversation URL, observed mode, time, and round. Keep the browser tab for the later turn.
-6. Inspect existing automations. Create or reuse a heartbeat on this chat for a first check about one hour later.
-7. The heartbeat must continue collection, reconciliation, validation, and PR work. Record its ID and verify the saved schedule.
+2. Use native Chrome and its signed-in Byron profile. Open the recorded conversation; do not submit another initial request.
+3. Inspect the conversation for progress, an answer request, failure, or completed artifacts.
+4. Reuse the active heartbeat. Do not create a duplicate monitor.
+5. Record subsequent rounds, retrieval times, and checks here.
+6. Inspect the live selector before a follow-up. Use Pro; do not substitute an API or cloud Codex task.
+7. The heartbeat must continue collection, reconciliation, validation, and PR work until the endpoint below.
 8. If Pro runs, retain the same conversation and check later. If it needs facts, answer from source. Preserve slow runs.
 9. Collect the ZIP and all five companion files. Inspect archive entries before extraction, verify integrity, hashes, JSON, counts, and readable reports.
 10. Preserve originals under `docs/intent/progressive-built-in-charts/raw/2026-10-12-pro/`. Record links, retrieval time, paths, hashes, and missing files.
