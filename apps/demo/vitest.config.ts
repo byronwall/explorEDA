@@ -1,8 +1,7 @@
 /// <reference types="vitest" />
 import { defineConfig } from "vite";
-import mdx from "@mdx-js/rollup";
-import remarkGfm from "remark-gfm";
 import react from "@vitejs/plugin-react";
+import { docsMdx } from "./mdxPlugin";
 import {
   docsKitDistAlias,
   exploredaSource,
@@ -14,7 +13,7 @@ import {
 export default defineConfig({
   plugins: [
     ...(useLibrarySource ? [exploredaSource()] : []),
-    { enforce: "pre", ...mdx({ remarkPlugins: [remarkGfm] }) },
+    docsMdx(),
     react({ include: /\.(mdx|js|jsx|ts|tsx)$/ }),
   ],
   resolve: {
