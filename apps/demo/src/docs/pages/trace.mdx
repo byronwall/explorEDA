@@ -2,11 +2,29 @@
 
 Trace explains how a mark was computed: its source values, calculations, filters, scales, and position. It works on every chart type except 3D scatter plots, data tables, pivot tables, summary tables, and notes.
 
-- Use the trace button in a chart's header to choose a chart object.
-- Or Alt-click a point, chart title, axis object, color label, or facet label. Alt-Enter traces the focused title, facet, or color scale.
-- A normal click keeps selecting and filtering.
+<Steps
+  label="Trace a mark"
+  steps={[
+    {
+      title: "Choose the mark",
+      detail:
+        "Use the trace button in a chart's header, or Alt-click a point, chart title, axis, color label, or facet label. Alt-Enter traces the focused title, facet, or color scale.",
+    },
+    {
+      title: "Read how it was computed",
+      detail:
+        "The trace lists the mark's source values, the calculations they pass through, the filters that apply, and the scales that place it.",
+    },
+    {
+      title: "Find its rows",
+      detail: "From the trace, open the source rows behind the mark.",
+    },
+  ]}
+/>
 
-From a trace, find the source rows behind the mark.
+<Callout type="tip" title="A plain click still filters.">
+  Only Alt-click traces. A normal click on a mark keeps selecting and filtering.
+</Callout>
 
 ## Try it
 

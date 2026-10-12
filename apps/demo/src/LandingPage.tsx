@@ -467,7 +467,14 @@ export function LandingPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground ">
-      <div className="flex flex-col items-center gap-6 px-3 py-3 sm:px-5">
+      <div
+        className={
+          // The docs draw their own full-width frame.
+          showDocs && !hasData
+            ? "flex flex-col"
+            : "flex flex-col items-center gap-6 px-3 py-3 sm:px-5"
+        }
+      >
         {restoreFailed && (
           <div
             role="alert"
@@ -523,7 +530,7 @@ export function LandingPage() {
                 showCoverage
                   ? "mx-auto w-full min-w-0 px-1 pt-2 sm:px-0"
                   : showDocs
-                    ? "mx-auto w-full max-w-[calc(100vw-3rem)]"
+                    ? "w-full"
                     : "landing mx-auto w-full max-w-6xl"
               }
             >
