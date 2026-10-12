@@ -1,7 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
-  ChartExportError,
-  captureChartPanel,
   chartImageFileName,
   chartImageUnsupportedReason,
   copyChartImage,
@@ -30,12 +28,9 @@ describe("chartImageFileName", () => {
 });
 
 describe("support", () => {
-  it("says why 3D charts cannot be exported yet", async () => {
-    expect(chartImageUnsupportedReason("3d-scatter")).toMatch(/3D/);
-    expect(chartImageUnsupportedReason("scatter")).toBeUndefined();
-    await expect(
-      captureChartPanel(document.createElement("div"), "3d-scatter")
-    ).rejects.toBeInstanceOf(ChartExportError);
+  it("exports every chart type, 3D included", () => {
+    for (const type of ["scatter", "3d-scatter", "composition"] as const)
+      {expect(chartImageUnsupportedReason(type)).toBeUndefined();}
   });
 });
 
@@ -62,5 +57,21 @@ describe("copyChartImage", () => {
       items: Record<string, Promise<Blob>>;
     };
     expect(await item.items["image/png"]).toBe(blob);
+  });
+});
+
+describe("captureChartPanel", () => {
+  it("exports a composition's artboard, and says when it is not open", async () => {
+    const { captureChartPanel, ChartExportError } = await import(
+      "./chartImage"
+    );
+    await expect(
+      captureChartPanel(document.createElement("div"), {
+        id: "not-mounted",
+        type: "composition",
+      })
+    ).rejects.toEqual(
+      new ChartExportError("Open the composition to export it.")
+    );
   });
 });

@@ -577,7 +577,12 @@ export function PlotChartPanel({
     settings.type === "data-table" ? settings.globalSearch : "";
   const hasFilter = settings.filters.some(isActiveFilter);
 
-  const imageExport = useChartImageExport(panelRef, settings.type, chartTitle);
+  const imageExport = useChartImageExport(
+    panelRef,
+    settings.id,
+    settings.type,
+    chartTitle
+  );
 
   const handleDelete = async () => {
     const confirmed = await showAlert(

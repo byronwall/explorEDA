@@ -94,7 +94,10 @@ it("copies with E and downloads with Shift+E while the chart is hovered", async 
   fireEvent.pointerEnter(panel);
   fireEvent.keyDown(document, { key: "e" });
   await waitFor(() => expect(write).toHaveBeenCalledOnce());
-  expect(capture).toHaveBeenCalledWith(panel, "bar");
+  expect(capture).toHaveBeenCalledWith(panel, {
+    id: expect.any(String),
+    type: "bar",
+  });
 
   const click = vi
     .spyOn(HTMLAnchorElement.prototype, "click")

@@ -13,7 +13,9 @@ import {
 function reportFailure(error: unknown) {
   if (error instanceof ChartExportError) {
     toast.error(error.message);
-  } else {toast.error("The chart image could not be created.");}
+  } else {
+    toast.error("The chart image could not be created.");
+  }
 }
 
 /**
@@ -22,6 +24,7 @@ function reportFailure(error: unknown) {
  */
 export function useChartImageExport(
   panelRef: RefObject<HTMLElement | null>,
+  id: string,
   type: ChartType,
   title: string
 ) {
@@ -34,8 +37,8 @@ export function useChartImageExport(
         new ChartExportError("Show the chart on screen to export it.")
       );
     }
-    return captureChartPanel(panel, type);
-  }, [panelRef, type]);
+    return captureChartPanel(panel, { id, type });
+  }, [panelRef, id, type]);
 
   const copy = useCallback(() => {
     if (reason) {

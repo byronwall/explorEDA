@@ -7514,14 +7514,6 @@ td[data-null] {
 .eda-composition-ramp-stop > div {
   width: 64px;
 }
-.eda-composition-copy-status {
-  margin-top: -4px;
-  color: var(--muted-foreground);
-  font-size: 11px;
-}
-.eda-composition-copy-status[data-state="failed"] {
-  color: var(--destructive);
-}
 
 /* Colors defined inside compositions, listed under the workspace scales. */
 .eda-composition-scales {

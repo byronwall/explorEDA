@@ -23,6 +23,9 @@ const { values } = parseArgs({
 
 // limit: the share of pixels that may differ, in percent. Antialiasing and
 // the omitted header controls account for a few tenths of a percent.
+// taller: the export shows the whole chart, so it must be taller than the
+// screen; only the part in view is compared. own: the export has its own
+// size (a composition artboard), so it is checked for content only.
 export const CASES = [
   {
     name: "scatter-dark",
@@ -49,6 +52,27 @@ export const CASES = [
     example: "shop-operations",
     title: "Orders by category",
     limit: 1,
+  },
+  {
+    name: "pivot-full-extent",
+    example: "categorical-charts",
+    title: "How do category counts vary by subcategory and rating?",
+    taller: true,
+    // The screen's sticky Total row covers rows the export shows in place.
+    limit: 6,
+  },
+  {
+    name: "3d-facets",
+    example: "lorenz-3d",
+    title: "How do runs trace the attractor?",
+    dark: true,
+    limit: 1,
+  },
+  {
+    name: "composition",
+    example: "covid-compare",
+    title: "The last nine months, against three years",
+    own: true,
   },
   {
     name: "data-table-scrolled",
@@ -107,11 +131,18 @@ async function compare(a, b) {
       const context = canvas.getContext("2d");
       const diff = context.createImageData(width, height);
       let bad = 0;
+      let plain = 0;
       for (let i = 0; i < pa.data.length; i += 4) {
         const delta =
           Math.abs(pa.data[i] - pb.data[i]) +
           Math.abs(pa.data[i + 1] - pb.data[i + 1]) +
           Math.abs(pa.data[i + 2] - pb.data[i + 2]);
+        if (
+          pb.data[i] === pb.data[0] &&
+          pb.data[i + 1] === pb.data[1] &&
+          pb.data[i + 2] === pb.data[2]
+        )
+          plain++;
         if (delta > 48) {
           bad++;
           diff.data[i] = 255;
@@ -124,6 +155,8 @@ async function compare(a, b) {
       return {
         sizes: [ia.width, ia.height, ib.width, ib.height],
         mismatch: (100 * bad) / (width * height),
+        // Share of the export that is its corner color: near 1 is blank.
+        blank: plain / (width * height),
         diff: canvas.toDataURL("image/png"),
       };
     },
@@ -170,9 +203,13 @@ for (const item of CASES) {
     `${out}/${item.name}-diff.png`,
     Buffer.from(result.diff.split(",")[1], "base64")
   );
-  const sameSize =
-    result.sizes[0] === result.sizes[2] && result.sizes[1] === result.sizes[3];
-  const ok = sameSize && result.mismatch <= item.limit;
+  const [sw, sh, ew, eh] = result.sizes;
+  const sameSize = sw === ew && sh === eh;
+  const ok = item.own
+    ? ew > 0 && eh > 0 && result.blank < 0.98
+    : item.taller
+      ? sw === ew && eh > sh && result.mismatch <= item.limit
+      : sameSize && result.mismatch <= item.limit;
   if (!ok) failed++;
   let copied = "";
   if (item.copy && values.engine === "chromium") {
@@ -185,10 +222,12 @@ for (const item of CASES) {
     copied = ` · clipboard PNG ${Math.round(bytes / 1024)} KB`;
     if (!bytes) failed++;
   }
+  const measure = item.own
+    ? `${Math.round(result.blank * 100)}% background`
+    : `${result.mismatch.toFixed(2)}% differs (limit ${item.limit}%)`;
   console.log(
-    `${ok ? "ok  " : "FAIL"} ${item.name}: ${result.mismatch.toFixed(2)}% differs` +
-      ` (limit ${item.limit}%), ${result.sizes[2]}x${result.sizes[3]}` +
-      (sameSize ? "" : ` vs screen ${result.sizes[0]}x${result.sizes[1]}`) +
+    `${ok ? "ok  " : "FAIL"} ${item.name}: ${measure}, ${ew}x${eh}` +
+      (sameSize ? "" : ` vs screen ${sw}x${sh}`) +
       ` · ${saved.suggestedFilename()}${copied}`
   );
 }

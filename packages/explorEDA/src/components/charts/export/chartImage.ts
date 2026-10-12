@@ -1,4 +1,5 @@
 import type { ChartType } from "@/types/ChartTypes";
+import { compositionPng } from "../Composition/compositionOutput";
 import {
   ChartExportError,
   rasterizePanel,
@@ -10,9 +11,7 @@ import {
  * Why a chart type cannot be exported yet, or undefined when it can. The
  * export actions stay listed for every chart and say why they are off.
  */
-const unsupported: Partial<Record<ChartType, string>> = {
-  "3d-scatter": "Image export isn't available for 3D charts yet.",
-};
+const unsupported: Partial<Record<ChartType, string>> = {};
 
 export function chartImageUnsupportedReason(type: ChartType) {
   return unsupported[type];
@@ -37,16 +36,34 @@ export function chartImageFileName(title: string, date = new Date()) {
   return `${slug}-${day}.png`;
 }
 
+/**
+ * Draws one chart to a PNG. A composition is already a finished graphic, so
+ * it exports its artboard at its own size; every other chart exports its
+ * panel as drawn.
+ */
 export function captureChartPanel(
   panel: HTMLElement,
-  type: ChartType,
+  chart: { id: string; type: ChartType },
   options?: RasterizeOptions
 ): Promise<ChartImage> {
+  const { type } = chart;
   const reason = chartImageUnsupportedReason(type);
   if (reason) {
     return Promise.reject(new ChartExportError(reason));
   }
-  return rasterizePanel(panel, options);
+  if (type === "composition") {
+    return compositionPng(chart.id, options?.pixelRatio).catch((error) => {
+      throw new ChartExportError(
+        error instanceof Error ? error.message : String(error)
+      );
+    });
+  }
+  // Every chart but the raw data table has a known size, so it is shown in
+  // full; a data table shows the rows in view.
+  return rasterizePanel(panel, {
+    fullExtent: type !== "data-table",
+    ...options,
+  });
 }
 
 export function canCopyImages() {

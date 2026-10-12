@@ -10,7 +10,15 @@ export interface ChartImage {
 export interface RasterizeOptions {
   /** Image pixels per CSS pixel; 2 keeps text sharp on slides. */
   pixelRatio?: number;
+  /**
+   * Show all of every vertically scrolling box, as for a pivot table with a
+   * known size. Off for a data table, which shows the rows in view.
+   */
+  fullExtent?: boolean;
 }
+
+/** Tallest image, in CSS pixels, before full extent stops growing. */
+const MAX_EXTENT = 8000;
 
 /** A failure the person exporting can act on; its message is shown as is. */
 export class ChartExportError extends Error {
@@ -101,8 +109,13 @@ const isScroller = (style: CSSStyleDeclaration) =>
  * are measured by briefly making each sticky node static, inside one task, so
  * nothing paints in between.
  */
-function keepScrollPosition(source: HTMLElement, target: HTMLElement) {
-  const { scrollTop, scrollLeft } = source;
+function keepScrollPosition(
+  source: HTMLElement,
+  target: HTMLElement,
+  expanded: boolean
+) {
+  const scrollTop = expanded ? 0 : source.scrollTop;
+  const { scrollLeft } = source;
   if (!scrollTop && !scrollLeft) {
     return;
   }
@@ -115,7 +128,7 @@ function keepScrollPosition(source: HTMLElement, target: HTMLElement) {
   }
 }
 
-function stickyOffsets(panel: HTMLElement) {
+function stickyOffsets(panel: HTMLElement, expanding: Set<Element>) {
   const offsets = new Map<Element, { dx: number; dy: number }>();
   for (const node of Array.from(panel.querySelectorAll<HTMLElement>("*"))) {
     if (getComputedStyle(node).position !== "sticky") {
@@ -123,6 +136,7 @@ function stickyOffsets(panel: HTMLElement) {
     }
     // Only scroll boxes inside the panel are replayed in the clone.
     let scrolled = false;
+    let expanded = false;
     for (
       let up = node.parentElement;
       up && up !== panel;
@@ -130,6 +144,9 @@ function stickyOffsets(panel: HTMLElement) {
     ) {
       if (up.scrollTop || up.scrollLeft) {
         scrolled = true;
+      }
+      if (expanding.has(up)) {
+        expanded = true;
       }
     }
     if (!scrolled) {
@@ -141,7 +158,8 @@ function stickyOffsets(panel: HTMLElement) {
     const unstuck = node.getBoundingClientRect();
     node.style.position = inline;
     const dx = stuck.left - unstuck.left;
-    const dy = stuck.top - unstuck.top;
+    // A box shown in full is drawn from its top, where nothing is stuck.
+    const dy = expanded ? 0 : stuck.top - unstuck.top;
     if (dx || dy) {
       offsets.set(node, { dx, dy });
     }
@@ -164,22 +182,53 @@ function backdrop(panel: HTMLElement) {
  * Builds a standalone SVG of the panel as drawn: computed styles inlined,
  * canvases replaced by their pixels, chrome hidden, scroll kept.
  */
-export function panelSvg(panel: HTMLElement, fontCss = "") {
+export function panelSvg(
+  panel: HTMLElement,
+  fontCss = "",
+  { fullExtent = false }: Pick<RasterizeOptions, "fullExtent"> = {}
+) {
   // Read the panel at rest: no hover-revealed actions or pointer readout.
   // Everything below runs in one task, so the page never paints this state.
   panel.setAttribute("data-exporting", "");
   try {
-    return clonePanel(panel, fontCss);
+    return clonePanel(panel, fontCss, fullExtent);
   } finally {
     panel.removeAttribute("data-exporting");
   }
 }
 
-function clonePanel(panel: HTMLElement, fontCss: string) {
+/** Boxes whose hidden rows a full-extent image shows. */
+function scrollersToExpand(panel: HTMLElement) {
+  const boxes = new Set<Element>();
+  for (const node of Array.from(panel.querySelectorAll<HTMLElement>("*"))) {
+    if (
+      node.scrollHeight > node.clientHeight + 1 &&
+      /auto|scroll/.test(getComputedStyle(node).overflowY)
+    ) {
+      boxes.add(node);
+    }
+  }
+  return boxes;
+}
+
+/** Lays the clone out off-screen to learn its height once boxes grow. */
+function measuredHeight(clone: HTMLElement, width: number) {
+  const host = document.createElement("div");
+  host.setAttribute("aria-hidden", "true");
+  host.style.cssText = `position:fixed;left:-100000px;top:0;width:${width}px;visibility:hidden;pointer-events:none`;
+  host.appendChild(clone);
+  document.body.appendChild(host);
+  const height = clone.getBoundingClientRect().height;
+  host.remove();
+  return Math.min(MAX_EXTENT, Math.ceil(height));
+}
+
+function clonePanel(panel: HTMLElement, fontCss: string, fullExtent: boolean) {
   const rect = panel.getBoundingClientRect();
   const width = Math.ceil(rect.width);
-  const height = Math.ceil(rect.height);
-  const sticky = stickyOffsets(panel);
+  let height = Math.ceil(rect.height);
+  const expanding = fullExtent ? scrollersToExpand(panel) : new Set<Element>();
+  const sticky = stickyOffsets(panel, expanding);
   const clone = panel.cloneNode(true) as HTMLElement;
   const sources = [panel, ...Array.from(panel.querySelectorAll("*"))];
   const targets = [clone, ...Array.from(clone.querySelectorAll("*"))];
@@ -233,13 +282,29 @@ function clonePanel(panel: HTMLElement, fontCss: string) {
     ) {
       // No scrollbars in a picture; the content shift stands in for scrolling.
       target.style.overflow = "hidden";
-      keepScrollPosition(source, target);
+      const expanded = expanding.has(source);
+      keepScrollPosition(source, target, expanded);
+      if (expanded) {
+        // Let the box and everything around it grow to its content.
+        for (
+          let node: HTMLElement | null = target;
+          node;
+          node = node === clone ? null : node.parentElement
+        ) {
+          node.style.height = "auto";
+          node.style.maxHeight = "none";
+        }
+      }
     }
   }
 
   clone.style.margin = "0";
   clone.style.transform = "none";
   clone.style.position = "static";
+  if (expanding.size) {
+    height = measuredHeight(clone, width);
+    clone.style.height = `${height}px`;
+  }
   const markup = new XMLSerializer().serializeToString(clone);
   const svg =
     `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">` +
@@ -267,11 +332,13 @@ function loadImage(url: string) {
  */
 export async function rasterizePanel(
   panel: HTMLElement,
-  { pixelRatio = 2 }: RasterizeOptions = {}
+  { pixelRatio = 2, fullExtent = false }: RasterizeOptions = {}
 ): Promise<ChartImage> {
   await document.fonts?.ready;
   const fontCss = await embeddedFontFaces(panel);
-  const { svg, width, height, images } = panelSvg(panel, fontCss);
+  const { svg, width, height, images } = panelSvg(panel, fontCss, {
+    fullExtent,
+  });
   if (!width || !height) {
     throw new ChartExportError("Show the chart on screen to export it.");
   }
