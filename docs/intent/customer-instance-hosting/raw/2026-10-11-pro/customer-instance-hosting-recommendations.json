@@ -1,0 +1,3552 @@
+{
+  "schema_version": "1.0.0",
+  "research_track": 4,
+  "assignment": "prompts/customer-instance-hosting.md",
+  "title": "Dedicated customer-instance hosting for explorEDA",
+  "research_date_utc": "2026-10-12",
+  "mode": "Research and architecture shaping only; no implementation or provisioning",
+  "baseline": {
+    "repository": "https://github.com/byronwall/explorEDA",
+    "commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+    "source_route": "attached source packet",
+    "source_files_hash_verified": 39,
+    "images_hash_verified": 3,
+    "hash_mismatches": 0,
+    "standalone_prompt_matches_assignment": true,
+    "runnable_checkout": false,
+    "newer_ref_inspected": false
+  },
+  "decision": {
+    "primary": "cloud_run_gen2_service_per_customer",
+    "fallback": "render_paid_service_per_customer",
+    "fallback_scope": "Simpler always-on application operation, conditional on two-provider state provisioning and container-level isolation being acceptable.",
+    "challenger": "cloudflare_containers_default_scheduler_per_customer",
+    "production_validated": false,
+    "challenger_test_trigger": "A mandatory primary gate fails, or measured cost/operational requirements make a challenger materially preferable."
+  },
+  "primary_configuration": {
+    "runtime": "trusted Linux amd64 OCI image, one release digest for all customers",
+    "cpu_vcpu": 1,
+    "memory_gib": 2,
+    "billing": "instance_based",
+    "automatic_scaling": true,
+    "minimum_instances": 0,
+    "service_level_maximum_instances": 2,
+    "maximum_is_hard_cap": false,
+    "http_ingress": "h2c on 8080 behind provider TLS",
+    "health": "HTTP/1 liveness on 8081 in same application process; only 8080 exposed in container ports",
+    "production_smoke_routing": "Reserved ALB path and serverless NEG mask selecting service and tag; narrow application authorization for exact customer/generation; remove tag after proof",
+    "image_portability": "The common image must support configurable provider-compatible HTTP/1 API or h2c ingress; proxy and cancellation behavior require a separate proof per host",
+    "http_concurrency": 4,
+    "active_queries_per_replica": 2,
+    "query_pool_connections_per_replica": 2,
+    "additional_cancel_connection": "adapter-specific, separately budgeted",
+    "interactive_query_deadline_seconds": 60,
+    "service_request_timeout_seconds": 90,
+    "snapshot_row_budget": 100000,
+    "snapshot_decoded_byte_budget_mib": 64,
+    "budgets_are_provisional": true,
+    "authoritative_local_state": false,
+    "customer_runtime_has_fleet_firestore_access": false,
+    "database_ownership": "customer_owned_by_default"
+  },
+  "assumptions": [
+    "No provider account, region, database engine, contractual isolation or availability tier, budget or fleet count selected by user; values are scenarios.",
+    "Trusted application code; no arbitrary customer native code or unrestricted shell/UDF execution.",
+    "Public TLS database access is acceptable in the default network profile; static/private routes are separately qualified.",
+    "No production SLA is inferred from provider documentation or paid-customer status.",
+    "Instance-based min-zero billing is a conservative health-compatible default; request billing is only an optimization sensitivity.",
+    "Pricing credits and free allowances shared once per relevant account/project, not multiplied per customer."
+  ],
+  "recommendations": [
+    {
+      "id": "H01",
+      "proposal": "Use one Cloud Run Gen2 service per customer as the default hosting architecture.",
+      "status": "recommend",
+      "rationale": "It combines ordinary native-driver containers, per-service identity and lifecycle, microVM isolation, regional placement, documented networking and request-driven scale-to-zero. The future backend is new work; current static hosting is not that backend.",
+      "benefit": "Dedicated customer query runtime without a guest OS fleet.",
+      "maintenance_cost": "Maintain one image, app health/auth/query safety, bounded provisioning code and a small shared Google control plane.",
+      "alternative": "Render always-on service/customer; Cloudflare Containers can displace the winner if its proof passes.",
+      "evidence": [
+        {
+          "source_id": "REP01"
+        },
+        {
+          "source_id": "REP02"
+        },
+        {
+          "source_id": "CR01"
+        },
+        {
+          "source_id": "CR02"
+        },
+        {
+          "source_id": "CR09"
+        },
+        {
+          "source_id": "CR10"
+        }
+      ],
+      "confidence": "medium",
+      "proof": {
+        "gate_ids": [
+          "P01",
+          "P02",
+          "P03",
+          "P04",
+          "P05",
+          "P06",
+          "P08"
+        ],
+        "required_before_production": true
+      }
+    },
+    {
+      "id": "H02",
+      "proposal": "Define the customer instance as an independently deployed service plus its exclusive replicas, identity, credentials and state resources.",
+      "status": "recommend",
+      "rationale": "A service can scale from zero to several customer-exclusive microVMs. It is not a dedicated physical host or customer cloud account. A database/schema alone does not isolate query compute.",
+      "benefit": "An honest dedicated-instance promise and smaller compromise boundary.",
+      "maintenance_cost": "Per-customer service, IAM and object/secret resource inventory; shared regional/account risks remain.",
+      "alternative": "Separate project/account for administrative, quota, contractual or network requirements.",
+      "evidence": [
+        {
+          "source_id": "CR01"
+        },
+        {
+          "source_id": "CR10"
+        },
+        {
+          "source_id": "GP15"
+        },
+        {
+          "source_id": "RENDER-PROJECTS"
+        }
+      ],
+      "confidence": "high",
+      "proof": {
+        "gate_ids": [
+          "P02"
+        ],
+        "required_before_production": true
+      }
+    },
+    {
+      "id": "H03",
+      "proposal": "Start at 1 vCPU/2 GiB, instance-based billing, automatic min zero, service-level max two, h2c ingress and separate HTTP/1 application liveness.",
+      "status": "recommend",
+      "rationale": "Conservative billing avoids ambiguity in current health-probe documentation and permits recovery/cleanup outside requests. Idle tails must be measured; max two is not a hard cap.",
+      "benefit": "Provider-driven hang recovery with scale-to-zero and a credible cost model.",
+      "maintenance_cost": "Two listeners in one application; health must reflect event-loop readiness, and billing/scale-down must be proved.",
+      "alternative": "Request-based billing after health/billing proof; min-one configuration for customers who pay for warm readiness.",
+      "evidence": [
+        {
+          "source_id": "CR04"
+        },
+        {
+          "source_id": "CR05"
+        },
+        {
+          "source_id": "CR22"
+        },
+        {
+          "source_id": "CR25"
+        },
+        {
+          "source_id": "CR33"
+        },
+        {
+          "source_id": "GP16"
+        }
+      ],
+      "confidence": "medium",
+      "proof": {
+        "gate_ids": [
+          "P03",
+          "P05",
+          "P08"
+        ],
+        "required_before_production": true
+      }
+    },
+    {
+      "id": "H04",
+      "proposal": "Connect to customer-owned databases using verified TLS and a narrowly privileged read-only identity by default.",
+      "status": "recommend",
+      "rationale": "Hosting a new customer database adds backup, migration, upgrade and billing commitments that the user has not selected.",
+      "benefit": "Keeps initial product responsibility bounded and preserves the customer source of truth.",
+      "maintenance_cost": "Customer onboarding still needs database credentials, permitted objects, region and network path; connection/timeout behavior is adapter-specific.",
+      "alternative": "A separately priced managed database/customer if the product must ingest and own customer data.",
+      "evidence": [
+        {
+          "source_id": "REP09"
+        },
+        {
+          "source_id": "GP17"
+        },
+        {
+          "source_id": "GP18"
+        },
+        {
+          "source_id": "CF11"
+        }
+      ],
+      "confidence": "high",
+      "proof": {
+        "gate_ids": [
+          "P01",
+          "P04",
+          "P09"
+        ],
+        "required_before_production": true
+      }
+    },
+    {
+      "id": "H05",
+      "proposal": "Push supported relational work to the source database and stream bounded results; do not transmit the complete internal AnalysisEvaluation by default.",
+      "status": "recommend",
+      "rationale": "Current evaluations include full stage rows and contributor arrays, and consumers create additional row copies. Naive serialization can erase database pushdown savings.",
+      "benefit": "Bounds server memory, browser memory and billed bytes while preserving complete snapshots when feasible.",
+      "maintenance_cost": "Reconcile query demand, provenance and scalar semantics with unfinished tracks; add explicit incomplete/error semantics.",
+      "alternative": "Bounded local evaluation in the customer container when pushdown cannot preserve semantics.",
+      "evidence": [
+        {
+          "source_id": "REP03"
+        },
+        {
+          "source_id": "REP05"
+        },
+        {
+          "source_id": "REP06"
+        },
+        {
+          "source_id": "GP18"
+        }
+      ],
+      "confidence": "medium",
+      "proof": {
+        "gate_ids": [
+          "P01",
+          "P04"
+        ],
+        "required_before_production": true
+      }
+    },
+    {
+      "id": "H06",
+      "proposal": "Keep admitted full snapshots in the browser and make server caches disposable and disabled initially.",
+      "status": "recommend",
+      "rationale": "The notebook intent does not imply server DuckDB or permanent cache. Durable caching introduces freshness, permission and invalidation work.",
+      "benefit": "Fast local interaction after loading with fewer server lifecycle dependencies.",
+      "maintenance_cost": "Enforce byte/row budgets and move decoding/indexing work off the main thread; local data already delivered cannot be remotely recalled.",
+      "alternative": "Tenant-scoped immutable snapshot objects only after repeated-transfer measurements justify them.",
+      "evidence": [
+        {
+          "source_id": "REP04"
+        },
+        {
+          "source_id": "REP05"
+        },
+        {
+          "source_id": "REP07"
+        }
+      ],
+      "confidence": "medium",
+      "proof": {
+        "gate_ids": [
+          "P01",
+          "P04",
+          "P09"
+        ],
+        "required_before_production": true
+      }
+    },
+    {
+      "id": "H07",
+      "proposal": "Require end-to-end cancellation proof, database statement deadlines and independent cancellation capacity.",
+      "status": "recommend",
+      "rationale": "Cloud Run HTTP/1 disconnects are not propagated; staleness suppression is not cancellation. A separate cancel request can reach a different replica or revision.",
+      "benefit": "Avoids runaway SQL, exhausted pools and misleading canceled UI states.",
+      "maintenance_cost": "Actual driver must cancel owned work, reserve any control connection and close transactions/cursors; h2c must survive ingress.",
+      "alternative": "Same-connection WebSocket control or tenant-scoped owner dispatch only if the simpler HTTP/2 path fails.",
+      "evidence": [
+        {
+          "source_id": "REP04"
+        },
+        {
+          "source_id": "CR24"
+        },
+        {
+          "source_id": "CR25"
+        },
+        {
+          "source_id": "GP17"
+        },
+        {
+          "source_id": "GP19"
+        },
+        {
+          "source_id": "RENDER-DEPLOY-DRAIN"
+        }
+      ],
+      "confidence": "high",
+      "proof": {
+        "gate_ids": [
+          "P03",
+          "P06"
+        ],
+        "required_before_production": true
+      }
+    },
+    {
+      "id": "H08",
+      "proposal": "Give each runtime only its own secret and object permissions, and validate browser identity against the fixed customer identity.",
+      "status": "recommend",
+      "rationale": "Hostname routing, a shared login provider and a service account solve different problems. Fleet control-plane database access would unnecessarily broaden runtime authority.",
+      "benefit": "Limits accidental routing mistakes and a customer-runtime compromise.",
+      "maintenance_cost": "Maintain narrow bindings, host-bound sessions, per-customer authorization and credential rotation.",
+      "alternative": "Customer-owned project/account when separate administrators or keys are required.",
+      "evidence": [
+        {
+          "source_id": "CR10"
+        },
+        {
+          "source_id": "CR11"
+        },
+        {
+          "source_id": "GP13"
+        },
+        {
+          "source_id": "GP14"
+        },
+        {
+          "source_id": "GP15"
+        },
+        {
+          "source_id": "RENDER-OIDC"
+        }
+      ],
+      "confidence": "high",
+      "proof": {
+        "gate_ids": [
+          "P02",
+          "P07"
+        ],
+        "required_before_production": true
+      }
+    },
+    {
+      "id": "H09",
+      "proposal": "Use one small shared desired-state reconciler with one durable record per customer.",
+      "status": "recommend",
+      "rationale": "Deterministic resource names, operation IDs, leases and observed readiness are enough for this finite lifecycle; payment and workflow platforms are unnecessary initially.",
+      "benefit": "Repeatable provisioning, retry and retirement without manual fleet administration.",
+      "maintenance_cost": "A Cloud Run controller job, Firestore control records and one regional reconciliation schedule; immediate commands use the same path.",
+      "alternative": "Private versioned manifests plus the same small CI/API script when initial onboarding is operator-triggered.",
+      "evidence": [
+        {
+          "source_id": "CR26"
+        },
+        {
+          "source_id": "CR03"
+        },
+        {
+          "source_id": "GP03"
+        },
+        {
+          "source_id": "GP04"
+        },
+        {
+          "source_id": "RENDER-RATE-LIMITS"
+        }
+      ],
+      "confidence": "medium",
+      "proof": {
+        "gate_ids": [
+          "P05",
+          "P07",
+          "P09"
+        ],
+        "required_before_production": true
+      }
+    },
+    {
+      "id": "H10",
+      "proposal": "Build one digest per release and deploy whole-customer cohorts with explicit rollback and tag cleanup.",
+      "status": "recommend",
+      "rationale": "Customer code forks and long intra-service traffic splits multiply states and pools. Old revisions, retained tags and deploy overrides have provider-specific lifecycle effects.",
+      "benefit": "A manageable release surface and a recoverable bad-deploy path.",
+      "maintenance_cost": "Retain old images; keep storage formats backward compatible; reconcile desired and observed digest; route production tagged smoke tests through a reserved ALB service/tag mask with application authorization; remove smoke tags.",
+      "alternative": "A warm fixed service plus a simple CI deploy command for the first few customers.",
+      "evidence": [
+        {
+          "source_id": "REP02"
+        },
+        {
+          "source_id": "CR20"
+        },
+        {
+          "source_id": "CR05"
+        },
+        {
+          "source_id": "CR21"
+        },
+        {
+          "source_id": "CR18"
+        },
+        {
+          "source_id": "GP14"
+        },
+        {
+          "source_id": "RENDER-UPDATE-SERVICE"
+        },
+        {
+          "source_id": "RENDER-CREATE-DEPLOY"
+        },
+        {
+          "source_id": "RENDER-ROLLBACK"
+        }
+      ],
+      "confidence": "high",
+      "proof": {
+        "gate_ids": [
+          "P05",
+          "P07"
+        ],
+        "required_before_production": true
+      }
+    },
+    {
+      "id": "H11",
+      "proposal": "Externalize project/configuration state in a bucket/customer with versioning, explicit retention and restore proof.",
+      "status": "recommend",
+      "rationale": "Runtime files disappear on restart; object-backed file mounts do not provide the locking semantics of a normal database filesystem.",
+      "benefit": "Rebuildable customer instances and portable exports.",
+      "maintenance_cost": "Object generation checks, retention accounting, backup/restore exercise and separate secret recovery.",
+      "alternative": "S3 via exact-service Render OIDC for fallback; managed database only when transactional shared state becomes a real requirement.",
+      "evidence": [
+        {
+          "source_id": "REP07"
+        },
+        {
+          "source_id": "GP01"
+        },
+        {
+          "source_id": "GP10"
+        },
+        {
+          "source_id": "GP11"
+        },
+        {
+          "source_id": "GP12"
+        },
+        {
+          "source_id": "AWS-S3-VERSIONING"
+        }
+      ],
+      "confidence": "high",
+      "proof": {
+        "gate_ids": [
+          "P09"
+        ],
+        "required_before_production": true
+      }
+    },
+    {
+      "id": "H12",
+      "proposal": "Treat public TLS, shared static egress, customer-exclusive egress and private/on-premises access as separate network profiles.",
+      "status": "recommend",
+      "rationale": "Direct VPC/NAT can add severe cold readiness latency; shared IP is not customer-specific identity; private access always requires a supported customer-side path.",
+      "benefit": "Avoids selling networking that the chosen provider does not actually supply.",
+      "maintenance_cost": "Preflight each database path; price shared infrastructure once and customer-dedicated paths separately.",
+      "alternative": "Fly app/customer for cheap static egress; dedicated cloud project/VPC or customer connector when necessary.",
+      "evidence": [
+        {
+          "source_id": "CR13"
+        },
+        {
+          "source_id": "CR14"
+        },
+        {
+          "source_id": "CR15"
+        },
+        {
+          "source_id": "CR28"
+        },
+        {
+          "source_id": "CF13"
+        },
+        {
+          "source_id": "CF14"
+        },
+        {
+          "source_id": "CF28"
+        },
+        {
+          "source_id": "RENDER-DEDICATED-IP"
+        },
+        {
+          "source_id": "FLY-EGRESS"
+        }
+      ],
+      "confidence": "high",
+      "proof": {
+        "gate_ids": [
+          "P06"
+        ],
+        "required_before_production": true
+      }
+    },
+    {
+      "id": "H13",
+      "proposal": "Use a paid Render 1c-2g service/customer as the simpler always-on fallback.",
+      "status": "recommend",
+      "rationale": "Render supplies managed TLS, health restart and deployment handling. One Pro workspace plus an isolated environment/customer preserves separate application runtimes.",
+      "benefit": "Simpler continuous application operation and predictable compute floor.",
+      "maintenance_cost": "External S3 state adds AWS OIDC/IAM/bucket setup; this is not universally simpler end to end. Initial 100-service creation is throttled across several hours.",
+      "alternative": "Keep Cloud Run and use min one if cold starts alone are the problem; Fly if a guest-kernel or cheap unique-egress requirement dominates.",
+      "evidence": [
+        {
+          "source_id": "RENDER-COMPUTE"
+        },
+        {
+          "source_id": "RENDER-RAILS-PRICE"
+        },
+        {
+          "source_id": "RENDER-WORKSPACE-PRICE"
+        },
+        {
+          "source_id": "RENDER-PROJECTS"
+        },
+        {
+          "source_id": "RENDER-HEALTH"
+        },
+        {
+          "source_id": "RENDER-OIDC"
+        },
+        {
+          "source_id": "RENDER-RATE-LIMITS"
+        }
+      ],
+      "confidence": "medium",
+      "proof": {
+        "gate_ids": [
+          "P02",
+          "P03",
+          "P05",
+          "P06",
+          "P07",
+          "P09"
+        ],
+        "required_before_production": true
+      }
+    },
+    {
+      "id": "H14",
+      "proposal": "Give Cloudflare Containers a bounded challenger proof using the default scheduler and one Worker/application/customer.",
+      "status": "investigate",
+      "rationale": "Current Firecracker isolation, native containers and actual-CPU/low-egress pricing are relevant. Exact database placement, native TCP fixed egress, cancellation and multi-resource rollout need proof.",
+      "benefit": "Can reduce recurring transfer and I/O-heavy compute cost without a guest OS fleet.",
+      "maintenance_cost": "Worker/DO/container lifecycle and separate image readiness; do not rely on beta snapshots or per-instance scheduler.",
+      "alternative": "Cloud Run baseline with documented regional network options.",
+      "evidence": [
+        {
+          "source_id": "CF22"
+        },
+        {
+          "source_id": "CF23"
+        },
+        {
+          "source_id": "CF24"
+        },
+        {
+          "source_id": "CF25"
+        },
+        {
+          "source_id": "CF26"
+        },
+        {
+          "source_id": "CF27"
+        },
+        {
+          "source_id": "CF28"
+        },
+        {
+          "source_id": "CF30"
+        },
+        {
+          "source_id": "CF32"
+        },
+        {
+          "source_id": "CF37"
+        }
+      ],
+      "confidence": "medium",
+      "proof": {
+        "gate_ids": [
+          "P02",
+          "P03",
+          "P04",
+          "P05",
+          "P06",
+          "P08"
+        ],
+        "required_before_production": true
+      }
+    },
+    {
+      "id": "H15",
+      "proposal": "Keep pure Workers as a constrained database-streaming specialization, not the general default.",
+      "status": "investigate",
+      "rationale": "Streaming may fit within 128 MB even when total output exceeds that size; ordinary native addons and broad local analytical work do not. Hyperdrive adds engine, pool and configuration limits.",
+      "benefit": "Potentially very low idle/transfer costs for bounded adapters.",
+      "maintenance_cost": "Maintain Worker-compatible driver/encoder path and prove Hyperdrive transaction/cancellation/cache semantics; request quota increase beyond 25 configs.",
+      "alternative": "Ordinary OCI container/customer.",
+      "evidence": [
+        {
+          "source_id": "CF01"
+        },
+        {
+          "source_id": "CF03"
+        },
+        {
+          "source_id": "CF09"
+        },
+        {
+          "source_id": "CF11"
+        },
+        {
+          "source_id": "CF12"
+        },
+        {
+          "source_id": "CF15"
+        },
+        {
+          "source_id": "CF16"
+        },
+        {
+          "source_id": "CF17"
+        }
+      ],
+      "confidence": "medium",
+      "proof": {
+        "gate_ids": [
+          "P01",
+          "P03",
+          "P04",
+          "P06"
+        ],
+        "required_before_production": true
+      }
+    },
+    {
+      "id": "H16",
+      "proposal": "Do not use a VPS fleet or shared-host customer containers as the default for this maintenance objective.",
+      "status": "reject",
+      "rationale": "VM creation is automatable but guest patching, restart coordination, capacity and restore remain operator work; shared hosts also share a kernel and outage domain.",
+      "benefit": "Avoids turning one developer into a small infrastructure operator.",
+      "maintenance_cost": "A VPS remains an exception with an explicit operating budget and rebuild/restore procedure.",
+      "alternative": "Managed customer-specific services or tasks.",
+      "evidence": [
+        {
+          "source_id": "DO-PRICING"
+        },
+        {
+          "source_id": "DO-POLICIES"
+        },
+        {
+          "source_id": "DO-BACKUPS"
+        },
+        {
+          "source_id": "DO-CLOUD-INIT"
+        }
+      ],
+      "confidence": "high",
+      "proof": {
+        "gate_ids": [
+          "P02",
+          "P05",
+          "P08",
+          "P09"
+        ],
+        "required_before_production": true
+      }
+    },
+    {
+      "id": "H17",
+      "proposal": "Defer ECS Express/Fargate unless AWS locality or consistently occupied instances changes the economics.",
+      "status": "defer",
+      "rationale": "Express now automates much AWS setup, but the default retains one task/customer and load-balancer/IP floors; minimum zero does not supply request-driven wake.",
+      "benefit": "A credible AWS-native route without Kubernetes.",
+      "maintenance_cost": "Task roles/security groups, ALB groups, networking and AWS billing dimensions remain; exact Virginia internet DTO quote is still open.",
+      "alternative": "Cloud Run for sleeping customers or Render for simple always-on operations.",
+      "evidence": [
+        {
+          "source_id": "AW04"
+        },
+        {
+          "source_id": "AW05"
+        },
+        {
+          "source_id": "AW06"
+        },
+        {
+          "source_id": "AW07"
+        },
+        {
+          "source_id": "AW10"
+        },
+        {
+          "source_id": "AW13"
+        },
+        {
+          "source_id": "AW14"
+        },
+        {
+          "source_id": "GP20"
+        }
+      ],
+      "confidence": "medium",
+      "proof": {
+        "gate_ids": [
+          "P02",
+          "P05",
+          "P06",
+          "P08"
+        ],
+        "required_before_production": true
+      }
+    },
+    {
+      "id": "H18",
+      "proposal": "Reject a shared multi-customer query process and Kubernetes/custom fleet orchestration for the baseline.",
+      "status": "reject",
+      "rationale": "A shared query process changes the requested dedicated runtime; a custom scheduler adds work without solving a demonstrated missing requirement.",
+      "benefit": "Preserves product intent and keeps the architecture runnable by one developer.",
+      "maintenance_cost": "One provider-specific provisioning adapter is still necessary; avoid attempting provider-neutral infrastructure abstractions.",
+      "alternative": "Shared ingress, auth and provisioning only; independent customer query services.",
+      "evidence": [
+        {
+          "source_id": "REP09"
+        },
+        {
+          "source_id": "CR01"
+        },
+        {
+          "source_id": "CR26"
+        }
+      ],
+      "confidence": "high",
+      "proof": {
+        "gate_ids": [
+          "P02",
+          "P05"
+        ],
+        "required_before_production": true
+      }
+    },
+    {
+      "id": "H19",
+      "proposal": "Complete local contract proof and then a separately authorized two-customer hosted sandbox before commitment.",
+      "status": "recommend",
+      "rationale": "Documents and mocks cannot establish proxy behavior, driver cancellation, memory, cold starts, identity bindings or actual bills.",
+      "benefit": "Can reject the architecture before a production fleet or product promise is created.",
+      "maintenance_cost": "A short-lived synthetic test, measured checklist and complete cleanup; do not execute during this research assignment.",
+      "alternative": "No production launch until failed gates are fixed, scoped out with a product decision or select a different host.",
+      "evidence": [
+        {
+          "source_id": "REP08"
+        },
+        {
+          "source_id": "CR24"
+        },
+        {
+          "source_id": "CR14"
+        },
+        {
+          "source_id": "RENDER-HEALTH"
+        },
+        {
+          "source_id": "CF28"
+        }
+      ],
+      "confidence": "high",
+      "proof": {
+        "gate_ids": [
+          "P01",
+          "P02",
+          "P03",
+          "P04",
+          "P05",
+          "P06",
+          "P07",
+          "P08",
+          "P09"
+        ],
+        "required_before_production": true
+      }
+    },
+    {
+      "id": "H20",
+      "proposal": "Defer hosted source databases, permanent embedded databases, cross-region HA and private customer connectors from the first baseline.",
+      "status": "defer",
+      "rationale": "These introduce durable-state, consistency, network and service-level commitments that have not been selected and are not forced by the row range.",
+      "benefit": "Keeps provisioning and operation bounded while preserving explicit migration paths.",
+      "maintenance_cost": "Revisit each capability with workload evidence and separately priced ownership/support obligations.",
+      "alternative": "Customer-owned database and external project state; short-lived embedded scratch only.",
+      "evidence": [
+        {
+          "source_id": "REP09"
+        },
+        {
+          "source_id": "GP12"
+        },
+        {
+          "source_id": "CR19"
+        },
+        {
+          "source_id": "CF14"
+        },
+        {
+          "source_id": "RENDER-DISKS"
+        }
+      ],
+      "confidence": "medium",
+      "proof": {
+        "gate_ids": [
+          "P01",
+          "P06",
+          "P09"
+        ],
+        "required_before_production": true
+      }
+    }
+  ],
+  "proof_gates": [
+    {
+      "id": "P01",
+      "name": "Local contract and driver proof",
+      "pass": "Two separate local processes or containers using the same image, each with one fixed customer identity, plus real local database drivers, 10k/100k narrow fixtures and wide/large sensitivities preserve scalar, filter, identity and provenance semantics; bounded snapshot or explicit too-large result.",
+      "reject": "Current full-stage serialization or driver buffering is unavoidable within selected memory; query/transport tracks cannot reconcile semantics."
+    },
+    {
+      "id": "P02",
+      "name": "Isolation",
+      "pass": "Cross-customer token/hostname/query-ID, secret, object and network attempts fail; A saturation does not consume B query slots or B data credentials.",
+      "reject": "Any cross-customer data/authority leak or misrepresented runtime boundary."
+    },
+    {
+      "id": "P03",
+      "name": "Cancellation and health",
+      "pass": "Confirmed native SQL cancellation within proposed 2 seconds for explicit cancel/disconnect; every SQL operation has a bounded DB deadline; crash and hung application recover without operator intervention.",
+      "reject": "Cancel can only stop browser rendering, waits behind exhausted pool, reaches wrong owner, or health conceals a hung app."
+    },
+    {
+      "id": "P04",
+      "name": "Streaming and responsiveness",
+      "pass": "First batch arrives before full result; slow-reader backpressure keeps primary RSS below 1.5 GiB on its 2 GiB plan. Cloudflare Containers proves headroom on its actual 3 GiB shape; pure Workers proves peak isolate memory comfortably below 128 MB including WASM, virtual filesystem, buffers and concurrent invocations. Completed snapshot is verified by final marker/count/checksum; browser remains interactive under explicit frame/long-task targets.",
+      "reject": "Unbounded buffers, silent partial success, main-thread stalls, or memory growth proportional to all stage rows/contributors."
+    },
+    {
+      "id": "P05",
+      "name": "Provision/update/recovery",
+      "pass": "Duplicate and interrupted creates converge to one owned service; proposed ready-without-DNS budget of 10 minutes; bad deploy rolls back within 5 minutes; old/new streams close correctly; drift reconciles and tags removed.",
+      "reject": "Unrecoverable manual resource repair, leaked duplicate resources, lost state, or mixed image/config promoted as ready."
+    },
+    {
+      "id": "P06",
+      "name": "Networking and cold readiness",
+      "pass": "Chosen DB route verifies TLS and required egress identity; proposed public-path p95 cold-to-first-result target of 5 seconds for a fast fixture; mandatory static/private route passes separately or an explicit warm tier is selected.",
+      "reject": "Undocumented required fixed TCP egress, unacceptable region/residency, or private/cold path fails agreed product SLO."
+    },
+    {
+      "id": "P07",
+      "name": "Suspend/revoke/resume",
+      "pass": "Immediate controller command removes smoke tags and disables new service admission; bounded in-flight SQL drains/cancels; resume restores exact healthy spec; user revocation follows a declared and tested token/session expiry policy.",
+      "reject": "Tagged endpoints bypass suspension, stale authorization remains beyond declared window, or shared resources deleted."
+    },
+    {
+      "id": "P08",
+      "name": "Costs and scale-to-zero",
+      "pass": "Measured awake time, CPU, compressed/uncompressed bytes and billing SKUs explain the modeled bill; no unbounded admission or egress; dormant service actually sleeps with health configured.",
+      "reject": "Invoice diverges by more than proposed 20 percent after unit/allowance normalization, idle tails prevent viable pricing, or required networking adds an unaccepted floor."
+    },
+    {
+      "id": "P09",
+      "name": "Export/restore/retire",
+      "pass": "Fresh replacement service restores acknowledged projects/config under proposed 30 minute RTO; versioned acknowledged save recovered, source DB untouched, credentials reissued, one customer deletion cannot affect another.",
+      "reject": "Local disk was authoritative, retention/old versions missing, exported data incomplete without warning, or broad deletion touches shared/customer-owned resources."
+    }
+  ],
+  "cost_model": {
+    "currency": "USD",
+    "month_hours": 720,
+    "price_date_utc": "2026-10-12",
+    "regions": {
+      "cloud_run": "us-central1 with North America public recipients",
+      "aws": "us-east-1 unless a source is explicitly described otherwise",
+      "render": "US service with Pro workspace",
+      "cloudflare": "North America/Europe egress",
+      "vps": "DigitalOcean US Basic Regular"
+    },
+    "workloads": {
+      "idle": {
+        "requests_per_customer": 0,
+        "request_seconds_per_customer": 0,
+        "actual_cpu_seconds_per_customer": 0,
+        "awake_instance_hours_per_customer": 0,
+        "outbound_gib_per_customer": 0
+      },
+      "bursty": {
+        "requests_per_customer": 2000,
+        "request_seconds_per_customer": 10000,
+        "actual_cpu_seconds_per_customer": 2500,
+        "awake_instance_hours_per_customer": 22,
+        "outbound_gib_per_customer": 10
+      },
+      "steady": {
+        "requests_per_customer": 500000,
+        "request_seconds_per_customer": 2592000,
+        "actual_cpu_seconds_per_customer": 1296000,
+        "awake_instance_hours_per_customer": 720,
+        "outbound_gib_per_customer": 100
+      }
+    },
+    "assumptions": [
+      "Requests are sequential in wall-time arithmetic; actual CPU utilization of 25 percent when bursty or 50 percent when steady is not measured throughput.",
+      "22 awake instance-hours includes all idle tails and is independent of request count; isolated requests can produce much larger tails.",
+      "Cloudflare custom shape of 1 vCPU, 3 GiB memory and 4 GB disk; pure Workers with 128 MB memory is not performance-equivalent.",
+      "Render and Cloudflare decimal egress interpretation is an explicit planning assumption where docs label GB/TB without a byte definition; reconcile actual meter.",
+      "Base state model: 2 GiB retained/customer, 1,000 writes and 100,000 reads monthly, 2 active secret versions for primary.",
+      "Primary operational allowance: 3 USD/fleet/month for bounded controller/build/registry/DNS work, not a fixed vendor fee.",
+      "No trial credits, taxes, negotiated discounts, production source DB charges, private networking, premium support or unmeasured deployment/startup overhead included in core tables."
+    ],
+    "rows": [
+      {
+        "provider": "cloud_run",
+        "scenario": "idle",
+        "customers": 1,
+        "currency": "USD",
+        "compute_gross": 0.0,
+        "compute_after_shared_allowance": 0.0,
+        "browser_egress": 0.0,
+        "core_total": 0.0,
+        "scope": "Instance-billed min-zero runtime and modeled browser egress; ancillary production costs separate.",
+        "production_model": {
+          "shared_lb_and_processing": 18.0,
+          "state_and_prior_versions_gross": 0.039451679999999996,
+          "object_operations_gross": 0.045,
+          "two_active_secret_versions_gross": 0.12,
+          "shared_control_build_registry_dns_allowance": 3.0,
+          "estimate_before_contingency": 21.204451680000002,
+          "contingency_is_not_a_cost_cap": true
+        }
+      },
+      {
+        "provider": "cloudflare_containers",
+        "scenario": "idle",
+        "customers": 1,
+        "currency": "USD",
+        "core_total_low": 5,
+        "core_total_high": 5,
+        "components": {
+          "customers": 1,
+          "scenario": "idle",
+          "cpu": 0,
+          "memory": 0,
+          "disk": 0,
+          "egress": 0,
+          "workerRequests": 0,
+          "workerCpu": 0,
+          "doRequests": 0,
+          "doDurationLow": 0,
+          "doDurationHigh": 0,
+          "totalLow": 5,
+          "totalHigh": 5,
+          "pureWorker": 5
+        },
+        "scope": "Workers plan, container compute/memory/disk, routing Worker, DO and modeled NA/EU egress; excludes durable state/logs/auth/builds."
+      },
+      {
+        "provider": "cloudflare_workers",
+        "scenario": "idle",
+        "customers": 1,
+        "currency": "USD",
+        "core_total": 5,
+        "scope": "Workers plan, request and CPU overage; no Worker egress fee. Runtime is not equivalent to an OCI container."
+      },
+      {
+        "provider": "render",
+        "scenario": "idle",
+        "customers": 1,
+        "currency": "USD",
+        "compute": 25,
+        "workspace": 25,
+        "browser_egress": 0.0,
+        "core_total": 50.0,
+        "additional_customer_hostnames": 0.0,
+        "s3_state_and_operations": 0.091,
+        "scope": "Always-on 1c-2g services, one Pro workspace and modeled browser egress; S3 transfer and other shared services separate."
+      },
+      {
+        "provider": "digitalocean_vps",
+        "scenario": "idle",
+        "customers": 1,
+        "currency": "USD",
+        "compute_disk_transfer": 12,
+        "weekly_backup": 2.4,
+        "core_total": 14.4,
+        "scope": "Full-month 2GiB shared-vCPU VM/customer, weekly VM backups and included transfer; OS overhead and sustained CPU fit unmeasured."
+      },
+      {
+        "provider": "ecs_express_fargate",
+        "scenario": "idle",
+        "customers": 1,
+        "currency": "USD",
+        "stable_floor": 62.546687999999996,
+        "scope": "One x86 Fargate task/customer, task IPv4 and ceil(N/25) shared ALBs with two IPv4 each. Excludes LCUs and internet transfer. Virginia DTO rate not verified; do not infer zero.",
+        "outbound_gib_to_price": 0,
+        "internet_egress_price_verified": false
+      },
+      {
+        "provider": "cloud_run",
+        "scenario": "idle",
+        "customers": 10,
+        "currency": "USD",
+        "compute_gross": 0.0,
+        "compute_after_shared_allowance": 0.0,
+        "browser_egress": 0.0,
+        "core_total": 0.0,
+        "scope": "Instance-billed min-zero runtime and modeled browser egress; ancillary production costs separate.",
+        "production_model": {
+          "shared_lb_and_processing": 18.0,
+          "state_and_prior_versions_gross": 0.3945168,
+          "object_operations_gross": 0.44999999999999996,
+          "two_active_secret_versions_gross": 1.2,
+          "shared_control_build_registry_dns_allowance": 3.0,
+          "estimate_before_contingency": 23.0445168,
+          "contingency_is_not_a_cost_cap": true
+        }
+      },
+      {
+        "provider": "cloudflare_containers",
+        "scenario": "idle",
+        "customers": 10,
+        "currency": "USD",
+        "core_total_low": 5,
+        "core_total_high": 5,
+        "components": {
+          "customers": 10,
+          "scenario": "idle",
+          "cpu": 0,
+          "memory": 0,
+          "disk": 0,
+          "egress": 0,
+          "workerRequests": 0,
+          "workerCpu": 0,
+          "doRequests": 0,
+          "doDurationLow": 0,
+          "doDurationHigh": 0,
+          "totalLow": 5,
+          "totalHigh": 5,
+          "pureWorker": 5
+        },
+        "scope": "Workers plan, container compute/memory/disk, routing Worker, DO and modeled NA/EU egress; excludes durable state/logs/auth/builds."
+      },
+      {
+        "provider": "cloudflare_workers",
+        "scenario": "idle",
+        "customers": 10,
+        "currency": "USD",
+        "core_total": 5,
+        "scope": "Workers plan, request and CPU overage; no Worker egress fee. Runtime is not equivalent to an OCI container."
+      },
+      {
+        "provider": "render",
+        "scenario": "idle",
+        "customers": 10,
+        "currency": "USD",
+        "compute": 250,
+        "workspace": 25,
+        "browser_egress": 0.0,
+        "core_total": 275.0,
+        "additional_customer_hostnames": 0.0,
+        "s3_state_and_operations": 0.9099999999999999,
+        "scope": "Always-on 1c-2g services, one Pro workspace and modeled browser egress; S3 transfer and other shared services separate."
+      },
+      {
+        "provider": "digitalocean_vps",
+        "scenario": "idle",
+        "customers": 10,
+        "currency": "USD",
+        "compute_disk_transfer": 120,
+        "weekly_backup": 24.0,
+        "core_total": 144.0,
+        "scope": "Full-month 2GiB shared-vCPU VM/customer, weekly VM backups and included transfer; OS overhead and sustained CPU fit unmeasured."
+      },
+      {
+        "provider": "ecs_express_fargate",
+        "scenario": "idle",
+        "customers": 10,
+        "currency": "USD",
+        "stable_floor": 414.8668799999999,
+        "scope": "One x86 Fargate task/customer, task IPv4 and ceil(N/25) shared ALBs with two IPv4 each. Excludes LCUs and internet transfer. Virginia DTO rate not verified; do not infer zero.",
+        "outbound_gib_to_price": 0,
+        "internet_egress_price_verified": false
+      },
+      {
+        "provider": "cloud_run",
+        "scenario": "idle",
+        "customers": 100,
+        "currency": "USD",
+        "compute_gross": 0.0,
+        "compute_after_shared_allowance": 0.0,
+        "browser_egress": 0.0,
+        "core_total": 0.0,
+        "scope": "Instance-billed min-zero runtime and modeled browser egress; ancillary production costs separate.",
+        "production_model": {
+          "shared_lb_and_processing": 18.0,
+          "state_and_prior_versions_gross": 3.945168,
+          "object_operations_gross": 4.5,
+          "two_active_secret_versions_gross": 12.0,
+          "shared_control_build_registry_dns_allowance": 3.0,
+          "estimate_before_contingency": 41.445167999999995,
+          "contingency_is_not_a_cost_cap": true
+        }
+      },
+      {
+        "provider": "cloudflare_containers",
+        "scenario": "idle",
+        "customers": 100,
+        "currency": "USD",
+        "core_total_low": 5,
+        "core_total_high": 5,
+        "components": {
+          "customers": 100,
+          "scenario": "idle",
+          "cpu": 0,
+          "memory": 0,
+          "disk": 0,
+          "egress": 0,
+          "workerRequests": 0,
+          "workerCpu": 0,
+          "doRequests": 0,
+          "doDurationLow": 0,
+          "doDurationHigh": 0,
+          "totalLow": 5,
+          "totalHigh": 5,
+          "pureWorker": 5
+        },
+        "scope": "Workers plan, container compute/memory/disk, routing Worker, DO and modeled NA/EU egress; excludes durable state/logs/auth/builds."
+      },
+      {
+        "provider": "cloudflare_workers",
+        "scenario": "idle",
+        "customers": 100,
+        "currency": "USD",
+        "core_total": 5,
+        "scope": "Workers plan, request and CPU overage; no Worker egress fee. Runtime is not equivalent to an OCI container."
+      },
+      {
+        "provider": "render",
+        "scenario": "idle",
+        "customers": 100,
+        "currency": "USD",
+        "compute": 2500,
+        "workspace": 25,
+        "browser_egress": 0.0,
+        "core_total": 2525.0,
+        "additional_customer_hostnames": 21.25,
+        "s3_state_and_operations": 9.1,
+        "scope": "Always-on 1c-2g services, one Pro workspace and modeled browser egress; S3 transfer and other shared services separate."
+      },
+      {
+        "provider": "digitalocean_vps",
+        "scenario": "idle",
+        "customers": 100,
+        "currency": "USD",
+        "compute_disk_transfer": 1200,
+        "weekly_backup": 240.0,
+        "core_total": 1440.0,
+        "scope": "Full-month 2GiB shared-vCPU VM/customer, weekly VM backups and included transfer; OS overhead and sustained CPU fit unmeasured."
+      },
+      {
+        "provider": "ecs_express_fargate",
+        "scenario": "idle",
+        "customers": 100,
+        "currency": "USD",
+        "stable_floor": 4008.2688,
+        "scope": "One x86 Fargate task/customer, task IPv4 and ceil(N/25) shared ALBs with two IPv4 each. Excludes LCUs and internet transfer. Virginia DTO rate not verified; do not infer zero.",
+        "outbound_gib_to_price": 0,
+        "internet_egress_price_verified": false
+      },
+      {
+        "provider": "cloud_run",
+        "scenario": "bursty",
+        "customers": 1,
+        "currency": "USD",
+        "compute_gross": 1.7424,
+        "compute_after_shared_allowance": 0.0,
+        "browser_egress": 1.08,
+        "core_total": 1.08,
+        "scope": "Instance-billed min-zero runtime and modeled browser egress; ancillary production costs separate.",
+        "production_model": {
+          "shared_lb_and_processing": 18.080030517578123,
+          "state_and_prior_versions_gross": 0.039451679999999996,
+          "object_operations_gross": 0.045,
+          "two_active_secret_versions_gross": 0.12,
+          "shared_control_build_registry_dns_allowance": 3.0,
+          "estimate_before_contingency": 22.364482197578123,
+          "contingency_is_not_a_cost_cap": true
+        }
+      },
+      {
+        "provider": "cloudflare_containers",
+        "scenario": "bursty",
+        "customers": 1,
+        "currency": "USD",
+        "core_total_low": 5.369,
+        "core_total_high": 5.369,
+        "components": {
+          "customers": 1,
+          "scenario": "bursty",
+          "cpu": 0,
+          "memory": 0.36900000000000005,
+          "disk": 0,
+          "egress": 0,
+          "workerRequests": 0,
+          "workerCpu": 0,
+          "doRequests": 0,
+          "doDurationLow": 0,
+          "doDurationHigh": 0,
+          "totalLow": 5.369,
+          "totalHigh": 5.369,
+          "pureWorker": 5
+        },
+        "scope": "Workers plan, container compute/memory/disk, routing Worker, DO and modeled NA/EU egress; excludes durable state/logs/auth/builds."
+      },
+      {
+        "provider": "cloudflare_workers",
+        "scenario": "bursty",
+        "customers": 1,
+        "currency": "USD",
+        "core_total": 5,
+        "scope": "Workers plan, request and CPU overage; no Worker egress fee. Runtime is not equivalent to an OCI container."
+      },
+      {
+        "provider": "render",
+        "scenario": "bursty",
+        "customers": 1,
+        "currency": "USD",
+        "compute": 25,
+        "workspace": 25,
+        "browser_egress": 0.0,
+        "core_total": 50.0,
+        "additional_customer_hostnames": 0.0,
+        "s3_state_and_operations": 0.091,
+        "scope": "Always-on 1c-2g services, one Pro workspace and modeled browser egress; S3 transfer and other shared services separate."
+      },
+      {
+        "provider": "digitalocean_vps",
+        "scenario": "bursty",
+        "customers": 1,
+        "currency": "USD",
+        "compute_disk_transfer": 12,
+        "weekly_backup": 2.4,
+        "core_total": 14.4,
+        "scope": "Full-month 2GiB shared-vCPU VM/customer, weekly VM backups and included transfer; OS overhead and sustained CPU fit unmeasured."
+      },
+      {
+        "provider": "ecs_express_fargate",
+        "scenario": "bursty",
+        "customers": 1,
+        "currency": "USD",
+        "stable_floor": 62.546687999999996,
+        "scope": "One x86 Fargate task/customer, task IPv4 and ceil(N/25) shared ALBs with two IPv4 each. Excludes LCUs and internet transfer. Virginia DTO rate not verified; do not infer zero.",
+        "outbound_gib_to_price": 10,
+        "internet_egress_price_verified": false
+      },
+      {
+        "provider": "cloud_run",
+        "scenario": "bursty",
+        "customers": 10,
+        "currency": "USD",
+        "compute_gross": 17.424,
+        "compute_after_shared_allowance": 12.204,
+        "browser_egress": 11.879999999999999,
+        "core_total": 24.084,
+        "scope": "Instance-billed min-zero runtime and modeled browser egress; ancillary production costs separate.",
+        "production_model": {
+          "shared_lb_and_processing": 18.80030517578125,
+          "state_and_prior_versions_gross": 0.3945168,
+          "object_operations_gross": 0.44999999999999996,
+          "two_active_secret_versions_gross": 1.2,
+          "shared_control_build_registry_dns_allowance": 3.0,
+          "estimate_before_contingency": 47.928821975781254,
+          "contingency_is_not_a_cost_cap": true
+        }
+      },
+      {
+        "provider": "cloudflare_containers",
+        "scenario": "bursty",
+        "customers": 10,
+        "currency": "USD",
+        "core_total_low": 10.93636,
+        "core_total_high": 10.93636,
+        "components": {
+          "customers": 10,
+          "scenario": "bursty",
+          "cpu": 0.05,
+          "memory": 5.715000000000001,
+          "disk": 0.17136,
+          "egress": 0,
+          "workerRequests": 0,
+          "workerCpu": 0,
+          "doRequests": 0,
+          "doDurationLow": 0,
+          "doDurationHigh": 0,
+          "totalLow": 10.93636,
+          "totalHigh": 10.93636,
+          "pureWorker": 5
+        },
+        "scope": "Workers plan, container compute/memory/disk, routing Worker, DO and modeled NA/EU egress; excludes durable state/logs/auth/builds."
+      },
+      {
+        "provider": "cloudflare_workers",
+        "scenario": "bursty",
+        "customers": 10,
+        "currency": "USD",
+        "core_total": 5,
+        "scope": "Workers plan, request and CPU overage; no Worker egress fee. Runtime is not equivalent to an OCI container."
+      },
+      {
+        "provider": "render",
+        "scenario": "bursty",
+        "customers": 10,
+        "currency": "USD",
+        "compute": 250,
+        "workspace": 25,
+        "browser_egress": 12.35612736,
+        "core_total": 287.35612736,
+        "additional_customer_hostnames": 0.0,
+        "s3_state_and_operations": 0.9099999999999999,
+        "scope": "Always-on 1c-2g services, one Pro workspace and modeled browser egress; S3 transfer and other shared services separate."
+      },
+      {
+        "provider": "digitalocean_vps",
+        "scenario": "bursty",
+        "customers": 10,
+        "currency": "USD",
+        "compute_disk_transfer": 120,
+        "weekly_backup": 24.0,
+        "core_total": 144.0,
+        "scope": "Full-month 2GiB shared-vCPU VM/customer, weekly VM backups and included transfer; OS overhead and sustained CPU fit unmeasured."
+      },
+      {
+        "provider": "ecs_express_fargate",
+        "scenario": "bursty",
+        "customers": 10,
+        "currency": "USD",
+        "stable_floor": 414.8668799999999,
+        "scope": "One x86 Fargate task/customer, task IPv4 and ceil(N/25) shared ALBs with two IPv4 each. Excludes LCUs and internet transfer. Virginia DTO rate not verified; do not infer zero.",
+        "outbound_gib_to_price": 100,
+        "internet_egress_price_verified": false
+      },
+      {
+        "provider": "cloud_run",
+        "scenario": "bursty",
+        "customers": 100,
+        "currency": "USD",
+        "compute_gross": 174.24,
+        "compute_after_shared_allowance": 169.02,
+        "browser_egress": 119.88,
+        "core_total": 288.9,
+        "scope": "Instance-billed min-zero runtime and modeled browser egress; ancillary production costs separate.",
+        "production_model": {
+          "shared_lb_and_processing": 26.0030517578125,
+          "state_and_prior_versions_gross": 3.945168,
+          "object_operations_gross": 4.5,
+          "two_active_secret_versions_gross": 12.0,
+          "shared_control_build_registry_dns_allowance": 3.0,
+          "estimate_before_contingency": 338.3482197578125,
+          "contingency_is_not_a_cost_cap": true
+        }
+      },
+      {
+        "provider": "cloudflare_containers",
+        "scenario": "bursty",
+        "customers": 100,
+        "currency": "USD",
+        "core_total_low": 72.7357456,
+        "core_total_high": 85.2357456,
+        "components": {
+          "customers": 100,
+          "scenario": "bursty",
+          "cpu": 4.550000000000001,
+          "memory": 59.175000000000004,
+          "disk": 2.1672000000000002,
+          "egress": 1.8435455999999988,
+          "workerRequests": 0,
+          "workerCpu": 0,
+          "doRequests": 0,
+          "doDurationLow": 0,
+          "doDurationHigh": 12.5,
+          "totalLow": 72.7357456,
+          "totalHigh": 85.2357456,
+          "pureWorker": 9.4
+        },
+        "scope": "Workers plan, container compute/memory/disk, routing Worker, DO and modeled NA/EU egress; excludes durable state/logs/auth/builds."
+      },
+      {
+        "provider": "cloudflare_workers",
+        "scenario": "bursty",
+        "customers": 100,
+        "currency": "USD",
+        "core_total": 9.4,
+        "scope": "Workers plan, request and CPU overage; no Worker egress fee. Runtime is not equivalent to an OCI container."
+      },
+      {
+        "provider": "render",
+        "scenario": "bursty",
+        "customers": 100,
+        "currency": "USD",
+        "compute": 2500,
+        "workspace": 25,
+        "browser_egress": 157.31127360000002,
+        "core_total": 2682.3112736,
+        "additional_customer_hostnames": 21.25,
+        "s3_state_and_operations": 9.1,
+        "scope": "Always-on 1c-2g services, one Pro workspace and modeled browser egress; S3 transfer and other shared services separate."
+      },
+      {
+        "provider": "digitalocean_vps",
+        "scenario": "bursty",
+        "customers": 100,
+        "currency": "USD",
+        "compute_disk_transfer": 1200,
+        "weekly_backup": 240.0,
+        "core_total": 1440.0,
+        "scope": "Full-month 2GiB shared-vCPU VM/customer, weekly VM backups and included transfer; OS overhead and sustained CPU fit unmeasured."
+      },
+      {
+        "provider": "ecs_express_fargate",
+        "scenario": "bursty",
+        "customers": 100,
+        "currency": "USD",
+        "stable_floor": 4008.2688,
+        "scope": "One x86 Fargate task/customer, task IPv4 and ceil(N/25) shared ALBs with two IPv4 each. Excludes LCUs and internet transfer. Virginia DTO rate not verified; do not infer zero.",
+        "outbound_gib_to_price": 1000,
+        "internet_egress_price_verified": false
+      },
+      {
+        "provider": "cloud_run",
+        "scenario": "steady",
+        "customers": 1,
+        "currency": "USD",
+        "compute_gross": 57.024,
+        "compute_after_shared_allowance": 51.804,
+        "browser_egress": 11.879999999999999,
+        "core_total": 63.684,
+        "scope": "Instance-billed min-zero runtime and modeled browser egress; ancillary production costs separate.",
+        "production_model": {
+          "shared_lb_and_processing": 18.80762939453125,
+          "state_and_prior_versions_gross": 0.039451679999999996,
+          "object_operations_gross": 0.045,
+          "two_active_secret_versions_gross": 0.12,
+          "shared_control_build_registry_dns_allowance": 3.0,
+          "estimate_before_contingency": 85.69608107453125,
+          "contingency_is_not_a_cost_cap": true
+        }
+      },
+      {
+        "provider": "cloudflare_containers",
+        "scenario": "steady",
+        "customers": 1,
+        "currency": "USD",
+        "core_total_low": 50.36036,
+        "core_total_high": 50.36036,
+        "components": {
+          "customers": 1,
+          "scenario": "steady",
+          "cpu": 25.470000000000002,
+          "memory": 19.215,
+          "disk": 0.6753600000000001,
+          "egress": 0,
+          "workerRequests": 0,
+          "workerCpu": 0,
+          "doRequests": 0,
+          "doDurationLow": 0,
+          "doDurationHigh": 0,
+          "totalLow": 50.36036,
+          "totalHigh": 50.36036,
+          "pureWorker": 30.32
+        },
+        "scope": "Workers plan, container compute/memory/disk, routing Worker, DO and modeled NA/EU egress; excludes durable state/logs/auth/builds."
+      },
+      {
+        "provider": "cloudflare_workers",
+        "scenario": "steady",
+        "customers": 1,
+        "currency": "USD",
+        "core_total": 30.32,
+        "scope": "Workers plan, request and CPU overage; no Worker egress fee. Runtime is not equivalent to an OCI container."
+      },
+      {
+        "provider": "render",
+        "scenario": "steady",
+        "customers": 1,
+        "currency": "USD",
+        "compute": 25,
+        "workspace": 25,
+        "browser_egress": 12.35612736,
+        "core_total": 62.35612736,
+        "additional_customer_hostnames": 0.0,
+        "s3_state_and_operations": 0.091,
+        "scope": "Always-on 1c-2g services, one Pro workspace and modeled browser egress; S3 transfer and other shared services separate."
+      },
+      {
+        "provider": "digitalocean_vps",
+        "scenario": "steady",
+        "customers": 1,
+        "currency": "USD",
+        "compute_disk_transfer": 12,
+        "weekly_backup": 2.4,
+        "core_total": 14.4,
+        "scope": "Full-month 2GiB shared-vCPU VM/customer, weekly VM backups and included transfer; OS overhead and sustained CPU fit unmeasured."
+      },
+      {
+        "provider": "ecs_express_fargate",
+        "scenario": "steady",
+        "customers": 1,
+        "currency": "USD",
+        "stable_floor": 62.546687999999996,
+        "scope": "One x86 Fargate task/customer, task IPv4 and ceil(N/25) shared ALBs with two IPv4 each. Excludes LCUs and internet transfer. Virginia DTO rate not verified; do not infer zero.",
+        "outbound_gib_to_price": 100,
+        "internet_egress_price_verified": false
+      },
+      {
+        "provider": "cloud_run",
+        "scenario": "steady",
+        "customers": 10,
+        "currency": "USD",
+        "compute_gross": 570.24,
+        "compute_after_shared_allowance": 565.02,
+        "browser_egress": 119.88,
+        "core_total": 684.9,
+        "scope": "Instance-billed min-zero runtime and modeled browser egress; ancillary production costs separate.",
+        "production_model": {
+          "shared_lb_and_processing": 26.0762939453125,
+          "state_and_prior_versions_gross": 0.3945168,
+          "object_operations_gross": 0.44999999999999996,
+          "two_active_secret_versions_gross": 1.2,
+          "shared_control_build_registry_dns_allowance": 3.0,
+          "estimate_before_contingency": 716.0208107453126,
+          "contingency_is_not_a_cost_cap": true
+        }
+      },
+      {
+        "provider": "cloudflare_containers",
+        "scenario": "steady",
+        "customers": 10,
+        "currency": "USD",
+        "core_total_low": 505.0757456,
+        "core_total_high": 505.0757456,
+        "components": {
+          "customers": 10,
+          "scenario": "steady",
+          "cpu": 258.75,
+          "memory": 194.175,
+          "disk": 7.2072,
+          "egress": 1.8435455999999988,
+          "workerRequests": 0,
+          "workerCpu": 0,
+          "doRequests": 0.6,
+          "doDurationLow": 37.5,
+          "doDurationHigh": 37.5,
+          "totalLow": 505.0757456,
+          "totalHigh": 505.0757456,
+          "pureWorker": 263.6
+        },
+        "scope": "Workers plan, container compute/memory/disk, routing Worker, DO and modeled NA/EU egress; excludes durable state/logs/auth/builds."
+      },
+      {
+        "provider": "cloudflare_workers",
+        "scenario": "steady",
+        "customers": 10,
+        "currency": "USD",
+        "core_total": 263.6,
+        "scope": "Workers plan, request and CPU overage; no Worker egress fee. Runtime is not equivalent to an OCI container."
+      },
+      {
+        "provider": "render",
+        "scenario": "steady",
+        "customers": 10,
+        "currency": "USD",
+        "compute": 250,
+        "workspace": 25,
+        "browser_egress": 157.31127360000002,
+        "core_total": 432.31127360000005,
+        "additional_customer_hostnames": 0.0,
+        "s3_state_and_operations": 0.9099999999999999,
+        "scope": "Always-on 1c-2g services, one Pro workspace and modeled browser egress; S3 transfer and other shared services separate."
+      },
+      {
+        "provider": "digitalocean_vps",
+        "scenario": "steady",
+        "customers": 10,
+        "currency": "USD",
+        "compute_disk_transfer": 120,
+        "weekly_backup": 24.0,
+        "core_total": 144.0,
+        "scope": "Full-month 2GiB shared-vCPU VM/customer, weekly VM backups and included transfer; OS overhead and sustained CPU fit unmeasured."
+      },
+      {
+        "provider": "ecs_express_fargate",
+        "scenario": "steady",
+        "customers": 10,
+        "currency": "USD",
+        "stable_floor": 414.8668799999999,
+        "scope": "One x86 Fargate task/customer, task IPv4 and ceil(N/25) shared ALBs with two IPv4 each. Excludes LCUs and internet transfer. Virginia DTO rate not verified; do not infer zero.",
+        "outbound_gib_to_price": 1000,
+        "internet_egress_price_verified": false
+      },
+      {
+        "provider": "cloud_run",
+        "scenario": "steady",
+        "customers": 100,
+        "currency": "USD",
+        "compute_gross": 5702.4,
+        "compute_after_shared_allowance": 5697.179999999999,
+        "browser_egress": 1110.12,
+        "core_total": 6807.299999999999,
+        "scope": "Instance-billed min-zero runtime and modeled browser egress; ancillary production costs separate.",
+        "production_model": {
+          "shared_lb_and_processing": 98.762939453125,
+          "state_and_prior_versions_gross": 3.945168,
+          "object_operations_gross": 4.5,
+          "two_active_secret_versions_gross": 12.0,
+          "shared_control_build_registry_dns_allowance": 3.0,
+          "estimate_before_contingency": 6929.5081074531245,
+          "contingency_is_not_a_cost_cap": true
+        }
+      },
+      {
+        "provider": "cloudflare_containers",
+        "scenario": "steady",
+        "customers": 100,
+        "currency": "USD",
+        "core_total_low": 5289.536056000001,
+        "core_total_high": 5289.536056000001,
+        "components": {
+          "customers": 100,
+          "scenario": "steady",
+          "cpu": 2591.55,
+          "memory": 1943.775,
+          "disk": 72.52560000000001,
+          "egress": 243.43545600000004,
+          "workerRequests": 12,
+          "workerCpu": 1.4,
+          "doRequests": 7.35,
+          "doDurationLow": 412.5,
+          "doDurationHigh": 412.5,
+          "totalLow": 5289.536056000001,
+          "totalHigh": 5289.536056000001,
+          "pureWorker": 2608.4
+        },
+        "scope": "Workers plan, container compute/memory/disk, routing Worker, DO and modeled NA/EU egress; excludes durable state/logs/auth/builds."
+      },
+      {
+        "provider": "cloudflare_workers",
+        "scenario": "steady",
+        "customers": 100,
+        "currency": "USD",
+        "core_total": 2608.4,
+        "scope": "Workers plan, request and CPU overage; no Worker egress fee. Runtime is not equivalent to an OCI container."
+      },
+      {
+        "provider": "render",
+        "scenario": "steady",
+        "customers": 100,
+        "currency": "USD",
+        "compute": 2500,
+        "workspace": 25,
+        "browser_egress": 1606.862736,
+        "core_total": 4131.862736,
+        "additional_customer_hostnames": 21.25,
+        "s3_state_and_operations": 9.1,
+        "scope": "Always-on 1c-2g services, one Pro workspace and modeled browser egress; S3 transfer and other shared services separate."
+      },
+      {
+        "provider": "digitalocean_vps",
+        "scenario": "steady",
+        "customers": 100,
+        "currency": "USD",
+        "compute_disk_transfer": 1200,
+        "weekly_backup": 240.0,
+        "core_total": 1440.0,
+        "scope": "Full-month 2GiB shared-vCPU VM/customer, weekly VM backups and included transfer; OS overhead and sustained CPU fit unmeasured."
+      },
+      {
+        "provider": "ecs_express_fargate",
+        "scenario": "steady",
+        "customers": 100,
+        "currency": "USD",
+        "stable_floor": 4008.2688,
+        "scope": "One x86 Fargate task/customer, task IPv4 and ceil(N/25) shared ALBs with two IPv4 each. Excludes LCUs and internet transfer. Virginia DTO rate not verified; do not infer zero.",
+        "outbound_gib_to_price": 10000,
+        "internet_egress_price_verified": false
+      }
+    ],
+    "request_billing_optimization": {
+      "gross_bursty_compute_per_customer": 0.2908,
+      "free_adjusted_compute_for_1_10_100": [
+        0.0,
+        0.0,
+        23.78
+      ],
+      "health_billing_and_actual_idle_behavior_require_proof": true
+    },
+    "aws_internet_transfer_rate_gap": "The public EC2 page confirmed 100 GB shared free DTO, but the current Virginia per-GB table and price API could not be retrieved. ECS values are explicitly stable floors plus LCU and transfer; no Ireland rate is substituted."
+  },
+  "handoffs": {
+    "query_demand": "Bound row/decoded-byte/compute/duration budgets; preserve provenance/filter semantics; separate request ID from snapshot identity; define cancel, stale and incomplete states.",
+    "transport": "Incremental decoder and bounded batches/backpressure; complete snapshot marker and count/checksum; type preservation; avoid automatic full-stage/contributor arrays; off-main-thread client work.",
+    "database_adapters": "Container-compatible real drivers with TLS, streaming/cursors, native cancellation and narrow read-only credentials; explicit pooling/private-network/static-egress/capability limits."
+  },
+  "unresolved_choices": [
+    "What does dedicated mean contractually: separate application runtime, guest kernel, exclusive egress, or customer-owned cloud account?",
+    "Which database engines/locations must launch support, and are public TLS/shared allowlisted IPs acceptable?",
+    "What cold-start and availability expectations, usage shape and target customer-level cost justify min-zero versus warm/always-on operation?"
+  ],
+  "verification": {
+    "executed": [
+      "ZIP path safety inspection",
+      "39 source SHA-256 matches",
+      "3 image SHA-256 matches",
+      "standalone prompt byte equality",
+      "source-code inspection",
+      "official documentation/pricing retrieval",
+      "independent arithmetic and artifact-schema/reference/ZIP validation"
+    ],
+    "not_executed": [
+      "pnpm --filter exploreda check-types",
+      "pnpm check:ui",
+      "pnpm --filter demo docs:check",
+      "pnpm check",
+      "targeted supplied Vitest tests",
+      "live driver or database queries",
+      "browser responsiveness measurements",
+      "provider account/quotas/billing inspection",
+      "hosted provisioning/rollout/network/cancellation/restore tests"
+    ],
+    "provisioned_resources": 0,
+    "implementation_changes": 0,
+    "production_data_accessed": false
+  },
+  "blockers": {
+    "research_deliverable": null,
+    "production": [
+      "Unfinished companion query/transport/adapter contracts must reconcile.",
+      "Chosen database driver/network, customer isolation wording and cold/availability targets remain provisional.",
+      "Hosted proofs have not been executed or authorized by this research assignment."
+    ],
+    "evidence_gaps": [
+      "Render guest-kernel guarantee and HTTP abort propagation not established.",
+      "Cloudflare dedicated native TCP egress, exact database placement/SLA and HTTP-to-driver cancellation not established.",
+      "Current Virginia AWS internet DTO rate not retrieved."
+    ]
+  },
+  "sources": [
+    {
+      "id": "CR01",
+      "title": "Cloud Run security",
+      "url": "https://docs.cloud.google.com/run/docs/securing/security",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Container-instance isolation uses a VMM; Gen2 provides a dedicated microVM boundary.",
+        "Containers in one instance share that instance boundary."
+      ]
+    },
+    {
+      "id": "CR02",
+      "title": "Cloud Run execution environments",
+      "url": "https://docs.cloud.google.com/run/docs/configuring/execution-environments",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Gen2 provides full Linux compatibility and supports native container workloads.",
+        "Environment choice affects startup and resource requirements."
+      ]
+    },
+    {
+      "id": "CR03",
+      "title": "Cloud Run quotas and limits",
+      "url": "https://docs.cloud.google.com/run/quotas",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "1,000 services/project/region; control-plane read 3,000/minute and write 180/minute/project/region.",
+        "32 MiB HTTP/1 request and buffered response limits; streamed/chunked response exemption and HTTP/2 request distinction.",
+        "Maximum request timeout 60 minutes; max concurrency 1,000; max 8 vCPU and 32 GiB.",
+        "Regional CPU/memory/Direct VPC capacity must be checked; new Instance resource is distinct from service replicas."
+      ]
+    },
+    {
+      "id": "CR04",
+      "title": "Cloud Run pricing",
+      "url": "https://cloud.google.com/run/pricing",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "us-central1 Tier 1 request active CPU $0.000024/vCPU-s, memory $0.0000025/GiB-s, requests $0.40/million.",
+        "Idle minimum instance CPU/memory $0.0000025 per relevant second; instance billing CPU $0.000018/vCPU-s and memory $0.000002/GiB-s.",
+        "Free allowances aggregate across projects on a billing account.",
+        "Ephemeral disk price $0.000109589/GiB-hour."
+      ]
+    },
+    {
+      "id": "CR05",
+      "title": "Cloud Run maximum instances",
+      "url": "https://docs.cloud.google.com/run/docs/configuring/max-instances",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Service-level and revision-level maximums differ.",
+        "Tagged revisions excluded from traffic split are not covered by service-level maximum in the same way.",
+        "Maximum settings are not strict guarantees against temporary overshoot."
+      ]
+    },
+    {
+      "id": "CR06",
+      "title": "Cloud Run instance autoscaling",
+      "url": "https://docs.cloud.google.com/run/docs/about-instance-autoscaling",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Temporary maximum-instance overshoot can occur on maintenance and traffic spikes; excess can exceed twice the setting.",
+        "Old/new revisions can overlap; idle instances can be retained.",
+        "Pending requests queue for a bounded interval."
+      ]
+    },
+    {
+      "id": "CR07",
+      "title": "Mapping custom domains",
+      "url": "https://docs.cloud.google.com/run/docs/mapping-custom-domains",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Native mapping remains Preview, not production-ready because of latency.",
+        "No wildcard certificate support; regional limitations.",
+        "External Application Load Balancer is the recommended production approach."
+      ]
+    },
+    {
+      "id": "CR08",
+      "title": "Configure request timeout",
+      "url": "https://docs.cloud.google.com/run/docs/configuring/request-timeout",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Default 300 seconds, maximum 3,600.",
+        "504 does not stop container processing.",
+        "Long requests need reconnect/idempotency handling."
+      ]
+    },
+    {
+      "id": "CR09",
+      "title": "Cloud Run container runtime contract",
+      "url": "https://docs.cloud.google.com/run/docs/container-contract",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Writable default filesystem is in memory, counts against RAM, and is nonpersistent.",
+        "CPU allocation and shutdown behavior constrain background work.",
+        "Container HTTP/2 requires cleartext h2c while platform terminates TLS."
+      ]
+    },
+    {
+      "id": "CR10",
+      "title": "Configure service identity",
+      "url": "https://docs.cloud.google.com/run/docs/configuring/services/service-identity",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Attach a runtime service account and grant only required access.",
+        "Runtime identity and deployer identity are separate."
+      ]
+    },
+    {
+      "id": "CR11",
+      "title": "Configure secrets",
+      "url": "https://docs.cloud.google.com/run/docs/configuring/services/secrets",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Runtime service identity needs secret access.",
+        "Pin environment secret versions; mounted secrets fetch versions at read time."
+      ]
+    },
+    {
+      "id": "CR13",
+      "title": "Static outbound IP address",
+      "url": "https://docs.cloud.google.com/run/docs/configuring/static-outbound-ip",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Static outbound address requires routing through VPC and Cloud NAT with reserved addresses.",
+        "All-traffic routing is required for the documented public static egress path."
+      ]
+    },
+    {
+      "id": "CR14",
+      "title": "Direct VPC egress",
+      "url": "https://docs.cloud.google.com/run/docs/configuring/vpc-direct-vpc",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Startup network establishment can take a minute or more.",
+        "With Cloud NAT, cold starts may have delays of 30 seconds or more; connector suggested for better startup performance.",
+        "Direct VPC uses network tags and can retain allocated addresses beyond shutdown."
+      ]
+    },
+    {
+      "id": "CR15",
+      "title": "Cloud NAT pricing",
+      "url": "https://cloud.google.com/nat/pricing",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Public NAT $0.0014 per assigned VM-hour capped at $0.044/hour beyond 32.",
+        "External address $0.005/hour.",
+        "Data processed $0.045/GiB in each direction; actual Cloud Run assignment count requires validation."
+      ]
+    },
+    {
+      "id": "CR16",
+      "title": "VPC network pricing",
+      "url": "https://cloud.google.com/vpc/network-pricing",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Serverless VPC Access connector VMs incur Compute Engine prices.",
+        "Networking and NAT charges remain separate."
+      ]
+    },
+    {
+      "id": "CR17",
+      "title": "Cloud Load Balancing pricing",
+      "url": "https://cloud.google.com/load-balancing/pricing",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "First five global forwarding rules $0.025/hour total.",
+        "Application load balancer data processing $0.008/GiB in and out, plus relevant transfer.",
+        "Topology-specific rules apply; avoid duplicate transfer charging."
+      ]
+    },
+    {
+      "id": "CR18",
+      "title": "Global external Application Load Balancer with serverless backend",
+      "url": "https://docs.cloud.google.com/load-balancing/docs/https/setup-global-ext-https-serverless",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Serverless NEG URL masks support extracting service from hostname or path.",
+        "Regional backend selection requires deliberate configuration."
+      ]
+    },
+    {
+      "id": "CR19",
+      "title": "Configure ephemeral disk volumes",
+      "url": "https://docs.cloud.google.com/run/docs/configuring/services/ephemeral-disk",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Preview; Gen2 only; per-volume 1–100 GiB, up to ten volumes.",
+        "Default per-instance disk quota 10 GiB; first deployment can automatically grant 100 GiB regional quota.",
+        "Disk does not persist across instance replacement; max-instance allocation interacts with regional quota."
+      ]
+    },
+    {
+      "id": "CR20",
+      "title": "Rollouts, rollbacks, and traffic migration",
+      "url": "https://docs.cloud.google.com/run/docs/rollouts-rollbacks-traffic-migration",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Immutable revisions support no-traffic deployment, controlled traffic migration, and rollback."
+      ]
+    },
+    {
+      "id": "CR21",
+      "title": "Manually scale services",
+      "url": "https://docs.cloud.google.com/run/docs/configuring/services/manual-scaling",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Manual scaling to zero disables a service.",
+        "Returning to automatic scaling restores normal request-driven behavior."
+      ]
+    },
+    {
+      "id": "CR22",
+      "title": "Cloud Run billing settings",
+      "url": "https://docs.cloud.google.com/run/docs/configuring/billing-settings",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Request-based versus instance-based CPU allocation.",
+        "Cloud Run budget spend caps are Preview.",
+        "Contains health-probe billing guidance that should be reconciled with detailed health-check documentation in proof."
+      ]
+    },
+    {
+      "id": "CR23",
+      "title": "Budget spend caps",
+      "url": "https://docs.cloud.google.com/billing/docs/how-to/budgets-spend-caps",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Preview caps apply to one supported product in one project, not per Cloud Run customer service.",
+        "Enforcement and recovery can lag; overages remain billable; fixed costs can continue."
+      ]
+    },
+    {
+      "id": "CR24",
+      "title": "Cloud Run troubleshooting: client disconnect",
+      "url": "https://docs.cloud.google.com/run/docs/troubleshooting#client_disconnect",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "HTTP/1.1 client disconnect events are not propagated to the container.",
+        "Use HTTP/2 or WebSockets for client-disconnect propagation."
+      ]
+    },
+    {
+      "id": "CR25",
+      "title": "Use HTTP/2",
+      "url": "https://docs.cloud.google.com/run/docs/configuring/http2",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "End-to-end HTTP/2 requires explicit configuration and h2c support.",
+        "Default Cloud Run forwarding can downgrade to HTTP/1."
+      ]
+    },
+    {
+      "id": "CR26",
+      "title": "Cloud Run v2 services API",
+      "url": "https://docs.cloud.google.com/run/docs/reference/rest/v2/projects.locations.services",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "API exposes desired/observed generations, etag, reconciling status, conditions and latest ready revision.",
+        "Supports durable lifecycle reconciliation."
+      ]
+    },
+    {
+      "id": "CR27",
+      "title": "IAM quotas and limits",
+      "url": "https://docs.cloud.google.com/iam/quotas",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Service-account count and CreateServiceAccount quotas vary by project.",
+        "Do not assume legacy universal quota 100."
+      ]
+    },
+    {
+      "id": "CR28",
+      "title": "Serverless VPC Access",
+      "url": "https://docs.cloud.google.com/vpc/docs/serverless-vpc-access",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Connectors have at least two VMs, maximum settings up to ten.",
+        "Connectors scale out, not back in automatically."
+      ]
+    },
+    {
+      "id": "CR29",
+      "title": "Configure Serverless VPC Access connectors",
+      "url": "https://docs.cloud.google.com/run/docs/configuring/vpc-connectors",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Smaller connector after scale-out requires recreation or replacement.",
+        "Connector compute floor and lifecycle differ from Direct VPC."
+      ]
+    },
+    {
+      "id": "CR31",
+      "title": "General-purpose Compute Engine pricing",
+      "url": "https://cloud.google.com/products/compute/pricing/general-purpose?hl=en",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Official search-indexed US Iowa e2-micro list rate $0.008376428/hour and f1-micro $0.0076/hour.",
+        "Full page open timed out; exact current rates were verified through official-domain search results, not a deployed billing estimate."
+      ]
+    },
+    {
+      "id": "CR32",
+      "title": "Cloud NAT product interactions",
+      "url": "https://docs.cloud.google.com/nat/docs/nat-product-interactions",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Direct VPC Cloud Run public NAT requires all-traffic routing.",
+        "Port allocation requires twice the ports needed per Cloud Run instance."
+      ]
+    },
+    {
+      "id": "CR33",
+      "title": "Cloud Run health checks",
+      "url": "https://docs.cloud.google.com/run/docs/configuring/healthchecks",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "HTTP probes require an HTTP/1 endpoint; gRPC and TCP options differ.",
+        "CPU/memory used for probes are billed; verify billing-mode interaction."
+      ]
+    },
+    {
+      "id": "CR34",
+      "title": "Configure CPU",
+      "url": "https://docs.cloud.google.com/run/docs/configuring/services/cpu",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Fractional CPU requires Gen1, concurrency one, and request billing.",
+        "Startup CPU boost adds billed resources; baseline costs exclude it."
+      ]
+    },
+    {
+      "id": "CR35",
+      "title": "Configure memory limits",
+      "url": "https://docs.cloud.google.com/run/docs/configuring/services/memory-limits",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Gen2 minimum 512 MiB; 1 vCPU supports up to 4 GiB.",
+        "Memory sizing must account for per-request usage times concurrency."
+      ]
+    },
+    {
+      "id": "AW01",
+      "title": "Lambda response streaming",
+      "url": "https://docs.aws.amazon.com/lambda/latest/dg/configuration-response-streaming.html",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Synchronous streamed responses up to 200 MB; first 6 MB uncapped, then 2 MB/s.",
+        "Client disconnect does not halt a streaming invocation and full duration is billed.",
+        "Node.js/custom runtime support; VPC function URL streaming limitation and SDK streaming alternative."
+      ]
+    },
+    {
+      "id": "AW02",
+      "title": "Lambda quotas",
+      "url": "https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-limits.html",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Normal synchronous functions: 15 minutes, 128–10,240 MB memory, 512–10,240 MB tmp; CPU equivalent one vCPU at 1,769 MB.",
+        "Default concurrency 1,000; most control APIs share 15 requests/second.",
+        "MicroVMs ARM64-only; 8-hour max lifetime; hard 8 concurrent connections at 1 vCPU.",
+        "New accounts can have lower effective quotas."
+      ]
+    },
+    {
+      "id": "AW04",
+      "title": "AWS Fargate pricing",
+      "url": "https://aws.amazon.com/fargate/pricing/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Virginia Linux x86 CPU $0.000011244/vCPU-s, memory $0.000001235/GB-s.",
+        "Virginia Linux ARM CPU $0.0000089944/vCPU-s, memory $0.0000009889/GB-s.",
+        "Billing starts with image download and has one-minute minimum for Linux."
+      ]
+    },
+    {
+      "id": "AW05",
+      "title": "AWS Fargate for ECS",
+      "url": "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/AWS_Fargate.html",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Fargate task has hardware virtualization isolation and does not share kernel, CPU, memory or ENI with another task.",
+        "Containers within one task share its boundary."
+      ]
+    },
+    {
+      "id": "AW06",
+      "title": "ECS Express Mode overview",
+      "url": "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/express-service-overview.html",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Managed workflow provisions Fargate, ALB HTTPS, monitoring, security groups and scaling.",
+        "No extra Express fee; underlying resources are billed."
+      ]
+    },
+    {
+      "id": "AW07",
+      "title": "How ECS Express Mode works",
+      "url": "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/express-service-work.html",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Defaults 1 vCPU/2 GiB, minimum one task, maximum twenty, CPU target 60%, canary deployment.",
+        "ALBs shared by up to 25 Express services in one VPC.",
+        "Deployment overlap temporarily adds resources; steady minimum is not inherently two tasks."
+      ]
+    },
+    {
+      "id": "AW08",
+      "title": "Announcing ECS Express Mode",
+      "url": "https://aws.amazon.com/about-aws/whats-new/2025/11/announcing-amazon-ecs-express-mode/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "November 2025 launch; available in all regions supporting ECS Fargate; no additional charge."
+      ]
+    },
+    {
+      "id": "AW09",
+      "title": "ECS Express Mode ARM architecture support",
+      "url": "https://aws.amazon.com/about-aws/whats-new/2026/09/amazon-ecs-express-mode-arm-architecture/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "September 2026 official announcement of ARM architecture support."
+      ]
+    },
+    {
+      "id": "AW10",
+      "title": "ECS service auto scaling",
+      "url": "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/service-auto-scaling.html",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Minimum capacity zero is possible.",
+        "Scaling from zero requires metric data; no automatic HTTP request buffering/wake is established by this feature."
+      ]
+    },
+    {
+      "id": "AW11",
+      "title": "App Runner CreateService API",
+      "url": "https://docs.aws.amazon.com/apprunner/latest/api/API_CreateService.html",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "App Runner stopped accepting new customers March 31, 2026; existing customers continue."
+      ]
+    },
+    {
+      "id": "AW13",
+      "title": "Elastic Load Balancing pricing",
+      "url": "https://aws.amazon.com/elasticloadbalancing/pricing/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "US East ALB $0.0225/hour plus $0.008/LCU-hour.",
+        "LCU dimensions include processed bytes, connections and rule evaluations.",
+        "Ordinary instance/IP target bytes dimension uses 1 GB/hour per LCU."
+      ]
+    },
+    {
+      "id": "AW14",
+      "title": "Amazon VPC pricing",
+      "url": "https://aws.amazon.com/vpc/pricing/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Public IPv4 $0.005/hour per address.",
+        "Official Ohio NAT example $0.045/hour plus $0.045/GB; not used as a falsely verified Virginia quote.",
+        "NAT and ordinary transfer charges can coexist."
+      ]
+    },
+    {
+      "id": "AW17",
+      "title": "Create a Lambda function from a container image",
+      "url": "https://docs.aws.amazon.com/lambda/latest/dg/images-create.html",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Lambda image must implement Runtime API; read-only root filesystem with writable tmp.",
+        "A generic long-lived HTTP OCI image is not a drop-in function deployment."
+      ]
+    },
+    {
+      "id": "AW18",
+      "title": "Lambda tenant isolation",
+      "url": "https://docs.aws.amazon.com/lambda/latest/dg/tenant-isolation.html",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Tenant ID selects environments never reused across tenants, using Firecracker isolation.",
+        "All tenants share execution-role permissions; function URLs, provisioned concurrency and SnapStart unsupported.",
+        "Additional environment creation charges."
+      ]
+    },
+    {
+      "id": "AW19",
+      "title": "Lambda Managed Instances",
+      "url": "https://docs.aws.amazon.com/lambda/latest/dg/lambda-managed-instances.html",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Functions run on EC2 capacity providers operated by AWS.",
+        "Capacity provider is security boundary; per-function containers can share the host."
+      ]
+    },
+    {
+      "id": "AW20",
+      "title": "AWS Lambda MicroVMs",
+      "url": "https://docs.aws.amazon.com/lambda/latest/dg/lambda-microvms-guide.html",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Full OS, Firecracker isolation, dedicated HTTPS endpoints, HTTP2/gRPC/WebSockets, and automatic suspend/resume.",
+        "Distinct product from ordinary Lambda functions."
+      ]
+    },
+    {
+      "id": "AW21",
+      "title": "Running and using Lambda MicroVMs",
+      "url": "https://docs.aws.amazon.com/lambda/latest/dg/microvms-launching.html",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Total running plus suspended lifespan 1–28,800 seconds; terminated afterward.",
+        "Each MicroVM has its own endpoint with mandatory JWE authentication; no shared load balancing.",
+        "Suspend/resume hooks must close/reopen connections and refresh credentials."
+      ]
+    },
+    {
+      "id": "CF01",
+      "title": "Cloudflare Workers limits",
+      "url": "https://developers.cloudflare.com/workers/platform/limits/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Paid: 128 MB per isolate (shared by concurrent invocations), 30s default/300s configurable CPU; no enforced HTTP response body or connected HTTP wall-time cap. 64 MiB uncompressed bundle; 500 scripts/account; 100 custom domains/zone; 10,000 default paid subrequests adjustable to 10M; six initial outgoing connections."
+      ]
+    },
+    {
+      "id": "CF02",
+      "title": "How Workers works",
+      "url": "https://developers.cloudflare.com/workers/reference/how-workers-works/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "V8 isolates separate memory within a shared runtime; isolates can be evicted and requests can reach different instances. This does not reserve a core, process or physical host for a customer."
+      ]
+    },
+    {
+      "id": "CF03",
+      "title": "Cloudflare Workers pricing",
+      "url": "https://developers.cloudflare.com/workers/platform/pricing/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "USD $5/account/month; 10M requests, 30M CPU-ms included; overages $0.30/M requests and $0.02/M CPU-ms; no Worker egress charge. Current logs 20M events included then $0.60/M, seven-day retention; pricing changes December 1, 2026."
+      ]
+    },
+    {
+      "id": "CF04",
+      "title": "Workers for Platforms pricing",
+      "url": "https://developers.cloudflare.com/cloudflare-for-platforms/workers-for-platforms/reference/pricing/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "$25 monthly, 20M requests, 60M CPU-ms and 1,000 scripts included; $0.30/M requests, $0.02/M CPU-ms, $0.02/additional script. Page still lists 30s CPU max/invocation; do not silently substitute normal Workers 300s limit."
+      ]
+    },
+    {
+      "id": "CF05",
+      "title": "Workers for Platforms limits",
+      "url": "https://developers.cloudflare.com/cloudflare-for-platforms/workers-for-platforms/reference/limits/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Unlimited scripts and Durable Object namespaces; user Workers lack gradual deployments and deploy all traffic at once. Shared API rate limit 1,200 requests/5min per user/account token."
+      ]
+    },
+    {
+      "id": "CF07",
+      "title": "Workers for Platforms custom limits",
+      "url": "https://developers.cloudflare.com/cloudflare-for-platforms/workers-for-platforms/configuration/custom-limits/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Dispatch can enforce per-invocation CPU and subrequest caps; a hit throws immediately."
+      ]
+    },
+    {
+      "id": "CF08",
+      "title": "How Workers for Platforms works",
+      "url": "https://developers.cloudflare.com/cloudflare-for-platforms/workers-for-platforms/how-workers-for-platforms-works/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "A dynamic dispatch Worker performs routing/authentication and invokes customer user Workers through namespace bindings; user Workers have separate resource bindings. Optional outbound Worker controls fetch requests."
+      ]
+    },
+    {
+      "id": "CF09",
+      "title": "Hyperdrive limits",
+      "url": "https://developers.cloudflare.com/hyperdrive/platform/limits/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Paid 25 configured databases/account; 60s statement timeout; responses above 50MB bypass cache but are still returned. Initial connect15s; idle10min; about100 origin connections/config as soft distributed limit. Limit increase requires approval and not all limits increase."
+      ]
+    },
+    {
+      "id": "CF11",
+      "title": "Hyperdrive supported databases and features",
+      "url": "https://developers.cloudflare.com/hyperdrive/reference/supported-databases-and-features/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "PostgreSQL9–18 and MySQL5.7–8 plus MariaDB supported; SQL Server/MongoDB unsupported. TLS required; verify-full mode supported. SQL-level prepared-statement management, advisory locks, LISTEN/NOTIFY and arbitrary per-session state unsupported."
+      ]
+    },
+    {
+      "id": "CF12",
+      "title": "Hyperdrive connection pooling",
+      "url": "https://developers.cloudflare.com/hyperdrive/concepts/connection-pooling/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Transaction pooling; SET state resets when connection returns to pool. Minimum pool5, configurable soft max. Driver named prepared statements supported in postgres.js and node-postgres; manual restart can interrupt queries."
+      ]
+    },
+    {
+      "id": "CF13",
+      "title": "Hyperdrive firewall and networking",
+      "url": "https://developers.cloudflare.com/hyperdrive/configuration/firewall-and-networking-configuration/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Origin firewall can allow Cloudflare IP ranges or use Tunnel. This is a shared Cloudflare-range allowlist, not a dedicated per-customer static egress address."
+      ]
+    },
+    {
+      "id": "CF14",
+      "title": "Hyperdrive private database via Workers VPC",
+      "url": "https://developers.cloudflare.com/hyperdrive/configuration/connect-to-private-database-vpc/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Workers VPC TCP service routes Hyperdrive through cloudflared running inside a reachable private network; no Access application/service token required. Guide and sidebar mark beta; TLS defaults differ from newer supported-features page, so configure verification explicitly."
+      ]
+    },
+    {
+      "id": "CF15",
+      "title": "Hyperdrive query caching",
+      "url": "https://developers.cloudflare.com/hyperdrive/concepts/query-caching/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Defaults max_age60s plus stale_while_revalidate15s; writes do not invalidate cached reads. Caching-disabled config retains pooling. Multiple configs for same database add to origin connection usage."
+      ]
+    },
+    {
+      "id": "CF16",
+      "title": "Workers TCP sockets",
+      "url": "https://developers.cloudflare.com/workers/runtime-apis/tcp-sockets/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Outbound TCP supported; sockets must be created within a handler and cannot be shared from global scope. Direct connect to private/localhost/Cloudflare ranges is disallowed; no inbound TCP server."
+      ]
+    },
+    {
+      "id": "CF17",
+      "title": "Workers Node.js compatibility",
+      "url": "https://developers.cloudflare.com/workers/runtime-apis/nodejs/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Workers supports many Node APIs including stream/net/fs/zlib; some modules are partial implementations or nonfunctional stubs. It is not a general Node/Linux runtime."
+      ]
+    },
+    {
+      "id": "CF18",
+      "title": "Workers fs",
+      "url": "https://developers.cloudflare.com/workers/runtime-apis/nodejs/fs/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Memory-based virtual filesystem includes read-only bundle and writable temporary files; temporary contents count against Worker memory. It is not a persistent disk or free spill space."
+      ]
+    },
+    {
+      "id": "CF20",
+      "title": "Workers placement",
+      "url": "https://developers.cloudflare.com/workers/configuration/placement/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Explicit cloud-region hints place near AWS/GCP/Azure regions, not inside them. Host probes are experimental. Placement affects fetch handlers, not RPC/named entrypoints."
+      ]
+    },
+    {
+      "id": "CF21",
+      "title": "Cloudflare Containers overview",
+      "url": "https://developers.cloudflare.com/containers/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Available on Workers Paid; supports Linux runtime/library/filesystem needs; a Worker and Durable Object start/control each instance. Availability is documented; general availability/SLA is not established merely by absence of a beta banner."
+      ]
+    },
+    {
+      "id": "CF22",
+      "title": "Container lifecycle and runtime",
+      "url": "https://developers.cloudflare.com/containers/concepts/architecture/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Each linux/amd64 Container runs in a Firecracker microVM with its own kernel/network. Container and DO placement can differ. Requests enter via Worker/DO; start returns before readiness. Restart may move location."
+      ]
+    },
+    {
+      "id": "CF23",
+      "title": "Container limits and instance types",
+      "url": "https://developers.cloudflare.com/containers/platform/limits/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Predefined max4vCPU/12GiB/20GB. Custom minimum1vCPU and3GiB/vCPU, max4vCPU/12GiB/20GB. Account6TiB/1,500vCPU/30TB concurrent; image storage50GB. Snapshot20GB/30day refreshed-on-restore TTL."
+      ]
+    },
+    {
+      "id": "CF24",
+      "title": "Container pricing",
+      "url": "https://developers.cloudflare.com/containers/platform/pricing/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "10ms billing; active CPU $0.000020/vCPU-s, provisioned RAM $0.0000025/GiB-s and disk $0.00000007/GB-s. Includes22,500vCPU-s/90,000GiB-s/720,000GB-s monthly. NA/EU egress$0.025/GB after1TB; Worker/DO charges additional."
+      ]
+    },
+    {
+      "id": "CF25",
+      "title": "Container scheduling policies",
+      "url": "https://developers.cloudflare.com/containers/configuration/scheduling-policy/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Default scheduler sets one application-wide image/size and uses provider rollouts/max_instances. durable_object policy is public beta, immutable policy choice, app-controlled image/size at start, no max_instances or provider image rollout."
+      ]
+    },
+    {
+      "id": "CF26",
+      "title": "Container rollouts",
+      "url": "https://developers.cloudflare.com/containers/configuration/rollouts/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Worker activates before image/rollout and operations are not transactional. Deploy success only starts rollout. Old/new image compatibility needed. SIGTERM then up to15min before SIGKILL; default rollout grace0."
+      ]
+    },
+    {
+      "id": "CF27",
+      "title": "Container placement",
+      "url": "https://developers.cloudflare.com/containers/concepts/placement/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Supports broad geographic-region and US/EU/fedramp jurisdiction constraints; not named cloud-zone co-location. Middle East/Oceania/Africa limited-capacity regions cannot be exclusively selected without support arrangement."
+      ]
+    },
+    {
+      "id": "CF28",
+      "title": "Container outbound traffic",
+      "url": "https://developers.cloudflare.com/containers/configuration/outbound-traffic/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Only HTTP80/HTTPS443 intercepted by outbound/host rules. With Internet enabled other ports bypass those rules; with it disabled other ports are denied. No documented tenant static TCP egress product established on this page."
+      ]
+    },
+    {
+      "id": "CF30",
+      "title": "Container environment variables and secrets",
+      "url": "https://developers.cloudflare.com/containers/examples/env-vars-and-secrets/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "DO reads Worker secrets or bound store and passes selected values via start env. Running process keeps startup environment; updated values apply on next start."
+      ]
+    },
+    {
+      "id": "CF31",
+      "title": "Container scaling and routing",
+      "url": "https://developers.cloudflare.com/containers/configuration/scaling-and-routing/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Unique IDs explicitly address separate instances; getting an ID alone does not start it. Documented use case is per-user backend. Random shared-instance routing is a different architecture."
+      ]
+    },
+    {
+      "id": "CF32",
+      "title": "Durable Object Container API",
+      "url": "https://developers.cloudflare.com/containers/api/durable-object-container/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "setInactivityTimeout controls time after DO inactivity and must reset after DO restart; getTcpPort returns fetch/connect access. Request cancellation does not automatically kill exec processes; DO fetch signal can be forwarded, RPC lacks it. Snapshot excludes memory/processes."
+      ]
+    },
+    {
+      "id": "CF33",
+      "title": "Durable Objects pricing",
+      "url": "https://developers.cloudflare.com/durable-objects/platform/pricing/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "1M requests and400,000GB-s included; $0.15/M requests and$12.50/M GB-s. Overage rounds to whole billable units. 128MB allocated billed/object; eligible hibernation not billed. DOs in same class can share isolate despite separate billed memory."
+      ]
+    },
+    {
+      "id": "CF34",
+      "title": "Durable Objects limits",
+      "url": "https://developers.cloudflare.com/durable-objects/platform/limits/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Paid500 classes/account, unlimited objects; SQLite storage10GB/object. Single object single-threaded, soft1,000requests/s; Worker limits apply."
+      ]
+    },
+    {
+      "id": "CF35",
+      "title": "D1 limits",
+      "url": "https://developers.cloudflare.com/d1/platform/limits/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "50,000 paid databases/account; hard10GB/database,100 columns/table,30s query,2MB row/blob. D1 is provider-hosted SQLite state, not a remote-DB connector."
+      ]
+    },
+    {
+      "id": "CF36",
+      "title": "R2 pricing",
+      "url": "https://developers.cloudflare.com/r2/pricing/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Standard $0.015/GB-month,$4.50/M class A,$0.36/M class B; free10GB-month,1M A,10M B; Internet egressfree. Overages rounded to next units."
+      ]
+    },
+    {
+      "id": "CF37",
+      "title": "Workers request AbortSignal",
+      "url": "https://developers.cloudflare.com/workers/runtime-apis/request/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "enable_request_signal allows inbound request.signal abort listener on client disconnect. This is a documented hook, not proof of database cancellation through driver/pool/container chain."
+      ]
+    },
+    {
+      "id": "CF39",
+      "title": "Container image management",
+      "url": "https://developers.cloudflare.com/containers/guides/image-management/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Default scheduler supports Cloudflare registry, Docker Hub, ECR, GAR; external registry images are not cached and can incur source egress. New DO scheduler requires Cloudflare registry digest-pinned images. Deleting old images can break rollback."
+      ]
+    },
+    {
+      "id": "CF40",
+      "title": "Cloudflare Observability pricing effective December 1, 2026",
+      "url": "https://developers.cloudflare.com/observability/pricing/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Current canonical table: from Dec1,2026 pooled account allowances50GB ingestion and10GB-month storage, thenUSD0.25/GB and0.10/GB-month. Workers/Containers logs and traces included. Ingestion is pre-compression incl enriched/custom attributes; storage=sum daily peak queryableGB/30. Seven-day default retention. Free/Pro/Business Workers Observability auto-migrate Dec1; Enterprise at renewal. Documentation inconsistency: worked example says(20-10)*0.10=0.80; this is wrong; use table and recompute. Search-cache version updatedOct2 showed12GB-month but canonical openedOct12 updatedOct5 shows10GB-month."
+      ]
+    },
+    {
+      "id": "RENDER-COMPUTE",
+      "title": "Compute Plans",
+      "url": "https://render.com/docs/compute-plans",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "1c-2g is one CPU and 2 GB RAM for web/private/worker services.",
+        "August 2026 introduced specification-based plan IDs; existing legacy IDs remain accepted.",
+        "Each service replica is billed for its compute plan."
+      ]
+    },
+    {
+      "id": "RENDER-RAILS-PRICE",
+      "title": "Production-Grade Rails Hosting: Architecture & Scaling Guide",
+      "url": "https://render.com/articles/production-rails-hosting-guide",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Official article lists web-service 1c-2g at $25/month, 1 CPU and 2 GB RAM.",
+        "Web-service 0.5c-512mb is $7/month.",
+        "Do not confuse the web-service plan with separately priced Postgres plans."
+      ]
+    },
+    {
+      "id": "RENDER-WORKSPACE-PRICE",
+      "title": "How much does cloud application hosting cost for small businesses",
+      "url": "https://render.com/articles/how-much-does-cloud-application-hosting-cost-for-small-businesses",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Pro workspace is $25/month, with 25 GB outbound bandwidth and 1,000 pipeline minutes.",
+        "Hobby is $0/month, 5 GB bandwidth, 500 pipeline minutes and at most 25 services.",
+        "Scale workspace is $499/month with 1 TB bandwidth and 5,000 pipeline minutes.",
+        "Persistent disk is $0.25/GB/month."
+      ]
+    },
+    {
+      "id": "RENDER-FEATURES",
+      "title": "Platform Features by Plan",
+      "url": "https://render.com/docs/platform-features-by-plan",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Pro supports unlimited services, projects and environments.",
+        "Network-isolated environments, OIDC, dedicated outbound IP add-on and private links require Pro or higher.",
+        "Hobby service count includes suspended services."
+      ]
+    },
+    {
+      "id": "RENDER-SERVICE-TYPES",
+      "title": "Service Types",
+      "url": "https://render.com/docs/service-types",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "A service runs one or more containerized instances.",
+        "CPU and memory are determined by the service compute plan.",
+        "The page does not establish a tenant-dedicated guest kernel or physical host."
+      ]
+    },
+    {
+      "id": "RENDER-PROJECTS",
+      "title": "Projects and Environments",
+      "url": "https://render.com/docs/projects",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "By default, all services within a workspace in the same region can communicate privately.",
+        "Environment network isolation blocks cross-environment private traffic but not public URLs or SSH.",
+        "Turning isolation on does not terminate existing connections; restart if required.",
+        "Deleting a project deletes its associated services and environments."
+      ]
+    },
+    {
+      "id": "RENDER-IMAGE",
+      "title": "Deploying an Image",
+      "url": "https://render.com/docs/deploying-an-image",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Prebuilt image must use linux/amd64 and be no larger than 10 GB compressed.",
+        "Immutable image digests can be specified.",
+        "Image-backed services do not automatically deploy after registry tag changes.",
+        "Render re-pulls images on some restarts, scaling and rollback; maintain old image availability.",
+        "ECR pull credentials expire after 12 hours; OIDC does not support image-backed ECR pulls."
+      ]
+    },
+    {
+      "id": "RENDER-HEALTH",
+      "title": "Health Checks",
+      "url": "https://render.com/docs/health-checks",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "HTTP health expects 2xx or 3xx within five seconds.",
+        "Unhealthy running instance stops receiving traffic after about 15 seconds and restarts after 60 seconds.",
+        "New deployment receives traffic after all new instances pass health checks.",
+        "A new deployment failing health for 15 minutes is cancelled while existing instances remain."
+      ]
+    },
+    {
+      "id": "RENDER-DEDICATED-IP",
+      "title": "Dedicated Outbound IPs",
+      "url": "https://render.com/docs/dedicated-ips",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "A regional dedicated set comprises three IPv4 addresses; traffic may use any of them.",
+        "A set may apply to a workspace or selected environments.",
+        "Default workspace quota is four sets, increase by contacting support."
+      ]
+    },
+    {
+      "id": "RENDER-DEDICATED-IP-PRICE",
+      "title": "Dedicated IPs for your services on Render",
+      "url": "https://render.com/blog/dedicated-ips-for-your-services-on-render",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "May 19, 2026 announcement prices each dedicated regional IP set at $100/month.",
+        "Sets are an add-on available to Pro and higher workspaces."
+      ]
+    },
+    {
+      "id": "RENDER-PRIVATE-LINK",
+      "title": "Private Links",
+      "url": "https://render.com/docs/private-link",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Private links are Pro+ and connect to supported resources hosted on AWS in the same region.",
+        "$30 per workspace per month covers up to three private links; higher needs require contact.",
+        "Public-provider and customer endpoint setup remains necessary."
+      ]
+    },
+    {
+      "id": "RENDER-LONG-HTTP",
+      "title": "Render vs Vercel",
+      "url": "https://render.com/docs/render-vs-vercel-comparison",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Render documents HTTP response duration up to 100 minutes.",
+        "Paid services are always on; free services can sleep.",
+        "The page documents WebSocket support.",
+        "Comparison claims about Vercel are not used as evidence about Vercel current limits."
+      ]
+    },
+    {
+      "id": "RENDER-DISKS",
+      "title": "Persistent Disks",
+      "url": "https://render.com/docs/disks",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Root filesystem is ephemeral unless a disk is attached.",
+        "A disk can attach to one service instance and prevents multi-instance scaling and zero-downtime deployments.",
+        "Automatic daily snapshots are retained at least seven days.",
+        "Disk snapshots should not replace database-native backups for transactional databases."
+      ]
+    },
+    {
+      "id": "RENDER-OIDC",
+      "title": "OIDC on Render",
+      "url": "https://render.com/docs/oidc",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Pro+ provides automatically rotated short-lived per-service tokens.",
+        "Managed integrations document AWS, Anthropic and OpenAI.",
+        "AWS configuration supports one AWS_ROLE_ARN per service and AWS_WEB_IDENTITY_TOKEN_FILE.",
+        "IAM trust may match exact subject workspace:{WORKSPACE_ID}:environment:{ENVIRONMENT_ID}:service:{SERVICE_ID} and sts.amazonaws.com audience.",
+        "Docker builds and image-backed ECR pulls are not supported by this integration."
+      ]
+    },
+    {
+      "id": "RENDER-OIDC-GA",
+      "title": "Render-to-AWS OIDC authentication now generally available",
+      "url": "https://render.com/changelog/render-to-aws-oidc-authentication-now-generally-available",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Render-to-AWS OIDC became generally available July 15, 2026 on Pro and higher."
+      ]
+    },
+    {
+      "id": "RENDER-AUTH",
+      "title": "API Authentication",
+      "url": "https://api-docs.render.com/reference/authentication",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Bearer API keys inherit access to all workspaces the owning user belongs to.",
+        "A per-service API key was not documented in this reference."
+      ]
+    },
+    {
+      "id": "RENDER-UPDATE-SERVICE",
+      "title": "Update service",
+      "url": "https://api-docs.render.com/reference/update-service",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "PATCH /v1/services/{serviceId} updates image and configuration.",
+        "An API update does not automatically trigger a deployment; explicitly trigger a deploy.",
+        "autoDeployTrigger replaces the deprecated autoDeploy field."
+      ]
+    },
+    {
+      "id": "RENDER-CREATE-DEPLOY",
+      "title": "Trigger deploy",
+      "url": "https://api-docs.render.com/reference/create-deploy",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Trigger-deploy API accepts an imageUrl override with the same image host/repository/name.",
+        "201 means started and 202 means queued.",
+        "An override alone is not persistent desired-image configuration."
+      ]
+    },
+    {
+      "id": "RENDER-ROLLBACK",
+      "title": "Rollbacks",
+      "url": "https://render.com/docs/rollbacks",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "API rollback does not disable auto-deploy.",
+        "Rollback restores target deployment settings but does not rewrite configured future state.",
+        "Disk contents, domains and compute plan do not roll back with the image.",
+        "Old images must remain available in the registry."
+      ]
+    },
+    {
+      "id": "RENDER-RATE-LIMITS",
+      "title": "API Rate Limiting",
+      "url": "https://api-docs.render.com/reference/rate-limiting",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Service creation is limited to 20/hour/user.",
+        "Service update/deploy/resume/suspend and deploy hooks are limited to 10/minute/service.",
+        "Custom-domain create/verify is limited to 50/hour/user.",
+        "Other POST/PATCH/DELETE requests are 30/minute, other GET requests 400/minute.",
+        "Read RateLimit headers; support can adjust limits."
+      ]
+    },
+    {
+      "id": "RENDER-CUSTOM-DOMAINS",
+      "title": "Custom Domains",
+      "url": "https://render.com/docs/custom-domains",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Pro includes 15 custom domains then charges $0.25/domain/month.",
+        "TLS certificates issue and renew automatically.",
+        "onrender.com hostname can be disabled after custom hostname readiness.",
+        "Render directs users to IPv4 configuration rather than AAAA records."
+      ]
+    },
+    {
+      "id": "RENDER-BANDWIDTH",
+      "title": "Outbound Bandwidth",
+      "url": "https://render.com/docs/outbound-bandwidth",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Pro includes 25 GB per workspace, Hobby 5 GB, Scale 1 TB.",
+        "Public outbound excess is $0.15/GB and private-link outbound $0.03/GB.",
+        "Public HTTP/WebSocket responses and service-initiated public outbound count.",
+        "Same-region service-initiated traffic to Amazon S3 or Google Cloud Storage is exempt.",
+        "Inbound, same-region Render private traffic, and log/metrics streaming traffic are not billed as outbound."
+      ]
+    },
+    {
+      "id": "FLY-PRICING",
+      "title": "Pricing",
+      "url": "https://docs.fly.io/about/pricing",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Current iad/ewr monthly examples: shared-2x/2 GB $13.39 and performance-1x/2 GB $33.",
+        "Stopped/suspended rootfs and provisioned volumes cost $0.15/GB/month.",
+        "US/EU internet egress is $0.02/GB; app-scoped static egress is $0.005/hour.",
+        "Dedicated ingress IPv4 is a separate $2/month.",
+        "Volume snapshots cost $0.08/GB/month after first 10 GB; no general platform subscription floor was identified."
+      ]
+    },
+    {
+      "id": "FLY-SECURITY",
+      "title": "Security",
+      "url": "https://fly.io/security/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Fly states tenants do not share kernels and run in separate lightweight VMs."
+      ]
+    },
+    {
+      "id": "FLY-CPU",
+      "title": "CPU Performance",
+      "url": "https://docs.fly.io/machines/cpu-performance/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Shared vCPU baseline is five milliseconds per 80-millisecond period, 6.25%.",
+        "Shared Machines burst using credits; performance CPUs receive full CPU time.",
+        "Shared-2x is not two continuous dedicated physical cores."
+      ]
+    },
+    {
+      "id": "FLY-NETWORK",
+      "title": "Custom Private Networks",
+      "url": "https://docs.fly.io/networking/custom-private-networks",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Default organization private network is shared.",
+        "Custom private network is selected during app creation and cannot be changed later.",
+        "Apps using the same custom network identity can communicate privately."
+      ]
+    },
+    {
+      "id": "FLY-EGRESS",
+      "title": "Static Egress IPs",
+      "url": "https://docs.fly.io/networking/egress-ips",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "App-scoped static egress survives Machine replacement and is regional.",
+        "Each IP supports up to 64 Machines and each Machine up to 1,024 connections per destination IP.",
+        "Both IPv4 and IPv6 allowlisting may be needed."
+      ]
+    },
+    {
+      "id": "FLY-AUTOSTOP",
+      "title": "Automatic Stop and Start",
+      "url": "https://docs.fly.io/launch/autostop-autostart",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Autostart wakes already-created Machines; it does not create new Machines.",
+        "Autostop evaluates every few minutes and stops one Machine per region per pass.",
+        "Minimum zero running Machines is configurable."
+      ]
+    },
+    {
+      "id": "FLY-HEALTH",
+      "title": "Health Checks",
+      "url": "https://docs.fly.io/reference/health-checks/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Health-check failure removes a Machine from routing but never automatically restarts or stops it."
+      ]
+    },
+    {
+      "id": "FLY-API",
+      "title": "Machines API Resource",
+      "url": "https://docs.fly.io/machines/api/machines-resource/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "API supports create, read, update, start, stop, suspend, delete, leases and version guards.",
+        "Updates submit full config rather than partial PATCH.",
+        "skip_launch=true allows updating a stopped Machine without starting it.",
+        "Region and name cannot change in place."
+      ]
+    },
+    {
+      "id": "RAILWAY-PRICING",
+      "title": "Pricing",
+      "url": "https://docs.railway.com/pricing",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Pro $20/month minimum counts toward resource usage.",
+        "RAM $10/GB-month; CPU $20/vCPU-month; public egress $0.05/GB; volume $0.15/GB-month.",
+        "Usage is metered rather than a fixed per-service monthly instance fee."
+      ]
+    },
+    {
+      "id": "RAILWAY-SERVERLESS",
+      "title": "Serverless",
+      "url": "https://docs.railway.com/deployments/serverless",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Sleeping follows roughly five to ten minutes without outbound packets.",
+        "Database pools and telemetry can keep a service alive.",
+        "First request after sleep can receive 502; configuration changes apply after redeploy."
+      ]
+    },
+    {
+      "id": "DO-PRICING",
+      "title": "Droplet Pricing",
+      "url": "https://www.digitalocean.com/pricing/droplets",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Basic Regular 2 GiB/one shared vCPU/50 GiB disk/2,000 GiB transfer is $12/month.",
+        "Basic 1 GiB/one shared vCPU/25 GiB/1,000 GiB is $6/month.",
+        "Basic 8 GiB/four shared vCPU/160 GiB/5,000 GiB is $48/month.",
+        "CPU-Optimized two dedicated vCPU/4 GiB is $42/month.",
+        "January 1, 2026 introduced per-second billing, minimum 60 seconds or $0.01, capped at 672 hours/month."
+      ]
+    },
+    {
+      "id": "DO-BILLING",
+      "title": "Droplet Pricing Details",
+      "url": "https://docs.digitalocean.com/products/droplets/details/pricing/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "A Droplet is billed from creation to destruction, including when powered off.",
+        "Excess outbound costs $0.01/GiB; team allowances are pooled.",
+        "Inbound and private VPC traffic are free."
+      ]
+    },
+    {
+      "id": "DO-BACKUPS",
+      "title": "Backups Pricing",
+      "url": "https://docs.digitalocean.com/products/backups/details/pricing/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Weekly backups cost 20% of Droplet price; daily backups cost 30%.",
+        "Usage-priced alternatives charge retained restorable data and require separate modeling."
+      ]
+    },
+    {
+      "id": "DO-CLOUD-INIT",
+      "title": "Provide User Data",
+      "url": "https://docs.digitalocean.com/products/droplets/how-to/provide-user-data/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Creation-time user-data/cloud-init can automate initial configuration."
+      ]
+    },
+    {
+      "id": "DO-METADATA",
+      "title": "Metadata API",
+      "url": "https://docs.digitalocean.com/reference/api/metadata/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Guest metadata at link-local 169.254.169.254 includes user-data.",
+        "Avoid putting long-lived provider control credentials in user-data."
+      ]
+    },
+    {
+      "id": "DO-POLICIES",
+      "title": "Droplet Policies",
+      "url": "https://docs.digitalocean.com/products/droplets/details/policies/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Droplets are Linux VMs on virtualized hardware.",
+        "Droplets are completely unmanaged and support cannot directly access them.",
+        "The operator remains responsible for guest administration."
+      ]
+    },
+    {
+      "id": "HETZNER-PRICE-CHANGE",
+      "title": "Price Adjustment",
+      "url": "https://docs.hetzner.com/general/infrastructure-and-availability/price-adjustment/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "New orders and rescaling prices changed June 15, 2026; page updated July 8.",
+        "US Ashburn/Hillsboro CPX11 rises from $6.99 to $20.49/month excluding primary IPv4 and VAT.",
+        "US CPX21 rises from $13.99 to $37.49/month.",
+        "EU CX23 new $6.49 price is not a US price or evidence of US availability."
+      ]
+    },
+    {
+      "id": "RENDER-DEPLOY-DRAIN",
+      "title": "Deploying on Render",
+      "url": "https://render.com/docs/deploys",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "After healthy new-instance routing switch, Render waits 60 seconds then sends SIGTERM to the old instance.",
+        "Default graceful shutdown is 30 seconds, configurable up to 300 seconds, then SIGKILL.",
+        "100-minute HTTP duration is not a guarantee a stream survives a deploy."
+      ]
+    },
+    {
+      "id": "AWS-S3-RATES",
+      "title": "Automated Security Response on AWS: Cost",
+      "url": "https://docs.aws.amazon.com/solutions/latest/automated-security-response-on-aws/cost.html",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Current official US East/N. Virginia example S3 row: first 50 TB storage $0.023 per GB-month.",
+        "S3 PUT/COPY/POST/LIST $0.005 per 1000; GET/other $0.0004 per 1000.",
+        "Only the S3 rate row is used; other service estimates are outside this research."
+      ]
+    },
+    {
+      "id": "AWS-S3-BILLING",
+      "title": "S3 Pricing",
+      "url": "https://aws.amazon.com/s3/pricing/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "S3 storage GB are binary units of 2^30 bytes.",
+        "First 100 GB monthly internet outbound is shared across AWS services and regions except China/GovCloud.",
+        "S3-to-AWS-service transfers within the same AWS region are exempt.",
+        "Render region labels alone do not prove the underlying AWS region or route."
+      ]
+    },
+    {
+      "id": "AWS-IAM-PRICING",
+      "title": "IAM FAQs",
+      "url": "https://aws.amazon.com/iam/faqs/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "IAM itself is offered at no additional charge.",
+        "Some optional IAM Access Analyzer capabilities are separately paid."
+      ]
+    },
+    {
+      "id": "AWS-S3-ENCRYPTION",
+      "title": "Using SSE-S3",
+      "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/UsingServerSideEncryption.html",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "New S3 objects are encrypted by default with SSE-S3.",
+        "SSE-S3 adds no extra encryption charge; configuration API calls have normal request pricing.",
+        "Object metadata is not encrypted by server-side encryption."
+      ]
+    },
+    {
+      "id": "AWS-S3-VERSIONING",
+      "title": "Retaining multiple versions with S3 Versioning",
+      "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/Versioning.html",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary",
+      "claims": [
+        "Versioning preserves multiple object versions; all retained versions must be included in storage estimates."
+      ]
+    },
+    {
+      "id": "GP01",
+      "title": "Cloud Storage pricing",
+      "url": "https://cloud.google.com/storage/pricing",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary"
+    },
+    {
+      "id": "GP02",
+      "title": "Secret Manager pricing",
+      "url": "https://cloud.google.com/secret-manager/pricing",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary"
+    },
+    {
+      "id": "GP03",
+      "title": "Firestore pricing",
+      "url": "https://cloud.google.com/firestore/pricing",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary"
+    },
+    {
+      "id": "GP04",
+      "title": "Cloud Scheduler pricing",
+      "url": "https://cloud.google.com/scheduler/pricing",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary"
+    },
+    {
+      "id": "GP05",
+      "title": "Google Cloud Observability pricing",
+      "url": "https://cloud.google.com/products/observability/pricing",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary"
+    },
+    {
+      "id": "GP06",
+      "title": "Artifact Registry pricing",
+      "url": "https://cloud.google.com/artifact-registry/pricing",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary"
+    },
+    {
+      "id": "GP07",
+      "title": "Cloud DNS pricing",
+      "url": "https://cloud.google.com/dns/pricing",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary"
+    },
+    {
+      "id": "GP08",
+      "title": "Identity Platform pricing",
+      "url": "https://cloud.google.com/identity-platform/pricing",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary"
+    },
+    {
+      "id": "GP09",
+      "title": "Cloud Build pricing",
+      "url": "https://cloud.google.com/build/pricing",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary"
+    },
+    {
+      "id": "GP10",
+      "title": "Cloud Storage soft delete",
+      "url": "https://docs.cloud.google.com/storage/docs/soft-delete",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary"
+    },
+    {
+      "id": "GP11",
+      "title": "Cloud Storage Object Versioning",
+      "url": "https://docs.cloud.google.com/storage/docs/object-versioning",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary"
+    },
+    {
+      "id": "GP12",
+      "title": "Cloud Storage FUSE mounts on Cloud Run",
+      "url": "https://docs.cloud.google.com/run/docs/configuring/services/cloud-storage-volume-mounts",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary"
+    },
+    {
+      "id": "GP13",
+      "title": "Cloud Run platform public access",
+      "url": "https://docs.cloud.google.com/run/docs/authenticating/public",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary"
+    },
+    {
+      "id": "GP14",
+      "title": "Cloud Run ingress restrictions",
+      "url": "https://docs.cloud.google.com/run/docs/securing/ingress",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary"
+    },
+    {
+      "id": "GP15",
+      "title": "Firestore server-library IAM",
+      "url": "https://docs.cloud.google.com/firestore/native/docs/security/iam",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary"
+    },
+    {
+      "id": "GP16",
+      "title": "Cloud Run Container API and HTTPGetAction",
+      "url": "https://docs.cloud.google.com/run/docs/reference/rest/v2/Container#HTTPGetAction",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary"
+    },
+    {
+      "id": "GP17",
+      "title": "PostgreSQL client connection settings and timeouts",
+      "url": "https://www.postgresql.org/docs/current/runtime-config-client.html",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary"
+    },
+    {
+      "id": "GP18",
+      "title": "node-postgres cursor API",
+      "url": "https://node-postgres.com/apis/cursor",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary"
+    },
+    {
+      "id": "GP19",
+      "title": "PostgreSQL protocol flow and cancellation",
+      "url": "https://www.postgresql.org/docs/current/protocol-flow.html",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary"
+    },
+    {
+      "id": "GP20",
+      "title": "AWS EC2 pricing and shared internet transfer allowance",
+      "url": "https://aws.amazon.com/ec2/pricing/on-demand/",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary"
+    },
+    {
+      "id": "GP21",
+      "title": "Certificate Manager pricing",
+      "url": "https://cloud.google.com/certificate-manager/pricing",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary"
+    },
+    {
+      "id": "GP22",
+      "title": "Google-managed certificates with DNS authorization",
+      "url": "https://docs.cloud.google.com/certificate-manager/docs/deploy-google-managed-dns-auth",
+      "accessed_utc_date": "2026-10-12",
+      "evidence_type": "official_primary"
+    },
+    {
+      "id": "REP01",
+      "title": "Application and package shape",
+      "evidence_type": "attached_repository_snapshot",
+      "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+      "paths": [
+        "README.md",
+        "package.json",
+        "packages/explorEDA/package.json",
+        "packages/explorEDA/README.md",
+        "apps/demo/package.json",
+        "apps/demo/vite.config.ts"
+      ],
+      "symbols_or_topics": [
+        "React/TypeScript embedded library",
+        "Vite demo"
+      ]
+    },
+    {
+      "id": "REP02",
+      "title": "Current deployment and verification workflows",
+      "evidence_type": "attached_repository_snapshot",
+      "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+      "paths": [
+        ".github/workflows/deploy.yml",
+        ".github/workflows/ci.yml",
+        ".github/workflows/release.yml"
+      ],
+      "symbols_or_topics": [
+        "GitHub Pages apps/demo/dist",
+        "pnpm check:pr",
+        "pnpm check",
+        "changesets"
+      ]
+    },
+    {
+      "id": "REP03",
+      "title": "Query and evaluation contracts",
+      "evidence_type": "attached_repository_snapshot",
+      "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+      "paths": [
+        "packages/explorEDA/src/types/AnalysisProject.ts",
+        "packages/explorEDA/src/lib/analysis/evaluateProject.ts"
+      ],
+      "symbols_or_topics": [
+        "AnalysisQuery",
+        "AnalysisEvaluation",
+        "sourceFrame",
+        "aggregateFrame",
+        "sourceReferences"
+      ]
+    },
+    {
+      "id": "REP04",
+      "title": "Local evaluation and Worker protocol",
+      "evidence_type": "attached_repository_snapshot",
+      "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+      "paths": [
+        "packages/explorEDA/src/lib/analysis/useAnalysisEvaluation.ts",
+        "packages/explorEDA/src/lib/analysis/analysisWorkerProtocol.ts"
+      ],
+      "symbols_or_topics": [
+        "useAnalysisEvaluation",
+        "AnalysisWorkerRequest",
+        "requestId"
+      ]
+    },
+    {
+      "id": "REP05",
+      "title": "Full-table consumers and runtime data layer",
+      "evidence_type": "attached_repository_snapshot",
+      "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+      "paths": [
+        "packages/explorEDA/src/components/ExplorEdaProject.tsx",
+        "packages/explorEDA/src/providers/DataLayerProvider.tsx"
+      ],
+      "symbols_or_topics": [
+        "ExplorEdaProject",
+        "DataLayerProvider",
+        "rawData",
+        "runtimeData"
+      ]
+    },
+    {
+      "id": "REP06",
+      "title": "Linked filters and scalar semantics",
+      "evidence_type": "attached_repository_snapshot",
+      "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+      "paths": [
+        "packages/explorEDA/src/hooks/CrossfilterWrapper.ts",
+        "packages/explorEDA/src/lib/valueParsing.ts",
+        "packages/explorEDA/src/lib/chartPopulation.ts"
+      ],
+      "symbols_or_topics": [
+        "CrossfilterWrapper",
+        "restrictToPopulation",
+        "numeric/date parsing"
+      ]
+    },
+    {
+      "id": "REP07",
+      "title": "Project import/export",
+      "evidence_type": "attached_repository_snapshot",
+      "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+      "paths": [
+        "packages/explorEDA/src/lib/analysis/projectFile.ts",
+        "packages/explorEDA/src/types/SavedDataStructure.ts"
+      ],
+      "symbols_or_topics": [
+        "projectFile",
+        "tables",
+        "tagged scalar serialization"
+      ]
+    },
+    {
+      "id": "REP08",
+      "title": "Historical performance context and supplied tests",
+      "evidence_type": "attached_repository_snapshot",
+      "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+      "paths": [
+        "docs/performance-checks.md",
+        "packages/explorEDA/src/test/lib/analysis/evaluateProject.test.ts",
+        "packages/explorEDA/src/test/lib/analysis/useAnalysisEvaluation.test.tsx",
+        "packages/explorEDA/src/test/lib/analysis/sourceRowIdentity.test.ts",
+        "packages/explorEDA/src/hooks/CrossfilterWrapper.test.ts"
+      ],
+      "symbols_or_topics": [
+        "historical 27004-row development checks",
+        "analysis/filter/identity tests"
+      ]
+    },
+    {
+      "id": "REP09",
+      "title": "Customer-instance intent and companion research contracts",
+      "evidence_type": "attached_repository_snapshot",
+      "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+      "paths": [
+        "source-notes.md",
+        "customer-instance-update.md",
+        "prompts/customer-instance-hosting.md",
+        "prompts/columnar-data-transport.md",
+        "prompts/database-adapters.md",
+        "prompts/database-query-contract.md"
+      ],
+      "symbols_or_topics": [
+        "dedicated customer instance",
+        "unfinished companion tracks"
+      ]
+    },
+    {
+      "id": "REP10",
+      "title": "Packet provenance and operating guidance",
+      "evidence_type": "attached_repository_snapshot",
+      "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+      "paths": [
+        "source-manifest.json",
+        "hosting-source-manifest.json",
+        "photo-manifest.json",
+        "AGENTS.md",
+        "docs/agent-guide.md"
+      ],
+      "symbols_or_topics": [
+        "SHA-256 source verification",
+        "selected snapshot"
+      ]
+    }
+  ],
+  "deliverables": [
+    "customer-instance-hosting-research.md",
+    "customer-instance-hosting-recommendations.json",
+    "customer-instance-hosting-research.zip"
+  ]
+}
