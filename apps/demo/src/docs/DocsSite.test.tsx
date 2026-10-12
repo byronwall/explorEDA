@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { afterEach, beforeEach, vi } from "vitest";
 import { catalogue } from "./catalogue";
@@ -6,6 +6,8 @@ import { DocsSite } from "./DocsSite";
 
 beforeEach(() => {
   vi.spyOn(window, "scrollTo").mockImplementation(() => undefined);
+  // jsdom lays nothing out, so it has no scrollIntoView.
+  Element.prototype.scrollIntoView = vi.fn();
 });
 
 afterEach(() => vi.restoreAllMocks());
@@ -29,13 +31,57 @@ describe("docs routes", () => {
       "href",
       "/docs/scatter"
     );
-    expect(main.getByRole("link", { name: "Bar chart" })).toHaveAttribute(
-      "href",
-      "/docs/bar"
-    );
+    // The chooser recommends it too.
+    for (const link of main.getAllByRole("link", { name: "Bar chart" })) {
+      expect(link).toHaveAttribute("href", "/docs/bar");
+    }
     expect(
       main.getByRole("link", { name: "How rendering works" })
     ).toHaveAttribute("href", "/docs/rendering");
+  });
+
+  it("shows the charts that answer the question picked", async () => {
+    renderAt("/docs");
+    const panel = () => within(screen.getByRole("tabpanel"));
+    expect(
+      panel().getByRole("link", { name: "Bar chart" })
+    ).toBeInTheDocument();
+    screen.getByRole("tab", { name: "How does it change over time?" }).click();
+    expect(
+      await panel().findByRole("link", { name: "Line chart" })
+    ).toHaveAttribute("href", "/docs/line");
+    expect(panel().queryByRole("link", { name: "Bar chart" })).toBeNull();
+  });
+
+  it("opens search with the keyboard and goes to a setting", async () => {
+    renderAt("/docs/scatter");
+    fireEvent.keyDown(document, { key: "k", metaKey: true });
+    const input = screen.getByRole("combobox", {
+      name: "Search pages, sections, and settings",
+    });
+    fireEvent.change(input, { target: { value: "binCount" } });
+    const option = await screen.findByRole("option", { name: /binCount/ });
+    expect(option).toHaveAttribute("aria-selected", "true");
+    fireEvent.keyDown(input, { key: "Enter" });
+    expect(
+      await screen.findByRole("heading", { level: 1, name: "Bar chart" })
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("dialog", { name: "Search the docs" })
+    ).toBeNull();
+  });
+
+  it("puts the group with the best search hit first", async () => {
+    renderAt("/docs/scatter");
+    fireEvent.click(
+      screen.getAllByRole("button", { name: "Search the docs" })[0]!
+    );
+    fireEvent.change(screen.getByRole("combobox"), {
+      target: { value: "opacity" },
+    });
+    const first = (await screen.findAllByRole("option"))[0];
+    expect(first).toHaveTextContent(/pointOpacity/);
+    expect(first).toHaveAttribute("aria-selected", "true");
   });
 
   it("lists every page in the sidebar, marking the current one", () => {

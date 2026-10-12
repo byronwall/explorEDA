@@ -57,7 +57,7 @@ function SettingRow({ type, row }: { type: string; row: Row }) {
     <div
       id={anchor}
       data-setting={row.key}
-      className="group/setting grid scroll-mt-20 gap-x-6 gap-y-1 px-4 py-2.5 target:bg-primary/5 sm:grid-cols-[14rem_minmax(0,1fr)]"
+      className="group/setting grid scroll-mt-20 gap-x-6 gap-y-1 px-4 py-2.5 target:bg-docs-accent/5 sm:grid-cols-[14rem_minmax(0,1fr)]"
     >
       <dt className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
         <code className="break-all font-mono text-[0.8125rem] font-semibold text-foreground">
@@ -77,7 +77,7 @@ function SettingRow({ type, row }: { type: string; row: Row }) {
         <a
           href={`#${anchor}`}
           aria-label={`Link to the ${row.key} setting of the ${type} chart`}
-          className="rounded-sm text-muted-foreground opacity-0 transition-opacity hover:text-primary focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring group-hover/setting:opacity-100"
+          className="rounded-sm text-muted-foreground opacity-0 transition-opacity hover:text-docs-accent focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring group-hover/setting:opacity-100"
         >
           <Link2 aria-hidden="true" className="size-3.5" />
         </a>

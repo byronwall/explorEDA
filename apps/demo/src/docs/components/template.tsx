@@ -34,19 +34,18 @@ export function AtAGlance({ chartType }: { chartType: string }) {
         {glance.gestures.length === 0 ? (
           "Nothing to select: it reads the rows that pass every filter."
         ) : (
-          <ul className="space-y-1">
+          <dl className="grid grid-cols-[auto_minmax(0,1fr)] items-baseline gap-x-2.5 gap-y-1.5">
             {glance.gestures.map(([gesture, effect]) => (
-              <li
-                key={gesture}
-                className="flex flex-wrap items-baseline gap-x-2"
-              >
-                <kbd className="rounded border border-b-2 border-border bg-background px-1.5 font-sans text-xs font-medium text-foreground">
-                  {gesture}
-                </kbd>
-                <span>{effect}</span>
-              </li>
+              <div key={gesture} className="contents">
+                <dt>
+                  <kbd className="whitespace-nowrap rounded border border-b-2 border-border bg-background px-1.5 font-sans text-xs font-medium text-foreground">
+                    {gesture}
+                  </kbd>
+                </dt>
+                <dd className="leading-snug">{effect}</dd>
+              </div>
             ))}
-          </ul>
+          </dl>
         )}
       </Cell>
     </dl>

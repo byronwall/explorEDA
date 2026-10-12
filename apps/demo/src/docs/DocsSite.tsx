@@ -23,7 +23,8 @@ import {
   stretchedLinkClass,
 } from "./components/chrome";
 import { DocsLink, mdxComponents } from "./components/content";
-import { DocsLayout } from "./components/layout";
+import { ChartChooser, Hero } from "./components/home";
+import { DocsLayout, Rail } from "./components/layout";
 import { AtAGlance, SavedSettings } from "./components/template";
 import {
   ContentsReader,
@@ -101,7 +102,10 @@ function GuidePage({ page }: { page: DocsPage }) {
   const { previous, next } = neighbours(page.topic);
 
   return (
-    <DocsLayout rail={<GuideRail page={page} contents={contents} />}>
+    <>
+      <Rail>
+        <GuideRail page={page} contents={contents} />
+      </Rail>
       <div className="mx-auto max-w-3xl xl:mx-0">
         <PageHeader trail={[GROUP_LABELS[page.group]]} heading={page.title}>
           {page.lede}
@@ -125,7 +129,7 @@ function GuidePage({ page }: { page: DocsPage }) {
         </article>
         <PageFooter topic={page.topic} previous={previous} next={next} />
       </div>
-    </DocsLayout>
+    </>
   );
 }
 
@@ -148,7 +152,7 @@ function ShotCard({ page }: { page: DocsPage }) {
           />
         ) : (
           <div className="flex h-full items-center justify-center">
-            <Icon aria-hidden="true" className="size-10 text-primary/30" />
+            <Icon aria-hidden="true" className="size-10 text-docs-accent/30" />
           </div>
         )}
       </div>
@@ -156,7 +160,7 @@ function ShotCard({ page }: { page: DocsPage }) {
         <h3 className="flex items-center gap-2 font-semibold">
           <Icon
             aria-hidden="true"
-            className="size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-primary"
+            className="size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-docs-accent"
           />
           <Link className={stretchedLinkClass} to={docsPath(page.topic)}>
             {page.title}
@@ -177,7 +181,7 @@ function LinkCard({ page }: { page: DocsPage }) {
     <article className={`${cardLinkClass} flex gap-3.5 p-4`}>
       <span
         aria-hidden="true"
-        className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary"
+        className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-docs-accent/10 text-docs-accent"
       >
         <Icon className="size-[1.125rem]" />
       </span>
@@ -218,11 +222,9 @@ const GROUP_INTROS: Record<DocsGroup, string> = {
 function IndexPage() {
   const groups = Object.keys(GROUP_LABELS) as DocsGroup[];
   return (
-    <DocsLayout>
-      <PageHeader heading="explorEDA docs">
-        Learn what each view computes and which rows it reads, try it on real
-        data right in the page, then open the full example.
-      </PageHeader>
+    <>
+      <Hero />
+      <ChartChooser />
       {groups.map((group) => {
         const pages = catalogue.filter((page) => page.group === group);
         if (pages.length === 0) {
@@ -233,7 +235,7 @@ function IndexPage() {
           <section
             key={group}
             aria-labelledby={`docs-${group}`}
-            className="mt-14"
+            className="mt-16"
           >
             <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-border pb-3">
               <h2
@@ -264,13 +266,13 @@ function IndexPage() {
           </section>
         );
       })}
-    </DocsLayout>
+    </>
   );
 }
 
 function MissingPage() {
   return (
-    <DocsLayout>
+    <>
       <PageHeader trail={["Docs"]} heading="That page does not exist">
         <span>
           Pick a page from the list, or go back to the{" "}
@@ -280,7 +282,7 @@ function MissingPage() {
           .
         </span>
       </PageHeader>
-    </DocsLayout>
+    </>
   );
 }
 
@@ -298,11 +300,15 @@ export function DocsSite() {
   }
   const topic = docsTopic(pathname);
   const page = topic ? findPage(topic) : undefined;
-  return !topic ? (
-    <IndexPage />
-  ) : page ? (
-    <GuidePage key={page.topic} page={page} />
-  ) : (
-    <MissingPage />
+  return (
+    <DocsLayout withRail={page !== undefined}>
+      {!topic ? (
+        <IndexPage />
+      ) : page ? (
+        <GuidePage key={page.topic} page={page} />
+      ) : (
+        <MissingPage />
+      )}
+    </DocsLayout>
   );
 }

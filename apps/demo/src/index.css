@@ -118,3 +118,22 @@
   color: var(--foreground);
   white-space: nowrap;
 }
+
+/* The docs' accent. The workspace's dark primary is near white, which
+   reads as plain text in links and highlights, so the docs use a blue. */
+.docs-root {
+  --docs-accent: var(--primary);
+}
+
+.dark .docs-root {
+  --docs-accent: hsl(213 90% 70%);
+}
+
+@theme inline {
+  --color-docs-accent: var(--docs-accent);
+}
+
+.docs-theme-switching,
+.docs-theme-switching * {
+  transition: none !important;
+}

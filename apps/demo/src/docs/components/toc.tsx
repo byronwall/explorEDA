@@ -8,6 +8,33 @@ export type TocEntry = { id: string; title: string; level: 2 | 3 };
 /** How far below the header a heading counts as the one being read. */
 const READING_LINE = 120;
 
+/**
+ * Scrolls to the element with `id`, and keeps it there while live examples
+ * above it load and change height. Stops when the reader scrolls, or after
+ * a moment.
+ */
+function keepInView(article: Element, id: string) {
+  const scroll = () => document.getElementById(id)?.scrollIntoView();
+  scroll();
+  if (typeof ResizeObserver === "undefined") {
+    return;
+  }
+  const observer = new ResizeObserver(scroll);
+  observer.observe(article);
+  const stop = () => {
+    observer.disconnect();
+    clearTimeout(timer);
+    for (const type of ["wheel", "touchstart", "keydown", "pointerdown"]) {
+      window.removeEventListener(type, stop);
+    }
+  };
+  const timer = setTimeout(stop, 2000);
+  for (const type of ["wheel", "touchstart", "keydown", "pointerdown"]) {
+    window.addEventListener(type, stop, { passive: true });
+  }
+  return stop;
+}
+
 /** Reads the page's section headings once its content is on screen. */
 export function ContentsReader({
   onRead,
@@ -27,10 +54,8 @@ export function ContentsReader({
         level: heading.tagName === "H3" ? 3 : 2,
       }))
     );
-    if (hash) {
-      document
-        .getElementById(decodeURIComponent(hash.slice(1)))
-        ?.scrollIntoView();
+    if (hash && article) {
+      return keepInView(article, decodeURIComponent(hash.slice(1)));
     }
   }, [hash, onRead]);
   return <span ref={marker} hidden />;
@@ -99,7 +124,7 @@ function TocList({
                 "-ml-px block border-l-2 py-1 leading-snug transition-colors focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                 entry.level === 3 ? "pl-6 text-[0.8125rem]" : "pl-3",
                 current
-                  ? "border-primary font-medium text-foreground"
+                  ? "border-docs-accent font-medium text-foreground"
                   : "border-transparent text-muted-foreground hover:border-foreground/30 hover:text-foreground"
               )}
             >

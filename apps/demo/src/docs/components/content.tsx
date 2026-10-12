@@ -75,7 +75,7 @@ export function Heading({
         href={`#${id}`}
         aria-hidden="true"
         tabIndex={-1}
-        className="ml-2 inline-flex translate-y-[-1px] align-middle text-muted-foreground opacity-0 transition-opacity hover:text-primary group-hover/heading:opacity-100"
+        className="ml-2 inline-flex translate-y-[-1px] align-middle text-muted-foreground opacity-0 transition-opacity hover:text-docs-accent group-hover/heading:opacity-100"
       >
         <Link2 aria-hidden="true" className="size-4" />
       </a>
@@ -117,8 +117,8 @@ const CALLOUTS: Record<
   note: {
     icon: Info,
     label: "Note",
-    box: "border-primary/25 bg-primary/[0.04]",
-    tint: "text-primary",
+    box: "border-docs-accent/25 bg-docs-accent/[0.04]",
+    tint: "text-docs-accent",
   },
   tip: {
     icon: Lightbulb,
@@ -175,7 +175,7 @@ export function Terms({
       {items.map(([name, body]) => (
         <div
           key={name}
-          className="rounded-lg border border-border bg-card p-4 shadow-[inset_0_2px_0_0_color-mix(in_oklab,var(--primary)_55%,transparent)]"
+          className="rounded-lg border border-border bg-card p-4 shadow-[inset_0_2px_0_0_color-mix(in_oklab,var(--docs-accent)_55%,transparent)]"
         >
           <dt className="text-sm font-semibold text-foreground">{name}</dt>
           <dd className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
@@ -239,7 +239,7 @@ export function Steps({
           )}
           <span
             aria-hidden="true"
-            className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary ring-4 ring-background"
+            className="flex size-7 shrink-0 items-center justify-center rounded-full bg-docs-accent/10 text-xs font-semibold text-docs-accent ring-4 ring-background"
           >
             {index + 1}
           </span>
@@ -310,14 +310,14 @@ export const mdxComponents: MDXComponents = {
   p: ({ children }) => <p className={`mt-4 ${proseClass}`}>{children}</p>,
   ul: ({ children }) => (
     <ul
-      className={`mt-4 list-disc space-y-2 pl-5 ${proseClass} marker:text-primary/50`}
+      className={`mt-4 list-disc space-y-2 pl-5 ${proseClass} marker:text-docs-accent/50`}
     >
       {children}
     </ul>
   ),
   ol: ({ children }) => (
     <ol
-      className={`mt-4 list-decimal space-y-2 pl-5 ${proseClass} marker:font-medium marker:text-primary/70`}
+      className={`mt-4 list-decimal space-y-2 pl-5 ${proseClass} marker:font-medium marker:text-docs-accent/70`}
     >
       {children}
     </ol>

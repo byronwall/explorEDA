@@ -4,114 +4,33 @@ import { EXAMPLES_PATH } from "@/routes";
 import { cn } from "@/lib/utils";
 import { BookOpen, Menu, Search, X } from "lucide-react";
 import {
+  createContext,
+  useContext,
   useEffect,
-  useId,
-  useMemo,
   useRef,
   useState,
   type ReactNode,
 } from "react";
+import { createPortal } from "react-dom";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import {
-  catalogue,
-  GROUP_LABELS,
-  type DocsGroup,
-  type DocsPage,
-} from "../catalogue";
+import { catalogue, GROUP_LABELS, type DocsGroup } from "../catalogue";
 import { docsPath } from "../paths";
+import { SearchButton, SearchProvider, useOpenSearch } from "./search";
+import { ThemeToggle, useDocsTheme } from "./theme";
 
 const focusRing =
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
 
-/** Pages whose title, summary, or highlights contain every word typed. */
-function matches(page: DocsPage, query: string) {
-  const text = [page.title, page.summary, ...page.highlights]
-    .join(" ")
-    .toLowerCase();
-  return query
-    .toLowerCase()
-    .split(/\s+/)
-    .filter(Boolean)
-    .every((word) => text.includes(word));
-}
-
-/** The page list, grouped by section, with a filter box above it. */
+/** The page list, grouped by section. */
 function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
-  const [query, setQuery] = useState("");
-  const inputId = useId();
-  const input = useRef<HTMLInputElement>(null);
-  const groups = useMemo(
-    () =>
-      (Object.keys(GROUP_LABELS) as DocsGroup[])
-        .map((group) => ({
-          group,
-          pages: catalogue.filter(
-            (page) => page.group === group && matches(page, query)
-          ),
-        }))
-        .filter(({ pages }) => pages.length > 0),
-    [query]
-  );
-
-  // "/" jumps to the filter, as on most docs sites.
-  useEffect(() => {
-    const onKey = (event: KeyboardEvent) => {
-      const target = event.target as HTMLElement | null;
-      if (
-        event.key !== "/" ||
-        event.metaKey ||
-        event.ctrlKey ||
-        target?.closest("input, textarea, select, [contenteditable=true]")
-      ) {
-        return;
-      }
-      if (!input.current?.offsetParent) {
-        return;
-      }
-      event.preventDefault();
-      input.current.focus();
-    };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, []);
+  const groups = (Object.keys(GROUP_LABELS) as DocsGroup[]).map((group) => ({
+    group,
+    pages: catalogue.filter((page) => page.group === group),
+  }));
 
   return (
     <div className="space-y-6">
-      <div className="relative">
-        <label htmlFor={inputId} className="sr-only">
-          Filter pages
-        </label>
-        <Search
-          aria-hidden="true"
-          className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
-        />
-        <input
-          ref={input}
-          id={inputId}
-          type="search"
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          onKeyDown={(event) => {
-            if (event.key === "Escape") {
-              setQuery("");
-            }
-          }}
-          placeholder="Filter pages"
-          className="h-9 w-full rounded-md border border-input bg-background pl-8 pr-8 text-sm placeholder:text-muted-foreground focus-visible:border-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
-        />
-        <kbd
-          aria-hidden="true"
-          className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 rounded border border-border bg-muted px-1.5 font-mono text-[0.7rem] text-muted-foreground"
-        >
-          /
-        </kbd>
-      </div>
       <nav aria-label="Docs pages" className="space-y-6">
-        {groups.length === 0 && (
-          <p className="px-2 text-sm text-muted-foreground">
-            No page matches “{query}”.
-          </p>
-        )}
         {groups.map(({ group, pages }) => (
           <div key={group}>
             <p className="px-2 text-xs font-semibold uppercase tracking-wide text-foreground/70">
@@ -130,7 +49,7 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
                           "group flex items-center gap-2.5 rounded-md px-2 py-1.5 text-sm transition-colors",
                           focusRing,
                           isActive
-                            ? "bg-primary/10 font-medium text-primary"
+                            ? "bg-docs-accent/10 font-medium text-docs-accent"
                             : "text-muted-foreground hover:bg-accent hover:text-foreground"
                         )
                       }
@@ -159,7 +78,9 @@ function NavDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
     if (!open) {
       return;
     }
-    panel.current?.querySelector<HTMLElement>("input")?.focus();
+    panel.current
+      ?.querySelector<HTMLElement>('[aria-current="page"], nav a')
+      ?.focus();
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         onClose();
@@ -207,12 +128,26 @@ function NavDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
         <div className="flex-1 overflow-y-auto px-3 py-4">
           <SidebarNav onNavigate={onClose} />
         </div>
+        <nav
+          aria-label="Site"
+          className="flex shrink-0 gap-1 border-t border-border px-3 py-2 sm:hidden"
+        >
+          <Button asChild variant="ghost" size="sm">
+            <Link to={EXAMPLES_PATH} onClick={onClose}>
+              Examples
+            </Link>
+          </Button>
+          <Button asChild variant="ghost" size="sm">
+            <a href="https://github.com/byronwall/explorEDA">GitHub</a>
+          </Button>
+        </nav>
       </div>
     </div>
   );
 }
 
 function DocsHeader({ onOpenNav }: { onOpenNav: () => void }) {
+  const { theme, toggle } = useDocsTheme();
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70">
       <div className="mx-auto flex h-14 max-w-[92rem] items-center gap-3 px-4 lg:px-6">
@@ -239,7 +174,7 @@ function DocsHeader({ onOpenNav }: { onOpenNav: () => void }) {
           <img
             src="/brand/wordmark.svg"
             alt=""
-            className="hidden h-5 w-auto sm:block"
+            className="hidden h-5 w-auto sm:block dark:brightness-0 dark:invert"
           />
         </Link>
         <span aria-hidden="true" className="h-5 w-px bg-border" />
@@ -250,63 +185,114 @@ function DocsHeader({ onOpenNav }: { onOpenNav: () => void }) {
             focusRing
           )}
         >
-          <BookOpen aria-hidden="true" className="size-4 text-primary" />
+          <BookOpen aria-hidden="true" className="size-4 text-docs-accent" />
           Docs
         </Link>
-        <nav aria-label="Site" className="ml-auto flex items-center gap-1">
-          <Button asChild variant="ghost" size="sm">
-            <Link to={EXAMPLES_PATH}>Examples</Link>
-          </Button>
-          <Button asChild variant="ghost" size="sm">
-            <a href="https://github.com/byronwall/explorEDA">GitHub</a>
-          </Button>
-        </nav>
+        <div className="ml-auto flex min-w-0 items-center gap-1 md:ml-6 md:flex-1">
+          <SearchButton className="hidden w-full max-w-sm md:flex" />
+          <SearchIconButton />
+          <nav aria-label="Site" className="ml-auto flex items-center gap-1">
+            <Button
+              asChild
+              variant="ghost"
+              size="sm"
+              className="hidden sm:inline-flex"
+            >
+              <Link to={EXAMPLES_PATH}>Examples</Link>
+            </Button>
+            <Button
+              asChild
+              variant="ghost"
+              size="sm"
+              className="hidden sm:inline-flex"
+            >
+              <a href="https://github.com/byronwall/explorEDA">GitHub</a>
+            </Button>
+          </nav>
+          <ThemeToggle theme={theme} onToggle={toggle} />
+        </div>
       </div>
     </header>
   );
 }
 
+/** Search as an icon, for screens too narrow for the search field. */
+function SearchIconButton() {
+  const open = useOpenSearch();
+  return (
+    <ActionTooltip content="Search the docs">
+      <Button
+        variant="ghost"
+        size="icon"
+        className="md:hidden"
+        aria-label="Search the docs"
+        onClick={open}
+      >
+        <Search aria-hidden="true" />
+      </Button>
+    </ActionTooltip>
+  );
+}
+
+const RailContext = createContext<HTMLElement | null>(null);
+
+/**
+ * Puts a page's right-rail content in the frame's rail. The frame stays
+ * mounted across pages, so the sidebar keeps its scroll position.
+ */
+export function Rail({ children }: { children: ReactNode }) {
+  const target = useContext(RailContext);
+  return target ? createPortal(children, target) : null;
+}
+
 /**
  * The docs frame: a header, the page list on the left, the page in the
- * middle, and an optional rail on the right for its contents.
+ * middle, and, with `withRail`, a rail on the right that pages fill with
+ * `<Rail>`.
  */
 export function DocsLayout({
   children,
-  rail,
+  withRail = false,
 }: {
   children: ReactNode;
-  rail?: ReactNode;
+  withRail?: boolean;
 }) {
   const [navOpen, setNavOpen] = useState(false);
+  const [rail, setRail] = useState<HTMLElement | null>(null);
   const { pathname } = useLocation();
   useEffect(() => setNavOpen(false), [pathname]);
 
   return (
-    <div className="landing min-h-screen bg-background">
-      <DocsHeader onOpenNav={() => setNavOpen(true)} />
-      <NavDrawer open={navOpen} onClose={() => setNavOpen(false)} />
-      <div
-        className={cn(
-          "mx-auto max-w-[92rem] px-4 lg:grid lg:gap-10 lg:px-6",
-          rail
-            ? "lg:grid-cols-[15.5rem_minmax(0,1fr)] xl:grid-cols-[15.5rem_minmax(0,1fr)_13.5rem]"
-            : "lg:grid-cols-[15.5rem_minmax(0,1fr)]"
-        )}
-      >
-        <aside className="hidden lg:block">
-          <div className="sticky top-14 -ml-2 h-[calc(100vh-3.5rem)] overflow-y-auto overscroll-contain py-6 pl-2 pr-3 [scrollbar-width:thin]">
-            <SidebarNav />
-          </div>
-        </aside>
-        <main className="min-w-0 pb-24">{children}</main>
-        {rail && (
-          <aside className="hidden xl:block">
-            <div className="sticky top-14 max-h-[calc(100vh-3.5rem)] overflow-y-auto py-8 [scrollbar-width:thin]">
-              {rail}
+    <div className="landing docs-root min-h-screen bg-background text-foreground">
+      <SearchProvider>
+        <DocsHeader onOpenNav={() => setNavOpen(true)} />
+        <NavDrawer open={navOpen} onClose={() => setNavOpen(false)} />
+        <div
+          className={cn(
+            "mx-auto max-w-[92rem] px-4 lg:grid lg:gap-10 lg:px-6",
+            withRail
+              ? "lg:grid-cols-[15.5rem_minmax(0,1fr)] xl:grid-cols-[15.5rem_minmax(0,1fr)_13.5rem]"
+              : "lg:grid-cols-[15.5rem_minmax(0,1fr)]"
+          )}
+        >
+          <aside className="hidden lg:block">
+            <div className="sticky top-14 -ml-2 h-[calc(100vh-3.5rem)] overflow-y-auto overscroll-contain py-6 pl-2 pr-3 [scrollbar-width:thin]">
+              <SidebarNav />
             </div>
           </aside>
-        )}
-      </div>
+          <RailContext.Provider value={withRail ? rail : null}>
+            <main className="min-w-0 pb-24">{children}</main>
+          </RailContext.Provider>
+          {withRail && (
+            <aside className="hidden xl:block">
+              <div
+                ref={setRail}
+                className="sticky top-14 max-h-[calc(100vh-3.5rem)] overflow-y-auto py-8 [scrollbar-width:thin]"
+              />
+            </aside>
+          )}
+        </div>
+      </SearchProvider>
     </div>
   );
 }

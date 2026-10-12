@@ -249,7 +249,7 @@ export function LiveExample({
               <li key={index} className="flex gap-3">
                 <span
                   aria-hidden="true"
-                  className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[0.7rem] font-semibold text-primary"
+                  className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-docs-accent/10 text-[0.7rem] font-semibold text-docs-accent"
                 >
                   {index + 1}
                 </span>

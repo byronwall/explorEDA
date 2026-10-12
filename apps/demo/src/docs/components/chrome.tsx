@@ -9,13 +9,13 @@ export const proseClass = "text-[0.9375rem] leading-7 text-foreground/80";
 export const inlineCodeClass =
   "rounded border border-border/70 bg-muted/70 px-[0.3em] py-px font-mono text-[0.85em] text-foreground";
 export const inlineLinkClass =
-  "font-medium text-primary underline decoration-primary/30 underline-offset-[3px] transition-colors hover:decoration-primary focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
+  "font-medium text-docs-accent underline decoration-docs-accent/30 underline-offset-[3px] transition-colors hover:decoration-docs-accent focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
 export const labelClass =
   "text-xs font-semibold uppercase tracking-wide text-foreground/70";
 export const stretchedLinkClass =
   "after:absolute after:inset-0 after:rounded-xl after:content-[''] focus-visible:outline-none";
 export const cardLinkClass =
-  "group relative rounded-xl border border-border bg-card transition-[border-color,box-shadow] focus-within:ring-2 focus-within:ring-ring hover:border-primary/40 hover:shadow-[0_6px_24px_-12px_color-mix(in_oklab,var(--foreground)_25%,transparent)]";
+  "group relative rounded-xl border border-border bg-card transition-[border-color,box-shadow] focus-within:ring-2 focus-within:ring-ring hover:border-docs-accent/40 hover:shadow-[0_6px_24px_-12px_color-mix(in_oklab,var(--foreground)_25%,transparent)]";
 
 const SOURCE_BASE =
   "https://github.com/byronwall/explorEDA/blob/main/apps/demo/src/docs/pages/";
@@ -40,7 +40,7 @@ export function PageHeader({
   return (
     <header className="pt-8 sm:pt-10">
       {trail && trail.length > 0 && (
-        <p className="flex items-center gap-1 text-sm font-medium text-primary">
+        <p className="flex items-center gap-1 text-sm font-medium text-docs-accent">
           {trail.map((step, index) => (
             <span key={step} className="flex items-center gap-1">
               {index > 0 && (
@@ -82,7 +82,7 @@ function PagerLink({
     <Link
       to={docsPath(page.topic)}
       className={cn(
-        "group flex flex-col gap-1 rounded-lg border border-border px-4 py-3 transition-colors hover:border-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        "group flex flex-col gap-1 rounded-lg border border-border px-4 py-3 transition-colors hover:border-docs-accent/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         next && "items-end text-right sm:col-start-2"
       )}
     >
@@ -91,7 +91,7 @@ function PagerLink({
         {next ? "Next" : "Previous"}
         {next && <ArrowRight aria-hidden="true" className="size-3.5" />}
       </span>
-      <span className="font-medium text-foreground group-hover:text-primary">
+      <span className="font-medium text-foreground group-hover:text-docs-accent">
         {page.title}
       </span>
     </Link>
@@ -153,7 +153,7 @@ export function RailCard({
       <p className="mt-0.5 text-xs text-muted-foreground">{meta}</p>
       <p
         aria-hidden="true"
-        className="mt-3 flex items-center gap-1 text-xs font-medium text-primary"
+        className="mt-3 flex items-center gap-1 text-xs font-medium text-docs-accent"
       >
         Open the example
         <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none" />
