@@ -75,11 +75,11 @@ export function MapLayersControl({
           {point && (
             <>
               <Label htmlFor={`${id}-group`}>Group</Label>
-              <ActionTooltip content="Above 2,000 drawn points, nearby points group into counted circles that split apart as you zoom in. Clicking a group selects all its rows.">
+              <ActionTooltip content="Off draws every point, which shows patterns such as fault lines. On, above 2,000 drawn points, nearby points group into counted circles that split apart as you zoom in.">
                 <span className="inline-flex justify-self-start">
                   <Switch
                     id={`${id}-group`}
-                    checked={settings.clusterPoints ?? true}
+                    checked={settings.clusterPoints ?? false}
                     onCheckedChange={(clusterPoints) =>
                       onChange({ clusterPoints })
                     }

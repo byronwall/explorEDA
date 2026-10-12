@@ -17,7 +17,12 @@ import {
   wrapLongitude,
 } from "./mapGeometry";
 import { useStreetMapEngine } from "./mapEngine";
-import { mapPointFilters, planPointMap, pointMapHeight } from "./pointMapPlan";
+import {
+  type MapPoint,
+  mapPointFilters,
+  planPointMap,
+  pointMapHeight,
+} from "./pointMapPlan";
 import {
   isStreetView,
   OUTLINE_MAX_ZOOM,
@@ -37,6 +42,9 @@ import { useRegionAsset } from "./useRegionAsset";
 import { regionGeometry } from "./regionGeometry";
 import { geoPath } from "d3-geo";
 
+// Stable empties keep the drawn layer memoized across gesture frames.
+const NONE: MapPoint[] = [];
+const NO_CLUSTERS: MapCluster[] = [];
 /** Point labels stay readable up to this many drawn points. */
 const MAX_LABELS = 150;
 import { useMapData } from "./useMapData";
@@ -95,17 +103,25 @@ export function PointMap({
   const fitZoom = engine
     ? viewZoom(STREET_FIT_ZOOM, settings.projection, width, mapHeight)
     : 32;
+  // The plan follows the saved view. During a pan or zoom gesture the drawn
+  // marks move by a transform instead, so thousands of points stay smooth;
+  // the plan catches up when the gesture ends.
   const plan = useMemo(
-    () =>
-      planPointMap(
-        draftView ? { ...settings, view: draftView } : settings,
-        snapshot,
-        width,
-        height,
-        street
-      ),
-    [settings, snapshot, width, height, draftView, street]
+    () => planPointMap(settings, snapshot, width, height, street),
+    [settings, snapshot, width, height, street]
   );
+  const gestureTransform = useMemo(() => {
+    if (!draftView) return undefined;
+    const next = street
+      ? streetProjection(draftView, settings.projection, width, plan.mapHeight)
+      : mapProjection(settings.projection, draftView, width, plan.mapHeight);
+    const scale = next.scale() / plan.projection.scale();
+    const from = plan.projection(plan.view.center);
+    const to = next(plan.view.center);
+    if (!from || !to || ![...from, ...to, scale].every(Number.isFinite))
+      return undefined;
+    return `translate(${to[0] - scale * from[0]},${to[1] - scale * from[1]}) scale(${scale})`;
+  }, [draftView, street, settings.projection, width, plan]);
   useEffect(() => setDraftView(undefined), [street]);
   const paths = useMemo(() => mapPaths(plan.projection), [plan.projection]);
   const source: TraceSource = {
@@ -212,14 +228,14 @@ export function PointMap({
   const grouped = useMemo(
     () =>
       showMarks &&
-      (settings.clusterPoints ?? true) &&
+      settings.clusterPoints === true &&
       plan.points.length > CLUSTER_THRESHOLD
         ? clusterPoints(plan.points)
         : undefined,
     [plan.points, showMarks, settings.clusterPoints]
   );
-  const drawnPoints = showMarks ? (grouped?.singles ?? plan.points) : [];
-  const clusters = grouped?.clusters ?? [];
+  const drawnPoints = showMarks ? (grouped?.singles ?? plan.points) : NONE;
+  const clusters = grouped?.clusters ?? NO_CLUSTERS;
   const selectRows = (ids: number[]) => {
     if (onSettingsChange) return inspect(ids[0]!);
     const current = settings.filters[0];
@@ -266,6 +282,220 @@ export function PointMap({
     if (nextKey) markRefs.current.get(nextKey)?.focus();
     return true;
   };
+  // Drawn once per plan or interaction state; gesture frames only move it.
+  const layers = useMemo(
+    () => (
+      <>
+        {(!street || streetFailed) && basemap !== "none" && (
+          <>
+            <path
+              d={paths.outline}
+              fill="var(--background)"
+              stroke="var(--border)"
+            />
+            <path
+              d={paths.land}
+              fill="var(--muted)"
+              stroke="var(--muted-foreground)"
+              strokeOpacity={0.3}
+              strokeWidth={0.6}
+            />
+            {!street && (
+              <path
+                d={paths.grid}
+                fill="none"
+                stroke="var(--border)"
+                strokeOpacity={0.5}
+                strokeWidth={0.5}
+              />
+            )}
+          </>
+        )}
+        {referencePath && (
+          <path
+            d={referencePath}
+            fill="none"
+            stroke="var(--foreground)"
+            strokeOpacity={0.45}
+            strokeWidth={1}
+            className="pointer-events-none"
+            aria-hidden="true"
+          />
+        )}
+        {drawnPoints.map((point) => {
+          const selected = plan.hasSelection && point.matching;
+          const emphasized =
+            selected ||
+            point.sourceId === activeId ||
+            point.sourceId === tracedId;
+          return (
+            <circle
+              key={point.sourceId}
+              ref={(node) => {
+                if (node) markRefs.current.set(`p:${point.sourceId}`, node);
+                else markRefs.current.delete(`p:${point.sourceId}`);
+              }}
+              cx={point.x}
+              cy={point.y}
+              r={point.radius}
+              fill={
+                settings.sizeField && point.value === 0 ? "none" : point.color
+              }
+              fillOpacity={
+                settings.pointOpacity *
+                (plan.hasSelection && !point.matching ? 0.2 : 1)
+              }
+              stroke={emphasized ? "var(--foreground)" : point.color}
+              strokeWidth={emphasized ? 2.5 : 1}
+              strokeOpacity={plan.hasSelection && !point.matching ? 0.2 : 1}
+              role="button"
+              className="chart-mark cursor-pointer"
+              style={{ pointerEvents: "auto" }}
+              tabIndex={`p:${point.sourceId}` === tabStop ? 0 : -1}
+              aria-label={`${point.label}; row ${point.sourceId}; latitude ${point.latitude}°; longitude ${point.longitude}°`}
+              aria-pressed={selected}
+              onPointerEnter={() => {
+                if (!drag.current?.moved) setActiveId(point.sourceId);
+              }}
+              onPointerLeave={() => setActiveId(undefined)}
+              onFocus={() => {
+                setActiveId(point.sourceId);
+                setFocusKey(`p:${point.sourceId}`);
+              }}
+              onClick={(event) => {
+                event.stopPropagation();
+                if (suppressClick.current) return;
+                if (event.altKey) inspect(point.sourceId);
+                else select(point.sourceId);
+              }}
+              onKeyDown={(event) => {
+                if (navigate(`p:${point.sourceId}`, event)) return;
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  if (event.altKey) inspect(point.sourceId);
+                  else select(point.sourceId);
+                }
+              }}
+            />
+          );
+        })}
+        {clusters.map((cluster) => {
+          const key = `c:${cluster.id}`;
+          const count = cluster.sourceIds.length;
+          const dim = plan.hasSelection && !cluster.matching;
+          return (
+            <g key={key}>
+              <circle
+                ref={(node) => {
+                  if (node) markRefs.current.set(key, node);
+                  else markRefs.current.delete(key);
+                }}
+                cx={cluster.x}
+                cy={cluster.y}
+                r={cluster.radius}
+                fill={cluster.color}
+                fillOpacity={settings.pointOpacity * (dim ? 0.2 : 0.85)}
+                stroke={
+                  activeCluster?.id === cluster.id
+                    ? "var(--foreground)"
+                    : cluster.color
+                }
+                strokeWidth={activeCluster?.id === cluster.id ? 2.5 : 1}
+                strokeOpacity={dim ? 0.2 : 1}
+                role="button"
+                className="chart-mark cursor-pointer"
+                style={{ pointerEvents: "auto" }}
+                tabIndex={key === tabStop ? 0 : -1}
+                aria-label={`${count} rows grouped near ${cluster.label}. Zoom in to split them.`}
+                aria-pressed={plan.hasSelection && cluster.matching}
+                onPointerEnter={() => setActiveCluster(cluster)}
+                onPointerLeave={() => setActiveCluster(undefined)}
+                onFocus={() => {
+                  setActiveCluster(cluster);
+                  setFocusKey(key);
+                }}
+                onBlur={() => setActiveCluster(undefined)}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  if (suppressClick.current) return;
+                  if (event.altKey) inspect(cluster.sourceIds[0]!);
+                  else selectRows(cluster.sourceIds);
+                }}
+                onKeyDown={(event) => {
+                  if (navigate(key, event)) return;
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    if (event.altKey) inspect(cluster.sourceIds[0]!);
+                    else selectRows(cluster.sourceIds);
+                  }
+                }}
+              />
+              <text
+                x={cluster.x}
+                y={cluster.y}
+                textAnchor="middle"
+                dominantBaseline="central"
+                fontSize={10}
+                fontWeight={600}
+                fill="var(--foreground)"
+                stroke="var(--background)"
+                strokeWidth={2.5}
+                paintOrder="stroke"
+                className="pointer-events-none"
+                aria-hidden="true"
+              >
+                {count.toLocaleString()}
+              </text>
+            </g>
+          );
+        })}
+        {(settings.showLabels &&
+        settings.labelField &&
+        drawnPoints.length <= MAX_LABELS
+          ? drawnPoints
+          : []
+        ).map((point) => (
+          <text
+            key={point.sourceId}
+            x={point.x! + point.radius + 3}
+            y={point.y!}
+            dominantBaseline="middle"
+            fontSize={11}
+            fill="var(--foreground)"
+            stroke="var(--background)"
+            strokeWidth={3}
+            paintOrder="stroke"
+            className="pointer-events-none"
+            aria-hidden="true"
+          >
+            {point.label}
+          </text>
+        ))}
+      </>
+    ),
+    // Handlers read the same settings, plan, and callbacks listed here.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [
+      plan,
+      paths,
+      street,
+      streetFailed,
+      basemap,
+      referencePath,
+      drawnPoints,
+      clusters,
+      activeId,
+      tracedId,
+      tabStop,
+      activeCluster,
+      settings,
+      onSettingsChange,
+      updateChart,
+      api,
+    ]
+  );
   return (
     <div style={{ width, height }} className="relative flex flex-col">
       <div
@@ -383,195 +613,7 @@ export function PointMap({
             </clipPath>
           </defs>
           <g clipPath={`url(#${owner}-map-clip)`}>
-            {(!street || streetFailed) && basemap !== "none" && (
-              <>
-                <path
-                  d={paths.outline}
-                  fill="var(--background)"
-                  stroke="var(--border)"
-                />
-                <path
-                  d={paths.land}
-                  fill="var(--muted)"
-                  stroke="var(--muted-foreground)"
-                  strokeOpacity={0.3}
-                  strokeWidth={0.6}
-                />
-                {!street && (
-                  <path
-                    d={paths.grid}
-                    fill="none"
-                    stroke="var(--border)"
-                    strokeOpacity={0.5}
-                    strokeWidth={0.5}
-                  />
-                )}
-              </>
-            )}
-            {referencePath && (
-              <path
-                d={referencePath}
-                fill="none"
-                stroke="var(--foreground)"
-                strokeOpacity={0.45}
-                strokeWidth={1}
-                className="pointer-events-none"
-                aria-hidden="true"
-              />
-            )}
-            {drawnPoints.map((point) => {
-              const selected = plan.hasSelection && point.matching;
-              const emphasized =
-                selected ||
-                point.sourceId === activeId ||
-                point.sourceId === tracedId;
-              return (
-                <circle
-                  key={point.sourceId}
-                  ref={(node) => {
-                    if (node) markRefs.current.set(`p:${point.sourceId}`, node);
-                    else markRefs.current.delete(`p:${point.sourceId}`);
-                  }}
-                  cx={point.x}
-                  cy={point.y}
-                  r={point.radius}
-                  fill={
-                    settings.sizeField && point.value === 0
-                      ? "none"
-                      : point.color
-                  }
-                  fillOpacity={
-                    settings.pointOpacity *
-                    (plan.hasSelection && !point.matching ? 0.2 : 1)
-                  }
-                  stroke={emphasized ? "var(--foreground)" : point.color}
-                  strokeWidth={emphasized ? 2.5 : 1}
-                  strokeOpacity={plan.hasSelection && !point.matching ? 0.2 : 1}
-                  role="button"
-                  className="chart-mark cursor-pointer"
-                  style={{ pointerEvents: "auto" }}
-                  tabIndex={`p:${point.sourceId}` === tabStop ? 0 : -1}
-                  aria-label={`${point.label}; row ${point.sourceId}; latitude ${point.latitude}°; longitude ${point.longitude}°`}
-                  aria-pressed={selected}
-                  onPointerEnter={() => {
-                    if (!drag.current?.moved) setActiveId(point.sourceId);
-                  }}
-                  onPointerLeave={() => setActiveId(undefined)}
-                  onFocus={() => {
-                    setActiveId(point.sourceId);
-                    setFocusKey(`p:${point.sourceId}`);
-                  }}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    if (suppressClick.current) return;
-                    if (event.altKey) inspect(point.sourceId);
-                    else select(point.sourceId);
-                  }}
-                  onKeyDown={(event) => {
-                    if (navigate(`p:${point.sourceId}`, event)) return;
-                    if (event.key === "Enter" || event.key === " ") {
-                      event.preventDefault();
-                      event.stopPropagation();
-                      if (event.altKey) inspect(point.sourceId);
-                      else select(point.sourceId);
-                    }
-                  }}
-                />
-              );
-            })}
-            {clusters.map((cluster) => {
-              const key = `c:${cluster.id}`;
-              const count = cluster.sourceIds.length;
-              const dim = plan.hasSelection && !cluster.matching;
-              return (
-                <g key={key}>
-                  <circle
-                    ref={(node) => {
-                      if (node) markRefs.current.set(key, node);
-                      else markRefs.current.delete(key);
-                    }}
-                    cx={cluster.x}
-                    cy={cluster.y}
-                    r={cluster.radius}
-                    fill={cluster.color}
-                    fillOpacity={settings.pointOpacity * (dim ? 0.2 : 0.85)}
-                    stroke={
-                      activeCluster?.id === cluster.id
-                        ? "var(--foreground)"
-                        : cluster.color
-                    }
-                    strokeWidth={activeCluster?.id === cluster.id ? 2.5 : 1}
-                    strokeOpacity={dim ? 0.2 : 1}
-                    role="button"
-                    className="chart-mark cursor-pointer"
-                    style={{ pointerEvents: "auto" }}
-                    tabIndex={key === tabStop ? 0 : -1}
-                    aria-label={`${count} rows grouped near ${cluster.label}. Zoom in to split them.`}
-                    aria-pressed={plan.hasSelection && cluster.matching}
-                    onPointerEnter={() => setActiveCluster(cluster)}
-                    onPointerLeave={() => setActiveCluster(undefined)}
-                    onFocus={() => {
-                      setActiveCluster(cluster);
-                      setFocusKey(key);
-                    }}
-                    onBlur={() => setActiveCluster(undefined)}
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      if (suppressClick.current) return;
-                      if (event.altKey) inspect(cluster.sourceIds[0]!);
-                      else selectRows(cluster.sourceIds);
-                    }}
-                    onKeyDown={(event) => {
-                      if (navigate(key, event)) return;
-                      if (event.key === "Enter" || event.key === " ") {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        if (event.altKey) inspect(cluster.sourceIds[0]!);
-                        else selectRows(cluster.sourceIds);
-                      }
-                    }}
-                  />
-                  <text
-                    x={cluster.x}
-                    y={cluster.y}
-                    textAnchor="middle"
-                    dominantBaseline="central"
-                    fontSize={10}
-                    fontWeight={600}
-                    fill="var(--foreground)"
-                    stroke="var(--background)"
-                    strokeWidth={2.5}
-                    paintOrder="stroke"
-                    className="pointer-events-none"
-                    aria-hidden="true"
-                  >
-                    {count.toLocaleString()}
-                  </text>
-                </g>
-              );
-            })}
-            {(settings.showLabels &&
-            settings.labelField &&
-            drawnPoints.length <= MAX_LABELS
-              ? drawnPoints
-              : []
-            ).map((point) => (
-              <text
-                key={point.sourceId}
-                x={point.x! + point.radius + 3}
-                y={point.y!}
-                dominantBaseline="middle"
-                fontSize={11}
-                fill="var(--foreground)"
-                stroke="var(--background)"
-                strokeWidth={3}
-                paintOrder="stroke"
-                className="pointer-events-none"
-                aria-hidden="true"
-              >
-                {point.label}
-              </text>
-            ))}
+            <g transform={gestureTransform}>{layers}</g>
           </g>
         </svg>
       </div>

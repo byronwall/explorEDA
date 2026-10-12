@@ -42,6 +42,7 @@ const settings: MapSettings = {
   latitudeField: "lat",
   longitudeField: "lon",
   labelField: "name",
+  clusterPoints: true,
 };
 // 2,100 sites in a 21 × 100 lattice, plus one far away.
 const rows = [
