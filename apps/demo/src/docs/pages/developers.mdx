@@ -1,5 +1,39 @@
 import PackageReadme from "../../../../../packages/explorEDA/README.md";
 
+## Quick start
+
+Install the package. It works with React 18 or 19.
+
+```bash
+pnpm add exploreda
+```
+
+Import the component and its stylesheet, then pass your rows. `data` is the only required prop; the workspace starts with a field summary and the rows.
+
+```tsx
+import { ExplorEda, stringifySavedData, type ExplorEdaProps } from "exploreda";
+import "exploreda/dist/ExplorEda.css";
+
+export function Analysis({ rows }: { rows: ExplorEdaProps["data"] }) {
+  return (
+    <ExplorEda
+      data={rows}
+      onStateChange={(settings) =>
+        localStorage.setItem("analysis", stringifySavedData(settings))
+      }
+    />
+  );
+}
+```
+
+To reopen a saved analysis, pass what `onStateChange` gave you back as `savedData`.
+
+<Callout type="warning" title="savedData is not a controlled value.">
+  Pass it to restore a workspace, the first time or to replace one. Don't feed
+  every `onStateChange` result back into it; the workspace already holds those
+  edits.
+</Callout>
+
 ## Props
 
 Every prop the `ExplorEda` component takes:

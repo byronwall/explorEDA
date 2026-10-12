@@ -99,7 +99,7 @@ export const liveExamples = {
       "A histogram of delivery days beside a bar chart of orders by sales channel.",
     steps: [
       { expectRows: 500 },
-      { brush: { chart: "shop-delivery", from: 2, to: 4 } },
+      { brush: { chart: "shop-delivery", from: 1.5, to: 4.5 } },
       { expectChip: "Delivery Days: 1.5–4.5" },
       { expectRows: 265 },
     ],
