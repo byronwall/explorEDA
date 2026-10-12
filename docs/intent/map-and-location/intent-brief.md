@@ -32,7 +32,7 @@ Users control analytical marks, reference boundaries, basemap context, and data 
 
 Changing context, visibility, or camera must preserve data meaning, selections, and source traces. Hidden selected records must remain discoverable. Changing the analytical mode or join can change the analysis and needs explicit behavior. Users must select, inspect, clear, and navigate with practical keyboard and touch controls.
 
-Coordinates can gain region columns through a stored calculation that finds the country, state, or US county containing each point. It is derived, not live, because it can be expensive.
+Coordinates can gain region columns through a calculation that finds the country, state, or US county containing each point. It computes locally on demand and is not saved; it must be as efficient as possible. Persisting results needs a future augmentation pass that writes back to the store of record.
 
 When a point map has more records than draw well (roughly a couple of thousand), nearby points group into counted clusters that split as the user zooms. Clicking a cluster selects its records.
 
@@ -44,7 +44,7 @@ Keep the current Polygon and MultiPolygon FeatureCollection path as the first su
 
 Strengthen the existing join preview with mismatch samples, types, and duplicate-key details. Define what happens to reusable assets when assignment fails or a draft closes. An unused shared asset is not necessarily an error.
 
-Ship world countries, states or provinces worldwide, and US counties. Users should not fetch or download boundaries by hand. Boundaries arrive with the library or a build step and load when the data needs them. Byron accepts maintaining or linking boundary files. Audit identifiers against real dashboard data. Retain source, version, geographic date, coverage, terms, and preparation details. Saved boundaries must not silently change with catalog updates.
+The default install includes world countries and US states and counties, provided they stay small. Other geography is opt-in: a host installs or names the boundaries it wants. Installs must not grow for users who never use maps. Audit identifiers against real dashboard data. Retain source, version, geographic date, coverage, terms, and preparation details. Saved boundaries must not silently change with catalog updates.
 
 ## Detailed local context
 

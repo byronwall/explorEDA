@@ -8,7 +8,7 @@
     "last_updated": "2026-10-11",
     "summary": "Improve point and region maps, custom and supplied geography, render controls, and detailed local context without building a full GIS.",
     "status": "planned",
-    "next_action": "Byron answers the two open shape choices; then write the implementation plan."
+    "next_action": "Byron decides whether maplibre-gl is an optional peer; then write the implementation plan."
   },
   "artifacts": {
     "intent_brief": {
@@ -415,7 +415,7 @@
       {
         "id": "map-19",
         "type": "required behavior",
-        "statement": "Supply countries, worldwide states/provinces, and US counties without user-triggered downloads.",
+        "statement": "Include world countries and US states/counties by default if small; other geography is opt-in per host so installs do not grow for non-map users.",
         "commitment": "explicit",
         "importance": "core",
         "status": "active",
@@ -427,12 +427,12 @@
           }
         ],
         "confidence": "high",
-        "notes": "Answers 4, 7."
+        "notes": "Answers 4, 7, and follow-up."
       },
       {
         "id": "map-20",
         "type": "required behavior",
-        "statement": "Provide a stored calculation that assigns latitude/longitude to named regions.",
+        "statement": "Provide a point-to-region calculation computed locally on demand, not saved; persistence awaits a future write-back augmentation pass.",
         "commitment": "explicit",
         "importance": "core",
         "status": "active",
@@ -444,7 +444,7 @@
           }
         ],
         "confidence": "high",
-        "notes": "Answer 10. Narrow exception to the spatial-join exclusion."
+        "notes": "Answer 10 and follow-up."
       },
       {
         "id": "map-21",
@@ -550,7 +550,7 @@
     "status": "current",
     "appetite": "Three shippable releases: (1) trustworthy selection, values, import; (2) supplied boundaries, level inference, Locate region, content controls; (3) street basemap, clustering, export.",
     "problem": "Maps need too much setup and have suspected selection faults: no ready boundaries beyond land, no level inference, no street context, and no handling for crowded points.",
-    "recommended_shape": "Keep D3/SVG for world extents and hand off to MapLibre GL with OpenFreeMap vector styles for regional and local views; deliver boundaries in a lazily loaded companion package; add a stored Locate region calculation; cluster crowded points.",
+    "recommended_shape": "Keep D3/SVG for world extents and hand off to MapLibre GL (optional peer) with OpenFreeMap styles for regional and local views; include world countries and US states/counties lazily, with opt-in packs for other geography; compute Locate region on demand in a worker; cluster crowded points.",
     "success_moves": [
       {
         "move": "Use MapLibre GL directly (no React wrapper) with OpenFreeMap as the default style.",
@@ -568,14 +568,14 @@
         "evidence": "OpenFreeMap ToS."
       },
       {
-        "move": "Ship boundaries as a companion package of per-level, per-country files; save references by version and hash, not copies.",
-        "risk_reduced": "Zero user fetching, small initial bundle, saved analyses within browser storage limits.",
-        "evidence": "Consider-contrast in chat: bundled-in-core, companion package, build CLI, runtime CDN; companion package won."
+        "move": "Include only world-atlas countries-110m and us-atlas states/counties (about 1.06 MB raw, 330 KB gzipped), loaded lazily; other geography through opt-in packs registered by the host.",
+        "risk_reduced": "Keeps installs small for users who never map; avoids a sprawling boundary catalog.",
+        "evidence": "Measured from world-atlas 2.0.2 and us-atlas 3.0.1 tarballs on 2026-10-11."
       },
       {
-        "move": "Run Locate region in a worker and store results as columns.",
-        "risk_reduced": "Keeps rendering fast; makes the expensive spatial lookup visible and reusable.",
-        "evidence": "Product answer 10; SavedDataStructure already has calculations."
+        "move": "Compute Locate region on demand in a worker with a Flatbush bounds index, once per distinct coordinate, cached per session.",
+        "risk_reduced": "Acceptable speed without persisting derived data.",
+        "evidence": "Follow-up answer; flatbush 4.6.2 (ISC)."
       },
       {
         "move": "Reproduce the empty-space clear and draft-Escape faults as failing tests first.",
@@ -591,14 +591,14 @@
     "rabbit_holes": [
       "Handoff between two renderers: camera mapping, transition feel, and dual focus models.",
       "Accessible keyboard path over WebGL marks and clusters.",
-      "Worldwide admin-1 identifier quality and file size per country.",
       "Level inference false positives (e.g. numeric codes that look like FIPS).",
       "OpenFreeMap discontinuation or CORS changes; export canvas tainting.",
-      "Saved references to supplied boundaries when the package version changes."
+      "Saved references to supplied boundaries when the package version changes.",
+      "Coarse 110m country polygons leave coastal points unlocated.",
+      "MapLibre install size (about 28 MB unpacked) versus the small-install goal."
     ],
     "open_decisions": [
-      "Locate region: store result columns in saved data, or store the calculation and recompute with a cache.",
-      "Boundary package: required dependency (zero setup) or optional (smaller installs)."
+      "Make maplibre-gl an optional peer dependency (recommended) or a regular dependency."
     ]
   },
   "implementation": {
@@ -649,6 +649,12 @@
       "action": "Revised intent and reshaped from ten product answers.",
       "reason": "Byron answered product questions and rejected self-maintained tiles and holding back Leaflet for React 18.",
       "evidence": "references/product-answers.md; claims map-17 to map-24; shape now MapLibre + OpenFreeMap, companion boundary package, Locate region, clustering."
+    },
+    {
+      "date": "2026-10-11",
+      "action": "Resolved shape choices: Locate region on demand; opt-in boundaries.",
+      "reason": "Byron's follow-up answers.",
+      "evidence": "references/product-answers.md follow-up; measured default boundary sizes."
     }
   ],
   "closure": null
