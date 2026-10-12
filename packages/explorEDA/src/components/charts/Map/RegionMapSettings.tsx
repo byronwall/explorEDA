@@ -5,7 +5,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ActionTooltip } from "@/components/ui/tooltip";
 import { useDataLayer } from "@/providers/DataLayerProvider";
-import { isRegionGeometry } from "@/lib/geometryAssets";
+import {
+  regionGeometryProblems,
+  regionGeometrySize,
+  type RegionGeometry,
+} from "@/lib/geometryAssets";
 import { displayAggregateValue } from "@/lib/aggregates";
 import type { ChartSettingsPanelProps } from "@/types/ChartTypes";
 import type { MapSettings } from "./definition";
@@ -43,21 +47,30 @@ export function RegionMapSettings({
   ];
   const [json, setJson] = useState(""),
     [name, setName] = useState("Regions"),
-    [error, setError] = useState("");
+    [errors, setErrors] = useState<string[]>([]);
   const importGeometry = (text: string, source: string, name: string) => {
+    let geometry: unknown;
     try {
-      const geometry: unknown = JSON.parse(text);
-      if (!isRegionGeometry(geometry))
-        throw new Error(
-          "Use a FeatureCollection of Polygon or MultiPolygon features. Coordinates must be WGS 84 degrees with closed rings."
-        );
-      const asset = {
-        id: crypto.randomUUID(),
-        name: name.trim() || "Regions",
-        source,
-        geometry,
-      };
-      addAsset(asset);
+      geometry = JSON.parse(text);
+    } catch (error) {
+      setErrors([
+        `Not valid JSON: ${error instanceof Error ? error.message : "could not parse"}`,
+      ]);
+      return;
+    }
+    const problems = regionGeometryProblems(geometry);
+    if (problems.length) {
+      setErrors(problems);
+      return;
+    }
+    const asset = {
+      id: crypto.randomUUID(),
+      name: name.trim() || "Regions",
+      source,
+      geometry: geometry as RegionGeometry,
+    };
+    // Assign first, so a failed assignment never leaves an orphaned asset.
+    try {
       onSettingsChange({
         ...settings,
         geometryAssetId: asset.id,
@@ -65,14 +78,36 @@ export function RegionMapSettings({
         view: undefined,
         filters: [],
       });
-      setError("");
-      setJson("");
     } catch (error) {
-      setError(
-        error instanceof Error ? error.message : "Could not read the GeoJSON."
-      );
+      setErrors([
+        `Could not use this geometry: ${error instanceof Error ? error.message : "the chart rejected it"}`,
+      ]);
+      return;
     }
+    addAsset(asset);
+    setErrors([]);
+    setJson("");
   };
+  const size = asset && regionGeometrySize(asset.geometry);
+  // Row keys that match a feature key's text but not its type.
+  const typeMismatches = useMemo(() => {
+    const byText = new Map(
+      plan.regions
+        .filter((region) => region.key !== undefined)
+        .map((region) => [String(region.key), region.key])
+    );
+    return plan.unmatched.flatMap((row) => {
+      const feature = byText.get(String(row.key));
+      return row.key != null && feature !== undefined
+        ? [{ key: row.key, feature }]
+        : [];
+    });
+  }, [plan]);
+  const unmatchedSamples = [
+    ...new Map(
+      plan.unmatched.map((row) => [`${typeof row.key}:${String(row.key)}`, row])
+    ).values(),
+  ].slice(0, 4);
   return (
     <div className="space-y-2">
       <div className="eda-setting-grid">
@@ -98,6 +133,13 @@ export function RegionMapSettings({
             </option>
           ))}
         </select>
+        {size && (
+          <p className="col-start-2 text-xs text-muted-foreground">
+            {size.features.toLocaleString()}{" "}
+            {size.features === 1 ? "feature" : "features"} ·{" "}
+            {size.vertices.toLocaleString()} vertices · {asset.source}
+          </p>
+        )}
       </div>
       <details>
         <summary className="cursor-pointer text-sm">Import GeoJSON</summary>
@@ -113,7 +155,7 @@ export function RegionMapSettings({
                 try {
                   importGeometry(await file.text(), file.name, file.name);
                 } catch {
-                  setError("Could not read this file.");
+                  setErrors(["Could not read this file."]);
                 }
               }
               event.target.value = "";
@@ -145,10 +187,15 @@ export function RegionMapSettings({
           </p>
         </div>
       </details>
-      {error && (
-        <p role="alert" className="text-xs text-destructive">
-          {error}
-        </p>
+      {errors.length > 0 && (
+        <div role="alert" className="text-xs text-destructive">
+          <p>Nothing was imported.</p>
+          <ul className="list-disc pl-4">
+            {errors.map((problem) => (
+              <li key={problem}>{problem}</li>
+            ))}
+          </ul>
+        </div>
       )}
       <div className="eda-setting-grid">
         <Label>Region key</Label>
@@ -290,6 +337,31 @@ export function RegionMapSettings({
                 </tbody>
               </table>
             </div>
+            {unmatchedSamples.length > 0 && (
+              <p>
+                Unmatched row keys:{" "}
+                {unmatchedSamples
+                  .map((row) =>
+                    row.key == null
+                      ? "missing"
+                      : `${displayAggregateValue(row.key)} (${typeof row.key})`
+                  )
+                  .join(", ")}
+                {plan.unmatched.length > unmatchedSamples.length && ", …"}
+              </p>
+            )}
+            {typeMismatches.length > 0 && (
+              <p className="text-warning">
+                {typeMismatches.length}{" "}
+                {typeMismatches.length === 1 ? "row matches" : "rows match"} a
+                feature key only as text, such as{" "}
+                {displayAggregateValue(typeMismatches[0]!.key)} (
+                {typeof typeMismatches[0]!.key}) and{" "}
+                {displayAggregateValue(typeMismatches[0]!.feature)} (
+                {typeof typeMismatches[0]!.feature}). Keys must match in type
+                too; convert the field&apos;s type to join them.
+              </p>
+            )}
             <p>
               Features with one key form one region. Alt-click outside the
               regions on the map to see every unmatched row and feature.
