@@ -5,10 +5,10 @@
     "slug": "compact-dsl-redesign",
     "scale": "capability",
     "current_phase": "execution",
-    "last_updated": "2026-10-11",
+    "last_updated": "2026-10-12",
     "summary": "Replace dashboard text with a schema-driven outline language: defaults-aware export, one vocabulary, nested named composition nodes, annotations as children, define-once charts placed in views, and a layout block. Agent-written, human-reviewed; no backward compatibility.",
     "status": "active",
-    "next_action": "Finish M1 PR, then M2 (brace syntax, fmt, layout)."
+    "next_action": "Finish M5: cold-agent rerun 3, pnpm check, PR"
   },
   "artifacts": {
     "intent_brief": {
@@ -107,7 +107,9 @@
         "importance": "core",
         "status": "active",
         "time_horizon": "now",
-        "sources": ["s-request"]
+        "sources": [
+          "s-request"
+        ]
       },
       {
         "id": "c-composition",
@@ -117,7 +119,10 @@
         "importance": "core",
         "status": "active",
         "time_horizon": "now",
-        "sources": ["s-request", "s-corpus"]
+        "sources": [
+          "s-request",
+          "s-corpus"
+        ]
       },
       {
         "id": "c-checkable",
@@ -127,7 +132,9 @@
         "importance": "core",
         "status": "active",
         "time_horizon": "now",
-        "sources": ["s-request"]
+        "sources": [
+          "s-request"
+        ]
       },
       {
         "id": "c-terse",
@@ -137,7 +144,9 @@
         "importance": "core",
         "status": "active",
         "time_horizon": "now",
-        "sources": ["s-request"]
+        "sources": [
+          "s-request"
+        ]
       },
       {
         "id": "c-break",
@@ -147,7 +156,9 @@
         "importance": "supporting",
         "status": "active",
         "time_horizon": "now",
-        "sources": ["s-request"]
+        "sources": [
+          "s-request"
+        ]
       },
       {
         "id": "c-one-source",
@@ -157,7 +168,9 @@
         "importance": "core",
         "status": "active",
         "time_horizon": "now",
-        "sources": ["s-reference"]
+        "sources": [
+          "s-reference"
+        ]
       },
       {
         "id": "c-formulas",
@@ -167,7 +180,9 @@
         "importance": "supporting",
         "status": "active",
         "time_horizon": "now",
-        "sources": ["s-corpus"]
+        "sources": [
+          "s-corpus"
+        ]
       }
     ],
     "themes": [
@@ -338,7 +353,10 @@
         "proof": "All examples round-trip; pairs <=6,730 (<=5,200 with D1=A).",
         "valid_intermediate_state": "Complete language that round-trips every example; set covers settings without grammar yet.",
         "rollback": "Revert the milestone PR; no users or saved text depend on the old syntax.",
-        "status": "active"
+        "status": "completed",
+        "evidence": [
+          "byronwall/explorEDA#336; schema.test.ts, dashboardTextSize.test.ts"
+        ]
       },
       {
         "id": "m2",
@@ -348,7 +366,10 @@
         "proof": "58 views + 7 analyses round-trip; fmt idempotent; mis-indented paste parses identically.",
         "valid_intermediate_state": "Complete language that round-trips every example; set covers settings without grammar yet.",
         "rollback": "Revert the milestone PR; no users or saved text depend on the old syntax.",
-        "status": "planned"
+        "status": "completed",
+        "evidence": [
+          "byronwall/explorEDA#343; parse/layout/format tests; analyses snapshot identical"
+        ]
       },
       {
         "id": "m3",
@@ -358,7 +379,10 @@
         "proof": "29 compositions round-trip with zero set lines; composition pairs -40%.",
         "valid_intermediate_state": "Complete language that round-trips every example; set covers settings without grammar yet.",
         "rollback": "Revert the milestone PR; no users or saved text depend on the old syntax.",
-        "status": "planned"
+        "status": "completed",
+        "evidence": [
+          "byronwall/explorEDA#352; 29/29 compositions round-trip"
+        ]
       },
       {
         "id": "m4",
@@ -368,7 +392,10 @@
         "proof": "No epoch, index, or []= in exported corpus; annotation persistence test passes.",
         "valid_intermediate_state": "Complete language that round-trips every example; set covers settings without grammar yet.",
         "rollback": "Revert the milestone PR; no users or saved text depend on the old syntax.",
-        "status": "planned"
+        "status": "completed",
+        "evidence": [
+          "byronwall/explorEDA#357; values.test.ts; annotation persistence test"
+        ]
       },
       {
         "id": "m5",
@@ -378,7 +405,7 @@
         "proof": "6/6 cold drafts pass exploreda-dsl check.",
         "valid_intermediate_state": "Complete language that round-trips every example; set covers settings without grammar yet.",
         "rollback": "Revert the milestone PR; no users or saved text depend on the old syntax.",
-        "status": "planned"
+        "status": "active"
       }
     ],
     "cut_line": [

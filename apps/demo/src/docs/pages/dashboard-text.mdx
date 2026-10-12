@@ -4,6 +4,8 @@ Dashboard text builds a whole dashboard from compact lines: each line declares a
 
 Workspace filters are `filter` lines, one per field, such as `filter Region=West,East`.
 
+Annotations, table columns, pivot values, and composed graphics are child lines inside a chart's braces, such as `rule y=4 "Target"` or `column Revenue width=140`. In a text with several views, a chart written above the views is defined once; each view places it by name and changes only what differs, such as `Region select.Region=West`.
+
 The text describes the whole dashboard. Omitted charts are removed, and omitted settings use the app's defaults. A line that can't be built is skipped with a diagnostic that gives its line, column, and a suggested fix; the other lines still build.
 
 ## The order book, as text

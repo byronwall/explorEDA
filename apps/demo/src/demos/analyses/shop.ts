@@ -1,152 +1,158 @@
 // The order book: one synthetic shop table, four focused tabs. It replaces
 // the separate shop, calendar, bar, area, and calculation examples.
 
-const CHANNELS = `mapping[]= mapping.0[]=Web,"#3479a8" mapping.1[]=Store,"#c77a45"
-mapping.2[]=Wholesale,"#4b9688"`;
-
 export const shopText = `dashboard "Inside the order book"
 grid rowHeight=76 padding=0 markers=false
 
 field Revenue format=currency currency=USD precision=2
 field Margin format=currency currency=USD precision=2
 
-calc "Discount rate"=min(0.25, max(0, if Discount == null then 0 else Discount))
-calc "Gross sales"=Units * ["Unit Price"]
-calc "Discount amount"=["Gross sales"] * ["Discount rate"]
-calc "Net sales"=["Gross sales"] - ["Discount amount"]
+calc "Discount rate" = min(0.25, max(0, if Discount == null then 0 else Discount))
+calc "Gross sales" = Units * ["Unit Price"]
+calc "Discount amount" = ["Gross sales"] * ["Discount rate"]
+calc "Net sales" = ["Gross sales"] - ["Discount amount"]
+calc Contribution = ["Net sales"] - Cost
+calc "Contribution rate" = if ["Net sales"] > 0 then ["Contribution"] / ["Net sales"] * 100 else 0
+calc "Order band" = if ["Net sales"] >= 500 then "Large" else if ["Net sales"] >= 100 then "Standard" else "Small"
+calc "Risk points" = sum(if Returned then 10 else 0, if !Fulfilled then 5 else 0, if ["Delivery Days"] != null && ["Delivery Days"] > 7 then 2 else 0)
+calc "Needs review" = ["Risk points"] >= 5 || ["Contribution"] < 0
+calc "Order month" = formatDate(["Order Date"], "%Y-%m")
 field "Net sales" format=currency currency=USD precision=2
-calc Contribution=["Net sales"] - Cost
 field Contribution format=currency currency=USD precision=2
-calc "Contribution rate"=if ["Net sales"] > 0 then ["Contribution"] / ["Net sales"] * 100 else 0
 field "Contribution rate" precision=1
-calc "Order band"=if ["Net sales"] >= 500 then "Large" else if ["Net sales"] >= 100 then "Standard" else "Small"
-calc "Risk points"=sum(if Returned then 10 else 0, if !Fulfilled then 5 else 0, if ["Delivery Days"] != null && ["Delivery Days"] > 7 then 2 else 0)
-calc "Needs review"=["Risk points"] >= 5 || ["Contribution"] < 0
-calc "Order month"=formatDate(["Order Date"], "%Y-%m")
 
-scale @category-colors field=Category {
-  mapping[]= mapping.0[]=Home,"#3479a8" mapping.1[]=Outdoors,"#c77a45"
-  mapping.2[]=Electronics,"#4b9688" mapping.3[]=Kitchen,"#9c6eac"
+scale @category-colors field=Category map=Home:#3479a8,Outdoors:#c77a45,Electronics:#4b9688,Kitchen:#9c6eac {
+  palette=#2a78d6,#eb6834,#1baf7a,#eda100,#e87ba4,#008300,#4a3aa7,#e34948
+  paletteId=theme order=frequency overflow=other
 }
-scale @channels field=Channel {
-  ${CHANNELS}
+scale @channels field=Channel map=Web:#3479a8,Store:#c77a45,Wholesale:#4b9688 {
+  palette=#2a78d6,#eb6834,#1baf7a,#eda100,#e87ba4,#008300,#4a3aa7,#e34948
+  paletteId=theme order=frequency overflow=other
+}
+scale @color-order-band field="Order band" map=Standard:#2a78d6,Small:#eb6834,Large:#1baf7a {
+  palette=#2a78d6,#eb6834,#1baf7a,#eda100,#e87ba4,#008300,#4a3aa7,#e34948
+  paletteId=theme order=frequency overflow=other
 }
 group @revenue-by-region sum(Revenue) by=Region name="Revenue by region"
 group @revenue-by-product sum(Revenue) by=Product name="Revenue by product"
 
 view "Order book" {
-  metric count @shop-count at=0,0,4,2 title="Matching orders"
-  metric sum(Revenue) @shop-revenue at=4,0,4,2 title="Revenue in this selection"
-  metric avg(Revenue) @shop-average at=8,0,4,2 title="Average order value"
-  scatter x=Revenue y=Margin @shop-margin at=0,2,6,5 color=Category {
-    xAxis.scaleType=symlog yAxis.scaleType=symlog title="Revenue and margin per order"
-    xAxisLabel="Revenue ($)" yAxisLabel="Margin ($)"
+  metric @shop-count count title="Matching orders"
+  metric @shop-revenue sum(Revenue) title="Revenue in this selection"
+  metric @shop-average avg(Revenue) title="Average order value"
+  scatter @shop-margin x=Revenue y=Margin color=Category {
+    title="Revenue and margin per order" x.scale=symlog y.scale=symlog
+    x.title="Revenue ($)" y.title="Margin ($)"
   }
-  row Category @shop-category at=6,2,3,5 color=Category title="Orders by category" {
-    xAxisLabel=Orders minRowHeight=22 maxRowHeight=36
+  row @shop-category Category color=Category title="Orders by category" x.title=Orders
+  row @shop-channel Channel color=Channel title="Sales channels" x.title=Orders
+  hist @shop-delivery "Delivery Days" title="How long does delivery take?" {
+    x.title="Delivery time (days)" y.title=Orders
   }
-  row Channel @shop-channel at=9,2,3,5 color=Channel title="Sales channels" {
-    xAxisLabel=Orders minRowHeight=22 maxRowHeight=36
+  boxplot @shop-order Revenue color=Category title="Order value by category" {
+    y.scale=symlog y.title="Revenue ($)"
   }
-  hist "Delivery Days" @shop-delivery at=0,7,4,4 binCount=20 {
-    title="How long does delivery take?" xAxisLabel="Delivery time (days)" yAxisLabel=Orders
+  hist @shop-region Revenue title="Revenue by region" x.title=Region {
+    y.title="Revenue ($)" group=revenue-by-region
   }
-  chart boxplot field=Revenue @shop-order at=4,7,4,4 color=Category {
-    yAxis.scaleType=symlog title="Order value by category" yAxisLabel="Revenue ($)"
-  }
-  hist Revenue @shop-region at=8,7,4,4 group=revenue-by-region {
-    title="Revenue by region" xAxisLabel=Region yAxisLabel="Revenue ($)"
-  }
-  chart heatmap field=Category @shop-category-region at=0,11,6,6 {
+  heatmap @shop-category-region Category title="Where does revenue come from?" {
     columnField=Region aggregation=sum measureField=Revenue
-    title="Where does revenue come from?"
   }
-  chart sankey @shop-flow at=6,11,6,6 stages[]=Channel,Category,Returned {
-    title="Which channels and categories lead to returns?"
+  sankey @shop-flow title="Which channels and categories lead to returns?" {
+    stages=Channel,Category,Returned
   }
-  table "Order Date",Region,Channel,Category,Product,Revenue,Margin,"Delivery Days",Returned {
-    @shop-orders at=0,17,12,5 title="Orders in this selection"
+  table @shop-orders "Order Date",Region,Channel,Category,Product,Revenue,Margin,"Delivery Days",Returned {
+    title="Orders in this selection"
   }
-
+  layout {
+    2: shop-count shop-revenue shop-average
+    5: shop-margin shop-margin shop-category shop-channel
+    4: shop-delivery shop-order shop-region
+    6: shop-category-region shop-flow
+    5: shop-orders
+  }
 }
+
 view "Sales mix" {
-  bar Region @mix-grouped at=0,0,6,6 group=revenue-by-region {
-    seriesField=Channel color=Channel title="Revenue by region and channel"
-    yAxisLabel="Revenue ($)"
+  bar @mix-grouped Region color=Channel title="Revenue by region and channel" {
+    y.title="Revenue ($)" group=revenue-by-region seriesField=Channel
   }
-  bar Region @mix-share at=6,0,6,6 seriesField=Channel color=Channel {
-    seriesLayout=percent title="Channel share of each region's orders"
-    yAxisLabel="Share of orders (%)"
+  bar @mix-share Region color=Channel title="Channel share of each region's orders" {
+    y.title="Share of orders (%)" seriesField=Channel seriesLayout=percent
   }
-  chart line @mix-layers at=0,6,8,5 xField="Order Date" color=Channel {
-    time.interval=month time.weekStart=monday time.aggregation=sum
-    time.measureField=Revenue time.splitField=Channel time.missingPeriods=zero
-    time.display=stacked-area title="Monthly revenue layers by channel"
-    xAxisLabel="Order month" yAxisLabel="Revenue ($)"
+  line @mix-layers color=Channel title="Monthly revenue layers by channel" {
+    x.title="Order month" y.title="Revenue ($)" x="Order Date" time.interval=month
+    time.weekStart=monday time.aggregation=sum time.measureField=Revenue
+    time.splitField=Channel time.missingPeriods=zero time.display=stacked-area
   }
-  row Category @mix-category at=8,6,4,5 color=Category title="Filter by category" {
-    xAxisLabel=Orders minRowHeight=22 maxRowHeight=36
+  row @mix-category Category color=Category title="Filter by category" x.title=Orders
+  pivot @mix-pivot title="Revenue by region and channel" rows=Region columns=Channel {
+    value sum(Revenue) label=Revenue
   }
-  chart pivot @mix-pivot at=0,11,8,5 title="Revenue by region and channel" {
-    rowFields[]=Region columnField=Channel valueFields[]=
-    valueFields.0.field=Revenue valueFields.0.aggregation=sum valueFields.0.label=Revenue
+  row @mix-products Product title="Which products bring in the revenue?" {
+    x.title="Revenue ($)" group=revenue-by-product topN=4
   }
-  row Product @mix-products at=8,11,4,5 group=revenue-by-product topN=4 {
-    title="Which products bring in the revenue?" xAxisLabel="Revenue ($)"
-  }
-  chart hierarchy @mix-hierarchy at=0,16,12,6 levels[]=Region,Category {
-    aggregation=sum measureField=Revenue
+  hierarchy @mix-hierarchy {
     title="How does revenue divide across regions and categories?"
+    levels=Region,Category aggregation=sum measureField=Revenue
   }
-
+  layout {
+    6: mix-grouped mix-share
+    5: mix-layers mix-layers mix-category
+    5: mix-pivot mix-pivot mix-products
+    6: mix-hierarchy
+  }
 }
-view "Calendar" {
-  chart calendar field="Order Date" @cal-daily at=0,0,12,4 {
-    aggregation=sum measureField=Revenue title="Daily revenue through 2024"
+
+view Calendar {
+  calendar @cal-daily "Order Date" title="Daily revenue through 2024" aggregation=sum {
+    measureField=Revenue
   }
-  chart line @cal-monthly at=0,4,8,5 xField="Order Date" color=Channel {
-    time.interval=month time.weekStart=monday time.aggregation=sum
-    time.measureField=Revenue time.splitField=Channel time.missingPeriods=gap
-    title="Monthly revenue by channel" xAxisLabel="Order month" yAxisLabel="Revenue ($)"
+  line @cal-monthly color=Channel title="Monthly revenue by channel" {
+    x.title="Order month" y.title="Revenue ($)" x="Order Date" time.interval=month
+    time.weekStart=monday time.aggregation=sum time.measureField=Revenue
+    time.splitField=Channel time.missingPeriods=gap
   }
-  row Channel @cal-channel at=8,4,4,3 color=Channel title="Sales channels" {
-    xAxisLabel=Orders minRowHeight=22 maxRowHeight=36
-  }
-  metric count @cal-count at=8,7,4,2 title="Matching orders"
-  chart line @cal-weekly at=0,9,12,4 xField="Order Date" {
+  row @cal-channel Channel color=Channel title="Sales channels" x.title=Orders
+  metric @cal-count count title="Matching orders"
+  line @cal-weekly title="Weekly order count" x.title=Week y.title=Orders x="Order Date" {
     time.interval=week time.weekStart=monday time.aggregation=count
-    time.missingPeriods=zero title="Weekly order count" xAxisLabel=Week yAxisLabel=Orders
+    time.missingPeriods=zero
   }
-  table "Order Date",Channel,Region,Revenue @cal-rows at=0,13,12,5 {
-    title="Orders on the selected dates"
+  table @cal-rows "Order Date",Channel,Region,Revenue title="Orders on the selected dates"
+  layout {
+    4: cal-daily
+    3: cal-monthly cal-monthly cal-channel
+    2: cal-monthly cal-monthly cal-count
+    4: cal-weekly
+    5: cal-rows
   }
-
 }
+
 view "Contribution and delivery" {
-  scatter x="Net sales" y=Contribution @calc-scatter at=0,0,6,5 {
-    xAxis.scaleType=symlog yAxis.scaleType=symlog color="Order band"
-    title="How much of each order remains?" xAxisLabel="Net sales ($)"
-    yAxisLabel="Contribution ($)"
+  scatter @calc-scatter x="Net sales" y=Contribution color="Order band" {
+    title="How much of each order remains?" x.scale=symlog y.scale=symlog
+    x.title="Net sales ($)" y.title="Contribution ($)"
   }
-  row "Order band" @calc-band at=6,0,3,5 color="Order band" title="Orders by size" {
-    xAxisLabel=Orders minRowHeight=22 maxRowHeight=36
+  row @calc-band "Order band" color="Order band" title="Orders by size" x.title=Orders
+  row @calc-review "Needs review" title="Which orders need review?" x.title=Orders
+  hist @calc-rate "Contribution rate" title="Contribution as a share of sales" {
+    x.title="Contribution (%)" y.title=Orders
   }
-  row "Needs review" @calc-review at=9,0,3,5 title="Which orders need review?" {
-    xAxisLabel=Orders minRowHeight=22 maxRowHeight=36
+  hist @calc-delivery "Delivery Days" title="Delivery time" {
+    x.title="Delivery time (days)" y.title=Orders
   }
-  hist "Contribution rate" @calc-rate at=0,5,4,4 binCount=20 {
-    title="Contribution as a share of sales" xAxisLabel="Contribution (%)" yAxisLabel=Orders
+  pivot @calc-monthly title="Monthly sales and contribution" rows="Order month" {
+    value sum("Net sales") label="Net sales"
+    value sum(Contribution) label=Contribution
   }
-  hist "Delivery Days" @calc-delivery at=4,5,4,4 binCount=20 {
-    title="Delivery time" xAxisLabel="Delivery time (days)" yAxisLabel=Orders
+  table @calc-chain Units,"Unit Price","Gross sales","Discount rate","Discount amount","Net sales",Cost,Contribution,"Contribution rate","Risk points" {
+    title="Follow each order's calculation"
   }
-  chart pivot @calc-monthly at=8,5,4,4 title="Monthly sales and contribution" {
-    rowFields[]="Order month" valueFields[]=
-    valueFields.0.field="Net sales" valueFields.0.aggregation=sum valueFields.0.label="Net sales"
-    valueFields.1.field=Contribution valueFields.1.aggregation=sum valueFields.1.label=Contribution
-  }
-  table Units,"Unit Price","Gross sales","Discount rate","Discount amount","Net sales",Cost,Contribution,"Contribution rate","Risk points" {
-    @calc-chain at=0,9,12,5 title="Follow each order's calculation"
+  layout {
+    5: calc-scatter calc-scatter calc-band calc-review
+    4: calc-rate calc-delivery calc-monthly
+    5: calc-chain
   }
 }
 `;

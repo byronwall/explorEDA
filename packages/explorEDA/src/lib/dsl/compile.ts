@@ -50,6 +50,7 @@ import {
 } from "./annotations";
 import type { ChartAnnotation } from "@/lib/annotations/types";
 import { listChildWords, lowerListChild } from "./lists";
+import { DEFAULT_TIME_SERIES } from "@/components/charts/LineChart/definition";
 import { isCompositionDefinition } from "@/components/charts/Composition/validateComposition";
 import {
   CHART_SETTING_KEYS,
@@ -407,15 +408,10 @@ export function compileDocument(
   const headers = viewHeaders(parsed.declarations);
   const viewIndex = internal.view ?? 0;
   const header = headers[viewIndex];
-  // Lines outside every view belong to all of them.
+  // Lines outside every view belong to all of them, except charts: those
+  // are defined once and placed by the views that use them.
   const declarations = headers.length
-    ? parsed.declarations.filter(
-        (item) =>
-          item.keyword !== "view" &&
-          (item.view === undefined ||
-            item.view === viewIndex ||
-            SHARED_KEYWORDS.has(item.keyword))
-      )
+    ? viewDeclarations(parsed.declarations, viewIndex)
     : parsed.declarations;
   const diagnostics: DslDiagnostic[] = problems.map((problem) => ({
     severity: "error",
@@ -2227,6 +2223,15 @@ export function compileDocument(
     ) {
       return "unknown";
     }
+    // A line's time settings are one record; the first key starts it whole.
+    if (
+      top === "time" &&
+      chart.type === "line" &&
+      !chart.time &&
+      path.segments.length > 1
+    ) {
+      chart = { ...chart, time: { ...DEFAULT_TIME_SERIES } };
+    }
     const references = {
       colorScaleId: [
         "color scale",
@@ -2603,6 +2608,112 @@ export function compileDocument(
     skippedCharts: skipped,
     complete: diagnostics.length === 0,
   };
+}
+
+function isChartDeclaration(declaration: DslDeclaration) {
+  return (
+    Object.hasOwn(DSL_CHART_KEYWORDS, declaration.keyword) ||
+    declaration.keyword === "chart"
+  );
+}
+
+/** A name as written: an override line may quote it, as in "Order band". */
+function unquoted(text: string) {
+  return text.startsWith('"') && text.endsWith('"') && text.length > 1
+    ? (JSON.parse(text) as string)
+    : text;
+}
+
+/** The names a layout block's cells use. */
+function layoutNames(layout: DslDeclaration): string[] {
+  return layout.children.flatMap((row) =>
+    row.positional.flatMap((cell) => {
+      const match = /^(?:"((?:[^"\\]|\\.)*)"|([^\s":]+))(?::\d+)?$/.exec(
+        cell.value.raw
+      );
+      if (!match) return [];
+      return match[1] !== undefined
+        ? [JSON.parse(`"${match[1]}"`) as string]
+        : match[2] === "."
+          ? []
+          : [match[2]!];
+    })
+  );
+}
+
+/**
+ * One view's declarations in a text with several views. Charts at the top
+ * level are defined once; a view shows one when its layout places it or an
+ * override line names it (`species select.species=Gentoo`), and a view that
+ * names none shows them all. An override's settings replace the chart's
+ * settings of the same name, and its child lines replace the chart's.
+ * Charts keep the order of the view's own lines.
+ */
+export function viewDeclarations(
+  all: DslDeclaration[],
+  viewIndex: number
+): DslDeclaration[] {
+  const library = all.filter(
+    (item) => item.view === undefined && isChartDeclaration(item)
+  );
+  const named = new Map<string, DslDeclaration>();
+  for (const chart of library) {
+    const name = chart.name ?? implicitName(chart);
+    if (name !== undefined && !named.has(name)) {
+      named.set(name, chart);
+    }
+  }
+  const shared = all.filter(
+    (item) =>
+      item.keyword !== "view" &&
+      !isChartDeclaration(item) &&
+      (item.view === undefined || SHARED_KEYWORDS.has(item.keyword))
+  );
+  const own = all.filter(
+    (item) =>
+      item.view === viewIndex &&
+      item.keyword !== "view" &&
+      !SHARED_KEYWORDS.has(item.keyword)
+  );
+  const used = new Set<DslDeclaration>();
+  const charts: DslDeclaration[] = [];
+  const rest: DslDeclaration[] = [];
+  for (const item of own) {
+    const base = named.get(unquoted(item.keyword));
+    if (
+      base &&
+      !isChartDeclaration(item) &&
+      !DSL_OTHER_KEYWORDS.includes(item.keyword)
+    ) {
+      used.add(base);
+      const keys = new Set(item.pairs.map((pair) => pair.key));
+      charts.push({
+        ...base,
+        positional: [...base.positional],
+        pairs: [
+          ...base.pairs.filter((pair) => !keys.has(pair.key)),
+          ...item.pairs,
+        ],
+        children: item.children.length ? item.children : base.children,
+        view: viewIndex,
+      });
+      continue;
+    }
+    (isChartDeclaration(item) ? charts : rest).push(item);
+  }
+  const layout = own.filter((item) => item.keyword === "layout").at(-1);
+  // A view that names no shared chart, by line or layout, shows them all.
+  const showAll = !layout && !used.size;
+  const placed = layout ? layoutNames(layout) : [];
+  for (const chart of library) {
+    if (used.has(chart)) continue;
+    const name = chart.name ?? implicitName(chart);
+    if (showAll || (name !== undefined && placed.includes(name))) {
+      used.add(chart);
+      charts.push({ ...chart, positional: [...chart.positional] });
+    }
+  }
+  return [...shared, ...rest, ...charts];
 }
 
 /**

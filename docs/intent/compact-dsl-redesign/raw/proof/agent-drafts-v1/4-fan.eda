@@ -1,0 +1,26 @@
+dashboard "Forecast fan"
+grid columns=12 rowHeight=100
+
+composition @fan height=540 {
+  title "Two measures, three years ahead" at=32,24
+  subtitle "Central projection with 20-80% bands" at=32,60
+  footnote "Bands show the spread of projected outcomes" at=32,516
+  scale numeric Year
+  scale numeric Central perInstance=true title=Percent
+  measure last(Central) orderBy=Year name=lastCentral
+  unit Measures at=40,110 size=380x300 {
+    repeat Measure columns=2 gap=72
+    path Central x=Year y=Central orderField=Year
+    label value=lastCentral
+  }
+  rule "Projection" at=0,0 unit=Measures scale=Year value.value=2025 shade=after
+  rule "2%" at=0,0 unit=Measures scale=Central value.value=2 where.Measure="GDP growth"
+  legend Key at=820,110 unit=Measures mark=Central
+}
+line @central x=Year y=Central
+row Kind
+
+layout {
+  6: fan
+  4: central:8 Kind:4
+}

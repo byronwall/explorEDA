@@ -257,7 +257,24 @@ export interface DslExportParts {
   shared: string[][];
   /** The grid, the Rows view, and the charts. */
   view: string[][];
+  /** The Rows view and workspace filter lines. */
+  context: string[];
+  /** Each chart, in order, as the pieces of its declaration. */
+  charts: DslChartPart[];
+  /** The layout block. */
+  layout: string[];
   omitted: string[];
+}
+
+/** One chart's declaration, in pieces, so views can share charts. */
+export interface DslChartPart {
+  id: string;
+  /** What the text calls the chart: its @name, or its field. */
+  name: string;
+  /** The chart word and subject, with @name when the text must write it. */
+  head: string;
+  tokens: string[];
+  children: string[];
 }
 
 /**
@@ -338,7 +355,7 @@ export function exportParts(
           ];
         }
         return [
-          `${word}=${typeof item === "string" ? JSON.stringify(item) : item}`,
+          `${word}=${typeof item === "string" ? encodeValue(item) : item}`,
         ];
       });
       return block(`field ${encodeScalar(field)}`, pairs);
@@ -347,7 +364,7 @@ export function exportParts(
     (field) => !calcNames.has(field)
   );
   const calcLines = settings.calculations.flatMap((calc) => [
-    `calc ${IDENTIFIER.test(calc.resultColumnName) ? calc.resultColumnName : JSON.stringify(calc.resultColumnName)}=${calc.expression.replace(/\s*\n\s*/g, " ")}`,
+    `calc ${IDENTIFIER.test(calc.resultColumnName) ? calc.resultColumnName : JSON.stringify(calc.resultColumnName)} = ${calc.expression.replace(/\s*\n\s*/g, " ")}`,
   ]);
 
   // Build a skeleton from each chart's short form, then add what differs.
@@ -491,7 +508,7 @@ export function exportParts(
     base.settings.charts.map((chart) => [chart.id, chart])
   );
 
-  const chartLines = charts.flatMap((chart, index) => {
+  const chartParts = charts.flatMap((chart, index): DslChartPart[] => {
     const built = baseCharts.get(`__c${index}`);
     const { head, pairs } = heads[index]!;
     if (!built) {
@@ -531,16 +548,26 @@ export function exportParts(
         )
       );
     }
-    return block(
-      head,
-      [
-        ...pairs,
-        ...(graphic?.head ?? []),
-        ...extra.map((pair) => toWord(chart.type, pair, built)),
-      ],
-      [...(graphic?.body ?? []), ...lists.lines, ...annotations]
-    );
+    return [
+      {
+        id: chart.id,
+        name: names[index]!,
+        head,
+        tokens: [
+          ...pairs,
+          ...(graphic?.head ?? []),
+          ...extra.map((pair) => toWord(chart.type, pair, built)),
+        ],
+        children: [...(graphic?.body ?? []), ...lists.lines, ...annotations],
+      },
+    ];
   });
+  const chartLines = chartParts.flatMap((part) =>
+    block(part.head, part.tokens, part.children)
+  );
+  const layoutBlock = layoutText?.length
+    ? ["layout {", ...layoutText.map((line) => `  ${line}`), "}"]
+    : [];
 
   return {
     name: workspace[0]!,
@@ -552,15 +579,11 @@ export function exportParts(
     // The grid line rides with the name in a single-view export.
     view: [
       workspace.slice(1),
-      [
-        ...rowsLines,
-        ...filterLines,
-        ...chartLines,
-        ...(layoutText?.length
-          ? ["layout {", ...layoutText.map((line) => `  ${line}`), "}"]
-          : []),
-      ],
+      [...rowsLines, ...filterLines, ...chartLines, ...layoutBlock],
     ],
+    context: [...rowsLines, ...filterLines],
+    charts: chartParts,
+    layout: layoutBlock,
     omitted,
   };
 }

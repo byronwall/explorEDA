@@ -170,3 +170,19 @@ row Region group=byRegion`);
     expect(rebuilt.settings.colorScales).toEqual(result.settings.colorScales);
   });
 });
+
+describe("line time settings", () => {
+  it("starts the time record whole from its first key", () => {
+    const { result, charts } = build(
+      "line @weekly x=Date time.interval=week time.splitField=Region"
+    );
+    expect(result.diagnostics).toEqual([]);
+    expect((charts[0] as unknown as { time: unknown }).time).toEqual({
+      interval: "week",
+      weekStart: "monday",
+      aggregation: "count",
+      missingPeriods: "gap",
+      splitField: "Region",
+    });
+  });
+});

@@ -49,3 +49,32 @@ A fresh agent got only `reference-v0.md` and `briefs.md`. It produced 6 drafts i
 4. The reference must include the formula language. It will be generated from the registry and the formula grammar, not written by hand.
 5. Smaller additions: `legend unit { mark "label" … }` covering several marks, list values for `show=`, quoted names in layouts, and `value=AGG` on row and bar charts (lowered to a grouped summary).
 6. House style is a product decision (see the plan). Either the library defaults adopt it, or the examples drop it.
+
+## Cold-agent reruns during milestone 5
+
+Each run used a fresh agent with the same six briefs, the generated reference, and the `exploreda-dsl` CLI. The agent wrote a first pass without running anything, then fixed its drafts using `check`. Its drafts are in `agent-drafts-v1/` through `agent-drafts-v3/`, each beside its untouched `.first.eda` copy.
+
+| Run | Reference                                    | First pass clean | Final `check` 0 | Features given up                                                                                 |
+| --- | -------------------------------------------- | ---------------: | --------------: | ------------------------------------------------------------------------------------------------- |
+| 2   | `reference-v1.txt` (129 lines)               |           1 of 6 |          6 of 6 | 3 (fan bands, weekly stacked area, grouped box plot)                                              |
+| 3   | `reference-v2.txt`, plus part-setting checks |           2 of 6 |          6 of 6 | 1 (the "+N jobs" label signs)                                                                     |
+| 4   | `reference-v3.txt`, plus value checks        |           3 of 6 |          6 of 6 | 0 (partial only: points at both ends took two marks, and leader notes aim by guessed coordinates) |
+
+**What run 2 exposed, and what changed:**
+
+- `check` accepted invented keys on composition parts. Every part now has a list of allowed and required settings, and anything else is reported at its line.
+- Missing required settings gave no line pointer. A part missing one is now left out with a diagnostic that names the setting.
+- The reference listed nested settings by name only. It now has `exploreda-dsl reference composition`, nested keys in `reference <type>`, and notes on line time series, box-plot groups, facets, band marks, and nulls in formulas.
+
+**What run 3 exposed, and what changed:**
+
+- A bad value dropped the whole graphic, such as `center=0`, `show=ends`, or `direction=horizontal`. Each setting's value is now checked at its line (numbers, true or false, allowed words). A part the graphic still can't draw is left out on its own, down to a single mark.
+- Partial nested records failed silently: a label's `valueSigns`, or a line's `time` with only `time.interval=week`. Both now fill the rest from defaults.
+- The reference didn't show allowed values. It now lists them (`show=all|first|last|min|max`), plus diverging value scales, last-by-order measures, legend items, per-instance scales, and how to quote a repeat key.
+
+**What run 4 exposed, and what changed:**
+
+- The reference showed a legend item backwards. It's `item "Label" mark=M`, which caused 10 of brief 4's 17 first-pass problems.
+- It didn't say that a rule needs `at=`, how marks are colored (`stroke=`, `fill=`, `colorField=`, `valueField=` with `valueScale=`), or that a unit sets its axis titles with `axisTitles.y=`. The reference now covers all of these.
+- A `color=` on a mark now suggests the right settings. It used to suggest `colorField`, which is wrong for a value scale.
+- Still open: a note can't aim at one series inside a frame, and `point show=` has no "both ends" value. Both are product features, not text features.

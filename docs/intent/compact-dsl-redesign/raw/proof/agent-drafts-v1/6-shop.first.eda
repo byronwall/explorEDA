@@ -1,0 +1,22 @@
+dashboard "Shop overview"
+grid columns=12 rowHeight=100
+field Revenue format=currency currency=USD
+scale @region field=Region map=West:#3479a8,East:#c77a45,North:#4b9688,South:#8a6bb0
+
+metric @orders count
+metric @total sum(Revenue)
+metric @average avg(Revenue)
+row Region y=Revenue color=Region colorScale=region
+hist "Delivery Days" bins=24
+line @weekly x="Order Date" y=Revenue color=Channel interval=week stack=true area=true {
+  band x=2024-06-01..2024-08-31 "Summer sale"
+}
+table @recent Order,"Order Date",Region,Channel,Revenue
+filter Region=West,East
+
+layout {
+  2: orders total average
+  4: Region "Delivery Days"
+  4: weekly
+  4: recent
+}

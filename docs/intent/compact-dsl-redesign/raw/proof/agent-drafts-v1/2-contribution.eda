@@ -1,0 +1,32 @@
+dashboard "From orders to contribution"
+grid columns=12 rowHeight=100
+field Discount as=num
+field "Unit Price" as=num
+calc discount_rate = Discount == null ? 0 : min(max(Discount, 0), 0.25)
+calc gross_sales = Units * ["Unit Price"]
+calc discount_amount = gross_sales * discount_rate
+calc net_sales = gross_sales - discount_amount
+calc contribution = net_sales - Cost
+calc contribution_rate = net_sales == 0 ? null : contribution / net_sales * 100
+calc order_band = net_sales >= 500 ? "Large" : net_sales >= 100 ? "Standard" : "Small"
+calc order_month = formatDate(["Order Date"], "%Y-%m")
+calc order_quarter = extractDateComponent(["Order Date"], "quarter")
+field contribution_rate unit=%
+
+markdown @intro content="Each order runs a chain: gross sales are units times unit price; the discount rate (clamped to 0-25%) gives the discount amount; net sales are gross less discount; contribution is net sales less cost; contribution rate is contribution as a share of net sales."
+scatter @netcon x=net_sales y=contribution x.scale=symlog y.scale=symlog title="Net sales vs contribution"
+row order_band
+hist contribution_rate
+line @trend x=Order y=net_sales facet.field=order_quarter facet.columns=2 showLegend=false
+pivot @bymonth rows=order_month {
+  value sum(net_sales) label="Net sales"
+  value sum(contribution) label="Contribution"
+}
+table @trace Order,Units,"Unit Price",Discount,discount_rate,gross_sales,discount_amount,net_sales,Cost,contribution,contribution_rate,order_band
+
+layout {
+  3: intro intro netcon netcon
+  3: order_band contribution_rate
+  4: trend trend bymonth
+  4: trace
+}

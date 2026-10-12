@@ -119,7 +119,7 @@ describe("exportViews", () => {
     const { text, omitted } = exportViews(edited, { rows, name: "Sales" });
     expect(omitted).toEqual([]);
     // Shared definitions appear once, above the first view.
-    expect(text.match(/^calc profit=/gm)).toHaveLength(1);
+    expect(text.match(/^calc profit = /gm)).toHaveLength(1);
     expect(text.indexOf("calc margin")).toBeLessThan(
       text.indexOf("view Overview")
     );
@@ -145,5 +145,65 @@ describe("exportViews", () => {
     expect(omitted).toEqual([
       expect.stringMatching(/^By channel: its own fields/),
     ]);
+  });
+});
+
+describe("charts defined once", () => {
+  const SHARED = `row Channel title="By channel"
+hist Revenue
+metric @total sum(Revenue)
+
+view Overview {
+  layout {
+    2: total
+    4: Channel Revenue
+  }
+}
+
+view Web {
+  Channel select.Channel=Web title="Web only"
+  total
+}
+
+view Everything {
+  grid rowHeight=80
+}`;
+
+  it("places a shared chart in each view that names it", () => {
+    const result = compileViews(SHARED, { rows });
+    expect(result.diagnostics).toEqual([]);
+    const [overview, web, everything] = result.views;
+    expect(overview!.settings.charts.map((chart) => chart.id)).toEqual([
+      "Channel",
+      "Revenue",
+      "total",
+    ]);
+    // An override line replaces the chart's settings of the same name.
+    expect(web!.settings.charts).toMatchObject([
+      {
+        id: "Channel",
+        title: "Web only",
+        filters: [{ type: "value", field: "Channel", values: ["Web"] }],
+      },
+      { id: "total" },
+    ]);
+    // A view that names no shared chart shows them all.
+    expect(everything!.settings.charts).toHaveLength(3);
+  });
+
+  it("writes charts several views share once, and each view's changes", () => {
+    const start = compileViews(SHARED, { rows });
+    const { text } = exportViews(start.views, { rows, name: "Sales" });
+    expect(text.match(/^row Channel/gm)).toHaveLength(1);
+    expect(text).toContain('  Channel select.Channel=Web title="Web only"');
+    const rebuilt = compileViews(text, { rows });
+    expect(rebuilt.diagnostics).toEqual([]);
+    const strip = (settings: (typeof start.views)[number]["settings"]) => ({
+      ...settings,
+      metadata: { ...settings.metadata, createdAt: "", modifiedAt: "" },
+    });
+    expect(rebuilt.views.map((view) => strip(view.settings))).toEqual(
+      start.views.map((view) => strip(view.settings))
+    );
   });
 });

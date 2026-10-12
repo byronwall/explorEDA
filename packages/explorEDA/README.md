@@ -310,7 +310,7 @@ Set an axis range with `x.min=`, `x.max=`, `y.min=`, and `y.max=`. They save as 
 
 ### Several views in one text
 
-One text can hold every saved view. Shared definitions (field settings, calculations, color scales, and grouped summaries) come first and apply to every view. Each `view "Name" { }` holds that view's grid, Rows view, charts, and layout.
+One text can hold every saved view. Shared definitions (field settings, calculations, color scales, and grouped summaries) come first and apply to every view. Each `view "Name" { }` holds that view's grid, theme, Rows view, charts, and layout. A chart written above the views is defined once: a view shows it when its layout places it or a line names it, and that line changes only what differs, such as `Channel select.Channel=Web`. A view that names no shared chart shows them all. `exportViews` writes a chart that several views share this way.
 
 ```text
 dashboard "Sales"

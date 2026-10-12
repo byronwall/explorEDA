@@ -1,7 +1,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { expect, it } from "vitest";
-import { exportDocument } from "exploreda";
+import { exportDocument, exportViews } from "exploreda";
 import { evaluateAnalysisQuery } from "exploreda/analysis";
 import { parseCsvData } from "./csvParser";
 import { examples } from "./demos/examples";
@@ -12,6 +12,8 @@ import { examples } from "./demos/examples";
  * text shorter, lower them to the new totals.
  */
 const BUDGET = { lines: 1926, pairs: 2577 };
+/** The same, for every file example's views written as one text. */
+const VIEWS_BUDGET = { lines: 141, pairs: 102 };
 
 /** Space-separated tokens outside quotes. */
 function tokens(line: string) {
@@ -59,4 +61,34 @@ it("keeps the examples' dashboard text within its size budget", async () => {
   }
   expect(size.lines).toBeLessThanOrEqual(BUDGET.lines);
   expect(size.pairs).toBeLessThanOrEqual(BUDGET.pairs);
+});
+
+it("keeps the examples' multi-view text within its size budget", async () => {
+  const texts: string[] = [];
+  for (const example of examples) {
+    if (example.project || !example.savedData || !example.views?.length) {
+      continue;
+    }
+    const rows = await parseCsvData(
+      readFileSync(join(__dirname, "../public", example.data), "utf8")
+    );
+    texts.push(
+      exportViews(
+        [
+          { name: example.title, settings: example.savedData },
+          ...example.views.map((view) => ({
+            name: view.name,
+            settings: view.savedData,
+          })),
+        ],
+        { rows }
+      ).text
+    );
+  }
+  const lines = texts.flatMap((text) =>
+    text.split("\n").filter((line) => line.trim())
+  );
+  const pairs = lines.flatMap(tokens).filter((token) => /=/.test(token));
+  expect(lines.length).toBeLessThanOrEqual(VIEWS_BUDGET.lines);
+  expect(pairs.length).toBeLessThanOrEqual(VIEWS_BUDGET.pairs);
 });
