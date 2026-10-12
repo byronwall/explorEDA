@@ -93,9 +93,7 @@
         "importance": "core",
         "status": "active",
         "time_horizon": "now",
-        "sources": [
-          "s-request"
-        ]
+        "sources": ["s-request"]
       },
       {
         "id": "c-composition",
@@ -105,10 +103,7 @@
         "importance": "core",
         "status": "active",
         "time_horizon": "now",
-        "sources": [
-          "s-request",
-          "s-corpus"
-        ]
+        "sources": ["s-request", "s-corpus"]
       },
       {
         "id": "c-checkable",
@@ -118,9 +113,7 @@
         "importance": "core",
         "status": "active",
         "time_horizon": "now",
-        "sources": [
-          "s-request"
-        ]
+        "sources": ["s-request"]
       },
       {
         "id": "c-terse",
@@ -130,9 +123,7 @@
         "importance": "core",
         "status": "active",
         "time_horizon": "now",
-        "sources": [
-          "s-request"
-        ]
+        "sources": ["s-request"]
       },
       {
         "id": "c-break",
@@ -142,9 +133,7 @@
         "importance": "supporting",
         "status": "active",
         "time_horizon": "now",
-        "sources": [
-          "s-request"
-        ]
+        "sources": ["s-request"]
       },
       {
         "id": "c-one-source",
@@ -154,9 +143,7 @@
         "importance": "core",
         "status": "active",
         "time_horizon": "now",
-        "sources": [
-          "s-reference"
-        ]
+        "sources": ["s-reference"]
       },
       {
         "id": "c-formulas",
@@ -166,9 +153,7 @@
         "importance": "supporting",
         "status": "active",
         "time_horizon": "now",
-        "sources": [
-          "s-corpus"
-        ]
+        "sources": ["s-corpus"]
       }
     ],
     "themes": [
@@ -293,10 +278,7 @@
       "description": "vitest round trip over all demo examples plus exploreda-dsl check on fixture files"
     },
     "milestones": [],
-    "cut_line": [
-      "Editor/LSP completion",
-      "Notebook sync"
-    ],
+    "cut_line": ["Editor/LSP completion", "Notebook sync"],
     "open_decisions": []
   },
   "history": [

@@ -101,18 +101,18 @@ Scores run from 0 to 10, where 10 is best.
 - **Edit locality:** one change touches one line and renumbers nothing.
 - **Terseness:** size of the 57-example corpus.
 
-| # | Approach | Legibility | Composition | Diagnostics | Agent pass | Locality | Terse | Note |
-|---|---|---:|---:|---:|---:|---:|---:|---|
-| 1 | Export fix | 5 | 1 | 6 | 5 | 3 | 5 | Cheap win; composition untouched |
-| 2 | Schema registry | 6 | 1 | 9 | 7 | 3 | 6 | Foundation; no nesting |
-| 3 | Indented outline | 8 | 7 | 7 | 7 | 8 | 7 | Nesting fixes indexes |
-| 4 | KDL | 7 | 7 | 8 | 5 | 8 | 6 | Strict; less familiar to agents |
-| 5 | YAML + schema | 5 | 5 | 9 | 6 | 6 | 2 | Verbose; IDs return |
-| 6 | TS builder | 5 | 8 | 9 | 6 | 6 | 6 | Code, not data; disqualified for in-app text |
-| 7 | Encoding heads | 8 | 2 | 5 | 5 | 5 | 9 | Too many grammars |
-| 8 | ASCII layout | 7 | 1 | 7 | 7 | 7 | 6 | Layout only |
-| 9 | Composition sublanguage | 6 | 9 | 7 | 7 | 8 | 8 | Biggest single payoff |
-| 10 | Define once | 6 | 2 | 6 | 6 | 7 | 8 | Multi-view only |
+| #   | Approach                | Legibility | Composition | Diagnostics | Agent pass | Locality | Terse | Note                                         |
+| --- | ----------------------- | ---------: | ----------: | ----------: | ---------: | -------: | ----: | -------------------------------------------- |
+| 1   | Export fix              |          5 |           1 |           6 |          5 |        3 |     5 | Cheap win; composition untouched             |
+| 2   | Schema registry         |          6 |           1 |           9 |          7 |        3 |     6 | Foundation; no nesting                       |
+| 3   | Indented outline        |          8 |           7 |           7 |          7 |        8 |     7 | Nesting fixes indexes                        |
+| 4   | KDL                     |          7 |           7 |           8 |          5 |        8 |     6 | Strict; less familiar to agents              |
+| 5   | YAML + schema           |          5 |           5 |           9 |          6 |        6 |     2 | Verbose; IDs return                          |
+| 6   | TS builder              |          5 |           8 |           9 |          6 |        6 |     6 | Code, not data; disqualified for in-app text |
+| 7   | Encoding heads          |          8 |           2 |           5 |          5 |        5 |     9 | Too many grammars                            |
+| 8   | ASCII layout            |          7 |           1 |           7 |          7 |        7 |     6 | Layout only                                  |
+| 9   | Composition sublanguage |          6 |           9 |           7 |          7 |        8 |     8 | Biggest single payoff                        |
+| 10  | Define once             |          6 |           2 |           6 |          6 |        7 |     8 | Multi-view only                              |
 
 ## Choice
 

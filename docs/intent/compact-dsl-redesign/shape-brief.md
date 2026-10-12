@@ -51,15 +51,15 @@ Dashboard text v2
 
 ## Behavior
 
-| Situation | Expected result |
-| --- | --- |
-| A setting equals its default or inferred value | Export omits it |
-| Unknown key or bad value | A diagnostic at the line and column with the nearest valid key; that key is skipped and the chart still builds |
-| Missing `}` | A top-level keyword at column 0 closes the open block. The error points to where indentation suggests the brace belongs |
-| A saved value with no registry word | Export writes `set path=value`, and check warns about the gap |
-| A chart is placed twice or not at all, or its matrix cells aren't a rectangle | An error naming the chart |
-| Export of a layout | The matrix where it reproduces the grid exactly; `at=` only for the charts it can't |
-| `fmt` runs twice, or export runs on compiled canonical text | No change |
+| Situation                                                                     | Expected result                                                                                                         |
+| ----------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| A setting equals its default or inferred value                                | Export omits it                                                                                                         |
+| Unknown key or bad value                                                      | A diagnostic at the line and column with the nearest valid key; that key is skipped and the chart still builds          |
+| Missing `}`                                                                   | A top-level keyword at column 0 closes the open block. The error points to where indentation suggests the brace belongs |
+| A saved value with no registry word                                           | Export writes `set path=value`, and check warns about the gap                                                           |
+| A chart is placed twice or not at all, or its matrix cells aren't a rectangle | An error naming the chart                                                                                               |
+| Export of a layout                                                            | The matrix where it reproduces the grid exactly; `at=` only for the charts it can't                                     |
+| `fmt` runs twice, or export runs on compiled canonical text                   | No change                                                                                                               |
 
 ## Examples
 
