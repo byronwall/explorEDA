@@ -10,7 +10,7 @@ import type { MDXComponents } from "mdx/types";
 import { isValidElement, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { docsPath, slugify } from "../paths";
-import { inlineLinkClass, proseClass } from "./chrome";
+import { inlineCodeClass, inlineLinkClass, proseClass } from "./chrome";
 import { CodeBlock } from "./code";
 import { WorkedOrder } from "./workedOrder";
 import {
@@ -50,7 +50,13 @@ export function DocsLink({
 }
 
 /** A section heading with a link to itself that shows on hover. */
-function Heading({ level, children }: { level: 2 | 3; children?: ReactNode }) {
+export function Heading({
+  level,
+  children,
+}: {
+  level: 2 | 3;
+  children?: ReactNode;
+}) {
   const text = textOf(children);
   const id = slugify(text);
   const Tag = level === 2 ? "h2" : "h3";
@@ -317,11 +323,7 @@ export const mdxComponents: MDXComponents = {
     </ol>
   ),
   li: ({ children }) => <li className="pl-1">{children}</li>,
-  code: ({ children }) => (
-    <code className="rounded border border-border/70 bg-muted/70 px-[0.3em] py-px font-mono text-[0.85em] text-foreground">
-      {children}
-    </code>
-  ),
+  code: ({ children }) => <code className={inlineCodeClass}>{children}</code>,
   kbd: ({ children }) => (
     <kbd className="rounded border border-border border-b-2 bg-card px-1.5 py-px font-mono text-[0.8em] text-foreground">
       {children}

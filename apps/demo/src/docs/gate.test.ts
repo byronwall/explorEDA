@@ -7,6 +7,7 @@ import { describe, expect, it } from "vitest";
 import { exampleCoverage } from "@/demos/coverage";
 import { examples } from "@/demos/examples";
 import { catalogue } from "./catalogue";
+import { GLANCES } from "./glance";
 import { findDocsErrors, type DocsGateInput } from "./gate";
 import { allTargets } from "./targets";
 import { CHART_SETTING_KEYS } from "exploreda/docs-kit";
@@ -75,6 +76,7 @@ function currentInput(): DocsGateInput {
     ),
     publicFiles: publicFiles(),
     settingKeys: CHART_SETTING_KEYS,
+    glanceTypes: Object.keys(GLANCES),
     commonDescriptions: COMMON_SETTINGS,
     chartDescriptions: CHART_SETTINGS,
   };
@@ -193,17 +195,21 @@ describe("docs gate", () => {
     ]);
   });
 
-  it("fails when a chart page has no settings reference", () => {
+  it("fails for a chart page without a glance, or with its own settings", () => {
     const input = currentInput();
     expect(
       findDocsErrors({
         ...input,
+        glanceTypes: input.glanceTypes.filter((type) => type !== "bar"),
         sources: {
           ...input.sources,
-          bar: input.sources.bar!.replace("<SettingsReference", "<Removed"),
+          row: `${input.sources.row}\n<SettingsReference type="row" />\n`,
         },
       })
-    ).toContain('Page "bar" has no <SettingsReference type="bar" />');
+    ).toEqual([
+      "pages/row.mdx renders a settings reference; chart pages get theirs from the page template",
+      'Page "bar" has no entry in glance.ts for "bar"',
+    ]);
   });
 
   it("fails for a new setting without a description, or a stale one", () => {

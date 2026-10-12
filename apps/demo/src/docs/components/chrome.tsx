@@ -6,6 +6,8 @@ import type { DocsPage } from "../catalogue";
 import { docsPath } from "../paths";
 
 export const proseClass = "text-[0.9375rem] leading-7 text-foreground/80";
+export const inlineCodeClass =
+  "rounded border border-border/70 bg-muted/70 px-[0.3em] py-px font-mono text-[0.85em] text-foreground";
 export const inlineLinkClass =
   "font-medium text-primary underline decoration-primary/30 underline-offset-[3px] transition-colors hover:decoration-primary focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
 export const labelClass =

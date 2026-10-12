@@ -24,6 +24,7 @@ import {
 } from "./components/chrome";
 import { DocsLink, mdxComponents } from "./components/content";
 import { DocsLayout } from "./components/layout";
+import { AtAGlance, SavedSettings } from "./components/template";
 import {
   ContentsReader,
   InlineContents,
@@ -105,6 +106,7 @@ function GuidePage({ page }: { page: DocsPage }) {
         <PageHeader trail={[GROUP_LABELS[page.group]]} heading={page.title}>
           {page.lede}
         </PageHeader>
+        {page.chartType && <AtAGlance chartType={page.chartType} />}
         <InlineContents entries={contents} />
         <article className="mt-10 min-w-0">
           {Content && (
@@ -116,6 +118,7 @@ function GuidePage({ page }: { page: DocsPage }) {
               }
             >
               <Content />
+              {page.chartType && <SavedSettings chartType={page.chartType} />}
               <ContentsReader onRead={setContents} />
             </Suspense>
           )}

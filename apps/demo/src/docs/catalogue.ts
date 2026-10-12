@@ -62,8 +62,6 @@ export type DocsPage = {
   title: string;
   group: DocsGroup;
   icon: LucideIcon;
-  /** The page's eyebrow above its title. */
-  eyebrow: string;
   /** One sentence under the title. */
   lede: string;
   /** One sentence on the index card. */
@@ -88,7 +86,6 @@ export const catalogue: readonly DocsPage[] = [
     title: "The workspace",
     group: "start",
     icon: House,
-    eyebrow: "Workspace",
     lede: "Find your way around the toolbar, chart headers, filter bar, and grid.",
     summary: "Toolbar, chart headers, the filter bar, and the grid.",
     highlights: ["Toolbar", "Chart header", "Filter bar", "Layout"],
@@ -113,7 +110,6 @@ export const catalogue: readonly DocsPage[] = [
     title: "Load data",
     group: "start",
     icon: Upload,
-    eyebrow: "Task",
     lede: "Open a CSV, JSON, or project file, or start from an example.",
     summary: "Drop a file or open an example.",
     highlights: ["CSV", "JSON", "Projects"],
@@ -127,7 +123,6 @@ export const catalogue: readonly DocsPage[] = [
     title: "Fields",
     group: "start",
     icon: ListTree,
-    eyebrow: "Workspace",
     lede: "See every field with its counts and distribution, and turn any of them into a chart.",
     summary: "Profile every field and add a chart of any of them.",
     highlights: ["Field list", "Add a chart"],
@@ -141,7 +136,6 @@ export const catalogue: readonly DocsPage[] = [
     title: "Chart settings",
     group: "start",
     icon: Settings2,
-    eyebrow: "Workspace",
     lede: "Change what a chart shows, how it is scaled, and how it reads, with the chart still in view.",
     summary:
       "Open a chart's settings, find the right tab, and undo a session of edits at once.",
@@ -155,7 +149,6 @@ export const catalogue: readonly DocsPage[] = [
     title: "Developers",
     group: "start",
     icon: Code,
-    eyebrow: "Guide",
     lede: "Embed the workspace in a React app and keep its state.",
     summary: "Props, saved state, and the package guide.",
     highlights: ["Props", "Saved state", "Projects"],
@@ -169,7 +162,6 @@ export const catalogue: readonly DocsPage[] = [
     title: "Scatter plot",
     group: "plots",
     icon: ScatterChart,
-    eyebrow: "Chart guide",
     lede: "Compare two fields across rows. Use the pattern to spot relationships, clusters, and unusual records.",
     summary:
       "Compare two fields row by row, brush a range, and trace a point back to its source values.",
@@ -193,7 +185,6 @@ export const catalogue: readonly DocsPage[] = [
     title: "Bar chart",
     group: "plots",
     icon: BarChart3,
-    eyebrow: "Chart guide",
     lede: "Compare categories or group a numeric measure. The selected operation determines what each bar means.",
     summary:
       "Compare category counts, numeric bins, or a grouped measure, and filter by clicking or dragging.",
@@ -214,7 +205,6 @@ export const catalogue: readonly DocsPage[] = [
     title: "Row chart",
     group: "plots",
     icon: ChartBar,
-    eyebrow: "Chart guide",
     lede: "Compare counts across many categories, with labels that stay readable however long they are.",
     summary:
       "Count rows per category in horizontal bars, and click a bar to filter.",
@@ -230,7 +220,6 @@ export const catalogue: readonly DocsPage[] = [
     title: "Line chart",
     group: "plots",
     icon: ChartLine,
-    eyebrow: "Chart guide",
     lede: "Follow a measure over time or along a numeric field, one line per series.",
     summary:
       "Draw series over dates or numbers, summarize by period, and fill areas.",
@@ -246,7 +235,6 @@ export const catalogue: readonly DocsPage[] = [
     title: "Box plot",
     group: "plots",
     icon: ChartCandlestick,
-    eyebrow: "Chart guide",
     lede: "Compare the spread of a numeric field across groups: middle half, whiskers, and outliers.",
     summary:
       "Summarize a numeric field per group as boxes, violins, and points.",
@@ -262,7 +250,6 @@ export const catalogue: readonly DocsPage[] = [
     title: "ECDF",
     group: "plots",
     icon: Spline,
-    eyebrow: "Chart guide",
     lede: "Read what share of rows fall at or below any value, and compare groups fairly.",
     summary:
       "Plot cumulative shares, read quantiles, and compare groups of any size.",
@@ -278,7 +265,6 @@ export const catalogue: readonly DocsPage[] = [
     title: "Heatmap",
     group: "plots",
     icon: Grid3x3,
-    eyebrow: "Chart guide",
     lede: "Compare a count or measure across two categories at once.",
     summary:
       "Shade each pair of categories by a count or a summary of a measure.",
@@ -294,7 +280,6 @@ export const catalogue: readonly DocsPage[] = [
     title: "Calendar heatmap",
     group: "plots",
     icon: CalendarDays,
-    eyebrow: "Chart guide",
     lede: "See a daily measure laid out as a year of weeks.",
     summary: "Shade each day by a count or measure, a year at a time.",
     highlights: ["Daily cells", "Week start"],
@@ -309,7 +294,6 @@ export const catalogue: readonly DocsPage[] = [
     title: "Hierarchy",
     group: "plots",
     icon: LayoutGrid,
-    eyebrow: "Chart guide",
     lede: "See how a total divides through nested categories, as a treemap, icicle, or sunburst.",
     summary: "Nest categories and size each node by a count or a sum.",
     highlights: ["Treemap", "Icicle", "Sunburst"],
@@ -324,7 +308,6 @@ export const catalogue: readonly DocsPage[] = [
     title: "Sankey chart",
     group: "plots",
     icon: Workflow,
-    eyebrow: "Chart guide",
     lede: "Follow rows as they flow through a sequence of categories.",
     summary:
       "Trace each row’s path through ordered categories as weighted flows.",
@@ -340,7 +323,6 @@ export const catalogue: readonly DocsPage[] = [
     title: "Parallel coordinates",
     group: "plots",
     icon: ChartNetwork,
-    eyebrow: "Chart guide",
     lede: "Compare many numeric fields at once, with each row drawn as one line across them.",
     summary: "Draw each row as a line across several axes to compare profiles.",
     highlights: ["Many fields", "Line per row"],
@@ -355,7 +337,6 @@ export const catalogue: readonly DocsPage[] = [
     title: "Scatter matrix",
     group: "plots",
     icon: LayoutGrid,
-    eyebrow: "Chart guide",
     lede: "See every pairing of a set of fields in one grid.",
     summary:
       "Compare each pair of fields at once, with distributions on the diagonal.",
@@ -371,7 +352,6 @@ export const catalogue: readonly DocsPage[] = [
     title: "3D scatter plot",
     group: "plots",
     icon: Orbit,
-    eyebrow: "Chart guide",
     lede: "Place rows by three numeric fields and turn the scene to read their shape.",
     summary: "Plot three fields in a scene you can orbit, with color and size.",
     highlights: ["Three axes", "Orbit"],
@@ -386,7 +366,6 @@ export const catalogue: readonly DocsPage[] = [
     title: "Map",
     group: "plots",
     icon: MapIcon,
-    eyebrow: "Chart guide",
     lede: "Place rows on a map by their coordinates, or shade regions by a measure.",
     summary: "Plot points by latitude and longitude, or join rows to regions.",
     highlights: ["Points", "Regions", "Projection"],
@@ -401,7 +380,6 @@ export const catalogue: readonly DocsPage[] = [
     title: "Composition",
     group: "plots",
     icon: Shapes,
-    eyebrow: "Chart guide",
     lede: "Build a custom graphic on an artboard from text, guides, and repeating chart units.",
     summary: "Arrange text, guides, and data-bound chart units on an artboard.",
     highlights: ["Artboard", "Repeats", "Computed text"],
@@ -416,7 +394,6 @@ export const catalogue: readonly DocsPage[] = [
     title: "Data table",
     group: "tables",
     icon: Table,
-    eyebrow: "Chart guide",
     lede: "Read the rows themselves, sorted and searched, with each column’s distribution in its header.",
     summary:
       "Show rows with sorting, search, and a distribution under each column name.",
@@ -438,7 +415,6 @@ export const catalogue: readonly DocsPage[] = [
     title: "Pivot table",
     group: "tables",
     icon: Table2,
-    eyebrow: "Chart guide",
     lede: "Group rows by fields and summarize measures in a grid, with totals.",
     summary: "Group rows and summarize measures, with totals and shaded cells.",
     highlights: ["Grouped measures", "Totals"],
@@ -453,7 +429,6 @@ export const catalogue: readonly DocsPage[] = [
     title: "Summary table",
     group: "tables",
     icon: Sigma,
-    eyebrow: "Chart guide",
     lede: "Profile every field at once: its type, its spread, and its distribution.",
     summary: "List each field with its statistics and distribution.",
     highlights: ["Field profiles"],
@@ -468,7 +443,6 @@ export const catalogue: readonly DocsPage[] = [
     title: "Metric card",
     group: "supporting",
     icon: Gauge,
-    eyebrow: "Chart guide",
     lede: "Show one number, a count or a summary of a measure, for the rows that pass every filter.",
     summary: "Show one count, sum, or average for the filtered rows.",
     highlights: ["One number", "Once per"],
@@ -483,7 +457,6 @@ export const catalogue: readonly DocsPage[] = [
     title: "Color legend",
     group: "supporting",
     icon: Palette,
-    eyebrow: "Chart guide",
     lede: "Show the color scales that charts share, in one place.",
     summary: "Show what each shared color means, for one or more fields.",
     highlights: ["Shared colors"],
@@ -498,7 +471,6 @@ export const catalogue: readonly DocsPage[] = [
     title: "Notes",
     group: "supporting",
     icon: NotebookText,
-    eyebrow: "Chart guide",
     lede: "Explain a dashboard in formatted text beside its charts.",
     summary: "Write formatted notes that sit in the dashboard grid.",
     highlights: ["Markdown"],
@@ -513,7 +485,6 @@ export const catalogue: readonly DocsPage[] = [
     title: "Filters",
     group: "tasks",
     icon: Filter,
-    eyebrow: "Task",
     lede: "Select marks to filter every chart, read the active filters, and save a dashboard with a selection in place.",
     summary:
       "Click or drag to filter every chart, then clear or save the selection.",
@@ -528,7 +499,6 @@ export const catalogue: readonly DocsPage[] = [
     title: "Trace a mark",
     group: "tasks",
     icon: Crosshair,
-    eyebrow: "Task",
     lede: "See exactly how a mark was computed, from its source rows to its position.",
     summary:
       "Follow a mark back through calculations, filters, and scales to its rows.",
@@ -543,7 +513,6 @@ export const catalogue: readonly DocsPage[] = [
     title: "Edit in place",
     group: "tasks",
     icon: PencilLine,
-    eyebrow: "Task",
     lede: "Change a chart's title and axis ranges where they are drawn.",
     summary: "Edit titles and axis ranges right on the chart.",
     highlights: ["Titles", "Axis ranges"],
@@ -557,7 +526,6 @@ export const catalogue: readonly DocsPage[] = [
     title: "Calculated fields",
     group: "tasks",
     icon: Calculator,
-    eyebrow: "Task",
     lede: "Make new fields from the data you have, and see each formula's inputs.",
     summary: "Write formulas, preview results, and follow their inputs.",
     highlights: ["Formulas", "\u0192x markers"],
@@ -570,7 +538,6 @@ export const catalogue: readonly DocsPage[] = [
     title: "Dashboard text",
     group: "tasks",
     icon: FileCode,
-    eyebrow: "Task",
     lede: "Describe a whole dashboard in compact text, and build it in one step.",
     summary: "Write a dashboard as text, with the full reference.",
     highlights: ["Text", "Reference"],
@@ -583,7 +550,6 @@ export const catalogue: readonly DocsPage[] = [
     title: "Views and history",
     group: "tasks",
     icon: History,
-    eyebrow: "Task",
     lede: "Keep several views of the same rows, and step back through every change.",
     summary: "Save views as tabs and undo any change.",
     highlights: ["Views", "Undo", "History"],
@@ -596,7 +562,6 @@ export const catalogue: readonly DocsPage[] = [
     title: "Export",
     group: "tasks",
     icon: Download,
-    eyebrow: "Task",
     lede: "Copy settings, data, or a whole analysis, and download views and projects.",
     summary: "Copy or download settings, rows, and analyses.",
     highlights: ["JSON", "Copy data", "PNG"],
@@ -610,7 +575,6 @@ export const catalogue: readonly DocsPage[] = [
     title: "Scales and axes",
     group: "guides",
     icon: Ruler,
-    eyebrow: "Guide",
     lede: "Choose a scale, tick density, grid, range, and title for each axis.",
     summary:
       "Linear, symmetric log, log, time, and band scales, and axis settings.",
@@ -634,7 +598,6 @@ export const catalogue: readonly DocsPage[] = [
     title: "Color",
     group: "guides",
     icon: Palette,
-    eyebrow: "Guide",
     lede: "Give each value one color across the dashboard, and explain it once.",
     summary: "Shared color scales, palettes, and legends.",
     highlights: ["Shared scales", "Palettes"],
@@ -648,7 +611,6 @@ export const catalogue: readonly DocsPage[] = [
     title: "Facets",
     group: "guides",
     icon: Layers,
-    eyebrow: "Guide",
     lede: "Repeat a chart for each value of a field, on shared scales.",
     summary: "Small multiples in wrap or grid layouts.",
     highlights: ["Wrap", "Grid", "Shared scales"],
@@ -661,7 +623,6 @@ export const catalogue: readonly DocsPage[] = [
     title: "Empty and invalid states",
     group: "guides",
     icon: CircleAlert,
-    eyebrow: "Guide",
     lede: "What charts say when no rows match, or when data or settings can't be used.",
     summary: "Messages for empty results and invalid data or settings.",
     highlights: ["No rows", "Validation"],
@@ -674,7 +635,6 @@ export const catalogue: readonly DocsPage[] = [
     title: "How rendering works",
     group: "guides",
     icon: Workflow,
-    eyebrow: "Shared guide",
     lede: "Follow one order through the host app, data layer, chart definitions, and saved settings.",
     summary:
       "Follow one order from its raw row through calculations, filters, chart plans, drawing, and saved settings.",
