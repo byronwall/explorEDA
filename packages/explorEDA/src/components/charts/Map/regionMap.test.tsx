@@ -329,11 +329,18 @@ it("counts every joined row but averages only valid measures", () => {
     },
   };
   const region = (aggregation: MapSettings["aggregation"]) =>
-    planRegionMap({ ...settings, aggregation }, local, asset, 800, 500)
-      .regions.find((item) => item.key === "A")!;
+    planRegionMap(
+      { ...settings, aggregation },
+      local,
+      asset,
+      800,
+      500
+    ).regions.find((item) => item.key === "A")!;
   expect(region("count").value).toBe(8);
   expect(region("sum").value).toBe(10);
-  expect(region("sum").contributors.filter((item) => item.included)).toHaveLength(4);
+  expect(
+    region("sum").contributors.filter((item) => item.included)
+  ).toHaveLength(4);
   expect(region("average").value).toBe(2.5);
   const zero = planRegionMap(settings, snapshot, asset, 800, 500).regions;
   expect(zero.find((item) => item.key === "Zero")!.state).toBe("value");
