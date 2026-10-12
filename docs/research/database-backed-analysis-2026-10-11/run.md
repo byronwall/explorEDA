@@ -71,7 +71,10 @@ No changesets or application screenshots are needed for documentation-only chang
 - `git diff --check`: passed before checkpoint.
 - Application tests: not run during preparation. No application files changed.
 - Pro results and Sleuth shaping: pending.
-- PRs: pending results.
+- PRs: pending results. Preparation branch is pushed to `origin/codex/database-query-research`.
+- Preparation commits: shared sources `8ec797d`; query `8136506`; transport `ad7cba4`; adapters `de7eff2`; hosting `ad98f4b`.
+- Hosting visibly confirmed baseline f01ff0f, started provider research, and reported no outputs yet.
+- Submission screenshot: `tmp/database-research/hosting-submitted.png` (local evidence, not committed).
 - Heartbeat: `collect-database-architecture-research`, ACTIVE, hourly, attached to this chat.
 - Schedule verified from the saved automation. Created Oct 11 at 23:26:21 EDT. First hourly check is due about Oct 12 at 00:26 EDT.
 - The monitor continues collection and PR work; it does not merely remind Byron.
