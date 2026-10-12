@@ -349,6 +349,9 @@ importers:
       topojson-client:
         specifier: ^3.1.0
         version: 3.1.0
+      us-atlas:
+        specifier: ^3.0.1
+        version: 3.0.1
       use-custom-compare:
         specifier: ^1.4.0
         version: 1.4.0(patch_hash=e5aca8603308519a3cf651eb5f97a0e5c65eadcef053a310caac0bf68435ae3d)(react@19.0.0)(typescript@5.4.5)
@@ -4430,6 +4433,9 @@ packages:
 
   uri-js@4.4.1:
     resolution: {integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==}
+
+  us-atlas@3.0.1:
+    resolution: {integrity: sha512-wEIZCq0ImPvGblTd8gZMqNNCPkQshugMUG/8nkSWXb02+XqNFREg9atHOKP9w6prLZTpqcLhSvdBW81MkV3/0Q==}
 
   use-callback-ref@1.3.3:
     resolution: {integrity: sha512-jQL3lRnocaFtu3V00JToYz/4QkNWswxijDaCVNZRiRTO3HQDLsdu1ZtmIUvV4yPp+rvWm5j0y0TG/S61cuijTg==}
@@ -9055,6 +9061,8 @@ snapshots:
   uri-js@4.4.1:
     dependencies:
       punycode: 2.3.1
+
+  us-atlas@3.0.1: {}
 
   use-callback-ref@1.3.3(@types/react@19.0.10)(react@19.0.0):
     dependencies:

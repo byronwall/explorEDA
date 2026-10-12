@@ -219,6 +219,8 @@ interface SavedCalculation {
 
 Point maps draw streets when zoomed in after the host calls `registerMapLibre(maplibregl)` with the optional `maplibre-gl` package. The default style is OpenFreeMap; pass `{ styles: { light, dark } }` to change it.
 
+Region maps can use supplied boundaries without an import: World countries, US states, and US counties load only when a map uses them. A chart saves them as `geometryAssetId: "boundary:world-countries"`. Add more with `registerBoundarySet({ id, name, source, level, coverage, keys, load })`, where `load` returns a Polygon or MultiPolygon FeatureCollection.
+
 Region maps reference a shared `GeometryAsset` by `geometryAssetId`. Each asset has an `id`, `name`, `source`, and `geometry`.
 Geometry is a WGS 84 GeoJSON FeatureCollection of Polygon or MultiPolygon features with closed rings.
 Settings and full-analysis exports both include these assets. Restore the complete settings object to keep map geometry.

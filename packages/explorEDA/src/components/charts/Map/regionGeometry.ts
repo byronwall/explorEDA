@@ -1,4 +1,4 @@
-import { geoBounds, geoPath } from "d3-geo";
+import { geoArea, geoBounds, geoPath } from "d3-geo";
 import type { Position } from "geojson";
 import type { RegionGeometry } from "@/lib/geometryAssets";
 import type { MapSettings, MapView } from "./definition";
@@ -17,8 +17,14 @@ function orient(ring: Position[], clockwise: boolean) {
   return area < 0 === clockwise ? ring : [...ring].reverse();
 }
 export function regionGeometry(geometry: RegionGeometry): RegionGeometry {
-  const rings = (polygon: Position[][]) =>
-    polygon.map((ring, i) => orient(ring, i === 0));
+  // A ring around a pole, such as Antarctica's, has no planar direction.
+  // No region covers more than a hemisphere, so one that does is inverted.
+  const rings = (polygon: Position[][]) => {
+    const oriented = polygon.map((ring, i) => orient(ring, i === 0));
+    return geoArea({ type: "Polygon", coordinates: oriented }) > 2 * Math.PI
+      ? oriented.map((ring) => [...ring].reverse())
+      : oriented;
+  };
   return {
     ...geometry,
     features: geometry.features.map((feature) => ({

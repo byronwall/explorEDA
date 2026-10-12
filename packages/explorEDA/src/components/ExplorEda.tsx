@@ -256,6 +256,11 @@ export {
 };
 
 export {
+  listBoundarySets,
+  registerBoundarySet,
+} from "@/lib/boundaries/registry";
+export type { BoundarySet } from "@/lib/boundaries/registry";
+export {
   OPENFREEMAP_STYLES,
   registerMapLibre,
 } from "@/components/charts/Map/mapEngine";

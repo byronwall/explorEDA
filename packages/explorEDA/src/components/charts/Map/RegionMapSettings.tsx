@@ -15,6 +15,12 @@ import type { ChartSettingsPanelProps } from "@/types/ChartTypes";
 import type { MapSettings } from "./definition";
 import { planRegionMap } from "./regionMapPlan";
 import { useMapData } from "./useMapData";
+import { useRegionAsset } from "./useRegionAsset";
+import {
+  boundaryAssetId,
+  boundaryIdOf,
+  useBoundarySets,
+} from "@/lib/boundaries/registry";
 
 const selectClass =
   "h-9 min-w-0 rounded-md border border-input bg-background px-2 text-sm";
@@ -25,7 +31,8 @@ export function RegionMapSettings({
   const id = useId();
   const assets = useDataLayer((state) => state.geometryAssets);
   const addAsset = useDataLayer((state) => state.addGeometryAsset);
-  const asset = assets.find((item) => item.id === settings.geometryAssetId);
+  const { asset, boundary } = useRegionAsset(settings);
+  const boundarySets = useBoundarySets();
   const { snapshot } = useMapData(settings);
   const plan = useMemo(
     () =>
@@ -39,11 +46,14 @@ export function RegionMapSettings({
     [settings, snapshot, asset]
   );
   const properties = [
-    ...new Set(
-      asset?.geometry.features.flatMap((feature) =>
+    ...new Set([
+      ...(boundary.status === "ready"
+        ? boundary.set.keys.map((key) => key.property)
+        : []),
+      ...(asset?.geometry.features.flatMap((feature) =>
         Object.keys(feature.properties ?? {})
-      ) ?? []
-    ),
+      ) ?? []),
+    ]),
   ];
   const [json, setJson] = useState(""),
     [name, setName] = useState("Regions"),
@@ -116,23 +126,47 @@ export function RegionMapSettings({
           id={`${id}-asset`}
           className={selectClass}
           value={settings.geometryAssetId ?? ""}
-          onChange={(e) =>
+          onChange={(e) => {
+            const set = boundarySets.find(
+              (item) => item.id === boundaryIdOf(e.target.value)
+            );
             onSettingsChange({
               ...settings,
               geometryAssetId: e.target.value,
-              featureKey: "",
+              featureKey: set?.keys[0]?.property ?? "",
               view: undefined,
               filters: [],
-            })
-          }
+            });
+          }}
         >
           <option value="">Choose geometry</option>
-          {assets.map((item) => (
-            <option key={item.id} value={item.id}>
-              {item.name}
+          <optgroup label="Supplied">
+            {boundarySets.map((set) => (
+              <option key={set.id} value={boundaryAssetId(set.id)}>
+                {set.name}
+              </option>
+            ))}
+          </optgroup>
+          {assets.length > 0 && (
+            <optgroup label="Imported">
+              {assets.map((item) => (
+                <option key={item.id} value={item.id}>
+                  {item.name}
+                </option>
+              ))}
+            </optgroup>
+          )}
+          {boundary.status === "missing" && (
+            <option value={settings.geometryAssetId}>
+              {boundary.id} (not available)
             </option>
-          ))}
+          )}
         </select>
+        {boundary.status === "loading" && (
+          <p className="col-start-2 text-xs text-muted-foreground">
+            Loading {boundary.set.name}…
+          </p>
+        )}
         {size && (
           <p className="col-start-2 text-xs text-muted-foreground">
             {size.features.toLocaleString()}{" "}
@@ -225,7 +259,10 @@ export function RegionMapSettings({
             <option value="@id">Feature ID</option>
             {properties.map((property) => (
               <option value={property} key={property}>
-                {property}
+                {boundary.status === "ready"
+                  ? (boundary.set.keys.find((key) => key.property === property)
+                      ?.label ?? property)
+                  : property}
               </option>
             ))}
           </select>

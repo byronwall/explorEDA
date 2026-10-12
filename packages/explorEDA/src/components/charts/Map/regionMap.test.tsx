@@ -1,4 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
+import { geoArea } from "d3-geo";
+import { useState } from "react";
 import { beforeAll, expect, it } from "vitest";
 import type { GeometryAsset, RegionGeometry } from "@/lib/geometryAssets";
 import { isRegionGeometry } from "@/lib/geometryAssets";
@@ -346,4 +348,92 @@ it("counts every joined row but averages only valid measures", () => {
   expect(zero.find((item) => item.key === "Zero")!.state).toBe("value");
   expect(zero.find((item) => item.key === "Invalid")!.state).toBe("invalid");
   expect(zero.find((item) => item.key === "Empty")!.state).toBe("empty");
+});
+
+it("joins rows to supplied US states without an import", async () => {
+  const states: MapSettings = {
+    ...settings,
+    geometryAssetId: "boundary:us-states",
+    regionField: "state",
+    featureKey: "usps",
+    aggregation: "count",
+    measureField: undefined,
+  };
+  render(
+    <DataLayerProvider
+      data={[
+        { state: "CA" },
+        { state: "CA" },
+        { state: "TX" },
+        { state: "ZZ" },
+      ]}
+      charts={[states]}
+    >
+      <ChartTraceScope>
+        <RegionMap settings={states} width={800} height={500} />
+      </ChartTraceScope>
+      <SaveCheck />
+    </DataLayerProvider>
+  );
+  expect(screen.getByText("Loading US states…")).toBeInTheDocument();
+  expect(
+    await screen.findByRole("button", { name: "CA; Row count: 2; 2 rows" })
+  ).toBeInTheDocument();
+  expect(screen.getByText(/1 unmatched row/)).toBeInTheDocument();
+  fireEvent.click(screen.getByText("Check save"));
+  expect(screen.getByLabelText("Save valid")).toHaveTextContent("true");
+});
+function SaveCheck() {
+  const save = useDataLayer((state) => state.saveToStructure);
+  const [valid, setValid] = useState<boolean>();
+  return (
+    <>
+      <button
+        onClick={() =>
+          setValid(validateSavedData(JSON.parse(stringifySavedData(save()))))
+        }
+      >
+        Check save
+      </button>
+      <output aria-label="Save valid">{String(valid)}</output>
+    </>
+  );
+}
+
+it("names supplied boundaries the app does not provide", () => {
+  const missing = { ...settings, geometryAssetId: "boundary:mars-craters" };
+  render(
+    <DataLayerProvider data={rows} charts={[missing]}>
+      <RegionMap settings={missing} width={800} height={500} />
+    </DataLayerProvider>
+  );
+  expect(screen.getByRole("status")).toHaveTextContent(
+    "“mars-craters” boundaries, which this app does not provide"
+  );
+});
+
+it("never draws a polar region inside out", () => {
+  const ring = [
+    [-180, -70],
+    [-90, -70],
+    [0, -70],
+    [90, -70],
+    [180, -70],
+    [180, -90],
+    [-180, -90],
+    [-180, -70],
+  ];
+  for (const coordinates of [[ring], [[...ring].reverse()]]) {
+    const [polar] = regionGeometry({
+      type: "FeatureCollection",
+      features: [
+        {
+          type: "Feature",
+          properties: {},
+          geometry: { type: "Polygon", coordinates },
+        },
+      ],
+    }).features;
+    expect(geoArea(polar!)).toBeLessThan(2 * Math.PI);
+  }
 });

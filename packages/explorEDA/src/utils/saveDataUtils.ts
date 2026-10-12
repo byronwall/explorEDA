@@ -17,6 +17,7 @@ import type { AggregateSpec } from "@/lib/aggregates";
 import { getFieldSettingsError } from "@/lib/fieldSettings";
 import type { FieldSettings } from "@/lib/fieldSettings";
 import { SAVED_MAX_ZOOM } from "@/components/charts/Map/streetCamera";
+import { BOUNDARY_PREFIX } from "@/lib/boundaries/registry";
 
 export async function saveToClipboard(data: SavedDataStructure): Promise<void> {
   try {
@@ -842,6 +843,8 @@ export function validateSavedData(data: unknown): data is SavedDataStructure {
         chart.type === "map" &&
         chart.mode === "region" &&
         chart.geometryAssetId &&
+        // Supplied boundaries come from the app; a missing set shows in the chart.
+        !chart.geometryAssetId.startsWith(BOUNDARY_PREFIX) &&
         !(data.geometryAssets as { id: string }[] | undefined)?.some(
           (asset) => asset.id === chart.geometryAssetId
         )

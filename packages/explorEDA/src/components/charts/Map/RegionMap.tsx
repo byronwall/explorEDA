@@ -1,7 +1,6 @@
 import { useId, useMemo, useRef, useState } from "react";
 import { Minus, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { BaseChartProps } from "@/types/ChartTypes";
 import { ChartReadout } from "../ChartReadout";
 import {
@@ -16,6 +15,7 @@ import { fitRegionGeometry } from "./regionGeometry";
 import { planRegionMap, regionFilters, regionMapHeight } from "./regionMapPlan";
 import { useMapData } from "./useMapData";
 import { useMapPan } from "./useMapPan";
+import { useRegionAsset } from "./useRegionAsset";
 
 export function RegionMap({
   settings,
@@ -29,9 +29,7 @@ export function RegionMap({
     settings,
     facetIds
   );
-  const asset = useDataLayer((state) =>
-    state.geometryAssets.find((asset) => asset.id === settings.geometryAssetId)
-  );
+  const { asset, boundary } = useRegionAsset(settings);
   const api = useChartTraceApi(),
     trace = useChartTrace();
   const [activeId, setActiveId] = useState<string>();
@@ -326,7 +324,13 @@ export function RegionMap({
           role="status"
           className="pointer-events-none absolute inset-x-3 top-3 rounded bg-background/90 p-2 text-center text-sm"
         >
-          Choose geometry, both join keys, and a metric.
+          {boundary.status === "loading"
+            ? `Loading ${boundary.set.name}…`
+            : boundary.status === "missing"
+              ? `This map uses the “${boundary.id}” boundaries, which this app does not provide.`
+              : boundary.status === "error"
+                ? `Could not load ${boundary.set.name}: ${boundary.message}`
+                : "Choose geometry, both join keys, and a metric."}
         </p>
       )}
       <div className="mt-1 flex flex-wrap items-center gap-1">
