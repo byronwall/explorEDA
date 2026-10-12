@@ -1,0 +1,150 @@
+{
+  "repository": "https://github.com/byronwall/explorEDA",
+  "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+  "source_ref": "origin/main at preparation",
+  "packet_kind": "selected source snapshot; not a runnable checkout",
+  "paths": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "2800c1d79eb04d1ece4be1ed6f1a816270c6270b42df70bba9cf0467f13c93fe"
+    },
+    {
+      "path": "README.md",
+      "sha256": "4690f7b91a3473eff7e12aaa0493954c5401efbf885a88351765ba423f2d431a"
+    },
+    {
+      "path": "package.json",
+      "sha256": "956f8078046ee2fcc2d67898c6a7dc53accf29d76ea8f740e3c5561840161cab"
+    },
+    {
+      "path": "pnpm-workspace.yaml",
+      "sha256": "9f1bb3ad3b8b9191935bd7c423b86d7acecdbb594fb07638f106ab8316b8b189"
+    },
+    {
+      "path": "packages/explorEDA/package.json",
+      "sha256": "4ef54367be79eaf36e739191f68d533102a24433cfeff925253bd7cfbeeefa13"
+    },
+    {
+      "path": "packages/explorEDA/README.md",
+      "sha256": "fb080ec4a5ea0c4dc1303b84ff3e3aa0ac30c29ab2a7bb1748a586bbbd9a1563"
+    },
+    {
+      "path": "docs/agent-guide.md",
+      "sha256": "64c72371bf6eeac34da3caf4f1ba05c89d2bc3841e0e22e94eb0f9dea2f29db4"
+    },
+    {
+      "path": "docs/ui-defaults.md",
+      "sha256": "3b6b28b962973c27279edc56094ea1d7c674d542d88280e34dd4a7c5b554a42a"
+    },
+    {
+      "path": "docs/performance-checks.md",
+      "sha256": "9dcaf64e27d37016372faae8e07165b0de2c390602787a9eff96e2c8a73ea80f"
+    },
+    {
+      "path": "docs/intent/current-analysis-trust/intent-brief.md",
+      "sha256": "d6b2d620753c1ea532fffcb1cb43cc42711e03daa898e989a7f283f475186bd7"
+    },
+    {
+      "path": "docs/intent/renderer-independent-replay/intent-brief.md",
+      "sha256": "dd0019e384a3a92213b2e4c7dadfb287acc20d37366e584fa98abfae0c63b904"
+    },
+    {
+      "path": "packages/explorEDA/src/analysis.ts",
+      "sha256": "363b81747cdd80dec35a8c479bfe217adbd09d71d5b7d5a26ca9029947b8fef4"
+    },
+    {
+      "path": "packages/explorEDA/src/types/AnalysisProject.ts",
+      "sha256": "374ffd46c8143f95c7256859d0a1bcc24e1eabe82a80dce9d465a2c4ba693408"
+    },
+    {
+      "path": "packages/explorEDA/src/types/ChartTypes.ts",
+      "sha256": "dd3ed12a1d454d08c0fcc8c6a59f89e94e566e8b19906616b439675796536353"
+    },
+    {
+      "path": "packages/explorEDA/src/types/FilterTypes.ts",
+      "sha256": "5779e19b22a73dbfc6c9c66b7d12f5b7cba149b5da7e1cfa1ed316afe3a9011f"
+    },
+    {
+      "path": "packages/explorEDA/src/types/SavedDataStructure.ts",
+      "sha256": "d06d902c2e9ba967adb39f25502405153b2b582bfd2bf7305ad51bec9b9dfebb"
+    },
+    {
+      "path": "packages/explorEDA/src/components/ExplorEdaProject.tsx",
+      "sha256": "7f58eaf38f008a5290416bf9f1eab7ad48d1ded04556602640d1944a0187beb1"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/analysis/evaluateProject.ts",
+      "sha256": "1b9ab2edf835387348d8f173dc1b7037ccd0a2fe179b2c105da623f22ea426bb"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/analysis/useAnalysisEvaluation.ts",
+      "sha256": "33e6f5cc1154078342028a998bfac97159cc9612869024492f4354c660418708"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/analysis/analysisWorkerProtocol.ts",
+      "sha256": "5ad9c95a7d354f773e43e68cb3fa7d25dc8ddd8d93ea7a23e5675baf62d2f6c5"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/analysis/projectFile.ts",
+      "sha256": "58c0d7462eb14be5597e296aed1b0dcca47f8b91993a2063952f6809631f52b4"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/analysis/sources.ts",
+      "sha256": "afb86a427d13a95ea1ca191ad7d927a385201cca963d3ec959d491a482f05465"
+    },
+    {
+      "path": "packages/explorEDA/src/providers/DataLayerProvider.tsx",
+      "sha256": "4026e73ef46413f8f57d3e1f59dc1bc68ac4b97435ff9f1c2880ac8d416d9ed0"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/CrossfilterWrapper.ts",
+      "sha256": "a7e790bf1518eef1130263a71c73601985b7a966193905561702be1326a483aa"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/applyFilter.ts",
+      "sha256": "d8f0610999aa93372bbbb29d9811d9106b71e1c40675b5bc3f3714ea5bbc3953"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/valueParsing.ts",
+      "sha256": "f6bb49ecf1c6f1ed06fc1e6c6de96800ee4242dd1e89d98fc8cfe0f8cf7c5239"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/aggregates.ts",
+      "sha256": "075fdd755f228895d5ac32288cf78ec05b0572a524ae2668db2375a03e7e7c85"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/chartPopulation.ts",
+      "sha256": "3108817ced390197b9b90708d5ee76386c992470716d9326adbc12ce1d0bab86"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/scatterPlan.ts",
+      "sha256": "433161741ecf1042d11d5efb98c901c689683e0cd5976654051a279f9948d224"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/barPlan.ts",
+      "sha256": "79933db557b72b3326342b1eb3e0667f4f2a1ce924093f17e3939f78e0399834"
+    },
+    {
+      "path": "packages/explorEDA/src/test/lib/analysis/evaluateProject.test.ts",
+      "sha256": "a2c0772d2f5414f43aa2d4a778599d5f285d2f633d6036e8a6df6c3b9512d5fa"
+    },
+    {
+      "path": "packages/explorEDA/src/test/lib/analysis/useAnalysisEvaluation.test.tsx",
+      "sha256": "393b63fd2dd9c45c63f7e26eade7db057ec702355c394f3c9a2423ffc0192498"
+    },
+    {
+      "path": "packages/explorEDA/src/test/lib/analysis/sourceRowIdentity.test.ts",
+      "sha256": "84d7f9fe54981ee6c34555e237a4baf10fb198b46cad847b479993a5fcb7ee4b"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/CrossfilterWrapper.test.ts",
+      "sha256": "94e2799318f45371da824c21d8b7ac45dcdbca87ffc0cbd2a05029b5b91166b8"
+    }
+  ],
+  "local_additions": [
+    "source-notes.md",
+    "three notebook photos",
+    "three handoff prompts"
+  ],
+  "exclusions": "No credentials, private data tables, build output, node_modules, unrelated files, or browser appshot."
+}
