@@ -294,3 +294,49 @@ it("selects exact joined rows, traces unmatched inputs, and restores shared geom
     screen.getByRole("table", { name: "Aggregate source contributors" })
   ).toHaveTextContent("Not a finite number");
 });
+
+it("clears region filters on a plain empty-space click but not on Alt-click", () => {
+  render(
+    <DataLayerProvider data={rows} charts={[settings]}>
+      <Workspace />
+    </DataLayerProvider>
+  );
+  fireEvent.click(screen.getByText("Load geometry"));
+  fireEvent.click(
+    screen.getByRole("button", { name: "A; Sum of value: 4; 2 rows" })
+  );
+  expect(screen.getByLabelText("Selected rows")).toHaveTextContent("0,1");
+  const map = screen.getByRole("group", { name: "Region map" });
+  fireEvent.click(map, { altKey: true });
+  expect(screen.getByLabelText("Selected rows")).toHaveTextContent("0,1");
+  fireEvent.click(map);
+  expect(screen.getByLabelText("Selected rows")).toHaveTextContent(
+    ids.join(",")
+  );
+});
+
+it("counts every joined row but averages only valid measures", () => {
+  const values = [10, -6, 0, "6", "bad", "", null, false];
+  const data = values.map((value) => ({ region: "A", value }));
+  const local: MapSnapshot = {
+    revision: "m",
+    allIds: data.map((_, id) => id),
+    chartIds: data.map((_, id) => id),
+    filteredIds: data.map((_, id) => id),
+    columns: {
+      region: Object.fromEntries(data.map((row, id) => [id, row.region])),
+      value: Object.fromEntries(data.map((row, id) => [id, row.value])),
+    },
+  };
+  const region = (aggregation: MapSettings["aggregation"]) =>
+    planRegionMap({ ...settings, aggregation }, local, asset, 800, 500)
+      .regions.find((item) => item.key === "A")!;
+  expect(region("count").value).toBe(8);
+  expect(region("sum").value).toBe(10);
+  expect(region("sum").contributors.filter((item) => item.included)).toHaveLength(4);
+  expect(region("average").value).toBe(2.5);
+  const zero = planRegionMap(settings, snapshot, asset, 800, 500).regions;
+  expect(zero.find((item) => item.key === "Zero")!.state).toBe("value");
+  expect(zero.find((item) => item.key === "Invalid")!.state).toBe("invalid");
+  expect(zero.find((item) => item.key === "Empty")!.state).toBe("empty");
+});

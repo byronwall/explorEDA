@@ -139,6 +139,11 @@ export function RegionMap({
         filters: regionFilters(settings, region, facetIds),
       });
   };
+  // A preview edits a draft, so it never clears the saved chart's filters.
+  const clearFilters = () => {
+    if (!onSettingsChange && settings.filters.length)
+      updateChart(settings.id, { filters: [] });
+  };
   const drawn = plan.regions.filter((region) => Boolean(region.path));
   const traced =
     trace?.selection?.owner === owner && trace.trace && "region" in trace.trace
@@ -158,16 +163,17 @@ export function RegionMap({
         className="block shrink-0 touch-none select-none rounded"
         role="group"
         aria-label="Region map"
-        aria-description="Drag to pan. Arrow keys move between regions. Enter selects joined rows. Alt-Enter inspects. Regions with no rows open inspection. Alt-click outside the regions to trace joins. Escape clears selection."
+        aria-description="Drag to pan. Arrow keys move between regions. Enter selects joined rows. Alt-Enter inspects. Regions with no rows open inspection. Click outside the regions or press Escape to clear the selection. Alt-click outside the regions to trace joins."
         {...events}
         onClick={(event) => {
-          if (event.altKey && !suppressClick.current)
-            api?.inspect(owner, "map-joins", "joins");
+          if (suppressClick.current) return;
+          if (event.altKey) api?.inspect(owner, "map-joins", "joins");
+          else clearFilters();
         }}
         onKeyDown={(event) => {
           if (event.key === "Escape") {
             event.stopPropagation();
-            if (!onSettingsChange) updateChart(settings.id, { filters: [] });
+            clearFilters();
           }
         }}
       >

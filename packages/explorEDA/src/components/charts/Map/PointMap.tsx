@@ -130,6 +130,11 @@ export function PointMap({
     onSettingsChange
       ? inspect(id)
       : updateChart(settings.id, { filters: mapPointFilters(settings, id) });
+  // A preview edits a draft, so it never clears the saved chart's filters.
+  const clearFilters = () => {
+    if (!onSettingsChange && settings.filters.length)
+      updateChart(settings.id, { filters: [] });
+  };
   const active = plan.points.find((point) => point.sourceId === activeId);
   const tracedId =
     trace?.selection?.owner === owner && trace.trace?.kind === "map-point"
@@ -154,7 +159,7 @@ export function PointMap({
         aria-description={
           onSettingsChange
             ? "Drag to pan. Click a point or press Enter to inspect its source row. Arrow keys move between visible points."
-            : "Drag to pan. Click a point or press Enter to select its source row. Arrow keys move between visible points. Alt-Enter inspects. Escape clears selection."
+            : "Drag to pan. Click a point or press Enter to select its source row. Arrow keys move between visible points. Alt-Enter inspects. Click empty map space or press Escape to clear the selection."
         }
         onPointerDown={(event) => {
           if (event.button !== 0) return;
@@ -207,10 +212,15 @@ export function PointMap({
           drag.current = undefined;
           setDraftView(undefined);
         }}
+        onClick={(event) => {
+          if (suppressClick.current) return;
+          if (event.altKey) api?.inspect(owner, "map-background", "land");
+          else clearFilters();
+        }}
         onKeyDown={(event) => {
           if (event.key === "Escape") {
             event.stopPropagation();
-            updateChart(settings.id, { filters: [] });
+            clearFilters();
           }
         }}
       >
