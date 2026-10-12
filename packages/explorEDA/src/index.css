@@ -7653,3 +7653,19 @@ td[data-null] {
   stroke: var(--border);
   stroke-width: 1;
 }
+
+/* Start and end totals: a hairline from zero to a filled dot. */
+.eda-waterfall-total line {
+  stroke: var(--eda-waterfall-total);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.eda-waterfall-total circle {
+  fill: var(--eda-waterfall-total);
+  stroke: var(--card);
+  stroke-width: 1.5;
+}
+.eda-waterfall-total[data-selected] circle {
+  stroke: var(--foreground);
+  stroke-width: 2;
+}

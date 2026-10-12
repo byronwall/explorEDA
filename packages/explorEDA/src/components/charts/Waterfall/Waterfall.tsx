@@ -36,6 +36,9 @@ import {
 } from "./waterfallPlan";
 import { stateMeasureField, type WaterfallSettings } from "./waterfallTypes";
 
+/** The radius of the dot that ends a start or end total. */
+const TOTAL_DOT = 5;
+
 const BAR_FILL: Record<string, string> = {
   up: "var(--eda-waterfall-up)",
   down: "var(--eda-waterfall-down)",
@@ -388,7 +391,7 @@ export function Waterfall({
     let min = Math.min(0, ...values);
     let max = Math.max(0, ...values, Number.MIN_VALUE);
     // Room past each extreme, so a checkpoint there draws whole.
-    const pad = (max - min) * 0.03;
+    const pad = ((max - min) * (TOTAL_DOT + 3)) / Math.max(1, innerWidth);
     if (max > 0) max += pad;
     if (min < 0) min -= pad;
     // Labels of falling steps can sit left of the lowest bar.
@@ -420,13 +423,18 @@ export function Waterfall({
   const labelsByKey = new Map(bars.map((bar) => [bar.key, axisLabel(bar)]));
   const hoveredBar = bars.find((bar) => bar.key === hovered);
   const band = yScale.bandwidth();
-  // Steps carry the story at full height. Start and end anchor it in a
-  // slimmer neutral bar, and a subtotal is only a checkpoint on the running
-  // total, so neither competes with the steps.
+  // Only steps are bars. Start and end are a hairline from zero to a filled
+  // dot, and a subtotal is a hollow checkpoint on the running total, so the
+  // totals mark the story without competing with the steps.
   const span = (bar: WaterfallBar) => {
     const a = xScale(bar.from);
     const b = xScale(bar.to);
-    const height = bar.kind === "step" ? band : band * 0.56;
+    const height =
+      bar.kind === "step"
+        ? band
+        : bar.kind === "subtotal"
+          ? band * 0.76
+          : TOTAL_DOT * 2;
     return {
       x: Math.min(a, b),
       width: Math.max(1, Math.abs(b - a)),
@@ -491,12 +499,17 @@ export function Waterfall({
             {bars.map((bar) => {
               const left = bar.kind === "step" ? bar.amount < 0 : bar.to < 0;
               const edge =
-                bar.kind === "subtotal"
+                bar.kind !== "step"
                   ? xScale(bar.to)
                   : left
                     ? Math.min(xScale(bar.from), xScale(bar.to))
                     : Math.max(xScale(bar.from), xScale(bar.to));
-              const gap = bar.kind === "subtotal" ? 9 : 5;
+              const gap =
+                bar.kind === "step"
+                  ? 5
+                  : bar.kind === "subtotal"
+                    ? 9
+                    : TOTAL_DOT + 5;
               return (
                 <text
                   key={bar.key}
@@ -570,9 +583,23 @@ export function Waterfall({
                   ? `subtotal ${amountText(bar)}`
                   : `total ${amountText(bar)}`;
             const checkpoint = bar.kind === "subtotal";
+            const marker = bar.kind !== "step";
             const markX = xScale(bar.to);
+            const midY = yScale(bar.key)! + band / 2;
             return (
               <g key={bar.key}>
+                {marker && !checkpoint && (
+                  <g
+                    aria-hidden="true"
+                    pointerEvents="none"
+                    className="eda-waterfall-total"
+                    data-selected={selected || undefined}
+                    style={{ opacity: dimmed ? 0.35 : 1 }}
+                  >
+                    <line x1={zero} x2={markX} y1={midY} y2={midY} />
+                    <circle cx={markX} cy={midY} r={TOTAL_DOT} />
+                  </g>
+                )}
                 {checkpoint && (
                   <g
                     aria-hidden="true"
@@ -595,8 +622,8 @@ export function Waterfall({
                   </g>
                 )}
                 <rect
-                  {...(checkpoint
-                    ? // A checkpoint selects its group from anywhere on its row.
+                  {...(marker
+                    ? // A total or checkpoint selects from anywhere on its row.
                       {
                         x: 0,
                         width: innerWidth,
@@ -610,9 +637,9 @@ export function Waterfall({
                   aria-label={`${bar.label}, ${kindText}`}
                   aria-pressed={selectable ? selected : undefined}
                   data-waterfall-kind={bar.kind}
-                  className={`chart-mark ${selectable ? "cursor-pointer" : ""}${checkpoint ? " eda-waterfall-checkpoint-hit" : ""}`}
+                  className={`chart-mark ${selectable ? "cursor-pointer" : ""}${marker ? " eda-waterfall-checkpoint-hit" : ""}`}
                   style={
-                    checkpoint
+                    marker
                       ? undefined
                       : {
                           fill: BAR_FILL[barTone(bar)],
