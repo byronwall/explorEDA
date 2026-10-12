@@ -4,11 +4,11 @@
     "title": "Show parts of a whole and cumulative contributions",
     "slug": "composition-and-contribution",
     "scale": "feature",
-    "current_phase": "shape",
+    "current_phase": "plan",
     "last_updated": "2026-10-12",
     "summary": "Waterfall (Bridge and Accumulate) then donut as chart types, then Composition marks.",
     "status": "planned",
-    "next_action": "Write the implementation plan, starting with the Bridge waterfall budget vs actual proof."
+    "next_action": "Start M1: waterfallPlan.ts with the budget vs actual fixture in wide and long layouts."
   },
   "artifacts": {
     "intent_brief": {
@@ -28,8 +28,8 @@
     },
     "implementation_plan": {
       "path": "implementation-plan.md",
-      "status": "not-created",
-      "updated_at": null
+      "status": "current",
+      "updated_at": "2026-10-12"
     }
   },
   "sources": [
@@ -539,22 +539,109 @@
   "implementation": {
     "status": "not-started",
     "repository_snapshot": {
-      "root": "/Users/byronwall/.codex/worktrees/abcf/explorEDA",
-      "revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
-      "worktree_status": "clean before intent capture; detached HEAD",
+      "root": "/Users/byronwall/Projects/explorEDA/.claude/worktrees/composition-contribution-review-6a27e4",
+      "revision": "2359bb70b4e3ab8e87878fa8b418a940cf99ad7c",
+      "worktree_status": "clean apart from planning docs",
       "subsystems": [
-        "packages/explorEDA/src/charts/registerAllCharts.ts",
         "packages/explorEDA/src/lib/aggregates.ts",
-        "packages/explorEDA/src/components/charts/BarChart/definition.ts"
+        "packages/explorEDA/src/hooks/applyFilter.ts",
+        "packages/explorEDA/src/components/charts/RowChart/rowChartPlan.ts",
+        "packages/explorEDA/src/charts/registerAllCharts.ts",
+        "packages/explorEDA/src/types/ChartTypes.ts",
+        "packages/explorEDA/src/utils/saveDataUtils.ts",
+        "packages/explorEDA/src/lib/dsl/compile.ts",
+        "packages/explorEDA/src/lib/dsl/export.ts",
+        "packages/explorEDA/src/components/charts/chartAccessibility.ts",
+        "packages/explorEDA/src/hooks/useCreateCharts.ts",
+        "packages/explorEDA/src/components/charts/Composition/compositionTypes.ts",
+        "apps/demo/src/docs/catalogue.ts",
+        "apps/demo/src/docs/live/examples.ts",
+        "apps/demo/src/demos/examples.ts",
+        "apps/demo/src/demos/coverage.ts"
       ],
-      "test_commands": [],
-      "deployment_surfaces": []
+      "test_commands": [
+        "pnpm --filter exploreda exec vitest run src/components/charts/Waterfall",
+        "pnpm --filter exploreda check-types",
+        "pnpm --filter demo exec vitest run src/demos/coverage.test.ts src/dashboardText.test.ts",
+        "pnpm --filter demo docs:check",
+        "pnpm --filter demo build && pnpm --filter demo docs:verify",
+        "pnpm check"
+      ],
+      "deployment_surfaces": [
+        "npm package exploreda (changeset per milestone)",
+        "demo docs site"
+      ]
     },
     "dependencies": [],
-    "fast_local_loop": null,
-    "milestones": [],
-    "cut_line": [],
-    "open_decisions": []
+    "fast_local_loop": {
+      "command": "pnpm --filter exploreda exec vitest run src/components/charts/Waterfall",
+      "companion": "pnpm --filter demo dev (library from source, no build)",
+      "shared_infrastructure_required": false,
+      "network_required": false,
+      "failure_injection": [
+        "state with no rows after filtering",
+        "line item missing from one state",
+        "negative or zero-sum donut input",
+        "non-numeric measure values excluded by aggregates"
+      ]
+    },
+    "milestones": [
+      {
+        "id": "m1",
+        "title": "Bridge waterfall explains budget vs actual",
+        "outcome": "User builds a plan-to-actual bridge with parent subtotals, cross-filters from steps, and traces both states' rows; docs page and demo example ship.",
+        "dependencies_introduced": [],
+        "proof": "Vitest for waterfallPlan (wide and long fixtures identical; steps = actual - plan; end = sum(actual)); saved-data and DSL round trips; docs:verify; screenshots at 1280/783/390.",
+        "valid_intermediate_state": "Waterfall chart type registered with Bridge mode only.",
+        "rollback": "Remove registry entry, docs page, and example together; no saved layouts contain the type.",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m2",
+        "title": "Accumulate mode for ordered running totals",
+        "outcome": "Same chart computes a running total of a signed measure over ordered steps; staged loss budget example and docs section ship.",
+        "dependencies_introduced": [],
+        "proof": "Vitest for accumulate plan; DSL round trip; docs:verify.",
+        "valid_intermediate_state": "Waterfall with Bridge and Accumulate modes.",
+        "rollback": "Hide the mode toggle; Bridge unaffected.",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m3",
+        "title": "Donut shows a small whole as shares",
+        "outcome": "User reads shares of the filtered whole, with top-N and selectable Other, and cross-filters from slices; docs page and example ship.",
+        "dependencies_introduced": [],
+        "proof": "Vitest for donutPlan; browser check of clicks and filtered whole; docs:verify.",
+        "valid_intermediate_state": "Donut chart type registered alongside the waterfall.",
+        "rollback": "Remove donut registry entry, page, and example.",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m4",
+        "title": "Waterfall and donut as Composition marks",
+        "outcome": "Both marks render in a Composition graphic using the M1-M3 plans, with docs sections and an editorial example.",
+        "dependencies_introduced": [],
+        "proof": "Composition mark tests; docs:verify; screenshots.",
+        "valid_intermediate_state": "Composition gains two marks; chart types unchanged.",
+        "rollback": "Remove the mark types from MarkDefinition and the editor.",
+        "status": "planned",
+        "evidence": []
+      }
+    ],
+    "cut_line": [
+      "User-placed subtotals",
+      "Price, volume, and mix decomposition",
+      "Nested rings and sunbursts",
+      "Sorting waterfall steps by size",
+      "OR conditions across fields within one state"
+    ],
+    "open_decisions": [
+      "Can FiltersSettingsTab editors edit a non-chart filter list? Fallback: value and range conditions only in M1.",
+      "DSL keys for states: from.where./to.where. (default) vs a state line; add from.measure=/to.measure= for two-column layouts."
+    ]
   },
   "history": [
     {
@@ -603,6 +690,12 @@
       "action": "Added docs and examples to shape scope.",
       "reason": "User asked to confirm docs and examples ship with the new charts.",
       "evidence": "gate.ts and coverage.ts inspection: chart pages gated, examples and Composition marks not."
+    },
+    {
+      "date": "2026-10-12",
+      "action": "Created implementation plan with four milestones.",
+      "reason": "User asked for an implementation plan.",
+      "evidence": "Inspected registry, ChartTypes union, saveDataUtils, DSL compile/export, chartAccessibility, useCreateCharts, docs gate, catalogue, coverage, examples."
     }
   ],
   "closure": null,
