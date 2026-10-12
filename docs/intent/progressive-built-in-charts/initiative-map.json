@@ -1,0 +1,196 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "Progressive built-in charts",
+    "slug": "progressive-built-in-charts",
+    "scale": "capability",
+    "current_phase": "intent",
+    "last_updated": "2026-10-12",
+    "summary": "Review every composition example and shape progressive built-in chart controls where composition is unnecessary.",
+    "status": "planned",
+    "next_action": "Submit the prepared Pro review after ChatGPT access is available; collect and reconcile results before shaping."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-12"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "not-created",
+      "updated_at": null
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "not-created",
+      "updated_at": null
+    }
+  },
+  "sources": [
+    {
+      "id": "USR-01",
+      "type": "direct-user-source",
+      "location": "../../research/composition-builtins-2026-10-12/prompt.md",
+      "anchor": "Mission and decision: quoted user direction",
+      "authority": "latest direct intent"
+    },
+    {
+      "id": "CODE-01",
+      "type": "repository-source",
+      "location": "apps/demo/src/demos/dashboardSettings.ts",
+      "anchor": "29 exported dashboards with composition charts",
+      "authority": "baseline source observation"
+    },
+    {
+      "id": "INV-01",
+      "type": "inventory",
+      "location": "../../research/composition-builtins-2026-10-12/inventory.json",
+      "anchor": "29 examples and the composition docs alias",
+      "authority": "local source inspection"
+    },
+    {
+      "id": "PRIOR-01",
+      "type": "companion-initiative",
+      "location": "../composed-analytical-graphics/intent-brief.md",
+      "anchor": "Composition scope and remaining work",
+      "authority": "prior intent; delivery claims require source checks"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "I-01",
+        "type": "outcome",
+        "statement": "Users can reach advanced chart behavior progressively through built-in settings.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "sources": [
+          "USR-01"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "I-02",
+        "type": "constraint",
+        "statement": "Composition should be required only for essential complexity beyond a coherent built-in chart.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "sources": [
+          "USR-01"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "I-03",
+        "type": "required behavior",
+        "statement": "Every composition example receives an evidence-backed justification and a specific built-in gap analysis.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "sources": [
+          "USR-01"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "I-04",
+        "type": "implementation hypothesis",
+        "statement": "Several composition examples may need only a few new settings or tweaks.",
+        "commitment": "tentative",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "sources": [
+          "USR-01"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "I-05",
+        "type": "anti-goal",
+        "statement": "Do not turn this research request into application implementation or deletion of examples.",
+        "commitment": "derived",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "sources": [
+          "USR-01"
+        ],
+        "confidence": "high"
+      }
+    ],
+    "themes": [
+      {
+        "id": "T-01",
+        "statement": "Progressive chart complexity without unnecessary composition authoring",
+        "claims": [
+          "I-01",
+          "I-02",
+          "I-03"
+        ]
+      }
+    ],
+    "conflicts": [],
+    "human_questions": []
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "not-started",
+    "appetite": null,
+    "problem": null,
+    "recommended_shape": null,
+    "success_moves": [],
+    "first_proof": null,
+    "rabbit_holes": [],
+    "open_decisions": []
+  },
+  "implementation": {
+    "status": "not-started",
+    "repository_snapshot": {
+      "root": "/Users/byronwall/.codex-workspaces/worktrees/ios-dc29de2d-6dda-4cd4-8c87-cd40549d2337/explorEDA",
+      "revision": "269485c6c94b411e27f440ea495ef225110c9a84",
+      "worktree_status": "Clean baseline; only scoped research documents added.",
+      "subsystems": [
+        "Demo example registry",
+        "Built-in chart definitions and settings",
+        "Composition marks and resolver",
+        "Shared annotations and facets",
+        "Saved state and Dashboard text"
+      ],
+      "test_commands": [
+        "pnpm --filter demo exec vitest run src/demos/coverage.test.ts src/dashboardText.test.ts",
+        "pnpm --filter exploreda exec vitest run src/components/charts/Composition",
+        "pnpm check"
+      ],
+      "deployment_surfaces": []
+    },
+    "dependencies": [],
+    "fast_local_loop": null,
+    "milestones": [],
+    "cut_line": [],
+    "open_decisions": []
+  },
+  "history": [
+    {
+      "date": "2026-10-12",
+      "action": "Initialized the planned initiative from direct user intent. Pro submission awaits authenticated browser access."
+    }
+  ],
+  "closure": null
+}
