@@ -10,6 +10,7 @@
 - Give every control whose effect is not obvious from its visible text a real tooltip that explains it: toggles, short or abbreviated labels, icon buttons, and options that differ subtly, such as Core and Full. Use `ActionTooltip` or the `Button` `tooltip` prop so it opens on hover and keyboard focus. Never fall back to a `title` attribute.
 - Run `pnpm check:ui`; it rejects native tooltip sources in TSX.
 - Keep user-facing copy about the product. Put internal caveats, release gaps, known bugs, and to-dos in the owning intent doc under `docs/intent/` or a GitHub issue, not on the page, in the UI, or in example comments.
+- When shaping or planning an initiative under `docs/intent/`, treat docs and demo examples as part of each user-visible feature's scope. List the docs page or section and the example in the same milestone as the feature. The docs gate (`apps/demo/src/docs/gate.ts`) requires a page only for registered chart types; nothing enforces examples, Composition marks, or other features.
 - Keep field names and filter state visible. Put optional actions beside or below the content.
 - Prefer compact nonmodal popovers for inspection and settings. Keep the data visible during edits.
 - In charts, a click on a mark selects it and a click on empty plot space clears that chart's filters. Marginals, legends, and overlays use the main marks' color encoding and visual treatment. See [UI defaults](docs/ui-defaults.md).
