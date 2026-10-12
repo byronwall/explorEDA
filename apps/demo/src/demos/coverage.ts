@@ -1119,6 +1119,14 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId: "budget-report",
+    intent:
+      "Lay out each quarter's plan-to-actual bridge and each group's shares as Composition marks, on shared scales and colors.",
+    features: {
+      "chart:composition": "shown",
+    },
+  },
+  {
     exampleId: "consumer-confidence",
     intent:
       "Draw every country in every panel and light up its own, with the latest point per series on a date scale.",

@@ -8,7 +8,7 @@
     "last_updated": "2026-10-12",
     "summary": "Waterfall (Bridge and Accumulate) then donut as chart types, then Composition marks.",
     "status": "active",
-    "next_action": "Finish M3 PR; then M4 Composition marks."
+    "next_action": "Finish M4 PR; then reconcile the initiative."
   },
   "artifacts": {
     "intent_brief": {
@@ -620,8 +620,10 @@
         "proof": "Vitest for donutPlan; browser check of clicks and filtered whole; docs:verify.",
         "valid_intermediate_state": "Donut chart type registered alongside the waterfall.",
         "rollback": "Remove donut registry entry, page, and example.",
-        "status": "active",
-        "evidence": []
+        "status": "completed",
+        "evidence": [
+          "byronwall/explorEDA#358; donutPlan and Donut tests; channel-share example and /docs/donut"
+        ]
       },
       {
         "id": "m4",
@@ -631,7 +633,7 @@
         "proof": "Composition mark tests; docs:verify; screenshots.",
         "valid_intermediate_state": "Composition gains two marks; chart types unchanged.",
         "rollback": "Remove the mark types from MarkDefinition and the editor.",
-        "status": "planned",
+        "status": "active",
         "evidence": []
       }
     ],

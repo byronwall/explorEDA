@@ -111,6 +111,51 @@ function isMark(value: unknown) {
       isNumber(value.labelMinWidth) &&
       value.labelMinWidth >= 0
     );
+  if (value.type === "waterfall")
+    return (
+      oneOf(value.mode, ["bridge", "accumulate"]) &&
+      oneOf(value.aggregation, ["sum", "count"]) &&
+      (value.aggregation === "count" || isString(value.measureField)) &&
+      isString(value.stepField) &&
+      (value.parentField === undefined || isString(value.parentField)) &&
+      Array.isArray(value.states) &&
+      value.states.length === 2 &&
+      value.states.every(
+        (state) =>
+          isRecord(state) &&
+          isString(state.label) &&
+          (state.measureField === undefined || isString(state.measureField)) &&
+          Array.isArray(state.filters) &&
+          state.filters.every(
+            (filter) =>
+              isRecord(filter) &&
+              isString(filter.type) &&
+              isString(filter.field)
+          )
+      ) &&
+      (value.startValue === undefined || isNumber(value.startValue)) &&
+      isString(value.up) &&
+      isString(value.down) &&
+      isString(value.total) &&
+      isNumber(value.labelWidth) &&
+      value.labelWidth >= 0
+    );
+  if (value.type === "donut")
+    return (
+      isString(value.categoryField) &&
+      oneOf(value.aggregation, ["count", "sum"]) &&
+      (value.aggregation === "count" || isString(value.measureField)) &&
+      (value.topN === undefined ||
+        (Number.isInteger(value.topN) && (value.topN as number) > 0)) &&
+      oneOf(value.order, ["label", "total"]) &&
+      Array.isArray(value.colors) &&
+      value.colors.length > 0 &&
+      value.colors.every(isString) &&
+      isNumber(value.hole) &&
+      (value.hole as number) >= 0 &&
+      (value.hole as number) <= 0.9 &&
+      typeof value.showTotal === "boolean"
+    );
   if (value.type === "waffle")
     return (
       isString(value.categoryField) &&
@@ -555,7 +600,10 @@ export function isCompositionDefinition(
             isRecord(mark) &&
             (mark.type === "density" || mark.type === "horizon"
               ? kinds.get(mark.xScaleId) === "numeric"
-              : mark.type === "waffle" || mark.type === "bar"
+              : mark.type === "waffle" ||
+                  mark.type === "bar" ||
+                  mark.type === "waterfall" ||
+                  mark.type === "donut"
                 ? true
                 : mark.type === "stack"
                   ? mark.xScaleId === undefined ||

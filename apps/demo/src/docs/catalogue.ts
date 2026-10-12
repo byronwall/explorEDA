@@ -416,7 +416,7 @@ export const catalogue: readonly DocsPage[] = [
     highlights: ["Artboard", "Repeats", "Computed text"],
     covers: ["chart:composition"],
     chartType: "composition",
-    examples: ["message-log"],
+    examples: ["message-log", "budget-report"],
     related: ["markdown"],
   },
   {

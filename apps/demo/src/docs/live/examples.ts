@@ -21,6 +21,7 @@ import { demoSettings as lorenzSettings } from "@/demos/lorenz";
 import {
   batteryDayDashboard,
   budgetBridgeDashboard,
+  budgetReportDashboard,
   channelShareDashboard,
 } from "@/demos/partsAndChangeDashboards";
 import type { SavedDataStructure } from "exploreda";
@@ -366,6 +367,15 @@ export const liveExamples = {
       { expectChip: "Channel" },
       { expectRows: 167 },
     ],
+  },
+  "composition-parts": {
+    label: "Live lab budget report",
+    data: "/datasets/lab-budget.csv",
+    savedData: focus(budgetReportDashboard, { "budget-report": [0, 0, 12] }),
+    exampleId: "budget-report",
+    shotAlt:
+      "A report page: each quarter's plan-to-actual waterfall on one scale, and a donut of each budget group's line items with a legend.",
+    steps: [{ expectRows: 96 }],
   },
   composition: {
     label: "Live composition",

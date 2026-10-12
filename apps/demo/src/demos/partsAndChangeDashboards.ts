@@ -226,3 +226,191 @@ export const channelShareDashboard: SavedDataStructure = {
     name: "Shares of the order book",
   },
 };
+
+const PALETTE = [
+  "#4e79a7",
+  "#f28e2b",
+  "#e15759",
+  "#76b7b2",
+  "#59a14f",
+  "#edc948",
+  "#b07aa1",
+  "#ff9da7",
+  "#9c755f",
+  "#bab0ac",
+  "#1f77b4",
+  "#8c564b",
+];
+const text = (
+  id: string,
+  role: "title" | "subtitle" | "note",
+  value: string,
+  y: number,
+  fontSize: number,
+  fontWeight = 400,
+  color = "#5f6368"
+) => ({
+  id,
+  kind: "text" as const,
+  role,
+  name: role[0]!.toUpperCase() + role.slice(1),
+  text: value,
+  x: 32,
+  y,
+  width: 896,
+  fontSize,
+  fontWeight,
+  color,
+});
+
+/** A report page: each quarter's bridge, and where each group's actual money went. */
+const budgetReport: Chart = {
+  ...base,
+  id: "budget-report",
+  type: "composition",
+  title: "Lab budget report",
+  layout: layout(0, 0, 12, 9),
+  margin: { top: 0, right: 0, bottom: 0, left: 0 },
+  composition: {
+    artboard: { width: 960, height: 640, background: "#ffffff" },
+    scales: [],
+    calculations: [],
+    overrides: [],
+    elements: [
+      text(
+        "title-1",
+        "title",
+        "The second quarter turned the lab's surplus into a deficit",
+        26,
+        24,
+        700,
+        "#1f2328"
+      ),
+      text(
+        "subtitle-1",
+        "subtitle",
+        "Each quarter's net position from plan to actual, by budget group ($K). Every quarter shares one scale.",
+        58,
+        13
+      ),
+      {
+        id: "unit-bridges",
+        kind: "unit",
+        name: "Quarters",
+        x: 32,
+        y: 104,
+        frame: { width: 206, height: 170 },
+        label: { show: true, width: 0, fontSize: 13 },
+        axis: false,
+        marks: [
+          {
+            type: "waterfall",
+            id: "mark-bridge",
+            name: "Plan to actual",
+            mode: "bridge",
+            aggregation: "sum",
+            measureField: "Amount ($K)",
+            stepField: "Group",
+            states: [
+              {
+                label: "Plan",
+                filters: [
+                  { type: "value", field: "Scenario", values: ["Plan"] },
+                ],
+              },
+              {
+                label: "Actual",
+                filters: [
+                  { type: "value", field: "Scenario", values: ["Actual"] },
+                ],
+              },
+            ],
+            up: "#1a7f5a",
+            down: "#c0392b",
+            total: "#4a5563",
+            labelWidth: 70,
+          },
+        ],
+        repeat: {
+          field: "Quarter",
+          arrangement: "columns",
+          columns: 4,
+          gap: 24,
+          order: "label",
+          limit: 4,
+        },
+      },
+      text(
+        "subtitle-2",
+        "subtitle",
+        "Where each group's actual money came from and went, by line item",
+        330,
+        15,
+        600,
+        "#1f2328"
+      ),
+      {
+        id: "unit-shares",
+        kind: "unit",
+        name: "Groups",
+        x: 32,
+        y: 372,
+        frame: { width: 150, height: 150 },
+        label: { show: true, width: 0, fontSize: 13 },
+        axis: false,
+        marks: [
+          {
+            type: "donut",
+            id: "mark-share",
+            name: "Share of actual",
+            categoryField: "Line item",
+            aggregation: "sum",
+            measureField: "Actual size ($K)",
+            topN: 4,
+            order: "total",
+            colors: PALETTE,
+            hole: 0.58,
+            showTotal: true,
+          },
+        ],
+        repeat: {
+          field: "Group",
+          arrangement: "columns",
+          columns: 3,
+          gap: 36,
+          order: "label",
+          limit: 3,
+        },
+      },
+      {
+        id: "legend-shares",
+        kind: "legend",
+        name: "Line items",
+        x: 600,
+        y: 380,
+        width: 330,
+        unitId: "unit-shares",
+        markId: "mark-share",
+        direction: "column",
+        fontSize: 11,
+        color: "#1f2328",
+      },
+      text(
+        "note-1",
+        "note",
+        "Synthetic budget generated for this demo. Funding is positive and spending negative; the donuts size actual amounts without their sign.",
+        606,
+        11
+      ),
+    ],
+  },
+} as Chart;
+
+export const budgetReportDashboard: SavedDataStructure = {
+  ...budgetBridgeDashboard,
+  charts: [budgetReport],
+  metadata: {
+    ...budgetBridgeDashboard.metadata,
+    name: "Lab budget report",
+  },
+};

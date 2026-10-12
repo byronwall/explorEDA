@@ -2,7 +2,8 @@
  * Writes a synthetic research lab's operating budget: for each quarter and
  * line item, the planned and actual amount in thousands of dollars. Funding
  * is positive and spending negative, so a scenario's total is the lab's net
- * position. Each line's actual differs from plan by a fixed share per
+ * position. Actual rows also carry the amount's size, with no sign, for
+ * shares of where the money came from and went. Each line's actual differs from plan by a fixed share per
  * quarter, so the file is the same on every run.
  *
  *   node --experimental-strip-types lab_budget.ts <output.csv>
@@ -28,14 +29,16 @@ const lines: [group: string, line: string, plan: number, drift: number[]][] = [
 ];
 const weights = [0.24, 0.25, 0.25, 0.26];
 
-const rows: string[] = ["Quarter,Group,Line item,Scenario,Amount ($K)"];
+const rows: string[] = [
+  "Quarter,Group,Line item,Scenario,Amount ($K),Actual size ($K)",
+];
 weights.forEach((weight, quarter) => {
   for (const [group, line, plan, drift] of lines) {
     const planned = Math.round(plan * weight);
     const actual = Math.round(planned * (1 + drift[quarter]!));
     const label = `Q${quarter + 1}`;
-    rows.push(`${label},${group},${line},Plan,${planned}`);
-    rows.push(`${label},${group},${line},Actual,${actual}`);
+    rows.push(`${label},${group},${line},Plan,${planned},`);
+    rows.push(`${label},${group},${line},Actual,${actual},${Math.abs(actual)}`);
   }
 });
 writeFileSync(output, `${rows.join("\n")}\n`);

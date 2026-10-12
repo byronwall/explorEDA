@@ -112,6 +112,7 @@ import { wineText } from "./analyses/wine";
 import {
   batteryDayDashboard,
   budgetBridgeDashboard,
+  budgetReportDashboard,
   channelShareDashboard,
 } from "./partsAndChangeDashboards";
 import { worldBankAnalysis } from "./analyses/worldbank";
@@ -829,7 +830,7 @@ export const examples: ExampleData[] = [
       "A research lab planned a $104K surplus and ended $39K short. A waterfall bridges plan to actual one line item at a time, with a subtotal for funding, staff, and operations; pick quarters to bridge part of the year, and click a step to see its rows.",
     dataset: {
       rows: "96 budget rows",
-      fields: 5,
+      fields: 6,
       source: "Synthetic",
     },
     shows: ["Waterfall bridge", "Group subtotals", "Plan and actual states"],
@@ -858,6 +859,17 @@ export const examples: ExampleData[] = [
     icon: DonutIcon,
     data: "/datasets/shop-operations.csv",
     savedData: channelShareDashboard,
+  },
+  {
+    id: "budget-report",
+    title: "Lab budget report",
+    description:
+      "A report page built in Composition: each quarter's plan-to-actual bridge as small multiples on one scale, and a donut per budget group of where its actual money came from and went. Filters and traces work as on any chart.",
+    dataset: { rows: "96 budget rows", fields: 6, source: "Synthetic" },
+    shows: ["Waterfall marks", "Donut marks", "Small multiples"],
+    icon: LayoutTemplate,
+    data: "/datasets/lab-budget.csv",
+    savedData: budgetReportDashboard,
   },
   {
     id: "consumer-confidence",
