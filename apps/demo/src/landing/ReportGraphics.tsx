@@ -15,11 +15,7 @@ export function ReportGraphics() {
   return (
     <section aria-labelledby="report-graphics-heading">
       <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
-        <SectionHeading
-          id="report-graphics-heading"
-          eyebrow="Report graphics"
-          heading="From exploration to a finished figure"
-        >
+        <SectionHeading id="report-graphics-heading" heading="Report graphics">
           Compose a finished graphic from your rows: titles, repeated chart
           units, shared scales, and callouts on one artboard. Filters still
           reach every mark.

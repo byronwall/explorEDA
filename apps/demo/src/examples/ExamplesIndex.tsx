@@ -20,38 +20,32 @@ export function ExamplesIndex() {
 
   return (
     <div className="pb-16">
-      <header className="landing-hero relative">
-        <div
-          aria-hidden="true"
-          className="landing-hero-grid pointer-events-none absolute inset-0"
-        />
-        <div className="relative mx-auto max-w-6xl px-4 pb-10 sm:px-6">
-          <SiteNav current="examples" />
-          <h1 className="mt-10 text-4xl font-bold tracking-[-0.03em] text-white sm:text-5xl">
-            All examples
-          </h1>
-          <p className="mt-3 max-w-3xl text-base leading-relaxed text-white/75 sm:text-lg">
-            {examples.length} examples, each opening as a live workspace you can
-            filter, inspect, and change.
-          </p>
-          <nav
-            aria-label="Example groups"
-            className="mt-6 flex flex-wrap gap-2 text-sm"
-          >
-            {exampleGroups.map((group) => (
-              <a
-                key={group.id}
-                href={`#${group.id}`}
-                className="rounded-full border border-band-border bg-white/5 px-3.5 py-1.5 font-medium text-white transition-colors hover:border-brand-teal/60 hover:bg-brand-teal/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-teal"
-              >
-                {group.heading}{" "}
-                <span className="tabular-nums text-brand-teal">
-                  {group.examples.length}
-                </span>
-              </a>
-            ))}
-          </nav>
-        </div>
+      <header className="mx-auto max-w-6xl px-4 sm:px-6">
+        <SiteNav current="examples" />
+        <h1 className="mt-10 text-4xl font-bold tracking-[-0.03em] text-brand-navy sm:text-5xl">
+          All examples
+        </h1>
+        <p className="mt-3 max-w-3xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+          {examples.length} examples, each opening as a live workspace you can
+          filter, inspect, and change.
+        </p>
+        <nav
+          aria-label="Example groups"
+          className="mt-6 flex flex-wrap gap-2 text-sm"
+        >
+          {exampleGroups.map((group) => (
+            <a
+              key={group.id}
+              href={`#${group.id}`}
+              className="rounded-md border border-border bg-card px-3 py-1.5 font-medium transition-colors hover:border-site-accent/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              {group.heading}{" "}
+              <span className="tabular-nums text-muted-foreground">
+                {group.examples.length}
+              </span>
+            </a>
+          ))}
+        </nav>
       </header>
       <div className="mx-auto mt-14 max-w-6xl space-y-16 px-4 sm:px-6">
         {exampleGroups.map((group) => (

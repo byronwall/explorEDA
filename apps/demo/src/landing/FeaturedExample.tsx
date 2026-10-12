@@ -22,11 +22,7 @@ export function FeaturedExample({ example, onOpen }: FeaturedExampleProps) {
   return (
     <section aria-labelledby="featured-heading" className="scroll-mt-8">
       <div className="max-w-3xl">
-        <SectionHeading
-          id="featured-heading"
-          eyebrow="Featured analysis"
-          heading={example.title}
-        >
+        <SectionHeading id="featured-heading" heading={example.title}>
           {example.description}
         </SectionHeading>
         {example.tabs && (

@@ -126,7 +126,7 @@ describe("LandingPage routing", () => {
     await waitFor(() =>
       expect(
         screen.getByRole("heading", {
-          name: /Click a bar\. Every chart answers\./i,
+          name: /Explore a CSV with charts that filter each other/i,
         })
       ).toBeInTheDocument()
     );
@@ -151,7 +151,7 @@ describe("LandingPage routing", () => {
       })
     ).toBeInTheDocument();
     const integration = screen.getByRole("heading", {
-      name: "Three props and a ref. Your app keeps the JSON.",
+      name: "Embed it in a React app",
     });
     const importHeading = screen.getByRole("heading", {
       name: "Import your data",
@@ -173,9 +173,7 @@ describe("LandingPage routing", () => {
 
     render(<RouterProvider router={router} />);
     const section = screen
-      .getByRole("heading", {
-        name: "From exploration to a finished figure",
-      })
+      .getByRole("heading", { name: "Report graphics" })
       .closest("section") as HTMLElement;
     const newest = compositionExamples[0]!;
     expect(
@@ -230,7 +228,7 @@ describe("LandingPage routing", () => {
 
     render(<RouterProvider router={router} />);
     const section = screen
-      .getByRole("heading", { name: "Real data, finished analyses" })
+      .getByRole("heading", { name: "Example analyses" })
       .closest("section") as HTMLElement;
     const list = within(section).getByRole("list");
     const items = () => within(list).getAllByRole("listitem");
@@ -640,7 +638,7 @@ describe("LandingPage routing", () => {
 
       expect(
         screen.getByRole("heading", {
-          name: /Click a bar\. Every chart answers\./i,
+          name: /Explore a CSV with charts that filter each other/i,
         })
       ).toBeInTheDocument();
       expect(screen.queryByTestId("workspace")).toBeNull();

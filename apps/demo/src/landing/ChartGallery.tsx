@@ -13,12 +13,10 @@ export function ChartGallery() {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <SectionHeading
           id="views-heading"
-          eyebrow="Chart guides"
-          heading={`${views.length} views, one way to select`}
+          heading={`${views.length} chart and table views`}
         >
-          Scatter to Sankey, pivot to map: every view filters the others the
-          same way. Each guide explains what the view computes and lets you try
-          it live.
+          Each one filters the others the same way. The guides explain what a
+          view computes from your rows, with a live example to try.
         </SectionHeading>
         <Link
           to={docsPath("rendering")}
@@ -32,11 +30,11 @@ export function ChartGallery() {
         {views.map(({ topic, title, summary, icon: Icon }) => (
           <li
             key={topic}
-            className="group relative flex items-center gap-3 rounded-xl sm:items-start border border-border bg-card p-3.5 transition-colors focus-within:ring-2 focus-within:ring-ring hover:border-site-accent/50 hover:bg-brand-teal/5"
+            className="group relative flex items-center gap-3 rounded-xl sm:items-start border border-border bg-card p-3.5 transition-colors focus-within:ring-2 focus-within:ring-ring hover:border-site-accent/50"
           >
             <span
               aria-hidden="true"
-              className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-brand-teal/10 text-site-accent transition-colors group-hover:bg-brand-navy group-hover:text-brand-teal"
+              className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted text-brand-navy transition-colors group-hover:text-site-accent"
             >
               <Icon className="size-[18px]" />
             </span>

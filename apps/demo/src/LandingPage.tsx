@@ -46,7 +46,6 @@ import { FeaturedExample } from "./landing/FeaturedExample";
 import { IntegrationGuide } from "./landing/IntegrationGuide";
 import { ChartGallery } from "./landing/ChartGallery";
 import { ClosingBand } from "./landing/ClosingBand";
-import { ProofStrip } from "./landing/ProofStrip";
 import { WhyWorkspace } from "./landing/WhyWorkspace";
 import { Hero } from "./landing/Hero";
 import { LandingFooter } from "./landing/LandingFooter";
@@ -565,7 +564,6 @@ export function LandingPage() {
                     />
                   )}
                   <div className="mx-auto mt-16 max-w-6xl space-y-28 px-4 pb-10 sm:px-6">
-                    <ProofStrip />
                     <WhyWorkspace />
                     <ChartGallery />
                     {featuredAnalysis && (
@@ -594,8 +592,7 @@ export function LandingPage() {
                       <div className="mb-8">
                         <SectionHeading
                           id="examples-heading"
-                          eyebrow="Examples"
-                          heading="Real data, finished analyses"
+                          heading="Example analyses"
                         >
                           Flights, air quality, earthquakes, wine, and more.
                           Each opens as a live workspace you can filter,
@@ -621,8 +618,7 @@ export function LandingPage() {
                     >
                       <SectionHeading
                         id="your-data-heading"
-                        eyebrow="Your data"
-                        heading="Try it on your own rows"
+                        heading="Open your own data"
                       >
                         Import a file into this demo, or reopen an analysis you
                         exported earlier. In your app, rows arrive through{" "}
