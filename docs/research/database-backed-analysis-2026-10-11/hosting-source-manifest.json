@@ -1,0 +1,31 @@
+{
+  "repository": "https://github.com/byronwall/explorEDA",
+  "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+  "packet_kind": "selected snapshot; not runnable",
+  "additional_source": [
+    {
+      "path": "apps/demo/package.json",
+      "sha256": "9a59f0507d5c5e2bca6ee520213b4644a498ca2db2f4324c6c31d0b081071c91"
+    },
+    {
+      "path": "apps/demo/vite.config.ts",
+      "sha256": "af6d4269eb75d5f3b485c9db5d55d622e38e9ad91c6381060f1e2b272fdc0118"
+    },
+    {
+      "path": ".github/workflows/deploy.yml",
+      "sha256": "06910bc7354f5c7a6d7f16170faf3b41f9182763c5bbb7c01c138f87ff5284d5"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "6b108b79d23a29004d970b7bce06ad6a2c9a0ca163b9cf62077f074883855d39"
+    },
+    {
+      "path": ".github/workflows/release.yml",
+      "sha256": "255d948b631e9dc36dc65b5943468488235194bb968c24c9b321ce9e9af8d24e"
+    }
+  ],
+  "local_additions": [
+    "customer-instance-update.md",
+    "prompts/customer-instance-hosting.md"
+  ]
+}

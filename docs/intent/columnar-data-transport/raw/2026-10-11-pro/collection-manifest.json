@@ -1,0 +1,36 @@
+{
+  "collected_at": "2026-10-12T04:33:06.103004+00:00",
+  "source": "https://chatgpt.com/c/6acc5239-824c-83ea-9a03-61e6f84b068c",
+  "download_method": "ChatGPT ZIP download; companion report and JSON extracted byte-for-byte",
+  "zip_checks": "relative paths, no traversal or symlinks, CRC passed",
+  "files": [
+    {
+      "path": "columnar-data-transport-research.zip",
+      "bytes": 51643,
+      "sha256": "dbdf50715cb5948b3f53ad8bedea4942d6e4f06cbcf1e648b9fba7db6deec8b1"
+    },
+    {
+      "path": "columnar-data-transport-research.md",
+      "bytes": 110758,
+      "sha256": "e18b8faadefbad2d20d53996dbd6d8bd6c9a29ad62032b7bc7ecef17534f0c45"
+    },
+    {
+      "path": "columnar-data-transport-recommendations.json",
+      "bytes": 43584,
+      "sha256": "c9240545a73e3b3d0f8325b8a7cdf629463f285dc82fd69c8b3d3dbed603b157"
+    }
+  ],
+  "companions": [
+    {
+      "name": "columnar-data-transport-research.md",
+      "archive_copy_identical": true,
+      "retrieved_at": "2026-10-12T04:39:55.458830+00:00"
+    },
+    {
+      "name": "columnar-data-transport-recommendations.json",
+      "archive_copy_identical": true,
+      "retrieved_at": "2026-10-12T04:41:50.013548+00:00"
+    }
+  ],
+  "prompt_sha256": "6d33f0458646a1f50e1b5aab3cdd5eb86cfd9bc715ab8813c2854d82a448b329"
+}
