@@ -40,6 +40,7 @@ function keys<T extends ChartType>() {
 /** Every saved setting of every chart type, reachable as a text path. */
 export const CHART_SETTING_KEYS: Record<ChartType, readonly string[]> = {
   row: keys<"row">()([
+    "annotations",
     "aggregateId",
     "colorField",
     "colorScaleId",
@@ -64,6 +65,7 @@ export const CHART_SETTING_KEYS: Record<ChartType, readonly string[]> = {
     "yGridLines",
   ]),
   bar: keys<"bar">()([
+    "annotations",
     "aggregateId",
     "binCount",
     "categoryOrder",
@@ -90,6 +92,7 @@ export const CHART_SETTING_KEYS: Record<ChartType, readonly string[]> = {
     "yGridLines",
   ]),
   scatter: keys<"scatter">()([
+    "annotations",
     "colorField",
     "colorScaleId",
     "contour",
@@ -123,6 +126,7 @@ export const CHART_SETTING_KEYS: Record<ChartType, readonly string[]> = {
     "yGridLines",
   ]),
   pivot: keys<"pivot">()([
+    "annotations",
     "colorField",
     "colorScaleId",
     "columnField",
@@ -148,6 +152,7 @@ export const CHART_SETTING_KEYS: Record<ChartType, readonly string[]> = {
     "yGridLines",
   ]),
   summary: keys<"summary">()([
+    "annotations",
     "colorField",
     "colorScaleId",
     "facet",
@@ -168,6 +173,7 @@ export const CHART_SETTING_KEYS: Record<ChartType, readonly string[]> = {
     "yGridLines",
   ]),
   "data-table": keys<"data-table">()([
+    "annotations",
     "colorField",
     "colorScaleId",
     "columns",
@@ -193,6 +199,7 @@ export const CHART_SETTING_KEYS: Record<ChartType, readonly string[]> = {
     "yGridLines",
   ]),
   composition: keys<"composition">()([
+    "annotations",
     "colorField",
     "colorScaleId",
     "composition",
@@ -214,6 +221,7 @@ export const CHART_SETTING_KEYS: Record<ChartType, readonly string[]> = {
     "yGridLines",
   ]),
   markdown: keys<"markdown">()([
+    "annotations",
     "colorField",
     "colorScaleId",
     "content",
@@ -235,6 +243,7 @@ export const CHART_SETTING_KEYS: Record<ChartType, readonly string[]> = {
     "yGridLines",
   ]),
   boxplot: keys<"boxplot">()([
+    "annotations",
     "autoBandwidth",
     "colorField",
     "colorScaleId",
@@ -263,6 +272,7 @@ export const CHART_SETTING_KEYS: Record<ChartType, readonly string[]> = {
     "yGridLines",
   ]),
   line: keys<"line">()([
+    "annotations",
     "colorField",
     "colorScaleId",
     "facet",
@@ -292,6 +302,7 @@ export const CHART_SETTING_KEYS: Record<ChartType, readonly string[]> = {
     "yGridLines",
   ]),
   sankey: keys<"sankey">()([
+    "annotations",
     "aggregation",
     "colorField",
     "colorScaleId",
@@ -319,6 +330,7 @@ export const CHART_SETTING_KEYS: Record<ChartType, readonly string[]> = {
     "yGridLines",
   ]),
   hierarchy: keys<"hierarchy">()([
+    "annotations",
     "aggregation",
     "arrangement",
     "colorBy",
@@ -346,6 +358,7 @@ export const CHART_SETTING_KEYS: Record<ChartType, readonly string[]> = {
     "yGridLines",
   ]),
   "parallel-coordinates": keys<"parallel-coordinates">()([
+    "annotations",
     "axes",
     "colorField",
     "colorScaleId",
@@ -369,6 +382,7 @@ export const CHART_SETTING_KEYS: Record<ChartType, readonly string[]> = {
     "yGridLines",
   ]),
   "scatter-matrix": keys<"scatter-matrix">()([
+    "annotations",
     "colorField",
     "colorScaleId",
     "diagonal",
@@ -396,6 +410,7 @@ export const CHART_SETTING_KEYS: Record<ChartType, readonly string[]> = {
     "yGridLines",
   ]),
   calendar: keys<"calendar">()([
+    "annotations",
     "aggregation",
     "colorField",
     "colorScaleId",
@@ -420,6 +435,7 @@ export const CHART_SETTING_KEYS: Record<ChartType, readonly string[]> = {
     "year",
   ]),
   heatmap: keys<"heatmap">()([
+    "annotations",
     "aggregation",
     "colorField",
     "colorScaleId",
@@ -446,6 +462,7 @@ export const CHART_SETTING_KEYS: Record<ChartType, readonly string[]> = {
     "yGridLines",
   ]),
   ecdf: keys<"ecdf">()([
+    "annotations",
     "colorField",
     "colorScaleId",
     "direction",
@@ -470,6 +487,7 @@ export const CHART_SETTING_KEYS: Record<ChartType, readonly string[]> = {
     "yGridLines",
   ]),
   map: keys<"map">()([
+    "annotations",
     "aggregation",
     "colorField",
     "colorScaleId",
@@ -506,6 +524,7 @@ export const CHART_SETTING_KEYS: Record<ChartType, readonly string[]> = {
     "yGridLines",
   ]),
   "metric-card": keys<"metric-card">()([
+    "annotations",
     "aggregation",
     "colorField",
     "colorScaleId",
@@ -529,6 +548,7 @@ export const CHART_SETTING_KEYS: Record<ChartType, readonly string[]> = {
     "yGridLines",
   ]),
   "color-legend": keys<"color-legend">()([
+    "annotations",
     "colorField",
     "colorScaleId",
     "facet",
@@ -552,6 +572,7 @@ export const CHART_SETTING_KEYS: Record<ChartType, readonly string[]> = {
     "yGridLines",
   ]),
   "3d-scatter": keys<"3d-scatter">()([
+    "annotations",
     "cameraPosition",
     "cameraTarget",
     "colorField",

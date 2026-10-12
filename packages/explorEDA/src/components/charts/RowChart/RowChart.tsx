@@ -1,4 +1,9 @@
 import { useThemeColors } from "@/hooks/useDisplayColorScales";
+import {
+  annotationSlot,
+  categoryText,
+  scaleFrame,
+} from "../annotations/ChartAnnotations";
 import { useAxisTypography } from "../chartTypography";
 import {
   categoryEqual,
@@ -54,7 +59,13 @@ type RowChartProps = BaseChartProps<RowChartSettings>;
 /** The smallest row, in pixels, that Top N compresses to before it gives way. */
 const TOP_N_ROW_FLOOR = 12;
 
-export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
+export function RowChart({
+  settings,
+  width,
+  height,
+  facetIds,
+  facetKey,
+}: RowChartProps) {
   const column = useGetColumnData(settings.field);
   const liveIds = useGetLiveIds(settings, facetIds);
   const owner = useId();
@@ -570,6 +581,24 @@ export function RowChart({ settings, width, height, facetIds }: RowChartProps) {
         }}
         xScale={xScale}
         yScale={yScale}
+        annotations={annotationSlot(settings, {
+          ...scaleFrame(xScale, yScale, { x: settings.xAxis.scaleType }),
+          facetKey,
+          // A row sums its category's rows; a note attaches at its bar end.
+          category: ({ value }) => {
+            const item = displayCounts.find(
+              (row) => !row.other && categoryText(row.value) === value
+            );
+            const at = item && (item.count ?? item.total);
+            return item && at !== undefined
+              ? {
+                  x: xScale(at),
+                  y: yScale(item.key)! + yScale.bandwidth() / 2,
+                  selected: true,
+                }
+              : undefined;
+          },
+        })}
         settings={chartSettings}
         onClearPlot={() => updateChart(settings.id, { filters: [] })}
         yTickFormatter={(value) =>

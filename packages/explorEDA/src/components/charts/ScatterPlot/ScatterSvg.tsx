@@ -430,7 +430,10 @@ export function ScatterSvg({
   activeFitId,
   onActiveFit,
   onInspectFit,
+  annotations,
 }: {
+  /** Saved annotations, drawn over the marks; given the plot clip path. */
+  annotations?: (clipPath: string) => ReactNode;
   fitMarks?: FitMark[];
   bubblePoints?: ScatterPlan["points"];
   /** A density surface drawn under the fits, such as hexagons or contours. */
@@ -614,6 +617,8 @@ export function ScatterSvg({
       onClick={(event) => {
         // The axis marker opens its own details; it never clears or selects.
         if ((event.target as Element).closest("[data-axis-hidden]")) return;
+        if ((event.target as Element).closest("[data-annotation-handle]"))
+          return;
         const marginalId = (event.target as Element)
           .closest("[data-marginal-id]")
           ?.getAttribute("data-marginal-id");
@@ -723,6 +728,7 @@ export function ScatterSvg({
         <g className="eda-brush" clipPath={`url(#${chartId}-plot)`}>
           <Primitives items={overlay.brush} />
         </g>
+        {annotations?.(`url(#${chartId}-plot)`)}
         {marginals && (
           <MarginalBars
             marginals={marginals}

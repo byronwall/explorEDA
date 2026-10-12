@@ -1,0 +1,36 @@
+{
+  "collected_at": "2026-10-12T04:33:06.096564+00:00",
+  "source": "https://chatgpt.com/c/6acc5207-c9f8-83ea-9b50-5b5dae43afdf",
+  "download_method": "ChatGPT ZIP download; companion report and JSON extracted byte-for-byte",
+  "zip_checks": "relative paths, no traversal or symlinks, CRC passed",
+  "files": [
+    {
+      "path": "database-query-contract-research.zip",
+      "bytes": 41996,
+      "sha256": "667492b1a62cc4723cac9dac1c3dfac156f881aaabf3a5e926bea31448ad6795"
+    },
+    {
+      "path": "database-query-contract-research.md",
+      "bytes": 114395,
+      "sha256": "d7531a2ac44db63eaff128dfc76d9784e36d6652179d64ac7d55b353bd16cdc8"
+    },
+    {
+      "path": "database-query-contract-recommendations.json",
+      "bytes": 15011,
+      "sha256": "f8212d65c239c33e94ab68b0da634045ff80f36537108bb314e42fcb7c22faa9"
+    }
+  ],
+  "companions": [
+    {
+      "name": "database-query-contract-research.md",
+      "archive_copy_identical": true,
+      "retrieved_at": "2026-10-12T04:38:57.696910+00:00"
+    },
+    {
+      "name": "database-query-contract-recommendations.json",
+      "archive_copy_identical": true,
+      "retrieved_at": "2026-10-12T04:39:19.273208+00:00"
+    }
+  ],
+  "prompt_sha256": "8f205c7dcd4f64954f6e829c671b4bc9af4fc1a395313fe22ea8bcd580bea9da"
+}

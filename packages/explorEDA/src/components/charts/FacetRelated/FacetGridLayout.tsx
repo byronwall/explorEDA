@@ -254,6 +254,7 @@ export function FacetGridLayout({
                                 cellHeight - CELL_ACTION_HEIGHT
                               )}
                               facetIds={facet.ids}
+                              facetKey={facet.id}
                             />
                           </>
                         ) : (

@@ -1,4 +1,5 @@
 import { useThemeColors } from "@/hooks/useDisplayColorScales";
+import { annotationSlot, scaleFrame } from "../annotations/ChartAnnotations";
 import { useAxisTypography } from "../chartTypography";
 import { useCallback, useId, useMemo, useRef, useState } from "react";
 import { useColorScales } from "@/hooks/useColorScales";
@@ -27,6 +28,7 @@ export function SeriesBarChart({
   width,
   height,
   facetIds,
+  facetKey,
 }: BaseChartProps<BarChartSettings>) {
   const owner = useId();
   const api = useChartTraceApi();
@@ -251,6 +253,11 @@ export function SeriesBarChart({
           axes={plan.axes}
           xScale={plan.x}
           yScale={plan.y}
+          annotations={annotationSlot(settings, {
+            // Grouped marks have no single record or category subject.
+            ...scaleFrame(plan.x, plan.y, { y: settings.yAxis.scaleType }),
+            facetKey,
+          })}
           brushingMode="none"
           onClearPlot={() => updateChart(settings.id, { filters: [] })}
           onBrushChange={() => {}}

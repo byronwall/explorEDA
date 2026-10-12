@@ -1,3 +1,4 @@
+import { isChartAnnotations } from "@/lib/annotations/validate";
 import { isDateText } from "@/lib/valueParsing";
 import { isCompositionDefinition } from "@/components/charts/Composition/validateComposition";
 import { isGeometryAsset } from "@/lib/geometryAssets";
@@ -350,6 +351,7 @@ function isBaseChart(value: Record<string, unknown>): boolean {
     (value.localFilters === undefined ||
       (Array.isArray(value.localFilters) &&
         value.localFilters.every(isFilter))) &&
+    isChartAnnotations(value.annotations) &&
     typeof value.xAxisLabel === "string" &&
     typeof value.yAxisLabel === "string" &&
     isFiniteNumber(value.xGridLines) &&

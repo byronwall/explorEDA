@@ -125,8 +125,8 @@ export function PageFileDrop({
           aria-live="polite"
           className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center landing-drop-overlay p-4 sm:p-6"
         >
-          <div className="flex h-full w-full max-w-6xl flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-primary px-6 text-center">
-            <FileUp className="h-10 w-10 text-primary" aria-hidden="true" />
+          <div className="flex h-full w-full max-w-6xl flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-site-accent px-6 text-center">
+            <FileUp className="h-10 w-10 text-site-accent" aria-hidden="true" />
             <p className="text-2xl font-semibold tracking-tight text-balance">
               Drop to explore your data
             </p>

@@ -44,7 +44,8 @@ import { CsvUpload } from "./CsvUpload";
 import { ExampleSelector } from "./ExampleSelector";
 import { FeaturedExample } from "./landing/FeaturedExample";
 import { IntegrationGuide } from "./landing/IntegrationGuide";
-import { LearningLinks } from "./landing/LearningLinks";
+import { ChartGallery } from "./landing/ChartGallery";
+import { ClosingBand } from "./landing/ClosingBand";
 import { WhyWorkspace } from "./landing/WhyWorkspace";
 import { Hero } from "./landing/Hero";
 import { LandingFooter } from "./landing/LandingFooter";
@@ -190,6 +191,7 @@ export function LandingPage() {
   const showCoverage =
     CoverageMatrix !== null && searchParams.get("view") === "coverage";
   const showDocs = isDocsPath(location.pathname);
+  const showLanding = !showDocs && !showCoverage;
   // A capability link opens an example at the tab that shows it.
   const initialTab = searchParams.get("tab") ?? undefined;
 
@@ -467,7 +469,14 @@ export function LandingPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground ">
-      <div className="flex flex-col items-center gap-6 px-3 py-3 sm:px-5">
+      <div
+        className={
+          // The docs and the home page's hero band draw their own full-width frame.
+          !hasData && (showDocs || showLanding)
+            ? "flex flex-col"
+            : "flex flex-col items-center gap-6 px-3 py-3 sm:px-5"
+        }
+      >
         {restoreFailed && (
           <div
             role="alert"
@@ -523,8 +532,10 @@ export function LandingPage() {
                 showCoverage
                   ? "mx-auto w-full min-w-0 px-1 pt-2 sm:px-0"
                   : showDocs
-                    ? "mx-auto w-full max-w-[calc(100vw-3rem)]"
-                    : "landing mx-auto w-full max-w-6xl"
+                    ? "w-full"
+                    : showLanding
+                      ? "landing w-full"
+                      : "landing mx-auto w-full max-w-6xl"
               }
             >
               {isExamplesIndex ? (
@@ -552,7 +563,9 @@ export function LandingPage() {
                       canResume={canResume}
                     />
                   )}
-                  <div className="mt-28 space-y-28 pb-10">
+                  <div className="mx-auto mt-16 max-w-6xl space-y-28 px-4 pb-10 sm:px-6">
+                    <WhyWorkspace />
+                    <ChartGallery />
                     {featuredAnalysis && (
                       <FeaturedExample
                         example={featuredAnalysis}
@@ -575,30 +588,29 @@ export function LandingPage() {
                         </Button>
                       </div>
                     )}
-                    <IntegrationGuide />
-                    <WhyWorkspace />
                     <section aria-labelledby="examples-heading">
                       <div className="mb-8">
                         <SectionHeading
                           id="examples-heading"
-                          heading="Examples"
+                          heading="Example analyses"
                         >
-                          Each is a finished analysis of a real or synthetic
-                          dataset, ready to filter, inspect, and change. Pick a
-                          capability to find the tab that shows it.
+                          Flights, air quality, earthquakes, wine, and more.
+                          Each opens as a live workspace you can filter,
+                          inspect, and change. Pick a capability to find the tab
+                          that shows it.
                         </SectionHeading>
                       </div>
-                      <LearningLinks />
                       <ExampleSelector onSelect={handleExampleSelect} />
                       <Link
                         to={EXAMPLES_PATH}
-                        className="mt-4 inline-flex items-center gap-1 rounded-sm text-sm font-medium text-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        className="mt-4 inline-flex items-center gap-1 rounded-sm text-sm font-medium text-site-accent underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                       >
                         Browse all {examples.length} examples
                         <ArrowRight className="size-4" aria-hidden="true" />
                       </Link>
                     </section>
                     <ReportGraphics />
+                    <IntegrationGuide />
                     <section
                       aria-labelledby="your-data-heading"
                       id="your-data"
@@ -606,7 +618,7 @@ export function LandingPage() {
                     >
                       <SectionHeading
                         id="your-data-heading"
-                        heading="Try your own data"
+                        heading="Open your own data"
                       >
                         Import a file into this demo, or reopen an analysis you
                         exported earlier. In your app, rows arrive through{" "}
@@ -656,6 +668,7 @@ export function LandingPage() {
                             className="min-h-32 w-full rounded-md border border-input bg-background p-3 font-mono text-xs"
                           />
                           <Button
+                            variant="brand"
                             className="mt-3"
                             onClick={handleAnalysisJson}
                             disabled={!analysisJson.trim()}
@@ -675,8 +688,11 @@ export function LandingPage() {
                         </section>
                       </div>
                     </section>
+                    <ClosingBand />
                   </div>
-                  <LandingFooter />
+                  <div className="mx-auto max-w-6xl px-4 sm:px-6">
+                    <LandingFooter />
+                  </div>
                 </>
               )}
             </motion.div>
@@ -773,7 +789,7 @@ export function LandingPage() {
             aria-busy="true"
           >
             <div className="flex flex-col items-center gap-4">
-              <div className="motion-safe:animate-spin rounded-full h-16 w-16 border-b-2 border-primary" />
+              <div className="motion-safe:animate-spin rounded-full h-16 w-16 border-b-2 border-site-accent" />
               <span>Loading example data…</span>
             </div>
           </div>
