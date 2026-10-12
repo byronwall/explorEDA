@@ -83,7 +83,9 @@ for (const topic of topics) {
         const overflow = await page.evaluate(
           () => document.documentElement.scrollWidth - window.innerWidth
         );
-        expect.soft(overflow, `horizontal overflow at ${width}px`).toBe(0);
+        expect
+          .soft(overflow, `horizontal overflow at ${width}px`)
+          .toBeLessThanOrEqual(0);
         await expectImagesLoad(
           page.locator("[data-docs-example] img"),
           `${path} at ${width}px`
