@@ -463,3 +463,12 @@ One row per economy with its code, region, income group, tonnes of CO2 per perso
 ```sh
 node --experimental-strip-types apps/data-samples/prepare/co2-per-capita.ts
 ```
+
+## Lab Budget
+
+- File: `lab-budget.csv`
+- Size: 96 rows and 5 fields
+- Use: a plan-to-actual waterfall, with a scenario column, line items, groups, and quarters
+- Generation: fixed values in `apps/data-samples/lab_budget.ts`
+
+Each quarter has a plan row and an actual row for twelve line items in three groups. Amounts are in thousands of dollars: funding is positive and spending negative, so a scenario's total is the lab's net position.

@@ -61,6 +61,7 @@ import {
   MapPin,
   Bird,
   BarChart3,
+  ChartColumnStacked,
   Calculator,
   Spline,
   TableProperties,
@@ -106,6 +107,7 @@ import { earthquakesAnalysis } from "./analyses/earthquakes";
 import { flightsAnalysis } from "./analyses/flights";
 import { shopText } from "./analyses/shop";
 import { wineText } from "./analyses/wine";
+import { budgetBridgeDashboard } from "./budgetDashboards";
 import { worldBankAnalysis } from "./analyses/worldbank";
 import type { ExampleAnalysis } from "./analyses/types";
 import { categoricalChartSettings } from "./categoricalChartSettings";
@@ -182,6 +184,7 @@ const viewNames: Record<string, string> = {
   boxplot: "box plot",
   "color-legend": "legend",
   composition: "composition",
+  waterfall: "waterfall",
   "data-table": "table",
   heatmap: "heatmap",
   ecdf: "ECDF",
@@ -812,6 +815,21 @@ export const examples: ExampleData[] = [
     icon: Layers,
     data: "/datasets/causes-by-age.csv",
     savedData: causesByAgeDashboard,
+  },
+  {
+    id: "budget-bridge",
+    title: "Lab budget: plan to actual",
+    description:
+      "A research lab planned a $104K surplus and ended $39K short. A waterfall bridges plan to actual one line item at a time, with a subtotal for funding, staff, and operations; pick quarters to bridge part of the year, and click a step to see its rows.",
+    dataset: {
+      rows: "96 budget rows",
+      fields: 5,
+      source: "Synthetic",
+    },
+    shows: ["Waterfall bridge", "Group subtotals", "Plan and actual states"],
+    icon: ChartColumnStacked,
+    data: "/datasets/lab-budget.csv",
+    savedData: budgetBridgeDashboard,
   },
   {
     id: "consumer-confidence",

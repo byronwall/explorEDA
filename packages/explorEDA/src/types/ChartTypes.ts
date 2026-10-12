@@ -22,6 +22,7 @@ import type { EcdfSettings } from "@/components/charts/Ecdf/definition";
 import type { MetricCardSettings } from "@/components/charts/MetricCard/definition";
 import type { ColorLegendSettings } from "@/components/charts/ColorLegend/definition";
 import type { CompositionSettings } from "@/components/charts/Composition/definition";
+import type { WaterfallSettings } from "@/components/charts/Waterfall/waterfallTypes";
 
 export interface ChartLayout {
   x: number;
@@ -158,7 +159,8 @@ export type ChartSettings =
   | MapSettings
   | MetricCardSettings
   | ColorLegendSettings
-  | CompositionSettings;
+  | CompositionSettings
+  | WaterfallSettings;
 
 export type ChartType = ChartSettings["type"];
 export type ScatterChartSettings = ScatterPlotSettings;

@@ -56,7 +56,7 @@ This milestone builds the whole bridge path, docs and example included. Accumula
   - Add the type to the `ChartSettings` union, `registerAllCharts`, saved-data validation, accessibility labels, and default sizing.
   - Verify with a saved-data round-trip test and a `chartAccessibility` label test.
 - **Change — renderer and selection**
-  - Floating bars on `BaseChart`, colored by direction. Start, end, and subtotal bars share a neutral total color. Signed labels on steps, values on totals.
+  - Horizontal floating bars on `BaseChart`, read top to bottom like a statement, so line-item labels stay readable at 390 px. Colored by direction. Start, end, and subtotal bars share a neutral total color. Signed labels on steps, values on totals.
   - Clicking a step sets a value filter on the step field. Clicking a subtotal selects every category in its group. Clicking start or end applies that state's filters. Clicking empty plot space clears this chart's filters, and `getFilterFunction` applies the chart's own filters.
   - Verify with a component test of the click paths. In the browser, a step click filters a neighboring table to that line item.
 - **Change — trace**
@@ -65,7 +65,7 @@ This milestone builds the whole bridge path, docs and example included. Accumula
   - Measure, mode, state 1 and state 2 (label, optional measure, conditions), step field, and parent field, using `FieldMetadata` pickers.
   - Reuse the filter editors from `FiltersSettingsTab` for the state conditions.
 - **Change — Dashboard text**
-  - Add a `waterfall` chart keyword. Write the state conditions as `from.where.<field>=` and `to.where.<field>=` keys, modeled on the table's `where.` keys.
+  - Register the settings in `settingKeys.ts`. The generic `chart waterfall` line and nested paths, such as `states.0.filters.0.values[]=Plan`, already round-trip every state, so no new keyword is needed.
   - Verify with `export.test.ts` and `compile.test.tsx` round trips.
 - **Change — docs and example**
   - Budget vs actual dataset and demo example: the bridge with parent subtotals beside a line-item table.
@@ -73,10 +73,8 @@ This milestone builds the whole bridge path, docs and example included. Accumula
   - `pages/waterfall.mdx` with a catalogue entry, a `LiveExample` whose scripted step clicks a step, and setting descriptions.
   - Add a changeset (`minor`).
 
-- **Spike — embedding the state-condition editor**
-  - Decision required: whether the `FiltersSettingsTab` editors can edit a filter list that isn't the chart's own filters.
-  - Evidence to gather: whether they can be driven by a value and change handler instead of `settings.filters`.
-  - Fallback: give each state value and range conditions only, with a field picker and a value list. Text and date conditions follow in M2.
+- **Spike — embedding the state-condition editor (resolved)**
+  - `ChartRowsFilters` already edited a standalone filter list. It is now the shared `FilterListEditor`, so each state gets every condition kind; no fallback was needed.
 
 ### Desired end state
 
@@ -143,8 +141,7 @@ This milestone adds marks that consume the M1–M3 plans and recompute nothing.
 
 ## Open decisions and spikes
 
-- **Embedding the state-condition editor** (M1, above). The fallback is a narrower set of condition kinds.
-- **Dashboard text keys for states:** the decision is between `from.where.` and `to.where.` keys and a separate `state` line. My default is the keys, matching the table's `where.` syntax. If they can't express two measures per state, add `from.measure=` and `to.measure=`.
+Both M1 unknowns are resolved: the shared filter-list editor edits each state, and Dashboard text carries states through generic setting paths. None remain open.
 
 ## Below the cut line
 

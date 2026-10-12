@@ -18,6 +18,7 @@ import {
   timeSeriesDashboard,
 } from "@/demos/dashboardSettings";
 import { demoSettings as lorenzSettings } from "@/demos/lorenz";
+import { budgetBridgeDashboard } from "@/demos/budgetDashboards";
 import type { SavedDataStructure } from "exploreda";
 
 /**
@@ -307,6 +308,25 @@ export const liveExamples = {
     exampleId: "point-map",
     shotAlt: "Service sites as points on a world map.",
     steps: [{ expectRows: 30 }],
+  },
+  waterfall: {
+    label: "Live budget waterfall",
+    data: "/datasets/lab-budget.csv",
+    savedData: focus(budgetBridgeDashboard, {
+      "budget-bridge": [0, 0, 7, 7],
+      "budget-quarter": [7, 0, 5, 3],
+    }),
+    exampleId: "budget-bridge",
+    shotAlt:
+      "A waterfall from the lab's planned net position to its actual one, with a step per line item and a subtotal per group, beside a quarter picker.",
+    steps: [
+      { expectRows: 96 },
+      { expectMark: "Plan, total 104" },
+      { expectMark: "Actual, total -39" },
+      { click: "Equipment, change -84" },
+      { expectChip: "Line item" },
+      { expectRows: 8 },
+    ],
   },
   composition: {
     label: "Live composition",

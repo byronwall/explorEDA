@@ -158,6 +158,17 @@ export const GLANCES: Readonly<Record<string, Glance>> = {
     needs: "Nothing: every field gets a row.",
     gestures: [],
   },
+  waterfall: {
+    useFor:
+      "Explaining how one total became another, such as plan to actual or last year to this year.",
+    needs: "A measure, a step field, and two states, each the rows it counts.",
+    gestures: [
+      ["Click a step", "Select its rows in both states"],
+      ["Click a subtotal", "Select every step in its group"],
+      ["Click the start or end", "Select that state's rows"],
+      ["Alt-click", "Trace a bar to both states' rows"],
+    ],
+  },
   "metric-card": {
     useFor: "Showing one headline number for the rows that pass every filter.",
     needs: "Nothing for a row count, or a measure field to summarize.",

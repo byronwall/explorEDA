@@ -40,6 +40,10 @@
   --eda-heat-high: oklch(0.43 0.14 257);
   --eda-heat-mid: oklch(0.96 0.004 250);
   --eda-heat-negative: oklch(0.53 0.17 28);
+  /* Waterfall bars: rising steps, falling steps, and start, subtotal, and end totals. */
+  --eda-waterfall-up: oklch(0.52 0.13 160);
+  --eda-waterfall-down: var(--eda-heat-negative);
+  --eda-waterfall-total: oklch(0.45 0.03 257);
   /* Sankey flow opacity: resting, hovered, dimmed, and context under a selection. */
   --eda-flow: 0.48;
   --eda-flow-strong: 0.82;
@@ -103,6 +107,8 @@
   --eda-heat-high: oklch(0.82 0.12 228);
   --eda-heat-mid: oklch(0.26 0.006 250);
   --eda-heat-negative: oklch(0.74 0.15 32);
+  --eda-waterfall-up: oklch(0.72 0.13 160);
+  --eda-waterfall-total: oklch(0.72 0.03 257);
   /* Flows sit on a dark card, so they need more opacity to keep their hue. */
   --eda-flow: 0.66;
   --eda-flow-strong: 0.92;
@@ -7598,4 +7604,21 @@ td[data-null] {
   border: 1px solid var(--input);
   border-radius: 4px;
   background: none;
+}
+
+/* A dashed rule carries the running total from one waterfall bar to the next. */
+.eda-waterfall-connector {
+  stroke: var(--muted-foreground);
+  stroke-width: 1;
+  stroke-dasharray: 2 2;
+}
+
+/* Step values sit beside their bars and may cross the zero line or a connector. */
+.eda-waterfall-value {
+  fill: var(--foreground);
+  font-size: 11px;
+  paint-order: stroke;
+  stroke: var(--card);
+  stroke-width: 3px;
+  stroke-linejoin: round;
 }

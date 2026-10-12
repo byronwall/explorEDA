@@ -649,6 +649,26 @@ function isChart(value: unknown): boolean {
       );
     case "composition":
       return isCompositionDefinition(value.composition);
+    case "waterfall":
+      return (
+        value.mode === "bridge" &&
+        (value.aggregation === "sum" || value.aggregation === "count") &&
+        (value.measureField === undefined ||
+          typeof value.measureField === "string") &&
+        (value.parentField === undefined ||
+          typeof value.parentField === "string") &&
+        Array.isArray(value.states) &&
+        value.states.length === 2 &&
+        value.states.every(
+          (state) =>
+            isRecord(state) &&
+            typeof state.label === "string" &&
+            (state.measureField === undefined ||
+              typeof state.measureField === "string") &&
+            Array.isArray(state.filters) &&
+            state.filters.every(isFilter)
+        )
+      );
     case "metric-card":
       return (
         ["count", "sum", "average"].includes(value.aggregation as string) &&

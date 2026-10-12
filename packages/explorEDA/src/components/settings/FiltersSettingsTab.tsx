@@ -61,6 +61,7 @@ export function chartFilterFields(
           },
         ];
       case "row":
+      case "waterfall":
         return [{ field: settings.field, valuesOnly: true }];
       case "boxplot":
         return [{ field: settings.colorField ?? "" }];
@@ -192,34 +193,61 @@ function ChartRowsFilters({
   settings: ChartSettings;
   onSettingChange: (key: string, value: unknown) => void;
 }) {
-  const fieldProfiles = useDataLayer((state) => state.fieldProfiles);
-  const getColumnData = useDataLayer((state) => state.getColumnData);
-  const getColumnNames = useDataLayer((state) => state.getColumnNames);
-  const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
-  const formatFieldValue = useDataLayer((state) => state.formatFieldValue);
-  const [adding, setAdding] = useState<string[]>([]);
-  const localFilters = settings.localFilters ?? [];
-  const fields = [
-    ...new Set([
-      ...localFilters.map((filter) => filter.field),
-      ...adding.filter((field) => getColumnNames().includes(field)),
-    ]),
-  ];
-  const setFilter = (field: string, filter?: Filter) => {
-    const next = [
-      ...localFilters.filter((item) => item.field !== field),
-      ...(filter ? [filter] : []),
-    ];
-    onSettingChange("localFilters", next.length ? next : undefined);
-    if (!filter) setAdding((current) => current.filter((f) => f !== field));
-  };
-
   return (
     <section className="eda-chart-rows" aria-label="Chart rows">
       <h3 className="text-xs font-semibold">Chart rows</h3>
       <p className="-mt-1 text-xs text-muted-foreground">
         Limit the rows this chart draws. Other charts ignore these filters.
       </p>
+      <FilterListEditor
+        filters={settings.localFilters ?? []}
+        onChange={(next) =>
+          onSettingChange("localFilters", next.length ? next : undefined)
+        }
+        addPlaceholder="Limit rows by a field"
+      />
+    </section>
+  );
+}
+
+/**
+ * Edits a list of conditions that is not the chart's own selection, such as
+ * the rows a chart draws or the rows one state of a bridge counts. One
+ * control per field, plus a picker that adds a field.
+ */
+export function FilterListEditor({
+  filters,
+  onChange,
+  addPlaceholder,
+  valuesOnly = false,
+}: {
+  filters: Filter[];
+  onChange: (next: Filter[]) => void;
+  addPlaceholder: string;
+  valuesOnly?: boolean;
+}) {
+  const fieldProfiles = useDataLayer((state) => state.fieldProfiles);
+  const getColumnData = useDataLayer((state) => state.getColumnData);
+  const getColumnNames = useDataLayer((state) => state.getColumnNames);
+  const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
+  const formatFieldValue = useDataLayer((state) => state.formatFieldValue);
+  const [adding, setAdding] = useState<string[]>([]);
+  const fields = [
+    ...new Set([
+      ...filters.map((filter) => filter.field),
+      ...adding.filter((field) => getColumnNames().includes(field)),
+    ]),
+  ];
+  const setFilter = (field: string, filter?: Filter) => {
+    onChange([
+      ...filters.filter((item) => item.field !== field),
+      ...(filter ? [filter] : []),
+    ]);
+    if (!filter) setAdding((current) => current.filter((f) => f !== field));
+  };
+
+  return (
+    <>
       {fields.map((field) => {
         const profile = resolveFieldProfile(
           field,
@@ -229,7 +257,7 @@ function ChartRowsFilters({
         if (!profile) {
           return (
             <p key={field} className="text-xs text-destructive">
-              {field} is not a field in this data, so the chart draws no rows.
+              {field} is not a field in this data, so no rows match.
             </p>
           );
         }
@@ -237,11 +265,12 @@ function ChartRowsFilters({
           <ColumnFilter
             key={field}
             embedded
+            valuesOnly={valuesOnly}
             columnId={field}
             columnLabel={getFieldLabel(field)}
             profile={profile}
             format={(value) => formatFieldValue(field, value as datum)}
-            filter={filterFor(localFilters, field)}
+            filter={filterFor(filters, field)}
             onChange={(_id, filter) => setFilter(field, filter)}
             onClear={() => setFilter(field)}
           />
@@ -249,13 +278,13 @@ function ChartRowsFilters({
       })}
       <FieldSelector
         label=""
-        placeholder="Limit rows by a field"
+        placeholder={addPlaceholder}
         value=""
         fields={getColumnNames().filter((field) => !fields.includes(field))}
         onChange={(field) =>
           field && setAdding((current) => [...current, field])
         }
       />
-    </section>
+    </>
   );
 }

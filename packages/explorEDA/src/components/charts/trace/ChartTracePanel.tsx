@@ -22,6 +22,7 @@ import { FitTraceBody } from "../ScatterPlot/FitTraceBody";
 import { MarginalTraceBody } from "../ScatterPlot/MarginalTraceBody";
 import { SurfaceTraceBody } from "../ScatterPlot/SurfaceTraceBody";
 import { CompositionTraceBody } from "../Composition/CompositionTraceBody";
+import { WaterfallTraceBody } from "../Waterfall/WaterfallTraceBody";
 import { useChartTrace, useChartTraceApi } from "./ChartTraceScope";
 import {
   FacetTraceBody,
@@ -70,6 +71,8 @@ function TraceBody({ trace }: { trace: ChartTrace }) {
       return <TimeSeriesTraceBody key={trace.id} trace={trace} />;
     case "metric-card":
       return <MetricCardTraceBody trace={trace} />;
+    case "waterfall-bar":
+      return <WaterfallTraceBody trace={trace} />;
     case "bar":
       return <BarTraceBody trace={trace} />;
     case "sankey-node":

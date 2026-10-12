@@ -116,6 +116,12 @@ const TRACE_COPY = {
       "Alt-click a point to inspect its period's calculation and source rows.",
     ariaLabel: "Time series trace inspector",
   },
+  waterfall: {
+    heading: "Waterfall trace",
+    emptyText:
+      "Alt-click a bar to see how its value was calculated and the rows in each state.",
+    ariaLabel: "Waterfall trace inspector",
+  },
   "metric-card": {
     heading: "Metric trace",
     emptyText:

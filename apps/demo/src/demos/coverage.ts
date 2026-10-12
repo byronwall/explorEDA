@@ -288,6 +288,16 @@ export const coverageFeatures = [
     chartType: "ecdf",
   },
   {
+    id: "chart:waterfall",
+    label: "Waterfall",
+    family: "Chart types",
+    description:
+      "Bridge one total to another, such as plan to actual, with one signed step per category and group subtotals.",
+    required: true,
+    status: "supported",
+    chartType: "waterfall",
+  },
+  {
     id: "chart:composition",
     label: "Composition",
     family: "Chart types",
@@ -1062,6 +1072,17 @@ export const exampleCoverage = [
       "chart:composition": "shown",
       "chart:row": "shown",
       "chart:bar": "shown",
+    },
+  },
+  {
+    exampleId: "budget-bridge",
+    intent:
+      "Bridge a lab's planned net position to its actual one line item at a time, with group subtotals, quarter filters, and the rows behind each step.",
+    features: {
+      "chart:waterfall": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+      "interaction:cross-filter": "shown",
     },
   },
   {

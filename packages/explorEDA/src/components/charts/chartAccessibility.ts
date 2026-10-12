@@ -23,6 +23,7 @@ const chartNames: Record<string, string> = {
   ecdf: "Cumulative distribution",
   "metric-card": "Metric card",
   composition: "Composition",
+  waterfall: "Waterfall",
 };
 
 export function getChartTitle(
@@ -61,6 +62,12 @@ export function getChartTitle(
     return settings.measureField
       ? `${metric} of ${getFieldLabel(settings.measureField)}${once}`
       : "Metric card";
+  }
+  if (settings.type === "waterfall") {
+    const [start, end] = settings.states;
+    return start?.label && end?.label && settings.field
+      ? `${start.label} to ${end.label} by ${getFieldLabel(settings.field)}`
+      : getChartDefinition(settings.type).name;
   }
   if (settings.type === "sankey") {
     const labels = settings.stages.filter(Boolean).map(getFieldLabel);
@@ -145,7 +152,15 @@ export function getChartFields(settings: ChartSettings): string[] {
             ]
           : [settings.xField, ...settings.seriesField];
       case "map":
-        return [settings.latitudeField, settings.longitudeField, settings.labelField, settings.colorField, settings.sizeField, settings.regionField, settings.measureField];
+        return [
+          settings.latitudeField,
+          settings.longitudeField,
+          settings.labelField,
+          settings.colorField,
+          settings.sizeField,
+          settings.regionField,
+          settings.measureField,
+        ];
       case "scatter":
         return [
           settings.xField,
@@ -190,6 +205,20 @@ export function getChartFields(settings: ChartSettings): string[] {
         return [
           settings.aggregation === "count" ? undefined : settings.measureField,
           settings.entityField,
+        ];
+      case "waterfall":
+        return [
+          settings.field,
+          settings.parentField,
+          ...(settings.aggregation === "count"
+            ? []
+            : [
+                settings.measureField,
+                ...settings.states.map((state) => state.measureField),
+              ]),
+          ...settings.states.flatMap((state) =>
+            state.filters.map((filter) => filter.field)
+          ),
         ];
       default:
         return [settings.field, settings.colorField];
