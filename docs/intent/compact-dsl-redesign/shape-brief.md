@@ -36,14 +36,13 @@ Dashboard text v2
 │   ├── Annotations as chart children: callout, rule, band, region
 │   ├── Define once, place in views: a view is a layout, overrides, theme, and filters
 │   ├── Placement: each chart by exactly one of
-│   │   ├── layout matrix: `height: cells…`; each line's cells split 12 columns evenly;
+│   │   ├── layout matrix: `height: cells…`; cells split 12 columns evenly unless a cell
+│   │   │   says `name:w` (D2);
 │   │   │   repeat a name to widen it, repeat it on the next line to make it taller
 │   │   └── at=x,y,w,h: always exact, for splits the matrix can't express
 │   ├── `set path=value` escape hatch, which check reports as a registry gap
 │   └── CLI: fmt (re-indent, canonical order, alignment, `--layout` converts at=
 │       to the matrix where exact), check --json, reference <type>
-├── EVALUATE BEFORE COMMITTING
-│   └── Field labels as default axis titles, factored out on export
 └── LATER POSSIBILITIES
     ├── Editor completion from a registry-generated JSON Schema
     └── Notebook-block sync (notebook-analysis)
@@ -104,6 +103,6 @@ view "Field report" theme=newsprint {   # 7/5 splits: the matrix can't, at= can
 
 **Boundary:** Calculation formulas keep their current syntax. Every inferred value, including scales, theme text styles, implicit names, and label-derived titles, needs one rule that export can reverse exactly. Otherwise the value is written out. `set` keeps every setting reachable while the registry fills in.
 
-**First proof:** **Try:** Build the registry for scatter, row, and hist with a defaults-aware export, and run it across the corpus. In parallel, give a cold agent only a one-page brace-syntax reference and ask it to write the six example dashboards, including two compositions. **Observe:** How many pairs drop with 57/57 round trips still passing. How many agent drafts pass a hand check on the first try. Which composition settings needed `set`. What share of example layouts the matrix expresses exactly. **Decide:** Proceed if at least four of the six drafts are clean and `set` covers under 5% of composition lines. Otherwise widen the composition grammar before building the parser. If the matrix covers under about 80% of layouts, use `at=` as the export default instead.
+**First proof:** Passed on 2026-10-11; see `raw/proof/results.md`. **Try:** Build the registry for scatter, row, and hist with a defaults-aware export, and run it across the corpus. In parallel, give a cold agent only a one-page brace-syntax reference and ask it to write the six example dashboards, including two compositions. **Observe:** How many pairs drop with every round trip still passing. How many agent drafts pass a hand check on the first try. Which composition settings needed `set`. What share of example layouts the matrix expresses exactly. **Decide:** Proceed if at least four of the six drafts are clean and `set` covers under 5% of composition lines. Otherwise widen the composition grammar before building the parser. If the matrix covers under about 80% of layouts, use `at=` as the export default instead.
 
 See the [intent brief](intent-brief.md) and the [approach comparison](brainstorm.md).

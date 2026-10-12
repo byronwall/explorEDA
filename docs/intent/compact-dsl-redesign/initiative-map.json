@@ -4,11 +4,11 @@
     "title": "Compact DSL redesign",
     "slug": "compact-dsl-redesign",
     "scale": "capability",
-    "current_phase": "shape",
+    "current_phase": "plan",
     "last_updated": "2026-10-11",
     "summary": "Replace dashboard text with a schema-driven outline language: defaults-aware export, one vocabulary, nested named composition nodes, annotations as children, define-once charts placed in views, and a layout block. Agent-written, human-reviewed; no backward compatibility.",
     "status": "planned",
-    "next_action": "Run the first proof (registry for scatter/row/hist + cold-agent brace-syntax authoring test + matrix coverage count), then write the implementation plan."
+    "next_action": "Byron decides D1 (house style as library defaults) and D2 (name:w matrix widths); then start M1 (schema registry + normalized export)."
   },
   "artifacts": {
     "intent_brief": {
@@ -23,13 +23,13 @@
     },
     "shape_brief": {
       "path": "shape-brief.md",
-      "status": "draft",
+      "status": "current",
       "updated_at": "2026-10-11"
     },
     "implementation_plan": {
       "path": "implementation-plan.md",
-      "status": "not-created",
-      "updated_at": null
+      "status": "draft",
+      "updated_at": "2026-10-11"
     }
   },
   "sources": [
@@ -81,6 +81,20 @@
       "location": "docs/intent/compact-dsl-redesign/raw/",
       "anchor": "six current exports and six hand conversions",
       "authority": "derived"
+    },
+    {
+      "id": "s-proof",
+      "type": "experiment",
+      "location": "docs/intent/compact-dsl-redesign/raw/proof/",
+      "anchor": "results.md, measure-corpus.json, agent-drafts/",
+      "authority": "observed"
+    },
+    {
+      "id": "s-house-style",
+      "type": "code",
+      "location": "apps/demo/src/demos/dashboardSettings.ts",
+      "anchor": "base margin 16/24/44/62, yGridLines 4, row 22/36",
+      "authority": "observed"
     }
   ],
   "intent": {
@@ -225,7 +239,7 @@
     "selected_option": "hybrid: o2+o3(brace form, per o4 structure)+o9+o10+o8(matrix)+at=, o1 first, o7 aggregate calls"
   },
   "shape": {
-    "status": "draft",
+    "status": "current",
     "appetite": "Full language replacement across every chart type and composition node, with all 57 examples round-tripping; rewritten in place.",
     "problem": "Exported dashboard text is ~30% defaults and ~44% flat composition paths; vocabulary is split; views repeat charts; composition has no grammar.",
     "recommended_shape": "Schema-registry-driven outline language with defaults-aware export, nested named composition nodes, chart-child annotations, define-once charts placed by view layout blocks, readable value forms, a set escape hatch, and fmt/check/reference tooling.",
@@ -240,14 +254,43 @@
     "first_proof": {
       "try": "Registry for scatter/row/hist + defaults-aware export over the corpus; cold agent writes 6 example dashboards (2 compositions) from a one-page draft reference.",
       "observe": "Pair reduction for those types with 57/57 round trips; first-pass clean drafts; composition settings needing set.",
-      "decide": ">=4/6 clean brace-syntax drafts and set <5% of composition lines proceeds; otherwise widen the composition grammar first. If the matrix covers under ~80% of example layouts, make at= the export default."
+      "decide": ">=4/6 clean brace-syntax drafts and set <5% of composition lines proceeds; otherwise widen the composition grammar first. If the matrix covers under ~80% of example layouts, make at= the export default.",
+      "result": {
+        "date": "2026-10-11",
+        "outcome": "passed",
+        "evidence": "raw/proof/results.md",
+        "pairs": {
+          "today": 7431,
+          "normalized": 6728,
+          "house_style_as_defaults": 5185,
+          "composition": 3308
+        },
+        "round_trip_after_normalization": "58/58 views",
+        "matrix_coverage": {
+          "even_split_max6": "48/58",
+          "max12": "58/58",
+          "misses": "9/10 are 7/5 splits"
+        },
+        "cold_agent": {
+          "clean": "4/6",
+          "failures": [
+            "formula language undocumented",
+            "top-level placement of defined charts undefined"
+          ],
+          "set_in_composition": "0 of ~60 lines"
+        }
+      },
+      "question": "Can agents write the brace syntax and composition grammar from a short reference, and how much text does the registry and matrix remove?",
+      "artifact": "raw/proof/ (results.md, measure-corpus.json, agent-drafts/)",
+      "decision_rule": ">=4/6 clean brace-syntax drafts and set <5% of composition lines proceeds; otherwise widen the composition grammar first. If the matrix covers under ~80% of example layouts, make at= the export default."
     },
     "rabbit_holes": [
       "Inference that cannot be reversed exactly (implicit scales, theme text styles, label-derived axis titles).",
       "Implicit names colliding or changing when a field is renamed.",
       "Splitting shared vs per-view chart state on export.",
       "Matrix cannot express uneven splits such as 7/5; those charts fall back to at=.",
-      "Brace recovery: a missing } must not swallow the rest of the file."
+      "Brace recovery: a missing } must not swallow the rest of the file.",
+      "House style differs from library defaults; 21% of exported pairs depend on a product decision."
     ],
     "open_decisions": [],
     "decisions": [
@@ -256,7 +299,7 @@
     ]
   },
   "implementation": {
-    "status": "not-started",
+    "status": "draft",
     "repository_snapshot": {
       "root": "packages/explorEDA/src/lib/dsl",
       "revision": "f01ff0f",
@@ -265,7 +308,10 @@
         "lib/dsl (parse, compile, export, paths, settingKeys, describe, highlight, views)",
         "cli/exploredaDsl.ts",
         "apps/demo DashboardTextPanel and dashboard-text docs page",
-        "components/charts/Composition"
+        "components/charts/Composition",
+        "apps/demo/src/demos/analyses (7 authored texts)",
+        "apps/demo/src/docs/reference (settingDescriptions, SettingsReference)",
+        "lib/annotations/persistence.test.ts"
       ],
       "test_commands": [
         "pnpm --filter exploreda exec vitest run src/lib/dsl",
@@ -275,11 +321,87 @@
     },
     "dependencies": [],
     "fast_local_loop": {
-      "description": "vitest round trip over all demo examples plus exploreda-dsl check on fixture files"
+      "description": "vitest over 58 example views + 7 analyses; committed corpus size ratchet",
+      "commands": [
+        "pnpm --filter exploreda exec vitest run src/lib/dsl",
+        "pnpm --filter demo exec vitest run src/dashboardText.test.ts src/demos/analyses"
+      ],
+      "command": "pnpm --filter exploreda exec vitest run src/lib/dsl && pnpm --filter demo exec vitest run src/dashboardText.test.ts src/demos/analyses",
+      "failure_injection": "Malformed-text fixtures (missing braces, mixed indentation, unknown keys, double placement) asserted against diagnostics."
     },
-    "milestones": [],
-    "cut_line": ["Editor/LSP completion", "Notebook sync"],
-    "open_decisions": []
+    "milestones": [
+      {
+        "id": "m1",
+        "title": "Smaller exports from a schema registry",
+        "outcome": "Registry drives export/validation/reference; normalized single-vocabulary export; house style per D1; size ratchet.",
+        "dependencies_introduced": [],
+        "proof": "All examples round-trip; pairs <=6,730 (<=5,200 with D1=A).",
+        "valid_intermediate_state": "Complete language that round-trips every example; set covers settings without grammar yet.",
+        "rollback": "Revert the milestone PR; no users or saved text depend on the old syntax.",
+        "status": "planned"
+      },
+      {
+        "id": "m2",
+        "title": "Brace syntax, fmt, and layout",
+        "outcome": "New parser/AST/printer; layout matrix + at=; override lines; analyses and fixtures migrated; composition via set.",
+        "dependencies_introduced": [],
+        "proof": "58 views + 7 analyses round-trip; fmt idempotent; mis-indented paste parses identically.",
+        "valid_intermediate_state": "Complete language that round-trips every example; set covers settings without grammar yet.",
+        "rollback": "Revert the milestone PR; no users or saved text depend on the old syntax.",
+        "status": "planned"
+      },
+      {
+        "id": "m3",
+        "title": "Composition grammar",
+        "outcome": "Named nodes, refs, inferred scales/styles/calcs with exact inverses.",
+        "dependencies_introduced": [],
+        "proof": "29 compositions round-trip with zero set lines; composition pairs -40%.",
+        "valid_intermediate_state": "Complete language that round-trips every example; set covers settings without grammar yet.",
+        "rollback": "Revert the milestone PR; no users or saved text depend on the old syntax.",
+        "status": "planned"
+      },
+      {
+        "id": "m4",
+        "title": "Readable values and annotations",
+        "outcome": "ISO dates, ranges, color maps, aggregate calls, annotation children.",
+        "dependencies_introduced": [],
+        "proof": "No epoch, index, or []= in exported corpus; annotation persistence test passes.",
+        "valid_intermediate_state": "Complete language that round-trips every example; set covers settings without grammar yet.",
+        "rollback": "Revert the milestone PR; no users or saved text depend on the old syntax.",
+        "status": "planned"
+      },
+      {
+        "id": "m5",
+        "title": "Define once and generated reference",
+        "outcome": "Top-level charts with view overrides; generated reference incl. formula grammar; cold-agent re-run.",
+        "dependencies_introduced": [],
+        "proof": "6/6 cold drafts pass exploreda-dsl check.",
+        "valid_intermediate_state": "Complete language that round-trips every example; set covers settings without grammar yet.",
+        "rollback": "Revert the milestone PR; no users or saved text depend on the old syntax.",
+        "status": "planned"
+      }
+    ],
+    "cut_line": [
+      "Editor/LSP completion",
+      "Notebook sync",
+      "Moving example axis titles into field labels (data cleanup)"
+    ],
+    "open_decisions": [
+      {
+        "id": "D1",
+        "question": "Adopt demo house style as library defaults (A) or strip it from examples (B)?",
+        "recommendation": "A",
+        "fallback": "B",
+        "needed_by": "m1"
+      },
+      {
+        "id": "D2",
+        "question": "Allow name:w widths in layout matrix cells?",
+        "recommendation": "yes",
+        "fallback": "at= for uneven splits",
+        "needed_by": "m2"
+      }
+    ]
   },
   "history": [
     {
@@ -290,6 +412,11 @@
     {
       "date": "2026-10-11",
       "event": "Byron chose braces over indentation and kept both at= and a layout matrix; shape brief and proposed examples updated.",
+      "status": "planned"
+    },
+    {
+      "date": "2026-10-11",
+      "event": "First proof passed (4/6 clean cold drafts, 0 composition set lines, 83% matrix coverage, 58/58 round trip after normalization). Implementation plan drafted with 5 milestones.",
       "status": "planned"
     }
   ],
