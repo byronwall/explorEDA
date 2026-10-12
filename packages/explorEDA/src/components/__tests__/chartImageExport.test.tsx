@@ -120,3 +120,17 @@ it("ignores Shift with other chart keys", () => {
   expect(capture).not.toHaveBeenCalled();
   expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
 });
+
+it("offers the image on a right-click that no other menu answers", async () => {
+  const panel = renderPanel();
+  const body = panel.querySelector(".eda-chart-content") ?? panel;
+  fireEvent.contextMenu(body, { clientX: 40, clientY: 60, shiftKey: true });
+  expect(screen.queryByRole("menuitem", { name: /Copy image/ })).toBeNull();
+  fireEvent.contextMenu(body, { clientX: 40, clientY: 60 });
+  expect(
+    await screen.findByRole("menuitem", { name: /Copy image/ })
+  ).toBeInTheDocument();
+  expect(
+    screen.getByRole("menuitem", { name: /Download image/ })
+  ).toBeVisible();
+});

@@ -29,8 +29,9 @@ describe("chartImageFileName", () => {
 
 describe("support", () => {
   it("exports every chart type, 3D included", () => {
-    for (const type of ["scatter", "3d-scatter", "composition"] as const)
-      {expect(chartImageUnsupportedReason(type)).toBeUndefined();}
+    for (const type of ["scatter", "3d-scatter", "composition"] as const) {
+      expect(chartImageUnsupportedReason(type)).toBeUndefined();
+    }
   });
 });
 

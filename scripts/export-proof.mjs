@@ -52,6 +52,7 @@ export const CASES = [
     example: "shop-operations",
     title: "Orders by category",
     limit: 1,
+    contextMenu: true,
   },
   {
     name: "pivot-full-extent",
@@ -221,6 +222,17 @@ for (const item of CASES) {
     });
     copied = ` · clipboard PNG ${Math.round(bytes / 1024)} KB`;
     if (!bytes) failed++;
+  }
+  if (item.contextMenu) {
+    // Right-click the plot, then download from the menu that opens there.
+    const box = await panel.boundingBox();
+    await page.mouse.click(box.x + box.width / 2, box.y + box.height * 0.6, {
+      button: "right",
+    });
+    const fromMenu = page.waitForEvent("download", { timeout: 20_000 });
+    await page.getByRole("menuitem", { name: /Download image/ }).click();
+    const menuFile = await fromMenu;
+    copied += ` · right-click download ${menuFile.suggestedFilename()}`;
   }
   const measure = item.own
     ? `${Math.round(result.blank * 100)}% background`

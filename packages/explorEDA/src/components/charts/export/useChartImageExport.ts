@@ -1,5 +1,5 @@
 import type { ChartType } from "@/types/ChartTypes";
-import { useCallback, type RefObject } from "react";
+import { useCallback, useMemo, type RefObject } from "react";
 import { toast } from "sonner";
 import {
   ChartExportError,
@@ -61,5 +61,5 @@ export function useChartImageExport(
     );
   }, [capture, reason, title]);
 
-  return { copy, download, reason };
+  return useMemo(() => ({ copy, download, reason }), [copy, download, reason]);
 }

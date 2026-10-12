@@ -34,6 +34,8 @@ The SVG payload is 1.6–7 MB per capture. Embedding one Latin font family adds 
 3. **Mark chrome explicitly.** Hiding by tag (`button`) removed the color-legend chips, because they are buttons. Hiding the header's actions and status by class works. Brush handles, the "Drag the edges to adjust, Esc to clear" hint, facet expand icons, the facet pager, and the table scrollbar still render. Each needs an explicit omit marker, extending composition's `data-overlay` convention.
 4. **WebGL needs a render-then-read hook.** Forcing `preserveDrawingBuffer` proves the pixels are reachable. The shipped approach should render a frame and read it synchronously, without a global buffer setting.
 
-## Not yet verified
+## Browser spike (2026-10-12)
 
-Safari and Firefox. Playwright's WebKit and Firefox builds are not installed here. WebKit has a history of tainting canvases after drawing `foreignObject` SVG. See the implementation plan's browser spike.
+- **Firefox:** the dark scatter and parallel coordinates matched, with fonts embedded.
+- **WebKit:** the scatter matched. Parallel coordinates drew no lines until the canvas got a warm-up draw: WebKit decodes images nested in an SVG image only after a first draw. With the warm-up, the export is visually correct.
+- **Memory:** a WebKit run of the large dark-scatter case, with two captures and embedded fonts, used enough memory to stall the machine. Run one engine and one case at a time. `pnpm export-proof` does that.

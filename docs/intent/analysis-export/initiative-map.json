@@ -4,11 +4,11 @@
     "title": "Export charts and analyses for sharing",
     "slug": "analysis-export",
     "scale": "capability",
-    "current_phase": "plan",
-    "last_updated": "2026-10-11",
+    "current_phase": "execution",
+    "last_updated": "2026-10-12",
     "summary": "Copy or download one chart as a PNG matching the screen, from every chart family, with a public function for embedding apps. Whole-report export is out of scope; headless rendering is a separate seed.",
     "status": "active",
-    "next_action": "Start M1 with the WebKit/Firefox spike (needs `pnpm exec playwright install webkit firefox`), then build the capture core and header menu."
+    "next_action": "Review and merge the stacked PRs (#333 → #340 → #341 → M3). Then decide whether to retire the initiative."
   },
   "artifacts": {
     "intent_brief": {
@@ -568,7 +568,10 @@
         "proof": "export-proof script under 1% mismatch light and dark; WebKit/Firefox spike result; PR screenshots at three widths.",
         "valid_intermediate_state": "Export works for most families; nothing else changes.",
         "rollback": "Revert PR; no saved-state changes.",
-        "status": "planned"
+        "status": "completed",
+        "evidence": [
+          "PR #340; pnpm export-proof; chartImage/rasterizePanel/chartImageExport tests"
+        ]
       },
       {
         "id": "m2",
@@ -578,7 +581,10 @@
         "proof": "Proof script covers pivot, 3D facets, composition.",
         "valid_intermediate_state": "All families export; composition button replaced.",
         "rollback": "Registry flags revert individual strategies.",
-        "status": "planned"
+        "status": "completed",
+        "evidence": [
+          "PR #341; export-proof pivot-full-extent, 3d-facets, composition"
+        ]
       },
       {
         "id": "m3",
@@ -588,7 +594,10 @@
         "proof": "Vitest for not-rendered rejection and workspace scoping; manual right-click check.",
         "valid_intermediate_state": "Feature complete for this initiative.",
         "rollback": "Revert PR.",
-        "status": "planned"
+        "status": "completed",
+        "evidence": [
+          "M3 PR; exportChartPng.test.ts; export-proof right-click download"
+        ]
       }
     ],
     "cut_line": [

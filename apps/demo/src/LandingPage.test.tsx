@@ -117,7 +117,10 @@ describe("LandingPage routing", () => {
     );
 
     render(<RouterProvider router={router} />);
-    expect(await screen.findByTestId("workspace")).toBeInTheDocument();
+    // The example loads lazily; under a full test run it can take over 1 s.
+    expect(
+      await screen.findByTestId("workspace", {}, { timeout: 5000 })
+    ).toBeInTheDocument();
 
     await act(async () => {
       await router.navigate(-1);

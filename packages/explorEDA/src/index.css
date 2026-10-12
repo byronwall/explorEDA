@@ -7378,6 +7378,15 @@ td[data-null] {
   letter-spacing: 0.02em;
   text-transform: uppercase;
 }
+.eda-quick-menu-separator {
+  height: 1px;
+  margin: 4px 0;
+  background: var(--border);
+}
+.eda-quick-menu-item:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
 .eda-quick-menu-item {
   display: flex;
   flex-direction: column;

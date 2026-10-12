@@ -10,6 +10,8 @@ last_updated: "2026-10-11"
 
 ## Plan at a glance
 
+**Status (2026-10-12):** all three milestones are implemented, as stacked PRs byronwall/explorEDA#340 (M1), byronwall/explorEDA#341 (M2), and the M3 PR on `claude/chart-export-m3`. The host method shipped on both `ExplorEda` and `ExplorEdaProject` refs. Right-click items also joined the axis and title menus, so every chart menu ends with them.
+
 The [first proof](references/first-proof/README.md) settled the mechanism. A generic panel rasterizer matched the screen within 0.3% for scatter, parallel coordinates, maps, and light and dark themes. It does this by inlining computed styles, swapping canvases for bitmaps, and drawing a `foreignObject` SVG through a `data:` URL. Only WebGL needs its own hook. So the work is one capture core plus thin entry points, in three stacked PRs:
 
 1. **Copy and Download from the chart header** for every non-WebGL family, with explicit omit markers on editor chrome and font embedding. 3D shows the action disabled with a reason. This alone delivers the main job: paste a chart into ongoing work.
@@ -82,7 +84,7 @@ These entry points sit on a finished core.
 
 ## Open decisions and spikes
 
-- **Browser coverage** (Milestone 1 spike): whether WebKit and Gecko need the `composite` fallback. If they fail and the fallback grows, ship Chromium-quality export first and disable Copy where capture throws, with a reason.
+- **Browser coverage** (resolved 2026-10-12): WebKit and Gecko work with the generic strategy. WebKit needs a warm-up draw for nested canvas images. No `composite` fallback is needed. See the [first-proof notes](references/first-proof/README.md).
 
 ## Below the cut line
 
