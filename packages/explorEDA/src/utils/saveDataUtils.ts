@@ -16,6 +16,7 @@ import type { DataType } from "@/components/SummaryTable/utils/dataTypeDetection
 import type { AggregateSpec } from "@/lib/aggregates";
 import { getFieldSettingsError } from "@/lib/fieldSettings";
 import type { FieldSettings } from "@/lib/fieldSettings";
+import { SAVED_MAX_ZOOM } from "@/components/charts/Map/streetCamera";
 
 export async function saveToClipboard(data: SavedDataStructure): Promise<void> {
   try {
@@ -645,7 +646,7 @@ function isChart(value: unknown): boolean {
             Math.abs(value.view.center[1]!) <= 90 &&
             isFiniteNumber(value.view.zoom) &&
             value.view.zoom >= 1 &&
-            value.view.zoom <= 64))
+            value.view.zoom <= SAVED_MAX_ZOOM))
       );
     case "composition":
       return isCompositionDefinition(value.composition);

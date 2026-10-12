@@ -1,5 +1,6 @@
 import { MapToolbar } from "./MapToolbar";
-import { useId, useMemo, useRef, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { BaseChartProps } from "@/types/ChartTypes";
 import { ChartReadout } from "../ChartReadout";
 import {
@@ -9,8 +10,23 @@ import {
 } from "../trace/ChartTraceScope";
 import type { TraceSource } from "../trace/traceTypes";
 import type { MapSettings, MapView } from "./definition";
-import { mapPaths, mapProjection, wrapLongitude } from "./mapGeometry";
-import { mapPointFilters, planPointMap } from "./pointMapPlan";
+import {
+  mapPaths,
+  mapProjection,
+  WORLD_VIEW,
+  wrapLongitude,
+} from "./mapGeometry";
+import { useStreetMapEngine } from "./mapEngine";
+import { mapPointFilters, planPointMap, pointMapHeight } from "./pointMapPlan";
+import {
+  isStreetView,
+  OUTLINE_MAX_ZOOM,
+  STREET_FIT_ZOOM,
+  STREET_MAX_ZOOM,
+  streetProjection,
+  viewZoom,
+} from "./streetCamera";
+import { StreetBasemap } from "./StreetBasemap";
 import { useMapData } from "./useMapData";
 
 export function PointMap({
@@ -41,16 +57,39 @@ export function PointMap({
     | undefined
   >(undefined);
   const suppressClick = useRef(false);
+  const engine = useStreetMapEngine();
+  const dark = useDataLayer((state) => state.darkMode ?? false);
+  const [failedEngine, setFailedEngine] = useState<typeof engine>();
+  const mapHeight = pointMapHeight(settings, height);
+  // The saved view decides the basemap, so a gesture never swaps it mid-drag.
+  const street =
+    Boolean(engine) &&
+    isStreetView(
+      settings.view ?? WORLD_VIEW,
+      settings.projection,
+      width,
+      mapHeight
+    );
+  const streetFailed = street && failedEngine === engine;
+  const maxZoom = engine
+    ? viewZoom(STREET_MAX_ZOOM, settings.projection, width, mapHeight)
+    : OUTLINE_MAX_ZOOM;
+  // Fit stops at neighborhood scale, so one site still shows its streets.
+  const fitZoom = engine
+    ? viewZoom(STREET_FIT_ZOOM, settings.projection, width, mapHeight)
+    : 32;
   const plan = useMemo(
     () =>
       planPointMap(
         draftView ? { ...settings, view: draftView } : settings,
         snapshot,
         width,
-        height
+        height,
+        street
       ),
-    [settings, snapshot, width, height, draftView]
+    [settings, snapshot, width, height, draftView, street]
   );
+  useEffect(() => setDraftView(undefined), [street]);
   const paths = useMemo(() => mapPaths(plan.projection), [plan.projection]);
   const source: TraceSource = {
     role: "chart",
@@ -150,186 +189,238 @@ export function PointMap({
       : keyboardPoints[0]?.sourceId;
   return (
     <div style={{ width, height }} className="relative flex flex-col">
-      <svg
-        width={width}
-        height={plan.mapHeight}
-        className="block shrink-0 touch-none select-none rounded"
-        role="group"
-        aria-label="Point map"
-        aria-description={
-          onSettingsChange
-            ? "Drag to pan. Click a point or press Enter to inspect its source row. Arrow keys move between visible points."
-            : "Drag to pan. Click a point or press Enter to select its source row. Arrow keys move between visible points. Alt-Enter inspects. Click empty map space or press Escape to clear the selection."
-        }
-        onPointerDown={(event) => {
-          if (event.button !== 0) return;
-          suppressClick.current = false;
-          drag.current = {
-            x: event.clientX,
-            y: event.clientY,
-            view: plan.view,
-            moved: false,
-          };
-        }}
-        onPointerMove={(event) => {
-          const start = drag.current;
-          if (!start) return;
-          const dx = event.clientX - start.x,
-            dy = event.clientY - start.y;
-          if (!start.moved && Math.hypot(dx, dy) < 4) return;
-          start.moved = true;
-          suppressClick.current = true;
-          event.currentTarget.setPointerCapture(event.pointerId);
-          const projection = mapProjection(
-            settings.projection,
-            start.view,
-            width,
-            plan.mapHeight
-          );
-          const center = projection.invert!([
-            width / 2 - dx,
-            plan.mapHeight / 2 - dy,
-          ]);
-          if (!center || !center.every(Number.isFinite)) return;
-          start.next = {
-            ...start.view,
-            center: [
-              wrapLongitude(center[0]),
-              Math.max(-90, Math.min(90, center[1])),
-            ],
-          };
-          setDraftView(start.next);
-        }}
-        onPointerUp={(event) => {
-          const start = drag.current;
-          drag.current = undefined;
-          if (start?.moved && start.next) saveView(start.next);
-          setDraftView(undefined);
-          if (event.currentTarget.hasPointerCapture(event.pointerId))
-            event.currentTarget.releasePointerCapture(event.pointerId);
-        }}
-        onPointerCancel={() => {
-          drag.current = undefined;
-          setDraftView(undefined);
-        }}
-        onClick={(event) => {
-          if (suppressClick.current) return;
-          if (event.altKey) api?.inspect(owner, "map-background", "land");
-          else clearFilters();
-        }}
-        onKeyDown={(event) => {
-          if (event.key === "Escape") {
-            event.stopPropagation();
-            clearFilters();
-          }
-        }}
+      <div
+        className="relative shrink-0"
+        style={{ width, height: plan.mapHeight }}
       >
-        <defs>
-          <clipPath id={`${owner}-map-clip`}>
-            <rect width={width} height={plan.mapHeight} />
-          </clipPath>
-        </defs>
-        <g clipPath={`url(#${owner}-map-clip)`}>
-          <path
-            d={paths.outline}
-            fill="var(--background)"
-            stroke="var(--border)"
+        {street && engine && !streetFailed && (
+          <StreetBasemap
+            engine={engine}
+            view={settings.view ?? WORLD_VIEW}
+            projection={settings.projection}
+            width={width}
+            height={plan.mapHeight}
+            dark={dark}
+            onMove={setDraftView}
+            onMoveEnd={(view) => {
+              saveView(view);
+              setDraftView(undefined);
+            }}
+            onBackgroundClick={(altKey) => {
+              if (altKey) api?.inspect(owner, "map-background", "land");
+              else clearFilters();
+            }}
+            onFailure={() => setFailedEngine(engine)}
           />
-          <path
-            d={paths.land}
-            fill="var(--muted)"
-            stroke="var(--muted-foreground)"
-            strokeOpacity={0.3}
-            strokeWidth={0.6}
-          />
-          <path
-            d={paths.grid}
-            fill="none"
-            stroke="var(--border)"
-            strokeOpacity={0.5}
-            strokeWidth={0.5}
-          />
-          {plan.points.map((point) => {
-            const selected = plan.hasSelection && point.matching;
-            const emphasized =
-              selected ||
-              point.sourceId === activeId ||
-              point.sourceId === tracedId;
-            return (
-              <circle
-                key={point.sourceId}
-                ref={(node) => {
-                  if (node) pointRefs.current.set(point.sourceId, node);
-                  else pointRefs.current.delete(point.sourceId);
-                }}
-                cx={point.x}
-                cy={point.y}
-                r={point.radius}
-                fill={
-                  settings.sizeField && point.value === 0 ? "none" : point.color
-                }
-                fillOpacity={
-                  settings.pointOpacity *
-                  (plan.hasSelection && !point.matching ? 0.2 : 1)
-                }
-                stroke={emphasized ? "var(--foreground)" : point.color}
-                strokeWidth={emphasized ? 2.5 : 1}
-                strokeOpacity={plan.hasSelection && !point.matching ? 0.2 : 1}
-                role="button"
-                className="chart-mark cursor-pointer"
-                tabIndex={point.sourceId === tabStop ? 0 : -1}
-                aria-label={`${point.label}; row ${point.sourceId}; latitude ${point.latitude}°; longitude ${point.longitude}°`}
-                aria-pressed={selected}
-                onPointerEnter={() => {
-                  if (!drag.current?.moved) setActiveId(point.sourceId);
-                }}
-                onPointerLeave={() => setActiveId(undefined)}
-                onFocus={() => setActiveId(point.sourceId)}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  if (suppressClick.current) return;
-                  if (event.altKey) inspect(point.sourceId);
-                  else select(point.sourceId);
-                }}
-                onKeyDown={(event) => {
-                  if (
-                    event.key.startsWith("Arrow") ||
-                    event.key === "Home" ||
-                    event.key === "End"
-                  ) {
-                    event.preventDefault();
+        )}
+        <svg
+          width={width}
+          height={plan.mapHeight}
+          className="relative block touch-none select-none rounded"
+          role="group"
+          aria-label="Point map"
+          aria-description={
+            onSettingsChange
+              ? "Drag to pan. Click a point or press Enter to inspect its source row. Arrow keys move between visible points."
+              : "Drag to pan. Click a point or press Enter to select its source row. Arrow keys move between visible points. Alt-Enter inspects. Click empty map space or press Escape to clear the selection."
+          }
+          style={
+            street && !streetFailed ? { pointerEvents: "none" } : undefined
+          }
+          onPointerDown={(event) => {
+            if (event.button !== 0 || (street && !streetFailed)) return;
+            suppressClick.current = false;
+            drag.current = {
+              x: event.clientX,
+              y: event.clientY,
+              view: plan.view,
+              moved: false,
+            };
+          }}
+          onPointerMove={(event) => {
+            const start = drag.current;
+            if (!start) return;
+            const dx = event.clientX - start.x,
+              dy = event.clientY - start.y;
+            if (!start.moved && Math.hypot(dx, dy) < 4) return;
+            start.moved = true;
+            suppressClick.current = true;
+            event.currentTarget.setPointerCapture(event.pointerId);
+            const projection = street
+              ? streetProjection(
+                  start.view,
+                  settings.projection,
+                  width,
+                  plan.mapHeight
+                )
+              : mapProjection(
+                  settings.projection,
+                  start.view,
+                  width,
+                  plan.mapHeight
+                );
+            const center = projection.invert!([
+              width / 2 - dx,
+              plan.mapHeight / 2 - dy,
+            ]);
+            if (!center || !center.every(Number.isFinite)) return;
+            start.next = {
+              ...start.view,
+              center: [
+                wrapLongitude(center[0]),
+                Math.max(-90, Math.min(90, center[1])),
+              ],
+            };
+            setDraftView(start.next);
+          }}
+          onPointerUp={(event) => {
+            const start = drag.current;
+            drag.current = undefined;
+            if (start?.moved && start.next) saveView(start.next);
+            setDraftView(undefined);
+            if (event.currentTarget.hasPointerCapture(event.pointerId))
+              event.currentTarget.releasePointerCapture(event.pointerId);
+          }}
+          onPointerCancel={() => {
+            drag.current = undefined;
+            setDraftView(undefined);
+          }}
+          onClick={(event) => {
+            if (suppressClick.current) return;
+            if (event.altKey) api?.inspect(owner, "map-background", "land");
+            else clearFilters();
+          }}
+          onKeyDown={(event) => {
+            if (event.key === "Escape") {
+              event.stopPropagation();
+              clearFilters();
+            }
+          }}
+        >
+          <defs>
+            <clipPath id={`${owner}-map-clip`}>
+              <rect width={width} height={plan.mapHeight} />
+            </clipPath>
+          </defs>
+          <g clipPath={`url(#${owner}-map-clip)`}>
+            {(!street || streetFailed) && (
+              <>
+                <path
+                  d={paths.outline}
+                  fill="var(--background)"
+                  stroke="var(--border)"
+                />
+                <path
+                  d={paths.land}
+                  fill="var(--muted)"
+                  stroke="var(--muted-foreground)"
+                  strokeOpacity={0.3}
+                  strokeWidth={0.6}
+                />
+                {!street && (
+                  <path
+                    d={paths.grid}
+                    fill="none"
+                    stroke="var(--border)"
+                    strokeOpacity={0.5}
+                    strokeWidth={0.5}
+                  />
+                )}
+              </>
+            )}
+            {plan.points.map((point) => {
+              const selected = plan.hasSelection && point.matching;
+              const emphasized =
+                selected ||
+                point.sourceId === activeId ||
+                point.sourceId === tracedId;
+              return (
+                <circle
+                  key={point.sourceId}
+                  ref={(node) => {
+                    if (node) pointRefs.current.set(point.sourceId, node);
+                    else pointRefs.current.delete(point.sourceId);
+                  }}
+                  cx={point.x}
+                  cy={point.y}
+                  r={point.radius}
+                  fill={
+                    settings.sizeField && point.value === 0
+                      ? "none"
+                      : point.color
+                  }
+                  fillOpacity={
+                    settings.pointOpacity *
+                    (plan.hasSelection && !point.matching ? 0.2 : 1)
+                  }
+                  stroke={emphasized ? "var(--foreground)" : point.color}
+                  strokeWidth={emphasized ? 2.5 : 1}
+                  strokeOpacity={plan.hasSelection && !point.matching ? 0.2 : 1}
+                  role="button"
+                  className="chart-mark cursor-pointer"
+                  style={{ pointerEvents: "auto" }}
+                  tabIndex={point.sourceId === tabStop ? 0 : -1}
+                  aria-label={`${point.label}; row ${point.sourceId}; latitude ${point.latitude}°; longitude ${point.longitude}°`}
+                  aria-pressed={selected}
+                  onPointerEnter={() => {
+                    if (!drag.current?.moved) setActiveId(point.sourceId);
+                  }}
+                  onPointerLeave={() => setActiveId(undefined)}
+                  onFocus={() => setActiveId(point.sourceId)}
+                  onClick={(event) => {
                     event.stopPropagation();
-                    const index = keyboardPoints.findIndex(
-                      (row) => row.sourceId === point.sourceId
-                    );
-                    const next =
-                      event.key === "Home"
-                        ? 0
-                        : event.key === "End"
-                          ? keyboardPoints.length - 1
-                          : (index +
-                              (["ArrowLeft", "ArrowUp"].includes(event.key)
-                                ? -1
-                                : 1) +
-                              keyboardPoints.length) %
-                            keyboardPoints.length;
-                    const id = keyboardPoints[next]?.sourceId;
-                    if (id !== undefined) {
-                      setActiveId(id);
-                      pointRefs.current.get(id)?.focus();
-                    }
-                  } else if (event.key === "Enter" || event.key === " ") {
-                    event.preventDefault();
-                    event.stopPropagation();
+                    if (suppressClick.current) return;
                     if (event.altKey) inspect(point.sourceId);
                     else select(point.sourceId);
-                  }
-                }}
-              />
-            );
-          })}
-        </g>
-      </svg>
+                  }}
+                  onKeyDown={(event) => {
+                    if (
+                      event.key.startsWith("Arrow") ||
+                      event.key === "Home" ||
+                      event.key === "End"
+                    ) {
+                      event.preventDefault();
+                      event.stopPropagation();
+                      const index = keyboardPoints.findIndex(
+                        (row) => row.sourceId === point.sourceId
+                      );
+                      const next =
+                        event.key === "Home"
+                          ? 0
+                          : event.key === "End"
+                            ? keyboardPoints.length - 1
+                            : (index +
+                                (["ArrowLeft", "ArrowUp"].includes(event.key)
+                                  ? -1
+                                  : 1) +
+                                keyboardPoints.length) %
+                              keyboardPoints.length;
+                      const id = keyboardPoints[next]?.sourceId;
+                      if (id !== undefined) {
+                        setActiveId(id);
+                        pointRefs.current.get(id)?.focus();
+                      }
+                    } else if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      event.stopPropagation();
+                      if (event.altKey) inspect(point.sourceId);
+                      else select(point.sourceId);
+                    }
+                  }}
+                />
+              );
+            })}
+          </g>
+        </svg>
+      </div>
+      {streetFailed && (
+        <div
+          className="pointer-events-none absolute left-2 top-2 rounded bg-background/90 px-2 py-1 text-xs text-muted-foreground"
+          role="status"
+        >
+          Street map unavailable. Showing the outline map.
+        </div>
+      )}
       {(!plan.configured || !plan.points.length) && (
         <div
           className="pointer-events-none absolute inset-x-4 top-3 rounded bg-background/90 p-2 text-center text-sm"
@@ -349,6 +440,8 @@ export function PointMap({
         plan={plan}
         owner={owner}
         getFieldLabel={getFieldLabel}
+        maxZoom={maxZoom}
+        fitZoom={fitZoom}
         onViewChange={saveView}
       />
       {active && (

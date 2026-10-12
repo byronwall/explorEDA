@@ -7,6 +7,8 @@ import { useColorScales } from "@/hooks/useColorScales";
 import type { ChartSettingsPanelProps } from "@/types/ChartTypes";
 import type { MapSettings } from "./definition";
 import { WORLD_VIEW } from "./mapGeometry";
+import { useStreetMapEngine } from "./mapEngine";
+import { OUTLINE_MAX_ZOOM, SAVED_MAX_ZOOM } from "./streetCamera";
 
 export function MapSettingsPanel({
   settings,
@@ -14,6 +16,7 @@ export function MapSettingsPanel({
 }: ChartSettingsPanelProps<MapSettings>) {
   const { getOrCreateScaleForField } = useColorScales();
   const view = settings.view ?? WORLD_VIEW;
+  const zoomLimit = useStreetMapEngine() ? SAVED_MAX_ZOOM : OUTLINE_MAX_ZOOM;
   return (
     <div className="space-y-2">
       <div className="eda-setting-grid">
@@ -204,17 +207,17 @@ export function MapSettingsPanel({
             </div>
           ))}
           <Label htmlFor={`map-zoom-${settings.id}`}>Zoom</Label>
-          <ActionTooltip content="Magnification relative to the world view. This geographic view is saved and refits when the chart is resized.">
+          <ActionTooltip content="Magnification relative to the world view. With street maps on, point maps past about 5× show streets. This geographic view is saved and refits when the chart is resized.">
             <Input
               id={`map-zoom-${settings.id}`}
               type="number"
               min={1}
-              max={64}
+              max={zoomLimit}
               step={0.5}
               value={Number(view.zoom.toFixed(3))}
               onChange={(e) => {
                 const zoom = Number(e.target.value);
-                if (zoom >= 1 && zoom <= 64)
+                if (zoom >= 1 && zoom <= zoomLimit)
                   onSettingsChange({ ...settings, view: { ...view, zoom } });
               }}
             />

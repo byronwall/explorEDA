@@ -10,12 +10,18 @@ export function MapToolbar({
   plan,
   owner,
   getFieldLabel,
+  maxZoom,
+  fitZoom,
   onViewChange,
 }: {
   settings: MapSettings;
   plan: PointMapPlan;
   owner: string;
   getFieldLabel: (field: string) => string;
+  /** Deepest zoom: street level when a street engine is registered. */
+  maxZoom: number;
+  /** Deepest zoom Fit data chooses. */
+  fitZoom: number;
   onViewChange: (view: MapView) => void;
 }) {
   const api = useChartTraceApi();
@@ -30,11 +36,11 @@ export function MapToolbar({
           className="size-6 shrink-0"
           aria-label="Zoom in"
           tooltip="Zoom in around the map center."
-          disabled={plan.view.zoom >= 64}
+          disabled={plan.view.zoom >= maxZoom}
           onClick={() =>
             saveView({
               ...plan.view,
-              zoom: Math.min(64, plan.view.zoom * 1.5),
+              zoom: Math.min(maxZoom, plan.view.zoom * (plan.street ? 2 : 1.5)),
             })
           }
         >
@@ -50,7 +56,7 @@ export function MapToolbar({
           onClick={() =>
             saveView({
               ...plan.view,
-              zoom: Math.max(1, plan.view.zoom / 1.5),
+              zoom: Math.max(1, plan.view.zoom / (plan.street ? 2 : 1.5)),
             })
           }
         >
@@ -68,7 +74,8 @@ export function MapToolbar({
                 plan.coordinates,
                 settings.projection,
                 width,
-                plan.mapHeight
+                plan.mapHeight,
+                fitZoom
               )
             )
           }
@@ -87,7 +94,8 @@ export function MapToolbar({
       </div>
       <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-muted-foreground">
         <span>
-          {plan.points.length} drawn · {projectionLabel(settings.projection)}
+          {plan.points.length} drawn ·{" "}
+          {plan.street ? "Street map" : projectionLabel(settings.projection)}
         </span>
         {plan.excluded.length > 0 && (
           <Button

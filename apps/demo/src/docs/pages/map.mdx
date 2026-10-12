@@ -12,3 +12,19 @@
 - **Selecting**: click a point or region to filter other charts. Click empty map space or press Escape to clear this map's filters. Alt-click traces.
 - **Projection**: Equal Earth preserves relative areas. Equirectangular places longitude and latitude on straight, evenly spaced lines.
 - The zoom and center are saved, and the view refits when the chart is resized.
+
+## Street maps
+
+Point maps can draw streets and place names once you zoom past continent scale. Wide views keep the Equal Earth outline, so world comparisons keep honest areas. Panning and zooming keep the same selection, and the chart saves the view.
+
+Street maps are optional. Install `maplibre-gl` (version 4 or 5), then register it once:
+
+```tsx
+import maplibregl from "maplibre-gl";
+import "maplibre-gl/dist/maplibre-gl.css";
+import { registerMapLibre } from "exploreda";
+
+registerMapLibre(maplibregl);
+```
+
+The default basemap is OpenFreeMap: free, with no key, in light and dark styles that follow the workspace. Pass `{ styles: { light, dark } }` to use another provider. If the style cannot load, the map shows the outline with a short notice, and selection keeps working.
