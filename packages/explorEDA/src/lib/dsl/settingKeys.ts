@@ -490,6 +490,7 @@ export const CHART_SETTING_KEYS: Record<ChartType, readonly string[]> = {
     "annotations",
     "aggregation",
     "basemap",
+    "clusterPoints",
     "colorField",
     "colorScaleId",
     "facet",

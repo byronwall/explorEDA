@@ -634,6 +634,8 @@ function isChart(value: unknown): boolean {
         ) &&
         (value.showMarks === undefined ||
           typeof value.showMarks === "boolean") &&
+        (value.clusterPoints === undefined ||
+          typeof value.clusterPoints === "boolean") &&
         (value.showLabels === undefined ||
           typeof value.showLabels === "boolean") &&
         (value.referenceAssetId === undefined ||

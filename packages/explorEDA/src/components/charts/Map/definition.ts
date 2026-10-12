@@ -29,6 +29,8 @@ export interface MapSettings extends BaseChartSettings {
   projection: "equal-earth" | "equirectangular";
   /** Draw the points; off leaves selections and filters unchanged. */
   showMarks?: boolean;
+  /** Group crowded points into counted circles. On unless false. */
+  clusterPoints?: boolean;
   /** Write each point's label beside it. */
   showLabels?: boolean;
   /** Boundaries drawn beneath points for reference, by geometry ID. */

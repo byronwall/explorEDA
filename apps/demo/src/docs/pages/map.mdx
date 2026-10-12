@@ -11,6 +11,8 @@
 - **Regions** join rows to polygon keys and summarize a measure for each region. Pick World countries (joined by ISO alpha-3, alpha-2, or numeric code), US states (postal or FIPS code), or US counties (FIPS code), or import your own GeoJSON. The feature key must match the row key exactly, in value and type.
 - **Picking a level**: switching a map to Region mode looks for a column of country, state, or county codes and starts on the matching boundaries. Zoom a country map into the US and it shows states, then counties, when the data has those columns. A `region()` calculation can add them from coordinates.
 - **Layers**: the layers button under the map hides or shows the points, writes point labels beside them (up to 150 points), draws reference outlines such as states or districts beneath the points, and switches the basemap between automatic, outline only, and none. Outlines are not selectable, and hiding points keeps the selection.
+- **Crowded maps**: above 2,000 drawn points, nearby points group into counted circles in the most common color of their points. Zoom in to split them. Click a group to select its rows; Group in the layers popover turns grouping off.
+- **Images**: the image button saves the map as a PNG at twice its size, with the street basemap and its credits when one is showing.
 - **Selecting**: click a point or region to filter other charts. Click empty map space or press Escape to clear this map's filters. Alt-click traces.
 - **Projection**: Equal Earth preserves relative areas. Equirectangular places longitude and latitude on straight, evenly spaced lines.
 - The zoom and center are saved, and the view refits when the chart is resized.

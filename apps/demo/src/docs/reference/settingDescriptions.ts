@@ -229,6 +229,8 @@ export const CHART_SETTINGS: Readonly<
     geometryAssetId:
       "The region geometry, for region maps: an imported asset's ID, or supplied boundaries such as boundary:world-countries.",
     showMarks: "Draws the points. Off keeps selections and filters.",
+    clusterPoints:
+      "Above 2,000 drawn points, groups nearby points into counted circles that split as you zoom in. On unless set to false.",
     showLabels:
       "Writes each point's label beside it, when 150 or fewer points are drawn.",
     referenceAssetId:

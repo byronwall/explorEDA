@@ -27,6 +27,12 @@ import {
   viewZoom,
 } from "./streetCamera";
 import { StreetBasemap } from "./StreetBasemap";
+import { downloadMapPng } from "./mapImage";
+import {
+  CLUSTER_THRESHOLD,
+  clusterPoints,
+  type MapCluster,
+} from "./pointClusters";
 import { useRegionAsset } from "./useRegionAsset";
 import { regionGeometry } from "./regionGeometry";
 import { geoPath } from "d3-geo";
@@ -51,7 +57,10 @@ export function PointMap({
   const trace = useChartTrace();
   const [activeId, setActiveId] = useState<number>();
   const [draftView, setDraftView] = useState<MapView>();
-  const pointRefs = useRef(new Map<number, SVGCircleElement>());
+  const markRefs = useRef(new Map<string, SVGCircleElement>());
+  const [focusKey, setFocusKey] = useState<string>();
+  const [activeCluster, setActiveCluster] = useState<MapCluster>();
+  const frame = useRef<HTMLDivElement>(null);
   const drag = useRef<
     | {
         x: number;
@@ -185,13 +194,6 @@ export function PointMap({
     [reference, plan.projection]
   );
   const showMarks = settings.showMarks ?? true;
-  const labeled =
-    showMarks &&
-    settings.showLabels &&
-    settings.labelField &&
-    plan.points.length <= MAX_LABELS
-      ? plan.points
-      : [];
   const select = (id: number) =>
     onSettingsChange
       ? inspect(id)
@@ -206,17 +208,68 @@ export function PointMap({
     trace?.selection?.owner === owner && trace.trace?.kind === "map-point"
       ? trace.trace.point?.sourceId
       : undefined;
-  const keyboardPoints = [...plan.points].sort(
-    (a, b) => a.sourceId - b.sourceId
+  // Crowded maps group nearby points; zooming in splits the groups.
+  const grouped = useMemo(
+    () =>
+      showMarks &&
+      (settings.clusterPoints ?? true) &&
+      plan.points.length > CLUSTER_THRESHOLD
+        ? clusterPoints(plan.points)
+        : undefined,
+    [plan.points, showMarks, settings.clusterPoints]
   );
-  const tabStop =
-    activeId !== undefined &&
-    plan.points.some((point) => point.sourceId === activeId)
-      ? activeId
-      : keyboardPoints[0]?.sourceId;
+  const drawnPoints = showMarks ? (grouped?.singles ?? plan.points) : [];
+  const clusters = grouped?.clusters ?? [];
+  const selectRows = (ids: number[]) => {
+    if (onSettingsChange) return inspect(ids[0]!);
+    const current = settings.filters[0];
+    const same =
+      settings.filters.length === 1 &&
+      current?.type === "value" &&
+      current.field === "__ID" &&
+      current.values.length === ids.length &&
+      ids.every((id, index) => current.values[index] === id);
+    updateChart(settings.id, {
+      filters: same ? [] : [{ type: "value", field: "__ID", values: ids }],
+    });
+  };
+  // Arrow keys walk points, then groups; one of them holds the tab stop.
+  const order = [
+    ...[...drawnPoints]
+      .sort((a, b) => a.sourceId - b.sourceId)
+      .map((point) => `p:${point.sourceId}`),
+    ...[...clusters]
+      .sort((a, b) => a.sourceIds[0]! - b.sourceIds[0]!)
+      .map((cluster) => `c:${cluster.id}`),
+  ];
+  const tabStop = focusKey && order.includes(focusKey) ? focusKey : order[0];
+  const navigate = (key: string, event: React.KeyboardEvent) => {
+    if (
+      !event.key.startsWith("Arrow") &&
+      event.key !== "Home" &&
+      event.key !== "End"
+    )
+      return false;
+    event.preventDefault();
+    event.stopPropagation();
+    const index = order.indexOf(key);
+    const next =
+      event.key === "Home"
+        ? 0
+        : event.key === "End"
+          ? order.length - 1
+          : (index +
+              (["ArrowLeft", "ArrowUp"].includes(event.key) ? -1 : 1) +
+              order.length) %
+            order.length;
+    const nextKey = order[next];
+    if (nextKey) markRefs.current.get(nextKey)?.focus();
+    return true;
+  };
   return (
     <div style={{ width, height }} className="relative flex flex-col">
       <div
+        ref={frame}
         className="relative shrink-0"
         style={{ width, height: plan.mapHeight }}
       >
@@ -366,7 +419,7 @@ export function PointMap({
                 aria-hidden="true"
               />
             )}
-            {(showMarks ? plan.points : []).map((point) => {
+            {drawnPoints.map((point) => {
               const selected = plan.hasSelection && point.matching;
               const emphasized =
                 selected ||
@@ -376,8 +429,8 @@ export function PointMap({
                 <circle
                   key={point.sourceId}
                   ref={(node) => {
-                    if (node) pointRefs.current.set(point.sourceId, node);
-                    else pointRefs.current.delete(point.sourceId);
+                    if (node) markRefs.current.set(`p:${point.sourceId}`, node);
+                    else markRefs.current.delete(`p:${point.sourceId}`);
                   }}
                   cx={point.x}
                   cy={point.y}
@@ -397,14 +450,17 @@ export function PointMap({
                   role="button"
                   className="chart-mark cursor-pointer"
                   style={{ pointerEvents: "auto" }}
-                  tabIndex={point.sourceId === tabStop ? 0 : -1}
+                  tabIndex={`p:${point.sourceId}` === tabStop ? 0 : -1}
                   aria-label={`${point.label}; row ${point.sourceId}; latitude ${point.latitude}°; longitude ${point.longitude}°`}
                   aria-pressed={selected}
                   onPointerEnter={() => {
                     if (!drag.current?.moved) setActiveId(point.sourceId);
                   }}
                   onPointerLeave={() => setActiveId(undefined)}
-                  onFocus={() => setActiveId(point.sourceId)}
+                  onFocus={() => {
+                    setActiveId(point.sourceId);
+                    setFocusKey(`p:${point.sourceId}`);
+                  }}
                   onClick={(event) => {
                     event.stopPropagation();
                     if (suppressClick.current) return;
@@ -412,33 +468,8 @@ export function PointMap({
                     else select(point.sourceId);
                   }}
                   onKeyDown={(event) => {
-                    if (
-                      event.key.startsWith("Arrow") ||
-                      event.key === "Home" ||
-                      event.key === "End"
-                    ) {
-                      event.preventDefault();
-                      event.stopPropagation();
-                      const index = keyboardPoints.findIndex(
-                        (row) => row.sourceId === point.sourceId
-                      );
-                      const next =
-                        event.key === "Home"
-                          ? 0
-                          : event.key === "End"
-                            ? keyboardPoints.length - 1
-                            : (index +
-                                (["ArrowLeft", "ArrowUp"].includes(event.key)
-                                  ? -1
-                                  : 1) +
-                                keyboardPoints.length) %
-                              keyboardPoints.length;
-                      const id = keyboardPoints[next]?.sourceId;
-                      if (id !== undefined) {
-                        setActiveId(id);
-                        pointRefs.current.get(id)?.focus();
-                      }
-                    } else if (event.key === "Enter" || event.key === " ") {
+                    if (navigate(`p:${point.sourceId}`, event)) return;
+                    if (event.key === "Enter" || event.key === " ") {
                       event.preventDefault();
                       event.stopPropagation();
                       if (event.altKey) inspect(point.sourceId);
@@ -448,7 +479,83 @@ export function PointMap({
                 />
               );
             })}
-            {labeled.map((point) => (
+            {clusters.map((cluster) => {
+              const key = `c:${cluster.id}`;
+              const count = cluster.sourceIds.length;
+              const dim = plan.hasSelection && !cluster.matching;
+              return (
+                <g key={key}>
+                  <circle
+                    ref={(node) => {
+                      if (node) markRefs.current.set(key, node);
+                      else markRefs.current.delete(key);
+                    }}
+                    cx={cluster.x}
+                    cy={cluster.y}
+                    r={cluster.radius}
+                    fill={cluster.color}
+                    fillOpacity={settings.pointOpacity * (dim ? 0.2 : 0.85)}
+                    stroke={
+                      activeCluster?.id === cluster.id
+                        ? "var(--foreground)"
+                        : cluster.color
+                    }
+                    strokeWidth={activeCluster?.id === cluster.id ? 2.5 : 1}
+                    strokeOpacity={dim ? 0.2 : 1}
+                    role="button"
+                    className="chart-mark cursor-pointer"
+                    style={{ pointerEvents: "auto" }}
+                    tabIndex={key === tabStop ? 0 : -1}
+                    aria-label={`${count} rows grouped near ${cluster.label}. Zoom in to split them.`}
+                    aria-pressed={plan.hasSelection && cluster.matching}
+                    onPointerEnter={() => setActiveCluster(cluster)}
+                    onPointerLeave={() => setActiveCluster(undefined)}
+                    onFocus={() => {
+                      setActiveCluster(cluster);
+                      setFocusKey(key);
+                    }}
+                    onBlur={() => setActiveCluster(undefined)}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      if (suppressClick.current) return;
+                      if (event.altKey) inspect(cluster.sourceIds[0]!);
+                      else selectRows(cluster.sourceIds);
+                    }}
+                    onKeyDown={(event) => {
+                      if (navigate(key, event)) return;
+                      if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        if (event.altKey) inspect(cluster.sourceIds[0]!);
+                        else selectRows(cluster.sourceIds);
+                      }
+                    }}
+                  />
+                  <text
+                    x={cluster.x}
+                    y={cluster.y}
+                    textAnchor="middle"
+                    dominantBaseline="central"
+                    fontSize={10}
+                    fontWeight={600}
+                    fill="var(--foreground)"
+                    stroke="var(--background)"
+                    strokeWidth={2.5}
+                    paintOrder="stroke"
+                    className="pointer-events-none"
+                    aria-hidden="true"
+                  >
+                    {count.toLocaleString()}
+                  </text>
+                </g>
+              );
+            })}
+            {(settings.showLabels &&
+            settings.labelField &&
+            drawnPoints.length <= MAX_LABELS
+              ? drawnPoints
+              : []
+            ).map((point) => (
               <text
                 key={point.sourceId}
                 x={point.x! + point.radius + 3}
@@ -499,7 +606,19 @@ export function PointMap({
         fitZoom={fitZoom}
         onViewChange={saveView}
         onSettingsChange={change}
+        onExport={() =>
+          frame.current &&
+          downloadMapPng(frame.current, settings.title || "map")
+        }
       />
+      {activeCluster && (
+        <ChartReadout fallbackClassName="eda-chart-readout-inline">
+          <span className="eda-readout-item">
+            <span>Group near {activeCluster.label}</span>
+            <b>{activeCluster.sourceIds.length.toLocaleString()} rows</b>
+          </span>
+        </ChartReadout>
+      )}
       {active && (
         <ChartReadout fallbackClassName="eda-chart-readout-inline">
           <span className="eda-readout-item">

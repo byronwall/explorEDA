@@ -1,4 +1,4 @@
-import { Minus, Plus } from "lucide-react";
+import { ImageDown, Minus, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MapLayersControl } from "./MapLayersControl";
 import { useChartTraceApi } from "../trace/ChartTraceScope";
@@ -15,6 +15,7 @@ export function MapToolbar({
   fitZoom,
   onViewChange,
   onSettingsChange,
+  onExport,
 }: {
   settings: MapSettings;
   plan: PointMapPlan;
@@ -26,6 +27,8 @@ export function MapToolbar({
   fitZoom: number;
   onViewChange: (view: MapView) => void;
   onSettingsChange: (updates: Partial<MapSettings>) => void;
+  /** Saves the map, basemap included, as a PNG. */
+  onExport: () => void;
 }) {
   const api = useChartTraceApi();
   const saveView = onViewChange;
@@ -86,6 +89,16 @@ export function MapToolbar({
           Fit data
         </Button>
         <MapLayersControl settings={settings} onChange={onSettingsChange} />
+        <Button
+          size="icon"
+          variant="ghost"
+          className="size-6 shrink-0"
+          aria-label="Download map image"
+          tooltip="Save the map as a PNG at twice its size, with the basemap and its credits."
+          onClick={onExport}
+        >
+          <ImageDown className="size-3.5" />
+        </Button>
         <Button
           size="sm"
           variant="ghost"

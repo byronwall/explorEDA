@@ -1,5 +1,5 @@
 import { useId, useMemo, useRef, useState } from "react";
-import { Minus, Plus } from "lucide-react";
+import { ImageDown, Minus, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { BaseChartProps } from "@/types/ChartTypes";
 import { ChartReadout } from "../ChartReadout";
@@ -18,6 +18,7 @@ import { useMapPan } from "./useMapPan";
 import { useRegionAsset } from "./useRegionAsset";
 import { useZoomDetail } from "./useZoomDetail";
 import { MapLayersControl } from "./MapLayersControl";
+import { downloadMapPng } from "./mapImage";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 
 export function RegionMap({
@@ -51,6 +52,7 @@ export function RegionMap({
     trace = useChartTrace();
   const [activeId, setActiveId] = useState<string>();
   const refs = useRef(new Map<string, SVGPathElement>());
+  const frame = useRef<HTMLDivElement>(null);
   const plan = useMemo(
     () =>
       planRegionMap(
@@ -161,7 +163,11 @@ export function RegionMap({
   const format = (value: number) =>
     value.toLocaleString(undefined, { maximumFractionDigits: 3 });
   return (
-    <div className="relative flex flex-col" style={{ width, height }}>
+    <div
+      ref={frame}
+      className="relative flex flex-col"
+      style={{ width, height }}
+    >
       <svg
         width={width}
         height={plan.mapHeight}
@@ -377,6 +383,18 @@ export function RegionMap({
               : updateChart(saved.id, updates)
           }
         />
+        <Button
+          size="sm"
+          variant="ghost"
+          className="h-7 w-7 p-0"
+          aria-label="Download map image"
+          tooltip="Save the map as a PNG at twice its size."
+          onClick={() =>
+            frame.current && downloadMapPng(frame.current, saved.title || "map")
+          }
+        >
+          <ImageDown className="h-3 w-3" />
+        </Button>
         <Button
           size="sm"
           variant="ghost"
