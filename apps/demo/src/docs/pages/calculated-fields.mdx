@@ -14,3 +14,4 @@ Press **Calculations** in the toolbar to create and edit calculated fields. Comb
 - An ƒx marker on a chart or table field opens its formula and the chain of fields it depends on.
 - The editor previews a draft before **Apply**. Inserting a field or function places it at the cursor.
 - Calculations save as formula text, such as `["Gross sales"] - ["Discount amount"]`.
+- `region(latitude, longitude, "us-state")` names the region that contains each point: `"country"` returns an ISO alpha-3 code, `"us-state"` a postal code, and `"us-county"` a FIPS code. Add `"name"` as a fourth argument for the region's name. It computes in the browser each time the workspace opens, so results are never saved with the data.

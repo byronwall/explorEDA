@@ -365,6 +365,7 @@ export const examples: ExampleData[] = [
     listed: true,
     tabs: [
       { name: "Where they struck", capabilities: ["Maps", "Distributions"] },
+      { name: "By country", capabilities: ["Maps"] },
       { name: "When they happened", capabilities: ["Time and calendars"] },
       {
         name: "Magnitude and depth",

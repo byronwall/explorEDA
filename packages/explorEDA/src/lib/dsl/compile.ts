@@ -39,6 +39,7 @@ import type {
 import { validateSavedData } from "@/utils/saveDataUtils";
 import { parsePath, setPath } from "./paths";
 import { boundaryAssetId, listBoundarySets } from "@/lib/boundaries/registry";
+import "@/lib/boundaries/regionFunction";
 import {
   CHART_SETTING_KEYS,
   FIELD_SETTING_WORDS,

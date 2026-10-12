@@ -8,6 +8,8 @@ import type { ChartSettingsPanelProps } from "@/types/ChartTypes";
 import type { MapSettings } from "./definition";
 import { WORLD_VIEW } from "./mapGeometry";
 import { useStreetMapEngine } from "./mapEngine";
+import { useRegionInference } from "./useRegionInference";
+import { boundaryAssetId } from "@/lib/boundaries/registry";
 import { OUTLINE_MAX_ZOOM, SAVED_MAX_ZOOM } from "./streetCamera";
 
 export function MapSettingsPanel({
@@ -17,6 +19,7 @@ export function MapSettingsPanel({
   const { getOrCreateScaleForField } = useColorScales();
   const view = settings.view ?? WORLD_VIEW;
   const zoomLimit = useStreetMapEngine() ? SAVED_MAX_ZOOM : OUTLINE_MAX_ZOOM;
+  const inferRegion = useRegionInference();
   return (
     <div className="space-y-2">
       <div className="eda-setting-grid">
@@ -26,22 +29,30 @@ export function MapSettingsPanel({
             id={`map-mode-${settings.id}`}
             className="h-9 min-w-0 rounded-md border border-input bg-background px-2 text-sm"
             value={settings.mode}
-            onChange={(e) =>
+            onChange={(e) => {
+              const mode = e.target.value as MapSettings["mode"];
+              // A new region map starts on the boundaries its data names.
+              const match =
+                mode === "region" && !settings.geometryAssetId
+                  ? inferRegion()
+                  : undefined;
               onSettingsChange({
                 ...settings,
-                mode: e.target.value as MapSettings["mode"],
+                mode,
                 aggregation: settings.aggregation ?? "count",
-                geometryAssetId: settings.geometryAssetId ?? "",
-                regionField: settings.regionField ?? "",
-                featureKey: settings.featureKey ?? "",
+                geometryAssetId: match
+                  ? boundaryAssetId(match.setId)
+                  : (settings.geometryAssetId ?? ""),
+                regionField: match?.field ?? settings.regionField ?? "",
+                featureKey: match?.featureKey ?? settings.featureKey ?? "",
                 showRegionLabels: settings.showRegionLabels ?? false,
                 outlineWidth: settings.outlineWidth ?? 1,
                 filters: [],
                 view: undefined,
                 colorField: undefined,
                 colorScaleId: undefined,
-              })
-            }
+              });
+            }}
           >
             <option value="point">Point</option>
             <option value="region">Region</option>

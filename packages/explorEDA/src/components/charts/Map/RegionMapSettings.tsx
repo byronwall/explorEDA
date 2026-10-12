@@ -16,6 +16,7 @@ import type { MapSettings } from "./definition";
 import { planRegionMap } from "./regionMapPlan";
 import { useMapData } from "./useMapData";
 import { useRegionAsset } from "./useRegionAsset";
+import { useRegionInference } from "./useRegionInference";
 import {
   boundaryAssetId,
   boundaryIdOf,
@@ -33,6 +34,7 @@ export function RegionMapSettings({
   const addAsset = useDataLayer((state) => state.addGeometryAsset);
   const { asset, boundary } = useRegionAsset(settings);
   const boundarySets = useBoundarySets();
+  const inferRegion = useRegionInference();
   const { snapshot } = useMapData(settings);
   const plan = useMemo(
     () =>
@@ -237,9 +239,23 @@ export function RegionMapSettings({
           label=""
           placeholder="Region key field"
           value={settings.regionField ?? ""}
-          onChange={(regionField) =>
-            onSettingsChange({ ...settings, regionField, filters: [] })
-          }
+          onChange={(regionField) => {
+            // Supplied boundaries follow the field; imported ones stay.
+            const match =
+              !settings.geometryAssetId || boundary.status !== "none"
+                ? inferRegion([regionField])
+                : undefined;
+            onSettingsChange({
+              ...settings,
+              regionField,
+              filters: [],
+              ...(match && {
+                geometryAssetId: boundaryAssetId(match.setId),
+                featureKey: match.featureKey,
+                view: undefined,
+              }),
+            });
+          }}
         />
         <Label htmlFor={`${id}-key`}>Feature key</Label>
         <ActionTooltip content="Match a GeoJSON property or feature ID to the row key. Keys must have the same value and type; no text conversion is applied.">

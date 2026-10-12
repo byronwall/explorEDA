@@ -16,16 +16,32 @@ import { planRegionMap, regionFilters, regionMapHeight } from "./regionMapPlan";
 import { useMapData } from "./useMapData";
 import { useMapPan } from "./useMapPan";
 import { useRegionAsset } from "./useRegionAsset";
+import { useZoomDetail } from "./useZoomDetail";
+import { useDataLayer } from "@/providers/DataLayerProvider";
 
 export function RegionMap({
-  settings,
+  settings: saved,
   width,
   height,
   facetIds,
   onSettingsChange,
 }: BaseChartProps<MapSettings>) {
   const owner = useId();
-  const { snapshot, updateChart, getFieldLabel, traceField } = useMapData(
+  const updateChart = useDataLayer((state) => state.updateChart);
+  const saveView = (view: MapView) =>
+    onSettingsChange
+      ? onSettingsChange({ view })
+      : updateChart(saved.id, { view });
+  const { draftView, events, suppressClick } = useMapPan(
+    saved,
+    width,
+    regionMapHeight(width, height),
+    saveView
+  );
+  // Zoomed into one country, finer supplied boundaries can take over.
+  const detail = useZoomDetail(saved, draftView ?? saved.view ?? WORLD_VIEW);
+  const settings = detail?.settings ?? saved;
+  const { snapshot, getFieldLabel, traceField } = useMapData(
     settings,
     facetIds
   );
@@ -34,16 +50,6 @@ export function RegionMap({
     trace = useChartTrace();
   const [activeId, setActiveId] = useState<string>();
   const refs = useRef(new Map<string, SVGPathElement>());
-  const saveView = (view: MapView) =>
-    onSettingsChange
-      ? onSettingsChange({ view })
-      : updateChart(settings.id, { view });
-  const { draftView, events, suppressClick } = useMapPan(
-    settings,
-    width,
-    regionMapHeight(width, height),
-    saveView
-  );
   const plan = useMemo(
     () =>
       planRegionMap(
@@ -425,6 +431,7 @@ export function RegionMap({
         </span>
       </div>
       <p className="mt-1 text-xs text-muted-foreground">
+        {detail && <>{detail.name} at this zoom · </>}
         {plan.regions.length} {plan.regions.length === 1 ? "region" : "regions"}{" "}
         · {plan.unmatched.length} unmatched{" "}
         {plan.unmatched.length === 1 ? "row" : "rows"}

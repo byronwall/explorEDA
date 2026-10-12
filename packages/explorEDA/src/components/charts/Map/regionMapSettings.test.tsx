@@ -5,6 +5,7 @@ import { registerAllCharts } from "@/charts/registerAllCharts";
 import { DataLayerProvider, useDataLayer } from "@/providers/DataLayerProvider";
 import { mapDefinition, type MapSettings } from "./definition";
 import { RegionMapSettings } from "./RegionMapSettings";
+import { MapSettingsPanel } from "./MapSettingsPanel";
 
 beforeAll(registerAllCharts);
 const settings: MapSettings = {
@@ -115,4 +116,33 @@ it("imports valid geometry, shows its size, and flags keys that differ only in t
   expect(
     screen.getByText(/1 row matches a feature key only as text/)
   ).toHaveTextContent(`"1" (string) and 1 (number)`);
+});
+
+it("starts a region map on the boundaries its data names", () => {
+  let next: MapSettings | undefined;
+  const point = {
+    ...settings,
+    mode: "point" as const,
+    geometryAssetId: undefined,
+  };
+  render(
+    <DataLayerProvider
+      data={[{ iso: "CHL" }, { iso: "PER" }, { iso: "IRN" }]}
+      charts={[point]}
+    >
+      <MapSettingsPanel
+        settings={point}
+        onSettingsChange={(value) => (next = value)}
+      />
+    </DataLayerProvider>
+  );
+  fireEvent.change(screen.getByLabelText("Map mode"), {
+    target: { value: "region" },
+  });
+  expect(next).toMatchObject({
+    mode: "region",
+    geometryAssetId: "boundary:world-countries",
+    regionField: "iso",
+    featureKey: "iso_a3",
+  });
 });

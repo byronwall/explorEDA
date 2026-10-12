@@ -437,3 +437,33 @@ it("never draws a polar region inside out", () => {
     expect(geoArea(polar!)).toBeLessThan(2 * Math.PI);
   }
 });
+
+it("shows US states when a country map is zoomed into the US", async () => {
+  const countries: MapSettings = {
+    ...settings,
+    geometryAssetId: "boundary:world-countries",
+    regionField: "country",
+    featureKey: "iso_a3",
+    aggregation: "count",
+    measureField: undefined,
+    view: { center: [-98, 39], zoom: 5 },
+  };
+  render(
+    <DataLayerProvider
+      data={[
+        { country: "USA", state: "CA" },
+        { country: "USA", state: "TX" },
+        { country: "CAN", state: null },
+      ]}
+      charts={[countries]}
+    >
+      <ChartTraceScope>
+        <RegionMap settings={countries} width={800} height={500} />
+      </ChartTraceScope>
+    </DataLayerProvider>
+  );
+  expect(
+    await screen.findByRole("button", { name: "TX; Row count: 1; 1 row" })
+  ).toBeInTheDocument();
+  expect(screen.getByText(/US states at this zoom/)).toBeInTheDocument();
+});
