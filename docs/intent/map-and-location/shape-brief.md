@@ -73,6 +73,6 @@ Maps for location data
 
 **First proof:** **Try:** On the earthquakes demo, mount MapLibre with an OpenFreeMap style beneath the existing chart frame. Hand off from the D3 world view at a zoom threshold, cluster the points, and export a PNG. **Observe:** whether the handoff keeps place, filters, and selection; whether cluster clicks select exact row IDs; whether keyboard selection still works; whether the PNG includes tiles and credits; how much bundle size MapLibre adds when loaded lazily. **Decide:** If the handoff is smooth and the IDs are exact, build release 3 this way. If the handoff is jarring, use MapLibre at every extent and drop equal-area world views.
 
-**Open choice:** MapLibre adds about 28 MB unpacked, against 5 MB for `exploreda`. I recommend making it an optional peer dependency, like the boundary packs. Hosts that want streets install it; without it, maps stay on the outline view.
+**Decided:** MapLibre is an optional peer dependency. Hosts that want streets install it and register it; without it, maps stay on the outline view. The default install grows only by the roughly 1 MB of boundaries.
 
-See the [intent brief](intent-brief.md) and the [research reconciliation](references/research-reconciliation.md).
+See the [intent brief](intent-brief.md), [implementation plan](implementation-plan.md), and the [research reconciliation](references/research-reconciliation.md).

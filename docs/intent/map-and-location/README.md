@@ -1,6 +1,6 @@
 # Map and location initiative
 
-Start with the [intent brief](intent-brief.md), then the [shape brief](shape-brief.md): the proposed releases, first proof, and two open choices. Implementation has not started.
+Start with the [intent brief](intent-brief.md), then the [shape brief](shape-brief.md) and [implementation plan](implementation-plan.md): the proposed releases, first proof, and two open choices. Implementation has not started.
 
 - [Product answers](references/product-answers.md): Byron's ten answers that set the current shape.
 - [Research reconciliation](references/research-reconciliation.md): all 20 decisions, scope limits, and unrun proofs.

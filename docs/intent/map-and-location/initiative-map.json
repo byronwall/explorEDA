@@ -4,11 +4,11 @@
     "title": "Useful, configurable maps for location data",
     "slug": "map-and-location",
     "scale": "capability",
-    "current_phase": "shape",
+    "current_phase": "plan",
     "last_updated": "2026-10-11",
     "summary": "Improve point and region maps, custom and supplied geography, render controls, and detailed local context without building a full GIS.",
     "status": "planned",
-    "next_action": "Byron decides whether maplibre-gl is an optional peer; then write the implementation plan."
+    "next_action": "Byron reviews the plan; then start milestone 1."
   },
   "artifacts": {
     "intent_brief": {
@@ -28,8 +28,8 @@
     },
     "implementation_plan": {
       "path": "implementation-plan.md",
-      "status": "not-created",
-      "updated_at": null
+      "status": "current",
+      "updated_at": "2026-10-11"
     }
   },
   "sources": [
@@ -597,21 +597,22 @@
       "Coarse 110m country polygons leave coastal points unlocated.",
       "MapLibre install size (about 28 MB unpacked) versus the small-install goal."
     ],
-    "open_decisions": [
-      "Make maplibre-gl an optional peer dependency (recommended) or a regular dependency."
-    ]
+    "open_decisions": []
   },
   "implementation": {
-    "status": "not-started",
+    "status": "current",
     "repository_snapshot": {
       "root": "/Users/byronwall/.codex/worktrees/6446/explorEDA",
-      "revision": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+      "revision": "396fb9e (main); map code unchanged since 12bd64d",
       "worktree_status": "Clean detached baseline; created codex/map-location-intent for documentation only.",
       "subsystems": [
         "Map chart planners and renderers",
         "Shared geometry assets",
         "Chart settings and saved analyses",
-        "Linked filters and traces"
+        "Linked filters and traces",
+        "Calculation function registry (src/lib/calculations/functions/registry.ts)",
+        "Composition artboard PNG export (compositionOutput.ts)",
+        "Dashboard DSL setting keys and docs gate"
       ],
       "test_commands": [
         "pnpm --filter exploreda exec vitest run src/components/charts/Map/pointMap.test.tsx src/components/charts/Map/regionMap.test.tsx",
@@ -619,11 +620,175 @@
       ],
       "deployment_surfaces": []
     },
-    "dependencies": [],
-    "fast_local_loop": null,
-    "milestones": [],
-    "cut_line": [],
-    "open_decisions": []
+    "dependencies": [
+      {
+        "id": "maplibre",
+        "name": "maplibre-gl (optional peer)",
+        "material": true,
+        "application_seam": "MapEngine: host registers the maplibre-gl module; exploreda never imports it.",
+        "failure_modes": [
+          "not registered",
+          "WebGL unavailable",
+          "style or tile load failure",
+          "canvas capture blocked"
+        ],
+        "proof_rungs": [
+          "pure camera/ID unit tests",
+          "demo in Chromium",
+          "Playwright blocked-request fallback"
+        ],
+        "first_proof_role": {
+          "mode": "real",
+          "rationale": "The handoff feel and WebGL interaction cannot be judged with a fake."
+        },
+        "local_proof": "Demo with maplibre-gl as a demo dependency.",
+        "live_proof": "Same demo against live OpenFreeMap.",
+        "rollout": "Off unless a host registers it."
+      },
+      {
+        "id": "openfreemap",
+        "name": "OpenFreeMap vector tiles and styles",
+        "material": true,
+        "application_seam": "streetStyle URL configuration with a host override and off switch.",
+        "failure_modes": [
+          "service discontinued",
+          "CORS change",
+          "partial tiles",
+          "slow network"
+        ],
+        "proof_rungs": [
+          "Playwright route blocking",
+          "live demo"
+        ],
+        "first_proof_role": {
+          "mode": "real",
+          "rationale": "No-key public service; fallback is tested by blocking it."
+        },
+        "local_proof": "Blocked requests in Playwright show the outline fallback.",
+        "live_proof": "Demo browsing at three widths.",
+        "rollout": "Default style only when an engine is registered."
+      },
+      {
+        "id": "boundaries",
+        "name": "world-atlas and us-atlas built-in boundaries",
+        "material": false,
+        "application_seam": "BoundaryRegistry with lazy loaders and host packs.",
+        "failure_modes": [
+          "missing pack on reopen",
+          "identifier mismatch"
+        ],
+        "proof_rungs": [
+          "unit tests",
+          "demo"
+        ],
+        "local_proof": "Vitest and demos.",
+        "live_proof": "None needed.",
+        "rollout": "Additive."
+      }
+    ],
+    "fast_local_loop": {
+      "command": "pnpm --filter exploreda exec vitest run src/components/charts/Map",
+      "starts": "nothing",
+      "network": false,
+      "failure_injection": "Playwright route blocking for tiles and styles",
+      "slower_proof": "pnpm dev:agent demo plus pnpm shot at three widths"
+    },
+    "milestones": [
+      {
+        "id": "m1",
+        "title": "Map selection behaves like other charts",
+        "outcome": "Draft Escape and empty-space click are fixed; region zero/no-rows/invalid/unmatched states are distinct.",
+        "dependencies_introduced": [],
+        "proof": "Failing-then-passing vitest in pointMap/regionMap tests; planner fixture; screenshots at 3 widths.",
+        "valid_intermediate_state": "Existing maps with corrected behavior.",
+        "rollback": "Revert the PR; no saved-data change.",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m2",
+        "title": "Street view hands off from the world map (proof)",
+        "outcome": "Earthquakes demo zooms from D3 world view into a MapLibre street view keeping place, filters, and exact selection.",
+        "dependencies_introduced": [
+          "maplibre-gl (optional peer, host-registered)",
+          "OpenFreeMap styles"
+        ],
+        "proof": "Camera round-trip unit tests; demo browser check; Playwright request blocking shows outline fallback; lazy chunk size measured.",
+        "valid_intermediate_state": "Hosts without a registered engine see no change.",
+        "rollback": "Remove the registration; tagged camera keeps legacy views valid.",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m3",
+        "title": "Boundary import explains itself",
+        "outcome": "Located validation errors, counts, no half-added imports, richer join preview.",
+        "dependencies_introduced": [],
+        "proof": "Malformed fixture tests; throwing callback leaves assets unchanged.",
+        "valid_intermediate_state": "Import path improved; nothing else changes.",
+        "rollback": "Revert the PR.",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m4",
+        "title": "Countries and US boundaries just work",
+        "outcome": "Built-in countries, US states, US counties via BoundaryRegistry; host packs; saved references by id and version.",
+        "dependencies_introduced": [
+          "us-atlas"
+        ],
+        "proof": "Choropleth demos; validateSavedData tests; missing-pack state; install and chunk size measured.",
+        "valid_intermediate_state": "Imported assets keep working; references are additive.",
+        "rollback": "Remove built-in sets; saved references show missing-pack state.",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m5",
+        "title": "The map picks the level, and points can find their region",
+        "outcome": "inferMapLevel picks the level; region() calculation locates points on demand; zoom shows finer levels.",
+        "dependencies_introduced": [
+          "flatbush"
+        ],
+        "proof": "Inference unit tests; 50k-row timing spike; demo opens on correct level.",
+        "valid_intermediate_state": "Override always available; calculation optional.",
+        "rollback": "Remove the function; saved expressions report an unknown function.",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m6",
+        "title": "Choose what the map shows",
+        "outcome": "Content popover controls marks, labels, reference boundaries, and basemap without changing filters or joins.",
+        "dependencies_introduced": [],
+        "proof": "Tests that content changes leave filters/joins; service-district demo screenshots.",
+        "valid_intermediate_state": "Defaults match current maps.",
+        "rollback": "Revert; new settings optional in validation.",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m7",
+        "title": "Crowded points and street export",
+        "outcome": "Clusters on both renderers select exact rows; PNG export includes streets and credits.",
+        "dependencies_introduced": [],
+        "proof": "50k earthquake demo; cluster selection IDs; PNG at 1x and 2x.",
+        "valid_intermediate_state": "Clustering only above a threshold.",
+        "rollback": "Disable clustering threshold; export falls back to outline.",
+        "status": "planned",
+        "evidence": []
+      }
+    ],
+    "cut_line": [
+      "Write-back of Locate region results to a store of record",
+      "Boundary packs beyond defaults and non-US counties",
+      "Heatmaps, classed scales, multiple analytical layers, offline streets",
+      "Self-hosted tiles, geocoding, routing, geometry repair"
+    ],
+    "open_decisions": [
+      "Keyboard path on the street view (m2); fallback pan-only street view.",
+      "Locate region main thread vs worker (m5); 200 ms threshold."
+    ]
   },
   "history": [
     {
@@ -655,6 +820,12 @@
       "action": "Resolved shape choices: Locate region on demand; opt-in boundaries.",
       "reason": "Byron's follow-up answers.",
       "evidence": "references/product-answers.md follow-up; measured default boundary sizes."
+    },
+    {
+      "date": "2026-10-11",
+      "action": "Kept MapLibre optional and wrote the implementation plan.",
+      "reason": "Byron: 1 MB of boundaries is fine; 28 MB more is too much.",
+      "evidence": "implementation-plan.md with seven milestones."
     }
   ],
   "closure": null

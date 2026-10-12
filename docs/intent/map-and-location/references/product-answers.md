@@ -17,3 +17,4 @@ Byron Wall, October 11, 2026, in response to ten product questions while shaping
 
 - **Locate region:** must not store results in the analysis. Compute on demand locally and make it as efficient as possible. Large data sets will later need a data augmentation pass that writes back to the store of record.
 - **Boundaries:** take the simple route. Users or hosts opt in to the boundaries they want; do not grow every install. The default install includes world and US boundaries if they are not too big.
+- **MapLibre:** keep it optional. About 1 MB of default boundaries is acceptable; another 28 MB is too much for now.
