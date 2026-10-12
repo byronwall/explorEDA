@@ -1,0 +1,351 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "Responsive database-backed exploration",
+    "slug": "database-query-contract",
+    "scale": "capability",
+    "current_phase": "shape",
+    "last_updated": "2026-10-12",
+    "summary": "Explore database-backed data through complete authorized source snapshots and the existing local evaluator, while preserving exact row meaning, filter scope, and honest coverage.",
+    "status": "planned",
+    "next_action": "Prove one complete authorized source snapshot through ExplorEdaProject.tables with a deterministic fake. Reject incomplete, stale, and mismatched replies before choosing a database adapter."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-12"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-12"
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "not-created",
+      "updated_at": null
+    }
+  },
+  "sources": [
+    {
+      "id": "user-notes",
+      "type": "direct-user-input",
+      "location": "../../research/database-backed-analysis-2026-10-11/source-notes.md",
+      "anchor": "Explicit request, notebook pages 1–3, interpretation boundaries",
+      "authority": "User request and source interpretation; mechanics remain proposals"
+    },
+    {
+      "id": "customer-instance-update",
+      "type": "direct-user-input",
+      "location": "../../research/database-backed-analysis-2026-10-11/customer-instance-update.md",
+      "anchor": "Dedicated instance for each paying customer; hosting is a fourth track",
+      "authority": "Explicit scope update for hosting; first three tracks retain their technical decisions"
+    },
+    {
+      "id": "pro-report",
+      "type": "agent-authored-analysis",
+      "location": "raw/2026-10-11-pro/database-query-contract-research.md",
+      "anchor": "Recommendation, repository findings, proof strategy, and limitations",
+      "authority": "Research proposal from selected source packet; not implementation evidence"
+    },
+    {
+      "id": "pro-recommendations",
+      "type": "agent-authored-analysis",
+      "location": "raw/2026-10-11-pro/database-query-contract-recommendations.json",
+      "anchor": "DQC-001 through DQC-012",
+      "authority": "Reconciliation aid; each recommendation reviewed in evidence/recommendation-review.md"
+    },
+    {
+      "id": "current-analysis-types",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/types/AnalysisProject.ts",
+      "anchor": "HEAD 28c5ac27: AnalysisQuery, AnalysisView, AnalysisEvaluation",
+      "authority": "Current checkout source inspection; not runtime proof"
+    },
+    {
+      "id": "current-crossfilter",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/hooks/CrossfilterWrapper.ts",
+      "anchor": "HEAD 28c5ac27: getFilteredRowIds, getChartFilteredRowIds, getAllData",
+      "authority": "Current checkout source inspection; not runtime proof"
+    },
+    {
+      "id": "current-provider",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/providers/DataLayerProvider.tsx",
+      "anchor": "HEAD 28c5ac27: getColumnData and emptyColumn",
+      "authority": "Current checkout source inspection; not runtime proof"
+    },
+    {
+      "id": "provider-postgres-snapshot",
+      "type": "official-documentation",
+      "location": "https://www.postgresql.org/docs/current/transaction-iso.html",
+      "anchor": "READ COMMITTED statement snapshots and REPEATABLE READ transaction snapshots",
+      "authority": "PostgreSQL 18 documentation accessed 2026-10-12"
+    },
+    {
+      "id": "provider-postgres-export",
+      "type": "official-documentation",
+      "location": "https://www.postgresql.org/docs/current/functions-admin.html#FUNCTIONS-SNAPSHOT-SYNCHRONIZATION",
+      "anchor": "Exported snapshot available only until exporter transaction ends",
+      "authority": "PostgreSQL 18 documentation accessed 2026-10-12"
+    },
+    {
+      "id": "provider-postgres-limit",
+      "type": "official-documentation",
+      "location": "https://www.postgresql.org/docs/current/queries-limit.html",
+      "anchor": "LIMIT needs unique ORDER BY for predictable subsets",
+      "authority": "PostgreSQL 18 documentation accessed 2026-10-12"
+    },
+    {
+      "id": "fetch-abort",
+      "type": "standard",
+      "location": "https://fetch.spec.whatwg.org/#abort-fetch",
+      "anchor": "Abort rejects the fetch promise and cancels or errors streams",
+      "authority": "WHATWG Fetch Standard accessed 2026-10-12"
+    },
+    {
+      "id": "postgres-cancel",
+      "type": "official-documentation",
+      "location": "https://www.postgresql.org/docs/current/libpq-cancel.html",
+      "anchor": "Cancellation dispatch does not guarantee query cancellation",
+      "authority": "PostgreSQL 18 documentation accessed 2026-10-12"
+    },
+    {
+      "id": "pro-adapter-report",
+      "type": "agent-authored-analysis",
+      "location": "../database-adapters/raw/2026-10-11-pro/database-adapters-research.md",
+      "anchor": "Sections 1, 3, and 7: complete registered source snapshots into ExplorEdaProject.tables; local evaluator and inspection remain",
+      "authority": "Cross-track recommendation that aligns with the existing tables input; no runtime integration proof"
+    },
+    {
+      "id": "pro-hosting-report",
+      "type": "agent-authored-analysis",
+      "location": "../customer-instance-hosting/raw/2026-10-11-pro/customer-instance-hosting-research.md",
+      "anchor": "Customer instance and browser snapshot sections",
+      "authority": "Cross-track hosting recommendation; per-customer ownership, not query semantics"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "intent-outcome",
+        "type": "outcome",
+        "statement": "Analysts can explore real database data with responsive linked views that preserve row meaning and filter scope.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first useful release",
+        "sources": [
+          "user-notes"
+        ]
+      },
+      {
+        "id": "complete-when-feasible",
+        "type": "preference",
+        "statement": "Keep a complete client snapshot of authorized source tables when their rows and fields fit the workload; a full snapshot is not mandatory for every source.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first useful release",
+        "sources": [
+          "user-notes",
+          "pro-adapter-report"
+        ]
+      },
+      {
+        "id": "server-owned-instance",
+        "type": "security boundary",
+        "statement": "The authenticated server-side customer instance owns source registration and customer identity; the browser cannot choose another instance with a client-supplied identity selector.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "all database reads",
+        "sources": [
+          "customer-instance-update",
+          "pro-adapter-report",
+          "pro-hosting-report"
+        ]
+      },
+      {
+        "id": "correct-coverage",
+        "type": "constraint",
+        "statement": "Incomplete data, missing fields, stale replies, and unstable identities must not claim exact exhaustive results.",
+        "commitment": "derived",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "all releases",
+        "sources": [
+          "user-notes",
+          "pro-report",
+          "pro-adapter-report"
+        ]
+      },
+      {
+        "id": "track-boundary",
+        "type": "constraint",
+        "statement": "Query contract, transport, adapters, and hosting are separate tracks with explicit handoffs.",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "initial shaping",
+        "sources": [
+          "customer-instance-update",
+          "pro-report"
+        ]
+      },
+      {
+        "id": "examples-not-limits",
+        "type": "constraint",
+        "statement": "The 10,000–100,000 row range and notebook encoding ideas are hypotheses, not measured budgets or fixed product limits.",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "initial proof",
+        "sources": [
+          "user-notes"
+        ]
+      }
+    ],
+    "themes": [
+      "Responsive exact linked filtering",
+      "Complete row and field coverage",
+      "Named workload proof before added infrastructure"
+    ],
+    "conflicts": [],
+    "human_questions": []
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "current",
+    "appetite": "One visible linked-view task and a small read contract.",
+    "problem": "The current workspace assumes full local rows and owner-aware Crossfilter populations. Remote partial data needs explicit identity, scope, and coverage before it can preserve those behaviors.",
+    "recommended_shape": {
+      "read_boundary": "Host-owned endpoint resolves registered source tables for the authenticated customer instance",
+      "first_policy": "Complete authorized source-table snapshots passed as fresh immutable arrays into ExplorEdaProject.tables; existing evaluator computes stages and contributors locally",
+      "projection_candidate": "Output-only or source-column projection is not the default or runtime fallback; consider it only when dependency closure covers every admitted operation and inspection path",
+      "identity": "Bind query and snapshot identities to server-owned customer instance and source registry; never trust a client-supplied customer selector",
+      "coverage": "State complete tables, schema, source identity, and snapshot; reject incomplete or stale replies",
+      "later": "Add aggregates, pages, or projection only after a named workload or required access pattern proves the need"
+    },
+    "success_moves": [
+      "Resolve customer and source ownership from authenticated server-side instance state; include that identity in query and snapshot scope.",
+      "Return complete authorized source tables through ExplorEdaProject.tables so the existing evaluator preserves stages and contributors.",
+      "Represent selected, owner-excluded context, workspace, local, and facet populations explicitly.",
+      "Admit only complete snapshot replies using separate request relevance, result meaning, customer/source ownership, and source snapshot identity.",
+      "Evaluate a dependency-closed projection only as a measured candidate; do not use it as an automatic fallback."
+    ],
+    "first_proof": {
+      "question": "Can one complete authorized source snapshot preserve current evaluation, inspection, and linked-view behavior while stale or incomplete replies are rejected?",
+      "artifact": "Deterministic fake host reader connected to ExplorEdaProject.tables, with a hand-audited bar/scatter/Rows/stage/trace fixture and request/result trace.",
+      "decision_rule": "Keep this boundary only if stage rows, contributors, selected/context/Rows keys, and counts match the oracle and every incomplete, obsolete, mismatched, or unauthorized reply fails admission. Test projection only as a separate candidate if the complete snapshot misses an agreed workload budget."
+    },
+    "rabbit_holes": [
+      "General query optimizer",
+      "Arbitrary SQL or universal SQL translation",
+      "Progressive cache-region splitting",
+      "Provider parity claims from mocks alone",
+      "Unmeasured row-count or byte ceilings"
+    ],
+    "open_decisions": [
+      "Which device and row-width workload sets latency and memory budgets?",
+      "Can the first source provide immutable/versioned data, or only one consistent read batch?"
+    ],
+    "first_intermediate": "A deterministic fake reader returns one complete authorized source snapshot through the existing tables input. Existing local analysis renders stages, contributors, linked charts, and records from that snapshot."
+  },
+  "implementation": {
+    "status": "not-started",
+    "repository_snapshot": {
+      "root": "/Users/byronwall/.codex/worktrees/583d/explorEDA",
+      "revision": "28c5ac27a400aa1fd66ce99eb1e6bd4ab5c72e9c",
+      "worktree_status": "Existing checkout; unrelated raw research artifacts are present",
+      "subsystems": [
+        "packages/explorEDA/src/types/AnalysisProject.ts",
+        "packages/explorEDA/src/hooks/CrossfilterWrapper.ts",
+        "packages/explorEDA/src/providers/DataLayerProvider.tsx",
+        "packages/explorEDA/src/lib/analysis/useAnalysisEvaluation.ts",
+        "packages/explorEDA/src/lib/aggregates.ts",
+        "packages/explorEDA/src/components/ExplorEdaProject.tsx"
+      ],
+      "test_commands": [
+        "pnpm --filter exploreda exec vitest run src/test/lib/analysis/evaluateProject.test.ts src/test/lib/analysis/useAnalysisEvaluation.test.tsx"
+      ],
+      "deployment_surfaces": [
+        "Host-owned endpoint and customer instance source registry; first proof uses a deterministic local substitute"
+      ]
+    },
+    "dependencies": [
+      {
+        "id": "source-snapshot-reader",
+        "name": "Host-owned authorized database source snapshot",
+        "material": true,
+        "application_seam": "The host authenticates the request, resolves customer identity and registered sources from server-side instance state, reads a complete bounded snapshot, then passes fresh immutable source arrays through ExplorEdaProject.tables. The existing evaluator keeps analysis, stages, contributors, and chart populations local.",
+        "failure_modes": [
+          "Client-supplied customer or source identity escapes server ownership",
+          "Partial rows or fields are marked complete",
+          "Snapshot changes between source reads",
+          "Unsupported scalar values lose meaning",
+          "Oversized snapshot exceeds the named browser budget"
+        ],
+        "proof_rungs": [
+          "Current local tables path",
+          "Deterministic fake host reader with complete, error, incomplete, and reordered replies",
+          "One bounded immutable read-only PostgreSQL fixture"
+        ],
+        "first_proof_role": {
+          "mode": "local-substitute",
+          "rationale": "The fake can prove host ownership, completion, immutable table handoff, evaluator stages, source contributors, and linked filtering without driver or production access."
+        },
+        "local_proof": "Use a hand-audited source fixture and fake host reader. Verify complete arrays and customer/source scope before passing tables to ExplorEdaProject; inject delayed, failed, incomplete, wrong-schema, and wrong-instance replies and prove they cannot replace current tables.",
+        "live_proof": "After the fake passes, use one disposable read-only PostgreSQL fixture and one customer instance configuration. Verify consistent bounded source reads, scalar identity, and full completion. This does not establish support for other engines or production connectivity.",
+        "rollout": "Keep existing local/demo table input. Enable the registered-source reader only through authenticated host configuration. Reject incomplete replies; never fall back from them to partial local results. Retain the full snapshot until a dependency-closed projection passes its own proof."
+      }
+    ],
+    "fast_local_loop": {
+      "command": "pnpm --filter exploreda exec vitest run src/test/lib/analysis/evaluateProject.test.ts src/test/lib/analysis/useAnalysisEvaluation.test.tsx",
+      "notes": "Existing evaluator/worker tests protect the reused local path. Add the fake-reader contract test when implementation starts; no fake-reader test exists yet."
+    },
+    "milestones": [],
+    "cut_line": [
+      "General optimizer and predicate-region remainder merging",
+      "Aggregate/page execution before a failing workload is measured",
+      "Output-only or source-column projection before dependency closure covers all admitted operations and inspection",
+      "Mutable retained snapshot service",
+      "Universal SQL/value translation",
+      "Production deployment and hosting choices belong to the hosting track"
+    ],
+    "open_decisions": []
+  },
+  "history": [
+    {
+      "date": "2026-10-12",
+      "action": "Recovered intent and completed initial shaping from the query-contract Pro packet.",
+      "reason": "User requested research preservation, intent recovery, initial shaping, and a review PR per track.",
+      "evidence": "Read source notes, customer-instance update, report and recommendation JSON; inspected current code and primary provider documentation. Source inspection only. No application checks or implementation ran."
+    }
+  ],
+  "closure": null,
+  "intake": {
+    "kind": "new capability",
+    "priority_basis": "Explicit goal to query real databases while keeping the client responsive",
+    "expand_when": "A named workload or required access pattern shows complete authorized source snapshots cannot meet correctness or agreed performance budgets.",
+    "related_initiatives": [
+      "database-adapters",
+      "columnar-data-transport",
+      "customer-instance-hosting"
+    ],
+    "audience": "Analysts using database-backed analyses",
+    "priority": "shape-ready; implementation not started"
+  }
+}

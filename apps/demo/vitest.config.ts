@@ -1,6 +1,7 @@
 /// <reference types="vitest" />
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import { vitestDefaults } from "@repo/test-config";
 import { docsMdx } from "./mdxPlugin";
 import {
   docsKitDistAlias,
@@ -21,10 +22,8 @@ export default defineConfig({
     dedupe: ["react", "react-dom"],
   },
   test: {
-    globals: true,
-    // Data-heavy tests take 1–3 s alone and several times that on CI runners or
-    // under a full parallel run; the timeout only needs to catch hangs.
-    testTimeout: 20_000,
+    // Shared time limits; see @repo/test-config.
+    ...vitestDefaults,
     environment: "./src/test/environment.ts",
     setupFiles: ["./src/test/setup.ts"],
     coverage: {
