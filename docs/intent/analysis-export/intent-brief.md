@@ -3,57 +3,77 @@ title: "Export charts and analyses for sharing"
 slug: "analysis-export"
 phase: intent
 status: current
-last_updated: "2026-10-06"
+last_updated: "2026-10-11"
 ---
 
 # Export charts and analyses for sharing
 
 ## My read
 
-End users should take a useful chart out of explorEDA as an image. Slides and PDF reports are possible later outputs. Export is a separate initiative from editorial styling. The live workspace should feel editorial in its own right; export carries that authored result to another destination.
+An analyst should be able to take one chart out of explorEDA as a PNG and paste it wherever the work is happening. That might be a slide, a written doc, a chat thread, an email, or a ticket. The common case is ongoing work, not a finished publication. The chart supports a discussion, so speed and fidelity matter more than layout control.
 
-The exported chart should preserve its intended text, typography, colors, axes, and data scope. Users should not need to repair clipped titles or reconstruct legends after downloading it. The output should represent a deliberate state of the analysis, including the chosen filters and visible features.
+"Fidelity" means the image shows what is visible on screen for that chart: title, subtitle, plot, axes, legends, annotations, and the current selection highlight. It uses the current theme, at the on-screen size, at 2x density. Editor UI such as popovers, focus rings, hover tooltips, and header buttons stays out.
 
-The first outcome is a dependable chart image. A whole-dashboard image, a set of chart images, a slide deck, and a paginated report have different layout needs. This request does not select all of them for the first release. Their boundaries should be decided from an actual sharing task rather than hidden behind one general Export button.
+Whole-report export (a deck or a PDF) is out of scope. An "export everything" button exists in other tools, and in Byron's experience it was rarely useful. It points to a deeper need: rendering a chart to PNG without a fully initialized client. That need is now its own seed, [headless chart rendering](../headless-chart-rendering/intent-brief.md).
 
-The main audience is an analyst sharing scientific or engineering findings. Newspaper graphics and annual or investor-relations reports supply visual direction. They do not imply automatic report writing, a particular document template, or publication-grade export in the first slice.
+The live workspace's editorial styling remains a separate initiative. Export carries whatever the user authored.
 
 ## What matters most
 
-- Export a readable image of an authored chart.
-- Preserve the displayed data scope, labels, and style choices.
-- Include essential chart content without temporary editor controls.
-- Handle current mixed rendering paths honestly.
-- Keep slides and reports available as separate extensions.
+- Copy or download one chart as a PNG that matches the screen.
+- Make it fast: one action from the chart, then paste.
+- Give every chart family the action. A family that cannot yet capture says so plainly instead of producing a broken image.
+- Let embedding apps call the same export from code.
 
 ## The intended experience
 
-A user finishes a chart and chooses image export. They inspect the proposed output size and see the content that will be included. They download it and place it into a document or presentation. Long text, legends, and selected data remain readable at the chosen size.
+The analyst finishes a chart and opens the chart's menu, right-clicks the chart, or presses a shortcut. They choose **Copy image** or **Download image**. Copy puts a PNG on the clipboard. Download saves a sensibly named file. They paste it into a slide or a Slack thread, and it looks like the chart they were just looking at.
 
-A later analysis export could select several charts, arrange them on slides or pages, and include user-authored explanations. A document-level layout should not simply capture whatever happens to fit in the browser viewport.
+A host application that embeds explorEDA calls a public function with a chart id. It gets back the same PNG as a Blob, with its pixel size, and builds its own button or batch flow around it.
 
 ## Boundaries
 
-Do not equate a browser screenshot with a clean authored export. A PNG is the recommended first proof because the current chart families combine SVG, Canvas, HTML, and WebGL. That recommendation does not settle all output formats.
+### Must be true
 
-An SVG option needs a clear policy for raster content. Editable slide objects and slide images are different products. PDF pagination, page sizes, and whole-analysis ordering need their own proof. Do not promise those outputs solely because a chart image succeeds.
+- The image shows the chart's visible content in the current theme, with selection emphasis preserved.
+- Charts with a bounded extent export at full extent, even when part of it is scrolled out of view. Examples include a row chart with a fixed category count and pivot or summary tables.
+- The raw data table exports only its visible rows. An image never carries thousands of rows.
+- 3D exports the current camera view. Maps export as drawn.
+- Composition shares the same actions, shortcut, and public function. Its artboard path becomes one capture strategy rather than a separate feature.
+- The public function requires a mounted chart.
 
-Export captures the appearance and data state at the time of export. Later global theme changes affect the live analysis, not an already downloaded static image. The saved interactive analysis remains a separate artifact.
+### Must be avoided
+
+- An "advanced mode" for now. That means no filter caption, source line, background option, or options popover.
+- Size presets, custom dimensions, or re-layout before capture.
+- Slides, PDF, multi-chart, and whole-dashboard output.
+- A native browser screenshot passed off as authored output, or temporary editor UI in the image.
 
 ## What seems settled
 
-Image export is explicitly wanted. Slides and PDF reports are possible extensions. Export has a dedicated scope. First-release granularity, formats, dimensions, and document layout remain open. The four first-pass priorities retain their place; creating this intent does not impose a new ordering.
+- Single chart; PNG; copy and download; on-screen size at 2x; current theme.
+- Entry points: the chart header menu, the chart's right-click menu, and a keyboard shortcut.
+- Every family gets the action, with an honest message where capture is not ready.
+- A public `exportChartPng`-style function returning a Blob and its size.
+- Headless rendering is a separate future seed, not part of this release.
 
 ## Possibilities, not decisions
 
-Start with one chart exported as PNG. A size preset or a simple width control could support common destinations. Later options include multiple images, a dashboard composition, slide images, or a paginated report. A selected-state caption could make filtering context understandable where the user needs it.
+- An opt-in caption with filter scope or provenance, if real sharing shows readers losing context.
+- Copy and download convenience helpers on the public API.
+- Size presets for slides or doc columns.
 
 ## Current reality that matters
 
-Current exports cover records and serialized analysis settings. The `composition` view copies its artboard to the clipboard as a 2x PNG (PR #214); hand-pasting into a report or slide is unchecked. Other chart panels have no image-export action. Ordinary scatter uses Canvas points with SVG guides; other views also use HTML and WebGL. These paths need an output proof before choosing one export mechanism for every family. Saved chart annotations ([reference marks](../reference-marks/implementation-plan.md)) draw as plain SVG inside each chart's SVG, in `g.eda-annotations`. They have no editor handles to strip: a label is its own drag target, and its focus underline shows only under `:focus-visible`. An ordinary-chart PNG that rasterizes the chart SVG over its canvas carries them as drawn.
+- Composition copies its artboard as a 2x PNG to the clipboard (PR #214) through `compositionOutput.ts`. Its SVG-only path does not cover ordinary charts.
+- Ordinary charts mix SVG, Canvas (scatter, scatter matrix, parallel coordinates), WebGL (3D scatter), and HTML (titles, color legends, tables).
+- The 3D renderer does not keep its drawing buffer, so capture must render a frame on demand or read during a frame.
+- Maps draw SVG geometry with no tile basemap, so cross-origin tainting does not apply.
+- The chart header is a row of icon buttons with single-letter shortcuts (S, V). It has no overflow menu yet.
+- Saved annotations draw as plain SVG in `g.eda-annotations` and carry into a rasterized SVG as drawn.
 
 ## Next step after confirmation
 
-Shape one image export from a styled scatter chart with a title, subtitle, legend, and active selection. Open the downloaded image and check size, fonts, Canvas points, SVG guides, and text bounds. Use that proof to choose a format and scope. Then test a second family before considering slides or PDF reports.
+The [shape brief](shape-brief.md) defines the action and its first proof. That proof is a dark-theme styled scatter with a title, subtitle, HTML legend, and active selection, captured and compared to the screen. Plan after the proof chooses the capture mechanism.
 
-See the [reference packet](references/README.md) and [editorial styling initiative](https://github.com/byronwall/explorEDA/blob/91b627d7307a4a14c7f123a713ce5f45662a3d22/docs/intent/editorial-chart-styling/intent-brief.md).
+See the [reference packet](references/README.md).
