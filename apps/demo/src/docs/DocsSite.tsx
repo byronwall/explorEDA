@@ -1,20 +1,13 @@
 import { examples } from "@/demos/examples";
 import { examplePath } from "@/routes";
-import { ArrowRight } from "lucide-react";
 import type { MDXContent } from "mdx/types";
-import {
-  lazy,
-  Suspense,
-  useLayoutEffect,
-  useRef,
-  useState,
-  type ComponentType,
-} from "react";
+import { lazy, Suspense, useState, type ComponentType } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   catalogue,
   findPage,
   GROUP_LABELS,
+  neighbours,
   pageModulePath,
   pageModules,
   type DocsGroup,
@@ -22,13 +15,23 @@ import {
 } from "./catalogue";
 import {
   cardLinkClass,
-  DocsBar,
+  inlineLinkClass,
   labelClass,
+  PageFooter,
   PageHeader,
+  RailCard,
   stretchedLinkClass,
-  TryCard,
 } from "./components/chrome";
 import { DocsLink, mdxComponents } from "./components/content";
+import { ChartChooser, Hero } from "./components/home";
+import { DocsLayout, Rail } from "./components/layout";
+import { AtAGlance, SavedSettings } from "./components/template";
+import {
+  ContentsReader,
+  InlineContents,
+  OnThisPage,
+  type TocEntry,
+} from "./components/toc";
 import { LiveExample } from "./live/LiveExample";
 import { captureId, docsPath, docsTopic, liveShotPath } from "./paths";
 
@@ -52,42 +55,64 @@ function pageContent(topic: string): ComponentType | null {
   return Content;
 }
 
-type TocEntry = { id: string; title: string };
-
-/** Reads the page's section headings once its content is on screen. */
-function ContentsReader({ onRead }: { onRead: (entries: TocEntry[]) => void }) {
-  const { hash } = useLocation();
-  const marker = useRef<HTMLSpanElement>(null);
-  useLayoutEffect(() => {
-    const article = marker.current?.closest("article");
-    const headings = article?.querySelectorAll("h2[id]") ?? [];
-    onRead(
-      [...headings].map((heading) => ({
-        id: heading.id,
-        title: heading.textContent ?? "",
-      }))
-    );
-    if (hash) {
-      document
-        .getElementById(decodeURIComponent(hash.slice(1)))
-        ?.scrollIntoView();
-    }
-  }, [hash, onRead]);
-  return <span ref={marker} hidden />;
+/** The right rail: sections, the page's examples, and related pages. */
+function GuideRail({
+  page,
+  contents,
+}: {
+  page: DocsPage;
+  contents: readonly TocEntry[];
+}) {
+  return (
+    <div className="space-y-8">
+      <OnThisPage entries={contents} />
+      {page.examples.map((id) => {
+        const example = examples.find((item) => item.id === id);
+        return example ? (
+          <RailCard
+            key={id}
+            label="Full example"
+            heading={example.title}
+            meta={`${example.dataset.rows} · ${example.dataset.source} data`}
+            to={examplePath(id)}
+          />
+        ) : null;
+      })}
+      {page.related.length > 0 && (
+        <div>
+          <p className={labelClass}>Related</p>
+          <ul className="mt-3 space-y-2 text-sm">
+            {page.related.map((topic) => (
+              <li key={topic}>
+                <DocsLink topic={topic}>
+                  {findPage(topic)?.title ?? topic}
+                </DocsLink>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
 }
 
 function GuidePage({ page }: { page: DocsPage }) {
   const [contents, setContents] = useState<TocEntry[]>([]);
   const Content = pageContent(page.topic);
+  const { previous, next } = neighbours(page.topic);
 
   return (
     <>
-      <DocsBar current={page.title} />
-      <PageHeader eyebrow={page.eyebrow} heading={page.title}>
-        {page.lede}
-      </PageHeader>
-      <div className="mt-14 grid gap-12 lg:grid-cols-[minmax(0,1fr)_17rem] lg:gap-16">
-        <article className="min-w-0 max-w-3xl">
+      <Rail>
+        <GuideRail page={page} contents={contents} />
+      </Rail>
+      <div className="mx-auto max-w-3xl xl:mx-0">
+        <PageHeader trail={[GROUP_LABELS[page.group]]} heading={page.title}>
+          {page.lede}
+        </PageHeader>
+        {page.chartType && <AtAGlance chartType={page.chartType} />}
+        <InlineContents entries={contents} />
+        <article className="docs-article mt-10 min-w-0">
           {Content && (
             <Suspense
               fallback={
@@ -97,145 +122,146 @@ function GuidePage({ page }: { page: DocsPage }) {
               }
             >
               <Content />
+              {page.chartType && <SavedSettings chartType={page.chartType} />}
               <ContentsReader onRead={setContents} />
             </Suspense>
           )}
         </article>
-        <aside className="space-y-6 lg:sticky lg:top-6 lg:self-start">
-          {contents.length > 0 && (
-            <nav
-              aria-label="On this page"
-              className="hidden border-l border-border pl-4 lg:block"
-            >
-              <p className={labelClass}>On this page</p>
-              <ul className="mt-3 space-y-2 text-sm">
-                {contents.map((entry) => (
-                  <li key={entry.id}>
-                    <a
-                      href={`#${entry.id}`}
-                      className="text-muted-foreground transition-colors hover:text-foreground focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                    >
-                      {entry.title}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          )}
-          {page.examples.map((id) => {
-            const example = examples.find((item) => item.id === id);
-            return example ? (
-              <TryCard
-                key={id}
-                heading={example.title}
-                meta={`${example.dataset.rows} · ${example.dataset.source} data`}
-                to={examplePath(id)}
-                label="Open the example"
-              />
-            ) : null;
-          })}
-          {page.related.length > 0 && (
-            <div className="rounded-xl border border-border p-5">
-              <p className={labelClass}>Related</p>
-              <ul className="mt-3 space-y-2.5 text-sm">
-                {page.related.map((topic) => (
-                  <li key={topic}>
-                    <DocsLink topic={topic}>
-                      {findPage(topic)?.title ?? topic}
-                    </DocsLink>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </aside>
+        <PageFooter topic={page.topic} previous={previous} next={next} />
       </div>
     </>
   );
 }
 
-function PageCard({ page }: { page: DocsPage }) {
+/** A page with its example screenshot, for the chart and table sections. */
+function ShotCard({ page }: { page: DocsPage }) {
   const Icon = page.icon;
   // Screenshots come from the docs check, so a dev server may not have them.
   const [thumbMissing, setThumbMissing] = useState(false);
+  const showThumb = page.thumbnail && !thumbMissing;
   return (
     <article className={`${cardLinkClass} flex flex-col overflow-hidden`}>
-      {page.thumbnail && !thumbMissing && (
-        <div className="aspect-[16/8] overflow-hidden border-b border-border bg-muted">
+      <div className="aspect-[16/9] overflow-hidden border-b border-border bg-muted/60">
+        {showThumb ? (
           <img
-            src={liveShotPath(page.thumbnail)}
+            src={liveShotPath(page.thumbnail!)}
             alt=""
+            loading="lazy"
             onError={() => setThumbMissing(true)}
-            className="h-full w-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.02] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+            className="h-full w-full object-cover object-left-top transition-transform duration-300 group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
           />
-        </div>
-      )}
-      <div className="flex flex-1 flex-col p-5 sm:p-6">
-        <div className="flex items-center gap-2.5">
+        ) : (
+          <div className="flex h-full items-center justify-center">
+            <Icon aria-hidden="true" className="size-10 text-docs-accent/30" />
+          </div>
+        )}
+      </div>
+      <div className="flex flex-1 flex-col p-4">
+        <h3 className="flex items-center gap-2 font-semibold">
           <Icon
             aria-hidden="true"
-            className="size-5 text-muted-foreground transition-colors group-hover:text-primary"
+            className="size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-docs-accent"
           />
-          <h3 className="text-lg font-semibold">
-            <Link className={stretchedLinkClass} to={docsPath(page.topic)}>
-              {page.title}
-            </Link>
-          </h3>
-        </div>
-        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+          <Link className={stretchedLinkClass} to={docsPath(page.topic)}>
+            {page.title}
+          </Link>
+        </h3>
+        <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
           {page.summary}
-        </p>
-        {page.highlights.length > 0 && (
-          <ul aria-label="Covers" className="mt-4 flex flex-wrap gap-1.5">
-            {page.highlights.map((item) => (
-              <li
-                key={item}
-                className="rounded-md bg-muted px-2 py-0.5 text-xs font-medium text-foreground"
-              >
-                {item}
-              </li>
-            ))}
-          </ul>
-        )}
-        <p
-          aria-hidden="true"
-          className="mt-auto flex items-center gap-1.5 pt-5 text-sm font-medium text-primary"
-        >
-          Read the guide
-          <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none" />
         </p>
       </div>
     </article>
   );
 }
 
+/** A page as one line of text, for the task and concept sections. */
+function LinkCard({ page }: { page: DocsPage }) {
+  const Icon = page.icon;
+  return (
+    <article className={`${cardLinkClass} flex gap-3.5 p-4`}>
+      <span
+        aria-hidden="true"
+        className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-docs-accent/10 text-docs-accent"
+      >
+        <Icon className="size-[1.125rem]" />
+      </span>
+      <div className="min-w-0">
+        <h3 className="font-semibold">
+          <Link className={stretchedLinkClass} to={docsPath(page.topic)}>
+            {page.title}
+          </Link>
+        </h3>
+        <p className="mt-0.5 text-sm leading-relaxed text-muted-foreground">
+          {page.summary}
+        </p>
+      </div>
+    </article>
+  );
+}
+
+/** Sections whose pages show a screenshot on the index. */
+const SHOT_GROUPS: ReadonlySet<DocsGroup> = new Set([
+  "plots",
+  "tables",
+  "supporting",
+]);
+
+const GROUP_INTROS: Record<DocsGroup, string> = {
+  start:
+    "Find your way around, bring in your rows, and embed the workspace in your own app.",
+  plots:
+    "What each chart computes, which rows it reads, and how a click or drag on it filters the rest.",
+  tables: "Read individual rows, cross-tabulate them, or profile every field.",
+  supporting:
+    "Headline numbers, shared legends, and notes that explain a dashboard.",
+  tasks: "Step-by-step guides for the things you do in every analysis.",
+  guides:
+    "Ideas that apply to every chart: scales, color, facets, and how a row becomes a mark.",
+};
+
 function IndexPage() {
   const groups = Object.keys(GROUP_LABELS) as DocsGroup[];
   return (
     <>
-      <DocsBar />
-      <PageHeader eyebrow="Learn" heading="Docs">
-        Choose a view for your question, learn what it computes and which rows
-        it reads, then open its matching workspace example.
-      </PageHeader>
+      <Hero />
+      <ChartChooser />
       {groups.map((group) => {
         const pages = catalogue.filter((page) => page.group === group);
         if (pages.length === 0) {
           return null;
         }
+        const withShots = SHOT_GROUPS.has(group);
         return (
           <section
             key={group}
             aria-labelledby={`docs-${group}`}
-            className="mt-14"
+            className="mt-16"
           >
-            <h2 id={`docs-${group}`} className={labelClass}>
-              {GROUP_LABELS[group]}
-            </h2>
-            <div className="mt-4 grid gap-6 md:grid-cols-2">
-              {pages.map((page) => (
-                <PageCard key={page.topic} page={page} />
-              ))}
+            <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-border pb-3">
+              <h2
+                id={`docs-${group}`}
+                className="text-xl font-semibold tracking-tight"
+              >
+                {GROUP_LABELS[group]}
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                {GROUP_INTROS[group]}
+              </p>
+            </div>
+            <div
+              className={
+                withShots
+                  ? "mt-5 grid gap-5 sm:grid-cols-2 xl:grid-cols-3"
+                  : "mt-5 grid gap-3 md:grid-cols-2 2xl:grid-cols-3"
+              }
+            >
+              {pages.map((page) =>
+                withShots ? (
+                  <ShotCard key={page.topic} page={page} />
+                ) : (
+                  <LinkCard key={page.topic} page={page} />
+                )
+              )}
             </div>
           </section>
         );
@@ -247,14 +273,10 @@ function IndexPage() {
 function MissingPage() {
   return (
     <>
-      <DocsBar current="Not found" />
-      <PageHeader eyebrow="Docs" heading="That page does not exist">
+      <PageHeader trail={["Docs"]} heading="That page does not exist">
         <span>
-          Go back to the{" "}
-          <Link
-            className="font-medium text-primary hover:underline"
-            to={docsPath()}
-          >
+          Pick a page from the list, or go back to the{" "}
+          <Link className={inlineLinkClass} to={docsPath()}>
             docs index
           </Link>
           .
@@ -279,7 +301,7 @@ export function DocsSite() {
   const topic = docsTopic(pathname);
   const page = topic ? findPage(topic) : undefined;
   return (
-    <main className="pb-16">
+    <DocsLayout withRail={page !== undefined}>
       {!topic ? (
         <IndexPage />
       ) : page ? (
@@ -287,6 +309,6 @@ export function DocsSite() {
       ) : (
         <MissingPage />
       )}
-    </main>
+    </DocsLayout>
   );
 }

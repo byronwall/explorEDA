@@ -16,7 +16,7 @@ Keep the existing React renderers, state store, saved workspace, and host histor
 
 The main risk is identity. Internal row IDs are assigned from array positions. Persist a source key and field bindings for record attachments. Resolve keys before projecting positions. Missing or duplicate keys must produce a visible repair state. A fixed coordinate must remain a fixed coordinate.
 
-This is a proposed delivery sequence. The current request authorizes source capture and planning, not feature implementation.
+Implementation started on 2026-10-11. Each milestone ships as its own stacked pull request.
 
 ## Implementation strategy
 
@@ -45,6 +45,8 @@ Add a plain label/callout and fixed numeric target to an ordinary scatter chart.
 - Test save/reload after row reordering, changed record values, duplicate keys, and deleted records. Test the fixed target under linear and symlog scales.
 - In the browser, move and cancel a label, commit and undo an edit, filter and restore its subject, then resize. Verify selection, brushing, and Alt-click tracing still work.
 
+**Delivered (M1):** `src/lib/annotations/` owns the saved types, key resolution, projection, and validation. Scatter draws them through `AnnotationLayer`; the chart settings **Notes** tab lists, adds, edits, hides, and removes them. A new callout attaches to the record with the largest Y value, keyed by the first field that identifies every row; without one it starts at a fixed point. Key choice is a single field in the form; composite keys resolve but have no editor yet. The bubble scatter demo carries a callout and a target.
+
 ### Desired end state
 
 - A saved callout follows a keyed observation; a fixed target keeps its value.
@@ -61,6 +63,8 @@ Extend the same authoring flow with fixed coordinate and plot-position labels, a
 - Clip geometry to its intended frame. Keep out-of-view definitions in the list. References do not extend the domain by default.
 - Add supplied lower/upper intervals only with named fields and a stated interpretation. Reuse composition band behavior where applicable.
 - Check negative and symlog values, date conversion, categorical positions, reversed/missing bounds, and dual-axis field changes.
+
+**Delivered (M2):** Line and time-series charts draw annotations through `BaseChart`'s `annotations` slot. New kinds: `band` (shaded or bracketed span on x or y, which covers events' durations, ranges, and tolerance bands) and `interval` (supplied lower/upper fields with a required meaning). Callouts gain an arrowhead and a series choice; values on a date axis are UTC timestamps edited with date inputs; y values can bind to the right axis. Charts report per-annotation statuses (`annotationStatus.ts`), so the list shows Outside the view and Not on this chart. Time series charts summarize rows, so record callouts and intervals report unsupported there. Scatter categorical axes are left unsupported rather than given category attachments; revisit with M4's aggregate identity work.
 
 ### Desired end state
 
@@ -79,6 +83,8 @@ Add coordinate rectangles/ellipses, saved record-set highlights, and a small set
 - Distinguish a fixed record from a query such as “largest value among filtered rows.” A query may change subjects by design.
 - Verify partial record-set visibility, empty selections, missing keys, and changed query winners. Include duplicate-key failure cases.
 
+**Delivered (M3):** `region` (rectangle or ellipse in data units) and `record-set` (keys copied from the current selection, capped at 500, drawn as squares with a shown-of-total count) are separate kinds. Reference lines take `calculated: { statistic, population }`; callouts take a `query` attachment (largest or smallest value). Frames carry `population.all` (rows the chart can draw, ignoring interactive filters, within the chart's local limits and facet) and `population.filtered`. Calculated labels always name their rows. Time series charts have no row population, so calculations and record sets report unsupported there. Record sets edit only by "Use selection"; per-member editing stays below the line.
+
 ### Desired end state
 
 - A saved group cannot silently become whatever falls inside a rectangle.
@@ -96,6 +102,8 @@ Extend ordinary Cartesian chart coverage only where the attachment can be define
 - Keep artboard positioning in composition. Keep ordinary chart annotations in their chart settings. Share behavior without requiring a new universal document store.
 - Verify facet reorder/removal, chart field changes, and restoration of an existing saved composition. State unsupported combinations in the editor's available choices.
 
+**Delivered (M4):** Bar, series bar, row, and box charts draw annotations through `BaseChart`, built with `scaleFrame`. A new `category` attachment places a callout on an aggregate bar or row by its category text; series bars and box plots take value-axis lines and bands only. Facet panels pass `facetKey` (the semantic `JSON.stringify([rowKey, columnKey])` id) down `ChartRenderer`; an annotation's optional `facet` binds it to one panel, and other panels report "Other panel". Calculations already read each panel's rows. Composition keeps its own `AnnotationAnchor`: its glyph picks are not stable record identity, so only the offset rule is shared, recorded in `docs/composition-mode.md`. No composition code changed. Box plot category callouts and series-bar subjects stay below the line.
+
 ### Desired end state
 
 - Annotation meaning and editing behavior match across supported chart families.
@@ -112,6 +120,8 @@ Complete persistence coverage, output integration, label readability, and keyboa
 - Include authored annotation geometry and text, but omit editing controls. If ordinary-chart image export is still unavailable, retain an explicit open dependency; do not claim complete sharing support.
 - Check labels at plot edges, dense marks, theme changes, and export size. Keep manual offsets; automatic placement remains an evaluation candidate.
 - Verify create, select, edit, hide, repair, remove, cancel, undo, and focus return with keyboard and form controls.
+
+**Delivered (M5, partial):** `persistence.test.ts` round-trips every annotation kind through Dashboard text (generic setting paths, no omissions, numeric-looking text keys stay text) and saved data, and the stringified save is stable through restore, so host echoes don't trigger full restores. Chart duplication copies annotations. Callout labels flip their reading side at the plot edge and stop at the top and bottom (`placeLabel.ts`); manual offsets are otherwise kept, and automatic placement stays an evaluation candidate. Removing an annotation moves focus to the card that takes its place. **Open dependency:** ordinary charts still have no image export; it belongs to [analysis export](../analysis-export/intent-brief.md), whose brief now notes that annotations are plain SVG with no editor overlays. This milestone stays active until that export exists and is checked with annotations.
 
 ### Desired end state
 

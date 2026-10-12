@@ -1,10 +1,7 @@
 import { examples } from "@/demos/examples";
 import type { ExplorEdaProps } from "exploreda";
 import { useEffect, useState } from "react";
-import { labelClass } from "../components/chrome";
-
-const codeClass =
-  "mt-4 overflow-x-auto rounded-lg border border-border bg-muted/50 p-4 font-mono text-[0.8rem] leading-6 text-foreground";
+import { CodeFrame } from "../components/code";
 
 /** The dashboard text a demo example is built from. */
 export function ExampleText({ id }: { id: string }) {
@@ -12,7 +9,9 @@ export function ExampleText({ id }: { id: string }) {
   if (!text) {
     throw new Error(`Example "${id}" has no dashboard text`);
   }
-  return <pre className={codeClass}>{text.trim()}</pre>;
+  return (
+    <CodeFrame code={text.trim()} language="dashboard" label="Dashboard text" />
+  );
 }
 
 /** The library's own Dashboard text reference. */
@@ -28,9 +27,11 @@ export function DashboardTextReference() {
     };
   }, []);
   return (
-    <pre className={codeClass} aria-busy={text === null}>
-      {text ?? "Loading the reference…"}
-    </pre>
+    <CodeFrame
+      code={text ?? "Loading the reference…"}
+      label="Dashboard text reference"
+      busy={text === null}
+    />
   );
 }
 
@@ -62,36 +63,23 @@ const PROPS: Record<keyof ExplorEdaProps, string> = {
 
 export function PropsReference() {
   return (
-    <div className="mt-4 overflow-x-auto rounded-lg border border-border">
-      <table
-        aria-label="ExplorEda props"
-        className="w-full min-w-[30rem] border-collapse text-sm"
-      >
-        <thead className="bg-muted/50 text-left">
-          <tr>
-            <th scope="col" className={`px-3 py-2 ${labelClass}`}>
-              Prop
-            </th>
-            <th scope="col" className={`px-3 py-2 ${labelClass}`}>
-              What it does
-            </th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-border">
-          {Object.entries(PROPS).map(([prop, line]) => (
-            <tr key={prop}>
-              <th scope="row" className="px-3 py-2 text-left align-top">
-                <code className="font-mono text-[0.85rem] text-foreground">
-                  {prop}
-                </code>
-              </th>
-              <td className="px-3 py-2 align-top leading-6 text-muted-foreground">
-                {line}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <dl
+      aria-label="ExplorEda props"
+      className="mt-5 divide-y divide-border overflow-hidden rounded-lg border border-border bg-card"
+    >
+      {Object.entries(PROPS).map(([prop, line]) => (
+        <div
+          key={prop}
+          className="grid gap-x-6 gap-y-1 px-4 py-3 sm:grid-cols-[10rem_minmax(0,1fr)]"
+        >
+          <dt>
+            <code className="font-mono text-[0.8125rem] font-semibold text-foreground">
+              {prop}
+            </code>
+          </dt>
+          <dd className="text-sm leading-6 text-foreground/80">{line}</dd>
+        </div>
+      ))}
+    </dl>
   );
 }

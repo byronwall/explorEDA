@@ -1,0 +1,20 @@
+[
+  {
+    "file": "notebook-1.jpeg",
+    "original_name": "0D68D514-1CBE-40FB-83F5-CCD14F58907A_1_102_o.jpeg",
+    "bytes": 713579,
+    "sha256": "e3becaba759ff5da99949bab06cfed62bec74d69dc95ae0bb8026de05727bd3c"
+  },
+  {
+    "file": "notebook-2.jpeg",
+    "original_name": "BBAB21A5-9986-4D93-A7F8-0BF6E9337ACA_1_102_o.jpeg",
+    "bytes": 707124,
+    "sha256": "7e7a5cd4d819fc76574b744ab41527c4b64baf3e7d66190724185b8d44588ba0"
+  },
+  {
+    "file": "notebook-3.jpeg",
+    "original_name": "59953777-1BD2-4C58-B24F-2532684417A5_1_102_o.jpeg",
+    "bytes": 702688,
+    "sha256": "3a64aa5e19fc45b6ef70a93c7ac91d92869193cd4b39fa1dc729f400b55b96ea"
+  }
+]

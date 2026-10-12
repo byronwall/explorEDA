@@ -30,6 +30,8 @@ export type DocsGateInput = {
   publicFiles: readonly string[];
   /** Every saved setting of each chart type, from the library. */
   settingKeys: Readonly<Record<string, readonly string[]>>;
+  /** Chart types with an "At a glance" entry. */
+  glanceTypes: readonly string[];
   /** Setting lines shared by every chart type. */
   commonDescriptions: Readonly<Record<string, string>>;
   /** Setting lines for one chart type. */
@@ -122,23 +124,21 @@ export function findDocsErrors(input: DocsGateInput): string[] {
         errors.push(`${where} uses missing live example "${id}"`);
       }
     }
-    for (const [, type] of source.matchAll(
-      /<SettingsReference\s+type="([^"]+)"/g
-    )) {
-      if (type) {
-        referenced.add(type);
-      }
+    if (source.includes("<SettingsReference")) {
+      errors.push(
+        `${where} renders a settings reference; chart pages get theirs from the page template`
+      );
     }
   }
+  // Every chart page ends with its settings, and opens with its glance.
   for (const page of input.pages) {
-    const source = input.sources[page.topic];
-    if (
-      page.chartType &&
-      source !== undefined &&
-      !source.includes(`<SettingsReference type="${page.chartType}"`)
-    ) {
+    if (!page.chartType) {
+      continue;
+    }
+    referenced.add(page.chartType);
+    if (!input.glanceTypes.includes(page.chartType)) {
       errors.push(
-        `Page "${page.topic}" has no <SettingsReference type="${page.chartType}" />`
+        `Page "${page.topic}" has no entry in glance.ts for "${page.chartType}"`
       );
     }
   }

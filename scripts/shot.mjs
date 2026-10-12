@@ -6,7 +6,9 @@
 //   <path>               page path, such as /examples/shop-operations
 //   --name <name>        file prefix; saves tmp/<name>-<width>.png (default: shot)
 //   --selector <loc>     element to capture; default is the whole viewport
-//   --click <loc>        click before capturing; repeat for several steps
+//   --click <loc>        click before capturing; repeat for several steps.
+//                        Prefix `hover:` to hover instead, or `press:` to press a
+//                        key such as `press:s`, for controls that show on hover.
 //   --wait <loc>         wait for this element before capturing
 //   --widths <list>      comma-separated widths (default: 1280,783,390)
 //   --height <px>        viewport height (default: 900)
@@ -62,7 +64,10 @@ for (const width of values.widths.split(",").map(Number)) {
   await page.goto(new URL(path, base).href);
   await page.waitForLoadState("networkidle");
   for (const step of values.click) {
-    await page.locator(step).first().click({ timeout: 15_000 });
+    if (step.startsWith("press:")) await page.keyboard.press(step.slice(6));
+    else if (step.startsWith("hover:"))
+      await page.locator(step.slice(6)).first().hover({ timeout: 15_000 });
+    else await page.locator(step).first().click({ timeout: 15_000 });
     await page.waitForLoadState("networkidle");
   }
   if (values.wait)

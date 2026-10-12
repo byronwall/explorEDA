@@ -126,6 +126,7 @@ No latency target has been agreed.
 - Repeated units do not sit in decorative cards. Text, marks, and guides form the hierarchy.
 - Keep supplied intervals separate from any model that produced them. Composition draws supplied bands; it does not forecast.
 - Summaries are unweighted. Survey estimates need correctly prepared weighted inputs.
+- Composition annotations stay separate from ordinary-chart annotations (`src/lib/annotations/`). A composition data anchor picks a glyph by max, min, first, last, or label; an ordinary-chart callout follows a keyed record, a category, or an explicit largest/smallest query over a named population. Sharing the anchor type would let a glyph pick pass for stable record identity. The two share only their offset rule: a label's x and y are a pixel offset from its subject.
 
 ## Code map
 
