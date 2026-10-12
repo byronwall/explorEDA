@@ -105,3 +105,35 @@
 .eda-dsl-input::placeholder {
   color: var(--muted-foreground);
 }
+
+/* Docs pages write <kbd> as raw JSX, which MDX components don't reach. */
+.docs-article kbd {
+  border: 1px solid var(--border);
+  border-bottom-width: 2px;
+  border-radius: 0.25rem;
+  background: var(--card);
+  padding: 0.05em 0.4em;
+  font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+  font-size: 0.8em;
+  color: var(--foreground);
+  white-space: nowrap;
+}
+
+/* The docs' accent. The workspace's dark primary is near white, which
+   reads as plain text in links and highlights, so the docs use a blue. */
+.docs-root {
+  --docs-accent: var(--primary);
+}
+
+.dark .docs-root {
+  --docs-accent: hsl(213 90% 70%);
+}
+
+@theme inline {
+  --color-docs-accent: var(--docs-accent);
+}
+
+.docs-theme-switching,
+.docs-theme-switching * {
+  transition: none !important;
+}
