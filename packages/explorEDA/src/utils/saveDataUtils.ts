@@ -632,6 +632,14 @@ function isChart(value: unknown): boolean {
         ["equal-earth", "equirectangular"].includes(
           value.projection as string
         ) &&
+        (value.showMarks === undefined ||
+          typeof value.showMarks === "boolean") &&
+        (value.showLabels === undefined ||
+          typeof value.showLabels === "boolean") &&
+        (value.referenceAssetId === undefined ||
+          typeof value.referenceAssetId === "string") &&
+        (value.basemap === undefined ||
+          ["auto", "outline", "none"].includes(value.basemap as string)) &&
         isFiniteNumber(value.pointRadius) &&
         value.pointRadius >= 2 &&
         value.pointRadius <= 32 &&

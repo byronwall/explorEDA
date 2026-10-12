@@ -1,5 +1,6 @@
 import { Minus, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { MapLayersControl } from "./MapLayersControl";
 import { useChartTraceApi } from "../trace/ChartTraceScope";
 import type { MapSettings, MapView } from "./definition";
 import type { PointMapPlan } from "./pointMapPlan";
@@ -13,6 +14,7 @@ export function MapToolbar({
   maxZoom,
   fitZoom,
   onViewChange,
+  onSettingsChange,
 }: {
   settings: MapSettings;
   plan: PointMapPlan;
@@ -23,6 +25,7 @@ export function MapToolbar({
   /** Deepest zoom Fit data chooses. */
   fitZoom: number;
   onViewChange: (view: MapView) => void;
+  onSettingsChange: (updates: Partial<MapSettings>) => void;
 }) {
   const api = useChartTraceApi();
   const saveView = onViewChange;
@@ -82,6 +85,7 @@ export function MapToolbar({
         >
           Fit data
         </Button>
+        <MapLayersControl settings={settings} onChange={onSettingsChange} />
         <Button
           size="sm"
           variant="ghost"
@@ -94,8 +98,10 @@ export function MapToolbar({
       </div>
       <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-muted-foreground">
         <span>
-          {plan.points.length} drawn ·{" "}
-          {plan.street ? "Street map" : projectionLabel(settings.projection)}
+          {settings.showMarks === false
+            ? `${plan.points.length} hidden`
+            : `${plan.points.length} drawn`}{" "}
+          · {plan.street ? "Street map" : projectionLabel(settings.projection)}
         </span>
         {plan.excluded.length > 0 && (
           <Button

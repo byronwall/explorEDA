@@ -489,6 +489,7 @@ export const CHART_SETTING_KEYS: Record<ChartType, readonly string[]> = {
   map: keys<"map">()([
     "annotations",
     "aggregation",
+    "basemap",
     "colorField",
     "colorScaleId",
     "facet",
@@ -508,7 +509,10 @@ export const CHART_SETTING_KEYS: Record<ChartType, readonly string[]> = {
     "pointOpacity",
     "pointRadius",
     "projection",
+    "referenceAssetId",
     "regionField",
+    "showLabels",
+    "showMarks",
     "showRegionLabels",
     "sizeField",
     "note",

@@ -27,6 +27,12 @@ import {
   viewZoom,
 } from "./streetCamera";
 import { StreetBasemap } from "./StreetBasemap";
+import { useRegionAsset } from "./useRegionAsset";
+import { regionGeometry } from "./regionGeometry";
+import { geoPath } from "d3-geo";
+
+/** Point labels stay readable up to this many drawn points. */
+const MAX_LABELS = 150;
 import { useMapData } from "./useMapData";
 
 export function PointMap({
@@ -62,8 +68,10 @@ export function PointMap({
   const [failedEngine, setFailedEngine] = useState<typeof engine>();
   const mapHeight = pointMapHeight(settings, height);
   // The saved view decides the basemap, so a gesture never swaps it mid-drag.
+  const basemap = settings.basemap ?? "auto";
   const street =
     Boolean(engine) &&
+    basemap === "auto" &&
     isStreetView(
       settings.view ?? WORLD_VIEW,
       settings.projection,
@@ -161,10 +169,29 @@ export function PointMap({
   const stableSource = useMemo(() => source, [plan, settings, snapshot]);
   useTraceSource(owner, stableSource);
   const inspect = (id: number) => api?.inspect(owner, "map-point", String(id));
-  const saveView = (view: MapView) =>
+  const change = (updates: Partial<MapSettings>) =>
     onSettingsChange
-      ? onSettingsChange({ view })
-      : updateChart(settings.id, { view });
+      ? onSettingsChange(updates)
+      : updateChart(settings.id, updates);
+  const saveView = (view: MapView) => change({ view });
+  const reference = useRegionAsset({
+    geometryAssetId: settings.referenceAssetId,
+  }).asset;
+  const referencePath = useMemo(
+    () =>
+      reference
+        ? (geoPath(plan.projection)(regionGeometry(reference.geometry)) ?? "")
+        : "",
+    [reference, plan.projection]
+  );
+  const showMarks = settings.showMarks ?? true;
+  const labeled =
+    showMarks &&
+    settings.showLabels &&
+    settings.labelField &&
+    plan.points.length <= MAX_LABELS
+      ? plan.points
+      : [];
   const select = (id: number) =>
     onSettingsChange
       ? inspect(id)
@@ -303,7 +330,7 @@ export function PointMap({
             </clipPath>
           </defs>
           <g clipPath={`url(#${owner}-map-clip)`}>
-            {(!street || streetFailed) && (
+            {(!street || streetFailed) && basemap !== "none" && (
               <>
                 <path
                   d={paths.outline}
@@ -328,7 +355,18 @@ export function PointMap({
                 )}
               </>
             )}
-            {plan.points.map((point) => {
+            {referencePath && (
+              <path
+                d={referencePath}
+                fill="none"
+                stroke="var(--foreground)"
+                strokeOpacity={0.45}
+                strokeWidth={1}
+                className="pointer-events-none"
+                aria-hidden="true"
+              />
+            )}
+            {(showMarks ? plan.points : []).map((point) => {
               const selected = plan.hasSelection && point.matching;
               const emphasized =
                 selected ||
@@ -410,6 +448,23 @@ export function PointMap({
                 />
               );
             })}
+            {labeled.map((point) => (
+              <text
+                key={point.sourceId}
+                x={point.x! + point.radius + 3}
+                y={point.y!}
+                dominantBaseline="middle"
+                fontSize={11}
+                fill="var(--foreground)"
+                stroke="var(--background)"
+                strokeWidth={3}
+                paintOrder="stroke"
+                className="pointer-events-none"
+                aria-hidden="true"
+              >
+                {point.label}
+              </text>
+            ))}
           </g>
         </svg>
       </div>
@@ -443,6 +498,7 @@ export function PointMap({
         maxZoom={maxZoom}
         fitZoom={fitZoom}
         onViewChange={saveView}
+        onSettingsChange={change}
       />
       {active && (
         <ChartReadout fallbackClassName="eda-chart-readout-inline">

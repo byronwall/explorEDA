@@ -27,6 +27,14 @@ export interface MapSettings extends BaseChartSettings {
   pointRadius: number;
   pointOpacity: number;
   projection: "equal-earth" | "equirectangular";
+  /** Draw the points; off leaves selections and filters unchanged. */
+  showMarks?: boolean;
+  /** Write each point's label beside it. */
+  showLabels?: boolean;
+  /** Boundaries drawn beneath points for reference, by geometry ID. */
+  referenceAssetId?: string;
+  /** Auto shows streets when zoomed in and a street engine is registered. */
+  basemap?: "auto" | "outline" | "none";
   view?: MapView;
 }
 export const mapDefinition: ChartDefinition<MapSettings> = {

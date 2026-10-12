@@ -17,6 +17,7 @@ import { useMapData } from "./useMapData";
 import { useMapPan } from "./useMapPan";
 import { useRegionAsset } from "./useRegionAsset";
 import { useZoomDetail } from "./useZoomDetail";
+import { MapLayersControl } from "./MapLayersControl";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 
 export function RegionMap({
@@ -214,12 +215,14 @@ export function RegionMap({
             fill="var(--background)"
             stroke="var(--border)"
           />
-          <path
-            d={paths.land}
-            fill="var(--muted)"
-            stroke="var(--border)"
-            strokeWidth={0.5}
-          />
+          {saved.basemap !== "none" && (
+            <path
+              d={paths.land}
+              fill="var(--muted)"
+              stroke="var(--border)"
+              strokeWidth={0.5}
+            />
+          )}
           {drawn.map((region) => (
             <g key={region.id}>
               <path
@@ -366,6 +369,14 @@ export function RegionMap({
         >
           <Minus className="h-3 w-3" />
         </Button>
+        <MapLayersControl
+          settings={saved}
+          onChange={(updates) =>
+            onSettingsChange
+              ? onSettingsChange(updates)
+              : updateChart(saved.id, updates)
+          }
+        />
         <Button
           size="sm"
           variant="ghost"
