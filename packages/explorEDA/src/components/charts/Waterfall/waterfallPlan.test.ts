@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { datum } from "@/types/ChartTypes";
-import { planBridge, type BridgeInput } from "./waterfallPlan";
+import { planAccumulate, planBridge, type BridgeInput } from "./waterfallPlan";
 
 /** Net budget lines: income is positive, costs negative; two quarters each. */
 const LINES = [
@@ -239,5 +239,151 @@ describe("planBridge", () => {
       bars.filter((bar) => bar.kind === "step").every((bar) => bar.amount === 0)
     ).toBe(true);
     expect(bars.some((bar) => bar.kind === "subtotal")).toBe(false);
+  });
+});
+
+describe("planAccumulate", () => {
+  /** A battery's energy flows in kWh: charging is positive. */
+  const flows: Row[] = [
+    { hour: 6, period: "Morning", flow: "Solar", energy: 4 },
+    { hour: 0, period: "Night", flow: "Load", energy: -3 },
+    { hour: 6, period: "Morning", flow: "Load", energy: -5 },
+    { hour: 12, period: "Midday", flow: "Solar", energy: 12 },
+    { hour: 0, period: "Night", flow: "Grid", energy: 6 },
+    { hour: 12, period: "Midday", flow: "Load", energy: -4 },
+    { hour: 18, period: "Evening", flow: "Load", energy: -9 },
+  ];
+  const input = (rows = flows, live = ids(rows)) => ({
+    ids: live,
+    orderIds: ids(rows),
+    step: column(rows, "hour"),
+    aggregation: "sum" as const,
+    measure: column(rows, "energy"),
+    labels: ["Charge at midnight", "Charge at day's end"] as [string, string],
+  });
+
+  it("runs numeric steps in sequence from the start value", () => {
+    const { bars } = planAccumulate({ ...input(), startValue: 20 });
+    expect(shape(bars)).toEqual([
+      {
+        key: "start",
+        kind: "start",
+        label: "Charge at midnight",
+        amount: 20,
+        from: 0,
+        to: 20,
+      },
+      {
+        key: 'step:["number",0]',
+        kind: "step",
+        label: "0",
+        amount: 3,
+        from: 20,
+        to: 23,
+      },
+      {
+        key: 'step:["number",6]',
+        kind: "step",
+        label: "6",
+        amount: -1,
+        from: 23,
+        to: 22,
+      },
+      {
+        key: 'step:["number",12]',
+        kind: "step",
+        label: "12",
+        amount: 8,
+        from: 22,
+        to: 30,
+      },
+      {
+        key: 'step:["number",18]',
+        kind: "step",
+        label: "18",
+        amount: -9,
+        from: 30,
+        to: 21,
+      },
+      {
+        key: "end",
+        kind: "end",
+        label: "Charge at day's end",
+        amount: 21,
+        from: 0,
+        to: 21,
+      },
+    ]);
+  });
+
+  it("starts from zero without a start bar when no start value is set", () => {
+    const { bars } = planAccumulate(input());
+    expect(bars[0]!.kind).toBe("step");
+    expect(bars.at(-1)).toMatchObject({ kind: "end", to: 1 });
+  });
+
+  it("keeps each step's rows and every row behind the end", () => {
+    const { bars } = planAccumulate(input());
+    expect(bars[0]!.rows!.contributors.map((item) => item.sourceId)).toEqual([
+      1, 4,
+    ]);
+    expect(bars.at(-1)!.rows!.rowCount).toBe(flows.length);
+  });
+
+  it("orders date steps in time and other steps in data order", () => {
+    const dated: Row[] = [
+      { day: "2026-03-02", energy: 2 },
+      { day: "2026-03-01", energy: 1 },
+    ];
+    const byDate = planAccumulate({
+      ...input(dated),
+      step: column(dated, "day"),
+      measure: column(dated, "energy"),
+    });
+    expect(byDate.bars.map((bar) => bar.label)).toEqual([
+      "2026-03-01",
+      "2026-03-02",
+      "Charge at day's end",
+    ]);
+    const byFlow = planAccumulate({ ...input(), step: column(flows, "flow") });
+    expect(byFlow.bars.map((bar) => bar.label)).toEqual([
+      "Solar",
+      "Load",
+      "Grid",
+      "Charge at day's end",
+    ]);
+  });
+
+  it("closes each period with a subtotal of the running total", () => {
+    const { bars } = planAccumulate({
+      ...input(),
+      startValue: 20,
+      parent: column(flows, "period"),
+    });
+    expect(bars.map((bar) => [bar.kind, bar.label, bar.to])).toEqual([
+      ["start", "Charge at midnight", 20],
+      ["step", "0", 23],
+      ["subtotal", "Night", 23],
+      ["step", "6", 22],
+      ["subtotal", "Morning", 22],
+      ["step", "12", 30],
+      ["subtotal", "Midday", 30],
+      ["step", "18", 21],
+      ["subtotal", "Evening", 21],
+      ["end", "Charge at day's end", 21],
+    ]);
+  });
+
+  it("counts rows per step without a measure", () => {
+    const { bars } = planAccumulate({
+      ...input(),
+      aggregation: "count",
+      measure: undefined,
+    });
+    expect(bars.map((bar) => bar.amount)).toEqual([2, 2, 2, 1, 7]);
+  });
+
+  it("draws nothing when no rows pass the other filters", () => {
+    expect(planAccumulate(input(flows, [])).bars).toEqual([]);
   });
 });

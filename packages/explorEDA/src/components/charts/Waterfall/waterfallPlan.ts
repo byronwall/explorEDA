@@ -5,6 +5,7 @@ import {
   type AggregateResultRow,
 } from "@/lib/aggregates";
 import { categoryKey, categoryLabel, categoryValue } from "@/lib/categories";
+import { parseDateText } from "@/lib/valueParsing";
 import type { datum } from "@/types/ChartTypes";
 import type { WaterfallAggregation } from "./waterfallTypes";
 
@@ -30,6 +31,8 @@ export interface WaterfallBar {
   to: number;
   /** Each state's reduction: one category for a step, every row for a total. */
   states: [WaterfallStateValue, WaterfallStateValue] | undefined;
+  /** A running total's one reduction: a step's category, or every row at the end. */
+  rows?: WaterfallStateValue;
   /** The state a step's category is missing from, which counts as 0. */
   missingFrom?: 0 | 1;
   /** A subtotal's step categories. */
@@ -136,38 +139,13 @@ export function planBridge(input: BridgeInput): WaterfallPlan {
     )
   ) as [WaterfallStateValue, WaterfallStateValue];
 
-  // Steps keep the order their categories first appear in the data, grouped
-  // under the parent each first appears with.
-  const order = new Map<string, datum>();
-  const seen = new Set<string>();
-  const parents = new Map<string, { value: datum; keys: string[] }>();
-  for (const id of input.orderIds) {
-    const value = categoryValue(input.step[id]);
-    const key = categoryKey(value);
-    if (seen.has(key)) continue;
-    if (!grouped[0]!.has(key) && !grouped[1]!.has(key)) continue;
-    seen.add(key);
-    const parentValue = input.parent
-      ? categoryValue(input.parent[id])
-      : undefined;
-    const parentKey = input.parent ? categoryKey(parentValue) : "";
-    const parent = parents.get(parentKey);
-    if (parent) parent.keys.push(key);
-    else parents.set(parentKey, { value: parentValue, keys: [key] });
-    order.set(key, value);
-  }
-  // Rows outside the order, such as live rows the population leaves out.
-  for (const map of grouped) {
-    for (const [key, row] of map) {
-      if (seen.has(key)) continue;
-      seen.add(key);
-      const parent = parents.get("");
-      if (parent) parent.keys.push(key);
-      else parents.set("", { value: undefined, keys: [key] });
-      order.set(key, row.groupValue);
-    }
-  }
-
+  const parents = orderSteps(
+    input,
+    [...grouped[0]!.values(), ...grouped[1]!.values()].map(
+      (row) => row.groupValue
+    ),
+    false
+  );
   const reduced = (row: AggregateResultRow | undefined) =>
     row
       ? {
@@ -177,71 +155,265 @@ export function planBridge(input: BridgeInput): WaterfallPlan {
         }
       : EMPTY;
   const start = totals[0].value ?? 0;
-  const bars: WaterfallBar[] = [
-    {
-      key: "start",
-      kind: "start",
-      value: undefined,
-      label: input.states[0].label,
-      amount: start,
-      from: 0,
-      to: start,
-      states: totals,
-    },
-  ];
-  let running = start;
-  for (const [parentKey, parent] of parents) {
-    for (const key of parent.keys) {
-      const before = grouped[0]!.get(key);
-      const after = grouped[1]!.get(key);
-      const amount = (after?.value ?? 0) - (before?.value ?? 0);
-      const value = order.get(key);
+  const end = totals[1].value ?? 0;
+  return {
+    bars: stackBars(
+      parents,
+      Boolean(input.parent),
+      {
+        key: "start",
+        kind: "start",
+        value: undefined,
+        label: input.states[0].label,
+        amount: start,
+        from: 0,
+        to: start,
+        states: totals,
+      },
+      (key) => {
+        const before = grouped[0]!.get(key);
+        const after = grouped[1]!.get(key);
+        return {
+          amount: (after?.value ?? 0) - (before?.value ?? 0),
+          states: [reduced(before), reduced(after)],
+          ...(before ? (after ? {} : { missingFrom: 1 }) : { missingFrom: 0 }),
+        };
+      },
+      () => ({
+        key: "end",
+        kind: "end",
+        value: undefined,
+        label: input.states[1].label,
+        // The second state's own total, which the steps reach.
+        amount: end,
+        from: 0,
+        to: end,
+        states: totals,
+      })
+    ),
+  };
+}
+
+interface StepGroup {
+  value: datum;
+  steps: { key: string; value: datum }[];
+}
+
+/** Whether every value is a number, or every value is date text. */
+function sortableOrder(values: datum[]) {
+  if (values.every((value) => typeof value === "number")) {
+    return (value: datum) => value as number;
+  }
+  if (
+    values.every(
+      (value) =>
+        typeof value === "string" && Number.isFinite(parseDateText(value))
+    )
+  ) {
+    return (value: datum) => parseDateText(value as string);
+  }
+  return undefined;
+}
+
+/**
+ * Steps in the order their categories first appear in the data, or sorted
+ * when the categories are numbers or dates and the steps run in sequence.
+ * With a parent field, steps gather under the parent each first appears
+ * with, and groups keep the order of their first step.
+ */
+function orderSteps(
+  input: Pick<BridgeInput, "orderIds" | "step" | "parent">,
+  liveValues: datum[],
+  sequence: boolean
+): Map<string, StepGroup> {
+  const live = new Set(liveValues.map((value) => categoryKey(value)));
+  const firstParent = new Map<string, datum>();
+  const values = new Map<string, datum>();
+  for (const id of input.orderIds) {
+    const value = categoryValue(input.step[id]);
+    const key = categoryKey(value);
+    if (values.has(key) || !live.has(key)) continue;
+    values.set(key, value);
+    firstParent.set(
+      key,
+      input.parent ? categoryValue(input.parent[id]) : undefined
+    );
+  }
+  // Live rows outside the order, such as rows the population leaves out.
+  for (const value of liveValues) {
+    const key = categoryKey(value);
+    if (values.has(key)) continue;
+    values.set(key, value);
+    firstParent.set(key, undefined);
+  }
+  let keys = [...values.keys()];
+  const position = sequence ? sortableOrder([...values.values()]) : undefined;
+  if (position) {
+    keys = keys.sort(
+      (a, b) => position(values.get(a)!) - position(values.get(b)!)
+    );
+  }
+  const groups = new Map<string, StepGroup>();
+  for (const key of keys) {
+    const parentValue = firstParent.get(key);
+    const parentKey = input.parent ? categoryKey(parentValue) : "";
+    const group = groups.get(parentKey) ?? { value: parentValue, steps: [] };
+    group.steps.push({ key, value: values.get(key) });
+    groups.set(parentKey, group);
+  }
+  return groups;
+}
+
+/** Start, each group's steps and subtotal, then end, each from the running total. */
+function stackBars(
+  groups: Map<string, StepGroup>,
+  subtotals: boolean,
+  start: WaterfallBar | undefined,
+  step: (
+    key: string
+  ) => Pick<WaterfallBar, "amount" | "states" | "rows" | "missingFrom">,
+  end: (running: number) => WaterfallBar
+): WaterfallBar[] {
+  const bars: WaterfallBar[] = start ? [start] : [];
+  let running = start?.to ?? 0;
+  for (const [parentKey, group] of groups) {
+    for (const item of group.steps) {
+      const values = step(item.key);
       bars.push({
-        key: `step:${key}`,
+        key: `step:${item.key}`,
         kind: "step",
-        value,
-        label: categoryLabel(value),
-        amount,
+        value: item.value,
+        label: categoryLabel(item.value),
+        ...values,
         from: running,
-        to: running + amount,
-        states: [reduced(before), reduced(after)],
-        ...(before ? (after ? {} : { missingFrom: 1 }) : { missingFrom: 0 }),
-        ...(input.parent
+        to: running + values.amount,
+        ...(subtotals
           ? {
               parent: {
                 key: parentKey,
-                value: parent.value,
-                label: categoryLabel(parent.value),
+                value: group.value,
+                label: categoryLabel(group.value),
               },
             }
           : {}),
       });
-      running += amount;
+      running += values.amount;
     }
-    if (input.parent) {
+    if (subtotals) {
       bars.push({
         key: `subtotal:${parentKey}`,
         kind: "subtotal",
-        value: parent.value,
-        label: categoryLabel(parent.value),
+        value: group.value,
+        label: categoryLabel(group.value),
         amount: running,
         from: 0,
         to: running,
         states: undefined,
-        members: parent.keys.map((key) => order.get(key)),
+        members: group.steps.map((item) => item.value),
       });
     }
   }
-  const end = totals[1].value ?? 0;
-  bars.push({
-    key: "end",
-    kind: "end",
-    value: undefined,
-    label: input.states[1].label,
-    amount: end,
-    from: 0,
-    to: end,
-    states: totals,
-  });
-  return { bars };
+  bars.push(end(running));
+  return bars;
+}
+
+export interface AccumulateInput {
+  /** Rows that pass the other charts' filters. */
+  ids: readonly number[];
+  /** Every row the chart can draw, in data order. */
+  orderIds: readonly number[];
+  step: Record<number, datum>;
+  parent?: Record<number, datum>;
+  aggregation: WaterfallAggregation;
+  /** Signed measure values by row ID; omitted for a count. */
+  measure?: Record<number, datum>;
+  rawInputs?: Record<number, datum>;
+  exclusionReasons?: Record<number, string>;
+  /** A value the running total starts from, drawn as the first bar. */
+  startValue?: number;
+  labels: [start: string, end: string];
+}
+
+/**
+ * A running total over ordered steps: each step adds its category's sum of
+ * a signed measure, or its row count, to the total so far. Numeric and date
+ * categories run in sequence; others keep data order. The end bar is the
+ * start value plus every step.
+ */
+export function planAccumulate(input: AccumulateInput): WaterfallPlan {
+  const spec = {
+    id: "accumulate",
+    name: input.labels[1],
+    groupField: STEP,
+    measureField: input.measure ? MEASURE : undefined,
+    aggregation: input.aggregation,
+  };
+  const rows: AggregateInputRow[] = input.ids.map((id) => ({
+    __ID: id,
+    [STEP]: input.step[id],
+    ...(input.measure ? { [MEASURE]: input.measure[id] } : {}),
+  }));
+  if (!rows.length) return { bars: [] };
+  const grouped = new Map(
+    calculateGroupedAggregate(
+      rows,
+      spec,
+      input.rawInputs,
+      input.exclusionReasons
+    ).rows.map((row) => [categoryKey(row.groupValue), row])
+  );
+  const total = summarizeGroup(
+    rows,
+    spec,
+    input.rawInputs,
+    input.exclusionReasons
+  );
+  const groups = orderSteps(
+    input,
+    [...grouped.values()].map((row) => row.groupValue),
+    true
+  );
+  const start =
+    input.startValue === undefined
+      ? undefined
+      : ({
+          key: "start",
+          kind: "start",
+          value: undefined,
+          label: input.labels[0],
+          amount: input.startValue,
+          from: 0,
+          to: input.startValue,
+          states: undefined,
+        } satisfies WaterfallBar);
+  return {
+    bars: stackBars(
+      groups,
+      Boolean(input.parent),
+      start,
+      (key) => {
+        const row = grouped.get(key)!;
+        return {
+          amount: row.value ?? 0,
+          states: undefined,
+          rows: {
+            value: row.value,
+            rowCount: row.rowCount,
+            contributors: row.contributors,
+          },
+        };
+      },
+      (running) => ({
+        key: "end",
+        kind: "end",
+        value: undefined,
+        label: input.labels[1],
+        amount: running,
+        from: 0,
+        to: running,
+        states: undefined,
+        rows: total,
+      })
+    ),
+  };
 }

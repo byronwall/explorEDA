@@ -163,4 +163,59 @@ describe("Waterfall", () => {
       states: settings.states,
     });
   });
+
+  it("runs a total through ordered steps from a start value", () => {
+    const energy = [
+      { hour: 12, flow: "Solar", kwh: 12 },
+      { hour: 0, flow: "Grid", kwh: 6 },
+      { hour: 0, flow: "Load", kwh: -3 },
+      { hour: 12, flow: "Load", kwh: -4 },
+    ];
+    const chart: WaterfallSettings = {
+      ...waterfallDefinition.createDefaultSettings(
+        { x: 0, y: 0, w: 6, h: 6 },
+        "hour"
+      ),
+      id: "battery",
+      mode: "accumulate",
+      measureField: "kwh",
+      startValue: 20,
+      states: [
+        { label: "Midnight", filters: [] },
+        { label: "End of day", filters: [] },
+      ],
+    };
+    render(
+      <DataLayerProvider charts={[chart]} data={energy}>
+        <Harness />
+      </DataLayerProvider>
+    );
+    const labels = screen
+      .getAllByRole("button")
+      .filter((item) => item.hasAttribute("data-waterfall-kind"))
+      .map((item) => item.getAttribute("aria-label"));
+    expect(labels).toEqual([
+      "Midnight, total 20",
+      "0, change +3",
+      "12, change +8",
+      "End of day, total 31",
+    ]);
+    fireEvent.click(screen.getByRole("button", { name: "Midnight, total 20" }));
+    expect(savedFilters()).toEqual([]);
+    fireEvent.click(screen.getByRole("button", { name: "12, change +8" }));
+    expect(screen.getByLabelText("Matching IDs")).toHaveTextContent(/^0,3$/);
+    fireEvent.click(screen.getByRole("button", { name: "12, change +8" }), {
+      altKey: true,
+    });
+    expect(screen.getByLabelText("Waterfall trace")).toHaveTextContent(
+      "added to the running total"
+    );
+    const saved = JSON.parse(
+      screen.getByLabelText("Saved settings").textContent!
+    );
+    expect(validateSavedData(saved)).toBe(true);
+    const { text } = exportDocument(saved, { rows: energy });
+    const rebuilt = compileDocument(text, { rows: energy }).settings.charts[0];
+    expect(rebuilt).toMatchObject({ mode: "accumulate", startValue: 20 });
+  });
 });

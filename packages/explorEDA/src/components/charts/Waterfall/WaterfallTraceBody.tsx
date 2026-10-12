@@ -21,6 +21,10 @@ export interface WaterfallTrace {
   amountText: string;
   valueTexts: [string, string] | undefined;
   showInputs: boolean;
+  /** A running total, whose bars reduce one set of rows instead of two states. */
+  running: boolean;
+  /** The measure's name, such as Sum of Energy. */
+  measure: string;
 }
 
 const KIND_TEXT = {
@@ -39,6 +43,7 @@ export function WaterfallTraceBody({ trace }: { trace: WaterfallTrace }) {
       : "Every row";
   const shownStates =
     bar.kind === "start" ? [0] : bar.kind === "end" ? [1] : [0, 1];
+  if (trace.running) return <RunningTraceBody trace={trace} />;
 
   return (
     <div className="space-y-2" aria-label="Waterfall trace">
@@ -115,6 +120,60 @@ export function WaterfallTraceBody({ trace }: { trace: WaterfallTrace }) {
       <TraceSection muted>
         Rows pass the other charts&apos; filters before either state counts
         them.
+      </TraceSection>
+    </div>
+  );
+}
+
+const RUNNING_CALCULATION = {
+  start: "The start value set in chart settings. It has no source rows.",
+  step: "This step's measure, added to the running total.",
+  subtotal: "The start value plus every step through this group.",
+  end: "The start value plus every step.",
+};
+
+/** A running total's bar: its calculation and, for a step or the end, its rows. */
+function RunningTraceBody({ trace }: { trace: WaterfallTrace }) {
+  const { bar } = trace;
+  return (
+    <div className="space-y-2" aria-label="Waterfall trace">
+      <TraceSection heading={bar.label}>
+        <TraceReadout label="Bar">{KIND_TEXT[bar.kind]}</TraceReadout>
+        {bar.kind === "step" && (
+          <TraceReadout label={trace.stepLabel}>{bar.label}</TraceReadout>
+        )}
+        <TraceReadout label={bar.kind === "step" ? "Change" : "Running total"}>
+          {trace.amountText}
+        </TraceReadout>
+        <TraceReadout label="Calculation">
+          {RUNNING_CALCULATION[bar.kind]}
+        </TraceReadout>
+        {bar.parent && (
+          <TraceReadout label="Group">{bar.parent.label}</TraceReadout>
+        )}
+        <TraceReadout label="Measure">{trace.measure}</TraceReadout>
+      </TraceSection>
+      {bar.rows && (
+        <TraceSection heading="Rows">
+          {bar.rows.contributors.length > 0 ? (
+            <AggregateContributorTable
+              showInputs={trace.showInputs}
+              row={{
+                id: bar.key,
+                groupValue: bar.value,
+                groupLabel: bar.label,
+                value: bar.rows.value,
+                rowCount: bar.rows.rowCount,
+                contributors: bar.rows.contributors,
+              }}
+            />
+          ) : (
+            <p className="text-muted-foreground">There are no rows here.</p>
+          )}
+        </TraceSection>
+      )}
+      <TraceSection muted>
+        Rows pass the other charts&apos; filters before the total counts them.
       </TraceSection>
     </div>
   );

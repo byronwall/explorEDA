@@ -46,7 +46,7 @@ Docs and examples (ship with each chart, not after)
 ├── Docs page per chart type, with a live example and settings table
 ├── Demo examples
 │   ├── Budget vs actual: Bridge with parent subtotals, linked to a line-item table
-│   ├── Staged running total: Accumulate mode, such as an engineering loss budget
+│   ├── Staged running total: Accumulate mode, such as a battery's charge through a day
 │   └── Small composition: donut beside a percent bar
 └── Composition mark sections in the Composition page, each with an example
 ```

@@ -31,3 +31,18 @@ The measure is a sum or a row count. Averages don't add up, so the waterfall doe
 - Alt-click any bar to see how its value was calculated and the source rows in each state.
 
 If other charts' filters leave a state with no rows, the chart says so instead of drawing a bridge from zero.
+
+## Running totals
+
+Set **Shows** to **Running total** to follow a total through ordered steps instead of bridging two states. Each step adds its category's sum of a signed measure, or its row count, to the total so far.
+
+<LiveExample
+  id="waterfall-running"
+  caption="A battery's charge through a day, from 40 kWh at midnight, beside a flow picker, from the battery example."
+/>
+
+- Steps run in sequence when the step field holds numbers or dates, such as hours or days. Other categories keep the order they first appear in the data.
+- **Start value** draws the first bar and starts the total there. Leave it blank to start at zero with no start bar.
+- The end bar is the start value plus every step, and **Group by** adds a subtotal after each group, as in a bridge.
+- Positive values raise the total and negative values lower it, so store inflows and outflows with their signs, such as charging as positive and load as negative.
+- Click a step to select its rows. Click the end bar to clear the selection. The start value has no rows, but Alt-click traces any bar.

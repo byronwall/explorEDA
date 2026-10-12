@@ -8,7 +8,7 @@
     "last_updated": "2026-10-12",
     "summary": "Waterfall (Bridge and Accumulate) then donut as chart types, then Composition marks.",
     "status": "active",
-    "next_action": "Finish M1 PR; then M2 Accumulate mode."
+    "next_action": "Finish M2 PR; then M3 donut."
   },
   "artifacts": {
     "intent_brief": {
@@ -594,8 +594,10 @@
         "proof": "Vitest for waterfallPlan (wide and long fixtures identical; steps = actual - plan; end = sum(actual)); saved-data and DSL round trips; docs:verify; screenshots at 1280/783/390.",
         "valid_intermediate_state": "Waterfall chart type registered with Bridge mode only.",
         "rollback": "Remove registry entry, docs page, and example together; no saved layouts contain the type.",
-        "status": "active",
-        "evidence": []
+        "status": "completed",
+        "evidence": [
+          "byronwall/explorEDA#351; waterfallPlan.test.ts, Waterfall.test.tsx; budget-bridge example and /docs/waterfall"
+        ]
       },
       {
         "id": "m2",
@@ -605,7 +607,7 @@
         "proof": "Vitest for accumulate plan; DSL round trip; docs:verify.",
         "valid_intermediate_state": "Waterfall with Bridge and Accumulate modes.",
         "rollback": "Hide the mode toggle; Bridge unaffected.",
-        "status": "planned",
+        "status": "active",
         "evidence": []
       },
       {

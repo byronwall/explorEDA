@@ -13,29 +13,39 @@ export interface WaterfallState {
   filters: Filter[];
 }
 
+export type WaterfallMode = "bridge" | "accumulate";
+
 /** Only additive reductions, so the start plus every step equals the end. */
 export type WaterfallAggregation = "sum" | "count";
 
 export interface WaterfallSettings extends BaseChartSettings {
   type: "waterfall";
   /**
-   * `field` is the step field: one step per category, ordered as the
-   * categories first appear in the data.
+   * `field` is the step field. A bridge shows each category's change
+   * between two states, in data order. A running total adds each category's
+   * signed measure in sequence: numbers and dates in order, others as they
+   * first appear.
    */
-  mode: "bridge";
+  mode: WaterfallMode;
   aggregation: WaterfallAggregation;
   measureField?: string;
-  /** The start state and the end state, in that order. */
+  /**
+   * The start state and the end state, in that order. A running total uses
+   * only their labels.
+   */
   states: WaterfallState[];
+  /** A running total's starting value, drawn as the first bar. */
+  startValue?: number;
   /** Groups steps and closes each group with a subtotal. */
   parentField?: string;
 }
 
 /** The measure a state reduces, or none for a count. */
 export function stateMeasureField(
-  settings: Pick<WaterfallSettings, "aggregation" | "measureField">,
+  settings: Pick<WaterfallSettings, "aggregation" | "measureField" | "mode">,
   state: WaterfallState | undefined
 ): string | undefined {
   if (settings.aggregation === "count") return undefined;
+  if (settings.mode === "accumulate") return settings.measureField || undefined;
   return state?.measureField || settings.measureField || undefined;
 }

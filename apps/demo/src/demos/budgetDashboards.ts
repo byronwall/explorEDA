@@ -98,3 +98,61 @@ export const budgetBridgeDashboard: SavedDataStructure = {
     modifiedAt: "2026-10-12T00:00:00Z",
   },
 };
+
+const ENERGY = "Energy (kWh)";
+
+/** The battery's state of charge through a day, hour by hour. */
+const batteryCharge: Chart = {
+  ...base,
+  id: "battery-charge",
+  type: "waterfall",
+  title: "The battery ended the day fuller than it began",
+  subtitle: "State of charge, hour by hour (kWh)",
+  field: "Hour",
+  layout: layout(0, 0, 7, 9),
+  mode: "accumulate",
+  aggregation: "sum",
+  measureField: ENERGY,
+  parentField: "Period",
+  startValue: 40,
+  xAxisLabel: "State of charge (kWh)",
+  states: [
+    { label: "Charge at midnight", filters: [] },
+    { label: "Charge at day's end", filters: [] },
+  ],
+};
+
+const batteryFlows: Chart = {
+  ...base,
+  id: "battery-flows",
+  type: "row",
+  title: "Pick flows to follow",
+  field: "Flow",
+  layout: layout(7, 0, 5, 3),
+  minRowHeight: 14,
+  maxRowHeight: 28,
+  xAxisLabel: "Hours",
+};
+
+const batteryRows: Chart = {
+  ...base,
+  id: "battery-rows",
+  type: "data-table",
+  title: "Hourly flows in view",
+  layout: layout(7, 3, 5, 6),
+  columns: ["Hour", "Period", "Flow", ENERGY].map((field) => ({
+    id: field,
+    field,
+  })),
+  sortDirection: "asc",
+  globalSearch: "",
+};
+
+export const batteryDayDashboard: SavedDataStructure = {
+  ...budgetBridgeDashboard,
+  charts: [batteryCharge, batteryFlows, batteryRows],
+  metadata: {
+    ...budgetBridgeDashboard.metadata,
+    name: "A day in the battery",
+  },
+};

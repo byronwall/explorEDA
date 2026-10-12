@@ -18,7 +18,10 @@ import {
   timeSeriesDashboard,
 } from "@/demos/dashboardSettings";
 import { demoSettings as lorenzSettings } from "@/demos/lorenz";
-import { budgetBridgeDashboard } from "@/demos/budgetDashboards";
+import {
+  batteryDayDashboard,
+  budgetBridgeDashboard,
+} from "@/demos/budgetDashboards";
 import type { SavedDataStructure } from "exploreda";
 
 /**
@@ -326,6 +329,23 @@ export const liveExamples = {
       { click: "Equipment, change -84" },
       { expectChip: "Line item" },
       { expectRows: 8 },
+    ],
+  },
+  "waterfall-running": {
+    label: "Live running-total waterfall",
+    data: "/datasets/battery-day.csv",
+    savedData: focus(batteryDayDashboard, {
+      "battery-charge": [0, 0, 7, 9],
+      "battery-flows": [7, 0, 5, 3],
+    }),
+    exampleId: "battery-day",
+    shotAlt:
+      "A battery's charge through a day: a start value, one step per hour, a subtotal per part of the day, and the charge at day's end, beside a flow picker.",
+    steps: [
+      { expectRows: 45 },
+      { click: "Solar: 13 rows" },
+      { expectRows: 13 },
+      { expectChip: "Flow" },
     ],
   },
   composition: {

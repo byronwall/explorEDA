@@ -93,7 +93,7 @@ This milestone adds a second way to compute steps. Rendering, subtotals, selecti
 - **Change — settings and Dashboard text**
   - A mode toggle with a tooltip explaining Bridge and Accumulate. In Accumulate, a single measure and a start value replace the two states. Add `mode=accumulate` and `start=` keys.
 - **Change — docs and example**
-  - A staged running total example, such as an engineering loss budget: input power, then signed losses by stage, then output. Add a section for the mode to `waterfall.mdx` and a coverage entry for the example.
+  - A staged running total example: a building battery's state of charge through one day (`battery-day`), from a 40 kWh start through signed hourly solar, grid, and load flows, with a subtotal per part of the day. Add a section for the mode to `waterfall.mdx`, a second live example, and a coverage entry.
 
 ### Desired end state
 

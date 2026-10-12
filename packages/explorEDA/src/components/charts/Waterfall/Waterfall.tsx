@@ -29,6 +29,7 @@ import type { TraceSource } from "../trace/traceTypes";
 import { useGetAllIds, useGetLiveIds } from "../useGetLiveData";
 import type { WaterfallTrace } from "./WaterfallTraceBody";
 import {
+  planAccumulate,
   planBridge,
   type WaterfallBar,
   type WaterfallPlan,
@@ -77,12 +78,13 @@ export function Waterfall({
   const [hovered, setHovered] = useState<string | null>(null);
 
   const states = settings.states;
+  const running = settings.mode === "accumulate";
   const measureFields = [0, 1].map((index) =>
     stateMeasureField(settings, states[index])
   );
   const setupMessage = !settings.field
     ? "Choose a step field in chart settings."
-    : states.length < 2
+    : states.length < 2 && !running
       ? "Name a start state and an end state in chart settings."
       : settings.aggregation === "sum" && measureFields.some((field) => !field)
         ? "Choose a measure in chart settings."
@@ -92,15 +94,9 @@ export function Waterfall({
     void nonce;
     void fieldSettings;
     if (setupMessage) return { bars: [] };
-    const stateInputs = [0, 1].map((index) => {
-      const state = states[index]!;
-      const tests = state.filters.map((filter) => ({
-        filter,
-        values: getColumnData(filter.field),
-      }));
-      const measureField = measureFields[index];
-      // Traces show each measure value as it was read, and why a value that
-      // failed conversion was left out, as metric cards do.
+    // Traces show each measure value as it was read, and why a value that
+    // failed conversion was left out, as metric cards do.
+    const measureInputs = (measureField: string | undefined) => {
       const rawInputs: Record<number, datum> = {};
       const exclusionReasons: Record<number, string> = {};
       if (
@@ -123,15 +119,12 @@ export function Waterfall({
         }
       }
       return {
-        label: state.label,
         rawInputs,
         exclusionReasons,
         measure: measureField ? getColumnData(measureField) : undefined,
-        includes: (id: number) =>
-          tests.every(({ filter, values }) => applyFilter(values[id], filter)),
       };
-    }) as Parameters<typeof planBridge>[0]["states"];
-    return planBridge({
+    };
+    const shared = {
       ids: liveIds,
       orderIds: allIds,
       step: getColumnData(settings.field),
@@ -139,8 +132,29 @@ export function Waterfall({
         ? getColumnData(settings.parentField)
         : undefined,
       aggregation: settings.aggregation,
-      states: stateInputs,
-    });
+    };
+    if (settings.mode === "accumulate") {
+      return planAccumulate({
+        ...shared,
+        ...measureInputs(measureFields[0]),
+        startValue: settings.startValue,
+        labels: [states[0]?.label ?? "Start", states[1]?.label ?? "End"],
+      });
+    }
+    const stateInputs = [0, 1].map((index) => {
+      const state = states[index]!;
+      const tests = state.filters.map((filter) => ({
+        filter,
+        values: getColumnData(filter.field),
+      }));
+      return {
+        label: state.label,
+        ...measureInputs(measureFields[index]),
+        includes: (id: number) =>
+          tests.every(({ filter, values }) => applyFilter(values[id], filter)),
+      };
+    }) as Parameters<typeof planBridge>[0]["states"];
+    return planBridge({ ...shared, states: stateInputs });
     // measureFields derives from settings.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -150,6 +164,8 @@ export function Waterfall({
     settings.parentField,
     settings.aggregation,
     settings.measureField,
+    settings.mode,
+    settings.startValue,
     liveIds,
     allIds,
     getColumnData,
@@ -189,6 +205,7 @@ export function Waterfall({
   );
   const selectedValues = valueFilter?.values ?? [];
   const stateSelected = (index: number) => {
+    if (running) return false;
     const filters = states[index]?.filters ?? [];
     return filters.length > 0 && sameFilters(settings.filters, filters);
   };
@@ -234,6 +251,12 @@ export function Waterfall({
       setStepValues(isSelected(bar) ? rest : [...rest, ...members]);
       return;
     }
+    // A running total's start is a constant with no rows, and its end
+    // stands for every row.
+    if (running) {
+      if (bar.kind === "end") updateChart(settings.id, { filters: [] });
+      return;
+    }
     // A total selects its state's rows, or every row for a state without
     // conditions.
     const filters = states[bar.kind === "start" ? 0 : 1]?.filters ?? [];
@@ -271,6 +294,8 @@ export function Waterfall({
           valueTexts: bar.states
             ? [format(bar.states[0].value), format(bar.states[1].value)]
             : undefined,
+          running,
+          measure: measureName(0),
           showInputs: settings.aggregation !== "count",
         };
         return trace;
@@ -279,8 +304,8 @@ export function Waterfall({
         const bar = plan.bars.find(
           (item) =>
             item.kind === "step" &&
-            item.states?.some((state) =>
-              state.contributors.some((row) => row.sourceId === id)
+            [...(item.states ?? []), ...(item.rows ? [item.rows] : [])].some(
+              (state) => state.contributors.some((row) => row.sourceId === id)
             )
         );
         return bar && { kind: "waterfall-bar", id: bar.key };
@@ -294,7 +319,16 @@ export function Waterfall({
     };
     // Formatting reads field settings, which the revision already tracks.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [revision, plan, owner, settings.id, settings.field, states, stepLabel]);
+  }, [
+    revision,
+    plan,
+    owner,
+    settings.id,
+    settings.field,
+    states,
+    stepLabel,
+    running,
+  ]);
   useTraceSource(owner, source);
   const inspect = (key: string) => api?.inspect(owner, "waterfall-bar", key);
 
@@ -495,6 +529,9 @@ export function Waterfall({
             const selected = isSelected(bar);
             const dimmed = hasSelection && !selected;
             const box = span(bar);
+            // A running total's start value has no rows to select; Alt-click
+            // still traces it.
+            const selectable = !(running && bar.kind === "start");
             const kindText =
               bar.kind === "step"
                 ? `change ${amountText(bar)}`
@@ -511,9 +548,9 @@ export function Waterfall({
                 role="button"
                 tabIndex={0}
                 aria-label={`${bar.label}, ${kindText}`}
-                aria-pressed={selected}
+                aria-pressed={selectable ? selected : undefined}
                 data-waterfall-kind={bar.kind}
-                className="chart-mark cursor-pointer"
+                className={`chart-mark ${selectable ? "cursor-pointer" : ""}`}
                 style={{
                   fill: BAR_FILL[barTone(bar)],
                   opacity: dimmed ? 0.3 : 1,

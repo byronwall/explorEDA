@@ -651,7 +651,8 @@ function isChart(value: unknown): boolean {
       return isCompositionDefinition(value.composition);
     case "waterfall":
       return (
-        value.mode === "bridge" &&
+        (value.mode === "bridge" || value.mode === "accumulate") &&
+        (value.startValue === undefined || isFiniteNumber(value.startValue)) &&
         (value.aggregation === "sum" || value.aggregation === "count") &&
         (value.measureField === undefined ||
           typeof value.measureField === "string") &&

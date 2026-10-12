@@ -538,6 +538,7 @@ export const CHART_SETTING_KEYS: Record<ChartType, readonly string[]> = {
     "mode",
     "note",
     "parentField",
+    "startValue",
     "states",
     "style",
     "subtitle",

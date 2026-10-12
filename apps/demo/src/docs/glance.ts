@@ -160,8 +160,9 @@ export const GLANCES: Readonly<Record<string, Glance>> = {
   },
   waterfall: {
     useFor:
-      "Explaining how one total became another, such as plan to actual or last year to this year.",
-    needs: "A measure, a step field, and two states, each the rows it counts.",
+      "Explaining how one total became another, such as plan to actual, or following a running total through ordered steps.",
+    needs:
+      "A measure and a step field. A bridge also needs two states, each the rows it counts.",
     gestures: [
       ["Click a step", "Select its rows in both states"],
       ["Click a subtotal", "Select every step in its group"],

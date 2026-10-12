@@ -1086,6 +1086,17 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId: "battery-day",
+    intent:
+      "Run a battery's state of charge through a day, adding each hour's signed energy flows to a start value, with a subtotal per part of the day.",
+    features: {
+      "chart:waterfall": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+      "interaction:cross-filter": "shown",
+    },
+  },
+  {
     exampleId: "consumer-confidence",
     intent:
       "Draw every country in every panel and light up its own, with the latest point per series on a date scale.",

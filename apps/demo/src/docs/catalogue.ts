@@ -309,13 +309,13 @@ export const catalogue: readonly DocsPage[] = [
     title: "Waterfall",
     group: "plots",
     icon: ChartColumnStacked,
-    lede: "Explain how one total became another, such as plan to actual, one signed step at a time.",
+    lede: "Explain how one total became another, such as plan to actual, or follow a running total through ordered steps.",
     summary:
       "Bridge two totals with a step per category and a subtotal per group.",
     highlights: ["Plan to actual", "Group subtotals", "Click a step"],
     covers: ["chart:waterfall"],
     chartType: "waterfall",
-    examples: ["budget-bridge"],
+    examples: ["budget-bridge", "battery-day"],
     related: ["row", "metric-card"],
   },
   {

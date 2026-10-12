@@ -66,6 +66,7 @@ import {
   Spline,
   TableProperties,
   AreaChart,
+  BatteryCharging,
   LayoutGrid as GridIcon,
   Columns3,
   Grid3x3,
@@ -107,7 +108,7 @@ import { earthquakesAnalysis } from "./analyses/earthquakes";
 import { flightsAnalysis } from "./analyses/flights";
 import { shopText } from "./analyses/shop";
 import { wineText } from "./analyses/wine";
-import { budgetBridgeDashboard } from "./budgetDashboards";
+import { batteryDayDashboard, budgetBridgeDashboard } from "./budgetDashboards";
 import { worldBankAnalysis } from "./analyses/worldbank";
 import type { ExampleAnalysis } from "./analyses/types";
 import { categoricalChartSettings } from "./categoricalChartSettings";
@@ -830,6 +831,17 @@ export const examples: ExampleData[] = [
     icon: ChartColumnStacked,
     data: "/datasets/lab-budget.csv",
     savedData: budgetBridgeDashboard,
+  },
+  {
+    id: "battery-day",
+    title: "A day in the battery",
+    description:
+      "A building's battery starts the day at 40 kWh. A running-total waterfall adds each hour's solar, grid, and load flows to its charge, with a subtotal for each part of the day; pick flows to see what solar alone added.",
+    dataset: { rows: "45 hourly flows", fields: 4, source: "Synthetic" },
+    shows: ["Running total", "Ordered steps", "Period subtotals"],
+    icon: BatteryCharging,
+    data: "/datasets/battery-day.csv",
+    savedData: batteryDayDashboard,
   },
   {
     id: "consumer-confidence",
