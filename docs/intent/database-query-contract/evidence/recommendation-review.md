@@ -47,3 +47,5 @@ The current source review does not settle whether first success must include ana
 Transport must preserve typed scalar meaning, stable keys, request/result identity, server-owned customer/source scope, snapshot identity, completeness, and bounded staging. Adapter research must define supported value/step semantics, row grain and keys, schema, snapshot lifetime, result limits, and actual driver cancellation. The authenticated host instance selects its own source registry. Query and snapshot identities include that server-owned instance and source scope; a browser-supplied customer selector is not authoritative.
 
 The source notes and customer update do not create a material unanswered query-track question. The added customer requirement belongs to the fourth hosting track; it changes the deployment context to one instance per paying customer, not this track's read and filter semantics.
+
+See the [shared reconciliation](../../../research/database-backed-analysis-2026-10-11/reconciliation.md) for the agreed boundaries across all four tracks.
