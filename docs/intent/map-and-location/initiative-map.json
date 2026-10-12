@@ -4,11 +4,11 @@
     "title": "Useful, configurable maps for location data",
     "slug": "map-and-location",
     "scale": "capability",
-    "current_phase": "intent",
+    "current_phase": "shape",
     "last_updated": "2026-10-11",
     "summary": "Improve point and region maps, custom and supplied geography, render controls, and detailed local context without building a full GIS.",
     "status": "planned",
-    "next_action": "Await Byron review of PR #321: https://github.com/byronwall/explorEDA/pull/321. Research is collected and reconciled; implementation has not started."
+    "next_action": "Byron reviews shape-brief.md and answers the two open choices; then write the implementation plan."
   },
   "artifacts": {
     "intent_brief": {
@@ -23,8 +23,8 @@
     },
     "shape_brief": {
       "path": "shape-brief.md",
-      "status": "not-created",
-      "updated_at": null
+      "status": "current",
+      "updated_at": "2026-10-11"
     },
     "implementation_plan": {
       "path": "implementation-plan.md",
@@ -404,14 +404,53 @@
     "selected_option": null
   },
   "shape": {
-    "status": "not-started",
-    "appetite": null,
-    "problem": null,
-    "recommended_shape": null,
-    "success_moves": [],
-    "first_proof": null,
-    "rabbit_holes": [],
-    "open_decisions": []
+    "status": "current",
+    "appetite": "Three independently shippable releases: (1) selection, region values, import; (2) one country set and content controls; (3) street context. No new runtime dependency before release 3; at most one in it.",
+    "problem": "Point and region maps have suspected selection faults, thin import and join diagnostics, no ready country geometry, no control over visible content, and no street context for local dashboards.",
+    "recommended_shape": "Harden the existing D3/SVG maps, add one audited country set and a compact content-controls popover with a nonselectable reference-boundary layer, then add host-supplied street context, preferring raster tiles drawn beneath the existing SVG in Web Mercator over a second rendering engine.",
+    "success_moves": [
+      {
+        "move": "Add a dependency-light street candidate: raster tiles beneath the existing SVG with a Web Mercator projection (d3-tile, BSD-3, no dependencies).",
+        "risk_reduced": "Avoids a second interaction, accessibility, trace, and facet model; sidesteps React Leaflet v5's React 19 requirement.",
+        "evidence": "Research compared only Leaflet and MapLibre; npm d3-tile 1.0.0 checked 2026-10-11."
+      },
+      {
+        "move": "Run the street spike early against owned local tile fixtures, in parallel with release 1.",
+        "risk_reduced": "The renderer decision changes the most downstream work; local fixtures remove provider terms and network from the loop.",
+        "evidence": "Proof plan P06 recommends owned local raster fixtures."
+      },
+      {
+        "move": "Reproduce the empty-space clear and draft-Escape faults as failing tests before other map work.",
+        "risk_reduced": "Confirms or retires the suspected baseline defects before features build on them.",
+        "evidence": "PointMap.tsx:211-213 calls updateChart on Escape without the onSettingsChange guard RegionMap.tsx:170 uses."
+      },
+      {
+        "move": "Ship no default tile provider; hosts opt in with a preset that includes attribution. Missing preset or tile failure falls back to the plain background.",
+        "risk_reduced": "Separates provider terms, credentials, and export rights from product behavior; gives a clean disable path.",
+        "evidence": "OSMF tile policy and research P07."
+      },
+      {
+        "move": "Copy the chosen country geometry into the analysis as a shared geometry asset, prepared by a repeatable script and lazy-loaded.",
+        "risk_reduced": "Reuses the existing save path; offline reopen works; catalog updates never change saved maps.",
+        "evidence": "SavedDataStructure geometryAssets; World Bank demo uses alpha-3 codes which World Atlas numeric IDs do not match."
+      }
+    ],
+    "first_proof": {
+      "question": "Can street context sit beneath the existing SVG maps without a second rendering engine?",
+      "artifact": "Spike on the service-district demo: owned local raster tile fixtures drawn beneath the existing SVG with a Web Mercator projection, checked at 1280, 783, and 390 px and in four facets. Observe point-to-street alignment, pan and zoom feel, unchanged click/Escape/Alt-click/keyboard/save-restore, and added bundle bytes.",
+      "decision_rule": "Pass: candidate A is the street path and Leaflet/MapLibre drop out. Fail: run the same fixtures through Leaflet core before considering MapLibre."
+    },
+    "rabbit_holes": [
+      "Saved view zoom multiplies a fitted world projection; tile zoom is a different quantity. Web Mercator view must be tagged, not reinterpreted.",
+      "Country set source: World Atlas (archived, Natural Earth 4.1, numeric IDs) versus Natural Earth 5.1.1 (alpha-3, larger). Audit against World Bank demo codes.",
+      "Import retention when a draft closes unsaved.",
+      "Provider terms, attribution at narrow widths, and image export rights.",
+      "Pan smoothness of re-rendered SVG over tiles at street zoom."
+    ],
+    "open_decisions": [
+      "Keep imported boundaries in the shared library when a draft closes unsaved (recommended) or discard them.",
+      "Demo street context: live OpenStreetMap tiles under light interactive use, or local fixtures only until a provider is chosen."
+    ]
   },
   "implementation": {
     "status": "not-started",
@@ -449,6 +488,12 @@
       "action": "Collected the complete Pro research and reconciled the intent.",
       "reason": "User requested autonomous research through a review PR.",
       "evidence": "Ten standalone downloads match the ZIP; all 20 recommendation dispositions recorded. Pro progress reports 4/4 completed. Final chat delivery interrupted; file library collection succeeded. Eight proposed proofs remain unrun. Initiative stays planned."
+    },
+    {
+      "date": "2026-10-11",
+      "action": "Shaped the initiative.",
+      "reason": "Byron asked to shape the intent on PR #321.",
+      "evidence": "shape-brief.md; added a raster-beneath-SVG street candidate; first proof is a local tile-fixture spike. Implementation has not started."
     }
   ],
   "closure": null

@@ -64,4 +64,4 @@ The [research review](references/research-reconciliation.md) records all 20 reco
 
 ## Next step after confirmation
 
-Review this intent and its proposed limits in the PR. After review, shape the smallest useful release and its proofs. Begin with analytical correctness and import behavior, then geography and content controls, then the street-context comparison. Accessibility applies throughout. The research proof plan supplies candidates; it is not an approved implementation plan.
+The [shape brief](shape-brief.md) proposes three releases and a first proof. After review, write the implementation plan.
