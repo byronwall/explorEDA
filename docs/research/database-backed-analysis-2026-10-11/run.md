@@ -30,10 +30,10 @@ Submission times are approximate, based on the browser action sequence. Each sub
 
 | Track | Prompt | Conversation | Submitted | State | Follow-ups |
 | --- | --- | --- | --- | --- | --- |
-| Query demands | [prompt](../../intent/database-query-contract/raw/2026-10-11-pro/prompt.md) | https://chatgpt.com/c/6acc5207-c9f8-83ea-9b50-5b5dae43afdf | Oct 11, 23:20 | Running, Pro | 0/2 |
-| Columnar transport | [prompt](../../intent/columnar-data-transport/raw/2026-10-11-pro/prompt.md) | https://chatgpt.com/c/6acc5239-824c-83ea-9a03-61e6f84b068c | Oct 11, 23:21 | Running, Pro | 0/2 |
-| Database adapters | [prompt](../../intent/database-adapters/raw/2026-10-11-pro/prompt.md) | https://chatgpt.com/c/6acc52ce-2a14-83ea-b9e0-01f54b8c3905 | Oct 11, 23:23 | Running, Pro | 0/2 |
-| Customer hosting | [prompt](../../intent/customer-instance-hosting/raw/2026-10-11-pro/prompt.md) | https://chatgpt.com/c/6acc52f9-15b8-83ea-9033-1fb171f62cc2 | Oct 11, 23:25 | Running, Pro | 0/2 |
+| Query demands | [prompt](../../intent/database-query-contract/raw/2026-10-11-pro/prompt.md) | https://chatgpt.com/c/6acc5207-c9f8-83ea-9b50-5b5dae43afdf | Oct 11, 23:20 | Collected and reconciled | 0/2 |
+| Columnar transport | [prompt](../../intent/columnar-data-transport/raw/2026-10-11-pro/prompt.md) | https://chatgpt.com/c/6acc5239-824c-83ea-9a03-61e6f84b068c | Oct 11, 23:21 | Collected and reconciled | 0/2 |
+| Database adapters | [prompt](../../intent/database-adapters/raw/2026-10-11-pro/prompt.md) | https://chatgpt.com/c/6acc52ce-2a14-83ea-b9e0-01f54b8c3905 | Oct 11, 23:23 | Collected and reconciled | 0/2 |
+| Customer hosting | [prompt](../../intent/customer-instance-hosting/raw/2026-10-11-pro/prompt.md) | https://chatgpt.com/c/6acc52f9-15b8-83ea-9033-1fb171f62cc2 | Oct 11, 23:25 | Collected and reconciled | 0/2 |
 
 The live selector showed Pro for each run. The first two selectors also showed power 5 of 5.
 Each run receives its prompt as a separate Markdown attachment plus the source ZIP.
@@ -70,10 +70,29 @@ No changesets or application screenshots are needed for documentation-only chang
 - The first three packet prompts remain unchanged after submission. The customer update is preserved separately.
 - `git diff --check`: passed before checkpoint.
 - Application tests: not run during preparation. No application files changed.
-- Pro results and Sleuth shaping: pending.
-- PRs: pending results.
+- Pro results and Sleuth shaping: complete. Four planned initiatives and 64 recommendation dispositions validated.
+- PRs: organizing four scoped review branches. Preparation branch remains the durable source checkpoint.
+- Preparation commits: shared sources `8ec797d`; query `8136506`; transport `ad7cba4`; adapters `de7eff2`; hosting `ad98f4b`.
+- Hosting visibly confirmed baseline f01ff0f, started provider research, and reported no outputs yet.
+- Submission screenshot: `tmp/database-research/hosting-submitted.png` (local evidence, not committed).
 - Heartbeat: `collect-database-architecture-research`, ACTIVE, hourly, attached to this chat.
 - Schedule verified from the saved automation. Created Oct 11 at 23:26:21 EDT. First hourly check is due about Oct 12 at 00:26 EDT.
 - The monitor continues collection and PR work; it does not merely remind Byron.
 - Goal: none created. The user requested a monitored workflow, not a goal record.
 - Blockers: none.
+
+## Collection checkpoint — October 12, 00:36 EDT
+
+All four Pro responses finished. Downloaded each ZIP and extracted its report and JSON unchanged.
+All archives passed path, symlink, and CRC checks. Collection manifests record each original file hash and size.
+Some download links first reached a Chrome blocked-by-client page. Returning to the conversation and retrying the file link succeeded. No browser settings changed.
+The transport and hosting responses reported Library upload authentication failure. Local ZIP delivery succeeded; no Library write is needed.
+Query customer scope is being reconciled without restarting its completed response. No follow-ups used.
+
+## Integration checkpoint — October 12, 00:44 EDT
+
+All four reports and JSON registers were read. All eight standalone companions match the ZIP copies.
+The [shared reconciliation](reconciliation.md) selects complete source snapshots into the current tables input as the first shape.
+Query customer-instance ownership is explicit; no material gap required a Pro follow-up. All counters remain 0/2.
+All four Sleuth validators passed with zero warnings. See [validation](validation.md) for the full-suite failure and focused pass.
+The app source is unchanged from the research baseline. No provider, database, or codec proof was executed.
