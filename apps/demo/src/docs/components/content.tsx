@@ -206,7 +206,7 @@ export const mdxComponents: MDXComponents = {
     return (
       <h2
         id={id}
-        className="mt-12 scroll-mt-8 border-t border-border pt-6 text-xl font-semibold tracking-tight first:mt-0 sm:text-2xl"
+        className="mt-12 scroll-mt-20 border-t border-border pt-6 text-xl font-semibold tracking-tight first:mt-0 sm:text-2xl"
       >
         {children}
       </h2>
@@ -216,7 +216,7 @@ export const mdxComponents: MDXComponents = {
   h1: ({ children }) => (
     <h2
       id={slugify(textOf(children))}
-      className="mt-12 scroll-mt-8 border-t border-border pt-6 text-xl font-semibold tracking-tight first:mt-0 sm:text-2xl"
+      className="mt-12 scroll-mt-20 border-t border-border pt-6 text-xl font-semibold tracking-tight first:mt-0 sm:text-2xl"
     >
       {children}
     </h2>

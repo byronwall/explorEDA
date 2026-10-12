@@ -40,20 +40,21 @@ import type { MDXContent } from "mdx/types";
 import type { DocsTarget } from "./targets";
 
 export type DocsGroup =
+  | "start"
   | "plots"
   | "tables"
   | "supporting"
-  | "surfaces"
   | "tasks"
   | "guides";
 
+/** Sidebar and index sections, in reading order. */
 export const GROUP_LABELS: Record<DocsGroup, string> = {
-  plots: "Plots",
+  start: "Get started",
+  plots: "Charts",
   tables: "Tables",
-  supporting: "Supporting views",
-  surfaces: "Workspace",
+  supporting: "Cards and notes",
   tasks: "Tasks",
-  guides: "Shared guides",
+  guides: "Concepts",
 };
 
 export type DocsPage = {
@@ -81,6 +82,87 @@ export type DocsPage = {
 };
 
 export const catalogue: readonly DocsPage[] = [
+  {
+    topic: "workspace",
+    thumbnail: "workspace",
+    title: "The workspace",
+    group: "start",
+    icon: House,
+    eyebrow: "Workspace",
+    lede: "Find your way around the toolbar, chart headers, filter bar, and grid.",
+    summary: "Toolbar, chart headers, the filter bar, and the grid.",
+    highlights: ["Toolbar", "Chart header", "Filter bar", "Layout"],
+    covers: [
+      "surface:toolbar",
+      "surface:chart-header",
+      "surface:details-dialog",
+      "surface:rows-drawer",
+      "surface:side-panels",
+      "surface:filter-chips",
+      "interaction:active-filter",
+      "layout:dashboard",
+      "responsive:desktop-resize",
+      "accessibility:naming",
+      "labels:meaningful-title",
+    ],
+    examples: ["shop-operations"],
+    related: ["fields", "chart-settings", "filters"],
+  },
+  {
+    topic: "load-data",
+    title: "Load data",
+    group: "start",
+    icon: Upload,
+    eyebrow: "Task",
+    lede: "Open a CSV, JSON, or project file, or start from an example.",
+    summary: "Drop a file or open an example.",
+    highlights: ["CSV", "JSON", "Projects"],
+    covers: ["flow:import"],
+    examples: ["shop-operations"],
+    related: ["fields", "export"],
+  },
+  {
+    topic: "fields",
+    thumbnail: "fields",
+    title: "Fields",
+    group: "start",
+    icon: ListTree,
+    eyebrow: "Workspace",
+    lede: "See every field with its counts and distribution, and turn any of them into a chart.",
+    summary: "Profile every field and add a chart of any of them.",
+    highlights: ["Field list", "Add a chart"],
+    covers: ["surface:field-list", "flow:summary-to-chart"],
+    examples: ["shop-operations"],
+    related: ["workspace", "summary"],
+  },
+  {
+    topic: "chart-settings",
+    thumbnail: "settings-bar",
+    title: "Chart settings",
+    group: "start",
+    icon: Settings2,
+    eyebrow: "Workspace",
+    lede: "Change what a chart shows, how it is scaled, and how it reads, with the chart still in view.",
+    summary:
+      "Open a chart's settings, find the right tab, and undo a session of edits at once.",
+    highlights: ["Tabs", "Live edits", "Reset"],
+    covers: ["surface:settings-popover"],
+    examples: ["shop-operations"],
+    related: ["bar"],
+  },
+  {
+    topic: "developers",
+    title: "Developers",
+    group: "start",
+    icon: Code,
+    eyebrow: "Guide",
+    lede: "Embed the workspace in a React app and keep its state.",
+    summary: "Props, saved state, and the package guide.",
+    highlights: ["Props", "Saved state", "Projects"],
+    covers: ["flow:host-embedding", "flow:projects"],
+    examples: ["shop-operations"],
+    related: ["rendering", "dashboard-text"],
+  },
   {
     topic: "scatter",
     thumbnail: "scatter",
@@ -426,61 +508,6 @@ export const catalogue: readonly DocsPage[] = [
     related: ["composition"],
   },
   {
-    topic: "chart-settings",
-    thumbnail: "settings-bar",
-    title: "Chart settings",
-    group: "surfaces",
-    icon: Settings2,
-    eyebrow: "Workspace",
-    lede: "Change what a chart shows, how it is scaled, and how it reads, with the chart still in view.",
-    summary:
-      "Open a chart's settings, find the right tab, and undo a session of edits at once.",
-    highlights: ["Tabs", "Live edits", "Reset"],
-    covers: ["surface:settings-popover"],
-    examples: ["shop-operations"],
-    related: ["bar"],
-  },
-  {
-    topic: "workspace",
-    thumbnail: "workspace",
-    title: "The workspace",
-    group: "surfaces",
-    icon: House,
-    eyebrow: "Workspace",
-    lede: "Find your way around the toolbar, chart headers, filter bar, and grid.",
-    summary: "Toolbar, chart headers, the filter bar, and the grid.",
-    highlights: ["Toolbar", "Chart header", "Filter bar", "Layout"],
-    covers: [
-      "surface:toolbar",
-      "surface:chart-header",
-      "surface:details-dialog",
-      "surface:rows-drawer",
-      "surface:side-panels",
-      "surface:filter-chips",
-      "interaction:active-filter",
-      "layout:dashboard",
-      "responsive:desktop-resize",
-      "accessibility:naming",
-      "labels:meaningful-title",
-    ],
-    examples: ["shop-operations"],
-    related: ["fields", "chart-settings", "filters"],
-  },
-  {
-    topic: "fields",
-    thumbnail: "fields",
-    title: "Fields",
-    group: "surfaces",
-    icon: ListTree,
-    eyebrow: "Workspace",
-    lede: "See every field with its counts and distribution, and turn any of them into a chart.",
-    summary: "Profile every field and add a chart of any of them.",
-    highlights: ["Field list", "Add a chart"],
-    covers: ["surface:field-list", "flow:summary-to-chart"],
-    examples: ["shop-operations"],
-    related: ["workspace", "summary"],
-  },
-  {
     topic: "filters",
     thumbnail: "saved-filter",
     title: "Filters",
@@ -565,19 +592,6 @@ export const catalogue: readonly DocsPage[] = [
     related: ["export", "developers"],
   },
   {
-    topic: "load-data",
-    title: "Load data",
-    group: "tasks",
-    icon: Upload,
-    eyebrow: "Task",
-    lede: "Open a CSV, JSON, or project file, or start from an example.",
-    summary: "Drop a file or open an example.",
-    highlights: ["CSV", "JSON", "Projects"],
-    covers: ["flow:import"],
-    examples: ["shop-operations"],
-    related: ["fields", "export"],
-  },
-  {
     topic: "export",
     title: "Export",
     group: "tasks",
@@ -656,19 +670,6 @@ export const catalogue: readonly DocsPage[] = [
     related: ["filters"],
   },
   {
-    topic: "developers",
-    title: "Developers",
-    group: "guides",
-    icon: Code,
-    eyebrow: "Guide",
-    lede: "Embed the workspace in a React app and keep its state.",
-    summary: "Props, saved state, and the package guide.",
-    highlights: ["Props", "Saved state", "Projects"],
-    covers: ["flow:host-embedding", "flow:projects"],
-    examples: ["shop-operations"],
-    related: ["rendering", "dashboard-text"],
-  },
-  {
     topic: "rendering",
     title: "How rendering works",
     group: "guides",
@@ -695,4 +696,18 @@ export function pageModulePath(topic: string) {
 
 export function findPage(topic: string) {
   return catalogue.find((page) => page.topic === topic);
+}
+
+/** Every page in sidebar order: by section, then catalogue order. */
+export const navPages: readonly DocsPage[] = (
+  Object.keys(GROUP_LABELS) as DocsGroup[]
+).flatMap((group) => catalogue.filter((page) => page.group === group));
+
+/** The pages before and after a topic in sidebar order. */
+export function neighbours(topic: string) {
+  const index = navPages.findIndex((page) => page.topic === topic);
+  return {
+    previous: index > 0 ? navPages[index - 1] : undefined,
+    next: index >= 0 ? navPages[index + 1] : undefined,
+  };
 }

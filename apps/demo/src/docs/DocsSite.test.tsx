@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { afterEach, beforeEach, vi } from "vitest";
 import { catalogue } from "./catalogue";
@@ -21,18 +21,46 @@ function renderAt(path: string) {
 describe("docs routes", () => {
   it("lists each guide on the index", () => {
     renderAt("/docs");
-    expect(screen.getByRole("heading", { name: "Docs" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Scatter plot" })).toHaveAttribute(
+    expect(
+      screen.getByRole("heading", { level: 1, name: "explorEDA docs" })
+    ).toBeInTheDocument();
+    const main = within(screen.getByRole("main"));
+    expect(main.getByRole("link", { name: "Scatter plot" })).toHaveAttribute(
       "href",
       "/docs/scatter"
     );
-    expect(screen.getByRole("link", { name: "Bar chart" })).toHaveAttribute(
+    expect(main.getByRole("link", { name: "Bar chart" })).toHaveAttribute(
       "href",
       "/docs/bar"
     );
     expect(
-      screen.getByRole("link", { name: "How rendering works" })
+      main.getByRole("link", { name: "How rendering works" })
     ).toHaveAttribute("href", "/docs/rendering");
+  });
+
+  it("lists every page in the sidebar, marking the current one", () => {
+    renderAt("/docs/bar");
+    const nav = within(screen.getByRole("navigation", { name: "Docs pages" }));
+    expect(nav.getAllByRole("link")).toHaveLength(catalogue.length);
+    expect(nav.getByRole("link", { name: "Bar chart" })).toHaveAttribute(
+      "aria-current",
+      "page"
+    );
+  });
+
+  it("links to the previous and next pages", () => {
+    renderAt("/docs/bar");
+    const pager = within(
+      screen.getByRole("navigation", { name: "Previous and next pages" })
+    );
+    expect(pager.getByRole("link", { name: /Scatter plot/ })).toHaveAttribute(
+      "href",
+      "/docs/scatter"
+    );
+    expect(pager.getByRole("link", { name: /Row chart/ })).toHaveAttribute(
+      "href",
+      "/docs/row"
+    );
   });
 
   it("renders the scatter guide with its example and trace limits", async () => {
@@ -46,7 +74,7 @@ describe("docs routes", () => {
       )
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("link", { name: "Open the example" })
+      screen.getByRole("link", { name: "Trace a scatter point" })
     ).toHaveAttribute("href", "/examples/scatter-trace");
     expect(
       screen.getByRole("navigation", { name: "On this page" })
@@ -62,7 +90,7 @@ describe("docs routes", () => {
       await screen.findByText(/globally filtered rows/)
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("link", { name: "Open the example" })
+      screen.getByRole("link", { name: "Inside the order book" })
     ).toHaveAttribute("href", "/examples/shop-operations");
   });
 

@@ -94,18 +94,14 @@ describe("docs gate", () => {
 
   it("fails for a renamed example or a page link that goes nowhere", () => {
     const input = currentInput();
-    const [scatter, ...rest] = input.pages;
     expect(
       findDocsErrors({
         ...input,
-        pages: [
-          {
-            ...scatter!,
-            examples: ["renamed"],
-            related: ["nowhere"],
-          },
-          ...rest,
-        ],
+        pages: input.pages.map((page) =>
+          page.topic === "scatter"
+            ? { ...page, examples: ["renamed"], related: ["nowhere"] }
+            : page
+        ),
       })
     ).toEqual([
       'Page "scatter" links to missing page "nowhere"',
