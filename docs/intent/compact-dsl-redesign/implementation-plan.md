@@ -125,14 +125,12 @@ This replaces the language in one step. Leaving `+` continuations and braces sid
 - The docs page, the CLI reference, and the demo panel all show the generated reference.
 - 6 of 6 cold drafts pass `check`.
 
-## Open decisions and spikes
+## Decisions
 
-1. **D1 — house style.**
-   - **Option A:** adopt the demo's style as the library defaults (margin 16/24/44/62, 4 y gridlines, y grid on, rows 22/36, 20 bins). New charts would match the examples, and 21% of exported pairs disappear.
-   - **Option B:** remove the house style from `dashboardSettings.ts`, so the examples render with library defaults.
-   - I recommend A, because the examples are the designed look. Fallback: B.
-   - **Decision needed before M1 merges.**
-2. **D2 — `name:w` widths in the matrix.** They take coverage from 48 of 58 views to 58 of 58 at readable widths, and the cold agent reached for them. I recommend yes. Fallback: `at=` for uneven splits.
+Byron decided both on 2026-10-12.
+
+1. **D1 — house style: adopt it as library defaults.** New charts get margin 16/24/44/62, 4 y ticks, a grid from the value axis (y on most charts, x on row charts), row heights 22/36, and 20 bins. Types with their own look keep their own margins, including ecdf, sankey, hierarchy, heatmap, pivot, and composition.
+2. **D2 — `name:w` widths in the matrix: yes.** Cells split evenly unless a cell says its width.
 
 ## Below the cut line
 

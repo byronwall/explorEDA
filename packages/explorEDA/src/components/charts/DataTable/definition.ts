@@ -39,7 +39,6 @@ export const dataTableDefinition: ChartDefinition<DataTableSettings> = {
     type: "data-table",
     title: "Data Table",
     layout,
-    margin: { top: 5, right: 5, bottom: 5, left: 5 },
     columns: [],
 
     sortDirection: "asc",

@@ -4,11 +4,11 @@
     "title": "Compact DSL redesign",
     "slug": "compact-dsl-redesign",
     "scale": "capability",
-    "current_phase": "plan",
+    "current_phase": "execution",
     "last_updated": "2026-10-11",
     "summary": "Replace dashboard text with a schema-driven outline language: defaults-aware export, one vocabulary, nested named composition nodes, annotations as children, define-once charts placed in views, and a layout block. Agent-written, human-reviewed; no backward compatibility.",
-    "status": "planned",
-    "next_action": "Byron decides D1 (house style as library defaults) and D2 (name:w matrix widths); then start M1 (schema registry + normalized export)."
+    "status": "active",
+    "next_action": "Finish M1 PR, then M2 (brace syntax, fmt, layout)."
   },
   "artifacts": {
     "intent_brief": {
@@ -28,7 +28,7 @@
     },
     "implementation_plan": {
       "path": "implementation-plan.md",
-      "status": "draft",
+      "status": "current",
       "updated_at": "2026-10-11"
     }
   },
@@ -299,7 +299,7 @@
     ]
   },
   "implementation": {
-    "status": "draft",
+    "status": "current",
     "repository_snapshot": {
       "root": "packages/explorEDA/src/lib/dsl",
       "revision": "f01ff0f",
@@ -338,7 +338,7 @@
         "proof": "All examples round-trip; pairs <=6,730 (<=5,200 with D1=A).",
         "valid_intermediate_state": "Complete language that round-trips every example; set covers settings without grammar yet.",
         "rollback": "Revert the milestone PR; no users or saved text depend on the old syntax.",
-        "status": "planned"
+        "status": "active"
       },
       {
         "id": "m2",
@@ -386,20 +386,19 @@
       "Notebook sync",
       "Moving example axis titles into field labels (data cleanup)"
     ],
-    "open_decisions": [
+    "open_decisions": [],
+    "decisions": [
       {
         "id": "D1",
-        "question": "Adopt demo house style as library defaults (A) or strip it from examples (B)?",
-        "recommendation": "A",
-        "fallback": "B",
-        "needed_by": "m1"
+        "decision": "Adopt the demo house style as library chart defaults",
+        "by": "Byron",
+        "date": "2026-10-12"
       },
       {
         "id": "D2",
-        "question": "Allow name:w widths in layout matrix cells?",
-        "recommendation": "yes",
-        "fallback": "at= for uneven splits",
-        "needed_by": "m2"
+        "decision": "Allow name:w widths in layout matrix cells",
+        "by": "Byron",
+        "date": "2026-10-12"
       }
     ]
   },
@@ -418,6 +417,11 @@
       "date": "2026-10-11",
       "event": "First proof passed (4/6 clean cold drafts, 0 composition set lines, 83% matrix coverage, 58/58 round trip after normalization). Implementation plan drafted with 5 milestones.",
       "status": "planned"
+    },
+    {
+      "date": "2026-10-12",
+      "event": "Byron chose D1 (house style as defaults) and D2 (matrix widths) and asked for every milestone as stacked PRs. M1 started.",
+      "status": "active"
     }
   ],
   "closure": null

@@ -6,14 +6,19 @@ import {
   compileViews,
   exportDocument,
   exportViews,
+  normalizeDashboard,
   type SavedDataStructure,
 } from "exploreda";
 import { evaluateAnalysisQuery } from "exploreda/analysis";
 import { parseCsvData } from "./csvParser";
 import { examples } from "./demos/examples";
 
-/** The saved view without its timestamps. */
-function meaning(settings: SavedDataStructure) {
+/**
+ * The saved view without its timestamps. Charts compare in normalized form:
+ * a setting left out draws as its default, so text leaves it out too.
+ */
+function meaning(saved: SavedDataStructure) {
+  const settings = normalizeDashboard(saved);
   return {
     ...settings,
     metadata: { ...settings.metadata, createdAt: "", modifiedAt: "" },

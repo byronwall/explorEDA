@@ -5,7 +5,10 @@ import type { SavedDataStructure } from "@/types/SavedDataStructure";
 import type { FieldSettings } from "@/lib/fieldSettings";
 import type { GridSettings, SavedChartSettings } from "@/types/SavedDataTypes";
 import { compileDocument } from "./compile";
-import { diffPaths, encodeScalar, formatPath } from "./paths";
+import { normalizeChart } from "./normalize";
+import { diffPaths, encodeScalar, formatPath, parsePath } from "./paths";
+import { splitPair } from "./parse";
+import { wordForPath } from "./schema";
 import { FIELD_SETTING_WORDS, GRID_SETTING_WORDS } from "./settingKeys";
 
 export interface DslExportOptions {
@@ -119,6 +122,15 @@ function headFor(chart: SavedChartSettings): string {
   }
 }
 
+/** Writes a `path=value` pair with the setting's word when it has one. */
+function toWord(type: string, pair: string): string {
+  const [key, value] = splitPair(pair) ?? [pair, ""];
+  const path = parsePath(key);
+  const word =
+    path && !path.marker && wordForPath(type, path.segments.join("."));
+  return word ? `${word}=${value}` : pair;
+}
+
 /** Text for one dashboard, split into what views share and what each owns. */
 export interface DslExportParts {
   /** The `dashboard name=` line. */
@@ -221,18 +233,23 @@ export function exportParts(
   ]);
 
   // Build a skeleton from each chart's short form, then add what differs.
-  const names = settings.charts.map((chart, index) =>
+  // Charts are compared in full, so a partial saved axis reads as default.
+  const charts = settings.charts.map((chart) => normalizeChart(chart));
+  const names = charts.map((chart, index) =>
     GENERATED_ID.test(chart.id) || !/^[\w-]+$/.test(chart.id)
       ? `__c${index}`
       : chart.id
   );
-  const heads = settings.charts.map((chart, index) => {
+  const heads = charts.map((chart, index) => {
     const pairs = [
       `@${names[index]}`,
       `at=${chart.layout.x},${chart.layout.y},${chart.layout.w},${chart.layout.h}`,
     ];
+    // color= also builds a scale; a chart saved without one says so.
     if (chart.colorField) {
-      pairs.push(`color=${encodeScalar(chart.colorField)}`);
+      pairs.push(
+        `${chart.colorScaleId ? "color" : "colorField"}=${encodeScalar(chart.colorField)}`
+      );
     }
     const local = chart.localFilters?.length
       ? filterPairs("where", chart.localFilters, types)
@@ -308,7 +325,7 @@ export function exportParts(
     base.settings.charts.map((chart) => [chart.id, chart])
   );
 
-  const chartLines = settings.charts.flatMap((chart, index) => {
+  const chartLines = charts.flatMap((chart, index) => {
     const built = baseCharts.get(names[index]!);
     const { head, pairs } = heads[index]!;
     const shown = pairs.filter((pair) => !pair.startsWith("@__c"));
@@ -330,7 +347,10 @@ export function exportParts(
         )
       );
     }
-    return wrap(head, [...shown, ...extra]);
+    return wrap(head, [
+      ...shown,
+      ...extra.map((pair) => toWord(chart.type, pair)),
+    ]);
   });
 
   return {

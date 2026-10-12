@@ -101,10 +101,11 @@ Charts (each starts from the app's defaults; @name is optional):
 
   chart <type> field=<field>          any chart type, such as chart boxplot
 
-Settings on any chart: title=, at=x,y,w,h, x.scale=, x.title=, x.min=, x.max=,
-y.*, xGridLines=, yGridLines=, margin.left= (top, right, bottom).
+Settings on any chart: title=, at=x,y,w,h, x.title=, x.scale=, x.min=, x.max=,
+x.grid=, x.ticks=, the same y.* words, and margin.left= (top, right, bottom).
 x.min= and x.max= set the axis range shown; rows outside stay counted.
-Every saved setting is a path: xAxis.scaleType=symlog, columns.0.width=140.
+Any other saved setting is its path: minRowHeight=30, columns.0.width=140.
+exploreda-dsl reference <type> lists every setting a chart type takes.
   key[]=a,b    a list (key[]= is empty)    key{}=     an empty object
   key=unset    back to the app default     key=null   a missing value
   "a b".c=1    quote a name with spaces    key=""     empty text

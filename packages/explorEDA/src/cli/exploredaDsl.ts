@@ -2,6 +2,7 @@
 import { readFileSync } from "node:fs";
 import { registerAllCharts } from "@/charts/registerAllCharts";
 import {
+  chartSettingReference,
   compileViews,
   describeDslSource,
   DSL_REFERENCE,
@@ -13,11 +14,12 @@ import type { datum } from "@/types/ChartTypes";
 const USAGE = `Usage:
   exploreda-dsl check <dashboard.eda> --data <rows.csv|rows.json> [--json]
   exploreda-dsl fields --data <rows.csv|rows.json>
-  exploreda-dsl reference
+  exploreda-dsl reference [chart-type]
 
 check   builds the dashboard (every view) and lists each problem with a fix.
         Exits 0 when complete, 1 when partial, 2 when nothing builds.
-fields  lists the fields, types, and example values to write against.`;
+fields  lists the fields, types, and example values to write against.
+reference  prints the grammar, or every setting a chart type takes.`;
 
 /** Reads a CSV cell the way the app's file import does. */
 function typed(text: string): datum {
@@ -98,7 +100,20 @@ function main(args: string[]) {
   };
   const dataPath = option("--data");
   if (command === "reference") {
-    console.log(DSL_REFERENCE);
+    const type = rest[0];
+    if (!type) {
+      console.log(DSL_REFERENCE);
+      return 0;
+    }
+    registerAllCharts();
+    const lines = chartSettingReference(type);
+    if (!lines.length) {
+      console.error(`${type} is not a chart type.`);
+      return 64;
+    }
+    console.log(
+      `Settings for ${type}:\n${lines.map((line) => `  ${line}`).join("\n")}`
+    );
     return 0;
   }
   if ((command !== "check" && command !== "fields") || !dataPath) {
