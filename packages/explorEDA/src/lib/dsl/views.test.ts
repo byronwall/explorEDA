@@ -14,7 +14,7 @@ calc profit=Revenue-Cost
 field profit format=currency
 
 view Overview {
-  metric sum=Revenue
+  metric sum(Revenue)
   scatter x=Revenue y=profit color=Channel
 }
 

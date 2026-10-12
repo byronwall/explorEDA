@@ -130,7 +130,7 @@ view "Where they struck" {
     xAxisLabel="" minRowHeight=20 maxRowHeight=32
   }
   metric count @quake-count at=8,7,2,2 title=Events
-  metric avg=mag @quake-mean at=10,7,2,2 title="Mean magnitude"
+  metric avg(mag) @quake-mean at=10,7,2,2 title="Mean magnitude"
   table time,place,mag,mag_type,depth,depth_band,net,id @quake-rows at=0,12,12,5 {
     title="Events in this selection"
   }

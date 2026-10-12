@@ -54,6 +54,10 @@ function axisWords(axis: "x" | "y") {
 export const COMMON_WORDS: Readonly<Record<string, SettingWord>> = {
   ...axisWords("x"),
   ...axisWords("y"),
+  colorScale: {
+    path: "colorScaleId",
+    help: "Color scale for the color field, by its @name",
+  },
 };
 
 /** Words for one chart type, beside the common ones. */
@@ -62,6 +66,18 @@ export const TYPE_WORDS: Readonly<
 > = {
   bar: {
     bins: { path: "binCount", help: "Number of bins for a numeric field" },
+    group: { path: "aggregateId", help: "Grouped summary to show" },
+  },
+  line: {
+    x: { path: "xField", help: "Field on the X axis: a date or a number" },
+    y: { path: "seriesField", help: "Fields drawn as lines, one line each" },
+  },
+  pivot: {
+    rows: { path: "rowFields", help: "Fields whose values make the rows" },
+    columns: { path: "columnField", help: "Field whose values make columns" },
+  },
+  row: {
+    group: { path: "aggregateId", help: "Grouped summary to rank by" },
   },
   scatter: {
     opacity: { path: "pointOpacity", help: "Point opacity, from 0 to 1" },

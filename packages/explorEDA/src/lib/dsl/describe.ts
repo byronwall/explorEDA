@@ -97,11 +97,16 @@ Charts (each starts from the app's defaults):
                                       regression=linear|polynomial|loess
   hist <field> bins=24                histogram
   bar <field>                         bars by category or bins
-  row <field>                         horizontal category bars
-  metric count | sum=<field> | avg=<field>
+  row <field>                         horizontal category bars; group=<@group>
+  boxplot | calendar | ecdf | heatmap <field>
+  line x=<field> y=<field>,<field>    one line per y field
+  metric count | sum(<field>) | avg(<field>)
   table <field>,<field>,...           data table (all fields when omitted)
+  pivot rows=<field> columns=<field>  values as child lines (below)
+  parallel <field>,<field>,...        parallel coordinates, one axis per field
+  sankey stages=a,b | hierarchy levels=a,b | markdown content="…" | map
   summary                             field summary table
-  chart <type> field=<field>          any chart type, such as chart boxplot
+  chart <type> field=<field>          any other chart type
 
   A chart goes by its @name, or by its field when no other chart shares it:
   row Region is named Region. Long settings go in a body:
@@ -112,10 +117,24 @@ Charts (each starts from the app's defaults):
 Settings on any chart: title=, x.title=, x.scale=, x.min=, x.max=, x.grid=,
 x.ticks=, the same y.* words, and margin.left= (top, right, bottom).
 x.min= and x.max= set the axis range shown; rows outside stay counted.
-Any other saved setting is its path: minRowHeight=30, columns.0.width=140.
-exploreda-dsl reference <type> lists every setting a chart type takes.
-  key[]=a,b    a list (key[]= is empty)    key{}=     an empty object
+Any other saved setting is its path: minRowHeight=30, hexbin.columns=18.
+A setting that holds a list reads a,b; key= empties it. Colors read plainly:
+color=#3479a8. exploreda-dsl reference <type> lists every setting a type takes.
   key=unset    back to the app default     key=null   a missing value
+
+Lists of records are child lines, named by their main field:
+  table @orders {                     column Revenue width=140
+  pivot rows=Month {                  value sum("Net sales") label="Net sales"
+  parallel {                          axis body_mass_g inverted=true
+  line x=Date y=Visits {              series Visits lineColor=#3479a8
+
+Annotations are child lines of the chart they mark (dates read as ISO):
+  callout "Day 31" on=Day:31 offset=-24,-28   or at=x,y, pick=max, category=West
+  rule y=4 "Target"   rule x=mean "Mean"      also median, min, max
+  band x=2024-06-01..2024-08-31 "Sale" display=bracket
+  region x=275..345 y=4.1..5.15 shape=ellipse "Fast days"
+  interval "80% of outcomes" lower=P10 upper=P90
+  records "Slow days" on=Day keys=31,44
 
 Placement: a layout block, one line per band of grid rows.
   layout {
@@ -144,9 +163,10 @@ generated ID wouldn't match. Settings equal to a part's default are left out.
   }
 
 Shared definitions (charts point at them by @name):
-  scale @channels field=Channel       color scale; charts: colorScaleId=channels
-  group @byRegion groupField=Region aggregation=sum measureField=Revenue
-                                      grouped summary; charts: aggregateId=byRegion
+  scale @channels field=Channel map=Web:#3479a8,Store:#c77a45
+                                      color scale; charts: colorScale=channels
+  group @byRegion sum(Revenue) by=Region
+                                      grouped summary; charts: group=byRegion
   rows sortBy=Revenue where.Units=2.. the Rows view
 
 Filters:

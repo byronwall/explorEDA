@@ -110,7 +110,7 @@ describe("layout lines", () => {
 describe("layout in a dashboard", () => {
   it("places charts by @name or by their field", () => {
     const result = compileDocument(
-      `metric @total sum=Revenue
+      `metric @total sum(Revenue)
 row Region
 hist Revenue
 layout {
@@ -175,7 +175,7 @@ filter Channel=Web,Store
 scatter @web x=revenue y=profit where.Channel=Web {
   title="Web orders" x.scale=log
 }
-metric @gains sum=profit where.profit=0..
+metric @gains sum(profit) where.profit=0..
 table @orders revenue,profit,Channel
 layout {
   5: web web gains

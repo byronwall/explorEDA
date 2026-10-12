@@ -41,6 +41,15 @@ import { parsePath, setPath } from "./paths";
 import { settingWords } from "./schema";
 import { parseLayout, placeLayout, type LayoutProblem } from "./layout";
 import { lowerComposition, type CompositionProblem } from "./composition";
+import {
+  ANNOTATION_KEYWORDS,
+  lowerAnnotation,
+  rawItems,
+  splitColon,
+  type AnnotationProblem,
+} from "./annotations";
+import type { ChartAnnotation } from "@/lib/annotations/types";
+import { listChildWords, lowerListChild } from "./lists";
 import { isCompositionDefinition } from "@/components/charts/Composition/validateComposition";
 import {
   CHART_SETTING_KEYS,
@@ -163,7 +172,40 @@ export const DSL_CHART_KEYWORDS: Record<string, string> = {
   table: "data-table",
   summary: "summary",
   composition: "composition",
+  boxplot: "boxplot",
+  calendar: "calendar",
+  ecdf: "ecdf",
+  heatmap: "heatmap",
+  line: "line",
+  pivot: "pivot",
+  parallel: "parallel-coordinates",
+  sankey: "sankey",
+  hierarchy: "hierarchy",
+  markdown: "markdown",
+  map: "map",
 };
+
+/** Chart words whose head names one field, as in `row Region`. */
+const ONE_FIELD_WORDS = [
+  "row",
+  "hist",
+  "histogram",
+  "bar",
+  "boxplot",
+  "calendar",
+  "ecdf",
+  "heatmap",
+];
+
+/** Chart words that need no field in the head. */
+const NO_FIELD_WORDS = [
+  "line",
+  "pivot",
+  "sankey",
+  "hierarchy",
+  "markdown",
+  "map",
+];
 
 export const DSL_OTHER_KEYWORDS = [
   "scale",
@@ -206,6 +248,25 @@ export function viewName(header: DslDeclaration, index: number): string {
     header.pairs.find((pair) => pair.key === "name")?.value;
   return (value && single(value)) || `View ${index + 1}`;
 }
+
+/** Words applySetting reads itself, with checks beyond setting a path. */
+const SETTING_WORDS_HANDLED = new Set([
+  "x.title",
+  "x.scale",
+  "x.min",
+  "x.max",
+  "x.grid",
+  "x.ticks",
+  "y.title",
+  "y.scale",
+  "y.min",
+  "y.max",
+  "y.grid",
+  "y.ticks",
+  "bins",
+  "opacity",
+  "size.max",
+]);
 
 /** Keys a field line takes; `as=` for the type is read on its own. */
 const FIELD_SETTING_KEYS = Object.entries(FIELD_SETTING_WORDS)
@@ -1125,7 +1186,7 @@ export function compileDocument(
         `A ${keyword} needs an @name so charts can refer to it, so this line was skipped.`,
         {
           subject,
-          suggestion: `Write it as ${keyword} @${keyword === "scale" ? "channelColors field=Channel" : "byRegion groupField=Region aggregation=sum measureField=Revenue"}.`,
+          suggestion: `Write it as ${keyword} @${keyword === "scale" ? "channelColors field=Channel" : "byRegion sum(Revenue) by=Region"}.`,
         }
       );
       continue;
@@ -1140,9 +1201,35 @@ export function compileDocument(
           subject,
           `${subject} starts empty`
         );
-      let scale: unknown = field
-        ? { ...defaultScale(field), id: name, name: field }
-        : { id: name, name, type: "categorical", palette: [], mapping: [] };
+      // map=Web:#3479a8,Store:#c77a45 gives each value its own color.
+      const mapPair = take("map");
+      const entries = mapPair
+        ? rawItems(mapPair.value.raw).map((item) => splitColon(item))
+        : [];
+      if (entries.some((entry) => !entry)) {
+        report(
+          "warning",
+          "setting-ignored",
+          mapPair!.span,
+          "map= pairs each value with a color, as in map=Web:#3479a8,Store:#c77a45.",
+          { subject, suggestion: "Quote a value with spaces or commas." }
+        );
+      }
+      const mapping = entries
+        .filter((entry): entry is [string, string | number] => !!entry)
+        .map(([value, color]) => [value, String(color)] as [string, string]);
+      let scale: unknown = mapPair
+        ? {
+            id: name,
+            name: field ?? name,
+            type: "categorical",
+            palette: [...new Set(mapping.map(([, color]) => color))],
+            mapping,
+            ...(field ? { sourceField: field } : {}),
+          }
+        : field
+          ? { ...defaultScale(field), id: name, name: field }
+          : { id: name, name, type: "categorical", palette: [], mapping: [] };
       scale = applyRecordPaths(scale, pairs, subject);
       if (
         !validateSavedData({
@@ -1165,11 +1252,47 @@ export function compileDocument(
       }
       colorScales.push(scale as SerializedColorScale);
     } else if (keyword === "group") {
-      const spec = applyRecordPaths(
-        { id: name, name, groupField: "", aggregation: "count" },
-        pairs,
-        subject
-      ) as AggregateSpec;
+      // group @byRegion sum(Revenue) by=Region
+      const call = declaration.positional[0];
+      const parsed = call && aggregateCall(call.value.raw);
+      const by = take("by");
+      const start: Record<string, unknown> = {
+        id: name,
+        name,
+        groupField: "",
+        aggregation: parsed?.aggregation ?? "count",
+      };
+      if (by) {
+        start.groupField =
+          resolveField(
+            single(by.value),
+            by.span,
+            subject,
+            `${subject} has no group field`
+          ) ?? "";
+      }
+      if (parsed?.field) {
+        start.measureField =
+          resolveField(
+            parsed.field,
+            call!.span,
+            subject,
+            `${subject} has no measure`
+          ) ?? "";
+      }
+      if (call && !parsed) {
+        report(
+          "warning",
+          "setting-ignored",
+          call.span,
+          `${call.value.raw} is not an aggregation, so ${subject} counts rows.`,
+          {
+            subject,
+            suggestion: "Write count, sum(field), or avg(field).",
+          }
+        );
+      }
+      const spec = applyRecordPaths(start, pairs, subject) as AggregateSpec;
       const valid =
         spec.groupField &&
         ["count", "sum", "average"].includes(spec.aggregation) &&
@@ -1179,11 +1302,10 @@ export function compileDocument(
           "error",
           "setting-ignored",
           declaration.span,
-          `${subject} needs groupField=, and measureField= unless it counts, so it was skipped.`,
+          `${subject} needs by=, and a field to sum or average unless it counts, so it was skipped.`,
           {
             subject,
-            suggestion:
-              "Write it as group @byRegion groupField=Region aggregation=sum measureField=Revenue.",
+            suggestion: "Write it as group @byRegion sum(Revenue) by=Region.",
           }
         );
         continue;
@@ -1220,6 +1342,32 @@ export function compileDocument(
         pairs,
         subject
       ) as SavedRowsSettings;
+      // column lines set the Rows view's columns, as in a table.
+      const started = new Set<string>();
+      const holder = { ...next, type: "data-table" } as Record<string, unknown>;
+      for (const child of declaration.children) {
+        if (
+          !lowerListChild(
+            holder,
+            child,
+            started,
+            (field) => aliases.get(field) ?? field
+          )
+        ) {
+          report(
+            "warning",
+            "setting-ignored",
+            child.span,
+            `${child.keyword} can't go inside the Rows view, so it was ignored.`,
+            {
+              subject,
+              suggestion:
+                "List columns as column lines: column Revenue width=120.",
+            }
+          );
+        }
+      }
+      next.columns = holder.columns as SavedRowsSettings["columns"];
       if (!validateSavedData({ ...EMPTY_SETTINGS, rowsSettings: next })) {
         report(
           "error",
@@ -1310,17 +1458,6 @@ export function compileDocument(
     const summary = { line: declaration.span.line, subject, type };
     const implicit = declaration.name ? undefined : implicitName(declaration);
     const chart = buildChart(declaration, type, subject, implicit);
-    for (const child of declaration.keyword === "composition"
-      ? []
-      : declaration.children) {
-      report(
-        "warning",
-        "setting-ignored",
-        child.span,
-        `${child.keyword} can't go inside ${subject}, so it was ignored.`,
-        { subject, suggestion: "Put settings in the body as key=value." }
-      );
-    }
     if (chart) {
       nameChart(chart.id, chart.id);
       if (implicit) {
@@ -1339,7 +1476,7 @@ export function compileDocument(
           `${spec.name} groups by ${spec.groupField}, not ${chart.field}, so ${subject} shows a message instead of bars.`,
           {
             subject,
-            suggestion: `Write it as row ${/^[A-Za-z_][\w.]*$/.test(spec.groupField) ? spec.groupField : JSON.stringify(spec.groupField)} aggregateId=${spec.id}.`,
+            suggestion: `Write it as row ${/^[A-Za-z_][\w.]*$/.test(spec.groupField) ? spec.groupField : JSON.stringify(spec.groupField)} group=${spec.id}.`,
           }
         );
       }
@@ -1701,41 +1838,27 @@ export function compileDocument(
         break;
       }
       case "metric": {
-        const aggregations = {
-          sum: "sum",
-          avg: "average",
-          mean: "average",
-          average: "average",
-        } as const;
-        const measurePair = [...pairs.values()].find(
-          (pair) => pair.key in aggregations
-        );
-        const count = positional.some((item) => single(item.value) === "count");
-        if (count) {
-          positional.splice(
-            positional.findIndex((item) => single(item.value) === "count"),
-            1
+        // metric count, metric sum(Revenue), metric avg(Revenue).
+        const call = positional.shift();
+        const parsed = call && aggregateCall(call.value.raw);
+        chart = definition.createDefaultSettings(layout) as ChartSettings;
+        if (!parsed || (parsed.aggregation !== "count" && !parsed.field)) {
+          return fail(
+            call?.span ?? declaration.span,
+            `${subject} needs count, sum(field), or avg(field), so it was skipped.`,
+            "Write it as metric sum(Revenue) or metric count."
           );
         }
-        chart = definition.createDefaultSettings(layout) as ChartSettings;
-        if (measurePair) {
-          take(measurePair.key);
-          const measure = fieldFrom(measurePair);
+        if (parsed.aggregation !== "count") {
+          const measure = resolveField(parsed.field!, call!.span, subject);
           if (!measure) {
             return undefined;
           }
           chart = {
             ...chart,
-            aggregation:
-              aggregations[measurePair.key as keyof typeof aggregations],
+            aggregation: parsed.aggregation,
             measureField: measure,
           } as ChartSettings;
-        } else if (!count) {
-          return fail(
-            declaration.span,
-            `${subject} needs count, sum=, or avg=, so it was skipped.`,
-            "Write it as metric sum=revenue or metric count."
-          );
         }
         break;
       }
@@ -1765,6 +1888,24 @@ export function compileDocument(
       case "summary":
         chart = definition.createDefaultSettings(layout) as ChartSettings;
         break;
+      case "parallel": {
+        // parallel a,b,c: one axis per field, in order.
+        const list = positional.shift();
+        const fields = (list?.value.items ?? []).map((item) =>
+          resolveField(item.text, list!.span, subject)
+        );
+        if (fields.some((item) => !item)) {
+          return undefined;
+        }
+        chart = {
+          ...definition.createDefaultSettings(layout),
+          axes: (fields as string[]).map((item) => ({
+            field: item,
+            inverted: false,
+          })),
+        } as ChartSettings;
+        break;
+      }
       case "composition": {
         // The head sizes the artboard; the body holds the graphic's parts.
         const size = (key: string) => {
@@ -1828,8 +1969,16 @@ export function compileDocument(
         }
         break;
       }
+      case "line":
+      case "pivot":
+      case "sankey":
+      case "hierarchy":
+      case "markdown":
+      case "map":
+        chart = definition.createDefaultSettings(layout) as ChartSettings;
+        break;
       default: {
-        // hist, bar, row: one field, positionally or as field=.
+        // hist, bar, row, boxplot, …: one field, positionally or as field=.
         const named = take("field");
         const first =
           named ??
@@ -1930,7 +2079,11 @@ export function compileDocument(
       chart.filters = linked;
     }
 
-    for (const [key, pair] of pairs) {
+    for (const [written, pair] of pairs) {
+      // A word that stands for a saved path, such as x= for a line's xField.
+      const word = settingWords(chart.type)[written];
+      const key =
+        word && !SETTING_WORDS_HANDLED.has(written) ? word.path : written;
       let result = applySetting(chart, key, pair, subject);
       if (result === "unknown") {
         const before = chart;
@@ -1986,6 +2139,55 @@ export function compileDocument(
           `${group.pairs.map((pair) => `${pair.key}=${pair.value.raw}`).join(" ")} doesn't fit ${top}, so ${subject} keeps the default ${top}.`,
           { subject }
         );
+      }
+    }
+
+    // Child lines: annotations, and lists of records such as columns.
+    if (type !== "composition") {
+      const annotations: ChartAnnotation[] = [];
+      const counts = {};
+      const started = new Set<string>();
+      const problems: AnnotationProblem[] = [];
+      for (const child of declaration.children) {
+        if (ANNOTATION_KEYWORDS[child.keyword]) {
+          const annotation = lowerAnnotation(child, counts, chart.id, problems);
+          if (annotation) {
+            annotations.push(annotation);
+          }
+          continue;
+        }
+        if (
+          lowerListChild(
+            chart as unknown as Record<string, unknown>,
+            child,
+            started,
+            (name) => aliases.get(name) ?? name
+          )
+        ) {
+          continue;
+        }
+        report(
+          "warning",
+          "setting-ignored",
+          child.span,
+          `${child.keyword} can't go inside ${subject}, so it was ignored.`,
+          {
+            subject,
+            suggestion: `Inside a chart: settings as key=value, annotations (${Object.keys(ANNOTATION_KEYWORDS).join(", ")}), or ${listChildWords(chart.type).join(", ") || "no lists"}.`,
+          }
+        );
+      }
+      for (const problem of problems) {
+        report("warning", "setting-ignored", problem.span, problem.message, {
+          subject,
+          suggestion: problem.suggestion,
+        });
+      }
+      if (annotations.length) {
+        (chart as { annotations?: ChartAnnotation[] }).annotations = [
+          ...((chart as { annotations?: ChartAnnotation[] }).annotations ?? []),
+          ...annotations,
+        ];
       }
     }
 
@@ -2404,14 +2606,44 @@ export function compileDocument(
 }
 
 /**
+ * Reads `count`, `sum(Revenue)`, `avg("Net sales")`, and the like. Average
+ * reads as avg, mean, or average.
+ */
+export function aggregateCall(
+  raw: string
+): { aggregation: string; field?: string } | undefined {
+  if (raw === "count" || raw === "count()") {
+    return { aggregation: "count" };
+  }
+  const match = /^(\w+)\((.*)\)$/.exec(raw);
+  if (!match) {
+    return undefined;
+  }
+  const names: Record<string, string> = {
+    sum: "sum",
+    avg: "average",
+    mean: "average",
+    average: "average",
+    count: "count",
+  };
+  const aggregation = names[match[1]!];
+  if (!aggregation) {
+    return undefined;
+  }
+  const inner = match[2]!.trim();
+  const field = inner.startsWith('"')
+    ? (JSON.parse(inner) as string)
+    : inner || undefined;
+  return { aggregation, field };
+}
+
+/**
  * The name a chart goes by without an @name: the field its head names,
  * for charts that show one field, such as `row Region`.
  */
 export function implicitName(declaration: DslDeclaration): string | undefined {
   const field = declaration.pairs.find((pair) => pair.key === "field");
-  const oneField = ["row", "hist", "histogram", "bar"].includes(
-    declaration.keyword
-  );
+  const oneField = ONE_FIELD_WORDS.includes(declaration.keyword);
   const value =
     field?.value ?? (oneField ? declaration.positional[0]?.value : undefined);
   return value && value.items.length === 1 ? value.items[0]!.text : undefined;

@@ -171,9 +171,7 @@ field days.pm25 precision=1
 field days.pm25_coverage_pct precision=1
 field pm25_vs_reference precision=1
 
-group @above-reference name="Mean PM2.5 above the reference station" {
-  groupField=days.station measureField=pm25_vs_reference aggregation=average
-}
+group @above-reference avg(pm25_vs_reference) by=days.station name="Mean PM2.5 above the reference station"
 
 scale @seasons field=days.season {
   ${SEASONS}
@@ -208,7 +206,7 @@ view "A year of PM2.5" {
     showObservations=true violinOverlay=true
   }
   metric count @air-count at=6,9,3,2 title="Station-days"
-  metric avg=days.pm25 @air-mean at=9,9,3,2 title="Mean PM2.5 (µg/m³)"
+  metric avg(days.pm25) @air-mean at=9,9,3,2 title="Mean PM2.5 (µg/m³)"
   row days.season @air-season-filter at=6,11,6,3 color=days.season {
     title="Filter by season" xAxisLabel="" minRowHeight=16 maxRowHeight=24
   }
@@ -243,7 +241,7 @@ view "Coverage and stations" {
     valueFields.2.field=days.pm25 valueFields.2.aggregation=avg
     valueFields.2.label="Mean in selection"
   }
-  hist days.station @air-reference at=6,6,6,6 aggregateId=above-reference {
+  hist days.station @air-reference at=6,6,6,6 group=above-reference {
     categoryOrder=label title="Mean PM2.5 above ${audit.referenceStation} on the same day"
     xAxisLabel=Station yAxisLabel="Difference (µg/m³)"
   }

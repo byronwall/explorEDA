@@ -69,10 +69,10 @@ export interface LineChartSettings extends BaseChartSettings {
 
 export const DEFAULT_SERIES_SETTINGS: SeriesSettings = {
   showPoints: false,
-  pointSize: 4,
-  pointOpacity: 1,
+  pointSize: 3,
+  pointOpacity: 0.8,
   lineWidth: 2,
-  lineOpacity: 0.8,
+  lineOpacity: 1,
   lineStyle: "solid",
   useRightAxis: false,
 };
