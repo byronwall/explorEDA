@@ -108,7 +108,7 @@ function GuidePage({ page }: { page: DocsPage }) {
         </PageHeader>
         {page.chartType && <AtAGlance chartType={page.chartType} />}
         <InlineContents entries={contents} />
-        <article className="mt-10 min-w-0">
+        <article className="docs-article mt-10 min-w-0">
           {Content && (
             <Suspense
               fallback={

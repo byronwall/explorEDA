@@ -105,3 +105,16 @@
 .eda-dsl-input::placeholder {
   color: var(--muted-foreground);
 }
+
+/* Docs pages write <kbd> as raw JSX, which MDX components don't reach. */
+.docs-article kbd {
+  border: 1px solid var(--border);
+  border-bottom-width: 2px;
+  border-radius: 0.25rem;
+  background: var(--card);
+  padding: 0.05em 0.4em;
+  font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+  font-size: 0.8em;
+  color: var(--foreground);
+  white-space: nowrap;
+}
