@@ -8,7 +8,7 @@
     "last_updated": "2026-10-11",
     "summary": "Improve point and region maps, custom and supplied geography, render controls, and detailed local context without building a full GIS.",
     "status": "planned",
-    "next_action": "Byron reviews shape-brief.md and answers the two open choices; then write the implementation plan."
+    "next_action": "Byron answers the two open shape choices; then write the implementation plan."
   },
   "artifacts": {
     "intent_brief": {
@@ -67,6 +67,13 @@
       "location": "references/primary-source-checks.md",
       "anchor": "October 11 independent checks",
       "authority": "Selected publisher claims verified; no provider acceptance"
+    },
+    {
+      "id": "product-answers",
+      "type": "direct-user-input",
+      "location": "references/product-answers.md",
+      "anchor": "Ten product questions, October 11",
+      "authority": "explicit user direction"
     }
   ],
   "intent": {
@@ -162,7 +169,7 @@
         "statement": "Use Leaflet or a similar renderer, perhaps with simple and detailed modes.",
         "commitment": "tentative",
         "importance": "supporting",
-        "status": "active",
+        "status": "revised",
         "time_horizon": "first release",
         "source_anchors": [
           {
@@ -171,7 +178,7 @@
           }
         ],
         "confidence": "high",
-        "notes": "A research hypothesis is not an approved implementation choice."
+        "notes": "Outcome kept (detailed street context). Engine choice resolved toward MapLibre by map-17: the no-key free vector service fits MapLibre."
       },
       {
         "id": "map-7",
@@ -272,7 +279,7 @@
         "statement": "Keep D3/SVG as the starting default and compare Leaflet/raster with MapLibre/vector for one optional street engine.",
         "commitment": "derived",
         "importance": "supporting",
-        "status": "active",
+        "status": "revised",
         "time_horizon": "proof",
         "source_anchors": [
           {
@@ -285,7 +292,7 @@
           }
         ],
         "confidence": "medium",
-        "notes": "No renderer winner. Avoid a universal scene model or permanent competing street engines."
+        "notes": "Superseded in part by map-17 and map-22: D3 for world extents, MapLibre for regional and local."
       },
       {
         "id": "map-13",
@@ -369,7 +376,143 @@
           }
         ],
         "confidence": "medium",
-        "notes": "Retain exact coincident-record access as a smaller density investigation."
+        "notes": "Retain exact coincident-record access as a smaller density investigation. Clustering moved into scope by map-21; point-to-region lookup by map-20."
+      },
+      {
+        "id": "map-17",
+        "type": "required behavior",
+        "statement": "Street maps work for paying customers with no key, no configuration, and no tiles maintained by Byron or hosts.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-answers",
+            "anchor": "map-17"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Answers 2, 4. Hosts may substitute a provider."
+      },
+      {
+        "id": "map-18",
+        "type": "required behavior",
+        "statement": "Infer the useful geography level from the data, allow override, and show finer detail on zoom.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-answers",
+            "anchor": "map-18"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Answer 6."
+      },
+      {
+        "id": "map-19",
+        "type": "required behavior",
+        "statement": "Supply countries, worldwide states/provinces, and US counties without user-triggered downloads.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-answers",
+            "anchor": "map-19"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Answers 4, 7."
+      },
+      {
+        "id": "map-20",
+        "type": "required behavior",
+        "statement": "Provide a stored calculation that assigns latitude/longitude to named regions.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-answers",
+            "anchor": "map-20"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Answer 10. Narrow exception to the spatial-join exclusion."
+      },
+      {
+        "id": "map-21",
+        "type": "required behavior",
+        "statement": "Group crowded points into clusters that split on zoom; draw a couple of thousand points directly.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-answers",
+            "anchor": "map-21"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Answers 5, 9."
+      },
+      {
+        "id": "map-22",
+        "type": "required behavior",
+        "statement": "Choose projection by extent: equal-area for world views, web map with streets for regional and local views.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-answers",
+            "anchor": "map-22"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Answer 8."
+      },
+      {
+        "id": "map-23",
+        "type": "required behavior",
+        "statement": "PNG export includes streets; shared views restore through saved settings only, without URL view parameters.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-answers",
+            "anchor": "map-23"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Answer 3. Offline street maps not required."
+      },
+      {
+        "id": "map-24",
+        "type": "constraint",
+        "statement": "React 18 support must not block the right street engine; React 19 is acceptable.",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-answers",
+            "anchor": "map-24"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Answer 2."
       }
     ],
     "themes": [
@@ -382,12 +525,12 @@
       {
         "id": "catalog-sequence",
         "description": "Research proposes one country pack first; the user wants more supplied geography.",
-        "resolution": "Treat one pack as sequencing. Retain national and regional expansion as desired scope; membership awaits review."
+        "resolution": "Resolved by product answers: ship countries, worldwide admin-1, and US counties up front through a companion package."
       },
       {
         "id": "renderer-hypothesis",
         "description": "Leaflet was a user hypothesis. Research identifies vector label controls as a possible reason to choose MapLibre.",
-        "resolution": "Keep local street context as the requirement. Select neither renderer before a bounded comparison."
+        "resolution": "Resolved by product answers: free no-key vector tiles (OpenFreeMap) imply MapLibre; Leaflet core remains a fallback, React 19 only if React Leaflet is used."
       },
       {
         "id": "proof-scope",
@@ -405,51 +548,57 @@
   },
   "shape": {
     "status": "current",
-    "appetite": "Three independently shippable releases: (1) selection, region values, import; (2) one country set and content controls; (3) street context. No new runtime dependency before release 3; at most one in it.",
-    "problem": "Point and region maps have suspected selection faults, thin import and join diagnostics, no ready country geometry, no control over visible content, and no street context for local dashboards.",
-    "recommended_shape": "Harden the existing D3/SVG maps, add one audited country set and a compact content-controls popover with a nonselectable reference-boundary layer, then add host-supplied street context, preferring raster tiles drawn beneath the existing SVG in Web Mercator over a second rendering engine.",
+    "appetite": "Three shippable releases: (1) trustworthy selection, values, import; (2) supplied boundaries, level inference, Locate region, content controls; (3) street basemap, clustering, export.",
+    "problem": "Maps need too much setup and have suspected selection faults: no ready boundaries beyond land, no level inference, no street context, and no handling for crowded points.",
+    "recommended_shape": "Keep D3/SVG for world extents and hand off to MapLibre GL with OpenFreeMap vector styles for regional and local views; deliver boundaries in a lazily loaded companion package; add a stored Locate region calculation; cluster crowded points.",
     "success_moves": [
       {
-        "move": "Add a dependency-light street candidate: raster tiles beneath the existing SVG with a Web Mercator projection (d3-tile, BSD-3, no dependencies).",
-        "risk_reduced": "Avoids a second interaction, accessibility, trace, and facet model; sidesteps React Leaflet v5's React 19 requirement.",
-        "evidence": "Research compared only Leaflet and MapLibre; npm d3-tile 1.0.0 checked 2026-10-11."
+        "move": "Use MapLibre GL directly (no React wrapper) with OpenFreeMap as the default style.",
+        "risk_reduced": "No key, no tiles to maintain, built-in clustering and canvas export; React 18 support unaffected.",
+        "evidence": "openfreemap.org: no key, no limits, commercial use allowed, vector tiles, MapLibre auto-attribution; ToS: may discontinue without notice."
       },
       {
-        "move": "Run the street spike early against owned local tile fixtures, in parallel with release 1.",
-        "risk_reduced": "The renderer decision changes the most downstream work; local fixtures remove provider terms and network from the loop.",
-        "evidence": "Proof plan P06 recommends owned local raster fixtures."
+        "move": "Key all selection by source row ID across D3 and MapLibre, including cluster leaves.",
+        "risk_reduced": "Prevents renderer feature IDs from changing what a selection means.",
+        "evidence": "Research P06; existing planners already own row identity."
       },
       {
-        "move": "Reproduce the empty-space clear and draft-Escape faults as failing tests before other map work.",
-        "risk_reduced": "Confirms or retires the suspected baseline defects before features build on them.",
-        "evidence": "PointMap.tsx:211-213 calls updateChart on Escape without the onSettingsChange guard RegionMap.tsx:170 uses."
+        "move": "Always keep the D3 outline map as the fallback when tiles fail or a host disables streets.",
+        "risk_reduced": "OpenFreeMap has no SLA; no blank maps.",
+        "evidence": "OpenFreeMap ToS."
       },
       {
-        "move": "Ship no default tile provider; hosts opt in with a preset that includes attribution. Missing preset or tile failure falls back to the plain background.",
-        "risk_reduced": "Separates provider terms, credentials, and export rights from product behavior; gives a clean disable path.",
-        "evidence": "OSMF tile policy and research P07."
+        "move": "Ship boundaries as a companion package of per-level, per-country files; save references by version and hash, not copies.",
+        "risk_reduced": "Zero user fetching, small initial bundle, saved analyses within browser storage limits.",
+        "evidence": "Consider-contrast in chat: bundled-in-core, companion package, build CLI, runtime CDN; companion package won."
       },
       {
-        "move": "Copy the chosen country geometry into the analysis as a shared geometry asset, prepared by a repeatable script and lazy-loaded.",
-        "risk_reduced": "Reuses the existing save path; offline reopen works; catalog updates never change saved maps.",
-        "evidence": "SavedDataStructure geometryAssets; World Bank demo uses alpha-3 codes which World Atlas numeric IDs do not match."
+        "move": "Run Locate region in a worker and store results as columns.",
+        "risk_reduced": "Keeps rendering fast; makes the expensive spatial lookup visible and reusable.",
+        "evidence": "Product answer 10; SavedDataStructure already has calculations."
+      },
+      {
+        "move": "Reproduce the empty-space clear and draft-Escape faults as failing tests first.",
+        "risk_reduced": "Confirms baseline correctness before new engines build on it.",
+        "evidence": "PointMap.tsx:211-213 vs RegionMap.tsx:170."
       }
     ],
     "first_proof": {
-      "question": "Can street context sit beneath the existing SVG maps without a second rendering engine?",
-      "artifact": "Spike on the service-district demo: owned local raster tile fixtures drawn beneath the existing SVG with a Web Mercator projection, checked at 1280, 783, and 390 px and in four facets. Observe point-to-street alignment, pan and zoom feel, unchanged click/Escape/Alt-click/keyboard/save-restore, and added bundle bytes.",
-      "decision_rule": "Pass: candidate A is the street path and Leaflet/MapLibre drop out. Fail: run the same fixtures through Leaflet core before considering MapLibre."
+      "question": "Can a D3 world view hand off to a MapLibre street view without losing place, filters, exact row selection, keyboard use, or export?",
+      "artifact": "Spike on the earthquakes demo: lazily loaded MapLibre with an OpenFreeMap style beneath the chart frame, handoff at a zoom threshold, clustered points, PNG export. Record handoff behavior, cluster selection IDs, keyboard selection, PNG contents and credits, and lazy bundle cost.",
+      "decision_rule": "Smooth handoff and exact IDs: build release 3 this way. Jarring handoff: use MapLibre at every extent and drop equal-area world views."
     },
     "rabbit_holes": [
-      "Saved view zoom multiplies a fitted world projection; tile zoom is a different quantity. Web Mercator view must be tagged, not reinterpreted.",
-      "Country set source: World Atlas (archived, Natural Earth 4.1, numeric IDs) versus Natural Earth 5.1.1 (alpha-3, larger). Audit against World Bank demo codes.",
-      "Import retention when a draft closes unsaved.",
-      "Provider terms, attribution at narrow widths, and image export rights.",
-      "Pan smoothness of re-rendered SVG over tiles at street zoom."
+      "Handoff between two renderers: camera mapping, transition feel, and dual focus models.",
+      "Accessible keyboard path over WebGL marks and clusters.",
+      "Worldwide admin-1 identifier quality and file size per country.",
+      "Level inference false positives (e.g. numeric codes that look like FIPS).",
+      "OpenFreeMap discontinuation or CORS changes; export canvas tainting.",
+      "Saved references to supplied boundaries when the package version changes."
     ],
     "open_decisions": [
-      "Keep imported boundaries in the shared library when a draft closes unsaved (recommended) or discard them.",
-      "Demo street context: live OpenStreetMap tiles under light interactive use, or local fixtures only until a provider is chosen."
+      "Locate region: store result columns in saved data, or store the calculation and recompute with a cache.",
+      "Boundary package: required dependency (zero setup) or optional (smaller installs)."
     ]
   },
   "implementation": {
@@ -494,6 +643,12 @@
       "action": "Shaped the initiative.",
       "reason": "Byron asked to shape the intent on PR #321.",
       "evidence": "shape-brief.md; added a raster-beneath-SVG street candidate; first proof is a local tile-fixture spike. Implementation has not started."
+    },
+    {
+      "date": "2026-10-11",
+      "action": "Revised intent and reshaped from ten product answers.",
+      "reason": "Byron answered product questions and rejected self-maintained tiles and holding back Leaflet for React 18.",
+      "evidence": "references/product-answers.md; claims map-17 to map-24; shape now MapLibre + OpenFreeMap, companion boundary package, Locate region, clustering."
     }
   ],
   "closure": null

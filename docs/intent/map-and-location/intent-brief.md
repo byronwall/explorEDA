@@ -12,25 +12,29 @@ last_updated: 2026-10-11
 
 People should turn location data into useful dashboards without becoming GIS specialists. Point and region maps need clearer behavior, useful geography, and control over visible content. A world outline can explain a global pattern. A local service dashboard can need roads, street names, and neighborhood context.
 
-The research supports improving the existing analytical maps, then testing optional street context. GeoJSON import already exists. The main task is to make importing, joining, configuring, and saving geography dependable. Leaflet remains a candidate. The desired outcome is useful local context; the renderer is still an open choice.
+Maps should feel close to magic. The map picks a sensible level from the data, boundaries are already there, and streets appear without setup. Nobody should see a blank map until someone contacts support. GeoJSON import already exists; the work is making geography dependable and mostly automatic.
 
-This brief incorporates the completed Pro research. Its recommendations remain proposals for Byron's review. The initiative is planned; implementation has not started.
+This brief incorporates the Pro research and Byron's answers to ten product questions on October 11, 2026. The initiative is planned; implementation has not started.
 
 ## What matters most
 
 - Make both map modes useful for comparisons, local sites, and custom territories.
 - Give users control over data marks, reference boundaries, labels, and map context.
 - Support custom GeoJSON and more ready-made geography with clear coverage and identifiers.
-- Add street and place context where users need it.
+- Add street and place context that works out of the box, for both city-level site finding and regional orientation.
 - Preserve exact selections, source traces, and understandable values within a small maintenance budget.
 
 ## The experience or behavior you appear to want
 
-A user starts with coordinates or region identifiers. They choose supplied geography or import their own boundaries. Before trusting the map, they can inspect excluded coordinates, unmatched keys, and grouped geometry. Labels can use readable names while joins use stable identifiers.
+A user starts with coordinates or region identifiers. The map infers the useful level: worldwide coordinates show countries, a single country shows its states, and zooming in shows finer detail. The user can override the level or import their own boundaries. Before trusting the map, they can inspect excluded coordinates, unmatched keys, and grouped geometry. Labels can use readable names while joins use stable identifiers.
 
 Users control analytical marks, reference boundaries, basemap context, and data labels separately. Street labels are a separate concern from record names. A small set of controls should cover common tasks. One nonselectable boundary overlay beneath points is a useful first proposal. Multiple analytical layers remain an option to assess when a dashboard needs them.
 
 Changing context, visibility, or camera must preserve data meaning, selections, and source traces. Hidden selected records must remain discoverable. Changing the analytical mode or join can change the analysis and needs explicit behavior. Users must select, inspect, clear, and navigate with practical keyboard and touch controls.
+
+Coordinates can gain region columns through a stored calculation that finds the country, state, or US county containing each point. It is derived, not live, because it can be expensive.
+
+When a point map has more records than draw well (roughly a couple of thousand), nearby points group into counted clusters that split as the user zooms. Clicking a cluster selects its records.
 
 Regional values must distinguish zero, no rows, invalid measures, and unmatched records. Averages use valid measure inputs. Color scales should stay stable through filters and facets. Prepared rates need clear units, periods, and denominators. The map must not invent normalization from polygon area.
 
@@ -40,25 +44,25 @@ Keep the current Polygon and MultiPolygon FeatureCollection path as the first su
 
 Strengthen the existing join preview with mismatch samples, types, and duplicate-key details. Define what happens to reusable assets when assignment fails or a draft closes. An unused shared asset is not necessarily an error.
 
-Start with one audited country pack, then add useful national or regional packs. This is a proposed sequence, not a permanent catalog limit. Compare existing World Atlas countries with a fresh Natural Earth source before choosing. Audit identifiers against real dashboard data. Retain source, version, geographic date, coverage, terms, and preparation details. Saved boundaries must not silently change with catalog updates.
+Ship world countries, states or provinces worldwide, and US counties. Users should not fetch or download boundaries by hand. Boundaries arrive with the library or a build step and load when the data needs them. Byron accepts maintaining or linking boundary files. Audit identifiers against real dashboard data. Retain source, version, geographic date, coverage, terms, and preparation details. Saved boundaries must not silently change with catalog updates.
 
 ## Detailed local context
 
-Keep D3/SVG as the default while comparing Leaflet with raster tiles and MapLibre with vector styles. Use the same small dashboard tasks and local fixtures. Choose at most one additional engine if it preserves analytical behavior and earns its maintenance cost.
+Street maps work with no key and no setup, through a free public tile service. Neither Byron nor host applications should maintain tiles. A host can substitute its own provider. Supporting React 18 must not block the right street engine; moving to React 19 is acceptable if needed.
 
-Raster street labels are part of the tile image. Vector label controls depend on the chosen style and data. The author should see only controls that work. The host supplies approved context presets and provider configuration. Provider rights, attribution, request behavior, and image export need separate checks.
+The projection follows the extent. World-scale views keep an equal-area projection; regional and local views use the web-map projection with streets. Provider rights, attribution, and request behavior need checks.
 
-Preserve saved geographic views without treating the existing zoom number as tile zoom. Keep credentials out of saved analyses. Confirm uploaded geometry and analytical rows stay local. Distinguish portable saved analysis from text DSL and image output. Detailed export remains unproven.
+PNG export must include streets. A saved view restores for another viewer once analyses save to the coming server; no URL view parameters. Offline street maps are not required. Do not treat the existing zoom number as tile zoom. Keep analytical rows and uploaded geometry local.
 
 ## Boundaries
 
 Keep the existing React and TypeScript library, host contract, linked filters, facets, and shared geometry. Use small proofs before setting workload limits or adding rendering infrastructure.
 
-Defer clustering, heatmaps, advanced classification, and offline street archives until a concrete task justifies them. Routing, geocoding infrastructure, spatial joins, geometry editing, arbitrary coordinate systems, and a full GIS workbench remain outside scope. This work authorizes research and a documentation PR, not implementation, deployment, or paid services.
+Defer heatmaps, advanced classification, and offline street archives. Routing, address geocoding, general spatial joins beyond point-to-region lookup, geometry editing, arbitrary coordinate systems, and a full GIS workbench remain outside scope. This work authorizes research and a documentation PR, not implementation, deployment, or paid services.
 
 ## What seems settled
 
-Both map modes, custom geography, supplied geography, and local context remain core goals. The research favors bounded controls and staged delivery. It does not select a renderer, provider, catalog membership, or final control layout.
+Both map modes, custom geography, supplied geography, and street context remain core goals. Byron chose a free no-key street default, automatic projection by extent, clustering on zoom, PNG export with streets, and a stored point-to-region calculation. The research favors bounded controls and staged delivery.
 
 The [research review](references/research-reconciliation.md) records all 20 recommendation dispositions and links the complete evidence. Source inspection found possible background-clear and draft-Escape faults. Browser reproduction remains pending. Five existing map tests passed locally; they do not establish the eight proposed proofs.
 

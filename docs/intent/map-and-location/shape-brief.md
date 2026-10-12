@@ -8,82 +8,69 @@ last_updated: 2026-10-11
 
 # Useful, configurable maps — what we are adding
 
-**Outcome:** People can trust what a map selects and shades, use world countries or their own boundaries without preparing files, choose what the map shows, and add street context when a local dashboard needs it.
+**Outcome:** Location data becomes a useful map with almost no setup. The map picks the right geography, boundaries are already there, and streets appear when the view is local.
 
-**Primary flow:** Pick coordinates or a region field → choose countries or import boundaries → check the join → choose what shows → select, filter, and save.
+**Primary flow:** Add a map → explorEDA infers points or regions and the level → zoom from world to street → select, filter, export, and save.
 
 ## Feature scope
 
 ```text
 Maps for location data
 ├── PLANNED ADDITIONS
-│   ├── Trustworthy selection (point and region)
-│   │   ├── Plain click on empty map space clears only this map's filters
-│   │   ├── Escape in a draft preview never changes the saved chart
-│   │   └── Overlapping points stay separately inspectable
-│   ├── Honest region values
-│   │   ├── Zero, no rows, no valid measure, and unmatched look different in fill, legend, and trace
-│   │   └── Join preview: typed mismatch samples, duplicate keys, unmatched rows and regions
-│   ├── Boundary import (existing Polygon/MultiPolygon subset)
-│   │   ├── Errors name the feature, ring, and coordinate
-│   │   ├── Feature and vertex counts shown before use
-│   │   └── A failed assignment leaves nothing half-added
-│   ├── World countries, ready to use
-│   │   ├── One audited country set, beside imported boundaries in the same picker
-│   │   ├── Joins on ISO alpha-3 or numeric code; country names for display only
-│   │   └── Source, version, and terms visible; a saved copy never changes on catalog update
-│   └── Content controls (one compact popover)
-│       ├── Data marks: show, opacity, data labels from a field
-│       ├── Reference boundaries beneath points: any shared asset, nonselectable, off by default
-│       └── Background: land, graticule, none, or a street preset when the host supplies one
-├── EVALUATE BEFORE COMMITTING
-│   └── Street context background
-│       ├── A: raster tiles drawn beneath the existing SVG in Web Mercator
-│       ├── B: Leaflet raster with the analytical SVG as an overlay
-│       └── C: MapLibre vector, only if independent street-label control proves necessary
+│   ├── Trustworthy selection and values
+│   │   ├── Empty-space click clears only this map; draft Escape never changes the saved chart
+│   │   └── Zero, no rows, no valid measure, and unmatched stay distinct in fill, legend, and trace
+│   ├── Boundaries that are already there
+│   │   ├── Countries, states/provinces worldwide, US counties
+│   │   ├── Loaded per level and country when needed; prefetched as soon as data suggests them
+│   │   ├── Level inferred from data (codes, names, coordinate extent), with override
+│   │   └── Import keeps working: located errors, size shown, nothing half-added
+│   ├── Locate region (stored calculation)
+│   │   └── Adds country, state, and US county columns from latitude/longitude; reusable in any chart
+│   ├── One map from world to street
+│   │   ├── World extents: equal-area outline map, as today
+│   │   ├── Regional and local extents: street basemap, no key, light and dark
+│   │   ├── Region level gets finer on zoom when a matching column exists
+│   │   └── Crowded points group into counted clusters that split on zoom
+│   ├── Content controls (one compact popover)
+│   │   └── Data marks, data labels, reference boundaries beneath points, basemap style or off
+│   └── PNG export including streets and the required credits
 └── LATER POSSIBILITIES
-    ├── More national or regional packs, chosen from real dashboards
-    ├── Clusters, heatmaps, classed scales
-    └── Several analytical layers; detailed-map image export
+    ├── County-level boundaries outside the US
+    ├── Heatmaps, classed scales, several analytical layers
+    └── Offline street maps
 ```
 
 ## Behavior
 
-| Situation                                          | Expected result                                                                                |
-| -------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| Click empty map space                              | This map's filters clear. Alt-click, a pan, and other charts' filters are unaffected.          |
-| Hide data marks while records are selected         | The filter stays and stays visible in the chart header.                                        |
-| Change background, reference boundaries, or labels | Filters, joins, and saved view meaning do not change.                                          |
-| Change mode or join field                          | The map's filters clear, as today, and the panel says so.                                      |
-| Street tiles fail or no preset exists              | Data draws on the plain background with a short notice; selection and keyboard use still work. |
-| Saved analysis with countries opened offline       | The saved geometry copy renders; nothing is fetched.                                           |
-| Invalid boundary file                              | Nothing is added; the first problems are listed with locations.                                |
-
-## Examples
-
-The World Bank demo currently colors points by region because no country boundaries ship. With the country set it becomes a choropleth (illustrative DSL; syntax unsettled):
-
-```text
-chart map @wb-map mode=region geometry=countries featureKey=iso_a3 regionField=country.code aggregation=sum measureField=without_power
-```
-
-The service-district demo gains a street background under the same districts and sites, with district outlines as a reference layer beneath points.
+| Situation                                            | Expected result                                                                             |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Coordinates span several countries                   | Points on the world map; a country region option is offered when region columns exist.      |
+| Data has US state codes only                         | US states region map, without asking.                                                       |
+| Zoom past the world extent                           | The map switches to the street basemap at the same place. Filters and selection carry over. |
+| Click a cluster                                      | Its records are selected. Alt-click traces them.                                            |
+| Street tiles fail or the service is gone             | Data draws on the outline map with a short notice. Selection and keyboard still work.       |
+| Host sets its own tile provider or turns streets off | That choice wins for every map.                                                             |
+| Shared analysis reopened by another viewer           | Same place and zoom, restored from saved settings; no URL view parameters.                  |
+| Locate region on 50k rows                            | Runs in the background with progress; results are stored, not recomputed on each render.    |
 
 ## Decisions and boundaries
 
-**Appetite:** Three releases, each shippable alone: (1) selection, values, and import; (2) countries and content controls; (3) street context. No new runtime dependency before release 3, and at most one in it.
+**Appetite:** Three releases, each shippable: (1) trustworthy selection, values, and import; (2) supplied boundaries, level inference, Locate region, and content controls; (3) street basemap, clustering, and export.
 
-**Key decision:** Harden the existing D3/SVG maps first, then add streets. Street context carries every external risk — provider terms, attribution, camera meaning, export rights, and React 18 support — and the first two releases do not need it.
+**Key decision:** Use MapLibre GL for street views, not Leaflet. The free no-key service that fits your answers, OpenFreeMap, serves vector tiles built for MapLibre. Leaflet would need a plugin that wraps MapLibre anyway, or a raster provider whose policy limits heavy use. MapLibre also supplies clustering and image export. It is framework-agnostic, so React 18 support is unaffected. If Leaflet comes back, use its core directly; React 19 is needed only for React Leaflet.
 
-**Key decision:** Add candidate A, which the research did not consider. Drawing raster tiles beneath the current SVG keeps one selection, keyboard, trace, and facet model and adds a tiny dependency. React Leaflet v5 requires React 19, so B would use Leaflet directly. Choose B or C only if A fails the same tasks.
+**Key decision:** Keep the current D3 map for world extents and hand off to MapLibre when zoomed in. This keeps honest world areas and today's accessible SVG interaction where comparisons happen. Selections stay keyed by source row ID across both, never by renderer feature IDs.
 
-**Boundary:** No geocoding, routing, spatial joins, geometry repair or reprojection, offline street archives, or general layer editor. The library ships no default tile provider; hosts opt in with a preset and attribution. Removing the preset turns street context off without breaking saved charts.
+**Key decision:** Deliver boundaries in a companion package of prepared files, per level and per country. `exploreda` depends on it, so hosts get it automatically. Bundlers serve the files from the host's own origin, and a host may point to a CDN instead. Saved analyses reference supplied boundaries by package version and content hash, avoiding copies of large geometry in browser storage. Imported boundaries are still copied, as today.
 
-**First proof:** **Try:** On the service-district demo, draw owned local tile fixtures beneath the existing SVG with a Web Mercator projection at 1280, 783, and 390 px and in four facets. **Observe:** points align with streets from city to street zoom; pan and zoom feel acceptable; click, Escape, Alt-click, keyboard, and save/restore behave as before; added bundle size. **Decide:** If alignment holds and pan is acceptable, A becomes the street path and B and C drop out. If not, run the same fixtures through Leaflet before considering MapLibre.
+**Boundary:** OpenFreeMap carries no service guarantee and may stop without notice, so the outline fallback must always work, and hosts can switch providers. No address geocoding, routing, general spatial joins beyond Locate region, geometry repair, or tiles we host.
+
+**First proof:** **Try:** On the earthquakes demo, mount MapLibre with an OpenFreeMap style beneath the existing chart frame. Hand off from the D3 world view at a zoom threshold, cluster the points, and export a PNG. **Observe:** whether the handoff keeps place, filters, and selection; whether cluster clicks select exact row IDs; whether keyboard selection still works; whether the PNG includes tiles and credits; how much bundle size MapLibre adds when loaded lazily. **Decide:** If the handoff is smooth and the IDs are exact, build release 3 this way. If the handoff is jarring, use MapLibre at every extent and drop equal-area world views.
 
 **Open choices:**
 
-1. Should imported boundaries stay in the shared library when a draft closes unsaved? I recommend keeping them; the library already allows unused assets.
-2. Should the demo show live OpenStreetMap tiles under light interactive use, or only local fixtures until a provider is chosen?
+1. Should Locate region store its result columns in the saved data, or store the calculation and recompute it on load with a cache?
+2. Should the boundary package be a required dependency (zero setup) or optional (smaller installs, but countries are missing until installed)?
 
 See the [intent brief](intent-brief.md) and the [research reconciliation](references/research-reconciliation.md).

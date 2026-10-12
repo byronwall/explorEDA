@@ -2,6 +2,7 @@
 
 Start with the [intent brief](intent-brief.md), then the [shape brief](shape-brief.md): the proposed releases, first proof, and two open choices. Implementation has not started.
 
+- [Product answers](references/product-answers.md): Byron's ten answers that set the current shape.
 - [Research reconciliation](references/research-reconciliation.md): all 20 decisions, scope limits, and unrun proofs.
 - [Original Pro report](resources/pro-map-location-research/report.md): broad product, geography, and renderer research.
 - [Complete research package index](resources/pro-map-location-research/README.md): ten unchanged companion files and the retained ZIP.
