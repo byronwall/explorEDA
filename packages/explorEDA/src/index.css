@@ -2960,6 +2960,17 @@ html {
     overflow: visible;
     pointer-events: auto;
   }
+  /* An image export reads the header at rest, so a hover or an open menu
+     never narrows the title in the picture. */
+  .eda-panel[data-exporting]:not(.eda-panel-expanded)
+    .eda-panel-header
+    .eda-panel-actions {
+    max-width: 0;
+    overflow: hidden;
+  }
+}
+.eda-panel[data-exporting] .eda-panel-readout {
+  display: none;
 }
 
 .eda-table-toolbar-compact {

@@ -64,6 +64,8 @@ import {
   PopoverTrigger,
 } from "./ui/popover";
 import { useAlertStore } from "@/stores/alertStore";
+import { ChartImageMenu } from "./charts/export/ChartImageMenu";
+import { useChartImageExport } from "./charts/export/useChartImageExport";
 import {
   SettingsPopoverContext,
   useChartDetailsStore,
@@ -575,6 +577,8 @@ export function PlotChartPanel({
     settings.type === "data-table" ? settings.globalSearch : "";
   const hasFilter = settings.filters.some(isActiveFilter);
 
+  const imageExport = useChartImageExport(panelRef, settings.type, chartTitle);
+
   const handleDelete = async () => {
     const confirmed = await showAlert(
       "Delete chart?",
@@ -594,7 +598,7 @@ export function PlotChartPanel({
         event.altKey ||
         event.ctrlKey ||
         event.metaKey ||
-        event.shiftKey ||
+        (event.shiftKey && event.key.toLowerCase() !== "e") ||
         document.querySelector("[role='menu']") ||
         Array.from(document.querySelectorAll("[role='dialog']")).some(
           (dialog) => !dialog.contains(panelRef.current)
@@ -621,12 +625,16 @@ export function PlotChartPanel({
         return;
 
       const key = event.key.toLowerCase();
-      if (!["s", "d", "x", "v", "c"].includes(key)) return;
+      if (!["s", "d", "x", "v", "c", "e"].includes(key)) return;
       if (key === "v" && !canViewData) return;
       // Duplicating would move focus to the copy behind the details view.
       if (key === "d" && expanded) return;
       event.preventDefault();
-      if (key === "s") {
+      if (key === "e") {
+        // Shift+E downloads; E copies, which needs this key press as its gesture.
+        if (event.shiftKey) imageExport.download();
+        else imageExport.copy();
+      } else if (key === "s") {
         if (expanded) setDetailsTab("settings");
         else settingsRef.current?.click();
       } else if (key === "d") onDuplicate();
@@ -683,6 +691,7 @@ export function PlotChartPanel({
           <GripVertical
             className="eda-drag absolute top-1/2 left-0 h-3 w-2.5 -translate-y-1/2 text-muted-foreground"
             aria-hidden="true"
+            data-export="omit"
           />
           {titleEditing.editor ? (
             <h3
@@ -717,6 +726,7 @@ export function PlotChartPanel({
             <ActionTooltip content="Title clipped: widen or heighten the chart, or shorten the title">
               <span
                 className="eda-clip-marker"
+                data-export="omit"
                 role="img"
                 tabIndex={0}
                 aria-label="Title clipped"
@@ -730,7 +740,7 @@ export function PlotChartPanel({
           <p className="eda-panel-subtitle drag-handle">{subtitle}</p>
         )}
         {/* Values under the pointer, beside the title and off the plot. */}
-        <div className="eda-panel-status">
+        <div className="eda-panel-status" data-export="omit">
           <div
             ref={setReadoutTarget}
             className="eda-panel-readout"
@@ -774,7 +784,10 @@ export function PlotChartPanel({
             </ActionTooltip>
           )}
         </div>
-        <div className="eda-panel-actions flex shrink-0 items-center gap-0">
+        <div
+          className="eda-panel-actions flex shrink-0 items-center gap-0"
+          data-export="omit"
+        >
           {isTableLike && <div ref={setToolbarTarget} />}
           {isTraceable(settings.type) &&
             (settings.type !== "line" || settings.time) && (
@@ -802,6 +815,7 @@ export function PlotChartPanel({
               </PopoverContent>
             </Popover>
           )}
+          <ChartImageMenu chartTitle={chartTitle} {...imageExport} />
           {!expanded && (
             <Button
               variant="ghost"
