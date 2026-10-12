@@ -20,6 +20,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+    timeout-minutes: 40
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -46,11 +47,12 @@ jobs:
 
       # The docs browser check runs every live example's steps and writes the
       # screenshots narrow screens show into dist. Any failure stops the
-      # deploy. Set DOCS_VERIFY=warn here to report without failing.
+      # deploy. Add `continue-on-error: true` here to report without failing.
       - name: Install Chromium for the docs check
         run: pnpm --filter demo exec playwright install --with-deps chromium
 
       - name: Check docs in a browser
+        timeout-minutes: 15
         run: pnpm --filter demo docs:verify
 
       - name: Setup Pages
