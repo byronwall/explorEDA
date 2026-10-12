@@ -8,7 +8,7 @@
     "last_updated": "2026-10-12",
     "summary": "Replace dashboard text with a schema-driven outline language: defaults-aware export, one vocabulary, nested named composition nodes, annotations as children, define-once charts placed in views, and a layout block. Agent-written, human-reviewed; no backward compatibility.",
     "status": "active",
-    "next_action": "Finish M5: cold-agent rerun 3, pnpm check, PR"
+    "next_action": "Byron reviews and merges the stack: #334 → #336 → #343 → #352 → #357 → #360. Open product follow-ups: notes aimed at one series in a frame; point show= for both ends."
   },
   "artifacts": {
     "intent_brief": {
@@ -405,7 +405,10 @@
         "proof": "6/6 cold drafts pass exploreda-dsl check.",
         "valid_intermediate_state": "Complete language that round-trips every example; set covers settings without grammar yet.",
         "rollback": "Revert the milestone PR; no users or saved text depend on the old syntax.",
-        "status": "active"
+        "status": "completed",
+        "evidence": [
+          "byronwall/explorEDA#360; views/composition/values tests; cold-agent runs 2-4 in raw/proof/results.md"
+        ]
       }
     ],
     "cut_line": [
