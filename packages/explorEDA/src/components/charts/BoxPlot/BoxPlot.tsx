@@ -12,6 +12,7 @@ import {
   categoryLabel,
   categoryValue,
 } from "@/lib/categories";
+import { formatFieldValue as formatValue } from "@/lib/fieldSettings";
 import {
   boundedDomain,
   countNonpositive,
@@ -19,6 +20,7 @@ import {
   logDomain,
   withNonpositive,
 } from "../Axis/axisBounds";
+import { planChartMargin } from "../Axis/axisPlan";
 import { numericScale } from "../Axis/numericScale";
 import { useColorScales } from "@/hooks/useColorScales";
 import { useDataLayer } from "@/providers/DataLayerProvider";
@@ -28,6 +30,7 @@ import { ScaleLinear, scaleBand } from "d3-scale";
 import natsort from "natsort";
 import { useCallback, useId, useMemo, useState } from "react";
 import { BaseChart } from "../BaseChart";
+import { useAxisTypography } from "../chartTypography";
 import { ChartReadout } from "../ChartReadout";
 import {
   ChartStatusLine,
@@ -104,10 +107,57 @@ export function BoxPlot({
     getFieldLabel
   );
 
-  // Chart dimensions
+  const typography = useAxisTypography();
+  // Value ticks read compactly, such as $15K, as on the bar chart.
+  const formatAxis = (value: string | number) =>
+    formatValue(
+      settings.field,
+      value,
+      // Zero reads as $0 beside $20K, not $0.00.
+      value === 0
+        ? { ...fieldSettings[settings.field], precision: 0 }
+        : fieldSettings[settings.field],
+      { compact: true }
+    );
+
+  // The domain spans all rows, so linked filters keep the axis still.
+  const yDomain = useMemo(() => {
+    const values = finiteNumbers(allData);
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+    const padding = (max - min) * Y_SCALE_PADDING;
+    return settings.yAxis.scaleType === "log"
+      ? logDomain(values, settings.yAxis)
+      : boundedDomain(
+          [
+            settings.yAxis.scaleType === "symlog" ? min : min - padding,
+            max + padding,
+          ],
+          settings.yAxis
+        );
+  }, [allData, settings.yAxis]);
+
+  // The left margin fits the tick labels the axis will draw.
+  const yTickLabels = numericScale(settings.yAxis, true)
+    .domain(yDomain)
+    .ticks(Math.max(2, settings.yGridLines ?? 5))
+    .map(formatAxis);
+  const { margin: plannedMargin } = planChartMargin({
+    margin: {
+      ...settings.margin,
+      left: Math.max(settings.margin.left, yAxisLabel ? 64 : 42),
+    },
+    width,
+    yDomain,
+    hasXLabel: Boolean(xAxisLabel),
+    hasYLabel: Boolean(yAxisLabel),
+    yTickFontSize: settings.yAxis.tickFontSize,
+    yLabels: yTickLabels,
+    typography,
+  });
   const margin = {
     ...settings.margin,
-    left: Math.max(settings.margin.left, yAxisLabel ? 64 : 42),
+    left: plannedMargin.left,
     bottom:
       Math.max(settings.margin.bottom, xAxisLabel ? 44 : 28) +
       STATUS_LINE_HEIGHT,
@@ -250,29 +300,13 @@ export function BoxPlot({
   }, []);
 
   // Create y scale with synchronized limits if in a facet
-  const yScale = useMemo(() => {
-    const values = finiteNumbers(allData);
-    const min = Math.min(...values);
-    const max = Math.max(...values);
-    const range = max - min;
-    const padding = range * Y_SCALE_PADDING;
-
-    const scale = numericScale(settings.yAxis, true)
-      .domain(
-        settings.yAxis.scaleType === "log"
-          ? logDomain(values, settings.yAxis)
-          : boundedDomain(
-              [
-                settings.yAxis.scaleType === "symlog" ? min : min - padding,
-                max + padding,
-              ],
-              settings.yAxis
-            )
-      )
-      .range([innerHeight, 0]);
-
-    return scale;
-  }, [allData, innerHeight, settings.yAxis]) as ScaleLinear<number, number>;
+  const yScale = useMemo(
+    () =>
+      numericScale(settings.yAxis, true)
+        .domain(yDomain)
+        .range([innerHeight, 0]),
+    [yDomain, innerHeight, settings.yAxis]
+  ) as ScaleLinear<number, number>;
   // A log axis has no place for zero or below. Statistics still use every
   // value; any part at or below zero is drawn at the floor and counted.
   const yLog = "base" in yScale;
@@ -500,6 +534,7 @@ export function BoxPlot({
         }}
         brushingMode="none"
         settings={{ ...settings, margin }}
+        yTickFormatter={formatAxis}
         onClearPlot={() => updateChart(settings.id, { filters: [] })}
         footer={STATUS_LINE_HEIGHT}
         overlay={
