@@ -4,11 +4,11 @@
     "title": "Useful, configurable maps for location data",
     "slug": "map-and-location",
     "scale": "capability",
-    "current_phase": "plan",
-    "last_updated": "2026-10-11",
+    "current_phase": "execution",
+    "last_updated": "2026-10-12",
     "summary": "Improve point and region maps, custom and supplied geography, render controls, and detailed local context without building a full GIS.",
-    "status": "planned",
-    "next_action": "Byron reviews the plan; then start milestone 1."
+    "status": "active",
+    "next_action": "Byron reviews and merges the stacked PRs in order, then approve retirement of this initiative."
   },
   "artifacts": {
     "intent_brief": {
@@ -702,8 +702,10 @@
         "proof": "Failing-then-passing vitest in pointMap/regionMap tests; planner fixture; screenshots at 3 widths.",
         "valid_intermediate_state": "Existing maps with corrected behavior.",
         "rollback": "Revert the PR; no saved-data change.",
-        "status": "planned",
-        "evidence": []
+        "status": "completed",
+        "evidence": [
+          "PR https://github.com/byronwall/explorEDA/pull/335; pointMap and regionMap tests"
+        ]
       },
       {
         "id": "m2",
@@ -716,8 +718,10 @@
         "proof": "Camera round-trip unit tests; demo browser check; Playwright request blocking shows outline fallback; lazy chunk size measured.",
         "valid_intermediate_state": "Hosts without a registered engine see no change.",
         "rollback": "Remove the registration; tagged camera keeps legacy views valid.",
-        "status": "planned",
-        "evidence": []
+        "status": "completed",
+        "evidence": [
+          "PR https://github.com/byronwall/explorEDA/pull/337; streetMap.test.tsx; Japan screenshots"
+        ]
       },
       {
         "id": "m3",
@@ -727,8 +731,10 @@
         "proof": "Malformed fixture tests; throwing callback leaves assets unchanged.",
         "valid_intermediate_state": "Import path improved; nothing else changes.",
         "rollback": "Revert the PR.",
-        "status": "planned",
-        "evidence": []
+        "status": "completed",
+        "evidence": [
+          "PR https://github.com/byronwall/explorEDA/pull/339; geometryAssets.test.ts, regionMapSettings.test.tsx"
+        ]
       },
       {
         "id": "m4",
@@ -740,8 +746,10 @@
         "proof": "Choropleth demos; validateSavedData tests; missing-pack state; install and chunk size measured.",
         "valid_intermediate_state": "Imported assets keep working; references are additive.",
         "rollback": "Remove built-in sets; saved references show missing-pack state.",
-        "status": "planned",
-        "evidence": []
+        "status": "completed",
+        "evidence": [
+          "PR https://github.com/byronwall/explorEDA/pull/342; boundaries.test.ts; World Bank choropleth"
+        ]
       },
       {
         "id": "m5",
@@ -753,8 +761,10 @@
         "proof": "Inference unit tests; 50k-row timing spike; demo opens on correct level.",
         "valid_intermediate_state": "Override always available; calculation optional.",
         "rollback": "Remove the function; saved expressions report an unknown function.",
-        "status": "planned",
-        "evidence": []
+        "status": "completed",
+        "evidence": [
+          "PR https://github.com/byronwall/explorEDA/pull/349; locate.test.tsx (50k in 145 ms), infer.test.ts"
+        ]
       },
       {
         "id": "m6",
@@ -764,8 +774,10 @@
         "proof": "Tests that content changes leave filters/joins; service-district demo screenshots.",
         "valid_intermediate_state": "Defaults match current maps.",
         "rollback": "Revert; new settings optional in validation.",
-        "status": "planned",
-        "evidence": []
+        "status": "completed",
+        "evidence": [
+          "PR https://github.com/byronwall/explorEDA/pull/353; mapLayers.test.tsx"
+        ]
       },
       {
         "id": "m7",
@@ -775,8 +787,10 @@
         "proof": "50k earthquake demo; cluster selection IDs; PNG at 1x and 2x.",
         "valid_intermediate_state": "Clustering only above a threshold.",
         "rollback": "Disable clustering threshold; export falls back to outline.",
-        "status": "planned",
-        "evidence": []
+        "status": "completed",
+        "evidence": [
+          "PR https://github.com/byronwall/explorEDA/pull/355; pointClusters.test.tsx; exported PNG"
+        ]
       }
     ],
     "cut_line": [
@@ -785,10 +799,7 @@
       "Heatmaps, classed scales, multiple analytical layers, offline streets",
       "Self-hosted tiles, geocoding, routing, geometry repair"
     ],
-    "open_decisions": [
-      "Keyboard path on the street view (m2); fallback pan-only street view.",
-      "Locate region main thread vs worker (m5); 200 ms threshold."
-    ]
+    "open_decisions": []
   },
   "history": [
     {
@@ -826,6 +837,12 @@
       "action": "Kept MapLibre optional and wrote the implementation plan.",
       "reason": "Byron: 1 MB of boundaries is fine; 28 MB more is too much.",
       "evidence": "implementation-plan.md with seven milestones."
+    },
+    {
+      "date": "2026-10-12",
+      "action": "Implemented all seven milestones as stacked PRs #335, #337, #339, #342, #349, #353, #355.",
+      "reason": "Byron asked for full implementation with stacked PRs and screenshots.",
+      "evidence": "Deviations from the plan: street marks stay in the SVG over MapLibre with a matched D3 Mercator projection, so the keyboard spike needed no separate path; MapLibre 5 recommended because 6 needs bundler worker setup; Locate region runs on the main thread (50k points in 145 ms); clustering uses one screen-space grouping on both renderers instead of MapLibre clustering; region() is registered on the main thread only because the analysis worker cannot load boundary chunks; supplied boundaries reuse geometryAssetId with a boundary: prefix."
     }
   ],
   "closure": null
