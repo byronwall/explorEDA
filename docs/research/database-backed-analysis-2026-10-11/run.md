@@ -1,0 +1,79 @@
+# Database-backed analysis: Pro run record
+
+## Outcome and authorization
+
+Run four Pro research tracks. Preserve source notes and raw reports, then apply Software Design Sleuth through intent and initial shaping.
+Open one verified review PR per track. Reconcile shared contracts across the four results.
+The user authorized prompt submission, bounded follow-ups, artifact collection, document edits, commits, push, and PR creation.
+No application implementation, infrastructure provisioning, merging, or deployment is authorized.
+
+## Repository and source
+
+- Repository: https://github.com/byronwall/explorEDA
+- Checkout: `/Users/byronwall/.codex/worktrees/583d/explorEDA`
+- Preparation branch: `codex/database-query-research`
+- Source commit: `f01ff0fb1f9e1240020744a18816f2dad68bf488` (local `origin/main` at preparation).
+- Initial working tree: clean, detached HEAD. Created a branch in the existing checkout.
+- Sources: [notebook interpretation](source-notes.md), three original photos and [photo hashes](photo-manifest.json).
+- Latest scope: [dedicated customer instances](customer-instance-update.md). This arrived after query research began.
+- Source manifests: [base packet](source-manifest.json), [hosting additions](hosting-source-manifest.json).
+- Uploaded packet: `tmp/database-research/source-packet.zip`, 2,239,332 bytes, SHA-256 `38ec033efa238c264a0e26f7ca6a943f20e67761d8535a14c3377d680c905c3a`.
+- Hosting packet: `tmp/database-research/hosting-source-packet.zip`, 2,250,120 bytes, SHA-256 `8de4a110f081dcb5def2f0107083529e60eb49fd00f03f446c4ff3dde9491d50`.
+- Both packets are selected snapshots, not runnable checkouts. They exclude credentials, unrelated files, build output, and dependencies.
+- The first packet contains 34 baseline files, source/photo manifests, the photos, notes, and three prompts.
+- The hosting packet adds five baseline deployment files, the customer update, its manifest, and the fourth prompt.
+
+## Runs
+
+All timestamps below use America/Indiana/Indianapolis (UTC−04:00).
+Submission times are approximate, based on the browser action sequence. Each submitted message and active response was verified.
+
+| Track | Prompt | Conversation | Submitted | State | Follow-ups |
+| --- | --- | --- | --- | --- | --- |
+| Query demands | [prompt](../../intent/database-query-contract/raw/2026-10-11-pro/prompt.md) | https://chatgpt.com/c/6acc5207-c9f8-83ea-9b50-5b5dae43afdf | Oct 11, 23:20 | Running, Pro | 0/2 |
+| Columnar transport | [prompt](../../intent/columnar-data-transport/raw/2026-10-11-pro/prompt.md) | https://chatgpt.com/c/6acc5239-824c-83ea-9a03-61e6f84b068c | Oct 11, 23:21 | Running, Pro | 0/2 |
+| Database adapters | [prompt](../../intent/database-adapters/raw/2026-10-11-pro/prompt.md) | https://chatgpt.com/c/6acc52ce-2a14-83ea-b9e0-01f54b8c3905 | Oct 11, 23:23 | Running, Pro | 0/2 |
+| Customer hosting | [prompt](../../intent/customer-instance-hosting/raw/2026-10-11-pro/prompt.md) | https://chatgpt.com/c/6acc52f9-15b8-83ea-9033-1fb171f62cc2 | Oct 11, 23:25 | Running, Pro | 0/2 |
+
+The live selector showed Pro for each run. The first two selectors also showed power 5 of 5.
+Each run receives its prompt as a separate Markdown attachment plus the source ZIP.
+Hosting uses `hosting-source-packet.zip` and `prompt(3).md`.
+ChatGPT renamed repeated uploads: transport uses `source-packet(1).zip` and `prompt(1).md`; adapters use `source-packet(2).zip` and `prompt(2).md`.
+Transport and adapters received the customer-instance update in their initial message.
+Query research started before that update. Review its result against the new scope. Send one bounded follow-up if the gap matters.
+Do not stop a running query response merely to send the update.
+
+## Collection and integration plan
+
+1. Read this record and inspect the recorded conversations. Never resubmit the initial prompts.
+2. If a run is still working, keep it and check again after a spaced delay, usually one hour.
+3. Collect all report, JSON, and ZIP outputs. Save originals under each track's `raw/2026-10-11-pro/` folder.
+4. Inspect ZIP paths before extraction. Verify integrity, hashes, readable reports, and parsed JSON. Record a collection manifest.
+5. Compare recommendations against the baseline and current source. Verify decisive provider and format claims using primary documentation.
+6. Record adopt/investigate/defer/reject dispositions. Reconcile snapshot identity, coverage, field types, filter scopes, driver/runtime limits, and customer isolation across tracks.
+7. Use `/Users/byronwall/.agents/skills/software-design-sleuth-full/` for each initiative. Produce `intent-brief.md`, `initiative-map.json`, and tree-based `shape-brief.md`.
+8. Keep initiative lifecycle `planned`. No implementation is requested. Keep uncertain mechanics provisional and first proofs falsifiable.
+9. Read the skill's shaping and implementation-success references before shaping. Run its validator for each initiative. Use `update-map.mjs` for lifecycle changes.
+10. Use no more than two follow-up submissions per track, only for material gaps or artifact recovery. Save each follow-up prompt.
+11. Build four scoped review PRs, one per track. Split preparation commits by path when organizing the branches. Shared notes may live in the first PR; later PRs can stack on it.
+12. Use the existing checkout, no new worktrees. Confirm author and committer are Byron Wall <byron@byroni.us> before each commit.
+13. Run required repository checks before PR creation. `pnpm check` builds the package; coordinate so it is not concurrent with another checkout.
+14. Use `gh` and `--body-file`. Attach every PR to this chat, then verify its body, base/head, files, and open state.
+15. Update this record with reports, validation, decisions, and PR links. Disable the heartbeat only after all four are done or user action is required.
+
+No changesets or application screenshots are needed for documentation-only changes. Notebook photos are requested raw material, not UI screenshot evidence.
+
+## Checks and persistence
+
+- All four prompts contain the canonical repository URL, baseline, scope, ranked questions, access fallback, decision gates, and exact outputs.
+- Every packet source path exists. ZIP integrity checks pass for both packets.
+- The first three packet prompts remain unchanged after submission. The customer update is preserved separately.
+- `git diff --check`: passed before checkpoint.
+- Application tests: not run during preparation. No application files changed.
+- Pro results and Sleuth shaping: pending.
+- PRs: pending results.
+- Heartbeat: `collect-database-architecture-research`, ACTIVE, hourly, attached to this chat.
+- Schedule verified from the saved automation. Created Oct 11 at 23:26:21 EDT. First hourly check is due about Oct 12 at 00:26 EDT.
+- The monitor continues collection and PR work; it does not merely remind Byron.
+- Goal: none created. The user requested a monitored workflow, not a goal record.
+- Blockers: none.
