@@ -126,7 +126,7 @@ describe("LandingPage routing", () => {
     await waitFor(() =>
       expect(
         screen.getByRole("heading", {
-          name: /Embed an interactive analysis workspace/i,
+          name: /Explore a CSV with charts that filter each other/i,
         })
       ).toBeInTheDocument()
     );
@@ -151,7 +151,7 @@ describe("LandingPage routing", () => {
       })
     ).toBeInTheDocument();
     const integration = screen.getByRole("heading", {
-      name: "Use it in your React app",
+      name: "Embed it in a React app",
     });
     const importHeading = screen.getByRole("heading", {
       name: "Import your data",
@@ -228,17 +228,18 @@ describe("LandingPage routing", () => {
 
     render(<RouterProvider router={router} />);
     const section = screen
-      .getByRole("heading", { name: "Examples" })
+      .getByRole("heading", { name: "Example analyses" })
       .closest("section") as HTMLElement;
     const list = within(section).getByRole("list");
     const items = () => within(list).getAllByRole("listitem");
 
     expect(
-      within(section).getByRole("link", { name: "Browse chart guides" })
-    ).toHaveAttribute("href", "/docs");
-    expect(
-      within(section).getByRole("link", { name: "How rendering works" })
+      screen.getByRole("link", { name: "How rendering works" })
     ).toHaveAttribute("href", "/docs/rendering");
+    expect(screen.getByRole("link", { name: "Bar chart" })).toHaveAttribute(
+      "href",
+      "/docs/bar"
+    );
     expect(items()).toHaveLength(catalogue.length);
     expect(screen.queryByText(/feature coverage/i)).toBeNull();
     const wine = items().find(
@@ -637,7 +638,7 @@ describe("LandingPage routing", () => {
 
       expect(
         screen.getByRole("heading", {
-          name: /Embed an interactive analysis workspace/i,
+          name: /Explore a CSV with charts that filter each other/i,
         })
       ).toBeInTheDocument();
       expect(screen.queryByTestId("workspace")).toBeNull();
