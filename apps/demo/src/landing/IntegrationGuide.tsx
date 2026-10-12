@@ -79,7 +79,8 @@ export function IntegrationGuide() {
     >
       <SectionHeading
         id="integration-heading"
-        heading="Use it in your React app"
+        eyebrow="Embed it"
+        heading="Three props and a ref. Your app keeps the JSON."
       >
         The order book is the published{" "}
         <code className={inlineCode}>ExplorEda</code> component. This site adds

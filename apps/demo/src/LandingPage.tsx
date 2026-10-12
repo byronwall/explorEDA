@@ -44,7 +44,9 @@ import { CsvUpload } from "./CsvUpload";
 import { ExampleSelector } from "./ExampleSelector";
 import { FeaturedExample } from "./landing/FeaturedExample";
 import { IntegrationGuide } from "./landing/IntegrationGuide";
-import { LearningLinks } from "./landing/LearningLinks";
+import { ChartGallery } from "./landing/ChartGallery";
+import { ClosingBand } from "./landing/ClosingBand";
+import { ProofStrip } from "./landing/ProofStrip";
 import { WhyWorkspace } from "./landing/WhyWorkspace";
 import { Hero } from "./landing/Hero";
 import { LandingFooter } from "./landing/LandingFooter";
@@ -562,7 +564,10 @@ export function LandingPage() {
                       canResume={canResume}
                     />
                   )}
-                  <div className="mx-auto mt-28 max-w-6xl space-y-28 px-4 pb-10 sm:px-6">
+                  <div className="mx-auto mt-16 max-w-6xl space-y-28 px-4 pb-10 sm:px-6">
+                    <ProofStrip />
+                    <WhyWorkspace />
+                    <ChartGallery />
                     {featuredAnalysis && (
                       <FeaturedExample
                         example={featuredAnalysis}
@@ -585,20 +590,19 @@ export function LandingPage() {
                         </Button>
                       </div>
                     )}
-                    <IntegrationGuide />
-                    <WhyWorkspace />
                     <section aria-labelledby="examples-heading">
                       <div className="mb-8">
                         <SectionHeading
                           id="examples-heading"
-                          heading="Examples"
+                          eyebrow="Examples"
+                          heading="Real data, finished analyses"
                         >
-                          Each is a finished analysis of a real or synthetic
-                          dataset, ready to filter, inspect, and change. Pick a
-                          capability to find the tab that shows it.
+                          Flights, air quality, earthquakes, wine, and more.
+                          Each opens as a live workspace you can filter,
+                          inspect, and change. Pick a capability to find the tab
+                          that shows it.
                         </SectionHeading>
                       </div>
-                      <LearningLinks />
                       <ExampleSelector onSelect={handleExampleSelect} />
                       <Link
                         to={EXAMPLES_PATH}
@@ -609,6 +613,7 @@ export function LandingPage() {
                       </Link>
                     </section>
                     <ReportGraphics />
+                    <IntegrationGuide />
                     <section
                       aria-labelledby="your-data-heading"
                       id="your-data"
@@ -616,7 +621,8 @@ export function LandingPage() {
                     >
                       <SectionHeading
                         id="your-data-heading"
-                        heading="Try your own data"
+                        eyebrow="Your data"
+                        heading="Try it on your own rows"
                       >
                         Import a file into this demo, or reopen an analysis you
                         exported earlier. In your app, rows arrive through{" "}
@@ -666,6 +672,7 @@ export function LandingPage() {
                             className="min-h-32 w-full rounded-md border border-input bg-background p-3 font-mono text-xs"
                           />
                           <Button
+                            variant="brand"
                             className="mt-3"
                             onClick={handleAnalysisJson}
                             disabled={!analysisJson.trim()}
@@ -685,6 +692,7 @@ export function LandingPage() {
                         </section>
                       </div>
                     </section>
+                    <ClosingBand />
                   </div>
                   <div className="mx-auto max-w-6xl px-4 sm:px-6">
                     <LandingFooter />

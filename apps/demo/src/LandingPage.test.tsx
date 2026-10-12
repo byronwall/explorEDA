@@ -151,7 +151,7 @@ describe("LandingPage routing", () => {
       })
     ).toBeInTheDocument();
     const integration = screen.getByRole("heading", {
-      name: "Use it in your React app",
+      name: "Three props and a ref. Your app keeps the JSON.",
     });
     const importHeading = screen.getByRole("heading", {
       name: "Import your data",
@@ -173,7 +173,9 @@ describe("LandingPage routing", () => {
 
     render(<RouterProvider router={router} />);
     const section = screen
-      .getByRole("heading", { name: "Report graphics" })
+      .getByRole("heading", {
+        name: "From exploration to a finished figure",
+      })
       .closest("section") as HTMLElement;
     const newest = compositionExamples[0]!;
     expect(
@@ -228,17 +230,18 @@ describe("LandingPage routing", () => {
 
     render(<RouterProvider router={router} />);
     const section = screen
-      .getByRole("heading", { name: "Examples" })
+      .getByRole("heading", { name: "Real data, finished analyses" })
       .closest("section") as HTMLElement;
     const list = within(section).getByRole("list");
     const items = () => within(list).getAllByRole("listitem");
 
     expect(
-      within(section).getByRole("link", { name: "Browse chart guides" })
-    ).toHaveAttribute("href", "/docs");
-    expect(
-      within(section).getByRole("link", { name: "How rendering works" })
+      screen.getByRole("link", { name: "How rendering works" })
     ).toHaveAttribute("href", "/docs/rendering");
+    expect(screen.getByRole("link", { name: "Bar chart" })).toHaveAttribute(
+      "href",
+      "/docs/bar"
+    );
     expect(items()).toHaveLength(catalogue.length);
     expect(screen.queryByText(/feature coverage/i)).toBeNull();
     const wine = items().find(

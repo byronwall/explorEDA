@@ -22,7 +22,11 @@ export function FeaturedExample({ example, onOpen }: FeaturedExampleProps) {
   return (
     <section aria-labelledby="featured-heading" className="scroll-mt-8">
       <div className="max-w-3xl">
-        <SectionHeading id="featured-heading" heading={example.title}>
+        <SectionHeading
+          id="featured-heading"
+          eyebrow="Featured analysis"
+          heading={example.title}
+        >
           {example.description}
         </SectionHeading>
         {example.tabs && (
@@ -52,7 +56,7 @@ export function FeaturedExample({ example, onOpen }: FeaturedExampleProps) {
           </ul>
         )}
         <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
-          <Button onClick={() => onOpen(example.id)}>
+          <Button variant="brand" onClick={() => onOpen(example.id)}>
             Open the analysis
             <ArrowRight aria-hidden="true" />
           </Button>
