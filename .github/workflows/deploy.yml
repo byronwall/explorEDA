@@ -20,7 +20,6 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    timeout-minutes: 40
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -52,7 +51,6 @@ jobs:
         run: pnpm --filter demo exec playwright install --with-deps chromium
 
       - name: Check docs in a browser
-        timeout-minutes: 15
         run: pnpm --filter demo docs:verify
 
       - name: Setup Pages

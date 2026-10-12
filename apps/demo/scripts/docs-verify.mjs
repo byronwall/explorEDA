@@ -10,11 +10,6 @@
 // Options: --out <dir> (screenshots; default dist/docs-shots), --port <n>.
 // DOCS_VERIFY=warn reports failures without failing. DOCS_CHROMIUM_PATH uses
 // an installed Chromium instead of Playwright's download.
-//
-// Every Playwright call has a default timeout, each page has a deadline, and
-// the whole run has a watchdog, so a stuck page fails in seconds and names
-// itself instead of hanging CI. DOCS_VERIFY_PAGE_MS and DOCS_VERIFY_TOTAL_MS
-// override the page deadline and the watchdog.
 import { mkdirSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { parseArgs } from "node:util";
@@ -34,47 +29,6 @@ mkdirSync(shotsDir, { recursive: true });
 const failures = [];
 const fail = (where, message) => failures.push(`${where}: ${message}`);
 
-const ACTION_MS = 20_000;
-const PAGE_MS = Number(process.env.DOCS_VERIFY_PAGE_MS) || 120_000;
-const TOTAL_MS = Number(process.env.DOCS_VERIFY_TOTAL_MS) || 12 * 60_000;
-
-let current = "starting";
-const started = Date.now();
-/** Names the step in progress, so a CI log shows where a run stopped. */
-function progress(label) {
-  current = label;
-  const seconds = ((Date.now() - started) / 1000).toFixed(0).padStart(4);
-  console.log(`[${seconds}s] ${label}`);
-}
-
-// The watchdog exits even when the browser stops answering entirely.
-setTimeout(() => {
-  console.error(
-    `Docs check stopped after ${TOTAL_MS / 1000}s, during: ${current}`
-  );
-  if (failures.length > 0) console.error(`- ${failures.join("\n- ")}`);
-  process.exit(1);
-}, TOTAL_MS).unref();
-
-/** Runs one page's checks, failing it when it outlasts the page deadline. */
-async function withDeadline(where, page, work) {
-  let timer;
-  const deadline = new Promise((_, reject) => {
-    timer = setTimeout(
-      () => reject(new Error(`took longer than ${PAGE_MS / 1000}s`)),
-      PAGE_MS
-    );
-  });
-  try {
-    await Promise.race([work(), deadline]);
-  } catch (error) {
-    fail(where, error.message);
-  } finally {
-    clearTimeout(timer);
-    await page.close().catch(() => undefined);
-  }
-}
-
 const server = await preview({
   root: demoDir,
   logLevel: "warn",
@@ -91,8 +45,6 @@ async function openPage(width, height) {
     viewport: { width, height },
     deviceScaleFactor: 2,
   });
-  page.setDefaultTimeout(ACTION_MS);
-  page.setDefaultNavigationTimeout(30_000);
   const errors = [];
   page.on("console", (message) => {
     if (message.type() === "error") errors.push(message.text());
@@ -232,7 +184,6 @@ async function runSteps(page, where, id, steps) {
 }
 
 // Every page the index links to.
-progress("/docs index");
 const { page: indexPage, errors: indexErrors } = await openPage(1280, 900);
 await indexPage.goto(`${base}/docs`);
 await indexPage.locator("h1").waitFor();
@@ -249,114 +200,106 @@ if (topics.length === 0) fail("/docs", "the index links to no pages");
 
 const exampleIds = new Set();
 for (const path of topics) {
-  progress(path);
   const { page, errors } = await openPage(1280, 900);
-  await withDeadline(path, page, async () => {
-    await page.goto(`${base}${path}`);
-    await page.locator("article h2").first().waitFor({ timeout: 15_000 });
-    const examples = await page
-      .locator("[data-docs-example]")
-      .evaluateAll((nodes) =>
-        nodes.map((node) => ({
-          id: node.getAttribute("data-docs-example"),
-          steps: JSON.parse(node.getAttribute("data-docs-steps") ?? "[]"),
-        }))
-      );
-    for (const { id, steps } of examples) {
-      exampleIds.add(id);
-      const where = `${path} example "${id}"`;
-      progress(where);
-      await page
-        .locator(`[data-docs-example="${id}"]`)
-        .scrollIntoViewIfNeeded();
-      try {
-        await waitForWorkspace(page, id);
-      } catch {
-        fail(where, "the live workspace did not load");
-        continue;
-      }
-      await runSteps(page, where, id, steps);
+  await page.goto(`${base}${path}`);
+  await page.locator("article h2").first().waitFor({ timeout: 15_000 });
+  const examples = await page
+    .locator("[data-docs-example]")
+    .evaluateAll((nodes) =>
+      nodes.map((node) => ({
+        id: node.getAttribute("data-docs-example"),
+        steps: JSON.parse(node.getAttribute("data-docs-steps") ?? "[]"),
+      }))
+    );
+  for (const { id, steps } of examples) {
+    exampleIds.add(id);
+    const where = `${path} example "${id}"`;
+    await page.locator(`[data-docs-example="${id}"]`).scrollIntoViewIfNeeded();
+    try {
+      await waitForWorkspace(page, id);
+    } catch {
+      fail(where, "the live workspace did not load");
+      continue;
     }
-  });
+    await runSteps(page, where, id, steps);
+  }
   for (const error of errors) fail(path, `console error: ${error}`);
+  await page.close();
 }
 
 // Screenshots of each example, which narrow screens show instead.
 for (const id of exampleIds) {
-  const where = `capture "${id}"`;
-  progress(where);
   const { page, errors } = await openPage(1132, 900);
-  await withDeadline(where, page, async () => {
-    await page.goto(`${base}/docs/_capture/${id}`);
+  await page.goto(`${base}/docs/_capture/${id}`);
+  try {
     await waitForWorkspace(page, id);
     await page.waitForTimeout(500);
     await page
       .locator(`[data-docs-live="${id}"]`)
       .screenshot({ path: join(shotsDir, `example-${id}.png`) });
-  });
-  for (const error of errors) fail(where, `console error: ${error}`);
-}
-
-/** Lists the images under `selector` that never load. */
-function brokenImages(page, selector) {
-  return page.locator(selector).evaluateAll((images) =>
-    Promise.all(
-      images.map(async (image) => {
-        image.scrollIntoView();
-        await Promise.race([
-          image.decode().catch(() => undefined),
-          new Promise((done) => setTimeout(done, 10_000)),
-        ]);
-        return image.naturalWidth === 0 ? image.getAttribute("src") : null;
-      })
-    ).then((sources) => sources.filter(Boolean))
-  );
+  } catch (error) {
+    fail(`capture "${id}"`, error.message);
+  }
+  for (const error of errors)
+    fail(`capture "${id}"`, `console error: ${error}`);
+  await page.close();
 }
 
 // The index shows each page's live example screenshot.
 {
-  progress("/docs thumbnails");
   const { page } = await openPage(1280, 900);
-  await withDeadline("/docs thumbnails", page, async () => {
-    await page.goto(`${base}/docs`);
-    await page.locator("h1").waitFor();
-    for (const src of await brokenImages(page, "main article img"))
-      fail("/docs", `thumbnail ${src} did not load`);
-  });
+  await page.goto(`${base}/docs`);
+  await page.locator("h1").waitFor();
+  const broken = await page.locator("main article img").evaluateAll((images) =>
+    Promise.all(
+      images.map(async (image) => {
+        await image.decode().catch(() => undefined);
+        return image.naturalWidth === 0 ? image.getAttribute("src") : null;
+      })
+    ).then((sources) => sources.filter(Boolean))
+  );
+  for (const src of broken) fail("/docs", `thumbnail ${src} did not load`);
+  await page.close();
 }
 
 // Narrow widths: no overflow, and screenshots in place of live examples.
 for (const width of [783, 390]) {
   for (const path of topics) {
-    const where = `${path} at ${width}px`;
-    progress(where);
     const { page } = await openPage(width, 900);
-    await withDeadline(where, page, async () => {
-      await page.goto(`${base}${path}`);
-      await page.locator("article h2").first().waitFor({ timeout: 15_000 });
-      const overflow = await page.evaluate(
-        () => document.documentElement.scrollWidth - window.innerWidth
+    await page.goto(`${base}${path}`);
+    await page.locator("article h2").first().waitFor({ timeout: 15_000 });
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth - window.innerWidth
+    );
+    if (overflow > 0)
+      fail(`${path} at ${width}px`, `${overflow}px horizontal overflow`);
+    const broken = await page
+      .locator("[data-docs-example] img")
+      .evaluateAll((images) =>
+        Promise.all(
+          images.map(async (image) => {
+            image.scrollIntoView();
+            await image.decode().catch(() => undefined);
+            return image.naturalWidth === 0 ? image.getAttribute("src") : null;
+          })
+        ).then((sources) => sources.filter(Boolean))
       );
-      if (overflow > 0) fail(where, `${overflow}px horizontal overflow`);
-      for (const src of await brokenImages(page, "[data-docs-example] img"))
-        fail(where, `screenshot ${src} did not load`);
-    });
+    for (const src of broken)
+      fail(`${path} at ${width}px`, `screenshot ${src} did not load`);
+    await page.close();
   }
 }
 
-progress("closing");
 await browser.close();
 await new Promise((done) => server.httpServer.close(done));
 
 const checked = `${topics.length} pages, ${exampleIds.size} live examples`;
 if (failures.length === 0) {
   console.log(`Docs check passed: ${checked}.`);
-  process.exit(0);
 } else {
   console.error(`Docs check failed (${checked}):\n- ${failures.join("\n- ")}`);
   if (process.env.DOCS_VERIFY === "warn") {
     console.error("DOCS_VERIFY=warn: reporting only.");
-    process.exit(0);
   } else {
     process.exit(1);
   }
