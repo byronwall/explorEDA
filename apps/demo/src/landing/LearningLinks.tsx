@@ -34,7 +34,7 @@ export function LearningLinks() {
         >
           <span
             aria-hidden="true"
-            className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors"
+            className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg bg-site-accent/10 text-site-accent transition-colors"
           >
             <Icon className="size-4" />
           </span>
@@ -51,7 +51,7 @@ export function LearningLinks() {
           </div>
           <ArrowRight
             aria-hidden="true"
-            className="mt-2 size-4 shrink-0 text-primary transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none"
+            className="mt-2 size-4 shrink-0 text-site-accent transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none"
           />
         </div>
       ))}

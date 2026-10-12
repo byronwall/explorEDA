@@ -169,7 +169,7 @@ export function IntegrationGuide() {
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border px-5 py-3">
           <h3 className="text-sm font-semibold">Before you integrate</h3>
           <a
-            className="text-sm font-medium text-primary underline-offset-4 hover:underline"
+            className="text-sm font-medium text-site-accent underline-offset-4 hover:underline"
             href={PACKAGE_README_URL}
           >
             Package README and API details

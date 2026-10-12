@@ -126,7 +126,7 @@ describe("LandingPage routing", () => {
     await waitFor(() =>
       expect(
         screen.getByRole("heading", {
-          name: /Embed an interactive analysis workspace/i,
+          name: /Click a bar\. Every chart answers\./i,
         })
       ).toBeInTheDocument()
     );
@@ -637,7 +637,7 @@ describe("LandingPage routing", () => {
 
       expect(
         screen.getByRole("heading", {
-          name: /Embed an interactive analysis workspace/i,
+          name: /Click a bar\. Every chart answers\./i,
         })
       ).toBeInTheDocument();
       expect(screen.queryByTestId("workspace")).toBeNull();

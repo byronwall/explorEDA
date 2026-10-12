@@ -11,6 +11,35 @@
   }
 }
 
+/* Site brand colors, from the logo. The landing page, docs, and examples
+   index share them; the embedded workspace keeps the package theme.
+   --site-accent is the text-safe teal: 4.5:1 or better on the page and card
+   backgrounds in each theme. */
+:root {
+  --brand-navy: #0b2946;
+  --brand-navy-deep: #061a2e;
+  --brand-teal: #01adb7;
+  --brand-teal-soft: color-mix(in oklab, var(--brand-teal) 14%, transparent);
+  --site-accent: hsl(184 98% 25%);
+  --site-accent-foreground: #ffffff;
+  /* Borders on the navy band. */
+  --band-border: rgb(255 255 255 / 0.15);
+}
+
+.dark {
+  --site-accent: hsl(183 80% 55%);
+  --site-accent-foreground: var(--brand-navy-deep);
+}
+
+@theme inline {
+  --color-brand-navy: var(--brand-navy);
+  --color-brand-navy-deep: var(--brand-navy-deep);
+  --color-brand-teal: var(--brand-teal);
+  --color-site-accent: var(--site-accent);
+  --color-site-accent-foreground: var(--site-accent-foreground);
+  --color-band-border: var(--band-border);
+}
+
 /* Landing page only; the workspace keeps the package typography. */
 .landing {
   font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
@@ -23,7 +52,32 @@
 }
 
 .landing ::selection {
-  background: color-mix(in oklab, var(--primary) 22%, transparent);
+  background: color-mix(in oklab, var(--brand-teal) 28%, transparent);
+}
+
+/* The hero band: brand navy with a faint plotted grid and a teal glow. */
+.landing-hero {
+  background:
+    radial-gradient(
+      60rem 28rem at 85% -10%,
+      color-mix(in oklab, var(--brand-teal) 30%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      40rem 20rem at 0% 0%,
+      color-mix(in oklab, #3b82f6 18%, transparent),
+      transparent 70%
+    ),
+    linear-gradient(180deg, var(--brand-navy-deep), var(--brand-navy));
+  color: #ffffff;
+}
+
+.landing-hero-grid {
+  background-image:
+    linear-gradient(rgb(255 255 255 / 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 0.05) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: linear-gradient(to bottom, black, transparent 85%);
 }
 
 .landing-frame {
@@ -36,6 +90,14 @@
   box-shadow:
     0 1px 2px color-mix(in oklab, var(--foreground) 6%, transparent),
     0 18px 40px -20px color-mix(in oklab, var(--foreground) 22%, transparent);
+}
+
+/* The live workspace, lifted off the hero band. */
+.landing-stage {
+  box-shadow:
+    0 0 0 1px rgb(255 255 255 / 0.08),
+    0 30px 80px -24px rgb(1 12 24 / 0.55),
+    0 0 0 6px color-mix(in oklab, var(--brand-teal) 16%, transparent);
 }
 
 .landing-drop-overlay {
@@ -119,14 +181,9 @@
   white-space: nowrap;
 }
 
-/* The docs' accent. The workspace's dark primary is near white, which
-   reads as plain text in links and highlights, so the docs use a blue. */
+/* The docs' accent is the site's brand teal, in both themes. */
 .docs-root {
-  --docs-accent: var(--primary);
-}
-
-.dark .docs-root {
-  --docs-accent: hsl(213 90% 70%);
+  --docs-accent: var(--site-accent);
 }
 
 @theme inline {

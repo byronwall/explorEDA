@@ -190,6 +190,7 @@ export function LandingPage() {
   const showCoverage =
     CoverageMatrix !== null && searchParams.get("view") === "coverage";
   const showDocs = isDocsPath(location.pathname);
+  const showLanding = !showDocs && !showCoverage;
   // A capability link opens an example at the tab that shows it.
   const initialTab = searchParams.get("tab") ?? undefined;
 
@@ -469,8 +470,8 @@ export function LandingPage() {
     <div className="min-h-screen bg-background text-foreground ">
       <div
         className={
-          // The docs draw their own full-width frame.
-          showDocs && !hasData
+          // The docs and the home page's hero band draw their own full-width frame.
+          !hasData && (showDocs || showLanding)
             ? "flex flex-col"
             : "flex flex-col items-center gap-6 px-3 py-3 sm:px-5"
         }
@@ -531,7 +532,9 @@ export function LandingPage() {
                   ? "mx-auto w-full min-w-0 px-1 pt-2 sm:px-0"
                   : showDocs
                     ? "w-full"
-                    : "landing mx-auto w-full max-w-6xl"
+                    : showLanding
+                      ? "landing w-full"
+                      : "landing mx-auto w-full max-w-6xl"
               }
             >
               {isExamplesIndex ? (
@@ -559,7 +562,7 @@ export function LandingPage() {
                       canResume={canResume}
                     />
                   )}
-                  <div className="mt-28 space-y-28 pb-10">
+                  <div className="mx-auto mt-28 max-w-6xl space-y-28 px-4 pb-10 sm:px-6">
                     {featuredAnalysis && (
                       <FeaturedExample
                         example={featuredAnalysis}
@@ -599,7 +602,7 @@ export function LandingPage() {
                       <ExampleSelector onSelect={handleExampleSelect} />
                       <Link
                         to={EXAMPLES_PATH}
-                        className="mt-4 inline-flex items-center gap-1 rounded-sm text-sm font-medium text-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        className="mt-4 inline-flex items-center gap-1 rounded-sm text-sm font-medium text-site-accent underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                       >
                         Browse all {examples.length} examples
                         <ArrowRight className="size-4" aria-hidden="true" />
@@ -683,7 +686,9 @@ export function LandingPage() {
                       </div>
                     </section>
                   </div>
-                  <LandingFooter />
+                  <div className="mx-auto max-w-6xl px-4 sm:px-6">
+                    <LandingFooter />
+                  </div>
                 </>
               )}
             </motion.div>
@@ -780,7 +785,7 @@ export function LandingPage() {
             aria-busy="true"
           >
             <div className="flex flex-col items-center gap-4">
-              <div className="motion-safe:animate-spin rounded-full h-16 w-16 border-b-2 border-primary" />
+              <div className="motion-safe:animate-spin rounded-full h-16 w-16 border-b-2 border-site-accent" />
               <span>Loading example data…</span>
             </div>
           </div>
