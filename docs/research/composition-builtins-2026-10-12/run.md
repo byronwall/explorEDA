@@ -21,7 +21,7 @@ Completion requires readable Pro outputs, checked findings, integrated Sleuth ar
 
 ## Current state
 
-- Phase: prepared; awaiting ChatGPT access.
+- Phase: prepared; awaiting access to the correct signed-in browser profile.
 - Pro round: initial submission pending. Follow-ups used: 0 of 2.
 - Pro conversation URL: none. Nothing submitted.
 - Model or mode: not yet selected or verified.
@@ -30,8 +30,12 @@ Completion requires readable Pro outputs, checked findings, integrated Sleuth ar
 - Goal: none. The user requested a process, not a goal record.
 - PR: none. Research has not run.
 
-The available Codex browser opened ChatGPT signed out. Native surface discovery reported that the Mac is locked.
-An asynchronous request asked the user to unlock the Mac and sign in to ChatGPT in Codex's browser.
+The task's Codex in-app browser opened ChatGPT signed out. Its profile identity was not verified.
+Byron says ChatGPT should already be signed in and asked whether the correct profile was used.
+The renewed browser inventory exposes only the in-app browser and empty MCP Apps. No named Chrome or Edge profile is available through that inventory.
+The in-app browser exposes visibility and viewport controls, with no profile switch.
+Native surface discovery still reports that the Mac is locked. Inspect the existing signed-in profile when native access is available.
+The earlier request to sign in again was premature; the observed logout applies only to the task's in-app browser session.
 This is an access blocker, not an approval-review rejection. Branch creation passed approval review after the sandbox blocked its shared Git metadata write.
 
 ## Prepared artifacts
@@ -72,7 +76,7 @@ Preparation checks:
 ## Resume and complete
 
 1. Read this record and inspect Git status. Preserve unrelated edits and this existing branch.
-2. Verify authenticated ChatGPT access and inspect the live model selector. Select Pro; do not substitute an API or cloud Codex task.
+2. Locate the user's existing signed-in browser profile before requesting another login. Verify ChatGPT access and inspect the live model selector. Select Pro; do not substitute an API or cloud Codex task.
 3. Before sending, verify no conversation was recorded or submitted in a later checkpoint. Never duplicate an uncertain send.
 4. Upload the prompt and ZIP. Verify both, send a short instruction to execute the prompt, then verify processing started.
 5. Record conversation URL, observed mode, time, and round. Keep the browser tab for the later turn.
