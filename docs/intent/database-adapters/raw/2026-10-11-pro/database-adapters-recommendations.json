@@ -1,0 +1,1196 @@
+{
+  "artifact": "database-adapters-recommendations",
+  "research_date_utc": "2026-10-12",
+  "track": 3,
+  "repository": "https://github.com/byronwall/explorEDA",
+  "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+  "source_basis": "Authorized selected source packet; not a runnable checkout or an independent Git-object attestation.",
+  "scope": "Research and proposed proof only; no application, dependency, database, repository or deployment changes.",
+  "hosting_context": {
+    "operational_unit": "One dedicated application instance per paying customer.",
+    "goal": "Minimal maintenance with highly automated setup and operation.",
+    "ownership": "Track 4 selects hosting; this track supplies driver/runtime/network/private-database constraints."
+  },
+  "verification": {
+    "source_hashes_verified": 34,
+    "photo_hashes_and_sizes_verified": 3,
+    "photos_visually_inspected": 3,
+    "baseline_files_read_fully": 32,
+    "baseline_files_read_targeted": [
+      "packages/explorEDA/src/lib/analysis/projectFile.ts"
+    ],
+    "baseline_files_integrity_only": [
+      "docs/ui-defaults.md"
+    ],
+    "assigned_prompt_byte_identical": true,
+    "application_tests_run": false,
+    "sql_or_driver_tests_run": false,
+    "benchmarks_run": false,
+    "artifact_structure_and_zip_checks": "Performed during final packaging; not application validation."
+  },
+  "recommendations": [
+    {
+      "id": "DBA-001",
+      "proposal": "Use a host-owned endpoint to read bounded complete registered source sets into the existing ExplorEdaProject.tables seam.",
+      "status": "recommend",
+      "rationale": "Preserves local analysis, stages, source inspection and chart scope with no new remote evaluator. Full transfer and local memory are explicit costs; a narrow remote demand is the alternative when the measured workload fails.",
+      "repository_evidence": [
+        {
+          "ref": "R03",
+          "path": "packages/explorEDA/src/types/AnalysisProject.ts",
+          "symbols": "SourceDefinition; six step types; AnalysisEvaluation and contributor types",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/types/AnalysisProject.ts"
+        },
+        {
+          "ref": "R06",
+          "path": "packages/explorEDA/src/components/ExplorEdaProject.tsx",
+          "symbols": "props; evaluator call; key/ID mapping; renderedSettings; tables/panels; chart context",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/components/ExplorEdaProject.tsx"
+        },
+        {
+          "ref": "R07",
+          "path": "packages/explorEDA/src/lib/analysis/evaluateProject.ts",
+          "symbols": "sourceReferences/sourceFrame; lookupFrame; expandedFrame; calculateFrame; filterFrame; aggregateFrame; evaluateAnalysisQuery",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/lib/analysis/evaluateProject.ts"
+        },
+        {
+          "ref": "R08",
+          "path": "packages/explorEDA/src/lib/analysis/useAnalysisEvaluation.ts",
+          "symbols": "immutable source transfer, worker/direct paths, latest-request and pending-result behavior",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/lib/analysis/useAnalysisEvaluation.ts"
+        },
+        {
+          "ref": "R09",
+          "path": "packages/explorEDA/src/providers/DataLayerProvider.tsx",
+          "symbols": "local rows/Crossfilter; field conversion; grouped aggregates; caches; settings restore",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/providers/DataLayerProvider.tsx"
+        }
+      ],
+      "external_sources": [
+        {
+          "ref": "E05",
+          "title": "node-postgres: transactions",
+          "url": "https://node-postgres.com/features/transactions",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E09",
+          "title": "PostgreSQL 18: transaction isolation",
+          "url": "https://www.postgresql.org/docs/18/transaction-iso.html",
+          "accessed": "2026-10-12"
+        }
+      ],
+      "confidence": {
+        "level": "high",
+        "basis": "Existing source seam is verified; capacity and runtime behavior remain unmeasured."
+      },
+      "proof": "P1–P3: fake, PostgreSQL and SQLite must reproduce direct-array values, fields, keys, diagnostics, contributors, source/step inspection and filter behavior. Reject false completeness or failure of the agreed workload budget.",
+      "report_sections": [
+        "1",
+        "3",
+        "9",
+        "10"
+      ]
+    },
+    {
+      "id": "DBA-002",
+      "proposal": "Prove PostgreSQL first with pinned pure-JavaScript node-postgres in a compatible server runtime.",
+      "status": "recommend",
+      "rationale": "Exercises remote connections, permissions, TLS, parameter binding, transaction affinity and raw type normalization. SQLite first is a serious alternative if customer needs are actually file-based.",
+      "repository_evidence": [
+        {
+          "ref": "R01",
+          "path": "package.json",
+          "symbols": "packageManager pnpm@11.9.0; workspace scripts",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/package.json"
+        },
+        {
+          "ref": "R02",
+          "path": "packages/explorEDA/README.md",
+          "symbols": "project integration, stylesheet, worker and host ownership",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/README.md"
+        },
+        {
+          "ref": "R06",
+          "path": "packages/explorEDA/src/components/ExplorEdaProject.tsx",
+          "symbols": "props; evaluator call; key/ID mapping; renderedSettings; tables/panels; chart context",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/components/ExplorEdaProject.tsx"
+        }
+      ],
+      "external_sources": [
+        {
+          "ref": "E01",
+          "title": "node-postgres: queries",
+          "url": "https://node-postgres.com/features/queries",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E02",
+          "title": "node-postgres: data types",
+          "url": "https://node-postgres.com/features/types",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E04",
+          "title": "node-postgres: Pool API",
+          "url": "https://node-postgres.com/apis/pool",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E05",
+          "title": "node-postgres: transactions",
+          "url": "https://node-postgres.com/features/transactions",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E30",
+          "title": "node-postgres: SSL",
+          "url": "https://node-postgres.com/features/ssl",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E34",
+          "title": "node-postgres: native bindings",
+          "url": "https://node-postgres.com/features/native",
+          "accessed": "2026-10-12"
+        }
+      ],
+      "confidence": {
+        "level": "medium",
+        "basis": "Primary driver documentation supports the choice; no exact driver/runtime pins or customer network profile are selected."
+      },
+      "proof": "P2: disposable loopback fixture, read role, parameter/type probes, repeatable-read consistency and abort/timeout cleanup. A successful local fixture does not establish private customer connectivity.",
+      "report_sections": [
+        "4",
+        "6.5",
+        "7.3",
+        "10"
+      ]
+    },
+    {
+      "id": "DBA-003",
+      "proposal": "Use embedded SQLite as the materially different second proof; provisionally pin Node 24 node:sqlite and isolate synchronous reads in a disposable process.",
+      "status": "recommend",
+      "rationale": "Challenges permissive typing, BigInt values, file ownership, locks and stopping without changing the client result shape. Another evidenced SQLite driver or DuckDB is an alternative if containment/runtime costs fail.",
+      "repository_evidence": [
+        {
+          "ref": "R03",
+          "path": "packages/explorEDA/src/types/AnalysisProject.ts",
+          "symbols": "SourceDefinition; six step types; AnalysisEvaluation and contributor types",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/types/AnalysisProject.ts"
+        },
+        {
+          "ref": "R06",
+          "path": "packages/explorEDA/src/components/ExplorEdaProject.tsx",
+          "symbols": "props; evaluator call; key/ID mapping; renderedSettings; tables/panels; chart context",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/components/ExplorEdaProject.tsx"
+        },
+        {
+          "ref": "R07",
+          "path": "packages/explorEDA/src/lib/analysis/evaluateProject.ts",
+          "symbols": "sourceReferences/sourceFrame; lookupFrame; expandedFrame; calculateFrame; filterFrame; aggregateFrame; evaluateAnalysisQuery",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/lib/analysis/evaluateProject.ts"
+        }
+      ],
+      "external_sources": [
+        {
+          "ref": "E15",
+          "title": "SQLite: datatypes",
+          "url": "https://www.sqlite.org/datatype3.html",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E17",
+          "title": "SQLite: rowid tables",
+          "url": "https://www.sqlite.org/rowidtable.html",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E18",
+          "title": "SQLite: isolation",
+          "url": "https://www.sqlite.org/isolation.html",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E20",
+          "title": "Node 24.x: node:sqlite",
+          "url": "https://nodejs.org/docs/latest-v24.x/api/sqlite.html",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E31",
+          "title": "SQLite: write-ahead logging",
+          "url": "https://www.sqlite.org/wal.html",
+          "accessed": "2026-10-12"
+        }
+      ],
+      "confidence": {
+        "level": "medium",
+        "basis": "Strong adversarial value; driver/runtime and confirmed process cleanup require real proof."
+      },
+      "proof": "P3: same logical complete bundle plus mixed-affinity, invalid Boolean, int64, keyless identity, lock and CPU tests. Reject if the host blocks, child exit cannot be confirmed within the test bound, or driver-specific result shapes leak.",
+      "report_sections": [
+        "4.2",
+        "6.5",
+        "10"
+      ]
+    },
+    {
+      "id": "DBA-004",
+      "proposal": "Make analysis-query versus workspace-demand semantics explicit and validate each proposed server plan.",
+      "status": "recommend",
+      "rationale": "The two current paths differ in filters, missing values, entity identity, conflicts, count and pooling. Shared operation names do not establish equivalent meaning; simplifying behavior requires a separate deliberate product decision.",
+      "repository_evidence": [
+        {
+          "ref": "R07",
+          "path": "packages/explorEDA/src/lib/analysis/evaluateProject.ts",
+          "symbols": "sourceReferences/sourceFrame; lookupFrame; expandedFrame; calculateFrame; filterFrame; aggregateFrame; evaluateAnalysisQuery",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/lib/analysis/evaluateProject.ts"
+        },
+        {
+          "ref": "R10",
+          "path": "packages/explorEDA/src/hooks/CrossfilterWrapper.ts",
+          "symbols": "selected/context membership; chart own-filter and field-control exclusions",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/hooks/CrossfilterWrapper.ts"
+        },
+        {
+          "ref": "R12",
+          "path": "packages/explorEDA/src/lib/valueParsing.ts",
+          "symbols": "parseNumber; missing/numeric exclusion reasons; UTC dates, fractional rounding and bounds",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/lib/valueParsing.ts"
+        },
+        {
+          "ref": "R13",
+          "path": "packages/explorEDA/src/lib/aggregates.ts",
+          "symbols": "summarizeGroup; calculateGroupedAggregate; poolAggregateRows; entity conflicts/contributors",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/lib/aggregates.ts"
+        },
+        {
+          "ref": "R14",
+          "path": "packages/explorEDA/src/components/charts/ScatterPlot/scatterPlan.ts",
+          "symbols": "full/context/selected IDs; domains, facets, legends and points",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/components/charts/ScatterPlot/scatterPlan.ts"
+        },
+        {
+          "ref": "R15",
+          "path": "packages/explorEDA/src/components/charts/BarChart/barPlan.ts",
+          "symbols": "full/domain/current groups; empty categories, bins, own selections and contributors",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/components/charts/BarChart/barPlan.ts"
+        }
+      ],
+      "external_sources": [
+        {
+          "ref": "E07",
+          "title": "PostgreSQL: comparison functions",
+          "url": "https://www.postgresql.org/docs/current/functions-comparison.html",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E08",
+          "title": "PostgreSQL 18: aggregates",
+          "url": "https://www.postgresql.org/docs/18/functions-aggregate.html",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E15",
+          "title": "SQLite: datatypes",
+          "url": "https://www.sqlite.org/datatype3.html",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E19",
+          "title": "SQLite: aggregate functions",
+          "url": "https://www.sqlite.org/lang_aggfunc.html",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E29",
+          "title": "ECMAScript: IsLessThan",
+          "url": "https://tc39.es/ecma262/multipage/abstract-operations.html#sec-islessthan",
+          "accessed": "2026-10-12"
+        }
+      ],
+      "confidence": {
+        "level": "high",
+        "basis": "Consequential differences are directly visible in the supplied evaluator and workspace code."
+      },
+      "proof": "Use separate oracles for null/undefined comparisons, numeric text, entity conflicts, null measures, empty groups, pooled shared entities and own-filter exclusion. Return UNSUPPORTED for any unproven SQL plan.",
+      "report_sections": [
+        "5",
+        "6.2",
+        "8",
+        "10.2"
+      ]
+    },
+    {
+      "id": "DBA-005",
+      "proposal": "Normalize from an explicit source schema and reject unsupported precision, temporal and complex-value cases before publishing an editable snapshot.",
+      "status": "recommend",
+      "rationale": "JavaScript Number and current parsers can lose exact int64/decimal meaning even when transport uses strings; date parsing rounds to milliseconds. Type hints do not enforce operation safety. Exact keys can use nonnumeric opaque tags; broader exact types require new semantic support.",
+      "repository_evidence": [
+        {
+          "ref": "R03",
+          "path": "packages/explorEDA/src/types/AnalysisProject.ts",
+          "symbols": "SourceDefinition; six step types; AnalysisEvaluation and contributor types",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/types/AnalysisProject.ts"
+        },
+        {
+          "ref": "R04",
+          "path": "packages/explorEDA/src/types/SavedDataStructure.ts",
+          "symbols": "saved values, field settings, filters and special-value representation",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/types/SavedDataStructure.ts"
+        },
+        {
+          "ref": "R06",
+          "path": "packages/explorEDA/src/components/ExplorEdaProject.tsx",
+          "symbols": "props; evaluator call; key/ID mapping; renderedSettings; tables/panels; chart context",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/components/ExplorEdaProject.tsx"
+        },
+        {
+          "ref": "R07",
+          "path": "packages/explorEDA/src/lib/analysis/evaluateProject.ts",
+          "symbols": "sourceReferences/sourceFrame; lookupFrame; expandedFrame; calculateFrame; filterFrame; aggregateFrame; evaluateAnalysisQuery",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/lib/analysis/evaluateProject.ts"
+        },
+        {
+          "ref": "R12",
+          "path": "packages/explorEDA/src/lib/valueParsing.ts",
+          "symbols": "parseNumber; missing/numeric exclusion reasons; UTC dates, fractional rounding and bounds",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/lib/valueParsing.ts"
+        }
+      ],
+      "external_sources": [
+        {
+          "ref": "E02",
+          "title": "node-postgres: data types",
+          "url": "https://node-postgres.com/features/types",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E15",
+          "title": "SQLite: datatypes",
+          "url": "https://www.sqlite.org/datatype3.html",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E20",
+          "title": "Node 24.x: node:sqlite",
+          "url": "https://nodejs.org/docs/latest-v24.x/api/sqlite.html",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E21",
+          "title": "DuckDB: Node Neo client",
+          "url": "https://duckdb.org/docs/current/clients/node_neo/overview",
+          "accessed": "2026-10-12"
+        }
+      ],
+      "confidence": {
+        "level": "high",
+        "basis": "Runtime scalar limits and parser behavior are source-backed; the initial admitted domain is a provisional product choice."
+      },
+      "proof": "Round-trip safe numbers, null/text/Boolean/Unicode and canonical millisecond dates; reject int64/decimal loss, submillisecond analysis values, Boolean 2, mixed homogeneous fields, nonfinite/complex data and oversize cells. Compare identical field settings.",
+      "report_sections": [
+        "5.3",
+        "9",
+        "10.2",
+        "10.4"
+      ]
+    },
+    {
+      "id": "DBA-006",
+      "proposal": "Distinguish stable source keys from snapshot-only occurrence identity; encode composite keys as collision-free typed tuples.",
+      "status": "recommend",
+      "rationale": "Current positional fallback works within one immutable array but cannot prove cross-refresh or keyset identity. Duplicate equal rows remain separate occurrences; expanded and grouped rows need their own grain-aware identities.",
+      "repository_evidence": [
+        {
+          "ref": "R03",
+          "path": "packages/explorEDA/src/types/AnalysisProject.ts",
+          "symbols": "SourceDefinition; six step types; AnalysisEvaluation and contributor types",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/types/AnalysisProject.ts"
+        },
+        {
+          "ref": "R07",
+          "path": "packages/explorEDA/src/lib/analysis/evaluateProject.ts",
+          "symbols": "sourceReferences/sourceFrame; lookupFrame; expandedFrame; calculateFrame; filterFrame; aggregateFrame; evaluateAnalysisQuery",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/lib/analysis/evaluateProject.ts"
+        },
+        {
+          "ref": "R18",
+          "path": "packages/explorEDA/src/lib/analysis/sources.ts",
+          "symbols": "sourceFromRows; addSourceFromRows; singleTableProject and source identity",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/lib/analysis/sources.ts"
+        }
+      ],
+      "external_sources": [
+        {
+          "ref": "E11",
+          "title": "PostgreSQL 18: system columns",
+          "url": "https://www.postgresql.org/docs/18/ddl-system-columns.html",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E17",
+          "title": "SQLite: rowid tables",
+          "url": "https://www.sqlite.org/rowidtable.html",
+          "accessed": "2026-10-12"
+        }
+      ],
+      "confidence": {
+        "level": "high",
+        "basis": "Physical source references and fallback behavior are verified in code and tests."
+      },
+      "proof": "Test missing/duplicate/composite keys, delimiter-bearing values, duplicate identical rows, reorder, refresh and expanded multiplicity. Reject unstable paging or silently rebound selections; keyless refresh starts a new identity domain.",
+      "report_sections": [
+        "5.4",
+        "6.3",
+        "10.2"
+      ]
+    },
+    {
+      "id": "DBA-007",
+      "proposal": "Publish source bundles atomically with complete field/row coverage, exact complete counts and distinct request/schema/policy/snapshot identity.",
+      "status": "recommend",
+      "rationale": "Existing local available counts and process-local revisions are not remote completeness or freshness metadata. Related tables must share a read snapshot; cached responses and long browser exploration cannot be mislabeled as new database reads.",
+      "repository_evidence": [
+        {
+          "ref": "R03",
+          "path": "packages/explorEDA/src/types/AnalysisProject.ts",
+          "symbols": "SourceDefinition; six step types; AnalysisEvaluation and contributor types",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/types/AnalysisProject.ts"
+        },
+        {
+          "ref": "R07",
+          "path": "packages/explorEDA/src/lib/analysis/evaluateProject.ts",
+          "symbols": "sourceReferences/sourceFrame; lookupFrame; expandedFrame; calculateFrame; filterFrame; aggregateFrame; evaluateAnalysisQuery",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/lib/analysis/evaluateProject.ts"
+        },
+        {
+          "ref": "R08",
+          "path": "packages/explorEDA/src/lib/analysis/useAnalysisEvaluation.ts",
+          "symbols": "immutable source transfer, worker/direct paths, latest-request and pending-result behavior",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/lib/analysis/useAnalysisEvaluation.ts"
+        }
+      ],
+      "external_sources": [
+        {
+          "ref": "E09",
+          "title": "PostgreSQL 18: transaction isolation",
+          "url": "https://www.postgresql.org/docs/18/transaction-iso.html",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E18",
+          "title": "SQLite: isolation",
+          "url": "https://www.sqlite.org/isolation.html",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E28",
+          "title": "Cloudflare Hyperdrive: connection pooling",
+          "url": "https://developers.cloudflare.com/hyperdrive/concepts/connection-pooling/",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E32",
+          "title": "Cloudflare Hyperdrive: query caching",
+          "url": "https://developers.cloudflare.com/hyperdrive/concepts/query-caching/",
+          "accessed": "2026-10-12"
+        }
+      ],
+      "confidence": {
+        "level": "high",
+        "basis": "Metadata gaps and database isolation/cache constraints are evidenced; exact property names are proposals."
+      },
+      "proof": "Inject truncation, omitted sources/fields, stale responses, schema/policy changes, false totals and interrupted bodies. Reader/oracle exhaustion checks must catch self-consistent falsely complete prefixes; browser flags alone cannot prove unseen rows. Use an independent writer between source reads and reject mixed snapshots or stale-cache freshness claims.",
+      "report_sections": [
+        "6",
+        "7.3",
+        "9",
+        "10.2"
+      ]
+    },
+    {
+      "id": "DBA-008",
+      "proposal": "Keep a small server-only SnapshotReader plus plan-level support checks and a stable safe error union; separate intent, dialect and encoding.",
+      "status": "recommend",
+      "rationale": "A source-set intent and complete-or-error result are sufficient initially. Projection, aggregates, sort, pagination, totals, sampling, diagnostics and consistency need explicit meanings, not a growing generic flag matrix or native driver objects.",
+      "repository_evidence": [
+        {
+          "ref": "R03",
+          "path": "packages/explorEDA/src/types/AnalysisProject.ts",
+          "symbols": "SourceDefinition; six step types; AnalysisEvaluation and contributor types",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/types/AnalysisProject.ts"
+        },
+        {
+          "ref": "R06",
+          "path": "packages/explorEDA/src/components/ExplorEdaProject.tsx",
+          "symbols": "props; evaluator call; key/ID mapping; renderedSettings; tables/panels; chart context",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/components/ExplorEdaProject.tsx"
+        },
+        {
+          "ref": "R08",
+          "path": "packages/explorEDA/src/lib/analysis/useAnalysisEvaluation.ts",
+          "symbols": "immutable source transfer, worker/direct paths, latest-request and pending-result behavior",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/lib/analysis/useAnalysisEvaluation.ts"
+        }
+      ],
+      "external_sources": [
+        {
+          "ref": "E01",
+          "title": "node-postgres: queries",
+          "url": "https://node-postgres.com/features/queries",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E03",
+          "title": "node-postgres: Client API",
+          "url": "https://node-postgres.com/apis/client",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E20",
+          "title": "Node 24.x: node:sqlite",
+          "url": "https://nodejs.org/docs/latest-v24.x/api/sqlite.html",
+          "accessed": "2026-10-12"
+        }
+      ],
+      "confidence": {
+        "level": "medium-high",
+        "basis": "Fits verified seams; extracting a shared module must earn its cost through the second reader."
+      },
+      "proof": "Swap two readers without changing authorization, response validation or client semantics. Reject unsupported plans before execution and distinguish schema/type/limit/timeout failures from a valid empty result.",
+      "report_sections": [
+        "3",
+        "6"
+      ]
+    },
+    {
+      "id": "DBA-009",
+      "proposal": "Use authenticated server-owned source definitions, bound values, restricted read permissions and independent execution/result limits.",
+      "status": "recommend",
+      "rationale": "Identifiers are not bind values; read-only transactions do not sandbox arbitrary functions. Row count does not bound cell width, scans, expansion or provenance, and checks after a buffered query do not prevent allocation.",
+      "repository_evidence": [
+        {
+          "ref": "R03",
+          "path": "packages/explorEDA/src/types/AnalysisProject.ts",
+          "symbols": "SourceDefinition; six step types; AnalysisEvaluation and contributor types",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/types/AnalysisProject.ts"
+        },
+        {
+          "ref": "R06",
+          "path": "packages/explorEDA/src/components/ExplorEdaProject.tsx",
+          "symbols": "props; evaluator call; key/ID mapping; renderedSettings; tables/panels; chart context",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/components/ExplorEdaProject.tsx"
+        },
+        {
+          "ref": "R07",
+          "path": "packages/explorEDA/src/lib/analysis/evaluateProject.ts",
+          "symbols": "sourceReferences/sourceFrame; lookupFrame; expandedFrame; calculateFrame; filterFrame; aggregateFrame; evaluateAnalysisQuery",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/lib/analysis/evaluateProject.ts"
+        },
+        {
+          "ref": "R16",
+          "path": "docs/performance-checks.md",
+          "symbols": "measurement context; cold/warm/production comparisons and historical performance caveats",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/docs/performance-checks.md"
+        }
+      ],
+      "external_sources": [
+        {
+          "ref": "E01",
+          "title": "node-postgres: queries",
+          "url": "https://node-postgres.com/features/queries",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E06",
+          "title": "node-postgres: Cursor API",
+          "url": "https://node-postgres.com/apis/cursor",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E14",
+          "title": "PostgreSQL 18: SET TRANSACTION",
+          "url": "https://www.postgresql.org/docs/18/sql-set-transaction.html",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E35",
+          "title": "DuckDB: securing DuckDB",
+          "url": "https://duckdb.org/docs/current/operations_manual/securing_duckdb/overview",
+          "accessed": "2026-10-12"
+        }
+      ],
+      "confidence": {
+        "level": "high",
+        "basis": "Direct driver/database facts and observed expansion/lineage costs support the boundary."
+      },
+      "proof": "Bind hostile quote/Unicode/pattern payloads; reject unregistered IDs and destinations. Test slow small-output queries, oversized cells, cap-plus-one rows and contributor explosion; implement bounds before uncontrolled buffering.",
+      "report_sections": [
+        "7.1",
+        "10.2",
+        "10.4"
+      ]
+    },
+    {
+      "id": "DBA-010",
+      "proposal": "Suppress stale publication and separately bound engine execution; verify resource cleanup before reuse.",
+      "status": "recommend",
+      "rationale": "Browser AbortSignal and stale worker replies do not prove database stopping. PostgreSQL destroy-release with server timeouts is bounded cleanup, not acknowledged cancel; synchronous SQLite needs verified containment. Stronger cancel protocols remain alternatives after pinned-driver proof.",
+      "repository_evidence": [
+        {
+          "ref": "R08",
+          "path": "packages/explorEDA/src/lib/analysis/useAnalysisEvaluation.ts",
+          "symbols": "immutable source transfer, worker/direct paths, latest-request and pending-result behavior",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/lib/analysis/useAnalysisEvaluation.ts"
+        },
+        {
+          "ref": "R06",
+          "path": "packages/explorEDA/src/components/ExplorEdaProject.tsx",
+          "symbols": "props; evaluator call; key/ID mapping; renderedSettings; tables/panels; chart context",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/components/ExplorEdaProject.tsx"
+        }
+      ],
+      "external_sources": [
+        {
+          "ref": "E03",
+          "title": "node-postgres: Client API",
+          "url": "https://node-postgres.com/apis/client",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E04",
+          "title": "node-postgres: Pool API",
+          "url": "https://node-postgres.com/apis/pool",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E10",
+          "title": "PostgreSQL 18: client connection defaults",
+          "url": "https://www.postgresql.org/docs/18/runtime-config-client.html",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E13",
+          "title": "PostgreSQL 18: protocol cancellation",
+          "url": "https://www.postgresql.org/docs/18/protocol-flow.html#PROTOCOL-FLOW-CANCELING-REQUESTS",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E20",
+          "title": "Node 24.x: node:sqlite",
+          "url": "https://nodejs.org/docs/latest-v24.x/api/sqlite.html",
+          "accessed": "2026-10-12"
+        }
+      ],
+      "confidence": {
+        "level": "medium-high",
+        "basis": "API limitations are documented; precise stop and cleanup timing remains unmeasured."
+      },
+      "proof": "Abort during acquisition, query, decode and completion races. Observe PostgreSQL backend disappearance and a fresh clean lease; confirm SQLite child exit after bounded escalation. Reject leaks, uncertain-session reuse or host blocking.",
+      "report_sections": [
+        "6.5",
+        "10.2",
+        "10.4"
+      ]
+    },
+    {
+      "id": "DBA-011",
+      "proposal": "After complete-source proof, admit one narrow SQL row or aggregate operation with typed cardinality and contributor semantics.",
+      "status": "investigate",
+      "rationale": "Guarded lookup differs from a normal left join; entity reductions require physical identity and cannot use SUM(DISTINCT amount). Restricted integer domains and a shared finalizer can make illustrative translations testable, but final rows alone do not replace full evaluation stages.",
+      "repository_evidence": [
+        {
+          "ref": "R03",
+          "path": "packages/explorEDA/src/types/AnalysisProject.ts",
+          "symbols": "SourceDefinition; six step types; AnalysisEvaluation and contributor types",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/types/AnalysisProject.ts"
+        },
+        {
+          "ref": "R07",
+          "path": "packages/explorEDA/src/lib/analysis/evaluateProject.ts",
+          "symbols": "sourceReferences/sourceFrame; lookupFrame; expandedFrame; calculateFrame; filterFrame; aggregateFrame; evaluateAnalysisQuery",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/lib/analysis/evaluateProject.ts"
+        },
+        {
+          "ref": "R13",
+          "path": "packages/explorEDA/src/lib/aggregates.ts",
+          "symbols": "summarizeGroup; calculateGroupedAggregate; poolAggregateRows; entity conflicts/contributors",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/lib/aggregates.ts"
+        },
+        {
+          "ref": "R15",
+          "path": "packages/explorEDA/src/components/charts/BarChart/barPlan.ts",
+          "symbols": "full/domain/current groups; empty categories, bins, own selections and contributors",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/components/charts/BarChart/barPlan.ts"
+        }
+      ],
+      "external_sources": [
+        {
+          "ref": "E01",
+          "title": "node-postgres: queries",
+          "url": "https://node-postgres.com/features/queries",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E07",
+          "title": "PostgreSQL: comparison functions",
+          "url": "https://www.postgresql.org/docs/current/functions-comparison.html",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E08",
+          "title": "PostgreSQL 18: aggregates",
+          "url": "https://www.postgresql.org/docs/18/functions-aggregate.html",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E12",
+          "title": "PostgreSQL 18: collation",
+          "url": "https://www.postgresql.org/docs/18/collation.html",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E36",
+          "title": "PostgreSQL 18: WITH queries",
+          "url": "https://www.postgresql.org/docs/18/queries-with.html#QUERIES-WITH-CTE-MATERIALIZATION",
+          "accessed": "2026-10-12"
+        }
+      ],
+      "confidence": {
+        "level": "medium",
+        "basis": "Translations were reviewed and fixture expectations derived by hand; SQL was not executed."
+      },
+      "proof": "P4: run section 8A/8B against the baseline oracle and a second-engine implementation. Compare undefined presence, row grain/order, ambiguity/missing diagnostics, source/measure contributors and empty-input behavior. Promote only if parity and measured benefit hold.",
+      "report_sections": [
+        "5",
+        "8",
+        "10"
+      ]
+    },
+    {
+      "id": "DBA-012",
+      "proposal": "Exclude live cross-database federation and arbitrary server formula execution from the first boundary.",
+      "status": "defer",
+      "rationale": "Independent databases introduce policy, data movement and snapshot problems; the full calculation engine is absent and arbitrary expression translation is unproven. Explicit immutable exports or individually admitted typed operations are simpler alternatives for named needs.",
+      "repository_evidence": [
+        {
+          "ref": "R03",
+          "path": "packages/explorEDA/src/types/AnalysisProject.ts",
+          "symbols": "SourceDefinition; six step types; AnalysisEvaluation and contributor types",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/types/AnalysisProject.ts"
+        },
+        {
+          "ref": "R07",
+          "path": "packages/explorEDA/src/lib/analysis/evaluateProject.ts",
+          "symbols": "sourceReferences/sourceFrame; lookupFrame; expandedFrame; calculateFrame; filterFrame; aggregateFrame; evaluateAnalysisQuery",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/lib/analysis/evaluateProject.ts"
+        },
+        {
+          "ref": "R12",
+          "path": "packages/explorEDA/src/lib/valueParsing.ts",
+          "symbols": "parseNumber; missing/numeric exclusion reasons; UTC dates, fractional rounding and bounds",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/lib/valueParsing.ts"
+        }
+      ],
+      "external_sources": [
+        {
+          "ref": "E33",
+          "title": "PostgreSQL 18: schemas",
+          "url": "https://www.postgresql.org/docs/18/ddl-schemas.html",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E35",
+          "title": "DuckDB: securing DuckDB",
+          "url": "https://duckdb.org/docs/current/operations_manual/securing_duckdb/overview",
+          "accessed": "2026-10-12"
+        }
+      ],
+      "confidence": {
+        "level": "high",
+        "basis": "Scope is deliberate and reversible; unsupported demands remain visible."
+      },
+      "proof": "Reject source sets spanning independent databases and server formulas outside the supported subset. Revisit only for a concrete demand with access, snapshot, type, error and lineage proof.",
+      "report_sections": [
+        "3.3",
+        "5.2",
+        "7.2"
+      ]
+    },
+    {
+      "id": "DBA-013",
+      "proposal": "Defer DuckDB as the default engine, a separate query service, and a universal adapter platform.",
+      "status": "defer",
+      "rationale": "Each adds runtime, data movement or per-customer operational costs before one visible database proof. DuckDB is a serious option for actual analytical files; a service/connector may be justified by a selected private-network or isolation requirement.",
+      "repository_evidence": [
+        {
+          "ref": "R02",
+          "path": "packages/explorEDA/README.md",
+          "symbols": "project integration, stylesheet, worker and host ownership",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/README.md"
+        },
+        {
+          "ref": "R06",
+          "path": "packages/explorEDA/src/components/ExplorEdaProject.tsx",
+          "symbols": "props; evaluator call; key/ID mapping; renderedSettings; tables/panels; chart context",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/components/ExplorEdaProject.tsx"
+        },
+        {
+          "ref": "R16",
+          "path": "docs/performance-checks.md",
+          "symbols": "measurement context; cold/warm/production comparisons and historical performance caveats",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/docs/performance-checks.md"
+        },
+        {
+          "ref": "R21",
+          "path": "docs/intent/current-analysis-trust/intent-brief.md",
+          "symbols": "source membership versus numerical contributors; explicit missing/invalid meanings",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/docs/intent/current-analysis-trust/intent-brief.md"
+        }
+      ],
+      "external_sources": [
+        {
+          "ref": "E21",
+          "title": "DuckDB: Node Neo client",
+          "url": "https://duckdb.org/docs/current/clients/node_neo/overview",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E22",
+          "title": "DuckDB: concurrency",
+          "url": "https://duckdb.org/docs/current/connect/concurrency",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E35",
+          "title": "DuckDB: securing DuckDB",
+          "url": "https://duckdb.org/docs/current/operations_manual/securing_duckdb/overview",
+          "accessed": "2026-10-12"
+        }
+      ],
+      "confidence": {
+        "level": "medium-high",
+        "basis": "Appropriate for the stated one-maintainer goal; actual customer workload or network needs may change the choice."
+      },
+      "proof": "Compare the named need against a fixed host endpoint. Revisit only if embedded files, native isolation, private reachability or measured workload cannot be served adequately by the simpler boundary.",
+      "report_sections": [
+        "1",
+        "3.2",
+        "4",
+        "7.3"
+      ]
+    },
+    {
+      "id": "DBA-014",
+      "proposal": "Reject partial data labeled exact/complete and aggregate-only responses fabricated as full AnalysisEvaluation objects.",
+      "status": "reject",
+      "rationale": "Current inspection, stages, field settings and charts consume source/row/contributor evidence. Empty placeholder stages or hidden omitted fields remove observable meaning. A new honest remote-consumer contract is the alternative.",
+      "repository_evidence": [
+        {
+          "ref": "R03",
+          "path": "packages/explorEDA/src/types/AnalysisProject.ts",
+          "symbols": "SourceDefinition; six step types; AnalysisEvaluation and contributor types",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/types/AnalysisProject.ts"
+        },
+        {
+          "ref": "R06",
+          "path": "packages/explorEDA/src/components/ExplorEdaProject.tsx",
+          "symbols": "props; evaluator call; key/ID mapping; renderedSettings; tables/panels; chart context",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/components/ExplorEdaProject.tsx"
+        },
+        {
+          "ref": "R07",
+          "path": "packages/explorEDA/src/lib/analysis/evaluateProject.ts",
+          "symbols": "sourceReferences/sourceFrame; lookupFrame; expandedFrame; calculateFrame; filterFrame; aggregateFrame; evaluateAnalysisQuery",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/lib/analysis/evaluateProject.ts"
+        },
+        {
+          "ref": "R09",
+          "path": "packages/explorEDA/src/providers/DataLayerProvider.tsx",
+          "symbols": "local rows/Crossfilter; field conversion; grouped aggregates; caches; settings restore",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/providers/DataLayerProvider.tsx"
+        },
+        {
+          "ref": "R13",
+          "path": "packages/explorEDA/src/lib/aggregates.ts",
+          "symbols": "summarizeGroup; calculateGroupedAggregate; poolAggregateRows; entity conflicts/contributors",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/lib/aggregates.ts"
+        },
+        {
+          "ref": "R14",
+          "path": "packages/explorEDA/src/components/charts/ScatterPlot/scatterPlan.ts",
+          "symbols": "full/context/selected IDs; domains, facets, legends and points",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/components/charts/ScatterPlot/scatterPlan.ts"
+        },
+        {
+          "ref": "R15",
+          "path": "packages/explorEDA/src/components/charts/BarChart/barPlan.ts",
+          "symbols": "full/domain/current groups; empty categories, bins, own selections and contributors",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/components/charts/BarChart/barPlan.ts"
+        }
+      ],
+      "external_sources": [
+        {
+          "ref": "E08",
+          "title": "PostgreSQL 18: aggregates",
+          "url": "https://www.postgresql.org/docs/18/functions-aggregate.html",
+          "accessed": "2026-10-12"
+        }
+      ],
+      "confidence": {
+        "level": "high",
+        "basis": "Conflicts directly with supplied source behavior and the assignment acceptance rules."
+      },
+      "proof": "Use known fixture/oracle data to detect false completeness and missing rows/groups/lineage; client checks reject detectable envelope inconsistencies. Reject unavailable stage evidence for consumers that require it. Never silently run local fallback over a partial server result.",
+      "report_sections": [
+        "1",
+        "5",
+        "6.3",
+        "8"
+      ]
+    },
+    {
+      "id": "DBA-015",
+      "proposal": "Use a deterministic fake, disposable real fixtures, shared behavioral contracts and failure injection while preserving one usable existing local mode.",
+      "status": "recommend",
+      "rationale": "Separates protocol, driver, semantic, performance and deployment evidence. Existing tests were read but not run; arbitrary implementation breadth would obscure falsifiers and increase maintenance.",
+      "repository_evidence": [
+        {
+          "ref": "R06",
+          "path": "packages/explorEDA/src/components/ExplorEdaProject.tsx",
+          "symbols": "props; evaluator call; key/ID mapping; renderedSettings; tables/panels; chart context",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/components/ExplorEdaProject.tsx"
+        },
+        {
+          "ref": "R07",
+          "path": "packages/explorEDA/src/lib/analysis/evaluateProject.ts",
+          "symbols": "sourceReferences/sourceFrame; lookupFrame; expandedFrame; calculateFrame; filterFrame; aggregateFrame; evaluateAnalysisQuery",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/lib/analysis/evaluateProject.ts"
+        },
+        {
+          "ref": "R16",
+          "path": "docs/performance-checks.md",
+          "symbols": "measurement context; cold/warm/production comparisons and historical performance caveats",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/docs/performance-checks.md"
+        },
+        {
+          "ref": "R18",
+          "path": "packages/explorEDA/src/lib/analysis/sources.ts",
+          "symbols": "sourceFromRows; addSourceFromRows; singleTableProject and source identity",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/lib/analysis/sources.ts"
+        },
+        {
+          "ref": "R19",
+          "path": "packages/explorEDA/src/test/lib/analysis/evaluateProject.test.ts",
+          "symbols": "lookup/expand/filter/aggregate/parameter/invalid-plan expectations; read, not run",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/test/lib/analysis/evaluateProject.test.ts"
+        },
+        {
+          "ref": "R20",
+          "path": "packages/explorEDA/src/test/lib/analysis/useAnalysisEvaluation.test.tsx",
+          "symbols": "worker reply ordering and pending/error cases; read, not run",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/test/lib/analysis/useAnalysisEvaluation.test.tsx"
+        },
+        {
+          "ref": "R21",
+          "path": "docs/intent/current-analysis-trust/intent-brief.md",
+          "symbols": "source membership versus numerical contributors; explicit missing/invalid meanings",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/docs/intent/current-analysis-trust/intent-brief.md"
+        }
+      ],
+      "external_sources": [
+        {
+          "ref": "E01",
+          "title": "node-postgres: queries",
+          "url": "https://node-postgres.com/features/queries",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E04",
+          "title": "node-postgres: Pool API",
+          "url": "https://node-postgres.com/apis/pool",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E09",
+          "title": "PostgreSQL 18: transaction isolation",
+          "url": "https://www.postgresql.org/docs/18/transaction-iso.html",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E20",
+          "title": "Node 24.x: node:sqlite",
+          "url": "https://nodejs.org/docs/latest-v24.x/api/sqlite.html",
+          "accessed": "2026-10-12"
+        }
+      ],
+      "confidence": {
+        "level": "high",
+        "basis": "Proof design follows verified seams; outcomes and performance remain wholly unmeasured."
+      },
+      "proof": "Execute P1–P4 only in a runnable checkout with exact pins. Vary 10k/100k row count and width; record first view, warm filters, bytes, heap and cleanup. Stop or narrow on failed invariants; retain the same deployed evaluator/client version.",
+      "report_sections": [
+        "9",
+        "10"
+      ]
+    },
+    {
+      "id": "DBA-016",
+      "proposal": "Give hosting constraints for one dedicated instance per paying customer and leave platform selection to track 4.",
+      "status": "recommend",
+      "rationale": "Per-instance simplicity requires repeatable provisioning, bounded pools/resources, secrets and an approved database route. Workers Node compatibility does not make embedded Node APIs work; private access can use separately documented Hyperdrive Tunnel/VPC paths. No hosting winner is selected.",
+      "repository_evidence": [
+        {
+          "ref": "R02",
+          "path": "packages/explorEDA/README.md",
+          "symbols": "project integration, stylesheet, worker and host ownership",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/README.md"
+        },
+        {
+          "ref": "R06",
+          "path": "packages/explorEDA/src/components/ExplorEdaProject.tsx",
+          "symbols": "props; evaluator call; key/ID mapping; renderedSettings; tables/panels; chart context",
+          "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+          "url": "https://github.com/byronwall/explorEDA/blob/f01ff0fb1f9e1240020744a18816f2dad68bf488/packages/explorEDA/src/components/ExplorEdaProject.tsx"
+        }
+      ],
+      "external_sources": [
+        {
+          "ref": "E20",
+          "title": "Node 24.x: node:sqlite",
+          "url": "https://nodejs.org/docs/latest-v24.x/api/sqlite.html",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E21",
+          "title": "DuckDB: Node Neo client",
+          "url": "https://duckdb.org/docs/current/clients/node_neo/overview",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E24",
+          "title": "Cloudflare Workers: Node compatibility",
+          "url": "https://developers.cloudflare.com/workers/runtime-apis/nodejs/",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E25",
+          "title": "Cloudflare Workers: TCP sockets",
+          "url": "https://developers.cloudflare.com/workers/runtime-apis/tcp-sockets/",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E26",
+          "title": "Cloudflare Hyperdrive: private database via Tunnel",
+          "url": "https://developers.cloudflare.com/hyperdrive/configuration/connect-to-private-database/",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E27",
+          "title": "Cloudflare: Hyperdrive with Workers VPC",
+          "url": "https://developers.cloudflare.com/changelog/post/2026-04-29-hyperdrive-vpc-private-databases/",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E28",
+          "title": "Cloudflare Hyperdrive: connection pooling",
+          "url": "https://developers.cloudflare.com/hyperdrive/concepts/connection-pooling/",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E30",
+          "title": "node-postgres: SSL",
+          "url": "https://node-postgres.com/features/ssl",
+          "accessed": "2026-10-12"
+        },
+        {
+          "ref": "E32",
+          "title": "Cloudflare Hyperdrive: query caching",
+          "url": "https://developers.cloudflare.com/hyperdrive/concepts/query-caching/",
+          "accessed": "2026-10-12"
+        }
+      ],
+      "confidence": {
+        "level": "high",
+        "basis": "User-defined ownership and primary runtime/network facts; customer-specific feasibility remains unproven."
+      },
+      "proof": "Hosting validates actual driver/runtime, DNS/TLS/private route or approved egress, transaction affinity, proxy-cache freshness, connection budget, cleanup and automated setup/rotation/updates. Reject combinations requiring recurring manual repair or unsupported connectivity.",
+      "report_sections": [
+        "7.3",
+        "11.1"
+      ]
+    }
+  ],
+  "implementation_blockers": [
+    "Application proof needs a runnable checkout and its dependencies.",
+    "Driver proof needs disposable local fixtures and exact runtime/driver/image pins.",
+    "Production connectivity and platform evidence belong to a later authorized hosting proof."
+  ],
+  "research_blockers": [],
+  "report": "database-adapters-research.md"
+}

@@ -1,0 +1,942 @@
+{
+  "schema_version": 1,
+  "track": "columnar-data-transport",
+  "research_date_utc": "2026-10-12",
+  "intended_integration_archive_date": "2026-10-11",
+  "repository": {
+    "url": "https://github.com/byronwall/explorEDA",
+    "baseline_commit": "f01ff0fb1f9e1240020744a18816f2dad68bf488",
+    "source_ref": "origin/main at preparation",
+    "access": "authorized selected source packet; not a runnable checkout",
+    "baseline_files_hash_verified": 34,
+    "baseline_files_read_in_full": 33,
+    "photos_hash_and_size_verified": 3,
+    "photos_visually_inspected": 3,
+    "application_changes_made": false,
+    "git_operations_performed": false
+  },
+  "decision": {
+    "binary_candidate": "Arrow IPC stream; internal compression none; negotiated HTTP gzip",
+    "binary_candidate_status": "investigate",
+    "simpler_baseline_and_fallback": "Lossless schema-described row JSON plus gzip",
+    "binary_adoption_proven": false,
+    "current_resident_layout": "Existing row-object provider and Crossfilter for first proof",
+    "hosting_scope": "Dedicated instance per paying customer; instance-scoped data/cache/resources; platform choice owned by fourth hosting track"
+  },
+  "adoption_gates": {
+    "classification": "proposed shaping thresholds; no measured benchmark results",
+    "mandatory_correctness": "Exact supported values/types/keys, row meaning, scope, coverage, completion and lifecycle; explicit unsupported states",
+    "primary_proxy": "100k complete scatter rows with x/y, 32 text color labels and durable text keys; 10k and numeric-color controls",
+    "latency": {
+      "metric": "p95 source/request-to-completed-filter-ready-view, including server/decoder startup, row bridge and current consumers",
+      "minimum_relative_improvement_percent": 20,
+      "minimum_absolute_improvement_ms": 100,
+      "both_required": true
+    },
+    "memory_alternative": {
+      "metric": "Peak incremental attributable client data across JS heap, unique backing buffers, workers and known native/WASM/plot allocations, including old/new overlap",
+      "minimum_reduction_percent": 25,
+      "maximum_latency_regression_percent": 5,
+      "same_browser_and_instrumentation_required": true,
+      "moving_off_heap_is_not_a_saving": true
+    },
+    "benefit_rule": "Pass latency OR memory alternative; all mandatory correctness/capacity and applicable regression guards still apply",
+    "small_output_guard": {
+      "reject_regression_exceeding_both": {
+        "percent": 10,
+        "milliseconds": 20
+      }
+    },
+    "warm_exact_filter_guard": {
+      "reject_regression_exceeding_both": {
+        "percent": 10,
+        "milliseconds": 5
+      }
+    },
+    "responsiveness_diagnostic": "Investigate newly introduced main-thread tasks over 50 ms in the 10k case; worker/cooperative techniques conditional on evidence",
+    "runs": {
+      "paired_primary_runs_minimum": 30,
+      "warmups": 5,
+      "filter_actions_minimum": 30,
+      "note": "Coarse p95; record raw samples/uncertainty, separate cold and warm caches, extend only for a threshold-crossing uncertainty or concrete risk"
+    }
+  },
+  "provisional_capacity_policy": {
+    "status": "lab defaults awaiting provider/browser/customer calibration",
+    "automatic_full_snapshot_row_target": 100000,
+    "first_fixture_rows": 10000,
+    "row_target_is_hard_ceiling": false,
+    "larger_sensitivity_rows": 1000000,
+    "decoded_payload_limit_bytes": 67108864,
+    "retained_client_data_budget_bytes": 134217728,
+    "peak_incremental_client_data_budget_bytes": 268435456,
+    "compressed_wire_soft_target_bytes": 8388608,
+    "incremental_batch_target_bytes": 2097152,
+    "incremental_batches_in_flight": 2,
+    "incremental_batch_row_target": 16000,
+    "heavy_incoming_builds_per_customer_instance": 1,
+    "enforcement": "Known bounded server response; incremental reader counts application-visible decoded bytes. Whole-body JSON charges actual parse/assembly cost and needs no custom record parser. Native decoder/network queues remain measured uncertainty, not a guaranteed hard cap.",
+    "oversize_behavior": "Narrower complete projection, exact aggregate with truthful trace, or explicit partial/unsupported result; never silent first-N truncation",
+    "cache_scope": "Authenticated instance + authoritative snapshot + query/population + row grain/order/keys + schema/projection/dictionary; no cross-instance customer result cache"
+  },
+  "first_proof": [
+    "F0 supported-value and lifecycle correctness",
+    "Paired row JSON/Arrow 10k and 100k current-host-row proof with compatible field settings",
+    "Separate complete-source-table ExplorEdaProject parity proof",
+    "Broaden only if evidence can reverse the decision",
+    "Bounded read-only adapter fixture including database/driver/server costs"
+  ],
+  "measured_performance_results": null,
+  "checks_not_run": [
+    "pnpm --filter exploreda exec vitest run src/test/lib/analysis/evaluateProject.test.ts src/test/lib/analysis/useAnalysisEvaluation.test.tsx src/test/lib/analysis/sourceRowIdentity.test.ts src/hooks/CrossfilterWrapper.test.ts",
+    "pnpm --filter exploreda check-types",
+    "pnpm check:ui",
+    "pnpm check",
+    "codec/browser/database/hosting benchmarks"
+  ],
+  "recommendations": [
+    {
+      "id": "CT-001",
+      "proposal": "Require authoritative snapshot, schema, row meaning, coverage and completion metadata before optimizing bytes.",
+      "status": "recommend",
+      "rationale": "Existing evaluation revision/counts do not prove a remote source snapshot or completed coverage. Keys, field types and filter scope determine whether parts can be assembled safely.",
+      "repository_evidence": [
+        {
+          "path": "packages/explorEDA/src/types/AnalysisProject.ts",
+          "symbol": "AnalysisEvaluation",
+          "observation": "No remote snapshot, batch or truncation contract."
+        },
+        {
+          "path": "packages/explorEDA/src/lib/analysis/evaluateProject.ts",
+          "symbol": "tableRevision; evaluateAnalysisQuery",
+          "observation": "Realm-local array revision and final-row counts are not server snapshot/exhaustion evidence."
+        },
+        {
+          "path": "packages/explorEDA/src/hooks/CrossfilterWrapper.ts",
+          "symbol": "getChartFilteredRowIds; live groups",
+          "observation": "Linked, local and other-filter populations differ."
+        }
+      ],
+      "external_sources": [
+        "E8",
+        "E13",
+        "E27"
+      ],
+      "confidence": {
+        "level": "high",
+        "basis": "Correctness requirement directly supported by source; final contract belongs to query track."
+      },
+      "proof": {
+        "test": "F0/F8: typed keys, changed snapshot/schema/order/dictionary, duplicate/gap/truncated/empty results and mismatched scope. Use independent application counters and tested end/error handling.",
+        "pass": "No invalid/partial result commits as complete; unknown counts and logical exhaustion remain explicit.",
+        "reversal": "Fields/IDs may be consolidated into a smaller canonical descriptor if it preserves all invariants."
+      },
+      "strongest_alternative": "One bounded schema-described JSON result with the same logical metadata.",
+      "principal_cost": "Small validator and descriptor; do not invent a general query/cache framework."
+    },
+    {
+      "id": "CT-002",
+      "proposal": "Investigate internally uncompressed Arrow IPC streams with negotiated HTTP gzip as the default binary candidate.",
+      "status": "investigate",
+      "rationale": "Standard typed batches may reduce parsing/transfer cost, but current row reconstruction and provider cost can consume the savings. No performance win is measured.",
+      "repository_evidence": [
+        {
+          "path": "packages/explorEDA/src/components/ExplorEdaProject.tsx",
+          "symbol": "data; useAnalysisEvaluation",
+          "observation": "Current project bridge constructs rows and has no external-evaluation prop."
+        },
+        {
+          "path": "packages/explorEDA/src/providers/DataLayerProvider.tsx",
+          "symbol": "setData; getColumnData",
+          "observation": "Current provider uses rows and object field maps."
+        }
+      ],
+      "external_sources": [
+        "E1",
+        "E3",
+        "E4",
+        "E5",
+        "E8",
+        "E10",
+        "E13"
+      ],
+      "confidence": {
+        "level": "medium",
+        "basis": "Feasible standard candidate; end-to-end advantage remains untested."
+      },
+      "proof": {
+        "test": "First paired 10k/100k scatter proof with real keys, identical schema/field settings/commit timing, cold assets and server cost.",
+        "pass": "Mandatory correctness plus latency or memory gate, with applicable regression/capacity guards.",
+        "reversal": "Retain JSON if gates fail; prefer column JSON if it wins with lower integration cost."
+      },
+      "strongest_alternative": "Lossless row JSON plus gzip.",
+      "principal_cost": "Arrow dependency/startup, schema mapping, validation, possible buffer assembly and row materialization."
+    },
+    {
+      "id": "CT-003",
+      "proposal": "Keep lossless schema-described row JSON as the baseline and fallback.",
+      "status": "recommend",
+      "rationale": "It reaches current row consumers directly and avoids a new column engine. Plain JSON.stringify needs explicit handling for existing exceptional raw values.",
+      "repository_evidence": [
+        {
+          "path": "packages/explorEDA/src/types/AnalysisProject.ts",
+          "symbol": "AnalysisScalar",
+          "observation": "Existing raw scalar domain includes undefined."
+        },
+        {
+          "path": "packages/explorEDA/src/lib/analysis/projectFile.ts",
+          "symbol": "special-value codec; scalar validator",
+          "observation": "Existing file format handles undefined/nonfinite values but is not a remote protocol."
+        },
+        {
+          "path": "packages/explorEDA/src/providers/DataLayerProvider.tsx",
+          "symbol": "DataLayerProvider",
+          "observation": "Rows remain the consumer boundary."
+        }
+      ],
+      "external_sources": [
+        "E21",
+        "E22",
+        "E28",
+        "E31"
+      ],
+      "confidence": {
+        "level": "high",
+        "basis": "Lowest-change baseline; exact restoration and consumer behavior still need proof."
+      },
+      "proof": {
+        "test": "Golden raw-value corpus, including absent/undefined/null, nonfinite/signed zero, typed keys and numeric-looking text. Count whole-body parsing temporaries.",
+        "pass": "Supported values and effective behavior match; unsafe semantics are rejected.",
+        "reversal": "Select a proven encoding that clears the same gates; JSON cannot waive unsupported consumer capabilities."
+      },
+      "strongest_alternative": "Column JSON with a direct ordinary-array-to-row transpose.",
+      "principal_cost": "Text parsing and resident rows; explicit schema/exceptions; a bounded collector adds cost if client byte enforcement requires it."
+    },
+    {
+      "id": "CT-004",
+      "proposal": "Decode and validate outside the provider, materialize rows once, and publish each completed snapshot once.",
+      "status": "recommend",
+      "rationale": "New data references can rebuild provider state and restore settings. Streaming arrival alone does not make current full-snapshot filters exact.",
+      "repository_evidence": [
+        {
+          "path": "packages/explorEDA/src/providers/DataLayerProvider.tsx",
+          "symbol": "setData; restoreFromStructure; data effect",
+          "observation": "Data replacement rebuilds runtime structures; saved settings can trigger restore."
+        },
+        {
+          "path": "packages/explorEDA/src/components/ExplorEdaProject.tsx",
+          "symbol": "renderedSettings; row maps",
+          "observation": "Schema is not automatically applied without compatible settings; project tracing has a separate boundary."
+        },
+        {
+          "path": "packages/explorEDA/src/lib/analysis/useAnalysisEvaluation.ts",
+          "symbol": "pending/applied state",
+          "observation": "Previous completed same-query result can overlap incoming work."
+        }
+      ],
+      "external_sources": [
+        "E10",
+        "E23",
+        "E24",
+        "E28"
+      ],
+      "confidence": {
+        "level": "high",
+        "basis": "Directly observed rebuild and row interface; allocation totals unmeasured."
+      },
+      "proof": {
+        "test": "Instrument decode, materialization, setup count, restore, old/new overlap and exact chart interactions.",
+        "pass": "One complete publication; obsolete or invalid work never commits; same field settings and row meaning for both formats.",
+        "reversal": "Progressive publication requires a separately justified consumer seam and truthful partial-view semantics."
+      },
+      "strongest_alternative": "Native lossless row JSON parsed once into the same boundary.",
+      "principal_cost": "Temporary column/row overlap; current provider and project row copies remain chargeable."
+    },
+    {
+      "id": "CT-005",
+      "proposal": "Use one compression layer by default; compare gzip, moderate Brotli and identity with recorded settings.",
+      "status": "recommend",
+      "rationale": "HTTP decoding differs from IPC/Parquet internal codecs. Extra CPU/startup must be justified by elapsed-time savings and per-instance resources.",
+      "repository_evidence": [
+        {
+          "path": "packages/explorEDA/package.json",
+          "symbol": "dependencies",
+          "observation": "No direct Arrow/Parquet codec in the supplied manifest."
+        },
+        {
+          "path": "packages/explorEDA/src/providers/DataLayerProvider.tsx",
+          "symbol": "setData",
+          "observation": "Wire savings do not remove consumer setup cost."
+        }
+      ],
+      "external_sources": [
+        "E1",
+        "E2",
+        "E5",
+        "E12",
+        "E13",
+        "E38"
+      ],
+      "confidence": {
+        "level": "high",
+        "basis": "Mechanisms verified; winning settings are workload-dependent."
+      },
+      "proof": {
+        "test": "Record encoded/decoded bytes, encode/decode CPU and complete-view time on fast, 100 Mbps and 10 Mbps conditions.",
+        "pass": "Compression improves the full path without exceeding instance budgets; tiny responses avoid unjustified overhead.",
+        "reversal": "Use identity for small bodies or a different measured level/codec when elapsed time wins."
+      },
+      "strongest_alternative": "Identity encoding for small results; gzip for the first bounded comparison.",
+      "principal_cost": "Compressor/decompressor state and CPU; higher levels and extra registered codecs may increase startup."
+    },
+    {
+      "id": "CT-006",
+      "proposal": "Separate lossless transport support from supported consumer semantics; reject silent coercion.",
+      "status": "recommend",
+      "rationale": "The scalar/type model lacks explicit bigint, decimal precision, fine temporal units, binary and nested semantics. Current parsing can reinterpret numeric-looking text.",
+      "repository_evidence": [
+        {
+          "path": "packages/explorEDA/src/types/AnalysisProject.ts",
+          "symbol": "AnalysisScalar; field type declarations",
+          "observation": "No exact rich-type analytical capability is declared."
+        },
+        {
+          "path": "packages/explorEDA/src/lib/valueParsing.ts",
+          "symbol": "parseNumber; timeOfDay; date parsing",
+          "observation": "Numeric-string parsing and millisecond temporal behavior need explicit guards."
+        },
+        {
+          "path": "packages/explorEDA/src/lib/analysis/evaluateProject.ts",
+          "symbol": "typed keys; filter evaluation",
+          "observation": "Scalar type changes affect key and filter meaning."
+        }
+      ],
+      "external_sources": [
+        "E21",
+        "E22",
+        "E25",
+        "E26",
+        "E27",
+        "E30",
+        "E31",
+        "E39",
+        "E42",
+        "E43"
+      ],
+      "confidence": {
+        "level": "high",
+        "basis": "Source and specifications establish the risk; supported subset remains a proof decision."
+      },
+      "proof": {
+        "test": "F0 exactness corpus from driver through raw and effective browser values, including overflow, decimal scale, zone/unit, leading BOM and mixed/nested states.",
+        "pass": "Preserve values/meaning or return an explicit unsupported diagnostic before lossy conversion.",
+        "reversal": "A richer type can be enabled only after its consumer operations and parity are proven."
+      },
+      "strongest_alternative": "Lossless JSON or intentional typed-text display/key use where current semantics are safe.",
+      "principal_cost": "Schema/type mapping, validation and explicit capability errors."
+    },
+    {
+      "id": "CT-007",
+      "proposal": "Measure dictionary/null/integer encodings; preserve float64 unless an exact narrower source type is established.",
+      "status": "investigate",
+      "rationale": "Repeated categories can be compact; unique text and sparse values can reverse the advantage. Builder state, string decoding and HTTP compression affect the result.",
+      "repository_evidence": [
+        {
+          "path": "packages/explorEDA/src/lib/valueParsing.ts",
+          "symbol": "parseNumber; numeric exclusion",
+          "observation": "Raw value distinctions must survive packing."
+        },
+        {
+          "path": "packages/explorEDA/src/components/charts/ScatterPlot/scatterPlan.ts",
+          "symbol": "point membership and domains",
+          "observation": "Rounding can change exact selection and coordinate values."
+        }
+      ],
+      "external_sources": [
+        "E3",
+        "E13",
+        "E15",
+        "E25",
+        "E26",
+        "E29",
+        "E42",
+        "E43"
+      ],
+      "confidence": {
+        "level": "medium",
+        "basis": "Analytical size advantages exist; compression/timing gains are unmeasured."
+      },
+      "proof": {
+        "test": "F2/F4/F5/F6 with cardinality, null fraction and runs varied independently; round-trip width/precision boundaries.",
+        "pass": "Measured net benefit with fixed validated dictionary meaning and exact values.",
+        "reversal": "Use flat strings/simple widths when encoding overhead loses; invisible quantization is rejected."
+      },
+      "strongest_alternative": "Straightforward lossless primitive columns or JSON plus HTTP compression.",
+      "principal_cost": "Dictionary hash tables/mappings, null state, width scans and decode work."
+    },
+    {
+      "id": "CT-008",
+      "proposal": "Admit snapshots using separate row, wire, decoded, retained and peak budgets.",
+      "status": "recommend",
+      "rationale": "Rows, field maps, Crossfilter, provenance and charts can exceed transport buffers. Full snapshots remain valid when actual total cost fits.",
+      "repository_evidence": [
+        {
+          "path": "packages/explorEDA/src/providers/DataLayerProvider.tsx",
+          "symbol": "rawData; profiles; columnCache; setData",
+          "observation": "Multiple retained structures are visible; helper internals are omitted."
+        },
+        {
+          "path": "packages/explorEDA/src/components/charts/BarChart/barPlan.ts",
+          "symbol": "numeric lists; bin members; Math.min/Math.max",
+          "observation": "Chart work and large-N sensitivity remain after transfer."
+        },
+        {
+          "path": "packages/explorEDA/src/lib/analysis/evaluateProject.ts",
+          "symbol": "stages; contributors",
+          "observation": "Trace/evaluation retention may scale with inputs."
+        }
+      ],
+      "external_sources": [
+        "E1",
+        "E10",
+        "E23",
+        "E32",
+        "E33",
+        "E34",
+        "E35",
+        "E36",
+        "E41"
+      ],
+      "confidence": {
+        "level": "high for policy; low for initial numeric defaults",
+        "basis": "Need is source-backed; 64/128/256 MiB values are lab knobs awaiting calibration."
+      },
+      "proof": {
+        "test": "Width/text/provenance plus replacement, cancellation and oversize cases; unique-allocation ledger across workers and known native data.",
+        "pass": "No silent truncation, no off-heap accounting illusion, budgets respected with uncertainty disclosed.",
+        "reversal": "Change row/byte targets using measured target-hardware results; never infer safety from compressed size alone."
+      },
+      "strongest_alternative": "Narrower complete projection or exact server aggregate with truthful coverage/trace.",
+      "principal_cost": "Admission estimation, explicit limits and retained/peak instrumentation."
+    },
+    {
+      "id": "CT-009",
+      "proposal": "Use staged end-to-end adoption gates with a predeclared workload and small-output/interaction guards.",
+      "status": "recommend",
+      "rationale": "The selected packet supplies no executed codec or application measurements. A byte-only benchmark could reward a slower full user path.",
+      "repository_evidence": [
+        {
+          "path": "docs/performance-checks.md",
+          "symbol": "production/cold/warm/full-workflow guidance",
+          "observation": "Historical development checks are not current transport evidence."
+        },
+        {
+          "path": "docs/intent/current-analysis-trust/intent-brief.md",
+          "symbol": "visible proof and contributor correctness",
+          "observation": "Proof should preserve meaningful interaction and record identity."
+        }
+      ],
+      "external_sources": [
+        "E4",
+        "E10",
+        "E28",
+        "E32",
+        "E34",
+        "E36"
+      ],
+      "confidence": {
+        "level": "high for method; provisional thresholds",
+        "basis": "Transparent falsifiable rule; thresholds are not product SLOs."
+      },
+      "proof": {
+        "test": "F0 then paired F1/F2 complete-view runs, project-source variant and actual bounded adapter path; broaden only when evidence could change the decision.",
+        "pass": "Correctness plus >=20% and >=100 ms p95 benefit, or >=25% attributable peak-memory reduction with <=5% latency regression; apply all guards.",
+        "reversal": "Retain JSON or select column JSON if Arrow fails; stop transport work if provider/trace dominates."
+      },
+      "strongest_alternative": "Ship the simpler encoding after correctness without adding an unproven binary dependency.",
+      "principal_cost": "Controlled runs, raw samples and instrumentation; avoid a full codec/workload cross product."
+    },
+    {
+      "id": "CT-010",
+      "proposal": "Scope caches to instance and immutable snapshot/row domain; defer a general progressive cache.",
+      "status": "recommend",
+      "rationale": "Equal row counts or local revisions do not establish that new columns describe the same records. Full-row projection coverage differs from partial-row coverage.",
+      "repository_evidence": [
+        {
+          "path": "packages/explorEDA/src/lib/analysis/evaluateProject.ts",
+          "symbol": "tableRevision; source/expand/aggregate keys",
+          "observation": "Source version and row grain differ from positional or local tokens."
+        },
+        {
+          "path": "packages/explorEDA/src/components/ExplorEdaProject.tsx",
+          "symbol": "__ID and row-key maps",
+          "observation": "Chart IDs are evaluation-local."
+        },
+        {
+          "path": "packages/explorEDA/src/hooks/CrossfilterWrapper.ts",
+          "symbol": "scope-specific filtering",
+          "observation": "Subset coverage cannot answer every local scope or filter removal."
+        }
+      ],
+      "external_sources": [
+        "E13",
+        "E27"
+      ],
+      "confidence": {
+        "level": "high",
+        "basis": "Correctness requirement; expansion capability is optional."
+      },
+      "proof": {
+        "test": "Late columns with old/new snapshots, reordered/duplicate keys, expired leases and changed dictionaries.",
+        "pass": "Only compatible complete row domains merge; otherwise rebuild or refuse extension.",
+        "reversal": "Enable broader caching only after a measured demand and coherent snapshot capability exist."
+      },
+      "strongest_alternative": "One completed snapshot plus one incoming replacement; refetch coherently on expiry.",
+      "principal_cost": "Pinned key/schema/dictionary metadata, bounded retention and invalidation."
+    },
+    {
+      "id": "CT-011",
+      "proposal": "Defer Parquet as the default dynamic query response.",
+      "status": "defer",
+      "rationale": "Footer/range/page decoding and reader startup may be unnecessary for bounded dynamic results. Existing immutable Parquet and repeated projections can justify it.",
+      "repository_evidence": [
+        {
+          "path": "packages/explorEDA/src/providers/DataLayerProvider.tsx",
+          "symbol": "DataLayerProvider",
+          "observation": "Rows still required after Parquet decoding."
+        },
+        {
+          "path": "packages/explorEDA/package.json",
+          "symbol": "dependencies",
+          "observation": "No selected Parquet decoder in supplied direct dependencies."
+        }
+      ],
+      "external_sources": [
+        "E2",
+        "E14",
+        "E15",
+        "E16",
+        "E17",
+        "E18",
+        "E19",
+        "E20",
+        "E29"
+      ],
+      "confidence": {
+        "level": "medium",
+        "basis": "Cost/fit inference; no measured reader comparison."
+      },
+      "proof": {
+        "test": "Compare pure-JS and WASM candidates on immutable range-aware files, including footer/extra requests, codecs, startup, copies and row bridge.",
+        "pass": "Selective-read reuse wins the same full-path gates with exact types.",
+        "reversal": "Reopen if the adapter/source already stores suitable Parquet or wide projection reuse dominates."
+      },
+      "strongest_alternative": "Arrow stream or lossless JSON for one complete bounded response.",
+      "principal_cost": "Reader/codec dependency, footer/range machinery and optional WASM/IPC bridge; no outer compression for original-byte ranges."
+    },
+    {
+      "id": "CT-012",
+      "proposal": "Defer a custom typed-array codec until standard-decoder overhead is a measured blocker.",
+      "status": "defer",
+      "rationale": "A small envelope may reduce startup but moves type validation, framing, strings, nulls, dictionary rules and maintenance into the project.",
+      "repository_evidence": [
+        {
+          "path": "packages/explorEDA/src/types/AnalysisProject.ts",
+          "symbol": "AnalysisScalar; AnalysisEvaluation",
+          "observation": "Current scalar/result semantics already need deliberate mapping."
+        },
+        {
+          "path": "packages/explorEDA/src/lib/valueParsing.ts",
+          "symbol": "raw/effective parsing rules",
+          "observation": "A custom codec must preserve existing value distinctions."
+        }
+      ],
+      "external_sources": [
+        "E13",
+        "E25",
+        "E27",
+        "E42",
+        "E43"
+      ],
+      "confidence": {
+        "level": "medium",
+        "basis": "Maintenance tradeoff; no custom decoder size/performance evidence."
+      },
+      "proof": {
+        "test": "Only after Arrow startup is isolated, compare a restricted scalar prototype with the same validation, row bridge and gates.",
+        "pass": "Meaningful full-path benefit exceeds owned-format maintenance cost.",
+        "reversal": "Keep standard Arrow or simpler JSON if savings disappear after complete accounting."
+      },
+      "strongest_alternative": "Standard Arrow IPC, or column JSON if that meets the need.",
+      "principal_cost": "Owned protocol/codec and long-term correctness responsibility; logical metadata remains required for every option."
+    },
+    {
+      "id": "CT-013",
+      "proposal": "Keep all customer data/caches within dedicated customer instances and hand platform choice to hosting.",
+      "status": "recommend",
+      "rationale": "Latest user scope interprets one-server simplicity per paying customer, with automated setup/operation. Transport imposes resource and consistency needs, not a platform selection.",
+      "repository_evidence": [
+        {
+          "path": "package.json",
+          "symbol": "packageManager",
+          "observation": "Existing pnpm/React project remains the application context."
+        },
+        {
+          "path": "packages/explorEDA/src/lib/analysis/useAnalysisEvaluation.ts",
+          "symbol": "stale request handling",
+          "observation": "Remote cancellation and instance resource control are additional interface obligations."
+        }
+      ],
+      "external_sources": [
+        "E1",
+        "E2",
+        "E35",
+        "E36",
+        "E37",
+        "E38"
+      ],
+      "confidence": {
+        "level": "high",
+        "basis": "Explicit user constraint; hosting capabilities/costs are not measured here."
+      },
+      "proof": {
+        "test": "Hosting validates per-instance routing, secret/data/cache scope, memory/duration/concurrency, cancellation, cleanup, telemetry and automated lifecycle.",
+        "pass": "A chosen platform meets bounded-response needs; streaming/ranges/shared-memory features are conditional and separately verified.",
+        "reversal": "No platform choice to reverse in this track; adapt retention/streaming strategy to measured hosting limits."
+      },
+      "strongest_alternative": "Bounded buffered complete responses when streaming is unavailable but budgets fit.",
+      "principal_cost": "Per-instance buffers/snapshot lifecycle and observability; no shared customer result cache or mandatory new durable platform."
+    },
+    {
+      "id": "CT-014",
+      "proposal": "Defer a resident column store or Crossfilter rewrite.",
+      "status": "defer",
+      "rationale": "Current column getters are object maps over rows; replacing transport does not replace profiles, calculations, filtering, inspection and restore.",
+      "repository_evidence": [
+        {
+          "path": "packages/explorEDA/src/providers/DataLayerProvider.tsx",
+          "symbol": "getColumnData; restoreFromStructure",
+          "observation": "Field maps and restore depend on current row representation."
+        },
+        {
+          "path": "packages/explorEDA/src/hooks/CrossfilterWrapper.ts",
+          "symbol": "chart/workspace dimensions",
+          "observation": "Scope behavior must survive any consumer change."
+        },
+        {
+          "path": "docs/intent/renderer-independent-replay/intent-brief.md",
+          "symbol": "proof scope",
+          "observation": "A broad provider/renderer rewrite is not a prerequisite to a visible proof."
+        }
+      ],
+      "external_sources": [
+        "E10",
+        "E20",
+        "E23",
+        "E24"
+      ],
+      "confidence": {
+        "level": "high for deferral",
+        "basis": "Broad current-consumer obligations are visible; a narrow wire experiment is available."
+      },
+      "proof": {
+        "test": "First measure provider/index/trace/plot fractions across encodings. Reopen with one narrowly scoped column consumer only if these dominate.",
+        "pass": "Separate proof preserves exact filtering, raw inspection, calculation, aggregate and restore semantics.",
+        "reversal": "Only measured consumer dominance and a useful small seam justify shaping this work."
+      },
+      "strongest_alternative": "Current rows, one materialization/commit and release of transient columns.",
+      "principal_cost": "Potentially broad application design and parity work, outside this assignment."
+    },
+    {
+      "id": "CT-015",
+      "proposal": "Investigate compact aggregate JSON with truthful same-snapshot trace capability.",
+      "status": "investigate",
+      "rationale": "Small group counts do not imply a small whole AnalysisEvaluation; earlier stages and per-measure contributor entries can dominate.",
+      "repository_evidence": [
+        {
+          "path": "packages/explorEDA/src/lib/analysis/evaluateProject.ts",
+          "symbol": "aggregate evaluation; stages; measureContributors",
+          "observation": "Whole evaluation retains input-scaled structures."
+        },
+        {
+          "path": "packages/explorEDA/src/lib/aggregates.ts",
+          "symbol": "calculateGroupedAggregate",
+          "observation": "Contributor records are distinct from output values."
+        },
+        {
+          "path": "packages/explorEDA/src/components/ExplorEdaProject.tsx",
+          "symbol": "trace inputs",
+          "observation": "Remote compact results cannot silently impersonate full local lineage."
+        }
+      ],
+      "external_sources": [
+        "E22",
+        "E28"
+      ],
+      "confidence": {
+        "level": "medium",
+        "basis": "Repository trace cost visible; future compact trace contract is unresolved."
+      },
+      "proof": {
+        "test": "F7: 32-group body versus full current evaluation; source membership/numeric contributors and same-snapshot record inspection.",
+        "pass": "Latency/startup benefit with honest capabilities, counts and trace meaning.",
+        "reversal": "Keep required trace data or report capability limitation if coherent deferred inspection is unavailable."
+      },
+      "strongest_alternative": "Complete source snapshot and local evaluation when its cost fits.",
+      "principal_cost": "Additional trace/result seam and snapshot retention if trace is deferred; not selected by transport alone."
+    },
+    {
+      "id": "CT-016",
+      "proposal": "Reject end-to-end zero-copy claims for the proposed transport.",
+      "status": "reject",
+      "rationale": "Specific typed views/transfers can avoid individual copies, while database conversion, HTTP, strings, row reconstruction, current workers and charts still allocate.",
+      "repository_evidence": [
+        {
+          "path": "packages/explorEDA/src/lib/analysis/useAnalysisEvaluation.ts",
+          "symbol": "postMessage(sources)",
+          "observation": "Observed table posts have no transfer list; actual result-side posting is omitted."
+        },
+        {
+          "path": "packages/explorEDA/src/components/ExplorEdaProject.tsx",
+          "symbol": "row spreading",
+          "observation": "Final rows are copied into chart objects."
+        },
+        {
+          "path": "packages/explorEDA/src/providers/DataLayerProvider.tsx",
+          "symbol": "getColumnData; setData",
+          "observation": "Row/index/map construction persists."
+        }
+      ],
+      "external_sources": [
+        "E1",
+        "E4",
+        "E10",
+        "E20",
+        "E23",
+        "E24",
+        "E25"
+      ],
+      "confidence": {
+        "level": "high",
+        "basis": "Source and ownership APIs directly contradict a blanket claim."
+      },
+      "proof": {
+        "test": "Per-boundary unique-allocation/lifetime ledger plus explicit concat/copy/clone/transfer and row-materialization instrumentation.",
+        "pass": "Only locally evidenced copy-avoidance claims; disclose unknown native/parser/renderer work.",
+        "reversal": "A narrower claim may be supported for a proven boundary; no unmeasured whole-system claim."
+      },
+      "strongest_alternative": "Describe the path as typed column transport with measured row materialization and copy costs.",
+      "principal_cost": "Accounting effort; aliases and off-heap buffers must not be double-counted or omitted."
+    }
+  ],
+  "source_catalog": {
+    "E1": {
+      "title": "WHATWG Fetch standard",
+      "url": "https://fetch.spec.whatwg.org/",
+      "accessed_at": "2026-10-12 UTC"
+    },
+    "E2": {
+      "title": "RFC 9110: HTTP semantics",
+      "url": "https://www.rfc-editor.org/rfc/rfc9110.html",
+      "accessed_at": "2026-10-12 UTC"
+    },
+    "E3": {
+      "title": "Apache Arrow JavaScript current documentation",
+      "url": "https://arrow.apache.org/js/current/",
+      "accessed_at": "2026-10-12 UTC"
+    },
+    "E4": {
+      "title": "Arrow JS IPC serialization source, pinned commit",
+      "url": "https://github.com/apache/arrow-js/blob/04ced72ce03d619836bb8a5445601114a67cbbc3/src/ipc/serialization.ts",
+      "accessed_at": "2026-10-12 UTC"
+    },
+    "E5": {
+      "title": "Arrow JS compression registry source, pinned commit",
+      "url": "https://github.com/apache/arrow-js/blob/04ced72ce03d619836bb8a5445601114a67cbbc3/src/ipc/compression/registry.ts",
+      "accessed_at": "2026-10-12 UTC"
+    },
+    "E8": {
+      "title": "Arrow JS RecordBatchReader API",
+      "url": "https://arrow.apache.org/js/current/classes/Arrow.dom.RecordBatchReader.html",
+      "accessed_at": "2026-10-12 UTC"
+    },
+    "E10": {
+      "title": "Arrow JS Vector API",
+      "url": "https://arrow.apache.org/js/current/classes/Arrow.dom.Vector.html",
+      "accessed_at": "2026-10-12 UTC"
+    },
+    "E12": {
+      "title": "MDN DecompressionStream constructor",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/DecompressionStream/DecompressionStream",
+      "accessed_at": "2026-10-12 UTC"
+    },
+    "E13": {
+      "title": "Apache Arrow columnar format specification",
+      "url": "https://arrow.apache.org/docs/format/Columnar.html",
+      "accessed_at": "2026-10-12 UTC"
+    },
+    "E14": {
+      "title": "Apache Parquet file format",
+      "url": "https://parquet.apache.org/docs/file-format/",
+      "accessed_at": "2026-10-12 UTC"
+    },
+    "E15": {
+      "title": "Apache Parquet data-page encodings",
+      "url": "https://parquet.apache.org/docs/file-format/data-pages/encodings/",
+      "accessed_at": "2026-10-12 UTC"
+    },
+    "E16": {
+      "title": "hyparquet maintained repository/documentation",
+      "url": "https://github.com/hyparam/hyparquet",
+      "accessed_at": "2026-10-12 UTC"
+    },
+    "E17": {
+      "title": "hyparquet-compressors maintained repository",
+      "url": "https://github.com/hyparam/hyparquet-compressors",
+      "accessed_at": "2026-10-12 UTC"
+    },
+    "E18": {
+      "title": "parquet-wasm documentation",
+      "url": "https://kylebarron.dev/parquet-wasm/",
+      "accessed_at": "2026-10-12 UTC"
+    },
+    "E19": {
+      "title": "parquet-wasm ParquetFile API",
+      "url": "https://kylebarron.dev/parquet-wasm/classes/esm_parquet_wasm.ParquetFile.html",
+      "accessed_at": "2026-10-12 UTC"
+    },
+    "E20": {
+      "title": "Arrow JS FFI maintained repository",
+      "url": "https://github.com/kylebarron/arrow-js-ffi",
+      "accessed_at": "2026-10-12 UTC"
+    },
+    "E21": {
+      "title": "ECMAScript Number.MAX_SAFE_INTEGER",
+      "url": "https://tc39.es/ecma262/multipage/numbers-and-dates.html#sec-number.max_safe_integer",
+      "accessed_at": "2026-10-12 UTC"
+    },
+    "E22": {
+      "title": "ECMAScript JSON.stringify",
+      "url": "https://tc39.es/ecma262/multipage/structured-data.html#sec-json.stringify",
+      "accessed_at": "2026-10-12 UTC"
+    },
+    "E23": {
+      "title": "WHATWG HTML structured data",
+      "url": "https://html.spec.whatwg.org/multipage/structured-data.html",
+      "accessed_at": "2026-10-12 UTC"
+    },
+    "E24": {
+      "title": "MDN transferable objects",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Transferable_objects",
+      "accessed_at": "2026-10-12 UTC"
+    },
+    "E25": {
+      "title": "WHATWG Encoding standard",
+      "url": "https://encoding.spec.whatwg.org/",
+      "accessed_at": "2026-10-12 UTC"
+    },
+    "E26": {
+      "title": "WebAssembly specification: floating-point values",
+      "url": "https://webassembly.github.io/spec/core/syntax/values.html#floating-point",
+      "accessed_at": "2026-10-12 UTC"
+    },
+    "E27": {
+      "title": "Apache Arrow schema source",
+      "url": "https://raw.githubusercontent.com/apache/arrow/main/format/Schema.fbs",
+      "accessed_at": "2026-10-12 UTC"
+    },
+    "E28": {
+      "title": "MDN Response.json",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/Response/json",
+      "accessed_at": "2026-10-12 UTC"
+    },
+    "E29": {
+      "title": "Apache Parquet null encoding",
+      "url": "https://parquet.apache.org/docs/file-format/nulls/",
+      "accessed_at": "2026-10-12 UTC"
+    },
+    "E30": {
+      "title": "Apache Parquet logical types",
+      "url": "https://parquet.apache.org/docs/file-format/types/logicaltypes/",
+      "accessed_at": "2026-10-12 UTC"
+    },
+    "E31": {
+      "title": "RFC 8259: JSON",
+      "url": "https://www.rfc-editor.org/rfc/rfc8259",
+      "accessed_at": "2026-10-12 UTC"
+    },
+    "E32": {
+      "title": "MDN measureUserAgentSpecificMemory",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/Performance/measureUserAgentSpecificMemory",
+      "accessed_at": "2026-10-12 UTC"
+    },
+    "E33": {
+      "title": "WICG measure-memory specification",
+      "url": "https://wicg.github.io/performance-measure-memory/",
+      "accessed_at": "2026-10-12 UTC"
+    },
+    "E34": {
+      "title": "Chrome DevTools: memory problems",
+      "url": "https://developer.chrome.com/docs/devtools/memory-problems",
+      "accessed_at": "2026-10-12 UTC"
+    },
+    "E35": {
+      "title": "Node process.memoryUsage",
+      "url": "https://nodejs.org/api/process.html#processmemoryusage",
+      "accessed_at": "2026-10-12 UTC"
+    },
+    "E36": {
+      "title": "W3C Resource Timing",
+      "url": "https://www.w3.org/TR/resource-timing/",
+      "accessed_at": "2026-10-12 UTC"
+    },
+    "E37": {
+      "title": "MDN SharedArrayBuffer",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SharedArrayBuffer",
+      "accessed_at": "2026-10-12 UTC"
+    },
+    "E38": {
+      "title": "Node zlib documentation",
+      "url": "https://nodejs.org/api/zlib.html",
+      "accessed_at": "2026-10-12 UTC"
+    },
+    "E39": {
+      "title": "Web IDL USVString",
+      "url": "https://webidl.spec.whatwg.org/#idl-USVString",
+      "accessed_at": "2026-10-12 UTC"
+    },
+    "E41": {
+      "title": "MDN Performance.memory",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/Performance/memory",
+      "accessed_at": "2026-10-12 UTC"
+    },
+    "E42": {
+      "title": "ECMAScript NumericToRawBytes",
+      "url": "https://tc39.es/ecma262/multipage/structured-data.html#sec-numerictorawbytes",
+      "accessed_at": "2026-10-12 UTC"
+    },
+    "E43": {
+      "title": "ECMAScript ToUint8 / ToFixedSizeInteger",
+      "url": "https://tc39.es/ecma262/multipage/abstract-operations.html#sec-touint8",
+      "accessed_at": "2026-10-12 UTC"
+    }
+  },
+  "unresolved": [
+    "Actual customer workload/schema/key width and browser/hardware floor",
+    "Final product latency/capacity values",
+    "Exact decimal/int64/fine-time and nested/mixed consumer capabilities",
+    "Canonical query/scope/trace contract and external-result seam",
+    "Adapter consistency/streaming/cancellation and snapshot lifetime",
+    "Hosting platform/resource limits/automated per-instance operation"
+  ],
+  "blockers": {
+    "research_handoff": [],
+    "binary_adoption": [
+      "No end-to-end measurements or executed provider parity proof",
+      "Selected packet is not a runnable checkout; omitted helper/worker/renderer implementations",
+      "Required unsupported semantics need explicit capability or rejection"
+    ]
+  },
+  "report": "columnar-data-transport-research.md",
+  "archive": "columnar-data-transport-research.zip"
+}

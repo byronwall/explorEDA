@@ -25,6 +25,7 @@
 
 - The demo dev server and demo tests run the library from source. Do not build the library to see a change; `pnpm --filter demo dev` picks it up. Set `EXPLOREDA_DIST=1` only to try the built package.
 - While working, run targeted tests (`pnpm --filter exploreda exec vitest run <files>`) and `pnpm --filter exploreda check-types`.
+- Take test time limits from `@repo/test-config`. Don't set a timeout in one test or one config; see [Test time limits](docs/agent-guide.md#test-time-limits).
 - Run `pnpm check` once, before opening a PR. It builds the package, so never run it from several worktrees at the same time.
 
 ## Pull requests
