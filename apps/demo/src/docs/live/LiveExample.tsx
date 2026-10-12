@@ -142,10 +142,16 @@ export function LiveExample({
       data-docs-steps={JSON.stringify(spec.steps)}
       data-docs-shot={`example-${id}`}
     >
-      <div className="overflow-hidden rounded-xl border border-border bg-card">
-        <div className="flex items-center gap-2 border-b border-border bg-muted/40 px-3 py-1.5">
-          <span className="text-xs font-medium text-muted-foreground">
-            {wide ? "Live example" : "Screenshot"}
+      <div className="landing-shot overflow-hidden rounded-xl border border-border bg-card">
+        <div className="flex items-center gap-2 border-b border-border bg-muted/40 py-1 pl-3.5 pr-1.5">
+          <span className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+            {wide && (
+              <span
+                aria-hidden="true"
+                className="size-1.5 rounded-full bg-[var(--eda-dsl-string)] shadow-[0_0_0_3px_color-mix(in_oklab,var(--eda-dsl-string)_20%,transparent)]"
+              />
+            )}
+            {wide ? "Live example · edits stay on this page" : "Screenshot"}
           </span>
           <div className="ml-auto flex items-center gap-1">
             {wide && (
@@ -225,23 +231,33 @@ export function LiveExample({
           />
         )}
       </div>
-      {(caption || (wide && spec.steps.length > 0)) && (
-        <figcaption className="mt-3 text-sm text-muted-foreground">
+      {caption && (
+        <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">
           {caption}
-          {wide && spec.steps.length > 0 && (
-            <p className="mt-3 font-medium text-foreground">Try this</p>
-          )}
-          {wide && spec.steps.length > 0 && (
-            <ol
-              aria-label="Try this"
-              className="mt-2 list-decimal space-y-1 pl-5"
-            >
-              {spec.steps.map((step, index) => (
-                <li key={index}>{describeStep(spec, step)}</li>
-              ))}
-            </ol>
-          )}
         </figcaption>
+      )}
+      {wide && spec.steps.length > 0 && (
+        <div className="mt-4 rounded-lg border border-border bg-card px-4 py-3">
+          <p className="text-xs font-semibold uppercase tracking-wide text-foreground/70">
+            Try this
+          </p>
+          <ol
+            aria-label="Try this"
+            className="mt-2 space-y-1.5 text-sm leading-6 text-foreground/80"
+          >
+            {spec.steps.map((step, index) => (
+              <li key={index} className="flex gap-3">
+                <span
+                  aria-hidden="true"
+                  className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[0.7rem] font-semibold text-primary"
+                >
+                  {index + 1}
+                </span>
+                {describeStep(spec, step)}
+              </li>
+            ))}
+          </ol>
+        </div>
       )}
     </figure>
   );
