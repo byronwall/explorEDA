@@ -8,7 +8,7 @@
     "last_updated": "2026-10-12",
     "summary": "Waterfall (Bridge and Accumulate) then donut as chart types, then Composition marks.",
     "status": "active",
-    "next_action": "Finish M4 PR; then reconcile the initiative."
+    "next_action": "Review and merge the stacked PRs in order: #338, #351, #354, #356, #358, #359. Then retire the initiative."
   },
   "artifacts": {
     "intent_brief": {
@@ -537,7 +537,7 @@
     "open_decisions": []
   },
   "implementation": {
-    "status": "in-progress",
+    "status": "completed",
     "repository_snapshot": {
       "root": "/Users/byronwall/Projects/explorEDA/.claude/worktrees/composition-contribution-review-6a27e4",
       "revision": "2359bb70b4e3ab8e87878fa8b418a940cf99ad7c",
@@ -633,8 +633,10 @@
         "proof": "Composition mark tests; docs:verify; screenshots.",
         "valid_intermediate_state": "Composition gains two marks; chart types unchanged.",
         "rollback": "Remove the mark types from MarkDefinition and the editor.",
-        "status": "active",
-        "evidence": []
+        "status": "completed",
+        "evidence": [
+          "byronwall/explorEDA#359; partsMarks.test.ts; budget-report example and /docs/composition section"
+        ]
       }
     ],
     "cut_line": [
@@ -705,6 +707,12 @@
       "action": "Restyled waterfall totals and subtotals.",
       "reason": "User found the gray subtotal and total bars heavy and confusing beside the step bars.",
       "evidence": "byronwall/explorEDA#356: subtotals as hollow checkpoints with group dividers; start and end as a line from zero to a filled dot, chosen by consider-contrast over slim bars, hollow checkpoints, and tinted bars."
+    },
+    {
+      "date": "2026-10-12",
+      "action": "Delivered all four milestones as stacked PRs.",
+      "reason": "User asked to keep stacking PRs until everything was done.",
+      "evidence": "byronwall/explorEDA#351 (bridge waterfall), #354 (running totals), #356 (total and subtotal restyle), #358 (donut), #359 (Composition marks). pnpm check passed on each branch; docs:verify runs in PR CI."
     }
   ],
   "closure": null,
