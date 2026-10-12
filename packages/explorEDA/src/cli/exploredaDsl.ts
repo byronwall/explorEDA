@@ -1,10 +1,11 @@
 /* eslint-disable no-console -- a command-line tool prints its results */
-import { readFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import { registerAllCharts } from "@/charts/registerAllCharts";
 import {
   chartSettingReference,
   compileViews,
   describeDslSource,
+  formatDsl,
   DSL_REFERENCE,
   formatDslDiagnostics,
 } from "@/lib/dsl";
@@ -14,11 +15,13 @@ import type { datum } from "@/types/ChartTypes";
 const USAGE = `Usage:
   exploreda-dsl check <dashboard.eda> --data <rows.csv|rows.json> [--json]
   exploreda-dsl fields --data <rows.csv|rows.json>
+  exploreda-dsl fmt <dashboard.eda> [--write]
   exploreda-dsl reference [chart-type]
 
 check   builds the dashboard (every view) and lists each problem with a fix.
         Exits 0 when complete, 1 when partial, 2 when nothing builds.
 fields  lists the fields, types, and example values to write against.
+fmt     indents by brace depth and tidies spacing; --write saves the file.
 reference  prints the grammar, or every setting a chart type takes.`;
 
 /** Reads a CSV cell the way the app's file import does. */
@@ -99,6 +102,20 @@ function main(args: string[]) {
     return at >= 0 ? rest[at + 1] : undefined;
   };
   const dataPath = option("--data");
+  if (command === "fmt") {
+    const file = rest.find((item) => !item.startsWith("--"));
+    if (!file) {
+      console.error(USAGE);
+      return 64;
+    }
+    const formatted = formatDsl(readFileSync(file, "utf8"));
+    if (rest.includes("--write")) {
+      writeFileSync(file, formatted);
+    } else {
+      process.stdout.write(formatted);
+    }
+    return 0;
+  }
   if (command === "reference") {
     const type = rest[0];
     if (!type) {

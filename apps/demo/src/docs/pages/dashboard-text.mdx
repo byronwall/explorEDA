@@ -1,6 +1,6 @@
 ## Write a dashboard as text
 
-Dashboard text builds a whole dashboard from compact lines: each line declares a field alias, a calculation, or a chart. In the demo, open **Dashboard text** (<kbd>T</kbd>) beside any view to read and edit the text that builds it.
+Dashboard text builds a whole dashboard from compact lines: each line declares a field alias, a calculation, or a chart. A line that ends in `{` opens a body for longer settings, and `}` closes it, so spacing never changes what the text means. A `layout` block places the charts, one line per band of the grid. In the demo, open **Dashboard text** (<kbd>T</kbd>) beside any view to read and edit the text that builds it.
 
 Workspace filters are `filter` lines, one per field, such as `filter Region=West,East`.
 

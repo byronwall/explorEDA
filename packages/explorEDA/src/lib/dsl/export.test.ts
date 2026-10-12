@@ -50,6 +50,13 @@ function meaning(settings: SavedDataStructure) {
 function roundTrip(settings: SavedDataStructure) {
   const { text, omitted } = exportDocument(settings, { rows });
   const rebuilt = compileDocument(text, { rows });
+  // Text names every chart; a chart saved with a generated ID takes its name.
+  rebuilt.settings.charts.forEach((chart, index) => {
+    const saved = settings.charts[index];
+    if (saved && /^[0-9a-f-]{36}$/.test(saved.id)) {
+      chart.id = saved.id;
+    }
+  });
   return { text, omitted, rebuilt };
 }
 
@@ -134,8 +141,9 @@ field "Order Date" label="Ordered" as=date
 calc margin=(Revenue-Cost)/Revenue
 calc "Net revenue"=Revenue-Cost
 field margin format=percent precision=1
-scatter @fit x=Revenue y=margin color=Channel where."Order Date"=2024-01-01..2024-02-28
-+ regression=polynomial regression.degree=2
+scatter @fit x=Revenue y=margin color=Channel where."Order Date"=2024-01-01..2024-02-28 {
+  regression=polynomial regression.degree=2
+}
 row Channel where.Channel="Store, Mall",null
 metric avg=Revenue select.Units=2..
 table Revenue,Cost,"Net revenue"`,
@@ -194,11 +202,10 @@ table Revenue,Cost,"Net revenue"`,
       "rows-missing",
     ]);
     expect(meaning(rebuilt.settings)).toEqual(meaning(edited));
-    // Readable text, no JSON blocks: every line is a declaration or a + line.
+    // Readable text, no JSON blocks: braces only open and close bodies.
     expect(text).not.toMatch(/[{[]\s*"|^\s*[{[]/m);
-    expect(text).toContain(
-      "scatter x=Revenue y=margin @fit at=0,0,6,4 color=Channel"
-    );
+    expect(text).toContain("scatter @fit x=Revenue y=margin color=Channel {");
+    expect(text).toMatch(/layout \{\n {2}4: fit Channel\n/);
     expect(text).toContain("columns.0.width=140");
   });
 
@@ -219,7 +226,7 @@ scatter x=Revenue y=Units title="Bigger orders earn more" subtitle="Revenue by u
     });
 
     const { text, rebuilt } = roundTrip(start.settings);
-    expect(text).toContain("theme name=newsprint");
+    expect(text).toContain("theme newsprint");
     expect(meaning(rebuilt.settings)).toEqual(meaning(start.settings));
   });
 

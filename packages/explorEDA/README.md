@@ -160,17 +160,17 @@ it everywhere, or target a theme with `[data-eda-theme="…"]`:
 }
 ```
 
-| Variable | Sets |
-| --- | --- |
-| `--eda-headline-font`, `--eda-headline-size`, `--eda-headline-weight`, `--eda-headline-line` | Chart title type |
-| `--eda-headline-color`, `--eda-headline-accent` | Title color and the short rule above it |
-| `--eda-subtitle-font`, `--eda-subtitle-size`, `--eda-subtitle-color` | Subtitle type |
-| `--eda-note-size`, `--eda-note-color` | Source note type |
-| `--eda-axis-tick-size`, `--eda-axis-label-size` | Axis tick and title sizes, in px |
-| `--eda-axis-tick-color`, `--eda-axis-label-color` | Axis text colors |
-| `--eda-panel-surface`, `--eda-panel-rule` | Chart surface and border |
-| `--eda-header-padding` | Space around an editorial headline |
-| `--eda-heat-low`, `--eda-heat-high`, `--eda-heat-mid`, `--eda-heat-negative` | The ramp heatmaps, region maps, and density use |
+| Variable                                                                                     | Sets                                            |
+| -------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| `--eda-headline-font`, `--eda-headline-size`, `--eda-headline-weight`, `--eda-headline-line` | Chart title type                                |
+| `--eda-headline-color`, `--eda-headline-accent`                                              | Title color and the short rule above it         |
+| `--eda-subtitle-font`, `--eda-subtitle-size`, `--eda-subtitle-color`                         | Subtitle type                                   |
+| `--eda-note-size`, `--eda-note-color`                                                        | Source note type                                |
+| `--eda-axis-tick-size`, `--eda-axis-label-size`                                              | Axis tick and title sizes, in px                |
+| `--eda-axis-tick-color`, `--eda-axis-label-color`                                            | Axis text colors                                |
+| `--eda-panel-surface`, `--eda-panel-rule`                                                    | Chart surface and border                        |
+| `--eda-header-padding`                                                                       | Space around an editorial headline              |
+| `--eda-heat-low`, `--eda-heat-high`, `--eda-heat-mid`, `--eda-heat-negative`                 | The ramp heatmaps, region maps, and density use |
 
 The package ships no font files. Point a font variable at a webfont the host
 already loads; axis layout measures text again once fonts finish loading, so
@@ -269,15 +269,21 @@ See [the calculation workflow](../../docs/calculation-workflow.md) and the demo'
 
 ## Dashboard text
 
-Build a complete dashboard from compact text. Each line declares a field alias, a calculation, a workspace filter, or a chart. `where.` filters limit only their own chart. A `filter` line narrows every chart, and no chart owns it; write one line per field.
+Build a complete dashboard from compact text. Each line declares a field alias, a calculation, a workspace filter, or a chart. A line that ends in `{` opens a body for longer settings, and `}` closes it. Whitespace never changes meaning. `where.` filters limit only their own chart. A `filter` line narrows every chart, and no chart owns it; write one line per field. A `layout` block places charts: each line is a band's height and its cells, which split the 12 columns evenly unless a cell gives its width.
 
 ```text
 revenue:num=Revenue label="Revenue ($)"
-calc profit=revenue-Cost
+calc profit = revenue - Cost
 filter Channel=Web,Store
-scatter @web x=revenue y=profit where.Channel=Web
-metric sum=profit where.profit=0..
-table revenue,profit,Channel
+scatter @web x=revenue y=profit where.Channel=Web {
+  title="Web orders" x.scale=log
+}
+metric @gains sum=profit where.profit=0..
+table @orders revenue,profit,Channel
+layout {
+  5: web web gains
+  4: orders
+}
 ```
 
 ```ts
@@ -295,26 +301,30 @@ Agents and scripts can check text without a browser:
 ```sh
 npx exploreda-dsl fields --data rows.csv
 npx exploreda-dsl check dashboard.eda --data rows.csv
+npx exploreda-dsl fmt dashboard.eda --write
 npx exploreda-dsl reference
+npx exploreda-dsl reference scatter
 ```
 
-Set an axis range with `x.min=`, `x.max=`, `y.min=`, and `y.max=`. They save as `xAxis.limits` and `yAxis.limits` and only change the view; rows outside stay counted. Any saved setting can be written as a flat path, such as `xAxis.scaleType=symlog` or `columns.0.width=140`. Color scales, grouped summaries, and the Rows view have their own lines (`scale`, `group`, `rows`). `exportDocument(settings, { rows })` writes the current dashboard as text that rebuilds it. Region maps refer to map shapes the host passes in as `geometryAssets`.
+Set an axis range with `x.min=`, `x.max=`, `y.min=`, and `y.max=`. They save as `xAxis.limits` and `yAxis.limits` and only change the view; rows outside stay counted. Each setting has one spelling: a word such as `x.title=` or `bins=` when it has one, and otherwise its saved path, such as `minRowHeight=30` or `columns.0.width=140`. `exploreda-dsl reference <type>` lists them. A chart goes by its `@name`, or by its field when no other chart shares it, so `row Region` is placed as `Region`. `formatDsl(text)` indents by brace depth without changing meaning. Color scales, grouped summaries, and the Rows view have their own lines (`scale`, `group`, `rows`). `exportDocument(settings, { rows })` writes the current dashboard as text that rebuilds it. Region maps refer to map shapes the host passes in as `geometryAssets`.
 
 ### Several views in one text
 
-One text can hold every saved view. Shared definitions (field settings, calculations, color scales, and grouped summaries) come first and apply to every view. Each `view "Name"` line starts a view; the grid, Rows view, and charts below it belong to that view.
+One text can hold every saved view. Shared definitions (field settings, calculations, color scales, and grouped summaries) come first and apply to every view. Each `view "Name" { }` holds that view's grid, Rows view, charts, and layout.
 
 ```text
-dashboard name="Sales"
-calc profit=Revenue-Cost
+dashboard "Sales"
+calc profit = Revenue - Cost
 
-view Overview
-metric sum=Revenue
-scatter x=Revenue y=profit color=Channel
+view Overview {
+  metric sum=Revenue
+  scatter x=Revenue y=profit color=Channel
+}
 
-view "By channel"
-row Channel where.Units=2..
-hist profit
+view "By channel" {
+  row Channel where.Units=2..
+  hist profit
+}
 ```
 
 ```ts
@@ -331,7 +341,7 @@ const { views } = compileViews(text, { rows });
 // views[i].name and views[i].settings rebuild each view.
 ```
 
-Text without `view` lines reads as one view. `compileDocument` builds only the first view and warns about the rest. `exploreda-dsl check` checks every view.
+Text without views reads as one view. `compileDocument` builds only the first view and warns about the rest. `exploreda-dsl check` checks every view.
 
 `check` exits 0 when every declaration applied, 1 when some were skipped, and 2 when nothing can be built. Add `--json` for the full result.
 
@@ -448,7 +458,12 @@ whose view keeps the same charts, filters, and layout.
 import { addSourceFromRows, singleTableProject } from "exploreda/analysis";
 
 const promoted = singleTableProject({ name: "Deliveries", rows, settings });
-const added = addSourceFromRows(promoted.project, promoted.tables, "Routes", routeRows);
+const added = addSourceFromRows(
+  promoted.project,
+  promoted.tables,
+  "Routes",
+  routeRows
+);
 // Render ExplorEdaProject with added.project, added.tables, and promoted.view;
 // schemaFocus={added.sourceId} opens the diagram on the new table.
 ```

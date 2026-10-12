@@ -39,6 +39,7 @@ import type {
 import { validateSavedData } from "@/utils/saveDataUtils";
 import { parsePath, setPath } from "./paths";
 import { settingWords } from "./schema";
+import { parseLayout, placeLayout, type LayoutProblem } from "./layout";
 import {
   CHART_SETTING_KEYS,
   FIELD_SETTING_WORDS,
@@ -175,6 +176,7 @@ export const DSL_OTHER_KEYWORDS = [
   "field",
   "chart",
   "view",
+  "layout",
 ];
 
 /** Declarations that hold for every view, wherever they appear. */
@@ -194,7 +196,7 @@ export function viewHeaders(declarations: DslDeclaration[]) {
   return declarations.filter((item) => item.keyword === "view");
 }
 
-/** A view's name: `view "Overview"` or `view name=Overview`. */
+/** A view's name: `view "Overview" { … }`. */
 export function viewName(header: DslDeclaration, index: number): string {
   const value =
     header.positional[0]?.value ??
@@ -341,19 +343,15 @@ export function compileDocument(
   const headers = viewHeaders(parsed.declarations);
   const viewIndex = internal.view ?? 0;
   const header = headers[viewIndex];
-  let section = -1;
+  // Lines outside every view belong to all of them.
   const declarations = headers.length
-    ? parsed.declarations.filter((item) => {
-        if (item.keyword === "view") {
-          section = headers.indexOf(item);
-          return false;
-        }
-        return (
-          section === -1 ||
-          section === viewIndex ||
-          SHARED_KEYWORDS.has(item.keyword)
-        );
-      })
+    ? parsed.declarations.filter(
+        (item) =>
+          item.keyword !== "view" &&
+          (item.view === undefined ||
+            item.view === viewIndex ||
+            SHARED_KEYWORDS.has(item.keyword))
+      )
     : parsed.declarations;
   const diagnostics: DslDiagnostic[] = problems.map((problem) => ({
     severity: "error",
@@ -372,6 +370,17 @@ export function compileDocument(
     diagnostics.push({ severity, effect, message, ...spanOf(span), ...extra });
 
   if (header) {
+    if (!header.hasBody) {
+      report(
+        "error",
+        "chart-skipped",
+        header.span,
+        `${viewName(header, viewIndex)} has no body, so it shows no charts.`,
+        {
+          suggestion: `Put the view's charts in braces: view ${JSON.stringify(viewName(header, viewIndex))} { … }.`,
+        }
+      );
+    }
     for (const pair of header.pairs) {
       if (pair.key !== "name") {
         report(
@@ -416,6 +425,7 @@ export function compileDocument(
   const sharedDeclarations: DslDeclaration[] = [];
   const filterDeclarations: DslDeclaration[] = [];
   const chartDeclarations: DslDeclaration[] = [];
+  const layoutDeclarations: DslDeclaration[] = [];
 
   const applyFieldPairs = (
     field: string,
@@ -615,6 +625,18 @@ export function compileDocument(
         break;
       }
       case "dashboard":
+        if (declaration.positional[0]) {
+          metadataName = single(declaration.positional.shift()!.value);
+        }
+        for (const item of declaration.positional) {
+          report(
+            "warning",
+            "setting-ignored",
+            item.span,
+            `${item.value.raw} is not a dashboard setting, so it was ignored.`,
+            { suggestion: 'Name the dashboard once: dashboard "Sales".' }
+          );
+        }
         for (const pair of declaration.pairs) {
           if (pair.key === "name") {
             metadataName = single(pair.value);
@@ -625,7 +647,7 @@ export function compileDocument(
               pair.span,
               `${pair.key} is not a dashboard setting, so it was ignored.`,
               {
-                suggestion: "Use name=.",
+                suggestion: 'Name it as dashboard "Sales".',
               }
             );
           }
@@ -676,7 +698,14 @@ export function compileDocument(
         }
         break;
       case "theme":
-        for (const pair of declaration.pairs) {
+        for (const pair of [
+          ...declaration.positional.map((item) => ({
+            key: "name",
+            value: item.value,
+            span: item.span,
+          })),
+          ...declaration.pairs,
+        ]) {
           const id = single(pair.value);
           if (pair.key !== "name") {
             report(
@@ -684,7 +713,7 @@ export function compileDocument(
               "setting-ignored",
               pair.span,
               `${pair.key} is not a theme setting, so it was ignored.`,
-              { suggestion: "Use name=." }
+              { suggestion: "Name the theme, as in theme newsprint." }
             );
           } else if (!isWorkspaceThemeId(id)) {
             const near = closestName(
@@ -720,6 +749,9 @@ export function compileDocument(
         break;
       case "filter":
         filterDeclarations.push(declaration);
+        break;
+      case "layout":
+        layoutDeclarations.push(declaration);
         break;
       default:
         if (DSL_CHART_KEYWORDS[keyword] || keyword === "chart") {
@@ -1249,6 +1281,21 @@ export function compileDocument(
     }
   }
 
+  // Charts go by their @name, or by their field when that is unambiguous,
+  // so a layout can place them.
+  const explicitNames = new Set(
+    chartDeclarations.flatMap((item) => (item.name ? [item.name] : []))
+  );
+  const chartNames = new Map<string, string>();
+  const ambiguousNames = new Set<string>();
+  const chartLines = new Map<string, { span: DslSpan; subject: string }>();
+  const nameChart = (name: string, id: string) => {
+    if (chartNames.has(name) && chartNames.get(name) !== id) {
+      ambiguousNames.add(name);
+    } else {
+      chartNames.set(name, id);
+    }
+  };
   for (const declaration of chartDeclarations) {
     const subject = subjectOf(declaration);
     const type =
@@ -1258,7 +1305,24 @@ export function compileDocument(
           : ""
         : DSL_CHART_KEYWORDS[declaration.keyword]!;
     const summary = { line: declaration.span.line, subject, type };
-    const chart = buildChart(declaration, type, subject);
+    const implicit = declaration.name ? undefined : implicitName(declaration);
+    const chart = buildChart(declaration, type, subject, implicit);
+    for (const child of declaration.children) {
+      report(
+        "warning",
+        "setting-ignored",
+        child.span,
+        `${child.keyword} can't go inside ${subject}, so it was ignored.`,
+        { subject, suggestion: "Put settings in the body as key=value." }
+      );
+    }
+    if (chart) {
+      nameChart(chart.id, chart.id);
+      if (implicit) {
+        nameChart(implicit, chart.id);
+      }
+      chartLines.set(chart.id, { span: declaration.span, subject });
+    }
     if (chart?.type === "row" && chart.aggregateId) {
       // A row chart ranks its own field, so its summary must group by it.
       const spec = aggregates.find((item) => item.id === chart.aggregateId);
@@ -1550,7 +1614,8 @@ export function compileDocument(
   function buildChart(
     declaration: DslDeclaration,
     type: string,
-    subject: string
+    subject: string,
+    implicit?: string
   ): ChartSettings | undefined {
     if (!type) {
       report(
@@ -1770,6 +1835,13 @@ export function compileDocument(
         );
       }
       chart.id = declaration.name;
+    } else if (
+      implicit &&
+      /^[\w-]+$/.test(implicit) &&
+      !usedIds.has(implicit) &&
+      !explicitNames.has(implicit)
+    ) {
+      chart.id = implicit;
     }
 
     // Filters first: a broken one skips the chart instead of widening it.
@@ -2153,6 +2225,80 @@ export function compileDocument(
     return "unknown";
   }
 
+  const layout = layoutDeclarations.at(-1);
+  for (const extra of layoutDeclarations.slice(0, -1)) {
+    report(
+      "warning",
+      "setting-ignored",
+      extra.span,
+      "Only the last layout block places charts, so this one was ignored.",
+      { suggestion: "Keep one layout block per view." }
+    );
+  }
+  if (layout) {
+    const problems: LayoutProblem[] = [];
+    const rows = parseLayout(layout, problems);
+    const placed = placeLayout(
+      rows,
+      gridSettings.columnCount,
+      (name, span) => {
+        if (ambiguousNames.has(name)) {
+          problems.push({
+            message: `${name} names more than one chart, so the layout can't place it.`,
+            span,
+            suggestion: "Give each chart its own @name and use that.",
+          });
+          return undefined;
+        }
+        const id = chartNames.get(name);
+        if (id === undefined) {
+          const near = closestName(name, chartNames.keys());
+          problems.push({
+            message: `${name} is not a chart in this view, so the layout skipped it.`,
+            span,
+            suggestion: near
+              ? `Did you mean ${near}?`
+              : "Name a chart with @name or by its field.",
+          });
+        }
+        return id;
+      },
+      problems
+    );
+    for (const problem of problems) {
+      report("warning", "setting-ignored", problem.span, problem.message, {
+        suggestion: problem.suggestion,
+      });
+    }
+    for (const chart of charts) {
+      const info = chartLines.get(chart.id);
+      const position = placed.get(chart.id);
+      if (position) {
+        if (explicitLayouts.has(chart.id) && info) {
+          report(
+            "warning",
+            "setting-ignored",
+            info.span,
+            `${info.subject} has at= and a place in the layout; the layout wins.`,
+            { subject: info.subject, suggestion: "Place it one way." }
+          );
+        }
+        chart.layout = position;
+        explicitLayouts.add(chart.id);
+      } else if (!explicitLayouts.has(chart.id) && info) {
+        report(
+          "warning",
+          "setting-default",
+          info.span,
+          `${info.subject} isn't in the layout, so it takes the first free space.`,
+          {
+            subject: info.subject,
+            suggestion: "Add it to the layout block, or give it at=.",
+          }
+        );
+      }
+    }
+  }
   placeCharts(charts, explicitLayouts, gridSettings.columnCount);
   if (header) {
     metadataName = viewName(header, viewIndex);
@@ -2204,6 +2350,20 @@ export function compileDocument(
     skippedCharts: skipped,
     complete: diagnostics.length === 0,
   };
+}
+
+/**
+ * The name a chart goes by without an @name: the field its head names,
+ * for charts that show one field, such as `row Region`.
+ */
+export function implicitName(declaration: DslDeclaration): string | undefined {
+  const field = declaration.pairs.find((pair) => pair.key === "field");
+  const oneField = ["row", "hist", "histogram", "bar"].includes(
+    declaration.keyword
+  );
+  const value =
+    field?.value ?? (oneField ? declaration.positional[0]?.value : undefined);
+  return value && value.items.length === 1 ? value.items[0]!.text : undefined;
 }
 
 /**

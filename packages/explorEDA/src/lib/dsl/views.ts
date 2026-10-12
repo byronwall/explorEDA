@@ -68,8 +68,10 @@ export function compileViews(
   const { declarations } = parseDocument(text);
   const headers = viewHeaders(declarations);
   const dashboard = declarations.find((item) => item.keyword === "dashboard");
-  const named = dashboard?.pairs.find((pair) => pair.key === "name")?.value
-    .items[0]?.text;
+  const named = (
+    dashboard?.positional[0]?.value ??
+    dashboard?.pairs.find((pair) => pair.key === "name")?.value
+  )?.items[0]?.text;
 
   const views = (headers.length ? headers : [undefined]).map(
     (header, index) => {
@@ -124,8 +126,8 @@ export function compileViews(
 
 /**
  * Writes a set of views as one text that rebuilds all of them. Shared
- * definitions come first, once; then each view's own lines follow its
- * `view "Name"` line.
+ * definitions come first, once; then each view's own lines sit in its
+ * `view "Name" { }` body.
  */
 export function exportViews(
   views: DslView[],
@@ -162,11 +164,14 @@ export function exportViews(
   const sharedGrid = grids.size === 1 ? (parts[0]!.view[0] ?? []) : [];
   const name = options.name ?? first.name;
   const blocks = [
-    [`dashboard name=${JSON.stringify(name)}`, ...sharedGrid],
+    [`dashboard ${JSON.stringify(name)}`, ...sharedGrid],
     ...parts[0]!.shared,
     ...parts.map((part, index) => [
-      `view ${encodeScalar(views[index]!.name)}`,
-      ...(sharedGrid.length ? part.view.slice(1) : part.view).flat(),
+      `view ${encodeScalar(views[index]!.name)} {`,
+      ...(sharedGrid.length ? part.view.slice(1) : part.view)
+        .flat()
+        .map((line) => `  ${line}`),
+      "}",
     ]),
   ].filter((block) => block.length);
   return {

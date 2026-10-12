@@ -92,10 +92,11 @@ channel:cat=Channel
 
 calc profit=revenue-cost
 calc rate=revenue==0 ? null : profit/revenue
-+ label="Margin" format=percent precision=1
+field rate label="Margin" format=percent precision=1
 
-scatter @web x=revenue y=profit where.channel=Web
-+ title="Web orders" at=0,0,6,5 x.scale=symlog margin.left=64
+scatter @web x=revenue y=profit where.channel=Web {
+  title="Web orders" at=0,0,6,5 x.scale=symlog margin.left=64
+}
 scatter @store x=revenue y=profit where.channel=Store at=6,0,6,5
 metric @gains sum=profit where.profit=0..
 table revenue,cost,profit,rate`);

@@ -85,8 +85,7 @@
 .eda-dsl-constant {
   color: var(--eda-dsl-constant);
 }
-.eda-dsl-operator,
-.eda-dsl-continuation {
+.eda-dsl-operator {
   color: var(--muted-foreground);
 }
 .eda-dsl-comment {

@@ -9,6 +9,7 @@ import { normalizeChart } from "./normalize";
 import { diffPaths, encodeScalar, formatPath, parsePath } from "./paths";
 import { splitPair } from "./parse";
 import { wordForPath } from "./schema";
+import { layoutLines } from "./layout";
 import { FIELD_SETTING_WORDS, GRID_SETTING_WORDS } from "./settingKeys";
 
 export interface DslExportOptions {
@@ -32,20 +33,43 @@ const TYPE_WORDS = {
 const IDENTIFIER = /^[A-Za-z_][\w]*$/;
 const GENERATED_ID =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-const LINE_WIDTH = 64;
+/** A declaration stays on one line up to this width. */
+const LINE_WIDTH = 88;
+/** Settings lines in a body wrap at this width. */
+const BODY_WIDTH = 80;
 
-/** Joins pairs into a head line and `+` lines of a comfortable width. */
-function wrap(head: string, pairs: string[]): string[] {
-  const lines = [head];
-  for (const pair of pairs) {
-    const last = lines.at(-1)!;
-    if (last.length + pair.length + 1 <= LINE_WIDTH || last === "+") {
-      lines[lines.length - 1] = `${last} ${pair}`;
+/**
+ * Writes a declaration: one line when it fits, otherwise a head line that
+ * opens a body, the remaining settings in lines of a comfortable width, and
+ * a closing brace. A token without `=`, such as `@name`, stays on the head.
+ */
+export function block(head: string, tokens: string[]): string[] {
+  const single = [head, ...tokens].join(" ");
+  if (single.length <= LINE_WIDTH) {
+    return [single];
+  }
+  let line = head;
+  let index = 0;
+  while (
+    index < tokens.length &&
+    (!tokens[index]!.includes("=") ||
+      line.length + tokens[index]!.length + 3 <= LINE_WIDTH)
+  ) {
+    line += ` ${tokens[index]}`;
+    index++;
+  }
+  const body: string[] = [];
+  for (const token of tokens.slice(index)) {
+    const last = body.at(-1);
+    if (last !== undefined && last.length + token.length + 1 <= BODY_WIDTH) {
+      body[body.length - 1] = `${last} ${token}`;
     } else {
-      lines.push(`+ ${pair}`);
+      body.push(token);
     }
   }
-  return lines;
+  return body.length
+    ? [`${line} {`, ...body.map((item) => `  ${item}`), "}"]
+    : [line];
 }
 
 /**
@@ -122,6 +146,65 @@ function headFor(chart: SavedChartSettings): string {
   }
 }
 
+/** The field a chart's head names, which it goes by without an @name. */
+function implicitField(chart: SavedChartSettings): string | undefined {
+  if (
+    ["scatter", "metric-card", "data-table", "summary"].includes(chart.type)
+  ) {
+    return undefined;
+  }
+  return chart.field || undefined;
+}
+
+/**
+ * The name each chart goes by in text, and whether the text must write it.
+ * A chart keeps a readable saved ID. Otherwise it goes by its field when no
+ * other chart shares it, or by its type and a number.
+ */
+function chartHandles(charts: SavedChartSettings[]) {
+  const fields = charts.map(implicitField);
+  const counts = new Map<string, number>();
+  for (const field of fields) {
+    if (field !== undefined) {
+      counts.set(field, (counts.get(field) ?? 0) + 1);
+    }
+  }
+  const readable = charts.map(
+    (chart) => !GENERATED_ID.test(chart.id) && /^[\w-]+$/.test(chart.id)
+  );
+  const taken = new Set(
+    charts.flatMap((chart, index) => (readable[index] ? [chart.id] : []))
+  );
+  const unique = (field: string | undefined) =>
+    field !== undefined && counts.get(field) === 1;
+  const names: string[] = [];
+  const written: boolean[] = [];
+  charts.forEach((chart, index) => {
+    const field = fields[index];
+    if (readable[index]) {
+      names.push(chart.id);
+      // Compile names an unnamed chart by its field when it can.
+      written.push(!(unique(field) && field === chart.id));
+      return;
+    }
+    if (unique(field) && !taken.has(field!)) {
+      names.push(field!);
+      taken.add(field!);
+      written.push(false);
+      return;
+    }
+    let count = 1;
+    while (taken.has(`${chart.type}-${count}`)) {
+      count++;
+    }
+    const name = `${chart.type}-${count}`;
+    taken.add(name);
+    names.push(name);
+    written.push(true);
+  });
+  return { names, written };
+}
+
 /** Writes a `path=value` pair with the setting's word when it has one. */
 function toWord(type: string, pair: string): string {
   const [key, value] = splitPair(pair) ?? [pair, ""];
@@ -177,7 +260,7 @@ export function exportParts(
   );
 
   const workspace: string[] = [
-    `dashboard name=${JSON.stringify(settings.metadata.name)}`,
+    `dashboard ${JSON.stringify(settings.metadata.name)}`,
   ];
   const grid = Object.entries(GRID_SETTING_WORDS).flatMap(
     ([key, { word, fallback }]) => {
@@ -191,7 +274,7 @@ export function exportParts(
     workspace.push(`grid ${grid.join(" ")}`);
   }
   if (settings.theme) {
-    workspace.push(`theme name=${settings.theme.id}`);
+    workspace.push(`theme ${settings.theme.id}`);
   }
 
   const fieldLines = (names: string[]) =>
@@ -223,7 +306,7 @@ export function exportParts(
           `${word}=${typeof item === "string" ? JSON.stringify(item) : item}`,
         ];
       });
-      return wrap(`field ${encodeScalar(field)}`, pairs);
+      return block(`field ${encodeScalar(field)}`, pairs);
     });
   const sourceSettings = Object.keys(settings.fieldSettings ?? {}).filter(
     (field) => !calcNames.has(field)
@@ -235,16 +318,21 @@ export function exportParts(
   // Build a skeleton from each chart's short form, then add what differs.
   // Charts are compared in full, so a partial saved axis reads as default.
   const charts = settings.charts.map((chart) => normalizeChart(chart));
-  const names = charts.map((chart, index) =>
-    GENERATED_ID.test(chart.id) || !/^[\w-]+$/.test(chart.id)
-      ? `__c${index}`
-      : chart.id
+  const { names, written } = chartHandles(charts);
+  // Charts that overlap can't be drawn as layout lines; each gets at=.
+  const layoutText = layoutLines(
+    charts.map((chart, index) => ({
+      name: names[index]!,
+      layout: chart.layout,
+    })),
+    settings.gridSettings.columnCount
   );
   const heads = charts.map((chart, index) => {
-    const pairs = [
-      `@${names[index]}`,
-      `at=${chart.layout.x},${chart.layout.y},${chart.layout.w},${chart.layout.h}`,
-    ];
+    const pairs = [`@${names[index]}`];
+    if (!layoutText) {
+      const { x, y, w, h } = chart.layout;
+      pairs.push(`at=${x},${y},${w},${h}`);
+    }
     // color= also builds a scale; a chart saved without one says so.
     if (chart.colorField) {
       pairs.push(
@@ -257,9 +345,18 @@ export function exportParts(
     const linked = chart.filters.length
       ? filterPairs("select", chart.filters, types)
       : [];
+    // The name reads right after the chart word: scatter @size x=… y=….
+    const [word, ...rest] = headFor(chart).split(" ");
+    const lead = word === "chart" ? 2 : 1;
+    const parts = [word!, ...rest];
+    const extras = [...pairs.slice(1), ...(local ?? []), ...(linked ?? [])];
+    const withName = (name: string[]) =>
+      [...parts.slice(0, lead), ...name, ...parts.slice(lead)].join(" ");
     return {
-      head: headFor(chart),
-      pairs: [...pairs, ...(local ?? []), ...(linked ?? [])],
+      head: withName(written[index] ? [pairs[0]!] : []),
+      pairs: extras,
+      // The skeleton names each chart by position, whatever the text calls it.
+      skeleton: [withName([`@__c${index}`]), ...extras].join(" "),
     };
   });
   // Shared definitions keep their IDs, so charts can point at them.
@@ -282,7 +379,7 @@ export function exportParts(
     ...scaleHeads,
     ...groupHeads,
     "rows",
-    ...heads.map(({ head, pairs }) => `${head} ${pairs.join(" ")}`),
+    ...heads.map(({ skeleton }) => skeleton),
   ].join("\n");
   const base = compileDocument(
     skeleton,
@@ -300,16 +397,16 @@ export function exportParts(
     const built = base.settings.colorScales.find(
       (item) => item.id === scale.id
     );
-    return wrap(scaleHeads[index]!, diffRecord(built ?? {}, scale, ["id"]));
+    return block(scaleHeads[index]!, diffRecord(built ?? {}, scale, ["id"]));
   });
   const groupLines = (settings.aggregates ?? []).flatMap((spec, index) => {
     const built = base.settings.aggregates?.find((item) => item.id === spec.id);
-    return wrap(groupHeads[index]!, diffRecord(built ?? {}, spec, ["id"]));
+    return block(groupHeads[index]!, diffRecord(built ?? {}, spec, ["id"]));
   });
   const rowsPairs = settings.rowsSettings
     ? diffRecord(base.settings.rowsSettings, settings.rowsSettings, [])
     : [];
-  const rowsLines = settings.rowsSettings ? wrap("rows", rowsPairs) : [];
+  const rowsLines = settings.rowsSettings ? block("rows", rowsPairs) : [];
   // One `filter` line per workspace filter, so each reads on its own.
   const filterLines = (settings.workspaceFilters ?? []).flatMap((filter) => {
     const pairs = filterPairs(undefined, [filter], types);
@@ -326,9 +423,8 @@ export function exportParts(
   );
 
   const chartLines = charts.flatMap((chart, index) => {
-    const built = baseCharts.get(names[index]!);
+    const built = baseCharts.get(`__c${index}`);
     const { head, pairs } = heads[index]!;
-    const shown = pairs.filter((pair) => !pair.startsWith("@__c"));
     if (!built) {
       omitted.push(`${head}: the chart could not be rebuilt from its fields`);
       return [];
@@ -347,8 +443,8 @@ export function exportParts(
         )
       );
     }
-    return wrap(head, [
-      ...shown,
+    return block(head, [
+      ...pairs,
       ...extra.map((pair) => toWord(chart.type, pair)),
     ]);
   });
@@ -361,7 +457,17 @@ export function exportParts(
       [...scaleLines, ...groupLines],
     ].filter((block) => block.length),
     // The grid line rides with the name in a single-view export.
-    view: [workspace.slice(1), [...rowsLines, ...filterLines, ...chartLines]],
+    view: [
+      workspace.slice(1),
+      [
+        ...rowsLines,
+        ...filterLines,
+        ...chartLines,
+        ...(layoutText?.length
+          ? ["layout {", ...layoutText.map((line) => `  ${line}`), "}"]
+          : []),
+      ],
+    ],
     omitted,
   };
 }
