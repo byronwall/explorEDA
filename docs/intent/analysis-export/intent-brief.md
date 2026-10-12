@@ -54,7 +54,7 @@ A host application that embeds explorEDA calls a public function with a chart id
 - Single chart; PNG; copy and download; on-screen size at 2x; current theme.
 - Entry points: the chart header menu, the chart's right-click menu, and a keyboard shortcut.
 - Every family gets the action, with an honest message where capture is not ready.
-- A public `exportChartPng`-style function returning a Blob and its size.
+- A public `exportChartPng` method on the `ExplorEda` ref, returning a Blob and its size.
 - Headless rendering is a separate future seed, not part of this release.
 
 ## Possibilities, not decisions
@@ -74,6 +74,6 @@ A host application that embeds explorEDA calls a public function with a chart id
 
 ## Next step after confirmation
 
-The [shape brief](shape-brief.md) defines the action and its first proof. That proof is a dark-theme styled scatter with a title, subtitle, HTML legend, and active selection, captured and compared to the screen. Plan after the proof chooses the capture mechanism.
+The [shape brief](shape-brief.md) defines the action. Its first proof passed in Chromium, and the [implementation plan](implementation-plan.md) sequences three stacked PRs.
 
 See the [reference packet](references/README.md).

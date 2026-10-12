@@ -20,7 +20,7 @@ Chart image export
 │   ├── Actions: Copy image, Download image
 │   │   ├── Chart header: new "More" menu (first overflow menu on the panel)
 │   │   ├── Right-click on the chart surface: same two items
-│   │   └── Shortcut while a chart has focus (letter key, listed in the ? dialog)
+│   │   └── Shortcut while a chart has focus: E copies, Shift+E downloads
 │   ├── Image contents: what is visible for that chart
 │   │   ├── Title, subtitle, plot, axes, legends, annotations, value labels
 │   │   ├── Selection emphasis as shown; current theme and background
@@ -33,7 +33,7 @@ Chart image export
 │   │   ├── Canvas and WebGL layers drawn into the image (3D at current camera)
 │   │   └── Not-yet-capturable family: actions disabled with a reason tooltip
 │   ├── Composition: moves onto the shared actions; its artboard path becomes one capture strategy
-│   └── Public API: exportChartPng(chartId) → { blob, width, height } for a mounted chart
+│   └── Public API: ExplorEdaHandle.exportChartPng(chartId) → { blob, width, height } for a mounted chart
 └── LATER POSSIBILITIES
     ├── Opt-in filter or provenance caption
     ├── Size presets, copy and download helpers on the API
@@ -52,7 +52,7 @@ Chart image export
 | Data table with 10k rows | Only the rows in view, with header and column widths as shown. |
 | Brushed selection on a scatter | Selected points emphasized and others dimmed, as on screen. |
 | Hover tooltip open at capture time | Not in the image. |
-| `exportChartPng` for a chart not mounted | Rejects with "Chart is not rendered." No headless fallback. |
+| `exportChartPng` on the ref for a chart not mounted | Rejects with "Chart is not rendered." No headless fallback. |
 
 ## Decisions and boundaries
 
@@ -66,4 +66,6 @@ Chart image export
 
 **First proof:** **Try:** Capture a dark-theme scatter that has a title, subtitle, HTML color legend, an annotation, and a brushed selection. Use a generic panel rasterizer that inlines SVG, swaps each canvas for its bitmap, and keeps HTML text. **Observe:** Compare the PNG against the screen for fonts, text bounds, Canvas point alignment, legend placement, selection dimming, and the absence of controls. **Decide:** If the generic rasterizer matches, it becomes the default strategy and only WebGL and composition need their own. If fonts or HTML layout drift, switch to per-family strategies that compose SVG and Canvas directly and draw legend and title text, and re-scope coverage.
 
-[Intent brief](intent-brief.md)
+**Proof result (2026-10-11, Chromium):** Passed. Diffs were within 0.3% across scatter, parallel coordinates, maps, and both themes. The rasterizer needs a `data:` URL, embedded fonts, and explicit omit markers on chrome. WebGL needs a render-then-read hook. Safari and Firefox remain unverified. See the [results](references/first-proof/README.md).
+
+[Intent brief](intent-brief.md) · [Implementation plan](implementation-plan.md)

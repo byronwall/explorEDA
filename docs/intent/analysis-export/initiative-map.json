@@ -4,11 +4,11 @@
     "title": "Export charts and analyses for sharing",
     "slug": "analysis-export",
     "scale": "capability",
-    "current_phase": "shape",
-    "last_updated": "2026-10-09",
+    "current_phase": "plan",
+    "last_updated": "2026-10-11",
     "summary": "Copy or download one chart as a PNG matching the screen, from every chart family, with a public function for embedding apps. Whole-report export is out of scope; headless rendering is a separate seed.",
     "status": "active",
-    "next_action": "Run the first proof: generic panel rasterizer on a dark-theme styled scatter with HTML legend, annotation, and selection; compare to screen; then write the implementation plan."
+    "next_action": "Start M1 with the WebKit/Firefox spike (needs `pnpm exec playwright install webkit firefox`), then build the capture core and header menu."
   },
   "artifacts": {
     "intent_brief": {
@@ -28,8 +28,8 @@
     },
     "implementation_plan": {
       "path": "implementation-plan.md",
-      "status": "not-created",
-      "updated_at": null
+      "status": "current",
+      "updated_at": "2026-10-11"
     }
   },
   "sources": [
@@ -417,6 +417,23 @@
         ],
         "confidence": "high",
         "notes": ""
+      },
+      {
+        "id": "api-on-handle",
+        "type": "decision",
+        "statement": "Expose exportChartPng as a method on ExplorEdaHandle, scoped to its workspace.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "interview-2026-10-11",
+            "anchor": "Library API; API contract"
+          }
+        ],
+        "confidence": "medium",
+        "notes": "Planning refinement of the user-approved public function; reversible."
       }
     ],
     "themes": [
@@ -437,7 +454,7 @@
     "status": "current",
     "appetite": "One capability: several entry points over one capture core; no new settings, saved state, or layout changes.",
     "problem": "Analysts paste charts into ongoing work but only composition can produce an image today.",
-    "recommended_shape": "One captureChart(chartId) seam with per-family capture strategies (generic DOM-panel rasterizer, composition artboard, WebGL frame grab); Copy, Download, context menu, shortcut, and public exportChartPng are thin wrappers. Capture from the live mounted chart.",
+    "recommended_shape": "One captureChart(chartId) seam with per-family capture strategies (generic DOM-panel rasterizer, composition artboard, WebGL frame grab); Copy, Download, context menu, shortcut, and ExplorEdaHandle.exportChartPng are thin wrappers. Capture from the live mounted chart.",
     "success_moves": [
       "Single capture seam so every entry point and the public API share one path and one not-capturable flag.",
       "Capture the live chart rather than re-rendering offscreen; offscreen rendering belongs to the headless seed.",
@@ -449,7 +466,9 @@
     "first_proof": {
       "question": "Does a generic DOM-panel rasterizer reproduce a mixed Canvas/SVG/HTML chart faithfully in the current theme?",
       "artifact": "PNG of a dark-theme scatter with title, subtitle, HTML legend, annotation, and brushed selection, compared side by side with the screen (fonts, text bounds, canvas alignment, legend, dimming, no controls).",
-      "decision_rule": "Match → generic rasterizer is the default strategy, only WebGL and composition get their own; drift in fonts or HTML layout → per-family compositors and re-scoped coverage."
+      "decision_rule": "Match → generic rasterizer is the default strategy, only WebGL and composition get their own; drift in fonts or HTML layout → per-family compositors and re-scoped coverage.",
+      "result": "Passed in Chromium 2026-10-11: ≤0.3% pixel mismatch for scatter (dark, HTML legend, annotations, brush), parallel coordinates, maps, light scatter. Required: data: URL (blob URL tainted with foreignObject), embedded @font-face (host Plex fell back and clipped title without), explicit omit markers (tag-based hiding removed legend buttons), WebGL render-then-read (blank without preserveDrawingBuffer). Safari/Firefox unverified.",
+      "evidence": "references/first-proof/README.md"
     },
     "rabbit_holes": [
       "Fonts and CSS variables not resolving inside an SVG foreignObject image.",
@@ -459,30 +478,129 @@
       "Possible new dependency (html-to-image or similar) versus an in-house rasterizer."
     ],
     "open_decisions": [
-      "Shortcut letter (reversible; plan proposes).",
-      "Generic rasterizer: library or in-house (decided by first proof)."
+      "Browser coverage: WebKit/Gecko may need a composite fallback strategy."
     ]
   },
   "implementation": {
-    "status": "not-started",
+    "status": "current",
     "repository_snapshot": {
-      "root": "/Users/byronwall/.codex/worktrees/abcf/explorEDA",
-      "revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
-      "worktree_status": "Detached HEAD; intent collection remains uncommitted.",
+      "root": ".claude/worktrees/export-charts-analyses-initiative-de3adc",
+      "revision": "10b002556d03ad1ab12b924e3191b187c154295c",
+      "worktree_status": "Docs-only changes on claude/export-charts-analyses-initiative-de3adc",
       "subsystems": [
-        "packages/explorEDA/src/components/PlotChartPanel.tsx",
-        "packages/explorEDA/src/components/charts/ScatterPlot/ScatterPlot.tsx",
-        "packages/explorEDA/src/types/SavedDataStructure.ts",
-        "packages/explorEDA/src/index.css"
+        "packages/explorEDA/src/components/PlotChartPanel.tsx (header actions, key handler S/D/X/V/C)",
+        "packages/explorEDA/src/components/charts/Composition/compositionOutput.ts (artboardPng, copyArtboardPng)",
+        "packages/explorEDA/src/components/charts/ThreeDScatter/ThreeDScatterChart.tsx (WebGLRenderer, no preserveDrawingBuffer)",
+        "packages/explorEDA/src/components/ExplorEda.tsx (ExplorEdaHandle)",
+        "packages/explorEDA/src/components/KeyboardShortcutsDialog.tsx",
+        "packages/explorEDA/src/components/PlotManager.tsx (data-chart-id wrappers)"
       ],
-      "test_commands": [],
-      "deployment_surfaces": []
+      "test_commands": [
+        "pnpm --filter exploreda exec vitest run src/components/charts/export",
+        "pnpm --filter exploreda check-types",
+        "pnpm dev:agent && node scripts/export-proof.mjs"
+      ],
+      "deployment_surfaces": [
+        "npm package exploreda (changesets)"
+      ]
     },
-    "dependencies": [],
-    "fast_local_loop": null,
-    "milestones": [],
-    "cut_line": [],
-    "open_decisions": []
+    "dependencies": [
+      {
+        "id": "browser-raster",
+        "name": "Browser SVG foreignObject rasterization and canvas encoding",
+        "material": true,
+        "application_seam": "captureChart(panel, options) strategy registry",
+        "failure_modes": [
+          "Canvas tainting (blob URL, WebKit foreignObject)",
+          "External fonts not loaded inside SVG image",
+          "Large payloads on big tables"
+        ],
+        "proof_rungs": [
+          "Chromium Playwright proof with pixel diff (done)",
+          "WebKit/Firefox Playwright run",
+          "Manual Safari check"
+        ],
+        "first_proof_role": {
+          "mode": "real",
+          "rationale": "Fidelity is the question; only the real browser answers it."
+        },
+        "local_proof": "tmp proof scripts → scripts/export-proof.mjs against pnpm dev:agent",
+        "live_proof": "Manual paste into Slides/Docs/Slack",
+        "rollout": "Per-family registry flag disables a strategy with a reason."
+      },
+      {
+        "id": "clipboard",
+        "name": "Async Clipboard API with image/png",
+        "material": true,
+        "application_seam": "copy wrapper around captureChart",
+        "failure_modes": [
+          "Insecure context",
+          "Lost user activation",
+          "Unsupported ClipboardItem"
+        ],
+        "proof_rungs": [
+          "Reuse composition pattern (pending promise in gesture)",
+          "Manual check from menu, shortcut, and context menu"
+        ],
+        "first_proof_role": {
+          "mode": "absent",
+          "rationale": "Composition already proves the clipboard path; the proof tested pixels."
+        },
+        "local_proof": "Demo on 127.0.0.1 (secure context)",
+        "live_proof": "Manual paste into target apps",
+        "rollout": "Failure message offers Download."
+      }
+    ],
+    "fast_local_loop": {
+      "command": "pnpm --filter exploreda exec vitest run src/components/charts/export; node scripts/export-proof.mjs",
+      "network": "Font CSS fetch only when a host uses web fonts",
+      "shared_infrastructure": false
+    },
+    "milestones": [
+      {
+        "id": "m1",
+        "title": "Copy or download a chart image from its header",
+        "outcome": "Header More menu and E/Shift+E copy or download a screen-matching PNG for every non-WebGL family; 3D disabled with reason.",
+        "dependencies_introduced": [
+          "browser-raster",
+          "clipboard"
+        ],
+        "proof": "export-proof script under 1% mismatch light and dark; WebKit/Firefox spike result; PR screenshots at three widths.",
+        "valid_intermediate_state": "Export works for most families; nothing else changes.",
+        "rollback": "Revert PR; no saved-state changes.",
+        "status": "planned"
+      },
+      {
+        "id": "m2",
+        "title": "Every family, at full extent",
+        "outcome": "Bounded charts export full height; 3D via render-then-read hook; composition on shared menu.",
+        "dependencies_introduced": [],
+        "proof": "Proof script covers pivot, 3D facets, composition.",
+        "valid_intermediate_state": "All families export; composition button replaced.",
+        "rollback": "Registry flags revert individual strategies.",
+        "status": "planned"
+      },
+      {
+        "id": "m3",
+        "title": "Right-click and the host API",
+        "outcome": "Context-menu items on every family and ExplorEdaHandle.exportChartPng.",
+        "dependencies_introduced": [],
+        "proof": "Vitest for not-rendered rejection and workspace scoping; manual right-click check.",
+        "valid_intermediate_state": "Feature complete for this initiative.",
+        "rollback": "Revert PR.",
+        "status": "planned"
+      }
+    ],
+    "cut_line": [
+      "Captions, provenance, size presets, transparent background, advanced mode",
+      "Multi-chart, dashboard, slides, PDF",
+      "Off-screen/headless export (headless-chart-rendering seed)",
+      "Horizontal full extent for wide tables",
+      "Copy/download helpers on host API"
+    ],
+    "open_decisions": [
+      "Browser coverage: does WebKit/Gecko need the composite fallback? Evidence: Playwright webkit/firefox run + Safari. Fallback: composite strategy or disable Copy with reason where capture throws."
+    ]
   },
   "history": [
     {
@@ -505,6 +623,12 @@
       "action": "Interviewed user (4 rounds), rewrote intent brief, created shape brief, created headless-chart-rendering seed.",
       "reason": "User asked to shape the initiative.",
       "evidence": "Decisions recorded as claims sourced to interview-2026-10-11."
+    },
+    {
+      "date": "2026-10-11",
+      "action": "Ran first proof (Chromium) and wrote implementation plan.",
+      "reason": "User asked to run the first proof and write the plan.",
+      "evidence": "references/first-proof/README.md; scripts in references/first-proof/."
     }
   ],
   "closure": null,
