@@ -4,11 +4,11 @@
     "title": "Change chart settings where the data is",
     "slug": "dense-chart-interactions",
     "scale": "capability",
-    "current_phase": "intent",
+    "current_phase": "shape",
     "last_updated": "2026-10-12",
     "summary": "Make frequent chart changes local and clear while keeping ordinary click-to-filter primary.",
     "status": "planned",
-    "next_action": "Collect the submitted Pro research, verify evidence, and produce the brainstorm, shape, and review PR."
+    "next_action": "Review the proposed shape, then authorize the bounded local Color proof if desired."
   },
   "artifacts": {
     "intent_brief": {
@@ -18,13 +18,13 @@
     },
     "brainstorm": {
       "path": "brainstorm.md",
-      "status": "not-created",
-      "updated_at": null
+      "status": "current",
+      "updated_at": "2026-10-12"
     },
     "shape_brief": {
       "path": "shape-brief.md",
-      "status": "not-created",
-      "updated_at": null
+      "status": "current",
+      "updated_at": "2026-10-12"
     },
     "implementation_plan": {
       "path": "implementation-plan.md",
@@ -46,6 +46,20 @@
       "location": "raw/2026-10-12-pro/source-manifest.json",
       "anchor": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e; exact paths and hashes",
       "authority": "current source observation; no product test proof"
+    },
+    {
+      "id": "pro-results",
+      "type": "research-proposal",
+      "location": "raw/2026-10-12-pro/manifest.json",
+      "anchor": "18 recommendations, 43 patterns, 165 inventory rows, 44 gestures",
+      "authority": "Untrusted research evidence; reconciled in references/reconciliation.json"
+    },
+    {
+      "id": "independent-review",
+      "type": "source-verification",
+      "location": "references/evidence-checks.json",
+      "anchor": "Exact source hashes, raw artifact integrity, and primary-source rechecks",
+      "authority": "Static evidence; proposed behavior remains untested"
     }
   ],
   "intent": {
@@ -185,20 +199,98 @@
     "human_questions": []
   },
   "brainstorm": {
-    "status": "not-started",
+    "status": "complete",
     "requested_count": 7,
-    "options": [],
-    "selected_option": null
+    "options": [
+      {
+        "id": "option-1",
+        "premise": "One existing editor with exact contextual navigation"
+      },
+      {
+        "id": "option-2",
+        "premise": "Named object actions choose a local task"
+      },
+      {
+        "id": "option-3",
+        "premise": "Visible encoding roles serve as the control surface"
+      },
+      {
+        "id": "option-4",
+        "premise": "Chart geometry directly represents editable values"
+      },
+      {
+        "id": "option-5",
+        "premise": "A deliberate object toolbar groups repeated edits"
+      },
+      {
+        "id": "option-6",
+        "premise": "Keyboard task search replaces navigation"
+      },
+      {
+        "id": "option-7",
+        "premise": "An explicit mode changes gesture ownership"
+      }
+    ],
+    "selected_option": "Compare option-3 alone with option-3 plus option-2; retain existing option-4 and option-1 fallback."
   },
   "shape": {
-    "status": "not-started",
-    "appetite": null,
-    "problem": null,
-    "recommended_shape": null,
-    "success_moves": [],
-    "first_proof": null,
-    "rabbit_holes": [],
-    "open_decisions": []
+    "status": "review-ready",
+    "appetite": "One scatter Color proof, then reassess. Research and docs only in this run.",
+    "problem": "Repeated chart changes require navigation away from the question. Hidden configuration can also conflict with filtering.",
+    "recommended_shape": "Visible encoding control plus shallow object menu opening the same compact editor; conditional Alt experiment.",
+    "success_moves": [
+      {
+        "move": "Compare a visible-only Color selector before adding menu or modifier complexity.",
+        "effect": "A simpler design can win the proof."
+      },
+      {
+        "move": "Resolve chart scope without requiring exact record identity.",
+        "effect": "Dense overlapping points do not block chart configuration."
+      },
+      {
+        "move": "Commit only explicit field acceptance and hold notifications before scale creation.",
+        "effect": "Avoid preview rollback and duplicate host checkpoints."
+      },
+      {
+        "move": "Reuse field metadata, scale resolution, and updateChart through a small popup presentation seam.",
+        "effect": "No generic command or transaction platform is required."
+      },
+      {
+        "move": "Keep filtering immediate; verify input, focus, and scope before broader adoption.",
+        "effect": "Protect the user’s strongest constraint."
+      },
+      {
+        "move": "Include docs and examples in every proposed visible slice.",
+        "effect": "Gesture changes remain discoverable and reviewable."
+      }
+    ],
+    "first_proof": {
+      "question": "Does local Color configuration improve actual exploration enough to justify menu and modifier complexity?",
+      "artifact": "Future local dense-chart-controls demo and task observation record; not produced in this research run.",
+      "try": "Filtered scatter points/bubbles, a shared-scale peer, no legend, categorical/numeric/computed fields, cancellation, keyboard, and optional Alt variant.",
+      "observe": "Discovery, scope, actions, corrections, selected field, unchanged filters/peers, focus, host checkpoint count.",
+      "decision_rule": "Reject filter/scope regressions. Keep the smallest route that improves locality or discovery; adopt Alt only if repeated changes improve and trace stays findable.",
+      "first_dependency_role": "Real local React UI and store with synthetic rows; no remote provider.",
+      "fallback": "Keep existing settings and trace convention; visible Color alone may satisfy the outcome."
+    },
+    "rabbit_holes": [
+      "Universal edit mode",
+      "Command framework",
+      "Renderer rewrite",
+      "Shared palette preview rollback",
+      "Generic chart conversion or X/Y swap",
+      "Independent facet bindings"
+    ],
+    "open_decisions": [
+      {
+        "question": "Does Alt configuration earn changing trace access?",
+        "resolution": "Observe the bounded proof before deciding."
+      },
+      {
+        "question": "Does persistent Color visibility earn its chart space?",
+        "resolution": "Compare persistent and focus-revealed controls with a touch-visible route."
+      }
+    ]
   },
   "implementation": {
     "status": "not-started",
@@ -222,22 +314,120 @@
       ],
       "deployment_surfaces": []
     },
-    "dependencies": [],
-    "fast_local_loop": null,
+    "dependencies": [
+      {
+        "id": "local-input",
+        "material": true,
+        "application_seam": "PlotChartPanel and renderer-owned input delegate to one Color editor.",
+        "first_proof_role": {
+          "mode": "real-local",
+          "rationale": "Synthetic store-only tests cannot prove filtering, hit targets, focus, or menu dismissal."
+        },
+        "failure_modes": [
+          "Menu dismiss filters chart",
+          "Alt drag produces trailing click",
+          "Unsized point misses selection",
+          "Popup leaves details focus trap",
+          "New scale produces extra host checkpoint"
+        ],
+        "proof_rungs": [
+          "Focused event/store tests for accepted change",
+          "Real browser task at 1280/783/390",
+          "Keyboard and supported-platform context menu checks"
+        ],
+        "remote_dependency": "absent"
+      }
+    ],
+    "fast_local_loop": {
+      "command": "pnpm --filter demo dev",
+      "scope": "Future implementation proof against source with synthetic rows. No service credentials or deployment."
+    },
     "milestones": [],
     "cut_line": [
       "Application implementation",
       "Deployment",
       "Merge"
     ],
-    "open_decisions": []
+    "open_decisions": [],
+    "proposed_feature_slices": [
+      {
+        "id": "color-proof",
+        "outcome": "Compare local Color routes while preserving selected records.",
+        "docs": [
+          "apps/demo/src/docs/pages/scatter.mdx",
+          "apps/demo/src/docs/pages/color.mdx",
+          "apps/demo/src/docs/pages/in-place-editing.mdx",
+          "apps/demo/src/docs/pages/chart-settings.mdx"
+        ],
+        "demo": "New dense-chart-controls entry in apps/demo/src/demos/examples.ts; fixture near existing demos.",
+        "proof": "Behavior gates and comparison in shape.first_proof.",
+        "intermediate_state": "Existing settings remain usable; experimental route can be removed."
+      },
+      {
+        "id": "alt-experiment",
+        "outcome": "Evaluate configuration shortcut with replacement trace access.",
+        "docs": [
+          "apps/demo/src/docs/pages/trace.mdx",
+          "apps/demo/src/docs/pages/in-place-editing.mdx",
+          "docs/ui-defaults.md",
+          "AGENTS.md"
+        ],
+        "demo": "Same dense-chart-controls example, with trace task and gesture help.",
+        "proof": "No lost filtering, brushing, trace discovery, or contradictory supported bindings.",
+        "intermediate_state": "Retain current convention unless complete remap proves useful."
+      },
+      {
+        "id": "analytical-controls",
+        "outcome": "Shorten field, measure, bin, time, sort, and Top N changes where repeated use is observed.",
+        "docs": "Owning registered chart pages and chart-settings.mdx.",
+        "demo": "Distribution and time-comparison examples in apps/demo/src/demos/examples.ts.",
+        "proof": "Meaningful task, clear scope, valid chart after acceptance and cancellation.",
+        "intermediate_state": "Each control retains full-settings access."
+      },
+      {
+        "id": "appearance-scope",
+        "outcome": "Evaluate point tuning, facets, and shared palette entry separately.",
+        "docs": [
+          "apps/demo/src/docs/pages/scatter.mdx",
+          "apps/demo/src/docs/pages/facets.mdx",
+          "apps/demo/src/docs/pages/color-legend.mdx"
+        ],
+        "demo": "Point-density, shared-color, and faceted examples.",
+        "proof": "Consumer scope and unchanged unrelated state.",
+        "intermediate_state": "No generalization across chart types without its own task evidence."
+      },
+      {
+        "id": "specialties",
+        "outcome": "Retain existing specialty actions; consider new routes only with separate evidence.",
+        "docs": "Owning table, pivot, map, Composition, or annotation page.",
+        "demo": "Matching specialty example in the same future slice.",
+        "proof": "Existing navigation/filter semantics retained.",
+        "intermediate_state": "No generic scatter menu imposed."
+      }
+    ]
   },
   "history": [
     {
       "date": "2026-10-12",
       "event": "Initialized from the user request and correction. Submitted research to Pro power 5 of 5; scheduled collection.",
       "evidence": "run.md"
+    },
+    {
+      "date": "2026-10-12",
+      "event": "Collected complete Pro output. Verified primary mechanics and all supplied source identities. Reconciled recommendations into intent, seven options, and shape. Implementation remains unrequested.",
+      "evidence": "references/research-review.md; references/reconciliation.json; references/evidence-checks.json"
     }
   ],
-  "closure": null
+  "closure": null,
+  "research_review": {
+    "dispositions": "references/reconciliation.json",
+    "evidence": "references/evidence-checks.json",
+    "raw_manifest": "raw/2026-10-12-pro/collection-manifest.json",
+    "limitations": [
+      "No telemetry or frequency study",
+      "No hands-on competitor tests",
+      "No implemented interaction proof"
+    ],
+    "followups_used": 0
+  }
 }

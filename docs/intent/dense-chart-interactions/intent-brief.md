@@ -1,63 +1,49 @@
----
-title: "Change chart settings where the data is"
-slug: "dense-chart-interactions"
-phase: intent
-status: current
-last_updated: "2026-10-12"
----
-
-# Change chart settings where the data is
+# Change chart settings where the question arises
 
 ## My read
 
-Analysts should change a chart while they explore it, with less travel through settings panels. The useful control should be close to the feature that prompted the change. The chart should remain visible so the analyst can judge the result.
+Make explorEDA faster to explore by putting frequent chart changes near the data or object that gives them meaning. An analyst should change a field, encoding, or analytic setting, then continue with the same selected records and chart context.
 
-The main opportunity is repeated work. An analyst might compare several color fields, change a measure, adjust grouping, or inspect a different pair of variables. These changes should have short, clear routes. Infrequent presentation choices can use the full settings editor when a local control adds little value.
+“Dense” means more useful work within reach. It does not require smaller targets or a menu with every setting. The aim is to reduce travel, searching, and interruptions during repeated analysis. A compact control should reveal both its current value and the scope of its effect.
 
-Byron wants a wide range of approaches before choosing a design. Other tools should inform the work through specific, verified examples. A famous product or a long feature list does not prove that an interaction works well. The comparison must explain the action, its target, its result, and why that pattern fits this linked-chart workspace.
+The motivating example is right-clicking a scatter point, choosing **Color by…**, and selecting a field. That is one candidate. A visible Color selector might reach the same result faster. The proposal must compare these routes and preserve useful alternatives.
 
-The scatter example is a useful test: right-click a point, choose Color by, and select a field. The outcome matters more than that exact sequence. A better route may use a visible encoding control, a local editor, a modifier gesture, or another approach.
+This initiative covers interaction design and its proof. The current research delivery includes [seven approaches](brainstorm.md), a [proposed shape](shape-brief.md), and [detailed research review](references/research-review.md). Application implementation needs a later request.
 
 ## What matters most
 
-- Give frequent analysis changes short routes near the chart.
-- Preserve ordinary click-to-filter as the main mark interaction.
-- Compare several distinct interaction models before narrowing the shape.
-- Ground competitor claims in current primary sources.
-- Keep data, field names, filter state, and edit scope clear.
+Ordinary click-to-filter has priority. A mark click should select immediately. Empty plot clicks should clear that chart’s filters. Configuration must not change the selected records on entry, dismissal, or acceptance. Do not delay clicks while waiting for a possible double-click.
 
-## The experience or behavior you appear to want
+Alt-click and tracing access can change. The user values filtering more than the present trace shortcut. Preserve access to explanations and source records, but test whether configuration deserves Alt/Option-click. A shortcut must have a visible alternative and a clear meaning on supported objects.
 
-The analyst notices a feature, reaches its relevant controls, makes a change, and sees the result without losing the chart. A point can lead to chart-wide encoding choices, but the interface must state that scope. Editing one category's color differs from changing the color field. Editing a shared scale may affect several charts.
+Prioritize settings changed during analysis. Fields, color, measures, aggregation, bins, time grain, ordering, and facets are strong candidates. Point size, opacity, display mode, and fits can matter during specific tasks. Formatting for publication has a different rhythm. Changing a palette or font often deserves a local route, but does not automatically deserve permanent space.
 
-Fast pointer gestures should have clear keyboard and touch routes. Dense marks, long field names, many fields, and small panels must not turn local editing into guesswork. A compact menu should help users reach an editor. It should not become another large settings panel.
+These frequency estimates are hypotheses. There is no supplied telemetry or user study. Rank a setting within its task and chart family. Frequent viewing does not prove frequent editing. A short session with actual analysis should change the ranking when the evidence disagrees.
+
+Keep ownership visible. **Color by** on a point changes the chart encoding, not that record. Facet controls must say when all panels change. A shared palette editor must identify the shared scale and affected charts. Category legend clicks must retain their filtering role.
+
+Provide the same useful task through pointer, keyboard, and visible touch controls. Search should help with many fields and long names. Menus should name actions; the focused editor should hold the choices. Keep the chart visible where practical, including when the editor opens inside chart details.
 
 ## Boundaries
 
-Research and document shaping are in scope. Application changes, deployment, and merge are outside this run. The endpoint is an open review PR with new intent and shaping documents.
+Ground the design in documented mechanics from other tools. The research compares Tableau, Power BI, Qlik Sense, JMP, Origin, Excel, Grafana, and Datawrapper. These are examples across analysis and authoring workflows, not a measured ranking of product quality. Their mode, platform, persistence, and selection rules affect which ideas transfer.
 
-The proposed interaction model must preserve the ordinary click-to-filter flow. Existing trace gestures have a lower priority. Alt-click may open configuration if that improves the experience and leaves a useful inspection route.
+Respect chart differences. Table sorting and header menus already use local interaction. Maps need navigation and layer controls. Composition has its own objects and scopes. A scatter menu must not replace those models. Keep useful title and axis editing, and use the full settings editor for complex or infrequent work.
 
-Do not treat a frequency estimate as measured usage. No usage telemetry was supplied. Rank likely changes by analysis scenarios, mark uncertainty, and propose tests that could change the ranking.
+Keep the first proof small. Reuse the existing chart write path, field metadata, and color-scale resolution. Avoid a universal command system or a broad renderer rewrite. Generic chart conversion, arbitrary point painting, and independent facet encodings stay outside the first proof.
 
-Keep the existing React and TypeScript product. Reuse useful controls and state paths where they fit. Avoid a new interaction framework before one representative flow proves its value.
+Treat each proposed feature as incomplete without its docs and demo example. If Alt changes, update the full supported gesture convention in the same feature slice. Do not ship conflicting help for marks, axes, titles, and legends.
 
 ## What seems settled
 
-The desired gain is less effort during exploration, with more useful actions near their objects. The full settings editor remains available. Existing code does not decide which gestures deserve to stay.
+The outcome and filtering priority are clear enough to shape without more questions. Local configuration should preserve filters, expose scope, and commit only accepted changes. Search and keyboard highlighting should not change chart state.
 
-The latest user direction explicitly opens Alt-click and tracing access to redesign. It gives click-to-filter the stronger claim on simple pointer input.
+The current recommendation combines a visible encoding control with a shallow object menu. Both open the same small editor. Existing direct manipulation remains useful for titles and numeric axes. A focused full editor remains the fallback for the long tail.
 
-## Possibilities, not decisions
-
-Object menus, direct manipulation, encoding chips, compact toolbars, keyboard commands, temporary edit modes, and local editors are candidates. Right-click Color by is an example to compare, not a committed design. Frequency rankings and the first implementation slice await research.
-
-## Current reality that matters
-
-The repository already has inline title edits, local axis range edits, axis dragging, field selection, table menus, and composition menus. Valid settings apply live. The chart edit hook can group a continuous edit into one undo step. Shared color scales make edit scope a key concern.
+This is a proposed direction, not approval to implement it. Alt remapping and permanent Color visibility remain experiments. The research supports trying them; it does not prove their value.
 
 ## Next step after confirmation
 
-The research run is authorized and submitted. Collect Pro's evidence, compare alternatives, and propose a bounded shape with a first proof. Preserve broad ideas in a separate brainstorm and linked research. Record the chosen route and deferred options without treating proposals as approved implementation.
+Build one local comparison for scatter Color, including points, bubbles, no current legend, and a shared-scale peer. Compare the existing settings route, visible selector, object menu, and optional Alt shortcut. Keep the smallest useful combination.
 
-See the [run record](run.md) and [research prompt](raw/2026-10-12-pro/prompt.md).
+Observe discovery, action count, scope understanding, unchanged filters, and keyboard completion. Verify ordinary point selection first because static source inspection found a possible gap. The [shape](shape-brief.md) defines the decision rule and the work below the cut line.

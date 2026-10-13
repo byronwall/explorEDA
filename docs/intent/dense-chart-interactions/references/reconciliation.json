@@ -1,0 +1,1737 @@
+{
+  "reviewed_at": "2026-10-13T03:03:50.394636+00:00",
+  "meaning": "Adopt means proposed design only. All later features require task evidence and implementation authorization.",
+  "recommendations": [
+    {
+      "id": "DCI-01",
+      "disposition": "adopt",
+      "reason": "Keep immediate filtering. Reproduce the static scatter concern before any gesture change.",
+      "destination": "intent-brief.md"
+    },
+    {
+      "id": "DCI-02",
+      "disposition": "adopt",
+      "reason": "Give each input sequence one owner. Include native-menu bypass in future proof, not code work now.",
+      "destination": "shape-brief.md"
+    },
+    {
+      "id": "DCI-03",
+      "disposition": "adopt",
+      "reason": "Compare Color control plus menu with the simpler visible control alone.",
+      "destination": "shape-brief.md"
+    },
+    {
+      "id": "DCI-04",
+      "disposition": "investigate",
+      "reason": "Test Alt configuration and replacement trace access. No remap is approved.",
+      "destination": "shape-brief.md"
+    },
+    {
+      "id": "DCI-05",
+      "disposition": "adopt",
+      "reason": "Accept one discrete binding edit. Hold notifications before scale creation; exclude palette preview.",
+      "destination": "shape-brief.md"
+    },
+    {
+      "id": "DCI-06",
+      "disposition": "adopt",
+      "reason": "Keep title and axis editing. Investigate field replacement after the first proof.",
+      "destination": "shape-brief.md"
+    },
+    {
+      "id": "DCI-07",
+      "disposition": "investigate",
+      "reason": "Reuse existing shared-scale disclosure. Palette mutation follows the binding proof.",
+      "destination": "references/research-review.md"
+    },
+    {
+      "id": "DCI-08",
+      "disposition": "adopt",
+      "reason": "Retain analytical controls as later candidates with conditional frequency hypotheses.",
+      "destination": "references/research-review.md"
+    },
+    {
+      "id": "DCI-09",
+      "disposition": "adopt",
+      "reason": "Make all-panels scope explicit. Add local facet entry only after Color proof.",
+      "destination": "shape-brief.md"
+    },
+    {
+      "id": "DCI-10",
+      "disposition": "adopt",
+      "reason": "Provide searchable, keyboard-accessible field selection with stable identity.",
+      "destination": "shape-brief.md"
+    },
+    {
+      "id": "DCI-11",
+      "disposition": "adopt",
+      "reason": "Prove focus, nested layers, dismissal, and reachable narrow placement.",
+      "destination": "shape-brief.md"
+    },
+    {
+      "id": "DCI-12",
+      "disposition": "adopt",
+      "reason": "Keep existing table actions. Defer new pivot shortcuts until their scope is checked.",
+      "destination": "references/research-review.md"
+    },
+    {
+      "id": "DCI-13",
+      "disposition": "investigate",
+      "reason": "Use explicit annotation intent. Keep ordinary brushing.",
+      "destination": "references/research-review.md"
+    },
+    {
+      "id": "DCI-14",
+      "disposition": "defer",
+      "reason": "Keep specialty-specific routes. Check each before proposing new local access.",
+      "destination": "references/research-review.md"
+    },
+    {
+      "id": "DCI-15",
+      "disposition": "adopt",
+      "reason": "Adopt exclusions: reject universal default edit mode, giant menus, click delays, and arbitrary point paint.",
+      "destination": "shape-brief.md"
+    },
+    {
+      "id": "DCI-16",
+      "disposition": "adopt",
+      "reason": "Let the visible-only comparator win. Do not require a larger user study to start.",
+      "destination": "shape-brief.md"
+    },
+    {
+      "id": "DCI-17",
+      "disposition": "defer",
+      "reason": "Define limits, filter, annotation, and default-setting policy before swap or conversion.",
+      "destination": "shape-brief.md"
+    },
+    {
+      "id": "DCI-18",
+      "disposition": "investigate",
+      "reason": "Evaluate size, opacity, display, and fit controls for actual repeated tasks.",
+      "destination": "references/research-review.md"
+    }
+  ],
+  "patterns": [
+    {
+      "id": "P01",
+      "name": "Semantic Color by menu",
+      "disposition": "adopt",
+      "recommendation_id": "DCI-03",
+      "reason": "Compare Color control plus menu with the simpler visible control alone.",
+      "destination": "shape-brief.md"
+    },
+    {
+      "id": "P02",
+      "name": "Visible encoding control with an empty state",
+      "disposition": "adopt",
+      "recommendation_id": "DCI-03",
+      "reason": "Compare Color control plus menu with the simpler visible control alone.",
+      "destination": "shape-brief.md"
+    },
+    {
+      "id": "P03",
+      "name": "Alt/Option direct configuration",
+      "disposition": "investigate",
+      "recommendation_id": "DCI-04",
+      "reason": "Test Alt configuration and replacement trace access. No remap is approved.",
+      "destination": "shape-brief.md"
+    },
+    {
+      "id": "P04",
+      "name": "Focused full editor instead of a new editor",
+      "disposition": "adopt",
+      "recommendation_id": "DCI-16",
+      "reason": "Let the visible-only comparator win. Do not require a larger user study to start.",
+      "destination": "shape-brief.md"
+    },
+    {
+      "id": "P05",
+      "name": "Trace a record without filtering it",
+      "disposition": "investigate",
+      "recommendation_id": "DCI-04",
+      "reason": "Test Alt configuration and replacement trace access. No remap is approved.",
+      "destination": "shape-brief.md"
+    },
+    {
+      "id": "P06",
+      "name": "Disambiguate only when identity matters",
+      "disposition": "adopt",
+      "recommendation_id": "DCI-03",
+      "reason": "Compare Color control plus menu with the simpler visible control alone.",
+      "destination": "shape-brief.md"
+    },
+    {
+      "id": "P07",
+      "name": "Empty-plot configuration without clearing",
+      "disposition": "adopt",
+      "recommendation_id": "DCI-03",
+      "reason": "Compare Color control plus menu with the simpler visible control alone.",
+      "destination": "shape-brief.md"
+    },
+    {
+      "id": "P08",
+      "name": "Legend-title field replacement",
+      "disposition": "adopt",
+      "recommendation_id": "DCI-03",
+      "reason": "Compare Color control plus menu with the simpler visible control alone.",
+      "destination": "shape-brief.md"
+    },
+    {
+      "id": "P09",
+      "name": "Explicit shared categorical color editing",
+      "disposition": "investigate",
+      "recommendation_id": "DCI-07",
+      "reason": "Reuse existing shared-scale disclosure. Palette mutation follows the binding proof.",
+      "destination": "references/research-review.md"
+    },
+    {
+      "id": "P10",
+      "name": "Numerical-ramp bounds as scale editing",
+      "disposition": "investigate",
+      "recommendation_id": "DCI-07",
+      "reason": "Reuse existing shared-scale disclosure. Palette mutation follows the binding proof.",
+      "destination": "references/research-review.md"
+    },
+    {
+      "id": "P11",
+      "name": "Size binding with a truthful area scale",
+      "disposition": "investigate",
+      "recommendation_id": "DCI-18",
+      "reason": "Evaluate size, opacity, display, and fit controls for actual repeated tasks.",
+      "destination": "references/research-review.md"
+    },
+    {
+      "id": "P12",
+      "name": "Continuous opacity adjustment",
+      "disposition": "investigate",
+      "recommendation_id": "DCI-18",
+      "reason": "Evaluate size, opacity, display, and fit controls for actual repeated tasks.",
+      "destination": "references/research-review.md"
+    },
+    {
+      "id": "P13",
+      "name": "Density display choice with analytical meaning",
+      "disposition": "investigate",
+      "recommendation_id": "DCI-18",
+      "reason": "Evaluate size, opacity, display, and fit controls for actual repeated tasks.",
+      "destination": "references/research-review.md"
+    },
+    {
+      "id": "P14",
+      "name": "Fit command and equation-targeted tuning",
+      "disposition": "investigate",
+      "recommendation_id": "DCI-18",
+      "reason": "Evaluate size, opacity, display, and fit controls for actual repeated tasks.",
+      "destination": "references/research-review.md"
+    },
+    {
+      "id": "P15",
+      "name": "Inline title edit without grid drag",
+      "disposition": "adopt",
+      "recommendation_id": "DCI-06",
+      "reason": "Retain existing behavior.",
+      "destination": "shape-brief.md"
+    },
+    {
+      "id": "P16",
+      "name": "Field replacement on an axis",
+      "disposition": "investigate",
+      "recommendation_id": "DCI-06",
+      "reason": "Keep title and axis editing. Investigate field replacement after the first proof.",
+      "destination": "shape-brief.md"
+    },
+    {
+      "id": "P17",
+      "name": "Exact axis range",
+      "disposition": "adopt",
+      "recommendation_id": "DCI-06",
+      "reason": "Retain existing behavior.",
+      "destination": "shape-brief.md"
+    },
+    {
+      "id": "P18",
+      "name": "Pan or stretch a numeric ruler",
+      "disposition": "adopt",
+      "recommendation_id": "DCI-06",
+      "reason": "Retain existing behavior.",
+      "destination": "shape-brief.md"
+    },
+    {
+      "id": "P19",
+      "name": "Hidden-row marker with a local remedy",
+      "disposition": "adopt",
+      "recommendation_id": "DCI-06",
+      "reason": "Retain existing behavior.",
+      "destination": "shape-brief.md"
+    },
+    {
+      "id": "P20",
+      "name": "Scale type near its axis",
+      "disposition": "investigate",
+      "recommendation_id": "DCI-08",
+      "reason": "Retain analytical controls as later candidates with conditional frequency hypotheses.",
+      "destination": "references/research-review.md"
+    },
+    {
+      "id": "P21",
+      "name": "Explicit swap rather than ambiguous dragging",
+      "disposition": "defer",
+      "recommendation_id": "DCI-17",
+      "reason": "Define limits, filter, annotation, and default-setting policy before swap or conversion.",
+      "destination": "shape-brief.md"
+    },
+    {
+      "id": "P22",
+      "name": "Metric expression at a value title",
+      "disposition": "investigate",
+      "recommendation_id": "DCI-08",
+      "reason": "Retain analytical controls as later candidates with conditional frequency hypotheses.",
+      "destination": "references/research-review.md"
+    },
+    {
+      "id": "P23",
+      "name": "Bin count beside the distribution",
+      "disposition": "investigate",
+      "recommendation_id": "DCI-08",
+      "reason": "Retain analytical controls as later candidates with conditional frequency hypotheses.",
+      "destination": "references/research-review.md"
+    },
+    {
+      "id": "P24",
+      "name": "Time grain on a time summary",
+      "disposition": "investigate",
+      "recommendation_id": "DCI-08",
+      "reason": "Retain analytical controls as later candidates with conditional frequency hypotheses.",
+      "destination": "references/research-review.md"
+    },
+    {
+      "id": "P25",
+      "name": "Sort and Top N at category labels",
+      "disposition": "investigate",
+      "recommendation_id": "DCI-08",
+      "reason": "Retain analytical controls as later candidates with conditional frequency hypotheses.",
+      "destination": "references/research-review.md"
+    },
+    {
+      "id": "P26",
+      "name": "Split, stack and normalize as a coherent choice",
+      "disposition": "investigate",
+      "recommendation_id": "DCI-08",
+      "reason": "Retain analytical controls as later candidates with conditional frequency hypotheses.",
+      "destination": "references/research-review.md"
+    },
+    {
+      "id": "P27",
+      "name": "Series-style editor without hiding data",
+      "disposition": "investigate",
+      "recommendation_id": "DCI-18",
+      "reason": "Evaluate size, opacity, display, and fit controls for actual repeated tasks.",
+      "destination": "references/research-review.md"
+    },
+    {
+      "id": "P28",
+      "name": "Facet template editing with an explicit owner",
+      "disposition": "investigate",
+      "recommendation_id": "DCI-09",
+      "reason": "Make all-panels scope explicit. Add local facet entry only after Color proof.",
+      "destination": "shape-brief.md"
+    },
+    {
+      "id": "P29",
+      "name": "One-panel annotation binding",
+      "disposition": "investigate",
+      "recommendation_id": "DCI-13",
+      "reason": "Use explicit annotation intent. Keep ordinary brushing.",
+      "destination": "references/research-review.md"
+    },
+    {
+      "id": "P30",
+      "name": "Annotate a record through an explicit command",
+      "disposition": "investigate",
+      "recommendation_id": "DCI-13",
+      "reason": "Use explicit annotation intent. Keep ordinary brushing.",
+      "destination": "references/research-review.md"
+    },
+    {
+      "id": "P31",
+      "name": "Reference line from an axis value",
+      "disposition": "investigate",
+      "recommendation_id": "DCI-13",
+      "reason": "Use explicit annotation intent. Keep ordinary brushing.",
+      "destination": "references/research-review.md"
+    },
+    {
+      "id": "P32",
+      "name": "One-shot range annotation rather than brush hijack",
+      "disposition": "investigate",
+      "recommendation_id": "DCI-13",
+      "reason": "Use explicit annotation intent. Keep ordinary brushing.",
+      "destination": "references/research-review.md"
+    },
+    {
+      "id": "P33",
+      "name": "Table header commands that already work",
+      "disposition": "adopt",
+      "recommendation_id": "DCI-12",
+      "reason": "Retain existing behavior.",
+      "destination": "references/research-review.md"
+    },
+    {
+      "id": "P34",
+      "name": "Value-derived table actions",
+      "disposition": "adopt",
+      "recommendation_id": "DCI-12",
+      "reason": "Retain existing behavior.",
+      "destination": "references/research-review.md"
+    },
+    {
+      "id": "P35",
+      "name": "Pivot measure configuration at the measure header",
+      "disposition": "defer",
+      "recommendation_id": "DCI-12",
+      "reason": "Keep existing table actions. Defer new pivot shortcuts until their scope is checked.",
+      "destination": "references/research-review.md"
+    },
+    {
+      "id": "P36",
+      "name": "Map content controls stay map-specific",
+      "disposition": "adopt",
+      "recommendation_id": "DCI-14",
+      "reason": "Retain existing behavior.",
+      "destination": "references/research-review.md"
+    },
+    {
+      "id": "P37",
+      "name": "Browse a calendar year locally",
+      "disposition": "defer",
+      "recommendation_id": "DCI-14",
+      "reason": "Keep specialty-specific routes. Check each before proposing new local access.",
+      "destination": "references/research-review.md"
+    },
+    {
+      "id": "P38",
+      "name": "Profile-axis order and direction",
+      "disposition": "defer",
+      "recommendation_id": "DCI-14",
+      "reason": "Keep specialty-specific routes. Check each before proposing new local access.",
+      "destination": "references/research-review.md"
+    },
+    {
+      "id": "P39",
+      "name": "Matrix-cell presentation targets a rule, not a record",
+      "disposition": "defer",
+      "recommendation_id": "DCI-14",
+      "reason": "Keep specialty-specific routes. Check each before proposing new local access.",
+      "destination": "references/research-review.md"
+    },
+    {
+      "id": "P40",
+      "name": "Composition semantic hierarchy navigation",
+      "disposition": "adopt",
+      "recommendation_id": "DCI-14",
+      "reason": "Retain existing behavior.",
+      "destination": "references/research-review.md"
+    },
+    {
+      "id": "P41",
+      "name": "Keyboard completion without pointer coordinates",
+      "disposition": "adopt",
+      "recommendation_id": "DCI-10",
+      "reason": "Provide searchable, keyboard-accessible field selection with stable identity.",
+      "destination": "shape-brief.md"
+    },
+    {
+      "id": "P42",
+      "name": "Touch completion without a long-press dependency",
+      "disposition": "adopt",
+      "recommendation_id": "DCI-11",
+      "reason": "Prove focus, nested layers, dismissal, and reachable narrow placement.",
+      "destination": "shape-brief.md"
+    },
+    {
+      "id": "P43",
+      "name": "Export section and unhandled fallback",
+      "disposition": "adopt",
+      "recommendation_id": "DCI-02",
+      "reason": "Retain existing behavior.",
+      "destination": "shape-brief.md"
+    }
+  ],
+  "inventory_and_gesture_mapping": [
+    {
+      "id": "S001",
+      "recommendation_ids": [
+        "DCI-06"
+      ]
+    },
+    {
+      "id": "S002",
+      "recommendation_ids": [
+        "DCI-15"
+      ]
+    },
+    {
+      "id": "S003",
+      "recommendation_ids": [
+        "DCI-15"
+      ]
+    },
+    {
+      "id": "S004",
+      "recommendation_ids": [
+        "DCI-06"
+      ]
+    },
+    {
+      "id": "S005",
+      "recommendation_ids": [
+        "DCI-17"
+      ]
+    },
+    {
+      "id": "S006",
+      "recommendation_ids": [
+        "DCI-01"
+      ]
+    },
+    {
+      "id": "S007",
+      "recommendation_ids": [
+        "DCI-01"
+      ]
+    },
+    {
+      "id": "S008",
+      "recommendation_ids": [
+        "DCI-09"
+      ]
+    },
+    {
+      "id": "S009",
+      "recommendation_ids": [
+        "DCI-09"
+      ]
+    },
+    {
+      "id": "S010",
+      "recommendation_ids": [
+        "DCI-06"
+      ]
+    },
+    {
+      "id": "S011",
+      "recommendation_ids": [
+        "DCI-06"
+      ]
+    },
+    {
+      "id": "S012",
+      "recommendation_ids": [
+        "DCI-06"
+      ]
+    },
+    {
+      "id": "S013",
+      "recommendation_ids": [
+        "DCI-15"
+      ]
+    },
+    {
+      "id": "S014",
+      "recommendation_ids": [
+        "DCI-15"
+      ]
+    },
+    {
+      "id": "S015",
+      "recommendation_ids": [
+        "DCI-15"
+      ]
+    },
+    {
+      "id": "S016",
+      "recommendation_ids": [
+        "DCI-15"
+      ]
+    },
+    {
+      "id": "S017",
+      "recommendation_ids": [
+        "DCI-03",
+        "DCI-05",
+        "DCI-07"
+      ]
+    },
+    {
+      "id": "S018",
+      "recommendation_ids": [
+        "DCI-07"
+      ]
+    },
+    {
+      "id": "S019",
+      "recommendation_ids": [
+        "DCI-07"
+      ]
+    },
+    {
+      "id": "S020",
+      "recommendation_ids": [
+        "DCI-08"
+      ]
+    },
+    {
+      "id": "S021",
+      "recommendation_ids": [
+        "DCI-08"
+      ]
+    },
+    {
+      "id": "S022",
+      "recommendation_ids": [
+        "DCI-08"
+      ]
+    },
+    {
+      "id": "S023",
+      "recommendation_ids": [
+        "DCI-15"
+      ]
+    },
+    {
+      "id": "S024",
+      "recommendation_ids": [
+        "DCI-08"
+      ]
+    },
+    {
+      "id": "S025",
+      "recommendation_ids": [
+        "DCI-08"
+      ]
+    },
+    {
+      "id": "S026",
+      "recommendation_ids": [
+        "DCI-08"
+      ]
+    },
+    {
+      "id": "S027",
+      "recommendation_ids": [
+        "DCI-08"
+      ]
+    },
+    {
+      "id": "S028",
+      "recommendation_ids": [
+        "DCI-08"
+      ]
+    },
+    {
+      "id": "S029",
+      "recommendation_ids": [
+        "DCI-06",
+        "DCI-08"
+      ]
+    },
+    {
+      "id": "S030",
+      "recommendation_ids": [
+        "DCI-18"
+      ]
+    },
+    {
+      "id": "S031",
+      "recommendation_ids": [
+        "DCI-18"
+      ]
+    },
+    {
+      "id": "S032",
+      "recommendation_ids": [
+        "DCI-18"
+      ]
+    },
+    {
+      "id": "S033",
+      "recommendation_ids": [
+        "DCI-18"
+      ]
+    },
+    {
+      "id": "S034",
+      "recommendation_ids": [
+        "DCI-18"
+      ]
+    },
+    {
+      "id": "S035",
+      "recommendation_ids": [
+        "DCI-18"
+      ]
+    },
+    {
+      "id": "S036",
+      "recommendation_ids": [
+        "DCI-18"
+      ]
+    },
+    {
+      "id": "S037",
+      "recommendation_ids": [
+        "DCI-18"
+      ]
+    },
+    {
+      "id": "S038",
+      "recommendation_ids": [
+        "DCI-08"
+      ]
+    },
+    {
+      "id": "S039",
+      "recommendation_ids": [
+        "DCI-15"
+      ]
+    },
+    {
+      "id": "S040",
+      "recommendation_ids": [
+        "DCI-18"
+      ]
+    },
+    {
+      "id": "S041",
+      "recommendation_ids": [
+        "DCI-18"
+      ]
+    },
+    {
+      "id": "S042",
+      "recommendation_ids": [
+        "DCI-15"
+      ]
+    },
+    {
+      "id": "S043",
+      "recommendation_ids": [
+        "DCI-15"
+      ]
+    },
+    {
+      "id": "S044",
+      "recommendation_ids": [
+        "DCI-08"
+      ]
+    },
+    {
+      "id": "S045",
+      "recommendation_ids": [
+        "DCI-08"
+      ]
+    },
+    {
+      "id": "S046",
+      "recommendation_ids": [
+        "DCI-08"
+      ]
+    },
+    {
+      "id": "S047",
+      "recommendation_ids": [
+        "DCI-08"
+      ]
+    },
+    {
+      "id": "S048",
+      "recommendation_ids": [
+        "DCI-08"
+      ]
+    },
+    {
+      "id": "S049",
+      "recommendation_ids": [
+        "DCI-08"
+      ]
+    },
+    {
+      "id": "S050",
+      "recommendation_ids": [
+        "DCI-18"
+      ]
+    },
+    {
+      "id": "S051",
+      "recommendation_ids": [
+        "DCI-18"
+      ]
+    },
+    {
+      "id": "S052",
+      "recommendation_ids": [
+        "DCI-08"
+      ]
+    },
+    {
+      "id": "S053",
+      "recommendation_ids": [
+        "DCI-15"
+      ]
+    },
+    {
+      "id": "S054",
+      "recommendation_ids": [
+        "DCI-12"
+      ]
+    },
+    {
+      "id": "S055",
+      "recommendation_ids": [
+        "DCI-12"
+      ]
+    },
+    {
+      "id": "S056",
+      "recommendation_ids": [
+        "DCI-12"
+      ]
+    },
+    {
+      "id": "S057",
+      "recommendation_ids": [
+        "DCI-12"
+      ]
+    },
+    {
+      "id": "S058",
+      "recommendation_ids": [
+        "DCI-12"
+      ]
+    },
+    {
+      "id": "S059",
+      "recommendation_ids": [
+        "DCI-12"
+      ]
+    },
+    {
+      "id": "S060",
+      "recommendation_ids": [
+        "DCI-15"
+      ]
+    },
+    {
+      "id": "S061",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S062",
+      "recommendation_ids": [
+        "DCI-07"
+      ]
+    },
+    {
+      "id": "S063",
+      "recommendation_ids": [
+        "DCI-07"
+      ]
+    },
+    {
+      "id": "S064",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S065",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S066",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S067",
+      "recommendation_ids": [
+        "DCI-08"
+      ]
+    },
+    {
+      "id": "S068",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S069",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S070",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S071",
+      "recommendation_ids": [
+        "DCI-08"
+      ]
+    },
+    {
+      "id": "S072",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S073",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S074",
+      "recommendation_ids": [
+        "DCI-08"
+      ]
+    },
+    {
+      "id": "S075",
+      "recommendation_ids": [
+        "DCI-18"
+      ]
+    },
+    {
+      "id": "S076",
+      "recommendation_ids": [
+        "DCI-08"
+      ]
+    },
+    {
+      "id": "S077",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S078",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S079",
+      "recommendation_ids": [
+        "DCI-18"
+      ]
+    },
+    {
+      "id": "S080",
+      "recommendation_ids": [
+        "DCI-08"
+      ]
+    },
+    {
+      "id": "S081",
+      "recommendation_ids": [
+        "DCI-15"
+      ]
+    },
+    {
+      "id": "S082",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S083",
+      "recommendation_ids": [
+        "DCI-08"
+      ]
+    },
+    {
+      "id": "S084",
+      "recommendation_ids": [
+        "DCI-08"
+      ]
+    },
+    {
+      "id": "S085",
+      "recommendation_ids": [
+        "DCI-08"
+      ]
+    },
+    {
+      "id": "S086",
+      "recommendation_ids": [
+        "DCI-15"
+      ]
+    },
+    {
+      "id": "S087",
+      "recommendation_ids": [
+        "DCI-08"
+      ]
+    },
+    {
+      "id": "S088",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S089",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S090",
+      "recommendation_ids": [
+        "DCI-08"
+      ]
+    },
+    {
+      "id": "S091",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S092",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S093",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S094",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S095",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S096",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S097",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S098",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S099",
+      "recommendation_ids": [
+        "DCI-08"
+      ]
+    },
+    {
+      "id": "S100",
+      "recommendation_ids": [
+        "DCI-08"
+      ]
+    },
+    {
+      "id": "S101",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S102",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S103",
+      "recommendation_ids": [
+        "DCI-15"
+      ]
+    },
+    {
+      "id": "S104",
+      "recommendation_ids": [
+        "DCI-13"
+      ]
+    },
+    {
+      "id": "S105",
+      "recommendation_ids": [
+        "DCI-09",
+        "DCI-13"
+      ]
+    },
+    {
+      "id": "S106",
+      "recommendation_ids": [
+        "DCI-13"
+      ]
+    },
+    {
+      "id": "S107",
+      "recommendation_ids": [
+        "DCI-13"
+      ]
+    },
+    {
+      "id": "S108",
+      "recommendation_ids": [
+        "DCI-13"
+      ]
+    },
+    {
+      "id": "S109",
+      "recommendation_ids": [
+        "DCI-13"
+      ]
+    },
+    {
+      "id": "S110",
+      "recommendation_ids": [
+        "DCI-13"
+      ]
+    },
+    {
+      "id": "S111",
+      "recommendation_ids": [
+        "DCI-13"
+      ]
+    },
+    {
+      "id": "S112",
+      "recommendation_ids": [
+        "DCI-13"
+      ]
+    },
+    {
+      "id": "S113",
+      "recommendation_ids": [
+        "DCI-13"
+      ]
+    },
+    {
+      "id": "S114",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S115",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S116",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S117",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S118",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S119",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S120",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S121",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S122",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S123",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S124",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S125",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S126",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S127",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S128",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S129",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S130",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S131",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S132",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S133",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S134",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S135",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S136",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S137",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S138",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S139",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S140",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S141",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S142",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S143",
+      "recommendation_ids": [
+        "DCI-15"
+      ]
+    },
+    {
+      "id": "S144",
+      "recommendation_ids": [
+        "DCI-15"
+      ]
+    },
+    {
+      "id": "S145",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "S146",
+      "recommendation_ids": [
+        "DCI-01"
+      ]
+    },
+    {
+      "id": "S147",
+      "recommendation_ids": [
+        "DCI-08"
+      ]
+    },
+    {
+      "id": "S148",
+      "recommendation_ids": [
+        "DCI-04"
+      ]
+    },
+    {
+      "id": "S149",
+      "recommendation_ids": [
+        "DCI-06"
+      ]
+    },
+    {
+      "id": "S150",
+      "recommendation_ids": [
+        "DCI-02"
+      ]
+    },
+    {
+      "id": "S151",
+      "recommendation_ids": [
+        "DCI-15"
+      ]
+    },
+    {
+      "id": "S152",
+      "recommendation_ids": [
+        "DCI-12"
+      ]
+    },
+    {
+      "id": "S153",
+      "recommendation_ids": [
+        "DCI-01"
+      ]
+    },
+    {
+      "id": "S154",
+      "recommendation_ids": [
+        "DCI-17"
+      ]
+    },
+    {
+      "id": "S155",
+      "recommendation_ids": [
+        "DCI-15"
+      ]
+    },
+    {
+      "id": "S156",
+      "recommendation_ids": [
+        "DCI-09"
+      ]
+    },
+    {
+      "id": "S157",
+      "recommendation_ids": [
+        "DCI-15"
+      ]
+    },
+    {
+      "id": "S158",
+      "recommendation_ids": [
+        "DCI-10"
+      ]
+    },
+    {
+      "id": "S159",
+      "recommendation_ids": [
+        "DCI-15"
+      ]
+    },
+    {
+      "id": "S160",
+      "recommendation_ids": [
+        "DCI-07"
+      ]
+    },
+    {
+      "id": "S161",
+      "recommendation_ids": [
+        "DCI-07"
+      ]
+    },
+    {
+      "id": "S162",
+      "recommendation_ids": [
+        "DCI-07"
+      ]
+    },
+    {
+      "id": "S163",
+      "recommendation_ids": [
+        "DCI-07"
+      ]
+    },
+    {
+      "id": "S164",
+      "recommendation_ids": [
+        "DCI-07"
+      ]
+    },
+    {
+      "id": "S165",
+      "recommendation_ids": [
+        "DCI-07"
+      ]
+    },
+    {
+      "id": "G01",
+      "recommendation_ids": [
+        "DCI-01"
+      ]
+    },
+    {
+      "id": "G02",
+      "recommendation_ids": [
+        "DCI-01"
+      ]
+    },
+    {
+      "id": "G03",
+      "recommendation_ids": [
+        "DCI-01"
+      ]
+    },
+    {
+      "id": "G04",
+      "recommendation_ids": [
+        "DCI-01"
+      ]
+    },
+    {
+      "id": "G05",
+      "recommendation_ids": [
+        "DCI-01"
+      ]
+    },
+    {
+      "id": "G06",
+      "recommendation_ids": [
+        "DCI-01"
+      ]
+    },
+    {
+      "id": "G07",
+      "recommendation_ids": [
+        "DCI-03"
+      ]
+    },
+    {
+      "id": "G08",
+      "recommendation_ids": [
+        "DCI-04"
+      ]
+    },
+    {
+      "id": "G09",
+      "recommendation_ids": [
+        "DCI-04"
+      ]
+    },
+    {
+      "id": "G10",
+      "recommendation_ids": [
+        "DCI-15"
+      ]
+    },
+    {
+      "id": "G11",
+      "recommendation_ids": [
+        "DCI-02"
+      ]
+    },
+    {
+      "id": "G12",
+      "recommendation_ids": [
+        "DCI-10"
+      ]
+    },
+    {
+      "id": "G13",
+      "recommendation_ids": [
+        "DCI-06"
+      ]
+    },
+    {
+      "id": "G14",
+      "recommendation_ids": [
+        "DCI-06"
+      ]
+    },
+    {
+      "id": "G15",
+      "recommendation_ids": [
+        "DCI-06"
+      ]
+    },
+    {
+      "id": "G16",
+      "recommendation_ids": [
+        "DCI-04"
+      ]
+    },
+    {
+      "id": "G17",
+      "recommendation_ids": [
+        "DCI-06"
+      ]
+    },
+    {
+      "id": "G18",
+      "recommendation_ids": [
+        "DCI-06"
+      ]
+    },
+    {
+      "id": "G19",
+      "recommendation_ids": [
+        "DCI-06"
+      ]
+    },
+    {
+      "id": "G20",
+      "recommendation_ids": [
+        "DCI-06"
+      ]
+    },
+    {
+      "id": "G21",
+      "recommendation_ids": [
+        "DCI-06"
+      ]
+    },
+    {
+      "id": "G22",
+      "recommendation_ids": [
+        "DCI-03"
+      ]
+    },
+    {
+      "id": "G23",
+      "recommendation_ids": [
+        "DCI-07"
+      ]
+    },
+    {
+      "id": "G24",
+      "recommendation_ids": [
+        "DCI-07"
+      ]
+    },
+    {
+      "id": "G25",
+      "recommendation_ids": [
+        "DCI-10"
+      ]
+    },
+    {
+      "id": "G26",
+      "recommendation_ids": [
+        "DCI-05"
+      ]
+    },
+    {
+      "id": "G27",
+      "recommendation_ids": [
+        "DCI-11"
+      ]
+    },
+    {
+      "id": "G28",
+      "recommendation_ids": [
+        "DCI-05"
+      ]
+    },
+    {
+      "id": "G29",
+      "recommendation_ids": [
+        "DCI-11"
+      ]
+    },
+    {
+      "id": "G30",
+      "recommendation_ids": [
+        "DCI-02"
+      ]
+    },
+    {
+      "id": "G31",
+      "recommendation_ids": [
+        "DCI-11"
+      ]
+    },
+    {
+      "id": "G32",
+      "recommendation_ids": [
+        "DCI-09"
+      ]
+    },
+    {
+      "id": "G33",
+      "recommendation_ids": [
+        "DCI-13"
+      ]
+    },
+    {
+      "id": "G34",
+      "recommendation_ids": [
+        "DCI-13"
+      ]
+    },
+    {
+      "id": "G35",
+      "recommendation_ids": [
+        "DCI-12"
+      ]
+    },
+    {
+      "id": "G36",
+      "recommendation_ids": [
+        "DCI-12"
+      ]
+    },
+    {
+      "id": "G37",
+      "recommendation_ids": [
+        "DCI-12"
+      ]
+    },
+    {
+      "id": "G38",
+      "recommendation_ids": [
+        "DCI-18"
+      ]
+    },
+    {
+      "id": "G39",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "G40",
+      "recommendation_ids": [
+        "DCI-14"
+      ]
+    },
+    {
+      "id": "G41",
+      "recommendation_ids": [
+        "DCI-11"
+      ]
+    },
+    {
+      "id": "G42",
+      "recommendation_ids": [
+        "DCI-11"
+      ]
+    },
+    {
+      "id": "G43",
+      "recommendation_ids": [
+        "DCI-15"
+      ]
+    },
+    {
+      "id": "G44",
+      "recommendation_ids": [
+        "DCI-01"
+      ]
+    }
+  ],
+  "row_overrides": {
+    "S082": "defer new calendar access; raw Keep/Explore conflict needs UI verification",
+    "S148": "do not infer universal trace support",
+    "S149": "do not infer universal high configuration frequency"
+  },
+  "frequency_policy": "All ranks are low-confidence task-conditioned hypotheses. The research-review table governs over inconsistent raw High/Medium labels.",
+  "rejected_approaches": [
+    "Universal default configuration mode",
+    "Double-click delay on selectable marks",
+    "Giant all-settings context menu",
+    "Arbitrary per-record paint"
+  ],
+  "followups": {
+    "used": 0,
+    "limit": 2,
+    "reason": "No material gap prevents useful integration. Retain scope and frequency uncertainties explicitly."
+  }
+}
