@@ -71,4 +71,4 @@ The demo is a Vite app on GitHub Pages that stores work in `localStorage`. There
 
 ## Next step after confirmation
 
-The local CLI is [shaped](../local-cli-projects/shape-brief.md), and its first proof passed: sources, joins, and queries are project text. Next is the CLI implementation plan.
+The local CLI is [shaped](../local-cli-projects/shape-brief.md), and its first proof passed: sources, joins, and queries are project text. The CLI [implementation plan](../local-cli-projects/implementation-plan.md) is ready.

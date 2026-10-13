@@ -4,11 +4,11 @@
     "title": "Local CLI projects with npx exploreda",
     "slug": "local-cli-projects",
     "scale": "capability",
-    "current_phase": "shape",
+    "current_phase": "plan",
     "last_updated": "2026-10-12",
     "summary": "npx exploreda in a folder starts a local server and opens the app on that project; sources, joins, and analyses are DSL v2 text files.",
     "status": "planned",
-    "next_action": "Write the implementation plan for the CLI; tighten the project-text reference (on=, aggregate output names, parameter semantics)."
+    "next_action": "Start M1: analysis query/bind syntax, folder codec, ProjectFiles port, exploreda-dsl project, shop example."
   },
   "artifacts": {
     "intent_brief": {
@@ -28,8 +28,8 @@
     },
     "implementation_plan": {
       "path": "implementation-plan.md",
-      "status": "not-created",
-      "updated_at": null
+      "status": "current",
+      "updated_at": "2026-10-12"
     }
   },
   "sources": [
@@ -503,18 +503,177 @@
   "implementation": {
     "status": "not-started",
     "repository_snapshot": {
-      "root": null,
-      "revision": null,
-      "worktree_status": null,
-      "subsystems": [],
-      "test_commands": [],
-      "deployment_surfaces": []
+      "root": "/Users/byronwall/Projects/explorEDA",
+      "revision": "cf659d29",
+      "worktree_status": "claude/project-grammar-proof (PR #368)",
+      "subsystems": [
+        "packages/explorEDA/src/lib/dsl (DSL v2, project text)",
+        "packages/explorEDA/src/components/ExplorEdaProject.tsx",
+        "packages/explorEDA/src/lib/analysis",
+        "packages/explorEDA/src/cli/exploredaDsl.ts",
+        "packages/explorEDA/tsup.config.ts",
+        "apps/demo/src/demos/analyses/loadAnalysis.ts"
+      ],
+      "test_commands": [
+        "pnpm --filter exploreda exec vitest run <files>",
+        "pnpm --filter exploreda check-types",
+        "pnpm check"
+      ],
+      "deployment_surfaces": [
+        "npm package exploreda (bin)",
+        "exploreda.dev GitHub Pages"
+      ]
     },
-    "dependencies": [],
-    "fast_local_loop": null,
-    "milestones": [],
-    "cut_line": [],
-    "open_decisions": []
+    "dependencies": [
+      {
+        "name": "local file system (read, write, watch)",
+        "material": true,
+        "application_seam": "ProjectFiles port: list, read, write, watch over project-relative paths",
+        "first_proof_role": {
+          "mode": "local-substitute",
+          "rationale": "Folder codec correctness is independent of the real fs; watching and Windows paths are proven later on temp dirs and CI."
+        },
+        "failure_modes": [
+          "missing or unreadable data file",
+          "write outside the project folder",
+          "own-write echo from the watcher",
+          "rename-based atomic saves from editors and git",
+          "Windows path separators and drive letters"
+        ],
+        "proof_rungs": [
+          "deterministic-fake",
+          "contract-test",
+          "real-container",
+          "deployed"
+        ],
+        "local_proof": "ProjectFiles contract suite against the in-memory fake and Node fs over temp directories",
+        "live_proof": "npx of the packed tarball on three OSes in CI",
+        "rollout": "Bin-only; component entries never import server or adapters; remove the bin entry to withdraw."
+      },
+      {
+        "name": "File System Access API (demo)",
+        "material": true,
+        "application_seam": "ProjectFiles port, browser adapter",
+        "first_proof_role": {
+          "mode": "absent",
+          "rationale": "Not needed until the format is stable (M5)."
+        },
+        "failure_modes": [
+          "permission revoked",
+          "unsupported browser"
+        ],
+        "proof_rungs": [
+          "contract-test",
+          "deployed"
+        ],
+        "local_proof": "Contract suite in a Chromium browser test",
+        "live_proof": "Folder round trip CLI to demo on exploreda.dev",
+        "rollout": "Hide Open project folder; demo unchanged without it."
+      }
+    ],
+    "fast_local_loop": {
+      "command": "pnpm --filter exploreda exec vitest run src/lib/project",
+      "starts": [
+        "in-memory ProjectFiles fake"
+      ],
+      "network": false,
+      "failure_injection": [
+        "missing data file",
+        "write refused",
+        "outside edit during autosave",
+        "rename-based save by an editor or git"
+      ],
+      "slower_proof": "packed tarball smoke on macOS, Linux, Windows (M6)"
+    },
+    "milestones": [
+      {
+        "id": "m1",
+        "title": "A project folder loads and every view builds",
+        "outcome": "exploreda-dsl project examples/shop reports every view built from real data.",
+        "dependencies_introduced": [],
+        "proof": "Codec vitest with in-memory ProjectFiles; exploreda-dsl project on the shop example.",
+        "valid_intermediate_state": "Codec and checker exist; no server or app.",
+        "rollback": "Remove the subcommand; library code unused.",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m2",
+        "title": "npx exploreda opens a folder, read-only",
+        "outcome": "Running the bin on a folder opens apps/app on its analyses; nothing is written.",
+        "dependencies_introduced": [
+          "local HTTP server (node:http)"
+        ],
+        "proof": "Token/Host 403 tests; browser screenshots at three widths.",
+        "valid_intermediate_state": "Read-only app; edits not saved.",
+        "rollback": "Drop the bin entry.",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m3",
+        "title": "Work saves to files and outside edits reload",
+        "outcome": "Edits autosave atomically; outside edits reload the tab.",
+        "dependencies_introduced": [
+          "Node fs writes and watching"
+        ],
+        "proof": "ProjectFiles contract suite over temp dirs; git diff shows one-line change; write guard test.",
+        "valid_intermediate_state": "Full local read/write CLI.",
+        "rollback": "Disable autosave; read-only mode remains.",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m4",
+        "title": "Any folder becomes a project",
+        "outcome": "First run writes nothing until first save; new analysis, sources, global config.",
+        "dependencies_introduced": [],
+        "proof": "Empty-folder test leaves exactly two files; screenshots.",
+        "valid_intermediate_state": "CLI usable on arbitrary folders.",
+        "rollback": "Creation actions hidden; open-existing still works.",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m5",
+        "title": "The demo opens the same project folder",
+        "outcome": "Demo reads and writes CLI project folders via File System Access.",
+        "dependencies_introduced": [
+          "File System Access API"
+        ],
+        "proof": "Contract suite in Chromium; folder round trip CLI↔demo.",
+        "valid_intermediate_state": "Demo unchanged without a folder.",
+        "rollback": "Hide Open project folder.",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m6",
+        "title": "Launch-ready",
+        "outcome": "Three-OS packed-tarball smoke, docs page, README quickstart, polish.",
+        "dependencies_introduced": [
+          "three-OS CI matrix"
+        ],
+        "proof": "Green smoke on macOS, Linux, Windows; docs live.",
+        "valid_intermediate_state": "Announceable release.",
+        "rollback": "Hold the announcement; package unchanged.",
+        "status": "planned",
+        "evidence": []
+      }
+    ],
+    "cut_line": [
+      "Database sources",
+      "Notebook view",
+      "Static HTML export",
+      "Undo surviving restart",
+      "Data larger than ~100 MB",
+      "Editor/LSP completion",
+      "Multi-user features"
+    ],
+    "open_decisions": [
+      "App assets inside exploreda package vs @exploreda/app (M2 spike)",
+      "View query/bind syntax (M1)"
+    ]
   },
   "history": [
     {
@@ -533,6 +692,12 @@
       "date": "2026-10-12",
       "event": "first proof passed",
       "summary": "Project text (exportProjectText/compileProjectText in exploreda/analysis) round-trips every demo project; cold agent draft passed. Text is the project format; JSON fallback dropped.",
+      "status": "planned"
+    },
+    {
+      "date": "2026-10-12",
+      "event": "planned",
+      "summary": "Six-milestone plan: codec → read-only server+app → autosave/watch → first run → demo folder access → launch.",
       "status": "planned"
     }
   ],

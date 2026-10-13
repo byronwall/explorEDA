@@ -65,4 +65,4 @@ The `exploreda` package already ships one bin, `exploreda-dsl`, which checks das
 
 ## Next step after confirmation
 
-The first proof passed ([results](raw/proof/results.md)): sources, joins, and queries are project text. Next is the implementation plan.
+The first proof passed ([results](raw/proof/results.md)): sources, joins, and queries are project text. The [implementation plan](implementation-plan.md) is next to execute.
