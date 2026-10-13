@@ -284,6 +284,9 @@ export {
   hasFieldDisplayFormat,
 };
 
+// Project folders: project text, analysis files, and their data, read
+// through any file adapter.
+export * from "@/lib/project";
 export {
   listBoundarySets,
   registerBoundarySet,

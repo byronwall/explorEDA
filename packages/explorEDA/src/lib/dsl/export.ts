@@ -495,7 +495,11 @@ export function exportParts(
         ]).map((pair) => toWord("", pair, base.settings.rowsSettings)),
       ]
     : [];
-  const rowsLines = rows ? block("rows", rowsPairs, rowsColumns.lines) : [];
+  // A Rows view left at its defaults says nothing, so it isn't written.
+  const rowsLines =
+    rows && (rowsPairs.length || rowsColumns.lines.length)
+      ? block("rows", rowsPairs, rowsColumns.lines)
+      : [];
   // One `filter` line per workspace filter, so each reads on its own.
   const filterLines = (settings.workspaceFilters ?? []).flatMap((filter) => {
     const pairs = filterPairs(undefined, [filter], types);

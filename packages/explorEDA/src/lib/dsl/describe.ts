@@ -224,6 +224,11 @@ Several views (one text for every saved view):
   it; a view that names none shows them all. Fields, calculations, scales, and
   groups are shared by every view, wherever they appear.
 
+In a project folder (each view charts one of the project's queries):
+  eda query=order-lines               the query every view charts
+  view "Aster" query=customer-orders bind.customer=C01
+                                      a view's own query and parameter values
+
 The text describes the whole dashboard: omitted charts are removed and
 omitted settings use the app's defaults.
 

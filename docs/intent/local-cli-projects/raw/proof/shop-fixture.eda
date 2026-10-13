@@ -1,0 +1,115 @@
+project @shop-analysis
+
+source @customers key=customerId {
+  field customerId string
+  field name string
+  field joinedAt Joined date
+}
+
+source @orders key=orderId {
+  field orderId string
+  field customerId string
+  field amount number
+  field orderedAt Ordered date
+}
+
+source @items key=itemId {
+  field itemId string
+  field orderId string
+  field productId string
+  field revenue number
+}
+
+source @products key=productId {
+  field productId string
+  field name Product string
+}
+
+relate @order-customer orders.customerId -> customers.customerId
+relate @item-order items.orderId -> orders.orderId
+relate @item-product items.productId -> products.productId
+
+query @orders-by-customer glyph=O frame=Orders {
+  source @orders-source orders
+  lookup @order-customer-lookup customer via=order-customer
+}
+
+query @items-by-order glyph=I frame=Items {
+  source @items-source items
+  lookup @item-order-lookup order via=item-order
+  lookup @item-product-lookup product via=item-product
+}
+
+query @customer-c1 "Customer C1" glyph=C frame=Orders {
+  source @c1-orders orders
+  filter @customer-filter orders.customerId = C1
+}
+
+query @order-totals glyph=ΣO frame=Orders {
+  source @totals-source orders
+  aggregate @orders-sum {
+    sum @orderAmount orders.amount
+  }
+}
+
+query @item-totals glyph=ΣI frame=Items {
+  source @item-totals-source items
+  aggregate @items-sum {
+    sum @itemRevenue items.revenue
+  }
+}
+
+query @order-amount-on-items "Orders represented by items" glyph=OI frame=Items {
+  source @item-order-amount-source items
+  lookup @item-order-amount-lookup order via=item-order
+  aggregate @distinct-order-sum {
+    sum @distinctOrderAmount order.amount label="Order amount" per=order.orderId
+  }
+}
+
+query @orders-and-items "Orders with item measures" glyph=OM frame=Orders {
+  source @orders-items-source orders
+  expand @orders-items-expand item via=item-order keep-unmatched
+  aggregate @orders-items-summary by=orders.orderId {
+    sum @orderAmount orders.amount per=orders.orderId
+    count @itemCount item.itemId label=Items
+    sum @itemRevenue item.revenue
+  }
+}
+
+query @customer-items-c1 "C1 items" glyph=CI frame=Items {
+  source @c1-item-source items
+  lookup @c1-item-order order via=item-order
+  lookup @c1-item-customer customer via=order-customer on=order.customerId
+  filter @c1-items-filter customer.customerId = C1
+}
+
+query @customer-instance "Customer and dates" glyph=D frame=Orders {
+  source @instance-orders orders
+  filter @instance-customer orders.customerId = $customerId
+  filter @instance-date-start orders.orderedAt >= $dateStart
+  filter @instance-date-end orders.orderedAt <= $dateEnd
+}
+
+query @product-revenue glyph=R frame=Items {
+  source @product-items items
+  filter @product-filter items.revenue >= 10
+  calc @product-calc items.netRevenue "Net revenue" = ["items.revenue"] * 1
+  lookup @product-lookup product via=item-product
+  aggregate @product-revenue-sum by=product.name {
+    sum @revenueByProduct items.netRevenue label=Revenue
+  }
+}
+
+query @empty-total glyph=E frame=Orders {
+  source @empty-orders orders
+  filter @empty-filter orders.amount > 1000
+  aggregate @empty-summary {
+    sum @emptySum orders.amount label=Amount
+    count @emptyCount label=Orders
+  }
+}
+
+param @customerId Customer string required pick=customers.name
+param @dateStart "From date" date required
+param @dateEnd "To date" date required

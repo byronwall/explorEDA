@@ -1,0 +1,268 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "Browser-only explorEDA at exploreda.dev",
+    "slug": "browser-only-site",
+    "scale": "capability",
+    "current_phase": "intent",
+    "last_updated": "2026-10-12",
+    "summary": "Zero-setup, file-only explorEDA at exploreda.dev with no server, accounts, or hosted storage.",
+    "status": "planned",
+    "next_action": "Question rounds; then shape against the existing demo deployment."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "draft",
+      "updated_at": "2026-10-12"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "not-created",
+      "updated_at": null
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "not-created",
+      "updated_at": null
+    }
+  },
+  "sources": [
+    {
+      "id": "USR-P1",
+      "type": "direct-user-source",
+      "location": "../runtime-modes/raw/2026-10-12-notes-transcription.md",
+      "anchor": "Page 1 \u2014 EDA: runtime modes",
+      "authority": "direct intent",
+      "notes": "Photo: ../runtime-modes/raw/2026-10-12-runtime-modes-page1.jpg"
+    },
+    {
+      "id": "USR-P2",
+      "type": "direct-user-source",
+      "location": "../runtime-modes/raw/2026-10-12-notes-transcription.md",
+      "anchor": "Page 2 \u2014 EDA modes",
+      "authority": "direct intent",
+      "notes": "Photo: ../runtime-modes/raw/2026-10-12-eda-modes-page2.jpg"
+    },
+    {
+      "id": "USR-CHAT",
+      "type": "direct-user-source",
+      "location": "conversation 2026-10-12",
+      "anchor": "Request accompanying the photos",
+      "authority": "latest direct instruction",
+      "notes": "Hosting-modes initiative somewhat replaces the commercialization initiative, possibly in parallel; separate initiative for a proper app with users, login, config."
+    },
+    {
+      "id": "REPO-01",
+      "type": "repository",
+      "location": "apps/demo/src/savedViewsSession.ts; .github/workflows/deploy.yml",
+      "anchor": "localStorage persistence; GitHub Pages deploy",
+      "authority": "current reality",
+      "notes": "No CLI, server, auth, or user model exists."
+    },
+    {
+      "id": "QA-1",
+      "type": "question-round",
+      "location": "conversation 2026-10-12",
+      "anchor": "Round 1",
+      "authority": "direct intent",
+      "notes": "recorded in runtime-modes question_rounds"
+    },
+    {
+      "id": "QA-2",
+      "type": "question-round",
+      "location": "conversation 2026-10-12",
+      "anchor": "Round 2",
+      "authority": "direct intent",
+      "notes": "recorded in runtime-modes question_rounds"
+    },
+    {
+      "id": "QA-3",
+      "type": "question-round",
+      "location": "conversation 2026-10-12",
+      "anchor": "Round 3",
+      "authority": "direct intent",
+      "notes": "recorded in runtime-modes question_rounds"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "I-01",
+        "type": "outcome",
+        "statement": "exploreda.dev makes it easy to test explorEDA or do an ad hoc analysis with minimal admin.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "USR-P2"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "I-02",
+        "type": "constraint",
+        "statement": "No database sources; file/CSV only.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "USR-P2"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "I-03",
+        "type": "constraint",
+        "statement": "No public storage mechanism.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "USR-P2"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "I-04",
+        "type": "implementation hypothesis",
+        "statement": "File System Access API for data sources and config.",
+        "commitment": "tentative",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "USR-P2"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "I-05",
+        "type": "future possibility",
+        "statement": "Playground with data in the URL, or storage behind a magic link.",
+        "commitment": "tentative",
+        "importance": "peripheral",
+        "status": "active",
+        "time_horizon": "later",
+        "sources": [
+          "USR-P2"
+        ],
+        "confidence": "high"
+      },
+      {
+        "type": "decision",
+        "statement": "Browser-only mode stays the demo at exploreda.dev rather than a static build of apps/app.",
+        "commitment": "explicit",
+        "importance": "core",
+        "time_horizon": "first release",
+        "sources": [
+          "QA-2"
+        ],
+        "status": "active",
+        "confidence": "high",
+        "id": "I-06"
+      },
+      {
+        "type": "required behavior",
+        "statement": "In Chromium the demo can open and save a CLI project folder via File System Access, using the same analysis files.",
+        "commitment": "explicit",
+        "importance": "core",
+        "time_horizon": "first release",
+        "sources": [
+          "QA-3"
+        ],
+        "status": "active",
+        "confidence": "high",
+        "id": "I-07"
+      }
+    ],
+    "themes": [
+      "zero setup",
+      "file-only",
+      "local persistence"
+    ],
+    "conflicts": [],
+    "human_questions": [
+      "Is a shareable link in scope, and is a small storage service acceptable for it?"
+    ]
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "not-started",
+    "appetite": null,
+    "problem": null,
+    "recommended_shape": null,
+    "success_moves": [],
+    "first_proof": null,
+    "rabbit_holes": [],
+    "open_decisions": []
+  },
+  "implementation": {
+    "status": "not-started",
+    "repository_snapshot": {
+      "root": null,
+      "revision": null,
+      "worktree_status": null,
+      "subsystems": [],
+      "test_commands": [],
+      "deployment_surfaces": []
+    },
+    "dependencies": [],
+    "fast_local_loop": null,
+    "milestones": [],
+    "cut_line": [],
+    "open_decisions": []
+  },
+  "history": [
+    {
+      "date": "2026-10-12",
+      "event": "created",
+      "summary": "Intent recovered from two handwritten notebook pages and the accompanying chat request.",
+      "status": "planned"
+    }
+  ],
+  "closure": null,
+  "related_initiatives": [
+    {
+      "slug": "runtime-modes",
+      "role": "program umbrella: mode ladder and shared storage model"
+    },
+    {
+      "slug": "standalone-app",
+      "role": "app layer every mode runs"
+    },
+    {
+      "slug": "local-cli-projects",
+      "role": "mode 2"
+    },
+    {
+      "slug": "self-hosted-team-server",
+      "role": "mode 3"
+    },
+    {
+      "slug": "customer-instance-hosting",
+      "role": "mode 4 (paid hosted), comes last"
+    },
+    {
+      "slug": "database-adapters",
+      "role": "server-side data path for modes 2\u20134"
+    },
+    {
+      "slug": "notebook-analysis",
+      "role": "notebooks as stored results"
+    }
+  ]
+}

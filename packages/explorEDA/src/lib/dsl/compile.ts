@@ -446,7 +446,13 @@ export function compileDocument(
       );
     }
     for (const pair of header.pairs) {
-      if (pair.key !== "name") {
+      // A project's analysis file names each view's query and inputs; the
+      // host reads them and supplies that query's rows.
+      if (
+        pair.key !== "name" &&
+        pair.key !== "query" &&
+        !pair.key.startsWith("bind.")
+      ) {
         report(
           "warning",
           "setting-ignored",

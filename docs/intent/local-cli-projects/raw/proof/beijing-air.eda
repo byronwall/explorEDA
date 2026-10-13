@@ -1,0 +1,49 @@
+project @beijing-air-2016
+
+source @days "Station days" glyph=D key=station_day {
+  path=/datasets/beijing/station-days.csv
+  field station_day string
+  field station string
+  field "date" date
+  field month string
+  field season string
+  field recorded_hours number
+  field pm25 "PM2.5 (µg/m³)" number
+  field pm10 "PM10 (µg/m³)" number
+  field so2 "SO₂ (µg/m³)" number
+  field no2 "NO₂ (µg/m³)" number
+  field co "CO (µg/m³)" number
+  field o3 "O₃ (µg/m³)" number
+  field temp "Temperature (°C)" number
+  field wspm "Wind speed (m/s)" number
+  field pm25_valid_hours "Valid PM2.5 hours" number
+  field pm25_coverage_pct "PM2.5 coverage (%)" number
+}
+
+source @stations key=station path=/datasets/beijing/stations.csv {
+  field station string
+  field recorded_hours "Hours recorded in 2016" number
+  field pm25_valid_hours "Valid PM2.5 hours in 2016" number
+  field qualified_pm25_days "Qualified PM2.5 days" number
+  field annual_pm25 "Station's 2016 PM2.5 (µg/m³)" number
+}
+
+source @reference "Reference days (Aotizhongxin)" key=date {
+  path=/datasets/beijing/reference-days.csv
+  field "date" date
+  field station "Reference station" string
+  field pm25 "Reference PM2.5 (µg/m³)" number
+  field pm25_valid_hours "Reference valid hours" number
+}
+
+relate @day-station days.station -> stations.station "Day's station"
+relate @day-reference days.date -> reference.date "Same date at the reference station"
+
+query @station-days "Station days with station and reference" glyph=◫ {
+  frame="station days"
+  source days
+  lookup station via=day-station
+  lookup reference via=day-reference
+  calc @versus-reference pm25_vs_reference "PM2.5 above reference (µg/m³)" = if ["days.pm25"] == null || ["reference.pm25"] == null then null else ["days.pm25"] - ["reference.pm25"]
+  calc @pm25-status pm25_status "PM2.5 day" = if ["days.pm25"] == null then "Under 20 valid hours" else "Qualified"
+}

@@ -1,0 +1,116 @@
+## Open a folder as a project
+
+Run explorEDA in any folder of data files:
+
+```bash
+npx exploreda
+```
+
+It starts a server on this computer, opens your browser on the folder, and lists its CSV and JSON files. Choose **Chart** beside a file to start: explorEDA adds the file to the project and opens a new analysis on a summary of its fields and its rows. Every change saves to the folder a moment after you make it, as text files you can read, diff, and commit.
+
+Run `npx exploreda --example` to copy a sample shop project into `./exploreda-example` and open it.
+
+| Option | What it does |
+| --- | --- |
+| `exploreda <folder>` | Opens that folder instead of the current one. |
+| `--port <n>` | Tries this port first (3939 by default), then the next free one. |
+| `--no-open` | Prints the link instead of opening the browser. |
+| `--hidden` | Keeps a new project's text in `.exploreda/project.eda` instead of `exploreda.eda`. |
+| `--example` | Copies the sample project to `./exploreda-example` and opens it. |
+
+Only this computer can connect. Each run prints a link with its own key, and the server answers only requests that carry it.
+
+In Chrome or Edge, you can also open a project folder from this site: [open a project folder](/folder). It reads and saves the same files.
+
+## What's in a project folder
+
+```text
+shop/
+├── exploreda.eda      the project: data files, how they relate, and queries
+├── orders.eda         an analysis: its views and charts
+├── products.eda       another analysis
+└── data/
+    ├── orders.csv
+    └── customers.csv
+```
+
+- **`exploreda.eda`** describes the data: one `source` per data file, `relate` lines that join them, and `query` blocks that combine them into the rows a chart reads.
+- **Each other `.eda` file is an analysis.** It's [dashboard text](/docs/dashboard-text) whose views chart one of the project's queries.
+- **Data files stay where they are.** Paths are relative to the folder. An absolute path also works, but the project then depends on a file outside the folder.
+
+When a file changes on disk, for example after `git pull` or an edit in your text editor, the open page reloads it and says so. Undo history lasts while the page is open.
+
+## Project text
+
+```text
+project @shop
+
+source @orders key=orderId path=data/orders.csv {
+  field orderId string
+  field amount number
+  field orderedAt Ordered date
+}
+source @customers path=data/customers.csv
+
+relate @order-customer orders.customerId -> customers.customerId
+
+query @order-lines "Orders with customers" glyph=◆ {
+  source orders
+  lookup customer via=order-customer
+  calc big "Large order" = ["orders.amount"] >= 40
+  filter @recent orders.orderedAt >= $from
+}
+
+param @from From date required
+```
+
+A declaration's head sits on one line. `@name` gives it an ID, `{ }` holds its body, and a value with spaces is quoted. Leave out anything a default supplies.
+
+| Declaration | Form | Defaults |
+| --- | --- | --- |
+| `source` | `source @id ["Name"] [glyph=X] [key=field] path=file { fields }` | With no `field` lines, the fields and their types come from the data, and so does `key=`. The name comes from the ID (`customers` → Customers). |
+| `field` | `field id ["Label"] [string \| number \| boolean \| date]` | The label comes from the ID: `orderId` → Order ID, `flight_date` → Flight date. |
+| `relate` | `relate @id source.field -> source.field [cardinality] ["Name"]` | `many-to-one`. The others are `one-to-one`, `one-to-many`, and `many-to-many`. |
+| `query` | `query @id ["Name"] glyph=X [frame=label] [output=step] { steps }` | The frame is the first source's ID, and the output is the last step. |
+| `param` | `param @id ["Name"] type [required] [pick=source[.labelField]]` | Parameters belong to the project, so any query can read them. |
+
+Every source can also be charted on its own: a source with no query of its name gets one that reads it.
+
+### Query steps
+
+Each step reads the step before it. Use `from=step` to read another one, and add `@id` to name a step differently.
+
+| Step | Form | What it adds |
+| --- | --- | --- |
+| `source` | `source orders` | The source's rows, with fields named `orders.amount`. |
+| `lookup` | `lookup customer via=order-customer [on=field]` | The one related row's fields, named `customer.name`. `on=` matches with a different field of the rows so far, such as `on=order.customerId` after an earlier lookup. |
+| `expand` | `expand item via=item-order [keep-unmatched]` | One row per related row. `keep-unmatched` keeps a row that has none. |
+| `calc` | `calc fieldId ["Label"] = formula` | A calculated field. The formula runs to the end of the line and refers to fields as `["orders.amount"]`. |
+| `filter` | `filter @id field op value` | Keeps rows that match: `=`, `!=`, `>`, `>=`, `<`, or `<=`, or `field is-null` / `not-null`. `$from` reads a parameter, and both ends of a range are inclusive. |
+| `aggregate` | `aggregate @id [by=field,field] { measures }` | One row per group. Grouped fields keep their names; each measure is a field named by its ID. |
+
+Measures are `sum @id field`, `average @id field`, and `count @id [field]`, each with an optional `label="…"`. Add `per=field` to count each entity's value once, such as an order's amount on every one of its items.
+
+A parameter picked from a source with `pick=customers.name` holds that row's key, `customerId`, and shows its `name`.
+
+## Analysis files
+
+An analysis names the query its views chart. A view can chart another query, or give a query's parameters values:
+
+```text
+eda query=order-lines
+dashboard "Orders"
+
+view Overview {
+  metric @count count title=Orders
+  row customer.region title="Orders by region"
+}
+
+view "Aster in spring" query=customer-orders bind.customer=C01 bind.from=2025-03-01 {
+  table @rows orders.orderId,orders.amount
+}
+```
+
+An analysis can also bring its own data with `source @sales path=sales.csv`. When the project text declares a source with the same ID, the project's wins.
+
+Check a whole folder from the terminal with `npx -p exploreda exploreda-dsl project <folder>`. It lists every source and view, and each problem with its file, line, and a suggested fix.

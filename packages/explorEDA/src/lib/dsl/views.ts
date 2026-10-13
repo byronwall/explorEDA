@@ -69,7 +69,9 @@ function sharedSignature(settings: SavedDataStructure) {
  */
 export function compileViews(
   text: string,
-  options: DslCompileOptions
+  options: DslCompileOptions,
+  /** Options for one view, such as rows from that view's own query. */
+  optionsFor?: (view: number) => DslCompileOptions
 ): DslViewsResult {
   const { declarations } = parseDocument(text);
   const headers = viewHeaders(declarations);
@@ -81,7 +83,7 @@ export function compileViews(
 
   const views = (headers.length ? headers : [undefined]).map(
     (header, index) => {
-      const result = compileDocument(text, options, {
+      const result = compileDocument(text, optionsFor?.(index) ?? options, {
         view: header ? index : undefined,
       });
       return {
