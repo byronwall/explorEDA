@@ -138,6 +138,7 @@ generated ID wouldn't match. Settings equal to a part's default are left out.
       path Occupations x=Year y=Jobs orderField=Year
     }                                 marks: path point band span strip summary
     legend Key at=620,130 unit=Groups mark=Occupations     stack waffle bar horizon density
+                                                           waterfall donut
     rule "1990" at=4,0 unit=Groups value.value="1990"
     note "Peak" at=-30,-40 on=Groups[A] point=0.5,0.7  (or mark=, pick=max)
     override Groups[A] dx=-40
