@@ -4,6 +4,7 @@ import { randomBytes } from "node:crypto";
 import { existsSync, promises as fs, statSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { globalConfigStore } from "../node/globalConfig";
 import { nodeProjectFiles } from "../node/projectFiles";
 import { startServer } from "../server/server";
 
@@ -18,6 +19,8 @@ Options:
   --port <n>     first port to try (default 3939; the next free one is used)
   --no-open      print the link instead of opening the browser
   --example      copy a sample project to ./exploreda-example and open it
+  --hidden       keep a new project's text in .exploreda/ instead of
+                 exploreda.eda at the folder's top
   -h, --help     show this help`;
 
 const DEFAULT_PORT = 3939;
@@ -27,6 +30,7 @@ interface Options {
   port: number;
   open: boolean;
   example: boolean;
+  hidden: boolean;
 }
 
 function parseArgs(args: string[]): Options | string {
@@ -35,6 +39,7 @@ function parseArgs(args: string[]): Options | string {
     port: DEFAULT_PORT,
     open: true,
     example: false,
+    hidden: false,
   };
   const positional: string[] = [];
   for (let index = 0; index < args.length; index++) {
@@ -46,6 +51,8 @@ function parseArgs(args: string[]): Options | string {
       options.open = false;
     } else if (arg === "--example") {
       options.example = true;
+    } else if (arg === "--hidden") {
+      options.hidden = true;
     } else if (arg === "--port") {
       const port = Number(args[++index]);
       if (!Number.isInteger(port) || port < 0 || port > 65535) {
@@ -126,6 +133,8 @@ async function main(args: string[]) {
       token,
       version: __EXPLOREDA_VERSION__,
       appDir,
+      hidden: parsed.hidden,
+      config: globalConfigStore(),
       port: parsed.port,
     });
   } catch (error) {

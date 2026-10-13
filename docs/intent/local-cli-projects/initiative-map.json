@@ -8,7 +8,7 @@
     "last_updated": "2026-10-12",
     "summary": "npx exploreda in a folder starts a local server and opens the app on that project; sources, joins, and analyses are DSL v2 text files.",
     "status": "active",
-    "next_action": "M4: any folder becomes a project"
+    "next_action": "M5: demo opens project folders"
   },
   "artifacts": {
     "intent_brief": {
@@ -637,8 +637,10 @@
         "proof": "Empty-folder test leaves exactly two files; screenshots.",
         "valid_intermediate_state": "CLI usable on arbitrary folders.",
         "rollback": "Creation actions hidden; open-existing still works.",
-        "status": "planned",
-        "evidence": []
+        "status": "completed",
+        "evidence": [
+          "apps/app/src/projectActions.test.ts; src/lib/project/createFolder.test.ts (data folder -> two files); src/node/globalConfig.test.ts; browser flow: chart CSV -> exploreda.eda + orders.eda, new/rename/delete analysis, theme saved to config.json; screenshots"
+        ]
       },
       {
         "id": "m5",

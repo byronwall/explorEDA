@@ -101,7 +101,7 @@ This covers first run and creation, which the earlier milestones did not need.
 
 - **Change — first run:** a folder with no project text opens on its CSV and JSON files. Nothing is written until the first save, which writes `exploreda.eda`, or `.exploreda/project.eda` with `--hidden`, plus the new analysis file.
 - **Change — creation:** new analysis, rename, and delete, with names chosen safely for files. Adding a source writes a `source` with a relative `path=`; picking an outside file writes an absolute one, labeled as not portable.
-- **Change — global config:** `~/.config/exploreda/config.json` (`%APPDATA%\exploreda` on Windows) holds preferences such as the theme and recent projects. Nothing project-specific goes there.
+- **Change — global config:** `~/.config/exploreda/config.json` (`%APPDATA%\exploreda` on Windows) holds preferences, starting with the theme. Nothing project-specific goes there. (Recent projects were dropped: one server serves one folder, so the app has nowhere to open them.)
 
 ### Desired end state
 

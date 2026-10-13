@@ -1,15 +1,17 @@
 import { useEffect, useRef, useState } from "react";
+import { isDataFile, readProjectFolder, type ProjectFolder } from "exploreda";
+import type { AppFiles, ServerInfo, ThemePreference } from "./httpFiles";
 import {
-  isDataFile,
-  readProjectFolder,
-  type ProjectFiles,
-  type ProjectFolder,
-} from "exploreda";
-import type { ServerInfo } from "./httpFiles";
-import { ProjectWorkspace, type Selection } from "./ProjectWorkspace";
+  chartDataFile,
+  createAnalysis,
+  renameAnalysis,
+} from "./projectActions";
+import {
+  ProjectWorkspace,
+  type ProjectActions,
+  type Selection,
+} from "./ProjectWorkspace";
 import { FolderSaver, type SaveState } from "./saver";
-
-type AppFiles = ProjectFiles & { info(): Promise<ServerInfo> };
 
 type Loaded =
   | { status: "loading" }
@@ -34,11 +36,56 @@ function describeChange(paths: string[]) {
     : `${first} changed on disk, so the project reloaded.`;
 }
 
+/** Light or dark follows the preference, or the system when it says so. */
+function applyTheme(theme: ThemePreference) {
+  const dark =
+    theme === "dark" ||
+    (theme === "system" &&
+      window.matchMedia?.("(prefers-color-scheme: dark)").matches);
+  document.documentElement.classList.toggle("dark", Boolean(dark));
+}
+
 export function App({ files }: { files: AppFiles }) {
   const [loaded, setLoaded] = useState<Loaded>({ status: "loading" });
   const [saveState, setSaveState] = useState<SaveState>({ status: "saved" });
   const [saver] = useState(() => new FolderSaver(files, setSaveState));
   const selection = useRef<Selection | undefined>(undefined);
+  const [theme, setTheme] = useState<ThemePreference>("system");
+
+  useEffect(() => {
+    files
+      .config()
+      .then((config) => setTheme(config.theme))
+      .catch(() => {});
+  }, [files]);
+  useEffect(() => {
+    applyTheme(theme);
+    const media = window.matchMedia?.("(prefers-color-scheme: dark)");
+    const follow = () => applyTheme(theme);
+    media?.addEventListener("change", follow);
+    return () => media?.removeEventListener("change", follow);
+  }, [theme]);
+  const changeTheme = (next: ThemePreference) => {
+    setTheme(next);
+    void files.setConfig({ theme: next }).catch(() => {});
+  };
+
+  /** Saves what is waiting, reads the folder again, and opens `path`. */
+  const reload = async (path: string | undefined, notice?: string) => {
+    await saver.flush();
+    const folder = await readProjectFolder(files);
+    selection.current = path ? { path, index: 0 } : selection.current;
+    setLoaded((previous) =>
+      previous.status === "ready"
+        ? {
+            ...previous,
+            folder,
+            generation: previous.generation + 1,
+            notice,
+          }
+        : previous
+    );
+  };
 
   useEffect(() => {
     let current = true;
@@ -137,9 +184,62 @@ export function App({ files }: { files: AppFiles }) {
       </main>
     );
   }
+  const { folder, info } = loaded;
+  const act =
+    (
+      run: () => Promise<string | undefined>,
+      notice: (path?: string) => string
+    ) =>
+    async () => {
+      try {
+        await saver.flush();
+        const path = await run();
+        await reload(path, notice(path));
+      } catch (error) {
+        await reload(
+          undefined,
+          `That didn't work: ${error instanceof Error ? error.message : String(error)}`
+        );
+      }
+    };
+  const actions: ProjectActions = {
+    chartFile: (dataPath) =>
+      act(
+        () =>
+          chartDataFile(files, folder, {
+            dataPath,
+            projectName: info.name,
+            layout: info.layout,
+          }),
+        (path) => `Created ${path} to chart ${dataPath}.`
+      )(),
+    createAnalysis: (name, queryId) =>
+      act(
+        () => createAnalysis(files, folder, { name, queryId }),
+        (path) => `Created ${path}.`
+      )(),
+    renameAnalysis: (path, name) =>
+      act(
+        () => renameAnalysis(files, folder, { path, name }),
+        (next) => `Renamed ${path} to ${next}.`
+      )(),
+    deleteAnalysis: (path) =>
+      act(
+        async () => {
+          saver.cancel(path);
+          await files.remove(path);
+          return undefined;
+        },
+        () => `Deleted ${path}.`
+      )(),
+  };
+
   return (
     <ProjectWorkspace
       key={loaded.generation}
+      actions={actions}
+      theme={theme}
+      onThemeChange={changeTheme}
       folder={loaded.folder}
       info={loaded.info}
       saver={saver}

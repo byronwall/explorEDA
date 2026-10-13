@@ -7,7 +7,21 @@ export interface ServerInfo {
   name: string;
   root: string;
   version: string;
+  /** Where a new project keeps its text: the root, or `.exploreda/`. */
+  layout: "visible" | "hidden";
 }
+
+export type ThemePreference = "system" | "light" | "dark";
+
+export interface GlobalConfig {
+  theme: ThemePreference;
+}
+
+export type AppFiles = ProjectFiles & {
+  info(): Promise<ServerInfo>;
+  config(): Promise<GlobalConfig>;
+  setConfig(change: Partial<GlobalConfig>): Promise<GlobalConfig>;
+};
 
 /** The project's files, through the local server that `exploreda` starts. */
 export function httpProjectFiles(token: string, base = "") {
@@ -29,9 +43,20 @@ export function httpProjectFiles(token: string, base = "") {
     }
     return response;
   };
-  const files: ProjectFiles & { info(): Promise<ServerInfo> } = {
+  const files: AppFiles = {
     async info() {
       return (await call("/api/info")).json() as Promise<ServerInfo>;
+    },
+    async config() {
+      return (await call("/api/config")).json() as Promise<GlobalConfig>;
+    },
+    async setConfig(change) {
+      return (
+        await call("/api/config", "", {
+          method: "PUT",
+          body: JSON.stringify(change),
+        })
+      ).json() as Promise<GlobalConfig>;
     },
     async list() {
       return (await call("/api/files")).json() as Promise<string[]>;

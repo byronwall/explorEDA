@@ -51,7 +51,7 @@ export interface ProjectFolder {
   declaredSources: Record<string, SourceDefinition>;
   /** Sources an analysis file declares, by source ID, with that file. */
   localSources: Record<string, string>;
-  /** Queries made for local sources; they are not written to project text. */
+  /** Queries made to read one source each; project text doesn't list them. */
   implicitQueries: string[];
   /** Sources whose file is missing or unreadable. */
   missingSources: string[];
@@ -185,19 +185,24 @@ export async function readProjectFolder(
       project.sources.push(source);
       paths[source.id] = local.paths[source.id]!;
       localSources[source.id] = path;
-      if (!project.queries.some((query) => query.id === source.id)) {
-        const query: AnalysisQuery = {
-          id: source.id,
-          name: source.name,
-          glyph: source.glyph,
-          frameLabel: source.id,
-          steps: [{ id: source.id, kind: "source", sourceId: source.id }],
-          outputStepId: source.id,
-        };
-        project.queries.push(query);
-        implicitQueries.push(query.id);
-      }
       defaultQuery.set(path, defaultQuery.get(path) ?? source.id);
+    }
+  }
+
+  // Every source can be charted on its own: one with no query of its name
+  // gets a query that reads it, which project text never needs to spell out.
+  for (const source of project.sources) {
+    if (!project.queries.some((query) => query.id === source.id)) {
+      const query: AnalysisQuery = {
+        id: source.id,
+        name: source.name,
+        glyph: source.glyph,
+        frameLabel: source.id,
+        steps: [{ id: source.id, kind: "source", sourceId: source.id }],
+        outputStepId: source.id,
+      };
+      project.queries.push(query);
+      implicitQueries.push(query.id);
     }
   }
 

@@ -6,13 +6,6 @@ import { httpProjectFiles, takeToken } from "./httpFiles";
 import "exploreda/dist/ExplorEda.css";
 import "./app.css";
 
-// The workspace follows the system's light or dark setting.
-const dark = window.matchMedia?.("(prefers-color-scheme: dark)");
-const applyTheme = () =>
-  document.documentElement.classList.toggle("dark", Boolean(dark?.matches));
-applyTheme();
-dark?.addEventListener("change", applyTheme);
-
 const token = takeToken();
 const files = token ? httpProjectFiles(token) : undefined;
 

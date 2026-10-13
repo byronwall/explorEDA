@@ -10,6 +10,7 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import path from "node:path";
 import { timingSafeEqual } from "node:crypto";
 import { ProjectFileError } from "../lib/project/files";
+import type { ConfigStore } from "../node/globalConfig";
 import type { NodeProjectFiles } from "../node/projectFiles";
 
 export const TOKEN_HEADER = "x-exploreda-token";
@@ -19,6 +20,8 @@ export interface ServerInfo {
   name: string;
   root: string;
   version: string;
+  /** Where a new project keeps its text: the root, or `.exploreda/`. */
+  layout: "visible" | "hidden";
 }
 
 export interface HandlerOptions {
@@ -27,6 +30,10 @@ export interface HandlerOptions {
   version: string;
   /** The built app; without it, requests outside `/api` go to `next`. */
   appDir?: string;
+  /** `--hidden`: a new project keeps its text in `.exploreda/`. */
+  hidden?: boolean;
+  /** Preferences shared by every project on this machine. */
+  config?: ConfigStore;
 }
 
 type Next = () => void;
@@ -123,7 +130,7 @@ function readBody(req: IncomingMessage): Promise<string> {
 }
 
 export function createRequestHandler(options: HandlerOptions) {
-  const { files, token, appDir, version } = options;
+  const { files, token, appDir, version, config } = options;
   // Every open page hears about outside changes over server-sent events.
   const listeners = new Set<ServerResponse>();
   let stopWatching: (() => void) | undefined;
@@ -137,6 +144,7 @@ export function createRequestHandler(options: HandlerOptions) {
     name: path.basename(files.root),
     root: files.root,
     version,
+    layout: options.hidden ? "hidden" : "visible",
   };
   return async (req: IncomingMessage, res: ServerResponse, next?: Next) => {
     const url = new URL(req.url ?? "/", "http://localhost");
@@ -173,6 +181,12 @@ export function createRequestHandler(options: HandlerOptions) {
     try {
       if (req.method === "GET" && url.pathname === "/api/info") {
         send(res, 200, info);
+      } else if (url.pathname === "/api/config" && config) {
+        if (req.method === "PUT") {
+          send(res, 200, await config.write(JSON.parse(await readBody(req))));
+        } else {
+          send(res, 200, await config.read());
+        }
       } else if (req.method === "GET" && url.pathname === "/api/files") {
         send(res, 200, await files.list());
       } else if (req.method === "GET" && url.pathname === "/api/file") {

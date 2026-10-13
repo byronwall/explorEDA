@@ -35,3 +35,12 @@ export {
   parseTable,
 } from "./tables";
 export { analysisFileText, projectFileText } from "./writeFolder";
+export {
+  addSourceText,
+  analysisPathFor,
+  newAnalysisText,
+  slugify,
+  sourceIdForFile,
+  uniqueName,
+} from "./createFolder";
+export { labelFromId } from "@/lib/dsl/project";

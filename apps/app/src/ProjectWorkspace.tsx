@@ -10,7 +10,7 @@ import {
   type SavedDataStructure,
 } from "exploreda";
 import { createAnalysisWorker } from "exploreda/analysis";
-import type { ServerInfo } from "./httpFiles";
+import type { ServerInfo, ThemePreference } from "./httpFiles";
 import type { FolderSaver, SaveState } from "./saver";
 
 /** A view's ID: its analysis file and its place in that file. */
@@ -39,6 +39,13 @@ const textViews = (views: AnalysisView[]) =>
     settings: view.settings ?? ({} as SavedDataStructure),
   }));
 
+export interface ProjectActions {
+  chartFile(dataPath: string): Promise<void>;
+  createAnalysis(name: string, queryId: string): Promise<void>;
+  renameAnalysis(path: string, name: string): Promise<void>;
+  deleteAnalysis(path: string): Promise<void>;
+}
+
 export interface Selection {
   path?: string;
   index: number;
@@ -52,7 +59,13 @@ export function ProjectWorkspace({
   notice,
   initialSelection,
   onSelect,
+  actions,
+  theme,
+  onThemeChange,
 }: {
+  actions: ProjectActions;
+  theme: ThemePreference;
+  onThemeChange: (theme: ThemePreference) => void;
   folder: ProjectFolder;
   info: ServerInfo;
   saver: FolderSaver;
@@ -63,6 +76,7 @@ export function ProjectWorkspace({
 }) {
   const [project, setProject] = useState<AnalysisProject>(folder.project);
   const [views, setViews] = useState(() => folderViews(folder));
+  const [creating, setCreating] = useState(false);
   const [selected, setSelectedState] = useState<Selection>(() =>
     initialSelection?.path &&
     folder.analyses.some((analysis) => analysis.path === initialSelection.path)
@@ -196,7 +210,31 @@ export function ProjectWorkspace({
         </header>
 
         <nav aria-labelledby="analyses-heading">
-          <h2 id="analyses-heading">Analyses</h2>
+          <div className="app-section-head">
+            <h2 id="analyses-heading">Analyses</h2>
+            {project.queries.length > 0 && (
+              <button
+                type="button"
+                className="app-button"
+                aria-expanded={creating}
+                onClick={() => setCreating((open) => !open)}
+              >
+                New analysis
+              </button>
+            )}
+          </div>
+          {creating && (
+            <NewAnalysisForm
+              queries={project.queries.map((query) => ({
+                id: query.id,
+                name: query.name,
+              }))}
+              onCancel={() => setCreating(false)}
+              onCreate={(name, queryId) =>
+                void actions.createAnalysis(name, queryId)
+              }
+            />
+          )}
           {folder.analyses.length ? (
             <ul className="app-list">
               {folder.analyses.map((analysis) => (
@@ -214,6 +252,13 @@ export function ProjectWorkspace({
                     <span>{analysis.result.name}</span>
                     <span className="app-muted">{analysis.path}</span>
                   </button>
+                  {analysis.path === selected.path && (
+                    <AnalysisActions
+                      path={analysis.path}
+                      name={analysis.result.name}
+                      actions={actions}
+                    />
+                  )}
                 </li>
               ))}
             </ul>
@@ -246,7 +291,14 @@ export function ProjectWorkspace({
             {looseFiles.map((path) => (
               <li key={path} className="app-source">
                 <span>{path}</span>
-                <span className="app-muted">not used yet</span>
+                <button
+                  type="button"
+                  className="app-button"
+                  aria-label={`Chart ${path}`}
+                  onClick={() => void actions.chartFile(path)}
+                >
+                  Chart
+                </button>
               </li>
             ))}
           </ul>
@@ -273,6 +325,8 @@ export function ProjectWorkspace({
             </ul>
           </details>
         )}
+
+        <ThemeChoice theme={theme} onChange={onThemeChange} />
       </aside>
 
       <main className="app-main">
@@ -289,13 +343,10 @@ export function ProjectWorkspace({
             toolbarStart={tabs}
           />
         ) : (
-          <div className="app-message">
-            <h2>No analyses in this folder yet</h2>
-            <p>
-              Add an <code>.eda</code> file that charts one of the project's
-              queries, or a data file to start from.
-            </p>
-          </div>
+          <FirstRun
+            dataFiles={looseFiles}
+            onChart={(path) => void actions.chartFile(path)}
+          />
         )}
       </main>
     </div>
@@ -314,5 +365,219 @@ function SaveStatus({ state }: { state: SaveState }) {
     <p className="app-save app-muted" aria-live="polite">
       {state.status === "saving" ? "Saving…" : "Saved to the folder"}
     </p>
+  );
+}
+
+function NewAnalysisForm({
+  queries,
+  onCreate,
+  onCancel,
+}: {
+  queries: Array<{ id: string; name: string }>;
+  onCreate: (name: string, queryId: string) => void;
+  onCancel: () => void;
+}) {
+  const [name, setName] = useState("");
+  const [queryId, setQueryId] = useState(queries[0]?.id ?? "");
+  return (
+    <form
+      className="app-form"
+      onSubmit={(event) => {
+        event.preventDefault();
+        if (name.trim() && queryId) {
+          onCreate(name.trim(), queryId);
+        }
+      }}
+    >
+      <label>
+        <span>Name</span>
+        <input
+          autoFocus
+          value={name}
+          onChange={(event) => setName(event.target.value)}
+          placeholder="Revenue by region"
+        />
+      </label>
+      <label>
+        <span>Charts</span>
+        <select
+          value={queryId}
+          onChange={(event) => setQueryId(event.target.value)}
+        >
+          {queries.map((query) => (
+            <option key={query.id} value={query.id}>
+              {query.name}
+            </option>
+          ))}
+        </select>
+      </label>
+      <div className="app-form-actions">
+        <button type="submit" className="app-button app-button-primary">
+          Create
+        </button>
+        <button type="button" className="app-button" onClick={onCancel}>
+          Cancel
+        </button>
+      </div>
+    </form>
+  );
+}
+
+function AnalysisActions({
+  path,
+  name,
+  actions,
+}: {
+  path: string;
+  name: string;
+  actions: ProjectActions;
+}) {
+  const [mode, setMode] = useState<"idle" | "rename" | "delete">("idle");
+  const [draft, setDraft] = useState(name);
+  if (mode === "rename") {
+    return (
+      <form
+        className="app-form app-form-inline"
+        onSubmit={(event) => {
+          event.preventDefault();
+          if (draft.trim() && draft.trim() !== name) {
+            void actions.renameAnalysis(path, draft.trim());
+          } else {
+            setMode("idle");
+          }
+        }}
+      >
+        <input
+          autoFocus
+          aria-label={`New name for ${name}`}
+          value={draft}
+          onChange={(event) => setDraft(event.target.value)}
+        />
+        <button type="submit" className="app-button app-button-primary">
+          Save
+        </button>
+        <button
+          type="button"
+          className="app-button"
+          onClick={() => setMode("idle")}
+        >
+          Cancel
+        </button>
+      </form>
+    );
+  }
+  if (mode === "delete") {
+    return (
+      <div className="app-form-inline" role="group" aria-label="Delete">
+        <span className="app-muted">Delete {path}?</span>
+        <button
+          type="button"
+          className="app-button app-button-danger"
+          onClick={() => void actions.deleteAnalysis(path)}
+        >
+          Delete
+        </button>
+        <button
+          type="button"
+          className="app-button"
+          onClick={() => setMode("idle")}
+        >
+          Keep
+        </button>
+      </div>
+    );
+  }
+  return (
+    <div className="app-form-inline">
+      <button
+        type="button"
+        className="app-button"
+        onClick={() => setMode("rename")}
+      >
+        Rename
+      </button>
+      <button
+        type="button"
+        className="app-button"
+        onClick={() => setMode("delete")}
+      >
+        Delete
+      </button>
+    </div>
+  );
+}
+
+function FirstRun({
+  dataFiles,
+  onChart,
+}: {
+  dataFiles: string[];
+  onChart: (path: string) => void;
+}) {
+  if (!dataFiles.length) {
+    return (
+      <div className="app-message">
+        <h2>Add data to start</h2>
+        <p>
+          Put a CSV or JSON file in this folder. It shows up here as soon as
+          it's saved, ready to chart.
+        </p>
+      </div>
+    );
+  }
+  return (
+    <div className="app-message">
+      <h2>Chart a data file to start</h2>
+      <p>
+        Charting a file adds it to the project and creates an analysis. Both are
+        text files in this folder, ready to commit.
+      </p>
+      <ul className="app-start-list">
+        {dataFiles.map((path) => (
+          <li key={path}>
+            <code>{path}</code>
+            <button
+              type="button"
+              className="app-button app-button-primary"
+              aria-label={`Chart ${path}`}
+              onClick={() => onChart(path)}
+            >
+              Chart
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+const THEMES: Array<{ id: ThemePreference; label: string }> = [
+  { id: "system", label: "System" },
+  { id: "light", label: "Light" },
+  { id: "dark", label: "Dark" },
+];
+
+function ThemeChoice({
+  theme,
+  onChange,
+}: {
+  theme: ThemePreference;
+  onChange: (theme: ThemePreference) => void;
+}) {
+  return (
+    <div className="app-theme" role="radiogroup" aria-label="Theme">
+      {THEMES.map((item) => (
+        <button
+          key={item.id}
+          type="button"
+          role="radio"
+          aria-checked={theme === item.id}
+          className="app-segment"
+          onClick={() => onChange(item.id)}
+        >
+          {item.label}
+        </button>
+      ))}
+    </div>
   );
 }
