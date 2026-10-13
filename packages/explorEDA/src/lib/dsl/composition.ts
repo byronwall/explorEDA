@@ -27,7 +27,7 @@ import {
   type CompositionDefinition,
 } from "@/components/charts/Composition/compositionTypes";
 import type { DslDeclaration, DslPair, DslSpan, DslValue } from "./parse";
-import { encodeScalar } from "./paths";
+import { diffPaths, encodeScalar, parsePath, setPath } from "./paths";
 import { block } from "./print";
 
 type Record_ = Record<string, unknown>;
@@ -62,6 +62,11 @@ interface Spec {
   lists?: string[];
   /** Paths that hold text even when the text looks like a number. */
   texts?: string[];
+  /**
+   * Paths that hold lists of records, written as chart settings write them:
+   * `states[]= states.0.label=Plan states.0.filters[]= ...`.
+   */
+  records?: string[];
   /** Two paths written as one word: `at=32,26` or `size=120x180`. */
   pairs?: Array<{ word: string; paths: [string, string]; separator: string }>;
   /** Nested objects written as child lines, such as a unit's `repeat`. */
@@ -226,6 +231,26 @@ const MARK_SPECS: Spec[] = [
     xScaleId: { word: "x", space: "scale" },
     colorScaleId: { word: "colorScale", space: "scale" },
   }),
+  markSpec(
+    "waterfall",
+    (part) => ({
+      mode: "accumulate",
+      aggregation: counted(part),
+      up: "#1a7f5a",
+      down: "#c0392b",
+      total: "#4a5563",
+      labelWidth: 90,
+    }),
+    {},
+    { records: ["states"] }
+  ),
+  markSpec("donut", (part) => ({
+    aggregation: counted(part),
+    order: "total",
+    colors: STACK_COLORS,
+    hole: 0.6,
+    showTotal: true,
+  })),
 ];
 
 const INSET_SPEC: Spec = {
@@ -644,6 +669,10 @@ function liftTokens(
     if (path in defaults && same(value, defaults[path])) {
       continue;
     }
+    if (spec.records?.includes(path)) {
+      tokens.push(...diffPaths(undefined, value, [path]));
+      continue;
+    }
     const ref = spec.refs?.[path];
     tokens.push(
       ref
@@ -1013,7 +1042,10 @@ const UNSET = Symbol("unset");
 const owners = new WeakMap<Record_, Record_>();
 
 function lowerPair(
-  spec: Pick<Spec, "pairs" | "refs" | "lists" | "texts" | "keyword"> & {
+  spec: Pick<
+    Spec,
+    "pairs" | "refs" | "lists" | "texts" | "records" | "keyword"
+  > & {
     defaults?: Spec["defaults"];
   },
   part: Record_,
@@ -1021,6 +1053,12 @@ function lowerPair(
   lower: LowerContext,
   pending: Pending[]
 ) {
+  const path = parsePath(pair.key);
+  const top = path?.segments[0];
+  if (path && top && spec.records?.includes(top)) {
+    part[top] = setPath({ [top]: part[top] }, path, pair.value)[top];
+    return;
+  }
   const compound = spec.pairs?.find((item) => item.word === pair.key);
   if (compound) {
     const pieces = pair.value.raw.split(compound.separator);

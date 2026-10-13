@@ -122,6 +122,44 @@ describe("composition text", () => {
     expect(text).toContain("unit Groups at=56,120 size=120x180 {");
   });
 
+  it("writes waterfall states and donuts as settings", () => {
+    const { result, definition } = composition(`composition {
+  unit Groups at=0,0 size=150x150 {
+    repeat Group
+    waterfall Bridge mode=bridge measureField=Jobs stepField=Occupation {
+      states[]= states.0.label=Before states.0.filters[]=
+      states.1.label=After states.1.filters[]=
+      states.1.filters.0.type=value states.1.filters.0.field=Year
+      states.1.filters.0.values[]=2012
+    }
+    donut Share categoryField=Occupation hole=0.5
+  }
+  legend Key at=200,0 unit=Groups mark=Share
+}`);
+    expect(result.diagnostics).toEqual([]);
+    const unit = definition.elements[0] as unknown as {
+      marks: Record<string, unknown>[];
+    };
+    expect(unit.marks).toMatchObject([
+      {
+        type: "waterfall",
+        mode: "bridge",
+        aggregation: "sum",
+        states: [
+          { label: "Before", filters: [] },
+          {
+            label: "After",
+            filters: [{ type: "value", field: "Year", values: [2012] }],
+          },
+        ],
+        labelWidth: 90,
+      },
+      { type: "donut", aggregation: "count", hole: 0.5, showTotal: true },
+    ]);
+    const { text } = exportDocument(result.settings, { rows });
+    expect(composition(text).definition).toEqual(definition);
+  });
+
   it("names a link it can't find and builds the rest", () => {
     const { result, definition } = composition(`composition {
   unit Groups at=0,0 size=10x10 {
