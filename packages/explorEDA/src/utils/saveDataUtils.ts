@@ -16,6 +16,8 @@ import type { DataType } from "@/components/SummaryTable/utils/dataTypeDetection
 import type { AggregateSpec } from "@/lib/aggregates";
 import { getFieldSettingsError } from "@/lib/fieldSettings";
 import type { FieldSettings } from "@/lib/fieldSettings";
+import { SAVED_MAX_ZOOM } from "@/components/charts/Map/streetCamera";
+import { BOUNDARY_PREFIX } from "@/lib/boundaries/registry";
 
 export async function saveToClipboard(data: SavedDataStructure): Promise<void> {
   try {
@@ -630,6 +632,16 @@ function isChart(value: unknown): boolean {
         ["equal-earth", "equirectangular"].includes(
           value.projection as string
         ) &&
+        (value.showMarks === undefined ||
+          typeof value.showMarks === "boolean") &&
+        (value.clusterPoints === undefined ||
+          typeof value.clusterPoints === "boolean") &&
+        (value.showLabels === undefined ||
+          typeof value.showLabels === "boolean") &&
+        (value.referenceAssetId === undefined ||
+          typeof value.referenceAssetId === "string") &&
+        (value.basemap === undefined ||
+          ["auto", "outline", "none"].includes(value.basemap as string)) &&
         isFiniteNumber(value.pointRadius) &&
         value.pointRadius >= 2 &&
         value.pointRadius <= 32 &&
@@ -645,7 +657,7 @@ function isChart(value: unknown): boolean {
             Math.abs(value.view.center[1]!) <= 90 &&
             isFiniteNumber(value.view.zoom) &&
             value.view.zoom >= 1 &&
-            value.view.zoom <= 64))
+            value.view.zoom <= SAVED_MAX_ZOOM))
       );
     case "composition":
       return isCompositionDefinition(value.composition);
@@ -841,6 +853,8 @@ export function validateSavedData(data: unknown): data is SavedDataStructure {
         chart.type === "map" &&
         chart.mode === "region" &&
         chart.geometryAssetId &&
+        // Supplied boundaries come from the app; a missing set shows in the chart.
+        !chart.geometryAssetId.startsWith(BOUNDARY_PREFIX) &&
         !(data.geometryAssets as { id: string }[] | undefined)?.some(
           (asset) => asset.id === chart.geometryAssetId
         )

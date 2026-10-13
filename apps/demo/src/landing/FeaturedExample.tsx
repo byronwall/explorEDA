@@ -52,7 +52,7 @@ export function FeaturedExample({ example, onOpen }: FeaturedExampleProps) {
           </ul>
         )}
         <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
-          <Button onClick={() => onOpen(example.id)}>
+          <Button variant="brand" onClick={() => onOpen(example.id)}>
             Open the analysis
             <ArrowRight aria-hidden="true" />
           </Button>

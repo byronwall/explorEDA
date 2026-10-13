@@ -1,0 +1,396 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "Database-backed analysis adapters",
+    "slug": "database-adapters",
+    "scale": "capability",
+    "current_phase": "shape",
+    "last_updated": "2026-10-12",
+    "summary": "Let analysts explore real database data with responsive, trustworthy semantics and a low-maintenance dedicated instance for each paying customer.",
+    "status": "planned",
+    "next_action": "Review the shaped complete-snapshot proof and resolve supported type/workload gates before creating an implementation plan."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-12"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-12"
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "not-created",
+      "updated_at": null
+    }
+  },
+  "sources": [
+    {
+      "id": "database-request",
+      "type": "direct-user-input",
+      "location": "../../research/database-backed-analysis-2026-10-11/source-notes.md",
+      "anchor": "Explicit request for real database queries and responsive client exploration; notebook ideas are proposals, not instructions",
+      "authority": "direct user request and source interpretation"
+    },
+    {
+      "id": "customer-instance-update",
+      "type": "direct-user-input",
+      "location": "../../research/database-backed-analysis-2026-10-11/customer-instance-update.md",
+      "anchor": "Dedicated instance for each paying customer; minimal maintenance and highly automated setup and operation",
+      "authority": "explicit user direction; hosting platform remains open"
+    },
+    {
+      "id": "track-direction",
+      "type": "direct-user-input",
+      "location": "conversation task instruction",
+      "anchor": "Preserve Pro results, shape this initiative only; PostgreSQL first; second driver only when it proves useful abstraction; require explicit proof for admission, semantics, completion, and cleanup",
+      "authority": "explicit current task direction"
+    },
+    {
+      "id": "pro-report",
+      "type": "agent-authored-analysis",
+      "location": "raw/2026-10-11-pro/database-adapters-research.md",
+      "anchor": "Sections 1–10: recommended complete source read, repository seams, semantics, type/identity risks, safety, lifecycle, and proof sequence",
+      "authority": "research recommendation; not user-approved product behavior"
+    },
+    {
+      "id": "pro-recommendations",
+      "type": "agent-authored-analysis",
+      "location": "raw/2026-10-11-pro/database-adapters-recommendations.json",
+      "anchor": "DBA-001 through DBA-016; reconciled in evidence/recommendation-review.md",
+      "authority": "recommendation register; dispositions are this shaping pass"
+    },
+    {
+      "id": "current-repository",
+      "type": "repository",
+      "location": "../../../packages/explorEDA/src/components/ExplorEdaProject.tsx; ../../../packages/explorEDA/src/types/AnalysisProject.ts; ../../../packages/explorEDA/src/lib/analysis/evaluateProject.ts",
+      "anchor": "28c5ac27a400aa1fd66ce99eb1e6bd4ab5c72e9c: inspected props, query steps, and evaluator call; no runtime proof",
+      "authority": "current checkout reality"
+    },
+    {
+      "id": "node-postgres-docs",
+      "type": "primary-documentation",
+      "location": "https://node-postgres.com/features/queries; https://node-postgres.com/features/transactions; https://node-postgres.com/apis/pool",
+      "anchor": "Bound parameters, identifier limitation, client affinity for transactions, connection pool bounds and release behavior",
+      "authority": "external technical evidence checked 2026-10-12"
+    },
+    {
+      "id": "postgres-docs",
+      "type": "primary-documentation",
+      "location": "https://www.postgresql.org/docs/18/transaction-iso.html",
+      "anchor": "Repeatable-read transaction snapshot behavior",
+      "authority": "external technical evidence checked 2026-10-12"
+    },
+    {
+      "id": "node-sqlite-docs",
+      "type": "primary-documentation",
+      "location": "https://nodejs.org/download/release/latest-v24.x/docs/api/sqlite.html",
+      "anchor": "DatabaseSync executes synchronously; current Node 24 documentation marks node:sqlite release candidate",
+      "authority": "external technical evidence checked 2026-10-12"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "outcome",
+        "type": "outcome",
+        "statement": "Analysts can explore real database data with responsive, trustworthy behavior that fits the source and the visible work.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "database-request",
+            "anchor": "Explicit request and notebook interpretation"
+          }
+        ],
+        "confidence": "high",
+        "notes": "A full snapshot is useful when feasible, not required for every source."
+      },
+      {
+        "id": "customer-instance",
+        "type": "constraint",
+        "statement": "The operating unit is one dedicated application instance per paying customer, with minimal manual setup and operation.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "customer-instance-update",
+            "anchor": "Goal and operating unit"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Platform, isolation detail, budget, and customer count remain open."
+      },
+      {
+        "id": "complete-source-first",
+        "type": "sequence",
+        "statement": "Start with a host-owned read of registered complete sources into the existing tables input, then retain the local evaluator for the first proof.",
+        "commitment": "derived",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "track-direction",
+            "anchor": "PostgreSQL first and no premature second adapter"
+          },
+          {
+            "source_id": "pro-report",
+            "anchor": "Sections 1 and 3"
+          },
+          {
+            "source_id": "current-repository",
+            "anchor": "tables prop and local useAnalysisEvaluation path"
+          }
+        ],
+        "confidence": "high",
+        "notes": "This is the selected proof shape, not approval to implement."
+      },
+      {
+        "id": "postgres-first",
+        "type": "decision",
+        "statement": "Use PostgreSQL as the first real driver proof in a compatible host server runtime.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "track-direction",
+            "anchor": "PostgreSQL first"
+          },
+          {
+            "source_id": "pro-recommendations",
+            "anchor": "DBA-002"
+          },
+          {
+            "source_id": "node-postgres-docs",
+            "anchor": "Query and transaction docs"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Runtime, driver, and fixture versions remain provisional."
+      },
+      {
+        "id": "second-driver-gate",
+        "type": "constraint",
+        "statement": "Add a second driver only if the first proof shows that a shared adapter boundary would be useful and the second driver can test it.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "later",
+        "source_anchors": [
+          {
+            "source_id": "track-direction",
+            "anchor": "Second driver only when it proves useful abstraction"
+          },
+          {
+            "source_id": "pro-recommendations",
+            "anchor": "DBA-003 and DBA-008"
+          }
+        ],
+        "confidence": "high",
+        "notes": "SQLite is a candidate falsifier, not a settled second driver."
+      },
+      {
+        "id": "typed-coverage",
+        "type": "required behavior",
+        "statement": "Publish all approved sources as one coherent complete snapshot with explicit types, coverage, identity, and errors, or publish no result.",
+        "commitment": "derived",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "pro-recommendations",
+            "anchor": "DBA-005 through DBA-007"
+          },
+          {
+            "source_id": "pro-report",
+            "anchor": "Sections 5–7"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Supported field types and precision limits need fixture proof."
+      },
+      {
+        "id": "semantics",
+        "type": "constraint",
+        "statement": "Prove null, identity, join, aggregation, contributor, and filter-context behavior before admitting any server plan.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "track-direction",
+            "anchor": "Explicitly requested proof areas"
+          },
+          {
+            "source_id": "pro-recommendations",
+            "anchor": "DBA-004 and DBA-011"
+          },
+          {
+            "source_id": "current-repository",
+            "anchor": "Analysis step types and local evaluator"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Do not treat shared operation names as equivalent semantics."
+      },
+      {
+        "id": "anti-generalization",
+        "type": "anti-goal",
+        "statement": "Do not build a universal SQL compiler, federation layer, or query service before a named workload proves it necessary.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "track-direction",
+            "anchor": "No universal SQL compiler or federation by default"
+          },
+          {
+            "source_id": "pro-recommendations",
+            "anchor": "DBA-012 and DBA-013"
+          }
+        ],
+        "confidence": "high",
+        "notes": "A specific proven customer need can reopen the choice."
+      },
+      {
+        "id": "candidate-transport",
+        "type": "future possibility",
+        "statement": "Binary transport, progressive data access, narrow SQL pushdown, and a second driver may be useful after the snapshot proof.",
+        "commitment": "tentative",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "later",
+        "source_anchors": [
+          {
+            "source_id": "database-request",
+            "anchor": "Notebook ideas and interpretation boundaries"
+          },
+          {
+            "source_id": "pro-report",
+            "anchor": "Sections 1 and 12"
+          }
+        ],
+        "confidence": "medium",
+        "notes": "The example 10,000–100,000 row range is not a ceiling or target."
+      }
+    ],
+    "themes": [
+      "Responsive, correct exploration of real database data.",
+      "Complete snapshots when useful and feasible; partial results need explicit semantics.",
+      "Dedicated customer instances with highly automated setup and low maintenance.",
+      "Prove the data boundary before generalizing adapters or translating analysis."
+    ],
+    "conflicts": [],
+    "human_questions": [
+      "Which source types and precision ranges matter to the first supported customer data?",
+      "What named workload and response/memory budget should the first integration satisfy?"
+    ]
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "current",
+    "appetite": "One host-owned source reader and one PostgreSQL proof. Keep current client evaluation and local mode. Extract a reusable adapter only if a second real driver proves the boundary useful.",
+    "problem": "The current analysis component uses client-side source rows. A database path must preserve field meaning, row identity, filter scope, inspection, and responsive interaction while fitting automated customer-specific hosting.",
+    "recommended_shape": "The customer host authenticates a read and resolves server-owned source definitions. A bounded reader uses a PostgreSQL transaction to load all approved fields and rows from one consistent snapshot, normalizes only declared supported values, and returns a complete-or-error bundle to the existing tables prop. The current evaluator and charts remain local. Start with a fixed host implementation and deterministic fake. Test a second driver only after PostgreSQL establishes a concrete shared boundary. Consider one narrow server row or aggregate request only if a named workload fails the snapshot budget and its semantic contract can be proven.",
+    "simpler_counterproposal": "Use only fixed host endpoint SQL with no reusable reader abstraction. Keep it if PostgreSQL is the only useful driver or the second proof does not reveal shared behavior.",
+    "success_moves": [
+      "Use the existing tables prop and local evaluator so the first real-data path keeps stages, inspection, and chart behavior.",
+      "Keep source registration, authentication, credentials, SQL, and driver objects on the host; bind values and enforce independent limits.",
+      "Publish all sources atomically from one consistent snapshot, with explicit type, coverage, count, and identity metadata.",
+      "Use declared types and reject lossy values before data becomes editable; distinguish stable keys from snapshot-only occurrence identity.",
+      "Test semantics with a deterministic fake, then verify transaction, type, and cleanup behavior using disposable PostgreSQL fixtures.",
+      "Run a second driver only when it tests a shared boundary shown useful by the first proof; otherwise keep the fixed endpoint."
+    ],
+    "first_proof": {
+      "question": "Can one registered PostgreSQL source set be read as a complete, type-safe snapshot and preserve the existing local analysis experience?",
+      "artifact": "A deterministic fake and disposable PostgreSQL fixture produce the same bounded source bundle through ExplorEdaProject.tables.",
+      "try": "Load a small fixture with nulls, text, booleans, supported numbers/dates, a stable key and keyless duplicate rows. Run a filter and inspect source/result rows through the current evaluator. Inject a missing source, unsupported type, cap+1 rows, interruption, and a writer commit between source reads.",
+      "observe": "Values and types match the fixture oracle; nulls and identities remain distinct; all sources reflect one database snapshot; unsupported and interrupted reads publish nothing; bounds trigger before uncontrolled buffering; cleanup is observed; filter and inspection outputs match local arrays. Measure transfer and browser memory on a named fixture.",
+      "decide": "Proceed only when semantic and completion invariants hold and the agreed response/memory budget passes. Otherwise narrow supported data or compare one named remote demand. Add a second driver only if the PostgreSQL result identifies a useful common boundary.",
+      "decision_rule": "Any semantic loss, false completeness, mixed snapshot, uncertain cleanup, or missing workload budget fails the proof; transfer failure may trigger one narrow demand comparison."
+    },
+    "rabbit_holes": [
+      "A universal SQL or formula compiler before one server operation is admitted.",
+      "Cross-database federation and remote pagination before a named consumer needs them.",
+      "A second driver, package, or service without evidence that it reduces maintenance or unlocks a required runtime.",
+      "Performance claims based only on row count without width, types, memory, or filter timing."
+    ],
+    "open_decisions": [
+      "Which declared field types and precision ranges should the first customer source support?",
+      "Which named workload and first-view, filter, transfer, and memory budget should decide whether a full snapshot fits?"
+    ]
+  },
+  "implementation": {
+    "status": "not-started",
+    "repository_snapshot": {
+      "root": "/Users/byronwall/.codex/worktrees/583d/explorEDA",
+      "revision": "28c5ac27a400aa1fd66ce99eb1e6bd4ab5c72e9c",
+      "worktree_status": "shared checkout with pre-existing untracked Pro research inputs; initiative folder was empty before this shaping work",
+      "subsystems": [
+        "packages/explorEDA/src/components/ExplorEdaProject.tsx",
+        "packages/explorEDA/src/types/AnalysisProject.ts",
+        "packages/explorEDA/src/lib/analysis/evaluateProject.ts"
+      ],
+      "test_commands": [],
+      "deployment_surfaces": []
+    },
+    "dependencies": [],
+    "fast_local_loop": "Deterministic source fixtures and a fake reader; disposable local PostgreSQL is required for driver, transaction, parameter, type, and cleanup behavior. No live customer database or hosted deployment belongs in the first proof.",
+    "milestones": [],
+    "cut_line": [
+      "Host-owned registered-source snapshot into the existing tables prop.",
+      "PostgreSQL first; second driver only after a useful common boundary is shown.",
+      "Complete-or-error publication with explicit coverage, types, identity, bounds, and observed cleanup.",
+      "No implementation plan or application work in this shaping pass."
+    ],
+    "open_decisions": [
+      "First customer source type and precision support.",
+      "Named workload and response, transfer, and memory budget.",
+      "Whether the PostgreSQL proof demonstrates that a reusable adapter boundary reduces maintenance."
+    ]
+  },
+  "history": [
+    {
+      "date": "2026-10-12",
+      "action": "Created intent and initial shape from preserved source notes and Pro research.",
+      "reason": "The task requested preserved research, intent recovery, initial shaping, and a falsifiable proof before planning.",
+      "status": "planned",
+      "evidence": "Direct checkout inspection confirmed the tables/local-evaluator seam; official driver/provider documentation checked. No app tests, database probes, benchmarks, deployment, or implementation were performed."
+    }
+  ],
+  "closure": null,
+  "intake": {
+    "kind": "new",
+    "priority_basis": "Direct request for database-backed analysis and a dedicated customer instance with minimal maintenance and high automation.",
+    "related_initiatives": [
+      "database-query-contract",
+      "columnar-data-transport"
+    ],
+    "audience": "Analysts using a hosted explorEDA instance; the host operator owns authentication and database access.",
+    "priority": "Requested initiative; implementation timing and workload budget remain open."
+  }
+}

@@ -50,7 +50,8 @@ export function fitMapCoordinates(
   coordinates: [number, number][],
   type: MapSettings["projection"],
   width: number,
-  height: number
+  height: number,
+  maxZoom = 32
 ): MapView {
   if (!coordinates.length) return WORLD_VIEW;
   const longitudes = coordinates
@@ -88,7 +89,7 @@ export function fitMapCoordinates(
   const center = projection.invert!([(minX + maxX) / 2, (minY + maxY) / 2])!;
   // A single location gets a regional view, with enough room for its marker.
   const zoom = Math.min(
-    32,
+    maxZoom,
     Math.max(
       1,
       Math.min(

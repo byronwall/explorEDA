@@ -97,6 +97,7 @@ depth_error=events.depth_error
 mag_error=events.mag_error
 field events.date format=date
 field events.time format=datetime
+calc country=region(latitude, longitude, "country")
 
 scale @depths field=depth_band {
   ${DEPTHS}
@@ -135,6 +136,19 @@ view "Where they struck" {
     title="Events in this selection"
   }
 
+}
+view "By country" {
+  chart map @quake-countries at=0,0,8,7 mode=region {
+    geometryAssetId=boundary:world-countries featureKey=iso_a3 regionField=country
+    aggregation=count showRegionLabels=false outlineWidth=0.5
+    title="Earthquakes on land, by country"
+  }
+  chart markdown @quake-countries-note at=8,0,4,3 title="Offshore events have no country" {
+    content="A region() calculation finds the country under each event from its coordinates. Events at sea count as unmatched rows."
+  }
+  row country @quake-country-rows at=8,3,4,4 title="Events by country code" {
+    xAxisLabel="" minRowHeight=14 maxRowHeight=24
+  }
 }
 view "When they happened" {
   chart calendar field=date @quake-calendar at=0,0,8,4 title="Events each day of 2023 (UTC)"

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { registerCanvasReader } from "@/components/charts/export/rasterizePanel";
 import * as THREE from "three";
 import { ticks as niceTicks } from "d3-array";
 import { Focus } from "lucide-react";
@@ -305,6 +306,13 @@ export function ThreeDScatterChart({
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     container.appendChild(renderer.domElement);
     rendererRef.current = renderer;
+    // WebGL clears its buffer after each shown frame, so an image export
+    // renders one and reads it in the same task.
+    const releaseReader = registerCanvasReader(renderer.domElement, () => {
+      showBackFaces(scene, camera);
+      renderer.render(scene, camera);
+      return renderer.domElement.toDataURL("image/png");
+    });
 
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.target.copy(settings.cameraTarget);
@@ -347,6 +355,7 @@ export function ThreeDScatterChart({
         clearTimeout(timeoutRef.current);
         timeoutRef.current = null;
       }
+      releaseReader();
       controls.dispose();
       renderer.dispose();
       renderer.forceContextLoss();
@@ -515,6 +524,7 @@ export function ThreeDScatterChart({
           size="icon"
           className="eda-surface-action absolute right-1 top-1 size-7 text-muted-foreground"
           aria-label="Fit view"
+          data-export="omit"
           tooltip="Turn the camera back to the starting view of the whole cube"
           onClick={fitView}
         >
