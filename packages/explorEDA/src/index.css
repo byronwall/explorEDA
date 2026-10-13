@@ -2960,6 +2960,17 @@ html {
     overflow: visible;
     pointer-events: auto;
   }
+  /* An image export reads the header at rest, so a hover or an open menu
+     never narrows the title in the picture. */
+  .eda-panel[data-exporting]:not(.eda-panel-expanded)
+    .eda-panel-header
+    .eda-panel-actions {
+    max-width: 0;
+    overflow: hidden;
+  }
+}
+.eda-panel[data-exporting] .eda-panel-readout {
+  display: none;
 }
 
 .eda-table-toolbar-compact {
@@ -7367,6 +7378,15 @@ td[data-null] {
   letter-spacing: 0.02em;
   text-transform: uppercase;
 }
+.eda-quick-menu-separator {
+  height: 1px;
+  margin: 4px 0;
+  background: var(--border);
+}
+.eda-quick-menu-item:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
 .eda-quick-menu-item {
   display: flex;
   flex-direction: column;
@@ -7502,14 +7522,6 @@ td[data-null] {
 }
 .eda-composition-ramp-stop > div {
   width: 64px;
-}
-.eda-composition-copy-status {
-  margin-top: -4px;
-  color: var(--muted-foreground);
-  font-size: 11px;
-}
-.eda-composition-copy-status[data-state="failed"] {
-  color: var(--destructive);
 }
 
 /* Colors defined inside compositions, listed under the workspace scales. */

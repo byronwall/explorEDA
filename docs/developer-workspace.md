@@ -38,7 +38,8 @@ Project navigation, multiple sources, and host persistence policy also remain se
 
 ## Host settings access
 
-The public `ExplorEdaHandle` exposes `getSettings()` through a React ref after mount.
+The public `ExplorEdaHandle` exposes `getSettings()` and `exportChartPng(chartId, options)` through a React ref after mount.
+`exportChartPng` captures a mounted chart through the same path as its Export image menu (`components/charts/export/`), looking in that workspace's grid first and then in an open details view. It rejects with "Chart is not rendered." rather than rendering off screen; that is the [headless rendering](intent/headless-chart-rendering/intent-brief.md) seed.
 It returns the current `SavedDataStructure` from the provider's `saveToStructure` function.
 Hosts can read initial settings and later settings after edits.
 The inspector, host read, and edit callback use the same workspace definitions.

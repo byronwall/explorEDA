@@ -218,6 +218,7 @@ describe("Earthquakes of 2023", () => {
   it("builds every tab from its text against all rows", async () => {
     await expectCleanTabs(earthquakesAnalysis, [
       "Where they struck",
+      "By country",
       "When they happened",
       "Magnitude and depth",
       "One magnitude type by depth",

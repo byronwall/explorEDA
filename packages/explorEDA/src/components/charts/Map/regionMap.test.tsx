@@ -1,4 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
+import { geoArea } from "d3-geo";
+import { useState } from "react";
 import { beforeAll, expect, it } from "vitest";
 import type { GeometryAsset, RegionGeometry } from "@/lib/geometryAssets";
 import { isRegionGeometry } from "@/lib/geometryAssets";
@@ -293,4 +295,175 @@ it("selects exact joined rows, traces unmatched inputs, and restores shared geom
   expect(
     screen.getByRole("table", { name: "Aggregate source contributors" })
   ).toHaveTextContent("Not a finite number");
+});
+
+it("clears region filters on a plain empty-space click but not on Alt-click", () => {
+  render(
+    <DataLayerProvider data={rows} charts={[settings]}>
+      <Workspace />
+    </DataLayerProvider>
+  );
+  fireEvent.click(screen.getByText("Load geometry"));
+  fireEvent.click(
+    screen.getByRole("button", { name: "A; Sum of value: 4; 2 rows" })
+  );
+  expect(screen.getByLabelText("Selected rows")).toHaveTextContent("0,1");
+  const map = screen.getByRole("group", { name: "Region map" });
+  fireEvent.click(map, { altKey: true });
+  expect(screen.getByLabelText("Selected rows")).toHaveTextContent("0,1");
+  fireEvent.click(map);
+  expect(screen.getByLabelText("Selected rows")).toHaveTextContent(
+    ids.join(",")
+  );
+});
+
+it("counts every joined row but averages only valid measures", () => {
+  const values = [10, -6, 0, "6", "bad", "", null, false];
+  const data = values.map((value) => ({ region: "A", value }));
+  const local: MapSnapshot = {
+    revision: "m",
+    allIds: data.map((_, id) => id),
+    chartIds: data.map((_, id) => id),
+    filteredIds: data.map((_, id) => id),
+    columns: {
+      region: Object.fromEntries(data.map((row, id) => [id, row.region])),
+      value: Object.fromEntries(data.map((row, id) => [id, row.value])),
+    },
+  };
+  const region = (aggregation: MapSettings["aggregation"]) =>
+    planRegionMap(
+      { ...settings, aggregation },
+      local,
+      asset,
+      800,
+      500
+    ).regions.find((item) => item.key === "A")!;
+  expect(region("count").value).toBe(8);
+  expect(region("sum").value).toBe(10);
+  expect(
+    region("sum").contributors.filter((item) => item.included)
+  ).toHaveLength(4);
+  expect(region("average").value).toBe(2.5);
+  const zero = planRegionMap(settings, snapshot, asset, 800, 500).regions;
+  expect(zero.find((item) => item.key === "Zero")!.state).toBe("value");
+  expect(zero.find((item) => item.key === "Invalid")!.state).toBe("invalid");
+  expect(zero.find((item) => item.key === "Empty")!.state).toBe("empty");
+});
+
+it("joins rows to supplied US states without an import", async () => {
+  const states: MapSettings = {
+    ...settings,
+    geometryAssetId: "boundary:us-states",
+    regionField: "state",
+    featureKey: "usps",
+    aggregation: "count",
+    measureField: undefined,
+  };
+  render(
+    <DataLayerProvider
+      data={[
+        { state: "CA" },
+        { state: "CA" },
+        { state: "TX" },
+        { state: "ZZ" },
+      ]}
+      charts={[states]}
+    >
+      <ChartTraceScope>
+        <RegionMap settings={states} width={800} height={500} />
+      </ChartTraceScope>
+      <SaveCheck />
+    </DataLayerProvider>
+  );
+  expect(screen.getByText("Loading US states…")).toBeInTheDocument();
+  expect(
+    await screen.findByRole("button", { name: "CA; Row count: 2; 2 rows" })
+  ).toBeInTheDocument();
+  expect(screen.getByText(/1 unmatched row/)).toBeInTheDocument();
+  fireEvent.click(screen.getByText("Check save"));
+  expect(screen.getByLabelText("Save valid")).toHaveTextContent("true");
+});
+function SaveCheck() {
+  const save = useDataLayer((state) => state.saveToStructure);
+  const [valid, setValid] = useState<boolean>();
+  return (
+    <>
+      <button
+        onClick={() =>
+          setValid(validateSavedData(JSON.parse(stringifySavedData(save()))))
+        }
+      >
+        Check save
+      </button>
+      <output aria-label="Save valid">{String(valid)}</output>
+    </>
+  );
+}
+
+it("names supplied boundaries the app does not provide", () => {
+  const missing = { ...settings, geometryAssetId: "boundary:mars-craters" };
+  render(
+    <DataLayerProvider data={rows} charts={[missing]}>
+      <RegionMap settings={missing} width={800} height={500} />
+    </DataLayerProvider>
+  );
+  expect(screen.getByRole("status")).toHaveTextContent(
+    "“mars-craters” boundaries, which this app does not provide"
+  );
+});
+
+it("never draws a polar region inside out", () => {
+  const ring = [
+    [-180, -70],
+    [-90, -70],
+    [0, -70],
+    [90, -70],
+    [180, -70],
+    [180, -90],
+    [-180, -90],
+    [-180, -70],
+  ];
+  for (const coordinates of [[ring], [[...ring].reverse()]]) {
+    const [polar] = regionGeometry({
+      type: "FeatureCollection",
+      features: [
+        {
+          type: "Feature",
+          properties: {},
+          geometry: { type: "Polygon", coordinates },
+        },
+      ],
+    }).features;
+    expect(geoArea(polar!)).toBeLessThan(2 * Math.PI);
+  }
+});
+
+it("shows US states when a country map is zoomed into the US", async () => {
+  const countries: MapSettings = {
+    ...settings,
+    geometryAssetId: "boundary:world-countries",
+    regionField: "country",
+    featureKey: "iso_a3",
+    aggregation: "count",
+    measureField: undefined,
+    view: { center: [-98, 39], zoom: 5 },
+  };
+  render(
+    <DataLayerProvider
+      data={[
+        { country: "USA", state: "CA" },
+        { country: "USA", state: "TX" },
+        { country: "CAN", state: null },
+      ]}
+      charts={[countries]}
+    >
+      <ChartTraceScope>
+        <RegionMap settings={countries} width={800} height={500} />
+      </ChartTraceScope>
+    </DataLayerProvider>
+  );
+  expect(
+    await screen.findByRole("button", { name: "TX; Row count: 1; 1 row" })
+  ).toBeInTheDocument();
+  expect(screen.getByText(/US states at this zoom/)).toBeInTheDocument();
 });

@@ -2,14 +2,22 @@ import { Check, Copy } from "lucide-react";
 import { Highlight, themes } from "prism-react-renderer";
 import { useState, type ReactNode } from "react";
 
-export function CopyButton({ text, label }: { text: string; label: string }) {
+export function CopyButton({
+  text,
+  label,
+  className = "text-muted-foreground hover:bg-muted hover:text-foreground",
+}: {
+  text: string;
+  label: string;
+  className?: string;
+}) {
   const [copied, setCopied] = useState(false);
 
   return (
     <button
       type="button"
       aria-label={copied ? `${label} copied` : `Copy ${label}`}
-      className="inline-flex h-7 items-center gap-1.5 rounded-md px-2 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      className={`inline-flex h-7 items-center gap-1.5 rounded-md px-2 text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${className}`}
       onClick={() => {
         void navigator.clipboard?.writeText(text).then(() => {
           setCopied(true);
@@ -80,7 +88,7 @@ export function CodePanel({ files }: { files: CodeFile[] }) {
               {index === active && (
                 <span
                   aria-hidden="true"
-                  className="absolute inset-x-3 bottom-0 h-0.5 rounded-full bg-primary"
+                  className="absolute inset-x-3 bottom-0 h-0.5 rounded-full bg-site-accent"
                 />
               )}
             </button>
@@ -104,16 +112,39 @@ export function CodePanel({ files }: { files: CodeFile[] }) {
   );
 }
 
-export function InstallCommand({ command }: { command: string }) {
+export function InstallCommand({
+  command,
+  tone = "light",
+}: {
+  command: string;
+  /** "dark" sits on the navy hero band. */
+  tone?: "light" | "dark";
+}) {
+  const dark = tone === "dark";
   return (
-    <div className="inline-flex items-center justify-between gap-3 rounded-lg border border-border bg-card py-1.5 pl-4 pr-1.5 shadow-sm">
+    <div
+      className={
+        dark
+          ? "inline-flex items-center justify-between gap-3 rounded-lg border border-band-border bg-white/5 py-1.5 pl-4 pr-1.5"
+          : "inline-flex items-center justify-between gap-3 rounded-lg border border-border bg-card py-1.5 pl-4 pr-1.5 shadow-sm"
+      }
+    >
       <code className="font-mono text-sm">
-        <span aria-hidden="true" className="select-none text-muted-foreground">
+        <span
+          aria-hidden="true"
+          className={`select-none ${dark ? "text-brand-teal" : "text-muted-foreground"}`}
+        >
           ${" "}
         </span>
         {command}
       </code>
-      <CopyButton text={command} label="install command" />
+      <CopyButton
+        text={command}
+        label="install command"
+        className={
+          dark ? "text-white/70 hover:bg-white/10 hover:text-white" : undefined
+        }
+      />
     </div>
   );
 }

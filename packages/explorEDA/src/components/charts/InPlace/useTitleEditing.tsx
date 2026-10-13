@@ -1,3 +1,4 @@
+import { ChartImageMenuSection } from "../export/ChartImageMenu";
 import { useState, type KeyboardEvent, type MouseEvent } from "react";
 import { createPortal } from "react-dom";
 import { Copy, Pencil, RotateCcw } from "lucide-react";
@@ -153,6 +154,7 @@ export function useTitleEditing(settings: ChartSettings, displayTitle: string) {
             <Copy aria-hidden="true" />
             Copy title
           </DropdownMenuItem>
+          <ChartImageMenuSection />
         </DropdownMenuContent>
       </DropdownMenu>,
       document.body

@@ -5,12 +5,23 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ActionTooltip } from "@/components/ui/tooltip";
 import { useDataLayer } from "@/providers/DataLayerProvider";
-import { isRegionGeometry } from "@/lib/geometryAssets";
+import {
+  regionGeometryProblems,
+  regionGeometrySize,
+  type RegionGeometry,
+} from "@/lib/geometryAssets";
 import { displayAggregateValue } from "@/lib/aggregates";
 import type { ChartSettingsPanelProps } from "@/types/ChartTypes";
 import type { MapSettings } from "./definition";
 import { planRegionMap } from "./regionMapPlan";
 import { useMapData } from "./useMapData";
+import { useRegionAsset } from "./useRegionAsset";
+import { useRegionInference } from "./useRegionInference";
+import {
+  boundaryAssetId,
+  boundaryIdOf,
+  useBoundarySets,
+} from "@/lib/boundaries/registry";
 
 const selectClass =
   "h-9 min-w-0 rounded-md border border-input bg-background px-2 text-sm";
@@ -21,7 +32,9 @@ export function RegionMapSettings({
   const id = useId();
   const assets = useDataLayer((state) => state.geometryAssets);
   const addAsset = useDataLayer((state) => state.addGeometryAsset);
-  const asset = assets.find((item) => item.id === settings.geometryAssetId);
+  const { asset, boundary } = useRegionAsset(settings);
+  const boundarySets = useBoundarySets();
+  const inferRegion = useRegionInference();
   const { snapshot } = useMapData(settings);
   const plan = useMemo(
     () =>
@@ -35,29 +48,41 @@ export function RegionMapSettings({
     [settings, snapshot, asset]
   );
   const properties = [
-    ...new Set(
-      asset?.geometry.features.flatMap((feature) =>
+    ...new Set([
+      ...(boundary.status === "ready"
+        ? boundary.set.keys.map((key) => key.property)
+        : []),
+      ...(asset?.geometry.features.flatMap((feature) =>
         Object.keys(feature.properties ?? {})
-      ) ?? []
-    ),
+      ) ?? []),
+    ]),
   ];
   const [json, setJson] = useState(""),
     [name, setName] = useState("Regions"),
-    [error, setError] = useState("");
+    [errors, setErrors] = useState<string[]>([]);
   const importGeometry = (text: string, source: string, name: string) => {
+    let geometry: unknown;
     try {
-      const geometry: unknown = JSON.parse(text);
-      if (!isRegionGeometry(geometry))
-        throw new Error(
-          "Use a FeatureCollection of Polygon or MultiPolygon features. Coordinates must be WGS 84 degrees with closed rings."
-        );
-      const asset = {
-        id: crypto.randomUUID(),
-        name: name.trim() || "Regions",
-        source,
-        geometry,
-      };
-      addAsset(asset);
+      geometry = JSON.parse(text);
+    } catch (error) {
+      setErrors([
+        `Not valid JSON: ${error instanceof Error ? error.message : "could not parse"}`,
+      ]);
+      return;
+    }
+    const problems = regionGeometryProblems(geometry);
+    if (problems.length) {
+      setErrors(problems);
+      return;
+    }
+    const asset = {
+      id: crypto.randomUUID(),
+      name: name.trim() || "Regions",
+      source,
+      geometry: geometry as RegionGeometry,
+    };
+    // Assign first, so a failed assignment never leaves an orphaned asset.
+    try {
       onSettingsChange({
         ...settings,
         geometryAssetId: asset.id,
@@ -65,14 +90,36 @@ export function RegionMapSettings({
         view: undefined,
         filters: [],
       });
-      setError("");
-      setJson("");
     } catch (error) {
-      setError(
-        error instanceof Error ? error.message : "Could not read the GeoJSON."
-      );
+      setErrors([
+        `Could not use this geometry: ${error instanceof Error ? error.message : "the chart rejected it"}`,
+      ]);
+      return;
     }
+    addAsset(asset);
+    setErrors([]);
+    setJson("");
   };
+  const size = asset && regionGeometrySize(asset.geometry);
+  // Row keys that match a feature key's text but not its type.
+  const typeMismatches = useMemo(() => {
+    const byText = new Map(
+      plan.regions
+        .filter((region) => region.key !== undefined)
+        .map((region) => [String(region.key), region.key])
+    );
+    return plan.unmatched.flatMap((row) => {
+      const feature = byText.get(String(row.key));
+      return row.key != null && feature !== undefined
+        ? [{ key: row.key, feature }]
+        : [];
+    });
+  }, [plan]);
+  const unmatchedSamples = [
+    ...new Map(
+      plan.unmatched.map((row) => [`${typeof row.key}:${String(row.key)}`, row])
+    ).values(),
+  ].slice(0, 4);
   return (
     <div className="space-y-2">
       <div className="eda-setting-grid">
@@ -81,23 +128,54 @@ export function RegionMapSettings({
           id={`${id}-asset`}
           className={selectClass}
           value={settings.geometryAssetId ?? ""}
-          onChange={(e) =>
+          onChange={(e) => {
+            const set = boundarySets.find(
+              (item) => item.id === boundaryIdOf(e.target.value)
+            );
             onSettingsChange({
               ...settings,
               geometryAssetId: e.target.value,
-              featureKey: "",
+              featureKey: set?.keys[0]?.property ?? "",
               view: undefined,
               filters: [],
-            })
-          }
+            });
+          }}
         >
           <option value="">Choose geometry</option>
-          {assets.map((item) => (
-            <option key={item.id} value={item.id}>
-              {item.name}
+          <optgroup label="Supplied">
+            {boundarySets.map((set) => (
+              <option key={set.id} value={boundaryAssetId(set.id)}>
+                {set.name}
+              </option>
+            ))}
+          </optgroup>
+          {assets.length > 0 && (
+            <optgroup label="Imported">
+              {assets.map((item) => (
+                <option key={item.id} value={item.id}>
+                  {item.name}
+                </option>
+              ))}
+            </optgroup>
+          )}
+          {boundary.status === "missing" && (
+            <option value={settings.geometryAssetId}>
+              {boundary.id} (not available)
             </option>
-          ))}
+          )}
         </select>
+        {boundary.status === "loading" && (
+          <p className="col-start-2 text-xs text-muted-foreground">
+            Loading {boundary.set.name}…
+          </p>
+        )}
+        {size && (
+          <p className="col-start-2 text-xs text-muted-foreground">
+            {size.features.toLocaleString()}{" "}
+            {size.features === 1 ? "feature" : "features"} ·{" "}
+            {size.vertices.toLocaleString()} vertices · {asset.source}
+          </p>
+        )}
       </div>
       <details>
         <summary className="cursor-pointer text-sm">Import GeoJSON</summary>
@@ -113,7 +191,7 @@ export function RegionMapSettings({
                 try {
                   importGeometry(await file.text(), file.name, file.name);
                 } catch {
-                  setError("Could not read this file.");
+                  setErrors(["Could not read this file."]);
                 }
               }
               event.target.value = "";
@@ -145,10 +223,15 @@ export function RegionMapSettings({
           </p>
         </div>
       </details>
-      {error && (
-        <p role="alert" className="text-xs text-destructive">
-          {error}
-        </p>
+      {errors.length > 0 && (
+        <div role="alert" className="text-xs text-destructive">
+          <p>Nothing was imported.</p>
+          <ul className="list-disc pl-4">
+            {errors.map((problem) => (
+              <li key={problem}>{problem}</li>
+            ))}
+          </ul>
+        </div>
       )}
       <div className="eda-setting-grid">
         <Label>Region key</Label>
@@ -156,9 +239,23 @@ export function RegionMapSettings({
           label=""
           placeholder="Region key field"
           value={settings.regionField ?? ""}
-          onChange={(regionField) =>
-            onSettingsChange({ ...settings, regionField, filters: [] })
-          }
+          onChange={(regionField) => {
+            // Supplied boundaries follow the field; imported ones stay.
+            const match =
+              !settings.geometryAssetId || boundary.status !== "none"
+                ? inferRegion([regionField])
+                : undefined;
+            onSettingsChange({
+              ...settings,
+              regionField,
+              filters: [],
+              ...(match && {
+                geometryAssetId: boundaryAssetId(match.setId),
+                featureKey: match.featureKey,
+                view: undefined,
+              }),
+            });
+          }}
         />
         <Label htmlFor={`${id}-key`}>Feature key</Label>
         <ActionTooltip content="Match a GeoJSON property or feature ID to the row key. Keys must have the same value and type; no text conversion is applied.">
@@ -178,7 +275,10 @@ export function RegionMapSettings({
             <option value="@id">Feature ID</option>
             {properties.map((property) => (
               <option value={property} key={property}>
-                {property}
+                {boundary.status === "ready"
+                  ? (boundary.set.keys.find((key) => key.property === property)
+                      ?.label ?? property)
+                  : property}
               </option>
             ))}
           </select>
@@ -290,6 +390,31 @@ export function RegionMapSettings({
                 </tbody>
               </table>
             </div>
+            {unmatchedSamples.length > 0 && (
+              <p>
+                Unmatched row keys:{" "}
+                {unmatchedSamples
+                  .map((row) =>
+                    row.key == null
+                      ? "missing"
+                      : `${displayAggregateValue(row.key)} (${typeof row.key})`
+                  )
+                  .join(", ")}
+                {plan.unmatched.length > unmatchedSamples.length && ", …"}
+              </p>
+            )}
+            {typeMismatches.length > 0 && (
+              <p className="text-warning">
+                {typeMismatches.length}{" "}
+                {typeMismatches.length === 1 ? "row matches" : "rows match"} a
+                feature key only as text, such as{" "}
+                {displayAggregateValue(typeMismatches[0]!.key)} (
+                {typeof typeMismatches[0]!.key}) and{" "}
+                {displayAggregateValue(typeMismatches[0]!.feature)} (
+                {typeof typeMismatches[0]!.feature}). Keys must match in type
+                too; convert the field&apos;s type to join them.
+              </p>
+            )}
             <p>
               Features with one key form one region. Alt-click outside the
               regions on the map to see every unmatched row and feature.

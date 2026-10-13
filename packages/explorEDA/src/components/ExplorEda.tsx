@@ -73,12 +73,26 @@ import { GlobalAlertDialog } from "./GlobalAlertDialog";
 
 import "../index.css";
 import { CalculationEditorProvider } from "./calculations/CalculationEditor";
-import { forwardRef, useImperativeHandle, type ReactNode } from "react";
+import { forwardRef, useImperativeHandle, useRef, type ReactNode } from "react";
+import {
+  exportWorkspaceChartPng,
+  type ExportChartPngOptions,
+} from "./charts/export/exportChartPng";
+import type { ChartImage } from "./charts/export/rasterizePanel";
 
 registerAllCharts();
 
 export interface ExplorEdaHandle {
   getSettings: () => SavedDataStructure;
+  /**
+   * The chart's PNG as drawn: the image its Download image action saves, at
+   * twice its on-screen size unless `pixelRatio` says otherwise. Rejects with
+   * "Chart is not rendered." when the chart is not mounted.
+   */
+  exportChartPng: (
+    chartId: string,
+    options?: ExportChartPngOptions
+  ) => Promise<ChartImage>;
 }
 
 export interface ExplorEdaProps {
@@ -162,10 +176,20 @@ const Workspace = forwardRef<
   ref
 ) {
   const getSettings = useDataLayer((state) => state.saveToStructure);
-  useImperativeHandle(ref, () => ({ getSettings }), [getSettings]);
+  const charts = useDataLayer((state) => state.charts);
+  const rootRef = useRef<HTMLDivElement>(null);
+  useImperativeHandle(
+    ref,
+    () => ({
+      getSettings,
+      exportChartPng: (chartId, options) =>
+        exportWorkspaceChartPng(rootRef.current, charts, chartId, options),
+    }),
+    [getSettings, charts]
+  );
 
   return (
-    <div className="bg-background text-foreground">
+    <div ref={rootRef} className="bg-background text-foreground">
       <CalculationEditorProvider>
         <ChartDraftProvider>
           <PlotManager
@@ -187,6 +211,7 @@ export type { SavedDataStructure, ExplorEdaSidePanel, ExplorEdaSchema };
 export type { GeometryAsset, RegionGeometry } from "@/lib/geometryAssets";
 export type { WorkspaceTheme, WorkspaceThemeId } from "@/lib/themes";
 export type { ChartStyleOverrides } from "@/types/ChartTypes";
+export type { ChartImage, ExportChartPngOptions };
 export type {
   SchemaEdge,
   SchemaEndpoint,
@@ -259,6 +284,20 @@ export {
   hasFieldDisplayFormat,
 };
 
+export {
+  listBoundarySets,
+  registerBoundarySet,
+} from "@/lib/boundaries/registry";
+export type { BoundarySet } from "@/lib/boundaries/registry";
+export {
+  OPENFREEMAP_STYLES,
+  registerMapLibre,
+} from "@/components/charts/Map/mapEngine";
+export type {
+  MapLibreModule,
+  StreetMapOptions,
+  StreetMapStyles,
+} from "@/components/charts/Map/mapEngine";
 export type * from "@/types/AnalysisProject";
 export { ExplorEdaProject } from "./ExplorEdaProject";
 export type {

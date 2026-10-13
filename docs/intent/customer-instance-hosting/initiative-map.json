@@ -1,0 +1,440 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "Dedicated customer-instance hosting",
+    "slug": "customer-instance-hosting",
+    "scale": "program",
+    "current_phase": "shape",
+    "last_updated": "2026-10-12",
+    "summary": "Shape a low-maintenance per-customer runtime and operator lifecycle automation, beginning with two synthetic local instances that use one image and separate identity, secrets, and state.",
+    "status": "planned",
+    "next_action": "Review the provisional service-level isolation promise and local proof; align snapshot, query, driver, and transport contracts before selecting a provider."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-12"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-12"
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "not-created",
+      "updated_at": null
+    }
+  },
+  "sources": [
+    {
+      "id": "USR-01",
+      "type": "direct-user-source",
+      "location": "../../research/database-backed-analysis-2026-10-11/source-notes.md",
+      "anchor": "Explicit request; pages 1–3; interpretation boundaries",
+      "authority": "direct intent",
+      "notes": "Database-backed exploration, responsive client, and complete snapshots when feasible; technical ideas remain proposals."
+    },
+    {
+      "id": "USR-02",
+      "type": "direct-user-source",
+      "location": "../../research/database-backed-analysis-2026-10-11/customer-instance-update.md",
+      "anchor": "Customer-instance update",
+      "authority": "latest direct correction",
+      "notes": "One dedicated instance per paying customer, minimal maintenance, and high automation. Exact isolation, host, budget, region, and availability remain open."
+    },
+    {
+      "id": "RAW-01",
+      "type": "research-report",
+      "location": "raw/2026-10-11-pro/customer-instance-hosting-research.md",
+      "anchor": "Sections 1–13 and 15; provider references in section 14",
+      "authority": "agent-authored evidence and proposal",
+      "notes": "Full Pro report retained as raw research. It recommends Cloud Run, with Render and Cloudflare alternatives; no live proof or deployment was performed."
+    },
+    {
+      "id": "RAW-02",
+      "type": "recommendation-json",
+      "location": "raw/2026-10-11-pro/customer-instance-hosting-recommendations.json",
+      "anchor": "H01–H20; P01–P09; cost_model and unresolved_choices",
+      "authority": "agent-authored recommendations",
+      "notes": "All recommendations are dispositioned in evidence/recommendation-review.md."
+    },
+    {
+      "id": "REVIEW-01",
+      "type": "provider-review",
+      "location": "evidence/recommendation-review.md",
+      "anchor": "Independent recommendation review and official provider checks",
+      "authority": "current primary documentation and local reasoning",
+      "notes": "Checks decisive Cloud Run, Render, and Cloudflare claims. Provider behavior, bills, and workload performance remain unmeasured."
+    },
+    {
+      "id": "CODE-01",
+      "type": "repository-source",
+      "location": "packages/explorEDA/src/lib/analysis/evaluateProject.ts",
+      "anchor": "AnalysisEvaluation, source and aggregate frames",
+      "authority": "current checkout observation",
+      "notes": "Current evaluation and provenance shapes affect future remote result boundaries."
+    },
+    {
+      "id": "CODE-02",
+      "type": "repository-source",
+      "location": "packages/explorEDA/src/components/ExplorEdaProject.tsx",
+      "anchor": "Source rows passed to the current provider",
+      "authority": "current checkout observation",
+      "notes": "Current consumer builds row-based client data."
+    },
+    {
+      "id": "CODE-03",
+      "type": "repository-source",
+      "location": "packages/explorEDA/src/providers/DataLayerProvider.tsx",
+      "anchor": "Raw/runtime rows, profiles, filters, and caches",
+      "authority": "current checkout observation",
+      "notes": "Full-table client materialization remains a capacity cost after hosting."
+    },
+    {
+      "id": "TRACK-01",
+      "type": "companion-initiative",
+      "location": "../database-query-contract/shape-brief.md",
+      "anchor": "Demand, scope, freshness, and completion contract",
+      "authority": "parallel shaping work",
+      "notes": "Query semantics and request/result identity must align with hosting."
+    },
+    {
+      "id": "TRACK-02",
+      "type": "companion-initiative",
+      "location": "../database-adapters/shape-brief.md",
+      "anchor": "Database adapter boundaries and read behavior",
+      "authority": "parallel shaping work",
+      "notes": "Driver behavior, TLS, snapshot consistency, and cancellation must align with hosting."
+    },
+    {
+      "id": "TRACK-03",
+      "type": "companion-initiative",
+      "location": "../columnar-data-transport/shape-brief.md",
+      "anchor": "Complete bounded snapshot transport and current row consumers",
+      "authority": "parallel shaping work",
+      "notes": "Hosting supports complete source snapshots and does not force streaming or binary transport."
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "I-01",
+        "type": "outcome",
+        "statement": "Each paying customer can use an independently operated explorEDA instance.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "USR-02"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "I-02",
+        "type": "constraint",
+        "statement": "The hosting approach should keep routine maintenance low and automate ordinary customer lifecycle work.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "USR-02"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "I-03",
+        "type": "implementation hypothesis",
+        "statement": "An independently deployable service with a fixed customer identity, separate credentials, and separate application state can satisfy the initial dedicated-instance promise.",
+        "commitment": "derived",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "sources": [
+          "USR-02",
+          "RAW-01",
+          "REVIEW-01"
+        ],
+        "confidence": "medium; customer-facing isolation wording remains unconfirmed"
+      },
+      {
+        "id": "I-04",
+        "type": "anti-goal",
+        "statement": "Do not operate a guest-OS fleet or custom multi-customer scheduler unless a measured need justifies the added maintenance.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "USR-02",
+          "RAW-01"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "I-05",
+        "type": "constraint",
+        "statement": "A shared release image may serve customers, while each customer runtime can access only its own configured secrets and state.",
+        "commitment": "derived",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "sources": [
+          "RAW-01",
+          "RAW-02"
+        ],
+        "confidence": "high for the proposed boundary; untested"
+      },
+      {
+        "id": "I-06",
+        "type": "constraint",
+        "statement": "The initial data-path proof returns the complete bounded source snapshot into existing row-based client tables; server pushdown needs later semantic parity proof.",
+        "commitment": "derived",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "sources": [
+          "USR-01",
+          "TRACK-01",
+          "TRACK-02",
+          "TRACK-03"
+        ],
+        "confidence": "high as the cross-track baseline"
+      },
+      {
+        "id": "I-07",
+        "type": "anti-goal",
+        "statement": "Do not require binary transport, streaming, or a server cache for a response that stays within a proved bounded path.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "sources": [
+          "USR-01",
+          "RAW-01",
+          "TRACK-03"
+        ],
+        "confidence": "high; actual client memory cost still needs measurement"
+      },
+      {
+        "id": "I-08",
+        "type": "open question",
+        "statement": "Does a service-level runtime boundary meet the intended customer-facing meaning of dedicated?",
+        "commitment": "derived",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "USR-02",
+          "RAW-01"
+        ],
+        "confidence": "unknown"
+      },
+      {
+        "id": "I-09",
+        "type": "open question",
+        "statement": "Will a launch customer require private routing or customer-exclusive database egress?",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "sources": [
+          "USR-02",
+          "RAW-01"
+        ],
+        "confidence": "unknown"
+      }
+    ],
+    "themes": [
+      "Customer-specific runtime and authority",
+      "Low routine operation through a shared release image",
+      "Disposable compute with recoverable per-customer state",
+      "Complete bounded source data and existing client memory costs",
+      "Provider and business choices remain reversible until proof"
+    ],
+    "conflicts": [
+      {
+        "topic": "Dedicated instance boundary",
+        "resolution": "Use an independently deployable customer service with exclusive application identity, credentials, and state as the provisional meaning. It is not a physical-host, exclusive-CPU, or separate-account promise.",
+        "sources": [
+          "USR-02",
+          "RAW-01",
+          "REVIEW-01"
+        ]
+      },
+      {
+        "topic": "Full snapshot versus server pushdown",
+        "resolution": "First return a complete bounded source snapshot into current tables. Prove server pushdown later against the same semantics. A bounded result does not require binary encoding or streaming.",
+        "sources": [
+          "USR-01",
+          "TRACK-01",
+          "TRACK-02",
+          "TRACK-03"
+        ]
+      },
+      {
+        "topic": "Provider recommendation versus proof order",
+        "resolution": "Keep Cloud Run as the current front-runner, but start with a local same-image two-customer proof. Provider docs and cost scenarios do not prove application isolation or hosted behavior.",
+        "sources": [
+          "RAW-01",
+          "RAW-02",
+          "REVIEW-01"
+        ]
+      }
+    ],
+    "human_questions": [
+      {
+        "id": "Q-01",
+        "question": "Does one separately identified service, with its own runtime credentials and application state, meet your intended meaning of a dedicated customer instance?",
+        "status": "open",
+        "impact": "A guest-kernel or customer-account promise would change the provider shortlist and operating cost."
+      },
+      {
+        "id": "Q-02",
+        "question": "Does a first customer need private database routing or a customer-exclusive egress address?",
+        "status": "open",
+        "impact": "A mandatory private route or unique IP could change the platform and cold-start proof."
+      }
+    ]
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "not-started",
+    "appetite": "First prove two synthetic customer runtimes locally. Then add one small desired-state manifest and idempotent operator script for the customer lifecycle. Select one provider only after a required provider property is clear.",
+    "problem": "No customer runtime exists. A provider choice made before identity, data, memory, cancellation, and durable-state boundaries are tested risks paying to discover an application-contract problem.",
+    "recommended_shape": {
+      "first_proof": "Two local processes or containers from one image, each with fixed customer identity, separate secrets, separate state, and separate synthetic database access.",
+      "provisional_dedicated_meaning": "Independently deployable logical service and its replicas, with exclusive customer identity, credentials, and application state; no physical host, exclusive CPU, or separate cloud account claim.",
+      "provider_candidate": "Cloud Run Gen2 service per customer is the front-runner; hosted use is conditional on local proof and separate authorization. Render is the always-on candidate; Cloudflare Containers is a challenger.",
+      "data_path": "Complete bounded source snapshot into existing row tables first. Evaluate pushdown only after query/adapter parity. Do not require binary transport or streaming for bounded responses; account for current client memory costs.",
+      "state": "Separate local test state first. Choose external durable provider storage when the acknowledged application save contract is defined.",
+      "lifecycle": "After the local boundary proof, add a small desired-state manifest and idempotent operator script to create, verify, update, roll back, suspend, resume, restore, and remove only customer-owned app resources. Never change or delete the customer database. Do not build a fleet controller or workflow platform.",
+      "selection": "Choose one provider after the smallest proof that can change the decision. Do not deploy multiple platforms in parallel."
+    },
+    "success_moves": [
+      {
+        "move": "Use two copies of one image with a fixed customer identity in each process.",
+        "risk_reduced": "This isolates customer-boundary errors from differences between app versions or deployment builds.",
+        "proof": "Both report the same image digest and their own immutable customer IDs for every request."
+      },
+      {
+        "move": "Give each local instance separate synthetic credentials and state paths, then test cross-customer access directly.",
+        "risk_reduced": "This exposes credential lookup, routing, and state leakage before cloud IAM or a provider hides the cause.",
+        "proof": "A cannot read B's secret, database role, saved object, or state directory; the converse also fails."
+      },
+      {
+        "move": "Run a complete bounded source snapshot into current row-based tables before testing server pushdown.",
+        "risk_reduced": "This keeps the hosting proof aligned with the query, adapter, and transport tracks while avoiding an unproven SQL rewrite.",
+        "proof": "Each instance returns all declared source rows and fields with exact types and values for the synthetic fixture."
+      },
+      {
+        "move": "Restart one instance after an acknowledged local save while the other continues unchanged.",
+        "risk_reduced": "This distinguishes disposable runtime state from recoverable customer state.",
+        "proof": "The restarted instance restores its own save; the other customer's save and active request are unchanged."
+      },
+      {
+        "move": "After local isolation passes, drive create, verify, update, rollback, suspend, resume, restore, and removal from a small manifest and idempotent operator script.",
+        "risk_reduced": "This delivers repeatable customer lifecycle automation without a custom fleet platform and avoids deleting customer-owned databases.",
+        "proof": "Repeated and interrupted operations converge on the same owned app resources; remove affects only the selected customer's app resources."
+      },
+      {
+        "move": "Defer provider configuration, exact size, and network add-ons until a required provider property can change the decision.",
+        "risk_reduced": "This avoids paid provider-specific work before the first app and data contracts are known.",
+        "proof": "The local report names one unresolved provider property and the smallest hosted check that would resolve it."
+      }
+    ],
+    "first_proof": {
+      "question": "Can one image serve two synthetic customers through distinct identities, credentials, and recoverable application state while returning a complete bounded source snapshot?",
+      "artifact": "A repeatable local command and proof report for two instances, with identity/resource mapping, exact row results, denied cross-customer attempts, image digests, and one-instance restart recovery.",
+      "decision_rule": "If both instances return complete expected data, every cross-customer attempt fails, and restart preserves only that customer's acknowledged state, proceed to shape the manifest and idempotent operator script against a local adapter. Otherwise revise the runtime boundary. A hosted sandbox is conditional on a specific unresolved provider property and separate authorization."
+    },
+    "rabbit_holes": [
+      "Treating Cloud Run's service maximum as a hard database connection ceiling despite documented overshoot and rollout overlap.",
+      "Assuming request cancellation stops database work without driver and proxy proof.",
+      "Taking the synthetic 64 MiB/100,000-row limits, target latencies, or cost tables as measured facts.",
+      "Allowing browser snapshot and row-object copies to hide the actual client memory ceiling.",
+      "Building a fleet controller or workflow platform instead of one small manifest and idempotent operator script.",
+      "Selecting private egress, multi-region availability, or customer-account isolation without a named requirement."
+    ],
+    "open_decisions": [
+      "Confirm that the provisional service-level runtime, credentials, and state boundary satisfies the customer-facing meaning of dedicated.",
+      "Name any launch database that requires private routing or customer-exclusive egress before a hosted provider proof."
+    ]
+  },
+  "implementation": {
+    "status": "not-started",
+    "repository_snapshot": {
+      "root": null,
+      "revision": null,
+      "worktree_status": null,
+      "subsystems": [
+        "The current repository is a React/TypeScript library and demo; no hosted customer backend or provisioner exists.",
+        "AnalysisEvaluation and its consumers carry row data and provenance; current client materialization remains part of every full-snapshot cost."
+      ],
+      "test_commands": [],
+      "deployment_surfaces": [
+        "The current demo deploys as static output; it does not provide the customer runtime."
+      ]
+    },
+    "dependencies": [
+      {
+        "id": "TRACKS-01-03",
+        "name": "Query, database adapter, and snapshot transport contracts",
+        "material": true,
+        "application_seam": "A provider-neutral runtime boundary receives a fixed customer identity and one source request, then returns a declared complete result or an explicit error.",
+        "first_proof_role": {
+          "mode": "local synthetic database and two processes/containers",
+          "rationale": "Prove identity, row data, client handoff, and state separation without provider credentials or hosted services."
+        },
+        "failure_modes": [
+          "identity mismatch",
+          "source snapshot changes",
+          "missing rows or fields",
+          "type coercion",
+          "driver buffering",
+          "partial result treated as complete"
+        ],
+        "proof_rungs": [
+          "deterministic fixtures",
+          "local real driver and database",
+          "provider-specific proxy/network smoke only if a required property remains unknown"
+        ],
+        "local_proof": "Local two-customer fixture; complete source rows pass to current row-based consumer with declared counts and identity.",
+        "live_proof": "No hosted proof is authorized now. After separate authorization, use two synthetic customers and one provider only to verify identity, proxy, network, lifecycle, and billable behavior.",
+        "rollout": "No production authority changes before the provider sandbox. Keep customer runtime choice provisional and stop if parity fails."
+      }
+    ],
+    "fast_local_loop": {
+      "command": "Not defined yet; the two-customer harness does not exist.",
+      "rationale": "The next implementation plan must provide one command that starts the same image twice and runs the focused synthetic proof."
+    },
+    "milestones": [],
+    "cut_line": [
+      "Cloud provider resource creation or paid hosted sandbox.",
+      "Fleet reconciliation service, payment integration, customer self-service provisioning, and automated billing.",
+      "Customer database hosting, private/on-prem network connectors, and exclusive egress addresses.",
+      "Server cache, mandatory streaming or binary transport, and generalized cross-engine SQL pushdown.",
+      "Warm-instance promises, multi-region recovery, custom scheduler, and customer-owned cloud accounts."
+    ],
+    "open_decisions": [
+      "Customer-facing isolation promise.",
+      "First-customer database engine and network profile.",
+      "Supported customer save format, retention, and recovery target."
+    ]
+  },
+  "history": [],
+  "closure": null
+}
