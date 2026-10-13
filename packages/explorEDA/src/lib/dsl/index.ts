@@ -20,6 +20,7 @@ export {
   type DslExportResult,
 } from "./export";
 export { highlightDsl, type DslToken, type DslTokenKind } from "./highlight";
+export { formatDsl } from "./format";
 export { normalizeChart, normalizeDashboard } from "./normalize";
 export { chartSettingReference, COMMON_WORDS, settingWords } from "./schema";
 export { CHART_SETTING_KEYS } from "./settingKeys";

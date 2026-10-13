@@ -11,8 +11,6 @@ export type DslTokenKind =
   | "keyword"
   /** The chart type after `chart`, or a field type such as `:num`. */
   | "type"
-  /** A `+` that continues the declaration above. */
-  | "continuation"
   /** A setting name before `=`, such as xAxis.scaleType. */
   | "key"
   /** `@name`: a declaration's name, or a value that points at one. */
@@ -21,7 +19,7 @@ export type DslTokenKind =
   | "number"
   /** true, false, null, and unset. */
   | "constant"
-  /** `=`, `,`, `..`, and the operators in a formula. */
+  /** `=`, `,`, `..`, `{`, `}`, and the operators in a formula. */
   | "operator"
   | "comment"
   /** Field names and other plain words. */
@@ -188,14 +186,8 @@ function highlightLine(line: string): DslToken[] {
   }
   const tokens: DslToken[] = [{ text: indent, kind: "space" }];
   let cursor = indent.length;
-  const continued =
-    trimmed.startsWith("+") && (trimmed.length === 1 || /\s/.test(trimmed[1]!));
-  if (continued) {
-    tokens.push({ text: "+", kind: "continuation" });
-    cursor++;
-  }
 
-  const keyword = continued ? "" : trimmed.slice(0, trimmed.search(/\s|$/));
+  const keyword = trimmed.slice(0, trimmed.search(/\s|$/));
   if (keyword === "calc") {
     tokens.push({ text: keyword, kind: "keyword" });
     const rest = line.slice(cursor + keyword.length);
@@ -214,7 +206,13 @@ function highlightLine(line: string): DslToken[] {
   words.forEach((word, index) => {
     tokens.push({ text: line.slice(cursor, word.column), kind: "space" });
     cursor = word.column + word.text.length;
-    const first = index === 0 && !continued;
+    if (word.text === "{" || word.text === "}") {
+      tokens.push({ text: word.text, kind: "operator" });
+      return;
+    }
+    // A statement starts the line, or follows a brace on it.
+    const previous = words[index - 1]?.text;
+    const first = index === 0 || previous === "{" || previous === "}";
     if (first && KEYWORDS.has(word.text)) {
       tokens.push({ text: word.text, kind: "keyword" });
       return;
@@ -229,8 +227,13 @@ function highlightLine(line: string): DslToken[] {
       );
       return;
     }
+    // A layout line's height, such as `5:`.
+    if (first && /^\d+:$/.test(word.text)) {
+      tokens.push({ text: word.text, kind: "number" });
+      return;
+    }
     // The type after `chart`, such as `chart boxplot`, reads as a keyword.
-    const chartType = index === 1 && !continued && words[0]!.text === "chart";
+    const chartType = previous === "chart";
     tokens.push(...wordTokens(word.text, chartType ? "type" : "text"));
   });
 

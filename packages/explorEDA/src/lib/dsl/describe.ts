@@ -77,45 +77,59 @@ export function formatDslDiagnostics(
 }
 
 /** A short grammar reference for people and agents writing dashboard text. */
-export const DSL_REFERENCE = `Dashboard text: one declaration per line. A line starting with + continues
-the one above. Values are key=value; quote values with spaces or commas.
+export const DSL_REFERENCE = `Dashboard text: one declaration per line. A line ending in { opens a body
+that } closes; in a body, a key=value line adds settings to the declaration,
+and a line starting with a word is a child. Spaces never change meaning;
+exploreda-dsl fmt indents by brace depth. Quote values with spaces or commas.
 
-  dashboard name="Sales"              view name
+  dashboard "Sales"                   view name
   grid columns=12 rowHeight=100       grid settings (also padding=, markers=)
+  theme newsprint                     workspace theme
   revenue:num=Revenue label="Rev ($)" alias a field; :num|:cat|:date|:bool checks
-                                      its type, as=num converts it; label=,
+                                      its type, as=num converts it
+  field "Order Date" label=Ordered    display settings by exact name: label=,
                                       format=, precision=, unit=, currency=
-  calc profit=revenue-cost            row calculation (native formula syntax)
-  + format=percent precision=1        display settings for the calculation
+  calc profit = revenue - cost        row calculation (native formula syntax);
+                                      the formula runs to the end of the line
 
-Charts (each starts from the app's defaults; @name is optional):
+Charts (each starts from the app's defaults):
   scatter x=<field> y=<field>         color=, size=<field|number>, opacity=,
-                                      regression=linear|polynomial|loess,
-                                      regression.degree=, regression.overall=
+                                      regression=linear|polynomial|loess
   hist <field> bins=24                histogram
   bar <field>                         bars by category or bins
   row <field>                         horizontal category bars
   metric count | sum=<field> | avg=<field>
   table <field>,<field>,...           data table (all fields when omitted)
   summary                             field summary table
-
   chart <type> field=<field>          any chart type, such as chart boxplot
 
-Settings on any chart: title=, at=x,y,w,h, x.title=, x.scale=, x.min=, x.max=,
-x.grid=, x.ticks=, the same y.* words, and margin.left= (top, right, bottom).
+  A chart goes by its @name, or by its field when no other chart shares it:
+  row Region is named Region. Long settings go in a body:
+    scatter @fit x=Revenue y=Margin {
+      title="Margin by revenue" x.scale=log
+    }
+
+Settings on any chart: title=, x.title=, x.scale=, x.min=, x.max=, x.grid=,
+x.ticks=, the same y.* words, and margin.left= (top, right, bottom).
 x.min= and x.max= set the axis range shown; rows outside stay counted.
 Any other saved setting is its path: minRowHeight=30, columns.0.width=140.
 exploreda-dsl reference <type> lists every setting a chart type takes.
   key[]=a,b    a list (key[]= is empty)    key{}=     an empty object
   key=unset    back to the app default     key=null   a missing value
-  "a b".c=1    quote a name with spaces    key=""     empty text
+
+Placement: a layout block, one line per band of grid rows.
+  layout {
+    5: size size species island       cells split 12 columns evenly: 6/3/3
+    4: bill:7 mass:5                  or say a cell's width
+    3: . table table                  . is empty; repeat a name to widen it, or
+  }                                   put it in the same cells below to make it taller
+  Or give one chart at=x,y,w,h. Charts in neither take the first free space.
 
 Shared definitions (charts point at them by @name):
   scale @channels field=Channel       color scale; charts: colorScaleId=channels
   group @byRegion groupField=Region aggregation=sum measureField=Revenue
                                       grouped summary; charts: aggregateId=byRegion
   rows sortBy=Revenue where.Units=2.. the Rows view
-  field "Order Date" label=Ordered    display settings by exact name
 
 Filters:
   where.<field>=Web,Store             only these rows, for this chart only
@@ -127,8 +141,9 @@ Filters:
                                       every chart; one line per field
 
 Several views (one text for every saved view):
-  view "Overview"                     starts a view; grid, rows, and charts
-                                      below it belong to that view
+  view "Overview" {                   a view's grid, filters, charts, and layout
+    row Region                        go in its body
+  }
   Fields, calculations, scales, and groups are shared by every view, wherever
   they appear; put them above the first view.
 
