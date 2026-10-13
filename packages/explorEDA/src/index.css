@@ -4010,6 +4010,71 @@ html {
   font-weight: 500;
   color: var(--muted-foreground);
 }
+/* A chart role's field, such as the color legend's title. It reads as the
+   legend's label and shows a chevron on hover or focus. */
+.eda-role-button {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 3px;
+  min-height: 24px;
+  max-width: 14rem;
+  margin: 0 0 0 -6px;
+  padding: 0 4px 0 6px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted-foreground);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.eda-role-button:hover,
+.eda-role-button[data-state="open"] {
+  border-color: var(--border);
+  background: var(--muted);
+  color: var(--foreground);
+}
+.eda-role-button:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+.eda-role-button .eda-role-field {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.eda-role-button[data-empty] .eda-role-field {
+  font-weight: 400;
+}
+.eda-role-button svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+.eda-chart-color-legend:has(.eda-legend-numeric) .eda-role-button {
+  margin-left: auto;
+}
+.eda-role-picker-scope {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 10px 6px;
+  border-bottom: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--muted-foreground);
+}
+.eda-role-picker-scope > span:first-child {
+  font-weight: 500;
+  color: var(--foreground);
+}
+.eda-role-picker-shared {
+  flex-shrink: 0;
+  font-size: 11px;
+  color: var(--muted-foreground);
+}
 .eda-legend-items {
   display: flex;
   gap: 4px;

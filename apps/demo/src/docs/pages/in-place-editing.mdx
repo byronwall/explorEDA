@@ -3,6 +3,7 @@
 - Double-click a chart title to edit it. Enter, Tab, or leaving the field keeps the change; Escape restores the title it opened with.
 - Double-click a numeric axis to set its range. Leave a side blank to follow the data.
 - Drag along a numeric axis to pan its range, or drag an end to stretch it.
+- On a scatter plot, click the color label above the plot, such as **Channel** or **Color: None**, to change the color field. Type part of a field name and press Enter, or click a field. The chart recolors at once. Its filters stay as they were.
 
 <Callout type="warning" title="A range hides marks; it doesn't filter rows.">
   Marks outside an axis range are not drawn, but their rows still count
@@ -11,9 +12,14 @@
 
 ## One edit, one step
 
-Each edit is reported once, when it ends: a typed title, an axis drag, or a session in the axis range popover. A host that records each change as an undo step gets one step per edit. An edit cancelled with Escape is not reported.
+Each edit is reported once, when it ends: a typed title, an axis drag, a session in the axis range popover, or a new color field. A new color field and the color scale it needs arrive together, so one undo removes both. A host that records each change as an undo step gets one step per edit. An edit cancelled with Escape is not reported.
 
 ## Try it
+
+<LiveExample
+  id="dense-chart-controls"
+  caption="Click Color: None above the left chart and choose Channel to share the right chart's colors."
+/>
 
 <LiveExample
   id="bar-histogram"

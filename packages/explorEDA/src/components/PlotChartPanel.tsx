@@ -37,6 +37,7 @@ import {
 import { getWorkspaceTheme } from "@/lib/themes";
 import { ChartReadoutProvider } from "./charts/ChartReadout";
 import { ChartColorLegend } from "./charts/ColorLegend/ChartColorLegend";
+import { hasRoleLabels } from "./charts/roles/chartRoles";
 import { ChartTraceControl } from "./charts/ChartTraceControl";
 import {
   ChartTraceScope,
@@ -560,11 +561,15 @@ export function PlotChartPanel({
     (localFilters.length ? LOCAL_FILTER_STRIP_HEIGHT : 0);
   // Row charts, box plots, and donuts color marks by their own labeled
   // category, so a legend repeats them.
+  // Charts with role labels keep the line even without a color field, so
+  // their Color role stays in reach.
+  const roleLabels = hasRoleLabels(settings);
   const autoLegendHeight =
-    settings.colorField &&
-    settings.colorScaleId &&
-    !(settings.type === "scatter" && settings.display === "density") &&
-    !CATEGORY_LABELED_CHART_TYPES.has(settings.type)
+    roleLabels ||
+    (settings.colorField &&
+      settings.colorScaleId &&
+      !(settings.type === "scatter" && settings.display === "density") &&
+      !CATEGORY_LABELED_CHART_TYPES.has(settings.type))
       ? 36
       : 0;
   const faceted = Boolean(
@@ -974,6 +979,7 @@ export function PlotChartPanel({
                   <ChartColorLegend
                     settings={settings}
                     width={Math.max(1, panelWidth - 24 - FACET_SLOT_WIDTH)}
+                    editable={roleLabels}
                   />
                 )}
                 <div ref={setFacetBarSlot} className="eda-facet-bar-slot" />
@@ -983,6 +989,7 @@ export function PlotChartPanel({
                 <ChartColorLegend
                   settings={settings}
                   width={Math.max(1, panelWidth - 24)}
+                  editable={roleLabels}
                 />
               )
             )}

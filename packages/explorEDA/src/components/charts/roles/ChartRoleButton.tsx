@@ -1,0 +1,113 @@
+import { useRef, useState } from "react";
+import { ChevronDown } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { ActionTooltip } from "@/components/ui/tooltip";
+import { useDataLayer } from "@/providers/DataLayerProvider";
+import type { ChartSettings } from "@/types/ChartTypes";
+import { CHART_ROLES, type ChartRole } from "./chartRoles";
+import { RoleFieldPicker } from "./RoleFieldPicker";
+import { useRoleEdit } from "./useRoleEdit";
+
+/**
+ * A chart role's field shown on the chart, such as the color legend's title.
+ * Activating it searches the fields and applies a choice at once. Alt-click
+ * or Alt-Enter runs `onAltActivate`, such as tracing the scale.
+ */
+export function ChartRoleButton({
+  settings,
+  role,
+  onAltActivate,
+}: {
+  settings: ChartSettings;
+  role: ChartRole;
+  onAltActivate?: () => void;
+}) {
+  const spec = CHART_ROLES[role];
+  const field = spec.field(settings);
+  const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
+  const { choose } = useRoleEdit(settings.id);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const [open, setOpen] = useState(false);
+  const label = field ? getFieldLabel(field) : "None";
+  // A choice can redraw the legend with a new button, and unmount this one,
+  // so focus returns to whichever button then shows this role.
+  const returnFocus = () => {
+    const scope =
+      triggerRef.current?.closest(".eda-chart-content") ?? document.body;
+    requestAnimationFrame(() =>
+      scope
+        .querySelector<HTMLElement>(`.eda-role-button[data-role="${role}"]`)
+        ?.focus({ preventScroll: true })
+    );
+  };
+  // Inside chart details the popover mounts in the dialog, whose focus trap
+  // would otherwise keep the search field from taking focus.
+  const container = open
+    ? triggerRef.current?.closest<HTMLElement>("[role='dialog']")
+    : undefined;
+
+  return (
+    // Modal, so the press that dismisses it never reaches the chart and
+    // filters it.
+    <Popover open={open} onOpenChange={setOpen} modal>
+      <ActionTooltip
+        content={`Change the field that sets ${spec.label.toLowerCase()} for this chart`}
+      >
+        <PopoverTrigger asChild>
+          <button
+            ref={triggerRef}
+            type="button"
+            className="eda-role-button"
+            data-role={role}
+            data-empty={field ? undefined : ""}
+            aria-label={`${spec.label}: ${label}. Change field`}
+            aria-description={
+              onAltActivate
+                ? "Alt-click or Alt-Enter to trace the color scale"
+                : undefined
+            }
+            onClick={(event) => {
+              if (!event.altKey || !onAltActivate) return;
+              event.preventDefault();
+              onAltActivate();
+            }}
+            onKeyDown={(event) => {
+              if (!event.altKey || event.key !== "Enter" || !onAltActivate)
+                return;
+              event.preventDefault();
+              onAltActivate();
+            }}
+          >
+            {!field && <span className="eda-role-name">{spec.label}:</span>}{" "}
+            <span className="eda-role-field">{label}</span>
+            <ChevronDown aria-hidden="true" />
+          </button>
+        </PopoverTrigger>
+      </ActionTooltip>
+      <PopoverContent
+        container={container}
+        align="start"
+        className="eda-role-popover w-[min(20rem,calc(100vw-1.5rem))] p-0"
+        aria-label={`${spec.label} field`}
+        onCloseAutoFocus={(event) => {
+          event.preventDefault();
+          returnFocus();
+        }}
+      >
+        <RoleFieldPicker
+          settings={settings}
+          role={role}
+          onChoose={(next) => {
+            returnFocus();
+            setOpen(false);
+            if (next !== field) choose(role, next);
+          }}
+        />
+      </PopoverContent>
+    </Popover>
+  );
+}

@@ -21,19 +21,43 @@ import {
 } from "../trace/ChartTraceScope";
 import type { LegendTrace, TraceSource } from "../trace/traceTypes";
 import { planNumericalLegend } from "@/lib/colorScaleMath";
+import { ChartRoleButton } from "../roles/ChartRoleButton";
 
 interface ChartColorLegendProps {
   settings: ChartSettings;
   width: number;
+  /** Shows the title as the chart's Color role, which changes the field. */
+  editable?: boolean;
 }
 
-export function ChartColorLegend({ settings, width }: ChartColorLegendProps) {
-  if (!settings.colorField || !settings.colorScaleId) return null;
+export function ChartColorLegend({
+  settings,
+  width,
+  editable,
+}: ChartColorLegendProps) {
+  if (!settings.colorField || !settings.colorScaleId) {
+    // An uncolored chart still offers its Color role on the legend's line.
+    return editable ? (
+      <div className="eda-chart-color-legend">
+        <ChartRoleButton settings={settings} role="color" />
+      </div>
+    ) : null;
+  }
 
-  return <ChartColorLegendBody settings={settings} width={width} />;
+  return (
+    <ChartColorLegendBody
+      settings={settings}
+      width={width}
+      editable={editable}
+    />
+  );
 }
 
-function ChartColorLegendBody({ settings, width }: ChartColorLegendProps) {
+function ChartColorLegendBody({
+  settings,
+  width,
+  editable,
+}: ChartColorLegendProps) {
   const trace = useChartTrace();
   const traceApi = useChartTraceApi();
   const owner = useId();
@@ -106,7 +130,11 @@ function ChartColorLegendBody({ settings, width }: ChartColorLegendProps) {
       id === "scale"
         ? undefined
         : shownCategories.find((item) => categoryKey(item) === id);
-    if (id !== "scale" && value === undefined && !shownCategories.some((item) => categoryKey(item) === id))
+    if (
+      id !== "scale" &&
+      value === undefined &&
+      !shownCategories.some((item) => categoryKey(item) === id)
+    )
       return undefined;
     return {
       kind: "legend",
@@ -139,7 +167,8 @@ function ChartColorLegendBody({ settings, width }: ChartColorLegendProps) {
     ? {
         role: "legend",
         revision,
-        resolve: (kind, id) => (kind === "legend" ? resolveLegend(id) : undefined),
+        resolve: (kind, id) =>
+          kind === "legend" ? resolveLegend(id) : undefined,
         targets: () =>
           scale?.type === "categorical"
             ? shownCategories.map((value) => ({
@@ -216,25 +245,31 @@ function ChartColorLegendBody({ settings, width }: ChartColorLegendProps) {
       className="eda-chart-color-legend"
       aria-label={`${getFieldLabel(field)} color legend`}
     >
-      <span
-        className="eda-legend-field"
-        tabIndex={canTrace ? 0 : undefined}
-        aria-description={
-          canTrace
-            ? "Alt-click or Alt-Enter to trace the color scale"
-            : undefined
-        }
-        onClick={(event) => {
-          if (event.altKey)
-            inspectLegend("scale");
-        }}
-        onKeyDown={(event) => {
-          if (event.altKey && event.key === "Enter")
-            inspectLegend("scale");
-        }}
-      >
-        {getFieldLabel(field)}
-      </span>
+      {editable ? (
+        <ChartRoleButton
+          settings={settings}
+          role="color"
+          onAltActivate={canTrace ? () => inspectLegend("scale") : undefined}
+        />
+      ) : (
+        <span
+          className="eda-legend-field"
+          tabIndex={canTrace ? 0 : undefined}
+          aria-description={
+            canTrace
+              ? "Alt-click or Alt-Enter to trace the color scale"
+              : undefined
+          }
+          onClick={(event) => {
+            if (event.altKey) inspectLegend("scale");
+          }}
+          onKeyDown={(event) => {
+            if (event.altKey && event.key === "Enter") inspectLegend("scale");
+          }}
+        >
+          {getFieldLabel(field)}
+        </span>
+      )}
       {scale.type === "categorical" && shownCategories.length > 8 ? (
         <details className="eda-legend-disclosure">
           <summary>Show {shownCategories.length} values</summary>
