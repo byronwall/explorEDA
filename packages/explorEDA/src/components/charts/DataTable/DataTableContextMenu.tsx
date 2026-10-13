@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { createPortal } from "react-dom";
 import { toast } from "sonner";
+import { ChartImageMenuSection } from "../export/ChartImageMenu";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -341,6 +342,7 @@ export function DataTableContextMenu({
             </DropdownMenuItem>
           </>
         )}
+        <ChartImageMenuSection />
       </DropdownMenuContent>
     </DropdownMenu>
   );

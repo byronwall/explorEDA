@@ -194,3 +194,81 @@ it("edits a map preview without changing saved charts or filtering workspace row
   );
   expect(screen.getByLabelText("Saved charts").textContent).toBe(saved);
 });
+
+it("clears only on a plain empty-space click, never on Alt-click or a pan", () => {
+  render(
+    <DataLayerProvider data={rows} charts={[settings]}>
+      <Workspace />
+    </DataLayerProvider>
+  );
+  fireEvent.click(
+    screen.getByRole("button", {
+      name: "East; row 0; latitude 10°; longitude 179°",
+    })
+  );
+  expect(screen.getByLabelText("Selected IDs").textContent).toBe("0");
+  const map = screen.getByRole("group", { name: "Point map" });
+  // jsdom has no pointer capture.
+  Object.assign(map, {
+    setPointerCapture() {},
+    releasePointerCapture() {},
+    hasPointerCapture: () => false,
+  });
+  fireEvent.click(map, { altKey: true });
+  expect(screen.getByLabelText("Selected IDs").textContent).toBe("0");
+  expect(screen.getByLabelText("Map trace")).toBeInTheDocument();
+  // jsdom's PointerEvent drops coordinates, so send mouse events by name.
+  const pointer = (type: string, clientX: number) =>
+    fireEvent(
+      map,
+      new MouseEvent(type, { bubbles: true, button: 0, clientX, clientY: 10 })
+    );
+  pointer("pointerdown", 10);
+  pointer("pointermove", 40);
+  pointer("pointerup", 40);
+  fireEvent.click(map);
+  expect(screen.getByLabelText("Selected IDs").textContent).toBe("0");
+  pointer("pointerdown", 10);
+  fireEvent.click(map);
+  expect(screen.getByLabelText("Selected IDs").textContent).toBe(ids.join(","));
+});
+
+it("keeps the saved chart's filters when Escape is pressed in a same-ID draft", () => {
+  const filtered: MapSettings = {
+    ...settings,
+    filters: [{ type: "value", field: "__ID", values: [0] }],
+  };
+  function SameIdDraft() {
+    const [draft, setDraft] = useState(filtered);
+    const charts = useDataLayer((state) => state.charts);
+    return (
+      <>
+        <output aria-label="Saved filters">
+          {JSON.stringify(charts[0]?.filters)}
+        </output>
+        <ChartTraceScope>
+          <PointMap
+            settings={draft}
+            width={800}
+            height={500}
+            onSettingsChange={(updates) => setDraft({ ...draft, ...updates })}
+          />
+        </ChartTraceScope>
+      </>
+    );
+  }
+  render(
+    <DataLayerProvider data={rows} charts={[filtered]}>
+      <SameIdDraft />
+    </DataLayerProvider>
+  );
+  const before = screen.getByLabelText("Saved filters").textContent;
+  const point = screen.getByRole("button", {
+    name: "East; row 0; latitude 10°; longitude 179°",
+  });
+  point.focus();
+  fireEvent.keyDown(point, { key: "Escape" });
+  fireEvent.click(screen.getByRole("group", { name: "Point map" }));
+  expect(screen.getByLabelText("Saved filters").textContent).toBe(before);
+  expect(before).toContain("__ID");
+});

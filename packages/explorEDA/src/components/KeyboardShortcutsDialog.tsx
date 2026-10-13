@@ -47,6 +47,8 @@ export const shortcutGroups: ShortcutGroup[] = [
       { keys: [["X"]], action: "Delete chart after confirmation" },
       { keys: [["V"]], action: "View chart data" },
       { keys: [["C"]], action: "Clear chart filters" },
+      { keys: [["E"]], action: "Copy the chart as an image" },
+      { keys: [["Shift", "E"]], action: "Download the chart as a PNG" },
       {
         keys: [["Enter"], ["Space"]],
         action: "Filter by the focused bar or category",

@@ -226,7 +226,17 @@ export const CHART_SETTINGS: Readonly<
     pointRadius:
       "Point radius in pixels, from 2 to 32. With a size field, the largest point's radius.",
     pointOpacity: "Point opacity, from 0.1 to 1.",
-    geometryAssetId: "The region geometry, for region maps.",
+    geometryAssetId:
+      "The region geometry, for region maps: an imported asset's ID, or supplied boundaries such as boundary:world-countries.",
+    showMarks: "Draws the points. Off keeps selections and filters.",
+    clusterPoints:
+      "When on, above 2,000 drawn points, groups nearby points into counted circles that split as you zoom in. Off by default, so every point is drawn.",
+    showLabels:
+      "Writes each point's label beside it, when 150 or fewer points are drawn.",
+    referenceAssetId:
+      "Boundaries drawn beneath points for reference. They are not selectable.",
+    basemap:
+      "Auto draws land, then streets past continent scale when street maps are on; outline always draws land; none draws no basemap.",
     regionField: "Field holding each row's region key.",
     featureKey:
       "GeoJSON property or feature ID matched to the region key. Values and types must match exactly.",

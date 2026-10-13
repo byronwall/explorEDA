@@ -5,6 +5,7 @@ import type { ColorScaleType } from "@/types/ColorScaleTypes";
 import type { Filter } from "@/types/FilterTypes";
 import type { MapSettings } from "./definition";
 import { mapProjection, WORLD_VIEW } from "./mapGeometry";
+import { streetProjection } from "./streetCamera";
 
 export interface MapSnapshot {
   revision: string;
@@ -42,20 +43,26 @@ export function coordinateReason(
     return "Longitude is outside −180 to 180°";
   return undefined;
 }
-export function planPointMap(
-  settings: MapSettings,
-  snapshot: MapSnapshot,
-  width: number,
-  height: number
-) {
-  const mapHeight = Math.max(
+export const pointMapHeight = (settings: MapSettings, height: number) =>
+  Math.max(
     40,
     height -
       MAP_FOOTER -
       (settings.sizeField ? settings.pointRadius * 2 + 12 : 0)
   );
+export function planPointMap(
+  settings: MapSettings,
+  snapshot: MapSnapshot,
+  width: number,
+  height: number,
+  /** Draw over a street basemap in Web Mercator instead of the world map. */
+  street = false
+) {
+  const mapHeight = pointMapHeight(settings, height);
   const view = settings.view ?? WORLD_VIEW;
-  const projection = mapProjection(settings.projection, view, width, mapHeight);
+  const projection = street
+    ? streetProjection(view, settings.projection, width, mapHeight)
+    : mapProjection(settings.projection, view, width, mapHeight);
   const get = (field: string | undefined, id: number) =>
     field ? snapshot.columns[field]?.[id] : undefined;
   const maxSize = settings.sizeField
@@ -82,11 +89,15 @@ export function planPointMap(
     const value = finiteNumber(get(settings.sizeField, sourceId));
     if (!reason && settings.sizeField && (value === undefined || value < 0))
       reason = "Size is missing, invalid, or negative";
-    const xy = reason ? undefined : projection([longitude!, latitude!]);
+    // Web Mercator never reaches the poles; those rows sit outside the view.
+    const polar = street && Math.abs(latitude ?? 0) > 85;
+    const xy =
+      reason || polar ? undefined : projection([longitude!, latitude!]);
     const x = xy?.[0],
       y = xy?.[1];
     if (
       !reason &&
+      !polar &&
       (x === undefined ||
         y === undefined ||
         !Number.isFinite(x) ||
@@ -115,7 +126,8 @@ export function planPointMap(
         : "var(--primary)",
       inScope: live.has(sourceId),
       matching: matching.has(sourceId),
-      offscreen: !reason && (x! < 0 || x! > width || y! < 0 || y! > mapHeight),
+      offscreen:
+        !reason && (polar || x! < 0 || x! > width || y! < 0 || y! > mapHeight),
       reason,
     });
   }
@@ -129,6 +141,7 @@ export function planPointMap(
     points,
     coordinates,
     view,
+    street,
     projection,
     mapHeight,
     width,

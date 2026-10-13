@@ -10,6 +10,12 @@
 | **Open full analysis JSON** | Reopens a full analysis                         |
 | **Copy Data**               | Copies the rows                                 |
 
-A composition can also **Copy PNG** of its artboard.
+## Chart images
+
+Every chart's header has an **Export image** button, and right-clicking a chart offers the same two actions. **Copy image** (<kbd>E</kbd>) puts a PNG on the clipboard to paste into a slide, document, or chat. **Download image** (<kbd>Shift</kbd>+<kbd>E</kbd>) saves it as a file named from the chart title and the date.
+
+The image matches the chart as drawn: its title, subtitle, legends, annotations, and current selection, in the workspace theme, at twice its on-screen size. Header buttons, hover readouts, resize grips, and usage hints are left out. A chart with more rows than fit, such as a pivot table, appears in full; a data table shows the rows in view. A 3D chart exports its current camera view, and a composition exports its finished artboard at its own size. Copying needs a secure (https) page; download works everywhere.
 
 In the demo, **Export analysis** downloads a view's charts and source rows as one JSON file, and **Export project** downloads every view, query, and source table.
+
+A host app can get the same PNG from code with `exportChartPng` on the workspace ref. See the package README.

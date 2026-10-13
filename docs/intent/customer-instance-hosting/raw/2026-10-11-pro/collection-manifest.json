@@ -1,0 +1,36 @@
+{
+  "collected_at": "2026-10-12T04:35:56.771476+00:00",
+  "source": "https://chatgpt.com/c/6acc52f9-15b8-83ea-9033-1fb171f62cc2",
+  "download_method": "ZIP plus byte-for-byte extracted report and JSON",
+  "zip_checks": "relative paths, no traversal or symlinks, CRC passed",
+  "files": [
+    {
+      "path": "customer-instance-hosting-research.zip",
+      "bytes": 78284,
+      "sha256": "05a006906d32fa6ddf190e5c0775c7939510c3d3b2bd2c123055fca0b44f621a"
+    },
+    {
+      "path": "customer-instance-hosting-research.md",
+      "bytes": 150490,
+      "sha256": "e6cc912c8ccd9bca631bec620dab3f0e60acb54b38abb0660f2e1ec3f3be6ac7"
+    },
+    {
+      "path": "customer-instance-hosting-recommendations.json",
+      "bytes": 143566,
+      "sha256": "74c8cb30f21cce2cc453e35c4626af97f07998d65e2e0f8d3bbc50a357a334e5"
+    }
+  ],
+  "companions": [
+    {
+      "name": "customer-instance-hosting-research.md",
+      "archive_copy_identical": true,
+      "retrieved_at": "2026-10-12T04:36:52.554124+00:00"
+    },
+    {
+      "name": "customer-instance-hosting-recommendations.json",
+      "archive_copy_identical": true,
+      "retrieved_at": "2026-10-12T04:37:58.203213+00:00"
+    }
+  ],
+  "prompt_sha256": "8281bc524063106f9421264c3407b0bcc0dc869ec752133021668cd8a8fe4d92"
+}

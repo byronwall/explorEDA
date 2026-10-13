@@ -40,6 +40,8 @@ import { validateSavedData } from "@/utils/saveDataUtils";
 import { parsePath, setPath } from "./paths";
 import { settingWords } from "./schema";
 import { parseLayout, placeLayout, type LayoutProblem } from "./layout";
+import { boundaryAssetId, listBoundarySets } from "@/lib/boundaries/registry";
+import "@/lib/boundaries/regionFunction";
 import {
   CHART_SETTING_KEYS,
   FIELD_SETTING_WORDS,
@@ -1985,7 +1987,14 @@ export function compileDocument(
         aggregates.map((item) => item.id),
         "group",
       ],
-      geometryAssetId: ["map shape", geometryAssets.map((item) => item.id), ""],
+      geometryAssetId: [
+        "map shape",
+        [
+          ...geometryAssets.map((item) => item.id),
+          ...listBoundarySets().map((set) => boundaryAssetId(set.id)),
+        ],
+        "",
+      ],
     } as const;
     if (top in references && path.segments.length === 1) {
       const [noun, ids, keyword] = references[top as keyof typeof references];
