@@ -355,7 +355,7 @@
         "rollback": "Revert the milestone PR; no users or saved text depend on the old syntax.",
         "status": "completed",
         "evidence": [
-          "byronwall/explorEDA#336; schema.test.ts, dashboardTextSize.test.ts"
+          "byronwall/explorEDA#336; schema.test.ts"
         ]
       },
       {
