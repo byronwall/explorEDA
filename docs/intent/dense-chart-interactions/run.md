@@ -33,3 +33,9 @@ The retry was accepted after public-source evidence. Both files uploaded and the
 ## Initial local work
 
 Saved the current intent and initiative map. The brainstorm and shape remain pending Pro evidence. No product implementation or tests were performed.
+
+Validation: `validate-sleuth.mjs docs/intent/dense-chart-interactions` passed with no warnings. `git diff --check` passed. Final repository checks remain due before the PR.
+
+Checkpoint: `9ec3a4d4` saved the prepared research and current intent. Both Git identities were verified as Byron Wall <byron@byroni.us>.
+
+The original browser tab closed during local work. Reopened the same saved conversation, without resubmission. It showed active source inspection and web research. Submission evidence: `tmp/dense-chart-interactions/pro-submitted.png` (untracked screenshot).
