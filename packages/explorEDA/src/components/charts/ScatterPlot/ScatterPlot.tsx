@@ -455,6 +455,7 @@ function ScatterPoints({
               inspect ? choose("point", id) : selectPoint(id)
             }
             onSelectPoint={(x, y) => {
+              if (surfaceMode && !showSurfacePoints) return false;
               const point = pointAt(x, y);
               if (!point) return false;
               selectPoint(point.id);
