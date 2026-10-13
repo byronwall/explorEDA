@@ -56,6 +56,8 @@ function readingColumns(summaries: Array<FieldSummary | undefined>) {
   return {
     "--eda-summary-low": `${low}ch`,
     "--eda-summary-high": `${high}ch`,
+    // The width a range needs on one line; narrower cells stack its bounds.
+    "--eda-summary-range": `${high === 0 ? low : low + 2 + high}ch`,
     "--eda-summary-stat-label": `${width(present.map((summary) => summary.statLabel))}ch`,
     "--eda-summary-stat": `${width(present.map((summary) => summary.stat))}ch`,
   } as CSSProperties;
@@ -247,15 +249,19 @@ export function CompactSummaryTable({
                         ) : (
                           <>
                             <span className="eda-summary-low">
-                              {summary.low}
+                              <span className="eda-summary-bound">
+                                {summary.low}
+                              </span>
+                              {summary.high !== undefined && (
+                                <span className="eda-summary-sep">–</span>
+                              )}
                             </span>
                             {summary.high !== undefined && (
-                              <>
-                                <span className="eda-summary-sep">–</span>
-                                <span className="eda-summary-high">
+                              <span className="eda-summary-high">
+                                <span className="eda-summary-bound">
                                   {summary.high}
                                 </span>
-                              </>
+                              </span>
                             )}
                           </>
                         )}
