@@ -134,14 +134,8 @@ The same codec runs through a third file adapter. This is launch scope because t
 
 ## Open decisions and spikes
 
-- **App assets in the package (M2 spike).**
-  - **Decision:** whether `dist/app/` ships inside `exploreda`.
-  - **Evidence:** packed size change, and cold `npx` start time on a clean cache.
-  - **Fallback:** if it adds more than about 5 MB or 3 seconds, publish the app as `@exploreda/app` and have the bin install it on first run.
-- **View query and inputs syntax (M1).**
-  - **Decision:** the exact spelling of `query=` and `bind.` on view lines.
-  - **Evidence:** export of every demo analysis, plus a cold-agent draft as in the first proof.
-  - **Fallback:** a per-view `inputs { … }` body.
+- **App assets in the package (M2 spike), resolved:** they ship in `exploreda`. The app adds 1.4 MB compressed (4.7 MB unpacked) to a 7.6 MB tarball. A cold `npx` start took 13 s, almost all of it npm installing the library's dependencies; the bin is self-contained and needs none of them. M6 looks at that install time.
+- **View query and inputs syntax (M1), resolved:** `eda query=` for the file and `query=` / `bind.<param>=` on view lines, as proposed.
 
 ## Below the cut line
 

@@ -8,7 +8,7 @@
     "last_updated": "2026-10-12",
     "summary": "npx exploreda in a folder starts a local server and opens the app on that project; sources, joins, and analyses are DSL v2 text files.",
     "status": "active",
-    "next_action": "M2: read-only server and apps/app"
+    "next_action": "M3: autosave and file watching"
   },
   "artifacts": {
     "intent_brief": {
@@ -609,8 +609,10 @@
         "proof": "Token/Host 403 tests; browser screenshots at three widths.",
         "valid_intermediate_state": "Read-only app; edits not saved.",
         "rollback": "Drop the bin entry.",
-        "status": "planned",
-        "evidence": []
+        "status": "completed",
+        "evidence": [
+          "npx of packed tarball serves apps/app on examples/shop; src/server/handler.test.ts (token and Host 403); apps/app/src/httpFiles.test.ts; screenshots at 1280/783/390; spike: app 1.4 MB compressed, cold npx 13 s (dependency install)"
+        ]
       },
       {
         "id": "m3",
@@ -672,10 +674,7 @@
       "Editor/LSP completion",
       "Multi-user features"
     ],
-    "open_decisions": [
-      "App assets inside exploreda package vs @exploreda/app (M2 spike)",
-      "View query/bind syntax (M1)"
-    ]
+    "open_decisions": []
   },
   "history": [
     {

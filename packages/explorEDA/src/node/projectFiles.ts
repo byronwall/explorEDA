@@ -11,7 +11,7 @@ import {
   ProjectFileError,
   SKIPPED_FOLDERS,
   type ProjectFiles,
-} from "@/lib/project/files";
+} from "../lib/project/files";
 
 export interface NodeProjectFiles extends ProjectFiles {
   root: string;
