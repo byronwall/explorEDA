@@ -221,9 +221,7 @@ scale @makers field=plane.manufacturer {
   mapping.4[]="BOMBARDIER INC","#9c6eac" overflow=other
 }
 
-group @delay-by-visibility name="Mean departure delay by visibility" {
-  groupField=visibility_band measureField=flights.dep_delay aggregation=average
-}
+group @delay-by-visibility avg(flights.dep_delay) by=visibility_band name="Mean departure delay by visibility"
 
 view "Delays carry through" {
   chart markdown @flights-summary at=0,0,4,5 title="All ${formatCount(audit.flights)} January flights" {
@@ -238,7 +236,7 @@ view "Delays carry through" {
     stages[]=dep_band,arr_band nodeOrder=label flowColor=first
   }
   metric count @flights-count at=0,5,2,2 title="Flights"
-  metric avg=flights.dep_delay @flights-mean at=2,5,2,2 title="Mean departure delay"
+  metric avg(flights.dep_delay) @flights-mean at=2,5,2,2 title="Mean departure delay"
   bar flights.origin @flights-origin at=0,7,6,5 color=arr_band {
     seriesField=arr_band seriesLayout=percent
     title="Arrival status at each origin" yAxisLabel="Share of flights (%)"
@@ -296,7 +294,7 @@ view "Weather at the scheduled hour" {
   row weather_match @flights-weather-match at=8,3,4,3 title="Weather lookup" {
     xAxisLabel="" minRowHeight=20 maxRowHeight=28
   }
-  hist visibility_band @flights-visibility-mean at=0,6,6,5 aggregateId=delay-by-visibility {
+  hist visibility_band @flights-visibility-mean at=0,6,6,5 group=delay-by-visibility {
     categoryOrder=label
     title="Mean departure delay by visibility" xAxisLabel="Visibility"
     yAxisLabel="Mean departure delay (min)"
@@ -333,7 +331,7 @@ view "When delays happened" {
     )}
   }
   metric count @flights-days-count at=8,4,2,2 title="Flights"
-  metric avg=flights.dep_delay @flights-days-mean at=10,4,2,2 title="Mean delay"
+  metric avg(flights.dep_delay) @flights-days-mean at=10,4,2,2 title="Mean delay"
   chart heatmap field=flights.sched_dep_hour @flights-hours at=0,6,6,6 {
     columnField=flights.origin aggregation=average measureField=flights.dep_delay
     sortBy=label

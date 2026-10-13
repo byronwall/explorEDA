@@ -281,10 +281,8 @@ view "Where people lack power" {
       ]
     )}
   }
-  group @without-by-region name="People without electricity by region" {
-    groupField=country.region measureField=without_electricity aggregation=sum
-  }
-  hist country.region @wb-map-region at=8,4,4,5 aggregateId=without-by-region {
+  group @without-by-region sum(without_electricity) by=country.region name="People without electricity by region"
+  hist country.region @wb-map-region at=8,4,4,5 group=without-by-region {
     ${IN_2023} color=country.region categoryOrder=label
     title="People without electricity by region" yAxisLabel="People"
   }

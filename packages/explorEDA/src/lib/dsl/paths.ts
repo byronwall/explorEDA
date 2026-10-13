@@ -135,6 +135,12 @@ export function setPath<T>(target: T, path: DslPath, value: DslValue): T {
         : value.items.map((item) => decodeItem(item, undefined));
   } else if (marker === "object") {
     next = {};
+  } else if (Array.isArray(current) && !unset) {
+    // A setting that holds a list reads a,b as one; an empty value clears it.
+    next =
+      value.raw === ""
+        ? []
+        : value.items.map((item) => decodeItem(item, undefined));
   } else if (value.items.length > 1) {
     next = value.items.map((item) => decodeItem(item, undefined));
   } else {
@@ -198,6 +204,13 @@ function sameValue(a: unknown, b: unknown): boolean {
   return JSON.stringify(a) === JSON.stringify(b);
 }
 
+/** A value after `=`: a color such as #1f2328 reads plainly there. */
+function encodePairValue(value: string | number | boolean | null): string {
+  return typeof value === "string" && /^#[0-9a-fA-F]{3,8}$/.test(value)
+    ? value
+    : encodeScalar(value);
+}
+
 /**
  * Lists the pairs that turn `base` into `next`. Records in a list are
  * rewritten whole, so their order survives.
@@ -217,7 +230,7 @@ export function diffPaths(
   if (isPlain(next)) {
     // A whole number written as text must stay text.
     return [
-      `${key}=${typeof base === "string" && typeof next === "string" ? encodeScalarAsText(next) : encodeScalar(next)}`,
+      `${key}=${typeof base === "string" && typeof next === "string" ? encodeScalarAsText(next) : encodePairValue(next)}`,
     ];
   }
   if (Array.isArray(next)) {
@@ -225,7 +238,9 @@ export function diffPaths(
       next.every(isPlain) &&
       next.every((item) => !(typeof item === "string" && item === ""))
     ) {
-      return [`${key}[]=${next.map((item) => encodeScalar(item)).join(",")}`];
+      return [
+        `${key}[]=${next.map((item) => encodePairValue(item)).join(",")}`,
+      ];
     }
     return [
       `${key}[]=`,
@@ -276,7 +291,8 @@ export function diffPaths(
 
 /** Text whose setting is text: only quote when the plain form misreads. */
 function encodeScalarAsText(value: string) {
-  return /^[^\s",=#@+[\]{}][^\s",=]*$/.test(value) &&
+  return (/^[^\s",=#@+[\]{}][^\s",=]*$/.test(value) ||
+    /^#[0-9a-fA-F]{3,8}$/.test(value)) &&
     value !== "null" &&
     value !== "unset"
     ? value

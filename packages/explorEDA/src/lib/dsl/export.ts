@@ -6,12 +6,20 @@ import type { FieldSettings } from "@/lib/fieldSettings";
 import type { GridSettings, SavedChartSettings } from "@/types/SavedDataTypes";
 import { compileDocument } from "./compile";
 import { normalizeChart } from "./normalize";
-import { diffPaths, encodeScalar, formatPath, parsePath } from "./paths";
+import {
+  diffPaths,
+  encodeScalar,
+  formatPath,
+  getPath,
+  parsePath,
+} from "./paths";
 import { splitPair } from "./parse";
 import { wordForPath } from "./schema";
 import { layoutLines } from "./layout";
 import { block } from "./print";
-import { liftComposition } from "./composition";
+import { encodeValue, liftComposition } from "./composition";
+import { liftAnnotations, type DateAxes } from "./annotations";
+import { liftListChildren } from "./lists";
 import { FIELD_SETTING_WORDS, GRID_SETTING_WORDS } from "./settingKeys";
 
 export interface DslExportOptions {
@@ -85,6 +93,35 @@ function filterPairs(
   return pairs;
 }
 
+/** An aggregation as a call: count, sum(Revenue), avg("Net sales"). */
+export function callFor(aggregation: string, field: string | undefined) {
+  if (aggregation === "count" || !field) {
+    return "count";
+  }
+  return `${aggregation === "average" ? "avg" : aggregation}(${encodeValue(field)})`;
+}
+
+/** Chart words whose head names one field. */
+const ONE_FIELD: Record<string, string> = {
+  row: "row",
+  boxplot: "boxplot",
+  calendar: "calendar",
+  ecdf: "ecdf",
+  heatmap: "heatmap",
+};
+
+/** Chart words that need nothing in the head. */
+const BARE: Record<string, string> = {
+  line: "line",
+  pivot: "pivot",
+  sankey: "sankey",
+  hierarchy: "hierarchy",
+  markdown: "markdown",
+  map: "map",
+  summary: "summary",
+  composition: "composition",
+};
+
 function headFor(chart: SavedChartSettings): string {
   const name = (field: string | undefined) => encodeScalar(field ?? "");
   switch (chart.type) {
@@ -92,23 +129,43 @@ function headFor(chart: SavedChartSettings): string {
       return `scatter x=${name(chart.xField)} y=${name(chart.yField)}`;
     case "bar":
       return `${chart.forceString ? "bar" : "hist"} ${name(chart.field)}`;
-    case "row":
-      return `row ${name(chart.field)}`;
     case "metric-card":
-      return chart.aggregation === "count" || !chart.measureField
-        ? "metric count"
-        : `metric ${chart.aggregation === "sum" ? "sum" : "avg"}=${name(chart.measureField)}`;
+      return `metric ${callFor(chart.aggregation, chart.measureField)}`;
     case "data-table":
-      return chart.columns.length
+      // Columns with their own settings are written as column lines.
+      return chart.columns.length &&
+        chart.columns.every(
+          (column) =>
+            column.id === column.field && Object.keys(column).length === 2
+        )
         ? `table ${chart.columns.map((column) => name(column.field)).join(",")}`
         : "table";
-    case "summary":
-      return "summary";
-    case "composition":
-      return "composition";
-    default:
-      return `chart ${chart.type}${chart.field ? ` field=${name(chart.field)}` : ""}`;
+    case "parallel-coordinates":
+      return chart.axes.length && chart.axes.every((axis) => !axis.inverted)
+        ? `parallel ${chart.axes.map((axis) => name(axis.field)).join(",")}`
+        : "parallel";
   }
+  if (ONE_FIELD[chart.type] && chart.field) {
+    return `${ONE_FIELD[chart.type]} ${name(chart.field)}`;
+  }
+  if (BARE[chart.type]) {
+    return BARE[chart.type]!;
+  }
+  return `chart ${chart.type}${chart.field ? ` field=${name(chart.field)}` : ""}`;
+}
+
+/** Which axes of a chart show dates, so annotation values read as dates. */
+function dateAxes(
+  chart: SavedChartSettings,
+  types: Record<string, string>
+): DateAxes {
+  const record = chart as unknown as Record<string, unknown>;
+  const xField = (record.xField ?? record.field) as string | undefined;
+  const yField = record.yField as string | undefined;
+  return {
+    x: !!xField && types[xField] === "datetime",
+    y: !!yField && types[yField] === "datetime",
+  };
 }
 
 /** The field a chart's head names, which it goes by without an @name. */
@@ -171,12 +228,28 @@ function chartHandles(charts: SavedChartSettings[]) {
 }
 
 /** Writes a `path=value` pair with the setting's word when it has one. */
-function toWord(type: string, pair: string): string {
+function toWord(type: string, pair: string, base: unknown): string {
   const [key, value] = splitPair(pair) ?? [pair, ""];
   const path = parsePath(key);
+  if (!path) {
+    return pair;
+  }
+  // A setting that is a list reads a,b without [] once compile knows it is.
+  // Records in a list are rewritten whole, so a list inside one keeps [].
+  const list =
+    path.marker === "list" &&
+    !path.segments.some((segment) => /^\d+$/.test(segment)) &&
+    Array.isArray(getPath(base, path.segments));
+  if (path.marker && !list) {
+    return pair;
+  }
+  const joined = path.segments.join(".");
+  // size= takes a field or a number, so it writes both of these.
   const word =
-    path && !path.marker && wordForPath(type, path.segments.join("."));
-  return word ? `${word}=${value}` : pair;
+    type === "scatter" && (joined === "sizeField" || joined === "pointSize")
+      ? "size"
+      : wordForPath(type, joined);
+  return `${word ?? formatPath(path.segments)}=${value}`;
 }
 
 /** Text for one dashboard, split into what views share and what each owns. */
@@ -329,12 +402,23 @@ export function exportParts(
     ...profiles.map((profile) => profile.name),
     ...calcNames,
   ]);
-  const scaleHeads = settings.colorScales.map(
-    (scale) =>
-      `scale @${scale.id}${scale.sourceField && known.has(scale.sourceField) ? ` field=${encodeScalar(scale.sourceField)}` : ""}`
-  );
+  const scaleHeads = settings.colorScales.map((scale) => {
+    const field =
+      scale.sourceField && known.has(scale.sourceField)
+        ? ` field=${encodeScalar(scale.sourceField)}`
+        : "";
+    // Each value's color reads as a map; theme settings follow as their own.
+    const map =
+      scale.type === "categorical" && scale.mapping.length
+        ? ` map=${scale.mapping
+            .map(([value, color]) => `${encodeValue(value)}:${color}`)
+            .join(",")}`
+        : "";
+    return `scale @${scale.id}${field}${map}`;
+  });
   const groupHeads = (settings.aggregates ?? []).map(
-    (spec) => `group @${spec.id}`
+    (spec) =>
+      `group @${spec.id} ${callFor(spec.aggregation, spec.measureField)}${spec.groupField ? ` by=${encodeValue(spec.groupField)}` : ""}`
   );
   const skeleton = [
     ...workspace,
@@ -362,16 +446,39 @@ export function exportParts(
     const built = base.settings.colorScales.find(
       (item) => item.id === scale.id
     );
-    return block(scaleHeads[index]!, diffRecord(built ?? {}, scale, ["id"]));
+    return block(
+      scaleHeads[index]!,
+      diffRecord(built ?? {}, scale, ["id"]).map((pair) =>
+        toWord("", pair, built)
+      )
+    );
   });
   const groupLines = (settings.aggregates ?? []).flatMap((spec, index) => {
     const built = base.settings.aggregates?.find((item) => item.id === spec.id);
     return block(groupHeads[index]!, diffRecord(built ?? {}, spec, ["id"]));
   });
-  const rowsPairs = settings.rowsSettings
-    ? diffRecord(base.settings.rowsSettings, settings.rowsSettings, [])
+  // The Rows view reads like a table: where. filters and column lines.
+  const rows = settings.rowsSettings;
+  const rowsFilters = rows?.filters.length
+    ? filterPairs("where", rows.filters, types)
     : [];
-  const rowsLines = settings.rowsSettings ? block("rows", rowsPairs) : [];
+  const rowsColumns = rows
+    ? liftListChildren(
+        "data-table",
+        rows as unknown as Record<string, unknown>,
+        base.settings.rowsSettings as unknown as Record<string, unknown>
+      )
+    : { lines: [], keys: [] };
+  const rowsPairs = rows
+    ? [
+        ...(rowsFilters ?? []),
+        ...diffRecord(base.settings.rowsSettings, rows, [
+          ...rowsColumns.keys,
+          ...(rowsFilters ? ["filters"] : []),
+        ]).map((pair) => toWord("", pair, base.settings.rowsSettings)),
+      ]
+    : [];
+  const rowsLines = rows ? block("rows", rowsPairs, rowsColumns.lines) : [];
   // One `filter` line per workspace filter, so each reads on its own.
   const filterLines = (settings.workspaceFilters ?? []).flatMap((filter) => {
     const pairs = filterPairs(undefined, [filter], types);
@@ -398,11 +505,21 @@ export function exportParts(
       chart.type === "composition"
         ? liftComposition(chart.composition)
         : undefined;
+    const lists = liftListChildren(
+      chart.type,
+      chart as unknown as Record<string, unknown>,
+      built as unknown as Record<string, unknown>
+    );
+    const annotations = chart.annotations?.length
+      ? liftAnnotations(chart.annotations, chart.id, dateAxes(chart, types))
+      : [];
     const skip = new Set([
       "id",
       "type",
       "layout",
       ...(graphic ? ["composition"] : []),
+      ...lists.keys,
+      ...(annotations.length ? ["annotations"] : []),
     ]);
     const extra: string[] = [];
     for (const key of new Set([...Object.keys(built), ...Object.keys(chart)])) {
@@ -422,9 +539,9 @@ export function exportParts(
       [
         ...pairs,
         ...(graphic?.head ?? []),
-        ...extra.map((pair) => toWord(chart.type, pair)),
+        ...extra.map((pair) => toWord(chart.type, pair, built)),
       ],
-      graphic?.body
+      [...(graphic?.body ?? []), ...lists.lines, ...annotations]
     );
   });
 

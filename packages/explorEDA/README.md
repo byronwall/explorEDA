@@ -299,7 +299,7 @@ filter Channel=Web,Store
 scatter @web x=revenue y=profit where.Channel=Web {
   title="Web orders" x.scale=log
 }
-metric @gains sum=profit where.profit=0..
+metric @gains sum(profit) where.profit=0..
 table @orders revenue,profit,Channel
 layout {
   5: web web gains
@@ -327,7 +327,7 @@ npx exploreda-dsl reference
 npx exploreda-dsl reference scatter
 ```
 
-Set an axis range with `x.min=`, `x.max=`, `y.min=`, and `y.max=`. They save as `xAxis.limits` and `yAxis.limits` and only change the view; rows outside stay counted. Each setting has one spelling: a word such as `x.title=` or `bins=` when it has one, and otherwise its saved path, such as `minRowHeight=30` or `columns.0.width=140`. `exploreda-dsl reference <type>` lists them. A chart goes by its `@name`, or by its field when no other chart shares it, so `row Region` is placed as `Region`. `formatDsl(text)` indents by brace depth without changing meaning. A `composition` chart writes its parts as child lines named for their kind (`title`, `unit`, `path`, `legend`, `note`, and so on), which point at each other by name instead of generated IDs. Color scales, grouped summaries, and the Rows view have their own lines (`scale`, `group`, `rows`). `exportDocument(settings, { rows })` writes the current dashboard as text that rebuilds it. Region maps refer to map shapes the host passes in as `geometryAssets`.
+Set an axis range with `x.min=`, `x.max=`, `y.min=`, and `y.max=`. They save as `xAxis.limits` and `yAxis.limits` and only change the view; rows outside stay counted. Each setting has one spelling: a word such as `x.title=` or `bins=` when it has one, and otherwise its saved path, such as `minRowHeight=30` or `columns.0.width=140`. `exploreda-dsl reference <type>` lists them. A chart goes by its `@name`, or by its field when no other chart shares it, so `row Region` is placed as `Region`. `formatDsl(text)` indents by brace depth without changing meaning. Charts take child lines too: annotations (`callout`, `rule`, `band`, `region`, `interval`, `records`) with ISO dates on date axes, and lists of records such as a table's `column Revenue width=140`, a pivot's `value sum(Revenue)`, or a line's `series Visits lineColor=#3479a8`. Metrics and grouped summaries read as calls: `metric sum(Revenue)`, `group @byRegion sum(Revenue) by=Region`. A color scale writes each value's color as `map=Web:#3479a8,Store:#c77a45`. A `composition` chart writes its parts as child lines named for their kind (`title`, `unit`, `path`, `legend`, `note`, and so on), which point at each other by name instead of generated IDs. Color scales, grouped summaries, and the Rows view have their own lines (`scale`, `group`, `rows`). `exportDocument(settings, { rows })` writes the current dashboard as text that rebuilds it. Region maps refer to map shapes the host passes in as `geometryAssets`.
 
 ### Several views in one text
 
@@ -338,7 +338,7 @@ dashboard "Sales"
 calc profit = Revenue - Cost
 
 view Overview {
-  metric sum=Revenue
+  metric sum(Revenue)
   scatter x=Revenue y=profit color=Channel
 }
 

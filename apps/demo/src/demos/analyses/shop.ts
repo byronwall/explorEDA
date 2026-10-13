@@ -31,17 +31,13 @@ scale @category-colors field=Category {
 scale @channels field=Channel {
   ${CHANNELS}
 }
-group @revenue-by-region name="Revenue by region" {
-  groupField=Region measureField=Revenue aggregation=sum
-}
-group @revenue-by-product name="Revenue by product" {
-  groupField=Product measureField=Revenue aggregation=sum
-}
+group @revenue-by-region sum(Revenue) by=Region name="Revenue by region"
+group @revenue-by-product sum(Revenue) by=Product name="Revenue by product"
 
 view "Order book" {
   metric count @shop-count at=0,0,4,2 title="Matching orders"
-  metric sum=Revenue @shop-revenue at=4,0,4,2 title="Revenue in this selection"
-  metric avg=Revenue @shop-average at=8,0,4,2 title="Average order value"
+  metric sum(Revenue) @shop-revenue at=4,0,4,2 title="Revenue in this selection"
+  metric avg(Revenue) @shop-average at=8,0,4,2 title="Average order value"
   scatter x=Revenue y=Margin @shop-margin at=0,2,6,5 color=Category {
     xAxis.scaleType=symlog yAxis.scaleType=symlog title="Revenue and margin per order"
     xAxisLabel="Revenue ($)" yAxisLabel="Margin ($)"
@@ -58,7 +54,7 @@ view "Order book" {
   chart boxplot field=Revenue @shop-order at=4,7,4,4 color=Category {
     yAxis.scaleType=symlog title="Order value by category" yAxisLabel="Revenue ($)"
   }
-  hist Revenue @shop-region at=8,7,4,4 aggregateId=revenue-by-region {
+  hist Revenue @shop-region at=8,7,4,4 group=revenue-by-region {
     title="Revenue by region" xAxisLabel=Region yAxisLabel="Revenue ($)"
   }
   chart heatmap field=Category @shop-category-region at=0,11,6,6 {
@@ -74,7 +70,7 @@ view "Order book" {
 
 }
 view "Sales mix" {
-  bar Region @mix-grouped at=0,0,6,6 aggregateId=revenue-by-region {
+  bar Region @mix-grouped at=0,0,6,6 group=revenue-by-region {
     seriesField=Channel color=Channel title="Revenue by region and channel"
     yAxisLabel="Revenue ($)"
   }
@@ -95,7 +91,7 @@ view "Sales mix" {
     rowFields[]=Region columnField=Channel valueFields[]=
     valueFields.0.field=Revenue valueFields.0.aggregation=sum valueFields.0.label=Revenue
   }
-  row Product @mix-products at=8,11,4,5 aggregateId=revenue-by-product topN=4 {
+  row Product @mix-products at=8,11,4,5 group=revenue-by-product topN=4 {
     title="Which products bring in the revenue?" xAxisLabel="Revenue ($)"
   }
   chart hierarchy @mix-hierarchy at=0,16,12,6 levels[]=Region,Category {
