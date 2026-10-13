@@ -4,11 +4,11 @@
     "title": "Self-hosted team server with Docker Compose",
     "slug": "self-hosted-team-server",
     "scale": "capability",
-    "current_phase": "shape",
+    "current_phase": "plan",
     "last_updated": "2026-10-13",
     "summary": "A free Docker Compose team server for one company: local accounts, projects with author and viewer members, CSV and JSON files by upload or URL, and project folders on one volume. File-only; database sources are a separate initiative.",
     "status": "planned",
-    "next_action": "Write the implementation plan, starting with the local role proof on the CLI server."
+    "next_action": "Start M1: access port, AccountStore spike, and the two-window author/viewer proof."
   },
   "artifacts": {
     "intent_brief": {
@@ -28,8 +28,8 @@
     },
     "implementation_plan": {
       "path": "implementation-plan.md",
-      "status": "not-created",
-      "updated_at": null
+      "status": "current",
+      "updated_at": "2026-10-13"
     }
   },
   "sources": [
@@ -487,20 +487,186 @@
     "open_decisions": []
   },
   "implementation": {
-    "status": "not-started",
+    "status": "planned",
     "repository_snapshot": {
-      "root": null,
-      "revision": null,
-      "worktree_status": null,
-      "subsystems": [],
-      "test_commands": [],
-      "deployment_surfaces": []
+      "root": ".",
+      "revision": "30579659",
+      "worktree_status": "clean; based on claude/cli-m6-launch (CLI PRs 369–376 assumed merged)",
+      "subsystems": [
+        "packages/explorEDA/src/server (handler, server)",
+        "packages/explorEDA/src/node (projectFiles, globalConfig)",
+        "packages/explorEDA/src/lib/project (ProjectFiles port, folder codec)",
+        "packages/explorEDA/src/cli/exploreda.ts",
+        "apps/app (App, saver, httpFiles, ProjectWorkspace)",
+        "apps/demo/src/docs/pages/project-folders.mdx"
+      ],
+      "test_commands": [
+        "pnpm --filter exploreda exec vitest run src/server src/node",
+        "pnpm --filter app test",
+        "pnpm --filter exploreda check-types",
+        "pnpm check:ui",
+        "pnpm check"
+      ],
+      "deployment_surfaces": [
+        ".github/workflows/cli-smoke.yml",
+        "new team-server-smoke workflow",
+        "release.yml (image publish only with approval)"
+      ]
     },
-    "dependencies": [],
-    "fast_local_loop": null,
-    "milestones": [],
-    "cut_line": [],
-    "open_decisions": []
+    "dependencies": [
+      {
+        "name": "SQLite via node:sqlite",
+        "material": true,
+        "application_seam": "AccountStore",
+        "first_proof_role": {
+          "mode": "absent",
+          "rationale": "The role proof uses the in-memory AccountStore; SQLite arrives in M2 under the same contract suite."
+        },
+        "failure_modes": [
+          "hard kill mid-write",
+          "module unavailable on Node < 22.5"
+        ],
+        "proof_rungs": [
+          "fake",
+          "contract-test",
+          "embedded-real"
+        ],
+        "local_proof": "Store contract suite on the fake and on a temp SQLite file.",
+        "live_proof": "Compose smoke restart in CI (M4).",
+        "rollout": "Fallback JSON-file store behind AccountStore if the M1 spike fails."
+      },
+      {
+        "name": "Outbound HTTP for URL sources",
+        "material": true,
+        "application_seam": "fetchSource(url, limits) in the server",
+        "first_proof_role": {
+          "mode": "absent",
+          "rationale": "Not needed for the role proof; added in M3."
+        },
+        "failure_modes": [
+          "stall",
+          "404",
+          "oversized body",
+          "redirect to metadata or link-local address"
+        ],
+        "proof_rungs": [
+          "fake",
+          "container"
+        ],
+        "local_proof": "Local test HTTP server with injected failures.",
+        "live_proof": "One internal-style URL fetched in the Compose smoke from a sibling container.",
+        "rollout": "Hide the From URL action; uploaded and fetched files stay plain project files."
+      },
+      {
+        "name": "Docker and Compose",
+        "material": true,
+        "application_seam": "exploreda server --data subcommand; the image only wraps it",
+        "first_proof_role": {
+          "mode": "absent",
+          "rationale": "Packaging only; behavior proven on plain Node first."
+        },
+        "failure_modes": [
+          "volume permissions for non-root user",
+          "missing session secret"
+        ],
+        "proof_rungs": [
+          "container",
+          "deployed-smoke"
+        ],
+        "local_proof": "docker compose up locally.",
+        "live_proof": "CI team-server-smoke with restart and, in M5, the fixture volume.",
+        "rollout": "Image published only after approval; users can build from the Dockerfile."
+      }
+    ],
+    "fast_local_loop": {
+      "command": "EXPLOREDA_DATA=<dir> pnpm --filter app dev; pnpm --filter exploreda exec vitest run src/server src/node",
+      "starts": [
+        "Vite dev server with team-mode middleware",
+        "seeded author and viewer"
+      ],
+      "shared_infrastructure_required": false,
+      "network_required": false,
+      "failure_injection": [
+        "memoryProjectFiles refuse option",
+        "in-memory AccountStore with disabled accounts and expired sessions",
+        "local HTTP server: stall, 404, oversize, redirect to metadata"
+      ]
+    },
+    "milestones": [
+      {
+        "id": "m1",
+        "title": "An author and a viewer share one project",
+        "outcome": "Two windows on a local exploreda server: the author's saves reach the viewer with a name; viewer changes never save and server refuses viewer writes.",
+        "dependencies_introduced": [],
+        "proof": "Handler tests (viewer/non-member/cross-site 403, missing cookie 401, named save broadcast skipping the writer); store contract suite on the in-memory store; saver viewer-mode test; browser two-window check at 1280/783/390.",
+        "valid_intermediate_state": "exploreda server works with seeded in-memory accounts and on-disk projects; CLI unchanged.",
+        "rollback": "Remove the server subcommand; localAccess path is the old handler.",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m2",
+        "title": "Admins set up accounts and authors set up projects",
+        "outcome": "Accounts persist in SQLite; from an empty data directory an admin sets up the server, invites by link, and authors create shared projects with members.",
+        "dependencies_introduced": [
+          "SQLite"
+        ],
+        "proof": "Store contract suite on SQLite plus restart persistence; node:sqlite spike; Store and handler tests per rule; browser checks of setup, admin, and members at three widths; pnpm check:ui.",
+        "valid_intermediate_state": "Full multi-user server without file intake beyond the app's own saves.",
+        "rollback": "Revert the PR; M1 seeded mode remains.",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m3",
+        "title": "Authors add files by upload or URL",
+        "outcome": "Authors upload CSV/JSON or fetch by URL, see fetch time, and refetch.",
+        "dependencies_introduced": [
+          "Outbound HTTP"
+        ],
+        "proof": "Local failing HTTP server tests; blocked-address tests; failed refetch keeps old copy; folder opens with npx.",
+        "valid_intermediate_state": "Server usable for real file analyses.",
+        "rollback": "Hide Add data routes; uploaded files stay plain project files.",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m4",
+        "title": "One Compose file runs the server",
+        "outcome": "docker compose up gives a working team server whose data survives restart.",
+        "dependencies_introduced": [
+          "Docker and Compose"
+        ],
+        "proof": "Local compose run; CI team-server-smoke builds image, sets up admin, uploads, restarts, checks persistence.",
+        "valid_intermediate_state": "Image buildable from docs; publishing waits for approval.",
+        "rollback": "Do not publish the image.",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m5",
+        "title": "Upgrades keep everything",
+        "outcome": "A new image migrates data with a dated backup and refuses to start on failure.",
+        "dependencies_introduced": [],
+        "proof": "Migration tests with injected failure; CI smoke against the fixture volume from the M4 release.",
+        "valid_intermediate_state": "Upgrade path proven before announcing.",
+        "rollback": "Restore from <data>/backups/<date>/.",
+        "status": "planned",
+        "evidence": []
+      }
+    ],
+    "cut_line": [
+      "Scheduled URL refetch; project zip download",
+      "Database sources (own initiative)",
+      "SSO, email invites, share links, audit log",
+      "Import CLI project or Git repo",
+      "Live co-editing or locks",
+      "Multi-instance or Kubernetes"
+    ],
+    "open_decisions": [
+      "Image registry and name: default ghcr.io/byronwall/exploreda, published by release.yml after approval.",
+      "node:sqlite viability (M2 spike); fallback JSON store."
+    ]
   },
   "history": [
     {
@@ -513,6 +679,12 @@
       "date": "2026-10-13",
       "event": "questions and shape",
       "summary": "Three question rounds settled projects with members, folder storage, viewer exploration, upload and URL sources, admin flag, auto-migrate; database sources moved out of scope. Shape brief written.",
+      "status": "planned"
+    },
+    {
+      "date": "2026-10-13",
+      "event": "plan",
+      "summary": "Implementation plan written: five stacked milestones; found that own-write echo suppression means team mode must broadcast saves with the writer's name.",
       "status": "planned"
     }
   ],

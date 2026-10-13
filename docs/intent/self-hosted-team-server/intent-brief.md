@@ -61,4 +61,4 @@ The CLI stack (PRs 369–376, assumed merged) adds a loopback-only file server w
 
 ## Next step after confirmation
 
-The [shape brief](shape-brief.md) is ready for review; the implementation plan follows.
+The [shape brief](shape-brief.md) and [implementation plan](implementation-plan.md) are ready for review.
