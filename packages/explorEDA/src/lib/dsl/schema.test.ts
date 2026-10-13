@@ -25,9 +25,9 @@ describe("setting words", () => {
     const lines = chartSettingReference("bar");
     expect(lines[0]).toMatch(/^x\.title= /);
     expect(lines.some((line) => line.startsWith("bins="))).toBe(true);
-    expect(lines).not.toContain("binCount");
-    expect(lines).not.toContain("xAxisLabel");
-    expect(lines).toContain("categoryOrder");
+    expect(lines.some((line) => line.startsWith("binCount"))).toBe(false);
+    expect(lines.some((line) => line.startsWith("xAxisLabel"))).toBe(false);
+    expect(lines).toContain("categoryOrder=");
   });
 
   it("writes words, never the paths they stand for", () => {

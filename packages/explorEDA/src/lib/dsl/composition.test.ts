@@ -177,3 +177,53 @@ describe("composition text", () => {
     expect(definition.elements).toMatchObject([{ kind: "unit", marks: [] }]);
   });
 });
+
+describe("checking composition parts", () => {
+  it("names a setting a part doesn't take, and one it needs", () => {
+    const { result, definition } = composition(`composition {
+  scale numeric Year
+  unit Groups at=0,0 size=10x10 {
+    path P x=Year shade=after
+    band B x=Year y=Year orderField=Year lowerField=P10
+  }
+  note "No place"
+  rule "2020" at=4,0 unit=Groups value=2020
+}`);
+    expect(result.diagnostics.map((item) => item.message)).toEqual([
+      'path "P" needs orderField=, so it was left out.',
+      "shade is not a path setting, so it was ignored.",
+      'band "B" needs upperField=, so it was left out.',
+      'annotation "No place" needs at=, so it was left out.',
+    ]);
+    expect(definition.elements).toMatchObject([
+      { kind: "unit", marks: [] },
+      { kind: "guide", value: { kind: "constant", value: "2020" } },
+    ]);
+  });
+});
+
+describe("checking composition values", () => {
+  it("names a value that doesn't fit and keeps the rest of the graphic", () => {
+    const { result, definition } = composition(`composition {
+  scale numeric Year ticks=2
+  scale value Gap colors=#a,#b center=#c
+  legend Key at=0,0 unit=Groups mark=P direction=horizontal
+  unit Groups at=0,0 size=10x10 {
+    label valueSigns.positive.prefix="+"
+    path P x=Year orderField=Year
+  }
+}`);
+    expect(result.diagnostics.map((item) => item.message)).toEqual([
+      "ticks=2 doesn't fit numeric, so it was ignored.",
+      "direction=horizontal doesn't fit legend, so it was ignored.",
+    ]);
+    const unit = definition.elements.find((part) => part.kind === "unit") as {
+      label: { valueSigns: unknown };
+    };
+    // One sign setting is enough; the rest of the record fills in.
+    expect(unit.label.valueSigns).toEqual({
+      positive: { prefix: "+", suffix: "", color: "#1f2328" },
+      negative: { prefix: "", suffix: "", color: "#1f2328" },
+    });
+  });
+});

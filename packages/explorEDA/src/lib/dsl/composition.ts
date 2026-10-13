@@ -26,6 +26,7 @@ import {
   STACK_COLORS,
   type CompositionDefinition,
 } from "@/components/charts/Composition/compositionTypes";
+import { isCompositionDefinition } from "@/components/charts/Composition/validateComposition";
 import type { DslDeclaration, DslPair, DslSpan, DslValue } from "./parse";
 import { diffPaths, encodeScalar, parsePath, setPath } from "./paths";
 import { block } from "./print";
@@ -423,6 +424,690 @@ const MEASURE_SPEC: Spec = {
   }),
 };
 
+/**
+ * The saved settings each kind of part takes, and those it can't do
+ * without. A path ending in `.*` allows anything under it. Compile reports
+ * any other setting, and leaves out a part that lacks a required one.
+ */
+const XY_MARK = ["name", "frameId", "xScaleId", "yScaleId"];
+const SETTINGS: Record<string, { allowed: string[]; required?: string[] }> = {
+  title: {
+    allowed: [
+      "name",
+      "text",
+      "x",
+      "y",
+      "width",
+      "fontSize",
+      "fontWeight",
+      "color",
+    ],
+    required: ["text", "x", "y"],
+  },
+  subtitle: {
+    allowed: [
+      "name",
+      "text",
+      "x",
+      "y",
+      "width",
+      "fontSize",
+      "fontWeight",
+      "color",
+    ],
+    required: ["text", "x", "y"],
+  },
+  footnote: {
+    allowed: [
+      "name",
+      "text",
+      "x",
+      "y",
+      "width",
+      "fontSize",
+      "fontWeight",
+      "color",
+    ],
+    required: ["text", "x", "y"],
+  },
+  unit: {
+    allowed: [
+      "name",
+      "x",
+      "y",
+      "frame.width",
+      "frame.height",
+      "axis",
+      "axisTitles.x",
+      "axisTitles.y",
+    ],
+    required: ["x", "y", "frame.width", "frame.height"],
+  },
+  legend: {
+    allowed: [
+      "name",
+      "x",
+      "y",
+      "unitId",
+      "markId",
+      "scaleId",
+      "direction",
+      "fontSize",
+      "color",
+      "width",
+    ],
+    required: ["x", "y", "unitId", "markId"],
+  },
+  rule: {
+    allowed: [
+      "name",
+      "x",
+      "y",
+      "unitId",
+      "value.kind",
+      "value.value",
+      "value.calcId",
+      "label",
+      "color",
+      "axis",
+      "shade",
+      "repeats",
+    ],
+    required: ["x", "y", "unitId"],
+  },
+  note: {
+    allowed: [
+      "name",
+      "text",
+      "x",
+      "y",
+      "fontSize",
+      "color",
+      "leader",
+      "on",
+      "point",
+      "mark",
+      "pick",
+      "pickAt",
+    ],
+    required: ["text", "x", "y"],
+  },
+  inset: {
+    allowed: [
+      "name",
+      "x",
+      "y",
+      "width",
+      "height",
+      "axis",
+      "background",
+      "outline",
+    ],
+    required: ["x", "y", "width", "height"],
+  },
+  item: { allowed: ["label", "markId", "part"], required: ["markId"] },
+  path: {
+    allowed: [
+      ...XY_MARK,
+      "orderField",
+      "stroke",
+      "strokeWidth",
+      "seriesField",
+      "focus.kind",
+      "focus.values",
+      "mutedStroke",
+      "population",
+      "labels",
+      "labelValue",
+      "colorField",
+      "colors",
+      "valueField",
+      "valueScaleId",
+      "curve",
+      "rank",
+    ],
+    required: ["xScaleId", "orderField"],
+  },
+  point: {
+    allowed: [
+      ...XY_MARK,
+      "orderField",
+      "radius",
+      "fill",
+      "labelField",
+      "labelEvery",
+      "labelValues",
+      "sizeField",
+      "minRadius",
+      "show",
+      "seriesField",
+      "focus.kind",
+      "focus.values",
+      "mutedFill",
+      "population",
+      "colorField",
+      "colors",
+      "valueField",
+      "valueScaleId",
+      "rank",
+      "spread",
+    ],
+    required: ["xScaleId"],
+  },
+  band: {
+    allowed: [
+      ...XY_MARK,
+      "orderField",
+      "lowerField",
+      "upperField",
+      "fill",
+      "opacity",
+    ],
+    required: [
+      "xScaleId",
+      "yScaleId",
+      "orderField",
+      "lowerField",
+      "upperField",
+    ],
+  },
+  span: {
+    allowed: [
+      ...XY_MARK,
+      "startField",
+      "endField",
+      "openEnd",
+      "fill",
+      "colorField",
+      "colors",
+      "labelField",
+      "labelMinWidth",
+      "inset",
+    ],
+    required: ["xScaleId", "startField", "endField"],
+  },
+  strip: {
+    allowed: [
+      "name",
+      "shape",
+      "positionScaleId",
+      "valueScaleId",
+      "aggregation",
+      "measureField",
+      "encoding",
+      "fill",
+      "inset",
+      "missing",
+      "valueLabels",
+      "missingLabel",
+    ],
+    required: ["positionScaleId", "valueScaleId"],
+  },
+  summary: {
+    allowed: [
+      "name",
+      "groupField",
+      "measureField",
+      "yScaleId",
+      "valueScaleId",
+      "fill",
+      "opacity",
+      "parts.band",
+      "parts.line",
+      "parts.points",
+    ],
+    required: ["groupField", "measureField", "yScaleId"],
+  },
+  stack: {
+    allowed: [
+      "name",
+      "categoryField",
+      "aggregation",
+      "measureField",
+      "normalize",
+      "order",
+      "colors",
+      "labelMinHeight",
+      "labelContent",
+      "direction",
+      "connect",
+      "texture",
+      "inset",
+      "xScaleId",
+      "baseline",
+      "curve",
+    ],
+    required: ["categoryField"],
+  },
+  bar: {
+    allowed: [
+      "name",
+      "aggregation",
+      "measureField",
+      "categoryField",
+      "mirror",
+      "order",
+      "colors",
+      "max",
+      "inset",
+      "labelMinWidth",
+    ],
+  },
+  waffle: {
+    allowed: [
+      "name",
+      "categoryField",
+      "each",
+      "normalize",
+      "columns",
+      "gap",
+      "from",
+      "order",
+      "colors",
+      "xScaleId",
+    ],
+    required: ["categoryField"],
+  },
+  horizon: {
+    allowed: [
+      "name",
+      "xScaleId",
+      "field",
+      "orderField",
+      "baseline",
+      "relative",
+      "bands",
+      "domain",
+      "positive",
+      "negative",
+    ],
+    required: ["xScaleId", "field", "orderField"],
+  },
+  density: {
+    allowed: [
+      "name",
+      "xScaleId",
+      "bandwidth",
+      "height",
+      "fill",
+      "opacity",
+      "stroke",
+      "colorScaleId",
+    ],
+    required: ["xScaleId"],
+  },
+  waterfall: {
+    allowed: [
+      "name",
+      "mode",
+      "aggregation",
+      "measureField",
+      "stepField",
+      "parentField",
+      "states",
+      "startValue",
+      "up",
+      "down",
+      "total",
+      "labelWidth",
+    ],
+    required: ["stepField", "states"],
+  },
+  donut: {
+    allowed: [
+      "name",
+      "categoryField",
+      "aggregation",
+      "measureField",
+      "topN",
+      "order",
+      "colors",
+      "hole",
+      "showTotal",
+    ],
+    required: ["categoryField"],
+  },
+  numeric: {
+    allowed: [
+      "name",
+      "field",
+      "domain",
+      "zero",
+      "nice",
+      "min",
+      "max",
+      "transform",
+      "ticks",
+    ],
+    required: ["field"],
+  },
+  position: {
+    allowed: ["name", "field", "interval", "domain"],
+    required: ["field"],
+  },
+  value: {
+    allowed: [
+      "name",
+      "domain",
+      "transform",
+      "colors",
+      "stops",
+      "center",
+      "max",
+    ],
+  },
+  measure: { allowed: ["name", "orderField", "population", "filters"] },
+  repeat: {
+    allowed: [
+      "field",
+      "arrangement",
+      "columns",
+      "tileField",
+      "gap",
+      "order",
+      "orderCalcId",
+      "direction",
+      "limit",
+      "skip",
+      "weightCalcId",
+    ],
+  },
+  label: {
+    allowed: [
+      "show",
+      "width",
+      "fontSize",
+      "valueCalcId",
+      "every",
+      "valueSigns.positive.prefix",
+      "valueSigns.positive.suffix",
+      "valueSigns.positive.color",
+      "valueSigns.negative.prefix",
+      "valueSigns.negative.suffix",
+      "valueSigns.negative.color",
+      "valueColumn.width",
+      "valueColumn.header",
+      "valueColumn.fill",
+    ],
+  },
+  window: { allowed: ["field", "min", "max"] },
+  override: { allowed: ["dx", "dy", "accent", "opacity", "emphasize"] },
+};
+
+/**
+ * The values a setting takes, where that is narrower than any text: a set
+ * of words or numbers, "number", or "boolean". Keyed by part, then path.
+ */
+type ValueRule = "number" | "boolean" | readonly (string | number)[];
+const NUMBERS = [
+  "x",
+  "y",
+  "width",
+  "height",
+  "fontSize",
+  "radius",
+  "strokeWidth",
+  "opacity",
+  "inset",
+  "labelMinWidth",
+  "labelMinHeight",
+  "labelEvery",
+  "minRadius",
+  "columns",
+  "gap",
+  "limit",
+  "each",
+  "bands",
+  "bandwidth",
+  "max",
+  "min",
+  "every",
+  "dx",
+  "dy",
+  "frame.width",
+  "frame.height",
+  "labelWidth",
+  "startValue",
+  "topN",
+  "hole",
+];
+const BOOLEANS = [
+  "axis",
+  "showTotal",
+  "leader",
+  "labelValue",
+  "openEnd",
+  "normalize",
+  "connect",
+  "relative",
+  "valueLabels",
+  "outline",
+  "emphasize",
+  "zero",
+  "nice",
+  "show",
+];
+const SCALE_DOMAIN = ["shared", "instance"] as const;
+const VALUES: Record<string, Record<string, ValueRule>> = {
+  title: { fontWeight: [400, 600, 700] },
+  subtitle: { fontWeight: [400, 600, 700] },
+  footnote: { fontWeight: [400, 600, 700] },
+  legend: { direction: ["row", "column"] },
+  rule: {
+    axis: ["x", "y"],
+    shade: ["none", "after", "before"],
+    "value.kind": ["constant", "calc"],
+  },
+  note: { pick: ["max", "min", "first", "last", "at"] },
+  item: { part: ["main", "muted", "band", "median", "missing"] },
+  path: {
+    labels: ["none", "start", "end", "both"],
+    curve: ["linear", "smooth"],
+    rank: ["desc", "asc"],
+    population: ["repeat", "composition"],
+    "focus.kind": ["repeat", "values"],
+  },
+  point: {
+    show: ["all", "first", "last", "min", "max"],
+    spread: ["swarm"],
+    rank: ["desc", "asc"],
+    population: ["repeat", "composition"],
+    "focus.kind": ["repeat", "values"],
+  },
+  strip: {
+    shape: ["rect", "circle"],
+    aggregation: ["count", "sum", "average"],
+    encoding: ["color", "size", "height"],
+  },
+  stack: {
+    aggregation: ["count", "sum"],
+    order: ["label", "total", "first"],
+    labelContent: ["both", "share"],
+    direction: ["up", "across"],
+    texture: ["hand"],
+    baseline: ["zero", "center", "wiggle"],
+    curve: ["linear", "smooth"],
+  },
+  bar: { aggregation: ["count", "sum", "average"], order: ["label", "total"] },
+  waffle: { from: ["top", "bottom"], order: ["label", "total"] },
+  horizon: { baseline: ["zero", "first", "mean"], domain: SCALE_DOMAIN },
+  density: { height: SCALE_DOMAIN },
+  waterfall: { mode: ["bridge", "accumulate"], aggregation: ["sum", "count"] },
+  donut: { aggregation: ["count", "sum"], order: ["label", "total"] },
+  numeric: {
+    domain: SCALE_DOMAIN,
+    ticks: ["auto", "ends", "none"],
+    transform: ["linear", "log"],
+  },
+  position: {
+    domain: SCALE_DOMAIN,
+    interval: ["day", "week", "month", "year"],
+  },
+  value: { domain: SCALE_DOMAIN, transform: ["linear", "sqrt", "log"] },
+  measure: {
+    population: ["repeat", "composition"],
+    filters: ["follow", "ignore"],
+  },
+  repeat: {
+    arrangement: ["rows", "columns", "grid", "tiles"],
+    order: ["count", "label", "value"],
+    direction: ["asc", "desc"],
+  },
+};
+
+function valueRule(keyword: string, path: string): ValueRule | undefined {
+  const own = VALUES[keyword]?.[path];
+  if (own) return own;
+  // A window's bounds are text: dates or labels.
+  if (keyword === "window") return undefined;
+  if (NUMBERS.includes(path) || path === "valueColumn.width") {
+    return "number";
+  }
+  if (BOOLEANS.includes(path)) return "boolean";
+  return undefined;
+}
+
+/** Why a value doesn't fit its setting, or undefined when it does. */
+function valueProblem(
+  keyword: string,
+  path: string,
+  value: unknown
+): string | undefined {
+  const rule = valueRule(keyword, path);
+  if (!rule || value === UNSET) return undefined;
+  if (rule === "number") {
+    return typeof value === "number" ? undefined : "a number";
+  }
+  if (rule === "boolean") {
+    return typeof value === "boolean" ? undefined : "true or false";
+  }
+  return rule.includes(value as string | number)
+    ? undefined
+    : `one of ${rule.join(", ")}`;
+}
+
+/** A setting's allowed values for the reference, such as `=row|column`. */
+function valueHint(keyword: string, path: string): string {
+  const rule = valueRule(keyword, path);
+  return Array.isArray(rule)
+    ? rule.join("|")
+    : rule === "boolean"
+      ? "true|false"
+      : "";
+}
+
+/** Short words for a part's nested settings: `rule value=2025`. */
+const ALIASES: Record<string, Record<string, string>> = {
+  rule: { value: "value.value" },
+};
+
+function allows(keyword: string, path: string): boolean {
+  const entry = SETTINGS[keyword];
+  return (
+    !entry ||
+    entry.allowed.some((item) =>
+      item.endsWith(".*") ? path.startsWith(item.slice(0, -1)) : item === path
+    )
+  );
+}
+
+/** The closest of `words` to a misspelled one, if one is close. */
+function closestWord(word: string, words: string[]): string | undefined {
+  const lower = word.toLowerCase();
+  return words.find(
+    (item) =>
+      item.toLowerCase().includes(lower) || lower.includes(item.toLowerCase())
+  );
+}
+
+/** A saved path as the text writes it: its word, or the path itself. */
+function wordFor(
+  spec: Pick<Spec, "pairs" | "refs"> & { keyword?: string },
+  path: string
+): string {
+  const compound = spec.pairs?.find((item) => item.paths.includes(path));
+  const alias = Object.entries(ALIASES[spec.keyword ?? ""] ?? {}).find(
+    ([, target]) => target === path
+  )?.[0];
+  return compound?.word ?? spec.refs?.[path]?.word ?? alias ?? path;
+}
+
+/** The settings a kind of part takes, as the text writes them. */
+export function partSettings(keyword: string): string[] {
+  const spec =
+    [
+      ...ELEMENT_SPECS,
+      ...MARK_SPECS,
+      INSET_SPEC,
+      ITEM_SPEC,
+      ...SCALE_SPECS,
+    ].find((item) => item.keyword === keyword) ??
+    (keyword === "measure" ? MEASURE_SPEC : undefined);
+  const object = UNIT_SPEC.objects?.[keyword];
+  const words = (SETTINGS[keyword]?.allowed ?? []).map((path) =>
+    wordFor(spec ?? { refs: object?.refs, keyword }, path)
+  );
+  return [...new Set(words)];
+}
+
+/** Every kind of part and the settings it takes, required ones first. */
+export function compositionReference(): string[] {
+  const groups: Array<[string, string[]]> = [
+    ["Text", ["title", "subtitle", "footnote"]],
+    ["Parts", ["unit", "legend", "rule", "note", "inset", "item"]],
+    ["Inside a unit", ["repeat", "label", "window"]],
+    ["Marks", MARK_SPECS.map((spec) => spec.keyword)],
+    ["Scales (scale <kind>)", SCALE_SPECS.map((spec) => spec.keyword)],
+    ["Other", ["measure", "override"]],
+  ];
+  const lines: string[] = [];
+  for (const [title, keywords] of groups) {
+    lines.push(`${title}:`);
+    for (const keyword of keywords) {
+      const spec = [
+        ...ELEMENT_SPECS,
+        ...MARK_SPECS,
+        INSET_SPEC,
+        ITEM_SPEC,
+        ...SCALE_SPECS,
+      ].find((item) => item.keyword === keyword);
+      // The plain value, such as a title's text, is written without a key.
+      const required = (SETTINGS[keyword]?.required ?? [])
+        .filter((path) => path !== spec?.positional)
+        .map((path) => wordFor(spec ?? { keyword }, path));
+      const words = partSettings(keyword).filter(
+        (word) => !required.includes(word) && word !== spec?.positional
+      );
+      const plain = spec?.positional ? ` "${spec.positional}"` : "";
+      const pathOf = (word: string) =>
+        (SETTINGS[keyword]?.allowed ?? []).find(
+          (path) => wordFor(spec ?? { keyword }, path) === word
+        ) ?? word;
+      lines.push(
+        `  ${keyword}${plain}  ${[...new Set(required)]
+          .map((word) => `${word}= (required)`)
+          .concat(
+            words.map((word) => `${word}=${valueHint(keyword, pathOf(word))}`)
+          )
+          .join(" ")}`
+      );
+    }
+  }
+  return lines;
+}
+
+/** Settings a part needs, as text, that it doesn't have. */
+function missingSettings(keyword: string, spec: Spec, part: Record_): string[] {
+  const flat = flatten(part);
+  return [
+    ...new Set(
+      (SETTINGS[keyword]?.required ?? [])
+        .filter((path) => flat[path] === undefined || flat[path] === "")
+        .map((path) => wordFor(spec, path))
+    ),
+  ];
+}
+
 // ---------------------------------------------------------------------------
 // Values
 
@@ -677,7 +1362,7 @@ function liftTokens(
     tokens.push(
       ref
         ? `${ref.word}=${refText(scope, ref.space, value)}`
-        : `${path}=${encodeValue(value)}`
+        : `${wordFor(spec, path)}=${encodeValue(value)}`
     );
   }
   // A default the part leaves out has no text form; say so explicitly.
@@ -964,6 +1649,7 @@ function lowerPart(
   pending: Pending[]
 ): Record_ {
   const part: Record_ = { ...structuredClone(spec.constants) };
+  partSpans.set(part, { span: declaration.span, spec });
   if (declaration.name) {
     part.id = declaration.name;
   }
@@ -996,6 +1682,7 @@ function lowerPart(
       const object = (part[child.keyword] as Record_) ?? {};
       owners.set(object, part);
       lowerObject(spec.objects![child.keyword]!, child, object, lower, pending);
+      completeLabel(child.keyword, object);
       part[child.keyword] = object;
       removeUnset(part);
       continue;
@@ -1026,6 +1713,29 @@ function lowerPart(
   return part;
 }
 
+/**
+ * A label's value signs and value column are whole records; fill what the
+ * text leaves out, so one setting such as a prefix is enough.
+ */
+function completeLabel(keyword: string, object: Record_) {
+  if (keyword !== "label") return;
+  const signs = object.valueSigns as Record_ | undefined;
+  if (signs) {
+    for (const side of ["positive", "negative"]) {
+      signs[side] = {
+        prefix: "",
+        suffix: "",
+        color: INK,
+        ...((signs[side] as Record_ | undefined) ?? {}),
+      };
+    }
+  }
+  const column = object.valueColumn as Record_ | undefined;
+  if (column && column.width === undefined) {
+    column.width = 64;
+  }
+}
+
 function removeUnset(part: Record_) {
   for (const [key, value] of Object.entries(part)) {
     if (value === UNSET) {
@@ -1041,6 +1751,9 @@ const UNSET = Symbol("unset");
 /** The part a nested object belongs to, such as a unit's repeat. */
 const owners = new WeakMap<Record_, Record_>();
 
+/** Where each part was written, to point a missing setting at its line. */
+const partSpans = new WeakMap<Record_, { span: DslSpan; spec: Spec }>();
+
 function lowerPair(
   spec: Pick<
     Spec,
@@ -1053,13 +1766,41 @@ function lowerPair(
   lower: LowerContext,
   pending: Pending[]
 ) {
-  const path = parsePath(pair.key);
-  const top = path?.segments[0];
-  if (path && top && spec.records?.includes(top)) {
-    part[top] = setPath({ [top]: part[top] }, path, pair.value)[top];
+  const aliased = ALIASES[spec.keyword]?.[pair.key];
+  if (aliased) {
+    pair = { ...pair, key: aliased };
+  }
+  const recordPath = parsePath(pair.key);
+  const top = recordPath?.segments[0];
+  if (recordPath && top && spec.records?.includes(top)) {
+    part[top] = setPath({ [top]: part[top] }, recordPath, pair.value)[top];
     return;
   }
   const compound = spec.pairs?.find((item) => item.word === pair.key);
+  const refPath = Object.entries(spec.refs ?? {}).find(
+    ([, ref]) => ref.word === pair.key
+  )?.[0];
+  const path = compound?.paths[0] ?? refPath ?? pair.key;
+  if (!allows(spec.keyword, path)) {
+    const words = partSettings(spec.keyword);
+    // Marks color by fill or stroke, by category, or by a value scale.
+    const colors =
+      pair.key === "color" &&
+      SETTINGS[spec.keyword]?.allowed.includes("valueScaleId")
+        ? `Use ${spec.keyword === "path" ? "stroke" : "fill"}= for one color, colorField= with colors= by category, or valueField= with valueScale= by a measure.`
+        : undefined;
+    const near = closestWord(pair.key, words);
+    lower.problems.push({
+      message: `${pair.key} is not a ${spec.keyword} setting, so it was ignored.`,
+      span: pair.span,
+      suggestion:
+        colors ??
+        (near
+          ? `Did you mean ${near}?`
+          : `${spec.keyword} takes: ${words.join(", ")}.`),
+    });
+    return;
+  }
   if (compound) {
     const pieces = pair.value.raw.split(compound.separator);
     const numbers = pieces.map(Number);
@@ -1097,16 +1838,22 @@ function lowerPair(
     return;
   }
   const current = flatten(part)[pair.key];
-  setFlat(
-    part,
-    pair.key,
-    decodeValue(pair.value, {
-      list: (spec.lists ?? []).includes(pair.key),
-      text:
-        TEXT_PATHS.includes(pair.key) || (spec.texts ?? []).includes(pair.key),
-      current,
-    })
-  );
+  const value = decodeValue(pair.value, {
+    list: (spec.lists ?? []).includes(pair.key),
+    text:
+      TEXT_PATHS.includes(pair.key) || (spec.texts ?? []).includes(pair.key),
+    current,
+  });
+  const wrong = valueProblem(spec.keyword, pair.key, value);
+  if (wrong) {
+    lower.problems.push({
+      message: `${pair.key}=${pair.value.raw} doesn't fit ${spec.keyword}, so it was ignored.`,
+      span: pair.span,
+      suggestion: `${pair.key} takes ${wrong}.`,
+    });
+    return;
+  }
+  setFlat(part, pair.key, value);
 }
 
 function lowerObject(
@@ -1357,6 +2104,28 @@ export function lowerComposition(
       setFlat(item.target, item.path, found.id);
     }
   }
+  // A part without a setting it needs can't be drawn; say which, and drop it.
+  const checkPart = (part: Record_) => {
+    const where = partSpans.get(part);
+    if (!where || broken.has(part)) return;
+    const missing = missingSettings(where.spec.keyword, where.spec, part);
+    if (missing.length) {
+      problems.push({
+        message: `${partLabel(part)} needs ${missing.map((word) => `${word}=`).join(", ")}, so it was left out.`,
+        span: where.span,
+        suggestion: `${where.spec.keyword} takes: ${partSettings(where.spec.keyword).join(", ")}.`,
+      });
+      broken.add(part);
+    }
+  };
+  for (const element of definition.elements) {
+    checkPart(element);
+    for (const key of ["marks", "insets", "items"]) {
+      for (const child of (element[key] as Record_[] | undefined) ?? []) {
+        checkPart(child);
+      }
+    }
+  }
   // A part whose link is missing would break the whole graphic; drop it.
   if (broken.size) {
     definition.elements = definition.elements.filter(
@@ -1402,7 +2171,54 @@ export function lowerComposition(
     }
     definition.overrides.push(override);
   }
-  return definition as unknown as CompositionDefinition;
+  return keepDrawableParts(
+    definition as unknown as CompositionDefinition,
+    problems
+  );
+}
+
+/**
+ * Leaves out each part the graphic can't draw, down to a single mark, so one
+ * bad part costs only itself, and says which part and where.
+ */
+function keepDrawableParts(
+  definition: CompositionDefinition,
+  problems: CompositionProblem[]
+): CompositionDefinition {
+  // A plain check, not a type guard, so a failing definition keeps its type.
+  const valid = (value: unknown): boolean => isCompositionDefinition(value);
+  if (valid(definition)) return definition;
+  const base = { ...definition, elements: [] };
+  if (!valid(base)) return definition;
+  const report = (part: Record_) => {
+    const where = partSpans.get(part);
+    if (!where) return;
+    problems.push({
+      message: `${partLabel(part)} has a setting the graphic can't draw, so it was left out.`,
+      span: where.span,
+      suggestion: `Check its values with exploreda-dsl reference composition.`,
+    });
+  };
+  const fits = (elements: unknown[]) => valid({ ...base, elements });
+  const elements = definition.elements.flatMap((element) => {
+    if (fits([element])) return [element];
+    const record = element as unknown as Record_;
+    if (record.kind === "unit") {
+      const marks = (record.marks as Record_[]) ?? [];
+      const bare = { ...record, marks: [] };
+      if (fits([bare])) {
+        const kept = marks.filter((mark) => {
+          const ok = fits([{ ...record, marks: [mark] }]);
+          if (!ok) report(mark);
+          return ok;
+        });
+        return [{ ...record, marks: kept } as unknown as typeof element];
+      }
+    }
+    report(record);
+    return [];
+  });
+  return { ...definition, elements };
 }
 
 /** How a diagnostic names a part: its kind and name. */

@@ -4,6 +4,7 @@ import { registerAllCharts } from "@/charts/registerAllCharts";
 import {
   chartSettingReference,
   compileViews,
+  compositionReference,
   describeDslSource,
   formatDsl,
   DSL_REFERENCE,
@@ -123,6 +124,12 @@ function main(args: string[]) {
       return 0;
     }
     registerAllCharts();
+    if (type === "composition") {
+      console.log(
+        `Composition parts and their settings:\n${compositionReference().join("\n")}`
+      );
+      return 0;
+    }
     const lines = chartSettingReference(type);
     if (!lines.length) {
       console.error(`${type} is not a chart type.`);

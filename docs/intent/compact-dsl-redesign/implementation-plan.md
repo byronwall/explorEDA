@@ -132,6 +132,26 @@ Byron decided both on 2026-10-12.
 1. **D1 — house style: adopt it as library defaults.** New charts get margin 16/24/44/62, 4 y ticks, a grid from the value axis (y on most charts, x on row charts), row heights 22/36, and 20 bins. Types with their own look keep their own margins, including ecdf, sankey, hierarchy, heatmap, pivot, and composition.
 2. **D2 — `name:w` widths in the matrix: yes.** Cells split evenly unless a cell says its width.
 
+## Decided while building
+
+These came up during implementation. Each one keeps every example round trip exact.
+
+- **Chart names.**
+  - A chart without `@name` goes by its field, and becomes that ID when the field is a valid name.
+  - Export gives any other chart a name its layout can use, such as `metric-card-1`. A chart saved with a generated UUID comes back under that name.
+- **Composition IDs.**
+  - Parts get the IDs the editor would generate (`unit-1`, `mark-1`, `n-1`), so text writes `@id` only when a part's ID differs.
+  - Parts link by name, and scales by field.
+- **Generated annotation IDs.** Annotations with generated UUIDs are written without an ID, and compile names them.
+- **Views.**
+  - A view shows a top-level chart when its layout places it or one of its lines names it. A view that names none shows them all.
+  - An override line's settings replace the chart's settings of the same name.
+- **House style.** D1 also covers line series (point size 3, point opacity 0.8, line opacity 1) and composition text roles (24, 13, and 10 px).
+- **Checking composition parts.**
+  - `check` rejects a setting a composition part doesn't take.
+  - A part missing a required setting is left out with a diagnostic at its line.
+  - Both came from the second cold-agent run, where invented keys passed silently.
+
 ## Below the cut line
 
 - Editor completion and a language server built from the registry.

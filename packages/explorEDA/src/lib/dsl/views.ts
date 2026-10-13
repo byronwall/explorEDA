@@ -6,7 +6,13 @@ import {
   type DslCompileOptions,
   type DslDiagnostic,
 } from "./compile";
-import { exportParts, type DslExportOptions } from "./export";
+import {
+  exportParts,
+  type DslChartPart,
+  type DslExportOptions,
+  type DslExportParts,
+} from "./export";
+import { block } from "./print";
 import { parseDocument } from "./parse";
 import { encodeScalar } from "./paths";
 
@@ -160,17 +166,78 @@ export function exportViews(
   });
 
   // A grid every view shares is written once; a view's own grid overrides it.
-  const grids = new Set(parts.map((part) => part.view[0]?.join("\n") ?? ""));
-  const sharedGrid = grids.size === 1 ? (parts[0]!.view[0] ?? []) : [];
+  const gridOf = (part: DslExportParts) =>
+    (part.view[0] ?? []).filter((line) => line.startsWith("grid"));
+  const grids = new Set(parts.map((part) => gridOf(part).join("\n")));
+  const sharedGrid = grids.size === 1 ? gridOf(parts[0]!) : [];
   const name = options.name ?? first.name;
+
+  // A chart in several views is defined once above them; each view names it
+  // in order, with only the settings and child lines it changes.
+  const variants = new Map<string, DslChartPart[]>();
+  for (const part of parts) {
+    for (const chart of part.charts) {
+      variants.set(chart.id, [...(variants.get(chart.id) ?? []), chart]);
+    }
+  }
+  const shared = new Map<string, { tokens: Set<string>; children: boolean }>();
+  for (const [id, list] of variants) {
+    if (list.length < 2 || new Set(list.map((item) => item.head)).size > 1) {
+      continue;
+    }
+    const tokens = new Set(
+      list[0]!.tokens.filter((token) =>
+        list.every((item) => item.tokens.includes(token))
+      )
+    );
+    const children = list.every(
+      (item) => item.children.join("\n") === list[0]!.children.join("\n")
+    );
+    shared.set(id, { tokens, children });
+  }
+  const library: string[] = [];
+  const defined = new Set<string>();
+  for (const part of parts) {
+    for (const chart of part.charts) {
+      const entry = shared.get(chart.id);
+      if (!entry || defined.has(chart.id)) continue;
+      defined.add(chart.id);
+      library.push(
+        ...block(
+          chart.head,
+          chart.tokens.filter((token) => entry.tokens.has(token)),
+          entry.children ? chart.children : []
+        )
+      );
+    }
+  }
+  const viewCharts = (part: DslExportParts) =>
+    part.charts.flatMap((chart) => {
+      const entry = shared.get(chart.id);
+      if (!entry) {
+        return block(chart.head, chart.tokens, chart.children);
+      }
+      return block(
+        /^[\w-]+$/.test(chart.name) ? chart.name : JSON.stringify(chart.name),
+        chart.tokens.filter((token) => !entry.tokens.has(token)),
+        entry.children ? [] : chart.children
+      );
+    });
+
   const blocks = [
     [`dashboard ${JSON.stringify(name)}`, ...sharedGrid],
     ...parts[0]!.shared,
+    library,
     ...parts.map((part, index) => [
       `view ${encodeScalar(views[index]!.name)} {`,
-      ...(sharedGrid.length ? part.view.slice(1) : part.view)
-        .flat()
-        .map((line) => `  ${line}`),
+      ...[
+        ...(part.view[0] ?? []).filter(
+          (line) => !sharedGrid.length || !line.startsWith("grid")
+        ),
+        ...part.context,
+        ...viewCharts(part),
+        ...part.layout,
+      ].map((line) => `  ${line}`),
       "}",
     ]),
   ].filter((block) => block.length);

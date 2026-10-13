@@ -4,6 +4,7 @@
  * its saved path. Compile reads both; export and the reference write only
  * the word, so agents and people converge on one form.
  */
+import { chartRegistry, getChartDefinition } from "@/charts/registry";
 import { CHART_SETTING_KEYS } from "./settingKeys";
 import type { ChartType } from "@/types/ChartTypes";
 
@@ -118,9 +119,46 @@ function coveredKeys(type: string) {
 /** Keys dashboard text writes on its own, outside the setting list. */
 const HEAD_KEYS = new Set(["layout", "filters", "localFilters", "colorField"]);
 
+/** Nested settings that start empty, so their keys aren't in a new chart. */
+const NESTED_HINTS: Record<string, string[]> = {
+  time: [
+    "time.interval=day|week|month|year",
+    "time.aggregation=count|sum|average",
+    "time.measureField=<field>",
+    "time.splitField=<field>  one line per value",
+    "time.display=line|area|stacked-area",
+    "time.missingPeriods=gap|zero",
+    "time.weekStart=monday|sunday",
+  ],
+  style: ["style.titleSize=", "style.titleWeight=", "style.subtitleSize="],
+  facet: [
+    "facet.enabled=true|false",
+    "facet.type=wrap|grid",
+    "facet.rowVariable=<field>",
+    "facet.columnVariable=<field>  grid only",
+    "facet.columnCount=  wrap only",
+  ],
+};
+
+/** A nested setting's keys, read from the chart type's own new chart. */
+function nestedKeys(key: string, value: unknown, prefix = key): string[] {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return [`${prefix}=`];
+  }
+  return Object.entries(value as Record<string, unknown>).flatMap(
+    ([name, item]) =>
+      item && typeof item === "object" && !Array.isArray(item)
+        ? nestedKeys(name, item, `${prefix}.${name}`)
+        : [
+            `${prefix}.${name}=${item === undefined ? "" : JSON.stringify(item).replace(/^"|"$/g, "")}`,
+          ]
+  );
+}
+
 /**
  * The settings a chart type takes, as text: its words first, then the saved
- * keys that have no shorter word. Generated, so it can't drift.
+ * keys that have no shorter word, with a nested setting's keys spelled out.
+ * Generated, so it can't drift.
  */
 export function chartSettingReference(type: string): string[] {
   const keys = CHART_SETTING_KEYS[type as ChartType];
@@ -128,11 +166,27 @@ export function chartSettingReference(type: string): string[] {
     return [];
   }
   const covered = coveredKeys(type);
+  const defaults = chartRegistry.has(type as ChartType)
+    ? (getChartDefinition(type as ChartType).createDefaultSettings({
+        x: 0,
+        y: 0,
+        w: 6,
+        h: 4,
+      }) as unknown as Record<string, unknown>)
+    : {};
   return [
     ...Object.entries(settingWords(type)).map(
       ([word, entry]) =>
         `${word}=${entry.values ? entry.values.join("|") : ""}  ${entry.help}`
     ),
-    ...keys.filter((key) => !covered.has(key) && !HEAD_KEYS.has(key)),
+    ...keys
+      .filter((key) => !covered.has(key) && !HEAD_KEYS.has(key))
+      .flatMap(
+        (key) =>
+          NESTED_HINTS[key] ??
+          (key.endsWith("Axis") || key === "annotations"
+            ? [`${key}=`]
+            : nestedKeys(key, defaults[key]))
+      ),
   ];
 }
