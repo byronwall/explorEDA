@@ -47,6 +47,8 @@ import {
 } from "../trace/ChartTraceScope";
 import type { TraceSource } from "../trace/traceTypes";
 import { TriangleAlert } from "lucide-react";
+import { ChartPlotMenu, type PlotMenuTarget } from "../roles/ChartPlotMenu";
+import { hasRoleLabels } from "../roles/chartRoles";
 import { Button } from "@/components/ui/button";
 import { ActionTooltip } from "@/components/ui/tooltip";
 import {
@@ -397,11 +399,52 @@ function ScatterPoints({
     [plan, settings, updateChart]
   );
 
+  // Right-click on the plot opens chart actions and, over a point, an action
+  // for its record. Axes, labels, and annotations keep their own menus, and
+  // Shift keeps the browser's.
+  const [plotMenu, setPlotMenu] = useState<PlotMenuTarget>();
+  const onPlotContextMenu = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (event.shiftKey || !hasRoleLabels(settings)) return;
+    const target = event.target as Element;
+    if (
+      target.closest?.(
+        "[data-field], [data-axis-edit], [data-axis-hidden], [data-annotation-handle], [data-marginal-id], [data-marginal-band]"
+      )
+    )
+      return;
+    const bounds = event.currentTarget.getBoundingClientRect();
+    const fromKeyboard = event.clientX === 0 && event.clientY === 0;
+    const clientX = fromKeyboard
+      ? bounds.left + plan.margin.left + 8
+      : event.clientX;
+    const clientY = fromKeyboard
+      ? bounds.top + plan.margin.top + 8
+      : event.clientY;
+    const px = clientX - bounds.left - plan.margin.left;
+    const py = clientY - bounds.top - plan.margin.top;
+    if (
+      !fromKeyboard &&
+      (px < 0 || px > plan.plotWidth || py < 0 || py > plan.plotHeight)
+    )
+      return;
+    event.preventDefault();
+    const point =
+      !fromKeyboard && traceApi && !(surfaceMode && !showSurfacePoints)
+        ? pointAt(px, py)
+        : undefined;
+    setPlotMenu({
+      x: clientX,
+      y: clientY,
+      trace: point ? () => choose("point", point.id) : undefined,
+    });
+  };
+
   return (
     <div
       ref={rootRef}
       style={{ width, height }}
       className="relative"
+      onContextMenu={onPlotContextMenu}
       onPointerLeave={() => {
         setHoveredId(null);
         setHoveredMarkId(undefined);
@@ -760,6 +803,13 @@ function ScatterPoints({
         <ChartMessage>
           {plan.populations.all > 0 ? NO_MATCHING_ROWS : "No rows to show."}
         </ChartMessage>
+      )}
+      {plotMenu && (
+        <ChartPlotMenu
+          settings={settings}
+          target={plotMenu}
+          onClose={() => setPlotMenu(undefined)}
+        />
       )}
     </div>
   );
