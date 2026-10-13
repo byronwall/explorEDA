@@ -74,7 +74,7 @@ table Revenue,Cost,Channel`);
     expect(row).toMatchObject({
       type: "row",
       field: "Channel",
-      minRowHeight: 30,
+      minRowHeight: 22,
     });
     expect(table).toMatchObject({
       type: "data-table",

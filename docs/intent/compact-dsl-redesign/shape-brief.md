@@ -37,7 +37,7 @@ Dashboard text v2
 │   ├── Define once, place in views: a view is a layout, overrides, theme, and filters
 │   ├── Placement: each chart by exactly one of
 │   │   ├── layout matrix: `height: cells…`; cells split 12 columns evenly unless a cell
-│   │   │   says `name:w` (D2);
+│   │   │   says `name:w`;
 │   │   │   repeat a name to widen it, repeat it on the next line to make it taller
 │   │   └── at=x,y,w,h: always exact, for splits the matrix can't express
 │   ├── `set path=value` escape hatch, which check reports as a registry gap

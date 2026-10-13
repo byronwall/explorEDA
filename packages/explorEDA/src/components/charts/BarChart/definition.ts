@@ -32,11 +32,10 @@ export const barChartDefinition: ChartDefinition<BarChartSettings> = {
     ...DEFAULT_CHART_SETTINGS,
     id: crypto.randomUUID(),
     field: field ?? "",
-    binCount: 10,
+    binCount: 20,
     type: "bar",
     title: "Bar Chart",
     layout,
-    margin: { top: 20, right: 20, bottom: 30, left: 60 },
     filters: [],
   }),
 
@@ -49,8 +48,12 @@ export const barChartDefinition: ChartDefinition<BarChartSettings> = {
     fieldGetter: (name: string) => Record<IdType, datum>
   ) => {
     if (settings.seriesField) {
-      const active = settings.filters.map((filter) => ({ filter, data: fieldGetter(filter.field) }));
-      return (id: IdType) => active.every(({ filter, data }) => applyFilter(data[id], filter));
+      const active = settings.filters.map((filter) => ({
+        filter,
+        data: fieldGetter(filter.field),
+      }));
+      return (id: IdType) =>
+        active.every(({ filter, data }) => applyFilter(data[id], filter));
     }
     if (settings.aggregateId) {
       // A grouped bar selects groups with a value filter on its group field

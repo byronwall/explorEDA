@@ -38,6 +38,7 @@ import type {
 } from "@/types/SavedDataTypes";
 import { validateSavedData } from "@/utils/saveDataUtils";
 import { parsePath, setPath } from "./paths";
+import { settingWords } from "./schema";
 import { boundaryAssetId, listBoundarySets } from "@/lib/boundaries/registry";
 import "@/lib/boundaries/regionFunction";
 import {
@@ -1968,24 +1969,14 @@ export function compileDocument(
       "title",
       "at",
       "color",
-      "x.title",
-      "x.scale",
-      "x.min",
-      "x.max",
-      "y.title",
-      "y.scale",
-      "y.min",
-      "y.max",
-      "xGridLines",
-      "yGridLines",
+      ...Object.keys(settingWords(chart.type)),
       "margin.top",
       "margin.right",
       "margin.bottom",
       "margin.left",
       "where.<field>",
       "select.<field>",
-      ...(chart.type === "bar" ? ["bins"] : []),
-      ...(chart.type === "scatter" ? ["size", "opacity", "regression"] : []),
+      ...(chart.type === "scatter" ? ["size", "regression"] : []),
     ];
   }
 
@@ -2079,19 +2070,36 @@ export function compileDocument(
         return "ok";
       case "xGridLines":
       case "yGridLines":
+      case "x.ticks":
+      case "y.ticks":
         if (number === undefined || number < 0) {
           return needNumber();
         }
-        target[key] = number;
+        target[key.endsWith("ticks") ? `${key[0]}GridLines` : key] = number;
+        return "ok";
+      case "size.max":
+        if (chart.type !== "scatter") {
+          return "unknown";
+        }
+        if (number === undefined || number <= 0) {
+          return needNumber();
+        }
+        chart.maxBubbleRadius = number;
         return "ok";
     }
-    const axis = /^(x|y)\.(title|scale|min|max)$/.exec(key);
+    const axis = /^(x|y)\.(title|scale|min|max|grid)$/.exec(key);
     if (axis) {
       const name = axis[1] === "x" ? "xAxis" : "yAxis";
       const next = { ...chart[name] };
       if (axis[2] === "title") {
-        next.title = text;
         chart[name === "xAxis" ? "xAxisLabel" : "yAxisLabel"] = text;
+        return "ok";
+      } else if (axis[2] === "grid") {
+        const flag = booleanValue(value);
+        if (flag === undefined) {
+          return `${key} must be true or false, so ${subject} keeps the default.`;
+        }
+        next.grid = flag;
       } else if (axis[2] === "scale") {
         const scales = ["linear", "log", "symlog", "time", "band"] as const;
         if (!scales.includes(text as never)) {
