@@ -234,7 +234,7 @@ export function ProjectWorkspace({
               Viewing · your changes aren't saved
             </p>
           ) : (
-            <SaveStatus state={saveState} onDisk={Boolean(info.root)} />
+            <SaveStatus state={saveState} onDisk={!team} />
           )}
           {notice && (
             <p className="app-notice" role="status">
@@ -419,7 +419,7 @@ function SaveStatus({
   onDisk,
 }: {
   state: SaveState;
-  /** The CLI saves to a folder the person can see; a team server doesn't. */
+  /** A folder the person can see; a team server keeps files out of sight. */
   onDisk: boolean;
 }) {
   if (state.status === "failed") {
