@@ -1,0 +1,38 @@
+import { chromium } from "playwright";
+import { writeFileSync } from "node:fs";
+const base = process.argv[2];
+const dark = process.argv[3] !== "light";
+const out = (n) => `tmp/proof/${n}${dark ? "" : "-light"}.png`;
+const browser = await chromium.launch();
+const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 }, deviceScaleFactor: 2, reducedMotion: "reduce" });
+const page = await ctx.newPage();
+page.on("console", (m) => m.type() === "error" && console.log("console:", m.text()));
+await page.goto(base); await page.evaluate(() => localStorage.clear());
+await page.goto(base + "/examples/bubble-scatter"); await page.waitForLoadState("networkidle");
+if (dark) await page.evaluate(() => document.documentElement.classList.add("dark"));
+const title = "Speed, conversion, and trial volume";
+const panel = page.locator(`.eda-panel:has-text("${title}")`).first();
+await panel.waitFor();
+await panel.hover();
+await page.locator(`role=button[name="Configure ${title}"]`).dispatchEvent("click");
+await page.locator('role=tab[name="Labels"]').click();
+await page.locator("#chart-subtitle").fill("Daily, by release phase · bubble area = trials");
+await page.keyboard.press("Escape");
+await page.waitForTimeout(400);
+const box = await panel.locator("canvas").first().boundingBox();
+await page.mouse.move(box.x + box.width * 0.25, box.y + box.height * 0.3);
+await page.mouse.down();
+await page.mouse.move(box.x + box.width * 0.55, box.y + box.height * 0.75, { steps: 8 });
+await page.mouse.up();
+await page.mouse.move(5, 5);
+await page.waitForTimeout(600);
+await panel.screenshot({ path: out("screen") });
+await page.addScriptTag({ path: "tmp/proof/rasterize.js" });
+for (const embedFonts of [true, false]) {
+  const r = await panel.evaluate((el, o) => window.__rasterize(el, o), { embedFonts });
+  writeFileSync(out(embedFonts ? "raster" : "raster-nofonts"), Buffer.from(r.dataUrl.split(",")[1], "base64"));
+  console.log({ embedFonts, width: r.width, height: r.height, ms: r.ms, svgKB: Math.round(r.svgBytes / 1024) });
+}
+const info = await panel.evaluate((el) => ({ canvases: el.querySelectorAll("canvas").length, svgs: el.querySelectorAll("svg").length, legend: !!el.querySelector(".eda-color-legend, [class*=legend]"), annotations: el.querySelectorAll("g.eda-annotations > *").length, status: el.textContent.match(/\d+ of \d+ points selected/)?.[0] }));
+console.log(info);
+await browser.close();

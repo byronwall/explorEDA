@@ -59,6 +59,23 @@ cancelled with Escape is not reported at all.
 `ref.current.getSettings()` reads the current `SavedDataStructure` after mount,
 including initial settings when `savedData` is omitted. It reflects later edits
 when called again. It does not change the edit-only callback behavior.
+`ref.current.exportChartPng(chartId, { pixelRatio })` resolves to
+`{ blob, width, height }`: the chart's PNG as drawn, the same image its
+**Download image** action saves, at twice its on-screen size by default. The
+chart must be rendered in that workspace (scrolled out of view is fine);
+otherwise the promise rejects with "Chart is not rendered.". Read chart ids
+from `getSettings().charts`.
+
+```tsx
+const saveFirstChart = async () => {
+  const handle = workspace.current;
+  const chart = handle?.getSettings().charts[0];
+  if (!handle || !chart) return;
+  const { blob } = await handle.exportChartPng(chart.id);
+  await uploadImage(blob); // your own storage
+};
+```
+
 `savedData` is an input for initial or replacement restore, not a controlled
 value; do not feed every callback result back into it. Callback snapshots are
 storage-neutral JSON settings. They include Rows filters, search, sort, column

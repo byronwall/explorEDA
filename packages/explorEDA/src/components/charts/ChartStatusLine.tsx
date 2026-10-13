@@ -37,7 +37,7 @@ export function ChartStatusLine({
     >
       {text}
       {hint && (
-        <span className="eda-chart-hint">
+        <span className="eda-chart-hint" data-export="omit">
           {text ? " · " : ""}
           {hint}
         </span>
