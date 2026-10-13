@@ -546,7 +546,10 @@ export function CompositionChart({
       : null;
 
   const glyph =
-    hovered && (hovered.type === "rect" || hovered.type === "circle")
+    hovered &&
+    (hovered.type === "rect" ||
+      hovered.type === "circle" ||
+      hovered.type === "arc")
       ? hovered.glyph
       : undefined;
   const hoveredField = definition.elements.find(

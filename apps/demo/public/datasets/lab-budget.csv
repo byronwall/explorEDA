@@ -1,0 +1,97 @@
+Quarter,Group,Line item,Scenario,Amount ($K),Actual size ($K)
+Q1,Funding,Federal grants,Plan,576,
+Q1,Funding,Federal grants,Actual,576,576
+Q1,Funding,Industry contracts,Plan,216,
+Q1,Funding,Industry contracts,Actual,227,227
+Q1,Funding,Internal funds,Plan,144,
+Q1,Funding,Internal funds,Actual,144,144
+Q1,Funding,Licensing,Plan,36,
+Q1,Funding,Licensing,Actual,29,29
+Q1,Staff,Salaries,Plan,-432,
+Q1,Staff,Salaries,Actual,-436,436
+Q1,Staff,Benefits,Plan,-108,
+Q1,Staff,Benefits,Actual,-110,110
+Q1,Staff,Postdoc stipends,Plan,-86,
+Q1,Staff,Postdoc stipends,Actual,-77,77
+Q1,Operations,Equipment,Plan,-125,
+Q1,Operations,Equipment,Actual,-144,144
+Q1,Operations,Consumables,Plan,-74,
+Q1,Operations,Consumables,Actual,-80,80
+Q1,Operations,Compute,Plan,-58,
+Q1,Operations,Compute,Actual,-55,55
+Q1,Operations,Travel,Plan,-22,
+Q1,Operations,Travel,Actual,-15,15
+Q1,Operations,Facilities,Plan,-43,
+Q1,Operations,Facilities,Actual,-43,43
+Q2,Funding,Federal grants,Plan,600,
+Q2,Funding,Federal grants,Actual,576,576
+Q2,Funding,Industry contracts,Plan,225,
+Q2,Funding,Industry contracts,Actual,252,252
+Q2,Funding,Internal funds,Plan,150,
+Q2,Funding,Internal funds,Actual,150,150
+Q2,Funding,Licensing,Plan,38,
+Q2,Funding,Licensing,Actual,34,34
+Q2,Staff,Salaries,Plan,-450,
+Q2,Staff,Salaries,Actual,-459,459
+Q2,Staff,Benefits,Plan,-112,
+Q2,Staff,Benefits,Actual,-115,115
+Q2,Staff,Postdoc stipends,Plan,-90,
+Q2,Staff,Postdoc stipends,Actual,-83,83
+Q2,Operations,Equipment,Plan,-130,
+Q2,Operations,Equipment,Actual,-175,175
+Q2,Operations,Consumables,Plan,-77,
+Q2,Operations,Consumables,Actual,-85,85
+Q2,Operations,Compute,Plan,-60,
+Q2,Operations,Compute,Actual,-66,66
+Q2,Operations,Travel,Plan,-22,
+Q2,Operations,Travel,Actual,-18,18
+Q2,Operations,Facilities,Plan,-45,
+Q2,Operations,Facilities,Actual,-45,45
+Q3,Funding,Federal grants,Plan,600,
+Q3,Funding,Federal grants,Actual,552,552
+Q3,Funding,Industry contracts,Plan,225,
+Q3,Funding,Industry contracts,Actual,266,266
+Q3,Funding,Internal funds,Plan,150,
+Q3,Funding,Internal funds,Actual,150,150
+Q3,Funding,Licensing,Plan,38,
+Q3,Funding,Licensing,Actual,49,49
+Q3,Staff,Salaries,Plan,-450,
+Q3,Staff,Salaries,Actual,-463,463
+Q3,Staff,Benefits,Plan,-112,
+Q3,Staff,Benefits,Actual,-116,116
+Q3,Staff,Postdoc stipends,Plan,-90,
+Q3,Staff,Postdoc stipends,Actual,-90,90
+Q3,Operations,Equipment,Plan,-130,
+Q3,Operations,Equipment,Actual,-143,143
+Q3,Operations,Consumables,Plan,-77,
+Q3,Operations,Consumables,Actual,-86,86
+Q3,Operations,Compute,Plan,-60,
+Q3,Operations,Compute,Actual,-75,75
+Q3,Operations,Travel,Plan,-22,
+Q3,Operations,Travel,Actual,-19,19
+Q3,Operations,Facilities,Plan,-45,
+Q3,Operations,Facilities,Actual,-46,46
+Q4,Funding,Federal grants,Plan,624,
+Q4,Funding,Federal grants,Actual,587,587
+Q4,Funding,Industry contracts,Plan,234,
+Q4,Funding,Industry contracts,Actual,281,281
+Q4,Funding,Internal funds,Plan,156,
+Q4,Funding,Internal funds,Actual,156,156
+Q4,Funding,Licensing,Plan,39,
+Q4,Funding,Licensing,Actual,59,59
+Q4,Staff,Salaries,Plan,-468,
+Q4,Staff,Salaries,Actual,-482,482
+Q4,Staff,Benefits,Plan,-117,
+Q4,Staff,Benefits,Actual,-123,123
+Q4,Staff,Postdoc stipends,Plan,-94,
+Q4,Staff,Postdoc stipends,Actual,-94,94
+Q4,Operations,Equipment,Plan,-135,
+Q4,Operations,Equipment,Actual,-142,142
+Q4,Operations,Consumables,Plan,-81,
+Q4,Operations,Consumables,Actual,-92,92
+Q4,Operations,Compute,Plan,-62,
+Q4,Operations,Compute,Actual,-81,81
+Q4,Operations,Travel,Plan,-23,
+Q4,Operations,Travel,Actual,-21,21
+Q4,Operations,Facilities,Plan,-47,
+Q4,Operations,Facilities,Actual,-48,48
