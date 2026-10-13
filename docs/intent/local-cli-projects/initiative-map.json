@@ -8,7 +8,7 @@
     "last_updated": "2026-10-12",
     "summary": "npx exploreda in a folder starts a local server and opens the app on that project; sources, joins, and analyses are DSL v2 text files.",
     "status": "planned",
-    "next_action": "After DSL v2 merges, run the project-grammar first proof; then write the implementation plan."
+    "next_action": "Write the implementation plan for the CLI; tighten the project-text reference (on=, aggregate output names, parameter semantics)."
   },
   "artifacts": {
     "intent_brief": {
@@ -128,6 +128,14 @@
       "anchor": "DSL v2 stack and project model",
       "authority": "current reality",
       "notes": "v2 source line is name-only; AnalysisProject (sources, relationships, queries) has no text form; exploreda-project JSON embeds tables."
+    },
+    {
+      "id": "PROOF-1",
+      "type": "repository",
+      "location": "docs/intent/local-cli-projects/raw/proof/results.md; packages/explorEDA/src/lib/dsl/project.ts",
+      "anchor": "Project text first proof",
+      "authority": "observation",
+      "notes": "Round-trip and cold-agent results."
     }
   ],
   "intent": {
@@ -480,7 +488,8 @@
     "first_proof": {
       "question": "Can sources, relationships, and all query step types be written as DSL text that round-trips AnalysisProject exactly and that an agent can write from the reference?",
       "artifact": "Project grammar + round-trip test over every multi-source demo example + a cold-agent draft of the shop project checked with exploreda-dsl check.",
-      "decision_rule": "All examples round-trip and set covers under 5% of query lines → build the folder format on text; otherwise launch with a project JSON file and move the text form below the cut line."
+      "decision_rule": "All examples round-trip and set covers under 5% of query lines → build the folder format on text; otherwise launch with a project JSON file and move the text form below the cut line.",
+      "result": "Passed 2026-10-12: all 6 demo projects round-trip deep-equal with 0 set lines and identical evaluated rows; cold-agent shop draft compiled with 0 diagnostics and matched demo rows. See raw/proof/results.md."
     },
     "rabbit_holes": [
       "Project grammar scope creep into a general query language",
@@ -518,6 +527,12 @@
       "date": "2026-10-12",
       "event": "shaped",
       "summary": "Four shaping question rounds; shape brief written. Export dropped, joins in, project grammar is the first proof, builds on DSL v2.",
+      "status": "planned"
+    },
+    {
+      "date": "2026-10-12",
+      "event": "first proof passed",
+      "summary": "Project text (exportProjectText/compileProjectText in exploreda/analysis) round-trips every demo project; cold agent draft passed. Text is the project format; JSON fallback dropped.",
       "status": "planned"
     }
   ],

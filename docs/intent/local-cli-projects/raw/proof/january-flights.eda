@@ -1,0 +1,60 @@
+project @january-flights
+
+source @flights key=flight_id path=/datasets/flights/flights.csv {
+  field flight_id string
+  field flight_date date
+  field sched_dep_hour "Scheduled hour" number
+  field dep_delay "Departure delay (min)" number
+  field arr_delay "Arrival delay (min)" number
+  field carrier "Carrier code" string
+  field flight string
+  field tailnum "Tail number" string
+  field origin string
+  field dest Destination string
+  field air_time "Air time (min)" number
+  field distance "Distance (mi)" number
+  field weather_key "Weather hour" string
+}
+
+source @airlines key=carrier path=/datasets/flights/airlines.csv {
+  field carrier "Carrier code" string
+  field name Airline string
+}
+
+source @planes Aircraft glyph=P key=tailnum path=/datasets/flights/planes.csv {
+  field tailnum "Tail number" string
+  field plane_year "Year built" number
+  field manufacturer string
+  field model string
+  field engines number
+  field seats number
+  field engine "Engine type" string
+}
+
+source @weather "Weather hours" key=weather_key path=/datasets/flights/weather.csv {
+  field weather_key "Weather hour" string
+  field origin Station string
+  field observed_hour string
+  field temp "Temperature (°F)" number
+  field humid "Humidity (%)" number
+  field wind_speed "Wind speed (mph)" number
+  field precip "Precipitation (in)" number
+  field visib "Visibility (mi)" number
+}
+
+relate @flight-airline flights.carrier -> airlines.carrier
+relate @flight-plane flights.tailnum -> planes.tailnum "Flight aircraft"
+relate @flight-weather flights.weather_key -> weather.weather_key "Weather at the scheduled hour"
+
+query @flights-in-context "Flights with airline, aircraft, and weather" glyph=✈ {
+  source flights
+  lookup airline via=flight-airline
+  lookup plane via=flight-plane
+  lookup weather via=flight-weather
+  calc @dep-band dep_band "Departure status" = if ["flights.dep_delay"] == null then "5 Not recorded" else if ["flights.dep_delay"] <= 0 then "1 On time or early" else if ["flights.dep_delay"] <= 15 then "2 Up to 15 min late" else if ["flights.dep_delay"] <= 60 then "3 15–60 min late" else "4 Over 60 min late"
+  calc @arr-band arr_band "Arrival status" = if ["flights.arr_delay"] == null then "5 Not recorded" else if ["flights.arr_delay"] <= 0 then "1 On time or early" else if ["flights.arr_delay"] <= 15 then "2 Up to 15 min late" else if ["flights.arr_delay"] <= 60 then "3 15–60 min late" else "4 Over 60 min late"
+  calc @aircraft-age aircraft_age "Aircraft age (years)" = if ["plane.plane_year"] == null then null else 2013 - ["plane.plane_year"]
+  calc @aircraft-status aircraft_match "Aircraft record" = if ["flights.tailnum"] == null then "No tail number" else if ["plane.tailnum"] == null then "Not in aircraft table" else "Matched"
+  calc @weather-status weather_match "Weather record" = if ["weather.weather_key"] == null then "No weather hour" else "Matched"
+  calc @visibility-band visibility_band Visibility = if ["weather.visib"] == null then "6 No reading" else if ["weather.visib"] < 1 then "1 Under 1 mi" else if ["weather.visib"] < 3 then "2 1–3 mi" else if ["weather.visib"] < 6 then "3 3–6 mi" else if ["weather.visib"] < 10 then "4 6–10 mi" else "5 10 mi"
+}

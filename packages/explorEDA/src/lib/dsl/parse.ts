@@ -94,6 +94,10 @@ const TOP_LEVEL = new Set([
   "theme",
   "source",
   "rows",
+  "project",
+  "relate",
+  "query",
+  "param",
 ]);
 
 /**
@@ -311,6 +315,64 @@ function parseCalc(
   return declaration;
 }
 
+/**
+ * A `calc` step in a query body. Its head runs to the first ` = ` outside
+ * quotes, so it can carry an `@name`, a label, and settings before the
+ * formula: calc @dep-band dep_band "Departure status" = if ….
+ */
+function parseStepCalc(
+  content: string,
+  indent: number,
+  line: number,
+  problems: DslParseProblem[]
+): DslDeclaration | undefined {
+  const span = { line, column: indent + 1, length: 4 };
+  const text = stripComment(content);
+  let inQuote = false;
+  let equals = -1;
+  for (let index = indent + 4; index < text.length; index++) {
+    const char = text[index]!;
+    if (inQuote && char === "\\") {
+      index++;
+    } else if (char === '"') {
+      inQuote = !inQuote;
+    } else if (
+      !inQuote &&
+      char === "=" &&
+      /\s/.test(text[index - 1]!) &&
+      /\s|$/.test(text[index + 1] ?? "")
+    ) {
+      equals = index;
+      break;
+    }
+  }
+  const declaration = newDeclaration("calc", span);
+  if (equals >= 0) {
+    const { tokens } = tokenize(text.slice(0, equals), indent + 4);
+    for (const token of tokens) {
+      addToken(declaration, token, line);
+    }
+  }
+  const formula = equals >= 0 ? text.slice(equals + 1) : "";
+  if (!declaration.positional.length || !formula.trim()) {
+    problems.push({
+      message: "A calc step needs a field and a formula.",
+      span: { line, column: indent + 1, length: content.length - indent },
+      suggestion: 'Write it as calc margin "Margin" = revenue - cost.',
+    });
+    return undefined;
+  }
+  declaration.expression = {
+    text: formula.trim(),
+    span: {
+      line,
+      column: equals + 2 + (formula.length - formula.trimStart().length),
+      length: formula.trim().length,
+    },
+  };
+  return declaration;
+}
+
 interface OpenBlock {
   declaration: DslDeclaration;
   /** The line holding the `{`. */
@@ -388,7 +450,10 @@ export function parseDocument(text: string): DslParseResult {
     }
 
     if (firstWord === "calc") {
-      const declaration = parseCalc(content, indent, line, problems);
+      const declaration =
+        stack.at(-1)?.declaration.keyword === "query"
+          ? parseStepCalc(content, indent, line, problems)
+          : parseCalc(content, indent, line, problems);
       if (declaration) {
         place(declaration);
       }

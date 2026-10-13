@@ -71,4 +71,4 @@ The demo is a Vite app on GitHub Pages that stores work in `localStorage`. There
 
 ## Next step after confirmation
 
-The local CLI is [shaped](../local-cli-projects/shape-brief.md). After DSL v2 merges, run its first proof: a text form for sources, joins, and queries.
+The local CLI is [shaped](../local-cli-projects/shape-brief.md), and its first proof passed: sources, joins, and queries are project text. Next is the CLI implementation plan.

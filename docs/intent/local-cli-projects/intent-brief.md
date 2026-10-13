@@ -61,8 +61,8 @@ An analyst runs `npx exploreda` in a repo with some CSVs. The browser opens on t
 
 ## Current reality that matters
 
-The `exploreda` package already ships one bin, `exploreda-dsl`, which checks dashboard text against data. It has no server. The DSL v2 stack (#334→#360) is about to merge. It makes dashboard text round-trip exactly, with a `set` escape hatch, but its `source` line holds only a name. Sources, relationships, and queries exist only as the `AnalysisProject` JSON model.
+The `exploreda` package already ships one bin, `exploreda-dsl`, which checks dashboard text against data. It has no server. The DSL v2 stack (#334→#360) is about to merge. It makes dashboard text round-trip exactly, with a `set` escape hatch, but its `source` line holds only a name. Project text for sources, relationships, and queries now exists in `exploreda/analysis` (`exportProjectText`, `compileProjectText`).
 
 ## Next step after confirmation
 
-Run the first proof in the [shape brief](shape-brief.md): a text form for sources, joins, and queries. Then plan.
+The first proof passed ([results](raw/proof/results.md)): sources, joins, and queries are project text. Next is the implementation plan.
