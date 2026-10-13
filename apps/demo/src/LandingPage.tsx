@@ -640,6 +640,16 @@ export function LandingPage() {
                             onImport={handleCsvImport}
                           />
                           <SampleDataButtons onImport={handleCsvImport} />
+                          <p className="mt-4 text-sm text-muted-foreground">
+                            Working in a folder of files?{" "}
+                            <Link
+                              to="/folder"
+                              className="font-medium text-site-accent underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            >
+                              Open a project folder
+                            </Link>{" "}
+                            and save analyses back to it.
+                          </p>
                         </section>
                         <section
                           aria-labelledby="json-heading"

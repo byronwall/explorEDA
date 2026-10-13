@@ -4,6 +4,7 @@ import { App } from "./App";
 import { httpProjectFiles, takeToken } from "./httpFiles";
 
 import "exploreda/dist/ExplorEda.css";
+import "./base.css";
 import "./app.css";
 
 const token = takeToken();

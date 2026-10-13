@@ -8,7 +8,7 @@
     "last_updated": "2026-10-12",
     "summary": "npx exploreda in a folder starts a local server and opens the app on that project; sources, joins, and analyses are DSL v2 text files.",
     "status": "active",
-    "next_action": "M5: demo opens project folders"
+    "next_action": "M6: launch-ready"
   },
   "artifacts": {
     "intent_brief": {
@@ -652,8 +652,10 @@
         "proof": "Contract suite in Chromium; folder round trip CLI↔demo.",
         "valid_intermediate_state": "Demo unchanged without a folder.",
         "rollback": "Hide Open project folder.",
-        "status": "planned",
-        "evidence": []
+        "status": "completed",
+        "evidence": [
+          "apps/demo/e2e/folder.e2e.ts (Chromium OPFS: open, render, delete chart, saved to orders.eda); src/lib/project/directoryFiles.test.ts (contract suite on fake handle, polling watch); screenshots"
+        ]
       },
       {
         "id": "m6",

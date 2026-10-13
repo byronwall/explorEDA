@@ -44,3 +44,8 @@ export {
   uniqueName,
 } from "./createFolder";
 export { labelFromId } from "@/lib/dsl/project";
+export {
+  directoryProjectFiles,
+  type DirectoryHandleLike,
+  type FileHandleLike,
+} from "./directoryFiles";
