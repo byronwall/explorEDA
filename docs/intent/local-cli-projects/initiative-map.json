@@ -4,16 +4,16 @@
     "title": "Local CLI projects with npx exploreda",
     "slug": "local-cli-projects",
     "scale": "capability",
-    "current_phase": "intent",
+    "current_phase": "shape",
     "last_updated": "2026-10-12",
-    "summary": "npx exploreda in a folder starts a local server and opens the standalone app on that folder's project, with analyses stored as files like notebook repos.",
+    "summary": "npx exploreda in a folder starts a local server and opens the app on that project; sources, joins, and analyses are DSL v2 text files.",
     "status": "planned",
-    "next_action": "Question rounds; then shape the project file layout and local server."
+    "next_action": "After DSL v2 merges, run the project-grammar first proof; then write the implementation plan."
   },
   "artifacts": {
     "intent_brief": {
       "path": "intent-brief.md",
-      "status": "draft",
+      "status": "current",
       "updated_at": "2026-10-12"
     },
     "brainstorm": {
@@ -23,8 +23,8 @@
     },
     "shape_brief": {
       "path": "shape-brief.md",
-      "status": "not-created",
-      "updated_at": null
+      "status": "current",
+      "updated_at": "2026-10-12"
     },
     "implementation_plan": {
       "path": "implementation-plan.md",
@@ -37,7 +37,7 @@
       "id": "USR-P1",
       "type": "direct-user-source",
       "location": "../runtime-modes/raw/2026-10-12-notes-transcription.md",
-      "anchor": "Page 1 \u2014 EDA: runtime modes",
+      "anchor": "Page 1 — EDA: runtime modes",
       "authority": "direct intent",
       "notes": "Photo: ../runtime-modes/raw/2026-10-12-runtime-modes-page1.jpg"
     },
@@ -45,7 +45,7 @@
       "id": "USR-P2",
       "type": "direct-user-source",
       "location": "../runtime-modes/raw/2026-10-12-notes-transcription.md",
-      "anchor": "Page 2 \u2014 EDA modes",
+      "anchor": "Page 2 — EDA modes",
       "authority": "direct intent",
       "notes": "Photo: ../runtime-modes/raw/2026-10-12-eda-modes-page2.jpg"
     },
@@ -88,6 +88,46 @@
       "anchor": "Round 3",
       "authority": "direct intent",
       "notes": "recorded in runtime-modes question_rounds"
+    },
+    {
+      "id": "QA-S1",
+      "type": "question-round",
+      "location": "conversation 2026-10-12 (shaping)",
+      "anchor": "Shaping round 1",
+      "authority": "direct intent",
+      "notes": "scope, format, order, scale"
+    },
+    {
+      "id": "QA-S2",
+      "type": "question-round",
+      "location": "conversation 2026-10-12 (shaping)",
+      "anchor": "Shaping round 2",
+      "authority": "direct intent",
+      "notes": "lossless, save, outside edits, binding; DSL rewrite warning"
+    },
+    {
+      "id": "QA-S3",
+      "type": "question-round",
+      "location": "conversation 2026-10-12 (shaping)",
+      "anchor": "Shaping round 3",
+      "authority": "direct intent",
+      "notes": "DSL dependency, joins, first run, export"
+    },
+    {
+      "id": "QA-S4",
+      "type": "question-round",
+      "location": "conversation 2026-10-12 (shaping)",
+      "anchor": "Shaping round 4",
+      "authority": "direct intent",
+      "notes": "join model home, layout default, launch bar"
+    },
+    {
+      "id": "REPO-DSL2",
+      "type": "repository",
+      "location": "origin/claude/compact-dsl-m5-views: packages/explorEDA/src/lib/dsl/; src/types/AnalysisProject.ts; src/lib/analysis/projectFile.ts",
+      "anchor": "DSL v2 stack and project model",
+      "authority": "current reality",
+      "notes": "v2 source line is name-only; AnalysisProject (sources, relationships, queries) has no text form; exploreda-project JSON embeds tables."
     }
   ],
   "intent": {
@@ -163,7 +203,7 @@
         "statement": "Does the CLI support databases?",
         "commitment": "explicit",
         "importance": "core",
-        "status": "active",
+        "status": "resolved",
         "time_horizon": "first release",
         "sources": [
           "USR-P1"
@@ -257,9 +297,10 @@
         "sources": [
           "QA-3"
         ],
-        "status": "active",
+        "status": "superseded",
         "confidence": "high",
-        "id": "I-13"
+        "id": "I-13",
+        "superseded_by": "I-21"
       },
       {
         "type": "decision",
@@ -286,6 +327,127 @@
         "status": "active",
         "confidence": "high",
         "id": "I-15"
+      },
+      {
+        "id": "I-16",
+        "type": "required behavior",
+        "statement": "Analyses are DSL v2 dashboard text (.eda), lossless for charts, fields, filters, calcs, and multiple views.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "QA-S1",
+          "QA-S2"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "I-17",
+        "type": "constraint",
+        "statement": "Build on the DSL v2 stack (#334→#360) after it merges; add only what files need, no syntax redesign.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "QA-S2",
+          "QA-S3"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "I-18",
+        "type": "required behavior",
+        "statement": "Debounced autosave; outside edits win and reload the app with a notice; undo history is in memory only.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "QA-S2"
+        ],
+        "confidence": "high; undo persistence provisional, to be judged in use"
+      },
+      {
+        "id": "I-19",
+        "type": "required behavior",
+        "statement": "Joins across data files are in v1; sources, relationships, and query steps get a DSL text form.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "QA-S3",
+          "QA-S4"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "I-20",
+        "type": "required behavior",
+        "statement": "Visible config at the project root by default; --hidden moves it to .exploreda/. First run writes nothing until the first save.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "QA-S3",
+          "QA-S4"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "I-21",
+        "type": "decision",
+        "statement": "CLI v1 includes global config and file watching; static HTML export and the notebook view are out.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "QA-S3"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "I-22",
+        "type": "required behavior",
+        "statement": "A source path can be given in the .eda and overridden by name at project level.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "QA-S2"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "I-23",
+        "type": "outcome",
+        "statement": "Launch bar: Mac/Linux/Windows smoke, docs page + README quickstart, example project, demo opens project folders.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "QA-S4"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "I-24",
+        "type": "constraint",
+        "statement": "Browser loads data as the demo does; target up to ~100 MB CSV.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "QA-S1"
+        ],
+        "confidence": "high"
       }
     ],
     "themes": [
@@ -294,9 +456,7 @@
       "local server"
     ],
     "conflicts": [],
-    "human_questions": [
-      "What does an analysis file contain: dashboard text only, or text plus explanatory notes?"
-    ]
+    "human_questions": []
   },
   "brainstorm": {
     "status": "not-requested",
@@ -305,13 +465,30 @@
     "selected_option": null
   },
   "shape": {
-    "status": "not-started",
-    "appetite": null,
-    "problem": null,
-    "recommended_shape": null,
-    "success_moves": [],
-    "first_proof": null,
-    "rabbit_holes": [],
+    "status": "draft",
+    "appetite": "Launch-quality local-file CLI incl. three-OS smoke, docs, example project, and demo folder-open; starts after DSL v2 merges.",
+    "problem": "No way to run explorEDA against a folder of files and keep analyses as committable text.",
+    "recommended_shape": "exploreda bin starts a localhost server serving apps/app over a project folder: project text (sources, relationships, queries) + one DSL v2 .eda per analysis; autosave, file watching, in-memory undo; demo reads the same folder via File System Access.",
+    "success_moves": [
+      "Prove the project grammar (sources, relationships, all six query steps) as an exact round trip with AnalysisProject before building the folder format.",
+      "Keep exploreda-project JSON as the fallback store if the grammar proof fails, so launch is not blocked.",
+      "Put folder read/write behind one project-store port used by both the Node server and the demo's File System Access adapter.",
+      "Develop against an in-memory filesystem fake for the store and watcher; the real fs and three-OS smoke come later.",
+      "Ship the server as a separate bin build so component consumers never load Node code.",
+      "Use the existing set escape hatch so no state is lost while text gaps remain."
+    ],
+    "first_proof": {
+      "question": "Can sources, relationships, and all query step types be written as DSL text that round-trips AnalysisProject exactly and that an agent can write from the reference?",
+      "artifact": "Project grammar + round-trip test over every multi-source demo example + a cold-agent draft of the shop project checked with exploreda-dsl check.",
+      "decision_rule": "All examples round-trip and set covers under 5% of query lines → build the folder format on text; otherwise launch with a project JSON file and move the text form below the cut line."
+    },
+    "rabbit_holes": [
+      "Project grammar scope creep into a general query language",
+      "Cross-OS file watching and path handling (Windows)",
+      "Autosave racing outside edits (write-then-watch echo)",
+      "File System Access only in Chromium",
+      "Bundling the server without bloating the component package"
+    ],
     "open_decisions": []
   },
   "implementation": {
@@ -335,6 +512,12 @@
       "date": "2026-10-12",
       "event": "created",
       "summary": "Intent recovered from two handwritten notebook pages and the accompanying chat request.",
+      "status": "planned"
+    },
+    {
+      "date": "2026-10-12",
+      "event": "shaped",
+      "summary": "Four shaping question rounds; shape brief written. Export dropped, joins in, project grammar is the first proof, builds on DSL v2.",
       "status": "planned"
     }
   ],
@@ -362,11 +545,138 @@
     },
     {
       "slug": "database-adapters",
-      "role": "server-side data path for modes 2\u20134"
+      "role": "server-side data path for modes 2–4"
     },
     {
       "slug": "notebook-analysis",
       "role": "notebooks as stored results"
     }
-  ]
+  ],
+  "question_rounds": {
+    "focus": "shaping the CLI and project-folder format",
+    "per_round": 4,
+    "planned_rounds": 4,
+    "status": "complete",
+    "rounds": [
+      {
+        "round": 1,
+        "theme": "scope and stakes",
+        "source": "QA-S1",
+        "questions": [
+          {
+            "n": 1,
+            "question": "What should this shaping pass cover?",
+            "answer": "CLI + folder format.",
+            "effect": "Shape local-cli-projects in detail; runtime-modes stays a thin umbrella."
+          },
+          {
+            "n": 2,
+            "question": "What is the analysis file on disk?",
+            "answer": ".eda text, made lossless.",
+            "effect": "Dashboard text is the file format; closing remaining text gaps is launch work."
+          },
+          {
+            "n": 3,
+            "question": "Where is the shared folder format built?",
+            "answer": "Inside CLI milestone 1.",
+            "effect": "Demo folder-open follows once the format is stable."
+          },
+          {
+            "n": 4,
+            "question": "Data sizes for launch?",
+            "answer": "Up to ~100 MB CSV.",
+            "effect": "Browser loads files as the demo does; server serves files, no columnar transport."
+          }
+        ]
+      },
+      {
+        "round": 2,
+        "theme": "behavior and limits",
+        "source": "QA-S2",
+        "questions": [
+          {
+            "n": 5,
+            "question": "What must survive reopening?",
+            "answer": "Charts, fields, filters, calcs; multiple views. Undo is ephemeral; OK to lose it when the CLI stops, will test the feel.",
+            "effect": "File is lossless for dashboard state and views; undo history lives in memory only (provisional)."
+          },
+          {
+            "n": 6,
+            "question": "How do edits reach the file?",
+            "answer": "Autosave, debounced.",
+            "effect": "Writes within ~1s of a change."
+          },
+          {
+            "n": 7,
+            "question": "Outside edit while open?",
+            "answer": "Disk wins, reload.",
+            "effect": "Reload with a notice; in-memory undo can step back."
+          },
+          {
+            "n": 8,
+            "question": "How does an .eda name its data?",
+            "answer": "Both.",
+            "effect": "`source` line carries a relative path; a project file can override by source name."
+          }
+        ],
+        "notes": "User: the DSL is being rewritten (compact-dsl-redesign stack #334→#360, about to merge). Shape builds on DSL v2, whose own boundary is lossless round trip with a `set` escape hatch."
+      },
+      {
+        "round": 3,
+        "theme": "boundaries and confirmation",
+        "source": "QA-S3",
+        "questions": [
+          {
+            "n": 9,
+            "question": "CLI builds on DSL v2 after merge, adds source paths and closes omissions, no syntax redesign?",
+            "answer": "Yes, build on v2.",
+            "effect": "DSL v2 merge is a prerequisite."
+          },
+          {
+            "n": 10,
+            "question": "Joins across data files in v1?",
+            "answer": "Yes, joins included.",
+            "effect": "Project model (sources, relationships, queries) must be stored in the folder."
+          },
+          {
+            "n": 11,
+            "question": "First run with no project?",
+            "answer": "Open, write nothing yet.",
+            "effect": "First save creates project files."
+          },
+          {
+            "n": 12,
+            "question": "Static HTML export contents?",
+            "answer": "Don't export anything now; just get the CLI working. Drop this requirement.",
+            "effect": "Static export removed from v1."
+          }
+        ]
+      },
+      {
+        "round": 4,
+        "theme": "join model, layout default, launch bar",
+        "source": "QA-S4",
+        "questions": [
+          {
+            "n": 13,
+            "question": "Where do sources, joins, and query steps live?",
+            "answer": "New DSL text for it.",
+            "effect": "Project grammar becomes the main new piece and the first proof; fallback is a project JSON file."
+          },
+          {
+            "n": 14,
+            "question": "Default layout and how it is picked?",
+            "answer": "Visible default, --hidden flag.",
+            "effect": "exploreda.eda at root; --hidden puts it in .exploreda/ (analysis files stay visible: provisional reading)."
+          },
+          {
+            "n": 15,
+            "question": "Launch bar?",
+            "answer": "All four: three-OS tested, docs + quickstart, demo opens project folders, example project.",
+            "effect": "Demo folder-open is launch scope."
+          }
+        ]
+      }
+    ]
+  }
 }

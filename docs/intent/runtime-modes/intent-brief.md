@@ -2,7 +2,7 @@
 title: "explorEDA runtime modes"
 slug: "runtime-modes"
 phase: intent
-status: draft
+status: current
 last_updated: "2026-10-12"
 ---
 
@@ -13,7 +13,7 @@ last_updated: "2026-10-12"
 You want explorEDA to run as a real product in several places, not only as a React component inside someone else's app. The notes name four ways to run it, ordered from least to most administration:
 
 1. **Browser only** at exploreda.dev — the demo, files and CSVs only, no server.
-2. **Local CLI** — `npx exploreda` in a folder, a project like a notebook repo, served locally.
+2. **Local CLI** — `npx exploreda` in a folder, a project of readable text files, served locally.
 3. **Self-hosted** — free Docker Compose inside a company, with accounts and database connections.
 4. **Managed (paid)** — one tenant per Docker or Kubernetes deployment, with SSO and integrations. This comes last.
 
@@ -24,7 +24,7 @@ The embedded React component stays a separate track: the host developer owns sto
 ## What matters most
 
 - A polished, announceable `npx exploreda` that turns any folder into a project.
-- One project-folder format shared by the CLI, the demo, and later the server.
+- One project-folder format shared by the CLI, the demo, and later the server. Sources, joins, and analyses are all dashboard text.
 - One server and one app for modes 2–4, with differences only in adapters.
 - Low administration at every rung, and nothing that makes the component require a server.
 
@@ -53,6 +53,7 @@ The embedded React component stays a separate track: the host developer owns sto
 ## What seems settled
 
 - Mode order and the CLI first; public npx launch as the near-term goal.
+- The project-folder format is built inside the CLI's first milestone. It builds on the DSL v2 rewrite (#334→#360) after that merges.
 - `apps/app` beside the demo; one server package; CLI as a bin in `exploreda`.
 - Free self-hosting, paid managed; component licensing paused.
 - [customer-instance-hosting](../customer-instance-hosting/intent-brief.md) was a seed for this program. It is paused, and its hosting research merges in when the managed mode is shaped.
@@ -68,10 +69,6 @@ The embedded React component stays a separate track: the host developer owns sto
 
 The demo is a Vite app on GitHub Pages that stores work in `localStorage`. There is no CLI, server, or user model. [Database adapters](../database-adapters/intent-brief.md) plans a server read into the existing `tables` input, which fits the shared server.
 
-## What still needs your input
-
-- Build the shared project-folder format as its own first step, or inside the CLI's first milestone?
-
 ## Next step after confirmation
 
-Shape the local CLI and the project-folder format together.
+The local CLI is [shaped](../local-cli-projects/shape-brief.md). After DSL v2 merges, run its first proof: a text form for sources, joins, and queries.

@@ -1,8 +1,8 @@
 ---
 title: "Local CLI projects with npx exploreda"
 slug: "local-cli-projects"
-phase: intent
-status: draft
+phase: shape
+status: current
 last_updated: "2026-10-12"
 ---
 
@@ -10,61 +10,59 @@ last_updated: "2026-10-12"
 
 ## My read
 
-You want explorEDA to work like Jupyter for exploratory analysis. Run `npx exploreda` in a folder and that folder becomes a project. The project holds shared project information and one file per analysis, like notebooks in a repo. Run it in another folder and you get another project. A global config holds preferences shared across projects.
+You want explorEDA to work like Jupyter for exploratory analysis. Run `npx exploreda` in a folder and that folder becomes a project. The project holds its sources and joins, plus one dashboard-text (`.eda`) file per analysis, like notebooks in a repo. A global config holds preferences shared across projects.
 
 The command starts a local server and opens the standalone app in the browser. There is no sign-in: the local user is the only user. This is the first mode to build, and the goal is a **public launch**, so install, first run, docs, and the file format must be good enough to announce.
 
 ## What matters most
 
 - One command in any folder opens that folder as a project.
-- Analyses are files, one per analysis, readable and stable to diff and commit.
-- The file format is shared with the demo, which can open the same project folder.
-- Polished enough to announce publicly.
+- The whole project is readable text: sources, joins, and analyses. It is stable to diff and commit.
+- Reopening restores charts, fields, filters, calculations, and every view exactly.
+- The demo can open the same project folder.
 
 ## The experience you appear to want
 
-An analyst runs `npx exploreda` in a repo with some CSVs. The browser opens on the project, listing its data files and saved analyses. They build an analysis, and it is saved as a file in the folder. A teammate pulls the repo, and the open app refreshes because it watches the files. Later they run an export command and send a standalone HTML report.
+An analyst runs `npx exploreda` in a repo with some CSVs. The browser opens on the folder's data files, and nothing is written yet. They join orders to customers and build an analysis, which autosaves as an `.eda` file. A teammate pulls the repo, and the open app reloads because it watches the files.
 
 ## First release
 
-- Open a folder as a project; read data files in place.
-- One file per analysis, plus shared project info.
-- **Config location is the user's choice per project:** keep it all in a hidden `.exploreda/` folder, or in visible project and workspace files.
-- Project-relative paths by default; absolute paths to outside files are allowed.
+- Open a folder as a project; read CSV and JSON in place, up to about 100 MB.
+- Sources, relationships, and query steps written as text, so joins across files work.
+- One `.eda` per analysis, on the DSL v2 syntax.
+- Project config visible at the root by default; `--hidden` puts it in `.exploreda/`.
+- Relative paths by default; absolute paths allowed and flagged as not portable.
+- Debounced autosave; outside edits reload the app.
+- Undo history in memory only. It is acceptable to lose it when the CLI stops; this will be judged in use.
 - Global config across projects.
-- File watching, so outside edits refresh the app.
-- Static HTML export of an analysis.
+- Launch bar: tested on Mac, Linux, and Windows; a docs page and README quickstart; an example project; and project folders in the demo.
 
-**Next, not first:** database sources, built on the [database adapters](../database-adapters/intent-brief.md) work. **Later:** the notebook view from [notebook analysis](../notebook-analysis/intent-brief.md).
+**Next:** database sources, on [database adapters](../database-adapters/intent-brief.md). **Later:** the notebook view and static HTML export.
 
 ## Boundaries
 
 ### Must be true
 
 - Ships as a bin in the `exploreda` package, so `npx exploreda` works.
-- The server listens only on the local machine by default.
-- Reopening a project restores its analyses exactly.
+- The server listens only on the local machine.
+- Builds on the [DSL v2 rewrite](https://github.com/byronwall/explorEDA/pull/334) after it merges, without changing its syntax.
 
 ### Must be avoided
 
-- No accounts, database, or Docker requirement.
+- No accounts, database, Docker, or export requirement.
 - Server code must not weigh down apps that only use the component.
 - Never write outside the project folder and the global config location.
 
-## Possibilities, not decisions
+## What seems settled
 
-- Analysis files built on dashboard text (`src/lib/dsl/`), which is already a readable text form.
-- `~/.config/exploreda` as the global config location.
-- Marking analyses that use absolute paths as not portable.
+- Analyses are DSL v2 `.eda` text; sources and joins get a text form too.
+- Autosave, and the disk wins on outside edits.
+- No export and no notebook view in the first release.
 
 ## Current reality that matters
 
-The `exploreda` package is a React library with no bin, server, or Node runtime code. Its build and exports would need a separate server entry point.
-
-## What still needs your input
-
-- What does an analysis file contain: dashboard text only, or text plus explanatory notes?
+The `exploreda` package already ships one bin, `exploreda-dsl`, which checks dashboard text against data. It has no server. The DSL v2 stack (#334→#360) is about to merge. It makes dashboard text round-trip exactly, with a `set` escape hatch, but its `source` line holds only a name. Sources, relationships, and queries exist only as the `AnalysisProject` JSON model.
 
 ## Next step after confirmation
 
-Shape the project-folder format and the local server together.
+Run the first proof in the [shape brief](shape-brief.md): a text form for sources, joins, and queries. Then plan.

@@ -6,14 +6,14 @@
     "scale": "program",
     "current_phase": "intent",
     "last_updated": "2026-10-12",
-    "summary": "Run one standalone explorEDA app in four modes \u2014 browser-only, local CLI, self-hosted Docker Compose, and paid per-tenant hosting \u2014 over one storage model whose backing store changes per mode.",
+    "summary": "Run one standalone explorEDA app in four modes — browser-only, local CLI, self-hosted Docker Compose, and paid per-tenant hosting — over one storage model whose backing store changes per mode.",
     "status": "planned",
-    "next_action": "Question rounds on scope and splits; then shape the shared storage model and the first mode."
+    "next_action": "local-cli-projects is shaped; after DSL v2 merges, run its project-grammar first proof, then plan the CLI."
   },
   "artifacts": {
     "intent_brief": {
       "path": "intent-brief.md",
-      "status": "draft",
+      "status": "current",
       "updated_at": "2026-10-12"
     },
     "brainstorm": {
@@ -37,7 +37,7 @@
       "id": "USR-P1",
       "type": "direct-user-source",
       "location": "raw/2026-10-12-notes-transcription.md",
-      "anchor": "Page 1 \u2014 EDA: runtime modes",
+      "anchor": "Page 1 — EDA: runtime modes",
       "authority": "direct intent",
       "notes": "Photo: raw/2026-10-12-runtime-modes-page1.jpg"
     },
@@ -45,7 +45,7 @@
       "id": "USR-P2",
       "type": "direct-user-source",
       "location": "raw/2026-10-12-notes-transcription.md",
-      "anchor": "Page 2 \u2014 EDA modes",
+      "anchor": "Page 2 — EDA modes",
       "authority": "direct intent",
       "notes": "Photo: raw/2026-10-12-eda-modes-page2.jpg"
     },
@@ -88,6 +88,14 @@
       "anchor": "Round 3",
       "authority": "direct intent",
       "notes": "layout, accounts, cut line, goal"
+    },
+    {
+      "id": "QA-S1",
+      "type": "question-round",
+      "location": "conversation 2026-10-12 (shaping)",
+      "anchor": "local-cli-projects shaping rounds 1–4",
+      "authority": "direct intent",
+      "notes": "Recorded in local-cli-projects/initiative-map.json question_rounds."
     }
   ],
   "intent": {
@@ -330,6 +338,19 @@
         "status": "active",
         "confidence": "high",
         "id": "I-18"
+      },
+      {
+        "id": "I-19",
+        "type": "decision",
+        "statement": "The project-folder format is built inside the CLI's first milestone, on DSL v2; sources, joins, and analyses are all text.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "QA-S1"
+        ],
+        "confidence": "high"
       }
     ],
     "themes": [
@@ -338,9 +359,7 @@
       "component vs app split"
     ],
     "conflicts": [],
-    "human_questions": [
-      "Build the shared project-folder format as its own first step, or inside the CLI's first milestone?"
-    ]
+    "human_questions": []
   },
   "brainstorm": {
     "status": "not-requested",
@@ -380,6 +399,12 @@
       "event": "created",
       "summary": "Intent recovered from two handwritten notebook pages and the accompanying chat request.",
       "status": "planned"
+    },
+    {
+      "date": "2026-10-12",
+      "event": "child shaped",
+      "summary": "local-cli-projects shaped; folder format resolved as part of CLI M1 on DSL v2; static export dropped from CLI v1.",
+      "status": "planned"
     }
   ],
   "closure": null,
@@ -406,7 +431,7 @@
     },
     {
       "slug": "database-adapters",
-      "role": "server-side data path for modes 2\u20134"
+      "role": "server-side data path for modes 2–4"
     },
     {
       "slug": "notebook-analysis",
@@ -480,7 +505,7 @@
           {
             "n": 8,
             "question": "Database sources in the first CLI release?",
-            "answer": "No \u2014 files first, DB next.",
+            "answer": "No — files first, DB next.",
             "effect": "CLI v1 is file-only; DB connections are the next CLI milestone reusing database-adapters."
           },
           {
@@ -516,7 +541,7 @@
         "questions": [
           {
             "n": 13,
-            "question": "Config in hidden folder or workspace files \u2014 which reading?",
+            "question": "Config in hidden folder or workspace files — which reading?",
             "answer": "User's choice per project.",
             "effect": "CLI supports both layouts: all config hidden in .exploreda/ or visible project/workspace files."
           },
