@@ -130,6 +130,16 @@ row sales.region title="By region"
     expect(folder.dataFiles).toEqual([]);
   });
 
+  it("doesn't list the app's own records in .exploreda as data", async () => {
+    const folder = await readProjectFolder(
+      memoryProjectFiles({
+        "data/sales.csv": "id\n1\n",
+        ".exploreda/fetched.json": "{}",
+      })
+    );
+    expect(folder.dataFiles).toEqual(["data/sales.csv"]);
+  });
+
   it("prefers the project's source when an analysis names the same one", async () => {
     const files = exampleFiles();
     files["extra.eda"] = `source @orders path=elsewhere.csv

@@ -18,13 +18,14 @@ npx exploreda server --data /srv/exploreda --public-url https://eda.example.com
 
 The first person to open the address creates the admin account. Accounts, projects, and members are kept in `exploreda.db` in the data folder, and each project's files are under `projects/`.
 
-| Option               | What it does                                                                                                                                                  |
-| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--data <folder>`    | Where projects and accounts are kept. Required.                                                                                                               |
-| `--port <n>`         | The port to listen on, 8080 by default.                                                                                                                       |
-| `--host <address>`   | The address to listen on, `0.0.0.0` by default.                                                                                                               |
-| `--public-url <url>` | The address people open. Changes to projects are accepted only from pages at this address, and sign-in cookies are marked secure when it starts with `https`. |
-| `--seed-dev`         | Adds sample accounts and the sample project, with accounts kept in memory.                                                                                    |
+| Option                | What it does                                                                                                                                                  |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--data <folder>`     | Where projects and accounts are kept. Required.                                                                                                               |
+| `--port <n>`          | The port to listen on, 8080 by default.                                                                                                                       |
+| `--host <address>`    | The address to listen on, `0.0.0.0` by default.                                                                                                               |
+| `--upload-limit <MB>` | The largest data file an author can upload or download, 100 MB by default.                                                                                    |
+| `--public-url <url>`  | The address people open. Changes to projects are accepted only from pages at this address, and sign-in cookies are marked secure when it starts with `https`. |
+| `--seed-dev`          | Adds sample accounts and the sample project, with accounts kept in memory.                                                                                    |
 
 The team server needs Node 22.5 or later.
 
@@ -42,6 +43,17 @@ Any account can also be an **admin**. Admins add people, hand out password links
 The server doesn't send email. To add someone, an admin opens **People**, enters their name and email, and chooses **Add person**. The page shows a link to send them. It sets their password, works once, and expires in 7 days. The same **Password link** button makes a new link for someone who has forgotten their password.
 
 After five wrong passwords for one email from one address, sign-in for that pair waits 15 minutes.
+
+## Add data to a project
+
+Authors choose **Add data** beside the project's data, or start from an empty project's first page:
+
+- **Upload a CSV or JSON file** from your computer. It goes into the project's `data/` folder. If a file of that name is already there, explorEDA asks before replacing it.
+- **Download from an address.** The server downloads the file now and keeps a copy, and the data list shows when. Choose **Refetch** to download a fresh copy from the same address. If a download fails, the last good copy stays.
+
+Addresses inside your company's network work, since the server downloads them itself. The server never downloads from its own machine, link-local addresses, or cloud metadata services, and it logs every download with who asked for it.
+
+Then choose **Chart** beside the file to start an analysis.
 
 ## Share a project
 

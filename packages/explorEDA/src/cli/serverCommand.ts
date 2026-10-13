@@ -17,6 +17,7 @@ Options:
   --port <n>          port to listen on (default 8080)
   --host <address>    address to listen on (default 0.0.0.0)
   --public-url <url>  the address people open, such as https://eda.example.com
+  --upload-limit <MB> the largest data file to upload or download (default 100)
   --seed-dev          try it out: sample accounts and a sample project,
                       with accounts kept in memory instead of the data folder
   -h, --help          show this help`;
@@ -27,6 +28,7 @@ interface ServerOptions {
   host: string;
   publicUrl?: string;
   seedDev: boolean;
+  uploadLimitMb: number;
 }
 
 function parseServerArgs(args: string[]): ServerOptions | string {
@@ -34,6 +36,7 @@ function parseServerArgs(args: string[]): ServerOptions | string {
     port: 8080,
     host: "0.0.0.0",
     seedDev: false,
+    uploadLimitMb: 100,
   };
   for (let index = 0; index < args.length; index++) {
     const arg = args[index]!;
@@ -48,6 +51,12 @@ function parseServerArgs(args: string[]): ServerOptions | string {
       options.publicUrl = value();
     } else if (arg === "--seed-dev") {
       options.seedDev = true;
+    } else if (arg === "--upload-limit") {
+      const limit = Number(value());
+      if (!Number.isFinite(limit) || limit <= 0) {
+        return `--upload-limit needs a size in megabytes.\n\n${SERVER_USAGE}`;
+      }
+      options.uploadLimitMb = limit;
     } else if (arg === "--port") {
       const port = Number(value());
       if (!Number.isInteger(port) || port < 0 || port > 65535) {
@@ -109,6 +118,7 @@ export async function serverCommand(
     version: paths.version,
     appDir: paths.appDir,
     publicUrl: parsed.publicUrl,
+    uploadLimit: Math.round(parsed.uploadLimitMb * 1024 * 1024),
   });
   const started = await startHttpServer({
     handle,

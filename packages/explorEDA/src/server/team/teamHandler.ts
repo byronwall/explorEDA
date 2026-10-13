@@ -6,6 +6,7 @@
  * name of the person who saved.
  */
 import type { IncomingMessage, ServerResponse } from "node:http";
+import type { LookupFunction } from "node:net";
 import path from "node:path";
 import {
   nodeProjectFiles,
@@ -20,6 +21,18 @@ import {
   serveApp,
 } from "../http";
 import { createAccountRoutes } from "./accountRoutes";
+import {
+  checkDeclaredSize,
+  dataPath,
+  DEFAULT_UPLOAD_LIMIT,
+  download,
+  IntakeError,
+  pathForUrl,
+  readFetched,
+  streamIntoPlace,
+  writeFetched,
+  FETCHED_FILE,
+} from "./fileIntake";
 import { signInLimiter } from "./signInLimiter";
 import {
   AccountError,
@@ -48,6 +61,12 @@ export interface TeamHandlerOptions {
    * must match its Host header.
    */
   publicUrl?: string;
+  /** The largest upload or download, in bytes. */
+  uploadLimit?: number;
+  /** Where each download is recorded; one JSON object per call. */
+  log?: (entry: Record<string, unknown>) => void;
+  /** Resolves download hosts; tests use it to reach a local server. */
+  lookup?: LookupFunction;
 }
 
 type Next = () => void;
@@ -104,10 +123,21 @@ interface OpenProject {
   files: NodeProjectFiles;
   listeners: Set<Listener>;
   stopWatching?: () => void;
+  /** Paths written by uploads and downloads, so the watcher skips them. */
+  recent: Map<string, number>;
 }
+
+/** How long a watcher event for an upload counts as its own echo. */
+const ECHO_MS = 3000;
 
 export function createTeamHandler(options: TeamHandlerOptions) {
   const { store, dataDir, version, appDir, publicUrl } = options;
+  const uploadLimit = options.uploadLimit ?? DEFAULT_UPLOAD_LIMIT;
+  const log =
+    options.log ??
+    ((entry: Record<string, unknown>) =>
+      // eslint-disable-next-line no-console -- the server's activity log
+      console.log(JSON.stringify(entry)));
   const secure = publicUrl?.startsWith("https:") ?? false;
   const open = new Map<string, OpenProject>();
   const projectFolder = (id: string) => path.join(dataDir, "projects", id);
@@ -117,6 +147,7 @@ export function createTeamHandler(options: TeamHandlerOptions) {
       project = {
         files: nodeProjectFiles(projectFolder(id)),
         listeners: new Set(),
+        recent: new Map(),
       };
       open.set(id, project);
     }
@@ -257,9 +288,116 @@ export function createTeamHandler(options: TeamHandlerOptions) {
       });
       opened.listeners.add(listener);
       // Edits made on the server's disk reach every page, unnamed.
-      opened.stopWatching ??= opened.files.watch?.((paths) =>
-        announce(opened, paths)
+      opened.stopWatching ??= opened.files.watch?.((paths) => {
+        const now = Date.now();
+        const outside = paths.filter(
+          (item) =>
+            item !== FETCHED_FILE &&
+            !(now - (opened.recent.get(item) ?? 0) < ECHO_MS)
+        );
+        if (outside.length) {
+          announce(opened, outside);
+        }
+      });
+      return;
+    }
+    if (req.method === "POST" && (route === "upload" || route === "fetch")) {
+      if (role !== "author") {
+        send(res, 403, { error: "Viewers can't add data to this project." });
+        return;
+      }
+      const folder = projectFolder(id);
+      const saved = (target: string) => {
+        opened.recent.set(target, Date.now());
+        announce(opened, [target], {
+          name: account.name,
+          client: header(req, CLIENT_HEADER),
+        });
+      };
+      if (route === "upload") {
+        const target = dataPath(url.searchParams.get("path") ?? "");
+        checkDeclaredSize(req.headers["content-length"], uploadLimit);
+        const bytes = await streamIntoPlace(
+          req,
+          opened.files.resolve(target)!,
+          uploadLimit
+        );
+        const records = await readFetched(folder);
+        if (records[target]) {
+          delete records[target];
+          await writeFetched(folder, records);
+        }
+        saved(target);
+        send(res, 200, { saved: target, bytes });
+        return;
+      }
+      const body = JSON.parse(await readBody(req, 16_384)) as {
+        url?: unknown;
+        path?: unknown;
+      };
+      const records = await readFetched(folder);
+      const known =
+        typeof body.path === "string"
+          ? records[dataPath(body.path)]
+          : undefined;
+      const address =
+        typeof body.url === "string" && body.url.trim()
+          ? body.url.trim()
+          : known?.url;
+      if (!address) {
+        send(res, 400, { error: "Enter the address of a CSV or JSON file." });
+        return;
+      }
+      const target = dataPath(
+        typeof body.path === "string" && body.path
+          ? body.path
+          : pathForUrl(address)
       );
+      const entry = {
+        at: new Date().toISOString(),
+        event: "fetch",
+        project: id,
+        account: account.email,
+        url: address,
+        path: target,
+      };
+      try {
+        const fetched = await download(address, {}, options.lookup);
+        let bytes: number;
+        try {
+          checkDeclaredSize(
+            fetched.body.headers["content-length"],
+            uploadLimit
+          );
+          bytes = await streamIntoPlace(
+            fetched.body,
+            opened.files.resolve(target)!,
+            uploadLimit
+          );
+        } finally {
+          fetched.body.destroy();
+        }
+        const record = {
+          url: address,
+          fetchedAt: new Date().toISOString(),
+          bytes,
+          ...(fetched.etag ? { etag: fetched.etag } : {}),
+        };
+        await writeFetched(folder, {
+          ...(await readFetched(folder)),
+          [target]: record,
+        });
+        log({ ...entry, outcome: "saved", bytes });
+        saved(target);
+        send(res, 200, { saved: target, ...record });
+      } catch (error) {
+        log({
+          ...entry,
+          outcome: "failed",
+          error: error instanceof Error ? error.message : String(error),
+        });
+        throw error;
+      }
       return;
     }
     const handled = await fileRoutes(opened.files, route, url, req, res, {
@@ -350,6 +488,10 @@ export function createTeamHandler(options: TeamHandlerOptions) {
           code: error.code,
           error: error.message,
         });
+        return;
+      }
+      if (error instanceof IntakeError) {
+        send(res, error.status, { error: error.message });
         return;
       }
       if (error instanceof SyntaxError) {

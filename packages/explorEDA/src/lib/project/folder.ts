@@ -288,7 +288,10 @@ export async function readProjectFolder(
     implicitQueries,
     missingSources,
     outsideSources,
-    dataFiles: listed.filter(isDataFile),
+    // `.exploreda/` holds the app's own records, never data.
+    dataFiles: listed.filter(
+      (path) => isDataFile(path) && !path.startsWith(".exploreda/")
+    ),
     analyses,
     problems,
   };

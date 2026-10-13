@@ -8,7 +8,7 @@
     "last_updated": "2026-10-13",
     "summary": "A free Docker Compose team server for one company: local accounts, projects with author and viewer members, CSV and JSON files by upload or URL, and project folders on one volume. File-only; database sources are a separate initiative.",
     "status": "active",
-    "next_action": "Finish M2 PR; then M3 upload and URL sources."
+    "next_action": "Finish M3 PR; then M4 Docker image and Compose."
   },
   "artifacts": {
     "intent_brief": {
@@ -140,7 +140,9 @@
         "importance": "core",
         "status": "active",
         "time_horizon": "first release",
-        "sources": ["USR-P2"],
+        "sources": [
+          "USR-P2"
+        ],
         "confidence": "high"
       },
       {
@@ -151,7 +153,9 @@
         "importance": "core",
         "status": "active",
         "time_horizon": "first release",
-        "sources": ["USR-P2"],
+        "sources": [
+          "USR-P2"
+        ],
         "confidence": "high"
       },
       {
@@ -162,7 +166,9 @@
         "importance": "core",
         "status": "active",
         "time_horizon": "first release",
-        "sources": ["USR-P2"],
+        "sources": [
+          "USR-P2"
+        ],
         "confidence": "high"
       },
       {
@@ -173,7 +179,9 @@
         "importance": "core",
         "status": "superseded",
         "time_horizon": "first release",
-        "sources": ["USR-P2"],
+        "sources": [
+          "USR-P2"
+        ],
         "confidence": "high",
         "superseded_by": "I-21",
         "notes": "Database connections are their own initiative (QA-S3 n13)."
@@ -186,7 +194,9 @@
         "importance": "core",
         "status": "active",
         "time_horizon": "first release",
-        "sources": ["USR-P2"],
+        "sources": [
+          "USR-P2"
+        ],
         "confidence": "high"
       },
       {
@@ -197,7 +207,9 @@
         "importance": "core",
         "status": "active",
         "time_horizon": "first release",
-        "sources": ["USR-P2"],
+        "sources": [
+          "USR-P2"
+        ],
         "confidence": "high"
       },
       {
@@ -208,7 +220,9 @@
         "importance": "supporting",
         "status": "active",
         "time_horizon": "later",
-        "sources": ["USR-P2"],
+        "sources": [
+          "USR-P2"
+        ],
         "confidence": "medium"
       },
       {
@@ -217,7 +231,9 @@
         "commitment": "explicit",
         "importance": "core",
         "time_horizon": "first release",
-        "sources": ["QA-2"],
+        "sources": [
+          "QA-2"
+        ],
         "status": "active",
         "confidence": "high",
         "id": "I-08"
@@ -228,7 +244,9 @@
         "commitment": "explicit",
         "importance": "supporting",
         "time_horizon": "first release",
-        "sources": ["QA-2"],
+        "sources": [
+          "QA-2"
+        ],
         "confidence": "medium; whether self-hosting itself is paid remains open",
         "status": "active",
         "id": "I-09"
@@ -239,7 +257,9 @@
         "commitment": "explicit",
         "importance": "core",
         "time_horizon": "first release",
-        "sources": ["QA-3"],
+        "sources": [
+          "QA-3"
+        ],
         "status": "active",
         "confidence": "high",
         "id": "I-10"
@@ -250,7 +270,9 @@
         "commitment": "explicit",
         "importance": "core",
         "time_horizon": "first release",
-        "sources": ["QA-3"],
+        "sources": [
+          "QA-3"
+        ],
         "status": "active",
         "confidence": "high",
         "id": "I-11"
@@ -261,7 +283,9 @@
         "commitment": "explicit",
         "importance": "core",
         "time_horizon": "first release",
-        "sources": ["QA-3"],
+        "sources": [
+          "QA-3"
+        ],
         "status": "active",
         "confidence": "high",
         "id": "I-12"
@@ -274,7 +298,9 @@
         "importance": "core",
         "status": "active",
         "time_horizon": "first release",
-        "sources": ["QA-S1"],
+        "sources": [
+          "QA-S1"
+        ],
         "confidence": "high"
       },
       {
@@ -285,7 +311,9 @@
         "importance": "core",
         "status": "active",
         "time_horizon": "first release",
-        "sources": ["QA-S1"],
+        "sources": [
+          "QA-S1"
+        ],
         "confidence": "high"
       },
       {
@@ -296,7 +324,9 @@
         "importance": "core",
         "status": "active",
         "time_horizon": "first release",
-        "sources": ["QA-S1"],
+        "sources": [
+          "QA-S1"
+        ],
         "confidence": "high"
       },
       {
@@ -307,7 +337,9 @@
         "importance": "core",
         "status": "superseded",
         "time_horizon": "first release",
-        "sources": ["QA-S1"],
+        "sources": [
+          "QA-S1"
+        ],
         "confidence": "high",
         "superseded_by": "I-21",
         "notes": "Database connections are their own initiative (QA-S3 n13)."
@@ -320,7 +352,9 @@
         "importance": "core",
         "status": "active",
         "time_horizon": "first release",
-        "sources": ["QA-S2"],
+        "sources": [
+          "QA-S2"
+        ],
         "confidence": "high"
       },
       {
@@ -331,7 +365,10 @@
         "importance": "core",
         "status": "active",
         "time_horizon": "first release",
-        "sources": ["QA-S2", "QA-S3"],
+        "sources": [
+          "QA-S2",
+          "QA-S3"
+        ],
         "confidence": "medium; schedule provisional"
       },
       {
@@ -342,7 +379,9 @@
         "importance": "core",
         "status": "active",
         "time_horizon": "first release",
-        "sources": ["QA-S2"],
+        "sources": [
+          "QA-S2"
+        ],
         "confidence": "high"
       },
       {
@@ -353,7 +392,9 @@
         "importance": "core",
         "status": "superseded",
         "time_horizon": "first release",
-        "sources": ["QA-S2"],
+        "sources": [
+          "QA-S2"
+        ],
         "confidence": "high",
         "superseded_by": "I-21",
         "notes": "Database connections are their own initiative (QA-S3 n13)."
@@ -366,7 +407,9 @@
         "importance": "core",
         "status": "active",
         "time_horizon": "first release",
-        "sources": ["QA-S3"],
+        "sources": [
+          "QA-S3"
+        ],
         "confidence": "high"
       },
       {
@@ -377,7 +420,9 @@
         "importance": "core",
         "status": "active",
         "time_horizon": "first release",
-        "sources": ["QA-S3"],
+        "sources": [
+          "QA-S3"
+        ],
         "confidence": "high"
       },
       {
@@ -388,7 +433,9 @@
         "importance": "core",
         "status": "active",
         "time_horizon": "first release",
-        "sources": ["QA-S3"],
+        "sources": [
+          "QA-S3"
+        ],
         "confidence": "high"
       },
       {
@@ -399,7 +446,9 @@
         "importance": "core",
         "status": "active",
         "time_horizon": "first release",
-        "sources": ["QA-S3"],
+        "sources": [
+          "QA-S3"
+        ],
         "confidence": "high"
       }
     ],
@@ -485,7 +534,11 @@
           "hard kill mid-write",
           "module unavailable on Node < 22.5"
         ],
-        "proof_rungs": ["fake", "contract-test", "embedded-real"],
+        "proof_rungs": [
+          "fake",
+          "contract-test",
+          "embedded-real"
+        ],
         "local_proof": "Store contract suite on the fake and on a temp SQLite file.",
         "live_proof": "Compose smoke restart in CI (M4).",
         "rollout": "Fallback JSON-file store behind AccountStore if the M1 spike fails."
@@ -504,7 +557,10 @@
           "oversized body",
           "redirect to metadata or link-local address"
         ],
-        "proof_rungs": ["fake", "container"],
+        "proof_rungs": [
+          "fake",
+          "container"
+        ],
         "local_proof": "Local test HTTP server with injected failures.",
         "live_proof": "One internal-style URL fetched in the Compose smoke from a sibling container.",
         "rollout": "Hide the From URL action; uploaded and fetched files stay plain project files."
@@ -521,7 +577,10 @@
           "volume permissions for non-root user",
           "missing session secret"
         ],
-        "proof_rungs": ["container", "deployed-smoke"],
+        "proof_rungs": [
+          "container",
+          "deployed-smoke"
+        ],
         "local_proof": "docker compose up locally.",
         "live_proof": "CI team-server-smoke with restart and, in M5, the fixture volume.",
         "rollout": "Image published only after approval; users can build from the Dockerfile."
@@ -559,31 +618,38 @@
         "id": "m2",
         "title": "Admins set up accounts and authors set up projects",
         "outcome": "Accounts persist in SQLite; from an empty data directory an admin sets up the server, invites by link, and authors create shared projects with members.",
-        "dependencies_introduced": ["SQLite"],
+        "dependencies_introduced": [
+          "SQLite"
+        ],
         "proof": "Store contract suite on SQLite plus restart persistence; node:sqlite spike; Store and handler tests per rule; browser checks of setup, admin, and members at three widths; pnpm check:ui.",
         "valid_intermediate_state": "Full multi-user server without file intake beyond the app's own saves.",
         "rollback": "Revert the PR; M1 seeded mode remains.",
-        "status": "active",
+        "status": "completed",
         "evidence": [
-          "node:sqlite spike: loads without a flag on Node 22.5+ (experimental warning, suppressed) and on 24; absent on 20, so it loads lazily."
+          "node:sqlite spike: loads without a flag on Node 22.5+ (experimental warning, suppressed) and on 24; absent on 20, so it loads lazily.",
+          "PR #387; sqliteStore.test.ts; accountRoutes.test.ts"
         ]
       },
       {
         "id": "m3",
         "title": "Authors add files by upload or URL",
         "outcome": "Authors upload CSV/JSON or fetch by URL, see fetch time, and refetch.",
-        "dependencies_introduced": ["Outbound HTTP"],
+        "dependencies_introduced": [
+          "Outbound HTTP"
+        ],
         "proof": "Local failing HTTP server tests; blocked-address tests; failed refetch keeps old copy; folder opens with npx.",
         "valid_intermediate_state": "Server usable for real file analyses.",
         "rollback": "Hide Add data routes; uploaded files stay plain project files.",
-        "status": "planned",
+        "status": "active",
         "evidence": []
       },
       {
         "id": "m4",
         "title": "One Compose file runs the server",
         "outcome": "docker compose up gives a working team server whose data survives restart.",
-        "dependencies_introduced": ["Docker and Compose"],
+        "dependencies_introduced": [
+          "Docker and Compose"
+        ],
         "proof": "Local compose run; CI team-server-smoke builds image, sets up admin, uploads, restarts, checks persistence.",
         "valid_intermediate_state": "Public image on ghcr.io/byronwall/exploreda, pushed by release.yml.",
         "rollback": "Stop publishing new image tags.",
@@ -610,7 +676,9 @@
       "Live co-editing or locks",
       "Multi-instance or Kubernetes"
     ],
-    "open_decisions": ["node:sqlite viability (M2 spike); fallback JSON store."]
+    "open_decisions": [
+      "node:sqlite viability (M2 spike); fallback JSON store."
+    ]
   },
   "history": [
     {

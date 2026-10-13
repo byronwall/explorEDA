@@ -21,7 +21,25 @@ export interface GlobalConfig {
   theme: ThemePreference;
 }
 
+/** Where a downloaded data file came from; the server records it. */
+export interface FetchedRecord {
+  url: string;
+  fetchedAt: string;
+  bytes: number;
+  etag?: string;
+}
+
+/** Adding data files from outside the folder, on a team server. */
+export interface DataIntake {
+  upload(file: Blob, path: string): Promise<void>;
+  /** Downloads `url`, or downloads `path`'s recorded URL again. */
+  fetchUrl(input: { url?: string; path?: string }): Promise<string>;
+  /** Every downloaded file's record, by path. */
+  fetched(): Promise<Record<string, FetchedRecord>>;
+}
+
 export type AppFiles = Omit<ProjectFiles, "watch"> & {
+  intake?: DataIntake;
   info(): Promise<ServerInfo>;
   config(): Promise<GlobalConfig>;
   setConfig(change: Partial<GlobalConfig>): Promise<GlobalConfig>;
@@ -154,12 +172,50 @@ const browserConfig: Pick<AppFiles, "config" | "setConfig"> = {
  */
 export function teamProjectFiles(projectId: string, client: string) {
   const api = `/api/projects/${encodeURIComponent(projectId)}`;
-  return createHttpFiles({
+  const files = createHttpFiles({
     api,
     headers: { [CLIENT_HEADER]: client },
     events: `${api}/events?client=${encodeURIComponent(client)}`,
     config: browserConfig,
   });
+  const post = async (url: string, body: BodyInit, json = false) => {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        [CLIENT_HEADER]: client,
+        ...(json ? { "content-type": "application/json" } : {}),
+      },
+      body,
+    });
+    const reply = (await response.json().catch(() => ({}))) as {
+      error?: string;
+      saved?: string;
+    };
+    if (!response.ok) {
+      throw new Error(
+        reply.error ?? `${response.status} ${response.statusText}`
+      );
+    }
+    return reply;
+  };
+  files.intake = {
+    async upload(file, path) {
+      await post(`${api}/upload?path=${encodeURIComponent(path)}`, file);
+    },
+    async fetchUrl(input) {
+      return (await post(`${api}/fetch`, JSON.stringify(input), true)).saved!;
+    },
+    async fetched() {
+      try {
+        return JSON.parse(
+          await files.read(".exploreda/fetched.json")
+        ) as Record<string, FetchedRecord>;
+      } catch {
+        return {};
+      }
+    },
+  };
+  return files;
 }
 
 const TOKEN_KEY = "exploreda.token";

@@ -93,7 +93,22 @@ function teamData(): Plugin {
           path.resolve(__dirname, "../../packages/explorEDA/examples/shop")
         );
       }
-      const handle = createTeamHandler({ store, dataDir, version: "dev" });
+      // In development, `localhost` stands in for a company file server, so
+      // URL downloads can be tried against a local one. The real server
+      // never downloads from this machine.
+      const { lookup } = await import("node:dns");
+      const { guardedLookup } = await import(
+        "../../packages/explorEDA/src/server/team/fileIntake"
+      );
+      const handle = createTeamHandler({
+        store,
+        dataDir,
+        version: "dev",
+        lookup: (hostname, options, callback) =>
+          hostname === "localhost"
+            ? lookup("127.0.0.1", options, callback)
+            : guardedLookup(hostname, options, callback),
+      });
       server.middlewares.use((req, res, next) => {
         void handle(req, res, next);
       });

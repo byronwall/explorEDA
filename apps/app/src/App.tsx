@@ -1,6 +1,11 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { isDataFile, readProjectFolder, type ProjectFolder } from "exploreda";
-import type { AppFiles, ServerInfo, ThemePreference } from "./httpFiles";
+import type {
+  AppFiles,
+  FetchedRecord,
+  ServerInfo,
+  ThemePreference,
+} from "./httpFiles";
 import {
   chartDataFile,
   createAnalysis,
@@ -19,6 +24,8 @@ type Loaded =
   | {
       status: "ready";
       folder: ProjectFolder;
+      /** Where downloaded data files came from, by path. */
+      fetched: Record<string, FetchedRecord>;
       info: ServerInfo;
       /** Counts reloads, so the workspace starts over from the new files. */
       generation: number;
@@ -46,6 +53,15 @@ function applyTheme(theme: ThemePreference) {
     (theme === "system" &&
       window.matchMedia?.("(prefers-color-scheme: dark)").matches);
   document.documentElement.classList.toggle("dark", Boolean(dark));
+}
+
+/** The folder, and on a team server the record of downloaded files. */
+async function readAll(files: AppFiles) {
+  const [folder, fetched] = await Promise.all([
+    readProjectFolder(files),
+    files.intake?.fetched() ?? Promise.resolve({}),
+  ]);
+  return { folder, fetched };
 }
 
 export function App({
@@ -88,13 +104,14 @@ export function App({
   /** Saves what is waiting, reads the folder again, and opens `path`. */
   const reload = async (path: string | undefined, notice?: string) => {
     await saver.flush();
-    const folder = await readProjectFolder(files);
+    const { folder, fetched } = await readAll(files);
     selection.current = path ? { path, index: 0 } : selection.current;
     setLoaded((previous) =>
       previous.status === "ready"
         ? {
             ...previous,
             folder,
+            fetched,
             generation: previous.generation + 1,
             notice,
           }
@@ -104,13 +121,13 @@ export function App({
 
   useEffect(() => {
     let current = true;
-    Promise.all([files.info(), readProjectFolder(files)])
-      .then(([info, folder]) => {
+    Promise.all([files.info(), readAll(files)])
+      .then(([info, { folder, fetched }]) => {
         if (!current) {
           return;
         }
         document.title = `${info.name} · explorEDA`;
-        setLoaded({ status: "ready", info, folder, generation: 0 });
+        setLoaded({ status: "ready", info, folder, fetched, generation: 0 });
       })
       .catch((error: unknown) => {
         if (current) {
@@ -139,12 +156,13 @@ export function App({
           saver.cancel(path);
         }
         await saver.flush();
-        const folder = await readProjectFolder(files);
+        const { folder, fetched } = await readAll(files);
         setLoaded((previous) =>
           previous.status === "ready"
             ? {
                 ...previous,
                 folder,
+                fetched,
                 generation: previous.generation + 1,
                 notice: describeChange(changed, by),
               }
@@ -242,6 +260,36 @@ export function App({
         () => renameAnalysis(files, folder, { path, name }),
         (next) => `Renamed ${path} to ${next}.`
       )(),
+    ...(files.intake && !readOnly
+      ? {
+          upload: (file: File, path: string) =>
+            act(
+              async () => {
+                await files.intake!.upload(file, path);
+                return undefined;
+              },
+              () => `Added ${path}. Chart it to start an analysis.`
+            )(),
+          fetchUrl: (url: string) => {
+            let saved = "";
+            return act(
+              async () => {
+                saved = await files.intake!.fetchUrl({ url });
+                return undefined;
+              },
+              () => `Downloaded ${saved}. Chart it to start an analysis.`
+            )();
+          },
+          refetch: (path: string) =>
+            act(
+              async () => {
+                await files.intake!.fetchUrl({ path });
+                return undefined;
+              },
+              () => `Downloaded a fresh copy of ${path}.`
+            )(),
+        }
+      : {}),
     deleteAnalysis: (path) =>
       act(
         async () => {
@@ -262,6 +310,7 @@ export function App({
       theme={theme}
       onThemeChange={changeTheme}
       folder={loaded.folder}
+      fetched={loaded.fetched}
       info={loaded.info}
       saver={saver}
       saveState={saveState}
