@@ -75,6 +75,19 @@ Web retrieval could not render the two pinned decoder files. Read-only `gh api` 
 | R18 | Adopt, scaled | Keep independent fixtures, real UI checks, and docs/examples in each slice. Choose a few behavior tests; do not copy the entire suggested test matrix. Map: proof sequence. |
 | R19 | Defer | A gzip wrapper follows demonstrated need and an expansion-limit proof. Arbitrary archives remain separate. Shape: later possibilities. |
 
+## Scope review changes (October 13, 2026)
+
+Byron set the goal as broad coverage aligned with other platforms. These answers override the dispositions above where they conflict:
+
+| ID | New disposition |
+| --- | --- |
+| R01 | Readers become a public `exploreda` API with optional, lazily loaded peer dependencies. No plugin registry. |
+| R02, R05 | Source fidelity applies to all readers, CSV included. Current CSV coercion is a defect, not a compatibility contract. |
+| R09 | Adopt Parquet (hyparquet) as in-scope work, not an evaluation. |
+| R10 | Defer Avro. The chosen baseline omits it; few peers read it. |
+| R11 | Adopt Arrow IPC / Feather V2 (apache-arrow). |
+| DuckDB-Wasm | Remains rejected; one library per format was chosen. |
+
 ## Proof status
 
 Pro verified its source packet and artifacts and ran four language-level assertions. Codex repeated archive integrity and structured reference checks, inspected baseline code, and ran the installed Papa probe. Those checks support this proposal; they do not establish new reader support.

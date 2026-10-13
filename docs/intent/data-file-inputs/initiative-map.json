@@ -260,13 +260,13 @@
   },
   "shape": {
     "status": "current",
-    "appetite": "One shared demo reader, one TSV end-to-end proof, then independent format slices. This PR does not authorize implementation.",
+    "appetite": "Public library reader API with optional lazy readers for CSV, TSV, JSON, JSON Lines, XLSX, Parquet, and Arrow/Feather; source fidelity fixed for every reader. Implementation not yet authorized.",
     "problem": "CSV/JSON initial import and CSV-only Add source diverge; new readers can lose values in existing inference and save paths.",
     "recommended_shape": {
-      "location": "apps/demo/src/readDataFile.ts",
+      "location": "packages/explorEDA (public reader API), consumed by the demo",
       "boundary": "File and format-specific options -> complete rows and the field interpretation required by existing consumers.",
       "workbooks": "Separate discovery/selection helper for one sheet, rectangle, and header; one source per action.",
-      "library": "Keep row arrays and ExplorEdaProject.tables. Make only narrow consumer repairs proved necessary.",
+      "library": "Keep row arrays. Readers return rows plus declared field types; optional peer dependencies load on demand.",
       "alternatives": [
         {
           "name": "Conversion only",
@@ -274,15 +274,15 @@
         },
         {
           "name": "Demo-local dispatch",
-          "disposition": "Selected: shares existing flows without a new package."
+          "disposition": "Superseded 2026-10-13: readers must be available to all package users."
         },
         {
           "name": "Public input adapter package",
-          "disposition": "Defer until a second host needs this policy."
+          "disposition": "Selected 2026-10-13 as a library API inside exploreda, without a plugin registry."
         },
         {
           "name": "DuckDB-Wasm or universal Arrow intermediate",
-          "disposition": "Defer: not required to read one local table."
+          "disposition": "Rejected 2026-10-13: one reader library per format chosen."
         }
       ]
     },
@@ -574,6 +574,12 @@
         "S07",
         "S10"
       ]
+    },
+    {
+      "date": "2026-10-13",
+      "event": "Scope review widened the target to the shared analytics-tool format baseline, moved readers into the library, and made source fidelity apply to all readers.",
+      "reason": "Byron answered product questions: broad coverage aligned with other platforms; raw source values win; readers are core.",
+      "evidence": []
     }
   ],
   "closure": null,

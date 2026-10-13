@@ -3,69 +3,73 @@ title: "Local data file inputs — shape brief"
 slug: "data-file-inputs"
 phase: shape
 status: draft
-last_updated: "2026-10-12"
+last_updated: "2026-10-13"
 ---
 
 # Local data file inputs — proposed scope
 
-**Outcome:** Open useful local formats without changing the meaning of their table data.
+**Outcome:** Open the local formats that mainstream analysis tools share, keeping the source's own values and types.
 
-**Primary flow:** Choose or drop a file → select workbook data when needed → validate the complete table → explore and save it.
+**Primary flow:** Choose or drop a file → select a sheet when needed → read the complete table → explore and save it.
+
+**Baseline:** The formats shared by Tableau, Power BI, Polars, DuckDB, and Observable: delimited text, JSON, Excel, Parquet, and Arrow. See the [tool matrix](raw/2026-10-12-pro/exploreda-data-file-inputs-research/report.md#representative-tool-support-matrix).
 
 ## Feature scope
 
 ```text
-Local file import
-├── PLANNED ADDITIONS
-│   ├── One import path for initial load and Add source
-│   │   ├── Keep CSV, JSON, and separate project restore behavior
-│   │   ├── Show useful file, field, row, and unsupported-value errors
-│   │   └── Apply a complete table once; preserve the prior view on failure
-│   ├── TSV with an explicit tab delimiter and quoted-field support
-│   ├── JSON Lines / NDJSON: one flat object per record line
-│   │   └── Reject blank records, duplicate keys, and unhandled nested values
-│   ├── XLSX: one selected worksheet, range, and header row
-│   │   ├── Preview values and selection before import
-│   │   └── Import stored formula results; do not calculate formulas
-│   └── Matching load-data docs and an example for each enabled format
-├── EVALUATE BEFORE ENABLING
-│   ├── Parquet: one complete flat local file, proven types and codecs
-│   ├── Avro: object container files with an embedded writer schema
-│   └── Google Sheets exports: real XLSX, CSV, and TSV producer fixtures
-└── LATER POSSIBILITIES
-    ├── Arrow IPC / Feather V2, ODS, XLSB, and a separate gzip wrapper
-    ├── Specialist statistical, scientific, and spatial inputs
-    └── Live Sheets, databases, remote connectors, and lakehouse readers
+Local file readers (exploreda package)
+├── IN SCOPE NOW
+│   ├── Public reader API in the library, used by the demo
+│   │   ├── File → complete rows plus source field types
+│   │   ├── Optional reader dependencies, loaded only when a format is read
+│   │   └── One path for initial import and Add source; project restore stays separate
+│   ├── Source fidelity across all readers, CSV included
+│   │   ├── Keep identifier text (leading zeros), large integers, and dates as the source states
+│   │   ├── Discover every field, not only fields in the first 500 rows
+│   │   └── Carry declared types through filters, trace, session, history, and project files
+│   ├── CSV (revisited) and TSV through Papa with explicit typing rules
+│   ├── JSON (existing) and JSON Lines / NDJSON
+│   ├── XLSX: choose a sheet; first row is the header; stored formula values
+│   ├── Parquet: single local file through hyparquet
+│   ├── Arrow IPC / Feather V2 through apache-arrow
+│   ├── Google Sheets via its XLSX, CSV, and TSV downloads
+│   └── Load-data docs and one working example per format
+└── LATER
+    ├── Avro OCF, ODS, XLSB, XLS, gzip wrapper
+    ├── Range selection inside a sheet
+    ├── GeoJSON with map-and-location; SPSS, Stata, SAS
+    └── Live Sheets, databases, multi-file datasets, lakehouse tables
 ```
 
 ## Behavior
 
 | Situation | Expected result |
 | --- | --- |
-| A workbook has several sheets or table regions | Select one table. Do not merge sheets automatically. |
-| A formula lacks a stored result, or selected cells contain unresolved errors or merges | Explain the affected cells. Require a clean selection or corrected export. |
-| A value exceeds the supported numeric, time, binary, or nested representation | Preserve it through a proved explicit mapping, or reject it before lossy conversion. |
-| A read fails, exceeds a measured limit, or is cancelled | Keep the prior analysis. Never publish a truncated preview as a complete import. |
-| A user imports a Sheets export | Treat it as a local snapshot. The source document does not stay connected. |
+| A typed source declares a column type (Parquet, Arrow, XLSX cell type) | Use the declared type. Do not re-infer it from values. |
+| A text source holds `0012`, a 19-digit ID, or ISO dates | Keep identifier-like text as text. Infer numbers only when conversion is exact. |
+| A value has no exact scalar form (int64 beyond 2^53, decimal, nested list or struct) | Keep it as exact text, or JSON text for nested values, and mark the field type. Never round silently. |
+| A workbook has several sheets | Choose one. Do not merge sheets. |
+| A read fails or is cancelled | Keep the prior analysis. Never publish a partial table as complete. |
+| A user imports a Sheets download | Treat it as a snapshot; it does not stay connected. |
 
 ## Decisions and boundaries
 
-**Appetite:** Propose one small reader function shared by the demo's import surfaces. Add optional format modules as each proof passes. Keep the library row based. Do not create a public adapter package, registration system, SQL engine, or Arrow intermediate representation.
+**Reader location:** Readers live in `exploreda`, so package users get them too. Reader libraries are optional peer dependencies loaded by dynamic import, as `maplibre-gl` already is. A missing reader produces a clear message. Each library change carries a changeset.
 
-The simplest alternative is to recommend CSV conversion for every file. That remains useful for specialist formats, but misses the requested direct imports. A shared dispatcher removes the current CSV-only Add source split without requiring a framework. Return rows plus the field information needed by actual consumers. Add workbook discovery and selection only to that reader's flow.
+**Readers:** Use one library per format: Papa for delimited text, SheetJS CE from its official artifact for XLSX, hyparquet for Parquet, and apache-arrow for Arrow. Do not add DuckDB-Wasm, a SQL engine, a plugin registry, or an Arrow-resident data model. Keep the library row based.
 
-Use Papa Parse for TSV with explicit delimiter and value rules. Consider SheetJS CE for XLSX, from a verified official artifact. Evaluate hyparquet first for Parquet; try parquet-wasm only if a required case fails. Avro needs an independent browser build, codec, and content security policy proof. None of these candidate choices is a shipped support claim.
+**Fidelity:** Treat CSV as a starting point, not as the rule for other formats. Today's coercion, such as turning `0012` into `12`, is a defect to fix for every reader. It is not behavior new readers should copy.
 
-**First proof:** Establish value fidelity before adding workbook or binary dependencies.
+**First proof:** Build the reader API with CSV and TSV before adding binary dependencies.
 
-**Try:** Import a small adversarial TSV through initial load and Add source. Include quoted tabs, leading-zero identifiers, missing cells, date-like text, a large integer, and a field populated after row 500.
+**Try:** Import an adversarial file with quoted tabs, leading zeros, missing cells, date-like text, a 19-digit integer, and a field that first appears after row 500.
 
-**Observe:** Compare expected fields and values through summary, rows, filtering, trace records, project promotion, session reload, history, and project-file restore. Verify the existing layout survives Add source and a rejected import.
+**Observe:** Check values through both import paths, summary, rows, filters, trace, session reload, history, and project files.
 
-**Decide:** Continue only when admitted values retain their meaning in every exercised consumer. If metadata is ignored or inference changes values, fix that narrow path first. Keep unsupported formats disabled. Do not introduce a general type system to pass the first proof.
+**Decide:** Fix each consumer that changes a value. Then add the other formats in turn, each with its fixtures, docs, and example.
 
-Each later format slice includes its load-data documentation and one working example. Workbook proof covers sheet selection, dates, formulas, and hidden-content policy. Binary proof uses independently produced fixtures, selected codecs, exact values, and the production browser build. Choose practical file limits from measured fixtures; the research's benchmark sizes are suggestions.
+**Open product defaults (proposed):** Nested values become JSON text in one column. Set practical file limits from measured fixtures, starting near 100 MB. Defer the range picker until real files need it.
 
-**Cut line and rollback:** Defer automatic nested flattening, multi-file datasets, workbook editing, arbitrary archives, and browser cache decoding. Do not import executable object serialization. Preserve existing CSV/JSON behavior without building parallel version support. A failed format proof can remove that reader from selection while existing readers remain usable.
+**Cut line:** No workbook editing, formula calculation, macros, executable serialization, browser-cache decoding, or arbitrary archives.
 
-The [intent](intent-brief.md) and [evidence review](evidence/recommendation-review.md) explain the scope. The [full research](raw/2026-10-12-pro/exploreda-data-file-inputs-research/report.md) retains detailed alternatives. Implementation has not started.
+The [intent](intent-brief.md) and [evidence review](evidence/recommendation-review.md) explain the research. The [full research](raw/2026-10-12-pro/exploreda-data-file-inputs-research/report.md) keeps the detailed alternatives. Implementation has not started.

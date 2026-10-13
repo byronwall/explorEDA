@@ -3,7 +3,7 @@ title: "Local data file inputs — intent brief"
 slug: "data-file-inputs"
 phase: intent
 status: draft
-last_updated: "2026-10-12"
+last_updated: "2026-10-13"
 ---
 
 # Local data file inputs
@@ -45,9 +45,9 @@ Fresh imports should retain the current summary and rows starting view. Existing
 
 ## What seems settled
 
-Start with a small shared reader path in the demo. Keep the library's existing row and source-table interfaces. Reuse Papa Parse for explicit TSV. Add a narrow JSON Lines option. Shape XLSX around one selected table. Prove flat, complete Parquet files and Avro object container files before promising their supported types and codecs.
+Scope review on October 13, 2026 replaced the narrower first shape. The target is broad coverage that matches the formats mainstream analysis tools share: CSV, TSV, JSON, JSON Lines, XLSX, Parquet, and Arrow/Feather. Readers belong in the `exploreda` package, so every host gets them. Reader libraries stay optional and load on demand. Use one reader per format, not a query engine.
 
-Avro remains a planned feasibility proof because Byron explicitly named it. New evidence of demand is unnecessary. Arrow/Feather, ODS, XLSB, and gzip can follow if their value justifies another reader or format branch. The wider catalog should explain conversion routes and limits without making those formats active scope.
+Raw source values take priority. CSV was a starting point, not the rule; its current coercion of identifiers and dates is a defect to fix for every reader. Avro, ODS, XLSB, spatial, and statistical formats move to later work. The wider catalog still explains conversion routes for them.
 
 ## Next step after confirmation
 
