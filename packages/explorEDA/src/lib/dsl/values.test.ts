@@ -169,4 +169,21 @@ row Region group=byRegion`);
     );
     expect(rebuilt.settings.colorScales).toEqual(result.settings.colorScales);
   });
+
+  it("keeps [] on an empty list inside a list's records", () => {
+    const { result, again } = build(`chart waterfall @w field=Region {
+  measureField=Revenue states[]= states.0.label=Morning states.0.filters[]=
+  states.1.label=Evening states.1.filters[]=
+}`);
+    expect(result.diagnostics).toEqual([]);
+    const { written, rebuilt } = again();
+    expect(written).toContain("states.0.filters[]=");
+    expect(rebuilt.diagnostics).toEqual([]);
+    expect(rebuilt.settings.charts[0]).toMatchObject({
+      states: [
+        { label: "Morning", filters: [] },
+        { label: "Evening", filters: [] },
+      ],
+    });
+  });
 });
