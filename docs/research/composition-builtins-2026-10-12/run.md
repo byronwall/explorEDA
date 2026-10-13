@@ -21,15 +21,15 @@ Completion requires readable Pro outputs, checked findings, integrated Sleuth ar
 
 ## Current state
 
-- Phase: collected and reconciled; preparing the review PR.
+- Phase: complete. Research is collected, reconciled, validated, and presented in an open review PR.
 - Pro round: initial submission sent. Follow-ups used: 0 of 2.
 - [Pro conversation](https://chatgpt.com/c/6acd1f36-150c-83ea-98f1-4d05946a051b).
 - Mode: Pro, power 5 of 5, verified in the live selector before sending.
 - Submission: 2026-10-12 at about 17:56 UTC (13:56 EDT).
 - Scheduled check started: 2026-10-12 at 18:59 UTC. Pro had completed after 41m 47s.
-- Heartbeat: `collect-composition-chart-review`, active on this chat.
+- Heartbeat: `collect-composition-chart-review`, disabled (`PAUSED`) after verified PR creation.
 - Goal: none. The user requested a process, not a goal record.
-- PR: pending. Shape, exhaustive review, recommendation decisions, and plan are ready.
+- PR: [#364](https://github.com/byronwall/explorEDA/pull/364), open, non-draft, `codex/composition-builtins-review` → `main`, attached to this chat.
 
 Chrome's native window confirmed the signed-in profile `Byron (byroni.us)`.
 Use `cua.getApp("com.google.Chrome")` when Chrome is absent from the browser inventory.
@@ -74,7 +74,12 @@ Verification passed:
 - Local Markdown links, review coverage, and Git whitespace checks.
 
 Proposed counterpart browser flows and PNG/clipboard acceptance remain unrun. No product code, package settings, or examples changed.
-Only scoped research and planning artifacts will enter the PR.
+Only scoped research and planning artifacts entered the PR. The saved body, 19-file list, branches, open state, and remote document links were verified.
+`pnpm check:pr` passed for changeset scope and commit authors. No changeset or screenshot is required for this docs-only result.
+The Chrome skill was also updated with connected-browser recovery and bounded download handling; skill validation passed.
+
+The requested research process is complete. The feature initiative remains planned, with no implemented milestone.
+Stop for review. Do not resume the heartbeat, merge, or begin implementation without a new instruction.
 
 ## Prepared artifacts
 
@@ -111,7 +116,9 @@ Preparation checks:
 - Product/browser checks: unrun. No application behavior changed.
 - Full `pnpm check`: deferred until before the review PR, as required by repository rules.
 
-## Resume and complete
+## Process reference
+
+The steps below record the completed workflow. They do not authorize a duplicate submission or renewed execution.
 
 1. Read this record and inspect Git status. Preserve unrelated edits and this existing branch.
 2. Use native Chrome and its signed-in Byron profile. Open the recorded conversation; do not submit another initial request.
