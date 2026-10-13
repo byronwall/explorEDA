@@ -20,7 +20,11 @@ Options:
   --upload-limit <MB> the largest data file to upload or download (default 100)
   --seed-dev          try it out: sample accounts and a sample project,
                       with accounts kept in memory instead of the data folder
-  -h, --help          show this help`;
+  -h, --help          show this help
+
+Each option can also come from the environment, as in a container:
+EXPLOREDA_DATA, EXPLOREDA_PORT, EXPLOREDA_HOST, EXPLOREDA_PUBLIC_URL, and
+EXPLOREDA_UPLOAD_LIMIT. Options on the command line win.`;
 
 interface ServerOptions {
   data?: string;
@@ -31,13 +35,33 @@ interface ServerOptions {
   uploadLimitMb: number;
 }
 
-function parseServerArgs(args: string[]): ServerOptions | string {
+/** Settings from the environment; an empty value counts as unset. */
+function fromEnvironment(env: NodeJS.ProcessEnv) {
+  const value = (name: string) => env[name]?.trim() || undefined;
+  return [
+    ...(value("EXPLOREDA_DATA") ? ["--data", value("EXPLOREDA_DATA")!] : []),
+    ...(value("EXPLOREDA_PORT") ? ["--port", value("EXPLOREDA_PORT")!] : []),
+    ...(value("EXPLOREDA_HOST") ? ["--host", value("EXPLOREDA_HOST")!] : []),
+    ...(value("EXPLOREDA_PUBLIC_URL")
+      ? ["--public-url", value("EXPLOREDA_PUBLIC_URL")!]
+      : []),
+    ...(value("EXPLOREDA_UPLOAD_LIMIT")
+      ? ["--upload-limit", value("EXPLOREDA_UPLOAD_LIMIT")!]
+      : []),
+  ];
+}
+
+export function parseServerArgs(
+  args: string[],
+  env: NodeJS.ProcessEnv = {}
+): ServerOptions | string {
   const options: ServerOptions = {
     port: 8080,
     host: "0.0.0.0",
     seedDev: false,
     uploadLimitMb: 100,
   };
+  args = [...fromEnvironment(env), ...args];
   for (let index = 0; index < args.length; index++) {
     const arg = args[index]!;
     const value = () => args[++index];
@@ -87,7 +111,7 @@ export async function serverCommand(
   args: string[],
   paths: { appDir: string; exampleDir: string; version: string }
 ) {
-  const parsed = parseServerArgs(args);
+  const parsed = parseServerArgs(args, process.env);
   if (typeof parsed === "string") {
     console.log(parsed);
     return parsed === SERVER_USAGE ? 0 : 64;

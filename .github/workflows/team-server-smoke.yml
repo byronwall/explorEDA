@@ -1,0 +1,48 @@
+name: Team server smoke
+
+# Builds the team server image from the packed exploreda tarball and runs it
+# with docker/compose.yaml: it serves the app, sets up an admin, takes an
+# upload, and keeps everything across a container restart.
+on:
+  pull_request:
+    paths:
+      - "packages/explorEDA/**"
+      - "apps/app/**"
+      - "docker/**"
+      - "scripts/team-server-smoke.mjs"
+      - ".github/workflows/team-server-smoke.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: team-server-smoke-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: "pnpm"
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Build the package and its app
+        run: |
+          pnpm --filter exploreda build
+          pnpm --filter app build
+
+      - name: Pack
+        working-directory: packages/explorEDA
+        run: pnpm pack --pack-destination ../../pack
+
+      - name: Run the image with Docker Compose
+        timeout-minutes: 10
+        run: node scripts/team-server-smoke.mjs pack

@@ -108,10 +108,10 @@ This milestone adds the durable account store, so a restart keeps accounts.
 ## Milestone 4: One Compose file runs the server
 
 - **Change — image:** a Dockerfile on Node 24 slim installs the packed `exploreda` tarball and runs `exploreda server --data /data` as a non-root user, with a health check on `/api/health`.
-- **Change — Compose and config:** `compose.yaml` has one service and one named volume. It reads `EXPLOREDA_PUBLIC_URL`, `EXPLOREDA_SESSION_SECRET`, and `EXPLOREDA_UPLOAD_LIMIT` from the environment, and a missing secret stops the server with a clear message. A sample Caddy file adds HTTPS.
+- **Change — Compose and config:** `compose.yaml` has one service and one named volume. Every server option also reads from the environment (`EXPLOREDA_PUBLIC_URL`, `EXPLOREDA_UPLOAD_LIMIT`, `EXPLOREDA_PORT`, `EXPLOREDA_HOST`, `EXPLOREDA_DATA`). No session secret is needed, because sessions are random tokens stored as hashes. A sample Caddy file adds HTTPS.
 - **Change — publishing:** `release.yml` builds the image and pushes it as public `ghcr.io/byronwall/exploreda`, tagged with the package version and `latest`, using `GITHUB_TOKEN` with `packages: write`.
 - **Change — CI smoke:** a `team-server-smoke` job builds the image, runs `compose up`, and creates the admin through the API. It uploads a CSV, restarts the container, and checks that the account, project, and file are still there.
-- **Change — docs:** a Self-hosting page next to [project folders](../../../apps/demo/src/docs/pages/project-folders.mdx), with the Compose file, environment variables, proxy, and backup steps.
+- **Change — docs:** a "Run it with Docker Compose" section on the Team server page, with the Compose file, environment variables, proxy, and backup steps.
 
 ### Desired end state
 

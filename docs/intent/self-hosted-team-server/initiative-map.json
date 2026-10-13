@@ -8,7 +8,7 @@
     "last_updated": "2026-10-13",
     "summary": "A free Docker Compose team server for one company: local accounts, projects with author and viewer members, CSV and JSON files by upload or URL, and project folders on one volume. File-only; database sources are a separate initiative.",
     "status": "active",
-    "next_action": "Finish M3 PR; then M4 Docker image and Compose."
+    "next_action": "Finish M4 PR; then M5 upgrades."
   },
   "artifacts": {
     "intent_brief": {
@@ -640,8 +640,10 @@
         "proof": "Local failing HTTP server tests; blocked-address tests; failed refetch keeps old copy; folder opens with npx.",
         "valid_intermediate_state": "Server usable for real file analyses.",
         "rollback": "Hide Add data routes; uploaded files stay plain project files.",
-        "status": "active",
-        "evidence": []
+        "status": "completed",
+        "evidence": [
+          "PR #388; fileIntake.test.ts"
+        ]
       },
       {
         "id": "m4",
@@ -653,8 +655,10 @@
         "proof": "Local compose run; CI team-server-smoke builds image, sets up admin, uploads, restarts, checks persistence.",
         "valid_intermediate_state": "Public image on ghcr.io/byronwall/exploreda, pushed by release.yml.",
         "rollback": "Stop publishing new image tags.",
-        "status": "planned",
-        "evidence": []
+        "status": "active",
+        "evidence": [
+          "node scripts/team-server-smoke.mjs pack passed locally (Docker 28, 288 MB image, non-root)"
+        ]
       },
       {
         "id": "m5",

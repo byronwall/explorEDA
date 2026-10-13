@@ -34,3 +34,4 @@ dist-ssr
 apps/demo/public/docs-shots
 apps/demo/test-results
 apps/demo/playwright-report
+pack

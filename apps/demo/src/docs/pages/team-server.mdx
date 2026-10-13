@@ -29,6 +29,60 @@ The first person to open the address creates the admin account. Accounts, projec
 
 The team server needs Node 22.5 or later.
 
+## Run it with Docker Compose
+
+The server is also an image, `ghcr.io/byronwall/exploreda`, with the same version numbers as the npm package. Save this as `compose.yaml`:
+
+```yaml
+services:
+  exploreda:
+    image: ghcr.io/byronwall/exploreda:latest
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      EXPLOREDA_PUBLIC_URL: ""
+      EXPLOREDA_UPLOAD_LIMIT: "100"
+    volumes:
+      - exploreda-data:/data
+
+volumes:
+  exploreda-data:
+    name: exploreda-data
+```
+
+Then start it, open port 8080 on that machine, and create the admin account:
+
+```bash
+docker compose up -d
+```
+
+Each command-line option has an environment variable for the container: `EXPLOREDA_PUBLIC_URL`, `EXPLOREDA_UPLOAD_LIMIT`, `EXPLOREDA_PORT`, `EXPLOREDA_HOST`, and `EXPLOREDA_DATA`. An empty value leaves the default.
+
+The server speaks plain HTTP. For HTTPS, put a proxy in front of it and set `EXPLOREDA_PUBLIC_URL` to the HTTPS address. With [Caddy](https://caddyserver.com), which gets its own certificate, the whole proxy configuration is:
+
+```text
+eda.example.com {
+	reverse_proxy exploreda:8080
+}
+```
+
+The server makes no calls home. It reaches the network only to download the data addresses that authors give it.
+
+### Back up and upgrade
+
+Everything the server keeps is in the `exploreda-data` volume: `exploreda.db` holds accounts, sessions, projects, and members, and `projects/` holds each project's folder. To back it up, stop the server and copy the volume:
+
+```bash
+docker compose stop && docker run --rm -v exploreda-data:/data -v "$PWD":/backup busybox tar czf /backup/exploreda-backup.tgz -C /data . && docker compose start
+```
+
+To upgrade, pull the new image and start it again:
+
+```bash
+docker compose pull && docker compose up -d
+```
+
 ## People and roles
 
 Every person signs in with an email and a password. An account is one of two kinds:
