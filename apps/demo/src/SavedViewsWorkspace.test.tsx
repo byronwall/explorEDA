@@ -9,7 +9,7 @@ import {
 } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { SavedDataStructure } from "exploreda";
-import { parseCsvData } from "./csvParser";
+import { readTableText } from "exploreda/readers";
 import { SavedViewsWorkspace } from "./SavedViewsWorkspace";
 import { getSavedViewsRows, readSavedViewsSession } from "./savedViewsSession";
 
@@ -571,7 +571,7 @@ describe("saved view session and history", () => {
 
   it("measures the 500-order source with the full retained history", async () => {
     const csv = readFileSync("public/datasets/shop-operations.csv", "utf8");
-    const rows = await parseCsvData(csv);
+    const rows = readTableText(csv).rows;
     expect(rows).toHaveLength(500);
     render(
       <SavedViewsWorkspace
@@ -603,6 +603,48 @@ describe("saved view session and history", () => {
       )
     ).toBe(true);
     expect(storageBytes).toBeGreaterThan(0);
+  });
+
+  it("adds a TSV source with its identifier text and declared types", async () => {
+    const onPromoteToProject = vi.fn();
+    const { container } = render(
+      <SavedViewsWorkspace
+        data={[{ region: "North", order_id: "0012" }]}
+        fieldTypes={{ region: "string", order_id: "string" }}
+        viewName="Orders"
+        onPromoteToProject={onPromoteToProject}
+      />
+    );
+    await screen.findByTestId("workspace");
+    const input =
+      container.querySelector<HTMLInputElement>('input[type="file"]')!;
+    expect(input.accept).toContain(".tsv");
+    const file = new File(
+      ["order_id\tshipped\n0012\t2025-03-01\n0040\t2025-03-04\n"],
+      "shipments.tsv"
+    );
+    fireEvent.change(input, { target: { files: [file] } });
+    await waitFor(() => expect(onPromoteToProject).toHaveBeenCalled());
+    const [projectFile, sourceId] = onPromoteToProject.mock.calls[0]!;
+    expect(sourceId).toBe("shipments");
+    expect(projectFile.tables.shipments[0]).toEqual({
+      order_id: "0012",
+      shipped: "2025-03-01",
+    });
+    const source = projectFile.project.sources.find(
+      (candidate: { id: string }) => candidate.id === "shipments"
+    );
+    expect(source.fields).toEqual([
+      { id: "order_id", name: "order_id", type: "string" },
+      { id: "shipped", name: "shipped", type: "date" },
+    ]);
+    // The promoted table keeps the types its own file declared.
+    const data = projectFile.project.sources.find(
+      (candidate: { id: string }) => candidate.id !== "shipments"
+    );
+    expect(
+      data.fields.find((field: { id: string }) => field.id === "order_id").type
+    ).toBe("string");
   });
 
   it("shows the history bound and exports when local storage refuses a save", async () => {

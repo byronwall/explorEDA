@@ -9,7 +9,7 @@ import {
   type SavedDataStructure,
 } from "exploreda";
 import { evaluateAnalysisQuery } from "exploreda/analysis";
-import { parseCsvData } from "./csvParser";
+import { readTableText } from "exploreda/readers";
 import { examples } from "./demos/examples";
 
 /** The saved view without its timestamps. */
@@ -54,9 +54,9 @@ describe("dashboard text round trip", () => {
               example.project.queries[0]!.id,
             ("bindings" in view && view.bindings) || {}
           ).rows.map((row) => row.data)
-        : await parseCsvData(
+        : readTableText(
             readFileSync(join(__dirname, "../public", example.data), "utf8")
-          );
+          ).rows;
     const { text, omitted } = exportDocument(view.savedData, { rows });
     expect(omitted).toEqual([]);
     const rebuilt = compileDocument(text, {
@@ -78,9 +78,9 @@ describe("all views as one text", () => {
   it.each(withViews.map((example) => [example.id, example] as const))(
     "%s",
     async (_id, example) => {
-      const rows = await parseCsvData(
+      const rows = readTableText(
         readFileSync(join(__dirname, "../public", example.data), "utf8")
-      );
+      ).rows;
       const tabs = [
         { name: example.title, settings: example.savedData! },
         ...example.views!.map((view) => ({

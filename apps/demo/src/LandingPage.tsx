@@ -15,7 +15,11 @@ import {
   type AnalysisProjectFile,
 } from "exploreda/analysis";
 
-import { parseCsvData } from "./csvParser";
+import {
+  readTableText,
+  type DeclaredFieldType,
+  type TableFile,
+} from "exploreda/readers";
 import {
   buildTextViews,
   loadAnalysisTables,
@@ -115,6 +119,8 @@ type Workspace =
       key: number;
       kind: "rows";
       rows: DatumObject[];
+      /** Field types the imported file declared. */
+      fieldTypes?: Record<string, DeclaredFieldType>;
       savedData?: SavedDataStructure;
     }
   | { key: number; kind: "example"; example: ExampleData; rows: DatumObject[] };
@@ -234,7 +240,8 @@ export function LandingPage() {
       if (!response.ok) {
         throw new Error(`Failed to fetch data: ${response.statusText}`);
       }
-      return parseCsvData(await response.text());
+      return readTableText(await response.text(), { name: url })
+        .rows as DatumObject[];
     },
     []
   );
@@ -413,17 +420,21 @@ export function LandingPage() {
 
   const openImported = (
     rows: DatumObject[],
-    savedData?: SavedDataStructure
+    savedData?: SavedDataStructure,
+    fieldTypes?: Record<string, DeclaredFieldType>
   ) => {
     setRestoreFailed(false);
     // A new source starts a new saved analysis.
     clearStoredSession();
-    setWorkspace({ kind: "rows", rows, savedData });
+    setWorkspace({ kind: "rows", rows, fieldTypes, savedData });
     setLoadError(null);
     navigate(VIEWER_PATH);
   };
 
-  const handleCsvImport = (data: DatumObject[]) => openImported(data);
+  const handleTableImport = (table: TableFile) => {
+    openImported(table.rows as DatumObject[], undefined, table.fieldTypes);
+    if (table.notes.length > 0) toast(table.notes.join(" "));
+  };
 
   // A project file keeps its own saved session beside the single-table one.
   const handleProjectImport = (file: AnalysisProjectFile) => {
@@ -553,7 +564,7 @@ export function LandingPage() {
                   <ScrollToHash hash={location.hash} />
                   <PageFileDrop
                     onProjectImport={handleProjectImport}
-                    onImport={handleCsvImport}
+                    onImport={handleTableImport}
                   />
                   {featuredExample && (
                     <Hero
@@ -637,9 +648,9 @@ export function LandingPage() {
                           </h3>
                           <CsvUpload
                             onProjectImport={handleProjectImport}
-                            onImport={handleCsvImport}
+                            onImport={handleTableImport}
                           />
-                          <SampleDataButtons onImport={handleCsvImport} />
+                          <SampleDataButtons onImport={handleTableImport} />
                         </section>
                         <section
                           aria-labelledby="json-heading"
@@ -755,6 +766,7 @@ export function LandingPage() {
                   <SavedViewsWorkspace
                     key={workspace.key}
                     data={workspace.rows}
+                    fieldTypes={workspace.fieldTypes}
                     initialSettings={workspace.savedData}
                     viewName="Analysis"
                     onPromoteToProject={openPromotedProject}

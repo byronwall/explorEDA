@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { parseCsvData } from "../csvParser";
-import type { DatumObject } from "../LandingPage";
+import { readTableText, type TableFile } from "exploreda/readers";
 
 const samples = [
   {
@@ -22,13 +21,19 @@ const samples = [
     detail: "500 rows",
     url: "/datasets/shop-operations.csv",
   },
+  {
+    id: "inventory",
+    label: "Store inventory",
+    detail: "240 rows, TSV",
+    url: "/datasets/store-inventory.tsv",
+  },
 ];
 
-/** Loads a bundled CSV through the same path as a user's own import. */
+/** Loads a bundled file through the same reader as a user's own import. */
 export function SampleDataButtons({
   onImport,
 }: {
-  onImport: (data: DatumObject[]) => void;
+  onImport: (table: TableFile) => void;
 }) {
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -41,7 +46,7 @@ export function SampleDataButtons({
       if (!response.ok) {
         throw new Error(response.statusText);
       }
-      onImport(await parseCsvData(await response.text()));
+      onImport(readTableText(await response.text(), { name: sample.url }));
     } catch {
       setError(`Could not load ${sample.label}. Try again.`);
     } finally {

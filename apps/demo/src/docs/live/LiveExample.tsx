@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { examplePath } from "@/routes";
 import type { DatumObject } from "@/LandingPage";
-import { parseCsvData } from "@/csvParser";
+import { readTableText } from "exploreda/readers";
 import { Maximize2, RotateCcw } from "lucide-react";
 import {
   lazy,
@@ -120,8 +120,7 @@ export function LiveExample({
         }
         return response.text();
       })
-      .then(parseCsvData)
-      .then(setRows)
+      .then((text) => setRows(readTableText(text).rows as DatumObject[]))
       .catch((error: unknown) => {
         if (!(error instanceof Error && error.name === "AbortError")) {
           setFailed(true);

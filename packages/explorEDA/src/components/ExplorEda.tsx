@@ -1,5 +1,6 @@
 import { ChartDraftProvider } from "./plot/ChartDraftContext";
 import type { DatumObject } from "@/providers/DataLayerProvider";
+import type { DeclaredFieldType } from "@/lib/declaredFieldTypes";
 import { DataLayerProvider, useDataLayer } from "@/providers/DataLayerProvider";
 import {
   SavedAnalysisStructure,
@@ -97,6 +98,12 @@ export interface ExplorEdaProps {
   data: DatumObject[];
   /** Declared output columns, including when the result contains no rows. */
   fieldNames?: string[];
+  /**
+   * Field types the data's source declares, such as `fields` from
+   * `readTableFile` in `exploreda/readers`. Detection fills in the rest, and
+   * a type chosen in field settings wins.
+   */
+  fieldTypes?: Record<string, DeclaredFieldType>;
   savedData?: SavedDataStructure;
   onStateChange?: (state: SavedDataStructure) => void;
   /** Host panels on the right edge, each with a toolbar button. */
@@ -128,6 +135,7 @@ export const ExplorEda = forwardRef<ExplorEdaHandle, ExplorEdaProps>(
     {
       data,
       fieldNames,
+      fieldTypes,
       savedData,
       onStateChange,
       sidePanels,
@@ -143,6 +151,7 @@ export const ExplorEda = forwardRef<ExplorEdaHandle, ExplorEdaProps>(
       <DataLayerProvider
         data={data}
         fieldNames={fieldNames}
+        fieldTypes={fieldTypes}
         savedData={savedData}
         onStateChange={onStateChange}
       >

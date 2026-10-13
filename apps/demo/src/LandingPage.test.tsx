@@ -31,12 +31,14 @@ vi.mock("exploreda", async () => {
     ...actual,
     ExplorEda: ({
       data,
+      fieldTypes,
       savedData,
       onStateChange,
       toolbarStart,
       toolbarEnd,
     }: {
       data: unknown[];
+      fieldTypes?: Record<string, string>;
       savedData?: unknown;
       onStateChange?: (state: unknown) => void;
       toolbarStart?: React.ReactNode;
@@ -68,6 +70,8 @@ vi.mock("exploreda", async () => {
         <div
           data-testid="workspace"
           data-rows={data.length}
+          data-first-row={JSON.stringify(data[0] ?? null)}
+          data-field-types={JSON.stringify(fieldTypes ?? null)}
           data-has-saved-data={savedData !== undefined}
           data-chart-count={settings?.charts?.length ?? 0}
           data-filter-count={settings?.rowsSettings?.filters?.length ?? 0}
@@ -348,19 +352,48 @@ describe("LandingPage routing", () => {
     expect(screen.queryByText("Drop to explore your data")).toBeNull();
   });
 
-  it("explains when a dropped file is not CSV or JSON", async () => {
+  it("opens a dropped TSV with its identifier text and field types", async () => {
     const router = createMemoryRouter(
       [{ path: "/*", element: <LandingPage /> }],
       { initialEntries: ["/"] }
     );
     render(<RouterProvider router={router} />);
 
-    const file = new File(["hi"], "notes.txt", { type: "text/plain" });
+    const file = new File(
+      ["order_id\tamount\n0012\t4.5\n0040\t\n"],
+      "orders.tsv",
+      { type: "text/tab-separated-values" }
+    );
+    fireEvent.drop(window, {
+      dataTransfer: { types: ["Files"], files: [file] },
+    });
+    const workspace = await screen.findByTestId("workspace");
+    expect(workspace).toHaveAttribute("data-rows", "2");
+    expect(JSON.parse(workspace.dataset.firstRow!)).toEqual({
+      order_id: "0012",
+      amount: 4.5,
+    });
+    expect(JSON.parse(workspace.dataset.fieldTypes!)).toEqual({
+      order_id: "string",
+      amount: "number",
+    });
+  });
+
+  it("explains when a dropped file is not a readable format", async () => {
+    const router = createMemoryRouter(
+      [{ path: "/*", element: <LandingPage /> }],
+      { initialEntries: ["/"] }
+    );
+    render(<RouterProvider router={router} />);
+
+    const file = new File(["%PDF"], "slides.pdf", {
+      type: "application/pdf",
+    });
     fireEvent.drop(window, {
       dataTransfer: { types: ["Files"], files: [file] },
     });
     expect(await screen.findByRole("alert")).toHaveTextContent(
-      "notes.txt is not a CSV or JSON file."
+      "slides.pdf is not a CSV, TSV, or JSON file."
     );
     expect(screen.queryByTestId("workspace")).toBeNull();
   });

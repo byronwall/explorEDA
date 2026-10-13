@@ -1,18 +1,51 @@
 ## Open your data
 
-On the demo's home page, drop a CSV or JSON file anywhere on the page, or use the upload box. The file opens through the same import path either way.
+On the demo's home page, drop a file anywhere on the page, or use the upload box. Either way, the file opens through the same reader. **Add source** in the Schema diagram reads the same formats.
+
+| Format | Files          | What opens                                                  |
+| ------ | -------------- | ----------------------------------------------------------- |
+| CSV    | `.csv`, `.txt` | One table. Comma, semicolon, tab, or pipe delimiters        |
+| TSV    | `.tsv`, `.tab` | One table, split on tabs                                    |
+| JSON   | `.json`        | An object or array of objects. Nested objects become fields |
 
 <Terms
   items={[
-    ["CSV", "Opens as rows, with a field summary to start from."],
+    ["Data file", "Opens as rows, with a field summary to start from."],
     ["Full analysis JSON", "Reopens its rows and its charts together."],
     ["Project file", "Opens several related tables as one project."],
   ]}
 />
 
+A Google Sheets document opens the same way: choose **File → Download** in Sheets, pick CSV or TSV, and open the downloaded file. It opens as a snapshot and doesn't stay connected to the sheet.
+
 <Callout title="Your data stays in your browser.">
   Opening a file reads it on this page. Nothing is uploaded.
 </Callout>
+
+## How values are read
+
+explorEDA keeps the values your file gives it. Each column's type comes from every row in it, not just the first few.
+
+<Terms
+  items={[
+    [
+      "Numbers",
+      "A column holds numbers only when every value converts without change. 0012 keeps its leading zeros, and a whole number too long to hold exactly, such as a 19-digit account ID, stays text.",
+    ],
+    [
+      "Dates",
+      "Date columns keep the text the file shows, such as 2025-03-01, and chart as dates.",
+    ],
+    ["True and false", "A column of true and false values reads as yes or no."],
+    ["Blank cells", "Blank cells are missing values, not zero or empty text."],
+  ]}
+/>
+
+When a file can't be read, the message names the row, such as **Row 12 has 6 values, but the header names 5 fields.** A blank or repeated header gets a new name, such as `Column 3` or `name_2`, and the field list shows it.
+
+To read a column another way, open the field in **Fields** and change its type.
+
+To try it, open **Store inventory** under **No file handy?** on the home page, or download [store-inventory.tsv](/datasets/store-inventory.tsv). Its SKUs, UPCs, and ZIP codes keep their leading zeros, and its count times chart as dates.
 
 ## Start from an example
 

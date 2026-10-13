@@ -1,20 +1,21 @@
+import type { AnalysisProjectFile } from "exploreda/analysis";
 import {
-  parseAnalysisProject,
-  type AnalysisProjectFile,
-} from "exploreda/analysis";
+  tableFileTypes,
+  tableFormatList,
+  type TableFile,
+} from "exploreda/readers";
 import { Button } from "@/components/ui/button";
 
-import { readDataFile } from "./readDataFile";
+import { readImportFile } from "./tableImport";
 import { Plus, Upload } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { toast } from "sonner";
-import { DatumObject } from "./LandingPage";
 
 interface CsvUploadProps {
   compact?: boolean;
   onProjectImport?: (file: AnalysisProjectFile) => void;
-  onImport?: (data: DatumObject[], fileName: string) => void;
+  onImport?: (table: TableFile) => void;
 }
 
 export function CsvUpload({
@@ -29,7 +30,7 @@ export function CsvUpload({
       const file = acceptedFiles[0];
 
       if (!file) {
-        setError("Choose a CSV or JSON file.");
+        setError(`Choose a ${tableFormatList()} file.`);
         toast.error("No file selected");
         return;
       }
@@ -37,27 +38,21 @@ export function CsvUpload({
       try {
         setError(null);
         setFailedFile(null);
-        if (file.name.toLowerCase().endsWith(".json")) {
-          const text = await file.text();
-          if (JSON.parse(text).format === "exploreda-project") {
-            if (!onProjectImport) {
-              throw new Error("Open this project from the project workspace");
-            }
-            onProjectImport(parseAnalysisProject(text));
-            return;
+        const imported = await readImportFile(file);
+        if (imported.kind === "project") {
+          if (!onProjectImport) {
+            throw new Error("Open this project from the project workspace");
           }
+          onProjectImport(imported.project);
+          return;
         }
-        onImport?.(await readDataFile(file), file.name);
+        onImport?.(imported.table);
       } catch (error) {
         const message =
           error instanceof Error ? error.message : "Unknown error";
         setFailedFile(file);
-        setError(
-          `Could not read ${file.name}: ${message}. Choose another CSV or JSON file.`
-        );
-        toast.error(
-          `Failed to parse ${file.name.toLowerCase().endsWith(".csv") ? "CSV" : "JSON"} file`
-        );
+        setError(`Could not read ${file.name}: ${message}`);
+        toast.error(`Could not read ${file.name}`);
       }
     },
     [onImport, onProjectImport]
@@ -65,10 +60,7 @@ export function CsvUpload({
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: {
-      "text/csv": [".csv"],
-      "application/json": [".json"],
-    },
+    accept: tableFileTypes(),
     multiple: false,
   });
 
@@ -78,7 +70,16 @@ export function CsvUpload({
         <Button
           variant="outline"
           size="sm"
-          onClick={() => onImport?.([], "")}
+          onClick={() =>
+            onImport?.({
+              name: "",
+              format: "csv",
+              rows: [],
+              fields: [],
+              fieldTypes: {},
+              notes: [],
+            })
+          }
           className="flex items-center gap-2"
         >
           <Plus className="h-4 w-4" />
@@ -93,23 +94,28 @@ export function CsvUpload({
       {...getRootProps({
         role: "button",
         tabIndex: 0,
-        "aria-label": "Import CSV or JSON data",
+        "aria-label": `Import ${tableFormatList()} data`,
         "aria-describedby": "file-upload-help",
       })}
       data-file-dropzone=""
       className="cursor-pointer rounded-lg border-2 border-dashed border-input p-5 text-center outline-none transition-colors hover:border-ring focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
     >
       <input
-        {...getInputProps({ "aria-label": "Choose a CSV or JSON file" })}
+        {...getInputProps({
+          "aria-label": `Choose a ${tableFormatList()} file`,
+        })}
       />
       <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
       {isDragActive ? (
-        <p>Drop the CSV or JSON file here…</p>
+        <p>Drop the file here…</p>
       ) : (
-        <p>Drag and drop a CSV or JSON file here, or click to select one</p>
+        <p>
+          Drag and drop a {tableFormatList()} file here, or click to select one
+        </p>
       )}
       <p id="file-upload-help" className="mt-2 text-sm text-muted-foreground">
-        Use a header row for CSV, or an object or array of objects for JSON.
+        Use a header row for delimited text, or an object or array of objects
+        for JSON. Values keep the form the file gives them.
       </p>
       {error && (
         <div role="alert" className="mt-3 text-sm text-destructive">

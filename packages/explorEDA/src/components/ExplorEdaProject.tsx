@@ -197,6 +197,14 @@ export const ExplorEdaProject = forwardRef<
     [settings, fieldNames]
   );
   const settingsCompatible = incompatibleFields.length === 0;
+  // Declared types hold even before any settings are saved.
+  const fieldTypes = useMemo(
+    () =>
+      Object.fromEntries(
+        evaluation.fields.map((field) => [field.id, field.type ?? "unknown"])
+      ),
+    [evaluation.fields]
+  );
   const renderedSettings = useMemo(() => {
     if (!settings) return undefined;
     const decoded = decodeAnalysisRowKeys(settings, idsByKey);
@@ -356,6 +364,7 @@ export const ExplorEdaProject = forwardRef<
           key={`${shownView.id}:${shownView.queryId}`}
           data={data}
           fieldNames={fieldNames}
+          fieldTypes={fieldTypes}
           savedData={settingsCompatible ? renderedSettings : undefined}
           onStateChange={
             readOnly || !settingsCompatible

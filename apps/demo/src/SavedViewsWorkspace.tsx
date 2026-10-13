@@ -33,7 +33,8 @@ import {
   stringifyAnalysisProject,
   type AnalysisProjectFile,
 } from "exploreda/analysis";
-import { parseCsvData } from "./csvParser";
+import { tableFileAccept, type DeclaredFieldType } from "exploreda/readers";
+import { fieldsFromTypes, readImportFile } from "./tableImport";
 import { HistoryTimeline } from "./HistoryTimeline";
 import {
   SavedViewActions,
@@ -81,7 +82,8 @@ function makeSession(
   project?: AnalysisProject,
   tables?: Record<string, readonly AnalysisSourceRow[]>,
   exampleId?: string,
-  tablesFromExample = false
+  tablesFromExample = false,
+  fieldTypes?: Record<string, DeclaredFieldType>
 ): SavedViewsSession {
   const tab = {
     id: newId(),
@@ -129,6 +131,7 @@ function makeSession(
     ...(exampleId ? { exampleId } : {}),
     ...(exampleId && tablesFromExample ? { tablesFrom: exampleId } : {}),
     sourceAnalysis,
+    ...(fieldTypes ? { fieldTypes } : {}),
     project,
     tables,
     tabs,
@@ -251,6 +254,7 @@ function isEditableTarget(target: EventTarget | null) {
 
 function WorkspaceInstance({
   data,
+  fieldTypes,
   settings,
   onStateChange,
   workspaceRef,
@@ -261,6 +265,7 @@ function WorkspaceInstance({
   onAddSource,
 }: {
   data: DatumObject[];
+  fieldTypes?: Record<string, DeclaredFieldType>;
   settings?: SavedDataStructure;
   onStateChange: (settings: SavedDataStructure) => void;
   workspaceRef: React.RefObject<ExplorEdaHandle | null>;
@@ -275,6 +280,7 @@ function WorkspaceInstance({
     <ExplorEda
       ref={workspaceRef}
       data={data}
+      fieldTypes={fieldTypes}
       savedData={initialSettings}
       onStateChange={onStateChange}
       sidePanels={sidePanels}
@@ -288,6 +294,7 @@ function WorkspaceInstance({
 
 export function SavedViewsWorkspace({
   data,
+  fieldTypes,
   initialSettings,
   initialSession,
   initialViews,
@@ -302,6 +309,8 @@ export function SavedViewsWorkspace({
   onPromoteToProject,
 }: {
   data: DatumObject[];
+  /** Field types the imported file declared for `data`. */
+  fieldTypes?: Record<string, DeclaredFieldType>;
   initialSettings?: SavedDataStructure;
   initialSession?: SavedViewsSession;
   /** Saved views that open as tabs after the main one. */
@@ -335,7 +344,8 @@ export function SavedViewsWorkspace({
           initialProject,
           sourceTables,
           exampleId,
-          tablesFromExample
+          tablesFromExample,
+          fieldTypes
         );
     const tab = initialTab
       ? opened.tabs.find((item) => item.name === initialTab)
@@ -377,18 +387,22 @@ export function SavedViewsWorkspace({
     () => shownTabs.map((tab) => ({ ...tab, queryId: tab.queryId ?? "" })),
     [shownTabs]
   );
-  // Add source: pick a CSV file, then add it to the project, or turn this
+  // Add source: pick a data file, then add it to the project, or turn this
   // single table into a project that keeps every tab's charts.
   const sourceInputRef = useRef<HTMLInputElement>(null);
   const addSourceFile = async (file: File) => {
-    const rows = (await parseCsvData(file)) as AnalysisSourceRow[];
-    const name = file.name.replace(/\.[^.]+$/, "") || "Source";
+    const imported = await readImportFile(file);
+    if (imported.kind === "project") {
+      throw new Error("open project files from the start page");
+    }
+    const { rows, fields, name, notes } = imported.table;
     if (session.project && session.tables) {
       const added = addSourceFromRows(
         session.project,
         session.tables,
         name,
-        rows
+        rows,
+        fields
       );
       setSession((current) => ({
         ...pushCheckpoint(
@@ -402,13 +416,14 @@ export function SavedViewsWorkspace({
         // The new table lives only in this session, so it saves with it.
         tablesFrom: undefined,
       }));
-      setAnnouncement(`${name} added`);
+      setAnnouncement([`${name} added.`, ...notes].join(" "));
       return;
     }
     const tabs = session.tabs.map((tab) => {
       const promoted = singleTableProject({
         name: viewName,
         rows: sourceRows as AnalysisSourceRow[],
+        fields: fieldsFromTypes(session.fieldTypes),
         settings: tab.settings,
       });
       return {
@@ -417,7 +432,13 @@ export function SavedViewsWorkspace({
       };
     });
     const first = tabs[0]!.promoted;
-    const added = addSourceFromRows(first.project, first.tables, name, rows);
+    const added = addSourceFromRows(
+      first.project,
+      first.tables,
+      name,
+      rows,
+      fields
+    );
     onPromoteToProject?.(
       {
         format: "exploreda-project",
@@ -440,7 +461,7 @@ export function SavedViewsWorkspace({
     <input
       ref={sourceInputRef}
       type="file"
-      accept=".csv,text/csv"
+      accept={tableFileAccept()}
       className="sr-only"
       tabIndex={-1}
       aria-hidden="true"
@@ -1312,6 +1333,7 @@ export function SavedViewsWorkspace({
           <WorkspaceInstance
             key={`${view.id}:${workspaceKey}`}
             data={sourceRows}
+            fieldTypes={session.fieldTypes}
             settings={settingsForDisplay}
             onStateChange={capture}
             workspaceRef={workspaceRef}

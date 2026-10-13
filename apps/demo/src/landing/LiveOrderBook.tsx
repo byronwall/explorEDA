@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { shopDashboard } from "@/demos/dashboardSettings";
 import { Maximize2, MousePointerClick, RotateCcw } from "lucide-react";
 import { lazy, Suspense, useEffect, useState } from "react";
-import { parseCsvData } from "../csvParser";
+import { readTableText } from "exploreda/readers";
 import type { DatumObject } from "../LandingPage";
 
 const ExplorEda = lazy(() =>
@@ -80,8 +80,7 @@ export function LiveOrderBook({ onOpenFull }: { onOpenFull: () => void }) {
         }
         return response.text();
       })
-      .then(parseCsvData)
-      .then(setRows)
+      .then((text) => setRows(readTableText(text).rows as DatumObject[]))
       .catch((error: unknown) => {
         if (!(error instanceof Error && error.name === "AbortError")) {
           setFailed(true);

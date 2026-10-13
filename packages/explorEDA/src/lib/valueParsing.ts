@@ -48,6 +48,36 @@ export function isNumberLike(value: datum): boolean {
   return value.trim() === "NaN" || !Number.isNaN(parseNumber(value));
 }
 
+const EXACT_NUMBER =
+  /^[+-]?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$|^[+-]?\.\d+(?:[eE][+-]?\d+)?$/;
+const PLAIN_INTEGER = /^[+-]?\d+$/;
+const NON_FINITE = /^[+-]?(?:Infinity|NaN)$/;
+
+/**
+ * True when text is a number that a JavaScript number holds without changing
+ * it. Leading zeros ("0012") mark identifiers, and integers past 2^53 would
+ * round, so both stay text. Thousands separators, radix prefixes, and units
+ * are not numbers.
+ */
+export function isExactNumberText(text: string): boolean {
+  const value = text.trim();
+  if (!EXACT_NUMBER.test(value)) return false;
+  const number = Number(value);
+  if (!Number.isFinite(number)) return false;
+  return !PLAIN_INTEGER.test(value) || Number.isSafeInteger(number);
+}
+
+/**
+ * True when a present value belongs in a numeric field: a number, exact
+ * number text, or NaN and Infinity text, which numeric fields hold but
+ * measurements skip.
+ */
+export function isNumericValue(value: datum): boolean {
+  if (typeof value === "number") return true;
+  if (typeof value !== "string") return false;
+  return isExactNumberText(value) || NON_FINITE.test(value.trim());
+}
+
 export type NumericExclusionReason =
   | "Missing value"
   | "Blank value"
