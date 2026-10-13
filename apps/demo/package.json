@@ -15,7 +15,7 @@
         "prettier": "prettier --write ./src",
         "eslint": "eslint . --max-warnings=0",
         "docs:check": "vitest run src/docs",
-        "docs:verify": "node scripts/docs-verify.mjs"
+        "docs:verify": "playwright test"
     },
     "dependencies": {
         "@radix-ui/react-dropdown-menu": "^2.1.6",
@@ -41,6 +41,8 @@
     "devDependencies": {
         "@eslint/js": "^9.19.0",
         "@mdx-js/rollup": "^3.1.1",
+        "@playwright/test": "^1.64.0",
+        "@repo/test-config": "workspace:*",
         "@repo/typescript-config": "workspace:*",
         "@testing-library/jest-dom": "^6.6.3",
         "@testing-library/react": "^16.2.0",

@@ -18,10 +18,27 @@ const changed = git(
 )
   .split("\n")
   .filter(Boolean);
+/** The manifest at `rev` without devDependencies, which users never install. */
+function manifestForUsers(rev) {
+  try {
+    const { devDependencies, ...manifest } = JSON.parse(
+      git("show", `${rev}:packages/explorEDA/package.json`)
+    );
+    return JSON.stringify(manifest);
+  } catch {
+    return null;
+  }
+}
 const packageChanges = changed.filter(
   (path) =>
     path.startsWith("packages/explorEDA/") &&
-    !/(\.test\.[jt]sx?|__tests__\/|\/test\/|\/vitest\.config\.[jt]s)/.test(path)
+    !/(\.test\.[jt]sx?|__tests__\/|\/test\/|\/vitest\.config\.[jt]s)/.test(
+      path
+    ) &&
+    !(
+      path === "packages/explorEDA/package.json" &&
+      manifestForUsers(mergeBase) === manifestForUsers("HEAD")
+    )
 );
 const changesets = changed.filter(
   (path) => /^\.changeset\/.+\.md$/.test(path) && !path.endsWith("README.md")

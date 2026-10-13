@@ -40,7 +40,12 @@ export function useCreateCharts() {
       .map((profile) => profile.name);
     const selectedField =
       field ||
-      (type === "row" || type === "heatmap" ? categories[0] : numeric[0]) ||
+      (type === "row" ||
+      type === "heatmap" ||
+      type === "waterfall" ||
+      type === "donut"
+        ? categories[0]
+        : numeric[0]) ||
       profiles[0]?.name ||
       "";
     const settings = definition.createDefaultSettings(layout, selectedField);
@@ -79,7 +84,10 @@ export function useCreateCharts() {
     if (settings.type === "sankey") {
       // Few-valued categories make readable stages.
       const stages = profiles
-        .filter((profile) => profile.dataType !== "numeric" && profile.uniqueCount <= 12)
+        .filter(
+          (profile) =>
+            profile.dataType !== "numeric" && profile.uniqueCount <= 12
+        )
         .map((profile) => profile.name);
       const start = stages.includes(selectedField) ? [selectedField] : [];
       settings.stages = [...new Set([...start, ...stages])].slice(0, 3);
