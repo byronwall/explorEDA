@@ -16,6 +16,8 @@ const TYPE_NAMES: Record<MarkDefinition["type"], string> = {
   density: "Density",
   span: "Spans",
   horizon: "Horizon",
+  waterfall: "Waterfall",
+  donut: "Donut",
 };
 
 /**
@@ -104,6 +106,23 @@ export function describeMark(
       parts.push(
         `${scaleName(mark.xScaleId) ?? "?"} · ${mark.field} from ${mark.baseline}${mark.relative ? " as a share" : ""} · ${mark.bands} bands`
       );
+      break;
+    case "waterfall":
+      parts.push(
+        `${mark.mode === "bridge" ? `${mark.states[0]?.label ?? "start"} to ${mark.states[1]?.label ?? "end"}` : "running total"} by ${mark.stepField}`
+      );
+      parts.push(
+        mark.aggregation === "count"
+          ? "count"
+          : `sum of ${mark.measureField ?? "?"}`
+      );
+      if (mark.parentField) parts.push(`subtotals by ${mark.parentField}`);
+      break;
+    case "donut":
+      parts.push(
+        `${mark.categoryField} · ${mark.aggregation === "count" ? "count" : `sum of ${mark.measureField ?? "?"}`}`
+      );
+      if (mark.topN) parts.push(`top ${mark.topN}`);
       break;
     case "density":
       parts.push(`${scaleName(mark.xScaleId) ?? "?"} · ${mark.height} height`);

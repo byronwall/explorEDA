@@ -1,0 +1,46 @@
+dashboard "From orders to contribution"
+unitPrice:num="Unit Price"
+orderDate:date="Order Date"
+
+calc discountRate = min(max(Discount == null ? 0 : Discount, 0), 0.25)
+calc grossSales = Units * unitPrice
+calc discountAmount = grossSales * discountRate
+calc netSales = grossSales - discountAmount
+calc contribution = netSales - Cost
+calc contributionRate = netSales == 0 ? null : contribution / netSales * 100
+calc orderBand = netSales >= 500 ? "Large" : netSales >= 100 ? "Standard" : "Small"
+calc orderMonth = formatDate(orderDate, "%Y-%m")
+calc orderQuarter = extractDateComponent(orderDate, "quarter")
+
+field discountRate label="Discount rate" format=percent
+field grossSales label="Gross sales" currency=USD
+field discountAmount label="Discount amount" currency=USD
+field netSales label="Net sales" currency=USD
+field contribution label=Contribution currency=USD
+field contributionRate label="Contribution rate" unit=% precision=1
+field orderBand label="Order band"
+field orderMonth label="Order month"
+field orderQuarter label="Order quarter"
+
+markdown @intro content="Each order runs a chain: gross sales (units x unit price) less the discount gives net sales; net sales less cost gives contribution, and contribution over net sales gives the contribution rate."
+scatter @value x=netSales y=contribution title="Net sales against contribution" {
+  x.scale=symlog y.scale=symlog
+}
+row @band orderBand title="Orders by band"
+hist @rate contributionRate title="Contribution rate"
+line @trend x=Order y=netSales title="Net sales by order" {
+  facet.enabled=true facet.rowVariable=orderQuarter facet.columnCount=2
+  legend.show=false
+}
+pivot @monthly rows=orderMonth {
+  value sum(netSales) label="Net sales"
+  value sum(contribution) label="Contribution"
+}
+table @trace Order,Units,unitPrice,Discount,discountRate,grossSales,discountAmount,netSales,Cost,contribution,contributionRate,orderBand
+
+layout {
+  2: intro
+  4: value:6 band:3 rate:3
+  5: trend:7 monthly:5
+  4: trace
+}

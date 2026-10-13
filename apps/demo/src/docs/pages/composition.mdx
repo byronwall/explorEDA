@@ -10,3 +10,16 @@
 - Chart units draw marks from the rows, through named scales that every repeat shares.
 - Text and labels can show values computed from the data.
 - A single repeat can carry its own visual changes, kept apart from the template.
+
+## Waterfall and donut marks
+
+A chart unit can draw a waterfall or a donut in each repeat. They compute their values as the [Waterfall](/docs/waterfall) and [Donut](/docs/donut) charts do, so a report page and the workspace show the same numbers.
+
+<LiveExample
+  id="composition-parts"
+  caption="Each quarter's plan-to-actual bridge and each budget group's shares, from the lab budget report example."
+/>
+
+- **Waterfall** bridges a start state to an end state with one signed step per category, or runs a total through ordered steps from a start value. Every repeat shares one value axis, so a quarter's deficit reads against the others. Steps can group under a field, with a hollow checkpoint for each subtotal, and the start and end draw as a line from zero to a dot.
+- **Donut** shows each category's share of the repeat's rows, largest first, with the smaller categories pooled into Other. Categories keep one color across repeats, and a legend element lists them. A repeat with a negative part or no total shows no shares.
+- Both trace like any mark: Alt-click a step or slice for its value, how it was calculated, and its rows.

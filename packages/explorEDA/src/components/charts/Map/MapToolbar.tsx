@@ -1,5 +1,6 @@
-import { Minus, Plus } from "lucide-react";
+import { ImageDown, Minus, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { MapLayersControl } from "./MapLayersControl";
 import { useChartTraceApi } from "../trace/ChartTraceScope";
 import type { MapSettings, MapView } from "./definition";
 import type { PointMapPlan } from "./pointMapPlan";
@@ -10,13 +11,24 @@ export function MapToolbar({
   plan,
   owner,
   getFieldLabel,
+  maxZoom,
+  fitZoom,
   onViewChange,
+  onSettingsChange,
+  onExport,
 }: {
   settings: MapSettings;
   plan: PointMapPlan;
   owner: string;
   getFieldLabel: (field: string) => string;
+  /** Deepest zoom: street level when a street engine is registered. */
+  maxZoom: number;
+  /** Deepest zoom Fit data chooses. */
+  fitZoom: number;
   onViewChange: (view: MapView) => void;
+  onSettingsChange: (updates: Partial<MapSettings>) => void;
+  /** Saves the map, basemap included, as a PNG. */
+  onExport: () => void;
 }) {
   const api = useChartTraceApi();
   const saveView = onViewChange;
@@ -30,11 +42,11 @@ export function MapToolbar({
           className="size-6 shrink-0"
           aria-label="Zoom in"
           tooltip="Zoom in around the map center."
-          disabled={plan.view.zoom >= 64}
+          disabled={plan.view.zoom >= maxZoom}
           onClick={() =>
             saveView({
               ...plan.view,
-              zoom: Math.min(64, plan.view.zoom * 1.5),
+              zoom: Math.min(maxZoom, plan.view.zoom * (plan.street ? 2 : 1.5)),
             })
           }
         >
@@ -50,7 +62,7 @@ export function MapToolbar({
           onClick={() =>
             saveView({
               ...plan.view,
-              zoom: Math.max(1, plan.view.zoom / 1.5),
+              zoom: Math.max(1, plan.view.zoom / (plan.street ? 2 : 1.5)),
             })
           }
         >
@@ -68,12 +80,24 @@ export function MapToolbar({
                 plan.coordinates,
                 settings.projection,
                 width,
-                plan.mapHeight
+                plan.mapHeight,
+                fitZoom
               )
             )
           }
         >
           Fit data
+        </Button>
+        <MapLayersControl settings={settings} onChange={onSettingsChange} />
+        <Button
+          size="icon"
+          variant="ghost"
+          className="size-6 shrink-0"
+          aria-label="Download map image"
+          tooltip="Save the map as a PNG at twice its size, with the basemap and its credits."
+          onClick={onExport}
+        >
+          <ImageDown className="size-3.5" />
         </Button>
         <Button
           size="sm"
@@ -87,7 +111,10 @@ export function MapToolbar({
       </div>
       <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-muted-foreground">
         <span>
-          {plan.points.length} drawn · {projectionLabel(settings.projection)}
+          {settings.showMarks === false
+            ? `${plan.points.length} hidden`
+            : `${plan.points.length} drawn`}{" "}
+          · {plan.street ? "Street map" : projectionLabel(settings.projection)}
         </span>
         {plan.excluded.length > 0 && (
           <Button

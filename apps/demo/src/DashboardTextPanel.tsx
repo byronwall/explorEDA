@@ -28,11 +28,17 @@ import { Button } from "@/components/ui/button";
 import { ActionTooltip } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
-const PLACEHOLDER = `# Paste or write a dashboard. One chart per line.
-scatter x=Revenue y=Margin color=Category
+const PLACEHOLDER = `# Paste or write a dashboard. One chart per line;
+# end a line with { for more settings.
+scatter @margins x=Revenue y=Margin color=Category {
+  title="Revenue and margin"
+}
 hist Revenue bins=24
 row Category
-table Revenue,Margin,Category`;
+layout {
+  5: margins margins Revenue
+  4: Category
+}`;
 
 function DiagnosticItem({
   item,

@@ -1,0 +1,16 @@
+dashboard "Speed, conversion, and trial volume"
+scale @phase field=Phase map=Baseline:#3479a8,Release:#c77a45,Follow-up:#4b9688
+
+scatter @bubbles x="Response time (ms)" y="Conversion (%)" size=Trials size.max=20 opacity=.5 color=Phase colorScale=phase {
+  callout "Day 31: slowest response" on=Day:31
+  rule y=4 "Target 4%"
+  rule x=mean "Mean response time"
+  region x=275..345 y=4.1..5.15 shape=ellipse "Fast, high-converting days"
+}
+metric @trials sum(Trials)
+row Phase color=Phase colorScale=phase
+
+layout {
+  2: bubbles:8 trials:4
+  4: bubbles:8 Phase:4
+}

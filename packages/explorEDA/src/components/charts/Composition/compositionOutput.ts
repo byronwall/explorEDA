@@ -69,20 +69,12 @@ export async function artboardPng(
 }
 
 /**
- * Copies a composition as a PNG. The clipboard write starts inside the click,
- * with the image as a pending promise, so browsers keep the user gesture.
+ * The composition's artboard as a PNG: the finished graphic at its own size,
+ * without editing overlays, whatever part of it is zoomed into view.
  */
-export async function copyArtboardPng(chartId: string, pixelRatio = 2) {
+export function compositionPng(chartId: string, pixelRatio = 2) {
   const svg = artboards.get(chartId);
-  if (!svg) throw new Error("Open the composition to copy it.");
-  if (!navigator.clipboard?.write || typeof ClipboardItem === "undefined")
-    throw new Error(
-      "This browser cannot copy images. Use a secure (https) page in a current browser."
-    );
-  const png = artboardPng(svg, pixelRatio);
-  await navigator.clipboard.write([
-    new ClipboardItem({ "image/png": png.then(({ blob }) => blob) }),
-  ]);
-  const { width, height } = await png;
-  return { width, height };
+  if (!svg)
+    return Promise.reject(new Error("Open the composition to export it."));
+  return artboardPng(svg, pixelRatio);
 }

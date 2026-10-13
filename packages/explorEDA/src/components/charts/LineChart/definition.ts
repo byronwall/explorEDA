@@ -5,6 +5,7 @@ import {
   type datum,
 } from "@/types/ChartTypes";
 import { applyFilter } from "@/hooks/applyFilter";
+import { DEFAULT_MARGIN_SETTINGS } from "@/utils/defaultSettings";
 import { IdType } from "@/providers/DataLayerProvider";
 import { Filter } from "@/types/FilterTypes";
 import { LineChart as LineChartIcon } from "lucide-react";
@@ -68,10 +69,10 @@ export interface LineChartSettings extends BaseChartSettings {
 
 export const DEFAULT_SERIES_SETTINGS: SeriesSettings = {
   showPoints: false,
-  pointSize: 4,
-  pointOpacity: 1,
+  pointSize: 3,
+  pointOpacity: 0.8,
   lineWidth: 2,
-  lineOpacity: 0.8,
+  lineOpacity: 1,
   lineStyle: "solid",
   useRightAxis: false,
 };
@@ -97,14 +98,14 @@ export const lineChartDefinition: ChartDefinition<LineChartSettings> = {
       rowVariable: "",
       columnVariable: "",
     },
-    xAxis: {},
-    yAxis: {},
-    margin: { top: 20, right: 60, bottom: 30, left: 60 },
+    xAxis: { grid: false },
+    yAxis: { grid: true },
+    margin: { ...DEFAULT_MARGIN_SETTINGS },
     filters: [],
     xAxisLabel: "",
     yAxisLabel: "",
     xGridLines: 5,
-    yGridLines: 5,
+    yGridLines: 4,
     xField: "",
     seriesField: [],
     seriesSettings: {},

@@ -726,7 +726,15 @@ export function ScatterSvg({
           </g>
         )}
         <g className="eda-brush" clipPath={`url(#${chartId}-plot)`}>
-          <Primitives items={overlay.brush} />
+          <Primitives
+            items={overlay.brush.filter((item) => item.id === "brush")}
+          />
+          {/* Resize grips are editor chrome; an exported image keeps the box. */}
+          <g data-export="omit">
+            <Primitives
+              items={overlay.brush.filter((item) => item.id !== "brush")}
+            />
+          </g>
         </g>
         {annotations?.(`url(#${chartId}-plot)`)}
         {marginals && (
@@ -747,6 +755,7 @@ export function ScatterSvg({
         />
         <g
           className="eda-axis-readout"
+          data-export="omit"
           role={overlay.readoutLabel ? "img" : undefined}
           aria-label={overlay.readoutLabel}
           pointerEvents="none"
