@@ -110,6 +110,7 @@ export function FacetWrapLayout({
                 size="icon"
                 className="size-5 shrink-0 text-muted-foreground hover:text-foreground"
                 tooltip="Focus facet"
+                data-export="omit"
                 aria-label={`Focus ${formatFacetValue(rowVariable, facet.rowRawValue)} facet`}
                 onKeyDown={traceOnAltEnter(
                   onTraceFacet && (() => onTraceFacet("panel", [facet], layout))
