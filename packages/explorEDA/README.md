@@ -59,6 +59,23 @@ cancelled with Escape is not reported at all.
 `ref.current.getSettings()` reads the current `SavedDataStructure` after mount,
 including initial settings when `savedData` is omitted. It reflects later edits
 when called again. It does not change the edit-only callback behavior.
+`ref.current.exportChartPng(chartId, { pixelRatio })` resolves to
+`{ blob, width, height }`: the chart's PNG as drawn, the same image its
+**Download image** action saves, at twice its on-screen size by default. The
+chart must be rendered in that workspace (scrolled out of view is fine);
+otherwise the promise rejects with "Chart is not rendered.". Read chart ids
+from `getSettings().charts`.
+
+```tsx
+const saveFirstChart = async () => {
+  const handle = workspace.current;
+  const chart = handle?.getSettings().charts[0];
+  if (!handle || !chart) return;
+  const { blob } = await handle.exportChartPng(chart.id);
+  await uploadImage(blob); // your own storage
+};
+```
+
 `savedData` is an input for initial or replacement restore, not a controlled
 value; do not feed every callback result back into it. Callback snapshots are
 storage-neutral JSON settings. They include Rows filters, search, sort, column
@@ -216,6 +233,10 @@ interface SavedCalculation {
   expression: string;
 }
 ```
+
+Point maps draw streets when zoomed in after the host calls `registerMapLibre(maplibregl)` with the optional `maplibre-gl` package. The default style is OpenFreeMap; pass `{ styles: { light, dark } }` to change it.
+
+Region maps can use supplied boundaries without an import: World countries, US states, and US counties load only when a map uses them. A chart saves them as `geometryAssetId: "boundary:world-countries"`. Add more with `registerBoundarySet({ id, name, source, level, coverage, keys, load })`, where `load` returns a Polygon or MultiPolygon FeatureCollection.
 
 Region maps reference a shared `GeometryAsset` by `geometryAssetId`. Each asset has an `id`, `name`, `source`, and `geometry`.
 Geometry is a WGS 84 GeoJSON FeatureCollection of Polygon or MultiPolygon features with closed rings.

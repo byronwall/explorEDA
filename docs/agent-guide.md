@@ -54,6 +54,12 @@ pnpm shot /examples/shop-operations --name orders --selector '.react-grid-item:h
 `pnpm shot` saves 2x screenshots at 1280, 783, and 390 px to `tmp/<name>-<width>.png`. It starts the dev server when needed, clears saved workspaces first, and runs with reduced motion. Add `--click <selector>` steps, such as `--click 'role=button[name="Explore the order book"]'` from `/`. The header of `scripts/shot.mjs` lists every option.
 
 ```bash
+pnpm export-proof
+```
+
+`pnpm export-proof` checks chart image export against the screen: it presses Shift+E on a set of demo charts and diffs each download with an element screenshot, saving `tmp/export-proof/<case>-{screen,export,diff}.png`. Add `--only <case>` to run one. Run one engine at a time; `--engine webkit` builds multi-MB images and has used a lot of memory.
+
+```bash
 pnpm check:pr
 ```
 

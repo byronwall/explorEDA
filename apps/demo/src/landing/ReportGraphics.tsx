@@ -22,7 +22,7 @@ export function ReportGraphics() {
         </SectionHeading>
         <Link
           to={`${EXAMPLES_PATH}#report-graphics`}
-          className="inline-flex shrink-0 items-center gap-1 rounded-sm text-sm font-medium text-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="inline-flex shrink-0 items-center gap-1 rounded-sm text-sm font-medium text-site-accent underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           All {compositionExamples.length} report graphics
           <ArrowRight className="size-4" aria-hidden="true" />

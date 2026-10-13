@@ -233,6 +233,10 @@ export const ExplorEdaProject = forwardRef<
         }
         return encodeAnalysisRowKeys(chartRef.current.getSettings(), keysById);
       },
+      exportChartPng: (chartId, options) =>
+        chartRef.current
+          ? chartRef.current.exportChartPng(chartId, options)
+          : Promise.reject(new Error("Chart is not rendered.")),
     }),
     [keysById, settings, settingsCompatible]
   );
