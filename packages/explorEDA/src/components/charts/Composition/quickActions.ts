@@ -56,7 +56,8 @@ export function markOfNode(
 ): MarkDefinition | undefined {
   if (element?.kind !== "unit" || !node) return undefined;
   const markId =
-    (node.type === "rect" || node.type === "circle") && node.glyph
+    (node.type === "rect" || node.type === "circle" || node.type === "arc") &&
+    node.glyph
       ? node.glyph.markId
       : node.type === "path"
         ? node.path.markId
@@ -72,7 +73,10 @@ export function traceIdOf(
   element: CompositionElement | undefined
 ): string | undefined {
   if (!node) return undefined;
-  if ((node.type === "rect" || node.type === "circle") && node.glyph)
+  if (
+    (node.type === "rect" || node.type === "circle" || node.type === "arc") &&
+    node.glyph
+  )
     return `glyph:${node.key}`;
   if (node.type === "path") return `path:${node.key}`;
   if (node.type === "area") return `band:${node.key}`;

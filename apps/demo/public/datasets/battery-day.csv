@@ -1,0 +1,46 @@
+Hour,Period,Flow,Energy (kWh)
+0,Night,Building load,-3
+1,Night,Grid import,5
+1,Night,Building load,-3
+2,Night,Grid import,5
+2,Night,Building load,-3
+3,Night,Grid import,5
+3,Night,Building load,-3
+4,Night,Grid import,5
+4,Night,Building load,-3.1
+5,Night,Building load,-3.4
+6,Morning,Building load,-4.5
+7,Morning,Solar,3.1
+7,Morning,Building load,-6.1
+8,Morning,Solar,6.1
+8,Morning,Building load,-7
+9,Morning,Solar,8.7
+9,Morning,Building load,-6.1
+10,Morning,Solar,10.9
+10,Morning,Building load,-4.5
+11,Morning,Solar,12.6
+11,Morning,Building load,-3.4
+11,Morning,Grid export,-3
+12,Afternoon,Solar,13.6
+12,Afternoon,Building load,-3.1
+12,Afternoon,Grid export,-3
+13,Afternoon,Solar,14
+13,Afternoon,Building load,-3
+13,Afternoon,Grid export,-3
+14,Afternoon,Solar,13.6
+14,Afternoon,Building load,-3
+14,Afternoon,Grid export,-3
+15,Afternoon,Solar,12.6
+15,Afternoon,Building load,-3.3
+16,Afternoon,Solar,10.9
+16,Afternoon,Building load,-4.2
+17,Afternoon,Solar,8.7
+17,Afternoon,Building load,-6.1
+18,Evening,Solar,6.1
+18,Evening,Building load,-8.7
+19,Evening,Solar,3.1
+19,Evening,Building load,-10
+20,Evening,Building load,-8.7
+21,Evening,Building load,-6.1
+22,Evening,Building load,-4.2
+23,Evening,Building load,-3.3

@@ -1,6 +1,7 @@
 /// <reference types="vitest" />
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import { vitestDefaults } from "@repo/test-config";
 import * as path from "path";
 
 // https://vitejs.dev/config/
@@ -12,10 +13,8 @@ export default defineConfig({
     },
   },
   test: {
-    globals: true,
-    // Data-heavy tests take 1–3 s alone and several times that on CI runners or
-    // under a full parallel run; the timeout only needs to catch hangs.
-    testTimeout: 20_000,
+    // Shared time limits; see @repo/test-config.
+    ...vitestDefaults,
     environment: "jsdom",
     setupFiles: ["./src/test/setup.ts"],
     coverage: {

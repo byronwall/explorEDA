@@ -46,12 +46,24 @@ export const CHART_QUESTIONS: readonly ChartQuestion[] = [
     ],
   },
   {
+    id: "change",
+    question: "What moved the total?",
+    picks: [
+      [
+        "waterfall",
+        "One total to another, such as plan to actual, a step per category.",
+      ],
+      ["bar", "Grouped bars of each category in both periods."],
+    ],
+  },
+  {
     id: "parts",
     question: "What is the total made of?",
     picks: [
       ["hierarchy", "Nested categories as a treemap, icicle, or sunburst."],
       ["sankey", "How rows flow through a sequence of categories."],
       ["bar", "Stacked or 100% bars split by a second field."],
+      ["donut", "A few categories' shares of one small whole."],
     ],
   },
   {

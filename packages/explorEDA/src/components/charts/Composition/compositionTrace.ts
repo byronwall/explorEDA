@@ -13,6 +13,7 @@ import {
   type RankOrder,
 } from "./compositionTypes";
 import type {
+  ArcNode,
   AreaNode,
   CircleNode,
   CompositionScene,
@@ -89,7 +90,7 @@ export interface CompositionTrace {
   anchor?: ResolvedAnchor;
 }
 
-type Glyph = RectNode | CircleNode;
+type Glyph = RectNode | CircleNode | ArcNode;
 
 /** Resolves selections against the drawn scene of one composition. */
 export function makeCompositionTraceSource(
@@ -103,7 +104,10 @@ export function makeCompositionTraceSource(
   const paths = new Map<string, PathNode>();
   const areas = new Map<string, AreaNode>();
   for (const node of scene.nodes) {
-    if ((node.type === "rect" || node.type === "circle") && node.glyph)
+    if (
+      (node.type === "rect" || node.type === "circle" || node.type === "arc") &&
+      node.glyph
+    )
       glyphs.set(node.key, node);
     if (node.type === "path") paths.set(node.key, node);
     if (node.type === "area") areas.set(node.key, node);

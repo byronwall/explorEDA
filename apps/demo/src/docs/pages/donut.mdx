@@ -1,0 +1,28 @@
+## Try it
+
+<LiveExample
+  id="donut"
+  caption="Revenue by sales channel beside the channel mix in each region, in the same colors, from the order-book shares example."
+/>
+
+## How it reads
+
+- Each slice is one category's share of the whole: every row that passes the other charts' filters. Filter another chart and the shares redraw so they still sum to 100%.
+- The center shows the whole: the row count, or the sum of the measure.
+- Slices run largest first, clockwise from the top. The legend lists each category with its share, in the slices' colors.
+- **Top N** sets how many of the largest categories get their own slice; the rest pool into **Other**. It shows six by default, because thin slices are hard to compare.
+- With a color field and scale, slices take the same colors as other charts that color by that field.
+
+## When it won't draw
+
+A share needs a whole made of nonnegative parts. If a category's sum is negative, or the values sum to zero, the chart says so instead of drawing a ring. For values that can be negative, such as profit, use a bar chart or a waterfall.
+
+## Select and trace
+
+- Click a slice or its legend entry to select that category. Click **Other** to select every category it pools.
+- Click empty space to clear the selection.
+- Alt-click a slice to see its value, its share of the whole, and its source rows. For Other, the trace also lists the categories it pools.
+
+## Donut or bars?
+
+A donut suits a few categories of one whole. To compare many categories, or the same mix across groups, use bars: the example sets a donut beside 100% bars of the same channel mix in each region.
