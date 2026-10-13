@@ -8,7 +8,7 @@
 - Branch: `codex/data-format-research`
 - Source commit: `c534378c052c9fbb2cb076d1df0d21eb0fa0965e`
 - Initial worktree: clean, detached HEAD. Created the branch in the existing checkout. No new worktree.
-- Current phase: shaping complete; validation passed; review PR pending.
+- Current phase: complete; research and shaping review PR opened, verified, and attached.
 - Round: initial; at most two focused follow-ups after submission.
 - Prompt: [raw/2026-10-12-pro/prompt.md](raw/2026-10-12-pro/prompt.md)
 - User source: [raw/2026-10-12-pro/user-request.md](raw/2026-10-12-pro/user-request.md)
@@ -17,12 +17,12 @@
 - Model: Chrome profile `byroni.us`; ChatGPT account `Byron Wall Pro`; live selector showed Pro, power 5 of 5. The submitted message showed both attachments and “ChatGPT is responding” with Stop available.
 - Submitted: October 12, 2026, about 9:25 PM America/Indiana/Indianapolis.
 - Collection check: October 12, about 10:25 PM. Pro had completed after 36m 37s. No duplicate submission or follow-up.
-- Heartbeat: `collect-data-format-research`, ACTIVE, attached to this chat. Saved schedule and target thread verified. No goal created; none requested.
+- Heartbeat: `collect-data-format-research`, PAUSED after verified PR completion. Saved status verified. No goal created; none requested.
 - Upload review: initial attempt rejected because the reviewer classified repository source as private. GitHub then confirmed `isPrivate: false` and `visibility: PUBLIC` for `byronwall/explorEDA`. The source manifest verifies all 36 files match the exact committed baseline. GitHub also verified the published baseline commit. The direct retry with this evidence succeeded. No upload workaround was used.
 - Git branch creation needed approved access to the parent repository's Git metadata.
 - Validation: all 36 packet files match the baseline and manifest hashes. `pnpm --filter demo exec vitest run src/parsers.test.ts` passed (4 tests). `pnpm check:ui` and `git diff --check` passed. Full validation results are recorded below.
 - Dependencies: `pnpm install --frozen-lockfile` succeeded after approved network access. The sandboxed attempt could not reach the registry. Node is v22.21.1; use Node 24 if running release checks.
-- PR: pending research completion.
+- PR: [#371 — Research and shape local data file inputs](https://github.com/byronwall/explorEDA/pull/371), OPEN and attached to this chat.
 
 ## Baseline findings
 
@@ -69,3 +69,9 @@ Validation completed October 12, 2026:
 - New format, workbook, binary, browser/CSP, Sheets export, and performance proofs remain unrun, as planned.
 
 Only initiative documentation and raw research enter the PR. No changeset or UI screenshot is required for this docs-only change.
+
+## PR completion
+
+PR #371 targets main from codex/data-format-research. Its saved body, title, all 18 scoped files, branch names, open status, and published artifact paths were verified. GitHub reported it mergeable. The PR is attached to this chat. The heartbeat is paused and its saved status was verified.
+
+Both Git identities were Byron Wall <byron@byroni.us> before each commit. The branch was pushed. pnpm check:pr passed for changeset scope and commit authors. No merge or application implementation occurred. The handoff is complete; the product initiative remains planned for review.
