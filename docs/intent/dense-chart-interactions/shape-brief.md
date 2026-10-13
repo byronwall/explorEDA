@@ -37,18 +37,18 @@ Editable chart roles
 
 ## Behavior
 
-| Situation | Expected result |
-| --- | --- |
-| Open, search, dismiss, or choose a field | Preserve the chart’s filters and linked selection. |
-| Choose a field | Apply at once as one host change and one undo step. |
-| Cmd/Ctrl-Z after a choice | Restore the previous binding and remove any scale the choice created. |
-| Browse fields with preview on | Show the preview without an undo step. Escape restores the chart. |
-| Choose a field that already has a color scale | Join that scale and say which charts share it. |
-| Right-click overlapping points | Offer chart Color without an exact record hit. Resolve a record only for trace. |
-| Click a category legend chip or swatch | Filter that category. Use a separate encoding action for configuration. |
-| Escape or outside dismissal | Close the editor and return focus. The dismissal must not also filter the chart. |
-| Keyboard or touch | Reach the same task through a visible control. Do not require Alt or long press. |
-| Object disappears during editing | Close or revalidate the target. Do not silently edit a different record. |
+| Situation                                     | Expected result                                                                  |
+| --------------------------------------------- | -------------------------------------------------------------------------------- |
+| Open, search, dismiss, or choose a field      | Preserve the chart’s filters and linked selection.                               |
+| Choose a field                                | Apply at once as one host change and one undo step.                              |
+| Cmd/Ctrl-Z after a choice                     | Restore the previous binding and remove any scale the choice created.            |
+| Browse fields with preview on                 | Show the preview without an undo step. Escape restores the chart.                |
+| Choose a field that already has a color scale | Join that scale and say which charts share it.                                   |
+| Right-click overlapping points                | Offer chart Color without an exact record hit. Resolve a record only for trace.  |
+| Click a category legend chip or swatch        | Filter that category. Use a separate encoding action for configuration.          |
+| Escape or outside dismissal                   | Close the editor and return focus. The dismissal must not also filter the chart. |
+| Keyboard or touch                             | Reach the same task through a visible control. Do not require Alt or long press. |
+| Object disappears during editing              | Close or revalidate the target. Do not silently edit a different record.         |
 
 ## Decisions and boundaries
 

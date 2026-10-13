@@ -4,11 +4,11 @@
     "title": "Change chart settings where the data is",
     "slug": "dense-chart-interactions",
     "scale": "capability",
-    "current_phase": "shape",
-    "last_updated": "2026-10-12",
+    "current_phase": "plan",
+    "last_updated": "2026-10-13",
     "summary": "Make frequent chart changes local and clear while keeping ordinary click-to-filter primary.",
     "status": "planned",
-    "next_action": "Review the updated shape, then authorize the scatter Color role proof if desired."
+    "next_action": "Review the implementation plan, then start Milestone 1 (scatter point click proof) if approved."
   },
   "artifacts": {
     "intent_brief": {
@@ -28,8 +28,8 @@
     },
     "implementation_plan": {
       "path": "implementation-plan.md",
-      "status": "not-requested",
-      "updated_at": null
+      "status": "current",
+      "updated_at": "2026-10-13"
     }
   },
   "sources": [
@@ -372,11 +372,11 @@
     ]
   },
   "implementation": {
-    "status": "not-started",
+    "status": "draft",
     "repository_snapshot": {
       "root": "/Users/byronwall/.codex/worktrees/3e0f/explorEDA",
-      "revision": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
-      "worktree_status": "Clean at start; only scoped research docs added.",
+      "revision": "8d7fb405",
+      "worktree_status": "Plan written against main at 8d7fb405; application code unchanged.",
       "subsystems": [
         "PlotChartPanel",
         "ChartSettingsContent",
@@ -384,9 +384,15 @@
         "AxisFieldActions",
         "FieldSelector",
         "ChartColorLegend",
-        "CompositionQuickMenu"
+        "CompositionQuickMenu",
+        "ScatterPlot/ScatterSvg",
+        "hooks/useColorScales",
+        "ComboBox",
+        "demo savedViewsHistory"
       ],
       "test_commands": [
+        "pnpm --filter exploreda exec vitest run src/components/charts/ScatterPlot src/components/charts/InPlace",
+        "pnpm --filter exploreda check-types",
         "pnpm check:ui",
         "pnpm --filter demo docs:check",
         "pnpm check"
@@ -414,20 +420,99 @@
           "Real browser task at 1280/783/390",
           "Keyboard and supported-platform context menu checks"
         ],
-        "remote_dependency": "absent"
+        "remote_dependency": "absent",
+        "local_proof": "Vitest pointer and keyboard sequences on ScatterSvg and PlotChartPanel, plus manual checks in pnpm --filter demo dev.",
+        "live_proof": "Not applicable: no external provider. Browser checks at 1280, 783, and 390 px with pnpm shot stand in.",
+        "rollout": "On by default in the library; each route is a separate component that can be removed without touching saved layouts or the settings panel."
       }
     ],
     "fast_local_loop": {
-      "command": "pnpm --filter demo dev",
-      "scope": "Future implementation proof against source with synthetic rows. No service credentials or deployment."
+      "command": "pnpm --filter exploreda exec vitest run src/components/charts/ScatterPlot src/components/charts/InPlace",
+      "scope": "Targeted tests while editing; pnpm --filter demo dev for real pointer, keyboard, and undo checks. No network or credentials."
     },
-    "milestones": [],
-    "cut_line": [
-      "Application implementation",
-      "Deployment",
-      "Merge"
+    "milestones": [
+      {
+        "id": "m1",
+        "title": "Ordinary scatter point clicks select",
+        "outcome": "A plain click on any scatter point selects it and an empty-space click clears, sized or unsized.",
+        "dependencies_introduced": [],
+        "proof": "ScatterSvg.test.tsx pointer sequence on an unsized point; manual mouse check in the demo.",
+        "valid_intermediate_state": "No new UI; existing behavior guarded or fixed.",
+        "rollback": "Revert the fix; the test documents the gap.",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m2",
+        "title": "A visible Color label changes the field in place",
+        "outcome": "On a scatter, the Color label opens field search, applies a choice at once, and one Cmd/Ctrl-Z restores it with any new scale.",
+        "dependencies_introduced": ["local-input"],
+        "proof": "Vitest for one host notification, unchanged filters, undo removing a created scale, shared-scale peer; pnpm shot at 1280/783/390.",
+        "valid_intermediate_state": "Settings panel route unchanged; label is an extra route on scatter only.",
+        "rollback": "Remove ChartRoleControl from the scatter definition; saved layouts unaffected.",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m3",
+        "title": "Right-click the plot to color or trace",
+        "outcome": "A scatter plot context menu offers Color by…, Trace this record, and image export, with keyboard parity.",
+        "dependencies_introduced": [],
+        "proof": "Tests for menu order (axis/title first, Shift native), dismissal not filtering, trace target resolution; demo check.",
+        "valid_intermediate_state": "Alt-click trace still works; the menu adds routes only.",
+        "rollback": "Restore the image-only panel menu.",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m4",
+        "title": "Preview fields while browsing",
+        "outcome": "Arrowing through fields recolors live; Escape restores; history and scales show only the final choice.",
+        "dependencies_introduced": [],
+        "proof": "Vitest for browse+Escape and browse+choose leaving clean history and scale list; responsiveness on the largest demo dataset.",
+        "valid_intermediate_state": "Instant apply from m2 works with or without preview.",
+        "rollback": "Disable preview; keep instant apply.",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m5",
+        "title": "Change X and Y the same way",
+        "outcome": "X and Y fields change through the same role editor from the axis title, each as one undo step.",
+        "dependencies_introduced": [],
+        "proof": "Tests for axis title Enter and menu entry, range/log reset in one step, existing axis gestures unchanged; pnpm shot.",
+        "valid_intermediate_state": "Color role from m2 unaffected; settings panel still edits X and Y.",
+        "rollback": "Remove the Change field… entry and Enter binding.",
+        "status": "planned",
+        "evidence": []
+      }
     ],
-    "open_decisions": [],
+    "cut_line": [
+      "Reassigning Alt-click and cross-chart gesture docs",
+      "Role labels on other chart families",
+      "Size, measure, aggregation, bins, time grain, sort, Top N roles",
+      "Duplicating a shared scale",
+      "Host opt-in",
+      "Object toolbars, command search, edit modes",
+      "X/Y swap and chart conversion"
+    ],
+    "open_decisions": [
+      {
+        "question": "Where does the role label sit?",
+        "evidence": "m2 screenshots at three widths with and without legend and facets",
+        "fallback": "Legend line"
+      },
+      {
+        "question": "Does preview survive?",
+        "evidence": "m4 responsiveness and clean history",
+        "fallback": "Instant apply without preview"
+      },
+      {
+        "question": "Does an X/Y field change reset axis range and log?",
+        "evidence": "m5 trials with annotations and hidden-row notices",
+        "fallback": "Reset range and transform; hidden notice handles annotations"
+      }
+    ],
     "proposed_feature_slices": [
       {
         "id": "color-proof",
@@ -500,6 +585,11 @@
       "date": "2026-10-12",
       "event": "Incorporated ten product answers: all properties in scope, instant apply with undo, shared scale per field, trace may move, demo audience, single design instead of variant comparison.",
       "evidence": "raw/product-answers-2026-10-12.md"
+    },
+    {
+      "date": "2026-10-13",
+      "event": "Wrote a five-milestone implementation plan: click proof, Color label with instant apply and undo, plot context menu with trace, preview, X/Y roles.",
+      "evidence": "implementation-plan.md"
     }
   ],
   "closure": null,
