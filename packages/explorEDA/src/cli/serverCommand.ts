@@ -1,7 +1,8 @@
 /* eslint-disable no-console -- a command-line tool prints its results */
 import { existsSync, promises as fs } from "node:fs";
 import path from "node:path";
-import { memoryAccountStore } from "../server/team/accounts";
+import { memoryAccountStore, type AccountStore } from "../server/team/accounts";
+import { sqliteAccountStore } from "../server/team/sqliteStore";
 import { DEV_ACCOUNTS, DEV_PASSWORD, seedDev } from "../server/team/seed";
 import { createTeamHandler } from "../server/team/teamHandler";
 import { startHttpServer } from "../server/server";
@@ -16,8 +17,8 @@ Options:
   --port <n>          port to listen on (default 8080)
   --host <address>    address to listen on (default 0.0.0.0)
   --public-url <url>  the address people open, such as https://eda.example.com
-  --seed-dev          add sample accounts and a sample project, kept in
-                      memory until the server stops
+  --seed-dev          try it out: sample accounts and a sample project,
+                      with accounts kept in memory instead of the data folder
   -h, --help          show this help`;
 
 interface ServerOptions {
@@ -82,12 +83,6 @@ export async function serverCommand(
     console.log(parsed);
     return parsed === SERVER_USAGE ? 0 : 64;
   }
-  if (!parsed.seedDev) {
-    console.error(
-      "Accounts aren't saved yet, so the team server only runs with --seed-dev for now."
-    );
-    return 64;
-  }
   if (!existsSync(path.join(paths.appDir, "index.html"))) {
     console.error(
       "This copy of exploreda is missing its app files. Reinstall it, or build the package with the app."
@@ -96,9 +91,17 @@ export async function serverCommand(
   }
   const dataDir = path.resolve(parsed.data!);
   await fs.mkdir(path.join(dataDir, "projects"), { recursive: true });
-  const store = memoryAccountStore();
+  let store: AccountStore;
   if (parsed.seedDev) {
+    store = memoryAccountStore();
     await seedDev(store, dataDir, paths.exampleDir);
+  } else {
+    try {
+      store = await sqliteAccountStore(path.join(dataDir, "exploreda.db"));
+    } catch (error) {
+      console.error(error instanceof Error ? error.message : String(error));
+      return 70;
+    }
   }
   const handle = createTeamHandler({
     store,
@@ -127,6 +130,9 @@ export async function serverCommand(
   console.log(`explorEDA team server ${paths.version}
   Data  ${dataDir}
   Open  ${started.url}`);
+  if (!parsed.seedDev && !(await store.accounts()).length) {
+    console.log("\nOpen the address above to create the admin account.");
+  }
   if (parsed.seedDev) {
     console.log(
       `\nSample accounts, kept in memory, all with password ${DEV_PASSWORD}:`

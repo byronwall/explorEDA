@@ -1,0 +1,50 @@
+## Run a server for your team
+
+`exploreda server` runs explorEDA for a group of people. Authors build analyses on the server, and colleagues sign in to explore them. Each project is the same kind of [project folder](/docs/project-folders) that `npx exploreda` opens, kept in a data folder on the server.
+
+Try it on your own computer with sample accounts and the sample shop project:
+
+```bash
+npx exploreda server --data ./team-data --seed-dev
+```
+
+It prints the address to open and the sample accounts to sign in with. With `--seed-dev`, accounts last only until the server stops.
+
+To run it for real, leave out `--seed-dev`:
+
+```bash
+npx exploreda server --data /srv/exploreda --public-url https://eda.example.com
+```
+
+The first person to open the address creates the admin account. Accounts, projects, and members are kept in `exploreda.db` in the data folder, and each project's files are under `projects/`.
+
+| Option               | What it does                                                                                                                                                  |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--data <folder>`    | Where projects and accounts are kept. Required.                                                                                                               |
+| `--port <n>`         | The port to listen on, 8080 by default.                                                                                                                       |
+| `--host <address>`   | The address to listen on, `0.0.0.0` by default.                                                                                                               |
+| `--public-url <url>` | The address people open. Changes to projects are accepted only from pages at this address, and sign-in cookies are marked secure when it starts with `https`. |
+| `--seed-dev`         | Adds sample accounts and the sample project, with accounts kept in memory.                                                                                    |
+
+The team server needs Node 22.5 or later.
+
+## People and roles
+
+Every person signs in with an email and a password. An account is one of two kinds:
+
+- **Authors** create projects, edit the projects they're in, and choose who else is in them.
+- **Viewers** open the projects they're added to. They can filter, select, drill in, and change charts while they look, but nothing they change is saved. The page says so: **Viewing · your changes aren't saved**.
+
+Any account can also be an **admin**. Admins add people, hand out password links, turn accounts off, and can open every project. The first account is an admin, and the server always keeps at least one.
+
+## Add people with a password link
+
+The server doesn't send email. To add someone, an admin opens **People**, enters their name and email, and chooses **Add person**. The page shows a link to send them. It sets their password, works once, and expires in 7 days. The same **Password link** button makes a new link for someone who has forgotten their password.
+
+After five wrong passwords for one email from one address, sign-in for that pair waits 15 minutes.
+
+## Share a project
+
+An author creates a project from **Projects**, then opens **Members** beside its name to add people. Each member can edit or can view. A viewer account can only ever view. A project always keeps at least one author.
+
+When an author saves a change, everyone else with the project open sees it reload, with a note that names who changed which file. If two authors change the same analysis at once, the last save wins.

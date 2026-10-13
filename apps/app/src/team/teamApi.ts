@@ -85,3 +85,124 @@ export async function isTeamServer() {
     return false;
   }
 }
+
+export interface Person {
+  id: string;
+  name: string;
+  email: string;
+  kind: "author" | "viewer";
+}
+
+export interface ProjectMember {
+  accountId: string;
+  name: string;
+  email: string;
+  kind: "author" | "viewer";
+  disabled: boolean;
+  role: "author" | "viewer";
+}
+
+/** True when the server has no accounts yet and needs its first admin. */
+export async function setupNeeded() {
+  return (await teamCall<{ needed: boolean }>("/api/setup")).needed;
+}
+
+export async function setUpAdmin(input: {
+  name: string;
+  email: string;
+  password: string;
+}) {
+  return (
+    await teamCall<{ account: TeamAccount }>("/api/setup", {
+      method: "POST",
+      body: input,
+    })
+  ).account;
+}
+
+/** Who a set-password link is for. */
+export function passwordLinkOwner(secret: string) {
+  return teamCall<{ email: string; name: string }>(
+    `/api/password-link?secret=${encodeURIComponent(secret)}`
+  );
+}
+
+export async function redeemPasswordLink(secret: string, password: string) {
+  return (
+    await teamCall<{ account: TeamAccount }>("/api/password-link", {
+      method: "POST",
+      body: { secret, password },
+    })
+  ).account;
+}
+
+/** The address a set-password link opens. */
+export const passwordLinkUrl = (secret: string) =>
+  `${window.location.origin}/?link=${encodeURIComponent(secret)}`;
+
+export function listAccounts() {
+  return teamCall<TeamAccount[]>("/api/accounts");
+}
+
+export function createAccount(input: {
+  name: string;
+  email: string;
+  kind: "author" | "viewer";
+  admin: boolean;
+}) {
+  return teamCall<{ account: TeamAccount; secret: string }>("/api/accounts", {
+    method: "POST",
+    body: input,
+  });
+}
+
+export function updateAccount(
+  id: string,
+  change: Partial<Pick<TeamAccount, "name" | "kind" | "admin" | "disabled">>
+) {
+  return teamCall<TeamAccount>(`/api/accounts/${id}`, {
+    method: "PATCH",
+    body: change,
+  });
+}
+
+export function newPasswordLink(id: string) {
+  return teamCall<{ secret: string }>(`/api/accounts/${id}/link`, {
+    method: "POST",
+  });
+}
+
+export function listPeople() {
+  return teamCall<Person[]>("/api/people");
+}
+
+export function createProject(name: string) {
+  return teamCall<TeamProject>("/api/projects", {
+    method: "POST",
+    body: { name },
+  });
+}
+
+export function listMembers(project: string) {
+  return teamCall<ProjectMember[]>(
+    `/api/projects/${encodeURIComponent(project)}/members`
+  );
+}
+
+export function setMember(
+  project: string,
+  accountId: string,
+  role: "author" | "viewer"
+) {
+  return teamCall(
+    `/api/projects/${encodeURIComponent(project)}/members/${accountId}`,
+    { method: "PUT", body: { role } }
+  );
+}
+
+export function removeMember(project: string, accountId: string) {
+  return teamCall(
+    `/api/projects/${encodeURIComponent(project)}/members/${accountId}`,
+    { method: "DELETE" }
+  );
+}

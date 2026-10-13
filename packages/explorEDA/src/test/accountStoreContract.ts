@@ -115,4 +115,34 @@ export function accountStoreContract(create: () => Promise<AccountStore>) {
       { id: "sales-2026", name: "Sales" },
     ]);
   });
+
+  it("sets a password once through a link, and only the newest link works", async () => {
+    const store = await create();
+    const vic = await store.createAccount({
+      email: "vic@example.com",
+      name: "Vic",
+      kind: "viewer",
+    });
+    expect(
+      await store.checkPassword("vic@example.com", "anything at all")
+    ).toBe(undefined);
+    const first = await store.createPasswordLink(vic.id);
+    const second = await store.createPasswordLink(vic.id);
+    expect(await store.passwordLinkAccount(first)).toBe(undefined);
+    expect((await store.passwordLinkAccount(second))?.email).toBe(
+      "vic@example.com"
+    );
+    await expect(store.usePasswordLink(second, "short")).rejects.toMatchObject({
+      code: "invalid",
+    });
+    expect((await store.usePasswordLink(second, "correct horse")).id).toBe(
+      vic.id
+    );
+    expect(
+      (await store.checkPassword("vic@example.com", "correct horse"))?.id
+    ).toBe(vic.id);
+    await expect(
+      store.usePasswordLink(second, "another horse")
+    ).rejects.toMatchObject({ code: "missing" });
+  });
 }

@@ -19,6 +19,8 @@ import {
   sendError,
   serveApp,
 } from "../http";
+import { createAccountRoutes } from "./accountRoutes";
+import { signInLimiter } from "./signInLimiter";
 import {
   AccountError,
   projectRole,
@@ -145,6 +147,15 @@ export function createTeamHandler(options: TeamHandlerOptions) {
       ...(secure ? ["Secure"] : []),
     ].join("; ");
 
+  const startSession = async (res: ServerResponse, account: Account) => {
+    const secret = await store.createSession(account.id);
+    send(res, 200, { account }, undefined, {
+      "set-cookie": sessionCookie(secret, SESSION_DAYS * 86_400),
+    });
+  };
+  const routes = createAccountRoutes({ store, dataDir, startSession });
+  const limiter = signInLimiter();
+
   const signedIn = async (req: IncomingMessage) => {
     const secret = cookies(req).get(SESSION_COOKIE);
     return secret ? store.sessionAccount(secret) : undefined;
@@ -165,18 +176,25 @@ export function createTeamHandler(options: TeamHandlerOptions) {
         email?: unknown;
         password?: unknown;
       };
+      const key = `${String(email).trim().toLowerCase()}|${req.socket.remoteAddress ?? ""}`;
+      const wait = limiter.wait(key);
+      if (wait > 0) {
+        send(res, 429, {
+          error: `Too many wrong passwords. Try again in ${Math.ceil(wait / 60_000)} minutes, or ask an admin for a new link.`,
+        });
+        return;
+      }
       const account =
         typeof email === "string" && typeof password === "string"
           ? await store.checkPassword(email, password)
           : undefined;
       if (!account) {
+        limiter.failed(key);
         send(res, 401, { error: "That email and password don't match." });
         return;
       }
-      const secret = await store.createSession(account.id);
-      send(res, 200, { account }, undefined, {
-        "set-cookie": sessionCookie(secret, SESSION_DAYS * 86_400),
-      });
+      limiter.succeeded(key);
+      await startSession(res, account);
       return;
     }
     if (req.method === "DELETE") {
@@ -201,6 +219,10 @@ export function createTeamHandler(options: TeamHandlerOptions) {
     const [, , , id = "", route = "", ...rest] = url.pathname.split("/");
     const project = await store.project(id);
     const role = project && (await projectRole(store, account, id));
+    if (project && role && route === "members" && rest.length <= 1) {
+      await routes.memberRoutes(account, id, rest[0], req, res);
+      return;
+    }
     if (!project || !role || rest.length) {
       send(res, 404, {
         error: "There's no such project, or it isn't shared with you.",
@@ -283,9 +305,27 @@ export function createTeamHandler(options: TeamHandlerOptions) {
         await sessionRoutes(req, res);
         return;
       }
+      if (await routes.publicRoutes(url, req, res)) {
+        return;
+      }
       const account = await signedIn(req);
       if (!account) {
         send(res, 401, { error: "Sign in to continue." });
+        return;
+      }
+      if (
+        url.pathname === "/api/accounts" ||
+        url.pathname.startsWith("/api/accounts/")
+      ) {
+        await routes.accountRoutes(account, url, req, res);
+        return;
+      }
+      if (req.method === "GET" && url.pathname === "/api/people") {
+        await routes.people(account, res);
+        return;
+      }
+      if (req.method === "POST" && url.pathname === "/api/projects") {
+        await routes.createProject(account, req, res);
         return;
       }
       if (req.method === "GET" && url.pathname === "/api/projects") {
@@ -306,7 +346,7 @@ export function createTeamHandler(options: TeamHandlerOptions) {
       send(res, 404, { error: `No ${req.method} ${url.pathname}.` });
     } catch (error) {
       if (error instanceof AccountError) {
-        send(res, error.code === "missing" ? 404 : 400, {
+        send(res, { missing: 404, exists: 409, invalid: 400 }[error.code], {
           code: error.code,
           error: error.message,
         });

@@ -8,7 +8,7 @@
     "last_updated": "2026-10-13",
     "summary": "A free Docker Compose team server for one company: local accounts, projects with author and viewer members, CSV and JSON files by upload or URL, and project folders on one volume. File-only; database sources are a separate initiative.",
     "status": "active",
-    "next_action": "Finish M1 PR; then M2 durable accounts and admin screens."
+    "next_action": "Finish M2 PR; then M3 upload and URL sources."
   },
   "artifacts": {
     "intent_brief": {
@@ -550,8 +550,10 @@
         "proof": "Handler tests (viewer/non-member/cross-site 403, missing cookie 401, named save broadcast skipping the writer); store contract suite on the in-memory store; saver viewer-mode test; browser two-window check at 1280/783/390.",
         "valid_intermediate_state": "exploreda server works with seeded in-memory accounts and on-disk projects; CLI unchanged.",
         "rollback": "Remove the server subcommand; localAccess path is the old handler.",
-        "status": "active",
-        "evidence": []
+        "status": "completed",
+        "evidence": [
+          "PR #385; src/server/team/teamHandler.test.ts; apps/app/src/team/TeamApp.test.tsx"
+        ]
       },
       {
         "id": "m2",
@@ -561,8 +563,10 @@
         "proof": "Store contract suite on SQLite plus restart persistence; node:sqlite spike; Store and handler tests per rule; browser checks of setup, admin, and members at three widths; pnpm check:ui.",
         "valid_intermediate_state": "Full multi-user server without file intake beyond the app's own saves.",
         "rollback": "Revert the PR; M1 seeded mode remains.",
-        "status": "planned",
-        "evidence": []
+        "status": "active",
+        "evidence": [
+          "node:sqlite spike: loads without a flag on Node 22.5+ (experimental warning, suppressed) and on 24; absent on 20, so it loads lazily."
+        ]
       },
       {
         "id": "m3",

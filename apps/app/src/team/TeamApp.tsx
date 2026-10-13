@@ -1,10 +1,14 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { App } from "../App";
 import { teamProjectFiles } from "../httpFiles";
+import { PasswordLinkPage, SetUp, SignIn } from "./AuthPages";
+import { Members } from "./Members";
+import { People } from "./People";
 import {
+  createProject,
   currentAccount,
   listProjects,
-  signIn,
+  setupNeeded,
   signOut,
   type TeamAccount,
   type TeamProject,
@@ -13,23 +17,35 @@ import {
 type State =
   | { status: "loading" }
   | { status: "failed"; message: string }
-  | { status: "signed-out" }
+  | { status: "signed-out"; setup: boolean }
   | { status: "ready"; account: TeamAccount; projects: TeamProject[] };
 
 const message = (error: unknown) =>
   error instanceof Error ? error.message : String(error);
 
-/** The open project, kept in the address so a link or reload returns to it. */
-function projectInAddress() {
-  return new URL(window.location.href).searchParams.get("project") ?? undefined;
+/** Where the page is: a project, the people page, or the project list. */
+interface Place {
+  project?: string;
+  page?: "people";
+  link?: string;
 }
 
-function goTo(project: string | undefined) {
+function placeInAddress(): Place {
+  const params = new URL(window.location.href).searchParams;
+  return {
+    project: params.get("project") ?? undefined,
+    page: params.get("page") === "people" ? "people" : undefined,
+    link: params.get("link") ?? undefined,
+  };
+}
+
+function goTo(place: Place) {
   const url = new URL(window.location.href);
-  if (project) {
-    url.searchParams.set("project", project);
-  } else {
-    url.searchParams.delete("project");
+  url.search = "";
+  if (place.project) {
+    url.searchParams.set("project", place.project);
+  } else if (place.page) {
+    url.searchParams.set("page", place.page);
   }
   window.history.pushState(null, "", url.pathname + url.search);
 }
@@ -42,19 +58,19 @@ const pageId = () =>
 /** explorEDA on a team server: sign in, pick a project, open it. */
 export function TeamApp() {
   const [state, setState] = useState<State>({ status: "loading" });
-  const [open, setOpen] = useState(projectInAddress);
+  const [place, setPlace] = useState(placeInAddress);
   const [client] = useState(pageId);
   // One file client per open project; a new one would reload the project.
   const files = useMemo(
-    () => (open ? teamProjectFiles(open, client) : undefined),
-    [open, client]
+    () => (place.project ? teamProjectFiles(place.project, client) : undefined),
+    [place.project, client]
   );
 
   const load = async () => {
     try {
       const account = await currentAccount();
       if (!account) {
-        setState({ status: "signed-out" });
+        setState({ status: "signed-out", setup: await setupNeeded() });
         return;
       }
       setState({ status: "ready", account, projects: await listProjects() });
@@ -64,17 +80,32 @@ export function TeamApp() {
   };
 
   useEffect(() => {
-    void load();
-    const follow = () => setOpen(projectInAddress());
+    if (!place.link) {
+      void load();
+    }
+    const follow = () => setPlace(placeInAddress());
     window.addEventListener("popstate", follow);
     return () => window.removeEventListener("popstate", follow);
+    // Loading once is enough; later changes call load themselves.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const choose = (project: string | undefined) => {
-    goTo(project);
-    setOpen(project);
+  const go = (next: Place) => {
+    goTo(next);
+    setPlace(next);
   };
 
+  if (place.link) {
+    return (
+      <PasswordLinkPage
+        secret={place.link}
+        onDone={() => {
+          go({});
+          void load();
+        }}
+      />
+    );
+  }
   if (state.status === "loading") {
     return (
       <main className="app-message" aria-busy="true">
@@ -92,22 +123,20 @@ export function TeamApp() {
     );
   }
   if (state.status === "signed-out") {
-    return <SignIn onSignedIn={() => void load()} />;
+    return state.setup ? (
+      <SetUp onDone={() => void load()} />
+    ) : (
+      <SignIn onSignedIn={() => void load()} />
+    );
   }
 
+  const { account, projects } = state;
   const leave = async () => {
     await signOut().catch(() => {});
-    choose(undefined);
-    setState({ status: "signed-out" });
+    go({});
+    setState({ status: "signed-out", setup: false });
   };
-  const project = state.projects.find((item) => item.id === open);
-  const bar = (
-    <TeamBar
-      account={state.account}
-      onProjects={open ? () => choose(undefined) : undefined}
-      onSignOut={() => void leave()}
-    />
-  );
+  const project = projects.find((item) => item.id === place.project);
 
   if (project && files) {
     document.title = `${project.name} · explorEDA`;
@@ -116,65 +145,178 @@ export function TeamApp() {
         key={project.id}
         files={files}
         readOnly={project.role === "viewer"}
-        team={bar}
+        team={
+          <div className="team-bar">
+            <span className="team-account">
+              <span className="team-account-name">{account.name}</span>
+              <span className="app-muted">{account.email}</span>
+            </span>
+            <button type="button" className="app-button" onClick={() => go({})}>
+              ← Projects
+            </button>
+            <Members
+              key={project.id}
+              project={project.id}
+              canManage={project.role === "author"}
+            />
+            <button
+              type="button"
+              className="app-button"
+              onClick={() => void leave()}
+            >
+              Sign out
+            </button>
+          </div>
+        }
       />
     );
   }
-  document.title = "Projects · explorEDA";
+
+  const people = place.page === "people" && account.admin;
+  document.title = `${people ? "People" : "Projects"} · explorEDA`;
   return (
     <div className="team-page">
-      {bar}
+      <header className="team-bar team-top">
+        <span className="team-brand">explorEDA</span>
+        <nav className="team-nav" aria-label="Server">
+          <button
+            type="button"
+            className="team-nav-item"
+            aria-current={people ? undefined : "page"}
+            onClick={() => go({})}
+          >
+            Projects
+          </button>
+          {account.admin && (
+            <button
+              type="button"
+              className="team-nav-item"
+              aria-current={people ? "page" : undefined}
+              onClick={() => go({ page: "people" })}
+            >
+              People
+            </button>
+          )}
+        </nav>
+        <span className="team-account">
+          <span className="team-account-name">{account.name}</span>
+          <span className="app-muted">{account.email}</span>
+        </span>
+        <button
+          type="button"
+          className="app-button"
+          onClick={() => void leave()}
+        >
+          Sign out
+        </button>
+      </header>
       <main className="team-main">
-        {open && (
-          <p className="app-notice" role="status">
-            That project doesn't exist, or it isn't shared with you.
-          </p>
+        {people ? (
+          <People self={account} />
+        ) : (
+          <>
+            {place.project && (
+              <p className="app-notice" role="status">
+                That project doesn't exist, or it isn't shared with you.
+              </p>
+            )}
+            <ProjectList
+              projects={projects}
+              canCreate={account.kind === "author"}
+              onOpen={(id) => go({ project: id })}
+              onCreated={(created) => {
+                setState({
+                  ...state,
+                  projects: [...projects, created].sort((a, b) =>
+                    a.name.localeCompare(b.name)
+                  ),
+                });
+                go({ project: created.id });
+              }}
+            />
+          </>
         )}
-        <ProjectList projects={state.projects} onOpen={choose} />
       </main>
     </div>
   );
 }
 
-function TeamBar({
-  account,
-  onProjects,
-  onSignOut,
+function NewProject({
+  onCreated,
 }: {
-  account: TeamAccount;
-  onProjects?: () => void;
-  onSignOut: () => void;
+  onCreated: (project: TeamProject) => void;
 }) {
-  return (
-    <div className="team-bar">
-      {onProjects && (
-        <button type="button" className="app-button" onClick={onProjects}>
-          ← Projects
-        </button>
-      )}
-      <span className="team-account">
-        <span className="team-account-name">{account.name}</span>
-        <span className="app-muted">{account.email}</span>
-      </span>
-      <button type="button" className="app-button" onClick={onSignOut}>
-        Sign out
+  const [open, setOpen] = useState(false);
+  const [name, setName] = useState("");
+  const [error, setError] = useState<string>();
+  const submit = async (event: FormEvent) => {
+    event.preventDefault();
+    setError(undefined);
+    try {
+      onCreated(await createProject(name));
+    } catch (failure) {
+      setError(message(failure));
+    }
+  };
+  if (!open) {
+    return (
+      <button
+        type="button"
+        className="app-button app-button-primary"
+        onClick={() => setOpen(true)}
+      >
+        New project
       </button>
-    </div>
+    );
+  }
+  return (
+    <form className="team-new-project" onSubmit={(event) => void submit(event)}>
+      <input
+        aria-label="Project name"
+        placeholder="Project name"
+        required
+        autoFocus
+        value={name}
+        onChange={(event) => setName(event.target.value)}
+      />
+      <button type="submit" className="app-button app-button-primary">
+        Create
+      </button>
+      <button
+        type="button"
+        className="app-button"
+        onClick={() => setOpen(false)}
+      >
+        Cancel
+      </button>
+      {error && (
+        <p className="team-error" role="alert">
+          {error}
+        </p>
+      )}
+    </form>
   );
 }
 
 function ProjectList({
   projects,
+  canCreate,
   onOpen,
+  onCreated,
 }: {
   projects: TeamProject[];
+  canCreate: boolean;
   onOpen: (project: string) => void;
+  onCreated: (project: TeamProject) => void;
 }) {
   return (
-    <section aria-labelledby="projects-heading">
-      <h1 id="projects-heading" className="team-heading">
-        Projects
-      </h1>
+    <section aria-labelledby="projects-heading" className="team-stack">
+      <div className="team-heading-row">
+        <h1 id="projects-heading" className="team-heading">
+          Projects
+        </h1>
+        {canCreate && <NewProject onCreated={onCreated} />}
+      </div>
       {projects.length ? (
         <ul className="team-projects">
           {projects.map((project) => (
@@ -194,72 +336,11 @@ function ProjectList({
         </ul>
       ) : (
         <p className="app-muted">
-          No projects are shared with you yet. Ask an author to add you.
+          {canCreate
+            ? "No projects yet. Create one, then add the people who should see it."
+            : "No projects are shared with you yet. Ask an author to add you."}
         </p>
       )}
     </section>
-  );
-}
-
-function SignIn({ onSignedIn }: { onSignedIn: () => void }) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState<string>();
-  const [busy, setBusy] = useState(false);
-  const submit = async (event: FormEvent) => {
-    event.preventDefault();
-    setBusy(true);
-    setError(undefined);
-    try {
-      await signIn(email, password);
-      onSignedIn();
-    } catch (failure) {
-      setError(message(failure));
-      setBusy(false);
-    }
-  };
-  document.title = "Sign in · explorEDA";
-  return (
-    <main className="team-auth">
-      <form className="team-card" onSubmit={(event) => void submit(event)}>
-        <h1>Sign in to explorEDA</h1>
-        <label className="team-field">
-          <span>Email</span>
-          <input
-            type="email"
-            autoComplete="username"
-            required
-            autoFocus
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-          />
-        </label>
-        <label className="team-field">
-          <span>Password</span>
-          <input
-            type="password"
-            autoComplete="current-password"
-            required
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-          />
-        </label>
-        {error && (
-          <p className="team-error" role="alert">
-            {error}
-          </p>
-        )}
-        <button
-          type="submit"
-          className="app-button app-button-primary"
-          disabled={busy}
-        >
-          {busy ? "Signing in…" : "Sign in"}
-        </button>
-        <p className="app-muted">
-          No account? Ask the person who runs this server to add you.
-        </p>
-      </form>
-    </main>
   );
 }

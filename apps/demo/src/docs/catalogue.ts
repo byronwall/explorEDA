@@ -37,6 +37,7 @@ import {
   Ruler,
   Layers,
   CircleAlert,
+  Users,
   type LucideIcon,
 } from "lucide-react";
 import type { MDXContent } from "mdx/types";
@@ -130,7 +131,19 @@ export const catalogue: readonly DocsPage[] = [
     highlights: ["npx exploreda", "Project text", "Git"],
     covers: ["flow:project-folders"],
     examples: [],
-    related: ["load-data", "dashboard-text"],
+    related: ["load-data", "dashboard-text", "team-server"],
+  },
+  {
+    topic: "team-server",
+    title: "Team server",
+    group: "start",
+    icon: Users,
+    lede: "Run explorEDA for your team: authors build analyses on a shared server, and colleagues sign in to explore them.",
+    summary: "Share project folders with authors and viewers who sign in.",
+    highlights: ["exploreda server", "Authors and viewers", "Password links"],
+    covers: ["flow:team-server"],
+    examples: [],
+    related: ["project-folders", "dashboard-text"],
   },
   {
     topic: "fields",

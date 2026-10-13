@@ -57,6 +57,16 @@ export interface AccountStore {
   endSession(secret: string): Promise<void>;
   endSessions(accountId: string): Promise<void>;
 
+  /**
+   * Starts a one-time link that sets the account's password, replacing
+   * any earlier one, and returns its secret.
+   */
+  createPasswordLink(accountId: string): Promise<string>;
+  /** The account a live link belongs to. */
+  passwordLinkAccount(secret: string): Promise<Account | undefined>;
+  /** Sets the password and spends the link. */
+  usePasswordLink(secret: string, password: string): Promise<Account>;
+
   projects(): Promise<Project[]>;
   project(id: string): Promise<Project | undefined>;
   createProject(project: Project): Promise<Project>;
@@ -151,8 +161,10 @@ export function checkNewAccount(account: NewAccount) {
 /** A project ID that is also a safe folder name. */
 export const PROJECT_ID = /^[a-z0-9][a-z0-9-]{0,62}$/;
 
-/** How long a session lasts without use. */
+/** How long a session lasts. */
 export const SESSION_DAYS = 30;
+/** How long a set-password link works. */
+export const LINK_DAYS = 7;
 
 /**
  * Accounts in memory. Everything is lost when the process stops, so this
@@ -161,6 +173,7 @@ export const SESSION_DAYS = 30;
 export function memoryAccountStore(): AccountStore {
   const accounts = new Map<string, Account & { hash?: string }>();
   const sessions = new Map<string, { accountId: string; expires: number }>();
+  const links = new Map<string, { accountId: string; expires: number }>();
   const projects = new Map<string, Project>();
   const members = new Map<string, Map<string, ProjectRole>>();
   let nextId = 1;
@@ -174,7 +187,7 @@ export function memoryAccountStore(): AccountStore {
     return account;
   };
 
-  return {
+  const store: AccountStore = {
     async accounts() {
       return [...accounts.values()].map(plain);
     },
@@ -262,6 +275,41 @@ export function memoryAccountStore(): AccountStore {
         }
       }
     },
+    async createPasswordLink(accountId) {
+      find(accountId);
+      for (const [key, link] of links) {
+        if (link.accountId === accountId) {
+          links.delete(key);
+        }
+      }
+      const secret = newSecret();
+      links.set(sessionKey(secret), {
+        accountId,
+        expires: Date.now() + LINK_DAYS * 86_400_000,
+      });
+      return secret;
+    },
+    async passwordLinkAccount(secret) {
+      const link = links.get(sessionKey(secret));
+      if (!link || link.expires < Date.now()) {
+        return undefined;
+      }
+      const account = accounts.get(link.accountId);
+      return account && !account.disabled ? plain(account) : undefined;
+    },
+    async usePasswordLink(secret, password) {
+      const account = await store.passwordLinkAccount(secret);
+      if (!account) {
+        throw new AccountError(
+          "missing",
+          "This link has expired or was already used. Ask an admin for a new one."
+        );
+      }
+      checkNewPassword(password);
+      find(account.id).hash = await hashPassword(password);
+      links.delete(sessionKey(secret));
+      return account;
+    },
     async projects() {
       return [...projects.values()];
     },
@@ -298,6 +346,7 @@ export function memoryAccountStore(): AccountStore {
       members.get(projectId)?.delete(accountId);
     },
   };
+  return store;
 }
 
 /**

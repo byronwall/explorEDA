@@ -212,7 +212,7 @@ export function ProjectWorkspace({
               Viewing · your changes aren't saved
             </p>
           ) : (
-            <SaveStatus state={saveState} />
+            <SaveStatus state={saveState} onDisk={Boolean(info.root)} />
           )}
           {notice && (
             <p className="app-notice" role="status">
@@ -368,7 +368,14 @@ export function ProjectWorkspace({
   );
 }
 
-function SaveStatus({ state }: { state: SaveState }) {
+function SaveStatus({
+  state,
+  onDisk,
+}: {
+  state: SaveState;
+  /** The CLI saves to a folder the person can see; a team server doesn't. */
+  onDisk: boolean;
+}) {
   if (state.status === "failed") {
     return (
       <p className="app-save app-save-failed" role="alert">
@@ -378,7 +385,11 @@ function SaveStatus({ state }: { state: SaveState }) {
   }
   return (
     <p className="app-save app-muted" aria-live="polite">
-      {state.status === "saving" ? "Saving…" : "Saved to the folder"}
+      {state.status === "saving"
+        ? "Saving…"
+        : onDisk
+          ? "Saved to the folder"
+          : "Saved"}
     </p>
   );
 }

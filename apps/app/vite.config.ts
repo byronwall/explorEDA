@@ -54,7 +54,9 @@ function projectFolder(): Plugin {
 /**
  * `EXPLOREDA_DATA=<path> pnpm --filter app dev` runs the team server's
  * routes with sample accounts in memory and the sample project copied into
- * that folder, so sign-in and roles can be tried without a build.
+ * that folder, so sign-in and roles can be tried without a build. Add
+ * `EXPLOREDA_STORE=sqlite` to keep accounts in that folder instead, with no
+ * sample accounts, as `exploreda server` does.
  */
 function teamData(): Plugin {
   return {
@@ -71,16 +73,26 @@ function teamData(): Plugin {
       const { seedDev } = await import(
         "../../packages/explorEDA/src/server/team/seed"
       );
+      const { sqliteAccountStore } = await import(
+        "../../packages/explorEDA/src/server/team/sqliteStore"
+      );
       const { createTeamHandler } = await import(
         "../../packages/explorEDA/src/server/team/teamHandler"
       );
       const dataDir = path.resolve(data);
-      const store = memoryAccountStore();
-      await seedDev(
-        store,
-        dataDir,
-        path.resolve(__dirname, "../../packages/explorEDA/examples/shop")
-      );
+      const { mkdirSync } = await import("node:fs");
+      mkdirSync(path.join(dataDir, "projects"), { recursive: true });
+      let store;
+      if (process.env.EXPLOREDA_STORE === "sqlite") {
+        store = await sqliteAccountStore(path.join(dataDir, "exploreda.db"));
+      } else {
+        store = memoryAccountStore();
+        await seedDev(
+          store,
+          dataDir,
+          path.resolve(__dirname, "../../packages/explorEDA/examples/shop")
+        );
+      }
       const handle = createTeamHandler({ store, dataDir, version: "dev" });
       server.middlewares.use((req, res, next) => {
         void handle(req, res, next);
