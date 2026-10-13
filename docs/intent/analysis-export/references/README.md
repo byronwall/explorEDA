@@ -1,6 +1,6 @@
 # Export references
 
-[Product-feedback annotation 4](../../comparison-opportunities/resources/product-feedback-2026-10-06.json) requests image export and a separate intent. Slides and PDF reports remain possible later outputs.
+[Product-feedback annotation 4](../../comparison-opportunities/resources/product-feedback-2026-10-06.json) requests image export and a separate intent. Slides and PDF reports were later ruled out of scope (2026-10-11); see [headless chart rendering](../../headless-chart-rendering/intent-brief.md) for the underlying need.
 
 ## Current foundation
 
@@ -14,6 +14,7 @@ Source inspected at `a50df9985ed3ff54d0f6ca368c0b369829b8a927`. No fresh export 
 ## Related intent
 
 - [Editorial styling](https://github.com/byronwall/explorEDA/blob/91b627d7307a4a14c7f123a713ce5f45662a3d22/docs/intent/editorial-chart-styling/intent-brief.md): global style links, explicit overrides, and editorial live layout.
+- [Headless chart rendering](../../headless-chart-rendering/intent-brief.md): chart PNGs from saved state without a live client; the seed behind deck or report output.
 - [Renderer-independent replay](../../renderer-independent-replay/intent-brief.md): a future semantic reproduction contract; not a prerequisite for an image.
 - [Data-bound narrative](../../data-bound-narrative/intent-brief.md): a possible later report-content source; not required for user-authored captions.
 

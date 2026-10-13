@@ -209,6 +209,28 @@ export const CHART_SETTINGS: Readonly<
     showOverall:
       "Draws a dashed curve for all rows together when curves are split by color.",
   },
+  donut: {
+    field:
+      "The category field. Each category gets a slice of the filtered whole.",
+    aggregation:
+      "A count of rows, or the sum of a measure with no negative values.",
+    measureField: "Field each slice sums, when the measure is a sum.",
+    topN: "How many of the largest categories get their own slice. The rest pool into Other. Blank shows six.",
+  },
+  waterfall: {
+    field:
+      "The step field: one step per category, in the order the categories first appear in the data.",
+    mode: "How steps are computed. A bridge shows each category's change between two states; a running total adds each category's measure in order.",
+    startValue:
+      "The value a running total starts from, drawn as the first bar. Blank starts at zero with no start bar.",
+    aggregation:
+      "Sum of the measure or a count of rows. Only additive measures, so the start plus every step equals the end.",
+    measureField: "Field each state sums, unless the state names its own.",
+    states:
+      "The start and end states: each has a label, an optional measure of its own, and the conditions for the rows it counts. A running total uses only their labels.",
+    parentField:
+      "Groups steps by this field and closes each group with a subtotal of the running total.",
+  },
   "metric-card": {
     field: "Not read by this chart type.",
     aggregation: "The metric: a count of rows, or a summary of the measure.",
@@ -226,7 +248,17 @@ export const CHART_SETTINGS: Readonly<
     pointRadius:
       "Point radius in pixels, from 2 to 32. With a size field, the largest point's radius.",
     pointOpacity: "Point opacity, from 0.1 to 1.",
-    geometryAssetId: "The region geometry, for region maps.",
+    geometryAssetId:
+      "The region geometry, for region maps: an imported asset's ID, or supplied boundaries such as boundary:world-countries.",
+    showMarks: "Draws the points. Off keeps selections and filters.",
+    clusterPoints:
+      "When on, above 2,000 drawn points, groups nearby points into counted circles that split as you zoom in. Off by default, so every point is drawn.",
+    showLabels:
+      "Writes each point's label beside it, when 150 or fewer points are drawn.",
+    referenceAssetId:
+      "Boundaries drawn beneath points for reference. They are not selectable.",
+    basemap:
+      "Auto draws land, then streets past continent scale when street maps are on; outline always draws land; none draws no basemap.",
     regionField: "Field holding each row's region key.",
     featureKey:
       "GeoJSON property or feature ID matched to the region key. Values and types must match exactly.",

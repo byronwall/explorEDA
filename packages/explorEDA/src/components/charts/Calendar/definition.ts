@@ -35,7 +35,6 @@ export const calendarDefinition: ChartDefinition<CalendarSettings> = {
     aggregation: "count",
     weekStart: "monday",
     layout,
-    margin: { top: 8, right: 16, bottom: 8, left: 8 },
     filters: [],
   }),
 

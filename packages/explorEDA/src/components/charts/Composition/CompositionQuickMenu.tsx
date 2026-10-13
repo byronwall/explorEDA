@@ -4,6 +4,7 @@ import {
   PopoverAnchor,
   PopoverContent,
 } from "@/components/ui/popover";
+import type { ChartImageActions } from "../export/chartImageContext";
 import type { QuickAction } from "./quickActions";
 
 /**
@@ -18,6 +19,7 @@ export function CompositionQuickMenu({
   heading,
   actions,
   container,
+  image,
   onRun,
   onClose,
 }: {
@@ -27,6 +29,8 @@ export function CompositionQuickMenu({
   heading: string;
   actions: QuickAction[];
   container?: HTMLElement | null;
+  /** The composition's image actions, listed after its own. */
+  image?: ChartImageActions | null;
   onRun: (action: QuickAction) => void;
   onClose: () => void;
 }) {
@@ -96,6 +100,32 @@ export function CompositionQuickMenu({
             <div className="eda-quick-menu-detail eda-quick-menu-empty">
               Nothing drawn here. Right-click a mark, label, or guide.
             </div>
+          )}
+          {image && (
+            <>
+              <div role="separator" className="eda-quick-menu-separator" />
+              {(
+                [
+                  ["Copy image", "E", image.copy],
+                  ["Download image", "⇧E", image.download],
+                ] as const
+              ).map(([label, key, run]) => (
+                <button
+                  key={label}
+                  type="button"
+                  role="menuitem"
+                  className="eda-quick-menu-item"
+                  disabled={!!image.reason}
+                  onClick={() => {
+                    run();
+                    onClose();
+                  }}
+                >
+                  <span>{label}</span>
+                  <span className="eda-quick-menu-detail">{key}</span>
+                </button>
+              ))}
+            </>
           )}
         </div>
       </PopoverContent>

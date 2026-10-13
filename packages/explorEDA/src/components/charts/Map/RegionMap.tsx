@@ -1,7 +1,6 @@
 import { useId, useMemo, useRef, useState } from "react";
-import { Minus, Plus } from "lucide-react";
+import { ImageDown, Minus, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { BaseChartProps } from "@/types/ChartTypes";
 import { ChartReadout } from "../ChartReadout";
 import {
@@ -16,36 +15,44 @@ import { fitRegionGeometry } from "./regionGeometry";
 import { planRegionMap, regionFilters, regionMapHeight } from "./regionMapPlan";
 import { useMapData } from "./useMapData";
 import { useMapPan } from "./useMapPan";
+import { useRegionAsset } from "./useRegionAsset";
+import { useZoomDetail } from "./useZoomDetail";
+import { MapLayersControl } from "./MapLayersControl";
+import { downloadMapPng } from "./mapImage";
+import { useDataLayer } from "@/providers/DataLayerProvider";
 
 export function RegionMap({
-  settings,
+  settings: saved,
   width,
   height,
   facetIds,
   onSettingsChange,
 }: BaseChartProps<MapSettings>) {
   const owner = useId();
-  const { snapshot, updateChart, getFieldLabel, traceField } = useMapData(
-    settings,
-    facetIds
-  );
-  const asset = useDataLayer((state) =>
-    state.geometryAssets.find((asset) => asset.id === settings.geometryAssetId)
-  );
-  const api = useChartTraceApi(),
-    trace = useChartTrace();
-  const [activeId, setActiveId] = useState<string>();
-  const refs = useRef(new Map<string, SVGPathElement>());
+  const updateChart = useDataLayer((state) => state.updateChart);
   const saveView = (view: MapView) =>
     onSettingsChange
       ? onSettingsChange({ view })
-      : updateChart(settings.id, { view });
+      : updateChart(saved.id, { view });
   const { draftView, events, suppressClick } = useMapPan(
-    settings,
+    saved,
     width,
     regionMapHeight(width, height),
     saveView
   );
+  // Zoomed into one country, finer supplied boundaries can take over.
+  const detail = useZoomDetail(saved, draftView ?? saved.view ?? WORLD_VIEW);
+  const settings = detail?.settings ?? saved;
+  const { snapshot, getFieldLabel, traceField } = useMapData(
+    settings,
+    facetIds
+  );
+  const { asset, boundary } = useRegionAsset(settings);
+  const api = useChartTraceApi(),
+    trace = useChartTrace();
+  const [activeId, setActiveId] = useState<string>();
+  const refs = useRef(new Map<string, SVGPathElement>());
+  const frame = useRef<HTMLDivElement>(null);
   const plan = useMemo(
     () =>
       planRegionMap(
@@ -139,6 +146,11 @@ export function RegionMap({
         filters: regionFilters(settings, region, facetIds),
       });
   };
+  // A preview edits a draft, so it never clears the saved chart's filters.
+  const clearFilters = () => {
+    if (!onSettingsChange && settings.filters.length)
+      updateChart(settings.id, { filters: [] });
+  };
   const drawn = plan.regions.filter((region) => Boolean(region.path));
   const traced =
     trace?.selection?.owner === owner && trace.trace && "region" in trace.trace
@@ -151,23 +163,28 @@ export function RegionMap({
   const format = (value: number) =>
     value.toLocaleString(undefined, { maximumFractionDigits: 3 });
   return (
-    <div className="relative flex flex-col" style={{ width, height }}>
+    <div
+      ref={frame}
+      className="relative flex flex-col"
+      style={{ width, height }}
+    >
       <svg
         width={width}
         height={plan.mapHeight}
         className="block shrink-0 touch-none select-none rounded"
         role="group"
         aria-label="Region map"
-        aria-description="Drag to pan. Arrow keys move between regions. Enter selects joined rows. Alt-Enter inspects. Regions with no rows open inspection. Alt-click outside the regions to trace joins. Escape clears selection."
+        aria-description="Drag to pan. Arrow keys move between regions. Enter selects joined rows. Alt-Enter inspects. Regions with no rows open inspection. Click outside the regions or press Escape to clear the selection. Alt-click outside the regions to trace joins."
         {...events}
         onClick={(event) => {
-          if (event.altKey && !suppressClick.current)
-            api?.inspect(owner, "map-joins", "joins");
+          if (suppressClick.current) return;
+          if (event.altKey) api?.inspect(owner, "map-joins", "joins");
+          else clearFilters();
         }}
         onKeyDown={(event) => {
           if (event.key === "Escape") {
             event.stopPropagation();
-            if (!onSettingsChange) updateChart(settings.id, { filters: [] });
+            clearFilters();
           }
         }}
       >
@@ -204,12 +221,14 @@ export function RegionMap({
             fill="var(--background)"
             stroke="var(--border)"
           />
-          <path
-            d={paths.land}
-            fill="var(--muted)"
-            stroke="var(--border)"
-            strokeWidth={0.5}
-          />
+          {saved.basemap !== "none" && (
+            <path
+              d={paths.land}
+              fill="var(--muted)"
+              stroke="var(--border)"
+              strokeWidth={0.5}
+            />
+          )}
           {drawn.map((region) => (
             <g key={region.id}>
               <path
@@ -320,7 +339,13 @@ export function RegionMap({
           role="status"
           className="pointer-events-none absolute inset-x-3 top-3 rounded bg-background/90 p-2 text-center text-sm"
         >
-          Choose geometry, both join keys, and a metric.
+          {boundary.status === "loading"
+            ? `Loading ${boundary.set.name}…`
+            : boundary.status === "missing"
+              ? `This map uses the “${boundary.id}” boundaries, which this app does not provide.`
+              : boundary.status === "error"
+                ? `Could not load ${boundary.set.name}: ${boundary.message}`
+                : "Choose geometry, both join keys, and a metric."}
         </p>
       )}
       <div className="mt-1 flex flex-wrap items-center gap-1">
@@ -349,6 +374,26 @@ export function RegionMap({
           }
         >
           <Minus className="h-3 w-3" />
+        </Button>
+        <MapLayersControl
+          settings={saved}
+          onChange={(updates) =>
+            onSettingsChange
+              ? onSettingsChange(updates)
+              : updateChart(saved.id, updates)
+          }
+        />
+        <Button
+          size="sm"
+          variant="ghost"
+          className="h-7 w-7 p-0"
+          aria-label="Download map image"
+          tooltip="Save the map as a PNG at twice its size."
+          onClick={() =>
+            frame.current && downloadMapPng(frame.current, saved.title || "map")
+          }
+        >
+          <ImageDown className="h-3 w-3" />
         </Button>
         <Button
           size="sm"
@@ -415,6 +460,7 @@ export function RegionMap({
         </span>
       </div>
       <p className="mt-1 text-xs text-muted-foreground">
+        {detail && <>{detail.name} at this zoom · </>}
         {plan.regions.length} {plan.regions.length === 1 ? "region" : "regions"}{" "}
         · {plan.unmatched.length} unmatched{" "}
         {plan.unmatched.length === 1 ? "row" : "rows"}

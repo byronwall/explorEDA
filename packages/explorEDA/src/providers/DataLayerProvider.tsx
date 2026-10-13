@@ -51,6 +51,8 @@ import {
   SavedRow,
 } from "@/types/SavedDataStructure";
 import { createContext, useContext, useEffect, useRef } from "react";
+import { onLocatorReady } from "@/lib/boundaries/locate";
+import "@/lib/boundaries/regionFunction";
 import { createStore, useStore } from "zustand";
 import isEqual from "react-fast-compare";
 import { compactChartLayouts } from "@/utils/compactChartLayouts";
@@ -361,6 +363,8 @@ interface DataLayerState<T extends DatumObject> extends DataLayerProps<T> {
     resultColumnName: string,
     newCalculation: CalculationDefinition
   ) => void;
+  /** Recompute every calculation, such as after boundaries finish loading. */
+  rerunCalculations: () => void;
 
   calcColumnCache: Record<string, Record<IdType, datum> | undefined>;
 
@@ -1227,6 +1231,13 @@ const createDataLayerStore = <T extends DatumObject>(
         refreshCalculations();
       },
 
+      rerunCalculations: () => {
+        const manager = get().calculationManager;
+        if (!manager.getCalculations().length) return;
+        manager.setCalculations(manager.getCalculations());
+        refreshCalculations();
+      },
+
       updateGridSettings: (settings) => {
         set((state) => ({
           gridSettings: {
@@ -1579,6 +1590,13 @@ export function DataLayerProvider<T extends DatumObject>({
       savedData: nextSavedData,
     };
   }, [nextData, nextFieldNames, nextSavedData]);
+
+  // region() reports "loading" until its boundaries arrive.
+  useEffect(
+    () =>
+      onLocatorReady(() => storeRef.current!.getState().rerunCalculations()),
+    []
+  );
 
   useEffect(() => {
     const store = storeRef.current!;

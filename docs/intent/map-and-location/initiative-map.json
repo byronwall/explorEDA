@@ -1,0 +1,849 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "Useful, configurable maps for location data",
+    "slug": "map-and-location",
+    "scale": "capability",
+    "current_phase": "execution",
+    "last_updated": "2026-10-12",
+    "summary": "Improve point and region maps, custom and supplied geography, render controls, and detailed local context without building a full GIS.",
+    "status": "active",
+    "next_action": "Byron reviews and merges the stacked PRs in order, then approve retirement of this initiative."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-11"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-11"
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "current",
+      "updated_at": "2026-10-11"
+    }
+  },
+  "sources": [
+    {
+      "id": "user-request",
+      "type": "direct-user-input",
+      "location": "references/user-request.md",
+      "anchor": "October 11 request",
+      "authority": "explicit user direction"
+    },
+    {
+      "id": "repository-baseline",
+      "type": "repository",
+      "location": "references/repository-baseline.md",
+      "anchor": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+      "authority": "source inspection; no browser proof"
+    },
+    {
+      "id": "pro-research",
+      "type": "external-research",
+      "location": "resources/pro-map-location-research/README.md",
+      "anchor": "Completed October 11, 2026; ZIP SHA-256 635eecd640f189a91f0a8e647635a5470b6a0d5d478c3d066c54b62ee731f9f1",
+      "authority": "Research evidence and proposals; not user approval or runtime proof"
+    },
+    {
+      "id": "research-reconciliation",
+      "type": "repository-review",
+      "location": "references/research-reconciliation.md",
+      "anchor": "All MAP-001 through MAP-020 dispositions",
+      "authority": "Agent synthesis for user review"
+    },
+    {
+      "id": "primary-source-checks",
+      "type": "primary-source-verification",
+      "location": "references/primary-source-checks.md",
+      "anchor": "October 11 independent checks",
+      "authority": "Selected publisher claims verified; no provider acceptance"
+    },
+    {
+      "id": "product-answers",
+      "type": "direct-user-input",
+      "location": "references/product-answers.md",
+      "anchor": "Ten product questions, October 11",
+      "authority": "explicit user direction"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "map-1",
+        "type": "outcome",
+        "statement": "Make useful dashboards from location-bearing data.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "user-request",
+            "anchor": "Make useful dashboards from location-bearing data."
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "map-2",
+        "type": "required behavior",
+        "statement": "Improve both point and region maps and user control over rendered content.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "user-request",
+            "anchor": "Improve both point and region maps and user control over rendered content."
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "map-3",
+        "type": "desired experience",
+        "statement": "Let users bring their own GeoJSON.",
+        "commitment": "tentative",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "user-request",
+            "anchor": "Let users bring their own GeoJSON."
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "map-4",
+        "type": "desired experience",
+        "statement": "Provide more ready-made geography.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "user-request",
+            "anchor": "Provide more ready-made geography."
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "map-5",
+        "type": "desired experience",
+        "statement": "Support recognizable local context including street names.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "user-request",
+            "anchor": "Support recognizable local context including street names."
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "map-6",
+        "type": "implementation hypothesis",
+        "statement": "Use Leaflet or a similar renderer, perhaps with simple and detailed modes.",
+        "commitment": "tentative",
+        "importance": "supporting",
+        "status": "revised",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "user-request",
+            "anchor": "Use Leaflet or a similar renderer, perhaps with simple and detailed modes."
+          }
+        ],
+        "confidence": "high",
+        "notes": "Outcome kept (detailed street context). Engine choice resolved toward MapLibre by map-17: the no-key free vector service fits MapLibre."
+      },
+      {
+        "id": "map-7",
+        "type": "anti-goal",
+        "statement": "Do not become a full GIS product.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "user-request",
+            "anchor": "Do not become a full GIS product."
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "map-8",
+        "type": "sequence",
+        "statement": "Complete Pro research, retain all artifacts, update intent, and open a PR before user review.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "user-request",
+            "anchor": "Complete Pro research, retain all artifacts, update intent, and open a PR before user review."
+          }
+        ],
+        "confidence": "high",
+        "notes": "Research completed and all ten companion artifacts collected. Reconciliation is complete; documentation PR is the final handoff. Implementation remains unstarted."
+      },
+      {
+        "id": "map-9",
+        "type": "current repository reality",
+        "statement": "Polygon GeoJSON import, typed joins, shared saved geometry, point styling, and D3 map rendering already exist.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "repository-baseline",
+            "anchor": "Polygon GeoJSON import, typed joins, shared saved geometry, point styling, and D3 map rendering already exist."
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "map-10",
+        "type": "desired experience",
+        "statement": "Separate analytical marks, reference boundaries, basemap context, and data labels.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "pro-research",
+            "anchor": "MAP-005"
+          },
+          {
+            "source_id": "research-reconciliation",
+            "anchor": "MAP-005"
+          }
+        ],
+        "confidence": "medium",
+        "notes": "One reference overlay and one analytical family are first-slice hypotheses, not permanent limits."
+      },
+      {
+        "id": "map-11",
+        "type": "sequence",
+        "statement": "Audit one country pack first, then expand supplied geography for concrete dashboard jobs.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "pro-research",
+            "anchor": "MAP-006, MAP-007, MAP-017"
+          },
+          {
+            "source_id": "research-reconciliation",
+            "anchor": "MAP-006, MAP-007, MAP-017"
+          }
+        ],
+        "confidence": "medium",
+        "notes": "No country source, national priority, pack membership, or delivery schedule is approved."
+      },
+      {
+        "id": "map-12",
+        "type": "implementation hypothesis",
+        "statement": "Keep D3/SVG as the starting default and compare Leaflet/raster with MapLibre/vector for one optional street engine.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "revised",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "pro-research",
+            "anchor": "MAP-001, MAP-009, MAP-020"
+          },
+          {
+            "source_id": "research-reconciliation",
+            "anchor": "MAP-001, MAP-009, MAP-020"
+          }
+        ],
+        "confidence": "medium",
+        "notes": "Superseded in part by map-17 and map-22: D3 for world extents, MapLibre for regional and local."
+      },
+      {
+        "id": "map-13",
+        "type": "required behavior",
+        "statement": "Preserve exact source identity, typed joins, metric states, valid-input denominators, stable scales, and accessible analytical actions.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "pro-research",
+            "anchor": "MAP-001, MAP-002, MAP-004, MAP-008, MAP-012"
+          },
+          {
+            "source_id": "research-reconciliation",
+            "anchor": "MAP-001, MAP-002, MAP-004, MAP-008, MAP-012"
+          }
+        ],
+        "confidence": "medium",
+        "notes": "Candidate source faults need runtime reproduction. Five existing tests passed; P01-P08 remain unrun."
+      },
+      {
+        "id": "map-14",
+        "type": "required behavior",
+        "statement": "Make polygon import diagnostics and asset retention understandable without silent repair or key conversion.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "pro-research",
+            "anchor": "MAP-003, MAP-004"
+          },
+          {
+            "source_id": "research-reconciliation",
+            "anchor": "MAP-003, MAP-004"
+          }
+        ],
+        "confidence": "medium",
+        "notes": "Atomic assignment versus reusable import is unresolved; state-hold is not rollback."
+      },
+      {
+        "id": "map-15",
+        "type": "required behavior",
+        "statement": "Separate provider configuration, saved geometry, geographic views, text DSL, and image export.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "pro-research",
+            "anchor": "MAP-007, MAP-010, MAP-011, MAP-014"
+          },
+          {
+            "source_id": "research-reconciliation",
+            "anchor": "MAP-007, MAP-010, MAP-011, MAP-014"
+          }
+        ],
+        "confidence": "medium",
+        "notes": "Specific camera structure, provider fallback, export route, rights, and workload limits remain unproven."
+      },
+      {
+        "id": "map-16",
+        "type": "anti-goal",
+        "statement": "Defer advanced density, classification, offline street archives, and broad GIS infrastructure until a concrete task justifies scope.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "pro-research",
+            "anchor": "MAP-013, MAP-015, MAP-016, MAP-018, MAP-019"
+          },
+          {
+            "source_id": "research-reconciliation",
+            "anchor": "MAP-013, MAP-015, MAP-016, MAP-018, MAP-019"
+          }
+        ],
+        "confidence": "medium",
+        "notes": "Retain exact coincident-record access as a smaller density investigation. Clustering moved into scope by map-21; point-to-region lookup by map-20."
+      },
+      {
+        "id": "map-17",
+        "type": "required behavior",
+        "statement": "Street maps work for paying customers with no key, no configuration, and no tiles maintained by Byron or hosts.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-answers",
+            "anchor": "map-17"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Answers 2, 4. Hosts may substitute a provider."
+      },
+      {
+        "id": "map-18",
+        "type": "required behavior",
+        "statement": "Infer the useful geography level from the data, allow override, and show finer detail on zoom.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-answers",
+            "anchor": "map-18"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Answer 6."
+      },
+      {
+        "id": "map-19",
+        "type": "required behavior",
+        "statement": "Include world countries and US states/counties by default if small; other geography is opt-in per host so installs do not grow for non-map users.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-answers",
+            "anchor": "map-19"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Answers 4, 7, and follow-up."
+      },
+      {
+        "id": "map-20",
+        "type": "required behavior",
+        "statement": "Provide a point-to-region calculation computed locally on demand, not saved; persistence awaits a future write-back augmentation pass.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-answers",
+            "anchor": "map-20"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Answer 10 and follow-up."
+      },
+      {
+        "id": "map-21",
+        "type": "required behavior",
+        "statement": "Group crowded points into clusters that split on zoom; draw a couple of thousand points directly.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-answers",
+            "anchor": "map-21"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Answers 5, 9."
+      },
+      {
+        "id": "map-22",
+        "type": "required behavior",
+        "statement": "Choose projection by extent: equal-area for world views, web map with streets for regional and local views.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-answers",
+            "anchor": "map-22"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Answer 8."
+      },
+      {
+        "id": "map-23",
+        "type": "required behavior",
+        "statement": "PNG export includes streets; shared views restore through saved settings only, without URL view parameters.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-answers",
+            "anchor": "map-23"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Answer 3. Offline street maps not required."
+      },
+      {
+        "id": "map-24",
+        "type": "constraint",
+        "statement": "React 18 support must not block the right street engine; React 19 is acceptable.",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "product-answers",
+            "anchor": "map-24"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Answer 2."
+      }
+    ],
+    "themes": [
+      "Useful dashboard maps",
+      "Explicit rendering control",
+      "Custom and supplied geography",
+      "Local context without GIS scope"
+    ],
+    "conflicts": [
+      {
+        "id": "catalog-sequence",
+        "description": "Research proposes one country pack first; the user wants more supplied geography.",
+        "resolution": "Resolved by product answers: ship countries, worldwide admin-1, and US counties up front through a companion package."
+      },
+      {
+        "id": "renderer-hypothesis",
+        "description": "Leaflet was a user hypothesis. Research identifies vector label controls as a possible reason to choose MapLibre.",
+        "resolution": "Resolved by product answers: free no-key vector tiles (OpenFreeMap) imply MapLibre; Leaflet core remains a fallback, React 19 only if React Leaflet is used."
+      },
+      {
+        "id": "proof-scope",
+        "description": "The Pro proof plan includes checkout, camera, fallback, and compatibility proposals beyond settled intent.",
+        "resolution": "Apply the limits in references/research-reconciliation.md. No new worktree, compatibility platform, or unapproved implementation follows from the report."
+      }
+    ],
+    "human_questions": []
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "current",
+    "appetite": "Three shippable releases: (1) trustworthy selection, values, import; (2) supplied boundaries, level inference, Locate region, content controls; (3) street basemap, clustering, export.",
+    "problem": "Maps need too much setup and have suspected selection faults: no ready boundaries beyond land, no level inference, no street context, and no handling for crowded points.",
+    "recommended_shape": "Keep D3/SVG for world extents and hand off to MapLibre GL (optional peer) with OpenFreeMap styles for regional and local views; include world countries and US states/counties lazily, with opt-in packs for other geography; compute Locate region on demand in a worker; cluster crowded points.",
+    "success_moves": [
+      {
+        "move": "Use MapLibre GL directly (no React wrapper) with OpenFreeMap as the default style.",
+        "risk_reduced": "No key, no tiles to maintain, built-in clustering and canvas export; React 18 support unaffected.",
+        "evidence": "openfreemap.org: no key, no limits, commercial use allowed, vector tiles, MapLibre auto-attribution; ToS: may discontinue without notice."
+      },
+      {
+        "move": "Key all selection by source row ID across D3 and MapLibre, including cluster leaves.",
+        "risk_reduced": "Prevents renderer feature IDs from changing what a selection means.",
+        "evidence": "Research P06; existing planners already own row identity."
+      },
+      {
+        "move": "Always keep the D3 outline map as the fallback when tiles fail or a host disables streets.",
+        "risk_reduced": "OpenFreeMap has no SLA; no blank maps.",
+        "evidence": "OpenFreeMap ToS."
+      },
+      {
+        "move": "Include only world-atlas countries-110m and us-atlas states/counties (about 1.06 MB raw, 330 KB gzipped), loaded lazily; other geography through opt-in packs registered by the host.",
+        "risk_reduced": "Keeps installs small for users who never map; avoids a sprawling boundary catalog.",
+        "evidence": "Measured from world-atlas 2.0.2 and us-atlas 3.0.1 tarballs on 2026-10-11."
+      },
+      {
+        "move": "Compute Locate region on demand in a worker with a Flatbush bounds index, once per distinct coordinate, cached per session.",
+        "risk_reduced": "Acceptable speed without persisting derived data.",
+        "evidence": "Follow-up answer; flatbush 4.6.2 (ISC)."
+      },
+      {
+        "move": "Reproduce the empty-space clear and draft-Escape faults as failing tests first.",
+        "risk_reduced": "Confirms baseline correctness before new engines build on it.",
+        "evidence": "PointMap.tsx:211-213 vs RegionMap.tsx:170."
+      }
+    ],
+    "first_proof": {
+      "question": "Can a D3 world view hand off to a MapLibre street view without losing place, filters, exact row selection, keyboard use, or export?",
+      "artifact": "Spike on the earthquakes demo: lazily loaded MapLibre with an OpenFreeMap style beneath the chart frame, handoff at a zoom threshold, clustered points, PNG export. Record handoff behavior, cluster selection IDs, keyboard selection, PNG contents and credits, and lazy bundle cost.",
+      "decision_rule": "Smooth handoff and exact IDs: build release 3 this way. Jarring handoff: use MapLibre at every extent and drop equal-area world views."
+    },
+    "rabbit_holes": [
+      "Handoff between two renderers: camera mapping, transition feel, and dual focus models.",
+      "Accessible keyboard path over WebGL marks and clusters.",
+      "Level inference false positives (e.g. numeric codes that look like FIPS).",
+      "OpenFreeMap discontinuation or CORS changes; export canvas tainting.",
+      "Saved references to supplied boundaries when the package version changes.",
+      "Coarse 110m country polygons leave coastal points unlocated.",
+      "MapLibre install size (about 28 MB unpacked) versus the small-install goal."
+    ],
+    "open_decisions": []
+  },
+  "implementation": {
+    "status": "current",
+    "repository_snapshot": {
+      "root": "/Users/byronwall/.codex/worktrees/6446/explorEDA",
+      "revision": "396fb9e (main); map code unchanged since 12bd64d",
+      "worktree_status": "Clean detached baseline; created codex/map-location-intent for documentation only.",
+      "subsystems": [
+        "Map chart planners and renderers",
+        "Shared geometry assets",
+        "Chart settings and saved analyses",
+        "Linked filters and traces",
+        "Calculation function registry (src/lib/calculations/functions/registry.ts)",
+        "Composition artboard PNG export (compositionOutput.ts)",
+        "Dashboard DSL setting keys and docs gate"
+      ],
+      "test_commands": [
+        "pnpm --filter exploreda exec vitest run src/components/charts/Map/pointMap.test.tsx src/components/charts/Map/regionMap.test.tsx",
+        "pnpm check"
+      ],
+      "deployment_surfaces": []
+    },
+    "dependencies": [
+      {
+        "id": "maplibre",
+        "name": "maplibre-gl (optional peer)",
+        "material": true,
+        "application_seam": "MapEngine: host registers the maplibre-gl module; exploreda never imports it.",
+        "failure_modes": [
+          "not registered",
+          "WebGL unavailable",
+          "style or tile load failure",
+          "canvas capture blocked"
+        ],
+        "proof_rungs": [
+          "pure camera/ID unit tests",
+          "demo in Chromium",
+          "Playwright blocked-request fallback"
+        ],
+        "first_proof_role": {
+          "mode": "real",
+          "rationale": "The handoff feel and WebGL interaction cannot be judged with a fake."
+        },
+        "local_proof": "Demo with maplibre-gl as a demo dependency.",
+        "live_proof": "Same demo against live OpenFreeMap.",
+        "rollout": "Off unless a host registers it."
+      },
+      {
+        "id": "openfreemap",
+        "name": "OpenFreeMap vector tiles and styles",
+        "material": true,
+        "application_seam": "streetStyle URL configuration with a host override and off switch.",
+        "failure_modes": [
+          "service discontinued",
+          "CORS change",
+          "partial tiles",
+          "slow network"
+        ],
+        "proof_rungs": [
+          "Playwright route blocking",
+          "live demo"
+        ],
+        "first_proof_role": {
+          "mode": "real",
+          "rationale": "No-key public service; fallback is tested by blocking it."
+        },
+        "local_proof": "Blocked requests in Playwright show the outline fallback.",
+        "live_proof": "Demo browsing at three widths.",
+        "rollout": "Default style only when an engine is registered."
+      },
+      {
+        "id": "boundaries",
+        "name": "world-atlas and us-atlas built-in boundaries",
+        "material": false,
+        "application_seam": "BoundaryRegistry with lazy loaders and host packs.",
+        "failure_modes": [
+          "missing pack on reopen",
+          "identifier mismatch"
+        ],
+        "proof_rungs": [
+          "unit tests",
+          "demo"
+        ],
+        "local_proof": "Vitest and demos.",
+        "live_proof": "None needed.",
+        "rollout": "Additive."
+      }
+    ],
+    "fast_local_loop": {
+      "command": "pnpm --filter exploreda exec vitest run src/components/charts/Map",
+      "starts": "nothing",
+      "network": false,
+      "failure_injection": "Playwright route blocking for tiles and styles",
+      "slower_proof": "pnpm dev:agent demo plus pnpm shot at three widths"
+    },
+    "milestones": [
+      {
+        "id": "m1",
+        "title": "Map selection behaves like other charts",
+        "outcome": "Draft Escape and empty-space click are fixed; region zero/no-rows/invalid/unmatched states are distinct.",
+        "dependencies_introduced": [],
+        "proof": "Failing-then-passing vitest in pointMap/regionMap tests; planner fixture; screenshots at 3 widths.",
+        "valid_intermediate_state": "Existing maps with corrected behavior.",
+        "rollback": "Revert the PR; no saved-data change.",
+        "status": "completed",
+        "evidence": [
+          "PR https://github.com/byronwall/explorEDA/pull/335; pointMap and regionMap tests"
+        ]
+      },
+      {
+        "id": "m2",
+        "title": "Street view hands off from the world map (proof)",
+        "outcome": "Earthquakes demo zooms from D3 world view into a MapLibre street view keeping place, filters, and exact selection.",
+        "dependencies_introduced": [
+          "maplibre-gl (optional peer, host-registered)",
+          "OpenFreeMap styles"
+        ],
+        "proof": "Camera round-trip unit tests; demo browser check; Playwright request blocking shows outline fallback; lazy chunk size measured.",
+        "valid_intermediate_state": "Hosts without a registered engine see no change.",
+        "rollback": "Remove the registration; tagged camera keeps legacy views valid.",
+        "status": "completed",
+        "evidence": [
+          "PR https://github.com/byronwall/explorEDA/pull/337; streetMap.test.tsx; Japan screenshots"
+        ]
+      },
+      {
+        "id": "m3",
+        "title": "Boundary import explains itself",
+        "outcome": "Located validation errors, counts, no half-added imports, richer join preview.",
+        "dependencies_introduced": [],
+        "proof": "Malformed fixture tests; throwing callback leaves assets unchanged.",
+        "valid_intermediate_state": "Import path improved; nothing else changes.",
+        "rollback": "Revert the PR.",
+        "status": "completed",
+        "evidence": [
+          "PR https://github.com/byronwall/explorEDA/pull/339; geometryAssets.test.ts, regionMapSettings.test.tsx"
+        ]
+      },
+      {
+        "id": "m4",
+        "title": "Countries and US boundaries just work",
+        "outcome": "Built-in countries, US states, US counties via BoundaryRegistry; host packs; saved references by id and version.",
+        "dependencies_introduced": [
+          "us-atlas"
+        ],
+        "proof": "Choropleth demos; validateSavedData tests; missing-pack state; install and chunk size measured.",
+        "valid_intermediate_state": "Imported assets keep working; references are additive.",
+        "rollback": "Remove built-in sets; saved references show missing-pack state.",
+        "status": "completed",
+        "evidence": [
+          "PR https://github.com/byronwall/explorEDA/pull/342; boundaries.test.ts; World Bank choropleth"
+        ]
+      },
+      {
+        "id": "m5",
+        "title": "The map picks the level, and points can find their region",
+        "outcome": "inferMapLevel picks the level; region() calculation locates points on demand; zoom shows finer levels.",
+        "dependencies_introduced": [
+          "flatbush"
+        ],
+        "proof": "Inference unit tests; 50k-row timing spike; demo opens on correct level.",
+        "valid_intermediate_state": "Override always available; calculation optional.",
+        "rollback": "Remove the function; saved expressions report an unknown function.",
+        "status": "completed",
+        "evidence": [
+          "PR https://github.com/byronwall/explorEDA/pull/349; locate.test.tsx (50k in 145 ms), infer.test.ts"
+        ]
+      },
+      {
+        "id": "m6",
+        "title": "Choose what the map shows",
+        "outcome": "Content popover controls marks, labels, reference boundaries, and basemap without changing filters or joins.",
+        "dependencies_introduced": [],
+        "proof": "Tests that content changes leave filters/joins; service-district demo screenshots.",
+        "valid_intermediate_state": "Defaults match current maps.",
+        "rollback": "Revert; new settings optional in validation.",
+        "status": "completed",
+        "evidence": [
+          "PR https://github.com/byronwall/explorEDA/pull/353; mapLayers.test.tsx"
+        ]
+      },
+      {
+        "id": "m7",
+        "title": "Crowded points and street export",
+        "outcome": "Clusters on both renderers select exact rows; PNG export includes streets and credits.",
+        "dependencies_introduced": [],
+        "proof": "50k earthquake demo; cluster selection IDs; PNG at 1x and 2x.",
+        "valid_intermediate_state": "Clustering only above a threshold.",
+        "rollback": "Disable clustering threshold; export falls back to outline.",
+        "status": "completed",
+        "evidence": [
+          "PR https://github.com/byronwall/explorEDA/pull/355; pointClusters.test.tsx; exported PNG"
+        ]
+      }
+    ],
+    "cut_line": [
+      "Write-back of Locate region results to a store of record",
+      "Boundary packs beyond defaults and non-US counties",
+      "Heatmaps, classed scales, multiple analytical layers, offline streets",
+      "Self-hosted tiles, geocoding, routing, geometry repair"
+    ],
+    "open_decisions": []
+  },
+  "history": [
+    {
+      "date": "2026-10-11",
+      "action": "Created initial intent and Pro handoff prompt.",
+      "reason": "User requested autonomous map research and an intent PR.",
+      "evidence": "Direct request and source inspection at 12bd64d; implementation has not started."
+    },
+    {
+      "date": "2026-10-11",
+      "action": "Collected the complete Pro research and reconciled the intent.",
+      "reason": "User requested autonomous research through a review PR.",
+      "evidence": "Ten standalone downloads match the ZIP; all 20 recommendation dispositions recorded. Pro progress reports 4/4 completed. Final chat delivery interrupted; file library collection succeeded. Eight proposed proofs remain unrun. Initiative stays planned."
+    },
+    {
+      "date": "2026-10-11",
+      "action": "Shaped the initiative.",
+      "reason": "Byron asked to shape the intent on PR #321.",
+      "evidence": "shape-brief.md; added a raster-beneath-SVG street candidate; first proof is a local tile-fixture spike. Implementation has not started."
+    },
+    {
+      "date": "2026-10-11",
+      "action": "Revised intent and reshaped from ten product answers.",
+      "reason": "Byron answered product questions and rejected self-maintained tiles and holding back Leaflet for React 18.",
+      "evidence": "references/product-answers.md; claims map-17 to map-24; shape now MapLibre + OpenFreeMap, companion boundary package, Locate region, clustering."
+    },
+    {
+      "date": "2026-10-11",
+      "action": "Resolved shape choices: Locate region on demand; opt-in boundaries.",
+      "reason": "Byron's follow-up answers.",
+      "evidence": "references/product-answers.md follow-up; measured default boundary sizes."
+    },
+    {
+      "date": "2026-10-11",
+      "action": "Kept MapLibre optional and wrote the implementation plan.",
+      "reason": "Byron: 1 MB of boundaries is fine; 28 MB more is too much.",
+      "evidence": "implementation-plan.md with seven milestones."
+    },
+    {
+      "date": "2026-10-12",
+      "action": "Implemented all seven milestones as stacked PRs #335, #337, #339, #342, #349, #353, #355.",
+      "reason": "Byron asked for full implementation with stacked PRs and screenshots.",
+      "evidence": "Deviations from the plan: street marks stay in the SVG over MapLibre with a matched D3 Mercator projection, so the keyboard spike needed no separate path; MapLibre 5 recommended because 6 needs bundler worker setup; Locate region runs on the main thread (50k points in 145 ms); clustering uses one screen-space grouping on both renderers instead of MapLibre clustering; region() is registered on the main thread only because the analysis worker cannot load boundary chunks; supplied boundaries reuse geometryAssetId with a boundary: prefix."
+    }
+  ],
+  "closure": null
+}

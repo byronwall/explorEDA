@@ -66,7 +66,6 @@ export const scatterPlotDefinition: ChartDefinition<ScatterPlotSettings> = {
     type: "scatter",
     title: "Scatter Plot",
     layout,
-    margin: { top: 20, right: 20, bottom: 20, left: 20 },
     xField: "__ID",
     yField: field ?? "",
     filters: [],

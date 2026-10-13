@@ -1,0 +1,13 @@
+# Proposed syntax for the charts in ../current-exports/calculated-orders.eda that change most.
+# Illustrative: grammar, defaults, and inference rules are not final.
+line @quarter-sales x=Order y="Net sales" facet="Order quarter" facet.columns=2 {
+  title="Net sales across quarters" x.title="Order sequence" legend=false grid.y=false
+}
+pivot @monthly rows="Order month" values=sum("Net sales"),sum(Contribution) {
+  title="Monthly sales and contribution"
+}
+scatter @sales-contribution x="Net sales" y=Contribution x.scale=symlog y.scale=symlog {
+  title="How much of each order remains?" x.title="Net sales ($)" y.title="Contribution ($)"
+}
+# A time chart band with ISO dates instead of epoch milliseconds:
+#   band x=2024-06-01..2024-08-31 "Summer sale" display=bracket
