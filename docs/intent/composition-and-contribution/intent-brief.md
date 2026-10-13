@@ -3,47 +3,66 @@ title: "Show parts of a whole and cumulative contributions"
 slug: "composition-and-contribution"
 phase: intent
 status: current
-last_updated: "2026-10-06"
+last_updated: "2026-10-12"
 ---
 
 # Show parts of a whole and cumulative contributions
 
 ## My read
 
-Some analyses benefit from familiar share and contribution views. A small donut can show a bounded nonnegative composition. A waterfall can explain how signed contributions move a starting value to an ending value. These answer different questions but can share clear metric and source-membership rules.
+End users need two familiar views that explorEDA lacks. A waterfall explains how a value moves from one state to another, such as plan to actual. A donut shows how a bounded, nonnegative whole splits into a few parts. Both are in scope. Each ships first as a standard chart type, with selection, filters, and trace. The same calculations then become marks in the Composition report-graphic builder.
 
-This seed preserves the Pro recommendation after higher-value linked analysis gaps. Neither chart is required for general exploration completeness. The durable goal is answering an actual share or change question inside the workspace. It should use existing reductions and tracing rather than hide new metric definitions inside geometry.
-
-This remains a future seed. Its expansion trigger is a proposed decision rule, not a release commitment.
+The waterfall comes first. No existing chart answers "how did we get from A to B." Percent bars, stacks, and waffles already cover much of share-of-whole.
 
 ## What matters most
 
-- Name the whole and its denominator.
-- Make waterfall start, end, and subtotal semantics explicit.
-- Keep category selection and source contributors consistent.
+- Every bar and slice traces back to its source rows.
+- Start, end, and subtotal bars mean exactly what their labels say.
+- The input model is general. It must not assume one data layout.
 
 ## The intended experience
 
-For composition, choose a small category set and a nonnegative measure, inspect total and share, and select a category. For contribution, supply ordered signed changes plus a starting value, inspect the running total, and explain any subtotal. Compare the resulting endpoint with a direct source calculation.
+**Waterfall: Bridge mode (primary).** The user defines two states. Each state is a measure plus an optional row condition. The user also picks a step field to break the change down and an optional parent field for subtotals. The start bar is state 1's total, and the end bar is state 2's total. Each step is one category's change from state 1 to state 2. Each parent group ends in a subtotal bar. One model covers many layouts:
+
+- Budget vs actual in two columns: `sum(plan)` to `sum(actual)`.
+- Budget vs actual in a scenario column: `sum(amount) where scenario = Plan` to `… = Actual`.
+- Period change: `where year = 2024` to `where year = 2025`.
+
+**Waterfall: Accumulate mode.** The user picks a signed measure, an ordered step field, and an optional start value. This covers precomputed steps, running totals, and staged engineering budgets.
+
+**Clicks.** Clicking a step selects that category's source rows in both states. Clicking start or end selects every state-1 or state-2 row.
+
+**Donut.** The user picks a category field and a nonnegative measure, then reads the total and each share. The whole is the filtered rows, so shares always sum to 100% of what is showing. The top categories get their own slices (six by default). The rest fold into "Other," which selects its members.
+
+The first proof is a budget vs actual bridge. Its end bar matches a direct `sum(actual)`, and every step equals that line item's actual minus plan.
 
 ## Boundaries
 
-Do not use an average as an additive whole. Reject or explicitly explain invalid and negative share inputs. Avoid unreadable slices and automatic hierarchy. Waterfall order is analytical meaning, not a sort convenience. Keep donut and waterfall proofs separate even if one brief preserves both candidates.
+- Never treat an average as an additive whole.
+- For negative or zero-sum input, the donut shows a clear message instead of drawing a ring.
+- The step order in a waterfall carries meaning. Do not offer it as a sort convenience.
+- A waterfall step always comes from the source data. The chart does not invent metrics.
+- Keep the waterfall proof separate from the donut proof.
 
 ## What seems settled
 
-Both are future possibilities. Existing stacked bars already answer many composition questions and can be the sufficient alternative. The current request does not require parity with every familiar chart menu.
+- The waterfall leads. The donut follows. Composition marks come after both chart types.
+- Bridge and Accumulate are the two waterfall input modes.
+- Subtotals come from a parent field.
+- The donut folds small categories into "Other" and refuses negative input.
+
+## Below the cut line
+
+- User-placed subtotals
+- Price, volume, and mix decomposition
+- Nested rings and sunbursts
 
 ## Current reality that matters
 
-The registry includes grouped and percentage bars but no donut or waterfall. Shared aggregates provide count, sum, and average. Exact source selection and trace contracts can support category-based extensions.
-
-## Expansion trigger
-
-Expand donut only when a compact bounded composition is preferable to a bar. Expand waterfall when users need to explain an ordered net change.
+The chart registry has grouped, stacked, and percent bars, but no waterfall or donut. The Composition builder already has `stack` and `waffle` marks for report graphics. Shared aggregates provide count, sum, and average, along with per-row contributors. Existing filter definitions can express a state's row condition. Exact source selection and trace contracts already support category-based charts.
 
 ## Next step after confirmation
 
-First compare a four-part composition with an existing percentage bar. Separately prove a signed three-step waterfall with a subtotal. Build only the candidate that improves a named task over those simpler alternatives.
+Shape the Bridge waterfall around the budget vs actual proof. Check that existing aggregates and filters can compute a state without new metric code. Then shape Accumulate and the donut as follow-on slices.
 
 See the [reference packet](references/README.md) and [comparison collection](../comparison-opportunities/README.md) for context.

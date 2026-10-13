@@ -1,4 +1,9 @@
-import { area as shapeArea, curveMonotoneX, line as shapeLine } from "d3-shape";
+import {
+  arc as shapeArc,
+  area as shapeArea,
+  curveMonotoneX,
+  line as shapeLine,
+} from "d3-shape";
 import type { ReactNode } from "react";
 import type { ArtboardView } from "./artboardZoom";
 import { COMPOSITION_FONT } from "./compositionTypes";
@@ -225,6 +230,26 @@ function SceneNodeView({ node }: { node: SceneNode }) {
           strokeWidth={node.stroke ? 1 : undefined}
           opacity={node.opacity}
           pointerEvents={node.under ? "none" : undefined}
+          clipPath={clipPath}
+        />
+      );
+    case "arc":
+      return (
+        <path
+          data-node={node.key}
+          d={
+            shapeArc()({
+              innerRadius: node.innerRadius,
+              outerRadius: node.outerRadius,
+              startAngle: node.startAngle,
+              endAngle: node.endAngle,
+            }) ?? undefined
+          }
+          transform={`translate(${node.cx} ${node.cy})`}
+          fill={node.fill}
+          stroke={node.stroke}
+          strokeWidth={node.stroke ? 1 : undefined}
+          opacity={node.opacity}
           clipPath={clipPath}
         />
       );

@@ -288,6 +288,26 @@ export const coverageFeatures = [
     chartType: "ecdf",
   },
   {
+    id: "chart:donut",
+    label: "Donut",
+    family: "Chart types",
+    description:
+      "Show each category's share of a small whole, with the smaller categories pooled into Other.",
+    required: true,
+    status: "supported",
+    chartType: "donut",
+  },
+  {
+    id: "chart:waterfall",
+    label: "Waterfall",
+    family: "Chart types",
+    description:
+      "Bridge one total to another, such as plan to actual, with one signed step per category and group subtotals.",
+    required: true,
+    status: "supported",
+    chartType: "waterfall",
+  },
+  {
     id: "chart:composition",
     label: "Composition",
     family: "Chart types",
@@ -1062,6 +1082,48 @@ export const exampleCoverage = [
       "chart:composition": "shown",
       "chart:row": "shown",
       "chart:bar": "shown",
+    },
+  },
+  {
+    exampleId: "budget-bridge",
+    intent:
+      "Bridge a lab's planned net position to its actual one line item at a time, with group subtotals, quarter filters, and the rows behind each step.",
+    features: {
+      "chart:waterfall": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+      "interaction:cross-filter": "shown",
+    },
+  },
+  {
+    exampleId: "battery-day",
+    intent:
+      "Run a battery's state of charge through a day, adding each hour's signed energy flows to a start value, with a subtotal per part of the day.",
+    features: {
+      "chart:waterfall": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+      "interaction:cross-filter": "shown",
+    },
+  },
+  {
+    exampleId: "channel-share",
+    intent:
+      "Show revenue's share by channel beside 100% bars of the same mix by region, in shared colors, and pool smaller products into Other.",
+    features: {
+      "chart:donut": "shown",
+      "chart:bar": "shown",
+      "mode:stacked-bars": "shown",
+      "chart:data-table": "shown",
+      "interaction:cross-filter": "shown",
+    },
+  },
+  {
+    exampleId: "budget-report",
+    intent:
+      "Lay out each quarter's plan-to-actual bridge and each group's shares as Composition marks, on shared scales and colors.",
+    features: {
+      "chart:composition": "shown",
     },
   },
   {

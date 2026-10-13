@@ -130,12 +130,12 @@ describe("docs gate", () => {
         ...input,
         sources: {
           ...input.sources,
-          bar: `import gone from "../assets/gone.png";\n${input.sources.bar}\n<DocsLink topic="pie">Pie</DocsLink> [x](/docs/donut) [y](/examples/nope)`,
+          bar: `import gone from "../assets/gone.png";\n${input.sources.bar}\n<DocsLink topic="pie">Pie</DocsLink> [x](/docs/radar) [y](/examples/nope)`,
         },
       })
     ).toEqual([
       'pages/bar.mdx links to missing page "pie"',
-      'pages/bar.mdx links to missing page "donut"',
+      'pages/bar.mdx links to missing page "radar"',
       'pages/bar.mdx links to unknown example "nope"',
       'pages/bar.mdx imports missing image "gone.png"',
     ]);

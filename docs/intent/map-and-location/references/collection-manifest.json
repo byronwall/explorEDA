@@ -1,0 +1,82 @@
+{
+  "conversation": "https://chatgpt.com/c/6acb148e-0acc-83e9-9891-6c5efcd0da68",
+  "retrieved_at": "2026-10-11T05:42:57.074279+00:00",
+  "method": "ChatGPT Space file library download; final conversation delivery had a connection interruption. All ten standalone files match the published ZIP.",
+  "zip": {
+    "name": "exploreda-map-location-research.zip",
+    "bytes": 100037,
+    "sha256": "635eecd640f189a91f0a8e647635a5470b6a0d5d478c3d066c54b62ee731f9f1"
+  },
+  "files": [
+    {
+      "name": "README.md",
+      "library_name": "README(20261011-052314).md",
+      "bytes": 10695,
+      "sha256": "ac7308a93179e5cbdbcd3ec3e311c1bb284a2c4fcac770d8172062ef1f65524e",
+      "standalone_matches_zip": true
+    },
+    {
+      "name": "report.md",
+      "library_name": "report(1).md",
+      "bytes": 37621,
+      "sha256": "abe934853d916dc293ac9d9133ddb654fbf95f34c03426fc8b08ce5b02436196",
+      "standalone_matches_zip": true
+    },
+    {
+      "name": "capability-matrix.csv",
+      "library_name": "capability-matrix.csv",
+      "bytes": 51738,
+      "sha256": "d0ce86dd8d0370ea85d21b1bf1f6e1b950d04d405aae832c0d3bcbae7aed323f",
+      "standalone_matches_zip": true
+    },
+    {
+      "name": "geography-catalog.csv",
+      "library_name": "geography-catalog.csv",
+      "bytes": 12730,
+      "sha256": "95a8dfe68529e4c2a729309458b81f399002c822d2acf8dc678ca974d3337e32",
+      "standalone_matches_zip": true
+    },
+    {
+      "name": "recommendations.json",
+      "library_name": "recommendations.json",
+      "bytes": 79136,
+      "sha256": "e0e477414a371410d0d4f9a23f35fd0368c98ef8f08d0cc7c6432a85c0fff947",
+      "standalone_matches_zip": true
+    },
+    {
+      "name": "intent-amendments.md",
+      "library_name": "intent-amendments.md",
+      "bytes": 5995,
+      "sha256": "3184c84aea308a4f1882ddeddf18341543707434df22a3848c78c23f21dfc909",
+      "standalone_matches_zip": true
+    },
+    {
+      "name": "proof-plan.md",
+      "library_name": "proof-plan.md",
+      "bytes": 27909,
+      "sha256": "7ff57ae7377dcf9c9d9cda4e1104fe9e709f52809da630979b12092a0cd3b146",
+      "standalone_matches_zip": true
+    },
+    {
+      "name": "sources.md",
+      "library_name": "sources.md",
+      "bytes": 63070,
+      "sha256": "7cac556b14aff06d5590d6103f2d30a3516e6dd06538208ced6e247bdc7c170d",
+      "standalone_matches_zip": true
+    },
+    {
+      "name": "repository-review.md",
+      "library_name": "repository-review.md",
+      "bytes": 42471,
+      "sha256": "71b463f62ff5daa4c3b69c44b7d45ec98ea8901f60e487fa56965f9a3a8368ec",
+      "standalone_matches_zip": true
+    },
+    {
+      "name": "verification.json",
+      "library_name": "verification.json",
+      "bytes": 32302,
+      "sha256": "9555daba35e96344f00a70eb3d1fadb6fb06d17328b6aa92a4a3560f7e3cefee",
+      "standalone_matches_zip": true
+    }
+  ]
+}
