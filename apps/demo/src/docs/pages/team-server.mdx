@@ -83,6 +83,14 @@ To upgrade, pull the new image and start it again:
 docker compose pull && docker compose up -d
 ```
 
+When a new version needs to change the account store, it first copies the store into `backups/<time>/` in the data folder, then changes it, and says so in its log. If the change fails, the server stops and leaves the data as it was. A version older than the one that last wrote the data folder refuses to start, so going back means restoring a backup.
+
+To restore, stop the server and put the backup back:
+
+```bash
+docker compose stop && docker run --rm -v exploreda-data:/data -v "$PWD":/backup busybox sh -c "rm -rf /data/* && tar xzf /backup/exploreda-backup.tgz -C /data && chown -R 1000:1000 /data" && docker compose start
+```
+
 ## People and roles
 
 Every person signs in with an email and a password. An account is one of two kinds:

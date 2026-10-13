@@ -92,10 +92,10 @@ try {
     { stdio: "inherit" }
   );
   compose("down", "-v", "--remove-orphans");
-  compose("up", "-d");
   if (process.env.EXPLOREDA_SMOKE_DATA) {
+    // Fill the volume before the server first starts, as an upgrade finds it.
     step(`Copying ${process.env.EXPLOREDA_SMOKE_DATA} into the volume`);
-    compose("stop");
+    compose("create");
     const container = execFileSync(
       "docker",
       ["compose", "-p", project, "-f", "docker/compose.yaml", "ps", "-aq"],
@@ -122,8 +122,8 @@ try {
       "node:node",
       "/data"
     );
-    compose("start");
   }
+  compose("up", "-d");
   const health = await healthy();
   step(`Server ${health.version} is up`);
   check(
@@ -140,6 +140,11 @@ try {
     });
     const projects = await call("/api/projects");
     check(projects.length > 0, "The copied data folder lost its projects.");
+    const files = await call("/api/projects/shop/files");
+    check(
+      files.includes("data/uploaded.csv") && files.includes("orders.eda"),
+      `The copied project lost files: ${JSON.stringify(files)}`
+    );
     step(`Signed in to the copied data; ${projects.length} project(s) kept`);
   } else {
     const { needed } = await call("/api/setup");

@@ -73,6 +73,8 @@ export interface AccountStore {
   members(projectId: string): Promise<Member[]>;
   setMember(projectId: string, member: Member): Promise<void>;
   removeMember(projectId: string, accountId: string): Promise<void>;
+  /** Releases the store's file, when it has one. */
+  close?(): void;
 }
 
 /** Store errors carry a short code the server turns into a status. */

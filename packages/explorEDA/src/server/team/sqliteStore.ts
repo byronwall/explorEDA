@@ -25,7 +25,10 @@ import {
 /** The schema this code writes. Older files are migrated on open. */
 export const SCHEMA_VERSION = 1;
 
-const MIGRATIONS: Record<number, string> = {
+/** One SQL script per schema version, run in order inside a transaction. */
+export type Migrations = Record<number, string>;
+
+export const MIGRATIONS: Migrations = {
   1: `
     CREATE TABLE accounts (
       id INTEGER PRIMARY KEY,
@@ -80,6 +83,17 @@ const toAccount = (row: AccountRow): Account => ({
   disabled: Boolean(row.disabled),
 });
 
+/** Writes a consistent copy of a store file, even while it's in use. */
+export async function copyStore(file: string, target: string) {
+  const { DatabaseSync } = await loadSqlite();
+  const db = new DatabaseSync(file);
+  try {
+    db.prepare("VACUUM INTO ?").run(target);
+  } finally {
+    db.close();
+  }
+}
+
 /** The schema version a store file holds, without changing it. */
 export async function storeVersion(file: string) {
   const { DatabaseSync } = await loadSqlite();
@@ -113,20 +127,28 @@ async function loadSqlite() {
   }
 }
 
-/** Brings a database up to SCHEMA_VERSION, one migration per version. */
-export function migrate(db: DatabaseSync) {
+/** The newest schema a set of migrations reaches. */
+export const latestSchema = (migrations: Migrations) =>
+  Math.max(0, ...Object.keys(migrations).map(Number));
+
+/**
+ * Brings a database up to the newest schema, one migration per version.
+ * A failed migration rolls back, leaving the database as it was.
+ */
+export function migrate(db: DatabaseSync, migrations = MIGRATIONS) {
+  const target = latestSchema(migrations);
   const current = (
     db.prepare("PRAGMA user_version").get() as { user_version: number }
   ).user_version;
-  if (current > SCHEMA_VERSION) {
+  if (current > target) {
     throw new Error(
-      `The account store was written by a newer explorEDA (schema ${current}); this one reads up to ${SCHEMA_VERSION}. Run the newer version.`
+      `The account store was written by a newer explorEDA (schema ${current}); this one reads up to ${target}. Run the newer version.`
     );
   }
-  for (let version = current + 1; version <= SCHEMA_VERSION; version++) {
+  for (let version = current + 1; version <= target; version++) {
     db.exec("BEGIN");
     try {
-      db.exec(MIGRATIONS[version]!);
+      db.exec(migrations[version]!);
       db.exec(`PRAGMA user_version = ${version}`);
       db.exec("COMMIT");
     } catch (error) {
@@ -136,11 +158,20 @@ export function migrate(db: DatabaseSync) {
   }
 }
 
-export async function sqliteAccountStore(file: string): Promise<AccountStore> {
+export async function sqliteAccountStore(
+  file: string,
+  { migrations = MIGRATIONS }: { migrations?: Migrations } = {}
+): Promise<AccountStore> {
   const { DatabaseSync } = await loadSqlite();
   const db = new DatabaseSync(file);
-  db.exec("PRAGMA journal_mode = WAL; PRAGMA foreign_keys = ON;");
-  migrate(db);
+  try {
+    db.exec("PRAGMA foreign_keys = ON;");
+    migrate(db, migrations);
+    db.exec("PRAGMA journal_mode = WAL;");
+  } catch (error) {
+    db.close();
+    throw error;
+  }
 
   const one = <T>(sql: string, ...params: Array<string | number | null>) =>
     db.prepare(sql).get(...params) as T | undefined;
@@ -344,6 +375,9 @@ export async function sqliteAccountStore(file: string): Promise<AccountStore> {
         Number(member.accountId),
         member.role
       );
+    },
+    close() {
+      db.close();
     },
     async removeMember(projectId, accountId) {
       run(

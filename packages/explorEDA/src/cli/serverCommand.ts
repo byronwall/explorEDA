@@ -2,7 +2,7 @@
 import { existsSync, promises as fs } from "node:fs";
 import path from "node:path";
 import { memoryAccountStore, type AccountStore } from "../server/team/accounts";
-import { sqliteAccountStore } from "../server/team/sqliteStore";
+import { openDataFolder } from "../server/team/dataFolder";
 import { DEV_ACCOUNTS, DEV_PASSWORD, seedDev } from "../server/team/seed";
 import { createTeamHandler } from "../server/team/teamHandler";
 import { startHttpServer } from "../server/server";
@@ -130,7 +130,14 @@ export async function serverCommand(
     await seedDev(store, dataDir, paths.exampleDir);
   } else {
     try {
-      store = await sqliteAccountStore(path.join(dataDir, "exploreda.db"));
+      const opened = await openDataFolder(dataDir, { version: paths.version });
+      store = opened.store;
+      if (opened.upgrade) {
+        const { from, to, backup } = opened.upgrade;
+        console.log(
+          `Upgraded the account store from schema ${from} to ${to}. The earlier copy is in ${backup}.`
+        );
+      }
     } catch (error) {
       console.error(error instanceof Error ? error.message : String(error));
       return 70;
@@ -176,7 +183,10 @@ export async function serverCommand(
     }
   }
   const stop = () => {
-    void started.close().then(() => process.exit(0));
+    void started.close().then(() => {
+      store.close?.();
+      process.exit(0);
+    });
   };
   process.once("SIGINT", stop);
   process.once("SIGTERM", stop);
