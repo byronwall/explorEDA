@@ -222,3 +222,20 @@ code {
     display: none;
   }
 }
+
+.app-save {
+  margin: 6px 0 0;
+}
+
+.app-save-failed {
+  color: var(--destructive);
+  font-size: 12px;
+}
+
+.app-notice {
+  margin: 6px 0 0;
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 12px;
+}

@@ -1,14 +1,16 @@
 eda query=order-lines
 dashboard "Orders"
 
-view "Overview" {
+view Overview {
   metric @count count title=Orders
   metric @revenue sum(orders.amount) title=Revenue
   metric @average avg(orders.amount) title="Average order"
   row customer.region title="Orders by region"
   row orders.channel title="Orders by channel"
   hist orders.amount title="Order size"
-  table @rows orders.orderId,customer.name,orders.channel,orders.orderedAt,orders.amount title="Orders"
+  table @rows orders.orderId,customer.name,orders.channel,orders.orderedAt,orders.amount {
+    title=Orders
+  }
   layout {
     2: count revenue average
     4: customer.region orders.channel orders.amount
@@ -19,7 +21,9 @@ view "Overview" {
 view "Aster in spring" query=customer-orders bind.customer=C01 bind.from=2025-03-01 bind.until=2025-05-31 {
   metric @spring-count count title=Orders
   metric @spring-revenue sum(orders.amount) title=Revenue
-  table @spring-rows orders.orderId,orders.orderedAt,orders.channel,orders.amount title="Aster's spring orders"
+  table @spring-rows orders.orderId,orders.orderedAt,orders.channel,orders.amount {
+    title="Aster's spring orders"
+  }
   layout {
     2: spring-count spring-revenue
     5: spring-rows

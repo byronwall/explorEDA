@@ -101,8 +101,38 @@ async function serveApp(appDir: string, pathname: string, res: ServerResponse) {
   createReadStream(target).pipe(res);
 }
 
+/** The largest file a save may send. */
+const MAX_BODY = 50 * 1024 * 1024;
+
+function readBody(req: IncomingMessage): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const chunks: Buffer[] = [];
+    let size = 0;
+    req.on("data", (chunk: Buffer) => {
+      size += chunk.length;
+      if (size > MAX_BODY) {
+        reject(new Error("The file is too large to save."));
+        req.destroy();
+        return;
+      }
+      chunks.push(chunk);
+    });
+    req.on("end", () => resolve(Buffer.concat(chunks).toString("utf8")));
+    req.on("error", reject);
+  });
+}
+
 export function createRequestHandler(options: HandlerOptions) {
   const { files, token, appDir, version } = options;
+  // Every open page hears about outside changes over server-sent events.
+  const listeners = new Set<ServerResponse>();
+  let stopWatching: (() => void) | undefined;
+  const broadcast = (paths: string[]) => {
+    const message = `event: change\ndata: ${JSON.stringify({ paths })}\n\n`;
+    for (const listener of listeners) {
+      listener.write(message);
+    }
+  };
   const info: ServerInfo = {
     name: path.basename(files.root),
     root: files.root,
@@ -124,8 +154,16 @@ export function createRequestHandler(options: HandlerOptions) {
       }
       return;
     }
-    const given = req.headers[TOKEN_HEADER];
-    if (!sameToken(Array.isArray(given) ? given[0] : given, token)) {
+    const header = req.headers[TOKEN_HEADER];
+    // EventSource can't send headers, so the event stream takes the key in
+    // its address.
+    const given =
+      url.pathname === "/api/events"
+        ? (url.searchParams.get("token") ?? undefined)
+        : Array.isArray(header)
+          ? header[0]
+          : header;
+    if (!sameToken(given, token)) {
       send(res, 403, {
         error:
           "Open the link the exploreda command printed; it carries this run's key.",
@@ -140,6 +178,30 @@ export function createRequestHandler(options: HandlerOptions) {
       } else if (req.method === "GET" && url.pathname === "/api/file") {
         const filePath = url.searchParams.get("path") ?? "";
         send(res, 200, await files.read(filePath), "text/plain; charset=utf-8");
+      } else if (req.method === "PUT" && url.pathname === "/api/file") {
+        const filePath = url.searchParams.get("path") ?? "";
+        await files.write(filePath, await readBody(req));
+        send(res, 200, { saved: filePath });
+      } else if (req.method === "DELETE" && url.pathname === "/api/file") {
+        const filePath = url.searchParams.get("path") ?? "";
+        await files.remove(filePath);
+        send(res, 200, { removed: filePath });
+      } else if (req.method === "GET" && url.pathname === "/api/events") {
+        res.writeHead(200, {
+          "content-type": "text/event-stream",
+          "cache-control": "no-store",
+          connection: "keep-alive",
+        });
+        res.write(": connected\n\n");
+        listeners.add(res);
+        stopWatching ??= files.watch?.(broadcast);
+        req.on("close", () => {
+          listeners.delete(res);
+          if (!listeners.size) {
+            stopWatching?.();
+            stopWatching = undefined;
+          }
+        });
       } else {
         send(res, 404, { error: `No ${req.method} ${url.pathname}.` });
       }

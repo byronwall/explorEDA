@@ -41,11 +41,28 @@ export function httpProjectFiles(token: string, base = "") {
         await call(`/api/file?path=${encodeURIComponent(path)}`, path)
       ).text();
     },
-    async write(path) {
-      throw new ProjectFileError("refused", path, "Saving isn't available.");
+    async write(path, text) {
+      await call(`/api/file?path=${encodeURIComponent(path)}`, path, {
+        method: "PUT",
+        body: text,
+      });
     },
     async remove(path) {
-      throw new ProjectFileError("refused", path, "Saving isn't available.");
+      await call(`/api/file?path=${encodeURIComponent(path)}`, path, {
+        method: "DELETE",
+      });
+    },
+    watch(onChange) {
+      const events = new EventSource(
+        `${base}/api/events?token=${encodeURIComponent(token)}`
+      );
+      events.addEventListener("change", (event) => {
+        const { paths } = JSON.parse((event as MessageEvent<string>).data) as {
+          paths: string[];
+        };
+        onChange(paths);
+      });
+      return () => events.close();
     },
   };
   return files;

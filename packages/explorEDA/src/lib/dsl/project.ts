@@ -96,6 +96,14 @@ function fieldLine(field: FieldDefinition): string {
   ].join(" ");
 }
 
+/** One source's declaration, as project text and analysis files write it. */
+export function exportSourceText(
+  source: SourceDefinition,
+  path?: string
+): string {
+  return `${sourceLines(source, path).join("\n")}\n`;
+}
+
 function sourceLines(source: SourceDefinition, path?: string): string[] {
   const name =
     source.name === labelFromId(source.id) ? [] : [text(source.name)];

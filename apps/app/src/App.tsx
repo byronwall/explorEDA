@@ -1,44 +1,44 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
-  ExplorEdaProject,
+  isDataFile,
   readProjectFolder,
-  type AnalysisProject,
-  type AnalysisView,
-  type ExplorEdaProjectChange,
   type ProjectFiles,
   type ProjectFolder,
-  type SavedDataStructure,
 } from "exploreda";
-import { createAnalysisWorker } from "exploreda/analysis";
 import type { ServerInfo } from "./httpFiles";
+import { ProjectWorkspace, type Selection } from "./ProjectWorkspace";
+import { FolderSaver, type SaveState } from "./saver";
 
 type AppFiles = ProjectFiles & { info(): Promise<ServerInfo> };
 
 type Loaded =
   | { status: "loading" }
   | { status: "failed"; message: string }
-  | { status: "ready"; folder: ProjectFolder; info: ServerInfo };
+  | {
+      status: "ready";
+      folder: ProjectFolder;
+      info: ServerInfo;
+      /** Counts reloads, so the workspace starts over from the new files. */
+      generation: number;
+      notice?: string;
+    };
 
-/** A view's ID: its analysis file and its place in that file. */
-const viewId = (path: string, index: number) => `${path}#${index}`;
+/** Files whose change alters the project: text and data. */
+const affectsProject = (path: string) =>
+  path.toLowerCase().endsWith(".eda") || isDataFile(path);
 
-function folderViews(folder: ProjectFolder): Map<string, AnalysisView[]> {
-  return new Map(
-    folder.analyses.map((analysis) => [
-      analysis.path,
-      analysis.result.views.map((view, index) => ({
-        id: viewId(analysis.path, index),
-        name: view.name,
-        queryId: view.queryId,
-        ...(view.bindings ? { bindings: view.bindings } : {}),
-        settings: view.settings,
-      })),
-    ])
-  );
+function describeChange(paths: string[]) {
+  const [first, ...rest] = paths;
+  return rest.length
+    ? `${first} and ${rest.length} other file${rest.length === 1 ? "" : "s"} changed on disk, so the project reloaded.`
+    : `${first} changed on disk, so the project reloaded.`;
 }
 
 export function App({ files }: { files: AppFiles }) {
   const [loaded, setLoaded] = useState<Loaded>({ status: "loading" });
+  const [saveState, setSaveState] = useState<SaveState>({ status: "saved" });
+  const [saver] = useState(() => new FolderSaver(files, setSaveState));
+  const selection = useRef<Selection | undefined>(undefined);
 
   useEffect(() => {
     let current = true;
@@ -48,7 +48,7 @@ export function App({ files }: { files: AppFiles }) {
           return;
         }
         document.title = `${info.name} · explorEDA`;
-        setLoaded({ status: "ready", info, folder });
+        setLoaded({ status: "ready", info, folder, generation: 0 });
       })
       .catch((error: unknown) => {
         if (current) {
@@ -62,6 +62,61 @@ export function App({ files }: { files: AppFiles }) {
       current = false;
     };
   }, [files]);
+
+  // Outside edits win: drop unsaved changes to those files, save the rest,
+  // and read the folder again.
+  useEffect(() => {
+    let reloading = Promise.resolve();
+    const stop = files.watch?.((paths) => {
+      const changed = paths.filter(affectsProject);
+      if (!changed.length) {
+        return;
+      }
+      reloading = reloading.then(async () => {
+        for (const path of changed) {
+          saver.cancel(path);
+        }
+        await saver.flush();
+        const folder = await readProjectFolder(files);
+        setLoaded((previous) =>
+          previous.status === "ready"
+            ? {
+                ...previous,
+                folder,
+                generation: previous.generation + 1,
+                notice: describeChange(changed),
+              }
+            : previous
+        );
+      });
+    });
+    return stop;
+  }, [files, saver]);
+
+  // A notice about a reload fades after a few seconds.
+  const notice = loaded.status === "ready" ? loaded.notice : undefined;
+  useEffect(() => {
+    if (!notice) {
+      return;
+    }
+    const timer = setTimeout(
+      () =>
+        setLoaded((previous) =>
+          previous.status === "ready"
+            ? { ...previous, notice: undefined }
+            : previous
+        ),
+      6000
+    );
+    return () => clearTimeout(timer);
+  }, [notice]);
+
+  // Leaving the page writes what is still waiting.
+  useEffect(() => {
+    const flush = () => void saver.flush();
+    window.addEventListener("pagehide", flush);
+    return () => window.removeEventListener("pagehide", flush);
+  }, [saver]);
 
   if (loaded.status === "loading") {
     return (
@@ -82,186 +137,18 @@ export function App({ files }: { files: AppFiles }) {
       </main>
     );
   }
-  return <ProjectWorkspace folder={loaded.folder} info={loaded.info} />;
-}
-
-function ProjectWorkspace({
-  folder,
-  info,
-}: {
-  folder: ProjectFolder;
-  info: ServerInfo;
-}) {
-  const [project, setProject] = useState<AnalysisProject>(folder.project);
-  const [views, setViews] = useState(() => folderViews(folder));
-  const [selected, setSelected] = useState(() => ({
-    path: folder.analyses[0]?.path,
-    index: 0,
-  }));
-
-  const analysisViews = selected.path ? (views.get(selected.path) ?? []) : [];
-  const view = analysisViews[selected.index] ?? analysisViews[0];
-  const allViews = useMemo(() => [...views.values()].flat(), [views]);
-
-  const updateView = (id: string, change: Partial<AnalysisView>) => {
-    setViews((previous) => {
-      const next = new Map(previous);
-      for (const [path, list] of next) {
-        if (list.some((item) => item.id === id)) {
-          next.set(
-            path,
-            list.map((item) => (item.id === id ? { ...item, ...change } : item))
-          );
-        }
-      }
-      return next;
-    });
-  };
-
-  const onProjectChange = ({
-    project: next,
-    view: changed,
-  }: ExplorEdaProjectChange) => {
-    setProject(next);
-    updateView(changed.id, changed);
-  };
-  const onStateChange = (settings: SavedDataStructure) => {
-    if (view) {
-      updateView(view.id, { settings });
-    }
-  };
-
-  const usedFiles = new Set(Object.values(folder.paths));
-  const looseFiles = folder.dataFiles.filter((path) => !usedFiles.has(path));
-
-  const tabs = (
-    <div className="app-tabs" role="tablist" aria-label="Views">
-      {analysisViews.map((item, index) => (
-        <button
-          key={item.id}
-          type="button"
-          role="tab"
-          aria-selected={item.id === view?.id}
-          className="app-tab"
-          onClick={() => setSelected({ path: selected.path, index })}
-        >
-          {item.name}
-        </button>
-      ))}
-    </div>
-  );
-
   return (
-    <div className="app">
-      <aside className="app-rail" aria-label="Project">
-        <header className="app-rail-head">
-          <h1>{info.name}</h1>
-          <p className="app-muted app-path">{info.root}</p>
-        </header>
-
-        <nav aria-labelledby="analyses-heading">
-          <h2 id="analyses-heading">Analyses</h2>
-          {folder.analyses.length ? (
-            <ul className="app-list">
-              {folder.analyses.map((analysis) => (
-                <li key={analysis.path}>
-                  <button
-                    type="button"
-                    className="app-item"
-                    aria-current={
-                      analysis.path === selected.path ? "page" : undefined
-                    }
-                    onClick={() =>
-                      setSelected({ path: analysis.path, index: 0 })
-                    }
-                  >
-                    <span>{analysis.result.name}</span>
-                    <span className="app-muted">{analysis.path}</span>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="app-muted">No analyses yet.</p>
-          )}
-        </nav>
-
-        <section aria-labelledby="data-heading">
-          <h2 id="data-heading">Data</h2>
-          <ul className="app-list">
-            {project.sources.map((source) => {
-              const missing = folder.missingSources.includes(source.id);
-              const outside = folder.outsideSources.includes(source.id);
-              return (
-                <li key={source.id} className="app-source">
-                  <span>{source.name}</span>
-                  <span className="app-muted">
-                    {missing
-                      ? "file missing"
-                      : `${(folder.tables[source.id]?.length ?? 0).toLocaleString()} rows`}
-                    {outside ? " · outside the folder" : ""}
-                  </span>
-                  {missing && (
-                    <span className="app-badge app-badge-error">Missing</span>
-                  )}
-                </li>
-              );
-            })}
-            {looseFiles.map((path) => (
-              <li key={path} className="app-source">
-                <span>{path}</span>
-                <span className="app-muted">not used yet</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        {folder.problems.length > 0 && (
-          <details className="app-problems">
-            <summary>
-              {folder.problems.length} problem
-              {folder.problems.length === 1 ? "" : "s"}
-            </summary>
-            <ul>
-              {folder.problems.map((problem, index) => (
-                <li key={index}>
-                  <span className="app-muted">
-                    {problem.path}:{problem.line}
-                  </span>{" "}
-                  {problem.message}
-                  {problem.suggestion && (
-                    <span className="app-muted"> {problem.suggestion}</span>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </details>
-        )}
-      </aside>
-
-      <main className="app-main">
-        {view ? (
-          <ExplorEdaProject
-            key={view.id}
-            project={project}
-            tables={folder.tables}
-            view={view}
-            views={allViews}
-            onProjectChange={onProjectChange}
-            onStateChange={onStateChange}
-            createWorker={createAnalysisWorker}
-            toolbarStart={tabs}
-          />
-        ) : (
-          <div className="app-message">
-            <h2>No analyses in this folder yet</h2>
-            <p>
-              Add an <code>.eda</code> file that charts one of the project's
-              queries, or a data file to start from.
-            </p>
-          </div>
-        )}
-      </main>
-    </div>
+    <ProjectWorkspace
+      key={loaded.generation}
+      folder={loaded.folder}
+      info={loaded.info}
+      saver={saver}
+      saveState={saveState}
+      notice={loaded.notice}
+      initialSelection={selection.current}
+      onSelect={(next) => {
+        selection.current = next;
+      }}
+    />
   );
 }

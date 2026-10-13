@@ -44,6 +44,11 @@ export interface ProjectFolder {
   tables: Record<string, AnalysisSourceRow[]>;
   /** Sources whose fields, or key, came from their data. */
   inferredSources: string[];
+  /**
+   * Each inferred source as its text declares it, before its data filled
+   * it in, so a save that changes nothing about it writes it the same way.
+   */
+  declaredSources: Record<string, SourceDefinition>;
   /** Sources an analysis file declares, by source ID, with that file. */
   localSources: Record<string, string>;
   /** Queries made for local sources; they are not written to project text. */
@@ -198,6 +203,7 @@ export async function readProjectFolder(
 
   const tables: Record<string, AnalysisSourceRow[]> = {};
   const inferredSources: string[] = [];
+  const declaredSources: Record<string, SourceDefinition> = {};
   const missingSources: string[] = [];
   const outsideSources: string[] = [];
   const declaredIn = (sourceId: string) =>
@@ -234,6 +240,7 @@ export async function readProjectFolder(
     }
     const inferred = inferSource(source, rows);
     if (inferred) {
+      declaredSources[source.id] = source;
       project.sources[index] = inferred.source;
       rows = inferred.rows;
       inferredSources.push(source.id);
@@ -271,6 +278,7 @@ export async function readProjectFolder(
     paths,
     tables,
     inferredSources,
+    declaredSources,
     localSources,
     implicitQueries,
     missingSources,

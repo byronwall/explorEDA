@@ -1,5 +1,11 @@
 // @vitest-environment node
-import { mkdtempSync, mkdirSync, symlinkSync, writeFileSync } from "node:fs";
+import {
+  mkdtempSync,
+  mkdirSync,
+  renameSync,
+  symlinkSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
@@ -45,5 +51,23 @@ describe("node project files", () => {
     const files = nodeProjectFiles(root);
     await files.write("a.eda", "x");
     expect(await files.list()).toEqual(["a.eda"]);
+  });
+
+  it("reports an editor's rename-over save, but not its own writes", async () => {
+    const root = seedFolder({ "orders.eda": "row a\n" });
+    const files = nodeProjectFiles(root);
+    const seen: string[] = [];
+    const stop = files.watch!((paths) => seen.push(...paths));
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    await files.write("mine.eda", "row b\n");
+    writeFileSync(path.join(root, ".orders.eda.swp"), "row c\n");
+    renameSync(
+      path.join(root, ".orders.eda.swp"),
+      path.join(root, "orders.eda")
+    );
+    await new Promise((resolve) => setTimeout(resolve, 600));
+    stop();
+    expect(seen).toContain("orders.eda");
+    expect(seen).not.toContain("mine.eda");
   });
 });

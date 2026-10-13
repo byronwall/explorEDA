@@ -8,7 +8,7 @@
     "last_updated": "2026-10-12",
     "summary": "npx exploreda in a folder starts a local server and opens the app on that project; sources, joins, and analyses are DSL v2 text files.",
     "status": "active",
-    "next_action": "M3: autosave and file watching"
+    "next_action": "M4: any folder becomes a project"
   },
   "artifacts": {
     "intent_brief": {
@@ -624,8 +624,10 @@
         "proof": "ProjectFiles contract suite over temp dirs; git diff shows one-line change; write guard test.",
         "valid_intermediate_state": "Full local read/write CLI.",
         "rollback": "Disable autosave; read-only mode remains.",
-        "status": "planned",
-        "evidence": []
+        "status": "completed",
+        "evidence": [
+          "apps/app saver + watch; src/lib/project/writeFolder.test.ts (unchanged write-back, one-line title diff); src/server/handler.test.ts (PUT/DELETE, events without own-save echo); src/node/projectFiles.test.ts (editor rename-over save); browser: delete chart -> 2-line git diff, outside edit -> reload notice"
+        ]
       },
       {
         "id": "m4",

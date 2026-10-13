@@ -53,6 +53,6 @@ query @customer-orders "One customer's orders" glyph=● {
   filter @before orders.orderedAt <= $until
 }
 
-param @customer Customer string required pick=customers.name
-param @from From date required
-param @until Until date required
+param @customer string required pick=customers.name
+param @from date required
+param @until date required

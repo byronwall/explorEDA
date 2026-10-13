@@ -1,5 +1,5 @@
 // @vitest-environment node
-import { mkdtempSync, mkdirSync, writeFileSync } from "node:fs";
+import { mkdtempSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { request } from "node:http";
 import { tmpdir } from "node:os";
 import path from "node:path";
@@ -10,11 +10,14 @@ import { startServer, type StartedServer } from "./server";
 
 const token = "test-token-0123456789";
 let server: StartedServer;
+let root: string;
 
 /** A raw request, so the test can send any Host header. */
 function get(
   pathname: string,
-  headers: Record<string, string> = {}
+  headers: Record<string, string> = {},
+  method = "GET",
+  body?: string
 ): Promise<{ status: number; body: string }> {
   return new Promise((resolve, reject) => {
     const req = request(
@@ -22,6 +25,7 @@ function get(
         host: "127.0.0.1",
         port: server.port,
         path: pathname,
+        method,
         headers: { host: `127.0.0.1:${server.port}`, ...headers },
       },
       (res) => {
@@ -31,12 +35,12 @@ function get(
       }
     );
     req.on("error", reject);
-    req.end();
+    req.end(body);
   });
 }
 
 beforeAll(async () => {
-  const root = mkdtempSync(path.join(tmpdir(), "exploreda-server-"));
+  root = mkdtempSync(path.join(tmpdir(), "exploreda-server-"));
   mkdirSync(path.join(root, "data"));
   writeFileSync(path.join(root, "data/sales.csv"), "id,revenue\nA,1\n");
   const appDir = mkdtempSync(path.join(tmpdir(), "exploreda-app-"));
@@ -89,6 +93,69 @@ describe("local server", () => {
       body: "<!doctype html>app",
     });
     expect((await get("/some/route")).body).toBe("<!doctype html>app");
+  });
+
+  it("saves and removes files inside the folder only", async () => {
+    const auth = { [TOKEN_HEADER]: token };
+    const saved = await get(
+      "/api/file?path=sales.eda",
+      auth,
+      "PUT",
+      "hist revenue\n"
+    );
+    expect(saved.status).toBe(200);
+    expect(readFileSync(path.join(root, "sales.eda"), "utf8")).toBe(
+      "hist revenue\n"
+    );
+    expect(
+      (await get("/api/file?path=../escape.eda", auth, "PUT", "x")).status
+    ).toBe(403);
+    expect((await get("/api/file?path=sales.eda", auth, "DELETE")).status).toBe(
+      200
+    );
+    expect(
+      (
+        await get(
+          "/api/file?path=sales.eda",
+          { "x-exploreda-token": "no" },
+          "PUT",
+          "x"
+        )
+      ).status
+    ).toBe(403);
+  });
+
+  it("streams outside changes, not its own saves", async () => {
+    const events: string[] = [];
+    const stream = await new Promise<import("node:http").IncomingMessage>(
+      (resolve) => {
+        request(
+          {
+            host: "127.0.0.1",
+            port: server.port,
+            path: `/api/events?token=${token}`,
+            headers: { host: `127.0.0.1:${server.port}` },
+          },
+          resolve
+        ).end();
+      }
+    );
+    stream.on("data", (chunk) => events.push(String(chunk)));
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    await get(
+      "/api/file?path=own.eda",
+      { [TOKEN_HEADER]: token },
+      "PUT",
+      "row a\n"
+    );
+    writeFileSync(path.join(root, "outside.eda"), "row b\n");
+    await new Promise((resolve) => setTimeout(resolve, 800));
+    stream.destroy();
+    const changed = events
+      .filter((event) => event.includes("event: change"))
+      .flatMap((event) => JSON.parse(event.split("data: ")[1]!).paths);
+    expect(changed).toContain("outside.eda");
+    expect(changed).not.toContain("own.eda");
   });
 
   it("knows which host names are this machine", () => {

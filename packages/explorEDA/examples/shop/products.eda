@@ -1,12 +1,14 @@
 eda query=item-lines
 dashboard "Products"
 
-metric @units sum(items.quantity) title="Units sold"
-metric @item-revenue sum(items.revenue) title="Item revenue"
-row product.name title="Items by product"
-row product.category title="Items by category"
-scatter @quantity-revenue x=items.quantity y=items.revenue title="Quantity and revenue"
-layout {
-  2: units item-revenue
-  5: product.name product.category quantity-revenue
+view Products {
+  metric @units sum(items.quantity) title="Units sold"
+  metric @item-revenue sum(items.revenue) title="Item revenue"
+  row product.name title="Items by product"
+  row product.category title="Items by category"
+  scatter @quantity-revenue x=items.quantity y=items.revenue title="Quantity and revenue"
+  layout {
+    2: units item-revenue
+    5: product.name product.category quantity-revenue
+  }
 }

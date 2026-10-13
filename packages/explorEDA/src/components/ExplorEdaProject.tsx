@@ -197,21 +197,46 @@ export const ExplorEdaProject = forwardRef<
     [settings, fieldNames]
   );
   const settingsCompatible = incompatibleFields.length === 0;
+  // Declared field names and types fill in what saved settings leave out.
+  const declared = useMemo(
+    () =>
+      Object.fromEntries(
+        evaluation.fields.map((field) => [
+          field.id,
+          {
+            label: field.name,
+            ...(field.type && field.type !== "unknown"
+              ? { type: FIELD_TYPES[field.type] }
+              : {}),
+          } as Record<string, unknown>,
+        ])
+      ),
+    [evaluation.fields]
+  );
+  /** Settings to report: only what differs from the declared fields. */
+  const reported = (next: SavedDataStructure) => {
+    const encoded = encodeAnalysisRowKeys(next, keysById);
+    if (!encoded.fieldSettings) {
+      return encoded;
+    }
+    const fieldSettings: NonNullable<SavedDataStructure["fieldSettings"]> = {};
+    for (const [id, saved] of Object.entries(encoded.fieldSettings)) {
+      const own = Object.fromEntries(
+        Object.entries(saved ?? {}).filter(
+          ([key, value]) => declared[id]?.[key] !== value
+        )
+      );
+      if (Object.keys(own).length) {
+        fieldSettings[id] = own;
+      }
+    }
+    return { ...encoded, fieldSettings };
+  };
   const renderedSettings = useMemo(() => {
-    if (!settings) return undefined;
+    if (!settings) {
+      return undefined;
+    }
     const decoded = decodeAnalysisRowKeys(settings, idsByKey);
-    // Declared field names and types fill in what saved settings leave out.
-    const declared = Object.fromEntries(
-      evaluation.fields.map((field) => [
-        field.id,
-        {
-          label: field.name,
-          ...(field.type && field.type !== "unknown"
-            ? { type: FIELD_TYPES[field.type] }
-            : {}),
-        },
-      ])
-    );
     // Saved settings for a field add to its declared name and type.
     const fieldSettings: NonNullable<SavedDataStructure["fieldSettings"]> = {
       ...declared,
@@ -220,30 +245,39 @@ export const ExplorEdaProject = forwardRef<
       fieldSettings[id] = { ...declared[id], ...saved };
     }
     return { ...decoded, fieldSettings };
-  }, [settings, idsByKey, evaluation.fields]);
+  }, [settings, idsByKey, declared]);
 
   useImperativeHandle(
     ref,
     () => ({
       getSettings: () => {
-        if (settings && !settingsCompatible) return settings;
+        if (settings && !settingsCompatible) {
+          return settings;
+        }
         if (!chartRef.current) {
-          if (settings) return settings;
+          if (settings) {
+            return settings;
+          }
           throw new Error("Workspace settings are not ready.");
         }
-        return encodeAnalysisRowKeys(chartRef.current.getSettings(), keysById);
+        return reported(chartRef.current.getSettings());
       },
       exportChartPng: (chartId, options) =>
         chartRef.current
           ? chartRef.current.exportChartPng(chartId, options)
           : Promise.reject(new Error("Chart is not rendered.")),
     }),
-    [keysById, settings, settingsCompatible]
+    // reported reads keysById and declared, listed here.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [keysById, declared, settings, settingsCompatible]
   );
 
   const update = (nextProject: AnalysisProject, nextView: AnalysisView) => {
-    if (readOnly) setPreviewView(nextView);
-    else onProjectChange({ project: nextProject, view: nextView });
+    if (readOnly) {
+      setPreviewView(nextView);
+    } else {
+      onProjectChange({ project: nextProject, view: nextView });
+    }
   };
   const panel = (id: "schema" | "query") => ({
     open: openPanel === id,
@@ -312,11 +346,12 @@ export const ExplorEdaProject = forwardRef<
       onOpenQueryFlow: (rowKeys: string[]) => {
         setFocusRowKeys(rowKeys);
         setOpenPanel("query");
-        if (shownView.inspection?.stepId)
+        if (shownView.inspection?.stepId) {
           update(project, {
             ...shownView,
             inspection: { ...shownView.inspection, stepId: undefined },
           });
+        }
       },
     }),
     // `update` and `shownView` only matter when a trace opens the flow.
@@ -360,7 +395,7 @@ export const ExplorEdaProject = forwardRef<
           onStateChange={
             readOnly || !settingsCompatible
               ? undefined
-              : (next) => onStateChange?.(encodeAnalysisRowKeys(next, keysById))
+              : (next) => onStateChange?.(reported(next))
           }
           sidePanels={[...sidePanels, schemaPanel, queryPanel]}
           schema={{

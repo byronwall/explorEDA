@@ -34,3 +34,4 @@ export {
   parseJsonRows,
   parseTable,
 } from "./tables";
+export { analysisFileText, projectFileText } from "./writeFolder";
