@@ -4,11 +4,11 @@
     "title": "Local CLI projects with npx exploreda",
     "slug": "local-cli-projects",
     "scale": "capability",
-    "current_phase": "plan",
+    "current_phase": "execution",
     "last_updated": "2026-10-12",
     "summary": "npx exploreda in a folder starts a local server and opens the app on that project; sources, joins, and analyses are DSL v2 text files.",
-    "status": "planned",
-    "next_action": "Start M1: analysis query/bind syntax, folder codec, ProjectFiles port, exploreda-dsl project, shop example."
+    "status": "active",
+    "next_action": "M2: read-only server and apps/app"
   },
   "artifacts": {
     "intent_brief": {
@@ -501,7 +501,7 @@
     "open_decisions": []
   },
   "implementation": {
-    "status": "not-started",
+    "status": "active",
     "repository_snapshot": {
       "root": "/Users/byronwall/Projects/explorEDA",
       "revision": "cf659d29",
@@ -594,8 +594,10 @@
         "proof": "Codec vitest with in-memory ProjectFiles; exploreda-dsl project on the shop example.",
         "valid_intermediate_state": "Codec and checker exist; no server or app.",
         "rollback": "Remove the subcommand; library code unused.",
-        "status": "planned",
-        "evidence": []
+        "status": "completed",
+        "evidence": [
+          "exploreda-dsl project examples/shop: ok, 2 analyses, 3 views; src/lib/project/folder.test.ts; src/node/projectFiles.test.ts (contract suite on memory + Node fs)"
+        ]
       },
       {
         "id": "m2",
@@ -699,6 +701,12 @@
       "event": "planned",
       "summary": "Six-milestone plan: codec → read-only server+app → autosave/watch → first run → demo folder access → launch.",
       "status": "planned"
+    },
+    {
+      "date": "2026-10-12",
+      "event": "execution started",
+      "summary": "M1 complete: folder codec, ProjectFiles port and adapters, analysis query/bind syntax, exploreda-dsl project, shop example. Server becomes a file server; codec runs in the browser.",
+      "status": "active"
     }
   ],
   "closure": null,

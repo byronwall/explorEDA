@@ -10,7 +10,7 @@ last_updated: "2026-10-12"
 
 ## Plan at a glance
 
-Build from the file format outward. The project text proof ([#368](https://github.com/byronwall/explorEDA/pull/368)) settled the hardest grammar question. The next risk is whether a whole folder (project text, analysis files, and data) loads into the existing `ExplorEdaProject` workspace and rebuilds every view. That can be proven with no server and no browser, as a pure folder codec over an in-memory file store, checked by a command. Only then does the server appear, and it opens folders read-only before it writes anything. Writing, watching, and first-run creation come after reading is trusted. The demo's folder access and the launch packaging come last, because they reuse the same codec through a different file store.
+Build from the file format outward. The project text proof ([#368](https://github.com/byronwall/explorEDA/pull/368)) settled the hardest grammar question. The next risk is whether a whole folder (project text, analysis files, and data) loads into the existing `ExplorEdaProject` workspace and rebuilds every view. That can be proven with no server and no browser, as a pure folder codec over an in-memory file store, checked by a command. Only then does the server appear: a small, guarded file server, with the codec running in the browser. It opens folders read-only before it writes anything. Writing, watching, and first-run creation come after reading is trusted. The demo's folder access and the launch packaging come last, because they reuse the same codec through a different file store.
 
 The main pushback is on scope. The standalone app (`apps/app`) is a thin shell around `ExplorEdaProject`. It has a file list, tabs for views, and autosave. It is not a port of the demo's saved-session, history, and import machinery. The component already owns the workspace, Schema, and Query panels. The CLI adds a home for them on disk.
 
@@ -68,7 +68,7 @@ This is the first user-visible slice. It introduces the server and the app shell
 - **Change — `apps/app`:** a Vite React app that hosts `ExplorEdaProject`. It shows the project's data files and analyses in a side list, one tab per view, and source problems inline. It talks only to an `AppStore` interface whose HTTP adapter calls the server.
 - **Change — local server in `src/server/`:** built on `node:http`, with no new runtime dependencies.
   - Binds to `127.0.0.1` on a free port and serves the built app.
-  - Exposes `GET /api/project` (the codec's output, minus rows) and `GET /api/files/<path>` (raw data, so the browser parses it).
+  - Exposes the folder as files: `GET /api/files` (the list) and `GET /api/files/<path>` (one file). The browser runs the same folder codec over an HTTP `ProjectFiles` adapter, so the server carries no chart code. (Changed in M1: the codec needs the chart compiler, which loads React.)
   - Every API request needs the run's random token, passed in the opened URL and kept in session storage, and a `Host` of `127.0.0.1` or `localhost`.
 - **Change — the `exploreda` bin:** a third tsup entry, Node-only, bundling the server; the built `apps/app` is copied to `dist/app/`. `exploreda [folder]` starts the server and opens the browser; `--port`, `--no-open`, and `--example` are included.
 - **Spike — package size and startup** (see Open decisions).

@@ -97,7 +97,8 @@ function fieldLine(field: FieldDefinition): string {
 }
 
 function sourceLines(source: SourceDefinition, path?: string): string[] {
-  const name = source.name === labelFromId(source.id) ? [] : [text(source.name)];
+  const name =
+    source.name === labelFromId(source.id) ? [] : [text(source.name)];
   const glyph =
     source.glyph === source.name.charAt(0).toUpperCase()
       ? []
@@ -107,7 +108,7 @@ function sourceLines(source: SourceDefinition, path?: string): string[] {
     [
       ...name,
       ...glyph,
-      `key=${encodeScalar(source.entityKey)}`,
+      ...(source.entityKey ? [`key=${encodeScalar(source.entityKey)}`] : []),
       ...(path === undefined ? [] : [`path=${encodeScalar(path)}`]),
     ],
     source.fields.map(fieldLine)
@@ -348,7 +349,9 @@ function checkPairs(
       report(
         pair.span,
         `${pair.key}= is not a ${declaration.keyword} setting, so it was ignored.`,
-        allowed.length ? `Use ${allowed.map((key) => `${key}=`).join(", ")}.` : undefined,
+        allowed.length
+          ? `Use ${allowed.map((key) => `${key}=`).join(", ")}.`
+          : undefined,
         "warning"
       );
     }
@@ -373,7 +376,9 @@ function compileSource(
 ): SourceDefinition | undefined {
   const id = idOf(declaration);
   const entityKey = single(declaration, "key");
-  if (!id || !entityKey) {
+  // A source read from a file can leave its key to the data, as it can
+  // its fields.
+  if (!id || (!entityKey && single(declaration, "path") === undefined)) {
     report(
       declaration.span,
       "A source needs a name and a key.",
@@ -409,7 +414,7 @@ function compileSource(
     id,
     name,
     glyph: single(declaration, "glyph") ?? name.charAt(0).toUpperCase(),
-    entityKey,
+    entityKey: entityKey ?? "",
     fields,
   };
 }
@@ -477,7 +482,10 @@ function filterParts(declaration: DslDeclaration) {
     })),
     ...declaration.pairs
       .filter((pair) => pair.key !== "from" && pair.key !== "id")
-      .map((pair) => ({ span: pair.span, raw: `${pair.key}=${pair.value.raw}` })),
+      .map((pair) => ({
+        span: pair.span,
+        raw: `${pair.key}=${pair.value.raw}`,
+      })),
   ].sort((a, b) => a.span.line - b.span.line || a.span.column - b.span.column);
   const joined = tokens.map((token) => token.raw).join(" ");
   const nullMatch = /^("(?:[^"\\]|\\.)*"|[^\s"]+)\s+(is-null|not-null)$/.exec(
@@ -496,7 +504,9 @@ function filterParts(declaration: DslDeclaration) {
 function unquoted(raw: string) {
   const parsed = parseDocument(`x ${raw}`).declarations[0];
   const item = parsed?.positional[0]?.value.items[0];
-  return item ? { text: item.text, quoted: item.quoted } : { text: raw, quoted: false };
+  return item
+    ? { text: item.text, quoted: item.quoted }
+    : { text: raw, quoted: false };
 }
 
 function compileStep(
@@ -516,7 +526,10 @@ function compileStep(
       checkPairs(declaration, [], report);
       const sourceId = parts[0]?.text;
       if (!sourceId) {
-        return fail("A source step names a source.", "Write it as source orders.");
+        return fail(
+          "A source step names a source.",
+          "Write it as source orders."
+        );
       }
       return { id: explicitId ?? sourceId, kind: "source", sourceId };
     }
@@ -547,7 +560,11 @@ function compileStep(
       if (!expand) {
         return { ...base, kind: "lookup" };
       }
-      const keepUnmatched = flagValue(declaration, "keep-unmatched", parts.slice(1));
+      const keepUnmatched = flagValue(
+        declaration,
+        "keep-unmatched",
+        parts.slice(1)
+      );
       return {
         ...base,
         kind: "expand",
@@ -714,7 +731,10 @@ function compileParameter(
       : {
           options:
             dot > 0
-              ? { sourceId: pick.slice(0, dot), labelFieldId: pick.slice(dot + 1) }
+              ? {
+                  sourceId: pick.slice(0, dot),
+                  labelFieldId: pick.slice(dot + 1),
+                }
               : { sourceId: pick },
         }),
   };
@@ -729,7 +749,8 @@ function checkReferences(
   const sources = new Map(project.sources.map((source) => [source.id, source]));
   const relationships = new Set(project.relationships.map((item) => item.id));
   const parameters = new Set(project.parameters?.map((item) => item.id));
-  const where = (item: object) => spans.get(item) ?? { line: 1, column: 1, length: 1 };
+  const where = (item: object) =>
+    spans.get(item) ?? { line: 1, column: 1, length: 1 };
   const nearest = (options: Iterable<string>) => {
     const list = [...options];
     return list.length ? `Use ${list.join(", ")}.` : undefined;
@@ -738,7 +759,11 @@ function checkReferences(
     for (const end of [relationship.from, relationship.to]) {
       const source = sources.get(end.sourceId);
       if (!source) {
-        report(where(relationship), `No source is named ${end.sourceId}.`, nearest(sources.keys()));
+        report(
+          where(relationship),
+          `No source is named ${end.sourceId}.`,
+          nearest(sources.keys())
+        );
       } else if (!source.fields.some((field) => field.id === end.fieldId)) {
         report(
           where(relationship),
@@ -753,45 +778,94 @@ function checkReferences(
     const ids = new Set<string>();
     for (const step of query.steps) {
       if (ids.has(step.id)) {
-        report(where(step), `Two steps in ${query.id} are named ${step.id}.`, "Give one of them its own @name.");
+        report(
+          where(step),
+          `Two steps in ${query.id} are named ${step.id}.`,
+          "Give one of them its own @name."
+        );
       }
       if ("inputStepId" in step && !ids.has(step.inputStepId)) {
-        report(where(step), `${step.id} reads ${step.inputStepId || "nothing"}, which comes later or doesn't exist.`, "Name an earlier step with from=.");
+        report(
+          where(step),
+          `${step.id} reads ${step.inputStepId || "nothing"}, which comes later or doesn't exist.`,
+          "Name an earlier step with from=."
+        );
       }
       ids.add(step.id);
       if (step.kind === "source" && !sources.has(step.sourceId)) {
-        report(where(step), `No source is named ${step.sourceId}.`, nearest(sources.keys()));
+        report(
+          where(step),
+          `No source is named ${step.sourceId}.`,
+          nearest(sources.keys())
+        );
       }
-      if ((step.kind === "lookup" || step.kind === "expand") && !relationships.has(step.relationshipId)) {
-        report(where(step), `No relationship is named ${step.relationshipId}.`, nearest(relationships));
+      if (
+        (step.kind === "lookup" || step.kind === "expand") &&
+        !relationships.has(step.relationshipId)
+      ) {
+        report(
+          where(step),
+          `No relationship is named ${step.relationshipId}.`,
+          nearest(relationships)
+        );
       }
-      if (step.kind === "filter" && step.parameterId !== undefined && !parameters.has(step.parameterId)) {
-        report(where(step), `No parameter is named ${step.parameterId}.`, nearest(parameters));
+      if (
+        step.kind === "filter" &&
+        step.parameterId !== undefined &&
+        !parameters.has(step.parameterId)
+      ) {
+        report(
+          where(step),
+          `No parameter is named ${step.parameterId}.`,
+          nearest(parameters)
+        );
       }
     }
     if (!ids.has(query.outputStepId)) {
-      report(where(query), `${query.id} has no step named ${query.outputStepId}.`, nearest(ids));
+      report(
+        where(query),
+        `${query.id} has no step named ${query.outputStepId}.`,
+        nearest(ids)
+      );
     }
   }
   for (const parameter of project.parameters ?? []) {
     if (parameter.options && !sources.has(parameter.options.sourceId)) {
-      report(where(parameter), `No source is named ${parameter.options.sourceId}.`, nearest(sources.keys()));
+      report(
+        where(parameter),
+        `No source is named ${parameter.options.sourceId}.`,
+        nearest(sources.keys())
+      );
     }
   }
 }
 
 /** Reads project text into a project, its source paths, and any problems. */
-export function compileProjectText(textValue: string): ProjectTextResult {
+export function compileProjectText(
+  textValue: string,
+  {
+    fragment = false,
+  }: {
+    /**
+     * Reads only the `source … path=` lines of other text, such as an
+     * analysis file that brings its own data.
+     */
+    fragment?: boolean;
+  } = {}
+): ProjectTextResult {
   const parsed = parseDocument(textValue);
-  const diagnostics: DslDiagnostic[] = parsed.problems.map((problem) => ({
-    severity: "error",
-    effect: "setting-ignored",
-    message: problem.message,
-    line: problem.span.line,
-    column: problem.span.column,
-    length: problem.span.length,
-    ...(problem.suggestion ? { suggestion: problem.suggestion } : {}),
-  }));
+  // The text's own reader reports syntax problems in a fragment.
+  const diagnostics: DslDiagnostic[] = (fragment ? [] : parsed.problems).map(
+    (problem) => ({
+      severity: "error",
+      effect: "setting-ignored",
+      message: problem.message,
+      line: problem.span.line,
+      column: problem.span.column,
+      length: problem.span.length,
+      ...(problem.suggestion ? { suggestion: problem.suggestion } : {}),
+    })
+  );
   const report: Report = (span, message, suggestion, severity = "error") => {
     diagnostics.push({
       severity,
@@ -818,13 +892,22 @@ export function compileProjectText(textValue: string): ProjectTextResult {
     }
     return item;
   };
-  for (const declaration of parsed.declarations) {
+  const declarations = fragment
+    ? parsed.declarations.filter(
+        (item) =>
+          item.keyword === "source" && single(item, "path") !== undefined
+      )
+    : parsed.declarations;
+  for (const declaration of declarations) {
     switch (declaration.keyword) {
       case "project":
         project.id = idOf(declaration) ?? "";
         break;
       case "source": {
-        const source = keep(compileSource(declaration, report), declaration.span);
+        const source = keep(
+          compileSource(declaration, report),
+          declaration.span
+        );
         if (source) {
           project.sources.push(source);
           const path = single(declaration, "path");
@@ -835,7 +918,10 @@ export function compileProjectText(textValue: string): ProjectTextResult {
         break;
       }
       case "relate": {
-        const relationship = keep(compileRelationship(declaration, report), declaration.span);
+        const relationship = keep(
+          compileRelationship(declaration, report),
+          declaration.span
+        );
         if (relationship) {
           project.relationships.push(relationship);
         }
@@ -845,14 +931,20 @@ export function compileProjectText(textValue: string): ProjectTextResult {
         const query = keep(compileQuery(declaration, report), declaration.span);
         if (query) {
           query.steps.forEach((step, index) =>
-            spans.set(step, declaration.children[index]?.span ?? declaration.span)
+            spans.set(
+              step,
+              declaration.children[index]?.span ?? declaration.span
+            )
           );
           project.queries.push(query);
         }
         break;
       }
       case "param": {
-        const parameter = keep(compileParameter(declaration, report), declaration.span);
+        const parameter = keep(
+          compileParameter(declaration, report),
+          declaration.span
+        );
         if (parameter) {
           (project.parameters ??= []).push(parameter);
         }
@@ -866,8 +958,12 @@ export function compileProjectText(textValue: string): ProjectTextResult {
         );
     }
   }
-  if (!project.id) {
-    report({ line: 1, column: 1, length: 1 }, "Project text starts with project @name.", "Add project @my-project as the first line.");
+  if (!project.id && !fragment) {
+    report(
+      { line: 1, column: 1, length: 1 },
+      "Project text starts with project @name.",
+      "Add project @my-project as the first line."
+    );
   }
   checkReferences(project, spans, report);
   return { project, paths, diagnostics };
