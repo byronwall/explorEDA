@@ -5,11 +5,23 @@ import type {
 } from "@/types/AnalysisProject";
 
 /** A file format that `readTableFile` reads. */
-export type TableFormat = "csv" | "tsv" | "json" | "jsonl";
+export type TableFormat = "csv" | "tsv" | "json" | "jsonl" | "xlsx";
+
+/** A workbook sheet that holds a table. */
+export interface WorkbookSheet {
+  name: string;
+  /** Data rows below the header row. */
+  rows: number;
+  /** The widest row's filled cells. */
+  columns: number;
+}
 
 /** One table read from a file: every row, and each field's declared type. */
 export interface TableFile {
-  /** The file name without its extension, as a source or view name. */
+  /**
+   * A name for the table, as a source or view name: the file name without
+   * its extension, or the sheet's name when a workbook holds several.
+   */
   name: string;
   format: TableFormat;
   rows: AnalysisSourceRow[];
@@ -23,11 +35,20 @@ export interface TableFile {
   fieldTypes: Record<string, DeclaredFieldType>;
   /** Changes made while reading, such as a renamed duplicate header. */
   notes: string[];
+  /** For a workbook, the sheet that was read. */
+  sheet?: string;
+  /**
+   * For a workbook, every sheet with a table, in workbook order. When there
+   * are several, read another with `readTableFile(file, { sheet })`.
+   */
+  sheets?: WorkbookSheet[];
 }
 
 export interface ReadTableOptions {
   /** Read as this format instead of the one the file name suggests. */
   format?: TableFormat;
+  /** For a workbook, the sheet to read. The sheet with the largest table otherwise. */
+  sheet?: string;
   /** Stops the read; it rejects with the signal's reason. */
   signal?: AbortSignal;
 }

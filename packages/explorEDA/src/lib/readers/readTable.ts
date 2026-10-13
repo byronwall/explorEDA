@@ -1,6 +1,7 @@
 import { readDelimited } from "./delimited";
-import { tableFormatList, tableFormatOf } from "./formats";
+import { BINARY_FORMATS, tableFormatList, tableFormatOf } from "./formats";
 import { readJson, readJsonLines } from "./json";
+import { readXlsx } from "./xlsx";
 import {
   TableReadError,
   type ReadTableOptions,
@@ -25,6 +26,27 @@ function blobText(blob: Blob): Promise<string> {
   });
 }
 
+/** A blob's bytes. FileReader covers environments without `Blob.arrayBuffer()`. */
+function blobBytes(blob: Blob): Promise<ArrayBuffer> {
+  if (typeof blob.arrayBuffer === "function") return blob.arrayBuffer();
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as ArrayBuffer);
+    reader.onerror = () =>
+      reject(reader.error ?? new TableReadError("The file could not be read."));
+    reader.readAsArrayBuffer(blob);
+  });
+}
+
+function withFieldTypes<T extends { fields: TableFile["fields"] }>(table: T) {
+  return {
+    ...table,
+    fieldTypes: Object.fromEntries(
+      table.fields.map((field) => [field.id, field.type ?? "unknown"])
+    ),
+  };
+}
+
 function throwIfAborted(signal: AbortSignal | undefined) {
   if (signal?.aborted) {
     throw (
@@ -43,7 +65,7 @@ function formatFor(fileName: string, options: ReadTableOptions): TableFormat {
   return format;
 }
 
-function decode(text: string, format: TableFormat) {
+function decode(text: string, format: Exclude<TableFormat, "xlsx">) {
   switch (format) {
     case "csv":
       return readDelimited(text, "auto");
@@ -57,13 +79,12 @@ function decode(text: string, format: TableFormat) {
 }
 
 function readText(text: string, format: TableFormat) {
-  const table = decode(text, format);
-  return {
-    ...table,
-    fieldTypes: Object.fromEntries(
-      table.fields.map((field) => [field.id, field.type ?? "unknown"])
-    ),
-  };
+  if (BINARY_FORMATS.has(format)) {
+    throw new TableReadError(
+      `${format.toUpperCase()} files are binary. Read them with readTableFile.`
+    );
+  }
+  return withFieldTypes(decode(text, format as Exclude<TableFormat, "xlsx">));
 }
 
 /**
@@ -90,6 +111,15 @@ export async function readTableFile(
 ): Promise<TableFile> {
   const format = formatFor(file.name, options);
   throwIfAborted(options.signal);
+  if (format === "xlsx") {
+    const bytes = await blobBytes(file);
+    throwIfAborted(options.signal);
+    const table = await readXlsx(bytes, options.sheet);
+    throwIfAborted(options.signal);
+    // A sheet names its table when the workbook holds several.
+    const name = table.sheets.length > 1 ? table.sheet : baseName(file.name);
+    return { name, format, ...withFieldTypes(table) };
+  }
   const text = await blobText(file);
   throwIfAborted(options.signal);
   return { name: baseName(file.name), format, ...readText(text, format) };

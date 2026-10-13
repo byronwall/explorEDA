@@ -7,6 +7,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { FileUp } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { useSheetChoice } from "../SheetPicker";
 import { readImportFile } from "../tableImport";
 
 const carriesFiles = (event: DragEvent) =>
@@ -28,8 +29,13 @@ export function PageFileDrop({
   const depth = useRef(0);
   const onProjectImportRef = useRef(onProjectImport);
   onProjectImportRef.current = onProjectImport;
-  const onImportRef = useRef(onImport);
-  onImportRef.current = onImport;
+  const sheets = useSheetChoice(
+    (table) => onImport(table),
+    (message) => setError(message),
+    true
+  );
+  const offerRef = useRef(sheets.offer);
+  offerRef.current = sheets.offer;
 
   useEffect(() => {
     const reset = () => {
@@ -94,7 +100,7 @@ export function PageFileDrop({
           onProjectImportRef.current(imported.project);
           return;
         }
-        onImportRef.current(imported.table);
+        offerRef.current(file, imported.table);
       })().catch((reason: unknown) => {
         const message =
           reason instanceof Error ? reason.message : "Unknown error";
@@ -135,6 +141,7 @@ export function PageFileDrop({
           </div>
         </div>
       )}
+      {sheets.picker}
       {error && (
         <div
           role="alert"

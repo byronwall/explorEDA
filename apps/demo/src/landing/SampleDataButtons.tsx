@@ -1,6 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { readTableText, type TableFile } from "exploreda/readers";
+import {
+  readTableFile,
+  readTableText,
+  tableFormatOf,
+  type TableFile,
+} from "exploreda/readers";
+import { useSheetChoice } from "../SheetPicker";
 
 const samples = [
   {
@@ -33,6 +39,12 @@ const samples = [
     detail: "300 rows, JSON Lines",
     url: "/datasets/app-events.ndjson",
   },
+  {
+    id: "sales",
+    label: "Regional sales",
+    detail: "3 sheets, Excel",
+    url: "/datasets/regional-sales.xlsx",
+  },
 ];
 
 /** Loads a bundled file through the same reader as a user's own import. */
@@ -43,6 +55,7 @@ export function SampleDataButtons({
 }) {
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const sheets = useSheetChoice(onImport, setError);
 
   const load = async (sample: (typeof samples)[number]) => {
     setLoading(sample.id);
@@ -52,7 +65,13 @@ export function SampleDataButtons({
       if (!response.ok) {
         throw new Error(response.statusText);
       }
-      onImport(readTableText(await response.text(), { name: sample.url }));
+      const name = sample.url.split("/").pop()!;
+      if (tableFormatOf(name) === "xlsx") {
+        const file = new File([await response.blob()], name);
+        sheets.offer(file, await readTableFile(file));
+      } else {
+        onImport(readTableText(await response.text(), { name }));
+      }
     } catch {
       setError(`Could not load ${sample.label}. Try again.`);
     } finally {
@@ -81,6 +100,7 @@ export function SampleDataButtons({
           </Button>
         ))}
       </div>
+      {sheets.picker && <div className="mt-3">{sheets.picker}</div>}
       {error && (
         <p role="alert" className="mt-2 text-sm text-destructive">
           {error}

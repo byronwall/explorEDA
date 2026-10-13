@@ -1,5 +1,5 @@
-// Local file readers: CSV, TSV, and JSON files into rows and declared field
-// types. No React; safe to use in workers, scripts, and servers.
+// Local file readers: CSV, TSV, JSON, JSON Lines, and Excel files into rows
+// and declared field types. No React; safe to use in workers, scripts, and servers.
 export { readTableFile, readTableText } from "./lib/readers/readTable";
 export {
   TABLE_FORMATS,
@@ -14,5 +14,6 @@ export {
   type ReadTableOptions,
   type TableFile,
   type TableFormat,
+  type WorkbookSheet,
 } from "./lib/readers/types";
 export type { DeclaredFieldType } from "./lib/declaredFieldTypes";

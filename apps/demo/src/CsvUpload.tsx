@@ -6,6 +6,7 @@ import {
 } from "exploreda/readers";
 import { Button } from "@/components/ui/button";
 
+import { useSheetChoice } from "./SheetPicker";
 import { readImportFile } from "./tableImport";
 import { Plus, Upload } from "lucide-react";
 import { useCallback, useState } from "react";
@@ -25,6 +26,10 @@ export function CsvUpload({
 }: CsvUploadProps) {
   const [error, setError] = useState<string | null>(null);
   const [failedFile, setFailedFile] = useState<File | null>(null);
+  const sheets = useSheetChoice(
+    (table) => onImport?.(table),
+    (message) => setError(message)
+  );
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
       const file = acceptedFiles[0];
@@ -46,7 +51,7 @@ export function CsvUpload({
           onProjectImport(imported.project);
           return;
         }
-        onImport?.(imported.table);
+        sheets.offer(file, imported.table);
       } catch (error) {
         const message =
           error instanceof Error ? error.message : "Unknown error";
@@ -55,7 +60,7 @@ export function CsvUpload({
         toast.error(`Could not read ${file.name}`);
       }
     },
-    [onImport, onProjectImport]
+    [onProjectImport, sheets.offer]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -90,52 +95,56 @@ export function CsvUpload({
   }
 
   return (
-    <div
-      {...getRootProps({
-        role: "button",
-        tabIndex: 0,
-        "aria-label": `Import ${tableFormatList()} data`,
-        "aria-describedby": "file-upload-help",
-      })}
-      data-file-dropzone=""
-      className="cursor-pointer rounded-lg border-2 border-dashed border-input p-5 text-center outline-none transition-colors hover:border-ring focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-    >
-      <input
-        {...getInputProps({
-          "aria-label": `Choose a ${tableFormatList()} file`,
+    <>
+      <div
+        {...getRootProps({
+          role: "button",
+          tabIndex: 0,
+          "aria-label": `Import ${tableFormatList()} data`,
+          "aria-describedby": "file-upload-help",
         })}
-      />
-      <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
-      {isDragActive ? (
-        <p>Drop the file here…</p>
-      ) : (
-        <p>
-          Drag and drop a {tableFormatList()} file here, or click to select one
+        data-file-dropzone=""
+        className="cursor-pointer rounded-lg border-2 border-dashed border-input p-5 text-center outline-none transition-colors hover:border-ring focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+      >
+        <input
+          {...getInputProps({
+            "aria-label": `Choose a ${tableFormatList()} file`,
+          })}
+        />
+        <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
+        {isDragActive ? (
+          <p>Drop the file here…</p>
+        ) : (
+          <p>
+            Drag and drop a {tableFormatList()} file here, or click to select
+            one
+          </p>
+        )}
+        <p id="file-upload-help" className="mt-2 text-sm text-muted-foreground">
+          Use a header row for delimited text and Excel sheets, and objects for
+          JSON. Values keep the form the file gives them.
         </p>
-      )}
-      <p id="file-upload-help" className="mt-2 text-sm text-muted-foreground">
-        Use a header row for delimited text, objects for JSON, and one object
-        per line for JSON Lines. Values keep the form the file gives them.
-      </p>
-      {error && (
-        <div role="alert" className="mt-3 text-sm text-destructive">
-          <p>{error}</p>
-          {failedFile && (
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              className="mt-2"
-              onClick={(event) => {
-                event.stopPropagation();
-                void onDrop([failedFile]);
-              }}
-            >
-              Try again
-            </Button>
-          )}
-        </div>
-      )}
-    </div>
+        {error && (
+          <div role="alert" className="mt-3 text-sm text-destructive">
+            <p>{error}</p>
+            {failedFile && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="mt-2"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  void onDrop([failedFile]);
+                }}
+              >
+                Try again
+              </Button>
+            )}
+          </div>
+        )}
+      </div>
+      {sheets.picker && <div className="mt-3">{sheets.picker}</div>}
+    </>
   );
 }

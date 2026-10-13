@@ -44,15 +44,18 @@ export function fieldNamesFromHeader(
   });
 }
 
+/** A cell as a reader found it: text, or a value the file already typed. */
+export type Cell = string | number | boolean | null;
+
 /**
- * Rows and field types for text cells. Each column's type comes from every
- * value in it, by the same rule the workspace uses, so a reload reads the
- * same types. Number and boolean columns convert; every other value keeps its
- * text. Blank cells are missing.
+ * Rows and field types for cells. Each column's type comes from every value
+ * in it, by the same rule the workspace uses, so a reload reads the same
+ * types. Number and boolean columns convert; text and date columns keep text,
+ * so a number in a text column becomes its digits. Blank cells are missing.
  */
 export function typeTextColumns(
   names: readonly string[],
-  cells: ReadonlyArray<ReadonlyArray<string | null>>
+  cells: ReadonlyArray<ReadonlyArray<Cell>>
 ): { rows: AnalysisSourceRow[]; fields: FieldDefinition[] } {
   const types = names.map((_, column) => {
     const values: datum[] = cells.map((row) => row[column] ?? null);
@@ -61,15 +64,16 @@ export function typeTextColumns(
   const rows = cells.map((row) => {
     const out: AnalysisSourceRow = {};
     names.forEach((name, column) => {
-      const text = row[column] ?? null;
-      if (text === null || isMissingValue(text)) {
+      const value = row[column] ?? null;
+      if (value === null || isMissingValue(value)) {
         out[name] = null;
       } else if (types[column] === "number") {
-        out[name] = Number(text.trim());
+        out[name] =
+          typeof value === "number" ? value : Number(String(value).trim());
       } else if (types[column] === "boolean") {
-        out[name] = parseBoolean(text) ?? null;
+        out[name] = parseBoolean(value) ?? null;
       } else {
-        out[name] = text;
+        out[name] = typeof value === "string" ? value : String(value);
       }
     });
     return out;

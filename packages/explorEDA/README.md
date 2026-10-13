@@ -153,7 +153,8 @@ React and ReactDOM are peer dependencies.
 `exploreda/readers` reads a local file into rows and field types. It reads
 CSV (comma, semicolon, tab, or pipe delimited, also as `.txt`), TSV (`.tsv`
 and `.tab`), JSON (an object, an array of objects, or an object whose one
-array holds the records), and JSON Lines (`.jsonl` and `.ndjson`).
+array holds the records), JSON Lines (`.jsonl` and `.ndjson`), and Excel
+(`.xlsx`). The Excel reader loads only when a workbook is read.
 
 ```tsx
 import { ExplorEda } from "exploreda";
@@ -173,6 +174,12 @@ is typed from every row, and a field that first appears late is still found.
 In JSON, integer literals past 2^53 keep their digits as text, nested objects
 become dotted fields such as `user.plan`, and arrays stay together as JSON
 text in one field.
+
+A workbook reads one sheet: the largest table, or the one `sheet` names.
+`table.sheets` lists every sheet with a table and its size, so your app can
+offer a choice and read another with `readTableFile(file, { sheet })`. A sheet
+starts at its header row, below title rows. Formulas read as the results the
+workbook saved and are never calculated; error cells read as missing.
 
 A file that can't be read rejects with a `TableReadError` that names the row,
 such as `Row 12 has 6 values, but the header names 5 fields.` `table.notes`

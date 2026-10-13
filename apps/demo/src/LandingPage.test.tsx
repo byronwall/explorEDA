@@ -11,6 +11,7 @@ import {
   waitFor,
   within,
 } from "@testing-library/react";
+import { readFileSync } from "node:fs";
 import { useState } from "react";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -379,6 +380,37 @@ describe("LandingPage routing", () => {
     });
   });
 
+  it("asks which sheet to open from a dropped workbook", async () => {
+    const router = createMemoryRouter(
+      [{ path: "/*", element: <LandingPage /> }],
+      { initialEntries: ["/"] }
+    );
+    render(<RouterProvider router={router} />);
+
+    const bytes = readFileSync(
+      "../../packages/explorEDA/src/lib/readers/fixtures/orders.xlsx"
+    );
+    const file = new File([bytes], "orders.xlsx");
+    fireEvent.drop(window, {
+      dataTransfer: { types: ["Files"], files: [file] },
+    });
+    const picker = await screen.findByRole("group", {
+      name: "Choose a sheet from orders.xlsx",
+    });
+    expect(
+      within(picker).getByRole("button", { name: /Orders/ })
+    ).toHaveTextContent("Largest");
+    expect(screen.queryByTestId("workspace")).toBeNull();
+    fireEvent.click(within(picker).getByRole("button", { name: /Returns/ }));
+    const workspace = await screen.findByTestId("workspace");
+    expect(workspace).toHaveAttribute("data-rows", "10");
+    expect(JSON.parse(workspace.dataset.firstRow!)).toEqual({
+      order_id: "00003",
+      reason: "late",
+      refund: 4.5,
+    });
+  });
+
   it("explains when a dropped file is not a readable format", async () => {
     const router = createMemoryRouter(
       [{ path: "/*", element: <LandingPage /> }],
@@ -393,7 +425,7 @@ describe("LandingPage routing", () => {
       dataTransfer: { types: ["Files"], files: [file] },
     });
     expect(await screen.findByRole("alert")).toHaveTextContent(
-      "slides.pdf is not a CSV, TSV, JSON, or JSON Lines file."
+      "slides.pdf is not a CSV, TSV, JSON, JSON Lines, or Excel file."
     );
     expect(screen.queryByTestId("workspace")).toBeNull();
   });

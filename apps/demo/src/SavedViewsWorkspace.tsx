@@ -33,7 +33,12 @@ import {
   stringifyAnalysisProject,
   type AnalysisProjectFile,
 } from "exploreda/analysis";
-import { tableFileAccept, type DeclaredFieldType } from "exploreda/readers";
+import {
+  tableFileAccept,
+  type DeclaredFieldType,
+  type TableFile,
+} from "exploreda/readers";
+import { useSheetChoice } from "./SheetPicker";
 import { fieldsFromTypes, readImportFile } from "./tableImport";
 import { HistoryTimeline } from "./HistoryTimeline";
 import {
@@ -390,12 +395,8 @@ export function SavedViewsWorkspace({
   // Add source: pick a data file, then add it to the project, or turn this
   // single table into a project that keeps every tab's charts.
   const sourceInputRef = useRef<HTMLInputElement>(null);
-  const addSourceFile = async (file: File) => {
-    const imported = await readImportFile(file);
-    if (imported.kind === "project") {
-      throw new Error("open project files from the start page");
-    }
-    const { rows, fields, name, notes } = imported.table;
+  const addTable = (table: TableFile) => {
+    const { rows, fields, name, notes } = table;
     if (session.project && session.tables) {
       const added = addSourceFromRows(
         session.project,
@@ -452,6 +453,18 @@ export function SavedViewsWorkspace({
       },
       added.sourceId
     );
+  };
+  const sourceSheets = useSheetChoice(
+    addTable,
+    (message) => setAnnouncement(`Could not add the file: ${message}`),
+    true
+  );
+  const addSourceFile = async (file: File) => {
+    const imported = await readImportFile(file);
+    if (imported.kind === "project") {
+      throw new Error("open project files from the start page");
+    }
+    sourceSheets.offer(file, imported.table);
   };
   const requestSource =
     showingPreview || (!session.project && !onPromoteToProject)
@@ -1345,6 +1358,7 @@ export function SavedViewsWorkspace({
           />
         )}
         {sourceInput}
+        {sourceSheets.picker}
       </div>
     </section>
   );

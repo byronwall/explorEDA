@@ -8,6 +8,7 @@ On the demo's home page, drop a file anywhere on the page, or use the upload box
 | TSV        | `.tsv`, `.tab`      | One table, split on tabs                                    |
 | JSON       | `.json`             | An object or array of objects. Nested objects become fields |
 | JSON Lines | `.jsonl`, `.ndjson` | One object per line                                         |
+| Excel      | `.xlsx`             | One sheet. With several sheets, you choose which to open    |
 
 <Terms
   items={[
@@ -17,7 +18,7 @@ On the demo's home page, drop a file anywhere on the page, or use the upload box
   ]}
 />
 
-A Google Sheets document opens the same way: choose **File → Download** in Sheets, pick CSV or TSV, and open the downloaded file. It opens as a snapshot and doesn't stay connected to the sheet.
+A Google Sheets document opens the same way: choose **File → Download** in Sheets, pick Microsoft Excel (.xlsx), CSV, or TSV, and open the downloaded file. The Excel download keeps every tab; CSV and TSV hold only the tab you were on. It opens as a snapshot and doesn't stay connected to the sheet.
 
 <Callout title="Your data stays in your browser.">
   Opening a file reads it on this page. Nothing is uploaded.
@@ -40,6 +41,10 @@ explorEDA keeps the values your file gives it. Each column's type comes from eve
     ["True and false", "A column of true and false values reads as yes or no."],
     ["Blank cells", "Blank cells are missing values, not zero or empty text."],
     [
+      "Excel sheets",
+      "A sheet opens at its header row, below any title rows. Formulas show the result the workbook saved; explorEDA doesn't recalculate them. Error cells, such as #DIV/0!, are missing values.",
+    ],
+    [
       "Nested JSON",
       "A nested object becomes dotted fields, such as user.plan. A list stays together as JSON text in one field, so each record is one row.",
     ],
@@ -50,7 +55,7 @@ A JSON file whose records sit under one key, such as `{ "data": [...] }`, opens 
 
 To read a column another way, open the field in **Fields** and change its type.
 
-To try it, open **Store inventory** under **No file handy?** on the home page, or download [store-inventory.tsv](/datasets/store-inventory.tsv). Its SKUs, UPCs, and ZIP codes keep their leading zeros, and its count times chart as dates. **App events** ([app-events.ndjson](/datasets/app-events.ndjson)) is JSON Lines with nested user fields and 19-digit session IDs.
+To try it, open **Store inventory** under **No file handy?** on the home page, or download [store-inventory.tsv](/datasets/store-inventory.tsv). Its SKUs, UPCs, and ZIP codes keep their leading zeros, and its count times chart as dates. **App events** ([app-events.ndjson](/datasets/app-events.ndjson)) is JSON Lines with nested user fields and 19-digit session IDs. **Regional sales** ([regional-sales.xlsx](/datasets/regional-sales.xlsx)) is a workbook with three sheets, so it asks which one to open.
 
 ## Start from an example
 

@@ -120,6 +120,7 @@
     "react-fast-compare": "^3.2.2",
     "react-grid-layout": "^1.5.0",
     "react-resizable": "^3.0.5",
+    "read-excel-file": "^9.3.12",
     "sonner": "^1.7.4",
     "tailwind-merge": "^3.0.1",
     "tailwindcss-animate": "^1.0.7",

@@ -34,7 +34,18 @@ export const TABLE_FORMATS: readonly TableFormatInfo[] = [
     extensions: [".jsonl", ".ndjson"],
     mimeTypes: ["application/jsonl", "application/x-ndjson"],
   },
+  {
+    format: "xlsx",
+    label: "Excel",
+    extensions: [".xlsx"],
+    mimeTypes: [
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    ],
+  },
 ];
+
+/** Formats read from bytes rather than text. */
+export const BINARY_FORMATS: ReadonlySet<TableFormat> = new Set(["xlsx"]);
 
 /** The format a file name's extension names, or undefined. */
 export function tableFormatOf(fileName: string): TableFormat | undefined {

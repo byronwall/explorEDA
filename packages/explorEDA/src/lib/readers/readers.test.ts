@@ -262,19 +262,99 @@ describe("JSON", () => {
   });
 });
 
+describe("Excel workbooks", () => {
+  it("reads the largest table, below its title rows", async () => {
+    const table = await readTableFile(await fixture("orders.xlsx"));
+    expect(table.format).toBe("xlsx");
+    expect(table.sheet).toBe("Orders");
+    expect(table.name).toBe("Orders");
+    expect(table.sheets).toEqual([
+      { name: "Cover", rows: 1, columns: 1 },
+      { name: "Orders", rows: 40, columns: 9 },
+      { name: "Returns", rows: 10, columns: 3 },
+      { name: "Lookup", rows: 1, columns: 2 },
+    ]);
+    expect(table.notes[0]).toBe(
+      'Started "Orders" at row 4, below 3 title rows.'
+    );
+    expect(table.rows).toHaveLength(40);
+    expect(typeOf(table)).toEqual({
+      order_id: "string",
+      customer: "string",
+      qty: "number",
+      unit_price: "number",
+      total: "number",
+      ordered: "date",
+      shipped_at: "date",
+      rush: "boolean",
+      ratio: "number",
+    });
+    expect(table.rows[0]).toEqual({
+      order_id: "00001",
+      customer: "Grace",
+      qty: 2,
+      unit_price: 2.75,
+      total: 5.5,
+      ordered: "2025-07-02",
+      shipped_at: "2025-08-02T10:30:00",
+      rush: false,
+      ratio: 2 / 2.75,
+    });
+    // Excel's day fractions round to the second.
+    expect(table.rows[1]!.shipped_at).toBe("2025-08-03T11:30:00");
+    expect(table.rows[4]!.shipped_at).toBeNull();
+    // A #DIV/0! result is a missing value.
+    expect(table.rows[6]!.ratio).toBeNull();
+  });
+
+  it("reads the sheet it is asked for", async () => {
+    const table = await readTableFile(await fixture("orders.xlsx"), {
+      sheet: "Returns",
+    });
+    expect(table.sheet).toBe("Returns");
+    expect(table.notes).toEqual([]);
+    expect(table.rows[0]).toEqual({
+      order_id: "00003",
+      reason: "late",
+      refund: 4.5,
+    });
+    await expect(
+      readTableFile(await fixture("orders.xlsx"), { sheet: "Nope" })
+    ).rejects.toThrow('The workbook has no sheet named "Nope".');
+  });
+
+  it("reads 1904 dates, text ZIP codes, and formulas with no stored result", async () => {
+    const table = await readTableFile(await fixture("mac-1904.xlsx"));
+    expect(table.name).toBe("mac-1904");
+    expect(table.rows[0]).toEqual({
+      zip: "02131",
+      count: 10,
+      when: "2024-01-01",
+      calc: null,
+    });
+    expect(typeOf(table).zip).toBe("string");
+  });
+
+  it("explains a file that is not a workbook", async () => {
+    await expect(readTableFile(new File(["a,b"], "fake.xlsx"))).rejects.toThrow(
+      "The file is not a readable Excel workbook"
+    );
+  });
+});
+
 describe("formats", () => {
   it("names formats by extension", () => {
     expect(tableFormatOf("Orders.TSV")).toBe("tsv");
     expect(tableFormatOf("notes.txt")).toBe("csv");
     expect(tableFormatOf("photo.png")).toBeUndefined();
     expect(tableFileAccept()).toContain(".tab");
-    expect(tableFormatList()).toBe("CSV, TSV, JSON, or JSON Lines");
+    expect(tableFormatList()).toBe("CSV, TSV, JSON, JSON Lines, or Excel");
     expect(tableFormatOf("events.NDJSON")).toBe("jsonl");
   });
 
   it("rejects an unknown extension with the readable formats", async () => {
     await expect(readTableFile(new File(["x"], "photo.png"))).rejects.toThrow(
-      "Choose a CSV, TSV, JSON, or JSON Lines file."
+      "Choose a CSV, TSV, JSON, JSON Lines, or Excel file."
     );
   });
 
