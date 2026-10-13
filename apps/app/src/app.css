@@ -360,3 +360,153 @@
   background: var(--accent);
   color: var(--foreground);
 }
+
+/* Team server: sign-in, the project list, and the bar above a project. */
+.team-auth {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  padding: 16px;
+}
+
+.team-card {
+  display: grid;
+  gap: 12px;
+  width: min(360px, 100%);
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--card);
+}
+
+.team-card h1 {
+  margin: 0 0 4px;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.team-card p {
+  margin: 0;
+}
+
+.team-field {
+  display: grid;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--muted-foreground);
+}
+
+.team-field input,
+.team-field select {
+  height: 32px;
+  min-width: 0;
+  padding: 0 8px;
+  border: 1px solid var(--input);
+  border-radius: 6px;
+  background: var(--background);
+  color: var(--foreground);
+  font: inherit;
+  font-size: 14px;
+}
+
+.team-field input:focus-visible,
+.team-field select:focus-visible,
+.team-project:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+
+.team-card .app-button {
+  height: 32px;
+}
+
+.team-error {
+  color: var(--destructive);
+  font-size: 13px;
+}
+
+.team-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.team-page > .team-bar {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--card);
+}
+
+.app-rail > .team-bar {
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.team-account {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  margin-right: auto;
+  line-height: 1.25;
+}
+
+.app-rail .team-account {
+  order: -1;
+  flex-basis: 100%;
+}
+
+.team-account-name {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.team-account .app-muted {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.team-main {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.team-heading {
+  margin: 0 0 12px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.team-projects {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.team-project {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.team-project:hover {
+  background: var(--accent);
+}
+
+.team-project-name {
+  font-weight: 500;
+}

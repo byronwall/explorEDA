@@ -51,12 +51,51 @@ function projectFolder(): Plugin {
   };
 }
 
+/**
+ * `EXPLOREDA_DATA=<path> pnpm --filter app dev` runs the team server's
+ * routes with sample accounts in memory and the sample project copied into
+ * that folder, so sign-in and roles can be tried without a build.
+ */
+function teamData(): Plugin {
+  return {
+    name: "exploreda-team-data",
+    apply: "serve",
+    async configureServer(server) {
+      const data = process.env.EXPLOREDA_DATA;
+      if (!data) {
+        return;
+      }
+      const { memoryAccountStore } = await import(
+        "../../packages/explorEDA/src/server/team/accounts"
+      );
+      const { seedDev } = await import(
+        "../../packages/explorEDA/src/server/team/seed"
+      );
+      const { createTeamHandler } = await import(
+        "../../packages/explorEDA/src/server/team/teamHandler"
+      );
+      const dataDir = path.resolve(data);
+      const store = memoryAccountStore();
+      await seedDev(
+        store,
+        dataDir,
+        path.resolve(__dirname, "../../packages/explorEDA/examples/shop")
+      );
+      const handle = createTeamHandler({ store, dataDir, version: "dev" });
+      server.middlewares.use((req, res, next) => {
+        void handle(req, res, next);
+      });
+    },
+  };
+}
+
 export default defineConfig({
   // The built app is served from the package's dist/app by `exploreda`.
   base: "./",
   plugins: [
     ...(useLibrarySource ? [exploredaSource()] : []),
     projectFolder(),
+    teamData(),
     react(),
     // The library's stylesheet is Tailwind source when run from source.
     tailwindcss(),

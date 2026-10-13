@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { isDataFile, readProjectFolder, type ProjectFolder } from "exploreda";
 import type { AppFiles, ServerInfo, ThemePreference } from "./httpFiles";
 import {
@@ -29,11 +29,14 @@ type Loaded =
 const affectsProject = (path: string) =>
   path.toLowerCase().endsWith(".eda") || isDataFile(path);
 
-function describeChange(paths: string[]) {
+export function describeChange(paths: string[], by?: string) {
   const [first, ...rest] = paths;
-  return rest.length
-    ? `${first} and ${rest.length} other file${rest.length === 1 ? "" : "s"} changed on disk, so the project reloaded.`
-    : `${first} changed on disk, so the project reloaded.`;
+  const files = rest.length
+    ? `${first} and ${rest.length} other file${rest.length === 1 ? "" : "s"}`
+    : first;
+  return by
+    ? `${by} changed ${files}, so the project reloaded.`
+    : `${files} changed on disk, so the project reloaded.`;
 }
 
 /** Light or dark follows the preference, or the system when it says so. */
@@ -45,10 +48,22 @@ function applyTheme(theme: ThemePreference) {
   document.documentElement.classList.toggle("dark", Boolean(dark));
 }
 
-export function App({ files }: { files: AppFiles }) {
+export function App({
+  files,
+  readOnly = false,
+  team,
+}: {
+  files: AppFiles;
+  /** Edits stay in the page and are never saved. */
+  readOnly?: boolean;
+  /** On a team server: the bar above the project, with sign-out. */
+  team?: ReactNode;
+}) {
   const [loaded, setLoaded] = useState<Loaded>({ status: "loading" });
   const [saveState, setSaveState] = useState<SaveState>({ status: "saved" });
-  const [saver] = useState(() => new FolderSaver(files, setSaveState));
+  const [saver] = useState(
+    () => new FolderSaver(files, setSaveState, undefined, readOnly)
+  );
   const selection = useRef<Selection | undefined>(undefined);
   const [theme, setTheme] = useState<ThemePreference>("system");
 
@@ -114,7 +129,7 @@ export function App({ files }: { files: AppFiles }) {
   // and read the folder again.
   useEffect(() => {
     let reloading = Promise.resolve();
-    const stop = files.watch?.((paths) => {
+    const stop = files.watch?.((paths, by) => {
       const changed = paths.filter(affectsProject);
       if (!changed.length) {
         return;
@@ -131,7 +146,7 @@ export function App({ files }: { files: AppFiles }) {
                 ...previous,
                 folder,
                 generation: previous.generation + 1,
-                notice: describeChange(changed),
+                notice: describeChange(changed, by),
               }
             : previous
         );
@@ -177,10 +192,14 @@ export function App({ files }: { files: AppFiles }) {
       <main className="app-message">
         <h1>The project folder couldn't be read</h1>
         <p role="alert">{loaded.message}</p>
-        <p>
-          Check that the <code>exploreda</code> command is still running, then
-          reload this page.
-        </p>
+        {team ? (
+          <p>Reload this page, or go back to your projects.</p>
+        ) : (
+          <p>
+            Check that the <code>exploreda</code> command is still running, then
+            reload this page.
+          </p>
+        )}
       </main>
     );
   }
@@ -238,6 +257,8 @@ export function App({ files }: { files: AppFiles }) {
     <ProjectWorkspace
       key={loaded.generation}
       actions={actions}
+      readOnly={readOnly}
+      team={team}
       theme={theme}
       onThemeChange={changeTheme}
       folder={loaded.folder}

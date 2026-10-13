@@ -5,10 +5,14 @@ const TOKEN_HEADER = "x-exploreda-token";
 
 export interface ServerInfo {
   name: string;
+  /** The folder on disk; empty on a team server. */
   root: string;
   version: string;
   /** Where a new project keeps its text: the root, or `.exploreda/`. */
   layout: "visible" | "hidden";
+  /** On a team server: what the signed-in person may do here. */
+  role?: "author" | "viewer";
+  account?: { name: string; email: string };
 }
 
 export type ThemePreference = "system" | "light" | "dark";
@@ -17,18 +21,28 @@ export interface GlobalConfig {
   theme: ThemePreference;
 }
 
-export type AppFiles = ProjectFiles & {
+export type AppFiles = Omit<ProjectFiles, "watch"> & {
   info(): Promise<ServerInfo>;
   config(): Promise<GlobalConfig>;
   setConfig(change: Partial<GlobalConfig>): Promise<GlobalConfig>;
+  /** `by` names who saved, when another person's save changed the files. */
+  watch?(onChange: (paths: string[], by?: string) => void): () => void;
 };
 
-/** The project's files, through the local server that `exploreda` starts. */
-export function httpProjectFiles(token: string, base = "") {
+interface HttpFilesOptions {
+  /** Where the project's API routes start, such as `/api`. */
+  api: string;
+  headers: Record<string, string>;
+  /** The event stream's address; EventSource can't send headers. */
+  events: string;
+  config?: Pick<AppFiles, "config" | "setConfig">;
+}
+
+function createHttpFiles({ api, headers, events, config }: HttpFilesOptions) {
   const call = async (url: string, path = "", init: RequestInit = {}) => {
-    const response = await fetch(`${base}${url}`, {
+    const response = await fetch(url, {
       ...init,
-      headers: { ...init.headers, [TOKEN_HEADER]: token },
+      headers: { ...init.headers, ...headers },
     });
     if (!response.ok) {
       const body = (await response.json().catch(() => ({}))) as {
@@ -45,52 +59,107 @@ export function httpProjectFiles(token: string, base = "") {
   };
   const files: AppFiles = {
     async info() {
-      return (await call("/api/info")).json() as Promise<ServerInfo>;
+      return (await call(`${api}/info`)).json() as Promise<ServerInfo>;
     },
     async config() {
-      return (await call("/api/config")).json() as Promise<GlobalConfig>;
+      if (config) {
+        return config.config();
+      }
+      return (await call(`${api}/config`)).json() as Promise<GlobalConfig>;
     },
     async setConfig(change) {
+      if (config) {
+        return config.setConfig(change);
+      }
       return (
-        await call("/api/config", "", {
+        await call(`${api}/config`, "", {
           method: "PUT",
           body: JSON.stringify(change),
         })
       ).json() as Promise<GlobalConfig>;
     },
     async list() {
-      return (await call("/api/files")).json() as Promise<string[]>;
+      return (await call(`${api}/files`)).json() as Promise<string[]>;
     },
     async read(path) {
       return (
-        await call(`/api/file?path=${encodeURIComponent(path)}`, path)
+        await call(`${api}/file?path=${encodeURIComponent(path)}`, path)
       ).text();
     },
     async write(path, text) {
-      await call(`/api/file?path=${encodeURIComponent(path)}`, path, {
+      await call(`${api}/file?path=${encodeURIComponent(path)}`, path, {
         method: "PUT",
         body: text,
       });
     },
     async remove(path) {
-      await call(`/api/file?path=${encodeURIComponent(path)}`, path, {
+      await call(`${api}/file?path=${encodeURIComponent(path)}`, path, {
         method: "DELETE",
       });
     },
     watch(onChange) {
-      const events = new EventSource(
-        `${base}/api/events?token=${encodeURIComponent(token)}`
-      );
-      events.addEventListener("change", (event) => {
-        const { paths } = JSON.parse((event as MessageEvent<string>).data) as {
-          paths: string[];
-        };
-        onChange(paths);
+      const source = new EventSource(events);
+      source.addEventListener("change", (event) => {
+        const { paths, by } = JSON.parse(
+          (event as MessageEvent<string>).data
+        ) as { paths: string[]; by?: string };
+        onChange(paths, by);
       });
-      return () => events.close();
+      return () => source.close();
     },
   };
   return files;
+}
+
+/** The project's files, through the local server that `exploreda` starts. */
+export function httpProjectFiles(token: string, base = "") {
+  return createHttpFiles({
+    api: `${base}/api`,
+    headers: { [TOKEN_HEADER]: token },
+    events: `${base}/api/events?token=${encodeURIComponent(token)}`,
+  });
+}
+
+/** Must match the team server's CLIENT_HEADER. */
+const CLIENT_HEADER = "x-exploreda-client";
+const THEME_KEY = "exploreda.theme";
+
+/** Theme follows this browser on a team server; it isn't anyone's file. */
+const browserConfig: Pick<AppFiles, "config" | "setConfig"> = {
+  async config() {
+    try {
+      const theme = localStorage.getItem(THEME_KEY);
+      if (theme === "light" || theme === "dark") {
+        return { theme };
+      }
+    } catch {
+      // Storage may be blocked; the default holds.
+    }
+    return { theme: "system" };
+  },
+  async setConfig(change) {
+    const theme = change.theme ?? "system";
+    try {
+      localStorage.setItem(THEME_KEY, theme);
+    } catch {
+      // Storage may be blocked; the choice lasts for this page.
+    }
+    return { theme };
+  },
+};
+
+/**
+ * A team server project's files. `client` names this page, so the server
+ * doesn't announce this page's own saves back to it.
+ */
+export function teamProjectFiles(projectId: string, client: string) {
+  const api = `/api/projects/${encodeURIComponent(projectId)}`;
+  return createHttpFiles({
+    api,
+    headers: { [CLIENT_HEADER]: client },
+    events: `${api}/events?client=${encodeURIComponent(client)}`,
+    config: browserConfig,
+  });
 }
 
 const TOKEN_KEY = "exploreda.token";

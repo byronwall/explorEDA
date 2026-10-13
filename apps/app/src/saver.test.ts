@@ -38,4 +38,20 @@ describe("FolderSaver", () => {
     await saver.flush();
     expect(last).toMatchObject({ status: "failed", path: "a.eda" });
   });
+
+  it("never writes when it is read-only", async () => {
+    const write = vi.fn(async () => {});
+    const states: SaveState["status"][] = [];
+    const saver = new FolderSaver(
+      { ...memoryProjectFiles(), write },
+      (state) => states.push(state.status),
+      0,
+      true
+    );
+    saver.known("a.eda", "one\n");
+    saver.queue("a.eda", "two\n");
+    await saver.flush();
+    expect(write).not.toHaveBeenCalled();
+    expect(states).toEqual([]);
+  });
 });

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
   analysisFileText,
   ExplorEdaProject,
@@ -62,8 +62,13 @@ export function ProjectWorkspace({
   actions,
   theme,
   onThemeChange,
+  readOnly = false,
+  team,
 }: {
   actions: ProjectActions;
+  /** Viewing only: no saving, creating, renaming, or deleting. */
+  readOnly?: boolean;
+  team?: ReactNode;
   theme: ThemePreference;
   onThemeChange: (theme: ThemePreference) => void;
   folder: ProjectFolder;
@@ -198,10 +203,17 @@ export function ProjectWorkspace({
   return (
     <div className="app">
       <aside className="app-rail" aria-label="Project">
+        {team}
         <header className="app-rail-head">
           <h1>{info.name}</h1>
-          <p className="app-muted app-path">{info.root}</p>
-          <SaveStatus state={saveState} />
+          {info.root && <p className="app-muted app-path">{info.root}</p>}
+          {readOnly ? (
+            <p className="app-save app-muted">
+              Viewing · your changes aren't saved
+            </p>
+          ) : (
+            <SaveStatus state={saveState} />
+          )}
           {notice && (
             <p className="app-notice" role="status">
               {notice}
@@ -212,7 +224,7 @@ export function ProjectWorkspace({
         <nav aria-labelledby="analyses-heading">
           <div className="app-section-head">
             <h2 id="analyses-heading">Analyses</h2>
-            {project.queries.length > 0 && (
+            {!readOnly && project.queries.length > 0 && (
               <button
                 type="button"
                 className="app-button"
@@ -252,7 +264,7 @@ export function ProjectWorkspace({
                     <span>{analysis.result.name}</span>
                     <span className="app-muted">{analysis.path}</span>
                   </button>
-                  {analysis.path === selected.path && (
+                  {!readOnly && analysis.path === selected.path && (
                     <AnalysisActions
                       path={analysis.path}
                       name={analysis.result.name}
@@ -291,14 +303,16 @@ export function ProjectWorkspace({
             {looseFiles.map((path) => (
               <li key={path} className="app-source">
                 <span>{path}</span>
-                <button
-                  type="button"
-                  className="app-button"
-                  aria-label={`Chart ${path}`}
-                  onClick={() => void actions.chartFile(path)}
-                >
-                  Chart
-                </button>
+                {!readOnly && (
+                  <button
+                    type="button"
+                    className="app-button"
+                    aria-label={`Chart ${path}`}
+                    onClick={() => void actions.chartFile(path)}
+                  >
+                    Chart
+                  </button>
+                )}
               </li>
             ))}
           </ul>
@@ -344,6 +358,7 @@ export function ProjectWorkspace({
           />
         ) : (
           <FirstRun
+            readOnly={readOnly}
             dataFiles={looseFiles}
             onChart={(path) => void actions.chartFile(path)}
           />
@@ -510,10 +525,20 @@ function AnalysisActions({
 function FirstRun({
   dataFiles,
   onChart,
+  readOnly,
 }: {
   dataFiles: string[];
   onChart: (path: string) => void;
+  readOnly: boolean;
 }) {
+  if (readOnly) {
+    return (
+      <div className="app-message">
+        <h2>No analyses yet</h2>
+        <p>An author of this project hasn't made one yet.</p>
+      </div>
+    );
+  }
   if (!dataFiles.length) {
     return (
       <div className="app-message">

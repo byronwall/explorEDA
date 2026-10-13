@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 import { globalConfigStore } from "../node/globalConfig";
 import { nodeProjectFiles } from "../node/projectFiles";
 import { startServer } from "../server/server";
+import { serverCommand } from "./serverCommand";
 
 declare const __EXPLOREDA_VERSION__: string;
 
@@ -100,12 +101,19 @@ async function copyFolder(from: string, to: string) {
 }
 
 async function main(args: string[]) {
+  const here = path.dirname(fileURLToPath(import.meta.url));
+  if (args[0] === "server") {
+    return serverCommand(args.slice(1), {
+      appDir: path.resolve(here, "../app"),
+      exampleDir: path.resolve(here, "../examples/shop"),
+      version: __EXPLOREDA_VERSION__,
+    });
+  }
   const parsed = parseArgs(args);
   if (typeof parsed === "string") {
     console.log(parsed);
     return parsed === USAGE ? 0 : 64;
   }
-  const here = path.dirname(fileURLToPath(import.meta.url));
   const appDir = path.resolve(here, "../app");
   if (!existsSync(path.join(appDir, "index.html"))) {
     console.error(

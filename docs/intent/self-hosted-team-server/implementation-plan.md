@@ -22,7 +22,7 @@ Every milestone ships as a stacked PR with a `minor` changeset. Each one leaves 
 
 - **First proof:** two browser windows on a local `exploreda server --data <dir>`, one signed in as an author and one as a viewer. The author's save reaches the viewer's page as "changed by". The viewer's page never tries to save, and the server refuses any write the viewer sends.
 - **Primary seams:**
-  - an `Access` port in the request handler: local token or team session;
+  - a team request handler beside the local one, sharing its file routes;
   - an `AccountStore` port for accounts, sessions, projects, and members;
   - one `NodeProjectFiles` per project folder, served under `/api/projects/<id>/`.
 - **Fast local loop:**
@@ -48,10 +48,10 @@ The real dependencies are SQLite and Docker. SQLite is embedded, so M2 tests it 
 
 This milestone proves the role model and last-save-wins with seeded accounts and a bare sign-in form. It leaves out setup screens, account management, uploads, and Docker.
 
-- **Change — access port in the request handler**
-  - `createRequestHandler` takes an `access` option. `localAccess(token)` is today's host and token check, moved as is. `teamAccess(store, publicUrl)` reads a session cookie, checks `Origin` on writes, and returns the user.
-  - Project routes move under `/api/projects/<id>/`. A write needs author membership; viewers and non-members get 403. `/api/info` reports the signed-in user and their role.
-  - Verify: existing `handler.test.ts` passes untouched under `localAccess`. New tests cover a viewer write (403), a non-member read (403), a cross-site write (403), and a missing cookie (401).
+- **Change — team request handler beside the local one**
+  - The local handler keeps its host and token check. Its JSON replies, app files, body reading, and file routes move into a shared module that a new `createTeamHandler` also uses. The team handler reads a session cookie, checks `Origin` on writes, and answers for the signed-in account.
+  - Project routes sit under `/api/projects/<id>/`. A write needs author membership; viewers get 403 and non-members get 404. `/api/projects/<id>/info` reports the signed-in account and its role.
+  - Verify: existing `handler.test.ts` passes untouched. New tests cover a viewer write (403), a non-member read (404), a cross-site or origin-less write (403), and a missing cookie (401).
 - **Change — accounts port**
   - `AccountStore` holds accounts (email, name, author or viewer, admin flag, scrypt password hash, disabled), sessions, projects, and members. M1 ships only the in-memory store, which `--seed-dev` fills.
   - A store contract suite runs against it, and M2 reuses that suite for the durable store.
@@ -78,6 +78,7 @@ This milestone adds the durable account store, so a restart keeps accounts.
 
 - **Change — durable store:** `node:sqlite` at `<data>/exploreda.db`, with the schema version in `user_version`. It passes the M1 store contract suite, and a restart test checks that accounts, sessions, and members persist.
 - **Spike — `node:sqlite` on the supported Node versions**
+
   - Decision required: use `node:sqlite` or a JSON-file store behind `AccountStore`.
   - Evidence to gather: whether it loads without a flag on Node 22.5+ and 24, what warnings it prints, and whether writes survive a hard kill.
   - Fallback: a single-writer JSON store with atomic rename. That is enough for about 110 accounts.
