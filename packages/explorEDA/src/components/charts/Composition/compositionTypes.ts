@@ -1,3 +1,5 @@
+import type { Filter } from "@/types/FilterTypes";
+
 /**
  * A composition is a report graphic built on a fixed-size artboard from
  * primitives: text, repeated chart units, and annotations. The definition is
@@ -621,6 +623,58 @@ export interface DensityMark {
   colorScaleId?: string;
 }
 
+/**
+ * A waterfall in each repeat: a bridge from one state's total to another's,
+ * one signed step per category, or a running total over ordered steps. It
+ * computes its bars as the Waterfall chart does, so both draw the same
+ * numbers, and its value axis is shared across repeats.
+ */
+export interface WaterfallMark {
+  type: "waterfall";
+  id: string;
+  name: string;
+  mode: "bridge" | "accumulate";
+  aggregation: "sum" | "count";
+  measureField?: string;
+  /** One step per category of this field. */
+  stepField: string;
+  /** Groups steps and closes each group with a subtotal checkpoint. */
+  parentField?: string;
+  /** The start and end states; a running total uses only their labels. */
+  states: { label: string; measureField?: string; filters: Filter[] }[];
+  /** A running total's starting value. */
+  startValue?: number;
+  /** Rising steps, falling steps, and the totals. */
+  up: string;
+  down: string;
+  total: string;
+  /** Room for step names at the frame's left, in pixels; 0 hides them. */
+  labelWidth: number;
+}
+
+/**
+ * A donut in each repeat: each category's share of the repeat's live rows,
+ * with the smaller categories pooled into Other. Categories keep one order
+ * and color across repeats.
+ */
+export interface DonutMark {
+  type: "donut";
+  id: string;
+  name: string;
+  categoryField: string;
+  aggregation: "count" | "sum";
+  measureField?: string;
+  /** Named slices before the rest pool into Other; six when unset. */
+  topN?: number;
+  /** Color order: by label, or largest total first across the whole graphic. */
+  order: "label" | "total";
+  colors: string[];
+  /** The hole's radius as a share of the ring's, from 0 to 0.9. */
+  hole: number;
+  /** Write the repeat's total in the hole. */
+  showTotal: boolean;
+}
+
 export type MarkDefinition =
   | StripMark
   | PointMark
@@ -632,7 +686,9 @@ export type MarkDefinition =
   | WaffleMark
   | BarMark
   | HorizonMark
-  | DensityMark;
+  | DensityMark
+  | WaterfallMark
+  | DonutMark;
 
 /** A categorical palette for stacks, distinct and readable on paper. */
 export const STACK_COLORS = [
@@ -669,6 +725,7 @@ export function markScaleIds(mark: MarkDefinition): string[] {
   if (mark.type === "horizon") return [mark.xScaleId];
   if (mark.type === "waffle") return mark.xScaleId ? [mark.xScaleId] : [];
   if (mark.type === "bar") return [];
+  if (mark.type === "waterfall" || mark.type === "donut") return [];
   if (mark.type === "band") return [mark.xScaleId, mark.yScaleId];
   const shade =
     (mark.type === "point" || mark.type === "path") && mark.valueScaleId
@@ -700,6 +757,7 @@ export function markHasCategories(mark: MarkDefinition): boolean {
   switch (mark.type) {
     case "stack":
     case "waffle":
+    case "donut":
       return true;
     case "bar":
       return Boolean(mark.categoryField);
@@ -755,6 +813,20 @@ export function markFields(mark: MarkDefinition): string[] {
       return [mark.field, mark.orderField];
     case "density":
       return [];
+    case "waterfall":
+      return [
+        mark.stepField,
+        mark.parentField,
+        mark.aggregation === "sum" ? mark.measureField : undefined,
+        ...mark.states.map((state) => state.measureField),
+        ...mark.states.flatMap((state) =>
+          state.filters.map((filter) => filter.field)
+        ),
+      ].filter((field): field is string => Boolean(field));
+    case "donut":
+      return mark.measureField && mark.aggregation === "sum"
+        ? [mark.categoryField, mark.measureField]
+        : [mark.categoryField];
   }
 }
 

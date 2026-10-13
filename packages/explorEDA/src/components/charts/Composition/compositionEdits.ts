@@ -162,6 +162,8 @@ function markColor(mark: MarkDefinition) {
     return mark.colors[0] ?? "#1f2328";
   if (mark.type === "density") return mark.fill;
   if (mark.type === "horizon") return mark.positive;
+  if (mark.type === "waterfall") return mark.up;
+  if (mark.type === "donut") return mark.colors[0] ?? "#1f2328";
   return mark.fill;
 }
 
@@ -259,6 +261,51 @@ export function convertMark(
     };
     return updateElement<UnitElement>(withX.definition, unit.id, {
       marks: unit.marks.map((item) => (item.id === markId ? horizon : item)),
+    });
+  }
+  if (type === "waterfall" || type === "donut") {
+    const measure = fields.find((item) => item.dataType === "numeric")?.name;
+    const categories = fields.filter(
+      (item) =>
+        item.dataType !== "numeric" &&
+        item.uniqueCount >= 2 &&
+        item.uniqueCount <= 24
+    );
+    const categoryField = categories[0]?.name ?? fields[0]?.name;
+    if (!categoryField) return definition;
+    const parts: MarkDefinition =
+      type === "donut"
+        ? {
+            type: "donut",
+            id: mark.id,
+            name: mark.name,
+            categoryField,
+            aggregation: measure ? "sum" : "count",
+            measureField: measure,
+            order: "total",
+            colors: STACK_COLORS,
+            hole: 0.6,
+            showTotal: true,
+          }
+        : {
+            type: "waterfall",
+            id: mark.id,
+            name: mark.name,
+            mode: "accumulate",
+            aggregation: measure ? "sum" : "count",
+            measureField: measure,
+            stepField: categoryField,
+            states: [
+              { label: "Start", filters: [] },
+              { label: "End", filters: [] },
+            ],
+            up: "#1a7f5a",
+            down: "#c0392b",
+            total: "#4a5563",
+            labelWidth: 90,
+          };
+    return updateElement<UnitElement>(definition, unit.id, {
+      marks: unit.marks.map((item) => (item.id === markId ? parts : item)),
     });
   }
   if (type === "bar") {

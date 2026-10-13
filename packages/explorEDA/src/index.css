@@ -40,6 +40,10 @@
   --eda-heat-high: oklch(0.43 0.14 257);
   --eda-heat-mid: oklch(0.96 0.004 250);
   --eda-heat-negative: oklch(0.53 0.17 28);
+  /* Waterfall bars: rising steps, falling steps, and start, subtotal, and end totals. */
+  --eda-waterfall-up: oklch(0.52 0.13 160);
+  --eda-waterfall-down: var(--eda-heat-negative);
+  --eda-waterfall-total: oklch(0.45 0.03 257);
   /* Sankey flow opacity: resting, hovered, dimmed, and context under a selection. */
   --eda-flow: 0.48;
   --eda-flow-strong: 0.82;
@@ -103,6 +107,8 @@
   --eda-heat-high: oklch(0.82 0.12 228);
   --eda-heat-mid: oklch(0.26 0.006 250);
   --eda-heat-negative: oklch(0.74 0.15 32);
+  --eda-waterfall-up: oklch(0.72 0.13 160);
+  --eda-waterfall-total: oklch(0.72 0.03 257);
   /* Flows sit on a dark card, so they need more opacity to keep their hue. */
   --eda-flow: 0.66;
   --eda-flow-strong: 0.92;
@@ -7610,4 +7616,160 @@ td[data-null] {
   border: 1px solid var(--input);
   border-radius: 4px;
   background: none;
+}
+
+/* A dashed rule carries the running total from one waterfall bar to the next. */
+.eda-waterfall-connector {
+  stroke: var(--muted-foreground);
+  stroke-width: 1;
+  stroke-dasharray: 2 2;
+}
+
+/* Step values sit beside their bars and may cross the zero line or a connector. */
+.eda-waterfall-value {
+  fill: var(--foreground);
+  font-size: 11px;
+  paint-order: stroke;
+  stroke: var(--card);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+
+/* A subtotal is a checkpoint on the running total, not another bar. */
+.eda-waterfall-checkpoint line {
+  stroke: var(--eda-waterfall-total);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.eda-waterfall-checkpoint circle {
+  fill: var(--card);
+  stroke: var(--eda-waterfall-total);
+  stroke-width: 2;
+}
+.eda-waterfall-checkpoint[data-selected] circle {
+  fill: var(--eda-waterfall-total);
+}
+.eda-waterfall-checkpoint-value {
+  fill: var(--muted-foreground);
+}
+/* The row behind a checkpoint takes its clicks and shows only on hover or focus. */
+.eda-waterfall-checkpoint-hit {
+  fill: var(--muted);
+  fill-opacity: 0;
+}
+.eda-waterfall-checkpoint-hit:hover,
+.eda-waterfall-checkpoint-hit:focus-visible {
+  fill-opacity: 0.6;
+}
+.eda-waterfall-divider {
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+/* Start and end totals: a hairline from zero to a filled dot. */
+.eda-waterfall-total line {
+  stroke: var(--eda-waterfall-total);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.eda-waterfall-total circle {
+  fill: var(--eda-waterfall-total);
+  stroke: var(--card);
+  stroke-width: 1.5;
+}
+.eda-waterfall-total[data-selected] circle {
+  stroke: var(--foreground);
+  stroke-width: 2;
+}
+
+/* Donut: the ring and its legend, side by side or stacked on narrow charts. */
+.eda-donut {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 12px;
+}
+.eda-donut-side {
+  flex-direction: row;
+  justify-content: center;
+}
+.eda-donut-stacked {
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 8px;
+}
+.eda-donut svg {
+  flex: none;
+}
+/* Under the ring, entries wrap into rows so the ring keeps its size. */
+.eda-donut-stacked .eda-donut-legend {
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  min-height: 0;
+}
+.eda-donut-stacked .eda-donut-legend-item {
+  width: auto;
+}
+.eda-donut-slice {
+  stroke: var(--card);
+  stroke-width: 1;
+  transition: opacity 120ms;
+}
+.eda-donut-slice[data-selected] {
+  stroke: var(--foreground);
+  stroke-width: 1.5;
+}
+.eda-donut-total {
+  fill: var(--foreground);
+  font-weight: 600;
+}
+.eda-donut-measure {
+  fill: var(--muted-foreground);
+  font-size: 11px;
+}
+.eda-donut-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  max-height: 100%;
+  overflow: auto;
+}
+.eda-donut-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  text-align: left;
+}
+.eda-donut-legend-item:hover,
+.eda-donut-legend-item:focus-visible {
+  background: var(--muted);
+}
+.eda-donut-legend-item[data-dimmed] {
+  opacity: 0.45;
+}
+.eda-donut-legend-item[aria-pressed="true"] {
+  font-weight: 600;
+}
+.eda-donut-swatch {
+  width: 10px;
+  height: 10px;
+  flex: none;
+  border-radius: 2px;
+}
+.eda-donut-legend-label {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.eda-donut-legend-share {
+  color: var(--muted-foreground);
+  font-variant-numeric: tabular-nums;
 }
