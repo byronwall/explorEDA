@@ -8,7 +8,7 @@
 - Branch: `codex/data-format-research`
 - Source commit: `c534378c052c9fbb2cb076d1df0d21eb0fa0965e`
 - Initial worktree: clean, detached HEAD. Created the branch in the existing checkout. No new worktree.
-- Current phase: collected; evidence review and shaping in progress.
+- Current phase: shaping complete; validation passed; review PR pending.
 - Round: initial; at most two focused follow-ups after submission.
 - Prompt: [raw/2026-10-12-pro/prompt.md](raw/2026-10-12-pro/prompt.md)
 - User source: [raw/2026-10-12-pro/user-request.md](raw/2026-10-12-pro/user-request.md)
@@ -20,7 +20,7 @@
 - Heartbeat: `collect-data-format-research`, ACTIVE, attached to this chat. Saved schedule and target thread verified. No goal created; none requested.
 - Upload review: initial attempt rejected because the reviewer classified repository source as private. GitHub then confirmed `isPrivate: false` and `visibility: PUBLIC` for `byronwall/explorEDA`. The source manifest verifies all 36 files match the exact committed baseline. GitHub also verified the published baseline commit. The direct retry with this evidence succeeded. No upload workaround was used.
 - Git branch creation needed approved access to the parent repository's Git metadata.
-- Validation: all 36 packet files match the baseline and manifest hashes. `pnpm --filter demo exec vitest run src/parsers.test.ts` passed (4 tests). `pnpm check:ui` and `git diff --check` passed. Full `pnpm check` and Sleuth validation remain due before the review PR.
+- Validation: all 36 packet files match the baseline and manifest hashes. `pnpm --filter demo exec vitest run src/parsers.test.ts` passed (4 tests). `pnpm check:ui` and `git diff --check` passed. Full validation results are recorded below.
 - Dependencies: `pnpm install --frozen-lockfile` succeeded after approved network access. The sandboxed attempt could not reach the registry. Node is v22.21.1; use Node 24 if running release checks.
 - PR: pending research completion.
 
@@ -51,3 +51,21 @@ The final response is preserved as rendered text. A standalone catalog download 
 At Byron’s request, the local handoff skill now records standing approval for task-related downloads from an authorized Pro session. Its workflow reference was updated, and the skill validator passed. This local skill change is outside the repository PR.
 
 Pro did not execute application, reader, workbook, browser, export, or performance proofs. These remain proposed work. Local evidence review checks decisive claims against current primary sources and unchanged baseline code.
+
+## Shaping and validation
+
+The intent brief, tree-based shape brief, and initiative map are ready for review. The lifecycle remains planned; implementation is not started. All 19 recommendations have dispositions. Avro keeps an explicit feasibility proof because Byron already requested it. The proposal does not copy the research’s broad test matrix or create an adapter platform.
+
+All 39 inspected repository files match the baseline and current checkout. Decisive primary-source checks are recorded in [recommendation review](evidence/recommendation-review.md). The installed Papa 5.5.2 probe confirms identifier/date coercion. No reader packages were added.
+
+Validation completed October 12, 2026:
+
+- Sleuth validator: passed, zero warnings. Intent: 784 words; shape: 728 words including frontmatter.
+- Synthesized document links, map sources, claims, and all 19 recommendation dispositions: passed.
+- Original artifact hashes and structured counts: passed.
+- Full pnpm check: passed, exit 0. Builds, type checks, UI checks, 206 library test files/1,303 tests, and 14 demo test files/193 tests passed.
+- Existing JSDOM canvas and window.scrollTo diagnostics appeared in passing tests. No test failed.
+- Authored document whitespace checks: passed. The full diff flags original CSV CRLF endings, one original Markdown hard break, and seven captured response spaces. These raw bytes remain unchanged to preserve provenance.
+- New format, workbook, binary, browser/CSP, Sheets export, and performance proofs remain unrun, as planned.
+
+Only initiative documentation and raw research enter the PR. No changeset or UI screenshot is required for this docs-only change.
