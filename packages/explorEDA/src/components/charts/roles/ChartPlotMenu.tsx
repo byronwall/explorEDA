@@ -45,7 +45,7 @@ export function ChartPlotMenu({
   const [picking, setPicking] = useState(false);
   const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
   const chartTitle = getChartTitle(settings, getFieldLabel);
-  const { choose } = useRoleEdit(settings.id);
+  const { preview, choose, cancel } = useRoleEdit(settings.id);
   // Focus goes back where it was, usually the plot, when the menu or the
   // picker closes.
   const returnTo = useRef(document.activeElement as HTMLElement | null);
@@ -73,7 +73,16 @@ export function ChartPlotMenu({
 
   if (picking) {
     return createPortal(
-      <Popover open onOpenChange={(open) => !open && close()} modal>
+      <Popover
+        open
+        onOpenChange={(open) => {
+          if (open) return;
+          // Escape or a press outside abandons any preview.
+          cancel();
+          close();
+        }}
+        modal
+      >
         <PopoverAnchor asChild>{anchor}</PopoverAnchor>
         <PopoverContent
           align="start"
@@ -84,9 +93,10 @@ export function ChartPlotMenu({
           <RoleFieldPicker
             settings={settings}
             role="color"
+            onPreview={(field) => preview("color", field)}
             onChoose={(field) => {
               close();
-              if (field !== color.field(settings)) choose("color", field);
+              choose("color", field);
             }}
           />
         </PopoverContent>

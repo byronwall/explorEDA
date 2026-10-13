@@ -21,7 +21,7 @@ import {
 } from "../trace/ChartTraceScope";
 import type { LegendTrace, TraceSource } from "../trace/traceTypes";
 import { planNumericalLegend } from "@/lib/colorScaleMath";
-import { ChartRoleButton } from "../roles/ChartRoleButton";
+import { ChartRoleButton, ChartRoleScope } from "../roles/ChartRoleButton";
 
 interface ChartColorLegendProps {
   settings: ChartSettings;
@@ -35,21 +35,24 @@ export function ChartColorLegend({
   width,
   editable,
 }: ChartColorLegendProps) {
-  if (!settings.colorField || !settings.colorScaleId) {
-    // An uncolored chart still offers its Color role on the legend's line.
-    return editable ? (
-      <div className="eda-chart-color-legend">
-        <ChartRoleButton settings={settings} role="color" />
-      </div>
+  const colored = Boolean(settings.colorField && settings.colorScaleId);
+  if (!editable)
+    return colored ? (
+      <ChartColorLegendBody settings={settings} width={width} />
     ) : null;
-  }
-
+  // The picker sits above both shapes of the legend, so previewing a first
+  // color field, which draws the full legend, keeps it open.
   return (
-    <ChartColorLegendBody
-      settings={settings}
-      width={width}
-      editable={editable}
-    />
+    <ChartRoleScope settings={settings} role="color">
+      {colored ? (
+        <ChartColorLegendBody settings={settings} width={width} editable />
+      ) : (
+        // An uncolored chart still offers its Color role on the legend's line.
+        <div className="eda-chart-color-legend">
+          <ChartRoleButton />
+        </div>
+      )}
+    </ChartRoleScope>
   );
 }
 
@@ -247,8 +250,6 @@ function ChartColorLegendBody({
     >
       {editable ? (
         <ChartRoleButton
-          settings={settings}
-          role="color"
           onAltActivate={canTrace ? () => inspectLegend("scale") : undefined}
         />
       ) : (

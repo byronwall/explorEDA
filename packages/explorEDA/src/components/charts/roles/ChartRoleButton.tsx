@@ -1,4 +1,10 @@
-import { useRef, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 import { ChevronDown } from "lucide-react";
 import {
   Popover,
@@ -12,102 +18,131 @@ import { CHART_ROLES, type ChartRole } from "./chartRoles";
 import { RoleFieldPicker } from "./RoleFieldPicker";
 import { useRoleEdit } from "./useRoleEdit";
 
+const RoleScopeContext = createContext<{
+  settings: ChartSettings;
+  role: ChartRole;
+} | null>(null);
+
 /**
- * A chart role's field shown on the chart, such as the color legend's title.
- * Activating it searches the fields and applies a choice at once. Alt-click
- * or Alt-Enter runs `onAltActivate`, such as tracing the scale.
+ * Holds one role's field picker. A preview can redraw what contains the
+ * role's button, such as a legend that appears with its first color field,
+ * so the picker lives here, above the redraw, and stays open while the
+ * button underneath it is replaced.
  */
-export function ChartRoleButton({
+export function ChartRoleScope({
   settings,
   role,
-  onAltActivate,
+  children,
 }: {
   settings: ChartSettings;
   role: ChartRole;
-  onAltActivate?: () => void;
+  children: ReactNode;
 }) {
   const spec = CHART_ROLES[role];
-  const field = spec.field(settings);
-  const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
-  const { choose } = useRoleEdit(settings.id);
-  const triggerRef = useRef<HTMLButtonElement>(null);
+  const { preview, choose, cancel } = useRoleEdit(settings.id);
+  const markerRef = useRef<HTMLSpanElement>(null);
   const [open, setOpen] = useState(false);
-  const label = field ? getFieldLabel(field) : "None";
-  // A choice can redraw the legend with a new button, and unmount this one,
-  // so focus returns to whichever button then shows this role.
-  const returnFocus = () => {
-    const scope =
-      triggerRef.current?.closest(".eda-chart-content") ?? document.body;
-    requestAnimationFrame(() =>
-      scope
-        .querySelector<HTMLElement>(`.eda-role-button[data-role="${role}"]`)
-        ?.focus({ preventScroll: true })
+  const button = () =>
+    markerRef.current?.parentElement?.querySelector<HTMLElement>(
+      `.eda-role-button[data-role="${role}"]`
     );
-  };
   // Inside chart details the popover mounts in the dialog, whose focus trap
   // would otherwise keep the search field from taking focus.
   const container = open
-    ? triggerRef.current?.closest<HTMLElement>("[role='dialog']")
+    ? button()?.closest<HTMLElement>("[role='dialog']")
     : undefined;
 
   return (
     // Modal, so the press that dismisses it never reaches the chart and
     // filters it.
-    <Popover open={open} onOpenChange={setOpen} modal>
-      <ActionTooltip
-        content={`Change the field that sets ${spec.label.toLowerCase()} for this chart`}
-      >
-        <PopoverTrigger asChild>
-          <button
-            ref={triggerRef}
-            type="button"
-            className="eda-role-button"
-            data-role={role}
-            data-empty={field ? undefined : ""}
-            aria-label={`${spec.label}: ${label}. Change field`}
-            aria-description={
-              onAltActivate
-                ? "Alt-click or Alt-Enter to trace the color scale"
-                : undefined
-            }
-            onClick={(event) => {
-              if (!event.altKey || !onAltActivate) return;
-              event.preventDefault();
-              onAltActivate();
-            }}
-            onKeyDown={(event) => {
-              if (!event.altKey || event.key !== "Enter" || !onAltActivate)
-                return;
-              event.preventDefault();
-              onAltActivate();
-            }}
-          >
-            {!field && <span className="eda-role-name">{spec.label}:</span>}{" "}
-            <span className="eda-role-field">{label}</span>
-            <ChevronDown aria-hidden="true" />
-          </button>
-        </PopoverTrigger>
-      </ActionTooltip>
+    <Popover
+      open={open}
+      onOpenChange={(next) => {
+        // Escape or a press outside abandons any preview.
+        if (!next) cancel();
+        setOpen(next);
+      }}
+      modal
+    >
+      <span ref={markerRef} hidden />
+      <RoleScopeContext.Provider value={{ settings, role }}>
+        {children}
+      </RoleScopeContext.Provider>
       <PopoverContent
         container={container}
         align="start"
         className="eda-role-popover w-[min(20rem,calc(100vw-1.5rem))] p-0"
         aria-label={`${spec.label} field`}
         onCloseAutoFocus={(event) => {
+          // The button may be a new one by now; focus whichever shows the
+          // role.
           event.preventDefault();
-          returnFocus();
+          requestAnimationFrame(() => button()?.focus({ preventScroll: true }));
         }}
       >
         <RoleFieldPicker
           settings={settings}
           role={role}
-          onChoose={(next) => {
-            returnFocus();
+          onPreview={(field) => preview(role, field)}
+          onChoose={(field) => {
             setOpen(false);
-            if (next !== field) choose(role, next);
+            choose(role, field);
           }}
         />
       </PopoverContent>
     </Popover>
+  );
+}
+
+/**
+ * A chart role's field shown on the chart, such as the color legend's title.
+ * Activating it opens the picker of the surrounding `ChartRoleScope`.
+ * Alt-click or Alt-Enter runs `onAltActivate`, such as tracing the scale.
+ */
+export function ChartRoleButton({
+  onAltActivate,
+}: {
+  onAltActivate?: () => void;
+}) {
+  const scope = useContext(RoleScopeContext)!;
+  const spec = CHART_ROLES[scope.role];
+  const field = spec.field(scope.settings);
+  const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
+  const label = field ? getFieldLabel(field) : "None";
+
+  return (
+    <ActionTooltip
+      content={`Change the field that sets ${spec.label.toLowerCase()} for this chart`}
+    >
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          className="eda-role-button"
+          data-role={scope.role}
+          data-empty={field ? undefined : ""}
+          aria-label={`${spec.label}: ${label}. Change field`}
+          aria-description={
+            onAltActivate
+              ? "Alt-click or Alt-Enter to trace the color scale"
+              : undefined
+          }
+          onClick={(event) => {
+            if (!event.altKey || !onAltActivate) return;
+            event.preventDefault();
+            onAltActivate();
+          }}
+          onKeyDown={(event) => {
+            if (!event.altKey || event.key !== "Enter" || !onAltActivate)
+              return;
+            event.preventDefault();
+            onAltActivate();
+          }}
+        >
+          {!field && <span className="eda-role-name">{spec.label}:</span>}{" "}
+          <span className="eda-role-field">{label}</span>
+          <ChevronDown aria-hidden="true" />
+        </button>
+      </PopoverTrigger>
+    </ActionTooltip>
   );
 }

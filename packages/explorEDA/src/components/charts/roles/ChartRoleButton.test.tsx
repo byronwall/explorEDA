@@ -83,7 +83,9 @@ function Readout() {
 }
 
 const readState = () =>
-  JSON.parse(screen.getByRole("status", { name: "State" }).textContent!) as {
+  JSON.parse(
+    screen.getByRole("status", { name: "State", hidden: true }).textContent!
+  ) as {
     charts: {
       id: string;
       colorField: string | null;
@@ -216,4 +218,77 @@ it("removes the color with None and closes on Escape without a change", async ()
   });
   await waitFor(() => expect(readState().charts[0]!.colorField).toBeNull());
   expect(changes).toHaveLength(before + 1);
+});
+
+it("previews highlighted fields and leaves nothing behind on Escape", async () => {
+  const changes: SavedDataStructure[] = [];
+  render(
+    <DataLayerProvider
+      data={rows}
+      charts={[scatter("a", "Points")]}
+      onStateChange={(state) => changes.push(state)}
+    >
+      <Panel id="a" />
+      <Readout />
+    </DataLayerProvider>
+  );
+  fireEvent.click(
+    screen.getByRole("button", { name: "Color: None. Change field" })
+  );
+  const picker = await screen.findByRole("dialog", { name: "Color field" });
+  const search = within(picker).getByPlaceholderText("Color by…");
+
+  // Rest on region, then team: each shows on the chart.
+  fireEvent.change(search, { target: { value: "region" } });
+  await waitFor(() => expect(readState().charts[0]!.colorField).toBe("region"));
+  // The picker stays open while the legend redraws under it.
+  expect(screen.getByRole("dialog", { name: "Color field" })).toBeVisible();
+  fireEvent.change(search, { target: { value: "team" } });
+  await waitFor(() => expect(readState().charts[0]!.colorField).toBe("team"));
+  expect(readState().scales).toHaveLength(2);
+
+  fireEvent.keyDown(search, { key: "Escape" });
+  await waitFor(() =>
+    expect(
+      screen.queryByRole("dialog", { name: "Color field" })
+    ).not.toBeInTheDocument()
+  );
+  expect(readState().charts[0]!.colorField).toBeNull();
+  expect(readState().scales).toHaveLength(0);
+  expect(changes).toHaveLength(0);
+});
+
+it("keeps only the chosen field's scale after previewing others", async () => {
+  const changes: SavedDataStructure[] = [];
+  render(
+    <DataLayerProvider
+      data={rows}
+      charts={[scatter("a", "Points")]}
+      onStateChange={(state) => changes.push(state)}
+    >
+      <Panel id="a" />
+      <Readout />
+    </DataLayerProvider>
+  );
+  fireEvent.click(
+    screen.getByRole("button", { name: "Color: None. Change field" })
+  );
+  const picker = await screen.findByRole("dialog", { name: "Color field" });
+  const search = within(picker).getByPlaceholderText("Color by…");
+  fireEvent.change(search, { target: { value: "region" } });
+  await waitFor(() => expect(readState().charts[0]!.colorField).toBe("region"));
+  fireEvent.change(search, { target: { value: "team" } });
+  await waitFor(() => expect(readState().charts[0]!.colorField).toBe("team"));
+
+  fireEvent.keyDown(search, { key: "Enter" });
+  await waitFor(() =>
+    expect(
+      screen.queryByRole("dialog", { name: "Color field" })
+    ).not.toBeInTheDocument()
+  );
+  const state = readState();
+  expect(state.charts[0]!.colorField).toBe("team");
+  expect(state.scales).toEqual([state.charts[0]!.colorScaleId]);
+  expect(changes).toHaveLength(1);
+  expect(changes[0]!.colorScales).toHaveLength(1);
 });

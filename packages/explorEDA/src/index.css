@@ -4054,8 +4054,10 @@ html {
   flex-shrink: 0;
   opacity: 0.6;
 }
+/* The role button stays at the start of the line, so a preview that swaps
+   a categorical legend for a numeric one never moves the picker. */
 .eda-chart-color-legend:has(.eda-legend-numeric) .eda-role-button {
-  margin-left: auto;
+  margin-left: -6px;
 }
 .eda-role-picker-scope {
   display: flex;

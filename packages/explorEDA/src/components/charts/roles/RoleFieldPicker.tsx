@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Check } from "lucide-react";
 import {
   Command,
@@ -17,6 +17,8 @@ import type { ChartSettings } from "@/types/ChartTypes";
 import { CHART_ROLES, type ChartRole } from "./chartRoles";
 
 const NONE = "__eda-role-none";
+/** How long the highlight rests on a field before the chart previews it. */
+const PREVIEW_DELAY = 120;
 
 /**
  * Matches the typed text inside a field's label or name. A match at the
@@ -46,13 +48,18 @@ export function RoleFieldPicker({
   settings,
   role,
   onChoose,
+  onPreview,
 }: {
   settings: ChartSettings;
   role: ChartRole;
   onChoose: (field: string | undefined) => void;
+  /** Shows the highlighted field on the chart before it is chosen. */
+  onPreview?: (field: string | undefined) => void;
 }) {
   const spec = CHART_ROLES[role];
-  const current = spec.field(settings);
+  // The field the picker opened on. A preview changes the chart's field,
+  // but the list keeps marking where the chart started.
+  const [current] = useState(() => spec.field(settings));
   const getColumnNames = useDataLayer((state) => state.getColumnNames);
   const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
   const getState = useDataLayerSnapshot();
@@ -68,12 +75,40 @@ export function RoleFieldPicker({
   }, [getState, settings.id]);
   const fields = getColumnNames();
   const currentShared = current ? (sharedBy.get(current) ?? 0) : 0;
+  const timer = useRef<number>(undefined);
+  const previewed = useRef(false);
+  const [value, setValue] = useState(current ?? NONE);
+  // Hovering highlights a field without previewing it, so moving the
+  // pointer to a field never flashes the others on the chart.
+  const fromPointer = useRef(false);
+  useEffect(() => () => window.clearTimeout(timer.current), []);
+  const highlight = (value: string) => {
+    setValue(value);
+    window.clearTimeout(timer.current);
+    if (!onPreview || fromPointer.current) return;
+    const field =
+      value === NONE
+        ? undefined
+        : fields.find((item) => item.toLowerCase() === value.toLowerCase());
+    if (value !== NONE && !field) return;
+    timer.current = window.setTimeout(() => {
+      if (field === current && !previewed.current) return;
+      previewed.current = true;
+      onPreview(field);
+    }, PREVIEW_DELAY);
+  };
+  const pick = (field: string | undefined) => {
+    window.clearTimeout(timer.current);
+    onChoose(field);
+  };
 
   return (
     <Command
       className="eda-role-picker"
-      defaultValue={current ?? NONE}
+      value={value}
       filter={matchField}
+      onValueChange={highlight}
+      onKeyDown={() => (fromPointer.current = false)}
       loop
     >
       <div className="eda-role-picker-scope">
@@ -89,14 +124,18 @@ export function RoleFieldPicker({
         placeholder={`${spec.label} by…`}
         aria-label={`Search fields for ${spec.label.toLowerCase()}`}
         autoFocus
+        onValueChange={() => (fromPointer.current = false)}
       />
-      <CommandList className="max-h-72 overflow-y-auto">
+      <CommandList
+        className="max-h-72 overflow-y-auto"
+        onPointerMove={() => (fromPointer.current = true)}
+      >
         <CommandEmpty>No fields match.</CommandEmpty>
         {spec.optional && (
           <CommandItem
             value={NONE}
             keywords={["None"]}
-            onSelect={() => onChoose(undefined)}
+            onSelect={() => pick(undefined)}
           >
             <Check className={cn(current ? "opacity-0" : "opacity-100")} />
             <span className="text-muted-foreground">None</span>
@@ -109,7 +148,7 @@ export function RoleFieldPicker({
               key={field}
               value={field}
               keywords={[getFieldLabel(field)]}
-              onSelect={() => onChoose(field)}
+              onSelect={() => pick(field)}
             >
               <Check
                 className={cn(field === current ? "opacity-100" : "opacity-0")}
