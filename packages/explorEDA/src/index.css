@@ -3360,6 +3360,13 @@ html {
 .eda-summary-stat {
   text-align: right;
 }
+/* Long readings, such as ISO date-times, truncate inside their track. */
+.eda-summary-low,
+.eda-summary-high {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .eda-summary-sep {
   color: var(--muted-foreground);
   text-align: center;

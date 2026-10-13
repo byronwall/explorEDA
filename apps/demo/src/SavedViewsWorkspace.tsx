@@ -38,7 +38,7 @@ import {
   type DeclaredFieldType,
   type TableFile,
 } from "exploreda/readers";
-import { useSheetChoice } from "./SheetPicker";
+import { useImportChoice } from "./ImportChoice";
 import { fieldsFromTypes, readImportFile } from "./tableImport";
 import { HistoryTimeline } from "./HistoryTimeline";
 import {
@@ -454,7 +454,7 @@ export function SavedViewsWorkspace({
       added.sourceId
     );
   };
-  const sourceSheets = useSheetChoice(
+  const sourceSheets = useImportChoice(
     addTable,
     (message) => setAnnouncement(`Could not add the file: ${message}`),
     true
@@ -1358,7 +1358,7 @@ export function SavedViewsWorkspace({
           />
         )}
         {sourceInput}
-        {sourceSheets.picker}
+        {sourceSheets.prompt}
       </div>
     </section>
   );

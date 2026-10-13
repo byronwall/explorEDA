@@ -3,10 +3,11 @@ import { useState } from "react";
 import {
   readTableFile,
   readTableText,
+  TABLE_FORMATS,
   tableFormatOf,
   type TableFile,
 } from "exploreda/readers";
-import { useSheetChoice } from "../SheetPicker";
+import { useImportChoice } from "../ImportChoice";
 
 const samples = [
   {
@@ -45,6 +46,12 @@ const samples = [
     detail: "3 sheets, Excel",
     url: "/datasets/regional-sales.xlsx",
   },
+  {
+    id: "trips",
+    label: "Bike trips",
+    detail: "5,000 rows, Parquet",
+    url: "/datasets/bike-trips.parquet",
+  },
 ];
 
 /** Loads a bundled file through the same reader as a user's own import. */
@@ -55,7 +62,7 @@ export function SampleDataButtons({
 }) {
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const sheets = useSheetChoice(onImport, setError);
+  const sheets = useImportChoice(onImport, setError);
 
   const load = async (sample: (typeof samples)[number]) => {
     setLoading(sample.id);
@@ -66,7 +73,10 @@ export function SampleDataButtons({
         throw new Error(response.statusText);
       }
       const name = sample.url.split("/").pop()!;
-      if (tableFormatOf(name) === "xlsx") {
+      const format = TABLE_FORMATS.find(
+        (info) => info.format === tableFormatOf(name)
+      );
+      if (format?.binary) {
         const file = new File([await response.blob()], name);
         sheets.offer(file, await readTableFile(file));
       } else {
@@ -100,7 +110,7 @@ export function SampleDataButtons({
           </Button>
         ))}
       </div>
-      {sheets.picker && <div className="mt-3">{sheets.picker}</div>}
+      {sheets.prompt && <div className="mt-3">{sheets.prompt}</div>}
       {error && (
         <p role="alert" className="mt-2 text-sm text-destructive">
           {error}

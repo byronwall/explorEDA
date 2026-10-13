@@ -9,6 +9,7 @@ On the demo's home page, drop a file anywhere on the page, or use the upload box
 | JSON       | `.json`             | An object or array of objects. Nested objects become fields |
 | JSON Lines | `.jsonl`, `.ndjson` | One object per line                                         |
 | Excel      | `.xlsx`             | One sheet. With several sheets, you choose which to open    |
+| Parquet    | `.parquet`          | One file, with the types its schema declares                |
 
 <Terms
   items={[
@@ -45,8 +46,12 @@ explorEDA keeps the values your file gives it. Each column's type comes from eve
       "A sheet opens at its header row, below any title rows. Formulas show the result the workbook saved; explorEDA doesn't recalculate them. Error cells, such as #DIV/0!, are missing values.",
     ],
     [
+      "Parquet types",
+      "Columns keep the types the file declares. Timestamps keep every stored digit, down to nanoseconds, and decimals keep their exact digits. A whole number or decimal too long to hold exactly keeps its digits as text.",
+    ],
+    [
       "Nested JSON",
-      "A nested object becomes dotted fields, such as user.plan. A list stays together as JSON text in one field, so each record is one row.",
+      "A nested object becomes dotted fields, such as user.plan. A list stays together as JSON text in one field, so each record is one row. Parquet lists, maps, and structs read the same way.",
     ],
   ]}
 />
@@ -55,7 +60,9 @@ A JSON file whose records sit under one key, such as `{ "data": [...] }`, opens 
 
 To read a column another way, open the field in **Fields** and change its type.
 
-To try it, open **Store inventory** under **No file handy?** on the home page, or download [store-inventory.tsv](/datasets/store-inventory.tsv). Its SKUs, UPCs, and ZIP codes keep their leading zeros, and its count times chart as dates. **App events** ([app-events.ndjson](/datasets/app-events.ndjson)) is JSON Lines with nested user fields and 19-digit session IDs. **Regional sales** ([regional-sales.xlsx](/datasets/regional-sales.xlsx)) is a workbook with three sheets, so it asks which one to open.
+Files of up to a few hundred thousand rows open in seconds. A table of more than 500,000 rows asks before it opens, since it takes a while and a lot of the tab's memory.
+
+To try it, open **Store inventory** under **No file handy?** on the home page, or download [store-inventory.tsv](/datasets/store-inventory.tsv). Its SKUs, UPCs, and ZIP codes keep their leading zeros, and its count times chart as dates. **App events** ([app-events.ndjson](/datasets/app-events.ndjson)) is JSON Lines with nested user fields and 19-digit session IDs. **Regional sales** ([regional-sales.xlsx](/datasets/regional-sales.xlsx)) is a workbook with three sheets, so it asks which one to open. **Bike trips** ([bike-trips.parquet](/datasets/bike-trips.parquet)) is a Parquet file with 64-bit trip IDs, UTC start times, decimal fares, and a nested rider.
 
 ## Start from an example
 

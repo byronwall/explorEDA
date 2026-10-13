@@ -1,6 +1,7 @@
 import { readDelimited } from "./delimited";
 import { BINARY_FORMATS, tableFormatList, tableFormatOf } from "./formats";
 import { readJson, readJsonLines } from "./json";
+import { readParquet } from "./parquet";
 import { readXlsx } from "./xlsx";
 import {
   TableReadError,
@@ -65,7 +66,9 @@ function formatFor(fileName: string, options: ReadTableOptions): TableFormat {
   return format;
 }
 
-function decode(text: string, format: Exclude<TableFormat, "xlsx">) {
+type TextFormat = Exclude<TableFormat, "xlsx" | "parquet">;
+
+function decode(text: string, format: TextFormat) {
   switch (format) {
     case "csv":
       return readDelimited(text, "auto");
@@ -84,7 +87,7 @@ function readText(text: string, format: TableFormat) {
       `${format.toUpperCase()} files are binary. Read them with readTableFile.`
     );
   }
-  return withFieldTypes(decode(text, format as Exclude<TableFormat, "xlsx">));
+  return withFieldTypes(decode(text, format as TextFormat));
 }
 
 /**
@@ -119,6 +122,13 @@ export async function readTableFile(
     // A sheet names its table when the workbook holds several.
     const name = table.sheets.length > 1 ? table.sheet : baseName(file.name);
     return { name, format, ...withFieldTypes(table) };
+  }
+  if (format === "parquet") {
+    const bytes = await blobBytes(file);
+    throwIfAborted(options.signal);
+    const table = await readParquet(bytes);
+    throwIfAborted(options.signal);
+    return { name: baseName(file.name), format, ...withFieldTypes(table) };
   }
   const text = await blobText(file);
   throwIfAborted(options.signal);

@@ -342,19 +342,117 @@ describe("Excel workbooks", () => {
   });
 });
 
+describe("Parquet", () => {
+  it("keeps exact values for every pyarrow type", async () => {
+    const table = await readTableFile(await fixture("parquet/types.parquet"));
+    expect(table.format).toBe("parquet");
+    expect(table.rows).toHaveLength(6);
+    expect(typeOf(table)).toEqual({
+      id: "string",
+      account: "string",
+      count: "number",
+      small: "number",
+      ratio: "number",
+      price: "number",
+      balance: "string",
+      day: "date",
+      at_ms: "date",
+      local_us: "date",
+      at_ns: "date",
+      flag: "boolean",
+      tags: "string",
+      address: "string",
+    });
+    expect(table.rows[1]).toEqual({
+      id: "00001",
+      account: "9007199254740994",
+      count: 10,
+      small: 1,
+      ratio: 1 / 3,
+      price: 0.1,
+      balance: "1.5000000000",
+      day: "2025-01-02",
+      at_ms: "2025-03-01T12:00:01.123Z",
+      local_us: "2025-03-01T08:30:00.111111",
+      at_ns: "2025-03-01T12:00:00.12345679Z",
+      flag: false,
+      tags: "[]",
+      address: '{"city":"Lima","zip":null}',
+    });
+    expect(table.rows[0]!.balance).toBe("12345678901234567890.1234567891");
+    expect(table.rows[0]!.tags).toBe('["a","b"]');
+    expect(table.rows[2]).toMatchObject({
+      count: null,
+      price: null,
+      flag: null,
+      tags: null,
+      address: null,
+    });
+  });
+
+  for (const codec of ["none", "gzip", "zstd", "brotli", "lz4"]) {
+    it(`reads ${codec} pages`, async () => {
+      const table = await readTableFile(
+        await fixture(`parquet/codec-${codec}.parquet`)
+      );
+      expect(table.rows[5]).toEqual({
+        id: "00005",
+        account: "9007199254740998",
+        price: 0,
+        at_ms: "2025-03-01T12:00:05.123Z",
+        tags: '["f"]',
+      });
+    });
+  }
+
+  it("reads a DuckDB file with decimals, lists, and structs", async () => {
+    const table = await readTableFile(await fixture("parquet/duckdb.parquet"));
+    expect(typeOf(table)).toEqual({
+      n: "number",
+      code: "string",
+      amount: "number",
+      huge: "number",
+      ts: "date",
+      d: "date",
+      pair: "string",
+      obj: "string",
+      ok: "boolean",
+    });
+    expect(table.rows[3]).toEqual({
+      n: 3,
+      code: "0003",
+      amount: 3.375,
+      huge: 170141183460469231731687303715884105727 - 3,
+      ts: "2024-03-01T00:00:02",
+      d: "2024-03-03",
+      pair: "[3,4]",
+      obj: '{"k":3}',
+      ok: true,
+    });
+  });
+
+  it("explains a file that is not Parquet", async () => {
+    await expect(
+      readTableFile(new File(["a,b"], "fake.parquet"))
+    ).rejects.toThrow("The file is not a readable Parquet file");
+  });
+});
+
 describe("formats", () => {
   it("names formats by extension", () => {
     expect(tableFormatOf("Orders.TSV")).toBe("tsv");
     expect(tableFormatOf("notes.txt")).toBe("csv");
     expect(tableFormatOf("photo.png")).toBeUndefined();
     expect(tableFileAccept()).toContain(".tab");
-    expect(tableFormatList()).toBe("CSV, TSV, JSON, JSON Lines, or Excel");
+    expect(tableFormatList()).toBe(
+      "CSV, TSV, JSON, JSON Lines, Excel, or Parquet"
+    );
     expect(tableFormatOf("events.NDJSON")).toBe("jsonl");
   });
 
   it("rejects an unknown extension with the readable formats", async () => {
     await expect(readTableFile(new File(["x"], "photo.png"))).rejects.toThrow(
-      "Choose a CSV, TSV, JSON, JSON Lines, or Excel file."
+      "Choose a CSV, TSV, JSON, JSON Lines, Excel, or Parquet file."
     );
   });
 

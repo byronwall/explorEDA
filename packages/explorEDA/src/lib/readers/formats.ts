@@ -6,6 +6,8 @@ export interface TableFormatInfo {
   label: string;
   extensions: readonly string[];
   mimeTypes: readonly string[];
+  /** Read from bytes, not text; `readTableText` can't read it. */
+  binary?: boolean;
 }
 
 /** Every format `readTableFile` reads, in the order to list them. */
@@ -37,15 +39,25 @@ export const TABLE_FORMATS: readonly TableFormatInfo[] = [
   {
     format: "xlsx",
     label: "Excel",
+    binary: true,
     extensions: [".xlsx"],
     mimeTypes: [
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     ],
   },
+  {
+    format: "parquet",
+    label: "Parquet",
+    binary: true,
+    extensions: [".parquet"],
+    mimeTypes: ["application/vnd.apache.parquet"],
+  },
 ];
 
 /** Formats read from bytes rather than text. */
-export const BINARY_FORMATS: ReadonlySet<TableFormat> = new Set(["xlsx"]);
+export const BINARY_FORMATS: ReadonlySet<TableFormat> = new Set(
+  TABLE_FORMATS.filter((info) => info.binary).map((info) => info.format)
+);
 
 /** The format a file name's extension names, or undefined. */
 export function tableFormatOf(fileName: string): TableFormat | undefined {

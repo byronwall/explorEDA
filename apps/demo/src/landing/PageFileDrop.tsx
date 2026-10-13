@@ -7,7 +7,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { FileUp } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { useSheetChoice } from "../SheetPicker";
+import { useImportChoice } from "../ImportChoice";
 import { readImportFile } from "../tableImport";
 
 const carriesFiles = (event: DragEvent) =>
@@ -29,7 +29,7 @@ export function PageFileDrop({
   const depth = useRef(0);
   const onProjectImportRef = useRef(onProjectImport);
   onProjectImportRef.current = onProjectImport;
-  const sheets = useSheetChoice(
+  const sheets = useImportChoice(
     (table) => onImport(table),
     (message) => setError(message),
     true
@@ -141,7 +141,7 @@ export function PageFileDrop({
           </div>
         </div>
       )}
-      {sheets.picker}
+      {sheets.prompt}
       {error && (
         <div
           role="alert"

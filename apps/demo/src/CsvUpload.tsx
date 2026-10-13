@@ -6,7 +6,7 @@ import {
 } from "exploreda/readers";
 import { Button } from "@/components/ui/button";
 
-import { useSheetChoice } from "./SheetPicker";
+import { useImportChoice } from "./ImportChoice";
 import { readImportFile } from "./tableImport";
 import { Plus, Upload } from "lucide-react";
 import { useCallback, useState } from "react";
@@ -26,7 +26,7 @@ export function CsvUpload({
 }: CsvUploadProps) {
   const [error, setError] = useState<string | null>(null);
   const [failedFile, setFailedFile] = useState<File | null>(null);
-  const sheets = useSheetChoice(
+  const sheets = useImportChoice(
     (table) => onImport?.(table),
     (message) => setError(message)
   );
@@ -144,7 +144,7 @@ export function CsvUpload({
           </div>
         )}
       </div>
-      {sheets.picker && <div className="mt-3">{sheets.picker}</div>}
+      {sheets.prompt && <div className="mt-3">{sheets.prompt}</div>}
     </>
   );
 }

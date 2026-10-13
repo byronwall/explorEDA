@@ -105,55 +105,137 @@ export function SheetPicker({
   );
 }
 
-type Pending = { file: File; table: TableFile; busy?: string };
+/** Tables past this many rows ask before opening; they take seconds and memory. */
+export const LARGE_TABLE_ROWS = 500_000;
+
+/** Asks before opening a table large enough to take a while. */
+export function LargeTableNotice({
+  fileName,
+  rows,
+  floating = false,
+  onOpen,
+  onCancel,
+}: {
+  fileName: string;
+  rows: number;
+  floating?: boolean;
+  onOpen: () => void;
+  onCancel: () => void;
+}) {
+  const open = useRef<HTMLButtonElement>(null);
+  useEffect(() => open.current?.focus({ preventScroll: floating }), [floating]);
+  // About 18 ms per 1,000 rows in a production build.
+  const seconds = Math.max(10, Math.round(((rows / 1000) * 0.018) / 5) * 5);
+  return (
+    <div
+      role="group"
+      aria-label={`Open ${fileName}?`}
+      data-large-table-notice=""
+      onKeyDown={(event) => {
+        if (event.key === "Escape") {
+          event.stopPropagation();
+          onCancel();
+        }
+      }}
+      onClick={(event) => event.stopPropagation()}
+      className={cn(
+        "rounded-lg border border-border bg-card p-3 text-left text-sm",
+        floating &&
+          "fixed inset-x-0 bottom-16 z-50 mx-auto w-[min(32rem,calc(100%-2rem))] shadow-lg"
+      )}
+    >
+      <p className="font-medium">
+        {fileName} has {rows.toLocaleString()} rows
+      </p>
+      <p className="mt-1 text-muted-foreground">
+        Opening it takes about {seconds} seconds and a lot of this tab&apos;s
+        memory.
+      </p>
+      <div className="mt-3 flex gap-2">
+        <Button ref={open} type="button" size="sm" onClick={onOpen}>
+          Open all rows
+        </Button>
+        <Button type="button" variant="outline" size="sm" onClick={onCancel}>
+          Cancel
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+type Pending =
+  | { kind: "sheet"; file: File; table: TableFile; busy?: string }
+  | { kind: "large"; file: File; table: TableFile };
 
 /**
- * Opens a read table, asking first which sheet to use when a workbook has
- * more than one. `picker` is the element to render while it asks.
+ * Opens a read table after any choice it needs: which sheet to use when a
+ * workbook has several, and whether to open a very large table. `prompt` is
+ * the element to render while it asks.
  */
-export function useSheetChoice(
+export function useImportChoice(
   open: (table: TableFile) => void,
   onError: (message: string) => void,
   floating = false
 ) {
   const [pending, setPending] = useState<Pending>();
-  const offer = useCallback(
+  const confirm = useCallback(
     (file: File, table: TableFile) => {
-      if ((table.sheets?.length ?? 0) > 1) {
-        setPending({ file, table });
+      if (table.rows.length > LARGE_TABLE_ROWS) {
+        setPending({ kind: "large", file, table });
         return;
       }
+      setPending(undefined);
       open(table);
     },
     [open]
   );
+  const offer = useCallback(
+    (file: File, table: TableFile) => {
+      if ((table.sheets?.length ?? 0) > 1) {
+        setPending({ kind: "sheet", file, table });
+        return;
+      }
+      confirm(file, table);
+    },
+    [confirm]
+  );
   const choose = async (sheet: string) => {
-    if (!pending) return;
+    if (pending?.kind !== "sheet") return;
     if (sheet === pending.table.sheet) {
-      setPending(undefined);
-      open(pending.table);
+      confirm(pending.file, pending.table);
       return;
     }
     setPending({ ...pending, busy: sheet });
     try {
-      const table = await readTableFile(pending.file, { sheet });
-      setPending(undefined);
-      open(table);
+      confirm(pending.file, await readTableFile(pending.file, { sheet }));
     } catch (error) {
       setPending({ ...pending, busy: undefined });
       onError(error instanceof Error ? error.message : String(error));
     }
   };
-  const picker = pending ? (
-    <SheetPicker
-      fileName={pending.file.name}
-      sheets={pending.table.sheets ?? []}
-      suggested={pending.table.sheet}
-      busy={pending.busy}
-      floating={floating}
-      onChoose={(sheet) => void choose(sheet)}
-      onCancel={() => setPending(undefined)}
-    />
-  ) : null;
-  return { offer, picker };
+  const cancel = () => setPending(undefined);
+  const prompt =
+    pending?.kind === "sheet" ? (
+      <SheetPicker
+        fileName={pending.file.name}
+        sheets={pending.table.sheets ?? []}
+        suggested={pending.table.sheet}
+        busy={pending.busy}
+        floating={floating}
+        onChoose={(sheet) => void choose(sheet)}
+        onCancel={cancel}
+      />
+    ) : pending?.kind === "large" ? (
+      <LargeTableNotice
+        fileName={pending.file.name}
+        rows={pending.table.rows.length}
+        floating={floating}
+        onOpen={() => {
+          setPending(undefined);
+          open(pending.table);
+        }}
+        onCancel={cancel}
+      />
+    ) : null;
+  return { offer, prompt };
 }
