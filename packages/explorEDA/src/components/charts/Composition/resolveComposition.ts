@@ -120,6 +120,21 @@ export interface LineNode extends NodeBase {
   casing?: string;
 }
 
+/** One slice of a ring, such as a donut's share of its repeat. Angles run clockwise from the top, in radians. */
+export interface ArcNode extends NodeBase {
+  type: "arc";
+  cx: number;
+  cy: number;
+  innerRadius: number;
+  outerRadius: number;
+  startAngle: number;
+  endAngle: number;
+  fill: string;
+  /** A thin outline between slices, in the paper color. */
+  stroke?: string;
+  glyph?: GlyphDatum;
+}
+
 /** One path through ordered points, drawn as connected runs. */
 export interface PathNode extends NodeBase {
   type: "path";
@@ -157,7 +172,8 @@ export type SceneNode =
   | CircleNode
   | LineNode
   | PathNode
-  | AreaNode;
+  | AreaNode
+  | ArcNode;
 
 /** Why a guide or annotation sits where it does. */
 export interface ResolvedAnchor {
@@ -682,7 +698,10 @@ function keyGlyph(
     case "stack":
     case "waffle":
     case "bar":
+    case "donut":
       return [rect(mark.colors[0] ?? INK)];
+    case "waterfall":
+      return [rect(part === "muted" ? mark.down : mark.up)];
   }
 }
 

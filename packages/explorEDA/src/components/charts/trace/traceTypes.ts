@@ -27,6 +27,8 @@ import type { MarginalTrace } from "../ScatterPlot/marginalPlan";
 import type { HexTrace } from "../ScatterPlot/hexPlan";
 import type { ContourTrace } from "../ScatterPlot/contourPlan";
 import type { CompositionTrace } from "../Composition/compositionTrace";
+import type { WaterfallTrace } from "../Waterfall/WaterfallTraceBody";
+import type { DonutTrace } from "../Donut/DonutTraceBody";
 
 /** A selected object. The owner's source resolves it against its current plan. */
 export interface TraceSelection {
@@ -125,6 +127,8 @@ export type ChartTrace =
   | HeatmapTrace
   | EcdfTrace
   | MetricCardTrace
+  | WaterfallTrace
+  | DonutTrace
   | TimeSeriesTrace
   | GuideTrace
   | TitleTrace
@@ -159,14 +163,16 @@ export function resolveGuideTrace(
   revision: string
 ): GuideTrace | undefined {
   const found = findAxisGuide(axes, id);
-  return found && {
-    kind: "guide",
-    id,
-    revision,
-    guide: found.guide,
-    axis: found.axis,
-    axes,
-  };
+  return (
+    found && {
+      kind: "guide",
+      id,
+      revision,
+      guide: found.guide,
+      axis: found.axis,
+      axes,
+    }
+  );
 }
 
 export function guideTargets(axes: ChartAxesPlan): TraceTarget[] {

@@ -1,0 +1,48 @@
+## Try it
+
+<LiveExample
+  id="waterfall"
+  caption="A lab budget bridged from plan to actual, beside a quarter picker, from the lab budget example."
+/>
+
+## How it reads
+
+- The first row is the **start state**'s total, such as the plan, and the last row is the **end state**'s total, such as the actual. Each is a line from zero to a filled dot at the total, so the colored steps between them stand out.
+- Each step between them is one category of the step field: its value in the end state minus its value in the start state. Rising steps and falling steps have their own colors.
+- Each step starts where the one before it ends, and a dashed line carries the running total from bar to bar.
+- With **Group by**, steps gather under each value of that field. A subtotal checkpoint closes each group: a marker on the running total so far, with a hairline under the group.
+- A category that appears in only one state counts as 0 in the other. Its trace says which state it is missing from.
+
+## Define the two states
+
+Each state is a measure and the rows it counts, so the chart works with however the data is laid out:
+
+- **Plan and actual in two columns:** leave both states' conditions empty, and give each state its own measure, such as Plan and Actual.
+- **A scenario column:** keep one measure, and give each state a condition, such as Scenario is Plan and Scenario is Actual.
+- **Two periods:** a condition on the year or date, such as Year is 2024 and Year is 2025.
+
+The measure is a sum or a row count. Averages don't add up, so the waterfall doesn't offer them.
+
+## Select and trace
+
+- Click a step to select its rows in both states. Click a subtotal to select every step in its group.
+- Click the start or end bar to select that state's rows. Click empty plot space to clear the selection.
+- Other charts filter the rows both states count, so a quarter picker bridges just those quarters.
+- Alt-click any bar to see how its value was calculated and the source rows in each state.
+
+If other charts' filters leave a state with no rows, the chart says so instead of drawing a bridge from zero.
+
+## Running totals
+
+Set **Shows** to **Running total** to follow a total through ordered steps instead of bridging two states. Each step adds its category's sum of a signed measure, or its row count, to the total so far.
+
+<LiveExample
+  id="waterfall-running"
+  caption="A battery's charge through a day, from 40 kWh at midnight, beside a flow picker, from the battery example."
+/>
+
+- Steps run in sequence when the step field holds numbers or dates, such as hours or days. Other categories keep the order they first appear in the data.
+- **Start value** draws the first bar and starts the total there. Leave it blank to start at zero with no start bar.
+- The end bar is the start value plus every step, and **Group by** adds a subtotal after each group, as in a bridge.
+- Positive values raise the total and negative values lower it, so store inflows and outflows with their signs, such as charging as positive and load as negative.
+- Click a step to select its rows. Click the end bar to clear the selection. The start value has no rows, but Alt-click traces any bar.

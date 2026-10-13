@@ -61,10 +61,13 @@ import {
   MapPin,
   Bird,
   BarChart3,
+  ChartColumnStacked,
   Calculator,
   Spline,
   TableProperties,
   AreaChart,
+  BatteryCharging,
+  Donut as DonutIcon,
   LayoutGrid as GridIcon,
   Columns3,
   Grid3x3,
@@ -106,6 +109,12 @@ import { earthquakesAnalysis } from "./analyses/earthquakes";
 import { flightsAnalysis } from "./analyses/flights";
 import { shopText } from "./analyses/shop";
 import { wineText } from "./analyses/wine";
+import {
+  batteryDayDashboard,
+  budgetBridgeDashboard,
+  budgetReportDashboard,
+  channelShareDashboard,
+} from "./partsAndChangeDashboards";
 import { worldBankAnalysis } from "./analyses/worldbank";
 import type { ExampleAnalysis } from "./analyses/types";
 import { categoricalChartSettings } from "./categoricalChartSettings";
@@ -182,6 +191,7 @@ const viewNames: Record<string, string> = {
   boxplot: "box plot",
   "color-legend": "legend",
   composition: "composition",
+  waterfall: "waterfall",
   "data-table": "table",
   heatmap: "heatmap",
   ecdf: "ECDF",
@@ -813,6 +823,54 @@ export const examples: ExampleData[] = [
     icon: Layers,
     data: "/datasets/causes-by-age.csv",
     savedData: causesByAgeDashboard,
+  },
+  {
+    id: "budget-bridge",
+    title: "Lab budget: plan to actual",
+    description:
+      "A research lab planned a $104K surplus and ended $39K short. A waterfall bridges plan to actual one line item at a time, with a subtotal for funding, staff, and operations; pick quarters to bridge part of the year, and click a step to see its rows.",
+    dataset: {
+      rows: "96 budget rows",
+      fields: 6,
+      source: "Synthetic",
+    },
+    shows: ["Waterfall bridge", "Group subtotals", "Plan and actual states"],
+    icon: ChartColumnStacked,
+    data: "/datasets/lab-budget.csv",
+    savedData: budgetBridgeDashboard,
+  },
+  {
+    id: "battery-day",
+    title: "A day in the battery",
+    description:
+      "A building's battery starts the day at 40 kWh. A running-total waterfall adds each hour's solar, grid, and load flows to its charge, with a subtotal for each part of the day; pick flows to see what solar alone added.",
+    dataset: { rows: "45 hourly flows", fields: 4, source: "Synthetic" },
+    shows: ["Running total", "Ordered steps", "Period subtotals"],
+    icon: BatteryCharging,
+    data: "/datasets/battery-day.csv",
+    savedData: batteryDayDashboard,
+  },
+  {
+    id: "channel-share",
+    title: "Shares of the order book",
+    description:
+      "500 orders split by sales channel and product. A donut shows each channel's share of revenue beside 100% bars of the same mix in each region, in the same colors; a second donut pools the smaller products into Other. Click a slice and every view narrows.",
+    dataset: { rows: "500 orders", fields: 15, source: "Synthetic" },
+    shows: ["Donut shares", "Other slice", "Shared channel colors"],
+    icon: DonutIcon,
+    data: "/datasets/shop-operations.csv",
+    savedData: channelShareDashboard,
+  },
+  {
+    id: "budget-report",
+    title: "Lab budget report",
+    description:
+      "A report page built in Composition: each quarter's plan-to-actual bridge as small multiples on one scale, and a donut per budget group of where its actual money came from and went. Filters and traces work as on any chart.",
+    dataset: { rows: "96 budget rows", fields: 6, source: "Synthetic" },
+    shows: ["Waterfall marks", "Donut marks", "Small multiples"],
+    icon: LayoutTemplate,
+    data: "/datasets/lab-budget.csv",
+    savedData: budgetReportDashboard,
   },
   {
     id: "consumer-confidence",

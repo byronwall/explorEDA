@@ -83,6 +83,7 @@ const CHART_GROUPS: Array<{ label: string; keys: string[] }> = [
     label: "Compare categories",
     keys: ["row", "bar", "pivot", "heatmap", "hierarchy"],
   },
+  { label: "Change and share", keys: ["waterfall", "donut"] },
   { label: "Distribution", keys: ["histogram", "boxplot", "ecdf"] },
   {
     label: "Relationships",

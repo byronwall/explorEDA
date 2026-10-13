@@ -301,6 +301,8 @@ const FORMATS: FieldFormat[] = [
 
 const DEFAULT_SIZES: Record<string, { w: number; h: number }> = {
   "metric-card": { w: 3, h: 2 },
+  waterfall: { w: 6, h: 6 },
+  donut: { w: 5, h: 4 },
   "data-table": { w: 12, h: 5 },
   summary: { w: 12, h: 5 },
 };
