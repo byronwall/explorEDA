@@ -1,0 +1,195 @@
+{
+  "repository": "https://github.com/byronwall/explorEDA",
+  "baseline": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+  "kind": "selected exact source snapshot; not a runnable checkout",
+  "local_additions": [
+    "prompt.md",
+    "user-request.md",
+    "source-packet.md",
+    "source-manifest.json",
+    "../../run.md"
+  ],
+  "local_source_changes": [],
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "bytes": 5682,
+      "sha256": "a3828060158eab7f9d3fad0f6626be3c05b1b4bd28b94f5d858e0e77d7678382"
+    },
+    {
+      "path": "README.md",
+      "bytes": 9646,
+      "sha256": "4690f7b91a3473eff7e12aaa0493954c5401efbf885a88351765ba423f2d431a"
+    },
+    {
+      "path": "package.json",
+      "bytes": 960,
+      "sha256": "98a8fe6c6a7118c6642ae7532c20775a9ed7246b176270c7b83c816517cce468"
+    },
+    {
+      "path": "pnpm-workspace.yaml",
+      "bytes": 257,
+      "sha256": "9f1bb3ad3b8b9191935bd7c423b86d7acecdbb594fb07638f106ab8316b8b189"
+    },
+    {
+      "path": "docs/agent-guide.md",
+      "bytes": 33614,
+      "sha256": "868d75d410af5c8c318a2b8acd2d3dcdb98eb6c94113eef4c3d9c5b1f51e409b"
+    },
+    {
+      "path": "docs/ui-defaults.md",
+      "bytes": 18914,
+      "sha256": "ba5ef4b0072b7f4da151da6188afbdbd3d06f62df91d6da52d3306a3f2c9c500"
+    },
+    {
+      "path": "packages/explorEDA/README.md",
+      "bytes": 21204,
+      "sha256": "b858d900ac7ea25f71236f8ea466fa28ae247967e27432afdbd620526bf610b3"
+    },
+    {
+      "path": "packages/explorEDA/package.json",
+      "bytes": 5325,
+      "sha256": "d5c9063b6d5e1e815d9928bb608e82bedcf08db7035f5e538da9762b72fcac3c"
+    },
+    {
+      "path": "apps/demo/package.json",
+      "bytes": 2684,
+      "sha256": "8d8401b17b77d7924aeab74f768a1ea3565449ae283e041e52ae24395838e48f"
+    },
+    {
+      "path": "packages/explorEDA/src/components/ExplorEda.tsx",
+      "bytes": 7929,
+      "sha256": "8a4d509f6e1b4d17f309b136357e5c1b74b81d37a853c0832a823771ff6092d0"
+    },
+    {
+      "path": "packages/explorEDA/src/components/ExplorEdaProject.tsx",
+      "bytes": 14034,
+      "sha256": "8d2d69f222b6d1860bcee9d00865df4128ca8b7c204cf70ed4bba9b48986ac96"
+    },
+    {
+      "path": "packages/explorEDA/src/types/AnalysisProject.ts",
+      "bytes": 4839,
+      "sha256": "374ffd46c8143f95c7256859d0a1bcc24e1eabe82a80dce9d465a2c4ba693408"
+    },
+    {
+      "path": "packages/explorEDA/src/types/ChartTypes.ts",
+      "bytes": 6936,
+      "sha256": "767e608bc8895a9691f1db145589fc7d104901396d1bb35ec5b921e34fdc4061"
+    },
+    {
+      "path": "packages/explorEDA/src/types/SavedDataStructure.ts",
+      "bytes": 1926,
+      "sha256": "d06d902c2e9ba967adb39f25502405153b2b582bfd2bf7305ad51bec9b9dfebb"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/valueParsing.ts",
+      "bytes": 9098,
+      "sha256": "f6bb49ecf1c6f1ed06fc1e6c6de96800ee4242dd1e89d98fc8cfe0f8cf7c5239"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/analysis/sources.ts",
+      "bytes": 7632,
+      "sha256": "afb86a427d13a95ea1ca191ad7d927a385201cca963d3ec959d491a482f05465"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/analysis/projectFile.ts",
+      "bytes": 21021,
+      "sha256": "58c0d7462eb14be5597e296aed1b0dcca47f8b91993a2063952f6809631f52b4"
+    },
+    {
+      "path": "packages/explorEDA/src/providers/DataLayerProvider.tsx",
+      "bytes": 53615,
+      "sha256": "c464ed3a4e2c65a5d4f33dc5e5c7fc9dc0b4762be64ccf6bbf5137cc1b08c698"
+    },
+    {
+      "path": "apps/demo/src/readDataFile.ts",
+      "bytes": 661,
+      "sha256": "6e34a56d8e215b9d1e861b9acfe7a502c0254da46b366f1c9bf80633972ed3b5"
+    },
+    {
+      "path": "apps/demo/src/csvParser.ts",
+      "bytes": 929,
+      "sha256": "63580902ae0fd8e3630a4b6106ba9a45dbb48f83202bfcebd63b7c5bacd80c5b"
+    },
+    {
+      "path": "apps/demo/src/jsonParser.ts",
+      "bytes": 2408,
+      "sha256": "7fde432e85f7f997a428c63e92929b23225d9a507265c3f2bdbacb135954a15f"
+    },
+    {
+      "path": "apps/demo/src/CsvUpload.tsx",
+      "bytes": 4027,
+      "sha256": "f00c4821db1a065b4466bafa86cf1d4b83b9dd8de12717c6997bee2feb45ba09"
+    },
+    {
+      "path": "apps/demo/src/LandingPage.tsx",
+      "bytes": 28243,
+      "sha256": "97daebc1d07b3a76c118a8e3593b958b96183b2efb3665f21b1697e6bfaa25f4"
+    },
+    {
+      "path": "apps/demo/src/SavedViewsWorkspace.tsx",
+      "bytes": 40053,
+      "sha256": "21ce42f590583a5d5e7c08a0fa459badd6f8ace36a5cfda663227ff0154b8a81"
+    },
+    {
+      "path": "apps/demo/src/savedViewsSession.ts",
+      "bytes": 6778,
+      "sha256": "ea269b22c9b0155d0b1fa500ef01e39c934723916f71fc20fd6ff429ef5b83e6"
+    },
+    {
+      "path": "apps/demo/src/savedViewsHistory.ts",
+      "bytes": 34392,
+      "sha256": "64013981d656cc65b62a5716626782b98bd1808ca5409aeb345ea64603aa5cda"
+    },
+    {
+      "path": "apps/demo/src/landing/PageFileDrop.tsx",
+      "bytes": 5115,
+      "sha256": "996bc6ea21cc599c6245c66ae81414d0eeac00616906da5dbe9cddb48c599cd7"
+    },
+    {
+      "path": "apps/demo/src/parsers.test.ts",
+      "bytes": 1927,
+      "sha256": "adf13ae6ab3d424999261fad29db279a5dce861bdbda40ad9e40b715776f6c2f"
+    },
+    {
+      "path": "apps/demo/src/SavedViewsWorkspace.test.tsx",
+      "bytes": 22798,
+      "sha256": "6d642cbe28948532767d0c3f08f950052af3672faf4aaecbc8a0f83df1c6115d"
+    },
+    {
+      "path": "apps/demo/src/docs/pages/load-data.mdx",
+      "bytes": 692,
+      "sha256": "9b0d6814bed9e253ba3a2c0cefe184b35fc33b6a11c27ad73c2023487f21d859"
+    },
+    {
+      "path": "docs/intent/database-adapters/intent-brief.md",
+      "bytes": 3685,
+      "sha256": "89f8900797c75f73ac5895f48fb29ff23e2ead61ea3adabe549a2fcfa74d7568"
+    },
+    {
+      "path": "docs/intent/database-adapters/shape-brief.md",
+      "bytes": 4283,
+      "sha256": "e3917ce0026d394a0bb01f9f2c1ecd9b8efdd697528bdcc7091cd20a1e2fb4d6"
+    },
+    {
+      "path": "docs/intent/columnar-data-transport/intent-brief.md",
+      "bytes": 3451,
+      "sha256": "954a6904f6325940a88e2219aaf992959390334dad4c71c5cdbb3e119ce908b1"
+    },
+    {
+      "path": "docs/intent/columnar-data-transport/shape-brief.md",
+      "bytes": 4774,
+      "sha256": "9e71e4558dd5e3c31d6d4ab8fa7dbcee94aaad47a42c5203794c20c91cb58cfc"
+    },
+    {
+      "path": "docs/intent/database-query-contract/intent-brief.md",
+      "bytes": 4420,
+      "sha256": "f131c70e4432956539c720dfaeb2a63e20d269d2f32db62f630d6f841c92e54b"
+    },
+    {
+      "path": "docs/intent/date-time-handling/intent-brief.md",
+      "bytes": 2309,
+      "sha256": "020e8d6a10df052c9b0db5ebdedd1f3225b92fd593841761fcd8fe9a106d1c69"
+    }
+  ]
+}
