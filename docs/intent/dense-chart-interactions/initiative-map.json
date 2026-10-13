@@ -8,7 +8,7 @@
     "last_updated": "2026-10-12",
     "summary": "Make frequent chart changes local and clear while keeping ordinary click-to-filter primary.",
     "status": "planned",
-    "next_action": "Review the proposed shape, then authorize the bounded local Color proof if desired."
+    "next_action": "Review the updated shape, then authorize the scatter Color role proof if desired."
   },
   "artifacts": {
     "intent_brief": {
@@ -60,6 +60,13 @@
       "location": "references/evidence-checks.json",
       "anchor": "Exact source hashes, raw artifact integrity, and primary-source rechecks",
       "authority": "Static evidence; proposed behavior remains untested"
+    },
+    {
+      "id": "product-answers",
+      "type": "direct-user-input",
+      "location": "raw/product-answers-2026-10-12.md",
+      "anchor": "Ten answers to product questions about scope, undo, scale sharing, trace, and audience",
+      "authority": "explicit current user direction; supersedes earlier shape where they conflict"
     }
   ],
   "intent": {
@@ -144,10 +151,14 @@
           {
             "source_id": "user-direction",
             "anchor": "Initial request and latest correction"
+          },
+          {
+            "source_id": "product-answers",
+            "anchor": "Answer 3"
           }
         ],
         "confidence": "high",
-        "notes": ""
+        "notes": "Trace is rare; it exists to force a planning/rendering split. Its gesture may move to the header and a record action."
       },
       {
         "id": "color-example",
@@ -182,6 +193,74 @@
         ],
         "confidence": "medium",
         "notes": ""
+      },
+      {
+        "id": "all-properties",
+        "type": "outcome",
+        "statement": "Cover every frequently changed property — Color, X, Y, and plotted fields — through one editable-role pattern.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "product-answers",
+            "anchor": "Answers 1 and 6"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Scatter Color is the first case, not the whole scope."
+      },
+      {
+        "id": "instant-undo",
+        "type": "required behavior",
+        "statement": "Choosing a value applies at once; Cmd/Ctrl-Z undoes it as one step.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "product-answers",
+            "anchor": "Answers 5 and 8"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Live preview while browsing is worth trying (Answer 4)."
+      },
+      {
+        "id": "shared-scale",
+        "type": "decision",
+        "statement": "A field uses one shared color scale by default; separate tuned copies come later.",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "product-answers",
+            "anchor": "Answer 7"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "demo-audience",
+        "type": "constraint",
+        "statement": "The first audience is Byron in the demo; host opt-in waits.",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "product-answers",
+            "anchor": "Answer 9"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
       }
     ],
     "themes": [
@@ -193,7 +272,7 @@
     "conflicts": [
       {
         "description": "Repository docs reserve Alt-click for tracing. The latest user direction explicitly allows that binding to change.",
-        "resolution": "Treat the binding as current behavior, not a proposed-design invariant. Preserve click-to-filter as the stronger constraint."
+        "resolution": "Treat the binding as current behavior, not a proposed-design invariant. Preserve click-to-filter as the stronger constraint. Product answers confirm trace is rare and may move to the header and a record action."
       }
     ],
     "human_questions": []
@@ -231,25 +310,25 @@
         "premise": "An explicit mode changes gesture ownership"
       }
     ],
-    "selected_option": "Compare option-3 alone with option-3 plus option-2; retain existing option-4 and option-1 fallback."
+    "selected_option": "Build option-3 as an editable-role pattern with option-2 as a second entry; one design adjusted through use. Retain option-4 and the option-1 fallback."
   },
   "shape": {
     "status": "review-ready",
-    "appetite": "One scatter Color proof, then reassess. Research and docs only in this run.",
+    "appetite": "Scatter Color as a reusable editable role, then X and Y. Research and docs only in this run.",
     "problem": "Repeated chart changes require navigation away from the question. Hidden configuration can also conflict with filtering.",
-    "recommended_shape": "Visible encoding control plus shallow object menu opening the same compact editor; conditional Alt experiment.",
+    "recommended_shape": "Visible role labels plus a plot context menu opening one field editor; instant apply with one-step undo; trace moves off Alt-click.",
     "success_moves": [
       {
-        "move": "Compare a visible-only Color selector before adding menu or modifier complexity.",
-        "effect": "A simpler design can win the proof."
+        "move": "Build one design and adjust through use instead of switchable variants.",
+        "effect": "Avoids building disposable comparison routes."
       },
       {
         "move": "Resolve chart scope without requiring exact record identity.",
         "effect": "Dense overlapping points do not block chart configuration."
       },
       {
-        "move": "Commit only explicit field acceptance and hold notifications before scale creation.",
-        "effect": "Avoid preview rollback and duplicate host checkpoints."
+        "move": "Apply on choice and group scale creation with binding into one host change.",
+        "effect": "One Cmd/Ctrl-Z restores the chart and any scale the choice created."
       },
       {
         "move": "Reuse field metadata, scale resolution, and updateChart through a small popup presentation seam.",
@@ -265,13 +344,13 @@
       }
     ],
     "first_proof": {
-      "question": "Does local Color configuration improve actual exploration enough to justify menu and modifier complexity?",
-      "artifact": "Future local dense-chart-controls demo and task observation record; not produced in this research run.",
-      "try": "Filtered scatter points/bubbles, a shared-scale peer, no legend, categorical/numeric/computed fields, cancellation, keyboard, and optional Alt variant.",
-      "observe": "Discovery, scope, actions, corrections, selected field, unchanged filters/peers, focus, host checkpoint count.",
-      "decision_rule": "Reject filter/scope regressions. Keep the smallest route that improves locality or discovery; adopt Alt only if repeated changes improve and trace stays findable.",
+      "question": "Does an editable Color role, reached from a visible label and a context menu, make shaping a new chart faster without touching filters?",
+      "artifact": "Future dense-chart-controls demo; not produced in this research run.",
+      "try": "Verify unsized point selection first. Filtered scatter points/bubbles, a shared-scale peer, no legend, categorical/numeric/computed fields, instant apply, one-step undo, preview while browsing, keyboard, and trace through its new routes.",
+      "observe": "Filters and peer unchanged, one undo step per choice, focus return, which entry gets used in real demo work.",
+      "decision_rule": "Reject filter or scope regressions and anything needing more than one undo. Drop the menu if the label covers real use. Keep preview only if it leaves no history.",
       "first_dependency_role": "Real local React UI and store with synthetic rows; no remote provider.",
-      "fallback": "Keep existing settings and trace convention; visible Color alone may satisfy the outcome."
+      "fallback": "Keep existing settings; the visible label alone may satisfy the outcome."
     },
     "rabbit_holes": [
       "Universal edit mode",
@@ -283,12 +362,12 @@
     ],
     "open_decisions": [
       {
-        "question": "Does Alt configuration earn changing trace access?",
-        "resolution": "Observe the bounded proof before deciding."
+        "question": "What should Alt/Option-click do once trace moves?",
+        "resolution": "Decide during use; no new meaning is required for the first proof."
       },
       {
-        "question": "Does persistent Color visibility earn its chart space?",
-        "resolution": "Compare persistent and focus-revealed controls with a touch-visible route."
+        "question": "Do role labels stay visible or reveal on focus?",
+        "resolution": "Decide during use, keeping a touch-visible route."
       }
     ]
   },
@@ -416,6 +495,11 @@
       "date": "2026-10-12",
       "event": "Collected complete Pro output. Verified primary mechanics and all supplied source identities. Reconciled recommendations into intent, seven options, and shape. Implementation remains unrequested.",
       "evidence": "references/research-review.md; references/reconciliation.json; references/evidence-checks.json"
+    },
+    {
+      "date": "2026-10-12",
+      "event": "Incorporated ten product answers: all properties in scope, instant apply with undo, shared scale per field, trace may move, demo audience, single design instead of variant comparison.",
+      "evidence": "raw/product-answers-2026-10-12.md"
     }
   ],
   "closure": null,

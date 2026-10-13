@@ -74,6 +74,6 @@ These alternatives differ in how the user finds and owns an edit. Each preserves
 
 ## Current lean
 
-Start with Option 3 and compare adding Option 2. Keep existing Option 4 interactions and Option 1 for complex work. Test Alt/Option-click as an accelerator into the same editor, with tracing still reachable. Option 5 may suit later visual tuning. Defer Option 6 and keep Option 7 out of normal exploration.
+Build Option 3 as an editable-role pattern — Color first, then X and Y — with Option 2’s context menu as a second entry into the same editor. Build one design and adjust it through use rather than comparing switchable variants. Keep existing Option 4 interactions and Option 1 for complex work. Alt/Option-click is free to change because trace moves to the header and a record action; decide its use later. Option 5 may suit later visual tuning. Defer Option 6 and keep Option 7 out of normal exploration.
 
 The [shape](shape-brief.md) defines the first proof. The [research review](references/research-review.md) links the wider catalog and explains which competitor mechanics transfer.
