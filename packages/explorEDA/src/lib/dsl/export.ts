@@ -235,8 +235,11 @@ function toWord(type: string, pair: string, base: unknown): string {
     return pair;
   }
   // A setting that is a list reads a,b without [] once compile knows it is.
+  // Records in a list are rewritten whole, so a list inside one keeps [].
   const list =
-    path.marker === "list" && Array.isArray(getPath(base, path.segments));
+    path.marker === "list" &&
+    !path.segments.some((segment) => /^\d+$/.test(segment)) &&
+    Array.isArray(getPath(base, path.segments));
   if (path.marker && !list) {
     return pair;
   }

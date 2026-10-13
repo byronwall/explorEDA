@@ -28,7 +28,7 @@ import {
 } from "@/components/charts/Composition/compositionTypes";
 import { isCompositionDefinition } from "@/components/charts/Composition/validateComposition";
 import type { DslDeclaration, DslPair, DslSpan, DslValue } from "./parse";
-import { encodeScalar } from "./paths";
+import { diffPaths, encodeScalar, parsePath, setPath } from "./paths";
 import { block } from "./print";
 
 type Record_ = Record<string, unknown>;
@@ -63,6 +63,11 @@ interface Spec {
   lists?: string[];
   /** Paths that hold text even when the text looks like a number. */
   texts?: string[];
+  /**
+   * Paths that hold lists of records, written as chart settings write them:
+   * `states[]= states.0.label=Plan states.0.filters[]= ...`.
+   */
+  records?: string[];
   /** Two paths written as one word: `at=32,26` or `size=120x180`. */
   pairs?: Array<{ word: string; paths: [string, string]; separator: string }>;
   /** Nested objects written as child lines, such as a unit's `repeat`. */
@@ -227,6 +232,26 @@ const MARK_SPECS: Spec[] = [
     xScaleId: { word: "x", space: "scale" },
     colorScaleId: { word: "colorScale", space: "scale" },
   }),
+  markSpec(
+    "waterfall",
+    (part) => ({
+      mode: "accumulate",
+      aggregation: counted(part),
+      up: "#1a7f5a",
+      down: "#c0392b",
+      total: "#4a5563",
+      labelWidth: 90,
+    }),
+    {},
+    { records: ["states"] }
+  ),
+  markSpec("donut", (part) => ({
+    aggregation: counted(part),
+    order: "total",
+    colors: STACK_COLORS,
+    hole: 0.6,
+    showTotal: true,
+  })),
 ];
 
 const INSET_SPEC: Spec = {
@@ -711,6 +736,37 @@ const SETTINGS: Record<string, { allowed: string[]; required?: string[] }> = {
     ],
     required: ["xScaleId"],
   },
+  waterfall: {
+    allowed: [
+      "name",
+      "mode",
+      "aggregation",
+      "measureField",
+      "stepField",
+      "parentField",
+      "states",
+      "startValue",
+      "up",
+      "down",
+      "total",
+      "labelWidth",
+    ],
+    required: ["stepField", "states"],
+  },
+  donut: {
+    allowed: [
+      "name",
+      "categoryField",
+      "aggregation",
+      "measureField",
+      "topN",
+      "order",
+      "colors",
+      "hole",
+      "showTotal",
+    ],
+    required: ["categoryField"],
+  },
   numeric: {
     allowed: [
       "name",
@@ -810,9 +866,14 @@ const NUMBERS = [
   "dy",
   "frame.width",
   "frame.height",
+  "labelWidth",
+  "startValue",
+  "topN",
+  "hole",
 ];
 const BOOLEANS = [
   "axis",
+  "showTotal",
   "leader",
   "labelValue",
   "openEnd",
@@ -871,6 +932,8 @@ const VALUES: Record<string, Record<string, ValueRule>> = {
   waffle: { from: ["top", "bottom"], order: ["label", "total"] },
   horizon: { baseline: ["zero", "first", "mean"], domain: SCALE_DOMAIN },
   density: { height: SCALE_DOMAIN },
+  waterfall: { mode: ["bridge", "accumulate"], aggregation: ["sum", "count"] },
+  donut: { aggregation: ["count", "sum"], order: ["label", "total"] },
   numeric: {
     domain: SCALE_DOMAIN,
     ticks: ["auto", "ends", "none"],
@@ -1291,6 +1354,10 @@ function liftTokens(
     if (path in defaults && same(value, defaults[path])) {
       continue;
     }
+    if (spec.records?.includes(path)) {
+      tokens.push(...diffPaths(undefined, value, [path]));
+      continue;
+    }
     const ref = spec.refs?.[path];
     tokens.push(
       ref
@@ -1688,7 +1755,10 @@ const owners = new WeakMap<Record_, Record_>();
 const partSpans = new WeakMap<Record_, { span: DslSpan; spec: Spec }>();
 
 function lowerPair(
-  spec: Pick<Spec, "pairs" | "refs" | "lists" | "texts" | "keyword"> & {
+  spec: Pick<
+    Spec,
+    "pairs" | "refs" | "lists" | "texts" | "records" | "keyword"
+  > & {
     defaults?: Spec["defaults"];
   },
   part: Record_,
@@ -1699,6 +1769,12 @@ function lowerPair(
   const aliased = ALIASES[spec.keyword]?.[pair.key];
   if (aliased) {
     pair = { ...pair, key: aliased };
+  }
+  const recordPath = parsePath(pair.key);
+  const top = recordPath?.segments[0];
+  if (recordPath && top && spec.records?.includes(top)) {
+    part[top] = setPath({ [top]: part[top] }, recordPath, pair.value)[top];
+    return;
   }
   const compound = spec.pairs?.find((item) => item.word === pair.key);
   const refPath = Object.entries(spec.refs ?? {}).find(
