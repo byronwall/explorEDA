@@ -3325,23 +3325,60 @@ html {
    wraps onto the hidden second line instead of being clipped. */
 .eda-summary-reading {
   display: flex;
+  flex: 1 1 0;
   flex-wrap: wrap;
-  align-items: baseline;
+  align-items: center;
   column-gap: 12px;
   min-width: 0;
-  height: 16px;
+  height: 28px;
   overflow: hidden;
-  line-height: 16px;
+  line-height: 14px;
   white-space: nowrap;
 }
+/* The range takes the width it needs, or the whole reading when the cell is
+   narrower. While it fits, each bound's flex basis is its track width and the
+   bounds share one line. Once it does not, the basis turns huge and they
+   stack: the low bound and dash over the high bound. */
 .eda-summary-range {
-  display: grid;
+  display: flex;
   flex: none;
-  grid-template-columns: var(--eda-summary-low, auto) 2ch var(
-      --eda-summary-high,
-      auto
-    );
-  max-width: 100%;
+  flex-wrap: wrap;
+  align-content: center;
+  /* A pixel of slack keeps rounding from tipping a range that fits into the
+     stacked layout. */
+  width: min(100%, calc(var(--eda-summary-range, 100%) + 1px));
+  height: 28px;
+}
+.eda-summary-low,
+.eda-summary-high {
+  --eda-summary-stack: calc((var(--eda-summary-range, 0px) - 100%) * 999);
+  display: flex;
+  flex: 0 1 auto;
+  justify-content: flex-end;
+  min-width: 0;
+}
+.eda-summary-low {
+  flex-basis: max(
+    calc(var(--eda-summary-low, 0px) + 2ch),
+    var(--eda-summary-stack)
+  );
+}
+.eda-summary-low:only-child {
+  flex-basis: max(var(--eda-summary-low, 0px), var(--eda-summary-stack));
+}
+.eda-summary-high {
+  flex-basis: max(var(--eda-summary-high, 0px), var(--eda-summary-stack));
+  /* Once stacked, the high bound lines up under the low bound, not its dash. */
+  padding-right: clamp(
+    0px,
+    calc((100% - var(--eda-summary-range, 0px)) * -999),
+    2ch
+  );
+}
+.eda-summary-bound {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .eda-summary-stat-group {
   display: grid;
@@ -3355,17 +3392,17 @@ html {
   color: var(--muted-foreground);
   font-size: 11px;
 }
-.eda-summary-low,
-.eda-summary-high,
 .eda-summary-stat {
   text-align: right;
 }
 .eda-summary-sep {
+  flex: none;
+  width: 2ch;
   color: var(--muted-foreground);
   text-align: center;
 }
 .eda-summary-label {
-  grid-column: 1 / -1;
+  flex: 1 1 100%;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -3843,6 +3880,16 @@ html {
   .eda-summary-spark {
     flex-basis: auto;
     height: 14px;
+  }
+  /* Under the sparkline the reading spans the cell and takes one line, or
+     two when the range stacks. */
+  .eda-summary-reading,
+  .eda-summary-range {
+    height: auto;
+  }
+  .eda-summary-reading {
+    flex: none;
+    align-self: stretch;
   }
   .eda-summary-table tbody th,
   .eda-summary-table tbody td {
