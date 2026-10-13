@@ -4,17 +4,17 @@
     "title": "Self-hosted team server with Docker Compose",
     "slug": "self-hosted-team-server",
     "scale": "capability",
-    "current_phase": "intent",
-    "last_updated": "2026-10-12",
-    "summary": "A Docker Compose deployment of the standalone app for one company: multi-user, database connections through a server, and analyses and config stored in volumes, sized for 1\u201310 authors and 10\u2013100 viewers.",
+    "current_phase": "shape",
+    "last_updated": "2026-10-13",
+    "summary": "A free Docker Compose team server for one company: local accounts, projects with author and viewer members, CSV and JSON files by upload or URL, and project folders on one volume. File-only; database sources are a separate initiative.",
     "status": "planned",
-    "next_action": "Question rounds; then shape a single-server proof reusing the database-adapter snapshot path."
+    "next_action": "Write the implementation plan, starting with the local role proof on the CLI server."
   },
   "artifacts": {
     "intent_brief": {
       "path": "intent-brief.md",
-      "status": "draft",
-      "updated_at": "2026-10-12"
+      "status": "current",
+      "updated_at": "2026-10-13"
     },
     "brainstorm": {
       "path": "brainstorm.md",
@@ -23,8 +23,8 @@
     },
     "shape_brief": {
       "path": "shape-brief.md",
-      "status": "not-created",
-      "updated_at": null
+      "status": "current",
+      "updated_at": "2026-10-13"
     },
     "implementation_plan": {
       "path": "implementation-plan.md",
@@ -37,7 +37,7 @@
       "id": "USR-P1",
       "type": "direct-user-source",
       "location": "../runtime-modes/raw/2026-10-12-notes-transcription.md",
-      "anchor": "Page 1 \u2014 EDA: runtime modes",
+      "anchor": "Page 1 — EDA: runtime modes",
       "authority": "direct intent",
       "notes": "Photo: ../runtime-modes/raw/2026-10-12-runtime-modes-page1.jpg"
     },
@@ -45,7 +45,7 @@
       "id": "USR-P2",
       "type": "direct-user-source",
       "location": "../runtime-modes/raw/2026-10-12-notes-transcription.md",
-      "anchor": "Page 2 \u2014 EDA modes",
+      "anchor": "Page 2 — EDA modes",
       "authority": "direct intent",
       "notes": "Photo: ../runtime-modes/raw/2026-10-12-eda-modes-page2.jpg"
     },
@@ -88,6 +88,38 @@
       "anchor": "Round 3",
       "authority": "direct intent",
       "notes": "recorded in runtime-modes question_rounds"
+    },
+    {
+      "id": "QA-S1",
+      "type": "question-round",
+      "location": "conversation 2026-10-13",
+      "anchor": "Server shaping round 1",
+      "authority": "direct intent",
+      "notes": "recorded in question_rounds"
+    },
+    {
+      "id": "QA-S2",
+      "type": "question-round",
+      "location": "conversation 2026-10-13",
+      "anchor": "Server shaping round 2",
+      "authority": "direct intent",
+      "notes": "recorded in question_rounds"
+    },
+    {
+      "id": "QA-S3",
+      "type": "question-round",
+      "location": "conversation 2026-10-13",
+      "anchor": "Server shaping round 3",
+      "authority": "latest direct instruction",
+      "notes": "recorded in question_rounds"
+    },
+    {
+      "id": "REPO-02",
+      "type": "repository",
+      "location": "packages/explorEDA/src/server/handler.ts; packages/explorEDA/src/lib/project/files.ts; apps/app/src/httpFiles.ts",
+      "anchor": "CLI stack M1–M6 (PRs 369–376), assumed merged",
+      "authority": "current reality",
+      "notes": "Loopback-only file server with a per-run token; ProjectFiles port; browser runs the folder codec; SSE change events; apps/app shell with autosave and refused-save handling."
     }
   ],
   "intent": {
@@ -137,12 +169,14 @@
         "statement": "Allows DB connections for loading data, with a full server sending data back and forth.",
         "commitment": "explicit",
         "importance": "core",
-        "status": "active",
+        "status": "superseded",
         "time_horizon": "first release",
         "sources": [
           "USR-P2"
         ],
-        "confidence": "high"
+        "confidence": "high",
+        "superseded_by": "I-21",
+        "notes": "Database connections are their own initiative (QA-S3 n13)."
       },
       {
         "id": "I-05",
@@ -160,7 +194,7 @@
       {
         "id": "I-06",
         "type": "audience",
-        "statement": "Used within one company by 1\u201310 authors with 10\u2013100 viewers.",
+        "statement": "Used within one company by 1–10 authors with 10–100 viewers.",
         "commitment": "explicit",
         "importance": "core",
         "status": "active",
@@ -247,17 +281,177 @@
         "status": "active",
         "confidence": "high",
         "id": "I-12"
+      },
+      {
+        "id": "I-13",
+        "type": "decision",
+        "statement": "A server holds many projects; each project has members. Author or viewer is set per account; authors create projects.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "QA-S1"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "I-14",
+        "type": "decision",
+        "statement": "Saved work is CLI-format project folders on the data volume; accounts and sessions sit in a small database beside them.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "QA-S1"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "I-15",
+        "type": "required behavior",
+        "statement": "Viewers can filter, select, and inspect, but nothing they do is saved.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "QA-S1"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "I-16",
+        "type": "decision",
+        "statement": "An admin adds database connections in the UI; the server stores credentials encrypted on the volume.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "superseded",
+        "time_horizon": "first release",
+        "sources": [
+          "QA-S1"
+        ],
+        "confidence": "high",
+        "superseded_by": "I-21",
+        "notes": "Database connections are their own initiative (QA-S3 n13)."
+      },
+      {
+        "id": "I-17",
+        "type": "decision",
+        "statement": "When two authors edit one analysis, the last save wins and the other author's page reloads with a notice naming who changed it.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "QA-S2"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "I-18",
+        "type": "required behavior",
+        "statement": "A URL source keeps its downloaded copy, shows when it was fetched, and can be refetched; scheduled refetch is an evaluation item.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "QA-S2",
+          "QA-S3"
+        ],
+        "confidence": "medium; schedule provisional"
+      },
+      {
+        "id": "I-19",
+        "type": "required behavior",
+        "statement": "Authors add files by uploading them or by giving a URL that the server downloads.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "QA-S2"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "I-20",
+        "type": "decision",
+        "statement": "An admin grants each database connection to specific projects.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "superseded",
+        "time_horizon": "first release",
+        "sources": [
+          "QA-S2"
+        ],
+        "confidence": "high",
+        "superseded_by": "I-21",
+        "notes": "Database connections are their own initiative (QA-S3 n13)."
+      },
+      {
+        "id": "I-21",
+        "type": "exclusion",
+        "statement": "The first team server is file-only: no database sources. Database connections are a separate large initiative.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "QA-S3"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "I-22",
+        "type": "decision",
+        "statement": "Admin is a flag on an account; the first account is admin; admins see and manage every project.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "QA-S3"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "I-23",
+        "type": "required behavior",
+        "statement": "URL sources may fetch any http(s) address, including internal ones; metadata and link-local addresses are refused.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "QA-S3"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "I-24",
+        "type": "required behavior",
+        "statement": "Backup is a copy of the data volume; a new image migrates data on start after a dated backup, and refuses to start if migration fails.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "QA-S3"
+        ],
+        "confidence": "high"
       }
     ],
     "themes": [
-      "multi-user",
-      "database connections",
-      "durable volumes"
+      "accounts and roles",
+      "projects as CLI folders",
+      "file sources: upload and URL",
+      "durable volume and upgrades"
     ],
     "conflicts": [],
-    "human_questions": [
-      "Do authors share analyses per workspace membership, or is everything visible to every account?"
-    ]
+    "human_questions": []
   },
   "brainstorm": {
     "status": "not-requested",
@@ -266,13 +460,30 @@
     "selected_option": null
   },
   "shape": {
-    "status": "not-started",
-    "appetite": null,
-    "problem": null,
-    "recommended_shape": null,
-    "success_moves": [],
-    "first_proof": null,
-    "rabbit_holes": [],
+    "status": "current",
+    "appetite": "One file-only team server built on the CLI's server, folder codec, and apps/app: accounts, projects with members, upload and URL sources, one Compose service and one volume. No database sources.",
+    "problem": "A company wants authors to build analyses on a shared server and colleagues to sign in and explore them, without anyone installing the CLI.",
+    "recommended_shape": "Keep each server project a plain CLI project folder under /data/projects and keep the browser as the folder reader. The server adds three things around the existing ProjectFiles routes: who is asking (session cookie replaces the per-run token), which project (path prefix), and whether they may write (author membership). Accounts, sessions, and members live in SQLite (node:sqlite) at /data/exploreda.db. Started by `exploreda server` from the same bin; the image wraps it.",
+    "success_moves": [
+      "Prove roles on the unchanged ProjectFiles routes with seeded accounts on a local Node run before any Docker or accounts UI.",
+      "Run the existing ProjectFiles contract suite against the project-scoped, role-checked adapter so the CLI and server cannot drift.",
+      "Hand out one-time set-password links instead of sending email: no SMTP setting, no outbound dependency.",
+      "Treat URL sources as files: download into the project's data folder with a small sidecar recording URL and fetch time, so the folder still opens with npx.",
+      "Make migration a startup step with a dated backup and refuse-to-start on failure, tested against a fixture volume from the previous version.",
+      "Keep the CLI's loopback and token path untouched; team mode is a separate auth adapter selected by the subcommand."
+    ],
+    "first_proof": {
+      "question": "Do role checks on the CLI's unchanged file routes make apps/app behave correctly for an author and a viewer?",
+      "artifact": "Run apps/app against the Node server in team mode locally (no Docker) with two seeded accounts, an author and a viewer, and one project folder. Observe: The server refuses the viewer's writes and the app shows view-only with no failed-save errors; the author's save reaches the viewer's open page as a reload notice naming the author; the folder still opens with npx exploreda.",
+      "decision_rule": "If role checks on the unchanged file routes hold, build the accounts UI, Compose, and URL sources on them. If the app needs more than refused writes to behave as view-only, add a viewer mode to the app shell first."
+    },
+    "rabbit_holes": [
+      "URL fetch from inside the company network (SSRF): allowed by choice; block metadata and link-local, cap size and time, log fetches.",
+      "Cross-site requests once the server leaves loopback: SameSite cookies plus an Origin check against the configured public URL.",
+      "Concurrent saves from two authors: last write wins on whole files; relies on the CLI's atomic write and watch reload.",
+      "Upload size: the CLI handler caps bodies at 50 MB while CLI data targets about 100 MB; the server needs a streamed upload with a configurable limit.",
+      "Migrating the volume across versions without losing projects."
+    ],
     "open_decisions": []
   },
   "implementation": {
@@ -296,6 +507,12 @@
       "date": "2026-10-12",
       "event": "created",
       "summary": "Intent recovered from two handwritten notebook pages and the accompanying chat request.",
+      "status": "planned"
+    },
+    {
+      "date": "2026-10-13",
+      "event": "questions and shape",
+      "summary": "Three question rounds settled projects with members, folder storage, viewer exploration, upload and URL sources, admin flag, auto-migrate; database sources moved out of scope. Shape brief written.",
       "status": "planned"
     }
   ],
@@ -323,11 +540,124 @@
     },
     {
       "slug": "database-adapters",
-      "role": "server-side data path for modes 2\u20134"
+      "role": "separate large initiative; not part of the first team server"
     },
     {
       "slug": "notebook-analysis",
       "role": "notebooks as stored results"
     }
-  ]
+  ],
+  "question_rounds": {
+    "focus": "shape the server work on top of the CLI server",
+    "per_round": 5,
+    "planned_rounds": 3,
+    "status": "complete",
+    "rounds": [
+      {
+        "round": 1,
+        "theme": "goals and stakes",
+        "source": "QA-S1",
+        "questions": [
+          {
+            "n": 1,
+            "question": "How should analyses be shared on a team server?",
+            "answer": "Projects with members.",
+            "effect": "Server holds many projects; membership per project assigns author or viewer. Resolves the workspace question."
+          },
+          {
+            "n": 2,
+            "question": "Where should a server's saved work live?",
+            "answer": "Project folders on the volume.",
+            "effect": "Same .eda folders as the CLI under the data volume, reusing ProjectFiles; accounts and sessions in a small SQLite file."
+          },
+          {
+            "n": 3,
+            "question": "What can a viewer do with an analysis?",
+            "answer": "Explore, never save.",
+            "effect": "Viewers get full interaction; the server refuses their writes; nothing persists."
+          },
+          {
+            "n": 4,
+            "question": "Who defines database connections and where do credentials live?",
+            "answer": "Admin adds in the UI.",
+            "effect": "Admin settings page for connections; credentials stored encrypted in the volume; needs an encryption key from the operator."
+          }
+        ]
+      },
+      {
+        "round": 2,
+        "theme": "behavior and limits",
+        "source": "QA-S2",
+        "questions": [
+          {
+            "n": 5,
+            "question": "Two authors edit the same analysis. What happens?",
+            "answer": "Last save wins, with a notice.",
+            "effect": "Reuse the CLI's outside-change reload over server-sent events, naming who changed it; no locks or live merge."
+          },
+          {
+            "n": 6,
+            "question": "Where do a viewer's database rows come from?",
+            "answer": "Cached snapshot with refresh.",
+            "effect": "Server keeps the last snapshot per source on the volume; manual refresh plus an optional schedule; the page shows when the data was read."
+          },
+          {
+            "n": 7,
+            "question": "How do files get into a server project?",
+            "answer": "Author uploads in the app; author provides a URL and the server downloads it (user-added option).",
+            "effect": "Upload and fetch-by-URL are in. Operator drop-in and CLI project import were not chosen. URL fetch raises internal-network reach and refresh questions."
+          },
+          {
+            "n": 8,
+            "question": "Which projects can use an admin-added connection?",
+            "answer": "Admin grants per project.",
+            "effect": "Each connection carries a list of projects allowed to use it."
+          }
+        ]
+      },
+      {
+        "round": 3,
+        "theme": "boundaries and confirmation",
+        "source": "QA-S3",
+        "questions": [
+          {
+            "n": 9,
+            "question": "Which URLs may the server fetch, and do URL sources refresh?",
+            "answer": "Any http(s), refreshable.",
+            "effect": "Internal URLs allowed; cloud metadata and link-local addresses always refused; the downloaded copy is kept and can be refetched."
+          },
+          {
+            "n": 10,
+            "question": "Who is an admin, and what can they see?",
+            "answer": "Admin flag; admins see everything.",
+            "effect": "The first account is admin and can grant the flag; admins manage accounts and every project's members."
+          },
+          {
+            "n": 11,
+            "question": "Who can create a project?",
+            "answer": "Accounts marked author.",
+            "effect": "Author or viewer is an account-level kind; authors create projects; a viewer account is a viewer in every project."
+          },
+          {
+            "n": 12,
+            "question": "What is the first release worth announcing?",
+            "answer": "Ship files-only; DB later.",
+            "effect": "Superseded by n13: DB is not in this initiative at all."
+          },
+          {
+            "n": 13,
+            "question": "Confirm: v1 files-only, URL snapshots, DB connections in the next release?",
+            "answer": "The initial server does file-only work and does not add database sources; that is its own large initiative.",
+            "effect": "Database connections, credential storage, and per-project grants leave this initiative. URL refetch kept as a file operation; scheduled refetch moved to evaluate (provisional)."
+          },
+          {
+            "n": 14,
+            "question": "What should upgrades and backups look like?",
+            "answer": "Copy the volume; migrate automatically.",
+            "effect": "Backup = copy /data; a new image migrates on start after a dated backup of what it changes; refuses to start if migration fails."
+          }
+        ]
+      }
+    ]
+  }
 }

@@ -25,7 +25,7 @@ The adapters arrive in mode order. The CLI needs a **single local user** and **p
 
 ## The experience you appear to want
 
-In the CLI, the app opens straight onto the folder's project with no sign-in. On a team server, an author signs in, opens a workspace, connects a source, and builds analyses that colleagues sign in to view. A settings page holds personal preferences and, for admins, the app's configuration.
+In the CLI, the app opens straight onto the folder's project with no sign-in. On a team server, an author signs in, opens a project, adds data files, and builds analyses that colleagues sign in to view. A settings page holds personal preferences and, for admins, the app's configuration.
 
 ## Boundaries
 
@@ -44,19 +44,11 @@ In the CLI, the app opens straight onto the folder's project with no sign-in. On
 
 - New `apps/app`; the demo stays the browser-only and docs site.
 - Single local user first; local accounts for self-hosted; all viewers have accounts.
-
-## Possibilities, not decisions
-
-- Workspaces as the unit of sharing, or one shared space per server.
-- An admin role, or the first account acting as admin.
+- On a team server, projects with members are the unit of sharing, and admin is an account flag that the first account holds.
 
 ## Current reality that matters
 
 `apps/demo` stores saved views, history, and tables in `localStorage` (`savedViewsSession.ts`). The component exposes `onStateChange` and save and restore structures that any host can persist. No user, auth, settings, or server code exists.
-
-## What still needs your input
-
-- Is admin a separate role, or is the first account the admin?
 
 ## Next step after confirmation
 
