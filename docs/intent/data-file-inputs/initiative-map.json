@@ -622,7 +622,7 @@
         "rollback": "Remove the arrow case.",
         "status": "completed",
         "evidence": [
-          "Arrow PR; pyarrow and Polars fixtures"
+          "PR #396; pyarrow and Polars fixtures"
         ]
       }
     ],
