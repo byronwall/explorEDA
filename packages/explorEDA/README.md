@@ -1,6 +1,22 @@
 # explorEDA
 
-React components for interactive exploratory data analysis.
+React components for interactive exploratory data analysis, and a command
+that opens any folder of data as a project.
+
+## Explore a folder of data
+
+```bash
+npx exploreda
+```
+
+Run it in a folder of CSV or JSON files. Your browser opens on the folder;
+choose **Chart** beside a file to start. Analyses save to the folder as `.eda`
+text files you can diff and commit, and the page reloads when files change on
+disk. `npx exploreda --example` opens a sample project. See
+[Project folders](https://exploreda.dev/docs/project-folders) for the folder
+layout and the project text reference.
+
+## Embed the workspace
 
 ```tsx
 import {

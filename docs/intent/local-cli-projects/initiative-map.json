@@ -8,7 +8,7 @@
     "last_updated": "2026-10-12",
     "summary": "npx exploreda in a folder starts a local server and opens the app on that project; sources, joins, and analyses are DSL v2 text files.",
     "status": "active",
-    "next_action": "M6: launch-ready"
+    "next_action": "Merge the PR stack (#367 to M6); confirm the CLI smoke workflow is green on all three OSes; then announce npx exploreda."
   },
   "artifacts": {
     "intent_brief": {
@@ -667,8 +667,10 @@
         "proof": "Green smoke on macOS, Linux, Windows; docs live.",
         "valid_intermediate_state": "Announceable release.",
         "rollback": "Hold the announcement; package unchanged.",
-        "status": "planned",
-        "evidence": []
+        "status": "completed",
+        "evidence": [
+          "scripts/cli-smoke.mjs passes locally on macOS from the packed tarball; .github/workflows/cli-smoke.yml runs it on ubuntu/macos/windows; docs page /docs/project-folders (docs gate + browser check pass); README quickstart"
+        ]
       }
     ],
     "cut_line": [
@@ -711,6 +713,12 @@
       "date": "2026-10-12",
       "event": "execution started",
       "summary": "M1 complete: folder codec, ProjectFiles port and adapters, analysis query/bind syntax, exploreda-dsl project, shop example. Server becomes a file server; codec runs in the browser.",
+      "status": "active"
+    },
+    {
+      "date": "2026-10-13",
+      "event": "implementation complete",
+      "summary": "M1-M6 built as stacked PRs #369, #370, #372, #374, #375, and the M6 PR. Awaiting merge and three-OS CI confirmation before marking completed.",
       "status": "active"
     }
   ],

@@ -8,7 +8,7 @@
     "last_updated": "2026-10-12",
     "summary": "Run one standalone explorEDA app in four modes — browser-only, local CLI, self-hosted Docker Compose, and paid per-tenant hosting — over one storage model whose backing store changes per mode.",
     "status": "planned",
-    "next_action": "Execute the local CLI implementation plan (local-cli-projects M1)."
+    "next_action": "Local CLI (mode 2) is built as a PR stack; after it merges and ships, shape self-hosted-team-server on the same server and app."
   },
   "artifacts": {
     "intent_brief": {
