@@ -1,3 +1,4 @@
+import { useChartImageActions } from "../export/chartImageContext";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { BaseChartProps } from "@/types/ChartTypes";
@@ -384,6 +385,7 @@ export function CompositionChart({
 
   // Right-click: a menu of what is under the pointer and where to edit it.
   // The keyboard's menu key lands at (0, 0), so it opens by the selection.
+  const imageActions = useChartImageActions();
   const onContextMenu = (event: React.MouseEvent) => {
     if (onSettingsChange) return;
     event.preventDefault();
@@ -544,7 +546,10 @@ export function CompositionChart({
       : null;
 
   const glyph =
-    hovered && (hovered.type === "rect" || hovered.type === "circle")
+    hovered &&
+    (hovered.type === "rect" ||
+      hovered.type === "circle" ||
+      hovered.type === "arc")
       ? hovered.glyph
       : undefined;
   const hoveredField = definition.elements.find(
@@ -574,6 +579,7 @@ export function CompositionChart({
             hasFilters: settings.filters.length > 0,
           })}
           container={svgRef.current?.closest<HTMLElement>("[role='dialog']")}
+          image={imageActions}
           onRun={(action: QuickAction) => action.run(quickApi)}
           onClose={() => setMenu(undefined)}
         />

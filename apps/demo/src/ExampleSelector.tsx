@@ -52,7 +52,7 @@ export function ExampleSelector({
           onClick={() => setCapability(undefined)}
           className={`${chipClass} ${
             capability === undefined
-              ? "border-primary bg-primary/10 text-primary"
+              ? "border-site-accent bg-site-accent/10 text-site-accent"
               : "border-border bg-card text-foreground hover:bg-accent/50"
           }`}
         >
@@ -70,7 +70,7 @@ export function ExampleSelector({
               }
               className={`${chipClass} ${
                 capability === name
-                  ? "border-primary bg-primary/10 text-primary"
+                  ? "border-site-accent bg-site-accent/10 text-site-accent"
                   : "border-border bg-card text-foreground hover:bg-accent/50"
               }`}
             >
@@ -91,7 +91,7 @@ export function ExampleSelector({
             >
               <div className="flex min-w-0 items-start gap-3">
                 <Icon
-                  className="mt-0.5 h-5 w-5 shrink-0 text-primary transition-colors"
+                  className="mt-0.5 h-5 w-5 shrink-0 text-site-accent transition-colors"
                   aria-hidden="true"
                 />
                 <div className="min-w-0">
@@ -135,7 +135,7 @@ export function ExampleSelector({
                               onClick={() => onSelect(example.id, tab.name)}
                               className={`relative z-10 rounded-md px-2 py-0.5 text-left text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
                                 match
-                                  ? "bg-primary/10 text-primary"
+                                  ? "bg-site-accent/10 text-site-accent"
                                   : "bg-muted text-foreground hover:bg-accent"
                               }`}
                             >
@@ -154,7 +154,7 @@ export function ExampleSelector({
               </dl>
               <ArrowRight
                 aria-hidden="true"
-                className="hidden h-5 w-5 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary lg:block"
+                className="hidden h-5 w-5 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-site-accent lg:block"
               />
             </li>
           );

@@ -18,6 +18,12 @@ import {
   timeSeriesDashboard,
 } from "@/demos/dashboardSettings";
 import { demoSettings as lorenzSettings } from "@/demos/lorenz";
+import {
+  batteryDayDashboard,
+  budgetBridgeDashboard,
+  budgetReportDashboard,
+  channelShareDashboard,
+} from "@/demos/partsAndChangeDashboards";
 import type { SavedDataStructure } from "exploreda";
 
 /**
@@ -307,6 +313,69 @@ export const liveExamples = {
     exampleId: "point-map",
     shotAlt: "Service sites as points on a world map.",
     steps: [{ expectRows: 30 }],
+  },
+  waterfall: {
+    label: "Live budget waterfall",
+    data: "/datasets/lab-budget.csv",
+    savedData: focus(budgetBridgeDashboard, {
+      "budget-bridge": [0, 0, 7, 7],
+      "budget-quarter": [7, 0, 5, 3],
+    }),
+    exampleId: "budget-bridge",
+    shotAlt:
+      "A waterfall from the lab's planned net position to its actual one, with a step per line item and a subtotal per group, beside a quarter picker.",
+    steps: [
+      { expectRows: 96 },
+      { expectMark: "Plan, total 104" },
+      { expectMark: "Actual, total -39" },
+      { click: "Equipment, change -84" },
+      { expectChip: "Line item" },
+      { expectRows: 8 },
+    ],
+  },
+  "waterfall-running": {
+    label: "Live running-total waterfall",
+    data: "/datasets/battery-day.csv",
+    savedData: focus(batteryDayDashboard, {
+      "battery-charge": [0, 0, 7, 9],
+      "battery-flows": [7, 0, 5, 3],
+    }),
+    exampleId: "battery-day",
+    shotAlt:
+      "A battery's charge through a day: a start value, one step per hour, a subtotal per part of the day, and the charge at day's end, beside a flow picker.",
+    steps: [
+      { expectRows: 45 },
+      { click: "Solar: 13 rows" },
+      { expectRows: 13 },
+      { expectChip: "Flow" },
+    ],
+  },
+  donut: {
+    label: "Live revenue donut",
+    data: "/datasets/shop-operations.csv",
+    savedData: focus(channelShareDashboard, {
+      "share-channel": [0, 0, 5, 4],
+      "share-region-mix": [5, 0, 7, 4],
+    }),
+    exampleId: "channel-share",
+    shotAlt:
+      "A donut of revenue by sales channel beside 100% bars of the channel mix in each region, in the same colors.",
+    steps: [
+      { expectRows: 500 },
+      { expectMark: "Web: 102.7K, 56%" },
+      { click: "Store: 46.7K, 25%" },
+      { expectChip: "Channel" },
+      { expectRows: 167 },
+    ],
+  },
+  "composition-parts": {
+    label: "Live lab budget report",
+    data: "/datasets/lab-budget.csv",
+    savedData: focus(budgetReportDashboard, { "budget-report": [0, 0, 12] }),
+    exampleId: "budget-report",
+    shotAlt:
+      "A report page: each quarter's plan-to-actual waterfall on one scale, and a donut of each budget group's line items with a legend.",
+    steps: [{ expectRows: 96 }],
   },
   composition: {
     label: "Live composition",

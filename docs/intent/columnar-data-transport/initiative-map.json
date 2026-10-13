@@ -1,0 +1,488 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "Columnar data transport",
+    "slug": "columnar-data-transport",
+    "scale": "capability",
+    "current_phase": "shape",
+    "last_updated": "2026-10-12",
+    "summary": "Prove whether Arrow IPC improves a bounded, complete database result through current row consumers compared with lossless row JSON, while preserving exact meaning and measured capacity.",
+    "status": "planned",
+    "next_action": "Review the shaped proof and align snapshot, type, coverage, completion, and instance contracts with query, adapter, and hosting tracks. No implementation plan was requested."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-12"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-12"
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "not-created",
+      "updated_at": null
+    }
+  },
+  "sources": [
+    {
+      "id": "USR-01",
+      "anchor": "Explicit request; Pages 1–3; Interpretation boundaries",
+      "authority": "direct intent",
+      "notes": "Database-backed exploration, responsive client, full snapshot when feasible, and reversible transport hypotheses.",
+      "type": "direct-user-source",
+      "location": "../../research/database-backed-analysis-2026-10-11/source-notes.md"
+    },
+    {
+      "id": "USR-02",
+      "anchor": "Customer-instance update",
+      "authority": "latest direct correction",
+      "notes": "One dedicated instance per paying customer, with minimal maintenance and high automation.",
+      "type": "direct-user-source",
+      "location": "../../research/database-backed-analysis-2026-10-11/customer-instance-update.md"
+    },
+    {
+      "id": "RAW-01",
+      "anchor": "Sections 1, 3–12; appendices A–B",
+      "authority": "agent-authored technical evidence and proposal",
+      "notes": "Selected source packet baseline, technical comparisons, first proof and adoption gates. No performance measurements were run.",
+      "type": "research-report",
+      "location": "raw/2026-10-11-pro/columnar-data-transport-research.md"
+    },
+    {
+      "id": "RAW-02",
+      "anchor": "CT-001 through CT-016",
+      "authority": "agent-authored recommendations",
+      "notes": "Each recommendation is reviewed in evidence/recommendation-review.md.",
+      "type": "recommendation-json",
+      "location": "raw/2026-10-11-pro/columnar-data-transport-recommendations.json"
+    },
+    {
+      "id": "CODE-01",
+      "anchor": "AnalysisScalar, AnalysisEvaluation, AnalysisResultRow",
+      "authority": "current checkout observation",
+      "notes": "The scalar/result model does not declare remote snapshot, coverage, or completion semantics.",
+      "type": "repository-source",
+      "location": "packages/explorEDA/src/types/AnalysisProject.ts"
+    },
+    {
+      "id": "CODE-02",
+      "anchor": "useAnalysisEvaluation, data row mapping, renderedSettings",
+      "authority": "current checkout observation",
+      "notes": "Current project view evaluates source tables and materializes rows with positional IDs.",
+      "type": "repository-source",
+      "location": "packages/explorEDA/src/components/ExplorEdaProject.tsx"
+    },
+    {
+      "id": "CODE-03",
+      "anchor": "setData, getColumnData, restoreFromStructure",
+      "authority": "current checkout observation",
+      "notes": "Provider state includes row-based field maps and setup/replacement work.",
+      "type": "repository-source",
+      "location": "packages/explorEDA/src/providers/DataLayerProvider.tsx"
+    },
+    {
+      "id": "CODE-04",
+      "anchor": "chart and workspace dimensions, live groups",
+      "authority": "current checkout observation",
+      "notes": "Chart-linked and workspace filter populations have distinct meanings.",
+      "type": "repository-source",
+      "location": "packages/explorEDA/src/hooks/CrossfilterWrapper.ts"
+    },
+    {
+      "id": "CODE-05",
+      "anchor": "tableRevision, evaluation stages, aggregate provenance",
+      "authority": "current checkout observation",
+      "notes": "Revision is local array identity; row grain and contributor/provenance data depend on the evaluation stage.",
+      "type": "repository-source",
+      "location": "packages/explorEDA/src/lib/analysis/evaluateProject.ts"
+    },
+    {
+      "id": "WEB-01",
+      "anchor": "Apache Arrow JS RecordBatchReader v21.2.0",
+      "authority": "official library documentation",
+      "notes": "Async record-batch reader API. It does not establish an end-to-end benefit.",
+      "type": "primary-technical-documentation",
+      "location": "https://arrow.apache.org/js/current/classes/Arrow.dom.RecordBatchReader.html"
+    },
+    {
+      "id": "WEB-02",
+      "anchor": "Apache Arrow JS Vector v21.2.0",
+      "authority": "official library documentation",
+      "notes": "Vector APIs and array conversion; concrete copy behavior still needs the pinned implementation and measurement.",
+      "type": "primary-technical-documentation",
+      "location": "https://arrow.apache.org/js/current/classes/Arrow.dom.Vector.html"
+    },
+    {
+      "id": "WEB-03",
+      "anchor": "Arrow columnar format specification",
+      "authority": "official format specification",
+      "notes": "Physical layout, validity, offsets, dictionaries, and IPC semantics.",
+      "type": "primary-specification",
+      "location": "https://arrow.apache.org/docs/format/Columnar.html"
+    },
+    {
+      "id": "WEB-04",
+      "anchor": "ECMAScript JSON.stringify",
+      "authority": "language specification",
+      "notes": "JSON handling of undefined, nonfinite numbers, signed zero, and BigInt.",
+      "type": "primary-specification",
+      "location": "https://tc39.es/ecma262/multipage/structured-data.html#sec-json.stringify"
+    },
+    {
+      "id": "WEB-05",
+      "anchor": "ECMAScript Number.MAX_SAFE_INTEGER",
+      "authority": "language specification",
+      "notes": "Exact integer range for JavaScript Number.",
+      "type": "primary-specification",
+      "location": "https://tc39.es/ecma262/multipage/numbers-and-dates.html#sec-number.max_safe_integer"
+    },
+    {
+      "id": "WEB-06",
+      "anchor": "Fetch Standard response bodies and content coding",
+      "authority": "web platform specification",
+      "notes": "Browser fetch behavior and body stream; does not promise copy-free execution.",
+      "type": "primary-specification",
+      "location": "https://fetch.spec.whatwg.org/"
+    },
+    {
+      "id": "WEB-07",
+      "anchor": "HTTP content coding and ranges",
+      "authority": "IETF standard",
+      "notes": "Compression and byte-range semantics.",
+      "type": "primary-specification",
+      "location": "https://www.rfc-editor.org/rfc/rfc9110.html"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "I-01",
+        "type": "outcome",
+        "statement": "Database-backed exploration should keep filtering and record inspection responsive while preserving what each view describes.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "USR-01"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "I-02",
+        "type": "preference",
+        "statement": "A complete client snapshot is preferred when the complete client cost is reasonable.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "sources": [
+          "USR-01"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "I-03",
+        "type": "constraint",
+        "statement": "Each paying customer has a dedicated instance with highly automated, low-maintenance operation.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "USR-02"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "I-04",
+        "type": "implementation hypothesis",
+        "statement": "Arrow IPC may reduce the complete transfer and browser path compared with lossless row JSON.",
+        "commitment": "tentative",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "sources": [
+          "USR-01",
+          "RAW-01",
+          "RAW-02"
+        ],
+        "confidence": "low; no codec or application performance was measured"
+      },
+      {
+        "id": "I-05",
+        "type": "constraint",
+        "statement": "A result must preserve snapshot, row domain, schema, scope, coverage, and completion meaning.",
+        "commitment": "derived",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "sources": [
+          "RAW-01",
+          "CODE-01",
+          "CODE-04",
+          "CODE-05"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "I-06",
+        "type": "anti-goal",
+        "statement": "A transport optimization must not silently truncate, coerce unsupported values, or claim end-to-end zero-copy.",
+        "commitment": "derived",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "sources": [
+          "RAW-01",
+          "RAW-02",
+          "CODE-01",
+          "WEB-04",
+          "WEB-05"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "I-07",
+        "type": "implementation hypothesis",
+        "statement": "The existing row provider is the right first consumer boundary for the encoding proof.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "sources": [
+          "CODE-02",
+          "CODE-03",
+          "RAW-01"
+        ],
+        "confidence": "high for a transport comparison; it does not prove remote project lineage"
+      }
+    ],
+    "themes": [
+      "Correct snapshot and row identity",
+      "Complete versus partial row and field coverage",
+      "Lossless values within current consumer capabilities",
+      "End-to-end latency and peak memory across existing row consumers",
+      "Dedicated customer-instance data and cache ownership"
+    ],
+    "conflicts": [
+      {
+        "topic": "Binary candidate versus simpler encoding",
+        "resolution": "Keep Arrow as an investigation candidate and row JSON as the benchmark baseline. Select one production encoding only after both use the same current consumers and pass the same correctness and capacity gates.",
+        "sources": [
+          "RAW-01",
+          "RAW-02"
+        ]
+      },
+      {
+        "topic": "Complete snapshots versus progressive caching",
+        "resolution": "Prove one bounded complete snapshot first. Defer general progressive caching; partial coverage must remain explicit.",
+        "sources": [
+          "USR-01",
+          "RAW-01"
+        ]
+      }
+    ],
+    "human_questions": []
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "current",
+    "appetite": "One bounded proof at the current row boundary, with a separate full-source-table parity check. Do not set a hard row ceiling before width and resident cost are measured.",
+    "problem": "A smaller wire body may still lose after decoder startup, row materialization, provider/Crossfilter setup, chart work, and replacement overlap. Correctness also depends on a coherent source snapshot and truthful coverage.",
+    "recommended_shape": {
+      "binary_candidate": "Arrow IPC stream, internal compression none, negotiated HTTP gzip; investigate only.",
+      "baseline": "Lossless schema-described row JSON under the same HTTP compression and consumers; benchmark reference, not an automatic runtime fallback.",
+      "resident_layout": "Existing row objects, provider, Crossfilter, chart and trace consumers.",
+      "publication": "Validate and materialize outside the provider; publish one complete replacement once.",
+      "selection": "Benchmark candidates, then ship one selected encoding. Do not ship runtime dual-format negotiation or fallback by default.",
+      "customer_boundary": "Source data, result snapshots, dictionaries, caches, and temporary files stay inside one dedicated customer instance."
+    },
+    "success_moves": [
+      "Make snapshot identity, row grain/key/order, schema, scope, two-axis coverage, counts, and successful completion a shared query/adapter/transport contract before accepting bytes.",
+      "Use one bounded complete snapshot and atomic publication so the existing provider does not rebuild on each incoming batch.",
+      "Compare Arrow and row JSON under the same compression, source snapshot, field settings, commit schedule, and row-based consumers; charge startup, server work, interaction, and old/new overlap.",
+      "Track decoded, retained, peak, and unique-copy costs separately; calibrate the proposed 64/128/256 MiB lab values on the actual browser and schema widths.",
+      "Scope every snapshot and cache to the dedicated customer instance; let hosting choose the platform and prove its limits separately."
+    ],
+    "first_proof": {
+      "question": "Does Arrow IPC improve the complete current row-consumer path over lossless row JSON for a bounded complete snapshot?",
+      "artifact": "Complete 10k and 100k source-snapshot fixtures through the existing project/evaluator path; paired row JSON/Arrow full-path measurements; exactness corpus; separate source-table and row-boundary parity evidence.",
+      "decision_rule": "Correctness and measured capacity are mandatory. Arrow must improve p95 by at least 20% and 100 ms, or reduce peak attributable client data by at least 25% with no more than 5% latency regression. Apply small-output and exact-filter guards. Otherwise choose the simpler passing encoding; if provider/trace dominates both, stop transport optimization.",
+      "limitations": "Thresholds and memory budgets are provisional proof gates, not product SLOs. Include a bounded read-only adapter run before claiming database-to-browser benefit."
+    },
+    "rabbit_holes": [
+      "The selected source packet omits provider helpers, worker bootstrap/result posting, renderer paths, browser measurements, and adapter/hosting runtime evidence.",
+      "Arrow's current API and schema support do not prove an end-to-end gain or current-consumer exactness for decimal, large integer, fine-time, mixed, or nested fields.",
+      "Snapshot consistency and response streaming/cancellation depend on the adapter and selected hosting platform.",
+      "The 64 MiB decoded, 128 MiB retained, 256 MiB peak, and 100k row starting values need customer/browser calibration."
+    ],
+    "open_decisions": []
+  },
+  "implementation": {
+    "status": "not-started",
+    "repository_snapshot": {
+      "root": "/Users/byronwall/.codex/worktrees/583d/explorEDA",
+      "revision": "28c5ac27a400aa1fd66ce99eb1e6bd4ab5c72e9c",
+      "worktree_status": "Shared checkout contains user-provided raw research artifacts; no Git changes were made by this track.",
+      "subsystems": [
+        "packages/explorEDA/src/types/AnalysisProject.ts",
+        "packages/explorEDA/src/components/ExplorEdaProject.tsx",
+        "packages/explorEDA/src/providers/DataLayerProvider.tsx",
+        "packages/explorEDA/src/hooks/CrossfilterWrapper.ts",
+        "packages/explorEDA/src/lib/analysis/evaluateProject.ts",
+        "packages/explorEDA/src/components/charts/ScatterPlot/scatterPlan.ts",
+        "packages/explorEDA/src/components/charts/BarChart/barPlan.ts"
+      ],
+      "test_commands": [],
+      "deployment_surfaces": []
+    },
+    "dependencies": [],
+    "fast_local_loop": null,
+    "milestones": [],
+    "cut_line": [
+      "No application implementation or runtime codec selection in this shaping task.",
+      "No general progressive cache, remote query engine, resident column store, Parquet range client, custom codec, or hosting platform choice.",
+      "No numeric memory/row budget becomes a product promise before representative measurements."
+    ],
+    "open_decisions": []
+  },
+  "history": [
+    {
+      "date": "2026-10-12",
+      "event": "intent-and-shape-created",
+      "reason": "User requested raw Pro research reconciliation and initial shaping for columnar data transport.",
+      "evidence": [
+        "USR-01",
+        "USR-02",
+        "RAW-01",
+        "RAW-02",
+        "CODE-01",
+        "CODE-02",
+        "CODE-03",
+        "CODE-04",
+        "CODE-05"
+      ],
+      "notes": "No implementation plan requested. Raw files remain unchanged."
+    }
+  ],
+  "closure": null,
+  "recommendation_review": {
+    "path": "evidence/recommendation-review.md",
+    "all_ids_reviewed": true,
+    "source_ids": [
+      "RAW-01",
+      "RAW-02",
+      "USR-01",
+      "USR-02",
+      "CODE-01",
+      "CODE-02",
+      "CODE-03",
+      "CODE-04",
+      "CODE-05",
+      "WEB-01",
+      "WEB-02",
+      "WEB-03",
+      "WEB-04",
+      "WEB-05",
+      "WEB-06",
+      "WEB-07"
+    ],
+    "dispositions": [
+      {
+        "id": "CT-001",
+        "source_status": "recommend",
+        "disposition": "adopt"
+      },
+      {
+        "id": "CT-002",
+        "source_status": "investigate",
+        "disposition": "investigate"
+      },
+      {
+        "id": "CT-003",
+        "source_status": "recommend",
+        "disposition": "adopt"
+      },
+      {
+        "id": "CT-004",
+        "source_status": "recommend",
+        "disposition": "adopt"
+      },
+      {
+        "id": "CT-005",
+        "source_status": "recommend",
+        "disposition": "adopt"
+      },
+      {
+        "id": "CT-006",
+        "source_status": "recommend",
+        "disposition": "adopt"
+      },
+      {
+        "id": "CT-007",
+        "source_status": "investigate",
+        "disposition": "investigate"
+      },
+      {
+        "id": "CT-008",
+        "source_status": "recommend",
+        "disposition": "adopt"
+      },
+      {
+        "id": "CT-009",
+        "source_status": "recommend",
+        "disposition": "adopt"
+      },
+      {
+        "id": "CT-010",
+        "source_status": "recommend",
+        "disposition": "adopt"
+      },
+      {
+        "id": "CT-011",
+        "source_status": "defer",
+        "disposition": "defer"
+      },
+      {
+        "id": "CT-012",
+        "source_status": "defer",
+        "disposition": "defer"
+      },
+      {
+        "id": "CT-013",
+        "source_status": "recommend",
+        "disposition": "adopt"
+      },
+      {
+        "id": "CT-014",
+        "source_status": "defer",
+        "disposition": "defer"
+      },
+      {
+        "id": "CT-015",
+        "source_status": "investigate",
+        "disposition": "investigate"
+      },
+      {
+        "id": "CT-016",
+        "source_status": "reject",
+        "disposition": "reject"
+      }
+    ]
+  }
+}

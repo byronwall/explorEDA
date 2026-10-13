@@ -38,6 +38,8 @@ import type {
 } from "@/types/SavedDataTypes";
 import { validateSavedData } from "@/utils/saveDataUtils";
 import { parsePath, setPath } from "./paths";
+import { boundaryAssetId, listBoundarySets } from "@/lib/boundaries/registry";
+import "@/lib/boundaries/regionFunction";
 import {
   CHART_SETTING_KEYS,
   FIELD_SETTING_WORDS,
@@ -232,6 +234,8 @@ const FORMATS: FieldFormat[] = [
 
 const DEFAULT_SIZES: Record<string, { w: number; h: number }> = {
   "metric-card": { w: 3, h: 2 },
+  waterfall: { w: 6, h: 6 },
+  donut: { w: 5, h: 4 },
   "data-table": { w: 12, h: 5 },
   summary: { w: 12, h: 5 },
 };
@@ -1912,7 +1916,14 @@ export function compileDocument(
         aggregates.map((item) => item.id),
         "group",
       ],
-      geometryAssetId: ["map shape", geometryAssets.map((item) => item.id), ""],
+      geometryAssetId: [
+        "map shape",
+        [
+          ...geometryAssets.map((item) => item.id),
+          ...listBoundarySets().map((set) => boundaryAssetId(set.id)),
+        ],
+        "",
+      ],
     } as const;
     if (top in references && path.segments.length === 1) {
       const [noun, ids, keyword] = references[top as keyof typeof references];

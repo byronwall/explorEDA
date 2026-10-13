@@ -14,6 +14,7 @@ import {
 import { createPortal } from "react-dom";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { catalogue, GROUP_LABELS, type DocsGroup } from "../catalogue";
+import { BrandIcon } from "../../landing/BrandMark";
 import { docsPath } from "../paths";
 import { SearchButton, SearchProvider, useOpenSearch } from "./search";
 import { ThemeToggle, useDocsTheme } from "./theme";
@@ -170,7 +171,7 @@ function DocsHeader({ onOpenNav }: { onOpenNav: () => void }) {
             focusRing
           )}
         >
-          <img src="/brand/icon.svg" alt="" className="size-6" />
+          <BrandIcon className="size-6 text-brand-navy dark:text-white" />
           <img
             src="/brand/wordmark.svg"
             alt=""

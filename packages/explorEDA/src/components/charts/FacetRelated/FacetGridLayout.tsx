@@ -231,6 +231,7 @@ export function FacetGridLayout({
                                 size="icon"
                                 className="size-5 text-muted-foreground hover:text-foreground"
                                 tooltip="Focus facet"
+                                data-export="omit"
                                 aria-label={`Focus ${formatFacetValue(rowVariable, facet.rowRawValue)}${facet.columnRawValue !== null ? `, ${formatFacetValue(columnVariable, facet.columnRawValue)}` : ""} facet`}
                                 onKeyDown={traceOnAltEnter(
                                   onTraceFacet &&

@@ -11,6 +11,34 @@
   }
 }
 
+/* Site brand colors, from the logo. The landing page, docs, and examples
+   index share them; the embedded workspace keeps the package theme.
+   --site-accent is the text-safe teal: 4.5:1 or better on the page and card
+   backgrounds in each theme. */
+:root {
+  --brand-navy: #0b2946;
+  --brand-navy-deep: #061a2e;
+  --brand-teal: #01adb7;
+  --site-accent: hsl(184 98% 25%);
+  --site-accent-foreground: #ffffff;
+  /* Borders on the navy band. */
+  --band-border: rgb(255 255 255 / 0.15);
+}
+
+.dark {
+  --site-accent: hsl(183 80% 55%);
+  --site-accent-foreground: var(--brand-navy-deep);
+}
+
+@theme inline {
+  --color-brand-navy: var(--brand-navy);
+  --color-brand-navy-deep: var(--brand-navy-deep);
+  --color-brand-teal: var(--brand-teal);
+  --color-site-accent: var(--site-accent);
+  --color-site-accent-foreground: var(--site-accent-foreground);
+  --color-band-border: var(--band-border);
+}
+
 /* Landing page only; the workspace keeps the package typography. */
 .landing {
   font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
@@ -23,7 +51,13 @@
 }
 
 .landing ::selection {
-  background: color-mix(in oklab, var(--primary) 22%, transparent);
+  background: color-mix(in oklab, var(--brand-teal) 28%, transparent);
+}
+
+/* The one dark moment on the page: flat brand navy, no effects. */
+.landing-band {
+  background: var(--brand-navy);
+  color: #ffffff;
 }
 
 .landing-frame {
@@ -36,6 +70,14 @@
   box-shadow:
     0 1px 2px color-mix(in oklab, var(--foreground) 6%, transparent),
     0 18px 40px -20px color-mix(in oklab, var(--foreground) 22%, transparent);
+}
+
+/* The live workspace: a hairline edge and a soft, offset shadow. */
+.landing-stage {
+  border: 1px solid var(--border);
+  box-shadow:
+    0 1px 2px color-mix(in oklab, var(--brand-navy) 8%, transparent),
+    0 24px 60px -28px color-mix(in oklab, var(--brand-navy) 35%, transparent);
 }
 
 .landing-drop-overlay {
@@ -119,14 +161,9 @@
   white-space: nowrap;
 }
 
-/* The docs' accent. The workspace's dark primary is near white, which
-   reads as plain text in links and highlights, so the docs use a blue. */
+/* The docs' accent is the site's brand teal, in both themes. */
 .docs-root {
-  --docs-accent: var(--primary);
-}
-
-.dark .docs-root {
-  --docs-accent: hsl(213 90% 70%);
+  --docs-accent: var(--site-accent);
 }
 
 @theme inline {

@@ -50,7 +50,11 @@ vi.mock("exploreda", async () => {
         const [draft, setDraft] = React.useState("");
         React.useImperativeHandle(
           ref,
-          () => ({ getSettings: () => currentSettings }),
+          () => ({
+            getSettings: () => currentSettings,
+            exportChartPng: () =>
+              Promise.reject(new Error("Chart is not rendered.")),
+          }),
           [currentSettings]
         );
         const emit = (kind: "filter" | "chart" | "both" | "shared") => {

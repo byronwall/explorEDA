@@ -12,7 +12,7 @@ These outcomes come from Byron’s direct follow-up. Editorial styling and the s
 | Durable editorial chart styling (completed) | Delivered as workspace themes; see the package README's [Themes and styling](../../../packages/explorEDA/README.md#themes-and-styling). |
 | Edit chart features in place (completed) | Delivered for titles, axis titles, and axis ranges; see [UI defaults](../../ui-defaults.md#popovers-and-dialogs). Remaining editors are Product Grid tasks. |
 | Scatter plot matrix (completed) | Delivered as the `scatter-matrix` view; see the [feature inventory](../../application-feature-inventory.md#scatter-matrix). |
-| [Image export and possible document outputs](../analysis-export/intent-brief.md) | Export authored charts; evaluate slides and PDF reports separately. |
+| [Chart image export](../analysis-export/intent-brief.md) | Copy or download any chart as a PNG matching the screen; whole-report export is out of scope. |
 
 The editing initiative links to axis-domain controls for numerical meaning. Styling owns visual choices and subtitle presentation.
 
@@ -31,7 +31,7 @@ Time is important and belongs in a second pass across these workflows. Lasso and
 Named comparisons have low current interest. Extra metrics, derived-output reuse, and filter-free templates remain unproven seeds.
 Keep correctness and restore checks within the selected journeys instead of replacing the priorities with a separate broad verification project.
 
-[Image export](../analysis-export/intent-brief.md) now has a dedicated scope. Compositions can already copy a PNG; other charts cannot. Slides and PDF reports remain possible extensions; no implementation order is implied.
+[Chart image export](../analysis-export/shape-brief.md) is shaped: one chart, Copy or Download as PNG, every family, plus a public function. Compositions can already copy a PNG. Whole-report output is out of scope; [headless chart rendering](../headless-chart-rendering/intent-brief.md) is a separate seed. No implementation order is implied.
 The [annotated product feedback](resources/product-feedback-2026-10-06.md) records the decisions and uncertainty.
 
 ## Current gaps worth evaluating
@@ -62,6 +62,7 @@ The [annotated product feedback](resources/product-feedback-2026-10-06.md) recor
 | [Explore explicit links and edge-list flows](../network-and-edge-flow/intent-brief.md) | Expand when actual data arrives as edges, or a user needs neighbors and cycles that cannot be represented honestly as ordered stages. |
 | [Funnels, retention, and interval schedules](../domain-analysis-views/intent-brief.md) | Expand one candidate when Byron has repeated funnel, cohort, or schedule questions that require manual preparation outside explorEDA. |
 | [Scientific overlays and multivariate discovery](../scientific-multivariate-analysis/intent-brief.md) | Expand when a concrete measurement, diagnostic, or multivariate task cannot be answered with the current scatter tools. Require independent numerical references before implementation. |
+| [Render charts to images without a live client](../headless-chart-rendering/intent-brief.md) | Expand when deck or report output, off-screen API export, or a test or docs pipeline needs chart images from saved state. |
 | [Reproduce an analysis beyond the current renderer](../renderer-independent-replay/intent-brief.md) | Expand when an external export, independent verification process, or second renderer needs more than reopening the same React component. |
 | [Keep explanations aligned with the selected data](../data-bound-narrative/intent-brief.md) | Expand when a recurring analysis needs manual explanation updates after filtering, and one existing metric can supply the statement. |
 

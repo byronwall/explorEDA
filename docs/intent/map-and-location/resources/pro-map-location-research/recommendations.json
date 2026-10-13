@@ -1,0 +1,1555 @@
+{
+  "schema_version": "1.0",
+  "research_date": "2026-10-11",
+  "repository": "https://github.com/byronwall/explorEDA",
+  "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+  "research_status": "GO",
+  "implementation_authorized": false,
+  "evidence_policy": {
+    "current_source": "Verified exact-ref selected source, not browser observation.",
+    "proposal": "All additions and intent changes await implementation review.",
+    "unknown": "No runtime, benchmark or live-provider acceptance is claimed.",
+    "source_ledger": "sources.md",
+    "proof_plan": "proof-plan.md"
+  },
+  "recommendations": [
+    {
+      "id": "MAP-001",
+      "title": "Retain the existing analytical map contract and D3/SVG default",
+      "disposition": "keep",
+      "phase": "0",
+      "user_job": "Create worldwide, regional and private local dashboards with exact linked selection and trace.",
+      "current_source": "MapChart chooses PointMap or RegionMap. The plans retain source IDs, typed region groups, metric states and full-source scales; local D3 projections use bundled land.",
+      "proposal": "Keep one Map chart with both analytical modes and the current local renderer. Protect analytical preparation and identity before any new rendering path.",
+      "repository_anchors": [
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/MapChart.tsx",
+          "symbols": [
+            "MapChart"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/MapChart.tsx"
+        },
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/pointMapPlan.ts",
+          "symbols": [
+            "planPointMap",
+            "mapPointFilters"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/pointMapPlan.ts"
+        },
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/regionMapPlan.ts",
+          "symbols": [
+            "planRegionMap",
+            "regionFilters"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/regionMapPlan.ts"
+        },
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/mapGeometry.ts",
+          "symbols": [
+            "mapProjection",
+            "worldLand"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/mapGeometry.ts"
+        }
+      ],
+      "primary_sources": [
+        "REPO-BASELINE",
+        "REN-001",
+        "GEO-002"
+      ],
+      "benefit": "Improves existing jobs without adding a provider dependency or redefining selected records.",
+      "maintenance_cost": "Low relative to replacement; targeted regressions and clarity work. Actual SVG workload ceiling is unmeasured.",
+      "rejected_simpler_option": "Keeping only point maps would reduce maintenance but remove useful custom-territory and regional comparison workflows already supported.",
+      "confidence": {
+        "level": "high",
+        "basis": "Verified implementation and supplied intent; runtime performance and browser behavior not measured."
+      },
+      "proof": {
+        "ids": [
+          "P01",
+          "P03"
+        ],
+        "acceptance": "Existing map tests and deterministic source-ID, typed-key, metric-state and trace oracles agree before expansion.",
+        "status": "not_run"
+      },
+      "dependencies": [],
+      "stop_condition": "Any expansion that changes analytical results or loses source trace must not ship."
+    },
+    {
+      "id": "MAP-002",
+      "title": "Close interaction and draft-isolation gaps",
+      "disposition": "fix",
+      "phase": "0",
+      "user_job": "Select or clear locations, inspect sources and navigate without changing unrelated charts or committed draft state.",
+      "current_source": "PointMap has no plain SVG background click handler; RegionMap's handles Alt inspection only. PointMap Escape calls live updateChart even with a draft callback. RegionMap guards that call. The preview fixture uses a different ID and omits Escape.",
+      "proposal": "Prove plain empty-space clearing inside the real panel, enforce the draft callback boundary for Escape, and preserve click/Alt/drag/cancel distinctions with one update per completed gesture.",
+      "repository_anchors": [
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/PointMap.tsx",
+          "symbols": [
+            "PointMap SVG onKeyDown",
+            "select"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/PointMap.tsx"
+        },
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/RegionMap.tsx",
+          "symbols": [
+            "RegionMap SVG onClick and onKeyDown",
+            "select"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/RegionMap.tsx"
+        },
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/useMapPan.ts",
+          "symbols": [
+            "useMapPan"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/useMapPan.ts"
+        },
+        {
+          "path": "packages/explorEDA/src/providers/DataLayerProvider.tsx",
+          "symbols": [
+            "updateChart"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/providers/DataLayerProvider.tsx"
+        },
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/pointMap.test.tsx",
+          "symbols": [
+            "DraftMap fixture"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/pointMap.test.tsx"
+        }
+      ],
+      "primary_sources": [
+        "REPO-BASELINE"
+      ],
+      "benefit": "Protects linked filters and host history during ordinary navigation and settings previews.",
+      "maintenance_cost": "Low-to-moderate targeted interaction work; avoid unrelated interaction rewrites.",
+      "rejected_simpler_option": "A clear button alone does not satisfy the established empty-space contract or prevent same-ID draft Escape from reaching saved state.",
+      "confidence": {
+        "level": "high",
+        "basis": "Component and provider branches are explicit. Real caller reachability, facet/wrapper behavior and browser reproduction remain to prove."
+      },
+      "proof": {
+        "ids": [
+          "P01",
+          "P05",
+          "P08"
+        ],
+        "acceptance": "Same-ID draft Escape preserves saved filters; plain dead click clears only own filters; Alt-click, drag threshold, pointer cancellation and toolbar actions do not clear selection.",
+        "status": "not_run"
+      },
+      "dependencies": [
+        "MAP-001"
+      ],
+      "stop_condition": "If wrapper behavior differs from the component prediction, refine the smallest fix against the reproduced case."
+    },
+    {
+      "id": "MAP-003",
+      "title": "Harden existing polygon import with bounded diagnostics and coherent commit",
+      "disposition": "fix",
+      "phase": "0",
+      "user_job": "Bring service boundaries into a dashboard and understand why an import is accepted or rejected.",
+      "current_source": "File/paste import exists. isRegionGeometry checks a nonempty Polygon/MultiPolygon FeatureCollection with finite bounded coordinates and closed rings. It has no diagnostic paths, topology guarantee or complexity budget; asset insertion precedes the settings callback.",
+      "proposal": "Keep the supported polygon subset; report feature/ring/coordinate errors, bounds and feature/vertex/property complexity. Define null/CRS/extra-ordinate handling explicitly. Validate before coherent asset/settings commit and decide draft asset retention without silently pruning reusable assets. State holding batches notifications; it is not rollback.",
+      "repository_anchors": [
+        {
+          "path": "packages/explorEDA/src/lib/geometryAssets.ts",
+          "symbols": [
+            "RegionGeometry",
+            "isRegionGeometry",
+            "GeometryAsset"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/lib/geometryAssets.ts"
+        },
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/RegionMapSettings.tsx",
+          "symbols": [
+            "importGeometry",
+            "file input handler"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/RegionMapSettings.tsx"
+        },
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/regionGeometry.ts",
+          "symbols": [
+            "regionGeometry",
+            "orient"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/regionGeometry.ts"
+        },
+        {
+          "path": "packages/explorEDA/src/providers/DataLayerProvider.tsx",
+          "symbols": [
+            "addGeometryAsset",
+            "holdStateChanges"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/providers/DataLayerProvider.tsx"
+        }
+      ],
+      "primary_sources": [
+        "REPO-BASELINE",
+        "GEO-001",
+        "GEO-002"
+      ],
+      "benefit": "Makes custom boundaries usable while preserving source geometry, selection and reusable assets.",
+      "maintenance_cost": "Moderate diagnostics and lifecycle coverage; budgets require measurement. Complete topology repair would be much larger and is excluded.",
+      "rejected_simpler_option": "Documenting the existing generic error is insufficient to locate bad geometry or explain a partially completed asset/settings action.",
+      "confidence": {
+        "level": "high",
+        "basis": "Validation and mutation order are source-inspected; specific topology handling and workload limits remain unverified."
+      },
+      "proof": {
+        "ids": [
+          "P02",
+          "P06"
+        ],
+        "acceptance": "Deterministic malformed, unsupported, winding, hole, seam and size fixtures produce declared outcomes; rejected commit leaves prior analysis intact; original saved geometry remains unchanged.",
+        "status": "not_run"
+      },
+      "dependencies": [
+        "MAP-001"
+      ],
+      "stop_condition": "Do not claim general GeoJSON/topology support or silently drop invalid features to pass import."
+    },
+    {
+      "id": "MAP-004",
+      "title": "Improve the existing join preview while preserving typed keys",
+      "disposition": "fix",
+      "phase": "0",
+      "user_job": "Join country or custom-district data confidently and explain unmatched records.",
+      "current_source": "RegionMapSettings already previews all-source unmatched rows/regions and duplicate typed-key groups. planRegionMap distinguishes numeric and string keys and groups repeated geometry keys into one analytical region.",
+      "proposal": "Add mismatched value samples, type distributions, missing-key detail and explicit grouped-feature inspection. Keep all-source and filtered summaries distinguishable; require explicit upstream transforms or reviewed aliases.",
+      "repository_anchors": [
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/RegionMapSettings.tsx",
+          "symbols": [
+            "RegionMapSettings",
+            "join preview"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/RegionMapSettings.tsx"
+        },
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/regionMapPlan.ts",
+          "symbols": [
+            "regionKey",
+            "featureValue",
+            "planRegionMap",
+            "regionFilters"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/regionMapPlan.ts"
+        },
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/regionMap.test.tsx",
+          "symbols": [
+            "typed-key and duplicate-feature fixtures"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/regionMap.test.tsx"
+        }
+      ],
+      "primary_sources": [
+        "REPO-BASELINE",
+        "PROD-MB-02",
+        "PROD-SH-01",
+        "PROD-AZ-03"
+      ],
+      "benefit": "Avoids plausible-looking but wrong choropleths and explains why data or geometry is unused.",
+      "maintenance_cost": "Low-to-moderate preview work over existing plan results; no fuzzy matching or spatial index required.",
+      "rejected_simpler_option": "Automatic string coercion or best-match field selection would hide type and geography mismatches that affect analytical meaning.",
+      "confidence": {
+        "level": "high",
+        "basis": "Current exact-join contract and preview exist; additional presentation detail is a bounded proposal."
+      },
+      "proof": {
+        "ids": [
+          "P03",
+          "P04"
+        ],
+        "acceptance": "Keys 1, '1', '01', booleans and missing values reconcile exactly; duplicate polygon parts do not duplicate sums, counts or contributors.",
+        "status": "not_run"
+      },
+      "dependencies": [
+        "MAP-003"
+      ],
+      "stop_condition": "Any proposed convenience that changes keys silently is rejected."
+    },
+    {
+      "id": "MAP-005",
+      "title": "Add a few explicit content controls",
+      "disposition": "explore",
+      "phase": "1",
+      "user_job": "Choose the geography, marks, boundaries and labels needed for a worldwide or local dashboard.",
+      "current_source": "One analytical mode renders at a time. Point labelField supplies accessible/readout identity; region labels use the join key. There is no independent reference-boundary overlay or tile context.",
+      "proposal": "Expose Analytical marks, Reference boundaries, Basemap context and Data labels as bounded groups. Default to one analytical family, land context and restrained labels; prove one noninteractive boundary overlay beneath points. Use fixed order and a display label separate from join key.",
+      "repository_anchors": [
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/definition.ts",
+          "symbols": [
+            "MapSettings"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/definition.ts"
+        },
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/MapSettingsPanel.tsx",
+          "symbols": [
+            "MapSettingsPanel"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/MapSettingsPanel.tsx"
+        },
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/RegionMapSettings.tsx",
+          "symbols": [
+            "RegionMapSettings"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/RegionMapSettings.tsx"
+        },
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/PointMap.tsx",
+          "symbols": [
+            "PointMap"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/PointMap.tsx"
+        },
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/RegionMap.tsx",
+          "symbols": [
+            "RegionMap"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/RegionMap.tsx"
+        }
+      ],
+      "primary_sources": [
+        "REPO-BASELINE",
+        "PROD-TAB-01",
+        "PROD-PL-02",
+        "PROD-MB-02",
+        "REN-011",
+        "REN-019"
+      ],
+      "benefit": "Supports point sites over service boundaries and legible regional comparisons without a universal layer editor.",
+      "maintenance_cost": "Moderate settings, legend, label and interaction coverage; no arbitrary reordering or multiple metric layers initially.",
+      "rejected_simpler_option": "Only an Outline/Streets switch cannot distinguish data labels, reference boundaries and context; omitting all controls leaves the stated render-control job unmet.",
+      "confidence": {
+        "level": "medium",
+        "basis": "Strong intent and comparator evidence; exact grouping and selected-label demand need a small user-task proof."
+      },
+      "proof": {
+        "ids": [
+          "P05",
+          "P08"
+        ],
+        "acceptance": "Each control changes only its named content. Presentation changes preserve filter IDs, counts, denominators, domains and trace; hidden selected marks remain discoverable.",
+        "status": "not_run"
+      },
+      "dependencies": [
+        "MAP-002",
+        "MAP-004",
+        "MAP-008",
+        "MAP-012"
+      ],
+      "stop_condition": "Remove a control or overlay slot if it does not materially improve the three exemplar dashboards."
+    },
+    {
+      "id": "MAP-006",
+      "title": "Select one versioned country pack after an identifier audit",
+      "disposition": "explore",
+      "phase": "1",
+      "user_job": "Make a worldwide region comparison without sourcing or preparing boundaries.",
+      "current_source": "mapGeometry loads World Atlas land, not an analytical country catalog. World Bank demo keys include alpha-3-like strings.",
+      "proposal": "Compare the already available World Atlas countries source with a fresh Natural Earth Admin 0 110m-derived pack. Ship one after schema, alias, missing-code, territorial-unit, simplification and notice review; prefer fresh source if the modest preparation cost is justified.",
+      "repository_anchors": [
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/mapGeometry.ts",
+          "symbols": [
+            "worldLand"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/mapGeometry.ts"
+        },
+        {
+          "path": "packages/explorEDA/src/lib/geometryAssets.ts",
+          "symbols": [
+            "GeometryAsset"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/lib/geometryAssets.ts"
+        },
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/RegionMapSettings.tsx",
+          "symbols": [
+            "RegionMapSettings",
+            "geometry asset selector",
+            "feature key selector"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/RegionMapSettings.tsx"
+        },
+        {
+          "path": "apps/demo/src/demos/analyses/worldbank.ts",
+          "symbols": [
+            "worldBankAnalysis",
+            "country code fields and filters"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/apps/demo/src/demos/analyses/worldbank.ts"
+        },
+        {
+          "path": "packages/explorEDA/package.json",
+          "symbols": [
+            "dependencies"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/package.json"
+        }
+      ],
+      "primary_sources": [
+        "REPO-BASELINE",
+        "GEO-003",
+        "GEO-004",
+        "GEO-005",
+        "GEO-006"
+      ],
+      "benefit": "Enables the worldwide dashboard with predictable joins and modest catalog scope.",
+      "maintenance_cost": "Moderate reproducible conversion/key review; small ongoing update responsibility. Actual payload and vertex counts unmeasured.",
+      "rejected_simpler_option": "Relabelling the existing land outline as countries supplies no analytical region IDs. Blindly using numeric World Atlas IDs against alpha-3 data creates unmatched rows.",
+      "confidence": {
+        "level": "medium",
+        "basis": "Sources and historic ID gaps documented; current Natural Earth file schema/crosswalk and browser costs not inspected."
+      },
+      "proof": {
+        "ids": [
+          "P04",
+          "P06"
+        ],
+        "acceptance": "One pinned pack joins documented keys including demo codes through audited explicit aliases; exceptions, small islands, terms, vintage and byte/vertex measurements are recorded.",
+        "status": "not_run"
+      },
+      "dependencies": [
+        "MAP-003",
+        "MAP-004",
+        "MAP-007"
+      ],
+      "stop_condition": "Do not release a pack without a reproducible identity/key/notice audit or promise universal country-code equivalence."
+    },
+    {
+      "id": "MAP-007",
+      "title": "Extend shared assets with useful provenance and immutable pack versions",
+      "disposition": "explore",
+      "phase": "1",
+      "user_job": "Reuse boundaries across charts and reopen the same analytical geography later or offline.",
+      "current_source": "GeometryAsset contains id, name, source and geometry. The provider saves the shared collection; saved analysis includes geometry. Dashboard DSL text excludes geometryAssets.",
+      "proposal": "Keep that shared-asset boundary. Add optional provenance fields used by real packs; acquire lazily from a host-approved origin and save geometry once. Preserve old assets and use explicit versioned replacements; keep host-supplied assets supported.",
+      "repository_anchors": [
+        {
+          "path": "packages/explorEDA/src/lib/geometryAssets.ts",
+          "symbols": [
+            "GeometryAsset"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/lib/geometryAssets.ts"
+        },
+        {
+          "path": "packages/explorEDA/src/providers/DataLayerProvider.tsx",
+          "symbols": [
+            "addGeometryAsset",
+            "saveToStructure",
+            "restoreFromStructure"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/providers/DataLayerProvider.tsx"
+        },
+        {
+          "path": "packages/explorEDA/src/types/SavedDataStructure.ts",
+          "symbols": [
+            "geometryAssets"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/types/SavedDataStructure.ts"
+        },
+        {
+          "path": "packages/explorEDA/src/utils/saveDataUtils.ts",
+          "symbols": [
+            "validateSavedData"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/utils/saveDataUtils.ts"
+        },
+        {
+          "path": "packages/explorEDA/src/lib/dsl/settingKeys.ts",
+          "symbols": [
+            "DASHBOARD_COVERAGE.geometryAssets"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/lib/dsl/settingKeys.ts"
+        }
+      ],
+      "primary_sources": [
+        "REPO-BASELINE",
+        "GEO-005",
+        "GEO-011",
+        "GEO-015",
+        "GEO-021"
+      ],
+      "benefit": "Makes saved geography reproducible and its source/terms understandable without a catalog server.",
+      "maintenance_cost": "Low-to-moderate optional metadata and compatibility validation; serialization size and host callback cost need measurement.",
+      "rejected_simpler_option": "A mutable remote URL alone cannot reproduce an old analysis when data changes or the network is unavailable; bundling all candidates adds unused bytes.",
+      "confidence": {
+        "level": "high",
+        "basis": "Existing reuse/save behavior is verified; exact metadata shape and bundling choice remain proposals."
+      },
+      "proof": {
+        "ids": [
+          "P04",
+          "P05"
+        ],
+        "acceptance": "Two charts share one asset after save/restore offline; keys and provenance remain identical; old saves load; explicit new pack versions never silently replace old geography.",
+        "status": "not_run"
+      },
+      "dependencies": [
+        "MAP-003"
+      ],
+      "stop_condition": "Avoid a new catalog service or automatic updater unless a later task establishes the need."
+    },
+    {
+      "id": "MAP-008",
+      "title": "Preserve metric states, valid denominators and stable color meaning",
+      "disposition": "keep",
+      "phase": "0",
+      "user_job": "Compare regions without confusing zero, missing data, invalid measures or changing color scales.",
+      "current_source": "planRegionMap distinguishes empty, invalid and value states, including valid zero. summarizeGroup uses valid numeric inputs for sum/average. Color bounds are based on full source; trace exposes inputs and exclusions.",
+      "proposal": "Keep count/sum/average and existing scale stability. Make joined-row count versus valid-input denominator clear in readouts. Recommend appropriately prepared rates for comparisons, with unit, cohort and period; do not infer normalization or average rates silently.",
+      "repository_anchors": [
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/regionMapPlan.ts",
+          "symbols": [
+            "planRegionMap",
+            "fixed color-domain construction"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/regionMapPlan.ts"
+        },
+        {
+          "path": "packages/explorEDA/src/lib/aggregates.ts",
+          "symbols": [
+            "aggregateValues",
+            "summarizeGroup"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/lib/aggregates.ts"
+        },
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/RegionTraceBody.tsx",
+          "symbols": [
+            "RegionTraceBody"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/RegionTraceBody.tsx"
+        },
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/RegionMap.tsx",
+          "symbols": [
+            "RegionMap",
+            "metric legend"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/RegionMap.tsx"
+        }
+      ],
+      "primary_sources": [
+        "REPO-BASELINE",
+        "ROOT-004",
+        "ROOT-005",
+        "PROD-EC-02",
+        "PROD-VG-08"
+      ],
+      "benefit": "Prevents misleading choropleths and preserves explanations through filtering, facets and context changes.",
+      "maintenance_cost": "Low preservation/readout work; prepared ratios use existing data preparation rather than a new statistics engine.",
+      "rejected_simpler_option": "Coloring unavailable values as zero or scaling each filtered view independently would simplify display but change meaning and comparisons.",
+      "confidence": {
+        "level": "high",
+        "basis": "Metric implementation verified; normalization guidance is a contextual recommendation, not a universal ban on totals."
+      },
+      "proof": {
+        "ids": [
+          "P03",
+          "P05"
+        ],
+        "acceptance": "Duplicate parts, signed sums, numeric strings, invalid-only, empty and zero fixtures reconcile; mean denominator equals valid inputs, not all joined rows; filter/presentation changes keep the declared domain.",
+        "status": "not_run"
+      },
+      "dependencies": [
+        "MAP-001"
+      ],
+      "stop_condition": "Do not add automatic area/population denominators or undocumented weighting to improve appearance."
+    },
+    {
+      "id": "MAP-009",
+      "title": "Compare Leaflet raster and MapLibre vector for one optional street renderer",
+      "disposition": "explore",
+      "phase": "2",
+      "user_job": "Recognize streets and places around city sites or local service districts.",
+      "current_source": "The package has no tile renderer. D3 plans mix analytical preparation with projection-dependent positions; React peer support includes 18 and 19.",
+      "proposal": "Use one common deterministic fixture and equivalent context data to compare Leaflet+raster presets with MapLibre+curated vector style. Keep D3 default and ship at most one optional engine. Extract only the small shared semantic seam the proof requires.",
+      "repository_anchors": [
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/MapChart.tsx",
+          "symbols": [
+            "MapChart"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/MapChart.tsx"
+        },
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/definition.ts",
+          "symbols": [
+            "MapSettings",
+            "MapView"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/definition.ts"
+        },
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/pointMapPlan.ts",
+          "symbols": [
+            "planPointMap",
+            "mapPointFilters"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/pointMapPlan.ts"
+        },
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/regionMapPlan.ts",
+          "symbols": [
+            "planRegionMap",
+            "regionFilters"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/regionMapPlan.ts"
+        },
+        {
+          "path": "packages/explorEDA/package.json",
+          "symbols": [
+            "peerDependencies",
+            "dependencies"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/package.json"
+        }
+      ],
+      "primary_sources": [
+        "REPO-BASELINE",
+        "REN-002",
+        "REN-003",
+        "REN-008",
+        "REN-010",
+        "REN-011",
+        "REN-013",
+        "REN-018",
+        "REN-019"
+      ],
+      "benefit": "Adds useful local context while choosing the smallest engine that satisfies actual control and workload needs.",
+      "maintenance_cost": "Moderate-to-high: second rendering lifecycle, camera, host compatibility, picking, accessibility, loading and export. Both candidate integrations are experiments, not a permanent promise.",
+      "rejected_simpler_option": "The land outline cannot show street relationships. A fixed background image alone does not provide the requested reusable local pan/zoom workflow.",
+      "confidence": {
+        "level": "medium",
+        "basis": "Capabilities documented; winner, integration costs and actual host/browser behavior unverified."
+      },
+      "proof": {
+        "ids": [
+          "P05",
+          "P06",
+          "P07",
+          "P08"
+        ],
+        "acceptance": "Identical analytical IDs/results and usable selection/trace across candidates; React18/19, camera, resize, failure, accessibility, legibility and supported export contract pass before selecting one.",
+        "status": "not_run"
+      },
+      "dependencies": [
+        "MAP-001",
+        "MAP-002",
+        "MAP-005",
+        "MAP-010",
+        "MAP-011",
+        "MAP-012",
+        "MAP-014"
+      ],
+      "stop_condition": "If neither preserves semantics and host requirements at acceptable cost, defer detailed context and retain D3 improvements.",
+      "dependency_scope": "Provider and export gates apply to release selection; start common owned local fixtures before those service checks."
+    },
+    {
+      "id": "MAP-010",
+      "title": "Make external context a host-configured provider contract",
+      "disposition": "explore",
+      "phase": "2",
+      "user_job": "Embed reliable local maps with understandable network, attribution and operational behavior.",
+      "current_source": "No tile/provider configuration exists in current MapSettings. Saved chart settings and host callbacks are established seams, so portable state must be designed before external context.",
+      "proposal": "Host supplies approved endpoint/style/resource origins, public restricted token, attribution and permitted export/offline behavior. Authors choose presets. Keep credentials out of portable analysis state and preserve useful analysis when context fails.",
+      "repository_anchors": [
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/definition.ts",
+          "symbols": [
+            "MapSettings"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/definition.ts"
+        },
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/MapSettingsPanel.tsx",
+          "symbols": [
+            "MapSettingsPanel"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/MapSettingsPanel.tsx"
+        },
+        {
+          "path": "packages/explorEDA/src/types/SavedDataStructure.ts",
+          "symbols": [
+            "SavedAnalysisStructure"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/types/SavedDataStructure.ts"
+        },
+        {
+          "path": "packages/explorEDA/src/utils/saveDataUtils.ts",
+          "symbols": [
+            "isChart",
+            "map settings validation"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/utils/saveDataUtils.ts"
+        },
+        {
+          "path": "packages/explorEDA/src/providers/DataLayerProvider.tsx",
+          "symbols": [
+            "saveToStructure",
+            "onStateChange callback"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/providers/DataLayerProvider.tsx"
+        }
+      ],
+      "primary_sources": [
+        "REPO-BASELINE",
+        "REN-021",
+        "REN-022",
+        "REN-024",
+        "REN-025",
+        "REN-027",
+        "REN-028",
+        "REN-029"
+      ],
+      "benefit": "Controls service obligations and failure behavior without asking dashboard users to configure mapping infrastructure.",
+      "maintenance_cost": "Moderate but bounded to approved arrangements; provider policy and style changes require an owner.",
+      "rejected_simpler_option": "Hardcoding public OSMF tiles avoids a configuration surface but introduces unchosen service restrictions and a best-effort dependency. Arbitrary user URLs enlarge support scope.",
+      "confidence": {
+        "level": "high",
+        "basis": "Configuration boundary is well supported; specific provider entitlement and Mapbox terms remain unresolved."
+      },
+      "proof": {
+        "ids": [
+          "P07"
+        ],
+        "acceptance": "Network audit proves request contents/origins; public-key restrictions, attribution and permissions are reviewed; 401/403/429/5xx/offline/style/GPU failures preserve filters and source access; no secret appears in saves.",
+        "status": "not_run"
+      },
+      "dependencies": [
+        "MAP-001"
+      ],
+      "stop_condition": "No live-service adoption, purchase, new credential access or agreement until separately authorized and applicable terms are readable."
+    },
+    {
+      "id": "MAP-011",
+      "title": "Preserve geographic views and host state across presentation changes",
+      "disposition": "explore",
+      "phase": "1_then_2",
+      "user_job": "Return to the same area after resize, filtering, restore or switching available context.",
+      "current_source": "MapView stores longitude/latitude center and world-scale multiplier zoom. Drag commits at end. The provider's display-only allowlist does not include view, so view updates can trigger broader work.",
+      "proposal": "Retain the current saved format. If tiled context passes, use a separately tagged detailed camera, translate center/extent on first transition and restore each saved camera thereafter. Keep filter-driven auto-fit disabled and measure/coalesce host updates without assuming current cost is unacceptable.",
+      "repository_anchors": [
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/definition.ts",
+          "symbols": [
+            "MapView"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/definition.ts"
+        },
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/mapGeometry.ts",
+          "symbols": [
+            "mapProjection",
+            "fitMapCoordinates"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/mapGeometry.ts"
+        },
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/useMapPan.ts",
+          "symbols": [
+            "useMapPan"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/useMapPan.ts"
+        },
+        {
+          "path": "packages/explorEDA/src/providers/DataLayerProvider.tsx",
+          "symbols": [
+            "DISPLAY_ONLY_KEYS",
+            "updateChart",
+            "saveToStructure"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/providers/DataLayerProvider.tsx"
+        },
+        {
+          "path": "packages/explorEDA/src/utils/saveDataUtils.ts",
+          "symbols": [
+            "isChart",
+            "map view validation"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/utils/saveDataUtils.ts"
+        },
+        {
+          "path": "packages/explorEDA/src/lib/dsl/settingKeys.ts",
+          "symbols": [
+            "CHART_SETTING_KEYS",
+            "map setting keys"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/lib/dsl/settingKeys.ts"
+        }
+      ],
+      "primary_sources": [
+        "REPO-BASELINE",
+        "REN-002",
+        "REN-007",
+        "REN-010",
+        "REN-014",
+        "REN-020",
+        "PROD-PL-09"
+      ],
+      "benefit": "Avoids jumps, lost views and noisy history while preserving old analyses and facet comparisons.",
+      "maintenance_cost": "Moderate compatibility and camera tests; minimal shared geographic intent, no universal camera abstraction.",
+      "rejected_simpler_option": "Copying the existing numeric zoom into a tile engine or fitting every filtered update is simpler but changes the viewed geography unexpectedly.",
+      "confidence": {
+        "level": "medium",
+        "basis": "View formats and update paths verified; exact mapping and recomputation costs require proof."
+      },
+      "proof": {
+        "ids": [
+          "P05",
+          "P06"
+        ],
+        "acceptance": "Old/new save roundtrips preserve intended geography and source semantics; one completed gesture produces one host history entry; resize/facets/dateline/polar cases follow declared limits.",
+        "status": "not_run"
+      },
+      "dependencies": [
+        "MAP-001",
+        "MAP-002",
+        "MAP-007"
+      ],
+      "stop_condition": "Do not promise pixel identity across projections or invalidate source coordinates merely because a context projection cannot display them."
+    },
+    {
+      "id": "MAP-012",
+      "title": "Make selection, trace and navigation usable by keyboard and touch",
+      "disposition": "fix",
+      "phase": "0_and_all_later",
+      "user_job": "Use the map's analytical actions without precise dragging, hover or thousands of tab stops.",
+      "current_source": "Map marks have roving focus, labels and keyboard actions. SVG touch-none and pointer panning need real-device review. Component accessibility primitives do not establish complete task accessibility.",
+      "proposal": "Preserve visible focus and exact mark actions; add a bounded source/region action list where dense or canvas views need it. Provide single-pointer pan alternatives, touch-safe page use and readable metric/selection status; retain the repository's shared tooltip/trace pattern.",
+      "repository_anchors": [
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/PointMap.tsx",
+          "symbols": [
+            "pointRefs",
+            "SVG key and pointer handlers"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/PointMap.tsx"
+        },
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/RegionMap.tsx",
+          "symbols": [
+            "refs",
+            "SVG key and pointer handlers"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/RegionMap.tsx"
+        },
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/MapToolbar.tsx",
+          "symbols": [
+            "MapToolbar"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/MapToolbar.tsx"
+        },
+        {
+          "path": "docs/ui-defaults.md",
+          "symbols": [
+            "interaction and responsive viewing guidance"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/docs/ui-defaults.md"
+        }
+      ],
+      "primary_sources": [
+        "REPO-BASELINE",
+        "ROOT-001",
+        "ROOT-002",
+        "ROOT-003",
+        "PROD-EC-03",
+        "PROD-OB-04"
+      ],
+      "benefit": "Keeps analytical workflows available when marks overlap, keyboard focus is used or the renderer is a canvas.",
+      "maintenance_cost": "Moderate interaction/manual acceptance work, shared across renderers; no blanket compliance claim.",
+      "rejected_simpler_option": "Renderer keyboard panning or generic ARIA text alone does not expose exact source selection and trace or a single-pointer alternative to dragging.",
+      "confidence": {
+        "level": "high",
+        "basis": "Existing controls are inspectable; task-level usability and assistive-technology behavior remain untested."
+      },
+      "proof": {
+        "ids": [
+          "P01",
+          "P06",
+          "P08"
+        ],
+        "acceptance": "Keyboard, screen reader and touch users can reach a specific coincident source row/region, select, trace, clear and navigate with visible state and no unintended filters; pan works without dragging.",
+        "status": "not_run"
+      },
+      "dependencies": [
+        "MAP-001",
+        "MAP-002"
+      ],
+      "stop_condition": "A new renderer cannot replace accessible analytical actions with an unlabeled canvas."
+    },
+    {
+      "id": "MAP-013",
+      "title": "Measure dense workloads and resolve coincident rows before aggregation",
+      "disposition": "explore",
+      "phase": "conditional",
+      "user_job": "Inspect many locations, including multiple records at one site, without losing exact row access.",
+      "current_source": "PointMap draws SVG circles sorted by size/source ID with roving focus; point sizing and opacity already exist. No application benchmark has been run.",
+      "proposal": "Measure 1k/10k/50k point workloads, overlap and one/four panels on a named reference device. First prove a deterministic row list or small hit chooser for overlap. Consider D3 Canvas only if measured rendering cost justifies new picking/accessibility work.",
+      "repository_anchors": [
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/PointMap.tsx",
+          "symbols": [
+            "plan.points rendering",
+            "pointRefs"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/PointMap.tsx"
+        },
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/pointMapPlan.ts",
+          "symbols": [
+            "planPointMap"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/pointMapPlan.ts"
+        },
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/pointMap.test.tsx",
+          "symbols": [
+            "overlapping-point and area-scaling fixtures"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/pointMap.test.tsx"
+        }
+      ],
+      "primary_sources": [
+        "REPO-BASELINE",
+        "REN-001",
+        "PROD-PL-03",
+        "PROD-MB-01"
+      ],
+      "benefit": "Finds a defensible workload boundary and improves exact inspection without changing analytical granularity.",
+      "maintenance_cost": "Measurement low; a chooser/list low-to-moderate; Canvas picking and accessible state moderate.",
+      "rejected_simpler_option": "A universal point cap copied from another product is unsupported. Coordinate jitter makes points easier to click by changing the displayed locations.",
+      "confidence": {
+        "level": "medium",
+        "basis": "Need for a measured limit and exact access is strong; thresholds and renderer benefit are unknown."
+      },
+      "proof": {
+        "ids": [
+          "P06",
+          "P08"
+        ],
+        "acceptance": "Record actual device/browser/workload, p95 selection/filter/pan, memory, serialization and bytes; exact same-coordinate rows remain individually selectable and traceable.",
+        "status": "not_run"
+      },
+      "dependencies": [
+        "MAP-001",
+        "MAP-002",
+        "MAP-008",
+        "MAP-012"
+      ],
+      "stop_condition": "Do not add an alternative renderer if current SVG meets the accepted workload and interaction target."
+    },
+    {
+      "id": "MAP-014",
+      "title": "Prove portable analysis and map image export separately",
+      "disposition": "explore",
+      "phase": "1_then_2",
+      "user_job": "Save and share a map with its analytical meaning, geography and required context notices intact.",
+      "current_source": "Saved analyses include shared geometry; DSL text excludes it. Ordinary map image-export behavior is unverified from selected source.",
+      "proposal": "Inspect the actual export owner in a runnable checkout. Prove local geometry export first; test detailed capture with resource completion, CORS, styles/fonts, legend, state, resolution and attribution. Require provider permission independently of technical capture.",
+      "repository_anchors": [
+        {
+          "path": "packages/explorEDA/src/providers/DataLayerProvider.tsx",
+          "symbols": [
+            "saveToStructure",
+            "saveAnalysisToStructure"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/providers/DataLayerProvider.tsx"
+        },
+        {
+          "path": "packages/explorEDA/src/utils/saveDataUtils.ts",
+          "symbols": [
+            "validateSavedData"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/utils/saveDataUtils.ts"
+        },
+        {
+          "path": "packages/explorEDA/src/types/SavedDataStructure.ts",
+          "symbols": [
+            "SavedAnalysisStructure"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/types/SavedDataStructure.ts"
+        },
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/PointMap.tsx",
+          "symbols": [
+            "PointMap SVG"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/PointMap.tsx"
+        },
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/RegionMap.tsx",
+          "symbols": [
+            "RegionMap SVG"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/RegionMap.tsx"
+        },
+        {
+          "path": "packages/explorEDA/src/lib/dsl/settingKeys.ts",
+          "symbols": [
+            "DASHBOARD_COVERAGE.geometryAssets"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/lib/dsl/settingKeys.ts"
+        }
+      ],
+      "primary_sources": [
+        "REPO-BASELINE",
+        "REN-010",
+        "REN-022",
+        "REN-026",
+        "REN-028",
+        "REN-029",
+        "PROD-AZ-01",
+        "PROD-KP-05"
+      ],
+      "benefit": "Prevents blank, incomplete or nonportable output and makes context limitations explicit.",
+      "maintenance_cost": "Moderate-to-high for mixed DOM/tile/WebGL capture; provider-specific constraints may justify limited export support.",
+      "rejected_simpler_option": "A screenshot-like capture alone cannot establish correct resource completion, attribution or permission; silently dropping streets changes the shared view.",
+      "confidence": {
+        "level": "medium",
+        "basis": "Analysis serialization verified; map-specific image capture and detailed-provider permission are not established."
+      },
+      "proof": {
+        "ids": [
+          "P04",
+          "P05",
+          "P07"
+        ],
+        "acceptance": "Local and detailed outputs pass their declared tests; denied resources or rights produce a clear result. Offer explicit outline export only if that route passes.",
+        "status": "not_run"
+      },
+      "dependencies": [
+        "MAP-001",
+        "MAP-007",
+        "MAP-010",
+        "MAP-011"
+      ],
+      "stop_condition": "Do not advertise detailed image export until both technical and permission gates pass.",
+      "dependency_scope": "Local analysis/SVG export can be proved independently; detailed export additionally depends on accepted provider and camera behavior."
+    },
+    {
+      "id": "MAP-015",
+      "title": "Defer cluster, bin and heatmap modes until contributor semantics earn their cost",
+      "disposition": "defer",
+      "phase": "later",
+      "user_job": "Understand density when individual points cannot answer the dashboard question.",
+      "current_source": "Current points are exact source-row marks; no cluster/bin/heatmap analytical mode is present in MapSettings.",
+      "proposal": "Revisit clusters or bins only after measured overlap/workload evidence and a concrete job. Specify aggregation, scale, zoom-dependent grouping, selection and exact contributor access first. Keep kernel heat surfaces later still.",
+      "repository_anchors": [
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/definition.ts",
+          "symbols": [
+            "MapSettings"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/definition.ts"
+        },
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/pointMapPlan.ts",
+          "symbols": [
+            "MapPoint",
+            "planPointMap",
+            "mapPointFilters"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/pointMapPlan.ts"
+        },
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/MapTraceBody.tsx",
+          "symbols": [
+            "MapTraceBody"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/MapTraceBody.tsx"
+        }
+      ],
+      "primary_sources": [
+        "REPO-BASELINE",
+        "PROD-PL-03",
+        "PROD-AZ-05",
+        "PROD-KP-01"
+      ],
+      "benefit": "Could reveal concentration while avoiding an unexplained change from source rows to aggregates.",
+      "maintenance_cost": "High relative to styling: aggregate identity, changing groups, legends, trace, selection and accessible alternatives.",
+      "rejected_simpler_option": "Opacity and exact overlap access remain the initial simpler choice; move beyond them only if the declared task still fails.",
+      "confidence": {
+        "level": "high",
+        "basis": "Deferral is supported by existing exact-row contract; future demand and thresholds unverified."
+      },
+      "proof": {
+        "ids": [
+          "P03",
+          "P06",
+          "P08"
+        ],
+        "acceptance": "A prototype aggregate reconciles exact contributors and selected rows across zoom/filter changes and materially outperforms the simpler workflow.",
+        "status": "not_run"
+      },
+      "dependencies": [
+        "MAP-008",
+        "MAP-012",
+        "MAP-013"
+      ],
+      "stop_condition": "No density mode that obscures exclusions, counts or trace targets."
+    },
+    {
+      "id": "MAP-016",
+      "title": "Defer advanced classification and automatic statistical normalization",
+      "disposition": "defer",
+      "phase": "later",
+      "user_job": "Compare meaningful regional quantities across filters, periods and units.",
+      "current_source": "Current regional aggregates are count/sum/average with stable continuous scales and traceable valid inputs.",
+      "proposal": "Keep that contract. Explore fixed manual domains/breaks only for a real comparison job, with explicit saved legend semantics. Defer quantiles/Jenks, smoothing, uncertainty surfaces and automatic denominators; use prepared documented measures first.",
+      "repository_anchors": [
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/regionMapPlan.ts",
+          "symbols": [
+            "planRegionMap",
+            "color-domain construction"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/regionMapPlan.ts"
+        },
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/definition.ts",
+          "symbols": [
+            "MapSettings"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/definition.ts"
+        },
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/RegionTraceBody.tsx",
+          "symbols": [
+            "RegionTraceBody"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/RegionTraceBody.tsx"
+        },
+        {
+          "path": "packages/explorEDA/src/lib/aggregates.ts",
+          "symbols": [
+            "aggregateValues"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/lib/aggregates.ts"
+        }
+      ],
+      "primary_sources": [
+        "REPO-BASELINE",
+        "ROOT-004",
+        "ROOT-005",
+        "PROD-EC-02",
+        "PROD-VG-08"
+      ],
+      "benefit": "Maintains comparability and avoids giving display geometry statistical authority.",
+      "maintenance_cost": "Low for clear guidance; fixed classification moderate; general statistical inference high.",
+      "rejected_simpler_option": "Prepared rates with documented numerator, denominator and vintage are the preferred simpler route; only move beyond them for a repeated unmet job.",
+      "confidence": {
+        "level": "high",
+        "basis": "Scope limit follows current intent and verified metrics; future classification demand is unverified."
+      },
+      "proof": {
+        "ids": [
+          "P03",
+          "P05"
+        ],
+        "acceptance": "If later added, fixed breaks/domains survive filters/facets/restore and expose bins, units and provenance; rate math uses the declared population and period.",
+        "status": "not_run"
+      },
+      "dependencies": [
+        "MAP-004",
+        "MAP-008"
+      ],
+      "stop_condition": "Never calculate a rate from simplified/projected polygon area or silently average percentages as a population rate."
+    },
+    {
+      "id": "MAP-017",
+      "title": "Add national and subnational packs only when a dashboard needs them",
+      "disposition": "defer",
+      "phase": "later",
+      "user_job": "Compare meaningful local administrative areas using official identifiers and an appropriate vintage.",
+      "current_source": "No maintained analytical geography catalog exists; current service districts are synthetic.",
+      "proposal": "After one country pack succeeds, evaluate one demand-led national-publisher pack: Census states/counties, Statistics Canada provinces/divisions or ONS districts. Keep geoBoundaries a reviewed per-country fallback; avoid a global Admin1 coverage promise.",
+      "repository_anchors": [
+        {
+          "path": "packages/explorEDA/src/lib/geometryAssets.ts",
+          "symbols": [
+            "GeometryAsset"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/lib/geometryAssets.ts"
+        },
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/RegionMapSettings.tsx",
+          "symbols": [
+            "RegionMapSettings",
+            "asset and key selection"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/RegionMapSettings.tsx"
+        },
+        {
+          "path": "packages/explorEDA/src/providers/DataLayerProvider.tsx",
+          "symbols": [
+            "addGeometryAsset"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/providers/DataLayerProvider.tsx"
+        },
+        {
+          "path": "apps/demo/src/demos/dashboardSettings.ts",
+          "symbols": [
+            "regionMapDashboard"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/apps/demo/src/demos/dashboardSettings.ts"
+        }
+      ],
+      "primary_sources": [
+        "REPO-BASELINE",
+        "GEO-007",
+        "GEO-008",
+        "GEO-009",
+        "GEO-010",
+        "GEO-011",
+        "GEO-012",
+        "GEO-014",
+        "GEO-015",
+        "GEO-019",
+        "GEO-020",
+        "GEO-021"
+      ],
+      "benefit": "Offers useful ready-made geography without taking on every country's code and boundary changes.",
+      "maintenance_cost": "Moderate per pack: rights/notices, CRS preparation, keys, simplification, vintage and update ownership.",
+      "rejected_simpler_option": "Host-supplied geometry is the simpler first route for infrequent geographies; maintain a bundled/lazy pack only when repeated demand justifies ownership.",
+      "confidence": {
+        "level": "medium",
+        "basis": "Candidate publishers and IDs documented with explicit schema/size uncertainties; no user-selected national priority."
+      },
+      "proof": {
+        "ids": [
+          "P02",
+          "P03",
+          "P04",
+          "P06"
+        ],
+        "acceptance": "The chosen exact file has reproducible WGS84 preparation, audited string keys, complete notices, stated vintage and measured workload, including unsupported or disputed units.",
+        "status": "not_run"
+      },
+      "dependencies": [
+        "MAP-006",
+        "MAP-007"
+      ],
+      "stop_condition": "Do not equate documentation examples or a public download link with a supported catalog."
+    },
+    {
+      "id": "MAP-018",
+      "title": "Defer owned offline street packages and PMTiles",
+      "disposition": "defer",
+      "phase": "later",
+      "user_job": "Use detailed local context with constrained connectivity or host-controlled data delivery.",
+      "current_source": "Local outlines and saved custom geometry can be available without tiles; there is no offline street pipeline.",
+      "proposal": "Retain the local-outline fallback. Consider host-owned/licensed bounded-area tiles only when an actual offline deployment needs them; PMTiles is one delivery option after renderer/provider decisions.",
+      "repository_anchors": [
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/mapGeometry.ts",
+          "symbols": [
+            "worldLand"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/mapGeometry.ts"
+        },
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/definition.ts",
+          "symbols": [
+            "MapSettings"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/definition.ts"
+        },
+        {
+          "path": "packages/explorEDA/src/lib/geometryAssets.ts",
+          "symbols": [
+            "GeometryAsset"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/lib/geometryAssets.ts"
+        },
+        {
+          "path": "packages/explorEDA/src/providers/DataLayerProvider.tsx",
+          "symbols": [
+            "saveToStructure"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/providers/DataLayerProvider.tsx"
+        }
+      ],
+      "primary_sources": [
+        "REPO-BASELINE",
+        "REN-024",
+        "REN-025",
+        "REN-032",
+        "REN-033"
+      ],
+      "benefit": "Could make local detailed context independent of a live third-party service.",
+      "maintenance_cost": "High data preparation, rights, storage, range-serving, cache/version and renderer support cost.",
+      "rejected_simpler_option": "Saved local geometry is the preferred simpler offline behavior until streets are proven essential.",
+      "confidence": {
+        "level": "high",
+        "basis": "Deferral is well supported; specific offline dataset entitlement and storage limits unverified."
+      },
+      "proof": {
+        "ids": [
+          "P04",
+          "P06",
+          "P07"
+        ],
+        "acceptance": "Owned bounded-area data works without network beyond declared host delivery, restores by immutable version and preserves notices and analytical semantics.",
+        "status": "not_run"
+      },
+      "dependencies": [
+        "MAP-010",
+        "MAP-014",
+        "MAP-009"
+      ],
+      "stop_condition": "Do not bulk-download public production tiles or promise an offline world package from a renderer choice."
+    },
+    {
+      "id": "MAP-019",
+      "title": "Keep GIS services and spatial analysis outside this initiative",
+      "disposition": "avoid",
+      "phase": "out_of_scope",
+      "user_job": "Build useful dashboards from coordinates, region keys and prepared boundaries without becoming a GIS specialist.",
+      "current_source": "Current maps use supplied coordinates and typed keys. Adjacent network/replay intents do not authorize routing, geocoding or a spatial workbench.",
+      "proposal": "Exclude in-app address geocoding infrastructure, routing/travel times, geometry editing/repair, spatial joins/databases, arbitrary CRS, terrain/3D and automatic network-flow mapping. Reconsider a narrow exception only with a specific job and separately reviewed modest cost.",
+      "repository_anchors": [
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/definition.ts",
+          "symbols": [
+            "MapSettings"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/definition.ts"
+        },
+        {
+          "path": "packages/explorEDA/src/lib/geometryAssets.ts",
+          "symbols": [
+            "RegionGeometry"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/lib/geometryAssets.ts"
+        },
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/regionMapPlan.ts",
+          "symbols": [
+            "regionKey",
+            "planRegionMap"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/regionMapPlan.ts"
+        },
+        {
+          "path": "docs/intent/network-and-edge-flow/intent-brief.md",
+          "symbols": [
+            "Boundaries"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/docs/intent/network-and-edge-flow/intent-brief.md"
+        },
+        {
+          "path": "docs/intent/renderer-independent-replay/intent-brief.md",
+          "symbols": [
+            "intent scope"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/docs/intent/renderer-independent-replay/intent-brief.md"
+        }
+      ],
+      "primary_sources": [
+        "REPO-BASELINE",
+        "INTENT-001",
+        "REN-030",
+        "REN-031",
+        "PROD-KP-01"
+      ],
+      "benefit": "Keeps the product supportable and preserves focus on dashboard analysis.",
+      "maintenance_cost": "Avoids substantial data/service, editing, projection and analytical correctness obligations.",
+      "rejected_simpler_option": "Coordinates, explicit keys, prepared measures and host-supplied geometry are the simpler accepted workflow; GIS tools can prepare data externally when needed.",
+      "confidence": {
+        "level": "high",
+        "basis": "Direct supplied intent; the value of excluded workflows is acknowledged but not a current requirement."
+      },
+      "proof": {
+        "ids": [
+          "P01",
+          "P04"
+        ],
+        "acceptance": "The three exemplar dashboards complete their intended jobs using the bounded scope; any claimed exception names the unmet task and a smaller alternative.",
+        "status": "not_run"
+      },
+      "dependencies": [
+        "MAP-001"
+      ],
+      "stop_condition": "Do not turn comparator feature breadth into implied user approval."
+    },
+    {
+      "id": "MAP-020",
+      "title": "Avoid permanent competing street stacks and a speculative renderer platform",
+      "disposition": "avoid",
+      "phase": "out_of_scope",
+      "user_job": "Get a reliable optional context view without multiplying configuration and compatibility burden.",
+      "current_source": "Point/region plans are application-specific and partly projection-coupled; replay intent is adjacent future scope.",
+      "proposal": "Keep D3 plus at most one accepted optional street engine. A small shared semantic helper may be justified by the proof; a universal scene graph, renderer plugin API and simultaneous Leaflet/MapLibre production support are not.",
+      "repository_anchors": [
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/pointMapPlan.ts",
+          "symbols": [
+            "planPointMap"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/pointMapPlan.ts"
+        },
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/regionMapPlan.ts",
+          "symbols": [
+            "planRegionMap"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/regionMapPlan.ts"
+        },
+        {
+          "path": "packages/explorEDA/src/components/charts/Map/MapChart.tsx",
+          "symbols": [
+            "MapChart"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/Map/MapChart.tsx"
+        },
+        {
+          "path": "docs/intent/renderer-independent-replay/intent-brief.md",
+          "symbols": [
+            "intent scope"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/docs/intent/renderer-independent-replay/intent-brief.md"
+        },
+        {
+          "path": "docs/intent/composed-analytical-graphics/intent-brief.md",
+          "symbols": [
+            "stable analytical scale intent"
+          ],
+          "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+          "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/docs/intent/composed-analytical-graphics/intent-brief.md"
+        }
+      ],
+      "primary_sources": [
+        "REPO-BASELINE",
+        "INTENT-001",
+        "REN-001",
+        "REN-002",
+        "REN-009"
+      ],
+      "benefit": "Limits lifecycle, provider, camera, trace, accessibility and export combinations a personal maintainer must own.",
+      "maintenance_cost": "Avoids long-lived abstraction and duplicate support cost; retain only proof-driven extraction.",
+      "rejected_simpler_option": "A minimal application-specific shared plan is the preferred simpler option; generalization must wait for another concrete consumer.",
+      "confidence": {
+        "level": "high",
+        "basis": "Bounded intent and verified current architecture; comparative engine outcome remains open."
+      },
+      "proof": {
+        "ids": [
+          "P06"
+        ],
+        "acceptance": "The chosen implementation supports the accepted jobs with one optional engine and a demonstrably small common analytical contract.",
+        "status": "not_run"
+      },
+      "dependencies": [
+        "MAP-001"
+      ],
+      "stop_condition": "Do not ship both experiment engines merely because prototypes exist."
+    }
+  ],
+  "dependency_policy": "Dependencies are acceptance prerequisites for the applicable delivered behavior, not a ban on independent local experiments or local-only export proofs."
+}

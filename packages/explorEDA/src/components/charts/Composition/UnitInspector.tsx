@@ -6,10 +6,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { describeMark } from "./markSummary";
+import { FilterListEditor } from "@/components/settings/FiltersSettingsTab";
 import {
   AreaChart,
   BarChartHorizontal,
   CandlestickChart,
+  ChartColumnStacked,
+  Donut as DonutIcon,
   GanttChart,
   Grid3x3,
   Layers,
@@ -31,6 +34,8 @@ import {
   type DensityMark,
   type WaffleMark,
   type BarMark,
+  type DonutMark,
+  type WaterfallMark,
   type SpanMark,
   type HorizonMark,
   type FrameWindow,
@@ -268,6 +273,18 @@ const MARK_TYPES = [
     label: <TypeLabel icon={BarChartHorizontal} text="Bar" />,
     tooltip:
       "One bar per repeat, or per category, whose length is a count, sum, or average of the repeat's rows. One category can mirror leftward, as a population pyramid.",
+  },
+  {
+    value: "waterfall" as const,
+    label: <TypeLabel icon={ChartColumnStacked} text="Waterfall" />,
+    tooltip:
+      "A bridge from one total to another in each repeat, one signed step per category, or a running total over ordered steps. Values share one axis across repeats.",
+  },
+  {
+    value: "donut" as const,
+    label: <TypeLabel icon={DonutIcon} text="Donut" />,
+    tooltip:
+      "Each category's share of the repeat's rows as a ring, largest first, with the smaller categories pooled into Other. Colors match across repeats.",
   },
   {
     value: "waffle" as const,
@@ -988,22 +1005,29 @@ function MarksSection({
               ? { ...first, id, name: "Waffle 2" }
               : first.type === "bar"
                 ? { ...first, id, name: "Bars 2" }
-                : first.type === "horizon"
-                  ? { ...first, id, name: "Horizon 2" }
-                  : first.type === "density"
-                    ? { ...first, id, name: "Density 2" }
-                    : {
-                        type: "point",
-                        id,
-                        name: "Points",
-                        xScaleId: first.xScaleId,
-                        yScaleId: first.yScaleId,
-                        orderField:
-                          "orderField" in first ? first.orderField : undefined,
-                        radius: 3.5,
-                        fill: first.type === "path" ? first.stroke : first.fill,
-                        labelEvery: 0,
-                      };
+                : first.type === "waterfall"
+                  ? { ...first, id, name: "Waterfall 2" }
+                  : first.type === "donut"
+                    ? { ...first, id, name: "Donut 2" }
+                    : first.type === "horizon"
+                      ? { ...first, id, name: "Horizon 2" }
+                      : first.type === "density"
+                        ? { ...first, id, name: "Density 2" }
+                        : {
+                            type: "point",
+                            id,
+                            name: "Points",
+                            xScaleId: first.xScaleId,
+                            yScaleId: first.yScaleId,
+                            orderField:
+                              "orderField" in first
+                                ? first.orderField
+                                : undefined,
+                            radius: 3.5,
+                            fill:
+                              first.type === "path" ? first.stroke : first.fill,
+                            labelEvery: 0,
+                          };
     onChange([...unit.marks, added]);
   };
   return (
@@ -1168,6 +1192,18 @@ function MarkProperties({
           />
         ) : mark.type === "bar" ? (
           <BarFields
+            mark={mark}
+            numericFields={numericFields}
+            onChange={onChange}
+          />
+        ) : mark.type === "waterfall" ? (
+          <WaterfallFields
+            mark={mark}
+            numericFields={numericFields}
+            onChange={onChange}
+          />
+        ) : mark.type === "donut" ? (
+          <DonutFields
             mark={mark}
             numericFields={numericFields}
             onChange={onChange}
@@ -3043,5 +3079,270 @@ export function OverrideProperties({
         Reset to template
       </Button>
     </section>
+  );
+}
+
+const WATERFALL_MODES = [
+  {
+    value: "bridge" as const,
+    label: "Change",
+    tooltip:
+      "Bridge one state's total to another's, such as plan to actual, one signed step per category.",
+  },
+  {
+    value: "accumulate" as const,
+    label: "Running",
+    tooltip:
+      "Add each step's signed measure in order from a start value, such as energy in and out through a day.",
+  },
+];
+
+function WaterfallFields({
+  mark,
+  numericFields,
+  onChange,
+}: {
+  mark: WaterfallMark;
+  numericFields: string[];
+  onChange: (patch: Partial<WaterfallMark>) => void;
+}) {
+  const id = useId();
+  const states = [0, 1].map(
+    (index) =>
+      mark.states[index] ?? { label: index ? "End" : "Start", filters: [] }
+  );
+  const changeState = (index: number, patch: Partial<(typeof states)[0]>) =>
+    onChange({
+      states: states.map((state, at) =>
+        at === index ? { ...state, ...patch } : state
+      ),
+    });
+  return (
+    <>
+      <span className="eda-setting-label">Shows</span>
+      <Segmented
+        label={`${mark.name} mode`}
+        value={mark.mode}
+        options={WATERFALL_MODES}
+        onChange={(mode) => onChange({ mode })}
+      />
+      <Label htmlFor={`${id}-aggregation`}>Measure</Label>
+      <select
+        id={`${id}-aggregation`}
+        className="eda-composition-select"
+        value={mark.aggregation}
+        onChange={(event) => {
+          const aggregation = event.target
+            .value as WaterfallMark["aggregation"];
+          onChange({
+            aggregation,
+            measureField:
+              aggregation === "count"
+                ? undefined
+                : (mark.measureField ?? numericFields[0]),
+          });
+        }}
+      >
+        <option value="sum" disabled={!numericFields.length}>
+          Sum
+        </option>
+        <option value="count">Count rows</option>
+      </select>
+      {mark.aggregation === "sum" && (
+        <>
+          <Label>Of</Label>
+          <FieldSelector
+            label=""
+            placeholder="Measure"
+            value={mark.measureField ?? ""}
+            fields={numericFields}
+            onChange={(measureField) => onChange({ measureField })}
+          />
+        </>
+      )}
+      <Label>Steps</Label>
+      <FieldSelector
+        label=""
+        placeholder="Step field"
+        value={mark.stepField}
+        onChange={(stepField) => onChange({ stepField })}
+      />
+      <Label>Group by</Label>
+      <FieldSelector
+        label=""
+        placeholder="No subtotals"
+        value={mark.parentField ?? ""}
+        allowClear
+        onChange={(parentField) =>
+          onChange({ parentField: parentField || undefined })
+        }
+      />
+      <Label htmlFor={`${id}-start`}>Start label</Label>
+      <Input
+        id={`${id}-start`}
+        value={states[0]!.label}
+        onChange={(event) => changeState(0, { label: event.target.value })}
+      />
+      <Label htmlFor={`${id}-end`}>End label</Label>
+      <Input
+        id={`${id}-end`}
+        value={states[1]!.label}
+        onChange={(event) => changeState(1, { label: event.target.value })}
+      />
+      {mark.mode === "accumulate" ? (
+        <NumberSetting
+          label="Start value"
+          value={mark.startValue ?? 0}
+          onChange={(startValue) => onChange({ startValue })}
+        />
+      ) : (
+        states.map((state, index) => (
+          <Fragment key={index}>
+            <span className="eda-setting-label">
+              {index ? "End rows" : "Start rows"}
+            </span>
+            <div className="space-y-1">
+              {mark.aggregation === "sum" && (
+                <FieldSelector
+                  label=""
+                  placeholder="Same measure"
+                  value={state.measureField ?? ""}
+                  allowClear
+                  fields={numericFields}
+                  onChange={(measureField) =>
+                    changeState(index, {
+                      measureField: measureField || undefined,
+                    })
+                  }
+                />
+              )}
+              <FilterListEditor
+                filters={state.filters}
+                onChange={(filters) => changeState(index, { filters })}
+                addPlaceholder="Count only rows where…"
+              />
+            </div>
+          </Fragment>
+        ))
+      )}
+      <NumberSetting
+        label="Name width"
+        min={0}
+        max={400}
+        value={mark.labelWidth}
+        onChange={(labelWidth) => onChange({ labelWidth })}
+      />
+      <ColorSetting
+        label="Rising"
+        value={mark.up}
+        onChange={(up) => onChange({ up })}
+      />
+      <ColorSetting
+        label="Falling"
+        value={mark.down}
+        onChange={(down) => onChange({ down })}
+      />
+      <ColorSetting
+        label="Totals"
+        value={mark.total}
+        onChange={(total) => onChange({ total })}
+      />
+    </>
+  );
+}
+
+function DonutFields({
+  mark,
+  numericFields,
+  onChange,
+}: {
+  mark: DonutMark;
+  numericFields: string[];
+  onChange: (patch: Partial<DonutMark>) => void;
+}) {
+  const id = useId();
+  const profiles = useDataLayer((state) => state.fieldProfiles);
+  const categoryFields = profiles
+    .filter((profile) => profile.uniqueCount <= 50)
+    .map((profile) => profile.name);
+  return (
+    <>
+      <Label>Categories</Label>
+      <FieldSelector
+        label=""
+        placeholder="Category field"
+        value={mark.categoryField}
+        fields={categoryFields}
+        onChange={(categoryField) => onChange({ categoryField })}
+      />
+      <Label htmlFor={`${id}-aggregation`}>Measure</Label>
+      <select
+        id={`${id}-aggregation`}
+        className="eda-composition-select"
+        value={mark.aggregation}
+        onChange={(event) => {
+          const aggregation = event.target.value as DonutMark["aggregation"];
+          onChange({
+            aggregation,
+            measureField:
+              aggregation === "count"
+                ? undefined
+                : (mark.measureField ?? numericFields[0]),
+          });
+        }}
+      >
+        <option value="count">Count rows</option>
+        <option value="sum" disabled={!numericFields.length}>
+          Sum
+        </option>
+      </select>
+      {mark.aggregation === "sum" && (
+        <>
+          <Label>Of</Label>
+          <FieldSelector
+            label=""
+            placeholder="Measure"
+            value={mark.measureField ?? ""}
+            fields={numericFields}
+            onChange={(measureField) => onChange({ measureField })}
+          />
+        </>
+      )}
+      <NumberSetting
+        label="Top N"
+        min={1}
+        max={24}
+        value={mark.topN ?? 6}
+        onChange={(topN) => onChange({ topN })}
+      />
+      <span className="eda-setting-label">Colors</span>
+      <Segmented
+        label={`${mark.name} color order`}
+        value={mark.order}
+        options={STACK_ORDERS}
+        onChange={(order) => onChange({ order })}
+      />
+      <NumberSetting
+        label="Hole"
+        min={0}
+        max={0.9}
+        value={mark.hole}
+        onChange={(hole) => onChange({ hole })}
+      />
+      <span className="eda-setting-label">Total</span>
+      <Segmented
+        label={`${mark.name} total in the hole`}
+        value={mark.showTotal}
+        options={[
+          {
+            value: true,
+            label: "Show",
+            tooltip: "Write the repeat's total in the hole.",
+          },
+          { value: false, label: "Hide", tooltip: "Leave the hole empty." },
+        ]}
+        onChange={(showTotal) => onChange({ showTotal })}
+      />
+    </>
   );
 }
