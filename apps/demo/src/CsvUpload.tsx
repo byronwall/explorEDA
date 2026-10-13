@@ -114,8 +114,8 @@ export function CsvUpload({
         </p>
       )}
       <p id="file-upload-help" className="mt-2 text-sm text-muted-foreground">
-        Use a header row for delimited text, or an object or array of objects
-        for JSON. Values keep the form the file gives them.
+        Use a header row for delimited text, objects for JSON, and one object
+        per line for JSON Lines. Values keep the form the file gives them.
       </p>
       {error && (
         <div role="alert" className="mt-3 text-sm text-destructive">

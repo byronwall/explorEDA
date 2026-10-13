@@ -27,6 +27,12 @@ const samples = [
     detail: "240 rows, TSV",
     url: "/datasets/store-inventory.tsv",
   },
+  {
+    id: "events",
+    label: "App events",
+    detail: "300 rows, JSON Lines",
+    url: "/datasets/app-events.ndjson",
+  },
 ];
 
 /** Loads a bundled file through the same reader as a user's own import. */

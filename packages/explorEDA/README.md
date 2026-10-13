@@ -152,7 +152,8 @@ React and ReactDOM are peer dependencies.
 
 `exploreda/readers` reads a local file into rows and field types. It reads
 CSV (comma, semicolon, tab, or pipe delimited, also as `.txt`), TSV (`.tsv`
-and `.tab`), and JSON (an object or array of objects).
+and `.tab`), JSON (an object, an array of objects, or an object whose one
+array holds the records), and JSON Lines (`.jsonl` and `.ndjson`).
 
 ```tsx
 import { ExplorEda } from "exploreda";
@@ -169,6 +170,9 @@ Values keep the form the file gives them. A column becomes numbers only when
 every value converts without change, so `0012` and IDs past 2^53 stay text.
 Dates stay as their text, typed as dates. Blank cells are missing. Each column
 is typed from every row, and a field that first appears late is still found.
+In JSON, integer literals past 2^53 keep their digits as text, nested objects
+become dotted fields such as `user.plan`, and arrays stay together as JSON
+text in one field.
 
 A file that can't be read rejects with a `TableReadError` that names the row,
 such as `Row 12 has 6 values, but the header names 5 fields.` `table.notes`

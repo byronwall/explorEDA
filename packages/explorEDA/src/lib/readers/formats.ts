@@ -28,6 +28,12 @@ export const TABLE_FORMATS: readonly TableFormatInfo[] = [
     extensions: [".json"],
     mimeTypes: ["application/json"],
   },
+  {
+    format: "jsonl",
+    label: "JSON Lines",
+    extensions: [".jsonl", ".ndjson"],
+    mimeTypes: ["application/jsonl", "application/x-ndjson"],
+  },
 ];
 
 /** The format a file name's extension names, or undefined. */

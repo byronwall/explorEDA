@@ -1,6 +1,6 @@
 import { readDelimited } from "./delimited";
 import { tableFormatList, tableFormatOf } from "./formats";
-import { readJson } from "./json";
+import { readJson, readJsonLines } from "./json";
 import {
   TableReadError,
   type ReadTableOptions,
@@ -51,6 +51,8 @@ function decode(text: string, format: TableFormat) {
       return readDelimited(text, "\t");
     case "json":
       return readJson(text);
+    case "jsonl":
+      return readJsonLines(text);
   }
 }
 

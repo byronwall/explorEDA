@@ -179,6 +179,58 @@ describe("delimited text", () => {
 });
 
 describe("JSON", () => {
+  it("reads JSON Lines with exact IDs, nested fields, and late fields", async () => {
+    const table = await readTableFile(await fixture("events.ndjson"));
+    expect(table.format).toBe("jsonl");
+    expect(table.rows).toHaveLength(300);
+    expect(typeOf(table)).toEqual({
+      event_id: "string",
+      account: "string",
+      amount: "number",
+      "user.name": "string",
+      "user.address.city": "string",
+      tags: "string",
+      ok: "boolean",
+      at: "date",
+      late: "number",
+    });
+    expect(table.rows[0]).toEqual({
+      event_id: "00001",
+      account: "9007199254740994",
+      amount: 0.75,
+      "user.name": "José",
+      "user.address.city": "Oslo",
+      tags: '["a","b"]',
+      ok: true,
+      at: "2025-06-02T12:00:00Z",
+      late: null,
+    });
+    expect(table.rows[1]!.account).toBe("9007199254740995");
+    expect(table.rows[1]!.tags).toBe("[]");
+    expect(table.rows[9]!.amount).toBeNull();
+    expect(table.rows[299]!.late).toBe(50);
+  });
+
+  it("reads the records array of an API-style object", async () => {
+    const table = await readTableFile(await fixture("events-api.json"));
+    expect(table.rows).toHaveLength(20);
+    expect(table.notes).toEqual(['Read the 20 records in "data".']);
+    expect(table.rows[0]!.event_id).toBe("00001");
+  });
+
+  it("keeps long integers inside arrays and leaves strings alone", () => {
+    const table = readTableText(
+      '[{"id": 12345678901234567890, "n": -9007199254740993, "s": "12345678901234567890", "x": 1.5e3}]',
+      { format: "json" }
+    );
+    expect(table.rows[0]).toEqual({
+      id: "12345678901234567890",
+      n: "-9007199254740993",
+      s: "12345678901234567890",
+      x: 1500,
+    });
+  });
+
   it("reads an array of objects and types every field", () => {
     const table = readTableText(
       JSON.stringify([
@@ -193,6 +245,16 @@ describe("JSON", () => {
       n: "number",
       late: "boolean",
     });
+    expect(table.rows[0]!.late).toBeNull();
+  });
+
+  it("names the line of a bad JSON Lines record", () => {
+    expect(() =>
+      readTableText('{"a":1}\n\n{"a":2\n', { format: "jsonl" })
+    ).toThrow(/^Line 3 is not valid JSON/);
+    expect(() => readTableText('{"a":1}\n[1]\n', { format: "jsonl" })).toThrow(
+      "Line 2 is not an object. Each line must hold one JSON object."
+    );
   });
 
   it("rejects scalar roots", () => {
@@ -206,12 +268,13 @@ describe("formats", () => {
     expect(tableFormatOf("notes.txt")).toBe("csv");
     expect(tableFormatOf("photo.png")).toBeUndefined();
     expect(tableFileAccept()).toContain(".tab");
-    expect(tableFormatList()).toBe("CSV, TSV, or JSON");
+    expect(tableFormatList()).toBe("CSV, TSV, JSON, or JSON Lines");
+    expect(tableFormatOf("events.NDJSON")).toBe("jsonl");
   });
 
   it("rejects an unknown extension with the readable formats", async () => {
     await expect(readTableFile(new File(["x"], "photo.png"))).rejects.toThrow(
-      "Choose a CSV, TSV, or JSON file."
+      "Choose a CSV, TSV, JSON, or JSON Lines file."
     );
   });
 

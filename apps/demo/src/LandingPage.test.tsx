@@ -393,7 +393,7 @@ describe("LandingPage routing", () => {
       dataTransfer: { types: ["Files"], files: [file] },
     });
     expect(await screen.findByRole("alert")).toHaveTextContent(
-      "slides.pdf is not a CSV, TSV, or JSON file."
+      "slides.pdf is not a CSV, TSV, JSON, or JSON Lines file."
     );
     expect(screen.queryByTestId("workspace")).toBeNull();
   });

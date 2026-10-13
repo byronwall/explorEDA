@@ -5,7 +5,7 @@ import type {
 } from "@/types/AnalysisProject";
 
 /** A file format that `readTableFile` reads. */
-export type TableFormat = "csv" | "tsv" | "json";
+export type TableFormat = "csv" | "tsv" | "json" | "jsonl";
 
 /** One table read from a file: every row, and each field's declared type. */
 export interface TableFile {
