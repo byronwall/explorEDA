@@ -120,6 +120,14 @@
       "anchor": "CLI stack M1–M6 (PRs 369–376), assumed merged",
       "authority": "current reality",
       "notes": "Loopback-only file server with a per-run token; ProjectFiles port; browser runs the folder codec; SSE change events; apps/app shell with autosave and refused-save handling."
+    },
+    {
+      "id": "USR-REG",
+      "type": "direct-user-source",
+      "location": "conversation 2026-10-13",
+      "anchor": "Use GHCR",
+      "authority": "latest direct instruction",
+      "notes": "Image published to GHCR."
     }
   ],
   "intent": {
@@ -510,7 +518,7 @@
       "deployment_surfaces": [
         ".github/workflows/cli-smoke.yml",
         "new team-server-smoke workflow",
-        "release.yml (image publish only with approval)"
+        "release.yml pushes public ghcr.io/byronwall/exploreda"
       ]
     },
     "dependencies": [
@@ -638,8 +646,8 @@
           "Docker and Compose"
         ],
         "proof": "Local compose run; CI team-server-smoke builds image, sets up admin, uploads, restarts, checks persistence.",
-        "valid_intermediate_state": "Image buildable from docs; publishing waits for approval.",
-        "rollback": "Do not publish the image.",
+        "valid_intermediate_state": "Public image on ghcr.io/byronwall/exploreda, pushed by release.yml.",
+        "rollback": "Stop publishing new image tags.",
         "status": "planned",
         "evidence": []
       },
@@ -664,7 +672,6 @@
       "Multi-instance or Kubernetes"
     ],
     "open_decisions": [
-      "Image registry and name: default ghcr.io/byronwall/exploreda, published by release.yml after approval.",
       "node:sqlite viability (M2 spike); fallback JSON store."
     ]
   },
@@ -685,6 +692,12 @@
       "date": "2026-10-13",
       "event": "plan",
       "summary": "Implementation plan written: five stacked milestones; found that own-write echo suppression means team mode must broadcast saves with the writer's name.",
+      "status": "planned"
+    },
+    {
+      "date": "2026-10-13",
+      "event": "decision",
+      "summary": "Image registry set to public GHCR (ghcr.io/byronwall/exploreda).",
       "status": "planned"
     }
   ],

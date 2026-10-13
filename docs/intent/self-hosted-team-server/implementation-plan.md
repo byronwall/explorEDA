@@ -30,7 +30,7 @@ Every milestone ships as a stacked PR with a `minor` changeset. Each one leaves 
   - `EXPLOREDA_DATA=<dir> pnpm --filter app dev` serves team mode through the existing Vite middleware, with a dev seed of one author and one viewer.
 - **Local dependencies:** temp data directories, the in-memory `AccountStore`, the existing `memoryProjectFiles` with refused writes, and a local test HTTP server for URL sources. That test server can stall, return 404, send oversized bodies, and redirect to blocked addresses.
 - **Container confirmation:** `docker compose up` locally and in a CI job, built from the packed tarball the CLI smoke already makes.
-- **Rollout and rollback:** `exploreda server` is a new subcommand; the CLI path is unchanged. The image is published only after you approve it. Withdraw the feature by not publishing the image.
+- **Rollout and rollback:** `exploreda server` is a new subcommand; the CLI path is unchanged. The image is public at `ghcr.io/byronwall/exploreda`, pushed by `release.yml` with `GITHUB_TOKEN`. Withdraw the feature by not publishing the image.
 
 ### Material dependency proof strategy
 
@@ -108,6 +108,7 @@ This milestone adds the durable account store, so a restart keeps accounts.
 
 - **Change — image:** a Dockerfile on Node 24 slim installs the packed `exploreda` tarball and runs `exploreda server --data /data` as a non-root user, with a health check on `/api/health`.
 - **Change — Compose and config:** `compose.yaml` has one service and one named volume. It reads `EXPLOREDA_PUBLIC_URL`, `EXPLOREDA_SESSION_SECRET`, and `EXPLOREDA_UPLOAD_LIMIT` from the environment, and a missing secret stops the server with a clear message. A sample Caddy file adds HTTPS.
+- **Change — publishing:** `release.yml` builds the image and pushes it as public `ghcr.io/byronwall/exploreda`, tagged with the package version and `latest`, using `GITHUB_TOKEN` with `packages: write`.
 - **Change — CI smoke:** a `team-server-smoke` job builds the image, runs `compose up`, and creates the admin through the API. It uploads a CSV, restarts the container, and checks that the account, project, and file are still there.
 - **Change — docs:** a Self-hosting page next to [project folders](../../../apps/demo/src/docs/pages/project-folders.mdx), with the Compose file, environment variables, proxy, and backup steps.
 
@@ -128,7 +129,6 @@ This milestone adds the durable account store, so a restart keeps accounts.
 
 ## Open decisions and spikes
 
-- **Image registry and name.** Default: `ghcr.io/byronwall/exploreda`, published by `release.yml` once you approve it. Fallback: users build the image from the documented Dockerfile.
 - **`node:sqlite`.** This is the spike in M2; the JSON store is the fallback.
 
 ## Below the cut line
