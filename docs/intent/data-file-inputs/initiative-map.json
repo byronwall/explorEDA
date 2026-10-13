@@ -8,7 +8,7 @@
     "last_updated": "2026-10-13",
     "summary": "Read the formats mainstream analysis tools share through a public exploreda reader API, keeping source values.",
     "status": "active",
-    "next_action": "Review and merge the stacked PRs #371, #390, #391, #394, #395, and the Arrow PR"
+    "next_action": "Review and merge the stacked PRs #371, #390, #391, #394, #395, and #396"
   },
   "artifacts": {
     "intent_brief": {
