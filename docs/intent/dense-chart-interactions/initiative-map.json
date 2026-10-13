@@ -1,0 +1,243 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "Change chart settings where the data is",
+    "slug": "dense-chart-interactions",
+    "scale": "capability",
+    "current_phase": "intent",
+    "last_updated": "2026-10-12",
+    "summary": "Make frequent chart changes local and clear while keeping ordinary click-to-filter primary.",
+    "status": "planned",
+    "next_action": "Collect the submitted Pro research, verify evidence, and produce the brainstorm, shape, and review PR."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-12"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-created",
+      "updated_at": null
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "not-created",
+      "updated_at": null
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "not-requested",
+      "updated_at": null
+    }
+  },
+  "sources": [
+    {
+      "id": "user-direction",
+      "type": "direct-user-input",
+      "location": "raw/user-direction-2026-10-12.md",
+      "anchor": "Initial request and later correction about Alt-click versus click-to-filter",
+      "authority": "explicit current user direction"
+    },
+    {
+      "id": "baseline",
+      "type": "repository",
+      "location": "raw/2026-10-12-pro/source-manifest.json",
+      "anchor": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e; exact paths and hashes",
+      "authority": "current source observation; no product test proof"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "local-config",
+        "type": "outcome",
+        "statement": "Make frequent chart changes close to the feature being edited.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "user-direction",
+            "anchor": "Initial request and latest correction"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "comparison",
+        "type": "required behavior",
+        "statement": "Ground the proposal in verified mechanics from other visualization tools.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "user-direction",
+            "anchor": "Initial request and latest correction"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "breadth",
+        "type": "required behavior",
+        "statement": "Compare a wide range of interaction approaches and chart settings.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "user-direction",
+            "anchor": "Initial request and latest correction"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "click-filter",
+        "type": "preference",
+        "statement": "Give ordinary click-to-filter priority over other gesture claims.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "user-direction",
+            "anchor": "Initial request and latest correction"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "alt-click",
+        "type": "decision",
+        "statement": "Allow Alt-click and tracing access to be redesigned.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "user-direction",
+            "anchor": "Initial request and latest correction"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "color-example",
+        "type": "example",
+        "statement": "Right-click a scatter point and choose Color by to pick a field.",
+        "commitment": "illustrative",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "user-direction",
+            "anchor": "Initial request and latest correction"
+          }
+        ],
+        "confidence": "medium",
+        "notes": ""
+      },
+      {
+        "id": "frequency",
+        "type": "derived implication",
+        "statement": "Treat frequency rankings as hypotheses because no telemetry was supplied.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "user-direction",
+            "anchor": "Initial request and latest correction"
+          }
+        ],
+        "confidence": "medium",
+        "notes": ""
+      }
+    ],
+    "themes": [
+      "Local configuration",
+      "Exploration frequency",
+      "Gesture ownership",
+      "Evidence from other tools"
+    ],
+    "conflicts": [
+      {
+        "description": "Repository docs reserve Alt-click for tracing. The latest user direction explicitly allows that binding to change.",
+        "resolution": "Treat the binding as current behavior, not a proposed-design invariant. Preserve click-to-filter as the stronger constraint."
+      }
+    ],
+    "human_questions": []
+  },
+  "brainstorm": {
+    "status": "not-started",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "not-started",
+    "appetite": null,
+    "problem": null,
+    "recommended_shape": null,
+    "success_moves": [],
+    "first_proof": null,
+    "rabbit_holes": [],
+    "open_decisions": []
+  },
+  "implementation": {
+    "status": "not-started",
+    "repository_snapshot": {
+      "root": "/Users/byronwall/.codex/worktrees/3e0f/explorEDA",
+      "revision": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "worktree_status": "Clean at start; only scoped research docs added.",
+      "subsystems": [
+        "PlotChartPanel",
+        "ChartSettingsContent",
+        "InPlace/useChartEdit",
+        "AxisFieldActions",
+        "FieldSelector",
+        "ChartColorLegend",
+        "CompositionQuickMenu"
+      ],
+      "test_commands": [
+        "pnpm check:ui",
+        "pnpm --filter demo docs:check",
+        "pnpm check"
+      ],
+      "deployment_surfaces": []
+    },
+    "dependencies": [],
+    "fast_local_loop": null,
+    "milestones": [],
+    "cut_line": [
+      "Application implementation",
+      "Deployment",
+      "Merge"
+    ],
+    "open_decisions": []
+  },
+  "history": [
+    {
+      "date": "2026-10-12",
+      "event": "Initialized from the user request and correction. Submitted research to Pro power 5 of 5; scheduled collection.",
+      "evidence": "run.md"
+    }
+  ],
+  "closure": null
+}
