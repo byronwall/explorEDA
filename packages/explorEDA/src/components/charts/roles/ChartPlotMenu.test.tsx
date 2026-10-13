@@ -156,3 +156,48 @@ it("leaves Shift-right-click to the browser", () => {
   expect(menuEvent.defaultPrevented).toBe(false);
   expect(screen.queryByRole("menu")).not.toBeInTheDocument();
 });
+
+it("changes the X field from the axis menu and resets that axis", async () => {
+  const changes: SavedDataStructure[] = [];
+  const filters = [{ type: "range" as const, field: "y", min: 2 }];
+  render(
+    <DataLayerProvider
+      data={rows}
+      charts={[
+        scatter("a", "Points", {
+          filters,
+          xAxisLabel: "Old title",
+          xAxis: { grid: true, limits: { min: 0, max: 10 } },
+        }),
+      ]}
+      onStateChange={(state) => changes.push(state)}
+    >
+      <Panel id="a" />
+    </DataLayerProvider>
+  );
+  const panel = screen.getByRole("region", { name: "Points" });
+  const title = panel.querySelector('.chart-guide[data-plan-id="x:label"]')!;
+  fireEvent.contextMenu(title);
+  const menu = await screen.findByRole("menu");
+  fireEvent.click(
+    within(menu).getByRole("menuitem", { name: /Change X field/ })
+  );
+
+  const picker = await screen.findByRole("dialog", { name: "X field" });
+  expect(within(picker).getByText("This chart · X axis")).toBeInTheDocument();
+  expect(within(picker).queryByRole("option", { name: "None" })).toBeNull();
+  fireEvent.click(within(picker).getByRole("option", { name: /region/ }));
+
+  await waitFor(() => expect(changes).toHaveLength(1));
+  const saved = changes[0]!.charts.find((chart) => chart.id === "a")! as {
+    xField: string;
+    xAxisLabel: string;
+    xAxis: { grid?: boolean; limits?: unknown };
+    filters: unknown[];
+  };
+  expect(saved.xField).toBe("region");
+  expect(saved.xAxisLabel).toBe("");
+  expect(saved.xAxis.limits).toBeUndefined();
+  expect(saved.xAxis.grid).toBe(true);
+  expect(saved.filters).toEqual(filters);
+});

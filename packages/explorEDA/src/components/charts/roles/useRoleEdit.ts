@@ -2,7 +2,8 @@ import { useCallback, useRef } from "react";
 import { useColorScales } from "@/hooks/useColorScales";
 import { useDataLayerSnapshot } from "@/providers/DataLayerProvider";
 import { useChartEdit } from "../InPlace/useChartEdit";
-import type { ChartRole } from "./chartRoles";
+import type { ChartSettings } from "@/types/ChartTypes";
+import { axisRoleUpdates, type ChartRole } from "./chartRoles";
 
 /**
  * Binds fields to one of a chart's roles. `preview` shows a field without
@@ -16,31 +17,44 @@ export function useRoleEdit(chartId: string) {
   const { getOrCreateScaleForField, removeColorScale } = useColorScales();
   const getState = useDataLayerSnapshot();
   const session = useRef<{
-    field?: string;
-    scaleId?: string;
+    /** The chart as the session found it. */
+    chart: ChartSettings;
     created: Set<string>;
   } | null>(null);
 
   const bind = useCallback(
     (role: ChartRole, field: string | undefined) => {
-      if (role !== "color") return undefined;
       if (!session.current) {
         const chart = getState().charts.find((item) => item.id === chartId);
-        session.current = {
-          field: chart?.colorField || undefined,
-          scaleId: chart?.colorScaleId,
-          created: new Set(),
-        };
+        if (!chart) return undefined;
+        session.current = { chart, created: new Set() };
       }
-      const current = session.current;
+      const { chart, created } = session.current;
       begin();
+      if (role !== "color") {
+        if (!field) return undefined;
+        const key = `${role}Field` as "xField" | "yField";
+        const original = (chart as Partial<Record<typeof key, string>>)[key];
+        // Back on the field it started with, the axis gets its own
+        // settings back.
+        apply(
+          field === original
+            ? ({
+                [key]: field,
+                [`${role}Axis`]: chart[`${role}Axis`],
+                [`${role}AxisLabel`]: chart[`${role}AxisLabel`],
+              } as Partial<ChartSettings>)
+            : axisRoleUpdates(chart, role, field)
+        );
+        return undefined;
+      }
       let scaleId: string | undefined;
-      if (field && field === current.field) {
-        scaleId = current.scaleId;
+      if (field && field === chart.colorField) {
+        scaleId = chart.colorScaleId;
       } else if (field) {
         const before = new Set(getState().colorScales.map((scale) => scale.id));
         scaleId = getOrCreateScaleForField(field);
-        if (!before.has(scaleId)) current.created.add(scaleId);
+        if (!before.has(scaleId)) created.add(scaleId);
       }
       apply({ colorField: field, colorScaleId: scaleId });
       return scaleId;

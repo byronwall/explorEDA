@@ -7,18 +7,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Popover,
-  PopoverAnchor,
-  PopoverContent,
-} from "@/components/ui/popover";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { ChartSettings } from "@/types/ChartTypes";
 import { getChartTitle } from "../chartAccessibility";
 import { ChartImageMenuSection } from "../export/ChartImageMenu";
-import { CHART_ROLES, hasRoleLabels } from "./chartRoles";
-import { RoleFieldPicker } from "./RoleFieldPicker";
-import { useRoleEdit } from "./useRoleEdit";
+import { hasRoleLabels } from "./chartRoles";
+import { RolePickerPopover } from "./RolePickerPopover";
 
 /** Where a plot menu opens, and the mark under the pointer, if any. */
 export interface PlotMenuTarget {
@@ -45,7 +39,6 @@ export function ChartPlotMenu({
   const [picking, setPicking] = useState(false);
   const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
   const chartTitle = getChartTitle(settings, getFieldLabel);
-  const { preview, choose, cancel } = useRoleEdit(settings.id);
   // Focus goes back where it was, usually the plot, when the menu or the
   // picker closes.
   const returnTo = useRef(document.activeElement as HTMLElement | null);
@@ -69,39 +62,15 @@ export function ChartPlotMenu({
       style={{ left: target.x, top: target.y }}
     />
   );
-  const color = CHART_ROLES.color;
 
   if (picking) {
-    return createPortal(
-      <Popover
-        open
-        onOpenChange={(open) => {
-          if (open) return;
-          // Escape or a press outside abandons any preview.
-          cancel();
-          close();
-        }}
-        modal
-      >
-        <PopoverAnchor asChild>{anchor}</PopoverAnchor>
-        <PopoverContent
-          align="start"
-          className="eda-role-popover w-[min(20rem,calc(100vw-1.5rem))] p-0"
-          aria-label={`${color.label} field`}
-          onCloseAutoFocus={(event) => event.preventDefault()}
-        >
-          <RoleFieldPicker
-            settings={settings}
-            role="color"
-            onPreview={(field) => preview("color", field)}
-            onChoose={(field) => {
-              close();
-              choose("color", field);
-            }}
-          />
-        </PopoverContent>
-      </Popover>,
-      document.body
+    return (
+      <RolePickerPopover
+        settings={settings}
+        role="color"
+        at={target}
+        onClose={close}
+      />
     );
   }
 
