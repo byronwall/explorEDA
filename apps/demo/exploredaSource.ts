@@ -30,9 +30,12 @@ export function exploredaSource(): Plugin {
     transform(code, id) {
       // The package loads its built worker file; from source, load the
       // worker module itself.
-      // Module IDs use forward slashes on every platform, Windows included.
+      // IDs and importers can arrive with either slash on Windows; compare
+      // normalized paths.
       if (
-        !id.startsWith(normalizePath(path.join(librarySrc, "lib/analysis/")))
+        !normalizePath(id).startsWith(
+          normalizePath(path.join(librarySrc, "lib/analysis/"))
+        )
       ) {
         return null;
       }
@@ -47,9 +50,11 @@ export const sourceAlias: Alias[] = [
     find: /^@\/(.*)$/,
     replacement: "$1",
     customResolver(source, importer) {
-      const root = importer?.startsWith(normalizePath(librarySrc))
-        ? librarySrc
-        : demoSrc;
+      const root =
+        importer &&
+        normalizePath(importer).startsWith(normalizePath(librarySrc))
+          ? librarySrc
+          : demoSrc;
       return this.resolve(path.join(root, source), importer, {
         skipSelf: true,
       });
