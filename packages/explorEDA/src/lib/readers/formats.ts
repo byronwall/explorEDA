@@ -52,6 +52,16 @@ export const TABLE_FORMATS: readonly TableFormatInfo[] = [
     extensions: [".parquet"],
     mimeTypes: ["application/vnd.apache.parquet"],
   },
+  {
+    format: "arrow",
+    label: "Arrow",
+    binary: true,
+    extensions: [".arrow", ".arrows", ".feather", ".ipc"],
+    mimeTypes: [
+      "application/vnd.apache.arrow.file",
+      "application/vnd.apache.arrow.stream",
+    ],
+  },
 ];
 
 /** Formats read from bytes rather than text. */

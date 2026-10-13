@@ -89,7 +89,7 @@ This milestone establishes the API and the typing rules with no new dependency. 
 ## Milestone 3: XLSX opens one chosen sheet
 
 - **Change — workbook reader**
-  - Lazily load SheetJS CE. Read cell types: numbers, text, booleans, and Excel dates as ISO text declared `date`. Use cached formula values; never calculate.
+  - Lazily load the workbook reader (`read-excel-file`; see the spike outcome below). Read cell types: numbers, text, booleans, and Excel dates as ISO text declared `date`. Use cached formula values; never calculate.
   - Error cells become missing values, and the import reports how many there were. The first non-empty row is the header.
 - **Change — sheet picker**
   - Add a nonmodal popover beside the drop target that lists sheet names with row and column counts. It appears only when a workbook has several visible sheets. Follow [UI defaults](../../ui-defaults.md).
@@ -122,7 +122,7 @@ This milestone establishes the API and the typing rules with no new dependency. 
 
 ## Milestone 5: Arrow IPC and Feather V2 open
 
-- **Change — Arrow reader** with lazily loaded `apache-arrow`, reusing `typedColumns.ts`.
+- **Change — Arrow reader** with a lazily loaded Arrow decoder (Flechette; see the spike outcome below), reusing `typedColumns.ts`.
 - **Spike — compressed IPC buffers**
   - Decision required: whether `apache-arrow` decodes LZ4 and ZSTD buffers without fetching codecs at runtime.
   - Evidence to gather: decode pyarrow Feather files written with `lz4`, `zstd`, and `uncompressed` in the production build.
@@ -141,9 +141,12 @@ This milestone establishes the API and the typing rules with no new dependency. 
 
 ## Open decisions and spikes
 
-- **Size limit:** Set from milestone 4's measurement. Add a worker only if a 100 MB Parquet import blocks input for more than about a second.
-- **SheetJS packaging and Arrow codecs:** Resolved inside milestones 3 and 5.
-- **Exact JSON integers:** Resolved inside milestone 2.
+All three spikes ran during implementation (October 13, 2026):
+
+- **Exact JSON integers (M2, #391):** Reviver `context.source` works in V8, but support in Firefox and Safari is unconfirmed. A small scanner quotes integer literals past 2^53 before `JSON.parse`, the same in every browser.
+- **Workbook package (M3, #394):** Current SheetJS ships only from its CDN, and npm `xlsx` is frozen at a release with known vulnerabilities. `read-excel-file` (MIT, on npm) replaced it. It reads cached formula results and 1904 dates; error cells read as missing.
+- **Size limit (M4, #395):** On the production demo build, 250,000 Parquet rows load in 4.5 s and 1,000,000 in 17.9 s, and the reader is about 10% of that time. No worker was added. Tables of more than 500,000 rows ask before opening.
+- **Arrow reader and codecs (M5):** Neither apache-arrow nor Flechette bundles LZ4 or zstd codecs, and apache-arrow misread decimals. Flechette replaced apache-arrow, with fzstd and a small LZ4 frame decoder registered as codecs. A Flechette ordering bug dropped dictionaries that Polars writes after its record batches; the reader loads a file's dictionaries first.
 
 ## Below the cut line
 

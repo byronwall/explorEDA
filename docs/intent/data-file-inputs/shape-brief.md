@@ -29,9 +29,9 @@ Local file readers (exploreda package)
 │   │   └── Carry declared types through filters, trace, session, history, and project files
 │   ├── CSV (revisited) and TSV through Papa with explicit typing rules
 │   ├── JSON (existing) and JSON Lines / NDJSON
-│   ├── XLSX: choose a sheet; first row is the header; stored formula values
+│   ├── XLSX: choose a sheet; header row below any title rows; stored formula values
 │   ├── Parquet: single local file through hyparquet
-│   ├── Arrow IPC / Feather V2 through apache-arrow
+│   ├── Arrow IPC / Feather V2 through Flechette
 │   ├── Google Sheets via its XLSX, CSV, and TSV downloads
 │   └── Load-data docs and one working example per format
 └── LATER
@@ -43,20 +43,20 @@ Local file readers (exploreda package)
 
 ## Behavior
 
-| Situation | Expected result |
-| --- | --- |
-| A typed source declares a column type (Parquet, Arrow, XLSX cell type) | Use the declared type. Do not re-infer it from values. |
-| A text source holds `0012`, a 19-digit ID, or ISO dates | Keep identifier-like text as text. Infer numbers only when conversion is exact. |
+| Situation                                                                            | Expected result                                                                                       |
+| ------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------- |
+| A typed source declares a column type (Parquet, Arrow, XLSX cell type)               | Use the declared type. Do not re-infer it from values.                                                |
+| A text source holds `0012`, a 19-digit ID, or ISO dates                              | Keep identifier-like text as text. Infer numbers only when conversion is exact.                       |
 | A value has no exact scalar form (int64 beyond 2^53, decimal, nested list or struct) | Keep it as exact text, or JSON text for nested values, and mark the field type. Never round silently. |
-| A workbook has several sheets | Choose one. Do not merge sheets. |
-| A read fails or is cancelled | Keep the prior analysis. Never publish a partial table as complete. |
-| A user imports a Sheets download | Treat it as a snapshot; it does not stay connected. |
+| A workbook has several sheets                                                        | Choose one. Do not merge sheets.                                                                      |
+| A read fails or is cancelled                                                         | Keep the prior analysis. Never publish a partial table as complete.                                   |
+| A user imports a Sheets download                                                     | Treat it as a snapshot; it does not stay connected.                                                   |
 
 ## Decisions and boundaries
 
 **Reader location:** Readers live in `exploreda`, so package users get them too. Reader libraries are optional peer dependencies loaded by dynamic import, as `maplibre-gl` already is. A missing reader produces a clear message. Each library change carries a changeset.
 
-**Readers:** Use one library per format: Papa for delimited text, SheetJS CE from its official artifact for XLSX, hyparquet for Parquet, and apache-arrow for Arrow. Do not add DuckDB-Wasm, a SQL engine, a plugin registry, or an Arrow-resident data model. Keep the library row based.
+**Readers:** Use one library per format: Papa for delimited text, read-excel-file for XLSX, hyparquet for Parquet, and Flechette for Arrow. Do not add DuckDB-Wasm, a SQL engine, a plugin registry, or an Arrow-resident data model. Keep the library row based.
 
 **Fidelity:** Treat CSV as a starting point, not as the rule for other formats. Today's coercion, such as turning `0012` into `12`, is a defect to fix for every reader. It is not behavior new readers should copy.
 

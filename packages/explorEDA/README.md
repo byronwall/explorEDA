@@ -154,8 +154,9 @@ React and ReactDOM are peer dependencies.
 CSV (comma, semicolon, tab, or pipe delimited, also as `.txt`), TSV (`.tsv`
 and `.tab`), JSON (an object, an array of objects, or an object whose one
 array holds the records), JSON Lines (`.jsonl` and `.ndjson`), and Excel
-(`.xlsx`), and Parquet (`.parquet`). The Excel and Parquet readers load only
-when such a file is read.
+(`.xlsx`), Parquet (`.parquet`), and Arrow IPC files and streams, including
+Feather V2 (`.arrow`, `.arrows`, `.feather`, `.ipc`). The Excel, Parquet, and
+Arrow readers load only when such a file is read.
 
 ```tsx
 import { ExplorEda } from "exploreda";
@@ -182,10 +183,11 @@ offer a choice and read another with `readTableFile(file, { sheet })`. A sheet
 starts at its header row, below title rows. Formulas read as the results the
 workbook saved and are never calculated; error cells read as missing.
 
-A Parquet file's columns take the types its schema declares. Timestamps keep
+A Parquet or Arrow file's columns take the types its schema declares. Timestamps keep
 their stored precision as ISO text, decimals keep their exact digits, int64
 values past 2^53 stay text, and lists, maps, and structs become JSON text.
-Snappy, gzip, zstd, Brotli, and LZ4 pages are read.
+Snappy, gzip, zstd, Brotli, and LZ4 Parquet pages and LZ4 and zstd Arrow
+buffers are read.
 
 A file that can't be read rejects with a `TableReadError` that names the row,
 such as `Row 12 has 6 values, but the header names 5 fields.` `table.notes`

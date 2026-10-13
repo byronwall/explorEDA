@@ -1,6 +1,7 @@
 import { readDelimited } from "./delimited";
 import { BINARY_FORMATS, tableFormatList, tableFormatOf } from "./formats";
 import { readJson, readJsonLines } from "./json";
+import { readArrow } from "./arrow";
 import { readParquet } from "./parquet";
 import { readXlsx } from "./xlsx";
 import {
@@ -66,7 +67,7 @@ function formatFor(fileName: string, options: ReadTableOptions): TableFormat {
   return format;
 }
 
-type TextFormat = Exclude<TableFormat, "xlsx" | "parquet">;
+type TextFormat = Exclude<TableFormat, "xlsx" | "parquet" | "arrow">;
 
 function decode(text: string, format: TextFormat) {
   switch (format) {
@@ -123,10 +124,10 @@ export async function readTableFile(
     const name = table.sheets.length > 1 ? table.sheet : baseName(file.name);
     return { name, format, ...withFieldTypes(table) };
   }
-  if (format === "parquet") {
+  if (format === "parquet" || format === "arrow") {
     const bytes = await blobBytes(file);
     throwIfAborted(options.signal);
-    const table = await readParquet(bytes);
+    const table = await (format === "parquet" ? readParquet : readArrow)(bytes);
     throwIfAborted(options.signal);
     return { name: baseName(file.name), format, ...withFieldTypes(table) };
   }

@@ -4,11 +4,11 @@
     "title": "Local data file inputs",
     "slug": "data-file-inputs",
     "scale": "capability",
-    "current_phase": "plan",
+    "current_phase": "execution",
     "last_updated": "2026-10-13",
     "summary": "Read the formats mainstream analysis tools share through a public exploreda reader API, keeping source values.",
-    "status": "planned",
-    "next_action": "Start m1: CSV and TSV reader API in exploreda"
+    "status": "active",
+    "next_action": "Review and merge the stacked PRs #371, #390, #391, #394, #395, and the Arrow PR"
   },
   "artifacts": {
     "intent_brief": {
@@ -559,8 +559,10 @@
         "proof": "Reader tests on adversarial fixture; consumer round trips; browser at 1280/783/390 px.",
         "valid_intermediate_state": "Library reader API live; JSON reading moved unchanged.",
         "rollback": "Revert the PR; demo parsers return.",
-        "status": "planned",
-        "evidence": []
+        "status": "completed",
+        "evidence": [
+          "PR #390; src/lib/readers/readers.test.ts"
+        ]
       },
       {
         "id": "m2",
@@ -572,8 +574,10 @@
         "proof": "Fixture tests with large integers, nested records, bad lines.",
         "valid_intermediate_state": "JSON Lines added; arrays become JSON text.",
         "rollback": "Remove the jsonl case.",
-        "status": "planned",
-        "evidence": []
+        "status": "completed",
+        "evidence": [
+          "PR #391; events.ndjson fixtures"
+        ]
       },
       {
         "id": "m3",
@@ -585,8 +589,10 @@
         "proof": "Excel, LibreOffice, and Sheets fixtures; sheet picker screenshots.",
         "valid_intermediate_state": "XLSX case and sheet picker behind lazy load.",
         "rollback": "Remove the xlsx case.",
-        "status": "planned",
-        "evidence": []
+        "status": "completed",
+        "evidence": [
+          "PR #394; XlsxWriter and openpyxl fixtures"
+        ]
       },
       {
         "id": "m4",
@@ -599,8 +605,10 @@
         "proof": "pyarrow and DuckDB fixtures; 100 MB timing in production build.",
         "valid_intermediate_state": "Shared typed-column mapping exists.",
         "rollback": "Remove the parquet case.",
-        "status": "planned",
-        "evidence": []
+        "status": "completed",
+        "evidence": [
+          "PR #395; pyarrow and DuckDB fixtures; production timing"
+        ]
       },
       {
         "id": "m5",
@@ -612,8 +620,10 @@
         "proof": "pyarrow and Polars fixtures, compressed and uncompressed.",
         "valid_intermediate_state": "All seven formats documented.",
         "rollback": "Remove the arrow case.",
-        "status": "planned",
-        "evidence": []
+        "status": "completed",
+        "evidence": [
+          "Arrow PR; pyarrow and Polars fixtures"
+        ]
       }
     ],
     "cut_line": [

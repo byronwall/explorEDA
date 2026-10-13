@@ -438,6 +438,90 @@ describe("Parquet", () => {
   });
 });
 
+describe("Arrow and Feather", () => {
+  for (const name of [
+    "types-uncompressed.feather",
+    "types-lz4.feather",
+    "types-zstd.feather",
+    "types.arrow",
+    "types.arrows",
+  ]) {
+    it(`reads ${name} with the same values as its Parquet source`, async () => {
+      const table = await readTableFile(await fixture(`arrow/${name}`));
+      expect(table.format).toBe("arrow");
+      expect(table.rows).toHaveLength(6);
+      expect(typeOf(table)).toMatchObject({
+        id: "string",
+        account: "string",
+        count: "number",
+        price: "number",
+        balance: "string",
+        day: "date",
+        at_ns: "date",
+        tags: "string",
+        region: "string",
+      });
+      expect(table.rows[1]).toEqual({
+        id: "00001",
+        account: "9007199254740994",
+        count: 10,
+        small: 1,
+        ratio: 1 / 3,
+        price: 0.1,
+        balance: "1.5000000000",
+        day: "2025-01-02",
+        at_ms: "2025-03-01T12:00:01.123Z",
+        local_us: "2025-03-01T08:30:00.111111",
+        at_ns: "2025-03-01T12:00:00.12345679Z",
+        flag: false,
+        tags: "[]",
+        address: '{"city":"Lima","zip":null}',
+        region: "South",
+      });
+      expect(table.rows[0]!.balance).toBe("12345678901234567890.1234567891");
+      expect(table.rows[0]!.tags).toBe('["a","b"]');
+      expect(table.rows[2]).toMatchObject({
+        count: null,
+        price: null,
+        tags: null,
+      });
+    });
+  }
+
+  it("reads a zstd Polars file with categoricals", async () => {
+    const table = await readTableFile(await fixture("arrow/polars.arrow"));
+    expect(table.rows).toEqual([
+      {
+        code: "007",
+        big: "9007199254740993",
+        when: "2025-01-01T10:00:00",
+        score: 1.5,
+        cat: "a",
+      },
+      {
+        code: "012",
+        big: "1",
+        when: "2025-01-02T11:30:00",
+        score: null,
+        cat: "b",
+      },
+    ]);
+    expect(typeOf(table)).toEqual({
+      code: "string",
+      big: "string",
+      when: "date",
+      score: "number",
+      cat: "string",
+    });
+  });
+
+  it("explains a file that is not Arrow", async () => {
+    await expect(
+      readTableFile(new File(["a,b"], "fake.feather"))
+    ).rejects.toThrow("The file is not a readable Arrow or Feather file");
+  });
+});
+
 describe("formats", () => {
   it("names formats by extension", () => {
     expect(tableFormatOf("Orders.TSV")).toBe("tsv");
@@ -445,14 +529,15 @@ describe("formats", () => {
     expect(tableFormatOf("photo.png")).toBeUndefined();
     expect(tableFileAccept()).toContain(".tab");
     expect(tableFormatList()).toBe(
-      "CSV, TSV, JSON, JSON Lines, Excel, or Parquet"
+      "CSV, TSV, JSON, JSON Lines, Excel, Parquet, or Arrow"
     );
     expect(tableFormatOf("events.NDJSON")).toBe("jsonl");
+    expect(tableFormatOf("trips.feather")).toBe("arrow");
   });
 
   it("rejects an unknown extension with the readable formats", async () => {
     await expect(readTableFile(new File(["x"], "photo.png"))).rejects.toThrow(
-      "Choose a CSV, TSV, JSON, JSON Lines, Excel, or Parquet file."
+      "Choose a CSV, TSV, JSON, JSON Lines, Excel, Parquet, or Arrow file."
     );
   });
 

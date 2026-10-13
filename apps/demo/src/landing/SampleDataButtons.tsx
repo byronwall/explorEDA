@@ -52,6 +52,12 @@ const samples = [
     detail: "5,000 rows, Parquet",
     url: "/datasets/bike-trips.parquet",
   },
+  {
+    id: "weather",
+    label: "Weather stations",
+    detail: "2,016 rows, Feather",
+    url: "/datasets/weather-stations.feather",
+  },
 ];
 
 /** Loads a bundled file through the same reader as a user's own import. */

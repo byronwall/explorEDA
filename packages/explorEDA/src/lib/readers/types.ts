@@ -5,7 +5,14 @@ import type {
 } from "@/types/AnalysisProject";
 
 /** A file format that `readTableFile` reads. */
-export type TableFormat = "csv" | "tsv" | "json" | "jsonl" | "xlsx" | "parquet";
+export type TableFormat =
+  | "csv"
+  | "tsv"
+  | "json"
+  | "jsonl"
+  | "xlsx"
+  | "parquet"
+  | "arrow";
 
 /** A workbook sheet that holds a table. */
 export interface WorkbookSheet {
