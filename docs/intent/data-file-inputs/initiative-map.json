@@ -4,17 +4,17 @@
     "title": "Local data file inputs",
     "slug": "data-file-inputs",
     "scale": "capability",
-    "current_phase": "shape",
-    "last_updated": "2026-10-12",
-    "summary": "Research local formats and propose small input readers that preserve table meaning.",
+    "current_phase": "plan",
+    "last_updated": "2026-10-13",
+    "summary": "Read the formats mainstream analysis tools share through a public exploreda reader API, keeping source values.",
     "status": "planned",
-    "next_action": "Review the proposed scope and first proof before authorizing implementation planning."
+    "next_action": "Start m1: CSV and TSV reader API in exploreda"
   },
   "artifacts": {
     "intent_brief": {
       "path": "intent-brief.md",
       "status": "current",
-      "updated_at": "2026-10-12"
+      "updated_at": "2026-10-13"
     },
     "brainstorm": {
       "path": "brainstorm.md",
@@ -24,12 +24,12 @@
     "shape_brief": {
       "path": "shape-brief.md",
       "status": "current",
-      "updated_at": "2026-10-12"
+      "updated_at": "2026-10-13"
     },
     "implementation_plan": {
       "path": "implementation-plan.md",
-      "status": "not-requested",
-      "updated_at": null
+      "status": "current",
+      "updated_at": "2026-10-13"
     }
   },
   "sources": [
@@ -375,7 +375,8 @@
         "packages/explorEDA/src/components/ExplorEdaProject.tsx"
       ],
       "test_commands": [
-        "pnpm --filter demo exec vitest run src/parsers.test.ts",
+        "pnpm --filter exploreda exec vitest run src/lib/readers",
+        "pnpm --filter exploreda check-types",
         "pnpm check:ui",
         "pnpm check"
       ],
@@ -388,7 +389,7 @@
         "id": "D01",
         "name": "Papa Parse 5.5.2",
         "material": true,
-        "application_seam": "Explicit TSV tokenization in the shared demo reader",
+        "application_seam": "readTableFile in exploreda/readers for CSV and TSV",
         "failure_modes": [
           "Automatic coercion changes identifiers and dates",
           "Malformed headers or async File errors"
@@ -404,7 +405,7 @@
         ],
         "local_proof": "Text and File fixtures plus actual exploration and restore.",
         "live_proof": "Browser import at wide, intermediate, and narrow widths; no provider account.",
-        "rollout": "Enable TSV after consumer parity; preserve current CSV behavior."
+        "rollout": "Replace dynamic typing with whole-column source-faithful typing by default."
       },
       {
         "id": "D02",
@@ -500,30 +501,6 @@
         "rollout": "Enable proved subsets; compare parquet-wasm only for a required failing case."
       },
       {
-        "id": "D06",
-        "name": "Avro OCF reader candidate",
-        "material": true,
-        "application_seam": "OCF and writer schema into admitted scalar rows",
-        "failure_modes": [
-          "Generated code/CSP",
-          "Browser stream shims",
-          "Codec gaps",
-          "Long or logical type loss"
-        ],
-        "first_proof_role": {
-          "mode": "absent",
-          "rationale": "Avro is requested, but its browser container path needs proof."
-        },
-        "proof_rungs": [
-          "deterministic fixtures",
-          "real decoder or existing consumer",
-          "production browser proof"
-        ],
-        "local_proof": "Pin a stable candidate; independent null/deflate OCF fixtures; exact long and union checks.",
-        "live_proof": "Real production browser policy; do not weaken policy to pass.",
-        "rollout": "If no bounded candidate passes, retain conversion guidance and failed-proof evidence."
-      },
-      {
         "id": "D07",
         "name": "Google Sheets manual exports",
         "material": true,
@@ -544,25 +521,115 @@
         "local_proof": "Retain producer exports with expected sheet, row, and value results.",
         "live_proof": "A few manually exported two-sheet fixtures during implementation. No OAuth or APIs.",
         "rollout": "Advertise only exported formats whose own readers pass; no sync promise."
+      },
+      {
+        "id": "D08",
+        "name": "apache-arrow",
+        "material": true,
+        "application_seam": "Arrow IPC/Feather bytes into typedColumns mapping",
+        "failure_modes": [
+          "Compressed buffers need runtime codecs",
+          "Bundle size"
+        ],
+        "first_proof_role": {
+          "mode": "absent",
+          "rationale": "Arrow follows the Parquet type mapping."
+        },
+        "proof_rungs": [
+          "deterministic fixtures",
+          "real decoder or existing consumer",
+          "production browser proof"
+        ],
+        "local_proof": "pyarrow and Polars fixtures with lz4, zstd, and uncompressed.",
+        "live_proof": "Production demo build in Chromium.",
+        "rollout": "Uncompressed files at minimum; others per spike."
       }
     ],
     "fast_local_loop": {
-      "command": "pnpm --filter demo exec vitest run src/parsers.test.ts",
+      "command": "pnpm --filter exploreda exec vitest run src/lib/readers",
       "browser": "pnpm --filter demo dev",
-      "policy": "Few important behavior tests and independent fixtures; exact package/browser proofs remain separate."
+      "policy": "Committed independent producer fixtures with expected-value files."
     },
-    "milestones": [],
-    "cut_line": [
-      "Application implementation in this PR",
-      "Live Sheets or remote connectors",
-      "Database/lakehouse execution",
-      "Public plugin API",
-      "Automatic nested flattening",
-      "Arbitrary archives",
-      "Executable serialization",
-      "Workbook editing and formula execution"
+    "milestones": [
+      {
+        "id": "m1",
+        "title": "CSV and TSV keep their source values",
+        "outcome": "Both import paths read CSV/TSV/JSON through exploreda/readers; adversarial values match the file through every consumer and reload.",
+        "dependencies_introduced": [],
+        "proof": "Reader tests on adversarial fixture; consumer round trips; browser at 1280/783/390 px.",
+        "valid_intermediate_state": "Library reader API live; JSON reading moved unchanged.",
+        "rollback": "Revert the PR; demo parsers return.",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m2",
+        "title": "JSON and JSON Lines keep exact numbers",
+        "outcome": "JSON and NDJSON import with exact large integers and predictable nested fields.",
+        "dependencies_introduced": [
+          "Possible lossless JSON parser"
+        ],
+        "proof": "Fixture tests with large integers, nested records, bad lines.",
+        "valid_intermediate_state": "JSON Lines added; arrays become JSON text.",
+        "rollback": "Remove the jsonl case.",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m3",
+        "title": "XLSX opens one chosen sheet",
+        "outcome": "A workbook, including a Google Sheets download, opens the chosen sheet with correct types.",
+        "dependencies_introduced": [
+          "SheetJS CE"
+        ],
+        "proof": "Excel, LibreOffice, and Sheets fixtures; sheet picker screenshots.",
+        "valid_intermediate_state": "XLSX case and sheet picker behind lazy load.",
+        "rollback": "Remove the xlsx case.",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m4",
+        "title": "Parquet single files open with declared types",
+        "outcome": "Parquet files import with schema types and no silent rounding.",
+        "dependencies_introduced": [
+          "hyparquet",
+          "hyparquet-compressors"
+        ],
+        "proof": "pyarrow and DuckDB fixtures; 100 MB timing in production build.",
+        "valid_intermediate_state": "Shared typed-column mapping exists.",
+        "rollback": "Remove the parquet case.",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m5",
+        "title": "Arrow IPC and Feather V2 open",
+        "outcome": "Arrow and Feather files import exactly.",
+        "dependencies_introduced": [
+          "apache-arrow"
+        ],
+        "proof": "pyarrow and Polars fixtures, compressed and uncompressed.",
+        "valid_intermediate_state": "All seven formats documented.",
+        "rollback": "Remove the arrow case.",
+        "status": "planned",
+        "evidence": []
+      }
     ],
-    "open_decisions": []
+    "cut_line": [
+      "Avro, ODS, XLSB, XLS, gzip, ZIP",
+      "Range selection inside a sheet",
+      "GeoJSON and statistical formats",
+      "Multi-file datasets, lakehouse, SQLite, DuckDB files",
+      "Live Sheets, URLs, database connectors",
+      "Worker or streaming pipeline before measurement",
+      "Public format registry or plugin API"
+    ],
+    "open_decisions": [
+      "Size limit from m4 measurement",
+      "SheetJS packaging (m3) and Arrow codecs (m5)",
+      "Exact JSON integers (m2)"
+    ]
   },
   "history": [
     {
