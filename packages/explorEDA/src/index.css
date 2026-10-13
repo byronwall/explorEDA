@@ -865,12 +865,15 @@
   gap: 6px;
   min-width: 0;
 }
+/* Long enough to read a value's place between the ends; it shrinks first
+   when the header is short of room. */
 .eda-heat-legend-ramp {
   flex: 0 1 auto;
-  width: 72px;
+  width: 128px;
   min-width: 24px;
   height: 10px;
   border-radius: 2px;
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--foreground) 8%, transparent);
 }
 /* Short of room, the scale keeps its ends and the metric name goes; the
    panel header names it while a cell is under the pointer. */

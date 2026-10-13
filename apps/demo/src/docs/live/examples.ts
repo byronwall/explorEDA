@@ -6,6 +6,8 @@ import {
   bubbleDashboard,
   densityDashboard,
   groupedBarsDashboard,
+  histogram,
+  lincolnCalendarDashboard,
   scatterRegressionDashboard,
   scatterSurfaceDashboard,
   stackedBarsDashboard,
@@ -90,16 +92,31 @@ function focus(
   return { ...source, charts: picked };
 }
 
+/** A layout with one more chart, placed by its own `layout`. */
+function withChart(
+  source: SavedDataStructure,
+  chart: SavedDataStructure["charts"][number]
+): SavedDataStructure {
+  return { ...source, charts: [...source.charts, chart] };
+}
+
 const SHOP = "/datasets/shop-operations.csv";
 
 export const liveExamples = {
   "bar-histogram": {
     label: "Live delivery-time histogram",
     data: "/datasets/shop-operations.csv",
-    savedData: focus(shopDashboard, {
-      "shop-delivery": [0, 0, 6, 5],
-      "shop-channel": [6, 0, 6, 5],
-    }),
+    // Both charts are bar charts: numeric bins beside category counts.
+    savedData: withChart(
+      focus(shopDashboard, { "shop-delivery": [0, 0, 6, 5] }),
+      histogram(
+        "shop-channel-bars",
+        "Sales channels",
+        "Channel",
+        { x: 6, y: 0, w: 6, h: 5 },
+        "Channel"
+      )
+    ),
     exampleId: "shop-operations",
     shotAlt:
       "A histogram of delivery days beside a bar chart of orders by sales channel.",
@@ -140,10 +157,10 @@ export const liveExamples = {
     data: SHOP,
     savedData: focus(shopDashboard, {
       "shop-category": [0, 0, 6],
-      "shop-region": [6, 0, 6],
+      "shop-channel": [6, 0, 6],
     }),
     exampleId: "shop-operations",
-    shotAlt: "Orders by product category beside revenue by region.",
+    shotAlt: "Orders by product category beside orders by sales channel.",
     steps: [
       { expectRows: 500 },
       { click: "Home: 168 rows" },
@@ -269,11 +286,12 @@ export const liveExamples = {
   },
   calendar: {
     label: "Live calendar heatmap",
-    data: SHOP,
-    savedData: focus(timeSeriesDashboard, { "time-calendar": [0, 0, 12] }),
-    exampleId: "calendar-series",
-    shotAlt: "Daily order counts as a calendar of shaded day cells.",
-    steps: [{ expectRows: 500 }],
+    data: "/datasets/lincoln-weather.csv",
+    savedData: lincolnCalendarDashboard,
+    exampleId: "lincoln-ridgeline",
+    shotAlt:
+      "Each day of 2016 in Lincoln, Nebraska, shaded by its high temperature: pale winter weeks, dark summer ones.",
+    steps: [{ expectRows: 366 }],
   },
   heatmap: {
     label: "Live heatmap",

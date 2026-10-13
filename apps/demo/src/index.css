@@ -163,10 +163,12 @@
 /* The docs' accent is the site's brand teal, in both themes. */
 .docs-root {
   --docs-accent: var(--site-accent);
+  --docs-accent-foreground: var(--site-accent-foreground);
 }
 
 @theme inline {
   --color-docs-accent: var(--docs-accent);
+  --color-docs-accent-foreground: var(--docs-accent-foreground);
 }
 
 .docs-theme-switching,
