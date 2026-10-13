@@ -1,0 +1,310 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "Standalone explorEDA app",
+    "slug": "standalone-app",
+    "scale": "program",
+    "current_phase": "intent",
+    "last_updated": "2026-10-12",
+    "summary": "Turn the demo into a proper application with users, sign-in, settings, projects, and durable saved work behind storage and auth boundaries each runtime mode fills.",
+    "status": "planned",
+    "next_action": "Question rounds; then shape storage and auth boundaries against the self-hosted mode."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "draft",
+      "updated_at": "2026-10-12"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "not-created",
+      "updated_at": null
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "not-created",
+      "updated_at": null
+    }
+  },
+  "sources": [
+    {
+      "id": "USR-P1",
+      "type": "direct-user-source",
+      "location": "../runtime-modes/raw/2026-10-12-notes-transcription.md",
+      "anchor": "Page 1 \u2014 EDA: runtime modes",
+      "authority": "direct intent",
+      "notes": "Photo: ../runtime-modes/raw/2026-10-12-runtime-modes-page1.jpg"
+    },
+    {
+      "id": "USR-P2",
+      "type": "direct-user-source",
+      "location": "../runtime-modes/raw/2026-10-12-notes-transcription.md",
+      "anchor": "Page 2 \u2014 EDA modes",
+      "authority": "direct intent",
+      "notes": "Photo: ../runtime-modes/raw/2026-10-12-eda-modes-page2.jpg"
+    },
+    {
+      "id": "USR-CHAT",
+      "type": "direct-user-source",
+      "location": "conversation 2026-10-12",
+      "anchor": "Request accompanying the photos",
+      "authority": "latest direct instruction",
+      "notes": "Hosting-modes initiative somewhat replaces the commercialization initiative, possibly in parallel; separate initiative for a proper app with users, login, config."
+    },
+    {
+      "id": "REPO-01",
+      "type": "repository",
+      "location": "apps/demo/src/savedViewsSession.ts; .github/workflows/deploy.yml",
+      "anchor": "localStorage persistence; GitHub Pages deploy",
+      "authority": "current reality",
+      "notes": "No CLI, server, auth, or user model exists."
+    },
+    {
+      "id": "QA-1",
+      "type": "question-round",
+      "location": "conversation 2026-10-12",
+      "anchor": "Round 1",
+      "authority": "direct intent",
+      "notes": "recorded in runtime-modes question_rounds"
+    },
+    {
+      "id": "QA-2",
+      "type": "question-round",
+      "location": "conversation 2026-10-12",
+      "anchor": "Round 2",
+      "authority": "direct intent",
+      "notes": "recorded in runtime-modes question_rounds"
+    },
+    {
+      "id": "QA-3",
+      "type": "question-round",
+      "location": "conversation 2026-10-12",
+      "anchor": "Round 3",
+      "authority": "direct intent",
+      "notes": "recorded in runtime-modes question_rounds"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "I-01",
+        "type": "outcome",
+        "statement": "A standalone app with users, login, and config, distinct from the demo showcase.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "USR-CHAT",
+          "USR-P1"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "I-02",
+        "type": "derived implication",
+        "statement": "Storing user data makes the app a multi-user system.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "USR-P1"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "I-03",
+        "type": "required behavior",
+        "statement": "Stores app config, user data, projects/workspaces, data-source definitions, schema info, and notebooks or results.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "USR-P1"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "I-04",
+        "type": "constraint",
+        "statement": "The embedded component stays host-managed and server-free.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "USR-P1"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "I-05",
+        "type": "required behavior",
+        "statement": "Authors and viewers are distinct roles (from the self-hosted 1\u201310 authors, 10\u2013100 viewers target).",
+        "commitment": "derived",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "USR-P2"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "I-06",
+        "type": "constraint",
+        "statement": "Browser-only and local CLI modes must not require an account.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "USR-P1",
+          "USR-P2"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "I-07",
+        "type": "future possibility",
+        "statement": "SSO and full enterprise features belong to the paid tier.",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "later",
+        "sources": [
+          "USR-P2"
+        ],
+        "confidence": "high"
+      },
+      {
+        "type": "decision",
+        "statement": "Build the app as a new apps/app beside the demo; the demo stays the landing, docs, and examples site.",
+        "commitment": "explicit",
+        "importance": "core",
+        "time_horizon": "first release",
+        "sources": [
+          "QA-1"
+        ],
+        "status": "active",
+        "confidence": "high",
+        "id": "I-08"
+      },
+      {
+        "type": "decision",
+        "statement": "apps/app is server-backed; first auth adapter is a single local user (CLI); accounts arrive with self-hosted.",
+        "commitment": "explicit",
+        "importance": "core",
+        "time_horizon": "first release",
+        "sources": [
+          "QA-2"
+        ],
+        "status": "active",
+        "confidence": "high",
+        "id": "I-09"
+      },
+      {
+        "type": "decision",
+        "statement": "Self-hosted roles: author and viewer, every user has an account; local accounts first.",
+        "commitment": "explicit",
+        "importance": "core",
+        "time_horizon": "first release",
+        "sources": [
+          "QA-3"
+        ],
+        "status": "active",
+        "confidence": "high",
+        "id": "I-10"
+      }
+    ],
+    "themes": [
+      "identity and roles",
+      "settings",
+      "projects and saved work",
+      "storage/auth ports"
+    ],
+    "conflicts": [],
+    "human_questions": [
+      "Is an admin role separate from author, or is the first account the admin?"
+    ]
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "not-started",
+    "appetite": null,
+    "problem": null,
+    "recommended_shape": null,
+    "success_moves": [],
+    "first_proof": null,
+    "rabbit_holes": [],
+    "open_decisions": []
+  },
+  "implementation": {
+    "status": "not-started",
+    "repository_snapshot": {
+      "root": null,
+      "revision": null,
+      "worktree_status": null,
+      "subsystems": [],
+      "test_commands": [],
+      "deployment_surfaces": []
+    },
+    "dependencies": [],
+    "fast_local_loop": null,
+    "milestones": [],
+    "cut_line": [],
+    "open_decisions": []
+  },
+  "history": [
+    {
+      "date": "2026-10-12",
+      "event": "created",
+      "summary": "Intent recovered from two handwritten notebook pages and the accompanying chat request.",
+      "status": "planned"
+    }
+  ],
+  "closure": null,
+  "related_initiatives": [
+    {
+      "slug": "runtime-modes",
+      "role": "program umbrella: mode ladder and shared storage model"
+    },
+    {
+      "slug": "browser-only-site",
+      "role": "mode 1"
+    },
+    {
+      "slug": "local-cli-projects",
+      "role": "mode 2"
+    },
+    {
+      "slug": "self-hosted-team-server",
+      "role": "mode 3"
+    },
+    {
+      "slug": "customer-instance-hosting",
+      "role": "mode 4 (paid hosted), comes last"
+    },
+    {
+      "slug": "database-adapters",
+      "role": "server-side data path for modes 2\u20134"
+    },
+    {
+      "slug": "notebook-analysis",
+      "role": "notebooks as stored results"
+    }
+  ]
+}

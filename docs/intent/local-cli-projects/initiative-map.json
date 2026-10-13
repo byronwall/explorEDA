@@ -1,0 +1,372 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "Local CLI projects with npx exploreda",
+    "slug": "local-cli-projects",
+    "scale": "capability",
+    "current_phase": "intent",
+    "last_updated": "2026-10-12",
+    "summary": "npx exploreda in a folder starts a local server and opens the standalone app on that folder's project, with analyses stored as files like notebook repos.",
+    "status": "planned",
+    "next_action": "Question rounds; then shape the project file layout and local server."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "draft",
+      "updated_at": "2026-10-12"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "not-created",
+      "updated_at": null
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "not-created",
+      "updated_at": null
+    }
+  },
+  "sources": [
+    {
+      "id": "USR-P1",
+      "type": "direct-user-source",
+      "location": "../runtime-modes/raw/2026-10-12-notes-transcription.md",
+      "anchor": "Page 1 \u2014 EDA: runtime modes",
+      "authority": "direct intent",
+      "notes": "Photo: ../runtime-modes/raw/2026-10-12-runtime-modes-page1.jpg"
+    },
+    {
+      "id": "USR-P2",
+      "type": "direct-user-source",
+      "location": "../runtime-modes/raw/2026-10-12-notes-transcription.md",
+      "anchor": "Page 2 \u2014 EDA modes",
+      "authority": "direct intent",
+      "notes": "Photo: ../runtime-modes/raw/2026-10-12-eda-modes-page2.jpg"
+    },
+    {
+      "id": "USR-CHAT",
+      "type": "direct-user-source",
+      "location": "conversation 2026-10-12",
+      "anchor": "Request accompanying the photos",
+      "authority": "latest direct instruction",
+      "notes": "Hosting-modes initiative somewhat replaces the commercialization initiative, possibly in parallel; separate initiative for a proper app with users, login, config."
+    },
+    {
+      "id": "REPO-01",
+      "type": "repository",
+      "location": "apps/demo/src/savedViewsSession.ts; .github/workflows/deploy.yml",
+      "anchor": "localStorage persistence; GitHub Pages deploy",
+      "authority": "current reality",
+      "notes": "No CLI, server, auth, or user model exists."
+    },
+    {
+      "id": "QA-1",
+      "type": "question-round",
+      "location": "conversation 2026-10-12",
+      "anchor": "Round 1",
+      "authority": "direct intent",
+      "notes": "recorded in runtime-modes question_rounds"
+    },
+    {
+      "id": "QA-2",
+      "type": "question-round",
+      "location": "conversation 2026-10-12",
+      "anchor": "Round 2",
+      "authority": "direct intent",
+      "notes": "recorded in runtime-modes question_rounds"
+    },
+    {
+      "id": "QA-3",
+      "type": "question-round",
+      "location": "conversation 2026-10-12",
+      "anchor": "Round 3",
+      "authority": "direct intent",
+      "notes": "recorded in runtime-modes question_rounds"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "I-01",
+        "type": "outcome",
+        "statement": "Run explorEDA from a CLI in a repo folder, project-based like Jupyter notebooks.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "USR-P1"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "I-02",
+        "type": "decision",
+        "statement": "Launch with npx exploreda.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "USR-P1"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "I-03",
+        "type": "required behavior",
+        "statement": "Runs in different folders; maybe a global config.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "USR-P1"
+        ],
+        "confidence": "medium; global config tentative"
+      },
+      {
+        "id": "I-04",
+        "type": "decision",
+        "statement": "For general users the CLI runs a local server.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "USR-P1"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "I-05",
+        "type": "constraint",
+        "statement": "Project/workspace files live on disk.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "USR-P1"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "I-06",
+        "type": "open question",
+        "statement": "Does the CLI support databases?",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "USR-P1"
+        ],
+        "confidence": "high"
+      },
+      {
+        "type": "sequence",
+        "statement": "This is the first runtime mode to build.",
+        "commitment": "explicit",
+        "importance": "core",
+        "time_horizon": "first release",
+        "sources": [
+          "QA-1"
+        ],
+        "status": "active",
+        "confidence": "high",
+        "id": "I-07"
+      },
+      {
+        "type": "decision",
+        "statement": "File sources only in the first release; database connections are the next CLI milestone.",
+        "commitment": "explicit",
+        "importance": "core",
+        "time_horizon": "first release",
+        "sources": [
+          "QA-2"
+        ],
+        "status": "active",
+        "confidence": "high",
+        "id": "I-08"
+      },
+      {
+        "type": "decision",
+        "statement": "The CLI ships as a bin in the exploreda package (npx exploreda).",
+        "commitment": "explicit",
+        "importance": "core",
+        "time_horizon": "first release",
+        "sources": [
+          "QA-2"
+        ],
+        "status": "active",
+        "confidence": "high",
+        "id": "I-09"
+      },
+      {
+        "type": "required behavior",
+        "statement": "A project folder holds shared project info plus one file per analysis, like notebooks; config can live in a hidden folder or in workspace files.",
+        "commitment": "explicit",
+        "importance": "core",
+        "time_horizon": "first release",
+        "sources": [
+          "QA-2"
+        ],
+        "confidence": "medium; 'either' location rule open",
+        "status": "active",
+        "id": "I-10"
+      },
+      {
+        "type": "decision",
+        "statement": "No sign-in in CLI mode; one local user.",
+        "commitment": "explicit",
+        "importance": "core",
+        "time_horizon": "first release",
+        "sources": [
+          "QA-2"
+        ],
+        "status": "active",
+        "confidence": "high",
+        "id": "I-11"
+      },
+      {
+        "type": "decision",
+        "statement": "Config and storage location is the user's choice per project: everything hidden in .exploreda/ or in visible project/workspace files.",
+        "commitment": "explicit",
+        "importance": "core",
+        "time_horizon": "first release",
+        "sources": [
+          "QA-3"
+        ],
+        "status": "active",
+        "confidence": "high",
+        "id": "I-12"
+      },
+      {
+        "type": "decision",
+        "statement": "CLI v1 includes global config, file watching, and static HTML export; notebook view is not in v1.",
+        "commitment": "explicit",
+        "importance": "core",
+        "time_horizon": "first release",
+        "sources": [
+          "QA-3"
+        ],
+        "status": "active",
+        "confidence": "high",
+        "id": "I-13"
+      },
+      {
+        "type": "decision",
+        "statement": "Data files are read in place; analyses use project-relative paths by default and may reference outside paths.",
+        "commitment": "explicit",
+        "importance": "core",
+        "time_horizon": "first release",
+        "sources": [
+          "QA-3"
+        ],
+        "status": "active",
+        "confidence": "high",
+        "id": "I-14"
+      },
+      {
+        "type": "decision",
+        "statement": "CLI must be polished enough for a public launch.",
+        "commitment": "explicit",
+        "importance": "core",
+        "time_horizon": "first release",
+        "sources": [
+          "QA-3"
+        ],
+        "status": "active",
+        "confidence": "high",
+        "id": "I-15"
+      }
+    ],
+    "themes": [
+      "per-folder projects",
+      "files on disk",
+      "local server"
+    ],
+    "conflicts": [],
+    "human_questions": [
+      "What does an analysis file contain: dashboard text only, or text plus explanatory notes?"
+    ]
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "not-started",
+    "appetite": null,
+    "problem": null,
+    "recommended_shape": null,
+    "success_moves": [],
+    "first_proof": null,
+    "rabbit_holes": [],
+    "open_decisions": []
+  },
+  "implementation": {
+    "status": "not-started",
+    "repository_snapshot": {
+      "root": null,
+      "revision": null,
+      "worktree_status": null,
+      "subsystems": [],
+      "test_commands": [],
+      "deployment_surfaces": []
+    },
+    "dependencies": [],
+    "fast_local_loop": null,
+    "milestones": [],
+    "cut_line": [],
+    "open_decisions": []
+  },
+  "history": [
+    {
+      "date": "2026-10-12",
+      "event": "created",
+      "summary": "Intent recovered from two handwritten notebook pages and the accompanying chat request.",
+      "status": "planned"
+    }
+  ],
+  "closure": null,
+  "related_initiatives": [
+    {
+      "slug": "runtime-modes",
+      "role": "program umbrella: mode ladder and shared storage model"
+    },
+    {
+      "slug": "standalone-app",
+      "role": "app layer every mode runs"
+    },
+    {
+      "slug": "browser-only-site",
+      "role": "mode 1"
+    },
+    {
+      "slug": "self-hosted-team-server",
+      "role": "mode 3"
+    },
+    {
+      "slug": "customer-instance-hosting",
+      "role": "mode 4 (paid hosted), comes last"
+    },
+    {
+      "slug": "database-adapters",
+      "role": "server-side data path for modes 2\u20134"
+    },
+    {
+      "slug": "notebook-analysis",
+      "role": "notebooks as stored results"
+    }
+  ]
+}
