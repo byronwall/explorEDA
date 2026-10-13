@@ -16,7 +16,7 @@ The review covers every delivered composition example. Each needs a comparison w
 
 Users should be able to start with simple chart settings and reveal more control as their needs grow. Advanced options should build on what users already understand. A useful composition example may remain valuable for teaching even when its analytical task becomes available through a built-in chart.
 
-The current work is research and planning. The Pro review will inform a proposed shape and proof sequence through Software Design Sleuth. It does not authorize application changes or deletion of examples.
+The current work is research and planning. The collected Pro review informs the proposed shape and proof sequence. It does not authorize application changes or deletion of examples.
 
 ## What matters most
 
@@ -48,4 +48,11 @@ Candidate routes include better settings, named display modes, a few new chart f
 
 ## Next step after confirmation
 
-Complete the authorized [Pro review](../../research/composition-builtins-2026-10-12/prompt.md). Reconcile every finding against source, then write the shape and a bounded proof sequence. The [run record](../../research/composition-builtins-2026-10-12/run.md) holds progress and access limits.
+Review the [shape](shape-brief.md), [all 29 verdicts](example-review.md), and [implementation plan](implementation-plan.md).
+Four examples have existing analytical routes. Fourteen need bounded extensions; seven need specialist modes or families.
+Three retain a conditional composition role. One clearly needs composition for its complete arrangement.
+These categories describe product routes, not delivery commitments or estimates of a few settings changes.
+
+If implementation is requested, the first step proves the four existing routes through public controls.
+It preserves the composition examples and their output. The authorized research and integration do not require another confirmation.
+The [run record](../../research/composition-builtins-2026-10-12/run.md) holds collection, validation, and PR status.

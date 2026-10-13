@@ -21,15 +21,15 @@ Completion requires readable Pro outputs, checked findings, integrated Sleuth ar
 
 ## Current state
 
-- Phase: submitted; Pro is working.
+- Phase: collected and reconciled; preparing the review PR.
 - Pro round: initial submission sent. Follow-ups used: 0 of 2.
 - [Pro conversation](https://chatgpt.com/c/6acd1f36-150c-83ea-98f1-4d05946a051b).
 - Mode: Pro, power 5 of 5, verified in the live selector before sending.
 - Submission: 2026-10-12 at about 17:56 UTC (13:56 EDT).
-- First scheduled check: about 18:57 UTC (14:57 EDT), then hourly while needed.
+- Scheduled check started: 2026-10-12 at 18:59 UTC. Pro had completed after 41m 47s.
 - Heartbeat: `collect-composition-chart-review`, active on this chat.
 - Goal: none. The user requested a process, not a goal record.
-- PR: none. Research results are pending.
+- PR: pending. Shape, exhaustive review, recommendation decisions, and plan are ready.
 
 Chrome's native window confirmed the signed-in profile `Byron (byroni.us)`.
 Use `cua.getApp("com.google.Chrome")` when Chrome is absent from the browser inventory.
@@ -44,6 +44,37 @@ The heartbeat was created at 17:56:44 UTC. Its saved configuration confirms this
 It owns later collection, bounded follow-ups, Sleuth integration, validation, and the review PR.
 The handoff skill now documents the verified Chrome workflow in `references/chrome-workflow.md`.
 Skill validation and relative reference checks passed.
+
+## Collection and integration
+
+Native access reported a locked Mac at the scheduled check. Browser inventory now exposed Chrome's `byroni.us` extension connection.
+That connection could read the completed conversation. No account login or Mac unlock was needed.
+
+The first intercepted download stalled and then failed with an invalid interception ID.
+A normal Chrome download recovered the existing ZIP at about 2026-10-13 00:55 UTC (October 12, 20:55 EDT).
+No research was resubmitted. All five original companions were extracted and verified; a separate report download matched exactly.
+Chrome blocked independent raw JSON destinations. The original JSON files are present in the verified archive.
+
+- [Collection manifest](../../intent/progressive-built-in-charts/raw/collection.json): paths, sizes, SHA-256, retrieval, and limits.
+- [Exhaustive review](../../intent/progressive-built-in-charts/example-review.md): all 29 examples, including current routes and exact gaps.
+- [Recommendation decisions](../../intent/progressive-built-in-charts/recommendation-decisions.md): all 26 proposals reconciled.
+- [Shape](../../intent/progressive-built-in-charts/shape-brief.md) and [plan](../../intent/progressive-built-in-charts/implementation-plan.md): four proposed milestones; lifecycle remains planned.
+- [Evidence checks](../../intent/progressive-built-in-charts/source-checks.md): independent code/data observations and executed checks.
+
+No material gap needed a follow-up. The integration retains four existing routes, fourteen bounded extensions, seven specialist examples, three mixed cases, and one clear composition case.
+“Small extension” is qualified as bounded ownership, often medium effort. Source corrections and output limits remain explicit.
+
+Verification passed:
+
+- Safe archive, five companion files, manifest sizes/hashes, JSON parsing, and standalone report equality.
+- Exactly 29 inventory/verdict IDs and 26 recommendation decisions; all recommendation references resolve.
+- All 623 baseline packet files still match the checkout by SHA-256.
+- `pnpm check` on Node 24.21.0/pnpm 11.9.0: UI, builds, types, 1,206 library tests, 187 demo tests, plus 64 build-time content tests.
+- Sleuth validator: zero warnings. Heuristic artifact audit: 9.4/10; this is a document check, not product acceptance.
+- Local Markdown links, review coverage, and Git whitespace checks.
+
+Proposed counterpart browser flows and PNG/clipboard acceptance remain unrun. No product code, package settings, or examples changed.
+Only scoped research and planning artifacts will enter the PR.
 
 ## Prepared artifacts
 

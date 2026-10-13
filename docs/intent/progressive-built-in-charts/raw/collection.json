@@ -1,0 +1,58 @@
+{
+  "retrieved_at": "2026-10-13T00:58:19.556497+00:00",
+  "conversation_url": "https://chatgpt.com/c/6acd1f36-150c-83ea-98f1-4d05946a051b",
+  "browser": "Chrome byroni.us extension connection",
+  "files": [
+    {
+      "name": "composition-builtins-review.md",
+      "bytes": 283343,
+      "sha256": "44b178e48e343f0d0ae17a17774fb14c411c2226151c746cea11d64b374a159b",
+      "retrieval": "original ZIP member"
+    },
+    {
+      "name": "composition-builtins-review.zip",
+      "bytes": 199711,
+      "sha256": "38ac65fecba6b06dc5f6ef9055ad52de2a3db41f783c87276ecaf6115bf6cede",
+      "retrieval": "ZIP download"
+    },
+    {
+      "name": "composition-recommendations.json",
+      "bytes": 279781,
+      "sha256": "58342361890816a823539ca9182c56032f88eaa2a3a9700a49a9fe8ce5212bde",
+      "retrieval": "original ZIP member"
+    },
+    {
+      "name": "composition-verdicts.json",
+      "bytes": 171392,
+      "sha256": "96f4a44c9d849e2cd24be5ea31b0004786e89f34219ccbeff582e754a211fe3b",
+      "retrieval": "original ZIP member"
+    },
+    {
+      "name": "manifest.json",
+      "bytes": 2413,
+      "sha256": "e0b67066a8ddda96d765c347db26205a4412680213d7b41bc9f23e79670851cc",
+      "retrieval": "original ZIP member"
+    },
+    {
+      "name": "sources.json",
+      "bytes": 169350,
+      "sha256": "e283ccc938fafef49199b59489a1044a96e75c9c7908fe5b96dfa56f6eb3a90c",
+      "retrieval": "original ZIP member"
+    }
+  ],
+  "checks": {
+    "zip_integrity": "passed",
+    "safe_root_entries": "passed; exactly five, no links",
+    "manifest_sizes_and_available_hashes": "passed",
+    "json_parse": "passed",
+    "unique_verdicts": 29,
+    "unique_recommendations": 26,
+    "recommendation_references": "passed",
+    "standalone_report_comparison": "byte-identical"
+  },
+  "limits": [
+    "Independent JSON downloads were not collected: Chrome blocked the raw file destination. Original JSON files were collected from the verified ZIP.",
+    "Initial intercepted download failed; a normal Chrome download recovered the original archive.",
+    "Pro could not persist outputs to Library; conversation downloads remain available."
+  ]
+}
