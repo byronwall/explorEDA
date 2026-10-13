@@ -125,6 +125,25 @@ Placement: a layout block, one line per band of grid rows.
   }                                   put it in the same cells below to make it taller
   Or give one chart at=x,y,w,h. Charts in neither take the first free space.
 
+Composition: a designed graphic, its parts as child lines named for their
+kind. Parts point at each other by name (scales by field); @id only when a
+generated ID wouldn't match. Settings equal to a part's default are left out.
+  composition @jobs height=704 {      artboard: width=, height=, background=
+    scale numeric Year nice=false     also scale position <field>, scale value "Name"
+    measure max("Group order")        a per-repeat value; name=, population=, filters=
+    title "Jobs" at=32,24             subtitle, footnote; fontSize=, color=, width=
+    unit Groups at=56,176 size=120x180 {
+      repeat Group columns=5 orderBy="Group order"
+      label fontSize=11 value="Group order"
+      path Occupations x=Year y=Jobs orderField=Year
+    }                                 marks: path point band span strip summary
+    legend Key at=620,130 unit=Groups mark=Occupations     stack waffle bar horizon density
+                                                           waterfall donut
+    rule "1990" at=4,0 unit=Groups value.value="1990"
+    note "Peak" at=-30,-40 on=Groups[A] point=0.5,0.7  (or mark=, pick=max)
+    override Groups[A] dx=-40
+  }
+
 Shared definitions (charts point at them by @name):
   scale @channels field=Channel       color scale; charts: colorScaleId=channels
   group @byRegion groupField=Region aggregation=sum measureField=Revenue

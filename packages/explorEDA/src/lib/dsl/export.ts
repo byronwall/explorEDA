@@ -10,6 +10,8 @@ import { diffPaths, encodeScalar, formatPath, parsePath } from "./paths";
 import { splitPair } from "./parse";
 import { wordForPath } from "./schema";
 import { layoutLines } from "./layout";
+import { block } from "./print";
+import { liftComposition } from "./composition";
 import { FIELD_SETTING_WORDS, GRID_SETTING_WORDS } from "./settingKeys";
 
 export interface DslExportOptions {
@@ -33,45 +35,6 @@ const TYPE_WORDS = {
 const IDENTIFIER = /^[A-Za-z_][\w]*$/;
 const GENERATED_ID =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-/** A declaration stays on one line up to this width. */
-const LINE_WIDTH = 88;
-/** Settings lines in a body wrap at this width. */
-const BODY_WIDTH = 80;
-
-/**
- * Writes a declaration: one line when it fits, otherwise a head line that
- * opens a body, the remaining settings in lines of a comfortable width, and
- * a closing brace. A token without `=`, such as `@name`, stays on the head.
- */
-export function block(head: string, tokens: string[]): string[] {
-  const single = [head, ...tokens].join(" ");
-  if (single.length <= LINE_WIDTH) {
-    return [single];
-  }
-  let line = head;
-  let index = 0;
-  while (
-    index < tokens.length &&
-    (!tokens[index]!.includes("=") ||
-      line.length + tokens[index]!.length + 3 <= LINE_WIDTH)
-  ) {
-    line += ` ${tokens[index]}`;
-    index++;
-  }
-  const body: string[] = [];
-  for (const token of tokens.slice(index)) {
-    const last = body.at(-1);
-    if (last !== undefined && last.length + token.length + 1 <= BODY_WIDTH) {
-      body[body.length - 1] = `${last} ${token}`;
-    } else {
-      body.push(token);
-    }
-  }
-  return body.length
-    ? [`${line} {`, ...body.map((item) => `  ${item}`), "}"]
-    : [line];
-}
-
 /**
  * `where.` text for a chart's filters, or the bare `field=` pairs of a
  * `filter` line, or undefined when one needs records.
@@ -141,6 +104,8 @@ function headFor(chart: SavedChartSettings): string {
         : "table";
     case "summary":
       return "summary";
+    case "composition":
+      return "composition";
     default:
       return `chart ${chart.type}${chart.field ? ` field=${name(chart.field)}` : ""}`;
   }
@@ -429,7 +394,16 @@ export function exportParts(
       omitted.push(`${head}: the chart could not be rebuilt from its fields`);
       return [];
     }
-    const skip = new Set(["id", "type", "layout"]);
+    const graphic =
+      chart.type === "composition"
+        ? liftComposition(chart.composition)
+        : undefined;
+    const skip = new Set([
+      "id",
+      "type",
+      "layout",
+      ...(graphic ? ["composition"] : []),
+    ]);
     const extra: string[] = [];
     for (const key of new Set([...Object.keys(built), ...Object.keys(chart)])) {
       if (skip.has(key)) {
@@ -443,10 +417,15 @@ export function exportParts(
         )
       );
     }
-    return block(head, [
-      ...pairs,
-      ...extra.map((pair) => toWord(chart.type, pair)),
-    ]);
+    return block(
+      head,
+      [
+        ...pairs,
+        ...(graphic?.head ?? []),
+        ...extra.map((pair) => toWord(chart.type, pair)),
+      ],
+      graphic?.body
+    );
   });
 
   return {

@@ -40,6 +40,8 @@ import { validateSavedData } from "@/utils/saveDataUtils";
 import { parsePath, setPath } from "./paths";
 import { settingWords } from "./schema";
 import { parseLayout, placeLayout, type LayoutProblem } from "./layout";
+import { lowerComposition, type CompositionProblem } from "./composition";
+import { isCompositionDefinition } from "@/components/charts/Composition/validateComposition";
 import { boundaryAssetId, listBoundarySets } from "@/lib/boundaries/registry";
 import "@/lib/boundaries/regionFunction";
 import {
@@ -162,6 +164,7 @@ export const DSL_CHART_KEYWORDS: Record<string, string> = {
   metric: "metric-card",
   table: "data-table",
   summary: "summary",
+  composition: "composition",
 };
 
 export const DSL_OTHER_KEYWORDS = [
@@ -1311,7 +1314,9 @@ export function compileDocument(
     const summary = { line: declaration.span.line, subject, type };
     const implicit = declaration.name ? undefined : implicitName(declaration);
     const chart = buildChart(declaration, type, subject, implicit);
-    for (const child of declaration.children) {
+    for (const child of declaration.keyword === "composition"
+      ? []
+      : declaration.children) {
       report(
         "warning",
         "setting-ignored",
@@ -1764,6 +1769,52 @@ export function compileDocument(
       case "summary":
         chart = definition.createDefaultSettings(layout) as ChartSettings;
         break;
+      case "composition": {
+        // The head sizes the artboard; the body holds the graphic's parts.
+        const size = (key: string) => {
+          const pair = take(key);
+          const value = pair && numberValue(pair.value);
+          if (pair && (value === undefined || value <= 0)) {
+            report(
+              "warning",
+              "setting-default",
+              pair.span,
+              `${key} needs a positive number, so ${subject} keeps the default.`,
+              { subject }
+            );
+          }
+          return value && value > 0 ? value : undefined;
+        };
+        const background = take("background");
+        const problems: CompositionProblem[] = [];
+        const composition = lowerComposition(
+          declaration,
+          {
+            width: size("width"),
+            height: size("height"),
+            background: background && single(background.value),
+          },
+          problems
+        );
+        for (const problem of problems) {
+          report("warning", "setting-ignored", problem.span, problem.message, {
+            subject,
+            suggestion: problem.suggestion,
+          });
+        }
+        if (!isCompositionDefinition(composition)) {
+          return fail(
+            declaration.span,
+            `${subject} doesn't describe a complete graphic, so it was skipped.`,
+            "Check that every mark names scales of the right kind."
+          );
+        }
+        chart = {
+          ...definition.createDefaultSettings(layout),
+          composition,
+        } as ChartSettings;
+        break;
+      }
       case "chart": {
         // Any registered type: defaults first, then settings by path.
         const named = take("field");
