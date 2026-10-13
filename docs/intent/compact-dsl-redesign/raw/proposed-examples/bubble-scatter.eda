@@ -1,0 +1,12 @@
+# Proposed syntax for the annotated scatter in ../current-exports/bubble-scatter.eda.
+# Illustrative: grammar, defaults, and inference rules are not final.
+scale Phase Baseline=#3479a8 Release=#c77a45 Follow-up=#4b9688
+
+scatter @trials x="Response time (ms)" y="Conversion (%)" color=Phase size=Trials {
+  title="Speed, conversion, and trial volume" size.max=20 opacity=.5
+  callout "Day 31: slowest response" at=Day:31 offset=-24,-28
+  rule    y=4 "Conversion target 4%"
+  rule    x=mean "Mean response"
+  region  ellipse x=275..345 y=4.1..5.15 "Fast, high-converting days"
+}
+metric @total sum(Trials) title="Trials in this selection"
