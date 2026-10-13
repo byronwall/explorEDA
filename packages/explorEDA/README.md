@@ -160,17 +160,17 @@ it everywhere, or target a theme with `[data-eda-theme="…"]`:
 }
 ```
 
-| Variable | Sets |
-| --- | --- |
-| `--eda-headline-font`, `--eda-headline-size`, `--eda-headline-weight`, `--eda-headline-line` | Chart title type |
-| `--eda-headline-color`, `--eda-headline-accent` | Title color and the short rule above it |
-| `--eda-subtitle-font`, `--eda-subtitle-size`, `--eda-subtitle-color` | Subtitle type |
-| `--eda-note-size`, `--eda-note-color` | Source note type |
-| `--eda-axis-tick-size`, `--eda-axis-label-size` | Axis tick and title sizes, in px |
-| `--eda-axis-tick-color`, `--eda-axis-label-color` | Axis text colors |
-| `--eda-panel-surface`, `--eda-panel-rule` | Chart surface and border |
-| `--eda-header-padding` | Space around an editorial headline |
-| `--eda-heat-low`, `--eda-heat-high`, `--eda-heat-mid`, `--eda-heat-negative` | The ramp heatmaps, region maps, and density use |
+| Variable                                                                                     | Sets                                            |
+| -------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| `--eda-headline-font`, `--eda-headline-size`, `--eda-headline-weight`, `--eda-headline-line` | Chart title type                                |
+| `--eda-headline-color`, `--eda-headline-accent`                                              | Title color and the short rule above it         |
+| `--eda-subtitle-font`, `--eda-subtitle-size`, `--eda-subtitle-color`                         | Subtitle type                                   |
+| `--eda-note-size`, `--eda-note-color`                                                        | Source note type                                |
+| `--eda-axis-tick-size`, `--eda-axis-label-size`                                              | Axis tick and title sizes, in px                |
+| `--eda-axis-tick-color`, `--eda-axis-label-color`                                            | Axis text colors                                |
+| `--eda-panel-surface`, `--eda-panel-rule`                                                    | Chart surface and border                        |
+| `--eda-header-padding`                                                                       | Space around an editorial headline              |
+| `--eda-heat-low`, `--eda-heat-high`, `--eda-heat-mid`, `--eda-heat-negative`                 | The ramp heatmaps, region maps, and density use |
 
 The package ships no font files. Point a font variable at a webfont the host
 already loads; axis layout measures text again once fonts finish loading, so
@@ -216,6 +216,10 @@ interface SavedCalculation {
   expression: string;
 }
 ```
+
+Point maps draw streets when zoomed in after the host calls `registerMapLibre(maplibregl)` with the optional `maplibre-gl` package. The default style is OpenFreeMap; pass `{ styles: { light, dark } }` to change it.
+
+Region maps can use supplied boundaries without an import: World countries, US states, and US counties load only when a map uses them. A chart saves them as `geometryAssetId: "boundary:world-countries"`. Add more with `registerBoundarySet({ id, name, source, level, coverage, keys, load })`, where `load` returns a Polygon or MultiPolygon FeatureCollection.
 
 Region maps reference a shared `GeometryAsset` by `geometryAssetId`. Each asset has an `id`, `name`, `source`, and `geometry`.
 Geometry is a WGS 84 GeoJSON FeatureCollection of Polygon or MultiPolygon features with closed rings.
@@ -448,7 +452,12 @@ whose view keeps the same charts, filters, and layout.
 import { addSourceFromRows, singleTableProject } from "exploreda/analysis";
 
 const promoted = singleTableProject({ name: "Deliveries", rows, settings });
-const added = addSourceFromRows(promoted.project, promoted.tables, "Routes", routeRows);
+const added = addSourceFromRows(
+  promoted.project,
+  promoted.tables,
+  "Routes",
+  routeRows
+);
 // Render ExplorEdaProject with added.project, added.tables, and promoted.view;
 // schemaFocus={added.sourceId} opens the diagram on the new table.
 ```

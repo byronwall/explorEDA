@@ -249,10 +249,11 @@ row country.income @wb-paths-income at=8,9,4,3
 + title="Filter by income group" xAxisLabel="" minRowHeight=16 maxRowHeight=24
 
 view "Where people lack power"
-chart map @wb-map at=0,0,8,7 ${IN_2023} color=country.region
-+ latitudeField=country.latitude longitudeField=country.longitude
-+ sizeField=without_electricity labelField=country.name pointRadius=30 pointOpacity=0.7
-+ title="People without electricity in 2023, at each capital"
+chart map @wb-map at=0,0,8,7 ${IN_2023} mode=region
++ geometryAssetId=boundary:world-countries featureKey=iso_a3
++ regionField=years.country_code aggregation=sum measureField=without_electricity
++ showRegionLabels=false outlineWidth=0.5
++ title="People without electricity in 2023, by country"
 chart markdown @wb-map-note at=8,0,4,4 title="${findings.withoutElectricity.millions} million people without power"
 + content=${note(
   `${findings.withoutElectricity.topRegion.region} holds ${findings.withoutElectricity.topRegion.millions} million.`,
