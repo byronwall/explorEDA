@@ -47,7 +47,9 @@ import {
   exportDocument,
   highlightDsl,
   exportViews,
+  formatDsl,
   formatDslDiagnostics,
+  normalizeDashboard,
   type DslChartResult,
   type DslView,
   type DslViewResult,
@@ -272,8 +274,10 @@ export {
   exportDocument,
   exportViews,
   compileViews,
+  formatDsl,
   formatDslDiagnostics,
   highlightDsl,
+  normalizeDashboard,
   parseSavedAnalysis,
   parseSavedData,
   saveAnalysisToClipboard,
@@ -289,6 +293,9 @@ export {
   hasFieldDisplayFormat,
 };
 
+// Project folders: project text, analysis files, and their data, read
+// through any file adapter.
+export * from "@/lib/project";
 export {
   listBoundarySets,
   registerBoundarySet,

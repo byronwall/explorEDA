@@ -37,13 +37,15 @@ describe("highlightDsl", () => {
     ]);
   });
 
-  it("colors continuations, lists, ranges, references, and comments", () => {
+  it("colors bodies, lists, ranges, references, and comments", () => {
     expect(
       kinds(
-        '+ where.Units=2.. mapping.0[]=Web,"#000000" colorScaleId=@channels show=true # note'
+        'row X { where.Units=2.. mapping.0[]=Web,"#000000" colorScaleId=@channels show=true } # note'
       )
     ).toEqual([
-      "continuation:+",
+      "keyword:row",
+      "text:X",
+      "operator:{",
       "key:where.Units",
       "operator:=",
       "number:2",
@@ -59,7 +61,16 @@ describe("highlightDsl", () => {
       "key:show",
       "operator:=",
       "constant:true",
+      "operator:}",
       "comment:# note",
+    ]);
+    expect(kinds("layout { 5: a b:7 }")).toEqual([
+      "keyword:layout",
+      "operator:{",
+      "number:5:",
+      "text:a",
+      "text:b:7",
+      "operator:}",
     ]);
     expect(kinds("  # a whole-line comment")).toEqual([
       "comment:# a whole-line comment",
@@ -121,7 +132,7 @@ describe("highlightDsl", () => {
   it("gives back every line exactly, so an overlay stays aligned", () => {
     const samples = [
       DSL_REFERENCE,
-      'dashboard name="Orders"\n\n  grid rowHeight=80\n\tscatter x=a y=b  \n+\n+ ',
+      'dashboard "Orders"\n\n  grid rowHeight=80\n\tscatter x=a y=b {  \n  title=T\n}\n+ ',
       'calc x=\ncalc =1\ncalc "unclosed=1\nfield "a \\" b" label=x',
       'table "a,b",c,,d where.x=..5 where.y=1..2 select.z.contains="q"',
       "x=1 =2 == @ + # +x",

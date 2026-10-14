@@ -1,0 +1,106 @@
+### VIEW: Orders, items, and their sources
+dashboard name="Orders"
+grid rowHeight=76 padding=0 markers=false
+
+field orders.amount label="Order amount" format="currency"
++ currency="USD" precision=2
+
+group @orders-by-customer-amount-by-group
++ name="Order amount by customer" groupField=customer.name
++ measureField=orders.amount aggregation=sum
+
+metric count @orders-by-customer-count at=0,0,4,2 title=Orders
++ xAxis{}= xAxis.grid=false yAxis{}= yAxis.grid=true
++ margin.top=12 margin.bottom=38 margin.left=52 yGridLines=4
+metric sum=orders.amount @orders-by-customer-amount at=4,0,4,2
++ title="Order amount" xAxis{}= xAxis.grid=false yAxis{}=
++ yAxis.grid=true margin.top=12 margin.bottom=38 margin.left=52
++ yGridLines=4
+metric avg=orders.amount @orders-by-customer-mean at=8,0,4,2
++ title="Average order amount" xAxis{}= xAxis.grid=false
++ yAxis{}= yAxis.grid=true margin.top=12 margin.bottom=38
++ margin.left=52 yGridLines=4
+hist customer.name @orders-by-customer-group at=0,2,12,5
++ title="Amount by customer" xAxis{}= xAxis.grid=false yAxis{}=
++ yAxis.grid=true margin.top=12 margin.right=16 margin.bottom=38
++ margin.left=52 yGridLines=4 binCount=unset
++ aggregateId=orders-by-customer-amount-by-group
+table orders.orderId,customer.name,orders.amount,orders.orderedAt
++ @orders-by-customer-rows at=0,7,12,5
++ title="Backing order records" field=orders.orderId xAxis{}=
++ xAxis.grid=false yAxis{}= yAxis.grid=true margin.top=12
++ margin.right=16 margin.bottom=38 margin.left=52 yGridLines=4
++ showDistributions=unset
+
+
+### VIEW: Items
+dashboard name="Items"
+grid rowHeight=76 padding=0 markers=false
+
+field items.revenue label="Item revenue" format="currency"
++ currency="USD" precision=2
+field order.amount label="Order amount" format="currency"
++ currency="USD" precision=2
+
+group @items-by-order-amount-by-group
++ name="Item revenue by product" groupField=product.name
++ measureField=items.revenue aggregation=sum
+
+metric count @items-by-order-count at=0,0,4,2 title=Items
++ xAxis{}= xAxis.grid=false yAxis{}= yAxis.grid=true
++ margin.top=12 margin.bottom=38 margin.left=52 yGridLines=4
+metric sum=items.revenue @items-by-order-amount at=4,0,4,2
++ title="Item revenue" xAxis{}= xAxis.grid=false yAxis{}=
++ yAxis.grid=true margin.top=12 margin.bottom=38 margin.left=52
++ yGridLines=4
+metric sum=order.amount @items-by-order-mean at=8,0,4,2
++ title="Order amount, once per order" xAxis{}= xAxis.grid=false
++ yAxis{}= yAxis.grid=true margin.top=12 margin.bottom=38
++ margin.left=52 yGridLines=4 entityField=order.orderId
+hist product.name @items-by-order-group at=0,2,12,5
++ title="Revenue by product" xAxis{}= xAxis.grid=false yAxis{}=
++ yAxis.grid=true margin.top=12 margin.right=16 margin.bottom=38
++ margin.left=52 yGridLines=4 binCount=unset
++ aggregateId=items-by-order-amount-by-group
+table items.itemId,items.orderId,product.name,items.revenue,order.amount
++ @items-by-order-rows at=0,7,12,5 title="Backing item records"
++ field=items.itemId xAxis{}= xAxis.grid=false yAxis{}=
++ yAxis.grid=true margin.top=12 margin.right=16 margin.bottom=38
++ margin.left=52 yGridLines=4 showDistributions=unset
+
+
+### VIEW: Customer orders
+dashboard name="Orders"
+grid rowHeight=76 padding=0 markers=false
+
+field orders.amount label="Order amount" format="currency"
++ currency="USD" precision=2
+
+group @customer-instance-amount-by-group
++ name="Order amount by customer" groupField=orders.customerId
++ measureField=orders.amount aggregation=sum
+
+metric count @customer-instance-count at=0,0,4,2 title=Orders
++ xAxis{}= xAxis.grid=false yAxis{}= yAxis.grid=true
++ margin.top=12 margin.bottom=38 margin.left=52 yGridLines=4
+metric sum=orders.amount @customer-instance-amount at=4,0,4,2
++ title="Order amount" xAxis{}= xAxis.grid=false yAxis{}=
++ yAxis.grid=true margin.top=12 margin.bottom=38 margin.left=52
++ yGridLines=4
+metric avg=orders.amount @customer-instance-mean at=8,0,4,2
++ title="Average order amount" xAxis{}= xAxis.grid=false
++ yAxis{}= yAxis.grid=true margin.top=12 margin.bottom=38
++ margin.left=52 yGridLines=4
+hist orders.customerId @customer-instance-group at=0,2,12,5
++ title="Amount by customer" xAxis{}= xAxis.grid=false yAxis{}=
++ yAxis.grid=true margin.top=12 margin.right=16 margin.bottom=38
++ margin.left=52 yGridLines=4 binCount=unset
++ aggregateId=customer-instance-amount-by-group
+table orders.orderId,orders.customerId,orders.amount,orders.orderedAt
++ @customer-instance-rows at=0,7,12,5
++ title="Backing order records" field=orders.orderId xAxis{}=
++ xAxis.grid=false yAxis{}= yAxis.grid=true margin.top=12
++ margin.right=16 margin.bottom=38 margin.left=52 yGridLines=4
++ showDistributions=unset
+
+

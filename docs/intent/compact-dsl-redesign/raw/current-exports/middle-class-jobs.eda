@@ -1,0 +1,205 @@
+### VIEW: The changing nature of middle-class jobs
+dashboard name="Middle-class jobs"
+grid rowHeight=76 padding=0 markers=false
+
+chart composition @jobs-composition at=0,0,12,10
++ title="The changing nature of middle-class jobs" xAxis{}=
++ xAxis.grid=false yAxis{}= yAxis.grid=true yGridLines=4
++ composition.artboard.height=704 composition.elements[]=
++ composition.elements.0.id=title-1
++ composition.elements.0.kind=text
++ composition.elements.0.role=title
++ composition.elements.0.name=Title
++ composition.elements.0.text="The Changing Nature of Middle-Class Jobs"
++ composition.elements.0.x=32 composition.elements.0.y=26
++ composition.elements.0.width=896
++ composition.elements.0.fontSize=26
++ composition.elements.0.fontWeight=700
++ composition.elements.0.color="#1f2328"
++ composition.elements.1.id=subtitle-1
++ composition.elements.1.kind=text
++ composition.elements.1.role=subtitle
++ composition.elements.1.name=Subtitle
++ composition.elements.1.text="Jobs per 1,000 middle-class jobs in 1980 and 2012, by occupation. Fewer are now in production work held mostly by men; a greater share are in occupations more open to women. Each label gives the group's change."
++ composition.elements.1.x=32 composition.elements.1.y=62
++ composition.elements.1.width=896
++ composition.elements.1.fontSize=14
++ composition.elements.1.fontWeight=400
++ composition.elements.1.color="#3c4043"
++ composition.elements.2.id=legend-1
++ composition.elements.2.kind=legend
++ composition.elements.2.name="Gender key"
++ composition.elements.2.x=620 composition.elements.2.y=130
++ composition.elements.2.unitId=unit-1
++ composition.elements.2.markId=mark-1
++ composition.elements.2.scaleId=value-1
++ composition.elements.2.direction=row
++ composition.elements.2.fontSize=10
++ composition.elements.2.color="#1f2328"
++ composition.elements.3.id=unit-1
++ composition.elements.3.kind=unit
++ composition.elements.3.name="Occupation groups"
++ composition.elements.3.x=56 composition.elements.3.y=176
++ composition.elements.3.frame.width=120
++ composition.elements.3.frame.height=180
++ composition.elements.3.label.show=true
++ composition.elements.3.label.width=0
++ composition.elements.3.label.fontSize=11
++ composition.elements.3.label.valueCalcId=calc-2
++ composition.elements.3.label.valueSigns.positive.prefix="+"
++ composition.elements.3.label.valueSigns.positive.suffix=" jobs"
++ composition.elements.3.label.valueSigns.positive.color="#1f2328"
++ composition.elements.3.label.valueSigns.negative.prefix=−
++ composition.elements.3.label.valueSigns.negative.suffix=" jobs"
++ composition.elements.3.label.valueSigns.negative.color="#1f2328"
++ composition.elements.3.axis=true
++ composition.elements.3.marks[]=
++ composition.elements.3.marks.0.type=path
++ composition.elements.3.marks.0.id=mark-1
++ composition.elements.3.marks.0.name=Occupations
++ composition.elements.3.marks.0.xScaleId=n-1
++ composition.elements.3.marks.0.yScaleId=n-2
++ composition.elements.3.marks.0.orderField=Year
++ composition.elements.3.marks.0.stroke="#1f2328"
++ composition.elements.3.marks.0.strokeWidth=1.5
++ composition.elements.3.marks.0.seriesField=Occupation
++ composition.elements.3.marks.0.valueField="Women minus men"
++ composition.elements.3.marks.0.valueScaleId=value-1
++ composition.elements.3.marks.1.type=point
++ composition.elements.3.marks.1.id=mark-2
++ composition.elements.3.marks.1.name=Ends
++ composition.elements.3.marks.1.xScaleId=n-1
++ composition.elements.3.marks.1.yScaleId=n-2
++ composition.elements.3.marks.1.orderField=Year
++ composition.elements.3.marks.1.radius=2.5
++ composition.elements.3.marks.1.fill="#1f2328"
++ composition.elements.3.marks.1.labelEvery=0
++ composition.elements.3.marks.1.valueField="Women minus men"
++ composition.elements.3.marks.1.valueScaleId=value-1
++ composition.elements.3.repeat.field=Group
++ composition.elements.3.repeat.arrangement=grid
++ composition.elements.3.repeat.columns=5
++ composition.elements.3.repeat.gap=46
++ composition.elements.3.repeat.order=value
++ composition.elements.3.repeat.orderCalcId=calc-1
++ composition.elements.3.repeat.direction=asc
++ composition.elements.3.repeat.limit=10
++ composition.elements.4.id=note-1
++ composition.elements.4.kind=annotation
++ composition.elements.4.name=Nurses
++ composition.elements.4.text="Registered\nnurses"
++ composition.elements.4.x=-62 composition.elements.4.y=-46
++ composition.elements.4.anchor.kind=frame
++ composition.elements.4.anchor.unitId=unit-1
++ composition.elements.4.anchor.instanceKey=Professionals
++ composition.elements.4.anchor.fx=0.5
++ composition.elements.4.anchor.fy=0.656
++ composition.elements.4.fontSize=11
++ composition.elements.4.color="#1f2328"
++ composition.elements.4.leader=true
++ composition.elements.5.id=note-2
++ composition.elements.5.kind=annotation
++ composition.elements.5.name="Health technologists"
++ composition.elements.5.text="Health\ntechnologists"
++ composition.elements.5.x=-30 composition.elements.5.y=-60
++ composition.elements.5.anchor.kind=frame
++ composition.elements.5.anchor.unitId=unit-1
++ composition.elements.5.anchor.instanceKey=Technicians
++ composition.elements.5.anchor.fx=0.5
++ composition.elements.5.anchor.fy=0.829
++ composition.elements.5.fontSize=11
++ composition.elements.5.color="#1f2328"
++ composition.elements.5.leader=true
++ composition.elements.6.id=note-3
++ composition.elements.6.kind=annotation
++ composition.elements.6.name=Police
++ composition.elements.6.text="Police and\ndetectives"
++ composition.elements.6.x=-20 composition.elements.6.y=-52
++ composition.elements.6.anchor.kind=frame
++ composition.elements.6.anchor.unitId=unit-1
++ composition.elements.6.anchor.instanceKey="Police, fire, military"
++ composition.elements.6.anchor.fx=0.5
++ composition.elements.6.anchor.fy=0.812
++ composition.elements.6.fontSize=11
++ composition.elements.6.color="#1f2328"
++ composition.elements.6.leader=true
++ composition.elements.7.id=note-4
++ composition.elements.7.kind=annotation
++ composition.elements.7.name=Secretaries
++ composition.elements.7.text=Secretaries
++ composition.elements.7.x=-30 composition.elements.7.y=-36
++ composition.elements.7.anchor.kind=frame
++ composition.elements.7.anchor.unitId=unit-1
++ composition.elements.7.anchor.instanceKey="Admin support"
++ composition.elements.7.anchor.fx=0.5
++ composition.elements.7.anchor.fy=0.696
++ composition.elements.7.fontSize=11
++ composition.elements.7.color="#1f2328"
++ composition.elements.7.leader=true
++ composition.elements.8.id=note-5
++ composition.elements.8.kind=annotation
++ composition.elements.8.name="Production supervisors"
++ composition.elements.8.text="Production\nsupervisors"
++ composition.elements.8.x=30 composition.elements.8.y=-50
++ composition.elements.8.anchor.kind=frame
++ composition.elements.8.anchor.unitId=unit-1
++ composition.elements.8.anchor.instanceKey="Skilled production"
++ composition.elements.8.anchor.fx=0.4
++ composition.elements.8.anchor.fy=0.715
++ composition.elements.8.fontSize=11
++ composition.elements.8.color="#1f2328"
++ composition.elements.8.leader=true
++ composition.elements.9.id=note-6
++ composition.elements.9.kind=text
++ composition.elements.9.role=note
++ composition.elements.9.name=Note
++ composition.elements.9.text="Illustrative values read approximately from Gregor Aisch and Robert Gebeloff's graphic for The New York Times (2015); middle-class jobs paid $40,000 to $80,000 in 2014 dollars. Unnamed lines are other occupations in each group."
++ composition.elements.9.x=32 composition.elements.9.y=668
++ composition.elements.9.width=896
++ composition.elements.9.fontSize=10
++ composition.elements.9.fontWeight=400
++ composition.elements.9.color="#5f6368" composition.scales[]=
++ composition.scales.0.id=n-1 composition.scales.0.kind=numeric
++ composition.scales.0.name=Year composition.scales.0.field=Year
++ composition.scales.0.domain=shared
++ composition.scales.0.zero=false
++ composition.scales.0.nice=false
++ composition.scales.0.ticks=ends composition.scales.1.id=n-2
++ composition.scales.1.kind=numeric
++ composition.scales.1.name="Jobs per 1,000 middle-class jobs"
++ composition.scales.1.field="Jobs per 1000"
++ composition.scales.1.domain=shared
++ composition.scales.1.zero=true composition.scales.1.nice=false
++ composition.scales.1.min=0 composition.scales.1.max=85
++ composition.scales.2.id=value-1
++ composition.scales.2.kind=value
++ composition.scales.2.name="Share of women minus share of men, points"
++ composition.scales.2.domain=shared
++ composition.scales.2.transform=linear
++ composition.scales.2.colors[]="#1a8fd0","#e3173b"
++ composition.scales.2.center="#b9b9b9"
++ composition.scales.2.max=100 composition.calculations[]=
++ composition.calculations.0.id=calc-1
++ composition.calculations.0.name="Group order"
++ composition.calculations.0.aggregation=max
++ composition.calculations.0.field="Group order"
++ composition.calculations.0.population=repeat
++ composition.calculations.0.filters=ignore
++ composition.calculations.1.id=calc-2
++ composition.calculations.1.name="Change in jobs"
++ composition.calculations.1.aggregation=max
++ composition.calculations.1.field="Group change"
++ composition.calculations.1.population=repeat
++ composition.calculations.1.filters=ignore
+row Group @jobs-groups at=0,10,6,5 title="Rows by group"
++ xAxis{}= xAxis.grid=true yAxis{}= yAxis.grid=false
++ margin.top=16 margin.right=24 margin.bottom=44 margin.left=62
++ xAxisLabel=Records yGridLines=4 minRowHeight=22
++ maxRowHeight=36
+hist "Women share" @jobs-share at=6,10,6,5
++ title="Share of women" xAxis{}= xAxis.grid=false yAxis{}=
++ yAxis.grid=true margin.top=16 margin.right=24 margin.bottom=44
++ margin.left=62 xAxisLabel="Women share" yAxisLabel=Records
++ yGridLines=4 binCount=20
+
+

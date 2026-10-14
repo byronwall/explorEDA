@@ -1,0 +1,58 @@
+project @shop
+
+source @customers key=customerId path=data/customers.csv {
+  field customerId string
+  field name string
+  field region string
+  field joinedAt Joined date
+}
+
+source @orders key=orderId path=data/orders.csv {
+  field orderId string
+  field customerId string
+  field channel string
+  field orderedAt Ordered date
+  field amount number
+}
+
+source @items key=itemId path=data/items.csv {
+  field itemId string
+  field orderId string
+  field productId string
+  field quantity number
+  field revenue number
+}
+
+source @products key=productId path=data/products.csv {
+  field productId string
+  field name Product string
+  field category string
+  field price number
+}
+
+relate @order-customer orders.customerId -> customers.customerId
+relate @item-order items.orderId -> orders.orderId
+relate @item-product items.productId -> products.productId
+
+query @order-lines "Orders with customers" glyph=◆ {
+  source orders
+  lookup customer via=order-customer
+}
+
+query @item-lines "Items with orders and products" glyph=◇ {
+  source items
+  lookup order via=item-order
+  lookup product via=item-product
+  lookup customer via=order-customer on=order.customerId
+}
+
+query @customer-orders "One customer's orders" glyph=● {
+  source orders
+  filter @chosen orders.customerId = $customer
+  filter @after orders.orderedAt >= $from
+  filter @before orders.orderedAt <= $until
+}
+
+param @customer string required pick=customers.name
+param @from date required
+param @until date required

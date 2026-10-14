@@ -1,6 +1,6 @@
 import { readFileSync } from "fs";
 import path from "path";
-import type { Alias, Plugin } from "vite";
+import { normalizePath, type Alias, type Plugin } from "vite";
 
 const demoSrc = path.resolve(__dirname, "./src");
 const libraryDir = path.resolve(__dirname, "../../packages/explorEDA");
@@ -30,7 +30,15 @@ export function exploredaSource(): Plugin {
     transform(code, id) {
       // The package loads its built worker file; from source, load the
       // worker module itself.
-      if (!id.startsWith(path.join(librarySrc, "lib/analysis/"))) return null;
+      // IDs and importers can arrive with either slash on Windows; compare
+      // normalized paths.
+      if (
+        !normalizePath(id).startsWith(
+          normalizePath(path.join(librarySrc, "lib/analysis/"))
+        )
+      ) {
+        return null;
+      }
       return code.replace('"./analysis-worker.js"', '"./analysisWorker.ts"');
     },
   };
@@ -42,7 +50,11 @@ export const sourceAlias: Alias[] = [
     find: /^@\/(.*)$/,
     replacement: "$1",
     customResolver(source, importer) {
-      const root = importer?.startsWith(librarySrc) ? librarySrc : demoSrc;
+      const root =
+        importer &&
+        normalizePath(importer).startsWith(normalizePath(librarySrc))
+          ? librarySrc
+          : demoSrc;
       return this.resolve(path.join(root, source), importer, {
         skipSelf: true,
       });

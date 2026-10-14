@@ -17,6 +17,8 @@ export const FLOWS = {
   "flow:projects": "Join tables in a project",
   "flow:export": "Export charts and data",
   "flow:host-embedding": "Embed the workspace in an app",
+  "flow:project-folders": "Work in a project folder with npx exploreda",
+  "flow:team-server": "Share projects with a team on exploreda server",
 } as const;
 
 export const SURFACES = {

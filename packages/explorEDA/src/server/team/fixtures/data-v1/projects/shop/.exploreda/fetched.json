@@ -1,0 +1,7 @@
+{
+  "data/uploaded.csv": {
+    "url": "https://reports.example.com/targets.csv",
+    "fetchedAt": "2026-10-13T01:15:00.000Z",
+    "bytes": 32
+  }
+}

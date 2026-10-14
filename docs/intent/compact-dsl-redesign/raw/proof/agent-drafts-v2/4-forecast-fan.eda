@@ -1,0 +1,34 @@
+dashboard "Forecast fan"
+composition @fan height=540 {
+  scale numeric Year
+  scale numeric Central domain=instance
+  measure last(Central) orderField=Year name=latest
+  title "Two measures, three years ahead" at=32,24
+  subtitle "Central projection with 20% to 80% probability bands" at=32,56
+  footnote "Bands show the spread of outcomes around the central path." at=32,516
+  unit Measures at=40,110 size=380x300 axisTitles.y=Percent {
+    repeat Measure columns=2 gap=72
+    band "P10 to P90" x=Year y=Central orderField=Year lowerField=P10 upperField=P90 fill=#1f4e8c opacity=.12
+    band "P20 to P80" x=Year y=Central orderField=Year lowerField=P20 upperField=P80 fill=#1f4e8c opacity=.16
+    band "P30 to P70" x=Year y=Central orderField=Year lowerField=P30 upperField=P70 fill=#1f4e8c opacity=.20
+    band "P40 to P60" x=Year y=Central orderField=Year lowerField=P40 upperField=P60 fill=#1f4e8c opacity=.26
+    path Central x=Year y=Central orderField=Year
+    label value=latest
+  }
+  rule "Projection" at=0,0 unit=Measures axis=x value=2025 shade=after
+  rule "2%" at=0,0 unit=Measures axis=y value=2 repeats="GDP growth"
+  legend Key at=40,440 unit=Measures mark=Central {
+    item "Central projection" mark=Central
+    item "80% of outcomes" mark="P10 to P90"
+    item "60% of outcomes" mark="P20 to P80"
+    item "40% of outcomes" mark="P30 to P70"
+    item "20% of outcomes" mark="P40 to P60"
+  }
+}
+line @central x=Year y=Central
+row Kind
+
+layout {
+  6: fan
+  4: central:8 Kind:4
+}

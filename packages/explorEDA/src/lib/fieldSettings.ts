@@ -206,6 +206,26 @@ export function hasFieldDisplayFormat(settings: FieldSettings = {}) {
   );
 }
 
+/**
+ * A UTC timestamp as YYYY-MM-DD, with HH:MM (and seconds or milliseconds when
+ * present) only when it is not midnight.
+ */
+export function formatTimestamp(time: number): string {
+  const iso = new Date(time).toISOString();
+  const date = iso.slice(0, 10);
+  if (time % 86_400_000 === 0) {
+    return date;
+  }
+  const ms = iso.slice(19, 23);
+  const clock =
+    ms !== ".000"
+      ? iso.slice(11, 23)
+      : iso.slice(17, 19) !== "00"
+        ? iso.slice(11, 19)
+        : iso.slice(11, 16);
+  return `${date} ${clock}`;
+}
+
 export function formatFieldValue(
   field: string,
   value: datum,
@@ -238,6 +258,16 @@ export function formatFieldValue(
       return settings.unit ? `${text} ${settings.unit}` : text;
     }
     return String(value);
+  }
+
+  // Converted dates are stored as ISO timestamps. Show them as the date, and
+  // the time only when there is one.
+  if (format === "auto" && settings.type === "datetime") {
+    const time = timestampOf(value);
+    if (time !== undefined) {
+      const text = formatTimestamp(time);
+      return settings.unit ? `${text} ${settings.unit}` : text;
+    }
   }
 
   const numberValue =
