@@ -16,6 +16,11 @@ disk. `npx exploreda --example` opens a sample project. See
 [Project folders](https://exploreda.dev/docs/project-folders) for the folder
 layout and the project text reference.
 
+`npx exploreda server --data <folder>` runs the same projects for a team, with
+author and viewer accounts, file uploads and URL sources. The `docker/` folder
+in the repository has a Compose file for it. See
+[Team server](https://exploreda.dev/docs/team-server).
+
 ## Embed the workspace
 
 ```tsx

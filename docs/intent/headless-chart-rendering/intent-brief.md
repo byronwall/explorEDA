@@ -10,7 +10,7 @@ last_updated: "2026-10-11"
 
 ## My read
 
-explorEDA should eventually be able to produce a chart image from saved state alone. That means a dataset plus chart settings, with no browser tab that has loaded the workspace, initialized stores, and mounted the chart. This came up while shaping [chart image export](../analysis-export/intent-brief.md). "Convert the whole report to PPTX" is out of scope there, but the capability underneath it matters: render any chart to PNG from state.
+explorEDA should eventually be able to produce a chart image from saved state alone. That means a dataset plus chart settings, with no browser tab that has loaded the workspace, initialized stores, and mounted the chart. This came up while shaping chart image export (now [shipped](../../../apps/demo/src/docs/pages/export.mdx)). "Convert the whole report to PPTX" is out of scope there, but the capability underneath it matters: render any chart to PNG from state.
 
 This is a seed, not a commitment. It captures the need so the export work does not quietly close it off.
 

@@ -12,7 +12,7 @@ These outcomes come from Byron’s direct follow-up. Editorial styling and the s
 | Durable editorial chart styling (completed) | Delivered as workspace themes; see the package README's [Themes and styling](../../../packages/explorEDA/README.md#themes-and-styling). |
 | Edit chart features in place (completed) | Delivered for titles, axis titles, and axis ranges; see [UI defaults](../../ui-defaults.md#popovers-and-dialogs). Remaining editors are Product Grid tasks. |
 | Scatter plot matrix (completed) | Delivered as the `scatter-matrix` view; see the [feature inventory](../../application-feature-inventory.md#scatter-matrix). |
-| [Chart image export](../analysis-export/intent-brief.md) | Copy or download any chart as a PNG matching the screen; whole-report export is out of scope. |
+| Chart image export (completed) | Delivered: copy or download any chart as a PNG; see [Export](../../../apps/demo/src/docs/pages/export.mdx). Whole-report export is out of scope. |
 
 The editing initiative links to axis-domain controls for numerical meaning. Styling owns visual choices and subtitle presentation.
 
@@ -31,7 +31,7 @@ Time is important and belongs in a second pass across these workflows. Lasso and
 Named comparisons have low current interest. Extra metrics, derived-output reuse, and filter-free templates remain unproven seeds.
 Keep correctness and restore checks within the selected journeys instead of replacing the priorities with a separate broad verification project.
 
-[Chart image export](../analysis-export/shape-brief.md) is shaped: one chart, Copy or Download as PNG, every family, plus a public function. Compositions can already copy a PNG. Whole-report output is out of scope; [headless chart rendering](../headless-chart-rendering/intent-brief.md) is a separate seed. No implementation order is implied.
+Chart image export shipped and [retired](../../application-feature-inventory.md#initiatives-retired-2026-10-13) on 2026-10-13. Whole-report output is out of scope; [headless chart rendering](../headless-chart-rendering/intent-brief.md) is a separate seed.
 The [annotated product feedback](resources/product-feedback-2026-10-06.md) records the decisions and uncertainty.
 
 ## Current gaps worth evaluating
@@ -39,10 +39,10 @@ The [annotated product feedback](resources/product-feedback-2026-10-06.md) recor
 | New intent | Expand when |
 | --- | --- |
 | [Agreement across charts, selections, and saved state](../current-analysis-trust/intent-brief.md) | Expand only when a fixture exposes disagreement, a restore changes the result, or a named workload misses an agreed response target. |
-| [Rank a measure in horizontal bars](../horizontal-metric-bars/intent-brief.md) | Expand to series or horizontal stacks when the same ranking task requires comparing subgroup contributions. Do not add them solely for chart-menu symmetry. |
-| [Targets, events, and supplied intervals](../reference-marks/intent-brief.md) | Expand after one fixed target is useful and restores correctly. Add supplied intervals only when a real dataset has lower/upper fields. |
+| Rank a measure in horizontal bars ([delivered](../../application-feature-inventory.md#initiatives-retired-2026-10-13)) | Expand to series or horizontal stacks when the same ranking task requires comparing subgroup contributions. Do not add them solely for chart-menu symmetry. |
+| Targets, events, and supplied intervals ([delivered](../../application-feature-inventory.md#initiatives-retired-2026-10-13) as chart annotations) | Expand to freehand, automatic layout, or other projections only for a concrete authoring case. |
 | [Discover field relationships, then open scatter](../relationship-discovery/intent-brief.md) | Expand when repeated analyses involve choosing among many numeric pairs. Add rank correlation only when monotonic nonlinear relationships make Pearson misleading for the task. |
-| [Set and reset chart domains without filtering rows](../axis-domain-controls/intent-brief.md) | Expand when an analysis repeatedly needs manual bounds, display-only zoom, or positive data spanning orders of magnitude. |
+| Set and reset chart domains without filtering rows ([delivered](../../application-feature-inventory.md#initiatives-retired-2026-10-13)) | Expand when an analysis repeatedly needs manual bounds, display-only zoom, or positive data spanning orders of magnitude. |
 | [Select exact category pairs and facet-local regions](../precise-composite-selection/intent-brief.md) | Expand when a real comparison requires separated cell pairs or selecting one facet without matching the same coordinates elsewhere. |
 | Filter a workspace without a chart (completed) | Delivered as workspace filters; see the [feature inventory](../../application-feature-inventory.md#filter-representations). Named segments, filters across saved views, and promotion from Rows are a Product Grid task, as is legend hide/isolate. |
 | [Step through periods and inspect rolling measures](../calendar-period-analysis/intent-brief.md) | Expand when a real analysis repeatedly compares adjacent periods or needs smoothing while retaining exact source inspection. |
@@ -57,8 +57,8 @@ The [annotated product feedback](resources/product-feedback-2026-10-06.md) recor
 | [Find missing values and missing observations](../missingness-and-expected-records/intent-brief.md) | Expand when field summaries hide a recurring pattern, or a real source includes a known expected sampling plan or key catalogue. |
 | [Use one analytical result as another view’s input](../reusable-analysis-outputs/intent-brief.md) | Expand when the same exported result is repeatedly reused, or a second view needs an analytical output that cannot be expressed over the existing source. |
 | [Complete saved analyses and optional templates](../saved-view-templates/intent-brief.md) | Expand when duplicated views repeatedly require clearing incidental selections, or the same arrangement must be reused against another compatible source. |
-| [Show parts of a whole and cumulative contributions](../composition-and-contribution/intent-brief.md) | Expand donut only when a compact bounded composition is preferable to a bar. Expand waterfall when users need to explain an ordered net change. |
-| [Explore nested categories and their totals](../hierarchy-analysis/intent-brief.md) | Expand when a dataset has several meaningful category levels and flat rankings make the parent-child relationship hard to inspect. |
+| Show parts of a whole and cumulative contributions ([delivered](../../application-feature-inventory.md#initiatives-retired-2026-10-13) as waterfall and donut) | Expand donut only when a compact bounded composition is preferable to a bar. Expand waterfall when users need to explain an ordered net change. |
+| Explore nested categories and their totals ([delivered](../../application-feature-inventory.md#initiatives-retired-2026-10-13) as the hierarchy view) | Expand when a dataset has several meaningful category levels and flat rankings make the parent-child relationship hard to inspect. |
 | [Explore explicit links and edge-list flows](../network-and-edge-flow/intent-brief.md) | Expand when actual data arrives as edges, or a user needs neighbors and cycles that cannot be represented honestly as ordered stages. |
 | [Funnels, retention, and interval schedules](../domain-analysis-views/intent-brief.md) | Expand one candidate when Byron has repeated funnel, cohort, or schedule questions that require manual preparation outside explorEDA. |
 | [Scientific overlays and multivariate discovery](../scientific-multivariate-analysis/intent-brief.md) | Expand when a concrete measurement, diagnostic, or multivariate task cannot be answered with the current scatter tools. Require independent numerical references before implementation. |
@@ -73,7 +73,7 @@ Do not recreate Heatmap, Map, Calendar, Metric Card, Sankey, ECDF, grouped verti
 Advanced scatter and DSL recommendations are now implemented in source. Saved-view tabs, persistence, history, local restrictions, and date presets also exist.
 Runtime agreement and gesture-level history behavior still need direct proof where the reports could not supply it.
 
-The remaining complete chart catalogue stays with [chart documentation](../chart-and-rendering-docs/intent-brief.md).
+Every chart type now has a page in the [docs site](../../../apps/demo/src/docs/pages/).
 Lookups are delivered as [related tables](../../../packages/explorEDA/README.md#related-tables).
 Task navigation, composition, and agents keep their current owners. Child briefs link those owners where useful.
 

@@ -55,7 +55,7 @@
     "title": "Generalize metric bars across orientations and series",
     "disposition": "partial",
     "current_assessment": "Vertical grouped/stacked/percentage modes exist; horizontal Row remains count-based.",
-    "intent": "../horizontal-metric-bars/intent-brief.md",
+    "intent": "retired 2026-10-13: ../../../application-feature-inventory.md#initiatives-retired-2026-10-13",
     "evidence_revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
     "evidence_scope": "Current source inspection and current chart guide; no fresh browser test"
   },
@@ -115,7 +115,7 @@
     "title": "Add reference rules, intervals, and annotations",
     "disposition": "gap",
     "current_assessment": "Shared saved reference lines, bands, and annotations remain absent from inspected settings.",
-    "intent": "../reference-marks/intent-brief.md",
+    "intent": "retired 2026-10-13: ../../../application-feature-inventory.md#initiatives-retired-2026-10-13",
     "evidence_revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
     "evidence_scope": "Current source inspection and current chart guide; no fresh browser test"
   },
@@ -187,7 +187,7 @@
     "title": "Complete axis-domain controls",
     "disposition": "gap",
     "current_assessment": "Common numerical controls remain linear/symlog; ECDF separately implements positive-value log. Common true-log and domain/reset controls remain candidates.",
-    "intent": "../axis-domain-controls/intent-brief.md",
+    "intent": "retired 2026-10-13: ../../../application-feature-inventory.md#initiatives-retired-2026-10-13",
     "evidence_revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
     "evidence_scope": "Current source inspection and current chart guide; no fresh browser test"
   },
@@ -207,7 +207,7 @@
     "title": "Familiar composition and contribution presets",
     "disposition": "seed",
     "current_assessment": "Donut and waterfall remain conditional presentation additions.",
-    "intent": "../composition-and-contribution/intent-brief.md",
+    "intent": "retired 2026-10-13: ../../../application-feature-inventory.md#initiatives-retired-2026-10-13",
     "evidence_revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
     "evidence_scope": "Current source inspection and current chart guide; no fresh browser test"
   },
@@ -243,7 +243,7 @@
     "source_id": "CHART-09",
     "title": "Explore nested categories and their totals",
     "disposition": "seed",
-    "intent": "../hierarchy-analysis/intent-brief.md",
+    "intent": "retired 2026-10-13: ../../../application-feature-inventory.md#initiatives-retired-2026-10-13",
     "current_assessment": "The registry has no hierarchy view. Pivot accepts multiple row fields; facets support one- or two-field repetition. Those are reusable entry points for a small hierarchy proof, not evidence of complete hierarchy totals and navigation.",
     "evidence_revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927"
   },
@@ -313,7 +313,7 @@
     "title": "Task-led chart pages and shared rendering guide",
     "disposition": "existing-owner",
     "current_assessment": "Two chart pages and rendering docs are started. Complete-catalogue work remains in its existing initiative. New intent capture does not duplicate that ownership.",
-    "existing_intent": "../chart-and-rendering-docs/intent-brief.md"
+    "existing_intent": "retired 2026-10-13: ../../../application-feature-inventory.md#initiatives-retired-2026-10-13"
   },
   {
     "source": "pro-gap-register",
@@ -344,6 +344,6 @@
     "disposition": "reconciled",
     "current_assessment": "First pass: editorial styling, direct editing, scatter matrix, table usability. Time second-pass. Named comparisons low interest. Unclear seeds retain unconfirmed demand.",
     "feedback": "product-feedback-2026-10-06.json",
-    "new_intent": "../analysis-export/intent-brief.md"
+    "new_intent": "retired 2026-10-13: ../../../application-feature-inventory.md#initiatives-retired-2026-10-13"
   }
 ]
