@@ -43,7 +43,7 @@ pnpm --filter exploreda check-types
 pnpm dev:agent
 ```
 
-`pnpm dev:agent` starts this checkout's demo server in the background, installs packages first in a fresh worktree, waits until it answers, and prints the URL. Each worktree gets its own port, so parallel sessions don't collide. Run it again to get the URL; `pnpm dev:agent --stop` stops it. The server log is `tmp/dev-server.log`. The browser pane's `preview_start` reads the main checkout's launch config, so in a worktree `navigate` to the printed URL instead.
+`pnpm dev:agent` starts this checkout's demo server in the background, installs packages first in a fresh worktree, waits until it answers, and prints the URL. Each worktree gets its own port, so parallel sessions don't collide. Run it again to get the URL; `pnpm dev:agent --stop` stops it, and `--stop-all` stops every worktree's server. A server exits by itself after 30 minutes without a request (`EXPLOREDA_DEV_IDLE_MINUTES`, 0 to keep it up), so run the command again after a break instead of reusing an old URL. Stop yours when a session ends: forgotten servers from parallel sessions once ran the machine out of memory. The server log is `tmp/dev-server.log`. The browser pane's `preview_start` reads the main checkout's launch config, so in a worktree `navigate` to the printed URL instead.
 
 ```bash
 pnpm shot /examples/shop-operations --name orders --selector '.react-grid-item:has-text("Order value by category")'
