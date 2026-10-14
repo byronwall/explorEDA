@@ -1,0 +1,1838 @@
+{
+  "research_date": "2026-10-12",
+  "repository": "byronwall/explorEDA",
+  "baseline": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+  "decisions_accepted": [
+    "Ordinary click-to-filter has priority.",
+    "Alt-click and tracing access are open to redesign.",
+    "Research and proposed documentation only; Codex owns integration."
+  ],
+  "recommendations": [
+    {
+      "id": "DCI-01",
+      "disposition": "Keep",
+      "integration_disposition": "Unreviewed — Codex/Byron decides",
+      "status": "Research proposal, not accepted product decision",
+      "problem": "Configuration must not replace or delay linked selection. Source shows a narrower ordinary-point click path than the blanket prose suggests.",
+      "affected_settings": [
+        "filters",
+        "localFilters"
+      ],
+      "affected_targets": [
+        "marks",
+        "category legends",
+        "empty plot",
+        "brush"
+      ],
+      "proposed_route": "Plain unmodified click immediately uses the existing filter action; empty plot clears this chart. Never wait for a double click. Verify unsized scatter separately; preserve working bubble/category flows.",
+      "repository_anchors": [
+        {
+          "source_id": "R104",
+          "path": "packages/explorEDA/src/components/charts/ScatterPlot/ScatterSvg.tsx",
+          "symbol": "ScatterSvg",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/ScatterPlot/ScatterSvg.tsx#L408-L423",
+          "line_start": 408,
+          "line_end": 423
+        },
+        {
+          "source_id": "R135",
+          "path": "packages/explorEDA/src/components/charts/ScatterPlot/ScatterPlot.tsx",
+          "symbol": "ScatterPoints",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/ScatterPlot/ScatterPlot.tsx"
+        },
+        {
+          "source_id": "R134",
+          "path": "packages/explorEDA/src/hooks/useBrush.tsx",
+          "symbol": "useBrush",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/hooks/useBrush.tsx"
+        },
+        {
+          "source_id": "R047",
+          "path": "packages/explorEDA/src/components/charts/ColorLegend/ColorScale.tsx",
+          "symbol": "ColorScale",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/ColorLegend/ColorScale.tsx#L25-L40",
+          "line_start": 25,
+          "line_end": 40
+        },
+        {
+          "source_id": "R131",
+          "path": "packages/explorEDA/src/types/ChartTypes.ts",
+          "symbol": "BaseChartSettings",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/types/ChartTypes.ts#L98-L113",
+          "line_start": 98,
+          "line_end": 113
+        }
+      ],
+      "source_ids": [
+        "R104",
+        "R135",
+        "R134",
+        "R047",
+        "R131"
+      ],
+      "external_evidence": [],
+      "original_design": true,
+      "benefit": "Keeps the workspace’s defining analysis loop intact.",
+      "costs": [
+        "Regression coverage across renderer-specific event paths."
+      ],
+      "alternatives": [
+        "A global select-then-edit state machine is rejected."
+      ],
+      "scope_api_impact": "No saved-data change. Keep chart writes through updateChart. Distinguish table sorting, view navigation and Composition authoring from row-selection marks.",
+      "confidence": "High for priority; high static evidence, runtime unverified",
+      "missing_evidence": [
+        "No usage telemetry or user study; no local product/browser execution in this research run."
+      ],
+      "falsifiable_proof": {
+        "reject_if": [
+          "Any plain click is intentionally delayed for double-click detection.",
+          "Opening a menu or choosing Color by changes filters.",
+          "A completed drag creates a second click action."
+        ],
+        "tasks": [
+          "Compare point, bubble, category legend, hexagon and empty-plot sequences with existing tests; treat unsized-point selection as a baseline discrepancy to resolve, not a preserved behavior."
+        ]
+      },
+      "documentation_and_demo_scope": [
+        "apps/demo/src/docs/pages/filters.mdx",
+        "apps/demo/src/docs/pages/scatter.mdx",
+        "apps/demo/src/demos/examples.ts: bubble-scatter and proposed dense-chart-controls"
+      ],
+      "phase": "proof-foundation",
+      "external_evidence_role": "Documented precedents or platform constraints only; no empirical validation of the proposed explorEDA interaction.",
+      "proposal_evidence_class": "Original shaping judgment grounded in the named baseline anchors; proposed benefits remain untested."
+    },
+    {
+      "id": "DCI-02",
+      "disposition": "Fix now",
+      "integration_disposition": "Unreviewed — Codex/Byron decides",
+      "status": "Research proposal, not accepted product decision",
+      "problem": "Generic export fallback, axis menus and new object menus can compete; the axis handler is called before the panel’s Shift bypass.",
+      "affected_settings": [
+        "context menus",
+        "image export"
+      ],
+      "affected_targets": [
+        "axis labels",
+        "plot",
+        "title",
+        "table",
+        "composition"
+      ],
+      "proposed_route": "Resolve the most specific eligible semantic target once; early Shift-right-click bypass; object menu then one export section; generic export only if unhandled. Bypass only pointer-origin Shift-right-click, not keyboard-origin Shift+F10; preserve macOS Control-click as context-menu access.",
+      "repository_anchors": [
+        {
+          "source_id": "R035",
+          "path": "packages/explorEDA/src/components/PlotChartPanel.tsx",
+          "symbol": "onPanelContextMenu",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/PlotChartPanel.tsx#L605-L620",
+          "line_start": 605,
+          "line_end": 620
+        },
+        {
+          "source_id": "R036",
+          "path": "packages/explorEDA/src/components/charts/AxisFieldActions.tsx",
+          "symbol": "useAxisFieldActions",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/AxisFieldActions.tsx#L44-L59",
+          "line_start": 44,
+          "line_end": 59
+        },
+        {
+          "source_id": "R076",
+          "path": "packages/explorEDA/src/components/charts/InPlace/useTitleEditing.tsx",
+          "symbol": "useTitleEditing",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/InPlace/useTitleEditing.tsx#L26-L41",
+          "line_start": 26,
+          "line_end": 41
+        },
+        {
+          "source_id": "R051",
+          "path": "packages/explorEDA/src/components/charts/DataTable/DataTableContextMenu.tsx",
+          "symbol": "DataTableContextMenu",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/DataTable/DataTableContextMenu.tsx#L72-L87",
+          "line_start": 72,
+          "line_end": 87
+        },
+        {
+          "source_id": "R049",
+          "path": "packages/explorEDA/src/components/charts/Composition/CompositionQuickMenu.tsx",
+          "symbol": "CompositionQuickMenu",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/Composition/CompositionQuickMenu.tsx#L16-L31",
+          "line_start": 16,
+          "line_end": 31
+        },
+        {
+          "source_id": "R113",
+          "path": "packages/explorEDA/src/components/charts/export/ChartImageMenu.tsx",
+          "symbol": "ChartImageMenuSection",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/export/ChartImageMenu.tsx#L47-L62",
+          "line_start": 47,
+          "line_end": 62
+        }
+      ],
+      "source_ids": [
+        "R035",
+        "R036",
+        "R076",
+        "R051",
+        "R049",
+        "R113",
+        "E14",
+        "E20"
+      ],
+      "external_evidence": [
+        "E14",
+        "E20"
+      ],
+      "original_design": true,
+      "benefit": "Prevents duplicate menus and preserves browser access.",
+      "costs": [
+        "Cross-browser capture/bubble, keyboard anchor and portal checks."
+      ],
+      "alternatives": [
+        "Adding a blanket panel context-menu handler without delegation is rejected."
+      ],
+      "scope_api_impact": "Small event-routing seam, not a command framework. No stored state.",
+      "confidence": "High",
+      "missing_evidence": [
+        "No usage telemetry or user study; no local product/browser execution in this research run."
+      ],
+      "falsifiable_proof": {
+        "reject_if": [
+          "Two menus open.",
+          "Shift-right-click is intercepted by an explorEDA handler.",
+          "Copy/Download disappear from a chart menu."
+        ],
+        "tasks": [
+          "Open over labels, ticks, swatches, annotation handles, Canvas marks and empty plot; repeat in details dialog."
+        ]
+      },
+      "documentation_and_demo_scope": [
+        "apps/demo/src/docs/pages/in-place-editing.mdx",
+        "apps/demo/src/docs/pages/chart-settings.mdx",
+        "docs/ui-defaults.md",
+        "apps/demo/src/demos/examples.ts: dense-chart-controls"
+      ],
+      "phase": "proof-foundation",
+      "external_evidence_role": "Documented precedents or platform constraints only; no empirical validation of the proposed explorEDA interaction.",
+      "proposal_evidence_class": "Original shaping judgment grounded in the named baseline anchors; proposed benefits remain untested."
+    },
+    {
+      "id": "DCI-03",
+      "disposition": "Explore",
+      "integration_disposition": "Unreviewed — Codex/Byron decides",
+      "status": "Research proposal, not accepted product decision",
+      "problem": "A frequent encoding change takes a full settings navigation and the hit point can mislead users about scope.",
+      "affected_settings": [
+        "colorField",
+        "colorScaleId"
+      ],
+      "affected_targets": [
+        "scatter point",
+        "empty scatter plot",
+        "legend title",
+        "chart header"
+      ],
+      "proposed_route": "Right-click point → “Color by… (all points)” → searchable field picker labeled “Chart color · all facets”. A separate “This record” section contains Trace. A visible Color trigger reaches the same picker.",
+      "repository_anchors": [
+        {
+          "source_id": "R104",
+          "path": "packages/explorEDA/src/components/charts/ScatterPlot/ScatterSvg.tsx",
+          "symbol": "ScatterSvg",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/ScatterPlot/ScatterSvg.tsx#L408-L423",
+          "line_start": 408,
+          "line_end": 423
+        },
+        {
+          "source_id": "R102",
+          "path": "packages/explorEDA/src/components/charts/ScatterPlot/ScatterPlotSettingsPanel.tsx",
+          "symbol": "ScatterPlotSettingsPanel",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/ScatterPlot/ScatterPlotSettingsPanel.tsx#L21-L36",
+          "line_start": 21,
+          "line_end": 36
+        },
+        {
+          "source_id": "R034",
+          "path": "packages/explorEDA/src/components/FieldSelector.tsx",
+          "symbol": "FieldSelector",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/FieldSelector.tsx#L18-L33",
+          "line_start": 18,
+          "line_end": 33
+        },
+        {
+          "source_id": "R045",
+          "path": "packages/explorEDA/src/components/charts/ColorLegend/ChartColorLegend.tsx",
+          "symbol": "ChartColorLegend",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/ColorLegend/ChartColorLegend.tsx#L30-L45",
+          "line_start": 30,
+          "line_end": 45
+        },
+        {
+          "source_id": "R129",
+          "path": "packages/explorEDA/src/hooks/useColorScales.ts",
+          "symbol": "getOrCreateScaleForField",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/hooks/useColorScales.ts#L141-L156",
+          "line_start": 141,
+          "line_end": 156
+        },
+        {
+          "source_id": "R137",
+          "path": "packages/explorEDA/src/components/ComboBox.tsx",
+          "symbol": "ComboBox",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/ComboBox.tsx"
+        }
+      ],
+      "source_ids": [
+        "R104",
+        "R102",
+        "R034",
+        "R045",
+        "R129",
+        "E02",
+        "E03",
+        "E12",
+        "R137"
+      ],
+      "external_evidence": [
+        "E02",
+        "E03",
+        "E12"
+      ],
+      "original_design": true,
+      "benefit": "Short route without a persistent field shelf or a point-style scope mistake.",
+      "costs": [
+        "Small local editor, semantic hit resolution, compatibility and no-legend state.",
+        "ComboBox currently owns open state and portal placement; direct menu-to-search needs a small controlled presentation seam. Search must distinguish display labels from stable field IDs."
+      ],
+      "alternatives": [
+        "DCI-16: existing Data settings focused on Color; visible Color selector alone."
+      ],
+      "scope_api_impact": "Uses existing bindings and shared-scale reuse. No new saved key or dependency. First proof excludes shared palette mutation.",
+      "confidence": "Medium",
+      "missing_evidence": [
+        "No usage telemetry or user study; no local product/browser execution in this research run."
+      ],
+      "falsifiable_proof": {
+        "reject_if": [
+          "Participants expect one point to change after reading the scope label.",
+          "The no-legend case requires a full editor.",
+          "Existing selection or another chart’s binding changes."
+        ],
+        "tasks": [
+          "Assign categorical and numeric fields; clear color; repeat with an active cohort and two charts sharing a scale."
+        ]
+      },
+      "documentation_and_demo_scope": [
+        "apps/demo/src/docs/pages/scatter.mdx",
+        "apps/demo/src/docs/pages/color.mdx",
+        "apps/demo/src/docs/pages/in-place-editing.mdx",
+        "apps/demo/src/demos/examples.ts: dense-chart-controls"
+      ],
+      "phase": "first-proof",
+      "external_evidence_role": "Documented precedents or platform constraints only; no empirical validation of the proposed explorEDA interaction.",
+      "proposal_evidence_class": "Original shaping judgment grounded in the named baseline anchors; proposed benefits remain untested."
+    },
+    {
+      "id": "DCI-04",
+      "disposition": "Explore",
+      "integration_disposition": "Unreviewed — Codex/Byron decides",
+      "status": "Research proposal, not accepted product decision",
+      "problem": "Alt-click is a valuable optional configuration shortcut currently devoted to tracing; retaining it by inertia would privilege the wrong task.",
+      "affected_settings": [
+        "colorField",
+        "colorScaleId",
+        "axis settings",
+        "trace access"
+      ],
+      "affected_targets": [
+        "points",
+        "axis objects",
+        "legends",
+        "chart objects"
+      ],
+      "proposed_route": "Favor Alt/Option-click as “configure this object”; in the scatter proof it opens the same Color picker directly. Trace moves to the object menu and the existing header target browser. Compare against keeping Alt for trace and against no modifier shortcut.",
+      "repository_anchors": [
+        {
+          "source_id": "R104",
+          "path": "packages/explorEDA/src/components/charts/ScatterPlot/ScatterSvg.tsx",
+          "symbol": "ScatterSvg",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/ScatterPlot/ScatterSvg.tsx#L408-L423",
+          "line_start": 408,
+          "line_end": 423
+        },
+        {
+          "source_id": "R073",
+          "path": "packages/explorEDA/src/components/charts/InPlace/useAxisEditing.tsx",
+          "symbol": "useAxisEditing",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/InPlace/useAxisEditing.tsx#L118-L133",
+          "line_start": 118,
+          "line_end": 133
+        },
+        {
+          "source_id": "R047",
+          "path": "packages/explorEDA/src/components/charts/ColorLegend/ColorScale.tsx",
+          "symbol": "ColorScale",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/ColorLegend/ColorScale.tsx#L25-L40",
+          "line_start": 25,
+          "line_end": 40
+        },
+        {
+          "source_id": "R035",
+          "path": "packages/explorEDA/src/components/PlotChartPanel.tsx",
+          "symbol": "onPanelContextMenu",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/PlotChartPanel.tsx#L605-L620",
+          "line_start": 605,
+          "line_end": 620
+        },
+        {
+          "source_id": "R049",
+          "path": "packages/explorEDA/src/components/charts/Composition/CompositionQuickMenu.tsx",
+          "symbol": "CompositionQuickMenu",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/Composition/CompositionQuickMenu.tsx#L16-L31",
+          "line_start": 16,
+          "line_end": 31
+        }
+      ],
+      "source_ids": [
+        "R104",
+        "R073",
+        "R047",
+        "R035",
+        "R049",
+        "E15"
+      ],
+      "external_evidence": [
+        "E15"
+      ],
+      "original_design": true,
+      "benefit": "Removes a menu step for repeated edits while retaining no-filter trace access.",
+      "costs": [
+        "Relearning existing convention; OS interception; renderer-by-renderer rollout; Alt-Enter copy and tests need migration."
+      ],
+      "alternatives": [
+        "Keep Alt-click trace with visible Color control.",
+        "Make Alt-click open the shallow object menu rather than a specific editor.",
+        "Use no modifier; rely on visible controls and keyboard menus."
+      ],
+      "scope_api_impact": "Transient input semantics only. Local experimental Alt branch is not a proposal to ship mixed, undocumented meanings across charts. Production remap needs a consistent supported-target map and trace replacement first. The new Alt-drag no-op rule would remove today’s possible Alt-brush; unmodified drag remains the replacement for brushing.",
+      "confidence": "Medium; preferred hypothesis, not approval",
+      "missing_evidence": [
+        "No usage telemetry or user study; no local product/browser execution in this research run."
+      ],
+      "falsifiable_proof": {
+        "reject_if": [
+          "Alt-drag edits, traces or filters.",
+          "Users cannot find traces after remapping.",
+          "An OS-reserved Alt gesture leaves no equivalent visible path."
+        ],
+        "tasks": [
+          "Counterbalance keep/replace variants after learning; reopen after a break; trace a record, an axis and an omitted-row explanation."
+        ]
+      },
+      "documentation_and_demo_scope": [
+        "apps/demo/src/docs/pages/trace.mdx",
+        "apps/demo/src/docs/pages/scatter.mdx",
+        "apps/demo/src/docs/pages/in-place-editing.mdx",
+        "AGENTS.md",
+        "docs/ui-defaults.md",
+        "apps/demo/src/demos/examples.ts: scatter-trace and dense-chart-controls"
+      ],
+      "phase": "first-proof-experiment",
+      "external_evidence_role": "Documented precedents or platform constraints only; no empirical validation of the proposed explorEDA interaction.",
+      "proposal_evidence_class": "Original shaping judgment grounded in the named baseline anchors; proposed benefits remain untested."
+    },
+    {
+      "id": "DCI-05",
+      "disposition": "Fix now",
+      "integration_disposition": "Unreviewed — Codex/Byron decides",
+      "status": "Research proposal, not accepted product decision",
+      "problem": "Creating a color scale and changing a chart are different store mutations; chart-only cancel cannot undo a shared-scale preview.",
+      "affected_settings": [
+        "colorField",
+        "colorScaleId",
+        "colorScales",
+        "shared aggregate definitions"
+      ],
+      "affected_targets": [
+        "field picker",
+        "continuous local editor"
+      ],
+      "proposed_route": "Search/highlight makes no write. On explicit field acceptance, hold notifications before any scale creation, resolve/create scale, updateChart, then release. Continuous chart-only edits reuse useChartEdit with explicit commit/cancel boundaries.",
+      "repository_anchors": [
+        {
+          "source_id": "R129",
+          "path": "packages/explorEDA/src/hooks/useColorScales.ts",
+          "symbol": "getOrCreateScaleForField",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/hooks/useColorScales.ts#L141-L156",
+          "line_start": 141,
+          "line_end": 156
+        },
+        {
+          "source_id": "R130",
+          "path": "packages/explorEDA/src/providers/DataLayerProvider.tsx",
+          "symbol": "holdStateChanges",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/providers/DataLayerProvider.tsx#L325-L340",
+          "line_start": 325,
+          "line_end": 340
+        },
+        {
+          "source_id": "R074",
+          "path": "packages/explorEDA/src/components/charts/InPlace/useChartEdit.ts",
+          "symbol": "useChartEdit",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/InPlace/useChartEdit.ts#L12-L27",
+          "line_start": 12,
+          "line_end": 27
+        },
+        {
+          "source_id": "R130",
+          "path": "packages/explorEDA/src/providers/DataLayerProvider.tsx",
+          "symbol": "updateChart",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/providers/DataLayerProvider.tsx#L1125-L1140",
+          "line_start": 1125,
+          "line_end": 1140
+        },
+        {
+          "source_id": "R031",
+          "path": "packages/explorEDA/src/components/ChartSettingsContent.tsx",
+          "symbol": "ChartSettingsContent",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/ChartSettingsContent.tsx#L22-L37",
+          "line_start": 22,
+          "line_end": 37
+        }
+      ],
+      "source_ids": [
+        "R129",
+        "R130",
+        "R074",
+        "R031"
+      ],
+      "external_evidence": [],
+      "original_design": true,
+      "benefit": "One meaningful host checkpoint; no orphan preview scales or wrong cancellation.",
+      "costs": [
+        "Error cleanup and overlapping-edit boundaries must be explicit; scale rollback is not supplied by useChartEdit."
+      ],
+      "alternatives": [
+        "Restrict proof to existing scales, but that fails the common first-color case.",
+        "Hover preview with staged shared scales is deferred."
+      ],
+      "scope_api_impact": "Existing APIs suffice for discrete binding. If an error occurs after creation, restore changed chart keys and remove only a newly created, unreferenced scale before release. Do not replace the whole workspace snapshot or concurrent filters.",
+      "confidence": "High",
+      "missing_evidence": [
+        "No usage telemetry or user study; no local product/browser execution in this research run."
+      ],
+      "falsifiable_proof": {
+        "reject_if": [
+          "Merely browsing fields saves state.",
+          "First color assignment sends two host changes.",
+          "Escape before acceptance creates a scale.",
+          "Failure cleanup removes a scale used by another chart."
+        ],
+        "tasks": [
+          "Count onStateChange calls; compare saveToStructure before and after no-op, cancel, first field, reused field, failure and host undo."
+        ]
+      },
+      "documentation_and_demo_scope": [
+        "apps/demo/src/docs/pages/in-place-editing.mdx",
+        "apps/demo/src/docs/pages/chart-settings.mdx",
+        "apps/demo/src/demos/examples.ts: dense-chart-controls"
+      ],
+      "phase": "first-proof",
+      "external_evidence_role": "Documented precedents or platform constraints only; no empirical validation of the proposed explorEDA interaction.",
+      "proposal_evidence_class": "Original shaping judgment grounded in the named baseline anchors; proposed benefits remain untested."
+    },
+    {
+      "id": "DCI-06",
+      "disposition": "Keep",
+      "integration_disposition": "Unreviewed — Codex/Byron decides",
+      "status": "Research proposal, not accepted product decision",
+      "problem": "Axes and titles already have valuable in-place editors, but their event handling is easy to accidentally replace.",
+      "affected_settings": [
+        "title",
+        "xAxisLabel",
+        "yAxisLabel",
+        "xAxis.limits",
+        "yAxis.limits"
+      ],
+      "affected_targets": [
+        "title",
+        "axis title",
+        "numeric axis band/end grips"
+      ],
+      "proposed_route": "Keep title second-mousedown and Enter/F2 editing, axis range entry and pan/stretch. Add field replacement in an explicit axis menu item; never overload a plain mark double click.",
+      "repository_anchors": [
+        {
+          "source_id": "R076",
+          "path": "packages/explorEDA/src/components/charts/InPlace/useTitleEditing.tsx",
+          "symbol": "useTitleEditing",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/InPlace/useTitleEditing.tsx#L26-L41",
+          "line_start": 26,
+          "line_end": 41
+        },
+        {
+          "source_id": "R073",
+          "path": "packages/explorEDA/src/components/charts/InPlace/useAxisEditing.tsx",
+          "symbol": "useAxisEditing",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/InPlace/useAxisEditing.tsx#L118-L133",
+          "line_start": 118,
+          "line_end": 133
+        },
+        {
+          "source_id": "R036",
+          "path": "packages/explorEDA/src/components/charts/AxisFieldActions.tsx",
+          "symbol": "useAxisFieldActions",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/AxisFieldActions.tsx#L44-L59",
+          "line_start": 44,
+          "line_end": 59
+        },
+        {
+          "source_id": "R030",
+          "path": "packages/explorEDA/src/components/ChartGridLayout.tsx",
+          "symbol": "ChartGridLayout",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/ChartGridLayout.tsx#L44-L59",
+          "line_start": 44,
+          "line_end": 59
+        }
+      ],
+      "source_ids": [
+        "R076",
+        "R073",
+        "R036",
+        "R030",
+        "E04"
+      ],
+      "external_evidence": [
+        "E04"
+      ],
+      "original_design": false,
+      "benefit": "Builds on delivered direct manipulation without replaying layout failures.",
+      "costs": [
+        "Map ticks/text to underlying bands; maintain log validity and hidden-row markers."
+      ],
+      "alternatives": [
+        "Universal drag anywhere to zoom conflicts with brushing and is rejected."
+      ],
+      "scope_api_impact": "Use limits, never deprecated AxisSettings.min/max. Axis changes apply to all facets of the chart, not row filters.",
+      "confidence": "High",
+      "missing_evidence": [
+        "No usage telemetry or user study; no local product/browser execution in this research run."
+      ],
+      "falsifiable_proof": {
+        "reject_if": [
+          "Editing a title drags the grid.",
+          "Axis manipulation brushes or changes row counts.",
+          "A bound is silently transferred to an unrelated replacement field."
+        ],
+        "tasks": [
+          "Title in grid/details; blank bounds; invalid/log bounds; dragging cancel; field replacement with manual limits."
+        ]
+      },
+      "documentation_and_demo_scope": [
+        "apps/demo/src/docs/pages/in-place-editing.mdx",
+        "apps/demo/src/docs/pages/scales-and-axes.mdx",
+        "apps/demo/src/demos/examples.ts: bar-histogram or dense-chart-controls"
+      ],
+      "phase": "retain-and-extend",
+      "external_evidence_role": "Documented precedents or platform constraints only; no empirical validation of the proposed explorEDA interaction.",
+      "proposal_evidence_class": "Original shaping judgment grounded in the named baseline anchors; proposed benefits remain untested."
+    },
+    {
+      "id": "DCI-07",
+      "disposition": "Explore",
+      "integration_disposition": "Unreviewed — Codex/Byron decides",
+      "status": "Research proposal, not accepted product decision",
+      "problem": "A palette looks local when opened from a chart but can change several charts. ColorScaleControl already identifies sharing; strengthen that existing disclosure at the local entry point rather than claiming it is absent.",
+      "affected_settings": [
+        "colorScaleId",
+        "scale.palette",
+        "scale.mapping",
+        "scale.min/max",
+        "colorScales[].paletteId",
+        "colorScales[].reverse",
+        "colorScales[].order",
+        "colorScales[].overflow",
+        "colorScales[].midpoint",
+        "colorScales[].steps",
+        "colorScales[].transform"
+      ],
+      "affected_targets": [
+        "legend swatch",
+        "legend ramp",
+        "legend title"
+      ],
+      "proposed_route": "Keep category chip click-to-filter. Use right-click swatch → “Edit shared colors…” with scale name and affected-chart count; later evaluate an explicit “Use a separate scale for this chart” fork.",
+      "repository_anchors": [
+        {
+          "source_id": "R047",
+          "path": "packages/explorEDA/src/components/charts/ColorLegend/ColorScale.tsx",
+          "symbol": "ColorScale",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/ColorLegend/ColorScale.tsx#L25-L40",
+          "line_start": 25,
+          "line_end": 40
+        },
+        {
+          "source_id": "R114",
+          "path": "packages/explorEDA/src/components/colorScales/ColorScaleControl.tsx",
+          "symbol": "ColorScaleControl",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/colorScales/ColorScaleControl.tsx#L31-L46",
+          "line_start": 31,
+          "line_end": 46
+        },
+        {
+          "source_id": "R129",
+          "path": "packages/explorEDA/src/hooks/useColorScales.ts",
+          "symbol": "getOrCreateScaleForField",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/hooks/useColorScales.ts#L141-L156",
+          "line_start": 141,
+          "line_end": 156
+        },
+        {
+          "source_id": "R130",
+          "path": "packages/explorEDA/src/providers/DataLayerProvider.tsx",
+          "symbol": "updateChart",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/providers/DataLayerProvider.tsx#L1125-L1140",
+          "line_start": 1125,
+          "line_end": 1140
+        },
+        {
+          "source_id": "R138",
+          "path": "packages/explorEDA/src/types/ColorScaleTypes.ts",
+          "symbol": "ColorScaleType",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/types/ColorScaleTypes.ts"
+        },
+        {
+          "source_id": "R139",
+          "path": "packages/explorEDA/src/components/colorScales/ColorScaleEditor.tsx",
+          "symbol": "ColorScaleEditor",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/colorScales/ColorScaleEditor.tsx"
+        }
+      ],
+      "source_ids": [
+        "R047",
+        "R114",
+        "R129",
+        "R130",
+        "E02",
+        "E09",
+        "R138",
+        "R139"
+      ],
+      "external_evidence": [
+        "E02",
+        "E09"
+      ],
+      "original_design": true,
+      "benefit": "Makes scope visible before a shared write; preserves cross-chart color meaning.",
+      "costs": [
+        "Duplicate scales reduce consistency; shared transactions need separate snapshots."
+      ],
+      "alternatives": [
+        "Open the existing Colors panel only.",
+        "Direct single-click swatch color editing is rejected for current filter chips."
+      ],
+      "scope_api_impact": "Scale editing uses existing shared-scale API, not new per-record color fields. A fork may reuse existing scale IDs/model but needs save/restore and usage checks. Existing shared editor already offers categorical assignment/movement, numeric ramp shape and session Reset. Reuse those controls; color-ramp log fallback is not positional-axis log semantics.",
+      "confidence": "Medium",
+      "missing_evidence": [
+        "No usage telemetry or user study; no local product/browser execution in this research run."
+      ],
+      "falsifiable_proof": {
+        "reject_if": [
+          "A shared palette edit is mistaken for a chart-only edit.",
+          "Clicking a swatch stops filtering."
+        ],
+        "tasks": [
+          "Change one category across three linked charts; explain scope; undo; fork only after explicit intent."
+        ]
+      },
+      "documentation_and_demo_scope": [
+        "apps/demo/src/docs/pages/color.mdx",
+        "apps/demo/src/docs/pages/filters.mdx",
+        "apps/demo/src/demos/examples.ts: palmer-penguins"
+      ],
+      "phase": "after-proof",
+      "external_evidence_role": "Documented precedents or platform constraints only; no empirical validation of the proposed explorEDA interaction.",
+      "proposal_evidence_class": "Original shaping judgment grounded in the named baseline anchors; proposed benefits remain untested."
+    },
+    {
+      "id": "DCI-08",
+      "disposition": "Explore",
+      "integration_disposition": "Unreviewed — Codex/Byron decides",
+      "status": "Research proposal, not accepted product decision",
+      "problem": "Analytical controls are scattered across chart-specific Data panels; their shared-looking labels hide different semantics.",
+      "affected_settings": [
+        "field bindings",
+        "aggregateId",
+        "aggregation",
+        "measureField",
+        "binCount",
+        "time.interval",
+        "seriesField",
+        "seriesLayout",
+        "topN",
+        "sortBy"
+      ],
+      "affected_targets": [
+        "axis label",
+        "histogram band",
+        "metric label",
+        "series legend",
+        "chart header"
+      ],
+      "proposed_route": "Promote field replacement, measure/operation, bins/time grain, sort/Top N and split/stack as small target-specific editors. Show current metric and applicable restrictions; keep multi-field creation and named-aggregate editing in full settings until scope is explicit.",
+      "repository_anchors": [
+        {
+          "source_id": "R038",
+          "path": "packages/explorEDA/src/components/charts/BarChart/BarChartSettingsPanel.tsx",
+          "symbol": "BarChartSettingsPanel",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/BarChart/BarChartSettingsPanel.tsx#L15-L30",
+          "line_start": 15,
+          "line_end": 30
+        },
+        {
+          "source_id": "R093",
+          "path": "packages/explorEDA/src/components/charts/RowChart/RowChartSettingsPanel.tsx",
+          "symbol": "RowChartSettingsPanel",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/RowChart/RowChartSettingsPanel.tsx#L17-L32",
+          "line_start": 17,
+          "line_end": 32
+        },
+        {
+          "source_id": "R079",
+          "path": "packages/explorEDA/src/components/charts/LineChart/TimeSeriesSettingsPanel.tsx",
+          "symbol": "TimeSeriesSettingsPanel",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/LineChart/TimeSeriesSettingsPanel.tsx#L80-L95",
+          "line_start": 80,
+          "line_end": 95
+        },
+        {
+          "source_id": "R086",
+          "path": "packages/explorEDA/src/components/charts/MetricCard/MetricCardSettingsPanel.tsx",
+          "symbol": "MetricCardSettingsPanel",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/MetricCard/MetricCardSettingsPanel.tsx#L12-L27",
+          "line_start": 12,
+          "line_end": 27
+        },
+        {
+          "source_id": "R031",
+          "path": "packages/explorEDA/src/components/ChartSettingsContent.tsx",
+          "symbol": "ChartSettingsContent",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/ChartSettingsContent.tsx#L22-L37",
+          "line_start": 22,
+          "line_end": 37
+        }
+      ],
+      "source_ids": [
+        "R038",
+        "R093",
+        "R079",
+        "R086",
+        "R031",
+        "E03",
+        "E04",
+        "E08"
+      ],
+      "external_evidence": [
+        "E03",
+        "E04",
+        "E08"
+      ],
+      "original_design": false,
+      "benefit": "Targets iterative analytical changes rather than cosmetic authorship.",
+      "costs": [
+        "Different reducers/populations, incompatible stacks, removal of binding-specific filters, shared aggregates."
+      ],
+      "alternatives": [
+        "A universal “Measure” abstraction or aggregations rewrite is not justified by this task."
+      ],
+      "scope_api_impact": "Existing keys and validators; chart-local binding changes must not silently rewrite shared aggregate definitions. No inferred average stacking.",
+      "confidence": "Medium; frequency is an untested scenario hypothesis",
+      "missing_evidence": [
+        "No usage telemetry or user study; no local product/browser execution in this research run."
+      ],
+      "falsifiable_proof": {
+        "reject_if": [
+          "Changing count to sum changes the population without disclosure.",
+          "Stacking average is offered despite existing restrictions.",
+          "Field changes silently remap filters."
+        ],
+        "tasks": [
+          "Count versus revenue by region; monthly versus weekly; Top N with Other; split and percent with negative values."
+        ]
+      },
+      "documentation_and_demo_scope": [
+        "apps/demo/src/docs/pages/bar.mdx",
+        "apps/demo/src/docs/pages/line.mdx",
+        "apps/demo/src/docs/pages/chart-settings.mdx",
+        "apps/demo/src/demos/examples.ts: grouped-bars, calendar-series, distribution-discovery"
+      ],
+      "phase": "after-proof",
+      "external_evidence_role": "Documented precedents or platform constraints only; no empirical validation of the proposed explorEDA interaction.",
+      "proposal_evidence_class": "Original shaping judgment grounded in the named baseline anchors; proposed benefits remain untested."
+    },
+    {
+      "id": "DCI-09",
+      "disposition": "Explore",
+      "integration_disposition": "Unreviewed — Codex/Byron decides",
+      "status": "Research proposal, not accepted product decision",
+      "problem": "Facet headers are nearby but users can mistake editing one repeated view for editing a template.",
+      "affected_settings": [
+        "facet",
+        "annotations[].facet",
+        "composition.overrides"
+      ],
+      "affected_targets": [
+        "facet header",
+        "Composition repeat"
+      ],
+      "proposed_route": "Facet header menu offers Replace facet field, Visible facets and layout, all explicitly chart-wide. Only existing annotation panel binding or Composition visual overrides may address one repeat.",
+      "repository_anchors": [
+        {
+          "source_id": "R131",
+          "path": "packages/explorEDA/src/types/ChartTypes.ts",
+          "symbol": "BaseChartSettings",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/types/ChartTypes.ts#L98-L113",
+          "line_start": 98,
+          "line_end": 113
+        },
+        {
+          "source_id": "R117",
+          "path": "packages/explorEDA/src/components/settings/FacetSettingsTab.tsx",
+          "symbol": "FacetSettingsTab",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/settings/FacetSettingsTab.tsx#L29-L44",
+          "line_start": 29,
+          "line_end": 44
+        },
+        {
+          "source_id": "R049",
+          "path": "packages/explorEDA/src/components/charts/Composition/CompositionQuickMenu.tsx",
+          "symbol": "CompositionQuickMenu",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/Composition/CompositionQuickMenu.tsx#L16-L31",
+          "line_start": 16,
+          "line_end": 31
+        },
+        {
+          "source_id": "R136",
+          "path": "packages/explorEDA/src/components/charts/Composition/compositionTypes.ts",
+          "symbol": "CompositionDefinition",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/Composition/compositionTypes.ts"
+        }
+      ],
+      "source_ids": [
+        "R131",
+        "R117",
+        "R049",
+        "R136",
+        "E05"
+      ],
+      "external_evidence": [
+        "E05"
+      ],
+      "original_design": true,
+      "benefit": "Local access without inventing unsupported independent-facet encodings.",
+      "costs": [
+        "Long facet values, hidden panels, scope explanation."
+      ],
+      "alternatives": [
+        "Modifier-only per-facet versus all-facet switching is rejected."
+      ],
+      "scope_api_impact": "Ordinary facets retain a single chart settings object. Free scales/new per-facet bindings are outside this initiative.",
+      "confidence": "Medium",
+      "missing_evidence": [
+        "No usage telemetry or user study; no local product/browser execution in this research run."
+      ],
+      "falsifiable_proof": {
+        "reject_if": [
+          "A chart-wide encoding change is understood as one-panel-only.",
+          "Reordering moves a keyed annotation to a different group."
+        ],
+        "tasks": [
+          "Edit from one of six facets; reorder and hide repeats; compare template versus supported override."
+        ]
+      },
+      "documentation_and_demo_scope": [
+        "apps/demo/src/docs/pages/facets.mdx",
+        "apps/demo/src/docs/pages/composition.mdx",
+        "apps/demo/src/demos/examples.ts: scatter-regression, message-log"
+      ],
+      "phase": "after-proof",
+      "external_evidence_role": "Documented precedents or platform constraints only; no empirical validation of the proposed explorEDA interaction.",
+      "proposal_evidence_class": "Original shaping judgment grounded in the named baseline anchors; proposed benefits remain untested."
+    },
+    {
+      "id": "DCI-10",
+      "disposition": "Explore",
+      "integration_disposition": "Unreviewed — Codex/Byron decides",
+      "status": "Research proposal, not accepted product decision",
+      "problem": "Local actions are hidden from keyboard and touch users when attached only to a pointer coordinate.",
+      "affected_settings": [
+        "field selection",
+        "context-menu access"
+      ],
+      "affected_targets": [
+        "header Color trigger",
+        "focused chart",
+        "focused semantic object"
+      ],
+      "proposed_route": "Expose a labeled Color/Configure trigger, ordinary Enter/Space activation and Shift+F10/Menu-key object actions. Search by display label and stable field name; keep type/origin/null metadata and selection separate from query text.",
+      "repository_anchors": [
+        {
+          "source_id": "R034",
+          "path": "packages/explorEDA/src/components/FieldSelector.tsx",
+          "symbol": "FieldSelector",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/FieldSelector.tsx#L18-L33",
+          "line_start": 18,
+          "line_end": 33
+        },
+        {
+          "source_id": "R032",
+          "path": "packages/explorEDA/src/components/FieldList/FieldPicker.tsx",
+          "symbol": "FieldPicker",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/FieldList/FieldPicker.tsx#L19-L34",
+          "line_start": 19,
+          "line_end": 34
+        },
+        {
+          "source_id": "R033",
+          "path": "packages/explorEDA/src/components/FieldMetadata.tsx",
+          "symbol": "FieldMetadata",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/FieldMetadata.tsx#L107-L122",
+          "line_start": 107,
+          "line_end": 122
+        },
+        {
+          "source_id": "R035",
+          "path": "packages/explorEDA/src/components/PlotChartPanel.tsx",
+          "symbol": "onPanelContextMenu",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/PlotChartPanel.tsx#L605-L620",
+          "line_start": 605,
+          "line_end": 620
+        },
+        {
+          "source_id": "R137",
+          "path": "packages/explorEDA/src/components/ComboBox.tsx",
+          "symbol": "ComboBox",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/ComboBox.tsx"
+        }
+      ],
+      "source_ids": [
+        "R034",
+        "R032",
+        "R033",
+        "R035",
+        "E12",
+        "E13",
+        "E14",
+        "R137"
+      ],
+      "external_evidence": [
+        "E12",
+        "E13",
+        "E14"
+      ],
+      "original_design": true,
+      "benefit": "The same action can be discovered and completed without a secondary mouse button.",
+      "costs": [
+        "Roving/focus behavior and input-method composition tests; large-field list cost.",
+        "ComboBox currently owns open state and portal placement; direct menu-to-search needs a small controlled presentation seam. Search must distinguish display labels from stable field IDs."
+      ],
+      "alternatives": [
+        "Global single-letter command search is deferred; S already opens settings."
+      ],
+      "scope_api_impact": "Reuse existing ComboBox/FieldSelector presentation; verify its internals before adding search behavior. FieldPicker is multi-select and must not be dropped in unchanged for one Color field.",
+      "confidence": "High for equivalent access; medium implementation fit",
+      "missing_evidence": [
+        "No usage telemetry or user study; no local product/browser execution in this research run."
+      ],
+      "falsifiable_proof": {
+        "reject_if": [
+          "Typing a query changes a binding.",
+          "A field is only discoverable by truncated text.",
+          "Focus is lost to body or chart shortcuts fire while typing."
+        ],
+        "tasks": [
+          "Keyboard-only choose field 487 of 500, duplicate labels, calculated field, no matches and Escape; voice/AT accessible-name review."
+        ]
+      },
+      "documentation_and_demo_scope": [
+        "apps/demo/src/docs/pages/chart-settings.mdx",
+        "apps/demo/src/docs/pages/in-place-editing.mdx",
+        "apps/demo/src/demos/examples.ts: dense-chart-controls"
+      ],
+      "phase": "first-proof",
+      "external_evidence_role": "Documented precedents or platform constraints only; no empirical validation of the proposed explorEDA interaction.",
+      "proposal_evidence_class": "Original shaping judgment grounded in the named baseline anchors; proposed benefits remain untested."
+    },
+    {
+      "id": "DCI-11",
+      "disposition": "Fix now",
+      "integration_disposition": "Unreviewed — Codex/Byron decides",
+      "status": "Research proposal, not accepted product decision",
+      "problem": "A compact local editor can still cover the data, escape the viewport or fight the details dialog focus trap.",
+      "affected_settings": [
+        "transient editor state",
+        "not layout"
+      ],
+      "affected_targets": [
+        "local popover",
+        "details dialog",
+        "narrow viewport"
+      ],
+      "proposed_route": "One active editor; place beside target, then above/below, then bounded corner/bottom dock. Restore focus to invoking object or chart if gone. Close transient menus before opening the picker; use the containing details dialog as portal container.",
+      "repository_anchors": [
+        {
+          "source_id": "R035",
+          "path": "packages/explorEDA/src/components/PlotChartPanel.tsx",
+          "symbol": "onPanelContextMenu",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/PlotChartPanel.tsx#L605-L620",
+          "line_start": 605,
+          "line_end": 620
+        },
+        {
+          "source_id": "R073",
+          "path": "packages/explorEDA/src/components/charts/InPlace/useAxisEditing.tsx",
+          "symbol": "useAxisEditing",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/InPlace/useAxisEditing.tsx#L118-L133",
+          "line_start": 118,
+          "line_end": 133
+        },
+        {
+          "source_id": "R114",
+          "path": "packages/explorEDA/src/components/colorScales/ColorScaleControl.tsx",
+          "symbol": "ColorScaleControl",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/colorScales/ColorScaleControl.tsx#L31-L46",
+          "line_start": 31,
+          "line_end": 46
+        },
+        {
+          "source_id": "R030",
+          "path": "packages/explorEDA/src/components/ChartGridLayout.tsx",
+          "symbol": "ChartGridLayout",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/ChartGridLayout.tsx#L44-L59",
+          "line_start": 44,
+          "line_end": 59
+        },
+        {
+          "source_id": "R137",
+          "path": "packages/explorEDA/src/components/ComboBox.tsx",
+          "symbol": "ComboBox",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/ComboBox.tsx"
+        }
+      ],
+      "source_ids": [
+        "R035",
+        "R073",
+        "R114",
+        "R030",
+        "E12",
+        "E16",
+        "R137"
+      ],
+      "external_evidence": [
+        "E12",
+        "E16"
+      ],
+      "original_design": true,
+      "benefit": "Keeps the chart’s owner, active filters and final action reachable.",
+      "costs": [
+        "783/390 layouts and software keyboard need real testing; desktop support is not magically mobile support.",
+        "ComboBox currently owns open state and portal placement; direct menu-to-search needs a small controlled presentation seam. Search must distinguish display labels from stable field IDs."
+      ],
+      "alternatives": [
+        "Permanent inspector sidebar and nested scrolling menu towers are rejected."
+      ],
+      "scope_api_impact": "No grid resize or saved layout mutation. New editor-only controls use data-export=\"omit\". No new overlay dependency.",
+      "confidence": "High",
+      "missing_evidence": [
+        "No usage telemetry or user study; no local product/browser execution in this research run."
+      ],
+      "falsifiable_proof": {
+        "reject_if": [
+          "Editor controls extend offscreen.",
+          "The details dialog steals picker focus.",
+          "The owner chart becomes unidentifiable or saved layout changes."
+        ],
+        "tasks": [
+          "1280, 783, 390 CSS px; 200% zoom; software keyboard; open near all viewport edges; export at rest."
+        ]
+      },
+      "documentation_and_demo_scope": [
+        "apps/demo/src/docs/pages/in-place-editing.mdx",
+        "docs/ui-defaults.md",
+        "apps/demo/src/demos/examples.ts: dense-chart-controls"
+      ],
+      "phase": "first-proof",
+      "external_evidence_role": "Documented precedents or platform constraints only; no empirical validation of the proposed explorEDA interaction.",
+      "proposal_evidence_class": "Original shaping judgment grounded in the named baseline anchors; proposed benefits remain untested."
+    },
+    {
+      "id": "DCI-12",
+      "disposition": "Keep",
+      "integration_disposition": "Unreviewed — Codex/Byron decides",
+      "status": "Research proposal, not accepted product decision",
+      "problem": "Tables already have direct controls; another chart-menu layer could interfere with sorting, data filtering and copy.",
+      "affected_settings": [
+        "columns",
+        "sortBy",
+        "sortDirection",
+        "globalSearch",
+        "showDistributions",
+        "rowFields",
+        "columnField",
+        "valueFields",
+        "showTotals",
+        "shadeCells"
+      ],
+      "affected_targets": [
+        "table header",
+        "table cell",
+        "pivot headers"
+      ],
+      "proposed_route": "Keep table header click sort, drag reorder and existing header/cell menu. Consider a pivot measure-header shortcut to its existing measure editor only after the scatter proof.",
+      "repository_anchors": [
+        {
+          "source_id": "R051",
+          "path": "packages/explorEDA/src/components/charts/DataTable/DataTableContextMenu.tsx",
+          "symbol": "DataTableContextMenu",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/DataTable/DataTableContextMenu.tsx#L72-L87",
+          "line_start": 72,
+          "line_end": 87
+        },
+        {
+          "source_id": "R090",
+          "path": "packages/explorEDA/src/components/charts/PivotTable/PivotTableSettingsPanel.tsx",
+          "symbol": "PivotTableSettingsPanel",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/PivotTable/PivotTableSettingsPanel.tsx#L30-L45",
+          "line_start": 30,
+          "line_end": 45
+        },
+        {
+          "source_id": "R052",
+          "path": "packages/explorEDA/src/components/charts/DataTable/DataTableSettingsPanel.tsx",
+          "symbol": "DataTableSettingsPanel",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/DataTable/DataTableSettingsPanel.tsx#L10-L25",
+          "line_start": 10,
+          "line_end": 25
+        }
+      ],
+      "source_ids": [
+        "R051",
+        "R090",
+        "R052",
+        "E07"
+      ],
+      "external_evidence": [
+        "E07"
+      ],
+      "original_design": false,
+      "benefit": "Reuses mature local paths; avoids turning table-local search into a linked filter.",
+      "costs": [
+        "Pivot headers and value cells have different identities; renderer behavior not fully in packet."
+      ],
+      "alternatives": [
+        "Generic mark menu on every table cell is rejected."
+      ],
+      "scope_api_impact": "No table model change; field formatting remains field/workspace scope. Pivot shortcut is later, not assumed existing.",
+      "confidence": "High for keep; medium for pivot extension",
+      "missing_evidence": [
+        "No usage telemetry or user study; no local product/browser execution in this research run."
+      ],
+      "falsifiable_proof": {
+        "reject_if": [
+          "Sorting filters linked charts.",
+          "Cell-derived missing-value filter is lost.",
+          "Column actions are only available by drag."
+        ],
+        "tasks": [
+          "Sort, move, hide, copy null, table search versus linked header filter; pivot measure/aggregation change."
+        ]
+      },
+      "documentation_and_demo_scope": [
+        "apps/demo/src/docs/pages/data-table.mdx",
+        "apps/demo/src/docs/pages/pivot.mdx (verify page in checkout)",
+        "apps/demo/src/demos/examples.ts: nba-stats"
+      ],
+      "phase": "retain-and-extend",
+      "external_evidence_role": "Documented precedents or platform constraints only; no empirical validation of the proposed explorEDA interaction.",
+      "proposal_evidence_class": "Original shaping judgment grounded in the named baseline anchors; proposed benefits remain untested."
+    },
+    {
+      "id": "DCI-13",
+      "disposition": "Explore",
+      "integration_disposition": "Unreviewed — Codex/Byron decides",
+      "status": "Research proposal, not accepted product decision",
+      "problem": "Annotations are useful but mark-click authoring would steal filtering and can confuse data anchors with decoration.",
+      "affected_settings": [
+        "annotations",
+        "composition.elements"
+      ],
+      "affected_targets": [
+        "record",
+        "callout",
+        "reference line",
+        "band",
+        "saved records"
+      ],
+      "proposed_route": "Right-click mark → Add callout… only when stable keyed identity is available; reference-line menu opens existing Notes controls. Keep callout drag/arrow nudge. Only an explicitly entered one-shot Add range tool may use drag to create a band.",
+      "repository_anchors": [
+        {
+          "source_id": "R127",
+          "path": "packages/explorEDA/src/components/settings/annotations/AnnotationsSettingsTab.tsx",
+          "symbol": "AnnotationsSettingsTab",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/settings/annotations/AnnotationsSettingsTab.tsx#L83-L98",
+          "line_start": 83,
+          "line_end": 98
+        },
+        {
+          "source_id": "R126",
+          "path": "packages/explorEDA/src/components/settings/annotations/AnnotationFields.tsx",
+          "symbol": "CalloutFields",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/settings/annotations/AnnotationFields.tsx#L113-L128",
+          "line_start": 113,
+          "line_end": 128
+        },
+        {
+          "source_id": "R131",
+          "path": "packages/explorEDA/src/types/ChartTypes.ts",
+          "symbol": "BaseChartSettings",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/types/ChartTypes.ts#L98-L113",
+          "line_start": 98,
+          "line_end": 113
+        },
+        {
+          "source_id": "R049",
+          "path": "packages/explorEDA/src/components/charts/Composition/CompositionQuickMenu.tsx",
+          "symbol": "CompositionQuickMenu",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/Composition/CompositionQuickMenu.tsx#L16-L31",
+          "line_start": 16,
+          "line_end": 31
+        }
+      ],
+      "source_ids": [
+        "R127",
+        "R126",
+        "R131",
+        "R049",
+        "E10"
+      ],
+      "external_evidence": [
+        "E10"
+      ],
+      "original_design": true,
+      "benefit": "Local interpretation without turning exploration into accidental authoring.",
+      "costs": [
+        "Record versus aggregate anchors, facet scope, missing keys, interval meanings."
+      ],
+      "alternatives": [
+        "Click-to-add-label in normal analysis is rejected.",
+        "Open full Notes tab is the simpler first option."
+      ],
+      "scope_api_impact": "Reuse existing ordinary annotation model; Composition anchors remain separate. No per-record style API.",
+      "confidence": "Medium",
+      "missing_evidence": [
+        "No usage telemetry or user study; no local product/browser execution in this research run."
+      ],
+      "falsifiable_proof": {
+        "reject_if": [
+          "Creating a callout depends on row index.",
+          "Normal drag creates annotations rather than brushes.",
+          "A supplied interval is described as computed confidence."
+        ],
+        "tasks": [
+          "Label record then reorder/filter rows; category callout on aggregate; fixed/calculated reference and one-panel scope."
+        ]
+      },
+      "documentation_and_demo_scope": [
+        "apps/demo/src/docs/pages/scatter.mdx",
+        "apps/demo/src/docs/pages/line.mdx",
+        "apps/demo/src/docs/pages/facets.mdx",
+        "apps/demo/src/demos/examples.ts: bubble-scatter"
+      ],
+      "phase": "after-proof",
+      "external_evidence_role": "Documented precedents or platform constraints only; no empirical validation of the proposed explorEDA interaction.",
+      "proposal_evidence_class": "Original shaping judgment grounded in the named baseline anchors; proposed benefits remain untested."
+    },
+    {
+      "id": "DCI-14",
+      "disposition": "Defer",
+      "integration_disposition": "Unreviewed — Codex/Byron decides",
+      "status": "Research proposal, not accepted product decision",
+      "problem": "Specialty charts have valid local tasks but blanket promotion would create a different miniature settings app for each.",
+      "affected_settings": [
+        "specialty chart settings",
+        "composition"
+      ],
+      "affected_targets": [
+        "map layers",
+        "calendar year",
+        "hierarchy focus",
+        "Sankey stages",
+        "matrix cell",
+        "3D camera"
+      ],
+      "proposed_route": "Keep existing map layers/view, calendar year and Composition quick navigation; add only a clearly earned local binding or mode shortcut. Leave geometry joins, matrix templates, waterfall states and most Composition construction in their full editors.",
+      "repository_anchors": [
+        {
+          "source_id": "R081",
+          "path": "packages/explorEDA/src/components/charts/Map/MapSettingsPanel.tsx",
+          "symbol": "MapSettingsPanel",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/Map/MapSettingsPanel.tsx#L15-L30",
+          "line_start": 15,
+          "line_end": 30
+        },
+        {
+          "source_id": "R043",
+          "path": "packages/explorEDA/src/components/charts/Calendar/CalendarSettingsPanel.tsx",
+          "symbol": "CalendarSettingsPanel",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/Calendar/CalendarSettingsPanel.tsx#L13-L28",
+          "line_start": 13,
+          "line_end": 28
+        },
+        {
+          "source_id": "R061",
+          "path": "packages/explorEDA/src/components/charts/Hierarchy/HierarchySettingsPanel.tsx",
+          "symbol": "HierarchySettingsPanel",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/Hierarchy/HierarchySettingsPanel.tsx#L19-L34",
+          "line_start": 19,
+          "line_end": 34
+        },
+        {
+          "source_id": "R097",
+          "path": "packages/explorEDA/src/components/charts/ScatterMatrix/ScatterMatrixSettingsPanel.tsx",
+          "symbol": "ScatterMatrixSettingsPanel",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/ScatterMatrix/ScatterMatrixSettingsPanel.tsx#L123-L138",
+          "line_start": 123,
+          "line_end": 138
+        },
+        {
+          "source_id": "R049",
+          "path": "packages/explorEDA/src/components/charts/Composition/CompositionQuickMenu.tsx",
+          "symbol": "CompositionQuickMenu",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/Composition/CompositionQuickMenu.tsx#L16-L31",
+          "line_start": 16,
+          "line_end": 31
+        },
+        {
+          "source_id": "R136",
+          "path": "packages/explorEDA/src/components/charts/Composition/compositionTypes.ts",
+          "symbol": "CompositionDefinition",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/Composition/compositionTypes.ts"
+        }
+      ],
+      "source_ids": [
+        "R081",
+        "R043",
+        "R061",
+        "R097",
+        "R049",
+        "R136"
+      ],
+      "external_evidence": [],
+      "original_design": true,
+      "benefit": "Broad coverage without widening the first proof into a renderer project.",
+      "costs": [
+        "Each later promotion needs its own filter/navigation/scope proof."
+      ],
+      "alternatives": [
+        "Universal “all chart controls everywhere” is rejected."
+      ],
+      "scope_api_impact": "No new renderer, chart family or saved model. Existing specialty properties are catalogued, not reintroduced as missing.",
+      "confidence": "Medium",
+      "missing_evidence": [
+        "No usage telemetry or user study; no local product/browser execution in this research run."
+      ],
+      "falsifiable_proof": {
+        "reject_if": [
+          "A specialty proposal duplicates an existing local toolbar.",
+          "Navigation or camera motion is relabeled row filtering."
+        ],
+        "tasks": [
+          "Audit map layers/view, year navigation and hierarchy focus from a runnable baseline before promotion."
+        ]
+      },
+      "documentation_and_demo_scope": [
+        "apps/demo/src/docs/pages/map.mdx",
+        "apps/demo/src/docs/pages/composition.mdx",
+        "apps/demo/src/demos/examples.ts: point-map, calendar-series, message-log"
+      ],
+      "phase": "later",
+      "external_evidence_role": "Documented precedents or platform constraints only; no empirical validation of the proposed explorEDA interaction.",
+      "proposal_evidence_class": "Original shaping judgment grounded in the named baseline anchors; proposed benefits remain untested."
+    },
+    {
+      "id": "DCI-15",
+      "disposition": "Avoid",
+      "integration_disposition": "Unreviewed — Codex/Byron decides",
+      "status": "Research proposal, not accepted product decision",
+      "problem": "Authoring-style selection, tiny invisible controls and giant nested menus can make a dense workspace less usable.",
+      "affected_settings": [
+        "all high-frequency controls"
+      ],
+      "affected_targets": [
+        "marks",
+        "hover toolbar",
+        "chart header"
+      ],
+      "proposed_route": "Reject default edit mode, a point double-click configurator, permanent shelves on every chart, arbitrary per-point paint, global gesture collisions and a menu containing every setting. Keep low-frequency cosmetic/structural controls in full settings.",
+      "repository_anchors": [
+        {
+          "source_id": "R031",
+          "path": "packages/explorEDA/src/components/ChartSettingsContent.tsx",
+          "symbol": "ChartSettingsContent",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/ChartSettingsContent.tsx#L22-L37",
+          "line_start": 22,
+          "line_end": 37
+        },
+        {
+          "source_id": "R030",
+          "path": "packages/explorEDA/src/components/ChartGridLayout.tsx",
+          "symbol": "ChartGridLayout",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/ChartGridLayout.tsx#L44-L59",
+          "line_start": 44,
+          "line_end": 59
+        },
+        {
+          "source_id": "R104",
+          "path": "packages/explorEDA/src/components/charts/ScatterPlot/ScatterSvg.tsx",
+          "symbol": "ScatterSvg",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/ScatterPlot/ScatterSvg.tsx#L408-L423",
+          "line_start": 408,
+          "line_end": 423
+        },
+        {
+          "source_id": "R047",
+          "path": "packages/explorEDA/src/components/charts/ColorLegend/ColorScale.tsx",
+          "symbol": "ColorScale",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/ColorLegend/ColorScale.tsx#L25-L40",
+          "line_start": 25,
+          "line_end": 40
+        }
+      ],
+      "source_ids": [
+        "R031",
+        "R030",
+        "R104",
+        "R047",
+        "E01",
+        "E06",
+        "E09",
+        "E10"
+      ],
+      "external_evidence": [
+        "E01",
+        "E06",
+        "E09",
+        "E10"
+      ],
+      "original_design": false,
+      "benefit": "Protects data area, discoverability and analytical meaning.",
+      "costs": [
+        "Some power-user options remain a longer route."
+      ],
+      "alternatives": [
+        "A one-shot explicit annotation tool can justify a temporary mode; it is not a global chart editing mode."
+      ],
+      "scope_api_impact": "Avoid dependency/framework conversion and broad schema/command architecture.",
+      "confidence": "High",
+      "missing_evidence": [
+        "No usage telemetry or user study; no local product/browser execution in this research run."
+      ],
+      "falsifiable_proof": {
+        "reject_if": [
+          "The proof requires click deferral or selecting a chart before filtering.",
+          "The smallest chart gains a persistent toolbar that obscures data."
+        ],
+        "tasks": [
+          "Repeat baseline filter task before and after; compare chart area and context retention."
+        ]
+      },
+      "documentation_and_demo_scope": [
+        "docs/ui-defaults.md",
+        "docs/intent/dense-chart-interactions/ proposed briefs"
+      ],
+      "phase": "boundary",
+      "external_evidence_role": "Documented precedents or platform constraints only; no empirical validation of the proposed explorEDA interaction.",
+      "proposal_evidence_class": "Original shaping judgment grounded in the named baseline anchors; proposed benefits remain untested."
+    },
+    {
+      "id": "DCI-16",
+      "disposition": "Explore",
+      "integration_disposition": "Unreviewed — Codex/Byron decides",
+      "status": "Research proposal, not accepted product decision",
+      "problem": "A new mini-editor must earn its cost against a materially simpler route.",
+      "affected_settings": [
+        "colorField",
+        "colorScaleId"
+      ],
+      "affected_targets": [
+        "existing Settings button / S",
+        "visible Color trigger"
+      ],
+      "proposed_route": "Compare the proposed menu+picker with (A) existing Data settings opened/focused at Color, and (B) a visible Color trigger with the reused selector but no point hit-testing or Alt remap.",
+      "repository_anchors": [
+        {
+          "source_id": "R122",
+          "path": "packages/explorEDA/src/components/settings/MainSettingsTab.tsx",
+          "symbol": "MainSettingsTab",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/settings/MainSettingsTab.tsx#L14-L29",
+          "line_start": 14,
+          "line_end": 29
+        },
+        {
+          "source_id": "R031",
+          "path": "packages/explorEDA/src/components/ChartSettingsContent.tsx",
+          "symbol": "ChartSettingsContent",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/ChartSettingsContent.tsx#L22-L37",
+          "line_start": 22,
+          "line_end": 37
+        },
+        {
+          "source_id": "R034",
+          "path": "packages/explorEDA/src/components/FieldSelector.tsx",
+          "symbol": "FieldSelector",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/FieldSelector.tsx#L18-L33",
+          "line_start": 18,
+          "line_end": 33
+        },
+        {
+          "source_id": "R035",
+          "path": "packages/explorEDA/src/components/PlotChartPanel.tsx",
+          "symbol": "onPanelContextMenu",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/PlotChartPanel.tsx#L605-L620",
+          "line_start": 605,
+          "line_end": 620
+        }
+      ],
+      "source_ids": [
+        "R122",
+        "R031",
+        "R034",
+        "R035"
+      ],
+      "external_evidence": [],
+      "original_design": true,
+      "benefit": "Can reject extra machinery while still making color configuration faster.",
+      "costs": [
+        "Focused-entry plumbing is not currently a general editor API; the existing panel still takes space."
+      ],
+      "alternatives": [
+        "Full editor unchanged is the control condition."
+      ],
+      "scope_api_impact": "No command registry, persistent interaction mode or new data model in any variant.",
+      "confidence": "High for comparison value",
+      "missing_evidence": [
+        "No usage telemetry or user study; no local product/browser execution in this research run."
+      ],
+      "falsifiable_proof": {
+        "reject_if": [
+          "The elaborate variant does not improve task completion, context or input count relative to a simpler variant."
+        ],
+        "tasks": [
+          "Unaided discovery; repeated field comparisons; return to filtering; find trace; keyboard and narrow-screen completion."
+        ]
+      },
+      "documentation_and_demo_scope": [
+        "apps/demo/src/docs/pages/chart-settings.mdx",
+        "apps/demo/src/demos/examples.ts: dense-chart-controls"
+      ],
+      "phase": "first-proof",
+      "external_evidence_role": "Documented precedents or platform constraints only; no empirical validation of the proposed explorEDA interaction.",
+      "proposal_evidence_class": "Original shaping judgment grounded in the named baseline anchors; proposed benefits remain untested."
+    },
+    {
+      "id": "DCI-17",
+      "disposition": "Defer",
+      "integration_disposition": "Unreviewed — Codex/Byron decides",
+      "status": "Research proposal, not accepted product decision",
+      "problem": "Chart-type conversion and X/Y swap can silently carry unrelated domains, filters, labels or annotations.",
+      "affected_settings": [
+        "type",
+        "xField",
+        "yField",
+        "xAxis",
+        "yAxis",
+        "xAxisLabel",
+        "yAxisLabel",
+        "annotations",
+        "filters"
+      ],
+      "affected_targets": [
+        "chart header",
+        "axis menu"
+      ],
+      "proposed_route": "Evaluate explicit Swap X/Y with a preview of moved bindings; keep chart-type change in Data settings until a compatibility policy is proven. Swap axis-specific scales/limits/labels consistently; do not reinterpret data-unit filters.",
+      "repository_anchors": [
+        {
+          "source_id": "R122",
+          "path": "packages/explorEDA/src/components/settings/MainSettingsTab.tsx",
+          "symbol": "MainSettingsTab",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/settings/MainSettingsTab.tsx#L14-L29",
+          "line_start": 14,
+          "line_end": 29
+        },
+        {
+          "source_id": "R131",
+          "path": "packages/explorEDA/src/types/ChartTypes.ts",
+          "symbol": "BaseChartSettings",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/types/ChartTypes.ts#L98-L113",
+          "line_start": 98,
+          "line_end": 113
+        },
+        {
+          "source_id": "R102",
+          "path": "packages/explorEDA/src/components/charts/ScatterPlot/ScatterPlotSettingsPanel.tsx",
+          "symbol": "ScatterPlotSettingsPanel",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/ScatterPlot/ScatterPlotSettingsPanel.tsx#L21-L36",
+          "line_start": 21,
+          "line_end": 36
+        },
+        {
+          "source_id": "R073",
+          "path": "packages/explorEDA/src/components/charts/InPlace/useAxisEditing.tsx",
+          "symbol": "useAxisEditing",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/InPlace/useAxisEditing.tsx#L118-L133",
+          "line_start": 118,
+          "line_end": 133
+        }
+      ],
+      "source_ids": [
+        "R122",
+        "R131",
+        "R102",
+        "R073",
+        "E04"
+      ],
+      "external_evidence": [
+        "E04"
+      ],
+      "original_design": true,
+      "benefit": "Avoids a cheap-looking shortcut that corrupts analytical context.",
+      "costs": [
+        "Annotation coordinates, regression meaning, categorical/numeric compatibility and field-specific limits."
+      ],
+      "alternatives": [
+        "Change X and Y individually through existing controls; duplicate chart before conversion."
+      ],
+      "scope_api_impact": "Swap is a new action on existing keys, not an existing control. Chart-type defaults may reset settings; no silent “smart migration”.",
+      "confidence": "Medium",
+      "missing_evidence": [
+        "No usage telemetry or user study; no local product/browser execution in this research run."
+      ],
+      "falsifiable_proof": {
+        "reject_if": [
+          "Swap loses selection or moves a fixed reference to the wrong data meaning.",
+          "Changing chart type silently claims preserved settings that defaults replaced."
+        ],
+        "tasks": [
+          "Swap bounded/log axes with titles, active filters and record/fixed annotations; save/restore and undo."
+        ]
+      },
+      "documentation_and_demo_scope": [
+        "apps/demo/src/docs/pages/scatter.mdx",
+        "apps/demo/src/docs/pages/scales-and-axes.mdx",
+        "apps/demo/src/demos/examples.ts: dense-chart-controls"
+      ],
+      "phase": "later",
+      "external_evidence_role": "Documented precedents or platform constraints only; no empirical validation of the proposed explorEDA interaction.",
+      "proposal_evidence_class": "Original shaping judgment grounded in the named baseline anchors; proposed benefits remain untested."
+    },
+    {
+      "id": "DCI-18",
+      "disposition": "Explore",
+      "integration_disposition": "Unreviewed — Codex/Byron decides",
+      "status": "Research proposal, not accepted product decision",
+      "problem": "Local analytical refinements such as opacity, density and fits are often more useful than styling, but their populations and display dependencies differ.",
+      "affected_settings": [
+        "pointSize",
+        "pointOpacity",
+        "sizeField",
+        "display",
+        "regression",
+        "summary",
+        "marginals",
+        "seriesSettings"
+      ],
+      "affected_targets": [
+        "points",
+        "fit line",
+        "series",
+        "surface legend"
+      ],
+      "proposed_route": "After field assignment proves useful, expose a compact Points editor for size/opacity, a Display chooser and a Fit-line menu that opens the reused fit controls. Keep density kernels and advanced series styling in full settings initially.",
+      "repository_anchors": [
+        {
+          "source_id": "R102",
+          "path": "packages/explorEDA/src/components/charts/ScatterPlot/ScatterPlotSettingsPanel.tsx",
+          "symbol": "ScatterPlotSettingsPanel",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/ScatterPlot/ScatterPlotSettingsPanel.tsx#L21-L36",
+          "line_start": 21,
+          "line_end": 36
+        },
+        {
+          "source_id": "R101",
+          "path": "packages/explorEDA/src/components/charts/ScatterPlot/RegressionSettings.tsx",
+          "symbol": "RegressionSettings",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/ScatterPlot/RegressionSettings.tsx#L17-L32",
+          "line_start": 17,
+          "line_end": 32
+        },
+        {
+          "source_id": "R105",
+          "path": "packages/explorEDA/src/components/charts/ScatterPlot/SurfaceSettings.tsx",
+          "symbol": "SurfaceSettings",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/ScatterPlot/SurfaceSettings.tsx#L37-L52",
+          "line_start": 37,
+          "line_end": 52
+        },
+        {
+          "source_id": "R078",
+          "path": "packages/explorEDA/src/components/charts/LineChart/LineSeriesSettings.tsx",
+          "symbol": "LineSeriesSettings",
+          "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/LineChart/LineSeriesSettings.tsx#L13-L28",
+          "line_start": 13,
+          "line_end": 28
+        }
+      ],
+      "source_ids": [
+        "R102",
+        "R101",
+        "R105",
+        "R078",
+        "E06"
+      ],
+      "external_evidence": [
+        "E06"
+      ],
+      "original_design": true,
+      "benefit": "Solves overlap and comparison tasks where they arise, without a generic property editor.",
+      "costs": [
+        "Continuous-edit grouping, hidden/non-applicable controls, count versus field color."
+      ],
+      "alternatives": [
+        "Display and Fit in full Data/Fit tabs remain strong fallbacks."
+      ],
+      "scope_api_impact": "Do not offer field color on count-colored rectangular bins as if the same encoding were active; do not silently clear dormant settings.",
+      "confidence": "Medium",
+      "missing_evidence": [
+        "No usage telemetry or user study; no local product/browser execution in this research run."
+      ],
+      "falsifiable_proof": {
+        "reject_if": [
+          "Changing display silently changes filters or represents counts as field color.",
+          "Fit scope is mistaken for a single-point calculation."
+        ],
+        "tasks": [
+          "Points → Rect → Hex → smoothed Density; categorical versus numeric axes; per-group/overall fit with filters."
+        ]
+      },
+      "documentation_and_demo_scope": [
+        "apps/demo/src/docs/pages/scatter.mdx",
+        "apps/demo/src/docs/pages/chart-settings.mdx",
+        "apps/demo/src/demos/examples.ts: scatter-surfaces, scatter-regression"
+      ],
+      "phase": "after-proof",
+      "external_evidence_role": "Documented precedents or platform constraints only; no empirical validation of the proposed explorEDA interaction.",
+      "proposal_evidence_class": "Original shaping judgment grounded in the named baseline anchors; proposed benefits remain untested."
+    }
+  ]
+}

@@ -1,0 +1,607 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "Change chart settings where the data is",
+    "slug": "dense-chart-interactions",
+    "scale": "capability",
+    "current_phase": "plan",
+    "last_updated": "2026-10-13",
+    "summary": "Make frequent chart changes local and clear while keeping ordinary click-to-filter primary.",
+    "status": "planned",
+    "next_action": "Review the implementation plan, then start Milestone 1 (scatter point click proof) if approved."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-12"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "current",
+      "updated_at": "2026-10-12"
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-12"
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "current",
+      "updated_at": "2026-10-13"
+    }
+  },
+  "sources": [
+    {
+      "id": "user-direction",
+      "type": "direct-user-input",
+      "location": "raw/user-direction-2026-10-12.md",
+      "anchor": "Initial request and later correction about Alt-click versus click-to-filter",
+      "authority": "explicit current user direction"
+    },
+    {
+      "id": "baseline",
+      "type": "repository",
+      "location": "raw/2026-10-12-pro/source-manifest.json",
+      "anchor": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e; exact paths and hashes",
+      "authority": "current source observation; no product test proof"
+    },
+    {
+      "id": "pro-results",
+      "type": "research-proposal",
+      "location": "raw/2026-10-12-pro/manifest.json",
+      "anchor": "18 recommendations, 43 patterns, 165 inventory rows, 44 gestures",
+      "authority": "Untrusted research evidence; reconciled in references/reconciliation.json"
+    },
+    {
+      "id": "independent-review",
+      "type": "source-verification",
+      "location": "references/evidence-checks.json",
+      "anchor": "Exact source hashes, raw artifact integrity, and primary-source rechecks",
+      "authority": "Static evidence; proposed behavior remains untested"
+    },
+    {
+      "id": "product-answers",
+      "type": "direct-user-input",
+      "location": "raw/product-answers-2026-10-12.md",
+      "anchor": "Ten answers to product questions about scope, undo, scale sharing, trace, and audience",
+      "authority": "explicit current user direction; supersedes earlier shape where they conflict"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "local-config",
+        "type": "outcome",
+        "statement": "Make frequent chart changes close to the feature being edited.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "user-direction",
+            "anchor": "Initial request and latest correction"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "comparison",
+        "type": "required behavior",
+        "statement": "Ground the proposal in verified mechanics from other visualization tools.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "user-direction",
+            "anchor": "Initial request and latest correction"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "breadth",
+        "type": "required behavior",
+        "statement": "Compare a wide range of interaction approaches and chart settings.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "user-direction",
+            "anchor": "Initial request and latest correction"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "click-filter",
+        "type": "preference",
+        "statement": "Give ordinary click-to-filter priority over other gesture claims.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "user-direction",
+            "anchor": "Initial request and latest correction"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "alt-click",
+        "type": "decision",
+        "statement": "Allow Alt-click and tracing access to be redesigned.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "user-direction",
+            "anchor": "Initial request and latest correction"
+          },
+          {
+            "source_id": "product-answers",
+            "anchor": "Answer 3"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Trace is rare; it exists to force a planning/rendering split. Its gesture may move to the header and a record action."
+      },
+      {
+        "id": "color-example",
+        "type": "example",
+        "statement": "Right-click a scatter point and choose Color by to pick a field.",
+        "commitment": "illustrative",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "user-direction",
+            "anchor": "Initial request and latest correction"
+          }
+        ],
+        "confidence": "medium",
+        "notes": ""
+      },
+      {
+        "id": "frequency",
+        "type": "derived implication",
+        "statement": "Treat frequency rankings as hypotheses because no telemetry was supplied.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "user-direction",
+            "anchor": "Initial request and latest correction"
+          }
+        ],
+        "confidence": "medium",
+        "notes": ""
+      },
+      {
+        "id": "all-properties",
+        "type": "outcome",
+        "statement": "Cover every frequently changed property — Color, X, Y, and plotted fields — through one editable-role pattern.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "product-answers",
+            "anchor": "Answers 1 and 6"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Scatter Color is the first case, not the whole scope."
+      },
+      {
+        "id": "instant-undo",
+        "type": "required behavior",
+        "statement": "Choosing a value applies at once; Cmd/Ctrl-Z undoes it as one step.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "product-answers",
+            "anchor": "Answers 5 and 8"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Live preview while browsing is worth trying (Answer 4)."
+      },
+      {
+        "id": "shared-scale",
+        "type": "decision",
+        "statement": "A field uses one shared color scale by default; separate tuned copies come later.",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "product-answers",
+            "anchor": "Answer 7"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "demo-audience",
+        "type": "constraint",
+        "statement": "The first audience is Byron in the demo; host opt-in waits.",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "product-answers",
+            "anchor": "Answer 9"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      }
+    ],
+    "themes": [
+      "Local configuration",
+      "Exploration frequency",
+      "Gesture ownership",
+      "Evidence from other tools"
+    ],
+    "conflicts": [
+      {
+        "description": "Repository docs reserve Alt-click for tracing. The latest user direction explicitly allows that binding to change.",
+        "resolution": "Treat the binding as current behavior, not a proposed-design invariant. Preserve click-to-filter as the stronger constraint. Product answers confirm trace is rare and may move to the header and a record action."
+      }
+    ],
+    "human_questions": []
+  },
+  "brainstorm": {
+    "status": "complete",
+    "requested_count": 7,
+    "options": [
+      {
+        "id": "option-1",
+        "premise": "One existing editor with exact contextual navigation"
+      },
+      {
+        "id": "option-2",
+        "premise": "Named object actions choose a local task"
+      },
+      {
+        "id": "option-3",
+        "premise": "Visible encoding roles serve as the control surface"
+      },
+      {
+        "id": "option-4",
+        "premise": "Chart geometry directly represents editable values"
+      },
+      {
+        "id": "option-5",
+        "premise": "A deliberate object toolbar groups repeated edits"
+      },
+      {
+        "id": "option-6",
+        "premise": "Keyboard task search replaces navigation"
+      },
+      {
+        "id": "option-7",
+        "premise": "An explicit mode changes gesture ownership"
+      }
+    ],
+    "selected_option": "Build option-3 as an editable-role pattern with option-2 as a second entry; one design adjusted through use. Retain option-4 and the option-1 fallback."
+  },
+  "shape": {
+    "status": "review-ready",
+    "appetite": "Scatter Color as a reusable editable role, then X and Y. Research and docs only in this run.",
+    "problem": "Repeated chart changes require navigation away from the question. Hidden configuration can also conflict with filtering.",
+    "recommended_shape": "Visible role labels plus a plot context menu opening one field editor; instant apply with one-step undo; trace moves off Alt-click.",
+    "success_moves": [
+      {
+        "move": "Build one design and adjust through use instead of switchable variants.",
+        "effect": "Avoids building disposable comparison routes."
+      },
+      {
+        "move": "Resolve chart scope without requiring exact record identity.",
+        "effect": "Dense overlapping points do not block chart configuration."
+      },
+      {
+        "move": "Apply on choice and group scale creation with binding into one host change.",
+        "effect": "One Cmd/Ctrl-Z restores the chart and any scale the choice created."
+      },
+      {
+        "move": "Reuse field metadata, scale resolution, and updateChart through a small popup presentation seam.",
+        "effect": "No generic command or transaction platform is required."
+      },
+      {
+        "move": "Keep filtering immediate; verify input, focus, and scope before broader adoption.",
+        "effect": "Protect the user’s strongest constraint."
+      },
+      {
+        "move": "Include docs and examples in every proposed visible slice.",
+        "effect": "Gesture changes remain discoverable and reviewable."
+      }
+    ],
+    "first_proof": {
+      "question": "Does an editable Color role, reached from a visible label and a context menu, make shaping a new chart faster without touching filters?",
+      "artifact": "Future dense-chart-controls demo; not produced in this research run.",
+      "try": "Verify unsized point selection first. Filtered scatter points/bubbles, a shared-scale peer, no legend, categorical/numeric/computed fields, instant apply, one-step undo, preview while browsing, keyboard, and trace through its new routes.",
+      "observe": "Filters and peer unchanged, one undo step per choice, focus return, which entry gets used in real demo work.",
+      "decision_rule": "Reject filter or scope regressions and anything needing more than one undo. Drop the menu if the label covers real use. Keep preview only if it leaves no history.",
+      "first_dependency_role": "Real local React UI and store with synthetic rows; no remote provider.",
+      "fallback": "Keep existing settings; the visible label alone may satisfy the outcome."
+    },
+    "rabbit_holes": [
+      "Universal edit mode",
+      "Command framework",
+      "Renderer rewrite",
+      "Shared palette preview rollback",
+      "Generic chart conversion or X/Y swap",
+      "Independent facet bindings"
+    ],
+    "open_decisions": [
+      {
+        "question": "What should Alt/Option-click do once trace moves?",
+        "resolution": "Decide during use; no new meaning is required for the first proof."
+      },
+      {
+        "question": "Do role labels stay visible or reveal on focus?",
+        "resolution": "Decide during use, keeping a touch-visible route."
+      }
+    ]
+  },
+  "implementation": {
+    "status": "draft",
+    "repository_snapshot": {
+      "root": "/Users/byronwall/.codex/worktrees/3e0f/explorEDA",
+      "revision": "8d7fb405",
+      "worktree_status": "Plan written against main at 8d7fb405; application code unchanged.",
+      "subsystems": [
+        "PlotChartPanel",
+        "ChartSettingsContent",
+        "InPlace/useChartEdit",
+        "AxisFieldActions",
+        "FieldSelector",
+        "ChartColorLegend",
+        "CompositionQuickMenu",
+        "ScatterPlot/ScatterSvg",
+        "hooks/useColorScales",
+        "ComboBox",
+        "demo savedViewsHistory"
+      ],
+      "test_commands": [
+        "pnpm --filter exploreda exec vitest run src/components/charts/ScatterPlot src/components/charts/InPlace",
+        "pnpm --filter exploreda check-types",
+        "pnpm check:ui",
+        "pnpm --filter demo docs:check",
+        "pnpm check"
+      ],
+      "deployment_surfaces": []
+    },
+    "dependencies": [
+      {
+        "id": "local-input",
+        "material": true,
+        "application_seam": "PlotChartPanel and renderer-owned input delegate to one Color editor.",
+        "first_proof_role": {
+          "mode": "real-local",
+          "rationale": "Synthetic store-only tests cannot prove filtering, hit targets, focus, or menu dismissal."
+        },
+        "failure_modes": [
+          "Menu dismiss filters chart",
+          "Alt drag produces trailing click",
+          "Unsized point misses selection",
+          "Popup leaves details focus trap",
+          "New scale produces extra host checkpoint"
+        ],
+        "proof_rungs": [
+          "Focused event/store tests for accepted change",
+          "Real browser task at 1280/783/390",
+          "Keyboard and supported-platform context menu checks"
+        ],
+        "remote_dependency": "absent",
+        "local_proof": "Vitest pointer and keyboard sequences on ScatterSvg and PlotChartPanel, plus manual checks in pnpm --filter demo dev.",
+        "live_proof": "Not applicable: no external provider. Browser checks at 1280, 783, and 390 px with pnpm shot stand in.",
+        "rollout": "On by default in the library; each route is a separate component that can be removed without touching saved layouts or the settings panel."
+      }
+    ],
+    "fast_local_loop": {
+      "command": "pnpm --filter exploreda exec vitest run src/components/charts/ScatterPlot src/components/charts/InPlace",
+      "scope": "Targeted tests while editing; pnpm --filter demo dev for real pointer, keyboard, and undo checks. No network or credentials."
+    },
+    "milestones": [
+      {
+        "id": "m1",
+        "title": "Ordinary scatter point clicks select",
+        "outcome": "A plain click on any scatter point selects it and an empty-space click clears, sized or unsized.",
+        "dependencies_introduced": [],
+        "proof": "ScatterSvg.test.tsx pointer sequence on an unsized point; manual mouse check in the demo.",
+        "valid_intermediate_state": "No new UI; existing behavior guarded or fixed.",
+        "rollback": "Revert the fix; the test documents the gap.",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m2",
+        "title": "A visible Color label changes the field in place",
+        "outcome": "On a scatter, the Color label opens field search, applies a choice at once, and one Cmd/Ctrl-Z restores it with any new scale.",
+        "dependencies_introduced": ["local-input"],
+        "proof": "Vitest for one host notification, unchanged filters, undo removing a created scale, shared-scale peer; pnpm shot at 1280/783/390.",
+        "valid_intermediate_state": "Settings panel route unchanged; label is an extra route on scatter only.",
+        "rollback": "Remove ChartRoleControl from the scatter definition; saved layouts unaffected.",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m3",
+        "title": "Right-click the plot to color or trace",
+        "outcome": "A scatter plot context menu offers Color by…, Trace this record, and image export, with keyboard parity.",
+        "dependencies_introduced": [],
+        "proof": "Tests for menu order (axis/title first, Shift native), dismissal not filtering, trace target resolution; demo check.",
+        "valid_intermediate_state": "Alt-click trace still works; the menu adds routes only.",
+        "rollback": "Restore the image-only panel menu.",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m4",
+        "title": "Preview fields while browsing",
+        "outcome": "Arrowing through fields recolors live; Escape restores; history and scales show only the final choice.",
+        "dependencies_introduced": [],
+        "proof": "Vitest for browse+Escape and browse+choose leaving clean history and scale list; responsiveness on the largest demo dataset.",
+        "valid_intermediate_state": "Instant apply from m2 works with or without preview.",
+        "rollback": "Disable preview; keep instant apply.",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m5",
+        "title": "Change X and Y the same way",
+        "outcome": "X and Y fields change through the same role editor from the axis title, each as one undo step.",
+        "dependencies_introduced": [],
+        "proof": "Tests for axis title Enter and menu entry, range/log reset in one step, existing axis gestures unchanged; pnpm shot.",
+        "valid_intermediate_state": "Color role from m2 unaffected; settings panel still edits X and Y.",
+        "rollback": "Remove the Change field… entry and Enter binding.",
+        "status": "planned",
+        "evidence": []
+      }
+    ],
+    "cut_line": [
+      "Reassigning Alt-click and cross-chart gesture docs",
+      "Role labels on other chart families",
+      "Size, measure, aggregation, bins, time grain, sort, Top N roles",
+      "Duplicating a shared scale",
+      "Host opt-in",
+      "Object toolbars, command search, edit modes",
+      "X/Y swap and chart conversion"
+    ],
+    "open_decisions": [
+      {
+        "question": "Where does the role label sit?",
+        "evidence": "m2 screenshots at three widths with and without legend and facets",
+        "fallback": "Legend line"
+      },
+      {
+        "question": "Does preview survive?",
+        "evidence": "m4 responsiveness and clean history",
+        "fallback": "Instant apply without preview"
+      },
+      {
+        "question": "Does an X/Y field change reset axis range and log?",
+        "evidence": "m5 trials with annotations and hidden-row notices",
+        "fallback": "Reset range and transform; hidden notice handles annotations"
+      }
+    ],
+    "proposed_feature_slices": [
+      {
+        "id": "color-proof",
+        "outcome": "Compare local Color routes while preserving selected records.",
+        "docs": [
+          "apps/demo/src/docs/pages/scatter.mdx",
+          "apps/demo/src/docs/pages/color.mdx",
+          "apps/demo/src/docs/pages/in-place-editing.mdx",
+          "apps/demo/src/docs/pages/chart-settings.mdx"
+        ],
+        "demo": "New dense-chart-controls entry in apps/demo/src/demos/examples.ts; fixture near existing demos.",
+        "proof": "Behavior gates and comparison in shape.first_proof.",
+        "intermediate_state": "Existing settings remain usable; experimental route can be removed."
+      },
+      {
+        "id": "alt-experiment",
+        "outcome": "Evaluate configuration shortcut with replacement trace access.",
+        "docs": [
+          "apps/demo/src/docs/pages/trace.mdx",
+          "apps/demo/src/docs/pages/in-place-editing.mdx",
+          "docs/ui-defaults.md",
+          "AGENTS.md"
+        ],
+        "demo": "Same dense-chart-controls example, with trace task and gesture help.",
+        "proof": "No lost filtering, brushing, trace discovery, or contradictory supported bindings.",
+        "intermediate_state": "Retain current convention unless complete remap proves useful."
+      },
+      {
+        "id": "analytical-controls",
+        "outcome": "Shorten field, measure, bin, time, sort, and Top N changes where repeated use is observed.",
+        "docs": "Owning registered chart pages and chart-settings.mdx.",
+        "demo": "Distribution and time-comparison examples in apps/demo/src/demos/examples.ts.",
+        "proof": "Meaningful task, clear scope, valid chart after acceptance and cancellation.",
+        "intermediate_state": "Each control retains full-settings access."
+      },
+      {
+        "id": "appearance-scope",
+        "outcome": "Evaluate point tuning, facets, and shared palette entry separately.",
+        "docs": [
+          "apps/demo/src/docs/pages/scatter.mdx",
+          "apps/demo/src/docs/pages/facets.mdx",
+          "apps/demo/src/docs/pages/color-legend.mdx"
+        ],
+        "demo": "Point-density, shared-color, and faceted examples.",
+        "proof": "Consumer scope and unchanged unrelated state.",
+        "intermediate_state": "No generalization across chart types without its own task evidence."
+      },
+      {
+        "id": "specialties",
+        "outcome": "Retain existing specialty actions; consider new routes only with separate evidence.",
+        "docs": "Owning table, pivot, map, Composition, or annotation page.",
+        "demo": "Matching specialty example in the same future slice.",
+        "proof": "Existing navigation/filter semantics retained.",
+        "intermediate_state": "No generic scatter menu imposed."
+      }
+    ]
+  },
+  "history": [
+    {
+      "date": "2026-10-12",
+      "event": "Initialized from the user request and correction. Submitted research to Pro power 5 of 5; scheduled collection.",
+      "evidence": "run.md"
+    },
+    {
+      "date": "2026-10-12",
+      "event": "Collected complete Pro output. Verified primary mechanics and all supplied source identities. Reconciled recommendations into intent, seven options, and shape. Implementation remains unrequested.",
+      "evidence": "references/research-review.md; references/reconciliation.json; references/evidence-checks.json"
+    },
+    {
+      "date": "2026-10-12",
+      "event": "Incorporated ten product answers: all properties in scope, instant apply with undo, shared scale per field, trace may move, demo audience, single design instead of variant comparison.",
+      "evidence": "raw/product-answers-2026-10-12.md"
+    },
+    {
+      "date": "2026-10-13",
+      "event": "Wrote a five-milestone implementation plan: click proof, Color label with instant apply and undo, plot context menu with trace, preview, X/Y roles.",
+      "evidence": "implementation-plan.md"
+    }
+  ],
+  "closure": null,
+  "research_review": {
+    "dispositions": "references/reconciliation.json",
+    "evidence": "references/evidence-checks.json",
+    "raw_manifest": "raw/2026-10-12-pro/collection-manifest.json",
+    "limitations": [
+      "No telemetry or frequency study",
+      "No hands-on competitor tests",
+      "No implemented interaction proof"
+    ],
+    "followups_used": 0
+  }
+}

@@ -1,0 +1,3620 @@
+{
+  "research_date": "2026-10-12",
+  "repository": "https://github.com/byronwall/explorEDA",
+  "baseline": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+  "integration_branch_supplied": "codex/dense-chart-interactions",
+  "main_substitution": false,
+  "source_identity_verification": {
+    "connected_commit": "Exact SHA returned by GitHub.fetch_commit; canonical repository URL matched.",
+    "connected_registry": "Exact-baseline registerAllCharts matched the authorized packet.",
+    "packet_sections": 133,
+    "packet_hashes_matched": 133,
+    "packet_source_bytes": 955835,
+    "input_prompt_local_addition": true
+  },
+  "method": {
+    "external": "Read-only current first-party documentation and standards research; no product hands-on tests.",
+    "repository": "All133 packet section hashes verified; source-reading route and targeted supplemental exact-baseline reads.",
+    "frequency": "Original H/M/L scenario hypotheses; no telemetry, no observed usage frequencies.",
+    "videos": "None used; no timestamp-based claims.",
+    "dates": "Access date follows the requested research date2026-10-12. Source publication/update dates included only where available; null means not established.",
+    "link_policy": "Ordinary primary URLs and immutable repository anchors; no chat-only citation tokens."
+  },
+  "product_count": 8,
+  "product_families": [
+    "BI / visual analysis and authoring",
+    "Scientific / statistical graphs",
+    "Office spreadsheet charts",
+    "Operational dashboards",
+    "Browser-first publication authoring"
+  ],
+  "product_mechanics": [
+    {
+      "id": "M01",
+      "product": "Tableau",
+      "family": "BI / visual authoring",
+      "source_ids": [
+        "E02"
+      ],
+      "object_hit": "Marks Color control or color legend",
+      "gesture": "Assign a field to Color; legend menu → Edit Colors",
+      "result": "Categorical assignments or continuous scale editor",
+      "scope": "Encoding/legend, not one clicked record",
+      "persistence": "Desktop confirms with OK; web closing applies documented color changes. Workbook save lifecycle not examined.",
+      "undo": "Reset is documented; web Undo can restore color changes. Granularity not established.",
+      "mode": "Authoring, not viewer filtering",
+      "transfer": "Let the legend identify the encoding; label shared explorEDA ownership explicitly."
+    },
+    {
+      "id": "M02",
+      "product": "Power BI",
+      "family": "BI / visual authoring",
+      "source_ids": [
+        "E01"
+      ],
+      "object_hit": "Visual then a subselection",
+      "gesture": "Double-click or right-click Format; then select object and right-click",
+      "result": "Format mode, mini-toolbar and overlapping-target correction",
+      "scope": "Selected formatting object",
+      "persistence": "Report edit; per-action save lifecycle not established by inspected page",
+      "undo": "Not established; source warns some Reset cases are incomplete",
+      "mode": "Explicit authoring format mode replaces click semantics",
+      "transfer": "Borrow target correction, not a default edit mode; small-multiple and accessibility limitations oppose uncritical transfer."
+    },
+    {
+      "id": "M03",
+      "product": "Qlik Sense",
+      "family": "BI / analysis",
+      "source_ids": [
+        "E08"
+      ],
+      "object_hit": "Visualization top-right control or context menu",
+      "gesture": "Hover then menu; or right-click → Exploration menu",
+      "result": "Data, sort, color and label properties without data selection",
+      "scope": "Visualization; alternative fields must already be supplied",
+      "persistence": "Session changes; eligible editable unpublished sheets can Apply or Discard",
+      "undo": "Discard documented; fine-grained undo not established",
+      "mode": "Analysis distinct from sheet editing",
+      "transfer": "Separate configuration from selection; do not import a second temporary saved-state model."
+    },
+    {
+      "id": "M04",
+      "product": "JMP",
+      "family": "Scientific / statistical analysis",
+      "source_ids": [
+        "E03",
+        "E04",
+        "E05"
+      ],
+      "object_hit": "Variable zone or graph element/area",
+      "gesture": "Select variable then click zone, or drag; zone menu swaps/removes; context menus vary by hit",
+      "result": "Bindings and graph-specific commands",
+      "scope": "Graph/element or all graphs depending documented menu route",
+      "persistence": "Graph Builder state changes; durable save lifecycle not examined",
+      "undo": "Not established in inspected pages",
+      "mode": "Graph construction / exploration",
+      "transfer": "Visible bindings and non-drag alternative transfer; modifier-only group scope does not."
+    },
+    {
+      "id": "M05",
+      "product": "Origin / OriginPro",
+      "family": "Scientific / graph authoring",
+      "source_ids": [
+        "E06"
+      ],
+      "object_hit": "Graph object or Object Manager selection",
+      "gesture": "Select object; click a mini-toolbar command; Shift can re-show faded toolbar",
+      "result": "Object-specific compact tools, including Group/Single choices",
+      "scope": "Visible group/single selector where supported",
+      "persistence": "Object formatting changes; save lifecycle not examined",
+      "undo": "Not established in inspected page",
+      "mode": "Authoring",
+      "transfer": "A short object toolbar can be useful, but requires an explicit non-filtering entry in explorEDA."
+    },
+    {
+      "id": "M06",
+      "product": "Excel",
+      "family": "Office / spreadsheet authoring",
+      "source_ids": [
+        "E07"
+      ],
+      "object_hit": "Chart element",
+      "gesture": "Right-click element → Format; selecting another element retargets pane",
+      "result": "Tailored Format pane; ribbon alternative",
+      "scope": "Selected chart element",
+      "persistence": "Workbook-edit context; save behavior not separately researched",
+      "undo": "Not established in inspected page",
+      "mode": "Authoring",
+      "transfer": "A correctly focused full editor is a strong minimal alternative to inventing many tiny editors."
+    },
+    {
+      "id": "M07",
+      "product": "Grafana",
+      "family": "Operational dashboards",
+      "source_ids": [
+        "E09"
+      ],
+      "object_hit": "Legend color bar or series label",
+      "gesture": "Color bar click opens picker; label click isolates series",
+      "result": "Color choice or automatically created series override",
+      "scope": "Series visual appearance, not linked row selection",
+      "persistence": "Save dashboard preserves override for viewers",
+      "undo": "No grouped undo claim; reselecting can restore series display",
+      "mode": "Dashboard interaction with explicit save",
+      "transfer": "The legend is useful real estate, but its click convention conflicts with explorEDA category filtering."
+    },
+    {
+      "id": "M08",
+      "product": "Datawrapper",
+      "family": "Browser-first publication authoring",
+      "source_ids": [
+        "E10",
+        "E11"
+      ],
+      "object_hit": "Point/label within Annotate, or chart after Add range highlight",
+      "gesture": "Pick label directly or from dropdown; explicit range action then drag",
+      "result": "Labels and range annotations",
+      "scope": "Selected labels or an annotation",
+      "persistence": "Authoring before a separate Publish step",
+      "undo": "Specific label removal documented; general undo grouping unknown",
+      "mode": "Authoring, not published viewer interaction",
+      "transfer": "Explicit one-shot annotation intent transfers; plain point-click editing does not."
+    }
+  ],
+  "sources": [
+    {
+      "id": "R001",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/AGENTS.md",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "AGENTS.md",
+      "sha256": "a3828060158eab7f9d3fad0f6626be3c05b1b4bd28b94f5d858e0e77d7678382",
+      "bytes": 5682,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R002",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/README.md",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "README.md",
+      "sha256": "4690f7b91a3473eff7e12aaa0493954c5401efbf885a88351765ba423f2d431a",
+      "bytes": 9646,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R003",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/apps/demo/src/demos/coverage.ts",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "apps/demo/src/demos/coverage.ts",
+      "sha256": "0a9dc9bcb1f4dc7953d00ec01f26e1aad3a936c005b2860a4122d69959814be4",
+      "bytes": 46995,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R004",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/apps/demo/src/demos/examples.ts",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "apps/demo/src/demos/examples.ts",
+      "sha256": "9e409fd6e0c83a8ef0afda856d4eabc35c3eacad0a4ddf2629ecc194458324a0",
+      "bytes": 43775,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R005",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/apps/demo/src/docs/gate.ts",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "apps/demo/src/docs/gate.ts",
+      "sha256": "681a9a53d90a5d048e05b7285c7178662f3b7ebc352f393f08a81c70df8b7de5",
+      "bytes": 7433,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R006",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/apps/demo/src/docs/pages/bar.mdx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "apps/demo/src/docs/pages/bar.mdx",
+      "sha256": "a78c8f1b5572944e0fdba332ad56b3942eaac9625dc12bc6658bc3fd5dab626d",
+      "bytes": 2464,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R007",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/apps/demo/src/docs/pages/chart-settings.mdx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "apps/demo/src/docs/pages/chart-settings.mdx",
+      "sha256": "d1fa0e281cc0fc3276226122e75afe001271eac6eb78dc5cc0510163dc9c7c02",
+      "bytes": 1449,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R008",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/apps/demo/src/docs/pages/color.mdx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "apps/demo/src/docs/pages/color.mdx",
+      "sha256": "6d1cc710122bb815ebbba56154a9ecdadd00a13314481b3d5ea5ea389475b59f",
+      "bytes": 762,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R009",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/apps/demo/src/docs/pages/composition.mdx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "apps/demo/src/docs/pages/composition.mdx",
+      "sha256": "ac02de890e01ebe55bc46725b315a4fa00a203045105ecff9b1e740f1daa4270",
+      "bytes": 1494,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R010",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/apps/demo/src/docs/pages/data-table.mdx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "apps/demo/src/docs/pages/data-table.mdx",
+      "sha256": "e797886da3fa48959f733d095376276e83aa93719c56b57acb8fe90485d1ebd5",
+      "bytes": 981,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R011",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/apps/demo/src/docs/pages/facets.mdx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "apps/demo/src/docs/pages/facets.mdx",
+      "sha256": "2455f2f844d550746c17ea3bcbed423bd309dfef25e09c2dfa72bf00e1fb4a47",
+      "bytes": 977,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R012",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/apps/demo/src/docs/pages/filters.mdx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "apps/demo/src/docs/pages/filters.mdx",
+      "sha256": "2900d282a67aac459cef111e19e227f55df5fd0cd2cff40721ee9d3059e9cc70",
+      "bytes": 1298,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R013",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/apps/demo/src/docs/pages/in-place-editing.mdx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "apps/demo/src/docs/pages/in-place-editing.mdx",
+      "sha256": "3381a0b8028f09303bdf4f04739cd6de916911d52d4609389e312ca9f815f389",
+      "bytes": 930,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R014",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/apps/demo/src/docs/pages/line.mdx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "apps/demo/src/docs/pages/line.mdx",
+      "sha256": "1f57e1a8cc0c596ea82aed9b52997d1e7f9dc48922b5bb26c0f1be9bd73eaced",
+      "bytes": 1941,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R015",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/apps/demo/src/docs/pages/map.mdx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "apps/demo/src/docs/pages/map.mdx",
+      "sha256": "1db4684896597f041f009d7307bbf81aaaa4040995b3bb2d2f59a5e5617f45f4",
+      "bytes": 2706,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R016",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/apps/demo/src/docs/pages/scales-and-axes.mdx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "apps/demo/src/docs/pages/scales-and-axes.mdx",
+      "sha256": "f980d97e2e43b2ceaf713874c0542fdc51aec65ea8223a8277a0acb5f053ac19",
+      "bytes": 1257,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R017",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/apps/demo/src/docs/pages/scatter.mdx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "apps/demo/src/docs/pages/scatter.mdx",
+      "sha256": "8570bc82ab30904e412b65242693ce3d82bb175e27a4f76ee34bab551cd5ffc8",
+      "bytes": 4853,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R018",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/apps/demo/src/docs/pages/trace.mdx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "apps/demo/src/docs/pages/trace.mdx",
+      "sha256": "a64ee29d2d3b057f4636a627d49c73e13a3f0afa2a8c9f6e784284a510960955",
+      "bytes": 1142,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R019",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/apps/demo/src/docs/reference/settingDescriptions.ts",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "apps/demo/src/docs/reference/settingDescriptions.ts",
+      "sha256": "eeead3294793bb88027b4020a6c630a9d7eb1dbc20afd7ba06f392521d7d148c",
+      "bytes": 16587,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R020",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/docs/agent-guide.md",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "docs/agent-guide.md",
+      "sha256": "868d75d410af5c8c318a2b8acd2d3dcdb98eb6c94113eef4c3d9c5b1f51e409b",
+      "bytes": 33614,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R021",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/docs/composition-mode.md",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "docs/composition-mode.md",
+      "sha256": "0034e1e9b2a859e3f395fe119d57722d9c80b0b3ba05dcb1c5e5f528c8e1e09b",
+      "bytes": 20206,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R022",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/docs/intent/axis-domain-controls/intent-brief.md",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "docs/intent/axis-domain-controls/intent-brief.md",
+      "sha256": "11b36fd7d45e231658cd2727f3395bf2ccdb4d72c537f7be0f3d96dba879490c",
+      "bytes": 4158,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R023",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/docs/intent/axis-domain-controls/shape-brief.md",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "docs/intent/axis-domain-controls/shape-brief.md",
+      "sha256": "cc055a8e95105252d2bd8643bb08ed01a7c6391ce2666cdd9f03ad07bc04b052",
+      "bytes": 4890,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R024",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/docs/intent/comparison-opportunities/resources/pro-chart-review/exploreda-chart-interaction-review/review.md",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "docs/intent/comparison-opportunities/resources/pro-chart-review/exploreda-chart-interaction-review/review.md",
+      "sha256": "f68fd6d9f6c4d47df77e2f2a074cc706b545ddc46ea3f624f03fdbe90c19948f",
+      "bytes": 34971,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R025",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/docs/ui-defaults.md",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "docs/ui-defaults.md",
+      "sha256": "ba5ef4b0072b7f4da151da6188afbdbd3d06f62df91d6da52d3306a3f2c9c500",
+      "bytes": 18914,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R026",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/package.json",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "package.json",
+      "sha256": "98a8fe6c6a7118c6642ae7532c20775a9ed7246b176270c7b83c816517cce468",
+      "bytes": 960,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R027",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/package.json",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/package.json",
+      "sha256": "d5c9063b6d5e1e815d9928bb608e82bedcf08db7035f5e538da9762b72fcac3c",
+      "bytes": 5325,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R028",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/charts/registerAllCharts.ts",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/charts/registerAllCharts.ts",
+      "sha256": "21449a363ca9ae77f1f838fb428bd543c16d6ff1ae757012043b32f6b6b75e14",
+      "bytes": 3015,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R029",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/charts/registry.ts",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/charts/registry.ts",
+      "sha256": "8938b10f0c249a0710517352c78eb8c56d461240c21afd4f0e24142b484c4b9a",
+      "bytes": 3090,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R030",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/ChartGridLayout.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/ChartGridLayout.tsx",
+      "sha256": "f6a448fe7e391d837a0caafe3c524a2e0a2c922857913f376a64599a145375e6",
+      "bytes": 12716,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R031",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/ChartSettingsContent.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/ChartSettingsContent.tsx",
+      "sha256": "dacdd56f15a69bb9b94d683adc2f4669f29acabc7a9ec5a5fe7b1d249cd7d993",
+      "bytes": 7450,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R032",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/FieldList/FieldPicker.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/FieldList/FieldPicker.tsx",
+      "sha256": "4acac175feb066949c68a554c334d71e9b59319a889504358995c47d9bc9a7df",
+      "bytes": 5006,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R033",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/FieldMetadata.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/FieldMetadata.tsx",
+      "sha256": "b141b6708594ce779a6a2f4cebdb8ace1d51f40949a29edf3454bbe24559b0eb",
+      "bytes": 8362,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R034",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/FieldSelector.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/FieldSelector.tsx",
+      "sha256": "bf6642e7c617dc281167c359942e3a5401bcd44243eaeedad8f799d6a8d77f68",
+      "bytes": 3290,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R035",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/PlotChartPanel.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/PlotChartPanel.tsx",
+      "sha256": "d1a601aaa9cbbb7c9ea9f567360c4bc5a7c4c8dd917ff155e42a986567e09ab5",
+      "bytes": 39078,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R036",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/AxisFieldActions.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/AxisFieldActions.tsx",
+      "sha256": "255bc6292bfa2ebb603c0cf58d8fbac1ff06fa5c4a3e0449a6450edf3d01fa64",
+      "bytes": 7358,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R037",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/BarChart/BarChartSettingsPanel.test.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/BarChart/BarChartSettingsPanel.test.tsx",
+      "sha256": "753cbf4d8a3ab5b181ae1c51085ad8b9f3a6e588947865d9bf8ef70def3e2c11",
+      "bytes": 3649,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R038",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/BarChart/BarChartSettingsPanel.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/BarChart/BarChartSettingsPanel.tsx",
+      "sha256": "1f4c01e09224d2b2e57b4ef9b276f5339f1efd94e458533f6150a869e68d970b",
+      "bytes": 15063,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R039",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/BarChart/definition.ts",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/BarChart/definition.ts",
+      "sha256": "5e54c433674e1c16c97eb2ff68bf85794a22860113f6fa9dfe2fb175d86b6623",
+      "bytes": 2749,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R040",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/BaseChart.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/BaseChart.tsx",
+      "sha256": "6996d12e1743cd6da2e82f70709d0e4b572f361b8255e984452d93d48377c281",
+      "bytes": 14197,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R041",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/BoxPlot/BoxPlotSettingsPanel.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/BoxPlot/BoxPlotSettingsPanel.tsx",
+      "sha256": "ad5e3027d7ee185cc6ced4048e1fceb6e456fbb782340f406b492e56dd5f2adc",
+      "bytes": 6325,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R042",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/BoxPlot/definition.ts",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/BoxPlot/definition.ts",
+      "sha256": "3f134f9c050385df9fbc2880d1e081a9096c6a0f2ab9ab125c0e1fdb637566d1",
+      "bytes": 2795,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R043",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/Calendar/CalendarSettingsPanel.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/Calendar/CalendarSettingsPanel.tsx",
+      "sha256": "3e47daf03b0401216e3a925d32f0524e9db6e252d1148c087772aad1fd89690f",
+      "bytes": 4940,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R044",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/Calendar/definition.ts",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/Calendar/definition.ts",
+      "sha256": "3a92c54d9d8cdfe5e6ac9a5f206a3295d54dea7e40ab42ef3e1f75ce9b759757",
+      "bytes": 1992,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R045",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/ColorLegend/ChartColorLegend.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/ColorLegend/ChartColorLegend.tsx",
+      "sha256": "e57300e006d90577dde23355dbef47a29e55daa67972f5e06404c38bb5313104",
+      "bytes": 8403,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R046",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/ColorLegend/ColorLegendSettingsPanel.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/ColorLegend/ColorLegendSettingsPanel.tsx",
+      "sha256": "ef843b6be8089811d1fc6f72e7cc940fb0110e62fc594e573fc52c2ac7edb349",
+      "bytes": 2025,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R047",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/ColorLegend/ColorScale.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/ColorLegend/ColorScale.tsx",
+      "sha256": "1a8e77f3cee9f4150dc8429626a579f3f599686c6116a26336349d44369f0686",
+      "bytes": 4532,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R048",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/ColorLegend/definition.ts",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/ColorLegend/definition.ts",
+      "sha256": "b11c90a08910685d303568b753aff6848c6270814fcdd1e70911b706aacda8a0",
+      "bytes": 2028,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R049",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/Composition/CompositionQuickMenu.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/Composition/CompositionQuickMenu.tsx",
+      "sha256": "36a6c0545954c0d37eef2e727d7a0276a2dba2d468e0d335c2b8aff32a3e6cb0",
+      "bytes": 4330,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R050",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/Composition/definition.ts",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/Composition/definition.ts",
+      "sha256": "4da429571f5d0a3df145cc01172521c0996cd4307cdf982900c7ab1484d18213",
+      "bytes": 1523,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R051",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/DataTable/DataTableContextMenu.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/DataTable/DataTableContextMenu.tsx",
+      "sha256": "76ca913d4fd68eaa674dfefc69ad784be0080370232a1f9f23caca1741235b7a",
+      "bytes": 11177,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R052",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/DataTable/DataTableSettingsPanel.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/DataTable/DataTableSettingsPanel.tsx",
+      "sha256": "dd180c0a6e73f6ce43314e9efd7bba0372921241aef9c5425c961434c3846595",
+      "bytes": 1828,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R053",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/DataTable/__tests__/DataTableContextMenu.test.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/DataTable/__tests__/DataTableContextMenu.test.tsx",
+      "sha256": "1375d2d0f92ffd57f6d93b596bd59717cd9f50c3fc7e005fe313fcb683d6a476",
+      "bytes": 4071,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R054",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/DataTable/definition.ts",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/DataTable/definition.ts",
+      "sha256": "9e61d4c0eed698a4a3166c77d0def01318307de8123074fa5c37184995b28a26",
+      "bytes": 2303,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R055",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/Donut/DonutSettingsPanel.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/Donut/DonutSettingsPanel.tsx",
+      "sha256": "62735e4226c230f65dfd4e1dc6b0a037a342b1b044b86dd170d6674a09124713",
+      "bytes": 3921,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R056",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/Donut/definition.ts",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/Donut/definition.ts",
+      "sha256": "c0d099e14053c5d2fa57b9798b03eca4a1684749f58f1ee562b3a58e64da340f",
+      "bytes": 1585,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R057",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/Ecdf/EcdfSettingsPanel.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/Ecdf/EcdfSettingsPanel.tsx",
+      "sha256": "8c28bd80248c7ee6c106ac28336009be9b3de50c7266a2fffd1383356bc71856",
+      "bytes": 6605,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R058",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/Ecdf/definition.ts",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/Ecdf/definition.ts",
+      "sha256": "ac5b154835778aec2ea727f618718134e6961b60e48d5d8441f124cf12ff7ce2",
+      "bytes": 2036,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R059",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/Heatmap/HeatmapSettingsPanel.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/Heatmap/HeatmapSettingsPanel.tsx",
+      "sha256": "cfad82eb14fa45fca1d71636c43d51272f8144e5d289fb7387ea24672603119b",
+      "bytes": 6108,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R060",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/Heatmap/definition.ts",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/Heatmap/definition.ts",
+      "sha256": "ae409ccfb52fb4608aa09e9d225e1a918ddbd5b8d89938b2b3b9a4a60f64d574",
+      "bytes": 2263,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R061",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/Hierarchy/HierarchySettingsPanel.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/Hierarchy/HierarchySettingsPanel.tsx",
+      "sha256": "bc3b02fb68169bca3dd163adf2a87b67dabb7c06c64cc8e93d1f0872086957c6",
+      "bytes": 10492,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R062",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/Hierarchy/definition.ts",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/Hierarchy/definition.ts",
+      "sha256": "af36fd5277bf3cf9680654d0c59ca404098edc237370f573bb78415f70709882",
+      "bytes": 2775,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R063",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/InPlace/AxisLimitFields.test.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/InPlace/AxisLimitFields.test.tsx",
+      "sha256": "72a9e7e4ee14ee34b2ba88c0b83bf22d0d07eab20f3df9ff76084d865dd49908",
+      "bytes": 2693,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R064",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/InPlace/AxisLimitFields.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/InPlace/AxisLimitFields.tsx",
+      "sha256": "ccc084a33fe74b6c4517a275fac18377b83fc4d3f7635a1287acdf4ecc60e4e1",
+      "bytes": 5739,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R065",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/InPlace/InlineTextEditor.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/InPlace/InlineTextEditor.tsx",
+      "sha256": "fe860cfdbc7c58aac567b902f6e04024c5bd6857dbc7e24cca971b4e2df6a234",
+      "bytes": 2546,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R066",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/InPlace/axisDrag.test.ts",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/InPlace/axisDrag.test.ts",
+      "sha256": "5050b28beb6bdbaa8ac2ee4ca7c1f166ab74c7cdadf5c1acff2654aca689ae06",
+      "bytes": 3973,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R067",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/InPlace/axisDrag.ts",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/InPlace/axisDrag.ts",
+      "sha256": "f0d2545d73fa0af7c5bf8f5f0b9e38755b31ad20b9fd9cf8612a1b141c027014",
+      "bytes": 3894,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R068",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/InPlace/axisEditing.test.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/InPlace/axisEditing.test.tsx",
+      "sha256": "24e0466d899a602efb15a7d44c4115b98f4ac44228d14492bac07e5809a65ad6",
+      "bytes": 6319,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R069",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/InPlace/hiddenNotice.test.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/InPlace/hiddenNotice.test.tsx",
+      "sha256": "3b1376a2a5429e3a5b77a3c759308e315cc4ea488631d6518396447a62a3d57d",
+      "bytes": 3161,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R070",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/InPlace/hiddenNoticeCharts.test.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/InPlace/hiddenNoticeCharts.test.tsx",
+      "sha256": "b8f9b0eba64e94dc2e1153c0203f14d38ea32945575c022e1533b135fa00e10b",
+      "bytes": 3917,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R071",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/InPlace/logScale.test.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/InPlace/logScale.test.tsx",
+      "sha256": "7e3c36f5710ded591ce64e668d21cb065060fb76b29c867225eca1b5de87a594",
+      "bytes": 4935,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R072",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/InPlace/titleEditing.test.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/InPlace/titleEditing.test.tsx",
+      "sha256": "443f9a8553c7afb801fde36af9e153fca0501ca1709b6d35162128feb19786c2",
+      "bytes": 3809,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R073",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/InPlace/useAxisEditing.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/InPlace/useAxisEditing.tsx",
+      "sha256": "2c0f4c2151cdd75ef7957ee43c988e5e33aa78912a21627229ad69abaaf33d23",
+      "bytes": 16253,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R074",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/InPlace/useChartEdit.ts",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/InPlace/useChartEdit.ts",
+      "sha256": "a7ac4f2276c48897792e06b88b3462b25a9245afb0dd4dbb287ef496d2f114d9",
+      "bytes": 2190,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R075",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/InPlace/useHiddenNotice.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/InPlace/useHiddenNotice.tsx",
+      "sha256": "29ab3b252fb35c692e103f76713acdea44a6cda42f889fb5a0c83b222ec3319d",
+      "bytes": 8285,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R076",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/InPlace/useTitleEditing.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/InPlace/useTitleEditing.tsx",
+      "sha256": "08287cb1d3dbd52a9f66c4731bd6e60b28aaff6804e524c0f7469faca7252ef3",
+      "bytes": 5569,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R077",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/LineChart/LineChartSettingsPanel.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/LineChart/LineChartSettingsPanel.tsx",
+      "sha256": "d4c00eb7a204f2914bcf04958ce9e59192f4e2eb0cc595e17fb1ea6347705513",
+      "bytes": 5473,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R078",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/LineChart/LineSeriesSettings.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/LineChart/LineSeriesSettings.tsx",
+      "sha256": "7d3490d90a6c66a897f882522b2a2d81269cc845c5d0ba9d205d97d6a477a6e0",
+      "bytes": 3689,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R079",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/LineChart/TimeSeriesSettingsPanel.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/LineChart/TimeSeriesSettingsPanel.tsx",
+      "sha256": "52248e30fe1fa03902c874cdd9283a7e5736a2ce4769c20420fb121e401aabd3",
+      "bytes": 9709,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R080",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/LineChart/definition.ts",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/LineChart/definition.ts",
+      "sha256": "10a22a4d77bed38f66217f2a70dec339e8094f283f2e49b54a786550f5146962",
+      "bytes": 3601,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R081",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/Map/MapSettingsPanel.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/Map/MapSettingsPanel.tsx",
+      "sha256": "bbf5b0e1a7dfa75496c4c71831f8f29f3b9529b2a73255df47df16c036eaee6e",
+      "bytes": 9722,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R082",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/Map/RegionMapSettings.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/Map/RegionMapSettings.tsx",
+      "sha256": "e7454ccb355c5951b4e32ae4aaafb2c95e9a87bc7beb950e471e53651b728c11",
+      "bytes": 15151,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R083",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/Map/definition.ts",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/Map/definition.ts",
+      "sha256": "9df07132d086e8cae4a7005ef12b587dcbde90b113844b526d0e702e783c126d",
+      "bytes": 2651,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R084",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/Map/regionMapSettings.test.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/Map/regionMapSettings.test.tsx",
+      "sha256": "2f0d2c5d61162f9ca7ac3349babec1898c91b82522e1792402c6ec454a0f7c99",
+      "bytes": 4464,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R085",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/Markdown/definition.ts",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/Markdown/definition.ts",
+      "sha256": "406963f36cee3026f2267b603477979ef05ad2e789d60388cf62195d52789754",
+      "bytes": 900,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R086",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/MetricCard/MetricCardSettingsPanel.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/MetricCard/MetricCardSettingsPanel.tsx",
+      "sha256": "78912a6feb545fadb70d6e95c047404e12b538bae00205a5443d5317231837f0",
+      "bytes": 3471,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R087",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/MetricCard/definition.ts",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/MetricCard/definition.ts",
+      "sha256": "698567ed7cedaa8a0218e05f4ab0be17e9d7f5e273de5e2e679cdfd3ae6d60ea",
+      "bytes": 1575,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R088",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/ParallelCoordinates/ParallelCoordinatesSettingsPanel.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/ParallelCoordinates/ParallelCoordinatesSettingsPanel.tsx",
+      "sha256": "8a2e1d3d995cd4909e4fad6f4ca490f455833ba4ac3d207bd6d2d043ec66eccf",
+      "bytes": 11286,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R089",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/ParallelCoordinates/definition.ts",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/ParallelCoordinates/definition.ts",
+      "sha256": "e1d96ef3941680625c92b972fcd228dadff8df95553c84390ecb924b3780449d",
+      "bytes": 2325,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R090",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/PivotTable/PivotTableSettingsPanel.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/PivotTable/PivotTableSettingsPanel.tsx",
+      "sha256": "f4b02c0ccc0b61cc7e9e8623f83e204fc62f4a2625e6b31d25e98639e4f16db8",
+      "bytes": 6719,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R091",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/PivotTable/definition.ts",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/PivotTable/definition.ts",
+      "sha256": "fc7c6121f491c9e136ed18f9e92d3c35e1cdae7acd007a8e615ddf1e47039356",
+      "bytes": 3618,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R092",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/RowChart/RowChartSettingsPanel.test.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/RowChart/RowChartSettingsPanel.test.tsx",
+      "sha256": "8a0c93b2bc8fd27de6d354b75b81ae08891ed6d106ef5830539494ac5bd4588b",
+      "bytes": 2969,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R093",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/RowChart/RowChartSettingsPanel.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/RowChart/RowChartSettingsPanel.tsx",
+      "sha256": "711b0df71b09b9e7a772421a2e3a9bcd18e19e2edf4391c9965c31fd4b55146e",
+      "bytes": 11258,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R094",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/RowChart/definition.ts",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/RowChart/definition.ts",
+      "sha256": "e4fc072a508902d353e265bbdce076faaa1de81985aa49ef970e10db729fa98f",
+      "bytes": 1500,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R095",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/Sankey/SankeySettingsPanel.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/Sankey/SankeySettingsPanel.tsx",
+      "sha256": "648704a4709a020e11aeb92b3988f3485e204477f79537293008faa49e39661b",
+      "bytes": 10522,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R096",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/Sankey/definition.ts",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/Sankey/definition.ts",
+      "sha256": "1828ce165e5e95c37e543f810f1e4350282b8a60bf2635fa38115d25d6b5b7c4",
+      "bytes": 2515,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R097",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/ScatterMatrix/ScatterMatrixSettingsPanel.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/ScatterMatrix/ScatterMatrixSettingsPanel.tsx",
+      "sha256": "abfaf29f0ad233319353c3937e9cb38f62a06e66d0629b0e06f80911d6ebc62c",
+      "bytes": 12991,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R098",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/ScatterMatrix/definition.ts",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/ScatterMatrix/definition.ts",
+      "sha256": "6b9d4dcd73add20db27ff9157564e29ec2b2952e2e56dba771c66d7708d445b9",
+      "bytes": 3673,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R099",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/ScatterPlot/DensitySettings.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/DensitySettings.tsx",
+      "sha256": "9073c2045e1b6a88ce881c3075bcd5777ba91327fc29ecc04d0a378626169522",
+      "bytes": 2443,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R100",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/ScatterPlot/PointSizeSetting.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/PointSizeSetting.tsx",
+      "sha256": "1c4f41458243eba175821837730aa0f612d95afa4b324947e94fa741736cba71",
+      "bytes": 1596,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R101",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/ScatterPlot/RegressionSettings.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/RegressionSettings.tsx",
+      "sha256": "4e018687036d6820102c9653739cf677419b4a7a9470952691ac861401cddc1e",
+      "bytes": 7049,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R102",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/ScatterPlot/ScatterPlotSettingsPanel.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/ScatterPlotSettingsPanel.tsx",
+      "sha256": "5d5bef4dfe0d8f19edc24170ae5761225fd0c33d8a596c08b8805fb0eddaf2e0",
+      "bytes": 8736,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R103",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/ScatterPlot/ScatterSvg.test.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/ScatterSvg.test.tsx",
+      "sha256": "bde0fc6274825cd701f29c052177c30ba0ed25061b2be577a0ea43ceb0693872",
+      "bytes": 8296,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R104",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/ScatterPlot/ScatterSvg.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/ScatterSvg.tsx",
+      "sha256": "897fe5aa6ed62e39f43badbcd55ecf2c6fd5dd5e6eacde2fc7fbaa36ea8d850f",
+      "bytes": 23595,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R105",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/ScatterPlot/SurfaceSettings.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/SurfaceSettings.tsx",
+      "sha256": "a184d25f0cd38cf318ef9e1b8eeeff1753f3448e13141c38bbbdb3376081ca5d",
+      "bytes": 5869,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R106",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/ScatterPlot/definition.ts",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/definition.ts",
+      "sha256": "5c9e543a3825193fa44812d23c44569c37fd4d5afd98e53b48fcf58cfc385c02",
+      "bytes": 2865,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R107",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/SummaryTable/SummaryTableSettingsPanel.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/SummaryTable/SummaryTableSettingsPanel.tsx",
+      "sha256": "8be1e6d258dd10def64a196f2c0aae81fba0fbb13fb4e86881be28227bf0e90a",
+      "bytes": 134,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R108",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/SummaryTable/definition.ts",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/SummaryTable/definition.ts",
+      "sha256": "fcca2db32f260ddd7cf944dd62caae80ad746d1bb0e58e90d9c33a4ec2c50d20",
+      "bytes": 1604,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R109",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/ThreeDScatter/ThreeDScatterSettingsPanel.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/ThreeDScatter/ThreeDScatterSettingsPanel.tsx",
+      "sha256": "9a88824eed0514b9f7cac3b219e615e99b755d1c4319774306bc992767b8af30",
+      "bytes": 3877,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R110",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/ThreeDScatter/definition.ts",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/ThreeDScatter/definition.ts",
+      "sha256": "8a0727bf0c8b6b2f32faba91dabfca6bd6d8b10b01344d2f1d1f45d571fe688a",
+      "bytes": 1597,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R111",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/Waterfall/WaterfallSettingsPanel.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/Waterfall/WaterfallSettingsPanel.tsx",
+      "sha256": "d61cbdba6413826a4c18c7d501a9b634505dbfb949f0654670f641f42917dcd3",
+      "bytes": 9381,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R112",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/Waterfall/definition.ts",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/Waterfall/definition.ts",
+      "sha256": "94e95f958f4f5ca68359c3e6abc23e7a7e32a4875951925797ecb636172d5fd0",
+      "bytes": 1491,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R113",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/export/ChartImageMenu.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/export/ChartImageMenu.tsx",
+      "sha256": "27fca9cb48a886875f90527426be2f285f72192fe9d21a87e0ace5a2e31e1fb7",
+      "bytes": 3616,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R114",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/colorScales/ColorScaleControl.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/colorScales/ColorScaleControl.tsx",
+      "sha256": "33fb89b45eccbe80de41164fe7d14a027b1e9922468b6f0362177e31a34ccb93",
+      "bytes": 5682,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R115",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/settings/AdvancedSettingsTab.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/settings/AdvancedSettingsTab.tsx",
+      "sha256": "eb7a559d853fed99fc99e8247c00bd4e6739f2edc72da16864b3fc7c8e287bc8",
+      "bytes": 2952,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R116",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/settings/AxisSettingsTab.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/settings/AxisSettingsTab.tsx",
+      "sha256": "467cc718bc4e0e5672a329c9a4b4e478c539b8155d4b8ee3f6ea636a3c90668c",
+      "bytes": 9594,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R117",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/settings/FacetSettingsTab.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/settings/FacetSettingsTab.tsx",
+      "sha256": "28efac6a5fa947666b55957cb7923a533cd5d5bdbd74059c1b1affdc50e90865",
+      "bytes": 8232,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R118",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/settings/FiltersSettingsTab.test.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/settings/FiltersSettingsTab.test.tsx",
+      "sha256": "400ba9acd29e6cfb71e25340e07c5d24f8ff96850e9892e12e5e494d55077ab6",
+      "bytes": 4244,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R119",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/settings/FiltersSettingsTab.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/settings/FiltersSettingsTab.tsx",
+      "sha256": "1cf173042f031ec2bedcdfa101e450e94fd626f89af896f77735b7ef7d2615a9",
+      "bytes": 9486,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R120",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/settings/GridSettingsPanel.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/settings/GridSettingsPanel.tsx",
+      "sha256": "f876e1907bf3187967cdd3253ec6b9b03e43730cd82048ad17262a3d5fe80897",
+      "bytes": 2109,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R121",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/settings/LabelsSettingsTab.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/settings/LabelsSettingsTab.tsx",
+      "sha256": "eacc77375d6cd7fb97dc3c859981108cbd599fb66637f8f9fb265274a9d194f3",
+      "bytes": 5543,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R122",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/settings/MainSettingsTab.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/settings/MainSettingsTab.tsx",
+      "sha256": "6d0e78da4693be7265ffd63f04daaa4ca31aedc8d626d69f4cad7e49d8f5973e",
+      "bytes": 2209,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R123",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/settings/TabContainer.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/settings/TabContainer.tsx",
+      "sha256": "1e4483d7caac49637251fdc6bf18745a9e20dce3b8cc090bc43fae3248ae3327",
+      "bytes": 929,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R124",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/settings/ThemeSettingsPanel.test.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/settings/ThemeSettingsPanel.test.tsx",
+      "sha256": "e470a60746581d41f0cb9fac033c06ace5ee7c5ac06fd7a1883b47d097d9e1f5",
+      "bytes": 2599,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R125",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/settings/ThemeSettingsPanel.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/settings/ThemeSettingsPanel.tsx",
+      "sha256": "fb0f5f3005b15da10dce31a3a56dc0d973787c5232be8eb99e9c753db21a40e0",
+      "bytes": 7890,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R126",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/settings/annotations/AnnotationFields.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/settings/annotations/AnnotationFields.tsx",
+      "sha256": "089ca8a9cac581255557e6f3c61ead1c6747c5a6241b1c54b77ab7ff1889226c",
+      "bytes": 23502,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R127",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/settings/annotations/AnnotationsSettingsTab.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/settings/annotations/AnnotationsSettingsTab.tsx",
+      "sha256": "f03f27d092d4739c69515a96ee39d68e4096426a83adf010a0bb4d802c6ac243",
+      "bytes": 16646,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R128",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/settings/annotations/annotationInputs.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/settings/annotations/annotationInputs.tsx",
+      "sha256": "f84eec7e2c00b7c797314cb4d816d570155f868f51ea7577ee197fc2b7227410",
+      "bytes": 3439,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R129",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/hooks/useColorScales.ts",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/hooks/useColorScales.ts",
+      "sha256": "fbb3c789c81c5658c3c6c80167184ae9dfb4aee903d5127226c12c581a857576",
+      "bytes": 5776,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R130",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/providers/DataLayerProvider.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/providers/DataLayerProvider.tsx",
+      "sha256": "c464ed3a4e2c65a5d4f33dc5e5c7fc9dc0b4762be64ccf6bbf5137cc1b08c698",
+      "bytes": 53615,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R131",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/types/ChartTypes.ts",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/types/ChartTypes.ts",
+      "sha256": "767e608bc8895a9691f1db145589fc7d104901396d1bb35ec5b921e34fdc4061",
+      "bytes": 6936,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R132",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/types/SavedDataStructure.ts",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/types/SavedDataStructure.ts",
+      "sha256": "d06d902c2e9ba967adb39f25502405153b2b582bfd2bf7305ad51bec9b9dfebb",
+      "bytes": 1926,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R133",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/utils/defaultSettings.ts",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript library and demo; static source review",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "immutable repository source in authorized packet",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/utils/defaultSettings.ts",
+      "sha256": "d6f959c8364cc1378b8c96780e8e9cfe8e69d97aa66c1b4db9db1a5db1228bb6",
+      "bytes": 2822,
+      "supported_claims": [
+        "Declarations, controls, documented behavior or tests in this exact file; recommendations cite narrower symbols."
+      ],
+      "limits": [
+        "Static evidence only. A declaration or test is not proof of runtime success."
+      ],
+      "verification": "Packet section bytes and SHA-256 matched manifest."
+    },
+    {
+      "id": "R134",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/hooks/useBrush.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "connected GitHub immutable source",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/hooks/useBrush.tsx",
+      "git_blob_sha": null,
+      "supported_claims": [
+        "useBrush declarations and interaction semantics"
+      ],
+      "limits": [
+        "Connected exact-baseline source read; entire hook inspected.",
+        "No local supplemental byte hash; no runtime tests."
+      ]
+    },
+    {
+      "id": "R135",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/ScatterPlot/ScatterPlot.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "connected GitHub immutable source",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/ScatterPlot.tsx",
+      "git_blob_sha": "8afa86824c34c88fe2bdc35787425c2dab87c780",
+      "supported_claims": [
+        "ScatterPoints declarations and interaction semantics"
+      ],
+      "limits": [
+        "Connected exact-baseline source; caller, selection and render flow inspected including lines 445–560.",
+        "No local supplemental byte hash; no runtime tests."
+      ]
+    },
+    {
+      "id": "R136",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/charts/Composition/compositionTypes.ts",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "connected GitHub immutable source",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/charts/Composition/compositionTypes.ts",
+      "git_blob_sha": "2f91d234ad5e84f2de34f32d5e3e8ed2b30a8adc",
+      "supported_claims": [
+        "CompositionDefinition declarations and interaction semantics"
+      ],
+      "limits": [
+        "Connected exact-baseline declarations inspected in ranges; functions unrelated to settings not exhaustively reviewed.",
+        "No local supplemental byte hash; no runtime tests."
+      ]
+    },
+    {
+      "id": "E01",
+      "url": "https://learn.microsoft.com/en-us/power-bi/create-reports/power-bi-on-object-interaction",
+      "product": "Power BI",
+      "version": "Desktop on-object interaction preview; build unspecified",
+      "platform": "Windows Desktop authoring",
+      "accessed": "2026-10-12",
+      "published_or_updated": "2026-07-22",
+      "evidence_type": "vendor documentation",
+      "access_status": "accessed",
+      "supported_claims": [
+        "Format mode changes click semantics; on-object field and format controls; overlapping target correction; documented small-multiple and accessibility limitations."
+      ],
+      "limits": [
+        "Documented, not hands-on. Preview status is the source wording, not a claim about every tenant. Per-action undo grouping not established."
+      ]
+    },
+    {
+      "id": "E02",
+      "url": "https://help.tableau.com/current/pro/desktop/en-us/viewparts_marks_markproperties_color.htm",
+      "product": "Tableau",
+      "version": "Current rolling help; build unspecified",
+      "platform": "Desktop and web authoring",
+      "accessed": "2026-10-12",
+      "published_or_updated": null,
+      "evidence_type": "vendor documentation",
+      "access_status": "accessed",
+      "supported_claims": [
+        "Marks Color field assignment; categorical/continuous controls; legend Edit Colors; desktop/web differences and reset."
+      ],
+      "limits": [
+        "Documented, not hands-on. No measured field-search usability or undo granularity."
+      ]
+    },
+    {
+      "id": "E03",
+      "url": "https://www.jmp.com/support/help/en/19.0/jmp/about-the-graph-builder-window.shtml",
+      "product": "JMP",
+      "version": "19.0 help",
+      "platform": "Desktop Graph Builder authoring",
+      "accessed": "2026-10-12",
+      "published_or_updated": "2025-07-15",
+      "evidence_type": "vendor documentation",
+      "access_status": "accessed",
+      "supported_claims": [
+        "Variable list and drop zones; select variable then click zone; derived virtual columns."
+      ],
+      "limits": [
+        "Versioned documentation, not a claim that 19.0 is the latest binary. No hands-on or undo assessment."
+      ]
+    },
+    {
+      "id": "E04",
+      "url": "https://www.jmp.com/support/help/en/19.0/jmp/move-or-remove-variables-in-zones.shtml",
+      "product": "JMP",
+      "version": "19.0 help",
+      "platform": "Desktop Graph Builder authoring",
+      "accessed": "2026-10-12",
+      "published_or_updated": "2025-07-15",
+      "evidence_type": "vendor documentation",
+      "access_status": "accessed",
+      "supported_claims": [
+        "Move, replace, remove and swap zone variables by drag or context menu."
+      ],
+      "limits": [
+        "Documented mechanics only."
+      ]
+    },
+    {
+      "id": "E05",
+      "url": "https://www.jmp.com/support/help/en/19.0/jmp/popup-menus-in-graph-builder.shtml",
+      "product": "JMP",
+      "version": "19.0 help",
+      "platform": "Desktop Graph Builder authoring",
+      "accessed": "2026-10-12",
+      "published_or_updated": "2025-07-15",
+      "evidence_type": "vendor documentation",
+      "access_status": "accessed",
+      "supported_claims": [
+        "Context-specific menus; different single-graph/all-graphs scope through Graph menu and Ctrl-right-click."
+      ],
+      "limits": [
+        "Not a proposed explorEDA modifier convention. Scope rule applies as documented, not every JMP operation."
+      ]
+    },
+    {
+      "id": "E06",
+      "url": "https://docs.originlab.com/origin-help/mini-toolbar/",
+      "product": "Origin / OriginPro",
+      "version": "Rolling Origin help; release not stated",
+      "platform": "Desktop scientific graph authoring",
+      "accessed": "2026-10-12",
+      "published_or_updated": null,
+      "evidence_type": "vendor documentation",
+      "access_status": "accessed",
+      "supported_claims": [
+        "Object mini-toolbars; Group/Single scope; Object Manager access; Search for toolbar commands."
+      ],
+      "limits": [
+        "Documented, not hands-on. Object hit accuracy and toolbar crowding unmeasured; undo grouping unspecified."
+      ]
+    },
+    {
+      "id": "E07",
+      "url": "https://support.microsoft.com/en-au/office/format-elements-of-a-chart",
+      "product": "Excel",
+      "version": "Microsoft 365 / 2024 / 2021 / 2019 / 2016 as listed",
+      "platform": "Desktop chart authoring",
+      "accessed": "2026-10-12",
+      "published_or_updated": null,
+      "evidence_type": "vendor documentation",
+      "access_status": "accessed",
+      "supported_claims": [
+        "Right-click selected element opens tailored Format pane; another element retargets pane; pane can move/resize; ribbon alternative."
+      ],
+      "limits": [
+        "No claim of identical web/mobile mechanics. Action-specific persistence and undo not stated."
+      ]
+    },
+    {
+      "id": "E08",
+      "url": "https://help.qlik.com/en-US/sense/May2026/Subsystems/Hub/Content/Sense_Hub/UserInterface/visual-exploration-menu.htm",
+      "product": "Qlik Sense",
+      "version": "May 2026 help",
+      "platform": "Windows deployment; browser analysis",
+      "accessed": "2026-10-12",
+      "published_or_updated": "2026-10-07",
+      "evidence_type": "vendor documentation",
+      "access_status": "accessed",
+      "supported_claims": [
+        "Exploration menu during analysis without selecting data; session changes, Apply/Discard; alternative dimensions/measures; narrow-screen interaction; container limitations."
+      ],
+      "limits": [
+        "Apply depends on sheet permissions and publication/master status. No hands-on measurement."
+      ]
+    },
+    {
+      "id": "E09",
+      "url": "https://grafana.com/docs/grafana/latest/visualizations/panels-visualizations/configure-legend/",
+      "product": "Grafana",
+      "version": "Latest rolling help; build unspecified",
+      "platform": "Browser dashboards and panel configuration",
+      "accessed": "2026-10-12",
+      "published_or_updated": null,
+      "evidence_type": "vendor documentation",
+      "access_status": "accessed",
+      "supported_claims": [
+        "Legend color-bar picker; label isolation creates override; dashboard Save persists; Ctrl/Cmd adds series back."
+      ],
+      "limits": [
+        "Isolation is visual series visibility, not explorEDA linked row filtering. Supported visualization types vary; undo granularity unspecified."
+      ]
+    },
+    {
+      "id": "E10",
+      "url": "https://www.datawrapper.de/academy/customizing-your-scatter-plot-annotate",
+      "product": "Datawrapper",
+      "version": "Browser service; build unspecified",
+      "platform": "Browser publication authoring",
+      "accessed": "2026-10-12",
+      "published_or_updated": "2021-05-11",
+      "evidence_type": "vendor documentation",
+      "access_status": "accessed",
+      "supported_claims": [
+        "Direct or dropdown label selection; click added label to remove; Add range highlight then drag; separate publish step."
+      ],
+      "limits": [
+        "Older article remains served by current vendor Academy. No present-runtime verification; do not generalize authoring clicks to published readers."
+      ]
+    },
+    {
+      "id": "E11",
+      "url": "https://www.datawrapper.de/academy/how-to-create-a-scatter-plot",
+      "product": "Datawrapper",
+      "version": "Browser service; build unspecified",
+      "platform": "Browser publication authoring",
+      "accessed": "2026-10-12",
+      "published_or_updated": "2020-10-16",
+      "evidence_type": "vendor documentation",
+      "access_status": "accessed",
+      "supported_claims": [
+        "Visualize chart-type choice and staged Refine/Annotate/Design workflow."
+      ],
+      "limits": [
+        "Only interface workflow used; statistical explanatory text not relied upon. Old article, not a current product test."
+      ]
+    },
+    {
+      "id": "E12",
+      "url": "https://www.w3.org/WAI/ARIA/apg/patterns/combobox/",
+      "product": "W3C WAI-ARIA APG",
+      "version": "Current pattern",
+      "platform": "Web keyboard / assistive technology",
+      "accessed": "2026-10-12",
+      "published_or_updated": null,
+      "evidence_type": "first-party accessibility guidance",
+      "access_status": "accessed",
+      "supported_claims": [
+        "Combobox focus, acceptance and cancellation conventions; native text-editing keys should remain available."
+      ],
+      "limits": [
+        "Design guidance, not a certification of the existing ComboBox component."
+      ]
+    },
+    {
+      "id": "E13",
+      "url": "https://www.w3.org/WAI/ARIA/apg/patterns/menu-button/",
+      "product": "W3C WAI-ARIA APG",
+      "version": "Current pattern",
+      "platform": "Web keyboard / assistive technology",
+      "accessed": "2026-10-12",
+      "published_or_updated": null,
+      "evidence_type": "first-party accessibility guidance",
+      "access_status": "accessed",
+      "supported_claims": [
+        "Enter/Space open menu; menu button states and focus behavior."
+      ],
+      "limits": [
+        "Accessible behavior still needs implementation and assistive-technology testing."
+      ]
+    },
+    {
+      "id": "E14",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/Element/contextmenu_event",
+      "product": "MDN",
+      "version": "Documentation updated 2026-07-28",
+      "platform": "Web browser",
+      "accessed": "2026-10-12",
+      "published_or_updated": "2026-07-28",
+      "evidence_type": "browser API documentation",
+      "access_status": "accessed",
+      "supported_claims": [
+        "Context-menu key behavior and Firefox Shift-right-click bypass."
+      ],
+      "limits": [
+        "Cross-browser event ordering still requires local real-input checks."
+      ]
+    },
+    {
+      "id": "E15",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/altKey",
+      "product": "MDN",
+      "version": "Documentation updated 2024-07-26",
+      "platform": "Web browser / OS input",
+      "accessed": "2026-10-12",
+      "published_or_updated": "2024-07-26",
+      "evidence_type": "browser API documentation",
+      "access_status": "accessed",
+      "supported_claims": [
+        "Alt/Option semantics and operating systems intercepting Alt-left-click."
+      ],
+      "limits": [
+        "No guarantee the browser receives an Alt gesture."
+      ]
+    },
+    {
+      "id": "E16",
+      "url": "https://www.w3.org/TR/2026/REC-pointerevents3-20260630/",
+      "product": "W3C Pointer Events",
+      "version": "Level 3 Recommendation",
+      "platform": "Web pointer / touch",
+      "accessed": "2026-10-12",
+      "published_or_updated": "2026-06-30",
+      "evidence_type": "web standard",
+      "access_status": "accessed",
+      "supported_claims": [
+        "Pointer capture, cancellation, touch-action and high-level click considerations."
+      ],
+      "limits": [
+        "Specification is not proof of each engine/device implementation."
+      ]
+    },
+    {
+      "id": "E17",
+      "url": "https://docs.tibco.com/pub/sfire-cloud/14.6.2/doc/html/en-US/TIB_sfire_client/client/topics/en-US/selecting_columns_on_an_axis.html",
+      "product": "Spotfire",
+      "version": "14.6.2 URL",
+      "platform": "Installed client documentation",
+      "accessed": "2026-10-12",
+      "published_or_updated": null,
+      "evidence_type": "vendor documentation",
+      "access_status": "unavailable-body",
+      "supported_claims": [],
+      "limits": [
+        "Search snippet surfaced axis-selector mechanics, but opened page returned no body. Excluded from the eight-product evidence comparison."
+      ]
+    },
+    {
+      "id": "E18",
+      "url": "https://www.rawgraphs.io/",
+      "product": "RAWGraphs",
+      "version": "Not established",
+      "platform": "Browser tool",
+      "accessed": "2026-10-12",
+      "published_or_updated": null,
+      "evidence_type": "vendor site",
+      "access_status": "unavailable",
+      "supported_claims": [],
+      "limits": [
+        "Robots restriction prevented main-page reading. Candidate excluded; no negative feature claim."
+      ]
+    },
+    {
+      "id": "E19",
+      "url": "https://academy.datawrapper.de/article/131-how-to-create-a-scatter-plot",
+      "product": "Datawrapper",
+      "version": "Legacy Academy URL",
+      "platform": "Browser",
+      "accessed": "2026-10-12",
+      "published_or_updated": null,
+      "evidence_type": "vendor documentation",
+      "access_status": "unavailable-legacy-url",
+      "supported_claims": [],
+      "limits": [
+        "Fetch failed; current-domain replacements E10/E11 were accessed."
+      ]
+    },
+    {
+      "id": "R137",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/ComboBox.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "connected GitHub immutable source",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/ComboBox.tsx",
+      "git_blob_sha": "c8c26281331182c45013b654c93a2eff8315d6c8",
+      "supported_claims": [
+        "ComboBox owns open state internally; options are mapped, search values use display strings; no controlled-open or portal-container prop."
+      ],
+      "limits": [
+        "Static source read; component not executed. Supplemental bytes not locally hashed."
+      ]
+    },
+    {
+      "id": "E20",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/ctrlKey",
+      "product": "MDN",
+      "version": "Documentation updated 2026-02-13",
+      "platform": "Web browser / macOS",
+      "accessed": "2026-10-12",
+      "published_or_updated": "2026-02-13",
+      "evidence_type": "browser API documentation",
+      "access_status": "accessed",
+      "supported_claims": [
+        "macOS Control-click is intercepted for the context menu."
+      ],
+      "limits": [
+        "Do not equate Control-click with Command-click across operating systems."
+      ]
+    },
+    {
+      "id": "R138",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/types/ColorScaleTypes.ts",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "connected GitHub immutable source",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/types/ColorScaleTypes.ts",
+      "git_blob_sha": "73d9e6e283b2d5ed763a112d1c7b3b421912831d",
+      "supported_claims": [
+        "Categorical paletteId/order/overflow/reverse/mapping and numerical midpoint/transform/steps/reverse fields."
+      ],
+      "limits": [
+        "Whole declarations read through connected exact-baseline GitHub.",
+        "Static read only; supplemental byte hash not available locally."
+      ]
+    },
+    {
+      "id": "R139",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/colorScales/ColorScaleEditor.tsx",
+      "product": "explorEDA",
+      "version": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "platform": "React / TypeScript",
+      "accessed": "2026-10-12",
+      "published": null,
+      "evidence_type": "connected GitHub immutable source",
+      "access_status": "accessed",
+      "path": "packages/explorEDA/src/components/colorScales/ColorScaleEditor.tsx",
+      "git_blob_sha": "90c968762acb8e984dbe5a6b7a7f9ebe0bb8643a",
+      "supported_claims": [
+        "Shared live editor and session Reset; numeric domain helpers, palette, reversal, classes and spacing; categorical assignment, search, color buttons and order moves."
+      ],
+      "limits": [
+        "Main editor and numerical/categorical sections inspected, including lines480–870; imported DomainEditor, gallery and lower color-button internals not exhaustively inspected.",
+        "Static read only; supplemental byte hash not available locally."
+      ]
+    }
+  ],
+  "read_route": [
+    {
+      "group": "Identity and working rules",
+      "paths": [
+        "AGENTS.md",
+        "README.md",
+        "package.json",
+        "packages/explorEDA/package.json",
+        "docs/agent-guide.md",
+        "docs/ui-defaults.md"
+      ]
+    },
+    {
+      "group": "Registry, definitions and saved contracts",
+      "paths": [
+        "packages/explorEDA/src/types/ChartTypes.ts",
+        "packages/explorEDA/src/types/SavedDataStructure.ts",
+        "packages/explorEDA/src/charts/registry.ts",
+        "packages/explorEDA/src/charts/registerAllCharts.ts",
+        "packages/explorEDA/src/components/charts/BarChart/definition.ts",
+        "packages/explorEDA/src/components/charts/BoxPlot/definition.ts",
+        "packages/explorEDA/src/components/charts/Calendar/definition.ts",
+        "packages/explorEDA/src/components/charts/ColorLegend/definition.ts",
+        "packages/explorEDA/src/components/charts/Composition/definition.ts",
+        "packages/explorEDA/src/components/charts/DataTable/definition.ts",
+        "packages/explorEDA/src/components/charts/Donut/definition.ts",
+        "packages/explorEDA/src/components/charts/Ecdf/definition.ts",
+        "packages/explorEDA/src/components/charts/Heatmap/definition.ts",
+        "packages/explorEDA/src/components/charts/Hierarchy/definition.ts",
+        "packages/explorEDA/src/components/charts/LineChart/definition.ts",
+        "packages/explorEDA/src/components/charts/Map/definition.ts",
+        "packages/explorEDA/src/components/charts/Markdown/definition.ts",
+        "packages/explorEDA/src/components/charts/MetricCard/definition.ts",
+        "packages/explorEDA/src/components/charts/ParallelCoordinates/definition.ts",
+        "packages/explorEDA/src/components/charts/PivotTable/definition.ts",
+        "packages/explorEDA/src/components/charts/RowChart/definition.ts",
+        "packages/explorEDA/src/components/charts/Sankey/definition.ts",
+        "packages/explorEDA/src/components/charts/ScatterMatrix/definition.ts",
+        "packages/explorEDA/src/components/charts/ScatterPlot/definition.ts",
+        "packages/explorEDA/src/components/charts/SummaryTable/definition.ts",
+        "packages/explorEDA/src/components/charts/ThreeDScatter/definition.ts",
+        "packages/explorEDA/src/components/charts/Waterfall/definition.ts"
+      ]
+    },
+    {
+      "group": "Settings and subeditors",
+      "paths": [
+        "packages/explorEDA/src/components/ChartSettingsContent.tsx",
+        "packages/explorEDA/src/components/charts/BarChart/BarChartSettingsPanel.test.tsx",
+        "packages/explorEDA/src/components/charts/BarChart/BarChartSettingsPanel.tsx",
+        "packages/explorEDA/src/components/charts/BoxPlot/BoxPlotSettingsPanel.tsx",
+        "packages/explorEDA/src/components/charts/Calendar/CalendarSettingsPanel.tsx",
+        "packages/explorEDA/src/components/charts/ColorLegend/ColorLegendSettingsPanel.tsx",
+        "packages/explorEDA/src/components/charts/DataTable/DataTableSettingsPanel.tsx",
+        "packages/explorEDA/src/components/charts/Donut/DonutSettingsPanel.tsx",
+        "packages/explorEDA/src/components/charts/Ecdf/EcdfSettingsPanel.tsx",
+        "packages/explorEDA/src/components/charts/Heatmap/HeatmapSettingsPanel.tsx",
+        "packages/explorEDA/src/components/charts/Hierarchy/HierarchySettingsPanel.tsx",
+        "packages/explorEDA/src/components/charts/LineChart/LineChartSettingsPanel.tsx",
+        "packages/explorEDA/src/components/charts/LineChart/LineSeriesSettings.tsx",
+        "packages/explorEDA/src/components/charts/LineChart/TimeSeriesSettingsPanel.tsx",
+        "packages/explorEDA/src/components/charts/Map/MapSettingsPanel.tsx",
+        "packages/explorEDA/src/components/charts/Map/RegionMapSettings.tsx",
+        "packages/explorEDA/src/components/charts/Map/regionMapSettings.test.tsx",
+        "packages/explorEDA/src/components/charts/MetricCard/MetricCardSettingsPanel.tsx",
+        "packages/explorEDA/src/components/charts/ParallelCoordinates/ParallelCoordinatesSettingsPanel.tsx",
+        "packages/explorEDA/src/components/charts/PivotTable/PivotTableSettingsPanel.tsx",
+        "packages/explorEDA/src/components/charts/RowChart/RowChartSettingsPanel.test.tsx",
+        "packages/explorEDA/src/components/charts/RowChart/RowChartSettingsPanel.tsx",
+        "packages/explorEDA/src/components/charts/Sankey/SankeySettingsPanel.tsx",
+        "packages/explorEDA/src/components/charts/ScatterMatrix/ScatterMatrixSettingsPanel.tsx",
+        "packages/explorEDA/src/components/charts/ScatterPlot/DensitySettings.tsx",
+        "packages/explorEDA/src/components/charts/ScatterPlot/PointSizeSetting.tsx",
+        "packages/explorEDA/src/components/charts/ScatterPlot/RegressionSettings.tsx",
+        "packages/explorEDA/src/components/charts/ScatterPlot/ScatterPlotSettingsPanel.tsx",
+        "packages/explorEDA/src/components/charts/ScatterPlot/SurfaceSettings.tsx",
+        "packages/explorEDA/src/components/charts/SummaryTable/SummaryTableSettingsPanel.tsx",
+        "packages/explorEDA/src/components/charts/ThreeDScatter/ThreeDScatterSettingsPanel.tsx",
+        "packages/explorEDA/src/components/charts/Waterfall/WaterfallSettingsPanel.tsx",
+        "packages/explorEDA/src/components/settings/AdvancedSettingsTab.tsx",
+        "packages/explorEDA/src/components/settings/AxisSettingsTab.tsx",
+        "packages/explorEDA/src/components/settings/FacetSettingsTab.tsx",
+        "packages/explorEDA/src/components/settings/FiltersSettingsTab.test.tsx",
+        "packages/explorEDA/src/components/settings/FiltersSettingsTab.tsx",
+        "packages/explorEDA/src/components/settings/GridSettingsPanel.tsx",
+        "packages/explorEDA/src/components/settings/LabelsSettingsTab.tsx",
+        "packages/explorEDA/src/components/settings/MainSettingsTab.tsx",
+        "packages/explorEDA/src/components/settings/TabContainer.tsx",
+        "packages/explorEDA/src/components/settings/ThemeSettingsPanel.test.tsx",
+        "packages/explorEDA/src/components/settings/ThemeSettingsPanel.tsx",
+        "packages/explorEDA/src/components/settings/annotations/AnnotationFields.tsx",
+        "packages/explorEDA/src/components/settings/annotations/AnnotationsSettingsTab.tsx",
+        "packages/explorEDA/src/components/settings/annotations/annotationInputs.tsx",
+        "packages/explorEDA/src/utils/defaultSettings.ts"
+      ]
+    },
+    {
+      "group": "Interaction, field metadata, shared store and tests",
+      "paths": [
+        "packages/explorEDA/src/components/ChartGridLayout.tsx",
+        "packages/explorEDA/src/components/FieldList/FieldPicker.tsx",
+        "packages/explorEDA/src/components/FieldMetadata.tsx",
+        "packages/explorEDA/src/components/FieldSelector.tsx",
+        "packages/explorEDA/src/components/PlotChartPanel.tsx",
+        "packages/explorEDA/src/components/charts/AxisFieldActions.tsx",
+        "packages/explorEDA/src/components/charts/ColorLegend/ChartColorLegend.tsx",
+        "packages/explorEDA/src/components/charts/ColorLegend/ColorLegendSettingsPanel.tsx",
+        "packages/explorEDA/src/components/charts/ColorLegend/ColorScale.tsx",
+        "packages/explorEDA/src/components/charts/ColorLegend/definition.ts",
+        "packages/explorEDA/src/components/charts/Composition/CompositionQuickMenu.tsx",
+        "packages/explorEDA/src/components/charts/DataTable/DataTableContextMenu.tsx",
+        "packages/explorEDA/src/components/charts/DataTable/__tests__/DataTableContextMenu.test.tsx",
+        "packages/explorEDA/src/components/charts/InPlace/AxisLimitFields.test.tsx",
+        "packages/explorEDA/src/components/charts/InPlace/AxisLimitFields.tsx",
+        "packages/explorEDA/src/components/charts/InPlace/InlineTextEditor.tsx",
+        "packages/explorEDA/src/components/charts/InPlace/axisDrag.test.ts",
+        "packages/explorEDA/src/components/charts/InPlace/axisDrag.ts",
+        "packages/explorEDA/src/components/charts/InPlace/axisEditing.test.tsx",
+        "packages/explorEDA/src/components/charts/InPlace/hiddenNotice.test.tsx",
+        "packages/explorEDA/src/components/charts/InPlace/hiddenNoticeCharts.test.tsx",
+        "packages/explorEDA/src/components/charts/InPlace/logScale.test.tsx",
+        "packages/explorEDA/src/components/charts/InPlace/titleEditing.test.tsx",
+        "packages/explorEDA/src/components/charts/InPlace/useAxisEditing.tsx",
+        "packages/explorEDA/src/components/charts/InPlace/useChartEdit.ts",
+        "packages/explorEDA/src/components/charts/InPlace/useHiddenNotice.tsx",
+        "packages/explorEDA/src/components/charts/InPlace/useTitleEditing.tsx",
+        "packages/explorEDA/src/components/charts/ScatterPlot/ScatterSvg.test.tsx",
+        "packages/explorEDA/src/components/charts/ScatterPlot/ScatterSvg.tsx",
+        "packages/explorEDA/src/components/charts/export/ChartImageMenu.tsx",
+        "packages/explorEDA/src/hooks/useColorScales.ts",
+        "packages/explorEDA/src/providers/DataLayerProvider.tsx"
+      ]
+    },
+    {
+      "group": "Documentation, examples and prior shaping",
+      "paths": [
+        "apps/demo/src/demos/coverage.ts",
+        "apps/demo/src/demos/examples.ts",
+        "apps/demo/src/docs/gate.ts",
+        "apps/demo/src/docs/pages/bar.mdx",
+        "apps/demo/src/docs/pages/chart-settings.mdx",
+        "apps/demo/src/docs/pages/color.mdx",
+        "apps/demo/src/docs/pages/composition.mdx",
+        "apps/demo/src/docs/pages/data-table.mdx",
+        "apps/demo/src/docs/pages/facets.mdx",
+        "apps/demo/src/docs/pages/filters.mdx",
+        "apps/demo/src/docs/pages/in-place-editing.mdx",
+        "apps/demo/src/docs/pages/line.mdx",
+        "apps/demo/src/docs/pages/map.mdx",
+        "apps/demo/src/docs/pages/scales-and-axes.mdx",
+        "apps/demo/src/docs/pages/scatter.mdx",
+        "apps/demo/src/docs/pages/trace.mdx",
+        "apps/demo/src/docs/reference/settingDescriptions.ts",
+        "docs/composition-mode.md",
+        "docs/intent/axis-domain-controls/intent-brief.md",
+        "docs/intent/axis-domain-controls/shape-brief.md",
+        "docs/intent/comparison-opportunities/resources/pro-chart-review/exploreda-chart-interaction-review/review.md"
+      ]
+    },
+    {
+      "group": "Exact-baseline connected supplements",
+      "paths": [
+        "packages/explorEDA/src/hooks/useBrush.tsx",
+        "packages/explorEDA/src/components/charts/ScatterPlot/ScatterPlot.tsx",
+        "packages/explorEDA/src/components/charts/Composition/compositionTypes.ts",
+        "packages/explorEDA/src/components/ComboBox.tsx",
+        "packages/explorEDA/src/types/ColorScaleTypes.ts",
+        "packages/explorEDA/src/components/colorScales/ColorScaleEditor.tsx"
+      ]
+    }
+  ],
+  "access_limits": [
+    "Selected static source review, not a runnable checkout; no dependencies installed or application launched.",
+    "No hands-on competitor or explorEDA browser interaction, benchmark, user study or assistive-technology test.",
+    "No pnpm, Vitest, TypeScript, UI-check, docs-check or screenshot command executed; supplied run sheet is for Codex.",
+    "Current main was neither substituted nor diffed; immutable baseline and authorized packet are the source of truth.",
+    "Supplemental GitHub source read as text with returned blob IDs where available; no independent local byte hashes for those supplements.",
+    "Container network archive download failed; connector text materialization failed; connected source and authorized packet remained sufficient.",
+    "Imported color-domain/gallery/button internals, some Composition inspectors, specialty renderer paths and full validation/field-format subeditors are not exhaustively reviewed.",
+    "External pages are vendor-documented mechanics; rolling versions and older Academy articles do not certify a current binary or observed usability.",
+    "Alt behavior, visible-trigger density and all performance/frequency rankings are unvalidated proposals or hypotheses."
+  ],
+  "unavailable_attempts": [
+    {
+      "resource": "Spotfire E17",
+      "outcome": "Search snippet only; body unreadable, excluded from mechanic evidence."
+    },
+    {
+      "resource": "RAWGraphs E18",
+      "outcome": "Robots restriction; excluded, no negative capability claim."
+    },
+    {
+      "resource": "Legacy Datawrapper E19",
+      "outcome": "Failed; replaced by accessed current-domain E10/E11."
+    },
+    {
+      "resource": "packages/explorEDA/src/hooks/useBrush.ts",
+      "outcome": "404; correct exact-baseline useBrush.tsx read as R134."
+    },
+    {
+      "resource": "Container codeload archive",
+      "outcome": "DNS/network failure; did not substitute a different ref."
+    },
+    {
+      "resource": "GitHub response text through Files.materialize",
+      "outcome": "Not visible in conversation Files surface; direct GitHub text reads used. No byte path invented."
+    }
+  ]
+}
