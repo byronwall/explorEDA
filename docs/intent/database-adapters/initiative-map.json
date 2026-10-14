@@ -1,20 +1,20 @@
 {
   "schema_version": "0.5.0",
   "initiative": {
-    "title": "Database-backed analysis adapters",
+    "title": "Database sources",
     "slug": "database-adapters",
     "scale": "capability",
-    "current_phase": "shape",
-    "last_updated": "2026-10-12",
-    "summary": "Let analysts explore real database data with responsive, trustworthy semantics and a low-maintenance dedicated instance for each paying customer.",
+    "current_phase": "plan",
+    "last_updated": "2026-10-13",
+    "summary": "Authors in the CLI and self-hosted server connect to PostgreSQL, SQLite/DuckDB, MySQL, and SQL Server, pick tables or write SQL, and explore a cached, complete, read-only snapshot that they refresh on demand.",
     "status": "planned",
-    "next_action": "Review the shaped complete-snapshot proof and resolve supported type/workload gates before creating an implementation plan."
+    "next_action": "Start Milestone 1: SQLite table source in the CLI with a refreshable snapshot."
   },
   "artifacts": {
     "intent_brief": {
       "path": "intent-brief.md",
       "status": "current",
-      "updated_at": "2026-10-12"
+      "updated_at": "2026-10-13"
     },
     "brainstorm": {
       "path": "brainstorm.md",
@@ -24,12 +24,12 @@
     "shape_brief": {
       "path": "shape-brief.md",
       "status": "current",
-      "updated_at": "2026-10-12"
+      "updated_at": "2026-10-13"
     },
     "implementation_plan": {
       "path": "implementation-plan.md",
-      "status": "not-created",
-      "updated_at": null
+      "status": "current",
+      "updated_at": "2026-10-13"
     }
   },
   "sources": [
@@ -95,6 +95,41 @@
       "location": "https://nodejs.org/download/release/latest-v24.x/docs/api/sqlite.html",
       "anchor": "DatabaseSync executes synchronously; current Node 24 documentation marks node:sqlite release candidate",
       "authority": "external technical evidence checked 2026-10-12"
+    },
+    {
+      "id": "qa-round-1",
+      "type": "question-round",
+      "location": "conversation 2026-10-13",
+      "anchor": "Round 1",
+      "authority": "explicit user answers"
+    },
+    {
+      "id": "qa-round-2",
+      "type": "question-round",
+      "location": "conversation 2026-10-13",
+      "anchor": "Round 2",
+      "authority": "explicit user answers (all recommended options)"
+    },
+    {
+      "id": "qa-round-3",
+      "type": "question-round",
+      "location": "conversation 2026-10-13",
+      "anchor": "Round 3",
+      "authority": "explicit user answers"
+    },
+    {
+      "id": "runtime-modes",
+      "type": "related-initiative",
+      "location": "../runtime-modes/intent-brief.md",
+      "anchor": "CLI → self-hosted → managed; DB credentials on a server; customer-instance-hosting paused",
+      "authority": "accepted program direction 2026-10-12"
+    },
+    {
+      "id": "limit-answer",
+      "type": "direct-user-input",
+      "location": "conversation 2026-10-13",
+      "anchor": "100k rows, authors can raise it; then write the plan",
+      "authority": "explicit user answer"
     }
   ],
   "intent": {
@@ -115,94 +150,6 @@
         ],
         "confidence": "high",
         "notes": "A full snapshot is useful when feasible, not required for every source."
-      },
-      {
-        "id": "customer-instance",
-        "type": "constraint",
-        "statement": "The operating unit is one dedicated application instance per paying customer, with minimal manual setup and operation.",
-        "commitment": "explicit",
-        "importance": "core",
-        "status": "active",
-        "time_horizon": "first release",
-        "source_anchors": [
-          {
-            "source_id": "customer-instance-update",
-            "anchor": "Goal and operating unit"
-          }
-        ],
-        "confidence": "high",
-        "notes": "Platform, isolation detail, budget, and customer count remain open."
-      },
-      {
-        "id": "complete-source-first",
-        "type": "sequence",
-        "statement": "Start with a host-owned read of registered complete sources into the existing tables input, then retain the local evaluator for the first proof.",
-        "commitment": "derived",
-        "importance": "core",
-        "status": "active",
-        "time_horizon": "proof",
-        "source_anchors": [
-          {
-            "source_id": "track-direction",
-            "anchor": "PostgreSQL first and no premature second adapter"
-          },
-          {
-            "source_id": "pro-report",
-            "anchor": "Sections 1 and 3"
-          },
-          {
-            "source_id": "current-repository",
-            "anchor": "tables prop and local useAnalysisEvaluation path"
-          }
-        ],
-        "confidence": "high",
-        "notes": "This is the selected proof shape, not approval to implement."
-      },
-      {
-        "id": "postgres-first",
-        "type": "decision",
-        "statement": "Use PostgreSQL as the first real driver proof in a compatible host server runtime.",
-        "commitment": "explicit",
-        "importance": "core",
-        "status": "active",
-        "time_horizon": "proof",
-        "source_anchors": [
-          {
-            "source_id": "track-direction",
-            "anchor": "PostgreSQL first"
-          },
-          {
-            "source_id": "pro-recommendations",
-            "anchor": "DBA-002"
-          },
-          {
-            "source_id": "node-postgres-docs",
-            "anchor": "Query and transaction docs"
-          }
-        ],
-        "confidence": "high",
-        "notes": "Runtime, driver, and fixture versions remain provisional."
-      },
-      {
-        "id": "second-driver-gate",
-        "type": "constraint",
-        "statement": "Add a second driver only if the first proof shows that a shared adapter boundary would be useful and the second driver can test it.",
-        "commitment": "explicit",
-        "importance": "core",
-        "status": "active",
-        "time_horizon": "later",
-        "source_anchors": [
-          {
-            "source_id": "track-direction",
-            "anchor": "Second driver only when it proves useful abstraction"
-          },
-          {
-            "source_id": "pro-recommendations",
-            "anchor": "DBA-003 and DBA-008"
-          }
-        ],
-        "confidence": "high",
-        "notes": "SQLite is a candidate falsifier, not a settled second driver."
       },
       {
         "id": "typed-coverage",
@@ -272,9 +219,97 @@
         "notes": "A specific proven customer need can reopen the choice."
       },
       {
+        "id": "customer-instance",
+        "type": "constraint",
+        "statement": "The operating unit is one dedicated application instance per paying customer, with minimal manual setup and operation.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "superseded",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "customer-instance-update",
+            "anchor": "Goal and operating unit"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Platform, isolation detail, budget, and customer count remain open. Superseded 2026-10-13: runtime-modes moved the managed per-customer tier last; this initiative targets CLI and self-hosted."
+      },
+      {
+        "id": "complete-source-first",
+        "type": "sequence",
+        "statement": "Read registered complete sources into the existing tables input and keep the local evaluator.",
+        "commitment": "derived",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "track-direction",
+            "anchor": "PostgreSQL first and no premature second adapter"
+          },
+          {
+            "source_id": "pro-report",
+            "anchor": "Sections 1 and 3"
+          },
+          {
+            "source_id": "current-repository",
+            "anchor": "tables prop and local useAnalysisEvaluation path"
+          }
+        ],
+        "confidence": "high",
+        "notes": "This is the selected proof shape, not approval to implement."
+      },
+      {
+        "id": "postgres-first",
+        "type": "decision",
+        "statement": "Use PostgreSQL as the first real driver proof in a compatible host server runtime.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "track-direction",
+            "anchor": "PostgreSQL first"
+          },
+          {
+            "source_id": "pro-recommendations",
+            "anchor": "DBA-002"
+          },
+          {
+            "source_id": "node-postgres-docs",
+            "anchor": "Query and transaction docs"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Now paired with SQLite for the first proof."
+      },
+      {
+        "id": "second-driver-gate",
+        "type": "constraint",
+        "statement": "Add a second driver only if the first proof shows that a shared adapter boundary would be useful and the second driver can test it.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "superseded",
+        "time_horizon": "later",
+        "source_anchors": [
+          {
+            "source_id": "track-direction",
+            "anchor": "Second driver only when it proves useful abstraction"
+          },
+          {
+            "source_id": "pro-recommendations",
+            "anchor": "DBA-003 and DBA-008"
+          }
+        ],
+        "confidence": "high",
+        "notes": "SQLite is a candidate falsifier, not a settled second driver. Superseded 2026-10-13: user requires four driver families; the shared boundary is a requirement, proven first with PostgreSQL + SQLite."
+      },
+      {
         "id": "candidate-transport",
         "type": "future possibility",
-        "statement": "Binary transport, progressive data access, narrow SQL pushdown, and a second driver may be useful after the snapshot proof.",
+        "statement": "Binary transport (columnar-data-transport) and server-side queries for too-big data (database-query-contract) follow when measured snapshot cost demands them.",
         "commitment": "tentative",
         "importance": "supporting",
         "status": "active",
@@ -291,19 +326,202 @@
         ],
         "confidence": "medium",
         "notes": "The example 10,000–100,000 row range is not a ceiling or target."
+      },
+      {
+        "id": "modes",
+        "type": "scope",
+        "statement": "Database sources ship to the CLI and the self-hosted server together, as a follow-on after self-hosted v1 (file-only) ships.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "qa-round-1",
+            "anchor": "Q1"
+          },
+          {
+            "source_id": "qa-round-2",
+            "anchor": "Q5"
+          }
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "source-form",
+        "type": "required behavior",
+        "statement": "Authors browse schemas and pick tables or views; an advanced path lets them write a SELECT that becomes a named source. Joins stay in explorEDA query steps.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "qa-round-1",
+            "anchor": "Q2"
+          }
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "drivers",
+        "type": "scope",
+        "statement": "First release supports PostgreSQL, SQLite and DuckDB files, MySQL, and SQL Server behind one adapter boundary.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "qa-round-1",
+            "anchor": "Q3"
+          }
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "first-pair",
+        "type": "sequence",
+        "statement": "Establish the adapter boundary with PostgreSQL and SQLite first; other drivers follow as added adapters.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          {
+            "source_id": "qa-round-3",
+            "anchor": "Q10"
+          }
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "too-big",
+        "type": "required behavior",
+        "statement": "A source over the snapshot limit is refused with a clear reason and a suggestion to narrow it; no sampling or server-side evaluation in this initiative.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "qa-round-1",
+            "anchor": "Q4"
+          }
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "credentials",
+        "type": "constraint",
+        "statement": "Project text names connections and sources; secrets live outside the project (env or global config in the CLI, admin-managed settings in self-hosted). Project folders stay safe to commit.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "qa-round-2",
+            "anchor": "Q6"
+          }
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "cached-snapshot",
+        "type": "required behavior",
+        "statement": "The server stores the last complete snapshot and shows when it was read. Opening an analysis does not query the database. Only authors refresh.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "qa-round-2",
+            "anchor": "Q7"
+          },
+          {
+            "source_id": "qa-round-3",
+            "anchor": "Q11"
+          }
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "viewer-access",
+        "type": "constraint",
+        "statement": "Self-hosted viewers see the author snapshot; project membership is the access control. Per-viewer database identity belongs to the managed tier.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "qa-round-2",
+            "anchor": "Q8"
+          }
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "read-only",
+        "type": "anti-goal",
+        "statement": "explorEDA only reads databases: read-only transaction, timeout, row and byte caps, recommended read-only database user. No writes, DDL, or write-back.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "qa-round-3",
+            "anchor": "Q12"
+          }
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "warehouses-later",
+        "type": "future possibility",
+        "statement": "Warehouses (Snowflake, BigQuery, Redshift, Databricks) are a separate later initiative because testing needs accounts.",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "later",
+        "source_anchors": [
+          {
+            "source_id": "qa-round-1",
+            "anchor": "Q3"
+          }
+        ],
+        "confidence": "high",
+        "notes": "See ../warehouse-sources."
+      },
+      {
+        "id": "limit",
+        "type": "decision",
+        "statement": "Default snapshot limit is 100,000 rows; authors raise it per source.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "source_anchors": [
+          {
+            "source_id": "limit-answer",
+            "anchor": "answer"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Byte cap default (100 MB) is a provisional agent default."
       }
     ],
     "themes": [
-      "Responsive, correct exploration of real database data.",
-      "Complete snapshots when useful and feasible; partial results need explicit semantics.",
-      "Dedicated customer instances with highly automated setup and low maintenance.",
-      "Prove the data boundary before generalizing adapters or translating analysis."
+      "Authors connect real databases from the CLI and self-hosted server with commit-safe project text.",
+      "Complete, read-only, cached snapshots that preserve field meaning and identity, or a clear refusal.",
+      "One adapter boundary across PostgreSQL, file databases, MySQL, and SQL Server.",
+      "Warehouses, server-side queries, binary transport, and managed hosting are separate later initiatives."
     ],
     "conflicts": [],
-    "human_questions": [
-      "Which source types and precision ranges matter to the first supported customer data?",
-      "What named workload and response/memory budget should the first integration satisfy?"
-    ]
+    "human_questions": []
   },
   "brainstorm": {
     "status": "not-requested",
@@ -313,64 +531,271 @@
   },
   "shape": {
     "status": "current",
-    "appetite": "One host-owned source reader and one PostgreSQL proof. Keep current client evaluation and local mode. Extract a reusable adapter only if a second real driver proves the boundary useful.",
-    "problem": "The current analysis component uses client-side source rows. A database path must preserve field meaning, row identity, filter scope, inspection, and responsive interaction while fitting automated customer-specific hosting.",
-    "recommended_shape": "The customer host authenticates a read and resolves server-owned source definitions. A bounded reader uses a PostgreSQL transaction to load all approved fields and rows from one consistent snapshot, normalizes only declared supported values, and returns a complete-or-error bundle to the existing tables prop. The current evaluator and charts remain local. Start with a fixed host implementation and deterministic fake. Test a second driver only after PostgreSQL establishes a concrete shared boundary. Consider one narrow server row or aggregate request only if a named workload fails the snapshot budget and its semantic contract can be proven.",
-    "simpler_counterproposal": "Use only fixed host endpoint SQL with no reusable reader abstraction. Keep it if PostgreSQL is the only useful driver or the second proof does not reveal shared behavior.",
+    "appetite": "One adapter boundary and five drivers, connection text and secret resolution for two modes, schema browsing, table and SQL sources, and a cached snapshot with refresh. No server-side evaluation, warehouses, or write-back.",
+    "problem": "CLI and self-hosted projects read only files. Authors need their operational databases as sources without putting secrets in project folders or losing explorEDA local filtering and inspection.",
+    "recommended_shape": "Project text gains connection and source lines that name a connection and a table or SQL. Each mode resolves the connection secret outside the project. A server-side adapter per driver lists schemas, runs a read-only bounded read, and normalizes declared types into one complete snapshot or a typed failure. The server caches the snapshot with its read time; the app loads it into ExplorEdaProject.tables and evaluates locally. Authors refresh; too-large sources are refused.",
+    "simpler_counterproposal": "PostgreSQL only with table sources and no SQL path. Rejected by the user: four driver families and author SQL are first-release scope.",
     "success_moves": [
-      "Use the existing tables prop and local evaluator so the first real-data path keeps stages, inspection, and chart behavior.",
-      "Keep source registration, authentication, credentials, SQL, and driver objects on the host; bind values and enforce independent limits.",
-      "Publish all sources atomically from one consistent snapshot, with explicit type, coverage, count, and identity metadata.",
-      "Use declared types and reject lossy values before data becomes editable; distinguish stable keys from snapshot-only occurrence identity.",
-      "Test semantics with a deterministic fake, then verify transaction, type, and cleanup behavior using disposable PostgreSQL fixtures.",
-      "Run a second driver only when it tests a shared boundary shown useful by the first proof; otherwise keep the fixed endpoint."
+      "Prove the adapter boundary with PostgreSQL and SQLite before adding MySQL, SQL Server, or DuckDB, so the boundary is shaped by a network server and a file database.",
+      "Run one shared adapter contract suite (types, nulls, identity, caps, timeout, cleanup) against every driver using disposable containers or files; no accounts needed.",
+      "Resolve secrets per mode behind one resolver so project text is identical in CLI and self-hosted.",
+      "Cache the complete snapshot server-side so opening an analysis never touches the database and refresh is explicit.",
+      "Refuse over-limit sources before uncontrolled buffering; never publish partial data.",
+      "Store each snapshot as a typed data file the server writes into the project (like team URL intake), so cache, change reload, and viewer access reuse existing paths."
     ],
     "first_proof": {
-      "question": "Can one registered PostgreSQL source set be read as a complete, type-safe snapshot and preserve the existing local analysis experience?",
-      "artifact": "A deterministic fake and disposable PostgreSQL fixture produce the same bounded source bundle through ExplorEdaProject.tables.",
-      "try": "Load a small fixture with nulls, text, booleans, supported numbers/dates, a stable key and keyless duplicate rows. Run a filter and inspect source/result rows through the current evaluator. Inject a missing source, unsupported type, cap+1 rows, interruption, and a writer commit between source reads.",
-      "observe": "Values and types match the fixture oracle; nulls and identities remain distinct; all sources reflect one database snapshot; unsupported and interrupted reads publish nothing; bounds trigger before uncontrolled buffering; cleanup is observed; filter and inspection outputs match local arrays. Measure transfer and browser memory on a named fixture.",
-      "decide": "Proceed only when semantic and completion invariants hold and the agreed response/memory budget passes. Otherwise narrow supported data or compare one named remote demand. Add a second driver only if the PostgreSQL result identifies a useful common boundary.",
-      "decision_rule": "Any semantic loss, false completeness, mixed snapshot, uncertain cleanup, or missing workload budget fails the proof; transfer failure may trigger one narrow demand comparison."
+      "question": "Can one adapter boundary serve PostgreSQL and SQLite sources from CLI project text into the current local analysis with complete, typed snapshots?",
+      "artifact": "A CLI project with a postgres connection and a sqlite file, table and SQL sources, loaded through the same adapter contract into ExplorEdaProject.tables.",
+      "try": "Run the contract suite against disposable PostgreSQL and a SQLite fixture with nulls, text, booleans, numbers, dates, keyed and keyless rows. Open the project in the CLI app, filter and inspect, then refresh. Inject over-limit, unsupported type, bad credentials, timeout, and write-attempt SQL.",
+      "observe": "Both drivers pass the same contract; values and types match; failures are clear and publish nothing; write SQL is rejected; the project folder contains no secrets; reopening uses the cache without a database read.",
+      "decide": "If both pass with one interface, add MySQL, SQL Server, and DuckDB against the same suite. If the interface needs driver-specific branches in the app, redesign the boundary before adding drivers.",
+      "decision_rule": "Any semantic loss, false completeness, secret in project text, or successful write fails the proof."
     },
     "rabbit_holes": [
-      "A universal SQL or formula compiler before one server operation is admitted.",
-      "Cross-database federation and remote pagination before a named consumer needs them.",
-      "A second driver, package, or service without evidence that it reduces maintenance or unlocks a required runtime.",
-      "Performance claims based only on row count without width, types, memory, or filter timing."
+      "Visual query builder beyond table pick and SQL.",
+      "Sampling or partial snapshots presented as analysis data.",
+      "Per-viewer database identity or row-level security.",
+      "Scheduled refresh before manual refresh is proven in both modes."
     ],
-    "open_decisions": [
-      "Which declared field types and precision ranges should the first customer source support?",
-      "Which named workload and first-view, filter, transfer, and memory budget should decide whether a full snapshot fits?"
-    ]
+    "open_decisions": []
   },
   "implementation": {
-    "status": "not-started",
+    "status": "current",
     "repository_snapshot": {
-      "root": "/Users/byronwall/.codex/worktrees/583d/explorEDA",
-      "revision": "28c5ac27a400aa1fd66ce99eb1e6bd4ab5c72e9c",
-      "worktree_status": "shared checkout with pre-existing untracked Pro research inputs; initiative folder was empty before this shaping work",
+      "root": "/Users/byronwall/Projects/explorEDA/.claude/worktrees/database-adapters-scope-701f70",
+      "revision": "34c957c4",
+      "worktree_status": "clean except initiative docs",
       "subsystems": [
-        "packages/explorEDA/src/components/ExplorEdaProject.tsx",
-        "packages/explorEDA/src/types/AnalysisProject.ts",
-        "packages/explorEDA/src/lib/analysis/evaluateProject.ts"
+        "packages/explorEDA/src/lib/dsl/project.ts",
+        "packages/explorEDA/src/lib/project/folder.ts",
+        "packages/explorEDA/src/server/handler.ts",
+        "packages/explorEDA/src/server/team/fileIntake.ts",
+        "packages/explorEDA/src/server/team/sqliteStore.ts",
+        "packages/explorEDA/src/node/globalConfig.ts",
+        "apps/app/src/AddData.tsx"
       ],
-      "test_commands": [],
-      "deployment_surfaces": []
+      "test_commands": [
+        "pnpm --filter exploreda exec vitest run src/server/sources",
+        "pnpm --filter exploreda check-types",
+        "pnpm check"
+      ],
+      "deployment_surfaces": [
+        ".github/workflows/ci.yml",
+        ".github/workflows/cli-smoke.yml",
+        ".github/workflows/team-server-smoke.yml",
+        "docker/"
+      ]
     },
-    "dependencies": [],
-    "fast_local_loop": "Deterministic source fixtures and a fake reader; disposable local PostgreSQL is required for driver, transaction, parameter, type, and cleanup behavior. No live customer database or hosted deployment belongs in the first proof.",
-    "milestones": [],
+    "dependencies": [
+      {
+        "id": "sqlite",
+        "name": "node:sqlite",
+        "material": true,
+        "application_seam": "SourceAdapter",
+        "first_proof_role": {
+          "mode": "real",
+          "rationale": "Built-in with no account, container, or new package; already used by the team store, so the real thing is the cheapest proof."
+        },
+        "local_proof": "Contract suite on fixture .db files",
+        "live_proof": "cli-smoke and team-server-smoke with a SQLite source",
+        "proof_rungs": [
+          "deterministic-fake",
+          "contract-test"
+        ],
+        "failure_modes": [
+          "unsupported or lossy type",
+          "row cap exceeded",
+          "byte cap exceeded",
+          "timeout",
+          "write attempt rejected",
+          "connection not released",
+          "missing file"
+        ],
+        "rollout": "New syntax only; remove connection lines to roll back."
+      },
+      {
+        "id": "postgres",
+        "name": "pg + PostgreSQL",
+        "material": true,
+        "application_seam": "SourceAdapter + secret resolver",
+        "first_proof_role": {
+          "mode": "absent",
+          "rationale": "m1 proves the product loop without a network driver; Postgres arrives in m2 against the same contract."
+        },
+        "local_proof": "Contract suite on docker/ Postgres container",
+        "live_proof": "CI service container; no hosted database needed",
+        "proof_rungs": [
+          "container",
+          "contract-test"
+        ],
+        "failure_modes": [
+          "unsupported or lossy type",
+          "row cap exceeded",
+          "byte cap exceeded",
+          "timeout",
+          "write attempt rejected",
+          "connection not released",
+          "bad credentials",
+          "missing secret"
+        ],
+        "rollout": "Driver registered lazily; remove registration to roll back."
+      },
+      {
+        "id": "mysql-mssql",
+        "name": "mysql2 and mssql",
+        "material": true,
+        "application_seam": "SourceAdapter",
+        "first_proof_role": {
+          "mode": "absent",
+          "rationale": "Added only after the port survives two drivers."
+        },
+        "local_proof": "Contract suite on containers",
+        "live_proof": "CI service containers",
+        "proof_rungs": [
+          "container",
+          "contract-test"
+        ],
+        "failure_modes": [
+          "unsupported or lossy type",
+          "row cap exceeded",
+          "byte cap exceeded",
+          "timeout",
+          "write attempt rejected",
+          "connection not released"
+        ],
+        "rollout": "Lazy driver registration."
+      },
+      {
+        "id": "duckdb",
+        "name": "@duckdb/node-api",
+        "material": true,
+        "application_seam": "SourceAdapter",
+        "first_proof_role": {
+          "mode": "absent",
+          "rationale": "Native packaging risk is isolated to the last milestone."
+        },
+        "local_proof": "Contract suite on fixture .duckdb files",
+        "live_proof": "cli-smoke on Mac, Linux, Windows",
+        "proof_rungs": [
+          "contract-test"
+        ],
+        "failure_modes": [
+          "unsupported or lossy type",
+          "row cap exceeded",
+          "byte cap exceeded",
+          "timeout",
+          "write attempt rejected",
+          "connection not released",
+          "native binary unavailable"
+        ],
+        "rollout": "Optional install fallback."
+      }
+    ],
+    "fast_local_loop": {
+      "command": "pnpm --filter exploreda exec vitest run src/server/sources",
+      "dependencies_started": [
+        "fake adapter",
+        "SQLite fixture files"
+      ],
+      "network_required": false,
+      "shared_infrastructure_required": false,
+      "failure_injection": [
+        "limit+1 rows",
+        "unsupported column type",
+        "write SQL",
+        "missing secret",
+        "timeout via fake",
+        "abort mid-read",
+        "interrupted snapshot write"
+      ],
+      "slower_proof": "Contract suite on Postgres/MySQL/SQL Server containers (docker/ compose locally, service containers in CI)."
+    },
+    "milestones": [
+      {
+        "id": "m1",
+        "title": "A SQLite table opens in the CLI from a refreshable snapshot",
+        "outcome": "CLI project with a sqlite connection and table/SQL source opens, filters, inspects; Refresh rewrites the snapshot and open pages reload.",
+        "dependencies_introduced": [
+          "sqlite"
+        ],
+        "proof": "Contract suite (fake + SQLite), folder/handler tests, screenshots at 1280/783/390.",
+        "valid_intermediate_state": "File projects unchanged; database syntax only affects projects that use it.",
+        "rollback": "Remove connection/source lines and .exploreda/snapshots.",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m2",
+        "title": "PostgreSQL works with its secret outside the project",
+        "outcome": "Postgres table and SQL sources in the CLI with secret from global config or env.",
+        "dependencies_introduced": [
+          "postgres"
+        ],
+        "proof": "Same contract suite on a Postgres CI service container; secret scan of project text; verify:lean.",
+        "valid_intermediate_state": "SQLite path unchanged.",
+        "rollback": "Drop the postgres driver registration.",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m3",
+        "title": "Authors add database sources from the app",
+        "outcome": "Schema browser and SQL entry in Add data write source lines and run the first refresh.",
+        "dependencies_introduced": [],
+        "proof": "App tests with fake adapter; screenshots at three widths.",
+        "valid_intermediate_state": "Text-authored sources still work.",
+        "rollback": "Hide the Database option in Add data.",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m4",
+        "title": "Self-hosted authors refresh and viewers see the read time",
+        "outcome": "Admin-managed connections; author-only Refresh; viewers see read time without database reads.",
+        "dependencies_introduced": [],
+        "proof": "teamHandler role tests; team-server-smoke with a SQLite source.",
+        "valid_intermediate_state": "Team server without connections behaves as v1.",
+        "rollback": "Disable connection routes on the team server.",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m5",
+        "title": "MySQL and SQL Server",
+        "outcome": "Two more drivers pass the contract suite without app changes.",
+        "dependencies_introduced": [
+          "mysql-mssql"
+        ],
+        "proof": "Contract suite on CI service containers.",
+        "valid_intermediate_state": "Other drivers unaffected.",
+        "rollback": "Drop driver registrations.",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m6",
+        "title": "DuckDB and launch polish",
+        "outcome": "DuckDB adapter after packaging spike; complete docs.",
+        "dependencies_introduced": [
+          "duckdb"
+        ],
+        "proof": "Packaging spike via cli-smoke on three OSes; contract suite; docs gate.",
+        "valid_intermediate_state": "Four drivers shipped.",
+        "rollback": "Make DuckDB optional or drop it.",
+        "status": "planned",
+        "evidence": []
+      }
+    ],
     "cut_line": [
-      "Host-owned registered-source snapshot into the existing tables prop.",
-      "PostgreSQL first; second driver only after a useful common boundary is shown.",
-      "Complete-or-error publication with explicit coverage, types, identity, bounds, and observed cleanup.",
-      "No implementation plan or application work in this shaping pass."
+      "Five drivers behind one adapter boundary, PostgreSQL + SQLite first.",
+      "Commit-safe connection text; per-mode secret resolution.",
+      "Table and SQL sources; complete read-only snapshot or clear failure.",
+      "Server cache with read time; author-only refresh.",
+      "Below the line: warehouses, server-side queries, binary transport, scheduled refresh, per-viewer identity, write-back."
     ],
     "open_decisions": [
-      "First customer source type and precision support.",
-      "Named workload and response, transfer, and memory budget.",
-      "Whether the PostgreSQL proof demonstrates that a reusable adapter boundary reduces maintenance."
+      "Snapshot file format: typed JSON envelope first; switch to Arrow if 100k-row size or parse time hurts (measure at m2).",
+      "DuckDB packaging: regular dependency vs optional install (m6 spike)."
     ]
   },
   "history": [
@@ -380,6 +805,27 @@
       "reason": "The task requested preserved research, intent recovery, initial shaping, and a falsifiable proof before planning.",
       "status": "planned",
       "evidence": "Direct checkout inspection confirmed the tables/local-evaluator seam; official driver/provider documentation checked. No app tests, database probes, benchmarks, deployment, or implementation were performed."
+    },
+    {
+      "date": "2026-10-13",
+      "action": "Question round 1 recorded",
+      "reason": "User asked to shape server-to-database scope with rounds of questions",
+      "status": "planned",
+      "evidence": "qa-round-1"
+    },
+    {
+      "date": "2026-10-13",
+      "action": "Question rounds 1–3 complete; retitled to Database sources; rewrote intent and shape; created warehouse-sources; reframed database-query-contract.",
+      "reason": "User shaped server-to-database scope and confirmed the initiative split.",
+      "status": "planned",
+      "evidence": "qa-round-1..3"
+    },
+    {
+      "date": "2026-10-13",
+      "action": "Set 100k default row limit; wrote implementation plan (6 milestones).",
+      "reason": "User answered the remaining open decision and asked for the plan.",
+      "status": "planned",
+      "evidence": "limit-answer; repository inspection at 34c957c4"
     }
   ],
   "closure": null,
@@ -387,10 +833,122 @@
     "kind": "new",
     "priority_basis": "Direct request for database-backed analysis and a dedicated customer instance with minimal maintenance and high automation.",
     "related_initiatives": [
+      "runtime-modes",
+      "local-cli-projects",
+      "self-hosted-team-server",
+      "warehouse-sources",
       "database-query-contract",
-      "columnar-data-transport"
+      "columnar-data-transport",
+      "customer-instance-hosting"
     ],
-    "audience": "Analysts using a hosted explorEDA instance; the host operator owns authentication and database access.",
-    "priority": "Requested initiative; implementation timing and workload budget remain open."
+    "audience": "Authors who connect databases in the CLI or self-hosted server, and viewers who explore their snapshots.",
+    "priority": "Follows local-cli-projects launch and self-hosted-team-server v1."
+  },
+  "question_rounds": {
+    "focus": "initial scope for database sources (server talks to real databases); initiative split",
+    "per_round": 5,
+    "planned_rounds": 3,
+    "status": "complete",
+    "rounds": [
+      {
+        "round": 1,
+        "theme": "goals and stakes",
+        "source": "qa-round-1",
+        "questions": [
+          {
+            "n": 1,
+            "question": "Which runtime mode gets database sources first?",
+            "answer": "Both together: CLI and self-hosted.",
+            "effect": "Connection config must work in both modes in one release; conflicts with self-hosted-team-server file-only first release (to resolve)."
+          },
+          {
+            "n": 2,
+            "question": "How does an author define a database source?",
+            "answer": "Pick tables/views, optional author SQL that becomes a named source.",
+            "effect": "Schema browsing and a SQL-source path are in scope; joins stay in explorEDA query steps."
+          },
+          {
+            "n": 3,
+            "question": "Which database families in the first release?",
+            "answer": "PostgreSQL, file DBs (SQLite/DuckDB), MySQL/SQL Server. Warehouses later because they need accounts to test; capture as follow-up work.",
+            "effect": "Multiple drivers are a requirement, so a shared adapter boundary is no longer gated on a second-driver proof. Warehouses become a separate follow-up initiative."
+          },
+          {
+            "n": 4,
+            "question": "What happens when data is too large for the browser?",
+            "answer": "Refuse clearly; snapshot only. Server-side query execution is a later, separate initiative.",
+            "effect": "Confirms complete-snapshot-or-error; pushdown belongs to database-query-contract, later."
+          }
+        ]
+      },
+      {
+        "round": 2,
+        "theme": "behavior and limits",
+        "source": "qa-round-2",
+        "questions": [
+          {
+            "n": 5,
+            "question": "How does this relate to self-hosted-team-server file-only v1?",
+            "answer": "Follow-on release: self-hosted ships file-only; database sources then land in CLI and self-hosted together, designed once.",
+            "effect": "No change to self-hosted v1 scope; this initiative targets both modes after it."
+          },
+          {
+            "n": 6,
+            "question": "Where do connections and credentials live?",
+            "answer": "Project text names the connection and sources; secrets live outside (env/global config in CLI, admin-managed server settings in self-hosted).",
+            "effect": "Project folders remain commit-safe; need a connection-reference text form and a secret resolver per mode."
+          },
+          {
+            "n": 7,
+            "question": "When does explorEDA read the database?",
+            "answer": "Cached snapshot with a visible read time and Refresh.",
+            "effect": "Server stores snapshots; opening an analysis does not query the database. Snapshot storage and read-time display are in scope."
+          },
+          {
+            "n": 8,
+            "question": "What do self-hosted viewers get?",
+            "answer": "The author snapshot; project membership is the access control.",
+            "effect": "No per-viewer database identity or row-level security in this initiative; that belongs to the managed tier."
+          }
+        ]
+      },
+      {
+        "round": 3,
+        "theme": "boundaries and confirmation",
+        "source": "qa-round-3",
+        "questions": [
+          {
+            "n": 9,
+            "question": "Confirm initiative split",
+            "answer": "Yes as proposed: this becomes Database sources; new Warehouse sources stub (later); database-query-contract reframed as server-side queries for data too big to snapshot (later); columnar-data-transport stays, triggered by measured snapshot cost; customer-instance-hosting stays paused under managed mode.",
+            "effect": "Retitled this initiative; created warehouse-sources; updated sibling maps."
+          },
+          {
+            "n": 10,
+            "question": "Which two drivers establish the adapter boundary?",
+            "answer": "PostgreSQL + SQLite.",
+            "effect": "First proof covers a credentialed network server and a credential-free local file; MySQL, SQL Server, DuckDB follow as added adapters."
+          },
+          {
+            "n": 11,
+            "question": "Who can refresh?",
+            "answer": "Authors only; viewers see the data-as-of time.",
+            "effect": "Refresh is an author action; no viewer-triggered database reads."
+          },
+          {
+            "n": 12,
+            "question": "Read-only understanding check",
+            "answer": "Correct: read-only. No writes, DDL, or write-back in this or any listed follow-up.",
+            "effect": "Read-only transaction, timeout, and row/byte cap are requirements; write-back is an anti-goal."
+          },
+          {
+            "n": 13,
+            "question": "Default snapshot limit and whether authors can raise it",
+            "answer": "100,000 rows; authors can raise it.",
+            "effect": "Default row cap 100,000 with per-source limit=; byte cap provisional at 100 MB."
+          }
+        ]
+      }
+    ]
   }
 }
