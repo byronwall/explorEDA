@@ -126,6 +126,20 @@ export function useCreateCharts() {
         .slice(0, 4)
         .map((item) => item.value);
     }
+    if (settings.type === "retention") {
+      // An event log: a date and a many-valued ID; every event counts.
+      settings.timeField =
+        profiles.find((profile) => profile.dataType === "datetime")?.name ?? "";
+      settings.entityField =
+        profiles
+          .filter(
+            (profile) =>
+              profile.dataType === "categorical" &&
+              profile.name !== settings.timeField
+          )
+          .sort((a, b) => b.uniqueCount - a.uniqueCount)[0]?.name ?? "";
+      settings.field = "";
+    }
     if (settings.type === "hierarchy") {
       // Nest few-valued categories, the selected one outermost.
       const levels = profiles

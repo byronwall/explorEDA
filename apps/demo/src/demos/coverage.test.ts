@@ -91,6 +91,7 @@ describe("example coverage manifest", () => {
       "budget-bridge",
       "battery-day",
       "product-funnel",
+      "product-retention",
       "consumer-confidence",
       "pew-meaning",
       "income-life",

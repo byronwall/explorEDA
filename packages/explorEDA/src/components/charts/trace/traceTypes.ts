@@ -30,6 +30,7 @@ import type { CompositionTrace } from "../Composition/compositionTrace";
 import type { WaterfallTrace } from "../Waterfall/WaterfallTraceBody";
 import type { DonutTrace } from "../Donut/DonutTraceBody";
 import type { FunnelTrace } from "../Funnel/FunnelTraceBody";
+import type { RetentionTrace } from "../Retention/RetentionTraceBody";
 
 /** A selected object. The owner's source resolves it against its current plan. */
 export interface TraceSelection {
@@ -131,6 +132,7 @@ export type ChartTrace =
   | WaterfallTrace
   | DonutTrace
   | FunnelTrace
+  | RetentionTrace
   | TimeSeriesTrace
   | GuideTrace
   | TitleTrace

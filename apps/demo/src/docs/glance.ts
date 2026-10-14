@@ -168,6 +168,16 @@ export const GLANCES: Readonly<Record<string, Glance>> = {
       ["Alt-click", "Trace a step to its rule, drop-off, and counted events"],
     ],
   },
+  retention: {
+    useFor:
+      "Seeing whether people who started in a given week or month keep coming back, and how that changes from cohort to cohort.",
+    needs:
+      "An event log: an entity field and a time field. An event field is optional, to choose the entry event and what counts as active.",
+    gestures: [
+      ["Click a cell", "Select every event of the entities active in it"],
+      ["Alt-click", "Trace a cell to its cohort, rate, and counted events"],
+    ],
+  },
   donut: {
     useFor:
       "Showing how a small whole divides among a few categories, such as revenue by channel.",

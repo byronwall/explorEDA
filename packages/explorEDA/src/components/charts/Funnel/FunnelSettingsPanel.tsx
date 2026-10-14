@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { ArrowDown, ArrowUp, X } from "lucide-react";
 import { FieldSelector } from "@/components/FieldSelector";
 import { Button } from "@/components/ui/button";
@@ -6,14 +5,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ActionTooltip } from "@/components/ui/tooltip";
 import { categoryKey, categoryLabel, categoryValue } from "@/lib/categories";
-import { isMissingValue } from "@/lib/valueParsing";
-import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { ChartSettingsPanelProps, datum } from "@/types/ChartTypes";
 import {
   MAX_FUNNEL_STEPS,
   MIN_FUNNEL_STEPS,
   type FunnelSettings,
 } from "./definition";
+import { useEventValues } from "../useEventValues";
 
 const SELECT =
   "h-7 w-full min-w-0 rounded-md border border-input bg-background px-2 text-sm";
@@ -22,30 +20,8 @@ export function FunnelSettingsPanel({
   settings,
   onSettingsChange,
 }: ChartSettingsPanelProps<FunnelSettings>) {
-  const getColumnData = useDataLayer((state) => state.getColumnData);
-  const nonce = useDataLayer((state) => state.nonce);
-
   // Event values, most frequent first, as step choices.
-  const events = useMemo(() => {
-    void nonce;
-    if (!settings.field) return [];
-    const counts = new Map<string, { value: datum; count: number }>();
-    for (const raw of Object.values(getColumnData(settings.field))) {
-      if (isMissingValue(raw)) continue;
-      const value = categoryValue(raw);
-      const key = categoryKey(value);
-      const item = counts.get(key);
-      if (item) item.count += 1;
-      else counts.set(key, { value, count: 1 });
-    }
-    return [...counts]
-      .map(([key, item]) => ({
-        key,
-        ...item,
-        label: categoryLabel(item.value),
-      }))
-      .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
-  }, [settings.field, getColumnData, nonce]);
+  const events = useEventValues(settings.field);
   const byKey = new Map(events.map((item) => [item.key, item]));
 
   const change = (next: Partial<FunnelSettings>) =>

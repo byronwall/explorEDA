@@ -142,6 +142,12 @@ const TRACE_COPY = {
       "Alt-click a step to see how it was counted, who dropped off, and the events that counted.",
     ariaLabel: "Funnel trace inspector",
   },
+  retention: {
+    heading: "Retention trace",
+    emptyText:
+      "Alt-click a cell to see its cohort, how its rate was counted, and the events that counted.",
+    ariaLabel: "Retention trace inspector",
+  },
   waterfall: {
     heading: "Waterfall trace",
     emptyText:

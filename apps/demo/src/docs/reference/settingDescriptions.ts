@@ -156,6 +156,23 @@ export const CHART_SETTINGS: Readonly<
     windowDays:
       "Days from an entity's first step in which later steps count. Blank counts any time.",
   },
+  retention: {
+    field:
+      "Optional event field. With it, the entry event and the active events can be chosen.",
+    entityField:
+      "Who is retained, such as a user ID. Each entity joins one cohort.",
+    timeField:
+      "When each event happened. Cohorts and periods are UTC calendar periods.",
+    entryEvent:
+      "The event that puts an entity into its cohort. Blank uses each entity's first event.",
+    activityEvents:
+      "Events that count as active. Blank counts every event at or after entry.",
+    period:
+      "Cohort and period length: a UTC day, a Monday-to-Sunday week, or a month.",
+    periods: "How many periods after entry to show, from period 0.",
+    selectedCell:
+      "The cell behind the chart's selection, as cohort start and period.",
+  },
   sankey: {
     field: "Not read by this chart type.",
     stages: "Category fields in order. Each row is one path through them.",
