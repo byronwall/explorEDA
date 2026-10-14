@@ -1,0 +1,7 @@
+project @forecast
+
+source @demand key=time path=data/ercot-demand.csv {
+  field time Hour date
+  field actual "Actual demand" number
+  field forecast "Day-ahead forecast" number
+}

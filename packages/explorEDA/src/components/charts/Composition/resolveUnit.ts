@@ -471,10 +471,7 @@ export function resolveUnit(
       ))
         longest = Math.max(longest, Math.abs(bar.value));
     const max =
-      mark.max ??
-      scaleLinear().domain([0, longest]).nice().domain()[1] ??
-      1 ??
-      1;
+      mark.max ?? scaleLinear().domain([0, longest]).nice().domain()[1] ?? 1;
     return { mark, domain: [mark.mirror ? -max : 0, max] as [number, number] };
   });
   // A binned waffle's whole values along x, shared across repeats.

@@ -71,9 +71,7 @@
     "retired_at": "2026-10-02",
     "summary": "Charts resize from each edge and corner. A delayed plus in free grid space opens chart choices and passes a free layout to normal chart creation. Reconciled against 22a9bd3694cf208c63911291a5926c3c5a367be0; no fresh browser or package checks ran in this isolated retirement worktree.",
     "reason": "Byron requested retirement of completed initiative scopes on 2026-10-01.",
-    "documentation": [
-      "docs/application-feature-inventory.md"
-    ],
+    "documentation": ["docs/application-feature-inventory.md"],
     "revision": "22a9bd3694cf208c63911291a5926c3c5a367be0",
     "follow_ups": [],
     "evidence": [
@@ -110,9 +108,7 @@
     "retired_at": "2026-10-02",
     "summary": "Scatter and bar render from chart plans and expose source and setting traces through a small shared scope. Other chart types remain separate work. Reconciled against 22a9bd3694cf208c63911291a5926c3c5a367be0; no fresh browser or package checks ran in this isolated retirement worktree.",
     "reason": "Byron requested retirement of completed initiative scopes on 2026-10-01.",
-    "documentation": [
-      "docs/application-feature-inventory.md"
-    ],
+    "documentation": ["docs/application-feature-inventory.md"],
     "revision": "22a9bd3694cf208c63911291a5926c3c5a367be0",
     "follow_ups": [
       {
@@ -544,9 +540,7 @@
     "retired_at": "2026-10-09",
     "summary": "Delivered the required package scope: linear, polynomial, and LOESS fits per group, facet, and pooled; paired summaries; marginal histograms; hexagonal bins; and smoothed density contours and filled regions. Milestone 4 (ellipse and distance overlays) was never accepted and moved to the scientific-multivariate-analysis seed. Reconciled against 91b627d; merged PRs #137, #138, #139, #140, #141.",
     "reason": "Byron asked on 2026-10-09 to retire the completed docs/intent initiatives. Every planned milestone's PR merged into main.",
-    "documentation": [
-      "docs/application-feature-inventory.md"
-    ],
+    "documentation": ["docs/application-feature-inventory.md"],
     "revision": "91b627d7307a4a14c7f123a713ce5f45662a3d22",
     "follow_ups": [
       {
@@ -615,8 +609,296 @@
       },
       {
         "scope": "Limits on ECDF, time X, map, and calendar axes",
-        "destination": "docs/intent/axis-domain-controls/intent-brief.md"
+        "destination": "docs/application-feature-inventory.md#deferred-scope"
       }
     ]
+  },
+  {
+    "title": "Export charts and analyses for sharing",
+    "slug": "analysis-export",
+    "outcome": "completed",
+    "retired_at": "2026-10-13",
+    "summary": "Chart image export shipped: Copy and Download image from the header, right-click menu, and E / Shift+E; full extent for bounded charts; composition and 3D through the shared capture; exportChartPng on the workspace handle. Reconciled against origin/main 34c957c4; the only uncommitted changes were this retirement's docs edits. No new browser or pnpm check ran for retirement.",
+    "reason": "Byron asked on 2026-10-13 to retire every recently completed initiative, update durable docs, and remove the intent folders.",
+    "documentation": [
+      "docs/application-feature-inventory.md",
+      "apps/demo/src/docs/pages/export.mdx",
+      "docs/research/chart-image-export-proof/README.md"
+    ],
+    "revision": "34c957c4f3ddeb815a188cbd0287a89ae53328f4",
+    "follow_ups": [
+      {
+        "scope": "Deferred scope from the plan",
+        "destination": "docs/application-feature-inventory.md#deferred-scope"
+      }
+    ]
+  },
+  {
+    "title": "Set and reset chart domains without filtering rows",
+    "slug": "axis-domain-controls",
+    "outcome": "completed",
+    "retired_at": "2026-10-13",
+    "summary": "Hidden-rows axis marker with one-side reset on six chart families, stable all-rows aggregate axes that grow to fit, and true log on scatter, line value axes, and box plots. Reconciled against origin/main 34c957c4; the only uncommitted changes were this retirement's docs edits. No new browser or pnpm check ran for retirement. Not delivered as written: claim-3 omitted: Per-panel free scales and ECDF bounds were deferred by design; listed under deferred scope.",
+    "reason": "Byron asked on 2026-10-13 to retire every recently completed initiative, update durable docs, and remove the intent folders.",
+    "documentation": [
+      "docs/application-feature-inventory.md",
+      "apps/demo/src/docs/pages/scales-and-axes.mdx"
+    ],
+    "revision": "34c957c4f3ddeb815a188cbd0287a89ae53328f4",
+    "follow_ups": [
+      {
+        "scope": "Deferred scope from the plan",
+        "destination": "docs/application-feature-inventory.md#deferred-scope"
+      }
+    ]
+  },
+  {
+    "title": "Compact DSL redesign",
+    "slug": "compact-dsl-redesign",
+    "outcome": "completed",
+    "retired_at": "2026-10-13",
+    "summary": "Dashboard text v2: one schema for compile, export, validation, and reference; nested named composition parts; charts defined once; exact round trips. Reconciled against origin/main 34c957c4; the only uncommitted changes were this retirement's docs edits. No new browser or pnpm check ran for retirement.",
+    "reason": "Byron asked on 2026-10-13 to retire every recently completed initiative, update durable docs, and remove the intent folders.",
+    "documentation": [
+      "docs/application-feature-inventory.md",
+      "apps/demo/src/docs/pages/dashboard-text.mdx",
+      "packages/explorEDA/README.md",
+      "docs/research/dashboard-text-v2-proof/README.md"
+    ],
+    "revision": "34c957c4f3ddeb815a188cbd0287a89ae53328f4",
+    "follow_ups": [
+      {
+        "scope": "Deferred scope from the plan",
+        "destination": "docs/application-feature-inventory.md#deferred-scope"
+      }
+    ]
+  },
+  {
+    "title": "Show parts of a whole and cumulative contributions",
+    "slug": "composition-and-contribution",
+    "outcome": "completed",
+    "retired_at": "2026-10-13",
+    "summary": "Waterfall (bridge and accumulate, group subtotals) and donut (filtered whole, Top N with Other) as chart types with selection, filters, and trace, then as Composition marks, each with docs and examples. Reconciled against origin/main 34c957c4; the only uncommitted changes were this retirement's docs edits. No new browser or pnpm check ran for retirement.",
+    "reason": "Byron asked on 2026-10-13 to retire every recently completed initiative, update durable docs, and remove the intent folders.",
+    "documentation": [
+      "docs/application-feature-inventory.md",
+      "apps/demo/src/docs/pages/waterfall.mdx",
+      "apps/demo/src/docs/pages/donut.mdx",
+      "apps/demo/src/docs/pages/composition.mdx"
+    ],
+    "revision": "34c957c4f3ddeb815a188cbd0287a89ae53328f4",
+    "follow_ups": [
+      {
+        "scope": "Deferred scope from the plan",
+        "destination": "docs/application-feature-inventory.md#deferred-scope"
+      }
+    ]
+  },
+  {
+    "title": "Local data file inputs",
+    "slug": "data-file-inputs",
+    "outcome": "completed",
+    "retired_at": "2026-10-13",
+    "summary": "exploreda/readers reads CSV, TSV, JSON, JSON Lines with exact integers, XLSX with a sheet picker, Parquet with schema types, and Arrow IPC / Feather V2. Google Sheets is documented as a download. Reconciled against origin/main 34c957c4; the only uncommitted changes were this retirement's docs edits. No new browser or pnpm check ran for retirement. Not delivered as written: C02 changed: TSV, XLSX, and Parquet shipped; Avro moved below the cut in the shape (shape-brief evaluation list); JSON Lines and Arrow IPC were added.",
+    "reason": "Byron asked on 2026-10-13 to retire every recently completed initiative, update durable docs, and remove the intent folders.",
+    "documentation": [
+      "docs/application-feature-inventory.md",
+      "apps/demo/src/docs/pages/load-data.mdx",
+      "packages/explorEDA/README.md",
+      "docs/research/data-file-inputs-2026-10-12/README.md"
+    ],
+    "revision": "34c957c4f3ddeb815a188cbd0287a89ae53328f4",
+    "follow_ups": [
+      {
+        "scope": "Deferred scope from the plan",
+        "destination": "docs/application-feature-inventory.md#deferred-scope"
+      }
+    ]
+  },
+  {
+    "title": "Change chart settings where the data is",
+    "slug": "dense-chart-interactions",
+    "outcome": "completed",
+    "retired_at": "2026-10-13",
+    "summary": "Scatter plots: plain click selects; Color label, plot right-click (Color by / trace), and axis menus change Color, X, or Y in place with preview and one undo step. Reconciled against origin/main 34c957c4; the only uncommitted changes were this retirement's docs edits. No new browser or pnpm check ran for retirement. Not delivered as written: alt-click omitted: Alt-click stays the trace gesture; reassigning it was deferred. all-properties changed: Color, X, and Y shipped through one field editor; size, measure, bins, and other plotted-field roles were deferred in the plan.",
+    "reason": "Byron asked on 2026-10-13 to retire every recently completed initiative, update durable docs, and remove the intent folders.",
+    "documentation": [
+      "docs/application-feature-inventory.md",
+      "apps/demo/src/docs/pages/in-place-editing.mdx",
+      "apps/demo/src/docs/pages/scales-and-axes.mdx",
+      "docs/research/dense-chart-interactions-2026-10-12/README.md"
+    ],
+    "revision": "34c957c4f3ddeb815a188cbd0287a89ae53328f4",
+    "follow_ups": [
+      {
+        "scope": "Deferred scope from the plan",
+        "destination": "docs/application-feature-inventory.md#deferred-scope"
+      }
+    ]
+  },
+  {
+    "title": "Explore nested categories and their totals",
+    "slug": "hierarchy-analysis",
+    "outcome": "completed",
+    "retired_at": "2026-10-13",
+    "summary": "The hierarchy view: one to three category levels as treemap, icicle, or sunburst, with saved zoom and breadcrumbs; small nodes stay unlabeled with no Other group. Reconciled against origin/main 34c957c4; the only uncommitted changes were this retirement's docs edits. No new browser or pnpm check ran for retirement.",
+    "reason": "Byron asked on 2026-10-13 to retire every recently completed initiative, update durable docs, and remove the intent folders.",
+    "documentation": [
+      "docs/application-feature-inventory.md",
+      "apps/demo/src/docs/pages/hierarchy.mdx"
+    ],
+    "revision": "34c957c4f3ddeb815a188cbd0287a89ae53328f4",
+    "follow_ups": [
+      {
+        "scope": "Deferred scope from the plan",
+        "destination": "docs/application-feature-inventory.md#deferred-scope"
+      }
+    ]
+  },
+  {
+    "title": "Rank a measure in horizontal bars",
+    "slug": "horizontal-metric-bars",
+    "outcome": "completed",
+    "retired_at": "2026-10-13",
+    "summary": "Row charts rank a named grouped summary with held order, explicit Top N, signed values, a readout and trace, and dashboard text. Reconciled against origin/main 34c957c4; the only uncommitted changes were this retirement's docs edits. No new browser or pnpm check ran for retirement. Not delivered as written: claim-3 omitted: The series and stack expansion trigger did not occur; deferred. later-composition-and-switch omitted: Deferred as planned.",
+    "reason": "Byron asked on 2026-10-13 to retire every recently completed initiative, update durable docs, and remove the intent folders.",
+    "documentation": [
+      "docs/application-feature-inventory.md",
+      "apps/demo/src/docs/pages/row.mdx"
+    ],
+    "revision": "34c957c4f3ddeb815a188cbd0287a89ae53328f4",
+    "follow_ups": [
+      {
+        "scope": "Deferred scope from the plan",
+        "destination": "docs/application-feature-inventory.md#deferred-scope"
+      }
+    ]
+  },
+  {
+    "title": "Local CLI projects with npx exploreda",
+    "slug": "local-cli-projects",
+    "outcome": "completed",
+    "retired_at": "2026-10-13",
+    "summary": "npx exploreda opens any folder as a project of .eda files with sources, relationships, and queries as text; autosave, outside-edit reload, global config, --hidden, an example project, and a three-OS smoke workflow. The demo opens the same folders. Reconciled against origin/main 34c957c4; the only uncommitted changes were this retirement's docs edits. No new browser or pnpm check ran for retirement.",
+    "reason": "Byron asked on 2026-10-13 to retire every recently completed initiative, update durable docs, and remove the intent folders.",
+    "documentation": [
+      "docs/application-feature-inventory.md",
+      "apps/demo/src/docs/pages/project-folders.mdx",
+      "packages/explorEDA/README.md",
+      "docs/research/project-text-proof/README.md"
+    ],
+    "revision": "34c957c4f3ddeb815a188cbd0287a89ae53328f4",
+    "follow_ups": [
+      {
+        "scope": "Deferred scope from the plan",
+        "destination": "docs/application-feature-inventory.md#deferred-scope"
+      },
+      {
+        "scope": "Publish the CLI to npm by merging the Version Packages PR",
+        "destination": "byronwall/explorEDA#383"
+      }
+    ]
+  },
+  {
+    "title": "Useful, configurable maps for location data",
+    "slug": "map-and-location",
+    "outcome": "completed",
+    "retired_at": "2026-10-13",
+    "summary": "Empty-space clears, keyless MapLibre/OpenFreeMap streets, GeoJSON import diagnostics, built-in world/US state/county boundaries, region() with level inference, a layers control, optional grouping, and PNG images with streets. Reconciled against origin/main 34c957c4; the only uncommitted changes were this retirement's docs edits. No new browser or pnpm check ran for retirement. Not delivered as written: map-21 changed: Grouping shipped as an opt-in Group toggle that clusters above 2,000 points; every point draws by default (map docs).",
+    "reason": "Byron asked on 2026-10-13 to retire every recently completed initiative, update durable docs, and remove the intent folders.",
+    "documentation": [
+      "docs/application-feature-inventory.md",
+      "apps/demo/src/docs/pages/map.mdx",
+      "docs/research/map-and-location-2026-10-11/README.md"
+    ],
+    "revision": "34c957c4f3ddeb815a188cbd0287a89ae53328f4",
+    "follow_ups": [
+      {
+        "scope": "Deferred scope from the plan",
+        "destination": "docs/application-feature-inventory.md#deferred-scope"
+      }
+    ]
+  },
+  {
+    "title": "Self-hosted team server with Docker Compose",
+    "slug": "self-hosted-team-server",
+    "outcome": "completed",
+    "retired_at": "2026-10-13",
+    "summary": "exploreda server and a Compose file: admin-managed local accounts, per-project author and viewer roles, uploads and URL sources with refetch, last-save-wins reload notices, and migrations after a dated backup. Reconciled against origin/main 34c957c4; the only uncommitted changes were this retirement's docs edits. No new browser or pnpm check ran for retirement. Not delivered as written: I-07 omitted: The paid hosted tier is not built; it belongs to runtime-modes and the paused customer-instance-hosting seed. I-09 omitted: Business direction, not built here; recorded in runtime-modes.",
+    "reason": "Byron asked on 2026-10-13 to retire every recently completed initiative, update durable docs, and remove the intent folders.",
+    "documentation": [
+      "docs/application-feature-inventory.md",
+      "apps/demo/src/docs/pages/team-server.mdx",
+      "packages/explorEDA/README.md"
+    ],
+    "revision": "34c957c4f3ddeb815a188cbd0287a89ae53328f4",
+    "follow_ups": [
+      {
+        "scope": "Deferred scope from the plan",
+        "destination": "docs/application-feature-inventory.md#deferred-scope"
+      },
+      {
+        "scope": "Publish the GHCR image on the next release (merge the Version Packages PR) and make the package public",
+        "destination": "byronwall/explorEDA#383"
+      }
+    ]
+  },
+  {
+    "title": "Living product documentation",
+    "slug": "living-product-docs",
+    "outcome": "completed",
+    "retired_at": "2026-10-13",
+    "summary": "MDX docs at /docs/<topic> with live examples, scripted steps, and generated settings tables for every chart type, flow, and surface; a strict gate fails the demo build; Pages deploys on the pinned toolchain. Reconciled against origin/main 34c957c4; the only uncommitted changes were this retirement's docs edits. No new browser or pnpm check ran for retirement.",
+    "reason": "Byron asked on 2026-10-13 to retire every recently completed initiative, update durable docs, and remove the intent folders.",
+    "documentation": [
+      "docs/application-feature-inventory.md",
+      "apps/demo/src/docs/pages/developers.mdx",
+      "docs/agent-guide.md"
+    ],
+    "revision": "34c957c4f3ddeb815a188cbd0287a89ae53328f4",
+    "follow_ups": [
+      {
+        "scope": "Deferred scope from the plan",
+        "destination": "docs/application-feature-inventory.md#deferred-scope"
+      }
+    ]
+  },
+  {
+    "title": "Chart annotations and reference marks",
+    "slug": "reference-marks",
+    "outcome": "completed",
+    "retired_at": "2026-10-13",
+    "summary": "Chart annotations: lines, bands, regions, callouts, events, supplied intervals, calculated references, and saved record highlights on scatter, line, bar, row, and box charts and facets; saved, round-tripped in dashboard text, and drawn in chart images. Reconciled against origin/main 34c957c4; the only uncommitted changes were this retirement's docs edits. No new browser or pnpm check ran for retirement. Not delivered as written: optional-editor-expansion omitted: Freehand, images, snapping, presets, automatic placement, and bulk events stayed evaluation candidates; deferred.",
+    "reason": "Byron asked on 2026-10-13 to retire every recently completed initiative, update durable docs, and remove the intent folders.",
+    "documentation": [
+      "docs/application-feature-inventory.md",
+      "apps/demo/src/docs/pages/chart-settings.mdx",
+      "apps/demo/src/docs/pages/scatter.mdx",
+      "apps/demo/src/docs/pages/line.mdx",
+      "apps/demo/src/docs/pages/export.mdx",
+      "docs/research/chart-annotations/README.md"
+    ],
+    "revision": "34c957c4f3ddeb815a188cbd0287a89ae53328f4",
+    "follow_ups": [
+      {
+        "scope": "Deferred scope from the plan",
+        "destination": "docs/application-feature-inventory.md#deferred-scope"
+      }
+    ]
+  },
+  {
+    "title": "Chart and rendering documentation",
+    "slug": "chart-and-rendering-docs",
+    "outcome": "cancelled",
+    "retired_at": "2026-10-13",
+    "summary": "Cancelled as superseded by living-product-docs after M1 shipped. Reconciled against origin/main 34c957c4; the only uncommitted changes were this retirement's docs edits. No new browser or pnpm check ran for retirement. Not delivered as written: c1 changed: Every chart type and the rendering system have pages under apps/demo/src/docs/pages/ (living-product-docs M5). c2 changed: All registered views are covered; the docs gate enforces it (living-product-docs M6). c5 changed: Pages use live examples first and screenshots only where interaction cannot show the point.",
+    "reason": "Superseded by living-product-docs, which widened the scope and raised the correctness bar. Byron asked on 2026-10-13 to retire the finished initiatives and remove their intent folders.",
+    "documentation": [
+      "docs/application-feature-inventory.md",
+      "docs/research/documentation-system-recommendation.md",
+      "docs/research/documentation-comparative-research.md"
+    ],
+    "revision": "34c957c4f3ddeb815a188cbd0287a89ae53328f4",
+    "follow_ups": []
   }
 ]
