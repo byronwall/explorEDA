@@ -1,0 +1,53 @@
+### VIEW: Trial volume, speed, and conversion
+dashboard name="Trial volume, speed, and conversion"
+grid rowHeight=76 padding=0 markers=false
+
+scale @phase-colors field=Phase
++ palette[]="#3479a8","#c77a45","#4b9688","#9c6eac","#bd596a"
++ mapping[]= mapping.0[]=Baseline,"#3479a8"
++ mapping.1[]=Release,"#c77a45" mapping.2[]=Follow-up,"#4b9688"
++ paletteId=unset order=unset overflow=unset
+
+scatter x="Response time (ms)" y="Conversion (%)" @bubble-trials
++ at=0,0,8,6 color=Phase
++ title="Speed, conversion, and trial volume" xAxis{}=
++ xAxis.grid=false yAxis{}= yAxis.grid=true margin.top=16
++ margin.right=24 margin.bottom=44 margin.left=62
++ xAxisLabel="Response time (ms)" yAxisLabel="Conversion (%)"
++ yGridLines=4 sizeField=Trials maxBubbleRadius=20
++ pointOpacity=0.5 annotations[]=
++ annotations.0.id=bubble-slow-day annotations.0.type=callout
++ annotations.0.text="Day 31: slowest response"
++ annotations.0.attach.kind=record
++ annotations.0.attach.keyFields[]=Day
++ annotations.0.attach.key[]=31 annotations.0.offset.dx=-24
++ annotations.0.offset.dy=-28 annotations.1.id=bubble-target
++ annotations.1.type=reference-line annotations.1.axis=y
++ annotations.1.value=4
++ annotations.1.label="Conversion target 4%"
++ annotations.2.id=bubble-mean-speed
++ annotations.2.type=reference-line annotations.2.axis=x
++ annotations.2.value=0 annotations.2.calculated.statistic=mean
++ annotations.2.calculated.population=filtered
++ annotations.2.label="Mean response"
++ annotations.3.id=bubble-fast-days annotations.3.type=region
++ annotations.3.shape=ellipse annotations.3.x0=275
++ annotations.3.x1=345 annotations.3.y0=4.1
++ annotations.3.y1=5.15
++ annotations.3.label="Fast, high-converting days"
+metric sum=Trials @bubble-total at=8,0,4,2
++ title="Trials in this selection" xAxis{}= xAxis.grid=false
++ yAxis{}= yAxis.grid=true margin.top=16 margin.right=24
++ margin.bottom=44 margin.left=62 yGridLines=4
+row Phase @bubble-phase at=8,2,4,4 color=Phase
++ title="Days by release phase" xAxis{}= xAxis.grid=true
++ yAxis{}= yAxis.grid=false margin.top=16 margin.right=24
++ margin.bottom=44 margin.left=62 xAxisLabel=Records
++ yGridLines=4 minRowHeight=22 maxRowHeight=36
+table Day,Phase,Visitors,"Returning visitors",Trials,"Conversion (%)","Response time (ms)"
++ @bubble-records at=0,6,12,5 title="Daily observations"
++ xAxis{}= xAxis.grid=false yAxis{}= yAxis.grid=true
++ margin.top=16 margin.right=24 margin.bottom=44 margin.left=62
++ yGridLines=4 showDistributions=unset
+
+

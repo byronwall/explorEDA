@@ -479,8 +479,17 @@ export function ScatterSvg({
     innerHeight: plan.plotHeight,
     mode: "2d",
     onBrushChange,
-    onPlotClick: (_, event) =>
-      event.altKey || altAtDown.current || Boolean(plan.size),
+    // Bubbles select in the click handler, where their DOM marks are hit.
+    // Canvas points have no DOM, so a plain click selects one here, before
+    // the brush treats it as a click on empty space.
+    // Marks that answer first, such as hex bins, select in the click handler.
+    onPlotClick: ([x, y], event) =>
+      event.altKey ||
+      altAtDown.current ||
+      Boolean(plan.size) ||
+      (markFirst &&
+        Boolean((event.target as Element).closest?.("[data-mark-id]"))) ||
+      Boolean(onSelectPoint?.(x, y)),
     defaultExtent: plan.brushExtent,
     onDeadClick: (inside) => {
       if (inside) return;

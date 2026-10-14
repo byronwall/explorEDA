@@ -1,0 +1,29 @@
+project @earthquakes-2023
+
+source @events "Catalogue events" glyph=E key=id path=/datasets/earthquakes/events.csv {
+  field id "Event ID" string
+  field time "Event time (UTC)" date
+  field "date" "Event date (UTC)" date
+  field latitude number
+  field longitude number
+  field depth "Depth (km)" number
+  field depth_band string
+  field mag Magnitude number
+  field mag_type "Magnitude type" string
+  field place string
+  field area string
+  field net Network string
+  field status "Review status" string
+  field metadata_present "Measurement fields present" number
+  field metadata_band "Measurement fields" string
+  field nst "Stations used" number
+  field gap "Azimuthal gap (°)" number
+  field rms "RMS residual (s)" number
+  field horizontal_error number
+  field depth_error number
+  field mag_error "Magnitude error" number
+}
+
+query @events "M4.5+ earthquakes in 2023" glyph=◉ frame=earthquakes {
+  source events
+}

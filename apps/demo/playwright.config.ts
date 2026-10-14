@@ -45,5 +45,7 @@ export default defineConfig({
     // them as thumbnails, runs after every page.
     { name: "pages", testMatch: /pages\.e2e\.ts$/ },
     { name: "index", testMatch: /index\.e2e\.ts$/, dependencies: ["pages"] },
+    // Opening a project folder, the same files `npx exploreda` writes.
+    { name: "folder", testMatch: /folder\.e2e\.ts$/ },
   ],
 });

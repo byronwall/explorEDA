@@ -75,8 +75,8 @@ export const boxPlotDefinition: ChartDefinition<BoxPlotSettings> = {
     colorField: undefined,
     xAxisLabel: "",
     yAxisLabel: "",
-    xGridLines: 5,
-    yGridLines: 5,
+    xGridLines: DEFAULT_CHART_SETTINGS.xGridLines,
+    yGridLines: DEFAULT_CHART_SETTINGS.yGridLines,
   }),
 
   validateSettings: (settings) => {

@@ -1,0 +1,18 @@
+# Proposed syntax for one view of ../current-exports/multi-source-shop.eda.
+# Illustrative: grammar, defaults, and inference rules are not final.
+# A chart without @name takes its subject's name (customer.name below).
+field orders.amount label="Order amount" format=currency currency=USD precision=2
+
+group @amount-by-customer sum(orders.amount) by=customer.name name="Order amount by customer"
+
+metric @orders count              title=Orders
+metric @amount sum(orders.amount) title="Order amount"
+metric @mean   avg(orders.amount) title="Average order amount"
+hist   customer.name group=amount-by-customer title="Amount by customer"
+table  @rows orders.orderId,customer.name,orders.amount,orders.orderedAt title="Backing order records"
+
+layout {
+  2: orders amount mean
+  5: customer.name
+  5: rows
+}

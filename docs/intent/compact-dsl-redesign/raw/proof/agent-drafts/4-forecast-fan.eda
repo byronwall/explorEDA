@@ -1,0 +1,34 @@
+dashboard "Forecast fan"
+
+composition @fan height=540 {
+  title "Two measures, three years ahead"
+  subtitle "Central projection with 20–80% through 80% probability bands"
+  footnote "Shaded area marks projected years; bands are percentile ranges." at=0,520
+  scale Central per=instance label=Percent
+  unit @u at=0,90 size=380x300 axis {
+    repeat Measure columns=2 gap=72
+    label value=last(Central by Year)
+    band @p10 x=Year y=P10..P90 fill=#1f4e8c opacity=.12
+    band @p20 x=Year y=P20..P80 fill=#1f4e8c opacity=.16
+    band @p30 x=Year y=P30..P70 fill=#1f4e8c opacity=.20
+    band @p40 x=Year y=P40..P60 fill=#1f4e8c opacity=.26
+    path @central x=Year y=Central color=#1f4e8c width=1.5
+    rule x=2025 "Projection" shade=after
+    rule y=2 "2% target" only="GDP growth"
+  }
+  legend u at=0,60 row {
+    central "Central projection"
+    p10 "10–90%"
+    p20 "20–80%"
+    p30 "30–70%"
+    p40 "40–60%"
+  }
+}
+
+line @central-line x=Year y=Central series=Measure
+row Kind
+
+layout {
+  7: fan
+  5: central-line central-line central-line central-line central-line central-line central-line central-line Kind Kind Kind Kind
+}

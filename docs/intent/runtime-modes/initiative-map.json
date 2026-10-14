@@ -1,0 +1,594 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "explorEDA runtime modes",
+    "slug": "runtime-modes",
+    "scale": "program",
+    "current_phase": "intent",
+    "last_updated": "2026-10-12",
+    "summary": "Run one standalone explorEDA app in four modes — browser-only, local CLI, self-hosted Docker Compose, and paid per-tenant hosting — over one storage model whose backing store changes per mode.",
+    "status": "planned",
+    "next_action": "Local CLI (mode 2) is built as a PR stack; after it merges and ships, shape self-hosted-team-server on the same server and app."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-12"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "not-created",
+      "updated_at": null
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "not-created",
+      "updated_at": null
+    }
+  },
+  "sources": [
+    {
+      "id": "USR-P1",
+      "type": "direct-user-source",
+      "location": "raw/2026-10-12-notes-transcription.md",
+      "anchor": "Page 1 — EDA: runtime modes",
+      "authority": "direct intent",
+      "notes": "Photo: raw/2026-10-12-runtime-modes-page1.jpg"
+    },
+    {
+      "id": "USR-P2",
+      "type": "direct-user-source",
+      "location": "raw/2026-10-12-notes-transcription.md",
+      "anchor": "Page 2 — EDA modes",
+      "authority": "direct intent",
+      "notes": "Photo: raw/2026-10-12-eda-modes-page2.jpg"
+    },
+    {
+      "id": "USR-CHAT",
+      "type": "direct-user-source",
+      "location": "conversation 2026-10-12",
+      "anchor": "Request accompanying the photos",
+      "authority": "latest direct instruction",
+      "notes": "Hosting-modes initiative somewhat replaces the commercialization initiative, possibly in parallel; separate initiative for a proper app with users, login, config."
+    },
+    {
+      "id": "REPO-01",
+      "type": "repository",
+      "location": "apps/demo/src/savedViewsSession.ts; .github/workflows/deploy.yml",
+      "anchor": "localStorage persistence; GitHub Pages deploy",
+      "authority": "current reality",
+      "notes": "No CLI, server, auth, or user model exists."
+    },
+    {
+      "id": "QA-1",
+      "type": "question-round",
+      "location": "conversation 2026-10-12",
+      "anchor": "Round 1",
+      "authority": "direct intent",
+      "notes": "goals and splits"
+    },
+    {
+      "id": "QA-2",
+      "type": "question-round",
+      "location": "conversation 2026-10-12",
+      "anchor": "Round 2",
+      "authority": "direct intent",
+      "notes": "server reuse, licensing, CLI scope"
+    },
+    {
+      "id": "QA-3",
+      "type": "question-round",
+      "location": "conversation 2026-10-12",
+      "anchor": "Round 3",
+      "authority": "direct intent",
+      "notes": "layout, accounts, cut line, goal"
+    },
+    {
+      "id": "QA-S1",
+      "type": "question-round",
+      "location": "conversation 2026-10-12 (shaping)",
+      "anchor": "local-cli-projects shaping rounds 1–4",
+      "authority": "direct intent",
+      "notes": "Recorded in local-cli-projects/initiative-map.json question_rounds."
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "I-01",
+        "type": "outcome",
+        "statement": "explorEDA runs as a standalone app in several runtime modes, separate from the embeddable component.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "USR-P1",
+          "USR-P2",
+          "USR-CHAT"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "I-02",
+        "type": "sequence",
+        "statement": "Modes ordered by administration: browser-only, local CLI, self-hosted Docker Compose, paid per-tenant hosting; paid comes after the others work.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "eventual",
+        "sources": [
+          "USR-P1",
+          "USR-P2"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "I-03",
+        "type": "required behavior",
+        "statement": "Config and settings state is unified across modes: app config, user data, project/workspace files, data-source info, common schema info, notebooks or standalone results.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "USR-P1"
+        ],
+        "confidence": "medium; 'unify' reading of handwriting"
+      },
+      {
+        "id": "I-04",
+        "type": "constraint",
+        "statement": "Embedded component: the host developer handles storage, users, and data.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "USR-P1"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "I-05",
+        "type": "decision",
+        "statement": "The 'hosted' app, currently the demo, becomes a standalone app.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "USR-P1"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "I-06",
+        "type": "implementation hypothesis",
+        "statement": "Project/workspace files on disk; data-source info in a database.",
+        "commitment": "tentative",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "USR-P1"
+        ],
+        "confidence": "medium; likely mode-specific"
+      },
+      {
+        "id": "I-07",
+        "type": "constraint",
+        "statement": "Database sources require a server; browser-only is file/CSV only.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "USR-P2"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "I-08",
+        "type": "decision",
+        "statement": "This program somewhat replaces commercial-license (component licensing on unmerged claude/license-* branches) and may run in parallel with it.",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "USR-CHAT",
+          "QA-1"
+        ],
+        "confidence": "high for which initiative; degree of replacement open"
+      },
+      {
+        "id": "I-09",
+        "type": "derived implication",
+        "statement": "Mode differences belong in storage, auth, and data-source adapters, not separate app forks.",
+        "commitment": "derived",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "USR-P1",
+          "USR-P2"
+        ],
+        "confidence": "high"
+      },
+      {
+        "type": "sequence",
+        "statement": "Local CLI is the first mode to build.",
+        "commitment": "explicit",
+        "importance": "core",
+        "time_horizon": "first release",
+        "sources": [
+          "QA-1"
+        ],
+        "status": "active",
+        "confidence": "high",
+        "id": "I-10"
+      },
+      {
+        "type": "decision",
+        "statement": "Five initiatives: runtime-modes umbrella, standalone-app, browser-only-site, local-cli-projects, self-hosted-team-server.",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "time_horizon": "first release",
+        "sources": [
+          "QA-1"
+        ],
+        "status": "active",
+        "confidence": "high",
+        "id": "I-11"
+      },
+      {
+        "type": "decision",
+        "statement": "One Node server package serves CLI and self-hosted modes; modes differ by storage, auth, and data-source adapters.",
+        "commitment": "explicit",
+        "importance": "core",
+        "time_horizon": "first release",
+        "sources": [
+          "QA-2"
+        ],
+        "status": "active",
+        "confidence": "high",
+        "id": "I-12"
+      },
+      {
+        "type": "decision",
+        "statement": "Pause commercial-license; revenue is expected from hosted and self-hosted app plans.",
+        "commitment": "explicit",
+        "importance": "core",
+        "time_horizon": "first release",
+        "sources": [
+          "QA-2"
+        ],
+        "status": "active",
+        "confidence": "high",
+        "id": "I-13"
+      },
+      {
+        "type": "decision",
+        "statement": "customer-instance-hosting was a seed for this program; it is paused and merges in when managed (paid) servers are shaped.",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "time_horizon": "later",
+        "sources": [
+          "QA-2"
+        ],
+        "status": "active",
+        "confidence": "high",
+        "id": "I-14"
+      },
+      {
+        "type": "decision",
+        "statement": "exploreda.dev browser-only mode stays the demo; apps/app is the server-backed app for CLI, self-hosted, and managed modes.",
+        "commitment": "explicit",
+        "importance": "core",
+        "time_horizon": "first release",
+        "sources": [
+          "QA-2"
+        ],
+        "status": "active",
+        "confidence": "high",
+        "id": "I-15"
+      },
+      {
+        "type": "decision",
+        "statement": "Self-hosting is free; revenue comes from the paid managed tier.",
+        "commitment": "explicit",
+        "importance": "core",
+        "time_horizon": "first release",
+        "sources": [
+          "QA-3"
+        ],
+        "status": "active",
+        "confidence": "high",
+        "id": "I-16"
+      },
+      {
+        "type": "outcome",
+        "statement": "Near-term goal: a public npx exploreda launch.",
+        "commitment": "explicit",
+        "importance": "core",
+        "time_horizon": "first release",
+        "sources": [
+          "QA-3"
+        ],
+        "status": "active",
+        "confidence": "high",
+        "id": "I-17"
+      },
+      {
+        "type": "required behavior",
+        "statement": "The CLI project-folder format is shared: the demo can open a project folder via File System Access.",
+        "commitment": "explicit",
+        "importance": "core",
+        "time_horizon": "first release",
+        "sources": [
+          "QA-3"
+        ],
+        "status": "active",
+        "confidence": "high",
+        "id": "I-18"
+      },
+      {
+        "id": "I-19",
+        "type": "decision",
+        "statement": "The project-folder format is built inside the CLI's first milestone, on DSL v2; sources, joins, and analyses are all text.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "QA-S1"
+        ],
+        "confidence": "high"
+      }
+    ],
+    "themes": [
+      "mode ladder",
+      "shared storage model",
+      "component vs app split"
+    ],
+    "conflicts": [],
+    "human_questions": []
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "not-started",
+    "appetite": null,
+    "problem": null,
+    "recommended_shape": null,
+    "success_moves": [],
+    "first_proof": null,
+    "rabbit_holes": [],
+    "open_decisions": []
+  },
+  "implementation": {
+    "status": "not-started",
+    "repository_snapshot": {
+      "root": null,
+      "revision": null,
+      "worktree_status": null,
+      "subsystems": [],
+      "test_commands": [],
+      "deployment_surfaces": []
+    },
+    "dependencies": [],
+    "fast_local_loop": null,
+    "milestones": [],
+    "cut_line": [],
+    "open_decisions": []
+  },
+  "history": [
+    {
+      "date": "2026-10-12",
+      "event": "created",
+      "summary": "Intent recovered from two handwritten notebook pages and the accompanying chat request.",
+      "status": "planned"
+    },
+    {
+      "date": "2026-10-12",
+      "event": "child shaped",
+      "summary": "local-cli-projects shaped; folder format resolved as part of CLI M1 on DSL v2; static export dropped from CLI v1.",
+      "status": "planned"
+    }
+  ],
+  "closure": null,
+  "related_initiatives": [
+    {
+      "slug": "standalone-app",
+      "role": "app layer every mode runs"
+    },
+    {
+      "slug": "browser-only-site",
+      "role": "mode 1"
+    },
+    {
+      "slug": "local-cli-projects",
+      "role": "mode 2"
+    },
+    {
+      "slug": "self-hosted-team-server",
+      "role": "mode 3"
+    },
+    {
+      "slug": "customer-instance-hosting",
+      "role": "mode 4 (paid hosted), comes last"
+    },
+    {
+      "slug": "database-adapters",
+      "role": "server-side data path for modes 2–4"
+    },
+    {
+      "slug": "notebook-analysis",
+      "role": "notebooks as stored results"
+    },
+    {
+      "slug": "commercial-license",
+      "role": "component licensing (unmerged branches claude/license-1..5); partly replaced, may run in parallel"
+    }
+  ],
+  "question_rounds": {
+    "focus": "scope and splits across runtime modes",
+    "per_round": 8,
+    "planned_rounds": 3,
+    "status": "complete",
+    "rounds": [
+      {
+        "round": 1,
+        "theme": "goals and splits",
+        "source": "QA-1",
+        "questions": [
+          {
+            "n": 1,
+            "question": "How does customer-instance-hosting relate to runtime-modes?",
+            "answer": "I meant something else.",
+            "effect": "The commercialization initiative is commercial-license (unmerged claude/license-* branches: offline keys, Paddle, license service for the component). customer-instance-hosting relation re-asked in round 2."
+          },
+          {
+            "n": 2,
+            "question": "Which mode first?",
+            "answer": "Local CLI (npx exploreda).",
+            "effect": "local-cli-projects leads; it builds the first server and files-on-disk project storage."
+          },
+          {
+            "n": 3,
+            "question": "Where does the standalone app come from?",
+            "answer": "New apps/app beside the demo.",
+            "effect": "Demo stays the landing/docs/examples site; apps/app hosts the component through storage and auth ports."
+          },
+          {
+            "n": 4,
+            "question": "Is the five-initiative split right?",
+            "answer": "Keep all five.",
+            "effect": "No merge."
+          }
+        ]
+      },
+      {
+        "round": 2,
+        "theme": "server reuse, licensing, CLI scope",
+        "source": "QA-2",
+        "questions": [
+          {
+            "n": 5,
+            "question": "Should the self-hosted image run the CLI's server?",
+            "answer": "Same server, more adapters.",
+            "effect": "One Node server package; CLI and Docker differ by storage, auth, and source adapters."
+          },
+          {
+            "n": 6,
+            "question": "How do runtime modes relate to commercial-license?",
+            "answer": "Pause licensing for hosting.",
+            "effect": "commercial-license (unmerged claude/license-* branches) is paused; revenue is expected from hosted/self-hosted app plans."
+          },
+          {
+            "n": 7,
+            "question": "What happens to customer-instance-hosting?",
+            "answer": "It was a starter seed for this modes work; it has useful info on where to host managed versions. Pause it or merge it in when we reach managed servers.",
+            "effect": "customer-instance-hosting paused; merge into runtime-modes at the managed (paid) server stage."
+          },
+          {
+            "n": 8,
+            "question": "Database sources in the first CLI release?",
+            "answer": "No — files first, DB next.",
+            "effect": "CLI v1 is file-only; DB connections are the next CLI milestone reusing database-adapters."
+          },
+          {
+            "n": 9,
+            "question": "Which package ships the CLI and server?",
+            "answer": "Bin in the exploreda package.",
+            "effect": "npx exploreda runs from the component package; server code must not burden component consumers (provisional default: bundle the server into the bin build)."
+          },
+          {
+            "n": 10,
+            "question": "How does a CLI project store analyses on disk?",
+            "answer": "Config storable in either a hidden folder or analysis workspace files. A project folder with common info and a file per analysis, similar to notebooks.",
+            "effect": "Project folder = shared project info + one file per analysis. Meaning of 'either' clarified in round 3."
+          },
+          {
+            "n": 11,
+            "question": "No sign-in in CLI; accounts built for self-hosted?",
+            "answer": "Yes, no auth in CLI.",
+            "effect": "standalone-app ships a single-local-user auth adapter first."
+          },
+          {
+            "n": 12,
+            "question": "Does exploreda.dev run apps/app or stay the demo?",
+            "answer": "Stays the demo.",
+            "effect": "Browser-only mode is the improved demo; apps/app is server-backed (CLI, self-hosted, managed)."
+          }
+        ]
+      },
+      {
+        "round": 3,
+        "theme": "layout, accounts, cut line, goal",
+        "source": "QA-3",
+        "questions": [
+          {
+            "n": 13,
+            "question": "Config in hidden folder or workspace files — which reading?",
+            "answer": "User's choice per project.",
+            "effect": "CLI supports both layouts: all config hidden in .exploreda/ or visible project/workspace files."
+          },
+          {
+            "n": 14,
+            "question": "Should the demo read/write the CLI project-folder format?",
+            "answer": "Yes, via folder access.",
+            "effect": "Demo opens a CLI project folder in Chromium via File System Access; same analysis files."
+          },
+          {
+            "n": 15,
+            "question": "How do self-hosted viewers get in?",
+            "answer": "Everyone has an account.",
+            "effect": "Viewers sign in with a viewer role; no anonymous share links in the first self-hosted release."
+          },
+          {
+            "n": 16,
+            "question": "First self-hosted sign-in method?",
+            "answer": "Local accounts.",
+            "effect": "Admin-managed email + password; OIDC/SSO later (managed tier)."
+          },
+          {
+            "n": 17,
+            "question": "What else is in CLI v1?",
+            "answer": "Global config, file watching, static export.",
+            "effect": "Notebook view excluded from CLI v1; it follows notebook-analysis."
+          },
+          {
+            "n": 18,
+            "question": "Is self-hosting paid?",
+            "answer": "Free self-host, paid managed.",
+            "effect": "Docker Compose is free; revenue from the managed tier."
+          },
+          {
+            "n": 19,
+            "question": "Data files read in place with project-relative paths?",
+            "answer": "Allow outside paths too.",
+            "effect": "Relative paths by default; absolute paths to outside files are allowed and flagged as non-portable."
+          },
+          {
+            "n": 20,
+            "question": "Near-term goal?",
+            "answer": "Public npx launch.",
+            "effect": "CLI must be polished enough to announce: install, first-run, docs, and stable file format."
+          }
+        ]
+      }
+    ]
+  }
+}

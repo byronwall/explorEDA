@@ -74,7 +74,7 @@ table Revenue,Cost,Channel`);
     expect(row).toMatchObject({
       type: "row",
       field: "Channel",
-      minRowHeight: 30,
+      minRowHeight: 22,
     });
     expect(table).toMatchObject({
       type: "data-table",
@@ -92,12 +92,13 @@ channel:cat=Channel
 
 calc profit=revenue-cost
 calc rate=revenue==0 ? null : profit/revenue
-+ label="Margin" format=percent precision=1
+field rate label="Margin" format=percent precision=1
 
-scatter @web x=revenue y=profit where.channel=Web
-+ title="Web orders" at=0,0,6,5 x.scale=symlog margin.left=64
+scatter @web x=revenue y=profit where.channel=Web {
+  title="Web orders" at=0,0,6,5 x.scale=symlog margin.left=64
+}
 scatter @store x=revenue y=profit where.channel=Store at=6,0,6,5
-metric @gains sum=profit where.profit=0..
+metric @gains sum(profit) where.profit=0..
 table revenue,cost,profit,rate`);
 
     expect(result.diagnostics).toEqual([]);
@@ -135,7 +136,7 @@ table revenue,cost,profit,rate`);
   it("keeps usable charts and explains the one it skipped", () => {
     const result = compile(`hist Revenue bins=24
 scatter x=Revenue y=MissingMargin
-metric sum=Revenue`);
+metric sum(Revenue)`);
 
     expect(result.complete).toBe(false);
     expect(result.settings.charts.map((chart) => chart.type)).toEqual([
@@ -172,8 +173,8 @@ row Channel where.Revenue=abc..`);
 calc a=b+1
 calc b=a+1
 calc c=a*2
-metric avg=ratio
-metric sum=c`);
+metric avg(ratio)
+metric sum(c)`);
 
     expect(
       result.settings.calculations.map((calc) => calc.resultColumnName)

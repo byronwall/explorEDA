@@ -1,0 +1,184 @@
+### VIEW: Forecast fan
+dashboard name="Forecast fan"
+grid rowHeight=76 padding=0 markers=false
+
+chart composition @fan-composition at=0,0,12,7
++ title="Forecast fan" xAxis{}= xAxis.grid=false yAxis{}=
++ yAxis.grid=true yGridLines=4 composition.artboard.height=540
++ composition.elements[]= composition.elements.0.id=title-1
++ composition.elements.0.kind=text
++ composition.elements.0.role=title
++ composition.elements.0.name=Title
++ composition.elements.0.text="Two measures, three years ahead"
++ composition.elements.0.x=32 composition.elements.0.y=28
++ composition.elements.0.width=896
++ composition.elements.0.fontSize=24
++ composition.elements.0.fontWeight=700
++ composition.elements.0.color="#1f2328"
++ composition.elements.1.id=subtitle-1
++ composition.elements.1.kind=text
++ composition.elements.1.role=subtitle
++ composition.elements.1.name=Subtitle
++ composition.elements.1.text="Quarterly history, then projections from 2025 with 20%, 40%, 60%, and 80% intervals around the central path. Illustrative figures; each panel keeps its own scale."
++ composition.elements.1.x=32 composition.elements.1.y=62
++ composition.elements.1.width=896
++ composition.elements.1.fontSize=13
++ composition.elements.1.fontWeight=400
++ composition.elements.1.color="#5f6368"
++ composition.elements.2.id=unit-1
++ composition.elements.2.kind=unit
++ composition.elements.2.name=Measures
++ composition.elements.2.x=72 composition.elements.2.y=110
++ composition.elements.2.frame.width=380
++ composition.elements.2.frame.height=300
++ composition.elements.2.label.show=true
++ composition.elements.2.label.width=0
++ composition.elements.2.label.fontSize=13
++ composition.elements.2.label.valueCalcId=calc-1
++ composition.elements.2.axis=true
++ composition.elements.2.marks[]=
++ composition.elements.2.marks.0.type=band
++ composition.elements.2.marks.0.id=mark-1
++ composition.elements.2.marks.0.name="80% interval"
++ composition.elements.2.marks.0.xScaleId=n-1
++ composition.elements.2.marks.0.yScaleId=n-2
++ composition.elements.2.marks.0.orderField=Year
++ composition.elements.2.marks.0.lowerField=P10
++ composition.elements.2.marks.0.upperField=P90
++ composition.elements.2.marks.0.fill="#1f4e8c"
++ composition.elements.2.marks.0.opacity=0.12
++ composition.elements.2.marks.1.type=band
++ composition.elements.2.marks.1.id=mark-2
++ composition.elements.2.marks.1.name="60% interval"
++ composition.elements.2.marks.1.xScaleId=n-1
++ composition.elements.2.marks.1.yScaleId=n-2
++ composition.elements.2.marks.1.orderField=Year
++ composition.elements.2.marks.1.lowerField=P20
++ composition.elements.2.marks.1.upperField=P80
++ composition.elements.2.marks.1.fill="#1f4e8c"
++ composition.elements.2.marks.1.opacity=0.16
++ composition.elements.2.marks.2.type=band
++ composition.elements.2.marks.2.id=mark-3
++ composition.elements.2.marks.2.name="40% interval"
++ composition.elements.2.marks.2.xScaleId=n-1
++ composition.elements.2.marks.2.yScaleId=n-2
++ composition.elements.2.marks.2.orderField=Year
++ composition.elements.2.marks.2.lowerField=P30
++ composition.elements.2.marks.2.upperField=P70
++ composition.elements.2.marks.2.fill="#1f4e8c"
++ composition.elements.2.marks.2.opacity=0.2
++ composition.elements.2.marks.3.type=band
++ composition.elements.2.marks.3.id=mark-4
++ composition.elements.2.marks.3.name="20% interval"
++ composition.elements.2.marks.3.xScaleId=n-1
++ composition.elements.2.marks.3.yScaleId=n-2
++ composition.elements.2.marks.3.orderField=Year
++ composition.elements.2.marks.3.lowerField=P40
++ composition.elements.2.marks.3.upperField=P60
++ composition.elements.2.marks.3.fill="#1f4e8c"
++ composition.elements.2.marks.3.opacity=0.26
++ composition.elements.2.marks.4.type=path
++ composition.elements.2.marks.4.id=mark-5
++ composition.elements.2.marks.4.name=Central
++ composition.elements.2.marks.4.xScaleId=n-1
++ composition.elements.2.marks.4.yScaleId=n-2
++ composition.elements.2.marks.4.orderField=Year
++ composition.elements.2.marks.4.stroke="#1f2328"
++ composition.elements.2.marks.4.strokeWidth=1.5
++ composition.elements.2.repeat.field=Measure
++ composition.elements.2.repeat.arrangement=columns
++ composition.elements.2.repeat.columns=2
++ composition.elements.2.repeat.gap=72
++ composition.elements.2.repeat.order=label
++ composition.elements.2.repeat.limit=24
++ composition.elements.3.id=guide-1
++ composition.elements.3.kind=guide
++ composition.elements.3.name=Projection
++ composition.elements.3.x=4 composition.elements.3.y=-318
++ composition.elements.3.unitId=unit-1
++ composition.elements.3.value.kind=constant
++ composition.elements.3.value.value="2025"
++ composition.elements.3.label=Projection
++ composition.elements.3.color="#8a6d3b"
++ composition.elements.3.shade=after
++ composition.elements.4.id=guide-2
++ composition.elements.4.kind=guide
++ composition.elements.4.name="2% reference"
++ composition.elements.4.x=4 composition.elements.4.y=0
++ composition.elements.4.unitId=unit-1
++ composition.elements.4.value.kind=constant
++ composition.elements.4.value.value="2"
++ composition.elements.4.label=2%
++ composition.elements.4.color="#a3241d"
++ composition.elements.4.axis=y
++ composition.elements.4.repeats="GDP growth"
++ composition.elements.5.id=legend-1
++ composition.elements.5.kind=legend
++ composition.elements.5.name="Interval key"
++ composition.elements.5.x=72 composition.elements.5.y=446
++ composition.elements.5.unitId=unit-1
++ composition.elements.5.markId=mark-1
++ composition.elements.5.direction=row
++ composition.elements.5.fontSize=11
++ composition.elements.5.color="#1f2328"
++ composition.elements.5.items[]=
++ composition.elements.5.items.0.markId=mark-5
++ composition.elements.5.items.0.label="Central path"
++ composition.elements.5.items.1.markId=mark-4
++ composition.elements.5.items.1.label="20% of outcomes (P40–P60)"
++ composition.elements.5.items.2.markId=mark-3
++ composition.elements.5.items.2.label="40% (P30–P70)"
++ composition.elements.5.items.3.markId=mark-2
++ composition.elements.5.items.3.label="60% (P20–P80)"
++ composition.elements.5.items.4.markId=mark-1
++ composition.elements.5.items.4.label="80% (P10–P90)"
++ composition.elements.6.id=note-2
++ composition.elements.6.kind=text
++ composition.elements.6.role=note
++ composition.elements.6.name=Note
++ composition.elements.6.text="Illustrative data generated for this demo: supplied percentile columns, not a forecast model. The layout follows central-bank fan charts."
++ composition.elements.6.x=32 composition.elements.6.y=506
++ composition.elements.6.width=896
++ composition.elements.6.fontSize=10
++ composition.elements.6.fontWeight=400
++ composition.elements.6.color="#5f6368" composition.scales[]=
++ composition.scales.0.id=n-1 composition.scales.0.kind=numeric
++ composition.scales.0.name=Year composition.scales.0.field=Year
++ composition.scales.0.domain=shared
++ composition.scales.0.zero=false
++ composition.scales.0.nice=false composition.scales.1.id=n-2
++ composition.scales.1.kind=numeric
++ composition.scales.1.name=Percent
++ composition.scales.1.field=Central
++ composition.scales.1.domain=instance
++ composition.scales.1.zero=true composition.scales.1.nice=true
++ composition.calculations[]=
++ composition.calculations.0.id=calc-1
++ composition.calculations.0.name="Latest central"
++ composition.calculations.0.aggregation=last
++ composition.calculations.0.field=Central
++ composition.calculations.0.orderField=Year
++ composition.calculations.0.population=repeat
++ composition.calculations.0.filters=follow
+chart line @fan-central at=0,7,8,5
++ title="Central path by quarter" facet.type=wrap
++ facet.columnVariable=unset facet.columnCount=2
++ xAxis.grid=false yAxis.grid=true margin.top=16 margin.right=24
++ margin.bottom=44 margin.left=62 xAxisLabel=Year
++ yAxisLabel=Percent yGridLines=4 xField=Year
++ seriesField[]=Central seriesSettings.Central.showPoints=false
++ seriesSettings.Central.pointSize=3
++ seriesSettings.Central.pointOpacity=0.8
++ seriesSettings.Central.lineWidth=2
++ seriesSettings.Central.lineOpacity=1
++ seriesSettings.Central.lineColor="#3479a8"
++ seriesSettings.Central.lineStyle=solid
++ seriesSettings.Central.useRightAxis=false showYGrid=false
++ showLegend=false
+row Kind @fan-kind at=8,7,4,5 title="History or projection"
++ xAxis{}= xAxis.grid=true yAxis{}= yAxis.grid=false
++ margin.top=16 margin.right=24 margin.bottom=44 margin.left=62
++ xAxisLabel=Records yGridLines=4 minRowHeight=22
++ maxRowHeight=36
+
+

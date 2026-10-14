@@ -1379,6 +1379,19 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId: "dense-chart-controls",
+    intent:
+      "Change a scatter's color field in place while its filter stays and a peer shares the scale.",
+    features: {
+      "chart:scatter": "shown",
+      "chart:markdown": "shown",
+      "guides:grids": "shown",
+      "color:categorical": "shown",
+      "color:legend": "shown",
+      "layout:dashboard": "shown",
+    },
+  },
+  {
     exampleId: "calculated-orders",
     intent:
       "Trace chained calculations from source orders to contribution, dates, and service rules.",
