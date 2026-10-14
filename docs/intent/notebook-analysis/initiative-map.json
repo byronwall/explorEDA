@@ -8,7 +8,7 @@
     "last_updated": "2026-10-13",
     "summary": ".eda.md notebook files in local projects: Markdown prose with eda blocks, live results, and minimal graph write-back. Forecast performance is the first proof.",
     "status": "active",
-    "next_action": "M3: graph edits write back to the file"
+    "next_action": "M4: edit source in the app; docs and example"
   },
   "artifacts": {
     "intent_brief": {
@@ -808,8 +808,10 @@
         "proof": "Browser session plus git diff; saver tests.",
         "valid_intermediate_state": "Write-back switch can turn graph edits off.",
         "rollback": "Turn the switch off.",
-        "status": "planned",
-        "evidence": []
+        "status": "completed",
+        "evidence": [
+          "browser on examples/forecast: showPoints -> one token in 'series forecast', y.min=20000 -> one token, table column hidden -> 'time,actual,delta', table -> bar -> one-line rewrite 'hist @hours time'; loading and opening settings write nothing; writeBackSettings tests for fill-ins and type changes"
+        ]
       },
       {
         "id": "m4",

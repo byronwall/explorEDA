@@ -107,6 +107,10 @@ export function ProjectWorkspace({
         }
   );
   const notebook = folder.notebooks.find((item) => item.path === selected.path);
+  // Notebook text as the app holds it, with chart edits written back.
+  const [notebookTexts, setNotebookTexts] = useState(
+    () => new Map(folder.notebooks.map((item) => [item.path, item.text]))
+  );
   const setSelected = (next: Selection) => {
     setSelectedState(next);
     onSelect(next);
@@ -144,6 +148,9 @@ export function ProjectWorkspace({
     }
     if (folder.projectPath) {
       saver.known(folder.projectPath, fileText(folder.projectPath, initial));
+    }
+    for (const item of folder.notebooks) {
+      saver.known(item.path, item.text);
     }
     // The saver and folder are fixed for this workspace's lifetime.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -428,10 +435,20 @@ export function ProjectWorkspace({
         {notebook ? (
           <ExplorEdaNotebook
             key={notebook.path}
-            text={notebook.text}
+            text={notebookTexts.get(notebook.path) ?? notebook.text}
             data={notebook.result.rows}
             name={notebook.result.settings.metadata.name}
             lastValid={notebookMemory?.(notebook.path)}
+            onTextChange={
+              readOnly
+                ? undefined
+                : (next) => {
+                    setNotebookTexts((previous) =>
+                      new Map(previous).set(notebook.path, next)
+                    );
+                    saver.queue(notebook.path, next);
+                  }
+            }
           />
         ) : view ? (
           <ExplorEdaProject

@@ -9,7 +9,7 @@ import { registerAllCharts } from "@/charts/registerAllCharts";
 import { readProjectFolder, type FolderNotebook } from "@/lib/project";
 import { nodeProjectFiles } from "@/node/projectFiles";
 import type { SavedChartSettings } from "@/types/SavedDataTypes";
-import { writeBackChart } from "./writeBack";
+import { writeBackChart, writeBackSettings } from "./writeBack";
 
 const exampleDir = path.resolve(__dirname, "../../../examples/forecast");
 
@@ -142,7 +142,7 @@ describe("forecast notebook", () => {
       const line = chart as unknown as {
         seriesSettings: Record<string, { lineColor?: string }>;
       };
-      line.seriesSettings.forecast!.lineColor = "#7a5195";
+      line.seriesSettings["demand.forecast"]!.lineColor = "#7a5195";
     });
     expect(result.kind).toBe("splice");
     expect(changedLines(notebook.text, result.text)).toEqual([
@@ -150,6 +150,65 @@ describe("forecast notebook", () => {
         26,
         "  series forecast lineColor=#c77a45",
         "  series forecast lineColor=#7a5195",
+      ],
+    ]);
+  });
+
+  it("writes only what changed when the app fills in defaults too", () => {
+    const { result, text } = notebook;
+    const previous = structuredClone(result.settings);
+    // The app holds charts with defaults filled in, such as axis ranges.
+    for (const chart of previous.charts) {
+      chart.xAxis = { scaleType: "linear", min: 0, max: 100, ...chart.xAxis };
+    }
+    const next = structuredClone(previous);
+    const demand = next.charts.find((chart) => chart.id === "demand")!;
+    demand.yAxis = { ...demand.yAxis, limits: { min: 20000 } };
+    // A line chart saves its palette color for a series it drew.
+    const delta = next.charts.find(
+      (chart) => chart.id === "delta"
+    ) as unknown as {
+      seriesSettings: Record<string, unknown>;
+    };
+    delta.seriesSettings = { ...delta.seriesSettings };
+    const written = writeBackSettings(text, result, previous, next, {
+      rows: result.rows,
+    });
+    expect(written.results.map((item) => [item.chartId, item.kind])).toEqual([
+      ["demand", "splice"],
+    ]);
+    expect(changedLines(text, written.text)).toEqual([
+      [
+        24,
+        'line @demand x=time y=actual,forecast title="Actual and forecast demand" {',
+        'line @demand x=time y=actual,forecast title="Actual and forecast demand" y.min=20000 {',
+      ],
+    ]);
+  });
+
+  it("drops the old type's settings when the app changes a chart's type", () => {
+    const { result, text } = notebook;
+    const previous = structuredClone(result.settings);
+    const next = structuredClone(previous);
+    const index = next.charts.findIndex((chart) => chart.id === "hours");
+    // The app lays the new type's settings over the old chart's.
+    next.charts[index] = {
+      ...next.charts[index]!,
+      ...getChartDefinition("bar")!.createDefaultSettings(
+        next.charts[index]!.layout,
+        "demand.time"
+      ),
+      id: "hours",
+    } as SavedChartSettings;
+    const written = writeBackSettings(text, result, previous, next, {
+      rows: result.rows,
+    });
+    expect(written.results[0]!.kind).toBe("rewrite");
+    expect(changedLines(text, written.text)).toEqual([
+      [
+        72,
+        'table @hours time,actual,forecast,delta title="Hourly demand and forecast"',
+        "hist @hours time",
       ],
     ]);
   });

@@ -281,6 +281,12 @@ interface DataLayerProps<T extends DatumObject> {
    * does. Workspace filters still narrow every chart.
    */
   localSelections?: boolean;
+  /**
+   * The settings as the workspace holds them once `savedData` is applied,
+   * at mount and after each restore. Edits reported to `onStateChange`
+   * start from these.
+   */
+  onSavedDataApplied?: (state: SavedDataStructure) => void;
 }
 
 // Add ID to the data type
@@ -1584,6 +1590,8 @@ export function DataLayerProvider<T extends DatumObject>({
   const storeRef = useRef<DataLayerStore<T> | null>(null);
   const propsRef = useRef(props);
   const onStateChangeRef = useRef(props.onStateChange);
+  const onAppliedRef = useRef(props.onSavedDataApplied);
+  onAppliedRef.current = props.onSavedDataApplied;
   const suppressStateChangeRef = useRef(false);
   const savedStateFingerprintRef = useRef<string | undefined>(undefined);
   onStateChangeRef.current = props.onStateChange;
@@ -1631,9 +1639,11 @@ export function DataLayerProvider<T extends DatumObject>({
       }
     } finally {
       suppressStateChangeRef.current = false;
-      savedStateFingerprintRef.current = getSavedStateFingerprint(
-        store.getState().saveToStructure()
-      );
+      const applied = store.getState().saveToStructure();
+      savedStateFingerprintRef.current = getSavedStateFingerprint(applied);
+      if (dataChanged || savedDataChanged) {
+        onAppliedRef.current?.(applied);
+      }
     }
 
     propsRef.current = {
@@ -1653,9 +1663,9 @@ export function DataLayerProvider<T extends DatumObject>({
 
   useEffect(() => {
     const store = storeRef.current!;
-    savedStateFingerprintRef.current = getSavedStateFingerprint(
-      store.getState().saveToStructure()
-    );
+    const applied = store.getState().saveToStructure();
+    savedStateFingerprintRef.current = getSavedStateFingerprint(applied);
+    onAppliedRef.current?.(applied);
 
     return store.subscribe((state) => {
       // A held edit reports once, when its last hold is released.

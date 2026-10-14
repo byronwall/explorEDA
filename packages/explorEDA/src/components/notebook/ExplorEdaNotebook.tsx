@@ -6,9 +6,11 @@ import {
   type MutableRefObject,
 } from "react";
 import { CircleAlert } from "lucide-react";
+import { toast } from "sonner";
 import type { DeclaredFieldType } from "@/lib/declaredFieldTypes";
 import {
   compileNotebook,
+  writeBackSettings,
   type NotebookBlockResult,
   type NotebookCompileResult,
 } from "@/lib/notebook";
@@ -37,8 +39,14 @@ export interface ExplorEdaNotebookProps {
   fieldTypes?: Record<string, DeclaredFieldType>;
   /** The notebook's name when no `dashboard` line gives one. */
   name?: string;
-  /** Chart and filter edits, as `ExplorEdaNotebook` reports them. */
+  /** Chart and filter edits, as `ExplorEda` reports them. */
   onStateChange?: (settings: SavedDataStructure) => void;
+  /**
+   * The notebook's new text after a chart edit made in the app, changed only
+   * where the edit says. Without it, chart edits stay on screen and the
+   * text never changes.
+   */
+  onTextChange?: (text: string) => void;
   /**
    * Each block's last text that worked. Pass the same ref when the host
    * remounts the notebook, such as after reloading its file, so a broken
@@ -94,6 +102,29 @@ export function useNotebookResult(
   }, [text, data, name, lastValid]);
 }
 
+/** How long after a key press or pointer press a change counts as an edit. */
+const INPUT_WINDOW = 2000;
+
+/** When someone last pressed a key or pointer, typed, or picked a value. */
+function useLastInput() {
+  const last = useRef(-Infinity);
+  useEffect(() => {
+    const mark = () => {
+      last.current = performance.now();
+    };
+    const events = ["pointerdown", "keydown", "input", "change"] as const;
+    for (const name of events) {
+      document.addEventListener(name, mark, true);
+    }
+    return () => {
+      for (const name of events) {
+        document.removeEventListener(name, mark, true);
+      }
+    };
+  }, []);
+  return last;
+}
+
 function useWidth() {
   const ref = useRef<HTMLElement>(null);
   const [width, setWidth] = useState(0);
@@ -121,15 +152,77 @@ export function ExplorEdaNotebook({
   fieldTypes,
   name,
   onStateChange,
+  onTextChange,
   lastValid,
 }: ExplorEdaNotebookProps) {
-  const result = useNotebookResult(text, data, name, lastValid);
+  const ownMemory = useRef<Record<number, string>>({});
+  const memory = lastValid ?? ownMemory;
+  const result = useNotebookResult(text, data, name, memory);
+
+  // After a splice, the app already shows what the new text says, so the
+  // settings stay as they are; restoring them would close open editors.
+  const written = useRef<
+    { text: string; settings: SavedDataStructure } | undefined
+  >(undefined);
+  const [revert, setRevert] = useState(0);
+  const refusedFor = useRef<string | undefined>(undefined);
+  // The settings as the app holds them; an edit is the change from these.
+  const applied = useRef<SavedDataStructure | undefined>(undefined);
+  const lastInput = useLastInput();
+  const savedData = useMemo(() => {
+    void revert;
+    return written.current?.text === text
+      ? written.current.settings
+      : structuredClone(result.settings);
+  }, [result, text, revert]);
+
+  const handleStateChange = (settings: SavedDataStructure) => {
+    onStateChange?.(settings);
+    if (!onTextChange) return;
+    const previous = applied.current;
+    applied.current = settings;
+    // Charts also save what they fill in as they draw, such as a series'
+    // color. Only a change that follows someone's input is an edit.
+    if (!previous || performance.now() - lastInput.current > INPUT_WINDOW) {
+      return;
+    }
+    const { text: next, results } = writeBackSettings(
+      text,
+      result,
+      previous,
+      settings,
+      // A broken block's stand-in text compiles the same way here.
+      { rows: data, name, lastValid: memory.current }
+    );
+    const refused = results.find((item) => item.kind === "unsupported");
+    // A refused edit is undone once, so the charts match the text again.
+    // If a control makes it again at once, it stays on screen unsaved.
+    if (refused && refusedFor.current !== text) {
+      refusedFor.current = text;
+      toast.error(refused.reason ?? "That change can't be saved as text.");
+      written.current = undefined;
+      setRevert((count) => count + 1);
+    }
+    if (next !== text) {
+      written.current = results.every((item) => item.kind !== "rewrite")
+        ? { text: next, settings: savedData }
+        : undefined;
+      onTextChange(next);
+    }
+  };
+
   return (
     <DataLayerProvider
       data={data}
       fieldTypes={fieldTypes}
-      savedData={result.settings}
-      onStateChange={onStateChange}
+      savedData={savedData}
+      onStateChange={handleStateChange}
+      onSavedDataApplied={(settings) => {
+        applied.current = settings;
+        // Charts fill in what they draw once settings arrive; only input
+        // that comes after counts as an edit.
+        lastInput.current = -Infinity;
+      }}
       localSelections
     >
       <CalculationEditorProvider>

@@ -24,6 +24,8 @@ export {
 } from "./readNotebook";
 export {
   writeBackChart,
+  writeBackSettings,
+  type NotebookWriteBack,
   type WriteBackKind,
   type WriteBackResult,
 } from "./writeBack";

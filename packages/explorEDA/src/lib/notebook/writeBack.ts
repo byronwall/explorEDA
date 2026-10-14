@@ -10,6 +10,9 @@
  * and compared with the edit, so text that wouldn't rebuild the edited chart
  * is never returned as a splice.
  */
+import isEqual from "react-fast-compare";
+import { chartRegistry, getChartDefinition } from "@/charts/registry";
+import { DEFAULT_CHART_SETTINGS } from "@/utils/defaultSettings";
 import { exportParts, type DslChartPart } from "@/lib/dsl/export";
 import { block as printBlock } from "@/lib/dsl/print";
 import {
@@ -494,7 +497,7 @@ export function writeBackChart(
   const declaration = declarationFor(compiled, chart.id);
   if (!declaration) {
     return unsupported(
-      "This chart's block has an error, so its text can't change until it is fixed."
+      "This chart's block has a problem in its text, so the change was undone. Fix the text first."
     );
   }
   const afterSettings: SavedDataStructure = {
@@ -507,7 +510,7 @@ export function writeBackChart(
   const before = partFor(compiled.settings, chart.id, options.rows, aliases);
   const after = partFor(afterSettings, chart.id, options.rows, aliases);
   if (!before || !after) {
-    return unsupported("This chart has no text form for the edit.");
+    return unsupported("This change has no text form, so it was undone.");
   }
   if (samePart(before, after)) {
     return { kind: "unchanged", text };
@@ -544,5 +547,152 @@ export function writeBackChart(
   if (samePart(rebuiltPartText, after)) {
     return { kind: "rewrite", text: rewritten };
   }
-  return unsupported("The edit can't be written as text that rebuilds it.");
+  return unsupported(
+    "This change can't be written to the notebook's text, so it was undone."
+  );
+}
+
+/** What a chart's text says: everything but its selection and placement. */
+function textPart(chart: SavedChartSettings) {
+  const { filters: _filters, layout: _layout, ...rest } = chart;
+  return rest;
+}
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+/** `over` laid on `under`, record by record. */
+function layered(under: unknown, over: unknown): unknown {
+  if (!isRecord(under) || !isRecord(over)) {
+    return over === undefined ? under : over;
+  }
+  const out: Record<string, unknown> = { ...under };
+  for (const [key, value] of Object.entries(over)) {
+    out[key] = layered(under[key], value);
+  }
+  return out;
+}
+
+/**
+ * The values the app may fill into a chart of this type: its own defaults
+ * over the ones every chart shares, such as axis and facet settings.
+ */
+function fillIns(chart: SavedChartSettings): unknown {
+  const own = chartRegistry.has(chart.type)
+    ? getChartDefinition(chart.type).createDefaultSettings(chart.layout)
+    : {};
+  return layered(DEFAULT_CHART_SETTINGS, own);
+}
+
+/** Settings any chart keeps, whatever its type. */
+const SHARED_KEYS = [
+  "id",
+  "title",
+  "subtitle",
+  "note",
+  "colorField",
+  "colorScaleId",
+  "localFilters",
+  "annotations",
+];
+
+/**
+ * A chart that changed type, without the old type's settings: the app keeps
+ * them in case the type changes back, but text says only what this type uses.
+ */
+function newTypeChart(chart: SavedChartSettings): SavedChartSettings {
+  const known = fillIns(chart);
+  const keep = new Set([
+    ...SHARED_KEYS,
+    ...(isRecord(known) ? Object.keys(known) : []),
+  ]);
+  return Object.fromEntries(
+    Object.entries(chart).filter(([key]) => keep.has(key))
+  ) as unknown as SavedChartSettings;
+}
+
+/**
+ * `base` with the change from `before` to `after` applied: only the values
+ * that changed, at any depth. Lists change whole.
+ */
+function applyChange(
+  base: unknown,
+  before: unknown,
+  after: unknown,
+  defaults: unknown
+): unknown {
+  if (!isRecord(before) || !isRecord(after)) {
+    return after;
+  }
+  const out: Record<string, unknown> = isRecord(base) ? { ...base } : {};
+  const fallback = isRecord(defaults) ? defaults : {};
+  for (const key of new Set([...Object.keys(before), ...Object.keys(after)])) {
+    if (isEqual(before[key], after[key])) {
+      continue;
+    }
+    // The app fills in a default it left out; the text needn't say it.
+    if (before[key] === undefined && isEqual(after[key], fallback[key])) {
+      continue;
+    }
+    if (!(key in after) || after[key] === undefined) {
+      delete out[key];
+    } else {
+      out[key] = applyChange(
+        isRecord(base) ? base[key] : undefined,
+        before[key],
+        after[key],
+        fallback[key]
+      );
+    }
+  }
+  return out;
+}
+
+export interface NotebookWriteBack {
+  /** The notebook text with every edit that could be written. */
+  text: string;
+  /** One result for each chart whose text-borne settings changed. */
+  results: Array<WriteBackResult & { chartId: string }>;
+}
+
+/**
+ * Writes the chart edits between `previous` and `next`, the dashboard as
+ * the app held it before and after, into the notebook text `compiled` was
+ * built from. Only what changed is applied to the compiled charts, so
+ * defaults the app fills in never reach the text. Clicks, brushes, and
+ * placement aren't text, so they never cause a write.
+ */
+export function writeBackSettings(
+  text: string,
+  compiled: NotebookCompileResult,
+  previous: SavedDataStructure,
+  next: SavedDataStructure,
+  options: NotebookCompileOptions
+): NotebookWriteBack {
+  let current = text;
+  let state = compiled;
+  const results: NotebookWriteBack["results"] = [];
+  for (const chart of next.charts) {
+    const before = previous.charts.find((item) => item.id === chart.id);
+    const base = state.settings.charts.find((item) => item.id === chart.id);
+    if (!before || !base || isEqual(textPart(before), textPart(chart))) {
+      continue;
+    }
+    const edited =
+      before.type === chart.type
+        ? (applyChange(
+            base,
+            textPart(before),
+            textPart(chart),
+            fillIns(chart)
+          ) as SavedChartSettings)
+        : newTypeChart(chart);
+    const result = writeBackChart(current, state, edited, options);
+    results.push({ ...result, chartId: chart.id });
+    if (result.text !== current) {
+      current = result.text;
+      state = compileNotebook(current, options);
+    }
+  }
+  return { text: current, results };
 }
