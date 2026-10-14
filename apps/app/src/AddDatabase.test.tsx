@@ -109,7 +109,13 @@ describe("AddDatabase", () => {
       [...(screen.getByLabelText("Kind") as HTMLSelectElement).options].map(
         (item) => item.textContent
       )
-    ).toEqual(["SQLite file", "PostgreSQL", "MySQL", "SQL Server"]);
+    ).toEqual([
+      "SQLite file",
+      "PostgreSQL",
+      "MySQL",
+      "SQL Server",
+      "DuckDB file",
+    ]);
     fireEvent.change(screen.getByLabelText("Kind"), {
       target: { value: "sqlserver" },
     });
