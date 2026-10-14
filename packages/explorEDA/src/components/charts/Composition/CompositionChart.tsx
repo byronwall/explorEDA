@@ -189,6 +189,7 @@ export function CompositionChart({
   const zoomed = zoomer.view.k !== 1;
   /** Screen pixels per artboard unit, after any zoom. */
   const unitSize = scale * zoomer.view.k;
+  const imageActions = useChartImageActions();
 
   if (!editing && definition.elements.length === 0) {
     return (
@@ -385,7 +386,6 @@ export function CompositionChart({
 
   // Right-click: a menu of what is under the pointer and where to edit it.
   // The keyboard's menu key lands at (0, 0), so it opens by the selection.
-  const imageActions = useChartImageActions();
   const onContextMenu = (event: React.MouseEvent) => {
     if (onSettingsChange) return;
     event.preventDefault();

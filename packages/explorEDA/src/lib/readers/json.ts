@@ -137,7 +137,7 @@ function records(value: unknown, notes: string[]) {
 /** Reads a JSON object or array of objects as a table. */
 export function readJson(text: string): Decoded {
   const notes: string[] = [];
-  const value = parse(text.replace(/^﻿/, ""), "The file");
+  const value = parse(text.replace(/^\uFEFF/, ""), "The file");
   return table(records(value, notes), notes);
 }
 
@@ -147,7 +147,7 @@ export function readJson(text: string): Decoded {
  */
 export function readJsonLines(text: string): Decoded {
   const items: Record<string, unknown>[] = [];
-  const lines = text.replace(/^﻿/, "").split(/\r?\n/);
+  const lines = text.replace(/^\uFEFF/, "").split(/\r?\n/);
   lines.forEach((line, index) => {
     if (line.trim() === "") return;
     const value = parse(line, `Line ${index + 1}`);

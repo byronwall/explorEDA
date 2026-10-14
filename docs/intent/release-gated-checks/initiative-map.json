@@ -1,0 +1,208 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "Check releases, not every pull request",
+    "slug": "release-gated-checks",
+    "scale": "feature",
+    "current_phase": "intent",
+    "last_updated": "2026-10-13",
+    "summary": "Move the full check suite from every PR to the release path, so main may break between releases but nothing broken is published.",
+    "status": "planned",
+    "next_action": "Byron answers the three intent questions, then shape where the release-path suite runs."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-13"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "not-created",
+      "updated_at": null
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "not-created",
+      "updated_at": null
+    }
+  },
+  "sources": [
+    {
+      "id": "USR-CHAT-2026-10-12",
+      "type": "direct-user-source",
+      "location": "Claude session 4dfec805 (2026-10-12)",
+      "anchor": "first message",
+      "authority": "direct intent",
+      "notes": "\"create a new initiative which does checks only on the release PR. Basically these constant pr checks are too much. I am OK with some breakage on main as long as it never gets released.\""
+    },
+    {
+      "id": "RETRO-2026-10-13",
+      "type": "agent-observation",
+      "location": "Claude session 9d68e0d6 (retro)",
+      "anchor": "item 6",
+      "authority": "context",
+      "notes": "The 2026-10-12 session fixed failing checks but never created this initiative; the retro recovered the request."
+    },
+    {
+      "id": "REPO-WORKFLOWS",
+      "type": "repository",
+      "location": ".github/workflows/",
+      "anchor": "ci.yml, cli-smoke.yml, team-server-smoke.yml, release.yml, deploy.yml",
+      "authority": "current reality",
+      "notes": "About 165 PR workflow runs between 2026-10-11 and 2026-10-13. Version Packages PR #383 (opened by github-actions) reports no checks."
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "C1",
+        "type": "outcome",
+        "statement": "Nothing broken reaches npm or the team server image.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "now",
+        "sources": ["USR-CHAT-2026-10-12"],
+        "confidence": "high"
+      },
+      {
+        "id": "C2",
+        "type": "preference",
+        "statement": "Per-PR checks are too much; stop gating every PR on the full suite.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "now",
+        "sources": ["USR-CHAT-2026-10-12"],
+        "confidence": "high"
+      },
+      {
+        "id": "C3",
+        "type": "constraint",
+        "statement": "Some breakage on main is acceptable as long as it is never released.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "now",
+        "sources": ["USR-CHAT-2026-10-12"],
+        "confidence": "high"
+      },
+      {
+        "id": "C4",
+        "type": "mechanism",
+        "statement": "Checks run on the release PR.",
+        "commitment": "proposed",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "now",
+        "sources": ["USR-CHAT-2026-10-12"],
+        "confidence": "medium",
+        "notes": "Literal mechanism; the Version Packages PR gets no pull_request runs because Changesets opens it with GITHUB_TOKEN, so the shape must pick another trigger."
+      },
+      {
+        "id": "C5",
+        "type": "fact",
+        "statement": "pnpm run release already runs pnpm check before changeset publish; docs:verify and the smokes are not on the release path.",
+        "commitment": "observed",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "now",
+        "sources": ["REPO-WORKFLOWS"],
+        "confidence": "high"
+      },
+      {
+        "id": "C6",
+        "type": "fact",
+        "statement": "The Pages deploy runs on every push to main and gates on build, demo tests, and docs:verify.",
+        "commitment": "observed",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "now",
+        "sources": ["REPO-WORKFLOWS"],
+        "confidence": "high"
+      }
+    ],
+    "themes": [
+      {
+        "id": "T1",
+        "name": "Verification belongs at the release boundary",
+        "claims": ["C1", "C2", "C3"]
+      }
+    ],
+    "conflicts": [
+      {
+        "id": "X1",
+        "summary": "\"Checks on the release PR\" cannot run as-is: PRs opened with GITHUB_TOKEN do not trigger pull_request workflows.",
+        "claims": ["C4", "C5"],
+        "resolution": "open \u2014 choose a trigger in shaping"
+      }
+    ],
+    "human_questions": [
+      {
+        "id": "Q1",
+        "question": "Does the public docs site count as released, keeping its own gate on main deploys?",
+        "why": "Decides whether deploy.yml keeps its checks or follows main's breakage.",
+        "status": "open"
+      },
+      {
+        "id": "Q2",
+        "question": "Should any cheap check (changeset and author) stay on PRs?",
+        "why": "Decides whether ci.yml is removed or trimmed.",
+        "status": "open"
+      },
+      {
+        "id": "Q3",
+        "question": "Should agents keep running pnpm check before every PR?",
+        "why": "Decides whether AGENTS.md changes along with CI.",
+        "status": "open"
+      }
+    ]
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "not-started",
+    "appetite": null,
+    "problem": null,
+    "recommended_shape": null,
+    "success_moves": [],
+    "first_proof": null,
+    "rabbit_holes": [],
+    "open_decisions": []
+  },
+  "implementation": {
+    "status": "not-started",
+    "repository_snapshot": {
+      "root": null,
+      "revision": null,
+      "worktree_status": null,
+      "subsystems": [],
+      "test_commands": [],
+      "deployment_surfaces": []
+    },
+    "dependencies": [],
+    "fast_local_loop": null,
+    "milestones": [],
+    "cut_line": [],
+    "open_decisions": []
+  },
+  "history": [
+    {
+      "date": "2026-10-13",
+      "event": "created",
+      "summary": "Intent recovered from the 2026-10-12 request, which an earlier session dropped, plus the current workflow setup.",
+      "status": "planned"
+    }
+  ],
+  "closure": null
+}
