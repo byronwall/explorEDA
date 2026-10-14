@@ -377,13 +377,13 @@ it("keeps a numeric bin range filter when Alt-clicking a bar", async () => {
   fireEvent.pointerUp(svg!, {
     altKey: true,
     button: 0,
-    clientX: 60 + barX + 1,
-    clientY: 20 + barY + 1,
+    clientX: chart.margin.left + barX + 1,
+    clientY: chart.margin.top + barY + 1,
   });
   fireEvent.click(svg!, {
     altKey: true,
-    clientX: 60 + barX + 1,
-    clientY: 20 + barY + 1,
+    clientX: chart.margin.left + barX + 1,
+    clientY: chart.margin.top + barY + 1,
   });
   expect(
     await screen.findByRole("dialog", { name: "Bar trace inspector" })

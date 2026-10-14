@@ -753,6 +753,59 @@ export const scatterTraceDashboard: SavedDataStructure = {
   },
 };
 
+export const chartControlsDashboard: SavedDataStructure = {
+  ...dashboard(
+    "Change a chart where it sits",
+    [
+      {
+        ...base,
+        id: "controls-guide",
+        type: "markdown",
+        title: "Change color in place",
+        layout: layout(0, 0, 12, 2),
+        content:
+          "<p>Click <b>Color: None</b> above the left chart, type part of a field name, and press Enter. The chart recolors at once and its filter stays put. Press Ctrl-Z or ⌘Z to undo. Choose Channel to share the right chart's colors.</p>",
+      },
+      {
+        ...scatter(
+          "controls-scatter",
+          "Units against net sales",
+          "Net sales",
+          "Units",
+          layout(0, 2, 6, 7),
+          ["Net sales ($)", "Units"]
+        ),
+        filters: [{ type: "range", field: "Net sales", min: 80 }],
+        xAxis: { grid: true },
+        yAxis: { grid: true },
+      },
+      {
+        ...scatter(
+          "controls-peer",
+          "Net sales to contribution",
+          "Net sales",
+          "Contribution",
+          layout(6, 2, 6, 7),
+          ["Net sales ($)", "Contribution ($)"],
+          "Channel",
+          "controls-channel-colors"
+        ),
+        xAxis: { grid: true },
+        yAxis: { grid: true },
+      },
+    ],
+    [
+      categoricalScale("controls-channel-colors", "Channel", [
+        "Online",
+        "Store",
+        "Partner",
+      ]),
+    ]
+  ),
+  calculations: scatterTraceDashboard.calculations,
+  fieldSettings: scatterTraceDashboard.fieldSettings,
+};
+
 const orderCalculations = [
   [
     "Discount rate",

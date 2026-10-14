@@ -16,3 +16,9 @@ export {
   singleTableProject,
   sourceFromRows,
 } from "./lib/analysis/sources";
+export {
+  compileProjectText,
+  exportProjectText,
+  type ProjectTextOptions,
+  type ProjectTextResult,
+} from "./lib/dsl/project";

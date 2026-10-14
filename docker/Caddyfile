@@ -1,0 +1,18 @@
+# HTTPS in front of the team server with Caddy, which gets and renews a
+# certificate on its own. Replace the name with your server's, set
+# EXPLOREDA_PUBLIC_URL=https://eda.example.com for the exploreda service,
+# and add Caddy to the Compose file:
+#
+#   caddy:
+#     image: caddy:2
+#     restart: unless-stopped
+#     ports: ["80:80", "443:443"]
+#     volumes:
+#       - ./Caddyfile:/etc/caddy/Caddyfile:ro
+#       - caddy-data:/data
+#
+# (and `caddy-data:` under `volumes:`). The exploreda service then needs no
+# published port of its own.
+eda.example.com {
+	reverse_proxy exploreda:8080
+}

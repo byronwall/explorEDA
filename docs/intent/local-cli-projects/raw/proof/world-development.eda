@@ -1,0 +1,64 @@
+project @development-indicators
+
+source @years Country-years key=country_year {
+  path=/datasets/worldbank/country-years.csv
+  field country_year Country-year string
+  field country_code string
+  field year number
+  field year_start "Year (as a date)" date
+  field population number
+}
+
+source @gdp "GDP per capita" key=country_year path=/datasets/worldbank/gdp.csv {
+  field country_year Country-year string
+  field gdp_pc "GDP per capita (PPP, 2021 $)" number
+  field log10_gdp_pc "log₁₀ GDP per capita (PPP, 2021 $)" number
+}
+
+source @life "Life expectancy" key=country_year {
+  path=/datasets/worldbank/life-expectancy.csv
+  field country_year Country-year string
+  field life_expectancy "Life expectancy (years)" number
+}
+
+source @electricity "Electricity access" key=country_year {
+  path=/datasets/worldbank/electricity.csv
+  field country_year Country-year string
+  field electricity_pct "Electricity access (%)" number
+}
+
+source @countries key=country_code path=/datasets/worldbank/countries.csv {
+  field country_code string
+  field name Country string
+  field region string
+  field income "Income group" string
+  field capital string
+  field latitude "Capital latitude" number
+  field longitude "Capital longitude" number
+}
+
+source @endpoints "Access endpoints" glyph=E key=country_code {
+  path=/datasets/worldbank/endpoints.csv
+  field country_code string
+  field electricity_2000 "Access in 2000 (%)" number
+  field electricity_2023 "Access in 2023 (%)" number
+  field access_gain_pp "Access gain (points)" number
+  field cohort "Endpoint cohort" string
+}
+
+relate @year-gdp years.country_year -> gdp.country_year "Same country-year GDP"
+relate @year-life years.country_year -> life.country_year "Same country-year life expectancy"
+relate @year-electricity years.country_year -> electricity.country_year "Same country-year electricity access"
+relate @year-country years.country_code -> countries.country_code Country
+relate @year-endpoints years.country_code -> endpoints.country_code "Country's access endpoints"
+
+query @country-years "Country-years with indicators" glyph=◎ frame=country-years {
+  source years
+  lookup country via=year-country
+  lookup gdp via=year-gdp
+  lookup life via=year-life
+  lookup power via=year-electricity
+  lookup endpoint via=year-endpoints
+  calc @without-power without_electricity "People without electricity" = if ["years.population"] == null || ["power.electricity_pct"] == null then null else ["years.population"] * (1 - ["power.electricity_pct"] / 100)
+  calc @endpoint-year endpoint_year = if ["years.year"] == 2000 then "In 2000" else if ["years.year"] == 2023 then "In 2023" else null
+}

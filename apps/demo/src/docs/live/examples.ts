@@ -14,6 +14,7 @@ import {
   pointMapDashboard,
   scatterMatrixDashboard,
   scatterTraceDashboard,
+  chartControlsDashboard,
   shopDashboard,
   timeSeriesDashboard,
 } from "@/demos/dashboardSettings";
@@ -134,6 +135,18 @@ export const liveExamples = {
     shotAlt:
       "Calculated net sales against contribution for 18 orders, beside orders by channel.",
     steps: [{ expectRows: 18 }, { click: "Online: 6 rows" }, { expectRows: 6 }],
+  },
+  "dense-chart-controls": {
+    label: "Live scatter plots with an editable color field",
+    data: "/datasets/scatter-trace.csv",
+    savedData: focus(chartControlsDashboard, {
+      "controls-scatter": [0, 0, 6, 6],
+      "controls-peer": [6, 0, 6, 6],
+    }),
+    exampleId: "dense-chart-controls",
+    shotAlt:
+      "An uncolored scatter with a Color: None label, beside a scatter colored by channel.",
+    steps: [{ expectText: "Color: None" }],
   },
   row: {
     label: "Live category row chart",

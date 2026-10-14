@@ -1,0 +1,67 @@
+# Proposed syntax, hand-converted from ../current-exports/palmer-penguins.eda (182 lines, 4 views).
+# Illustrative: grammar, defaults, and inference rules are not final.
+# Axis titles come from field labels, so they are written once.
+dashboard "Penguin field notes"
+grid rowHeight=76 padding=0 markers=false
+
+field flipper_length_mm label="Flipper length (mm)"
+field body_mass_g       label="Body mass (g)"
+field bill_length_mm    label="Bill length (mm)"
+field bill_depth_mm     label="Bill depth (mm)"
+
+scale species Adelie=#3479a8 Chinstrap=#c77a45 Gentoo=#4b9688
+
+scatter  @size x=flipper_length_mm y=body_mass_g color=species title="Body size & flipper length"
+scatter  @bill x=bill_length_mm y=bill_depth_mm color=species title="Bill shape separates species"
+row      species color=species title="Species · shared color key"
+row      island title="Sampling islands"
+boxplot  @mass body_mass_g color=species title="Body mass by species" {
+  box     fill=#3479a8 stroke=#3479a8 width=0
+  whisker width=1.5
+  outlier size=2
+}
+hist     @flipper flipper_length_mm title="Flipper length distribution"
+table    @records species,island,sex,bill_length_mm,bill_depth_mm,flipper_length_mm,body_mass_g,year {
+  title="Selected observations"
+}
+parallel @profile bill_length_mm,bill_depth_mm,flipper_length_mm,body_mass_g,island color=species {
+  title="Four measurements, one line per penguin"
+}
+
+view "Penguin field notes" {
+  layout {
+    5: size size species island
+    4: bill mass flipper
+    5: records
+    6: profile
+  }
+}
+
+view "Gentoo on Biscoe" {
+  layout {
+    5: species island size size
+    5: records
+  }
+  species select=Gentoo
+  island  select=Biscoe
+}
+
+view "Bill shape" {
+  bill    at=0,0,7,6
+  species at=7,0,5,6
+  mass    at=0,6,6,5
+  flipper at=6,6,6,5
+}
+
+view "Field report" theme=newsprint {
+  size at=0,0,7,6 title="Gentoo penguins are the heavyweights" {
+    subtitle="Body mass (g) against flipper length (mm), 344 birds, Palmer Archipelago 2007–09"
+    note="Source: Palmer Station LTER; Gorman, Williams and Fraser (2014)"
+  }
+  species at=7,0,5,6 title="Adelie make up almost half the sample" subtitle="Penguins measured, by species"
+  bill at=0,6,7,6 title="Bill shape tells the species apart" {
+    subtitle="Bill depth against bill length (mm)"
+    note="Species that overlap in body size separate by bill shape."
+  }
+  mass at=7,6,5,6 title="Chinstrap and Adelie weigh about the same" subtitle="Body mass (g) by species"
+}

@@ -378,10 +378,10 @@ export function BarChartSettingsPanel({
           !settings.forceString &&
           measureFields.includes(settings.field) && (
             <>
-              <Label>Bins · {settings.binCount ?? 10}</Label>
+              <Label>Bins · {settings.binCount ?? 20}</Label>
               <Slider
                 aria-label="Histogram bin count"
-                value={[settings.binCount ?? 10]}
+                value={[settings.binCount ?? 20]}
                 min={2}
                 max={50}
                 step={1}

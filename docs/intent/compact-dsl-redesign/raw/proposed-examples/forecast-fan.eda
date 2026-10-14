@@ -1,0 +1,44 @@
+# Proposed syntax, hand-converted from ../current-exports/forecast-fan.eda (184 lines).
+# Illustrative: grammar, defaults, and inference rules are not final.
+dashboard "Forecast fan"
+grid rowHeight=76 padding=0 markers=false
+
+composition @fan height=540 {
+  title "Two measures, three years ahead"
+  subtitle "Quarterly history, then projections from 2025 with 20%, 40%, 60%, and 80% intervals around the central path. Illustrative figures; each panel keeps its own scale." size=13
+  footnote "Illustrative data generated for this demo: supplied percentile columns, not a forecast model. The layout follows central-bank fan charts." at=32,506
+
+  scale Year    zero=false nice=false
+  scale Central label=Percent per=instance
+
+  unit @measures at=72,110 size=380x300 axis {
+    repeat Measure columns=2 gap=72 order=label
+    label value=last(Central by Year) size=13 filters=follow
+    band @p80 x=Year y=P10..P90 fill=#1f4e8c opacity=.12
+    band @p60 x=Year y=P20..P80 fill=#1f4e8c opacity=.16
+    band @p40 x=Year y=P30..P70 fill=#1f4e8c opacity=.20
+    band @p20 x=Year y=P40..P60 fill=#1f4e8c opacity=.26
+    path @central x=Year y=Central width=1.5
+    rule x=2025 "Projection" color=#8a6d3b shade=after offset=4,-318
+    rule y=2 "2%" color=#a3241d only="GDP growth" offset=4,0
+  }
+
+  legend measures at=72,446 row {
+    central "Central path"
+    p20 "20% of outcomes (P40–P60)"
+    p40 "40% (P30–P70)"
+    p60 "60% (P20–P80)"
+    p80 "80% (P10–P90)"
+  }
+}
+
+line @central-by-quarter x=Year y=Central facet.columns=2 title="Central path by quarter" {
+  legend=false grid.y=false
+}
+row Kind title="History or projection"
+
+# 8/4 split: thirds work, so the matrix can express it.
+layout {
+  7: fan
+  5: central-by-quarter central-by-quarter Kind
+}

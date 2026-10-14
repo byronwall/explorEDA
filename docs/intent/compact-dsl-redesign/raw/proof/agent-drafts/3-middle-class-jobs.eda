@@ -1,0 +1,26 @@
+dashboard "The changing nature of middle-class jobs"
+
+composition @jobs height=704 {
+  title "The Changing Nature of Middle-Class Jobs" size=26
+  subtitle "Jobs per 1,000 workers by occupation, colored by the gap between women's and men's shares"
+  footnote "Source: U.S. Census Bureau, decennial census and American Community Survey" at=0,684
+  scale Year zero=false nice=false ticks=ends
+  scale "Jobs per 1000" max=85
+  scale @v diverging=#1a8fd0,#e3173b center=#b9b9b9 max=100 label="Share of women minus share of men, points"
+  unit @u at=0,120 size=120x180 axis {
+    repeat Group columns=5 gap=46 limit=10 order=max("Group order")
+    label value=max("Group change") positive="+{} jobs" negative="−{} jobs"
+    path @m x=Year y="Jobs per 1000" series=Occupation color=v("Women minus men") width=1.5
+    point @ends x=Year y="Jobs per 1000" radius=2.5 show=first,last
+  }
+  legend u.m at=620,130 row { m "Share of women minus share of men, points" }
+  note "Registered nurses" on=u[Professionals] at=0.8,0.3 offset=10,-20 leader
+  note "Secretaries" on=u["Admin support"] at=0.5,0.4 offset=10,-20 leader
+}
+
+row Group
+hist "Women share"
+
+jobs at=0,0,12,9
+Group at=0,9,6,5
+"Women share" at=6,9,6,5

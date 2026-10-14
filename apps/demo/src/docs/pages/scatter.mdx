@@ -21,17 +21,18 @@ Click a channel to narrow the points to its orders. Drag across the plot to brus
 
 ## Selection and row scope
 
-Drag across the plot to brush a rectangular range on both axes. The brush filters linked views. Other active filters also limit the visible rows. The axes keep their domains from the full source population, so the scale stays stable as rows are filtered.
+Click a point to filter linked views to its row; click it again, or click empty plot space, to clear. Drag across the plot to brush a rectangular range on both axes. The brush filters linked views. Other active filters also limit the visible rows. The axes keep their domains from the full source population, so the scale stays stable as rows are filtered.
 
 <Callout title="Trace a point.">
-  Use the chart trace action or Alt-click a point to inspect its source values,
-  calculations, filters, scales, and position. Trace works on every chart type
-  except 3D scatter plots, data tables, pivot tables, summary tables, and notes.
+  Use the chart trace action, Alt-click a point, or right-click it and choose
+  Trace this point to inspect its source values, calculations, filters, scales,
+  and position. Trace works on every chart type except 3D scatter plots, data
+  tables, pivot tables, summary tables, and notes.
 </Callout>
 
 ## Settings and limits
 
-Choose X, Y, and optional color fields. Adjust point size and opacity to make overlap easier to see.
+Choose X, Y, and optional color fields. Change the color field from the label above the plot without opening settings, or right-click the plot and choose **Color by…**. Right-click an axis title to change the X or Y field the same way. Adjust point size and opacity to make overlap easier to see.
 
 - On numeric axes, rows with missing or non-finite values have no point. Categorical axes can include a missing-value category.
 - Canvas draws the points; SVG draws the axes and the brush.
