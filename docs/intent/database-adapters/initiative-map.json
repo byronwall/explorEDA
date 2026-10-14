@@ -8,7 +8,7 @@
     "last_updated": "2026-10-13",
     "summary": "Authors in the CLI and self-hosted server connect to PostgreSQL, SQLite/DuckDB, MySQL, and SQL Server, pick tables or write SQL, and explore a cached, complete, read-only snapshot that they refresh on demand.",
     "status": "active",
-    "next_action": "M5: MySQL and SQL Server"
+    "next_action": "M6: DuckDB packaging spike and launch polish"
   },
   "artifacts": {
     "intent_brief": {
@@ -777,8 +777,10 @@
         "proof": "Contract suite on CI service containers.",
         "valid_intermediate_state": "Other drivers unaffected.",
         "rollback": "Drop driver registrations.",
-        "status": "active",
-        "evidence": []
+        "status": "completed",
+        "evidence": [
+          "MySQL 8.4 and SQL Server 2022 contracts in CI database-contract job; lazy driver chunks"
+        ]
       },
       {
         "id": "m6",
@@ -790,7 +792,7 @@
         "proof": "Packaging spike via cli-smoke on three OSes; contract suite; docs gate.",
         "valid_intermediate_state": "Four drivers shipped.",
         "rollback": "Make DuckDB optional or drop it.",
-        "status": "planned",
+        "status": "active",
         "evidence": []
       }
     ],
