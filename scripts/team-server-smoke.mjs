@@ -1,14 +1,15 @@
 // Builds the team server image from a packed exploreda tarball and runs it
 // with docker/compose.yaml: the server starts and serves the app, the first
 // visitor sets up the admin, an author creates a project and uploads a file,
-// and all of it is still there after the container restarts.
+// and reads a table from an uploaded SQLite file, and all of it is still
+// there after the container restarts.
 //
 // Usage: node scripts/team-server-smoke.mjs [pack-folder]
 //   pack-folder  holds exploreda-<version>.tgz (default: pack)
 //   EXPLOREDA_SMOKE_DATA=<folder>  start from a copy of this data folder
 //   instead of an empty volume, to prove an upgrade keeps older data.
 import { execFileSync } from "node:child_process";
-import { readdirSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 
 const packDir = path.resolve(process.argv[2] ?? "pack");
@@ -164,6 +165,22 @@ try {
       raw: "region,revenue\nEast,10\nWest,12\n",
     });
     step("Created a project and uploaded a file");
+    await call("/api/projects/smoke/upload?path=data/shop.db", {
+      method: "POST",
+      raw: readFileSync("packages/explorEDA/examples/database/data/shop.db"),
+    });
+    await call("/api/projects/smoke/file?path=exploreda.eda", {
+      method: "PUT",
+      raw: "project @smoke\n\nconnection @shop driver=sqlite path=data/shop.db\n\nsource @orders db=shop table=orders\n",
+    });
+    const read = await call("/api/projects/smoke/sources/orders/refresh", {
+      method: "POST",
+    });
+    check(
+      read.rowCount === 80,
+      `Reading orders answered ${JSON.stringify(read)}`
+    );
+    step("Read 80 rows from an uploaded SQLite file");
   }
 
   const before = await call("/api/projects");
@@ -183,6 +200,10 @@ try {
     );
     const text = await call("/api/projects/smoke/file?path=data/sales.csv");
     check(text.includes("West,12"), "The uploaded file changed.");
+    const snapshot = await call(
+      "/api/projects/smoke/file?path=.exploreda/snapshots/orders.json"
+    );
+    check(snapshot.rowCount === 80, "The database snapshot is gone.");
   }
   step("Accounts, the session, projects, and files survived the restart");
 } catch (error) {

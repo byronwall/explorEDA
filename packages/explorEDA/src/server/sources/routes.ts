@@ -15,6 +15,7 @@ import {
   refreshSource,
   type SourceOptions,
 } from "./refresh";
+import type { SnapshotInfo } from "../../lib/project/snapshots";
 import { SourceReadError } from "./types";
 
 export interface SourceRouteOptions
@@ -23,6 +24,10 @@ export interface SourceRouteOptions
   secrets?: SecretStore;
   /** False refuses refreshes and secrets, as for a viewer. */
   canRefresh?: boolean;
+  /** False refuses entering passwords; on a team server only admins can. */
+  canSaveSecret?: boolean;
+  /** Called after a read writes a new snapshot. */
+  onRead?: (info: SnapshotInfo) => void;
 }
 
 /** Answers a database route, or returns false for any other path. */
@@ -30,7 +35,13 @@ export async function sourceRoutes(
   route: string,
   req: IncomingMessage,
   res: ServerResponse,
-  { secrets, canRefresh = true, ...options }: SourceRouteOptions
+  {
+    secrets,
+    canRefresh = true,
+    canSaveSecret = true,
+    onRead,
+    ...options
+  }: SourceRouteOptions
 ): Promise<boolean> {
   const refresh = /^sources\/([^/]+)\/refresh$/.exec(route);
   const secret = /^connections\/([^/]+)\/secret$/.exec(route);
@@ -59,6 +70,7 @@ export async function sourceRoutes(
       secret: resolveSecret(secrets),
       signal: controller.signal,
     });
+    onRead?.(info);
     send(res, 200, info);
     return true;
   }
@@ -81,6 +93,13 @@ export async function sourceRoutes(
     decodeURIComponent(secret![1]!),
     options.root
   );
+  if (!canSaveSecret) {
+    send(res, 403, {
+      code: "secret",
+      error: `Only an admin can enter ${connection.id}'s password.`,
+    });
+    return true;
+  }
   if (req.method === "DELETE") {
     await secrets.remove(connection);
     send(res, 200, { saved: false });

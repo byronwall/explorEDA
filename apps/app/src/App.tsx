@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
+  isDatabaseFile,
   isDataFile,
   isNotebookPath,
   isSnapshotPath,
@@ -330,7 +331,10 @@ export function App({
                 await files.intake!.upload(file, path);
                 return undefined;
               },
-              () => `Added ${path}. Chart it to start an analysis.`
+              () =>
+                isDatabaseFile(path)
+                  ? `Added ${path}. Choose Add database to read its tables.`
+                  : `Added ${path}. Chart it to start an analysis.`
             )(),
           fetchUrl: (url: string) => {
             let saved = "";
@@ -354,8 +358,12 @@ export function App({
       : {}),
     ...(files.databases && !readOnly
       ? {
-          saveSecret: (connectionId: string, secret: string) =>
-            files.databases!.saveSecret(connectionId, secret),
+          ...(info.canEnterSecrets === false
+            ? {}
+            : {
+                saveSecret: (connectionId: string, secret: string) =>
+                  files.databases!.saveSecret(connectionId, secret),
+              }),
           database: {
             listTables: (connectionId: string) =>
               files.databases!.listTables(connectionId),

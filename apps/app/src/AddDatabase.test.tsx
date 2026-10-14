@@ -24,6 +24,15 @@ const shop = {
 };
 
 describe("AddDatabase", () => {
+  it("leaves the password to an admin when this person can't enter one", () => {
+    render(
+      <AddDatabase connections={[]} sourceIds={[]} actions={actions()} onClose={vi.fn()} />
+    );
+    fireEvent.click(screen.getByRole("radio", { name: "PostgreSQL" }));
+    expect(screen.queryByLabelText("Password")).toBeNull();
+    expect(screen.getByText(/An admin enters the password/)).toBeTruthy();
+  });
+
   it("starts with a new connection when the project has none", async () => {
     const act = actions();
     render(
@@ -46,7 +55,7 @@ describe("AddDatabase", () => {
   });
 
   it("keeps a PostgreSQL password apart from its settings", () => {
-    const act = actions();
+    const act = actions({ saveSecret: vi.fn(async () => {}) });
     render(
       <AddDatabase
         connections={[]}

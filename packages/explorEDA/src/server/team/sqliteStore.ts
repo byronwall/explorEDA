@@ -5,6 +5,7 @@
  * without it.
  */
 import type { DatabaseSync } from "node:sqlite";
+import { secretKey, type SecretStore } from "../../node/secrets";
 import {
   AccountError,
   checkNewAccount,
@@ -23,7 +24,7 @@ import {
 } from "./accounts";
 
 /** The schema this code writes. Older files are migrated on open. */
-export const SCHEMA_VERSION = 1;
+export const SCHEMA_VERSION = 2;
 
 /** One SQL script per schema version, run in order inside a transaction. */
 export type Migrations = Record<number, string>;
@@ -60,6 +61,14 @@ export const MIGRATIONS: Migrations = {
       account_id INTEGER NOT NULL REFERENCES accounts(id) ON DELETE CASCADE,
       role TEXT NOT NULL CHECK (role IN ('author', 'viewer')),
       PRIMARY KEY (project_id, account_id)
+    );
+  `,
+  // Database passwords an admin entered, filed by the server they unlock.
+  2: `
+    CREATE TABLE secrets (
+      key TEXT PRIMARY KEY,
+      value TEXT NOT NULL,
+      updated_at INTEGER NOT NULL
     );
   `,
 };
@@ -135,8 +144,9 @@ export const latestSchema = (migrations: Migrations) =>
   Math.max(0, ...Object.keys(migrations).map(Number));
 
 /**
- * Brings a database up to the newest schema, one migration per version.
- * A failed migration rolls back, leaving the database as it was.
+ * Brings a database up to the newest schema, one migration per version,
+ * all in one transaction: a failed migration rolls every one of them back,
+ * leaving the database as it was.
  */
 export function migrate(db: DatabaseSync, migrations = MIGRATIONS) {
   const target = latestSchema(migrations);
@@ -148,16 +158,19 @@ export function migrate(db: DatabaseSync, migrations = MIGRATIONS) {
       `The account store was written by a newer explorEDA (schema ${current}); this one reads up to ${target}. Run the newer version.`
     );
   }
-  for (let version = current + 1; version <= target; version++) {
-    db.exec("BEGIN");
-    try {
+  if (current === target) {
+    return;
+  }
+  db.exec("BEGIN");
+  try {
+    for (let version = current + 1; version <= target; version++) {
       db.exec(migrations[version]!);
       db.exec(`PRAGMA user_version = ${version}`);
-      db.exec("COMMIT");
-    } catch (error) {
-      db.exec("ROLLBACK");
-      throw error;
     }
+    db.exec("COMMIT");
+  } catch (error) {
+    db.exec("ROLLBACK");
+    throw error;
   }
 }
 
@@ -391,4 +404,32 @@ export async function sqliteAccountStore(
     },
   };
   return store;
+}
+
+/**
+ * Database passwords in the team server's store, beside its accounts, so a
+ * backup of the data folder keeps them. Open it after the account store,
+ * which brings the file to the newest schema.
+ */
+export async function sqliteSecretStore(file: string): Promise<SecretStore> {
+  const { DatabaseSync } = await loadSqlite();
+  const db = new DatabaseSync(file);
+  return {
+    async get(connection) {
+      const row = db
+        .prepare("SELECT value FROM secrets WHERE key = ?")
+        .get(secretKey(connection)) as { value: string } | undefined;
+      return row?.value;
+    },
+    async set(connection, secret) {
+      db.prepare(
+        "INSERT INTO secrets (key, value, updated_at) VALUES (?, ?, ?) ON CONFLICT (key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at"
+      ).run(secretKey(connection), secret, Date.now());
+    },
+    async remove(connection) {
+      db.prepare("DELETE FROM secrets WHERE key = ?").run(
+        secretKey(connection)
+      );
+    },
+  };
 }

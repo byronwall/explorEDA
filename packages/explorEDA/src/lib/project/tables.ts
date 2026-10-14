@@ -14,6 +14,14 @@ export function isDataFile(path: string) {
   return DATA_EXTENSIONS.some((extension) => lower.endsWith(extension));
 }
 
+/** File extensions of databases a `driver=sqlite` connection reads. */
+export const DATABASE_EXTENSIONS = [".db", ".sqlite", ".sqlite3"] as const;
+
+export function isDatabaseFile(path: string) {
+  const lower = path.toLowerCase();
+  return DATABASE_EXTENSIONS.some((extension) => lower.endsWith(extension));
+}
+
 /** Reads a CSV cell the way the app's file import does. */
 export function typedCell(text: string): datum {
   if (text === "") {

@@ -47,6 +47,8 @@ export interface ResolvedConnection extends ConnectionDefinition {
   secret?: string;
   /** The project folder, which relative file paths start from. */
   root: string;
+  /** True on a shared server: file paths must stay inside the project. */
+  confined?: boolean;
 }
 
 /** A table or view a connection can read. */
