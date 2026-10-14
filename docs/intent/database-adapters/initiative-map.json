@@ -8,7 +8,7 @@
     "last_updated": "2026-10-13",
     "summary": "Authors in the CLI and self-hosted server connect to PostgreSQL, SQLite/DuckDB, MySQL, and SQL Server, pick tables or write SQL, and explore a cached, complete, read-only snapshot that they refresh on demand.",
     "status": "active",
-    "next_action": "M7: demo Compose with seeded Postgres"
+    "next_action": "M8: impeccable audit and polish of the rail and forms"
   },
   "artifacts": {
     "intent_brief": {
@@ -812,8 +812,10 @@
         "proof": "Demo smoke script and screenshots.",
         "valid_intermediate_state": "Production compose unchanged.",
         "rollback": "Delete docker/demo.",
-        "status": "planned",
-        "evidence": []
+        "status": "completed",
+        "evidence": [
+          "docker/demo stack; scripts/demo-smoke.mjs reads 5 sources and builds 3 analyses in Docker"
+        ]
       },
       {
         "id": "m8",
@@ -823,7 +825,7 @@
         "proof": "Impeccable audit; before/after screenshots; check:ui.",
         "valid_intermediate_state": "Styling only.",
         "rollback": "Revert CSS.",
-        "status": "planned",
+        "status": "active",
         "evidence": []
       }
     ],

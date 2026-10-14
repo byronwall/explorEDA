@@ -31,4 +31,15 @@ describe("exploreda server options", () => {
       /--upload-limit needs a size/
     );
   });
+
+  it("seeds a chosen project with the sample accounts", () => {
+    expect(
+      parseServerArgs(["--data", "/d", "--seed-dev"], {
+        EXPLOREDA_SEED_PROJECT: "/demo/project",
+      })
+    ).toMatchObject({ seedDev: true, seedProject: "/demo/project" });
+    expect(
+      parseServerArgs(["--data", "/d", "--seed-project", "/demo/project"])
+    ).toMatch(/--seed-project goes with --seed-dev/);
+  });
 });

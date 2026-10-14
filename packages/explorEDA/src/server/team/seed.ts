@@ -41,20 +41,21 @@ async function copyFolder(from: string, to: string) {
 export async function seedDev(
   store: AccountStore,
   dataDir: string,
-  exampleDir: string
+  exampleDir: string,
+  project: { id: string; name: string } = DEV_PROJECT
 ) {
-  const folder = path.join(dataDir, "projects", DEV_PROJECT.id);
+  const folder = path.join(dataDir, "projects", project.id);
   if (!existsSync(folder)) {
     await copyFolder(exampleDir, folder);
   }
-  if (!(await store.project(DEV_PROJECT.id))) {
-    await store.createProject(DEV_PROJECT);
+  if (!(await store.project(project.id))) {
+    await store.createProject(project);
   }
   for (const input of DEV_ACCOUNTS) {
     const account =
       (await store.accountByEmail(input.email)) ??
       (await store.createAccount({ ...input, password: DEV_PASSWORD }));
-    await store.setMember(DEV_PROJECT.id, {
+    await store.setMember(project.id, {
       accountId: account.id,
       role: account.kind,
     });

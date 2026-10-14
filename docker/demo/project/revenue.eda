@@ -1,0 +1,24 @@
+eda query=sales
+dashboard "Revenue"
+
+view Overview {
+  metric @revenue sum(lines.revenue) title=Revenue
+  metric @units sum(lines.quantity) title="Units sold"
+  metric @line-count count title="Order lines"
+  line @by-month title="Revenue by month" x=order.ordered_at {
+    time.interval=month time.aggregation=sum time.measureField=lines.revenue
+    time.missingPeriods=zero
+  }
+  row customer.region title="Lines by region"
+  row product.category title="Lines by category"
+  row order.channel title="Lines by channel"
+  table @rows order.ordered_at,customer.name,product.name,lines.quantity,lines.revenue {
+    title="Order lines"
+  }
+  layout {
+    2: revenue units line-count
+    5: by-month
+    4: customer.region product.category order.channel
+    5: rows
+  }
+}

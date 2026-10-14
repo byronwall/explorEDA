@@ -8,6 +8,8 @@ import { memorySecretStore, type SecretStore } from "../node/secrets";
 import { DEV_ACCOUNTS, DEV_PASSWORD, seedDev } from "../server/team/seed";
 import { createTeamHandler } from "../server/team/teamHandler";
 import { startHttpServer } from "../server/server";
+import { labelFromId } from "../lib/dsl/project";
+import { slugify } from "../lib/project/createFolder";
 
 export const SERVER_USAGE = `Usage: exploreda server --data <folder> [options]
 
@@ -22,11 +24,16 @@ Options:
   --upload-limit <MB> the largest data file to upload or download (default 100)
   --seed-dev          try it out: sample accounts and a sample project,
                       with accounts kept in memory instead of the data folder
+  --seed-project <folder>
+                      with --seed-dev, the sample project to copy in place
+                      of the shop example, such as a demo project folder
   -h, --help          show this help
 
 Each option can also come from the environment, as in a container:
-EXPLOREDA_DATA, EXPLOREDA_PORT, EXPLOREDA_HOST, EXPLOREDA_PUBLIC_URL, and
-EXPLOREDA_UPLOAD_LIMIT. Options on the command line win.`;
+EXPLOREDA_DATA, EXPLOREDA_PORT, EXPLOREDA_HOST, EXPLOREDA_PUBLIC_URL,
+EXPLOREDA_UPLOAD_LIMIT, and EXPLOREDA_SEED_PROJECT. Options on the command
+line win. A database connection's password can come from
+EXPLOREDA_<NAME>_PASSWORD, with the connection's name in capitals.`;
 
 interface ServerOptions {
   data?: string;
@@ -34,6 +41,8 @@ interface ServerOptions {
   host: string;
   publicUrl?: string;
   seedDev: boolean;
+  /** With seedDev, the sample project's folder. */
+  seedProject?: string;
   uploadLimitMb: number;
 }
 
@@ -49,6 +58,9 @@ function fromEnvironment(env: NodeJS.ProcessEnv) {
       : []),
     ...(value("EXPLOREDA_UPLOAD_LIMIT")
       ? ["--upload-limit", value("EXPLOREDA_UPLOAD_LIMIT")!]
+      : []),
+    ...(value("EXPLOREDA_SEED_PROJECT")
+      ? ["--seed-project", value("EXPLOREDA_SEED_PROJECT")!]
       : []),
   ];
 }
@@ -77,6 +89,8 @@ export function parseServerArgs(
       options.publicUrl = value();
     } else if (arg === "--seed-dev") {
       options.seedDev = true;
+    } else if (arg === "--seed-project") {
+      options.seedProject = value();
     } else if (arg === "--upload-limit") {
       const limit = Number(value());
       if (!Number.isFinite(limit) || limit <= 0) {
@@ -96,6 +110,9 @@ export function parseServerArgs(
   if (!options.data) {
     return `Give a data folder with --data.\n\n${SERVER_USAGE}`;
   }
+  if (options.seedProject && !options.seedDev) {
+    return `--seed-project goes with --seed-dev.\n\n${SERVER_USAGE}`;
+  }
   if (options.publicUrl) {
     try {
       const url = new URL(options.publicUrl);
@@ -107,6 +124,17 @@ export function parseServerArgs(
     }
   }
   return options;
+}
+
+/** A seeded project's ID and name, from its folder's project text. */
+async function seededProject(folder: string) {
+  const text = await fs
+    .readFile(path.join(folder, "exploreda.eda"), "utf8")
+    .catch(() => "");
+  const id =
+    /^project\s+@([\w.-]+)/m.exec(text)?.[1] ??
+    slugify(path.basename(path.resolve(folder)), "demo");
+  return { id, name: labelFromId(id) };
 }
 
 export async function serverCommand(
@@ -131,7 +159,12 @@ export async function serverCommand(
   if (parsed.seedDev) {
     store = memoryAccountStore();
     secrets = memorySecretStore();
-    await seedDev(store, dataDir, paths.exampleDir);
+    await seedDev(
+      store,
+      dataDir,
+      parsed.seedProject ? path.resolve(parsed.seedProject) : paths.exampleDir,
+      parsed.seedProject ? await seededProject(parsed.seedProject) : undefined
+    );
   } else {
     try {
       const opened = await openDataFolder(dataDir, { version: paths.version });
