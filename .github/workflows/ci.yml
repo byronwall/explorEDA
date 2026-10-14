@@ -46,3 +46,67 @@ jobs:
       - name: Check docs in a browser
         timeout-minutes: 15
         run: pnpm --filter demo docs:verify
+
+  # Every database driver passes one contract suite against a real
+  # database. SQLite runs in the main check; this job adds the servers.
+  database-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          # Throwaway credentials for this job's container only.
+          POSTGRES_USER: exploreda
+          POSTGRES_PASSWORD: exploreda
+          POSTGRES_DB: contract
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U exploreda -d contract"
+          --health-interval 2s
+          --health-timeout 2s
+          --health-retries 30
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: exploreda
+          MYSQL_USER: exploreda
+          MYSQL_PASSWORD: exploreda
+          MYSQL_DATABASE: contract
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd "mysqladmin ping -h 127.0.0.1 -uexploreda -pexploreda"
+          --health-interval 2s
+          --health-timeout 2s
+          --health-retries 60
+      sqlserver:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        env:
+          ACCEPT_EULA: "Y"
+          MSSQL_SA_PASSWORD: Exploreda-test-1
+        ports:
+          - 1433:1433
+        options: >-
+          --health-cmd "/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P Exploreda-test-1 -Q 'select 1' || exit 1"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: "pnpm"
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Source contract
+        timeout-minutes: 5
+        env:
+          EXPLOREDA_TEST_POSTGRES: postgres://exploreda:exploreda@127.0.0.1:5432/contract
+          EXPLOREDA_TEST_MYSQL: mysql://exploreda:exploreda@127.0.0.1:3306/contract
+          EXPLOREDA_TEST_SQLSERVER: sqlserver://sa:Exploreda-test-1@127.0.0.1:1433/master
+        run: pnpm --filter exploreda exec vitest run src/server/sources

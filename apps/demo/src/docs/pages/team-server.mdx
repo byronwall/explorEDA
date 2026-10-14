@@ -29,6 +29,18 @@ The first person to open the address creates the admin account. Accounts, projec
 
 The team server needs Node 22.5 or later.
 
+## Try the demo with a database
+
+The repository's `docker/demo` folder runs the team server beside a PostgreSQL database of made-up retail data: 2,500 customers, 30 products, and two years of orders. Its Retail project already has a connection, five sources, and three analyses:
+
+```bash
+git clone https://github.com/byronwall/explorEDA.git
+cd explorEDA
+docker compose -f docker/demo/compose.yaml up -d
+```
+
+Open `http://localhost:8080`, sign in as `ana@example.com` with the password `exploreda-dev`, and choose **Read all**. The demo's accounts and passwords are public and its accounts last only while it runs, so use it to look around or as a starting point, never as a server people rely on.
+
 ## Run it with Docker Compose
 
 The server is also an image, `ghcr.io/byronwall/exploreda`, with the same version numbers as the npm package. Save this as `compose.yaml`:
@@ -110,12 +122,14 @@ After five wrong passwords for one email from one address, sign-in for that pair
 
 Authors choose **Add data** beside the project's data, or start from an empty project's first page:
 
-- **Upload a CSV or JSON file** from your computer. It goes into the project's `data/` folder. If a file of that name is already there, explorEDA asks before replacing it.
+- **Upload a CSV, JSON, or SQLite file** from your computer. It goes into the project's `data/` folder. If a file of that name is already there, explorEDA asks before replacing it.
 - **Download from an address.** The server downloads the file now and keeps a copy, and the data list shows when. Choose **Refetch** to download a fresh copy from the same address. If a download fails, the last good copy stays.
 
 Addresses inside your company's network work, since the server downloads them itself. The server never downloads from its own machine, link-local addresses, or cloud metadata services, and it logs every download with who asked for it.
 
 Then choose **Chart** beside the file to start an analysis.
+
+Authors can also choose **Add database** to read tables and queries from a database server or an uploaded SQLite file. See [database sources](/docs/database-sources#on-a-team-server).
 
 ## Share a project
 

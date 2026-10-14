@@ -1,10 +1,14 @@
 import { beforeAll, describe, expect, it } from "vitest";
 import { registerAllCharts } from "@/charts/registerAllCharts";
+import { compileProjectText } from "@/lib/dsl/project";
 import {
+  addConnectionText,
+  addDatabaseSourceText,
   addSourceText,
   analysisPathFor,
   newAnalysisText,
   sourceIdForFile,
+  sourceIdForTable,
 } from "./createFolder";
 import { memoryProjectFiles } from "./files";
 import { readProjectFolder } from "./folder";
@@ -69,5 +73,68 @@ describe("creating project files", () => {
       "exploreda.eda",
       "sales.eda",
     ]);
+  });
+});
+
+describe("adding database sources", () => {
+  const connection = {
+    id: "warehouse",
+    driver: "postgres",
+    settings: { host: "db.internal", database: "sales", user: "", port: "" },
+  };
+
+  it("adds a connection after the project line, then after the others", () => {
+    const first = addConnectionText("project @shop\n\nsource @a path=a.csv\n", {
+      projectId: "shop",
+      connection,
+    });
+    expect(first).toBe(
+      "project @shop\n\nconnection @warehouse driver=postgres host=db.internal database=sales\n\nsource @a path=a.csv\n"
+    );
+    const second = addConnectionText(first, {
+      projectId: "shop",
+      connection: {
+        id: "app",
+        driver: "sqlite",
+        settings: { path: "data/app.db" },
+      },
+    });
+    expect(second).toContain(
+      "connection @warehouse driver=postgres host=db.internal database=sales\nconnection @app driver=sqlite path=data/app.db\n"
+    );
+    expect(compileProjectText(second).diagnostics).toEqual([]);
+  });
+
+  it("starts the project text when there is none", () => {
+    expect(
+      addConnectionText(undefined, { projectId: "My Shop", connection })
+    ).toBe(
+      "project @my-shop\n\nconnection @warehouse driver=postgres host=db.internal database=sales\n"
+    );
+  });
+
+  it("adds a table source and a query source that read back", () => {
+    let text = addConnectionText(undefined, { projectId: "shop", connection });
+    text = addDatabaseSourceText(text, {
+      projectId: "shop",
+      sourceId: "orders",
+      database: { connection: "warehouse", table: "public.orders" },
+    });
+    text = addDatabaseSourceText(text, {
+      projectId: "shop",
+      sourceId: "big",
+      database: { connection: "warehouse", sql: 'select "id"\nfrom orders' },
+    });
+    const { databases, diagnostics } = compileProjectText(text);
+    expect(diagnostics).toEqual([]);
+    expect(databases).toEqual({
+      orders: { connection: "warehouse", table: "public.orders" },
+      big: { connection: "warehouse", sql: 'select "id"\nfrom orders' },
+    });
+  });
+
+  it("makes a source ID from a table name", () => {
+    expect(sourceIdForTable("public.Order Lines", [])).toBe("order-lines");
+    expect(sourceIdForTable("orders", ["orders"])).toBe("orders-2");
   });
 });

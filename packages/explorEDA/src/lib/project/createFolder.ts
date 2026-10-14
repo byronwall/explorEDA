@@ -4,6 +4,11 @@
  * so the rest of the file keeps its author's layout.
  */
 import { encodeScalar } from "@/lib/dsl/paths";
+import {
+  connectionLine,
+  type ConnectionDefinition,
+  type DatabaseSource,
+} from "@/lib/dsl/project";
 import { analysisNameFromPath } from "./folder";
 
 /** A name made safe for an ID or a file: lowercase words joined by `-`. */
@@ -31,6 +36,72 @@ export function uniqueName(base: string, taken: Iterable<string>) {
 /** A source ID for a data file, such as `data/Sales 2024.csv` → `sales-2024`. */
 export function sourceIdForFile(path: string, taken: Iterable<string>) {
   return uniqueName(slugify(path.split("/").at(-1)!, "data"), taken);
+}
+
+/** A source ID for a table, such as `public.Order Lines` → `order-lines`. */
+export function sourceIdForTable(table: string, taken: Iterable<string>) {
+  return uniqueName(slugify(table.split(".").at(-1)!, "table"), taken);
+}
+
+/**
+ * Project text with a connection added, after the connections it already
+ * has, or after its `project` line. The first creates the project text.
+ */
+export function addConnectionText(
+  existing: string | undefined,
+  {
+    projectId,
+    connection,
+  }: { projectId: string; connection: ConnectionDefinition }
+) {
+  const line = connectionLine(connection);
+  if (existing === undefined) {
+    return `project @${slugify(projectId, "project")}\n\n${line}\n`;
+  }
+  const lines = existing.split("\n");
+  let lastConnection = -1;
+  lines.forEach((item, index) => {
+    if (/^connection\s/.test(item)) {
+      lastConnection = index;
+    }
+  });
+  if (lastConnection >= 0) {
+    lines.splice(lastConnection + 1, 0, line);
+    return lines.join("\n");
+  }
+  const project = lines.findIndex((item) => /^project\s/.test(item));
+  lines.splice(project + 1, 0, "", line);
+  return lines.join("\n");
+}
+
+/**
+ * Project text with a source that reads a database: a table, or a query.
+ * Its fields, types, and key come from the read, so it is one line.
+ */
+export function addDatabaseSourceText(
+  existing: string | undefined,
+  {
+    projectId,
+    sourceId,
+    database,
+  }: { projectId: string; sourceId: string; database: DatabaseSource }
+) {
+  const line = [
+    `source @${sourceId}`,
+    `db=${encodeScalar(database.connection)}`,
+    ...(database.table === undefined
+      ? []
+      : [`table=${encodeScalar(database.table)}`]),
+    ...(database.sql === undefined
+      ? []
+      : [`sql=${JSON.stringify(database.sql)}`]),
+    ...(database.limit === undefined ? [] : [`limit=${database.limit}`]),
+  ].join(" ");
+  if (existing === undefined) {
+    return `project @${slugify(projectId, "project")}\n\n${line}\n`;
+  }
+  const body = existing.endsWith("\n") ? existing : `${existing}\n`;
+  return `${body}\n${line}\n`;
 }
 
 /** A file for a new analysis named `name`, at the folder's top level. */

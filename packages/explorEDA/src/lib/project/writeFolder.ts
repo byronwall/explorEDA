@@ -52,7 +52,15 @@ export function projectFileText(
       sources,
       queries: project.queries.filter((query) => !implicit.has(query.id)),
     },
-    { paths }
+    {
+      paths,
+      connections: folder.connections,
+      databases: Object.fromEntries(
+        sources
+          .filter((source) => folder.databases[source.id])
+          .map((source) => [source.id, folder.databases[source.id]!])
+      ),
+    }
   );
 }
 

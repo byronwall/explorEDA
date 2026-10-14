@@ -1,4 +1,8 @@
-import { ProjectFileError, type ProjectFiles } from "exploreda";
+import {
+  ProjectFileError,
+  type ProjectFiles,
+  type SnapshotInfo,
+} from "exploreda";
 
 /** Must match the server's TOKEN_HEADER. */
 const TOKEN_HEADER = "x-exploreda-token";
@@ -13,6 +17,8 @@ export interface ServerInfo {
   /** On a team server: what the signed-in person may do here. */
   role?: "author" | "viewer";
   account?: { name: string; email: string };
+  /** False when database passwords are an admin's to enter. */
+  canEnterSecrets?: boolean;
 }
 
 export type ThemePreference = "system" | "light" | "dark";
@@ -38,8 +44,38 @@ export interface DataIntake {
   fetched(): Promise<Record<string, FetchedRecord>>;
 }
 
+/** A refresh the server couldn't finish, with what to do about it. */
+export class RefreshError extends Error {
+  constructor(
+    message: string,
+    readonly suggestion?: string,
+    readonly code?: string,
+    /** The connection the error belongs to, when there is one. */
+    readonly connection?: string
+  ) {
+    super(message);
+    this.name = "RefreshError";
+  }
+}
+
+/** Reading database sources again, on a server that holds their secrets. */
+export interface DatabaseRefresh {
+  refresh(sourceId: string): Promise<SnapshotInfo>;
+  /** Checks a connection's password, then keeps it on the server. */
+  saveSecret(connectionId: string, secret: string): Promise<void>;
+  /** The tables and views a connection can read. */
+  listTables(connectionId: string): Promise<DatabaseTable[]>;
+}
+
+export interface DatabaseTable {
+  name: string;
+  schema?: string;
+  kind: "table" | "view";
+}
+
 export type AppFiles = Omit<ProjectFiles, "watch"> & {
   intake?: DataIntake;
+  databases?: DatabaseRefresh;
   info(): Promise<ServerInfo>;
   config(): Promise<GlobalConfig>;
   setConfig(change: Partial<GlobalConfig>): Promise<GlobalConfig>;
@@ -129,13 +165,68 @@ function createHttpFiles({ api, headers, events, config }: HttpFilesOptions) {
   return files;
 }
 
+/** Asks a server to read a database source again. */
+export function databaseRefresh(
+  api: string,
+  headers: Record<string, string>
+): DatabaseRefresh {
+  const call = async (url: string, init: RequestInit) => {
+    const response = await fetch(url, {
+      ...init,
+      headers: { ...headers, ...init.headers },
+    });
+    const reply = (await response.json().catch(() => ({}))) as {
+      error?: string;
+      suggestion?: string;
+      code?: string;
+      connection?: string;
+    };
+    if (!response.ok) {
+      throw new RefreshError(
+        reply.error ?? `${response.status} ${response.statusText}`,
+        reply.suggestion,
+        reply.code,
+        reply.connection
+      );
+    }
+    return reply;
+  };
+  return {
+    async refresh(sourceId) {
+      return (await call(
+        `${api}/sources/${encodeURIComponent(sourceId)}/refresh`,
+        { method: "POST" }
+      )) as unknown as SnapshotInfo;
+    },
+    async listTables(connectionId) {
+      return (await call(
+        `${api}/connections/${encodeURIComponent(connectionId)}/tables`,
+        { method: "GET" }
+      )) as unknown as DatabaseTable[];
+    },
+    async saveSecret(connectionId, secret) {
+      await call(
+        `${api}/connections/${encodeURIComponent(connectionId)}/secret`,
+        {
+          method: "PUT",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ secret }),
+        }
+      );
+    },
+  };
+}
+
 /** The project's files, through the local server that `exploreda` starts. */
 export function httpProjectFiles(token: string, base = "") {
-  return createHttpFiles({
+  const headers = { [TOKEN_HEADER]: token };
+  const files = createHttpFiles({
     api: `${base}/api`,
-    headers: { [TOKEN_HEADER]: token },
+    headers,
     events: `${base}/api/events?token=${encodeURIComponent(token)}`,
   });
+  files.databases = databaseRefresh(`${base}/api`, headers);
+  return files;
 }
 
 /** Must match the team server's CLIENT_HEADER. */
@@ -198,6 +289,7 @@ export function teamProjectFiles(projectId: string, client: string) {
     }
     return reply;
   };
+  files.databases = databaseRefresh(api, { [CLIENT_HEADER]: client });
   files.intake = {
     async upload(file, path) {
       await post(`${api}/upload?path=${encodeURIComponent(path)}`, file);

@@ -1,14 +1,19 @@
 /* The project shell: rail, tabs, forms. Every class starts with app-. */
 .app {
   display: grid;
-  grid-template-columns: 248px minmax(0, 1fr);
+  grid-template-columns: 264px minmax(0, 1fr);
   min-height: 100%;
 }
 
+/*
+ * The rail keeps one text edge: headings, rows, and meta lines all start
+ * 8px inside the rail's padding, and panels and the notice span the full
+ * width. Actions are small and quiet; the content outweighs them.
+ */
 .app-rail {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 20px;
   padding: 14px 12px;
   border-right: 1px solid var(--border);
   background: var(--card);
@@ -17,17 +22,23 @@
 
 .app-rail h1 {
   margin: 0;
+  padding: 0 8px;
   font-size: 15px;
   font-weight: 600;
+  overflow-wrap: anywhere;
 }
 
 .app-rail h2 {
-  margin: 0 0 4px;
+  margin: 0;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--muted-foreground);
+}
+
+.app-rail-head > .app-muted {
+  padding: 0 8px;
 }
 
 .app-muted {
@@ -38,6 +49,13 @@
 .app-path {
   margin: 2px 0 0;
   overflow-wrap: anywhere;
+}
+
+.app-rail-head .app-path {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .app-list {
@@ -52,7 +70,7 @@
   align-items: flex-start;
   gap: 1px;
   width: 100%;
-  padding: 5px 8px;
+  padding: 6px 8px;
   border: 0;
   border-radius: 6px;
   background: transparent;
@@ -68,7 +86,37 @@
 
 .app-item[aria-current="page"] {
   background: var(--accent);
-  box-shadow: inset 2px 0 0 var(--primary);
+}
+
+.app-item[aria-current="page"] > span:first-child {
+  font-weight: 600;
+}
+
+/* Rename and Delete, under the analysis they act on. */
+.app-item-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 4px 6px;
+}
+
+.app-item-actions input {
+  flex: 1 1 100%;
+  min-width: 0;
+  height: 28px;
+  padding: 0 8px;
+  border: 1px solid var(--input);
+  border-radius: 6px;
+  background: var(--background);
+  color: var(--foreground);
+  font: inherit;
+  font-size: 13px;
+}
+
+.app-item-actions .app-muted {
+  flex-basis: 100%;
+  padding: 0 4px;
 }
 
 .app-item:focus-visible,
@@ -77,12 +125,69 @@
   outline-offset: 1px;
 }
 
+/* A source: its name, one meta line, and at most one quiet action. */
 .app-source {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 2px 8px;
-  padding: 4px 8px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 8px;
+  row-gap: 1px;
+  padding: 6px 4px 6px 8px;
+  border-radius: 6px;
+}
+
+.app-source-name {
+  grid-column: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.app-source-meta {
+  grid-column: 1;
+  min-width: 0;
+  color: var(--muted-foreground);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.app-source > .app-button {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+}
+
+.app-source[aria-busy] .app-source-meta {
+  color: var(--foreground);
+}
+
+/* A state word in a meta line, marked by a dot in its color. */
+.app-status {
+  white-space: nowrap;
+}
+
+.app-status::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 5px;
+  border-radius: 999px;
+  background: currentColor;
+  vertical-align: 1px;
+}
+
+.app-status-warning {
+  color: var(--foreground);
+}
+
+.app-status-warning::before {
+  background: var(--warning);
+}
+
+.app-status-error {
+  color: var(--destructive);
 }
 
 .app-badge {
@@ -97,7 +202,51 @@
   color: var(--destructive);
 }
 
+.app-badge-warning {
+  border: 1px solid var(--border);
+  color: var(--muted-foreground);
+}
+
+.app-section-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.app-read-problem {
+  grid-column: 1 / -1;
+  padding-right: 4px;
+}
+
+.app-source .app-secret-form {
+  margin: 6px 0 0;
+}
+
+.app-secret-note {
+  margin: 0;
+  font-size: 12px;
+}
+
+.app-message .app-read-problem {
+  margin-top: 8px;
+}
+
+.app-refresh-error {
+  padding: 0 8px 4px;
+}
+
+.app-source-error {
+  overflow-wrap: anywhere;
+  margin: 4px 0 0;
+  color: var(--destructive);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
 .app-problems summary {
+  padding: 0 8px;
   cursor: pointer;
   color: var(--warning);
   font-weight: 500;
@@ -182,6 +331,12 @@
     width: auto;
   }
 
+  .app-sources {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 2px 16px;
+  }
+
   .app-main {
     padding: 8px;
   }
@@ -195,6 +350,7 @@
   }
 
   .app-path,
+  .app-rail-head .app-path,
   .app-item .app-muted {
     display: none;
   }
@@ -219,10 +375,13 @@
 
 .app-section-head {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
-  margin-bottom: 4px;
+  gap: 4px 8px;
+  min-height: 28px;
+  margin-bottom: 2px;
+  padding-left: 8px;
 }
 
 .app-section-head h2 {
@@ -244,6 +403,26 @@
 
 .app-button:hover {
   background: var(--accent);
+}
+
+/* Small actions inside the rail's lists and headers. */
+.app-button-sm {
+  height: 26px;
+  padding: 0 8px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.app-button-ghost {
+  border-color: transparent;
+  background: transparent;
+  color: var(--muted-foreground);
+}
+
+.app-button-ghost:hover,
+.app-button-ghost[aria-expanded="true"] {
+  background: var(--accent);
+  color: var(--foreground);
 }
 
 .app-button:focus-visible,
@@ -270,10 +449,26 @@
   color: var(--destructive);
 }
 
+.app-button-danger:hover {
+  background: var(--destructive);
+  color: var(--destructive-foreground, #fff);
+}
+
 .app-form {
   display: grid;
-  gap: 6px;
+  gap: 10px;
   margin: 0 0 8px;
+}
+
+/* A form or tool opened inline in the rail, set into the page color. */
+.app-panel {
+  display: grid;
+  gap: 10px;
+  margin: 2px 0 8px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--background);
 }
 
 .app-form label {
@@ -308,12 +503,12 @@
   padding: 4px 8px;
 }
 
-.app-form-inline input {
-  flex: 1 1 120px;
+.app-panel .app-form-actions {
+  padding: 2px 0 0;
 }
 
-.app-source .app-button {
-  margin-left: auto;
+.app-form-inline input {
+  flex: 1 1 120px;
 }
 
 .app-start-list {
@@ -338,6 +533,7 @@
 .app-theme {
   display: inline-flex;
   margin-top: auto;
+  margin-left: 4px;
   padding: 2px;
   border: 1px solid var(--border);
   border-radius: 8px;
@@ -359,6 +555,123 @@
 .app-segment[aria-checked="true"] {
   background: var(--accent);
   color: var(--foreground);
+}
+
+/* Adding a database source: a connection, then a table or a query. */
+.app-add-database .app-database-form {
+  margin: 0;
+}
+
+/* A label over its control, as the team server's forms set them. */
+.app-form label.app-field,
+.app-field {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted-foreground);
+}
+
+.app-field input,
+.app-field select,
+.app-field textarea,
+.app-panel > input,
+.app-database-form > input {
+  width: 100%;
+  min-width: 0;
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid var(--input);
+  border-radius: 6px;
+  background: var(--card);
+  color: var(--foreground);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.app-field textarea {
+  height: auto;
+  padding: 6px 8px;
+}
+
+.app-field input:focus-visible,
+.app-field select:focus-visible,
+.app-field textarea:focus-visible,
+.app-panel > input:focus-visible,
+.app-database-form > input:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+
+.app-add-database textarea {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 12px;
+  resize: vertical;
+}
+
+.app-database-form .app-form-actions {
+  padding: 0;
+}
+
+.app-database-form > .app-source-error {
+  margin: 0;
+}
+
+.app-segmented {
+  display: inline-flex;
+  padding: 2px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  justify-self: start;
+}
+
+.app-table-list {
+  max-height: 220px;
+  margin: 0;
+  padding: 2px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--card);
+  list-style: none;
+}
+
+.app-table-list button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 4px 8px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--foreground);
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.app-table-list button:hover {
+  background: var(--accent);
+}
+
+.app-table-list button[aria-pressed="true"] {
+  background: var(--accent);
+  font-weight: 600;
+}
+
+.app-table-list button:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+
+.app-table-list li.app-muted {
+  padding: 4px 8px;
+  font-size: 12px;
 }
 
 /* Team server: sign-in, the project list, and the bar above a project. */
@@ -832,6 +1145,10 @@
   border-radius: 8px;
   background: var(--background);
   font-size: 12px;
+}
+
+.app-message > .app-button-primary {
+  margin-top: 8px;
 }
 
 .app-message .app-add-data {

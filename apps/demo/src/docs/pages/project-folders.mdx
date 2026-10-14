@@ -37,6 +37,7 @@ shop/
 - **`exploreda.eda`** describes the data: one `source` per data file, `relate` lines that join them, and `query` blocks that combine them into the rows a chart reads.
 - **Each other `.eda` file is an analysis.** It's [dashboard text](/docs/dashboard-text) whose views chart one of the project's queries.
 - **Data files stay where they are.** Paths are relative to the folder. An absolute path also works, but the project then depends on a file outside the folder.
+- **Sources can also come from a database.** See [database sources](/docs/database-sources).
 
 When a file changes on disk, for example after `git pull` or an edit in your text editor, the open page reloads it and says so. Undo history lasts while the page is open.
 

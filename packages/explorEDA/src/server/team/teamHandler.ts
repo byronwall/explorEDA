@@ -34,6 +34,10 @@ import {
   FETCHED_FILE,
 } from "./fileIntake";
 import { signInLimiter } from "./signInLimiter";
+import type { SecretStore } from "../../node/secrets";
+import { snapshotPath } from "../../lib/project/snapshots";
+import { sourceRoutes } from "../sources/routes";
+import type { DatabaseDriver } from "../sources/types";
 import {
   AccountError,
   projectRole,
@@ -67,6 +71,10 @@ export interface TeamHandlerOptions {
   log?: (entry: Record<string, unknown>) => void;
   /** Resolves download hosts; tests use it to reach a local server. */
   lookup?: LookupFunction;
+  /** Database passwords, which only admins enter. */
+  secrets?: SecretStore;
+  /** Database drivers by name; tests pass a fake. */
+  drivers?: Record<string, DatabaseDriver>;
 }
 
 type Next = () => void;
@@ -79,6 +87,8 @@ export interface TeamProjectInfo {
   project: string;
   role: "author" | "viewer";
   account: Pick<Account, "name" | "email">;
+  /** True for admins, who enter database passwords for everyone. */
+  canEnterSecrets: boolean;
 }
 
 function cookies(req: IncomingMessage) {
@@ -254,6 +264,43 @@ export function createTeamHandler(options: TeamHandlerOptions) {
       await routes.memberRoutes(account, id, rest[0], req, res);
       return;
     }
+    if (
+      project &&
+      role &&
+      (route === "sources" || route === "connections") &&
+      rest.length === 2
+    ) {
+      const opened = openProject(id);
+      const handled = await sourceRoutes([route, ...rest].join("/"), req, res, {
+        root: projectFolder(id),
+        confined: true,
+        canRefresh: role === "author",
+        canSaveSecret: account.admin,
+        ...(options.secrets ? { secrets: options.secrets } : {}),
+        ...(options.drivers ? { drivers: options.drivers } : {}),
+        onRead: (info) => {
+          const target = snapshotPath(info.sourceId);
+          opened.recent.set(target, Date.now());
+          announce(opened, [target], {
+            name: account.name,
+            client: header(req, CLIENT_HEADER),
+          });
+          log({
+            at: new Date().toISOString(),
+            event: "database-read",
+            project: id,
+            account: account.email,
+            source: info.sourceId,
+            connection: info.connection,
+            rows: info.rowCount,
+          });
+        },
+      });
+      if (!handled) {
+        send(res, 404, { error: `No ${req.method} ${url.pathname}.` });
+      }
+      return;
+    }
     if (!project || !role || rest.length) {
       send(res, 404, {
         error: "There's no such project, or it isn't shared with you.",
@@ -270,6 +317,7 @@ export function createTeamHandler(options: TeamHandlerOptions) {
         project: id,
         role,
         account: { name: account.name, email: account.email },
+        canEnterSecrets: account.admin,
       };
       send(res, 200, info);
       return;
