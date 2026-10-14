@@ -165,7 +165,7 @@ export const catalogue: readonly DocsPage[] = [
     group: "start",
     icon: Database,
     lede: "Read tables and queries from a database into a project folder, and refresh them when the data changes.",
-    summary: "Chart tables and SQL queries from a SQLite file.",
+    summary: "Chart tables and SQL queries from SQLite and PostgreSQL.",
     highlights: ["connection", "table= and sql=", "Refresh"],
     covers: ["flow:database-sources"],
     examples: [],

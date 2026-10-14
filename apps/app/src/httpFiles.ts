@@ -47,7 +47,9 @@ export class RefreshError extends Error {
   constructor(
     message: string,
     readonly suggestion?: string,
-    readonly code?: string
+    readonly code?: string,
+    /** The connection the error belongs to, when there is one. */
+    readonly connection?: string
   ) {
     super(message);
     this.name = "RefreshError";
@@ -57,6 +59,8 @@ export class RefreshError extends Error {
 /** Reading database sources again, on a server that holds their secrets. */
 export interface DatabaseRefresh {
   refresh(sourceId: string): Promise<SnapshotInfo>;
+  /** Checks a connection's password, then keeps it on the server. */
+  saveSecret(connectionId: string, secret: string): Promise<void>;
 }
 
 export type AppFiles = Omit<ProjectFiles, "watch"> & {
@@ -156,25 +160,43 @@ export function databaseRefresh(
   api: string,
   headers: Record<string, string>
 ): DatabaseRefresh {
+  const call = async (url: string, init: RequestInit) => {
+    const response = await fetch(url, {
+      ...init,
+      headers: { ...headers, ...init.headers },
+    });
+    const reply = (await response.json().catch(() => ({}))) as {
+      error?: string;
+      suggestion?: string;
+      code?: string;
+      connection?: string;
+    };
+    if (!response.ok) {
+      throw new RefreshError(
+        reply.error ?? `${response.status} ${response.statusText}`,
+        reply.suggestion,
+        reply.code,
+        reply.connection
+      );
+    }
+    return reply;
+  };
   return {
     async refresh(sourceId) {
-      const response = await fetch(
+      return (await call(
         `${api}/sources/${encodeURIComponent(sourceId)}/refresh`,
-        { method: "POST", headers }
+        { method: "POST" }
+      )) as unknown as SnapshotInfo;
+    },
+    async saveSecret(connectionId, secret) {
+      await call(
+        `${api}/connections/${encodeURIComponent(connectionId)}/secret`,
+        {
+          method: "PUT",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ secret }),
+        }
       );
-      const reply = (await response.json().catch(() => ({}))) as {
-        error?: string;
-        suggestion?: string;
-        code?: string;
-      };
-      if (!response.ok) {
-        throw new RefreshError(
-          reply.error ?? `${response.status} ${response.statusText}`,
-          reply.suggestion,
-          reply.code
-        );
-      }
-      return reply as SnapshotInfo;
     },
   };
 }

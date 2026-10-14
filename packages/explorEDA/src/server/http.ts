@@ -93,6 +93,7 @@ export function sendError(res: ServerResponse, error: unknown) {
       code: error.code,
       error: error.message,
       ...(error.suggestion ? { suggestion: error.suggestion } : {}),
+      ...(error.connection ? { connection: error.connection } : {}),
     });
     return;
   }

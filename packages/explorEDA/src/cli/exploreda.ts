@@ -6,6 +6,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { globalConfigStore } from "../node/globalConfig";
 import { nodeProjectFiles } from "../node/projectFiles";
+import { fileSecretStore } from "../node/secrets";
 import { startServer } from "../server/server";
 import { serverCommand } from "./serverCommand";
 
@@ -158,6 +159,7 @@ async function main(args: string[]) {
       appDir,
       hidden: parsed.hidden,
       config: globalConfigStore(),
+      secrets: fileSecretStore(),
       port: parsed.port,
     });
   } catch (error) {

@@ -8,7 +8,7 @@
     "last_updated": "2026-10-13",
     "summary": "Authors in the CLI and self-hosted server connect to PostgreSQL, SQLite/DuckDB, MySQL, and SQL Server, pick tables or write SQL, and explore a cached, complete, read-only snapshot that they refresh on demand.",
     "status": "active",
-    "next_action": "Open the M1 PR, then start M2 (PostgreSQL)."
+    "next_action": "M2: PostgreSQL adapter with secrets outside the project"
   },
   "artifacts": {
     "intent_brief": {
@@ -721,8 +721,10 @@
         "proof": "Contract suite (fake + SQLite), folder/handler tests, screenshots at 1280/783/390.",
         "valid_intermediate_state": "File projects unchanged; database syntax only affects projects that use it.",
         "rollback": "Remove connection/source lines and .exploreda/snapshots.",
-        "status": "active",
-        "evidence": []
+        "status": "completed",
+        "evidence": [
+          "PR byronwall/explorEDA#410; SQLite contract, refresh, route, example tests in packages/explorEDA/src/server/sources"
+        ]
       },
       {
         "id": "m2",
@@ -734,7 +736,7 @@
         "proof": "Same contract suite on a Postgres CI service container; secret scan of project text; verify:lean.",
         "valid_intermediate_state": "SQLite path unchanged.",
         "rollback": "Drop the postgres driver registration.",
-        "status": "planned",
+        "status": "active",
         "evidence": []
       },
       {
@@ -794,7 +796,7 @@
       "Below the line: warehouses, server-side queries, binary transport, scheduled refresh, per-viewer identity, write-back."
     ],
     "open_decisions": [
-      "Snapshot file format: typed JSON envelope first; switch to Arrow if 100k-row size or parse time hurts (measure at m2).",
+      "Resolved 2026-10-13: keep the typed JSON snapshot. 100k rows x 12 columns from Postgres: refresh 0.5 s, 14.8 MB (5 MB gzip), JSON.parse 45 ms, row objects 22 ms. Arrow stays with columnar-data-transport.",
       "DuckDB packaging: regular dependency vs optional install (m6 spike)."
     ]
   },
@@ -826,6 +828,13 @@
       "reason": "User answered the remaining open decision and asked for the plan.",
       "status": "planned",
       "evidence": "limit-answer; repository inspection at 34c957c4"
+    },
+    {
+      "date": "2026-10-13",
+      "action": "M2 measurement: JSON snapshot kept",
+      "reason": "Plan asked to measure snapshot cost at 100k rows during M2",
+      "status": "active",
+      "evidence": "Local Postgres 16 container; built CLI refresh of a 100k-row, 12-column table"
     }
   ],
   "closure": null,

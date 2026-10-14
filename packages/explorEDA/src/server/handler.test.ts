@@ -5,6 +5,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { nodeProjectFiles } from "../node/projectFiles";
+import { memorySecretStore } from "../node/secrets";
 import { writeContractSqlite } from "./sources/fixtures/sqliteContract";
 import { isLocalHost, TOKEN_HEADER } from "./handler";
 import { startServer, type StartedServer } from "./server";
@@ -12,6 +13,7 @@ import { startServer, type StartedServer } from "./server";
 const token = "test-token-0123456789";
 let server: StartedServer;
 let root: string;
+const secrets = memorySecretStore();
 
 /** A raw request, so the test can send any Host header. */
 function get(
@@ -52,6 +54,7 @@ beforeAll(async () => {
     version: "test",
     appDir,
     port: 0,
+    secrets,
   });
 });
 
@@ -197,6 +200,40 @@ source @many db=app table=contract_many limit=5
     });
     const unknown = await get("/api/sources/nope/refresh", auth, "POST");
     expect(unknown.status).toBe(404);
+
+    // A password is checked, kept outside the project, and never sent back.
+    const saved = await get(
+      "/api/connections/app/secret",
+      auth,
+      "PUT",
+      JSON.stringify({ secret: "test-only" })
+    );
+    expect(JSON.parse(saved.body)).toEqual({ saved: true });
+    expect(
+      await secrets.get({
+        id: "app",
+        driver: "sqlite",
+        settings: { path: "data/app.db" },
+      })
+    ).toBe("test-only");
+    expect(readFileSync(path.join(root, "exploreda.eda"), "utf8")).not.toMatch(
+      /test-only/
+    );
+    const empty = await get(
+      "/api/connections/app/secret",
+      auth,
+      "PUT",
+      JSON.stringify({ secret: "" })
+    );
+    expect(empty.status).toBe(422);
+    await get("/api/connections/app/secret", auth, "DELETE");
+    expect(
+      await secrets.get({
+        id: "app",
+        driver: "sqlite",
+        settings: { path: "data/app.db" },
+      })
+    ).toBeUndefined();
   });
 
   it("knows which host names are this machine", () => {

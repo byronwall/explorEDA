@@ -8,8 +8,10 @@ import type { Column } from "../../lib/readers/typedColumns";
 import type { ConnectionDefinition } from "../../lib/dsl/project";
 
 export type SourceReadErrorCode =
-  /** The connection's settings or secret are missing or wrong. */
+  /** The database can't be reached, or its settings are wrong. */
   | "connection"
+  /** The connection needs a password, or refused the one it was given. */
+  | "secret"
   /** The table or query doesn't exist, or the database refused it. */
   | "query"
   /** The read would write, which explorEDA never does. */
@@ -26,6 +28,9 @@ export type SourceReadErrorCode =
 
 /** Why a read failed, in words the author can act on. */
 export class SourceReadError extends Error {
+  /** The connection the error belongs to, when there is one. */
+  connection?: string;
+
   constructor(
     readonly code: SourceReadErrorCode,
     message: string,
@@ -57,13 +62,16 @@ export interface ReadRequest {
   sourceId: string;
   table?: string;
   sql?: string;
+  /** How long the database may spend, in milliseconds, where it can enforce it. */
+  timeout?: number;
 }
 
 /**
  * Rows a read is returning. `batches` yields rows as arrays in column
  * order. After the last batch, `columns` turns each column's values into a
  * typed column, since a database without strict types can only say what a
- * column holds once it has seen it.
+ * column holds once it has seen it. It may rewrite the values in place into
+ * the form its kind takes, such as decimal text into unscaled integers.
  */
 export interface ReadCursor {
   names: string[];

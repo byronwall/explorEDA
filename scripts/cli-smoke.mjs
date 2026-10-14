@@ -47,25 +47,41 @@ function fail(message) {
   process.exitCode = 1;
 }
 
-const started = Date.now();
-const server = npx(["exploreda", "--example", "--no-open", "--port", "0"]);
-let output = "";
-server.stderr.on("data", (chunk) => (output += chunk));
-const link = await new Promise((resolve, reject) => {
-  const timer = setTimeout(
-    () => reject(new Error(`no link after 60 s:\n${output}`)),
-    60_000
-  );
-  server.stdout.on("data", (chunk) => {
-    output += chunk;
-    const match = /Open\s+(http:\/\/\S+)/.exec(output);
-    if (match) {
-      clearTimeout(timer);
-      resolve(match[1]);
-    }
+/** Starts `exploreda` with these arguments and resolves with its link. */
+async function start(args) {
+  const server = npx(["exploreda", ...args, "--no-open", "--port", "0"]);
+  let output = "";
+  server.stderr.on("data", (chunk) => (output += chunk));
+  const link = await new Promise((resolve, reject) => {
+    const timer = setTimeout(
+      () => reject(new Error(`no link after 60 s:\n${output}`)),
+      60_000
+    );
+    server.stdout.on("data", (chunk) => {
+      output += chunk;
+      const match = /Open\s+(http:\/\/\S+)/.exec(output);
+      if (match) {
+        clearTimeout(timer);
+        resolve(match[1]);
+      }
+    });
+    server.on("exit", (code) =>
+      reject(new Error(`exited ${code}:\n${output}`))
+    );
   });
-  server.on("exit", (code) => reject(new Error(`exited ${code}:\n${output}`)));
-});
+  return { server, link };
+}
+
+function stop(server) {
+  if (windows) {
+    spawnSync("taskkill", ["/pid", String(server.pid), "/T", "/F"]);
+  } else {
+    server.kill("SIGINT");
+  }
+}
+
+const started = Date.now();
+const { server, link } = await start(["--example"]);
 console.log(
   `started in ${((Date.now() - started) / 1000).toFixed(1)} s: ${link}`
 );
@@ -91,10 +107,30 @@ try {
   const page = await (await api("/")).text();
   if (!page.includes('id="root"')) fail("the app page didn't load");
 } finally {
-  if (windows) {
-    spawnSync("taskkill", ["/pid", String(server.pid), "/T", "/F"]);
-  } else {
-    server.kill("SIGINT");
+  stop(server);
+}
+
+// The database example reads a SQLite file into a snapshot on request.
+{
+  const { server: database, link: databaseLink } = await start([
+    "--example",
+    "database",
+  ]);
+  const at = new URL(databaseLink);
+  try {
+    const response = await fetch(
+      new URL("/api/sources/orders/refresh", at.origin),
+      {
+        method: "POST",
+        headers: { "x-exploreda-token": at.searchParams.get("token") },
+      }
+    );
+    const read = await response.json();
+    if (read.rowCount !== 80)
+      fail(`reading orders from SQLite answered ${JSON.stringify(read)}`);
+    else console.log(`read ${read.rowCount} rows from the database example`);
+  } finally {
+    stop(database);
   }
 }
 
