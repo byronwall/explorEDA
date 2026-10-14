@@ -7,6 +7,12 @@
 Give users linked charts, record-level tables, and editable calculated fields
 without building the workspace around them.
 
+Or explore a folder of data files without writing any code:
+
+```bash
+npx exploreda
+```
+
 [Live demo](https://exploreda.dev) ·
 [Package docs](packages/explorEDA/README.md) ·
 [Example source](apps/demo/src/demos)

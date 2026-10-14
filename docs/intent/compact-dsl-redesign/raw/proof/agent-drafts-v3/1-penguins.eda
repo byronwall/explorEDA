@@ -1,0 +1,46 @@
+dashboard "Penguin field notes"
+scale @species field=species map=Adelie:#3479a8,Chinstrap:#c77a45,Gentoo:#4b9688
+field bill_length_mm label="Bill length (mm)"
+field bill_depth_mm label="Bill depth (mm)"
+field flipper_length_mm label="Flipper length (mm)"
+field body_mass_g label="Body mass (g)"
+
+scatter @bodySize x=flipper_length_mm y=body_mass_g color=species colorScale=species
+scatter @bill x=bill_length_mm y=bill_depth_mm color=species colorScale=species
+row species color=species colorScale=species
+row island
+boxplot @box body_mass_g color=species colorScale=species
+hist @flipper flipper_length_mm
+table @records
+parallel @parallel bill_length_mm,bill_depth_mm,flipper_length_mm,body_mass_g,island color=species colorScale=species
+
+view "Penguin field notes" {
+  layout {
+    4: bodySize:6 species:3 island:3
+    4: bill box flipper
+    4: records
+    4: parallel
+  }
+}
+
+view "Gentoo on Biscoe" {
+  species select.species=Gentoo
+  island select.island=Biscoe
+  layout {
+    3: species island
+    4: bodySize
+    4: records
+  }
+}
+
+view "Field report" {
+  theme newsprint
+  bodySize title="Bigger penguins, longer flippers" subtitle="Flipper length tracks body mass across all three species" note="Palmer Station LTER; Gorman, Williams and Fraser (2014)"
+  species title="Adelie outnumber the rest" subtitle="Penguins sampled per species"
+  bill title="Bills sort the species" subtitle="Bill length against bill depth"
+  box title="Gentoo carry the most weight" subtitle="Body mass by species"
+  layout {
+    5: bodySize:7 species:5
+    5: bill:7 box:5
+  }
+}

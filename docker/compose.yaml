@@ -1,0 +1,25 @@
+# explorEDA for a team. Start it with `docker compose up -d`, open
+# http://<this machine>:8080, and create the admin account.
+#
+# Everything the server keeps (accounts, projects, and their files) is in
+# the exploreda-data volume. Back it up by copying that volume.
+services:
+  exploreda:
+    image: ${EXPLOREDA_IMAGE:-ghcr.io/byronwall/exploreda:latest}
+    restart: unless-stopped
+    ports:
+      - "${EXPLOREDA_PORT:-8080}:8080"
+    environment:
+      # The address people open, such as https://eda.example.com. Set it when
+      # the server sits behind an HTTPS proxy; sign-in cookies are then
+      # marked secure, and changes are accepted only from that address.
+      EXPLOREDA_PUBLIC_URL: ${EXPLOREDA_PUBLIC_URL:-}
+      # The largest data file an author can upload or download, in MB.
+      EXPLOREDA_UPLOAD_LIMIT: ${EXPLOREDA_UPLOAD_LIMIT:-100}
+    volumes:
+      - exploreda-data:/data
+
+volumes:
+  exploreda-data:
+    # A fixed name, so backup commands can name it.
+    name: ${EXPLOREDA_VOLUME:-exploreda-data}

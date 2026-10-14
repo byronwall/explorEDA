@@ -9,30 +9,34 @@ const rows = [
   { Revenue: 75, Cost: 30, Channel: "Web", Units: 2 },
 ];
 
-const TEXT = `dashboard name="Sales"
+const TEXT = `dashboard "Sales"
 calc profit=Revenue-Cost
 field profit format=currency
 
-view Overview
-metric sum=Revenue
-scatter x=Revenue y=profit color=Channel
+view Overview {
+  metric sum(Revenue)
+  scatter x=Revenue y=profit color=Channel
+}
 
-view "By channel"
-grid rowHeight=80
-row Channel where.Units=2..
-calc margin=profit/Revenue
-hist margin`;
+view "By channel" {
+  grid rowHeight=80
+  row Channel where.Units=2..
+  calc margin=profit/Revenue
+  hist margin
+}`;
 
 beforeAll(() => registerAllCharts());
 
 describe("compileViews", () => {
   it("keeps a filter line with the view it sits in", () => {
-    const text = `view Overview
-metric count
+    const text = `view Overview {
+  metric count
+}
 
-view Web
-filter Channel=Web
-metric count`;
+view Web {
+  filter Channel=Web
+  metric count
+}`;
     const result = compileViews(text, { rows });
     expect(result.diagnostics).toEqual([]);
     const [overview, web] = result.views;
@@ -77,12 +81,12 @@ metric count`;
     }
     expect(overview!.settings.gridSettings.rowHeight).toBe(100);
     expect(byChannel!.settings.gridSettings.rowHeight).toBe(80);
-    expect(byChannel!.line).toBe(9);
+    expect(byChannel!.line).toBe(10);
   });
 
   it("reports a shared problem once", () => {
     const result = compileViews(
-      `calc broken=Revenue+Nope\nview A\nmetric count\nview B\nmetric count`,
+      `calc broken=Revenue+Nope\nview A { metric count }\nview B { metric count }`,
       { rows }
     );
     expect(result.views).toHaveLength(2);
@@ -92,7 +96,7 @@ metric count`;
   });
 
   it("reads text without view lines as one view", () => {
-    const result = compileViews(`dashboard name=Solo\nmetric count`, { rows });
+    const result = compileViews(`dashboard Solo\nmetric count`, { rows });
     expect(result.views.map((view) => view.name)).toEqual(["Solo"]);
   });
 
@@ -101,7 +105,7 @@ metric count`;
     expect(result.settings.metadata.name).toBe("Overview");
     expect(result.settings.charts).toHaveLength(2);
     expect(result.diagnostics).toMatchObject([
-      { line: 9, effect: "chart-skipped" },
+      { line: 10, effect: "chart-skipped" },
     ]);
   });
 });
@@ -115,11 +119,11 @@ describe("exportViews", () => {
     const { text, omitted } = exportViews(edited, { rows, name: "Sales" });
     expect(omitted).toEqual([]);
     // Shared definitions appear once, above the first view.
-    expect(text.match(/^calc profit=/gm)).toHaveLength(1);
+    expect(text.match(/^calc profit = /gm)).toHaveLength(1);
     expect(text.indexOf("calc margin")).toBeLessThan(
       text.indexOf("view Overview")
     );
-    expect(text).toContain('view "By channel"');
+    expect(text).toContain('view "By channel" {');
 
     const rebuilt = compileViews(text, { rows });
     expect(rebuilt.diagnostics).toEqual([]);
@@ -141,5 +145,65 @@ describe("exportViews", () => {
     expect(omitted).toEqual([
       expect.stringMatching(/^By channel: its own fields/),
     ]);
+  });
+});
+
+describe("charts defined once", () => {
+  const SHARED = `row Channel title="By channel"
+hist Revenue
+metric @total sum(Revenue)
+
+view Overview {
+  layout {
+    2: total
+    4: Channel Revenue
+  }
+}
+
+view Web {
+  Channel select.Channel=Web title="Web only"
+  total
+}
+
+view Everything {
+  grid rowHeight=80
+}`;
+
+  it("places a shared chart in each view that names it", () => {
+    const result = compileViews(SHARED, { rows });
+    expect(result.diagnostics).toEqual([]);
+    const [overview, web, everything] = result.views;
+    expect(overview!.settings.charts.map((chart) => chart.id)).toEqual([
+      "Channel",
+      "Revenue",
+      "total",
+    ]);
+    // An override line replaces the chart's settings of the same name.
+    expect(web!.settings.charts).toMatchObject([
+      {
+        id: "Channel",
+        title: "Web only",
+        filters: [{ type: "value", field: "Channel", values: ["Web"] }],
+      },
+      { id: "total" },
+    ]);
+    // A view that names no shared chart shows them all.
+    expect(everything!.settings.charts).toHaveLength(3);
+  });
+
+  it("writes charts several views share once, and each view's changes", () => {
+    const start = compileViews(SHARED, { rows });
+    const { text } = exportViews(start.views, { rows, name: "Sales" });
+    expect(text.match(/^row Channel/gm)).toHaveLength(1);
+    expect(text).toContain('  Channel select.Channel=Web title="Web only"');
+    const rebuilt = compileViews(text, { rows });
+    expect(rebuilt.diagnostics).toEqual([]);
+    const strip = (settings: (typeof start.views)[number]["settings"]) => ({
+      ...settings,
+      metadata: { ...settings.metadata, createdAt: "", modifiedAt: "" },
+    });
+    expect(rebuilt.views.map((view) => strip(view.settings))).toEqual(
+      start.views.map((view) => strip(view.settings))
+    );
   });
 });

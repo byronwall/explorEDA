@@ -1,0 +1,28 @@
+dashboard "The changing nature of middle-class jobs"
+composition @jobs height=704 {
+  scale numeric Year nice=false zero=false ticks=ends
+  scale numeric "Jobs per 1000" max=85
+  scale value "Share of women minus share of men, points" colors=#1a8fd0,#e3173b center=#b9b9b9 max=100
+  measure max("Group order") name=order
+  measure max("Group change") name=change
+  title "The Changing Nature of Middle-Class Jobs" at=32,24 fontSize=26
+  subtitle "Jobs per 1,000 workers in middle-class occupation groups, by share of women" at=32,64
+  footnote "Source: U.S. Census Bureau, decennial census and American Community Survey" at=32,680
+  unit Groups at=56,140 size=120x180 axis=true {
+    repeat Group columns=5 gap=46 orderBy=order limit=10
+    label value=change
+    path Occupations x=Year y="Jobs per 1000" orderField=Year seriesField=Occupation valueField="Women minus men" valueScale="Share of women minus share of men, points"
+    point Starts x=Year y="Jobs per 1000" orderField=Year seriesField=Occupation show=first valueField="Women minus men" valueScale="Share of women minus share of men, points"
+    point Ends x=Year y="Jobs per 1000" orderField=Year seriesField=Occupation show=last valueField="Women minus men" valueScale="Share of women minus share of men, points"
+  }
+  legend Key at=620,130 unit=Groups mark=Occupations scale="Share of women minus share of men, points" direction=row
+  note "Registered nurses" at=-30,-40 on=Groups[Professionals] mark=Occupations leader=true
+  note "Secretaries" at=-30,-40 on=Groups["Admin support"] mark=Occupations leader=true
+}
+row Group
+hist @women "Women share"
+
+layout {
+  7: jobs
+  4: Group women
+}
