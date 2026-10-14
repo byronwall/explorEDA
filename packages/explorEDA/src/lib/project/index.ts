@@ -29,6 +29,8 @@ export {
 } from "./folder";
 export {
   DATA_EXTENSIONS,
+  DATABASE_EXTENSIONS,
+  isDatabaseFile,
   isDataFile,
   parseCsv,
   parseJsonRows,

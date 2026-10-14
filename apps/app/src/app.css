@@ -142,6 +142,7 @@
 
 .app-source-error {
   flex-basis: 100%;
+  overflow-wrap: anywhere;
   margin: 2px 0 0;
   color: var(--destructive);
   font-size: 12px;
@@ -269,9 +270,10 @@
 
 .app-section-head {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: 6px 8px;
   margin-bottom: 4px;
 }
 

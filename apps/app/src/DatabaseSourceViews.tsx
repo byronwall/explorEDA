@@ -69,8 +69,12 @@ export function ReadProblem({
     <div className="app-read-problem">
       <p className="app-source-error" role="alert">
         {state.message}
-        {state.suggestion && (
-          <span className="app-muted"> {state.suggestion}</span>
+        {state.needsSecret && !onSaveSecret ? (
+          <span className="app-muted"> Ask an admin to enter it.</span>
+        ) : (
+          state.suggestion && (
+            <span className="app-muted"> {state.suggestion}</span>
+          )
         )}
       </p>
       {state.needsSecret && onSaveSecret && (
@@ -129,7 +133,7 @@ function SecretForm({
         />
       </label>
       <p className="app-muted app-secret-note">
-        Kept on this computer, outside the project, so the folder stays safe to
+        Kept by explorEDA, outside the project, so the folder stays safe to
         commit.
       </p>
       <div className="app-form-actions">

@@ -2,7 +2,9 @@
 import { existsSync, promises as fs } from "node:fs";
 import path from "node:path";
 import { memoryAccountStore, type AccountStore } from "../server/team/accounts";
-import { openDataFolder } from "../server/team/dataFolder";
+import { openDataFolder, STORE_FILE } from "../server/team/dataFolder";
+import { sqliteSecretStore } from "../server/team/sqliteStore";
+import { memorySecretStore, type SecretStore } from "../node/secrets";
 import { DEV_ACCOUNTS, DEV_PASSWORD, seedDev } from "../server/team/seed";
 import { createTeamHandler } from "../server/team/teamHandler";
 import { startHttpServer } from "../server/server";
@@ -125,13 +127,16 @@ export async function serverCommand(
   const dataDir = path.resolve(parsed.data!);
   await fs.mkdir(path.join(dataDir, "projects"), { recursive: true });
   let store: AccountStore;
+  let secrets: SecretStore;
   if (parsed.seedDev) {
     store = memoryAccountStore();
+    secrets = memorySecretStore();
     await seedDev(store, dataDir, paths.exampleDir);
   } else {
     try {
       const opened = await openDataFolder(dataDir, { version: paths.version });
       store = opened.store;
+      secrets = await sqliteSecretStore(path.join(dataDir, STORE_FILE));
       if (opened.upgrade) {
         const { from, to, backup } = opened.upgrade;
         console.log(
@@ -150,6 +155,7 @@ export async function serverCommand(
     appDir: paths.appDir,
     publicUrl: parsed.publicUrl,
     uploadLimit: Math.round(parsed.uploadLimitMb * 1024 * 1024),
+    secrets,
   });
   const started = await startHttpServer({
     handle,

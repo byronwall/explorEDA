@@ -13,7 +13,7 @@ import { BlockList, isIP, type LookupFunction } from "node:net";
 import path from "node:path";
 import type { Readable } from "node:stream";
 import { normalizeProjectPath } from "../../lib/project/files";
-import { isDataFile } from "../../lib/project/tables";
+import { isDatabaseFile, isDataFile } from "../../lib/project/tables";
 
 /** The largest upload or download, unless the server sets another. */
 export const DEFAULT_UPLOAD_LIMIT = 100 * 1024 * 1024;
@@ -59,8 +59,8 @@ export function dataPath(requested: string) {
   if (!normalized || normalized.startsWith(".exploreda/")) {
     throw new IntakeError(400, `${requested} isn't a path in this project.`);
   }
-  if (!isDataFile(normalized)) {
-    throw new IntakeError(400, "Add a .csv or .json file.");
+  if (!isDataFile(normalized) && !isDatabaseFile(normalized)) {
+    throw new IntakeError(400, "Add a .csv, .json, or SQLite (.db) file.");
   }
   return normalized;
 }
@@ -77,7 +77,7 @@ export function pathForUrl(url: string) {
     // The URL is checked later; keep the default name.
   }
   name = name.replace(/[^\w.-]+/g, "-").replace(/^-+/, "") || "download";
-  return `data/${isDataFile(name) ? name : `${name}.csv`}`;
+  return `data/${isDataFile(name) || isDatabaseFile(name) ? name : `${name}.csv`}`;
 }
 
 function megabytes(bytes: number) {

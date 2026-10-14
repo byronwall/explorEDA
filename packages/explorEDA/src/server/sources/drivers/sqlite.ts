@@ -178,6 +178,17 @@ export const sqliteDriver: DatabaseDriver = {
       );
     }
     const full = path.resolve(connection.root, file);
+    const inside = path.relative(connection.root, full);
+    if (
+      connection.confined &&
+      (inside.startsWith("..") || path.isAbsolute(inside))
+    ) {
+      throw new SourceReadError(
+        "connection",
+        `${connection.id} reads ${file}, outside this project.`,
+        "Upload the database file to the project, and point path= at it."
+      );
+    }
     const stat = await fs.stat(full).catch(() => undefined);
     if (!stat?.isFile()) {
       throw new SourceReadError(

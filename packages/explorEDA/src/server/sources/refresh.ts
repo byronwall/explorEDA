@@ -46,6 +46,8 @@ export interface SourceOptions {
   secret?: (connection: ConnectionDefinition) => Promise<string | undefined>;
   limits?: Partial<ReadLimits>;
   signal?: AbortSignal;
+  /** True on a shared server: file paths must stay inside the project. */
+  confined?: boolean;
 }
 
 /** The project's text, from whichever file holds it. */
@@ -89,6 +91,7 @@ async function openConnection(
     const session = await driver.connect({
       ...connection,
       root: options.root,
+      ...(options.confined ? { confined: true } : {}),
       ...(secret === undefined ? {} : { secret }),
     });
     return { session, driver };

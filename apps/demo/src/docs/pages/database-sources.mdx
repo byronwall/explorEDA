@@ -57,6 +57,14 @@ The first read asks for the password. explorEDA checks it, then keeps it in `sec
 
 Each read runs in a read-only transaction, so every row comes from the same moment and nothing can be written. Timestamps with a time zone are read in UTC.
 
+## On a team server
+
+Database sources work the same on a [team server](/docs/team-server), with these differences:
+
+- **Authors read, viewers look.** Authors add sources and choose **Refresh**. Viewers see each source's rows and when it was read, and never query the database. Everyone with the project open sees a refresh as it lands, with who made it.
+- **Admins enter passwords.** A password is checked, then kept in the server's `exploreda.db`, so a backup of the data folder keeps it. An author who needs one is asked to find an admin. You can also set `EXPLOREDA_<NAME>_PASSWORD` in the Compose file.
+- **SQLite files live in the project.** Upload a `.db` file with **Add data**, then add it as a connection. A connection can't read a file outside its project.
+
 ## Fields and keys
 
 A database source joins, filters, and charts like any other source. Its fields and their types come from the database, so it needs no `field` lines. Add them only to rename a field or to change its type.

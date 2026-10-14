@@ -110,12 +110,14 @@ After five wrong passwords for one email from one address, sign-in for that pair
 
 Authors choose **Add data** beside the project's data, or start from an empty project's first page:
 
-- **Upload a CSV or JSON file** from your computer. It goes into the project's `data/` folder. If a file of that name is already there, explorEDA asks before replacing it.
+- **Upload a CSV, JSON, or SQLite file** from your computer. It goes into the project's `data/` folder. If a file of that name is already there, explorEDA asks before replacing it.
 - **Download from an address.** The server downloads the file now and keeps a copy, and the data list shows when. Choose **Refetch** to download a fresh copy from the same address. If a download fails, the last good copy stays.
 
 Addresses inside your company's network work, since the server downloads them itself. The server never downloads from its own machine, link-local addresses, or cloud metadata services, and it logs every download with who asked for it.
 
 Then choose **Chart** beside the file to start an analysis.
+
+Authors can also choose **Add database** to read tables and queries from PostgreSQL or an uploaded SQLite file. See [database sources](/docs/database-sources#on-a-team-server).
 
 ## Share a project
 

@@ -8,7 +8,7 @@
     "last_updated": "2026-10-13",
     "summary": "Authors in the CLI and self-hosted server connect to PostgreSQL, SQLite/DuckDB, MySQL, and SQL Server, pick tables or write SQL, and explore a cached, complete, read-only snapshot that they refresh on demand.",
     "status": "active",
-    "next_action": "M3: add database sources from the app"
+    "next_action": "M5: MySQL and SQL Server"
   },
   "artifacts": {
     "intent_brief": {
@@ -749,8 +749,10 @@
         "proof": "App tests with fake adapter; screenshots at three widths.",
         "valid_intermediate_state": "Text-authored sources still work.",
         "rollback": "Hide the Database option in Add data.",
-        "status": "active",
-        "evidence": []
+        "status": "completed",
+        "evidence": [
+          "PR byronwall/explorEDA#418; AddDatabase tests; createFolder helpers"
+        ]
       },
       {
         "id": "m4",
@@ -760,8 +762,10 @@
         "proof": "teamHandler role tests; team-server-smoke with a SQLite source.",
         "valid_intermediate_state": "Team server without connections behaves as v1.",
         "rollback": "Disable connection routes on the team server.",
-        "status": "planned",
-        "evidence": []
+        "status": "completed",
+        "evidence": [
+          "team handler database test, sqlite store schema 2, team-server-smoke reads uploaded SQLite in Docker"
+        ]
       },
       {
         "id": "m5",
@@ -773,7 +777,7 @@
         "proof": "Contract suite on CI service containers.",
         "valid_intermediate_state": "Other drivers unaffected.",
         "rollback": "Drop driver registrations.",
-        "status": "planned",
+        "status": "active",
         "evidence": []
       },
       {

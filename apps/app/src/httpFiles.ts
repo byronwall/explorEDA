@@ -17,6 +17,8 @@ export interface ServerInfo {
   /** On a team server: what the signed-in person may do here. */
   role?: "author" | "viewer";
   account?: { name: string; email: string };
+  /** False when database passwords are an admin's to enter. */
+  canEnterSecrets?: boolean;
 }
 
 export type ThemePreference = "system" | "light" | "dark";
@@ -287,6 +289,7 @@ export function teamProjectFiles(projectId: string, client: string) {
     }
     return reply;
   };
+  files.databases = databaseRefresh(api, { [CLIENT_HEADER]: client });
   files.intake = {
     async upload(file, path) {
       await post(`${api}/upload?path=${encodeURIComponent(path)}`, file);

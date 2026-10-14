@@ -74,6 +74,7 @@ export function AddDatabase({
         <NewConnectionForm
           taken={connections.map((item) => item.id)}
           onAdd={actions.addConnection}
+          canEnterSecret={Boolean(actions.saveSecret)}
           databaseFiles={actions.databaseFiles}
           onCancel={
             connections.length
@@ -100,7 +101,9 @@ function NewConnectionForm({
   onAdd,
   onCancel,
   databaseFiles,
+  canEnterSecret,
 }: {
+  canEnterSecret: boolean;
   taken: string[];
   onAdd: AddDatabaseActions["addConnection"];
   onCancel: () => void;
@@ -215,19 +218,27 @@ function NewConnectionForm({
           {field("port", "Port", "5432")}
           {field("database", "Database", "sales")}
           {field("user", "User", "reader")}
-          <label className="app-field">
-            <span>Password</span>
-            <input
-              type="password"
-              autoComplete="off"
-              value={secret}
-              onChange={(event) => setSecret(event.target.value)}
-            />
-          </label>
-          <p className="app-muted app-secret-note">
-            The project text keeps the settings above. The password is kept on
-            this computer, outside the project.
-          </p>
+          {canEnterSecret ? (
+            <>
+              <label className="app-field">
+                <span>Password</span>
+                <input
+                  type="password"
+                  autoComplete="off"
+                  value={secret}
+                  onChange={(event) => setSecret(event.target.value)}
+                />
+              </label>
+              <p className="app-muted app-secret-note">
+                The project text keeps the settings above. The password is kept
+                on this server, outside the project.
+              </p>
+            </>
+          ) : (
+            <p className="app-muted app-secret-note">
+              An admin enters the password, once, for everyone on this server.
+            </p>
+          )}
         </>
       )}
       <div className="app-form-actions">
