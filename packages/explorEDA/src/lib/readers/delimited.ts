@@ -21,7 +21,7 @@ export function readDelimited(
   text: string,
   delimiter: "\t" | "auto"
 ): { rows: AnalysisSourceRow[]; fields: FieldDefinition[]; notes: string[] } {
-  const parsed = Papa.parse<string[]>(text.replace(/^﻿/, ""), {
+  const parsed = Papa.parse<string[]>(text.replace(/^\uFEFF/, ""), {
     header: false,
     dynamicTyping: false,
     skipEmptyLines: "greedy",

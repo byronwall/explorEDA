@@ -62,11 +62,12 @@ describe("CrossfilterWrapper", () => {
         data.map((row) => [row.__ID, row[field as keyof typeof row]])
       )
     );
-    const live = (id: string) =>
-      wrapper
-        .getAllData()
-        [id]!.items.filter((item) => item.value > 0)
-        .map((item) => item.key);
+    const live = (id: string) => {
+      const data = wrapper.getAllData();
+      return data[id]!.items.filter((item) => item.value > 0).map(
+        (item) => item.key
+      );
+    };
 
     wrapper.addChart({
       ...makeChart("web", []),
@@ -122,11 +123,12 @@ describe("CrossfilterWrapper", () => {
       );
       return wrapper;
     };
-    const liveIds = (wrapper: ReturnType<typeof makeWrapper>, key: string) =>
-      wrapper
-        .getAllData()
-        [key]!.items.filter((item) => item.value > 0)
-        .map((item) => item.key);
+    const liveIds = (wrapper: ReturnType<typeof makeWrapper>, key: string) => {
+      const data = wrapper.getAllData();
+      return data[key]!.items.filter((item) => item.value > 0).map(
+        (item) => item.key
+      );
+    };
 
     it("narrows every chart exactly as a chart's linked filter does", () => {
       const bar = {

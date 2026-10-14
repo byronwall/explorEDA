@@ -97,7 +97,7 @@ pnpm -s pgm node list --roots --compact --json 2>/dev/null
 pnpm changeset:add minor "What users can now do."
 ```
 
-Format only the files you changed: `git status --short | awk '{print $2}' | xargs npx prettier --write`. Formatting a whole folder rewrites unrelated files. ESLint's `curly` warnings already exist across the codebase, and `pnpm check` does not run ESLint.
+A pre-commit hook (`.githooks/pre-commit`, installed by `pnpm install`) formats the staged files with Prettier and fails on ESLint errors in them, so don't run Prettier by hand before committing. A file with unstaged edits as well is only checked; format it and stage it again. Never format a whole folder; it rewrites unrelated files. `pnpm lint` runs ESLint on the library and demo and reports errors only, since the codebase already has thousands of `curly` warnings. `pnpm check` and CI do not run ESLint.
 
 ## Traps
 

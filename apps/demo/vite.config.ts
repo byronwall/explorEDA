@@ -44,14 +44,18 @@ function idleExit(): Plugin {
     name: "idle-exit",
     apply: "serve",
     configureServer(server) {
-      if (!(minutes > 0)) return;
+      if (!(minutes > 0)) {
+        return;
+      }
       let lastRequest = Date.now();
       server.middlewares.use((_request, _response, next) => {
         lastRequest = Date.now();
         next();
       });
       setInterval(() => {
-        if (Date.now() - lastRequest < minutes * 60_000) return;
+        if (Date.now() - lastRequest < minutes * 60_000) {
+          return;
+        }
         server.config.logger.info(
           `No requests for ${minutes} minute${minutes === 1 ? "" : "s"}; stopping the dev server.`
         );
