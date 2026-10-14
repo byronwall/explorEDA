@@ -24,12 +24,19 @@ function projectFolder(): Plugin {
       if (!folder) {
         return;
       }
-      const { createRequestHandler } = await import(
-        "../../packages/explorEDA/src/server/handler"
-      );
-      const { nodeProjectFiles } = await import(
-        "../../packages/explorEDA/src/node/projectFiles"
-      );
+      // Vite loads the server so the library's own "@/" imports resolve.
+      const { createRequestHandler } = (await server.ssrLoadModule(
+        path.resolve(
+          __dirname,
+          "../../packages/explorEDA/src/server/handler.ts"
+        )
+      )) as typeof import("../../packages/explorEDA/src/server/handler");
+      const { nodeProjectFiles } = (await server.ssrLoadModule(
+        path.resolve(
+          __dirname,
+          "../../packages/explorEDA/src/node/projectFiles.ts"
+        )
+      )) as typeof import("../../packages/explorEDA/src/node/projectFiles");
       const token = "dev";
       const handle = createRequestHandler({
         files: nodeProjectFiles(path.resolve(folder)),

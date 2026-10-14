@@ -57,14 +57,14 @@ Database sources
 
 ## Examples
 
-Proposed syntax, not yet settled. It extends the CLI's file `source` line:
+The syntax M1 shipped. It extends the CLI's file `source` line:
 
 ```text
 connection @warehouse driver=postgres host=db.internal database=sales
 connection @local     driver=sqlite   path=data/app.db
-source @orders  from=@warehouse table=public.orders key=order_id limit=250000
-source @active  from=@warehouse sql="select id, region from customers where active"
-source @events  from=@local     table=events
+source @orders  db=warehouse   table=public.orders key=order_id limit=250000
+source @active  db=warehouse   sql="select id, region from customers where active"
+source @events  db=local       table=events
 ```
 
 ## Decisions and boundaries

@@ -6,6 +6,7 @@ import { createReadStream, promises as fs } from "node:fs";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import path from "node:path";
 import { ProjectFileError, type ProjectFiles } from "../lib/project/files";
+import { SourceReadError } from "./sources/types";
 
 const CONTENT_TYPES: Record<string, string> = {
   ".html": "text/html; charset=utf-8",
@@ -87,6 +88,14 @@ export function readBody(
 
 /** Sends a project file error with the status that matches its code. */
 export function sendError(res: ServerResponse, error: unknown) {
+  if (error instanceof SourceReadError) {
+    send(res, error.code === "unknown-source" ? 404 : 422, {
+      code: error.code,
+      error: error.message,
+      ...(error.suggestion ? { suggestion: error.suggestion } : {}),
+    });
+    return;
+  }
   if (error instanceof ProjectFileError) {
     send(res, error.code === "missing" ? 404 : 403, {
       code: error.code,

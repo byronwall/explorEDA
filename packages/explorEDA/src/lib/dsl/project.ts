@@ -21,17 +21,60 @@ import { parseDocument, type DslDeclaration, type DslSpan } from "./parse";
 import { encodeScalar } from "./paths";
 import { block } from "./print";
 
+/**
+ * A named database connection: its driver and the settings that are safe
+ * to commit. Passwords and other secrets never appear in project text.
+ */
+export interface ConnectionDefinition {
+  id: string;
+  /** `sqlite`, `postgres`, and so on. */
+  driver: string;
+  /** Every other setting, in the order the text gives them. */
+  settings: Record<string, string>;
+}
+
+/** Where a database source's rows come from: a table, or a query. */
+export interface DatabaseSource {
+  /** The connection's ID, written as `db=`. */
+  connection: string;
+  table?: string;
+  sql?: string;
+  /** The most rows a read may return; the default applies otherwise. */
+  limit?: number;
+}
+
 export interface ProjectTextOptions {
   /** Source ID to the file that holds its rows, written as `path=`. */
   paths?: Record<string, string>;
+  connections?: ConnectionDefinition[];
+  /** Source ID to the database it reads, written as `db=`. */
+  databases?: Record<string, DatabaseSource>;
 }
 
 export interface ProjectTextResult {
   project: AnalysisProject;
   /** Source ID to the `path=` its declaration names. */
   paths: Record<string, string>;
+  connections: ConnectionDefinition[];
+  /** Source ID to the database it reads. */
+  databases: Record<string, DatabaseSource>;
   diagnostics: DslDiagnostic[];
 }
+
+/** Settings that hold secrets, which project text refuses. */
+const SECRET_SETTINGS = new Set([
+  "password",
+  "pass",
+  "pwd",
+  "secret",
+  "token",
+  "key",
+  "url",
+  "uri",
+  "dsn",
+  "connectionstring",
+  "connection-string",
+]);
 
 const FIELD_TYPES = new Set(["string", "number", "boolean", "date", "unknown"]);
 const PARAMETER_TYPES = new Set(["string", "number", "boolean", "date"]);
@@ -104,7 +147,37 @@ export function exportSourceText(
   return `${sourceLines(source, path).join("\n")}\n`;
 }
 
-function sourceLines(source: SourceDefinition, path?: string): string[] {
+function databaseSettings(database: DatabaseSource | undefined): string[] {
+  if (!database) {
+    return [];
+  }
+  return [
+    `db=${encodeScalar(database.connection)}`,
+    ...(database.table === undefined
+      ? []
+      : [`table=${encodeScalar(database.table)}`]),
+    ...(database.sql === undefined
+      ? []
+      : [`sql=${JSON.stringify(database.sql)}`]),
+    ...(database.limit === undefined ? [] : [`limit=${database.limit}`]),
+  ];
+}
+
+function connectionLine(connection: ConnectionDefinition): string {
+  return [
+    `connection ${nameToken(connection.id)}`,
+    `driver=${encodeScalar(connection.driver)}`,
+    ...Object.entries(connection.settings).map(
+      ([key, value]) => `${key}=${encodeScalar(value)}`
+    ),
+  ].join(" ");
+}
+
+function sourceLines(
+  source: SourceDefinition,
+  path?: string,
+  database?: DatabaseSource
+): string[] {
   const name =
     source.name === labelFromId(source.id) ? [] : [text(source.name)];
   const glyph =
@@ -118,6 +191,7 @@ function sourceLines(source: SourceDefinition, path?: string): string[] {
       ...glyph,
       ...(source.entityKey ? [`key=${encodeScalar(source.entityKey)}`] : []),
       ...(path === undefined ? [] : [`path=${encodeScalar(path)}`]),
+      ...databaseSettings(database),
     ],
     source.fields.map(fieldLine)
   );
@@ -304,12 +378,19 @@ export function exportProjectText(
   project: AnalysisProject,
   options: ProjectTextOptions = {}
 ): string {
-  const sections: string[][] = [
-    [`project ${nameToken(project.id)}`],
+  const sections: string[][] = [[`project ${nameToken(project.id)}`]];
+  if (options.connections?.length) {
+    sections.push(options.connections.map(connectionLine));
+  }
+  sections.push(
     ...project.sources.map((source) =>
-      sourceLines(source, options.paths?.[source.id])
-    ),
-  ];
+      sourceLines(
+        source,
+        options.paths?.[source.id],
+        options.databases?.[source.id]
+      )
+    )
+  );
   if (project.relationships.length) {
     sections.push(project.relationships.map(relationshipLine));
   }
@@ -378,15 +459,110 @@ function flagValue(
   return pair === undefined ? undefined : pair !== "false";
 }
 
+function compileConnection(
+  declaration: DslDeclaration,
+  report: Report
+): ConnectionDefinition | undefined {
+  const id = idOf(declaration);
+  const driver = single(declaration, "driver");
+  if (!id || !driver) {
+    report(
+      declaration.span,
+      "A connection needs a name and a driver.",
+      "Write it as connection @app driver=sqlite path=data/app.db."
+    );
+    return undefined;
+  }
+  const settings: Record<string, string> = {};
+  for (const pair of declaration.pairs) {
+    if (pair.key === "id" || pair.key === "driver") {
+      continue;
+    }
+    if (SECRET_SETTINGS.has(pair.key.toLowerCase())) {
+      report(
+        pair.span,
+        `${pair.key}= can hold a secret, so project text doesn't keep it.`,
+        `Remove it. explorEDA reads ${id}'s password from your settings, so the project stays safe to commit.`
+      );
+      continue;
+    }
+    settings[pair.key] = pair.value.items.map((item) => item.text).join(",");
+  }
+  return { id, driver, settings };
+}
+
+/** A source's `db=` settings, or undefined when it reads a file. */
+function compileDatabase(
+  declaration: DslDeclaration,
+  report: Report
+): DatabaseSource | undefined {
+  const connection = single(declaration, "db");
+  const table = single(declaration, "table");
+  const sql = single(declaration, "sql");
+  const limitText = single(declaration, "limit");
+  if (connection === undefined) {
+    for (const key of ["table", "sql", "limit"]) {
+      const pair = declaration.pairs.find((item) => item.key === key);
+      if (pair) {
+        report(
+          pair.span,
+          `${key}= reads a database, so it needs db=.`,
+          "Name the connection, as db=app."
+        );
+      }
+    }
+    return undefined;
+  }
+  if (single(declaration, "path") !== undefined) {
+    report(
+      declaration.span,
+      "A source reads a file or a database, not both.",
+      "Keep path= or db=."
+    );
+  }
+  if ((table === undefined) === (sql === undefined)) {
+    report(
+      declaration.span,
+      table === undefined
+        ? "A database source needs table= or sql=."
+        : "A database source reads table= or sql=, not both.",
+      'Write table=orders, or sql="select id, region from customers".'
+    );
+  }
+  let limit: number | undefined;
+  if (limitText !== undefined) {
+    limit = Number(limitText);
+    if (!Number.isSafeInteger(limit) || limit < 1) {
+      report(
+        declaration.span,
+        `limit=${limitText} isn't a whole number of rows.`,
+        "Write it as limit=250000."
+      );
+      limit = undefined;
+    }
+  }
+  return {
+    connection,
+    ...(table === undefined ? {} : { table }),
+    ...(sql === undefined || table !== undefined ? {} : { sql }),
+    ...(limit === undefined ? {} : { limit }),
+  };
+}
+
 function compileSource(
   declaration: DslDeclaration,
   report: Report
 ): SourceDefinition | undefined {
   const id = idOf(declaration);
   const entityKey = single(declaration, "key");
-  // A source read from a file can leave its key to the data, as it can
-  // its fields.
-  if (!id || (!entityKey && single(declaration, "path") === undefined)) {
+  // A source read from a file or a database can leave its key to the data,
+  // as it can its fields.
+  if (
+    !id ||
+    (!entityKey &&
+      single(declaration, "path") === undefined &&
+      single(declaration, "db") === undefined)
+  ) {
     report(
       declaration.span,
       "A source needs a name and a key.",
@@ -394,7 +570,11 @@ function compileSource(
     );
     return undefined;
   }
-  checkPairs(declaration, ["key", "glyph", "path"], report);
+  checkPairs(
+    declaration,
+    ["key", "glyph", "path", "db", "table", "sql", "limit"],
+    report
+  );
   const name = words(declaration)[0]?.text ?? labelFromId(id);
   const fields: FieldDefinition[] = [];
   for (const child of declaration.children) {
@@ -752,9 +932,14 @@ function compileParameter(
 function checkReferences(
   project: AnalysisProject,
   spans: Map<object, DslSpan>,
-  report: Report
+  report: Report,
+  connections: ConnectionDefinition[] = [],
+  databases: Record<string, DatabaseSource> = {},
+  paths: Record<string, string> = {}
 ) {
+  const fromData = new Set([...Object.keys(databases), ...Object.keys(paths)]);
   const sources = new Map(project.sources.map((source) => [source.id, source]));
+  const connectionIds = new Set(connections.map((item) => item.id));
   const relationships = new Set(project.relationships.map((item) => item.id));
   const parameters = new Set(project.parameters?.map((item) => item.id));
   const where = (item: object) =>
@@ -763,6 +948,28 @@ function checkReferences(
     const list = [...options];
     return list.length ? `Use ${list.join(", ")}.` : undefined;
   };
+  const seenConnections = new Set<string>();
+  for (const connection of connections) {
+    if (seenConnections.has(connection.id)) {
+      report(
+        where(connection),
+        `Two connections are named ${connection.id}.`,
+        "Give one of them its own @name."
+      );
+    }
+    seenConnections.add(connection.id);
+  }
+  for (const [sourceId, database] of Object.entries(databases)) {
+    if (!connectionIds.has(database.connection)) {
+      const source = sources.get(sourceId);
+      report(
+        source ? where(source) : { line: 1, column: 1, length: 1 },
+        `No connection is named ${database.connection}.`,
+        nearest(connectionIds) ??
+          "Add one, as connection @app driver=sqlite path=data/app.db."
+      );
+    }
+  }
   for (const relationship of project.relationships) {
     for (const end of [relationship.from, relationship.to]) {
       const source = sources.get(end.sourceId);
@@ -772,7 +979,11 @@ function checkReferences(
           `No source is named ${end.sourceId}.`,
           nearest(sources.keys())
         );
-      } else if (!source.fields.some((field) => field.id === end.fieldId)) {
+      } else if (
+        // A source with no field lines takes its fields from its data.
+        (source.fields.length || !fromData.has(source.id)) &&
+        !source.fields.some((field) => field.id === end.fieldId)
+      ) {
         report(
           where(relationship),
           `${end.sourceId} has no field ${end.fieldId}.`,
@@ -893,6 +1104,8 @@ export function compileProjectText(
     queries: [],
   };
   const paths: Record<string, string> = {};
+  const connections: ConnectionDefinition[] = [];
+  const databases: Record<string, DatabaseSource> = {};
   const spans = new Map<object, DslSpan>();
   const keep = <T extends object>(item: T | undefined, span: DslSpan) => {
     if (item) {
@@ -918,10 +1131,23 @@ export function compileProjectText(
         );
         if (source) {
           project.sources.push(source);
+          const database = compileDatabase(declaration, report);
           const path = single(declaration, "path");
-          if (path !== undefined) {
+          if (database) {
+            databases[source.id] = database;
+          } else if (path !== undefined) {
             paths[source.id] = path;
           }
+        }
+        break;
+      }
+      case "connection": {
+        const connection = keep(
+          compileConnection(declaration, report),
+          declaration.span
+        );
+        if (connection) {
+          connections.push(connection);
         }
         break;
       }
@@ -962,7 +1188,7 @@ export function compileProjectText(
         report(
           declaration.span,
           `${declaration.keyword} isn't part of project text.`,
-          "Use project, source, relate, query, or param."
+          "Use project, connection, source, relate, query, or param."
         );
     }
   }
@@ -973,6 +1199,6 @@ export function compileProjectText(
       "Add project @my-project as the first line."
     );
   }
-  checkReferences(project, spans, report);
-  return { project, paths, diagnostics };
+  checkReferences(project, spans, report, connections, databases, paths);
+  return { project, paths, connections, databases, diagnostics };
 }

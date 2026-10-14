@@ -3,6 +3,7 @@ import {
   analysisFileText,
   ExplorEdaProject,
   projectFileText,
+  readAgo,
   type AnalysisProject,
   type AnalysisView,
   type ExplorEdaProjectChange,
@@ -11,8 +12,14 @@ import {
 } from "exploreda";
 import { createAnalysisWorker } from "exploreda/analysis";
 import { AddData, fetchedLabel } from "./AddData";
-import type { FetchedRecord, ServerInfo, ThemePreference } from "./httpFiles";
+import {
+  RefreshError,
+  type FetchedRecord,
+  type ServerInfo,
+  type ThemePreference,
+} from "./httpFiles";
 import type { FolderSaver, SaveState } from "./saver";
+import { unreadSources, visibleProblems, waitingFor } from "./databaseSources";
 
 /** A view's ID: its analysis file and its place in that file. */
 const viewId = (path: string, index: number) => `${path}#${index}`;
@@ -49,6 +56,8 @@ export interface ProjectActions {
   upload?(file: File, path: string): Promise<void>;
   fetchUrl?(url: string): Promise<void>;
   refetch?(path: string): Promise<void>;
+  /** Reads database sources again; rejects with why one couldn't. */
+  refreshSources?(sourceIds: string[]): Promise<void>;
 }
 
 export interface Selection {
@@ -91,6 +100,7 @@ export function ProjectWorkspace({
   const [views, setViews] = useState(() => folderViews(folder));
   const [creating, setCreating] = useState(false);
   const [adding, setAdding] = useState(false);
+  const [refreshAllError, setRefreshAllError] = useState<string>();
   const [selected, setSelectedState] = useState<Selection>(() =>
     initialSelection?.path &&
     folder.analyses.some((analysis) => analysis.path === initialSelection.path)
@@ -202,6 +212,11 @@ export function ProjectWorkspace({
         )
       : undefined;
 
+  const databaseIds = Object.keys(folder.databases);
+  const unread = unreadSources(folder);
+  const problems = visibleProblems(folder, project);
+  const waiting = view ? waitingFor(folder, project, view.queryId) : [];
+
   const usedFiles = new Set(Object.values(folder.paths));
   const looseFiles = folder.dataFiles.filter((path) => !usedFiles.has(path));
 
@@ -304,6 +319,14 @@ export function ProjectWorkspace({
         <section aria-labelledby="data-heading">
           <div className="app-section-head">
             <h2 id="data-heading">Data</h2>
+            {databaseIds.length > 1 && !readOnly && actions.refreshSources && (
+              <RefreshAll
+                sourceIds={databaseIds}
+                unread={unread.length}
+                onRefresh={actions.refreshSources}
+                onError={setRefreshAllError}
+              />
+            )}
             {addData && (
               <button
                 type="button"
@@ -316,8 +339,31 @@ export function ProjectWorkspace({
             )}
           </div>
           {addData && adding && addData(() => setAdding(false))}
+          {refreshAllError && (
+            <p className="app-source-error app-refresh-error" role="alert">
+              {refreshAllError}
+            </p>
+          )}
           <ul className="app-list">
             {project.sources.map((source) => {
+              const database = folder.databases[source.id];
+              if (database) {
+                return (
+                  <DatabaseSourceItem
+                    key={source.id}
+                    name={source.name}
+                    sourceId={source.id}
+                    connection={database.connection}
+                    rows={folder.tables[source.id]?.length ?? 0}
+                    snapshot={folder.snapshots[source.id]}
+                    onRefresh={
+                      readOnly || !actions.refreshSources
+                        ? undefined
+                        : (id) => actions.refreshSources!([id])
+                    }
+                  />
+                );
+              }
               const missing = folder.missingSources.includes(source.id);
               const outside = folder.outsideSources.includes(source.id);
               return (
@@ -363,14 +409,14 @@ export function ProjectWorkspace({
           </ul>
         </section>
 
-        {folder.problems.length > 0 && (
+        {problems.length > 0 && (
           <details className="app-problems">
             <summary>
-              {folder.problems.length} problem
-              {folder.problems.length === 1 ? "" : "s"}
+              {problems.length} problem
+              {problems.length === 1 ? "" : "s"}
             </summary>
             <ul>
-              {folder.problems.map((problem, index) => (
+              {problems.map((problem, index) => (
                 <li key={index}>
                   <span className="app-muted">
                     {problem.path}:{problem.line}
@@ -389,7 +435,16 @@ export function ProjectWorkspace({
       </aside>
 
       <main className="app-main">
-        {view ? (
+        {view && waiting.length ? (
+          <WaitingForData
+            analysis={names.get(selected.path ?? "") ?? view.name}
+            sourceIds={waiting}
+            connections={[
+              ...new Set(waiting.map((id) => folder.databases[id]!.connection)),
+            ]}
+            onRead={readOnly ? undefined : actions.refreshSources}
+          />
+        ) : view ? (
           <ExplorEdaProject
             key={view.id}
             project={project}
@@ -576,6 +631,223 @@ function AnalysisActions({
         Delete
       </button>
     </div>
+  );
+}
+
+/** A list of names in words: "a", "a and b", "a, b, and c". */
+function listWords(items: string[]) {
+  if (items.length < 3) {
+    return items.join(" and ");
+  }
+  return `${items.slice(0, -1).join(", ")}, and ${items.at(-1)}`;
+}
+
+/** Reads every database source again, in one go. */
+function RefreshAll({
+  sourceIds,
+  unread,
+  onRefresh,
+  onError,
+}: {
+  sourceIds: string[];
+  unread: number;
+  onRefresh: (sourceIds: string[]) => Promise<void>;
+  onError: (message: string | undefined) => void;
+}) {
+  const [reading, setReading] = useState(false);
+  const run = async () => {
+    setReading(true);
+    onError(undefined);
+    try {
+      await onRefresh(sourceIds);
+    } catch (error) {
+      onError(
+        `${error instanceof Error ? error.message : String(error)}${
+          error instanceof RefreshError && error.suggestion
+            ? ` ${error.suggestion}`
+            : ""
+        }`
+      );
+    } finally {
+      setReading(false);
+    }
+  };
+  return (
+    <button
+      type="button"
+      className="app-button app-section-action"
+      aria-label={`Read all ${sourceIds.length} database sources again`}
+      disabled={reading}
+      onClick={() => void run()}
+    >
+      {reading
+        ? "Reading…"
+        : unread === sourceIds.length
+          ? "Read all"
+          : "Refresh all"}
+    </button>
+  );
+}
+
+/** In place of an analysis whose database sources haven't been read. */
+function WaitingForData({
+  analysis,
+  sourceIds,
+  connections,
+  onRead,
+}: {
+  analysis: string;
+  sourceIds: string[];
+  connections: string[];
+  onRead?: (sourceIds: string[]) => Promise<void>;
+}) {
+  const [state, setState] = useState<
+    | { status: "idle" }
+    | { status: "reading" }
+    | { status: "failed"; message: string; suggestion?: string }
+  >({ status: "idle" });
+  const read = async () => {
+    if (!onRead) {
+      return;
+    }
+    setState({ status: "reading" });
+    try {
+      await onRead(sourceIds);
+    } catch (error) {
+      setState({
+        status: "failed",
+        message: error instanceof Error ? error.message : String(error),
+        ...(error instanceof RefreshError && error.suggestion
+          ? { suggestion: error.suggestion }
+          : {}),
+      });
+    }
+  };
+  const them = sourceIds.length === 1 ? "it" : "them";
+  return (
+    <div className="app-message">
+      <h2>{analysis} needs its data</h2>
+      <p>
+        It reads {listWords(sourceIds)} from {listWords(connections)}, which{" "}
+        {sourceIds.length === 1 ? "hasn't" : "haven't"} been read yet.{" "}
+        {onRead
+          ? `Read ${them} once; after that the project opens from the copy explorEDA keeps, and Refresh reads ${them} again.`
+          : `An author of this project needs to read ${them} first.`}
+      </p>
+      {onRead && (
+        <button
+          type="button"
+          className="app-button app-button-primary"
+          disabled={state.status === "reading"}
+          onClick={() => void read()}
+        >
+          {state.status === "reading"
+            ? `Reading from ${listWords(connections)}…`
+            : `Read ${listWords(sourceIds)}`}
+        </button>
+      )}
+      {state.status === "failed" && (
+        <p className="app-source-error" role="alert">
+          {state.message}
+          {state.suggestion && (
+            <span className="app-muted"> {state.suggestion}</span>
+          )}
+        </p>
+      )}
+    </div>
+  );
+}
+
+/** The time since a read, kept current while the page stays open. */
+function useReadAgo(readAt: string | undefined) {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (!readAt) {
+      return;
+    }
+    const timer = setInterval(() => setNow(Date.now()), 30_000);
+    return () => clearInterval(timer);
+  }, [readAt]);
+  return readAt ? readAgo(readAt, now) : undefined;
+}
+
+/** A database source: its rows, when they were read, and Refresh. */
+function DatabaseSourceItem({
+  name,
+  sourceId,
+  connection,
+  rows,
+  snapshot,
+  onRefresh,
+}: {
+  name: string;
+  sourceId: string;
+  connection: string;
+  rows: number;
+  snapshot?: ProjectFolder["snapshots"][string];
+  onRefresh?: (sourceId: string) => Promise<void>;
+}) {
+  const [state, setState] = useState<
+    | { status: "idle" }
+    | { status: "reading" }
+    | { status: "failed"; message: string; suggestion?: string }
+  >({ status: "idle" });
+  const ago = useReadAgo(snapshot?.readAt);
+  const refresh = async () => {
+    if (!onRefresh) {
+      return;
+    }
+    setState({ status: "reading" });
+    try {
+      await onRefresh(sourceId);
+      setState({ status: "idle" });
+    } catch (error) {
+      setState({
+        status: "failed",
+        message: error instanceof Error ? error.message : String(error),
+        ...(error instanceof RefreshError && error.suggestion
+          ? { suggestion: error.suggestion }
+          : {}),
+      });
+    }
+  };
+  return (
+    <li className="app-source">
+      <span>{name}</span>
+      <span className="app-muted">
+        {snapshot ? `${rows.toLocaleString()} rows · ` : ""}from {connection}
+      </span>
+      {!snapshot && state.status !== "reading" && (
+        <span className="app-badge app-badge-warning">Not read</span>
+      )}
+      <span className="app-fetched">
+        {(state.status === "reading" || ago) && (
+          <span className="app-muted">
+            {state.status === "reading"
+              ? `Reading from ${connection}…`
+              : `Read ${ago}`}
+          </span>
+        )}
+        {onRefresh && state.status !== "reading" && (
+          <button
+            type="button"
+            className="app-button"
+            aria-label={`Read ${sourceId} again from ${connection}`}
+            onClick={() => void refresh()}
+          >
+            {snapshot ? "Refresh" : "Read now"}
+          </button>
+        )}
+      </span>
+      {state.status === "failed" && (
+        <p className="app-source-error" role="alert">
+          {state.message}
+          {state.suggestion && (
+            <span className="app-muted"> {state.suggestion}</span>
+          )}
+        </p>
+      )}
+    </li>
   );
 }
 

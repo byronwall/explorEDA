@@ -5,6 +5,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { nodeProjectFiles } from "../node/projectFiles";
+import { writeContractSqlite } from "./sources/fixtures/sqliteContract";
 import { isLocalHost, TOKEN_HEADER } from "./handler";
 import { startServer, type StartedServer } from "./server";
 
@@ -156,6 +157,46 @@ describe("local server", () => {
       .flatMap((event) => JSON.parse(event.split("data: ")[1]!).paths);
     expect(changed).toContain("outside.eda");
     expect(changed).not.toContain("own.eda");
+  });
+
+  it("refreshes a database source on request", async () => {
+    await writeContractSqlite(path.join(root, "data/app.db"));
+    writeFileSync(
+      path.join(root, "exploreda.eda"),
+      `project @p
+
+connection @app driver=sqlite path=data/app.db
+
+source @items db=app table=contract_items
+
+source @many db=app table=contract_many limit=5
+`
+    );
+    const auth = { [TOKEN_HEADER]: token };
+    expect((await get("/api/sources/items/refresh", {}, "POST")).status).toBe(
+      403
+    );
+    const done = await get("/api/sources/items/refresh", auth, "POST");
+    expect(done.status).toBe(200);
+    expect(JSON.parse(done.body)).toMatchObject({
+      sourceId: "items",
+      rowCount: 4,
+    });
+    expect(
+      JSON.parse(
+        readFileSync(path.join(root, ".exploreda/snapshots/items.json"), "utf8")
+      ).rows
+    ).toHaveLength(4);
+
+    const tooMany = await get("/api/sources/many/refresh", auth, "POST");
+    expect(tooMany.status).toBe(422);
+    expect(JSON.parse(tooMany.body)).toEqual({
+      code: "too-many-rows",
+      error: "many has more than 5 rows.",
+      suggestion: "Raise its limit, as limit=10, or read fewer rows with sql=.",
+    });
+    const unknown = await get("/api/sources/nope/refresh", auth, "POST");
+    expect(unknown.status).toBe(404);
   });
 
   it("knows which host names are this machine", () => {

@@ -106,7 +106,10 @@ export async function storeVersion(file: string) {
   }
 }
 
-async function loadSqlite() {
+/** Node's built-in SQLite, without the warning Node 22 prints for it. */
+export async function loadSqlite(
+  needs = "The team server"
+): Promise<typeof import("node:sqlite")> {
   // Node 22 prints an experimental warning the first time; it isn't ours
   // to act on.
   const emit = process.emitWarning;
@@ -120,7 +123,7 @@ async function loadSqlite() {
     return await import("node:sqlite");
   } catch {
     throw new Error(
-      `The team server needs Node 22.5 or later; this is Node ${process.versions.node}.`
+      `${needs} needs Node 22.5 or later; this is Node ${process.versions.node}.`
     );
   } finally {
     process.emitWarning = emit;
