@@ -49,7 +49,7 @@ pnpm dev:agent
 pnpm shot /examples/shop-operations --name orders --selector '.react-grid-item:has-text("Order value by category")'
 ```
 
-`pnpm shot` saves 2x screenshots at 1280, 783, and 390 px to `tmp/<name>-<width>.png`. It starts the dev server when needed, clears saved workspaces first, and runs with reduced motion. Add `--click <selector>` steps, such as `--click 'role=button[name="Explore the order book"]'` from `/`. The header of `scripts/shot.mjs` lists every option.
+`pnpm shot` saves 2x screenshots at 1280, 783, and 390 px to `tmp/<name>-<width>.png`. It starts the dev server when needed, clears saved workspaces first, and runs with reduced motion. Add `--click <selector>` steps, such as `--click 'role=button[name="Explore the order book"]'` from `/`. To measure instead of look, add `--eval '<js>'`, which prints a result per width, or `--clipped`, which lists text cut off inside `--selector`. Add `--no-shot` to skip the images. Use these before writing a one-off Playwright script. The header of `scripts/shot.mjs` lists every option.
 
 ```bash
 pnpm export-proof
