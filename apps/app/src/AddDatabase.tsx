@@ -29,6 +29,7 @@ const DRIVERS = [
   { id: "postgres", label: "PostgreSQL", port: "5432" },
   { id: "mysql", label: "MySQL", port: "3306" },
   { id: "sqlserver", label: "SQL Server", port: "1433" },
+  { id: "duckdb", label: "DuckDB file", port: "" },
 ] as const;
 
 type DriverId = (typeof DRIVERS)[number]["id"];
@@ -128,11 +129,12 @@ function NewConnectionForm({
     | { status: "saving" }
     | { status: "failed"; message: string }
   >({ status: "idle" });
-  const id = (name.trim() || (driver === "sqlite" ? "app" : "warehouse"))
+  const isFile = driver === "sqlite" || driver === "duckdb";
+  const id = (name.trim() || (isFile ? "app" : "warehouse"))
     .toLowerCase()
     .replace(/[^a-z0-9_-]+/g, "-");
   const clash = taken.includes(id);
-  const required = driver === "sqlite" ? ["path"] : ["host", "database"];
+  const required = isFile ? ["path"] : ["host", "database"];
   const ready = !clash && required.every((key) => settings[key]?.trim());
   const field = (
     key: string,
@@ -195,7 +197,7 @@ function NewConnectionForm({
         <span>Name</span>
         <input
           value={name}
-          placeholder={driver === "sqlite" ? "app" : "warehouse"}
+          placeholder={isFile ? "app" : "warehouse"}
           onChange={(event) => setName(event.target.value)}
         />
       </label>
@@ -204,9 +206,15 @@ function NewConnectionForm({
           The project already has a connection named {id}.
         </p>
       )}
-      {driver === "sqlite" ? (
+      {isFile ? (
         <>
-          {field("path", "File", files[0] ?? "data/app.db", "database-files")}
+          {field(
+            "path",
+            "File",
+            files[0] ??
+              (driver === "duckdb" ? "data/lake.duckdb" : "data/app.db"),
+            "database-files"
+          )}
           <datalist id="database-files">
             {files.map((file) => (
               <option key={file} value={file} />

@@ -67,6 +67,11 @@ export const DRIVERS: Record<string, DatabaseDriver> = {
     "SQL Server",
     async () => (await import("./drivers/sqlserver")).sqlServerDriver
   ),
+  duckdb: lazyDriver(
+    "duckdb",
+    "DuckDB",
+    async () => (await import("./drivers/duckdb")).duckdbDriver
+  ),
 };
 
 export interface SourceOptions {

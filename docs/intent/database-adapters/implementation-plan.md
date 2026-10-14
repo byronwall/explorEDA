@@ -28,6 +28,8 @@ The order puts one new dependency in each milestone:
 4. **Self-hosted.** Admin-managed connection secrets, Refresh for authors only, and read time for viewers.
 5. **MySQL and SQL Server** on the contract suite.
 6. **DuckDB**, after a packaging check, plus launch polish.
+7. **Demo Compose** with a seeded Postgres and ready analyses (added on request).
+8. **Rail and form polish** after a design audit (added on request).
 
 Each milestone is one stacked PR, with a changeset and its docs section.
 
@@ -187,6 +189,35 @@ This starts after self-hosted v1 ships.
 ### Desired end state
 
 - All five drivers are documented and pass the contract suite. The CLI smoke test passes on all three operating systems.
+
+## Milestone 7: A demo Compose file starts with data to explore
+
+Added at the user's request on 2026-10-13. It gives the self-hosted option a one-command demo and starting point.
+
+- **Change — `docker/demo/compose.yaml`**
+  - The team server image plus a PostgreSQL service seeded on first start with a sample business dataset.
+  - A seeded demo project already has the connection, its sources, and analyses ready to explore, so nobody writes text first.
+  - Demo-only throwaway credentials are passed by environment, never written to project text.
+- **Change — seeding**
+  - The server takes a demo project folder to copy on first start, and sample accounts.
+  - The Postgres password comes from `EXPLOREDA_WAREHOUSE_PASSWORD`.
+- **Verify:** a smoke script brings the stack up, signs in, refreshes the sources, and checks every analysis builds. Screenshots of the demo.
+
+### Desired end state
+
+- `docker compose -f docker/demo/compose.yaml up` gives a working analysis on real Postgres data in a few minutes.
+
+## Milestone 8: The project rail and its forms look finished
+
+Added at the user's request on 2026-10-13.
+
+- **Change — design audit** (`/impeccable`) of the project rail, the database source rows, Add database, Add data, and the password form against the rest of the app.
+- **Change — fixes**: consistent spacing, field styles, headings, and button hierarchy, using the app's shared tokens, at all three widths.
+- **Verify:** screenshots before and after at 1280, 783, and 390 px. `pnpm check:ui`.
+
+### Desired end state
+
+- The rail and its forms match the workspace's look, with nothing crowded or misaligned at any width.
 
 ## Open decisions and spikes
 
