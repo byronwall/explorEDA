@@ -296,6 +296,13 @@ export {
 // Project folders: project text, analysis files, and their data, read
 // through any file adapter.
 export * from "@/lib/project";
+// Notebooks: Markdown with eda blocks, and chart edits written back to them.
+export * from "@/lib/notebook";
+export {
+  ExplorEdaNotebook,
+  useNotebookResult,
+  type ExplorEdaNotebookProps,
+} from "./notebook/ExplorEdaNotebook";
 export {
   listBoundarySets,
   registerBoundarySet,

@@ -37,6 +37,7 @@ import type {
   SerializedColorScale,
 } from "@/types/SavedDataTypes";
 import { validateSavedData } from "@/utils/saveDataUtils";
+import { parseDateText } from "@/lib/valueParsing";
 import { parsePath, setPath } from "./paths";
 import { settingWords } from "./schema";
 import { parseLayout, placeLayout, type LayoutProblem } from "./layout";
@@ -2443,10 +2444,12 @@ export function compileDocument(
         }
         next.scaleType = text as (typeof scales)[number];
       } else {
-        if (number === undefined) {
-          return needNumber();
+        // A date axis reads its range as ISO dates, as annotations do.
+        const bound = number ?? parseDateText(text, "iso");
+        if (!Number.isFinite(bound)) {
+          return `${key} needs a number or an ISO date, so ${subject} keeps the default.`;
         }
-        next.limits = { ...next.limits, [axis[2] as "min"]: number };
+        next.limits = { ...next.limits, [axis[2] as "min"]: bound };
       }
       chart[name] = next;
       return "ok";
