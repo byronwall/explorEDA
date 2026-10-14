@@ -190,8 +190,10 @@ export function lowerListChild(
         : match[2]!;
     }
   }
+  // Records name their field, or are keyed by it, as `series actual` keys
+  // the series of the field that `actual` aliases.
+  name = resolveField(name) ?? name;
   if (!child.keyed) {
-    name = resolveField(name) ?? name;
     record[child.main] = name;
   }
   for (const pair of declaration.pairs) {

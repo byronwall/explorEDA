@@ -37,6 +37,11 @@ export class CrossfilterWrapper<T> {
    */
   workspace: Map<string, WorkspaceDimension<T, IdType>> = new Map();
   idFunction: (item: T) => IdType;
+  /**
+   * When true, a chart's own selection never narrows the other charts, as
+   * in a notebook. Workspace filters still narrow every chart.
+   */
+  localSelections = false;
 
   // assume this gets set after creation
   fieldGetter: (name: string) => Record<IdType, FieldValue> = () => ({});
@@ -69,6 +74,10 @@ export class CrossfilterWrapper<T> {
     // apply the filters to the dimension
     const dimension = foundChart?.dimension;
     if (!dimension) {
+      return;
+    }
+    if (this.localSelections) {
+      dimension.filterAll();
       return;
     }
 

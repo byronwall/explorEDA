@@ -32,6 +32,39 @@ function spaFallback(): Plugin {
   };
 }
 
+/**
+ * `pnpm dev:agent` sets EXPLOREDA_DEV_IDLE_MINUTES so servers that agent
+ * sessions leave behind exit once nothing has requested a file for that long.
+ * Dozens of forgotten servers ran the machine out of memory. A plain
+ * `pnpm --filter demo dev` never sets it and stays up.
+ */
+function idleExit(): Plugin {
+  const minutes = Number(process.env.EXPLOREDA_DEV_IDLE_MINUTES);
+  return {
+    name: "idle-exit",
+    apply: "serve",
+    configureServer(server) {
+      if (!(minutes > 0)) {
+        return;
+      }
+      let lastRequest = Date.now();
+      server.middlewares.use((_request, _response, next) => {
+        lastRequest = Date.now();
+        next();
+      });
+      setInterval(() => {
+        if (Date.now() - lastRequest < minutes * 60_000) {
+          return;
+        }
+        server.config.logger.info(
+          `No requests for ${minutes} minute${minutes === 1 ? "" : "s"}; stopping the dev server.`
+        );
+        void server.close().finally(() => process.exit(0));
+      }, 60_000).unref();
+    },
+  };
+}
+
 // https://vite.dev/config/
 export default defineConfig(({ command }) => ({
   plugins: [
@@ -41,6 +74,7 @@ export default defineConfig(({ command }) => ({
     react({ include: /\.(mdx|js|jsx|ts|tsx)$/ }),
     tailwindcss(),
     spaFallback(),
+    idleExit(),
   ],
   base: "/",
 

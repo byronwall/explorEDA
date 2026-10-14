@@ -18,7 +18,7 @@ import { wordForPath } from "./schema";
 import { layoutLines } from "./layout";
 import { block } from "./print";
 import { encodeValue, liftComposition } from "./composition";
-import { liftAnnotations, type DateAxes } from "./annotations";
+import { dateText, liftAnnotations, type DateAxes } from "./annotations";
 import { liftListChildren } from "./lists";
 import { FIELD_SETTING_WORDS, GRID_SETTING_WORDS } from "./settingKeys";
 
@@ -166,6 +166,14 @@ function dateAxes(
     x: !!xField && types[xField] === "datetime",
     y: !!yField && types[yField] === "datetime",
   };
+}
+
+/** An axis range on a date axis reads as an ISO date: x.min=2021-02-07. */
+function dateLimit(token: string, axes: DateAxes): string {
+  const match = /^(x|y)\.(min|max)=(-?[\d.]+)$/.exec(token);
+  return match && axes[match[1] as "x"] && Number.isFinite(Number(match[3]))
+    ? `${match[1]}.${match[2]}=${dateText(Number(match[3]))}`
+    : token;
 }
 
 /** The field a chart's head names, which it goes by without an @name. */
@@ -563,7 +571,9 @@ export function exportParts(
         tokens: [
           ...pairs,
           ...(graphic?.head ?? []),
-          ...extra.map((pair) => toWord(chart.type, pair, built)),
+          ...extra.map((pair) =>
+            dateLimit(toWord(chart.type, pair, built), dateAxes(chart, types))
+          ),
         ],
         children: [...(graphic?.body ?? []), ...lists.lines, ...annotations],
       },
