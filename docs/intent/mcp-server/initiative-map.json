@@ -1,0 +1,384 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "MCP server for agent-driven analysis",
+    "slug": "mcp-server",
+    "scale": "capability",
+    "current_phase": "plan",
+    "last_updated": "2026-10-13",
+    "summary": "An exploreda MCP server lets an outside agent kick off a project from data or .eda files, build and revise views, and get DSL check, field, and reference feedback, with coverage growing toward everything a user can control.",
+    "status": "planned",
+    "next_action": "Start M1: shared tool module, checker bundle, /mcp route, then the cold-agent proof."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-13"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-13"
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "current",
+      "updated_at": "2026-10-13"
+    }
+  },
+  "sources": [
+    {
+      "id": "USR-CHAT-2026-10-13",
+      "type": "direct-user-source",
+      "location": "conversation 2026-10-13",
+      "anchor": "Request to create the MCP server initiative",
+      "authority": "latest direct instruction",
+      "notes": "Agent can create views and control anything the user can; kickoff by uploading data or .eda files; server reports useful info and DSL syntax checking."
+    },
+    {
+      "id": "REPO-CLI",
+      "type": "repository",
+      "location": "docs/intent/local-cli-projects/",
+      "anchor": "shape-brief.md, implementation-plan.md",
+      "authority": "prior accepted decisions",
+      "notes": "Project folder format, guarded local server, ProjectFiles port, SSE file watching."
+    },
+    {
+      "id": "REPO-SERVER",
+      "type": "repository",
+      "location": "packages/explorEDA/src/server/handler.ts",
+      "anchor": "/api/files, /api/file, /api/events",
+      "authority": "current reality",
+      "notes": "File server only; token and Host checks; codec and compiler run in the browser."
+    },
+    {
+      "id": "REPO-DSL-CLI",
+      "type": "repository",
+      "location": "packages/explorEDA/src/cli/exploredaDsl.ts",
+      "anchor": "check, fields, fmt, project, reference",
+      "authority": "current reality",
+      "notes": "DSL checking and project loading already run in Node via registerAllCharts and readProjectFolder."
+    },
+    {
+      "id": "REPO-AGENT",
+      "type": "repository",
+      "location": "docs/intent/in-app-analysis-agent/",
+      "anchor": "shape-brief.md",
+      "authority": "related intent",
+      "notes": "In-app agent with server-held credentials; distinct from an external MCP client."
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "C1",
+        "statement": "An outside agent can start a project from data files or .eda text and get working views.",
+        "kind": "goal",
+        "sources": ["USR-CHAT-2026-10-13"],
+        "confidence": "high",
+        "importance": "core"
+      },
+      {
+        "id": "C2",
+        "statement": "The MCP server returns actionable DSL feedback: parse and build problems with fixes, fields, and reference.",
+        "kind": "goal",
+        "sources": ["USR-CHAT-2026-10-13"],
+        "confidence": "high",
+        "importance": "core"
+      },
+      {
+        "id": "C3",
+        "statement": "Coverage grows toward parity with everything a user can control.",
+        "kind": "goal",
+        "sources": ["USR-CHAT-2026-10-13"],
+        "confidence": "high",
+        "notes": "Round 1: launch parity means saved state through files; live tab state later.",
+        "importance": "core"
+      },
+      {
+        "id": "C4",
+        "statement": "Agent output is ordinary project text a person can open and edit.",
+        "kind": "constraint",
+        "sources": ["REPO-CLI"],
+        "confidence": "medium",
+        "importance": "core"
+      },
+      {
+        "id": "C5",
+        "statement": "No model or credentials live in explorEDA for this initiative.",
+        "kind": "boundary",
+        "sources": ["REPO-AGENT"],
+        "confidence": "medium"
+      },
+      {
+        "id": "C6",
+        "statement": "The agent connects to the running exploreda server over HTTP and joins the open session.",
+        "kind": "decision",
+        "sources": ["USR-CHAT-2026-10-13"],
+        "confidence": "high"
+      },
+      {
+        "id": "C7",
+        "statement": "A stale agent write fails and the agent rereads.",
+        "kind": "decision",
+        "sources": ["USR-CHAT-2026-10-13"],
+        "confidence": "high"
+      },
+      {
+        "id": "C8",
+        "statement": "Data kickoff covers local files, inline rows, and URL fetch; database sources follow database-adapters.",
+        "kind": "decision",
+        "sources": ["USR-CHAT-2026-10-13"],
+        "confidence": "high"
+      },
+      {
+        "id": "C9",
+        "statement": "Launch without chart images; images are important and the main trigger for headless rendering.",
+        "kind": "decision",
+        "sources": ["USR-CHAT-2026-10-13"],
+        "confidence": "high"
+      },
+      {
+        "id": "C10",
+        "statement": "The server writes a git-ignored .exploreda/server.json; an `exploreda mcp` helper reads it and relays to the running server, so the agent config is one fixed line.",
+        "kind": "decision",
+        "sources": ["USR-CHAT-2026-10-13"],
+        "confidence": "high"
+      },
+      {
+        "id": "C11",
+        "statement": "Checks run in the server, loading the exploreda-dsl bundle lazily on the first MCP call.",
+        "kind": "decision",
+        "sources": ["USR-CHAT-2026-10-13"],
+        "confidence": "high"
+      }
+    ],
+    "themes": ["kickoff", "feedback loop", "control parity", "live app"],
+    "conflicts": [],
+    "human_questions": [
+      {
+        "round": 1,
+        "asked": [
+          "control scope",
+          "chart images",
+          "connection",
+          "concurrent edits",
+          "data kickoff"
+        ],
+        "answers": {
+          "control scope": "Saved state via files",
+          "chart images": "Launch without; note headless rendering is important and will likely help a lot",
+          "connection": "Join the running app (MCP over HTTP)",
+          "concurrent edits": "Stale write fails",
+          "data kickoff": "Local files, inline rows, and URL fetch; MCP supports databases once database-adapters lands"
+        }
+      },
+      {
+        "round": 2,
+        "asked": ["address and key discovery", "where checks run"],
+        "answers": {
+          "address and key discovery": "Discovery file + helper",
+          "where checks run": "In the server, loaded lazily"
+        }
+      }
+    ]
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "current",
+    "appetite": "Launch-quality MCP endpoint on the running exploreda server with kickoff (files, rows, URL), feedback, and editing tools, plus docs and an example session.",
+    "problem": "An external agent has no checked, structured way to create and revise explorEDA analyses or learn why its DSL fails.",
+    "recommended_shape": "Project files as the control surface, served as an MCP endpoint on the running exploreda server: tools wrap the folder codec and exploreda-dsl check/fields/reference/describe, writes return check results with a stale-read guard, and the open tab updates through existing file watching. A git-ignored .exploreda/server.json plus an `exploreda mcp` relay helper gives agents one fixed config line; the checker bundle loads lazily on the first tool call.",
+    "success_moves": [
+      "Reuse exploreda-dsl and readProjectFolder in Node, loaded lazily on the first MCP call, instead of a new compiler path.",
+      "Return the check result from every write so check-and-fix is one loop.",
+      "Use existing SSE file watching for live app updates instead of a browser bridge.",
+      "Guard writes with a read-version check so concurrent human edits are not overwritten.",
+      "Prove with a cold agent before adding finer edit tools.",
+      "Discovery file plus relay helper so per-run port and key never reach agent config."
+    ],
+    "first_proof": {
+      "question": "Can a cold agent reach a fully built analysis using only MCP tool results?",
+      "artifact": "check, fields, reference, and whole-file write_eda served from the running server over the shop example; a cold agent given a CSV and a dashboard request; count of check-fix rounds and problems lacking a usable fix.",
+      "decision_rule": "Within about five rounds: build the remaining tools on the file loop. Stalls on DSL syntax: put finer edit tools (add chart, set setting) ahead of whole-file writes."
+    },
+    "rabbit_holes": [
+      "Mirroring every UI gesture as a tool before agents need it.",
+      "A browser bridge before the file loop is proven.",
+      "Headless rendering pulled into launch scope.",
+      "URL fetch growing into a general connector; keep it to CSV/JSON with a size limit."
+    ],
+    "open_decisions": []
+  },
+  "implementation": {
+    "status": "planned",
+    "repository_snapshot": {
+      "root": "packages/explorEDA",
+      "revision": "6896d6f0",
+      "worktree_status": "clean",
+      "subsystems": [
+        "src/cli/exploredaDsl.ts",
+        "src/lib/dsl",
+        "src/lib/project",
+        "src/server",
+        "src/node/projectFiles",
+        "apps/app"
+      ],
+      "test_commands": [
+        "pnpm --filter exploreda exec vitest run src/lib/project",
+        "pnpm --filter exploreda check-types"
+      ],
+      "deployment_surfaces": ["exploreda npm package bin"]
+    },
+    "dependencies": [
+      {
+        "name": "MCP protocol (Streamable HTTP + stdio)",
+        "material": true,
+        "application_seam": "src/mcp/tools.ts behind a /mcp JSON-RPC handler and the exploreda mcp relay",
+        "first_proof_role": {
+          "mode": "real",
+          "rationale": "Client strictness is the risk; one real agent in M1 is the cheapest faithful check."
+        },
+        "failure_modes": [
+          "client rejects JSON-only responses",
+          "stale key after restart",
+          "relay cannot find or start a server"
+        ],
+        "local_proof": "In-process JSON-RPC handler tests",
+        "live_proof": "Claude Code session in M1; tarball stdio round trip on three OSes in M5",
+        "proof_rungs": ["fake", "contract-test", "sandbox", "deployed"],
+        "rollout": "Opt-in: nothing loads unless an agent connects; remove /mcp route and mcp subcommand to withdraw.",
+        "notes": "M1 spike: bundle @modelcontextprotocol/sdk or hand-write initialize/tools/list/tools/call."
+      },
+      {
+        "name": "Remote URL fetch",
+        "material": true,
+        "application_seam": "add_data url branch with an injectable fetch",
+        "first_proof_role": {
+          "mode": "absent",
+          "rationale": "Not needed until M4; the shop example already has data."
+        },
+        "failure_modes": [
+          "oversized response",
+          "non-CSV/JSON content",
+          "redirect loop",
+          "timeout"
+        ],
+        "local_proof": "Local fixture HTTP server",
+        "live_proof": "Docs example fetching a public CSV in M5",
+        "proof_rungs": ["fake", "contract-test", "sandbox"],
+        "rollout": "Remove the url branch; local and inline data remain."
+      }
+    ],
+    "fast_local_loop": {
+      "command": "pnpm --filter exploreda exec vitest run src/mcp",
+      "notes": "Tools over memoryProjectFiles; pnpm --filter app dev with EXPLOREDA_FOLDER serves /mcp.",
+      "shared_infrastructure_required": false,
+      "network_required": false,
+      "failure_injection": [
+        "memoryProjectFiles editOutside (stale write)",
+        "memoryProjectFiles refuse (refused write)",
+        "local fixture HTTP server (oversized, HTML, redirect loop, timeout)",
+        "stale key in server.json"
+      ]
+    },
+    "milestones": [
+      {
+        "id": "m1",
+        "title": "A cold agent builds a dashboard through four tools",
+        "outcome": "check, fields, reference, write_eda served from /mcp on the running server; a cold agent reaches a built dashboard on the shop example.",
+        "dependencies_introduced": ["MCP protocol"],
+        "proof": "Vitest over memory files; exploreda-dsl output unchanged; recorded cold-agent transcript with round count.",
+        "valid_intermediate_state": "exploreda works unchanged; /mcp needs a pasted key.",
+        "rollback": "Remove the /mcp route and checker bundle entry.",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m2",
+        "title": "One fixed config line connects any agent",
+        "outcome": "server.json discovery plus exploreda mcp stdio relay that starts a server when none runs.",
+        "dependencies_introduced": ["stdio transport"],
+        "proof": "Restart and stale-key tests; real agent across a restart.",
+        "valid_intermediate_state": "HTTP connection still works directly.",
+        "rollback": "Drop the mcp subcommand and server.json writing.",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m3",
+        "title": "The agent edits a project the way a person does",
+        "outcome": "read/write/rename/delete/format/describe/project tools with a version guard; agent writes broadcast to the open tab.",
+        "dependencies_introduced": [],
+        "proof": "Conflict tests with editOutside; two-listener broadcast test; screenshots at three widths.",
+        "valid_intermediate_state": "M1 tools unchanged.",
+        "rollback": "Remove the added tools.",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m4",
+        "title": "The agent starts a project from data",
+        "outcome": "add_data from a local path, inline rows, or a URL, with limits and provenance comments.",
+        "dependencies_introduced": ["network fetch"],
+        "proof": "Local fixture HTTP server tests for size, type, redirect, timeout.",
+        "valid_intermediate_state": "Projects with existing data unaffected.",
+        "rollback": "Remove add_data.",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m5",
+        "title": "Launch-ready",
+        "outcome": "Three-OS MCP smoke, real agent session, docs and README, changeset.",
+        "dependencies_introduced": [],
+        "proof": "cli-smoke.yml green on three OSes.",
+        "valid_intermediate_state": "Everything shipped behind opt-in agent config.",
+        "rollback": "Revert the release.",
+        "status": "planned",
+        "evidence": []
+      }
+    ],
+    "cut_line": [
+      "Chart images (headless-chart-rendering; important)",
+      "Live tab control: active view, selection, hover",
+      "Database sources after database-adapters",
+      "MCP for demo or self-hosted server",
+      "Progress notifications, resources, prompts"
+    ],
+    "open_decisions": [
+      "SDK vs hand-written handler (M1)",
+      "Finer edit tools (M3, decided by M1 proof)"
+    ]
+  },
+  "history": [
+    {
+      "date": "2026-10-13",
+      "event": "Initiative created with intent brief and draft shape brief; status planned."
+    },
+    {
+      "date": "2026-10-13",
+      "event": "Question round 1 answered; shape moved from stdio to HTTP on the running server, URL fetch added, images and databases deferred."
+    },
+    {
+      "date": "2026-10-13",
+      "event": "Round 2 answered: discovery file + relay helper; lazy server-side checker. Shape marked current and plan-ready."
+    },
+    {
+      "date": "2026-10-13",
+      "event": "Implementation plan written: five milestones from a four-tool cold-agent proof to launch."
+    }
+  ],
+  "closure": null
+}

@@ -37,12 +37,22 @@ function oldFolder() {
 
 const now = () => new Date("2026-11-01T12:00:00.000Z");
 
+/** The schema the 0.1.0 fixture folder was written with. */
+const FIXTURE_SCHEMA = 1;
+
 describe("opening a data folder", () => {
   it("opens the 0.1.0 folder with every account, project, and member", async () => {
     const dir = oldFolder();
-    const { store, upgrade } = await openDataFolder(dir, { version: "test" });
+    const { store, upgrade } = await openDataFolder(dir, {
+      version: "test",
+      now,
+    });
     expect(SCHEMA_VERSION).toBe(latestSchema(MIGRATIONS));
-    expect(upgrade).toBe(undefined);
+    expect(upgrade).toEqual({
+      from: FIXTURE_SCHEMA,
+      to: SCHEMA_VERSION,
+      backup: path.join(dir, "backups/2026-11-01T12-00-00-000Z"),
+    });
     const ana = await store.checkPassword("ana@example.com", "exploreda-dev");
     expect(ana).toMatchObject({ admin: true, kind: "author" });
     expect((await store.projects()).map((project) => project.id)).toEqual([
@@ -51,7 +61,6 @@ describe("opening a data folder", () => {
     ]);
     const vic = (await store.accountByEmail("vic@example.com"))!;
     expect(await projectRole(store, vic, "shop")).toBe("viewer");
-    expect(existsSync(path.join(dir, "backups"))).toBe(false);
     expect(
       readFileSync(path.join(dir, "projects/shop/data/uploaded.csv"), "utf8")
     ).toContain("West,22");
@@ -83,12 +92,12 @@ describe("opening a data folder", () => {
       now,
     });
     expect(upgrade).toEqual({
-      from: SCHEMA_VERSION,
+      from: FIXTURE_SCHEMA,
       to: SCHEMA_VERSION + 1,
       backup: path.join(dir, "backups/2026-11-01T12-00-00-000Z"),
     });
     expect(await storeVersion(path.join(upgrade!.backup, STORE_FILE))).toBe(
-      SCHEMA_VERSION
+      FIXTURE_SCHEMA
     );
     expect(await storeVersion(path.join(dir, STORE_FILE))).toBe(
       SCHEMA_VERSION + 1
@@ -108,7 +117,8 @@ describe("opening a data folder", () => {
     await expect(
       openDataFolder(dir, { version: "test", migrations, now })
     ).rejects.toThrow(/nothing was changed/);
-    expect(await storeVersion(path.join(dir, STORE_FILE))).toBe(SCHEMA_VERSION);
+    // Every pending migration rolls back together, not just the failed one.
+    expect(await storeVersion(path.join(dir, STORE_FILE))).toBe(FIXTURE_SCHEMA);
     const columns = new DatabaseSync(path.join(dir, STORE_FILE), {
       readOnly: true,
     })
@@ -116,10 +126,10 @@ describe("opening a data folder", () => {
       .all()
       .map((column) => (column as { name: string }).name);
     expect(columns).not.toContain("locale");
-    // The current version still opens it as before.
+    // The current version still opens it, upgrading it with its own backup.
     const { store } = await openDataFolder(dir, { version: "test" });
     expect(await store.accountByEmail("ana@example.com")).toBeTruthy();
-    expect(readdirSync(path.join(dir, "backups"))).toHaveLength(1);
+    expect(readdirSync(path.join(dir, "backups"))).toHaveLength(2);
   });
 
   it("refuses a folder written by a newer version", async () => {

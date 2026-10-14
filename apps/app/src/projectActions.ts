@@ -3,6 +3,8 @@
  * analysis to show next; the app then reads the folder again.
  */
 import {
+  addConnectionText,
+  addDatabaseSourceText,
   addSourceText,
   analysisPathFor,
   HIDDEN_PROJECT_FILE,
@@ -10,12 +12,29 @@ import {
   newAnalysisText,
   PROJECT_FILE,
   sourceIdForFile,
+  type ConnectionDefinition,
+  type DatabaseSource,
   type ProjectFiles,
   type ProjectFolder,
 } from "exploreda";
 
 const takenPaths = (folder: ProjectFolder) =>
   folder.analyses.map((analysis) => analysis.path);
+
+/** The project text's path, and its text when it exists yet. */
+async function projectText(
+  files: ProjectFiles,
+  folder: ProjectFolder,
+  layout: "visible" | "hidden"
+) {
+  const path =
+    folder.projectPath ??
+    (layout === "hidden" ? HIDDEN_PROJECT_FILE : PROJECT_FILE);
+  const text = folder.projectPath
+    ? await files.read(folder.projectPath)
+    : undefined;
+  return { path, text };
+}
 
 /**
  * Charts a data file: the project text gains a one-line source for it (the
@@ -34,12 +53,11 @@ export async function chartDataFile(
     dataPath,
     folder.project.sources.map((source) => source.id)
   );
-  const projectPath =
-    folder.projectPath ??
-    (layout === "hidden" ? HIDDEN_PROJECT_FILE : PROJECT_FILE);
-  const existing = folder.projectPath
-    ? await files.read(folder.projectPath)
-    : undefined;
+  const { path: projectPath, text: existing } = await projectText(
+    files,
+    folder,
+    layout
+  );
   await files.write(
     projectPath,
     addSourceText(existing, {
@@ -54,6 +72,61 @@ export async function chartDataFile(
     newAnalysisText(sourceId, path, labelFromId(sourceId), { starter: true })
   );
   return path;
+}
+
+/** Adds a connection to the project text; the first creates that text. */
+export async function addConnection(
+  files: ProjectFiles,
+  folder: ProjectFolder,
+  {
+    connection,
+    projectName,
+    layout,
+  }: {
+    connection: ConnectionDefinition;
+    projectName: string;
+    layout: "visible" | "hidden";
+  }
+) {
+  const { path, text } = await projectText(files, folder, layout);
+  await files.write(
+    path,
+    addConnectionText(text, { projectId: projectName, connection })
+  );
+}
+
+/**
+ * Adds a source that reads a database, and a new analysis that charts it,
+ * as charting a data file does. Returns the source's ID and the analysis.
+ */
+export async function addDatabaseSource(
+  files: ProjectFiles,
+  folder: ProjectFolder,
+  {
+    sourceId,
+    database,
+    projectName,
+    layout,
+  }: {
+    sourceId: string;
+    database: DatabaseSource;
+    projectName: string;
+    layout: "visible" | "hidden";
+  }
+) {
+  const { path, text } = await projectText(files, folder, layout);
+  await files.write(
+    path,
+    addDatabaseSourceText(text, { projectId: projectName, sourceId, database })
+  );
+  const analysis = analysisPathFor(sourceId, takenPaths(folder));
+  await files.write(
+    analysis,
+    newAnalysisText(sourceId, analysis, labelFromId(sourceId), {
+      starter: true,
+    })
+  );
+  return analysis;
 }
 
 /** A new analysis of one of the project's queries. */

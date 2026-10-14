@@ -7,12 +7,15 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { startHttpServer, type StartedServer } from "../server";
 import { memoryAccountStore, type AccountStore } from "./accounts";
 import { CLIENT_HEADER, createTeamHandler } from "./teamHandler";
+import { memorySecretStore } from "../../node/secrets";
+import { writeContractSqlite } from "../sources/fixtures/sqliteContract";
 
 const PASSWORD = "correct horse";
 let server: StartedServer;
 let store: AccountStore;
 let dataDir: string;
 let origin: string;
+const secrets = memorySecretStore();
 
 interface Reply {
   status: number;
@@ -124,7 +127,14 @@ beforeAll(async () => {
     }
   }
   server = await startHttpServer({
-    handle: createTeamHandler({ store, dataDir, version: "test", appDir }),
+    handle: createTeamHandler({
+      store,
+      dataDir,
+      version: "test",
+      appDir,
+      secrets,
+      log: () => {},
+    }),
     port: 0,
     host: "127.0.0.1",
     link: (port) => `http://127.0.0.1:${port}/`,
@@ -291,5 +301,111 @@ describe("team server", () => {
     });
     expect(reply).toBe(404);
     await bare.close();
+  });
+
+  it("reads database sources for authors, and announces who read them", async () => {
+    await writeContractSqlite(path.join(dataDir, "projects/shop/data/app.db"));
+    writeFileSync(
+      path.join(dataDir, "projects/shop/exploreda.eda"),
+      `project @shop
+
+connection @app driver=sqlite path=data/app.db
+connection @outside driver=sqlite path=../../../outside.db
+
+source @items db=app table=contract_items
+
+source @stolen db=outside table=secrets
+`
+    );
+    const ana = await signIn("ana@example.com");
+    const vic = await signIn("vic@example.com");
+    const watcher = listen(vic, "vic-page");
+    await watcher.ready;
+    const write = (cookie: string) => ({
+      cookie,
+      origin,
+      [CLIENT_HEADER]: "ana-page",
+    });
+
+    const read = await call("/api/projects/shop/sources/items/refresh", {
+      method: "POST",
+      headers: write(ana),
+    });
+    expect(read.status).toBe(200);
+    expect(JSON.parse(read.body)).toMatchObject({
+      sourceId: "items",
+      rowCount: 4,
+    });
+    await until(() =>
+      watcher.events.some(
+        (event) =>
+          (event as { by?: string }).by === "Ana" &&
+          (event as { paths: string[] }).paths.includes(
+            ".exploreda/snapshots/items.json"
+          )
+      )
+    );
+    watcher.close();
+
+    // Viewers read the snapshot, but never the database.
+    const snapshot = await call(
+      "/api/projects/shop/file?path=.exploreda/snapshots/items.json",
+      { headers: { cookie: vic } }
+    );
+    expect(JSON.parse(snapshot.body).rowCount).toBe(4);
+    const refused = await call("/api/projects/shop/sources/items/refresh", {
+      method: "POST",
+      headers: { cookie: vic, origin },
+    });
+    expect(refused.status).toBe(403);
+    expect(
+      (
+        await call("/api/projects/shop/connections/app/tables", {
+          headers: { cookie: vic },
+        })
+      ).status
+    ).toBe(403);
+
+    // A file outside the project can't be read through a connection.
+    const outside = await call("/api/projects/shop/sources/stolen/refresh", {
+      method: "POST",
+      headers: write(ana),
+    });
+    expect(outside.status).toBe(422);
+    expect(JSON.parse(outside.body).error).toBe(
+      "outside reads ../../../outside.db, outside this project."
+    );
+
+    // Only admins enter passwords.
+    const body = JSON.stringify({ secret: "test-only" });
+    const notAdmin = await call("/api/projects/shop/connections/app/secret", {
+      method: "PUT",
+      headers: write(ana),
+      body,
+    });
+    expect(notAdmin.status).toBe(403);
+    const anaAccount = (await store.accountByEmail("ana@example.com"))!;
+    await store.updateAccount(anaAccount.id, { admin: true });
+    try {
+      const saved = await call("/api/projects/shop/connections/app/secret", {
+        method: "PUT",
+        headers: write(ana),
+        body,
+      });
+      expect(saved.status).toBe(200);
+      expect(
+        await secrets.get({
+          id: "app",
+          driver: "sqlite",
+          settings: { path: "data/app.db" },
+        })
+      ).toBe("test-only");
+      const info = await call("/api/projects/shop/info", {
+        headers: { cookie: ana },
+      });
+      expect(JSON.parse(info.body).canEnterSecrets).toBe(true);
+    } finally {
+      await store.updateAccount(anaAccount.id, { admin: false });
+    }
   });
 });

@@ -14,6 +14,13 @@ import { createAnalysisWorker } from "exploreda/analysis";
 import { AddData, fetchedLabel } from "./AddData";
 import type { FetchedRecord, ServerInfo, ThemePreference } from "./httpFiles";
 import type { FolderSaver, SaveState } from "./saver";
+import { AddDatabase, type AddDatabaseActions } from "./AddDatabase";
+import { unreadSources, visibleProblems, waitingFor } from "./databaseSources";
+import {
+  DatabaseSourceItem,
+  RefreshAll,
+  WaitingForData,
+} from "./DatabaseSourceViews";
 
 /** A view's ID: its analysis file and its place in that file. */
 const viewId = (path: string, index: number) => `${path}#${index}`;
@@ -50,6 +57,18 @@ export interface ProjectActions {
   upload?(file: File, path: string): Promise<void>;
   fetchUrl?(url: string): Promise<void>;
   refetch?(path: string): Promise<void>;
+  /** Reads database sources again; rejects with why one couldn't. */
+  refreshSources?(sourceIds: string[]): Promise<void>;
+  /** Checks a connection's password and keeps it outside the project. */
+  saveSecret?(connectionId: string, secret: string): Promise<void>;
+  /** Adding database sources from the app, where the server reads them. */
+  database?: Omit<AddDatabaseActions, "saveSecret">;
+}
+
+/** What to show open when the workspace starts again after a reload. */
+export interface OpenPanel {
+  /** The add-database panel, on this connection. */
+  addDatabase?: string;
 }
 
 export interface Selection {
@@ -64,6 +83,7 @@ export function ProjectWorkspace({
   saveState,
   notice,
   initialSelection,
+  initialPanel,
   onSelect,
   notebookMemory,
   actions,
@@ -87,6 +107,7 @@ export function ProjectWorkspace({
   saveState: SaveState;
   notice?: string;
   initialSelection?: Selection;
+  initialPanel?: OpenPanel;
   onSelect: (selection: Selection) => void;
   /** A notebook's last working block text, kept by the host across reloads. */
   notebookMemory?: (path: string) => { current: Record<number, string> };
@@ -95,6 +116,10 @@ export function ProjectWorkspace({
   const [views, setViews] = useState(() => folderViews(folder));
   const [creating, setCreating] = useState(false);
   const [adding, setAdding] = useState(false);
+  const [refreshAllError, setRefreshAllError] = useState<string>();
+  const [addingDatabase, setAddingDatabase] = useState(
+    initialPanel?.addDatabase !== undefined
+  );
   const [selected, setSelectedState] = useState<Selection>(() =>
     initialSelection?.path &&
     [...folder.analyses, ...folder.notebooks].some(
@@ -220,6 +245,12 @@ export function ProjectWorkspace({
         )
       : undefined;
 
+  const databaseIds = Object.keys(folder.databases);
+  const canAddDatabase = !readOnly && Boolean(actions.database);
+  const unread = unreadSources(folder);
+  const problems = visibleProblems(folder, project);
+  const waiting = view ? waitingFor(folder, project, view.queryId) : [];
+
   const usedFiles = new Set(Object.values(folder.paths));
   const looseFiles = folder.dataFiles.filter((path) => !usedFiles.has(path));
 
@@ -267,7 +298,7 @@ export function ProjectWorkspace({
             {!readOnly && project.queries.length > 0 && (
               <button
                 type="button"
-                className="app-button"
+                className="app-button app-button-sm app-button-ghost"
                 aria-expanded={creating}
                 onClick={() => setCreating((open) => !open)}
               >
@@ -347,73 +378,134 @@ export function ProjectWorkspace({
         <section aria-labelledby="data-heading">
           <div className="app-section-head">
             <h2 id="data-heading">Data</h2>
-            {addData && (
-              <button
-                type="button"
-                className="app-button"
-                aria-expanded={adding}
-                onClick={() => setAdding((open) => !open)}
-              >
-                Add data
-              </button>
-            )}
+            <div className="app-section-actions">
+              {databaseIds.length > 1 &&
+                !readOnly &&
+                actions.refreshSources && (
+                  <RefreshAll
+                    sourceIds={databaseIds}
+                    unread={unread.length}
+                    onRefresh={actions.refreshSources}
+                    onError={setRefreshAllError}
+                  />
+                )}
+              {canAddDatabase && (
+                <button
+                  type="button"
+                  className="app-button app-button-sm app-button-ghost"
+                  aria-expanded={addingDatabase}
+                  aria-label="Add a table or query from a database"
+                  onClick={() => setAddingDatabase((open) => !open)}
+                >
+                  Add database
+                </button>
+              )}
+              {addData && (
+                <button
+                  type="button"
+                  className="app-button app-button-sm app-button-ghost"
+                  aria-expanded={adding}
+                  onClick={() => setAdding((open) => !open)}
+                >
+                  Add data
+                </button>
+              )}
+            </div>
           </div>
           {addData && adding && addData(() => setAdding(false))}
-          <ul className="app-list">
+          {canAddDatabase && addingDatabase && (
+            <AddDatabase
+              connections={folder.connections}
+              sourceIds={project.sources.map((source) => source.id)}
+              initialConnection={initialPanel?.addDatabase || undefined}
+              actions={{ ...actions.database!, saveSecret: actions.saveSecret }}
+              onClose={() => setAddingDatabase(false)}
+            />
+          )}
+          {refreshAllError && (
+            <p className="app-source-error app-refresh-error" role="alert">
+              {refreshAllError}
+            </p>
+          )}
+          <ul className="app-list app-sources">
             {project.sources.map((source) => {
+              const database = folder.databases[source.id];
+              if (database) {
+                return (
+                  <DatabaseSourceItem
+                    key={source.id}
+                    name={source.name}
+                    sourceId={source.id}
+                    connection={database.connection}
+                    rows={folder.tables[source.id]?.length ?? 0}
+                    snapshot={folder.snapshots[source.id]}
+                    onRefresh={
+                      readOnly || !actions.refreshSources
+                        ? undefined
+                        : (id) => actions.refreshSources!([id])
+                    }
+                    onSaveSecret={readOnly ? undefined : actions.saveSecret}
+                  />
+                );
+              }
               const missing = folder.missingSources.includes(source.id);
               const outside = folder.outsideSources.includes(source.id);
+              const path = folder.paths[source.id];
               return (
                 <li key={source.id} className="app-source">
-                  <span>{source.name}</span>
-                  <span className="app-muted">
-                    {missing
-                      ? "file missing"
-                      : `${(folder.tables[source.id]?.length ?? 0).toLocaleString()} rows`}
+                  <span className="app-source-name">{source.name}</span>
+                  <span className="app-source-meta">
+                    {missing ? (
+                      <span className="app-status app-status-error">
+                        File missing
+                      </span>
+                    ) : (
+                      `${(folder.tables[source.id]?.length ?? 0).toLocaleString()} rows`
+                    )}
                     {outside ? " · outside the folder" : ""}
+                    {path && fetched[path]
+                      ? ` · ${fetchedLabel(fetched[path]!)}`
+                      : ""}
                   </span>
-                  {missing && (
-                    <span className="app-badge app-badge-error">Missing</span>
-                  )}
-                  <Fetched
-                    path={folder.paths[source.id]}
+                  <Refetch
+                    path={path}
                     fetched={fetched}
-                    onRefetch={actions.refetch}
+                    onRefetch={readOnly ? undefined : actions.refetch}
                   />
                 </li>
               );
             })}
             {looseFiles.map((path) => (
               <li key={path} className="app-source">
-                <span>{path}</span>
+                <span className="app-source-name">{path}</span>
+                <span className="app-source-meta">
+                  {fetched[path]
+                    ? `Not charted yet · ${fetchedLabel(fetched[path]!)}`
+                    : "Not charted yet"}
+                </span>
                 {!readOnly && (
                   <button
                     type="button"
-                    className="app-button"
+                    className="app-button app-button-sm app-button-ghost"
                     aria-label={`Chart ${path}`}
                     onClick={() => void actions.chartFile(path)}
                   >
                     Chart
                   </button>
                 )}
-                <Fetched
-                  path={path}
-                  fetched={fetched}
-                  onRefetch={actions.refetch}
-                />
               </li>
             ))}
           </ul>
         </section>
 
-        {folder.problems.length > 0 && (
+        {problems.length > 0 && (
           <details className="app-problems">
             <summary>
-              {folder.problems.length} problem
-              {folder.problems.length === 1 ? "" : "s"}
+              {problems.length} problem
+              {problems.length === 1 ? "" : "s"}
             </summary>
             <ul>
-              {folder.problems.map((problem, index) => (
+              {problems.map((problem, index) => (
                 <li key={index}>
                   <span className="app-muted">
                     {problem.path}:{problem.line}
@@ -450,6 +542,16 @@ export function ProjectWorkspace({
                   }
             }
           />
+        ) : view && waiting.length ? (
+          <WaitingForData
+            analysis={names.get(selected.path ?? "") ?? view.name}
+            sourceIds={waiting}
+            connections={[
+              ...new Set(waiting.map((id) => folder.databases[id]!.connection)),
+            ]}
+            onRead={readOnly ? undefined : actions.refreshSources}
+            onSaveSecret={readOnly ? undefined : actions.saveSecret}
+          />
         ) : view ? (
           <ExplorEdaProject
             key={view.id}
@@ -468,6 +570,9 @@ export function ProjectWorkspace({
             readOnly={readOnly}
             dataFiles={looseFiles}
             onChart={(path) => void actions.chartFile(path)}
+            onAddDatabase={
+              canAddDatabase ? () => setAddingDatabase(true) : undefined
+            }
           />
         )}
       </main>
@@ -514,7 +619,7 @@ function NewAnalysisForm({
   const [queryId, setQueryId] = useState(queries[0]?.id ?? "");
   return (
     <form
-      className="app-form"
+      className="app-form app-panel"
       onSubmit={(event) => {
         event.preventDefault();
         if (name.trim() && queryId) {
@@ -522,7 +627,7 @@ function NewAnalysisForm({
         }
       }}
     >
-      <label>
+      <label className="app-field">
         <span>Name</span>
         <input
           autoFocus
@@ -531,7 +636,7 @@ function NewAnalysisForm({
           placeholder="Revenue by region"
         />
       </label>
-      <label>
+      <label className="app-field">
         <span>Charts</span>
         <select
           value={queryId}
@@ -548,7 +653,11 @@ function NewAnalysisForm({
         <button type="submit" className="app-button app-button-primary">
           Create
         </button>
-        <button type="button" className="app-button" onClick={onCancel}>
+        <button
+          type="button"
+          className="app-button app-button-ghost"
+          onClick={onCancel}
+        >
           Cancel
         </button>
       </div>
@@ -570,7 +679,7 @@ function AnalysisActions({
   if (mode === "rename") {
     return (
       <form
-        className="app-form app-form-inline"
+        className="app-item-actions"
         onSubmit={(event) => {
           event.preventDefault();
           if (draft.trim() && draft.trim() !== name) {
@@ -586,12 +695,15 @@ function AnalysisActions({
           value={draft}
           onChange={(event) => setDraft(event.target.value)}
         />
-        <button type="submit" className="app-button app-button-primary">
+        <button
+          type="submit"
+          className="app-button app-button-sm app-button-primary"
+        >
           Save
         </button>
         <button
           type="button"
-          className="app-button"
+          className="app-button app-button-sm app-button-ghost"
           onClick={() => setMode("idle")}
         >
           Cancel
@@ -601,18 +713,18 @@ function AnalysisActions({
   }
   if (mode === "delete") {
     return (
-      <div className="app-form-inline" role="group" aria-label="Delete">
+      <div className="app-item-actions" role="group" aria-label="Delete">
         <span className="app-muted">Delete {path}?</span>
         <button
           type="button"
-          className="app-button app-button-danger"
+          className="app-button app-button-sm app-button-danger"
           onClick={() => void actions.deleteAnalysis(path)}
         >
           Delete
         </button>
         <button
           type="button"
-          className="app-button"
+          className="app-button app-button-sm app-button-ghost"
           onClick={() => setMode("idle")}
         >
           Keep
@@ -621,17 +733,17 @@ function AnalysisActions({
     );
   }
   return (
-    <div className="app-form-inline">
+    <div className="app-item-actions">
       <button
         type="button"
-        className="app-button"
+        className="app-button app-button-sm app-button-ghost"
         onClick={() => setMode("rename")}
       >
         Rename
       </button>
       <button
         type="button"
-        className="app-button"
+        className="app-button app-button-sm app-button-ghost"
         onClick={() => setMode("delete")}
       >
         Delete
@@ -640,8 +752,8 @@ function AnalysisActions({
   );
 }
 
-/** When and where a downloaded file came from, with a way to refresh it. */
-function Fetched({
+/** Downloads a fetched file again from the address it came from. */
+function Refetch({
   path,
   fetched,
   onRefetch,
@@ -651,23 +763,18 @@ function Fetched({
   onRefetch?: (path: string) => Promise<void>;
 }) {
   const record = path ? fetched[path] : undefined;
-  if (!path || !record) {
+  if (!path || !record || !onRefetch) {
     return null;
   }
   return (
-    <span className="app-fetched">
-      <span className="app-muted">{fetchedLabel(record)}</span>
-      {onRefetch && (
-        <button
-          type="button"
-          className="app-button"
-          aria-label={`Refetch ${path} from ${record.url}`}
-          onClick={() => void onRefetch(path)}
-        >
-          Refetch
-        </button>
-      )}
-    </span>
+    <button
+      type="button"
+      className="app-button app-button-sm app-button-ghost"
+      aria-label={`Refetch ${path} from ${record.url}`}
+      onClick={() => void onRefetch(path)}
+    >
+      Refetch
+    </button>
   );
 }
 
@@ -676,11 +783,13 @@ function FirstRun({
   onChart,
   readOnly,
   addData,
+  onAddDatabase,
 }: {
   dataFiles: string[];
   onChart: (path: string) => void;
   readOnly: boolean;
   addData?: () => ReactNode;
+  onAddDatabase?: () => void;
 }) {
   if (readOnly) {
     return (
@@ -710,6 +819,18 @@ function FirstRun({
           Put a CSV or JSON file in this folder. It shows up here as soon as
           it's saved, ready to chart.
         </p>
+        {onAddDatabase && (
+          <>
+            <p>Or read a table or a query from a database.</p>
+            <button
+              type="button"
+              className="app-button app-button-primary"
+              onClick={onAddDatabase}
+            >
+              Add a database
+            </button>
+          </>
+        )}
       </div>
     );
   }

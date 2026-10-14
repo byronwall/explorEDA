@@ -1,0 +1,16 @@
+eda query=monthly
+dashboard "Monthly trends"
+
+view Overview {
+  line @trend title="Revenue by month and region" x=monthly.month color=monthly.region {
+    time.interval=month time.aggregation=sum time.measureField=monthly.revenue
+    time.splitField=monthly.region
+  }
+  pivot @mix title="Revenue by region and category" rows=monthly.region columns=monthly.category {
+    value sum(monthly.revenue) label=Revenue
+  }
+  layout {
+    6: trend
+    5: mix
+  }
+}

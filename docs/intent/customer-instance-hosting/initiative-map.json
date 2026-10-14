@@ -5,7 +5,7 @@
     "slug": "customer-instance-hosting",
     "scale": "program",
     "current_phase": "shape",
-    "last_updated": "2026-10-12",
+    "last_updated": "2026-10-13",
     "summary": "Shape a low-maintenance per-customer runtime and operator lifecycle automation, beginning with two synthetic local instances that use one image and separate identity, secrets, and state.",
     "status": "paused",
     "next_action": "Paused 2026-10-12: seed for runtime-modes. Merge its managed-hosting research into runtime-modes when the paid (managed) mode is shaped."
@@ -37,7 +37,7 @@
       "id": "USR-01",
       "type": "direct-user-source",
       "location": "../../research/database-backed-analysis-2026-10-11/source-notes.md",
-      "anchor": "Explicit request; pages 1\u20133; interpretation boundaries",
+      "anchor": "Explicit request; pages 1–3; interpretation boundaries",
       "authority": "direct intent",
       "notes": "Database-backed exploration, responsive client, and complete snapshots when feasible; technical ideas remain proposals."
     },
@@ -53,7 +53,7 @@
       "id": "RAW-01",
       "type": "research-report",
       "location": "raw/2026-10-11-pro/customer-instance-hosting-research.md",
-      "anchor": "Sections 1\u201313 and 15; provider references in section 14",
+      "anchor": "Sections 1–13 and 15; provider references in section 14",
       "authority": "agent-authored evidence and proposal",
       "notes": "Full Pro report retained as raw research. It recommends Cloud Run, with Render and Cloudflare alternatives; no live proof or deployment was performed."
     },
@@ -61,7 +61,7 @@
       "id": "RAW-02",
       "type": "recommendation-json",
       "location": "raw/2026-10-11-pro/customer-instance-hosting-recommendations.json",
-      "anchor": "H01\u2013H20; P01\u2013P09; cost_model and unresolved_choices",
+      "anchor": "H01–H20; P01–P09; cost_model and unresolved_choices",
       "authority": "agent-authored recommendations",
       "notes": "All recommendations are dispositioned in evidence/recommendation-review.md."
     },
@@ -441,6 +441,13 @@
       "event": "status-change",
       "summary": "Paused on Byron's direction: this was a starter seed for the runtime-modes program. Its research on where to host managed versions merges into runtime-modes at the managed-server stage.",
       "status": "paused"
+    },
+    {
+      "date": "2026-10-13",
+      "action": "Scope note",
+      "reason": "Database-adapters scope questions (round 3): stays paused under the managed mode; database-adapters targets CLI and self-hosted.",
+      "status": "paused",
+      "evidence": "../database-adapters/initiative-map.json question_rounds"
     }
   ],
   "closure": null

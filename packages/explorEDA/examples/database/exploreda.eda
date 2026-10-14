@@ -1,0 +1,16 @@
+project @shop
+
+connection @shop driver=sqlite path=data/shop.db
+
+source @orders key=orderId db=shop table=orders
+
+source @customers key=customerId db=shop table=customers
+
+source @returns key=returnId db=shop sql="select r.returnId, r.orderId, r.reason, r.refunded, r.returnedAt, o.channel, o.amount from returns r join orders o using (orderId)"
+
+relate @order-customer orders.customerId -> customers.customerId
+
+query @order-lines "Orders with customers" glyph=◆ {
+  source orders
+  lookup customer via=order-customer
+}
