@@ -1,0 +1,52 @@
+dashboard "Penguin field notes"
+grid columns=12 rowHeight=100
+field bill_length_mm label="Bill length (mm)"
+field bill_depth_mm label="Bill depth (mm)"
+field flipper_length_mm label="Flipper length (mm)"
+field body_mass_g label="Body mass (g)"
+scale @species field=species map=Adelie:#3479a8,Chinstrap:#c77a45,Gentoo:#4b9688
+
+scatter @size x=flipper_length_mm y=body_mass_g color=species colorScale=species
+scatter @bill x=bill_length_mm y=bill_depth_mm color=species colorScale=species
+row species colorScale=species
+row island
+boxplot body_mass_g group=species
+hist flipper_length_mm
+table @all
+parallel @par color=species colorScale=species {
+  axis bill_length_mm
+  axis bill_depth_mm
+  axis flipper_length_mm
+  axis body_mass_g
+  axis island
+}
+
+view "Penguin field notes" {
+  layout {
+    4: size size species island
+    4: bill boxplot flipper_length_mm
+    4: all
+    4: par
+  }
+}
+
+view "Gentoo on Biscoe" {
+  species select.species=Gentoo
+  island select.island=Biscoe
+  layout {
+    4: species island size
+    4: all
+  }
+}
+
+view "Field report" {
+  theme newsprint
+  size title="Heavier penguins have longer flippers" subtitle="Body mass against flipper length" note="Palmer Station LTER; Gorman, Williams and Fraser (2014)"
+  species title="Adelie outnumber the rest" subtitle="Penguins counted by species"
+  bill title="Bill shape separates the species" subtitle="Bill length against bill depth"
+  boxplot title="Gentoo are the heaviest" subtitle="Body mass by species"
+  layout {
+    5: size:7 species:5
+    5: bill:7 boxplot:5
+  }
+}

@@ -6,21 +6,45 @@ import {
   compileViews,
   exportDocument,
   exportViews,
+  normalizeDashboard,
   type SavedDataStructure,
 } from "exploreda";
 import { evaluateAnalysisQuery } from "exploreda/analysis";
 import { readTableText } from "exploreda/readers";
 import { examples } from "./demos/examples";
 
-/** The saved view without its timestamps. */
-function meaning(settings: SavedDataStructure) {
+const GENERATED_ID = /^[0-9a-f]{8}-[0-9a-f-]{27}$/;
+
+/**
+ * Text names every chart. A chart saved with a generated ID comes back under
+ * its text name, so compare it by position under the saved ID.
+ */
+function withSavedIds(
+  rebuilt: SavedDataStructure,
+  saved: SavedDataStructure
+): SavedDataStructure {
+  return {
+    ...rebuilt,
+    charts: rebuilt.charts.map((chart, index) => {
+      const id = saved.charts[index]?.id;
+      return id && GENERATED_ID.test(id) ? { ...chart, id } : chart;
+    }),
+  };
+}
+
+/**
+ * The saved view without its timestamps. Charts compare in normalized form:
+ * a setting left out draws as its default, so text leaves it out too.
+ */
+function meaning(saved: SavedDataStructure) {
+  const settings = normalizeDashboard(saved);
   return {
     ...settings,
     metadata: { ...settings.metadata, createdAt: "", modifiedAt: "" },
     // Generated chart IDs carry no meaning; named ones must survive.
     charts: settings.charts.map((chart) => ({
       ...chart,
-      id: /^[0-9a-f]{8}-[0-9a-f-]{27}$/.test(chart.id) ? "" : chart.id,
+      id: GENERATED_ID.test(chart.id) ? "" : chart.id,
     })),
     fieldSettings: settings.fieldSettings ?? {},
     aggregates: settings.aggregates ?? [],
@@ -66,7 +90,9 @@ describe("dashboard text round trip", () => {
     expect(
       rebuilt.diagnostics.filter((item) => item.effect !== "rows-missing")
     ).toEqual([]);
-    expect(meaning(rebuilt.settings)).toEqual(meaning(view.savedData));
+    expect(meaning(withSavedIds(rebuilt.settings, view.savedData))).toEqual(
+      meaning(view.savedData)
+    );
   });
 });
 
@@ -100,9 +126,11 @@ describe("all views as one text", () => {
       expect(rebuilt.views.map((view) => view.name)).toEqual(
         tabs.map((tab) => tab.name)
       );
-      expect(rebuilt.views.map((view) => meaning(view.settings))).toEqual(
-        tabs.map((tab) => meaning(tab.settings))
-      );
+      expect(
+        rebuilt.views.map((view, index) =>
+          meaning(withSavedIds(view.settings, tabs[index]!.settings))
+        )
+      ).toEqual(tabs.map((tab) => meaning(tab.settings)));
     }
   );
 });

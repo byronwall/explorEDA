@@ -1,0 +1,458 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "Compact DSL redesign",
+    "slug": "compact-dsl-redesign",
+    "scale": "capability",
+    "current_phase": "execution",
+    "last_updated": "2026-10-12",
+    "summary": "Replace dashboard text with a schema-driven outline language: defaults-aware export, one vocabulary, nested named composition nodes, annotations as children, define-once charts placed in views, and a layout block. Agent-written, human-reviewed; no backward compatibility.",
+    "status": "active",
+    "next_action": "Byron reviews and merges the stack: #334 → #336 → #343 → #352 → #357 → #360. Open product follow-ups: notes aimed at one series in a frame; point show= for both ends."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-11"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "current",
+      "updated_at": "2026-10-11"
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-11"
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "current",
+      "updated_at": "2026-10-11"
+    }
+  },
+  "sources": [
+    {
+      "id": "s-request",
+      "type": "user-request",
+      "location": "chat 2026-10-11",
+      "anchor": "Run the intent process ... compact DSL ... composed stuff is terrible ... versatile, checkable, expressive and terse ... agent written and human reviewed",
+      "authority": "direct"
+    },
+    {
+      "id": "s-corpus",
+      "type": "repository-evidence",
+      "location": "apps/demo/src/demos/examples.ts via exportDocument at f01ff0f",
+      "anchor": "57 examples, 5,031 lines, 7,474 pairs; ~2,230 default-noise pairs; ~3,310 composition.* pairs; 29 compositions",
+      "authority": "observed"
+    },
+    {
+      "id": "s-export",
+      "type": "code",
+      "location": "packages/explorEDA/src/lib/dsl/export.ts",
+      "anchor": "exportParts diffs each chart against compileDocument(skeleton of head lines), not creation defaults; wrap() packs pairs into 64 columns",
+      "authority": "observed"
+    },
+    {
+      "id": "s-reference",
+      "type": "code",
+      "location": "packages/explorEDA/src/lib/dsl/describe.ts",
+      "anchor": "DSL_REFERENCE teaches x.title/x.min/bins while export writes xAxisLabel/xAxis.min/binCount",
+      "authority": "observed"
+    },
+    {
+      "id": "s-paths",
+      "type": "code",
+      "location": "packages/explorEDA/src/lib/dsl/paths.ts",
+      "anchor": "flat path encoding: indexes, []=, {}=, unset, null",
+      "authority": "observed"
+    },
+    {
+      "id": "s-composition-types",
+      "type": "code",
+      "location": "packages/explorEDA/src/components/charts/Composition/compositionTypes.ts",
+      "anchor": "elements (text, unit, guide, annotation, legend), marks (strip, point, path, span, band, summary, stack, ...), scales (position, value, numeric), calculations, overrides",
+      "authority": "observed"
+    },
+    {
+      "id": "s-raw",
+      "type": "evidence-folder",
+      "location": "docs/intent/compact-dsl-redesign/raw/",
+      "anchor": "six current exports and six hand conversions",
+      "authority": "derived"
+    },
+    {
+      "id": "s-proof",
+      "type": "experiment",
+      "location": "docs/intent/compact-dsl-redesign/raw/proof/",
+      "anchor": "results.md, measure-corpus.json, agent-drafts/",
+      "authority": "observed"
+    },
+    {
+      "id": "s-house-style",
+      "type": "code",
+      "location": "apps/demo/src/demos/dashboardSettings.ts",
+      "anchor": "base margin 16/24/44/62, yGridLines 4, row 22/36",
+      "authority": "observed"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "c-review",
+        "type": "outcome",
+        "statement": "Text must be readable by a human reviewer: every line carries meaning.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "now",
+        "sources": [
+          "s-request"
+        ]
+      },
+      {
+        "id": "c-composition",
+        "type": "outcome",
+        "statement": "Composed graphics must have a first-class nested form; current composition text is unacceptable.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "now",
+        "sources": [
+          "s-request",
+          "s-corpus"
+        ]
+      },
+      {
+        "id": "c-checkable",
+        "type": "requirement",
+        "statement": "The language must be checkable: schema validation, precise diagnostics, exact round trips.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "now",
+        "sources": [
+          "s-request"
+        ]
+      },
+      {
+        "id": "c-terse",
+        "type": "requirement",
+        "statement": "Expressive and terse; agent written, human reviewed or edited.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "now",
+        "sources": [
+          "s-request"
+        ]
+      },
+      {
+        "id": "c-break",
+        "type": "constraint",
+        "statement": "No backward compatibility required; existing syntax may be replaced.",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "now",
+        "sources": [
+          "s-request"
+        ]
+      },
+      {
+        "id": "c-one-source",
+        "type": "derived-requirement",
+        "statement": "One schema drives compile, export, validation, and reference so vocabulary cannot split again.",
+        "commitment": "derived",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "now",
+        "sources": [
+          "s-reference"
+        ]
+      },
+      {
+        "id": "c-formulas",
+        "type": "boundary",
+        "statement": "Calculation formulas keep their existing expression syntax.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "now",
+        "sources": [
+          "s-corpus"
+        ]
+      }
+    ],
+    "themes": [
+      "default leakage",
+      "flat index paths",
+      "split vocabulary",
+      "cross-view repetition",
+      "storage encodings in text",
+      "composition has no grammar"
+    ],
+    "conflicts": [],
+    "human_questions": []
+  },
+  "brainstorm": {
+    "status": "complete",
+    "requested_count": 10,
+    "options": [
+      {
+        "id": "o1",
+        "name": "Export defaults fix",
+        "premise": "Diff against creation defaults; keep syntax."
+      },
+      {
+        "id": "o2",
+        "name": "Schema registry",
+        "premise": "One per-type key table drives everything."
+      },
+      {
+        "id": "o3",
+        "name": "Indented outline",
+        "premise": "Children by indentation; lists as repeated nodes."
+      },
+      {
+        "id": "o4",
+        "name": "KDL",
+        "premise": "Standard node language with braces."
+      },
+      {
+        "id": "o5",
+        "name": "YAML + JSON Schema",
+        "premise": "Serialize saved structure as YAML."
+      },
+      {
+        "id": "o6",
+        "name": "TypeScript builder",
+        "premise": "Code API checked by tsc."
+      },
+      {
+        "id": "o7",
+        "name": "Encoding heads",
+        "premise": "Grammar-of-graphics one-liners."
+      },
+      {
+        "id": "o8",
+        "name": "ASCII layout",
+        "premise": "Rows of name:width replace at=."
+      },
+      {
+        "id": "o9",
+        "name": "Composition sublanguage",
+        "premise": "Named nested units, marks, legends, notes; inferred scales."
+      },
+      {
+        "id": "o10",
+        "name": "Define once, place in views",
+        "premise": "Top-level charts; views are layout + overrides."
+      }
+    ],
+    "selected_option": "hybrid: o2+o3(brace form, per o4 structure)+o9+o10+o8(matrix)+at=, o1 first, o7 aggregate calls"
+  },
+  "shape": {
+    "status": "current",
+    "appetite": "Full language replacement across every chart type and composition node, with all 57 examples round-tripping; rewritten in place.",
+    "problem": "Exported dashboard text is ~30% defaults and ~44% flat composition paths; vocabulary is split; views repeat charts; composition has no grammar.",
+    "recommended_shape": "Schema-registry-driven outline language with defaults-aware export, nested named composition nodes, chart-child annotations, define-once charts placed by view layout blocks, readable value forms, a set escape hatch, and fmt/check/reference tooling.",
+    "success_moves": [
+      "Ship the defaults-aware export on the current syntax first: an independent ~30% reduction that also builds the registry's default table.",
+      "Make the registry the single source for compile, export, check, reference, and highlighting so docs cannot drift.",
+      "Use the 57-example round trip plus fmt idempotence (format(export(compile(t))) == format(t)) as the gate for every inference rule.",
+      "Keep a `set path=value` escape hatch so the language is complete before the registry is; check reports each use as a gap.",
+      "Test agent authorability with a cold agent and a one-page reference before building the parser; fall back to braces if indentation fails.",
+      "Convert composition last among grammars but prove its hardest example (middle-class-jobs) by hand in the first proof."
+    ],
+    "first_proof": {
+      "try": "Registry for scatter/row/hist + defaults-aware export over the corpus; cold agent writes 6 example dashboards (2 compositions) from a one-page draft reference.",
+      "observe": "Pair reduction for those types with 57/57 round trips; first-pass clean drafts; composition settings needing set.",
+      "decide": ">=4/6 clean brace-syntax drafts and set <5% of composition lines proceeds; otherwise widen the composition grammar first. If the matrix covers under ~80% of example layouts, make at= the export default.",
+      "result": {
+        "date": "2026-10-11",
+        "outcome": "passed",
+        "evidence": "raw/proof/results.md",
+        "pairs": {
+          "today": 7431,
+          "normalized": 6728,
+          "house_style_as_defaults": 5185,
+          "composition": 3308
+        },
+        "round_trip_after_normalization": "58/58 views",
+        "matrix_coverage": {
+          "even_split_max6": "48/58",
+          "max12": "58/58",
+          "misses": "9/10 are 7/5 splits"
+        },
+        "cold_agent": {
+          "clean": "4/6",
+          "failures": [
+            "formula language undocumented",
+            "top-level placement of defined charts undefined"
+          ],
+          "set_in_composition": "0 of ~60 lines"
+        }
+      },
+      "question": "Can agents write the brace syntax and composition grammar from a short reference, and how much text does the registry and matrix remove?",
+      "artifact": "raw/proof/ (results.md, measure-corpus.json, agent-drafts/)",
+      "decision_rule": ">=4/6 clean brace-syntax drafts and set <5% of composition lines proceeds; otherwise widen the composition grammar first. If the matrix covers under ~80% of example layouts, make at= the export default."
+    },
+    "rabbit_holes": [
+      "Inference that cannot be reversed exactly (implicit scales, theme text styles, label-derived axis titles).",
+      "Implicit names colliding or changing when a field is renamed.",
+      "Splitting shared vs per-view chart state on export.",
+      "Matrix cannot express uneven splits such as 7/5; those charts fall back to at=.",
+      "Brace recovery: a missing } must not swallow the rest of the file.",
+      "House style differs from library defaults; 21% of exported pairs depend on a product decision."
+    ],
+    "open_decisions": [],
+    "decisions": [
+      "Braces only for nesting; whitespace never carries meaning; fmt re-indents. Indentation is not a second syntax (Byron, 2026-10-11).",
+      "Placement by exactly one of at=x,y,w,h (always exact) or a layout matrix whose lines split 12 columns evenly; export writes the matrix where exact, at= otherwise (Byron, 2026-10-11)."
+    ]
+  },
+  "implementation": {
+    "status": "current",
+    "repository_snapshot": {
+      "root": "packages/explorEDA/src/lib/dsl",
+      "revision": "f01ff0f",
+      "worktree_status": "clean",
+      "subsystems": [
+        "lib/dsl (parse, compile, export, paths, settingKeys, describe, highlight, views)",
+        "cli/exploredaDsl.ts",
+        "apps/demo DashboardTextPanel and dashboard-text docs page",
+        "components/charts/Composition",
+        "apps/demo/src/demos/analyses (7 authored texts)",
+        "apps/demo/src/docs/reference (settingDescriptions, SettingsReference)",
+        "lib/annotations/persistence.test.ts"
+      ],
+      "test_commands": [
+        "pnpm --filter exploreda exec vitest run src/lib/dsl",
+        "pnpm --filter demo exec vitest run src/dashboardText.test.ts"
+      ],
+      "deployment_surfaces": []
+    },
+    "dependencies": [],
+    "fast_local_loop": {
+      "description": "vitest over 58 example views + 7 analyses; committed corpus size ratchet",
+      "commands": [
+        "pnpm --filter exploreda exec vitest run src/lib/dsl",
+        "pnpm --filter demo exec vitest run src/dashboardText.test.ts src/demos/analyses"
+      ],
+      "command": "pnpm --filter exploreda exec vitest run src/lib/dsl && pnpm --filter demo exec vitest run src/dashboardText.test.ts src/demos/analyses",
+      "failure_injection": "Malformed-text fixtures (missing braces, mixed indentation, unknown keys, double placement) asserted against diagnostics."
+    },
+    "milestones": [
+      {
+        "id": "m1",
+        "title": "Smaller exports from a schema registry",
+        "outcome": "Registry drives export/validation/reference; normalized single-vocabulary export; house style per D1; size ratchet.",
+        "dependencies_introduced": [],
+        "proof": "All examples round-trip; pairs <=6,730 (<=5,200 with D1=A).",
+        "valid_intermediate_state": "Complete language that round-trips every example; set covers settings without grammar yet.",
+        "rollback": "Revert the milestone PR; no users or saved text depend on the old syntax.",
+        "status": "completed",
+        "evidence": [
+          "byronwall/explorEDA#336; schema.test.ts"
+        ]
+      },
+      {
+        "id": "m2",
+        "title": "Brace syntax, fmt, and layout",
+        "outcome": "New parser/AST/printer; layout matrix + at=; override lines; analyses and fixtures migrated; composition via set.",
+        "dependencies_introduced": [],
+        "proof": "58 views + 7 analyses round-trip; fmt idempotent; mis-indented paste parses identically.",
+        "valid_intermediate_state": "Complete language that round-trips every example; set covers settings without grammar yet.",
+        "rollback": "Revert the milestone PR; no users or saved text depend on the old syntax.",
+        "status": "completed",
+        "evidence": [
+          "byronwall/explorEDA#343; parse/layout/format tests; analyses snapshot identical"
+        ]
+      },
+      {
+        "id": "m3",
+        "title": "Composition grammar",
+        "outcome": "Named nodes, refs, inferred scales/styles/calcs with exact inverses.",
+        "dependencies_introduced": [],
+        "proof": "29 compositions round-trip with zero set lines; composition pairs -40%.",
+        "valid_intermediate_state": "Complete language that round-trips every example; set covers settings without grammar yet.",
+        "rollback": "Revert the milestone PR; no users or saved text depend on the old syntax.",
+        "status": "completed",
+        "evidence": [
+          "byronwall/explorEDA#352; 29/29 compositions round-trip"
+        ]
+      },
+      {
+        "id": "m4",
+        "title": "Readable values and annotations",
+        "outcome": "ISO dates, ranges, color maps, aggregate calls, annotation children.",
+        "dependencies_introduced": [],
+        "proof": "No epoch, index, or []= in exported corpus; annotation persistence test passes.",
+        "valid_intermediate_state": "Complete language that round-trips every example; set covers settings without grammar yet.",
+        "rollback": "Revert the milestone PR; no users or saved text depend on the old syntax.",
+        "status": "completed",
+        "evidence": [
+          "byronwall/explorEDA#357; values.test.ts; annotation persistence test"
+        ]
+      },
+      {
+        "id": "m5",
+        "title": "Define once and generated reference",
+        "outcome": "Top-level charts with view overrides; generated reference incl. formula grammar; cold-agent re-run.",
+        "dependencies_introduced": [],
+        "proof": "6/6 cold drafts pass exploreda-dsl check.",
+        "valid_intermediate_state": "Complete language that round-trips every example; set covers settings without grammar yet.",
+        "rollback": "Revert the milestone PR; no users or saved text depend on the old syntax.",
+        "status": "completed",
+        "evidence": [
+          "byronwall/explorEDA#360; views/composition/values tests; cold-agent runs 2-4 in raw/proof/results.md"
+        ]
+      }
+    ],
+    "cut_line": [
+      "Editor/LSP completion",
+      "Notebook sync",
+      "Moving example axis titles into field labels (data cleanup)"
+    ],
+    "open_decisions": [],
+    "decisions": [
+      {
+        "id": "D1",
+        "decision": "Adopt the demo house style as library chart defaults",
+        "by": "Byron",
+        "date": "2026-10-12"
+      },
+      {
+        "id": "D2",
+        "decision": "Allow name:w widths in layout matrix cells",
+        "by": "Byron",
+        "date": "2026-10-12"
+      }
+    ]
+  },
+  "history": [
+    {
+      "date": "2026-10-11",
+      "event": "Initiative captured; corpus exported and measured; 10 options compared; hybrid shape drafted.",
+      "status": "planned"
+    },
+    {
+      "date": "2026-10-11",
+      "event": "Byron chose braces over indentation and kept both at= and a layout matrix; shape brief and proposed examples updated.",
+      "status": "planned"
+    },
+    {
+      "date": "2026-10-11",
+      "event": "First proof passed (4/6 clean cold drafts, 0 composition set lines, 83% matrix coverage, 58/58 round trip after normalization). Implementation plan drafted with 5 milestones.",
+      "status": "planned"
+    },
+    {
+      "date": "2026-10-12",
+      "event": "Byron chose D1 (house style as defaults) and D2 (matrix widths) and asked for every milestone as stacked PRs. M1 started.",
+      "status": "active"
+    }
+  ],
+  "closure": null
+}

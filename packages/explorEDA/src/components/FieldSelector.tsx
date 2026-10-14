@@ -25,9 +25,6 @@ export function FieldSelector({
 }: FieldSelectorProps) {
   const getColumnNames = useDataLayer((state) => state.getColumnNames);
   const availableFields = fields ?? getColumnNames();
-  const calculations = useDataLayer((state) => state.calculations);
-  const fieldProfiles = useDataLayer((state) => state.fieldProfiles);
-  const getColumnData = useDataLayer((state) => state.getColumnData);
   const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
 
   const fieldOptions = availableFields.map((field) => ({
@@ -55,30 +52,7 @@ export function FieldSelector({
             onChange={(option) => onChange(option?.value || value)}
             optionToString={(option) => getFieldLabel(option.value)}
             aria-label={label || placeholder}
-            optionToNode={(option) => (
-              <span className="flex min-w-0 items-center gap-1">
-                {calculations.some(
-                  (calc) => calc.resultColumnName === option.value
-                ) && (
-                  <span
-                    className="eda-calc-symbol"
-                    aria-label="Calculated field"
-                  >
-                    ƒx
-                  </span>
-                )}
-                <FieldMetadata
-                  profile={resolveFieldProfile(
-                    option.value,
-                    fieldProfiles,
-                    getColumnData
-                  )}
-                  label={getFieldLabel(option.value)}
-                  compact
-                  tooltipSide={window.innerWidth < 700 ? "top" : "left"}
-                />
-              </span>
-            )}
+            optionToNode={(option) => <FieldOptionLabel field={option.value} />}
             placeholder={placeholder}
           />
         </div>
@@ -96,5 +70,28 @@ export function FieldSelector({
         </Button>
       )}
     </div>
+  );
+}
+
+/** A field in a picker list: its calculated mark, name, and type. */
+export function FieldOptionLabel({ field }: { field: string }) {
+  const calculations = useDataLayer((state) => state.calculations);
+  const fieldProfiles = useDataLayer((state) => state.fieldProfiles);
+  const getColumnData = useDataLayer((state) => state.getColumnData);
+  const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
+  return (
+    <span className="flex min-w-0 items-center gap-1">
+      {calculations.some((calc) => calc.resultColumnName === field) && (
+        <span className="eda-calc-symbol" aria-label="Calculated field">
+          ƒx
+        </span>
+      )}
+      <FieldMetadata
+        profile={resolveFieldProfile(field, fieldProfiles, getColumnData)}
+        label={getFieldLabel(field)}
+        compact
+        tooltipSide={window.innerWidth < 700 ? "top" : "left"}
+      />
+    </span>
   );
 }

@@ -49,7 +49,7 @@ describe("composition text", () => {
       x: 32,
       y: 32,
       width: 896,
-      height: 33,
+      height: 30,
     });
   });
 });

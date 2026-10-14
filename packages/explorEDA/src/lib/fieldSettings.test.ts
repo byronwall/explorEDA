@@ -75,6 +75,25 @@ describe("field settings", () => {
     ).toMatch(/Jan 10, 2025.*11:30/);
   });
 
+  it("shows converted dates as the date and keeps real times", () => {
+    const date = { type: "datetime" as const };
+    const stored = convertFieldValue("2025-02-15", "datetime").value;
+    expect(formatFieldValue("at", stored, date)).toBe("2025-02-15");
+    expect(
+      formatFieldValue("at", "2025-02-15T13:45:00.000Z", date)
+    ).toBe("2025-02-15 13:45");
+    expect(
+      formatFieldValue("at", "2025-02-15T13:45:07.000Z", date)
+    ).toBe("2025-02-15 13:45:07");
+    expect(
+      formatFieldValue("at", "2025-02-15T13:45:07.250Z", date)
+    ).toBe("2025-02-15 13:45:07.250");
+    expect(formatFieldValue("at", "not a date", date)).toBe("not a date");
+    expect(formatFieldValue("at", "2025-02-15T00:00:00.000Z")).toBe(
+      "2025-02-15T00:00:00.000Z"
+    );
+  });
+
   it("does not preview inferred conversion without an explicit conversion setting", () => {
     const preview = buildConversionPreview(
       "value",

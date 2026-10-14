@@ -50,6 +50,13 @@ function meaning(settings: SavedDataStructure) {
 function roundTrip(settings: SavedDataStructure) {
   const { text, omitted } = exportDocument(settings, { rows });
   const rebuilt = compileDocument(text, { rows });
+  // Text names every chart; a chart saved with a generated ID takes its name.
+  rebuilt.settings.charts.forEach((chart, index) => {
+    const saved = settings.charts[index];
+    if (saved && /^[0-9a-f-]{36}$/.test(saved.id)) {
+      chart.id = saved.id;
+    }
+  });
   return { text, omitted, rebuilt };
 }
 
@@ -134,10 +141,11 @@ field "Order Date" label="Ordered" as=date
 calc margin=(Revenue-Cost)/Revenue
 calc "Net revenue"=Revenue-Cost
 field margin format=percent precision=1
-scatter @fit x=Revenue y=margin color=Channel where."Order Date"=2024-01-01..2024-02-28
-+ regression=polynomial regression.degree=2
+scatter @fit x=Revenue y=margin color=Channel where."Order Date"=2024-01-01..2024-02-28 {
+  regression=polynomial regression.degree=2
+}
 row Channel where.Channel="Store, Mall",null
-metric avg=Revenue select.Units=2..
+metric avg(Revenue) select.Units=2..
 table Revenue,Cost,"Net revenue"`,
       { rows }
     );
@@ -194,12 +202,11 @@ table Revenue,Cost,"Net revenue"`,
       "rows-missing",
     ]);
     expect(meaning(rebuilt.settings)).toEqual(meaning(edited));
-    // Readable text, no JSON blocks: every line is a declaration or a + line.
+    // Readable text, no JSON blocks: braces only open and close bodies.
     expect(text).not.toMatch(/[{[]\s*"|^\s*[{[]/m);
-    expect(text).toContain(
-      "scatter x=Revenue y=margin @fit at=0,0,6,4 color=Channel"
-    );
-    expect(text).toContain("columns.0.width=140");
+    expect(text).toContain("scatter @fit x=Revenue y=margin color=Channel {");
+    expect(text).toMatch(/layout \{\n {2}4: fit Channel\n/);
+    expect(text).toContain("column Revenue width=140");
   });
 
   it("carries the workspace theme and chart subtitles and notes", () => {
@@ -219,7 +226,7 @@ scatter x=Revenue y=Units title="Bigger orders earn more" subtitle="Revenue by u
     });
 
     const { text, rebuilt } = roundTrip(start.settings);
-    expect(text).toContain("theme name=newsprint");
+    expect(text).toContain("theme newsprint");
     expect(meaning(rebuilt.settings)).toEqual(meaning(start.settings));
   });
 
@@ -249,8 +256,8 @@ theme name=newsprnt`,
   it("carries custom colors, grouped summaries, and the Rows view", () => {
     const { settings } = compileDocument(
       `scale @channels field=Channel
-group @byChannel groupField=Channel aggregation=sum measureField=Revenue
-bar Channel aggregateId=byChannel color=Channel
+group @byChannel sum(Revenue) by=Channel
+bar Channel group=byChannel color=Channel
 rows sortBy=Revenue sortDirection=desc where.Units=2..`,
       { rows }
     );
@@ -262,7 +269,7 @@ rows sortBy=Revenue sortDirection=desc where.Units=2..`,
 
     const { text, omitted, rebuilt } = roundTrip(settings);
     expect(omitted).toEqual([]);
-    expect(text).toContain('mapping.0[]=Web,"#000000"');
+    expect(text).toContain("scale @channels field=Channel map=Web:#000000 {");
     expect(rebuilt.settings.colorScales).toEqual(settings.colorScales);
     expect(rebuilt.settings.aggregates).toEqual(settings.aggregates);
     expect(rebuilt.settings.rowsSettings).toEqual(settings.rowsSettings);
@@ -274,9 +281,9 @@ rows sortBy=Revenue sortDirection=desc where.Units=2..`,
 
   it("carries once-per IDs on grouped summaries and metric cards", () => {
     const { settings, diagnostics } = compileDocument(
-      `group @channels groupField=Channel aggregation=count entityField=Units
-bar Channel aggregateId=channels
-metric sum=Revenue entityField=Channel`,
+      `group @channels count by=Channel entityField=Units
+bar Channel group=channels
+metric sum(Revenue) entityField=Channel`,
       { rows }
     );
     expect(diagnostics).toEqual([]);
@@ -295,8 +302,8 @@ metric sum=Revenue entityField=Channel`,
 describe("row rankings in dashboard text", () => {
   it("round-trips a ranked summary with Top N", () => {
     const { settings, diagnostics } = compileDocument(
-      `group @byChannel groupField=Channel aggregation=sum measureField=Revenue
-row Channel aggregateId=byChannel topN=2`,
+      `group @byChannel sum(Revenue) by=Channel
+row Channel group=byChannel topN=2`,
       { rows }
     );
     expect(diagnostics).toEqual([]);
@@ -306,7 +313,7 @@ row Channel aggregateId=byChannel topN=2`,
       topN: 2,
     });
     const { text, rebuilt } = roundTrip(settings);
-    expect(text).toContain("aggregateId=byChannel");
+    expect(text).toContain("group=byChannel");
     expect(text).toContain("topN=2");
     expect(rebuilt.settings.charts[0]).toMatchObject({
       aggregateId: "byChannel",
@@ -316,12 +323,12 @@ row Channel aggregateId=byChannel topN=2`,
 
   it("warns when the summary groups a different field", () => {
     const { diagnostics } = compileDocument(
-      `group @byChannel groupField=Channel aggregation=sum measureField=Revenue
-row Units aggregateId=byChannel`,
+      `group @byChannel sum(Revenue) by=Channel
+row Units group=byChannel`,
       { rows }
     );
     expect(diagnostics.map((item) => item.suggestion)).toEqual([
-      "Write it as row Channel aggregateId=byChannel.",
+      "Write it as row Channel group=byChannel.",
     ]);
   });
 });

@@ -1,6 +1,7 @@
 import { fireEvent, render } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { buildFieldProfile } from "@/lib/fieldProfiles";
+import { formatFieldValue } from "@/lib/fieldSettings";
 import type { datum } from "@/types/ChartTypes";
 import { binValues } from "../utils/statisticsCalculator";
 import {
@@ -64,6 +65,20 @@ describe("summarizeField", () => {
     expect(summarizeField(profile, format)).toMatchObject({
       low: "2024-01-01",
       high: "2024-03-01",
+    });
+  });
+
+  it("reads converted dates without their midnight time", () => {
+    const profile = buildFieldProfile(
+      "orderedAt",
+      column(["2025-09-29T00:00:00.000Z", "2025-02-01T00:00:00.000Z"]),
+      "datetime"
+    );
+    const dates = (value: unknown) =>
+      formatFieldValue("orderedAt", value as datum, { type: "datetime" });
+    expect(summarizeField(profile, dates)).toMatchObject({
+      low: "2025-02-01",
+      high: "2025-09-29",
     });
   });
 

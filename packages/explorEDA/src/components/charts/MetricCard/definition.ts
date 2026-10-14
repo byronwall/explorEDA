@@ -29,7 +29,6 @@ export const metricCardDefinition: ChartDefinition<MetricCardSettings> = {
     field: "",
     aggregation: "count",
     layout,
-    margin: { top: 8, right: 16, bottom: 8, left: 8 },
     filters: [],
   }),
   validateSettings: (settings) =>
