@@ -89,7 +89,7 @@ const CHART_GROUPS: Array<{ label: string; keys: string[] }> = [
     label: "Relationships",
     keys: ["scatter", "scatter-matrix", "3d-scatter", "parallel-coordinates"],
   },
-  { label: "Over time", keys: ["line", "calendar"] },
+  { label: "Over time", keys: ["line", "calendar", "timeline"] },
   { label: "Flow and place", keys: ["sankey", "map"] },
   { label: "Journeys", keys: ["funnel", "retention"] },
   {

@@ -71,6 +71,7 @@ import {
   Donut as DonutIcon,
   ArrowDownWideNarrow as FunnelIcon,
   Grid2x2 as RetentionIcon,
+  ChartGantt as TimelineIcon,
   LayoutGrid as GridIcon,
   Columns3,
   Grid3x3,
@@ -121,6 +122,7 @@ import {
 import {
   productFunnelDashboard,
   productRetentionDashboard,
+  roomBookingsDashboard,
 } from "./journeyDashboards";
 import { worldBankAnalysis } from "./analyses/worldbank";
 import type { ExampleAnalysis } from "./analyses/types";
@@ -201,6 +203,7 @@ const viewNames: Record<string, string> = {
   waterfall: "waterfall",
   funnel: "funnel",
   retention: "retention",
+  timeline: "timeline",
   "data-table": "table",
   heatmap: "heatmap",
   ecdf: "ECDF",
@@ -906,6 +909,17 @@ export const examples: ExampleData[] = [
     icon: RetentionIcon,
     data: "/datasets/product-events.csv",
     savedData: productRetentionDashboard,
+  },
+  {
+    id: "room-bookings",
+    title: "Which rooms are booked, and when",
+    description:
+      "Four weeks of bookings across 12 fictional rooms, one row per booking, with double bookings, cancellations, and holds that have no end yet. Drag across the timeline to keep the bookings that overlap that time, or click a bar to select one booking; the team chart and table follow.",
+    dataset: { rows: "673 bookings", fields: 8, source: "Synthetic" },
+    shows: ["Lanes per room", "Brush a time window", "Open-ended holds"],
+    icon: TimelineIcon,
+    data: "/datasets/room-bookings.csv",
+    savedData: roomBookingsDashboard,
   },
   {
     id: "budget-report",

@@ -146,3 +146,38 @@ export const productRetentionDashboard: SavedDataStructure = {
   gridSettings: grid,
   metadata: metadata("Weekly retention"),
 };
+
+/** Four weeks of room bookings, one lane per room. */
+const bookingTimeline: Chart = {
+  ...base,
+  id: "bookings-timeline",
+  type: "timeline",
+  title: "Harbor and Atlas are held for days at a time",
+  subtitle:
+    "Room bookings, March 2025, colored by status; drag across time to select",
+  field: "room",
+  startField: "start",
+  endField: "end",
+  colorField: "status",
+  layout: layout(0, 0, 12, 6),
+};
+
+export const roomBookingsDashboard: SavedDataStructure = {
+  charts: [
+    bookingTimeline,
+    {
+      ...row("bookings-team", "Bookings by team", "team", layout(0, 6, 4, 4)),
+      xAxisLabel: "Bookings",
+    } as Chart,
+    table(
+      "bookings-rows",
+      "Bookings in view",
+      ["booking_id", "room", "team", "start", "end", "status"],
+      layout(4, 6, 8, 4)
+    ),
+  ],
+  calculations: [],
+  colorScales: [],
+  gridSettings: grid,
+  metadata: metadata("Room bookings"),
+};

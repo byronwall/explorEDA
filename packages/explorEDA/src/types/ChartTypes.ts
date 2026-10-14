@@ -26,6 +26,7 @@ import type { WaterfallSettings } from "@/components/charts/Waterfall/waterfallT
 import type { DonutSettings } from "@/components/charts/Donut/definition";
 import type { FunnelSettings } from "@/components/charts/Funnel/definition";
 import type { RetentionSettings } from "@/components/charts/Retention/definition";
+import type { TimelineSettings } from "@/components/charts/Timeline/definition";
 
 export interface ChartLayout {
   x: number;
@@ -166,7 +167,8 @@ export type ChartSettings =
   | WaterfallSettings
   | DonutSettings
   | FunnelSettings
-  | RetentionSettings;
+  | RetentionSettings
+  | TimelineSettings;
 
 export type ChartType = ChartSettings["type"];
 export type ScatterChartSettings = ScatterPlotSettings;

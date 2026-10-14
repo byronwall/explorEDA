@@ -1,6 +1,7 @@
 import {
   ArrowDownWideNarrow,
   Grid2x2,
+  ChartGantt,
   BarChart3,
   BookOpen,
   CalendarDays,
@@ -400,6 +401,20 @@ export const catalogue: readonly DocsPage[] = [
     chartType: "retention",
     examples: ["product-retention"],
     related: ["funnel", "heatmap"],
+  },
+  {
+    topic: "timeline",
+    thumbnail: "timeline",
+    title: "Timeline",
+    group: "plots",
+    icon: ChartGantt,
+    lede: "Lay out bookings, shifts, or jobs from start to end in lanes, and select a stretch of time to keep what overlaps it.",
+    summary: "Draw each row from its start to its end, one lane per value.",
+    highlights: ["Lanes", "Brush a window", "Open ends"],
+    covers: ["chart:timeline"],
+    chartType: "timeline",
+    examples: ["room-bookings"],
+    related: ["composition", "calendar"],
   },
   {
     topic: "waterfall",

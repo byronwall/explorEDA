@@ -674,6 +674,11 @@ function isChart(value: unknown): boolean {
         (value.windowDays === undefined ||
           (isFiniteNumber(value.windowDays) && value.windowDays > 0))
       );
+    case "timeline":
+      return (
+        typeof value.startField === "string" &&
+        typeof value.endField === "string"
+      );
     case "retention":
       return (
         typeof value.entityField === "string" &&

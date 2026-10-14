@@ -142,6 +142,12 @@ const TRACE_COPY = {
       "Alt-click a step to see how it was counted, who dropped off, and the events that counted.",
     ariaLabel: "Funnel trace inspector",
   },
+  timeline: {
+    heading: "Timeline trace",
+    emptyText:
+      "Alt-click a bar to see its start, end, and whether it overlaps the selected window.",
+    ariaLabel: "Timeline trace inspector",
+  },
   retention: {
     heading: "Retention trace",
     emptyText:

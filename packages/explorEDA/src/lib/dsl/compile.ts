@@ -307,6 +307,7 @@ const DEFAULT_SIZES: Record<string, { w: number; h: number }> = {
   donut: { w: 5, h: 4 },
   funnel: { w: 6, h: 4 },
   retention: { w: 7, h: 6 },
+  timeline: { w: 12, h: 6 },
   "data-table": { w: 12, h: 5 },
   summary: { w: 12, h: 5 },
 };

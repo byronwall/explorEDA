@@ -70,7 +70,7 @@ Expected: 4 → 3 → 2
 
 **Appetite:** Three charts tonight, one stacked PR each. No new analysis-step kinds and no filter-model changes.
 
-**Key decision:** Preparation lives in a pure `*Plan.ts` per chart, following the Sankey pattern, and is tested against hand fixtures before any rendering. A selection is stored on the chart (a stage index or a cohort cell). Its filter function rebuilds the entity set from column getters, so the selection survives a save and restore without storing long id lists.
+**Key decision:** Preparation lives in a pure `*Plan.ts` per chart, following the Sankey pattern, and is tested against hand fixtures before any rendering. Every selection is an ordinary filter, so chips, Clear filters, the Filters tab, and Dashboard text work unchanged. A funnel step is a value filter on the event field, which the funnel's filter function reads as "entities that reached this step" over all rows. A retention cell is a value filter listing its entities. A timeline window is two date-range filters that together mean overlap.
 
 **Boundary:** Not a scheduling engine, not event ingestion, and no change to Composition span marks. Retention with partial periods leaves cells blank and never extrapolates them.
 

@@ -318,6 +318,16 @@ export const coverageFeatures = [
     chartType: "retention",
   },
   {
+    id: "chart:timeline",
+    label: "Timeline",
+    family: "Chart types",
+    description:
+      "Lay out start-to-end intervals in lanes, and brush a time window to keep every overlapping row.",
+    required: true,
+    status: "supported",
+    chartType: "timeline",
+  },
+  {
     id: "chart:waterfall",
     label: "Waterfall",
     family: "Chart types",
@@ -1155,6 +1165,17 @@ export const exampleCoverage = [
       "Group users by signup week, show the share active in each week after, and select a cell to see everything its users did.",
     features: {
       "chart:retention": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+      "interaction:cross-filter": "shown",
+    },
+  },
+  {
+    exampleId: "room-bookings",
+    intent:
+      "Lay out four weeks of room bookings in lanes, brush a time window to keep overlapping bookings, and select one booking.",
+    features: {
+      "chart:timeline": "shown",
       "chart:row": "shown",
       "chart:data-table": "shown",
       "interaction:cross-filter": "shown",
