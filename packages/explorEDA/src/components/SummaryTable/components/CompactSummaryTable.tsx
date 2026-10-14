@@ -42,6 +42,7 @@ const width = (values: Array<string | undefined>) =>
 /**
  * Size the reading tracks from the longest value in each, so ranges, medians,
  * and shares line up down the table instead of following each row's text.
+ * The full range width also decides when a range moves under its sparkline.
  */
 function readingColumns(summaries: Array<FieldSummary | undefined>) {
   const present = summaries.filter(
@@ -56,6 +57,7 @@ function readingColumns(summaries: Array<FieldSummary | undefined>) {
   return {
     "--eda-summary-low": `${low}ch`,
     "--eda-summary-high": `${high}ch`,
+    "--eda-summary-range": `${low + (high > 0 ? 2 : 0) + high}ch`,
     "--eda-summary-stat-label": `${width(present.map((summary) => summary.statLabel))}ch`,
     "--eda-summary-stat": `${width(present.map((summary) => summary.stat))}ch`,
   } as CSSProperties;
@@ -238,7 +240,11 @@ export function CompactSummaryTable({
                   <div className="eda-summary-profile">
                     {summary.graphic}
                     <span className="sr-only">{summary.description}</span>
-                    <span aria-hidden="true" className="eda-summary-reading">
+                    <span
+                      aria-hidden="true"
+                      className="eda-summary-reading"
+                      data-label={summary.label !== undefined || undefined}
+                    >
                       <span className="eda-summary-range">
                         {summary.label !== undefined ? (
                           <span className="eda-summary-label">

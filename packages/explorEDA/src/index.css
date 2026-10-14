@@ -3291,11 +3291,15 @@ html {
 .eda-summary-values {
   overflow: hidden;
 }
+/* A reading sits beside its sparkline while the table's full range width
+   fits there, and moves under the sparkline when it does not. */
 .eda-summary-profile {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 12px;
+  gap: 2px 12px;
   min-width: 0;
+  padding: 4px 0;
 }
 .eda-summary-spark {
   flex: 0 0 96px;
@@ -3322,9 +3326,11 @@ html {
 }
 /* Readings share track widths sized from the longest value in the table, so
    ranges and statistics line up by column. A statistic that does not fit
-   wraps onto the hidden second line instead of being clipped. */
+   wraps onto the hidden second line instead of being clipped, and in a tight
+   cell the range tracks shrink to their own values. */
 .eda-summary-reading {
   display: flex;
+  flex: 1 1 var(--eda-summary-range, auto);
   flex-wrap: wrap;
   align-items: baseline;
   column-gap: 12px;
@@ -3334,13 +3340,16 @@ html {
   line-height: 16px;
   white-space: nowrap;
 }
+/* Top values truncate, so a short name stays beside its sparkline. */
+.eda-summary-reading[data-label] {
+  flex-basis: 8ch;
+}
 .eda-summary-range {
   display: grid;
-  flex: none;
-  grid-template-columns: var(--eda-summary-low, auto) 2ch var(
-      --eda-summary-high,
-      auto
-    );
+  flex: 0 1 auto;
+  grid-template-columns:
+    minmax(auto, var(--eda-summary-low, auto)) 2ch
+    minmax(auto, var(--eda-summary-high, auto));
   max-width: 100%;
 }
 .eda-summary-stat-group {
@@ -3835,10 +3844,13 @@ html {
     visibility: hidden;
   }
   .eda-summary-profile {
-    flex-direction: column;
     align-items: flex-start;
     gap: 2px;
     padding: 6px 0;
+  }
+  .eda-summary-reading,
+  .eda-summary-reading[data-label] {
+    flex-basis: 100%;
   }
   .eda-summary-spark {
     flex-basis: auto;
