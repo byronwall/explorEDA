@@ -43,6 +43,7 @@ export const CHART_QUESTIONS: readonly ChartQuestion[] = [
     picks: [
       ["line", "A measure per day, week, month, or year, by series."],
       ["calendar", "Daily values laid out by week, to see rhythms."],
+      ["funnel", "How many reach each step of an event log, in order."],
     ],
   },
   {

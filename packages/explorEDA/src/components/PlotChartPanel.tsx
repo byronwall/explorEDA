@@ -136,6 +136,12 @@ const TRACE_COPY = {
       "Alt-click a slice to see its share of the whole and its source rows.",
     ariaLabel: "Donut trace inspector",
   },
+  funnel: {
+    heading: "Funnel trace",
+    emptyText:
+      "Alt-click a step to see how it was counted, who dropped off, and the events that counted.",
+    ariaLabel: "Funnel trace inspector",
+  },
   waterfall: {
     heading: "Waterfall trace",
     emptyText:

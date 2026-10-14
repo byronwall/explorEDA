@@ -29,6 +29,7 @@ import type { ContourTrace } from "../ScatterPlot/contourPlan";
 import type { CompositionTrace } from "../Composition/compositionTrace";
 import type { WaterfallTrace } from "../Waterfall/WaterfallTraceBody";
 import type { DonutTrace } from "../Donut/DonutTraceBody";
+import type { FunnelTrace } from "../Funnel/FunnelTraceBody";
 
 /** A selected object. The owner's source resolves it against its current plan. */
 export interface TraceSelection {
@@ -129,6 +130,7 @@ export type ChartTrace =
   | MetricCardTrace
   | WaterfallTrace
   | DonutTrace
+  | FunnelTrace
   | TimeSeriesTrace
   | GuideTrace
   | TitleTrace

@@ -4,17 +4,17 @@
     "title": "Funnels, retention, and interval schedules",
     "slug": "domain-analysis-views",
     "scale": "feature",
-    "current_phase": "intent",
-    "last_updated": "2026-10-09",
-    "summary": "Certain questions require a domain model beyond generic chart fields.",
-    "status": "planned",
-    "next_action": "Choose one real domain and a hand-sized fixture. Write independent expected stage counts, cohort rates, or overlap results. Decide whether existing views with explicit preparation suffice before adding a dedicated chart."
+    "current_phase": "execution",
+    "last_updated": "2026-10-13",
+    "summary": "Add Funnel, Retention, and interactive Timeline charts whose domain preparation is tested and visible in the trace.",
+    "status": "active",
+    "next_action": "Build Milestone 2: Retention on product-events.csv"
   },
   "artifacts": {
     "intent_brief": {
       "path": "intent-brief.md",
       "status": "current",
-      "updated_at": "2026-10-06"
+      "updated_at": "2026-10-13"
     },
     "brainstorm": {
       "path": "brainstorm.md",
@@ -23,13 +23,13 @@
     },
     "shape_brief": {
       "path": "shape-brief.md",
-      "status": "not-created",
-      "updated_at": null
+      "status": "current",
+      "updated_at": "2026-10-13"
     },
     "implementation_plan": {
       "path": "implementation-plan.md",
-      "status": "not-created",
-      "updated_at": null
+      "status": "current",
+      "updated_at": "2026-10-13"
     }
   },
   "sources": [
@@ -81,6 +81,27 @@
       "location": "../comparison-opportunities/resources/product-feedback-2026-10-06.json",
       "anchor": "Annotation 3: end users determine product choices",
       "authority": "Explicit human feedback; tentative answers remain tentative"
+    },
+    {
+      "id": "qa-round-1",
+      "type": "question-round",
+      "location": "conversation 2026-10-13",
+      "anchor": "1",
+      "authority": "explicit user direction"
+    },
+    {
+      "id": "qa-round-2",
+      "type": "question-round",
+      "location": "conversation 2026-10-13",
+      "anchor": "2",
+      "authority": "explicit user direction"
+    },
+    {
+      "id": "qa-round-3",
+      "type": "question-round",
+      "location": "conversation 2026-10-13",
+      "anchor": "3",
+      "authority": "explicit user direction"
     }
   ],
   "intent": {
@@ -89,10 +110,10 @@
         "id": "claim-1",
         "type": "outcome",
         "statement": "Certain questions require a domain model beyond generic chart fields.",
-        "commitment": "derived",
+        "commitment": "explicit",
         "importance": "core",
         "status": "active",
-        "time_horizon": "later",
+        "time_horizon": "now",
         "source_anchors": [
           {
             "source_id": "current-request",
@@ -133,7 +154,7 @@
         "statement": "Expand one candidate when Byron has repeated funnel, cohort, or schedule questions that require manual preparation outside explorEDA.",
         "commitment": "tentative",
         "importance": "supporting",
-        "status": "active",
+        "status": "superseded",
         "time_horizon": "later",
         "source_anchors": [
           {
@@ -146,7 +167,7 @@
           }
         ],
         "confidence": "medium",
-        "notes": "Candidate interpretation; no feature implementation has been selected."
+        "notes": "Superseded 2026-10-13: Byron chose to build all three now with synthetic data (qa-round-1)."
       },
       {
         "id": "priority-1",
@@ -240,6 +261,131 @@
         ],
         "confidence": "high",
         "notes": "Does not establish runtime or browser acceptance."
+      },
+      {
+        "id": "decision-input",
+        "type": "decision",
+        "statement": "Funnel and Retention take a long event log (entity, event, timestamp); one synthetic product event log feeds both.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "now",
+        "source_anchors": [
+          {
+            "source_id": "qa-round-2",
+            "anchor": "Q5"
+          }
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "decision-funnel-rule",
+        "type": "decision",
+        "statement": "A stage counts only after the previous stage was reached; first occurrence wins; optional conversion window, default none.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "now",
+        "source_anchors": [
+          {
+            "source_id": "qa-round-2",
+            "anchor": "Q6"
+          }
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "decision-retention-rule",
+        "type": "decision",
+        "statement": "Retained in period N means any qualifying event in elapsed period N; cohort size is the denominator.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "now",
+        "source_anchors": [
+          {
+            "source_id": "qa-round-2",
+            "anchor": "Q7"
+          }
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "decision-prep-home",
+        "type": "decision",
+        "statement": "Preparation is chart-owned pure plan code shown in the trace; no new analysis-step kinds. Funnel and Timeline need dedicated rendering.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "now",
+        "source_anchors": [
+          {
+            "source_id": "qa-round-1",
+            "anchor": "Q2"
+          },
+          {
+            "source_id": "qa-round-3",
+            "anchor": "Q9"
+          }
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "decision-selection",
+        "type": "decision",
+        "statement": "Clicking a funnel stage or retention cell selects every event of the qualifying entities.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "now",
+        "source_anchors": [
+          {
+            "source_id": "qa-round-3",
+            "anchor": "Q10"
+          }
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "decision-timeline",
+        "type": "decision",
+        "statement": "Schedules mean an interactive linked timeline over a synthetic resource-bookings set; brushing a window keeps overlapping intervals. Concurrency strip and overlap highlight are later.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "now",
+        "source_anchors": [
+          {
+            "source_id": "qa-round-1",
+            "anchor": "Q3"
+          },
+          {
+            "source_id": "qa-round-2",
+            "anchor": "Q8"
+          },
+          {
+            "source_id": "qa-round-3",
+            "anchor": "Q11"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Click-select treated as standard chart behavior; provisional."
+      },
+      {
+        "id": "decision-order",
+        "type": "decision",
+        "statement": "Funnel, then Retention, then Timeline; one stacked PR each with docs page and demo example.",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "now",
+        "source_anchors": [
+          {
+            "source_id": "qa-round-3",
+            "anchor": "Q12"
+          }
+        ],
+        "confidence": "high"
       }
     ],
     "themes": [
@@ -257,33 +403,99 @@
     "selected_option": null
   },
   "shape": {
-    "status": "not-started",
-    "appetite": null,
-    "problem": null,
-    "recommended_shape": null,
-    "success_moves": [],
-    "first_proof": null,
-    "rabbit_holes": [],
+    "status": "current",
+    "appetite": "Three registered charts tonight, one stacked PR each; no filter-model, analysis-step, or Composition changes.",
+    "problem": "Funnel, cohort, and schedule questions need domain rules generic charts cannot express.",
+    "recommended_shape": "Funnel, Retention, and Timeline chart types, each with a pure *Plan.ts tested against hand fixtures, trace of the prepared table, per-entity or overlap selection via getFilterFunction, a synthetic dataset, docs page, and example.",
+    "success_moves": [
+      "Prove counting rules in pure plan modules against hand fixtures before rendering.",
+      "Store selections as stage index, cohort cell, or window on the chart and rebuild entity sets in getFilterFunction, avoiding filter-model changes.",
+      "Put the riskiest per-entity selection in M1 so M2 reuses it.",
+      "Plant ordering traps in the synthetic event log so the demo itself exercises the rules.",
+      "Reuse Sankey plan/trace layout, heatScale/HeatLegend, and BaseChart horizontal brush.",
+      "Each chart is one registry entry, so rollback is removing it."
+    ],
+    "first_proof": {
+      "question": "Do ordered-stage counts and per-entity selection work inside the existing chart contract?",
+      "artifact": "funnelPlan.test.ts hand fixture plus product-funnel example",
+      "decision_rule": "If per-entity getFilterFunction exceeds ~50 ms on 30k rows or cannot work, store selection as a value filter on the entity field before M2."
+    },
+    "rabbit_holes": [
+      "Scheduling engine or dependency logic",
+      "Generic domain-package framework or analysis steps",
+      "Concurrency/overlap analytics on the timeline tonight"
+    ],
     "open_decisions": []
   },
   "implementation": {
-    "status": "not-started",
+    "status": "planned",
     "repository_snapshot": {
-      "root": "/Users/byronwall/.codex/worktrees/abcf/explorEDA",
-      "revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
+      "root": "/Users/byronwall/Projects/explorEDA/.claude/worktrees/funnels-retention-schedules-f0e7a4",
+      "revision": "222d371c",
       "worktree_status": "clean before intent capture; detached HEAD",
       "subsystems": [
-        "packages/explorEDA/src/lib/dailyRollup.ts",
-        "packages/explorEDA/src/components/charts/Sankey/definition.ts",
-        "packages/explorEDA/src/charts/registerAllCharts.ts"
+        "packages/explorEDA/src/components/charts/Sankey",
+        "packages/explorEDA/src/components/charts/BaseChart.tsx",
+        "packages/explorEDA/src/components/charts/heatScale.ts",
+        "packages/explorEDA/src/charts/registerAllCharts.ts",
+        "packages/explorEDA/src/types/FilterTypes.ts",
+        "apps/data-samples",
+        "apps/demo/src/demos/examples.ts",
+        "apps/demo/src/demos/coverage.ts",
+        "apps/demo/src/docs/catalogue.ts"
       ],
-      "test_commands": [],
+      "test_commands": [
+        "pnpm --filter exploreda exec vitest run <files>",
+        "pnpm --filter exploreda check-types",
+        "pnpm --filter demo exec vitest run src/demos/coverage.test.ts src/dashboardText.test.ts",
+        "pnpm check"
+      ],
       "deployment_surfaces": []
     },
     "dependencies": [],
-    "fast_local_loop": null,
-    "milestones": [],
-    "cut_line": [],
+    "fast_local_loop": "pnpm --filter exploreda exec vitest run src/components/charts/<Type> plus pnpm --filter demo dev",
+    "milestones": [
+      {
+        "id": "m1",
+        "title": "Funnel on a product event log",
+        "outcome": "Users build an ordered funnel on an event log, inspect stage rows, and click a stage to narrow linked views.",
+        "dependencies_introduced": [],
+        "proof": "Hand fixture 4→3→2; stage click narrows linked DataTable; save/restore keeps selection; docs gate and coverage pass.",
+        "valid_intermediate_state": "Funnel is a complete registered chart with docs and example; other charts unchanged.",
+        "rollback": "Remove the funnel register line and example.",
+        "status": "completed",
+        "evidence": [
+          "Funnel chart, funnelPlan hand fixture (4→3→2), product-events.csv, /docs/funnel, product-funnel example; pnpm check and docs:verify /docs/funnel pass; counts match an independent Python recount (2000→1060→735→324→112; upgrade selection 1,355 events)"
+        ]
+      },
+      {
+        "id": "m2",
+        "title": "Retention on the same log",
+        "outcome": "Users see a cohort × elapsed-period grid of % active and click a cell to narrow linked views.",
+        "dependencies_introduced": [],
+        "proof": "Cohort grid matches fixture; future cells blank; cell click narrows views.",
+        "valid_intermediate_state": "Funnel and Retention both shipped on product-events.csv.",
+        "rollback": "Remove the retention register line and example.",
+        "status": "planned"
+      },
+      {
+        "id": "m3",
+        "title": "Interactive bookings timeline",
+        "outcome": "Users explore bookings by lane and brush a time window to narrow linked views to overlapping intervals.",
+        "dependencies_introduced": [],
+        "proof": "Brush keeps exactly overlapping bookings including open-ended ones; docs gate passes.",
+        "valid_intermediate_state": "All three charts shipped; Composition span marks untouched.",
+        "rollback": "Remove the timeline register line and example.",
+        "status": "planned"
+      }
+    ],
+    "cut_line": [
+      "Timeline concurrency strip and overlap highlight",
+      "Segment breakdowns",
+      "Analysis-query funnel/cohort steps",
+      "Wide stage-date input; survival retention",
+      "Drop-off selection"
+    ],
     "open_decisions": []
   },
   "history": [
@@ -303,27 +515,153 @@
       "date": "2026-10-06",
       "action": "Reconciled annotated product feedback and priority.",
       "reason": "User provided clearer goals and indicated lower interest in unclear topics.",
-      "source_annotation_indices": [
-        3
-      ],
+      "source_annotation_indices": [3],
       "evidence": "Current brief changes where applicable; source inspection only. No implementation, pause, or cancellation."
     },
     {
       "date": "2026-10-09",
       "event": "status-checked",
       "status": "planned",
-      "evidence": [
-        "No implementation of this scope found at 91b627d"
-      ]
+      "evidence": ["No implementation of this scope found at 91b627d"]
+    },
+    {
+      "date": "2026-10-13",
+      "action": "Recorded question round 1.",
+      "reason": "User asked for rounds of questions, then a shape; plans to implement tonight.",
+      "evidence": "conversation"
+    },
+    {
+      "date": "2026-10-13",
+      "action": "Recorded question round 2 and dataset choice.",
+      "reason": "consider-contrast picked a shared synthetic event log and a resource-bookings set.",
+      "evidence": "conversation"
+    },
+    {
+      "date": "2026-10-13",
+      "action": "Recorded question round 3; rounds complete.",
+      "reason": "Boundaries confirmed for tonight implementation.",
+      "evidence": "conversation"
+    },
+    {
+      "date": "2026-10-13",
+      "action": "Rewrote intent brief; created shape brief and implementation plan.",
+      "reason": "Three question rounds settled scope for implementation tonight.",
+      "evidence": "Repository inspection at 222d371c; no runtime checks."
+    },
+    {
+      "date": "2026-10-13",
+      "action": "Settled the selection-rows spike: getFilterFunction column getters cover all rows, so a selection entity set comes from all rows; the trace says so.",
+      "evidence": "hooks/CrossfilterWrapper.ts fieldGetter"
     }
   ],
   "closure": null,
   "intake": {
-    "kind": "seed",
+    "kind": "initiative",
     "priority_basis": "Pro recommendations reconciled with current source; proposed priority, no implementation approval",
-    "expand_when": "Expand one candidate when Byron has repeated funnel, cohort, or schedule questions that require manual preparation outside explorEDA.",
+    "expand_when": null,
     "related_initiatives": [],
     "audience": "End users; developers deliver their experience.",
-    "priority": "Unranked candidate or future seed"
+    "priority": "Building now (2026-10-13)"
+  },
+  "question_rounds": {
+    "focus": "dial in the effort, then shape",
+    "per_round": 5,
+    "planned_rounds": 3,
+    "status": "complete",
+    "rounds": [
+      {
+        "round": 1,
+        "theme": "goals and stakes",
+        "source": "qa-round-1",
+        "questions": [
+          {
+            "n": 1,
+            "question": "Which domains have a real dataset and repeated question today?",
+            "answer": "No dataset; create representative ones that seem best, using consider-contrast to pick each.",
+            "effect": "All three domains in scope with synthetic demo datasets; the expansion trigger is replaced by explicit direction."
+          },
+          {
+            "n": 2,
+            "question": "New chart type or preparation for existing views?",
+            "answer": "Prep first, but funnel and Gantt will likely need dedicated rendering tweaks.",
+            "effect": "Preparation is the core; Funnel and interval timeline get dedicated rendering; retention likely rides on Heatmap/Line."
+          },
+          {
+            "n": 3,
+            "question": "Composition span marks draw timelines; what is missing for schedules?",
+            "answer": "Interactive exploration.",
+            "effect": "Schedule scope is a linked, filterable timeline in dashboards, not a Composition feature."
+          },
+          {
+            "n": 4,
+            "question": "Appetite?",
+            "answer": "We are going to implement this tonight.",
+            "effect": "Status moves toward active; run shape and plan after the rounds."
+          }
+        ]
+      },
+      {
+        "round": 2,
+        "theme": "behavior and limits",
+        "source": "qa-round-2",
+        "questions": [
+          {
+            "n": 5,
+            "question": "Input shape for Funnel and Retention?",
+            "answer": "Long event log (entity, event, timestamp).",
+            "effect": "One synthetic event log feeds both views; wide stage columns are out."
+          },
+          {
+            "n": 6,
+            "question": "Funnel counting rule?",
+            "answer": "Ordered, optional conversion window; first occurrence wins; default no window.",
+            "effect": "Ordered-stage reduction with window setting; ever-reached is out."
+          },
+          {
+            "n": 7,
+            "question": "Retention meaning?",
+            "answer": "Active in period N (classic cohort grid).",
+            "effect": "Cohort by entry period, retained = any qualifying event in elapsed period N."
+          },
+          {
+            "n": 8,
+            "question": "Interval dataset?",
+            "answer": "Resource bookings (~12 resources, 4 weeks, overlaps, open-ended, cancelled).",
+            "effect": "New synthetic bookings dataset drives the interactive timeline."
+          }
+        ]
+      },
+      {
+        "round": 3,
+        "theme": "boundaries and confirmation",
+        "source": "qa-round-3",
+        "questions": [
+          {
+            "n": 9,
+            "question": "Where should funnel and cohort preparation live?",
+            "answer": "Chart-owned, shown in trace: pure reductions in lib, prepared table visible in trace/readout.",
+            "effect": "No new analysis step kinds; dedicated Funnel and Retention chart types."
+          },
+          {
+            "n": 10,
+            "question": "Selection grain for a funnel stage or retention cell?",
+            "answer": "All events of those entities.",
+            "effect": "Selection resolves entity ids then selects every event row of those entities."
+          },
+          {
+            "n": 11,
+            "question": "Timeline interactions tonight?",
+            "answer": "Brush time window only.",
+            "effect": "Brush filters linked views to overlapping bookings; concurrency strip and overlap highlight below the cut line. Click-select treated as standard chart behavior (provisional)."
+          },
+          {
+            "n": 12,
+            "question": "Milestone order?",
+            "answer": "Funnel, then Retention, then Timeline; one stacked PR each with docs page and demo example.",
+            "effect": "Three milestones in that order."
+          }
+        ]
+      }
+    ]
   }
 }

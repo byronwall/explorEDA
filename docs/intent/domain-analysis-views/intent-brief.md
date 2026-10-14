@@ -1,49 +1,60 @@
 ---
 title: "Funnels, retention, and interval schedules"
 slug: "domain-analysis-views"
-phase: intent
+phase: plan
 status: current
-last_updated: "2026-10-06"
+last_updated: "2026-10-13"
 ---
 
 # Funnels, retention, and interval schedules
 
 ## My read
 
-Certain questions require a domain model beyond generic chart fields. A funnel needs an ordered definition of stages and eligible entities. Retention needs cohorts, elapsed periods, and a denominator. A Gantt view needs start/end intervals and a meaning for overlap. This seed preserves those possibilities without treating three renderer names as one implementation commitment.
+Some everyday questions need a domain rule that generic chart fields can't express. A funnel needs ordered stages and a rule for when an entity counts as reaching one. Retention needs entry cohorts, elapsed periods, and a denominator. A schedule needs start and end intervals that can be explored in time. Byron wants all three in explorEDA as linked views. The work starts tonight.
 
-The shared intent is bringing a repeated domain task into the workspace when generic linked views are insufficient. Each candidate must start from its own source grain and independent expected results. A convincing picture with the wrong denominator or sequence would make the product less trustworthy.
+Correct preparation comes first. Each view computes its domain table (stage counts, a cohort grid, or interval lanes) with rules that can be tested and inspected, and only then draws it. A convincing picture with the wrong denominator or stage order would make the product less trustworthy. Funnel and timeline still need their own rendering. Retention needs its own view because its preparation lives in the chart.
 
-This remains a future seed. Its expansion trigger is a proposed decision rule, not a release commitment.
+No real dataset is driving this. Each view gets a representative synthetic demo dataset and a small hand-checked fixture.
 
 ## What matters most
 
-- Define domain grain before choosing a renderer.
-- Make stages, cohorts, or interval boundaries inspectable.
-- Expand only the domain backed by an actual dataset.
+- Counts are right by rule: ordered stages, cohort denominators, and interval overlap all match results that were worked out by hand.
+- The prepared table is visible. The trace shows the stage, cohort, or interval rows behind every mark.
+- Each view links like any other chart: a selection narrows the rest of the dashboard.
 
 ## The intended experience
 
-For a funnel, follow eligible entities through declared stages. For retention, select an entry cohort and inspect survival or return by elapsed period. For schedules, inspect an interval and its source record. In each case, use linked source inspection to explain the result rather than conceal domain preparation.
+A user loads an event log with an entity, an event name, and a timestamp. In **Funnel**, they list stages in order and optionally set a conversion window. They see how many entities reached each stage and what share carried on from the stage before. Clicking a stage narrows the other views to every event of the entities who reached it. In **Retention**, they group entities by their entry week and see the share active in each elapsed week. Clicking a cell selects those entities' events. With a bookings table, the **Timeline** shows one lane per resource and one bar per booking. Brushing a time window narrows the other views to bookings that overlap it.
 
 ## Boundaries
 
-Do not count unordered events as completed stages. Do not confuse calendar trends with retention. Do not assume interval endpoints are both inclusive. Avoid a generic domain-package framework, event ingestion service, or scheduling engine. Separate the three proofs and allow the other two to stay seeds.
+### Must be true
+
+- A stage counts only when it happens after the previous stage was reached. The first occurrence wins.
+- Retained in period N means any qualifying event in elapsed period N. The cohort size is the denominator.
+- A brush keeps bookings that overlap the window, including open-ended ones.
+- Every new view has a docs page and a demo example in the same milestone.
+
+### Must be avoided
+
+- Counting unordered or repeated events as completed stages.
+- Treating calendar trends as retention.
+- A generic domain-package framework, new analysis-step kinds, event ingestion, or a scheduling engine.
 
 ## What seems settled
 
-These are uncommitted conditional possibilities from the comparison review. Capturing them does not select a first domain, audience, or release appetite.
+- Input is a long event log, not one date column per stage. Funnel and Retention share one synthetic product event log. The timeline uses a synthetic resource-bookings set.
+- Preparation is pure, tested library code owned by each chart and shown in its trace.
+- Order: Funnel, then Retention, then Timeline, as one stacked PR each.
+- Composition's span mark already draws static timelines. The gap is interactive, linked exploration.
 
 ## Current reality that matters
 
-Current calendar reductions summarize source events by UTC period. Sankey summarizes categorical paths. Neither establishes cohort-entry rules, funnel event ordering, or schedule-interval semantics. The registry has no dedicated funnel, retention, or Gantt view.
-
-## Expansion trigger
-
-Expand one candidate when Byron has repeated funnel, cohort, or schedule questions that require manual preparation outside explorEDA.
+- The Sankey chart already follows the plan, trace, and settings layout these views need.
+- `BaseChart` already has a horizontal brush.
+- Each chart's filter function receives column getters, so a selection can be computed per entity.
+- Synthetic generators live in `apps/data-samples/`.
 
 ## Next step after confirmation
 
-Choose one real domain and a hand-sized fixture. Write independent expected stage counts, cohort rates, or overlap results. Decide whether existing views with explicit preparation suffice before adding a dedicated chart.
-
-See the [reference packet](references/README.md) and [comparison collection](../comparison-opportunities/README.md) for context.
+Build Milestone 1. See the [shape](shape-brief.md) and the [implementation plan](implementation-plan.md).

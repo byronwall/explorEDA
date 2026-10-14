@@ -90,6 +90,7 @@ describe("example coverage manifest", () => {
       "causes-by-age",
       "budget-bridge",
       "battery-day",
+      "product-funnel",
       "consumer-confidence",
       "pew-meaning",
       "income-life",

@@ -1,0 +1,30 @@
+## Try it
+
+<LiveExample
+  id="funnel"
+  caption="Users from a first visit to a paid plan, beside events by channel, from the signup funnel example."
+/>
+
+## What it needs
+
+A funnel reads an event log: one row per event, with a field that names **who** (such as a user ID), a field that names **what happened**, and a field that says **when**. The steps are values of the event field, in the order people should reach them.
+
+## How it reads
+
+- Each bar counts the entities that reached that step. The pale part to its right is everyone who reached the step before but not this one.
+- Beside each bar: the count, its share of the first step, and its share of the step before.
+- Steps count in order. A step counts at its first event after the step before it was reached, so a step done too early never counts. Events at the same moment keep their row order.
+- Set a **Window** to count later steps only within that many days of an entity's first step. Blank counts them at any time.
+- Rows with no entity or no readable time are left out, and the status line says how many.
+- The bars span every row, so filtering another chart shortens them without changing the scale.
+
+## Select and trace
+
+- Click a step to select the entities that reached it. Every other chart then shows all of their events, not only the ones that counted, so you can see what those people did.
+- Click a channel, a date, or any value in another chart to see the funnel for just those events.
+- Click empty space to clear the selection.
+- Alt-click a step to see its rule, both shares as a calculation, how many dropped off because they never did the step and how many did it too early, and the events that counted.
+
+## Funnel or Sankey?
+
+Use a <DocsLink topic="sankey">Sankey chart</DocsLink> when each row is already one path through category fields. Use a funnel when each row is one event, and the path has to be built per person from events in time order.

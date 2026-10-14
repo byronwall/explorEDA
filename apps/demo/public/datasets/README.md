@@ -138,6 +138,20 @@ Twelve fictional correspondents exchange messages with one mailbox from 2019 thr
 node --experimental-strip-types apps/data-samples/message_log.ts apps/demo/public/datasets/message-log.csv
 ```
 
+## Product events
+
+- File: `product-events.csv`
+- Size: 11,090 rows and 5 fields
+- Demo: `?example=product-funnel`
+- Use: an event log for funnels and retention: one row per event, with a user, an event name, and a UTC time
+- Generation: fixed seed in `apps/data-samples/product_events.ts`
+
+About 2,000 visitors to a fictional app from January to June 2025. Visitors move through visit, signup, create_project, invite_team, and upgrade at rates that differ by channel, and signed-up users return in later weeks less often as time passes. The log keeps the mess real logs have: repeated visits, some invites sent before a first project, upgrades that skip the invite, and 60 anonymous visits with no user. The data is synthetic.
+
+```sh
+node --experimental-strip-types apps/data-samples/product_events.ts apps/demo/public/datasets/product-events.csv
+```
+
 ## Driving shifts into reverse
 
 - File: `driving.csv`

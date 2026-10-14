@@ -298,6 +298,16 @@ export const coverageFeatures = [
     chartType: "donut",
   },
   {
+    id: "chart:funnel",
+    label: "Funnel",
+    family: "Chart types",
+    description:
+      "Follow entities through ordered steps of an event log, with drop-off between steps.",
+    required: true,
+    status: "supported",
+    chartType: "funnel",
+  },
+  {
     id: "chart:waterfall",
     label: "Waterfall",
     family: "Chart types",
@@ -1114,6 +1124,17 @@ export const exampleCoverage = [
       "chart:donut": "shown",
       "chart:bar": "shown",
       "mode:stacked-bars": "shown",
+      "chart:data-table": "shown",
+      "interaction:cross-filter": "shown",
+    },
+  },
+  {
+    exampleId: "product-funnel",
+    intent:
+      "Follow users from a first visit to a paid plan in order, and select a step to see everything its users did.",
+    features: {
+      "chart:funnel": "shown",
+      "chart:row": "shown",
       "chart:data-table": "shown",
       "interaction:cross-filter": "shown",
     },

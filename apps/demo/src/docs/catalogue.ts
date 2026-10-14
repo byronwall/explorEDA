@@ -1,4 +1,5 @@
 import {
+  ArrowDownWideNarrow,
   BarChart3,
   BookOpen,
   CalendarDays,
@@ -370,6 +371,20 @@ export const catalogue: readonly DocsPage[] = [
     chartType: "donut",
     examples: ["channel-share"],
     related: ["bar", "row"],
+  },
+  {
+    topic: "funnel",
+    thumbnail: "funnel",
+    title: "Funnel",
+    group: "plots",
+    icon: ArrowDownWideNarrow,
+    lede: "Follow people or accounts through ordered steps of an event log, and see where they drop off.",
+    summary: "Count who reaches each step of an event log, in order.",
+    highlights: ["Ordered steps", "Drop-off", "Who reached a step"],
+    covers: ["chart:funnel"],
+    chartType: "funnel",
+    examples: ["product-funnel"],
+    related: ["sankey", "row"],
   },
   {
     topic: "waterfall",

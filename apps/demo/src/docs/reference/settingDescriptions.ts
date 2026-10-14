@@ -146,6 +146,16 @@ export const CHART_SETTINGS: Readonly<
     focus:
       "The zoomed branch, as values along the levels. Empty shows the whole.",
   },
+  funnel: {
+    field: "The event field. Steps are values of this field.",
+    entityField:
+      "Who moves through the funnel, such as a user ID. Each entity counts once per step.",
+    timeField: "When each event happened. Steps count in time order.",
+    steps:
+      "Event values in order. A step counts at its first event after the step before it.",
+    windowDays:
+      "Days from an entity's first step in which later steps count. Blank counts any time.",
+  },
   sankey: {
     field: "Not read by this chart type.",
     stages: "Category fields in order. Each row is one path through them.",

@@ -24,6 +24,7 @@ import { SurfaceTraceBody } from "../ScatterPlot/SurfaceTraceBody";
 import { CompositionTraceBody } from "../Composition/CompositionTraceBody";
 import { WaterfallTraceBody } from "../Waterfall/WaterfallTraceBody";
 import { DonutTraceBody } from "../Donut/DonutTraceBody";
+import { FunnelTraceBody } from "../Funnel/FunnelTraceBody";
 import { useChartTrace, useChartTraceApi } from "./ChartTraceScope";
 import {
   FacetTraceBody,
@@ -76,6 +77,8 @@ function TraceBody({ trace }: { trace: ChartTrace }) {
       return <WaterfallTraceBody trace={trace} />;
     case "donut-slice":
       return <DonutTraceBody trace={trace} />;
+    case "funnel-step":
+      return <FunnelTraceBody trace={trace} />;
     case "bar":
       return <BarTraceBody trace={trace} />;
     case "sankey-node":
