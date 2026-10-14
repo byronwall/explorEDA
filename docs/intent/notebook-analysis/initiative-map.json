@@ -4,17 +4,17 @@
     "title": "Notebook analysis with synchronized definitions",
     "slug": "notebook-analysis",
     "scale": "capability",
-    "current_phase": "intent",
-    "last_updated": "2026-10-10",
-    "summary": "Interleave prose, dashboard-language blocks, and editable graphics in one reading column. Preserve both edit directions. Eleven researched examples inform the next scope decisions.",
-    "status": "planned",
-    "next_action": "Choose the first reproduction (forecast performance is recommended) and its relationship to saved dashboard views, then shape the edit-and-reopen proof."
+    "current_phase": "execution",
+    "last_updated": "2026-10-13",
+    "summary": ".eda.md notebook files in local projects: Markdown prose with eda blocks, live results, and minimal graph write-back. Forecast performance is the first proof.",
+    "status": "active",
+    "next_action": "Review and merge the stacked PRs (#403, #404, #414, #417, M4)"
   },
   "artifacts": {
     "intent_brief": {
       "path": "intent-brief.md",
       "status": "current",
-      "updated_at": "2026-10-10"
+      "updated_at": "2026-10-13"
     },
     "brainstorm": {
       "path": "brainstorm.md",
@@ -23,13 +23,13 @@
     },
     "shape_brief": {
       "path": "shape-brief.md",
-      "status": "not-created",
-      "updated_at": null
+      "status": "current",
+      "updated_at": "2026-10-13"
     },
     "implementation_plan": {
       "path": "implementation-plan.md",
-      "status": "not-created",
-      "updated_at": null
+      "status": "current",
+      "updated_at": "2026-10-13"
     },
     "research_synthesis": {
       "path": "research-synthesis.md",
@@ -135,6 +135,62 @@
       "location": "docs/application-feature-inventory.md#named-grouped-summaries",
       "anchor": "Named grouped summaries provide bounded bar/table reuse. Current chart-local fits and transformations do not establish arbitrary reusable notebook outputs.",
       "authority": "Documented boundary, read alongside the separately delivered related-table query path"
+    },
+    {
+      "id": "qa-round-1",
+      "type": "question-round",
+      "location": "Claude Code session notebook-analysis-scope, 2026-10-13",
+      "anchor": "Round 1",
+      "authority": "Current explicit user answers"
+    },
+    {
+      "id": "qa-round-2",
+      "type": "question-round",
+      "location": "Claude Code session notebook-analysis-scope, 2026-10-13",
+      "anchor": "Round 2",
+      "authority": "Current explicit user answers"
+    },
+    {
+      "id": "qa-round-3",
+      "type": "question-round",
+      "location": "Claude Code session notebook-analysis-scope, 2026-10-13",
+      "anchor": "Round 3",
+      "authority": "Current explicit user answers"
+    },
+    {
+      "id": "dsl-parser-spans",
+      "type": "repository-code",
+      "location": "packages/explorEDA/src/lib/dsl/parse.ts",
+      "anchor": "DslSpan line/column on every item; tokenize records columns; '#' starts a comment.",
+      "authority": "Current repository reality, not product intent"
+    },
+    {
+      "id": "project-folder",
+      "type": "repository-code",
+      "location": "packages/explorEDA/src/lib/project/folder.ts; docs/intent/local-cli-projects/intent-brief.md",
+      "anchor": "Every .eda file other than the project file is an analysis; server watches files; local-cli-projects lists the notebook view as later.",
+      "authority": "Current repository reality and sibling initiative"
+    },
+    {
+      "id": "user-answers-2026-10-13",
+      "type": "direct-user-input",
+      "location": "Claude Code session notebook-analysis-scope, 2026-10-13",
+      "anchor": "Fields, type, filters, axes, color first; Markdown source for prose.",
+      "authority": "Current explicit user answer"
+    },
+    {
+      "id": "analysis-save-path",
+      "type": "repository-code",
+      "location": "packages/explorEDA/src/lib/project/writeFolder.ts; apps/app/src/ProjectWorkspace.tsx; packages/explorEDA/src/components/charts/Markdown",
+      "anchor": "analysisFileText regenerates analysis text via exportAnalysisText and the saver queues it; Markdown chart is Tiptap rich text.",
+      "authority": "Current repository reality"
+    },
+    {
+      "id": "local-projects-shipped",
+      "type": "repository-history",
+      "location": "git main; PRs #370, #375, #376; docs/intent/local-cli-projects/initiative-map.json",
+      "anchor": "All six local-CLI-project milestones completed and merged; PR #401 retires that initiative's intent docs.",
+      "authority": "Current repository reality"
     }
   ],
   "intent": {
@@ -147,9 +203,7 @@
         "importance": "core",
         "status": "active",
         "time_horizon": "eventual",
-        "source_anchors": [
-          "user-request-2026-10-10"
-        ],
+        "source_anchors": ["user-request-2026-10-10"],
         "conflicts": [],
         "supersedes": [],
         "confidence": "high",
@@ -163,9 +217,7 @@
         "importance": "supporting",
         "status": "active",
         "time_horizon": "eventual",
-        "source_anchors": [
-          "user-request-2026-10-10"
-        ],
+        "source_anchors": ["user-request-2026-10-10"],
         "conflicts": [],
         "supersedes": [],
         "confidence": "high",
@@ -179,9 +231,7 @@
         "importance": "core",
         "status": "active",
         "time_horizon": "eventual",
-        "source_anchors": [
-          "user-request-2026-10-10"
-        ],
+        "source_anchors": ["user-request-2026-10-10"],
         "conflicts": [],
         "supersedes": [],
         "confidence": "high",
@@ -195,13 +245,11 @@
         "importance": "core",
         "status": "active",
         "time_horizon": "eventual",
-        "source_anchors": [
-          "user-request-2026-10-10"
-        ],
+        "source_anchors": ["user-request-2026-10-10", "qa-round-1"],
         "conflicts": [],
         "supersedes": [],
         "confidence": "high",
-        "notes": "Supported edit types, update timing, and treatment of invalid drafts remain open."
+        "notes": "Graph edits must be minimal: change only the affected token and keep comments and formatting (qa-round-1). Text edits update live when valid."
       },
       {
         "id": "coherent-view",
@@ -211,13 +259,11 @@
         "importance": "core",
         "status": "active",
         "time_horizon": "eventual",
-        "source_anchors": [
-          "user-request-2026-10-10"
-        ],
+        "source_anchors": ["user-request-2026-10-10", "qa-round-1"],
         "conflicts": [],
         "supersedes": [],
         "confidence": "high",
-        "notes": "Whether notebook and dashboard share saved-view identity remains open."
+        "notes": "Notebook is a separate file, not a view inside dashboard text (qa-round-1). Coherence means shared language and chart behavior, not shared saved-view identity."
       },
       {
         "id": "durable-meaning",
@@ -227,9 +273,7 @@
         "importance": "supporting",
         "status": "active",
         "time_horizon": "eventual",
-        "source_anchors": [
-          "user-request-2026-10-10"
-        ],
+        "source_anchors": ["user-request-2026-10-10"],
         "conflicts": [],
         "supersedes": [],
         "confidence": "medium",
@@ -238,18 +282,16 @@
       {
         "id": "initial-author",
         "type": "audience",
-        "statement": "The likely author investigates data and explains the reasoning to a reader.",
-        "commitment": "tentative",
-        "importance": "supporting",
+        "statement": "Two co-primary users: an agent drafts a notebook and hands it to a person, and an analyst works in a notebook for themselves.",
+        "commitment": "explicit",
+        "importance": "core",
         "status": "active",
         "time_horizon": "eventual",
-        "source_anchors": [
-          "user-request-2026-10-10"
-        ],
+        "source_anchors": ["qa-round-1"],
         "conflicts": [],
         "supersedes": [],
-        "confidence": "medium",
-        "notes": "The user did not select a first audience or task."
+        "confidence": "high",
+        "notes": "Roughly equal weight. External-reader publishing is not the first audience."
       },
       {
         "id": "existing-language",
@@ -259,9 +301,7 @@
         "importance": "supporting",
         "status": "active",
         "time_horizon": "eventual",
-        "source_anchors": [
-          "dashboard-text"
-        ],
+        "source_anchors": ["dashboard-text"],
         "conflicts": [],
         "supersedes": [],
         "confidence": "high",
@@ -275,9 +315,7 @@
         "importance": "supporting",
         "status": "active",
         "time_horizon": "eventual",
-        "source_anchors": [
-          "rich-text-panel"
-        ],
+        "source_anchors": ["rich-text-panel"],
         "conflicts": [],
         "supersedes": [],
         "confidence": "high",
@@ -291,9 +329,7 @@
         "importance": "core",
         "status": "active",
         "time_horizon": "proof",
-        "source_anchors": [
-          "user-request-2026-10-10"
-        ],
+        "source_anchors": ["user-request-2026-10-10"],
         "conflicts": [],
         "supersedes": [],
         "confidence": "high",
@@ -307,13 +343,221 @@
         "importance": "core",
         "status": "active",
         "time_horizon": "eventual",
-        "source_anchors": [
-          "research-request-2026-10-10"
-        ],
+        "source_anchors": ["research-request-2026-10-10"],
         "conflicts": [],
         "supersedes": [],
         "confidence": "high",
         "notes": "Individual graphics may contain facets. The reading sequence is not a grid of unrelated dashboard panels."
+      },
+      {
+        "id": "separate-notebook-file",
+        "type": "decision",
+        "statement": "A notebook is its own Markdown-like file with fenced dashboard-language blocks.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": ["qa-round-1"],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "high",
+        "notes": "Syntax is provisional."
+      },
+      {
+        "id": "minimal-write-back",
+        "type": "required behavior",
+        "statement": "Graph edits change only the affected text and preserve comments, formatting, and order.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": ["qa-round-1", "qa-round-2"],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "high",
+        "notes": "When no token-level edit exists, rewrite only that declaration canonically (qa-round-2)."
+      },
+      {
+        "id": "live-execution",
+        "type": "required behavior",
+        "statement": "A block recompiles automatically when its text becomes valid, and dependent blocks follow.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": ["qa-round-1"],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "forecast-first-proof",
+        "type": "decision",
+        "statement": "Forecast performance is the first end-to-end reproduction.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": ["qa-round-1"],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "high",
+        "notes": "CSV must be retrieved and cleaned first."
+      },
+      {
+        "id": "file-wide-definitions",
+        "type": "required behavior",
+        "statement": "Definitions are shared across the whole notebook file regardless of block order.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": ["qa-round-2"],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "high",
+        "notes": "Duplicate names and cycles become diagnostics (agent default)."
+      },
+      {
+        "id": "local-selections",
+        "type": "required behavior",
+        "statement": "Clicks and brushes filter only the chart where they happen.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": ["qa-round-2"],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "high",
+        "notes": "Opt-in shared selections are a later possibility."
+      },
+      {
+        "id": "three-edit-surfaces",
+        "type": "desired experience",
+        "statement": "People edit in the explorEDA app or in a text editor with live preview; agents check notebooks from the CLI.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": ["qa-round-2", "qa-round-3"],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "high",
+        "notes": "All three in the first proof (qa-round-3)."
+      },
+      {
+        "id": "author-first-release",
+        "type": "constraint",
+        "statement": "The first release serves authors; publishing, sharing, and self-contained export are out. The first proof includes an agent-written draft.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": ["qa-round-2"],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "project-foundation",
+        "type": "decision",
+        "statement": "Notebooks are files in a local CLI project and read its sources and joins.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": ["qa-round-3"],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "high",
+        "notes": "Local projects shipped on main; links point to the package README because PR #401 retires that initiative's intent docs."
+      },
+      {
+        "id": "eda-md-format",
+        "type": "decision",
+        "statement": "Notebook files use the .eda.md extension.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": ["qa-round-3"],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "high",
+        "notes": ".edamd is the fallback if tooling fights the double extension."
+      },
+      {
+        "id": "multi-output-blocks",
+        "type": "required behavior",
+        "statement": "A block may hold only definitions or several outputs stacked full width.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": ["qa-round-3"],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "all-surfaces-first",
+        "type": "constraint",
+        "statement": "The first proof includes in-app editing, external-editor live preview, and CLI check.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": ["qa-round-3"],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "frozen-invalid-result",
+        "type": "required behavior",
+        "statement": "While block text is invalid, the last valid result stays visible but frozen with its diagnostic and graph controls disabled.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": ["qa-round-3"],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "high",
+        "notes": "Agent proposal confirmed by the user."
+      },
+      {
+        "id": "write-back-coverage",
+        "type": "decision",
+        "statement": "The first write-back covers fields, chart type, filters, axes, and color.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": ["user-answers-2026-10-13"],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "high",
+        "notes": "Other controls stay below the cut line."
+      },
+      {
+        "id": "markdown-prose-editing",
+        "type": "decision",
+        "statement": "Prose is edited as Markdown source in the app.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": ["user-answers-2026-10-13"],
+        "conflicts": [],
+        "supersedes": [],
+        "confidence": "high",
+        "notes": "The rich-text panel editor is not reused for notebook prose."
       }
     ],
     "themes": [
@@ -328,146 +572,125 @@
         "id": "q1",
         "topic": "First task",
         "question": "Who will author and read the first notebook, and what real analysis should they complete?",
-        "status": "open",
+        "status": "resolved",
         "decision_impact": "Sets the primary workflow and reader needs.",
-        "source_anchors": [
-          "user-request-2026-10-10"
-        ],
+        "source_anchors": ["user-request-2026-10-10"],
         "research_context": "The collection offers investigative, teaching, and published narrative examples. It does not choose the first author or reader.",
-        "research_anchors": [
-          "pro-notebook-research"
-        ]
+        "research_anchors": ["pro-notebook-research"],
+        "resolution": "Agent-to-human handoff and self-directed analyst, equal weight (qa-round-1)."
       },
       {
         "id": "q2",
         "topic": "First release",
         "question": "What is the smallest useful version: prose, definition blocks, and one chart, or tables and summary values too?",
-        "status": "open",
+        "status": "resolved",
         "decision_impact": "Sets the first release boundary and appetite.",
-        "source_anchors": [
-          "user-request-2026-10-10"
-        ],
+        "source_anchors": ["user-request-2026-10-10"],
         "research_context": "Forecast performance is the recommended small candidate. This is not a user-approved first release.",
-        "research_anchors": [
-          "pro-notebook-research"
-        ]
+        "research_anchors": ["pro-notebook-research"],
+        "resolution": "Forecast performance with prose, multi-output blocks, and an agent-authored draft (qa-round-1, qa-round-3)."
       },
       {
         "id": "q3",
         "topic": "Query scope",
         "question": "Are current dashboard declarations enough initially, or must blocks produce named results that later blocks can use?",
-        "status": "open",
+        "status": "resolved",
         "decision_impact": "Determines whether reusable intermediate outputs are needed.",
-        "source_anchors": [
-          "user-request-2026-10-10"
-        ],
+        "source_anchors": ["user-request-2026-10-10"],
         "research_context": "Forecast uses a small derived field. Date Patterns and Seattle need broader intermediate computations; related-table queries already exist.",
-        "research_anchors": [
-          "pro-notebook-research"
-        ]
+        "research_anchors": ["pro-notebook-research"],
+        "resolution": "Current declarations plus file-wide definitions suffice for forecast; named intermediate results stay with reusable-analysis-outputs."
       },
       {
         "id": "q4",
         "topic": "Execution",
         "question": "Should changes run automatically, require running one block, or require running the whole notebook?",
-        "status": "open",
+        "status": "resolved",
         "decision_impact": "Sets when results refresh and what execution controls users need.",
-        "source_anchors": [
-          "user-request-2026-10-10"
-        ],
+        "source_anchors": ["user-request-2026-10-10"],
         "research_context": "Source examples include reactive controls, static authored outputs, and explicit randomized runs. There is no single implied execution policy.",
-        "research_anchors": [
-          "pro-notebook-research"
-        ]
+        "research_anchors": ["pro-notebook-research"],
+        "resolution": "Live on valid text (qa-round-1)."
       },
       {
         "id": "q5",
         "topic": "Shared state",
         "question": "Should calculations and interactive filters affect the whole notebook, only later blocks, or explicitly linked blocks?",
-        "status": "open",
+        "status": "resolved",
         "decision_impact": "Sets population and dependency expectations across blocks.",
-        "source_anchors": [
-          "user-request-2026-10-10"
-        ],
+        "source_anchors": ["user-request-2026-10-10"],
         "research_context": "Date Patterns demonstrates a local brush independent of later grouping. Correlation mixes local controls with shared styling.",
-        "research_anchors": [
-          "pro-notebook-research"
-        ]
+        "research_anchors": ["pro-notebook-research"],
+        "resolution": "Definitions file-wide and order-free; selections chart-local (qa-round-2)."
       },
       {
         "id": "q6",
         "topic": "Graphical edits",
-        "question": "Which edits must write back first: fields, chart type, aggregation, filters, axis settings, or visual styling?",
-        "status": "open",
+        "question": "Which graph controls must write back in the first proof: every setting with a DSL spelling, or fields, chart type, filters, axes, and color only?",
+        "status": "resolved",
         "decision_impact": "Sets the first supported graphical write-back contract.",
-        "source_anchors": [
-          "user-request-2026-10-10"
-        ],
+        "source_anchors": ["user-request-2026-10-10"],
         "research_context": "The report proposes many graphical edits; observed source controls are distinguished. The first write-back coverage is still open.",
-        "research_anchors": [
-          "pro-notebook-research"
-        ]
+        "research_anchors": ["pro-notebook-research"],
+        "resolution": "Fields, chart type, filters, axes, and color write back first; other settings later."
       },
       {
         "id": "q7",
         "topic": "Text preservation",
         "question": "Must graph edits preserve comments, formatting, and declaration order, or is regenerated equivalent text acceptable?",
-        "status": "open",
+        "status": "resolved",
         "decision_impact": "Sets whether equivalent generated text is sufficient.",
-        "source_anchors": [
-          "user-request-2026-10-10"
-        ],
+        "source_anchors": ["user-request-2026-10-10"],
         "research_context": "The current exporter regenerates text from settings. Research does not resolve comment and formatting preservation expectations.",
-        "research_anchors": [
-          "pro-notebook-research"
-        ]
+        "research_anchors": ["pro-notebook-research"],
+        "resolution": "Minimal token edit; one-declaration rewrite fallback (qa-round-1, qa-round-2)."
       },
       {
         "id": "q8",
         "topic": "View relationship",
         "question": "Is the notebook another presentation of the same saved dashboard, or a separate document that reuses its analysis objects?",
-        "status": "open",
+        "status": "resolved",
         "decision_impact": "Sets saved-view identity and cross-view edit expectations.",
-        "source_anchors": [
-          "user-request-2026-10-10"
-        ],
+        "source_anchors": ["user-request-2026-10-10"],
         "research_context": "Shared data does not establish whether notebook and dashboard share one saved view.",
-        "research_anchors": [
-          "pro-notebook-research"
-        ]
+        "research_anchors": ["pro-notebook-research"],
+        "resolution": "Separate .eda.md file in a local project (qa-round-1, qa-round-3)."
       },
       {
         "id": "q9",
         "topic": "Invalid drafts",
         "question": "While block text is invalid, should the last valid graph remain editable, and how should users reconcile those edits?",
-        "status": "open",
+        "status": "resolved",
         "decision_impact": "Sets visible behavior when draft text and valid graphical state differ.",
-        "source_anchors": [
-          "user-request-2026-10-10"
-        ],
+        "source_anchors": ["user-request-2026-10-10"],
         "research_context": "Broken source branches demonstrate scoped failures. They do not settle how invalid drafts and graph edits should coexist.",
-        "research_anchors": [
-          "pro-notebook-research"
-        ]
+        "research_anchors": ["pro-notebook-research"],
+        "resolution": "Last valid result frozen with diagnostic; graph controls disabled (qa-round-3)."
       },
       {
         "id": "q10",
         "topic": "Saved output",
         "question": "Is reopening an editable notebook enough initially, or must users also share or export a readable, self-contained result?",
-        "status": "open",
+        "status": "resolved",
         "decision_impact": "Sets persistence, sharing, and export expectations.",
-        "source_anchors": [
-          "user-request-2026-10-10"
-        ],
+        "source_anchors": ["user-request-2026-10-10"],
         "research_context": "The offline research report is a delivery format, not evidence that notebook export is required in the first release.",
-        "research_anchors": [
-          "pro-notebook-research"
-        ]
+        "research_anchors": ["pro-notebook-research"],
+        "resolution": "Reopening is enough; export and sharing are out of the first release (qa-round-2)."
+      },
+      {
+        "id": "q11",
+        "topic": "Prose editing",
+        "question": "In the app, is prose edited as Markdown source or in a rich-text editor?",
+        "status": "resolved",
+        "decision_impact": "Sets whether the existing rich-text panel editor is reused and how prose round-trips to Markdown.",
+        "source_anchors": ["qa-round-2"],
+        "resolution": "Prose is edited as Markdown source in the app."
       }
     ],
     "shape_readiness": {
-      "status": "needs-scope-decisions",
-      "reason": "Research identifies concrete reproduction candidates. Audience, first-release appetite, execution, text preservation, and saved-view identity remain open."
+      "status": "ready",
+      "reason": "Audience, foundation, format, execution, scope, write-back fidelity, invalid drafts, and first proof are decided. Two reversible choices remain."
     }
   },
   "brainstorm": {
@@ -477,34 +700,139 @@
     "selected_option": null
   },
   "shape": {
-    "status": "not-started",
-    "appetite": null,
-    "problem": null,
-    "recommended_shape": null,
-    "success_moves": [],
-    "first_proof": null,
-    "rabbit_holes": [],
-    "open_decisions": []
+    "status": "current",
+    "appetite": "One new file kind on the existing project and DSL pipelines; no new runtime, store, or chart types.",
+    "problem": "Analysts and agents need an ordered, explained analysis whose graphs and text stay in sync without regenerating text the author did not touch.",
+    "recommended_shape": ".eda.md files in local projects: Markdown + eda blocks, file-wide definitions, single-column rendering, live recompile, span-based minimal write-back with per-declaration fallback, three edit surfaces.",
+    "success_moves": [
+      {
+        "move": "Prove write-back as a pure library function (settings diff -> token splices over parser spans) with fixture tests before any UI.",
+        "benefit": "Isolates the largest risk in a fast local loop."
+      },
+      {
+        "move": "Compile a notebook by gathering all eda blocks into one dashboard document internally, mapping outputs back to block positions.",
+        "benefit": "File-wide order-free definitions reuse the existing compiler instead of a new dependency engine."
+      },
+      {
+        "move": "Reuse local-project file watching and disk-wins reload for the external-editor surface.",
+        "benefit": "Editor preview costs little beyond recognizing .eda.md."
+      },
+      {
+        "move": "Extend exploreda-dsl check/fmt to .eda.md before the app UI.",
+        "benefit": "Agent authoring and diagnostics are testable headlessly and early."
+      },
+      {
+        "move": "Keep a switch that disables graph write-back, leaving text editing intact.",
+        "benefit": "Clean rollback if splicing misbehaves."
+      },
+      {
+        "move": "Retrieve and clean the forecast CSV into an example project first.",
+        "benefit": "Fixes expected results before the end-to-end proof."
+      }
+    ],
+    "first_proof": {
+      "question": "Can graph edits on a real notebook land as minimal diffs while text edits from an outside editor refresh dependents?",
+      "artifact": "Agent-written forecast.eda.md in an example project; five graph edits in the app (field, type, filter, axis limit, color) and a delta edit in an outside editor. Observe: Git diff shows only changed tokens plus at most one rewritten declaration; comments survive; dependents refresh; reopen matches.",
+      "decision_rule": "If token splicing can't keep these edits minimal, make declaration rewrite the norm and revisit fidelity with Byron before building more surfaces."
+    },
+    "rabbit_holes": [
+      "Token splicing for list/child declarations (series, columns, annotations) and multi-line bodies.",
+      "Mapping compiled outputs back to blocks when definitions are file-wide.",
+      "Concurrent edits between app and outside editor (disk wins).",
+      "Forecast CSV units, timestamps, and duplicate hours."
+    ],
+    "open_decisions": [],
+    "dependencies": ["local-cli-projects (active execution)"]
   },
   "implementation": {
-    "status": "not-started",
+    "status": "planned",
     "repository_snapshot": {
-      "root": "/Users/byronwall/.codex/worktrees/0345/explorEDA",
-      "revision": "29b402349f7ee1214cb5f71dc17bc8c5cac84458",
-      "worktree_status": "Clean detached HEAD before creating the intent files.",
+      "root": "/Users/byronwall/Projects/explorEDA/.claude/worktrees/notebook-analysis-scope-5c998a",
+      "revision": "34c957c4",
+      "worktree_status": "Clean before planning edits.",
       "subsystems": [
-        "Dashboard text compiler and exporter",
-        "Saved view workspace",
-        "Rich-text explanation panel",
-        "Chart settings and save/restore"
+        "lib/dsl parser (DslSpan), compiler, exporter",
+        "lib/project folder scan and writeFolder",
+        "apps/app ProjectWorkspace and saver",
+        "exploreda-dsl CLI",
+        "Markdown (Tiptap) chart"
       ],
-      "test_commands": [],
+      "test_commands": [
+        "pnpm --filter exploreda exec vitest run <files>",
+        "pnpm --filter exploreda check-types",
+        "pnpm check"
+      ],
       "deployment_surfaces": []
     },
-    "dependencies": [],
-    "fast_local_loop": null,
-    "milestones": [],
-    "cut_line": [],
+    "dependencies": [
+      {
+        "name": "Local projects: folder scan, saver, file watching, demo folder access",
+        "first_proof_role": "absent in M1; real in M2",
+        "proof_strategy": "Shipped on main. Library fixtures first, then the real project server from M2.",
+        "status": "available"
+      }
+    ],
+    "fast_local_loop": "pnpm --filter exploreda exec vitest run src/lib/notebook",
+    "milestones": [
+      {
+        "id": "m1",
+        "title": "Notebook text compiles, checks, and writes back minimally",
+        "outcome": "exploreda-dsl check passes on an agent-written forecast.eda.md; write-back fixtures are minimal for fields, type, filters, axes, color.",
+        "dependencies_introduced": [],
+        "proof": "Vitest fixtures in src/lib/notebook; CLI check output.",
+        "valid_intermediate_state": "Library and CLI only; app unchanged.",
+        "rollback": "Remove src/lib/notebook and CLI branch.",
+        "status": "completed",
+        "evidence": [
+          "src/lib/notebook/{compileNotebook,writeBack,forecast}.test.ts (30 tests: five edit kinds minimal on the forecast notebook); exploreda-dsl check/project/fmt on examples/forecast"
+        ]
+      },
+      {
+        "id": "m2",
+        "title": "Read a notebook in the app and follow outside edits",
+        "outcome": "Opening a project shows .eda.md notebooks in one column; outside edits refresh dependents; selections are chart-local. The app reload filter and demo scan recognize .eda.md.",
+        "dependencies_introduced": [],
+        "proof": "Component tests; browser at 1280/783/390 px.",
+        "valid_intermediate_state": "Graph controls read-only; .eda analyses unchanged.",
+        "rollback": "Stop recognizing .eda.md in the scan.",
+        "status": "completed",
+        "evidence": [
+          "ExplorEdaNotebook.test.tsx, CrossfilterWrapper local selections test, LineChart ISO date test; browser on examples/forecast: outside edit reload, frozen block, chart-local brush (477 of 1,417 rows vs table 1,417); screenshots at 1280/783/390"
+        ]
+      },
+      {
+        "id": "m3",
+        "title": "Graph edits write back to the file",
+        "outcome": "Five edit kinds in the app produce minimal git diffs and survive reopen.",
+        "dependencies_introduced": [],
+        "proof": "Browser session plus git diff; saver tests.",
+        "valid_intermediate_state": "Write-back switch can turn graph edits off.",
+        "rollback": "Turn the switch off.",
+        "status": "completed",
+        "evidence": [
+          "browser on examples/forecast: showPoints -> one token in 'series forecast', y.min=20000 -> one token, table column hidden -> 'time,actual,delta', table -> bar -> one-line rewrite 'hist @hours time'; loading and opening settings write nothing; writeBackSettings tests for fill-ins and type changes"
+        ]
+      },
+      {
+        "id": "m4",
+        "title": "Edit source in the app; docs and example",
+        "outcome": "Per-block DSL and Markdown-source editing with live recompile; README section, docs page, forecast example.",
+        "dependencies_introduced": [],
+        "proof": "Browser at three widths; docs gate.",
+        "valid_intermediate_state": "All surfaces available.",
+        "rollback": "Hide the source toggle.",
+        "status": "completed",
+        "evidence": [
+          "browser: block editor flips delta live, unclosed quote freezes block with editor focused, prose edit saves; ExplorEdaNotebook editing tests; /docs/notebooks page and README Notebooks section; readmeExample.test.ts builds both doc examples"
+        ]
+      }
+    ],
+    "cut_line": [
+      "Write-back for other settings",
+      "Opt-in shared selections, named results, values in prose",
+      "Export, sharing, publishing",
+      "<Notebook> outside projects"
+    ],
     "open_decisions": []
   },
   "history": [
@@ -513,9 +841,7 @@
       "event": "intent-created",
       "status": "planned",
       "reason": "Captured the requested notebook direction and ten scope questions. No implementation or shape was selected.",
-      "source_anchors": [
-        "user-request-2026-10-10"
-      ]
+      "source_anchors": ["user-request-2026-10-10"]
     },
     {
       "date": "2026-10-10",
@@ -534,19 +860,81 @@
         "implementation_plan": "not-created"
       },
       "downstream_invalidation": "No shape or implementation plan exists to invalidate. Research recommendations did not become approved requirements."
+    },
+    {
+      "date": "2026-10-13",
+      "event": "scope-question-rounds-and-shape",
+      "status": "planned",
+      "reason": "Three rounds of five questions settled audience, foundation, file format, execution, definition scope, selection scope, write-back fidelity, invalid drafts, and first proof. Rewrote the intent brief and created the shape brief.",
+      "source_anchors": [
+        "qa-round-1",
+        "qa-round-2",
+        "qa-round-3",
+        "dsl-parser-spans",
+        "project-folder"
+      ],
+      "artifact_effects": {
+        "intent_brief": "rewritten",
+        "shape_brief": "created",
+        "implementation_plan": "not-created"
+      },
+      "downstream_invalidation": "No plan existed."
+    },
+    {
+      "date": "2026-10-13",
+      "event": "open-shape-choices-resolved",
+      "status": "planned",
+      "reason": "Byron set first write-back coverage and Markdown-source prose editing.",
+      "source_anchors": ["user-answers-2026-10-13"],
+      "artifact_effects": {
+        "intent_brief": "updated",
+        "shape_brief": "updated"
+      },
+      "downstream_invalidation": "No plan existed."
+    },
+    {
+      "date": "2026-10-13",
+      "event": "plan-created",
+      "status": "planned",
+      "reason": "Wrote a four-milestone plan that proves write-back headlessly first and reuses local-project saving and watching.",
+      "source_anchors": [
+        "analysis-save-path",
+        "dsl-parser-spans",
+        "project-folder"
+      ],
+      "artifact_effects": {
+        "implementation_plan": "created"
+      },
+      "downstream_invalidation": "None."
+    },
+    {
+      "date": "2026-10-13",
+      "event": "dependency-corrected",
+      "status": "planned",
+      "reason": "Local CLI projects are fully merged, so M2 has no blocker. Repointed links to the package README ahead of PR #401 retiring that initiative's docs, and added the reload-filter change to M2.",
+      "source_anchors": ["local-projects-shipped"],
+      "artifact_effects": {
+        "intent_brief": "updated",
+        "implementation_plan": "updated"
+      }
+    },
+    {
+      "date": "2026-10-13",
+      "event": "execution-started",
+      "status": "active",
+      "reason": "M1 built: notebook parsing, compiling, minimal write-back with alias mapping, CLI support, and the forecast example project. All five first-proof edit kinds splice minimally on the forecast notebook.",
+      "source_anchors": ["qa-round-3"]
+    },
+    {
+      "date": "2026-10-13",
+      "event": "m2-spikes-resolved",
+      "status": "active",
+      "reason": "Rendering: a dedicated reading column of PlotChartPanels inside one DataLayerProvider (no grid). Local selections: a CrossfilterWrapper flag that keeps each chart's own filter off the other charts. Also fixed line charts that drew nothing for an ISO date x field.",
+      "source_anchors": ["qa-round-2"]
     }
   ],
   "closure": null,
-  "quality_overrides": [
-    {
-      "rule": "intent.human_questions maximum of three",
-      "requested_count": 10,
-      "reason": "The user explicitly requested ten questions in the intent document.",
-      "source_anchors": [
-        "user-request-2026-10-10"
-      ]
-    }
-  ],
+  "quality_overrides": [],
   "research": {
     "status": "synthesized",
     "captured_at": "2026-10-10",
@@ -663,10 +1051,7 @@
     "implications": [
       {
         "statement": "Separate reading order from execution dependencies.",
-        "examples": [
-          "date-patterns",
-          "silge-penguins"
-        ],
+        "examples": ["date-patterns", "silge-penguins"],
         "status": "candidate"
       },
       {
@@ -682,36 +1067,22 @@
       },
       {
         "statement": "Preserve formulas and population meaning during graphical editing.",
-        "examples": [
-          "forecast",
-          "bratenahl",
-          "pudding"
-        ],
+        "examples": ["forecast", "bratenahl", "pudding"],
         "status": "candidate"
       },
       {
         "statement": "Separate computed narrative values from authored conclusions.",
-        "examples": [
-          "bratenahl",
-          "owid-decoupling"
-        ],
+        "examples": ["bratenahl", "owid-decoupling"],
         "status": "candidate"
       },
       {
         "statement": "Keep errors and stale results scoped to affected outputs.",
-        "examples": [
-          "bratenahl",
-          "spatial"
-        ],
+        "examples": ["bratenahl", "spatial"],
         "status": "candidate"
       },
       {
         "statement": "Make raw rows, transformed rows, and chart values distinguishable.",
-        "examples": [
-          "date-patterns",
-          "seattle",
-          "owid-decoupling"
-        ],
+        "examples": ["date-patterns", "seattle", "owid-decoupling"],
         "status": "candidate"
       }
     ],
@@ -721,6 +1092,125 @@
       "The package contains no upstream datasets. The Pro report marks several attached-data claims as loaded rows rather than independently downloaded bytes.",
       "Repository documentation and selected code were read. No application reproduction or browser feature test was performed.",
       "Original report-generation code was preserved without execution."
+    ]
+  },
+  "question_rounds": {
+    "focus": "scope of the notebook initiative",
+    "per_round": 5,
+    "planned_rounds": 3,
+    "status": "complete",
+    "rounds": [
+      {
+        "round": 1,
+        "theme": "goals and stakes",
+        "source": "qa-round-1",
+        "questions": [
+          {
+            "n": 1,
+            "question": "Who writes and reads the first notebook?",
+            "answer": "About 50% agent-written and handed to a human, 50% an analyst writing for themselves.",
+            "effect": "Two co-primary users: agent-to-human handoff and self-directed analyst. External-reader polish moves later; diffable text and CLI checks move up."
+          },
+          {
+            "n": 2,
+            "question": "Which analysis should the first proof reproduce end to end?",
+            "answer": "Forecast performance.",
+            "effect": "Forecast performance becomes the first proof."
+          },
+          {
+            "n": 3,
+            "question": "How should a notebook relate to saved dashboard views?",
+            "answer": "Separate notebook file (Markdown-like document with fenced eda blocks).",
+            "effect": "Notebook is its own file, not a view inside dashboard text. Syntax provisional."
+          },
+          {
+            "n": 4,
+            "question": "When a graph edit writes back into block text, what must survive?",
+            "answer": "Everything, minimal edit.",
+            "effect": "Write-back must change only the affected token/setting and preserve comments and formatting. Largest implementation risk."
+          },
+          {
+            "n": 5,
+            "question": "When does a block's result update after a text edit?",
+            "answer": "Live on valid text.",
+            "effect": "Debounced live recompilation; dependents follow automatically."
+          }
+        ]
+      },
+      {
+        "round": 2,
+        "theme": "behavior and limits",
+        "source": "qa-round-2",
+        "questions": [
+          {
+            "n": 6,
+            "question": "Graph edits with no token-level form: what should write-back do?",
+            "answer": "Rewrite one declaration in canonical form.",
+            "effect": "Fallback rewrites only that declaration; nearby standalone comments survive."
+          },
+          {
+            "n": 7,
+            "question": "Which blocks can use a calc defined in block 1?",
+            "answer": "Whole file, any order.",
+            "effect": "File-wide, order-independent definitions; requires a cross-block dependency graph with duplicate-name and cycle diagnostics."
+          },
+          {
+            "n": 8,
+            "question": "What does a click or brush filter?",
+            "answer": "Only that chart.",
+            "effect": "Selections are chart-local; shared selections are a later opt-in."
+          },
+          {
+            "n": 9,
+            "question": "Where does the human edit after handoff?",
+            "answer": "In the app, in a text editor with live preview, and CLI check for agents (all three).",
+            "effect": "Three surfaces wanted; first-proof subset decided in round 3."
+          },
+          {
+            "n": 10,
+            "question": "Understanding check: first release is author-facing; export/sharing out; first proof includes an agent-written forecast notebook.",
+            "answer": "Yes.",
+            "effect": "Export and sharing below the cut line; agent-authored draft is part of the first proof."
+          }
+        ]
+      },
+      {
+        "round": 3,
+        "theme": "boundaries and confirmation",
+        "source": "qa-round-3",
+        "questions": [
+          {
+            "n": 11,
+            "question": "What should the notebook be built on?",
+            "answer": "Local CLI project.",
+            "effect": "Notebook is a file kind in a local project; reuses scan, watch, autosave, sources and joins."
+          },
+          {
+            "n": 12,
+            "question": "What file format should a notebook use?",
+            "answer": "`.eda.md` or `.edamd`, making clear it is both Markdown and eda; `.eda.md` probably preferred.",
+            "effect": "`.eda.md` selected; `.edamd` fallback."
+          },
+          {
+            "n": 13,
+            "question": "How many outputs can one eda block produce?",
+            "answer": "Zero or more, stacked.",
+            "effect": "Definition-only blocks allowed; several outputs render full width in order."
+          },
+          {
+            "n": 14,
+            "question": "If something has to slip from the first proof, which goes first?",
+            "answer": "Nothing, keep all three.",
+            "effect": "App, external-editor preview, and CLI check all in the first proof; larger first release accepted."
+          },
+          {
+            "n": 15,
+            "question": "Invalid text: keep last valid result frozen with diagnostic, graph controls disabled?",
+            "answer": "Yes.",
+            "effect": "Adopted as the invalid-draft rule."
+          }
+        ]
+      }
     ]
   }
 }

@@ -97,8 +97,9 @@ import {
 
 interface PlotChartPanelProps {
   settings: ChartSettings;
-  onDelete: () => void;
-  onDuplicate: () => void;
+  /** Omitted where charts come from text, such as a notebook. */
+  onDelete?: () => void;
+  onDuplicate?: () => void;
   width: number;
   height: number;
 }
@@ -682,7 +683,7 @@ export function PlotChartPanel({
       { confirmLabel: "Delete", destructive: true }
     );
     if (confirmed) {
-      onDelete();
+      onDelete?.();
     }
   };
 
@@ -733,9 +734,10 @@ export function PlotChartPanel({
       } else if (key === "s") {
         if (expanded) setDetailsTab("settings");
         else settingsRef.current?.click();
-      } else if (key === "d") onDuplicate();
-      else if (key === "x") void handleDelete();
-      else if (key === "v") {
+      } else if (key === "d") onDuplicate?.();
+      else if (key === "x") {
+        if (onDelete) void handleDelete();
+      } else if (key === "v") {
         if (expanded) setDetailsTab("data");
         else setDataOpen(true);
       } else clearFilter(settings);
@@ -914,7 +916,7 @@ export function PlotChartPanel({
             </Popover>
           )}
           <ChartImageMenu chartTitle={chartTitle} {...imageExport} />
-          {!expanded && (
+          {!expanded && onDuplicate && (
             <Button
               variant="ghost"
               size="icon"
@@ -986,16 +988,18 @@ export function PlotChartPanel({
               </PopoverContent>
             </Popover>
           )}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="eda-panel-delete"
-            aria-label={`Delete ${chartTitle}`}
-            tooltip="Delete chart (X)"
-            onClick={() => void handleDelete()}
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
+          {onDelete && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="eda-panel-delete"
+              aria-label={`Delete ${chartTitle}`}
+              tooltip="Delete chart (X)"
+              onClick={() => void handleDelete()}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          )}
         </div>
       </div>
       {settings.type !== "scatter" && calculatedFields.length > 0 && (

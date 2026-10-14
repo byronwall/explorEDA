@@ -21,7 +21,7 @@ The Examples section links to these same-origin query routes:
 - `?view=docs&topic=scatter` and `?view=docs&topic=bar`: guides with matching example links.
 
 Navigation resets scroll and focuses the destination heading. Direct URLs and refresh use the existing demo route system.
-The full chart catalogue and expanded rendering guide remain in the [chart documentation initiative](intent/chart-and-rendering-docs/intent-brief.md).
+The full chart catalogue and rendering guide are in the docs site: one page per chart type under [`apps/demo/src/docs/pages/`](../apps/demo/src/docs/pages/), including [Rendering](../apps/demo/src/docs/pages/rendering.mdx).
 
 ## Add, edit, inspect, and reset
 
