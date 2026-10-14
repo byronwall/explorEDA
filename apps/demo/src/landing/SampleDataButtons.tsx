@@ -1,7 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { parseCsvData } from "../csvParser";
-import type { DatumObject } from "../LandingPage";
+import {
+  readTableFile,
+  readTableText,
+  TABLE_FORMATS,
+  tableFormatOf,
+  type TableFile,
+} from "exploreda/readers";
+import { useImportChoice } from "../ImportChoice";
 
 const samples = [
   {
@@ -22,16 +28,47 @@ const samples = [
     detail: "500 rows",
     url: "/datasets/shop-operations.csv",
   },
+  {
+    id: "inventory",
+    label: "Store inventory",
+    detail: "240 rows, TSV",
+    url: "/datasets/store-inventory.tsv",
+  },
+  {
+    id: "events",
+    label: "App events",
+    detail: "300 rows, JSON Lines",
+    url: "/datasets/app-events.ndjson",
+  },
+  {
+    id: "sales",
+    label: "Regional sales",
+    detail: "3 sheets, Excel",
+    url: "/datasets/regional-sales.xlsx",
+  },
+  {
+    id: "trips",
+    label: "Bike trips",
+    detail: "5,000 rows, Parquet",
+    url: "/datasets/bike-trips.parquet",
+  },
+  {
+    id: "weather",
+    label: "Weather stations",
+    detail: "2,016 rows, Feather",
+    url: "/datasets/weather-stations.feather",
+  },
 ];
 
-/** Loads a bundled CSV through the same path as a user's own import. */
+/** Loads a bundled file through the same reader as a user's own import. */
 export function SampleDataButtons({
   onImport,
 }: {
-  onImport: (data: DatumObject[]) => void;
+  onImport: (table: TableFile) => void;
 }) {
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const sheets = useImportChoice(onImport, setError);
 
   const load = async (sample: (typeof samples)[number]) => {
     setLoading(sample.id);
@@ -41,7 +78,16 @@ export function SampleDataButtons({
       if (!response.ok) {
         throw new Error(response.statusText);
       }
-      onImport(await parseCsvData(await response.text()));
+      const name = sample.url.split("/").pop()!;
+      const format = TABLE_FORMATS.find(
+        (info) => info.format === tableFormatOf(name)
+      );
+      if (format?.binary) {
+        const file = new File([await response.blob()], name);
+        sheets.offer(file, await readTableFile(file));
+      } else {
+        onImport(readTableText(await response.text(), { name }));
+      }
     } catch {
       setError(`Could not load ${sample.label}. Try again.`);
     } finally {
@@ -70,6 +116,7 @@ export function SampleDataButtons({
           </Button>
         ))}
       </div>
+      {sheets.prompt && <div className="mt-3">{sheets.prompt}</div>}
       {error && (
         <p role="alert" className="mt-2 text-sm text-destructive">
           {error}

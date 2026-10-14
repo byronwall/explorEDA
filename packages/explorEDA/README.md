@@ -164,6 +164,54 @@ observed.
 
 React and ReactDOM are peer dependencies.
 
+## Read local files
+
+`exploreda/readers` reads a local file into rows and field types. It reads
+CSV (comma, semicolon, tab, or pipe delimited, also as `.txt`), TSV (`.tsv`
+and `.tab`), JSON (an object, an array of objects, or an object whose one
+array holds the records), JSON Lines (`.jsonl` and `.ndjson`), and Excel
+(`.xlsx`), Parquet (`.parquet`), and Arrow IPC files and streams, including
+Feather V2 (`.arrow`, `.arrows`, `.feather`, `.ipc`). The Excel, Parquet, and
+Arrow readers load only when such a file is read.
+
+```tsx
+import { ExplorEda } from "exploreda";
+import { readTableFile, tableFileAccept } from "exploreda/readers";
+
+async function open(file: File) {
+  const table = await readTableFile(file);
+  return <ExplorEda data={table.rows} fieldTypes={table.fieldTypes} />;
+}
+// <input type="file" accept={tableFileAccept()} />
+```
+
+Values keep the form the file gives them. A column becomes numbers only when
+every value converts without change, so `0012` and IDs past 2^53 stay text.
+Dates stay as their text, typed as dates. Blank cells are missing. Each column
+is typed from every row, and a field that first appears late is still found.
+In JSON, integer literals past 2^53 keep their digits as text, nested objects
+become dotted fields such as `user.plan`, and arrays stay together as JSON
+text in one field.
+
+A workbook reads one sheet: the largest table, or the one `sheet` names.
+`table.sheets` lists every sheet with a table and its size, so your app can
+offer a choice and read another with `readTableFile(file, { sheet })`. A sheet
+starts at its header row, below title rows. Formulas read as the results the
+workbook saved and are never calculated; error cells read as missing.
+
+A Parquet or Arrow file's columns take the types its schema declares. Timestamps keep
+their stored precision as ISO text, decimals keep their exact digits, int64
+values past 2^53 stay text, and lists, maps, and structs become JSON text.
+Snappy, gzip, zstd, Brotli, and LZ4 Parquet pages and LZ4 and zstd Arrow
+buffers are read.
+
+A file that can't be read rejects with a `TableReadError` that names the row,
+such as `Row 12 has 6 values, but the header names 5 fields.` `table.notes`
+lists changes made while reading, such as a renamed duplicate header. Pass
+`table.fields` to `addSourceFromRows` or `singleTableProject` to keep the
+types in a project. `readTableText` reads text you already have, such as a
+fetched file.
+
 ## Themes and styling
 
 The Theme tab in workspace settings picks how charts look. **Compact** is the
@@ -486,20 +534,23 @@ reaches `onProjectChange` once. `readOnly` keeps the diagram and hides edits.
 
 Pass every saved view as `views` so the diagram shows what each one reads;
 views other than the current one fold to one row per chart. Pass
-`onAddSource` to show **Add source**: your app picks a file, then adds it
-with `addSourceFromRows`. A single-table `ExplorEda` takes `onAddSource` too,
+`onAddSource` to show **Add source**: your app picks a file, reads it with
+`readTableFile`, then adds it with `addSourceFromRows`. A single-table `ExplorEda` takes `onAddSource` too,
 and `singleTableProject` turns its rows and saved settings into a project
 whose view keeps the same charts, filters, and layout.
 
 ```ts
 import { addSourceFromRows, singleTableProject } from "exploreda/analysis";
+import { readTableFile } from "exploreda/readers";
 
 const promoted = singleTableProject({ name: "Deliveries", rows, settings });
+const routes = await readTableFile(file);
 const added = addSourceFromRows(
   promoted.project,
   promoted.tables,
-  "Routes",
-  routeRows
+  routes.name,
+  routes.rows,
+  routes.fields
 );
 // Render ExplorEdaProject with added.project, added.tables, and promoted.view;
 // schemaFocus={added.sourceId} opens the diagram on the new table.

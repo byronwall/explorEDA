@@ -52,6 +52,11 @@
       "types": "./dist/analysis.d.ts",
       "require": "./dist/analysis.cjs",
       "import": "./dist/analysis.js"
+    },
+    "./readers": {
+      "types": "./dist/readers.d.ts",
+      "require": "./dist/readers.cjs",
+      "import": "./dist/readers.js"
     }
   },
   "bin": {
@@ -62,6 +67,9 @@
     "*": {
       "analysis": [
         "./dist/analysis.d.ts"
+      ],
+      "readers": [
+        "./dist/readers.d.ts"
       ]
     }
   },
@@ -94,6 +102,7 @@
     "@tiptap/extension-text-style": "^2.11.5",
     "@tiptap/react": "^2.11.5",
     "@tiptap/starter-kit": "^2.11.5",
+    "@uwdata/flechette": "^2.7.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "1.0.0",
@@ -104,14 +113,19 @@
     "d3-scale": "^4.0.2",
     "d3-scale-chromatic": "^3.1.0",
     "d3-time-format": "^4.1.0",
+    "fzstd": "^0.1.1",
+    "hyparquet": "^1.31.3",
+    "hyparquet-compressors": "^1.1.2",
     "lucide-react": "^0.475.0",
     "natsort": "^2.0.3",
     "next-themes": "^0.4.4",
     "ohm-js": "^17.1.0",
+    "papaparse": "^5.5.2",
     "react-colorful": "^5.6.1",
     "react-fast-compare": "^3.2.2",
     "react-grid-layout": "^1.5.0",
     "react-resizable": "^3.0.5",
+    "read-excel-file": "^9.3.12",
     "sonner": "^1.7.4",
     "tailwind-merge": "^3.0.1",
     "tailwindcss-animate": "^1.0.7",

@@ -1,6 +1,6 @@
 import { stringifySavedData } from "exploreda";
 import { useEffect, useState } from "react";
-import { parseCsvData } from "../csvParser";
+import { readTableText } from "exploreda/readers";
 import { shopDashboard } from "../demos/dashboardSettings";
 import { OrdersExplorer } from "./OrdersExplorer.example";
 
@@ -14,8 +14,8 @@ export function OrderBook() {
   useEffect(() => {
     fetch("/datasets/shop-operations.csv")
       .then((response) => response.text())
-      .then(parseCsvData)
-      .then((rows) => setOrders(rows as Order[]));
+      .then((text) => readTableText(text))
+      .then((table) => setOrders(table.rows as Order[]));
   }, []);
 
   if (!orders) {

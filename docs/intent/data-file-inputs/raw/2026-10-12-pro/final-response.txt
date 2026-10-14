@@ -1,0 +1,103 @@
+Today 9:25 PM
+You said:
+prompt(5).md
+Document
+source-packet.md
+Document
+
+Please execute the complete research assignment in the attached prompt(5).md (local filename prompt.md). Use source-packet.md as the exact selected snapshot of the public repository 
+https://github.com/byronwall/explorEDA at c534378c052c9fbb2cb076d1df0d21eb0fa0965e. Research current primary sources on common and niche data formats, with deep dives on TSV, Parquet, Avro, XLSX, and local Google Sheets export options. Recommend a small input-reader design grounded in these files. Keep APIs, live Sheets integration, and application implementation out of scope. Return all six requested artifacts, the ZIP, and standalone links. Codex will preserve and verify your results, then prepare intent and shaping docs and a review PR.
+
+Worked for 36m 37s
+ChatGPT said:
+
+Hi, the research assignment is complete. Access status: GO. The report uses the attached selected snapshot of byronwall/explorEDA at c534378c052c9fbb2cb076d1df0d21eb0fa0965e, with all 36 packet files verified against their byte counts and SHA-256 hashes.
+
+The deliverables contain 70 catalog entries, 19 recommendations, and 188 evidence records, with primary-source retrieval dated October 12, 2026, America/Indiana/Indianapolis.
+
+Deliverables
+
+Complete package: 
+exploreda-data-file-inputs-research.zip
+
+The ZIP contains exactly these six files under exploreda-data-file-inputs-research/:
+
+Standalone file	Contents
+
+report.md
+	Executive recommendation, format landscape, requested deep dives, Google Sheets boundary, repository findings, TypeScript proposal, alternatives, and unresolved proofs
+
+format-catalog.csv
+	70 entries with 17 fields covering format identity, tool support, fidelity, browser feasibility, reader routes, unsupported subtypes, tiers, confidence, and sources
+
+recommendations.json
+	R01–R19, with priorities, reasons, exact repository evidence, alternatives, required proofs, and dependencies
+
+sources.json
+	188 source records with URLs or repository paths/refs, supporting sections, retrieval dates, claims, and verification limitations
+
+proof-plan.md
+	M0–M4, independent producer fixtures, expected outcomes, docs/examples, browser checks at 1280/783/390 pixels, declared performance workloads, and explicitly unrun commands
+
+manifest.json
+	Byte sizes and SHA-256 hashes for the five content artifacts, baseline/access provenance, completion status, and verification record
+
+Delivery limitation: the downloadable files above are complete and verified. Persistent saving failed because upload authentication was unavailable, so these links should be used for Codex preservation.
+
+Recommended scope and order
+
+Choose a small demo-local reader dispatch shared by initial import and Add source. Preserve the existing scalar-row APIs and introduce explicit admission checks before decoded values reach exploration or saved state.
+
+Stage	Recommendation
+First proof	Adversarial TSV through actual inference, filtering, project promotion, trace records, and save/reload
+Add soon	Explicit TSV support, then strict flat-object JSON Lines
+Next	Bounded XLSX: one selected worksheet, rectangular range, and header row per import; stored formula results only
+First binary evaluation	Flat, complete local Parquet, beginning with conservative hyparquet settings and proven codecs/types
+Demand-gated evaluation	Arrow IPC/Feather V2, Avro OCF, ODS, XLSB, and a bounded gzip wrapper
+Outside this initiative	Live Sheets, APIs, remote URLs, database execution, lakehouse browsing, a general query engine/plugin platform, and application implementation
+
+Two baseline findings make the first proof essential:
+
+sourceFromRows samples the first 500 rows for field names as well as types, so late fields need explicit protection. 
+Exact baseline source
+The project-table cache uses ordinary JSON serialization, so the richer project-file codec alone cannot prove durable value fidelity. 
+Exact baseline source
+
+The proposed boundary therefore checks source schemas, cell types, and numeric representations before lossy conversion, then verifies admitted values through the real consumers.
+
+Google Sheets conclusion
+
+Downloaded exports are useful local inputs. Google documents manual File → Download, and its export matrix includes XLSX, ODS, CSV, and TSV. The recommendation is to import those exported formats as snapshots. 
+Google Docs Editors Help
++1
+
+Native documents, .gsheet pointers, and managed offline state remain separate categories. Historical pointer evidence is explicitly qualified, and offline availability is treated as browser/profile-managed application state—not a portable cache format to decode. 
+Git at Google
++1
+
+Official manual TSV instructions identify the current sheet. The report keeps that distinct from the API documentation’s “first-sheet only” wording. Exact current-tab CSV behavior and export fidelity remain small producer-fixture checks; no API, OAuth, public-link fetching, or live integration is proposed. 
+Manufacturer Center Help
++1
+
+Inspection and verification
+Inspected: all 36 selected packet files, covering project rules, manifests, readers, upload/drop and Add source flows, session/history persistence, library consumers and scalar types, tests, user documentation, and adjacent proposals.
+Supplemental inspection: three helpers at the same exact commit—fieldSettings.ts, dataLayerState.ts, and dataTypeDetection.ts. Appendix A provides the complete 39-file inventory.
+Executed: packet hash verification; four Node assertions covering JSON precision, undefined/nonfinite serialization, bigint rejection, and duplicate-member overwrite; fixture-expectation arithmetic; strict CSV round-trip validation; JSON/reference/dependency validation; Markdown link/table checks; and ZIP membership, byte, and hash verification.
+Explicitly unrun: package-reader experiments, real workbook/binary imports, Sheets exports, browser compatibility tests, benchmarks, and all repository pnpm checks. The selected packet is not a runnable checkout.
+
+There is no remaining research-access blocker. Adoption still depends on the recorded proofs for semantic enforcement, persistence, exact dependency artifacts, codecs, production CSP/build behavior, and responsiveness. No repository changes, commits, deployment, or PR were made; Codex retains ownership of preservation, intent/shaping documents, integration, and the review PR.
+
+report.md
+Document
+format-catalog.csv
+Spreadsheet
+recommendations.json
+Code
+3 more
+ChatGPT can make mistakes. Check important info.
+Latest response
+
+
+
+
+Pro

@@ -1,0 +1,123 @@
+{
+  "schema_version": 1,
+  "research_date": "2026-10-12",
+  "research_timezone": "America/Indiana/Indianapolis",
+  "generated_at_utc": "2026-10-13T02:00:06+00:00",
+  "source_baseline": {
+    "repository": "https://github.com/byronwall/explorEDA",
+    "owner": "byronwall",
+    "repository_name": "explorEDA",
+    "commit": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+    "codex_preparation_branch_from_assignment": "codex/data-format-research (not checked out or modified)",
+    "packet_kind": "selected exact source snapshot; not a runnable checkout",
+    "packet_file_count": 36,
+    "verified_selected_file_bytes": 396261
+  },
+  "access_route": {
+    "primary": "Attached source-packet.md, authoritative selected snapshot with all manifest byte counts and SHA-256 verified",
+    "supplemental": "Connected GitHub exact-ref readDataFile.ts corroboration plus three necessary helpers, evidence E37–E39",
+    "web": "Current primary specifications, official support docs, and maintainer source/release/package pages; retrieval dates and limitations in sources.json"
+  },
+  "input_attachments": [
+    {
+      "name": "prompt(5).md",
+      "bytes": 17183,
+      "sha256": "cf99bdb86bd06e87a859da32df6c233081a58f18275c53a07d01118d5c639f4b"
+    },
+    {
+      "name": "source-packet.md",
+      "bytes": 407565,
+      "sha256": "e51852a8e93e34c31b26e9aa058b2b6e9119f33f2756735af0e8793881edfdf2"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "report.md",
+      "bytes": 107048,
+      "sha256": "465cc3753b22e70bb171496fcc463a14db9153889a966bd1d923e68123069941"
+    },
+    {
+      "name": "format-catalog.csv",
+      "bytes": 59416,
+      "sha256": "2326e06e7c3e00ac070fde751123e448e508c06b6d9cf83e8f50bba9c4efcdd1"
+    },
+    {
+      "name": "recommendations.json",
+      "bytes": 63407,
+      "sha256": "39d6a4f75b1d0fc124677cc66ea3003535767d9634bb33dd657d6d9e58438238"
+    },
+    {
+      "name": "sources.json",
+      "bytes": 179719,
+      "sha256": "58bcbda88e422c8e061124928199328af4de3aab14e05d015c81b5df7331c117"
+    },
+    {
+      "name": "proof-plan.md",
+      "bytes": 46757,
+      "sha256": "600c4dcec69e6fba4207c53ca9998aac118736c6d7a728ef7aca9a5e26519619"
+    }
+  ],
+  "hash_scope": "The five content artifacts above. The manifest does not hash itself or its containing ZIP.",
+  "archive": {
+    "name": "exploreda-data-file-inputs-research.zip",
+    "root_folder": "exploreda-data-file-inputs-research",
+    "members": [
+      "report.md",
+      "format-catalog.csv",
+      "recommendations.json",
+      "sources.json",
+      "proof-plan.md",
+      "manifest.json"
+    ]
+  },
+  "counts": {
+    "catalog_entries": 70,
+    "catalog_columns": 17,
+    "recommendations": 19,
+    "sources": 188,
+    "repository_files_inspected": 39
+  },
+  "checks": {
+    "packet_file_hashes": "passed: 36/36, 396261 bytes, exact baseline",
+    "supplemental_source_identity": "3 exact-baseline GitHub files recorded with Git blob SHA-1 and SHA-256",
+    "language_semantics": "passed: four Node v24.19.0 assertions; not application/reader tests",
+    "fixture_expectation_arithmetic": "passed: TSV/JSONL sums reviewed; Parquet sums and 1900/1904 date pair verified independently",
+    "catalog": "passed: 70 unique records, 17 populated fields, strict CSV parse equals authored matrix, no formula cells",
+    "structured_evidence": "passed: 188 unique source IDs; all source/recommendation references resolve; 19 unique recommendations; acyclic dependencies",
+    "markdown": {
+      "report.md": {
+        "reference_definitions": 188,
+        "referenced_ids": 188,
+        "tables": 9,
+        "fences_balanced": true,
+        "relative_links_resolve": true
+      },
+      "proof-plan.md": {
+        "reference_definitions": 188,
+        "referenced_ids": 188,
+        "tables": 3,
+        "fences_balanced": true,
+        "relative_links_resolve": true
+      }
+    },
+    "visual_qa": "passed: bounded catalog identity-column view rendered and inspected; CSV has no layout styles",
+    "independent_review": "completed: binary, workbook/Sheets, and landscape coverage reviews; actionable corrections incorporated",
+    "application_and_browser_checks": "UNRUN: no package reader, real binary/workbook import, producer export, browser benchmark, or pnpm application checks",
+    "repository_mutation": "none; selected snapshot hashes unchanged",
+    "archive": "passed only after readback assertions: exactly six requested files under the requested root folder; bytes match standalone files"
+  },
+  "completion": {
+    "research": "complete",
+    "repository_access": "GO",
+    "application_implementation": "not performed",
+    "blocking_research_gaps": [],
+    "remaining_proof_gates": [
+      "Initial-view and restored semantic enforcement",
+      "Real independent reader/producer fixtures",
+      "Pinned production browser/CSP/codecs",
+      "Memory and responsiveness measurements",
+      "Actual manual Sheets export fidelity"
+    ],
+    "handoff": "Codex owns preservation/reconciliation, intent and shaping documents, integration, commits, and review PR."
+  }
+}

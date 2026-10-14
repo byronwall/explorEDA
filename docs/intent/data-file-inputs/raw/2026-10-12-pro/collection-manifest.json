@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "conversation_url": "https://chatgpt.com/c/6acd88a1-24ec-83e9-a30b-b65230c75c0f",
+  "conversation_title": "Research deliverables package",
+  "submitted_local": "2026-10-12 about 21:25 America/Indiana/Indianapolis",
+  "collected_by_utc": "2026-10-13T02:41:50.221693+00:00",
+  "original_archive_download": "/Users/byronwall/Downloads/exploreda-data-file-inputs-research.zip",
+  "original_archive_download_mtime_utc": "2026-10-13T02:31:47.611177+00:00",
+  "files": [
+    {
+      "path": "exploreda-data-file-inputs-research.zip",
+      "bytes": 112490,
+      "sha256": "7deaac4059bc211cc142cf4448e4e2e21ea7b34aaae7c81508ba1288b761fdf0",
+      "source_url": "https://chatgpt.com/c/6acd88a1-24ec-83e9-a30b-b65230c75c0f",
+      "collection_mode": "Chrome download",
+      "observed_control": "Download exploreda-data-file-inputs-research.zip",
+      "collected_by_utc": "2026-10-13T02:41:50.221693+00:00",
+      "local_mtime_utc": "2026-10-13T02:31:47.611177+00:00"
+    },
+    {
+      "path": "exploreda-data-file-inputs-research/format-catalog.csv",
+      "bytes": 59416,
+      "sha256": "2326e06e7c3e00ac070fde751123e448e508c06b6d9cf83e8f50bba9c4efcdd1",
+      "source_url": "https://chatgpt.com/c/6acd88a1-24ec-83e9-a30b-b65230c75c0f",
+      "collection_mode": "unchanged ZIP member",
+      "observed_control": "Open preview of format-catalog.csv",
+      "collected_by_utc": "2026-10-13T02:41:50.221693+00:00",
+      "local_mtime_utc": "2026-10-13T02:32:09.354005+00:00"
+    },
+    {
+      "path": "exploreda-data-file-inputs-research/manifest.json",
+      "bytes": 5066,
+      "sha256": "a66c58ad5c68f738fd587b2228919b5a40fbc911dc2a0cc6c95133e9803da0e3",
+      "source_url": "https://chatgpt.com/c/6acd88a1-24ec-83e9-a30b-b65230c75c0f",
+      "collection_mode": "unchanged ZIP member",
+      "observed_control": "Open preview of manifest.json",
+      "collected_by_utc": "2026-10-13T02:41:50.221693+00:00",
+      "local_mtime_utc": "2026-10-13T02:32:09.355638+00:00"
+    },
+    {
+      "path": "exploreda-data-file-inputs-research/proof-plan.md",
+      "bytes": 46757,
+      "sha256": "600c4dcec69e6fba4207c53ca9998aac118736c6d7a728ef7aca9a5e26519619",
+      "source_url": "https://chatgpt.com/c/6acd88a1-24ec-83e9-a30b-b65230c75c0f",
+      "collection_mode": "unchanged ZIP member",
+      "observed_control": "Open preview of proof-plan.md",
+      "collected_by_utc": "2026-10-13T02:41:50.221693+00:00",
+      "local_mtime_utc": "2026-10-13T02:32:09.355326+00:00"
+    },
+    {
+      "path": "exploreda-data-file-inputs-research/recommendations.json",
+      "bytes": 63407,
+      "sha256": "39d6a4f75b1d0fc124677cc66ea3003535767d9634bb33dd657d6d9e58438238",
+      "source_url": "https://chatgpt.com/c/6acd88a1-24ec-83e9-a30b-b65230c75c0f",
+      "collection_mode": "unchanged ZIP member",
+      "observed_control": "Open preview of recommendations.json",
+      "collected_by_utc": "2026-10-13T02:41:50.221693+00:00",
+      "local_mtime_utc": "2026-10-13T02:32:09.354567+00:00"
+    },
+    {
+      "path": "exploreda-data-file-inputs-research/report.md",
+      "bytes": 107048,
+      "sha256": "465cc3753b22e70bb171496fcc463a14db9153889a966bd1d923e68123069941",
+      "source_url": "https://chatgpt.com/c/6acd88a1-24ec-83e9-a30b-b65230c75c0f",
+      "collection_mode": "unchanged ZIP member",
+      "observed_control": "Open preview of report.md",
+      "collected_by_utc": "2026-10-13T02:41:50.221693+00:00",
+      "local_mtime_utc": "2026-10-13T02:32:09.353449+00:00"
+    },
+    {
+      "path": "exploreda-data-file-inputs-research/sources.json",
+      "bytes": 179719,
+      "sha256": "58bcbda88e422c8e061124928199328af4de3aab14e05d015c81b5df7331c117",
+      "source_url": "https://chatgpt.com/c/6acd88a1-24ec-83e9-a30b-b65230c75c0f",
+      "collection_mode": "unchanged ZIP member",
+      "observed_control": "Open preview of sources.json",
+      "collected_by_utc": "2026-10-13T02:41:50.221693+00:00",
+      "local_mtime_utc": "2026-10-13T02:32:09.354890+00:00"
+    },
+    {
+      "path": "final-response.txt",
+      "bytes": 6567,
+      "sha256": "f40be826eb8fed76e9fa1cd1928a3ede0db48d51a904646fa74c570a0330c48b",
+      "source_url": "https://chatgpt.com/c/6acd88a1-24ec-83e9-a30b-b65230c75c0f",
+      "collection_mode": "rendered conversation text",
+      "observed_control": "Conversation region",
+      "collected_by_utc": "2026-10-13T02:41:50.221693+00:00",
+      "local_mtime_utc": "2026-10-13T02:39:43.465731+00:00"
+    }
+  ],
+  "checks": {
+    "archive_paths": "passed before extraction; relative paths; no traversal or symlinks",
+    "archive_crc": "passed",
+    "archive_members": "exactly six expected files; all extracted bytes equal archive members",
+    "producer_hashes": "all five content files match producer manifest",
+    "standalone_report": "preview Download succeeded; bytes equal archive report",
+    "structured_counts": {
+      "catalog": 70,
+      "recommendations": 19,
+      "sources": 188
+    },
+    "recommendation_source_refs": "all resolve"
+  },
+  "delivery_notes": [
+    "All six requested originals are preserved from the verified archive.",
+    "Independent format-catalog.csv download was blocked by Chrome with ERR_BLOCKED_BY_CLIENT; one event-based retry timed out. The archive copy is complete and verified.",
+    "No research follow-up or regeneration was needed. No companion is missing.",
+    "Final response is an exact rendered text capture; it is not an original Markdown export.",
+    "Individual artifact controls expose previews, so the conversation URL and observed control names identify their origin. Expiring signed download URLs are not retained.",
+    "Standalone report duplicate is not stored twice.",
+    "The handoff skill now records standing user approval for task-related asset downloads."
+  ]
+}

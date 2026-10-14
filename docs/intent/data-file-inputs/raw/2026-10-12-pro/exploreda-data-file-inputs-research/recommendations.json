@@ -1,0 +1,1792 @@
+{
+  "schema_version": 1,
+  "research_date": "2026-10-12",
+  "research_timezone": "America/Indiana/Indianapolis",
+  "baseline": {
+    "repository": "https://github.com/byronwall/explorEDA",
+    "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e"
+  },
+  "purpose": "Evidence for Codex disposition and later intent/shaping; not task execution commands.",
+  "priority_legend": {
+    "0": "Precondition or cross-cutting guard",
+    "1": "First useful supported slices",
+    "2": "First binary feasibility proof",
+    "3": "Demand-driven evaluation, conversion, or later integration"
+  },
+  "tier_legend": {
+    "keep/current": "Observed current route, with stated limits",
+    "add soon": "Recommended next slice, contingent on required proof",
+    "evaluate": "No support promise; proof or demand needed",
+    "manual conversion": "User prepares a selected neutral table with a trusted producer",
+    "later integration": "Separate product/system scope",
+    "avoid": "Do not implement the proposed import/execution route"
+  },
+  "recommendation_count": 19,
+  "recommendations": [
+    {
+      "id": "R01",
+      "recommendation": "Choose demo-local direct readers behind the existing file dispatcher",
+      "priority": 0,
+      "tier": "add soon",
+      "reason": "The application already consumes complete scalar rows, has two import host paths, and needs a modest set of local formats. An internal shared reader is sufficient; a public plugin/engine boundary would introduce obligations without a demonstrated second consumer.",
+      "repository_evidence": [
+        {
+          "source_id": "E08",
+          "path": "packages/explorEDA/package.json",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "exports; peerDependencies; scripts"
+          ]
+        },
+        {
+          "source_id": "E10",
+          "path": "packages/explorEDA/src/components/ExplorEda.tsx",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "ExplorEdaProps; data; fieldNames; savedData; onAddSource"
+          ]
+        },
+        {
+          "source_id": "E11",
+          "path": "packages/explorEDA/src/components/ExplorEdaProject.tsx",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "useAnalysisEvaluation; renderedSettings; data mapping"
+          ]
+        },
+        {
+          "source_id": "E19",
+          "path": "apps/demo/src/readDataFile.ts",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "isSupportedDataFile; readDataFile"
+          ]
+        },
+        {
+          "source_id": "E24",
+          "path": "apps/demo/src/SavedViewsWorkspace.tsx",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "addSourceFile; makeSession; WorkspaceInstance; project promotion"
+          ]
+        }
+      ],
+      "source_ids": [
+        "E08",
+        "E10",
+        "E11",
+        "E19",
+        "E24",
+        "B07",
+        "B34"
+      ],
+      "alternatives": [
+        {
+          "option": "Optional exploreda/inputs public entry",
+          "disposition": "Defer until a real second embedding host needs the same policy and isolated bundle."
+        },
+        {
+          "option": "DuckDB-Wasm or general plugin registry",
+          "disposition": "Defer until local query execution avoids materialization or independent plugins have proven demand."
+        }
+      ],
+      "confidence": {
+        "level": "high",
+        "scope": "Architecture/classification and source evidence, not executed browser support",
+        "runtime_status": "unrun"
+      },
+      "required_proof": [
+        "M0 reaches real exploration and Add source through one result contract.",
+        "CSV-only embedding and root/core imports retain existing APIs and avoid optional decoder assets."
+      ],
+      "dependencies": [],
+      "proposed_milestone": "M0",
+      "disposition_status": "Research recommendation for Codex; no implementation performed"
+    },
+    {
+      "id": "R02",
+      "recommendation": "Admit full schemas and scalar meaning before lossy conversion",
+      "priority": 0,
+      "tier": "add soon",
+      "reason": "Decoded arrays are not sufficient. Existing field inventory samples 500 rows and inference can reinterpret numeric, boolean, and date-like text; direct binary readers can lose precision before row validation.",
+      "repository_evidence": [
+        {
+          "source_id": "E11",
+          "path": "packages/explorEDA/src/components/ExplorEdaProject.tsx",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "useAnalysisEvaluation; renderedSettings; data mapping"
+          ]
+        },
+        {
+          "source_id": "E12",
+          "path": "packages/explorEDA/src/types/AnalysisProject.ts",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "AnalysisScalar; AnalysisSourceRow; FieldDefinition; SourceDefinition"
+          ]
+        },
+        {
+          "source_id": "E13",
+          "path": "packages/explorEDA/src/types/ChartTypes.ts",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "datum"
+          ]
+        },
+        {
+          "source_id": "E15",
+          "path": "packages/explorEDA/src/lib/valueParsing.ts",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "parseNumber; parseBoolean; isMissingValue; parseDateText; timestampOf; timeOfDay"
+          ]
+        },
+        {
+          "source_id": "E16",
+          "path": "packages/explorEDA/src/lib/analysis/sources.ts",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "fieldIds; TYPE_SAMPLE; sourceFromRows; addSourceFromRows; singleTableProject"
+          ]
+        },
+        {
+          "source_id": "E37",
+          "path": "packages/explorEDA/src/lib/fieldSettings.ts",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "convertFieldValue",
+            "applyFieldSettings"
+          ]
+        },
+        {
+          "source_id": "E38",
+          "path": "packages/explorEDA/src/providers/lib/dataLayerState.ts",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "initializeData",
+            "invalidateCalculationCache"
+          ]
+        },
+        {
+          "source_id": "E39",
+          "path": "packages/explorEDA/src/components/SummaryTable/utils/dataTypeDetection.ts",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "detectColumnType"
+          ]
+        }
+      ],
+      "source_ids": [
+        "E11",
+        "E12",
+        "E13",
+        "E15",
+        "E16",
+        "E37",
+        "E38",
+        "E39",
+        "B09",
+        "B32",
+        "P02",
+        "P09",
+        "P11"
+      ],
+      "alternatives": [
+        {
+          "option": "Validate only finished JavaScript rows",
+          "disposition": "Reject: already-rounded digits, branch identity, and timestamp precision cannot be recovered."
+        },
+        {
+          "option": "Stringify every unsupported value",
+          "disposition": "Reject: changes meaning and can be reinterpreted downstream."
+        }
+      ],
+      "confidence": {
+        "level": "high",
+        "scope": "Architecture/classification and source evidence, not executed browser support",
+        "runtime_status": "unrun"
+      },
+      "required_proof": [
+        "M0 validates a field first appearing at record 501 and a later incompatible value.",
+        "Exact identifiers and schema-declared true/date/NaN/Infinity strings are enforced as text or rejected.",
+        "Unsupported bigint/Date/decimal/binary/nested values fail before publication; no silent flattening or key invention."
+      ],
+      "dependencies": [
+        "R01"
+      ],
+      "proposed_milestone": "M0",
+      "disposition_status": "Research recommendation for Codex; no implementation performed"
+    },
+    {
+      "id": "R03",
+      "recommendation": "Unify initial import and Add source while preserving restoration and tabs",
+      "priority": 0,
+      "tier": "add soon",
+      "reason": "Initial upload/drop and CSV-only Add source have separate readers; project/full-analysis state also has distinct routing. A new format is useful only when both table paths preserve existing promotion, source names, and saved layouts.",
+      "repository_evidence": [
+        {
+          "source_id": "E16",
+          "path": "packages/explorEDA/src/lib/analysis/sources.ts",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "fieldIds; TYPE_SAMPLE; sourceFromRows; addSourceFromRows; singleTableProject"
+          ]
+        },
+        {
+          "source_id": "E19",
+          "path": "apps/demo/src/readDataFile.ts",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "isSupportedDataFile; readDataFile"
+          ]
+        },
+        {
+          "source_id": "E21",
+          "path": "apps/demo/src/jsonParser.ts",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "parseJsonData; flattening helpers"
+          ]
+        },
+        {
+          "source_id": "E22",
+          "path": "apps/demo/src/CsvUpload.tsx",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "CsvUpload; file handling"
+          ]
+        },
+        {
+          "source_id": "E23",
+          "path": "apps/demo/src/LandingPage.tsx",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "openImported; handleCsvImport; handleProjectImport; handleAnalysisJson"
+          ]
+        },
+        {
+          "source_id": "E24",
+          "path": "apps/demo/src/SavedViewsWorkspace.tsx",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "addSourceFile; makeSession; WorkspaceInstance; project promotion"
+          ]
+        },
+        {
+          "source_id": "E25",
+          "path": "apps/demo/src/savedViewsSession.ts",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "writeProjectTables; session serialization and clone helpers"
+          ]
+        },
+        {
+          "source_id": "E26",
+          "path": "apps/demo/src/savedViewsHistory.ts",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "history checkpoints; JSON clone helpers"
+          ]
+        },
+        {
+          "source_id": "E27",
+          "path": "apps/demo/src/landing/PageFileDrop.tsx",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "PageFileDrop; file detection and project handling"
+          ]
+        }
+      ],
+      "source_ids": [
+        "E16",
+        "E19",
+        "E21",
+        "E22",
+        "E23",
+        "E24",
+        "E25",
+        "E26",
+        "E27"
+      ],
+      "alternatives": [
+        {
+          "option": "Patch each accept list and parser independently",
+          "disposition": "Reject: duplicates semantics and leaves format-dependent saved-state behavior."
+        },
+        {
+          "option": "Treat every JSON file as rows",
+          "disposition": "Reject: state envelopes can be flattened and restoration lost."
+        }
+      ],
+      "confidence": {
+        "level": "high",
+        "scope": "Architecture/classification and source evidence, not executed browser support",
+        "runtime_status": "unrun"
+      },
+      "required_proof": [
+        "M0/M1 distinguish raw JSON, valid/malformed project envelopes, and the existing full-analysis paste/restore route.",
+        "Both initial surfaces and Add source import equivalent data.",
+        "Saved tab IDs/names/active selection/layout survive promotion and stale/cancelled imports cannot overwrite newer edits."
+      ],
+      "dependencies": [
+        "R01",
+        "R02",
+        "R04",
+        "R13"
+      ],
+      "proposed_milestone": "M0–M1",
+      "disposition_status": "Research recommendation for Codex; no implementation performed"
+    },
+    {
+      "id": "R04",
+      "recommendation": "Gate new values on actual cache, history, and project round-trips",
+      "priority": 0,
+      "tier": "add soon",
+      "reason": "Project-file tags and scalar validation differ from plain JSON table-cache/history paths. Ordinary JSON can omit undefined or change nonfinite numbers; metadata alone cannot establish durable semantics.",
+      "repository_evidence": [
+        {
+          "source_id": "E14",
+          "path": "packages/explorEDA/src/types/SavedDataStructure.ts",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "SavedDatum; SavedDataStructure"
+          ]
+        },
+        {
+          "source_id": "E17",
+          "path": "packages/explorEDA/src/lib/analysis/projectFile.ts",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "validateAnalysisProjectFile; stringifyAnalysisProject; parseAnalysisProject; encode/decode helpers"
+          ]
+        },
+        {
+          "source_id": "E18",
+          "path": "packages/explorEDA/src/providers/DataLayerProvider.tsx",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "rawData; applyFieldSettings; initializeData; caches; saveAnalysisToStructure"
+          ]
+        },
+        {
+          "source_id": "E24",
+          "path": "apps/demo/src/SavedViewsWorkspace.tsx",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "addSourceFile; makeSession; WorkspaceInstance; project promotion"
+          ]
+        },
+        {
+          "source_id": "E25",
+          "path": "apps/demo/src/savedViewsSession.ts",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "writeProjectTables; session serialization and clone helpers"
+          ]
+        },
+        {
+          "source_id": "E26",
+          "path": "apps/demo/src/savedViewsHistory.ts",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "history checkpoints; JSON clone helpers"
+          ]
+        }
+      ],
+      "source_ids": [
+        "E14",
+        "E17",
+        "E18",
+        "E24",
+        "E25",
+        "E26",
+        "P10"
+      ],
+      "alternatives": [
+        {
+          "option": "Test only stringifyAnalysisProject/parseAnalysisProject",
+          "disposition": "Insufficient: misses the workspace persistence paths."
+        },
+        {
+          "option": "Add a universal serialization system now",
+          "disposition": "Defer; narrow unsupported values or repair only the proven affected path."
+        }
+      ],
+      "confidence": {
+        "level": "high",
+        "scope": "Architecture/classification and source evidence, not executed browser support",
+        "runtime_status": "unrun"
+      },
+      "required_proof": [
+        "M0 verifies null/empty/absent, exact text, types, filters, and restored rows in each used path.",
+        "NaN/infinity/unsupported undefined cases reject until meaningful persistence is proved.",
+        "Quota failure is reported as unsaved state; crash-atomic persistence is not claimed without a proof."
+      ],
+      "dependencies": [
+        "R02"
+      ],
+      "proposed_milestone": "M0",
+      "disposition_status": "Research recommendation for Codex; no implementation performed"
+    },
+    {
+      "id": "R05",
+      "recommendation": "Add an explicit quoted TSV profile using Papa tokenization",
+      "priority": 1,
+      "tier": "add soon",
+      "reason": "Tabular exports offer a useful small extension of the installed dependency, but the current dispatcher rejects .tsv and parser metadata/coercions need deliberate handling.",
+      "repository_evidence": [
+        {
+          "source_id": "E09",
+          "path": "apps/demo/package.json",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "dependencies; scripts"
+          ]
+        },
+        {
+          "source_id": "E19",
+          "path": "apps/demo/src/readDataFile.ts",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "isSupportedDataFile; readDataFile"
+          ]
+        },
+        {
+          "source_id": "E20",
+          "path": "apps/demo/src/csvParser.ts",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "parseCsvData"
+          ]
+        },
+        {
+          "source_id": "E28",
+          "path": "apps/demo/src/parsers.test.ts",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "CSV and JSON parser cases"
+          ]
+        },
+        {
+          "source_id": "E30",
+          "path": "apps/demo/src/docs/pages/load-data.mdx",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "Current import guidance"
+          ]
+        }
+      ],
+      "source_ids": [
+        "E09",
+        "E19",
+        "E20",
+        "E28",
+        "E30",
+        "P01",
+        "P02",
+        "P03",
+        "P04",
+        "P06",
+        "P07"
+      ],
+      "alternatives": [
+        {
+          "option": "Only add .tsv to accepted extensions",
+          "disposition": "Reject: delimiter guesses and value/header handling remain unproved."
+        },
+        {
+          "option": "Install another delimited parser",
+          "disposition": "Unnecessary unless the bounded Papa proof fails."
+        }
+      ],
+      "confidence": {
+        "level": "high",
+        "scope": "Architecture/classification and source evidence, not executed browser support",
+        "runtime_status": "unrun"
+      },
+      "required_proof": [
+        "M0 four-record fixture has exact count, sum 10.5, quoted tabs/newlines/quotes, BOM, and empty strings.",
+        "M1 exercises line endings, header collisions, invalid widths, encoding errors, and asynchronous File read failures.",
+        "Use explicit tab and new-profile conversion after tokenization; preserve legacy CSV compatibility unless separately adjudicated."
+      ],
+      "dependencies": [
+        "R03",
+        "R12",
+        "R18"
+      ],
+      "proposed_milestone": "M0–M1",
+      "disposition_status": "Research recommendation for Codex; no implementation performed"
+    },
+    {
+      "id": "R06",
+      "recommendation": "Add strict flat-object JSON Lines after the text admission proof",
+      "priority": 1,
+      "tier": "add soon",
+      "reason": "Line-oriented records provide a useful interchange path with precise diagnostics. Native JSON parsing and the current flattener cannot establish duplicate-key and numeric-lexeme safety.",
+      "repository_evidence": [
+        {
+          "source_id": "E21",
+          "path": "apps/demo/src/jsonParser.ts",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "parseJsonData; flattening helpers"
+          ]
+        },
+        {
+          "source_id": "E15",
+          "path": "packages/explorEDA/src/lib/valueParsing.ts",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "parseNumber; parseBoolean; isMissingValue; parseDateText; timestampOf; timeOfDay"
+          ]
+        },
+        {
+          "source_id": "E16",
+          "path": "packages/explorEDA/src/lib/analysis/sources.ts",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "fieldIds; TYPE_SAMPLE; sourceFromRows; addSourceFromRows; singleTableProject"
+          ]
+        },
+        {
+          "source_id": "E30",
+          "path": "apps/demo/src/docs/pages/load-data.mdx",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "Current import guidance"
+          ]
+        }
+      ],
+      "source_ids": [
+        "E21",
+        "E15",
+        "E16",
+        "E30",
+        "P05",
+        "P08",
+        "P09",
+        "P10",
+        "P11",
+        "P12",
+        "P13"
+      ],
+      "alternatives": [
+        {
+          "option": "Split lines and call the legacy JSON flattener",
+          "disposition": "Reject: silently inherits null/flattening semantics and pre-validation number loss."
+        },
+        {
+          "option": "Write a custom JSON tokenizer",
+          "disposition": "Prefer an evaluated small lossless parser; avoid maintaining a language parser without need."
+        }
+      ],
+      "confidence": {
+        "level": "medium-high",
+        "scope": "Architecture/classification and source evidence, not executed browser support",
+        "runtime_status": "unrun"
+      },
+      "required_proof": [
+        "M1 strict UTF-8 flat objects, no BOM/blank lines, LF/CRLF and final newline profile.",
+        "Duplicate names, unsafe numeric tokens, malformed line 2, nested values, and nonobject records reject atomically.",
+        "Pin and browser-build lossless-json; no wrapper object escapes into rows; expected finite sum is 0.75."
+      ],
+      "dependencies": [
+        "R05",
+        "R12"
+      ],
+      "proposed_milestone": "M1",
+      "disposition_status": "Research recommendation for Codex; no implementation performed"
+    },
+    {
+      "id": "R07",
+      "recommendation": "Add bounded XLSX as one selected worksheet region per import",
+      "priority": 1,
+      "tier": "add soon",
+      "reason": "A workbook is not automatically one table. Sheet/range/header selection and stored-cell semantics give useful local data without implementing a spreadsheet application.",
+      "repository_evidence": [
+        {
+          "source_id": "E10",
+          "path": "packages/explorEDA/src/components/ExplorEda.tsx",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "ExplorEdaProps; data; fieldNames; savedData; onAddSource"
+          ]
+        },
+        {
+          "source_id": "E13",
+          "path": "packages/explorEDA/src/types/ChartTypes.ts",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "datum"
+          ]
+        },
+        {
+          "source_id": "E15",
+          "path": "packages/explorEDA/src/lib/valueParsing.ts",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "parseNumber; parseBoolean; isMissingValue; parseDateText; timestampOf; timeOfDay"
+          ]
+        },
+        {
+          "source_id": "E23",
+          "path": "apps/demo/src/LandingPage.tsx",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "openImported; handleCsvImport; handleProjectImport; handleAnalysisJson"
+          ]
+        },
+        {
+          "source_id": "E24",
+          "path": "apps/demo/src/SavedViewsWorkspace.tsx",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "addSourceFile; makeSession; WorkspaceInstance; project promotion"
+          ]
+        },
+        {
+          "source_id": "E30",
+          "path": "apps/demo/src/docs/pages/load-data.mdx",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "Current import guidance"
+          ]
+        },
+        {
+          "source_id": "E37",
+          "path": "packages/explorEDA/src/lib/fieldSettings.ts",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "convertFieldValue",
+            "applyFieldSettings"
+          ]
+        }
+      ],
+      "source_ids": [
+        "E10",
+        "E13",
+        "E15",
+        "E23",
+        "E24",
+        "E30",
+        "E37",
+        "W01",
+        "W02",
+        "W03",
+        "W04",
+        "W06",
+        "W07",
+        "W10",
+        "W11",
+        "W12",
+        "W13",
+        "W14",
+        "W15",
+        "W16",
+        "W17",
+        "W18",
+        "W19",
+        "W20",
+        "W22",
+        "W23",
+        "W24"
+      ],
+      "alternatives": [
+        {
+          "option": "SheetJS CE first",
+          "disposition": "Evaluate exact official artifact and selected-cell traversal; pin integrity and test strict selected-sheet errors."
+        },
+        {
+          "option": "ExcelJS fallback",
+          "disposition": "Compare on the same fixtures if XLSX-only fidelity/bundling favors it; browser document model is not Node streaming."
+        },
+        {
+          "option": "Implicit sheet merge or named-table picker by assumption",
+          "disposition": "Reject; explicit source boundaries and actual metadata proof required."
+        }
+      ],
+      "confidence": {
+        "level": "medium-high",
+        "scope": "Architecture/classification and source evidence, not executed browser support",
+        "runtime_status": "unrun"
+      },
+      "required_proof": [
+        "M2 independent Excel/LibreOffice/Sheets workbooks select 32 second-sheet records, not title/other-region data.",
+        "Cached results only; stale warning; absent cache/errors/merged regions/encryption reject; no formula/macro/link execution.",
+        "1900/1904/date/civil-time/hidden/sparse/value-format cases meet explicit policies.",
+        "Same file through initial import and Add source; saved interpretation and layout survive."
+      ],
+      "dependencies": [
+        "R05",
+        "R02",
+        "R04",
+        "R12",
+        "R13"
+      ],
+      "proposed_milestone": "M2",
+      "disposition_status": "Research recommendation for Codex; no implementation performed"
+    },
+    {
+      "id": "R08",
+      "recommendation": "Use Google Sheets only through manual local exports",
+      "priority": 1,
+      "tier": "add soon",
+      "reason": "Downloaded CSV/TSV and XLSX/ODS contain usable local data. Native documents, .gsheet pointers, and managed offline caches are separate artifacts and do not establish a portable table reader.",
+      "repository_evidence": [
+        {
+          "source_id": "E19",
+          "path": "apps/demo/src/readDataFile.ts",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "isSupportedDataFile; readDataFile"
+          ]
+        },
+        {
+          "source_id": "E22",
+          "path": "apps/demo/src/CsvUpload.tsx",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "CsvUpload; file handling"
+          ]
+        },
+        {
+          "source_id": "E23",
+          "path": "apps/demo/src/LandingPage.tsx",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "openImported; handleCsvImport; handleProjectImport; handleAnalysisJson"
+          ]
+        },
+        {
+          "source_id": "E24",
+          "path": "apps/demo/src/SavedViewsWorkspace.tsx",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "addSourceFile; makeSession; WorkspaceInstance; project promotion"
+          ]
+        },
+        {
+          "source_id": "E30",
+          "path": "apps/demo/src/docs/pages/load-data.mdx",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "Current import guidance"
+          ]
+        }
+      ],
+      "source_ids": [
+        "E19",
+        "E22",
+        "E23",
+        "E24",
+        "E30",
+        "W25",
+        "W26",
+        "W27",
+        "W28",
+        "W29",
+        "W30",
+        "W31",
+        "W32",
+        "W33"
+      ],
+      "alternatives": [
+        {
+          "option": "API/OAuth/public-link live integration",
+          "disposition": "Out of scope; no live connector is proposed."
+        },
+        {
+          "option": ".gsheet/offline cache parsing",
+          "disposition": "Reject as an import route; provide download guidance."
+        },
+        {
+          "option": "Manual CSV/TSV versus XLSX/ODS",
+          "disposition": "Choose text for one prepared table, workbook for sheet/cell structure; advertised formats follow their own gates."
+        }
+      ],
+      "confidence": {
+        "level": "high",
+        "scope": "Architecture/classification and source evidence, not executed browser support",
+        "runtime_status": "unrun"
+      },
+      "required_proof": [
+        "M2 compares user-prepared two-tab exports; TSV official current-sheet evidence and CSV current-tab behavior are distinguished.",
+        "XLSX/ODS fidelity and CSV/TSV text interpretation documented; exports are snapshots without sync.",
+        "Pointer/cache input fails before row parsing and never follows a URL."
+      ],
+      "dependencies": [
+        "R03",
+        "R18"
+      ],
+      "proposed_milestone": "M2",
+      "disposition_status": "Research recommendation for Codex; no implementation performed"
+    },
+    {
+      "id": "R09",
+      "recommendation": "Evaluate flat single-file Parquet with hyparquet first",
+      "priority": 2,
+      "tier": "evaluate",
+      "reason": "Parquet has substantial analytical interoperability and a direct browser candidate. However inspected default decimal/time conversions and byte/geometry behavior require schema admission before materialization.",
+      "repository_evidence": [
+        {
+          "source_id": "E10",
+          "path": "packages/explorEDA/src/components/ExplorEda.tsx",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "ExplorEdaProps; data; fieldNames; savedData; onAddSource"
+          ]
+        },
+        {
+          "source_id": "E11",
+          "path": "packages/explorEDA/src/components/ExplorEdaProject.tsx",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "useAnalysisEvaluation; renderedSettings; data mapping"
+          ]
+        },
+        {
+          "source_id": "E13",
+          "path": "packages/explorEDA/src/types/ChartTypes.ts",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "datum"
+          ]
+        },
+        {
+          "source_id": "E15",
+          "path": "packages/explorEDA/src/lib/valueParsing.ts",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "parseNumber; parseBoolean; isMissingValue; parseDateText; timestampOf; timeOfDay"
+          ]
+        },
+        {
+          "source_id": "E18",
+          "path": "packages/explorEDA/src/providers/DataLayerProvider.tsx",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "rawData; applyFieldSettings; initializeData; caches; saveAnalysisToStructure"
+          ]
+        }
+      ],
+      "source_ids": [
+        "E10",
+        "E11",
+        "E13",
+        "E15",
+        "E18",
+        "B01",
+        "B02",
+        "B03",
+        "B04",
+        "B05",
+        "B06",
+        "B07",
+        "B08",
+        "B09",
+        "B10",
+        "B11",
+        "B12",
+        "B13",
+        "B14",
+        "B15",
+        "B16",
+        "B39",
+        "B44",
+        "B45"
+      ],
+      "alternatives": [
+        {
+          "option": "hyparquet",
+          "disposition": "First proof: complete file, conservative types, uncompressed/Snappy first; artifact and codec route pinned."
+        },
+        {
+          "option": "parquet-wasm",
+          "disposition": "Compare only for a concrete fidelity/access failure; explicit Wasm/Arrow ownership and codec gates."
+        },
+        {
+          "option": "DuckDB-Wasm",
+          "disposition": "Defer engine adoption for local SQL/pushdown demand."
+        }
+      ],
+      "confidence": {
+        "level": "medium",
+        "scope": "Architecture/classification and source evidence, not executed browser support",
+        "runtime_status": "unrun"
+      },
+      "required_proof": [
+        "M3 independent 257-row files agree; PyArrow has multiple groups, and a separate 4097-row DuckDB fixture proves groups. Expected 257-row integer sum 0 and floating sum 8224.",
+        "DECIMAL, unsafe int64, unsupported timestamps/binary/nested/annotations reject before conversion.",
+        "Selected dictionary/page encodings and codecs, corruption, checksum policy, single-file locality, and production assets pass."
+      ],
+      "dependencies": [
+        "R02",
+        "R03",
+        "R04",
+        "R12",
+        "R13",
+        "R18"
+      ],
+      "proposed_milestone": "M3",
+      "disposition_status": "Research recommendation for Codex; no implementation performed"
+    },
+    {
+      "id": "R10",
+      "recommendation": "Keep Avro OCF demand-gated; reject schema-dependent messages",
+      "priority": 3,
+      "tier": "evaluate",
+      "reason": "OCF embeds a writer schema, but unions/logical types, browser codecs, stable package selection, and generated-code CSP behavior are unresolved maintenance costs for this application.",
+      "repository_evidence": [
+        {
+          "source_id": "E12",
+          "path": "packages/explorEDA/src/types/AnalysisProject.ts",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "AnalysisScalar; AnalysisSourceRow; FieldDefinition; SourceDefinition"
+          ]
+        },
+        {
+          "source_id": "E13",
+          "path": "packages/explorEDA/src/types/ChartTypes.ts",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "datum"
+          ]
+        },
+        {
+          "source_id": "E15",
+          "path": "packages/explorEDA/src/lib/valueParsing.ts",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "parseNumber; parseBoolean; isMissingValue; parseDateText; timestampOf; timeOfDay"
+          ]
+        },
+        {
+          "source_id": "E19",
+          "path": "apps/demo/src/readDataFile.ts",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "isSupportedDataFile; readDataFile"
+          ]
+        }
+      ],
+      "source_ids": [
+        "E12",
+        "E13",
+        "E15",
+        "E19",
+        "B17",
+        "B18",
+        "B19",
+        "B20",
+        "B21",
+        "B22",
+        "B23",
+        "B24",
+        "B25",
+        "B38",
+        "B40",
+        "B42",
+        "B43"
+      ],
+      "alternatives": [
+        {
+          "option": "avsc browser OCF path",
+          "disposition": "Evaluate only after stable artifact and actual CSP proof; no unsafe-eval policy expansion recommended."
+        },
+        {
+          "option": "Official Apache avro-js",
+          "disposition": "Current browser export inspected without exposed OCF decoder; separate proof required."
+        },
+        {
+          "option": "Manual source-tool conversion",
+          "disposition": "Preferred if browser OCF needs a custom container parser or many shims."
+        }
+      ],
+      "confidence": {
+        "level": "medium",
+        "scope": "Architecture/classification and source evidence, not executed browser support",
+        "runtime_status": "unrun"
+      },
+      "required_proof": [
+        "M4 actual production browser build succeeds without unapproved generated-code policy changes.",
+        "Independent OCF fixtures exercise null/deflate and each optional supported codec; nullable unions and exact longs/logical types pass or reject.",
+        "Raw datum and fingerprint-only single-object input fail as incomplete local tables."
+      ],
+      "dependencies": [
+        "R02",
+        "R03",
+        "R12",
+        "R13",
+        "R18"
+      ],
+      "proposed_milestone": "M4",
+      "disposition_status": "Research recommendation for Codex; no implementation performed"
+    },
+    {
+      "id": "R11",
+      "recommendation": "Evaluate Arrow IPC file/saved stream and Feather V2 as one bounded family",
+      "priority": 3,
+      "tier": "evaluate",
+      "reason": "Arrow JS provides IPC reading and codec hooks, while the existing application still needs scalar rows. Feather V1 is a separate legacy format and compressed V2 is not proved by uncompressed IPC.",
+      "repository_evidence": [
+        {
+          "source_id": "E10",
+          "path": "packages/explorEDA/src/components/ExplorEda.tsx",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "ExplorEdaProps; data; fieldNames; savedData; onAddSource"
+          ]
+        },
+        {
+          "source_id": "E11",
+          "path": "packages/explorEDA/src/components/ExplorEdaProject.tsx",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "useAnalysisEvaluation; renderedSettings; data mapping"
+          ]
+        },
+        {
+          "source_id": "E13",
+          "path": "packages/explorEDA/src/types/ChartTypes.ts",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "datum"
+          ]
+        },
+        {
+          "source_id": "E18",
+          "path": "packages/explorEDA/src/providers/DataLayerProvider.tsx",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "rawData; applyFieldSettings; initializeData; caches; saveAnalysisToStructure"
+          ]
+        },
+        {
+          "source_id": "E33",
+          "path": "docs/intent/columnar-data-transport/intent-brief.md",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "Arrow transport comparison and constraints"
+          ]
+        },
+        {
+          "source_id": "E34",
+          "path": "docs/intent/columnar-data-transport/shape-brief.md",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "Benchmarks; adoption gates"
+          ]
+        }
+      ],
+      "source_ids": [
+        "E10",
+        "E11",
+        "E13",
+        "E18",
+        "E33",
+        "E34",
+        "B26",
+        "B27",
+        "B28",
+        "B29",
+        "B30",
+        "B31",
+        "B32",
+        "B41"
+      ],
+      "alternatives": [
+        {
+          "option": "Arrow as universal input intermediate",
+          "disposition": "Defer; imposes conversion on unrelated direct readers without demonstrated benefit."
+        },
+        {
+          "option": "Reuse an independently needed Arrow decoder",
+          "disposition": "Reasonable if the same exact package and codec/type proofs satisfy this input feature."
+        },
+        {
+          "option": "Feather V1 conversion",
+          "disposition": "Recommend rewriting to V2/Parquet in the producing environment."
+        }
+      ],
+      "confidence": {
+        "level": "medium",
+        "scope": "Architecture/classification and source evidence, not executed browser support",
+        "runtime_status": "unrun"
+      },
+      "required_proof": [
+        "M4 independent multiple-batch IPC file/stream and FeatherV2 fixtures agree.",
+        "Uncompressed, LZ4-frame, and Zstd tested separately with exact registered codec packages.",
+        "int64/decimal/time/extension/nested semantics cannot be lost in table iteration; V1 gets a clear version diagnostic."
+      ],
+      "dependencies": [
+        "R02",
+        "R03",
+        "R12",
+        "R13",
+        "R18"
+      ],
+      "proposed_milestone": "M4",
+      "disposition_status": "Research recommendation for Codex; no implementation performed"
+    },
+    {
+      "id": "R12",
+      "recommendation": "Keep optional reader delivery explicit, lazy, and version-pinned",
+      "priority": 0,
+      "tier": "add soon",
+      "reason": "New packages vary in ESM/CommonJS/browser exports, worker shims, Wasm assets, licenses, and mutable release labels. A parser claim cannot substitute for the actual production bundle.",
+      "repository_evidence": [
+        {
+          "source_id": "E03",
+          "path": "package.json",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "packageManager; scripts; type"
+          ]
+        },
+        {
+          "source_id": "E08",
+          "path": "packages/explorEDA/package.json",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "exports; peerDependencies; scripts"
+          ]
+        },
+        {
+          "source_id": "E09",
+          "path": "apps/demo/package.json",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "dependencies; scripts"
+          ]
+        }
+      ],
+      "source_ids": [
+        "E03",
+        "E08",
+        "E09",
+        "P03",
+        "P12",
+        "W06",
+        "W07",
+        "W08",
+        "W09",
+        "W23",
+        "W24",
+        "B08",
+        "B12",
+        "B14",
+        "B19",
+        "B28",
+        "B33",
+        "B38"
+      ],
+      "alternatives": [
+        {
+          "option": "Eagerly export all decoders from the library root",
+          "disposition": "Reject: CSV-only and embedding consumers would inherit unneeded dependencies."
+        },
+        {
+          "option": "Runtime public CDN loading",
+          "disposition": "Prefer pinned local build assets; do not assume network/CSP availability."
+        }
+      ],
+      "confidence": {
+        "level": "high",
+        "scope": "Architecture/classification and source evidence, not executed browser support",
+        "runtime_status": "unrun"
+      },
+      "required_proof": [
+        "Actual installed versions/artifact hashes, license notices, ESM/Vite build and worker/Wasm assets recorded.",
+        "CSV-only run fetches no workbook/binary chunks.",
+        "Production CSP/asset-load failures are actionable and never mislabeled as malformed files; no package-size guesses reported as measurements."
+      ],
+      "dependencies": [
+        "R01"
+      ],
+      "proposed_milestone": "M0 onward",
+      "disposition_status": "Research recommendation for Codex; no implementation performed"
+    },
+    {
+      "id": "R13",
+      "recommendation": "Stage complete imports with cancellation and bounded resource checks",
+      "priority": 0,
+      "tier": "add soon",
+      "reason": "The consumer retains complete rows, indexes/caches, and saved data. Workers and columnar bytes do not eliminate resident cost, and asynchronous imports can race with newer files or saved-tab edits.",
+      "repository_evidence": [
+        {
+          "source_id": "E11",
+          "path": "packages/explorEDA/src/components/ExplorEdaProject.tsx",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "useAnalysisEvaluation; renderedSettings; data mapping"
+          ]
+        },
+        {
+          "source_id": "E18",
+          "path": "packages/explorEDA/src/providers/DataLayerProvider.tsx",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "rawData; applyFieldSettings; initializeData; caches; saveAnalysisToStructure"
+          ]
+        },
+        {
+          "source_id": "E23",
+          "path": "apps/demo/src/LandingPage.tsx",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "openImported; handleCsvImport; handleProjectImport; handleAnalysisJson"
+          ]
+        },
+        {
+          "source_id": "E24",
+          "path": "apps/demo/src/SavedViewsWorkspace.tsx",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "addSourceFile; makeSession; WorkspaceInstance; project promotion"
+          ]
+        },
+        {
+          "source_id": "E25",
+          "path": "apps/demo/src/savedViewsSession.ts",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "writeProjectTables; session serialization and clone helpers"
+          ]
+        },
+        {
+          "source_id": "E26",
+          "path": "apps/demo/src/savedViewsHistory.ts",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "history checkpoints; JSON clone helpers"
+          ]
+        },
+        {
+          "source_id": "E38",
+          "path": "packages/explorEDA/src/providers/lib/dataLayerState.ts",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "initializeData",
+            "invalidateCalculationCache"
+          ]
+        }
+      ],
+      "source_ids": [
+        "E11",
+        "E18",
+        "E23",
+        "E24",
+        "E25",
+        "E26",
+        "E38",
+        "B15",
+        "B35",
+        "B38",
+        "L45",
+        "L46",
+        "L48"
+      ],
+      "alternatives": [
+        {
+          "option": "Streaming engine or preview-as-data",
+          "disposition": "Defer streaming engine; reject publishing partial samples as the full source."
+        },
+        {
+          "option": "File.size-only protection",
+          "disposition": "Insufficient for compressed/container data; expansion/cell/row/string budgets and decoder limitations must be explicit."
+        }
+      ],
+      "confidence": {
+        "level": "high",
+        "scope": "Architecture/classification and source evidence, not executed browser support",
+        "runtime_status": "unrun"
+      },
+      "required_proof": [
+        "Latest operation alone can publish; cancellation preserves existing rows/layout and releases resources when possible.",
+        "Add source commits against current session; quota failure does not claim durable save.",
+        "Declared four workload shapes measure total load/admission/render/save and memory on actual browsers; worker introduced only for a resolved responsiveness need."
+      ],
+      "dependencies": [
+        "R01"
+      ],
+      "proposed_milestone": "M0 onward",
+      "disposition_status": "Research recommendation for Codex; no implementation performed"
+    },
+    {
+      "id": "R14",
+      "recommendation": "Do not automatically enable every workbook extension",
+      "priority": 3,
+      "tier": "evaluate",
+      "reason": "A shared decoder may recognize many workbook variants, but each has distinct packaging, legacy encodings, formula/date, encryption, and producer behavior. Capability reuse is not a support promise.",
+      "repository_evidence": [
+        {
+          "source_id": "E19",
+          "path": "apps/demo/src/readDataFile.ts",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "isSupportedDataFile; readDataFile"
+          ]
+        },
+        {
+          "source_id": "E30",
+          "path": "apps/demo/src/docs/pages/load-data.mdx",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "Current import guidance"
+          ]
+        }
+      ],
+      "source_ids": [
+        "E19",
+        "E30",
+        "W05",
+        "W07",
+        "W10",
+        "W17",
+        "W18",
+        "W21"
+      ],
+      "alternatives": [
+        {
+          "option": "Enable XLS/XLSB/XLSM/ODS together with XLSX",
+          "disposition": "Reject until independent fixtures and bounded semantics justify each."
+        },
+        {
+          "option": "ODS or XLSB demand-driven slice",
+          "disposition": "Evaluate after XLSX; keep XLS/XLSM manual conversion initially."
+        }
+      ],
+      "confidence": {
+        "level": "medium-high",
+        "scope": "Architecture/classification and source evidence, not executed browser support",
+        "runtime_status": "unrun"
+      },
+      "required_proof": [
+        "Each promoted subtype has a real independent file, positive/negative profile, docs, and example.",
+        "No macros, encryption/password collection, or formula execution added."
+      ],
+      "dependencies": [
+        "R07"
+      ],
+      "proposed_milestone": "After M2",
+      "disposition_status": "Research recommendation for Codex; no implementation performed"
+    },
+    {
+      "id": "R15",
+      "recommendation": "Use niche-format breadth as a documented conversion map",
+      "priority": 3,
+      "tier": "manual conversion",
+      "reason": "Statistical labels/missing categories, array axes/calendars, spatial geometry, and message schemas are product semantics beyond a flat decoder. No observed local demand warrants implementing every domain.",
+      "repository_evidence": [
+        {
+          "source_id": "E10",
+          "path": "packages/explorEDA/src/components/ExplorEda.tsx",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "ExplorEdaProps; data; fieldNames; savedData; onAddSource"
+          ]
+        },
+        {
+          "source_id": "E12",
+          "path": "packages/explorEDA/src/types/AnalysisProject.ts",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "AnalysisScalar; AnalysisSourceRow; FieldDefinition; SourceDefinition"
+          ]
+        },
+        {
+          "source_id": "E13",
+          "path": "packages/explorEDA/src/types/ChartTypes.ts",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "datum"
+          ]
+        },
+        {
+          "source_id": "E30",
+          "path": "apps/demo/src/docs/pages/load-data.mdx",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "Current import guidance"
+          ]
+        }
+      ],
+      "source_ids": [
+        "E10",
+        "E12",
+        "E13",
+        "E30",
+        "L01",
+        "L02",
+        "L03",
+        "L04",
+        "L06",
+        "L09",
+        "L13",
+        "L14",
+        "L16",
+        "L18",
+        "L19",
+        "L20",
+        "L21",
+        "L23",
+        "L24",
+        "L25",
+        "L26",
+        "L27",
+        "L28",
+        "L29",
+        "L30",
+        "L31",
+        "L32",
+        "L33",
+        "L34"
+      ],
+      "alternatives": [
+        {
+          "option": "Universal format plugin catalog as first release",
+          "disposition": "Reject: expands maintenance and unsupported semantic promises."
+        },
+        {
+          "option": "Trusted owner exports a selected table",
+          "disposition": "Recommend with explicit labels, missing values, dimensions, and geometry-projection decisions."
+        }
+      ],
+      "confidence": {
+        "level": "high",
+        "scope": "Architecture/classification and source evidence, not executed browser support",
+        "runtime_status": "unrun"
+      },
+      "required_proof": [
+        "Unsupported-format docs state the appropriate source-tool conversion boundary.",
+        "Promotion of a niche requires a concrete dataset, independent fixture, and evidence that scalar interpretation is useful."
+      ],
+      "dependencies": [
+        "R18"
+      ],
+      "proposed_milestone": "Documentation / demand-driven",
+      "disposition_status": "Research recommendation for Codex; no implementation performed"
+    },
+    {
+      "id": "R16",
+      "recommendation": "Keep databases, lakehouses, live services, and a general query engine below the cut line",
+      "priority": 3,
+      "tier": "later integration",
+      "reason": "Local database bytes and table-storage metadata still require consistent snapshot/table selection and engine semantics. Existing adjacent server/transport plans are proposals, not authorization to extend local import.",
+      "repository_evidence": [
+        {
+          "source_id": "E31",
+          "path": "docs/intent/database-adapters/intent-brief.md",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "Scope; complete source snapshots"
+          ]
+        },
+        {
+          "source_id": "E32",
+          "path": "docs/intent/database-adapters/shape-brief.md",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "Design alternatives and first adapter"
+          ]
+        },
+        {
+          "source_id": "E33",
+          "path": "docs/intent/columnar-data-transport/intent-brief.md",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "Arrow transport comparison and constraints"
+          ]
+        },
+        {
+          "source_id": "E34",
+          "path": "docs/intent/columnar-data-transport/shape-brief.md",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "Benchmarks; adoption gates"
+          ]
+        },
+        {
+          "source_id": "E35",
+          "path": "docs/intent/database-query-contract/intent-brief.md",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "Authorized tables; server boundary"
+          ]
+        },
+        {
+          "source_id": "E36",
+          "path": "docs/intent/date-time-handling/intent-brief.md",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "Current behavior; unresolved design"
+          ]
+        }
+      ],
+      "source_ids": [
+        "E31",
+        "E32",
+        "E33",
+        "E34",
+        "E35",
+        "E36",
+        "B33",
+        "B34",
+        "B35",
+        "B36",
+        "B37",
+        "L39",
+        "L40",
+        "L41",
+        "L42",
+        "L43",
+        "L44",
+        "L56",
+        "L57",
+        "W28",
+        "W29"
+      ],
+      "alternatives": [
+        {
+          "option": "Read all Parquet/Avro leaves as the table",
+          "disposition": "Reject: ignores snapshot/log/deletion semantics."
+        },
+        {
+          "option": "Embed DuckDB for format coverage alone",
+          "disposition": "Defer; justify with measured local query workload instead."
+        }
+      ],
+      "confidence": {
+        "level": "high",
+        "scope": "Architecture/classification and source evidence, not executed browser support",
+        "runtime_status": "unrun"
+      },
+      "required_proof": [
+        "Documentation distinguishes files/wrappers/table systems/protocols/services.",
+        "Any later integration has separate user intent and proofs for consistent snapshots and engine resources."
+      ],
+      "dependencies": [],
+      "proposed_milestone": "Outside current scope",
+      "disposition_status": "Research recommendation for Codex; no implementation performed"
+    },
+    {
+      "id": "R17",
+      "recommendation": "Avoid executable serialization and managed-cache imports",
+      "priority": 0,
+      "tier": "avoid",
+      "reason": "Pickle and object-array persistence are unsuitable arbitrary-input routes. Managed Sheets offline state and pointer files do not establish an independent portable table format.",
+      "repository_evidence": [
+        {
+          "source_id": "E19",
+          "path": "apps/demo/src/readDataFile.ts",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "isSupportedDataFile; readDataFile"
+          ]
+        },
+        {
+          "source_id": "E30",
+          "path": "apps/demo/src/docs/pages/load-data.mdx",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "Current import guidance"
+          ]
+        }
+      ],
+      "source_ids": [
+        "E19",
+        "E30",
+        "L15",
+        "L17",
+        "L22",
+        "W28",
+        "W30",
+        "W31",
+        "W32"
+      ],
+      "alternatives": [
+        {
+          "option": "Execute restoration to discover data",
+          "disposition": "Reject in this initiative."
+        },
+        {
+          "option": "Trusted producer exports neutral scalar tables",
+          "disposition": "Recommend, without application-side macros, credentials, or remote resolution."
+        }
+      ],
+      "confidence": {
+        "level": "high",
+        "scope": "Architecture/classification and source evidence, not executed browser support",
+        "runtime_status": "unrun"
+      },
+      "required_proof": [
+        "Unsupported signatures/extensions fail before execution or state mutation.",
+        "No unsafe deserializer, macro/formula engine, or cache scraping code enters reader scope."
+      ],
+      "dependencies": [],
+      "proposed_milestone": "All milestones",
+      "disposition_status": "Research recommendation for Codex; no implementation performed"
+    },
+    {
+      "id": "R18",
+      "recommendation": "Require a real end-to-end proof, documentation, and example with each feature",
+      "priority": 0,
+      "tier": "add soon",
+      "reason": "The inspected tests cover baseline parsing/host behavior and mock exploration. They cannot prove real format fidelity, type behavior, saved-state correctness, or responsive use.",
+      "repository_evidence": [
+        {
+          "source_id": "E01",
+          "path": "AGENTS.md",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "Repository workflow and scope"
+          ]
+        },
+        {
+          "source_id": "E05",
+          "path": "docs/agent-guide.md",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "User documentation; live examples; verification commands"
+          ]
+        },
+        {
+          "source_id": "E06",
+          "path": "docs/ui-defaults.md",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "Initial state; layout; metadata; responsive behavior"
+          ]
+        },
+        {
+          "source_id": "E28",
+          "path": "apps/demo/src/parsers.test.ts",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "CSV and JSON parser cases"
+          ]
+        },
+        {
+          "source_id": "E29",
+          "path": "apps/demo/src/SavedViewsWorkspace.test.tsx",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "SavedViewsWorkspace tests; ExplorEda mock"
+          ]
+        },
+        {
+          "source_id": "E30",
+          "path": "apps/demo/src/docs/pages/load-data.mdx",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "Current import guidance"
+          ]
+        }
+      ],
+      "source_ids": [
+        "E01",
+        "E05",
+        "E06",
+        "E28",
+        "E29",
+        "E30",
+        "B39",
+        "B40",
+        "B41"
+      ],
+      "alternatives": [
+        {
+          "option": "Fake decoder tests alone",
+          "disposition": "Insufficient; keep for dispatch tests alongside independently produced binary/workbook files."
+        },
+        {
+          "option": "Advertise formats first, write docs later",
+          "disposition": "Reject: supported subtype and interpretation must be visible when the feature ships."
+        }
+      ],
+      "confidence": {
+        "level": "high",
+        "scope": "Architecture/classification and source evidence, not executed browser support",
+        "runtime_status": "unrun"
+      },
+      "required_proof": [
+        "Follow M0–M4 in proof-plan.md, with exact fixture/version/hash/expected-values records.",
+        "Real UI at 1280, 783, 390 exercises both entry paths, filters, trace, tabs/layout, save/restore, cancel/errors.",
+        "Run relevant targeted checks in a full checkout and record unrun checks truthfully; no app checks ran in this research."
+      ],
+      "dependencies": [],
+      "proposed_milestone": "M0 onward",
+      "disposition_status": "Research recommendation for Codex; no implementation performed"
+    },
+    {
+      "id": "R19",
+      "recommendation": "Evaluate a bounded gzip wrapper separately after useful core readers",
+      "priority": 3,
+      "tier": "evaluate",
+      "reason": "Compression changes byte access and expansion cost without supplying a row schema. Generic archives and standalone zstd do not become supported because a workbook or Parquet codec handles them internally.",
+      "repository_evidence": [
+        {
+          "source_id": "E19",
+          "path": "apps/demo/src/readDataFile.ts",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "isSupportedDataFile; readDataFile"
+          ]
+        },
+        {
+          "source_id": "E18",
+          "path": "packages/explorEDA/src/providers/DataLayerProvider.tsx",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "rawData; applyFieldSettings; initializeData; caches; saveAnalysisToStructure"
+          ]
+        },
+        {
+          "source_id": "E30",
+          "path": "apps/demo/src/docs/pages/load-data.mdx",
+          "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+          "symbols_or_sections": [
+            "Current import guidance"
+          ]
+        }
+      ],
+      "source_ids": [
+        "E19",
+        "E18",
+        "E30",
+        "L45",
+        "L46",
+        "L47",
+        "L48"
+      ],
+      "alternatives": [
+        {
+          "option": "All compression/archive formats at once",
+          "disposition": "Defer; arbitrary entry/companion selection is separate work."
+        },
+        {
+          "option": "One allowed compressed text file with explicit expansion/member rules",
+          "disposition": "Evaluate only after demand and resource proof."
+        }
+      ],
+      "confidence": {
+        "level": "medium",
+        "scope": "Architecture/classification and source evidence, not executed browser support",
+        "runtime_status": "unrun"
+      },
+      "required_proof": [
+        "Independent CSV.gz plus truncated/concatenated/high-expansion cases meet explicit expanded-byte budget and member policy.",
+        "Feature-detect and browser-test native decompression; standards enum is not browser-version proof."
+      ],
+      "dependencies": [
+        "R05",
+        "R13",
+        "R18"
+      ],
+      "proposed_milestone": "After M1",
+      "disposition_status": "Research recommendation for Codex; no implementation performed"
+    }
+  ]
+}

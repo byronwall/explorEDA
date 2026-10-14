@@ -101,7 +101,7 @@ export function IntegrationGuide() {
               {
                 name: "OrderBook.tsx",
                 code: orderBookSource,
-                note: "The featured example: its CSV as data and its typed settings as savedData. parseCsvData and shopDashboard come from this demo app, not the package.",
+                note: "The featured example: its CSV as data and its typed settings as savedData. readTableText comes from exploreda/readers; shopDashboard comes from this demo app.",
               },
             ]}
           />
