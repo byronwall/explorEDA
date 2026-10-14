@@ -1,6 +1,7 @@
 /**
  * The database routes a project answers under its API path:
  * `POST sources/<id>/refresh` reads a database source again, and
+ * `GET connections/<id>/tables` lists what a connection can read, and
  * `PUT connections/<id>/secret` checks a connection's password and keeps
  * it on this computer (`DELETE` forgets it). A secret is never sent back.
  */
@@ -9,6 +10,7 @@ import { resolveSecret, type SecretStore } from "../../node/secrets";
 import { readBody, send } from "../http";
 import {
   checkSecret,
+  listTables,
   projectConnection,
   refreshSource,
   type SourceOptions,
@@ -32,7 +34,12 @@ export async function sourceRoutes(
 ): Promise<boolean> {
   const refresh = /^sources\/([^/]+)\/refresh$/.exec(route);
   const secret = /^connections\/([^/]+)\/secret$/.exec(route);
-  if (!(refresh && req.method === "POST") && !secret) {
+  const tables = /^connections\/([^/]+)\/tables$/.exec(route);
+  if (
+    !(refresh && req.method === "POST") &&
+    !(tables && req.method === "GET") &&
+    !secret
+  ) {
     return false;
   }
   if (!canRefresh) {
@@ -53,6 +60,17 @@ export async function sourceRoutes(
       signal: controller.signal,
     });
     send(res, 200, info);
+    return true;
+  }
+  if (tables) {
+    send(
+      res,
+      200,
+      await listTables(decodeURIComponent(tables[1]!), {
+        ...options,
+        secret: resolveSecret(secrets),
+      })
+    );
     return true;
   }
   if (!secrets) {

@@ -10,6 +10,14 @@ npx exploreda --example database
 
 The first time the project opens, its analyses need data. Choose **Read all** to read every source, or **Read now** beside one. After that, each source shows how many rows it holds and when it was read. Choose **Refresh** to read it again.
 
+## Add a database from the app
+
+Choose **Add database** beside **Data**, or **Add a database** on a new project.
+
+1. **Pick a connection, or add one.** A SQLite connection needs the file's path; a database file already in the folder is suggested. A PostgreSQL connection needs its host, database, and user, and takes its password here.
+2. **Pick a table, or write a query.** Type to filter the tables. Choose **A query** to write a `select`.
+3. **Name the source and choose Add and read.** explorEDA adds one line to the project text, reads the rows, and opens a new analysis on a summary of their fields.
+
 ## Connections and sources
 
 ```text

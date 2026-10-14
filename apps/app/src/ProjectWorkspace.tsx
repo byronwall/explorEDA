@@ -13,6 +13,7 @@ import { createAnalysisWorker } from "exploreda/analysis";
 import { AddData, fetchedLabel } from "./AddData";
 import type { FetchedRecord, ServerInfo, ThemePreference } from "./httpFiles";
 import type { FolderSaver, SaveState } from "./saver";
+import { AddDatabase, type AddDatabaseActions } from "./AddDatabase";
 import { unreadSources, visibleProblems, waitingFor } from "./databaseSources";
 import {
   DatabaseSourceItem,
@@ -59,6 +60,14 @@ export interface ProjectActions {
   refreshSources?(sourceIds: string[]): Promise<void>;
   /** Checks a connection's password and keeps it outside the project. */
   saveSecret?(connectionId: string, secret: string): Promise<void>;
+  /** Adding database sources from the app, where the server reads them. */
+  database?: Omit<AddDatabaseActions, "saveSecret">;
+}
+
+/** What to show open when the workspace starts again after a reload. */
+export interface OpenPanel {
+  /** The add-database panel, on this connection. */
+  addDatabase?: string;
 }
 
 export interface Selection {
@@ -73,6 +82,7 @@ export function ProjectWorkspace({
   saveState,
   notice,
   initialSelection,
+  initialPanel,
   onSelect,
   actions,
   theme,
@@ -95,6 +105,7 @@ export function ProjectWorkspace({
   saveState: SaveState;
   notice?: string;
   initialSelection?: Selection;
+  initialPanel?: OpenPanel;
   onSelect: (selection: Selection) => void;
 }) {
   const [project, setProject] = useState<AnalysisProject>(folder.project);
@@ -102,6 +113,9 @@ export function ProjectWorkspace({
   const [creating, setCreating] = useState(false);
   const [adding, setAdding] = useState(false);
   const [refreshAllError, setRefreshAllError] = useState<string>();
+  const [addingDatabase, setAddingDatabase] = useState(
+    initialPanel?.addDatabase !== undefined
+  );
   const [selected, setSelectedState] = useState<Selection>(() =>
     initialSelection?.path &&
     folder.analyses.some((analysis) => analysis.path === initialSelection.path)
@@ -214,6 +228,7 @@ export function ProjectWorkspace({
       : undefined;
 
   const databaseIds = Object.keys(folder.databases);
+  const canAddDatabase = !readOnly && Boolean(actions.database);
   const unread = unreadSources(folder);
   const problems = visibleProblems(folder, project);
   const waiting = view ? waitingFor(folder, project, view.queryId) : [];
@@ -328,6 +343,17 @@ export function ProjectWorkspace({
                 onError={setRefreshAllError}
               />
             )}
+            {canAddDatabase && (
+              <button
+                type="button"
+                className="app-button"
+                aria-expanded={addingDatabase}
+                aria-label="Add a table or query from a database"
+                onClick={() => setAddingDatabase((open) => !open)}
+              >
+                Add database
+              </button>
+            )}
             {addData && (
               <button
                 type="button"
@@ -340,6 +366,15 @@ export function ProjectWorkspace({
             )}
           </div>
           {addData && adding && addData(() => setAdding(false))}
+          {canAddDatabase && addingDatabase && (
+            <AddDatabase
+              connections={folder.connections}
+              sourceIds={project.sources.map((source) => source.id)}
+              initialConnection={initialPanel?.addDatabase || undefined}
+              actions={{ ...actions.database!, saveSecret: actions.saveSecret }}
+              onClose={() => setAddingDatabase(false)}
+            />
+          )}
           {refreshAllError && (
             <p className="app-source-error app-refresh-error" role="alert">
               {refreshAllError}
@@ -465,6 +500,9 @@ export function ProjectWorkspace({
             readOnly={readOnly}
             dataFiles={looseFiles}
             onChart={(path) => void actions.chartFile(path)}
+            onAddDatabase={
+              canAddDatabase ? () => setAddingDatabase(true) : undefined
+            }
           />
         )}
       </main>
@@ -673,11 +711,13 @@ function FirstRun({
   onChart,
   readOnly,
   addData,
+  onAddDatabase,
 }: {
   dataFiles: string[];
   onChart: (path: string) => void;
   readOnly: boolean;
   addData?: () => ReactNode;
+  onAddDatabase?: () => void;
 }) {
   if (readOnly) {
     return (
@@ -707,6 +747,18 @@ function FirstRun({
           Put a CSV or JSON file in this folder. It shows up here as soon as
           it's saved, ready to chart.
         </p>
+        {onAddDatabase && (
+          <>
+            <p>Or read a table or a query from a database.</p>
+            <button
+              type="button"
+              className="app-button app-button-primary"
+              onClick={onAddDatabase}
+            >
+              Add a database
+            </button>
+          </>
+        )}
       </div>
     );
   }

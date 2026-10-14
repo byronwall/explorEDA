@@ -163,13 +163,14 @@ function databaseSettings(database: DatabaseSource | undefined): string[] {
   ];
 }
 
-function connectionLine(connection: ConnectionDefinition): string {
+/** A connection's one line of project text; empty settings are left out. */
+export function connectionLine(connection: ConnectionDefinition): string {
   return [
     `connection ${nameToken(connection.id)}`,
     `driver=${encodeScalar(connection.driver)}`,
-    ...Object.entries(connection.settings).map(
-      ([key, value]) => `${key}=${encodeScalar(value)}`
-    ),
+    ...Object.entries(connection.settings)
+      .filter(([, value]) => value !== "")
+      .map(([key, value]) => `${key}=${encodeScalar(value)}`),
   ].join(" ");
 }
 

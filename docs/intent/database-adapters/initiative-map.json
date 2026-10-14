@@ -8,7 +8,7 @@
     "last_updated": "2026-10-13",
     "summary": "Authors in the CLI and self-hosted server connect to PostgreSQL, SQLite/DuckDB, MySQL, and SQL Server, pick tables or write SQL, and explore a cached, complete, read-only snapshot that they refresh on demand.",
     "status": "active",
-    "next_action": "M2: PostgreSQL adapter with secrets outside the project"
+    "next_action": "M3: add database sources from the app"
   },
   "artifacts": {
     "intent_brief": {
@@ -736,8 +736,10 @@
         "proof": "Same contract suite on a Postgres CI service container; secret scan of project text; verify:lean.",
         "valid_intermediate_state": "SQLite path unchanged.",
         "rollback": "Drop the postgres driver registration.",
-        "status": "active",
-        "evidence": []
+        "status": "completed",
+        "evidence": [
+          "PR byronwall/explorEDA#416; Postgres contract (42 tests) in CI job database-contract; 100k-row measurement"
+        ]
       },
       {
         "id": "m3",
@@ -747,7 +749,7 @@
         "proof": "App tests with fake adapter; screenshots at three widths.",
         "valid_intermediate_state": "Text-authored sources still work.",
         "rollback": "Hide the Database option in Add data.",
-        "status": "planned",
+        "status": "active",
         "evidence": []
       },
       {

@@ -61,6 +61,14 @@ export interface DatabaseRefresh {
   refresh(sourceId: string): Promise<SnapshotInfo>;
   /** Checks a connection's password, then keeps it on the server. */
   saveSecret(connectionId: string, secret: string): Promise<void>;
+  /** The tables and views a connection can read. */
+  listTables(connectionId: string): Promise<DatabaseTable[]>;
+}
+
+export interface DatabaseTable {
+  name: string;
+  schema?: string;
+  kind: "table" | "view";
 }
 
 export type AppFiles = Omit<ProjectFiles, "watch"> & {
@@ -187,6 +195,12 @@ export function databaseRefresh(
         `${api}/sources/${encodeURIComponent(sourceId)}/refresh`,
         { method: "POST" }
       )) as unknown as SnapshotInfo;
+    },
+    async listTables(connectionId) {
+      return (await call(
+        `${api}/connections/${encodeURIComponent(connectionId)}/tables`,
+        { method: "GET" }
+      )) as unknown as DatabaseTable[];
     },
     async saveSecret(connectionId, secret) {
       await call(

@@ -5,7 +5,9 @@
 // Usage: node scripts/app-shot.mjs <url> --name <name> [options]
 //   --wait <loc>     element to wait for before capturing
 //   --click <loc>    click before capturing (after the wait); repeatable
-//   --after <loc>    element to wait for after the clicks
+//   --step <step>    an ordered step, repeatable, run after the clicks:
+//                    `click:<loc>`, `fill:<loc>::<text>`, or `wait:<loc>`
+//   --after <loc>    element to wait for after the clicks and steps
 //   --widths <list>  comma-separated widths (default: 1280,783,390)
 //   --height <px>    viewport height (default: 820)
 //   --full           capture the whole page, not just the viewport
@@ -19,6 +21,7 @@ const { values, positionals } = parseArgs({
     name: { type: "string", default: "app" },
     wait: { type: "string" },
     click: { type: "string", multiple: true, default: [] },
+    step: { type: "string", multiple: true, default: [] },
     after: { type: "string" },
     widths: { type: "string", default: "1280,783,390" },
     height: { type: "string", default: "820" },
@@ -45,6 +48,23 @@ for (const width of values.widths.split(",").map(Number)) {
     await page.locator(values.wait).first().waitFor({ timeout: 20_000 });
   for (const step of values.click) {
     await page.locator(step).first().click({ timeout: 15_000 });
+  }
+  for (const step of values.step) {
+    const [kind, rest] = [
+      step.slice(0, step.indexOf(":")),
+      step.slice(step.indexOf(":") + 1),
+    ];
+    if (kind === "click")
+      await page.locator(rest).first().click({ timeout: 15_000 });
+    else if (kind === "wait")
+      await page.locator(rest).first().waitFor({ timeout: 20_000 });
+    else if (kind === "fill") {
+      const [locator, text] = rest.split("::");
+      await page
+        .locator(locator)
+        .first()
+        .fill(text ?? "", { timeout: 15_000 });
+    } else throw new Error(`Unknown step ${step}`);
   }
   if (values.after)
     await page.locator(values.after).first().waitFor({ timeout: 20_000 });
