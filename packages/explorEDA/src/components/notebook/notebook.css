@@ -1,0 +1,323 @@
+/* A notebook reads top to bottom: prose and results share one column. */
+.eda-notebook {
+  min-height: 100%;
+  padding: 2rem 1rem 4rem;
+}
+
+.eda-notebook-column {
+  max-width: 880px;
+  margin: 0 auto;
+}
+
+.eda-notebook-column > * + * {
+  margin-top: 1.25rem;
+}
+
+.eda-notebook-prose {
+  color: var(--foreground);
+  font-size: 1rem;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
+.eda-notebook-prose > * + * {
+  margin-top: 0.75em;
+}
+
+.eda-notebook-prose :is(h1, h2, h3, h4, h5, h6) {
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.eda-notebook-prose > :is(h1, h2, h3, h4, h5, h6):not(:first-child) {
+  margin-top: 1.6em;
+}
+
+.eda-notebook-prose h1 {
+  font-size: 1.75rem;
+}
+
+.eda-notebook-prose h2 {
+  font-size: 1.3rem;
+}
+
+.eda-notebook-prose :is(h3, h4, h5, h6) {
+  font-size: 1.05rem;
+}
+
+.eda-notebook-prose p {
+  max-width: 72ch;
+}
+
+.eda-notebook-prose :is(ul, ol) {
+  max-width: 72ch;
+  padding-left: 1.4em;
+}
+
+.eda-notebook-prose ul {
+  list-style: disc;
+}
+
+.eda-notebook-prose ol {
+  list-style: decimal;
+}
+
+.eda-notebook-prose li::marker {
+  color: var(--muted-foreground);
+}
+
+.eda-notebook-prose a {
+  color: var(--primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.eda-notebook-prose blockquote {
+  border-left: 2px solid var(--border);
+  padding-left: 0.9em;
+  color: var(--muted-foreground);
+}
+
+.eda-notebook-prose code {
+  border-radius: 0.3rem;
+  background: var(--muted);
+  padding: 0.1em 0.35em;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.9em;
+}
+
+.eda-notebook-prose pre {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: var(--muted);
+  padding: 0.75rem 1rem;
+}
+
+.eda-notebook-prose pre code {
+  background: none;
+  padding: 0;
+}
+
+.eda-notebook-prose table {
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.eda-notebook-prose :is(th, td) {
+  border: 1px solid var(--border);
+  padding: 0.3rem 0.6rem;
+  text-align: left;
+}
+
+.eda-notebook-prose hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+}
+
+.eda-notebook-block > * + * {
+  margin-top: 1rem;
+}
+
+/* Each chart brings its own card; the block only stacks them. */
+.eda-notebook-output {
+  min-width: 0;
+}
+
+/* A block whose text doesn't work keeps its last results, held still. */
+.eda-notebook-block[data-status="frozen"] .eda-notebook-output {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.eda-notebook-defines {
+  color: var(--muted-foreground);
+  font-size: 0.8rem;
+}
+
+.eda-notebook-problems {
+  border: 1px solid var(--warning);
+  border-radius: 0.5rem;
+  background: color-mix(in oklab, var(--warning) 8%, var(--background));
+  padding: 0.6rem 0.8rem;
+  font-size: 0.85rem;
+}
+
+.eda-notebook-problems[data-severity="error"] {
+  border-color: var(--destructive);
+  background: color-mix(in oklab, var(--destructive) 7%, var(--background));
+}
+
+.eda-notebook-problems-head {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 500;
+}
+
+.eda-notebook-problems ul {
+  margin-top: 0.35rem;
+  padding-left: 1.4rem;
+}
+
+.eda-notebook-problems li + li {
+  margin-top: 0.2rem;
+}
+
+.eda-notebook-line {
+  color: var(--muted-foreground);
+  font-variant-numeric: tabular-nums;
+}
+
+.eda-notebook-fix {
+  color: var(--muted-foreground);
+}
+
+/* Each segment's text opens beside it, on hover or keyboard focus. */
+.eda-notebook-segment {
+  position: relative;
+}
+
+.eda-notebook-segment-tools {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.25rem;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .eda-notebook-segment-tools {
+    position: absolute;
+    z-index: 2;
+    top: -0.25rem;
+    right: 0;
+    margin: 0;
+    opacity: 0;
+    transition: opacity 120ms ease;
+  }
+
+  .eda-notebook-segment:hover > .eda-notebook-segment-tools,
+  .eda-notebook-segment:focus-within > .eda-notebook-segment-tools,
+  .eda-notebook-segment[data-open] > .eda-notebook-segment-tools {
+    opacity: 1;
+  }
+
+  .eda-notebook-segment[data-open] > .eda-notebook-segment-tools {
+    position: static;
+    justify-content: flex-end;
+    margin-bottom: 0.25rem;
+  }
+}
+
+.eda-notebook-segment-tools button {
+  background: var(--background);
+}
+
+/* The editor grows with its text; the colored copy sits under the input. */
+.eda-notebook-source {
+  position: relative;
+  border: 1px solid var(--input);
+  border-radius: 0.5rem;
+  background: var(--card);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.8rem;
+  line-height: 1.25rem;
+}
+
+.eda-notebook-source:focus-within {
+  border-color: var(--ring);
+  box-shadow: 0 0 0 1px var(--ring);
+}
+
+.eda-notebook-source-colors,
+.eda-notebook-source-input {
+  margin: 0;
+  padding: 0.6rem 0.75rem;
+  font: inherit;
+  line-height: inherit;
+  white-space: pre;
+  tab-size: 2;
+}
+
+.eda-notebook-source-colors {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  color: var(--foreground);
+  pointer-events: none;
+}
+
+.eda-notebook-source-input {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  resize: none;
+  border: 0;
+  background: transparent;
+  color: var(--foreground);
+  outline: none;
+}
+
+.eda-notebook-source[data-language="markdown"] .eda-notebook-source-input {
+  white-space: pre-wrap;
+  font-family: inherit;
+  /* Wrapped lines grow the box where the browser can size it to content. */
+  field-sizing: content;
+}
+
+/* Dashboard text colors, the same in every notebook host. Color only, so
+   glyphs stay aligned under the text area. */
+.eda-notebook {
+  --eda-dsl-keyword: hsl(262 55% 48%);
+  --eda-dsl-type: hsl(190 75% 30%);
+  --eda-dsl-key: hsl(215 70% 40%);
+  --eda-dsl-reference: hsl(190 75% 30%);
+  --eda-dsl-string: hsl(140 55% 29%);
+  --eda-dsl-number: hsl(25 85% 38%);
+  --eda-dsl-constant: hsl(330 60% 44%);
+}
+
+.dark .eda-notebook {
+  --eda-dsl-keyword: hsl(262 85% 78%);
+  --eda-dsl-type: hsl(185 60% 62%);
+  --eda-dsl-key: hsl(210 85% 74%);
+  --eda-dsl-reference: hsl(185 60% 62%);
+  --eda-dsl-string: hsl(120 40% 68%);
+  --eda-dsl-number: hsl(30 85% 68%);
+  --eda-dsl-constant: hsl(330 75% 76%);
+}
+
+.eda-notebook-source .eda-dsl-keyword {
+  color: var(--eda-dsl-keyword);
+}
+.eda-notebook-source .eda-dsl-type {
+  color: var(--eda-dsl-type);
+}
+.eda-notebook-source .eda-dsl-key {
+  color: var(--eda-dsl-key);
+}
+.eda-notebook-source .eda-dsl-reference {
+  color: var(--eda-dsl-reference);
+}
+.eda-notebook-source .eda-dsl-string {
+  color: var(--eda-dsl-string);
+}
+.eda-notebook-source .eda-dsl-number {
+  color: var(--eda-dsl-number);
+}
+.eda-notebook-source .eda-dsl-constant {
+  color: var(--eda-dsl-constant);
+}
+.eda-notebook-source :is(.eda-dsl-operator, .eda-dsl-comment) {
+  color: var(--muted-foreground);
+}
+
+.eda-notebook-source .eda-dsl-input {
+  color: transparent;
+  caret-color: var(--foreground);
+}
+
+.eda-notebook-source .eda-dsl-input::selection {
+  background: color-mix(in oklab, var(--ring) 28%, transparent);
+}

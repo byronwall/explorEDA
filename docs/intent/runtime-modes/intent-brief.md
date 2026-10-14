@@ -62,13 +62,13 @@ The embedded React component stays a separate track: the host developer owns sto
 
 - [Standalone app](../standalone-app/intent-brief.md) — users, sign-in, settings, projects.
 - [Browser-only site](../browser-only-site/intent-brief.md) — the demo as mode 1.
-- [Local CLI projects](../local-cli-projects/intent-brief.md) — mode 2, first to build.
-- [Self-hosted team server](../self-hosted-team-server/intent-brief.md) — mode 3.
+- Local CLI projects — mode 2. Shipped as `npx exploreda` and [retired](../../application-feature-inventory.md#initiatives-retired-2026-10-13) on 2026-10-13.
+- Self-hosted team server — mode 3. Shipped as `exploreda server` and [retired](../../application-feature-inventory.md#initiatives-retired-2026-10-13) on 2026-10-13.
 
 ## Current reality that matters
 
-The demo is a Vite app on GitHub Pages that stores work in `localStorage`. There is no CLI, server, or user model. [Database adapters](../database-adapters/intent-brief.md) plans a server read into the existing `tables` input, which fits the shared server.
+The demo is a Vite app on GitHub Pages that stores work in `localStorage`. `npx exploreda` runs a local single-user server over a project folder, and `exploreda server` adds accounts, roles, and projects for a team. [Database adapters](../database-adapters/intent-brief.md) plans a server read into the existing `tables` input, which fits the shared server.
 
 ## Next step after confirmation
 
-The local CLI is [shaped](../local-cli-projects/shape-brief.md), and its first proof passed: sources, joins, and queries are project text. The CLI [implementation plan](../local-cli-projects/implementation-plan.md) is ready.
+Modes 2 and 3 have shipped; see [Project folders](../../../apps/demo/src/docs/pages/project-folders.mdx) and [Team server](../../../apps/demo/src/docs/pages/team-server.mdx). The browser-only site and standalone app remain.

@@ -395,6 +395,9 @@ importers:
       maplibre-gl:
         specifier: '>=4.0.0'
         version: 6.13.0
+      markdown-it:
+        specifier: ^14.1.0
+        version: 14.1.0
       natsort:
         specifier: ^2.0.3
         version: 2.0.3
@@ -498,6 +501,9 @@ importers:
       '@types/jest':
         specifier: ^29.5.14
         version: 29.5.14
+      '@types/markdown-it':
+        specifier: ^14.1.2
+        version: 14.1.2
       '@types/natsort':
         specifier: ^2.0.0
         version: 2.0.0

@@ -1,8 +1,12 @@
 // Starts this checkout's demo dev server in the background and waits until it
 // answers. Each worktree gets its own port, derived from its path, so parallel
-// sessions never collide. The log goes to tmp/dev-server.log.
-// Usage: pnpm dev:agent          start (or reuse) and print the URL
-//        pnpm dev:agent --stop   stop this checkout's server
+// sessions never collide. The log goes to tmp/dev-server.log. The server
+// exits after IDLE_MINUTES without a request, so forgotten servers don't pile
+// up across sessions; running the command again starts a new one.
+// Usage: pnpm dev:agent             start (or reuse) and print the URL
+//        pnpm dev:agent --stop      stop this checkout's server
+//        pnpm dev:agent --stop-all  stop the servers of every worktree
+// Set EXPLOREDA_DEV_IDLE_MINUTES to change the idle limit; 0 keeps it up.
 import { execFileSync, spawn } from "node:child_process";
 import { createHash } from "node:crypto";
 import {
@@ -20,6 +24,7 @@ import { fileURLToPath } from "node:url";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const statePath = join(root, "tmp/dev-server.json");
 const logPath = join(root, "tmp/dev-server.log");
+const IDLE_MINUTES = process.env.EXPLOREDA_DEV_IDLE_MINUTES ?? "30";
 
 const responds = async (url) => {
   try {
@@ -95,7 +100,12 @@ export async function ensureDevServer({ quiet = false } = {}) {
       "--host",
       "127.0.0.1",
     ],
-    { cwd: root, detached: true, stdio: ["ignore", log, log] }
+    {
+      cwd: root,
+      detached: true,
+      stdio: ["ignore", log, log],
+      env: { ...process.env, EXPLOREDA_DEV_IDLE_MINUTES: IDLE_MINUTES },
+    }
   );
   child.unref();
   const url = `http://127.0.0.1:${port}`;
@@ -120,18 +130,45 @@ export async function ensureDevServer({ quiet = false } = {}) {
   throw new Error(`Demo dev server did not start on ${url}.\n${tail}`);
 }
 
-export function stopDevServer() {
-  const state = readState();
-  if (state && isAlive(state.pid)) {
-    process.kill(-state.pid, "SIGTERM");
-    console.log(`Stopped the demo dev server on ${state.url}`);
-  } else {
-    console.log("No demo dev server is running for this checkout.");
+export function stopDevServer(checkout = root) {
+  const path = join(checkout, "tmp/dev-server.json");
+  let state = null;
+  try {
+    state = JSON.parse(readFileSync(path, "utf8"));
+  } catch {
+    // No server was started here.
   }
-  rmSync(statePath, { force: true });
+  let stopped = false;
+  if (state && isAlive(state.pid)) {
+    try {
+      process.kill(-state.pid, "SIGTERM");
+      console.log(`Stopped the demo dev server on ${state.url} (${checkout})`);
+      stopped = true;
+    } catch {
+      // It exited between the check and the kill.
+    }
+  }
+  rmSync(path, { force: true });
+  return stopped;
+}
+
+/** Stops the server of every worktree of this repository. */
+export function stopAllDevServers() {
+  const worktrees = execFileSync("git", ["worktree", "list", "--porcelain"], {
+    cwd: root,
+    encoding: "utf8",
+  })
+    .split("\n")
+    .filter((line) => line.startsWith("worktree "))
+    .map((line) => line.slice("worktree ".length));
+  const stopped = worktrees.filter((checkout) => stopDevServer(checkout));
+  if (!stopped.length) console.log("No demo dev servers are running.");
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  if (process.argv.includes("--stop")) stopDevServer();
-  else console.log(await ensureDevServer());
+  if (process.argv.includes("--stop-all")) stopAllDevServers();
+  else if (process.argv.includes("--stop")) {
+    if (!stopDevServer())
+      console.log("No demo dev server is running for this checkout.");
+  } else console.log(await ensureDevServer());
 }
