@@ -6,7 +6,8 @@
 //   --wait <loc>     element to wait for before capturing
 //   --click <loc>    click before capturing (after the wait); repeatable
 //   --step <step>    an ordered step, repeatable, run after the clicks:
-//                    `click:<loc>`, `fill:<loc>::<text>`, or `wait:<loc>`
+//                    `click:<loc>`, `fill:<loc>::<text>`,
+//                    `select:<loc>::<option label>`, or `wait:<loc>`
 //   --after <loc>    element to wait for after the clicks and steps
 //   --widths <list>  comma-separated widths (default: 1280,783,390)
 //   --height <px>    viewport height (default: 820)
@@ -64,6 +65,12 @@ for (const width of values.widths.split(",").map(Number)) {
         .locator(locator)
         .first()
         .fill(text ?? "", { timeout: 15_000 });
+    } else if (kind === "select") {
+      const [locator, label] = rest.split("::");
+      await page
+        .locator(locator)
+        .first()
+        .selectOption({ label }, { timeout: 15_000 });
     } else throw new Error(`Unknown step ${step}`);
   }
   if (values.after)

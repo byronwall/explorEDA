@@ -12,7 +12,7 @@ import pg from "pg";
 import Cursor from "pg-cursor";
 import type { Column, Kind } from "../../../lib/readers/typedColumns";
 import { secretVariable } from "../../../node/secrets";
-import { refuseBinary } from "../columnKinds";
+import { decimalColumn, isoTimestamp, refuseBinary } from "../columnKinds";
 import {
   SourceReadError,
   type DatabaseDriver,
@@ -90,34 +90,6 @@ function kindOf(oid: number): Kind {
     default:
       return "text";
   }
-}
-
-/** `2024-01-02 03:04:05+00` as ISO text: `2024-01-02T03:04:05Z`. */
-function isoTimestamp(value: string) {
-  return value
-    .replace(" ", "T")
-    .replace(/\+00(:00)?$/, "Z")
-    .replace(/([+-]\d{2})$/, "$1:00");
-}
-
-/**
- * A numeric column as unscaled integers and one scale, the form
- * `convertColumn` takes. Undefined when a value isn't a finite number.
- */
-function decimalColumn(values: unknown[]) {
-  let scale = 0;
-  for (const value of values) {
-    if (typeof value !== "string") continue;
-    if (!/^-?\d+(\.\d+)?$/.test(value)) return undefined;
-    scale = Math.max(scale, value.split(".")[1]?.length ?? 0);
-  }
-  for (let index = 0; index < values.length; index++) {
-    const value = values[index];
-    if (typeof value !== "string") continue;
-    const [whole, fraction = ""] = value.split(".");
-    values[index] = BigInt(`${whole}${fraction.padEnd(scale, "0")}`);
-  }
-  return scale;
 }
 
 function failure(error: unknown, what: string, id: string): SourceReadError {

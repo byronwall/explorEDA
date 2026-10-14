@@ -19,7 +19,6 @@ import {
   snapshotPath,
   type SnapshotInfo,
 } from "../../lib/project/snapshots";
-import { postgresDriver } from "./drivers/postgres";
 import { sqliteDriver } from "./drivers/sqlite";
 import { readSnapshot } from "./read";
 import {
@@ -33,9 +32,41 @@ import {
 /** How long a read may take by default: one minute. */
 export const DEFAULT_READ_TIMEOUT = 60_000;
 
+/**
+ * A driver whose code loads the first time it connects, so the command
+ * starts without the client libraries of databases a project doesn't use.
+ */
+function lazyDriver(
+  name: string,
+  label: string,
+  load: () => Promise<DatabaseDriver>
+): DatabaseDriver {
+  return {
+    name,
+    label,
+    async connect(connection) {
+      return (await load()).connect(connection);
+    },
+  };
+}
+
 export const DRIVERS: Record<string, DatabaseDriver> = {
   sqlite: sqliteDriver,
-  postgres: postgresDriver,
+  postgres: lazyDriver(
+    "postgres",
+    "PostgreSQL",
+    async () => (await import("./drivers/postgres")).postgresDriver
+  ),
+  mysql: lazyDriver(
+    "mysql",
+    "MySQL",
+    async () => (await import("./drivers/mysql")).mysqlDriver
+  ),
+  sqlserver: lazyDriver(
+    "sqlserver",
+    "SQL Server",
+    async () => (await import("./drivers/sqlserver")).sqlServerDriver
+  ),
 };
 
 export interface SourceOptions {

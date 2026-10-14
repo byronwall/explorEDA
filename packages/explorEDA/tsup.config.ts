@@ -35,7 +35,8 @@ export default defineConfig([
       js: "#!/usr/bin/env node\nimport { createRequire } from 'node:module'; const require = createRequire(import.meta.url);",
     },
     define: { __EXPLOREDA_VERSION__: JSON.stringify(version) },
-    splitting: false,
+    // Database drivers load on first use from their own chunks.
+    splitting: true,
     minify: false,
     sourcemap: false,
     dts: false,

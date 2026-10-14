@@ -26,9 +26,16 @@ const shop = {
 describe("AddDatabase", () => {
   it("leaves the password to an admin when this person can't enter one", () => {
     render(
-      <AddDatabase connections={[]} sourceIds={[]} actions={actions()} onClose={vi.fn()} />
+      <AddDatabase
+        connections={[]}
+        sourceIds={[]}
+        actions={actions()}
+        onClose={vi.fn()}
+      />
     );
-    fireEvent.click(screen.getByRole("radio", { name: "PostgreSQL" }));
+    fireEvent.change(screen.getByLabelText("Kind"), {
+      target: { value: "postgres" },
+    });
     expect(screen.queryByLabelText("Password")).toBeNull();
     expect(screen.getByText(/An admin enters the password/)).toBeTruthy();
   });
@@ -64,7 +71,9 @@ describe("AddDatabase", () => {
         onClose={vi.fn()}
       />
     );
-    fireEvent.click(screen.getByRole("radio", { name: "PostgreSQL" }));
+    fireEvent.change(screen.getByLabelText("Kind"), {
+      target: { value: "postgres" },
+    });
     fireEvent.change(screen.getByLabelText("Name"), {
       target: { value: "Sales DB" },
     });
@@ -84,6 +93,28 @@ describe("AddDatabase", () => {
         settings: { host: "db.internal", database: "sales", user: "reader" },
       },
       "test-only"
+    );
+  });
+
+  it("offers each kind of database", () => {
+    render(
+      <AddDatabase
+        connections={[]}
+        sourceIds={[]}
+        actions={actions()}
+        onClose={vi.fn()}
+      />
+    );
+    expect(
+      [...(screen.getByLabelText("Kind") as HTMLSelectElement).options].map(
+        (item) => item.textContent
+      )
+    ).toEqual(["SQLite file", "PostgreSQL", "MySQL", "SQL Server"]);
+    fireEvent.change(screen.getByLabelText("Kind"), {
+      target: { value: "sqlserver" },
+    });
+    expect(screen.getByLabelText("Port").getAttribute("placeholder")).toBe(
+      "1433"
     );
   });
 

@@ -1,6 +1,6 @@
 ## Read data from a database
 
-A [project folder](/docs/project-folders) can read tables and queries from a SQLite file or a PostgreSQL database as well as from files. Name the database once as a `connection`, then point each source at a table or a `select` query. explorEDA reads each source once and keeps a copy of its rows in the folder. Opening the project reads that copy, so the database is queried only when you ask it to be.
+A [project folder](/docs/project-folders) can read tables and queries from SQLite, PostgreSQL, MySQL, and SQL Server as well as from files. Name the database once as a `connection`, then point each source at a table or a `select` query. explorEDA reads each source once and keeps a copy of its rows in the folder. Opening the project reads that copy, so the database is queried only when you ask it to be.
 
 Try it with a sample shop kept in a SQLite file:
 
@@ -38,24 +38,32 @@ relate @order-customer orders.customerId -> customers.customerId
 | `source` from a table | `source @id [key=field] db=connection table=name [limit=rows]`     | Write `schema.table` for a table outside the default schema.    |
 | `source` from a query | `source @id [key=field] db=connection sql="select …" [limit=rows]` | Any query that returns rows. Write a newline as `\n`.           |
 
-## PostgreSQL
+## PostgreSQL, MySQL, and SQL Server
 
 ```text
 connection @warehouse driver=postgres host=db.internal database=sales user=reader
+connection @shop driver=mysql host=shop-db database=store user=reader
+connection @erp driver=sqlserver host=erp.internal database=Finance user=reader
 source @orders key=order_id db=warehouse table=public.orders
 ```
 
-| Setting     | What it does                                                                                                     |
-| ----------- | ---------------------------------------------------------------------------------------------------------------- |
-| `host=`     | The server's name or address. Required.                                                                          |
-| `database=` | The database to read. Required.                                                                                  |
-| `user=`     | The user to sign in as. Give explorEDA a user that can only read.                                                |
-| `port=`     | 5432 unless you say otherwise.                                                                                   |
-| `ssl=`      | `require` encrypts the connection; `verify-full` also checks the server's certificate; `disable` is the default. |
+| Setting     | What it does                                                                                                                                                        |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `driver=`   | `postgres`, `mysql` (MySQL and MariaDB), or `sqlserver` (SQL Server and Azure SQL).                                                                                 |
+| `host=`     | The server's name or address. Required.                                                                                                                             |
+| `database=` | The database to read. Required.                                                                                                                                     |
+| `user=`     | The user to sign in as. Give explorEDA a user that can only read.                                                                                                   |
+| `port=`     | 5432, 3306, or 1433 unless you say otherwise.                                                                                                                       |
+| `ssl=`      | `require` encrypts the connection; `verify-full` also checks the server's certificate; `disable` doesn't encrypt. SQL Server encrypts by default; the others don't. |
 
 The first read asks for the password. explorEDA checks it, then keeps it in `secrets.json` in your explorEDA settings folder, readable only by you, outside every project. Or set `EXPLOREDA_WAREHOUSE_PASSWORD` (the connection's name in capitals) before running `npx exploreda`; it wins over a saved password.
 
-Each read runs in a read-only transaction, so every row comes from the same moment and nothing can be written. Timestamps with a time zone are read in UTC.
+No read can change the database:
+
+- **PostgreSQL and MySQL** run each read in a read-only transaction, so every row comes from the same moment and a write fails.
+- **SQL Server** has no read-only transaction. It describes each query first, and a query that returns no rows is refused before it runs; the read runs in a transaction that is always rolled back.
+
+Timestamps with a time zone are read in UTC. Whole numbers and decimals too precise for JavaScript keep every digit as text. On SQL Server that holds for a `table=` source; a `sql=` source's decimals come as numbers.
 
 ## On a team server
 

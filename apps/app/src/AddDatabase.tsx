@@ -25,9 +25,13 @@ export interface AddDatabaseActions {
 }
 
 const DRIVERS = [
-  { id: "sqlite", label: "SQLite file" },
-  { id: "postgres", label: "PostgreSQL" },
+  { id: "sqlite", label: "SQLite file", port: "" },
+  { id: "postgres", label: "PostgreSQL", port: "5432" },
+  { id: "mysql", label: "MySQL", port: "3306" },
+  { id: "sqlserver", label: "SQL Server", port: "1433" },
 ] as const;
+
+type DriverId = (typeof DRIVERS)[number]["id"];
 
 const NEW = "";
 
@@ -115,7 +119,7 @@ function NewConnectionForm({
     // Listed once when the form opens; the app's actions change every render.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  const [driver, setDriver] = useState<"sqlite" | "postgres">("sqlite");
+  const [driver, setDriver] = useState<DriverId>("sqlite");
   const [name, setName] = useState("");
   const [settings, setSettings] = useState<Record<string, string>>({});
   const [secret, setSecret] = useState("");
@@ -174,24 +178,19 @@ function NewConnectionForm({
         );
       }}
     >
-      <div
-        className="app-segmented"
-        role="radiogroup"
-        aria-label="Kind of database"
-      >
-        {DRIVERS.map((item) => (
-          <button
-            key={item.id}
-            type="button"
-            role="radio"
-            className="app-segment"
-            aria-checked={driver === item.id}
-            onClick={() => setDriver(item.id)}
-          >
-            {item.label}
-          </button>
-        ))}
-      </div>
+      <label className="app-field">
+        <span>Kind</span>
+        <select
+          value={driver}
+          onChange={(event) => setDriver(event.target.value as DriverId)}
+        >
+          {DRIVERS.map((item) => (
+            <option key={item.id} value={item.id}>
+              {item.label}
+            </option>
+          ))}
+        </select>
+      </label>
       <label className="app-field">
         <span>Name</span>
         <input
@@ -201,7 +200,9 @@ function NewConnectionForm({
         />
       </label>
       {clash && (
-        <p className="app-source-error">The project already has a {id}.</p>
+        <p className="app-source-error">
+          The project already has a connection named {id}.
+        </p>
       )}
       {driver === "sqlite" ? (
         <>
@@ -215,7 +216,11 @@ function NewConnectionForm({
       ) : (
         <>
           {field("host", "Host", "db.internal")}
-          {field("port", "Port", "5432")}
+          {field(
+            "port",
+            "Port",
+            DRIVERS.find((item) => item.id === driver)!.port
+          )}
           {field("database", "Database", "sales")}
           {field("user", "User", "reader")}
           {canEnterSecret ? (
@@ -418,7 +423,7 @@ function SourcePicker({
       </label>
       {clash && (
         <p className="app-source-error">
-          The project already has a {sourceId}.
+          The project already has a source named {sourceId}.
         </p>
       )}
       <div className="app-form-actions">
