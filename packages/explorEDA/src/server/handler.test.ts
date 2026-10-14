@@ -201,6 +201,11 @@ source @many db=app table=contract_many limit=5
     const unknown = await get("/api/sources/nope/refresh", auth, "POST");
     expect(unknown.status).toBe(404);
 
+    const tables = await get("/api/connections/app/tables", auth);
+    expect(
+      (JSON.parse(tables.body) as { name: string }[]).map((table) => table.name)
+    ).toContain("contract_items");
+
     // A password is checked, kept outside the project, and never sent back.
     const saved = await get(
       "/api/connections/app/secret",

@@ -14,12 +14,15 @@ import type {
   ThemePreference,
 } from "./httpFiles";
 import {
+  addConnection,
+  addDatabaseSource,
   chartDataFile,
   createAnalysis,
   renameAnalysis,
 } from "./projectActions";
 import {
   ProjectWorkspace,
+  type OpenPanel,
   type ProjectActions,
   type Selection,
 } from "./ProjectWorkspace";
@@ -37,6 +40,8 @@ type Loaded =
       /** Counts reloads, so the workspace starts over from the new files. */
       generation: number;
       notice?: string;
+      /** A panel to show open after this reload. */
+      panel?: OpenPanel;
     };
 
 /** Files whose change alters the project: text, notebooks, and data. */
@@ -146,7 +151,11 @@ export function App({
   };
 
   /** Saves what is waiting, reads the folder again, and opens `path`. */
-  const reload = async (path: string | undefined, notice?: string) => {
+  const reload = async (
+    path: string | undefined,
+    notice?: string,
+    panel?: OpenPanel
+  ) => {
     await saver.flush();
     const { folder, fetched } = await readAll(files);
     selection.current = path ? { path, index: 0 } : selection.current;
@@ -158,6 +167,7 @@ export function App({
             fetched,
             generation: previous.generation + 1,
             notice,
+            panel,
           }
         : previous
     );
@@ -216,6 +226,7 @@ export function App({
                 fetched,
                 generation: previous.generation + 1,
                 notice: describeChange(changed, by),
+                panel: undefined,
               }
             : previous
         );
@@ -345,6 +356,61 @@ export function App({
       ? {
           saveSecret: (connectionId: string, secret: string) =>
             files.databases!.saveSecret(connectionId, secret),
+          database: {
+            listTables: (connectionId: string) =>
+              files.databases!.listTables(connectionId),
+            databaseFiles: async () =>
+              (await files.list()).filter((path) =>
+                /\.(db|sqlite3?|duckdb)$/i.test(path)
+              ),
+            addConnection: async (connection, secret) => {
+              await saver.flush();
+              await addConnection(files, folder, {
+                connection,
+                projectName: info.name,
+                layout: info.layout,
+              });
+              let problem = "";
+              if (secret) {
+                await files
+                  .databases!.saveSecret(connection.id, secret)
+                  .catch((error: unknown) => {
+                    problem = ` Its password wasn't kept: ${error instanceof Error ? error.message : String(error)}`;
+                  });
+              }
+              // The panel opens again on the new connection.
+              await reload(
+                undefined,
+                `Added the ${connection.id} connection.${problem}`,
+                { addDatabase: connection.id }
+              );
+            },
+            addSource: async (sourceId, database) => {
+              await saver.flush();
+              const path = await addDatabaseSource(files, folder, {
+                sourceId,
+                database,
+                projectName: info.name,
+                layout: info.layout,
+              });
+              ownSnapshots.current.set(snapshotPath(sourceId), Date.now());
+              let notice: string;
+              try {
+                const read = await files.databases!.refresh(sourceId);
+                notice = describeReads([
+                  {
+                    sourceId,
+                    rows: read.rowCount,
+                    connection: read.connection,
+                  },
+                ]);
+              } catch (error) {
+                ownSnapshots.current.delete(snapshotPath(sourceId));
+                notice = `Added ${sourceId}, but it couldn't be read: ${error instanceof Error ? error.message : String(error)}`;
+              }
+              await reload(path, notice);
+            },
+          } satisfies ProjectActions["database"],
           refreshSources: async (sourceIds: string[]) => {
             await saver.flush();
             const read: {
@@ -402,6 +468,7 @@ export function App({
       saveState={saveState}
       notice={loaded.notice}
       initialSelection={selection.current}
+      initialPanel={loaded.panel}
       notebookMemory={(path) => {
         let memory = notebookMemory.current.get(path);
         if (!memory) {

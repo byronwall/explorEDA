@@ -51,7 +51,10 @@ export {
   type SnapshotInfo,
 } from "./snapshots";
 export {
+  addConnectionText,
+  addDatabaseSourceText,
   addSourceText,
+  sourceIdForTable,
   analysisPathFor,
   newAnalysisText,
   slugify,
@@ -59,6 +62,7 @@ export {
   uniqueName,
 } from "./createFolder";
 export {
+  connectionLine,
   labelFromId,
   type ConnectionDefinition,
   type DatabaseSource,

@@ -411,6 +411,107 @@
   color: var(--foreground);
 }
 
+/* Adding a database source: a connection, then a table or a query. */
+.app-add-database {
+  display: grid;
+  gap: 8px;
+  margin: 0 8px 10px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card);
+}
+
+.app-field {
+  display: grid;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--muted-foreground);
+}
+
+.app-form.app-database-form .app-field {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 4px;
+}
+
+.app-add-database input,
+.app-add-database select,
+.app-add-database textarea {
+  width: 100%;
+  min-width: 0;
+  padding: 4px 8px;
+  border: 1px solid var(--input);
+  border-radius: 6px;
+  background: var(--background);
+  color: var(--foreground);
+  font: inherit;
+  font-size: 13px;
+}
+
+.app-add-database input,
+.app-add-database select {
+  height: 28px;
+}
+
+.app-add-database textarea {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 12px;
+  resize: vertical;
+}
+
+.app-database-form .app-form-actions {
+  padding: 0;
+}
+
+.app-segmented {
+  display: inline-flex;
+  padding: 2px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  justify-self: start;
+}
+
+.app-table-list {
+  max-height: 220px;
+  margin: 0;
+  padding: 2px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  list-style: none;
+}
+
+.app-table-list button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 4px 8px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--foreground);
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.app-table-list button:hover {
+  background: var(--accent);
+}
+
+.app-table-list button[aria-pressed="true"] {
+  background: var(--accent);
+  box-shadow: inset 2px 0 0 var(--primary);
+}
+
+.app-table-list li.app-muted {
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
 /* Team server: sign-in, the project list, and the bar above a project. */
 .team-auth {
   display: grid;

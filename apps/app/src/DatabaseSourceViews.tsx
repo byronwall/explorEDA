@@ -27,7 +27,7 @@ type ReadState =
     };
 
 /** Runs a read and keeps what happened, for a button and its message. */
-function useRead(read: (() => Promise<void>) | undefined) {
+export function useRead(read: (() => Promise<void>) | undefined) {
   const [state, setState] = useState<ReadState>({ status: "idle" });
   const run = async () => {
     if (!read) {
@@ -53,7 +53,7 @@ function useRead(read: (() => Promise<void>) | undefined) {
 }
 
 /** A failed read's message, and a password form when that's the fix. */
-function ReadProblem({
+export function ReadProblem({
   state,
   onSaveSecret,
   onRetry,
