@@ -56,6 +56,21 @@ for (const path of [
       "Use semantic border tokens, including status borders."
     );
 }
+// Charts and cards reach records through Alt-click tracing, not "Inspect"
+// buttons (AGENTS.md). Field inspectors are fine; mark-level inspect is not.
+const inspectMark =
+  /\bInspect (?:the )?(?:records?|rows?|points?|bars?|marks?|slices?|segments?|cells?|bins?|groups?|series)\b/gi;
+for (const path of [
+  ...files("packages/explorEDA/src"),
+  ...files("apps/demo/src"),
+]) {
+  if (!/\.tsx?$/.test(path) || /\.test\.tsx?$/.test(path)) continue;
+  const text = readFileSync(path, "utf8");
+  for (const match of text.matchAll(inspectMark))
+    failures.push(
+      `${path}:${text.slice(0, match.index).split("\n").length}: Don't add "${match[0]}" controls; reach records by Alt-click or the chart header's trace control.`
+    );
+}
 // Raw values are parsed only in valueParsing.ts; V8's Date.parse reads text
 // such as "Depot 2" as a date.
 for (const path of files("packages/explorEDA/src")) {
@@ -72,5 +87,5 @@ if (failures.length) {
   process.exitCode = 1;
 } else
   console.log(
-    "UI conventions pass: semantic borders, no native title tooltips, and no Date.parse outside valueParsing."
+    "UI conventions pass: semantic borders, no native title tooltips, no Inspect buttons on marks, and no Date.parse outside valueParsing."
   );

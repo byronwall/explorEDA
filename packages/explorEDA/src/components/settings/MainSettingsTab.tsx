@@ -35,7 +35,7 @@ export function MainSettingsTab({
             if (option) {
               const newSettings = option.createDefaultSettings(
                 settings.layout,
-                settings.field
+                mainField(settings)
               );
               onSettingsChange(newSettings);
             }
@@ -67,5 +67,25 @@ export function MainSettingsTab({
         />
       )}
     </div>
+  );
+}
+
+/**
+ * The field a chart is mostly about, which a new chart type starts from: its
+ * field, or a table's first column, an x field, or its first series.
+ */
+function mainField(settings: ChartSettings): string {
+  const record = settings as unknown as {
+    field?: string;
+    columns?: Array<{ field?: string }>;
+    xField?: string;
+    seriesField?: string[];
+  };
+  return (
+    record.field ||
+    record.columns?.[0]?.field ||
+    record.xField ||
+    record.seriesField?.[0] ||
+    ""
   );
 }
