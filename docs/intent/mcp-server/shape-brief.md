@@ -47,14 +47,14 @@ exploreda MCP
 
 ## Behavior
 
-| Situation | Expected result |
-| --- | --- |
-| The agent writes an analysis with errors | It saves, and the tool result lists each problem with its line and fix. The app opens it with the same problems shown. |
-| The folder has data but no project text | `fields` works on the data files. The first write creates the project text, as the app's first save does. |
-| A person edits the same analysis while the agent works | The agent's write fails if the file changed since the agent read it. The result tells the agent to read the file again. |
-| No browser tab is open | Every tool still works. The server loads the checker on the first tool call. |
-| The server restarts with a new port and key | The helper rereads `server.json`; the agent config does not change. |
-| The agent fetches a URL | The file is saved into the folder, and its source records where it came from. Oversized or non-CSV/JSON responses are refused. |
+| Situation                                              | Expected result                                                                                                                |
+| ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| The agent writes an analysis with errors               | It saves, and the tool result lists each problem with its line and fix. The app opens it with the same problems shown.         |
+| The folder has data but no project text                | `fields` works on the data files. The first write creates the project text, as the app's first save does.                      |
+| A person edits the same analysis while the agent works | The agent's write fails if the file changed since the agent read it. The result tells the agent to read the file again.        |
+| No browser tab is open                                 | Every tool still works. The server loads the checker on the first tool call.                                                   |
+| The server restarts with a new port and key            | The helper rereads `server.json`; the agent config does not change.                                                            |
+| The agent fetches a URL                                | The file is saved into the folder, and its source records where it came from. Oversized or non-CSV/JSON responses are refused. |
 
 ## Examples
 

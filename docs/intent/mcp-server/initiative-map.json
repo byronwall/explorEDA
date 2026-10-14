@@ -80,9 +80,7 @@
         "id": "C1",
         "statement": "An outside agent can start a project from data files or .eda text and get working views.",
         "kind": "goal",
-        "sources": [
-          "USR-CHAT-2026-10-13"
-        ],
+        "sources": ["USR-CHAT-2026-10-13"],
         "confidence": "high",
         "importance": "core"
       },
@@ -90,9 +88,7 @@
         "id": "C2",
         "statement": "The MCP server returns actionable DSL feedback: parse and build problems with fixes, fields, and reference.",
         "kind": "goal",
-        "sources": [
-          "USR-CHAT-2026-10-13"
-        ],
+        "sources": ["USR-CHAT-2026-10-13"],
         "confidence": "high",
         "importance": "core"
       },
@@ -100,9 +96,7 @@
         "id": "C3",
         "statement": "Coverage grows toward parity with everything a user can control.",
         "kind": "goal",
-        "sources": [
-          "USR-CHAT-2026-10-13"
-        ],
+        "sources": ["USR-CHAT-2026-10-13"],
         "confidence": "high",
         "notes": "Round 1: launch parity means saved state through files; live tab state later.",
         "importance": "core"
@@ -111,9 +105,7 @@
         "id": "C4",
         "statement": "Agent output is ordinary project text a person can open and edit.",
         "kind": "constraint",
-        "sources": [
-          "REPO-CLI"
-        ],
+        "sources": ["REPO-CLI"],
         "confidence": "medium",
         "importance": "core"
       },
@@ -121,72 +113,53 @@
         "id": "C5",
         "statement": "No model or credentials live in explorEDA for this initiative.",
         "kind": "boundary",
-        "sources": [
-          "REPO-AGENT"
-        ],
+        "sources": ["REPO-AGENT"],
         "confidence": "medium"
       },
       {
         "id": "C6",
         "statement": "The agent connects to the running exploreda server over HTTP and joins the open session.",
         "kind": "decision",
-        "sources": [
-          "USR-CHAT-2026-10-13"
-        ],
+        "sources": ["USR-CHAT-2026-10-13"],
         "confidence": "high"
       },
       {
         "id": "C7",
         "statement": "A stale agent write fails and the agent rereads.",
         "kind": "decision",
-        "sources": [
-          "USR-CHAT-2026-10-13"
-        ],
+        "sources": ["USR-CHAT-2026-10-13"],
         "confidence": "high"
       },
       {
         "id": "C8",
         "statement": "Data kickoff covers local files, inline rows, and URL fetch; database sources follow database-adapters.",
         "kind": "decision",
-        "sources": [
-          "USR-CHAT-2026-10-13"
-        ],
+        "sources": ["USR-CHAT-2026-10-13"],
         "confidence": "high"
       },
       {
         "id": "C9",
         "statement": "Launch without chart images; images are important and the main trigger for headless rendering.",
         "kind": "decision",
-        "sources": [
-          "USR-CHAT-2026-10-13"
-        ],
+        "sources": ["USR-CHAT-2026-10-13"],
         "confidence": "high"
       },
       {
         "id": "C10",
         "statement": "The server writes a git-ignored .exploreda/server.json; an `exploreda mcp` helper reads it and relays to the running server, so the agent config is one fixed line.",
         "kind": "decision",
-        "sources": [
-          "USR-CHAT-2026-10-13"
-        ],
+        "sources": ["USR-CHAT-2026-10-13"],
         "confidence": "high"
       },
       {
         "id": "C11",
         "statement": "Checks run in the server, loading the exploreda-dsl bundle lazily on the first MCP call.",
         "kind": "decision",
-        "sources": [
-          "USR-CHAT-2026-10-13"
-        ],
+        "sources": ["USR-CHAT-2026-10-13"],
         "confidence": "high"
       }
     ],
-    "themes": [
-      "kickoff",
-      "feedback loop",
-      "control parity",
-      "live app"
-    ],
+    "themes": ["kickoff", "feedback loop", "control parity", "live app"],
     "conflicts": [],
     "human_questions": [
       {
@@ -208,10 +181,7 @@
       },
       {
         "round": 2,
-        "asked": [
-          "address and key discovery",
-          "where checks run"
-        ],
+        "asked": ["address and key discovery", "where checks run"],
         "answers": {
           "address and key discovery": "Discovery file + helper",
           "where checks run": "In the server, loaded lazily"
@@ -269,9 +239,7 @@
         "pnpm --filter exploreda exec vitest run src/lib/project",
         "pnpm --filter exploreda check-types"
       ],
-      "deployment_surfaces": [
-        "exploreda npm package bin"
-      ]
+      "deployment_surfaces": ["exploreda npm package bin"]
     },
     "dependencies": [
       {
@@ -289,12 +257,7 @@
         ],
         "local_proof": "In-process JSON-RPC handler tests",
         "live_proof": "Claude Code session in M1; tarball stdio round trip on three OSes in M5",
-        "proof_rungs": [
-          "fake",
-          "contract-test",
-          "sandbox",
-          "deployed"
-        ],
+        "proof_rungs": ["fake", "contract-test", "sandbox", "deployed"],
         "rollout": "Opt-in: nothing loads unless an agent connects; remove /mcp route and mcp subcommand to withdraw.",
         "notes": "M1 spike: bundle @modelcontextprotocol/sdk or hand-write initialize/tools/list/tools/call."
       },
@@ -314,11 +277,7 @@
         ],
         "local_proof": "Local fixture HTTP server",
         "live_proof": "Docs example fetching a public CSV in M5",
-        "proof_rungs": [
-          "fake",
-          "contract-test",
-          "sandbox"
-        ],
+        "proof_rungs": ["fake", "contract-test", "sandbox"],
         "rollout": "Remove the url branch; local and inline data remain."
       }
     ],
@@ -339,9 +298,7 @@
         "id": "m1",
         "title": "A cold agent builds a dashboard through four tools",
         "outcome": "check, fields, reference, write_eda served from /mcp on the running server; a cold agent reaches a built dashboard on the shop example.",
-        "dependencies_introduced": [
-          "MCP protocol"
-        ],
+        "dependencies_introduced": ["MCP protocol"],
         "proof": "Vitest over memory files; exploreda-dsl output unchanged; recorded cold-agent transcript with round count.",
         "valid_intermediate_state": "exploreda works unchanged; /mcp needs a pasted key.",
         "rollback": "Remove the /mcp route and checker bundle entry.",
@@ -352,9 +309,7 @@
         "id": "m2",
         "title": "One fixed config line connects any agent",
         "outcome": "server.json discovery plus exploreda mcp stdio relay that starts a server when none runs.",
-        "dependencies_introduced": [
-          "stdio transport"
-        ],
+        "dependencies_introduced": ["stdio transport"],
         "proof": "Restart and stale-key tests; real agent across a restart.",
         "valid_intermediate_state": "HTTP connection still works directly.",
         "rollback": "Drop the mcp subcommand and server.json writing.",
@@ -376,9 +331,7 @@
         "id": "m4",
         "title": "The agent starts a project from data",
         "outcome": "add_data from a local path, inline rows, or a URL, with limits and provenance comments.",
-        "dependencies_introduced": [
-          "network fetch"
-        ],
+        "dependencies_introduced": ["network fetch"],
         "proof": "Local fixture HTTP server tests for size, type, redirect, timeout.",
         "valid_intermediate_state": "Projects with existing data unaffected.",
         "rollback": "Remove add_data.",
