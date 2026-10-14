@@ -1,0 +1,29 @@
+project @retail
+
+connection @warehouse driver=postgres host=warehouse database=retail user=exploreda_reader
+
+source @orders key=order_id db=warehouse table=orders
+
+source @customers key=customer_id db=warehouse table=customers
+
+source @products key=product_id db=warehouse table=products
+
+source @lines "Order lines" key=line_id db=warehouse sql="select line_id, order_id, product_id, quantity, discount, round(quantity * unit_price * (1 - discount), 2) as revenue from order_lines"
+
+source @monthly "Monthly sales" db=warehouse table=monthly_sales
+
+relate @order-customer orders.customer_id -> customers.customer_id
+relate @line-order lines.order_id -> orders.order_id
+relate @line-product lines.product_id -> products.product_id
+
+query @sales "Sales" glyph=◆ {
+  source lines
+  lookup order via=line-order
+  lookup product via=line-product
+  lookup customer via=order-customer on=order.customer_id
+}
+
+query @order-list "Orders with customers" glyph=◇ {
+  source orders
+  lookup customer via=order-customer
+}
