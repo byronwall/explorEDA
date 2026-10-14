@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
   analysisFileText,
+  ExplorEdaNotebook,
   ExplorEdaProject,
   projectFileText,
   type AnalysisProject,
@@ -64,6 +65,7 @@ export function ProjectWorkspace({
   notice,
   initialSelection,
   onSelect,
+  notebookMemory,
   actions,
   theme,
   onThemeChange,
@@ -86,6 +88,8 @@ export function ProjectWorkspace({
   notice?: string;
   initialSelection?: Selection;
   onSelect: (selection: Selection) => void;
+  /** A notebook's last working block text, kept by the host across reloads. */
+  notebookMemory?: (path: string) => { current: Record<number, string> };
 }) {
   const [project, setProject] = useState<AnalysisProject>(folder.project);
   const [views, setViews] = useState(() => folderViews(folder));
@@ -93,10 +97,16 @@ export function ProjectWorkspace({
   const [adding, setAdding] = useState(false);
   const [selected, setSelectedState] = useState<Selection>(() =>
     initialSelection?.path &&
-    folder.analyses.some((analysis) => analysis.path === initialSelection.path)
+    [...folder.analyses, ...folder.notebooks].some(
+      (item) => item.path === initialSelection.path
+    )
       ? initialSelection
-      : { path: folder.analyses[0]?.path, index: 0 }
+      : {
+          path: folder.analyses[0]?.path ?? folder.notebooks[0]?.path,
+          index: 0,
+        }
   );
+  const notebook = folder.notebooks.find((item) => item.path === selected.path);
   const setSelected = (next: Selection) => {
     setSelectedState(next);
     onSelect(next);
@@ -149,7 +159,8 @@ export function ProjectWorkspace({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [project, views, saver]);
 
-  const analysisViews = selected.path ? (views.get(selected.path) ?? []) : [];
+  const analysisViews =
+    selected.path && !notebook ? (views.get(selected.path) ?? []) : [];
   const view = analysisViews[selected.index] ?? analysisViews[0];
   const allViews = useMemo(() => [...views.values()].flat(), [views]);
 
@@ -301,6 +312,31 @@ export function ProjectWorkspace({
           )}
         </nav>
 
+        {folder.notebooks.length > 0 && (
+          <nav aria-labelledby="notebooks-heading">
+            <div className="app-section-head">
+              <h2 id="notebooks-heading">Notebooks</h2>
+            </div>
+            <ul className="app-list">
+              {folder.notebooks.map((item) => (
+                <li key={item.path}>
+                  <button
+                    type="button"
+                    className="app-item"
+                    aria-current={
+                      item.path === selected.path ? "page" : undefined
+                    }
+                    onClick={() => setSelected({ path: item.path, index: 0 })}
+                  >
+                    <span>{item.result.settings.metadata.name}</span>
+                    <span className="app-muted">{item.path}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )}
+
         <section aria-labelledby="data-heading">
           <div className="app-section-head">
             <h2 id="data-heading">Data</h2>
@@ -389,7 +425,15 @@ export function ProjectWorkspace({
       </aside>
 
       <main className="app-main">
-        {view ? (
+        {notebook ? (
+          <ExplorEdaNotebook
+            key={notebook.path}
+            text={notebook.text}
+            data={notebook.result.rows}
+            name={notebook.result.settings.metadata.name}
+            lastValid={notebookMemory?.(notebook.path)}
+          />
+        ) : view ? (
           <ExplorEdaProject
             key={view.id}
             project={project}

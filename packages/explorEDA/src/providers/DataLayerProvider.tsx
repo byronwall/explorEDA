@@ -276,6 +276,11 @@ interface DataLayerProps<T extends DatumObject> {
   charts?: ChartSettings[];
   savedData?: SavedDataStructure;
   onStateChange?: (state: SavedDataStructure) => void;
+  /**
+   * Keeps each chart's clicks and brushes to that chart, as a notebook
+   * does. Workspace filters still narrow every chart.
+   */
+  localSelections?: boolean;
 }
 
 // Add ID to the data type
@@ -403,13 +408,15 @@ type DataLayerStore<T extends DatumObject> = ReturnType<
 function getDataAndCrossfilterWrapper<T extends DatumObject>(
   data: T[],
   fieldGetter?: (name: string) => Record<IdType, datum>,
-  charts?: ChartSettings[]
+  charts?: ChartSettings[],
+  localSelections = false
 ): Partial<DataLayerState<T>> {
   const { dataWithIds, emptyColumn } = initializeData(data);
   const newCrossFilter = new CrossfilterWrapper<T & HasId>(
     dataWithIds,
     (d) => d.__ID
   );
+  newCrossFilter.localSelections = localSelections;
 
   if (fieldGetter) {
     newCrossFilter.setFieldGetter(fieldGetter);
@@ -516,7 +523,12 @@ const getInitialStoreState = <T extends DatumObject>(
     emptyColumn: initialEmptyColumn,
     crossfilterWrapper,
     calculationManager: ogCalculationManager,
-  } = getDataAndCrossfilterWrapper(runtimeData);
+  } = getDataAndCrossfilterWrapper(
+    runtimeData,
+    undefined,
+    undefined,
+    initProps?.localSelections
+  );
   const fieldProfiles = buildFieldProfiles(
     runtimeData,
     typeOverrides(fieldSettings, fieldTypes),
@@ -646,6 +658,7 @@ const createDataLayerStore = <T extends DatumObject>(
     });
     return {
       ...initialState,
+      localSelections: initProps?.localSelections ?? false,
       liveItems: {},
       filterReset: 0,
       stateChangeHolds: 0,
@@ -677,7 +690,12 @@ const createDataLayerStore = <T extends DatumObject>(
           emptyColumn: newEmptyColumn,
           crossfilterWrapper: newCrossfilter,
           calculationManager: newCalculationManager,
-        } = getDataAndCrossfilterWrapper(runtimeData, get().getColumnData);
+        } = getDataAndCrossfilterWrapper(
+          runtimeData,
+          get().getColumnData,
+          undefined,
+          get().localSelections
+        );
         const fieldProfiles = buildFieldProfiles(
           runtimeData,
           typeOverrides({}, fieldTypes),
@@ -786,6 +804,7 @@ const createDataLayerStore = <T extends DatumObject>(
           nextData.dataWithIds,
           (row) => row.__ID
         );
+        nextCrossfilter.localSelections = get().localSelections ?? false;
         const nextCharts = get().charts.map((chart) => ({
           ...chart,
           filters: chart.filters.filter((filter) => filter.field !== field),
@@ -1345,7 +1364,12 @@ const createDataLayerStore = <T extends DatumObject>(
           fieldSettings,
           inferredTypes
         );
-        const next = getDataAndCrossfilterWrapper(runtimeData);
+        const next = getDataAndCrossfilterWrapper(
+          runtimeData,
+          undefined,
+          undefined,
+          get().localSelections
+        );
         const nextData = next.data;
         const nextCrossfilter = next.crossfilterWrapper;
         const nextEmptyColumn = next.emptyColumn;

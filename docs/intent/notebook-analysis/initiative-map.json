@@ -8,7 +8,7 @@
     "last_updated": "2026-10-13",
     "summary": ".eda.md notebook files in local projects: Markdown prose with eda blocks, live results, and minimal graph write-back. Forecast performance is the first proof.",
     "status": "active",
-    "next_action": "M2: read notebooks in the app and follow outside edits"
+    "next_action": "M3: graph edits write back to the file"
   },
   "artifacts": {
     "intent_brief": {
@@ -795,8 +795,10 @@
         "proof": "Component tests; browser at 1280/783/390 px.",
         "valid_intermediate_state": "Graph controls read-only; .eda analyses unchanged.",
         "rollback": "Stop recognizing .eda.md in the scan.",
-        "status": "planned",
-        "evidence": []
+        "status": "completed",
+        "evidence": [
+          "ExplorEdaNotebook.test.tsx, CrossfilterWrapper local selections test, LineChart ISO date test; browser on examples/forecast: outside edit reload, frozen block, chart-local brush (477 of 1,417 rows vs table 1,417); screenshots at 1280/783/390"
+        ]
       },
       {
         "id": "m3",
@@ -827,10 +829,7 @@
       "Export, sharing, publishing",
       "<Notebook> outside projects"
     ],
-    "open_decisions": [
-      "M2 spike: rendering path (column renderer vs full-width grid bands)",
-      "M2 spike: chart-local selection state"
-    ]
+    "open_decisions": []
   },
   "history": [
     {
@@ -921,6 +920,13 @@
       "status": "active",
       "reason": "M1 built: notebook parsing, compiling, minimal write-back with alias mapping, CLI support, and the forecast example project. All five first-proof edit kinds splice minimally on the forecast notebook.",
       "source_anchors": ["qa-round-3"]
+    },
+    {
+      "date": "2026-10-13",
+      "event": "m2-spikes-resolved",
+      "status": "active",
+      "reason": "Rendering: a dedicated reading column of PlotChartPanels inside one DataLayerProvider (no grid). Local selections: a CrossfilterWrapper flag that keeps each chart's own filter off the other charts. Also fixed line charts that drew nothing for an ISO date x field.",
+      "source_anchors": ["qa-round-2"]
     }
   ],
   "closure": null,

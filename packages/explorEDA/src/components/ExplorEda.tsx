@@ -299,6 +299,11 @@ export * from "@/lib/project";
 // Notebooks: Markdown with eda blocks, and chart edits written back to them.
 export * from "@/lib/notebook";
 export {
+  ExplorEdaNotebook,
+  useNotebookResult,
+  type ExplorEdaNotebookProps,
+} from "./notebook/ExplorEdaNotebook";
+export {
   listBoundarySets,
   registerBoundarySet,
 } from "@/lib/boundaries/registry";

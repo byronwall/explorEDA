@@ -1,0 +1,176 @@
+/* A notebook reads top to bottom: prose and results share one column. */
+.eda-notebook {
+  min-height: 100%;
+  padding: 2rem 1rem 4rem;
+}
+
+.eda-notebook-column {
+  max-width: 880px;
+  margin: 0 auto;
+}
+
+.eda-notebook-column > * + * {
+  margin-top: 1.25rem;
+}
+
+.eda-notebook-prose {
+  color: var(--foreground);
+  font-size: 1rem;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
+.eda-notebook-prose > * + * {
+  margin-top: 0.75em;
+}
+
+.eda-notebook-prose :is(h1, h2, h3, h4, h5, h6) {
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.eda-notebook-prose > :is(h1, h2, h3, h4, h5, h6):not(:first-child) {
+  margin-top: 1.6em;
+}
+
+.eda-notebook-prose h1 {
+  font-size: 1.75rem;
+}
+
+.eda-notebook-prose h2 {
+  font-size: 1.3rem;
+}
+
+.eda-notebook-prose :is(h3, h4, h5, h6) {
+  font-size: 1.05rem;
+}
+
+.eda-notebook-prose p {
+  max-width: 72ch;
+}
+
+.eda-notebook-prose :is(ul, ol) {
+  max-width: 72ch;
+  padding-left: 1.4em;
+}
+
+.eda-notebook-prose ul {
+  list-style: disc;
+}
+
+.eda-notebook-prose ol {
+  list-style: decimal;
+}
+
+.eda-notebook-prose li::marker {
+  color: var(--muted-foreground);
+}
+
+.eda-notebook-prose a {
+  color: var(--primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.eda-notebook-prose blockquote {
+  border-left: 2px solid var(--border);
+  padding-left: 0.9em;
+  color: var(--muted-foreground);
+}
+
+.eda-notebook-prose code {
+  border-radius: 0.3rem;
+  background: var(--muted);
+  padding: 0.1em 0.35em;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.9em;
+}
+
+.eda-notebook-prose pre {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: var(--muted);
+  padding: 0.75rem 1rem;
+}
+
+.eda-notebook-prose pre code {
+  background: none;
+  padding: 0;
+}
+
+.eda-notebook-prose table {
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.eda-notebook-prose :is(th, td) {
+  border: 1px solid var(--border);
+  padding: 0.3rem 0.6rem;
+  text-align: left;
+}
+
+.eda-notebook-prose hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+}
+
+.eda-notebook-block > * + * {
+  margin-top: 1rem;
+}
+
+/* Each chart brings its own card; the block only stacks them. */
+.eda-notebook-output {
+  min-width: 0;
+}
+
+/* A block whose text doesn't work keeps its last results, held still. */
+.eda-notebook-block[data-status="frozen"] .eda-notebook-output {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.eda-notebook-defines {
+  color: var(--muted-foreground);
+  font-size: 0.8rem;
+}
+
+.eda-notebook-problems {
+  border: 1px solid var(--warning);
+  border-radius: 0.5rem;
+  background: color-mix(in oklab, var(--warning) 8%, var(--background));
+  padding: 0.6rem 0.8rem;
+  font-size: 0.85rem;
+}
+
+.eda-notebook-problems[data-severity="error"] {
+  border-color: var(--destructive);
+  background: color-mix(in oklab, var(--destructive) 7%, var(--background));
+}
+
+.eda-notebook-problems-head {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 500;
+}
+
+.eda-notebook-problems ul {
+  margin-top: 0.35rem;
+  padding-left: 1.4rem;
+}
+
+.eda-notebook-problems li + li {
+  margin-top: 0.2rem;
+}
+
+.eda-notebook-line {
+  color: var(--muted-foreground);
+  font-variant-numeric: tabular-nums;
+}
+
+.eda-notebook-fix {
+  color: var(--muted-foreground);
+}

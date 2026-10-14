@@ -188,14 +188,30 @@ export function compileNotebook(
     return found;
   };
 
-  let pass = build(new Set());
-  const broken = errorBlocks(pass.result.diagnostics);
+  // Blocks whose own text is broken stand in first. A block that fails only
+  // because of another block's text then compiles against the stand-in, and
+  // stands in itself only if it still fails.
+  const canStandIn = (index: number) => lastValid[index] !== undefined;
   const frozen = new Set(
-    [...broken].filter((index) => lastValid[index] !== undefined)
+    [...own]
+      .filter(
+        ([index, items]) =>
+          canStandIn(index) && items.some((item) => item.severity === "error")
+      )
+      .map(([index]) => index)
   );
-  if (frozen.size) {
+  let pass = build(frozen);
+  for (;;) {
+    const more = [...errorBlocks(pass.result.diagnostics)].filter(
+      (index) => !frozen.has(index) && canStandIn(index)
+    );
+    if (!more.length) {
+      break;
+    }
+    more.forEach((index) => frozen.add(index));
     pass = build(frozen);
   }
+  const broken = new Set([...errorBlocks(pass.result.diagnostics), ...frozen]);
   const { compiledText, standIns, result } = pass;
 
   // Which block a compiled line belongs to, stand-in text included.

@@ -49,6 +49,31 @@ describe("CrossfilterWrapper", () => {
     expect(wrapper.getFilteredRowCount()).toBe(1);
   });
 
+  it("keeps each chart's selection to that chart when selections are local", () => {
+    const data = [
+      { __ID: 0, name: "A", category: "x" },
+      { __ID: 1, name: "B", category: "x" },
+      { __ID: 2, name: "A", category: "y" },
+    ];
+    const wrapper = new CrossfilterWrapper(data, (row) => row.__ID);
+    wrapper.localSelections = true;
+    wrapper.setFieldGetter((field) =>
+      Object.fromEntries(
+        data.map((row) => [row.__ID, row[field as keyof typeof row]])
+      )
+    );
+    wrapper.addChart(
+      makeChart("names", [
+        { type: "text", field: "name", operator: "equals", value: "A" },
+      ])
+    );
+    wrapper.addChart(makeChart("categories", []));
+
+    expect(wrapper.getFilteredRowCount()).toBe(3);
+    const live = wrapper.getAllData();
+    expect(live.categories!.items.filter((item) => item.value)).toHaveLength(3);
+  });
+
   it("keeps a chart's local filters out of every other chart", () => {
     const data = [
       { __ID: 0, name: "A", category: "web" },

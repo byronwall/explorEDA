@@ -154,6 +154,22 @@ describe("compileNotebook", () => {
     ).toBe(true);
   });
 
+  it("freezes only the broken block when others depend on it", () => {
+    const text = [
+      fence("calc delta = actual - forecast\nhist @d delta {"),
+      fence("line @line x=time y=delta"),
+    ].join("\n");
+    const result = compileNotebook(text, {
+      rows,
+      lastValid: { 0: "calc delta = actual - forecast\nhist @d delta", 1: "" },
+    });
+    expect(result.blocks.map((block) => block.status)).toEqual([
+      "frozen",
+      "ok",
+    ]);
+    expect(result.blocks[1]!.charts.map((chart) => chart.id)).toEqual(["line"]);
+  });
+
   it("flags a calculation defined twice at both definitions", () => {
     const result = compileNotebook(
       [
