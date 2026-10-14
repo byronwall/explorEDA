@@ -174,3 +174,150 @@
 .eda-notebook-fix {
   color: var(--muted-foreground);
 }
+
+/* Each segment's text opens beside it, on hover or keyboard focus. */
+.eda-notebook-segment {
+  position: relative;
+}
+
+.eda-notebook-segment-tools {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.25rem;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .eda-notebook-segment-tools {
+    position: absolute;
+    z-index: 2;
+    top: -0.25rem;
+    right: 0;
+    margin: 0;
+    opacity: 0;
+    transition: opacity 120ms ease;
+  }
+
+  .eda-notebook-segment:hover > .eda-notebook-segment-tools,
+  .eda-notebook-segment:focus-within > .eda-notebook-segment-tools,
+  .eda-notebook-segment[data-open] > .eda-notebook-segment-tools {
+    opacity: 1;
+  }
+
+  .eda-notebook-segment[data-open] > .eda-notebook-segment-tools {
+    position: static;
+    justify-content: flex-end;
+    margin-bottom: 0.25rem;
+  }
+}
+
+.eda-notebook-segment-tools button {
+  background: var(--background);
+}
+
+/* The editor grows with its text; the colored copy sits under the input. */
+.eda-notebook-source {
+  position: relative;
+  border: 1px solid var(--input);
+  border-radius: 0.5rem;
+  background: var(--card);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.8rem;
+  line-height: 1.25rem;
+}
+
+.eda-notebook-source:focus-within {
+  border-color: var(--ring);
+  box-shadow: 0 0 0 1px var(--ring);
+}
+
+.eda-notebook-source-colors,
+.eda-notebook-source-input {
+  margin: 0;
+  padding: 0.6rem 0.75rem;
+  font: inherit;
+  line-height: inherit;
+  white-space: pre;
+  tab-size: 2;
+}
+
+.eda-notebook-source-colors {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  color: var(--foreground);
+  pointer-events: none;
+}
+
+.eda-notebook-source-input {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  resize: none;
+  border: 0;
+  background: transparent;
+  color: var(--foreground);
+  outline: none;
+}
+
+.eda-notebook-source[data-language="markdown"] .eda-notebook-source-input {
+  white-space: pre-wrap;
+  font-family: inherit;
+  /* Wrapped lines grow the box where the browser can size it to content. */
+  field-sizing: content;
+}
+
+/* Dashboard text colors, the same in every notebook host. Color only, so
+   glyphs stay aligned under the text area. */
+.eda-notebook {
+  --eda-dsl-keyword: hsl(262 55% 48%);
+  --eda-dsl-type: hsl(190 75% 30%);
+  --eda-dsl-key: hsl(215 70% 40%);
+  --eda-dsl-reference: hsl(190 75% 30%);
+  --eda-dsl-string: hsl(140 55% 29%);
+  --eda-dsl-number: hsl(25 85% 38%);
+  --eda-dsl-constant: hsl(330 60% 44%);
+}
+
+.dark .eda-notebook {
+  --eda-dsl-keyword: hsl(262 85% 78%);
+  --eda-dsl-type: hsl(185 60% 62%);
+  --eda-dsl-key: hsl(210 85% 74%);
+  --eda-dsl-reference: hsl(185 60% 62%);
+  --eda-dsl-string: hsl(120 40% 68%);
+  --eda-dsl-number: hsl(30 85% 68%);
+  --eda-dsl-constant: hsl(330 75% 76%);
+}
+
+.eda-notebook-source .eda-dsl-keyword {
+  color: var(--eda-dsl-keyword);
+}
+.eda-notebook-source .eda-dsl-type {
+  color: var(--eda-dsl-type);
+}
+.eda-notebook-source .eda-dsl-key {
+  color: var(--eda-dsl-key);
+}
+.eda-notebook-source .eda-dsl-reference {
+  color: var(--eda-dsl-reference);
+}
+.eda-notebook-source .eda-dsl-string {
+  color: var(--eda-dsl-string);
+}
+.eda-notebook-source .eda-dsl-number {
+  color: var(--eda-dsl-number);
+}
+.eda-notebook-source .eda-dsl-constant {
+  color: var(--eda-dsl-constant);
+}
+.eda-notebook-source :is(.eda-dsl-operator, .eda-dsl-comment) {
+  color: var(--muted-foreground);
+}
+
+.eda-notebook-source .eda-dsl-input {
+  color: transparent;
+  caret-color: var(--foreground);
+}
+
+.eda-notebook-source .eda-dsl-input::selection {
+  background: color-mix(in oklab, var(--ring) 28%, transparent);
+}

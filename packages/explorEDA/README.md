@@ -444,6 +444,35 @@ bar to search its members, inspect source rows, or select categories. The saved
 filter contains exact category values. Resizing changes the displayed groups and
 keeps the selection. A literal “Other categories” value remains a separate category.
 
+## Notebooks
+
+A notebook is an analysis written as prose with its charts in line: a `<name>.eda.md` file in a project folder. Text outside the fences is Markdown, and each fenced `eda` block is dashboard text whose charts appear where the block sits. A definition in any block applies to the whole notebook, and each chart's clicks and brushes stay with that chart.
+
+````markdown
+# Forecast misses
+
+```eda
+eda query=demand
+time:date=demand.time
+actual:num=demand.actual
+forecast:num=demand.forecast
+calc delta = actual - forecast
+line @delta x=time y=delta title="Actual minus forecast"
+```
+
+The miss widens after February 15.
+````
+
+`npx exploreda` lists a folder's notebooks beside its analyses. Chart edits there save back to the file, changing only the edited setting, and the file reloads when it changes on disk. `npx exploreda-dsl check notebook.eda.md` reports each problem at its line.
+
+```tsx
+import { ExplorEdaNotebook, readNotebookText, writeBackChart } from "exploreda";
+
+<ExplorEdaNotebook text={text} data={rows} onTextChange={setText} />;
+```
+
+`readNotebookText(text, { project, tables })` builds a notebook against a project's data, and `compileNotebook(text, { rows })` against rows. `writeBackChart` and `writeBackSettings` turn a chart edit into the smallest change to the text.
+
 ## Related tables
 
 `exploreda/analysis` evaluates queries over several related tables without

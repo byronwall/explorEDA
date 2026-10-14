@@ -4,8 +4,9 @@ import {
   useRef,
   useState,
   type MutableRefObject,
+  type ReactNode,
 } from "react";
-import { CircleAlert } from "lucide-react";
+import { Check, CircleAlert, Pencil } from "lucide-react";
 import { toast } from "sonner";
 import type { DeclaredFieldType } from "@/lib/declaredFieldTypes";
 import {
@@ -13,6 +14,7 @@ import {
   writeBackSettings,
   type NotebookBlockResult,
   type NotebookCompileResult,
+  type NotebookSegment,
 } from "@/lib/notebook";
 import { resolveThemeId } from "@/lib/themes";
 import {
@@ -26,8 +28,10 @@ import { CalculationEditorProvider } from "../calculations/CalculationEditor";
 import { GlobalAlertDialog } from "../GlobalAlertDialog";
 import { ChartDraftProvider } from "../plot/ChartDraftContext";
 import { GridChartPanel } from "../GridChartPanel";
+import { Button } from "../ui/button";
 import { Toaster } from "../ui/sonner";
 import { NotebookProse } from "./NotebookProse";
+import { NotebookSourceEditor } from "./NotebookSourceEditor";
 import "./notebook.css";
 
 export interface ExplorEdaNotebookProps {
@@ -227,7 +231,15 @@ export function ExplorEdaNotebook({
     >
       <CalculationEditorProvider>
         <ChartDraftProvider>
-          <NotebookColumn result={result} />
+          <NotebookColumn
+            result={result}
+            onSegmentChange={
+              onTextChange
+                ? (segment, next) =>
+                    onTextChange(replaceSegment(text, segment, next))
+                : undefined
+            }
+          />
         </ChartDraftProvider>
       </CalculationEditorProvider>
       <GlobalAlertDialog />
@@ -236,10 +248,41 @@ export function ExplorEdaNotebook({
   );
 }
 
-function NotebookColumn({ result }: { result: NotebookCompileResult }) {
+/** The notebook text with one segment's lines replaced. */
+function replaceSegment(
+  text: string,
+  segment: NotebookSegment,
+  next: string
+): string {
+  const lines = text.split(/\r?\n/);
+  // An empty block's text goes on the line after its opening fence.
+  const end = Math.max(segment.endLine, segment.startLine - 1);
+  return [
+    ...lines.slice(0, segment.startLine - 1),
+    ...next.split("\n"),
+    ...lines.slice(end),
+  ].join("\n");
+}
+
+function NotebookColumn({
+  result,
+  onSegmentChange,
+}: {
+  result: NotebookCompileResult;
+  /** Present when the notebook's text can change. */
+  onSegmentChange?: (segment: NotebookSegment, text: string) => void;
+}) {
   const { ref, width } = useWidth();
   const themeId = resolveThemeId(useDataLayer((state) => state.theme));
   const setDarkMode = useDataLayer((state) => state.setDarkMode);
+  const [editing, setEditing] = useState<ReadonlySet<string>>(new Set());
+  const toggle = (key: string) =>
+    setEditing((previous) => {
+      const next = new Set(previous);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
   // Charts color their palettes for the surface they sit on.
   useEffect(() => {
     const update = () =>
@@ -257,27 +300,96 @@ function NotebookColumn({ result }: { result: NotebookCompileResult }) {
     return () => observer.disconnect();
   }, [ref, setDarkMode]);
 
+  // Prose segments go by their order, which typing in them doesn't change.
+  let proseCount = 0;
   return (
     <div
       className="eda-workspace eda-notebook bg-background text-foreground"
       data-eda-theme={themeId}
     >
       <article ref={ref} className="eda-notebook-column">
-        {result.notebook.segments.map((segment) =>
-          segment.kind === "prose" ? (
-            <NotebookProse
-              key={`prose-${segment.startLine}`}
-              text={segment.text}
+        {result.notebook.segments.map((segment) => {
+          const key =
+            segment.kind === "prose"
+              ? `prose-${proseCount++}`
+              : `block-${segment.index}`;
+          const open = editing.has(key);
+          const edit = onSegmentChange && (
+            <EditToggle
+              open={open}
+              kind={segment.kind}
+              onToggle={() => toggle(key)}
             />
+          );
+          const editor = open && onSegmentChange && (
+            <NotebookSourceEditor
+              value={segment.text}
+              language={segment.kind === "prose" ? "markdown" : "eda"}
+              label={
+                segment.kind === "prose"
+                  ? "Markdown text"
+                  : `Block ${segment.index + 1} text`
+              }
+              onChange={(next) => onSegmentChange(segment, next)}
+            />
+          );
+          return segment.kind === "prose" ? (
+            <div
+              key={key}
+              className="eda-notebook-segment"
+              data-open={open || undefined}
+            >
+              {edit}
+              {editor || <NotebookProse text={segment.text} />}
+            </div>
           ) : (
             <NotebookBlockView
-              key={`block-${segment.index}`}
+              key={key}
               block={result.blocks[segment.index]!}
               width={width}
+              edit={edit}
+              editor={editor}
+              open={open}
             />
-          )
-        )}
+          );
+        })}
       </article>
+    </div>
+  );
+}
+
+/** Opens or closes a segment's text, beside it. */
+function EditToggle({
+  open,
+  kind,
+  onToggle,
+}: {
+  open: boolean;
+  kind: NotebookSegment["kind"];
+  onToggle: () => void;
+}) {
+  return (
+    <div className="eda-notebook-segment-tools">
+      <Button
+        variant="ghost"
+        size="sm"
+        aria-pressed={open}
+        tooltip={
+          open
+            ? "Close the text editor; changes are already saved"
+            : kind === "prose"
+              ? "Edit this text as Markdown"
+              : "Edit this block's dashboard text; charts update as you type"
+        }
+        onClick={onToggle}
+      >
+        {open ? (
+          <Check className="h-4 w-4" aria-hidden="true" />
+        ) : (
+          <Pencil className="h-4 w-4" aria-hidden="true" />
+        )}
+        {open ? "Done" : kind === "prose" ? "Edit text" : "Edit block"}
+      </Button>
     </div>
   );
 }
@@ -285,9 +397,15 @@ function NotebookColumn({ result }: { result: NotebookCompileResult }) {
 function NotebookBlockView({
   block,
   width,
+  edit,
+  editor,
+  open,
 }: {
   block: NotebookBlockResult;
   width: number;
+  edit?: ReactNode;
+  editor?: ReactNode;
+  open: boolean;
 }) {
   const charts = useDataLayer((state) => state.charts);
   const byId = useMemo(
@@ -296,20 +414,27 @@ function NotebookBlockView({
   );
   const problems = block.diagnostics;
   const empty = !block.charts.length;
-  if (empty && !problems.length) {
-    return block.calculations.length ? (
-      <p className="eda-notebook-defines">
-        Defines {block.calculations.join(", ")}
-      </p>
+  if (empty && !problems.length && !open) {
+    const names = [...block.aliases, ...block.calculations];
+    return names.length || edit ? (
+      <div className="eda-notebook-segment">
+        {edit}
+        <p className="eda-notebook-defines">
+          {names.length ? `Defines ${names.join(", ")}` : "Definitions"}
+        </p>
+      </div>
     ) : null;
   }
   return (
     <section
-      className="eda-notebook-block"
+      className="eda-notebook-block eda-notebook-segment"
       data-block={block.index}
       data-status={block.status}
+      data-open={open || undefined}
       aria-label={`Block ${block.index + 1}`}
     >
+      {edit}
+      {editor}
       {problems.length > 0 && (
         <BlockProblems block={block} problems={problems} />
       )}

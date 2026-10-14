@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react";
+import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { registerAllCharts } from "@/charts/registerAllCharts";
 import { ExplorEdaNotebook } from "./ExplorEdaNotebook";
@@ -114,5 +114,46 @@ describe("ExplorEdaNotebook", () => {
       "The results below are from its last version that worked."
     );
     expect(block.querySelectorAll("[data-chart-id]")).toHaveLength(2);
+  });
+
+  it("edits a block's text in place and hands on the new notebook text", () => {
+    vi.useFakeTimers();
+    try {
+      const onTextChange = vi.fn();
+      render(
+        <ExplorEdaNotebook
+          text={TEXT}
+          data={rows}
+          onTextChange={onTextChange}
+        />
+      );
+      const block = screen.getByRole("region", { name: "Block 2" });
+      fireEvent.click(
+        within(block).getByRole("button", { name: /Edit block/ })
+      );
+      const editor = screen.getByRole("textbox", { name: "Block 2 text" });
+      fireEvent.change(editor, {
+        target: {
+          value: (editor as HTMLTextAreaElement).value.replace(
+            "Actual minus forecast",
+            "Signed miss"
+          ),
+        },
+      });
+      expect(onTextChange).not.toHaveBeenCalled();
+      act(() => {
+        vi.advanceTimersByTime(400);
+      });
+      expect(onTextChange).toHaveBeenCalledWith(
+        TEXT.replace("Actual minus forecast", "Signed miss")
+      );
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("shows no edit controls without onTextChange", () => {
+    render(<ExplorEdaNotebook text={TEXT} data={rows} />);
+    expect(screen.queryByRole("button", { name: /Edit/ })).toBeNull();
   });
 });

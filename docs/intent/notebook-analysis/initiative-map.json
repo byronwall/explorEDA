@@ -8,7 +8,7 @@
     "last_updated": "2026-10-13",
     "summary": ".eda.md notebook files in local projects: Markdown prose with eda blocks, live results, and minimal graph write-back. Forecast performance is the first proof.",
     "status": "active",
-    "next_action": "M4: edit source in the app; docs and example"
+    "next_action": "Review and merge the stacked PRs (#403, #404, #414, #417, M4)"
   },
   "artifacts": {
     "intent_brief": {
@@ -821,8 +821,10 @@
         "proof": "Browser at three widths; docs gate.",
         "valid_intermediate_state": "All surfaces available.",
         "rollback": "Hide the source toggle.",
-        "status": "planned",
-        "evidence": []
+        "status": "completed",
+        "evidence": [
+          "browser: block editor flips delta live, unclosed quote freezes block with editor focused, prose edit saves; ExplorEdaNotebook editing tests; /docs/notebooks page and README Notebooks section; readmeExample.test.ts builds both doc examples"
+        ]
       }
     ],
     "cut_line": [
