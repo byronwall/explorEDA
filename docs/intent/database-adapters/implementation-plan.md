@@ -45,7 +45,7 @@ Each milestone is one stacked PR, with a changeset and its docs section.
   - No accounts are needed.
 - **Live confirmation:** none is required. Warehouses, which do need accounts, are out of scope.
 - **Rollout and rollback:**
-  - Database `connection` and `source from=` lines are new syntax, so file projects are untouched.
+  - Database `connection` and `source db=` lines are new syntax, so file projects are untouched.
   - Removing the lines or the snapshot folder returns a project to file-only.
   - The team server gets database sources only after its v1 ships.
 
@@ -74,7 +74,7 @@ This proves the whole product loop with no new package and no secret. It leaves 
 
 - **Change — project grammar for connections and database sources** (`lib/dsl/project.ts`)
   - Add `connection @name driver=sqlite path=…`.
-  - Add `source @id from=@conn table=…` or `sql="…"`, with optional `key=` and `limit=`.
+  - Add `source @id db=conn table=…` or `sql="…"`, with optional `key=` and `limit=`.
   - The text uses names only. `path=` follows the existing project-relative rules.
   - Verify: round-trip tests beside the existing source-line tests. A diagnostic is raised when a source names an unknown connection.
 - **Change — `SourceAdapter` port, fake adapter, and SQLite adapter** (new `src/server/sources/`)
@@ -95,7 +95,7 @@ This proves the whole product loop with no new package and no secret. It leaves 
   - The existing watch then broadcasts the change, and open pages reload.
   - Verify: `handler.test.ts` covers a refused token, an unknown source, and success.
 - **Change — folder loader reads snapshots** (`lib/project/folder.ts`)
-  - A `from=` source reads its snapshot envelope and keeps its declared types.
+  - A `db=` source reads its snapshot envelope and keeps its declared types.
   - With no snapshot yet, the source is marked missing with "Refresh to read it."
   - Verify: `folder.test.ts` with in-memory `ProjectFiles`.
 - **Change — read time and Refresh in the app** (`apps/app`)

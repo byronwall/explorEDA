@@ -2,7 +2,9 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   isDataFile,
   isNotebookPath,
+  isSnapshotPath,
   readProjectFolder,
+  snapshotPath,
   type ProjectFolder,
 } from "exploreda";
 import type {
@@ -43,7 +45,22 @@ const affectsProject = (path: string) =>
   isNotebookPath(path) ||
   isDataFile(path);
 
+/** The source a snapshot file belongs to. */
+const snapshotSource = (path: string) =>
+  decodeURIComponent(
+    path
+      .split("/")
+      .at(-1)!
+      .replace(/\.json$/, "")
+  );
+
 export function describeChange(paths: string[], by?: string) {
+  if (paths.every(isSnapshotPath)) {
+    const sources = paths.map(snapshotSource).join(", ");
+    return by
+      ? `${by} refreshed ${sources}, so the project reloaded.`
+      : `${sources} ${paths.length === 1 ? "was" : "were"} read again from the database, so the project reloaded.`;
+  }
   const [first, ...rest] = paths;
   const files = rest.length
     ? `${first} and ${rest.length} other file${rest.length === 1 ? "" : "s"}`
@@ -51,6 +68,20 @@ export function describeChange(paths: string[], by?: string) {
   return by
     ? `${by} changed ${files}, so the project reloaded.`
     : `${files} changed on disk, so the project reloaded.`;
+}
+
+/** What a refresh read, in a sentence. */
+export function describeReads(
+  read: { sourceId: string; rows: number; connection: string }[]
+) {
+  const rows = (count: number) =>
+    `${count.toLocaleString()} row${count === 1 ? "" : "s"}`;
+  if (read.length === 1) {
+    const [only] = read;
+    return `Read ${rows(only!.rows)} into ${only!.sourceId} from ${only!.connection}.`;
+  }
+  const total = read.reduce((sum, item) => sum + item.rows, 0);
+  return `Read ${rows(total)} into ${read.map((item) => item.sourceId).join(", ")}.`;
 }
 
 /** Light or dark follows the preference, or the system when it says so. */
@@ -88,6 +119,8 @@ export function App({
     () => new FolderSaver(files, setSaveState, undefined, readOnly)
   );
   const selection = useRef<Selection | undefined>(undefined);
+  /** Snapshots this page asked for, which it reloads itself. */
+  const ownSnapshots = useRef(new Map<string, number>());
   // Each notebook's last working block text, kept across reloads.
   const notebookMemory = useRef(
     new Map<string, { current: Record<number, string> }>()
@@ -158,7 +191,14 @@ export function App({
   useEffect(() => {
     let reloading = Promise.resolve();
     const stop = files.watch?.((paths, by) => {
-      const changed = paths.filter(affectsProject);
+      const changed = paths.filter((path) => {
+        const asked = ownSnapshots.current.get(path);
+        if (asked !== undefined && Date.now() - asked < 10_000) {
+          ownSnapshots.current.delete(path);
+          return false;
+        }
+        return affectsProject(path);
+      });
       if (!changed.length) {
         return;
       }
@@ -299,6 +339,39 @@ export function App({
               },
               () => `Downloaded a fresh copy of ${path}.`
             )(),
+        }
+      : {}),
+    ...(files.databases && !readOnly
+      ? {
+          refreshSources: async (sourceIds: string[]) => {
+            await saver.flush();
+            const read: {
+              sourceId: string;
+              rows: number;
+              connection: string;
+            }[] = [];
+            try {
+              for (const sourceId of sourceIds) {
+                const path = snapshotPath(sourceId);
+                ownSnapshots.current.set(path, Date.now());
+                try {
+                  const info = await files.databases!.refresh(sourceId);
+                  read.push({
+                    sourceId,
+                    rows: info.rowCount,
+                    connection: info.connection,
+                  });
+                } catch (error) {
+                  ownSnapshots.current.delete(path);
+                  throw error;
+                }
+              }
+            } finally {
+              if (read.length) {
+                await reload(undefined, describeReads(read));
+              }
+            }
+          },
         }
       : {}),
     deleteAnalysis: (path) =>

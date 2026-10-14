@@ -37,6 +37,20 @@ export {
 } from "./tables";
 export { analysisFileText, projectFileText } from "./writeFolder";
 export {
+  DEFAULT_BYTE_LIMIT,
+  DEFAULT_ROW_LIMIT,
+  isSnapshotPath,
+  parseSnapshot,
+  readAgo,
+  SNAPSHOT_FOLDER,
+  SNAPSHOT_FORMAT,
+  snapshotInfo,
+  snapshotPath,
+  type SnapshotField,
+  type SnapshotFile,
+  type SnapshotInfo,
+} from "./snapshots";
+export {
   addSourceText,
   analysisPathFor,
   newAnalysisText,
@@ -44,7 +58,11 @@ export {
   sourceIdForFile,
   uniqueName,
 } from "./createFolder";
-export { labelFromId } from "@/lib/dsl/project";
+export {
+  labelFromId,
+  type ConnectionDefinition,
+  type DatabaseSource,
+} from "@/lib/dsl/project";
 export {
   directoryProjectFiles,
   type DirectoryHandleLike,

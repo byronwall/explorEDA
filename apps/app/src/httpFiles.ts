@@ -1,4 +1,8 @@
-import { ProjectFileError, type ProjectFiles } from "exploreda";
+import {
+  ProjectFileError,
+  type ProjectFiles,
+  type SnapshotInfo,
+} from "exploreda";
 
 /** Must match the server's TOKEN_HEADER. */
 const TOKEN_HEADER = "x-exploreda-token";
@@ -38,8 +42,26 @@ export interface DataIntake {
   fetched(): Promise<Record<string, FetchedRecord>>;
 }
 
+/** A refresh the server couldn't finish, with what to do about it. */
+export class RefreshError extends Error {
+  constructor(
+    message: string,
+    readonly suggestion?: string,
+    readonly code?: string
+  ) {
+    super(message);
+    this.name = "RefreshError";
+  }
+}
+
+/** Reading database sources again, on a server that holds their secrets. */
+export interface DatabaseRefresh {
+  refresh(sourceId: string): Promise<SnapshotInfo>;
+}
+
 export type AppFiles = Omit<ProjectFiles, "watch"> & {
   intake?: DataIntake;
+  databases?: DatabaseRefresh;
   info(): Promise<ServerInfo>;
   config(): Promise<GlobalConfig>;
   setConfig(change: Partial<GlobalConfig>): Promise<GlobalConfig>;
@@ -129,13 +151,44 @@ function createHttpFiles({ api, headers, events, config }: HttpFilesOptions) {
   return files;
 }
 
+/** Asks a server to read a database source again. */
+export function databaseRefresh(
+  api: string,
+  headers: Record<string, string>
+): DatabaseRefresh {
+  return {
+    async refresh(sourceId) {
+      const response = await fetch(
+        `${api}/sources/${encodeURIComponent(sourceId)}/refresh`,
+        { method: "POST", headers }
+      );
+      const reply = (await response.json().catch(() => ({}))) as {
+        error?: string;
+        suggestion?: string;
+        code?: string;
+      };
+      if (!response.ok) {
+        throw new RefreshError(
+          reply.error ?? `${response.status} ${response.statusText}`,
+          reply.suggestion,
+          reply.code
+        );
+      }
+      return reply as SnapshotInfo;
+    },
+  };
+}
+
 /** The project's files, through the local server that `exploreda` starts. */
 export function httpProjectFiles(token: string, base = "") {
-  return createHttpFiles({
+  const headers = { [TOKEN_HEADER]: token };
+  const files = createHttpFiles({
     api: `${base}/api`,
-    headers: { [TOKEN_HEADER]: token },
+    headers,
     events: `${base}/api/events?token=${encodeURIComponent(token)}`,
   });
+  files.databases = databaseRefresh(`${base}/api`, headers);
+  return files;
 }
 
 /** Must match the team server's CLIENT_HEADER. */

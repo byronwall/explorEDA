@@ -18,6 +18,7 @@ import {
   sendError,
   serveApp,
 } from "./http";
+import { sourceRoutes } from "./sources/routes";
 
 export const TOKEN_HEADER = "x-exploreda-token";
 
@@ -135,6 +136,9 @@ export function createRequestHandler(options: HandlerOptions) {
         listeners.add(res);
         stopWatching ??= files.watch?.(broadcast);
       } else if (
+        !(await sourceRoutes(url.pathname.slice(5), req, res, {
+          root: files.root,
+        })) &&
         !(await fileRoutes(files, url.pathname.slice(5), url, req, res, {
           canWrite: true,
         }))

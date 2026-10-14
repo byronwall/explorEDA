@@ -39,6 +39,7 @@ import {
   Layers,
   CircleAlert,
   Users,
+  Database,
   type LucideIcon,
 } from "lucide-react";
 import type { MDXContent } from "mdx/types";
@@ -157,6 +158,18 @@ export const catalogue: readonly DocsPage[] = [
     covers: ["flow:team-server"],
     examples: [],
     related: ["project-folders", "dashboard-text"],
+  },
+  {
+    topic: "database-sources",
+    title: "Database sources",
+    group: "start",
+    icon: Database,
+    lede: "Read tables and queries from a database into a project folder, and refresh them when the data changes.",
+    summary: "Chart tables and SQL queries from a SQLite file.",
+    highlights: ["connection", "table= and sql=", "Refresh"],
+    covers: ["flow:database-sources"],
+    examples: [],
+    related: ["project-folders", "team-server"],
   },
   {
     topic: "fields",

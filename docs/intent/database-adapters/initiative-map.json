@@ -4,11 +4,11 @@
     "title": "Database sources",
     "slug": "database-adapters",
     "scale": "capability",
-    "current_phase": "plan",
+    "current_phase": "execution",
     "last_updated": "2026-10-13",
     "summary": "Authors in the CLI and self-hosted server connect to PostgreSQL, SQLite/DuckDB, MySQL, and SQL Server, pick tables or write SQL, and explore a cached, complete, read-only snapshot that they refresh on demand.",
-    "status": "planned",
-    "next_action": "Start Milestone 1: SQLite table source in the CLI with a refreshable snapshot."
+    "status": "active",
+    "next_action": "Open the M1 PR, then start M2 (PostgreSQL)."
   },
   "artifacts": {
     "intent_brief": {
@@ -721,7 +721,7 @@
         "proof": "Contract suite (fake + SQLite), folder/handler tests, screenshots at 1280/783/390.",
         "valid_intermediate_state": "File projects unchanged; database syntax only affects projects that use it.",
         "rollback": "Remove connection/source lines and .exploreda/snapshots.",
-        "status": "planned",
+        "status": "active",
         "evidence": []
       },
       {

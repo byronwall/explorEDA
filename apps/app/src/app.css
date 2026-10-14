@@ -97,6 +97,26 @@
   color: var(--destructive);
 }
 
+.app-badge-warning {
+  border: 1px solid var(--border);
+  color: var(--muted-foreground);
+}
+
+.app-section-action {
+  margin-left: auto;
+}
+
+.app-refresh-error {
+  padding: 0 8px 4px;
+}
+
+.app-source-error {
+  flex-basis: 100%;
+  margin: 2px 0 0;
+  color: var(--destructive);
+  font-size: 12px;
+}
+
 .app-problems summary {
   cursor: pointer;
   color: var(--warning);
@@ -832,6 +852,10 @@
   border-radius: 8px;
   background: var(--background);
   font-size: 12px;
+}
+
+.app-message > .app-button-primary {
+  margin-top: 8px;
 }
 
 .app-message .app-add-data {

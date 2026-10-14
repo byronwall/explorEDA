@@ -1,0 +1,47 @@
+## Read data from a database
+
+A [project folder](/docs/project-folders) can read tables and queries from a database as well as from files. Name the database once as a `connection`, then point each source at a table or a `select` query. explorEDA reads each source once and keeps a copy of its rows in the folder. Opening the project reads that copy, so the database is queried only when you ask it to be.
+
+Try it with a sample shop kept in a SQLite file:
+
+```bash
+npx exploreda --example database
+```
+
+The first time the project opens, its analyses need data. Choose **Read all** to read every source, or **Read now** beside one. After that, each source shows how many rows it holds and when it was read. Choose **Refresh** to read it again.
+
+## Connections and sources
+
+```text
+project @shop
+
+connection @shop driver=sqlite path=data/shop.db
+
+source @orders key=orderId db=shop table=orders
+source @customers key=customerId db=shop table=customers
+source @returns db=shop sql="select r.returnId, r.reason, o.amount from returns r join orders o using (orderId)"
+
+relate @order-customer orders.customerId -> customers.customerId
+```
+
+| Declaration           | Form                                                               | Notes                                                           |
+| --------------------- | ------------------------------------------------------------------ | --------------------------------------------------------------- |
+| `connection`          | `connection @id driver=sqlite path=file`                           | `path=` is relative to the folder. An absolute path also works. |
+| `source` from a table | `source @id [key=field] db=connection table=name [limit=rows]`     | Write `schema.table` for a table outside the default schema.    |
+| `source` from a query | `source @id [key=field] db=connection sql="select …" [limit=rows]` | Any query that returns rows. Write a newline as `\n`.           |
+
+A database source joins, filters, and charts like any other source. Its fields and their types come from the database, so it needs no `field` lines. Add them only to rename a field or to change its type.
+
+Project text never holds a password. A connection line with `password=`, `url=`, or another setting that can hold a secret is refused, so the project stays safe to commit.
+
+## What a read keeps
+
+- **Every row, or none.** A read that fails keeps the last copy and says why beside the source.
+- **100,000 rows at most, unless you raise it.** A source with more rows isn't read; the message suggests a `limit=` to set, or a narrower `sql=`. A copy is also capped at 100 MB.
+- **Exact values.** Whole numbers too large for JavaScript keep every digit as text, and the source notes it. Dates stay dates and booleans stay booleans.
+- **No binary columns.** A column of binary data stops the read; list the columns you need with `sql=`.
+- **Read-only.** The database file opens read-only, so a query that would change it fails.
+
+The copies live in `.exploreda/snapshots/`, with a `.gitignore` that keeps them out of Git. A teammate who pulls the project reads the data from their own access to the database.
+
+Reading SQLite files needs Node 22.16 or later.
