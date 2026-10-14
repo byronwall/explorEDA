@@ -106,7 +106,7 @@ function SecretForm({
   >({ status: "idle" });
   return (
     <form
-      className="app-form app-secret-form"
+      className="app-form app-panel app-secret-form"
       onSubmit={(event) => {
         event.preventDefault();
         if (!secret) {
@@ -123,7 +123,7 @@ function SecretForm({
         );
       }}
     >
-      <label>
+      <label className="app-field">
         <span>Password for {connection}</span>
         <input
           type="password"
@@ -187,7 +187,7 @@ export function RefreshAll({
   return (
     <button
       type="button"
-      className="app-button app-section-action"
+      className="app-button app-button-sm app-button-ghost"
       aria-label={`Read all ${sourceIds.length} database sources again`}
       disabled={reading}
       onClick={() => void run()}
@@ -244,6 +244,14 @@ export function WaitingForData({
   );
 }
 
+/** "5 minutes ago" as "5m ago", to fit a source's meta line. */
+export function shortAgo(ago: string) {
+  return ago.replace(
+    /^(\d+) (minute|hour|day)s? ago$/,
+    (_, count: string, unit: string) => `${count}${unit[0]} ago`
+  );
+}
+
 /** The time since a read, kept current while the page stays open. */
 function useReadAgo(readAt: string | undefined) {
   const [now, setNow] = useState(() => Date.now());
@@ -254,7 +262,7 @@ function useReadAgo(readAt: string | undefined) {
     const timer = setInterval(() => setNow(Date.now()), 30_000);
     return () => clearInterval(timer);
   }, [readAt]);
-  return readAt ? readAgo(readAt, now) : undefined;
+  return readAt ? shortAgo(readAgo(readAt, now)) : undefined;
 }
 
 /** A database source: its rows, when they were read, and Refresh. */
@@ -279,34 +287,35 @@ export function DatabaseSourceItem({
     onRefresh ? () => onRefresh(sourceId) : undefined
   );
   const ago = useReadAgo(snapshot?.readAt);
+  const meta =
+    state.status === "reading" ? (
+      `Reading from ${connection}…`
+    ) : snapshot ? (
+      `${rows.toLocaleString()} rows · ${connection} · ${ago}`
+    ) : (
+      <>
+        <span className="app-status app-status-warning">Not read yet</span>
+        {` · ${connection}`}
+      </>
+    );
   return (
-    <li className="app-source">
-      <span>{name}</span>
-      <span className="app-muted">
-        {snapshot ? `${rows.toLocaleString()} rows · ` : ""}from {connection}
-      </span>
-      {!snapshot && state.status !== "reading" && (
-        <span className="app-badge app-badge-warning">Not read</span>
+    <li
+      className="app-source"
+      aria-busy={state.status === "reading" || undefined}
+    >
+      <span className="app-source-name">{name}</span>
+      <span className="app-source-meta">{meta}</span>
+      {onRefresh && (
+        <button
+          type="button"
+          className="app-button app-button-sm app-button-ghost"
+          aria-label={`Read ${sourceId} again from ${connection}`}
+          disabled={state.status === "reading"}
+          onClick={() => void run()}
+        >
+          {snapshot ? "Refresh" : "Read"}
+        </button>
       )}
-      <span className="app-fetched">
-        {(state.status === "reading" || ago) && (
-          <span className="app-muted">
-            {state.status === "reading"
-              ? `Reading from ${connection}…`
-              : `Read ${ago}`}
-          </span>
-        )}
-        {onRefresh && state.status !== "reading" && (
-          <button
-            type="button"
-            className="app-button"
-            aria-label={`Read ${sourceId} again from ${connection}`}
-            onClick={() => void run()}
-          >
-            {snapshot ? "Refresh" : "Read now"}
-          </button>
-        )}
-      </span>
       <ReadProblem state={state} onSaveSecret={onSaveSecret} onRetry={run} />
     </li>
   );
