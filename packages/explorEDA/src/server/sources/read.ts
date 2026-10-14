@@ -79,7 +79,10 @@ export async function readSnapshot(
   };
   try {
     stopIfAborted();
-    const cursor = await session.read(request, controller.signal);
+    const cursor = await session.read(
+      { ...request, timeout: limits.timeout },
+      controller.signal
+    );
     const notes: string[] = [];
     const names = fieldNamesFromHeader(cursor.names, notes);
     const values: unknown[][] = names.map(() => []);

@@ -19,6 +19,7 @@ import {
   snapshotPath,
   type SnapshotInfo,
 } from "../../lib/project/snapshots";
+import { postgresDriver } from "./drivers/postgres";
 import { sqliteDriver } from "./drivers/sqlite";
 import { readSnapshot } from "./read";
 import {
@@ -34,6 +35,7 @@ export const DEFAULT_READ_TIMEOUT = 60_000;
 
 export const DRIVERS: Record<string, DatabaseDriver> = {
   sqlite: sqliteDriver,
+  postgres: postgresDriver,
 };
 
 export interface SourceOptions {
@@ -83,12 +85,19 @@ async function openConnection(
     );
   }
   const secret = await options.secret?.(connection);
-  const session = await driver.connect({
-    ...connection,
-    root: options.root,
-    ...(secret === undefined ? {} : { secret }),
-  });
-  return { session, driver };
+  try {
+    const session = await driver.connect({
+      ...connection,
+      root: options.root,
+      ...(secret === undefined ? {} : { secret }),
+    });
+    return { session, driver };
+  } catch (error) {
+    if (error instanceof SourceReadError) {
+      error.connection = connection.id;
+    }
+    throw error;
+  }
 }
 
 function findConnection(
@@ -181,6 +190,28 @@ async function readAndWrite(
   } finally {
     await session.close();
   }
+}
+
+/** A connection the project declares, by ID. */
+export async function projectConnection(
+  connectionId: string,
+  root: string
+): Promise<ConnectionDefinition> {
+  const { connections } = await projectDatabases(root);
+  return findConnection(connections, connectionId);
+}
+
+/** Connects with a secret and lets go, to check it before keeping it. */
+export async function checkSecret(
+  connection: ConnectionDefinition,
+  secret: string,
+  options: SourceOptions
+) {
+  const { session } = await openConnection(connection, {
+    ...options,
+    secret: async () => secret,
+  });
+  await session.close();
 }
 
 /** The tables and views a connection can read. */

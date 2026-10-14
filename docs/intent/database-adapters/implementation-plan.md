@@ -190,7 +190,7 @@ This starts after self-hosted v1 ships.
 
 ## Open decisions and spikes
 
-- **Snapshot file format.** The typed JSON envelope is simple and reuses the JSON reader. If snapshot size or parse time hurts at 100,000 rows, switch to the Arrow reader that already exists. That switch belongs to [columnar-data-transport](../columnar-data-transport/intent-brief.md). Decide by measuring at Milestone 2.
+- **Snapshot file format (settled in Milestone 2).** The typed JSON envelope stays. A 100,000-row, 12-column Postgres table refreshed in 0.5 s into 14.8 MB (5 MB gzipped), which parses in 45 ms. Arrow remains with [columnar-data-transport](../columnar-data-transport/intent-brief.md).
 - **DuckDB packaging** (Milestone 6 spike, above).
 
 ## Below the cut line

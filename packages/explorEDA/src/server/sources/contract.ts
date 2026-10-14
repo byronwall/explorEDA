@@ -10,6 +10,7 @@
  *   (4, null, 1000000, 0, true, 1999-12-31, 1999-12-31 00:00:00)
  * - `contract_events`: kind, n holding ('click', 1) twice and ('view', 2)
  * - `contract_many`: n holding 1 through 25
+ * - `contract_large`: n holding 1 through 2,500, more than one batch
  * - `contract_blob`: id, data holding (1, bytes 00 ff)
  */
 import { describe, expect, it } from "vitest";
@@ -157,6 +158,20 @@ export function runSourceContract(
       } finally {
         await session.close();
       }
+    });
+
+    it("reads a table larger than one batch", async () => {
+      const snapshot = await read({ table: "contract_large" }, { rows: 2500 });
+      expect(snapshot.rowCount).toBe(2500);
+      const values = snapshot.rows
+        .map((row) => row[0])
+        .sort((a, b) => Number(a) - Number(b));
+      expect(values[0]).toBe(1);
+      expect(values.at(-1)).toBe(2500);
+      const error = await failure(
+        read({ table: "contract_large" }, { rows: 2499 })
+      );
+      expect(error.code).toBe("too-many-rows");
     });
 
     it("refuses more rows than the limit", async () => {

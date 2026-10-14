@@ -46,3 +46,39 @@ jobs:
       - name: Check docs in a browser
         timeout-minutes: 15
         run: pnpm --filter demo docs:verify
+
+  # Every database driver passes one contract suite against a real
+  # database. SQLite runs in the main check; this job adds the servers.
+  database-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          # Throwaway credentials for this job's container only.
+          POSTGRES_USER: exploreda
+          POSTGRES_PASSWORD: exploreda
+          POSTGRES_DB: contract
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U exploreda -d contract"
+          --health-interval 2s
+          --health-timeout 2s
+          --health-retries 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: "pnpm"
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Source contract
+        timeout-minutes: 5
+        env:
+          EXPLOREDA_TEST_POSTGRES: postgres://exploreda:exploreda@127.0.0.1:5432/contract
+        run: pnpm --filter exploreda exec vitest run src/server/sources

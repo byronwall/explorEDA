@@ -336,6 +336,8 @@ export function App({
       : {}),
     ...(files.databases && !readOnly
       ? {
+          saveSecret: (connectionId: string, secret: string) =>
+            files.databases!.saveSecret(connectionId, secret),
           refreshSources: async (sourceIds: string[]) => {
             await saver.flush();
             const read: {

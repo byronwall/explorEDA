@@ -117,6 +117,7 @@ describe("refreshing a database source", () => {
       "contract_blob",
       "contract_events",
       "contract_items",
+      "contract_large",
       "contract_many",
     ]);
   });

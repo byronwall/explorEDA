@@ -29,7 +29,11 @@ export default defineConfig([
     platform: "node",
     target: "node20",
     noExternal: [/.*/],
-    banner: { js: "#!/usr/bin/env node" },
+    // Database drivers such as pg are CommonJS; their require() calls for
+    // Node's own modules need a real require in this ES module.
+    banner: {
+      js: "#!/usr/bin/env node\nimport { createRequire } from 'node:module'; const require = createRequire(import.meta.url);",
+    },
     define: { __EXPLOREDA_VERSION__: JSON.stringify(version) },
     splitting: false,
     minify: false,

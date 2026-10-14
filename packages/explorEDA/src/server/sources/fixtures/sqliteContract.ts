@@ -21,6 +21,9 @@ insert into contract_events values ('click', 1), ('click', 1), ('view', 2);
 create table contract_many (n integer);
 with recursive count(n) as (select 1 union all select n + 1 from count where n < 25)
 insert into contract_many select n from count;
+create table contract_large (n integer);
+with recursive count(n) as (select 1 union all select n + 1 from count where n < 2500)
+insert into contract_large select n from count;
 create table contract_blob (id integer, data blob);
 insert into contract_blob values (1, x'00ff');
 `;

@@ -37,11 +37,16 @@ function projectFolder(): Plugin {
           "../../packages/explorEDA/src/node/projectFiles.ts"
         )
       )) as typeof import("../../packages/explorEDA/src/node/projectFiles");
+      // Passwords entered here last until the dev server stops.
+      const { memorySecretStore } = (await server.ssrLoadModule(
+        path.resolve(__dirname, "../../packages/explorEDA/src/node/secrets.ts")
+      )) as typeof import("../../packages/explorEDA/src/node/secrets");
       const token = "dev";
       const handle = createRequestHandler({
         files: nodeProjectFiles(path.resolve(folder)),
         token,
         version: "dev",
+        secrets: memorySecretStore(),
       });
       server.middlewares.use((req, res, next) => {
         void handle(req, res, next);
