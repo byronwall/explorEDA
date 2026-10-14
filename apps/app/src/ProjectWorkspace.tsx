@@ -280,7 +280,7 @@ export function ProjectWorkspace({
             {!readOnly && project.queries.length > 0 && (
               <button
                 type="button"
-                className="app-button"
+                className="app-button app-button-sm app-button-ghost"
                 aria-expanded={creating}
                 onClick={() => setCreating((open) => !open)}
               >
@@ -335,35 +335,39 @@ export function ProjectWorkspace({
         <section aria-labelledby="data-heading">
           <div className="app-section-head">
             <h2 id="data-heading">Data</h2>
-            {databaseIds.length > 1 && !readOnly && actions.refreshSources && (
-              <RefreshAll
-                sourceIds={databaseIds}
-                unread={unread.length}
-                onRefresh={actions.refreshSources}
-                onError={setRefreshAllError}
-              />
-            )}
-            {canAddDatabase && (
-              <button
-                type="button"
-                className="app-button"
-                aria-expanded={addingDatabase}
-                aria-label="Add a table or query from a database"
-                onClick={() => setAddingDatabase((open) => !open)}
-              >
-                Add database
-              </button>
-            )}
-            {addData && (
-              <button
-                type="button"
-                className="app-button"
-                aria-expanded={adding}
-                onClick={() => setAdding((open) => !open)}
-              >
-                Add data
-              </button>
-            )}
+            <div className="app-section-actions">
+              {databaseIds.length > 1 &&
+                !readOnly &&
+                actions.refreshSources && (
+                  <RefreshAll
+                    sourceIds={databaseIds}
+                    unread={unread.length}
+                    onRefresh={actions.refreshSources}
+                    onError={setRefreshAllError}
+                  />
+                )}
+              {canAddDatabase && (
+                <button
+                  type="button"
+                  className="app-button app-button-sm app-button-ghost"
+                  aria-expanded={addingDatabase}
+                  aria-label="Add a table or query from a database"
+                  onClick={() => setAddingDatabase((open) => !open)}
+                >
+                  Add database
+                </button>
+              )}
+              {addData && (
+                <button
+                  type="button"
+                  className="app-button app-button-sm app-button-ghost"
+                  aria-expanded={adding}
+                  onClick={() => setAdding((open) => !open)}
+                >
+                  Add data
+                </button>
+              )}
+            </div>
           </div>
           {addData && adding && addData(() => setAdding(false))}
           {canAddDatabase && addingDatabase && (
@@ -380,7 +384,7 @@ export function ProjectWorkspace({
               {refreshAllError}
             </p>
           )}
-          <ul className="app-list">
+          <ul className="app-list app-sources">
             {project.sources.map((source) => {
               const database = folder.databases[source.id];
               if (database) {
@@ -403,44 +407,49 @@ export function ProjectWorkspace({
               }
               const missing = folder.missingSources.includes(source.id);
               const outside = folder.outsideSources.includes(source.id);
+              const path = folder.paths[source.id];
               return (
                 <li key={source.id} className="app-source">
-                  <span>{source.name}</span>
-                  <span className="app-muted">
-                    {missing
-                      ? "file missing"
-                      : `${(folder.tables[source.id]?.length ?? 0).toLocaleString()} rows`}
+                  <span className="app-source-name">{source.name}</span>
+                  <span className="app-source-meta">
+                    {missing ? (
+                      <span className="app-status app-status-error">
+                        File missing
+                      </span>
+                    ) : (
+                      `${(folder.tables[source.id]?.length ?? 0).toLocaleString()} rows`
+                    )}
                     {outside ? " · outside the folder" : ""}
+                    {path && fetched[path]
+                      ? ` · ${fetchedLabel(fetched[path]!)}`
+                      : ""}
                   </span>
-                  {missing && (
-                    <span className="app-badge app-badge-error">Missing</span>
-                  )}
-                  <Fetched
-                    path={folder.paths[source.id]}
+                  <Refetch
+                    path={path}
                     fetched={fetched}
-                    onRefetch={actions.refetch}
+                    onRefetch={readOnly ? undefined : actions.refetch}
                   />
                 </li>
               );
             })}
             {looseFiles.map((path) => (
               <li key={path} className="app-source">
-                <span>{path}</span>
+                <span className="app-source-name">{path}</span>
+                <span className="app-source-meta">
+                  {fetched[path]
+                    ? `Not charted yet · ${fetchedLabel(fetched[path]!)}`
+                    : "Not charted yet"}
+                </span>
                 {!readOnly && (
                   <button
                     type="button"
-                    className="app-button"
+                    className="app-button app-button-sm app-button-ghost"
                     aria-label={`Chart ${path}`}
                     onClick={() => void actions.chartFile(path)}
                   >
                     Chart
                   </button>
                 )}
-                <Fetched
-                  path={path}
-                  fetched={fetched}
-                  onRefetch={actions.refetch}
-                />
               </li>
             ))}
           </ul>
@@ -549,7 +558,7 @@ function NewAnalysisForm({
   const [queryId, setQueryId] = useState(queries[0]?.id ?? "");
   return (
     <form
-      className="app-form"
+      className="app-form app-panel"
       onSubmit={(event) => {
         event.preventDefault();
         if (name.trim() && queryId) {
@@ -557,7 +566,7 @@ function NewAnalysisForm({
         }
       }}
     >
-      <label>
+      <label className="app-field">
         <span>Name</span>
         <input
           autoFocus
@@ -566,7 +575,7 @@ function NewAnalysisForm({
           placeholder="Revenue by region"
         />
       </label>
-      <label>
+      <label className="app-field">
         <span>Charts</span>
         <select
           value={queryId}
@@ -583,7 +592,11 @@ function NewAnalysisForm({
         <button type="submit" className="app-button app-button-primary">
           Create
         </button>
-        <button type="button" className="app-button" onClick={onCancel}>
+        <button
+          type="button"
+          className="app-button app-button-ghost"
+          onClick={onCancel}
+        >
           Cancel
         </button>
       </div>
@@ -605,7 +618,7 @@ function AnalysisActions({
   if (mode === "rename") {
     return (
       <form
-        className="app-form app-form-inline"
+        className="app-item-actions"
         onSubmit={(event) => {
           event.preventDefault();
           if (draft.trim() && draft.trim() !== name) {
@@ -621,12 +634,15 @@ function AnalysisActions({
           value={draft}
           onChange={(event) => setDraft(event.target.value)}
         />
-        <button type="submit" className="app-button app-button-primary">
+        <button
+          type="submit"
+          className="app-button app-button-sm app-button-primary"
+        >
           Save
         </button>
         <button
           type="button"
-          className="app-button"
+          className="app-button app-button-sm app-button-ghost"
           onClick={() => setMode("idle")}
         >
           Cancel
@@ -636,18 +652,18 @@ function AnalysisActions({
   }
   if (mode === "delete") {
     return (
-      <div className="app-form-inline" role="group" aria-label="Delete">
+      <div className="app-item-actions" role="group" aria-label="Delete">
         <span className="app-muted">Delete {path}?</span>
         <button
           type="button"
-          className="app-button app-button-danger"
+          className="app-button app-button-sm app-button-danger"
           onClick={() => void actions.deleteAnalysis(path)}
         >
           Delete
         </button>
         <button
           type="button"
-          className="app-button"
+          className="app-button app-button-sm app-button-ghost"
           onClick={() => setMode("idle")}
         >
           Keep
@@ -656,17 +672,17 @@ function AnalysisActions({
     );
   }
   return (
-    <div className="app-form-inline">
+    <div className="app-item-actions">
       <button
         type="button"
-        className="app-button"
+        className="app-button app-button-sm app-button-ghost"
         onClick={() => setMode("rename")}
       >
         Rename
       </button>
       <button
         type="button"
-        className="app-button"
+        className="app-button app-button-sm app-button-ghost"
         onClick={() => setMode("delete")}
       >
         Delete
@@ -675,8 +691,8 @@ function AnalysisActions({
   );
 }
 
-/** When and where a downloaded file came from, with a way to refresh it. */
-function Fetched({
+/** Downloads a fetched file again from the address it came from. */
+function Refetch({
   path,
   fetched,
   onRefetch,
@@ -686,23 +702,18 @@ function Fetched({
   onRefetch?: (path: string) => Promise<void>;
 }) {
   const record = path ? fetched[path] : undefined;
-  if (!path || !record) {
+  if (!path || !record || !onRefetch) {
     return null;
   }
   return (
-    <span className="app-fetched">
-      <span className="app-muted">{fetchedLabel(record)}</span>
-      {onRefetch && (
-        <button
-          type="button"
-          className="app-button"
-          aria-label={`Refetch ${path} from ${record.url}`}
-          onClick={() => void onRefetch(path)}
-        >
-          Refetch
-        </button>
-      )}
-    </span>
+    <button
+      type="button"
+      className="app-button app-button-sm app-button-ghost"
+      aria-label={`Refetch ${path} from ${record.url}`}
+      onClick={() => void onRefetch(path)}
+    >
+      Refetch
+    </button>
   );
 }
 

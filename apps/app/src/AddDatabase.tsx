@@ -55,7 +55,7 @@ export function AddDatabase({
   );
   return (
     <div
-      className="app-add-database"
+      className="app-panel app-add-database"
       role="group"
       aria-label="Add from a database"
     >
@@ -262,7 +262,11 @@ function NewConnectionForm({
         >
           {state.status === "saving" ? "Connecting…" : "Add connection"}
         </button>
-        <button type="button" className="app-button" onClick={onCancel}>
+        <button
+          type="button"
+          className="app-button app-button-ghost"
+          onClick={onCancel}
+        >
           Cancel
         </button>
       </div>
@@ -442,7 +446,11 @@ function SourcePicker({
         >
           {add.state.status === "reading" ? "Reading…" : "Add and read"}
         </button>
-        <button type="button" className="app-button" onClick={onCancel}>
+        <button
+          type="button"
+          className="app-button app-button-ghost"
+          onClick={onCancel}
+        >
           Cancel
         </button>
       </div>

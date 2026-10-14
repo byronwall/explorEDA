@@ -65,3 +65,13 @@ describe("database sources an analysis needs", () => {
     expect(visibleProblems(folder, folder.project)).toEqual([]);
   });
 });
+
+describe("short read times", () => {
+  it("fits a read time into a meta line", async () => {
+    const { shortAgo } = await import("./DatabaseSourceViews");
+    expect(shortAgo("just now")).toBe("just now");
+    expect(shortAgo("1 hour ago")).toBe("1h ago");
+    expect(shortAgo("12 minutes ago")).toBe("12m ago");
+    expect(shortAgo("3 days ago")).toBe("3d ago");
+  });
+});
