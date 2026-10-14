@@ -6,6 +6,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { globalConfigStore } from "../node/globalConfig";
 import { nodeProjectFiles } from "../node/projectFiles";
+import { fileSecretStore } from "../node/secrets";
 import { startServer } from "../server/server";
 import { serverCommand } from "./serverCommand";
 
@@ -19,7 +20,9 @@ exploreda.eda describes its data; each other .eda file is an analysis.
 Options:
   --port <n>     first port to try (default 3939; the next free one is used)
   --no-open      print the link instead of opening the browser
-  --example      copy a sample project to ./exploreda-example and open it
+  --example [database]
+                 copy a sample project to ./exploreda-example and open it;
+                 "database" copies one that reads a SQLite file instead
   --hidden       keep a new project's text in .exploreda/ instead of
                  exploreda.eda at the folder's top
   -h, --help     show this help`;
@@ -30,16 +33,22 @@ interface Options {
   folder: string;
   port: number;
   open: boolean;
-  example: boolean;
+  /** The sample project to copy and open, if any. */
+  example?: "shop" | "database";
   hidden: boolean;
 }
+
+/** Sample projects, by the name `--example` takes, with their folders. */
+const EXAMPLES = {
+  shop: { from: "shop", to: "exploreda-example" },
+  database: { from: "database", to: "exploreda-example-database" },
+} as const;
 
 function parseArgs(args: string[]): Options | string {
   const options: Options = {
     folder: ".",
     port: DEFAULT_PORT,
     open: true,
-    example: false,
     hidden: false,
   };
   const positional: string[] = [];
@@ -51,7 +60,13 @@ function parseArgs(args: string[]): Options | string {
     if (arg === "--no-open") {
       options.open = false;
     } else if (arg === "--example") {
-      options.example = true;
+      const name = args[index + 1];
+      if (name && name in EXAMPLES) {
+        options.example = name as keyof typeof EXAMPLES;
+        index += 1;
+      } else {
+        options.example = "shop";
+      }
     } else if (arg === "--hidden") {
       options.hidden = true;
     } else if (arg === "--port") {
@@ -123,9 +138,10 @@ async function main(args: string[]) {
   }
   let folder = path.resolve(parsed.folder);
   if (parsed.example) {
-    folder = path.resolve("exploreda-example");
+    const example = EXAMPLES[parsed.example];
+    folder = path.resolve(example.to);
     if (!existsSync(folder)) {
-      await copyFolder(path.resolve(here, "../examples/shop"), folder);
+      await copyFolder(path.resolve(here, "../examples", example.from), folder);
       console.log(`Copied the sample project to ${folder}`);
     }
   }
@@ -143,6 +159,7 @@ async function main(args: string[]) {
       appDir,
       hidden: parsed.hidden,
       config: globalConfigStore(),
+      secrets: fileSecretStore(),
       port: parsed.port,
     });
   } catch (error) {

@@ -1,0 +1,123 @@
+## Read data from a database
+
+A [project folder](/docs/project-folders) can read tables and queries from SQLite, DuckDB, PostgreSQL, MySQL, and SQL Server as well as from files. Name the database once as a `connection`, then point each source at a table or a `select` query. explorEDA reads each source once and keeps a copy of its rows in the folder. Opening the project reads that copy, so the database is queried only when you ask it to be.
+
+Try it with a sample shop kept in a SQLite file:
+
+```bash
+npx exploreda --example database
+```
+
+The first time the project opens, its analyses need data. Choose **Read all** to read every source, or **Read** beside one. After that, each source shows how many rows it holds and when it was read. Choose **Refresh** to read it again.
+
+## Add a database from the app
+
+Choose **Add database** beside **Data**, or **Add a database** on a new project.
+
+1. **Pick a connection, or add one.** A SQLite or DuckDB connection needs the file's path; a database file already in the folder is suggested. A server connection needs its host, database, and user, and takes its password here.
+2. **Pick a table, or write a query.** Type to filter the tables. Choose **A query** to write a `select`.
+3. **Name the source and choose Add and read.** explorEDA adds one line to the project text, reads the rows, and opens a new analysis on a summary of their fields.
+
+## Connections and sources
+
+```text
+project @shop
+
+connection @shop driver=sqlite path=data/shop.db
+
+source @orders key=orderId db=shop table=orders
+source @customers key=customerId db=shop table=customers
+source @returns db=shop sql="select r.returnId, r.reason, o.amount from returns r join orders o using (orderId)"
+
+relate @order-customer orders.customerId -> customers.customerId
+```
+
+| Declaration           | Form                                                               | Notes                                                                                                             |
+| --------------------- | ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
+| `connection`          | `connection @id driver=sqlite path=file`                           | `driver=duckdb` reads a DuckDB file the same way. `path=` is relative to the folder. An absolute path also works. |
+| `source` from a table | `source @id [key=field] db=connection table=name [limit=rows]`     | Write `schema.table` for a table outside the default schema.                                                      |
+| `source` from a query | `source @id [key=field] db=connection sql="select …" [limit=rows]` | Any query that returns rows. Write a newline as `\n`.                                                             |
+
+## PostgreSQL, MySQL, and SQL Server
+
+```text
+connection @warehouse driver=postgres host=db.internal database=sales user=reader
+connection @shop driver=mysql host=shop-db database=store user=reader
+connection @erp driver=sqlserver host=erp.internal database=Finance user=reader
+source @orders key=order_id db=warehouse table=public.orders
+```
+
+| Setting     | What it does                                                                                                                                                        |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `driver=`   | `postgres`, `mysql` (MySQL and MariaDB), or `sqlserver` (SQL Server and Azure SQL).                                                                                 |
+| `host=`     | The server's name or address. Required.                                                                                                                             |
+| `database=` | The database to read. Required.                                                                                                                                     |
+| `user=`     | The user to sign in as. Give explorEDA a user that can only read.                                                                                                   |
+| `port=`     | 5432, 3306, or 1433 unless you say otherwise.                                                                                                                       |
+| `ssl=`      | `require` encrypts the connection; `verify-full` also checks the server's certificate; `disable` doesn't encrypt. SQL Server encrypts by default; the others don't. |
+
+The first read asks for the password. explorEDA checks it, then keeps it in `secrets.json` in your explorEDA settings folder, readable only by you, outside every project. Or set `EXPLOREDA_WAREHOUSE_PASSWORD` (the connection's name in capitals) before running `npx exploreda`; it wins over a saved password.
+
+No read can change the database:
+
+- **PostgreSQL and MySQL** run each read in a read-only transaction, so every row comes from the same moment and a write fails.
+- **SQL Server** has no read-only transaction. It describes each query first, and a query that returns no rows is refused before it runs; the read runs in a transaction that is always rolled back.
+
+Timestamps with a time zone are read in UTC. Whole numbers and decimals too precise for JavaScript keep every digit as text. On SQL Server that holds for a `table=` source; a `sql=` source's decimals come as numbers.
+
+## DuckDB
+
+```text
+connection @lake driver=duckdb path=data/lake.duckdb
+source @events db=lake table=events
+```
+
+DuckDB's library is 70 to 110 MB, so `npx exploreda` doesn't install it. The first read of a DuckDB source says what to run: `npm install @duckdb/node-api` in the project folder. The file opens read-only with DuckDB's external access off, so a query can't write, attach another database, or read other files.
+
+## Give explorEDA a read-only user
+
+explorEDA never writes, but a user that can only read makes sure of it. For example:
+
+```sql
+-- PostgreSQL
+create role exploreda_reader login password '…';
+grant connect on database sales to exploreda_reader;
+grant usage on schema public to exploreda_reader;
+grant select on all tables in schema public to exploreda_reader;
+
+-- MySQL
+create user 'exploreda_reader'@'%' identified by '…';
+grant select on sales.* to 'exploreda_reader'@'%';
+
+-- SQL Server
+create login exploreda_reader with password = '…';
+create user exploreda_reader for login exploreda_reader;
+alter role db_datareader add member exploreda_reader;
+```
+
+## On a team server
+
+Database sources work the same on a [team server](/docs/team-server), with these differences:
+
+- **Authors read, viewers look.** Authors add sources and choose **Refresh**. Viewers see each source's rows and when it was read, and never query the database. Everyone with the project open sees a refresh as it lands, with who made it.
+- **Admins enter passwords.** A password is checked, then kept in the server's `exploreda.db`, so a backup of the data folder keeps it. An author who needs one is asked to find an admin. You can also set `EXPLOREDA_<NAME>_PASSWORD` in the Compose file.
+- **SQLite files live in the project.** Upload a `.db` file with **Add data**, then add it as a connection. A connection can't read a file outside its project.
+
+## Fields and keys
+
+A database source joins, filters, and charts like any other source. Its fields and their types come from the database, so it needs no `field` lines. Add them only to rename a field or to change its type.
+
+Project text never holds a password. A connection line with `password=`, `url=`, or another setting that can hold a secret is refused, so the project stays safe to commit.
+
+## What a read keeps
+
+- **Every row, or none.** A read that fails keeps the last copy and says why beside the source.
+- **100,000 rows at most, unless you raise it.** A source with more rows isn't read; the message suggests a `limit=` to set, or a narrower `sql=`. A copy is also capped at 100 MB.
+- **Exact values.** Whole numbers too large for JavaScript keep every digit as text, and the source notes it. Dates stay dates and booleans stay booleans.
+- **No binary columns.** A column of binary data stops the read; list the columns you need with `sql=`.
+- **Read-only.** A SQLite file opens read-only, and a PostgreSQL read runs in a read-only transaction, so a query that would change the database fails.
+- **One minute at most.** A read that takes longer stops; narrow it with `sql=`.
+
+The copies live in `.exploreda/snapshots/`, with a `.gitignore` that keeps them out of Git. A teammate who pulls the project reads the data from their own access to the database.
+
+Reading SQLite files needs Node 22.16 or later.

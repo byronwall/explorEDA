@@ -14,7 +14,12 @@ import type {
 } from "@/types/AnalysisProject";
 import { sourceFromRows } from "@/lib/analysis/sources";
 import type { DslDiagnostic } from "@/lib/dsl";
-import { compileProjectText, labelFromId } from "@/lib/dsl/project";
+import {
+  compileProjectText,
+  labelFromId,
+  type ConnectionDefinition,
+  type DatabaseSource,
+} from "@/lib/dsl/project";
 import {
   isNotebookPath,
   notebookNameFromPath,
@@ -24,6 +29,7 @@ import {
 import { readAnalysisText, type AnalysisTextResult } from "./analysisText";
 import { isAbsolutePath, ProjectFileError, type ProjectFiles } from "./files";
 import { isDataFile, parseTable } from "./tables";
+import { parseSnapshot, snapshotPath, type SnapshotInfo } from "./snapshots";
 
 export const PROJECT_FILE = "exploreda.eda";
 export const HIDDEN_PROJECT_FILE = ".exploreda/project.eda";
@@ -54,6 +60,12 @@ export interface ProjectFolder {
   project: AnalysisProject;
   /** Source ID to the path its declaration names. */
   paths: Record<string, string>;
+  /** The project's database connections, without their secrets. */
+  connections: ConnectionDefinition[];
+  /** Source ID to the database it reads. */
+  databases: Record<string, DatabaseSource>;
+  /** Each database source's last read, by source ID. */
+  snapshots: Record<string, SnapshotInfo>;
   tables: Record<string, AnalysisSourceRow[]>;
   /** Sources whose fields, or key, came from their data. */
   inferredSources: string[];
@@ -66,7 +78,7 @@ export interface ProjectFolder {
   localSources: Record<string, string>;
   /** Queries made to read one source each; project text doesn't list them. */
   implicitQueries: string[];
-  /** Sources whose file is missing or unreadable. */
+  /** Sources whose file or snapshot is missing or unreadable. */
   missingSources: string[];
   /** Sources read from outside the folder, so the project isn't portable. */
   outsideSources: string[];
@@ -141,6 +153,66 @@ function inferSource(
   };
 }
 
+/** A database source's snapshot, or why there isn't one to use. */
+async function readSnapshot(
+  files: ProjectFiles,
+  sourceId: string
+): Promise<
+  | ReturnType<typeof parseSnapshot>
+  | { problem: string; suggestion: string; unread?: boolean }
+> {
+  let text: string;
+  try {
+    text = await files.read(snapshotPath(sourceId));
+  } catch (error) {
+    if (error instanceof ProjectFileError && error.code === "missing") {
+      return {
+        problem: `${sourceId} hasn't been read from its database yet.`,
+        suggestion: "Refresh it to read its rows.",
+        unread: true,
+      };
+    }
+    throw error;
+  }
+  try {
+    return parseSnapshot(text);
+  } catch (error) {
+    return {
+      problem: `${sourceId}'s snapshot can't be read: ${error instanceof Error ? error.message : String(error)}`,
+      suggestion: "Refresh it to read its rows again.",
+    };
+  }
+}
+
+/**
+ * A database source with the types its snapshot read, for fields its text
+ * declares without one. Text that lists no fields takes the snapshot's.
+ */
+function withSnapshotTypes(
+  source: SourceDefinition,
+  info: SnapshotInfo
+): SourceDefinition {
+  const types = new Map(info.fields.map((field) => [field.id, field.type]));
+  if (!source.fields.length) {
+    return {
+      ...source,
+      fields: info.fields.map((field) => ({
+        id: field.id,
+        name: labelFromId(field.id),
+        type: field.type,
+      })),
+    };
+  }
+  return {
+    ...source,
+    fields: source.fields.map((field) =>
+      field.type || !types.has(field.id)
+        ? field
+        : { ...field, type: types.get(field.id) }
+    ),
+  };
+}
+
 /** Reads a whole project folder through any file adapter. */
 export async function readProjectFolder(
   files: ProjectFiles
@@ -159,10 +231,14 @@ export async function readProjectFolder(
     queries: [],
   };
   const paths: Record<string, string> = {};
+  let connections: ConnectionDefinition[] = [];
+  let databases: Record<string, DatabaseSource> = {};
   if (projectPath) {
     const compiled = compileProjectText(await files.read(projectPath));
     project = compiled.project;
     Object.assign(paths, compiled.paths);
+    connections = compiled.connections;
+    databases = compiled.databases;
     problems.push(...withPath(projectPath, compiled.diagnostics));
   }
 
@@ -225,9 +301,38 @@ export async function readProjectFolder(
   const declaredSources: Record<string, SourceDefinition> = {};
   const missingSources: string[] = [];
   const outsideSources: string[] = [];
+  const snapshots: Record<string, SnapshotInfo> = {};
   const declaredIn = (sourceId: string) =>
     localSources[sourceId] ?? projectPath ?? PROJECT_FILE;
   for (const [index, source] of project.sources.entries()) {
+    const database = databases[source.id];
+    if (database) {
+      const read = await readSnapshot(files, source.id);
+      if ("problem" in read) {
+        missingSources.push(source.id);
+        tables[source.id] = [];
+        problems.push(
+          problem(declaredIn(source.id), read.problem, {
+            subject: source.id,
+            suggestion: read.suggestion,
+            ...(read.unread ? { severity: "warning" as const } : {}),
+          })
+        );
+        continue;
+      }
+      snapshots[source.id] = read.info;
+      const typed = withSnapshotTypes(source, read.info);
+      const inferred = inferSource(typed, read.rows);
+      const loaded = inferred?.source ?? typed;
+      if (loaded !== source) {
+        // A save writes the source as its text declared it.
+        declaredSources[source.id] = source;
+        inferredSources.push(source.id);
+      }
+      project.sources[index] = loaded;
+      tables[source.id] = inferred?.rows ?? read.rows;
+      continue;
+    }
     const path = paths[source.id];
     if (path === undefined) {
       tables[source.id] = [];
@@ -307,6 +412,9 @@ export async function readProjectFolder(
     ...(projectPath ? { projectPath } : {}),
     project,
     paths,
+    connections,
+    databases,
+    snapshots,
     tables,
     inferredSources,
     declaredSources,

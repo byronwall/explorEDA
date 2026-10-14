@@ -10,6 +10,7 @@ import path from "node:path";
 import { timingSafeEqual } from "node:crypto";
 import type { ConfigStore } from "../node/globalConfig";
 import type { NodeProjectFiles } from "../node/projectFiles";
+import type { SecretStore } from "../node/secrets";
 import {
   fileRoutes,
   openEvents,
@@ -18,6 +19,7 @@ import {
   sendError,
   serveApp,
 } from "./http";
+import { sourceRoutes } from "./sources/routes";
 
 export const TOKEN_HEADER = "x-exploreda-token";
 
@@ -40,6 +42,8 @@ export interface HandlerOptions {
   hidden?: boolean;
   /** Preferences shared by every project on this machine. */
   config?: ConfigStore;
+  /** Database passwords on this machine, outside every project. */
+  secrets?: SecretStore;
 }
 
 type Next = () => void;
@@ -67,7 +71,7 @@ function sameToken(given: string | undefined, token: string) {
 }
 
 export function createRequestHandler(options: HandlerOptions) {
-  const { files, token, appDir, version, config } = options;
+  const { files, token, appDir, version, config, secrets } = options;
   // Every open page hears about outside changes over server-sent events.
   const listeners = new Set<ServerResponse>();
   let stopWatching: (() => void) | undefined;
@@ -135,6 +139,10 @@ export function createRequestHandler(options: HandlerOptions) {
         listeners.add(res);
         stopWatching ??= files.watch?.(broadcast);
       } else if (
+        !(await sourceRoutes(url.pathname.slice(5), req, res, {
+          root: files.root,
+          ...(secrets ? { secrets } : {}),
+        })) &&
         !(await fileRoutes(files, url.pathname.slice(5), url, req, res, {
           canWrite: true,
         }))

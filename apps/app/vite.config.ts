@@ -24,17 +24,29 @@ function projectFolder(): Plugin {
       if (!folder) {
         return;
       }
-      const { createRequestHandler } = await import(
-        "../../packages/explorEDA/src/server/handler"
-      );
-      const { nodeProjectFiles } = await import(
-        "../../packages/explorEDA/src/node/projectFiles"
-      );
+      // Vite loads the server so the library's own "@/" imports resolve.
+      const { createRequestHandler } = (await server.ssrLoadModule(
+        path.resolve(
+          __dirname,
+          "../../packages/explorEDA/src/server/handler.ts"
+        )
+      )) as typeof import("../../packages/explorEDA/src/server/handler");
+      const { nodeProjectFiles } = (await server.ssrLoadModule(
+        path.resolve(
+          __dirname,
+          "../../packages/explorEDA/src/node/projectFiles.ts"
+        )
+      )) as typeof import("../../packages/explorEDA/src/node/projectFiles");
+      // Passwords entered here last until the dev server stops.
+      const { memorySecretStore } = (await server.ssrLoadModule(
+        path.resolve(__dirname, "../../packages/explorEDA/src/node/secrets.ts")
+      )) as typeof import("../../packages/explorEDA/src/node/secrets");
       const token = "dev";
       const handle = createRequestHandler({
         files: nodeProjectFiles(path.resolve(folder)),
         token,
         version: "dev",
+        secrets: memorySecretStore(),
       });
       server.middlewares.use((req, res, next) => {
         void handle(req, res, next);
@@ -67,26 +79,41 @@ function teamData(): Plugin {
       if (!data) {
         return;
       }
-      const { memoryAccountStore } = await import(
-        "../../packages/explorEDA/src/server/team/accounts"
-      );
-      const { seedDev } = await import(
-        "../../packages/explorEDA/src/server/team/seed"
-      );
-      const { sqliteAccountStore } = await import(
-        "../../packages/explorEDA/src/server/team/sqliteStore"
-      );
-      const { createTeamHandler } = await import(
-        "../../packages/explorEDA/src/server/team/teamHandler"
-      );
+      // Vite loads the server so the library's own "@/" imports resolve.
+      const load = <T>(file: string) =>
+        server.ssrLoadModule(
+          path.resolve(__dirname, "../../packages/explorEDA/src", file)
+        ) as Promise<T>;
+      const { memoryAccountStore } = await load<
+        typeof import("../../packages/explorEDA/src/server/team/accounts")
+      >("server/team/accounts.ts");
+      const { seedDev } = await load<
+        typeof import("../../packages/explorEDA/src/server/team/seed")
+      >("server/team/seed.ts");
+      const { sqliteAccountStore, sqliteSecretStore } = await load<
+        typeof import("../../packages/explorEDA/src/server/team/sqliteStore")
+      >("server/team/sqliteStore.ts");
+      const { createTeamHandler } = await load<
+        typeof import("../../packages/explorEDA/src/server/team/teamHandler")
+      >("server/team/teamHandler.ts");
+      const { memorySecretStore } =
+        await load<typeof import("../../packages/explorEDA/src/node/secrets")>(
+          "node/secrets.ts"
+        );
+      const { guardedLookup } = await load<
+        typeof import("../../packages/explorEDA/src/server/team/fileIntake")
+      >("server/team/fileIntake.ts");
       const dataDir = path.resolve(data);
       const { mkdirSync } = await import("node:fs");
       mkdirSync(path.join(dataDir, "projects"), { recursive: true });
       let store;
+      let secrets;
       if (process.env.EXPLOREDA_STORE === "sqlite") {
         store = await sqliteAccountStore(path.join(dataDir, "exploreda.db"));
+        secrets = await sqliteSecretStore(path.join(dataDir, "exploreda.db"));
       } else {
         store = memoryAccountStore();
+        secrets = memorySecretStore();
         await seedDev(
           store,
           dataDir,
@@ -97,11 +124,9 @@ function teamData(): Plugin {
       // URL downloads can be tried against a local one. The real server
       // never downloads from this machine.
       const { lookup } = await import("node:dns");
-      const { guardedLookup } = await import(
-        "../../packages/explorEDA/src/server/team/fileIntake"
-      );
       const handle = createTeamHandler({
         store,
+        secrets,
         dataDir,
         version: "dev",
         lookup: (hostname, options, callback) =>

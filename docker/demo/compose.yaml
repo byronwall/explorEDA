@@ -1,0 +1,52 @@
+# A demo of explorEDA for a team, with a database to explore. It starts the
+# team server beside a PostgreSQL database of made-up retail data, and a
+# Retail project whose analyses already read it:
+#
+#   docker compose -f docker/demo/compose.yaml up -d
+#
+# Open http://localhost:8080 and sign in as ana@example.com with the
+# password exploreda-dev. Choose Read all to read the database, then explore.
+#
+# This is a demo, not a deployment: the sample accounts and their password
+# are public, accounts last only while the server runs, and the database
+# passwords below are for these containers alone. To run explorEDA for real,
+# use docker/compose.yaml.
+name: exploreda-demo
+
+services:
+  exploreda:
+    image: ${EXPLOREDA_IMAGE:-ghcr.io/byronwall/exploreda:latest}
+    command: ["--seed-dev", "--seed-project", "/demo/project"]
+    ports:
+      - "${EXPLOREDA_PORT:-8080}:8080"
+    environment:
+      # The Retail project's connection is named warehouse.
+      EXPLOREDA_WAREHOUSE_PASSWORD: exploreda-demo
+    volumes:
+      - ./project:/demo/project:ro
+      - demo-data:/data
+    depends_on:
+      warehouse:
+        condition: service_healthy
+
+  warehouse:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: retail_owner
+      POSTGRES_PASSWORD: retail-demo-owner
+      POSTGRES_DB: retail
+    volumes:
+      # Runs once, when the warehouse volume is new: tables, two years of
+      # orders, and the read-only user explorEDA signs in as.
+      - ./warehouse:/docker-entrypoint-initdb.d:ro
+      - demo-warehouse:/var/lib/postgresql/data
+    healthcheck:
+      # Over TCP, so it passes only after the seed scripts finish.
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U retail_owner -d retail"]
+      interval: 2s
+      timeout: 2s
+      retries: 60
+
+volumes:
+  demo-data:
+  demo-warehouse:

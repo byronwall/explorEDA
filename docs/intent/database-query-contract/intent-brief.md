@@ -1,12 +1,14 @@
 ---
-title: "Responsive database-backed exploration"
+title: "Server-side queries for data too big to snapshot"
 slug: "database-query-contract"
 phase: intent
-status: current
+status: stale
 last_updated: "2026-10-12"
 ---
 
-# Responsive database-backed exploration
+# Server-side queries for data too big to snapshot
+
+> **Reframed 2026-10-13.** Complete snapshots, connections, and drivers moved to [Database sources](../database-adapters/intent-brief.md). This initiative now covers only server-side queries for sources too big to snapshot, and comes later. The text below predates the reframe and will be rewritten when this work starts.
 
 ## My read
 

@@ -1,0 +1,17 @@
+eda query=returns
+dashboard "Returns"
+
+view Overview {
+  metric @count count title=Returns
+  metric @refunded sum(returns.amount) title="Order value"
+  row returns.reason title="Returns by reason"
+  row returns.channel title="Returns by channel"
+  table @rows returns.returnId,returns.orderId,returns.reason,returns.refunded,returns.returnedAt {
+    title=Returns
+  }
+  layout {
+    2: count refunded
+    4: returns.reason returns.channel
+    5: rows
+  }
+}

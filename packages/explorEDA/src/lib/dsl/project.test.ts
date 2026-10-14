@@ -122,7 +122,7 @@ query @q glyph=Q {
       operator: "gte",
       parameterId: "limit",
     });
-    expect(steps("filter @f t.a != \"10\"")).toMatchObject({
+    expect(steps('filter @f t.a != "10"')).toMatchObject({
       operator: "neq",
       value: "10",
     });
@@ -156,5 +156,92 @@ query @q glyph=Q {
     expect(labelFromId("orderId")).toBe("Order ID");
     expect(labelFromId("order-customer")).toBe("Order customer");
     expect(labelFromId("flight_date")).toBe("Flight date");
+  });
+
+  describe("database sources", () => {
+    const text = `project @shop
+
+connection @app driver=sqlite path=data/app.db
+connection @warehouse driver=postgres host=db.internal database=sales
+
+source @events db=app table=events
+
+source @orders key=order_id db=warehouse table=public.orders limit=250000
+
+source @active db=warehouse sql="select id, region\\nfrom customers where active"
+`;
+
+    it("reads connections and the database each source reads", () => {
+      const result = compileProjectText(text);
+      expect(result.diagnostics).toEqual([]);
+      expect(result.connections).toEqual([
+        { id: "app", driver: "sqlite", settings: { path: "data/app.db" } },
+        {
+          id: "warehouse",
+          driver: "postgres",
+          settings: { host: "db.internal", database: "sales" },
+        },
+      ]);
+      expect(result.databases).toEqual({
+        events: { connection: "app", table: "events" },
+        orders: {
+          connection: "warehouse",
+          table: "public.orders",
+          limit: 250000,
+        },
+        active: {
+          connection: "warehouse",
+          sql: "select id, region\nfrom customers where active",
+        },
+      });
+      expect(result.paths).toEqual({});
+    });
+
+    it("writes them back exactly", () => {
+      const { project, connections, databases } = compileProjectText(text);
+      expect(exportProjectText(project, { connections, databases })).toBe(text);
+    });
+
+    it("refuses secrets in project text", () => {
+      const { connections, diagnostics } = compileProjectText(`project @p
+connection @w driver=postgres host=h password=hunter2
+`);
+      expect(connections[0]!.settings).toEqual({ host: "h" });
+      expect(diagnostics.map((item) => [item.line, item.message])).toEqual([
+        [2, "password= can hold a secret, so project text doesn't keep it."],
+      ]);
+    });
+
+    it("points at a database source that can't be read", () => {
+      const { diagnostics } = compileProjectText(`project @p
+connection @app driver=sqlite path=a.db
+source @a db=ap table=t
+source @b db=app
+source @c db=app table=t sql="select 1"
+source @d table=t
+source @e db=app table=t limit=lots
+`);
+      expect(
+        diagnostics.map((item) => [item.line, item.message, item.suggestion])
+      ).toEqual([
+        [
+          4,
+          "A database source needs table= or sql=.",
+          'Write table=orders, or sql="select id, region from customers".',
+        ],
+        [
+          5,
+          "A database source reads table= or sql=, not both.",
+          'Write table=orders, or sql="select id, region from customers".',
+        ],
+        [6, "A source needs a name and a key.", expect.any(String)],
+        [
+          7,
+          "limit=lots isn't a whole number of rows.",
+          "Write it as limit=250000.",
+        ],
+        [3, "No connection is named ap.", "Use app."],
+      ]);
+    });
   });
 });

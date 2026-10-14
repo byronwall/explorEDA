@@ -1,19 +1,19 @@
 {
   "schema_version": "0.5.0",
   "initiative": {
-    "title": "Responsive database-backed exploration",
+    "title": "Server-side queries for data too big to snapshot",
     "slug": "database-query-contract",
     "scale": "capability",
-    "current_phase": "shape",
-    "last_updated": "2026-10-12",
+    "current_phase": "intent",
+    "last_updated": "2026-10-13",
     "summary": "Explore database-backed data through complete authorized source snapshots and the existing local evaluator, while preserving exact row meaning, filter scope, and honest coverage.",
     "status": "planned",
-    "next_action": "Prove one complete authorized source snapshot through ExplorEdaProject.tables with a deterministic fake. Reject incomplete, stale, and mismatched replies before choosing a database adapter."
+    "next_action": "Reframed 2026-10-13 as server-side queries for data too big to snapshot. Later: start only when database-adapters refusals or a named workload show the need."
   },
   "artifacts": {
     "intent_brief": {
       "path": "intent-brief.md",
-      "status": "current",
+      "status": "stale",
       "updated_at": "2026-10-12"
     },
     "brainstorm": {
@@ -23,7 +23,7 @@
     },
     "shape_brief": {
       "path": "shape-brief.md",
-      "status": "current",
+      "status": "stale",
       "updated_at": "2026-10-12"
     },
     "implementation_plan": {
@@ -37,7 +37,7 @@
       "id": "user-notes",
       "type": "direct-user-input",
       "location": "../../research/database-backed-analysis-2026-10-11/source-notes.md",
-      "anchor": "Explicit request, notebook pages 1–3, interpretation boundaries",
+      "anchor": "Explicit request, notebook pages 1\u20133, interpretation boundaries",
       "authority": "User request and source interpretation; mechanics remain proposals"
     },
     {
@@ -203,7 +203,7 @@
       {
         "id": "examples-not-limits",
         "type": "constraint",
-        "statement": "The 10,000–100,000 row range and notebook encoding ideas are hypotheses, not measured budgets or fixed product limits.",
+        "statement": "The 10,000\u2013100,000 row range and notebook encoding ideas are hypotheses, not measured budgets or fixed product limits.",
         "commitment": "explicit",
         "importance": "supporting",
         "status": "active",
@@ -333,6 +333,13 @@
       "action": "Recovered intent and completed initial shaping from the query-contract Pro packet.",
       "reason": "User requested research preservation, intent recovery, initial shaping, and a review PR per track.",
       "evidence": "Read source notes, customer-instance update, report and recommendation JSON; inspected current code and primary provider documentation. Source inspection only. No application checks or implementation ran."
+    },
+    {
+      "date": "2026-10-13",
+      "action": "Scope note",
+      "reason": "Reframed by database-adapters scope questions (round 3): complete-snapshot work moved to database-adapters; this initiative now owns server-side queries for data too big to snapshot.",
+      "status": "planned",
+      "evidence": "../database-adapters/initiative-map.json question_rounds"
     }
   ],
   "closure": null,

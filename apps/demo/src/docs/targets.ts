@@ -20,6 +20,7 @@ export const FLOWS = {
   "flow:project-folders": "Work in a project folder with npx exploreda",
   "flow:notebooks": "Write a notebook of prose and charts",
   "flow:team-server": "Share projects with a team on exploreda server",
+  "flow:database-sources": "Read tables and queries from a database",
 } as const;
 
 export const SURFACES = {

@@ -55,10 +55,10 @@ export function AddData({
   return (
     <div className="app-add-data" aria-busy={busy || undefined}>
       <label className="app-file">
-        <span>Upload a CSV or JSON file</span>
+        <span>Upload a CSV, JSON, or SQLite file</span>
         <input
           type="file"
-          accept=".csv,.json,text/csv,application/json"
+          accept=".csv,.json,.db,.sqlite,.sqlite3,text/csv,application/json"
           disabled={busy}
           onChange={(event) => {
             choose(event.target.files?.[0]);

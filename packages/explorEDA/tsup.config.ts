@@ -29,9 +29,16 @@ export default defineConfig([
     platform: "node",
     target: "node20",
     noExternal: [/.*/],
-    banner: { js: "#!/usr/bin/env node" },
+    // Database drivers such as pg are CommonJS; their require() calls for
+    // Node's own modules need a real require in this ES module.
+    banner: {
+      js: "#!/usr/bin/env node\nimport { createRequire as __bannerRequire } from 'node:module'; const require = __bannerRequire(import.meta.url);",
+    },
     define: { __EXPLOREDA_VERSION__: JSON.stringify(version) },
-    splitting: false,
+    // Database drivers load on first use from their own chunks.
+    splitting: true,
+    // DuckDB's native library is installed by the projects that use it.
+    external: ["@duckdb/node-api"],
     minify: false,
     sourcemap: false,
     dts: false,

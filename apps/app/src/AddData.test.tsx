@@ -7,9 +7,12 @@ describe("AddData", () => {
     const onUpload = vi.fn(async () => {});
     render(<AddData existing={[]} onUpload={onUpload} onFetch={vi.fn()} />);
     const file = new File(["id\n1\n"], "Q3 sales.csv", { type: "text/csv" });
-    fireEvent.change(screen.getByLabelText("Upload a CSV or JSON file"), {
-      target: { files: [file] },
-    });
+    fireEvent.change(
+      screen.getByLabelText("Upload a CSV, JSON, or SQLite file"),
+      {
+        target: { files: [file] },
+      }
+    );
     expect(onUpload).toHaveBeenCalledWith(file, "data/Q3-sales.csv");
   });
 
@@ -23,9 +26,12 @@ describe("AddData", () => {
       />
     );
     const file = new File(["id\n1\n"], "orders.csv");
-    fireEvent.change(screen.getByLabelText("Upload a CSV or JSON file"), {
-      target: { files: [file] },
-    });
+    fireEvent.change(
+      screen.getByLabelText("Upload a CSV, JSON, or SQLite file"),
+      {
+        target: { files: [file] },
+      }
+    );
     expect(onUpload).not.toHaveBeenCalled();
     expect(screen.getByText(/data\/orders.csv is already here/)).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "Replace" }));
