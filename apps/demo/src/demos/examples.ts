@@ -3,6 +3,7 @@ import {
   largeShopDashboard,
   calculationDashboard,
   scatterTraceDashboard,
+  chartControlsDashboard,
   activityDashboard,
   timeSeriesDashboard,
   groupedBarsDashboard,
@@ -693,6 +694,17 @@ export const examples: ExampleData[] = [
     icon: ScatterChart,
     data: "/datasets/scatter-trace.csv",
     savedData: scatterTraceDashboard,
+  },
+  {
+    id: "dense-chart-controls",
+    title: "Change a chart where it sits",
+    description:
+      "Change a scatter's color field from the label above the plot. The choice applies at once, keeps the chart's filter, and undoes in one step.",
+    dataset: { rows: "18 orders", fields: 6, source: "Synthetic" },
+    shows: ["Color in place", "Shared color scale", "One-step undo"],
+    icon: ScatterChart,
+    data: "/datasets/scatter-trace.csv",
+    savedData: chartControlsDashboard,
   },
   {
     id: "calculated-orders",

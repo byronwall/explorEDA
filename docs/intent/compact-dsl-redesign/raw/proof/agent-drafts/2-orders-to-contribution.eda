@@ -1,0 +1,30 @@
+dashboard "From orders to contribution"
+
+calc "Discount rate" = clamp(coalesce(Discount, 0), 0, 0.25)
+calc "Gross sales" = Units * ["Unit Price"]
+calc "Discount amount" = ["Gross sales"] * ["Discount rate"]
+calc "Net sales" = ["Gross sales"] - ["Discount amount"]
+calc Contribution = ["Net sales"] - Cost
+calc "Contribution rate" = Contribution / ["Net sales"]
+calc "Order band" = if(["Net sales"] >= 500, "Large", if(["Net sales"] >= 100, "Standard", "Small"))
+calc "Order month" = formatDate(["Order Date"], "%Y-%m")
+calc "Order quarter" = quarter(["Order Date"])
+
+field "Contribution rate" format=percent
+field "Net sales" format=currency currency=USD
+field Contribution format=currency currency=USD
+
+markdown @intro "<h3>From orders to contribution</h3><p>Each order starts as <b>gross sales</b> (units × unit price). Subtracting the clamped <b>discount</b> gives <b>net sales</b>; subtracting cost gives <b>contribution</b>, and contribution over net sales is the <b>contribution rate</b>.</p>"
+scatter @value x="Net sales" y=Contribution x.scale=symlog y.scale=symlog title="Net sales vs contribution"
+row "Order band" title="Orders by band"
+hist "Contribution rate" title="Contribution rate"
+line @by-quarter x=Order y="Net sales" facet="Order quarter" facet.columns=2 legend=false title="Net sales by order, per quarter"
+pivot @monthly rows="Order month" values=sum("Net sales"),sum(Contribution) title="Monthly net sales and contribution"
+table @trace Order,Units,"Unit Price",Discount,"Discount rate","Gross sales","Discount amount","Net sales",Cost,Contribution,"Contribution rate","Order band" title="Calculation trace"
+
+layout {
+  3: intro intro intro
+  5: value value "Order band" "Contribution rate"
+  6: by-quarter by-quarter monthly
+  6: trace
+}

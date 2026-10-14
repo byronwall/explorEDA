@@ -1,0 +1,14 @@
+dashboard "Speed, conversion, and trial volume"
+
+scale Phase Baseline=#3479a8 Release=#c77a45 Follow-up=#4b9688
+
+scatter @bubbles x="Response time (ms)" y="Conversion (%)" size=Trials opacity=.5 color=Phase at=0,0,8,6 {
+  size.max=20
+  callout "Day 31: slowest response" at=Day:31 offset=-24,-28
+  rule y=4 "Target"
+  rule x=mean "Mean response time"
+  region ellipse x=275..345 y=4.1..5.15 "Fast, high-converting days"
+}
+
+metric @trials sum(Trials) title="Total trials" at=8,0,4,2
+row Phase color=Phase at=8,2,4,4

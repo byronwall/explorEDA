@@ -1,0 +1,82 @@
+import { readFileSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
+import { it } from "vitest";
+import { exportDocument, compileDocument } from "exploreda";
+import { getChartDefinition } from "../../../packages/explorEDA/src/charts/registry";
+import { evaluateAnalysisQuery } from "exploreda/analysis";
+import { parseCsvData } from "./csvParser";
+import { examples } from "./demos/examples";
+
+const isObj = (v: unknown): v is Record<string, unknown> => !!v && typeof v === "object" && !Array.isArray(v);
+function fill(base: unknown, over: unknown): unknown {
+  if (!isObj(base) || !isObj(over)) return over === undefined ? base : over;
+  const out: Record<string, unknown> = { ...base };
+  for (const [k, v] of Object.entries(over)) out[k] = fill(base[k], v);
+  return out;
+}
+function tokens(text: string) {
+  return text.split("\n").filter((l) => !l.startsWith("#")).join(" ").match(/(?:[^\s"]|"(?:\\.|[^"\\])*")+/g) ?? [];
+}
+const pairs = (text: string) => tokens(text).filter((t) => /^[^"]*=/.test(t) || /^"[^"]*"[.\w]*=/.test(t));
+const HOUSE = [/^margin\.top=(16|12)$/, /^margin\.right=(24|16)$/, /^margin\.bottom=(44|38)$/, /^margin\.left=(62|52)$/,
+  /^yGridLines=4$/, /^[xy]Axis\.grid=(true|false)$/, /^minRowHeight=22$/, /^maxRowHeight=36$/, /^binCount=20$/,
+  /^xAxisLabel=Records$/, /^yAxisLabel=Records$/];
+
+function matrixOk(charts: Array<{ layout: { x: number; y: number; w: number; h: number } }>, ns: number[]) {
+  const cuts = [...new Set(charts.flatMap((c) => [c.layout.y, c.layout.y + c.layout.h]))].sort((a, b) => a - b);
+  for (let i = 0; i < cuts.length - 1; i++) {
+    const top = cuts[i]!, bottom = cuts[i + 1]!;
+    const inLine = charts.filter((c) => c.layout.y < bottom && c.layout.y + c.layout.h > top);
+    if (!inLine.length) continue;
+    const edges = inLine.flatMap((c) => [c.layout.x, c.layout.x + c.layout.w]);
+    if (!ns.some((n) => edges.every((e) => e % (12 / n) === 0))) return false;
+  }
+  return true;
+}
+
+it("proof", async () => {
+  const totals = { base: 0, normalized: 0, house: 0, composition: 0, repeated: 0, views: 0, matrix6: 0, matrix12: 0, charts: 0, roundTrip: 0, roundTripFail: [] as string[] };
+  const byKey: Record<string, number> = {};
+  const failures: string[] = [];
+  for (const example of examples) {
+    const views = [...(example.savedData ? [{ name: example.title, savedData: example.savedData }] : []), ...(example.views ?? [])];
+    const seen = new Map<string, string>();
+    for (const view of views) {
+      const rows = example.project && example.tables
+        ? evaluateAnalysisQuery(example.project, example.tables, ("queryId" in view && (view as any).queryId) || example.project.queries[0]!.id, ("bindings" in view && (view as any).bindings) || {}).rows.map((r) => r.data)
+        : await parseCsvData(readFileSync(join(__dirname, "../public", example.data), "utf8"));
+      const s = view.savedData;
+      totals.views++;
+      totals.charts += s.charts.length;
+      if (matrixOk(s.charts, [1, 2, 3, 4, 6])) totals.matrix6++;
+      if (matrixOk(s.charts, [1, 2, 3, 4, 6, 12])) totals.matrix12++;
+      const base = exportDocument(s, { rows }).text;
+      const bp = pairs(base);
+      totals.base += bp.length;
+      totals.composition += bp.filter((p) => p.startsWith("composition.")).length;
+      // A: fill partial saved objects from the chart type's own defaults.
+      const normalizedCharts = s.charts.map((c) => fill(getChartDefinition(c.type).createDefaultSettings(c.layout, (c as any).field), c) as typeof c);
+      const norm = { ...s, charts: normalizedCharts };
+      const nText = exportDocument(norm, { rows }).text;
+      const rebuilt = compileDocument(nText, { rows, geometryAssets: s.geometryAssets });
+      const ok = JSON.stringify(rebuilt.settings.charts.map((c) => ({ ...c, id: "" }))) === JSON.stringify(normalizedCharts.map((c) => ({ ...c, id: "" })));
+      if (ok) totals.roundTrip++; else totals.roundTripFail.push(example.id + ":" + view.name);
+      const np = pairs(nText);
+      totals.normalized += np.length;
+      // B: also treat the demo house style as the default.
+      const hp = np.filter((p) => !HOUSE.some((r) => r.test(p)));
+      totals.house += hp.length;
+      for (const p of hp) { const k = p.split("=")[0]!.replace(/\.\d+\./g, ".N.").replace(/\.\d+$/, ".N"); byKey[k] = (byKey[k] ?? 0) + 1; }
+      // C: chart blocks repeated verbatim from an earlier view (ignoring at=).
+      for (const block of nText.split(/\n(?=[a-z])/)) {
+        const name = block.match(/@([\w-]+)/)?.[1];
+        if (!name) continue;
+        const key = block.replace(/at=[\d,]+/, "");
+        if (seen.get(name) === key) totals.repeated += pairs(block).filter((p) => !p.startsWith("at=")).length;
+        else seen.set(name, key);
+      }
+    }
+  }
+  const top = Object.entries(byKey).sort((a, b) => b[1] - a[1]).slice(0, 40);
+  writeFileSync("/private/tmp/claude-501/-Users-byronwall-Projects-explorEDA--claude-worktrees-compact-dsl-redesign-3ffa17/d834cdcc-7b2d-48b2-a5c3-e8599cc443f4/scratchpad/proof.json", JSON.stringify({ totals, top, failures }, null, 1));
+});

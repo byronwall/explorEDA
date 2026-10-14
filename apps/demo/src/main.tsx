@@ -1,6 +1,6 @@
-import { StrictMode } from "react";
+import { lazy, StrictMode, Suspense } from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter } from "react-router";
+import { BrowserRouter, Route, Routes } from "react-router";
 import { registerMapLibre } from "exploreda";
 import { LandingPage } from "./LandingPage";
 
@@ -14,10 +14,23 @@ void Promise.all([
   import("maplibre-gl/dist/maplibre-gl.css"),
 ]).then(([maplibre]) => registerMapLibre(maplibre));
 
+// Opening a project folder loads the app shell only when it's used.
+const FolderPage = lazy(() => import("./folder/FolderPage"));
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
-      <LandingPage />
+      <Routes>
+        <Route
+          path="/folder"
+          element={
+            <Suspense fallback={null}>
+              <FolderPage />
+            </Suspense>
+          }
+        />
+        <Route path="*" element={<LandingPage />} />
+      </Routes>
     </BrowserRouter>
   </StrictMode>
 );

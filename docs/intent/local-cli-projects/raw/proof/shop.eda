@@ -1,0 +1,52 @@
+project @shop-analysis
+
+source @customers key=customerId path=data/customers.csv {
+  field customerId string
+  field name string
+  field joinedAt Joined date
+}
+
+source @orders key=orderId path=data/orders.csv {
+  field orderId string
+  field customerId string
+  field amount number
+  field orderedAt Ordered date
+}
+
+source @items key=itemId path=data/items.csv {
+  field itemId string
+  field orderId string
+  field productId string
+  field revenue number
+}
+
+source @products key=productId path=data/products.csv {
+  field productId string
+  field name Product string
+}
+
+relate @order-customer orders.customerId -> customers.customerId
+relate @item-order items.orderId -> orders.orderId
+relate @item-product items.productId -> products.productId
+
+query @orders-by-customer "Orders with customers" glyph=◆ {
+  source orders
+  lookup @order-customer customer via=order-customer
+}
+
+query @items-by-order "Items with orders and products" glyph=◇ {
+  source items
+  lookup @item-order order via=item-order
+  lookup @item-product product via=item-product
+}
+
+query @customer-instance "One customer's orders" glyph=● {
+  source @all-orders orders
+  filter @customer orders.customerId = $customerId
+  filter @from orders.orderedAt >= $dateStart
+  filter @until orders.orderedAt <= $dateEnd
+}
+
+param @customerId Customer string required pick=customers.name
+param @dateStart From date required
+param @dateEnd Until date required

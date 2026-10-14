@@ -1,0 +1,112 @@
+### VIEW: From orders to contribution
+dashboard name="From orders to contribution"
+grid rowHeight=76 padding=0 markers=false
+
+calc "Discount rate"=min(0.25, max(0, if Discount == null then 0 else Discount))
+calc "Gross sales"=Units * ["Unit Price"]
+calc "Discount amount"=["Gross sales"] * ["Discount rate"]
+calc "Net sales"=["Gross sales"] - ["Discount amount"]
+calc Contribution=["Net sales"] - Cost
+calc "Contribution rate"=if ["Net sales"] > 0 then ["Contribution"] / ["Net sales"] * 100 else 0
+calc "Sales per unit"=["Net sales"] / max(1, Units)
+calc "Order band"=if ["Net sales"] >= 500 then "Large" else if ["Net sales"] >= 100 then "Standard" else "Small"
+calc "Service score"=100 * avg(if Fulfilled then 1 else 0, if Returned then 0 else 1, if ["Delivery Days"] == null then 0 else if ["Delivery Days"] <= 5 then 1 else 0)
+calc "Risk points"=sum(if Returned then 10 else 0, if !Fulfilled then 5 else 0, if ["Delivery Days"] != null && ["Delivery Days"] > 7 then 2 else 0)
+calc "Needs review"=["Risk points"] >= 5 || ["Contribution"] < 0
+calc "Order month"=formatDate(["Order Date"], "%Y-%m")
+calc "Order quarter"=extractDateComponent(["Order Date"], "quarter")
+calc "Target gap"=max(0, 45 - ["Contribution rate"])
+
+chart markdown @calc-guide at=0,0,12,2
++ title="Follow a value from source to result" xAxis{}=
++ xAxis.grid=false yAxis{}= yAxis.grid=true margin.top=16
++ margin.right=24 margin.bottom=44 margin.left=62 yGridLines=4
++ content="<p><strong>Gross sales → Discount amount → Net sales → Contribution.</strong> Hover an <strong>ƒx</strong> field to inspect its chain. In Discount rate, try a 10% cap, preview, then Apply.</p>"
+scatter x="Net sales" y=Contribution @calc-sales-contribution
++ at=0,2,6,5 title="How much of each order remains?"
++ xAxis.scaleType=symlog xAxis.min=unset xAxis.max=unset
++ yAxis{}= yAxis.scaleType=symlog yAxis.grid=true margin.top=16
++ margin.right=24 margin.bottom=44 margin.left=62
++ xAxisLabel="Net sales ($)" yAxisLabel="Contribution ($)"
++ yGridLines=4
+row "Order band" @calc-order-band at=6,2,3,5
++ title="Orders by size" xAxis{}= xAxis.grid=true yAxis{}=
++ yAxis.grid=false margin.top=16 margin.right=24
++ margin.bottom=44 margin.left=62 xAxisLabel=Records
++ yGridLines=4 minRowHeight=22 maxRowHeight=36
+row "Needs review" @calc-review at=9,2,3,5
++ title="Which orders need review?" xAxis{}= xAxis.grid=true
++ yAxis{}= yAxis.grid=false margin.top=16 margin.right=24
++ margin.bottom=44 margin.left=62 xAxisLabel=Records
++ yGridLines=4 minRowHeight=22 maxRowHeight=36
+hist "Contribution rate" @calc-rate at=0,7,4,4
++ title="Contribution as a share of sales" xAxis{}=
++ xAxis.grid=false yAxis{}= yAxis.grid=true margin.top=16
++ margin.right=24 margin.bottom=44 margin.left=62
++ xAxisLabel="Contribution (%)" yAxisLabel=Records yGridLines=4
++ binCount=20
+hist "Sales per unit" @calc-unit-sales at=4,7,4,4
++ title="Sales per unit" xAxis{}= xAxis.grid=false yAxis{}=
++ yAxis.grid=true margin.top=16 margin.right=24 margin.bottom=44
++ margin.left=62 xAxisLabel="Sales per unit" yAxisLabel=Records
++ yGridLines=4 binCount=20
+hist "Discount amount" @calc-discounts at=8,7,4,4
++ title="Discount amount per order" xAxis{}= xAxis.grid=false
++ yAxis{}= yAxis.grid=true margin.top=16 margin.right=24
++ margin.bottom=44 margin.left=62 xAxisLabel="Discount amount"
++ yAxisLabel=Records yGridLines=4 binCount=20
+table Order,Units,"Unit Price","Gross sales","Discount rate","Discount amount","Net sales",Cost,Contribution,"Contribution rate"
++ @calc-chain-table at=0,11,12,5
++ title="Trace the order calculation" xAxis{}= xAxis.grid=false
++ yAxis{}= yAxis.grid=true margin.top=16 margin.right=24
++ margin.bottom=44 margin.left=62 yGridLines=4
++ showDistributions=unset
+row "Service score" @calc-service at=0,16,4,4
++ title="Service score: three checks" xAxis{}= xAxis.grid=true
++ yAxis{}= yAxis.grid=false margin.top=16 margin.right=24
++ margin.bottom=44 margin.left=62 xAxisLabel=Records
++ yGridLines=4 minRowHeight=22 maxRowHeight=36
+row "Risk points" @calc-risk at=4,16,4,4
++ title="Risk points by order" xAxis{}= xAxis.grid=true yAxis{}=
++ yAxis.grid=false margin.top=16 margin.right=24
++ margin.bottom=44 margin.left=62 xAxisLabel=Records
++ yGridLines=4 minRowHeight=22 maxRowHeight=36
+row "Order quarter" @calc-quarter at=8,16,4,4
++ title="Orders by UTC quarter" xAxis{}= xAxis.grid=true
++ yAxis{}= yAxis.grid=false margin.top=16 margin.right=24
++ margin.bottom=44 margin.left=62 xAxisLabel=Records
++ yGridLines=4 minRowHeight=22 maxRowHeight=36
+chart line @calc-quarter-sales at=0,20,8,6
++ title="Net sales across quarters" facet.enabled=true
++ facet.type=wrap facet.rowVariable="Order quarter"
++ facet.columnVariable=unset facet.columnCount=2
++ xAxis.grid=false yAxis.grid=true margin.top=16 margin.right=24
++ margin.bottom=44 margin.left=62 xAxisLabel="Order sequence"
++ yAxisLabel="Net sales" yGridLines=4 xField=Order
++ seriesField[]="Net sales"
++ seriesSettings."Net sales".showPoints=false
++ seriesSettings."Net sales".pointSize=3
++ seriesSettings."Net sales".pointOpacity=0.8
++ seriesSettings."Net sales".lineWidth=2
++ seriesSettings."Net sales".lineOpacity=1
++ seriesSettings."Net sales".lineColor="#3479a8"
++ seriesSettings."Net sales".lineStyle=solid
++ seriesSettings."Net sales".useRightAxis=false showYGrid=false
++ showLegend=false
+chart pivot @calc-monthly at=8,20,4,6
++ title="Monthly sales and contribution" xAxis{}=
++ xAxis.grid=false yAxis{}= yAxis.grid=true margin.top=16
++ margin.right=24 margin.bottom=44 margin.left=62 yGridLines=4
++ rowFields[]="Order month" valueFields[]=
++ valueFields.0.field="Net sales" valueFields.0.aggregation=sum
++ valueFields.0.label="Net sales"
++ valueFields.1.field=Contribution valueFields.1.aggregation=sum
++ valueFields.1.label=Contribution
+hist "Target gap" @calc-target at=0,26,12,4
++ title="Gap to 45% contribution target" xAxis{}=
++ xAxis.grid=false yAxis{}= yAxis.grid=true margin.top=16
++ margin.right=24 margin.bottom=44 margin.left=62
++ xAxisLabel="Percentage points below target" yAxisLabel=Records
++ yGridLines=4 binCount=20
+
+

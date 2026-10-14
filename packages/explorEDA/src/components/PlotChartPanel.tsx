@@ -18,6 +18,7 @@ import {
   Copy,
   FilterX,
   GripVertical,
+  ArrowLeftRight,
   Maximize2,
   Minimize2,
   Scaling,
@@ -37,6 +38,9 @@ import {
 import { getWorkspaceTheme } from "@/lib/themes";
 import { ChartReadoutProvider } from "./charts/ChartReadout";
 import { ChartColorLegend } from "./charts/ColorLegend/ChartColorLegend";
+import { hasRoleLabels } from "./charts/roles/chartRoles";
+import { RolePickerPopover } from "./charts/roles/RolePickerPopover";
+import { DropdownMenuItem } from "./ui/dropdown-menu";
 import { ChartTraceControl } from "./charts/ChartTraceControl";
 import {
   ChartTraceScope,
@@ -49,7 +53,10 @@ import type { TraceSource } from "./charts/trace/traceTypes";
 import { FacetContainer } from "./charts/FacetRelated/FacetContainer";
 import { FacetBarSlotContext } from "./charts/FacetRelated/facetBarSlot";
 import { useAxisFieldActions } from "./charts/AxisFieldActions";
-import { useAxisEditing } from "./charts/InPlace/useAxisEditing";
+import {
+  axisEditTarget,
+  useAxisEditing,
+} from "./charts/InPlace/useAxisEditing";
 import {
   TITLE_EDIT_DESCRIPTION,
   useTitleEditing,
@@ -406,7 +413,46 @@ export function PlotChartPanel({
   const detailsRef = useRef<HTMLDivElement>(null);
   const details = detailsLayout(useViewport(expanded));
   const axisEditing = useAxisEditing(settings, panelRef);
-  const axisFieldActions = useAxisFieldActions(axisEditing.menuItems);
+  // Charts with role labels change an axis's field from its menu too.
+  const [axisPicker, setAxisPicker] = useState<{
+    role: "x" | "y";
+    at: { x: number; y: number };
+    side: "top" | "bottom";
+    container: HTMLElement | null;
+  }>();
+  const axisMenuItems = (element: Element) => {
+    const axis = axisEditTarget(element)?.axis;
+    return (
+      <>
+        {hasRoleLabels(settings) && (axis === "x" || axis === "y") && (
+          <DropdownMenuItem
+            onSelect={() => {
+              const box = element.getBoundingClientRect();
+              // The X title sits at the chart's foot, so its picker opens
+              // upward over the plot.
+              setAxisPicker({
+                role: axis,
+                at: {
+                  x: box.left,
+                  y: axis === "x" ? box.top - 4 : box.bottom + 4,
+                },
+                side: axis === "x" ? "top" : "bottom",
+                container: element.closest<HTMLElement>("[role='dialog']"),
+              });
+            }}
+          >
+            <ArrowLeftRight
+              aria-hidden="true"
+              className={axis === "y" ? "rotate-90" : undefined}
+            />
+            Change {axis.toUpperCase()} field…
+          </DropdownMenuItem>
+        )}
+        {axisEditing.menuItems(element)}
+      </>
+    );
+  };
+  const axisFieldActions = useAxisFieldActions(axisMenuItems);
   const settingsRef = useRef<HTMLButtonElement>(null);
   const settingsAnchor = useRef<HTMLElement | null>(null);
   const expandRef = useRef<HTMLButtonElement>(null);
@@ -560,11 +606,15 @@ export function PlotChartPanel({
     (localFilters.length ? LOCAL_FILTER_STRIP_HEIGHT : 0);
   // Row charts, box plots, and donuts color marks by their own labeled
   // category, so a legend repeats them.
+  // Charts with role labels keep the line even without a color field, so
+  // their Color role stays in reach.
+  const roleLabels = hasRoleLabels(settings);
   const autoLegendHeight =
-    settings.colorField &&
-    settings.colorScaleId &&
-    !(settings.type === "scatter" && settings.display === "density") &&
-    !CATEGORY_LABELED_CHART_TYPES.has(settings.type)
+    roleLabels ||
+    (settings.colorField &&
+      settings.colorScaleId &&
+      !(settings.type === "scatter" && settings.display === "density") &&
+      !CATEGORY_LABELED_CHART_TYPES.has(settings.type))
       ? 36
       : 0;
   const faceted = Boolean(
@@ -963,6 +1013,16 @@ export function PlotChartPanel({
         {chartSummary}
       </p>
       {axisFieldActions.overlay}
+      {axisPicker && (
+        <RolePickerPopover
+          settings={settings}
+          role={axisPicker.role}
+          at={axisPicker.at}
+          side={axisPicker.side}
+          container={axisPicker.container}
+          onClose={() => setAxisPicker(undefined)}
+        />
+      )}
       {axisEditing.overlay}
       <AxisTypographyProvider value={axisTypography}>
         <ChartReadoutProvider value={readoutTarget}>
@@ -974,6 +1034,7 @@ export function PlotChartPanel({
                   <ChartColorLegend
                     settings={settings}
                     width={Math.max(1, panelWidth - 24 - FACET_SLOT_WIDTH)}
+                    editable={roleLabels}
                   />
                 )}
                 <div ref={setFacetBarSlot} className="eda-facet-bar-slot" />
@@ -983,6 +1044,7 @@ export function PlotChartPanel({
                 <ChartColorLegend
                   settings={settings}
                   width={Math.max(1, panelWidth - 24)}
+                  editable={roleLabels}
                 />
               )
             )}

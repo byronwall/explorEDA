@@ -285,3 +285,70 @@ it("clears filters on a click in a marginal band that misses every bin", () => {
   fireEvent.click(bands[0]!, { altKey: true });
   expect(onClearPlot).toHaveBeenCalledTimes(2);
 });
+
+it("selects an unsized point on a plain click and clears on empty space", () => {
+  window.PointerEvent = MouseEvent as typeof PointerEvent;
+  const settings = scatterPlotDefinition.createDefaultSettings({
+    x: 0,
+    y: 0,
+    w: 4,
+    h: 4,
+  });
+  settings.xField = "x";
+  settings.yField = "y";
+  const plan = planScatter(
+    settings,
+    {
+      revision: "test",
+      allIds: [0, 1],
+      chartIds: [0, 1],
+      filteredIds: [0, 1],
+      xData: { 0: 10, 1: 90 },
+      yData: { 0: 20, 1: 80 },
+      colorData: {},
+      fieldSettings: {},
+    },
+    400,
+    300
+  );
+  expect(plan.size).toBeFalsy();
+  const point = plan.points[0]!;
+  const onSelectPoint = vi.fn(
+    (x: number, y: number) => Math.hypot(x - point.x, y - point.y) < 6
+  );
+  const onBrushChange = vi.fn();
+  const onClearPlot = vi.fn();
+  const { container } = render(
+    <ScatterSvg
+      plan={plan}
+      hoveredId={null}
+      onBrushChange={onBrushChange}
+      onClearPlot={onClearPlot}
+      onSelectPoint={onSelectPoint}
+      onInspectPoint={vi.fn(() => true)}
+      onInspectGuide={vi.fn()}
+      onInspectOverlay={vi.fn()}
+    />
+  );
+  const svg = container.querySelector("svg")!;
+  const click = (x: number, y: number) => {
+    fireEvent.pointerDown(svg, { clientX: x, clientY: y, button: 0 });
+    fireEvent.pointerUp(svg, { clientX: x, clientY: y });
+    fireEvent.click(svg, { clientX: x, clientY: y });
+  };
+
+  click(plan.margin.left + point.x, plan.margin.top + point.y);
+  expect(onSelectPoint).toHaveBeenCalledOnce();
+  const [hitX, hitY] = onSelectPoint.mock.calls[0]!;
+  expect(Math.abs(hitX - point.x)).toBeLessThan(1);
+  expect(Math.abs(hitY - point.y)).toBeLessThan(1);
+  expect(onClearPlot).not.toHaveBeenCalled();
+  expect(onBrushChange).not.toHaveBeenCalled();
+
+  // Halfway between the points hits neither.
+  const emptyX = (plan.points[0]!.x + plan.points[1]!.x) / 2;
+  const emptyY = (plan.points[0]!.y + plan.points[1]!.y) / 2;
+  click(plan.margin.left + emptyX, plan.margin.top + emptyY);
+  expect(onClearPlot).toHaveBeenCalledOnce();
+  expect(onSelectPoint).toHaveBeenCalledTimes(2);
+});
