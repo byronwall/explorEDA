@@ -557,11 +557,12 @@ export const catalogue: readonly DocsPage[] = [
     title: "Edit in place",
     group: "tasks",
     icon: PencilLine,
-    lede: "Change a chart's title and axis ranges where they are drawn.",
-    summary: "Edit titles and axis ranges right on the chart.",
-    highlights: ["Titles", "Axis ranges"],
+    lede: "Change a chart's title, axis ranges, and fields where they are drawn.",
+    summary:
+      "Edit titles, axis ranges, and color and axis fields right on the chart.",
+    highlights: ["Titles", "Axis ranges", "Fields"],
     covers: ["flow:in-place-edit"],
-    examples: ["shop-operations"],
+    examples: ["shop-operations", "dense-chart-controls"],
     related: ["scales-and-axes", "chart-settings"],
   },
   {
