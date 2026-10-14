@@ -70,6 +70,7 @@ import {
   BatteryCharging,
   Donut as DonutIcon,
   ArrowDownWideNarrow as FunnelIcon,
+  Grid2x2 as RetentionIcon,
   LayoutGrid as GridIcon,
   Columns3,
   Grid3x3,
@@ -117,7 +118,10 @@ import {
   budgetReportDashboard,
   channelShareDashboard,
 } from "./partsAndChangeDashboards";
-import { productFunnelDashboard } from "./journeyDashboards";
+import {
+  productFunnelDashboard,
+  productRetentionDashboard,
+} from "./journeyDashboards";
 import { worldBankAnalysis } from "./analyses/worldbank";
 import type { ExampleAnalysis } from "./analyses/types";
 import { categoricalChartSettings } from "./categoricalChartSettings";
@@ -196,6 +200,7 @@ const viewNames: Record<string, string> = {
   composition: "composition",
   waterfall: "waterfall",
   funnel: "funnel",
+  retention: "retention",
   "data-table": "table",
   heatmap: "heatmap",
   ecdf: "ECDF",
@@ -881,7 +886,7 @@ export const examples: ExampleData[] = [
     title: "Who gets from a first visit to a paid plan",
     description:
       "2,000 visitors to a fictional app, one row per event. A funnel follows each user through visit, signup, first project, team invite, and upgrade in order, so a step done too early never counts. Click a step to see everything its users did; click a channel to compare funnels.",
-    dataset: { rows: "11,090 events", fields: 5, source: "Synthetic" },
+    dataset: { rows: "11,296 events", fields: 5, source: "Synthetic" },
     shows: [
       "Ordered funnel steps",
       "Drop-off between steps",
@@ -890,6 +895,17 @@ export const examples: ExampleData[] = [
     icon: FunnelIcon,
     data: "/datasets/product-events.csv",
     savedData: productFunnelDashboard,
+  },
+  {
+    id: "product-retention",
+    title: "Who keeps coming back after signing up",
+    description:
+      "The same 2,000 visitors, grouped by the week they signed up. Each cell is the share of that week's signups active in each week after, so the newest cohorts end where the data ends. Click a cell to see everything its users did; click a channel to compare retention.",
+    dataset: { rows: "11,296 events", fields: 5, source: "Synthetic" },
+    shows: ["Weekly cohorts", "Share active by week", "Users behind a cell"],
+    icon: RetentionIcon,
+    data: "/datasets/product-events.csv",
+    savedData: productRetentionDashboard,
   },
   {
     id: "budget-report",

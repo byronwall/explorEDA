@@ -91,7 +91,7 @@ const CHART_GROUPS: Array<{ label: string; keys: string[] }> = [
   },
   { label: "Over time", keys: ["line", "calendar"] },
   { label: "Flow and place", keys: ["sankey", "map"] },
-  { label: "Journeys", keys: ["funnel"] },
+  { label: "Journeys", keys: ["funnel", "retention"] },
   {
     label: "Tables and notes",
     keys: ["data-table", "summary", "metric-card", "markdown", "color-legend"],

@@ -157,13 +157,17 @@ for (let index = 1; index <= VISITORS; index += 1) {
     push("upgrade", time + (2 + random() * 26) * DAY);
   }
 
-  // Return visits: each later week, a falling chance of coming back.
+  // Return visits: each later calendar week (Monday to Sunday, UTC), a
+  // falling chance of coming back.
+  const signupDay = Math.floor(signedUp / DAY) * DAY;
+  const signupWeek =
+    signupDay - ((new Date(signupDay).getUTCDay() + 6) % 7) * DAY;
   for (let week = 1; signedUp + week * WEEK < END; week += 1) {
     const chance = channel.retain * Math.pow(0.86, week - 1) + 0.04;
     if (random() >= chance) continue;
     const sessions = 1 + Math.floor(random() * 3);
     for (let session = 0; session < sessions; session += 1) {
-      push("session", signedUp + week * WEEK + random() * WEEK);
+      push("session", signupWeek + week * WEEK + random() * WEEK);
     }
   }
 }

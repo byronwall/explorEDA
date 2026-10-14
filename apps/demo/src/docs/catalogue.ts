@@ -1,5 +1,6 @@
 import {
   ArrowDownWideNarrow,
+  Grid2x2,
   BarChart3,
   BookOpen,
   CalendarDays,
@@ -385,6 +386,20 @@ export const catalogue: readonly DocsPage[] = [
     chartType: "funnel",
     examples: ["product-funnel"],
     related: ["sankey", "row"],
+  },
+  {
+    topic: "retention",
+    thumbnail: "retention",
+    title: "Retention",
+    group: "plots",
+    icon: Grid2x2,
+    lede: "Group people or accounts by when they started, and see what share came back in each period after.",
+    summary: "Show each start cohort's share active in each later period.",
+    highlights: ["Cohorts", "Share active", "Who came back"],
+    covers: ["chart:retention"],
+    chartType: "retention",
+    examples: ["product-retention"],
+    related: ["funnel", "heatmap"],
   },
   {
     topic: "waterfall",

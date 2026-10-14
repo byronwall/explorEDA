@@ -25,6 +25,7 @@ import { CompositionTraceBody } from "../Composition/CompositionTraceBody";
 import { WaterfallTraceBody } from "../Waterfall/WaterfallTraceBody";
 import { DonutTraceBody } from "../Donut/DonutTraceBody";
 import { FunnelTraceBody } from "../Funnel/FunnelTraceBody";
+import { RetentionTraceBody } from "../Retention/RetentionTraceBody";
 import { useChartTrace, useChartTraceApi } from "./ChartTraceScope";
 import {
   FacetTraceBody,
@@ -79,6 +80,8 @@ function TraceBody({ trace }: { trace: ChartTrace }) {
       return <DonutTraceBody trace={trace} />;
     case "funnel-step":
       return <FunnelTraceBody trace={trace} />;
+    case "retention-cell":
+      return <RetentionTraceBody trace={trace} />;
     case "bar":
       return <BarTraceBody trace={trace} />;
     case "sankey-node":

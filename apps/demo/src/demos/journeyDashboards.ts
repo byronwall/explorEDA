@@ -101,3 +101,48 @@ export const productFunnelDashboard: SavedDataStructure = {
   gridSettings: grid,
   metadata: metadata("Signup funnel"),
 };
+
+/** Weekly signup cohorts and the share who came back each week after. */
+const weeklyRetention: Chart = {
+  ...base,
+  id: "retention-weekly",
+  type: "retention",
+  title: "Fewer than half of new users are back by week 3",
+  subtitle: "Share of each signup week active in each week after",
+  field: "event",
+  entityField: "user_id",
+  timeField: "at",
+  entryEvent: "signup",
+  activityEvents: [
+    "signup",
+    "session",
+    "create_project",
+    "invite_team",
+    "upgrade",
+  ],
+  period: "week",
+  periods: 10,
+  layout: layout(0, 0, 8, 7),
+};
+
+export const productRetentionDashboard: SavedDataStructure = {
+  charts: [
+    weeklyRetention,
+    row(
+      "retention-channel",
+      "Events by channel",
+      "channel",
+      layout(8, 0, 4, 7)
+    ),
+    table(
+      "retention-events",
+      "Events in view",
+      ["user_id", "event", "at", "channel", "device"],
+      layout(0, 7, 12, 4)
+    ),
+  ],
+  calculations: [],
+  colorScales: [],
+  gridSettings: grid,
+  metadata: metadata("Weekly retention"),
+};

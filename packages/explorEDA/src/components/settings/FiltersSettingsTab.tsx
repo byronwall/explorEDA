@@ -65,6 +65,8 @@ export function chartFilterFields(
       case "donut":
       case "funnel":
         return [{ field: settings.field, valuesOnly: true }];
+      case "retention":
+        return [{ field: settings.entityField, valuesOnly: true }];
       case "boxplot":
         return [{ field: settings.colorField ?? "" }];
       case "pivot":

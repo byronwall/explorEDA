@@ -26,6 +26,7 @@ const chartNames: Record<string, string> = {
   waterfall: "Waterfall",
   donut: "Donut",
   funnel: "Funnel",
+  retention: "Retention",
 };
 
 export function getChartTitle(
@@ -77,6 +78,11 @@ export function getChartTitle(
     const last = settings.steps[settings.steps.length - 1];
     return settings.steps.length >= 2 && settings.entityField
       ? `${getFieldLabel(settings.entityField)} from ${String(first)} to ${String(last)}`
+      : getChartDefinition(settings.type).name;
+  }
+  if (settings.type === "retention") {
+    return settings.entityField
+      ? `${getFieldLabel(settings.entityField)} retention by ${settings.period}`
       : getChartDefinition(settings.type).name;
   }
   if (settings.type === "waterfall") {
@@ -223,6 +229,7 @@ export function getChartFields(settings: ChartSettings): string[] {
           settings.entityField,
         ];
       case "funnel":
+      case "retention":
         return [settings.entityField, settings.field, settings.timeField];
       case "donut":
         return [

@@ -674,6 +674,23 @@ function isChart(value: unknown): boolean {
         (value.windowDays === undefined ||
           (isFiniteNumber(value.windowDays) && value.windowDays > 0))
       );
+    case "retention":
+      return (
+        typeof value.entityField === "string" &&
+        typeof value.timeField === "string" &&
+        ["day", "week", "month"].includes(value.period as string) &&
+        Number.isInteger(value.periods) &&
+        (value.periods as number) >= 1 &&
+        (value.activityEvents === undefined ||
+          (Array.isArray(value.activityEvents) &&
+            value.activityEvents.every(
+              (item) =>
+                item === null ||
+                ["string", "number", "boolean"].includes(typeof item)
+            ))) &&
+        (value.selectedCell === undefined ||
+          typeof value.selectedCell === "string")
+      );
     case "donut":
       return (
         (value.aggregation === "count" || value.aggregation === "sum") &&

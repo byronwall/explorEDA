@@ -308,6 +308,16 @@ export const coverageFeatures = [
     chartType: "funnel",
   },
   {
+    id: "chart:retention",
+    label: "Retention",
+    family: "Chart types",
+    description:
+      "Group entities by when they started and show the share active in each period after.",
+    required: true,
+    status: "supported",
+    chartType: "retention",
+  },
+  {
     id: "chart:waterfall",
     label: "Waterfall",
     family: "Chart types",
@@ -1134,6 +1144,17 @@ export const exampleCoverage = [
       "Follow users from a first visit to a paid plan in order, and select a step to see everything its users did.",
     features: {
       "chart:funnel": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+      "interaction:cross-filter": "shown",
+    },
+  },
+  {
+    exampleId: "product-retention",
+    intent:
+      "Group users by signup week, show the share active in each week after, and select a cell to see everything its users did.",
+    features: {
+      "chart:retention": "shown",
       "chart:row": "shown",
       "chart:data-table": "shown",
       "interaction:cross-filter": "shown",

@@ -27,7 +27,10 @@ import {
   budgetReportDashboard,
   channelShareDashboard,
 } from "@/demos/partsAndChangeDashboards";
-import { productFunnelDashboard } from "@/demos/journeyDashboards";
+import {
+  productFunnelDashboard,
+  productRetentionDashboard,
+} from "@/demos/journeyDashboards";
 import type { SavedDataStructure } from "exploreda";
 
 /**
@@ -293,11 +296,29 @@ export const liveExamples = {
     shotAlt:
       "A funnel of users from visit to upgrade, beside events by channel.",
     steps: [
-      { expectRows: 11090 },
+      { expectRows: 11296 },
       { expectMark: "Step 5, upgrade: 112, 5.6% of the first step" },
       { click: "Step 5, upgrade: 112, 5.6% of the first step" },
       { expectChip: "event" },
-      { expectRows: 1355 },
+      { expectRows: 1379 },
+    ],
+  },
+  retention: {
+    label: "Live weekly retention",
+    data: "/datasets/product-events.csv",
+    savedData: focus(productRetentionDashboard, {
+      "retention-weekly": [0, 0, 8, 7],
+      "retention-channel": [8, 0, 4, 7],
+    }),
+    exampleId: "product-retention",
+    shotAlt:
+      "Weekly signup cohorts by the share active in each week after, beside events by channel.",
+    steps: [
+      { expectRows: 11296 },
+      { expectMark: "Mar 3 cohort, Week 4: 53%, 10 of 19" },
+      { click: "Mar 3 cohort, Week 4: 53%, 10 of 19" },
+      { expectChip: "user_id" },
+      { expectRows: 125 },
     ],
   },
   "parallel-coordinates": {
