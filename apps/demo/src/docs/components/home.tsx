@@ -36,12 +36,10 @@ function HeroShots() {
           alt=""
           onError={() => setMissing((set) => new Set(set).add(id))}
           className={cn(
-            "landing-shot absolute w-[78%] rounded-lg border border-border bg-card object-cover object-left-top transition-transform duration-500 motion-reduce:transition-none",
-            index === 0 && "left-0 top-6 -rotate-3 group-hover/hero:-rotate-6",
-            index === 1 &&
-              "left-[11%] top-0 rotate-1 group-hover/hero:rotate-0",
-            index === 2 &&
-              "left-[22%] top-12 rotate-3 group-hover/hero:rotate-6"
+            "landing-shot absolute w-[78%] rounded-lg border border-border bg-card object-cover object-left-top",
+            index === 0 && "left-0 top-6 -rotate-3",
+            index === 1 && "left-[11%] top-0 rotate-1",
+            index === 2 && "left-[22%] top-12 rotate-3"
           )}
           style={{ aspectRatio: "16 / 10", zIndex: index }}
         />
@@ -77,7 +75,7 @@ export function Hero() {
   return (
     <section
       aria-labelledby="docs-hero"
-      className="group/hero relative mt-8 overflow-hidden rounded-2xl border border-border bg-card"
+      className="relative mt-8 overflow-hidden rounded-2xl border border-border bg-card"
     >
       <div
         aria-hidden="true"
@@ -162,7 +160,7 @@ function PickCard({
           </div>
         )}
         {best && (
-          <span className="absolute left-3 top-3 rounded-full bg-docs-accent px-2.5 py-0.5 text-xs font-semibold text-background shadow-sm">
+          <span className="absolute left-3 top-3 rounded-full bg-docs-accent px-2.5 py-0.5 text-xs font-semibold text-docs-accent-foreground shadow-sm">
             Best fit
           </span>
         )}
@@ -255,7 +253,7 @@ export function ChartChooser() {
               className={cn(
                 "shrink-0 rounded-full border px-3.5 py-1.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                 active
-                  ? "border-docs-accent bg-docs-accent text-background"
+                  ? "border-docs-accent bg-docs-accent text-docs-accent-foreground"
                   : "border-border bg-card text-foreground hover:border-docs-accent/50"
               )}
             >

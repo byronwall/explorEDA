@@ -44,7 +44,7 @@ const row = (
   colorField: colorScaleId ? field : undefined,
   colorScaleId,
 });
-const histogram = (
+export const histogram = (
   id: string,
   title: string,
   field: string,
@@ -4181,6 +4181,21 @@ export const electionsDashboard = dashboard("Presidential margins", [
  * become a density curve on one shared temperature scale; the rows overlap
  * through a negative gap, January at the top.
  */
+/** A full year of daily readings, so the calendar shows seasons and runs. */
+export const lincolnCalendarDashboard = dashboard("Lincoln calendar", [
+  {
+    ...base,
+    id: "lincoln-calendar",
+    type: "calendar",
+    title: "Daily high temperature, °F",
+    field: "Date",
+    aggregation: "average",
+    measureField: "Max temperature",
+    weekStart: "monday",
+    layout: layout(0, 0, 12, 4),
+  },
+]);
+
 export const lincolnRidgelineDashboard = dashboard("Lincoln ridgeline", [
   {
     ...base,
