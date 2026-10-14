@@ -4,11 +4,11 @@
     "title": "Notebook analysis with synchronized definitions",
     "slug": "notebook-analysis",
     "scale": "capability",
-    "current_phase": "plan",
+    "current_phase": "execution",
     "last_updated": "2026-10-13",
     "summary": ".eda.md notebook files in local projects: Markdown prose with eda blocks, live results, and minimal graph write-back. Forecast performance is the first proof.",
-    "status": "planned",
-    "next_action": "Start M1: retrieve and clean the forecast CSV, then build parseNotebook, compileNotebook, and writeBackChart with fixtures."
+    "status": "active",
+    "next_action": "M2: read notebooks in the app and follow outside edits"
   },
   "artifacts": {
     "intent_brief": {
@@ -782,8 +782,10 @@
         "proof": "Vitest fixtures in src/lib/notebook; CLI check output.",
         "valid_intermediate_state": "Library and CLI only; app unchanged.",
         "rollback": "Remove src/lib/notebook and CLI branch.",
-        "status": "planned",
-        "evidence": []
+        "status": "completed",
+        "evidence": [
+          "src/lib/notebook/{compileNotebook,writeBack,forecast}.test.ts (30 tests: five edit kinds minimal on the forecast notebook); exploreda-dsl check/project/fmt on examples/forecast"
+        ]
       },
       {
         "id": "m2",
@@ -912,6 +914,13 @@
         "intent_brief": "updated",
         "implementation_plan": "updated"
       }
+    },
+    {
+      "date": "2026-10-13",
+      "event": "execution-started",
+      "status": "active",
+      "reason": "M1 built: notebook parsing, compiling, minimal write-back with alias mapping, CLI support, and the forecast example project. All five first-proof edit kinds splice minimally on the forecast notebook.",
+      "source_anchors": ["qa-round-3"]
     }
   ],
   "closure": null,

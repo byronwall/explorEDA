@@ -23,6 +23,7 @@ export {
   projectLayout,
   readProjectFolder,
   type FolderAnalysis,
+  type FolderNotebook,
   type ProjectFolder,
   type ProjectLayout,
   type ProjectProblem,

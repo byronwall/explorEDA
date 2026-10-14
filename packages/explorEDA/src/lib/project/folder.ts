@@ -2,7 +2,8 @@
  * Reads a project folder: the project text, every analysis file, and the
  * data their sources name. A folder holds `exploreda.eda` at its root, or
  * `.exploreda/project.eda` when the project keeps its text out of sight.
- * Every other `.eda` file is an analysis. Source paths are relative to the
+ * Every other `.eda` file is an analysis, and every `.eda.md` file is a
+ * notebook. Source paths are relative to the
  * folder; an absolute path reads a file outside it.
  */
 import type {
@@ -14,6 +15,12 @@ import type {
 import { sourceFromRows } from "@/lib/analysis/sources";
 import type { DslDiagnostic } from "@/lib/dsl";
 import { compileProjectText, labelFromId } from "@/lib/dsl/project";
+import {
+  isNotebookPath,
+  notebookNameFromPath,
+  readNotebookText,
+  type NotebookReadResult,
+} from "@/lib/notebook";
 import { readAnalysisText, type AnalysisTextResult } from "./analysisText";
 import { isAbsolutePath, ProjectFileError, type ProjectFiles } from "./files";
 import { isDataFile, parseTable } from "./tables";
@@ -32,6 +39,12 @@ export interface FolderAnalysis {
   path: string;
   text: string;
   result: AnalysisTextResult;
+}
+
+export interface FolderNotebook {
+  path: string;
+  text: string;
+  result: NotebookReadResult;
 }
 
 export interface ProjectFolder {
@@ -60,6 +73,7 @@ export interface ProjectFolder {
   /** Every data file in the folder, used by a source or not. */
   dataFiles: string[];
   analyses: FolderAnalysis[];
+  notebooks: FolderNotebook[];
   problems: ProjectProblem[];
 }
 
@@ -276,6 +290,18 @@ export async function readProjectFolder(
     return { path, text, result };
   });
 
+  const notebooks: FolderNotebook[] = [];
+  for (const path of listed.filter(isNotebookPath)) {
+    const text = await files.read(path);
+    const result = readNotebookText(text, {
+      project,
+      tables,
+      name: notebookNameFromPath(path),
+    });
+    problems.push(...withPath(path, result.diagnostics));
+    notebooks.push({ path, text, result });
+  }
+
   return {
     layout,
     ...(projectPath ? { projectPath } : {}),
@@ -293,6 +319,7 @@ export async function readProjectFolder(
       (path) => isDataFile(path) && !path.startsWith(".exploreda/")
     ),
     analyses,
+    notebooks,
     problems,
   };
 }
