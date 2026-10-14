@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
   analysisFileText,
   ExplorEdaProject,
@@ -10,7 +10,8 @@ import {
   type SavedDataStructure,
 } from "exploreda";
 import { createAnalysisWorker } from "exploreda/analysis";
-import type { ServerInfo, ThemePreference } from "./httpFiles";
+import { AddData, fetchedLabel } from "./AddData";
+import type { FetchedRecord, ServerInfo, ThemePreference } from "./httpFiles";
 import type { FolderSaver, SaveState } from "./saver";
 
 /** A view's ID: its analysis file and its place in that file. */
@@ -44,6 +45,10 @@ export interface ProjectActions {
   createAnalysis(name: string, queryId: string): Promise<void>;
   renameAnalysis(path: string, name: string): Promise<void>;
   deleteAnalysis(path: string): Promise<void>;
+  /** On a team server: add a data file from this computer or a URL. */
+  upload?(file: File, path: string): Promise<void>;
+  fetchUrl?(url: string): Promise<void>;
+  refetch?(path: string): Promise<void>;
 }
 
 export interface Selection {
@@ -62,8 +67,16 @@ export function ProjectWorkspace({
   actions,
   theme,
   onThemeChange,
+  readOnly = false,
+  team,
+  fetched = {},
 }: {
+  /** Where downloaded data files came from, by path. */
+  fetched?: Record<string, FetchedRecord>;
   actions: ProjectActions;
+  /** Viewing only: no saving, creating, renaming, or deleting. */
+  readOnly?: boolean;
+  team?: ReactNode;
   theme: ThemePreference;
   onThemeChange: (theme: ThemePreference) => void;
   folder: ProjectFolder;
@@ -77,6 +90,7 @@ export function ProjectWorkspace({
   const [project, setProject] = useState<AnalysisProject>(folder.project);
   const [views, setViews] = useState(() => folderViews(folder));
   const [creating, setCreating] = useState(false);
+  const [adding, setAdding] = useState(false);
   const [selected, setSelectedState] = useState<Selection>(() =>
     initialSelection?.path &&
     folder.analyses.some((analysis) => analysis.path === initialSelection.path)
@@ -175,6 +189,19 @@ export function ProjectWorkspace({
     }
   };
 
+  const { upload, fetchUrl } = actions;
+  const addData =
+    upload && fetchUrl
+      ? (onDone?: () => void) => (
+          <AddData
+            existing={folder.dataFiles}
+            onUpload={upload}
+            onFetch={fetchUrl}
+            onDone={onDone}
+          />
+        )
+      : undefined;
+
   const usedFiles = new Set(Object.values(folder.paths));
   const looseFiles = folder.dataFiles.filter((path) => !usedFiles.has(path));
 
@@ -198,10 +225,17 @@ export function ProjectWorkspace({
   return (
     <div className="app">
       <aside className="app-rail" aria-label="Project">
+        {team}
         <header className="app-rail-head">
           <h1>{info.name}</h1>
-          <p className="app-muted app-path">{info.root}</p>
-          <SaveStatus state={saveState} />
+          {info.root && <p className="app-muted app-path">{info.root}</p>}
+          {readOnly ? (
+            <p className="app-save app-muted">
+              Viewing · your changes aren't saved
+            </p>
+          ) : (
+            <SaveStatus state={saveState} onDisk={!team} />
+          )}
           {notice && (
             <p className="app-notice" role="status">
               {notice}
@@ -212,7 +246,7 @@ export function ProjectWorkspace({
         <nav aria-labelledby="analyses-heading">
           <div className="app-section-head">
             <h2 id="analyses-heading">Analyses</h2>
-            {project.queries.length > 0 && (
+            {!readOnly && project.queries.length > 0 && (
               <button
                 type="button"
                 className="app-button"
@@ -252,7 +286,7 @@ export function ProjectWorkspace({
                     <span>{analysis.result.name}</span>
                     <span className="app-muted">{analysis.path}</span>
                   </button>
-                  {analysis.path === selected.path && (
+                  {!readOnly && analysis.path === selected.path && (
                     <AnalysisActions
                       path={analysis.path}
                       name={analysis.result.name}
@@ -268,7 +302,20 @@ export function ProjectWorkspace({
         </nav>
 
         <section aria-labelledby="data-heading">
-          <h2 id="data-heading">Data</h2>
+          <div className="app-section-head">
+            <h2 id="data-heading">Data</h2>
+            {addData && (
+              <button
+                type="button"
+                className="app-button"
+                aria-expanded={adding}
+                onClick={() => setAdding((open) => !open)}
+              >
+                Add data
+              </button>
+            )}
+          </div>
+          {addData && adding && addData(() => setAdding(false))}
           <ul className="app-list">
             {project.sources.map((source) => {
               const missing = folder.missingSources.includes(source.id);
@@ -285,20 +332,32 @@ export function ProjectWorkspace({
                   {missing && (
                     <span className="app-badge app-badge-error">Missing</span>
                   )}
+                  <Fetched
+                    path={folder.paths[source.id]}
+                    fetched={fetched}
+                    onRefetch={actions.refetch}
+                  />
                 </li>
               );
             })}
             {looseFiles.map((path) => (
               <li key={path} className="app-source">
                 <span>{path}</span>
-                <button
-                  type="button"
-                  className="app-button"
-                  aria-label={`Chart ${path}`}
-                  onClick={() => void actions.chartFile(path)}
-                >
-                  Chart
-                </button>
+                {!readOnly && (
+                  <button
+                    type="button"
+                    className="app-button"
+                    aria-label={`Chart ${path}`}
+                    onClick={() => void actions.chartFile(path)}
+                  >
+                    Chart
+                  </button>
+                )}
+                <Fetched
+                  path={path}
+                  fetched={fetched}
+                  onRefetch={actions.refetch}
+                />
               </li>
             ))}
           </ul>
@@ -344,6 +403,8 @@ export function ProjectWorkspace({
           />
         ) : (
           <FirstRun
+            addData={addData}
+            readOnly={readOnly}
             dataFiles={looseFiles}
             onChart={(path) => void actions.chartFile(path)}
           />
@@ -353,7 +414,14 @@ export function ProjectWorkspace({
   );
 }
 
-function SaveStatus({ state }: { state: SaveState }) {
+function SaveStatus({
+  state,
+  onDisk,
+}: {
+  state: SaveState;
+  /** A folder the person can see; a team server keeps files out of sight. */
+  onDisk: boolean;
+}) {
   if (state.status === "failed") {
     return (
       <p className="app-save app-save-failed" role="alert">
@@ -363,7 +431,11 @@ function SaveStatus({ state }: { state: SaveState }) {
   }
   return (
     <p className="app-save app-muted" aria-live="polite">
-      {state.status === "saving" ? "Saving…" : "Saved to the folder"}
+      {state.status === "saving"
+        ? "Saving…"
+        : onDisk
+          ? "Saved to the folder"
+          : "Saved"}
     </p>
   );
 }
@@ -507,13 +579,68 @@ function AnalysisActions({
   );
 }
 
+/** When and where a downloaded file came from, with a way to refresh it. */
+function Fetched({
+  path,
+  fetched,
+  onRefetch,
+}: {
+  path: string | undefined;
+  fetched: Record<string, FetchedRecord>;
+  onRefetch?: (path: string) => Promise<void>;
+}) {
+  const record = path ? fetched[path] : undefined;
+  if (!path || !record) {
+    return null;
+  }
+  return (
+    <span className="app-fetched">
+      <span className="app-muted">{fetchedLabel(record)}</span>
+      {onRefetch && (
+        <button
+          type="button"
+          className="app-button"
+          aria-label={`Refetch ${path} from ${record.url}`}
+          onClick={() => void onRefetch(path)}
+        >
+          Refetch
+        </button>
+      )}
+    </span>
+  );
+}
+
 function FirstRun({
   dataFiles,
   onChart,
+  readOnly,
+  addData,
 }: {
   dataFiles: string[];
   onChart: (path: string) => void;
+  readOnly: boolean;
+  addData?: () => ReactNode;
 }) {
+  if (readOnly) {
+    return (
+      <div className="app-message">
+        <h2>No analyses yet</h2>
+        <p>An author of this project hasn't made one yet.</p>
+      </div>
+    );
+  }
+  if (!dataFiles.length && addData) {
+    return (
+      <div className="app-message">
+        <h2>Add data to start</h2>
+        <p>
+          Add a CSV or JSON file to this project. Then chart it to start an
+          analysis.
+        </p>
+        {addData()}
+      </div>
+    );
+  }
   if (!dataFiles.length) {
     return (
       <div className="app-message">
@@ -529,8 +656,9 @@ function FirstRun({
     <div className="app-message">
       <h2>Chart a data file to start</h2>
       <p>
-        Charting a file adds it to the project and creates an analysis. Both are
-        text files in this folder, ready to commit.
+        {addData
+          ? "Charting a file adds it to the project and creates an analysis."
+          : "Charting a file adds it to the project and creates an analysis. Both are text files in this folder, ready to commit."}
       </p>
       <ul className="app-start-list">
         {dataFiles.map((path) => (

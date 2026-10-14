@@ -8,7 +8,8 @@ export type SaveState =
 /**
  * Writes changed files a moment after the last edit. A file whose text
  * matches what is on disk isn't written, so opening a project, or undoing
- * back to the saved state, leaves the folder alone.
+ * back to the saved state, leaves the folder alone. A read-only saver,
+ * for someone who may only view the project, never writes.
  */
 export class FolderSaver {
   private readonly onDisk = new Map<string, string>();
@@ -21,7 +22,8 @@ export class FolderSaver {
   constructor(
     private readonly files: ProjectFiles,
     private readonly onState: (state: SaveState) => void,
-    private readonly delay = 1000
+    private readonly delay = 1000,
+    private readonly readOnly = false
   ) {}
 
   /** Records the text a file already holds. */
@@ -30,6 +32,9 @@ export class FolderSaver {
   }
 
   queue(path: string, text: string) {
+    if (this.readOnly) {
+      return;
+    }
     const waiting = this.pending.get(path);
     if (waiting) {
       clearTimeout(waiting.timer);

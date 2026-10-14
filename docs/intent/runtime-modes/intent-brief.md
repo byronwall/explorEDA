@@ -34,7 +34,7 @@ The embedded React component stays a separate track: the host developer owns sto
 | --- | --- | --- | --- | --- |
 | Browser | demo, static | none | files | browser, or a picked project folder |
 | CLI | `apps/app` + local server | one local user | files; DB next | project folder on disk |
-| Self-hosted | same server, Compose | local accounts, author/viewer | files + DB | server volume |
+| Self-hosted | same server, Compose | local accounts, author/viewer | files (upload or URL) | project folders on a volume |
 | Managed | same image per tenant | SSO, enterprise | files, DB, integrations | per-tenant store |
 
 ## Boundaries

@@ -1,0 +1,11 @@
+customerId,name,region,joinedAt
+C01,Aster,North,2025-02-11
+C02,Birch,South,2025-01-20
+C03,Cedar,West,2025-02-20
+C04,Dogwood,North,2025-03-25
+C05,Elm,East,2025-01-07
+C06,Fir,South,2025-01-10
+C07,Ginkgo,West,2025-04-16
+C08,Hazel,East,2025-03-10
+C09,Ivy,North,2025-01-13
+C10,Juniper,East,2025-02-16

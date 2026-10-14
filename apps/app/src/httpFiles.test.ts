@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { httpProjectFiles, takeToken } from "./httpFiles";
+import { httpProjectFiles, takeToken, teamProjectFiles } from "./httpFiles";
 
 afterEach(() => {
   vi.unstubAllGlobals();
@@ -32,6 +32,28 @@ describe("httpProjectFiles", () => {
       path: "x.csv",
       message: "gone",
     });
+  });
+});
+
+describe("teamProjectFiles", () => {
+  it("reads under the project's path and names this page on a save", async () => {
+    const fetch = vi.fn(async () => new Response("{}"));
+    vi.stubGlobal("fetch", fetch);
+    const files = teamProjectFiles("shop", "page-1");
+    await files.write("a.eda", "eda\n");
+    expect(fetch).toHaveBeenCalledWith("/api/projects/shop/file?path=a.eda", {
+      method: "PUT",
+      body: "eda\n",
+      headers: { "x-exploreda-client": "page-1" },
+    });
+  });
+
+  it("keeps the theme in this browser", async () => {
+    const files = teamProjectFiles("shop", "page-1");
+    expect(await files.config()).toEqual({ theme: "system" });
+    await files.setConfig({ theme: "dark" });
+    expect(await files.config()).toEqual({ theme: "dark" });
+    localStorage.clear();
   });
 });
 
