@@ -29,7 +29,7 @@ Each milestone proves its counting rule in a pure plan module against a hand fix
   - Verify with `funnelPlan.test.ts`: the four-user fixture from the shape (4 → 3 → 2), window edges, ties at equal timestamps (ordered by row), and missing times.
 - **Change — chart:** `definition.ts` (`type: "funnel"`, settings for entity, event, and time fields, `stages[]`, `windowDays?`, and `selectedStage?`), `FunnelChart.tsx` (horizontal bars with drop-off labels, built on BaseChart), `FunnelSettingsPanel.tsx`, `funnelTrace.ts`, and `FunnelTraceBody.tsx`. Register it in `registerAllCharts.ts`.
   - `getFilterFunction` uses the column getters to build the entity set for `selectedStage` once, then tests `id → entity ∈ set`.
-- **Spike — which rows the filter function sees** (first hour): check whether `fieldGetter` covers all rows or the cross-filtered population. Record the answer in the trace copy. If the filter takes more than 50 ms on 30k rows, fall back to storing a value filter on the entity field.
+- **Settled — which rows the filter function sees:** `fieldGetter` covers all rows, so a step's entity set comes from all rows, and the trace says so. The journeys are followed once per selection, not per row.
 - **Change — docs and example:** `/docs/funnel` (`pages/funnel.mdx`, a catalogue entry, setting descriptions) and a `product-funnel` example with Funnel, DataTable, and a by-channel bar. Add a `coverage.ts` entry. Add a changeset (`minor`).
 
 ### Desired end state
@@ -43,7 +43,7 @@ Each milestone proves its counting rule in a pure plan module against a hand fix
 
 - **Change — `Retention/retentionPlan.ts`:** cohort by period of the entry event (default: the first event), elapsed period N active if any qualifying event falls in it, cohort size as the denominator, and blank cells where period N is beyond the data's last time. Use UTC periods consistent with `dailyRollup.ts`.
   - Verify with `retentionPlan.test.ts`: a skip-then-return case, cells past the data end, week boundaries, and a cohort of one.
-- **Change — chart:** a grid with the shared `heatScale.ts` and `HeatLegend`, cohort-size labels, a trace per cell, and `selectedCell?` with the same entity-set filter as Funnel (lift a shared helper only if it is identical).
+- **Change — chart:** a grid with the shared `heatScale.ts` and `HeatLegend`, cohort-size labels, a trace per cell, and a cell selection stored as a value filter on the entity field listing the cell's entities, with `selectedCell` remembering which cell to outline.
 - **Change — docs and example:** `/docs/retention`, a `product-retention` example on `product-events.csv`, and coverage. Extend the M1 changeset or add a second if the PR ships separately.
 
 ### Desired end state
@@ -56,7 +56,7 @@ Each milestone proves its counting rule in a pure plan module against a hand fix
 - **Change — dataset:** `apps/data-samples/room_bookings.ts` writes `room-bookings.csv` (~12 rooms, 4 weeks, a few hundred rows; columns `booking_id, room, team, start, end, status`) with overlaps, open ends, and cancellations.
 - **Change — `Timeline/timelinePlan.ts`:** lanes by field, intervals with an open-end limit, and an `overlaps(window)` rule (start ≤ window end and end-or-limit ≥ window start).
   - Verify with `timelinePlan.test.ts`: a touching endpoint, open ends, and missing starts left out and counted in the trace.
-- **Change — chart:** lanes on a date axis, BaseChart `brushingMode="horizontal"`, a brush stored as `window?: {min, max}` with `getFilterFunction` applying the overlap rule, and click-select on a bar.
+- **Change — chart:** lanes on a UTC axis drawn by the chart, the shared `useBrush` hook, a window stored as two date-range filters (start at or before the window's end, end at or after its start) whose filter function also keeps open ends, and click-select on a bar by `__ID`.
 - **Change — docs and example:** `/docs/timeline` linking to Composition's span mark for static graphics, a `room-bookings` example (Timeline, a bookings-by-team bar, DataTable), and coverage.
 
 ### Desired end state
@@ -70,7 +70,7 @@ Run `pnpm --filter exploreda check-types` per milestone. Run `pnpm check` once b
 
 ## Open decisions and spikes
 
-- **Rows behind a selection** (M1 spike). Decision: the entity set comes from all rows or from filtered rows. Evidence: what `fieldGetter` returns. Fallback: all rows, stated in the trace.
+None open. The M1 spike was settled before Retention was built.
 
 ## Below the cut line
 

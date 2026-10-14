@@ -168,6 +168,17 @@ export const GLANCES: Readonly<Record<string, Glance>> = {
       ["Alt-click", "Trace a step to its rule, drop-off, and counted events"],
     ],
   },
+  timeline: {
+    useFor:
+      "Seeing who or what was busy when, such as room bookings, machine jobs, or shifts, and what overlapped a stretch of time.",
+    needs:
+      "A lane field and start and end fields. A blank end means the row has not ended.",
+    gestures: [
+      ["Drag across time", "Keep every row that overlaps that window"],
+      ["Click a bar", "Select its row"],
+      ["Alt-click", "Trace a bar to its start, end, and the window"],
+    ],
+  },
   retention: {
     useFor:
       "Seeing whether people who started in a given week or month keep coming back, and how that changes from cohort to cohort.",

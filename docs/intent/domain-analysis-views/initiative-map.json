@@ -5,10 +5,10 @@
     "slug": "domain-analysis-views",
     "scale": "feature",
     "current_phase": "execution",
-    "last_updated": "2026-10-13",
+    "last_updated": "2026-10-14",
     "summary": "Add Funnel, Retention, and interactive Timeline charts whose domain preparation is tested and visible in the trace.",
     "status": "active",
-    "next_action": "Build Milestone 3: interactive bookings timeline"
+    "next_action": "Review and merge the stacked PRs: #425 (Funnel), #427 (Retention), then the Timeline PR. Retire the initiative once merged."
   },
   "artifacts": {
     "intent_brief": {
@@ -24,12 +24,12 @@
     "shape_brief": {
       "path": "shape-brief.md",
       "status": "current",
-      "updated_at": "2026-10-13"
+      "updated_at": "2026-10-14"
     },
     "implementation_plan": {
       "path": "implementation-plan.md",
       "status": "current",
-      "updated_at": "2026-10-13"
+      "updated_at": "2026-10-14"
     }
   },
   "sources": [
@@ -479,7 +479,8 @@
         "rollback": "Remove the retention register line and example.",
         "status": "completed",
         "evidence": [
-          "Retention chart, retentionPlan hand fixture, product-retention example, /docs/retention; pnpm check and docs:verify pass; All row matches an independent Python recount (100,73,54,46,40,34,28,28,21,18%); Mar 3 week 4 selection = 125 events"
+          "Retention chart, retentionPlan hand fixture, product-retention example, /docs/retention; pnpm check and docs:verify pass; All row matches an independent Python recount (100,73,54,46,40,34,28,28,21,18%); Mar 3 week 4 selection = 125 events",
+          "PR #427"
         ]
       },
       {
@@ -490,7 +491,10 @@
         "proof": "Brush keeps exactly overlapping bookings including open-ended ones; docs gate passes.",
         "valid_intermediate_state": "All three charts shipped; Composition span marks untouched.",
         "rollback": "Remove the timeline register line and example.",
-        "status": "planned"
+        "status": "completed",
+        "evidence": [
+          "Timeline chart, timelinePlan overlap tests, room-bookings.csv (673 rows), room-bookings example, /docs/timeline; pnpm check and docs:verify pass; a real mouse brush in Playwright and an independent Python overlap count agree (98 of 673)"
+        ]
       }
     ],
     "cut_line": [
@@ -561,6 +565,11 @@
       "date": "2026-10-13",
       "action": "Retention cell selection stored as a value filter on the entity field instead of a chart-owned rule, so it works unchanged with chips, the Filters tab, and Dashboard text. Sessions in the generator now fall in calendar weeks; funnel counts unchanged.",
       "evidence": "PR for M2"
+    },
+    {
+      "date": "2026-10-14",
+      "action": "Built all three milestones as stacked PRs; recorded selection storage as plain filters.",
+      "evidence": "PRs #425, #427, and the M3 PR"
     }
   ],
   "closure": null,

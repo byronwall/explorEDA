@@ -152,6 +152,20 @@ About 2,000 visitors to a fictional app from January to June 2025. Visitors move
 node --experimental-strip-types apps/data-samples/product_events.ts apps/demo/public/datasets/product-events.csv
 ```
 
+## Room bookings
+
+- File: `room-bookings.csv`
+- Size: 673 rows and 8 fields
+- Demo: `?example=room-bookings`
+- Use: intervals for a timeline: one row per booking, with a room, a UTC start and end, a team, and a status
+- Generation: fixed seed in `apps/data-samples/room_bookings.ts`
+
+Four weeks of bookings, March 3 to 30, 2025, across 12 fictional rooms. Most are short weekday meetings between 8:00 and 18:00, with multi-day workshops in the large rooms. Some rooms are double-booked, about 7% of bookings are cancelled, and three holds have a blank end because they have not ended. The data is synthetic.
+
+```sh
+node --experimental-strip-types apps/data-samples/room_bookings.ts apps/demo/public/datasets/room-bookings.csv
+```
+
 ## Driving shifts into reverse
 
 - File: `driving.csv`

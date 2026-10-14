@@ -126,6 +126,21 @@ export function useCreateCharts() {
         .slice(0, 4)
         .map((item) => item.value);
     }
+    if (settings.type === "timeline") {
+      // Two dates make an interval; a few-valued category makes the lanes.
+      const dates = profiles
+        .filter((profile) => profile.dataType === "datetime")
+        .map((profile) => profile.name);
+      settings.startField = dates[0] ?? "";
+      settings.endField = dates[1] ?? "";
+      settings.field =
+        profiles.find(
+          (profile) =>
+            profile.dataType === "categorical" &&
+            profile.uniqueCount >= 2 &&
+            profile.uniqueCount <= 40
+        )?.name ?? "";
+    }
     if (settings.type === "retention") {
       // An event log: a date and a many-valued ID; every event counts.
       settings.timeField =

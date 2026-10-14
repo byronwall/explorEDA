@@ -156,6 +156,13 @@ export const CHART_SETTINGS: Readonly<
     windowDays:
       "Days from an entity's first step in which later steps count. Blank counts any time.",
   },
+  timeline: {
+    field: "The lane field. Each value gets its own lane.",
+    startField: "When each row begins. Times read as UTC.",
+    endField:
+      "When each row ends. A blank end has not ended: the bar runs to the last time in the data.",
+    colorField: "Optional category that colors the bars, such as status.",
+  },
   retention: {
     field:
       "Optional event field. With it, the entry event and the active events can be chosen.",

@@ -45,6 +45,7 @@ export const CHART_QUESTIONS: readonly ChartQuestion[] = [
       ["calendar", "Daily values laid out by week, to see rhythms."],
       ["funnel", "How many reach each step of an event log, in order."],
       ["retention", "Whether each start cohort keeps coming back."],
+      ["timeline", "Bookings, shifts, or jobs from start to end, by lane."],
     ],
   },
   {

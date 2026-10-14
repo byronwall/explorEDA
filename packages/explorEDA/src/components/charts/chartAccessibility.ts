@@ -27,6 +27,7 @@ const chartNames: Record<string, string> = {
   donut: "Donut",
   funnel: "Funnel",
   retention: "Retention",
+  timeline: "Timeline",
 };
 
 export function getChartTitle(
@@ -78,6 +79,11 @@ export function getChartTitle(
     const last = settings.steps[settings.steps.length - 1];
     return settings.steps.length >= 2 && settings.entityField
       ? `${getFieldLabel(settings.entityField)} from ${String(first)} to ${String(last)}`
+      : getChartDefinition(settings.type).name;
+  }
+  if (settings.type === "timeline") {
+    return settings.field
+      ? `${getFieldLabel(settings.field)} timeline`
       : getChartDefinition(settings.type).name;
   }
   if (settings.type === "retention") {
@@ -227,6 +233,13 @@ export function getChartFields(settings: ChartSettings): string[] {
         return [
           settings.aggregation === "count" ? undefined : settings.measureField,
           settings.entityField,
+        ];
+      case "timeline":
+        return [
+          settings.field,
+          settings.startField,
+          settings.endField,
+          settings.colorField,
         ];
       case "funnel":
       case "retention":

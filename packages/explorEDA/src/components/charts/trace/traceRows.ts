@@ -8,6 +8,8 @@ export function traceRowIds(trace: ChartTrace): number[] | undefined {
   switch (trace.kind) {
     case "metric-card":
       return trace.plan.contributors.map((item) => item.sourceId);
+    case "timeline-interval":
+      return [trace.interval.id];
     case "retention-cell":
       return trace.cell.rows;
     case "funnel-step":

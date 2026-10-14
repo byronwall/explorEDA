@@ -30,6 +30,7 @@ import {
 import {
   productFunnelDashboard,
   productRetentionDashboard,
+  roomBookingsDashboard,
 } from "@/demos/journeyDashboards";
 import type { SavedDataStructure } from "exploreda";
 
@@ -319,6 +320,22 @@ export const liveExamples = {
       { click: "Mar 3 cohort, Week 4: 53%, 10 of 19" },
       { expectChip: "user_id" },
       { expectRows: 125 },
+    ],
+  },
+  timeline: {
+    label: "Live room bookings",
+    data: "/datasets/room-bookings.csv",
+    savedData: focus(roomBookingsDashboard, {
+      "bookings-timeline": [0, 0, 12, 6],
+    }),
+    exampleId: "room-bookings",
+    shotAlt:
+      "Four weeks of room bookings in one lane per room, colored by status.",
+    steps: [
+      { expectRows: 673 },
+      { click: "Lab 4: Mar 23, 9:00 AM to no end" },
+      { expectChip: "Source row" },
+      { expectRows: 1 },
     ],
   },
   "parallel-coordinates": {

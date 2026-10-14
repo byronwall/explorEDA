@@ -1,0 +1,30 @@
+## Try it
+
+<LiveExample
+  id="timeline"
+  caption="Four weeks of room bookings, one lane per room, from the room bookings example."
+/>
+
+## What it needs
+
+A timeline reads one row per interval: a **lane** field, such as a room, machine, or person, and **start** and **end** fields. A blank end means the row has not ended yet, such as a hold or a job still running.
+
+## How it reads
+
+- Each lane is one value of the lane field, sorted by name. Each bar runs from its row's start to its end, in UTC.
+- A row with no end runs to the last time in the data, drawn faded with a dashed edge.
+- Bars that overlap in a lane draw over each other, so a double booking shows as a darker stretch.
+- **Color** bars by a category, such as status or team.
+- Lanes and the time range come from every row, so filtering another chart thins the bars without moving them.
+- Rows with no lane, no readable start, or an end before their start are left out, and the status line says how many.
+
+## Select and trace
+
+- Drag across time to select a window. Every other chart keeps the rows that **overlap** it: those that start by the window's end and end at or after its start. Rows with no end count once they have started. Drag the window to move it, or its edges to resize it.
+- The window saves as two filters, one on the start field and one on the end field, so the status bar shows both.
+- Click a bar to select just its row. Click empty space, or press Escape, to clear.
+- Alt-click a bar to see its start and end as read from the data, its length, and whether it overlaps the window.
+
+## Timeline or composition?
+
+A timeline is for exploring: it links to the other charts and selects by time. To lay out a finished graphic, such as terms of office in one lane per seat, use the span mark in a <DocsLink topic="composition">composition</DocsLink>.
