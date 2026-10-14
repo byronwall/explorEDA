@@ -60,9 +60,12 @@ function naturalIds(annotations: ChartAnnotation[], chartId: string) {
   });
 }
 
-function dateText(ms: number): string {
+/** A timestamp as ISO text, without a time at midnight UTC. */
+export function dateText(ms: number): string {
   const iso = new Date(ms).toISOString();
-  return iso.endsWith("T00:00:00.000Z") ? iso.slice(0, 10) : iso;
+  return iso.endsWith("T00:00:00.000Z")
+    ? iso.slice(0, 10)
+    : iso.replace(/\.000Z$/, "Z");
 }
 
 function axisValue(value: number, date: boolean): string {

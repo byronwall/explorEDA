@@ -1,5 +1,7 @@
 # Research the documentation system for explorEDA
 
+> Historical prompt. Its answer is [the documentation system recommendation](research/documentation-system-recommendation.md). The `docs/intent/chart-and-rendering-docs/` folder it reads was retired on 2026-10-13; read it [at `34c957c`](https://github.com/byronwall/explorEDA/tree/34c957c4/docs/intent/chart-and-rendering-docs).
+
 https://github.com/byronwall/explorEDA
 
 ## Mission

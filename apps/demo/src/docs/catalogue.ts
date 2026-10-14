@@ -1,5 +1,6 @@
 import {
   BarChart3,
+  BookOpen,
   CalendarDays,
   ChartBar,
   ChartCandlestick,
@@ -133,6 +134,18 @@ export const catalogue: readonly DocsPage[] = [
     covers: ["flow:project-folders"],
     examples: [],
     related: ["load-data", "dashboard-text", "team-server"],
+  },
+  {
+    topic: "notebooks",
+    title: "Notebooks",
+    group: "start",
+    icon: BookOpen,
+    lede: "Explain an analysis in prose, with its charts in line, in one Markdown file you can edit as text or through the charts.",
+    summary: "Interleave prose and charts; chart edits save back to the text.",
+    highlights: [".eda.md", "Edit text or charts", "Agents and Git"],
+    covers: ["flow:notebooks"],
+    examples: [],
+    related: ["project-folders", "dashboard-text"],
   },
   {
     topic: "team-server",
