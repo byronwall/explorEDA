@@ -661,6 +661,19 @@ function isChart(value: unknown): boolean {
       );
     case "composition":
       return isCompositionDefinition(value.composition);
+    case "funnel":
+      return (
+        typeof value.entityField === "string" &&
+        typeof value.timeField === "string" &&
+        Array.isArray(value.steps) &&
+        value.steps.every(
+          (step) =>
+            step === null ||
+            ["string", "number", "boolean"].includes(typeof step)
+        ) &&
+        (value.windowDays === undefined ||
+          (isFiniteNumber(value.windowDays) && value.windowDays > 0))
+      );
     case "donut":
       return (
         (value.aggregation === "count" || value.aggregation === "sum") &&

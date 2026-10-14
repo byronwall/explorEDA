@@ -158,6 +158,16 @@ export const GLANCES: Readonly<Record<string, Glance>> = {
     needs: "Nothing: every field gets a row.",
     gestures: [],
   },
+  funnel: {
+    useFor:
+      "Seeing how many people or accounts reach each step of a process, in order, and where they drop off.",
+    needs:
+      "An event log: an entity field, an event field, and a time field. Steps are event values.",
+    gestures: [
+      ["Click a step", "Select every event of the entities that reached it"],
+      ["Alt-click", "Trace a step to its rule, drop-off, and counted events"],
+    ],
+  },
   donut: {
     useFor:
       "Showing how a small whole divides among a few categories, such as revenue by channel.",

@@ -27,6 +27,7 @@ import {
   budgetReportDashboard,
   channelShareDashboard,
 } from "@/demos/partsAndChangeDashboards";
+import { productFunnelDashboard } from "@/demos/journeyDashboards";
 import type { SavedDataStructure } from "exploreda";
 
 /**
@@ -279,6 +280,24 @@ export const liveExamples = {
       { expectRows: 500 },
       { click: "Web to Home: 84 rows" },
       { expectRows: 84 },
+    ],
+  },
+  funnel: {
+    label: "Live signup funnel",
+    data: "/datasets/product-events.csv",
+    savedData: focus(productFunnelDashboard, {
+      "funnel-signup": [0, 0, 7, 5],
+      "funnel-channel": [7, 0, 5, 5],
+    }),
+    exampleId: "product-funnel",
+    shotAlt:
+      "A funnel of users from visit to upgrade, beside events by channel.",
+    steps: [
+      { expectRows: 11090 },
+      { expectMark: "Step 5, upgrade: 112, 5.6% of the first step" },
+      { click: "Step 5, upgrade: 112, 5.6% of the first step" },
+      { expectChip: "event" },
+      { expectRows: 1355 },
     ],
   },
   "parallel-coordinates": {

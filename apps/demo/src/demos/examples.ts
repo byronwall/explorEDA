@@ -69,6 +69,7 @@ import {
   AreaChart,
   BatteryCharging,
   Donut as DonutIcon,
+  ArrowDownWideNarrow as FunnelIcon,
   LayoutGrid as GridIcon,
   Columns3,
   Grid3x3,
@@ -116,6 +117,7 @@ import {
   budgetReportDashboard,
   channelShareDashboard,
 } from "./partsAndChangeDashboards";
+import { productFunnelDashboard } from "./journeyDashboards";
 import { worldBankAnalysis } from "./analyses/worldbank";
 import type { ExampleAnalysis } from "./analyses/types";
 import { categoricalChartSettings } from "./categoricalChartSettings";
@@ -193,6 +195,7 @@ const viewNames: Record<string, string> = {
   "color-legend": "legend",
   composition: "composition",
   waterfall: "waterfall",
+  funnel: "funnel",
   "data-table": "table",
   heatmap: "heatmap",
   ecdf: "ECDF",
@@ -872,6 +875,21 @@ export const examples: ExampleData[] = [
     icon: DonutIcon,
     data: "/datasets/shop-operations.csv",
     savedData: channelShareDashboard,
+  },
+  {
+    id: "product-funnel",
+    title: "Who gets from a first visit to a paid plan",
+    description:
+      "2,000 visitors to a fictional app, one row per event. A funnel follows each user through visit, signup, first project, team invite, and upgrade in order, so a step done too early never counts. Click a step to see everything its users did; click a channel to compare funnels.",
+    dataset: { rows: "11,090 events", fields: 5, source: "Synthetic" },
+    shows: [
+      "Ordered funnel steps",
+      "Drop-off between steps",
+      "Users behind a step",
+    ],
+    icon: FunnelIcon,
+    data: "/datasets/product-events.csv",
+    savedData: productFunnelDashboard,
   },
   {
     id: "budget-report",

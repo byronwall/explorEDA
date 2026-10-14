@@ -92,6 +92,40 @@ export function useCreateCharts() {
       const start = stages.includes(selectedField) ? [selectedField] : [];
       settings.stages = [...new Set([...start, ...stages])].slice(0, 3);
     }
+    if (settings.type === "funnel") {
+      // An event log: a few-valued event field, a date, and a many-valued ID.
+      const fewValued = (name: string) => {
+        const profile = profiles.find((item) => item.name === name);
+        return (
+          profile?.dataType === "categorical" &&
+          profile.uniqueCount >= 2 &&
+          profile.uniqueCount <= 30
+        );
+      };
+      const event = fewValued(field)
+        ? field
+        : (profiles.find((profile) => fewValued(profile.name))?.name ?? "");
+      const time =
+        profiles.find((profile) => profile.dataType === "datetime")?.name ?? "";
+      const entity =
+        profiles
+          .filter(
+            (profile) =>
+              profile.dataType === "categorical" &&
+              profile.name !== event &&
+              profile.name !== time
+          )
+          .sort((a, b) => b.uniqueCount - a.uniqueCount)[0]?.name ?? "";
+      settings.field = event;
+      settings.timeField = time;
+      settings.entityField = entity;
+      settings.steps = (
+        profiles.find((profile) => profile.name === event)?.categories
+          ?.topValues ?? []
+      )
+        .slice(0, 4)
+        .map((item) => item.value);
+    }
     if (settings.type === "hierarchy") {
       // Nest few-valued categories, the selected one outermost.
       const levels = profiles

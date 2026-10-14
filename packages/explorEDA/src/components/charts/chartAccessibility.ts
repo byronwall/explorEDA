@@ -25,6 +25,7 @@ const chartNames: Record<string, string> = {
   composition: "Composition",
   waterfall: "Waterfall",
   donut: "Donut",
+  funnel: "Funnel",
 };
 
 export function getChartTitle(
@@ -70,6 +71,13 @@ export function getChartTitle(
     return settings.aggregation === "sum" && settings.measureField
       ? `Share of ${getFieldLabel(settings.measureField)} by ${field}`
       : `Share of rows by ${field}`;
+  }
+  if (settings.type === "funnel") {
+    const first = settings.steps[0];
+    const last = settings.steps[settings.steps.length - 1];
+    return settings.steps.length >= 2 && settings.entityField
+      ? `${getFieldLabel(settings.entityField)} from ${String(first)} to ${String(last)}`
+      : getChartDefinition(settings.type).name;
   }
   if (settings.type === "waterfall") {
     const [start, end] = settings.states;
@@ -214,6 +222,8 @@ export function getChartFields(settings: ChartSettings): string[] {
           settings.aggregation === "count" ? undefined : settings.measureField,
           settings.entityField,
         ];
+      case "funnel":
+        return [settings.entityField, settings.field, settings.timeField];
       case "donut":
         return [
           settings.field,
