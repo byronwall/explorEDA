@@ -89,3 +89,30 @@ it("sorts X values while retaining a missing-value line gap", () => {
   const path = container.querySelector("path");
   expect(path?.getAttribute("d")?.match(/M/g)).toHaveLength(2);
 });
+
+it("plots ISO dates on the x axis with calendar ticks", () => {
+  registerAllCharts();
+  const settings = {
+    ...lineChartDefinition.createDefaultSettings({ x: 0, y: 0, w: 6, h: 4 }),
+    id: "line-dates",
+    xField: "time",
+    seriesField: ["demand"],
+    showLegend: false,
+  };
+  const { container } = render(
+    <DataLayerProvider
+      data={[
+        { time: "2021-02-07T00:00:00Z", demand: 40 },
+        { time: "2021-02-09T00:00:00Z", demand: 55 },
+        { time: "2021-02-08T00:00:00Z", demand: 50 },
+      ]}
+      charts={[settings]}
+    >
+      <LineChart settings={settings} width={400} height={300} />
+    </DataLayerProvider>
+  );
+  const path = container.querySelector("path.eda-series-line, path[d^='M']");
+  expect(path?.getAttribute("d")).toMatch(/^M[\d.]+,[\d.]+L[\d.]+,[\d.]+L/);
+  expect(container.textContent).toMatch(/Feb 07/);
+  expect(container.textContent).not.toMatch(/1,612/);
+});

@@ -33,7 +33,7 @@ Not yet stated. Byron's ideas will define it.
 
 ## What seems settled
 
-- Date-axis bounds belong here, not in [axis-domain controls](../axis-domain-controls/intent-brief.md). That includes setting a date range on a time-series axis, typing exact dates, and dragging or resetting it.
+- Date-axis bounds belong here, not with the retired axis-domain work ([deferred scope](../../application-feature-inventory.md#deferred-scope)). That includes setting a date range on a time-series axis, typing exact dates, and dragging or resetting it.
 
 ## Possibilities, not decisions
 

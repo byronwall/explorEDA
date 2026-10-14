@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   isDatabaseFile,
   isDataFile,
+  isNotebookPath,
   isSnapshotPath,
   readProjectFolder,
   snapshotPath,
@@ -44,9 +45,11 @@ type Loaded =
       panel?: OpenPanel;
     };
 
-/** Files whose change alters the project: text and data. */
+/** Files whose change alters the project: text, notebooks, and data. */
 const affectsProject = (path: string) =>
-  path.toLowerCase().endsWith(".eda") || isDataFile(path);
+  path.toLowerCase().endsWith(".eda") ||
+  isNotebookPath(path) ||
+  isDataFile(path);
 
 /** The source a snapshot file belongs to. */
 const snapshotSource = (path: string) =>
@@ -124,6 +127,10 @@ export function App({
   const selection = useRef<Selection | undefined>(undefined);
   /** Snapshots this page asked for, which it reloads itself. */
   const ownSnapshots = useRef(new Map<string, number>());
+  // Each notebook's last working block text, kept across reloads.
+  const notebookMemory = useRef(
+    new Map<string, { current: Record<number, string> }>()
+  );
   const [theme, setTheme] = useState<ThemePreference>("system");
 
   useEffect(() => {
@@ -470,6 +477,14 @@ export function App({
       notice={loaded.notice}
       initialSelection={selection.current}
       initialPanel={loaded.panel}
+      notebookMemory={(path) => {
+        let memory = notebookMemory.current.get(path);
+        if (!memory) {
+          memory = { current: {} };
+          notebookMemory.current.set(path, memory);
+        }
+        return memory;
+      }}
       onSelect={(next) => {
         selection.current = next;
       }}
