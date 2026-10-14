@@ -58,6 +58,12 @@ pnpm export-proof
 `pnpm export-proof` checks chart image export against the screen: it presses Shift+E on a set of demo charts and diffs each download with an element screenshot, saving `tmp/export-proof/<case>-{screen,export,diff}.png`. Add `--only <case>` to run one. Run one engine at a time; `--engine webkit` builds multi-MB images and has used a lot of memory.
 
 ```bash
+pnpm restack 390
+```
+
+`pnpm restack <pr|branch>` brings a stack of PRs up to date with `main`. It finds the whole stack from any PR in it, merges `main` into the bottom branch and each branch into the one above in a scratch worktree (`tmp/restack`), and stops at the first conflict with the file list. Resolve there, commit, and run `pnpm restack --continue`. It then type-checks the top of the stack, which catches conflicts git can't see, and pushes as fast-forwards. `--no-push` stops before pushing, `--merge` merges the PRs bottom-up afterwards, and `--abort` drops the scratch worktree. `git rerere` is on in this repo, so check any resolution it fills in.
+
+```bash
 pnpm check:pr
 ```
 

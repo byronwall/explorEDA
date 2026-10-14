@@ -14,7 +14,8 @@
     "shot": "node scripts/shot.mjs",
     "export-proof": "node scripts/export-proof.mjs",
     "check:pr": "node scripts/check-pr.mjs",
-    "team-shot": "node scripts/team-shot.mjs"
+    "team-shot": "node scripts/team-shot.mjs",
+    "restack": "node scripts/restack.mjs"
   },
   "dependencies": {
     "@changesets/cli": "^2.28.1",
