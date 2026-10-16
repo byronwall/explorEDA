@@ -1305,6 +1305,24 @@ export const exampleCoverage = [
     features: { "chart:line": "shown", "chart:row": "shown" },
   },
   {
+    exampleId: "message-log-heatmap",
+    intent:
+      "Bin a date column by month in a heatmap, every month shown, with square-root color and date-range cell selection.",
+    features: { "chart:heatmap": "shown", "chart:row": "shown" },
+  },
+  {
+    exampleId: "measles-heatmap",
+    intent:
+      "Show a complete 51 × 85 state-year matrix in source order with fixed color ends.",
+    features: { "chart:heatmap": "shown", "chart:row": "shown" },
+  },
+  {
+    exampleId: "elections-heatmap",
+    intent:
+      "Color each state-election by its margin on a fixed diverging scale from −40 to +40.",
+    features: { "chart:heatmap": "shown", "chart:row": "shown" },
+  },
+  {
     exampleId: "covid-tiles",
     intent:
       "Place each state's weekly case-rate path at its cell on a tile grid, on one shared scale.",

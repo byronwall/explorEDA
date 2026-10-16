@@ -229,7 +229,15 @@ export const CHART_SETTINGS: Readonly<
     measureField: "Field the metric summarizes, when it is not a count.",
     maxCategories:
       "Most values on each axis, ranked by rows. Rows with other values are left out and counted below the chart.",
-    sortBy: "Axis order: by row count, or by label.",
+    maxColumns:
+      "Most columns, when it differs from `maxCategories`. Binned dates keep the latest periods.",
+    sortBy:
+      "Axis order: by row count, by label, or the order values first appear in the data.",
+    columnSortBy: "Column order, when it differs from `sortBy`.",
+    columnInterval:
+      "Groups a date column into UTC years, months, weeks, or days, with a column for every period from the first to the last. A cell selects its period's dates.",
+    colorDomain:
+      "Fixed color ends (`min`, `max`) and an optional square-root transform (`transform: sqrt`). Absent uses the shown cells' range.",
     showValues: "Prints each value in its cell when the text fits.",
   },
   ecdf: {

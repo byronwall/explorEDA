@@ -55,6 +55,9 @@ import {
   pewMeaningScatterDashboard,
   middleClassJobsScatterDashboard,
   fanLineDashboard,
+  messageHeatmapDashboard,
+  measlesHeatmapDashboard,
+  electionsHeatmapDashboard,
 } from "./dashboardSettings";
 import { demoSettings } from "@/demos/lorenz";
 import type {
@@ -763,6 +766,10 @@ export const examples: ExampleData[] = [
     icon: LayoutTemplate,
     data: "/datasets/message-log.csv",
     savedData: messageDashboard,
+    counterpart: {
+      id: "message-log-heatmap",
+      label: "The same analysis as a built-in heatmap",
+    },
   },
   {
     id: "driving-shifts",
@@ -861,6 +868,10 @@ export const examples: ExampleData[] = [
     icon: Grid3x3,
     data: "/datasets/measles.csv",
     savedData: measlesDashboard,
+    counterpart: {
+      id: "measles-heatmap",
+      label: "The same analysis as a built-in heatmap",
+    },
   },
   {
     id: "causes-by-age",
@@ -1047,6 +1058,10 @@ export const examples: ExampleData[] = [
     icon: Vote,
     data: "/datasets/elections.csv",
     savedData: electionsDashboard,
+    counterpart: {
+      id: "elections-heatmap",
+      label: "The same analysis as a built-in heatmap",
+    },
   },
   {
     id: "lincoln-ridgeline",
@@ -1355,6 +1370,42 @@ export const examples: ExampleData[] = [
     data: "/datasets/inflation-fan.csv",
     savedData: fanLineDashboard,
     counterpart: { id: "forecast-fan", label: "The authored composition" },
+  },
+  {
+    id: "message-log-heatmap",
+    title: "Six years of messages, as a heatmap",
+    description:
+      "Twelve correspondents by month, 2019 to 2024, in an ordinary heatmap that bins the Date column by month: all 72 months show, a quiet month stays an empty cell, and color follows the square root of each count so light months still read. Click a cell for that month's messages.",
+    dataset: { rows: "10,376 messages", fields: 5, source: "Synthetic" },
+    shows: ["Monthly date bins", "Square-root color", "Date-range selection"],
+    icon: LayoutTemplate,
+    data: "/datasets/message-log.csv",
+    savedData: messageHeatmapDashboard,
+    counterpart: { id: "message-log", label: "The authored composition" },
+  },
+  {
+    id: "measles-heatmap",
+    title: "Measles before and after the vaccine, as a heatmap",
+    description:
+      "All 51 states and 85 years in an ordinary heatmap, states in the publisher's order and years in sequence. Color runs on fixed ends with a square root, so a state-year keeps its color through filters; years a state did not report read as cells without a valid value.",
+    dataset: { rows: "4,335 state-years", fields: 6, source: "Real" },
+    shows: ["51 × 85 cells", "Data order", "Fixed color ends"],
+    icon: Grid3x3,
+    data: "/datasets/measles.csv",
+    savedData: measlesHeatmapDashboard,
+    counterpart: { id: "measles", label: "The authored composition" },
+  },
+  {
+    id: "elections-heatmap",
+    title: "How each state voted, as a heatmap",
+    description:
+      "Fifty-one states by eleven elections, colored by the Democratic margin on a fixed signed scale from −40 to +40, so a margin keeps its color when you filter to a region or a winner. The tile map stays in the composed version.",
+    dataset: { rows: "561 state-elections", fields: 8, source: "Real" },
+    shows: ["Diverging fixed scale", "Average margin", "51 × 11 cells"],
+    icon: Vote,
+    data: "/datasets/elections.csv",
+    savedData: electionsHeatmapDashboard,
+    counterpart: { id: "elections", label: "The authored composition" },
   },
 ];
 

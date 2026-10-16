@@ -8,7 +8,8 @@ import type { AggregateAggregation } from "@/lib/aggregates";
 import { finiteNumber } from "@/lib/valueParsing";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { ChartSettingsPanelProps } from "@/types/ChartTypes";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { Input } from "@/components/ui/input";
 import type { HeatmapSettings } from "./definition";
 
 /** Drops a cell selection that names a field the chart no longer uses. */
@@ -44,6 +45,12 @@ export function HeatmapSettingsPanel({
   }, [calculations, getColumnData, getColumnNames]);
   const change = (next: Partial<HeatmapSettings>) =>
     onSettingsChange(withoutStaleSelection(settings, next));
+  const columnIsDate = useDataLayer(
+    (state) =>
+      state.fieldProfiles.find(
+        (profile) => profile.name === settings.columnField
+      )?.dataType === "datetime"
+  );
 
   return (
     <div className="space-y-2.5">
@@ -107,55 +114,121 @@ export function HeatmapSettingsPanel({
         )}
 
         <ActionTooltip content="Each axis shows at most this many values, the ones with the most rows. Rows with other values are left out and counted below the chart.">
-          <Label htmlFor="heatmap-limit">Values per axis</Label>
+          <Label htmlFor="heatmap-limit">Rows shown</Label>
         </ActionTooltip>
         <NumericInputEnter
           id="heatmap-limit"
           value={settings.maxCategories}
           onChange={(value) => change({ maxCategories: Math.round(value) })}
           min={2}
-          max={60}
+          max={MAX_VALUES}
           stepSmall={1}
           stepMedium={5}
           stepLarge={10}
-          placeholder="Values per axis"
+          placeholder="Rows shown"
+        />
+        <ActionTooltip content="Columns shown, when it differs from rows. Binned dates keep the latest periods.">
+          <Label htmlFor="heatmap-column-limit">Columns shown</Label>
+        </ActionTooltip>
+        <NumericInputEnter
+          id="heatmap-column-limit"
+          value={settings.maxColumns ?? settings.maxCategories}
+          onChange={(value) => change({ maxColumns: Math.round(value) })}
+          min={2}
+          max={MAX_VALUES}
+          stepSmall={1}
+          stepMedium={5}
+          stepLarge={10}
+          placeholder="Columns shown"
         />
 
-        <Label>Order</Label>
-        <ToggleGroup
-          type="single"
-          size="sm"
-          variant="outline"
-          value={settings.sortBy}
-          onValueChange={(next) =>
-            next && change({ sortBy: next as HeatmapSettings["sortBy"] })
-          }
-          aria-label="Order"
-          className="justify-start"
-        >
-          {(
-            [
-              [
-                "count",
-                "Most rows",
-                "Put the values with the most rows first on each axis.",
-              ],
-              [
-                "label",
-                "A to Z",
-                "Sort each axis by its value labels, numbers in numeric order.",
-              ],
-            ] as const
-          ).map(([value, text, help]) => (
-            <ActionTooltip key={value} content={help}>
-              <span className="inline-flex">
-                <ToggleGroupItem value={value} className="px-2">
-                  {text}
-                </ToggleGroupItem>
-              </span>
+        {columnIsDate && (
+          <>
+            <ActionTooltip content="Groups the column dates into calendar periods, with a column for every period from the first to the last. A cell selects its rows by date range.">
+              <Label htmlFor="heatmap-interval">Column dates</Label>
             </ActionTooltip>
-          ))}
-        </ToggleGroup>
+            <select
+              id="heatmap-interval"
+              className="h-9 rounded-md border-input bg-background px-2 text-sm"
+              value={settings.columnInterval ?? ""}
+              onChange={(event) =>
+                onSettingsChange({
+                  ...settings,
+                  columnInterval: (event.target.value ||
+                    undefined) as HeatmapSettings["columnInterval"],
+                  // A value selection and a date range don't mix.
+                  filters: settings.filters.filter(
+                    (filter) => filter.field !== settings.columnField
+                  ),
+                })
+              }
+            >
+              <option value="">Each value</option>
+              <option value="year">By year</option>
+              <option value="month">By month</option>
+              <option value="week">By week</option>
+              <option value="day">By day</option>
+            </select>
+          </>
+        )}
+
+        <OrderToggle
+          label="Order"
+          value={settings.sortBy}
+          onChange={(sortBy) => change({ sortBy })}
+        />
+        {!settings.columnInterval && (
+          <OrderToggle
+            label="Column order"
+            value={settings.columnSortBy ?? settings.sortBy}
+            onChange={(columnSortBy) => change({ columnSortBy })}
+          />
+        )}
+
+        <ActionTooltip content="Fixed ends keep each value's color while filters change what shows. Values past an end take the end's color. A domain that crosses zero diverges around it. Empty uses the shown cells' range.">
+          <Label>Color ends</Label>
+        </ActionTooltip>
+        <div className="grid grid-cols-2 gap-2">
+          <OptionalNumber
+            label="Color low end"
+            placeholder="Auto low"
+            value={settings.colorDomain?.min}
+            onCommit={(min) =>
+              change({
+                colorDomain: cleanDomain({ ...settings.colorDomain, min }),
+              })
+            }
+          />
+          <OptionalNumber
+            label="Color high end"
+            placeholder="Auto high"
+            value={settings.colorDomain?.max}
+            onCommit={(max) =>
+              change({
+                colorDomain: cleanDomain({ ...settings.colorDomain, max }),
+              })
+            }
+          />
+        </div>
+        <div className="col-start-2">
+          <ActionTooltip content="Spreads small values apart: color follows the square root of the value, signed around zero. Zero stays the lowest color.">
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="heatmap-sqrt"
+                checked={settings.colorDomain?.transform === "sqrt"}
+                onCheckedChange={(checked) =>
+                  change({
+                    colorDomain: cleanDomain({
+                      ...settings.colorDomain,
+                      transform: checked ? "sqrt" : undefined,
+                    }),
+                  })
+                }
+              />
+              <Label htmlFor="heatmap-sqrt">Square-root color</Label>
+            </div>
+          </ActionTooltip>
+        </div>
 
         <div className="col-start-2">
           <ActionTooltip content="Print each cell's value inside it when the cells are large enough to fit the text.">
@@ -171,5 +244,102 @@ export function HeatmapSettingsPanel({
         </div>
       </div>
     </div>
+  );
+}
+
+/** The most values an axis can show. */
+const MAX_VALUES = 200;
+
+/** Drops an empty color domain, so "all automatic" saves as absent. */
+function cleanDomain(
+  domain: NonNullable<HeatmapSettings["colorDomain"]>
+): HeatmapSettings["colorDomain"] {
+  const entries = Object.entries(domain).filter(
+    ([, value]) => value !== undefined
+  );
+  return entries.length ? Object.fromEntries(entries) : undefined;
+}
+
+function OrderToggle({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: HeatmapSettings["sortBy"];
+  onChange: (value: HeatmapSettings["sortBy"]) => void;
+}) {
+  return (
+    <>
+      <Label>{label}</Label>
+      <ToggleGroup
+        type="single"
+        size="sm"
+        variant="outline"
+        value={value}
+        onValueChange={(next) =>
+          next && onChange(next as HeatmapSettings["sortBy"])
+        }
+        aria-label={label}
+        className="justify-start"
+      >
+        {(
+          [
+            ["count", "Most rows", "Put the values with the most rows first."],
+            [
+              "label",
+              "A to Z",
+              "Sort by value labels, numbers in numeric order.",
+            ],
+            ["data", "Data", "Keep the order values first appear in the data."],
+          ] as const
+        ).map(([item, text, help]) => (
+          <ActionTooltip key={item} content={help}>
+            <span className="inline-flex">
+              <ToggleGroupItem value={item} className="px-2">
+                {text}
+              </ToggleGroupItem>
+            </span>
+          </ActionTooltip>
+        ))}
+      </ToggleGroup>
+    </>
+  );
+}
+
+/** A number that may be left blank; it commits on blur or Enter. */
+function OptionalNumber({
+  label,
+  placeholder,
+  value,
+  onCommit,
+}: {
+  label: string;
+  placeholder: string;
+  value: number | undefined;
+  onCommit: (value: number | undefined) => void;
+}) {
+  const [text, setText] = useState(value?.toString() ?? "");
+  useEffect(() => setText(value?.toString() ?? ""), [value]);
+  const commit = () => {
+    const next = text.trim() === "" ? undefined : finiteNumber(text);
+    if (text.trim() !== "" && next === undefined) {
+      setText(value?.toString() ?? "");
+      return;
+    }
+    if (next !== value) onCommit(next);
+  };
+  return (
+    <Input
+      type="number"
+      aria-label={label}
+      placeholder={placeholder}
+      value={text}
+      onChange={(event) => setText(event.target.value)}
+      onBlur={commit}
+      onKeyDown={(event) => {
+        if (event.key === "Enter") commit();
+      }}
+    />
   );
 }
