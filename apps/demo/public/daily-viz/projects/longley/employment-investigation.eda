@@ -1,0 +1,17 @@
+eda query=r
+dashboard "Investigate sixteen years of U.S. employment figures"
+grid columns=12 rowHeight=76
+employment:num=r.employment label="Employed (thousands)"
+gnp:num=r.gnp label="GNP ($M, nominal)"
+unemployed:num=r.unemployed label="Unemployed (thousands)"
+year:num=r.year label="Year"
+employment_change:num=r.employment_change label="Change in employed (thousands/year)"
+gnp_change:num=r.gnp_change label="Change in GNP ($M/year)"
+era:cat=r.era label="Era"
+scatter @db-longley-employment-investigation-view-1 x=gnp y=employment color=era title="Nominal output and employment levels" at=0,0,8,5 x.title="GNP ($M, nominal)" y.title="Employed (thousands)"
+row @db-longley-employment-investigation-view-2 era title="Select a broad historical span" at=8,0,4,5 x.title="Rows"
+scatter @db-longley-employment-investigation-view-3 x=gnp_change y=employment_change title="Output and employment changes" at=0,5,6,4 x.title="Change in GNP ($M/year)" y.title="Change in employed (thousands/year)"
+line @db-longley-employment-investigation-view-4 x=year y=unemployed title="Unemployment counts over time" at=6,5,6,4 x.title="Year" y.title="Unemployed (thousands)"
+hist @db-longley-employment-investigation-view-5 employment_change bins=10 title="Brush annual employment change" at=0,9,8,5 x.title="Change in employed (thousands/year)" y.title="Rows"
+metric @db-longley-employment-investigation-view-6 count title="Annual source rows in selection" at=8,9,4,2
+table @db-longley-employment-investigation-records year,employment,gnp,employment_change,gnp_change,unemployed title="Matching source records and lookup values" at=0,14,12,5

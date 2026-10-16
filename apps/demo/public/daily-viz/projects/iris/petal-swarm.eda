@@ -1,0 +1,14 @@
+eda query=r
+dashboard "Petal lengths, one measured flower at a time"
+grid columns=12 rowHeight=76
+composition @cp-iris-petal-swarm width=960 height=740 at=0,0,12,9 {
+  title "Petal lengths, one measured flower at a time" at=32,28 fontSize=24
+  subtitle "A common-scale swarm preserves each measured petal length within its species group." at=32,78 fontSize=13
+  scale numeric r.petal_length zero=true
+  unit Species at=40,180 size=720x85 axisTitles.x="Petal length (cm)" {
+    repeat r.species arrangement=rows gap=38 order=label
+    label width=165 fontSize=13
+    point Flowers x=r.petal_length spread=swarm radius=4
+  }
+  footnote "Fisher / UCI Iris, scikit-learn corrected variant; CC BY 4.0." at=32,686 fontSize=10
+}

@@ -1,0 +1,18 @@
+eda query=annual
+dashboard "CO₂ rose about 40 ppm between the 1960s and the 1990s"
+grid columns=12 rowHeight=76
+composition @cp-co2-annual-concentration width=960 height=640 at=0,0,12,9 {
+  title "CO₂ rose about 40 ppm between the 1960s and the 1990s" at=32,28 fontSize=24
+  subtitle "The line is each year's mean of its measured weeks. The shaded band runs from the lowest to the highest week, so the seasonal swing stays visible." at=32,78 fontSize=13
+  scale numeric annual.year nice=false
+  scale numeric annual.mean zero=false
+  unit Years at=88,150 size=820x345 axisTitles.x="Year" axisTitles.y="Annual mean CO₂ (ppm)" {
+    label show=false
+    band "Lowest to highest week" x=annual.year y=annual.mean orderField=annual.year lowerField=annual.low upperField=annual.high {
+      fill=#2b6cb0 opacity=0.16
+    }
+    path Mean x=annual.year y=annual.mean orderField=annual.year
+    point Annual x=annual.year y=annual.mean radius=2
+  }
+  footnote "Keeling and Whorf / CDIAC; statsmodels historical snapshot; public domain." at=32,586 fontSize=10
+}

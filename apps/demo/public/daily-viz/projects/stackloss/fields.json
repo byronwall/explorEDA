@@ -1,0 +1,122 @@
+{
+  "r": {
+    "source_id": "r",
+    "path": "projects/stackloss/data/r.csv",
+    "row_count": 21,
+    "grain": "one recorded plant operating day",
+    "key": "id",
+    "fields": [
+      {
+        "name": "id",
+        "source_field": "r.id",
+        "type": "string",
+        "unit": "identifier",
+        "missing_count": 0,
+        "valid_count": 21,
+        "description": "id; identifier"
+      },
+      {
+        "name": "stackloss",
+        "source_field": "r.stackloss",
+        "type": "number",
+        "unit": "10 × percent ammonia lost",
+        "missing_count": 0,
+        "valid_count": 21,
+        "description": "stackloss; 10 × percent ammonia lost"
+      },
+      {
+        "name": "airflow",
+        "source_field": "r.airflow",
+        "type": "number",
+        "unit": "source airflow units",
+        "missing_count": 0,
+        "valid_count": 21,
+        "description": "airflow; source airflow units"
+      },
+      {
+        "name": "watertemp",
+        "source_field": "r.watertemp",
+        "type": "number",
+        "unit": "degrees Celsius",
+        "missing_count": 0,
+        "valid_count": 21,
+        "description": "watertemp; degrees Celsius"
+      },
+      {
+        "name": "acidconc",
+        "source_field": "r.acidconc",
+        "type": "number",
+        "unit": "source-coded acid concentration",
+        "missing_count": 0,
+        "valid_count": 21,
+        "description": "acidconc; source-coded acid concentration"
+      },
+      {
+        "name": "sequence",
+        "source_field": "r.sequence",
+        "type": "number",
+        "unit": "source row sequence",
+        "missing_count": 0,
+        "valid_count": 21,
+        "description": "sequence; source row sequence"
+      },
+      {
+        "name": "loss_pct",
+        "source_field": "r.loss_pct",
+        "type": "number",
+        "unit": "% ammonia lost",
+        "missing_count": 0,
+        "valid_count": 21,
+        "description": "loss pct; % ammonia lost"
+      },
+      {
+        "name": "fitted",
+        "source_field": "r.fitted",
+        "type": "number",
+        "unit": "10 × percent ammonia lost",
+        "missing_count": 0,
+        "valid_count": 21,
+        "description": "fitted; 10 × percent ammonia lost"
+      },
+      {
+        "name": "residual",
+        "source_field": "r.residual",
+        "type": "number",
+        "unit": "10 × percentage-point loss residual",
+        "missing_count": 0,
+        "valid_count": 21,
+        "description": "residual; 10 × percentage-point loss residual"
+      },
+      {
+        "name": "loo_slope",
+        "source_field": "r.loo_slope",
+        "type": "number",
+        "unit": "stackloss units per airflow unit",
+        "missing_count": 0,
+        "valid_count": 21,
+        "description": "loo slope; stackloss units per airflow unit"
+      },
+      {
+        "name": "slope_shift",
+        "source_field": "r.slope_shift",
+        "type": "number",
+        "unit": "slope units",
+        "missing_count": 0,
+        "valid_count": 21,
+        "description": "slope shift; slope units"
+      },
+      {
+        "name": "air_band",
+        "source_field": "r.air_band",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 21,
+        "description": "air band; category"
+      }
+    ],
+    "transformations": "Loss percent = source stackloss / 10. Ordinary least-squares single-predictor fits include an intercept. Leave-one-out slopes omit exactly that row. Observation sequence is not a verified date.",
+    "sha256": "174ad453516351b0b90d46de33de37e10e01f666c1e92e7618c68adaadbdc453",
+    "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+  }
+}

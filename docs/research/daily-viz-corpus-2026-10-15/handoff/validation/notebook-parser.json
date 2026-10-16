@@ -1,0 +1,293 @@
+{
+  "check": "actual-authorized-notebook-fence-parser",
+  "status": "passed",
+  "node": "v22.16.0",
+  "source_sha256": "4fdee9cd2462d9cb5ec7f7dacdc3e5d49bfe92bcfab0e67e51790e1ec34a6eea",
+  "notebooks": 40,
+  "blocks": 240,
+  "chart_declarations": 200,
+  "dsl_compiled": false,
+  "limitations": "Parses notebook fences and prose. Does not compile dashboard text, validate settings, render charts, or exercise interactions.",
+  "results": [
+    {
+      "id": "nb-ercot-signed-error",
+      "blocks": 6,
+      "charts": 5,
+      "closed": true,
+      "line_count": 87
+    },
+    {
+      "id": "nb-co2-trend-and-coverage",
+      "blocks": 6,
+      "charts": 5,
+      "closed": true,
+      "line_count": 81
+    },
+    {
+      "id": "nb-elnino-season-and-anomaly",
+      "blocks": 6,
+      "charts": 5,
+      "closed": true,
+      "line_count": 83
+    },
+    {
+      "id": "nb-sunspots-cycles",
+      "blocks": 6,
+      "charts": 5,
+      "closed": true,
+      "line_count": 76
+    },
+    {
+      "id": "nb-nile-before-and-after",
+      "blocks": 6,
+      "charts": 5,
+      "closed": true,
+      "line_count": 79
+    },
+    {
+      "id": "nb-macro-level-versus-growth",
+      "blocks": 6,
+      "charts": 5,
+      "closed": true,
+      "line_count": 93
+    },
+    {
+      "id": "nb-grunfeld-within-firm",
+      "blocks": 6,
+      "charts": 5,
+      "closed": true,
+      "line_count": 81
+    },
+    {
+      "id": "nb-stackloss-operating-conditions",
+      "blocks": 6,
+      "charts": 5,
+      "closed": true,
+      "line_count": 82
+    },
+    {
+      "id": "nb-engel-food-and-income",
+      "blocks": 6,
+      "charts": 5,
+      "closed": true,
+      "line_count": 75
+    },
+    {
+      "id": "nb-strikes-duration-tail",
+      "blocks": 6,
+      "charts": 5,
+      "closed": true,
+      "line_count": 76
+    },
+    {
+      "id": "nb-danish-logs-and-indices",
+      "blocks": 6,
+      "charts": 5,
+      "closed": true,
+      "line_count": 86
+    },
+    {
+      "id": "nb-fertility-trajectories",
+      "blocks": 6,
+      "charts": 5,
+      "closed": true,
+      "line_count": 79
+    },
+    {
+      "id": "nb-iris-measurement-choice",
+      "blocks": 6,
+      "charts": 5,
+      "closed": true,
+      "line_count": 77
+    },
+    {
+      "id": "nb-wine-cultivar-chemistry",
+      "blocks": 6,
+      "charts": 5,
+      "closed": true,
+      "line_count": 85
+    },
+    {
+      "id": "nb-longley-trending-levels",
+      "blocks": 6,
+      "charts": 5,
+      "closed": true,
+      "line_count": 85
+    },
+    {
+      "id": "nb-football-group-goals",
+      "blocks": 6,
+      "charts": 5,
+      "closed": true,
+      "line_count": 80
+    },
+    {
+      "id": "nb-tate-metadata-not-lifespans",
+      "blocks": 6,
+      "charts": 5,
+      "closed": true,
+      "line_count": 79
+    },
+    {
+      "id": "nb-sunspots-smoothing-cost",
+      "blocks": 6,
+      "charts": 5,
+      "closed": true,
+      "line_count": 78
+    },
+    {
+      "id": "nb-nile-tail-sensitivity",
+      "blocks": 6,
+      "charts": 5,
+      "closed": true,
+      "line_count": 77
+    },
+    {
+      "id": "nb-stackloss-leave-one-out",
+      "blocks": 6,
+      "charts": 5,
+      "closed": true,
+      "line_count": 82
+    },
+    {
+      "id": "nb-engel-weighting",
+      "blocks": 6,
+      "charts": 5,
+      "closed": true,
+      "line_count": 79
+    },
+    {
+      "id": "nb-strikes-production-context",
+      "blocks": 6,
+      "charts": 5,
+      "closed": true,
+      "line_count": 76
+    },
+    {
+      "id": "nb-danish-rate-spread",
+      "blocks": 6,
+      "charts": 5,
+      "closed": true,
+      "line_count": 88
+    },
+    {
+      "id": "nb-ercot-relative-error",
+      "blocks": 6,
+      "charts": 5,
+      "closed": true,
+      "line_count": 85
+    },
+    {
+      "id": "nb-co2-seasonal-centering",
+      "blocks": 6,
+      "charts": 5,
+      "closed": true,
+      "line_count": 83
+    },
+    {
+      "id": "nb-elnino-two-warm-windows",
+      "blocks": 6,
+      "charts": 5,
+      "closed": true,
+      "line_count": 83
+    },
+    {
+      "id": "nb-macro-inflation-unemployment",
+      "blocks": 6,
+      "charts": 5,
+      "closed": true,
+      "line_count": 91
+    },
+    {
+      "id": "nb-grunfeld-indexing-firms",
+      "blocks": 6,
+      "charts": 5,
+      "closed": true,
+      "line_count": 81
+    },
+    {
+      "id": "nb-fertility-matched-endpoints",
+      "blocks": 6,
+      "charts": 5,
+      "closed": true,
+      "line_count": 78
+    },
+    {
+      "id": "nb-iris-pooled-versus-grouped",
+      "blocks": 6,
+      "charts": 5,
+      "closed": true,
+      "line_count": 77
+    },
+    {
+      "id": "nb-wine-profile-scales",
+      "blocks": 6,
+      "charts": 5,
+      "closed": true,
+      "line_count": 85
+    },
+    {
+      "id": "nb-longley-different-denominators",
+      "blocks": 6,
+      "charts": 5,
+      "closed": true,
+      "line_count": 85
+    },
+    {
+      "id": "nb-football-points-and-goals",
+      "blocks": 6,
+      "charts": 5,
+      "closed": true,
+      "line_count": 78
+    },
+    {
+      "id": "nb-ercot-clock-coverage",
+      "blocks": 6,
+      "charts": 5,
+      "closed": true,
+      "line_count": 77
+    },
+    {
+      "id": "nb-co2-missing-runs",
+      "blocks": 6,
+      "charts": 5,
+      "closed": true,
+      "line_count": 77
+    },
+    {
+      "id": "nb-elnino-annual-range",
+      "blocks": 6,
+      "charts": 5,
+      "closed": true,
+      "line_count": 78
+    },
+    {
+      "id": "nb-grunfeld-investment-concentration",
+      "blocks": 6,
+      "charts": 5,
+      "closed": true,
+      "line_count": 76
+    },
+    {
+      "id": "nb-fertility-pace-by-decade",
+      "blocks": 6,
+      "charts": 5,
+      "closed": true,
+      "line_count": 80
+    },
+    {
+      "id": "nb-football-draws-and-points",
+      "blocks": 6,
+      "charts": 5,
+      "closed": true,
+      "line_count": 80
+    },
+    {
+      "id": "nb-fertility-empty-end-years",
+      "blocks": 6,
+      "charts": 5,
+      "closed": true,
+      "line_count": 79
+    }
+  ]
+}

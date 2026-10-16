@@ -93,6 +93,16 @@ function sourceReferences(
   stepId?: string,
   diagnostics?: AnalysisDiagnostic[]
 ) {
+  // A file source can leave its key out; its rows are told apart by position.
+  if (!source.entityKey)
+    return table.map(
+      (_, index) =>
+        ({
+          sourceId: source.id,
+          rowKey: `${source.id}:row:${index}`,
+          entityKey: undefined,
+        }) satisfies AnalysisSourceReference
+    );
   const counts = new Map<string, number>();
   const keys = table.map((row) => row[source.entityKey]);
   for (const key of keys) {

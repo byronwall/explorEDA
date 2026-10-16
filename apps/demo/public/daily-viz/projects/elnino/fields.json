@@ -1,0 +1,326 @@
+{
+  "r": {
+    "source_id": "r",
+    "path": "projects/elnino/data/r.csv",
+    "row_count": 732,
+    "grain": "one Niño 1+2 calendar month",
+    "key": "id",
+    "fields": [
+      {
+        "name": "id",
+        "source_field": "r.id",
+        "type": "string",
+        "unit": "identifier",
+        "missing_count": 0,
+        "valid_count": 732,
+        "description": "id; identifier"
+      },
+      {
+        "name": "year",
+        "source_field": "r.year",
+        "type": "number",
+        "unit": "year",
+        "missing_count": 0,
+        "valid_count": 732,
+        "description": "year; year"
+      },
+      {
+        "name": "month_name",
+        "source_field": "r.month_name",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 732,
+        "description": "month name; category"
+      },
+      {
+        "name": "sst",
+        "source_field": "r.sst",
+        "type": "number",
+        "unit": "degrees Celsius, Niño 1+2 region",
+        "missing_count": 0,
+        "valid_count": 732,
+        "description": "sst; degrees Celsius, Niño 1+2 region"
+      },
+      {
+        "name": "month",
+        "source_field": "r.month",
+        "type": "number",
+        "unit": "month number",
+        "missing_count": 0,
+        "valid_count": 732,
+        "description": "month; month number"
+      },
+      {
+        "name": "date",
+        "source_field": "r.date",
+        "type": "date",
+        "unit": "calendar label",
+        "missing_count": 0,
+        "valid_count": 732,
+        "description": "date; calendar label"
+      },
+      {
+        "name": "month_label",
+        "source_field": "r.month_label",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 732,
+        "description": "month label; category"
+      },
+      {
+        "name": "decade",
+        "source_field": "r.decade",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 732,
+        "description": "decade; category"
+      },
+      {
+        "name": "climatology",
+        "source_field": "r.climatology",
+        "type": "number",
+        "unit": "degrees Celsius; 1981–2010 calendar-month mean",
+        "missing_count": 0,
+        "valid_count": 732,
+        "description": "climatology; degrees Celsius; 1981–2010 calendar-month mean"
+      },
+      {
+        "name": "anomaly",
+        "source_field": "r.anomaly",
+        "type": "number",
+        "unit": "degrees Celsius relative to 1981–2010 month mean",
+        "missing_count": 0,
+        "valid_count": 732,
+        "description": "anomaly; degrees Celsius relative to 1981–2010 month mean"
+      },
+      {
+        "name": "era",
+        "source_field": "r.era",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 732,
+        "description": "era; category"
+      }
+    ],
+    "transformations": "Wide months unpivoted; anomaly = temperature - 1981–2010 mean for the same month. No standardization by variance.",
+    "sha256": "60a9b927ce853aa85f648f7eb3ac3c23c86cabf70d3d22aad966ebf92dbef4c4",
+    "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+  },
+  "annual": {
+    "source_id": "annual",
+    "path": "projects/elnino/data/annual.csv",
+    "row_count": 61,
+    "grain": "one year",
+    "key": "id",
+    "fields": [
+      {
+        "name": "id",
+        "source_field": "annual.id",
+        "type": "string",
+        "unit": "identifier",
+        "missing_count": 0,
+        "valid_count": 61,
+        "description": "id; identifier"
+      },
+      {
+        "name": "year",
+        "source_field": "annual.year",
+        "type": "number",
+        "unit": "year",
+        "missing_count": 0,
+        "valid_count": 61,
+        "description": "year; year"
+      },
+      {
+        "name": "mean",
+        "source_field": "annual.mean",
+        "type": "number",
+        "unit": "degrees Celsius",
+        "missing_count": 0,
+        "valid_count": 61,
+        "description": "mean; degrees Celsius"
+      },
+      {
+        "name": "low",
+        "source_field": "annual.low",
+        "type": "number",
+        "unit": "degrees Celsius",
+        "missing_count": 0,
+        "valid_count": 61,
+        "description": "low; degrees Celsius"
+      },
+      {
+        "name": "high",
+        "source_field": "annual.high",
+        "type": "number",
+        "unit": "degrees Celsius",
+        "missing_count": 0,
+        "valid_count": 61,
+        "description": "high; degrees Celsius"
+      },
+      {
+        "name": "range",
+        "source_field": "annual.range",
+        "type": "number",
+        "unit": "degrees Celsius",
+        "missing_count": 0,
+        "valid_count": 61,
+        "description": "range; degrees Celsius"
+      },
+      {
+        "name": "months",
+        "source_field": "annual.months",
+        "type": "number",
+        "unit": "observed months",
+        "missing_count": 0,
+        "valid_count": 61,
+        "description": "months; observed months"
+      },
+      {
+        "name": "anomaly",
+        "source_field": "annual.anomaly",
+        "type": "number",
+        "unit": "degrees Celsius",
+        "missing_count": 0,
+        "valid_count": 61,
+        "description": "anomaly; degrees Celsius"
+      }
+    ],
+    "transformations": "Unweighted monthly means and observed minimum/maximum; range is not uncertainty.",
+    "sha256": "efdc920324c3e70ae30d4b844c945f761f3d36d3168a238311de67245712e11d",
+    "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+  },
+  "episodes": {
+    "source_id": "episodes",
+    "path": "projects/elnino/data/episodes.csv",
+    "row_count": 48,
+    "grain": "one calendar month in either selected two-year window",
+    "key": "id",
+    "fields": [
+      {
+        "name": "id",
+        "source_field": "episodes.id",
+        "type": "string",
+        "unit": "identifier",
+        "missing_count": 0,
+        "valid_count": 48,
+        "description": "id; identifier"
+      },
+      {
+        "name": "year",
+        "source_field": "episodes.year",
+        "type": "number",
+        "unit": "year",
+        "missing_count": 0,
+        "valid_count": 48,
+        "description": "year; year"
+      },
+      {
+        "name": "month_name",
+        "source_field": "episodes.month_name",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 48,
+        "description": "month name; category"
+      },
+      {
+        "name": "sst",
+        "source_field": "episodes.sst",
+        "type": "number",
+        "unit": "degrees Celsius, Niño 1+2 region",
+        "missing_count": 0,
+        "valid_count": 48,
+        "description": "sst; degrees Celsius, Niño 1+2 region"
+      },
+      {
+        "name": "month",
+        "source_field": "episodes.month",
+        "type": "number",
+        "unit": "month number",
+        "missing_count": 0,
+        "valid_count": 48,
+        "description": "month; month number"
+      },
+      {
+        "name": "date",
+        "source_field": "episodes.date",
+        "type": "date",
+        "unit": "calendar label",
+        "missing_count": 0,
+        "valid_count": 48,
+        "description": "date; calendar label"
+      },
+      {
+        "name": "month_label",
+        "source_field": "episodes.month_label",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 48,
+        "description": "month label; category"
+      },
+      {
+        "name": "decade",
+        "source_field": "episodes.decade",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 48,
+        "description": "decade; category"
+      },
+      {
+        "name": "climatology",
+        "source_field": "episodes.climatology",
+        "type": "number",
+        "unit": "degrees Celsius; 1981–2010 calendar-month mean",
+        "missing_count": 0,
+        "valid_count": 48,
+        "description": "climatology; degrees Celsius; 1981–2010 calendar-month mean"
+      },
+      {
+        "name": "anomaly",
+        "source_field": "episodes.anomaly",
+        "type": "number",
+        "unit": "degrees Celsius relative to 1981–2010 month mean",
+        "missing_count": 0,
+        "valid_count": 48,
+        "description": "anomaly; degrees Celsius relative to 1981–2010 month mean"
+      },
+      {
+        "name": "era",
+        "source_field": "episodes.era",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 48,
+        "description": "era; category"
+      },
+      {
+        "name": "episode",
+        "source_field": "episodes.episode",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 48,
+        "description": "episode; category"
+      },
+      {
+        "name": "episode_month",
+        "source_field": "episodes.episode_month",
+        "type": "number",
+        "unit": "month index from January of the first year",
+        "missing_count": 0,
+        "valid_count": 48,
+        "description": "episode month; month index from January of the first year"
+      }
+    ],
+    "transformations": "Illustrative predeclared 1982–1983 and 1997–1998 windows; same baseline and 1–24 aligned months; not event classification.",
+    "sha256": "06142ca9ae88ffb549a4fbacf3e0073e1904b91c4b2cb0baeaff38021bf43f98",
+    "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+  }
+}

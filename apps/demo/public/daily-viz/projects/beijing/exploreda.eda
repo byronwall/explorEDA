@@ -1,0 +1,39 @@
+project @beijing
+
+source @days key=station_day path=../../../datasets/beijing/station-days.csv {
+  field station_day string
+  field station string
+  field date date
+  field month string
+  field season string
+  field recorded_hours number
+  field pm25_valid_hours number
+  field pm25 number
+  field pm10 number
+  field so2 number
+  field no2 number
+  field co number
+  field o3 number
+  field temp number
+  field wspm number
+  field pm25_coverage_pct number
+}
+
+source @stations key=station path=../../../datasets/beijing/stations.csv {
+  field station string
+  field recorded_hours number
+  field pm25_valid_hours number
+  field qualified_pm25_days number
+  field annual_pm25 number
+}
+
+relate @day-station days.station -> stations.station
+
+query @days "Station-days with station totals" glyph=◆ {
+  source days
+  lookup site via=day-station
+}
+
+query @stations "Stations" glyph=◆ {
+  source stations
+}

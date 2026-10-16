@@ -1,0 +1,14 @@
+project @measles
+
+source @measles path=../../../datasets/measles.csv {
+  field State string
+  field Label string
+  field Order number
+  field Year number
+  field Rate number
+  field Status string
+}
+
+query @measles "measles" glyph=◆ {
+  source measles
+}

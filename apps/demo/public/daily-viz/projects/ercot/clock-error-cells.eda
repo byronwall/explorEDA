@@ -1,0 +1,16 @@
+eda query=clock
+dashboard "Clock-hour error cells need their coverage context"
+grid columns=12 rowHeight=76
+composition @cp-ercot-clock-error-cells width=960 height=540 at=0,0,12,9 {
+  title "Clock-hour error cells need their coverage context" at=32,28 fontSize=24
+  subtitle "Each cell encodes the mean absolute miss for one month and UTC clock hour." at=32,78 fontSize=13
+  scale position clock.hour_label
+  scale value Miss transform=linear
+  unit Months at=40,165 size=740x42 {
+    repeat clock.month_label arrangement=rows gap=75 order=label
+    label width=155 fontSize=13
+    strip Error position=clock.hour_label valueScale=Miss aggregation=average measureField=clock.abs_error encoding=color
+  }
+  legend "Mean absolute error (MWh)" at=200,115 unit=Months mark=Error scale=Miss
+  footnote "EIA / ERCOT; authorized repository snapshot; U.S. public-domain data." at=32,486 fontSize=10
+}

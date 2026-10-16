@@ -1,0 +1,29 @@
+project @macro
+
+source @r key=id path=data/r.csv {
+  field id "id" string
+  field year "year" number
+  field quarter "quarter" number
+  field realgdp "realgdp" number
+  field realcons "realcons" number
+  field realinv "realinv" number
+  field realgovt "realgovt" number
+  field realdpi "realdpi" number
+  field cpi "cpi" number
+  field m1 "m1" number
+  field tbilrate "tbilrate" number
+  field unemp "unemp" number
+  field pop "pop" number
+  field infl "infl" number
+  field realint "realint" number
+  field date "date" date
+  field decade "decade" string
+  field gdp_growth "gdp growth" number
+  field consumption_share "consumption share" number
+  field gdp_change "gdp change" number
+  field unemp_change "unemp change" number
+}
+
+query @r "r" glyph=◆ {
+  source r
+}

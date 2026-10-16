@@ -1,0 +1,19 @@
+eda query=industries
+dashboard "Who the unemployed were, 2000 to 2010"
+grid columns=12 rowHeight=76
+composition @cp-unemployment-share-stack width=900 height=660 at=0,0,12,9 {
+  title "Who the unemployed were, 2000 to 2010" at=32,28 fontSize=24
+  subtitle "Each band is one industry's share of all unemployed workers, month by month. The total doubled after 2007; construction's share grew with it." at=32,72 fontSize=13
+  scale numeric industries.Month nice=false
+  legend "Industry key" at=32,112 unit=Months mark=Share fontSize=10 width=836
+  unit Months at=32,180 size=700x400 {
+    repeat gap=0 limit=1
+    label show=false
+    stack Share categoryField=industries.Industry measureField="industries.Unemployed (thousands)" {
+      normalize=true
+      colors=#4e79a7,#a0cbe8,#f28e2b,#ffbe7d,#59a14f,#8cd17d,#b6992d,#f1ce63,#499894,#86bcb6,#e15759,#ff9d9a,#79706e,#bab0ac
+      labelMinHeight=16 inset=0 x=industries.Month baseline=zero curve=smooth
+    }
+  }
+  footnote "Bureau of Labor Statistics, Current Population Survey, via vega-datasets. Not seasonally adjusted." at=32,620 fontSize=10
+}

@@ -1,0 +1,19 @@
+eda query=r
+dashboard "Investigate U.S. quarters by growth, jobs, and prices"
+grid columns=12 rowHeight=76
+quarter:num=r.quarter label="Quarter"
+realgdp:num=r.realgdp label="Real GDP ($B, 2005)"
+unemp:num=r.unemp label="Unemployment (%)"
+infl:num=r.infl label="Inflation (%)"
+date:date=r.date label="Date"
+decade:cat=r.decade label="Decade"
+gdp_growth:num=r.gdp_growth label="GDP growth (annualized %)"
+gdp_change:num=r.gdp_change label="Change in real GDP ($B, 2005)"
+unemp_change:num=r.unemp_change label="Change in unemployment (points)"
+scatter @db-macro-quarter-investigation-view-1 x=gdp_change y=unemp_change color=decade title="GDP change and unemployment change" at=0,0,8,5 x.title="Change in real GDP ($B, 2005)" y.title="Change in unemployment (points)"
+row @db-macro-quarter-investigation-view-2 decade title="Select a historical decade" at=8,0,4,5 x.title="Rows"
+hist @db-macro-quarter-investigation-view-3 gdp_growth bins=26 title="Brush annualized GDP growth" at=0,5,6,4 x.title="GDP growth (annualized %)" y.title="Rows"
+scatter @db-macro-quarter-investigation-view-4 x=unemp y=infl color=decade title="Inflation and unemployment levels" at=6,5,6,4 x.title="Unemployment (%)" y.title="Inflation (%)"
+line @db-macro-quarter-investigation-view-5 x=date y=realgdp title="GDP level through the quarters" at=0,9,8,5 x.title="Date" y.title="Real GDP ($B, 2005)"
+metric @db-macro-quarter-investigation-view-6 count title="Quarter rows matching the filters" at=8,9,4,2
+table @db-macro-quarter-investigation-records date,realgdp,gdp_growth,unemp,unemp_change,infl title="Matching source records and lookup values" at=0,14,12,5

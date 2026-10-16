@@ -1,0 +1,206 @@
+{
+  "r": {
+    "source_id": "r",
+    "path": "projects/wine/data/r.csv",
+    "row_count": 178,
+    "grain": "one Italian wine chemical analysis",
+    "key": "id",
+    "fields": [
+      {
+        "name": "id",
+        "source_field": "r.id",
+        "type": "string",
+        "unit": "identifier",
+        "missing_count": 0,
+        "valid_count": 178,
+        "description": "id; identifier"
+      },
+      {
+        "name": "alcohol",
+        "source_field": "r.alcohol",
+        "type": "number",
+        "unit": "source assay units; publisher does not specify units",
+        "missing_count": 0,
+        "valid_count": 178,
+        "description": "alcohol; source assay units; publisher does not specify units"
+      },
+      {
+        "name": "malic_acid",
+        "source_field": "r.malic_acid",
+        "type": "number",
+        "unit": "source assay units; publisher does not specify units",
+        "missing_count": 0,
+        "valid_count": 178,
+        "description": "malic acid; source assay units; publisher does not specify units"
+      },
+      {
+        "name": "ash",
+        "source_field": "r.ash",
+        "type": "number",
+        "unit": "source assay units; publisher does not specify units",
+        "missing_count": 0,
+        "valid_count": 178,
+        "description": "ash; source assay units; publisher does not specify units"
+      },
+      {
+        "name": "ash_alkalinity",
+        "source_field": "r.ash_alkalinity",
+        "type": "number",
+        "unit": "source assay units; publisher does not specify units",
+        "missing_count": 0,
+        "valid_count": 178,
+        "description": "ash alkalinity; source assay units; publisher does not specify units"
+      },
+      {
+        "name": "magnesium",
+        "source_field": "r.magnesium",
+        "type": "number",
+        "unit": "source assay units; publisher does not specify units",
+        "missing_count": 0,
+        "valid_count": 178,
+        "description": "magnesium; source assay units; publisher does not specify units"
+      },
+      {
+        "name": "total_phenols",
+        "source_field": "r.total_phenols",
+        "type": "number",
+        "unit": "source assay units; publisher does not specify units",
+        "missing_count": 0,
+        "valid_count": 178,
+        "description": "total phenols; source assay units; publisher does not specify units"
+      },
+      {
+        "name": "flavanoids",
+        "source_field": "r.flavanoids",
+        "type": "number",
+        "unit": "source assay units; publisher does not specify units",
+        "missing_count": 0,
+        "valid_count": 178,
+        "description": "flavanoids; source assay units; publisher does not specify units"
+      },
+      {
+        "name": "nonflavanoid_phenols",
+        "source_field": "r.nonflavanoid_phenols",
+        "type": "number",
+        "unit": "source assay units; publisher does not specify units",
+        "missing_count": 0,
+        "valid_count": 178,
+        "description": "nonflavanoid phenols; source assay units; publisher does not specify units"
+      },
+      {
+        "name": "proanthocyanins",
+        "source_field": "r.proanthocyanins",
+        "type": "number",
+        "unit": "source assay units; publisher does not specify units",
+        "missing_count": 0,
+        "valid_count": 178,
+        "description": "proanthocyanins; source assay units; publisher does not specify units"
+      },
+      {
+        "name": "color_intensity",
+        "source_field": "r.color_intensity",
+        "type": "number",
+        "unit": "source assay units; publisher does not specify units",
+        "missing_count": 0,
+        "valid_count": 178,
+        "description": "color intensity; source assay units; publisher does not specify units"
+      },
+      {
+        "name": "hue",
+        "source_field": "r.hue",
+        "type": "number",
+        "unit": "source assay units; publisher does not specify units",
+        "missing_count": 0,
+        "valid_count": 178,
+        "description": "hue; source assay units; publisher does not specify units"
+      },
+      {
+        "name": "od_ratio",
+        "source_field": "r.od_ratio",
+        "type": "number",
+        "unit": "source assay units; publisher does not specify units",
+        "missing_count": 0,
+        "valid_count": 178,
+        "description": "od ratio; source assay units; publisher does not specify units"
+      },
+      {
+        "name": "proline",
+        "source_field": "r.proline",
+        "type": "number",
+        "unit": "source assay units; publisher does not specify units",
+        "missing_count": 0,
+        "valid_count": 178,
+        "description": "proline; source assay units; publisher does not specify units"
+      },
+      {
+        "name": "cultivar",
+        "source_field": "r.cultivar",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 178,
+        "description": "cultivar; category"
+      }
+    ],
+    "transformations": "Decode source class to cultivar labels; this is UCI Wine recognition, not Wine Quality. No quality ratings inferred.",
+    "sha256": "a8333d11aee5495ce4ab170475f17bde0149e3370b232da9b1dd6c10bba3ec1e",
+    "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+  },
+  "profiles": {
+    "source_id": "profiles",
+    "path": "projects/wine/data/profiles.csv",
+    "row_count": 2314,
+    "grain": "one wine-measure observation",
+    "key": "id",
+    "fields": [
+      {
+        "name": "id",
+        "source_field": "profiles.id",
+        "type": "string",
+        "unit": "identifier",
+        "missing_count": 0,
+        "valid_count": 2314,
+        "description": "id; identifier"
+      },
+      {
+        "name": "cultivar",
+        "source_field": "profiles.cultivar",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 2314,
+        "description": "cultivar; category"
+      },
+      {
+        "name": "measure",
+        "source_field": "profiles.measure",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 2314,
+        "description": "measure; category"
+      },
+      {
+        "name": "value",
+        "source_field": "profiles.value",
+        "type": "number",
+        "unit": "source units, different for each measure",
+        "missing_count": 0,
+        "valid_count": 2314,
+        "description": "value; source units, different for each measure"
+      },
+      {
+        "name": "unit",
+        "source_field": "profiles.unit",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 2314,
+        "description": "unit; category"
+      }
+    ],
+    "transformations": "Unpivot all 13 assays without standardization; repeat-specific value domains necessary because units differ.",
+    "sha256": "562f001229be292027fb483b29066d65218ab9d1e042167eb93f232f700397f9",
+    "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+  }
+}

@@ -1,0 +1,16 @@
+project @elections
+
+source @elections path=../../../datasets/elections.csv {
+  field State string
+  field Code string
+  field Tile string
+  field Year number
+  field "Democratic share" number
+  field "Republican share" number
+  field Margin number
+  field Winner string
+}
+
+query @elections "elections" glyph=◆ {
+  source elections
+}

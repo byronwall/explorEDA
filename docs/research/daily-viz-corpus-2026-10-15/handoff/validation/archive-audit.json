@@ -1,0 +1,16 @@
+{
+  "status": "passed",
+  "archive_file_name": "exploreda-daily-viz-corpus.zip",
+  "member_count": 320,
+  "safe_relative_paths": true,
+  "duplicate_members": 0,
+  "symlinks": 0,
+  "crc_test": "passed",
+  "member_sizes_match_manifest": true,
+  "sha256_matches_manifest_except_self": true,
+  "catalogue_entries_resolve_inside_archive": 75,
+  "manifest_self_hash": "intentionally omitted; own size verified",
+  "archive_sha256": "external .zip.sha256 companion, not recursively embedded",
+  "native_dsl_compilation": "see integration.json",
+  "browser_rendering": "see integration.json for exact scope"
+}

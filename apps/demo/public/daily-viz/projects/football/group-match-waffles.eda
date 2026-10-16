@@ -1,0 +1,14 @@
+eda query=r
+dashboard "Nine of 48 group matches ended in a draw"
+grid columns=12 rowHeight=76
+composition @cp-football-group-match-waffles width=1010 height=680 at=0,0,12,9 {
+  title "Nine of 48 group matches ended in a draw" at=32,28 fontSize=24
+  subtitle "A waffle cell represents one group match and its color distinguishes a draw from a decisive score." at=32,78 fontSize=13
+  unit Groups at=100,205 size=150x110 {
+    repeat r.group arrangement=grid columns=4 gap=70 order=label
+    label fontSize=15
+    waffle Matches categoryField=r.result each=1 normalize=false columns=3 gap=4 from=top order=label
+  }
+  legend "Final-score result" at=110,130 unit=Groups mark=Matches
+  footnote "OpenFootball World Cup 2018 group-stage final scores; public-domain dedication." at=32,626 fontSize=10
+}

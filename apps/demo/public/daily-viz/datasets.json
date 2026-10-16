@@ -1,0 +1,272 @@
+[
+  {
+    "id": "ercot",
+    "title": "ERCOT hourly served demand and day-ahead forecast",
+    "publisher": "U.S. Energy Information Administration / ERCOT",
+    "url": "https://www.eia.gov/electricity/gridmonitor/",
+    "license": "U.S. public domain (EIA-authored data)",
+    "license_url": "https://www.eia.gov/about/copyrights_reuse.php",
+    "version": "Snapshot shipped with the explorEDA forecast example",
+    "notes": "Hourly served demand and the day-ahead forecast for the ERCOT grid, January and February 2021, in UTC hours. The same file feeds the forecast example."
+  },
+  {
+    "id": "co2",
+    "title": "Historical weekly Mauna Loa CO2",
+    "publisher": "Keeling and Whorf; Scripps / CDIAC; distributed by statsmodels",
+    "url": "https://www.statsmodels.org/stable/datasets/generated/co2.html",
+    "license": "Public domain (dataset-specific distributor statement)",
+    "license_url": "https://www.statsmodels.org/stable/datasets/generated/co2.html#copyright",
+    "version": "statsmodels 0.14.6 dataset",
+    "notes": "Weekly carbon dioxide concentration at Mauna Loa, March 1958 to December 2001, from the historical flask-data revision. Missing weeks stay blank."
+  },
+  {
+    "id": "elnino",
+    "title": "Niño 1+2 monthly sea-surface temperatures",
+    "publisher": "NOAA Climate Prediction Center, ERSST v3b; distributed by statsmodels",
+    "url": "https://www.statsmodels.org/stable/datasets/generated/elnino.html",
+    "license": "Public domain (dataset-specific distributor statement)",
+    "license_url": "https://www.statsmodels.org/stable/datasets/generated/elnino.html#copyright",
+    "version": "statsmodels 0.14.6 dataset",
+    "notes": "Monthly Niño 1+2 sea-surface temperature, 1950 to 2010."
+  },
+  {
+    "id": "sunspots",
+    "title": "Historical annual sunspot numbers",
+    "publisher": "NOAA historical solar series; distributed by statsmodels",
+    "url": "https://www.statsmodels.org/stable/datasets/generated/sunspots.html",
+    "license": "Public domain (dataset-specific distributor statement)",
+    "license_url": "https://www.statsmodels.org/stable/datasets/generated/sunspots.html#copyright",
+    "version": "statsmodels 0.14.6 dataset",
+    "notes": "Annual mean sunspot number, 1700 to 2008, from the historical revision before the 2015 recalibration."
+  },
+  {
+    "id": "nile",
+    "title": "Annual Nile flow at Aswan",
+    "publisher": "Historical Aswan observations; distributed by statsmodels",
+    "url": "https://www.statsmodels.org/stable/datasets/generated/nile.html",
+    "license": "Public domain (dataset-specific distributor statement)",
+    "license_url": "https://www.statsmodels.org/stable/datasets/generated/nile.html#copyright",
+    "version": "statsmodels 0.14.6 dataset",
+    "notes": "Annual flow of the Nile at Aswan, 1871 to 1970, in 10⁸ cubic metres."
+  },
+  {
+    "id": "macro",
+    "title": "Historical US quarterly macroeconomic panel",
+    "publisher": "U.S. public statistical sources; curated in statsmodels",
+    "url": "https://www.statsmodels.org/stable/datasets/generated/macrodata.html",
+    "license": "Public domain (dataset-specific distributor statement)",
+    "license_url": "https://www.statsmodels.org/stable/datasets/generated/macrodata.html#copyright",
+    "version": "statsmodels 0.14.6 dataset",
+    "notes": "U.S. quarterly macroeconomic series, 1959 to 2009, in chained 2005 dollars where real."
+  },
+  {
+    "id": "grunfeld",
+    "title": "Grunfeld firm investment panel",
+    "publisher": "Grunfeld; Kleiber and Zeileis; distributed by statsmodels",
+    "url": "https://www.statsmodels.org/stable/datasets/generated/grunfeld.html",
+    "license": "Public domain (dataset-specific distributor statement)",
+    "license_url": "https://www.statsmodels.org/stable/datasets/generated/grunfeld.html#copyright",
+    "version": "statsmodels 0.14.6 dataset",
+    "notes": "Annual investment, market value, and capital stock for 11 U.S. firms, 1935 to 1954, in 1947 dollars."
+  },
+  {
+    "id": "stackloss",
+    "title": "Plant operating conditions and stack loss",
+    "publisher": "Brownlee historical plant data; distributed by statsmodels",
+    "url": "https://www.statsmodels.org/stable/datasets/generated/stackloss.html",
+    "license": "Public domain (dataset-specific distributor statement)",
+    "license_url": "https://www.statsmodels.org/stable/datasets/generated/stackloss.html#copyright",
+    "version": "statsmodels 0.14.6 dataset",
+    "notes": "Twenty-one days of operation at an ammonia oxidation plant: airflow, water temperature, acid concentration, and loss."
+  },
+  {
+    "id": "engel",
+    "title": "Engel household food expenditure",
+    "publisher": "Engel historical Belgian household survey; distributed by statsmodels",
+    "url": "https://www.statsmodels.org/stable/datasets/generated/engel.html",
+    "license": "Public domain (dataset-specific distributor statement)",
+    "license_url": "https://www.statsmodels.org/stable/datasets/generated/engel.html#copyright",
+    "version": "statsmodels 0.14.6 dataset",
+    "notes": "Income and food expenditure for 235 Belgian working-class households, 1857, in Belgian francs."
+  },
+  {
+    "id": "strikes",
+    "title": "Selected manufacturing strike durations",
+    "publisher": "U.S. Bureau of Labor Statistics; Kennan; distributed by statsmodels",
+    "url": "https://www.statsmodels.org/stable/datasets/generated/strikes.html",
+    "license": "Public domain (dataset-specific distributor statement)",
+    "license_url": "https://www.statsmodels.org/stable/datasets/generated/strikes.html#copyright",
+    "version": "statsmodels 0.14.6 dataset",
+    "notes": "Duration of 62 U.S. manufacturing strikes, 1968 to 1976, with an industrial production index."
+  },
+  {
+    "id": "danish",
+    "title": "Danish quarterly money and income data",
+    "publisher": "Johansen and Juselius; distributed by statsmodels",
+    "url": "https://www.statsmodels.org/stable/datasets/generated/danish_data.html",
+    "license": "Public domain (dataset-specific distributor statement)",
+    "license_url": "https://www.statsmodels.org/stable/datasets/generated/danish_data.html#copyright",
+    "version": "statsmodels 0.14.6 dataset",
+    "notes": "Quarterly Danish money, income, prices, and two interest rates, 1974 to 1987."
+  },
+  {
+    "id": "fertility",
+    "title": "Selected historical World Bank fertility rates",
+    "publisher": "World Bank; UN Population Division and national statistical sources; historical statsmodels snapshot",
+    "url": "https://www.statsmodels.org/stable/datasets/generated/fertility.html",
+    "license": "Creative Commons Attribution 4.0 International",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "version": "statsmodels 0.14.6 dataset",
+    "notes": "Total fertility rate for twelve countries, 1960 to 2013, from World Development Indicators. Years without a published value stay blank."
+  },
+  {
+    "id": "iris",
+    "title": "Iris flower measurements, corrected variant",
+    "publisher": "R. A. Fisher / UCI Machine Learning Repository; scikit-learn corrected variant",
+    "url": "https://archive.ics.uci.edu/dataset/53/iris",
+    "license": "Creative Commons Attribution 4.0 International",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "version": "scikit-learn 1.8.0 dataset",
+    "notes": "Four measurements of 150 iris flowers from three species, collected by Edgar Anderson."
+  },
+  {
+    "id": "wine",
+    "title": "UCI Wine cultivar-recognition assays",
+    "publisher": "S. Aeberhard and M. Forina / UCI Machine Learning Repository; scikit-learn distribution",
+    "url": "https://archive.ics.uci.edu/dataset/109/wine",
+    "license": "Creative Commons Attribution 4.0 International",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "version": "scikit-learn 1.8.0 dataset",
+    "notes": "Thirteen chemical assays of 178 Italian wines from three cultivars."
+  },
+  {
+    "id": "longley",
+    "title": "Longley historical US employment benchmark",
+    "publisher": "Longley historical regression benchmark; distributed by statsmodels",
+    "url": "https://www.statsmodels.org/stable/datasets/generated/longley.html",
+    "license": "Public domain (dataset-specific distributor statement)",
+    "license_url": "https://www.statsmodels.org/stable/datasets/generated/longley.html#copyright",
+    "version": "statsmodels 0.14.6 dataset",
+    "notes": "Sixteen years of U.S. employment, GNP, and population figures, 1947 to 1962."
+  },
+  {
+    "id": "football",
+    "title": "2018 World Cup group-stage final scores",
+    "publisher": "OpenFootball community, football.db",
+    "url": "https://github.com/openfootball/worldcup/tree/master/2018--russia",
+    "license": "Public-domain dedication (OpenFootball publisher statement)",
+    "license_url": "https://github.com/openfootball/worldcup/blob/master/README.md",
+    "version": "Git blob 6069ee605e0556ffc8cc7d60983e7a369e755303",
+    "notes": "All 48 group-stage matches of the 2018 FIFA World Cup: teams, dates, and final scores."
+  },
+  {
+    "id": "tate",
+    "title": "Tate artist-metadata alphabetic prefix",
+    "publisher": "Tate; October 2014 collection metadata archive",
+    "url": "https://github.com/tategallery/collection",
+    "license": "CC0 1.0 Universal",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "version": "Git blob 7a47fe57205af5bb5ea57bae760540f7fe781853",
+    "notes": "Name, birth year, and death year for the first 60 artists, alphabetically, in the Tate collection's 2014 metadata."
+  },
+  {
+    "id": "flights",
+    "title": "January 2013 flights from New York",
+    "publisher": "Bureau of Transportation Statistics, FAA, and Iowa Environmental Mesonet, via nycflights13",
+    "url": "https://nycflights13.tidyverse.org/",
+    "license": "CC0 1.0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "version": "nycflights13 1.0.2",
+    "notes": "Every flight that left Newark, JFK, or LaGuardia in January 2013 (27,004), with the 16 airlines and hourly weather at each airport. Cancelled flights keep blank departure and arrival times."
+  },
+  {
+    "id": "beijing",
+    "title": "Beijing multi-site air quality, 2016",
+    "publisher": "Beijing Municipal Environmental Monitoring Center, via the UCI Machine Learning Repository",
+    "url": "https://archive.ics.uci.edu/dataset/501/beijing+multi+site+air+quality+data",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "version": "UCI dataset 501 (Chen, 2017), DOI 10.24432/C5RK5G",
+    "notes": "Daily means for 12 monitoring stations through 2016. A day needs 20 valid hours of 24 to get a PM2.5 value; otherwise it is blank."
+  },
+  {
+    "id": "worldbank",
+    "title": "World Development Indicators, 2000–2023",
+    "publisher": "World Bank, with UN Population Division and International Comparison Program figures",
+    "url": "https://data.worldbank.org/",
+    "license": "CC BY 4.0",
+    "license_url": "https://www.worldbank.org/en/about/legal/terms-of-use-for-datasets",
+    "version": "API vintage 2026-07-13",
+    "notes": "Population, GDP per person (PPP, constant 2021 dollars), and life expectancy for 217 economies, 2000 to 2023. Aggregates are excluded; a missing row means no published value."
+  },
+  {
+    "id": "earthquakes",
+    "title": "Earthquakes of magnitude 4.5 or more, 2023",
+    "publisher": "U.S. Geological Survey, ANSS Comprehensive Catalog",
+    "url": "https://earthquake.usgs.gov/data/comcat/",
+    "license": "Public domain (U.S. Geological Survey)",
+    "license_url": "https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits",
+    "version": "ComCat query for 2023, M4.5+",
+    "notes": "Every catalogued earthquake of magnitude 4.5 or more in 2023: 7,643 events with time, place, depth, and magnitude. Depth bands at 70 and 300 km are analyst-defined."
+  },
+  {
+    "id": "unemployment",
+    "title": "Unemployment by industry, 2000–2010",
+    "publisher": "Bureau of Labor Statistics, Current Population Survey, via vega-datasets",
+    "url": "https://github.com/vega/vega-datasets",
+    "license": "BSD-3-Clause (vega-datasets); public U.S. government statistics",
+    "license_url": "https://github.com/vega/vega-datasets/blob/main/LICENSE",
+    "version": "vega-datasets unemployment-across-industries.json",
+    "notes": "Monthly unemployed count (thousands) and unemployment rate for 14 industries, January 2000 to February 2010."
+  },
+  {
+    "id": "penguins",
+    "title": "Palmer Archipelago penguins",
+    "publisher": "Kristen Gorman and Palmer Station LTER, via palmerpenguins",
+    "url": "https://allisonhorst.github.io/palmerpenguins/",
+    "license": "CC0 1.0",
+    "license_url": "https://allisonhorst.github.io/palmerpenguins/LICENSE.html",
+    "version": "palmerpenguins penguins table",
+    "notes": "Bill, flipper, and body-mass measurements for 344 penguins of three species on three islands, 2007 to 2009. Eleven birds have no recorded sex."
+  },
+  {
+    "id": "titanic",
+    "title": "Titanic passengers",
+    "publisher": "Thomas Cason, from Encyclopedia Titanica; kept by Vanderbilt Biostatistics (titanic3)",
+    "url": "https://hbiostat.org/data/",
+    "license": "Public domain data, reused with credit",
+    "license_url": "https://hbiostat.org/data/",
+    "version": "titanic3",
+    "notes": "1,309 passengers with class, sex, age, port, fare, and fate. Crew are not included; 263 ages are blank."
+  },
+  {
+    "id": "measles",
+    "title": "Measles in the United States, 1928–2012",
+    "publisher": "Project Tycho and the CDC, as published by The Wall Street Journal",
+    "url": "https://graphics.wsj.com/infectious-diseases-and-vaccines/",
+    "license": "Project Tycho figures, CC BY; CDC statistics",
+    "license_url": "https://www.tycho.pitt.edu/",
+    "version": "WSJ datum.json, 2015",
+    "notes": "Reported measles cases per 100,000 people for 50 states and DC, 1928 to 2012. Years the publisher marked not available stay blank."
+  },
+  {
+    "id": "bigtech",
+    "title": "Big-tech opening prices, 2010–2023",
+    "publisher": "Yahoo Finance via Kaggle, packaged by TidyTuesday (2023-02-07)",
+    "url": "https://github.com/rfordatascience/tidytuesday/tree/master/data/2023/2023-02-07",
+    "license": "TidyTuesday repository CC0; prices carry no separate license",
+    "license_url": "https://github.com/rfordatascience/tidytuesday/blob/master/LICENSE",
+    "version": "TidyTuesday 2023-02-07",
+    "notes": "Opening share prices for 14 large technology companies, every fifth trading day from January 2010 to January 2023, plus each company's first and last day."
+  },
+  {
+    "id": "elections",
+    "title": "Presidential vote by state, 1976–2016",
+    "publisher": "MIT Election Data and Science Lab",
+    "url": "https://doi.org/10.7910/DVN/42MVDX",
+    "license": "CC0 1.0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "version": "U.S. President 1976–2020 state returns (1976–2016 file)",
+    "notes": "Democratic and Republican shares of all votes cast in 51 jurisdictions for 11 elections. Margin is Democratic minus Republican share, in points."
+  }
+]

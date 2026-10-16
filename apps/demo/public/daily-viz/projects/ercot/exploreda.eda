@@ -1,0 +1,51 @@
+project @ercot
+
+source @r key=id path=data/r.csv {
+  field id "id" string
+  field date "date" date
+  field actual "actual" number
+  field forecast "forecast" number
+  field year "year" number
+  field month "month" number
+  field month_label "month label" string
+  field decade "decade" string
+  field hour "hour" number
+  field hour_label "hour label" string
+  field error "error" number
+  field abs_error "abs error" number
+  field pct_error "pct error" number
+  field abs_pct_error "abs pct error" number
+  field direction "direction" string
+}
+
+source @daily key=id path=data/daily.csv {
+  field id "id" string
+  field date "date" date
+  field actual "actual" number
+  field forecast "forecast" number
+  field error "error" number
+  field abs_error "abs error" number
+  field hours "hours" number
+}
+
+source @clock key=id path=data/clock.csv {
+  field id "id" string
+  field month_label "month label" string
+  field hour "hour" number
+  field hour_label "hour label" string
+  field error "error" number
+  field abs_error "abs error" number
+  field hours "hours" number
+}
+
+query @r "r" glyph=◆ {
+  source r
+}
+
+query @daily "daily" glyph=◆ {
+  source daily
+}
+
+query @clock "clock" glyph=◆ {
+  source clock
+}

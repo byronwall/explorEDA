@@ -1,0 +1,272 @@
+{
+  "r": {
+    "source_id": "r",
+    "path": "projects/co2/data/r.csv",
+    "row_count": 2284,
+    "grain": "one supplied weekly date",
+    "key": "id",
+    "fields": [
+      {
+        "name": "id",
+        "source_field": "r.id",
+        "type": "string",
+        "unit": "identifier",
+        "missing_count": 0,
+        "valid_count": 2284,
+        "description": "id; identifier"
+      },
+      {
+        "name": "date",
+        "source_field": "r.date",
+        "type": "date",
+        "unit": "calendar label",
+        "missing_count": 0,
+        "valid_count": 2284,
+        "description": "date; calendar label"
+      },
+      {
+        "name": "co2",
+        "source_field": "r.co2",
+        "type": "number",
+        "unit": "parts per million by volume (ppmv)",
+        "missing_count": 59,
+        "valid_count": 2225,
+        "description": "co2; parts per million by volume (ppmv)"
+      },
+      {
+        "name": "year",
+        "source_field": "r.year",
+        "type": "number",
+        "unit": "year",
+        "missing_count": 0,
+        "valid_count": 2284,
+        "description": "year; year"
+      },
+      {
+        "name": "month",
+        "source_field": "r.month",
+        "type": "number",
+        "unit": "month number",
+        "missing_count": 0,
+        "valid_count": 2284,
+        "description": "month; month number"
+      },
+      {
+        "name": "month_label",
+        "source_field": "r.month_label",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 2284,
+        "description": "month label; category"
+      },
+      {
+        "name": "decade",
+        "source_field": "r.decade",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 2284,
+        "description": "decade; category"
+      },
+      {
+        "name": "coverage",
+        "source_field": "r.coverage",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 2284,
+        "description": "coverage; category"
+      },
+      {
+        "name": "observed",
+        "source_field": "r.observed",
+        "type": "number",
+        "unit": "1 measured; 0 missing",
+        "missing_count": 0,
+        "valid_count": 2284,
+        "description": "observed; 1 measured; 0 missing"
+      },
+      {
+        "name": "annual_center",
+        "source_field": "r.annual_center",
+        "type": "number",
+        "unit": "ppmv",
+        "missing_count": 0,
+        "valid_count": 2284,
+        "description": "annual center; ppmv"
+      },
+      {
+        "name": "residual",
+        "source_field": "r.residual",
+        "type": "number",
+        "unit": "ppmv relative to annual available-week mean",
+        "missing_count": 59,
+        "valid_count": 2225,
+        "description": "residual; ppmv relative to annual available-week mean"
+      }
+    ],
+    "transformations": "No gap filling; residual subtracts that year's available-week mean, not a fitted trend.",
+    "sha256": "fa105e8860d685c0cfc3615f67ee740e265ad29ee806069b6303957166f886eb",
+    "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+  },
+  "annual": {
+    "source_id": "annual",
+    "path": "projects/co2/data/annual.csv",
+    "row_count": 44,
+    "grain": "one supplied year",
+    "key": "id",
+    "fields": [
+      {
+        "name": "id",
+        "source_field": "annual.id",
+        "type": "string",
+        "unit": "identifier",
+        "missing_count": 0,
+        "valid_count": 44,
+        "description": "id; identifier"
+      },
+      {
+        "name": "year",
+        "source_field": "annual.year",
+        "type": "number",
+        "unit": "year",
+        "missing_count": 0,
+        "valid_count": 44,
+        "description": "year; year"
+      },
+      {
+        "name": "mean",
+        "source_field": "annual.mean",
+        "type": "number",
+        "unit": "ppmv",
+        "missing_count": 0,
+        "valid_count": 44,
+        "description": "mean; ppmv"
+      },
+      {
+        "name": "low",
+        "source_field": "annual.low",
+        "type": "number",
+        "unit": "ppmv",
+        "missing_count": 0,
+        "valid_count": 44,
+        "description": "low; ppmv"
+      },
+      {
+        "name": "high",
+        "source_field": "annual.high",
+        "type": "number",
+        "unit": "ppmv",
+        "missing_count": 0,
+        "valid_count": 44,
+        "description": "high; ppmv"
+      },
+      {
+        "name": "valid",
+        "source_field": "annual.valid",
+        "type": "number",
+        "unit": "measured weeks",
+        "missing_count": 0,
+        "valid_count": 44,
+        "description": "valid; measured weeks"
+      },
+      {
+        "name": "slots",
+        "source_field": "annual.slots",
+        "type": "number",
+        "unit": "supplied weekly slots",
+        "missing_count": 0,
+        "valid_count": 44,
+        "description": "slots; supplied weekly slots"
+      },
+      {
+        "name": "coverage_pct",
+        "source_field": "annual.coverage_pct",
+        "type": "number",
+        "unit": "% supplied slots measured",
+        "missing_count": 0,
+        "valid_count": 44,
+        "description": "coverage pct; % supplied slots measured"
+      }
+    ],
+    "transformations": "Available-week annual means/extrema and valid/supplied coverage; first and last years may be partial.",
+    "sha256": "5ccb07afc5e6ecb5d1f68120d61062c9a282b941eb472b9b40e795e1a52f2d88",
+    "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+  },
+  "gaps": {
+    "source_id": "gaps",
+    "path": "projects/co2/data/gaps.csv",
+    "row_count": 22,
+    "grain": "one consecutive missing run",
+    "key": "id",
+    "fields": [
+      {
+        "name": "id",
+        "source_field": "gaps.id",
+        "type": "string",
+        "unit": "identifier",
+        "missing_count": 0,
+        "valid_count": 22,
+        "description": "id; identifier"
+      },
+      {
+        "name": "date",
+        "source_field": "gaps.date",
+        "type": "date",
+        "unit": "calendar label",
+        "missing_count": 0,
+        "valid_count": 22,
+        "description": "date; calendar label"
+      },
+      {
+        "name": "end_date",
+        "source_field": "gaps.end_date",
+        "type": "date",
+        "unit": "calendar label",
+        "missing_count": 0,
+        "valid_count": 22,
+        "description": "end date; calendar label"
+      },
+      {
+        "name": "length",
+        "source_field": "gaps.length",
+        "type": "number",
+        "unit": "consecutive missing weekly slots",
+        "missing_count": 0,
+        "valid_count": 22,
+        "description": "length; consecutive missing weekly slots"
+      },
+      {
+        "name": "year",
+        "source_field": "gaps.year",
+        "type": "number",
+        "unit": "year",
+        "missing_count": 0,
+        "valid_count": 22,
+        "description": "year; year"
+      },
+      {
+        "name": "before",
+        "source_field": "gaps.before",
+        "type": "number",
+        "unit": "ppmv",
+        "missing_count": 0,
+        "valid_count": 22,
+        "description": "before; ppmv"
+      },
+      {
+        "name": "after",
+        "source_field": "gaps.after",
+        "type": "number",
+        "unit": "ppmv",
+        "missing_count": 0,
+        "valid_count": 22,
+        "description": "after; ppmv"
+      }
+    ],
+    "transformations": "Consecutive means adjacent rows in the supplied weekly calendar; before/after values are observations, not interpolated replacements.",
+    "sha256": "3d0a0d178c676d87538ece0463a04a8c8fbb2d859bc709e0f9a1d4cc6e700d5d",
+    "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+  }
+}

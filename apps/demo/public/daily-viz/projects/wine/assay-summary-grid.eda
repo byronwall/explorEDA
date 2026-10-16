@@ -1,0 +1,14 @@
+eda query=profiles
+dashboard "Thirteen wine assays, each on its own ruler"
+grid columns=12 rowHeight=76
+composition @cp-wine-assay-summary-grid width=1080 height=1330 at=0,0,12,9 {
+  title "Thirteen wine assays, each on its own ruler" at=32,28 fontSize=24
+  subtitle "Each assay panel shows native unweighted quartiles and medians across the three cultivar groups." at=32,78 fontSize=13
+  scale numeric profiles.value domain=instance zero=false
+  unit Assays at=72,180 size=230x125 {
+    repeat profiles.measure arrangement=grid columns=3 gap=83 order=label
+    label fontSize=11
+    summary Cultivars groupField=profiles.cultivar measureField=profiles.value y=profiles.value
+  }
+  footnote "Aeberhard and Forina / UCI Wine recognition; CC BY 4.0; source assay units." at=32,1276 fontSize=10
+}

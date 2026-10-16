@@ -1,0 +1,18 @@
+eda query=r
+dashboard "Investigate CO₂ measurements and their coverage"
+grid columns=12 rowHeight=76
+date:date=r.date label="Date"
+co2:num=r.co2 label="CO₂ (ppm)"
+month:num=r.month label="Month"
+month_label:cat=r.month_label label="Calendar month"
+decade:cat=r.decade label="Decade"
+coverage:cat=r.coverage label="Coverage"
+annual_center:num=r.annual_center label="Annual mean (ppm)"
+residual:num=r.residual label="Difference from annual mean (ppm)"
+line @db-co2-measurement-investigation-view-1 x=date y=co2 title="Historical weekly concentrations" at=0,0,8,5 x.title="Date" y.title="CO₂ (ppm)"
+row @db-co2-measurement-investigation-view-2 decade title="Select a decade" at=8,0,4,5 x.title="Rows"
+row @db-co2-measurement-investigation-view-3 coverage title="Measured or missing" at=0,5,6,4 x.title="Rows"
+boxplot @db-co2-measurement-investigation-view-4 residual color=month_label title="Centered values by month" at=6,5,6,4 y.title="Difference from annual mean (ppm)"
+hist @db-co2-measurement-investigation-view-5 co2 bins=28 title="Concentration distribution" at=0,9,8,5 x.title="CO₂ (ppm)" y.title="Rows"
+metric @db-co2-measurement-investigation-view-6 count title="Supplied weekly slots in selection" at=8,9,4,2
+table @db-co2-measurement-investigation-records date,co2,coverage,annual_center,residual title="Matching source records and lookup values" at=0,14,12,5

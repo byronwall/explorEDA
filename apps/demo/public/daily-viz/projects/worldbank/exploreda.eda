@@ -1,0 +1,47 @@
+project @worldbank
+
+source @years key=country_year path=../../../datasets/worldbank/country-years.csv {
+  field country_year string
+  field country_code string
+  field year number
+  field year_start date
+  field population number
+}
+
+source @countries key=country_code path=../../../datasets/worldbank/countries.csv {
+  field country_code string
+  field name string
+  field region string
+  field income string
+  field capital string
+  field latitude number
+  field longitude number
+}
+
+source @gdp key=country_year path=../../../datasets/worldbank/gdp.csv {
+  field country_year string
+  field gdp_pc number
+  field log10_gdp_pc number
+}
+
+source @life_expectancy key=country_year path=../../../datasets/worldbank/life-expectancy.csv {
+  field country_year string
+  field life_expectancy number
+}
+
+relate @year-country years.country_code -> countries.country_code
+relate @year-gdp years.country_year -> gdp.country_year
+relate @year-life years.country_year -> life_expectancy.country_year
+
+query @years "Country-years with region, GDP, and life expectancy" glyph=◆ {
+  source years
+  lookup country via=year-country
+  lookup gdp via=year-gdp
+  lookup life via=year-life
+}
+
+query @latest "2023 only" glyph=◆ {
+  source years
+  lookup country via=year-country
+  filter @in-2023 years.year = 2023
+}

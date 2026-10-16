@@ -1,0 +1,600 @@
+[
+  {
+    "family": "ercot",
+    "reference": "signed-error",
+    "slug": "forecast-investigation",
+    "title": "Investigate the supplied ERCOT forecast hours",
+    "question": "Which hours combine large errors, unusual forecast levels, and a particular clock-hour context?",
+    "query": "r",
+    "steps": [
+      {
+        "kind": "scatter",
+        "title": "Forecast level and signed error",
+        "args": "x=forecast y=error color=direction",
+        "prose": ""
+      },
+      {
+        "kind": "row",
+        "title": "Select an error direction",
+        "args": "direction",
+        "prose": ""
+      },
+      {
+        "kind": "hist",
+        "title": "Brush an absolute-error range",
+        "args": "abs_error bins=30",
+        "prose": ""
+      },
+      {
+        "kind": "boxplot",
+        "title": "Error distribution by UTC month",
+        "args": "error color=month_label",
+        "prose": ""
+      },
+      {
+        "kind": "heatmap",
+        "title": "Clock hour and month",
+        "args": "hour_label columnField=month_label aggregation=average measureField=abs_error",
+        "prose": ""
+      },
+      {
+        "kind": "metric",
+        "title": "Supplied hours matching the filters",
+        "args": "count",
+        "prose": ""
+      }
+    ],
+    "table": [
+      "date",
+      "actual",
+      "forecast",
+      "error",
+      "abs_error",
+      "hour_label"
+    ],
+    "interactions": [
+      "Select Below forecast, then brush a high absolute-error range. The table should retain only the intersection.",
+      "Clear the error-direction chart and verify that the same error-range selection remains.",
+      "Alt-click an error point and reconcile actual minus forecast against the source row."
+    ],
+    "lookup": false
+  },
+  {
+    "family": "co2",
+    "reference": "trend-and-coverage",
+    "slug": "measurement-investigation",
+    "title": "Investigate CO2 measurements and their coverage",
+    "question": "Which concentrations and missing dates belong to a selected decade and calendar month?",
+    "query": "r",
+    "steps": [
+      {
+        "kind": "line",
+        "title": "Historical weekly concentrations",
+        "args": "x=date y=co2",
+        "prose": ""
+      },
+      {
+        "kind": "row",
+        "title": "Select a decade",
+        "args": "decade",
+        "prose": ""
+      },
+      {
+        "kind": "row",
+        "title": "Measured or missing",
+        "args": "coverage",
+        "prose": ""
+      },
+      {
+        "kind": "boxplot",
+        "title": "Centered values by month",
+        "args": "residual color=month_label",
+        "prose": ""
+      },
+      {
+        "kind": "hist",
+        "title": "Concentration distribution",
+        "args": "co2 bins=28",
+        "prose": ""
+      },
+      {
+        "kind": "metric",
+        "title": "Supplied weekly slots in selection",
+        "args": "count",
+        "prose": ""
+      }
+    ],
+    "table": [
+      "date",
+      "co2",
+      "coverage",
+      "annual_center",
+      "residual"
+    ],
+    "interactions": [
+      "Select the 1990s in the decade chart, then one month in the box plot; all peer views should reflect their intersection.",
+      "Select Missing in coverage. The table should retain null CO2 records while numerical concentration marks disappear.",
+      "Clear all selections and compare the source-row count with the full snapshot."
+    ],
+    "lookup": false
+  },
+  {
+    "family": "elnino",
+    "reference": "season-and-anomaly",
+    "slug": "season-investigation",
+    "title": "Investigate warm months against their own season",
+    "question": "Are extreme Niño 1+2 anomalies concentrated in particular months or decades?",
+    "query": "r",
+    "steps": [
+      {
+        "kind": "scatter",
+        "title": "Temperature and seasonal anomaly",
+        "args": "x=sst y=anomaly color=decade",
+        "prose": ""
+      },
+      {
+        "kind": "row",
+        "title": "Select a decade",
+        "args": "decade",
+        "prose": ""
+      },
+      {
+        "kind": "boxplot",
+        "title": "Anomalies by calendar month",
+        "args": "anomaly color=month_label",
+        "prose": ""
+      },
+      {
+        "kind": "hist",
+        "title": "Brush an anomaly range",
+        "args": "anomaly bins=30",
+        "prose": ""
+      },
+      {
+        "kind": "line",
+        "title": "Monthly anomalies in time",
+        "args": "x=date y=anomaly",
+        "prose": ""
+      },
+      {
+        "kind": "metric",
+        "title": "Calendar months matching the filters",
+        "args": "count",
+        "prose": ""
+      }
+    ],
+    "table": [
+      "date",
+      "sst",
+      "climatology",
+      "anomaly",
+      "month_label"
+    ],
+    "interactions": [
+      "Select a decade, then brush positive anomalies in the histogram; the line should narrow to the same months.",
+      "Alt-click a point and subtract its climatology from its Celsius temperature.",
+      "Clear the decade selection without clearing the anomaly brush and compare the broader population."
+    ],
+    "lookup": false
+  },
+  {
+    "family": "macro",
+    "reference": "level-versus-growth",
+    "slug": "quarter-investigation",
+    "title": "Investigate a historical quarter, not today’s economy",
+    "question": "Which quarters combine GDP contraction, unemployment change, and a particular inflation context?",
+    "query": "r",
+    "steps": [
+      {
+        "kind": "scatter",
+        "title": "GDP change and unemployment change",
+        "args": "x=gdp_change y=unemp_change color=decade",
+        "prose": ""
+      },
+      {
+        "kind": "row",
+        "title": "Select a historical decade",
+        "args": "decade",
+        "prose": ""
+      },
+      {
+        "kind": "hist",
+        "title": "Brush annualized GDP growth",
+        "args": "gdp_growth bins=26",
+        "prose": ""
+      },
+      {
+        "kind": "scatter",
+        "title": "Inflation and unemployment levels",
+        "args": "x=unemp y=infl color=decade",
+        "prose": ""
+      },
+      {
+        "kind": "line",
+        "title": "GDP level through the supplied quarters",
+        "args": "x=date y=realgdp",
+        "prose": ""
+      },
+      {
+        "kind": "metric",
+        "title": "Quarter rows matching the filters",
+        "args": "count",
+        "prose": ""
+      }
+    ],
+    "table": [
+      "date",
+      "realgdp",
+      "gdp_growth",
+      "unemp",
+      "unemp_change",
+      "infl"
+    ],
+    "interactions": [
+      "Brush negative GDP growth and inspect the remaining quarters in the record table.",
+      "Select a decade and verify the intersection, including the first-quarter missing-change behavior.",
+      "Clear all filters before comparing the fixed narrative extrema with live charts."
+    ],
+    "lookup": false
+  },
+  {
+    "family": "grunfeld",
+    "reference": "within-firm",
+    "slug": "firm-investigation",
+    "title": "Trace a firm-year through an explicit company lookup",
+    "question": "How do a selected firm’s annual changes compare with its own panel summary?",
+    "query": "r",
+    "steps": [
+      {
+        "kind": "scatter",
+        "title": "Market value and investment",
+        "args": "x=value y=invest color=firm",
+        "prose": ""
+      },
+      {
+        "kind": "row",
+        "title": "Select a firm",
+        "args": "firm",
+        "prose": ""
+      },
+      {
+        "kind": "scatter",
+        "title": "Within-firm annual changes",
+        "args": "x=value_change y=invest_change",
+        "prose": ""
+      },
+      {
+        "kind": "hist",
+        "title": "Investment-index distribution",
+        "args": "invest_index bins=24",
+        "prose": ""
+      },
+      {
+        "kind": "line",
+        "title": "Recorded investment through time",
+        "args": "x=year y=invest",
+        "prose": ""
+      },
+      {
+        "kind": "metric",
+        "title": "Firm-years in the selection",
+        "args": "count",
+        "prose": ""
+      }
+    ],
+    "table": [
+      "firm",
+      "year",
+      "invest",
+      "value",
+      "invest_change",
+      "company_mean"
+    ],
+    "interactions": [
+      "Select one firm before reading the annual line, then trace a row into its company summary lookup.",
+      "Brush negative investment changes and inspect the intersection with the selected firm.",
+      "Clear the firm selector and confirm that base firm-year count is preserved, not multiplied by the lookup."
+    ],
+    "lookup": true
+  },
+  {
+    "family": "fertility",
+    "reference": "trajectories",
+    "slug": "country-investigation",
+    "title": "Investigate selected fertility paths and empty year cells",
+    "question": "Which selected country-years support a comparison, and which year cells are null?",
+    "query": "r",
+    "steps": [
+      {
+        "kind": "scatter",
+        "title": "Recorded country-year rates",
+        "args": "x=year y=fertility color=country",
+        "prose": ""
+      },
+      {
+        "kind": "row",
+        "title": "Select a country",
+        "args": "country",
+        "prose": ""
+      },
+      {
+        "kind": "hist",
+        "title": "Brush a year range",
+        "args": "year bins=54",
+        "prose": ""
+      },
+      {
+        "kind": "boxplot",
+        "title": "Available values by decade",
+        "args": "fertility color=decade",
+        "prose": ""
+      },
+      {
+        "kind": "ecdf",
+        "title": "Distribution of selected period rates",
+        "args": "fertility direction=below",
+        "prose": ""
+      },
+      {
+        "kind": "metric",
+        "title": "Retained country-year cells",
+        "args": "count",
+        "prose": ""
+      }
+    ],
+    "table": [
+      "country",
+      "code",
+      "year",
+      "fertility",
+      "decade"
+    ],
+    "interactions": [
+      "Select a country, then a year range ending in 2013; null end-year rows remain in the table but not the numerical scatter.",
+      "Clear the country selection and compare the same year range across the illustrative cohort.",
+      "Inspect a 2011 rate and a 2012 null without converting the latter to zero."
+    ],
+    "lookup": false
+  },
+  {
+    "family": "iris",
+    "reference": "measurement-choice",
+    "slug": "flower-investigation",
+    "title": "Follow the same flowers across several measurements",
+    "question": "Which flowers remain when a species selection and a petal-length range intersect?",
+    "query": "r",
+    "steps": [
+      {
+        "kind": "scatter",
+        "title": "Petal dimensions",
+        "args": "x=petal_length y=petal_width color=species",
+        "prose": ""
+      },
+      {
+        "kind": "row",
+        "title": "Select species",
+        "args": "species",
+        "prose": ""
+      },
+      {
+        "kind": "scatter",
+        "title": "Sepal dimensions of the same flowers",
+        "args": "x=sepal_length y=sepal_width color=species",
+        "prose": ""
+      },
+      {
+        "kind": "hist",
+        "title": "Brush petal length",
+        "args": "petal_length bins=20",
+        "prose": ""
+      },
+      {
+        "kind": "parallel",
+        "title": "Four measurements per flower",
+        "args": "sepal_length,sepal_width,petal_length,petal_width color=species",
+        "prose": ""
+      },
+      {
+        "kind": "metric",
+        "title": "Flowers matching the filters",
+        "args": "count",
+        "prose": ""
+      }
+    ],
+    "table": [
+      "species",
+      "sepal_length",
+      "sepal_width",
+      "petal_length",
+      "petal_width"
+    ],
+    "interactions": [
+      "Select versicolor, then brush petal length; the sepal plot and table should retain the identical flower IDs.",
+      "Alt-click a scatter point to inspect its original four measurements.",
+      "Clear the species chart while preserving the length brush and compare overlap with other species."
+    ],
+    "lookup": false
+  },
+  {
+    "family": "wine",
+    "reference": "cultivar-chemistry",
+    "slug": "assay-investigation",
+    "title": "Investigate cultivar chemistry without quality labels",
+    "question": "Which assay profiles remain after selecting a cultivar and a chemical range?",
+    "query": "r",
+    "steps": [
+      {
+        "kind": "scatter",
+        "title": "Flavanoids and color intensity",
+        "args": "x=flavanoids y=color_intensity color=cultivar",
+        "prose": ""
+      },
+      {
+        "kind": "row",
+        "title": "Select a supplied cultivar",
+        "args": "cultivar",
+        "prose": ""
+      },
+      {
+        "kind": "hist",
+        "title": "Brush flavanoid values",
+        "args": "flavanoids bins=24",
+        "prose": ""
+      },
+      {
+        "kind": "scatter",
+        "title": "Alcohol and proline",
+        "args": "x=alcohol y=proline color=cultivar",
+        "prose": ""
+      },
+      {
+        "kind": "parallel",
+        "title": "Selected chemical axes",
+        "args": "alcohol,magnesium,flavanoids,color_intensity,proline color=cultivar",
+        "prose": ""
+      },
+      {
+        "kind": "metric",
+        "title": "Wine analyses matching the filters",
+        "args": "count",
+        "prose": ""
+      }
+    ],
+    "table": [
+      "cultivar",
+      "alcohol",
+      "flavanoids",
+      "color_intensity",
+      "hue",
+      "proline"
+    ],
+    "interactions": [
+      "Select Cultivar 3 and brush a flavanoid range; verify identical source wines in the profile and table.",
+      "Trace a value without assigning an invented physical unit or tasting quality.",
+      "Clear the cultivar selection and inspect overlap in the same numerical range."
+    ],
+    "lookup": false
+  },
+  {
+    "family": "longley",
+    "reference": "trending-levels",
+    "slug": "employment-investigation",
+    "title": "Investigate a small historical employment benchmark",
+    "question": "Which annual observations drive the difference between the levels and changes views?",
+    "query": "r",
+    "steps": [
+      {
+        "kind": "scatter",
+        "title": "Nominal output and employment levels",
+        "args": "x=gnp y=employment color=era",
+        "prose": ""
+      },
+      {
+        "kind": "row",
+        "title": "Select a broad historical span",
+        "args": "era",
+        "prose": ""
+      },
+      {
+        "kind": "scatter",
+        "title": "Output and employment changes",
+        "args": "x=gnp_change y=employment_change",
+        "prose": ""
+      },
+      {
+        "kind": "line",
+        "title": "Unemployment counts over time",
+        "args": "x=year y=unemployed",
+        "prose": ""
+      },
+      {
+        "kind": "hist",
+        "title": "Brush annual employment change",
+        "args": "employment_change bins=10",
+        "prose": ""
+      },
+      {
+        "kind": "metric",
+        "title": "Annual source rows in selection",
+        "args": "count",
+        "prose": ""
+      }
+    ],
+    "table": [
+      "year",
+      "employment",
+      "gnp",
+      "employment_change",
+      "gnp_change",
+      "unemployed"
+    ],
+    "interactions": [
+      "Brush negative employment changes and inspect the corresponding annual count records.",
+      "Select an era and check the combined subset rather than interpreting either filter separately.",
+      "Clear all selections and verify that the initial row remains even though its change values are null."
+    ],
+    "lookup": false
+  },
+  {
+    "family": "football",
+    "reference": "points-and-goals",
+    "slug": "team-match-investigation",
+    "title": "Follow a team’s group profile back to its matches",
+    "question": "Which individual match appearances produced a team’s group-stage scoring and points?",
+    "query": "appearances",
+    "steps": [
+      {
+        "kind": "scatter",
+        "title": "Goals scored and conceded in one appearance",
+        "args": "x=goals_for y=goals_against color=result",
+        "prose": ""
+      },
+      {
+        "kind": "row",
+        "title": "Select a team",
+        "args": "team",
+        "prose": ""
+      },
+      {
+        "kind": "row",
+        "title": "Select a match result",
+        "args": "result",
+        "prose": ""
+      },
+      {
+        "kind": "boxplot",
+        "title": "Goals scored by group",
+        "args": "goals_for color=group",
+        "prose": ""
+      },
+      {
+        "kind": "scatter",
+        "title": "Appearance points and full group points",
+        "args": "x=points y=group_points color=group",
+        "prose": ""
+      },
+      {
+        "kind": "metric",
+        "title": "Team appearances, not distinct matches",
+        "args": "count",
+        "prose": ""
+      }
+    ],
+    "table": [
+      "date",
+      "team",
+      "opponent",
+      "goals_for",
+      "goals_against",
+      "points",
+      "group_points",
+      "match_total"
+    ],
+    "interactions": [
+      "Select a team: its three appearances should remain, with each row linked to the team summary and the original match.",
+      "Then select Win; this narrows appearances, while the repeated full-group points lookup remains the team’s fixed whole-group total.",
+      "Do not sum the repeated group_points field across appearances. Clear selections to recover 96 appearances from 48 matches."
+    ],
+    "lookup": true
+  }
+]

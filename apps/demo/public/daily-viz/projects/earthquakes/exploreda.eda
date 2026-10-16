@@ -1,0 +1,29 @@
+project @earthquakes
+
+source @events key=id path=../../../datasets/earthquakes/events.csv {
+  field id string
+  field time date
+  field date date
+  field latitude number
+  field longitude number
+  field depth number
+  field depth_band string
+  field mag number
+  field mag_type string
+  field place string
+  field area string
+  field net string
+  field status string
+  field metadata_present number
+  field metadata_band string
+  field nst number
+  field gap number
+  field rms number
+  field horizontal_error number
+  field depth_error number
+  field mag_error number
+}
+
+query @events "events" glyph=◆ {
+  source events
+}

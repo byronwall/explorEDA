@@ -1,0 +1,19 @@
+eda query=annual
+dashboard "Each year's warmest and coolest months, 1950 to 2010"
+grid columns=12 rowHeight=76
+composition @cp-elnino-observed-range width=960 height=690 at=0,0,12,9 {
+  title "Each year's warmest and coolest months, 1950 to 2010" at=32,28 fontSize=24
+  subtitle "A min–max band surrounds an annual mean path. The band uses measured monthly extremes." at=32,78 fontSize=13
+  scale numeric annual.year nice=false
+  scale numeric annual.mean zero=false
+  unit Years at=90,155 size=820x330 axisTitles.x=Year axisTitles.y="Niño 1+2 temperature (degrees C)" {
+    label show=false
+    band Range x=annual.year y=annual.mean orderField=annual.year lowerField=annual.low upperField=annual.high opacity=0.18
+    path Mean x=annual.year y=annual.mean orderField=annual.year strokeWidth=1.8
+  }
+  legend "Observed, not modeled" at=95,535 unit=Years mark=Mean {
+    item "Observed monthly minimum to maximum" mark=Range
+    item "Annual monthly mean" mark=Mean
+  }
+  footnote "NOAA CPC, ERSST v3b Niño 1+2; historical snapshot; public domain." at=32,636 fontSize=10
+}

@@ -83,6 +83,10 @@ drag one of its ends to stretch it. A range changes only the view: filters and
 row counts stay as they were. Your app's `onStateChange` hears each edit once,
 so one rename or one drag is one undo step.
 
+## Daily data viz
+
+The demo includes a [daily visualization collection](https://exploreda.dev/daily): narrative notebooks, compositions, and dashboards over real datasets. Each piece ships its local data, credits, and findings that the tests recompute. Source files are in [`apps/demo/public/daily-viz`](apps/demo/public/daily-viz); after building the library, open a family with `node packages/explorEDA/dist/cli/exploreda.js apps/demo/public/daily-viz/projects/co2`. To add pieces, follow [Daily data viz](docs/daily-viz.md).
+
 ## Install
 
 ```sh

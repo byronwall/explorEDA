@@ -1,0 +1,16 @@
+eda query=titanic
+dashboard "Three classes, three different odds"
+grid columns=12 rowHeight=76
+composition @cp-titanic-fate-donuts width=900 height=460 at=0,0,12,7 {
+  title "Three classes, three different odds" at=32,28 fontSize=24
+  subtitle "Each ring is one class's passengers, split by fate. First class lost fewer than four in ten; third class lost three in four." at=32,72 fontSize=13
+  unit Classes at=60,150 size=200x200 axis=false {
+    repeat titanic.Class arrangement=columns columns=3 gap=80 order=label
+    label fontSize=14
+    donut Fate categoryField=titanic.Fate {
+      colors=#b3443b,#2f6db5 hole=0.58
+    }
+  }
+  legend "Fate" at=60,400 unit=Classes mark=Fate fontSize=11
+  footnote "Titanic passenger list (titanic3), Encyclopedia Titanica via Vanderbilt Biostatistics. Crew not included." at=32,430 fontSize=10
+}

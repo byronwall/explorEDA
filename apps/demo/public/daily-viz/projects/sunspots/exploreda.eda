@@ -1,0 +1,14 @@
+project @sunspots
+
+source @r key=id path=data/r.csv {
+  field id "id" string
+  field year "year" number
+  field activity "activity" number
+  field era "era" string
+  field smooth11 "smooth11" number
+  field departure "departure" number
+}
+
+query @r "r" glyph=◆ {
+  source r
+}

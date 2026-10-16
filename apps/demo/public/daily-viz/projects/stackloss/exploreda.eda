@@ -1,0 +1,20 @@
+project @stackloss
+
+source @r key=id path=data/r.csv {
+  field id "id" string
+  field stackloss "stackloss" number
+  field airflow "airflow" number
+  field watertemp "watertemp" number
+  field acidconc "acidconc" number
+  field sequence "sequence" number
+  field loss_pct "loss pct" number
+  field fitted "fitted" number
+  field residual "residual" number
+  field loo_slope "loo slope" number
+  field slope_shift "slope shift" number
+  field air_band "air band" string
+}
+
+query @r "r" glyph=◆ {
+  source r
+}

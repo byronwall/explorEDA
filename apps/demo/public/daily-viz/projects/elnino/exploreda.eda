@@ -1,0 +1,54 @@
+project @elnino
+
+source @r key=id path=data/r.csv {
+  field id "id" string
+  field year "year" number
+  field month_name "month name" string
+  field sst "sst" number
+  field month "month" number
+  field date "date" date
+  field month_label "month label" string
+  field decade "decade" string
+  field climatology "climatology" number
+  field anomaly "anomaly" number
+  field era "era" string
+}
+
+source @annual key=id path=data/annual.csv {
+  field id "id" string
+  field year "year" number
+  field mean "mean" number
+  field low "low" number
+  field high "high" number
+  field range "range" number
+  field months "months" number
+  field anomaly "anomaly" number
+}
+
+source @episodes key=id path=data/episodes.csv {
+  field id "id" string
+  field year "year" number
+  field month_name "month name" string
+  field sst "sst" number
+  field month "month" number
+  field date "date" date
+  field month_label "month label" string
+  field decade "decade" string
+  field climatology "climatology" number
+  field anomaly "anomaly" number
+  field era "era" string
+  field episode "episode" string
+  field episode_month "episode month" number
+}
+
+query @r "r" glyph=◆ {
+  source r
+}
+
+query @annual "annual" glyph=◆ {
+  source annual
+}
+
+query @episodes "episodes" glyph=◆ {
+  source episodes
+}

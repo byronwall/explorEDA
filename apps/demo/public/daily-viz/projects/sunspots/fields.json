@@ -1,0 +1,68 @@
+{
+  "r": {
+    "source_id": "r",
+    "path": "projects/sunspots/data/r.csv",
+    "row_count": 309,
+    "grain": "one year",
+    "key": "id",
+    "fields": [
+      {
+        "name": "id",
+        "source_field": "r.id",
+        "type": "string",
+        "unit": "identifier",
+        "missing_count": 0,
+        "valid_count": 309,
+        "description": "id; identifier"
+      },
+      {
+        "name": "year",
+        "source_field": "r.year",
+        "type": "number",
+        "unit": "year",
+        "missing_count": 0,
+        "valid_count": 309,
+        "description": "year; year"
+      },
+      {
+        "name": "activity",
+        "source_field": "r.activity",
+        "type": "number",
+        "unit": "historical annual sunspot number",
+        "missing_count": 0,
+        "valid_count": 309,
+        "description": "activity; historical annual sunspot number"
+      },
+      {
+        "name": "era",
+        "source_field": "r.era",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 309,
+        "description": "era; category"
+      },
+      {
+        "name": "smooth11",
+        "source_field": "r.smooth11",
+        "type": "number",
+        "unit": "11-year mean sunspot number",
+        "missing_count": 10,
+        "valid_count": 299,
+        "description": "smooth11; 11-year mean sunspot number"
+      },
+      {
+        "name": "departure",
+        "source_field": "r.departure",
+        "type": "number",
+        "unit": "sunspot-number difference",
+        "missing_count": 10,
+        "valid_count": 299,
+        "description": "departure; sunspot-number difference"
+      }
+    ],
+    "transformations": "Centered 11-year arithmetic mean requires all 11 observations; five edge years at either end have no smooth value. Historical supplied revision retained.",
+    "sha256": "da9c89bba8e669ed20622e8cd154911d872a99f36d5a8acb2578f1d914edb1c9",
+    "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+  }
+}

@@ -1,0 +1,9 @@
+eda query={{query}}
+dashboard "{{title}}"
+grid columns=12 rowHeight=76
+TODO_field:num={{query}}.TODO_field label="Readable name (unit)"
+line @{{id}}-trend x=TODO y=TODO title="The overview" at=0,0,8,5
+row @{{id}}-pick TODO title="Select a group" at=8,0,4,5
+hist @{{id}}-spread TODO title="How values spread" at=0,5,6,4
+metric @{{id}}-count count title="Rows in selection" at=6,5,6,2
+table @{{id}}-records TODO title="Matching records" at=0,9,12,5

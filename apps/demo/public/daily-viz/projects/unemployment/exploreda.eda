@@ -1,0 +1,13 @@
+project @unemployment
+
+source @industries path=../../../datasets/unemployment-industries.csv {
+  field Industry string
+  field Month date
+  field Year number
+  field "Unemployed (thousands)" number
+  field "Unemployment rate" number
+}
+
+query @industries "industries" glyph=◆ {
+  source industries
+}

@@ -1,0 +1,421 @@
+[
+  {
+    "id": "source-ercot",
+    "authoritative_urls": [
+      "https://www.eia.gov/electricity/gridmonitor/",
+      "https://raw.githubusercontent.com/byronwall/explorEDA/ea8b52ff742f11d1fb89457acabbcd27b0bd04e7/packages/explorEDA/examples/forecast/data/ercot-demand.csv",
+      "https://www.eia.gov/about/copyrights_reuse.php",
+      "https://www.eia.gov/about/copyrights_reuse.php"
+    ],
+    "retrieval_time_utc": "2026-10-16T02:53:17.612711+00:00",
+    "supports": [
+      "dataset attribution",
+      "historical snapshot identity",
+      "field definitions and units",
+      "documented redistribution basis"
+    ],
+    "local_evidence_paths": [
+      "evidence/raw/ercot-demand.csv",
+      "evidence/licenses/ercot.md",
+      "evidence/fields/ercot.json"
+    ],
+    "acquisition_method": "Exact CSV bytes from authorized source packet; SHA-256 matches packet manifest",
+    "original_source": "U.S. EIA ERCOT hourly demand and day-ahead forecast, as credited in the baseline forecast notebook"
+  },
+  {
+    "id": "source-co2",
+    "authoritative_urls": [
+      "https://www.statsmodels.org/stable/datasets/generated/co2.html",
+      "https://raw.githubusercontent.com/statsmodels/statsmodels/v0.14.6/statsmodels/datasets/co2/co2.csv",
+      "https://www.statsmodels.org/stable/datasets/generated/co2.html#copyright",
+      "https://www.statsmodels.org/stable/datasets/generated/co2.html#copyright"
+    ],
+    "retrieval_time_utc": "2026-10-16T02:53:16.334940+00:00",
+    "supports": [
+      "dataset attribution",
+      "historical snapshot identity",
+      "field definitions and units",
+      "documented redistribution basis"
+    ],
+    "local_evidence_paths": [
+      "evidence/raw/co2.csv",
+      "evidence/licenses/co2.md",
+      "evidence/fields/co2.json"
+    ],
+    "acquisition_method": "copied from installed package; no network download claimed",
+    "original_source": "\nData obtained from http://cdiac.ornl.gov/trends/co2/sio-keel-flask/sio-keel-flaskmlo_c.html\n\nObtained on 3/15/2014.\n\nCitation:\n\nKeeling, C.D. and T.P. Whorf. 2004. Atmospheric CO2 concentrations derived from flask air samples at sites in the SIO network. In Trends: A Compendium of Data on Global Change. Carbon Dioxide Information Analysis Center, Oak Ridge National Laboratory, U.S. Department of Energy, Oak Ridge, Tennessee, U.S.A.\n"
+  },
+  {
+    "id": "source-elnino",
+    "authoritative_urls": [
+      "https://www.statsmodels.org/stable/datasets/generated/elnino.html",
+      "https://raw.githubusercontent.com/statsmodels/statsmodels/v0.14.6/statsmodels/datasets/elnino/elnino.csv",
+      "https://www.statsmodels.org/stable/datasets/generated/elnino.html#copyright",
+      "https://www.statsmodels.org/stable/datasets/generated/elnino.html#copyright"
+    ],
+    "retrieval_time_utc": "2026-10-16T02:53:16.335902+00:00",
+    "supports": [
+      "dataset attribution",
+      "historical snapshot identity",
+      "field definitions and units",
+      "documented redistribution basis"
+    ],
+    "local_evidence_paths": [
+      "evidence/raw/elnino.csv",
+      "evidence/licenses/elnino.md",
+      "evidence/fields/elnino.json"
+    ],
+    "acquisition_method": "copied from installed package; no network download claimed",
+    "original_source": "\nNational Oceanic and Atmospheric Administration's National Weather Service\n\nERSST.V3B dataset, Nino 1+2\nhttp://www.cpc.ncep.noaa.gov/data/indices/\n"
+  },
+  {
+    "id": "source-sunspots",
+    "authoritative_urls": [
+      "https://www.statsmodels.org/stable/datasets/generated/sunspots.html",
+      "https://raw.githubusercontent.com/statsmodels/statsmodels/v0.14.6/statsmodels/datasets/sunspots/sunspots.csv",
+      "https://www.statsmodels.org/stable/datasets/generated/sunspots.html#copyright",
+      "https://www.statsmodels.org/stable/datasets/generated/sunspots.html#copyright"
+    ],
+    "retrieval_time_utc": "2026-10-16T02:53:16.336904+00:00",
+    "supports": [
+      "dataset attribution",
+      "historical snapshot identity",
+      "field definitions and units",
+      "documented redistribution basis"
+    ],
+    "local_evidence_paths": [
+      "evidence/raw/sunspots.csv",
+      "evidence/licenses/sunspots.md",
+      "evidence/fields/sunspots.json"
+    ],
+    "acquisition_method": "copied from installed package; no network download claimed",
+    "original_source": "\nhttp://www.ngdc.noaa.gov/stp/solar/solarda3.html\n\nThe original dataset contains monthly data on sunspot activity in the file\n./src/sunspots_yearly.dat.  There is also sunspots_monthly.dat.\n"
+  },
+  {
+    "id": "source-nile",
+    "authoritative_urls": [
+      "https://www.statsmodels.org/stable/datasets/generated/nile.html",
+      "https://raw.githubusercontent.com/statsmodels/statsmodels/v0.14.6/statsmodels/datasets/nile/nile.csv",
+      "https://www.statsmodels.org/stable/datasets/generated/nile.html#copyright",
+      "https://www.statsmodels.org/stable/datasets/generated/nile.html#copyright"
+    ],
+    "retrieval_time_utc": "2026-10-16T02:53:16.337930+00:00",
+    "supports": [
+      "dataset attribution",
+      "historical snapshot identity",
+      "field definitions and units",
+      "documented redistribution basis"
+    ],
+    "local_evidence_paths": [
+      "evidence/raw/nile.csv",
+      "evidence/licenses/nile.md",
+      "evidence/fields/nile.json"
+    ],
+    "acquisition_method": "copied from installed package; no network download claimed",
+    "original_source": "\nThis data is first analyzed in:\n\n    Cobb, G. W. 1978. \"The Problem of the Nile: Conditional Solution to a\n        Changepoint Problem.\" *Biometrika*. 65.2, 243-51.\n"
+  },
+  {
+    "id": "source-macro",
+    "authoritative_urls": [
+      "https://www.statsmodels.org/stable/datasets/generated/macrodata.html",
+      "https://raw.githubusercontent.com/statsmodels/statsmodels/v0.14.6/statsmodels/datasets/macrodata/macrodata.csv",
+      "https://www.statsmodels.org/stable/datasets/generated/macrodata.html#copyright",
+      "https://www.statsmodels.org/stable/datasets/generated/macrodata.html#copyright"
+    ],
+    "retrieval_time_utc": "2026-10-16T02:53:16.339242+00:00",
+    "supports": [
+      "dataset attribution",
+      "historical snapshot identity",
+      "field definitions and units",
+      "documented redistribution basis"
+    ],
+    "local_evidence_paths": [
+      "evidence/raw/macrodata.csv",
+      "evidence/licenses/macro.md",
+      "evidence/fields/macro.json"
+    ],
+    "acquisition_method": "copied from installed package; no network download claimed",
+    "original_source": "\nCompiled by Skipper Seabold. All data are from the Federal Reserve Bank of St.\nLouis [1] except the unemployment rate which was taken from the National\nBureau of Labor Statistics [2]. ::\n\n    [1] Data Source: FRED, Federal Reserve Economic Data, Federal Reserve Bank of\n        St. Louis; http://research.stlouisfed.org/fred2/; accessed December 15,\n        2009.\n\n    [2] Data Source: Bureau of Labor Statistics, U.S. Department of Labor;\n        http://www.bls.gov/data/; accessed December 15, 2009.\n"
+  },
+  {
+    "id": "source-grunfeld",
+    "authoritative_urls": [
+      "https://www.statsmodels.org/stable/datasets/generated/grunfeld.html",
+      "https://raw.githubusercontent.com/statsmodels/statsmodels/v0.14.6/statsmodels/datasets/grunfeld/grunfeld.csv",
+      "https://www.statsmodels.org/stable/datasets/generated/grunfeld.html#copyright",
+      "https://www.statsmodels.org/stable/datasets/generated/grunfeld.html#copyright"
+    ],
+    "retrieval_time_utc": "2026-10-16T02:53:16.340073+00:00",
+    "supports": [
+      "dataset attribution",
+      "historical snapshot identity",
+      "field definitions and units",
+      "documented redistribution basis"
+    ],
+    "local_evidence_paths": [
+      "evidence/raw/grunfeld.csv",
+      "evidence/licenses/grunfeld.md",
+      "evidence/fields/grunfeld.json"
+    ],
+    "acquisition_method": "copied from installed package; no network download claimed",
+    "original_source": "This is the Grunfeld (1950) Investment Data.\n\nThe source for the data was the original 11-firm data set from Grunfeld's Ph.D.\nthesis recreated by Kleiber and Zeileis (2008) \"The Grunfeld Data at 50\".\nThe data can be found here.\nhttp://statmath.wu-wien.ac.at/~zeileis/grunfeld/\n\nFor a note on the many versions of the Grunfeld data circulating see:\nhttp://www.stanford.edu/~clint/bench/grunfeld.htm\n"
+  },
+  {
+    "id": "source-stackloss",
+    "authoritative_urls": [
+      "https://www.statsmodels.org/stable/datasets/generated/stackloss.html",
+      "https://raw.githubusercontent.com/statsmodels/statsmodels/v0.14.6/statsmodels/datasets/stackloss/stackloss.csv",
+      "https://www.statsmodels.org/stable/datasets/generated/stackloss.html#copyright",
+      "https://www.statsmodels.org/stable/datasets/generated/stackloss.html#copyright"
+    ],
+    "retrieval_time_utc": "2026-10-16T02:53:16.340979+00:00",
+    "supports": [
+      "dataset attribution",
+      "historical snapshot identity",
+      "field definitions and units",
+      "documented redistribution basis"
+    ],
+    "local_evidence_paths": [
+      "evidence/raw/stackloss.csv",
+      "evidence/licenses/stackloss.md",
+      "evidence/fields/stackloss.json"
+    ],
+    "acquisition_method": "copied from installed package; no network download claimed",
+    "original_source": "\nBrownlee, K. A. (1965), \"Statistical Theory and Methodology in\nScience and Engineering\", 2nd edition, New York:Wiley.\n"
+  },
+  {
+    "id": "source-engel",
+    "authoritative_urls": [
+      "https://www.statsmodels.org/stable/datasets/generated/engel.html",
+      "https://raw.githubusercontent.com/statsmodels/statsmodels/v0.14.6/statsmodels/datasets/engel/engel.csv",
+      "https://www.statsmodels.org/stable/datasets/generated/engel.html#copyright",
+      "https://www.statsmodels.org/stable/datasets/generated/engel.html#copyright"
+    ],
+    "retrieval_time_utc": "2026-10-16T02:53:16.341818+00:00",
+    "supports": [
+      "dataset attribution",
+      "historical snapshot identity",
+      "field definitions and units",
+      "documented redistribution basis"
+    ],
+    "local_evidence_paths": [
+      "evidence/raw/engel.csv",
+      "evidence/licenses/engel.md",
+      "evidence/fields/engel.json"
+    ],
+    "acquisition_method": "copied from installed package; no network download claimed",
+    "original_source": "\nThis dataset was used in Koenker and Bassett (1982) and distributed alongside\nthe ``quantreg`` package for R.\n\nKoenker, R. and Bassett, G (1982) Robust Tests of Heteroscedasticity based on\nRegression Quantiles; Econometrica 50, 43-61.\n\nRoger Koenker (2012). quantreg: Quantile Regression. R package version 4.94.\nhttp://CRAN.R-project.org/package=quantreg\n"
+  },
+  {
+    "id": "source-strikes",
+    "authoritative_urls": [
+      "https://www.statsmodels.org/stable/datasets/generated/strikes.html",
+      "https://raw.githubusercontent.com/statsmodels/statsmodels/v0.14.6/statsmodels/datasets/strikes/strikes.csv",
+      "https://www.statsmodels.org/stable/datasets/generated/strikes.html#copyright",
+      "https://www.statsmodels.org/stable/datasets/generated/strikes.html#copyright"
+    ],
+    "retrieval_time_utc": "2026-10-16T02:53:16.342781+00:00",
+    "supports": [
+      "dataset attribution",
+      "historical snapshot identity",
+      "field definitions and units",
+      "documented redistribution basis"
+    ],
+    "local_evidence_paths": [
+      "evidence/raw/strikes.csv",
+      "evidence/licenses/strikes.md",
+      "evidence/fields/strikes.json"
+    ],
+    "acquisition_method": "copied from installed package; no network download claimed",
+    "original_source": "\nThis is a subset of the data used in Kennan (1985). It was originally\npublished by the Bureau of Labor Statistics.\n\n::\n\n    Kennan, J. 1985. \"The duration of contract strikes in US manufacturing.\n        `Journal of Econometrics` 28.1, 5-28.\n"
+  },
+  {
+    "id": "source-danish",
+    "authoritative_urls": [
+      "https://www.statsmodels.org/stable/datasets/generated/danish_data.html",
+      "https://raw.githubusercontent.com/statsmodels/statsmodels/v0.14.6/statsmodels/datasets/danish_data/data.csv",
+      "https://www.statsmodels.org/stable/datasets/generated/danish_data.html#copyright",
+      "https://www.statsmodels.org/stable/datasets/generated/danish_data.html#copyright"
+    ],
+    "retrieval_time_utc": "2026-10-16T02:53:16.343659+00:00",
+    "supports": [
+      "dataset attribution",
+      "historical snapshot identity",
+      "field definitions and units",
+      "documented redistribution basis"
+    ],
+    "local_evidence_paths": [
+      "evidence/raw/danish_data.csv",
+      "evidence/licenses/danish.md",
+      "evidence/fields/danish.json"
+    ],
+    "acquisition_method": "copied from installed package; no network download claimed",
+    "original_source": "\nDanish data used in S. Johansen and K. Juselius.  For estimating\nestimating a money demand function::\n\n    [1] Johansen, S. and Juselius, K. (1990), Maximum Likelihood Estimation\n        and Inference on Cointegration - with Applications to the Demand\n        for Money, Oxford Bulletin of Economics and Statistics, 52, 2,\n        169-210.\n"
+  },
+  {
+    "id": "source-fertility",
+    "authoritative_urls": [
+      "https://www.statsmodels.org/stable/datasets/generated/fertility.html",
+      "https://raw.githubusercontent.com/statsmodels/statsmodels/v0.14.6/statsmodels/datasets/fertility/fertility.csv",
+      "https://data.worldbank.org/indicator/SP.DYN.TFRT.IN",
+      "https://creativecommons.org/licenses/by/4.0/"
+    ],
+    "retrieval_time_utc": "2026-10-16T02:53:16.344709+00:00",
+    "supports": [
+      "dataset attribution",
+      "historical snapshot identity",
+      "field definitions and units",
+      "documented redistribution basis"
+    ],
+    "local_evidence_paths": [
+      "evidence/raw/fertility.csv",
+      "evidence/licenses/fertility.md",
+      "evidence/fields/fertility.json"
+    ],
+    "acquisition_method": "copied from installed package; no network download claimed",
+    "original_source": "\nThis data has been acquired from\n\nThe World Bank: Fertility rate, total (births per woman): World Development Indicators\n\nAt the following URL: http://data.worldbank.org/indicator/SP.DYN.TFRT.IN\n\nThe sources for these statistics are listed as\n\n(1) United Nations Population Division. World Population Prospects\n(2) United Nations Statistical Division. Population and Vital Statistics Repot (various years)\n(3) Census reports and other statistical publications from national statistical offices\n(4) Eurostat: Demographic Statistics\n(5) Secretariat of the Pacific Community: Statistics and Demography Programme\n(6) U.S. Census Bureau: International Database\n\nThe World Bank Terms of Use can be found at the following URL\n\nhttp://go.worldbank.org/OJC02YMLA0\n"
+  },
+  {
+    "id": "source-iris",
+    "authoritative_urls": [
+      "https://archive.ics.uci.edu/dataset/53/iris",
+      "https://raw.githubusercontent.com/scikit-learn/scikit-learn/1.8.0/sklearn/datasets/data/iris.csv",
+      "https://archive.ics.uci.edu/dataset/53/iris",
+      "https://creativecommons.org/licenses/by/4.0/"
+    ],
+    "retrieval_time_utc": "2026-10-16T02:53:16.840462+00:00",
+    "supports": [
+      "dataset attribution",
+      "historical snapshot identity",
+      "field definitions and units",
+      "documented redistribution basis"
+    ],
+    "local_evidence_paths": [
+      "evidence/raw/iris.csv",
+      "evidence/licenses/iris.md",
+      "evidence/fields/iris.json"
+    ],
+    "acquisition_method": "copied from installed package; no network download claimed",
+    "original_source": "UCI source dataset as distributed by scikit-learn"
+  },
+  {
+    "id": "source-wine",
+    "authoritative_urls": [
+      "https://archive.ics.uci.edu/dataset/109/wine",
+      "https://raw.githubusercontent.com/scikit-learn/scikit-learn/1.8.0/sklearn/datasets/data/wine_data.csv",
+      "https://archive.ics.uci.edu/dataset/109/wine",
+      "https://creativecommons.org/licenses/by/4.0/"
+    ],
+    "retrieval_time_utc": "2026-10-16T02:53:16.841041+00:00",
+    "supports": [
+      "dataset attribution",
+      "historical snapshot identity",
+      "field definitions and units",
+      "documented redistribution basis"
+    ],
+    "local_evidence_paths": [
+      "evidence/raw/wine.csv",
+      "evidence/licenses/wine.md",
+      "evidence/fields/wine.json"
+    ],
+    "acquisition_method": "copied from installed package; no network download claimed",
+    "original_source": "UCI source dataset as distributed by scikit-learn"
+  },
+  {
+    "id": "source-longley",
+    "authoritative_urls": [
+      "https://www.statsmodels.org/stable/datasets/generated/longley.html",
+      "https://raw.githubusercontent.com/statsmodels/statsmodels/v0.14.6/statsmodels/datasets/longley/longley.csv",
+      "https://www.statsmodels.org/stable/datasets/generated/longley.html#copyright",
+      "https://www.statsmodels.org/stable/datasets/generated/longley.html#copyright"
+    ],
+    "retrieval_time_utc": "2026-10-16T03:02:28.153770+00:00",
+    "supports": [
+      "dataset attribution",
+      "historical snapshot identity",
+      "field definitions and units",
+      "documented redistribution basis"
+    ],
+    "local_evidence_paths": [
+      "evidence/raw/longley.csv",
+      "evidence/licenses/longley.md",
+      "evidence/fields/longley.json"
+    ],
+    "acquisition_method": "copied from installed package; no network download claimed",
+    "original_source": "\nThe classic 1967 Longley Data\n\nhttp://www.itl.nist.gov/div898/strd/lls/data/Longley.shtml\n\n::\n\n    Longley, J.W. (1967) \"An Appraisal of Least Squares Programs for the\n        Electronic Comptuer from the Point of View of the User.\"  Journal of\n        the American Statistical Association.  62.319, 819-41.\n"
+  },
+  {
+    "id": "source-football",
+    "authoritative_urls": [
+      "https://github.com/openfootball/worldcup/tree/master/2018--russia",
+      "https://raw.githubusercontent.com/openfootball/worldcup/master/2018--russia/cup.txt",
+      "https://github.com/openfootball/worldcup/blob/master/README.md",
+      "https://github.com/openfootball/worldcup/blob/master/README.md"
+    ],
+    "retrieval_time_utc": "2026-10-16T02:58:15.618773+00:00",
+    "supports": [
+      "dataset attribution",
+      "historical snapshot identity",
+      "field definitions and units",
+      "documented redistribution basis"
+    ],
+    "local_evidence_paths": [
+      "evidence/raw/worldcup-group-matches.csv",
+      "evidence/licenses/football.md",
+      "evidence/fields/football.json"
+    ],
+    "acquisition_method": "All 48 group-stage final scores and supplied calendar dates transcribed from connector response; kickoff instants, venues, scorers and halftime scores omitted. Not a byte-identical copy of upstream text.",
+    "original_source": "https://github.com/openfootball/worldcup/tree/master/2018--russia"
+  },
+  {
+    "id": "source-tate",
+    "authoritative_urls": [
+      "https://github.com/tategallery/collection",
+      "https://raw.githubusercontent.com/tategallery/collection/master/artist_data.csv",
+      "https://github.com/tategallery/collection/blob/master/README.md",
+      "https://creativecommons.org/publicdomain/zero/1.0/"
+    ],
+    "retrieval_time_utc": "2026-10-16T02:58:15.618901+00:00",
+    "supports": [
+      "dataset attribution",
+      "historical snapshot identity",
+      "field definitions and units",
+      "documented redistribution basis"
+    ],
+    "local_evidence_paths": [
+      "evidence/raw/tate-artists-prefix.csv",
+      "evidence/licenses/tate.md",
+      "evidence/fields/tate.json"
+    ],
+    "acquisition_method": "Selected id, name, yearOfBirth and yearOfDeath from first 60 data records. Header renamed; values preserved. Full upstream row count not obtained. Alphabetical convenience slice, not representative.",
+    "original_source": "https://github.com/tategallery/collection"
+  },
+  {
+    "id": "source-repository",
+    "authoritative_urls": [
+      "https://github.com/byronwall/explorEDA/tree/ea8b52ff742f11d1fb89457acabbcd27b0bd04e7"
+    ],
+    "retrieval_time_utc": null,
+    "supports": [
+      "DSL and notebook syntax",
+      "demo integration contracts",
+      "source baseline"
+    ],
+    "local_evidence_paths": [
+      "evidence/source-inspection.json"
+    ]
+  },
+  {
+    "id": "source-blocked-barley",
+    "authoritative_urls": [
+      "https://github.com/vega/vega-datasets/blob/main/datapackage.md#barley"
+    ],
+    "retrieval_time_utc": null,
+    "supports": [
+      "Barley replacement decision: dataset license unspecified, unlike repository code license"
+    ],
+    "local_evidence_paths": [
+      "gaps.json"
+    ]
+  }
+]

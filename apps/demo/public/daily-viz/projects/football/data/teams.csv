@@ -1,0 +1,33 @@
+id,team,group,matches,goals_for,goals_against,points,goal_difference
+football-teams-00001,Argentina,D,3,3,5,4,-2
+football-teams-00002,Australia,C,3,2,5,1,-3
+football-teams-00003,Belgium,G,3,9,2,9,7
+football-teams-00004,Brazil,E,3,5,1,7,4
+football-teams-00005,Colombia,H,3,5,2,6,3
+football-teams-00006,Costa Rica,E,3,2,5,1,-3
+football-teams-00007,Croatia,D,3,7,1,9,6
+football-teams-00008,Denmark,C,3,2,1,5,1
+football-teams-00009,Egypt,A,3,2,6,0,-4
+football-teams-00010,England,G,3,8,3,6,5
+football-teams-00011,France,C,3,3,1,7,2
+football-teams-00012,Germany,F,3,2,4,3,-2
+football-teams-00013,Iceland,D,3,2,5,1,-3
+football-teams-00014,Iran,B,3,2,2,4,0
+football-teams-00015,Japan,H,3,4,4,4,0
+football-teams-00016,Mexico,F,3,3,4,6,-1
+football-teams-00017,Morocco,B,3,2,4,1,-2
+football-teams-00018,Nigeria,D,3,3,4,3,-1
+football-teams-00019,Panama,G,3,2,11,0,-9
+football-teams-00020,Peru,C,3,2,2,3,0
+football-teams-00021,Poland,H,3,2,5,3,-3
+football-teams-00022,Portugal,B,3,5,4,5,1
+football-teams-00023,Russia,A,3,8,4,6,4
+football-teams-00024,Saudi Arabia,A,3,2,7,3,-5
+football-teams-00025,Senegal,H,3,4,4,4,0
+football-teams-00026,Serbia,E,3,2,4,3,-2
+football-teams-00027,South Korea,F,3,3,3,3,0
+football-teams-00028,Spain,B,3,6,5,5,1
+football-teams-00029,Sweden,F,3,5,2,6,3
+football-teams-00030,Switzerland,E,3,5,4,5,1
+football-teams-00031,Tunisia,G,3,5,8,3,-3
+football-teams-00032,Uruguay,A,3,5,0,9,5

@@ -1,0 +1,18 @@
+eda query=days
+dashboard "Twelve stations, one city's air"
+grid columns=12 rowHeight=76
+date:date=days.date label="Date"
+station:cat=days.station label="Station"
+pm25:num=days.pm25 label="PM2.5 (µg/m³)"
+wind:num=days.wspm label="Wind speed (m/s)"
+season:cat=days.season label="Season"
+row @db-beijing-stations-pick station title="Select a station" at=0,0,4,6 x.title=Days
+calendar @db-beijing-stations-calendar date aggregation=average title="Daily PM2.5" at=4,0,8,6 {
+  measureField=pm25
+}
+scatter @db-beijing-stations-wind x=wind y=pm25 color=season title="Wind clears the air" at=0,6,6,5 x.title="Wind speed (m/s)" y.title="PM2.5 (µg/m³)"
+boxplot @db-beijing-stations-season pm25 color=season title="PM2.5 by season" at=6,6,6,5 y.title="PM2.5 (µg/m³)"
+metric @db-beijing-stations-mean avg(pm25) title="Mean PM2.5 in selection" at=0,11,3,2
+metric @db-beijing-stations-count count title="Station-days" at=3,11,3,2
+hist @db-beijing-stations-spread pm25 bins=40 title="Station-days by PM2.5" at=6,11,6,4 x.title="PM2.5 (µg/m³)" y.title="Station-days"
+table @db-beijing-stations-records date,station,season,pm25,wind title="Station-days in the selection" at=0,15,12,5

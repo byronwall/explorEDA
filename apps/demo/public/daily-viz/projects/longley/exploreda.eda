@@ -1,0 +1,34 @@
+project @longley
+
+source @r key=id path=data/r.csv {
+  field id "id" string
+  field employment "employment" number
+  field deflator "deflator" number
+  field gnp "gnp" number
+  field unemployed "unemployed" number
+  field armed "armed" number
+  field population "population" number
+  field year "year" number
+  field employment_change "employment change" number
+  field gnp_change "gnp change" number
+  field population_change "population change" number
+  field era "era" string
+  field employment_index "employment index" number
+  field gnp_index "gnp index" number
+  field population_index "population index" number
+}
+
+source @indexed key=id path=data/indexed.csv {
+  field id "id" string
+  field year "year" number
+  field series "series" string
+  field value "value" number
+}
+
+query @r "r" glyph=◆ {
+  source r
+}
+
+query @indexed "indexed" glyph=◆ {
+  source indexed
+}

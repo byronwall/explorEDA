@@ -1,0 +1,17 @@
+eda query=episodes
+dashboard "Two warm-water windows on one unshifted clock"
+grid columns=12 rowHeight=76
+composition @cp-elnino-aligned-windows width=960 height=690 at=0,0,12,9 {
+  title "Two warm-water windows on one unshifted clock" at=32,28 fontSize=24
+  subtitle "Two colored paths retain the monthly anomalies in the predeclared two-year windows." at=32,78 fontSize=13
+  scale numeric episodes.episode_month nice=false min=1 max=24
+  scale numeric episodes.anomaly zero=true
+  unit Windows at=90,155 size=820x330 axisTitles.x="Month since January of first year" axisTitles.y="Niño 1+2 anomaly (degrees C)" {
+    label show=false
+    path Anomalies x=episodes.episode_month y=episodes.anomaly orderField=episodes.episode_month seriesField=episodes.episode colorField=episodes.episode
+    point Months x=episodes.episode_month y=episodes.anomaly radius=2 colorField=episodes.episode
+  }
+  rule "1981–2010 monthly reference" at=5,0 unit=Windows axis=y value.value=0
+  legend Windows at=110,535 unit=Windows mark=Anomalies
+  footnote "NOAA CPC, ERSST v3b Niño 1+2; historical snapshot; public domain." at=32,636 fontSize=10
+}

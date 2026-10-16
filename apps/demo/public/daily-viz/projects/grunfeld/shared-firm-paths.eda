@@ -1,0 +1,15 @@
+eda query=r
+dashboard "Firm investment paths on one absolute scale"
+grid columns=12 rowHeight=76
+composition @cp-grunfeld-shared-firm-paths width=960 height=1030 at=0,0,12,9 {
+  title "Firm investment paths on one absolute scale" at=32,28 fontSize=24
+  subtitle "A repeated path for each firm shows recorded investment using the same vertical scale." at=32,78 fontSize=13
+  scale numeric r.year nice=false ticks=ends
+  scale numeric r.invest zero=true
+  unit Firms at=34,145 size=715x42 axisTitles.x=Year {
+    repeat r.firm arrangement=rows gap=27 order=label
+    label width=195 fontSize=12
+    path Investment x=r.year y=r.invest orderField=r.year
+  }
+  footnote "Grunfeld investment panel, Kleiber and Zeileis / statsmodels; public domain." at=32,976 fontSize=10
+}

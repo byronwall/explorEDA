@@ -1,0 +1,97 @@
+id,match_id,team,opponent,group,date,goals_for,goals_against,points,result
+football-appearances-00001,football-r-00001,Russia,Saudi Arabia,A,2018-06-14,5,0,3,Win
+football-appearances-00002,football-r-00001,Saudi Arabia,Russia,A,2018-06-14,0,5,0,Loss
+football-appearances-00003,football-r-00002,Egypt,Uruguay,A,2018-06-15,0,1,0,Loss
+football-appearances-00004,football-r-00002,Uruguay,Egypt,A,2018-06-15,1,0,3,Win
+football-appearances-00005,football-r-00003,Russia,Egypt,A,2018-06-19,3,1,3,Win
+football-appearances-00006,football-r-00003,Egypt,Russia,A,2018-06-19,1,3,0,Loss
+football-appearances-00007,football-r-00004,Uruguay,Saudi Arabia,A,2018-06-20,1,0,3,Win
+football-appearances-00008,football-r-00004,Saudi Arabia,Uruguay,A,2018-06-20,0,1,0,Loss
+football-appearances-00009,football-r-00005,Uruguay,Russia,A,2018-06-25,3,0,3,Win
+football-appearances-00010,football-r-00005,Russia,Uruguay,A,2018-06-25,0,3,0,Loss
+football-appearances-00011,football-r-00006,Saudi Arabia,Egypt,A,2018-06-25,2,1,3,Win
+football-appearances-00012,football-r-00006,Egypt,Saudi Arabia,A,2018-06-25,1,2,0,Loss
+football-appearances-00013,football-r-00007,Morocco,Iran,B,2018-06-15,0,1,0,Loss
+football-appearances-00014,football-r-00007,Iran,Morocco,B,2018-06-15,1,0,3,Win
+football-appearances-00015,football-r-00008,Portugal,Spain,B,2018-06-15,3,3,1,Draw
+football-appearances-00016,football-r-00008,Spain,Portugal,B,2018-06-15,3,3,1,Draw
+football-appearances-00017,football-r-00009,Portugal,Morocco,B,2018-06-20,1,0,3,Win
+football-appearances-00018,football-r-00009,Morocco,Portugal,B,2018-06-20,0,1,0,Loss
+football-appearances-00019,football-r-00010,Iran,Spain,B,2018-06-20,0,1,0,Loss
+football-appearances-00020,football-r-00010,Spain,Iran,B,2018-06-20,1,0,3,Win
+football-appearances-00021,football-r-00011,Iran,Portugal,B,2018-06-25,1,1,1,Draw
+football-appearances-00022,football-r-00011,Portugal,Iran,B,2018-06-25,1,1,1,Draw
+football-appearances-00023,football-r-00012,Spain,Morocco,B,2018-06-25,2,2,1,Draw
+football-appearances-00024,football-r-00012,Morocco,Spain,B,2018-06-25,2,2,1,Draw
+football-appearances-00025,football-r-00013,France,Australia,C,2018-06-16,2,1,3,Win
+football-appearances-00026,football-r-00013,Australia,France,C,2018-06-16,1,2,0,Loss
+football-appearances-00027,football-r-00014,Peru,Denmark,C,2018-06-16,0,1,0,Loss
+football-appearances-00028,football-r-00014,Denmark,Peru,C,2018-06-16,1,0,3,Win
+football-appearances-00029,football-r-00015,Denmark,Australia,C,2018-06-21,1,1,1,Draw
+football-appearances-00030,football-r-00015,Australia,Denmark,C,2018-06-21,1,1,1,Draw
+football-appearances-00031,football-r-00016,France,Peru,C,2018-06-21,1,0,3,Win
+football-appearances-00032,football-r-00016,Peru,France,C,2018-06-21,0,1,0,Loss
+football-appearances-00033,football-r-00017,Denmark,France,C,2018-06-26,0,0,1,Draw
+football-appearances-00034,football-r-00017,France,Denmark,C,2018-06-26,0,0,1,Draw
+football-appearances-00035,football-r-00018,Australia,Peru,C,2018-06-26,0,2,0,Loss
+football-appearances-00036,football-r-00018,Peru,Australia,C,2018-06-26,2,0,3,Win
+football-appearances-00037,football-r-00019,Argentina,Iceland,D,2018-06-16,1,1,1,Draw
+football-appearances-00038,football-r-00019,Iceland,Argentina,D,2018-06-16,1,1,1,Draw
+football-appearances-00039,football-r-00020,Croatia,Nigeria,D,2018-06-16,2,0,3,Win
+football-appearances-00040,football-r-00020,Nigeria,Croatia,D,2018-06-16,0,2,0,Loss
+football-appearances-00041,football-r-00021,Argentina,Croatia,D,2018-06-21,0,3,0,Loss
+football-appearances-00042,football-r-00021,Croatia,Argentina,D,2018-06-21,3,0,3,Win
+football-appearances-00043,football-r-00022,Nigeria,Iceland,D,2018-06-22,2,0,3,Win
+football-appearances-00044,football-r-00022,Iceland,Nigeria,D,2018-06-22,0,2,0,Loss
+football-appearances-00045,football-r-00023,Nigeria,Argentina,D,2018-06-26,1,2,0,Loss
+football-appearances-00046,football-r-00023,Argentina,Nigeria,D,2018-06-26,2,1,3,Win
+football-appearances-00047,football-r-00024,Iceland,Croatia,D,2018-06-26,1,2,0,Loss
+football-appearances-00048,football-r-00024,Croatia,Iceland,D,2018-06-26,2,1,3,Win
+football-appearances-00049,football-r-00025,Costa Rica,Serbia,E,2018-06-17,0,1,0,Loss
+football-appearances-00050,football-r-00025,Serbia,Costa Rica,E,2018-06-17,1,0,3,Win
+football-appearances-00051,football-r-00026,Brazil,Switzerland,E,2018-06-17,1,1,1,Draw
+football-appearances-00052,football-r-00026,Switzerland,Brazil,E,2018-06-17,1,1,1,Draw
+football-appearances-00053,football-r-00027,Brazil,Costa Rica,E,2018-06-22,2,0,3,Win
+football-appearances-00054,football-r-00027,Costa Rica,Brazil,E,2018-06-22,0,2,0,Loss
+football-appearances-00055,football-r-00028,Serbia,Switzerland,E,2018-06-22,1,2,0,Loss
+football-appearances-00056,football-r-00028,Switzerland,Serbia,E,2018-06-22,2,1,3,Win
+football-appearances-00057,football-r-00029,Serbia,Brazil,E,2018-06-27,0,2,0,Loss
+football-appearances-00058,football-r-00029,Brazil,Serbia,E,2018-06-27,2,0,3,Win
+football-appearances-00059,football-r-00030,Switzerland,Costa Rica,E,2018-06-27,2,2,1,Draw
+football-appearances-00060,football-r-00030,Costa Rica,Switzerland,E,2018-06-27,2,2,1,Draw
+football-appearances-00061,football-r-00031,Germany,Mexico,F,2018-06-17,0,1,0,Loss
+football-appearances-00062,football-r-00031,Mexico,Germany,F,2018-06-17,1,0,3,Win
+football-appearances-00063,football-r-00032,Sweden,South Korea,F,2018-06-18,1,0,3,Win
+football-appearances-00064,football-r-00032,South Korea,Sweden,F,2018-06-18,0,1,0,Loss
+football-appearances-00065,football-r-00033,South Korea,Mexico,F,2018-06-23,1,2,0,Loss
+football-appearances-00066,football-r-00033,Mexico,South Korea,F,2018-06-23,2,1,3,Win
+football-appearances-00067,football-r-00034,Germany,Sweden,F,2018-06-23,2,1,3,Win
+football-appearances-00068,football-r-00034,Sweden,Germany,F,2018-06-23,1,2,0,Loss
+football-appearances-00069,football-r-00035,South Korea,Germany,F,2018-06-27,2,0,3,Win
+football-appearances-00070,football-r-00035,Germany,South Korea,F,2018-06-27,0,2,0,Loss
+football-appearances-00071,football-r-00036,Mexico,Sweden,F,2018-06-27,0,3,0,Loss
+football-appearances-00072,football-r-00036,Sweden,Mexico,F,2018-06-27,3,0,3,Win
+football-appearances-00073,football-r-00037,Belgium,Panama,G,2018-06-18,3,0,3,Win
+football-appearances-00074,football-r-00037,Panama,Belgium,G,2018-06-18,0,3,0,Loss
+football-appearances-00075,football-r-00038,Tunisia,England,G,2018-06-18,1,2,0,Loss
+football-appearances-00076,football-r-00038,England,Tunisia,G,2018-06-18,2,1,3,Win
+football-appearances-00077,football-r-00039,Belgium,Tunisia,G,2018-06-23,5,2,3,Win
+football-appearances-00078,football-r-00039,Tunisia,Belgium,G,2018-06-23,2,5,0,Loss
+football-appearances-00079,football-r-00040,England,Panama,G,2018-06-24,6,1,3,Win
+football-appearances-00080,football-r-00040,Panama,England,G,2018-06-24,1,6,0,Loss
+football-appearances-00081,football-r-00041,England,Belgium,G,2018-06-28,0,1,0,Loss
+football-appearances-00082,football-r-00041,Belgium,England,G,2018-06-28,1,0,3,Win
+football-appearances-00083,football-r-00042,Panama,Tunisia,G,2018-06-28,1,2,0,Loss
+football-appearances-00084,football-r-00042,Tunisia,Panama,G,2018-06-28,2,1,3,Win
+football-appearances-00085,football-r-00043,Colombia,Japan,H,2018-06-19,1,2,0,Loss
+football-appearances-00086,football-r-00043,Japan,Colombia,H,2018-06-19,2,1,3,Win
+football-appearances-00087,football-r-00044,Poland,Senegal,H,2018-06-19,1,2,0,Loss
+football-appearances-00088,football-r-00044,Senegal,Poland,H,2018-06-19,2,1,3,Win
+football-appearances-00089,football-r-00045,Japan,Senegal,H,2018-06-24,2,2,1,Draw
+football-appearances-00090,football-r-00045,Senegal,Japan,H,2018-06-24,2,2,1,Draw
+football-appearances-00091,football-r-00046,Poland,Colombia,H,2018-06-24,0,3,0,Loss
+football-appearances-00092,football-r-00046,Colombia,Poland,H,2018-06-24,3,0,3,Win
+football-appearances-00093,football-r-00047,Japan,Poland,H,2018-06-28,0,1,0,Loss
+football-appearances-00094,football-r-00047,Poland,Japan,H,2018-06-28,1,0,3,Win
+football-appearances-00095,football-r-00048,Senegal,Colombia,H,2018-06-28,0,1,0,Loss
+football-appearances-00096,football-r-00048,Colombia,Senegal,H,2018-06-28,1,0,3,Win

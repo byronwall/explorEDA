@@ -1,0 +1,158 @@
+{
+  "r": {
+    "source_id": "r",
+    "path": "projects/danish/data/r.csv",
+    "row_count": 55,
+    "grain": "one Danish calendar quarter",
+    "key": "id",
+    "fields": [
+      {
+        "name": "id",
+        "source_field": "r.id",
+        "type": "string",
+        "unit": "identifier",
+        "missing_count": 0,
+        "valid_count": 55,
+        "description": "id; identifier"
+      },
+      {
+        "name": "period",
+        "source_field": "r.period",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 55,
+        "description": "period; category"
+      },
+      {
+        "name": "lrm",
+        "source_field": "r.lrm",
+        "type": "number",
+        "unit": "log real money, source definition",
+        "missing_count": 0,
+        "valid_count": 55,
+        "description": "lrm; log real money, source definition"
+      },
+      {
+        "name": "lry",
+        "source_field": "r.lry",
+        "type": "number",
+        "unit": "log real income, source definition",
+        "missing_count": 0,
+        "valid_count": 55,
+        "description": "lry; log real income, source definition"
+      },
+      {
+        "name": "lpy",
+        "source_field": "r.lpy",
+        "type": "number",
+        "unit": "log price level",
+        "missing_count": 0,
+        "valid_count": 55,
+        "description": "lpy; log price level"
+      },
+      {
+        "name": "ibo",
+        "source_field": "r.ibo",
+        "type": "number",
+        "unit": "source bond-rate units (fraction)",
+        "missing_count": 0,
+        "valid_count": 55,
+        "description": "ibo; source bond-rate units (fraction)"
+      },
+      {
+        "name": "ide",
+        "source_field": "r.ide",
+        "type": "number",
+        "unit": "source deposit-rate units (fraction)",
+        "missing_count": 0,
+        "valid_count": 55,
+        "description": "ide; source deposit-rate units (fraction)"
+      },
+      {
+        "name": "year",
+        "source_field": "r.year",
+        "type": "number",
+        "unit": "year",
+        "missing_count": 0,
+        "valid_count": 55,
+        "description": "year; year"
+      },
+      {
+        "name": "quarter",
+        "source_field": "r.quarter",
+        "type": "number",
+        "unit": "quarter number",
+        "missing_count": 0,
+        "valid_count": 55,
+        "description": "quarter; quarter number"
+      },
+      {
+        "name": "date",
+        "source_field": "r.date",
+        "type": "date",
+        "unit": "calendar label",
+        "missing_count": 0,
+        "valid_count": 55,
+        "description": "date; calendar label"
+      },
+      {
+        "name": "money_index",
+        "source_field": "r.money_index",
+        "type": "number",
+        "unit": "first quarter = 100",
+        "missing_count": 0,
+        "valid_count": 55,
+        "description": "money index; first quarter = 100"
+      },
+      {
+        "name": "income_index",
+        "source_field": "r.income_index",
+        "type": "number",
+        "unit": "first quarter = 100",
+        "missing_count": 0,
+        "valid_count": 55,
+        "description": "income index; first quarter = 100"
+      },
+      {
+        "name": "dmoney",
+        "source_field": "r.dmoney",
+        "type": "number",
+        "unit": "quarterly log change",
+        "missing_count": 1,
+        "valid_count": 54,
+        "description": "dmoney; quarterly log change"
+      },
+      {
+        "name": "dincome",
+        "source_field": "r.dincome",
+        "type": "number",
+        "unit": "quarterly log change",
+        "missing_count": 1,
+        "valid_count": 54,
+        "description": "dincome; quarterly log change"
+      },
+      {
+        "name": "spread",
+        "source_field": "r.spread",
+        "type": "number",
+        "unit": "difference in source rate fractions",
+        "missing_count": 0,
+        "valid_count": 55,
+        "description": "spread; difference in source rate fractions"
+      },
+      {
+        "name": "era",
+        "source_field": "r.era",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 55,
+        "description": "era; category"
+      }
+    ],
+    "transformations": "Source logged real money/income rebased using exp(log value - first log value) × 100; first log changes null; spread = bond rate - deposit rate, in source rate units.",
+    "sha256": "b0a4ec67aac09cba8a764084845e57458597ba0024623586b21a48dce5d53ae9",
+    "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+  }
+}

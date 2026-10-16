@@ -1,0 +1,17 @@
+project @tate
+
+source @r key=id path=data/r.csv {
+  field id "id" string
+  field catalogue_id "catalogue id" number
+  field name "name" string
+  field birth_year "birth year" number
+  field death_year "death year" number
+  field date_span "date span" number
+  field entity "entity" string
+  field death_status "death status" string
+  field birth_century "birth century" string
+}
+
+query @r "r" glyph=◆ {
+  source r
+}

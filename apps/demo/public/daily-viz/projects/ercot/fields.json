@@ -1,0 +1,299 @@
+{
+  "r": {
+    "source_id": "r",
+    "path": "projects/ercot/data/r.csv",
+    "row_count": 1417,
+    "grain": "one supplied hour",
+    "key": "id",
+    "fields": [
+      {
+        "name": "id",
+        "source_field": "r.id",
+        "type": "string",
+        "unit": "identifier",
+        "missing_count": 0,
+        "valid_count": 1417,
+        "description": "id; identifier"
+      },
+      {
+        "name": "date",
+        "source_field": "r.date",
+        "type": "date",
+        "unit": "calendar label",
+        "missing_count": 0,
+        "valid_count": 1417,
+        "description": "date; calendar label"
+      },
+      {
+        "name": "actual",
+        "source_field": "r.actual",
+        "type": "number",
+        "unit": "MWh for the supplied hour",
+        "missing_count": 0,
+        "valid_count": 1417,
+        "description": "actual; MWh for the supplied hour"
+      },
+      {
+        "name": "forecast",
+        "source_field": "r.forecast",
+        "type": "number",
+        "unit": "MWh for the supplied hour",
+        "missing_count": 0,
+        "valid_count": 1417,
+        "description": "forecast; MWh for the supplied hour"
+      },
+      {
+        "name": "year",
+        "source_field": "r.year",
+        "type": "number",
+        "unit": "year",
+        "missing_count": 0,
+        "valid_count": 1417,
+        "description": "year; year"
+      },
+      {
+        "name": "month",
+        "source_field": "r.month",
+        "type": "number",
+        "unit": "month number",
+        "missing_count": 0,
+        "valid_count": 1417,
+        "description": "month; month number"
+      },
+      {
+        "name": "month_label",
+        "source_field": "r.month_label",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 1417,
+        "description": "month label; category"
+      },
+      {
+        "name": "decade",
+        "source_field": "r.decade",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 1417,
+        "description": "decade; category"
+      },
+      {
+        "name": "hour",
+        "source_field": "r.hour",
+        "type": "number",
+        "unit": "UTC clock hour",
+        "missing_count": 0,
+        "valid_count": 1417,
+        "description": "hour; UTC clock hour"
+      },
+      {
+        "name": "hour_label",
+        "source_field": "r.hour_label",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 1417,
+        "description": "hour label; category"
+      },
+      {
+        "name": "error",
+        "source_field": "r.error",
+        "type": "number",
+        "unit": "MWh for the supplied hour",
+        "missing_count": 0,
+        "valid_count": 1417,
+        "description": "error; MWh for the supplied hour"
+      },
+      {
+        "name": "abs_error",
+        "source_field": "r.abs_error",
+        "type": "number",
+        "unit": "MWh for the supplied hour",
+        "missing_count": 0,
+        "valid_count": 1417,
+        "description": "abs error; MWh for the supplied hour"
+      },
+      {
+        "name": "pct_error",
+        "source_field": "r.pct_error",
+        "type": "number",
+        "unit": "% of positive forecast",
+        "missing_count": 0,
+        "valid_count": 1417,
+        "description": "pct error; % of positive forecast"
+      },
+      {
+        "name": "abs_pct_error",
+        "source_field": "r.abs_pct_error",
+        "type": "number",
+        "unit": "% of positive forecast",
+        "missing_count": 0,
+        "valid_count": 1417,
+        "description": "abs pct error; % of positive forecast"
+      },
+      {
+        "name": "direction",
+        "source_field": "r.direction",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 1417,
+        "description": "direction; category"
+      }
+    ],
+    "transformations": "Preserve all supplied rows; signed error = actual - forecast; percentages divide by positive forecast; calendar fields derived in UTC.",
+    "sha256": "9221900ed072a24e46bbb33900a2ca18f51238511cc8f28111c94651301d69f0",
+    "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+  },
+  "daily": {
+    "source_id": "daily",
+    "path": "projects/ercot/data/daily.csv",
+    "row_count": 60,
+    "grain": "one supplied UTC date",
+    "key": "id",
+    "fields": [
+      {
+        "name": "id",
+        "source_field": "daily.id",
+        "type": "string",
+        "unit": "identifier",
+        "missing_count": 0,
+        "valid_count": 60,
+        "description": "id; identifier"
+      },
+      {
+        "name": "date",
+        "source_field": "daily.date",
+        "type": "date",
+        "unit": "calendar label",
+        "missing_count": 0,
+        "valid_count": 60,
+        "description": "date; calendar label"
+      },
+      {
+        "name": "actual",
+        "source_field": "daily.actual",
+        "type": "number",
+        "unit": "MWh for the supplied hour",
+        "missing_count": 0,
+        "valid_count": 60,
+        "description": "actual; MWh for the supplied hour"
+      },
+      {
+        "name": "forecast",
+        "source_field": "daily.forecast",
+        "type": "number",
+        "unit": "MWh for the supplied hour",
+        "missing_count": 0,
+        "valid_count": 60,
+        "description": "forecast; MWh for the supplied hour"
+      },
+      {
+        "name": "error",
+        "source_field": "daily.error",
+        "type": "number",
+        "unit": "MWh for the supplied hour",
+        "missing_count": 0,
+        "valid_count": 60,
+        "description": "error; MWh for the supplied hour"
+      },
+      {
+        "name": "abs_error",
+        "source_field": "daily.abs_error",
+        "type": "number",
+        "unit": "MWh for the supplied hour",
+        "missing_count": 0,
+        "valid_count": 60,
+        "description": "abs error; MWh for the supplied hour"
+      },
+      {
+        "name": "hours",
+        "source_field": "daily.hours",
+        "type": "number",
+        "unit": "supplied hours",
+        "missing_count": 0,
+        "valid_count": 60,
+        "description": "hours; supplied hours"
+      }
+    ],
+    "transformations": "Arithmetic means across available hours; hours retained; partial boundary days not completed.",
+    "sha256": "3609b73e8e4fbf4f678cb9455430b53d8e44550d013616f404f49a9c915ca36b",
+    "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+  },
+  "clock": {
+    "source_id": "clock",
+    "path": "projects/ercot/data/clock.csv",
+    "row_count": 53,
+    "grain": "one month and UTC clock hour",
+    "key": "id",
+    "fields": [
+      {
+        "name": "id",
+        "source_field": "clock.id",
+        "type": "string",
+        "unit": "identifier",
+        "missing_count": 0,
+        "valid_count": 53,
+        "description": "id; identifier"
+      },
+      {
+        "name": "month_label",
+        "source_field": "clock.month_label",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 53,
+        "description": "month label; category"
+      },
+      {
+        "name": "hour",
+        "source_field": "clock.hour",
+        "type": "number",
+        "unit": "UTC clock hour",
+        "missing_count": 0,
+        "valid_count": 53,
+        "description": "hour; UTC clock hour"
+      },
+      {
+        "name": "hour_label",
+        "source_field": "clock.hour_label",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 53,
+        "description": "hour label; category"
+      },
+      {
+        "name": "error",
+        "source_field": "clock.error",
+        "type": "number",
+        "unit": "MWh for the supplied hour",
+        "missing_count": 0,
+        "valid_count": 53,
+        "description": "error; MWh for the supplied hour"
+      },
+      {
+        "name": "abs_error",
+        "source_field": "clock.abs_error",
+        "type": "number",
+        "unit": "MWh for the supplied hour",
+        "missing_count": 0,
+        "valid_count": 53,
+        "description": "abs error; MWh for the supplied hour"
+      },
+      {
+        "name": "hours",
+        "source_field": "clock.hours",
+        "type": "number",
+        "unit": "supplied hours",
+        "missing_count": 0,
+        "valid_count": 53,
+        "description": "hours; supplied hours"
+      }
+    ],
+    "transformations": "Mean errors, with observed hour denominator.",
+    "sha256": "978a943e5ea9b2452aa251501cee4bed075c915242fb91ed430913f7d4906c57",
+    "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+  }
+}

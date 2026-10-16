@@ -1,0 +1,77 @@
+{
+  "r": {
+    "source_id": "r",
+    "path": "projects/nile/data/r.csv",
+    "row_count": 100,
+    "grain": "one annual flow observation at Aswan",
+    "key": "id",
+    "fields": [
+      {
+        "name": "id",
+        "source_field": "r.id",
+        "type": "string",
+        "unit": "identifier",
+        "missing_count": 0,
+        "valid_count": 100,
+        "description": "id; identifier"
+      },
+      {
+        "name": "year",
+        "source_field": "r.year",
+        "type": "number",
+        "unit": "year",
+        "missing_count": 0,
+        "valid_count": 100,
+        "description": "year; year"
+      },
+      {
+        "name": "volume",
+        "source_field": "r.volume",
+        "type": "number",
+        "unit": "10^8 cubic metres per year",
+        "missing_count": 0,
+        "valid_count": 100,
+        "description": "volume; 10^8 cubic metres per year"
+      },
+      {
+        "name": "era",
+        "source_field": "r.era",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 100,
+        "description": "era; category"
+      },
+      {
+        "name": "rank",
+        "source_field": "r.rank",
+        "type": "number",
+        "unit": "percentile rank",
+        "missing_count": 0,
+        "valid_count": 100,
+        "description": "rank; percentile rank"
+      },
+      {
+        "name": "tail",
+        "source_field": "r.tail",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 100,
+        "description": "tail; category"
+      },
+      {
+        "name": "centered",
+        "source_field": "r.centered",
+        "type": "number",
+        "unit": "10^8 cubic metres relative to full mean",
+        "missing_count": 0,
+        "valid_count": 100,
+        "description": "centered; 10^8 cubic metres relative to full mean"
+      }
+    ],
+    "transformations": "Era cutoff 1898 is descriptive, not causal; rank is average-rank percentile; tails use linear 10th/90th percentiles and strict inequalities.",
+    "sha256": "b434608328e6c23464f00172e58cb4b8edf8dc433814f34560c207e10f307c6b",
+    "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+  }
+}

@@ -126,6 +126,43 @@ describe("multi-source analysis", () => {
     ).toBe(5);
   });
 
+  it("tells a keyless source's rows apart by position without reporting each one", () => {
+    const project: AnalysisProject = {
+      id: "keyless",
+      version: 1,
+      sources: [
+        {
+          id: "birds",
+          name: "Birds",
+          glyph: "B",
+          entityKey: "",
+          fields: [{ id: "species", name: "Species", type: "string" }],
+        },
+      ],
+      relationships: [],
+      queries: [
+        {
+          id: "birds",
+          name: "Birds",
+          glyph: "B",
+          frameLabel: "birds",
+          outputStepId: "birds",
+          steps: [{ id: "birds", kind: "source", sourceId: "birds" }],
+        },
+      ],
+    };
+    const result = evaluateAnalysisQuery(
+      project,
+      { birds: [{ species: "Adelie" }, { species: "Adelie" }] },
+      "birds"
+    );
+    expect(result.diagnostics).toEqual([]);
+    expect(result.rows.map((row) => row.sourceRows[0]!.rowKey)).toEqual([
+      "birds:row:0",
+      "birds:row:1",
+    ]);
+  });
+
   it("keeps null and unlike scalar keys from matching", () => {
     const nullKey = createShopFixture("null-key");
     const nullResult = evaluateAnalysisQuery(

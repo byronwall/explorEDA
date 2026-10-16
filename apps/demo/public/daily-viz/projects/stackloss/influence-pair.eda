@@ -1,0 +1,20 @@
+eda query=r
+dashboard "Dropping one day moves the airflow slope from 0.95 to 1.10"
+grid columns=12 rowHeight=76
+composition @cp-stackloss-influence-pair width=1040 height=670 at=0,0,12,9 {
+  title "Dropping one day moves the airflow slope from 0.95 to 1.10" at=32,28 fontSize=24
+  subtitle "The left panel shows original observed pairs; the right panel shows one refitted slope per omitted observation." at=32,78 fontSize=13
+  scale numeric r.airflow zero=false
+  scale numeric r.stackloss zero=true
+  scale numeric r.sequence nice=false
+  scale numeric r.loo_slope zero=false
+  unit Observed at=90,165 size=345x300 axisTitles.x="Airflow (source units)" axisTitles.y="Recorded loss (source ×10 scale)" {
+    label show=false
+    point Days x=r.airflow y=r.stackloss radius=4
+  }
+  unit Sensitivity at=580,165 size=345x300 axisTitles.x="Omitted source-row sequence" axisTitles.y="Leave-one-out slope" {
+    label show=false
+    point Slopes x=r.sequence y=r.loo_slope radius=4
+  }
+  footnote "Brownlee plant observations via statsmodels; public domain." at=32,616 fontSize=10
+}

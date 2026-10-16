@@ -1,0 +1,24 @@
+project @danish
+
+source @r key=id path=data/r.csv {
+  field id "id" string
+  field period "period" string
+  field lrm "lrm" number
+  field lry "lry" number
+  field lpy "lpy" number
+  field ibo "ibo" number
+  field ide "ide" number
+  field year "year" number
+  field quarter "quarter" number
+  field date "date" date
+  field money_index "money index" number
+  field income_index "income index" number
+  field dmoney "dmoney" number
+  field dincome "dincome" number
+  field spread "spread" number
+  field era "era" string
+}
+
+query @r "r" glyph=◆ {
+  source r
+}

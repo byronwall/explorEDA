@@ -1,0 +1,14 @@
+eda query=r
+dashboard "Annual sunspot activity has different distributions across eras"
+grid columns=12 rowHeight=76
+composition @cp-sunspots-activity-ridges width=960 height=800 at=0,0,12,9 {
+  title "Annual sunspot activity has different distributions across eras" at=32,28 fontSize=24
+  subtitle "One native kernel-density trace summarizes annual sunspot numbers in each broad historical span." at=32,78 fontSize=13
+  scale numeric r.activity zero=true
+  unit Eras at=42,155 size=745x42 axisTitles.x="Historical annual sunspot number" {
+    repeat r.era arrangement=rows gap=25 order=label
+    label width=150 fontSize=12
+    density Activity x=r.activity height=shared opacity=0.6
+  }
+  footnote "NOAA historical sunspot series via statsmodels; public domain." at=32,746 fontSize=10
+}

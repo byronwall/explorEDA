@@ -1,0 +1,27 @@
+[
+  {
+    "id": "football",
+    "source_blob_sha1": "6069ee605e0556ffc8cc7d60983e7a369e755303",
+    "source_url": "https://raw.githubusercontent.com/openfootball/worldcup/master/2018--russia/cup.txt",
+    "capture": "All 48 group-stage final scores and supplied calendar dates transcribed from connector response; kickoff instants, venues, scorers and halftime scores omitted. Not a byte-identical copy of upstream text.",
+    "source_rows": 48,
+    "output_raw": "evidence/raw/worldcup-group-matches.csv",
+    "sha256": "c70a1d3ea57650edf913d5bf1b719125174069c59539e9f23b6da36322fb65c2",
+    "bytes": 1627
+  },
+  {
+    "id": "tate",
+    "source_blob_sha1": "7a47fe57205af5bb5ea57bae760540f7fe781853",
+    "source_url": "https://raw.githubusercontent.com/tategallery/collection/master/artist_data.csv",
+    "source_line_range": [
+      1,
+      61
+    ],
+    "capture": "Selected id, name, yearOfBirth and yearOfDeath from first 60 data records. Header renamed; values preserved. Full upstream row count not obtained. Alphabetical convenience slice, not representative.",
+    "source_rows": 60,
+    "source_total_rows": null,
+    "output_raw": "evidence/raw/tate-artists-prefix.csv",
+    "sha256": "697c10a60f1358a7878483aa1c48b4268e9c65bc6d3b12bc8665b3d2007981c9",
+    "bytes": 1897
+  }
+]

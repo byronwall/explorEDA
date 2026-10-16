@@ -1,0 +1,70 @@
+{
+  "status": "passed",
+  "scope": "offline structural/data/evidence audit; NOT native DSL compilation or rendering",
+  "delivered_counts": {
+    "notebook": 40,
+    "composition": 25,
+    "dashboard": 10
+  },
+  "dataset_families": 17,
+  "prepared_tables": 32,
+  "prepared_rows": 9627,
+  "computed_finding_records": 150,
+  "distinct_finding_expressions": 80,
+  "qualified_bindings_checked": 1243,
+  "json_files_parsed": 110,
+  "csv_files_parsed": 50,
+  "chart_declarations": {
+    "line": 25,
+    "hist": 27,
+    "ecdf": 18,
+    "table": 50,
+    "row": 20,
+    "boxplot": 31,
+    "scatter": 76,
+    "heatmap": 8,
+    "parallel": 4,
+    "composition": 25,
+    "markdown": 10,
+    "metric": 10,
+    "bar": 1
+  },
+  "checks": [
+    "JSON strict parse",
+    "CSV rectangularity with documented scikit-learn metadata exception",
+    "distinct physical artifact counts and content hashes",
+    "catalog paths and related IDs",
+    "release order and CSV parity",
+    "local project sources, identity queries and typed field contracts",
+    "declared field missingness and table primary keys",
+    "qualified field references and reserved aliases",
+    "notebook structure and actual fence-parser proof references",
+    "all finding expressions recomputed from exact CSV bytes",
+    "raw and prepared SHA-256 verification",
+    "many-to-one lookup cardinality, coverage and population preservation",
+    "documented license records present; blocked barley excluded"
+  ],
+  "lookup_audits": {
+    "grunfeld": {
+      "base_rows": 220,
+      "joined_rows": 220,
+      "matched_rows": 220,
+      "cardinality": "many-to-one"
+    },
+    "football_teams": {
+      "base_rows": 96,
+      "joined_rows": 96,
+      "matched_rows": 96,
+      "cardinality": "many-to-one"
+    },
+    "football_matches": {
+      "base_rows": 96,
+      "joined_rows": 96,
+      "matched_rows": 96,
+      "cardinality": "many-to-one"
+    }
+  },
+  "native_dsl_compilations": 0,
+  "browser_checks": 0,
+  "errors": []
+}

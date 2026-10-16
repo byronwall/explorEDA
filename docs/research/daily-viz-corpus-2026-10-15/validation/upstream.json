@@ -1,0 +1,157 @@
+[
+  {
+    "id": "ercot",
+    "url": "https://raw.githubusercontent.com/byronwall/explorEDA/ea8b52ff742f11d1fb89457acabbcd27b0bd04e7/packages/explorEDA/examples/forecast/data/ercot-demand.csv",
+    "bytes": 46782,
+    "sha256": "d2f5cf4db04e65e409eaf56227f08543763e34d4442012c2df5fcb9c34680c73",
+    "exact_raw_match": true,
+    "git_blob_sha1": "fc4f70c680e41154c895c31d04bb64d92cb2ddc6",
+    "checked_at_utc": "2026-10-16T05:02:52.092167+00:00"
+  },
+  {
+    "id": "co2",
+    "url": "https://raw.githubusercontent.com/statsmodels/statsmodels/v0.14.6/statsmodels/datasets/co2/co2.csv",
+    "bytes": 33974,
+    "sha256": "16695fa2786e53414e5a6b54767a3fdf5de99cfbc68617f69d1362d92776a92f",
+    "exact_raw_match": true,
+    "git_blob_sha1": "506036d959f371d45926c7b73db297c3d73c7f90",
+    "checked_at_utc": "2026-10-16T05:02:52.092613+00:00"
+  },
+  {
+    "id": "elnino",
+    "url": "https://raw.githubusercontent.com/statsmodels/statsmodels/v0.14.6/statsmodels/datasets/elnino/elnino.csv",
+    "bytes": 5508,
+    "sha256": "b647be00e0fd264be9764e317e6b963f35030014ecca2b21b204521716e463ad",
+    "exact_raw_match": true,
+    "git_blob_sha1": "c692bc94567455bfc166a5975db8b15df987b442",
+    "checked_at_utc": "2026-10-16T05:02:52.092752+00:00"
+  },
+  {
+    "id": "sunspots",
+    "url": "https://raw.githubusercontent.com/statsmodels/statsmodels/v0.14.6/statsmodels/datasets/sunspots/sunspots.csv",
+    "bytes": 2944,
+    "sha256": "f67889b1d9002cd5227f0e0ef54e35b419cdd85a31279adef6f73fb41e5c0a9b",
+    "exact_raw_match": true,
+    "git_blob_sha1": "bf1aec0ce46612fb472d08b66a43115538f405d5",
+    "checked_at_utc": "2026-10-16T05:02:52.092895+00:00"
+  },
+  {
+    "id": "nile",
+    "url": "https://raw.githubusercontent.com/statsmodels/statsmodels/v0.14.6/statsmodels/datasets/nile/nile.csv",
+    "bytes": 942,
+    "sha256": "88e97bea7249e5832a85e41aec6ce4b8f7b1b14aae930c8363da7f193286b598",
+    "exact_raw_match": true,
+    "git_blob_sha1": "b72f66d2822a493e345e9b3c0341f50664eb1b99",
+    "checked_at_utc": "2026-10-16T05:02:52.093087+00:00"
+  },
+  {
+    "id": "macro",
+    "url": "https://raw.githubusercontent.com/statsmodels/statsmodels/v0.14.6/statsmodels/datasets/macrodata/macrodata.csv",
+    "bytes": 17829,
+    "sha256": "d93c0d3a7a77ef83c3af14e46032bb1d02ae3a512b22ab94159a8ca226fcf708",
+    "exact_raw_match": true,
+    "git_blob_sha1": "25175f7f706edeabe68d9791da0700fb60c93dbe",
+    "checked_at_utc": "2026-10-16T05:02:52.093236+00:00"
+  },
+  {
+    "id": "grunfeld",
+    "url": "https://raw.githubusercontent.com/statsmodels/statsmodels/v0.14.6/statsmodels/datasets/grunfeld/grunfeld.csv",
+    "bytes": 7629,
+    "sha256": "6f6ca138e645eeee6ff3e54fe5b9b498f7ddb5c484237d2a8489c524b3c94098",
+    "exact_raw_match": true,
+    "git_blob_sha1": "b2adbe5348f99cdae37b398f90c788638eac79ca",
+    "checked_at_utc": "2026-10-16T05:02:52.093357+00:00"
+  },
+  {
+    "id": "stackloss",
+    "url": "https://raw.githubusercontent.com/statsmodels/statsmodels/v0.14.6/statsmodels/datasets/stackloss/stackloss.csv",
+    "bytes": 292,
+    "sha256": "7395953d62eec7abab783ae9603ff82f091d04a4689780e455c239f0f5509f64",
+    "exact_raw_match": true,
+    "git_blob_sha1": "3eb60f57f1bace1c9a3effd7fdb5034fd7e8256f",
+    "checked_at_utc": "2026-10-16T05:02:52.093478+00:00"
+  },
+  {
+    "id": "engel",
+    "url": "https://raw.githubusercontent.com/statsmodels/statsmodels/v0.14.6/statsmodels/datasets/engel/engel.csv",
+    "bytes": 7941,
+    "sha256": "796c3da0406291dd324c51901b51386be12b5f52e330afaf69584f57c06ad45c",
+    "exact_raw_match": true,
+    "git_blob_sha1": "0fcf4738a70fcb4797fdd9785963b375f17fbdf0",
+    "checked_at_utc": "2026-10-16T05:02:52.093550+00:00"
+  },
+  {
+    "id": "strikes",
+    "url": "https://raw.githubusercontent.com/statsmodels/statsmodels/v0.14.6/statsmodels/datasets/strikes/strikes.csv",
+    "bytes": 718,
+    "sha256": "9211cb538c6ee67ff7c12d6fca64ea86a5717e49d4670b71d3c456c965678e91",
+    "exact_raw_match": true,
+    "git_blob_sha1": "86efd2aee8decafef8df98ff3c52bf3442eddd24",
+    "checked_at_utc": "2026-10-16T05:02:52.093686+00:00"
+  },
+  {
+    "id": "danish",
+    "url": "https://raw.githubusercontent.com/statsmodels/statsmodels/v0.14.6/statsmodels/datasets/danish_data/data.csv",
+    "bytes": 3293,
+    "sha256": "5ee57beea96c0795bf30cc0d70ae99ae436105f673cd0fb477db17a5d5c3a5bb",
+    "exact_raw_match": true,
+    "git_blob_sha1": "299126353c981225b4dcc784896f3dae1e07a20f",
+    "checked_at_utc": "2026-10-16T05:02:52.093804+00:00"
+  },
+  {
+    "id": "fertility",
+    "url": "https://raw.githubusercontent.com/statsmodels/statsmodels/v0.14.6/statsmodels/datasets/fertility/fertility.csv",
+    "bytes": 94455,
+    "sha256": "2219a1b039b2da46cb8b7fd0e1692de51851e02bfee4a996d64c75c466228e28",
+    "exact_raw_match": true,
+    "git_blob_sha1": "d1456dd26f41316c77730b398ad0e0c1a7bfa4d3",
+    "checked_at_utc": "2026-10-16T05:02:52.094752+00:00"
+  },
+  {
+    "id": "iris",
+    "url": "https://raw.githubusercontent.com/scikit-learn/scikit-learn/1.8.0/sklearn/datasets/data/iris.csv",
+    "bytes": 2734,
+    "sha256": "f13ffa8fdd56fd8e6c8d16d4081a3fbd3114bcd0aae4256c43205169cd9d1449",
+    "exact_raw_match": true,
+    "git_blob_sha1": "b7f746072794309a9a971949562a050e7366ceb1",
+    "checked_at_utc": "2026-10-16T05:02:52.094834+00:00"
+  },
+  {
+    "id": "wine",
+    "url": "https://raw.githubusercontent.com/scikit-learn/scikit-learn/1.8.0/sklearn/datasets/data/wine_data.csv",
+    "bytes": 11157,
+    "sha256": "10e8a802908b34f86e5da8ce962f3c806694bc98450a18f61851af59f324bede",
+    "exact_raw_match": true,
+    "git_blob_sha1": "6c7fe81952aa6129023730ced4581b42ecd085af",
+    "checked_at_utc": "2026-10-16T05:02:52.094984+00:00"
+  },
+  {
+    "id": "longley",
+    "url": "https://raw.githubusercontent.com/statsmodels/statsmodels/v0.14.6/statsmodels/datasets/longley/longley.csv",
+    "bytes": 742,
+    "sha256": "0927ec7cc34edb5670920cb2ff1542e46de27a2010746e1662f4276cf3569a24",
+    "exact_raw_match": true,
+    "git_blob_sha1": "0661f2682e6f31e60ef0483f198d9b72df9e3962",
+    "checked_at_utc": "2026-10-16T05:02:52.095127+00:00"
+  },
+  {
+    "id": "football",
+    "url": "https://raw.githubusercontent.com/openfootball/worldcup/master/2018--russia/cup.txt",
+    "bytes": 8179,
+    "sha256": "ca954efbb01c115528b0dbaf0888e9182b474f94cd7008017ed3c441e19dd7a0",
+    "exact_raw_match": false,
+    "git_blob_sha1": "6069ee605e0556ffc8cc7d60983e7a369e755303",
+    "checked_at_utc": "2026-10-16T05:02:52.095161+00:00",
+    "capture_check": "All 48 records match group, date, team names, and final goals."
+  },
+  {
+    "id": "tate",
+    "url": "https://raw.githubusercontent.com/tategallery/collection/master/artist_data.csv",
+    "bytes": 482311,
+    "sha256": "b4a3cb051fe6ee93073e8a57ab600c449c37f64d9ea8135efb15d56e76299be2",
+    "exact_raw_match": false,
+    "git_blob_sha1": "7a47fe57205af5bb5ea57bae760540f7fe781853",
+    "checked_at_utc": "2026-10-16T05:02:52.095684+00:00",
+    "capture_check": "All 60 records match id, name, birth year, and death year."
+  }
+]

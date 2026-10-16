@@ -1,0 +1,5 @@
+# The ZIP preserves the original response byte for byte. Extracted files are local review copies.
+*
+!.gitignore
+!*.zip
+!*.sha256

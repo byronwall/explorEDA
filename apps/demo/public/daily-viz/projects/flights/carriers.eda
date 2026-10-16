@@ -1,0 +1,22 @@
+eda query=flights
+dashboard "Which airline, from which airport, ran late?"
+grid columns=12 rowHeight=76
+delay:num=flights.dep_delay label="Departure delay (min)"
+arrival:num=flights.arr_delay label="Arrival delay (min)"
+origin:cat=flights.origin label="Airport"
+airline:cat=airline.name label="Airline"
+dest:cat=flights.dest label="Destination"
+sankey @db-flights-carriers-flow title="Flights from each airport, by airline" at=0,0,7,6 {
+  stages[]=origin,airline nodeOrder=value
+}
+pivot @db-flights-carriers-table title="Airlines side by side" at=7,0,5,6 {
+  rows=airline
+  value count(delay) label=Flights
+  value median(delay) label="Median delay"
+  value avg(delay) label="Mean delay"
+}
+row @db-flights-carriers-airline airline title="Select an airline" at=0,6,4,5 x.title=Flights
+hist @db-flights-carriers-spread delay bins=200 title="Departure delays in the selection" at=4,6,5,5 x.title="Departure delay (min)" y.title=Flights x.min=-30 x.max=180
+metric @db-flights-carriers-count count title="Flights in selection" at=9,6,3,2
+metric @db-flights-carriers-mean avg(delay) title="Mean departure delay" at=9,8,3,3
+table @db-flights-carriers-records airline,origin,dest,delay,arrival title="Flights in the selection" at=0,11,12,5

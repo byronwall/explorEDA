@@ -1,0 +1,2393 @@
+[
+  {
+    "family": "ercot",
+    "slug": "signed-error",
+    "title": "When two demand lines hide the forecast miss",
+    "question": "How does subtracting the forecast change the reading of the supplied ERCOT hours?",
+    "query": "r",
+    "caveat": "Actual is electricity served in each supplied hour, not unconstrained demand. These observations alone cannot identify why consumption or supply changed. The UTC snapshot includes partial boundary dates.",
+    "conclusion": "The difference chart changes the task from comparing two vertical positions to reading one signed distance from zero. The histogram then distinguishes typical errors from a few unusually large misses.",
+    "findings": [
+      {
+        "op": "mean",
+        "field": "error",
+        "sentence": "The mean signed error was {value:,.1f} MWh per supplied hour."
+      },
+      {
+        "op": "mean",
+        "field": "abs_error",
+        "sentence": "The mean absolute error was {value:,.1f} MWh per supplied hour."
+      }
+    ],
+    "steps": [
+      {
+        "kind": "line",
+        "title": "Actual and forecast, in the same units",
+        "args": "x=date y=actual,forecast",
+        "prose": "Begin with the quantities being compared. Both lines use the same MWh scale; closeness is meaningful, but small differences are difficult to follow against the much larger level."
+      },
+      {
+        "kind": "line",
+        "title": "Subtract the forecast; keep a zero reference",
+        "args": "x=date y=error | rule y=0 \"Actual equals forecast\"",
+        "prose": "A positive value means more electricity was served than forecast; a negative value means less. The reference is a definition, not a target chosen after inspecting the data."
+      },
+      {
+        "kind": "hist",
+        "title": "How often does each size of signed miss occur?",
+        "args": "error bins=30",
+        "prose": "Remove time temporarily to inspect the distribution. Bins summarize frequency, but they cannot tell whether adjacent extreme observations belong to the same episode."
+      },
+      {
+        "kind": "ecdf",
+        "title": "Absolute error without bin boundaries",
+        "args": "abs_error direction=below",
+        "prose": "Read the cumulative share below a chosen error threshold. Every valid supplied hour has equal weight, unlike an energy-weighted summary."
+      }
+    ],
+    "table": [
+      "date",
+      "actual",
+      "forecast",
+      "error",
+      "abs_error"
+    ]
+  },
+  {
+    "family": "ercot",
+    "slug": "relative-error",
+    "title": "A large forecast miss is not always a large percentage miss",
+    "question": "Which hours look different when forecast error is divided by the forecast level?",
+    "query": "r",
+    "caveat": "Percentage errors divide by the positive forecast, not actual demand. Changing that denominator changes the statistic. Both summaries describe this historical snapshot and are not forecast-model rankings.",
+    "conclusion": "Absolute errors retain the grid-scale quantity. Relative errors describe that miss against the size of the forecast. Keep both rather than allowing the percentage plot to erase the operational magnitude.",
+    "findings": [
+      {
+        "op": "median",
+        "field": "abs_pct_error",
+        "sentence": "The median absolute percentage error was {value:.2f}% of forecast."
+      },
+      {
+        "op": "quantile",
+        "field": "abs_pct_error",
+        "sentence": "The 90th percentile of absolute percentage error was {value:.2f}% of forecast.",
+        "q": 0.9
+      }
+    ],
+    "steps": [
+      {
+        "kind": "scatter",
+        "title": "Does absolute miss grow with the forecast?",
+        "args": "x=forecast y=abs_error opacity=0.4",
+        "prose": "Each point is one supplied hour. A large forecast and a large absolute miss can coexist without implying that the forecast caused the error."
+      },
+      {
+        "kind": "scatter",
+        "title": "The same denominator made explicit",
+        "args": "x=forecast y=abs_pct_error opacity=0.4",
+        "prose": "Keep forecast on the horizontal axis and replace the vertical measure with an absolute percentage. The denominator is now visible instead of being hidden inside the metric."
+      },
+      {
+        "kind": "boxplot",
+        "title": "Percentage-error distributions by UTC month",
+        "args": "abs_pct_error color=month_label",
+        "prose": "Compare distributions, not just their means. The small March boundary slice is not a third complete month and must not be treated as an equally supported estimate."
+      },
+      {
+        "kind": "ecdf",
+        "title": "What share stays below a percentage threshold?",
+        "args": "abs_pct_error direction=below",
+        "prose": "A cumulative curve avoids arbitrary histogram bins. Its percentage denominator is the number of valid hourly percentage errors, not the sum of forecast MWh."
+      }
+    ],
+    "table": [
+      "date",
+      "forecast",
+      "error",
+      "abs_error",
+      "pct_error",
+      "abs_pct_error"
+    ]
+  },
+  {
+    "family": "ercot",
+    "slug": "clock-coverage",
+    "title": "The clock-hour pattern depends on which days were supplied",
+    "question": "Do recurring UTC hours have similar signed and absolute errors within each supplied month?",
+    "query": "clock",
+    "caveat": "These are means over available dates for a UTC clock hour. Partial boundary months have fewer observations, and the clock is not local Texas time. A mean of these cells is not automatically an hour-weighted monthly mean.",
+    "conclusion": "Read the count before comparing the error. The table preserves each cell denominator so an apparently unusual hour can be distinguished from a scarcely observed boundary cell.",
+    "findings": [
+      {
+        "op": "max",
+        "field": "hours",
+        "sentence": "The best-supported month-hour cell contains {value:.0f} supplied hours."
+      },
+      {
+        "op": "min",
+        "field": "hours",
+        "sentence": "The least-supported month-hour cell contains {value:.0f} supplied hour."
+      }
+    ],
+    "steps": [
+      {
+        "kind": "heatmap",
+        "title": "Signed error by UTC clock hour and month",
+        "args": "hour_label columnField=month_label aggregation=average measureField=error showValues=true",
+        "prose": "The position of each cell carries calendar structure. Signed values retain direction, while the shared unit keeps all cells comparable."
+      },
+      {
+        "kind": "heatmap",
+        "title": "Absolute error asks a different question",
+        "args": "hour_label columnField=month_label aggregation=average measureField=abs_error",
+        "prose": "Absolute errors measure miss size regardless of sign. A cell can have a small signed mean even when its positive and negative errors are both substantial."
+      },
+      {
+        "kind": "scatter",
+        "title": "How much support is behind each mean?",
+        "args": "x=hours y=abs_error color=month_label",
+        "prose": "Pair the estimated mean with the actual contributing-hour count. This makes unequal support visible rather than encoding a sparse cell as if it were a complete month."
+      },
+      {
+        "kind": "boxplot",
+        "title": "Variation across clock-hour means",
+        "args": "error color=month_label",
+        "prose": "These boxes summarize cell means, not individual hourly errors. They help compare clock patterns but should not be substituted for the raw-hour distribution."
+      }
+    ],
+    "table": [
+      "month_label",
+      "hour_label",
+      "hours",
+      "error",
+      "abs_error"
+    ]
+  },
+  {
+    "family": "co2",
+    "slug": "trend-and-coverage",
+    "title": "A CO2 trend with the missing weeks left visible",
+    "question": "What does this historical weekly Mauna Loa snapshot show without filling gaps?",
+    "query": "r",
+    "caveat": "This is the historical flask-data revision distributed with statsmodels, not the latest NOAA series. Missing weeks stay null. Weekly observations at one station are not global spatial measurements.",
+    "conclusion": "A time series, a coverage count, and distributions by decade answer complementary questions. The rising sequence must be read alongside seasonal movement and the limits of the historical measurement calendar.",
+    "findings": [
+      {
+        "op": "mean",
+        "field": "co2",
+        "sentence": "The mean measured concentration in the 1960s was {value:.2f} ppmv.",
+        "where": [
+          [
+            "decade",
+            "eq",
+            "1960s"
+          ]
+        ]
+      },
+      {
+        "op": "mean",
+        "field": "co2",
+        "sentence": "The mean measured concentration in the 1990s was {value:.2f} ppmv.",
+        "where": [
+          [
+            "decade",
+            "eq",
+            "1990s"
+          ]
+        ]
+      }
+    ],
+    "steps": [
+      {
+        "kind": "line",
+        "title": "Measured weekly concentrations; no imputation",
+        "args": "x=date y=co2",
+        "prose": "Follow the observations in calendar order. Gaps are not zero concentration, and no connecting value has been inserted to repair them."
+      },
+      {
+        "kind": "row",
+        "title": "Measured and missing weekly slots",
+        "args": "coverage",
+        "prose": "The coverage chart uses all supplied dates. It separates a missing measurement from the absence of a row in a newly constructed calendar."
+      },
+      {
+        "kind": "boxplot",
+        "title": "The weekly distribution in each decade",
+        "args": "co2 color=decade",
+        "prose": "Decades make the long-run shift easier to compare, but the first and final decades are partial. Each box uses observed weeks only."
+      },
+      {
+        "kind": "ecdf",
+        "title": "Compare the whole distribution, not just a center",
+        "args": "co2 color=decade direction=below",
+        "prose": "Cumulative distributions retain the tails and overlap. They are descriptive summaries of measured weeks, not estimates weighted by the length of missing intervals."
+      }
+    ],
+    "table": [
+      "date",
+      "co2",
+      "coverage",
+      "decade"
+    ]
+  },
+  {
+    "family": "co2",
+    "slug": "seasonal-centering",
+    "title": "Remove the annual level to see the CO2 calendar",
+    "question": "Which calendar months sit above or below their own year’s measured-week mean?",
+    "query": "r",
+    "caveat": "Centering by an available-week annual mean does not remove every within-year trend. Incomplete years and uneven missingness can shift the reference. Residuals are not a fitted seasonal model.",
+    "conclusion": "The centered view makes the within-year rhythm easier to compare while explicitly surrendering the long-run concentration level. Keep the raw plot nearby whenever absolute concentration matters.",
+    "findings": [
+      {
+        "op": "mean",
+        "field": "residual",
+        "sentence": "The mean centered value for May weeks was {value:.2f} ppmv.",
+        "where": [
+          [
+            "month",
+            "eq",
+            5
+          ]
+        ]
+      },
+      {
+        "op": "mean",
+        "field": "residual",
+        "sentence": "The mean centered value for September weeks was {value:.2f} ppmv.",
+        "where": [
+          [
+            "month",
+            "eq",
+            9
+          ]
+        ]
+      }
+    ],
+    "steps": [
+      {
+        "kind": "scatter",
+        "title": "The level removed from each observation",
+        "args": "x=annual_center y=co2 opacity=0.35",
+        "prose": "The annual center is derived from the same year’s measured weeks. Plotting it against raw concentration shows how much variation remains around that annual reference."
+      },
+      {
+        "kind": "line",
+        "title": "Weekly deviations from the annual mean",
+        "args": "x=date y=residual | rule y=0 \"Annual measured-week mean\"",
+        "prose": "The zero line is different for each underlying year even though the residual axis is shared. Long-run level information has intentionally been removed."
+      },
+      {
+        "kind": "boxplot",
+        "title": "Centered concentration by calendar month",
+        "args": "residual color=month_label",
+        "prose": "Order the month labels chronologically. A pooled monthly box summarizes many years and must not be read as one observed calendar year."
+      },
+      {
+        "kind": "heatmap",
+        "title": "Calendar pattern within each decade",
+        "args": "month_label columnField=decade aggregation=average measureField=residual",
+        "prose": "Cross month with decade to test whether a pooled seasonal pattern is supported across different spans. Blank cells are not zero residuals."
+      }
+    ],
+    "table": [
+      "date",
+      "co2",
+      "annual_center",
+      "residual",
+      "month_label"
+    ]
+  },
+  {
+    "family": "co2",
+    "slug": "missing-runs",
+    "title": "Missing CO2 weeks arrive in runs, not isolated blanks",
+    "question": "How long are the consecutive missing stretches in the supplied weekly calendar?",
+    "query": "gaps",
+    "caveat": "A run means consecutive missing rows in this supplied series. It is not proof that a station stopped operating. Before and after values do not reveal the unmeasured path between them.",
+    "conclusion": "Treat missingness as a population of intervals rather than a nuisance to erase. The run-length distribution and calendar positions identify where interpolation would make the strongest assumptions.",
+    "findings": [
+      {
+        "op": "max",
+        "field": "length",
+        "sentence": "The longest missing run spans {value:.0f} supplied weekly slots."
+      },
+      {
+        "op": "sum",
+        "field": "length",
+        "sentence": "All missing runs together account for {value:.0f} supplied weekly slots."
+      }
+    ],
+    "steps": [
+      {
+        "kind": "scatter",
+        "title": "Place each missing run in time",
+        "args": "x=year y=length",
+        "prose": "Each point represents an entire missing stretch, not one week. Height measures the number of adjacent null rows."
+      },
+      {
+        "kind": "hist",
+        "title": "Short gaps and long gaps are different problems",
+        "args": "length bins=12",
+        "prose": "The histogram counts runs. Its denominator is not the number of missing weeks; one long interruption still contributes only one observation here."
+      },
+      {
+        "kind": "scatter",
+        "title": "Concentrations on either side of each gap",
+        "args": "x=before y=after",
+        "prose": "These are the nearest supplied observed values on either side. They help bound the contextual question, but drawing a point does not authorize filling the intervening values."
+      },
+      {
+        "kind": "ecdf",
+        "title": "Share of missing runs below each duration",
+        "args": "length direction=below",
+        "prose": "A cumulative curve reveals whether a few long runs dominate the uncertainty in any gap-filling exercise. Every run receives equal weight."
+      }
+    ],
+    "table": [
+      "date",
+      "end_date",
+      "length",
+      "before",
+      "after"
+    ]
+  },
+  {
+    "family": "elnino",
+    "slug": "season-and-anomaly",
+    "title": "Warm water and unusual warmth are different questions",
+    "question": "How does a Niño 1+2 sea-surface temperature differ from its calendar-month baseline?",
+    "query": "r",
+    "caveat": "These are monthly temperatures for Niño 1+2, not a global ocean average or a Niño 3.4 event classification. The baseline is the supplied 1981–2010 calendar-month mean; no modern data revision is substituted.",
+    "conclusion": "Raw temperature answers how warm the water was. Anomaly answers how different it was from the selected seasonal reference. A chart title should say which of those questions it answers.",
+    "findings": [
+      {
+        "op": "mean",
+        "field": "sst",
+        "sentence": "The mean February temperature across supplied years was {value:.2f} °C.",
+        "where": [
+          [
+            "month",
+            "eq",
+            2
+          ]
+        ]
+      },
+      {
+        "op": "mean",
+        "field": "sst",
+        "sentence": "The mean September temperature across supplied years was {value:.2f} °C.",
+        "where": [
+          [
+            "month",
+            "eq",
+            9
+          ]
+        ]
+      }
+    ],
+    "steps": [
+      {
+        "kind": "line",
+        "title": "The original monthly temperature series",
+        "args": "x=date y=sst",
+        "prose": "Begin with the recorded Celsius values. Repeated within-year movement can conceal which months were unusual for their season."
+      },
+      {
+        "kind": "boxplot",
+        "title": "The calendar has its own temperature distribution",
+        "args": "sst color=month_label",
+        "prose": "The monthly boxes establish why one all-year temperature threshold can be misleading. These are distributions over years for each month."
+      },
+      {
+        "kind": "line",
+        "title": "Anomalies against the same calendar month",
+        "args": "x=date y=anomaly | rule y=0 \"1981–2010 monthly mean\"",
+        "prose": "Subtracting a month-specific reference removes the average seasonal level. Positive and negative values are deviations from a declared baseline, not from zero Celsius."
+      },
+      {
+        "kind": "hist",
+        "title": "The distribution after seasonal centering",
+        "args": "anomaly bins=30",
+        "prose": "An anomaly histogram summarizes the amplitude distribution but discards the ordering and persistence of warm or cool episodes."
+      }
+    ],
+    "table": [
+      "date",
+      "sst",
+      "climatology",
+      "anomaly",
+      "month_label"
+    ]
+  },
+  {
+    "family": "elnino",
+    "slug": "two-warm-windows",
+    "title": "Compare two warm-water windows on an aligned clock",
+    "question": "How do the supplied 1982–1983 and 1997–1998 windows differ after seasonal centering?",
+    "query": "episodes",
+    "caveat": "The two windows are illustrative, predeclared spans, not an automated event sample. Alignment begins in January of each first year and does not align peaks or event onset. No causal attribution follows.",
+    "conclusion": "Keep a common clock and baseline rather than shifting the curves until they appear to match. Differences in duration and amplitude should remain visible rather than being normalized away.",
+    "findings": [
+      {
+        "op": "max",
+        "field": "anomaly",
+        "sentence": "The largest monthly anomaly in the 1982–1983 window was {value:.2f} °C.",
+        "where": [
+          [
+            "episode",
+            "eq",
+            "1982–1983"
+          ]
+        ]
+      },
+      {
+        "op": "max",
+        "field": "anomaly",
+        "sentence": "The largest monthly anomaly in the 1997–1998 window was {value:.2f} °C.",
+        "where": [
+          [
+            "episode",
+            "eq",
+            "1997–1998"
+          ]
+        ]
+      }
+    ],
+    "steps": [
+      {
+        "kind": "scatter",
+        "title": "An aligned month number, not aligned peaks",
+        "args": "x=episode_month y=anomaly color=episode",
+        "prose": "Every point keeps its position in the two-year window. Use color to distinguish the windows without shifting either to maximize apparent agreement."
+      },
+      {
+        "kind": "scatter",
+        "title": "The same windows in raw Celsius",
+        "args": "x=episode_month y=sst color=episode",
+        "prose": "Return to raw temperature to see the seasonal cycle that the anomaly view removed. The difference in vertical meaning is the point of the comparison."
+      },
+      {
+        "kind": "ecdf",
+        "title": "Compare the full anomaly distribution",
+        "args": "anomaly color=episode direction=below",
+        "prose": "A higher maximum does not establish that every month was warmer. The full cumulative distribution exposes the remainder of each window."
+      },
+      {
+        "kind": "boxplot",
+        "title": "Centers and spreads across the two windows",
+        "args": "anomaly color=episode",
+        "prose": "Each summary has the same intended window length. It still loses serial ordering, so return to the aligned scatter before describing persistence."
+      }
+    ],
+    "table": [
+      "episode",
+      "episode_month",
+      "date",
+      "sst",
+      "anomaly"
+    ]
+  },
+  {
+    "family": "elnino",
+    "slug": "annual-range",
+    "title": "An annual temperature mean does not show the warmest month",
+    "question": "Do years with high means also have unusually wide within-year temperature ranges?",
+    "query": "annual",
+    "caveat": "The lower and upper bounds are observed monthly minima and maxima, not confidence intervals. Annual summaries give months equal weight and erase timing within the year.",
+    "conclusion": "An observed-range band is useful only when it is named honestly. Pair it with the annual mean, and resist describing the band as uncertainty about that mean.",
+    "findings": [
+      {
+        "op": "mean",
+        "field": "range",
+        "sentence": "The average within-year observed monthly range was {value:.2f} °C."
+      },
+      {
+        "op": "max",
+        "field": "range",
+        "sentence": "The largest within-year observed monthly range was {value:.2f} °C."
+      }
+    ],
+    "steps": [
+      {
+        "kind": "line",
+        "title": "Annual mean and observed extremes",
+        "args": "x=year y=low,mean,high",
+        "prose": "Use a shared Celsius axis for the minimum, mean, and maximum. The outer lines summarize observed months rather than a statistical interval."
+      },
+      {
+        "kind": "scatter",
+        "title": "Mean temperature against seasonal range",
+        "args": "x=mean y=range",
+        "prose": "The range adds information not encoded by the mean. A year may have a high mean without having the widest spread of monthly values."
+      },
+      {
+        "kind": "hist",
+        "title": "How unusual is a wide annual range?",
+        "args": "range bins=15",
+        "prose": "This histogram counts years equally. It is not a distribution of monthly temperatures and cannot identify when the extremes occurred."
+      },
+      {
+        "kind": "scatter",
+        "title": "Check the number of observed months",
+        "args": "x=year y=months",
+        "prose": "A min–max comparison becomes unreliable when years have different opportunities to record an extreme. The explicit month count checks that denominator."
+      }
+    ],
+    "table": [
+      "year",
+      "months",
+      "low",
+      "mean",
+      "high",
+      "range"
+    ]
+  },
+  {
+    "family": "sunspots",
+    "slug": "cycles",
+    "title": "Sunspot cycles do not all have the same height",
+    "question": "What range of annual activity is visible in this historical sunspot-number revision?",
+    "query": "r",
+    "caveat": "The historical series is preserved as supplied and is not the current revised international sunspot-number series. Annual averages obscure monthly peaks; this is not a forecast of the next cycle.",
+    "conclusion": "A repeated rise-and-fall pattern need not repeat at the same amplitude. The time series establishes order, while the distribution separates typical activity from a few large annual values.",
+    "findings": [
+      {
+        "op": "max",
+        "field": "activity",
+        "sentence": "The largest supplied annual sunspot number is {value:.1f}."
+      },
+      {
+        "op": "median",
+        "field": "activity",
+        "sentence": "The median supplied annual sunspot number is {value:.1f}."
+      }
+    ],
+    "steps": [
+      {
+        "kind": "line",
+        "title": "Annual activity in calendar order",
+        "args": "x=year y=activity",
+        "prose": "Keep the full chronology before imposing any cycle boundaries. The observations do not arrive as identical repetitions of a template."
+      },
+      {
+        "kind": "hist",
+        "title": "The distribution of annual activity",
+        "args": "activity bins=24",
+        "prose": "Count years by activity rather than smoothing the cycles into a single average. A long upper tail can pull the mean away from a typical year."
+      },
+      {
+        "kind": "boxplot",
+        "title": "Compare broad historical spans",
+        "args": "activity color=era",
+        "prose": "Half-century labels provide descriptive groups, not scientifically estimated cycle boundaries. The final span is incomplete."
+      },
+      {
+        "kind": "ecdf",
+        "title": "Read low-activity thresholds without bins",
+        "args": "activity direction=below",
+        "prose": "The curve gives the observed share of years at or below a threshold. It does not estimate the probability for an independent future year."
+      }
+    ],
+    "table": [
+      "year",
+      "activity",
+      "era"
+    ]
+  },
+  {
+    "family": "sunspots",
+    "slug": "smoothing-cost",
+    "title": "What an eleven-year smooth removes from a sunspot chart",
+    "question": "How different is annual activity from a centered eleven-observation mean?",
+    "query": "r",
+    "caveat": "A centered mean uses future observations and therefore is not a real-time forecast. The first and last five years lack complete windows and remain null rather than using shorter windows.",
+    "conclusion": "Smoothing trades local peaks for a slower-moving reference. Display the departure and the missing edge estimates so the reader can see the cost of that trade.",
+    "findings": [
+      {
+        "op": "max",
+        "field": "departure",
+        "sentence": "The largest annual value above its centered mean was {value:.2f} sunspot-number units."
+      },
+      {
+        "op": "min",
+        "field": "departure",
+        "sentence": "The largest annual value below its centered mean was {value:.2f} sunspot-number units."
+      }
+    ],
+    "steps": [
+      {
+        "kind": "line",
+        "title": "Raw annual values beside the centered mean",
+        "args": "x=year y=activity,smooth11",
+        "prose": "Both series stay on one scale. The smooth is deliberately unavailable where a complete centered window does not exist."
+      },
+      {
+        "kind": "line",
+        "title": "What the smooth leaves out",
+        "args": "x=year y=departure | rule y=0 \"Equals centered mean\"",
+        "prose": "Subtracting the smooth makes the remaining amplitude visible. It does not create a separately measured physical quantity."
+      },
+      {
+        "kind": "scatter",
+        "title": "Large annual values versus their local reference",
+        "args": "x=smooth11 y=activity",
+        "prose": "This compares an observation with a summary that includes that observation. Their association is partly mathematical and must not be interpreted as independent validation."
+      },
+      {
+        "kind": "hist",
+        "title": "The distribution of departures",
+        "args": "departure bins=24",
+        "prose": "Only complete-window years contribute. The edge exclusions are a consequence of the declared smoothing rule, not missing original activity measurements."
+      }
+    ],
+    "table": [
+      "year",
+      "activity",
+      "smooth11",
+      "departure"
+    ]
+  },
+  {
+    "family": "nile",
+    "slug": "before-and-after",
+    "title": "A Nile flow comparison needs a boundary, not a causal story",
+    "question": "How do the supplied annual flow distributions compare on either side of 1898?",
+    "query": "r",
+    "caveat": "The cutoff is an explicit historical comparison, not a randomized intervention. Many environmental and measurement factors could differ across eras. Annual volumes are measured at Aswan, not all reaches of the Nile.",
+    "conclusion": "Compare both location and overlap rather than allowing a vertical reference line to imply a causal experiment. The unequal era lengths remain visible in the count chart.",
+    "findings": [
+      {
+        "op": "mean",
+        "field": "volume",
+        "sentence": "Mean annual volume before 1898 was {value:.2f} ×10^8 m³.",
+        "where": [
+          [
+            "year",
+            "lt",
+            1898
+          ]
+        ]
+      },
+      {
+        "op": "mean",
+        "field": "volume",
+        "sentence": "Mean annual volume from 1898 onward was {value:.2f} ×10^8 m³.",
+        "where": [
+          [
+            "year",
+            "ge",
+            1898
+          ]
+        ]
+      }
+    ],
+    "steps": [
+      {
+        "kind": "line",
+        "title": "Annual flow across the chosen boundary",
+        "args": "x=year y=volume | rule x=1898 \"Comparison boundary\"",
+        "prose": "The line preserves individual wet and dry years. The marked year defines the comparison; it does not prove why the distribution differs."
+      },
+      {
+        "kind": "boxplot",
+        "title": "Two eras, the same volume scale",
+        "args": "volume color=era",
+        "prose": "Compare the medians and middle halves while keeping extreme annual volumes visible. Different sample lengths are not automatically comparable precision."
+      },
+      {
+        "kind": "ecdf",
+        "title": "How much do the era distributions overlap?",
+        "args": "volume color=era direction=below",
+        "prose": "Cumulative curves make it possible to compare more than their centers. Crossing curves would warn against describing one era as uniformly lower."
+      },
+      {
+        "kind": "row",
+        "title": "Years contributing to each era",
+        "args": "era",
+        "prose": "The later era contributes more observations. This count is the denominator for each era summary, not an adjustment for serial correlation."
+      }
+    ],
+    "table": [
+      "year",
+      "volume",
+      "era"
+    ]
+  },
+  {
+    "family": "nile",
+    "slug": "tail-sensitivity",
+    "title": "How much do extreme flow years move the Nile average?",
+    "question": "Does the typical flow change when the outer volume tails are examined separately?",
+    "query": "r",
+    "caveat": "Tail labels use the supplied sample’s linear 10th and 90th percentiles. They are not flood or drought standards. The middle group is a sensitivity comparison, not a corrected replacement dataset.",
+    "conclusion": "Keep the tail years visible and explain why a robust summary differs from the ordinary mean. Removing an inconvenient extreme without a stated rule would change the population silently.",
+    "findings": [
+      {
+        "op": "mean",
+        "field": "volume",
+        "sentence": "The mean across every supplied year was {value:.2f} ×10^8 m³."
+      },
+      {
+        "op": "mean",
+        "field": "volume",
+        "sentence": "The mean between the declared tail cutoffs was {value:.2f} ×10^8 m³.",
+        "where": [
+          [
+            "tail",
+            "eq",
+            "Middle 80% cutoffs"
+          ]
+        ]
+      }
+    ],
+    "steps": [
+      {
+        "kind": "hist",
+        "title": "Annual flow has a distribution, not one typical value",
+        "args": "volume bins=18",
+        "prose": "Start with all years. The bins make the tails visible without classifying any annual measurement as an error."
+      },
+      {
+        "kind": "scatter",
+        "title": "Locate the tail years in time",
+        "args": "x=year y=volume color=tail",
+        "prose": "Color adds the explicit analytical grouping while leaving chronology intact. It does not label the years using an external flood or drought definition."
+      },
+      {
+        "kind": "ecdf",
+        "title": "A threshold view of every annual value",
+        "args": "volume direction=below",
+        "prose": "The cumulative curve allows direct inspection of tail boundaries. It retains every year, including values the sensitivity calculation does not average."
+      },
+      {
+        "kind": "boxplot",
+        "title": "The selected middle versus the two tails",
+        "args": "volume color=tail",
+        "prose": "This is a view of subsets chosen by the outcome itself. Their separation is built into the rule and is not an independently discovered relationship."
+      }
+    ],
+    "table": [
+      "year",
+      "volume",
+      "rank",
+      "tail"
+    ]
+  },
+  {
+    "family": "macro",
+    "slug": "level-versus-growth",
+    "title": "A rising GDP level can conceal falling quarterly growth",
+    "question": "What changes when a historical GDP level becomes an annualized quarter-to-quarter growth rate?",
+    "query": "r",
+    "caveat": "This is an old source vintage, not current revised GDP. Annualizing a quarterly change is a mathematical convention, not the year-on-year rate. The first supplied quarter has no preceding observation in this file.",
+    "conclusion": "Levels answer how large the measured economy was in the source’s chained dollars. Growth rates answer how rapidly it changed between adjacent supplied quarters. Neither should silently replace the other.",
+    "findings": [
+      {
+        "op": "min",
+        "field": "gdp_growth",
+        "sentence": "The smallest derived annualized quarterly GDP growth rate was {value:.2f}%."
+      },
+      {
+        "op": "max",
+        "field": "gdp_growth",
+        "sentence": "The largest derived annualized quarterly GDP growth rate was {value:.2f}%."
+      }
+    ],
+    "steps": [
+      {
+        "kind": "line",
+        "title": "GDP in the source’s chained-dollar level",
+        "args": "x=date y=realgdp",
+        "prose": "The level retains scale and historical size. A large vertical range can make short contractions visually subtle."
+      },
+      {
+        "kind": "line",
+        "title": "Annualized quarterly growth on a zero reference",
+        "args": "x=date y=gdp_growth | rule y=0 \"No quarterly change\"",
+        "prose": "Growth is computed from adjacent quarters using a compounded annualization. The zero line separates positive from negative changes without inventing recession classifications."
+      },
+      {
+        "kind": "hist",
+        "title": "The distribution of quarterly growth rates",
+        "args": "gdp_growth bins=24",
+        "prose": "The histogram counts available quarter-to-quarter comparisons. It loses chronology, so a cluster of negative observations cannot be located from this view alone."
+      },
+      {
+        "kind": "scatter",
+        "title": "GDP change and unemployment change",
+        "args": "x=gdp_change y=unemp_change",
+        "prose": "These are two first differences from the same quarterly sequence. Association is descriptive and does not identify a structural labor-market response."
+      }
+    ],
+    "table": [
+      "date",
+      "realgdp",
+      "gdp_change",
+      "gdp_growth",
+      "unemp_change"
+    ]
+  },
+  {
+    "family": "macro",
+    "slug": "inflation-unemployment",
+    "title": "One inflation–unemployment scatter hides different decades",
+    "question": "Does the pooled historical association resemble the association within the 1970s?",
+    "query": "r",
+    "caveat": "Time ordering, policy regimes, revisions, and omitted factors limit a pooled scatter. The source’s initial inflation placeholder is excluded from the pooled calculation. Correlation is not a policy trade-off or causal estimate.",
+    "conclusion": "A colored cloud is a starting point for checking mixtures, not a stable structural curve. Examine the time series and the grouped distributions before naming an economic mechanism.",
+    "findings": [
+      {
+        "op": "corr",
+        "field": "infl",
+        "sentence": "The pooled inflation–unemployment correlation, excluding the initial placeholder quarter, was {value:.3f}.",
+        "other": "unemp",
+        "where": [
+          [
+            "date",
+            "ne",
+            "1959-01-01"
+          ]
+        ]
+      },
+      {
+        "op": "corr",
+        "field": "infl",
+        "sentence": "Within the supplied 1970s quarters, the correlation was {value:.3f}.",
+        "other": "unemp",
+        "where": [
+          [
+            "decade",
+            "eq",
+            "1970s"
+          ]
+        ]
+      }
+    ],
+    "steps": [
+      {
+        "kind": "scatter",
+        "title": "Color the pooled relationship by decade",
+        "args": "x=unemp y=infl color=decade opacity=0.6",
+        "prose": "Color preserves the calendar grouping inside the pooled cloud. The first source inflation value is a placeholder, so do not give that point the status of a measured change."
+      },
+      {
+        "kind": "line",
+        "title": "Inflation retains its time order",
+        "args": "x=date y=infl",
+        "prose": "A time series reveals sequences that disappear in the scatter. Avoid treating successive quarters as independent draws."
+      },
+      {
+        "kind": "boxplot",
+        "title": "Unemployment distributions within each decade",
+        "args": "unemp color=decade",
+        "prose": "Changing group distributions can change a pooled relationship even when no single within-group slope is stable."
+      },
+      {
+        "kind": "ecdf",
+        "title": "Inflation thresholds by historical span",
+        "args": "infl color=decade direction=below",
+        "prose": "The cumulative view compares the entire distribution. It does not correct the small and unequal number of quarters in the boundary decades."
+      }
+    ],
+    "table": [
+      "date",
+      "infl",
+      "unemp",
+      "decade"
+    ]
+  },
+  {
+    "family": "grunfeld",
+    "slug": "within-firm",
+    "title": "Big firms and within-firm changes are not the same comparison",
+    "question": "How does investment relate to market value in levels and in annual within-firm changes?",
+    "query": "r",
+    "caveat": "These selected historical firms are not a random sample of all businesses. First differences remain observational and can amplify measurement noise. Source monetary units are retained without an unverified multiplier.",
+    "conclusion": "The pooled levels cloud mixes firm size with time movement. Within-firm differences change the unit of comparison to adjacent observations and should be named as a separate question.",
+    "findings": [
+      {
+        "op": "corr",
+        "field": "value",
+        "sentence": "Across firm-year levels, market value and investment had correlation {value:.3f}.",
+        "other": "invest"
+      },
+      {
+        "op": "corr",
+        "field": "value_change",
+        "sentence": "Across valid within-firm annual changes, the correlation was {value:.3f}.",
+        "other": "invest_change"
+      }
+    ],
+    "steps": [
+      {
+        "kind": "scatter",
+        "title": "Firm size in the pooled levels",
+        "args": "x=value y=invest color=firm opacity=0.6",
+        "prose": "Each point is a firm-year rather than a distinct firm. Large firms can dominate the visual range without receiving more statistical weight per point."
+      },
+      {
+        "kind": "scatter",
+        "title": "Change within a firm, not between firms",
+        "args": "x=value_change y=invest_change color=firm",
+        "prose": "The preparation resets the difference at each firm boundary. No final year from one company is subtracted from the first year of another."
+      },
+      {
+        "kind": "boxplot",
+        "title": "Investment changes differ across firms",
+        "args": "invest_change color=firm",
+        "prose": "Group summaries retain the selected firms separately. They do not turn the repeated annual observations into independent experimental units."
+      },
+      {
+        "kind": "ecdf",
+        "title": "How large are the recorded investment changes?",
+        "args": "invest_change direction=below",
+        "prose": "The cumulative distribution reveals negative and positive changes without bin choices. It weights each eligible firm-year difference equally."
+      }
+    ],
+    "table": [
+      "firm",
+      "year",
+      "invest",
+      "value",
+      "invest_change",
+      "value_change"
+    ]
+  },
+  {
+    "family": "grunfeld",
+    "slug": "indexing-firms",
+    "title": "Indexing investment changes the ranking question",
+    "question": "How different do historical firm trajectories look after each starts at 100?",
+    "query": "r",
+    "caveat": "An index erases the absolute investment level and can magnify growth from a small base. The reference is each firm’s first supplied year, not a market benchmark. The selected firms and years limit generalization.",
+    "conclusion": "Use indexed traces for proportional movement and raw values for investment scale. A firm leading one comparison need not lead the other.",
+    "findings": [
+      {
+        "op": "max",
+        "field": "invest_index",
+        "sentence": "The highest first-year-normalized investment index in the panel was {value:.2f}."
+      },
+      {
+        "op": "median",
+        "field": "invest_index",
+        "sentence": "The median firm-year investment index was {value:.2f}."
+      }
+    ],
+    "steps": [
+      {
+        "kind": "scatter",
+        "title": "Raw investment over time, with firms identified",
+        "args": "x=year y=invest color=firm",
+        "prose": "This retains monetary scale but compresses smaller firms into the lower part of the chart. The compression reflects genuine size differences."
+      },
+      {
+        "kind": "scatter",
+        "title": "Normalize each firm to its own first year",
+        "args": "x=year y=invest_index color=firm",
+        "prose": "Every firm starts at the same index by construction. Later vertical separation is proportional to its own starting value, not an absolute-dollar gap."
+      },
+      {
+        "kind": "boxplot",
+        "title": "The distribution of indexed investment by firm",
+        "args": "invest_index color=firm",
+        "prose": "These distributions summarize trajectories but lose their order. A wide box could reflect sustained growth or large reversals."
+      },
+      {
+        "kind": "scatter",
+        "title": "Market-value and investment indices",
+        "args": "x=value_index y=invest_index color=firm",
+        "prose": "Both axes use a firm-specific starting reference. That makes proportional movements visible while removing cross-firm level information."
+      }
+    ],
+    "table": [
+      "firm",
+      "year",
+      "invest",
+      "invest_index",
+      "value_index"
+    ]
+  },
+  {
+    "family": "stackloss",
+    "slug": "operating-conditions",
+    "title": "Plant operating conditions and recorded ammonia loss",
+    "question": "Which measured operating conditions vary alongside the recorded loss?",
+    "query": "r",
+    "caveat": "The observations are selected operating days, not a randomized trial. Airflow and acid concentration retain source-coded units. A fitted descriptive relationship should not be used as an operating recommendation.",
+    "conclusion": "Read the paired measurements before reducing the process to a single predictor. The scatter and grouped distributions reveal association, while the source table keeps the measurement scale explicit.",
+    "findings": [
+      {
+        "op": "corr",
+        "field": "airflow",
+        "sentence": "Airflow and source-scaled stack loss had correlation {value:.3f}.",
+        "other": "stackloss"
+      },
+      {
+        "op": "corr",
+        "field": "watertemp",
+        "sentence": "Cooling-water temperature and source-scaled stack loss had correlation {value:.3f}.",
+        "other": "stackloss"
+      }
+    ],
+    "steps": [
+      {
+        "kind": "scatter",
+        "title": "Airflow and recorded loss",
+        "args": "x=airflow y=stackloss regression=linear",
+        "prose": "A straight fit summarizes the observed cloud; it does not isolate airflow from the other operating conditions."
+      },
+      {
+        "kind": "scatter",
+        "title": "Water temperature and recorded loss",
+        "args": "x=watertemp y=stackloss",
+        "prose": "The second predictor may move with the first. Comparing two separate scatters does not establish their independent effects."
+      },
+      {
+        "kind": "scatter",
+        "title": "Source-coded acid concentration",
+        "args": "x=acidconc y=stackloss",
+        "prose": "Keep the original coding visible instead of inventing a physical concentration unit. The dictionary records that limitation."
+      },
+      {
+        "kind": "boxplot",
+        "title": "Loss percentage across airflow groups",
+        "args": "loss_pct color=air_band",
+        "prose": "This presentation converts the documented loss scaling only. The airflow split is the sample median, so it is an analytical comparison rather than a safe operating threshold."
+      }
+    ],
+    "table": [
+      "sequence",
+      "airflow",
+      "watertemp",
+      "acidconc",
+      "stackloss",
+      "loss_pct"
+    ]
+  },
+  {
+    "family": "stackloss",
+    "slug": "leave-one-out",
+    "title": "One operating day can change a small-sample fitted slope",
+    "question": "How much does the airflow–loss slope change when each observation is omitted in turn?",
+    "query": "r",
+    "caveat": "Leave-one-out fits diagnose sensitivity, not data validity. The omitted points are not automatically errors, and the single-predictor model ignores other measured process conditions.",
+    "conclusion": "An influential point is a reason to inspect the record and the model, not a license to delete it. Preserve the original fit and every omitted-row result side by side.",
+    "findings": [
+      {
+        "op": "min",
+        "field": "loo_slope",
+        "sentence": "The smallest leave-one-out airflow slope was {value:.4f} loss units per airflow unit."
+      },
+      {
+        "op": "max",
+        "field": "loo_slope",
+        "sentence": "The largest leave-one-out airflow slope was {value:.4f} loss units per airflow unit."
+      }
+    ],
+    "steps": [
+      {
+        "kind": "scatter",
+        "title": "The complete-sample descriptive fit",
+        "args": "x=airflow y=stackloss regression=linear",
+        "prose": "Start with every original observation. The sensitivity exercise must remain anchored to the model that would otherwise be reported."
+      },
+      {
+        "kind": "scatter",
+        "title": "Residuals from that same fit",
+        "args": "x=fitted y=residual",
+        "prose": "A residual is recorded minus fitted loss. Large residuals and influence are related concepts, but one is not a substitute for the other."
+      },
+      {
+        "kind": "scatter",
+        "title": "The slope after omitting each source row",
+        "args": "x=sequence y=loo_slope",
+        "prose": "The horizontal position identifies the omitted row. These are refits of almost the same small dataset, not independent slope estimates."
+      },
+      {
+        "kind": "scatter",
+        "title": "Does a large residual imply a large slope shift?",
+        "args": "x=residual y=slope_shift",
+        "prose": "Compare the two diagnostics directly. The prepared shift subtracts the complete-sample slope and preserves its sign."
+      }
+    ],
+    "table": [
+      "sequence",
+      "airflow",
+      "stackloss",
+      "residual",
+      "loo_slope",
+      "slope_shift"
+    ]
+  },
+  {
+    "family": "engel",
+    "slug": "food-and-income",
+    "title": "Food spending can rise while its income share falls",
+    "question": "How do absolute food spending and the food budget share differ across these households?",
+    "query": "r",
+    "caveat": "The historical sample covers working-class Belgian households, not contemporary consumers. Household composition and other omitted factors may affect both income and food spending. Ratios share a denominator with income.",
+    "conclusion": "Absolute spending and budget pressure are different measurements. Show the currency amount and the share together instead of declaring one the more truthful picture.",
+    "findings": [
+      {
+        "op": "corr",
+        "field": "income",
+        "sentence": "Income and food expenditure had correlation {value:.3f}.",
+        "other": "foodexp"
+      },
+      {
+        "op": "corr",
+        "field": "income",
+        "sentence": "Income and food share had correlation {value:.3f}.",
+        "other": "food_share"
+      }
+    ],
+    "steps": [
+      {
+        "kind": "scatter",
+        "title": "Food expenditure in historical francs",
+        "args": "x=income y=foodexp opacity=0.6",
+        "prose": "Both axes preserve the recorded monetary scale. More spending does not necessarily mean a larger fraction of the household budget."
+      },
+      {
+        "kind": "scatter",
+        "title": "Replace the amount with its income share",
+        "args": "x=income y=food_share opacity=0.6",
+        "prose": "The vertical denominator is the same income shown horizontally. The mathematical coupling should be acknowledged before proposing an economic explanation."
+      },
+      {
+        "kind": "boxplot",
+        "title": "Budget shares across income quartiles",
+        "args": "food_share color=income_band",
+        "prose": "Quartiles improve readability but erase within-group ordering. They are defined from this sample, not external income thresholds."
+      },
+      {
+        "kind": "ecdf",
+        "title": "The observed distribution of food shares",
+        "args": "food_share direction=below",
+        "prose": "The cumulative curve treats households equally. It answers a household question, not what fraction of all pooled francs was spent on food."
+      }
+    ],
+    "table": [
+      "income",
+      "foodexp",
+      "food_share",
+      "income_band"
+    ]
+  },
+  {
+    "family": "engel",
+    "slug": "weighting",
+    "title": "The average household is not the average franc",
+    "question": "How much does the food-share summary change when income, rather than households, supplies the weights?",
+    "query": "bands",
+    "caveat": "The grouping is based on sample income quartiles. Income-weighted ratios do not measure a typical household, while equally weighted means do not describe the allocation of all pooled income.",
+    "conclusion": "A change of weights is a change of question. State the denominator on the chart and retain group totals so the weighted rate can be reconstructed rather than averaged incorrectly.",
+    "findings": [
+      {
+        "op": "ratio_sums",
+        "field": "food_sum",
+        "sentence": "Food expenditure divided by pooled income was {value:.2f}%.",
+        "other": "income_sum",
+        "scale": 100
+      },
+      {
+        "op": "weighted_mean",
+        "field": "mean_share",
+        "sentence": "The household-count-weighted mean of the quartile household means was {value:.2f}%.",
+        "weight": "households"
+      }
+    ],
+    "steps": [
+      {
+        "kind": "scatter",
+        "title": "Two legitimate shares for each income group",
+        "args": "x=mean_share y=weighted_share color=income_band",
+        "prose": "Compare an equally weighted household mean with the group’s pooled-franc ratio. Their difference is about weights, not rounding."
+      },
+      {
+        "kind": "line",
+        "title": "Follow the groups from lower to higher income",
+        "args": "x=order y=mean_share,weighted_share",
+        "prose": "The ordered line makes the comparison compact. The horizontal steps are quartile positions, not equal intervals of income."
+      },
+      {
+        "kind": "scatter",
+        "title": "The denominators behind the ratio",
+        "args": "x=income_sum y=food_sum color=income_band",
+        "prose": "The group totals explain why a pooled ratio cannot be obtained by taking an unweighted mean of the four displayed ratios."
+      },
+      {
+        "kind": "scatter",
+        "title": "How many households contribute to each group?",
+        "args": "x=order y=households",
+        "prose": "Nearly equal group sizes are a consequence of the quartile construction. Exact counts remain necessary when reconstructing the household-weighted overall mean."
+      }
+    ],
+    "table": [
+      "income_band",
+      "households",
+      "income_sum",
+      "food_sum",
+      "mean_share",
+      "weighted_share"
+    ]
+  },
+  {
+    "family": "strikes",
+    "slug": "duration-tail",
+    "title": "A typical strike and a long strike tell different stories",
+    "question": "How far apart are the mean and median durations in this selected strike sample?",
+    "query": "r",
+    "caveat": "The sample contains selected manufacturing strikes, not all labor disputes. Durations describe completed recorded events and should not be interpreted as a forecast for a current dispute.",
+    "conclusion": "The long tail makes the average sensitive to a small number of lengthy events. Report both the central summary and the tail rather than trimming inconvenient observations without disclosure.",
+    "findings": [
+      {
+        "op": "mean",
+        "field": "duration",
+        "sentence": "The mean recorded duration was {value:.2f} days."
+      },
+      {
+        "op": "median",
+        "field": "duration",
+        "sentence": "The median recorded duration was {value:.2f} days."
+      }
+    ],
+    "steps": [
+      {
+        "kind": "hist",
+        "title": "Count durations on their original day scale",
+        "args": "duration bins=20",
+        "prose": "A day-scale histogram keeps the operational meaning of an extended dispute. Its binning can make the dense short-duration region difficult to inspect."
+      },
+      {
+        "kind": "ecdf",
+        "title": "Read the share ending by a chosen duration",
+        "args": "duration direction=below",
+        "prose": "The cumulative view avoids bin choices but still describes only the observed sample. It is not a survival model for censored ongoing strikes."
+      },
+      {
+        "kind": "hist",
+        "title": "A log transform spreads the shorter durations",
+        "args": "log_duration bins=18",
+        "prose": "The prepared log10 field changes the visual spacing, not the underlying durations. Equal horizontal distances now represent multiplicative ratios."
+      },
+      {
+        "kind": "scatter",
+        "title": "Keep the longest events attached to source rows",
+        "args": "x=sequence y=duration",
+        "prose": "Sequence is only the original record position. It locates records for inspection and must not be presented as chronological trend."
+      }
+    ],
+    "table": [
+      "sequence",
+      "duration",
+      "log_duration",
+      "iprod"
+    ]
+  },
+  {
+    "family": "strikes",
+    "slug": "production-context",
+    "title": "Production context and strike length: compare, do not explain away",
+    "question": "Do durations differ between negative and nonnegative source production deviations?",
+    "query": "r",
+    "caveat": "The source production variable is contextual, not a randomized exposure. Its zero split is an analyst-defined comparison. The dataset cannot identify whether production conditions caused a strike to last longer.",
+    "conclusion": "A group mean is only one part of the comparison. The overlap and sample support prevent a descriptive contrast from becoming an unsupported mechanism.",
+    "findings": [
+      {
+        "op": "median",
+        "field": "duration",
+        "sentence": "Median duration at negative production deviations was {value:.2f} days.",
+        "where": [
+          [
+            "iprod",
+            "lt",
+            0
+          ]
+        ]
+      },
+      {
+        "op": "median",
+        "field": "duration",
+        "sentence": "Median duration at nonnegative production deviations was {value:.2f} days.",
+        "where": [
+          [
+            "iprod",
+            "ge",
+            0
+          ]
+        ]
+      }
+    ],
+    "steps": [
+      {
+        "kind": "scatter",
+        "title": "Keep the continuous contextual variable",
+        "args": "x=iprod y=duration",
+        "prose": "Inspect the actual indicator values before dividing them into two groups. A split can create an apparent discontinuity that the continuous cloud does not support."
+      },
+      {
+        "kind": "boxplot",
+        "title": "Duration distributions across the declared split",
+        "args": "duration color=production_band",
+        "prose": "Median and spread make the contrast legible without assuming a normally distributed duration. Outlying events remain part of the sample."
+      },
+      {
+        "kind": "ecdf",
+        "title": "How much do the groups overlap?",
+        "args": "duration color=production_band direction=below",
+        "prose": "Cumulative curves show whether the contrast concerns the center, the tails, or both. They are conditional on the selected group sample."
+      },
+      {
+        "kind": "row",
+        "title": "Count the events supporting each comparison",
+        "args": "production_band",
+        "prose": "Unequal counts matter even when both groups occupy equal chart space. Counts do not by themselves quantify statistical uncertainty."
+      }
+    ],
+    "table": [
+      "sequence",
+      "iprod",
+      "production_band",
+      "duration"
+    ]
+  },
+  {
+    "family": "danish",
+    "slug": "logs-and-indices",
+    "title": "Logs, levels, and rebased money in a historical Danish series",
+    "question": "Does the relationship between real money and real income persist after taking quarterly log changes?",
+    "query": "r",
+    "caveat": "These are source-defined logged economic series from a historical Danish model dataset. First differences do not remove all confounding or serial dependence. Indices describe changes, not absolute currency levels.",
+    "conclusion": "A close relationship in trending levels can look different after differencing. Present the transformation as a different analytical view rather than claiming it reveals the one correct relationship.",
+    "findings": [
+      {
+        "op": "corr",
+        "field": "lrm",
+        "sentence": "Logged real money and logged real income had correlation {value:.3f}.",
+        "other": "lry"
+      },
+      {
+        "op": "corr",
+        "field": "dmoney",
+        "sentence": "Their valid quarterly log changes had correlation {value:.3f}.",
+        "other": "dincome"
+      }
+    ],
+    "steps": [
+      {
+        "kind": "line",
+        "title": "Rebase both series to the first supplied quarter",
+        "args": "x=date y=money_index,income_index",
+        "prose": "Exponentiating each log difference from its initial value yields a comparable starting index. It does not put the two original series into the same currency quantity."
+      },
+      {
+        "kind": "scatter",
+        "title": "The relationship in logged levels",
+        "args": "x=lry y=lrm",
+        "prose": "Trending variables can share a strong levels association. Each point is a quarter in one connected historical sequence."
+      },
+      {
+        "kind": "scatter",
+        "title": "The relationship in quarterly log changes",
+        "args": "x=dincome y=dmoney",
+        "prose": "Differencing removes the initial level and leaves the first quarter without a valid comparison. The result still needs time-series caution."
+      },
+      {
+        "kind": "hist",
+        "title": "Quarterly log changes in real money",
+        "args": "dmoney bins=16",
+        "prose": "A distribution view exposes asymmetry and extreme changes. It discards persistence and should be read alongside the time series."
+      }
+    ],
+    "table": [
+      "period",
+      "lrm",
+      "lry",
+      "money_index",
+      "income_index",
+      "dmoney",
+      "dincome"
+    ]
+  },
+  {
+    "family": "danish",
+    "slug": "rate-spread",
+    "title": "Two interest-rate lines become one historical spread",
+    "question": "How large is the recorded bond-rate minus deposit-rate spread?",
+    "query": "r",
+    "caveat": "The displayed rates are historical source fractions, not current quoted products. A spread is not a total investment return, and the observations support no recommendation about present borrowing or investing.",
+    "conclusion": "Subtracting the two source fractions makes their difference directly readable. Retain the original lines so a wider spread can be distinguished from movement in both rates together.",
+    "findings": [
+      {
+        "op": "min",
+        "field": "spread",
+        "sentence": "The smallest recorded bond-minus-deposit spread was {value:.4f} in source rate fractions."
+      },
+      {
+        "op": "max",
+        "field": "spread",
+        "sentence": "The largest recorded spread was {value:.4f} in source rate fractions."
+      }
+    ],
+    "steps": [
+      {
+        "kind": "line",
+        "title": "The two historical rate series",
+        "args": "x=date y=ibo,ide",
+        "prose": "Use one shared fraction scale. Do not format these source fractions as percent values without explicitly multiplying by a hundred."
+      },
+      {
+        "kind": "line",
+        "title": "The spread relative to equality",
+        "args": "x=date y=spread | rule y=0 \"Equal source rates\"",
+        "prose": "The zero reference follows from the definition of the subtraction. A positive spread says which source rate is larger, not which asset is preferable."
+      },
+      {
+        "kind": "boxplot",
+        "title": "Spread distributions across two historical spans",
+        "args": "spread color=era",
+        "prose": "The broad split is descriptive. It is not evidence that an unmodeled regime change occurred at the boundary."
+      },
+      {
+        "kind": "scatter",
+        "title": "The level of the bond rate and the spread",
+        "args": "x=ibo y=spread",
+        "prose": "The bond rate appears on both sides of this comparison because it is part of the spread. That arithmetic coupling limits interpretation of a correlation."
+      }
+    ],
+    "table": [
+      "period",
+      "ibo",
+      "ide",
+      "spread",
+      "era"
+    ]
+  },
+  {
+    "family": "fertility",
+    "slug": "trajectories",
+    "title": "Twelve fertility trajectories, with the empty end years retained",
+    "question": "How do selected historical country paths differ without implying a world average?",
+    "query": "r",
+    "caveat": "The countries are an illustrative fixed set, not a representative sample. Total fertility rate is a period measure, not completed lifetime births for a cohort. The supplied 2012 and 2013 columns contain no published values.",
+    "conclusion": "Keep trajectories separate and make the missing tail explicit. A pooled average would hide country paths and introduce an arbitrary weighting question that this selection cannot resolve globally.",
+    "findings": [
+      {
+        "op": "mean",
+        "field": "fertility",
+        "sentence": "The unweighted mean across the selected countries in 1960 was {value:.3f} births per woman.",
+        "where": [
+          [
+            "year",
+            "eq",
+            1960
+          ]
+        ]
+      },
+      {
+        "op": "mean",
+        "field": "fertility",
+        "sentence": "The corresponding selected-country mean in 2011 was {value:.3f} births per woman.",
+        "where": [
+          [
+            "year",
+            "eq",
+            2011
+          ]
+        ]
+      }
+    ],
+    "steps": [
+      {
+        "kind": "scatter",
+        "title": "Country-year observations with country colors",
+        "args": "x=year y=fertility color=country",
+        "prose": "Unconnected points do not imply interpolation through null end years. Each country receives one point for each available annual value."
+      },
+      {
+        "kind": "boxplot",
+        "title": "Country distributions across decades",
+        "args": "fertility color=decade",
+        "prose": "These boxes mix countries and years and therefore answer a country-year question. They are not population-weighted distributions of people."
+      },
+      {
+        "kind": "heatmap",
+        "title": "Published rates across country and decade",
+        "args": "country columnField=decade aggregation=average measureField=fertility",
+        "prose": "The cell is an available-year mean within a country and decade. Different decade coverage must be checked before treating cells as equally supported."
+      },
+      {
+        "kind": "row",
+        "title": "Rows retained for each country",
+        "args": "country",
+        "prose": "The row counts include null-valued year cells. Equal retained counts do not mean equal numbers of measured values."
+      }
+    ],
+    "table": [
+      "country",
+      "code",
+      "year",
+      "fertility"
+    ]
+  },
+  {
+    "family": "fertility",
+    "slug": "matched-endpoints",
+    "title": "Compare fertility endpoints only when both are present",
+    "question": "What changed between 1960 and 2011 for the same selected country cohort?",
+    "query": "endpoints",
+    "caveat": "The endpoint year is 2011 because the supplied 2012–2013 columns are empty. Endpoint differences hide intervening reversals. Countries have equal weight and no claim is made about the world population.",
+    "conclusion": "Matching endpoints keeps the country population constant. The comparison still loses the route between the two values, which is why the trajectory notebook remains a necessary companion.",
+    "findings": [
+      {
+        "op": "mean",
+        "field": "change",
+        "sentence": "The mean matched-country change was {value:.3f} births per woman."
+      },
+      {
+        "op": "min",
+        "field": "change",
+        "sentence": "The largest decline in the selected cohort was {value:.3f} births per woman."
+      }
+    ],
+    "steps": [
+      {
+        "kind": "scatter",
+        "title": "Each country’s starting and ending rate",
+        "args": "x=start y=end color=country",
+        "prose": "A point keeps the paired readings together. The two axis labels identify the historical endpoints rather than implying a simultaneous relationship."
+      },
+      {
+        "kind": "scatter",
+        "title": "Change against the starting rate",
+        "args": "x=start y=change color=country",
+        "prose": "Change includes the starting value in its subtraction. A relationship with baseline can arise partly from that construction and should not be treated as policy evidence."
+      },
+      {
+        "kind": "hist",
+        "title": "Distribution of paired changes",
+        "args": "change bins=8",
+        "prose": "Every complete country contributes once. This differs from a histogram of all country-year rates, which weights longer observed paths more heavily."
+      },
+      {
+        "kind": "ecdf",
+        "title": "What share of selected countries changed by this much?",
+        "args": "change direction=below",
+        "prose": "The denominator is the matched selected cohort, not countries worldwide or people. Read a negative change as a decline in the period rate."
+      }
+    ],
+    "table": [
+      "country",
+      "start",
+      "end",
+      "change",
+      "complete"
+    ]
+  },
+  {
+    "family": "fertility",
+    "slug": "pace-by-decade",
+    "title": "Endpoint declines can arrive at different speeds",
+    "question": "Which complete decades contain the fastest average declines among the selected countries?",
+    "query": "decades",
+    "caveat": "A decade’s first and last observations are nine elapsed years apart, not ten. The annualized difference is linear, not a compound growth rate. The incomplete 2010s are deliberately excluded.",
+    "conclusion": "Comparing pace retains more timing than one long endpoint difference, but still erases changes within each decade. Keep the elapsed-year denominator visible.",
+    "findings": [
+      {
+        "op": "mean",
+        "field": "annual_change",
+        "sentence": "The selected-country mean pace in the 1960s was {value:.3f} births per woman per elapsed year.",
+        "where": [
+          [
+            "decade",
+            "eq",
+            "1960s"
+          ]
+        ]
+      },
+      {
+        "op": "mean",
+        "field": "annual_change",
+        "sentence": "The corresponding pace in the 2000s was {value:.3f} births per woman per elapsed year.",
+        "where": [
+          [
+            "decade",
+            "eq",
+            "2000s"
+          ]
+        ]
+      }
+    ],
+    "steps": [
+      {
+        "kind": "heatmap",
+        "title": "A country-by-decade view of pace",
+        "args": "country columnField=decade aggregation=average measureField=annual_change",
+        "prose": "Each cell is already one prepared country-decade observation. The chart’s average therefore returns that cell’s value rather than averaging several undisclosed records."
+      },
+      {
+        "kind": "boxplot",
+        "title": "Pace varies within the same decade",
+        "args": "annual_change color=decade",
+        "prose": "The distribution across countries shows what an unweighted decade mean would conceal. Equal country weights are a deliberate analytical choice."
+      },
+      {
+        "kind": "scatter",
+        "title": "Starting fertility and subsequent decade change",
+        "args": "x=start y=change color=decade",
+        "prose": "A lower starting value leaves a different numerical range for a decline. This plot describes that context without assigning a causal explanation."
+      },
+      {
+        "kind": "scatter",
+        "title": "Check the annual observation count",
+        "args": "x=year y=valid color=country",
+        "prose": "The count verifies whether a named decade has the intended annual support. It does not imply that annual observations are independent."
+      }
+    ],
+    "table": [
+      "country",
+      "decade",
+      "valid",
+      "start",
+      "end",
+      "change",
+      "annual_change"
+    ]
+  },
+  {
+    "family": "iris",
+    "slug": "measurement-choice",
+    "title": "Petals and sepals do not separate iris groups equally",
+    "question": "Which pairs of measured dimensions make the supplied species groups easier to distinguish?",
+    "query": "r",
+    "caveat": "The classic sample has a deliberately limited species population and is not a survey of all irises. The scikit-learn corrected variant is preserved. Visual separation is not an evaluated classifier accuracy.",
+    "conclusion": "Choose measurements for the analytical question rather than assuming every two-dimensional projection is equally informative. Keep overlapping observations visible and avoid converting visual clusters into unsupported prediction claims.",
+    "findings": [
+      {
+        "op": "mean",
+        "field": "petal_length",
+        "sentence": "Mean petal length for setosa was {value:.3f} cm.",
+        "where": [
+          [
+            "species",
+            "eq",
+            "setosa"
+          ]
+        ]
+      },
+      {
+        "op": "mean",
+        "field": "petal_length",
+        "sentence": "Mean petal length for virginica was {value:.3f} cm.",
+        "where": [
+          [
+            "species",
+            "eq",
+            "virginica"
+          ]
+        ]
+      }
+    ],
+    "steps": [
+      {
+        "kind": "scatter",
+        "title": "Petal length against petal width",
+        "args": "x=petal_length y=petal_width color=species",
+        "prose": "Each point is one flower. Consistent species colors support comparison, but points with the same measurements can overlap."
+      },
+      {
+        "kind": "scatter",
+        "title": "Replace petals with sepals",
+        "args": "x=sepal_length y=sepal_width color=species",
+        "prose": "This changes the projection while retaining the population. Any apparent loss of separation comes from the selected measurements, not a different sample."
+      },
+      {
+        "kind": "boxplot",
+        "title": "Petal-length distributions by species",
+        "args": "petal_length color=species",
+        "prose": "A one-dimensional summary sacrifices the joint relationship but makes the distribution centers and overlap easy to compare."
+      },
+      {
+        "kind": "parallel",
+        "title": "Follow each flower through all four dimensions",
+        "args": "sepal_length,sepal_width,petal_length,petal_width color=species",
+        "prose": "Each polyline is one complete flower. Axes have their own scales, so a line’s angle is not a physical geometric angle of the specimen."
+      }
+    ],
+    "table": [
+      "species",
+      "sepal_length",
+      "sepal_width",
+      "petal_length",
+      "petal_width"
+    ]
+  },
+  {
+    "family": "iris",
+    "slug": "pooled-versus-grouped",
+    "title": "A pooled iris correlation is not a within-species relationship",
+    "question": "How does sepal length–width association change after retaining the species grouping?",
+    "query": "r",
+    "caveat": "Grouping is descriptive and does not prove a biological mechanism. Correlations use complete numerical pairs. Equal class counts in this teaching dataset should not be mistaken for natural species prevalence.",
+    "conclusion": "The pooled cloud combines within-group movement with differences between group centers. Report which population a correlation describes instead of calling one coefficient the relationship.",
+    "findings": [
+      {
+        "op": "corr",
+        "field": "sepal_length",
+        "sentence": "The pooled sepal length–width correlation was {value:.3f}.",
+        "other": "sepal_width"
+      },
+      {
+        "op": "corr",
+        "field": "sepal_length",
+        "sentence": "Within setosa, the correlation was {value:.3f}.",
+        "other": "sepal_width",
+        "where": [
+          [
+            "species",
+            "eq",
+            "setosa"
+          ]
+        ]
+      }
+    ],
+    "steps": [
+      {
+        "kind": "scatter",
+        "title": "One pooled cloud, no grouping",
+        "args": "x=sepal_length y=sepal_width regression=linear",
+        "prose": "The fitted line describes every supplied flower together. It mixes between-species differences with within-species variation."
+      },
+      {
+        "kind": "scatter",
+        "title": "Show the groups the pooled fit hid",
+        "args": "x=sepal_length y=sepal_width color=species regression=linear",
+        "prose": "Grouping makes the conditional comparisons explicit. These are descriptive straight fits, not independent tests of a causal model."
+      },
+      {
+        "kind": "boxplot",
+        "title": "Sepal width differs across the groups",
+        "args": "sepal_width color=species",
+        "prose": "Group locations help explain why the pooled cloud can behave differently from each species cloud. A box still loses the paired length measurement."
+      },
+      {
+        "kind": "ecdf",
+        "title": "The entire width distribution by species",
+        "args": "sepal_width color=species direction=below",
+        "prose": "Cumulative curves expose overlap and tails without relying on a fitted equation. They preserve the equal weighting of flowers."
+      }
+    ],
+    "table": [
+      "species",
+      "sepal_length",
+      "sepal_width",
+      "petal_length"
+    ]
+  },
+  {
+    "family": "wine",
+    "slug": "cultivar-chemistry",
+    "title": "Wine chemistry is not a tasting score",
+    "question": "How do recorded flavanoids and color intensity differ across the supplied cultivar groups?",
+    "query": "r",
+    "caveat": "This is the UCI Wine recognition dataset, not the demo’s Wine Quality ratings. The publisher does not specify units for these assay fields; source units are retained. Cultivar labels are not quality rankings.",
+    "conclusion": "The group label supplies context for chemical comparisons, not a scale from bad wine to good wine. Avoid reusing the narrative of a quality-score example on a different source population.",
+    "findings": [
+      {
+        "op": "mean",
+        "field": "flavanoids",
+        "sentence": "Mean flavanoids in Cultivar 1 were {value:.3f} source assay units.",
+        "where": [
+          [
+            "cultivar",
+            "eq",
+            "Cultivar 1"
+          ]
+        ]
+      },
+      {
+        "op": "mean",
+        "field": "flavanoids",
+        "sentence": "Mean flavanoids in Cultivar 3 were {value:.3f} source assay units.",
+        "where": [
+          [
+            "cultivar",
+            "eq",
+            "Cultivar 3"
+          ]
+        ]
+      }
+    ],
+    "steps": [
+      {
+        "kind": "scatter",
+        "title": "Flavanoids against color intensity",
+        "args": "x=flavanoids y=color_intensity color=cultivar",
+        "prose": "The two assays describe different measurements. Their numerical values cannot be compared as though both had one common physical unit."
+      },
+      {
+        "kind": "boxplot",
+        "title": "Flavanoid distributions by cultivar",
+        "args": "flavanoids color=cultivar",
+        "prose": "Use the same field scale across groups. A difference in group center does not establish a difference in desirability or quality."
+      },
+      {
+        "kind": "scatter",
+        "title": "Total phenols and flavanoids",
+        "args": "x=total_phenols y=flavanoids color=cultivar",
+        "prose": "A second chemical pair checks whether the grouping is visible beyond the first projection. The relationship remains observational."
+      },
+      {
+        "kind": "ecdf",
+        "title": "Color intensity across the same groups",
+        "args": "color_intensity color=cultivar direction=below",
+        "prose": "The cumulative view compares all recorded intensities. It avoids inventing an assay threshold that the source did not define."
+      }
+    ],
+    "table": [
+      "cultivar",
+      "flavanoids",
+      "color_intensity",
+      "total_phenols",
+      "alcohol"
+    ]
+  },
+  {
+    "family": "wine",
+    "slug": "profile-scales",
+    "title": "Chemical profiles need separate axes, not one shared unit",
+    "question": "Which measurements dominate a raw numerical view of the wine assays?",
+    "query": "r",
+    "caveat": "The assay fields have different source units and scales. Parallel-coordinate axes are separate, so steep segments do not measure chemical relationships directly. No classifier or quality model is evaluated.",
+    "conclusion": "A multivariable view is useful when its axes acknowledge different measurements. Standardizing would answer a relative-position question, but it would erase the original units; this piece keeps the raw values.",
+    "findings": [
+      {
+        "op": "max",
+        "field": "proline",
+        "sentence": "The maximum recorded proline value was {value:.1f} source units."
+      },
+      {
+        "op": "max",
+        "field": "hue",
+        "sentence": "The maximum recorded hue value was {value:.3f} source units."
+      }
+    ],
+    "steps": [
+      {
+        "kind": "parallel",
+        "title": "One wine across selected assay axes",
+        "args": "alcohol,malic_acid,magnesium,flavanoids,color_intensity,proline color=cultivar",
+        "prose": "Separate axes stop the numerically largest field from compressing every other measure. The display does not make unlike units additive."
+      },
+      {
+        "kind": "scatter",
+        "title": "Proline and alcohol remain in original units",
+        "args": "x=proline y=alcohol color=cultivar",
+        "prose": "A conventional paired plot restores explicit two-axis interpretation. It helps test an impression formed in the denser profile view."
+      },
+      {
+        "kind": "boxplot",
+        "title": "Hue has its own numerical scale",
+        "args": "hue color=cultivar",
+        "prose": "A field with small numerical values can still separate groups. Magnitude in source units is not a measure of analytical importance."
+      },
+      {
+        "kind": "boxplot",
+        "title": "Proline has a much larger raw scale",
+        "args": "proline color=cultivar",
+        "prose": "Do not compare box heights across these two charts as if the vertical rulers were identical. Read each field’s label and unit caveat."
+      }
+    ],
+    "table": [
+      "cultivar",
+      "alcohol",
+      "malic_acid",
+      "magnesium",
+      "hue",
+      "proline"
+    ]
+  },
+  {
+    "family": "longley",
+    "slug": "trending-levels",
+    "title": "A small employment benchmark contains several rising trends",
+    "question": "How similar are employment, population, and nominal output after rebasing their starting values?",
+    "query": "r",
+    "caveat": "This is a small historical regression benchmark, not a current labor-market dataset. GNP is nominal and source units are retained. Similar trends do not establish a stable causal employment model.",
+    "conclusion": "Indices make proportional movement comparable while hiding original scale. The paired changes offer a different test of whether the levels association is mainly a shared historical trend.",
+    "findings": [
+      {
+        "op": "corr",
+        "field": "employment",
+        "sentence": "Employment and nominal GNP in levels had correlation {value:.3f}.",
+        "other": "gnp"
+      },
+      {
+        "op": "corr",
+        "field": "employment_change",
+        "sentence": "Their valid annual changes had correlation {value:.3f}.",
+        "other": "gnp_change"
+      }
+    ],
+    "steps": [
+      {
+        "kind": "line",
+        "title": "Give each series the same starting index",
+        "args": "x=year y=employment_index,gnp_index,population_index",
+        "prose": "A common start is imposed by the transformation. Different subsequent slopes describe proportional movement from that reference."
+      },
+      {
+        "kind": "scatter",
+        "title": "The strong-looking levels relationship",
+        "args": "x=gnp y=employment",
+        "prose": "Both measurements move through the same short historical span. A close cloud alone does not validate a prediction model."
+      },
+      {
+        "kind": "scatter",
+        "title": "Compare changes between adjacent years",
+        "args": "x=gnp_change y=employment_change",
+        "prose": "The first year has no prior observation and is omitted from the paired-change statistic. Differencing changes the question rather than simply improving the first chart."
+      },
+      {
+        "kind": "hist",
+        "title": "The distribution of annual employment changes",
+        "args": "employment_change bins=8",
+        "prose": "With a small number of differences, bins are only a rough descriptive device. Use the source table to inspect the individual changes."
+      }
+    ],
+    "table": [
+      "year",
+      "employment",
+      "gnp",
+      "population",
+      "employment_change",
+      "gnp_change"
+    ]
+  },
+  {
+    "family": "longley",
+    "slug": "different-denominators",
+    "title": "Employment counts and unemployment counts are not a rate",
+    "question": "What do the raw historical count series show without inventing a labor-force denominator?",
+    "query": "r",
+    "caveat": "The selected columns do not provide a verified labor-force denominator for constructing a standard unemployment rate. Population is not a substitute. These source counts belong to an old benchmark vintage.",
+    "conclusion": "A dashboard can be useful without manufacturing a familiar metric. Keep the count series separate, name their units, and make the missing denominator an analytical limit.",
+    "findings": [
+      {
+        "op": "min",
+        "field": "unemployed",
+        "sentence": "The smallest recorded unemployment count was {value:,.0f} source count units."
+      },
+      {
+        "op": "max",
+        "field": "unemployed",
+        "sentence": "The largest recorded unemployment count was {value:,.0f} source count units."
+      }
+    ],
+    "steps": [
+      {
+        "kind": "line",
+        "title": "Unemployment counts across the supplied years",
+        "args": "x=year y=unemployed",
+        "prose": "This line is a count series. Calling it an unemployment rate would silently add a denominator the analysis has not verified."
+      },
+      {
+        "kind": "line",
+        "title": "Armed-forces counts provide different context",
+        "args": "x=year y=armed",
+        "prose": "The second count has a different population meaning. Its separate panel avoids suggesting that the two series partition a complete labor force."
+      },
+      {
+        "kind": "scatter",
+        "title": "Employment and unemployment can both move",
+        "args": "x=employment y=unemployed color=era",
+        "prose": "A two-count plot makes the changing scale of the economy relevant. There is no identity requiring the two plotted numbers to sum to a constant."
+      },
+      {
+        "kind": "scatter",
+        "title": "Population is context, not a rate denominator",
+        "args": "x=population y=unemployed",
+        "prose": "Population does not establish who participates in the labor force. This view describes scale without converting the ratio into an official labor statistic."
+      }
+    ],
+    "table": [
+      "year",
+      "employment",
+      "unemployed",
+      "armed",
+      "population"
+    ]
+  },
+  {
+    "family": "football",
+    "slug": "group-goals",
+    "title": "The group stage was not forty-eight identical scorelines",
+    "question": "How much of the 2018 group-stage scoring distribution sits in close games and high totals?",
+    "query": "r",
+    "caveat": "Only the supplied group stage is included. Final scores exclude penalty shootouts and contain no playing-time, shot, or possession information. The first listed side is not treated as a home team.",
+    "conclusion": "Match totals describe spectacle; margins describe closeness. They can move independently, so a high-scoring match should not automatically be called uncompetitive.",
+    "findings": [
+      {
+        "op": "mean",
+        "field": "total_goals",
+        "sentence": "The mean group-stage match total was {value:.3f} goals."
+      },
+      {
+        "op": "share",
+        "field": "margin",
+        "sentence": "Matches with a margin no greater than one goal represented {value:.2f}% of the group stage.",
+        "condition": [
+          [
+            "margin",
+            "le",
+            1
+          ]
+        ]
+      }
+    ],
+    "steps": [
+      {
+        "kind": "hist",
+        "title": "How many goals did a match contain?",
+        "args": "total_goals bins=8",
+        "prose": "The unit is one match, so each final score contributes once. Team-appearance rows would double the count and require a different denominator."
+      },
+      {
+        "kind": "scatter",
+        "title": "A high total need not mean a wide margin",
+        "args": "x=total_goals y=margin opacity=0.6",
+        "prose": "Each match has two derived measures from the same score. Coincident points remain separate records and should not be deduplicated."
+      },
+      {
+        "kind": "boxplot",
+        "title": "Match-total distributions by group",
+        "args": "total_goals color=group",
+        "prose": "Every group has the same intended match schedule, but a small number of games makes broad group rankings fragile."
+      },
+      {
+        "kind": "row",
+        "title": "Drawn and decisive final scores",
+        "args": "result",
+        "prose": "A draw is defined by equal final goals. This is not a claim about whether a match was tactically balanced or whether either team deserved to win."
+      }
+    ],
+    "table": [
+      "date",
+      "group",
+      "team1",
+      "team2",
+      "goals1",
+      "goals2",
+      "total_goals",
+      "margin"
+    ]
+  },
+  {
+    "family": "football",
+    "slug": "points-and-goals",
+    "title": "Goals scored and group points reward different things",
+    "question": "How do team-level scoring, defending, and points compare over the same three matches?",
+    "query": "teams",
+    "caveat": "Teams faced different opponents, and the small group-stage schedule is not a strength-adjusted experiment. No advancement ranking is inferred because all tie-break procedures are outside this analysis.",
+    "conclusion": "The team table changes the population from matches to participants. Points and goal difference summarize different rules, so retain goals for and against instead of compressing everything into a single league table.",
+    "findings": [
+      {
+        "op": "max",
+        "field": "goals_for",
+        "sentence": "The largest team group-stage goal total was {value:.0f} goals."
+      },
+      {
+        "op": "share",
+        "field": "points",
+        "sentence": "Teams earning at least seven group points represented {value:.2f}% of the selected teams.",
+        "condition": [
+          [
+            "points",
+            "ge",
+            7
+          ]
+        ]
+      }
+    ],
+    "steps": [
+      {
+        "kind": "scatter",
+        "title": "Scoring and conceding are separate axes",
+        "args": "x=goals_for y=goals_against color=group",
+        "prose": "Each point is one team after its completed group matches. Teams are not independent because opponents contribute to one another’s goals-against totals."
+      },
+      {
+        "kind": "scatter",
+        "title": "Goal difference against points",
+        "args": "x=goal_difference y=points color=group",
+        "prose": "Points follow win/draw/loss rules rather than a direct conversion of goal difference. Equal points can conceal different scoring profiles."
+      },
+      {
+        "kind": "hist",
+        "title": "The distribution of group-stage points",
+        "args": "points bins=10",
+        "prose": "This counts teams, not matches. The schedule creates a discrete points scale and limits the sample’s possible values."
+      },
+      {
+        "kind": "boxplot",
+        "title": "Scoring totals within each group",
+        "args": "goals_for color=group",
+        "prose": "Each group’s teams share opponents within their schedule. These distributions are descriptive and not measures of an independently randomized group effect."
+      }
+    ],
+    "table": [
+      "team",
+      "group",
+      "matches",
+      "goals_for",
+      "goals_against",
+      "goal_difference",
+      "points"
+    ]
+  },
+  {
+    "family": "tate",
+    "slug": "metadata-not-lifespans",
+    "title": "A museum catalogue date span is not always a person’s lifespan",
+    "question": "What goes wrong when birth and death fields are treated as complete biographies?",
+    "query": "r",
+    "caveat": "This is the first sixty alphabetically ordered records in Tate’s October 2014 archive, not a representative artist sample. A blank death year is not evidence that someone is alive today. The explicit Alken Family entry is not one person.",
+    "conclusion": "An implausible-looking span can expose a mismatch between the analytical unit and the catalogue entity. Preserve the record and explain the mismatch instead of silently clipping it or inventing a death date.",
+    "findings": [
+      {
+        "op": "max",
+        "field": "date_span",
+        "sentence": "The largest recorded date span in this prefix was {value:.0f} years; it belongs to the explicit family entity."
+      },
+      {
+        "op": "missing_share",
+        "field": "death_year",
+        "sentence": "Blank death-year fields represent {value:.2f}% of this archive prefix."
+      }
+    ],
+    "steps": [
+      {
+        "kind": "hist",
+        "title": "Birth-year coverage of the alphabetic prefix",
+        "args": "birth_year bins=16",
+        "prose": "The prefix is selected by catalogue ordering, not time or random sampling. Its birth-year distribution cannot describe Tate’s whole collection."
+      },
+      {
+        "kind": "row",
+        "title": "Recorded versus blank death-year fields",
+        "args": "death_status",
+        "prose": "The labels describe the old metadata, not current living status. Both types remain in the full row population."
+      },
+      {
+        "kind": "scatter",
+        "title": "Date span against birth year, with the family distinguished",
+        "args": "x=birth_year y=date_span color=entity",
+        "prose": "The span is a subtraction of supplied date fields. Color identifies the explicitly named family entry without assuming that every other catalogue record is necessarily a single-person biography."
+      },
+      {
+        "kind": "hist",
+        "title": "Inspect long spans rather than deleting them",
+        "args": "date_span bins=15",
+        "prose": "Only paired dates contribute. A long interval is a prompt to inspect entity semantics; it is not automatically a bad numeric measurement."
+      }
+    ],
+    "table": [
+      "catalogue_id",
+      "name",
+      "birth_year",
+      "death_year",
+      "date_span",
+      "entity",
+      "death_status"
+    ]
+  },
+  {
+    "family": "grunfeld",
+    "slug": "investment-concentration",
+    "title": "A selected corporate panel can be dominated by a few firms",
+    "question": "How concentrated is cumulative recorded investment among the firms in this panel?",
+    "query": "firms",
+    "caveat": "The denominator is cumulative investment among the selected panel firms and years, not all corporate investment. Adding market values across years would not represent a stock of wealth, so that quantity is not used.",
+    "conclusion": "Changing from firm-years to firm summaries makes concentration visible without giving each large firm more rows. Retain the observation counts to distinguish investment scale from a longer recorded history.",
+    "findings": [
+      {
+        "op": "top_share",
+        "field": "invest_total",
+        "sentence": "The largest firm accounts for {value:.2f}% of cumulative panel investment.",
+        "k": 1
+      },
+      {
+        "op": "top_share",
+        "field": "invest_total",
+        "sentence": "The three largest firms together account for {value:.2f}% of cumulative panel investment.",
+        "k": 3
+      }
+    ],
+    "steps": [
+      {
+        "kind": "scatter",
+        "title": "Mean market value against mean investment",
+        "args": "x=value_mean y=invest_mean",
+        "prose": "Each point now represents one firm rather than a firm-year. That changes the observational unit and removes the chronological variation inside each company."
+      },
+      {
+        "kind": "hist",
+        "title": "The distribution of cumulative investment by firm",
+        "args": "invest_total bins=8",
+        "prose": "A firm contributes one total across its supplied years. The horizontal measure is a flow accumulated over time, not an asset value measured at one date."
+      },
+      {
+        "kind": "scatter",
+        "title": "Separate scale from observation count",
+        "args": "x=years y=invest_total",
+        "prose": "A high total might reflect more years, larger annual amounts, or both. The explicit year count checks which of these explanations is available in this panel."
+      },
+      {
+        "kind": "ecdf",
+        "title": "How many firms fall below a cumulative amount?",
+        "args": "invest_total direction=below",
+        "prose": "The cumulative curve gives firms equal weight. It therefore answers a different question from the share of all investment contributed by the largest firms."
+      }
+    ],
+    "table": [
+      "firm",
+      "years",
+      "invest_mean",
+      "value_mean",
+      "invest_total"
+    ]
+  },
+  {
+    "family": "fertility",
+    "slug": "empty-end-years",
+    "title": "An empty year column is not a fertility collapse",
+    "question": "What happens when a historical export contains year columns with no values?",
+    "query": "r",
+    "caveat": "The supplied export is a historical snapshot. Empty values mean unavailable in this file, not zero births per woman and not necessarily unavailable from later source revisions. The country subset is illustrative.",
+    "conclusion": "Data coverage is part of the result. Keeping blank end years prevents a chart from inventing a decline to zero or presenting a carried-forward value as a fresh observation.",
+    "findings": [
+      {
+        "op": "missing_share",
+        "field": "fertility",
+        "sentence": "In the selected 2012 rows, the missing-value share was {value:.1f}%.",
+        "where": [
+          [
+            "year",
+            "eq",
+            2012
+          ]
+        ]
+      },
+      {
+        "op": "missing_share",
+        "field": "fertility",
+        "sentence": "In the selected 2011 rows, the missing-value share was {value:.1f}%.",
+        "where": [
+          [
+            "year",
+            "eq",
+            2011
+          ]
+        ]
+      }
+    ],
+    "steps": [
+      {
+        "kind": "scatter",
+        "title": "Recorded rates stop before the headers do",
+        "args": "x=year y=fertility color=country",
+        "prose": "The axis can contain dates without measured points. Do not connect a null to zero or carry the previous observation forward without declaring an imputation model."
+      },
+      {
+        "kind": "bar",
+        "title": "Published and missing cells in each year",
+        "args": "year_label seriesField=coverage seriesLayout=stacked color=coverage",
+        "prose": "Count each selected country-year once and split the count by value availability. The missing segment records null source cells; it does not replace the missing rate with zero."
+      },
+      {
+        "kind": "row",
+        "title": "Published versus missing source values",
+        "args": "coverage",
+        "prose": "Count the two availability categories across the entire fixed country-year grid. This makes the missing-rate denominator explicit without deleting the incomplete rows."
+      },
+      {
+        "kind": "heatmap",
+        "title": "Coverage by country and supplied year",
+        "args": "country columnField=year_label aggregation=average measureField=observed",
+        "prose": "Each cell has one selected country-year: one means a published rate and zero means a null rate. These are measurement-availability indicators, not imputed fertility values."
+      }
+    ],
+    "table": [
+      "country",
+      "code",
+      "year",
+      "fertility",
+      "decade"
+    ]
+  },
+  {
+    "family": "football",
+    "slug": "draws-and-points",
+    "title": "A drawn group match distributes fewer points",
+    "question": "How does the draw rate affect the number of group-stage points available to teams?",
+    "query": "r",
+    "caveat": "This is arithmetic under the declared three-points-for-a-win and one-for-a-draw rule, not a measure of match quality. It describes group-stage final scores only and says nothing about later knockout results.",
+    "conclusion": "A decisive match supplies three total team points; a draw supplies two. Comparing groups by points without acknowledging that rule can obscure why equal schedules produce different point pools.",
+    "findings": [
+      {
+        "op": "share",
+        "field": "result",
+        "sentence": "Draws represent {value:.2f}% of the supplied group-stage matches.",
+        "condition": [
+          [
+            "result",
+            "eq",
+            "Draw"
+          ]
+        ]
+      },
+      {
+        "op": "sum",
+        "field": "total_goals",
+        "sentence": "The supplied group-stage matches contain {value:.0f} total goals."
+      }
+    ],
+    "steps": [
+      {
+        "kind": "row",
+        "title": "First separate drawn from decisive matches",
+        "args": "result",
+        "prose": "The result categories are defined directly from equal or unequal final goals. They do not incorporate shootouts or subjective assessments of play."
+      },
+      {
+        "kind": "heatmap",
+        "title": "Result counts inside each group",
+        "args": "group columnField=result aggregation=count showValues=true",
+        "prose": "The count cells reveal differences in group draws under the same schedule length. A missing category should not be confused with a missing match."
+      },
+      {
+        "kind": "boxplot",
+        "title": "Draws can still have different goal totals",
+        "args": "total_goals color=result",
+        "prose": "A draw may be scoreless or high-scoring. This distribution prevents the draw category from being treated as a synonym for a low-event match."
+      },
+      {
+        "kind": "scatter",
+        "title": "The two final goal counts",
+        "args": "x=goals1 y=goals2 color=result",
+        "prose": "Draws lie where the two scores are equal. First and second are listing order, not home advantage, and coincident scorelines still represent separate games."
+      }
+    ],
+    "table": [
+      "date",
+      "group",
+      "team1",
+      "team2",
+      "goals1",
+      "goals2",
+      "result"
+    ]
+  }
+]

@@ -1,0 +1,77 @@
+{
+  "r": {
+    "source_id": "r",
+    "path": "projects/iris/data/r.csv",
+    "row_count": 150,
+    "grain": "one sampled iris flower",
+    "key": "id",
+    "fields": [
+      {
+        "name": "id",
+        "source_field": "r.id",
+        "type": "string",
+        "unit": "identifier",
+        "missing_count": 0,
+        "valid_count": 150,
+        "description": "id; identifier"
+      },
+      {
+        "name": "sepal_length",
+        "source_field": "r.sepal_length",
+        "type": "number",
+        "unit": "centimetres",
+        "missing_count": 0,
+        "valid_count": 150,
+        "description": "sepal length; centimetres"
+      },
+      {
+        "name": "sepal_width",
+        "source_field": "r.sepal_width",
+        "type": "number",
+        "unit": "centimetres",
+        "missing_count": 0,
+        "valid_count": 150,
+        "description": "sepal width; centimetres"
+      },
+      {
+        "name": "petal_length",
+        "source_field": "r.petal_length",
+        "type": "number",
+        "unit": "centimetres",
+        "missing_count": 0,
+        "valid_count": 150,
+        "description": "petal length; centimetres"
+      },
+      {
+        "name": "petal_width",
+        "source_field": "r.petal_width",
+        "type": "number",
+        "unit": "centimetres",
+        "missing_count": 0,
+        "valid_count": 150,
+        "description": "petal width; centimetres"
+      },
+      {
+        "name": "species",
+        "source_field": "r.species",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 150,
+        "description": "species; category"
+      },
+      {
+        "name": "petal_ratio",
+        "source_field": "r.petal_ratio",
+        "type": "number",
+        "unit": "length / width, dimensionless",
+        "missing_count": 0,
+        "valid_count": 150,
+        "description": "petal ratio; length / width, dimensionless"
+      }
+    ],
+    "transformations": "Preserve scikit-learn corrected source variant; decode class labels; petal ratio = length / width.",
+    "sha256": "2d29182611141f573e5dfe64cb648421159ea94ff7ec02b868cc38fa90922288",
+    "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+  }
+}

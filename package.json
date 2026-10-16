@@ -12,6 +12,7 @@
     "changeset:add": "node scripts/add-changeset.mjs",
     "dev:agent": "node scripts/dev.mjs",
     "shot": "node scripts/shot.mjs",
+    "daily": "node scripts/daily.mjs",
     "export-proof": "node scripts/export-proof.mjs",
     "check:pr": "node scripts/check-pr.mjs",
     "team-shot": "node scripts/team-shot.mjs",

@@ -1,0 +1,95 @@
+{
+  "r": {
+    "source_id": "r",
+    "path": "projects/tate/data/r.csv",
+    "row_count": 60,
+    "grain": "one artist-catalogue record in the first 60 alphabetic records",
+    "key": "id",
+    "fields": [
+      {
+        "name": "id",
+        "source_field": "r.id",
+        "type": "string",
+        "unit": "identifier",
+        "missing_count": 0,
+        "valid_count": 60,
+        "description": "id; identifier"
+      },
+      {
+        "name": "catalogue_id",
+        "source_field": "r.catalogue_id",
+        "type": "number",
+        "unit": "original Tate catalogue identifier",
+        "missing_count": 0,
+        "valid_count": 60,
+        "description": "catalogue id; original Tate catalogue identifier"
+      },
+      {
+        "name": "name",
+        "source_field": "r.name",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 60,
+        "description": "name; category"
+      },
+      {
+        "name": "birth_year",
+        "source_field": "r.birth_year",
+        "type": "number",
+        "unit": "year in October 2014 archive",
+        "missing_count": 0,
+        "valid_count": 60,
+        "description": "birth year; year in October 2014 archive"
+      },
+      {
+        "name": "death_year",
+        "source_field": "r.death_year",
+        "type": "number",
+        "unit": "year in October 2014 archive",
+        "missing_count": 19,
+        "valid_count": 41,
+        "description": "death year; year in October 2014 archive"
+      },
+      {
+        "name": "date_span",
+        "source_field": "r.date_span",
+        "type": "number",
+        "unit": "years between two catalogue dates; not necessarily a lifespan",
+        "missing_count": 19,
+        "valid_count": 41,
+        "description": "date span; years between two catalogue dates; not necessarily a lifespan"
+      },
+      {
+        "name": "entity",
+        "source_field": "r.entity",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 60,
+        "description": "entity; category"
+      },
+      {
+        "name": "death_status",
+        "source_field": "r.death_status",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 60,
+        "description": "death status; category"
+      },
+      {
+        "name": "birth_century",
+        "source_field": "r.birth_century",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 60,
+        "description": "birth century; category"
+      }
+    ],
+    "transformations": "Select four supplied fields; span = death year - birth year only when both recorded; identify explicit Alken Family name without inferring other entities. No current-life status inferred from old missing death dates.",
+    "sha256": "8dd3f837fb047f83d0a0bde56f52a4e07c3e7ee6e28e0cfce58c161fcb15f272",
+    "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+  }
+}

@@ -1,0 +1,16 @@
+eda query=paired
+dashboard "Two fertility endpoints, the same country cohort"
+grid columns=12 rowHeight=76
+composition @cp-fertility-matched-slope-grid width=1080 height=1100 at=0,0,12,9 {
+  title "Two fertility endpoints, the same country cohort" at=32,28 fontSize=24
+  subtitle "A small paired slope chart for each country preserves its two endpoint observations." at=32,78 fontSize=13
+  scale numeric paired.year nice=false ticks=ends
+  scale numeric paired.fertility zero=true
+  unit Countries at=68,175 size=240x130 axisTitles.y="Births per woman" {
+    repeat paired.country arrangement=grid columns=3 gap=75 order=label
+    label fontSize=12
+    path Change x=paired.year y=paired.fertility orderField=paired.year
+    point Endpoints x=paired.year y=paired.fertility radius=3
+  }
+  footnote "World Bank, UN and national statistical sources; historical snapshot; CC BY 4.0." at=32,1046 fontSize=10
+}
