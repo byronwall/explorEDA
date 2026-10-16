@@ -1,0 +1,155 @@
+{
+  "repository": "https://github.com/byronwall/explorEDA",
+  "baseline": "ea8b52ff742f11d1fb89457acabbcd27b0bd04e7",
+  "kind": "selected text source snapshot; not runnable checkout",
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "802990c1bacd76b4b867239da78fd011fb32653f891d4a88560e9ee629979a33"
+    },
+    {
+      "path": "README.md",
+      "sha256": "ecbcbb73d55fb0e4287c0f58d19519048f0c8bc41dcb06497ebef98eff1ebb79"
+    },
+    {
+      "path": "CODING_STANDARDS.md",
+      "sha256": "b4358fe75d063d53aea1edbc58d0dc6fd8df6e6165aa5792d8d2aa35eefe7ac5"
+    },
+    {
+      "path": "docs/agent-guide.md",
+      "sha256": "3dda5eefaf03d479b10de1cda4fca89bda4a244abac027044e0ee6a91a6de36c"
+    },
+    {
+      "path": "docs/ui-defaults.md",
+      "sha256": "93ee25ebd3917a1e56d7db818ff4b6edcfe7e063f390ff9d5e9b83a0cc32f84a"
+    },
+    {
+      "path": "docs/composition-mode.md",
+      "sha256": "0034e1e9b2a859e3f395fe119d57722d9c80b0b3ba05dcb1c5e5f528c8e1e09b"
+    },
+    {
+      "path": "docs/research/demo-datasets/README.md",
+      "sha256": "903f7380d39932a67bb6b1fee403b450300d8bf35908dd79b0094ec81fbc05d0"
+    },
+    {
+      "path": "docs/research/demo-datasets/dataset-research.md",
+      "sha256": "5ada2bd98ad326a4936edab6ba291e5712d6d97f88fa3036b15b68b7241e83a8"
+    },
+    {
+      "path": "apps/demo/public/datasets/README.md",
+      "sha256": "45a79328aa683d4ff7aa2aaa69acd49eda47cbad9ee2c4434b3bc1593f907872"
+    },
+    {
+      "path": "apps/demo/src/dashboardText.test.ts",
+      "sha256": "92c91d8469d88b301bdab05cefad286fcd65ba216ad415d90c35af764616c832"
+    },
+    {
+      "path": "apps/demo/src/demos/examples.ts",
+      "sha256": "540d1f1912de9b00d53a6b145fc3cf76772facfef516f6d9552ae40da6ee186e"
+    },
+    {
+      "path": "apps/demo/src/demos/coverage.ts",
+      "sha256": "62d934155661c5ea0a7244c109deea073e68fbcc0f2ca6c077af0c06f5cdadeb"
+    },
+    {
+      "path": "apps/demo/src/demos/dashboardSettings.ts",
+      "sha256": "744175f3c841082acec0a4ae579ae80992cf4074070af50f92a0570fb2592ce9"
+    },
+    {
+      "path": "apps/demo/src/demos/analyses/types.ts",
+      "sha256": "d87425683543d36b2416c9f9d45e4e05b5719d5b4cbd404c9e8309f80b9a54c2"
+    },
+    {
+      "path": "apps/demo/src/demos/analyses/loadAnalysis.ts",
+      "sha256": "be69417418b481f8e9c30f34341c22089382870621a940d35412d22e618f19e9"
+    },
+    {
+      "path": "apps/demo/src/demos/analyses/flights.ts",
+      "sha256": "edba51f42d80e70ce294cb9c22351f489a5b9aea45ffe376cc6d1b3ff4a29a51"
+    },
+    {
+      "path": "apps/demo/src/demos/analyses/beijing.ts",
+      "sha256": "a8fea3ede7ba2acd016ec7060bb981fb5a9da09049424302dfe280cda78d594b"
+    },
+    {
+      "path": "packages/explorEDA/src/cli/exploredaDsl.ts",
+      "sha256": "ab40d58967f93de8ee403ca7972595de2dd59b7f36cfdccd379e360c8dbbf807"
+    },
+    {
+      "path": "packages/explorEDA/src/components/notebook/ExplorEdaNotebook.tsx",
+      "sha256": "ba85622562c0814509fef9dc11b7e8db81d2417abaa7027e111bee2a40ac94f7"
+    },
+    {
+      "path": "apps/demo/src/docs/pages/notebooks.mdx",
+      "sha256": "f8cc4a8dce0af2f8b220f7e0fdffa4379657d05f89f80f2ec571809e03dde115"
+    },
+    {
+      "path": "apps/demo/src/docs/pages/project-folders.mdx",
+      "sha256": "8dd64f54e6d7671a1eb33f68dcbdcd00ec9fc038335cd615d80f04231402c5d4"
+    },
+    {
+      "path": "apps/demo/src/docs/pages/dashboard-text.mdx",
+      "sha256": "f20b6cb46922ba7e11cbb7f8c92d90b3855135eafc24409b360d7867e81b56fb"
+    },
+    {
+      "path": "apps/demo/src/docs/pages/composition.mdx",
+      "sha256": "ac02de890e01ebe55bc46725b315a4fa00a203045105ecff9b1e740f1daa4270"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/notebook/parseNotebook.ts",
+      "sha256": "4fdee9cd2462d9cb5ec7f7dacdc3e5d49bfe92bcfab0e67e51790e1ec34a6eea"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/notebook/compileNotebook.ts",
+      "sha256": "ec8257785e1a912d9e6a3a4766615cda9fe6cfb423aa9d8d0f212b49ee1c42eb"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/notebook/readNotebook.ts",
+      "sha256": "3567277dd615c44e6a1acdcfb0dc103dce27d84794080e07140a06f25fd3fcbb"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/notebook/compileNotebook.test.ts",
+      "sha256": "26bbc8932b05b9fdf9029098a2511630e705d1b00db6190a6ed32c482d238c10"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/project.ts",
+      "sha256": "c5667a63d5b9da7219bc1eaaee996e06cbb9f736e4a5a436377bad87265e8f75"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/composition.ts",
+      "sha256": "fdcf70f6c66ba88b6f6727c6829300dacb8ee167da1e8f9ec5a5665b99a2826d"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/compile.ts",
+      "sha256": "d9e8c4e478d0e4c93ec990b0ba32ccb83f4aba2934a1a22696c0c7468d91dc9b"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/settingKeys.ts",
+      "sha256": "4eb6b4452717c5adbe26a1046deff79ecdb63a2a3f5fe9b66efedc87521ef364"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/describe.ts",
+      "sha256": "01532d8ab9fc5f9f1ace435f35d900da920ee74e7d96d90833e7db69cdb0cfa5"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/composition.test.ts",
+      "sha256": "ee96db603d95e3096c4b4b68e2fd9a7e7bc6dc60ef3eaa4bb9e3efc44d96737c"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/views.test.ts",
+      "sha256": "9b0dbbba11c32df0d1b702a136cff03e4998424bd4e42a0d84f8bcf571490948"
+    },
+    {
+      "path": "packages/explorEDA/examples/forecast/forecast.eda.md",
+      "sha256": "58d2d058650ecd6a4becff43eb584892d5016242091d200f4a6469d9529ff17b"
+    },
+    {
+      "path": "packages/explorEDA/examples/forecast/exploreda.eda",
+      "sha256": "b0a81f29d2c9ac27fe4fef27eb83e1ea3c35781a5770fe4afecb0deb7f6286f5"
+    },
+    {
+      "path": "packages/explorEDA/examples/forecast/data/ercot-demand.csv",
+      "sha256": "d2f5cf4db04e65e409eaf56227f08543763e34d4442012c2df5fcb9c34680c73"
+    }
+  ]
+}
