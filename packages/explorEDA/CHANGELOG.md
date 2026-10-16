@@ -1,5 +1,49 @@
 # exploreda
 
+## 0.3.0
+
+### Minor Changes
+
+- 3c2001e: Add a Funnel chart that follows entities through ordered steps of an event log. A step counts only after the step before it, within an optional window, and clicking a step selects every event of the entities that reached it.
+- a7fc47f: Add a Retention chart that groups entities by the day, week, or month they entered and shows the share active in each period after, with an optional entry event and choice of active events. Clicking a cell selects every event of the entities active in it.
+- 51da502: Add a Timeline chart that lays out start-to-end intervals in one lane per value, such as room bookings. Drag across time to keep every row that overlaps that window, including rows with no end yet, or click a bar to select its row.
+- 7b51575: Authors can add database connections and sources from the project app: pick a SQLite file or PostgreSQL server, then a table or a query, and the source is read and opened in a new analysis. The package exports `addConnectionText`, `addDatabaseSourceText`, and `sourceIdForTable` for the same edits.
+- 72dd3c2: Chart edits in a notebook now save to its `.eda.md` text: `ExplorEdaNotebook` takes `onTextChange`, and `writeBackSettings` changes only the settings that were edited, leaving comments and other lines as written. Line series written with a field alias, such as `series actual`, now apply, and changing a table, line, or scatter chart to another type keeps its main field.
+- f38c430: `exploreda server --data <folder>` now keeps accounts, projects, and members in the data folder. The first person to open it creates the admin account. Admins add people as authors or viewers and hand them set-password links, and authors create projects and choose their members.
+- 4062fb3: `ExplorEdaNotebook` shows a notebook's prose and charts in one reading column, and project folders list `.eda.md` notebooks beside analyses. A chart's clicks and brushes stay with that chart there (`localSelections` on `DataLayerProvider`), and a block with broken text keeps its last results until it is fixed. Line charts now draw an ISO date x field with calendar ticks.
+- 08e9b2d: Notebooks: a `.eda.md` file in a project folder holds Markdown prose with `eda` blocks of dashboard text. `readNotebookText`, `compileNotebook`, and `writeBackChart` build it and write chart edits back as minimal text changes, and `exploreda-dsl check`, `fmt`, and `project` accept notebooks. Axis ranges on date axes now read and write ISO dates, such as `x.min=2021-02-07`.
+- 5f0602d: Notebooks can be edited in the app: each `eda` block and each stretch of prose has an Edit control that opens its text in place, and charts update as you type. The docs have a Notebooks page.
+- 5d4cf04: On `exploreda server`, authors can add CSV and JSON files to a project by uploading them or by giving an address the server downloads. Downloaded files show when they were fetched and can be refetched.
+- 65994d5: Project folders can read DuckDB files with `driver=duckdb`. DuckDB's library isn't bundled; the first read says to run `npm install @duckdb/node-api` in the project folder. Fixes a crash in the built `exploreda` command when a database driver loads.
+- b637386: Project folders can read tables and SQL queries from PostgreSQL. Add a `driver=postgres` connection; the app asks for its password once and keeps it outside the project, or reads it from `EXPLOREDA_<NAME>_PASSWORD`. Each read runs in a read-only transaction.
+- 0417d5e: Project folders can read tables and SQL queries from MySQL (and MariaDB) and SQL Server (and Azure SQL), with the same password handling as PostgreSQL. Database client code now loads only when a project uses it, so `npx exploreda` starts faster.
+- dcb89f1: Project folders can read tables and SQL queries from SQLite databases. Add a `connection` line and point a source at it with `db=` and `table=` or `sql=`. Each source is read on request into a snapshot the project opens from, and `npx exploreda --example database` opens a sample.
+- a219add: Read Arrow IPC files and streams, including Feather V2 (`.arrow`, `.arrows`, `.feather`, `.ipc`), with `readTableFile`. Columns follow the same exact rules as Parquet, LZ4 and zstd buffers are read, and the Arrow reader loads only when such a file is read.
+- a22f9e1: Read CSV, TSV, and JSON files with the new `exploreda/readers` entry (`readTableFile`, `readTableText`), and pass their declared types to `ExplorEda` through the new `fieldTypes` prop. Type detection now keeps values that a number would change, such as `0012` or integers past 2^53, as text, and project sources detect fields and types from every row instead of the first 500.
+- 397a70e: Read Excel workbooks (`.xlsx`) with `readTableFile`. It reads the largest sheet, or the one `sheet` names, starting at the header row below any title rows; `table.sheets` lists every sheet with its size. Formulas read as their saved results, and the workbook reader loads only when a workbook is read.
+- 328fe78: Read JSON Lines (`.jsonl`, `.ndjson`) files. JSON integers past 2^53 now keep their digits as text, arrays stay together as JSON text in one field instead of numbered columns, and a JSON object whose one array holds the records opens those records.
+- 0357330: Read Parquet files with `readTableFile`. Columns take the types the file's schema declares; timestamps keep their stored precision, decimals keep their exact digits, int64 values past 2^53 stay text, and lists, maps, and structs become JSON text. Snappy, gzip, zstd, Brotli, and LZ4 pages are read, and the reader loads only when a Parquet file is read. The summary table now shows date-time ranges to the minute and truncates long range labels instead of overlapping them.
+- 4cd7601: Right-click a scatter plot for Color by… and, over a point, Trace this point, beside the image actions. Shift-right-click still opens the browser's menu.
+- 51d00a1: Right-click a scatter plot's axis title to change its X or Y field in place. The axis's range, log scale, and custom title reset for the new field, and one undo restores them.
+- ad47fdb: Run `npx exploreda --example forecast` to open a sample project with a notebook. A chart edit in a notebook no longer rewrites other charts that drew at the same time, a newly styled series is added as one line, and chart settings stay on screen for charts low on a tall page.
+- 8f3687f: Scatter plots show their color field as a label above the plot. Click it to search the fields and recolor the chart at once; the change keeps the chart's filters, joins any shared color scale, and undoes in one step.
+- 8159178: The team server now runs from a Docker image, `ghcr.io/byronwall/exploreda`, with a one-service Compose file. `exploreda server` also reads its options from `EXPLOREDA_*` environment variables.
+- cd1a695: The team server reads database sources: authors read and refresh them, viewers see the last read without querying the database, admins enter connection passwords (kept in exploreda.db), and authors can upload SQLite files. Upgrading migrates the account store to schema 2 with a backup, and a failed upgrade now rolls back every pending migration.
+- b8fff70: When a newer `exploreda server` needs to change the account store, it backs it up into `backups/<time>/` first, and it stops without changing anything if the upgrade fails. An older version refuses a data folder that a newer one wrote.
+
+### Patch Changes
+
+- 33cf79f: A project source with no key no longer reports a missing key on every row; its rows are told apart by position.
+- 3c761ef: Add an early `exploreda server --seed-dev` command that runs explorEDA for a team with sample accounts, so authors and viewers can try sharing a project. `npx exploreda` works as before.
+- 999388d: Adding the first element to an empty composition no longer calls a React hook out of order.
+- 4c17c10: Clicking a point on a scatter plot without a size field now selects that point, instead of clearing the chart's filters.
+- 612c540: Date fields converted to the date type now show date-only values as YYYY-MM-DD and timestamps as YYYY-MM-DD HH:MM in tables and summaries, instead of full ISO strings. Summary ranges stack their bounds in narrow columns instead of overlapping.
+- ba9b8e8: `exploreda server --seed-dev` takes `--seed-project <folder>` (or `EXPLOREDA_SEED_PROJECT`) to seed that project instead of the shop example, as the new docker/demo stack does with its seeded Postgres warehouse.
+- d33244b: Heatmap and calendar heatmap legends draw a longer, outlined color ramp, so a cell's value is easier to place between the two ends.
+- 74c8f09: The color field picker previews the highlighted field on the chart while you type or use the arrow keys. Escape restores the original color, and previewed fields leave no undo step or color scale behind.
+- 5b01871: The project app's sidebar is cleaner: one text edge, quiet actions, one-line source rows with their read time, and forms whose fields match the rest of the app.
+- f4ef503: The README now points to `exploreda server` for running projects for a team.
+
 ## 0.2.0
 
 ### Minor Changes
