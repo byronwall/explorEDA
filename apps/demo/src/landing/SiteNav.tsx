@@ -26,7 +26,7 @@ export function SiteNav({ current }: { current?: "examples" | "daily" }) {
         <img
           src="/brand/wordmark.svg"
           alt=""
-          className="h-6 w-auto dark:brightness-0 dark:invert"
+          className="hidden h-6 w-auto min-[420px]:block dark:brightness-0 dark:invert"
         />
       </Link>
       <div className="flex items-center gap-1 text-sm">
