@@ -1,18 +1,32 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { ArrowUpRight } from "lucide-react";
 import { SiteNav } from "../landing/SiteNav";
-import { dailyPath, kindLabels } from "./corpus";
+import {
+  chartWordOf,
+  dailyPath,
+  formatDay,
+  kindLabels,
+  publishedEntries,
+} from "./corpus";
 import { useDailyCatalog } from "./useDailyCatalog";
 import { DailyMeta } from "./DailyMeta";
 
 export default function DailyIndex() {
+  const [params] = useSearchParams();
   const [search, setSearch] = useState("");
-  const [kind, setKind] = useState("");
+  const [kind, setKind] = useState(params.get("kind") ?? "");
+  const chart = params.get("chart");
+  const chartWords = chart ? (chartWordOf[chart] ?? [chart]) : [];
   const { data, error } = useDailyCatalog();
-  const entries = (data?.entries ?? []).filter(
+  const all = data ? publishedEntries(data.entries) : [];
+  const entries = all.filter(
     (entry) =>
       (!kind || entry.kind === kind) &&
+      (!chart ||
+        (chart === "composition"
+          ? entry.kind === "composition"
+          : chartWords.some((word) => entry.charts.includes(word)))) &&
       `${entry.title} ${entry.question} ${entry.industry} ${entry.analysis} ${entry.charts.join(" ")}}`
         .toLowerCase()
         .includes(search.toLowerCase())
@@ -21,9 +35,9 @@ export default function DailyIndex() {
     <div className="mx-auto max-w-6xl px-4 pb-16 sm:px-6">
       <DailyMeta
         heading="Daily data viz"
-        description="40 notebooks, 25 compositions, and 10 dashboards. Explore real datasets, compare visual choices, and inspect the evidence."
+        description="A new notebook, composed graphic, or dashboard every day, over real datasets, with the data and calculations behind it."
       />
-      <SiteNav />
+      <SiteNav current="daily" />
       <main>
         <header className="max-w-3xl pb-8 pt-10">
           <p className="text-sm font-medium text-site-accent">
@@ -34,8 +48,7 @@ export default function DailyIndex() {
           </h1>
           <p className="mt-4 text-base leading-relaxed text-muted-foreground">
             Follow an analysis, inspect a composed graphic, or explore a
-            dashboard. This library holds 40 notebooks, 25 compositions, and 10
-            dashboards over 17 real dataset families.
+            dashboard. One new piece every day, over real datasets.
           </p>
           <p className="mt-3 text-sm text-muted-foreground">
             A backlog to explore at your own pace. Each piece includes its data,
@@ -66,9 +79,9 @@ export default function DailyIndex() {
               onChange={(event) => setKind(event.target.value)}
             >
               <option value="">All formats</option>
-              <option value="notebook">Notebooks (40)</option>
-              <option value="composition">Compositions (25)</option>
-              <option value="dashboard">Dashboards (10)</option>
+              <option value="notebook">Notebooks</option>
+              <option value="composition">Compositions</option>
+              <option value="dashboard">Dashboards</option>
             </select>
           </label>
           <p
@@ -90,6 +103,9 @@ export default function DailyIndex() {
               className="grid gap-2 py-5 sm:grid-cols-[110px_1fr] sm:gap-5"
             >
               <p className="text-xs text-muted-foreground sm:pt-1">
+                <time dateTime={entry.published} className="block tabular-nums">
+                  {formatDay(entry.published)}
+                </time>
                 {kindLabels[entry.kind]}
                 <span className="mt-1 block">{entry.industry}</span>
               </p>

@@ -139,6 +139,11 @@ function NavDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
             </Link>
           </Button>
           <Button asChild variant="ghost" size="sm">
+            <Link to="/daily" onClick={onClose}>
+              Daily
+            </Link>
+          </Button>
+          <Button asChild variant="ghost" size="sm">
             <a href="https://github.com/byronwall/explorEDA">GitHub</a>
           </Button>
         </nav>
@@ -200,6 +205,14 @@ function DocsHeader({ onOpenNav }: { onOpenNav: () => void }) {
               className="hidden sm:inline-flex"
             >
               <Link to={EXAMPLES_PATH}>Examples</Link>
+            </Button>
+            <Button
+              asChild
+              variant="ghost"
+              size="sm"
+              className="hidden sm:inline-flex"
+            >
+              <Link to="/daily">Daily</Link>
             </Button>
             <Button
               asChild

@@ -8,8 +8,8 @@ import { ThemeToggle, useDocsTheme } from "../docs/components/theme";
 const navLinkClass =
   "rounded-md px-2.5 py-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring aria-[current=page]:font-medium aria-[current=page]:text-foreground";
 
-/** The site's top bar: logo, then docs, examples, and code. */
-export function SiteNav({ current }: { current?: "examples" }) {
+/** The site's top bar: logo, then docs, examples, the daily collection, and code. */
+export function SiteNav({ current }: { current?: "examples" | "daily" }) {
   // The docs' theme choice holds across the whole site.
   const { theme, toggle } = useDocsTheme();
   return (
@@ -39,6 +39,13 @@ export function SiteNav({ current }: { current?: "examples" }) {
           aria-current={current === "examples" ? "page" : undefined}
         >
           Examples
+        </Link>
+        <Link
+          className={navLinkClass}
+          to="/daily"
+          aria-current={current === "daily" ? "page" : undefined}
+        >
+          Daily
         </Link>
         <Link
           className={`${navLinkClass} hidden sm:block`}

@@ -1,5 +1,6 @@
 import { useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import { DailyArchiveLink, DailyLatest } from "../daily/DailyLatest";
 import { exampleGroups } from "../demos/exampleIndex";
 import { examples } from "../demos/examples";
 import { SectionHeading } from "../landing/SectionHeading";
@@ -29,14 +30,6 @@ export function ExamplesIndex() {
           {examples.length} examples, each opening as a live workspace you can
           filter, inspect, and change.
         </p>
-        <p className="mt-4 text-sm">
-          <Link
-            to="/daily"
-            className="font-medium text-site-accent underline underline-offset-4"
-          >
-            Daily data viz: 40 notebooks, 25 compositions, and 10 dashboards
-          </Link>
-        </p>
         <nav
           aria-label="Example groups"
           className="mt-6 flex flex-wrap gap-2 text-sm"
@@ -53,6 +46,12 @@ export function ExamplesIndex() {
               </span>
             </a>
           ))}
+          <a
+            href="#daily"
+            className="rounded-md border border-border bg-card px-3 py-1.5 font-medium transition-colors hover:border-site-accent/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            Daily data viz
+          </a>
         </nav>
       </header>
       <div className="mx-auto mt-14 max-w-6xl space-y-16 px-4 sm:px-6">
@@ -74,6 +73,20 @@ export function ExamplesIndex() {
             <ExampleCardGrid examples={group.examples} />
           </section>
         ))}
+        <section
+          id="daily"
+          aria-labelledby="daily-heading"
+          className="scroll-mt-8"
+        >
+          <SectionHeading id="daily-heading" heading="Daily data viz">
+            One notebook, composed graphic, or dashboard a day over real
+            datasets, each with its data and calculations. The newest:
+          </SectionHeading>
+          <div className="mt-6 max-w-3xl">
+            <DailyLatest count={6} />
+            <DailyArchiveLink>Browse the archive</DailyArchiveLink>
+          </div>
+        </section>
       </div>
     </div>
   );

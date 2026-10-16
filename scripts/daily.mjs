@@ -10,13 +10,21 @@
 //                            add a notebook, composition, or dashboard from a
 //                            template and register it in catalog.json
 //   check                    compile every piece and recompute every finding
+//   schedule                 give each piece without a date the next free day,
+//                            ordered so neighboring days differ; --reseed
+//                            reorders everything to end on --end (default today)
 //   review <slug>...         screenshot pieces at 1280 px and tile them into
 //                            tmp/daily-review.png, to look over a batch at once
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { parseArgs } from "node:util";
 import { execFileSync } from "node:child_process";
-import { buildIndex, CHART_WORDS, MARKS } from "../apps/demo/dailyCorpus.mjs";
+import {
+  buildIndex,
+  CHART_WORDS,
+  MARKS,
+  scheduleCatalog,
+} from "../apps/demo/dailyCorpus.mjs";
 
 const corpus = path.resolve("apps/demo/public/daily-viz");
 const catalogFile = path.join(corpus, "catalog.json");
@@ -214,6 +222,20 @@ function newPiece(kind, target, options) {
   );
 }
 
+function schedule({ reseed, end }) {
+  const today = new Date().toLocaleDateString("en-CA");
+  const catalog = scheduleCatalog(readJson(catalogFile), {
+    reseed,
+    end: end ?? today,
+  });
+  catalog.sort((a, b) => a.published.localeCompare(b.published));
+  writeJson(catalogFile, catalog);
+  const upcoming = catalog.filter((entry) => entry.published > today);
+  console.log(
+    `${catalog.length} pieces from ${catalog[0].published} to ${catalog.at(-1).published}; ${upcoming.length} after today.`
+  );
+}
+
 async function review(slugs) {
   if (!slugs.length) fail("Usage: pnpm daily review <slug>...");
   const shots = slugs.map((slug) => {
@@ -260,6 +282,8 @@ const { positionals, values } = parseArgs({
     query: { type: "string" },
     industry: { type: "string" },
     analysis: { type: "string" },
+    reseed: { type: "boolean" },
+    end: { type: "string" },
   },
 });
 const [command, ...rest] = positionals;
@@ -267,6 +291,7 @@ if (command === "coverage") await coverage();
 else if (command === "family") family(rest[0], rest.slice(1));
 else if (command === "new") newPiece(rest[0], rest[1], values);
 else if (command === "review") await review(rest);
+else if (command === "schedule") schedule(values);
 else if (command === "check")
   execFileSync(
     "pnpm",

@@ -24,6 +24,10 @@ export interface DailyCatalogEntry {
   query: string;
   industry: string;
   analysis: string;
+  /** The day the piece appears, `YYYY-MM-DD`; later days stay hidden. */
+  published: string;
+  /** Parts of a deep dive, read in order. */
+  series?: { id: string; title: string; part: number };
   findings: DailyFinding[];
 }
 
@@ -61,6 +65,33 @@ export const kindLabels: Record<DailyKind, string> = {
   dashboard: "Dashboard",
 };
 export const dailyPath = (entry: { slug: string }) => `/daily/${entry.slug}`;
+
+/** Today in the reader's own time zone, as `YYYY-MM-DD`. */
+export const todayKey = () => new Date().toLocaleDateString("en-CA");
+
+/** Pieces whose day has come, newest first. */
+export function publishedEntries(entries: DailyEntry[], today = todayKey()) {
+  return entries
+    .filter((entry) => entry.published <= today)
+    .sort((a, b) => b.published.localeCompare(a.published));
+}
+
+/** "Oct 16" or "Oct 16, 2026" when the year differs from this one. */
+export function formatDay(day: string, withYear = false) {
+  return new Date(`${day}T12:00:00`).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    ...(withYear && { year: "numeric" }),
+  });
+}
+
+/** The chart word in dashboard text for a native chart type, such as `table`. */
+export const chartWordOf: Record<string, string[]> = {
+  bar: ["hist", "bar"],
+  "data-table": ["table"],
+  "metric-card": ["metric"],
+  "parallel-coordinates": ["parallel"],
+};
 export const assetPath = (file: string) => `${CORPUS_URL}/${file}`;
 
 /**

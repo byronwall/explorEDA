@@ -43,6 +43,7 @@ import { CsvUpload } from "./CsvUpload";
 import { ExampleSelector } from "./ExampleSelector";
 import { IntegrationGuide } from "./landing/IntegrationGuide";
 import { ChartGallery } from "./landing/ChartGallery";
+import { DailyArchiveLink, DailyLatest } from "./daily/DailyLatest";
 import { ClosingBand } from "./landing/ClosingBand";
 import { StartSection } from "./landing/StartSection";
 import { WhyWorkspace } from "./landing/WhyWorkspace";
@@ -625,6 +626,20 @@ export function LandingPage() {
                     />
                     <WhyWorkspace />
                     <ChartGallery />
+                    <section aria-labelledby="daily-heading">
+                      <SectionHeading
+                        id="daily-heading"
+                        heading="A new data viz every day"
+                      >
+                        Notebooks, composed graphics, and dashboards over real
+                        datasets, from flight delays to measles. Each one opens
+                        live, with its data and calculations.
+                      </SectionHeading>
+                      <div className="mt-8 max-w-3xl">
+                        <DailyLatest />
+                        <DailyArchiveLink>Browse the archive</DailyArchiveLink>
+                      </div>
+                    </section>
                     {loadError && (
                       <div
                         role="alert"

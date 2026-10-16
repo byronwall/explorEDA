@@ -6,7 +6,9 @@ import { SiteNav } from "../landing/SiteNav";
 import {
   assetPath,
   dailyPath,
+  formatDay,
   kindLabels,
+  todayKey,
   loadDailyEntry,
   type DailyEntry,
 } from "./corpus";
@@ -125,7 +127,7 @@ export default function DailyEntryPage() {
   if (!data)
     return (
       <div className="mx-auto max-w-6xl px-4">
-        <SiteNav />
+        <SiteNav current="daily" />
         <p className="py-10" role={error ? "alert" : "status"}>
           {error || "Loading the collection…"}
         </p>
@@ -134,7 +136,7 @@ export default function DailyEntryPage() {
   if (!entry)
     return (
       <div className="mx-auto max-w-6xl px-4">
-        <SiteNav />
+        <SiteNav current="daily" />
         <h1 className="mt-10 text-2xl font-semibold">Piece not found</h1>
         <Link className="mt-4 inline-block underline" to="/daily">
           Browse daily data viz
@@ -152,7 +154,7 @@ export default function DailyEntryPage() {
     <div className="daily-page pb-12">
       <DailyMeta heading={entry.title} description={entry.summary} />
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <SiteNav />
+        <SiteNav current="daily" />
         <header className="py-6">
           <Link
             to="/daily"
@@ -161,7 +163,11 @@ export default function DailyEntryPage() {
             Daily data viz
           </Link>
           <p className="mt-3 text-xs text-muted-foreground">
-            {kindLabels[entry.kind]} · {entry.industry} · {entry.analysis}
+            <time dateTime={entry.published}>
+              {formatDay(entry.published, true)}
+            </time>{" "}
+            · {kindLabels[entry.kind]} · {entry.industry} · {entry.analysis}
+            {entry.published > todayKey() && " · Scheduled, not yet listed"}
           </p>
           {entry.kind !== "notebook" && (
             <h1 className="mt-2 max-w-4xl text-3xl font-semibold tracking-tight">

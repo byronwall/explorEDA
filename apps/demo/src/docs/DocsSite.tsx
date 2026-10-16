@@ -33,6 +33,13 @@ import {
   type TocEntry,
 } from "./components/toc";
 import { LiveExample } from "./live/LiveExample";
+import {
+  chartWordOf,
+  dailyPath,
+  publishedEntries,
+  type DailyEntry,
+} from "../daily/corpus";
+import { useDailyCatalog } from "../daily/useDailyCatalog";
 import { captureId, docsPath, docsTopic, liveShotPath } from "./paths";
 
 const loaded = new Map<string, ComponentType>();
@@ -53,6 +60,49 @@ function pageContent(topic: string): ComponentType | null {
     loaded.set(topic, Content);
   }
   return Content;
+}
+
+/** Pieces of the daily collection that use this page's chart or format. */
+function DailyUses({ page }: { page: DocsPage }) {
+  const { data } = useDailyCatalog();
+  const matches = (entry: DailyEntry) => {
+    if (page.topic === "notebooks") return entry.kind === "notebook";
+    if (page.chartType === "composition") return entry.kind === "composition";
+    const words = chartWordOf[page.chartType ?? ""] ?? [page.chartType];
+    return words.some((word) => entry.charts.includes(word!));
+  };
+  if (!data || (!page.chartType && page.topic !== "notebooks")) return null;
+  const uses = publishedEntries(data.entries).filter(matches);
+  if (!uses.length) return null;
+  return (
+    <div>
+      <p className={labelClass}>In the daily collection</p>
+      <ul className="mt-3 space-y-2 text-sm">
+        {uses.slice(0, 4).map((entry) => (
+          <li key={entry.id}>
+            <Link
+              to={dailyPath(entry)}
+              className="text-foreground underline-offset-4 hover:text-site-accent hover:underline"
+            >
+              {entry.title}
+            </Link>
+          </li>
+        ))}
+      </ul>
+      {uses.length > 4 && (
+        <Link
+          to={
+            page.chartType
+              ? `/daily?chart=${encodeURIComponent(page.chartType)}`
+              : "/daily?kind=notebook"
+          }
+          className="mt-2 inline-block text-sm text-site-accent underline-offset-4 hover:underline"
+        >
+          All {uses.length}
+        </Link>
+      )}
+    </div>
+  );
 }
 
 /** The right rail: sections, the page's examples, and related pages. */
@@ -78,6 +128,7 @@ function GuideRail({
           />
         ) : null;
       })}
+      <DailyUses page={page} />
       {page.related.length > 0 && (
         <div>
           <p className={labelClass}>Related</p>

@@ -20,7 +20,8 @@ The demo's `/daily` collection holds narrative notebooks, compositions, and dash
 4. **Add the piece:** `pnpm daily new <notebook|composition|dashboard> <family>/<slug> --title "…" --question "…" --industry "…" --analysis "…"`. It copies a template and registers the entry with no findings.
 5. **Write it.** Follow [Writing rules](#writing-rules). Open `/daily/<family>-<slug>` on `pnpm dev:agent` and read it as a visitor would.
 6. **Declare findings** in the catalogue entry and type each computed sentence into the prose. Run `pnpm daily check`. It compiles every piece against its local rows and fails when a sentence in the prose differs from its computed value.
-7. **Look at it.** `pnpm daily review <slug>...` screenshots each piece at 1280 px and tiles them into `tmp/daily-review.png`, one image to check a batch. Check the final ones at 1280, 783, and 390 px with `pnpm shot /daily/<slug> --name daily-<slug>`.
+7. **Schedule it:** `pnpm daily schedule` gives every piece without a `published` date the next free day after the latest one, choosing an order so neighboring days use different datasets, industries, and analyses, and series parts stay in order. A piece is listed from its day on, in the reader's time zone; until then its page works but nothing links to it. To publish a batch at once, schedule it and the days stack up after today.
+8. **Look at it.** `pnpm daily review <slug>...` screenshots each piece at 1280 px and tiles them into `tmp/daily-review.png`, one image to check a batch. Check the final ones at 1280, 783, and 390 px with `pnpm shot /daily/<slug> --name daily-<slug>`.
 
 ## Catalogue entry
 
@@ -37,6 +38,7 @@ The demo's `/daily` collection holds narrative notebooks, compositions, and dash
   "query": "flights",
   "industry": "Transportation",
   "analysis": "Distribution",
+  "published": "2026-10-17",
   "findings": [
     {
       "text": "The median departure delay was {value} minutes.",
@@ -50,6 +52,7 @@ The demo's `/daily` collection holds narrative notebooks, compositions, and dash
 
 - `kind` is `notebook` (`.eda.md`), `composition` (`.eda` plus `companion`, a `.design.md` note), or `dashboard` (`.eda` plus a `.guide.md`).
 - `industry` and `analysis` are the browse facets. Reuse a value from `pnpm daily coverage` when one fits; add a new one when it does not.
+- `published` is the day the piece appears; `pnpm daily schedule` writes it.
 - `series` (optional) is `{ "id", "title", "part" }`; see below.
 - A finding has `text` with `{value}`, a Python-style `format` (`.2f`, `,.0f`), and a calculation: `op` is one of `count`, `mean`, `median`, `min`, `max`, `sum`, `quantile` (with `q`), `corr` (with `other`), `share` (percent of rows matching `condition`), `missing_share`, `top_share` (with `k`), `ratio_sums` (with `other`, optional `scale`), or `weighted_mean` (with `weight`). `where` filters rows first: `[["decade", "eq", "1990s"]]`, with `eq`, `ne`, `lt`, `le`, `gt`, `ge`; ISO dates compare as text, so `["date", "ge", "2021-02-14"]` works. `query` reads another query of the family.
 
