@@ -46,6 +46,10 @@ import {
   stocksHorizonDashboard,
   co2SwarmDashboard,
   titanicMosaicDashboard,
+  incomeLifeScatterDashboard,
+  mediaDeathsBarDashboard,
+  duBoisIncomeBarDashboard,
+  unemploymentAreaDashboard,
 } from "./dashboardSettings";
 import { demoSettings } from "@/demos/lorenz";
 import type {
@@ -191,6 +195,11 @@ export interface ExampleData {
   savedData?: SavedDataStructure;
   /** More saved views that open as tabs beside the main one. */
   views?: ExampleView[];
+  /**
+   * The same analysis built another way: a composition's ordinary-chart
+   * route, or the authored composition a built-in example stands beside.
+   */
+  counterpart?: { id: string; label: string };
 }
 
 const viewNames: Record<string, string> = {
@@ -820,6 +829,10 @@ export const examples: ExampleData[] = [
     icon: Columns3,
     data: "/datasets/media-deaths.csv",
     savedData: mediaDeathsDashboard,
+    counterpart: {
+      id: "media-deaths-bar",
+      label: "The same analysis as a built-in bar chart",
+    },
   },
   {
     id: "measles",
@@ -976,6 +989,10 @@ export const examples: ExampleData[] = [
     icon: CircleDot,
     data: "/datasets/gapminder-2023.csv",
     savedData: incomeLifeDashboard,
+    counterpart: {
+      id: "income-life-scatter",
+      label: "The same analysis as a built-in scatter",
+    },
   },
   {
     id: "covid-tiles",
@@ -1087,6 +1104,10 @@ export const examples: ExampleData[] = [
     icon: Columns3,
     data: "/datasets/du-bois-income.csv",
     savedData: duBoisIncomeDashboard,
+    counterpart: {
+      id: "du-bois-income-bar",
+      label: "The same analysis as a built-in bar chart",
+    },
   },
   {
     id: "tax-slope",
@@ -1120,6 +1141,10 @@ export const examples: ExampleData[] = [
     icon: Waves,
     data: "/datasets/unemployment-industries.csv",
     savedData: unemploymentStreamDashboard,
+    counterpart: {
+      id: "unemployment-area",
+      label: "The same analysis as a built-in line chart",
+    },
   },
   {
     id: "population-pyramid",
@@ -1186,6 +1211,57 @@ export const examples: ExampleData[] = [
     icon: Columns3,
     data: "/datasets/titanic.csv",
     savedData: titanicMosaicDashboard,
+  },
+  {
+    id: "income-life-scatter",
+    title: "Richer countries live longer, as a scatter",
+    description:
+      "The income and life composition rebuilt as an ordinary scatter: 197 economies on a log income axis, circles sized by population and colored by region, with a dozen countries labeled by Country-keyed callouts in Notes.",
+    dataset: { rows: "197 economies", fields: 7, source: "Real" },
+    shows: ["Log x axis", "Bubble size", "Record callouts"],
+    icon: CircleDot,
+    data: "/datasets/gapminder-2023.csv",
+    savedData: incomeLifeScatterDashboard,
+    counterpart: { id: "income-life", label: "The authored composition" },
+  },
+  {
+    id: "media-deaths-bar",
+    title: "What Americans die from, and what the news covers, as bars",
+    description:
+      "The media and deaths composition rebuilt as an ordinary 100% bar chart: each source sums its counts and splits them by cause, so every column is a share of its own total. Alt-click a segment for the source's denominator.",
+    dataset: { rows: "60 source-cause counts", fields: 5, source: "Real" },
+    shows: ["100% series bars", "Summed groups", "Per-source denominators"],
+    icon: Columns3,
+    data: "/datasets/media-deaths.csv",
+    savedData: mediaDeathsBarDashboard,
+    counterpart: { id: "media-deaths", label: "The authored composition" },
+  },
+  {
+    id: "du-bois-income-bar",
+    title: "Income and expenditure of 150 families, as bars",
+    description:
+      "Du Bois's 1900 plate as an ordinary 100% bar chart: one column per income class in its own order, each class's spending split by category as shares of its total. The traces list the 33 class shares, the data the plate was drawn from.",
+    dataset: { rows: "33 class shares", fields: 5, source: "Real" },
+    shows: ["100% series bars", "Data order", "Shared category colors"],
+    icon: Columns3,
+    data: "/datasets/du-bois-income.csv",
+    savedData: duBoisIncomeBarDashboard,
+    counterpart: { id: "du-bois-income", label: "The authored composition" },
+  },
+  {
+    id: "unemployment-area",
+    title: "Unemployed Americans by industry, as stacked areas",
+    description:
+      "The unemployment streamgraph as an ordinary line chart: fourteen industries' unemployed summed per month and stacked from zero, so the top edge is the national total and each band is one industry. Pick an industry to see it alone.",
+    dataset: { rows: "1,708 months", fields: 5, source: "Real" },
+    shows: ["Stacked areas", "Monthly sums", "Split by industry"],
+    icon: Layers,
+    data: "/datasets/unemployment-industries.csv",
+    savedData: unemploymentAreaDashboard,
+    counterpart: {
+      id: "unemployment-stream",
+      label: "The authored composition",
+    },
   },
 ];
 
