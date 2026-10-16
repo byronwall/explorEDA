@@ -9,9 +9,9 @@
 
 ## Fixed-snapshot findings
 
-The smallest recorded bond-minus-deposit spread was 0.0253 in source rate fractions. Eligible rows: 55; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-danish-spread-path.json).
+The smallest recorded bond-minus-deposit spread was 0.0253 in source rate fractions. Eligible rows: 55; full expression, denominator, and contributing IDs are in the
 
-The largest recorded spread was 0.1050 in source rate fractions. Eligible rows: 55; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-danish-spread-path.json).
+The largest recorded spread was 0.1050 in source rate fractions. Eligible rows: 55; full expression, denominator, and contributing IDs are in the
 
 ## What this design gives up
 
@@ -26,4 +26,4 @@ In viewing mode, selecting a repeated unit is intended to filter that repeat acr
 ## Credit
 
 Johansen and Juselius Danish data via statsmodels; public domain.
-Full provenance and transformations: [dataset record](../../datasets.json), [fields](../../evidence/fields/danish.json).
+Full provenance and transformations: [dataset record](../../datasets.json), [fields](fields.json).

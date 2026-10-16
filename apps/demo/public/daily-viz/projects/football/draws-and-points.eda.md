@@ -34,7 +34,7 @@ The count cells reveal differences in group draws under the same schedule length
 heatmap @nb-football-draws-and-points-chart-2 group_field columnField=result aggregation=count showValues=true title="Result counts inside each group"
 ```
 
-**Computed finding.** Draws represent 18.75% of the supplied group-stage matches. This calculation uses 48 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-football-draws-and-points.json).
+**Computed finding.** Draws represent 18.75% of the supplied group-stage matches. This calculation uses 48 eligible rows after the recorded filter and field-completeness rule.
 
 ## 3. Draws can still have different goal totals
 
@@ -52,7 +52,7 @@ Draws lie where the two scores are equal. First and second are listing order, no
 scatter @nb-football-draws-and-points-chart-4 x=goals1 y=goals2 color=result title="The two final goal counts" x.title="Goals1 (goals by first listed team)" y.title="Goals2 (goals by second listed team)"
 ```
 
-**Computed finding.** The supplied group-stage matches contain 122 total goals. This calculation uses 48 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-football-draws-and-points.json).
+**Computed finding.** The supplied group-stage matches contain 122 total goals. This calculation uses 48 eligible rows after the recorded filter and field-completeness rule.
 
 ## 5. Inspect the records behind the comparison
 
@@ -74,6 +74,6 @@ This is arithmetic under the declared three-points-for-a-win and one-for-a-draw 
 
 OpenFootball community, football.db; Public-domain dedication (OpenFootball publisher statement). Historical source version: Git blob 6069ee605e0556ffc8cc7d60983e7a369e755303
 
-Data credit and license: [football provenance](../../datasets.json). The accompanying [field dictionary](../../evidence/fields/football.json) gives units and missingness for every field. [Preparation source](../../evidence/scripts/prepare.py) records the transformation; [computed evidence](../../evidence/findings/nb-football-draws-and-points.json) records filters, denominators, source-row IDs, and CSV hashes.
+Data credit and license: [football provenance](../../datasets.json). The accompanying [field dictionary](fields.json) gives units and missingness for every field. [Preparation source](https://github.com/byronwall/explorEDA/blob/main/docs/research/daily-viz-corpus-2026-10-15/handoff/scripts/prepare.py) records the transformation; the catalogue entry records filters, denominators, source-row IDs, and CSV hashes.
 
 **Reading units.** goals1: goals by first listed team; goals2: goals by second listed team.

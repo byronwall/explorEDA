@@ -9,9 +9,9 @@
 
 ## Fixed-snapshot findings
 
-Draws represent 18.75% of the supplied group-stage matches. Eligible rows: 48; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-football-group-match-waffles.json).
+Draws represent 18.75% of the supplied group-stage matches. Eligible rows: 48; full expression, denominator, and contributing IDs are in the
 
-The supplied group-stage matches contain 122 total goals. Eligible rows: 48; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-football-group-match-waffles.json).
+The supplied group-stage matches contain 122 total goals. Eligible rows: 48; full expression, denominator, and contributing IDs are in the
 
 ## What this design gives up
 
@@ -26,4 +26,4 @@ In viewing mode, selecting a repeated unit is intended to filter that repeat acr
 ## Credit
 
 OpenFootball World Cup 2018 group-stage final scores; public-domain dedication.
-Full provenance and transformations: [dataset record](../../datasets.json), [fields](../../evidence/fields/football.json).
+Full provenance and transformations: [dataset record](../../datasets.json), [fields](fields.json).

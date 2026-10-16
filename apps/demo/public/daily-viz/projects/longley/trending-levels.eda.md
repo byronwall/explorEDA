@@ -39,7 +39,7 @@ Both measurements move through the same short historical span. A close cloud alo
 scatter @nb-longley-trending-levels-chart-2 x=gnp y=employment title="The strong-looking levels relationship" x.title="Gnp (source nominal GNP units)" y.title="Employment (source employment units)"
 ```
 
-**Computed finding.** Employment and nominal GNP in levels had correlation 0.984. This calculation uses 16 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-longley-trending-levels.json).
+**Computed finding.** Employment and nominal GNP in levels had correlation 0.984. This calculation uses 16 eligible rows after the recorded filter and field-completeness rule.
 
 ## 3. Compare changes between adjacent years
 
@@ -57,7 +57,7 @@ With a small number of differences, bins are only a rough descriptive device. Us
 hist @nb-longley-trending-levels-chart-4 employment_change bins=8 title="The distribution of annual employment changes" x.title="Employment change (source employment units per year)" y.title="Source rows"
 ```
 
-**Computed finding.** Their valid annual changes had correlation 0.892. This calculation uses 15 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-longley-trending-levels.json).
+**Computed finding.** Their valid annual changes had correlation 0.892. This calculation uses 15 eligible rows after the recorded filter and field-completeness rule.
 
 ## 5. Inspect the records behind the comparison
 
@@ -79,6 +79,6 @@ This is a small historical regression benchmark, not a current labor-market data
 
 Longley historical regression benchmark; distributed by statsmodels; Public domain (dataset-specific distributor statement). Historical source version: statsmodels 0.14.6; original historical series, not a live revision
 
-Data credit and license: [longley provenance](../../datasets.json). The accompanying [field dictionary](../../evidence/fields/longley.json) gives units and missingness for every field. [Preparation source](../../evidence/scripts/prepare.py) records the transformation; [computed evidence](../../evidence/findings/nb-longley-trending-levels.json) records filters, denominators, source-row IDs, and CSV hashes.
+Data credit and license: [longley provenance](../../datasets.json). The accompanying [field dictionary](fields.json) gives units and missingness for every field. [Preparation source](https://github.com/byronwall/explorEDA/blob/main/docs/research/daily-viz-corpus-2026-10-15/handoff/scripts/prepare.py) records the transformation; the catalogue entry records filters, denominators, source-row IDs, and CSV hashes.
 
 **Reading units.** employment: source employment units; gnp: source nominal GNP units; population: source population units; year: year; employment_change: source employment units per year; gnp_change: source GNP units per year.

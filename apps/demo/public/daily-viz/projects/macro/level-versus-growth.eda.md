@@ -47,7 +47,7 @@ line @nb-macro-level-versus-growth-chart-2 x=date y=gdp_growth title="Annualized
 }
 ```
 
-**Computed finding.** The smallest derived annualized quarterly GDP growth rate was -7.95%. This calculation uses 202 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-macro-level-versus-growth.json).
+**Computed finding.** The smallest derived annualized quarterly GDP growth rate was -7.95%. This calculation uses 202 eligible rows after the recorded filter and field-completeness rule.
 
 ## 3. The distribution of quarterly growth rates
 
@@ -65,7 +65,7 @@ These are two first differences from the same quarterly sequence. Association is
 scatter @nb-macro-level-versus-growth-chart-4 x=gdp_change y=unemp_change title="GDP change and unemployment change" x.title="Gdp change (billions, chained 2005 US$)" y.title="Unemp change (percentage points)"
 ```
 
-**Computed finding.** The largest derived annualized quarterly GDP growth rate was 16.69%. This calculation uses 202 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-macro-level-versus-growth.json).
+**Computed finding.** The largest derived annualized quarterly GDP growth rate was 16.69%. This calculation uses 202 eligible rows after the recorded filter and field-completeness rule.
 
 ## 5. Inspect the records behind the comparison
 
@@ -87,6 +87,6 @@ This is an old source vintage, not current revised GDP. Annualizing a quarterly 
 
 U.S. public statistical sources; curated in statsmodels; Public domain (dataset-specific distributor statement). Historical source version: statsmodels 0.14.6; original historical series, not a live revision
 
-Data credit and license: [macro provenance](../../datasets.json). The accompanying [field dictionary](../../evidence/fields/macro.json) gives units and missingness for every field. [Preparation source](../../evidence/scripts/prepare.py) records the transformation; [computed evidence](../../evidence/findings/nb-macro-level-versus-growth.json) records filters, denominators, source-row IDs, and CSV hashes.
+Data credit and license: [macro provenance](../../datasets.json). The accompanying [field dictionary](fields.json) gives units and missingness for every field. [Preparation source](https://github.com/byronwall/explorEDA/blob/main/docs/research/daily-viz-corpus-2026-10-15/handoff/scripts/prepare.py) records the transformation; the catalogue entry records filters, denominators, source-row IDs, and CSV hashes.
 
 **Reading units.** realgdp: billions of chained 2005 US dollars (source vintage); gdp_growth: annualized quarter-on-quarter %; gdp_change: billions of chained 2005 US dollars (source vintage); unemp_change: percentage points.

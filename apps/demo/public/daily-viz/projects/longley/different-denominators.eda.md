@@ -39,7 +39,7 @@ The second count has a different population meaning. Its separate panel avoids s
 line @nb-longley-different-denominators-chart-2 x=year y=armed title="Armed-forces counts provide different context" x.title="Year" y.title="Armed (source armed-forces-count units)"
 ```
 
-**Computed finding.** The smallest recorded unemployment count was 1,870 source count units. This calculation uses 16 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-longley-different-denominators.json).
+**Computed finding.** The smallest recorded unemployment count was 1,870 source count units. This calculation uses 16 eligible rows after the recorded filter and field-completeness rule.
 
 ## 3. Employment and unemployment can both move
 
@@ -57,7 +57,7 @@ Population does not establish who participates in the labor force. This view des
 scatter @nb-longley-different-denominators-chart-4 x=population y=unemployed title="Population is context, not a rate denominator" x.title="Population (source population units)" y.title="Unemployed (source unemployment-count units)"
 ```
 
-**Computed finding.** The largest recorded unemployment count was 4,806 source count units. This calculation uses 16 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-longley-different-denominators.json).
+**Computed finding.** The largest recorded unemployment count was 4,806 source count units. This calculation uses 16 eligible rows after the recorded filter and field-completeness rule.
 
 ## 5. Inspect the records behind the comparison
 
@@ -79,6 +79,6 @@ The selected columns do not provide a verified labor-force denominator for const
 
 Longley historical regression benchmark; distributed by statsmodels; Public domain (dataset-specific distributor statement). Historical source version: statsmodels 0.14.6; original historical series, not a live revision
 
-Data credit and license: [longley provenance](../../datasets.json). The accompanying [field dictionary](../../evidence/fields/longley.json) gives units and missingness for every field. [Preparation source](../../evidence/scripts/prepare.py) records the transformation; [computed evidence](../../evidence/findings/nb-longley-different-denominators.json) records filters, denominators, source-row IDs, and CSV hashes.
+Data credit and license: [longley provenance](../../datasets.json). The accompanying [field dictionary](fields.json) gives units and missingness for every field. [Preparation source](https://github.com/byronwall/explorEDA/blob/main/docs/research/daily-viz-corpus-2026-10-15/handoff/scripts/prepare.py) records the transformation; the catalogue entry records filters, denominators, source-row IDs, and CSV hashes.
 
 **Reading units.** employment: source employment units; unemployed: source unemployment-count units; armed: source armed-forces-count units; population: source population units; year: year.

@@ -39,7 +39,7 @@ Use the same field scale across groups. A difference in group center does not es
 boxplot @nb-wine-cultivar-chemistry-chart-2 flavanoids color=cultivar title="Flavanoid distributions by cultivar" y.title="Flavanoids (source units)"
 ```
 
-**Computed finding.** Mean flavanoids in Cultivar 1 were 2.982 source assay units. This calculation uses 59 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-wine-cultivar-chemistry.json).
+**Computed finding.** Mean flavanoids in Cultivar 1 were 2.982 source assay units. This calculation uses 59 eligible rows after the recorded filter and field-completeness rule.
 
 ## 3. Total phenols and flavanoids
 
@@ -57,7 +57,7 @@ The cumulative view compares all recorded intensities. It avoids inventing an as
 ecdf @nb-wine-cultivar-chemistry-chart-4 color_intensity color=cultivar direction=below title="Color intensity across the same groups" x.title="Color intensity (source units)"
 ```
 
-**Computed finding.** Mean flavanoids in Cultivar 3 were 0.781 source assay units. This calculation uses 48 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-wine-cultivar-chemistry.json).
+**Computed finding.** Mean flavanoids in Cultivar 3 were 0.781 source assay units. This calculation uses 48 eligible rows after the recorded filter and field-completeness rule.
 
 ## 5. Inspect the records behind the comparison
 
@@ -79,6 +79,6 @@ This is the UCI Wine recognition dataset, not the demo’s Wine Quality ratings.
 
 S. Aeberhard and M. Forina / UCI Machine Learning Repository; scikit-learn distribution; Creative Commons Attribution 4.0 International. Historical source version: scikit-learn 1.8.0; original historical series, not a live revision
 
-Data credit and license: [wine provenance](../../datasets.json). The accompanying [field dictionary](../../evidence/fields/wine.json) gives units and missingness for every field. [Preparation source](../../evidence/scripts/prepare.py) records the transformation; [computed evidence](../../evidence/findings/nb-wine-cultivar-chemistry.json) records filters, denominators, source-row IDs, and CSV hashes.
+Data credit and license: [wine provenance](../../datasets.json). The accompanying [field dictionary](fields.json) gives units and missingness for every field. [Preparation source](https://github.com/byronwall/explorEDA/blob/main/docs/research/daily-viz-corpus-2026-10-15/handoff/scripts/prepare.py) records the transformation; the catalogue entry records filters, denominators, source-row IDs, and CSV hashes.
 
 **Reading units.** alcohol: source assay units; publisher does not specify units; total_phenols: source assay units; publisher does not specify units; flavanoids: source assay units; publisher does not specify units; color_intensity: source assay units; publisher does not specify units.

@@ -9,9 +9,9 @@
 
 ## Fixed-snapshot findings
 
-The maximum recorded proline value was 1680.0 source units. Eligible rows: 178; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-wine-assay-summary-grid.json).
+The maximum recorded proline value was 1680.0 source units. Eligible rows: 178; full expression, denominator, and contributing IDs are in the
 
-The maximum recorded hue value was 1.710 source units. Eligible rows: 178; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-wine-assay-summary-grid.json).
+The maximum recorded hue value was 1.710 source units. Eligible rows: 178; full expression, denominator, and contributing IDs are in the
 
 ## What this design gives up
 
@@ -26,4 +26,4 @@ In viewing mode, selecting a repeated unit is intended to filter that repeat acr
 ## Credit
 
 Aeberhard and Forina / UCI Wine recognition; CC BY 4.0; source assay units.
-Full provenance and transformations: [dataset record](../../datasets.json), [fields](../../evidence/fields/wine.json).
+Full provenance and transformations: [dataset record](../../datasets.json), [fields](fields.json).

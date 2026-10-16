@@ -31,7 +31,7 @@ Color adds the explicit analytical grouping while leaving chronology intact. It 
 scatter @nb-nile-tail-sensitivity-chart-2 x=year y=volume color=tail title="Locate the tail years in time" x.title="Year" y.title="Volume (10^8 m³)"
 ```
 
-**Computed finding.** The mean across every supplied year was 919.35 ×10^8 m³. This calculation uses 100 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-nile-tail-sensitivity.json).
+**Computed finding.** The mean across every supplied year was 919.35 ×10^8 m³. This calculation uses 100 eligible rows after the recorded filter and field-completeness rule.
 
 ## 3. A threshold view of every annual value
 
@@ -49,7 +49,7 @@ This is a view of subsets chosen by the outcome itself. Their separation is buil
 boxplot @nb-nile-tail-sensitivity-chart-4 volume color=tail title="The selected middle versus the two tails" y.title="Volume (10^8 m³)"
 ```
 
-**Computed finding.** The mean between the declared tail cutoffs was 915.25 ×10^8 m³. This calculation uses 81 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-nile-tail-sensitivity.json).
+**Computed finding.** The mean between the declared tail cutoffs was 915.25 ×10^8 m³. This calculation uses 81 eligible rows after the recorded filter and field-completeness rule.
 
 ## 5. Inspect the records behind the comparison
 
@@ -71,6 +71,6 @@ Tail labels use the supplied sample’s linear 10th and 90th percentiles. They a
 
 Historical Aswan observations; distributed by statsmodels; Public domain (dataset-specific distributor statement). Historical source version: statsmodels 0.14.6; original historical series, not a live revision
 
-Data credit and license: [nile provenance](../../datasets.json). The accompanying [field dictionary](../../evidence/fields/nile.json) gives units and missingness for every field. [Preparation source](../../evidence/scripts/prepare.py) records the transformation; [computed evidence](../../evidence/findings/nb-nile-tail-sensitivity.json) records filters, denominators, source-row IDs, and CSV hashes.
+Data credit and license: [nile provenance](../../datasets.json). The accompanying [field dictionary](fields.json) gives units and missingness for every field. [Preparation source](https://github.com/byronwall/explorEDA/blob/main/docs/research/daily-viz-corpus-2026-10-15/handoff/scripts/prepare.py) records the transformation; the catalogue entry records filters, denominators, source-row IDs, and CSV hashes.
 
 **Reading units.** year: year; volume: 10^8 cubic metres per year; rank: percentile rank.

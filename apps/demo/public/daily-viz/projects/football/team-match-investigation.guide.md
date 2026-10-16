@@ -10,8 +10,8 @@ Which individual match appearances produced a team’s group-stage scoring and p
 
 ## Fixed-snapshot findings
 
-The largest team group-stage goal total was 9 goals. [Evidence](../../evidence/findings/db-football-team-match-investigation.json).
-Teams earning at least seven group points represented 15.62% of the selected teams. [Evidence](../../evidence/findings/db-football-team-match-investigation.json).
+The largest team group-stage goal total was 9 goals.
+Teams earning at least seven group points represented 15.62% of the selected teams.
 
 ## Limits
 
@@ -22,4 +22,4 @@ Eight panels contain an instruction note, six analytical/selector/metric views, 
 ## Source credit
 
 OpenFootball World Cup 2018 group-stage final scores; public-domain dedication.
-[Full provenance](../../datasets.json); [field dictionary](../../evidence/fields/football.json).
+[Full provenance](../../datasets.json); [field dictionary](fields.json).

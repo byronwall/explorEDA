@@ -39,7 +39,7 @@ Keep forecast on the horizontal axis and replace the vertical measure with an ab
 scatter @nb-ercot-relative-error-chart-2 x=forecast y=abs_pct_error opacity=0.4 title="The same denominator made explicit" x.title="Forecast (MWh)" y.title="Abs pct error (%)"
 ```
 
-**Computed finding.** The median absolute percentage error was 2.26% of forecast. This calculation uses 1,417 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-ercot-relative-error.json).
+**Computed finding.** The median absolute percentage error was 2.26% of forecast. This calculation uses 1,417 eligible rows after the recorded filter and field-completeness rule.
 
 ## 3. Percentage-error distributions by UTC month
 
@@ -57,7 +57,7 @@ A cumulative curve avoids arbitrary histogram bins. Its percentage denominator i
 ecdf @nb-ercot-relative-error-chart-4 abs_pct_error direction=below title="What share stays below a percentage threshold?" x.title="Abs pct error (%)"
 ```
 
-**Computed finding.** The 90th percentile of absolute percentage error was 14.23% of forecast. This calculation uses 1,417 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-ercot-relative-error.json).
+**Computed finding.** The 90th percentile of absolute percentage error was 14.23% of forecast. This calculation uses 1,417 eligible rows after the recorded filter and field-completeness rule.
 
 ## 5. Inspect the records behind the comparison
 
@@ -79,6 +79,6 @@ Percentage errors divide by the positive forecast, not actual demand. Changing t
 
 U.S. Energy Information Administration / ERCOT; U.S. public domain (EIA-authored data). Historical source version: Authorized repository baseline ea8b52ff742f11d1fb89457acabbcd27b0bd04e7
 
-Data credit and license: [ercot provenance](../../datasets.json). The accompanying [field dictionary](../../evidence/fields/ercot.json) gives units and missingness for every field. [Preparation source](../../evidence/scripts/prepare.py) records the transformation; [computed evidence](../../evidence/findings/nb-ercot-relative-error.json) records filters, denominators, source-row IDs, and CSV hashes.
+Data credit and license: [ercot provenance](../../datasets.json). The accompanying [field dictionary](fields.json) gives units and missingness for every field. [Preparation source](https://github.com/byronwall/explorEDA/blob/main/docs/research/daily-viz-corpus-2026-10-15/handoff/scripts/prepare.py) records the transformation; the catalogue entry records filters, denominators, source-row IDs, and CSV hashes.
 
 **Reading units.** forecast: MWh for the supplied hour; error: MWh for the supplied hour; abs_error: MWh for the supplied hour; pct_error: % of positive forecast; abs_pct_error: % of positive forecast.

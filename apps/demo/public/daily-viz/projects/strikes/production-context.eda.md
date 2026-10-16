@@ -30,7 +30,7 @@ Median and spread make the contrast legible without assuming a normally distribu
 boxplot @nb-strikes-production-context-chart-2 duration color=production_band title="Duration distributions across the declared split" y.title="Duration (days)"
 ```
 
-**Computed finding.** Median duration at negative production deviations was 38.00 days. This calculation uses 25 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-strikes-production-context.json).
+**Computed finding.** Median duration at negative production deviations was 38.00 days. This calculation uses 25 eligible rows after the recorded filter and field-completeness rule.
 
 ## 3. How much do the groups overlap?
 
@@ -48,7 +48,7 @@ Unequal counts matter even when both groups occupy equal chart space. Counts do 
 row @nb-strikes-production-context-chart-4 production_band title="Count the events supporting each comparison" x.title="Source rows"
 ```
 
-**Computed finding.** Median duration at nonnegative production deviations was 25.00 days. This calculation uses 37 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-strikes-production-context.json).
+**Computed finding.** Median duration at nonnegative production deviations was 25.00 days. This calculation uses 37 eligible rows after the recorded filter and field-completeness rule.
 
 ## 5. Inspect the records behind the comparison
 
@@ -70,6 +70,6 @@ The source production variable is contextual, not a randomized exposure. Its zer
 
 U.S. Bureau of Labor Statistics; Kennan; distributed by statsmodels; Public domain (dataset-specific distributor statement). Historical source version: statsmodels 0.14.6; original historical series, not a live revision
 
-Data credit and license: [strikes provenance](../../datasets.json). The accompanying [field dictionary](../../evidence/fields/strikes.json) gives units and missingness for every field. [Preparation source](../../evidence/scripts/prepare.py) records the transformation; [computed evidence](../../evidence/findings/nb-strikes-production-context.json) records filters, denominators, source-row IDs, and CSV hashes.
+Data credit and license: [strikes provenance](../../datasets.json). The accompanying [field dictionary](fields.json) gives units and missingness for every field. [Preparation source](https://github.com/byronwall/explorEDA/blob/main/docs/research/daily-viz-corpus-2026-10-15/handoff/scripts/prepare.py) records the transformation; the catalogue entry records filters, denominators, source-row IDs, and CSV hashes.
 
 **Reading units.** duration: days; iprod: source industrial-production deviation units; sequence: source row sequence.

@@ -33,7 +33,7 @@ Count each selected country-year once and split the count by value availability.
 bar @nb-fertility-empty-end-years-chart-2 year_label seriesField=coverage seriesLayout=stacked color=coverage title="Published and missing cells in each year"
 ```
 
-**Computed finding.** In the selected 2012 rows, the missing-value share was 100.0%. This calculation uses 12 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-fertility-empty-end-years.json).
+**Computed finding.** In the selected 2012 rows, the missing-value share was 100.0%. This calculation uses 12 eligible rows after the recorded filter and field-completeness rule.
 
 ## 3. Published versus missing source values
 
@@ -51,7 +51,7 @@ Each cell has one selected country-year: one means a published rate and zero mea
 heatmap @nb-fertility-empty-end-years-chart-4 country columnField=year_label aggregation=average measureField=observed title="Coverage by country and supplied year"
 ```
 
-**Computed finding.** In the selected 2011 rows, the missing-value share was 0.0%. This calculation uses 12 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-fertility-empty-end-years.json).
+**Computed finding.** In the selected 2011 rows, the missing-value share was 0.0%. This calculation uses 12 eligible rows after the recorded filter and field-completeness rule.
 
 ## 5. Inspect the records behind the comparison
 
@@ -73,6 +73,6 @@ The supplied export is a historical snapshot. Empty values mean unavailable in t
 
 World Bank; UN Population Division and national statistical sources; historical statsmodels snapshot; Creative Commons Attribution 4.0 International. Historical source version: statsmodels 0.14.6; original historical series, not a live revision
 
-Data credit and license: [fertility provenance](../../datasets.json). The accompanying [field dictionary](../../evidence/fields/fertility.json) gives units and missingness for every field. [Preparation source](../../evidence/scripts/prepare.py) records the transformation; [computed evidence](../../evidence/findings/nb-fertility-empty-end-years.json) records filters, denominators, source-row IDs, and CSV hashes.
+Data credit and license: [fertility provenance](../../datasets.json). The accompanying [field dictionary](fields.json) gives units and missingness for every field. [Preparation source](https://github.com/byronwall/explorEDA/blob/main/docs/research/daily-viz-corpus-2026-10-15/handoff/scripts/prepare.py) records the transformation; the catalogue entry records filters, denominators, source-row IDs, and CSV hashes.
 
 **Reading units.** year: year; fertility: period total fertility rate, births per woman.

@@ -9,9 +9,9 @@
 
 ## Fixed-snapshot findings
 
-The pooled inflation–unemployment correlation, excluding the initial placeholder quarter, was 0.065. Eligible rows: 202; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-macro-decade-clouds.json).
+The pooled inflation–unemployment correlation, excluding the initial placeholder quarter, was 0.065. Eligible rows: 202; full expression, denominator, and contributing IDs are in the
 
-Within the supplied 1970s quarters, the correlation was -0.183. Eligible rows: 40; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-macro-decade-clouds.json).
+Within the supplied 1970s quarters, the correlation was -0.183. Eligible rows: 40; full expression, denominator, and contributing IDs are in the
 
 ## What this design gives up
 
@@ -26,4 +26,4 @@ In viewing mode, selecting a repeated unit is intended to filter that repeat acr
 ## Credit
 
 U.S. macroeconomic sources via statsmodels; historical vintage; public domain.
-Full provenance and transformations: [dataset record](../../datasets.json), [fields](../../evidence/fields/macro.json).
+Full provenance and transformations: [dataset record](../../datasets.json), [fields](fields.json).

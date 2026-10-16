@@ -9,9 +9,9 @@
 
 ## Fixed-snapshot findings
 
-The smallest leave-one-out airflow slope was 0.9479 loss units per airflow unit. Eligible rows: 21; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-stackloss-influence-pair.json).
+The smallest leave-one-out airflow slope was 0.9479 loss units per airflow unit. Eligible rows: 21; full expression, denominator, and contributing IDs are in the
 
-The largest leave-one-out airflow slope was 1.0982 loss units per airflow unit. Eligible rows: 21; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-stackloss-influence-pair.json).
+The largest leave-one-out airflow slope was 1.0982 loss units per airflow unit. Eligible rows: 21; full expression, denominator, and contributing IDs are in the
 
 ## What this design gives up
 
@@ -26,4 +26,4 @@ In viewing mode, selecting a repeated unit is intended to filter that repeat acr
 ## Credit
 
 Brownlee plant observations via statsmodels; public domain.
-Full provenance and transformations: [dataset record](../../datasets.json), [fields](../../evidence/fields/stackloss.json).
+Full provenance and transformations: [dataset record](../../datasets.json), [fields](fields.json).

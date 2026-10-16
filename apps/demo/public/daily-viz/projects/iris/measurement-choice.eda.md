@@ -31,7 +31,7 @@ This changes the projection while retaining the population. Any apparent loss of
 scatter @nb-iris-measurement-choice-chart-2 x=sepal_length y=sepal_width color=species title="Replace petals with sepals" x.title="Sepal length (cm)" y.title="Sepal width (cm)"
 ```
 
-**Computed finding.** Mean petal length for setosa was 1.462 cm. This calculation uses 50 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-iris-measurement-choice.json).
+**Computed finding.** Mean petal length for setosa was 1.462 cm. This calculation uses 50 eligible rows after the recorded filter and field-completeness rule.
 
 ## 3. Petal-length distributions by species
 
@@ -49,7 +49,7 @@ Each polyline is one complete flower. Axes have their own scales, so a line’s 
 parallel @nb-iris-measurement-choice-chart-4 sepal_length,sepal_width,petal_length,petal_width color=species title="Follow each flower through all four dimensions"
 ```
 
-**Computed finding.** Mean petal length for virginica was 5.552 cm. This calculation uses 50 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-iris-measurement-choice.json).
+**Computed finding.** Mean petal length for virginica was 5.552 cm. This calculation uses 50 eligible rows after the recorded filter and field-completeness rule.
 
 ## 5. Inspect the records behind the comparison
 
@@ -71,6 +71,6 @@ The classic sample has a deliberately limited species population and is not a su
 
 R. A. Fisher / UCI Machine Learning Repository; scikit-learn corrected variant; Creative Commons Attribution 4.0 International. Historical source version: scikit-learn 1.8.0; original historical series, not a live revision
 
-Data credit and license: [iris provenance](../../datasets.json). The accompanying [field dictionary](../../evidence/fields/iris.json) gives units and missingness for every field. [Preparation source](../../evidence/scripts/prepare.py) records the transformation; [computed evidence](../../evidence/findings/nb-iris-measurement-choice.json) records filters, denominators, source-row IDs, and CSV hashes.
+Data credit and license: [iris provenance](../../datasets.json). The accompanying [field dictionary](fields.json) gives units and missingness for every field. [Preparation source](https://github.com/byronwall/explorEDA/blob/main/docs/research/daily-viz-corpus-2026-10-15/handoff/scripts/prepare.py) records the transformation; the catalogue entry records filters, denominators, source-row IDs, and CSV hashes.
 
 **Reading units.** sepal_length: centimetres; sepal_width: centimetres; petal_length: centimetres; petal_width: centimetres.

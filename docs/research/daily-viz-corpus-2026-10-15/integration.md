@@ -2,9 +2,9 @@
 
 The demo now has 40 narrative notebooks, 25 compositions, and 10 dashboards over 17 dataset families. Open `/daily` to search the collection and select a format. Each piece has local data, source credit, license links, and calculations. The existing examples index links to the collection.
 
-The collection is a backlog. No publication dates, scheduler, merge, or deployment are part of this change. The release order remains in [release-plan.csv](../../../apps/demo/public/daily-viz/release-plan.csv).
+The collection is a backlog. No publication dates, scheduler, merge, or deployment are part of this change. The release order remains in [release-plan.csv](handoff/release-plan.csv).
 
-The [corrected source archive](../../../apps/demo/public/daily-viz/exploreda-daily-viz-corpus.zip) opens with the local project viewer. Its manifest and checksum are included beside it.
+The integration first published a corrected copy of the archive beside the pieces. The workflow in [docs/daily-viz.md](../../daily-viz.md) replaced it: the catalogue is authored directly, findings are recomputed in TypeScript by `corpus.test.ts`, and the Python pipeline, raw snapshots, specifications, and reports moved to [handoff/](handoff/).
 
 ## Sources and files
 
@@ -12,7 +12,7 @@ Pro authored the [original archive](pro/exploreda-daily-viz-corpus.zip) in [the 
 
 The [catalogue](../../../apps/demo/public/daily-viz/catalog.json) gives each piece a stable ID, question, format, paths, evidence, and related pieces. Data files and project contracts live under `apps/demo/public/daily-viz/projects/<family>`. Notebook files use `.eda.md`; compositions and dashboards use `.eda`. An `exploreda.eda` file declares the local sources and queries in each family.
 
-The original [report](../../../apps/demo/public/daily-viz/report.md), [datasets](../../../apps/demo/public/daily-viz/datasets.json), and [gaps](../../../apps/demo/public/daily-viz/gaps.json) describe Pro's output before local validation. Their pending status is historical. The integration catalogue records native compilation and distinguishes the three browser-reviewed entries from the rest. Use this document and local validation evidence for integration status. The original manifest fingerprints the delivered archive, not later local fixes.
+The original [report](handoff/report.md), [datasets](handoff/datasets.json), and [gaps](handoff/gaps.json) describe Pro's output before local validation. Their pending status is historical. The integration catalogue records native compilation and distinguishes the three browser-reviewed entries from the rest. Use this document and local validation evidence for integration status. The original manifest fingerprints the delivered archive, not later local fixes.
 
 ## Decisions
 

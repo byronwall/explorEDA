@@ -9,9 +9,9 @@
 
 ## Fixed-snapshot findings
 
-The smallest recorded unemployment count was 1,870 source count units. Eligible rows: 16; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-longley-counts-not-rates.json).
+The smallest recorded unemployment count was 1,870 source count units. Eligible rows: 16; full expression, denominator, and contributing IDs are in the
 
-The largest recorded unemployment count was 4,806 source count units. Eligible rows: 16; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-longley-counts-not-rates.json).
+The largest recorded unemployment count was 4,806 source count units. Eligible rows: 16; full expression, denominator, and contributing IDs are in the
 
 ## What this design gives up
 
@@ -26,4 +26,4 @@ In viewing mode, selecting a repeated unit is intended to filter that repeat acr
 ## Credit
 
 Longley historical employment benchmark via statsmodels; public domain.
-Full provenance and transformations: [dataset record](../../datasets.json), [fields](../../evidence/fields/longley.json).
+Full provenance and transformations: [dataset record](../../datasets.json), [fields](fields.json).

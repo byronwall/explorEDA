@@ -1,0 +1,13 @@
+eda query={{query}}
+dashboard "{{title}}"
+grid columns=12 rowHeight=76
+composition @{{id}} width=960 height=600 at=0,0,12,9 {
+  title "{{title}}" at=32,28 fontSize=24
+  subtitle "One sentence on how to read the graphic." at=32,78 fontSize=13
+  scale numeric {{query}}.TODO
+  unit Main at=88,150 size=820x345 {
+    label show=false
+    point Values x={{query}}.TODO y={{query}}.TODO radius=3
+  }
+  footnote "Source credit, from datasets.json." at=32,560 fontSize=10
+}

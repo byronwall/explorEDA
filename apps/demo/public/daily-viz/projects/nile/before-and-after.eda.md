@@ -33,7 +33,7 @@ Compare the medians and middle halves while keeping extreme annual volumes visib
 boxplot @nb-nile-before-and-after-chart-2 volume color=era title="Two eras, the same volume scale" y.title="Volume (10^8 m³)"
 ```
 
-**Computed finding.** Mean annual volume before 1898 was 1097.67 ×10^8 m³. This calculation uses 27 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-nile-before-and-after.json).
+**Computed finding.** Mean annual volume before 1898 was 1097.67 ×10^8 m³. This calculation uses 27 eligible rows after the recorded filter and field-completeness rule.
 
 ## 3. How much do the era distributions overlap?
 
@@ -51,7 +51,7 @@ The later era contributes more observations. This count is the denominator for e
 row @nb-nile-before-and-after-chart-4 era title="Years contributing to each era" x.title="Source rows"
 ```
 
-**Computed finding.** Mean annual volume from 1898 onward was 853.40 ×10^8 m³. This calculation uses 73 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-nile-before-and-after.json).
+**Computed finding.** Mean annual volume from 1898 onward was 853.40 ×10^8 m³. This calculation uses 73 eligible rows after the recorded filter and field-completeness rule.
 
 ## 5. Inspect the records behind the comparison
 
@@ -73,6 +73,6 @@ The cutoff is an explicit historical comparison, not a randomized intervention. 
 
 Historical Aswan observations; distributed by statsmodels; Public domain (dataset-specific distributor statement). Historical source version: statsmodels 0.14.6; original historical series, not a live revision
 
-Data credit and license: [nile provenance](../../datasets.json). The accompanying [field dictionary](../../evidence/fields/nile.json) gives units and missingness for every field. [Preparation source](../../evidence/scripts/prepare.py) records the transformation; [computed evidence](../../evidence/findings/nb-nile-before-and-after.json) records filters, denominators, source-row IDs, and CSV hashes.
+Data credit and license: [nile provenance](../../datasets.json). The accompanying [field dictionary](fields.json) gives units and missingness for every field. [Preparation source](https://github.com/byronwall/explorEDA/blob/main/docs/research/daily-viz-corpus-2026-10-15/handoff/scripts/prepare.py) records the transformation; the catalogue entry records filters, denominators, source-row IDs, and CSV hashes.
 
 **Reading units.** year: year; volume: 10^8 cubic metres per year.

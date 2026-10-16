@@ -10,8 +10,8 @@ Which hours combine large errors, unusual forecast levels, and a particular cloc
 
 ## Fixed-snapshot findings
 
-The mean signed error was -1,242.9 MWh per supplied hour. [Evidence](../../evidence/findings/db-ercot-forecast-investigation.json).
-The mean absolute error was 2,591.7 MWh per supplied hour. [Evidence](../../evidence/findings/db-ercot-forecast-investigation.json).
+The mean signed error was -1,242.9 MWh per supplied hour.
+The mean absolute error was 2,591.7 MWh per supplied hour.
 
 ## Limits
 
@@ -22,4 +22,4 @@ Eight panels contain an instruction note, six analytical/selector/metric views, 
 ## Source credit
 
 EIA / ERCOT; authorized repository snapshot; U.S. public-domain data.
-[Full provenance](../../datasets.json); [field dictionary](../../evidence/fields/ercot.json).
+[Full provenance](../../datasets.json); [field dictionary](fields.json).

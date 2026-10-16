@@ -45,7 +45,7 @@ A time series reveals sequences that disappear in the scatter. Avoid treating su
 line @nb-macro-inflation-unemployment-chart-2 x=date y=infl title="Inflation retains its time order" x.title="Calendar date" y.title="Infl (%)"
 ```
 
-**Computed finding.** The pooled inflation–unemployment correlation, excluding the initial placeholder quarter, was 0.065. This calculation uses 202 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-macro-inflation-unemployment.json).
+**Computed finding.** The pooled inflation–unemployment correlation, excluding the initial placeholder quarter, was 0.065. This calculation uses 202 eligible rows after the recorded filter and field-completeness rule.
 
 ## 3. Unemployment distributions within each decade
 
@@ -63,7 +63,7 @@ The cumulative view compares the entire distribution. It does not correct the sm
 ecdf @nb-macro-inflation-unemployment-chart-4 infl color=decade direction=below title="Inflation thresholds by historical span" x.title="Infl (%)"
 ```
 
-**Computed finding.** Within the supplied 1970s quarters, the correlation was -0.183. This calculation uses 40 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-macro-inflation-unemployment.json).
+**Computed finding.** Within the supplied 1970s quarters, the correlation was -0.183. This calculation uses 40 eligible rows after the recorded filter and field-completeness rule.
 
 ## 5. Inspect the records behind the comparison
 
@@ -85,6 +85,6 @@ Time ordering, policy regimes, revisions, and omitted factors limit a pooled sca
 
 U.S. public statistical sources; curated in statsmodels; Public domain (dataset-specific distributor statement). Historical source version: statsmodels 0.14.6; original historical series, not a live revision
 
-Data credit and license: [macro provenance](../../datasets.json). The accompanying [field dictionary](../../evidence/fields/macro.json) gives units and missingness for every field. [Preparation source](../../evidence/scripts/prepare.py) records the transformation; [computed evidence](../../evidence/findings/nb-macro-inflation-unemployment.json) records filters, denominators, source-row IDs, and CSV hashes.
+Data credit and license: [macro provenance](../../datasets.json). The accompanying [field dictionary](fields.json) gives units and missingness for every field. [Preparation source](https://github.com/byronwall/explorEDA/blob/main/docs/research/daily-viz-corpus-2026-10-15/handoff/scripts/prepare.py) records the transformation; the catalogue entry records filters, denominators, source-row IDs, and CSV hashes.
 
 **Reading units.** unemp: unemployment rate, %; infl: source annualized inflation, %.

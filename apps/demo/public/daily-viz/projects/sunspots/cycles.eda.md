@@ -30,7 +30,7 @@ Count years by activity rather than smoothing the cycles into a single average. 
 hist @nb-sunspots-cycles-chart-2 activity bins=24 title="The distribution of annual activity" x.title="Activity (sunspot number)" y.title="Source rows"
 ```
 
-**Computed finding.** The largest supplied annual sunspot number is 190.2. This calculation uses 309 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-sunspots-cycles.json).
+**Computed finding.** The largest supplied annual sunspot number is 190.2. This calculation uses 309 eligible rows after the recorded filter and field-completeness rule.
 
 ## 3. Compare broad historical spans
 
@@ -48,7 +48,7 @@ The curve gives the observed share of years at or below a threshold. It does not
 ecdf @nb-sunspots-cycles-chart-4 activity direction=below title="Read low-activity thresholds without bins" x.title="Activity (sunspot number)"
 ```
 
-**Computed finding.** The median supplied annual sunspot number is 40.0. This calculation uses 309 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-sunspots-cycles.json).
+**Computed finding.** The median supplied annual sunspot number is 40.0. This calculation uses 309 eligible rows after the recorded filter and field-completeness rule.
 
 ## 5. Inspect the records behind the comparison
 
@@ -70,6 +70,6 @@ The historical series is preserved as supplied and is not the current revised in
 
 NOAA historical solar series; distributed by statsmodels; Public domain (dataset-specific distributor statement). Historical source version: statsmodels 0.14.6; original historical series, not a live revision
 
-Data credit and license: [sunspots provenance](../../datasets.json). The accompanying [field dictionary](../../evidence/fields/sunspots.json) gives units and missingness for every field. [Preparation source](../../evidence/scripts/prepare.py) records the transformation; [computed evidence](../../evidence/findings/nb-sunspots-cycles.json) records filters, denominators, source-row IDs, and CSV hashes.
+Data credit and license: [sunspots provenance](../../datasets.json). The accompanying [field dictionary](fields.json) gives units and missingness for every field. [Preparation source](https://github.com/byronwall/explorEDA/blob/main/docs/research/daily-viz-corpus-2026-10-15/handoff/scripts/prepare.py) records the transformation; the catalogue entry records filters, denominators, source-row IDs, and CSV hashes.
 
 **Reading units.** year: year; activity: historical annual sunspot number.

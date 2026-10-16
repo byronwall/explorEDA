@@ -30,7 +30,7 @@ A firm contributes one total across its supplied years. The horizontal measure i
 hist @nb-grunfeld-investment-concentration-chart-2 invest_total bins=8 title="The distribution of cumulative investment by firm" x.title="Invest total (source 1947-dollar units)" y.title="Source rows"
 ```
 
-**Computed finding.** The largest firm accounts for 41.46% of cumulative panel investment. This calculation uses 11 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-grunfeld-investment-concentration.json).
+**Computed finding.** The largest firm accounts for 41.46% of cumulative panel investment. This calculation uses 11 eligible rows after the recorded filter and field-completeness rule.
 
 ## 3. Separate scale from observation count
 
@@ -48,7 +48,7 @@ The cumulative curve gives firms equal weight. It therefore answers a different 
 ecdf @nb-grunfeld-investment-concentration-chart-4 invest_total direction=below title="How many firms fall below a cumulative amount?" x.title="Invest total (source 1947-dollar units)"
 ```
 
-**Computed finding.** The three largest firms together account for 76.43% of cumulative panel investment. This calculation uses 11 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-grunfeld-investment-concentration.json).
+**Computed finding.** The three largest firms together account for 76.43% of cumulative panel investment. This calculation uses 11 eligible rows after the recorded filter and field-completeness rule.
 
 ## 5. Inspect the records behind the comparison
 
@@ -70,6 +70,6 @@ The denominator is cumulative investment among the selected panel firms and year
 
 Grunfeld; Kleiber and Zeileis; distributed by statsmodels; Public domain (dataset-specific distributor statement). Historical source version: statsmodels 0.14.6; original historical series, not a live revision
 
-Data credit and license: [grunfeld provenance](../../datasets.json). The accompanying [field dictionary](../../evidence/fields/grunfeld.json) gives units and missingness for every field. [Preparation source](../../evidence/scripts/prepare.py) records the transformation; [computed evidence](../../evidence/findings/nb-grunfeld-investment-concentration.json) records filters, denominators, source-row IDs, and CSV hashes.
+Data credit and license: [grunfeld provenance](../../datasets.json). The accompanying [field dictionary](fields.json) gives units and missingness for every field. [Preparation source](https://github.com/byronwall/explorEDA/blob/main/docs/research/daily-viz-corpus-2026-10-15/handoff/scripts/prepare.py) records the transformation; the catalogue entry records filters, denominators, source-row IDs, and CSV hashes.
 
 **Reading units.** years: observed firm-years; invest_mean: source 1947-dollar units; no multiplier assumed; value_mean: source 1947-dollar units; no multiplier assumed; invest_total: source 1947-dollar units; no multiplier assumed.

@@ -9,9 +9,9 @@
 
 ## Fixed-snapshot findings
 
-The average within-year observed monthly range was 5.86 °C. Eligible rows: 61; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-elnino-observed-range.json).
+The average within-year observed monthly range was 5.86 °C. Eligible rows: 61; full expression, denominator, and contributing IDs are in the
 
-The largest within-year observed monthly range was 7.93 °C. Eligible rows: 61; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-elnino-observed-range.json).
+The largest within-year observed monthly range was 7.93 °C. Eligible rows: 61; full expression, denominator, and contributing IDs are in the
 
 ## What this design gives up
 
@@ -26,4 +26,4 @@ In viewing mode, selecting a repeated unit is intended to filter that repeat acr
 ## Credit
 
 NOAA CPC, ERSST v3b Niño 1+2; historical snapshot; public domain.
-Full provenance and transformations: [dataset record](../../datasets.json), [fields](../../evidence/fields/elnino.json).
+Full provenance and transformations: [dataset record](../../datasets.json), [fields](fields.json).

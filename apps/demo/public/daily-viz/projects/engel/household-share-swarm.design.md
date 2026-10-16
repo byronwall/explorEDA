@@ -9,9 +9,9 @@
 
 ## Fixed-snapshot findings
 
-Income and food expenditure had correlation 0.911. Eligible rows: 235; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-engel-household-share-swarm.json).
+Income and food expenditure had correlation 0.911. Eligible rows: 235; full expression, denominator, and contributing IDs are in the
 
-Income and food share had correlation -0.416. Eligible rows: 235; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-engel-household-share-swarm.json).
+Income and food share had correlation -0.416. Eligible rows: 235; full expression, denominator, and contributing IDs are in the
 
 ## What this design gives up
 
@@ -26,4 +26,4 @@ In viewing mode, selecting a repeated unit is intended to filter that repeat acr
 ## Credit
 
 Engel household data via statsmodels; historical Belgian sample; public domain.
-Full provenance and transformations: [dataset record](../../datasets.json), [fields](../../evidence/fields/engel.json).
+Full provenance and transformations: [dataset record](../../datasets.json), [fields](fields.json).

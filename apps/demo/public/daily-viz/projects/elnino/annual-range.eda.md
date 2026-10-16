@@ -32,7 +32,7 @@ The range adds information not encoded by the mean. A year may have a high mean 
 scatter @nb-elnino-annual-range-chart-2 x=mean y=range title="Mean temperature against seasonal range" x.title="Mean (°C)" y.title="Range (°C)"
 ```
 
-**Computed finding.** The average within-year observed monthly range was 5.86 °C. This calculation uses 61 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-elnino-annual-range.json).
+**Computed finding.** The average within-year observed monthly range was 5.86 °C. This calculation uses 61 eligible rows after the recorded filter and field-completeness rule.
 
 ## 3. How unusual is a wide annual range?
 
@@ -50,7 +50,7 @@ A min–max comparison becomes unreliable when years have different opportunitie
 scatter @nb-elnino-annual-range-chart-4 x=year y=months title="Check the number of observed months" x.title="Year" y.title="Months (observed months)"
 ```
 
-**Computed finding.** The largest within-year observed monthly range was 7.93 °C. This calculation uses 61 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-elnino-annual-range.json).
+**Computed finding.** The largest within-year observed monthly range was 7.93 °C. This calculation uses 61 eligible rows after the recorded filter and field-completeness rule.
 
 ## 5. Inspect the records behind the comparison
 
@@ -72,6 +72,6 @@ The lower and upper bounds are observed monthly minima and maxima, not confidenc
 
 NOAA Climate Prediction Center, ERSST v3b; distributed by statsmodels; Public domain (dataset-specific distributor statement). Historical source version: statsmodels 0.14.6; original historical series, not a live revision
 
-Data credit and license: [elnino provenance](../../datasets.json). The accompanying [field dictionary](../../evidence/fields/elnino.json) gives units and missingness for every field. [Preparation source](../../evidence/scripts/prepare.py) records the transformation; [computed evidence](../../evidence/findings/nb-elnino-annual-range.json) records filters, denominators, source-row IDs, and CSV hashes.
+Data credit and license: [elnino provenance](../../datasets.json). The accompanying [field dictionary](fields.json) gives units and missingness for every field. [Preparation source](https://github.com/byronwall/explorEDA/blob/main/docs/research/daily-viz-corpus-2026-10-15/handoff/scripts/prepare.py) records the transformation; the catalogue entry records filters, denominators, source-row IDs, and CSV hashes.
 
 **Reading units.** year: year; mean: degrees Celsius; low: degrees Celsius; high: degrees Celsius; range: degrees Celsius; months: observed months.

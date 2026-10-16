@@ -9,9 +9,9 @@
 
 ## Fixed-snapshot findings
 
-The mean recorded duration was 42.66 days. Eligible rows: 62; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-strikes-duration-dot-rows.json).
+The mean recorded duration was 42.66 days. Eligible rows: 62; full expression, denominator, and contributing IDs are in the
 
-The median recorded duration was 27.00 days. Eligible rows: 62; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-strikes-duration-dot-rows.json).
+The median recorded duration was 27.00 days. Eligible rows: 62; full expression, denominator, and contributing IDs are in the
 
 ## What this design gives up
 
@@ -26,4 +26,4 @@ In viewing mode, selecting a repeated unit is intended to filter that repeat acr
 ## Credit
 
 BLS / Kennan strike-duration sample via statsmodels; public domain.
-Full provenance and transformations: [dataset record](../../datasets.json), [fields](../../evidence/fields/strikes.json).
+Full provenance and transformations: [dataset record](../../datasets.json), [fields](fields.json).

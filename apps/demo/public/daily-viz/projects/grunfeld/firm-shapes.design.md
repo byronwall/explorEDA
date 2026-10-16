@@ -9,9 +9,9 @@
 
 ## Fixed-snapshot findings
 
-The highest first-year-normalized investment index in the panel was 696.67. Eligible rows: 220; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-grunfeld-firm-shapes.json).
+The highest first-year-normalized investment index in the panel was 696.67. Eligible rows: 220; full expression, denominator, and contributing IDs are in the
 
-The median firm-year investment index was 183.91. Eligible rows: 220; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-grunfeld-firm-shapes.json).
+The median firm-year investment index was 183.91. Eligible rows: 220; full expression, denominator, and contributing IDs are in the
 
 ## What this design gives up
 
@@ -26,4 +26,4 @@ In viewing mode, selecting a repeated unit is intended to filter that repeat acr
 ## Credit
 
 Grunfeld investment panel, Kleiber and Zeileis / statsmodels; public domain.
-Full provenance and transformations: [dataset record](../../datasets.json), [fields](../../evidence/fields/grunfeld.json).
+Full provenance and transformations: [dataset record](../../datasets.json), [fields](fields.json).

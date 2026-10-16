@@ -9,9 +9,9 @@
 
 ## Fixed-snapshot findings
 
-The best-supported month-hour cell contains 31 supplied hours. Eligible rows: 53; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-ercot-clock-error-cells.json).
+The best-supported month-hour cell contains 31 supplied hours. Eligible rows: 53; full expression, denominator, and contributing IDs are in the
 
-The least-supported month-hour cell contains 1 supplied hour. Eligible rows: 53; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-ercot-clock-error-cells.json).
+The least-supported month-hour cell contains 1 supplied hour. Eligible rows: 53; full expression, denominator, and contributing IDs are in the
 
 ## What this design gives up
 
@@ -26,4 +26,4 @@ In viewing mode, selecting a repeated unit is intended to filter that repeat acr
 ## Credit
 
 EIA / ERCOT; authorized repository snapshot; U.S. public-domain data.
-Full provenance and transformations: [dataset record](../../datasets.json), [fields](../../evidence/fields/ercot.json).
+Full provenance and transformations: [dataset record](../../datasets.json), [fields](fields.json).

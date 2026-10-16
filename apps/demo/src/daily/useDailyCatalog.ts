@@ -1,29 +1,21 @@
 import { useEffect, useState } from "react";
-import type catalog from "../../public/daily-viz/catalog.json";
-import type datasets from "../../public/daily-viz/datasets.json";
-import { assetPath } from "./corpus";
+import { assetPath, type DailyIndex } from "./corpus";
 
-type Catalog = { entries: typeof catalog; datasets: typeof datasets };
-let pending: Promise<Catalog> | undefined;
+let pending: Promise<DailyIndex> | undefined;
 
+/** The index `dailyCorpus.mjs` derives from the catalogue and its files. */
 async function load() {
-  const responses = await Promise.all([
-    fetch(assetPath("catalog.json")),
-    fetch(assetPath("datasets.json")),
-  ]);
-  if (responses.some((response) => !response.ok))
+  const response = await fetch(assetPath("index.json"));
+  if (!response.ok)
     throw new Error(
       "Could not load the collection. Reload this page to try again."
     );
-  const [entries, sources] = await Promise.all(
-    responses.map((response) => response.json())
-  );
-  return { entries, datasets: sources } as Catalog;
+  return (await response.json()) as DailyIndex;
 }
 
 /** Public metadata loads once, through the same asset URLs as the source files. */
 export function useDailyCatalog() {
-  const [data, setData] = useState<Catalog | null>(null);
+  const [data, setData] = useState<DailyIndex | null>(null);
   const [error, setError] = useState("");
   useEffect(() => {
     let active = true;

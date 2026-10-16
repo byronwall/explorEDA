@@ -39,7 +39,7 @@ A conventional paired plot restores explicit two-axis interpretation. It helps t
 scatter @nb-wine-profile-scales-chart-2 x=proline y=alcohol color=cultivar title="Proline and alcohol remain in original units" x.title="Proline (source units)" y.title="Alcohol (source units)"
 ```
 
-**Computed finding.** The maximum recorded proline value was 1680.0 source units. This calculation uses 178 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-wine-profile-scales.json).
+**Computed finding.** The maximum recorded proline value was 1680.0 source units. This calculation uses 178 eligible rows after the recorded filter and field-completeness rule.
 
 ## 3. Hue has its own numerical scale
 
@@ -57,7 +57,7 @@ Do not compare box heights across these two charts as if the vertical rulers wer
 boxplot @nb-wine-profile-scales-chart-4 proline color=cultivar title="Proline has a much larger raw scale" y.title="Proline (source units)"
 ```
 
-**Computed finding.** The maximum recorded hue value was 1.710 source units. This calculation uses 178 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-wine-profile-scales.json).
+**Computed finding.** The maximum recorded hue value was 1.710 source units. This calculation uses 178 eligible rows after the recorded filter and field-completeness rule.
 
 ## 5. Inspect the records behind the comparison
 
@@ -79,6 +79,6 @@ The assay fields have different source units and scales. Parallel-coordinate axe
 
 S. Aeberhard and M. Forina / UCI Machine Learning Repository; scikit-learn distribution; Creative Commons Attribution 4.0 International. Historical source version: scikit-learn 1.8.0; original historical series, not a live revision
 
-Data credit and license: [wine provenance](../../datasets.json). The accompanying [field dictionary](../../evidence/fields/wine.json) gives units and missingness for every field. [Preparation source](../../evidence/scripts/prepare.py) records the transformation; [computed evidence](../../evidence/findings/nb-wine-profile-scales.json) records filters, denominators, source-row IDs, and CSV hashes.
+Data credit and license: [wine provenance](../../datasets.json). The accompanying [field dictionary](fields.json) gives units and missingness for every field. [Preparation source](https://github.com/byronwall/explorEDA/blob/main/docs/research/daily-viz-corpus-2026-10-15/handoff/scripts/prepare.py) records the transformation; the catalogue entry records filters, denominators, source-row IDs, and CSV hashes.
 
 **Reading units.** alcohol: source assay units; publisher does not specify units; malic_acid: source assay units; publisher does not specify units; magnesium: source assay units; publisher does not specify units; hue: source assay units; publisher does not specify units; proline: source assay units; publisher does not specify units.

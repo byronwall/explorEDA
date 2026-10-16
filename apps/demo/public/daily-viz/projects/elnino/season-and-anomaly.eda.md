@@ -35,7 +35,7 @@ The monthly boxes establish why one all-year temperature threshold can be mislea
 boxplot @nb-elnino-season-and-anomaly-chart-2 sst color=month_label title="The calendar has its own temperature distribution" y.title="Sst (°C)"
 ```
 
-**Computed finding.** The mean February temperature across supplied years was 25.84 °C. This calculation uses 61 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-elnino-season-and-anomaly.json).
+**Computed finding.** The mean February temperature across supplied years was 25.84 °C. This calculation uses 61 eligible rows after the recorded filter and field-completeness rule.
 
 ## 3. Anomalies against the same calendar month
 
@@ -55,7 +55,7 @@ An anomaly histogram summarizes the amplitude distribution but discards the orde
 hist @nb-elnino-season-and-anomaly-chart-4 anomaly bins=30 title="The distribution after seasonal centering" x.title="Anomaly (°C)" y.title="Source rows"
 ```
 
-**Computed finding.** The mean September temperature across supplied years was 20.58 °C. This calculation uses 61 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-elnino-season-and-anomaly.json).
+**Computed finding.** The mean September temperature across supplied years was 20.58 °C. This calculation uses 61 eligible rows after the recorded filter and field-completeness rule.
 
 ## 5. Inspect the records behind the comparison
 
@@ -77,6 +77,6 @@ These are monthly temperatures for Niño 1+2, not a global ocean average or a Ni
 
 NOAA Climate Prediction Center, ERSST v3b; distributed by statsmodels; Public domain (dataset-specific distributor statement). Historical source version: statsmodels 0.14.6; original historical series, not a live revision
 
-Data credit and license: [elnino provenance](../../datasets.json). The accompanying [field dictionary](../../evidence/fields/elnino.json) gives units and missingness for every field. [Preparation source](../../evidence/scripts/prepare.py) records the transformation; [computed evidence](../../evidence/findings/nb-elnino-season-and-anomaly.json) records filters, denominators, source-row IDs, and CSV hashes.
+Data credit and license: [elnino provenance](../../datasets.json). The accompanying [field dictionary](fields.json) gives units and missingness for every field. [Preparation source](https://github.com/byronwall/explorEDA/blob/main/docs/research/daily-viz-corpus-2026-10-15/handoff/scripts/prepare.py) records the transformation; the catalogue entry records filters, denominators, source-row IDs, and CSV hashes.
 
 **Reading units.** sst: degrees Celsius, Niño 1+2 region; climatology: degrees Celsius; 1981–2010 calendar-month mean; anomaly: degrees Celsius relative to 1981–2010 month mean.

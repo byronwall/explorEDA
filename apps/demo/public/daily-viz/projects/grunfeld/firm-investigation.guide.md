@@ -10,8 +10,8 @@ How do a selected firm’s annual changes compare with its own panel summary?
 
 ## Fixed-snapshot findings
 
-Across firm-year levels, market value and investment had correlation 0.862. [Evidence](../../evidence/findings/db-grunfeld-firm-investigation.json).
-Across valid within-firm annual changes, the correlation was 0.562. [Evidence](../../evidence/findings/db-grunfeld-firm-investigation.json).
+Across firm-year levels, market value and investment had correlation 0.862.
+Across valid within-firm annual changes, the correlation was 0.562.
 
 ## Limits
 
@@ -22,4 +22,4 @@ Eight panels contain an instruction note, six analytical/selector/metric views, 
 ## Source credit
 
 Grunfeld investment panel, Kleiber and Zeileis / statsmodels; public domain.
-[Full provenance](../../datasets.json); [field dictionary](../../evidence/fields/grunfeld.json).
+[Full provenance](../../datasets.json); [field dictionary](fields.json).

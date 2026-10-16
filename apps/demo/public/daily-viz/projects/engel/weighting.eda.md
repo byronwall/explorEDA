@@ -33,7 +33,7 @@ The ordered line makes the comparison compact. The horizontal steps are quartile
 line @nb-engel-weighting-chart-2 x=order y=mean_share,weighted_share title="Follow the groups from lower to higher income" x.title="Order" y.title="Mean share (%) / Weighted share (%)"
 ```
 
-**Computed finding.** Food expenditure divided by pooled income was 63.53%. This calculation uses 4 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-engel-weighting.json).
+**Computed finding.** Food expenditure divided by pooled income was 63.53%. This calculation uses 4 eligible rows after the recorded filter and field-completeness rule.
 
 ## 3. The denominators behind the ratio
 
@@ -51,7 +51,7 @@ Nearly equal group sizes are a consequence of the quartile construction. Exact c
 scatter @nb-engel-weighting-chart-4 x=order y=households title="How many households contribute to each group?" x.title="Order" y.title="Households (households)"
 ```
 
-**Computed finding.** The household-count-weighted mean of the quartile household means was 65.58%. This calculation uses 4 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-engel-weighting.json).
+**Computed finding.** The household-count-weighted mean of the quartile household means was 65.58%. This calculation uses 4 eligible rows after the recorded filter and field-completeness rule.
 
 ## 5. Inspect the records behind the comparison
 
@@ -73,6 +73,6 @@ The grouping is based on sample income quartiles. Income-weighted ratios do not 
 
 Engel historical Belgian household survey; distributed by statsmodels; Public domain (dataset-specific distributor statement). Historical source version: statsmodels 0.14.6; original historical series, not a live revision
 
-Data credit and license: [engel provenance](../../datasets.json). The accompanying [field dictionary](../../evidence/fields/engel.json) gives units and missingness for every field. [Preparation source](../../evidence/scripts/prepare.py) records the transformation; [computed evidence](../../evidence/findings/nb-engel-weighting.json) records filters, denominators, source-row IDs, and CSV hashes.
+Data credit and license: [engel provenance](../../datasets.json). The accompanying [field dictionary](fields.json) gives units and missingness for every field. [Preparation source](https://github.com/byronwall/explorEDA/blob/main/docs/research/daily-viz-corpus-2026-10-15/handoff/scripts/prepare.py) records the transformation; the catalogue entry records filters, denominators, source-row IDs, and CSV hashes.
 
 **Reading units.** households: households; income_sum: Belgian francs per year, 1857; food_sum: Belgian francs per year, 1857; mean_share: % unweighted household mean; weighted_share: % income-weighted ratio.

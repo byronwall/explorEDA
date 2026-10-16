@@ -10,8 +10,8 @@ Which annual observations drive the difference between the levels and changes vi
 
 ## Fixed-snapshot findings
 
-Employment and nominal GNP in levels had correlation 0.984. [Evidence](../../evidence/findings/db-longley-employment-investigation.json).
-Their valid annual changes had correlation 0.892. [Evidence](../../evidence/findings/db-longley-employment-investigation.json).
+Employment and nominal GNP in levels had correlation 0.984.
+Their valid annual changes had correlation 0.892.
 
 ## Limits
 
@@ -22,4 +22,4 @@ Eight panels contain an instruction note, six analytical/selector/metric views, 
 ## Source credit
 
 Longley historical employment benchmark via statsmodels; public domain.
-[Full provenance](../../datasets.json); [field dictionary](../../evidence/fields/longley.json).
+[Full provenance](../../datasets.json); [field dictionary](fields.json).

@@ -1,2 +1,4 @@
-# Preserve frozen source snapshots, evidence hashes, and generated analysis files.
+# Daily data viz: authored analysis files, and `pnpm daily` writes the JSON.
 apps/demo/public/daily-viz/
+# The first corpus's handoff, kept byte for byte.
+docs/research/daily-viz-corpus-2026-10-15/handoff/

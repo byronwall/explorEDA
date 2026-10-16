@@ -40,7 +40,7 @@ Trending variables can share a strong levels association. Each point is a quarte
 scatter @nb-danish-logs-and-indices-chart-2 x=lry y=lrm title="The relationship in logged levels" x.title="Lry (log real income, source definition)" y.title="Lrm (log real money, source definition)"
 ```
 
-**Computed finding.** Logged real money and logged real income had correlation 0.868. This calculation uses 55 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-danish-logs-and-indices.json).
+**Computed finding.** Logged real money and logged real income had correlation 0.868. This calculation uses 55 eligible rows after the recorded filter and field-completeness rule.
 
 ## 3. The relationship in quarterly log changes
 
@@ -58,7 +58,7 @@ A distribution view exposes asymmetry and extreme changes. It discards persisten
 hist @nb-danish-logs-and-indices-chart-4 dmoney bins=16 title="Quarterly log changes in real money" x.title="Dmoney (quarterly log change)" y.title="Source rows"
 ```
 
-**Computed finding.** Their valid quarterly log changes had correlation 0.490. This calculation uses 54 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-danish-logs-and-indices.json).
+**Computed finding.** Their valid quarterly log changes had correlation 0.490. This calculation uses 54 eligible rows after the recorded filter and field-completeness rule.
 
 ## 5. Inspect the records behind the comparison
 
@@ -80,6 +80,6 @@ These are source-defined logged economic series from a historical Danish model d
 
 Johansen and Juselius; distributed by statsmodels; Public domain (dataset-specific distributor statement). Historical source version: statsmodels 0.14.6; original historical series, not a live revision
 
-Data credit and license: [danish provenance](../../datasets.json). The accompanying [field dictionary](../../evidence/fields/danish.json) gives units and missingness for every field. [Preparation source](../../evidence/scripts/prepare.py) records the transformation; [computed evidence](../../evidence/findings/nb-danish-logs-and-indices.json) records filters, denominators, source-row IDs, and CSV hashes.
+Data credit and license: [danish provenance](../../datasets.json). The accompanying [field dictionary](fields.json) gives units and missingness for every field. [Preparation source](https://github.com/byronwall/explorEDA/blob/main/docs/research/daily-viz-corpus-2026-10-15/handoff/scripts/prepare.py) records the transformation; the catalogue entry records filters, denominators, source-row IDs, and CSV hashes.
 
 **Reading units.** lrm: log real money, source definition; lry: log real income, source definition; money_index: first quarter = 100; income_index: first quarter = 100; dmoney: quarterly log change; dincome: quarterly log change.

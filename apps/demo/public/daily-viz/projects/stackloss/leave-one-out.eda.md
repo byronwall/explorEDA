@@ -36,7 +36,7 @@ A residual is recorded minus fitted loss. Large residuals and influence are rela
 scatter @nb-stackloss-leave-one-out-chart-2 x=fitted y=residual title="Residuals from that same fit" x.title="Fitted (10 × percent ammonia lost)" y.title="Residual (10 × percentage-point loss residual)"
 ```
 
-**Computed finding.** The smallest leave-one-out airflow slope was 0.9479 loss units per airflow unit. This calculation uses 21 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-stackloss-leave-one-out.json).
+**Computed finding.** The smallest leave-one-out airflow slope was 0.9479 loss units per airflow unit. This calculation uses 21 eligible rows after the recorded filter and field-completeness rule.
 
 ## 3. The slope after omitting each source row
 
@@ -54,7 +54,7 @@ Compare the two diagnostics directly. The prepared shift subtracts the complete-
 scatter @nb-stackloss-leave-one-out-chart-4 x=residual y=slope_shift title="Does a large residual imply a large slope shift?" x.title="Residual (10 × percentage-point loss residual)" y.title="Slope shift (slope units)"
 ```
 
-**Computed finding.** The largest leave-one-out airflow slope was 1.0982 loss units per airflow unit. This calculation uses 21 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-stackloss-leave-one-out.json).
+**Computed finding.** The largest leave-one-out airflow slope was 1.0982 loss units per airflow unit. This calculation uses 21 eligible rows after the recorded filter and field-completeness rule.
 
 ## 5. Inspect the records behind the comparison
 
@@ -76,6 +76,6 @@ Leave-one-out fits diagnose sensitivity, not data validity. The omitted points a
 
 Brownlee historical plant data; distributed by statsmodels; Public domain (dataset-specific distributor statement). Historical source version: statsmodels 0.14.6; original historical series, not a live revision
 
-Data credit and license: [stackloss provenance](../../datasets.json). The accompanying [field dictionary](../../evidence/fields/stackloss.json) gives units and missingness for every field. [Preparation source](../../evidence/scripts/prepare.py) records the transformation; [computed evidence](../../evidence/findings/nb-stackloss-leave-one-out.json) records filters, denominators, source-row IDs, and CSV hashes.
+Data credit and license: [stackloss provenance](../../datasets.json). The accompanying [field dictionary](fields.json) gives units and missingness for every field. [Preparation source](https://github.com/byronwall/explorEDA/blob/main/docs/research/daily-viz-corpus-2026-10-15/handoff/scripts/prepare.py) records the transformation; the catalogue entry records filters, denominators, source-row IDs, and CSV hashes.
 
 **Reading units.** stackloss: 10 × percent ammonia lost; airflow: source airflow units; sequence: source row sequence; residual: 10 × percentage-point loss residual; loo_slope: stackloss units per airflow unit; slope_shift: slope units.

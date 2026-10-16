@@ -9,9 +9,9 @@
 
 ## Fixed-snapshot findings
 
-The largest team group-stage goal total was 9 goals. Eligible rows: 32; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-football-team-score-cloud.json).
+The largest team group-stage goal total was 9 goals. Eligible rows: 32; full expression, denominator, and contributing IDs are in the
 
-Teams earning at least seven group points represented 15.62% of the selected teams. Eligible rows: 32; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-football-team-score-cloud.json).
+Teams earning at least seven group points represented 15.62% of the selected teams. Eligible rows: 32; full expression, denominator, and contributing IDs are in the
 
 ## What this design gives up
 
@@ -26,4 +26,4 @@ In viewing mode, selecting a repeated unit is intended to filter that repeat acr
 ## Credit
 
 OpenFootball World Cup 2018 group-stage final scores; public-domain dedication.
-Full provenance and transformations: [dataset record](../../datasets.json), [fields](../../evidence/fields/football.json).
+Full provenance and transformations: [dataset record](../../datasets.json), [fields](fields.json).

@@ -32,7 +32,7 @@ Change includes the starting value in its subtraction. A relationship with basel
 scatter @nb-fertility-matched-endpoints-chart-2 x=start y=change color=country title="Change against the starting rate" x.title="Start (births/woman)" y.title="Change (births/woman)"
 ```
 
-**Computed finding.** The mean matched-country change was -2.965 births per woman. This calculation uses 12 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-fertility-matched-endpoints.json).
+**Computed finding.** The mean matched-country change was -2.965 births per woman. This calculation uses 12 eligible rows after the recorded filter and field-completeness rule.
 
 ## 3. Distribution of paired changes
 
@@ -50,7 +50,7 @@ The denominator is the matched selected cohort, not countries worldwide or peopl
 ecdf @nb-fertility-matched-endpoints-chart-4 change direction=below title="What share of selected countries changed by this much?" x.title="Change (births/woman)"
 ```
 
-**Computed finding.** The largest decline in the selected cohort was -4.911 births per woman. This calculation uses 12 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-fertility-matched-endpoints.json).
+**Computed finding.** The largest decline in the selected cohort was -4.911 births per woman. This calculation uses 12 eligible rows after the recorded filter and field-completeness rule.
 
 ## 5. Inspect the records behind the comparison
 
@@ -72,6 +72,6 @@ The endpoint year is 2011 because the supplied 2012–2013 columns are empty. En
 
 World Bank; UN Population Division and national statistical sources; historical statsmodels snapshot; Creative Commons Attribution 4.0 International. Historical source version: statsmodels 0.14.6; original historical series, not a live revision
 
-Data credit and license: [fertility provenance](../../datasets.json). The accompanying [field dictionary](../../evidence/fields/fertility.json) gives units and missingness for every field. [Preparation source](../../evidence/scripts/prepare.py) records the transformation; [computed evidence](../../evidence/findings/nb-fertility-matched-endpoints.json) records filters, denominators, source-row IDs, and CSV hashes.
+Data credit and license: [fertility provenance](../../datasets.json). The accompanying [field dictionary](fields.json) gives units and missingness for every field. [Preparation source](https://github.com/byronwall/explorEDA/blob/main/docs/research/daily-viz-corpus-2026-10-15/handoff/scripts/prepare.py) records the transformation; the catalogue entry records filters, denominators, source-row IDs, and CSV hashes.
 
 **Reading units.** start: births per woman in 1960; end: births per woman in 2011; change: births per woman, 2011 minus 1960.

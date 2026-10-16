@@ -10,8 +10,8 @@ Are extreme Niño 1+2 anomalies concentrated in particular months or decades?
 
 ## Fixed-snapshot findings
 
-The mean February temperature across supplied years was 25.84 °C. [Evidence](../../evidence/findings/db-elnino-season-investigation.json).
-The mean September temperature across supplied years was 20.58 °C. [Evidence](../../evidence/findings/db-elnino-season-investigation.json).
+The mean February temperature across supplied years was 25.84 °C.
+The mean September temperature across supplied years was 20.58 °C.
 
 ## Limits
 
@@ -22,4 +22,4 @@ Eight panels contain an instruction note, six analytical/selector/metric views, 
 ## Source credit
 
 NOAA CPC, ERSST v3b Niño 1+2; historical snapshot; public domain.
-[Full provenance](../../datasets.json); [field dictionary](../../evidence/fields/elnino.json).
+[Full provenance](../../datasets.json); [field dictionary](fields.json).

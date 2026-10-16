@@ -9,9 +9,9 @@
 
 ## Fixed-snapshot findings
 
-Across firm-year levels, market value and investment had correlation 0.862. Eligible rows: 220; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-grunfeld-shared-firm-paths.json).
+Across firm-year levels, market value and investment had correlation 0.862. Eligible rows: 220; full expression, denominator, and contributing IDs are in the
 
-Across valid within-firm annual changes, the correlation was 0.562. Eligible rows: 209; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-grunfeld-shared-firm-paths.json).
+Across valid within-firm annual changes, the correlation was 0.562. Eligible rows: 209; full expression, denominator, and contributing IDs are in the
 
 ## What this design gives up
 
@@ -26,4 +26,4 @@ In viewing mode, selecting a repeated unit is intended to filter that repeat acr
 ## Credit
 
 Grunfeld investment panel, Kleiber and Zeileis / statsmodels; public domain.
-Full provenance and transformations: [dataset record](../../datasets.json), [fields](../../evidence/fields/grunfeld.json).
+Full provenance and transformations: [dataset record](../../datasets.json), [fields](fields.json).

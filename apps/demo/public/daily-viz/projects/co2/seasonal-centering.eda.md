@@ -37,7 +37,7 @@ line @nb-co2-seasonal-centering-chart-2 x=date y=residual title="Weekly deviatio
 }
 ```
 
-**Computed finding.** The mean centered value for May weeks was 2.76 ppmv. This calculation uses 187 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-co2-seasonal-centering.json).
+**Computed finding.** The mean centered value for May weeks was 2.76 ppmv. This calculation uses 187 eligible rows after the recorded filter and field-completeness rule.
 
 ## 3. Centered concentration by calendar month
 
@@ -55,7 +55,7 @@ Cross month with decade to test whether a pooled seasonal pattern is supported a
 heatmap @nb-co2-seasonal-centering-chart-4 month_label columnField=decade aggregation=average measureField=residual title="Calendar pattern within each decade"
 ```
 
-**Computed finding.** The mean centered value for September weeks was -2.77 ppmv. This calculation uses 184 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-co2-seasonal-centering.json).
+**Computed finding.** The mean centered value for September weeks was -2.77 ppmv. This calculation uses 184 eligible rows after the recorded filter and field-completeness rule.
 
 ## 5. Inspect the records behind the comparison
 
@@ -77,6 +77,6 @@ Centering by an available-week annual mean does not remove every within-year tre
 
 Keeling and Whorf; Scripps / CDIAC; distributed by statsmodels; Public domain (dataset-specific distributor statement). Historical source version: statsmodels 0.14.6; original historical series, not a live revision
 
-Data credit and license: [co2 provenance](../../datasets.json). The accompanying [field dictionary](../../evidence/fields/co2.json) gives units and missingness for every field. [Preparation source](../../evidence/scripts/prepare.py) records the transformation; [computed evidence](../../evidence/findings/nb-co2-seasonal-centering.json) records filters, denominators, source-row IDs, and CSV hashes.
+Data credit and license: [co2 provenance](../../datasets.json). The accompanying [field dictionary](fields.json) gives units and missingness for every field. [Preparation source](https://github.com/byronwall/explorEDA/blob/main/docs/research/daily-viz-corpus-2026-10-15/handoff/scripts/prepare.py) records the transformation; the catalogue entry records filters, denominators, source-row IDs, and CSV hashes.
 
 **Reading units.** co2: parts per million by volume (ppmv); annual_center: ppmv; residual: ppmv relative to annual available-week mean.

@@ -31,7 +31,7 @@ The histogram counts runs. Its denominator is not the number of missing weeks; o
 hist @nb-co2-missing-runs-chart-2 length bins=12 title="Short gaps and long gaps are different problems" x.title="Length (consecutive missing weekly slots)" y.title="Source rows"
 ```
 
-**Computed finding.** The longest missing run spans 18 supplied weekly slots. This calculation uses 22 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-co2-missing-runs.json).
+**Computed finding.** The longest missing run spans 18 supplied weekly slots. This calculation uses 22 eligible rows after the recorded filter and field-completeness rule.
 
 ## 3. Concentrations on either side of each gap
 
@@ -49,7 +49,7 @@ A cumulative curve reveals whether a few long runs dominate the uncertainty in a
 ecdf @nb-co2-missing-runs-chart-4 length direction=below title="Share of missing runs below each duration" x.title="Length (consecutive missing weekly slots)"
 ```
 
-**Computed finding.** All missing runs together account for 59 supplied weekly slots. This calculation uses 22 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-co2-missing-runs.json).
+**Computed finding.** All missing runs together account for 59 supplied weekly slots. This calculation uses 22 eligible rows after the recorded filter and field-completeness rule.
 
 ## 5. Inspect the records behind the comparison
 
@@ -71,6 +71,6 @@ A run means consecutive missing rows in this supplied series. It is not proof th
 
 Keeling and Whorf; Scripps / CDIAC; distributed by statsmodels; Public domain (dataset-specific distributor statement). Historical source version: statsmodels 0.14.6; original historical series, not a live revision
 
-Data credit and license: [co2 provenance](../../datasets.json). The accompanying [field dictionary](../../evidence/fields/co2.json) gives units and missingness for every field. [Preparation source](../../evidence/scripts/prepare.py) records the transformation; [computed evidence](../../evidence/findings/nb-co2-missing-runs.json) records filters, denominators, source-row IDs, and CSV hashes.
+Data credit and license: [co2 provenance](../../datasets.json). The accompanying [field dictionary](fields.json) gives units and missingness for every field. [Preparation source](https://github.com/byronwall/explorEDA/blob/main/docs/research/daily-viz-corpus-2026-10-15/handoff/scripts/prepare.py) records the transformation; the catalogue entry records filters, denominators, source-row IDs, and CSV hashes.
 
 **Reading units.** length: consecutive missing weekly slots; before: ppmv; after: ppmv.

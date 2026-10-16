@@ -10,8 +10,8 @@ Which concentrations and missing dates belong to a selected decade and calendar 
 
 ## Fixed-snapshot findings
 
-The mean measured concentration in the 1960s was 320.22 ppmv. [Evidence](../../evidence/findings/db-co2-measurement-investigation.json).
-The mean measured concentration in the 1990s was 360.38 ppmv. [Evidence](../../evidence/findings/db-co2-measurement-investigation.json).
+The mean measured concentration in the 1960s was 320.22 ppmv.
+The mean measured concentration in the 1990s was 360.38 ppmv.
 
 ## Limits
 
@@ -22,4 +22,4 @@ Eight panels contain an instruction note, six analytical/selector/metric views, 
 ## Source credit
 
 Keeling and Whorf / CDIAC; statsmodels historical snapshot; public domain.
-[Full provenance](../../datasets.json); [field dictionary](../../evidence/fields/co2.json).
+[Full provenance](../../datasets.json); [field dictionary](fields.json).

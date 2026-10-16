@@ -118,7 +118,7 @@ function EntryContent({ entry }: { entry: DailyEntry }) {
 export default function DailyEntryPage() {
   const { slug } = useParams();
   const { data, error } = useDailyCatalog();
-  const entry = data?.entries.find((item) => item.proposed_slug === slug);
+  const entry = data?.entries.find((item) => item.slug === slug);
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [slug]);
@@ -142,14 +142,15 @@ export default function DailyEntryPage() {
       </div>
     );
   const related = data.entries.filter((item) =>
-    entry.related_ids.includes(item.id)
+    entry.related.includes(item.id)
   );
-  const sources = data.datasets.filter((dataset) =>
-    entry.dataset_ids.includes(dataset.id)
+  const sources = data.datasets.filter(
+    (dataset) => dataset.id === entry.family
   );
+  const tables = data.tables[entry.family] ?? [];
   return (
     <div className="daily-page pb-12">
-      <DailyMeta heading={entry.title} description={entry.description} />
+      <DailyMeta heading={entry.title} description={entry.summary} />
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <SiteNav />
         <header className="py-6">
@@ -160,7 +161,7 @@ export default function DailyEntryPage() {
             Daily data viz
           </Link>
           <p className="mt-3 text-xs text-muted-foreground">
-            {kindLabels[entry.kind]} · {entry.topic}
+            {kindLabels[entry.kind]} · {entry.industry} · {entry.analysis}
           </p>
           {entry.kind !== "notebook" && (
             <h1 className="mt-2 max-w-4xl text-3xl font-semibold tracking-tight">
@@ -171,7 +172,7 @@ export default function DailyEntryPage() {
             {entry.question}
           </p>
           <a
-            href={assetPath(entry.entry_path)}
+            href={assetPath(entry.entryPath)}
             download
             className="mt-3 inline-block text-sm text-site-accent underline underline-offset-4"
           >
@@ -189,50 +190,36 @@ export default function DailyEntryPage() {
               <div key={source.id} className="mt-3 space-y-2">
                 <p>
                   <a
-                    href={source.source_landing_url}
+                    href={source.url}
                     className="text-site-accent underline underline-offset-4"
                   >
                     {source.title}
                   </a>{" "}
                   · {source.publisher}
                 </p>
-                <p className="text-muted-foreground">{source.source_notes}</p>
+                <p className="text-muted-foreground">{source.notes}</p>
                 <a
                   href={source.license_url}
                   className="text-site-accent underline underline-offset-4"
                 >
-                  {source.license_name}
+                  {source.license}
                 </a>
                 <ul className="flex flex-wrap gap-x-4 gap-y-2">
-                  {source.output_tables.map((table) => (
-                    <li key={table.source_id}>
+                  {tables.map((table) => (
+                    <li key={table.id}>
                       <a
                         href={assetPath(table.path)}
                         download
                         className="text-site-accent underline underline-offset-4"
                       >
-                        {table.source_id}.csv ·{" "}
-                        {table.row_count.toLocaleString()} rows
+                        {table.path.split("/").pop()} ·{" "}
+                        {table.rows.toLocaleString()} rows
                       </a>
                     </li>
                   ))}
                 </ul>
               </div>
             ))}
-            <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-2">
-              {entry.evidence_paths.map((file, i) => (
-                <li key={file}>
-                  <a
-                    href={assetPath(file)}
-                    className="text-site-accent underline underline-offset-4"
-                  >
-                    {i === 0
-                      ? "Calculations and contributing records"
-                      : "Field dictionary"}
-                  </a>
-                </li>
-              ))}
-            </ul>
           </section>
           <section aria-label="Related pieces">
             <h2 className="text-lg font-semibold">

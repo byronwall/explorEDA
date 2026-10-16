@@ -9,9 +9,9 @@
 
 ## Fixed-snapshot findings
 
-The selected-country mean pace in the 1960s was -0.050 births per woman per elapsed year. Eligible rows: 12; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-fertility-pace-strips.json).
+The selected-country mean pace in the 1960s was -0.050 births per woman per elapsed year. Eligible rows: 12; full expression, denominator, and contributing IDs are in the
 
-The corresponding pace in the 2000s was -0.022 births per woman per elapsed year. Eligible rows: 12; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-fertility-pace-strips.json).
+The corresponding pace in the 2000s was -0.022 births per woman per elapsed year. Eligible rows: 12; full expression, denominator, and contributing IDs are in the
 
 ## What this design gives up
 
@@ -26,4 +26,4 @@ In viewing mode, selecting a repeated unit is intended to filter that repeat acr
 ## Credit
 
 World Bank, UN and national statistical sources; historical snapshot; CC BY 4.0.
-Full provenance and transformations: [dataset record](../../datasets.json), [fields](../../evidence/fields/fertility.json).
+Full provenance and transformations: [dataset record](../../datasets.json), [fields](fields.json).

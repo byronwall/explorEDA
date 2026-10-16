@@ -42,7 +42,7 @@ line @nb-danish-rate-spread-chart-2 x=date y=spread title="The spread relative t
 }
 ```
 
-**Computed finding.** The smallest recorded bond-minus-deposit spread was 0.0253 in source rate fractions. This calculation uses 55 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-danish-rate-spread.json).
+**Computed finding.** The smallest recorded bond-minus-deposit spread was 0.0253 in source rate fractions. This calculation uses 55 eligible rows after the recorded filter and field-completeness rule.
 
 ## 3. Spread distributions across two historical spans
 
@@ -60,7 +60,7 @@ The bond rate appears on both sides of this comparison because it is part of the
 scatter @nb-danish-rate-spread-chart-4 x=ibo y=spread title="The level of the bond rate and the spread" x.title="Ibo (source rate fractions)" y.title="Spread (source rate fractions)"
 ```
 
-**Computed finding.** The largest recorded spread was 0.1050 in source rate fractions. This calculation uses 55 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-danish-rate-spread.json).
+**Computed finding.** The largest recorded spread was 0.1050 in source rate fractions. This calculation uses 55 eligible rows after the recorded filter and field-completeness rule.
 
 ## 5. Inspect the records behind the comparison
 
@@ -82,6 +82,6 @@ The displayed rates are historical source fractions, not current quoted products
 
 Johansen and Juselius; distributed by statsmodels; Public domain (dataset-specific distributor statement). Historical source version: statsmodels 0.14.6; original historical series, not a live revision
 
-Data credit and license: [danish provenance](../../datasets.json). The accompanying [field dictionary](../../evidence/fields/danish.json) gives units and missingness for every field. [Preparation source](../../evidence/scripts/prepare.py) records the transformation; [computed evidence](../../evidence/findings/nb-danish-rate-spread.json) records filters, denominators, source-row IDs, and CSV hashes.
+Data credit and license: [danish provenance](../../datasets.json). The accompanying [field dictionary](fields.json) gives units and missingness for every field. [Preparation source](https://github.com/byronwall/explorEDA/blob/main/docs/research/daily-viz-corpus-2026-10-15/handoff/scripts/prepare.py) records the transformation; the catalogue entry records filters, denominators, source-row IDs, and CSV hashes.
 
 **Reading units.** ibo: source bond-rate units (fraction); ide: source deposit-rate units (fraction); spread: difference in source rate fractions.

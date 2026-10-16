@@ -33,7 +33,7 @@ The labels describe the old metadata, not current living status. Both types rema
 row @nb-tate-metadata-not-lifespans-chart-2 death_status title="Recorded versus blank death-year fields" x.title="Source rows"
 ```
 
-**Computed finding.** The largest recorded date span in this prefix was 138 years; it belongs to the explicit family entity. This calculation uses 41 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-tate-metadata-not-lifespans.json).
+**Computed finding.** The largest recorded date span in this prefix was 138 years; it belongs to the explicit family entity. This calculation uses 41 eligible rows after the recorded filter and field-completeness rule.
 
 ## 3. Date span against birth year, with the family distinguished
 
@@ -51,7 +51,7 @@ Only paired dates contribute. A long interval is a prompt to inspect entity sema
 hist @nb-tate-metadata-not-lifespans-chart-4 date_span bins=15 title="Inspect long spans rather than deleting them" x.title="Date span (source units; see dictionary)" y.title="Source rows"
 ```
 
-**Computed finding.** Blank death-year fields represent 31.67% of this archive prefix. This calculation uses 60 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-tate-metadata-not-lifespans.json).
+**Computed finding.** Blank death-year fields represent 31.67% of this archive prefix. This calculation uses 60 eligible rows after the recorded filter and field-completeness rule.
 
 ## 5. Inspect the records behind the comparison
 
@@ -73,6 +73,6 @@ This is the first sixty alphabetically ordered records in Tate’s October 2014 
 
 Tate; October 2014 collection metadata archive; CC0 1.0 Universal. Historical source version: Git blob 7a47fe57205af5bb5ea57bae760540f7fe781853
 
-Data credit and license: [tate provenance](../../datasets.json). The accompanying [field dictionary](../../evidence/fields/tate.json) gives units and missingness for every field. [Preparation source](../../evidence/scripts/prepare.py) records the transformation; [computed evidence](../../evidence/findings/nb-tate-metadata-not-lifespans.json) records filters, denominators, source-row IDs, and CSV hashes.
+Data credit and license: [tate provenance](../../datasets.json). The accompanying [field dictionary](fields.json) gives units and missingness for every field. [Preparation source](https://github.com/byronwall/explorEDA/blob/main/docs/research/daily-viz-corpus-2026-10-15/handoff/scripts/prepare.py) records the transformation; the catalogue entry records filters, denominators, source-row IDs, and CSV hashes.
 
 **Reading units.** catalogue_id: original Tate catalogue identifier; birth_year: year in October 2014 archive; death_year: year in October 2014 archive; date_span: years between two catalogue dates; not necessarily a lifespan.

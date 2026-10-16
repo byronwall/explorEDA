@@ -9,9 +9,9 @@
 
 ## Fixed-snapshot findings
 
-The mean measured concentration in the 1960s was 320.22 ppmv. Eligible rows: 488; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-co2-annual-concentration.json).
+The mean measured concentration in the 1960s was 320.22 ppmv. Eligible rows: 488; full expression, denominator, and contributing IDs are in the
 
-The mean measured concentration in the 1990s was 360.38 ppmv. Eligible rows: 521; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-co2-annual-concentration.json).
+The mean measured concentration in the 1990s was 360.38 ppmv. Eligible rows: 521; full expression, denominator, and contributing IDs are in the
 
 ## What this design gives up
 
@@ -26,4 +26,4 @@ In viewing mode, selecting a repeated unit is intended to filter that repeat acr
 ## Credit
 
 Keeling and Whorf / CDIAC; statsmodels historical snapshot; public domain.
-Full provenance and transformations: [dataset record](../../datasets.json), [fields](../../evidence/fields/co2.json).
+Full provenance and transformations: [dataset record](../../datasets.json), [fields](fields.json).

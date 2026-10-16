@@ -9,9 +9,9 @@
 
 ## Fixed-snapshot findings
 
-Mean annual volume before 1898 was 1097.67 ×10^8 m³. Eligible rows: 27; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-nile-flow-boundary.json).
+Mean annual volume before 1898 was 1097.67 ×10^8 m³. Eligible rows: 27; full expression, denominator, and contributing IDs are in the
 
-Mean annual volume from 1898 onward was 853.40 ×10^8 m³. Eligible rows: 73; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-nile-flow-boundary.json).
+Mean annual volume from 1898 onward was 853.40 ×10^8 m³. Eligible rows: 73; full expression, denominator, and contributing IDs are in the
 
 ## What this design gives up
 
@@ -26,4 +26,4 @@ In viewing mode, selecting a repeated unit is intended to filter that repeat acr
 ## Credit
 
 Aswan historical Nile observations via statsmodels; public domain.
-Full provenance and transformations: [dataset record](../../datasets.json), [fields](../../evidence/fields/nile.json).
+Full provenance and transformations: [dataset record](../../datasets.json), [fields](fields.json).

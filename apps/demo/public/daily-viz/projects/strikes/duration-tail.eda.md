@@ -30,7 +30,7 @@ The cumulative view avoids bin choices but still describes only the observed sam
 ecdf @nb-strikes-duration-tail-chart-2 duration direction=below title="Read the share ending by a chosen duration" x.title="Duration (days)"
 ```
 
-**Computed finding.** The mean recorded duration was 42.66 days. This calculation uses 62 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-strikes-duration-tail.json).
+**Computed finding.** The mean recorded duration was 42.66 days. This calculation uses 62 eligible rows after the recorded filter and field-completeness rule.
 
 ## 3. A log transform spreads the shorter durations
 
@@ -48,7 +48,7 @@ Sequence is only the original record position. It locates records for inspection
 scatter @nb-strikes-duration-tail-chart-4 x=sequence y=duration title="Keep the longest events attached to source rows" x.title="Sequence" y.title="Duration (days)"
 ```
 
-**Computed finding.** The median recorded duration was 27.00 days. This calculation uses 62 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-strikes-duration-tail.json).
+**Computed finding.** The median recorded duration was 27.00 days. This calculation uses 62 eligible rows after the recorded filter and field-completeness rule.
 
 ## 5. Inspect the records behind the comparison
 
@@ -70,6 +70,6 @@ The sample contains selected manufacturing strikes, not all labor disputes. Dura
 
 U.S. Bureau of Labor Statistics; Kennan; distributed by statsmodels; Public domain (dataset-specific distributor statement). Historical source version: statsmodels 0.14.6; original historical series, not a live revision
 
-Data credit and license: [strikes provenance](../../datasets.json). The accompanying [field dictionary](../../evidence/fields/strikes.json) gives units and missingness for every field. [Preparation source](../../evidence/scripts/prepare.py) records the transformation; [computed evidence](../../evidence/findings/nb-strikes-duration-tail.json) records filters, denominators, source-row IDs, and CSV hashes.
+Data credit and license: [strikes provenance](../../datasets.json). The accompanying [field dictionary](fields.json) gives units and missingness for every field. [Preparation source](https://github.com/byronwall/explorEDA/blob/main/docs/research/daily-viz-corpus-2026-10-15/handoff/scripts/prepare.py) records the transformation; the catalogue entry records filters, denominators, source-row IDs, and CSV hashes.
 
 **Reading units.** duration: days; iprod: source industrial-production deviation units; sequence: source row sequence; log_duration: log10(days).

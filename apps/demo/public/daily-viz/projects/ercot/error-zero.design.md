@@ -9,9 +9,9 @@
 
 ## Fixed-snapshot findings
 
-The mean signed error was -1,242.9 MWh per supplied hour. Eligible rows: 1,417; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-ercot-error-zero.json).
+The mean signed error was -1,242.9 MWh per supplied hour. Eligible rows: 1,417; full expression, denominator, and contributing IDs are in the
 
-The mean absolute error was 2,591.7 MWh per supplied hour. Eligible rows: 1,417; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-ercot-error-zero.json).
+The mean absolute error was 2,591.7 MWh per supplied hour. Eligible rows: 1,417; full expression, denominator, and contributing IDs are in the
 
 ## What this design gives up
 
@@ -26,4 +26,4 @@ In viewing mode, selecting a repeated unit is intended to filter that repeat acr
 ## Credit
 
 EIA / ERCOT; authorized repository snapshot; U.S. public-domain data.
-Full provenance and transformations: [dataset record](../../datasets.json), [fields](../../evidence/fields/ercot.json).
+Full provenance and transformations: [dataset record](../../datasets.json), [fields](fields.json).

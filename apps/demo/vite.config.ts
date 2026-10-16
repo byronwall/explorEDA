@@ -2,7 +2,7 @@ import { copyFile } from "node:fs/promises";
 import path from "path";
 import { defineConfig, type Plugin } from "vite";
 import react from "@vitejs/plugin-react";
-import { dailyPages } from "./dailyPages.mjs";
+import { dailyCorpus } from "./dailyCorpus.mjs";
 import { docsMdx } from "./mdxPlugin";
 import tailwindcss from "@tailwindcss/vite";
 import {
@@ -75,7 +75,7 @@ export default defineConfig(({ command }) => ({
     react({ include: /\.(mdx|js|jsx|ts|tsx)$/ }),
     tailwindcss(),
     spaFallback(),
-    dailyPages(),
+    dailyCorpus(),
     idleExit(),
   ],
   base: "/",

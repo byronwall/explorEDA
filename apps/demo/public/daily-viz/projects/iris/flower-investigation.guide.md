@@ -10,8 +10,8 @@ Which flowers remain when a species selection and a petal-length range intersect
 
 ## Fixed-snapshot findings
 
-Mean petal length for setosa was 1.462 cm. [Evidence](../../evidence/findings/db-iris-flower-investigation.json).
-Mean petal length for virginica was 5.552 cm. [Evidence](../../evidence/findings/db-iris-flower-investigation.json).
+Mean petal length for setosa was 1.462 cm.
+Mean petal length for virginica was 5.552 cm.
 
 ## Limits
 
@@ -22,4 +22,4 @@ Eight panels contain an instruction note, six analytical/selector/metric views, 
 ## Source credit
 
 Fisher / UCI Iris, scikit-learn corrected variant; CC BY 4.0.
-[Full provenance](../../datasets.json); [field dictionary](../../evidence/fields/iris.json).
+[Full provenance](../../datasets.json); [field dictionary](fields.json).

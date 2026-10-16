@@ -29,7 +29,7 @@ The vertical denominator is the same income shown horizontally. The mathematical
 scatter @nb-engel-food-and-income-chart-2 x=income y=food_share opacity=0.6 title="Replace the amount with its income share" x.title="Income (Belgian francs, 1857)" y.title="Food share (%)"
 ```
 
-**Computed finding.** Income and food expenditure had correlation 0.911. This calculation uses 235 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-engel-food-and-income.json).
+**Computed finding.** Income and food expenditure had correlation 0.911. This calculation uses 235 eligible rows after the recorded filter and field-completeness rule.
 
 ## 3. Budget shares across income quartiles
 
@@ -47,7 +47,7 @@ The cumulative curve treats households equally. It answers a household question,
 ecdf @nb-engel-food-and-income-chart-4 food_share direction=below title="The observed distribution of food shares" x.title="Food share (%)"
 ```
 
-**Computed finding.** Income and food share had correlation -0.416. This calculation uses 235 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-engel-food-and-income.json).
+**Computed finding.** Income and food share had correlation -0.416. This calculation uses 235 eligible rows after the recorded filter and field-completeness rule.
 
 ## 5. Inspect the records behind the comparison
 
@@ -69,6 +69,6 @@ The historical sample covers working-class Belgian households, not contemporary 
 
 Engel historical Belgian household survey; distributed by statsmodels; Public domain (dataset-specific distributor statement). Historical source version: statsmodels 0.14.6; original historical series, not a live revision
 
-Data credit and license: [engel provenance](../../datasets.json). The accompanying [field dictionary](../../evidence/fields/engel.json) gives units and missingness for every field. [Preparation source](../../evidence/scripts/prepare.py) records the transformation; [computed evidence](../../evidence/findings/nb-engel-food-and-income.json) records filters, denominators, source-row IDs, and CSV hashes.
+Data credit and license: [engel provenance](../../datasets.json). The accompanying [field dictionary](fields.json) gives units and missingness for every field. [Preparation source](https://github.com/byronwall/explorEDA/blob/main/docs/research/daily-viz-corpus-2026-10-15/handoff/scripts/prepare.py) records the transformation; the catalogue entry records filters, denominators, source-row IDs, and CSV hashes.
 
 **Reading units.** income: Belgian francs per year, 1857; foodexp: Belgian francs per year, 1857; food_share: % household income spent on food.

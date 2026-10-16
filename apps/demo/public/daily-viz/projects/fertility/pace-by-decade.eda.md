@@ -34,7 +34,7 @@ The distribution across countries shows what an unweighted decade mean would con
 boxplot @nb-fertility-pace-by-decade-chart-2 annual_change color=decade title="Pace varies within the same decade" y.title="Annual change (births/woman/year)"
 ```
 
-**Computed finding.** The selected-country mean pace in the 1960s was -0.050 births per woman per elapsed year. This calculation uses 12 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-fertility-pace-by-decade.json).
+**Computed finding.** The selected-country mean pace in the 1960s was -0.050 births per woman per elapsed year. This calculation uses 12 eligible rows after the recorded filter and field-completeness rule.
 
 ## 3. Starting fertility and subsequent decade change
 
@@ -52,7 +52,7 @@ The count verifies whether a named decade has the intended annual support. It do
 scatter @nb-fertility-pace-by-decade-chart-4 x=year y=valid color=country title="Check the annual observation count" x.title="Year" y.title="Valid (published years)"
 ```
 
-**Computed finding.** The corresponding pace in the 2000s was -0.022 births per woman per elapsed year. This calculation uses 12 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-fertility-pace-by-decade.json).
+**Computed finding.** The corresponding pace in the 2000s was -0.022 births per woman per elapsed year. This calculation uses 12 eligible rows after the recorded filter and field-completeness rule.
 
 ## 5. Inspect the records behind the comparison
 
@@ -74,6 +74,6 @@ A decade’s first and last observations are nine elapsed years apart, not ten. 
 
 World Bank; UN Population Division and national statistical sources; historical statsmodels snapshot; Creative Commons Attribution 4.0 International. Historical source version: statsmodels 0.14.6; original historical series, not a live revision
 
-Data credit and license: [fertility provenance](../../datasets.json). The accompanying [field dictionary](../../evidence/fields/fertility.json) gives units and missingness for every field. [Preparation source](../../evidence/scripts/prepare.py) records the transformation; [computed evidence](../../evidence/findings/nb-fertility-pace-by-decade.json) records filters, denominators, source-row IDs, and CSV hashes.
+Data credit and license: [fertility provenance](../../datasets.json). The accompanying [field dictionary](fields.json) gives units and missingness for every field. [Preparation source](https://github.com/byronwall/explorEDA/blob/main/docs/research/daily-viz-corpus-2026-10-15/handoff/scripts/prepare.py) records the transformation; the catalogue entry records filters, denominators, source-row IDs, and CSV hashes.
 
 **Reading units.** start: births per woman; end: births per woman; change: births per woman; annual_change: births per woman per elapsed year; valid: published years.

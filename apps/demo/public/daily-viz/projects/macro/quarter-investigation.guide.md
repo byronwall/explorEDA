@@ -10,8 +10,8 @@ Which quarters combine GDP contraction, unemployment change, and a particular in
 
 ## Fixed-snapshot findings
 
-The smallest derived annualized quarterly GDP growth rate was -7.95%. [Evidence](../../evidence/findings/db-macro-quarter-investigation.json).
-The largest derived annualized quarterly GDP growth rate was 16.69%. [Evidence](../../evidence/findings/db-macro-quarter-investigation.json).
+The smallest derived annualized quarterly GDP growth rate was -7.95%.
+The largest derived annualized quarterly GDP growth rate was 16.69%.
 
 ## Limits
 
@@ -22,4 +22,4 @@ Eight panels contain an instruction note, six analytical/selector/metric views, 
 ## Source credit
 
 U.S. macroeconomic sources via statsmodels; historical vintage; public domain.
-[Full provenance](../../datasets.json); [field dictionary](../../evidence/fields/macro.json).
+[Full provenance](../../datasets.json); [field dictionary](fields.json).

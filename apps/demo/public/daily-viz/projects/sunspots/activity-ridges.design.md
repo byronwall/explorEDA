@@ -9,9 +9,9 @@
 
 ## Fixed-snapshot findings
 
-The largest supplied annual sunspot number is 190.2. Eligible rows: 309; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-sunspots-activity-ridges.json).
+The largest supplied annual sunspot number is 190.2. Eligible rows: 309; full expression, denominator, and contributing IDs are in the
 
-The median supplied annual sunspot number is 40.0. Eligible rows: 309; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-sunspots-activity-ridges.json).
+The median supplied annual sunspot number is 40.0. Eligible rows: 309; full expression, denominator, and contributing IDs are in the
 
 ## What this design gives up
 
@@ -26,4 +26,4 @@ In viewing mode, selecting a repeated unit is intended to filter that repeat acr
 ## Credit
 
 NOAA historical sunspot series via statsmodels; public domain.
-Full provenance and transformations: [dataset record](../../datasets.json), [fields](../../evidence/fields/sunspots.json).
+Full provenance and transformations: [dataset record](../../datasets.json), [fields](fields.json).

@@ -9,9 +9,9 @@
 
 ## Fixed-snapshot findings
 
-Mean petal length for setosa was 1.462 cm. Eligible rows: 50; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-iris-petal-swarm.json).
+Mean petal length for setosa was 1.462 cm. Eligible rows: 50; full expression, denominator, and contributing IDs are in the
 
-Mean petal length for virginica was 5.552 cm. Eligible rows: 50; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-iris-petal-swarm.json).
+Mean petal length for virginica was 5.552 cm. Eligible rows: 50; full expression, denominator, and contributing IDs are in the
 
 ## What this design gives up
 
@@ -26,4 +26,4 @@ In viewing mode, selecting a repeated unit is intended to filter that repeat acr
 ## Credit
 
 Fisher / UCI Iris, scikit-learn corrected variant; CC BY 4.0.
-Full provenance and transformations: [dataset record](../../datasets.json), [fields](../../evidence/fields/iris.json).
+Full provenance and transformations: [dataset record](../../datasets.json), [fields](fields.json).

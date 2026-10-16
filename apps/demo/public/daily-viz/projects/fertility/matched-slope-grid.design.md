@@ -9,9 +9,9 @@
 
 ## Fixed-snapshot findings
 
-The mean matched-country change was -2.965 births per woman. Eligible rows: 12; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-fertility-matched-slope-grid.json).
+The mean matched-country change was -2.965 births per woman. Eligible rows: 12; full expression, denominator, and contributing IDs are in the
 
-The largest decline in the selected cohort was -4.911 births per woman. Eligible rows: 12; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-fertility-matched-slope-grid.json).
+The largest decline in the selected cohort was -4.911 births per woman. Eligible rows: 12; full expression, denominator, and contributing IDs are in the
 
 ## What this design gives up
 
@@ -26,4 +26,4 @@ In viewing mode, selecting a repeated unit is intended to filter that repeat acr
 ## Credit
 
 World Bank, UN and national statistical sources; historical snapshot; CC BY 4.0.
-Full provenance and transformations: [dataset record](../../datasets.json), [fields](../../evidence/fields/fertility.json).
+Full provenance and transformations: [dataset record](../../datasets.json), [fields](fields.json).

@@ -10,8 +10,8 @@ Which assay profiles remain after selecting a cultivar and a chemical range?
 
 ## Fixed-snapshot findings
 
-Mean flavanoids in Cultivar 1 were 2.982 source assay units. [Evidence](../../evidence/findings/db-wine-assay-investigation.json).
-Mean flavanoids in Cultivar 3 were 0.781 source assay units. [Evidence](../../evidence/findings/db-wine-assay-investigation.json).
+Mean flavanoids in Cultivar 1 were 2.982 source assay units.
+Mean flavanoids in Cultivar 3 were 0.781 source assay units.
 
 ## Limits
 
@@ -22,4 +22,4 @@ Eight panels contain an instruction note, six analytical/selector/metric views, 
 ## Source credit
 
 Aeberhard and Forina / UCI Wine recognition; CC BY 4.0; source assay units.
-[Full provenance](../../datasets.json); [field dictionary](../../evidence/fields/wine.json).
+[Full provenance](../../datasets.json); [field dictionary](fields.json).

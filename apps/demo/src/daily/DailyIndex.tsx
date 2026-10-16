@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowUpRight } from "lucide-react";
 import { SiteNav } from "../landing/SiteNav";
-import { assetPath, dailyPath, kindLabels } from "./corpus";
+import { dailyPath, kindLabels } from "./corpus";
 import { useDailyCatalog } from "./useDailyCatalog";
 import { DailyMeta } from "./DailyMeta";
 
@@ -13,7 +13,7 @@ export default function DailyIndex() {
   const entries = (data?.entries ?? []).filter(
     (entry) =>
       (!kind || entry.kind === kind) &&
-      `${entry.title} ${entry.topic} ${entry.question} ${entry.capability_tags.join(" ")}`
+      `${entry.title} ${entry.question} ${entry.industry} ${entry.analysis} ${entry.charts.join(" ")}}`
         .toLowerCase()
         .includes(search.toLowerCase())
   );
@@ -41,13 +41,6 @@ export default function DailyIndex() {
             A backlog to explore at your own pace. Each piece includes its data,
             sources, and calculations.
           </p>
-          <a
-            className="mt-4 inline-block text-sm font-medium text-site-accent underline underline-offset-4"
-            href={assetPath("exploreda-daily-viz-corpus.zip")}
-            download
-          >
-            Download the source collection
-          </a>
         </header>
         <form
           className="flex flex-wrap items-end gap-3 border-y border-border py-4"
@@ -98,7 +91,7 @@ export default function DailyIndex() {
             >
               <p className="text-xs text-muted-foreground sm:pt-1">
                 {kindLabels[entry.kind]}
-                <span className="mt-1 block">{entry.dataset_ids[0]}</span>
+                <span className="mt-1 block">{entry.industry}</span>
               </p>
               <div className="min-w-0">
                 <h2 className="text-lg font-semibold leading-snug">

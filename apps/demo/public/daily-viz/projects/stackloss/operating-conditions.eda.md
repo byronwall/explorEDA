@@ -36,7 +36,7 @@ The second predictor may move with the first. Comparing two separate scatters do
 scatter @nb-stackloss-operating-conditions-chart-2 x=watertemp y=stackloss title="Water temperature and recorded loss" x.title="Watertemp (°C)" y.title="Stackloss (10 × percent ammonia lost)"
 ```
 
-**Computed finding.** Airflow and source-scaled stack loss had correlation 0.920. This calculation uses 21 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-stackloss-operating-conditions.json).
+**Computed finding.** Airflow and source-scaled stack loss had correlation 0.920. This calculation uses 21 eligible rows after the recorded filter and field-completeness rule.
 
 ## 3. Source-coded acid concentration
 
@@ -54,7 +54,7 @@ This presentation converts the documented loss scaling only. The airflow split i
 boxplot @nb-stackloss-operating-conditions-chart-4 loss_pct color=air_band title="Loss percentage across airflow groups" y.title="Loss pct (%)"
 ```
 
-**Computed finding.** Cooling-water temperature and source-scaled stack loss had correlation 0.876. This calculation uses 21 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-stackloss-operating-conditions.json).
+**Computed finding.** Cooling-water temperature and source-scaled stack loss had correlation 0.876. This calculation uses 21 eligible rows after the recorded filter and field-completeness rule.
 
 ## 5. Inspect the records behind the comparison
 
@@ -76,6 +76,6 @@ The observations are selected operating days, not a randomized trial. Airflow an
 
 Brownlee historical plant data; distributed by statsmodels; Public domain (dataset-specific distributor statement). Historical source version: statsmodels 0.14.6; original historical series, not a live revision
 
-Data credit and license: [stackloss provenance](../../datasets.json). The accompanying [field dictionary](../../evidence/fields/stackloss.json) gives units and missingness for every field. [Preparation source](../../evidence/scripts/prepare.py) records the transformation; [computed evidence](../../evidence/findings/nb-stackloss-operating-conditions.json) records filters, denominators, source-row IDs, and CSV hashes.
+Data credit and license: [stackloss provenance](../../datasets.json). The accompanying [field dictionary](fields.json) gives units and missingness for every field. [Preparation source](https://github.com/byronwall/explorEDA/blob/main/docs/research/daily-viz-corpus-2026-10-15/handoff/scripts/prepare.py) records the transformation; the catalogue entry records filters, denominators, source-row IDs, and CSV hashes.
 
 **Reading units.** stackloss: 10 × percent ammonia lost; airflow: source airflow units; watertemp: degrees Celsius; acidconc: source-coded acid concentration; sequence: source row sequence; loss_pct: % ammonia lost.

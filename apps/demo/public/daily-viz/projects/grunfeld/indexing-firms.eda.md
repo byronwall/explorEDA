@@ -35,7 +35,7 @@ Every firm starts at the same index by construction. Later vertical separation i
 scatter @nb-grunfeld-indexing-firms-chart-2 x=year y=invest_index color=firm title="Normalize each firm to its own first year" x.title="Year" y.title="Invest index (first supplied firm year = 100)"
 ```
 
-**Computed finding.** The highest first-year-normalized investment index in the panel was 696.67. This calculation uses 220 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-grunfeld-indexing-firms.json).
+**Computed finding.** The highest first-year-normalized investment index in the panel was 696.67. This calculation uses 220 eligible rows after the recorded filter and field-completeness rule.
 
 ## 3. The distribution of indexed investment by firm
 
@@ -53,7 +53,7 @@ Both axes use a firm-specific starting reference. That makes proportional moveme
 scatter @nb-grunfeld-indexing-firms-chart-4 x=value_index y=invest_index color=firm title="Market-value and investment indices" x.title="Value index (first supplied firm year = 100)" y.title="Invest index (first supplied firm year = 100)"
 ```
 
-**Computed finding.** The median firm-year investment index was 183.91. This calculation uses 220 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-grunfeld-indexing-firms.json).
+**Computed finding.** The median firm-year investment index was 183.91. This calculation uses 220 eligible rows after the recorded filter and field-completeness rule.
 
 ## 5. Inspect the records behind the comparison
 
@@ -75,6 +75,6 @@ An index erases the absolute investment level and can magnify growth from a smal
 
 Grunfeld; Kleiber and Zeileis; distributed by statsmodels; Public domain (dataset-specific distributor statement). Historical source version: statsmodels 0.14.6; original historical series, not a live revision
 
-Data credit and license: [grunfeld provenance](../../datasets.json). The accompanying [field dictionary](../../evidence/fields/grunfeld.json) gives units and missingness for every field. [Preparation source](../../evidence/scripts/prepare.py) records the transformation; [computed evidence](../../evidence/findings/nb-grunfeld-indexing-firms.json) records filters, denominators, source-row IDs, and CSV hashes.
+Data credit and license: [grunfeld provenance](../../datasets.json). The accompanying [field dictionary](fields.json) gives units and missingness for every field. [Preparation source](https://github.com/byronwall/explorEDA/blob/main/docs/research/daily-viz-corpus-2026-10-15/handoff/scripts/prepare.py) records the transformation; the catalogue entry records filters, denominators, source-row IDs, and CSV hashes.
 
 **Reading units.** invest: source 1947-dollar units; no multiplier assumed; year: year; invest_index: first supplied firm year = 100; value_index: first supplied firm year = 100.

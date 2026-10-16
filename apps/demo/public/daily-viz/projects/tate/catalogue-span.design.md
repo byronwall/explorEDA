@@ -9,9 +9,9 @@
 
 ## Fixed-snapshot findings
 
-The largest recorded date span in this prefix was 138 years; it belongs to the explicit family entity. Eligible rows: 41; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-tate-catalogue-span.json).
+The largest recorded date span in this prefix was 138 years; it belongs to the explicit family entity. Eligible rows: 41; full expression, denominator, and contributing IDs are in the
 
-Blank death-year fields represent 31.67% of this archive prefix. Eligible rows: 60; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-tate-catalogue-span.json).
+Blank death-year fields represent 31.67% of this archive prefix. Eligible rows: 60; full expression, denominator, and contributing IDs are in the
 
 ## What this design gives up
 
@@ -26,4 +26,4 @@ In viewing mode, selecting a repeated unit is intended to filter that repeat acr
 ## Credit
 
 Tate collection metadata, October 2014 archive; first 60 records; CC0 1.0.
-Full provenance and transformations: [dataset record](../../datasets.json), [fields](../../evidence/fields/tate.json).
+Full provenance and transformations: [dataset record](../../datasets.json), [fields](fields.json).

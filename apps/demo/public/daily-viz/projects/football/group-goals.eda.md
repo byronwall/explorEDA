@@ -34,7 +34,7 @@ Each match has two derived measures from the same score. Coincident points remai
 scatter @nb-football-group-goals-chart-2 x=total_goals y=margin opacity=0.6 title="A high total need not mean a wide margin" x.title="Total goals (goals per match)" y.title="Margin (absolute final goal difference)"
 ```
 
-**Computed finding.** The mean group-stage match total was 2.542 goals. This calculation uses 48 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-football-group-goals.json).
+**Computed finding.** The mean group-stage match total was 2.542 goals. This calculation uses 48 eligible rows after the recorded filter and field-completeness rule.
 
 ## 3. Match-total distributions by group
 
@@ -52,7 +52,7 @@ A draw is defined by equal final goals. This is not a claim about whether a matc
 row @nb-football-group-goals-chart-4 result title="Drawn and decisive final scores" x.title="Source rows"
 ```
 
-**Computed finding.** Matches with a margin no greater than one goal represented 68.75% of the group stage. This calculation uses 48 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-football-group-goals.json).
+**Computed finding.** Matches with a margin no greater than one goal represented 68.75% of the group stage. This calculation uses 48 eligible rows after the recorded filter and field-completeness rule.
 
 ## 5. Inspect the records behind the comparison
 
@@ -74,6 +74,6 @@ Only the supplied group stage is included. Final scores exclude penalty shootout
 
 OpenFootball community, football.db; Public-domain dedication (OpenFootball publisher statement). Historical source version: Git blob 6069ee605e0556ffc8cc7d60983e7a369e755303
 
-Data credit and license: [football provenance](../../datasets.json). The accompanying [field dictionary](../../evidence/fields/football.json) gives units and missingness for every field. [Preparation source](../../evidence/scripts/prepare.py) records the transformation; [computed evidence](../../evidence/findings/nb-football-group-goals.json) records filters, denominators, source-row IDs, and CSV hashes.
+Data credit and license: [football provenance](../../datasets.json). The accompanying [field dictionary](fields.json) gives units and missingness for every field. [Preparation source](https://github.com/byronwall/explorEDA/blob/main/docs/research/daily-viz-corpus-2026-10-15/handoff/scripts/prepare.py) records the transformation; the catalogue entry records filters, denominators, source-row IDs, and CSV hashes.
 
 **Reading units.** goals1: goals by first listed team; goals2: goals by second listed team; total_goals: goals per match; margin: absolute final goal difference.

@@ -9,9 +9,9 @@
 
 ## Fixed-snapshot findings
 
-Employment and nominal GNP in levels had correlation 0.984. Eligible rows: 16; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-longley-three-indices.json).
+Employment and nominal GNP in levels had correlation 0.984. Eligible rows: 16; full expression, denominator, and contributing IDs are in the
 
-Their valid annual changes had correlation 0.892. Eligible rows: 15; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-longley-three-indices.json).
+Their valid annual changes had correlation 0.892. Eligible rows: 15; full expression, denominator, and contributing IDs are in the
 
 ## What this design gives up
 
@@ -26,4 +26,4 @@ In viewing mode, selecting a repeated unit is intended to filter that repeat acr
 ## Credit
 
 Longley historical employment benchmark via statsmodels; public domain.
-Full provenance and transformations: [dataset record](../../datasets.json), [fields](../../evidence/fields/longley.json).
+Full provenance and transformations: [dataset record](../../datasets.json), [fields](fields.json).

@@ -9,9 +9,9 @@
 
 ## Fixed-snapshot findings
 
-The smallest derived annualized quarterly GDP growth rate was -7.95%. Eligible rows: 202; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-macro-growth-horizon.json).
+The smallest derived annualized quarterly GDP growth rate was -7.95%. Eligible rows: 202; full expression, denominator, and contributing IDs are in the
 
-The largest derived annualized quarterly GDP growth rate was 16.69%. Eligible rows: 202; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-macro-growth-horizon.json).
+The largest derived annualized quarterly GDP growth rate was 16.69%. Eligible rows: 202; full expression, denominator, and contributing IDs are in the
 
 ## What this design gives up
 
@@ -26,4 +26,4 @@ In viewing mode, selecting a repeated unit is intended to filter that repeat acr
 ## Credit
 
 U.S. macroeconomic sources via statsmodels; historical vintage; public domain.
-Full provenance and transformations: [dataset record](../../datasets.json), [fields](../../evidence/fields/macro.json).
+Full provenance and transformations: [dataset record](../../datasets.json), [fields](fields.json).

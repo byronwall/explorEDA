@@ -37,7 +37,7 @@ Return to raw temperature to see the seasonal cycle that the anomaly view remove
 scatter @nb-elnino-two-warm-windows-chart-2 x=episode_month y=sst color=episode title="The same windows in raw Celsius" x.title="Episode month (source units; see dictionary)" y.title="Sst (°C)"
 ```
 
-**Computed finding.** The largest monthly anomaly in the 1982–1983 window was 4.35 °C. This calculation uses 24 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-elnino-two-warm-windows.json).
+**Computed finding.** The largest monthly anomaly in the 1982–1983 window was 4.35 °C. This calculation uses 24 eligible rows after the recorded filter and field-completeness rule.
 
 ## 3. Compare the full anomaly distribution
 
@@ -55,7 +55,7 @@ Each summary has the same intended window length. It still loses serial ordering
 boxplot @nb-elnino-two-warm-windows-chart-4 anomaly color=episode title="Centers and spreads across the two windows" y.title="Anomaly (°C)"
 ```
 
-**Computed finding.** The largest monthly anomaly in the 1997–1998 window was 4.07 °C. This calculation uses 24 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-elnino-two-warm-windows.json).
+**Computed finding.** The largest monthly anomaly in the 1997–1998 window was 4.07 °C. This calculation uses 24 eligible rows after the recorded filter and field-completeness rule.
 
 ## 5. Inspect the records behind the comparison
 
@@ -77,6 +77,6 @@ The two windows are illustrative, predeclared spans, not an automated event samp
 
 NOAA Climate Prediction Center, ERSST v3b; distributed by statsmodels; Public domain (dataset-specific distributor statement). Historical source version: statsmodels 0.14.6; original historical series, not a live revision
 
-Data credit and license: [elnino provenance](../../datasets.json). The accompanying [field dictionary](../../evidence/fields/elnino.json) gives units and missingness for every field. [Preparation source](../../evidence/scripts/prepare.py) records the transformation; [computed evidence](../../evidence/findings/nb-elnino-two-warm-windows.json) records filters, denominators, source-row IDs, and CSV hashes.
+Data credit and license: [elnino provenance](../../datasets.json). The accompanying [field dictionary](fields.json) gives units and missingness for every field. [Preparation source](https://github.com/byronwall/explorEDA/blob/main/docs/research/daily-viz-corpus-2026-10-15/handoff/scripts/prepare.py) records the transformation; the catalogue entry records filters, denominators, source-row IDs, and CSV hashes.
 
 **Reading units.** sst: degrees Celsius, Niño 1+2 region; anomaly: degrees Celsius relative to 1981–2010 month mean; episode_month: month index from January of the first year.

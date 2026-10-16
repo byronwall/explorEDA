@@ -9,9 +9,9 @@
 
 ## Fixed-snapshot findings
 
-The mean centered value for May weeks was 2.76 ppmv. Eligible rows: 187; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-co2-month-middle-half.json).
+The mean centered value for May weeks was 2.76 ppmv. Eligible rows: 187; full expression, denominator, and contributing IDs are in the
 
-The mean centered value for September weeks was -2.77 ppmv. Eligible rows: 184; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-co2-month-middle-half.json).
+The mean centered value for September weeks was -2.77 ppmv. Eligible rows: 184; full expression, denominator, and contributing IDs are in the
 
 ## What this design gives up
 
@@ -26,4 +26,4 @@ In viewing mode, selecting a repeated unit is intended to filter that repeat acr
 ## Credit
 
 Keeling and Whorf / CDIAC; statsmodels historical snapshot; public domain.
-Full provenance and transformations: [dataset record](../../datasets.json), [fields](../../evidence/fields/co2.json).
+Full provenance and transformations: [dataset record](../../datasets.json), [fields](fields.json).

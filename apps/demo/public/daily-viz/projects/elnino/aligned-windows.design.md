@@ -9,9 +9,9 @@
 
 ## Fixed-snapshot findings
 
-The largest monthly anomaly in the 1982–1983 window was 4.35 °C. Eligible rows: 24; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-elnino-aligned-windows.json).
+The largest monthly anomaly in the 1982–1983 window was 4.35 °C. Eligible rows: 24; full expression, denominator, and contributing IDs are in the
 
-The largest monthly anomaly in the 1997–1998 window was 4.07 °C. Eligible rows: 24; full expression, denominator, and contributing IDs are in the [evidence](../../evidence/findings/cp-elnino-aligned-windows.json).
+The largest monthly anomaly in the 1997–1998 window was 4.07 °C. Eligible rows: 24; full expression, denominator, and contributing IDs are in the
 
 ## What this design gives up
 
@@ -26,4 +26,4 @@ In viewing mode, selecting a repeated unit is intended to filter that repeat acr
 ## Credit
 
 NOAA CPC, ERSST v3b Niño 1+2; historical snapshot; public domain.
-Full provenance and transformations: [dataset record](../../datasets.json), [fields](../../evidence/fields/elnino.json).
+Full provenance and transformations: [dataset record](../../datasets.json), [fields](fields.json).

@@ -31,7 +31,7 @@ Absolute errors measure miss size regardless of sign. A cell can have a small si
 heatmap @nb-ercot-clock-coverage-chart-2 hour_label columnField=month_label aggregation=average measureField=abs_error title="Absolute error asks a different question"
 ```
 
-**Computed finding.** The best-supported month-hour cell contains 31 supplied hours. This calculation uses 53 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-ercot-clock-coverage.json).
+**Computed finding.** The best-supported month-hour cell contains 31 supplied hours. This calculation uses 53 eligible rows after the recorded filter and field-completeness rule.
 
 ## 3. How much support is behind each mean?
 
@@ -49,7 +49,7 @@ These boxes summarize cell means, not individual hourly errors. They help compar
 boxplot @nb-ercot-clock-coverage-chart-4 error color=month_label title="Variation across clock-hour means" y.title="Error (MWh)"
 ```
 
-**Computed finding.** The least-supported month-hour cell contains 1 supplied hour. This calculation uses 53 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-ercot-clock-coverage.json).
+**Computed finding.** The least-supported month-hour cell contains 1 supplied hour. This calculation uses 53 eligible rows after the recorded filter and field-completeness rule.
 
 ## 5. Inspect the records behind the comparison
 
@@ -71,6 +71,6 @@ These are means over available dates for a UTC clock hour. Partial boundary mont
 
 U.S. Energy Information Administration / ERCOT; U.S. public domain (EIA-authored data). Historical source version: Authorized repository baseline ea8b52ff742f11d1fb89457acabbcd27b0bd04e7
 
-Data credit and license: [ercot provenance](../../datasets.json). The accompanying [field dictionary](../../evidence/fields/ercot.json) gives units and missingness for every field. [Preparation source](../../evidence/scripts/prepare.py) records the transformation; [computed evidence](../../evidence/findings/nb-ercot-clock-coverage.json) records filters, denominators, source-row IDs, and CSV hashes.
+Data credit and license: [ercot provenance](../../datasets.json). The accompanying [field dictionary](fields.json) gives units and missingness for every field. [Preparation source](https://github.com/byronwall/explorEDA/blob/main/docs/research/daily-viz-corpus-2026-10-15/handoff/scripts/prepare.py) records the transformation; the catalogue entry records filters, denominators, source-row IDs, and CSV hashes.
 
 **Reading units.** error: MWh for the supplied hour; abs_error: MWh for the supplied hour; hours: supplied hours.

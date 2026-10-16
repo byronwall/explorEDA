@@ -2,26 +2,66 @@ import { compileViews, readNotebookText } from "exploreda";
 import { compileProjectText, evaluateAnalysisQuery } from "exploreda/analysis";
 import type { DeclaredFieldType } from "exploreda/readers";
 import { parseTable } from "../demos/analyses/loadAnalysis";
-import type catalog from "../../public/daily-viz/catalog.json";
-import type datasets from "../../public/daily-viz/datasets.json";
+import { corpusLinks, CORPUS_URL } from "../../dailyLinks.mjs";
+import { evaluateFinding, type DailyFinding } from "./findings";
 
-export type DailyEntry = (typeof catalog)[number];
-export const kindLabels: Record<string, string> = {
+export type DailyKind = "notebook" | "composition" | "dashboard";
+
+/** One piece as authored in `public/daily-viz/catalog.json`. */
+export interface DailyCatalogEntry {
+  id: string;
+  slug: string;
+  kind: DailyKind;
+  title: string;
+  question: string;
+  summary: string;
+  /** Folder under `projects/`, holding `exploreda.eda` and its data. */
+  family: string;
+  /** The piece's file in that folder. */
+  entry: string;
+  /** Design note or investigation guide for a composition or dashboard. */
+  companion?: string;
+  query: string;
+  industry: string;
+  analysis: string;
+  findings: DailyFinding[];
+}
+
+/** A catalogue entry plus what `dailyCorpus.mjs` derives from its files. */
+export interface DailyEntry extends DailyCatalogEntry {
+  entryPath: string;
+  projectPath: string;
+  companionPath?: string;
+  charts: string[];
+  marks: string[];
+  features: string[];
+  related: string[];
+}
+
+export interface DailyDataset {
+  id: string;
+  title: string;
+  publisher: string;
+  url: string;
+  license: string;
+  license_url: string;
+  version: string;
+  notes: string;
+}
+
+export interface DailyIndex {
+  entries: DailyEntry[];
+  datasets: DailyDataset[];
+  tables: Record<string, { id: string; path: string; rows: number }[]>;
+}
+
+export const kindLabels: Record<DailyKind, string> = {
   notebook: "Notebook",
   composition: "Composition",
   dashboard: "Dashboard",
 };
-export const dailyPath = (entry: DailyEntry) => `/daily/${entry.proposed_slug}`;
-export const assetPath = (file: string) => `/daily-viz/${file}`;
-
-/** Markdown links keep their project-folder meaning when shown at a page URL. */
-export function articleLinks(text: string, file: string) {
-  return text.replace(/\]\(([^)]+)\)/g, (match, href: string) => {
-    if (/^(?:[a-z]+:|\/|#)/i.test(href)) return match;
-    const url = new URL(href, `https://exploreda.dev${assetPath(file)}`);
-    return `](${url.pathname}${url.hash})`;
-  });
-}
+export const dailyPath = (entry: { slug: string }) => `/daily/${entry.slug}`;
+export const assetPath = (file: string) => `${CORPUS_URL}/${file}`;
 
 async function read(file: string, signal?: AbortSignal) {
   const response = await fetch(assetPath(file), { signal });
@@ -30,19 +70,16 @@ async function read(file: string, signal?: AbortSignal) {
   return response.text();
 }
 
-/** Reads the same project contracts, local data, and text used by the folder viewer. */
+/** Reads the same project, local data, and text the folder viewer opens. */
 export async function loadDailyEntry(entry: DailyEntry, signal?: AbortSignal) {
   const [text, projectText] = await Promise.all([
-    read(entry.entry_path, signal),
-    read(entry.project_path, signal),
+    read(entry.entryPath, signal),
+    read(entry.projectPath, signal),
   ]);
   const compiled = compileProjectText(projectText);
   if (compiled.diagnostics.length)
     throw new Error(compiled.diagnostics[0]!.message);
-  const folder = entry.project_path.slice(
-    0,
-    entry.project_path.lastIndexOf("/") + 1
-  );
+  const folder = `projects/${entry.family}/`;
   const tables = Object.fromEntries(
     await Promise.all(
       Object.entries(compiled.paths).map(async ([id, file]) => [
@@ -51,8 +88,13 @@ export async function loadDailyEntry(entry: DailyEntry, signal?: AbortSignal) {
       ])
     )
   );
-  const query = evaluateAnalysisQuery(compiled.project, tables, entry.query_id);
-  if (query.diagnostics.length) throw new Error(query.diagnostics[0]!.message);
+  const queryRows = (id: string) => {
+    const query = evaluateAnalysisQuery(compiled.project, tables, id);
+    if (query.diagnostics.length)
+      throw new Error(query.diagnostics[0]!.message);
+    return query;
+  };
+  const query = queryRows(entry.query);
   const rows = query.rows.map((row) => row.data);
   const fieldTypes: Record<string, DeclaredFieldType> = {};
   for (const field of query.fields) {
@@ -65,15 +107,24 @@ export async function loadDailyEntry(entry: DailyEntry, signal?: AbortSignal) {
       : compileViews(text, { rows });
   if (result.diagnostics.length)
     throw new Error(result.diagnostics[0]!.message);
-  const companion = entry.companion_path
-    ? await read(entry.companion_path, signal)
+  const companion = entry.companionPath
+    ? await read(entry.companionPath, signal)
     : "";
+  const findings = entry.findings.map((finding) =>
+    evaluateFinding(
+      finding,
+      finding.query && finding.query !== entry.query
+        ? queryRows(finding.query).rows.map((row) => row.data)
+        : rows
+    )
+  );
   return {
-    text: articleLinks(text, entry.entry_path),
+    text: corpusLinks(text, entry.entryPath),
     rows,
     fieldTypes,
-    companion: entry.companion_path
-      ? articleLinks(companion, entry.companion_path).replace(/^# .+\n/, "")
+    findings,
+    companion: entry.companionPath
+      ? corpusLinks(companion, entry.companionPath).replace(/^# .+\n/, "")
       : "",
     settings: "views" in result ? result.views[0]!.settings : result.settings,
   };

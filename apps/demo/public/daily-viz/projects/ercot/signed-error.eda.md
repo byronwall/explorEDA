@@ -41,7 +41,7 @@ line @nb-ercot-signed-error-chart-2 x=date y=error title="Subtract the forecast;
 }
 ```
 
-**Computed finding.** The mean signed error was -1,242.9 MWh per supplied hour. This calculation uses 1,417 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-ercot-signed-error.json).
+**Computed finding.** The mean signed error was -1,242.9 MWh per supplied hour. This calculation uses 1,417 eligible rows after the recorded filter and field-completeness rule.
 
 ## 3. How often does each size of signed miss occur?
 
@@ -59,7 +59,7 @@ Read the cumulative share below a chosen error threshold. Every valid supplied h
 ecdf @nb-ercot-signed-error-chart-4 abs_error direction=below title="Absolute error without bin boundaries" x.title="Abs error (MWh)"
 ```
 
-**Computed finding.** The mean absolute error was 2,591.7 MWh per supplied hour. This calculation uses 1,417 eligible rows after the recorded filter and field-completeness rule. [Calculation and contributing IDs](../../evidence/findings/nb-ercot-signed-error.json).
+**Computed finding.** The mean absolute error was 2,591.7 MWh per supplied hour. This calculation uses 1,417 eligible rows after the recorded filter and field-completeness rule.
 
 ## 5. Inspect the records behind the comparison
 
@@ -81,6 +81,6 @@ Actual is electricity served in each supplied hour, not unconstrained demand. Th
 
 U.S. Energy Information Administration / ERCOT; U.S. public domain (EIA-authored data). Historical source version: Authorized repository baseline ea8b52ff742f11d1fb89457acabbcd27b0bd04e7
 
-Data credit and license: [ercot provenance](../../datasets.json). The accompanying [field dictionary](../../evidence/fields/ercot.json) gives units and missingness for every field. [Preparation source](../../evidence/scripts/prepare.py) records the transformation; [computed evidence](../../evidence/findings/nb-ercot-signed-error.json) records filters, denominators, source-row IDs, and CSV hashes.
+Data credit and license: [ercot provenance](../../datasets.json). The accompanying [field dictionary](fields.json) gives units and missingness for every field. [Preparation source](https://github.com/byronwall/explorEDA/blob/main/docs/research/daily-viz-corpus-2026-10-15/handoff/scripts/prepare.py) records the transformation; the catalogue entry records filters, denominators, source-row IDs, and CSV hashes.
 
 **Reading units.** actual: MWh for the supplied hour; forecast: MWh for the supplied hour; error: MWh for the supplied hour; abs_error: MWh for the supplied hour.
