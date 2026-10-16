@@ -3,7 +3,7 @@ title: "Progressive built-in charts — implementation plan"
 slug: "progressive-built-in-charts"
 phase: plan
 status: proposed
-last_updated: "2026-10-12"
+last_updated: "2026-10-16"
 ---
 
 # Progressive built-in charts — implementation plan
@@ -125,6 +125,17 @@ An exposed settings tab without a renderer projection does not complete annotati
 - Complete message and measles histories are reachable in an ordinary Heatmap.
 - Date/cell selection retains exact original rows and missing-state meaning.
 - Elections can use a stable signed color scale; geographic placement remains an advanced composition.
+
+## Delivery
+
+The four milestones are open as stacked PRs on this one. Byron asked for the plan's four milestones without broad rewrites or sprawling settings, so each one adds a small, optional set of controls to the chart that owns the operation.
+
+| Milestone              | PR   | Delivered                                                                                                                                                                         | Left out, with the reason                                                                            |
+| ---------------------- | ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| 1. Existing routes     | #447 | Four built-in counterparts, cross-linked with their compositions; a "Before you compose" docs section; dense time series no longer draw a dot per period                          | Bubble legend number format; the coverage matrix's stale `scale:log` status                          |
+| 2. Scatter connections | #448 | `connect` (order, group, end/both labels); paths break at filtered or unplotted rows; band axes center when connected; path trace; four counterparts                              | Signed paired differences and Scatter category order: each needs its own setting                     |
+| 3. Line intervals      | #449 | Bounds widen the domain; runs split at missing bounds; outer bounds at a repeated X; date X; evidence in Notes; Line domains follow chart-local filters; forecast fan counterpart | A band-to-records trace, since annotations have no trace route; one faceted chart with free Y scales |
+| 4. Heatmap histories   | #450 | Per-axis limits and order; source order; date bins with date-range selection; fixed color ends and square root; dense label thinning; three counterparts                          | Heatmap Notes projection, row totals, color stops, and a scrolling viewport                          |
 
 ## Cross-cutting verification
 

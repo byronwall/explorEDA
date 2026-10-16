@@ -5,10 +5,10 @@
     "slug": "progressive-built-in-charts",
     "scale": "capability",
     "current_phase": "plan",
-    "last_updated": "2026-10-12",
+    "last_updated": "2026-10-16",
     "summary": "Review every composition example and shape progressive built-in chart controls where composition is unnecessary.",
     "status": "planned",
-    "next_action": "Review PR #364 and the proposed scope. Begin implementation only after a new user instruction."
+    "next_action": "Review the four milestone PRs stacked on #364 (#447 counterparts, #448 Scatter connections, #449 Line intervals, #450 Heatmap histories) and merge bottom-up. Later slices stay below the cut line."
   },
   "artifacts": {
     "intent_brief": {
@@ -86,9 +86,7 @@
         "importance": "core",
         "status": "active",
         "time_horizon": "proof",
-        "sources": [
-          "USR-01"
-        ],
+        "sources": ["USR-01"],
         "confidence": "high"
       },
       {
@@ -99,9 +97,7 @@
         "importance": "core",
         "status": "active",
         "time_horizon": "proof",
-        "sources": [
-          "USR-01"
-        ],
+        "sources": ["USR-01"],
         "confidence": "high"
       },
       {
@@ -112,9 +108,7 @@
         "importance": "core",
         "status": "active",
         "time_horizon": "proof",
-        "sources": [
-          "USR-01"
-        ],
+        "sources": ["USR-01"],
         "confidence": "high"
       },
       {
@@ -125,9 +119,7 @@
         "importance": "core",
         "status": "active",
         "time_horizon": "proof",
-        "sources": [
-          "USR-01"
-        ],
+        "sources": ["USR-01"],
         "confidence": "high"
       },
       {
@@ -138,9 +130,7 @@
         "importance": "core",
         "status": "active",
         "time_horizon": "proof",
-        "sources": [
-          "USR-01"
-        ],
+        "sources": ["USR-01"],
         "confidence": "high"
       }
     ],
@@ -148,11 +138,7 @@
       {
         "id": "T-01",
         "statement": "Progressive chart complexity without unnecessary composition authoring",
-        "claims": [
-          "I-01",
-          "I-02",
-          "I-03"
-        ]
+        "claims": ["I-01", "I-02", "I-03"]
       }
     ],
     "conflicts": [],
