@@ -8,8 +8,8 @@ import { ThemeToggle, useDocsTheme } from "../docs/components/theme";
 const navLinkClass =
   "rounded-md px-2.5 py-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring aria-[current=page]:font-medium aria-[current=page]:text-foreground";
 
-/** The site's top bar: logo, then docs, examples, and code. */
-export function SiteNav({ current }: { current?: "examples" }) {
+/** The site's top bar: logo, then docs, examples, the daily collection, and code. */
+export function SiteNav({ current }: { current?: "examples" | "daily" }) {
   // The docs' theme choice holds across the whole site.
   const { theme, toggle } = useDocsTheme();
   return (
@@ -26,7 +26,7 @@ export function SiteNav({ current }: { current?: "examples" }) {
         <img
           src="/brand/wordmark.svg"
           alt=""
-          className="h-6 w-auto dark:brightness-0 dark:invert"
+          className="hidden h-6 w-auto min-[420px]:block dark:brightness-0 dark:invert"
         />
       </Link>
       <div className="flex items-center gap-1 text-sm">
@@ -41,6 +41,13 @@ export function SiteNav({ current }: { current?: "examples" }) {
           Examples
         </Link>
         <Link
+          className={navLinkClass}
+          to="/daily"
+          aria-current={current === "daily" ? "page" : undefined}
+        >
+          Daily
+        </Link>
+        <Link
           className={`${navLinkClass} hidden sm:block`}
           to={docsPath("team-server")}
         >
@@ -49,7 +56,7 @@ export function SiteNav({ current }: { current?: "examples" }) {
         <Link className={`${navLinkClass} hidden sm:block`} to="/#integration">
           Embed
         </Link>
-        <a className={navLinkClass} href={REPO_URL}>
+        <a className={`${navLinkClass} hidden sm:block`} href={REPO_URL}>
           GitHub
         </a>
         <ThemeToggle theme={theme} onToggle={toggle} />

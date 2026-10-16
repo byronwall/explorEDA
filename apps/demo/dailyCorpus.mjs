@@ -2,7 +2,7 @@
 // names. Everything else the site needs (paths, chart types, related pieces,
 // table sizes, static pages, the sitemap) is derived here, so an author edits
 // `catalog.json` and the piece's own files and nothing else.
-import { readFile, mkdir, writeFile } from "node:fs/promises";
+import { access, readFile, mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import MarkdownIt from "markdown-it";
 import { CORPUS_URL, SITE, corpusLinks } from "./dailyLinks.mjs";
@@ -86,6 +86,99 @@ export function describeText(text) {
   return { charts: [...charts], marks: [...marks], features: [...features] };
 }
 
+const DAY = 86_400_000;
+const isoDay = (time) => new Date(time).toISOString().slice(0, 10);
+const dayTime = (day) => Date.parse(`${day}T00:00:00Z`);
+
+/**
+ * How much a piece would repeat what the last few days published: the same
+ * dataset within a week, industry within three days, analysis within two, or
+ * format the day before. Lower is more varied.
+ */
+function repetition(entry, recent) {
+  let cost = 0;
+  recent.forEach((other, index) => {
+    const gap = recent.length - index;
+    if (gap <= 7 && other.family === entry.family) cost += 8 / gap;
+    if (gap <= 3 && other.industry === entry.industry) cost += 4 / gap;
+    if (gap <= 2 && other.analysis === entry.analysis) cost += 2 / gap;
+    if (gap === 1 && other.kind === entry.kind) cost += 1;
+  });
+  return cost;
+}
+
+/**
+ * Orders pieces one per day so neighbors differ and each dataset's pieces
+ * spread evenly across the run, keeping series parts in order. Ties go to
+ * catalogue order, so the result is deterministic.
+ */
+export function releaseOrder(entries, history = []) {
+  const pending = [...entries];
+  const placed = [...history];
+  // How far into the run a dataset's or format's next piece would ideally
+  // fall, so each spreads evenly instead of bunching at one end.
+  const total = new Map();
+  const done = new Map();
+  const keys = (entry) => [`family:${entry.family}`, `kind:${entry.kind}`];
+  const weight = { family: 12, kind: 30 };
+  for (const entry of entries)
+    for (const key of keys(entry)) total.set(key, (total.get(key) ?? 0) + 1);
+  const due = (entry) =>
+    keys(entry).map((key) => ((done.get(key) ?? 0) + 0.5) / total.get(key));
+  const order = [];
+  while (pending.length) {
+    const ready = pending.filter(
+      (entry) =>
+        !entry.series ||
+        !pending.some(
+          (other) =>
+            other.series?.id === entry.series.id &&
+            other.series.part < entry.series.part
+        )
+    );
+    const recent = placed.slice(-7);
+    const progress = order.length / entries.length;
+    const score = (entry) =>
+      repetition(entry, recent) +
+      due(entry).reduce(
+        (sum, at, index) =>
+          sum + (index ? weight.kind : weight.family) * (at - progress),
+        0
+      );
+    let best = ready[0];
+    for (const entry of ready) if (score(entry) < score(best)) best = entry;
+    pending.splice(pending.indexOf(best), 1);
+    placed.push(best);
+    order.push(best);
+    for (const key of keys(best)) done.set(key, (done.get(key) ?? 0) + 1);
+  }
+  return order;
+}
+
+/**
+ * Gives each unscheduled piece the next free day after the latest one, in a
+ * varied order. With `reseed`, every piece is reordered so the last lands on
+ * `end`, which is how the collection was first back-filled.
+ */
+export function scheduleCatalog(catalog, { reseed = false, end } = {}) {
+  const dated = reseed ? [] : catalog.filter((entry) => entry.published);
+  const undated = reseed
+    ? catalog
+    : catalog.filter((entry) => !entry.published);
+  const history = [...dated].sort((a, b) =>
+    a.published.localeCompare(b.published)
+  );
+  const order = releaseOrder(undated, history);
+  const last = history.at(-1)?.published;
+  const first = reseed
+    ? dayTime(end) - (order.length - 1) * DAY
+    : Math.max(last ? dayTime(last) + DAY : 0, dayTime(end));
+  order.forEach((entry, index) => {
+    entry.published = isoDay(first + index * DAY);
+  });
+  return catalog;
+}
+
 const sourcePattern = /^source @(\w+)(?: key=\S+)? path=(\S+)/gm;
 
 /** Related pieces: other formats of the same data first, then its series. */
@@ -132,8 +225,14 @@ export async function buildIndex(corpusDir) {
     catalog.map(async (entry) => {
       const folder = `projects/${entry.family}`;
       const text = await readText(path.join(corpusDir, folder, entry.entry));
+      const thumb = `thumbs/${entry.slug}.jpg`;
+      const hasThumb = await access(path.join(corpusDir, thumb)).then(
+        () => true,
+        () => false
+      );
       return {
         ...entry,
+        ...(hasThumb && { thumb }),
         entryPath: `${folder}/${entry.entry}`,
         projectPath: `${folder}/exploreda.eda`,
         ...(entry.companion && {
@@ -210,6 +309,12 @@ export function dailyCorpus() {
         path.join(output, CORPUS_URL, "index.json"),
         JSON.stringify(index)
       );
+      // Later pieces ship in the index and appear on their day; only the
+      // ones out by build day get static pages and sitemap entries.
+      const today = new Date().toLocaleDateString("en-CA");
+      index.entries = index.entries
+        .filter((entry) => entry.published <= today)
+        .sort((a, b) => b.published.localeCompare(a.published));
       const template = await readText(path.join(output, "index.html"));
       for (const entry of index.entries) {
         const textPath =

@@ -4,7 +4,12 @@ import { beforeAll, describe, expect, it } from "vitest";
 import { compileViews, DSL_CHART_KEYWORDS, readNotebookText } from "exploreda";
 import { compileProjectText, evaluateAnalysisQuery } from "exploreda/analysis";
 import { readTableText } from "exploreda/readers";
-import { buildIndex, CHART_WORDS, describeText } from "../../dailyCorpus.mjs";
+import {
+  buildIndex,
+  CHART_WORDS,
+  describeText,
+  scheduleCatalog,
+} from "../../dailyCorpus.mjs";
 import { corpusLinks } from "../../dailyLinks.mjs";
 import catalog from "../../public/daily-viz/catalog.json";
 import datasets from "../../public/daily-viz/datasets.json";
@@ -82,6 +87,63 @@ describe("daily visualization corpus", () => {
       (word) => word !== "histogram"
     );
     expect([...CHART_WORDS].sort()).toEqual(words.sort());
+  });
+
+  it("schedules new pieces after the last day, spreading datasets apart", () => {
+    const piece = (id: string, family: string, published?: string) => ({
+      id,
+      family,
+      industry: family,
+      analysis: "Trend",
+      kind: "notebook",
+      ...(published && { published }),
+    });
+    const catalog = [
+      piece("a1", "a", "2026-10-15"),
+      piece("a2", "a"),
+      piece("a3", "a"),
+      piece("b1", "b"),
+      piece("b2", "b"),
+    ];
+    scheduleCatalog(catalog, { end: "2026-10-16" });
+    const order = [...catalog]
+      .sort((x, y) => x.published!.localeCompare(y.published!))
+      .map((entry) => `${entry.published!.slice(5)} ${entry.id}`);
+    expect(order).toEqual([
+      "10-15 a1",
+      "10-16 b1",
+      "10-17 a2",
+      "10-18 b2",
+      "10-19 a3",
+    ]);
+  });
+
+  it("publishes at most one piece a day, with series parts in order", () => {
+    const days = entries.map((entry) => entry.published);
+    for (const day of days) expect(day).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    expect(new Set(days).size).toBe(days.length);
+    const series = new Map<string, DailyCatalogEntry[]>();
+    for (const entry of entries)
+      if (entry.series)
+        series.set(entry.series.id, [
+          ...(series.get(entry.series.id) ?? []),
+          entry,
+        ]);
+    for (const parts of series.values()) {
+      const byDay = [...parts].sort((a, b) =>
+        a.published.localeCompare(b.published)
+      );
+      expect(byDay.map((entry) => entry.series!.part)).toEqual(
+        parts.map((_, index) => index + 1)
+      );
+    }
+  });
+
+  it("has a thumbnail for every piece (pnpm daily thumbs)", () => {
+    const missing = index.entries
+      .filter((entry) => !entry.thumb)
+      .map((entry) => entry.slug);
+    expect(missing).toEqual([]);
   });
 
   it("derives chart types, related pieces, and table sizes", () => {

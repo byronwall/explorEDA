@@ -1,19 +1,25 @@
-/* The article owns the page scroll; the existing workspace owns its tools. */
+/* A workspace as tall as its saved layout, so the page owns the scroll. */
 .daily-workspace {
-  height: 1050px;
   min-width: 0;
+  height: var(--daily-wide, 1050px);
   border-block: 1px solid var(--border);
+}
+
+@media (max-width: 959px) {
+  .daily-workspace {
+    height: var(--daily-two, 1050px);
+  }
+}
+
+@media (max-width: 639px) {
+  .daily-workspace {
+    height: var(--daily-one, 1050px);
+  }
 }
 
 .daily-notebook .eda-notebook {
   padding-inline: 0;
   padding-top: 0;
-}
-
-@media (max-width: 640px) {
-  .daily-workspace {
-    height: 950px;
-  }
 }
 
 /* Keep category names and counts visible in the narrow article column. */
@@ -27,12 +33,5 @@
 }
 
 .daily-artboard-scroll {
-  max-width: 100%;
   overflow-x: auto;
-  scrollbar-gutter: stable;
-}
-
-.daily-artboard-scroll:focus-visible {
-  outline: 2px solid var(--ring);
-  outline-offset: 2px;
 }
