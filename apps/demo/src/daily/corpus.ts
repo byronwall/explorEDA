@@ -2,12 +2,10 @@ import { compileViews, readNotebookText } from "exploreda";
 import { compileProjectText, evaluateAnalysisQuery } from "exploreda/analysis";
 import type { DeclaredFieldType } from "exploreda/readers";
 import { parseTable } from "../demos/analyses/loadAnalysis";
-import catalog from "../../public/daily-viz/catalog.json";
-import datasets from "../../public/daily-viz/datasets.json";
+import type catalog from "../../public/daily-viz/catalog.json";
+import type datasets from "../../public/daily-viz/datasets.json";
 
 export type DailyEntry = (typeof catalog)[number];
-export const dailyEntries = catalog;
-export const dailyDatasets = datasets;
 export const kindLabels: Record<string, string> = {
   notebook: "Notebook",
   composition: "Composition",

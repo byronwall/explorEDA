@@ -87,7 +87,7 @@ so one rename or one drag is one undo step.
 
 The demo includes a [daily visualization library](https://exploreda.dev/daily): 40 notebooks, 25 compositions, and 10 dashboards over 17 dataset families. Browse by topic and format, inspect the calculations, and download local data and analysis text. The collection is a release backlog; this change does not schedule publication.
 
-Source files, credits, licenses, preparation code, and evidence are in [`apps/demo/public/daily-viz`](apps/demo/public/daily-viz). Each `projects/<family>` folder opens with `pnpm exec exploreda <folder>` after building the library. The [integration notes](docs/research/daily-viz-corpus-2026-10-15/integration.md) record checks and limits.
+Source files, credits, licenses, preparation code, and evidence are in [`apps/demo/public/daily-viz`](apps/demo/public/daily-viz). After building the library, open a family with `node packages/explorEDA/dist/cli/exploreda.js apps/demo/public/daily-viz/projects/co2`. The [integration notes](docs/research/daily-viz-corpus-2026-10-15/integration.md) record checks and limits.
 
 ## Install
 

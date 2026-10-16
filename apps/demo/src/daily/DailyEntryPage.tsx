@@ -5,13 +5,12 @@ import { Button } from "@/components/ui/button";
 import { SiteNav } from "../landing/SiteNav";
 import {
   assetPath,
-  dailyDatasets,
-  dailyEntries,
   dailyPath,
   kindLabels,
   loadDailyEntry,
   type DailyEntry,
 } from "./corpus";
+import { useDailyCatalog } from "./useDailyCatalog";
 import { DailyMeta } from "./DailyMeta";
 import "./daily.css";
 
@@ -70,18 +69,40 @@ function EntryContent({ entry }: { entry: DailyEntry }) {
       </div>
     );
   }
+  const graphic = loaded.settings.charts.find(
+    (chart) => chart.type === "composition"
+  );
+  const artboard =
+    graphic?.type === "composition" ? graphic.composition.artboard : undefined;
   return (
     <>
+      {artboard && (
+        <p className="mb-3 text-sm text-muted-foreground xl:hidden">
+          Scroll sideways in the graphic to read the full-size artboard.
+        </p>
+      )}
       <div
-        className="daily-workspace"
-        aria-label={`${kindLabels[entry.kind]} workspace`}
+        className={artboard ? "daily-artboard-scroll" : undefined}
+        role={artboard ? "region" : undefined}
+        tabIndex={artboard ? 0 : undefined}
+        aria-label={artboard ? "Scrollable composition" : undefined}
       >
-        <ExplorEda
-          key={`${entry.id}-${attempt}`}
-          data={loaded.rows}
-          fieldTypes={loaded.fieldTypes}
-          savedData={loaded.settings}
-        />
+        <div
+          className="daily-workspace"
+          style={
+            artboard
+              ? { minWidth: artboard.width + 64, height: artboard.height + 180 }
+              : undefined
+          }
+          aria-label={`${kindLabels[entry.kind]} workspace`}
+        >
+          <ExplorEda
+            key={`${entry.id}-${attempt}`}
+            data={loaded.rows}
+            fieldTypes={loaded.fieldTypes}
+            savedData={loaded.settings}
+          />
+        </div>
       </div>
       <div className="daily-notebook mt-8">
         <ExplorEdaNotebook
@@ -96,10 +117,20 @@ function EntryContent({ entry }: { entry: DailyEntry }) {
 
 export default function DailyEntryPage() {
   const { slug } = useParams();
-  const entry = dailyEntries.find((item) => item.proposed_slug === slug);
+  const { data, error } = useDailyCatalog();
+  const entry = data?.entries.find((item) => item.proposed_slug === slug);
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [slug]);
+  if (!data)
+    return (
+      <div className="mx-auto max-w-6xl px-4">
+        <SiteNav />
+        <p className="py-10" role={error ? "alert" : "status"}>
+          {error || "Loading the collection…"}
+        </p>
+      </div>
+    );
   if (!entry)
     return (
       <div className="mx-auto max-w-6xl px-4">
@@ -110,10 +141,10 @@ export default function DailyEntryPage() {
         </Link>
       </div>
     );
-  const related = dailyEntries.filter((item) =>
+  const related = data.entries.filter((item) =>
     entry.related_ids.includes(item.id)
   );
-  const sources = dailyDatasets.filter((dataset) =>
+  const sources = data.datasets.filter((dataset) =>
     entry.dataset_ids.includes(dataset.id)
   );
   return (

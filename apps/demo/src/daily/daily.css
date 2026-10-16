@@ -15,3 +15,24 @@
     height: 950px;
   }
 }
+
+/* Keep category names and counts visible in the narrow article column. */
+.daily-page .eda-chart-color-legend {
+  max-height: none;
+  align-items: flex-start;
+}
+
+.daily-page .eda-chart-color-legend .eda-legend-items {
+  flex-wrap: wrap;
+}
+
+.daily-artboard-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-gutter: stable;
+}
+
+.daily-artboard-scroll:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}

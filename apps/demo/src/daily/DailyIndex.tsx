@@ -2,13 +2,15 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowUpRight } from "lucide-react";
 import { SiteNav } from "../landing/SiteNav";
-import { assetPath, dailyEntries, dailyPath, kindLabels } from "./corpus";
+import { assetPath, dailyPath, kindLabels } from "./corpus";
+import { useDailyCatalog } from "./useDailyCatalog";
 import { DailyMeta } from "./DailyMeta";
 
 export default function DailyIndex() {
   const [search, setSearch] = useState("");
   const [kind, setKind] = useState("");
-  const entries = dailyEntries.filter(
+  const { data, error } = useDailyCatalog();
+  const entries = (data?.entries ?? []).filter(
     (entry) =>
       (!kind || entry.kind === kind) &&
       `${entry.title} ${entry.topic} ${entry.question} ${entry.capability_tags.join(" ")}`
@@ -83,6 +85,11 @@ export default function DailyIndex() {
             {entries.length} pieces
           </p>
         </form>
+        {!data && (
+          <p className="py-10" role={error ? "alert" : "status"}>
+            {error || "Loading the collection…"}
+          </p>
+        )}
         <ul className="divide-y divide-border">
           {entries.map((entry) => (
             <li
@@ -113,7 +120,7 @@ export default function DailyIndex() {
             </li>
           ))}
         </ul>
-        {entries.length === 0 && (
+        {data && entries.length === 0 && (
           <p className="py-10 text-muted-foreground">
             No pieces match. Try another topic or choose all formats.
           </p>
