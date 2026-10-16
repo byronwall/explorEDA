@@ -11,14 +11,14 @@
 - Baseline: `ea8b52ff742f11d1fb89457acabbcd27b0bd04e7`; origin/main was already current.
 - Prompt: [pro-prompt.md](pro-prompt.md).
 - Source packet: `tmp/daily-viz-corpus/source-packet.txt`, 835636 bytes, 37 selected files. [Manifest](source-manifest.json). It is not a runnable checkout.
-- Phase: integration and validation complete; saving review PR. Round: initial (0). Follow-up limit: two.
+- Phase: complete; review PR open and verified. Round: initial (0). Follow-up limit: two.
 - Chrome: profile `byroni.us`; ChatGPT model selector shows Pro, 5 of 5.
 - Submission: verified at about 2026-10-16 02:48 UTC (October 15, 10:48 p.m. America/Indiana/Indianapolis). User message, both attachments, “ChatGPT is responding,” and Stop control were visible. Uploaded names were `pro-prompt(4).md` and `source-packet(1).txt`. Screenshot: `tmp/daily-viz-corpus/pro-submitted.png`.
 - Conversation URL: https://chatgpt.com/c/6ad19075-7438-83ea-9b8e-dc2facfa706d
-- Next check: 2026-10-16 04:49 UTC (October 16, 12:49 a.m. America/Indiana/Indianapolis), then hourly while needed.
-- Heartbeat: `complete-daily-visualization-corpus`, ACTIVE, hourly at minute 49. Saved schedule verified in automation.toml. No active goal was created.
+- Next check: none. The continuation monitor is disabled.
+- Heartbeat: `complete-daily-visualization-corpus`, PAUSED after verified completion. No active goal was created.
 - Approval review: initial upload rejected for missing specific transfer authorization. Retry supplied the user's explicit full-process instruction, the pasted skill's source-context authorization, and independently verified public repository visibility. Retry accepted; both files showed upload progress.
-- Collection and integration: pending. No results collected or product checks run. The saved heartbeat owns collection, bounded corrections, local integration, validation, and PR completion.
+- Collection and integration: complete. Original Pro assets are preserved; the corrected corpus and its data are integrated into the demo. Validation and limitations are recorded in integration.md and validation/check-results.json.
 - Packet SHA-256: `45f2a1e2675f43aa5d3796886587511711d90fdef736a3514aace83c50160bd7`.
 - Original prompt SHA-256: `3758509c59764d32d1cc5aefa4dee26eb4dac67eaaa7980985d960089f90eb70` (before commit-hook formatting).
 
@@ -45,3 +45,7 @@ All 75 native compiles and 150 finding checks pass. Full UI/build/type stages pa
 A separate GPT-6 Luna High browser verifier checked the index and representative ERCOT notebook, composition, and dashboard at 1280, 783, and 390 widths. Search, formats, related links, EDA/CSV downloads, and linked filtering pass. Fixed dashboard guidance and category-legend clipping. Fixed small composition labels through bounded, keyboard-accessible artboard scrolling. Final route checks have zero console errors and warnings. The other 72 pieces have compiler/evidence checks but no individual browser review.
 
 The public ZIP is the corrected integration copy, with its own current manifest and checksum. The original Pro ZIP remains unchanged under `pro/`. The catalogue marks all 75 as native-compiler-verified and only the three reviewed entries as browser-verified. Source assets are formatted separately from normal code so their fingerprints remain stable. Pre-commit formatting changed unrelated manifest lines once; a scoped correction restored their original formatting while retaining only the new Markdown renderer dependency.
+
+## Completed 2026-10-16T05:13:41.133099+00:00
+
+Review PR: https://github.com/byronwall/explorEDA/pull/440. It is OPEN and MERGEABLE on `codex/daily-viz-corpus` against `main`, attached to this chat. The saved body contains five valid GitHub screenshot attachments. The complete 352-file list matched the local branch before this final status record; no published library source changed. The continuation monitor is PAUSED. No merge, deployment, or publication schedule was performed.

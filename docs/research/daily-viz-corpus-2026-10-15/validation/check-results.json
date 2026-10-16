@@ -1,0 +1,87 @@
+{
+  "runtime": "Node 22.21.1; pnpm 11.9.0",
+  "root_check": {
+    "command": "pnpm check",
+    "exit_status": "failed in sandboxed library test phase",
+    "passed_stages": [
+      "UI rules",
+      "library build",
+      "app build",
+      "demo build",
+      "library type check",
+      "app type check",
+      "demo type check"
+    ],
+    "library_initial": {
+      "passed_files": 241,
+      "failed_files": 5,
+      "skipped_files": 3,
+      "passed_tests": 1595,
+      "failed_tests": 10,
+      "skipped_tests": 72
+    },
+    "environment_errors": [
+      "listen EPERM: operation not permitted 127.0.0.1",
+      "EMFILE: too many open files, watch"
+    ],
+    "recovered_files": [
+      "src/server/handler.test.ts",
+      "src/server/team/teamHandler.test.ts",
+      "src/server/team/fileIntake.test.ts",
+      "src/server/team/accountRoutes.test.ts",
+      "src/node/projectFiles.test.ts"
+    ],
+    "recovery": "All five files pass with approved socket and file-watch access: 50 tests. The full command itself was not rerun or represented as green."
+  },
+  "complete_demo_suite": {
+    "command": "pnpm --filter demo test",
+    "status": "passed",
+    "files": 18,
+    "tests": 293
+  },
+  "final_daily_suite": {
+    "command": "pnpm --filter demo exec vitest run src/daily",
+    "status": "passed",
+    "files": 3,
+    "tests": 79
+  },
+  "final_type_check": {
+    "command": "pnpm --filter demo check-types",
+    "status": "passed"
+  },
+  "final_build": {
+    "command": "pnpm --filter demo exec vite build",
+    "status": "passed",
+    "static_articles": 75,
+    "collection_indexes": 1,
+    "sitemap_urls": 78
+  },
+  "source_lint_and_ui": "passed",
+  "changeset_and_author_checks": "passed; no published library code changed",
+  "mechanical_design_scan": "no findings",
+  "browser": {
+    "verifier": "separate GPT-6 Luna High subagent",
+    "widths": [1280, 783, 390],
+    "routes": [
+      "/daily",
+      "/daily/ercot-signed-error",
+      "/daily/ercot-error-zero",
+      "/daily/ercot-forecast-investigation"
+    ],
+    "passed": [
+      "search",
+      "format counts",
+      "related links",
+      "source and CSV downloads",
+      "linked filtering from 1417 to 704 rows",
+      "dashboard guidance and category labels",
+      "bounded full-size artboard scrolling",
+      "keyboard focus and ArrowRight",
+      "zoom controls",
+      "desktop composition fit"
+    ],
+    "fresh_console_errors": 0,
+    "fresh_console_warnings": 0,
+    "limitation": "The remaining 72 pieces have complete compiler and evidence checks but no individual browser review."
+  }
+}
