@@ -19,13 +19,13 @@ npx exploreda
 
 It starts a server on this computer, opens your browser on the folder, and lists its CSV and JSON files. Choose **Chart** beside a file to start: explorEDA adds the file to the project and opens a new analysis on a summary of its fields and its rows. Every change saves to the folder a moment after you make it, as text files you can read, diff, and commit.
 
-| Option               | What it does                                                                       |
-| -------------------- | ---------------------------------------------------------------------------------- |
-| `exploreda <folder>` | Opens that folder instead of the current one.                                      |
-| `--port <n>`         | Tries this port first (3939 by default), then the next free one.                   |
-| `--no-open`          | Prints the link instead of opening the browser.                                    |
-| `--hidden`           | Keeps a new project's text in `.exploreda/project.eda` instead of `exploreda.eda`. |
-| `--example`          | Copies the sample project to `./exploreda-example` and opens it.                   |
+| Option               | What it does                                                                                                                                                        |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `exploreda <folder>` | Opens that folder instead of the current one.                                                                                                                       |
+| `--port <n>`         | Tries this port first (3939 by default), then the next free one.                                                                                                    |
+| `--no-open`          | Prints the link instead of opening the browser.                                                                                                                     |
+| `--hidden`           | Keeps a new project's text in `.exploreda/project.eda` instead of `exploreda.eda`.                                                                                  |
+| `--example`          | Copies the sample shop project to `./exploreda-example` and opens it. Add `database` for a project that reads a SQLite file, or `forecast` for one with a notebook. |
 
 Only this computer can connect. Each run prints a link with its own key, and the server answers only requests that carry it.
 

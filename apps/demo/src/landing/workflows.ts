@@ -40,7 +40,7 @@ export const WORKFLOWS: readonly Workflow[] = [
     title: "Write a notebook",
     where: "Your computer or a team server",
     body: "Write Markdown with eda blocks between the paragraphs. Editing a chart in the page changes the same file.",
-    to: docsPath("notebooks"),
+    to: `${docsPath("notebooks")}#try-it-with-the-sample-notebook`,
     icon: BookOpen,
   },
   {

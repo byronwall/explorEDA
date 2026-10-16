@@ -165,7 +165,7 @@ describe("LandingPage routing", () => {
         "Read from a database",
         "/docs/database-sources#try-it-with-a-sample-database",
       ],
-      ["Write a notebook", "/docs/notebooks"],
+      ["Write a notebook", "/docs/notebooks#try-it-with-the-sample-notebook"],
       ["Run a team server", "/docs/team-server"],
       ["Embed it in React", "/docs/developers#quick-start"],
     ]);

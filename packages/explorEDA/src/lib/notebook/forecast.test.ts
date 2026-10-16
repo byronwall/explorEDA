@@ -154,6 +154,27 @@ describe("forecast notebook", () => {
     ]);
   });
 
+  it("adds a series line for a series the text doesn't style yet", () => {
+    const result = edit("delta", (chart) => {
+      const line = chart as unknown as {
+        seriesSettings: Record<string, Record<string, unknown>>;
+      };
+      line.seriesSettings = {
+        ...line.seriesSettings,
+        delta: { ...line.seriesSettings.delta, lineWidth: 3 },
+      };
+    });
+    expect(result.kind).toBe("splice");
+    const lines = notebook.text.split("\n");
+    // The delta chart's block ends after its own blackout rule.
+    const at = lines.indexOf('  rule y=0 "On forecast"') + 1;
+    expect(result.text.split("\n")).toEqual([
+      ...lines.slice(0, at + 1),
+      "  series delta lineWidth=3",
+      ...lines.slice(at + 1),
+    ]);
+  });
+
   it("writes only what changed when the app fills in defaults too", () => {
     const { result, text } = notebook;
     const previous = structuredClone(result.settings);
@@ -184,6 +205,28 @@ describe("forecast notebook", () => {
         'line @demand x=time y=actual,forecast title="Actual and forecast demand" y.min=20000 {',
       ],
     ]);
+  });
+
+  it("leaves a chart alone when the app only colors a series it drew", () => {
+    const { result, text } = notebook;
+    const previous = structuredClone(result.settings);
+    const next = structuredClone(previous);
+    // A chart that draws while someone edits another block still saves the
+    // palette color it picked for each new series.
+    const delta = next.charts.find(
+      (chart) => chart.id === "delta"
+    ) as unknown as {
+      seriesSettings: Record<string, Record<string, unknown>>;
+    };
+    delta.seriesSettings = {
+      ...delta.seriesSettings,
+      delta: { ...delta.seriesSettings.delta, lineColor: "#2a78d6" },
+    };
+    const written = writeBackSettings(text, result, previous, next, {
+      rows: result.rows,
+    });
+    expect(written.results).toEqual([]);
+    expect(written.text).toBe(text);
   });
 
   it("drops the old type's settings when the app changes a chart's type", () => {

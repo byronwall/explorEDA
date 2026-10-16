@@ -2,6 +2,16 @@
 
 A notebook is an analysis written as prose, with its charts in line. It's one Markdown file in a [project folder](/docs/project-folders), named `<name>.eda.md`. Text outside the fences is prose. Each fenced `eda` block holds [dashboard text](/docs/dashboard-text), and its charts appear where the block sits, at the full width of the column.
 
+## Try it with the sample notebook
+
+You need [Node.js](https://nodejs.org) 22 or later. In a terminal, in any empty folder:
+
+1. **Copy and open the sample.** Run `npx exploreda --example forecast`. It copies a project of Texas electricity demand into `./exploreda-example-forecast` and opens its notebook, `forecast.eda.md`.
+2. **Edit the prose.** Hover the first paragraph, choose **Edit text**, add a sentence, and choose **Done**. That paragraph changes in `forecast.eda.md`, and nothing else does.
+3. **Edit a block's text.** Hover the first chart and choose **Edit block**. Change its `title=`, and the chart's title changes as you type. Choose **Done**.
+4. **Edit a chart in the page.** Open **Chart settings** on **Actual minus forecast** and set the series' **Line width** to 3. The block gains one line, `series delta lineWidth=3`.
+5. **Reopen it.** Stop the server with Ctrl-C and run the command again. The notebook opens with your edits, since they're in the file.
+
 ````markdown
 # Did Texas demand run off forecast?
 
@@ -26,7 +36,7 @@ line @delta x=time y=delta title="Actual minus forecast" {
 The miss widens after February 15.
 ````
 
-Open the project with `npx exploreda`, and the notebook is listed under **Notebooks**. The full forecast notebook is in the explorEDA repository at `packages/explorEDA/examples/forecast`.
+Open the project with `npx exploreda`, and the notebook is listed under **Notebooks**. Run `npx exploreda --example forecast` for the full forecast notebook.
 
 ## How blocks work together
 
