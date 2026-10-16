@@ -1,0 +1,42 @@
+project @flights
+
+source @flights key=flight_id path=../../../datasets/flights/flights.csv {
+  field flight_id string
+  field flight_date date
+  field sched_dep_hour number
+  field dep_delay number
+  field arr_delay number
+  field carrier string
+  field flight string
+  field tailnum string
+  field origin string
+  field dest string
+  field air_time number
+  field distance number
+  field weather_key string
+}
+
+source @airlines key=carrier path=../../../datasets/flights/airlines.csv {
+  field carrier string
+  field name string
+}
+
+source @weather key=weather_key path=../../../datasets/flights/weather.csv {
+  field weather_key string
+  field origin string
+  field observed_hour date
+  field temp number
+  field humid number
+  field wind_speed number
+  field precip number
+  field visib number
+}
+
+relate @flight-airline flights.carrier -> airlines.carrier
+relate @flight-weather flights.weather_key -> weather.weather_key
+
+query @flights "Flights with airline and weather" glyph=◆ {
+  source flights
+  lookup airline via=flight-airline
+  lookup weather via=flight-weather
+}

@@ -1,0 +1,16 @@
+project @titanic
+
+source @titanic path=../../../datasets/titanic.csv {
+  field Name string
+  field Class string
+  field Sex string
+  field Age number
+  field "Age group" string
+  field Embarked string
+  field Fare number
+  field Fate string
+}
+
+query @titanic "titanic" glyph=◆ {
+  source titanic
+}

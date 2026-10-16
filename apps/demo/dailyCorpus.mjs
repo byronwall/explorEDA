@@ -69,8 +69,9 @@ export function describeText(text) {
     ) {
       charts.add(head === "histogram" ? "hist" : head);
       block = head;
-      if (/\bfacet[.=]/.test(line)) features.add("facet");
     }
+    if (block !== "composition" && /\bfacet\.(type|enabled)=/.test(line))
+      features.add("facet");
     if (depth > 0 && head) {
       if (block !== "composition") {
         if (ANNOTATIONS.includes(head)) features.add("annotation");

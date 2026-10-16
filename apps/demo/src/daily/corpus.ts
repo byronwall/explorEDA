@@ -63,6 +63,14 @@ export const kindLabels: Record<DailyKind, string> = {
 export const dailyPath = (entry: { slug: string }) => `/daily/${entry.slug}`;
 export const assetPath = (file: string) => `${CORPUS_URL}/${file}`;
 
+/**
+ * A lookup with no matching row is a fact about the data, such as a flight
+ * with no weather hour, not a reason to refuse the page.
+ */
+export function queryProblems<T extends { code?: string }>(diagnostics: T[]) {
+  return diagnostics.filter((item) => item.code !== "missing-lookup");
+}
+
 async function read(file: string, signal?: AbortSignal) {
   const response = await fetch(assetPath(file), { signal });
   if (!response.ok)
@@ -90,8 +98,8 @@ export async function loadDailyEntry(entry: DailyEntry, signal?: AbortSignal) {
   );
   const queryRows = (id: string) => {
     const query = evaluateAnalysisQuery(compiled.project, tables, id);
-    if (query.diagnostics.length)
-      throw new Error(query.diagnostics[0]!.message);
+    const problem = queryProblems(query.diagnostics)[0];
+    if (problem) throw new Error(problem.message);
     return query;
   };
   const query = queryRows(entry.query);

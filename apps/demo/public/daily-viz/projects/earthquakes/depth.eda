@@ -1,0 +1,18 @@
+eda query=events
+dashboard "How deep do strong earthquakes start?"
+grid columns=12 rowHeight=76
+latitude:num=events.latitude label="Latitude"
+longitude:num=events.longitude label="Longitude"
+mag:num=events.mag label="Magnitude"
+depth:num=events.depth label="Depth (km)"
+band:cat=events.depth_band label="Depth band"
+area:cat=events.area label="Area"
+type:cat=events.mag_type label="Magnitude type"
+map @db-earthquakes-depth-map color=band title="Earthquakes by depth" at=0,0,8,7 {
+  latitudeField=latitude longitudeField=longitude sizeField=mag pointOpacity=0.5
+}
+row @db-earthquakes-depth-band band title="Select a depth band" at=8,0,4,3 x.title=Earthquakes
+row @db-earthquakes-depth-area area title="Busiest areas" at=8,3,4,4 x.title=Earthquakes
+hist @db-earthquakes-depth-hist depth bins=70 title="Earthquakes by depth" at=0,7,6,5 x.title="Depth (km)" y.title=Earthquakes
+scatter @db-earthquakes-depth-mag x=depth y=mag color=band title="Depth and magnitude" at=6,7,6,5 x.title="Depth (km)" y.title=Magnitude
+table @db-earthquakes-depth-records area,depth,mag,type,band title="Earthquakes in the selection" at=0,12,12,5

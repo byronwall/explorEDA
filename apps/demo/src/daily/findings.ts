@@ -134,21 +134,24 @@ export function formatValue(value: number, format: string) {
 }
 
 /**
- * Query rows key fields by source, as `r.co2`; findings name the bare field.
- * Returns rows keyed by bare field names alongside the originals.
+ * Query rows key fields by source, as `r.co2` or `weather.precip`. A finding
+ * may name the field either way; a bare name works when only one source has it.
  */
 function bareFields(rows: readonly Row[]) {
   const first = rows[0];
-  if (!first || !Object.keys(first).some((key) => key.includes(".")))
-    return rows;
-  return rows.map((row) =>
-    Object.fromEntries(
-      Object.entries(row).map(([key, value]) => [
-        key.slice(key.indexOf(".") + 1),
-        value,
-      ])
-    )
-  );
+  if (!first) return rows;
+  const owners = new Map<string, string[]>();
+  for (const key of Object.keys(first)) {
+    const bare = key.slice(key.indexOf(".") + 1);
+    if (bare !== key) owners.set(bare, [...(owners.get(bare) ?? []), key]);
+  }
+  const aliases = [...owners].filter(([, keys]) => keys.length === 1);
+  if (!aliases.length) return rows;
+  return rows.map((row) => {
+    const copy: Row = { ...row };
+    for (const [bare, [key]] of aliases) copy[bare] = row[key!];
+    return copy;
+  });
 }
 
 export function evaluateFinding(

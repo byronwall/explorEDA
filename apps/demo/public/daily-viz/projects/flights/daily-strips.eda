@@ -1,0 +1,19 @@
+eda query=flights
+dashboard "Thirty-one days, three airports"
+grid columns=12 rowHeight=76
+composition @cp-flights-daily-strips width=980 height=420 at=0,0,12,6 {
+  title "Thirty-one days, three airports" at=32,28 fontSize=24
+  subtitle "Each cell is one airport and day, colored by the mean departure delay. The worst days hit all three airports at once." at=32,72 fontSize=13
+  scale position flights.flight_date interval=day
+  scale value "Mean delay" {
+    colors=#f1f5f9,#fde68a,#f59e0b,#dc2626,#7f1d1d
+    stops=0,0.2,0.45,0.75,1
+  }
+  unit Airports at=32,150 size=860x48 {
+    repeat flights.origin gap=10 order=label
+    label width=60 fontSize=13
+    strip Days position=flights.flight_date valueScale="Mean delay" aggregation=average measureField=flights.dep_delay
+  }
+  legend "Delay key" at=92,118 unit=Airports mark=Days scale="Mean delay" fontSize=10
+  footnote "Bureau of Transportation Statistics via nycflights13; CC0. Cancelled flights have no delay and are not counted." at=32,380 fontSize=10
+}

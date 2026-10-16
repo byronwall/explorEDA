@@ -2525,5 +2525,1097 @@
         ]
       }
     ]
+  },
+  {
+    "id": "nb-flights-delay-tail",
+    "slug": "flights-delay-tail",
+    "kind": "notebook",
+    "title": "Most January flights left early; the average says ten minutes late",
+    "question": "How late is a typical flight out of New York?",
+    "summary": "The median January departure left two minutes early, while the mean ran ten minutes late. One flight in fifteen left more than an hour late, and that tail is what the average measures.",
+    "family": "flights",
+    "entry": "delay-tail.eda.md",
+    "query": "flights",
+    "industry": "Transportation",
+    "analysis": "Distribution",
+    "series": {
+      "id": "flights-january",
+      "title": "A month of New York flights",
+      "part": 1
+    },
+    "findings": [
+      {
+        "text": "The median departure delay was {value} minutes.",
+        "format": ".0f",
+        "op": "median",
+        "field": "dep_delay"
+      },
+      {
+        "text": "The mean departure delay was {value} minutes.",
+        "format": ".1f",
+        "op": "mean",
+        "field": "dep_delay"
+      },
+      {
+        "text": "{value}% of flights left on time or early.",
+        "format": ".1f",
+        "op": "share",
+        "field": "dep_delay",
+        "where": [
+          [
+            "dep_delay",
+            "ge",
+            -10000
+          ]
+        ],
+        "condition": [
+          [
+            "dep_delay",
+            "le",
+            0
+          ]
+        ]
+      },
+      {
+        "text": "{value}% of flights left more than an hour late.",
+        "format": ".1f",
+        "op": "share",
+        "field": "dep_delay",
+        "where": [
+          [
+            "dep_delay",
+            "ge",
+            -10000
+          ]
+        ],
+        "condition": [
+          [
+            "dep_delay",
+            "gt",
+            60
+          ]
+        ]
+      },
+      {
+        "text": "Newark's mean departure delay was {value} minutes.",
+        "format": ".1f",
+        "op": "mean",
+        "field": "dep_delay",
+        "where": [
+          [
+            "flights.origin",
+            "eq",
+            "EWR"
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "nb-flights-by-hour",
+    "slug": "flights-by-hour",
+    "kind": "notebook",
+    "title": "Delays snowball through the day",
+    "question": "When in the day do New York flights fall behind?",
+    "summary": "A 6:00 departure averaged three minutes late; a 19:00 departure averaged nineteen. The median barely moves, so the evening penalty is mostly a longer tail of badly late flights.",
+    "family": "flights",
+    "entry": "by-hour.eda.md",
+    "query": "flights",
+    "industry": "Transportation",
+    "analysis": "Seasonality",
+    "series": {
+      "id": "flights-january",
+      "title": "A month of New York flights",
+      "part": 2
+    },
+    "findings": [
+      {
+        "text": "Flights scheduled at 6:00 left {value} minutes late on average.",
+        "format": ".1f",
+        "op": "mean",
+        "field": "dep_delay",
+        "where": [
+          [
+            "sched_dep_hour",
+            "eq",
+            6
+          ]
+        ]
+      },
+      {
+        "text": "Flights scheduled at 19:00 left {value} minutes late on average.",
+        "format": ".1f",
+        "op": "mean",
+        "field": "dep_delay",
+        "where": [
+          [
+            "sched_dep_hour",
+            "eq",
+            19
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "db-flights-carriers",
+    "slug": "flights-carriers",
+    "kind": "dashboard",
+    "title": "Which airline, from which airport, ran late?",
+    "question": "How much of a flight's delay comes with its airline?",
+    "summary": "Follow each airport's flights to their airlines, compare medians side by side, and select an airline to see its delay tail.",
+    "family": "flights",
+    "entry": "carriers.eda",
+    "companion": "carriers.guide.md",
+    "query": "flights",
+    "industry": "Transportation",
+    "analysis": "Comparison",
+    "series": {
+      "id": "flights-january",
+      "title": "A month of New York flights",
+      "part": 3
+    },
+    "findings": [
+      {
+        "text": "ExpressJet's mean departure delay was {value} minutes.",
+        "format": ".1f",
+        "op": "mean",
+        "field": "dep_delay",
+        "where": [
+          [
+            "flights.carrier",
+            "eq",
+            "EV"
+          ]
+        ]
+      },
+      {
+        "text": "Delta's median departure delay was {value} minutes.",
+        "format": ".0f",
+        "op": "median",
+        "field": "dep_delay",
+        "where": [
+          [
+            "flights.carrier",
+            "eq",
+            "DL"
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "nb-flights-weather",
+    "slug": "flights-weather",
+    "kind": "notebook",
+    "title": "Rain and snow nearly doubled the average delay",
+    "question": "How much does the weather at the airport matter?",
+    "summary": "Departures scheduled into an hour of rain or snow averaged 18.4 minutes late, against 9.6 in dry hours. Visibility tells the same story; wind on its own does not.",
+    "family": "flights",
+    "entry": "weather.eda.md",
+    "query": "flights",
+    "industry": "Transportation",
+    "analysis": "Relationship",
+    "series": {
+      "id": "flights-january",
+      "title": "A month of New York flights",
+      "part": 4
+    },
+    "findings": [
+      {
+        "text": "In hours with rain or snow, the mean departure delay was {value} minutes.",
+        "format": ".1f",
+        "op": "mean",
+        "field": "dep_delay",
+        "where": [
+          [
+            "weather.precip",
+            "gt",
+            0
+          ]
+        ]
+      },
+      {
+        "text": "In dry hours, the mean departure delay was {value} minutes.",
+        "format": ".1f",
+        "op": "mean",
+        "field": "dep_delay",
+        "where": [
+          [
+            "weather.precip",
+            "eq",
+            0
+          ]
+        ]
+      },
+      {
+        "text": "With visibility under five miles, the mean departure delay was {value} minutes.",
+        "format": ".1f",
+        "op": "mean",
+        "field": "dep_delay",
+        "where": [
+          [
+            "weather.visib",
+            "lt",
+            5
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "cp-flights-daily-strips",
+    "slug": "flights-daily-strips",
+    "kind": "composition",
+    "title": "Thirty-one days, three airports",
+    "question": "Were January's bad days bad everywhere, or one airport at a time?",
+    "summary": "One strip per airport, one cell per day. The worst days, at the end of the month, darken all three airports at once.",
+    "family": "flights",
+    "entry": "daily-strips.eda",
+    "companion": "daily-strips.design.md",
+    "query": "flights",
+    "industry": "Transportation",
+    "analysis": "Trend",
+    "series": {
+      "id": "flights-january",
+      "title": "A month of New York flights",
+      "part": 5
+    },
+    "findings": [
+      {
+        "text": "On January 31, the mean departure delay was {value} minutes.",
+        "format": ".1f",
+        "op": "mean",
+        "field": "dep_delay",
+        "where": [
+          [
+            "flights.flight_date",
+            "eq",
+            "2013-01-31"
+          ]
+        ]
+      },
+      {
+        "text": "On January 15, the mean departure delay was {value} minutes.",
+        "format": ".1f",
+        "op": "mean",
+        "field": "dep_delay",
+        "where": [
+          [
+            "flights.flight_date",
+            "eq",
+            "2013-01-15"
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "nb-beijing-calendar",
+    "slug": "beijing-calendar",
+    "kind": "notebook",
+    "title": "Beijing's worst air came in a few winter weeks",
+    "question": "Which days of 2016 did Beijing breathe its worst air?",
+    "summary": "More than a third of station-days broke China's 24-hour PM2.5 limit, but the worst readings came in multi-day winter episodes, led by December's red alert.",
+    "family": "beijing",
+    "entry": "calendar.eda.md",
+    "query": "days",
+    "industry": "Environment",
+    "analysis": "Seasonality",
+    "series": {
+      "id": "beijing-2016",
+      "title": "A year of Beijing air",
+      "part": 1
+    },
+    "findings": [
+      {
+        "text": "December's station-days averaged {value} µg/m³.",
+        "format": ".1f",
+        "op": "mean",
+        "field": "pm25",
+        "where": [
+          [
+            "month",
+            "eq",
+            "12 Dec"
+          ]
+        ]
+      },
+      {
+        "text": "{value}% of station-days were above China's 24-hour limit of 75 µg/m³.",
+        "format": ".1f",
+        "op": "share",
+        "field": "pm25",
+        "where": [
+          [
+            "pm25",
+            "ge",
+            -1
+          ]
+        ],
+        "condition": [
+          [
+            "pm25",
+            "gt",
+            75
+          ]
+        ]
+      },
+      {
+        "text": "The highest daily mean at any station was {value} µg/m³.",
+        "format": ".1f",
+        "op": "max",
+        "field": "pm25"
+      }
+    ]
+  },
+  {
+    "id": "nb-beijing-pollutants",
+    "slug": "beijing-pollutants",
+    "kind": "notebook",
+    "title": "PM2.5 travels with carbon monoxide, not ozone",
+    "question": "Which pollutants rise and fall with Beijing's fine particles?",
+    "summary": "Fine particles, carbon monoxide, and nitrogen dioxide share combustion sources and peak together in winter. Ozone peaks on clear summer days, when particles are lowest.",
+    "family": "beijing",
+    "entry": "pollutants.eda.md",
+    "query": "days",
+    "industry": "Environment",
+    "analysis": "Relationship",
+    "series": {
+      "id": "beijing-2016",
+      "title": "A year of Beijing air",
+      "part": 2
+    },
+    "findings": [
+      {
+        "text": "PM2.5 and carbon monoxide had correlation {value}.",
+        "format": ".3f",
+        "op": "corr",
+        "field": "pm25",
+        "other": "co"
+      },
+      {
+        "text": "PM2.5 and ozone had correlation {value}.",
+        "format": ".3f",
+        "op": "corr",
+        "field": "pm25",
+        "other": "o3"
+      }
+    ]
+  },
+  {
+    "id": "db-beijing-stations",
+    "slug": "beijing-stations",
+    "kind": "dashboard",
+    "title": "Twelve stations, one city's air",
+    "question": "Do Beijing's monitoring stations see the same bad days?",
+    "summary": "Pick a station to see its calendar, its season boxes, and how wind clears its air. Episodes cover the whole city; the city center runs dirtier.",
+    "family": "beijing",
+    "entry": "stations.eda",
+    "companion": "stations.guide.md",
+    "query": "days",
+    "industry": "Environment",
+    "analysis": "Comparison",
+    "series": {
+      "id": "beijing-2016",
+      "title": "A year of Beijing air",
+      "part": 3
+    },
+    "findings": [
+      {
+        "text": "PM2.5 and wind speed had correlation {value}.",
+        "format": ".3f",
+        "op": "corr",
+        "field": "pm25",
+        "other": "wspm"
+      },
+      {
+        "text": "Dongsi's station-days averaged {value} µg/m³.",
+        "format": ".1f",
+        "op": "mean",
+        "field": "pm25",
+        "where": [
+          [
+            "days.station",
+            "eq",
+            "Dongsi"
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "cp-beijing-month-ridges",
+    "slug": "beijing-month-ridges",
+    "kind": "composition",
+    "title": "Winter's air has the longest tail",
+    "question": "Is winter worse every day, or worse on some days?",
+    "summary": "Twelve monthly ridges on one PM2.5 axis. Summer months crowd tightly near their median; November and December stretch far past the national limit.",
+    "family": "beijing",
+    "entry": "month-ridges.eda",
+    "companion": "month-ridges.design.md",
+    "query": "days",
+    "industry": "Environment",
+    "analysis": "Distribution",
+    "series": {
+      "id": "beijing-2016",
+      "title": "A year of Beijing air",
+      "part": 4
+    },
+    "findings": [
+      {
+        "text": "December's median station-day was {value} µg/m³.",
+        "format": ".1f",
+        "op": "median",
+        "field": "pm25",
+        "where": [
+          [
+            "month",
+            "eq",
+            "12 Dec"
+          ]
+        ]
+      },
+      {
+        "text": "August's median station-day was {value} µg/m³.",
+        "format": ".1f",
+        "op": "median",
+        "field": "pm25",
+        "where": [
+          [
+            "month",
+            "eq",
+            "08 Aug"
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "nb-worldbank-wealth-and-health",
+    "slug": "worldbank-wealth-and-health",
+    "kind": "notebook",
+    "title": "Richer countries live longer, with diminishing returns",
+    "question": "How closely does a country's income track how long its people live?",
+    "summary": "Across 217 economies, log GDP per person and life expectancy move together closely. The average economy gained six years of life expectancy from 2000 to 2023, most of it in poorer regions.",
+    "family": "worldbank",
+    "entry": "wealth-and-health.eda.md",
+    "query": "years",
+    "industry": "Global development",
+    "analysis": "Relationship",
+    "findings": [
+      {
+        "text": "In 2023, log GDP per person and life expectancy had correlation {value}.",
+        "format": ".3f",
+        "op": "corr",
+        "field": "log10_gdp_pc",
+        "other": "life_expectancy",
+        "where": [
+          [
+            "year",
+            "eq",
+            2023
+          ]
+        ]
+      },
+      {
+        "text": "The mean economy's life expectancy was {value} years in 2000.",
+        "format": ".1f",
+        "op": "mean",
+        "field": "life_expectancy",
+        "where": [
+          [
+            "year",
+            "eq",
+            2000
+          ]
+        ]
+      },
+      {
+        "text": "By 2023, it was {value} years.",
+        "format": ".1f",
+        "op": "mean",
+        "field": "life_expectancy",
+        "where": [
+          [
+            "year",
+            "eq",
+            2023
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "cp-worldbank-population-bridge",
+    "slug": "worldbank-population-bridge",
+    "kind": "composition",
+    "title": "Where the world added 1.9 billion people",
+    "question": "Which regions account for the world's population growth since 2000?",
+    "summary": "A bridge from the 2000 world total to 2023, one step per region. Sub-Saharan Africa added the most people, ahead of South Asia and East Asia.",
+    "family": "worldbank",
+    "entry": "population-bridge.eda",
+    "companion": "population-bridge.design.md",
+    "query": "years",
+    "industry": "Global development",
+    "analysis": "Part-to-whole",
+    "findings": [
+      {
+        "text": "The 217 economies held {value} people in 2000.",
+        "format": ",.0f",
+        "op": "sum",
+        "field": "population",
+        "where": [
+          [
+            "year",
+            "eq",
+            2000
+          ]
+        ]
+      },
+      {
+        "text": "They held {value} people in 2023.",
+        "format": ",.0f",
+        "op": "sum",
+        "field": "population",
+        "where": [
+          [
+            "year",
+            "eq",
+            2023
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "nb-worldbank-income-groups",
+    "slug": "worldbank-income-groups",
+    "kind": "notebook",
+    "title": "Most of the world's people live in middle-income countries",
+    "question": "How does the world's population divide by region and income group?",
+    "summary": "Counted by economies, high-income countries are the largest group. Weighted by people, the world centers on middle-income Asia, with China and India alone holding over a third.",
+    "family": "worldbank",
+    "entry": "income-groups.eda.md",
+    "query": "latest",
+    "industry": "Global development",
+    "analysis": "Part-to-whole",
+    "findings": [
+      {
+        "text": "China and India together held {value}% of the 2023 population of these 217 economies.",
+        "format": ".1f",
+        "op": "top_share",
+        "field": "population",
+        "k": 2,
+        "where": [
+          [
+            "year",
+            "eq",
+            2023
+          ]
+        ]
+      },
+      {
+        "text": "86 of the 217 economies were classed as high income, {value}% of the list.",
+        "format": ".1f",
+        "op": "share",
+        "field": "income",
+        "where": [
+          [
+            "year",
+            "eq",
+            2023
+          ]
+        ],
+        "condition": [
+          [
+            "income",
+            "eq",
+            "High income"
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "nb-earthquakes-year-of-quakes",
+    "slug": "earthquakes-year-of-quakes",
+    "kind": "notebook",
+    "title": "7,643 strong earthquakes, and where they cluster",
+    "question": "Where and when did 2023's strong earthquakes strike?",
+    "summary": "The year's magnitude 4.5+ earthquakes trace the plate boundaries, arrive about twenty a day, and spike after each large shock. Fewer than one in fifty reached magnitude 6.",
+    "family": "earthquakes",
+    "entry": "year-of-quakes.eda.md",
+    "query": "events",
+    "industry": "Geoscience",
+    "analysis": "Geography",
+    "findings": [
+      {
+        "text": "The year's largest earthquake was magnitude {value}.",
+        "format": ".1f",
+        "op": "max",
+        "field": "mag"
+      },
+      {
+        "text": "{value}% of the year's earthquakes reached magnitude 6 or more.",
+        "format": ".1f",
+        "op": "share",
+        "field": "mag",
+        "condition": [
+          [
+            "mag",
+            "ge",
+            6
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "db-earthquakes-depth",
+    "slug": "earthquakes-depth",
+    "kind": "dashboard",
+    "title": "How deep do strong earthquakes start?",
+    "question": "Where do deep earthquakes happen, and how sure is the catalogue of each depth?",
+    "summary": "Select a depth band to see where it happens on the map. Most events are shallow, deep ones gather where plates dive, and a spike at exactly 10 km is a default, not a measurement.",
+    "family": "earthquakes",
+    "entry": "depth.eda",
+    "companion": "depth.guide.md",
+    "query": "events",
+    "industry": "Geoscience",
+    "analysis": "Data quality",
+    "findings": [
+      {
+        "text": "The median depth was {value} km.",
+        "format": ".0f",
+        "op": "median",
+        "field": "depth"
+      },
+      {
+        "text": "{value}% of events sit at exactly 10 km.",
+        "format": ".1f",
+        "op": "share",
+        "field": "depth",
+        "condition": [
+          [
+            "depth",
+            "eq",
+            10
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "nb-unemployment-recession",
+    "slug": "unemployment-recession",
+    "kind": "notebook",
+    "title": "Construction's unemployment rate hit 27% in the recession",
+    "question": "Which industries did the 2008 recession hit hardest?",
+    "summary": "Unemployment rose in every industry after 2007, but construction started high, swung with every winter, and peaked at 27.1%. Government never passed 5.1%.",
+    "family": "unemployment",
+    "entry": "recession.eda.md",
+    "query": "industries",
+    "industry": "Labor",
+    "analysis": "Comparison",
+    "findings": [
+      {
+        "text": "Construction's unemployment rate peaked at {value}%.",
+        "format": ".1f",
+        "op": "max",
+        "field": "Unemployment rate",
+        "where": [
+          [
+            "Industry",
+            "eq",
+            "Construction"
+          ]
+        ]
+      },
+      {
+        "text": "Its lowest rate in the decade was {value}%.",
+        "format": ".1f",
+        "op": "min",
+        "field": "Unemployment rate",
+        "where": [
+          [
+            "Industry",
+            "eq",
+            "Construction"
+          ]
+        ]
+      },
+      {
+        "text": "Government's unemployment rate never went above {value}%.",
+        "format": ".1f",
+        "op": "max",
+        "field": "Unemployment rate",
+        "where": [
+          [
+            "Industry",
+            "eq",
+            "Government"
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "cp-unemployment-share-stack",
+    "slug": "unemployment-share-stack",
+    "kind": "composition",
+    "title": "Who the unemployed were, 2000 to 2010",
+    "question": "Did the recession change which industries the unemployed came from?",
+    "summary": "Each band is an industry's share of all unemployed workers, month by month. The total doubled after 2007, and construction's share grew along with it.",
+    "family": "unemployment",
+    "entry": "share-stack.eda",
+    "companion": "share-stack.design.md",
+    "query": "industries",
+    "industry": "Labor",
+    "analysis": "Part-to-whole",
+    "findings": [
+      {
+        "text": "In January 2007, {value} thousand Americans were unemployed across these industries.",
+        "format": ",.0f",
+        "op": "sum",
+        "field": "Unemployed (thousands)",
+        "where": [
+          [
+            "Month",
+            "eq",
+            "2007-01-01"
+          ]
+        ]
+      },
+      {
+        "text": "By January 2010, {value} thousand were.",
+        "format": ",.0f",
+        "op": "sum",
+        "field": "Unemployed (thousands)",
+        "where": [
+          [
+            "Month",
+            "eq",
+            "2010-01-01"
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "nb-penguins-species",
+    "slug": "penguins-species",
+    "kind": "notebook",
+    "title": "Gentoo penguins outweigh their neighbors by more than a kilogram",
+    "question": "How different are the three Palmer Archipelago penguin species?",
+    "summary": "Gentoos average 5.1 kg against 3.7 kg for Adélies and Chinstraps. Each species keeps to its own islands, so island comparisons are partly species comparisons.",
+    "family": "penguins",
+    "entry": "species.eda.md",
+    "query": "penguins",
+    "industry": "Ecology",
+    "analysis": "Comparison",
+    "findings": [
+      {
+        "text": "Flipper length and body mass had correlation {value}.",
+        "format": ".3f",
+        "op": "corr",
+        "field": "flipper_length_mm",
+        "other": "body_mass_g"
+      },
+      {
+        "text": "Gentoo penguins averaged {value} g.",
+        "format": ",.0f",
+        "op": "mean",
+        "field": "body_mass_g",
+        "where": [
+          [
+            "species",
+            "eq",
+            "Gentoo"
+          ]
+        ]
+      },
+      {
+        "text": "Adélie penguins averaged {value} g.",
+        "format": ",.0f",
+        "op": "mean",
+        "field": "body_mass_g",
+        "where": [
+          [
+            "species",
+            "eq",
+            "Adelie"
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "nb-titanic-class-and-sex",
+    "slug": "titanic-class-and-sex",
+    "kind": "notebook",
+    "title": "On the Titanic, sex mattered more than class",
+    "question": "Who survived the Titanic?",
+    "summary": "Nearly three women in four survived, and fewer than one man in five. A first-class man was less likely to survive than a third-class woman.",
+    "family": "titanic",
+    "entry": "class-and-sex.eda.md",
+    "query": "titanic",
+    "industry": "History",
+    "analysis": "Comparison",
+    "findings": [
+      {
+        "text": "{value}% of women survived.",
+        "format": ".1f",
+        "op": "share",
+        "field": "Fate",
+        "where": [
+          [
+            "Sex",
+            "eq",
+            "Female"
+          ]
+        ],
+        "condition": [
+          [
+            "Fate",
+            "eq",
+            "Survived"
+          ]
+        ]
+      },
+      {
+        "text": "{value}% of men survived.",
+        "format": ".1f",
+        "op": "share",
+        "field": "Fate",
+        "where": [
+          [
+            "Sex",
+            "eq",
+            "Male"
+          ]
+        ],
+        "condition": [
+          [
+            "Fate",
+            "eq",
+            "Survived"
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "cp-titanic-fate-donuts",
+    "slug": "titanic-fate-donuts",
+    "kind": "composition",
+    "title": "Three classes, three different odds",
+    "question": "How did a passenger's class change their odds?",
+    "summary": "One ring per class. First class lost fewer than four passengers in ten; third class lost three in four.",
+    "family": "titanic",
+    "entry": "fate-donuts.eda",
+    "companion": "fate-donuts.design.md",
+    "query": "titanic",
+    "industry": "History",
+    "analysis": "Part-to-whole",
+    "findings": [
+      {
+        "text": "{value}% of first-class passengers survived.",
+        "format": ".1f",
+        "op": "share",
+        "field": "Fate",
+        "where": [
+          [
+            "Class",
+            "eq",
+            "First class"
+          ]
+        ],
+        "condition": [
+          [
+            "Fate",
+            "eq",
+            "Survived"
+          ]
+        ]
+      },
+      {
+        "text": "{value}% of third-class passengers survived.",
+        "format": ".1f",
+        "op": "share",
+        "field": "Fate",
+        "where": [
+          [
+            "Class",
+            "eq",
+            "Third class"
+          ]
+        ],
+        "condition": [
+          [
+            "Fate",
+            "eq",
+            "Survived"
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "nb-measles-vaccine",
+    "slug": "measles-vaccine",
+    "kind": "notebook",
+    "title": "Measles nearly vanished within a decade of the vaccine",
+    "question": "What happened to measles in the United States after 1963?",
+    "summary": "Before the vaccine, a state-year averaged over 300 cases per 100,000. By the 1970s the average was 17, a fall of about 95% in under a decade.",
+    "family": "measles",
+    "entry": "vaccine.eda.md",
+    "query": "measles",
+    "industry": "Public health",
+    "analysis": "Trend",
+    "findings": [
+      {
+        "text": "From 1950 to 1962, the average state-year saw {value} cases per 100,000.",
+        "format": ".1f",
+        "op": "mean",
+        "field": "Rate",
+        "where": [
+          [
+            "Year",
+            "ge",
+            1950
+          ],
+          [
+            "Year",
+            "le",
+            1962
+          ]
+        ]
+      },
+      {
+        "text": "In the 1970s, it was {value}.",
+        "format": ".1f",
+        "op": "mean",
+        "field": "Rate",
+        "where": [
+          [
+            "Year",
+            "ge",
+            1970
+          ],
+          [
+            "Year",
+            "le",
+            1979
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "nb-bigtech-growth",
+    "slug": "bigtech-growth",
+    "kind": "notebook",
+    "title": "A dollar in Tesla grew seventy-fold; in IBM, it barely moved",
+    "question": "How differently did fourteen big technology stocks grow from 2010 to 2022?",
+    "summary": "Tesla, Netflix, and NVIDIA multiplied thirty to seventy times while IBM and Intel ended near where they began. A shared axis hides that; small multiples show it.",
+    "family": "bigtech",
+    "entry": "growth.eda.md",
+    "query": "prices",
+    "industry": "Finance",
+    "analysis": "Trend",
+    "findings": [
+      {
+        "text": "Netflix's highest opening price in the sample was ${value}.",
+        "format": ".2f",
+        "op": "max",
+        "field": "Open",
+        "where": [
+          [
+            "Company",
+            "eq",
+            "Netflix"
+          ]
+        ]
+      },
+      {
+        "text": "IBM never opened above ${value}.",
+        "format": ".2f",
+        "op": "max",
+        "field": "Open",
+        "where": [
+          [
+            "Company",
+            "eq",
+            "International Business Machines"
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "nb-elections-polarization",
+    "slug": "elections-polarization",
+    "kind": "notebook",
+    "title": "Close states became rare in presidential elections",
+    "question": "How many states were genuinely competitive, election by election?",
+    "summary": "In 1976, nineteen states were decided by under five points. By 2012 there were four, and the spread of state margins kept widening.",
+    "family": "elections",
+    "entry": "polarization.eda.md",
+    "query": "elections",
+    "industry": "Politics",
+    "analysis": "Distribution",
+    "findings": [
+      {
+        "text": "In 1976, {value}% of states were decided by under five points.",
+        "format": ".1f",
+        "op": "share",
+        "field": "Margin",
+        "where": [
+          [
+            "Year",
+            "eq",
+            1976
+          ]
+        ],
+        "condition": [
+          [
+            "Margin",
+            "gt",
+            -5
+          ],
+          [
+            "Margin",
+            "lt",
+            5
+          ]
+        ]
+      },
+      {
+        "text": "In 2012, {value}% were.",
+        "format": ".1f",
+        "op": "share",
+        "field": "Margin",
+        "where": [
+          [
+            "Year",
+            "eq",
+            2012
+          ]
+        ],
+        "condition": [
+          [
+            "Margin",
+            "gt",
+            -5
+          ],
+          [
+            "Margin",
+            "lt",
+            5
+          ]
+        ]
+      }
+    ]
   }
 ]

@@ -1,0 +1,13 @@
+project @bigtech
+
+source @prices path=../../../datasets/big-tech-prices.csv {
+  field Symbol string
+  field Company string
+  field Date date
+  field Observation number
+  field Open number
+}
+
+query @prices "prices" glyph=◆ {
+  source prices
+}

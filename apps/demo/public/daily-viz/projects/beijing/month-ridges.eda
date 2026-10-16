@@ -1,0 +1,15 @@
+eda query=days
+dashboard "Winter's air has the longest tail"
+grid columns=12 rowHeight=76
+composition @cp-beijing-month-ridges width=960 height=760 at=0,0,12,11 {
+  title "Winter's air has the longest tail" at=32,28 fontSize=24
+  subtitle "One ridge per month: the distribution of station-day PM2.5. Summer months crowd near the median; winter ones stretch far to the right." at=32,72 fontSize=13
+  scale numeric days.pm25 name=PM2.5 zero=true nice=false max=350
+  unit Months at=32,140 size=760x30 axisTitles.x="Daily PM2.5 (µg/m³)" {
+    repeat days.month arrangement=rows gap=14 order=label
+    label width=80 fontSize=12
+    density Days x=days.pm25 height=shared bandwidth=8 opacity=0.75
+  }
+  rule "China's 24-hour limit" at=0,0 unit=Months value="75"
+  footnote "Beijing Municipal Environmental Monitoring Center via the UCI Machine Learning Repository; CC BY 4.0. Days above 350 µg/m³ run off the right edge." at=32,720 fontSize=10
+}

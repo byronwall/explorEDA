@@ -1,0 +1,16 @@
+project @penguins
+
+source @penguins path=../../../datasets/palmer-penguins.csv {
+  field species string
+  field island string
+  field bill_length_mm number
+  field bill_depth_mm number
+  field flipper_length_mm number
+  field body_mass_g number
+  field sex string
+  field year number
+}
+
+query @penguins "penguins" glyph=◆ {
+  source penguins
+}

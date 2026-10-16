@@ -20,7 +20,7 @@ The demo's `/daily` collection holds narrative notebooks, compositions, and dash
 4. **Add the piece:** `pnpm daily new <notebook|composition|dashboard> <family>/<slug> --title "…" --question "…" --industry "…" --analysis "…"`. It copies a template and registers the entry with no findings.
 5. **Write it.** Follow [Writing rules](#writing-rules). Open `/daily/<family>-<slug>` on `pnpm dev:agent` and read it as a visitor would.
 6. **Declare findings** in the catalogue entry and type each computed sentence into the prose. Run `pnpm daily check`. It compiles every piece against its local rows and fails when a sentence in the prose differs from its computed value.
-7. **Look at it** at 1280, 783, and 390 px with `pnpm shot /daily/<slug> --name daily-<slug>`.
+7. **Look at it.** `pnpm daily review <slug>...` screenshots each piece at 1280 px and tiles them into `tmp/daily-review.png`, one image to check a batch. Check the final ones at 1280, 783, and 390 px with `pnpm shot /daily/<slug> --name daily-<slug>`.
 
 ## Catalogue entry
 
@@ -64,6 +64,19 @@ The demo's `/daily` collection holds narrative notebooks, compositions, and dash
 - **Notebooks** have three to six charts. End with `## Takeaway` and `## Limits`. A records table is optional; add one when a reader would want to check rows.
 - **Compositions** are designed graphics, not a default chart in a frame. Use the mark the question needs; the [composition mode](composition-mode.md) table lists them with reference examples. The design note says what a default chart would show and what this design gives up.
 - **Dashboards** link six or so views of one query. The guide lists two or three selections to try and what each should change. Don't spend a panel on instructions.
+
+## Syntax traps
+
+- **Name a field with spaces by quoting the whole reference:** `rate:num="industries.Unemployment rate"`. In `exploreda.eda`, quote the field id: `field "Unemployment rate" number`; the id must match the CSV header.
+- **Keys inside a chart's `{ }` block take source fields, not aliases.** `levels=country.region,country.name` on a hierarchy and `facet.rowVariable=prices.Company` on a facet work; the alias names do not.
+- **A line with one series per category needs `time.splitField=`** with `time.interval`, `time.aggregation`, and `time.measureField`; `color=` alone joins every row into one zigzag.
+- **Facets need `facet.enabled=true facet.type=wrap facet.rowVariable=<field>`.**
+- **Calculations have no string concatenation.** Build labels with a ternary chain: `calc label = hour == 5 ? "05:00" : hour == 6 ? "06:00" : …`. Guard blanks with `x == null ? … :`.
+- **A numeric field cannot be a category,** so give a calc label to anything you color or group by.
+- **Filter a whole notebook in the project**, with a query `filter` step, rather than per chart: `filter @in-2023 years.year = 2023`.
+- **Band annotations take a range:** `band x=2007-12-01..2009-06-30 "Recession"`.
+- **Histogram bins span all the data**, not the axis limits; raise `bins=` to keep bars narrow inside a clipped axis. ECDF charts ignore `x.min` and `x.max`.
+- **Every chart compiles with no warnings.** The corpus test fails on any diagnostic, so a skipped chart or ignored setting never ships silently.
 
 ## Composition traps
 

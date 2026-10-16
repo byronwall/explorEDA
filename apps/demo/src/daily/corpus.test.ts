@@ -8,7 +8,11 @@ import { buildIndex, CHART_WORDS, describeText } from "../../dailyCorpus.mjs";
 import { corpusLinks } from "../../dailyLinks.mjs";
 import catalog from "../../public/daily-viz/catalog.json";
 import datasets from "../../public/daily-viz/datasets.json";
-import type { DailyCatalogEntry, DailyIndex } from "./corpus";
+import {
+  queryProblems,
+  type DailyCatalogEntry,
+  type DailyIndex,
+} from "./corpus";
 import { evaluateFinding, formatValue } from "./findings";
 
 const root = path.resolve(__dirname, "../../public/daily-viz");
@@ -25,10 +29,11 @@ async function context(family: string) {
       readTableText(read(`projects/${family}/${file}`)).rows,
     ])
   );
-  const rows = (query: string) =>
-    evaluateAnalysisQuery(compiled.project, tables, query).rows.map(
-      (row) => row.data
-    );
+  const rows = (query: string) => {
+    const result = evaluateAnalysisQuery(compiled.project, tables, query);
+    expect(queryProblems(result.diagnostics)).toEqual([]);
+    return result.rows.map((row) => row.data);
+  };
   return { project: compiled.project, tables, rows };
 }
 

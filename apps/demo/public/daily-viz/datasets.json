@@ -168,5 +168,105 @@
     "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
     "version": "Git blob 7a47fe57205af5bb5ea57bae760540f7fe781853",
     "notes": "Name, birth year, and death year for the first 60 artists, alphabetically, in the Tate collection's 2014 metadata."
+  },
+  {
+    "id": "flights",
+    "title": "January 2013 flights from New York",
+    "publisher": "Bureau of Transportation Statistics, FAA, and Iowa Environmental Mesonet, via nycflights13",
+    "url": "https://nycflights13.tidyverse.org/",
+    "license": "CC0 1.0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "version": "nycflights13 1.0.2",
+    "notes": "Every flight that left Newark, JFK, or LaGuardia in January 2013 (27,004), with the 16 airlines and hourly weather at each airport. Cancelled flights keep blank departure and arrival times."
+  },
+  {
+    "id": "beijing",
+    "title": "Beijing multi-site air quality, 2016",
+    "publisher": "Beijing Municipal Environmental Monitoring Center, via the UCI Machine Learning Repository",
+    "url": "https://archive.ics.uci.edu/dataset/501/beijing+multi+site+air+quality+data",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "version": "UCI dataset 501 (Chen, 2017), DOI 10.24432/C5RK5G",
+    "notes": "Daily means for 12 monitoring stations through 2016. A day needs 20 valid hours of 24 to get a PM2.5 value; otherwise it is blank."
+  },
+  {
+    "id": "worldbank",
+    "title": "World Development Indicators, 2000–2023",
+    "publisher": "World Bank, with UN Population Division and International Comparison Program figures",
+    "url": "https://data.worldbank.org/",
+    "license": "CC BY 4.0",
+    "license_url": "https://www.worldbank.org/en/about/legal/terms-of-use-for-datasets",
+    "version": "API vintage 2026-07-13",
+    "notes": "Population, GDP per person (PPP, constant 2021 dollars), and life expectancy for 217 economies, 2000 to 2023. Aggregates are excluded; a missing row means no published value."
+  },
+  {
+    "id": "earthquakes",
+    "title": "Earthquakes of magnitude 4.5 or more, 2023",
+    "publisher": "U.S. Geological Survey, ANSS Comprehensive Catalog",
+    "url": "https://earthquake.usgs.gov/data/comcat/",
+    "license": "Public domain (U.S. Geological Survey)",
+    "license_url": "https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits",
+    "version": "ComCat query for 2023, M4.5+",
+    "notes": "Every catalogued earthquake of magnitude 4.5 or more in 2023: 7,643 events with time, place, depth, and magnitude. Depth bands at 70 and 300 km are analyst-defined."
+  },
+  {
+    "id": "unemployment",
+    "title": "Unemployment by industry, 2000–2010",
+    "publisher": "Bureau of Labor Statistics, Current Population Survey, via vega-datasets",
+    "url": "https://github.com/vega/vega-datasets",
+    "license": "BSD-3-Clause (vega-datasets); public U.S. government statistics",
+    "license_url": "https://github.com/vega/vega-datasets/blob/main/LICENSE",
+    "version": "vega-datasets unemployment-across-industries.json",
+    "notes": "Monthly unemployed count (thousands) and unemployment rate for 14 industries, January 2000 to February 2010."
+  },
+  {
+    "id": "penguins",
+    "title": "Palmer Archipelago penguins",
+    "publisher": "Kristen Gorman and Palmer Station LTER, via palmerpenguins",
+    "url": "https://allisonhorst.github.io/palmerpenguins/",
+    "license": "CC0 1.0",
+    "license_url": "https://allisonhorst.github.io/palmerpenguins/LICENSE.html",
+    "version": "palmerpenguins penguins table",
+    "notes": "Bill, flipper, and body-mass measurements for 344 penguins of three species on three islands, 2007 to 2009. Eleven birds have no recorded sex."
+  },
+  {
+    "id": "titanic",
+    "title": "Titanic passengers",
+    "publisher": "Thomas Cason, from Encyclopedia Titanica; kept by Vanderbilt Biostatistics (titanic3)",
+    "url": "https://hbiostat.org/data/",
+    "license": "Public domain data, reused with credit",
+    "license_url": "https://hbiostat.org/data/",
+    "version": "titanic3",
+    "notes": "1,309 passengers with class, sex, age, port, fare, and fate. Crew are not included; 263 ages are blank."
+  },
+  {
+    "id": "measles",
+    "title": "Measles in the United States, 1928–2012",
+    "publisher": "Project Tycho and the CDC, as published by The Wall Street Journal",
+    "url": "https://graphics.wsj.com/infectious-diseases-and-vaccines/",
+    "license": "Project Tycho figures, CC BY; CDC statistics",
+    "license_url": "https://www.tycho.pitt.edu/",
+    "version": "WSJ datum.json, 2015",
+    "notes": "Reported measles cases per 100,000 people for 50 states and DC, 1928 to 2012. Years the publisher marked not available stay blank."
+  },
+  {
+    "id": "bigtech",
+    "title": "Big-tech opening prices, 2010–2023",
+    "publisher": "Yahoo Finance via Kaggle, packaged by TidyTuesday (2023-02-07)",
+    "url": "https://github.com/rfordatascience/tidytuesday/tree/master/data/2023/2023-02-07",
+    "license": "TidyTuesday repository CC0; prices carry no separate license",
+    "license_url": "https://github.com/rfordatascience/tidytuesday/blob/master/LICENSE",
+    "version": "TidyTuesday 2023-02-07",
+    "notes": "Opening share prices for 14 large technology companies, every fifth trading day from January 2010 to January 2023, plus each company's first and last day."
+  },
+  {
+    "id": "elections",
+    "title": "Presidential vote by state, 1976–2016",
+    "publisher": "MIT Election Data and Science Lab",
+    "url": "https://doi.org/10.7910/DVN/42MVDX",
+    "license": "CC0 1.0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "version": "U.S. President 1976–2020 state returns (1976–2016 file)",
+    "notes": "Democratic and Republican shares of all votes cast in 51 jurisdictions for 11 elections. Margin is Democratic minus Republican share, in points."
   }
 ]

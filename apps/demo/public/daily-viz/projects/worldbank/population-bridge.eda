@@ -1,0 +1,18 @@
+eda query=years
+dashboard "Where the world added 1.9 billion people"
+grid columns=12 rowHeight=76
+composition @cp-worldbank-population-bridge width=980 height=620 at=0,0,12,9 {
+  title "Where the world added 1.9 billion people" at=32,28 fontSize=24
+  subtitle "World population in 2000, each region's change to 2023, and the 2023 total. Sub-Saharan Africa added the most people of any region." at=32,72 fontSize=13
+  unit Bridge at=32,130 size=900x380 axis=false {
+    label show=false
+    waterfall Growth mode=bridge measureField=years.population labelWidth=300 {
+      stepField=country.region states[]= states.0.label="In 2000" states.0.filters[]=
+      states.0.filters.0.type=value states.0.filters.0.field=years.year
+      states.0.filters.0.values[]=2000 states.1.label="In 2023" states.1.filters[]=
+      states.1.filters.0.type=value states.1.filters.0.field=years.year
+      states.1.filters.0.values[]=2023
+    }
+  }
+  footnote "World Bank World Development Indicators (UN Population Division figures); CC BY 4.0. 217 economies; regional aggregates excluded." at=32,580 fontSize=10
+}

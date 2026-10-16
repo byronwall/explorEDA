@@ -10,6 +10,8 @@
 //                            add a notebook, composition, or dashboard from a
 //                            template and register it in catalog.json
 //   check                    compile every piece and recompute every finding
+//   review <slug>...         screenshot pieces at 1280 px and tile them into
+//                            tmp/daily-review.png, to look over a batch at once
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { parseArgs } from "node:util";
@@ -62,11 +64,17 @@ async function coverage() {
   );
 }
 
+/** One CSV line's cells, keeping commas inside quotes. */
+const cellsOf = (line) =>
+  (line.match(/("([^"]|"")*"|[^,]*)(,|$)/g) ?? [])
+    .map((cell) => cell.replace(/,$/, "").replace(/^"|"$/g, "").trim())
+    .slice(0, -1);
+
 /** Field lines for a CSV header: number, date, or string from its values. */
 function fieldLines(text) {
   const [header, ...lines] = text.trimEnd().split("\n").slice(0, 200);
-  const names = header.split(",").map((name) => name.trim());
-  const cells = lines.map((line) => line.split(","));
+  const names = cellsOf(header);
+  const cells = lines.map(cellsOf);
   return names.map((name, i) => {
     const values = cells.map((row) => row[i]?.trim()).filter(Boolean);
     const type = values.every((v) => /^-?\d*\.?\d+(e[-+]?\d+)?$/i.test(v))
@@ -74,10 +82,10 @@ function fieldLines(text) {
       : values.every((v) => /^\d{4}-\d{2}-\d{2}/.test(v))
         ? "date"
         : "string";
-    const id = name.replace(/[^A-Za-z0-9_]/g, "_");
-    return id === name
-      ? `  field ${id} ${type}`
-      : `  field ${id} "${name}" ${type}`;
+    // A header that is not a plain word is quoted; the id must match it.
+    return /^[A-Za-z_]\w*$/.test(name)
+      ? `  field ${name} ${type}`
+      : `  field "${name}" ${type}`;
   });
 }
 
@@ -94,13 +102,24 @@ function family(id, files) {
       .basename(file)
       .replace(/\.[^.]+$/, "")
       .replace(/\W+/g, "_");
-    return { source, relative, text: readFileSync(absolute, "utf8") };
+    const text = readFileSync(absolute, "utf8");
+    // A first column with a value on every row and no repeats is the key.
+    const rows = text
+      .trimEnd()
+      .split("\n")
+      .slice(1)
+      .map((line) => cellsOf(line)[0]);
+    const key =
+      rows.every(Boolean) && new Set(rows).size === rows.length
+        ? cellsOf(text.split("\n")[0])[0]
+        : undefined;
+    return { source, relative, text, key };
   });
   const project = [
     `project @${id}`,
     "",
-    ...sources.flatMap(({ source, relative, text }) => [
-      `source @${source} path=${relative} {`,
+    ...sources.flatMap(({ source, relative, text, key }) => [
+      `source @${source}${key && /^\w+$/.test(key) ? ` key=${key}` : ""} path=${relative} {`,
       ...fieldLines(text),
       "}",
       "",
@@ -195,6 +214,44 @@ function newPiece(kind, target, options) {
   );
 }
 
+async function review(slugs) {
+  if (!slugs.length) fail("Usage: pnpm daily review <slug>...");
+  const shots = slugs.map((slug) => {
+    execFileSync(
+      "node",
+      [
+        "scripts/shot.mjs",
+        `/daily/${slug}`,
+        "--name",
+        `daily-review/${slug}`,
+        "--widths",
+        "1280",
+        "--height",
+        "2400",
+      ],
+      { stdio: "inherit" }
+    );
+    return path.resolve(`tmp/daily-review/${slug}-1280.png`);
+  });
+  const { chromium } = await import("playwright");
+  const browser = await chromium.launch();
+  const page = await browser.newPage({
+    viewport: { width: 2400, height: 800 },
+  });
+  const cells = shots
+    .map(
+      (file) =>
+        `<figure><img src="data:image/png;base64,${readFileSync(file).toString("base64")}"><figcaption>${path.basename(file)}</figcaption></figure>`
+    )
+    .join("");
+  await page.setContent(
+    `<style>body{margin:0;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;font:14px sans-serif}img{width:100%;height:1100px;object-fit:cover;object-position:top;border:1px solid #ccc}figure{margin:0}</style>${cells}`
+  );
+  await page.screenshot({ path: "tmp/daily-review.png", fullPage: true });
+  await browser.close();
+  console.log("Wrote tmp/daily-review.png");
+}
+
 const { positionals, values } = parseArgs({
   allowPositionals: true,
   options: {
@@ -209,6 +266,7 @@ const [command, ...rest] = positionals;
 if (command === "coverage") await coverage();
 else if (command === "family") family(rest[0], rest.slice(1));
 else if (command === "new") newPiece(rest[0], rest[1], values);
+else if (command === "review") await review(rest);
 else if (command === "check")
   execFileSync(
     "pnpm",
