@@ -1,23 +1,18 @@
 eda query=linked
-dashboard "Trace a firm-year through an explicit company lookup"
+dashboard "Trace one firm's year back to its company record"
 grid columns=12 rowHeight=76
-id:cat=r.id label="Id"
-invest:num=r.invest label="Invest (source 1947-dollar units)"
-value:num=r.value label="Value (source 1947-dollar units)"
-capital:num=r.capital label="Capital (source 1947-dollar units)"
+invest:num=r.invest label="Investment ($M, 1947)"
+value:num=r.value label="Market value ($M, 1947)"
 firm:cat=r.firm label="Firm"
 year:num=r.year label="Year"
-invest_index:num=r.invest_index label="Invest index (first supplied firm year = 100)"
-value_index:num=r.value_index label="Value index (first supplied firm year = 100)"
-invest_change:num=r.invest_change label="Invest change (source 1947-dollar units)"
-value_change:num=r.value_change label="Value change (source 1947-dollar units)"
-capital_change:num=r.capital_change label="Capital change (source 1947-dollar units)"
-company_mean:num=company.invest_mean label="Firm full-panel mean investment"
-markdown @db-grunfeld-firm-investigation-guide content="<p>Select a category or range to filter the other views. Written findings describe the full snapshot.</p>" title="Explore the linked views" at=0,0,12,2
-scatter @db-grunfeld-firm-investigation-view-1 x=value y=invest color=firm title="Market value and investment" at=0,2,8,5 note="Grunfeld investment panel, Kleiber and Zeileis / statsmodels; public domain." x.title="Value (source 1947-dollar units)" y.title="Invest (source 1947-dollar units)"
-row @db-grunfeld-firm-investigation-view-2 firm title="Select a firm" at=8,2,4,5 note="Grunfeld investment panel, Kleiber and Zeileis / statsmodels; public domain." x.title="Source rows"
-scatter @db-grunfeld-firm-investigation-view-3 x=value_change y=invest_change title="Within-firm annual changes" at=0,7,6,4 note="Grunfeld investment panel, Kleiber and Zeileis / statsmodels; public domain." x.title="Value change (source 1947-dollar units)" y.title="Invest change (source 1947-dollar units)"
-hist @db-grunfeld-firm-investigation-view-4 invest_index bins=24 title="Investment-index distribution" at=6,7,6,4 note="Grunfeld investment panel, Kleiber and Zeileis / statsmodels; public domain." x.title="Invest index (first supplied firm year = 100)" y.title="Source rows"
-scatter @db-grunfeld-firm-investigation-view-5 x=year y=invest color=firm title="Recorded investment through time" at=0,11,8,5 note="Grunfeld investment panel, Kleiber and Zeileis / statsmodels; public domain." x.title="Year" y.title="Invest (source 1947-dollar units)"
-metric @db-grunfeld-firm-investigation-view-6 count title="Firm-years in the selection" at=8,11,4,2 note="Grunfeld investment panel, Kleiber and Zeileis / statsmodels; public domain."
-table @db-grunfeld-firm-investigation-records firm,year,invest,value,invest_change,company_mean title="Matching source records and lookup values" at=0,16,12,5
+invest_index:num=r.invest_index label="Investment index (first year = 100)"
+invest_change:num=r.invest_change label="Change in investment ($M, 1947)"
+value_change:num=r.value_change label="Change in market value ($M, 1947)"
+company_mean:num=company.invest_mean label="Firm mean investment ($M, 1947)"
+scatter @db-grunfeld-firm-investigation-view-1 x=value y=invest color=firm title="Market value and investment" at=0,0,8,5 x.title="Market value ($M, 1947)" y.title="Investment ($M, 1947)"
+row @db-grunfeld-firm-investigation-view-2 firm title="Select a firm" at=8,0,4,5 x.title="Rows"
+scatter @db-grunfeld-firm-investigation-view-3 x=value_change y=invest_change title="Within-firm annual changes" at=0,5,6,4 x.title="Change in market value ($M, 1947)" y.title="Change in investment ($M, 1947)"
+hist @db-grunfeld-firm-investigation-view-4 invest_index bins=24 title="Investment-index distribution" at=6,5,6,4 x.title="Investment index (first year = 100)" y.title="Rows"
+scatter @db-grunfeld-firm-investigation-view-5 x=year y=invest color=firm title="Recorded investment through time" at=0,9,8,5 x.title="Year" y.title="Investment ($M, 1947)"
+metric @db-grunfeld-firm-investigation-view-6 count title="Firm-years in the selection" at=8,9,4,2
+table @db-grunfeld-firm-investigation-records firm,year,invest,value,invest_change,company_mean title="Matching source records and lookup values" at=0,14,12,5

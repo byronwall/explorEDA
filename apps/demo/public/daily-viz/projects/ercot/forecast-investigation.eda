@@ -1,26 +1,20 @@
 eda query=r
-dashboard "Investigate the supplied ERCOT forecast hours"
+dashboard "Investigate the ERCOT forecast, hour by hour"
 grid columns=12 rowHeight=76
-id:cat=r.id label="Id"
-date:date=r.date label="UTC supplied hour"
+date:date=r.date label="Hour (UTC)"
 actual:num=r.actual label="Actual (MWh)"
 forecast:num=r.forecast label="Forecast (MWh)"
-year:num=r.year label="Year"
 month:num=r.month label="Month"
-month_label:cat=r.month_label label="Month label"
-decade:cat=r.decade label="Decade"
-hour:num=r.hour label="Hour (UTC clock hour)"
-hour_label:cat=r.hour_label label="Hour label"
+month_label:cat=r.month_label label="Calendar month"
+hour:num=r.hour label="Hour (UTC)"
+hour_label:cat=r.hour_label label="Clock hour"
 error:num=r.error label="Error (MWh)"
-abs_error:num=r.abs_error label="Abs error (MWh)"
-pct_error:num=r.pct_error label="Pct error (%)"
-abs_pct_error:num=r.abs_pct_error label="Abs pct error (%)"
+abs_error:num=r.abs_error label="Absolute error (MWh)"
 direction:cat=r.direction label="Direction"
-markdown @db-ercot-forecast-investigation-guide content="<p>Select a category or range to filter the other views. Written findings describe the full snapshot.</p>" title="Explore the linked views" at=0,0,12,2
-scatter @db-ercot-forecast-investigation-view-1 x=forecast y=error color=direction title="Forecast level and signed error" at=0,2,8,5 note="EIA / ERCOT; authorized repository snapshot; U.S. public-domain data." x.title="Forecast (MWh)" y.title="Error (MWh)"
-row @db-ercot-forecast-investigation-view-2 direction title="Select an error direction" at=8,2,4,5 note="EIA / ERCOT; authorized repository snapshot; U.S. public-domain data." x.title="Source rows"
-hist @db-ercot-forecast-investigation-view-3 abs_error bins=30 title="Brush an absolute-error range" at=0,7,6,4 note="EIA / ERCOT; authorized repository snapshot; U.S. public-domain data." x.title="Abs error (MWh)" y.title="Source rows"
-boxplot @db-ercot-forecast-investigation-view-4 error color=month_label title="Error distribution by UTC month" at=6,7,6,4 note="EIA / ERCOT; authorized repository snapshot; U.S. public-domain data." y.title="Error (MWh)"
-heatmap @db-ercot-forecast-investigation-view-5 hour_label columnField=month_label aggregation=average measureField=abs_error title="Clock hour and month" at=0,11,8,5 note="EIA / ERCOT; authorized repository snapshot; U.S. public-domain data."
-metric @db-ercot-forecast-investigation-view-6 count title="Supplied hours matching the filters" at=8,11,4,2 note="EIA / ERCOT; authorized repository snapshot; U.S. public-domain data."
-table @db-ercot-forecast-investigation-records date,actual,forecast,error,abs_error,hour_label title="Matching source records and lookup values" at=0,16,12,5
+scatter @db-ercot-forecast-investigation-view-1 x=forecast y=error color=direction title="Forecast level and signed error" at=0,0,8,5 x.title="Forecast (MWh)" y.title="Error (MWh)"
+row @db-ercot-forecast-investigation-view-2 direction title="Select an error direction" at=8,0,4,5 x.title="Rows"
+hist @db-ercot-forecast-investigation-view-3 abs_error bins=30 title="Brush an absolute-error range" at=0,5,6,4 x.title="Absolute error (MWh)" y.title="Rows"
+boxplot @db-ercot-forecast-investigation-view-4 error color=month_label title="Error distribution by UTC month" at=6,5,6,4 y.title="Error (MWh)"
+heatmap @db-ercot-forecast-investigation-view-5 hour_label columnField=month_label aggregation=average measureField=abs_error title="Clock hour and month" at=0,9,8,5
+metric @db-ercot-forecast-investigation-view-6 count title="Supplied hours matching the filters" at=8,9,4,2
+table @db-ercot-forecast-investigation-records date,actual,forecast,error,abs_error,hour_label title="Matching source records and lookup values" at=0,14,12,5

@@ -11,5 +11,4 @@ composition @cp-sunspots-activity-ridges width=960 height=800 at=0,0,12,9 {
     density Activity x=r.activity height=shared opacity=0.6
   }
   footnote "NOAA historical sunspot series via statsmodels; public domain." at=32,746 fontSize=10
-  footnote "Units, denominator, transformation and evidence: companion design note; snapshot findings do not change with filters." at=32,768 fontSize=10
 }

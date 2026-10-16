@@ -1,29 +1,14 @@
-# A historical CO2 rise, one available-week mean per year — design and analytical contract
+# CO₂ rose about 40 ppm between the 1960s and the 1990s
 
-**Question.** What does this historical weekly Mauna Loa snapshot show without filling gaps?
+**Question.** How fast did annual mean CO₂ climb at Mauna Loa?
 
-**Encoding.** A thin path and dots show the available-week annual means. Dots retain the annual sampling unit.
-**Ordering.** Chronological years; no endpoint extension.
-**Baseline.** The concentration axis is not forced to zero because position, not bar length, encodes value.
-**Scale.** One linear concentration scale; partial endpoint years remain included and documented.
-
-## Fixed-snapshot findings
-
-The mean measured concentration in the 1960s was 320.22 ppmv. Eligible rows: 488; full expression, denominator, and contributing IDs are in the
-
-The mean measured concentration in the 1990s was 360.38 ppmv. Eligible rows: 521; full expression, denominator, and contributing IDs are in the
+- **Encoding.** A thin path and dots show each year's mean of its measured weeks. A band behind them spans the lowest to the highest measured week, so the seasonal swing of about 6.5 ppm stays in view.
+- **Ordering.** Chronological years; no endpoint extension.
+- **Baseline.** The concentration axis is not forced to zero because position, not bar length, encodes value.
+- **Scale.** One linear concentration scale; partial endpoint years remain included and documented.
 
 ## What this design gives up
 
-Seasonality and week-level coverage disappear in the annual mean; they remain in the linked source material.
+The band shows how wide each year's swing was, but not when in the year the peak and trough fell. Week-level gaps disappear; the related notebooks keep them.
 
 This is the historical flask-data revision distributed with statsmodels, not the latest NOAA series. Missing weeks stay null. Weekly observations at one station are not global spatial measurements.
-
-## Interactions and tracing
-
-In viewing mode, selecting a repeated unit is intended to filter that repeat across a workspace. Alt-click traces contributing marks. These behaviors come from the inspected baseline contract; this artifact has not been browser-tested. Static findings above describe the unfiltered snapshot.
-
-## Credit
-
-Keeling and Whorf / CDIAC; statsmodels historical snapshot; public domain.
-Full provenance and transformations: [dataset record](../../datasets.json), [fields](fields.json).

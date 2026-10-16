@@ -1,22 +1,16 @@
-# Remove the annual level to see the CO2 calendar
+# Remove the annual level to see the CO₂ calendar
 
-**Reader question.** Which calendar months sit above or below their own year’s measured-week mean?
-
-**Population.** one supplied weekly date. The supplied snapshot is fixed. This article describes the unfiltered data; exploratory chart selections do not update the written findings.
+**Which calendar months sit above or below their own year’s measured-week mean?** Each row is one weekly date.
 
 ```eda
 eda query=r
-id:cat=r.id label="Id"
-date:date=r.date label="Calendar date"
-co2:num=r.co2 label="Co2 (ppmv)"
-year:num=r.year label="Year"
+date:date=r.date label="Date"
+co2:num=r.co2 label="CO₂ (ppm)"
 month:num=r.month label="Month"
-month_label:cat=r.month_label label="Month label"
+month_label:cat=r.month_label label="Calendar month"
 decade:cat=r.decade label="Decade"
-coverage:cat=r.coverage label="Coverage"
-observed:num=r.observed label="Observed (1 measured; 0 missing)"
-annual_center:num=r.annual_center label="Annual center (ppmv)"
-residual:num=r.residual label="Residual (ppmv)"
+annual_center:num=r.annual_center label="Annual mean (ppm)"
+residual:num=r.residual label="Difference from annual mean (ppm)"
 ```
 
 ## 1. The level removed from each observation
@@ -24,7 +18,7 @@ residual:num=r.residual label="Residual (ppmv)"
 The annual center is derived from the same year’s measured weeks. Plotting it against raw concentration shows how much variation remains around that annual reference.
 
 ```eda
-scatter @nb-co2-seasonal-centering-chart-1 x=annual_center y=co2 opacity=0.35 title="The level removed from each observation" x.title="Annual center (ppmv)" y.title="Co2 (ppmv)"
+scatter @nb-co2-seasonal-centering-chart-1 x=annual_center y=co2 opacity=0.35 title="The level removed from each observation" x.title="Annual mean (ppm)" y.title="CO₂ (ppm)"
 ```
 
 ## 2. Weekly deviations from the annual mean
@@ -32,19 +26,19 @@ scatter @nb-co2-seasonal-centering-chart-1 x=annual_center y=co2 opacity=0.35 ti
 The zero line is different for each underlying year even though the residual axis is shared. Long-run level information has intentionally been removed.
 
 ```eda
-line @nb-co2-seasonal-centering-chart-2 x=date y=residual title="Weekly deviations from the annual mean" x.title="Calendar date" y.title="Residual (ppmv)" {
+line @nb-co2-seasonal-centering-chart-2 x=date y=residual title="Weekly deviations from the annual mean" x.title="Date" y.title="Difference from annual mean (ppm)" {
   rule y=0 "Annual measured-week mean"
 }
 ```
 
-**Computed finding.** The mean centered value for May weeks was 2.76 ppmv. This calculation uses 187 eligible rows after the recorded filter and field-completeness rule.
+**Finding.** The mean centered value for May weeks was 2.76 ppm.
 
 ## 3. Centered concentration by calendar month
 
 Order the month labels chronologically. A pooled monthly box summarizes many years and must not be read as one observed calendar year.
 
 ```eda
-boxplot @nb-co2-seasonal-centering-chart-3 residual color=month_label title="Centered concentration by calendar month" y.title="Residual (ppmv)"
+boxplot @nb-co2-seasonal-centering-chart-3 residual color=month_label title="Centered concentration by calendar month" y.title="Difference from annual mean (ppm)"
 ```
 
 ## 4. Calendar pattern within each decade
@@ -55,28 +49,20 @@ Cross month with decade to test whether a pooled seasonal pattern is supported a
 heatmap @nb-co2-seasonal-centering-chart-4 month_label columnField=decade aggregation=average measureField=residual title="Calendar pattern within each decade"
 ```
 
-**Computed finding.** The mean centered value for September weeks was -2.77 ppmv. This calculation uses 184 eligible rows after the recorded filter and field-completeness rule.
+**Finding.** The mean centered value for September weeks was -2.77 ppm.
 
-## 5. Inspect the records behind the comparison
+## 5. The rows behind the charts
 
-The table exposes the source values or prepared values actually used above. Select a row to inspect the calculation inputs; clear chart selections before comparing a live chart with the fixed prose. Notebook selections are local to their chart, not linked across the page.
+Sort a column or select rows to check any value above. Selections in a notebook stay with their own chart.
 
 ```eda
 table @nb-co2-seasonal-centering-records date,co2,annual_center,residual,month_label title="Records behind this comparison"
 ```
 
-## What the comparison supports
+## Takeaway
 
 The centered view makes the within-year rhythm easier to compare while explicitly surrendering the long-run concentration level. Keep the raw plot nearby whenever absolute concentration matters.
 
 ## Limits
 
 Centering by an available-week annual mean does not remove every within-year trend. Incomplete years and uneven missingness can shift the reference. Residuals are not a fitted seasonal model.
-
-## Source and preparation
-
-Keeling and Whorf; Scripps / CDIAC; distributed by statsmodels; Public domain (dataset-specific distributor statement). Historical source version: statsmodels 0.14.6; original historical series, not a live revision
-
-Data credit and license: [co2 provenance](../../datasets.json). The accompanying [field dictionary](fields.json) gives units and missingness for every field. [Preparation source](https://github.com/byronwall/explorEDA/blob/main/docs/research/daily-viz-corpus-2026-10-15/handoff/scripts/prepare.py) records the transformation; the catalogue entry records filters, denominators, source-row IDs, and CSV hashes.
-
-**Reading units.** co2: parts per million by volume (ppmv); annual_center: ppmv; residual: ppmv relative to annual available-week mean.

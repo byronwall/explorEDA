@@ -68,6 +68,15 @@ function matches(row: Row, [field, comparison, expected]: Condition) {
         : String(value ?? "") === String(expected);
     return comparison === "eq" ? equal : !equal;
   }
+  // ISO dates compare as text: "2021-02-14" < "2021-02-14T06:00:00Z".
+  if (typeof expected === "string" && numeric(expected) === null) {
+    const text = String(value ?? "");
+    if (!text) return false;
+    if (comparison === "lt") return text < expected;
+    if (comparison === "le") return text <= expected;
+    if (comparison === "gt") return text > expected;
+    return text >= expected;
+  }
   const number = numeric(value);
   const bound = Number(expected);
   if (number === null) return false;

@@ -13,5 +13,4 @@ composition @cp-grunfeld-firm-shapes width=1080 height=1010 at=0,0,12,9 {
     point Latest x=r.year y=r.invest_index orderField=r.year show=last radius=3
   }
   footnote "Grunfeld investment panel, Kleiber and Zeileis / statsmodels; public domain." at=32,956 fontSize=10
-  footnote "Units, denominator, transformation and evidence: companion design note; snapshot findings do not change with filters." at=32,978 fontSize=10
 }

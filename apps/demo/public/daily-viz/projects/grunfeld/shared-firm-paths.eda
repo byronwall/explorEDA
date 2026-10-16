@@ -12,5 +12,4 @@ composition @cp-grunfeld-shared-firm-paths width=960 height=1030 at=0,0,12,9 {
     path Investment x=r.year y=r.invest orderField=r.year
   }
   footnote "Grunfeld investment panel, Kleiber and Zeileis / statsmodels; public domain." at=32,976 fontSize=10
-  footnote "Units, denominator, transformation and evidence: companion design note; snapshot findings do not change with filters." at=32,998 fontSize=10
 }

@@ -1,8 +1,8 @@
 eda query=decades
-dashboard "The pace of fertility change is not uniform across decades"
+dashboard "Fertility fell fastest in the 1970s"
 grid columns=12 rowHeight=76
 composition @cp-fertility-pace-strips width=1030 height=850 at=0,0,12,9 {
-  title "The pace of fertility change is not uniform across decades" at=32,28 fontSize=24
+  title "Fertility fell fastest in the 1970s" at=32,28 fontSize=24
   subtitle "Color encodes the first-to-last annualized change for each country-decade." at=32,78 fontSize=13
   scale position decades.decade
   scale value Pace center=#f7f7f7 colors=#2166ac,#b2182b transform=linear
@@ -13,5 +13,4 @@ composition @cp-fertility-pace-strips width=1030 height=850 at=0,0,12,9 {
   }
   legend "Births per woman per elapsed year" at=300,118 unit=Countries mark=Pace scale=Pace
   footnote "World Bank, UN and national statistical sources; historical snapshot; CC BY 4.0." at=32,796 fontSize=10
-  footnote "Units, denominator, transformation and evidence: companion design note; snapshot findings do not change with filters." at=32,818 fontSize=10
 }

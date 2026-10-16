@@ -12,5 +12,4 @@ composition @cp-football-team-score-cloud width=960 height=690 at=0,0,12,9 {
   }
   legend Groups at=110,535 unit=Teams mark=Profiles
   footnote "OpenFootball World Cup 2018 group-stage final scores; public-domain dedication." at=32,636 fontSize=10
-  footnote "Units, denominator, transformation and evidence: companion design note; snapshot findings do not change with filters." at=32,658 fontSize=10
 }

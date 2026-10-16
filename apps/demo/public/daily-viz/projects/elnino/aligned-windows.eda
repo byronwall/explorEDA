@@ -14,5 +14,4 @@ composition @cp-elnino-aligned-windows width=960 height=690 at=0,0,12,9 {
   rule "1981–2010 monthly reference" at=5,0 unit=Windows axis=y value.value=0
   legend Windows at=110,535 unit=Windows mark=Anomalies
   footnote "NOAA CPC, ERSST v3b Niño 1+2; historical snapshot; public domain." at=32,636 fontSize=10
-  footnote "Units, denominator, transformation and evidence: companion design note; snapshot findings do not change with filters." at=32,658 fontSize=10
 }

@@ -51,7 +51,7 @@ The demo's `/daily` collection holds narrative notebooks, compositions, and dash
 - `kind` is `notebook` (`.eda.md`), `composition` (`.eda` plus `companion`, a `.design.md` note), or `dashboard` (`.eda` plus a `.guide.md`).
 - `industry` and `analysis` are the browse facets. Reuse a value from `pnpm daily coverage` when one fits; add a new one when it does not.
 - `series` (optional) is `{ "id", "title", "part" }`; see below.
-- A finding has `text` with `{value}`, a Python-style `format` (`.2f`, `,.0f`), and a calculation: `op` is one of `count`, `mean`, `median`, `min`, `max`, `sum`, `quantile` (with `q`), `corr` (with `other`), `share` (percent of rows matching `condition`), `missing_share`, `top_share` (with `k`), `ratio_sums` (with `other`, optional `scale`), or `weighted_mean` (with `weight`). `where` filters rows first: `[["decade", "eq", "1990s"]]`, with `eq`, `ne`, `lt`, `le`, `gt`, `ge`. `query` reads another query of the family.
+- A finding has `text` with `{value}`, a Python-style `format` (`.2f`, `,.0f`), and a calculation: `op` is one of `count`, `mean`, `median`, `min`, `max`, `sum`, `quantile` (with `q`), `corr` (with `other`), `share` (percent of rows matching `condition`), `missing_share`, `top_share` (with `k`), `ratio_sums` (with `other`, optional `scale`), or `weighted_mean` (with `weight`). `where` filters rows first: `[["decade", "eq", "1990s"]]`, with `eq`, `ne`, `lt`, `le`, `gt`, `ge`; ISO dates compare as text, so `["date", "ge", "2021-02-14"]` works. `query` reads another query of the family.
 
 ## Writing rules
 
@@ -64,6 +64,14 @@ The demo's `/daily` collection holds narrative notebooks, compositions, and dash
 - **Notebooks** have three to six charts. End with `## Takeaway` and `## Limits`. A records table is optional; add one when a reader would want to check rows.
 - **Compositions** are designed graphics, not a default chart in a frame. Use the mark the question needs; the [composition mode](composition-mode.md) table lists them with reference examples. The design note says what a default chart would show and what this design gives up.
 - **Dashboards** link six or so views of one query. The guide lists two or three selections to try and what each should change. Don't spend a panel on instructions.
+
+## Composition traps
+
+- **A unit's frame starts after its label column.** With `label width=210`, a unit at `x=32` with `size=900x…` ends at 1142; on a 1010-wide artboard the right side is clipped without an error. Keep `x + label width + frame width` inside the artboard.
+- **A repeat draws 24 repeats unless told otherwise.** Set `limit=` when there are more, or the last ones vanish silently.
+- **A scale spans the field it names.** A span or band whose end field runs past the start field's extent needs `min=` and `max=` on the scale.
+- **Find working syntax in the demo.** Every mark has a reference example (see [composition mode](composition-mode.md#marks)); open it at `/?example=<id>` and use the workspace's dashboard text view (`{ }` in the toolbar) to copy its text.
+- **Size the panel to the artboard:** a grid row is 76 px, so `at=0,0,12,<rows>` needs `rows × 76 ≥ height`.
 
 ## Series and deep dives
 

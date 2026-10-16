@@ -11,5 +11,4 @@ composition @cp-strikes-duration-dot-rows width=960 height=670 at=0,0,12,9 {
     point Strikes x=r.duration spread=swarm radius=4
   }
   footnote "BLS / Kennan strike-duration sample via statsmodels; public domain." at=32,616 fontSize=10
-  footnote "Units, denominator, transformation and evidence: companion design note; snapshot findings do not change with filters." at=32,638 fontSize=10
 }

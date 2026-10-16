@@ -1,25 +1,15 @@
-# When two demand lines hide the forecast miss
+# One storm week broke the ERCOT forecast
 
-**Reader question.** How does subtracting the forecast change the reading of the supplied ERCOT hours?
-
-**Population.** one supplied hour. The supplied snapshot is fixed. This article describes the unfiltered data; exploratory chart selections do not update the written findings.
+**How far off was the day-ahead demand forecast, and in which direction?** Each row is one hour of January and February 2021 on the Texas grid. Most hours are unremarkable. One week is not: Winter Storm Uri reached Texas on February 14, and the grid served far less electricity than the forecast expected.
 
 ```eda
 eda query=r
-id:cat=r.id label="Id"
-date:date=r.date label="UTC supplied hour"
+date:date=r.date label="Hour (UTC)"
 actual:num=r.actual label="Actual (MWh)"
 forecast:num=r.forecast label="Forecast (MWh)"
-year:num=r.year label="Year"
-month:num=r.month label="Month"
-month_label:cat=r.month_label label="Month label"
-decade:cat=r.decade label="Decade"
-hour:num=r.hour label="Hour (UTC clock hour)"
-hour_label:cat=r.hour_label label="Hour label"
+hour:num=r.hour label="Hour (UTC)"
 error:num=r.error label="Error (MWh)"
-abs_error:num=r.abs_error label="Abs error (MWh)"
-pct_error:num=r.pct_error label="Pct error (%)"
-abs_pct_error:num=r.abs_pct_error label="Abs pct error (%)"
+abs_error:num=r.abs_error label="Absolute error (MWh)"
 direction:cat=r.direction label="Direction"
 ```
 
@@ -28,59 +18,57 @@ direction:cat=r.direction label="Direction"
 Begin with the quantities being compared. Both lines use the same MWh scale; closeness is meaningful, but small differences are difficult to follow against the much larger level.
 
 ```eda
-line @nb-ercot-signed-error-chart-1 x=date y=actual,forecast title="Actual and forecast, in the same units" x.title="UTC supplied hour" y.title="Actual (MWh) / Forecast (MWh)"
+line @nb-ercot-signed-error-chart-1 x=date y=actual,forecast title="Actual and forecast, in the same units" x.title="Hour (UTC)" y.title="Actual (MWh) / Forecast (MWh)"
 ```
 
-## 2. Subtract the forecast; keep a zero reference
+## 2. Subtract the forecast and the storm stands alone
 
-A positive value means more electricity was served than forecast; a negative value means less. The reference is a definition, not a target chosen after inspecting the data.
+A positive value means more electricity was served than forecast; a negative value means less. For six weeks the line hugs zero. Then it climbs as demand outruns the forecast in the cold, and falls off a cliff when generators trip offline and the grid sheds load.
 
 ```eda
-line @nb-ercot-signed-error-chart-2 x=date y=error title="Subtract the forecast; keep a zero reference" x.title="UTC supplied hour" y.title="Error (MWh)" {
+line @nb-ercot-signed-error-chart-2 x=date y=error title="Served minus forecast, by hour" x.title="Hour (UTC)" y.title="Error (MWh)" {
   rule y=0 "Actual equals forecast"
 }
 ```
 
-**Computed finding.** The mean signed error was -1,242.9 MWh per supplied hour. This calculation uses 1,417 eligible rows after the recorded filter and field-completeness rule.
+**Finding.** The mean signed error was -1,242.9 MWh per hour.
 
-## 3. How often does each size of signed miss occur?
+**Finding.** From February 14 to 20, the mean signed error was -11,109 MWh per hour.
 
-Remove time temporarily to inspect the distribution. Bins summarize frequency, but they cannot tell whether adjacent extreme observations belong to the same episode.
+**Finding.** Before February 14, the mean signed error was 646 MWh per hour.
 
-```eda
-hist @nb-ercot-signed-error-chart-3 error bins=30 title="How often does each size of signed miss occur?" x.title="Error (MWh)" y.title="Source rows"
-```
+Before the storm the forecast ran slightly low, not high. The two-month average is a storm average; read alone, it would suggest a forecast that runs high every day.
 
-## 4. Absolute error without bin boundaries
+## 3. Most misses are small
 
-Read the cumulative share below a chosen error threshold. Every valid supplied hour has equal weight, unlike an energy-weighted summary.
+Set time aside and count hours by the size of their miss. The tall bars sit near zero. The long left tail is almost entirely storm week, though the histogram alone can't show that those hours are neighbors.
 
 ```eda
-ecdf @nb-ercot-signed-error-chart-4 abs_error direction=below title="Absolute error without bin boundaries" x.title="Abs error (MWh)"
+hist @nb-ercot-signed-error-chart-3 error bins=30 title="Hours by size of miss" x.title="Error (MWh)" y.title="Rows"
 ```
 
-**Computed finding.** The mean absolute error was 2,591.7 MWh per supplied hour. This calculation uses 1,417 eligible rows after the recorded filter and field-completeness rule.
+## 4. How big a miss is typical?
 
-## 5. Inspect the records behind the comparison
-
-The table exposes the source values or prepared values actually used above. Select a row to inspect the calculation inputs; clear chart selections before comparing a live chart with the fixed prose. Notebook selections are local to their chart, not linked across the page.
+The cumulative curve answers threshold questions directly: pick an error size on the x axis and read the share of hours that missed by less.
 
 ```eda
-table @nb-ercot-signed-error-records date,actual,forecast,error,abs_error title="Records behind this comparison"
+ecdf @nb-ercot-signed-error-chart-4 abs_error direction=below title="Share of hours under each miss size" x.title="Absolute error (MWh)"
 ```
 
-## What the comparison supports
+**Finding.** The mean absolute error was 2,591.7 MWh per hour.
 
-The difference chart changes the task from comparing two vertical positions to reading one signed distance from zero. The histogram then distinguishes typical errors from a few unusually large misses.
+## 5. The rows behind the charts
+
+Sort a column or select rows to check any value above. Selections in a notebook stay with their own chart.
+
+```eda
+table @nb-ercot-signed-error-records date,actual,forecast,error,abs_error title="Hourly demand and forecast"
+```
+
+## Takeaway
+
+Plotting the difference turns a two-line comparison into one distance from zero, and that is where the storm becomes obvious. Before summarizing a forecast's error, look for an episode like this one; a single week can set the average for two months.
 
 ## Limits
 
-Actual is electricity served in each supplied hour, not unconstrained demand. These observations alone cannot identify why consumption or supply changed. The UTC snapshot includes partial boundary dates.
-
-## Source and preparation
-
-U.S. Energy Information Administration / ERCOT; U.S. public domain (EIA-authored data). Historical source version: Authorized repository baseline ea8b52ff742f11d1fb89457acabbcd27b0bd04e7
-
-Data credit and license: [ercot provenance](../../datasets.json). The accompanying [field dictionary](fields.json) gives units and missingness for every field. [Preparation source](https://github.com/byronwall/explorEDA/blob/main/docs/research/daily-viz-corpus-2026-10-15/handoff/scripts/prepare.py) records the transformation; the catalogue entry records filters, denominators, source-row IDs, and CSV hashes.
-
-**Reading units.** actual: MWh for the supplied hour; forecast: MWh for the supplied hour; error: MWh for the supplied hour; abs_error: MWh for the supplied hour.
+Actual is electricity served in each hour, not unconstrained demand. Served demand during the storm reflects rolling outages, not what Texans wanted to use, so the storm-week error mixes forecast error with load shedding. The UTC snapshot includes partial boundary dates.

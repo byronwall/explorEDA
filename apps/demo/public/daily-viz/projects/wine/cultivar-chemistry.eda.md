@@ -1,25 +1,13 @@
-# Wine chemistry is not a tasting score
+# Flavanoids pull three wine cultivars apart
 
-**Reader question.** How do recorded flavanoids and color intensity differ across the supplied cultivar groups?
-
-**Population.** one Italian wine chemical analysis. The supplied snapshot is fixed. This article describes the unfiltered data; exploratory chart selections do not update the written findings.
+**How different is the chemistry of wines from three grape cultivars?** Each row is one Italian wine chemical analysis.
 
 ```eda
 eda query=r
-id:cat=r.id label="Id"
-alcohol:num=r.alcohol label="Alcohol (source units)"
-malic_acid:num=r.malic_acid label="Malic acid (source units)"
-ash:num=r.ash label="Ash (source units)"
-ash_alkalinity:num=r.ash_alkalinity label="Ash alkalinity (source units)"
-magnesium:num=r.magnesium label="Magnesium (source units)"
-total_phenols:num=r.total_phenols label="Total phenols (source units)"
-flavanoids:num=r.flavanoids label="Flavanoids (source units)"
-nonflavanoid_phenols:num=r.nonflavanoid_phenols label="Nonflavanoid phenols (source units)"
-proanthocyanins:num=r.proanthocyanins label="Proanthocyanins (source units)"
-color_intensity:num=r.color_intensity label="Color intensity (source units)"
-hue:num=r.hue label="Hue (source units)"
-od_ratio:num=r.od_ratio label="Od ratio (source units)"
-proline:num=r.proline label="Proline (source units)"
+alcohol:num=r.alcohol label="Alcohol (% vol)"
+total_phenols:num=r.total_phenols label="Total phenols"
+flavanoids:num=r.flavanoids label="Flavanoids"
+color_intensity:num=r.color_intensity label="Color intensity"
 cultivar:cat=r.cultivar label="Cultivar"
 ```
 
@@ -28,7 +16,7 @@ cultivar:cat=r.cultivar label="Cultivar"
 The two assays describe different measurements. Their numerical values cannot be compared as though both had one common physical unit.
 
 ```eda
-scatter @nb-wine-cultivar-chemistry-chart-1 x=flavanoids y=color_intensity color=cultivar title="Flavanoids against color intensity" x.title="Flavanoids (source units)" y.title="Color intensity (source units)"
+scatter @nb-wine-cultivar-chemistry-chart-1 x=flavanoids y=color_intensity color=cultivar title="Flavanoids against color intensity" x.title="Flavanoids" y.title="Color intensity"
 ```
 
 ## 2. Flavanoid distributions by cultivar
@@ -36,17 +24,17 @@ scatter @nb-wine-cultivar-chemistry-chart-1 x=flavanoids y=color_intensity color
 Use the same field scale across groups. A difference in group center does not establish a difference in desirability or quality.
 
 ```eda
-boxplot @nb-wine-cultivar-chemistry-chart-2 flavanoids color=cultivar title="Flavanoid distributions by cultivar" y.title="Flavanoids (source units)"
+boxplot @nb-wine-cultivar-chemistry-chart-2 flavanoids color=cultivar title="Flavanoid distributions by cultivar" y.title="Flavanoids"
 ```
 
-**Computed finding.** Mean flavanoids in Cultivar 1 were 2.982 source assay units. This calculation uses 59 eligible rows after the recorded filter and field-completeness rule.
+**Finding.** Mean flavanoids in Cultivar 1 were 2.982 source assay units.
 
 ## 3. Total phenols and flavanoids
 
 A second chemical pair checks whether the grouping is visible beyond the first projection. The relationship remains observational.
 
 ```eda
-scatter @nb-wine-cultivar-chemistry-chart-3 x=total_phenols y=flavanoids color=cultivar title="Total phenols and flavanoids" x.title="Total phenols (source units)" y.title="Flavanoids (source units)"
+scatter @nb-wine-cultivar-chemistry-chart-3 x=total_phenols y=flavanoids color=cultivar title="Total phenols and flavanoids" x.title="Total phenols" y.title="Flavanoids"
 ```
 
 ## 4. Color intensity across the same groups
@@ -54,31 +42,23 @@ scatter @nb-wine-cultivar-chemistry-chart-3 x=total_phenols y=flavanoids color=c
 The cumulative view compares all recorded intensities. It avoids inventing an assay threshold that the source did not define.
 
 ```eda
-ecdf @nb-wine-cultivar-chemistry-chart-4 color_intensity color=cultivar direction=below title="Color intensity across the same groups" x.title="Color intensity (source units)"
+ecdf @nb-wine-cultivar-chemistry-chart-4 color_intensity color=cultivar direction=below title="Color intensity across the same groups" x.title="Color intensity"
 ```
 
-**Computed finding.** Mean flavanoids in Cultivar 3 were 0.781 source assay units. This calculation uses 48 eligible rows after the recorded filter and field-completeness rule.
+**Finding.** Mean flavanoids in Cultivar 3 were 0.781 source assay units.
 
-## 5. Inspect the records behind the comparison
+## 5. The rows behind the charts
 
-The table exposes the source values or prepared values actually used above. Select a row to inspect the calculation inputs; clear chart selections before comparing a live chart with the fixed prose. Notebook selections are local to their chart, not linked across the page.
+Sort a column or select rows to check any value above. Selections in a notebook stay with their own chart.
 
 ```eda
 table @nb-wine-cultivar-chemistry-records cultivar,flavanoids,color_intensity,total_phenols,alcohol title="Records behind this comparison"
 ```
 
-## What the comparison supports
+## Takeaway
 
 The group label supplies context for chemical comparisons, not a scale from bad wine to good wine. Avoid reusing the narrative of a quality-score example on a different source population.
 
 ## Limits
 
 This is the UCI Wine recognition dataset, not the demo’s Wine Quality ratings. The publisher does not specify units for these assay fields; source units are retained. Cultivar labels are not quality rankings.
-
-## Source and preparation
-
-S. Aeberhard and M. Forina / UCI Machine Learning Repository; scikit-learn distribution; Creative Commons Attribution 4.0 International. Historical source version: scikit-learn 1.8.0; original historical series, not a live revision
-
-Data credit and license: [wine provenance](../../datasets.json). The accompanying [field dictionary](fields.json) gives units and missingness for every field. [Preparation source](https://github.com/byronwall/explorEDA/blob/main/docs/research/daily-viz-corpus-2026-10-15/handoff/scripts/prepare.py) records the transformation; the catalogue entry records filters, denominators, source-row IDs, and CSV hashes.
-
-**Reading units.** alcohol: source assay units; publisher does not specify units; total_phenols: source assay units; publisher does not specify units; flavanoids: source assay units; publisher does not specify units; color_intensity: source assay units; publisher does not specify units.

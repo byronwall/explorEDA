@@ -11,5 +11,4 @@ composition @cp-engel-household-share-swarm width=960 height=730 at=0,0,12,9 {
     point Households x=r.food_share spread=swarm radius=3
   }
   footnote "Engel household data via statsmodels; historical Belgian sample; public domain." at=32,676 fontSize=10
-  footnote "Units, denominator, transformation and evidence: companion design note; snapshot findings do not change with filters." at=32,698 fontSize=10
 }

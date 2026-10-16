@@ -1,26 +1,17 @@
 eda query=r
-dashboard "Investigate cultivar chemistry without quality labels"
+dashboard "Investigate wine chemistry by cultivar"
 grid columns=12 rowHeight=76
-id:cat=r.id label="Id"
-alcohol:num=r.alcohol label="Alcohol (source units)"
-malic_acid:num=r.malic_acid label="Malic acid (source units)"
-ash:num=r.ash label="Ash (source units)"
-ash_alkalinity:num=r.ash_alkalinity label="Ash alkalinity (source units)"
-magnesium:num=r.magnesium label="Magnesium (source units)"
-total_phenols:num=r.total_phenols label="Total phenols (source units)"
-flavanoids:num=r.flavanoids label="Flavanoids (source units)"
-nonflavanoid_phenols:num=r.nonflavanoid_phenols label="Nonflavanoid phenols (source units)"
-proanthocyanins:num=r.proanthocyanins label="Proanthocyanins (source units)"
-color_intensity:num=r.color_intensity label="Color intensity (source units)"
-hue:num=r.hue label="Hue (source units)"
-od_ratio:num=r.od_ratio label="Od ratio (source units)"
-proline:num=r.proline label="Proline (source units)"
+alcohol:num=r.alcohol label="Alcohol (% vol)"
+magnesium:num=r.magnesium label="Magnesium (mg/L)"
+flavanoids:num=r.flavanoids label="Flavanoids"
+color_intensity:num=r.color_intensity label="Color intensity"
+hue:num=r.hue label="Hue"
+proline:num=r.proline label="Proline (mg/L)"
 cultivar:cat=r.cultivar label="Cultivar"
-markdown @db-wine-assay-investigation-guide content="<p>Select a category or range to filter the other views. Written findings describe the full snapshot.</p>" title="Explore the linked views" at=0,0,12,2
-scatter @db-wine-assay-investigation-view-1 x=flavanoids y=color_intensity color=cultivar title="Flavanoids and color intensity" at=0,2,8,5 note="Aeberhard and Forina / UCI Wine recognition; CC BY 4.0; source assay units." x.title="Flavanoids (source units)" y.title="Color intensity (source units)"
-row @db-wine-assay-investigation-view-2 cultivar title="Select a supplied cultivar" at=8,2,4,5 note="Aeberhard and Forina / UCI Wine recognition; CC BY 4.0; source assay units." x.title="Source rows"
-hist @db-wine-assay-investigation-view-3 flavanoids bins=24 title="Brush flavanoid values" at=0,7,6,4 note="Aeberhard and Forina / UCI Wine recognition; CC BY 4.0; source assay units." x.title="Flavanoids (source units)" y.title="Source rows"
-scatter @db-wine-assay-investigation-view-4 x=alcohol y=proline color=cultivar title="Alcohol and proline" at=6,7,6,4 note="Aeberhard and Forina / UCI Wine recognition; CC BY 4.0; source assay units." x.title="Alcohol (source units)" y.title="Proline (source units)"
-parallel @db-wine-assay-investigation-view-5 alcohol,magnesium,flavanoids,color_intensity,proline color=cultivar title="Selected chemical axes" at=0,11,8,5 note="Aeberhard and Forina / UCI Wine recognition; CC BY 4.0; source assay units."
-metric @db-wine-assay-investigation-view-6 count title="Wine analyses matching the filters" at=8,11,4,2 note="Aeberhard and Forina / UCI Wine recognition; CC BY 4.0; source assay units."
-table @db-wine-assay-investigation-records cultivar,alcohol,flavanoids,color_intensity,hue,proline title="Matching source records and lookup values" at=0,16,12,5
+scatter @db-wine-assay-investigation-view-1 x=flavanoids y=color_intensity color=cultivar title="Flavanoids and color intensity" at=0,0,8,5 x.title="Flavanoids" y.title="Color intensity"
+row @db-wine-assay-investigation-view-2 cultivar title="Select a cultivar" at=8,0,4,5 x.title="Rows"
+hist @db-wine-assay-investigation-view-3 flavanoids bins=24 title="Brush flavanoid values" at=0,5,6,4 x.title="Flavanoids" y.title="Rows"
+scatter @db-wine-assay-investigation-view-4 x=alcohol y=proline color=cultivar title="Alcohol and proline" at=6,5,6,4 x.title="Alcohol (% vol)" y.title="Proline (mg/L)"
+parallel @db-wine-assay-investigation-view-5 alcohol,magnesium,flavanoids,color_intensity,proline color=cultivar title="Selected chemical axes" at=0,9,8,5
+metric @db-wine-assay-investigation-view-6 count title="Wine analyses matching the filters" at=8,9,4,2
+table @db-wine-assay-investigation-records cultivar,alcohol,flavanoids,color_intensity,hue,proline title="Matching source records and lookup values" at=0,14,12,5

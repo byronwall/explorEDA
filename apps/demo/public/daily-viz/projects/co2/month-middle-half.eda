@@ -1,11 +1,11 @@
 eda query=r
-dashboard "The middle half of centered CO2 weeks, month by month"
+dashboard "CO₂ peaks in May and bottoms out in September"
 grid columns=12 rowHeight=76
 composition @cp-co2-month-middle-half width=960 height=680 at=0,0,12,9 {
-  title "The middle half of centered CO2 weeks, month by month" at=32,28 fontSize=24
+  title "CO₂ peaks in May and bottoms out in September" at=32,28 fontSize=24
   subtitle "Native unweighted quartiles form a band and medians are connected across ordered months." at=32,78 fontSize=13
   scale numeric r.residual zero=true
-  unit Calendar at=90,155 size=820x330 axisTitles.y="CO2 minus annual measured-week mean (ppmv)" {
+  unit Calendar at=90,155 size=820x330 axisTitles.y="CO₂ minus annual measured-week mean (ppm)" {
     label show=false
     summary Weeks groupField=r.month_label measureField=r.residual y=r.residual
   }
@@ -15,5 +15,4 @@ composition @cp-co2-month-middle-half width=960 height=680 at=0,0,12,9 {
     item "Median" mark=Weeks part=median
   }
   footnote "Keeling and Whorf / CDIAC; statsmodels historical snapshot; public domain." at=32,626 fontSize=10
-  footnote "Units, denominator, transformation and evidence: companion design note; snapshot findings do not change with filters." at=32,648 fontSize=10
 }

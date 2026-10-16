@@ -1,22 +1,18 @@
 eda query=r
-dashboard "Investigate CO2 measurements and their coverage"
+dashboard "Investigate CO₂ measurements and their coverage"
 grid columns=12 rowHeight=76
-id:cat=r.id label="Id"
-date:date=r.date label="Calendar date"
-co2:num=r.co2 label="Co2 (ppmv)"
-year:num=r.year label="Year"
+date:date=r.date label="Date"
+co2:num=r.co2 label="CO₂ (ppm)"
 month:num=r.month label="Month"
-month_label:cat=r.month_label label="Month label"
+month_label:cat=r.month_label label="Calendar month"
 decade:cat=r.decade label="Decade"
 coverage:cat=r.coverage label="Coverage"
-observed:num=r.observed label="Observed (1 measured; 0 missing)"
-annual_center:num=r.annual_center label="Annual center (ppmv)"
-residual:num=r.residual label="Residual (ppmv)"
-markdown @db-co2-measurement-investigation-guide content="<p>Select a category or range to filter the other views. Written findings describe the full snapshot.</p>" title="Explore the linked views" at=0,0,12,2
-line @db-co2-measurement-investigation-view-1 x=date y=co2 title="Historical weekly concentrations" at=0,2,8,5 note="Keeling and Whorf / CDIAC; statsmodels historical snapshot; public domain." x.title="Calendar date" y.title="Co2 (ppmv)"
-row @db-co2-measurement-investigation-view-2 decade title="Select a decade" at=8,2,4,5 note="Keeling and Whorf / CDIAC; statsmodels historical snapshot; public domain." x.title="Source rows"
-row @db-co2-measurement-investigation-view-3 coverage title="Measured or missing" at=0,7,6,4 note="Keeling and Whorf / CDIAC; statsmodels historical snapshot; public domain." x.title="Source rows"
-boxplot @db-co2-measurement-investigation-view-4 residual color=month_label title="Centered values by month" at=6,7,6,4 note="Keeling and Whorf / CDIAC; statsmodels historical snapshot; public domain." y.title="Residual (ppmv)"
-hist @db-co2-measurement-investigation-view-5 co2 bins=28 title="Concentration distribution" at=0,11,8,5 note="Keeling and Whorf / CDIAC; statsmodels historical snapshot; public domain." x.title="Co2 (ppmv)" y.title="Source rows"
-metric @db-co2-measurement-investigation-view-6 count title="Supplied weekly slots in selection" at=8,11,4,2 note="Keeling and Whorf / CDIAC; statsmodels historical snapshot; public domain."
-table @db-co2-measurement-investigation-records date,co2,coverage,annual_center,residual title="Matching source records and lookup values" at=0,16,12,5
+annual_center:num=r.annual_center label="Annual mean (ppm)"
+residual:num=r.residual label="Difference from annual mean (ppm)"
+line @db-co2-measurement-investigation-view-1 x=date y=co2 title="Historical weekly concentrations" at=0,0,8,5 x.title="Date" y.title="CO₂ (ppm)"
+row @db-co2-measurement-investigation-view-2 decade title="Select a decade" at=8,0,4,5 x.title="Rows"
+row @db-co2-measurement-investigation-view-3 coverage title="Measured or missing" at=0,5,6,4 x.title="Rows"
+boxplot @db-co2-measurement-investigation-view-4 residual color=month_label title="Centered values by month" at=6,5,6,4 y.title="Difference from annual mean (ppm)"
+hist @db-co2-measurement-investigation-view-5 co2 bins=28 title="Concentration distribution" at=0,9,8,5 x.title="CO₂ (ppm)" y.title="Rows"
+metric @db-co2-measurement-investigation-view-6 count title="Supplied weekly slots in selection" at=8,9,4,2
+table @db-co2-measurement-investigation-records date,co2,coverage,annual_center,residual title="Matching source records and lookup values" at=0,14,12,5

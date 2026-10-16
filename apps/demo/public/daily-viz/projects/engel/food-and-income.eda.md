@@ -1,14 +1,11 @@
 # Food spending can rise while its income share falls
 
-**Reader question.** How do absolute food spending and the food budget share differ across these households?
-
-**Population.** one surveyed working-class household. The supplied snapshot is fixed. This article describes the unfiltered data; exploratory chart selections do not update the written findings.
+**How do absolute food spending and the food budget share differ across these households?** Each row is one surveyed working-class household.
 
 ```eda
 eda query=r
-id:cat=r.id label="Id"
-income:num=r.income label="Income (Belgian francs, 1857)"
-foodexp:num=r.foodexp label="Foodexp (Belgian francs, 1857)"
+income:num=r.income label="Income (francs)"
+foodexp:num=r.foodexp label="Food spending (francs)"
 food_share:num=r.food_share label="Food share (%)"
 income_band:cat=r.income_band label="Income band"
 ```
@@ -18,7 +15,7 @@ income_band:cat=r.income_band label="Income band"
 Both axes preserve the recorded monetary scale. More spending does not necessarily mean a larger fraction of the household budget.
 
 ```eda
-scatter @nb-engel-food-and-income-chart-1 x=income y=foodexp opacity=0.6 title="Food expenditure in historical francs" x.title="Income (Belgian francs, 1857)" y.title="Foodexp (Belgian francs, 1857)"
+scatter @nb-engel-food-and-income-chart-1 x=income y=foodexp opacity=0.6 title="Food expenditure in historical francs" x.title="Income (francs)" y.title="Food spending (francs)"
 ```
 
 ## 2. Replace the amount with its income share
@@ -26,10 +23,10 @@ scatter @nb-engel-food-and-income-chart-1 x=income y=foodexp opacity=0.6 title="
 The vertical denominator is the same income shown horizontally. The mathematical coupling should be acknowledged before proposing an economic explanation.
 
 ```eda
-scatter @nb-engel-food-and-income-chart-2 x=income y=food_share opacity=0.6 title="Replace the amount with its income share" x.title="Income (Belgian francs, 1857)" y.title="Food share (%)"
+scatter @nb-engel-food-and-income-chart-2 x=income y=food_share opacity=0.6 title="Replace the amount with its income share" x.title="Income (francs)" y.title="Food share (%)"
 ```
 
-**Computed finding.** Income and food expenditure had correlation 0.911. This calculation uses 235 eligible rows after the recorded filter and field-completeness rule.
+**Finding.** Income and food expenditure had correlation 0.911.
 
 ## 3. Budget shares across income quartiles
 
@@ -47,28 +44,20 @@ The cumulative curve treats households equally. It answers a household question,
 ecdf @nb-engel-food-and-income-chart-4 food_share direction=below title="The observed distribution of food shares" x.title="Food share (%)"
 ```
 
-**Computed finding.** Income and food share had correlation -0.416. This calculation uses 235 eligible rows after the recorded filter and field-completeness rule.
+**Finding.** Income and food share had correlation -0.416.
 
-## 5. Inspect the records behind the comparison
+## 5. The rows behind the charts
 
-The table exposes the source values or prepared values actually used above. Select a row to inspect the calculation inputs; clear chart selections before comparing a live chart with the fixed prose. Notebook selections are local to their chart, not linked across the page.
+Sort a column or select rows to check any value above. Selections in a notebook stay with their own chart.
 
 ```eda
 table @nb-engel-food-and-income-records income,foodexp,food_share,income_band title="Records behind this comparison"
 ```
 
-## What the comparison supports
+## Takeaway
 
 Absolute spending and budget pressure are different measurements. Show the currency amount and the share together instead of declaring one the more truthful picture.
 
 ## Limits
 
 The historical sample covers working-class Belgian households, not contemporary consumers. Household composition and other omitted factors may affect both income and food spending. Ratios share a denominator with income.
-
-## Source and preparation
-
-Engel historical Belgian household survey; distributed by statsmodels; Public domain (dataset-specific distributor statement). Historical source version: statsmodels 0.14.6; original historical series, not a live revision
-
-Data credit and license: [engel provenance](../../datasets.json). The accompanying [field dictionary](fields.json) gives units and missingness for every field. [Preparation source](https://github.com/byronwall/explorEDA/blob/main/docs/research/daily-viz-corpus-2026-10-15/handoff/scripts/prepare.py) records the transformation; the catalogue entry records filters, denominators, source-row IDs, and CSV hashes.
-
-**Reading units.** income: Belgian francs per year, 1857; foodexp: Belgian francs per year, 1857; food_share: % household income spent on food.

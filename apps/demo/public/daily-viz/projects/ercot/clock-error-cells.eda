@@ -3,7 +3,7 @@ dashboard "Clock-hour error cells need their coverage context"
 grid columns=12 rowHeight=76
 composition @cp-ercot-clock-error-cells width=960 height=540 at=0,0,12,9 {
   title "Clock-hour error cells need their coverage context" at=32,28 fontSize=24
-  subtitle "Each cell encodes the mean absolute miss for one supplied month and UTC clock hour." at=32,78 fontSize=13
+  subtitle "Each cell encodes the mean absolute miss for one month and UTC clock hour." at=32,78 fontSize=13
   scale position clock.hour_label
   scale value Miss transform=linear
   unit Months at=40,165 size=740x42 {
@@ -13,5 +13,4 @@ composition @cp-ercot-clock-error-cells width=960 height=540 at=0,0,12,9 {
   }
   legend "Mean absolute error (MWh)" at=200,115 unit=Months mark=Error scale=Miss
   footnote "EIA / ERCOT; authorized repository snapshot; U.S. public-domain data." at=32,486 fontSize=10
-  footnote "Units, denominator, transformation and evidence: companion design note; snapshot findings do not change with filters." at=32,508 fontSize=10
 }

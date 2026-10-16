@@ -1,19 +1,15 @@
-# An annual temperature mean does not show the warmest month
+# The annual mean hides a 6 °C swing inside each year
 
-**Reader question.** Do years with high means also have unusually wide within-year temperature ranges?
-
-**Population.** one year. The supplied snapshot is fixed. This article describes the unfiltered data; exploratory chart selections do not update the written findings.
+**Do years with high means also have unusually wide within-year temperature ranges?** Each row is one year.
 
 ```eda
 eda query=annual
-id:cat=annual.id label="Id"
 year:num=annual.year label="Year"
 mean:num=annual.mean label="Mean (°C)"
 low:num=annual.low label="Low (°C)"
 high:num=annual.high label="High (°C)"
 range:num=annual.range label="Range (°C)"
-months:num=annual.months label="Months (observed months)"
-anomaly:num=annual.anomaly label="Anomaly (°C)"
+months:num=annual.months label="Months observed"
 ```
 
 ## 1. Annual mean and observed extremes
@@ -32,14 +28,14 @@ The range adds information not encoded by the mean. A year may have a high mean 
 scatter @nb-elnino-annual-range-chart-2 x=mean y=range title="Mean temperature against seasonal range" x.title="Mean (°C)" y.title="Range (°C)"
 ```
 
-**Computed finding.** The average within-year observed monthly range was 5.86 °C. This calculation uses 61 eligible rows after the recorded filter and field-completeness rule.
+**Finding.** The average within-year observed monthly range was 5.86 °C.
 
 ## 3. How unusual is a wide annual range?
 
 This histogram counts years equally. It is not a distribution of monthly temperatures and cannot identify when the extremes occurred.
 
 ```eda
-hist @nb-elnino-annual-range-chart-3 range bins=15 title="How unusual is a wide annual range?" x.title="Range (°C)" y.title="Source rows"
+hist @nb-elnino-annual-range-chart-3 range bins=15 title="How unusual is a wide annual range?" x.title="Range (°C)" y.title="Rows"
 ```
 
 ## 4. Check the number of observed months
@@ -47,31 +43,23 @@ hist @nb-elnino-annual-range-chart-3 range bins=15 title="How unusual is a wide 
 A min–max comparison becomes unreliable when years have different opportunities to record an extreme. The explicit month count checks that denominator.
 
 ```eda
-scatter @nb-elnino-annual-range-chart-4 x=year y=months title="Check the number of observed months" x.title="Year" y.title="Months (observed months)"
+scatter @nb-elnino-annual-range-chart-4 x=year y=months title="Check the number of observed months" x.title="Year" y.title="Months observed"
 ```
 
-**Computed finding.** The largest within-year observed monthly range was 7.93 °C. This calculation uses 61 eligible rows after the recorded filter and field-completeness rule.
+**Finding.** The largest within-year observed monthly range was 7.93 °C.
 
-## 5. Inspect the records behind the comparison
+## 5. The rows behind the charts
 
-The table exposes the source values or prepared values actually used above. Select a row to inspect the calculation inputs; clear chart selections before comparing a live chart with the fixed prose. Notebook selections are local to their chart, not linked across the page.
+Sort a column or select rows to check any value above. Selections in a notebook stay with their own chart.
 
 ```eda
 table @nb-elnino-annual-range-records year,months,low,mean,high,range title="Records behind this comparison"
 ```
 
-## What the comparison supports
+## Takeaway
 
 An observed-range band is useful only when it is named honestly. Pair it with the annual mean, and resist describing the band as uncertainty about that mean.
 
 ## Limits
 
 The lower and upper bounds are observed monthly minima and maxima, not confidence intervals. Annual summaries give months equal weight and erase timing within the year.
-
-## Source and preparation
-
-NOAA Climate Prediction Center, ERSST v3b; distributed by statsmodels; Public domain (dataset-specific distributor statement). Historical source version: statsmodels 0.14.6; original historical series, not a live revision
-
-Data credit and license: [elnino provenance](../../datasets.json). The accompanying [field dictionary](fields.json) gives units and missingness for every field. [Preparation source](https://github.com/byronwall/explorEDA/blob/main/docs/research/daily-viz-corpus-2026-10-15/handoff/scripts/prepare.py) records the transformation; the catalogue entry records filters, denominators, source-row IDs, and CSV hashes.
-
-**Reading units.** year: year; mean: degrees Celsius; low: degrees Celsius; high: degrees Celsius; range: degrees Celsius; months: observed months.

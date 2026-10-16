@@ -16,5 +16,4 @@ composition @cp-longley-counts-not-rates width=1090 height=660 at=0,0,12,9 {
     path Count x=r.year y=r.armed orderField=r.year
   }
   footnote "Longley historical employment benchmark via statsmodels; public domain." at=32,606 fontSize=10
-  footnote "Units, denominator, transformation and evidence: companion design note; snapshot findings do not change with filters." at=32,628 fontSize=10
 }

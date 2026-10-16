@@ -1,18 +1,15 @@
 # The clock-hour pattern depends on which days were supplied
 
-**Reader question.** Do recurring UTC hours have similar signed and absolute errors within each supplied month?
-
-**Population.** one month and UTC clock hour. The supplied snapshot is fixed. This article describes the unfiltered data; exploratory chart selections do not update the written findings.
+**Do recurring UTC hours have similar signed and absolute errors within each month?** Each row is one month and UTC clock hour.
 
 ```eda
 eda query=clock
-id:cat=clock.id label="Id"
-month_label:cat=clock.month_label label="Month label"
-hour:num=clock.hour label="Hour (UTC clock hour)"
-hour_label:cat=clock.hour_label label="Hour label"
+month_label:cat=clock.month_label label="Calendar month"
+hour:num=clock.hour label="Hour (UTC)"
+hour_label:cat=clock.hour_label label="Clock hour"
 error:num=clock.error label="Error (MWh)"
-abs_error:num=clock.abs_error label="Abs error (MWh)"
-hours:num=clock.hours label="Hours (supplied hours)"
+abs_error:num=clock.abs_error label="Absolute error (MWh)"
+hours:num=clock.hours label="Hours"
 ```
 
 ## 1. Signed error by UTC clock hour and month
@@ -31,14 +28,14 @@ Absolute errors measure miss size regardless of sign. A cell can have a small si
 heatmap @nb-ercot-clock-coverage-chart-2 hour_label columnField=month_label aggregation=average measureField=abs_error title="Absolute error asks a different question"
 ```
 
-**Computed finding.** The best-supported month-hour cell contains 31 supplied hours. This calculation uses 53 eligible rows after the recorded filter and field-completeness rule.
+**Finding.** The best-supported month-hour cell contains 31 hours.
 
 ## 3. How much support is behind each mean?
 
 Pair the estimated mean with the actual contributing-hour count. This makes unequal support visible rather than encoding a sparse cell as if it were a complete month.
 
 ```eda
-scatter @nb-ercot-clock-coverage-chart-3 x=hours y=abs_error color=month_label title="How much support is behind each mean?" x.title="Hours (supplied hours)" y.title="Abs error (MWh)"
+scatter @nb-ercot-clock-coverage-chart-3 x=hours y=abs_error color=month_label title="How much support is behind each mean?" x.title="Hours" y.title="Absolute error (MWh)"
 ```
 
 ## 4. Variation across clock-hour means
@@ -49,28 +46,20 @@ These boxes summarize cell means, not individual hourly errors. They help compar
 boxplot @nb-ercot-clock-coverage-chart-4 error color=month_label title="Variation across clock-hour means" y.title="Error (MWh)"
 ```
 
-**Computed finding.** The least-supported month-hour cell contains 1 supplied hour. This calculation uses 53 eligible rows after the recorded filter and field-completeness rule.
+**Finding.** The least-supported month-hour cell contains 1 hour.
 
-## 5. Inspect the records behind the comparison
+## 5. The rows behind the charts
 
-The table exposes the source values or prepared values actually used above. Select a row to inspect the calculation inputs; clear chart selections before comparing a live chart with the fixed prose. Notebook selections are local to their chart, not linked across the page.
+Sort a column or select rows to check any value above. Selections in a notebook stay with their own chart.
 
 ```eda
 table @nb-ercot-clock-coverage-records month_label,hour_label,hours,error,abs_error title="Records behind this comparison"
 ```
 
-## What the comparison supports
+## Takeaway
 
 Read the count before comparing the error. The table preserves each cell denominator so an apparently unusual hour can be distinguished from a scarcely observed boundary cell.
 
 ## Limits
 
 These are means over available dates for a UTC clock hour. Partial boundary months have fewer observations, and the clock is not local Texas time. A mean of these cells is not automatically an hour-weighted monthly mean.
-
-## Source and preparation
-
-U.S. Energy Information Administration / ERCOT; U.S. public domain (EIA-authored data). Historical source version: Authorized repository baseline ea8b52ff742f11d1fb89457acabbcd27b0bd04e7
-
-Data credit and license: [ercot provenance](../../datasets.json). The accompanying [field dictionary](fields.json) gives units and missingness for every field. [Preparation source](https://github.com/byronwall/explorEDA/blob/main/docs/research/daily-viz-corpus-2026-10-15/handoff/scripts/prepare.py) records the transformation; the catalogue entry records filters, denominators, source-row IDs, and CSV hashes.
-
-**Reading units.** error: MWh for the supplied hour; abs_error: MWh for the supplied hour; hours: supplied hours.

@@ -1,8 +1,8 @@
 eda query=r
-dashboard "GDP growth folded around zero, not the GDP level"
+dashboard "Fifty years of U.S. growth, folded into one band"
 grid columns=12 rowHeight=76
 composition @cp-macro-growth-horizon width=960 height=630 at=0,0,12,9 {
-  title "GDP growth folded around zero, not the GDP level" at=32,28 fontSize=24
+  title "Fifty years of U.S. growth, folded into one band" at=32,28 fontSize=24
   subtitle "A native horizon mark folds positive and negative annualized quarterly growth into compact bands." at=32,78 fontSize=13
   scale numeric r.date nice=false
   unit Growth at=95,170 size=805x230 axisTitles.x="Historical quarter" {
@@ -11,5 +11,4 @@ composition @cp-macro-growth-horizon width=960 height=630 at=0,0,12,9 {
   }
   note "Blue is positive growth; red is negative. Bands fold magnitude. Return to the line chart for exact signed height." at=95,465 leader=false
   footnote "U.S. macroeconomic sources via statsmodels; historical vintage; public domain." at=32,576 fontSize=10
-  footnote "Units, denominator, transformation and evidence: companion design note; snapshot findings do not change with filters." at=32,598 fontSize=10
 }

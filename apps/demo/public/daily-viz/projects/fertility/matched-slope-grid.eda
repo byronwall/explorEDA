@@ -13,5 +13,4 @@ composition @cp-fertility-matched-slope-grid width=1080 height=1100 at=0,0,12,9 
     point Endpoints x=paired.year y=paired.fertility radius=3
   }
   footnote "World Bank, UN and national statistical sources; historical snapshot; CC BY 4.0." at=32,1046 fontSize=10
-  footnote "Units, denominator, transformation and evidence: companion design note; snapshot findings do not change with filters." at=32,1068 fontSize=10
 }
