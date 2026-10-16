@@ -1,0 +1,50 @@
+dashboard "Penguin field notes"
+field bill_length_mm label="Bill length (mm)"
+field bill_depth_mm label="Bill depth (mm)"
+field flipper_length_mm label="Flipper length (mm)"
+field body_mass_g label="Body mass (g)"
+
+scale @species field=species map=Adelie:#3479a8,Chinstrap:#c77a45,Gentoo:#4b9688
+
+scatter @size x=flipper_length_mm y=body_mass_g color=species colorScale=species
+scatter @bill x=bill_length_mm y=bill_depth_mm color=species colorScale=species
+row species color=species colorScale=species
+row island
+boxplot @mass body_mass_g color=species colorScale=species
+hist @flipper flipper_length_mm
+table @all
+parallel @shape bill_length_mm,bill_depth_mm,flipper_length_mm,body_mass_g,island color=species colorScale=species
+
+view "Penguin field notes" {
+  layout {
+    4: size size species island
+    4: bill mass flipper
+    4: all
+    4: shape
+  }
+}
+
+view "Gentoo on Biscoe" {
+  species select.species=Gentoo
+  island select.island=Biscoe
+  layout {
+    3: species island
+    4: size all
+  }
+}
+
+view "Field report" {
+  theme newsprint
+  size {
+    title="Bigger flippers, heavier birds"
+    subtitle="Body mass rises with flipper length, and Gentoo are the largest"
+    source="Palmer Station LTER; Gorman, Williams and Fraser (2014)"
+  }
+  species title="Adelie outnumber the rest" subtitle="Penguins counted by species"
+  bill title="Bills separate the species" subtitle="Bill length against bill depth"
+  mass title="Gentoo carry the most weight" subtitle="Body mass by species"
+  layout {
+    5: size:7 species:5
+    5: bill:7 mass:5
+  }
+}

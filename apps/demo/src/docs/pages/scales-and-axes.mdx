@@ -11,10 +11,19 @@
 - Tick density sets about how many tick values an axis shows, from 2 to 12.
 - Grid lines can be turned on or off for each axis.
 - An axis range sets the values it shows. Leave a side blank to follow the data. Marks outside are hidden, not filtered.
+- When a range hides marks, a small marker sits at that end of the axis. Hover or focus it to see how many rows are hidden, and reset that end alone. Scatter, bar, histogram, row, line, and box charts show it.
+
+## Axes that hold still
+
+A chart's axes span all rows until you change them on that chart. Filtering or selecting in other charts changes which marks are drawn, not the axes, so bars and points can be compared before and after. If a filtered summary grows past the all-rows range, the axis grows to fit it until the filter clears, and never shrinks below the all-rows range.
 
 ## Axis titles
 
 Set each axis title and its units in a chart's **Labels** settings. A blank title uses the field's label.
+
+## Axis fields
+
+On a scatter plot, right-click an axis title or tick label and choose **Change X field…** or **Change Y field…** to plot another field without opening settings. The new field starts from its own data: the axis's range, log scale, and custom title reset, and grid lines stay. One undo puts the old field back with its settings.
 
 ## Try it
 

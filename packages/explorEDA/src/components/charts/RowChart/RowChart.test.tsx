@@ -16,6 +16,9 @@ const settings = {
     "category"
   ),
   id: "categories",
+  // Tall rows leave room for three, so the rest gather in Other.
+  minRowHeight: 30,
+  maxRowHeight: 50,
 };
 function Harness() {
   const [height, setHeight] = useState(160);

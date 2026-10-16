@@ -138,6 +138,34 @@ Twelve fictional correspondents exchange messages with one mailbox from 2019 thr
 node --experimental-strip-types apps/data-samples/message_log.ts apps/demo/public/datasets/message-log.csv
 ```
 
+## Product events
+
+- File: `product-events.csv`
+- Size: 11,296 rows and 5 fields
+- Demo: `?example=product-funnel`, `?example=product-retention`
+- Use: an event log for funnels and retention: one row per event, with a user, an event name, and a UTC time
+- Generation: fixed seed in `apps/data-samples/product_events.ts`
+
+About 2,000 visitors to a fictional app from January to June 2025. Visitors move through visit, signup, create_project, invite_team, and upgrade at rates that differ by channel, and signed-up users return in later calendar weeks (Monday to Sunday, UTC) less often as time passes. The log keeps the mess real logs have: repeated visits, some invites sent before a first project, upgrades that skip the invite, and 60 anonymous visits with no user. The data is synthetic.
+
+```sh
+node --experimental-strip-types apps/data-samples/product_events.ts apps/demo/public/datasets/product-events.csv
+```
+
+## Room bookings
+
+- File: `room-bookings.csv`
+- Size: 673 rows and 8 fields
+- Demo: `?example=room-bookings`
+- Use: intervals for a timeline: one row per booking, with a room, a UTC start and end, a team, and a status
+- Generation: fixed seed in `apps/data-samples/room_bookings.ts`
+
+Four weeks of bookings, March 3 to 30, 2025, across 12 fictional rooms. Most are short weekday meetings between 8:00 and 18:00, with multi-day workshops in the large rooms. Some rooms are double-booked, about 7% of bookings are cancelled, and three holds have a blank end because they have not ended. The data is synthetic.
+
+```sh
+node --experimental-strip-types apps/data-samples/room_bookings.ts apps/demo/public/datasets/room-bookings.csv
+```
+
 ## Driving shifts into reverse
 
 - File: `driving.csv`
@@ -463,3 +491,21 @@ One row per economy with its code, region, income group, tonnes of CO2 per perso
 ```sh
 node --experimental-strip-types apps/data-samples/prepare/co2-per-capita.ts
 ```
+
+## Lab Budget
+
+- File: `lab-budget.csv`
+- Size: 96 rows and 6 fields
+- Use: a plan-to-actual waterfall, with a scenario column, line items, groups, and quarters, and donuts of actual amounts by size
+- Generation: fixed values in `apps/data-samples/lab_budget.ts`
+
+Each quarter has a plan row and an actual row for twelve line items in three groups. Amounts are in thousands of dollars: funding is positive and spending negative, so a scenario's total is the lab's net position.
+
+## Battery Day
+
+- File: `battery-day.csv`
+- Size: 45 rows and 4 fields
+- Use: a running-total waterfall of a battery's state of charge through one day
+- Generation: fixed daily curves in `apps/data-samples/battery_day.ts`
+
+Each row is one hour's energy flow in kWh: solar and grid import are positive, and building load and grid export are negative. Hours with no flow of a kind have no row.

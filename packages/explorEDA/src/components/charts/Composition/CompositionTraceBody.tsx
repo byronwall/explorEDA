@@ -24,6 +24,8 @@ export function CompositionTraceBody({ trace }: { trace: CompositionTrace }) {
   const waffle = glyph?.datum.waffle;
   const bar = glyph?.datum.bar;
   const span = glyph?.datum.span;
+  const waterfall = glyph?.datum.waterfall;
+  const donut = glyph?.datum.donut;
   return (
     <div className="space-y-2" aria-label="Composition trace">
       {glyph && span && (
@@ -60,6 +62,57 @@ export function CompositionTraceBody({ trace }: { trace: CompositionTrace }) {
               : ""}
             , after the active filters
           </TraceReadout>
+        </TraceSection>
+      )}
+      {glyph && waterfall && (
+        <TraceSection heading={`${glyph.markName} · ${glyph.datum.bin.label}`}>
+          <TraceReadout label={waterfall.kind === "step" ? "Change" : "Total"}>
+            <TraceSwatch color={glyph.fill} />{" "}
+            {formatCalcValue(glyph.datum.value, "number")}
+          </TraceReadout>
+          <TraceReadout label="Calculation">
+            {waterfall.kind === "step"
+              ? waterfall.mode === "bridge"
+                ? `The ${waterfall.stepField} value's end state minus its start state`
+                : `This ${waterfall.stepField} value's measure, added to the running total`
+              : waterfall.kind === "subtotal"
+                ? "The running total through this group"
+                : waterfall.mode === "bridge"
+                  ? "This state's total over its rows"
+                  : waterfall.kind === "start"
+                    ? "The start value set on the mark"
+                    : "The start value plus every step"}
+            , over this repeat&apos;s rows after the active filters
+          </TraceReadout>
+          {waterfall.states?.map((state, index) => (
+            <TraceReadout key={index} label={state.label}>
+              {formatCalcValue(state.value, "number")}
+            </TraceReadout>
+          ))}
+        </TraceSection>
+      )}
+      {glyph && donut && (
+        <TraceSection heading={`${glyph.markName} · ${glyph.datum.bin.label}`}>
+          <TraceReadout label="Share">
+            <TraceSwatch color={glyph.fill} />{" "}
+            {new Intl.NumberFormat("en-US", {
+              style: "percent",
+              maximumFractionDigits: 1,
+            }).format(donut.share)}
+          </TraceReadout>
+          <TraceReadout label="Calculation">
+            {formatCalcValue(glyph.datum.value, "number")} ÷{" "}
+            {formatCalcValue(donut.total, "number")},{" "}
+            {donut.aggregation === "count"
+              ? "rows"
+              : `the sum of ${donut.measureField}`}{" "}
+            in this repeat after the active filters
+          </TraceReadout>
+          {donut.members && (
+            <TraceReadout label="Pools">
+              {donut.members.join(", ")}
+            </TraceReadout>
+          )}
         </TraceSection>
       )}
       {glyph && waffle && (

@@ -1,0 +1,64 @@
+## A notebook reads top to bottom
+
+A notebook is an analysis written as prose, with its charts in line. It's one Markdown file in a [project folder](/docs/project-folders), named `<name>.eda.md`. Text outside the fences is prose. Each fenced `eda` block holds [dashboard text](/docs/dashboard-text), and its charts appear where the block sits, at the full width of the column.
+
+## Try it with the sample notebook
+
+You need [Node.js](https://nodejs.org) 22 or later. In a terminal, in any empty folder:
+
+1. **Copy and open the sample.** Run `npx exploreda --example forecast`. It copies a project of Texas electricity demand into `./exploreda-example-forecast` and opens its notebook, `forecast.eda.md`.
+2. **Edit the prose.** Hover the first paragraph, choose **Edit text**, add a sentence, and choose **Done**. That paragraph changes in `forecast.eda.md`, and nothing else does.
+3. **Edit a block's text.** Hover the first chart and choose **Edit block**. Change its `title=`, and the chart's title changes as you type. Choose **Done**.
+4. **Edit a chart in the page.** Open **Chart settings** on **Actual minus forecast** and set the series' **Line width** to 3. The block gains one line, `series delta lineWidth=3`.
+5. **Reopen it.** Stop the server with Ctrl-C and run the command again. The notebook opens with your edits, since they're in the file.
+
+````markdown
+# Did Texas demand run off forecast?
+
+ERCOT forecasts each hour's demand a day ahead.
+
+```eda
+eda query=demand
+time:date=demand.time label=Hour
+actual:num=demand.actual
+forecast:num=demand.forecast
+```
+
+Subtracting the forecast turns the question into one line.
+
+```eda
+calc delta = actual - forecast   # positive: demand above forecast
+line @delta x=time y=delta title="Actual minus forecast" {
+  rule y=0 "On forecast"
+}
+```
+
+The miss widens after February 15.
+````
+
+Open the project with `npx exploreda`, and the notebook is listed under **Notebooks**. Run `npx exploreda --example forecast` for the full forecast notebook.
+
+## How blocks work together
+
+- **Definitions reach the whole notebook.** A calculation or field alias in any block applies to every block, in any order. Define `delta` once and chart it anywhere.
+- **A block can hold several charts.** They stack in the order you write them. A block with only definitions shows what it defines.
+- **The data comes from the project.** `eda query=demand` picks the query every block charts. Without one, the notebook charts the project's first query.
+- **Clicks and brushes stay with their chart.** Selecting a range in one chart doesn't narrow the others, so a zoomed window can sit below the full series. A `filter` line still narrows every chart.
+
+## Edit the text or the charts
+
+Both edits change the same file, and the notebook updates as you go.
+
+- **In the app.** Hover a block and choose **Edit block** to change its text, with charts updating as you type. Choose **Edit text** on prose to change its Markdown.
+- **Through a chart.** Change a chart in its settings, axes, or filters, and the notebook text changes to match. Only the changed setting is rewritten, so comments, spacing, and your field names stay as you wrote them. A new chart type rewrites that one chart's line.
+- **In your editor.** Save the file in any editor and the open page reloads it.
+
+When a block's text has a problem, the block says what it is and on which line. Its charts keep showing the last version that worked until the text is fixed. A chart change that can't be written as text is undone, with a note saying why.
+
+## Check a notebook from the command line
+
+```bash
+npx exploreda-dsl check forecast.eda.md
+```
+
+`check` reads the notebook's project data and lists each problem with its line and a suggested fix. Add `--data rows.csv` to check against a data file instead. `exploreda-dsl fmt forecast.eda.md --write` tidies the text inside `eda` blocks and leaves the prose alone.

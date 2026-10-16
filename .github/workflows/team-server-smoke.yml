@@ -1,0 +1,61 @@
+name: Team server smoke
+
+# Builds the team server image from the packed exploreda tarball and runs it
+# with docker/compose.yaml: it serves the app, sets up an admin, takes an
+# upload, and keeps everything across a container restart. A second run
+# starts it on a data folder that 0.1.0 wrote, as an upgrade would. A third
+# runs the demo in docker/demo with its seeded Postgres warehouse.
+on:
+  pull_request:
+    paths:
+      - "packages/explorEDA/**"
+      - "apps/app/**"
+      - "docker/**"
+      - "scripts/team-server-smoke.mjs"
+      - "scripts/demo-smoke.mjs"
+      - ".github/workflows/team-server-smoke.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: team-server-smoke-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: "pnpm"
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Build the package and its app
+        run: |
+          pnpm --filter exploreda build
+          pnpm --filter app build
+
+      - name: Pack
+        working-directory: packages/explorEDA
+        run: pnpm pack --pack-destination ../../pack
+
+      - name: Run the image with Docker Compose
+        timeout-minutes: 10
+        run: node scripts/team-server-smoke.mjs pack
+
+      - name: Start the image on data from 0.1.0
+        timeout-minutes: 10
+        env:
+          EXPLOREDA_SMOKE_DATA: packages/explorEDA/src/server/team/fixtures/data-v1
+        run: node scripts/team-server-smoke.mjs pack
+
+      - name: Run the demo with its database
+        timeout-minutes: 10
+        run: node scripts/demo-smoke.mjs pack

@@ -1,0 +1,18 @@
+eda query=order-list
+dashboard "Customer segments"
+
+view Overview {
+  metric @orders count title=Orders
+  row customer.segment title="Orders by segment"
+  row customer.region title="Orders by region"
+  row orders.status title="Orders by status"
+  row customer.name title="Most frequent customers" topN=12
+  table @rows orders.order_id,customer.name,customer.segment,orders.channel,orders.status,orders.ordered_at {
+    title=Orders
+  }
+  layout {
+    2: orders
+    4: customer.segment customer.region orders.status
+    5: customer.name rows
+  }
+}

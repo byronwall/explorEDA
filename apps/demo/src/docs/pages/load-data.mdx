@@ -1,18 +1,73 @@
 ## Open your data
 
-On the demo's home page, drop a CSV or JSON file anywhere on the page, or use the upload box. The file opens through the same import path either way.
+On the demo's home page, drop a file anywhere on the page, or use the upload box. Either way, the file opens through the same reader. **Add source** in the Schema diagram reads the same formats.
+
+| Format     | Files                                   | What opens                                                  |
+| ---------- | --------------------------------------- | ----------------------------------------------------------- |
+| CSV        | `.csv`, `.txt`                          | One table. Comma, semicolon, tab, or pipe delimiters        |
+| TSV        | `.tsv`, `.tab`                          | One table, split on tabs                                    |
+| JSON       | `.json`                                 | An object or array of objects. Nested objects become fields |
+| JSON Lines | `.jsonl`, `.ndjson`                     | One object per line                                         |
+| Excel      | `.xlsx`                                 | One sheet. With several sheets, you choose which to open    |
+| Parquet    | `.parquet`                              | One file, with the types its schema declares                |
+| Arrow      | `.arrow`, `.arrows`, `.feather`, `.ipc` | An Arrow IPC file or stream, including Feather V2           |
 
 <Terms
   items={[
-    ["CSV", "Opens as rows, with a field summary to start from."],
+    ["Data file", "Opens as rows, with a field summary to start from."],
     ["Full analysis JSON", "Reopens its rows and its charts together."],
     ["Project file", "Opens several related tables as one project."],
   ]}
 />
 
+A Google Sheets document opens the same way: choose **File → Download** in Sheets, pick Microsoft Excel (.xlsx), CSV, or TSV, and open the downloaded file. The Excel download keeps every tab; CSV and TSV hold only the tab you were on. It opens as a snapshot and doesn't stay connected to the sheet.
+
 <Callout title="Your data stays in your browser.">
   Opening a file reads it on this page. Nothing is uploaded.
 </Callout>
+
+## How values are read
+
+explorEDA keeps the values your file gives it. Each column's type comes from every row in it, not just the first few.
+
+<Terms
+  items={[
+    [
+      "Numbers",
+      "A column holds numbers only when every value converts without change. 0012 keeps its leading zeros, and a whole number too long to hold exactly, such as a 19-digit account ID, stays text.",
+    ],
+    [
+      "Dates",
+      "Date columns keep the text the file shows, such as 2025-03-01, and chart as dates.",
+    ],
+    ["True and false", "A column of true and false values reads as yes or no."],
+    ["Blank cells", "Blank cells are missing values, not zero or empty text."],
+    [
+      "Excel sheets",
+      "A sheet opens at its header row, below any title rows. Formulas show the result the workbook saved; explorEDA doesn't recalculate them. Error cells, such as #DIV/0!, are missing values.",
+    ],
+    [
+      "Parquet and Arrow types",
+      "Columns keep the types the file declares. Timestamps keep every stored digit, down to nanoseconds, and decimals keep their exact digits. A whole number or decimal too long to hold exactly keeps its digits as text.",
+    ],
+    [
+      "Nested JSON",
+      "A nested object becomes dotted fields, such as user.plan. A list stays together as JSON text in one field, so each record is one row. Parquet and Arrow lists, maps, and structs read the same way.",
+    ],
+  ]}
+/>
+
+A JSON file whose records sit under one key, such as `{ "data": [...] }`, opens those records. When a file can't be read, the message names the row or line, such as **Row 12 has 6 values, but the header names 5 fields.** A blank or repeated header gets a new name, such as `Column 3` or `name_2`, and the field list shows it.
+
+To read a column another way, open the field in **Fields** and change its type.
+
+Files of up to a few hundred thousand rows open in seconds. A table of more than 500,000 rows asks before it opens, since it takes a while and a lot of the tab's memory.
+
+To try it, open **Store inventory** under **No file handy?** on the home page, or download [store-inventory.tsv](/datasets/store-inventory.tsv). Its SKUs, UPCs, and ZIP codes keep their leading zeros, and its count times chart as dates. **App events** ([app-events.ndjson](/datasets/app-events.ndjson)) is JSON Lines with nested user fields and 19-digit session IDs. **Regional sales** ([regional-sales.xlsx](/datasets/regional-sales.xlsx)) is a workbook with three sheets, so it asks which one to open. **Bike trips** ([bike-trips.parquet](/datasets/bike-trips.parquet)) is a Parquet file with 64-bit trip IDs, UTC start times, decimal fares, and a nested rider. **Weather stations** ([weather-stations.feather](/datasets/weather-stations.feather)) is a Feather file written by Polars, with LZ4 compression, station IDs such as 007, and a categorical station name.
+
+## Other formats
+
+To open another format, such as Avro, ORC, OpenDocument, older Excel files (.xls, .xlsb), compressed or zipped files, a SQLite or DuckDB database, GeoJSON, or an SPSS, Stata, or SAS file, export it as one of these first. Most tools that read those formats can write CSV or Parquet; Parquet keeps the most detail.
 
 ## Start from an example
 

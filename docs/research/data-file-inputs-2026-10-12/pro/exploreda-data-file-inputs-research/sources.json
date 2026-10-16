@@ -1,0 +1,4262 @@
+{
+  "schema_version": 1,
+  "research_date": "2026-10-12",
+  "research_timezone": "America/Indiana/Indianapolis",
+  "retrieval_utc_date": "2026-10-13",
+  "repository_baseline": {
+    "repository": "https://github.com/byronwall/explorEDA",
+    "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e"
+  },
+  "evidence_policy": {
+    "primary_only": true,
+    "repository_packet_authoritative": true,
+    "current_docs_are_not_executed_browser_verification": true,
+    "mutable_source_versions_are_not_verified_published_dependency_pins": true,
+    "historical_sources_are_explicitly_limited": true,
+    "confidence_scope": "Confidence in classification and recommendation evidence; browser execution unverified unless explicitly marked otherwise."
+  },
+  "source_count": 188,
+  "sources": [
+    {
+      "id": "E01",
+      "evidence_kind": "repository_observation",
+      "title": "Project rules",
+      "repository": "https://github.com/byronwall/explorEDA",
+      "repository_path": "AGENTS.md",
+      "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/AGENTS.md",
+      "publisher": "byronwall / explorEDA",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "access_route": "attached exact selected source-packet.md",
+      "supported_sections": [
+        "Repository workflow and scope"
+      ],
+      "supported_claims": [
+        "Existing project instructions, small changes, and required verification routes."
+      ],
+      "verification_limitations": [
+        "Static inspection at the exact baseline. Selected packet is not a runnable checkout; application behavior was not executed."
+      ],
+      "snapshot_bytes": 5682,
+      "snapshot_sha256": "a3828060158eab7f9d3fad0f6626be3c05b1b4bd28b94f5d858e0e77d7678382"
+    },
+    {
+      "id": "E02",
+      "evidence_kind": "repository_observation",
+      "title": "Project overview",
+      "repository": "https://github.com/byronwall/explorEDA",
+      "repository_path": "README.md",
+      "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/README.md",
+      "publisher": "byronwall / explorEDA",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "access_route": "attached exact selected source-packet.md",
+      "supported_sections": [
+        "Features and development"
+      ],
+      "supported_claims": [
+        "Existing React/TypeScript analysis library and demo capabilities."
+      ],
+      "verification_limitations": [
+        "Static inspection at the exact baseline. Selected packet is not a runnable checkout; application behavior was not executed."
+      ],
+      "snapshot_bytes": 9646,
+      "snapshot_sha256": "4690f7b91a3473eff7e12aaa0493954c5401efbf885a88351765ba423f2d431a"
+    },
+    {
+      "id": "E03",
+      "evidence_kind": "repository_observation",
+      "title": "Root package manifest",
+      "repository": "https://github.com/byronwall/explorEDA",
+      "repository_path": "package.json",
+      "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/package.json",
+      "publisher": "byronwall / explorEDA",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "access_route": "attached exact selected source-packet.md",
+      "supported_sections": [
+        "packageManager; scripts; type"
+      ],
+      "supported_claims": [
+        "pnpm package manager, ESM package, and available root verification scripts."
+      ],
+      "verification_limitations": [
+        "Static inspection at the exact baseline. Selected packet is not a runnable checkout; application behavior was not executed."
+      ],
+      "snapshot_bytes": 960,
+      "snapshot_sha256": "98a8fe6c6a7118c6642ae7532c20775a9ed7246b176270c7b83c816517cce468"
+    },
+    {
+      "id": "E04",
+      "evidence_kind": "repository_observation",
+      "title": "Workspace manifest",
+      "repository": "https://github.com/byronwall/explorEDA",
+      "repository_path": "pnpm-workspace.yaml",
+      "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/pnpm-workspace.yaml",
+      "publisher": "byronwall / explorEDA",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "access_route": "attached exact selected source-packet.md",
+      "supported_sections": [
+        "Workspace packages and configuration"
+      ],
+      "supported_claims": [
+        "Existing monorepo workspace structure."
+      ],
+      "verification_limitations": [
+        "Static inspection at the exact baseline. Selected packet is not a runnable checkout; application behavior was not executed."
+      ],
+      "snapshot_bytes": 257,
+      "snapshot_sha256": "9f1bb3ad3b8b9191935bd7c423b86d7acecdbb594fb07638f106ab8316b8b189"
+    },
+    {
+      "id": "E05",
+      "evidence_kind": "repository_observation",
+      "title": "Agent guide",
+      "repository": "https://github.com/byronwall/explorEDA",
+      "repository_path": "docs/agent-guide.md",
+      "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/docs/agent-guide.md",
+      "publisher": "byronwall / explorEDA",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "access_route": "attached exact selected source-packet.md",
+      "supported_sections": [
+        "User documentation; live examples; verification commands"
+      ],
+      "supported_claims": [
+        "Established documentation/example paths and browser verification workflow."
+      ],
+      "verification_limitations": [
+        "Static inspection at the exact baseline. Selected packet is not a runnable checkout; application behavior was not executed."
+      ],
+      "snapshot_bytes": 33614,
+      "snapshot_sha256": "868d75d410af5c8c318a2b8acd2d3dcdb98eb6c94113eef4c3d9c5b1f51e409b"
+    },
+    {
+      "id": "E06",
+      "evidence_kind": "repository_observation",
+      "title": "UI defaults",
+      "repository": "https://github.com/byronwall/explorEDA",
+      "repository_path": "docs/ui-defaults.md",
+      "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/docs/ui-defaults.md",
+      "publisher": "byronwall / explorEDA",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "access_route": "attached exact selected source-packet.md",
+      "supported_sections": [
+        "Initial state; layout; metadata; responsive behavior"
+      ],
+      "supported_claims": [
+        "Fresh summary/rows defaults and preservation of saved layouts."
+      ],
+      "verification_limitations": [
+        "Static inspection at the exact baseline. Selected packet is not a runnable checkout; application behavior was not executed."
+      ],
+      "snapshot_bytes": 18914,
+      "snapshot_sha256": "ba5ef4b0072b7f4da151da6188afbdbd3d06f62df91d6da52d3306a3f2c9c500"
+    },
+    {
+      "id": "E07",
+      "evidence_kind": "repository_observation",
+      "title": "Library README",
+      "repository": "https://github.com/byronwall/explorEDA",
+      "repository_path": "packages/explorEDA/README.md",
+      "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/README.md",
+      "publisher": "byronwall / explorEDA",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "access_route": "attached exact selected source-packet.md",
+      "supported_sections": [
+        "React integration; data and project APIs"
+      ],
+      "supported_claims": [
+        "Existing embedding and project exploration contracts."
+      ],
+      "verification_limitations": [
+        "Static inspection at the exact baseline. Selected packet is not a runnable checkout; application behavior was not executed."
+      ],
+      "snapshot_bytes": 21204,
+      "snapshot_sha256": "b858d900ac7ea25f71236f8ea466fa28ae247967e27432afdbd620526bf610b3"
+    },
+    {
+      "id": "E08",
+      "evidence_kind": "repository_observation",
+      "title": "Library package manifest",
+      "repository": "https://github.com/byronwall/explorEDA",
+      "repository_path": "packages/explorEDA/package.json",
+      "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/package.json",
+      "publisher": "byronwall / explorEDA",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "access_route": "attached exact selected source-packet.md",
+      "supported_sections": [
+        "exports; peerDependencies; scripts"
+      ],
+      "supported_claims": [
+        "Current optional core/analysis/chart exports; no input-reader entry."
+      ],
+      "verification_limitations": [
+        "Static inspection at the exact baseline. Selected packet is not a runnable checkout; application behavior was not executed."
+      ],
+      "snapshot_bytes": 5325,
+      "snapshot_sha256": "d5c9063b6d5e1e815d9928bb608e82bedcf08db7035f5e538da9762b72fcac3c"
+    },
+    {
+      "id": "E09",
+      "evidence_kind": "repository_observation",
+      "title": "Demo package manifest",
+      "repository": "https://github.com/byronwall/explorEDA",
+      "repository_path": "apps/demo/package.json",
+      "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/apps/demo/package.json",
+      "publisher": "byronwall / explorEDA",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "access_route": "attached exact selected source-packet.md",
+      "supported_sections": [
+        "dependencies; scripts"
+      ],
+      "supported_claims": [
+        "Papa Parse declared as ^5.5.2 and existing demo build/test commands; installed pin unverified."
+      ],
+      "verification_limitations": [
+        "Static inspection at the exact baseline. Selected packet is not a runnable checkout; application behavior was not executed."
+      ],
+      "snapshot_bytes": 2684,
+      "snapshot_sha256": "8d8401b17b77d7924aeab74f768a1ea3565449ae283e041e52ae24395838e48f"
+    },
+    {
+      "id": "E10",
+      "evidence_kind": "repository_observation",
+      "title": "ExplorEda component",
+      "repository": "https://github.com/byronwall/explorEDA",
+      "repository_path": "packages/explorEDA/src/components/ExplorEda.tsx",
+      "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/ExplorEda.tsx",
+      "publisher": "byronwall / explorEDA",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "access_route": "attached exact selected source-packet.md",
+      "supported_sections": [
+        "ExplorEdaProps; data; fieldNames; savedData; onAddSource"
+      ],
+      "supported_claims": [
+        "Raw-row embedding and explicit field names remain supported contracts."
+      ],
+      "verification_limitations": [
+        "Static inspection at the exact baseline. Selected packet is not a runnable checkout; application behavior was not executed."
+      ],
+      "snapshot_bytes": 7929,
+      "snapshot_sha256": "8a4d509f6e1b4d17f309b136357e5c1b74b81d37a853c0832a823771ff6092d0"
+    },
+    {
+      "id": "E11",
+      "evidence_kind": "repository_observation",
+      "title": "ExplorEdaProject component",
+      "repository": "https://github.com/byronwall/explorEDA",
+      "repository_path": "packages/explorEDA/src/components/ExplorEdaProject.tsx",
+      "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/ExplorEdaProject.tsx",
+      "publisher": "byronwall / explorEDA",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "access_route": "attached exact selected source-packet.md",
+      "supported_sections": [
+        "useAnalysisEvaluation; renderedSettings; data mapping"
+      ],
+      "supported_claims": [
+        "Complete source tables; evaluated row copies; declared field settings merge requires settings to exist."
+      ],
+      "verification_limitations": [
+        "Static inspection at the exact baseline. Selected packet is not a runnable checkout; application behavior was not executed."
+      ],
+      "snapshot_bytes": 14034,
+      "snapshot_sha256": "8d2d69f222b6d1860bcee9d00865df4128ca8b7c204cf70ed4bba9b48986ac96"
+    },
+    {
+      "id": "E12",
+      "evidence_kind": "repository_observation",
+      "title": "Analysis project types",
+      "repository": "https://github.com/byronwall/explorEDA",
+      "repository_path": "packages/explorEDA/src/types/AnalysisProject.ts",
+      "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/types/AnalysisProject.ts",
+      "publisher": "byronwall / explorEDA",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "access_route": "attached exact selected source-packet.md",
+      "supported_sections": [
+        "AnalysisScalar; AnalysisSourceRow; FieldDefinition; SourceDefinition"
+      ],
+      "supported_claims": [
+        "Scalar table rows, source fields and keys, relationships, query/view model."
+      ],
+      "verification_limitations": [
+        "Static inspection at the exact baseline. Selected packet is not a runnable checkout; application behavior was not executed."
+      ],
+      "snapshot_bytes": 4839,
+      "snapshot_sha256": "374ffd46c8143f95c7256859d0a1bcc24e1eabe82a80dce9d465a2c4ba693408"
+    },
+    {
+      "id": "E13",
+      "evidence_kind": "repository_observation",
+      "title": "Chart types",
+      "repository": "https://github.com/byronwall/explorEDA",
+      "repository_path": "packages/explorEDA/src/types/ChartTypes.ts",
+      "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/types/ChartTypes.ts",
+      "publisher": "byronwall / explorEDA",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "access_route": "attached exact selected source-packet.md",
+      "supported_sections": [
+        "datum"
+      ],
+      "supported_claims": [
+        "Public scalar value union excludes bigint, Date, binary, and nested collections."
+      ],
+      "verification_limitations": [
+        "Static inspection at the exact baseline. Selected packet is not a runnable checkout; application behavior was not executed."
+      ],
+      "snapshot_bytes": 6936,
+      "snapshot_sha256": "767e608bc8895a9691f1db145589fc7d104901396d1bb35ec5b921e34fdc4061"
+    },
+    {
+      "id": "E14",
+      "evidence_kind": "repository_observation",
+      "title": "Saved structure types",
+      "repository": "https://github.com/byronwall/explorEDA",
+      "repository_path": "packages/explorEDA/src/types/SavedDataStructure.ts",
+      "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/types/SavedDataStructure.ts",
+      "publisher": "byronwall / explorEDA",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "access_route": "attached exact selected source-packet.md",
+      "supported_sections": [
+        "SavedDatum; SavedDataStructure"
+      ],
+      "supported_claims": [
+        "Saved analysis rows and settings carry scalar fields and layout information."
+      ],
+      "verification_limitations": [
+        "Static inspection at the exact baseline. Selected packet is not a runnable checkout; application behavior was not executed."
+      ],
+      "snapshot_bytes": 1926,
+      "snapshot_sha256": "d06d902c2e9ba967adb39f25502405153b2b582bfd2bf7305ad51bec9b9dfebb"
+    },
+    {
+      "id": "E15",
+      "evidence_kind": "repository_observation",
+      "title": "Value parsing",
+      "repository": "https://github.com/byronwall/explorEDA",
+      "repository_path": "packages/explorEDA/src/lib/valueParsing.ts",
+      "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/lib/valueParsing.ts",
+      "publisher": "byronwall / explorEDA",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "access_route": "attached exact selected source-packet.md",
+      "supported_sections": [
+        "parseNumber; parseBoolean; isMissingValue; parseDateText; timestampOf; timeOfDay"
+      ],
+      "supported_claims": [
+        "Numeric-string interpretation, blank missingness, UTC interpretation of unzoned date text, millisecond precision."
+      ],
+      "verification_limitations": [
+        "Static inspection at the exact baseline. Selected packet is not a runnable checkout; application behavior was not executed."
+      ],
+      "snapshot_bytes": 9098,
+      "snapshot_sha256": "f6bb49ecf1c6f1ed06fc1e6c6de96800ee4242dd1e89d98fc8cfe0f8cf7c5239"
+    },
+    {
+      "id": "E16",
+      "evidence_kind": "repository_observation",
+      "title": "Analysis source helpers",
+      "repository": "https://github.com/byronwall/explorEDA",
+      "repository_path": "packages/explorEDA/src/lib/analysis/sources.ts",
+      "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/lib/analysis/sources.ts",
+      "publisher": "byronwall / explorEDA",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "access_route": "attached exact selected source-packet.md",
+      "supported_sections": [
+        "fieldIds; TYPE_SAMPLE; sourceFromRows; addSourceFromRows; singleTableProject"
+      ],
+      "supported_claims": [
+        "First-500-row field/type sampling, key inference, positional key creation, and saved-settings project promotion."
+      ],
+      "verification_limitations": [
+        "Static inspection at the exact baseline. Selected packet is not a runnable checkout; application behavior was not executed."
+      ],
+      "snapshot_bytes": 7632,
+      "snapshot_sha256": "afb86a427d13a95ea1ca191ad7d927a385201cca963d3ec959d491a482f05465"
+    },
+    {
+      "id": "E17",
+      "evidence_kind": "repository_observation",
+      "title": "Project file codec",
+      "repository": "https://github.com/byronwall/explorEDA",
+      "repository_path": "packages/explorEDA/src/lib/analysis/projectFile.ts",
+      "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/lib/analysis/projectFile.ts",
+      "publisher": "byronwall / explorEDA",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "access_route": "attached exact selected source-packet.md",
+      "supported_sections": [
+        "validateAnalysisProjectFile; stringifyAnalysisProject; parseAnalysisProject; encode/decode helpers"
+      ],
+      "supported_claims": [
+        "Tagged value encoding is constrained by scalar-row validation; full restore validates project data."
+      ],
+      "verification_limitations": [
+        "Static inspection at the exact baseline. Selected packet is not a runnable checkout; application behavior was not executed."
+      ],
+      "snapshot_bytes": 21021,
+      "snapshot_sha256": "58c0d7462eb14be5597e296aed1b0dcca47f8b91993a2063952f6809631f52b4"
+    },
+    {
+      "id": "E18",
+      "evidence_kind": "repository_observation",
+      "title": "Data layer provider",
+      "repository": "https://github.com/byronwall/explorEDA",
+      "repository_path": "packages/explorEDA/src/providers/DataLayerProvider.tsx",
+      "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/providers/DataLayerProvider.tsx",
+      "publisher": "byronwall / explorEDA",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "access_route": "attached exact selected source-packet.md",
+      "supported_sections": [
+        "rawData; applyFieldSettings; initializeData; caches; saveAnalysisToStructure"
+      ],
+      "supported_claims": [
+        "Row copies, inference, Crossfilter/calculation residency, default charts, and saved-state paths."
+      ],
+      "verification_limitations": [
+        "Static inspection at the exact baseline. Selected packet is not a runnable checkout; application behavior was not executed."
+      ],
+      "snapshot_bytes": 53615,
+      "snapshot_sha256": "c464ed3a4e2c65a5d4f33dc5e5c7fc9dc0b4762be64ccf6bbf5137cc1b08c698"
+    },
+    {
+      "id": "E19",
+      "evidence_kind": "repository_observation",
+      "title": "Local file dispatcher",
+      "repository": "https://github.com/byronwall/explorEDA",
+      "repository_path": "apps/demo/src/readDataFile.ts",
+      "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/apps/demo/src/readDataFile.ts",
+      "publisher": "byronwall / explorEDA",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "access_route": "attached exact selected source-packet.md",
+      "supported_sections": [
+        "isSupportedDataFile; readDataFile"
+      ],
+      "supported_claims": [
+        "Only .csv/.json accepted at the baseline; exact-ref GitHub content corroborated packet."
+      ],
+      "verification_limitations": [
+        "Static inspection at the exact baseline. Selected packet is not a runnable checkout; application behavior was not executed."
+      ],
+      "snapshot_bytes": 661,
+      "snapshot_sha256": "6e34a56d8e215b9d1e861b9acfe7a502c0254da46b366f1c9bf80633972ed3b5"
+    },
+    {
+      "id": "E20",
+      "evidence_kind": "repository_observation",
+      "title": "CSV parser",
+      "repository": "https://github.com/byronwall/explorEDA",
+      "repository_path": "apps/demo/src/csvParser.ts",
+      "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/apps/demo/src/csvParser.ts",
+      "publisher": "byronwall / explorEDA",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "access_route": "attached exact selected source-packet.md",
+      "supported_sections": [
+        "parseCsvData"
+      ],
+      "supported_claims": [
+        "Papa header/dynamicTyping/skipEmptyLines configuration, first-error rejection, no delimiter or async error callback."
+      ],
+      "verification_limitations": [
+        "Static inspection at the exact baseline. Selected packet is not a runnable checkout; application behavior was not executed."
+      ],
+      "snapshot_bytes": 929,
+      "snapshot_sha256": "63580902ae0fd8e3630a4b6106ba9a45dbb48f83202bfcebd63b7c5bacd80c5b"
+    },
+    {
+      "id": "E21",
+      "evidence_kind": "repository_observation",
+      "title": "Raw JSON parser",
+      "repository": "https://github.com/byronwall/explorEDA",
+      "repository_path": "apps/demo/src/jsonParser.ts",
+      "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/apps/demo/src/jsonParser.ts",
+      "publisher": "byronwall / explorEDA",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "access_route": "attached exact selected source-packet.md",
+      "supported_sections": [
+        "parseJsonData; flattening helpers"
+      ],
+      "supported_claims": [
+        "Object/array-of-objects acceptance, nested/index flattening, and null-to-undefined behavior."
+      ],
+      "verification_limitations": [
+        "Static inspection at the exact baseline. Selected packet is not a runnable checkout; application behavior was not executed."
+      ],
+      "snapshot_bytes": 2408,
+      "snapshot_sha256": "7fde432e85f7f997a428c63e92929b23225d9a507265c3f2bdbacb135954a15f"
+    },
+    {
+      "id": "E22",
+      "evidence_kind": "repository_observation",
+      "title": "Upload UI",
+      "repository": "https://github.com/byronwall/explorEDA",
+      "repository_path": "apps/demo/src/CsvUpload.tsx",
+      "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/apps/demo/src/CsvUpload.tsx",
+      "publisher": "byronwall / explorEDA",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "access_route": "attached exact selected source-packet.md",
+      "supported_sections": [
+        "CsvUpload; file handling"
+      ],
+      "supported_claims": [
+        "Table reader and separately detected exploreda-project restoration; CSV/JSON accept choices."
+      ],
+      "verification_limitations": [
+        "Static inspection at the exact baseline. Selected packet is not a runnable checkout; application behavior was not executed."
+      ],
+      "snapshot_bytes": 4027,
+      "snapshot_sha256": "f00c4821db1a065b4466bafa86cf1d4b83b9dd8de12717c6997bee2feb45ba09"
+    },
+    {
+      "id": "E23",
+      "evidence_kind": "repository_observation",
+      "title": "Landing page",
+      "repository": "https://github.com/byronwall/explorEDA",
+      "repository_path": "apps/demo/src/LandingPage.tsx",
+      "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/apps/demo/src/LandingPage.tsx",
+      "publisher": "byronwall / explorEDA",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "access_route": "attached exact selected source-packet.md",
+      "supported_sections": [
+        "openImported; handleCsvImport; handleProjectImport; handleAnalysisJson"
+      ],
+      "supported_claims": [
+        "Initial import, state reset, full-analysis paste restore, and row-only callback boundary."
+      ],
+      "verification_limitations": [
+        "Static inspection at the exact baseline. Selected packet is not a runnable checkout; application behavior was not executed."
+      ],
+      "snapshot_bytes": 28243,
+      "snapshot_sha256": "97daebc1d07b3a76c118a8e3593b958b96183b2efb3665f21b1697e6bfaa25f4"
+    },
+    {
+      "id": "E24",
+      "evidence_kind": "repository_observation",
+      "title": "Saved views workspace",
+      "repository": "https://github.com/byronwall/explorEDA",
+      "repository_path": "apps/demo/src/SavedViewsWorkspace.tsx",
+      "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/apps/demo/src/SavedViewsWorkspace.tsx",
+      "publisher": "byronwall / explorEDA",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "access_route": "attached exact selected source-packet.md",
+      "supported_sections": [
+        "addSourceFile; makeSession; WorkspaceInstance; project promotion"
+      ],
+      "supported_claims": [
+        "Separate CSV-only Add source path, saved tab handling, asynchronous session capture, persistence integration."
+      ],
+      "verification_limitations": [
+        "Static inspection at the exact baseline. Selected packet is not a runnable checkout; application behavior was not executed."
+      ],
+      "snapshot_bytes": 40053,
+      "snapshot_sha256": "21ce42f590583a5d5e7c08a0fa459badd6f8ace36a5cfda663227ff0154b8a81"
+    },
+    {
+      "id": "E25",
+      "evidence_kind": "repository_observation",
+      "title": "Saved views session",
+      "repository": "https://github.com/byronwall/explorEDA",
+      "repository_path": "apps/demo/src/savedViewsSession.ts",
+      "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/apps/demo/src/savedViewsSession.ts",
+      "publisher": "byronwall / explorEDA",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "access_route": "attached exact selected source-packet.md",
+      "supported_sections": [
+        "writeProjectTables; session serialization and clone helpers"
+      ],
+      "supported_claims": [
+        "Ordinary JSON serialization of project tables can alter unsupported JSON values."
+      ],
+      "verification_limitations": [
+        "Static inspection at the exact baseline. Selected packet is not a runnable checkout; application behavior was not executed."
+      ],
+      "snapshot_bytes": 6778,
+      "snapshot_sha256": "ea269b22c9b0155d0b1fa500ef01e39c934723916f71fc20fd6ff429ef5b83e6"
+    },
+    {
+      "id": "E26",
+      "evidence_kind": "repository_observation",
+      "title": "Saved views history",
+      "repository": "https://github.com/byronwall/explorEDA",
+      "repository_path": "apps/demo/src/savedViewsHistory.ts",
+      "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/apps/demo/src/savedViewsHistory.ts",
+      "publisher": "byronwall / explorEDA",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "access_route": "attached exact selected source-packet.md",
+      "supported_sections": [
+        "history checkpoints; JSON clone helpers"
+      ],
+      "supported_claims": [
+        "Saved session/tab/project history uses JSON-based cloning and restoration."
+      ],
+      "verification_limitations": [
+        "Static inspection at the exact baseline. Selected packet is not a runnable checkout; application behavior was not executed."
+      ],
+      "snapshot_bytes": 34392,
+      "snapshot_sha256": "64013981d656cc65b62a5716626782b98bd1808ca5409aeb345ea64603aa5cda"
+    },
+    {
+      "id": "E27",
+      "evidence_kind": "repository_observation",
+      "title": "Page file drop",
+      "repository": "https://github.com/byronwall/explorEDA",
+      "repository_path": "apps/demo/src/landing/PageFileDrop.tsx",
+      "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/apps/demo/src/landing/PageFileDrop.tsx",
+      "publisher": "byronwall / explorEDA",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "access_route": "attached exact selected source-packet.md",
+      "supported_sections": [
+        "PageFileDrop; file detection and project handling"
+      ],
+      "supported_claims": [
+        "Separate initial drop surface dispatch and project JSON recognition."
+      ],
+      "verification_limitations": [
+        "Static inspection at the exact baseline. Selected packet is not a runnable checkout; application behavior was not executed."
+      ],
+      "snapshot_bytes": 5115,
+      "snapshot_sha256": "996bc6ea21cc599c6245c66ae81414d0eeac00616906da5dbe9cddb48c599cd7"
+    },
+    {
+      "id": "E28",
+      "evidence_kind": "repository_observation",
+      "title": "Parser tests",
+      "repository": "https://github.com/byronwall/explorEDA",
+      "repository_path": "apps/demo/src/parsers.test.ts",
+      "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/apps/demo/src/parsers.test.ts",
+      "publisher": "byronwall / explorEDA",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "access_route": "attached exact selected source-packet.md",
+      "supported_sections": [
+        "CSV and JSON parser cases"
+      ],
+      "supported_claims": [
+        "Inspected baseline tests document existing behavior, not new-format verification."
+      ],
+      "verification_limitations": [
+        "Static inspection at the exact baseline. Selected packet is not a runnable checkout; application behavior was not executed."
+      ],
+      "snapshot_bytes": 1927,
+      "snapshot_sha256": "adf13ae6ab3d424999261fad29db279a5dce861bdbda40ad9e40b715776f6c2f"
+    },
+    {
+      "id": "E29",
+      "evidence_kind": "repository_observation",
+      "title": "Workspace tests",
+      "repository": "https://github.com/byronwall/explorEDA",
+      "repository_path": "apps/demo/src/SavedViewsWorkspace.test.tsx",
+      "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/apps/demo/src/SavedViewsWorkspace.test.tsx",
+      "publisher": "byronwall / explorEDA",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "access_route": "attached exact selected source-packet.md",
+      "supported_sections": [
+        "SavedViewsWorkspace tests; ExplorEda mock"
+      ],
+      "supported_claims": [
+        "Host behavior is tested with mocked exploration; no proof of real new-format scalar fidelity."
+      ],
+      "verification_limitations": [
+        "Static inspection at the exact baseline. Selected packet is not a runnable checkout; application behavior was not executed."
+      ],
+      "snapshot_bytes": 22798,
+      "snapshot_sha256": "6d642cbe28948532767d0c3f08f950052af3672faf4aaecbc8a0f83df1c6115d"
+    },
+    {
+      "id": "E30",
+      "evidence_kind": "repository_observation",
+      "title": "Load data documentation",
+      "repository": "https://github.com/byronwall/explorEDA",
+      "repository_path": "apps/demo/src/docs/pages/load-data.mdx",
+      "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/apps/demo/src/docs/pages/load-data.mdx",
+      "publisher": "byronwall / explorEDA",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "access_route": "attached exact selected source-packet.md",
+      "supported_sections": [
+        "Current import guidance"
+      ],
+      "supported_claims": [
+        "Existing user documentation location for each format milestone."
+      ],
+      "verification_limitations": [
+        "Static inspection at the exact baseline. Selected packet is not a runnable checkout; application behavior was not executed."
+      ],
+      "snapshot_bytes": 692,
+      "snapshot_sha256": "9b0d6814bed9e253ba3a2c0cefe184b35fc33b6a11c27ad73c2023487f21d859"
+    },
+    {
+      "id": "E31",
+      "evidence_kind": "repository_observation",
+      "title": "Database adapters intent",
+      "repository": "https://github.com/byronwall/explorEDA",
+      "repository_path": "docs/intent/database-adapters/intent-brief.md",
+      "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/docs/intent/database-adapters/intent-brief.md",
+      "publisher": "byronwall / explorEDA",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "access_route": "attached exact selected source-packet.md",
+      "supported_sections": [
+        "Scope; complete source snapshots"
+      ],
+      "supported_claims": [
+        "Adjacent proposal for host-owned database snapshots; not implemented local-reader behavior."
+      ],
+      "verification_limitations": [
+        "Static inspection at the exact baseline. Selected packet is not a runnable checkout; application behavior was not executed."
+      ],
+      "snapshot_bytes": 3685,
+      "snapshot_sha256": "89f8900797c75f73ac5895f48fb29ff23e2ead61ea3adabe549a2fcfa74d7568"
+    },
+    {
+      "id": "E32",
+      "evidence_kind": "repository_observation",
+      "title": "Database adapters shape",
+      "repository": "https://github.com/byronwall/explorEDA",
+      "repository_path": "docs/intent/database-adapters/shape-brief.md",
+      "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/docs/intent/database-adapters/shape-brief.md",
+      "publisher": "byronwall / explorEDA",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "access_route": "attached exact selected source-packet.md",
+      "supported_sections": [
+        "Design alternatives and first adapter"
+      ],
+      "supported_claims": [
+        "Adjacent proposal favors concrete need before generic abstraction."
+      ],
+      "verification_limitations": [
+        "Static inspection at the exact baseline. Selected packet is not a runnable checkout; application behavior was not executed."
+      ],
+      "snapshot_bytes": 4283,
+      "snapshot_sha256": "e3917ce0026d394a0bb01f9f2c1ecd9b8efdd697528bdcc7091cd20a1e2fb4d6"
+    },
+    {
+      "id": "E33",
+      "evidence_kind": "repository_observation",
+      "title": "Columnar transport intent",
+      "repository": "https://github.com/byronwall/explorEDA",
+      "repository_path": "docs/intent/columnar-data-transport/intent-brief.md",
+      "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/docs/intent/columnar-data-transport/intent-brief.md",
+      "publisher": "byronwall / explorEDA",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "access_route": "attached exact selected source-packet.md",
+      "supported_sections": [
+        "Arrow transport comparison and constraints"
+      ],
+      "supported_claims": [
+        "Transport decision and existing row consumers are separate from local format choice."
+      ],
+      "verification_limitations": [
+        "Static inspection at the exact baseline. Selected packet is not a runnable checkout; application behavior was not executed."
+      ],
+      "snapshot_bytes": 3451,
+      "snapshot_sha256": "954a6904f6325940a88e2219aaf992959390334dad4c71c5cdbb3e119ce908b1"
+    },
+    {
+      "id": "E34",
+      "evidence_kind": "repository_observation",
+      "title": "Columnar transport shape",
+      "repository": "https://github.com/byronwall/explorEDA",
+      "repository_path": "docs/intent/columnar-data-transport/shape-brief.md",
+      "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/docs/intent/columnar-data-transport/shape-brief.md",
+      "publisher": "byronwall / explorEDA",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "access_route": "attached exact selected source-packet.md",
+      "supported_sections": [
+        "Benchmarks; adoption gates"
+      ],
+      "supported_claims": [
+        "Proposed transport experiments do not establish local-file performance or thresholds."
+      ],
+      "verification_limitations": [
+        "Static inspection at the exact baseline. Selected packet is not a runnable checkout; application behavior was not executed."
+      ],
+      "snapshot_bytes": 4774,
+      "snapshot_sha256": "9e71e4558dd5e3c31d6d4ab8fa7dbcee94aaad47a42c5203794c20c91cb58cfc"
+    },
+    {
+      "id": "E35",
+      "evidence_kind": "repository_observation",
+      "title": "Database query contract intent",
+      "repository": "https://github.com/byronwall/explorEDA",
+      "repository_path": "docs/intent/database-query-contract/intent-brief.md",
+      "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/docs/intent/database-query-contract/intent-brief.md",
+      "publisher": "byronwall / explorEDA",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "access_route": "attached exact selected source-packet.md",
+      "supported_sections": [
+        "Authorized tables; server boundary"
+      ],
+      "supported_claims": [
+        "Adjacent server/query proposal does not authorize local-file connector expansion."
+      ],
+      "verification_limitations": [
+        "Static inspection at the exact baseline. Selected packet is not a runnable checkout; application behavior was not executed."
+      ],
+      "snapshot_bytes": 4420,
+      "snapshot_sha256": "f131c70e4432956539c720dfaeb2a63e20d269d2f32db62f630d6f841c92e54b"
+    },
+    {
+      "id": "E36",
+      "evidence_kind": "repository_observation",
+      "title": "Date/time intent",
+      "repository": "https://github.com/byronwall/explorEDA",
+      "repository_path": "docs/intent/date-time-handling/intent-brief.md",
+      "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/docs/intent/date-time-handling/intent-brief.md",
+      "publisher": "byronwall / explorEDA",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "access_route": "attached exact selected source-packet.md",
+      "supported_sections": [
+        "Current behavior; unresolved design"
+      ],
+      "supported_claims": [
+        "Draft date/time direction is not an implemented richer scalar model."
+      ],
+      "verification_limitations": [
+        "Static inspection at the exact baseline. Selected packet is not a runnable checkout; application behavior was not executed."
+      ],
+      "snapshot_bytes": 2309,
+      "snapshot_sha256": "020e8d6a10df052c9b0db5ebdedd1f3225b92fd593841761fcd8fe9a106d1c69"
+    },
+    {
+      "id": "E37",
+      "evidence_kind": "repository_observation",
+      "title": "Field settings and conversion",
+      "repository": "https://github.com/byronwall/explorEDA",
+      "repository_path": "packages/explorEDA/src/lib/fieldSettings.ts",
+      "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/lib/fieldSettings.ts",
+      "publisher": "byronwall / explorEDA",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "access_route": "connected GitHub exact-ref file reader; supplemental to selected packet",
+      "supported_sections": [
+        "convertFieldValue",
+        "applyFieldSettings"
+      ],
+      "supported_claims": [
+        "Explicit settings govern conversion; copying occurs even when values are retained. Numeric/date formatting and null handling have separate semantics."
+      ],
+      "verification_limitations": [
+        "Static exact-baseline source inspection; not an application execution."
+      ],
+      "git_blob_sha1": "1477b70b20cc98be83a1b60e7586ff932aad23b0",
+      "snapshot_bytes": 9720,
+      "snapshot_sha256": "b2aff121c939f9013adaa164b16824a5c4869057cd976c07cb0373e9a03e0c98"
+    },
+    {
+      "id": "E38",
+      "evidence_kind": "repository_observation",
+      "title": "Data layer initialization",
+      "repository": "https://github.com/byronwall/explorEDA",
+      "repository_path": "packages/explorEDA/src/providers/lib/dataLayerState.ts",
+      "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/providers/lib/dataLayerState.ts",
+      "publisher": "byronwall / explorEDA",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "access_route": "connected GitHub exact-ref file reader; supplemental to selected packet",
+      "supported_sections": [
+        "initializeData",
+        "invalidateCalculationCache"
+      ],
+      "supported_claims": [
+        "Row copies overwrite internal __ID with a positional value and maintain column/cache state."
+      ],
+      "verification_limitations": [
+        "Static exact-baseline source inspection; not an application execution."
+      ],
+      "git_blob_sha1": "76b54c6a71987c813850368dd261c8d8f19c5a93",
+      "snapshot_bytes": 805,
+      "snapshot_sha256": "662ece8ccbdbe7a2cfff5376847968b144bbc13947824fbaa7cfacc5dc542c7e"
+    },
+    {
+      "id": "E39",
+      "evidence_kind": "repository_observation",
+      "title": "Column type detection",
+      "repository": "https://github.com/byronwall/explorEDA",
+      "repository_path": "packages/explorEDA/src/components/SummaryTable/utils/dataTypeDetection.ts",
+      "ref": "c534378c052c9fbb2cb076d1df0d21eb0fa0965e",
+      "url": "https://github.com/byronwall/explorEDA/blob/c534378c052c9fbb2cb076d1df0d21eb0fa0965e/packages/explorEDA/src/components/SummaryTable/utils/dataTypeDetection.ts",
+      "publisher": "byronwall / explorEDA",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "access_route": "connected GitHub exact-ref file reader; supplemental to selected packet",
+      "supported_sections": [
+        "detectColumnType"
+      ],
+      "supported_claims": [
+        "Boolean, numeric, and date-like strings can be inferred as analytical types after exact decoding."
+      ],
+      "verification_limitations": [
+        "Static exact-baseline source inspection; not an application execution."
+      ],
+      "git_blob_sha1": "46631efb7f9b23b06879fc82f9d64cdeedcf8559",
+      "snapshot_bytes": 1141,
+      "snapshot_sha256": "12272c47f439245a9ce1b0b4c48ed94ed2dc41ca8669a08413d9ad33d45dfca5"
+    },
+    {
+      "id": "P01",
+      "title": "Papa Parse documentation",
+      "url": "https://www.papaparse.com/docs",
+      "publisher": "Papa Parse maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "supported_sections": [
+        "Parse Config: delimiter, header, dynamicTyping, error, preview, worker",
+        "Parse Result metadata"
+      ],
+      "supported_claims": [
+        "Local File and text parsing; explicit and guessed delimiters; duplicate-header metadata; asynchronous read errors and worker controls."
+      ],
+      "verification_limitations": [
+        "Documentation describes library behavior; this work did not run Papa in target browsers."
+      ],
+      "web_ref": "turn16view0",
+      "evidence_kind": "primary_web"
+    },
+    {
+      "id": "P02",
+      "title": "Papa Parse 5.7.0 source",
+      "url": "https://github.com/mholt/PapaParse/blob/5.7.0/papaparse.js",
+      "publisher": "Papa Parse maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "supported_sections": [
+        "parseDynamic",
+        "testFloat",
+        "stripBom",
+        "newWorker",
+        "UMD wrapper"
+      ],
+      "supported_claims": [
+        "Dynamic typing includes ISO strings to Date, empty string to null, bounded numeric conversion; worker source uses Blob URLs."
+      ],
+      "verification_limitations": [
+        "Read through GitHub connector at tag 5.7.0, blob 5229936a13e3bdb466d5799c57bbcc3aea2fa7d3. Not proof of baseline's lockfile resolution or browser execution."
+      ],
+      "web_ref": null,
+      "evidence_kind": "primary_web"
+    },
+    {
+      "id": "P03",
+      "title": "Papa Parse package metadata and releases",
+      "url": "https://github.com/mholt/PapaParse/blob/5.7.0/package.json",
+      "publisher": "Papa Parse maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "supported_sections": [
+        "version, license, main, browser"
+      ],
+      "supported_claims": [
+        "5.7.0 package identifies MIT license, main UMD script and browser entry."
+      ],
+      "verification_limitations": [
+        "Exact tag source inspected; repository baseline declares ^5.5.2 and packet omits lockfile."
+      ],
+      "web_ref": null,
+      "evidence_kind": "primary_web"
+    },
+    {
+      "id": "P04",
+      "title": "Papa Parse releases",
+      "url": "https://github.com/mholt/PapaParse/releases",
+      "publisher": "Papa Parse maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "supported_sections": [
+        "5.7.0 release",
+        "5.4.0 BOM and duplicate header notes"
+      ],
+      "supported_claims": [
+        "Release page marks 5.7.0 latest in retrieved view and records maintenance changes."
+      ],
+      "verification_limitations": [
+        "Observed release listing, not npm dist-tag verification; visible date did not establish year so none inferred."
+      ],
+      "web_ref": "turn16view2",
+      "evidence_kind": "primary_web"
+    },
+    {
+      "id": "P05",
+      "title": "JSON Lines format",
+      "url": "https://jsonlines.org/",
+      "publisher": "Ian Ward / JSON Lines",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "supported_sections": [
+        "UTF-8",
+        "Each Line is a Valid JSON Value",
+        "Line Terminator",
+        "Conventions"
+      ],
+      "supported_claims": [
+        "UTF-8, no BOM, one JSON value per line; blank line invalid; LF/CRLF and optional final terminator; .jsonl convention."
+      ],
+      "verification_limitations": [
+        "Community format documentation, not a table schema; object-only reader is a proposed narrower subset."
+      ],
+      "web_ref": "turn16view1",
+      "evidence_kind": "primary_web"
+    },
+    {
+      "id": "P06",
+      "title": "RFC 4180: Common Format and MIME Type for CSV Files",
+      "url": "https://www.rfc-editor.org/info/rfc4180/",
+      "publisher": "IETF / RFC Editor",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "supported_sections": [
+        "Section 2: Definition of the CSV Format",
+        "Section 3 MIME type"
+      ],
+      "supported_claims": [
+        "CSV convention for records, optional header, quote escaping and embedded line breaks."
+      ],
+      "verification_limitations": [
+        "Informational RFC does not describe every locale or application dialect."
+      ],
+      "web_ref": "turn16view3",
+      "evidence_kind": "primary_web"
+    },
+    {
+      "id": "P07",
+      "title": "IANA text/tab-separated-values registration",
+      "url": "https://www.iana.org/assignments/media-types/text/tab-separated-values",
+      "publisher": "IANA / University of Minnesota Internet Gopher Team",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "supported_sections": [
+        "Definition of tab-separated-values"
+      ],
+      "supported_claims": [
+        "Tab-separated record fields; header first line; constant field count; registered simple encoding excludes tabs inside values."
+      ],
+      "verification_limitations": [
+        "Old minimal registration is narrower than quoted spreadsheet export dialects."
+      ],
+      "web_ref": "turn47view0",
+      "evidence_kind": "primary_web"
+    },
+    {
+      "id": "P08",
+      "title": "NDJSON specification 1.0.0",
+      "url": "https://github.com/ndjson/ndjson-spec",
+      "publisher": "NDJSON specification authors",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "supported_sections": [
+        "3.1 Serialization",
+        "3.2 Parsing",
+        "3.3 MediaType and File Extensions"
+      ],
+      "supported_claims": [
+        "UTF-8 line framing, LF/CRLF, .ndjson; optionally ignoring empty lines must be documented and configurable."
+      ],
+      "verification_limitations": [
+        "Format 1.0.0, last-update metadata 2014-10-19; proposed strict local subset can reject optional blank lines."
+      ],
+      "web_ref": "turn47view1",
+      "evidence_kind": "primary_web"
+    },
+    {
+      "id": "P09",
+      "title": "RFC 8259: The JSON Data Interchange Format",
+      "url": "https://www.rfc-editor.org/info/rfc8259/",
+      "publisher": "IETF / RFC Editor",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "supported_sections": [
+        "4 Objects",
+        "6 Numbers",
+        "8.1 Character Encoding"
+      ],
+      "supported_claims": [
+        "JSON supports nested values and arbitrary numeric grammar; duplicate member names impair interoperability and numeric implementations have precision limits."
+      ],
+      "verification_limitations": [
+        "Does not provide a JavaScript lossless decoder."
+      ],
+      "web_ref": "turn47view2",
+      "evidence_kind": "primary_web"
+    },
+    {
+      "id": "P10",
+      "title": "ECMAScript JSON parse and stringify algorithms",
+      "url": "https://tc39.es/ecma262/multipage/structured-data.html#sec-json.stringify",
+      "publisher": "Ecma TC39",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "supported_sections": [
+        "JSON.parse / ParseJSON",
+        "JSON.stringify / SerializeJSONProperty / SerializeJSONObject"
+      ],
+      "supported_claims": [
+        "Ordinary JSON parsing overwrites earlier duplicate names; ordinary JSON serialization omits undefined object members, maps nonfinite numbers to null, and rejects uncustomized bigint."
+      ],
+      "verification_limitations": [
+        "Retrieved current draft titled ECMAScript 2027; four targeted Node v24.19.0 checks separately executed; not full application or browser tests."
+      ],
+      "web_ref": "turn47view3",
+      "evidence_kind": "primary_web"
+    },
+    {
+      "id": "P11",
+      "title": "lossless-json maintainers' documentation",
+      "url": "https://github.com/josdejong/lossless-json",
+      "publisher": "Jos de Jong / lossless-json maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "supported_sections": [
+        "Features",
+        "parse options",
+        "isSafeNumber",
+        "LosslessNumber",
+        "browser use"
+      ],
+      "supported_claims": [
+        "Browser/Node JSON parser preserves numeric text, rejects duplicate keys by default and exposes custom numeric conversion; permissive valueOf must not be the admission rule."
+      ],
+      "verification_limitations": [
+        "Maintainer documentation, not target-browser validation; numeric round-trip predicates do not create exact-decimal arithmetic."
+      ],
+      "web_ref": "turn55view0",
+      "evidence_kind": "primary_web"
+    },
+    {
+      "id": "P12",
+      "title": "lossless-json package metadata",
+      "url": "https://github.com/josdejong/lossless-json/blob/main/package.json",
+      "publisher": "Jos de Jong / lossless-json maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "supported_sections": [
+        "version",
+        "exports",
+        "browser",
+        "license",
+        "dependencies"
+      ],
+      "supported_claims": [
+        "Observed source version 4.3.1; MIT; ESM and UMD entry points, TypeScript definitions, sideEffects false; no runtime dependencies declared."
+      ],
+      "verification_limitations": [
+        "Mutable main source, blob 79c3af26991288080dfd52bebe9ee7f510d21b10. Published artifact and target Vite build not verified."
+      ],
+      "web_ref": "turn55view1",
+      "evidence_kind": "primary_web"
+    },
+    {
+      "id": "P13",
+      "title": "lossless-json changelog",
+      "url": "https://github.com/josdejong/lossless-json/blob/main/CHANGELOG.md",
+      "publisher": "Jos de Jong / lossless-json maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "supported_sections": [
+        "4.3.1",
+        "4.3.0",
+        "4.2.0"
+      ],
+      "supported_claims": [
+        "Changelog records 4.3.1 on 2026-07-31 and recent numeric-safety/duplicate-key maintenance."
+      ],
+      "verification_limitations": [
+        "Source changelog read through GitHub connector, blob 7715027f292ea93ead224f080177d23d774b7599; GitHub release page was empty, npm latest unverified."
+      ],
+      "web_ref": null,
+      "evidence_kind": "primary_web"
+    },
+    {
+      "id": "P14",
+      "title": "Papa Parse FAQ",
+      "url": "https://www.papaparse.com/faq",
+      "publisher": "Papa Parse maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "retrieval_date_utc": "2026-10-13",
+      "supported_sections": [
+        "Browser compatibility",
+        "streaming",
+        "workers"
+      ],
+      "supported_claims": [
+        "Documented local-browser parsing and streaming/worker tradeoffs."
+      ],
+      "verification_limitations": [
+        "CSP and target browser behavior require application build proof."
+      ],
+      "web_ref": "turn55view2",
+      "evidence_kind": "primary_web"
+    },
+    {
+      "id": "B01",
+      "title": "Parquet File Format",
+      "url": "https://parquet.apache.org/docs/file-format/",
+      "publisher": "Apache Software Foundation",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "File format and layout"
+      ],
+      "supported_claims": [
+        "Columnar file metadata can reference external column files."
+      ],
+      "verification_limitations": [
+        "Format specification, not evidence that any browser implementation supports every feature."
+      ],
+      "web_ref": "turn0search8",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "B02",
+      "title": "Parquet Concepts",
+      "url": "https://parquet.apache.org/docs/concepts/",
+      "publisher": "Apache Software Foundation",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Row group",
+        "Column chunk",
+        "Page"
+      ],
+      "supported_claims": [
+        "Row groups contain column chunks; chunks contain encoding/compression pages."
+      ],
+      "verification_limitations": [
+        "Conceptual layout only."
+      ],
+      "web_ref": "turn3view0",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "B03",
+      "title": "Parquet compression definitions",
+      "url": "https://parquet.apache.org/docs/file-format/data-pages/compression/",
+      "publisher": "Apache Software Foundation",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Overview",
+        "Codecs"
+      ],
+      "supported_claims": [
+        "UNCOMPRESSED, SNAPPY, GZIP, LZO, BROTLI, legacy LZ4, ZSTD, LZ4_RAW.",
+        "GZIP multiple-member compatibility; legacy LZ4 differs from LZ4_RAW."
+      ],
+      "verification_limitations": [
+        "The legal codec list is not a reader support matrix."
+      ],
+      "web_ref": "turn1view0",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "B04",
+      "title": "Parquet Encodings",
+      "url": "https://parquet.apache.org/docs/file-format/data-pages/encodings/",
+      "publisher": "Apache Software Foundation",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Plain",
+        "Dictionary encoding",
+        "RLE",
+        "Delta encodings",
+        "Byte Stream Split"
+      ],
+      "supported_claims": [
+        "Dictionary and delta encodings are distinct from compression codecs."
+      ],
+      "verification_limitations": [
+        "No decoder execution or interoperability measurement."
+      ],
+      "web_ref": "turn3view3",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "B05",
+      "title": "Parquet Nested Encoding",
+      "url": "https://parquet.apache.org/docs/file-format/nestedencoding/",
+      "publisher": "Apache Software Foundation",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Nested Encoding"
+      ],
+      "supported_claims": [
+        "Definition and repetition levels represent optional/repeated nested values."
+      ],
+      "verification_limitations": [
+        "Does not establish safe automatic flattening."
+      ],
+      "web_ref": "turn3view1",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "B06",
+      "title": "Parquet Logical Type Definitions",
+      "url": "https://github.com/apache/parquet-format/blob/master/LogicalTypes.md",
+      "publisher": "Apache Software Foundation",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "DECIMAL",
+        "DATE",
+        "TIME",
+        "TIMESTAMP",
+        "Unsupported Logical Types",
+        "LIST",
+        "MAP"
+      ],
+      "supported_claims": [
+        "Logical annotations carry decimals and temporal meaning beyond physical types.",
+        "Timestamp UTC adjustment and resolution matter; date-only differs from timestamps."
+      ],
+      "verification_limitations": [
+        "Mutable specification head; not every newer annotation is supported by readers."
+      ],
+      "web_ref": "turn3view2",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "B07",
+      "title": "hyparquet README",
+      "url": "https://github.com/hyparam/hyparquet",
+      "publisher": "Hyperparam maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Quick Start",
+        "AsyncBuffer",
+        "parquetRead vs parquetReadObjects",
+        "Binary columns",
+        "Compression"
+      ],
+      "supported_claims": [
+        "Browser-targeted direct ESM reader; ArrayBuffer accepted.",
+        "Default codecs are uncompressed/Snappy; optional compressor package broadens support.",
+        "Unannotated binary defaults to text; row transposition adds work."
+      ],
+      "verification_limitations": [
+        "Maintainer documentation, not tested explorEDA browser integration. Broad all-types claim is narrowed by source B09."
+      ],
+      "web_ref": "turn1view1",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "B08",
+      "title": "hyparquet package manifest at observed commit",
+      "url": "https://github.com/hyparam/hyparquet/blob/1eb9fe4607d9a53d68803b8ecfa1936720e47968/package.json",
+      "publisher": "Hyperparam maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "version",
+        "license",
+        "exports",
+        "dependencies"
+      ],
+      "supported_claims": [
+        "Observed version 1.31.3; MIT; ESM browser condition; no runtime dependencies declared."
+      ],
+      "verification_limitations": [
+        "Repository manifest is not independently verified npm dist-tag, tarball, lockfile, or production bundle."
+      ],
+      "web_ref": null,
+      "access_route": "GitHub plugin fetch_file",
+      "blob_sha": "f5b6fad0fb35e598f155375ef65ec1f19c489820",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "B09",
+      "title": "hyparquet value conversion source at observed commit",
+      "url": "https://github.com/hyparam/hyparquet/blob/1eb9fe4607d9a53d68803b8ecfa1936720e47968/src/convert.js",
+      "publisher": "Hyperparam maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "DEFAULT_PARSERS",
+        "convert",
+        "parseDecimal"
+      ],
+      "supported_claims": [
+        "DECIMAL becomes Number; default timestamps become millisecond Date objects.",
+        "BSON and INTERVAL explicitly throw; temporal parser hooks exist."
+      ],
+      "verification_limitations": [
+        "Static source inspection only. Exact-decimal and timezone behavior must be proved before admission."
+      ],
+      "web_ref": null,
+      "access_route": "GitHub plugin fetch_file",
+      "blob_sha": "f3a524d2d4a5504e38b270f635f87feeafbffef4",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "B10",
+      "title": "hyparquet changelog",
+      "url": "https://github.com/hyparam/hyparquet/blob/master/CHANGELOG.md",
+      "publisher": "Hyperparam maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "1.31.3",
+        "1.31.0",
+        "1.27.0"
+      ],
+      "supported_claims": [
+        "Recent listed fixes cover decoding, page indexes, nested alignment, and parser overrides."
+      ],
+      "verification_limitations": [
+        "Undated changelog does not alone establish release publication time."
+      ],
+      "web_ref": "turn3view5",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "B11",
+      "title": "hyparquet-compressors README",
+      "url": "https://github.com/hyparam/hyparquet-compressors",
+      "publisher": "Hyperparam maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Compression formats",
+        "Snappy",
+        "Gzip",
+        "Brotli",
+        "LZ4",
+        "Zstd"
+      ],
+      "supported_claims": [
+        "Browser/Node compressor package mixes JavaScript and Wasm.",
+        "Snappy Wasm is embedded as base64 and instantiated synchronously."
+      ],
+      "verification_limitations": [
+        "Codec claims not executed. README size statements are not measured for explorEDA."
+      ],
+      "web_ref": "turn3view7",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "B12",
+      "title": "hyparquet-compressors package manifest",
+      "url": "https://github.com/hyparam/hyparquet-compressors/blob/master/package.json",
+      "publisher": "Hyperparam maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "version",
+        "license",
+        "dependencies",
+        "type"
+      ],
+      "supported_claims": [
+        "Observed 1.1.2 MIT ESM; fzstd and hysnappy dependencies."
+      ],
+      "verification_limitations": [
+        "Mutable manifest and transitive license/browser behavior require exact selected-version review."
+      ],
+      "web_ref": null,
+      "access_route": "GitHub plugin fetch_file",
+      "blob_sha": "413d45b08e6fa23c14ecf9201f833f212eed1ad2",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "B13",
+      "title": "parquet-wasm v0.9.0 documentation",
+      "url": "https://kylebarron.dev/parquet-wasm/",
+      "publisher": "Kyle Barron and parquet-wasm contributors",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "API",
+        "Memory management",
+        "Entry Points",
+        "Example",
+        "Custom Builds"
+      ],
+      "supported_claims": [
+        "Wasm Parquet reader returns Arrow data; ESM initialization and Wasm asset delivery are explicit.",
+        "Synchronous read uses complete bytes; ownership/free rules affect peak memory."
+      ],
+      "verification_limitations": [
+        "Documentation was checked; no build, browser, CSP, codec or performance experiment executed. Reported bundle sizes not used as measurements."
+      ],
+      "web_ref": "turn1view2",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "B14",
+      "title": "parquet-wasm v0.9.0 Cargo manifest",
+      "url": "https://github.com/kylebarron/parquet-wasm/blob/v0.9.0/Cargo.toml",
+      "publisher": "Kyle Barron and parquet-wasm contributors",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "package",
+        "features",
+        "dependencies"
+      ],
+      "supported_claims": [
+        "MIT OR Apache-2.0; reader, writer and async features default on.",
+        "all_compressions expands to Brotli/Gzip/Snappy/Zstd/Lz4 features."
+      ],
+      "verification_limitations": [
+        "Feature name does not prove every legal Parquet codec, including LZO and legacy LZ4 variants. Rust dependency version is not a binary-fidelity test."
+      ],
+      "web_ref": null,
+      "access_route": "GitHub plugin fetch_file",
+      "blob_sha": "f6b91c18b6933c4777a53ece70c1c7c7ca2e2214",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "B15",
+      "title": "ParquetFile API",
+      "url": "https://kylebarron.dev/parquet-wasm/classes/esm_parquet_wasm.ParquetFile.html",
+      "publisher": "Kyle Barron and parquet-wasm contributors",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "fromFile",
+        "read",
+        "stream",
+        "free"
+      ],
+      "supported_claims": [
+        "Local Blob/File input; selected columns/row groups/offset/limit.",
+        "fromFile documents a multithreaded-environment limitation."
+      ],
+      "verification_limitations": [
+        "Browser worker placement must distinguish one worker from multithreaded Wasm; not tested here."
+      ],
+      "web_ref": "turn35view1",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "B16",
+      "title": "parquet-wasm v0.9.0 release",
+      "url": "https://github.com/kylebarron/parquet-wasm/releases/tag/v0.9.0",
+      "publisher": "Kyle Barron and parquet-wasm contributors",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Release metadata",
+        "What's Changed"
+      ],
+      "supported_claims": [
+        "Observed release published 2026-09-25; Arrow/Parquet Rust 60 update."
+      ],
+      "verification_limitations": [
+        "Release metadata is activity evidence, not a package integrity or compatibility audit."
+      ],
+      "web_ref": "turn11view6",
+      "access_route": "Web release list plus GitHub plugin release metadata",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "B17",
+      "title": "Apache Avro 1.12.0 specification",
+      "url": "https://avro.apache.org/docs/1.12.0/specification/",
+      "publisher": "Apache Software Foundation",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Object Container Files",
+        "Required Codecs",
+        "Optional Codecs",
+        "Single-object encoding",
+        "Unions",
+        "Logical Types"
+      ],
+      "supported_claims": [
+        "OCF embeds writer schema; raw and fingerprinted messages need external schema knowledge.",
+        "Block codecs, unions, longs and logical types require explicit interpretation."
+      ],
+      "verification_limitations": [
+        "Official documentation navigation still selected 1.12.0; 1.12.2 spec URL was inaccessible. Newer SDK release observed separately."
+      ],
+      "web_ref": "turn1view3",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "B18",
+      "title": "Avro 1.12.2 release announcement",
+      "url": "https://avro.apache.org/blog/2026/08/12/avro-1.12.2/",
+      "publisher": "Apache Software Foundation",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Security Fixes",
+        "Language SDK / Convenience artifacts"
+      ],
+      "supported_claims": [
+        "2026-08-12 release includes Java/Python allocation/decompression hardening and JavaScript dependency updates.",
+        "Official avro-js 1.12.2 package link exists."
+      ],
+      "verification_limitations": [
+        "SDK fixes are language-specific; do not imply avsc received these fixes."
+      ],
+      "web_ref": "turn33view6",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "B19",
+      "title": "avsc package manifest at observed master commit",
+      "url": "https://github.com/mtth/avsc/blob/91d653f72906102448a059cb81692177bb678f52/package.json",
+      "publisher": "Matthieu Monsch and avsc contributors",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "version",
+        "browser",
+        "main",
+        "license"
+      ],
+      "supported_claims": [
+        "Observed source manifest 6.0.0-rc.1, CommonJS main with browser shims, MIT."
+      ],
+      "verification_limitations": [
+        "Not a verified stable npm selection. Head is prerelease source; build compatibility unrun."
+      ],
+      "web_ref": "turn11view4",
+      "access_route": "Web file view; observed head from GitHub plugin",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "B20",
+      "title": "avsc wiki browser support",
+      "url": "https://github.com/mtth/avsc/wiki",
+      "publisher": "avsc maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Browser support"
+      ],
+      "supported_claims": [
+        "Different browser distributions cover types, protocols, or full file support."
+      ],
+      "verification_limitations": [
+        "Page reports last edit 2018; historic bundle estimates not applicable as current measurements."
+      ],
+      "web_ref": "turn15view1",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "B21",
+      "title": "avsc API",
+      "url": "https://github.com/mtth/avsc/wiki/API",
+      "publisher": "avsc maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "BlockDecoder",
+        "UnwrappedUnionType",
+        "WrappedUnionType",
+        "LongType.__with",
+        "parseHook"
+      ],
+      "supported_claims": [
+        "BlockDecoder supports custom codecs and writer-schema parse hooks.",
+        "Wrapped unions preserve branch identity; ambiguous unwrapped unions have limits."
+      ],
+      "verification_limitations": [
+        "Codec example uses Node packages; browser-specific codec delivery needs proof. Mutable wiki; stable-package behavior unrun."
+      ],
+      "web_ref": "turn6view0",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "B22",
+      "title": "avsc Advanced usage",
+      "url": "https://github.com/mtth/avsc/wiki/Advanced-usage",
+      "publisher": "avsc maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Logical types",
+        "Custom long types"
+      ],
+      "supported_claims": [
+        "Logical types require handlers; default long reader rejects precision overflow; custom long representations are possible."
+      ],
+      "verification_limitations": [
+        "Page reports last edit 2020; verify against selected package, not only wiki."
+      ],
+      "web_ref": "turn6view1",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "B23",
+      "title": "avsc generated record source at observed commit",
+      "url": "https://github.com/mtth/avsc/blob/91d653f72906102448a059cb81692177bb678f52/lib/types.js",
+      "publisher": "avsc maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "RecordType._createConstructor",
+        "RecordType._createReader"
+      ],
+      "supported_claims": [
+        "Reader/constructor creation uses new Function."
+      ],
+      "verification_limitations": [
+        "Static inspection of prerelease head; no claim of exploitable schema injection or confirmed production browser failure."
+      ],
+      "web_ref": null,
+      "access_route": "GitHub plugin fetch_file",
+      "blob_sha": "7a8331e0979ea7db52873d98f0e4d075ddfc2afc",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "B24",
+      "title": "avsc browser Blob entry point",
+      "url": "https://github.com/mtth/avsc/blob/91d653f72906102448a059cb81692177bb678f52/etc/browser/avsc.js",
+      "publisher": "avsc maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "BlobReader",
+        "createBlobDecoder",
+        "module.exports"
+      ],
+      "supported_claims": [
+        "Browser path includes FileReader and Node-style streams for OCF Blob decoding."
+      ],
+      "verification_limitations": [
+        "Static source shows intended browser route, not verified Vite/polyfill integration."
+      ],
+      "web_ref": null,
+      "access_route": "GitHub plugin fetch_file",
+      "blob_sha": "1ad278cc6bacadbbf97f1a3fe7a922c8724c6dcc",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "B25",
+      "title": "avsc observed master commit metadata",
+      "url": "https://api.github.com/repos/mtth/avsc/commits/91d653f72906102448a059cb81692177bb678f52",
+      "publisher": "GitHub metadata for avsc",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "commit date and message"
+      ],
+      "supported_claims": [
+        "Observed master head dated 2025-04-10."
+      ],
+      "verification_limitations": [
+        "Master activity does not prove npm publication status, branch inactivity, abandonment, or support commitment."
+      ],
+      "web_ref": null,
+      "access_route": "GitHub plugin fetch",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "B26",
+      "title": "Arrow Columnar Format",
+      "url": "https://arrow.apache.org/docs/format/Columnar.html",
+      "publisher": "Apache Software Foundation",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "IPC Streaming Format",
+        "IPC File Format",
+        "Compression",
+        "Extension Types"
+      ],
+      "supported_claims": [
+        "IPC file is seekable with ARROW1/footer; stream begins schema and record/dictionary messages.",
+        "Buffer codecs use LZ4 frame or Zstd; metadata/extension semantics can exceed scalar rows."
+      ],
+      "verification_limitations": [
+        "Format support is per implementation; generic IPC support is not universal type support."
+      ],
+      "web_ref": "turn6view2",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "B27",
+      "title": "Feather File Format",
+      "url": "https://arrow.apache.org/docs/python/feather.html",
+      "publisher": "Apache Software Foundation",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Versions",
+        "Using Compression",
+        "Writing Version 1 Files"
+      ],
+      "supported_claims": [
+        "V2 is Arrow IPC file and supports LZ4/Zstd; V1 is distinct, uncompressed and restricted.",
+        "Current docs deprecate V1 reading/writing from Arrow 25.0.0."
+      ],
+      "verification_limitations": [
+        "PyArrow feature support does not establish JavaScript reader support."
+      ],
+      "web_ref": "turn6view3",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "B28",
+      "title": "Apache Arrow JavaScript current documentation",
+      "url": "https://arrow.apache.org/js/current/",
+      "publisher": "Apache Software Foundation",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Cookbook",
+        "Packaging",
+        "Supported Browsers and Platforms",
+        "License"
+      ],
+      "supported_claims": [
+        "Observed docs 21.2.0; tableFromIPC; ESM/CommonJS delivery; maintained browser targets; Apache-2.0."
+      ],
+      "verification_limitations": [
+        "Broad browser statement untested in explorEDA. No advertised bundle-size inference."
+      ],
+      "web_ref": "turn33view0",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "B29",
+      "title": "Apache Arrow JS release list",
+      "url": "https://github.com/apache/arrow-js/releases",
+      "publisher": "Apache Software Foundation",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "21.2.0",
+        "21.1.0"
+      ],
+      "supported_claims": [
+        "Observed 21.2.0 release; release history includes IPC body compression support."
+      ],
+      "verification_limitations": [
+        "Release availability differs from successful decoder+codec initialization."
+      ],
+      "web_ref": "turn23view2",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "B30",
+      "title": "Arrow JS 21.2.0 compression registry source",
+      "url": "https://github.com/apache/arrow-js/blob/v21.2.0/src/ipc/compression/registry.ts",
+      "publisher": "Apache Software Foundation",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "_CompressionRegistry",
+        "Codec"
+      ],
+      "supported_claims": [
+        "Compression registry initializes empty and accepts optional codecs."
+      ],
+      "verification_limitations": [
+        "Application must choose and prove codec packages; no codec implementation is endorsed by this inspection."
+      ],
+      "web_ref": null,
+      "access_route": "GitHub plugin fetch_file",
+      "blob_sha": "af7d819ca25fc2af9b7b0bd0e4670fd3ac66d27c",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "B31",
+      "title": "Arrow JS 21.2.0 IPC reader source",
+      "url": "https://github.com/apache/arrow-js/blob/v21.2.0/src/ipc/reader.ts",
+      "publisher": "Apache Software Foundation",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "_loadRecordBatch",
+        "_loadDictionaryBatch",
+        "_decompressBuffers"
+      ],
+      "supported_claims": [
+        "Compressed record/dictionary batches use registered decoders and error if absent."
+      ],
+      "verification_limitations": [
+        "Static path inspection; no corrupt-input or producer compatibility experiment."
+      ],
+      "web_ref": null,
+      "access_route": "GitHub plugin fetch_file",
+      "blob_sha": "d0edafd17b15202acc84b3bf2d3715b90d8c266a",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "B32",
+      "title": "Arrow JS 21.2.0 value getter source",
+      "url": "https://github.com/apache/arrow-js/blob/v21.2.0/src/visitor/get.ts",
+      "publisher": "Apache Software Foundation",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "getBigInts",
+        "getDateDay",
+        "getTimestampMicrosecond",
+        "getTimestampNanosecond",
+        "getDecimal"
+      ],
+      "supported_claims": [
+        "64-bit integer, timestamp and decimal accessors have distinct representations; timestamp getters use milliseconds."
+      ],
+      "verification_limitations": [
+        "Inspect schema before converting to plain rows; exact temporal roundtrip not executed."
+      ],
+      "web_ref": null,
+      "access_route": "GitHub plugin fetch_file",
+      "blob_sha": "10c2c75b08857fc0997ab1b1503c7c1d440267e2",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "B33",
+      "title": "DuckDB Wasm Client overview",
+      "url": "https://duckdb.org/docs/current/clients/wasm/overview",
+      "publisher": "DuckDB Foundation",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Overview",
+        "Installation"
+      ],
+      "supported_claims": [
+        "Browser-resident engine; documentation labels client stable 1.5.6."
+      ],
+      "verification_limitations": [
+        "Version label differs from retrieved GitHub release tag B37; do not use as reconciled package pin."
+      ],
+      "web_ref": "turn26view6",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "B34",
+      "title": "DuckDB-Wasm Import Data",
+      "url": "https://duckdb.org/docs/current/clients/wasm/data_ingestion",
+      "publisher": "DuckDB Foundation",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Overview",
+        "Apache Arrow",
+        "Parquet"
+      ],
+      "supported_claims": [
+        "Local File handles/buffers registered before SQL reads; Arrow output/inserts are central.",
+        "Current docs require Arrow major version alignment with dependency."
+      ],
+      "verification_limitations": [
+        "Desktop DuckDB extensions not automatically browser-supported. Local decoder design does not require SQL."
+      ],
+      "web_ref": "turn26view5",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "B35",
+      "title": "Deploy DuckDB-Wasm",
+      "url": "https://duckdb.org/docs/current/clients/wasm/deploying_duckdb_wasm",
+      "publisher": "DuckDB Foundation",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "JS Worker Component",
+        "Wasm Worker Component",
+        "DuckDB Extensions",
+        "Cross-Origin Isolation"
+      ],
+      "supported_claims": [
+        "Deployment includes workers, matching Wasm modules and any extensions.",
+        "Threaded coi bundle requires cross-origin isolation; single-thread bundles avoid that condition."
+      ],
+      "verification_limitations": [
+        "No claim current explorEDA hosting satisfies worker/CSP/COOP/COEP needs."
+      ],
+      "web_ref": "turn37view2",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "B36",
+      "title": "DuckDB-Wasm package manifest",
+      "url": "https://github.com/duckdb/duckdb-wasm/blob/main/packages/duckdb-wasm/package.json",
+      "publisher": "DuckDB maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "license",
+        "dependencies",
+        "exports"
+      ],
+      "supported_claims": [
+        "MIT; browser ESM/CommonJS and worker/Wasm assets; apache-arrow ^17 dependency."
+      ],
+      "verification_limitations": [
+        "Source manifest version 1.11.0 is not synchronized with observed release tags/docs; inspect actual published artifact before a future pin."
+      ],
+      "web_ref": null,
+      "access_route": "GitHub plugin fetch_file",
+      "blob_sha": "5150fcebe86c2a65f993371b855534f7dc186adc",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "B37",
+      "title": "DuckDB-Wasm observed GitHub release metadata",
+      "url": "https://github.com/duckdb/duckdb-wasm/releases/tag/v1.33.0",
+      "publisher": "DuckDB maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Release metadata"
+      ],
+      "supported_claims": [
+        "GitHub releases/latest returned v1.33.0, published 2025-12-16."
+      ],
+      "verification_limitations": [
+        "GitHub release tag is not reconciled with docs client version or engine version; no unqualified latest-package claim."
+      ],
+      "web_ref": null,
+      "access_route": "GitHub plugin fetch releases/latest",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "B38",
+      "title": "Content Security Policy Level 3",
+      "url": "https://www.w3.org/TR/CSP3/",
+      "publisher": "W3C Web Application Security Working Group",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "4.5 WebAssembly integration",
+        "6.1.10 script-src",
+        "worker-src"
+      ],
+      "supported_claims": [
+        "Wasm compilation and JavaScript Function construction have distinct policy gates."
+      ],
+      "verification_limitations": [
+        "Policy spec, not an audit of explorEDA response headers or browser behavior."
+      ],
+      "web_ref": "turn50view1",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "B39",
+      "title": "Apache Parquet compatibility test data",
+      "url": "https://github.com/apache/parquet-testing/blob/master/data/README.md",
+      "publisher": "Apache Software Foundation",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Test data files",
+        "Encrypted Files"
+      ],
+      "supported_claims": [
+        "Real fixtures cover dictionaries, pages, nulls, codecs, nested types, decimals and malformed input."
+      ],
+      "verification_limitations": [
+        "Read fixture inventory/descriptions only. No binary fixture downloaded or decoded; large corpus entries need size review before use."
+      ],
+      "web_ref": null,
+      "access_route": "GitHub plugin data directory and README",
+      "blob_sha": "7aebae5a653e442355b6b1d6df2d989a3cbe3008",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "B40",
+      "title": "Apache Avro shared test-data inventory",
+      "url": "https://github.com/apache/avro/tree/main/share/test/data",
+      "publisher": "Apache Software Foundation",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "weather files",
+        "schema files"
+      ],
+      "supported_claims": [
+        "Authoritative weather OCF fixtures exist with null/deflate/Snappy/Zstd variants and JSON expectation."
+      ],
+      "verification_limitations": [
+        "Inventory checked, binary contents not parsed; exact producer/ref and expected values must be captured in proof."
+      ],
+      "web_ref": null,
+      "access_route": "GitHub plugin directory listing",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "B41",
+      "title": "Apache Arrow test-data inventory",
+      "url": "https://github.com/apache/arrow-testing/tree/master/data",
+      "publisher": "Apache Software Foundation",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "arrow-ipc-file",
+        "arrow-ipc-stream",
+        "avro",
+        "orc"
+      ],
+      "supported_claims": [
+        "Authoritative IPC file/stream and malformed-input fixture families exist."
+      ],
+      "verification_limitations": [
+        "Directory inventory is not sufficient to select arbitrary fuzz input; use small known fixtures with expected failure."
+      ],
+      "web_ref": null,
+      "access_route": "GitHub plugin directory listing",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "B42",
+      "title": "Apache avro-js package manifest",
+      "url": "https://github.com/apache/avro/blob/main/lang/js/package.json",
+      "publisher": "Apache Software Foundation",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "browser",
+        "license",
+        "version",
+        "dependencies"
+      ],
+      "supported_claims": [
+        "Apache-2.0; CommonJS with browser mapping; observed development version 1.13.0-SNAPSHOT."
+      ],
+      "verification_limitations": [
+        "Development manifest differs from released 1.12.2; not an install recommendation."
+      ],
+      "web_ref": null,
+      "access_route": "GitHub plugin fetch_file",
+      "blob_sha": "258a3e1a02564f1bcd2f05d53a494423c64579e4",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "B43",
+      "title": "Apache avro-js browser entry point",
+      "url": "https://github.com/apache/avro/blob/main/lang/js/etc/browser/avro.js",
+      "publisher": "Apache Software Foundation",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "parse",
+        "module.exports"
+      ],
+      "supported_claims": [
+        "Browserify shim exposes type parsing/validators without filesystem methods or an exposed OCF decoder."
+      ],
+      "verification_limitations": [
+        "Current source-only inspection; browser container route and CSP require separate proof."
+      ],
+      "web_ref": null,
+      "access_route": "GitHub plugin fetch_file",
+      "blob_sha": "b2b894ed2b4700bada045c3eaf5df8a126f1448c",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "B44",
+      "title": "hyparquet observed master commit metadata",
+      "url": "https://api.github.com/repos/hyparam/hyparquet/commits/1eb9fe4607d9a53d68803b8ecfa1936720e47968",
+      "publisher": "GitHub metadata for Hyperparam",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "commit date and message"
+      ],
+      "supported_claims": [
+        "Observed master head dated 2026-10-10."
+      ],
+      "verification_limitations": [
+        "Activity evidence only; no release freshness or support guarantee."
+      ],
+      "web_ref": null,
+      "access_route": "GitHub plugin fetch",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "B45",
+      "title": "Parquet Tips",
+      "url": "https://duckdb.org/docs/current/data/parquet/tips",
+      "publisher": "DuckDB Foundation",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Selecting a ROW_GROUP_SIZE"
+      ],
+      "supported_claims": [
+        "DuckDB documents a minimum ROW_GROUP_SIZE setting of 2,048 rows."
+      ],
+      "verification_limitations": [
+        "Documentation checked; no DuckDB execution or file generation. Planned fixture metadata must establish actual row-group count."
+      ],
+      "web_ref": "turn63view0",
+      "access_route": "Primary web documentation; system2 and system1 searches plus direct open/find",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "W01",
+      "title": "ECMA-376: Office Open XML file formats",
+      "url": "https://ecma-international.org/publications-and-standards/standards/ecma-376/",
+      "publisher": "Ecma International",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_claims": [
+        "Office Open XML defines vocabularies, representation, packaging, and producer/consumer requirements."
+      ],
+      "verification_limitations": [
+        "Landing-page overview checked; full specification parts were not downloaded."
+      ],
+      "web_ref": "turn41view3",
+      "evidence_kind": "primary_documentation",
+      "supported_sections": [
+        "Standard overview; four constituent parts"
+      ],
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "W02",
+      "title": "Structure of a SpreadsheetML document",
+      "url": "https://learn.microsoft.com/en-us/office/open-xml/spreadsheet/structure-of-a-spreadsheetml-document",
+      "publisher": "Microsoft",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_claims": [
+        "XLSX consists of related package parts; worksheets are cell grids; an Excel table denotes a data range and differs from a worksheet or pivot table."
+      ],
+      "verification_limitations": [
+        "Document text retrieved despite a generic authorization banner; no workbook implementation exercised."
+      ],
+      "web_ref": "turn32view3",
+      "evidence_kind": "primary_documentation",
+      "supported_sections": [
+        "Important Spreadsheet Parts; Minimum Workbook Scenario; Typical Workbook Scenario"
+      ],
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "W03",
+      "title": "Working with formulas",
+      "url": "https://learn.microsoft.com/en-us/office/open-xml/spreadsheet/working-with-formulas",
+      "publisher": "Microsoft",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_claims": [
+        "Formula text and a previously calculated cached value are separate cell elements; a cached value may be absent; formulas may refer outside the workbook."
+      ],
+      "verification_limitations": [
+        "Describes format semantics, not guaranteed freshness or completeness of any producer's formula cache."
+      ],
+      "web_ref": "turn32view2",
+      "evidence_kind": "primary_documentation",
+      "supported_sections": [
+        "Formulas in SpreadsheetML"
+      ],
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "W04",
+      "title": "Date systems in Excel",
+      "url": "https://support.microsoft.com/en-us/excel/date-systems-in-excel",
+      "publisher": "Microsoft",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_claims": [
+        "Excel supports 1900 and 1904 serial-date systems; the same date differs by 1,462 serial days."
+      ],
+      "verification_limitations": [
+        "No independent date fixture decoded during research."
+      ],
+      "web_ref": "turn32view1",
+      "evidence_kind": "primary_documentation",
+      "supported_sections": [
+        "The 1900 date system; The 1904 date system; The difference between the date systems"
+      ],
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "W05",
+      "title": "File Formats",
+      "url": "https://docs.sheetjs.com/docs/miscellany/formats/",
+      "publisher": "SheetJS LLC",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_claims": [
+        "SheetJS CE documents XLSX/XLSM, XLSB, legacy XLS, ODS/FODS, and other spreadsheet import routes; these formats are not equivalent feature promises."
+      ],
+      "verification_limitations": [
+        "Maintainer support matrix is capability evidence, not market prevalence or explorEDA/browser verification."
+      ],
+      "web_ref": "turn18view7",
+      "evidence_kind": "primary_documentation",
+      "supported_sections": [
+        "Read/write support matrix; Common File Formats; OpenDocument Spreadsheet"
+      ],
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "W06",
+      "title": "Frameworks and Bundlers",
+      "url": "https://docs.sheetjs.com/docs/getting-started/installation/frameworks/",
+      "publisher": "SheetJS LLC",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_claims": [
+        "Official 0.20.3 tarball installs through pnpm; the maintainer calls npm xlsx 0.18.5 stale; ESM and dynamic wrapper loading are documented; legacy codepages need an additional module."
+      ],
+      "verification_limitations": [
+        "Documentation was updated August 3, 2026; no package installation, ESM bundling, dependency scan, or bundle measurement was performed."
+      ],
+      "web_ref": "turn9view0",
+      "evidence_kind": "primary_documentation",
+      "supported_sections": [
+        "Installation; Legacy Endpoints; Vendoring; Usage; Dynamic Imports; Encoding support"
+      ],
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "W07",
+      "title": "Standalone Browser Scripts",
+      "url": "https://docs.sheetjs.com/docs/getting-started/installation/standalone/",
+      "publisher": "SheetJS LLC",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_claims": [
+        "The page names 0.20.3 as current; full standalone browser scripts and a mini build exist; the mini build omits XLSB and XLS among other features."
+      ],
+      "verification_limitations": [
+        "Artifact bytes were not downloaded or tested; no compressed size claims are inferred."
+      ],
+      "web_ref": "turn9view1",
+      "evidence_kind": "primary_documentation",
+      "supported_sections": [
+        "Current version; Browser Scripts"
+      ],
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "W08",
+      "title": "SheetJS Community Edition official source repository",
+      "url": "https://git.sheetjs.com/sheetjs/sheetjs",
+      "publisher": "SheetJS LLC",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_claims": [
+        "Official source shows 2026 maintenance activity while generated 0.20.3 artifacts carry older version-bump history."
+      ],
+      "verification_limitations": [
+        "A source commit is not evidence that its changes are included in the published 0.20.3 tarball; commit listing is not a complete maintenance audit."
+      ],
+      "web_ref": "turn28view2",
+      "evidence_kind": "primary_documentation",
+      "supported_sections": [
+        "File tree commit summaries; source and distribution links"
+      ],
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "W09",
+      "title": "SheetJS Community Edition license",
+      "url": "https://docs.sheetjs.com/docs/miscellany/license/",
+      "publisher": "SheetJS LLC",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_claims": [
+        "SheetJS CE is Apache-2.0; SheetJS Pro uses separate terms."
+      ],
+      "verification_limitations": [
+        "Documentation review only; selected package and bundled dependency notices still require review before adoption."
+      ],
+      "web_ref": "turn28view3",
+      "evidence_kind": "primary_documentation",
+      "supported_sections": [
+        "License; Required Attribution"
+      ],
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "W10",
+      "title": "Reading Files",
+      "url": "https://docs.sheetjs.com/docs/api/parse-options/",
+      "publisher": "SheetJS LLC",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_claims": [
+        "Browser input uses supplied bytes through read; readFile is not a browser filesystem API. Sheet discovery/selection and parse limits exist. Default worksheet errors may be suppressed; unsupported encryption rejects."
+      ],
+      "verification_limitations": [
+        "Options do not prove strict decompression budgets, streaming, atomicity, or security. Feature-specific details require real fixtures; no reader was run."
+      ],
+      "web_ref": "turn4view1",
+      "evidence_kind": "primary_documentation",
+      "supported_sections": [
+        "Parsing Options; Range; Workbook Metadata; Worksheets; Password Protection; Parsing Errors; Guessing File Type"
+      ],
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "W11",
+      "title": "Workbook Object",
+      "url": "https://docs.sheetjs.com/docs/csf/book/",
+      "publisher": "SheetJS LLC",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_claims": [
+        "Ordered SheetNames, Sheets, visibility metadata, defined names, and the date1904 flag are exposed; true/1 denotes the 1904 system."
+      ],
+      "verification_limitations": [
+        "Runtime metadata completeness depends on format and parser options."
+      ],
+      "web_ref": "turn18view4",
+      "evidence_kind": "primary_documentation",
+      "supported_sections": [
+        "Workbook object; Workbook-Level Attributes; Sheet Metadata"
+      ],
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "W12",
+      "title": "Cell Objects",
+      "url": "https://docs.sheetjs.com/docs/csf/cell/",
+      "publisher": "SheetJS LLC",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_claims": [
+        "Cell type, raw value, formatted text, formula, and number format are distinct. Error cells and blank stubs require explicit handling. Numbers use JavaScript number representation."
+      ],
+      "verification_limitations": [
+        "Decoding a cell does not prove admissibility in explorEDA; source values already rounded by a producer cannot be recovered."
+      ],
+      "web_ref": "turn18view1",
+      "evidence_kind": "primary_documentation",
+      "supported_sections": [
+        "Content and Presentation; Cell Types; Underlying Values"
+      ],
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "W13",
+      "title": "Arrays of Data",
+      "url": "https://docs.sheetjs.com/docs/api/utilities/array/",
+      "publisher": "SheetJS LLC",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_claims": [
+        "sheet_to_json does no field validation; header inference renames duplicates; blank-row, raw/display, missing-cell, range, and hidden-cell options alter output."
+      ],
+      "verification_limitations": [
+        "Default conversion must not silently become the application's import contract; no conversion experiments were run."
+      ],
+      "web_ref": "turn18view5",
+      "evidence_kind": "primary_documentation",
+      "supported_sections": [
+        "Array Output"
+      ],
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "W14",
+      "title": "Merged Cells",
+      "url": "https://docs.sheetjs.com/docs/csf/features/merges/",
+      "publisher": "SheetJS LLC",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_claims": [
+        "Merged cells conventionally use the top-left value; covered cells may also contain data; merge metadata is exposed."
+      ],
+      "verification_limitations": [
+        "Covered-cell handling varies by utility. Overlap/collision checks and the chosen interpretation need fixtures."
+      ],
+      "web_ref": "turn18view3",
+      "evidence_kind": "primary_documentation",
+      "supported_sections": [
+        "File Format Support; Storage; Cells and Covered Cells"
+      ],
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "W15",
+      "title": "Sheet Visibility",
+      "url": "https://docs.sheetjs.com/docs/csf/features/visibility/",
+      "publisher": "SheetJS LLC",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_claims": [
+        "Hidden and very-hidden worksheet states can coexist with stored sheet data; visibility is metadata."
+      ],
+      "verification_limitations": [
+        "No claim that hiding is security; selecting hidden sources remains an explicit product decision."
+      ],
+      "web_ref": "turn30view0",
+      "evidence_kind": "primary_documentation",
+      "supported_sections": [
+        "Storage; Parsing"
+      ],
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "W16",
+      "title": "Row Properties",
+      "url": "https://docs.sheetjs.com/docs/csf/features/rowprops/",
+      "publisher": "SheetJS LLC",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_claims": [
+        "Parsing row properties requires cellStyles; utility skipHidden can exclude hidden rows."
+      ],
+      "verification_limitations": [
+        "Metadata extraction has a cost that was not measured; filtered visibility and manual hiding require producer fixtures."
+      ],
+      "web_ref": "turn30view1",
+      "evidence_kind": "primary_documentation",
+      "supported_sections": [
+        "Functions: Reading Files; Exporting Data"
+      ],
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "W17",
+      "title": "Formulae",
+      "url": "https://docs.sheetjs.com/docs/csf/features/formulae/",
+      "publisher": "SheetJS LLC",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_claims": [
+        "SheetJS CE does not calculate formula results; formula strings and array-formula range metadata are separate from cached data."
+      ],
+      "verification_limitations": [
+        "No formula engine is proposed. Cache freshness cannot be established from decoder success."
+      ],
+      "web_ref": "turn18view2",
+      "evidence_kind": "primary_documentation",
+      "supported_sections": [
+        "Formula storage; Array Formulae"
+      ],
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "W18",
+      "title": "Dates and Times",
+      "url": "https://docs.sheetjs.com/docs/csf/features/dates/",
+      "publisher": "SheetJS LLC",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_claims": [
+        "Spreadsheet serial dates and number formats differ from absolute JavaScript times; 1900 includes fictitious leap-day compatibility; UTC/local interpretation and conversion options matter."
+      ],
+      "verification_limitations": [
+        "One sample on the page has inverted date1904 comments; use W11/W04 for flag meaning and prove conversions with real files. No timezone behavior was executed."
+      ],
+      "web_ref": "turn18view0",
+      "evidence_kind": "primary_documentation",
+      "supported_sections": [
+        "How Spreadsheets Understand Time; Relative Epochs; How Files Store Dates and Times; How SheetJS handles Dates and Times"
+      ],
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "W19",
+      "title": "Web Workers",
+      "url": "https://docs.sheetjs.com/docs/demos/bigdata/worker/",
+      "publisher": "SheetJS LLC",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_claims": [
+        "SheetJS documents passing a local File into a worker and reading its bytes there; classic and module-worker examples exist; hosted production assets are encouraged."
+      ],
+      "verification_limitations": [
+        "Documentation includes version-specific browser claims; no current-browser compatibility, strict CSP, cancellation, responsiveness, or memory test was run."
+      ],
+      "web_ref": "turn18view6",
+      "evidence_kind": "primary_documentation",
+      "supported_sections": [
+        "Installation; ECMAScript Module Support; User-Submitted File"
+      ],
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "W20",
+      "title": "Defined Names",
+      "url": "https://docs.sheetjs.com/docs/csf/features/names/",
+      "publisher": "SheetJS LLC",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_claims": [
+        "Named references have workbook/sheet scope; names can point to A1-style ranges and may use relative references."
+      ],
+      "verification_limitations": [
+        "A defined name is not necessarily a simple table; arbitrary names/formulas must not be treated as safe rectangular regions."
+      ],
+      "web_ref": "turn30view3",
+      "evidence_kind": "primary_documentation",
+      "supported_sections": [
+        "Defined Name Object; Ranges; Scope"
+      ],
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "W21",
+      "title": "VBA and Macros",
+      "url": "https://docs.sheetjs.com/docs/csf/features/vba/",
+      "publisher": "SheetJS LLC",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_claims": [
+        "Optional bookVBA extraction exposes embedded macro data; macro-enabled workbooks and macro-dependent formulas are separate concerns."
+      ],
+      "verification_limitations": [
+        "No macros or spreadsheet automation were executed; not evidence for safe full workbook execution."
+      ],
+      "web_ref": "turn30view2",
+      "evidence_kind": "primary_documentation",
+      "supported_sections": [
+        "Extracting VBA Blobs; Details"
+      ],
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "W22",
+      "title": "ExcelJS README at v4.4.0",
+      "url": "https://github.com/exceljs/exceljs/blob/v4.4.0/README.md",
+      "publisher": "ExcelJS maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_claims": [
+        "ExcelJS documents XLSX buffer loading, browser document workbooks, and cached formula results without calculation. Its streaming reader/writer are excluded from the browser build."
+      ],
+      "verification_limitations": [
+        "Tag-specific README fetched through GitHub plugin (blob e70b1d2be90da7e07af27884340a7783752784fd). Current master README also retrieved via web; neither was browser-tested."
+      ],
+      "web_ref": null,
+      "evidence_kind": "primary_repository_file",
+      "supported_sections": [
+        "Installation; Importing; Reading XLSX; Browser; Formula Value; Tables"
+      ],
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "W23",
+      "title": "ExcelJS package.json at v4.4.0",
+      "url": "https://github.com/exceljs/exceljs/blob/v4.4.0/package.json",
+      "publisher": "ExcelJS maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_claims": [
+        "Version 4.4.0; MIT; CommonJS main excel.js; browser dist/exceljs.min.js; bundled TypeScript declarations; JSZip and SAX-style XML dependencies."
+      ],
+      "verification_limitations": [
+        "Read-only GitHub plugin fetch, blob 7a70a5e13145a917b57806a6998b8d5e04f47acd. No module field/exports field in inspected package; actual Vite interop remains untested."
+      ],
+      "web_ref": null,
+      "evidence_kind": "primary_repository_file",
+      "supported_sections": [
+        "version; license; main; browser; types; dependencies"
+      ],
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "W24",
+      "title": "ExcelJS latest release metadata and v4.4.0 release",
+      "url": "https://api.github.com/repos/exceljs/exceljs/releases/latest",
+      "publisher": "ExcelJS maintainers / GitHub",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_claims": [
+        "GitHub latest-release endpoint returned v4.4.0, a non-prerelease published 2023-10-19T19:57:46Z; canonical release page is https://github.com/exceljs/exceljs/releases/tag/v4.4.0."
+      ],
+      "verification_limitations": [
+        "Latest tagged release is not a complete picture of post-release maintenance or vulnerability state. Endpoint fetched read-only via GitHub plugin."
+      ],
+      "web_ref": "turn28view1",
+      "evidence_kind": "primary_release_metadata",
+      "supported_sections": [
+        "tag_name; prerelease; published_at; html_url"
+      ],
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "W25",
+      "title": "Create, view, or download a file",
+      "url": "https://support.google.com/docs/answer/49114?hl=en",
+      "publisher": "Google",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_claims": [
+        "A person can open a spreadsheet, use File > Download, choose a format, and obtain a file on the computer."
+      ],
+      "verification_limitations": [
+        "Public help only; no signed-in Google session or live export was used."
+      ],
+      "web_ref": "turn21view1",
+      "evidence_kind": "primary_documentation",
+      "supported_sections": [
+        "Download a copy of a file"
+      ],
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "W26",
+      "title": "Export MIME types for Google Workspace documents",
+      "url": "https://developers.google.com/workspace/drive/api/guides/ref-export-formats",
+      "publisher": "Google",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_claims": [
+        "The export matrix lists XLSX, ODS, PDF, zipped HTML, CSV, and TSV; CSV/TSV are explicitly single-sheet in this API context."
+      ],
+      "verification_limitations": [
+        "The table labels CSV/TSV first-sheet only for the API. It must not establish which sheet the manual UI chooses. Documentation is factual evidence only; no API integration is proposed."
+      ],
+      "web_ref": "turn4view3",
+      "evidence_kind": "primary_documentation",
+      "supported_sections": [
+        "Spreadsheets export format rows"
+      ],
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "W27",
+      "title": "Supported file formats: Google Sheets TSV export",
+      "url": "https://support.google.com/manufacturers/answer/6124098?hl=en",
+      "publisher": "Google",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_claims": [
+        "Official manual instructions identify File > Download as > Tab-separated values (.tsv, current sheet)."
+      ],
+      "verification_limitations": [
+        "Manual TSV behavior is documented; equivalent current-tab CSV behavior and producer fidelity still require an exported fixture or independent official confirmation. Other feed rules on this page are not general TSV rules."
+      ],
+      "web_ref": "turn28view4",
+      "evidence_kind": "primary_documentation",
+      "supported_sections": [
+        "Tab-delimited files; If you're using Google Sheets"
+      ],
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "W28",
+      "title": "Work on Google Docs, Sheets, & Slides offline",
+      "url": "https://support.google.com/docs/answer/6388102?hl=en",
+      "publisher": "Google",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_claims": [
+        "Offline use is tied to supported browser/profile, Google Docs Offline, account selection, and managed local site data."
+      ],
+      "verification_limitations": [
+        "No public portable offline-cache schema is provided by this source; no cache was inspected. Lack of a documented interchange route is an engineering reason to exclude cache import, not a claim that no data exists locally."
+      ],
+      "web_ref": "turn7search0",
+      "evidence_kind": "primary_documentation",
+      "supported_sections": [
+        "Before you turn on offline access; Make specific files available offline; browser profile and site-data troubleshooting"
+      ],
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "W29",
+      "title": "Files and folders overview",
+      "url": "https://developers.google.com/workspace/drive/api/guides/about-files",
+      "publisher": "Google",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_claims": [
+        "Google Workspace documents differ from binary/text blobs; a Sheets native document has application/vnd.google-apps.spreadsheet type; compatible formats can be exported."
+      ],
+      "verification_limitations": [
+        "Drive shortcuts are also documented but must not be conflated with every desktop .gsheet implementation. This source describes provider classification, not a cache decoder."
+      ],
+      "web_ref": "turn21view3",
+      "evidence_kind": "primary_documentation",
+      "supported_sections": [
+        "File types"
+      ],
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "W30",
+      "title": "Use Google Drive for desktop",
+      "url": "https://support.google.com/drive/answer/10838124?hl=en",
+      "publisher": "Google",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_claims": [
+        "Opening Docs/Sheets/Slides items from the Drive desktop folder opens them in a web browser."
+      ],
+      "verification_limitations": [
+        "Does not specify current .gsheet serialization or independently usable offline-cache format."
+      ],
+      "web_ref": "turn21view2",
+      "evidence_kind": "primary_documentation",
+      "supported_sections": [
+        "Access your synced files"
+      ],
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "W31",
+      "title": "Chromium hosted-document pointer serialization",
+      "url": "https://chromium.googlesource.com/chromium/src/+/9d94097261b83d3fe2af86de8b22a81da603c0ea/components/drive/file_system_core_util.cc",
+      "publisher": "The Chromium Authors / Google-hosted source",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_claims": [
+        "Historical primary implementation writes URL/resource_id JSON for hosted-document pointer files, rather than table cells."
+      ],
+      "verification_limitations": [
+        "Historical pinned Chromium implementation, not a current Drive for desktop contract; paired with W32 to identify .gsheet. No actual user's pointer or offline cache was read."
+      ],
+      "web_ref": "turn28view5",
+      "evidence_kind": "historical_primary_source",
+      "supported_sections": [
+        "CreateGDocFile; ReadUrlFromGDocFile; ReadResourceIdFromGDocFile"
+      ],
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "W32",
+      "title": "Chromium hosted-spreadsheet extension metadata",
+      "url": "https://chromium.googlesource.com/chromium/src/+/1b93c87e38de8f82e35efd150d6db17dcccfaa17/components/drive/drive.proto",
+      "publisher": "The Chromium Authors / Google-hosted source",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_claims": [
+        "Historical source explicitly labels .gsheet as a hosted-spreadsheet extension and distinguishes hosted-document URLs from regular file content."
+      ],
+      "verification_limitations": [
+        "Historical primary code, not a current public interchange specification."
+      ],
+      "web_ref": "turn41view0",
+      "evidence_kind": "historical_primary_source",
+      "supported_sections": [
+        "FileSpecificInfo.document_extension; is_hosted_document; alternate_url"
+      ],
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "W33",
+      "title": "Export spreadsheets",
+      "url": "https://support.google.com/a/users/answer/9330963?hl=en&ref_topic=9296611",
+      "publisher": "Google",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_claims": [
+        "Google's learning center says a downloaded spreadsheet can be opened in other programs."
+      ],
+      "verification_limitations": [
+        "The format menu is an SVG image the web reader could not render; use W26/W27 for text-verified format details. No live menu was inspected."
+      ],
+      "web_ref": "turn42view0",
+      "evidence_kind": "primary_documentation",
+      "supported_sections": [
+        "Download in different formats"
+      ],
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L01",
+      "title": "IO tools (text, CSV, HDF5, …)",
+      "url": "https://pandas.pydata.org/docs/user_guide/io.html",
+      "publisher": "pandas maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Reader/writer table",
+        "CSV & text files",
+        "HDF5 (PyTables)"
+      ],
+      "supported_claims": [
+        "pandas documents readers across text, workbook, analytical, statistical and Python serialization formats. A listed method does not imply a dependency-free reader."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn10view0",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L02",
+      "title": "Installation: optional dependencies",
+      "url": "https://pandas.pydata.org/docs/getting_started/install.html",
+      "publisher": "pandas maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Optional dependencies",
+        "Excel files",
+        "Other data sources"
+      ],
+      "supported_claims": [
+        "Optional packages include workbook engines, PyTables, PyArrow, PyIceberg and pyreadstat; unavailable required extras cause ImportError."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn45view5",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L03",
+      "title": "Input/output",
+      "url": "https://docs.pola.rs/api/python/stable/reference/io.html",
+      "publisher": "Polars maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Avro",
+        "CSV",
+        "Delta Lake",
+        "Excel / ODS",
+        "Feather / IPC",
+        "Iceberg",
+        "JSON",
+        "Parquet"
+      ],
+      "supported_claims": [
+        "Polars exposes readers for Avro, CSV, JSON/NDJSON, Excel/ODS, IPC and Parquet, plus distinct lakehouse and database access methods."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn22view2",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L04",
+      "title": "Excel",
+      "url": "https://docs.pola.rs/user-guide/io/excel/",
+      "publisher": "Polars maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Reading",
+        "Engine options"
+      ],
+      "supported_claims": [
+        "Polars spreadsheet reading uses separately installed fastexcel/calamine, xlsx2csv or openpyxl; sheet selection is explicit."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn24view0",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L05",
+      "title": "Importing Data",
+      "url": "https://duckdb.org/docs/current/data/overview",
+      "publisher": "DuckDB Foundation",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "File Formats: CSV Loading, Parquet Loading, JSON Loading"
+      ],
+      "supported_claims": [
+        "DuckDB documents SQL-based CSV, JSON and Parquet file reads, including compressed CSV."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn22view5",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L06",
+      "title": "Import and Export SPSS, Stata and SAS Files",
+      "url": "https://haven.tidyverse.org/",
+      "publisher": "haven/tidyverse maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Overview"
+      ],
+      "supported_claims": [
+        "haven wraps ReadStat for SAS, SPSS and Stata; labels and special missing values require richer semantics than ordinary scalar values."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn14view1",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L07",
+      "title": "Read Rectangular Text Data",
+      "url": "https://readr.tidyverse.org/",
+      "publisher": "readr/tidyverse maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Usage"
+      ],
+      "supported_claims": [
+        "readr covers CSV, TSV, custom delimiters, fixed-width, whitespace tables and web logs, with explicit column specifications."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn14view2",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L08",
+      "title": "Text File",
+      "url": "https://help.tableau.com/current/pro/desktop/en-us/examples_text.htm",
+      "publisher": "Tableau / Salesforce",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Make the connection",
+        "Set text file options"
+      ],
+      "supported_claims": [
+        "Tableau documents delimited .txt/.csv/.tab/.tsv inputs and configurable delimiter, qualifier, header, encoding and locale."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn22view0",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L09",
+      "title": "Statistical File",
+      "url": "https://help.tableau.com/current/pro/desktop/en-us/examples_statfile.htm",
+      "publisher": "Tableau / Salesforce",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Statistical file connection",
+        "R data file object and format support"
+      ],
+      "supported_claims": [
+        "Tableau lists SAS, SPSS and R statistical files; value labels and some compression/object arrangements are unsupported."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn22view1",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L10",
+      "title": "Power Query connectors",
+      "url": "https://learn.microsoft.com/en-us/power-query/connectors/",
+      "publisher": "Microsoft",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Connector availability matrix"
+      ],
+      "supported_claims": [
+        "Power Query distinguishes availability by Excel, Power BI semantic models and online host; listings include file and live connectors."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn22view6",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L11",
+      "title": "Perspective README",
+      "url": "https://github.com/perspective-dev/perspective",
+      "publisher": "Perspective maintainers / OpenJS Foundation",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Features"
+      ],
+      "supported_claims": [
+        "Perspective advertises Arrow, CSV and JSON input for its browser Wasm analytics engine; external-engine virtual servers are a separate capability."
+      ],
+      "verification_limitations": [
+        "Maintainer README capability claim; browser runtime and format fidelity were not tested. The former finos repository URL redirects to perspective-dev."
+      ],
+      "web_ref": "turn22view4",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L12",
+      "title": "DuckDB | Observable Framework",
+      "url": "https://observablehq.github.io/framework/lib/duckdb",
+      "publisher": "Observable",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "DuckDBClient",
+        "Extensions",
+        "Configuring",
+        "Versioning"
+      ],
+      "supported_claims": [
+        "Observable wraps DuckDB-Wasm for CSV/TSV/JSON/Arrow/Parquet and database attachments; extension loading and conversion defaults are configurable."
+      ],
+      "verification_limitations": [
+        "Product documentation, not explorEDA proof. Its documented bundled DuckDB-Wasm version is product-specific and is not evidence of latest engine support."
+      ],
+      "web_ref": "turn43view1",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L13",
+      "title": "Tabular Datasets",
+      "url": "https://arrow.apache.org/docs/python/dataset.html",
+      "publisher": "Apache Software Foundation",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Tabular Datasets",
+        "Reading different file formats",
+        "Writing partitioned data",
+        "A note on transactions & ACID guarantees"
+      ],
+      "supported_claims": [
+        "PyArrow Dataset documents Parquet, IPC/Feather, CSV and ORC; directory discovery and partition interpretation are separate from decoding one file."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn10view3",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L14",
+      "title": "Serialization Interface for Single Objects",
+      "url": "https://stat.ethz.ch/R-manual/R-devel/library/base/html/readRDS.html",
+      "publisher": "R Core Team",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Description",
+        "Details",
+        "Warning"
+      ],
+      "supported_claims": [
+        "RDS restores a single R object; save/load handles named workspace objects; R warns against treating saveRDS as general machine interchange."
+      ],
+      "verification_limitations": [
+        "R-devel manual reviewed, not a guarantee for every released R serialization or compression variant; no deserialization performed."
+      ],
+      "web_ref": "turn27view0",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L15",
+      "title": "pickle — Python object serialization",
+      "url": "https://docs.python.org/3/library/pickle.html",
+      "publisher": "Python Software Foundation",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Warning",
+        "Comparison with JSON",
+        "Data stream format"
+      ],
+      "supported_claims": [
+        "Pickle is Python object serialization and can execute arbitrary code during unpickling."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn27view1",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L16",
+      "title": "Datasets",
+      "url": "https://docs.h5py.org/en/stable/high/dataset.html",
+      "publisher": "h5py maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Datasets",
+        "Filter pipeline",
+        "Dataset.external",
+        "Dataset.is_virtual"
+      ],
+      "supported_claims": [
+        "HDF5 datasets have types and multidimensional shapes; filters and external/virtual data dependencies complicate standalone projection."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn27view2",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L17",
+      "title": "pandas.read_hdf",
+      "url": "https://pandas.pydata.org/docs/reference/api/pandas.read_hdf.html",
+      "publisher": "pandas maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Description",
+        "Warning",
+        "Parameters"
+      ],
+      "supported_claims": [
+        "read_hdf retrieves stored pandas objects through PyTables; fixed object data can use pickle."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn43view4",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L18",
+      "title": "The NetCDF Data Model",
+      "url": "https://docs.unidata.ucar.edu/netcdf-c/current/netcdf_data_model.html",
+      "publisher": "NSF Unidata / UCAR",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "The Classic Model",
+        "The Enhanced Data Model"
+      ],
+      "supported_claims": [
+        "NetCDF organizes variables, dimensions and attributes; the enhanced model extends the classic model."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn27view3",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L19",
+      "title": "Reading and writing files",
+      "url": "https://docs.xarray.dev/en/stable/user-guide/io.html",
+      "publisher": "xarray maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Backend Selection",
+        "netCDF",
+        "Reading encoded data",
+        "Zarr"
+      ],
+      "supported_claims": [
+        "xarray uses installed backend libraries for NetCDF/HDF5/Zarr; multidimensional coordinates and CF encodings matter; not every Zarr store is compatible."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn45view0",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L20",
+      "title": "Zarr core specification",
+      "url": "https://zarr-specs.readthedocs.io/en/latest/v3/core/index.html",
+      "publisher": "Zarr core development team",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Concepts and terminology",
+        "Stored representation",
+        "Metadata",
+        "Extensions"
+      ],
+      "supported_claims": [
+        "Zarr stores typed multidimensional chunks and metadata in key/value stores; versions, codecs and extensions affect interoperability."
+      ],
+      "verification_limitations": [
+        "Current evolving specification was read; no claim that all v3.1 features are implemented in any candidate browser library."
+      ],
+      "web_ref": "turn31view0",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L21",
+      "title": "numpy.lib.format",
+      "url": "https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html",
+      "publisher": "NumPy maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "NPY format",
+        "Capabilities",
+        "Limitations",
+        "File extensions"
+      ],
+      "supported_claims": [
+        "NPY stores one typed shaped array; NPZ is a ZIP of NPY arrays; array order, endianness and structured fields are meaningful."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn31view1",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L22",
+      "title": "numpy.load",
+      "url": "https://numpy.org/doc/stable/reference/generated/numpy.load.html",
+      "publisher": "NumPy maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Warning",
+        "allow_pickle",
+        "Returns",
+        "Notes"
+      ],
+      "supported_claims": [
+        "NPY/NPZ object arrays can require unsafe pickle; allow_pickle defaults false."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn27view5",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L23",
+      "title": "scipy.io.loadmat",
+      "url": "https://docs.scipy.org/doc/scipy/reference/generated/scipy.io.loadmat.html",
+      "publisher": "SciPy maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Parameters",
+        "Notes"
+      ],
+      "supported_claims": [
+        "SciPy loadmat supports v4, v6 and v7 through 7.2; MATLAB 7.3 requires an HDF5 reader."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn27view6",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L24",
+      "title": "RFC 7946: The GeoJSON Format",
+      "url": "https://www.rfc-editor.org/info/rfc7946/",
+      "publisher": "IETF / RFC Editor",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Section 3 GeoJSON Object",
+        "Section 3.2 Feature",
+        "Section 3.3 FeatureCollection",
+        "Section 4 Coordinate Reference System"
+      ],
+      "supported_claims": [
+        "GeoJSON features pair properties and geometry; FeatureCollections are arrays of features using the specified geographic coordinate system."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn34view0",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L25",
+      "title": "TopoJSON Format Specification",
+      "url": "https://github.com/topojson/topojson-specification",
+      "publisher": "TopoJSON maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Topology objects",
+        "Geometry objects",
+        "Arcs",
+        "Transforms"
+      ],
+      "supported_claims": [
+        "TopoJSON extends JSON geographic representation with shared arcs and topology; properties do not convey the complete geometry semantics."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn34view1",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L26",
+      "title": "ESRI Shapefile / DBF",
+      "url": "https://gdal.org/en/stable/drivers/vector/shapefile.html",
+      "publisher": "GDAL / OSGeo",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Driver overview",
+        "Creation Issues",
+        "Encoding",
+        "Compressed files"
+      ],
+      "supported_claims": [
+        "Shapefiles are companion sets; DBF field lengths/types and encodings constrain attributes; zipped shapefile sets remain datasets."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn34view2",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L27",
+      "title": "GPKG — GeoPackage vector",
+      "url": "https://gdal.org/en/stable/drivers/vector/gpkg.html",
+      "publisher": "GDAL / OSGeo",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Driver overview",
+        "SQL",
+        "Open options"
+      ],
+      "supported_claims": [
+        "GeoPackage vector access uses a SQLite-based package with layers and spatial semantics."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn34view3",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L28",
+      "title": "KML — Keyhole Markup Language",
+      "url": "https://gdal.org/en/stable/drivers/vector/kml.html",
+      "publisher": "GDAL / OSGeo",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Driver overview",
+        "KML Reading",
+        "KML Writing"
+      ],
+      "supported_claims": [
+        "GDAL KML reading requires Expat and projects a subset of KML structure; rich styling and hierarchy exceed a plain table."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn34view4",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L29",
+      "title": "FITS File Handling (astropy.io.fits)",
+      "url": "https://docs.astropy.org/en/stable/io/fits/index.html",
+      "publisher": "Astropy maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Working with Image Data",
+        "Working with Table Data",
+        "Creating a Multi-Extension FITS file"
+      ],
+      "supported_claims": [
+        "FITS contains header/data units with images or ASCII/binary tables; selecting an HDU differs from interpreting an arbitrary scientific file as rows."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn34view5",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L30",
+      "title": "Read common/combined log file into a tibble",
+      "url": "https://readr.tidyverse.org/reference/read_log.html",
+      "publisher": "readr/tidyverse maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Description",
+        "Usage",
+        "Arguments"
+      ],
+      "supported_claims": [
+        "readr provides a specific reader for common/combined web-log layouts."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn45view1",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L31",
+      "title": "ORC Specification v1",
+      "url": "https://orc.apache.org/specification/ORCv1/",
+      "publisher": "Apache Software Foundation",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "File Tail",
+        "Type Information",
+        "Compression",
+        "Column Encryption"
+      ],
+      "supported_claims": [
+        "ORC is typed columnar storage with stripes, indexes, nested types, codecs and optional encryption."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn36view0",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L32",
+      "title": "Reading and Writing the Apache ORC Format",
+      "url": "https://arrow.apache.org/docs/python/orc.html",
+      "publisher": "Apache Software Foundation",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Reading ORC files",
+        "Data Type Handling"
+      ],
+      "supported_claims": [
+        "PyArrow exposes ORC readers and documents type mappings."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn36view1",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L33",
+      "title": "MessagePack specification",
+      "url": "https://github.com/msgpack/msgpack/blob/master/spec.md",
+      "publisher": "MessagePack maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Type system",
+        "Formats",
+        "Timestamp extension type"
+      ],
+      "supported_claims": [
+        "MessagePack represents scalar, array, map, binary and extension values; a tabular schema is not inherent."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn36view2",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L34",
+      "title": "MessagePack for JavaScript and TypeScript",
+      "url": "https://github.com/msgpack/msgpack-javascript",
+      "publisher": "MessagePack JavaScript maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Overview",
+        "NPM / npmjs.com",
+        "Extension types"
+      ],
+      "supported_claims": [
+        "@msgpack/msgpack documents browser-compatible JavaScript/TypeScript decoding and bundler/ESM delivery."
+      ],
+      "verification_limitations": [
+        "Maintainer capability claim; package release, bundled size and browser fidelity were not independently measured for this conversion-only option."
+      ],
+      "web_ref": "turn45view2",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L35",
+      "title": "BSON Specification",
+      "url": "https://bsonspec.org/spec.html",
+      "publisher": "BSON / MongoDB maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Basic types",
+        "Non-terminals",
+        "Notes"
+      ],
+      "supported_claims": [
+        "BSON includes nested documents, int64, Decimal128, binary, ObjectId and distinct time/code-related types."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn36view3",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L36",
+      "title": "BSON Parser for node and browser",
+      "url": "https://github.com/mongodb/js-bson",
+      "publisher": "MongoDB maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Node.js or Bundling Usage",
+        "Browser Usage"
+      ],
+      "supported_claims": [
+        "The bson package documents local byte deserialization and browser ESM delivery."
+      ],
+      "verification_limitations": [
+        "Maintainer capability claim; no BSON decoding, JavaScript code execution or browser test was performed."
+      ],
+      "web_ref": "turn45view3",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L37",
+      "title": "Encoding | Protocol Buffers Documentation",
+      "url": "https://protobuf.dev/programming-guides/encoding/",
+      "publisher": "Protocol Buffers / Google",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Message Structure",
+        "Length-Delimited Records",
+        "Field Order",
+        "Key"
+      ],
+      "supported_claims": [
+        "Protobuf wire tags encode field numbers and wire kinds; schemas are needed for meaningful field names, types and message interpretation."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn36view4",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L38",
+      "title": "protobuf.js README",
+      "url": "https://github.com/protobufjs/protobuf.js",
+      "publisher": "protobuf.js maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Install",
+        "Browser builds",
+        "Usage"
+      ],
+      "supported_claims": [
+        "protobuf.js supplies browser builds and schema-aware decoding; default field-name casing can differ from the schema."
+      ],
+      "verification_limitations": [
+        "Documented library availability only; no latest-version recommendation or actual browser build test."
+      ],
+      "web_ref": "turn45view4",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L39",
+      "title": "Database File Format",
+      "url": "https://www.sqlite.org/fileformat.html",
+      "publisher": "SQLite authors",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "The Database File",
+        "Storage Of The SQL Database Schema",
+        "The Write-Ahead Log"
+      ],
+      "supported_claims": [
+        "SQLite is a database container; a WAL may hold committed state not yet in the main file."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn31view2",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L40",
+      "title": "sqlite3 WebAssembly & JavaScript Documentation Index",
+      "url": "https://sqlite.org/wasm/doc/trunk/index.md",
+      "publisher": "SQLite authors",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Overview",
+        "Documentation index"
+      ],
+      "supported_claims": [
+        "SQLite maintains JavaScript/WebAssembly bindings; executing database reads is a separate architecture choice."
+      ],
+      "verification_limitations": [
+        "Existence of official Wasm bindings was verified; no browser filesystem or database import was exercised."
+      ],
+      "web_ref": "turn31view3",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L41",
+      "title": "ATTACH and DETACH Statements",
+      "url": "https://duckdb.org/docs/current/sql/statements/attach",
+      "publisher": "DuckDB Foundation",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Examples",
+        "Explicit Storage Versions",
+        "Database Encryption",
+        "Options"
+      ],
+      "supported_claims": [
+        "DuckDB database files require engine attachment; storage version and encryption affect readability; SQLite uses an extension."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn49view1",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L42",
+      "title": "Apache Iceberg Table Spec",
+      "url": "https://iceberg.apache.org/spec/",
+      "publisher": "Apache Software Foundation",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Overview",
+        "Manifests",
+        "Snapshots",
+        "Manifest Lists",
+        "Appendix A"
+      ],
+      "supported_claims": [
+        "Iceberg snapshot interpretation requires metadata, manifests, data/delete files and version rules; a data leaf is not a table snapshot."
+      ],
+      "verification_limitations": [
+        "Current spec includes multiple versions; catalog does not promise every version/feature in a particular reader."
+      ],
+      "web_ref": "turn31view5",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L43",
+      "title": "Delta Transaction Log Protocol",
+      "url": "https://github.com/delta-io/delta/blob/master/PROTOCOL.md",
+      "publisher": "Delta Lake maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Delta Log Entries",
+        "Checkpoints",
+        "Add File and Remove File",
+        "Deletion Vectors",
+        "Catalog-managed tables"
+      ],
+      "supported_claims": [
+        "Delta requires log/checkpoint interpretation and active feature rules; raw data-file reads can include deleted rows."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn31view6",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L44",
+      "title": "Table & Query Types",
+      "url": "https://hudi.apache.org/docs/table_types/",
+      "publisher": "Apache Software Foundation",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Copy On Write Table",
+        "Merge On Read Table",
+        "Query types"
+      ],
+      "supported_claims": [
+        "Hudi readers choose committed file slices and may merge base and log data; reading arbitrary leaves is not a snapshot."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn31view7",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L45",
+      "title": "RFC 1952: GZIP file format specification version 4.3",
+      "url": "https://www.rfc-editor.org/rfc/rfc1952.html",
+      "publisher": "IETF / RFC Editor",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Section 2.2 File format",
+        "Section 2.3 Member format"
+      ],
+      "supported_claims": [
+        "Gzip wraps compressed bytes in members, without supplying a table schema or archive directory."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn49view0",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L46",
+      "title": "Compression Standard",
+      "url": "https://compression.spec.whatwg.org/",
+      "publisher": "WHATWG",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "CompressionFormat",
+        "CompressionStream",
+        "DecompressionStream",
+        "Supported formats"
+      ],
+      "supported_claims": [
+        "The current standard enumerates brotli, deflate, deflate-raw and gzip; zstd and ZIP are not in that enum."
+      ],
+      "verification_limitations": [
+        "Standards text is not a cross-browser support matrix; feature detection and target-browser tests remain necessary."
+      ],
+      "web_ref": "turn36view5",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L47",
+      "title": "APPNOTE.TXT: ZIP File Format Specification",
+      "url": "https://pkware.cachefly.net/webdocs/casestudies/APPNOTE.TXT",
+      "publisher": "PKWARE",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "4.3 ZIP File Format",
+        "4.4 General Purpose Bit Flag",
+        "Compression Methods"
+      ],
+      "supported_claims": [
+        "ZIP is a multi-entry archive with a central directory and per-entry methods; encrypted and multipart variants require additional behavior."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn36view7",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L48",
+      "title": "RFC 8878: Zstandard Compression and application/zstd",
+      "url": "https://www.rfc-editor.org/rfc/rfc8878.html",
+      "publisher": "IETF / RFC Editor",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Frames",
+        "Dictionary Format",
+        "Media Type"
+      ],
+      "supported_claims": [
+        "Zstandard frames compress bytes and can require a dictionary; compression is distinct from the enclosed dataset format."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn36view6",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L49",
+      "title": "pandas.read_xml",
+      "url": "https://pandas.pydata.org/docs/reference/api/pandas.read_xml.html",
+      "publisher": "pandas maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Parameters",
+        "Notes"
+      ],
+      "supported_claims": [
+        "read_xml requires a chosen row structure/XPath and is designed for shallow row-column XML."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn43view5",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L50",
+      "title": "pandas.read_html",
+      "url": "https://pandas.pydata.org/docs/reference/api/pandas.read_html.html",
+      "publisher": "pandas maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Parameters",
+        "Notes"
+      ],
+      "supported_claims": [
+        "read_html returns selected HTML tables and interprets header, rowspan and colspan structure."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn43view6",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L51",
+      "title": "Excel Extension",
+      "url": "https://duckdb.org/docs/current/core_extensions/excel",
+      "publisher": "DuckDB Foundation",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Excel Extension",
+        "Installing and Loading"
+      ],
+      "supported_claims": [
+        "DuckDB XLSX support is an extension; its documentation explicitly excludes legacy XLS and describes autoloading."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn49view3",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L52",
+      "title": "pandas.read_spss",
+      "url": "https://pandas.pydata.org/docs/reference/api/pandas.read_spss.html",
+      "publisher": "pandas maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Parameters"
+      ],
+      "supported_claims": [
+        "pandas forwards SPSS reader options to pyreadstat.read_sav and can convert categorical columns."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn43view3",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L53",
+      "title": "Excel",
+      "url": "https://help.tableau.com/current/pro/desktop/en-us/examples_excel.htm",
+      "publisher": "Tableau / Salesforce",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Overview",
+        "Make the connection"
+      ],
+      "supported_claims": [
+        "Tableau documents XLS/XLSX, worksheets, named ranges and tables; pivot tables are excluded."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn57view3",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L54",
+      "title": "JSON File",
+      "url": "https://help.tableau.com/current/pro/desktop/en-us/examples_json.htm",
+      "publisher": "Tableau / Salesforce",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Select schema levels",
+        "Why measures are calculated in hierarchical JSON files"
+      ],
+      "supported_claims": [
+        "Tableau makes hierarchical JSON projection explicit and compensates for row multiplication in aggregations."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn57view4",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L55",
+      "title": "Create Tableau Maps from Spatial Files",
+      "url": "https://help.tableau.com/current/pro/desktop/en-us/maps_shapefiles.htm",
+      "publisher": "Tableau / Salesforce",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Overview",
+        "Connect to spatial files",
+        "The Geometry field"
+      ],
+      "supported_claims": [
+        "Tableau supports selected spatial files and treats geometry as a dedicated field; Desktop and web requirements differ."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn57view5",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L56",
+      "title": "polars.read_delta",
+      "url": "https://docs.pola.rs/api/python/stable/reference/api/polars.read_delta.html",
+      "publisher": "Polars maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Parameters",
+        "Examples"
+      ],
+      "supported_claims": [
+        "Delta reading addresses a table root and version, with deltalake storage settings and optional PyArrow reads."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn57view1",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    },
+    {
+      "id": "L57",
+      "title": "polars.scan_iceberg",
+      "url": "https://docs.pola.rs/api/python/stable/reference/api/polars.scan_iceberg.html",
+      "publisher": "Polars maintainers",
+      "retrieval_date": "2026-10-12",
+      "retrieval_timezone": "America/Indiana/Indianapolis",
+      "supported_sections": [
+        "Parameters",
+        "reader_override",
+        "Notes"
+      ],
+      "supported_claims": [
+        "Polars documents native/PyIceberg reader choices, snapshot selection and optional catalog-backed access."
+      ],
+      "verification_limitations": [
+        "Primary documentation reviewed; no reader execution, browser compatibility test, security audit, or adoption measurement performed."
+      ],
+      "web_ref": "turn57view2",
+      "evidence_kind": "primary_documentation_or_source",
+      "retrieval_date_utc": "2026-10-13"
+    }
+  ]
+}

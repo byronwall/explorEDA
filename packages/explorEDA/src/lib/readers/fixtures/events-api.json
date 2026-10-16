@@ -1,0 +1,315 @@
+{
+ "page": 1,
+ "data": [
+  {
+   "event_id": "00001",
+   "account": 9007199254740994,
+   "amount": 0.75,
+   "user": {
+    "name": "José",
+    "address": {
+     "city": "Oslo"
+    }
+   },
+   "tags": [
+    "a",
+    "b"
+   ],
+   "ok": true,
+   "at": "2025-06-02T12:00:00Z"
+  },
+  {
+   "event_id": "00002",
+   "account": 9007199254740995,
+   "amount": 1.5,
+   "user": {
+    "name": "Ana",
+    "address": {
+     "city": "Lima"
+    }
+   },
+   "tags": [],
+   "ok": true,
+   "at": "2025-06-03T12:00:00Z"
+  },
+  {
+   "event_id": "00003",
+   "account": 9007199254740996,
+   "amount": 2.25,
+   "user": {
+    "name": "Zoë",
+    "address": {
+     "city": "Lisbon"
+    }
+   },
+   "tags": [
+    "a",
+    "b"
+   ],
+   "ok": true,
+   "at": "2025-06-04T12:00:00Z"
+  },
+  {
+   "event_id": "00004",
+   "account": 9007199254740997,
+   "amount": 3.0,
+   "user": {
+    "name": "José",
+    "address": {
+     "city": "Oslo"
+    }
+   },
+   "tags": [],
+   "ok": false,
+   "at": "2025-06-05T12:00:00Z"
+  },
+  {
+   "event_id": "00005",
+   "account": 9007199254740998,
+   "amount": 3.75,
+   "user": {
+    "name": "Ana",
+    "address": {
+     "city": "Lima"
+    }
+   },
+   "tags": [
+    "a",
+    "b"
+   ],
+   "ok": true,
+   "at": "2025-06-06T12:00:00Z"
+  },
+  {
+   "event_id": "00006",
+   "account": 9007199254740999,
+   "amount": 4.5,
+   "user": {
+    "name": "Zoë",
+    "address": {
+     "city": "Lisbon"
+    }
+   },
+   "tags": [],
+   "ok": true,
+   "at": "2025-06-07T12:00:00Z"
+  },
+  {
+   "event_id": "00007",
+   "account": 9007199254741000,
+   "amount": 5.25,
+   "user": {
+    "name": "José",
+    "address": {
+     "city": "Oslo"
+    }
+   },
+   "tags": [
+    "a",
+    "b"
+   ],
+   "ok": true,
+   "at": "2025-06-08T12:00:00Z"
+  },
+  {
+   "event_id": "00008",
+   "account": 9007199254741001,
+   "amount": 6.0,
+   "user": {
+    "name": "Ana",
+    "address": {
+     "city": "Lima"
+    }
+   },
+   "tags": [],
+   "ok": false,
+   "at": "2025-06-09T12:00:00Z"
+  },
+  {
+   "event_id": "00009",
+   "account": 9007199254741002,
+   "amount": 6.75,
+   "user": {
+    "name": "Zoë",
+    "address": {
+     "city": "Lisbon"
+    }
+   },
+   "tags": [
+    "a",
+    "b"
+   ],
+   "ok": true,
+   "at": "2025-06-10T12:00:00Z"
+  },
+  {
+   "event_id": "00010",
+   "account": 9007199254741003,
+   "amount": null,
+   "user": {
+    "name": "José",
+    "address": {
+     "city": "Oslo"
+    }
+   },
+   "tags": [],
+   "ok": true,
+   "at": "2025-06-11T12:00:00Z"
+  },
+  {
+   "event_id": "00011",
+   "account": 9007199254741004,
+   "amount": 8.25,
+   "user": {
+    "name": "Ana",
+    "address": {
+     "city": "Lima"
+    }
+   },
+   "tags": [
+    "a",
+    "b"
+   ],
+   "ok": true,
+   "at": "2025-06-12T12:00:00Z"
+  },
+  {
+   "event_id": "00012",
+   "account": 9007199254741005,
+   "amount": 9.0,
+   "user": {
+    "name": "Zoë",
+    "address": {
+     "city": "Lisbon"
+    }
+   },
+   "tags": [],
+   "ok": false,
+   "at": "2025-06-13T12:00:00Z"
+  },
+  {
+   "event_id": "00013",
+   "account": 9007199254741006,
+   "amount": 9.75,
+   "user": {
+    "name": "José",
+    "address": {
+     "city": "Oslo"
+    }
+   },
+   "tags": [
+    "a",
+    "b"
+   ],
+   "ok": true,
+   "at": "2025-06-14T12:00:00Z"
+  },
+  {
+   "event_id": "00014",
+   "account": 9007199254741007,
+   "amount": 10.5,
+   "user": {
+    "name": "Ana",
+    "address": {
+     "city": "Lima"
+    }
+   },
+   "tags": [],
+   "ok": true,
+   "at": "2025-06-15T12:00:00Z"
+  },
+  {
+   "event_id": "00015",
+   "account": 9007199254741008,
+   "amount": 11.25,
+   "user": {
+    "name": "Zoë",
+    "address": {
+     "city": "Lisbon"
+    }
+   },
+   "tags": [
+    "a",
+    "b"
+   ],
+   "ok": true,
+   "at": "2025-06-16T12:00:00Z"
+  },
+  {
+   "event_id": "00016",
+   "account": 9007199254741009,
+   "amount": 12.0,
+   "user": {
+    "name": "José",
+    "address": {
+     "city": "Oslo"
+    }
+   },
+   "tags": [],
+   "ok": false,
+   "at": "2025-06-17T12:00:00Z"
+  },
+  {
+   "event_id": "00017",
+   "account": 9007199254741010,
+   "amount": 12.75,
+   "user": {
+    "name": "Ana",
+    "address": {
+     "city": "Lima"
+    }
+   },
+   "tags": [
+    "a",
+    "b"
+   ],
+   "ok": true,
+   "at": "2025-06-18T12:00:00Z"
+  },
+  {
+   "event_id": "00018",
+   "account": 9007199254741011,
+   "amount": 13.5,
+   "user": {
+    "name": "Zoë",
+    "address": {
+     "city": "Lisbon"
+    }
+   },
+   "tags": [],
+   "ok": true,
+   "at": "2025-06-19T12:00:00Z"
+  },
+  {
+   "event_id": "00019",
+   "account": 9007199254741012,
+   "amount": 14.25,
+   "user": {
+    "name": "José",
+    "address": {
+     "city": "Oslo"
+    }
+   },
+   "tags": [
+    "a",
+    "b"
+   ],
+   "ok": true,
+   "at": "2025-06-20T12:00:00Z"
+  },
+  {
+   "event_id": "00020",
+   "account": 9007199254741013,
+   "amount": null,
+   "user": {
+    "name": "Ana",
+    "address": {
+     "city": "Lima"
+    }
+   },
+   "tags": [],
+   "ok": false,
+   "at": "2025-06-21T12:00:00Z"
+  }
+ ]
+}

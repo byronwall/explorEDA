@@ -32,3 +32,6 @@ dist-ssr
 
 # Docs screenshots, written by the docs check
 apps/demo/public/docs-shots
+apps/demo/test-results
+apps/demo/playwright-report
+pack

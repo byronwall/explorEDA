@@ -19,6 +19,11 @@ import { scatterMatrixDefinition } from "@/components/charts/ScatterMatrix/defin
 import { scatterPlotDefinition } from "@/components/charts/ScatterPlot/definition";
 import { summaryTableDefinition } from "@/components/charts/SummaryTable/definition";
 import { threeDScatterDefinition } from "@/components/charts/ThreeDScatter/definition";
+import { waterfallDefinition } from "@/components/charts/Waterfall/definition";
+import { donutDefinition } from "@/components/charts/Donut/definition";
+import { funnelDefinition } from "@/components/charts/Funnel/definition";
+import { retentionDefinition } from "@/components/charts/Retention/definition";
+import { timelineDefinition } from "@/components/charts/Timeline/definition";
 import { chartRegistry } from "./registry";
 
 export function registerAllCharts() {
@@ -43,4 +48,9 @@ export function registerAllCharts() {
   chartRegistry.register(metricCardDefinition);
   chartRegistry.register(mapDefinition);
   chartRegistry.register(compositionDefinition);
+  chartRegistry.register(waterfallDefinition);
+  chartRegistry.register(donutDefinition);
+  chartRegistry.register(funnelDefinition);
+  chartRegistry.register(retentionDefinition);
+  chartRegistry.register(timelineDefinition);
 }

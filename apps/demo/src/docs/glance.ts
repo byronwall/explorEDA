@@ -158,6 +158,59 @@ export const GLANCES: Readonly<Record<string, Glance>> = {
     needs: "Nothing: every field gets a row.",
     gestures: [],
   },
+  funnel: {
+    useFor:
+      "Seeing how many people or accounts reach each step of a process, in order, and where they drop off.",
+    needs:
+      "An event log: an entity field, an event field, and a time field. Steps are event values.",
+    gestures: [
+      ["Click a step", "Select every event of the entities that reached it"],
+      ["Alt-click", "Trace a step to its rule, drop-off, and counted events"],
+    ],
+  },
+  timeline: {
+    useFor:
+      "Seeing who or what was busy when, such as room bookings, machine jobs, or shifts, and what overlapped a stretch of time.",
+    needs:
+      "A lane field and start and end fields. A blank end means the row has not ended.",
+    gestures: [
+      ["Drag across time", "Keep every row that overlaps that window"],
+      ["Click a bar", "Select its row"],
+      ["Alt-click", "Trace a bar to its start, end, and the window"],
+    ],
+  },
+  retention: {
+    useFor:
+      "Seeing whether people who started in a given week or month keep coming back, and how that changes from cohort to cohort.",
+    needs:
+      "An event log: an entity field and a time field. An event field is optional, to choose the entry event and what counts as active.",
+    gestures: [
+      ["Click a cell", "Select every event of the entities active in it"],
+      ["Alt-click", "Trace a cell to its cohort, rate, and counted events"],
+    ],
+  },
+  donut: {
+    useFor:
+      "Showing how a small whole divides among a few categories, such as revenue by channel.",
+    needs: "A category field. A measure to sum is optional.",
+    gestures: [
+      ["Click a slice or legend entry", "Select its category"],
+      ["Click Other", "Select every category it pools"],
+      ["Alt-click", "Trace a slice to its share and source rows"],
+    ],
+  },
+  waterfall: {
+    useFor:
+      "Explaining how one total became another, such as plan to actual, or following a running total through ordered steps.",
+    needs:
+      "A measure and a step field. A bridge also needs two states, each the rows it counts.",
+    gestures: [
+      ["Click a step", "Select its rows in both states"],
+      ["Click a subtotal", "Select every step in its group"],
+      ["Click the start or end", "Select that state's rows"],
+      ["Alt-click", "Trace a bar to both states' rows"],
+    ],
+  },
   "metric-card": {
     useFor: "Showing one headline number for the rows that pass every filter.",
     needs: "Nothing for a row count, or a measure field to summarize.",

@@ -1,0 +1,42 @@
+dashboard "Penguin field notes"
+
+field bill_length_mm label="Bill length (mm)"
+field bill_depth_mm label="Bill depth (mm)"
+field flipper_length_mm label="Flipper length (mm)"
+field body_mass_g label="Body mass (g)"
+scale species Adelie=#3479a8 Chinstrap=#c77a45 Gentoo=#4b9688
+
+scatter @size x=flipper_length_mm y=body_mass_g color=species
+scatter @bill x=bill_length_mm y=bill_depth_mm color=species
+row species color=species
+row island
+boxplot @box body_mass_g by=species
+hist flipper_length_mm
+table @records species,island,bill_length_mm,bill_depth_mm,flipper_length_mm,body_mass_g,sex,year
+parallel @parallel bill_length_mm,bill_depth_mm,flipper_length_mm,body_mass_g,island color=species
+
+view "Penguin field notes" {
+  layout {
+    5: size size species island
+    4: bill box flipper_length_mm
+    5: records
+    5: parallel
+  }
+}
+
+view "Gentoo on Biscoe" {
+  layout {
+    4: species island
+    5: size
+    5: records
+  }
+  species select=Gentoo
+  island select=Biscoe
+}
+
+view "Field report" theme=newsprint {
+  size at=0,0,7,5 title="Bigger flippers, heavier birds" subtitle="Flipper length against body mass, by species" note="Palmer Station LTER; Gorman, Williams and Fraser (2014)"
+  species at=7,0,5,5 title="Adelie dominate the sample" subtitle="Penguins counted per species"
+  bill at=0,5,7,5 title="Bills separate the species" subtitle="Bill length against bill depth"
+  box at=7,5,5,5 title="Gentoo outweigh the rest" subtitle="Body mass by species"
+}

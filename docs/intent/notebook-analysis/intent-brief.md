@@ -1,75 +1,76 @@
 ---
 title: "Notebook analysis with synchronized definitions"
 slug: "notebook-analysis"
-phase: intent
+phase: plan
 status: current
-last_updated: "2026-10-10"
+last_updated: "2026-10-13"
 ---
 
 # Notebook analysis with synchronized definitions
 
+> **Current status (2026-10-15):** notebooks have shipped. Projects list and render `.eda.md` files, and chart and text edits write back to the file. See [Notebooks](../../../apps/demo/src/docs/pages/notebooks.mdx) for current behavior. The text below is the original intent; its notes on what exists today are out of date.
+
 ## My read
 
-Make an analysis readable as a notebook, with explanatory text, calculation blocks, and graphics interleaved in one reading column. Each main block spans that column. The reader should follow the question, calculation, and result as one continuous analysis. Byron's reference is an experience that feels closer to Observable than a page organized only as a dashboard grid.
+Make an analysis readable as a notebook: explanatory text, calculation blocks, and graphics interleaved in one reading column. Each block spans that column. The experience should feel closer to Observable than to a dashboard grid.
 
-Use explorEDA's dashboard language to define queries, calculations, and the visuals they produce. Keep the resulting graphs editable through the application's controls. When someone changes a graph, save the corresponding change back into the text that defines its block. Editing that text must also update the result. These are two ways to work on the same analysis.
+A notebook is its own file, `name.eda.md`: Markdown prose with fenced `eda` blocks written in the dashboard language. It lives in a [local project](../../../packages/explorEDA/README.md#explore-a-folder-of-data), beside that project's `.eda` analyses, and reads the project's sources and joins.
 
-The notebook should be another coherent view into explorEDA's existing capabilities. Data, calculations, chart behavior, and saved work should retain their meaning when presented this way. The likely author is someone investigating data and explaining their reasoning; the first audience and task remain open.
+Text and graphs are two ways to edit the same analysis. Editing a block's text updates its results live. Editing a graph through explorEDA's controls writes the smallest matching change back into the block, keeping comments and formatting intact.
 
-This request establishes the direction. It leaves the first release size, execution rules, and supported edits open. “Notebook” describes the desired experience here; it does not yet select a general programming runtime.
+The first users carry equal weight. An agent drafts a notebook and hands it to a person. An analyst also works in a notebook for themselves. Publishing for outside readers comes later.
 
 ## What matters most
 
-- Put explanation beside the calculation and result it describes.
-- Make graphical edits persist in the defining text, without a separate manual export step.
-- Keep notebook behavior consistent with the rest of the application.
-- Preserve the meaning of the analysis through text edits, graphical edits, and reopening saved work.
+- Explanation sits beside the calculation and result it describes.
+- Graph edits land in the file as minimal, reviewable diffs.
+- The file is plain, diffable text that agents and people can both write.
+- The notebook reuses the language, charts, and project data of the rest of explorEDA.
 
 ## The intended experience
 
-An author writes a question, adds a block that calculates profit and plots it against revenue, then explains the result below. They change a chart field or setting through the graph's controls. The matching block reflects that change. They edit the calculation text and see the updated result in the same sequence. Reopening the analysis restores both its explanation and its editable definitions.
-
-This is an illustrative flow. Profit, revenue, and this chart choice are examples, not required initial content. The timing of execution remains undecided.
+An agent writes `forecast.eda.md` into a project. It explains the forecast question, defines `delta = actual - forecast`, plots the signed difference, and zooms into an event window. `exploreda-dsl check` reports no problems. The analyst opens the project in the app and reads the notebook top to bottom. They recolor the delta chart through its controls, and the file changes by one setting. They then fix a calculation in their text editor. The app reloads, and every chart that uses `delta` updates. Brushing the event window affects only that chart.
 
 ## Boundaries
 
-Use the existing dashboard language as the starting point. Do not assume it already expresses every query or result the notebook will need.
+### Must be true
 
-Observable is an experience reference, not a requirement to copy its syntax, runtime, hosting, or collaboration model. Arbitrary JavaScript, external kernels, and remote execution are not established requirements.
+- Definitions (calculations, field aliases, scales) are shared across the whole file, in any order.
+- A block can hold definitions only, or several outputs stacked full width.
+- Results update automatically whenever a block's text is valid.
+- Write-back changes only the affected tokens. If an edit has no token-level form, only that one declaration is rewritten.
+- While a block's text is invalid, its last valid result stays visible but frozen, beside the diagnostic.
+- Clicks and brushes filter only their own chart.
+- People can edit in the app or in an outside text editor, and agents can check notebooks from the command line.
 
-The notebook adds a way to work with the application. Replacing dashboards, adding new chart families, and building a general query engine are outside the confirmed intent. Live values inside prose and reusable intermediate tables remain related possibilities with separate intent documents.
+### Must be avoided
+
+- Rewriting text the person did not touch.
+- Two competing versions of a block, one in the graph and one in the text.
+- A general programming runtime, arbitrary JavaScript, or remote kernels.
+- Replacing dashboards or the `.eda` analysis format.
 
 ## What seems settled
 
-The output interleaves text and graphics. Definitions use the dashboard language. Graphical edits write back to those definitions. The notebook belongs within the application's existing analysis model.
+- File format `.eda.md`. `.edamd` is the fallback if tooling fights the double extension.
+- Built on local CLI projects: project scan, file watching, autosave, and the rule that the disk wins on outside edits.
+- Forecast performance is the first end-to-end reproduction, including an agent-authored draft.
+- Export, sharing, and publishing are out of the first release.
+- First graph write-back covers fields, chart type, filters, axes, and color.
+- Prose is edited as Markdown source in the app.
 
-The document format, block syntax, execution controls, and exact relationship to saved dashboard views remain unselected. Capturing this intent does not start implementation.
+## Possibilities, not decisions
+
+- Opt-in shared selections between blocks, needed for Date Patterns-style work.
+- Named intermediate results ([reusable analysis outputs](../reusable-analysis-outputs/intent-brief.md)) and live values in prose ([data-bound narrative](../data-bound-narrative/intent-brief.md)).
+- A `<Notebook>` component for host apps outside projects.
 
 ## Current reality that matters
 
-[Dashboard text](../../../packages/explorEDA/README.md#dashboard-text) already supports calculations, chart declarations, chart-local filters, and multiple saved views. It compiles complete dashboard settings and exports settings back to text. That provides a starting point, but does not establish continuous synchronization with authored notebook blocks.
-
-The existing [Markdown panel](../../application-feature-inventory.md#markdown--explanation-panel) saves rich-text content. It is not an execution system. [Data-bound narrative](../data-bound-narrative/intent-brief.md) concerns values inside explanations. [Reusable analysis outputs](../reusable-analysis-outputs/intent-brief.md) concerns feeding one result into another view. Neither capability is automatically required by this request.
-
-## What the research adds
-
-The [research synthesis](research-synthesis.md) covers eleven examples, with the [full illustrated report](resources/pro-notebook-research/exploreda-notebook-research/exploreda-notebook-examples.html) preserved locally. Forecast performance is the recommended first reproduction: a simple subtraction connects explanation, graphics, and a local event window. Date Patterns and Seattle cycling provide broader follow-ups.
-
-The examples distinguish reading order from calculation dependencies, and graphical settings from changes to analytical inputs. They also expose differences between local controls and shared filters. These are candidate behaviors to evaluate. The research does not select execution rules, exact text preservation, or first-release scope. Its suggested interactions are not all observed source behavior.
-
-## Ten questions to define scope
-
-1. **First task:** Who will author and read the first notebook, and what real analysis should they complete?
-2. **First release:** What is the smallest useful version: prose, definition blocks, and one chart, or tables and summary values too?
-3. **Query scope:** Are current dashboard declarations enough initially, or must blocks produce named results that later blocks can use?
-4. **Execution:** Should changes run automatically, require running one block, or require running the whole notebook?
-5. **Shared state:** Should calculations and interactive filters affect the whole notebook, only later blocks, or explicitly linked blocks?
-6. **Graphical edits:** Which edits must write back first: fields, chart type, aggregation, filters, axis settings, or visual styling?
-7. **Text preservation:** Must graph edits preserve comments, formatting, and declaration order, or is regenerated equivalent text acceptable?
-8. **View relationship:** Is the notebook another presentation of the same saved dashboard, or a separate document that reuses its analysis objects?
-9. **Invalid drafts:** While block text is invalid, should the last valid graph remain editable, and how should users reconcile those edits?
-10. **Saved output:** Is reopening an editable notebook enough initially, or must users also share or export a readable, self-contained result?
+- [Dashboard text](../../../packages/explorEDA/README.md#dashboard-text) compiles and exports full dashboards. Its parser records a line and column for every item, and comments start with `#`, so token-level splicing is feasible. The exporter regenerates canonical text and would not preserve edits on its own.
+- Local projects shipped (`npx exploreda`, PRs through #376). They treat every `.eda` file as an analysis, autosave, and reload on outside edits. `.eda.md` files are ignored today, so there is no collision.
+- The [research synthesis](research-synthesis.md) explains why forecast performance comes first. Its CSV has to be retrieved and cleaned before expected results are fixed.
 
 ## Next step after confirmation
 
-Choose the first reproduction and its relationship to saved dashboard views. Use the remaining answers to define what survives each edit. Then shape a small demonstration of text edits, graphical edits, local scope, and reopening. Keep broader notebook features provisional until that scope is clear.
+Follow the [implementation plan](implementation-plan.md), which starts with write-back fixtures.

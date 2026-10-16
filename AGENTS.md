@@ -4,19 +4,8 @@
 - Keep this existing React library and demo in React and TypeScript.
 - Use pnpm. Run `pnpm check` after a broad change; see [Verifying changes](#verifying-changes).
 - Read [UI defaults](docs/ui-defaults.md) before changing controls, tables, overlays, or field details.
-- Use `--border` for neutral borders, `--input` for inputs, and semantic tokens for status borders.
-- Never add a `title` attribute or SVG `<title>` element to rendered UI. Both create native hover tooltips.
-- Use `aria-label` or visible text for accessible names. Use `ActionTooltip` or the `Button` `tooltip` prop only when hover help is needed.
-- Give every control whose effect is not obvious from its visible text a real tooltip that explains it: toggles, short or abbreviated labels, icon buttons, and options that differ subtly, such as Core and Full. Use `ActionTooltip` or the `Button` `tooltip` prop so it opens on hover and keyboard focus. Never fall back to a `title` attribute.
-- Run `pnpm check:ui`; it rejects native tooltip sources in TSX.
-- Keep user-facing copy about the product. Put internal caveats, release gaps, known bugs, and to-dos in the owning intent doc under `docs/intent/` or a GitHub issue, not on the page, in the UI, or in example comments.
-- Keep field names and filter state visible. Put optional actions beside or below the content.
-- Prefer compact nonmodal popovers for inspection and settings. Keep the data visible during edits.
-- In charts, a click on a mark selects it and a click on empty plot space clears that chart's filters. Marginals, legends, and overlays use the main marks' color encoding and visual treatment. See [UI defaults](docs/ui-defaults.md).
-- Do not put "Inspect" buttons (Inspect records, Inspect point, Inspect bar, and the like) on charts or cards. Reach a chart trace by Alt-click or Alt-Enter on the mark, or from the trace control in the chart header.
-- Start new imports with summary and rows. Preserve saved layouts.
-- Quick previews must not create charts or change the saved layout.
-- Use the shared `FieldMetadata` component in field lists and pickers.
+- Follow [Coding standards](CODING_STANDARDS.md) for UI, copy, and data rules, and check your diff against it before opening a PR. `pnpm check:ui` enforces the mechanical ones.
+- When shaping or planning an initiative under `docs/intent/`, treat docs and demo examples as part of each user-visible feature's scope. List the docs page or section and the example in the same milestone as the feature. The docs gate (`apps/demo/src/docs/gate.ts`) requires a page only for registered chart types; nothing enforces examples, Composition marks, or other features.
 - Verify changed flows in the browser at wide, intermediate, and narrow widths.
 - Keep existing user edits. Do not commit on `main` without an explicit request.
 
@@ -24,6 +13,7 @@
 
 - The demo dev server and demo tests run the library from source. Do not build the library to see a change; `pnpm --filter demo dev` picks it up. Set `EXPLOREDA_DIST=1` only to try the built package.
 - While working, run targeted tests (`pnpm --filter exploreda exec vitest run <files>`) and `pnpm --filter exploreda check-types`.
+- Take test time limits from `@repo/test-config`. Don't set a timeout in one test or one config; see [Test time limits](docs/agent-guide.md#test-time-limits).
 - Run `pnpm check` once, before opening a PR. It builds the package, so never run it from several worktrees at the same time.
 
 ## Pull requests

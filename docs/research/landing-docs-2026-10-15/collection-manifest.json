@@ -1,0 +1,49 @@
+{
+  "conversation": "https://chatgpt.com/c/6ad05992-f05c-83ea-9ba1-21bda700c45f",
+  "retrieved_at": "2026-10-15T05:49:46.453570+00:00",
+  "archive_integrity": "pass; five safe relative regular-file entries; CRC verified before extraction",
+  "manifest_hashes": "all four payload hashes and byte sizes match",
+  "inventory": "47 unique pages match baseline MDX topics and hashes",
+  "recommendations": "16; all evidence IDs resolve",
+  "files": [
+    {
+      "path": "originals/exploreda-landing-docs-review.zip",
+      "bytes": 105025,
+      "sha256": "c04522e37c1540c61a55f8494331642e260b5aade7c9d28da7a397a9cb5c631c",
+      "independent_download_matches_archive": true
+    },
+    {
+      "path": "originals/landing-docs-review.md",
+      "bytes": 191369,
+      "sha256": "22d24618180e63d571061b87f390be21c635a47ba552de9f0b0542d44b395af4",
+      "independent_download_matches_archive": true
+    },
+    {
+      "path": "originals/manifest.json",
+      "bytes": 1599,
+      "sha256": "01604c2a73520ed9c0ada7bff2a272d4c367eda6d31117f6089d2843b27d4609"
+    },
+    {
+      "path": "originals/page-inventory.csv",
+      "bytes": 41806,
+      "sha256": "a654441af3397739f341e83275b762617dda2cbecc0c3b1e6c76bff5c34e953a",
+      "independent_download_matches_archive": true
+    },
+    {
+      "path": "originals/recommendations.json",
+      "bytes": 142563,
+      "sha256": "474a4d1492e3788a5a03aafda19c746ce466633d3f54935a1fcf0a7c07ee2686"
+    },
+    {
+      "path": "originals/sources.md",
+      "bytes": 89288,
+      "sha256": "27bda99e1e54ef97d7353b6956b69a637bd063f8da1379079d4b971b34fafe7d"
+    }
+  ],
+  "notes": [
+    "ZIP browser download event timed out. Actual Downloads file existed and was verified before any retry.",
+    "Independent report and CSV downloads match archive copies; duplicate downloads also match.",
+    "Source list, recommendations, and manifest recovered intact from verified archive. Preview-download attempts did not leave new independent copies.",
+    "Older unrelated files with generic names sources.md, recommendations.json, manifest.json already existed in Downloads. Their bytes differ and were excluded. No requested outputs are missing."
+  ]
+}

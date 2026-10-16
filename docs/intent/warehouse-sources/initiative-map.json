@@ -1,0 +1,102 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "Warehouse sources",
+    "slug": "warehouse-sources",
+    "scale": "capability",
+    "current_phase": "intent",
+    "last_updated": "2026-10-13",
+    "summary": "Snowflake, BigQuery, Redshift, and Databricks as sources on the database-sources adapter contract.",
+    "status": "planned",
+    "next_action": "Revisit after database-adapters ships; choose first warehouse and test-account strategy."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-13"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "not-created",
+      "updated_at": null
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "not-created",
+      "updated_at": null
+    }
+  },
+  "sources": [
+    {
+      "id": "qa-database-adapters-round-1",
+      "type": "question-round",
+      "location": "conversation 2026-10-13 (database-adapters round 1, Q3)",
+      "anchor": "Warehouses later; harder to test since they need accounts; capture follow-up",
+      "authority": "explicit user answer"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "later-warehouses",
+        "type": "scope",
+        "statement": "Warehouse sources follow database sources and reuse its adapter contract.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "later",
+        "source_anchors": [
+          {
+            "source_id": "qa-database-adapters-round-1",
+            "anchor": "Q3"
+          }
+        ],
+        "confidence": "high"
+      }
+    ],
+    "themes": [
+      "Warehouses as additional drivers, not a second system."
+    ],
+    "conflicts": [],
+    "human_questions": []
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "not-started"
+  },
+  "implementation": {
+    "status": "not-started",
+    "milestones": []
+  },
+  "history": [
+    {
+      "date": "2026-10-13",
+      "action": "Created stub",
+      "reason": "Split out of database-adapters during scope questions",
+      "status": "planned",
+      "evidence": "database-adapters qa-round-1"
+    }
+  ],
+  "closure": null,
+  "intake": {
+    "kind": "new",
+    "priority_basis": "Deferred follow-up captured at user request",
+    "related_initiatives": [
+      "database-adapters",
+      "database-query-contract"
+    ],
+    "audience": "Authors whose data lives in a cloud warehouse",
+    "priority": "Later; after database-adapters"
+  }
+}

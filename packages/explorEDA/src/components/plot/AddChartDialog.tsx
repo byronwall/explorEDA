@@ -83,13 +83,15 @@ const CHART_GROUPS: Array<{ label: string; keys: string[] }> = [
     label: "Compare categories",
     keys: ["row", "bar", "pivot", "heatmap", "hierarchy"],
   },
+  { label: "Change and share", keys: ["waterfall", "donut"] },
   { label: "Distribution", keys: ["histogram", "boxplot", "ecdf"] },
   {
     label: "Relationships",
     keys: ["scatter", "scatter-matrix", "3d-scatter", "parallel-coordinates"],
   },
-  { label: "Over time", keys: ["line", "calendar"] },
+  { label: "Over time", keys: ["line", "calendar", "timeline"] },
   { label: "Flow and place", keys: ["sankey", "map"] },
+  { label: "Journeys", keys: ["funnel", "retention"] },
   {
     label: "Tables and notes",
     keys: ["data-table", "summary", "metric-card", "markdown", "color-legend"],

@@ -1,13 +1,17 @@
 import { Link } from "react-router-dom";
 import { BrandIcon } from "./BrandMark";
 import { REPO_URL } from "./links";
+import { docsPath } from "../docs/paths";
 import { EXAMPLES_PATH } from "../routes";
+import { ThemeToggle, useDocsTheme } from "../docs/components/theme";
 
 const navLinkClass =
   "rounded-md px-2.5 py-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring aria-[current=page]:font-medium aria-[current=page]:text-foreground";
 
 /** The site's top bar: logo, then docs, examples, and code. */
 export function SiteNav({ current }: { current?: "examples" }) {
+  // The docs' theme choice holds across the whole site.
+  const { theme, toggle } = useDocsTheme();
   return (
     <nav
       aria-label="Site"
@@ -18,8 +22,12 @@ export function SiteNav({ current }: { current?: "examples" }) {
         className="flex shrink-0 items-center gap-2 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         aria-label="explorEDA home"
       >
-        <BrandIcon className="size-7 text-brand-navy" />
-        <img src="/brand/wordmark.svg" alt="" className="h-6 w-auto" />
+        <BrandIcon className="size-7 text-site-ink" />
+        <img
+          src="/brand/wordmark.svg"
+          alt=""
+          className="h-6 w-auto dark:brightness-0 dark:invert"
+        />
       </Link>
       <div className="flex items-center gap-1 text-sm">
         <Link className={navLinkClass} to="/docs">
@@ -32,12 +40,19 @@ export function SiteNav({ current }: { current?: "examples" }) {
         >
           Examples
         </Link>
+        <Link
+          className={`${navLinkClass} hidden sm:block`}
+          to={docsPath("team-server")}
+        >
+          Self-host
+        </Link>
         <Link className={`${navLinkClass} hidden sm:block`} to="/#integration">
           Embed
         </Link>
         <a className={navLinkClass} href={REPO_URL}>
           GitHub
         </a>
+        <ThemeToggle theme={theme} onToggle={toggle} />
       </div>
     </nav>
   );

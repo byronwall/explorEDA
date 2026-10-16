@@ -1,0 +1,31 @@
+## Try it
+
+<LiveExample
+  id="retention"
+  caption="Weekly signup cohorts and the share active in each week after, from the weekly retention example."
+/>
+
+## What it needs
+
+Retention reads an event log: one row per event, with a field that names **who** (such as a user ID) and a field that says **when**. Add the event field to choose which event starts an entity's cohort, such as signup, and which events count as active.
+
+## How it reads
+
+- Each row is a **cohort**: the entities whose entry fell in that day, week, or month. Its size sits beside it.
+- Each column is a period after entry. Period 0 is the period they entered; week 1 is the next calendar week, Monday to Sunday in UTC, not seven days later.
+- A cell is the share of the cohort with at least one active event in that period. An entity can skip a week and come back.
+- The **All** row pools every cohort, over the cohorts that have reached that period.
+- Periods after the data ends are blank, not 0%. The period the data ends in is hatched, since its share may still rise.
+- Colors run from 0 to 100% and keep that range while filtering, so a color always means the same rate.
+- With more cohorts than fit, the newest show, and the status line says how many.
+
+## Select and trace
+
+- Click a cell to select the entities active in it. Every other chart then shows all of their events.
+- Click a value in another chart, such as a channel, to see retention for just those events.
+- Click empty space to clear the selection.
+- Alt-click a cell to see its cohort, the rate as a calculation, the rule, and the events that made each entity active.
+
+## Retention or a line chart?
+
+A <DocsLink topic="line">line chart</DocsLink> of active users per week mixes new and returning users, so growth can hide churn. Retention follows each start cohort on its own, so you can tell whether later cohorts stay longer than earlier ones. To see where people stop in a sequence of steps instead, use a <DocsLink topic="funnel">funnel</DocsLink>.

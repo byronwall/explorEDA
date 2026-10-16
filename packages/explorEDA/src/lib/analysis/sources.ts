@@ -11,7 +11,6 @@ import { detectColumnType } from "@/components/SummaryTable/utils/dataTypeDetect
 import { evaluateAnalysisQuery } from "./evaluateProject";
 import { encodeAnalysisRowKeys } from "@/components/project/analysisRowKeys";
 
-const TYPE_SAMPLE = 500;
 const ROW_NUMBER = "row_number";
 
 const DETECTED: Record<
@@ -38,10 +37,14 @@ function sourceId(name: string, taken: Set<string>) {
   return id;
 }
 
-function fieldIds(rows: readonly AnalysisSourceRow[]) {
-  const ids = new Set<string>();
-  for (const row of rows.slice(0, TYPE_SAMPLE)) {
-    Object.keys(row).forEach((key) => key !== "__ID" && ids.add(key));
+// Every row counts: a field that first appears late is still a field.
+function fieldIds(
+  rows: readonly AnalysisSourceRow[],
+  declared: readonly FieldDefinition[]
+) {
+  const ids = new Set<string>(declared.map((field) => field.id));
+  for (const row of rows) {
+    for (const key in row) if (key !== "__ID") ids.add(key);
   }
   return [...ids];
 }
@@ -61,20 +64,27 @@ function isUnique(rows: readonly AnalysisSourceRow[], field: string) {
  * detected type, and a key. The key is an ID-like column (such as `id`,
  * `order_id`, or `code`) or a text column with a distinct value in every row;
  * a number that only happens to be distinct, such as a measure, is not. With
- * no such column, a row number is added to the rows.
+ * no such column, a row number is added to the rows. Declared fields, such as
+ * those a file reader returns, keep their names and types; other fields are
+ * detected from every row.
  */
 export function sourceFromRows(
   id: string,
   name: string,
-  rows: readonly AnalysisSourceRow[]
+  rows: readonly AnalysisSourceRow[],
+  declared: readonly FieldDefinition[] = []
 ): { source: SourceDefinition; rows: AnalysisSourceRow[] } {
-  const ids = fieldIds(rows);
+  const ids = fieldIds(rows, declared);
+  const declaredById = new Map(declared.map((field) => [field.id, field]));
   const fields: FieldDefinition[] = ids.map((field) => {
-    const column: Record<number, AnalysisSourceRow[string]> = {};
-    rows.slice(0, TYPE_SAMPLE).forEach((row, index) => {
-      column[index] = row[field];
-    });
-    return { id: field, name: field, type: DETECTED[detectColumnType(column)] };
+    const known = declaredById.get(field);
+    if (known?.type && known.type !== "unknown") return { ...known };
+    const column = rows.map((row) => row[field]);
+    return {
+      id: field,
+      name: known?.name ?? field,
+      type: DETECTED[detectColumnType(column)],
+    };
   });
   const idLike = (field: string) => /(^|[^a-z])(id|key|code)$/i.test(field);
   const typeOf = new Map(fields.map((field) => [field.id, field.type]));
@@ -115,13 +125,14 @@ export function addSourceFromRows(
   project: AnalysisProject,
   tables: Record<string, readonly AnalysisSourceRow[]>,
   name: string,
-  rows: readonly AnalysisSourceRow[]
+  rows: readonly AnalysisSourceRow[],
+  fields?: readonly FieldDefinition[]
 ) {
   const id = sourceId(
     name,
     new Set(project.sources.map((source) => source.id))
   );
-  const added = sourceFromRows(id, name, rows);
+  const added = sourceFromRows(id, name, rows, fields);
   return {
     sourceId: id,
     project: { ...project, sources: [...project.sources, added.source] },
@@ -193,6 +204,7 @@ export function singleTableProject({
   name,
   sourceName = "Data",
   rows,
+  fields,
   settings,
 }: {
   /** The query and view's name, such as the workspace's tab. */
@@ -200,6 +212,8 @@ export function singleTableProject({
   /** The table's name. Field names in the views read "Data Hours". */
   sourceName?: string;
   rows: readonly AnalysisSourceRow[];
+  /** Declared field types, such as a file reader returns. */
+  fields?: readonly FieldDefinition[];
   settings?: SavedDataStructure;
 }): {
   project: AnalysisProject;
@@ -207,7 +221,7 @@ export function singleTableProject({
   view: AnalysisView;
 } {
   const id = sourceId(sourceName, new Set());
-  const added = sourceFromRows(id, sourceName, rows);
+  const added = sourceFromRows(id, sourceName, rows, fields);
   const queryId = `${id}-rows`;
   const stepId = `${queryId}-read`;
   const query: AnalysisQuery = {

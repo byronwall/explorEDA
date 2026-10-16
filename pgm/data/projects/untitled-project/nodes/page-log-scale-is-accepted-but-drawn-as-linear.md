@@ -16,7 +16,7 @@ metadata:
 - The Axes tab then shows **Linear** selected and the axis title gets no scale note, so the user can't tell their setting was ignored.
 - Only ECDF has a real log option (`logX`, with its own `scaleLog`).
 
-Fix options, decided with the axis-domain-controls initiative (`docs/intent/axis-domain-controls/intent-brief.md`, which says not to map log to symlog silently and to report nonpositive values):
+Fix options, decided with the axis-domain-controls initiative (retired 2026-10-13; see `docs/initiative-history.json`), which said not to map log to symlog silently and to report nonpositive values:
 
 1. **Short term:** reject `log` (and `time`/`band` on numeric axes) in dashboard text with a diagnostic that suggests `symlog`. On restore, map the saved value to linear and report it, rather than storing a setting no chart honors.
 2. **Real support:** implement a true log scale in `numericScale`. Values ≤ 0 need an explicit omission or rejection policy, and excluded rows must stay visible in traces. Offer it in the Axes tab beside Linear and Symlog, and make `axisDrag.ts` move log axes in log space, as it does for symlog.
@@ -25,3 +25,4 @@ Done when no saved or typed scale is silently replaced by another.
 
 Found while correcting docs in #209, which also changed the docs' `xAxis.scaleType=log` examples to `symlog`.
 
+Update 2026-10-13: true log shipped on scatter axes, line value axes, and box plots (#282, #290), with a count of rows at or below zero. Check whether other chart families still accept `log` and draw linear before closing this.

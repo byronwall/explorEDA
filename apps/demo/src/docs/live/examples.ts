@@ -6,6 +6,8 @@ import {
   bubbleDashboard,
   densityDashboard,
   groupedBarsDashboard,
+  histogram,
+  lincolnCalendarDashboard,
   scatterRegressionDashboard,
   scatterSurfaceDashboard,
   stackedBarsDashboard,
@@ -14,10 +16,22 @@ import {
   pointMapDashboard,
   scatterMatrixDashboard,
   scatterTraceDashboard,
+  chartControlsDashboard,
   shopDashboard,
   timeSeriesDashboard,
 } from "@/demos/dashboardSettings";
 import { demoSettings as lorenzSettings } from "@/demos/lorenz";
+import {
+  batteryDayDashboard,
+  budgetBridgeDashboard,
+  budgetReportDashboard,
+  channelShareDashboard,
+} from "@/demos/partsAndChangeDashboards";
+import {
+  productFunnelDashboard,
+  productRetentionDashboard,
+  roomBookingsDashboard,
+} from "@/demos/journeyDashboards";
 import type { SavedDataStructure } from "exploreda";
 
 /**
@@ -84,16 +98,31 @@ function focus(
   return { ...source, charts: picked };
 }
 
+/** A layout with one more chart, placed by its own `layout`. */
+function withChart(
+  source: SavedDataStructure,
+  chart: SavedDataStructure["charts"][number]
+): SavedDataStructure {
+  return { ...source, charts: [...source.charts, chart] };
+}
+
 const SHOP = "/datasets/shop-operations.csv";
 
 export const liveExamples = {
   "bar-histogram": {
     label: "Live delivery-time histogram",
     data: "/datasets/shop-operations.csv",
-    savedData: focus(shopDashboard, {
-      "shop-delivery": [0, 0, 6, 5],
-      "shop-channel": [6, 0, 6, 5],
-    }),
+    // Both charts are bar charts: numeric bins beside category counts.
+    savedData: withChart(
+      focus(shopDashboard, { "shop-delivery": [0, 0, 6, 5] }),
+      histogram(
+        "shop-channel-bars",
+        "Sales channels",
+        "Channel",
+        { x: 6, y: 0, w: 6, h: 5 },
+        "Channel"
+      )
+    ),
     exampleId: "shop-operations",
     shotAlt:
       "A histogram of delivery days beside a bar chart of orders by sales channel.",
@@ -129,15 +158,27 @@ export const liveExamples = {
       "Calculated net sales against contribution for 18 orders, beside orders by channel.",
     steps: [{ expectRows: 18 }, { click: "Online: 6 rows" }, { expectRows: 6 }],
   },
+  "dense-chart-controls": {
+    label: "Live scatter plots with an editable color field",
+    data: "/datasets/scatter-trace.csv",
+    savedData: focus(chartControlsDashboard, {
+      "controls-scatter": [0, 0, 6, 6],
+      "controls-peer": [6, 0, 6, 6],
+    }),
+    exampleId: "dense-chart-controls",
+    shotAlt:
+      "An uncolored scatter with a Color: None label, beside a scatter colored by channel.",
+    steps: [{ expectText: "Color: None" }],
+  },
   row: {
     label: "Live category row chart",
     data: SHOP,
     savedData: focus(shopDashboard, {
       "shop-category": [0, 0, 6],
-      "shop-region": [6, 0, 6],
+      "shop-channel": [6, 0, 6],
     }),
     exampleId: "shop-operations",
-    shotAlt: "Orders by product category beside revenue by region.",
+    shotAlt: "Orders by product category beside orders by sales channel.",
     steps: [
       { expectRows: 500 },
       { click: "Home: 168 rows" },
@@ -245,6 +286,58 @@ export const liveExamples = {
       { expectRows: 84 },
     ],
   },
+  funnel: {
+    label: "Live signup funnel",
+    data: "/datasets/product-events.csv",
+    savedData: focus(productFunnelDashboard, {
+      "funnel-signup": [0, 0, 7, 5],
+      "funnel-channel": [7, 0, 5, 5],
+    }),
+    exampleId: "product-funnel",
+    shotAlt:
+      "A funnel of users from visit to upgrade, beside events by channel.",
+    steps: [
+      { expectRows: 11296 },
+      { expectMark: "Step 5, upgrade: 112, 5.6% of the first step" },
+      { click: "Step 5, upgrade: 112, 5.6% of the first step" },
+      { expectChip: "event" },
+      { expectRows: 1379 },
+    ],
+  },
+  retention: {
+    label: "Live weekly retention",
+    data: "/datasets/product-events.csv",
+    savedData: focus(productRetentionDashboard, {
+      "retention-weekly": [0, 0, 8, 7],
+      "retention-channel": [8, 0, 4, 7],
+    }),
+    exampleId: "product-retention",
+    shotAlt:
+      "Weekly signup cohorts by the share active in each week after, beside events by channel.",
+    steps: [
+      { expectRows: 11296 },
+      { expectMark: "Mar 3 cohort, Week 4: 53%, 10 of 19" },
+      { click: "Mar 3 cohort, Week 4: 53%, 10 of 19" },
+      { expectChip: "user_id" },
+      { expectRows: 125 },
+    ],
+  },
+  timeline: {
+    label: "Live room bookings",
+    data: "/datasets/room-bookings.csv",
+    savedData: focus(roomBookingsDashboard, {
+      "bookings-timeline": [0, 0, 12, 6],
+    }),
+    exampleId: "room-bookings",
+    shotAlt:
+      "Four weeks of room bookings in one lane per room, colored by status.",
+    steps: [
+      { expectRows: 673 },
+      { click: "Lab 4: Mar 23, 9:00 AM to no end" },
+      { expectChip: "Source row" },
+      { expectRows: 1 },
+    ],
+  },
   "parallel-coordinates": {
     label: "Live parallel coordinates chart",
     data: "/datasets/palmer-penguins.csv",
@@ -263,11 +356,12 @@ export const liveExamples = {
   },
   calendar: {
     label: "Live calendar heatmap",
-    data: SHOP,
-    savedData: focus(timeSeriesDashboard, { "time-calendar": [0, 0, 12] }),
-    exampleId: "calendar-series",
-    shotAlt: "Daily order counts as a calendar of shaded day cells.",
-    steps: [{ expectRows: 500 }],
+    data: "/datasets/lincoln-weather.csv",
+    savedData: lincolnCalendarDashboard,
+    exampleId: "lincoln-ridgeline",
+    shotAlt:
+      "Each day of 2016 in Lincoln, Nebraska, shaded by its high temperature: pale winter weeks, dark summer ones.",
+    steps: [{ expectRows: 366 }],
   },
   heatmap: {
     label: "Live heatmap",
@@ -307,6 +401,69 @@ export const liveExamples = {
     exampleId: "point-map",
     shotAlt: "Service sites as points on a world map.",
     steps: [{ expectRows: 30 }],
+  },
+  waterfall: {
+    label: "Live budget waterfall",
+    data: "/datasets/lab-budget.csv",
+    savedData: focus(budgetBridgeDashboard, {
+      "budget-bridge": [0, 0, 7, 7],
+      "budget-quarter": [7, 0, 5, 3],
+    }),
+    exampleId: "budget-bridge",
+    shotAlt:
+      "A waterfall from the lab's planned net position to its actual one, with a step per line item and a subtotal per group, beside a quarter picker.",
+    steps: [
+      { expectRows: 96 },
+      { expectMark: "Plan, total 104" },
+      { expectMark: "Actual, total -39" },
+      { click: "Equipment, change -84" },
+      { expectChip: "Line item" },
+      { expectRows: 8 },
+    ],
+  },
+  "waterfall-running": {
+    label: "Live running-total waterfall",
+    data: "/datasets/battery-day.csv",
+    savedData: focus(batteryDayDashboard, {
+      "battery-charge": [0, 0, 7, 9],
+      "battery-flows": [7, 0, 5, 3],
+    }),
+    exampleId: "battery-day",
+    shotAlt:
+      "A battery's charge through a day: a start value, one step per hour, a subtotal per part of the day, and the charge at day's end, beside a flow picker.",
+    steps: [
+      { expectRows: 45 },
+      { click: "Solar: 13 rows" },
+      { expectRows: 13 },
+      { expectChip: "Flow" },
+    ],
+  },
+  donut: {
+    label: "Live revenue donut",
+    data: "/datasets/shop-operations.csv",
+    savedData: focus(channelShareDashboard, {
+      "share-channel": [0, 0, 5, 4],
+      "share-region-mix": [5, 0, 7, 4],
+    }),
+    exampleId: "channel-share",
+    shotAlt:
+      "A donut of revenue by sales channel beside 100% bars of the channel mix in each region, in the same colors.",
+    steps: [
+      { expectRows: 500 },
+      { expectMark: "Web: 102.7K, 56%" },
+      { click: "Store: 46.7K, 25%" },
+      { expectChip: "Channel" },
+      { expectRows: 167 },
+    ],
+  },
+  "composition-parts": {
+    label: "Live lab budget report",
+    data: "/datasets/lab-budget.csv",
+    savedData: focus(budgetReportDashboard, { "budget-report": [0, 0, 12] }),
+    exampleId: "budget-report",
+    shotAlt:
+      "A report page: each quarter's plan-to-actual waterfall on one scale, and a donut of each budget group's line items with a legend.",
+    steps: [{ expectRows: 96 }],
   },
   composition: {
     label: "Live composition",

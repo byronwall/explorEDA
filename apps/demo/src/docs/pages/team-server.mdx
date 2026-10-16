@@ -1,0 +1,143 @@
+## Run a server for your team
+
+`exploreda server` runs explorEDA for a group of people. Authors build analyses on the server, and colleagues sign in to explore them. Each project is the same kind of [project folder](/docs/project-folders) that `npx exploreda` opens, kept in a data folder on the server.
+
+## Try it with sample accounts
+
+You need [Node.js](https://nodejs.org) 22.5 or later. On your own computer, in any empty folder:
+
+1. **Start a trial server.** Run `npx exploreda server --data ./team-data --seed-dev`. It prints `http://localhost:8080/`, three sample accounts, and their password.
+2. **Edit as an author.** Open the address and sign in as `ana@example.com`. Open **Shop orders**, choose **Add chart**, pick a chart, and choose **Add to grid**. The page says **Saved**.
+3. **Look as a viewer.** Choose **Sign out** and sign in as `vic@example.com`. **Shop orders** shows Ana's new chart, and the page says **Viewing · your changes aren't saved**. Vic can filter and change charts while looking, but nothing Vic changes is kept.
+4. **Stop it.** Press Ctrl-C. The sample accounts are gone, since `--seed-dev` keeps them in memory. The sample project stays in `./team-data/projects/shop`.
+
+To keep a server running for real, leave out `--seed-dev`, as in [Docker Compose](#keep-one-running-with-docker-compose) below.
+
+## Keep one running with Docker Compose
+
+The server is also an image, `ghcr.io/byronwall/exploreda`, with the same version numbers as the npm package. On the machine that will run it:
+
+1. **Start it.** Save the `compose.yaml` below in an empty folder and run `docker compose up -d`.
+2. **Create the admin account.** Open port 8080 on that machine. The first person to open it creates the admin account.
+3. **Add a project and data.** Choose **New project** and name it. Under **Or download from an address**, enter `https://exploreda.dev/datasets/shop-operations.csv` and choose **Download**, then choose **Chart** beside the file.
+4. **Add a person.** Open **People**, enter a name and email, and choose **Add person**. Copy the password link it shows. In the project, choose **Members** and add them with **Can view**.
+5. **Restart it.** Run `docker compose restart`. Accounts, the project, and the link are all still there, in the `exploreda-data` volume. Open the link in another browser to set that person's password, and they see the project, read-only.
+
+```yaml
+services:
+  exploreda:
+    image: ghcr.io/byronwall/exploreda:latest
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      EXPLOREDA_PUBLIC_URL: ""
+      EXPLOREDA_UPLOAD_LIMIT: "100"
+    volumes:
+      - exploreda-data:/data
+
+volumes:
+  exploreda-data:
+    name: exploreda-data
+```
+
+Each command-line option has an environment variable for the container: `EXPLOREDA_PUBLIC_URL`, `EXPLOREDA_UPLOAD_LIMIT`, `EXPLOREDA_PORT`, `EXPLOREDA_HOST`, and `EXPLOREDA_DATA`. An empty value leaves the default.
+
+The server speaks plain HTTP. For HTTPS, put a proxy in front of it and set `EXPLOREDA_PUBLIC_URL` to the HTTPS address. With [Caddy](https://caddyserver.com), which gets its own certificate, the whole proxy configuration is:
+
+```text
+eda.example.com {
+	reverse_proxy exploreda:8080
+}
+```
+
+The server makes no calls home. It reaches the network only to download the data addresses that authors give it and to read the databases that projects connect to.
+
+### Back up and upgrade
+
+Everything the server keeps is in the `exploreda-data` volume: `exploreda.db` holds accounts, sessions, projects, and members, and `projects/` holds each project's folder. To back it up, stop the server and copy the volume:
+
+```bash
+docker compose stop && docker run --rm -v exploreda-data:/data -v "$PWD":/backup busybox tar czf /backup/exploreda-backup.tgz -C /data . && docker compose start
+```
+
+To upgrade, pull the new image and start it again:
+
+```bash
+docker compose pull && docker compose up -d
+```
+
+When a new version needs to change the account store, it first copies the store into `backups/<time>/` in the data folder, then changes it, and says so in its log. If the change fails, the server stops and leaves the data as it was. A version older than the one that last wrote the data folder refuses to start, so going back means restoring a backup.
+
+To restore, stop the server and put the backup back:
+
+```bash
+docker compose stop && docker run --rm -v exploreda-data:/data -v "$PWD":/backup busybox sh -c "rm -rf /data/* && tar xzf /backup/exploreda-backup.tgz -C /data && chown -R 1000:1000 /data" && docker compose start
+```
+
+## Run it with Node
+
+Without Docker, run the same server with Node:
+
+```bash
+npx exploreda server --data /srv/exploreda --public-url https://eda.example.com
+```
+
+The first person to open the address creates the admin account. Accounts, projects, and members are kept in `exploreda.db` in the data folder, and each project's files are under `projects/`.
+
+| Option                | What it does                                                                                                                                                  |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--data <folder>`     | Where projects and accounts are kept. Required.                                                                                                               |
+| `--port <n>`          | The port to listen on, 8080 by default.                                                                                                                       |
+| `--host <address>`    | The address to listen on, `0.0.0.0` by default.                                                                                                               |
+| `--upload-limit <MB>` | The largest data file an author can upload or download, 100 MB by default.                                                                                    |
+| `--public-url <url>`  | The address people open. Changes to projects are accepted only from pages at this address, and sign-in cookies are marked secure when it starts with `https`. |
+| `--seed-dev`          | Adds sample accounts and the sample project, with accounts kept in memory.                                                                                    |
+
+The team server needs Node 22.5 or later.
+
+## Try the demo with a database
+
+The repository's `docker/demo` folder runs the team server beside a PostgreSQL database of made-up retail data: 2,500 customers, 30 products, and two years of orders. Its Retail project already has a connection, five sources, and three analyses:
+
+```bash
+git clone https://github.com/byronwall/explorEDA.git
+cd explorEDA
+docker compose -f docker/demo/compose.yaml up -d
+```
+
+Open `http://localhost:8080`, sign in as `ana@example.com` with the password `exploreda-dev`, and choose **Read all**. The demo's accounts and passwords are public and its accounts last only while it runs, so use it to look around or as a starting point, never as a server people rely on.
+
+## People and roles
+
+Every person signs in with an email and a password. An account is one of two kinds:
+
+- **Authors** create projects, edit the projects they're in, and choose who else is in them.
+- **Viewers** open the projects they're added to. They can filter, select, drill in, and change charts while they look, but nothing they change is saved. The page says so: **Viewing · your changes aren't saved**.
+
+Any account can also be an **admin**. Admins add people, hand out password links, turn accounts off, and can open every project. The first account is an admin, and the server always keeps at least one.
+
+## Add people with a password link
+
+The server doesn't send email. To add someone, an admin opens **People**, enters their name and email, and chooses **Add person**. The page shows a link to send them. It sets their password, works once, and expires in 7 days. The same **Password link** button makes a new link for someone who has forgotten their password.
+
+After five wrong passwords for one email from one address, sign-in for that pair waits 15 minutes.
+
+## Add data to a project
+
+Authors choose **Add data** beside the project's data, or start from an empty project's first page:
+
+- **Upload a CSV, JSON, or SQLite file** from your computer. It goes into the project's `data/` folder. If a file of that name is already there, explorEDA asks before replacing it.
+- **Download from an address.** The server downloads the file now and keeps a copy, and the data list shows when. Choose **Refetch** to download a fresh copy from the same address. If a download fails, the last good copy stays.
+
+Addresses inside your company's network work, since the server downloads them itself. The server never downloads from its own machine, link-local addresses, or cloud metadata services, and it logs every download with who asked for it.
+
+Then choose **Chart** beside the file to start an analysis.
+
+Authors can also choose **Add database** to read tables and queries from a database server or an uploaded SQLite file. See [database sources](/docs/database-sources#on-a-team-server).
+
+## Share a project
+
+An author creates a project from **Projects**, then opens **Members** beside its name to add people. Each member can edit or can view. A viewer account can only ever view. A project always keeps at least one author.
+
+When an author saves a change, everyone else with the project open sees it reload, with a note that names who changed which file. If two authors change the same analysis at once, the last save wins.

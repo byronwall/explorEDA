@@ -1,0 +1,111 @@
+{
+  "conversation_url": "https://chatgpt.com/c/6acd8f8f-ce9c-83e9-af9c-1019d982f227",
+  "retrieved_at": "2026-10-13T02:53:56.127688+00:00",
+  "archive_sha256": "820df63232fa1dfb83e0a8f6a2df74fdab843d9c04a42405b862f6e2ec29a378",
+  "archive_expected_sha256": "820df63232fa1dfb83e0a8f6a2df74fdab843d9c04a42405b862f6e2ec29a378",
+  "download_note": "Tool download-event wait timed out, but the normal browser download completed. Verified local file before any retry.",
+  "artifacts": [
+    {
+      "filename": "report.md",
+      "bytes": 48254,
+      "sha256": "d37d9a8c3ca7feba016a9ffeb94a904f47e41713fea72509c0e5f98c332d800a",
+      "origin": "ZIP member",
+      "standalone_matches": [
+        "/Users/byronwall/Downloads/report (1).md"
+      ],
+      "original_link": "Conversation artifact button: report.md"
+    },
+    {
+      "filename": "settings-inventory.csv",
+      "bytes": 234465,
+      "sha256": "10cc4a3bfd32b476aaa5f1806f05c90e9804cb2655414024094921967b8e2e0d",
+      "origin": "ZIP member",
+      "standalone_matches": [
+        "/Users/byronwall/Downloads/settings-inventory.csv"
+      ],
+      "original_link": "Conversation artifact button: settings-inventory.csv"
+    },
+    {
+      "filename": "interaction-catalog.md",
+      "bytes": 58707,
+      "sha256": "8906061a00d8617359ed58ee1704d903b630211be25d3f0e7fedb10308d16940",
+      "origin": "ZIP member",
+      "standalone_matches": [
+        "/Users/byronwall/Downloads/interaction-catalog.md"
+      ],
+      "original_link": "Conversation artifact button: interaction-catalog.md"
+    },
+    {
+      "filename": "gesture-map.csv",
+      "bytes": 31991,
+      "sha256": "d1d9857f90ae87aeec94058483658d5b8ea3b4c7ff5a7489b1aafa40dc52f8b6",
+      "origin": "ZIP member",
+      "standalone_matches": [
+        "/Users/byronwall/Downloads/gesture-map.csv"
+      ],
+      "original_link": "Conversation artifact button: gesture-map.csv"
+    },
+    {
+      "filename": "recommendations.json",
+      "bytes": 85270,
+      "sha256": "77ed1a1bcad08e402bbb17be181f01244cd6b4b268094395ce4af878e31f4947",
+      "origin": "ZIP member",
+      "standalone_matches": [
+        "/Users/byronwall/Downloads/recommendations (1).json"
+      ],
+      "original_link": "Conversation artifact button: recommendations.json"
+    },
+    {
+      "filename": "sources.json",
+      "bytes": 181123,
+      "sha256": "885b987d237f7ee2e002ae42e91add09281412c2c7b37bf8ac3cdcb19ac2c09d",
+      "origin": "ZIP member",
+      "standalone_matches": [
+        "/Users/byronwall/Downloads/sources.json"
+      ],
+      "original_link": "Conversation artifact button: sources.json"
+    },
+    {
+      "filename": "proof-plan.md",
+      "bytes": 22243,
+      "sha256": "f11b469bf56b93f5e2700f9083357a610766cba1f2301d3ff42b01362c94f6d3",
+      "origin": "ZIP member",
+      "standalone_matches": [
+        "/Users/byronwall/Downloads/proof-plan (1).md"
+      ],
+      "original_link": "Conversation artifact button: proof-plan.md"
+    },
+    {
+      "filename": "proposed-intent-brief.md",
+      "bytes": 6320,
+      "sha256": "1361492180ddd06f05a36033cc595cf27b0b283278dfd145e674cd24dab40ce2",
+      "origin": "ZIP member",
+      "standalone_matches": [
+        "/Users/byronwall/Downloads/proposed-intent-brief.md"
+      ],
+      "original_link": "Conversation artifact button: proposed-intent-brief.md"
+    },
+    {
+      "filename": "proposed-shape-brief.md",
+      "bytes": 5738,
+      "sha256": "754cfa040a7df4be7b0722b6d0c85897169b6c8dd962cba797ebdb9b9a4bc5e3",
+      "origin": "ZIP member",
+      "standalone_matches": [
+        "/Users/byronwall/Downloads/proposed-shape-brief.md"
+      ],
+      "original_link": "Conversation artifact button: proposed-shape-brief.md"
+    },
+    {
+      "filename": "manifest.json",
+      "bytes": 11999,
+      "sha256": "0e75e0f6dd9ad50da50f1d02712ff4937364807ec3adc7a27aa05cec604a0546",
+      "origin": "ZIP member",
+      "standalone_matches": [
+        "/Users/byronwall/Downloads/manifest.json"
+      ],
+      "original_link": "Conversation artifact button: manifest.json"
+    }
+  ],
+  "archive_bytes": 108886,
+  "verified_again_at": "2026-10-13T03:03:50.394636+00:00"
+}

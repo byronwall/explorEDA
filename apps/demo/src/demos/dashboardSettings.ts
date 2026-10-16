@@ -44,7 +44,7 @@ const row = (
   colorField: colorScaleId ? field : undefined,
   colorScaleId,
 });
-const histogram = (
+export const histogram = (
   id: string,
   title: string,
   field: string,
@@ -751,6 +751,59 @@ export const scatterTraceDashboard: SavedDataStructure = {
     "Net sales": { format: "currency", precision: 0 },
     Contribution: { format: "currency", precision: 0 },
   },
+};
+
+export const chartControlsDashboard: SavedDataStructure = {
+  ...dashboard(
+    "Change a chart where it sits",
+    [
+      {
+        ...base,
+        id: "controls-guide",
+        type: "markdown",
+        title: "Change color in place",
+        layout: layout(0, 0, 12, 2),
+        content:
+          "<p>Click <b>Color: None</b> above the left chart, type part of a field name, and press Enter. The chart recolors at once and its filter stays put. Press Ctrl-Z or ⌘Z to undo. Choose Channel to share the right chart's colors.</p>",
+      },
+      {
+        ...scatter(
+          "controls-scatter",
+          "Units against net sales",
+          "Net sales",
+          "Units",
+          layout(0, 2, 6, 7),
+          ["Net sales ($)", "Units"]
+        ),
+        filters: [{ type: "range", field: "Net sales", min: 80 }],
+        xAxis: { grid: true },
+        yAxis: { grid: true },
+      },
+      {
+        ...scatter(
+          "controls-peer",
+          "Net sales to contribution",
+          "Net sales",
+          "Contribution",
+          layout(6, 2, 6, 7),
+          ["Net sales ($)", "Contribution ($)"],
+          "Channel",
+          "controls-channel-colors"
+        ),
+        xAxis: { grid: true },
+        yAxis: { grid: true },
+      },
+    ],
+    [
+      categoricalScale("controls-channel-colors", "Channel", [
+        "Online",
+        "Store",
+        "Partner",
+      ]),
+    ]
+  ),
+  calculations: scatterTraceDashboard.calculations,
+  fieldSettings: scatterTraceDashboard.fieldSettings,
 };
 
 const orderCalculations = [
@@ -4128,6 +4181,21 @@ export const electionsDashboard = dashboard("Presidential margins", [
  * become a density curve on one shared temperature scale; the rows overlap
  * through a negative gap, January at the top.
  */
+/** A full year of daily readings, so the calendar shows seasons and runs. */
+export const lincolnCalendarDashboard = dashboard("Lincoln calendar", [
+  {
+    ...base,
+    id: "lincoln-calendar",
+    type: "calendar",
+    title: "Daily high temperature, °F",
+    field: "Date",
+    aggregation: "average",
+    measureField: "Max temperature",
+    weekStart: "monday",
+    layout: layout(0, 0, 12, 4),
+  },
+]);
+
 export const lincolnRidgelineDashboard = dashboard("Lincoln ridgeline", [
   {
     ...base,

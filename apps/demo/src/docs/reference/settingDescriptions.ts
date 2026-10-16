@@ -146,6 +146,40 @@ export const CHART_SETTINGS: Readonly<
     focus:
       "The zoomed branch, as values along the levels. Empty shows the whole.",
   },
+  funnel: {
+    field: "The event field. Steps are values of this field.",
+    entityField:
+      "Who moves through the funnel, such as a user ID. Each entity counts once per step.",
+    timeField: "When each event happened. Steps count in time order.",
+    steps:
+      "Event values in order. A step counts at its first event after the step before it.",
+    windowDays:
+      "Days from an entity's first step in which later steps count. Blank counts any time.",
+  },
+  timeline: {
+    field: "The lane field. Each value gets its own lane.",
+    startField: "When each row begins. Times read as UTC.",
+    endField:
+      "When each row ends. A blank end has not ended: the bar runs to the last time in the data.",
+    colorField: "Optional category that colors the bars, such as status.",
+  },
+  retention: {
+    field:
+      "Optional event field. With it, the entry event and the active events can be chosen.",
+    entityField:
+      "Who is retained, such as a user ID. Each entity joins one cohort.",
+    timeField:
+      "When each event happened. Cohorts and periods are UTC calendar periods.",
+    entryEvent:
+      "The event that puts an entity into its cohort. Blank uses each entity's first event.",
+    activityEvents:
+      "Events that count as active. Blank counts every event at or after entry.",
+    period:
+      "Cohort and period length: a UTC day, a Monday-to-Sunday week, or a month.",
+    periods: "How many periods after entry to show, from period 0.",
+    selectedCell:
+      "The cell behind the chart's selection, as cohort start and period.",
+  },
   sankey: {
     field: "Not read by this chart type.",
     stages: "Category fields in order. Each row is one path through them.",
@@ -209,6 +243,28 @@ export const CHART_SETTINGS: Readonly<
     showOverall:
       "Draws a dashed curve for all rows together when curves are split by color.",
   },
+  donut: {
+    field:
+      "The category field. Each category gets a slice of the filtered whole.",
+    aggregation:
+      "A count of rows, or the sum of a measure with no negative values.",
+    measureField: "Field each slice sums, when the measure is a sum.",
+    topN: "How many of the largest categories get their own slice. The rest pool into Other. Blank shows six.",
+  },
+  waterfall: {
+    field:
+      "The step field: one step per category, in the order the categories first appear in the data.",
+    mode: "How steps are computed. A bridge shows each category's change between two states; a running total adds each category's measure in order.",
+    startValue:
+      "The value a running total starts from, drawn as the first bar. Blank starts at zero with no start bar.",
+    aggregation:
+      "Sum of the measure or a count of rows. Only additive measures, so the start plus every step equals the end.",
+    measureField: "Field each state sums, unless the state names its own.",
+    states:
+      "The start and end states: each has a label, an optional measure of its own, and the conditions for the rows it counts. A running total uses only their labels.",
+    parentField:
+      "Groups steps by this field and closes each group with a subtotal of the running total.",
+  },
   "metric-card": {
     field: "Not read by this chart type.",
     aggregation: "The metric: a count of rows, or a summary of the measure.",
@@ -226,7 +282,17 @@ export const CHART_SETTINGS: Readonly<
     pointRadius:
       "Point radius in pixels, from 2 to 32. With a size field, the largest point's radius.",
     pointOpacity: "Point opacity, from 0.1 to 1.",
-    geometryAssetId: "The region geometry, for region maps.",
+    geometryAssetId:
+      "The region geometry, for region maps: an imported asset's ID, or supplied boundaries such as boundary:world-countries.",
+    showMarks: "Draws the points. Off keeps selections and filters.",
+    clusterPoints:
+      "When on, above 2,000 drawn points, groups nearby points into counted circles that split as you zoom in. Off by default, so every point is drawn.",
+    showLabels:
+      "Writes each point's label beside it, when 150 or fewer points are drawn.",
+    referenceAssetId:
+      "Boundaries drawn beneath points for reference. They are not selectable.",
+    basemap:
+      "Auto draws land, then streets past continent scale when street maps are on; outline always draws land; none draws no basemap.",
     regionField: "Field holding each row's region key.",
     featureKey:
       "GeoJSON property or feature ID matched to the region key. Values and types must match exactly.",

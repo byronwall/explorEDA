@@ -6,6 +6,7 @@ import {
   type AnalysisSourceRow,
   type SavedDataStructure,
 } from "exploreda";
+import type { DeclaredFieldType } from "exploreda/readers";
 import type { DatumObject } from "./LandingPage";
 
 export const STORAGE_KEY = "exploreda.saved-views.v1";
@@ -85,6 +86,8 @@ export type SavedViewsSession = {
   /** The example these rows came from. Imported data has none. */
   exampleId?: string;
   sourceAnalysis: string;
+  /** Field types the imported file declared for the source rows. */
+  fieldTypes?: Record<string, DeclaredFieldType>;
   project?: AnalysisProject;
   tables?: Record<string, readonly AnalysisSourceRow[]>;
   /**

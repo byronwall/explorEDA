@@ -1,7 +1,7 @@
 import {
   isDateText,
   isMissingValue,
-  isNumberLike,
+  isNumericValue,
   parseBoolean,
 } from "@/lib/valueParsing";
 import { datum } from "@/types/ChartTypes";
@@ -25,8 +25,9 @@ export function detectColumnType(columnData: {
     return "boolean";
   }
 
-  // Check if all values are numbers or can be converted to numbers
-  if (nonNullValues.every(isNumberLike)) {
+  // Numbers, or text that converts without change. "0012" and integers past
+  // 2^53 stay text, so identifiers keep their digits.
+  if (nonNullValues.every(isNumericValue)) {
     return "numeric";
   }
 

@@ -22,6 +22,11 @@ import { FitTraceBody } from "../ScatterPlot/FitTraceBody";
 import { MarginalTraceBody } from "../ScatterPlot/MarginalTraceBody";
 import { SurfaceTraceBody } from "../ScatterPlot/SurfaceTraceBody";
 import { CompositionTraceBody } from "../Composition/CompositionTraceBody";
+import { WaterfallTraceBody } from "../Waterfall/WaterfallTraceBody";
+import { DonutTraceBody } from "../Donut/DonutTraceBody";
+import { FunnelTraceBody } from "../Funnel/FunnelTraceBody";
+import { RetentionTraceBody } from "../Retention/RetentionTraceBody";
+import { TimelineTraceBody } from "../Timeline/TimelineTraceBody";
 import { useChartTrace, useChartTraceApi } from "./ChartTraceScope";
 import {
   FacetTraceBody,
@@ -70,6 +75,16 @@ function TraceBody({ trace }: { trace: ChartTrace }) {
       return <TimeSeriesTraceBody key={trace.id} trace={trace} />;
     case "metric-card":
       return <MetricCardTraceBody trace={trace} />;
+    case "waterfall-bar":
+      return <WaterfallTraceBody trace={trace} />;
+    case "donut-slice":
+      return <DonutTraceBody trace={trace} />;
+    case "funnel-step":
+      return <FunnelTraceBody trace={trace} />;
+    case "retention-cell":
+      return <RetentionTraceBody trace={trace} />;
+    case "timeline-interval":
+      return <TimelineTraceBody trace={trace} />;
     case "bar":
       return <BarTraceBody trace={trace} />;
     case "sankey-node":

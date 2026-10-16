@@ -9,6 +9,7 @@ import { createPortal } from "react-dom";
 import { BarChart, Copy, Settings2 } from "lucide-react";
 import { resolveFieldProfile } from "@/components/FieldMetadata";
 import { FieldInspector } from "@/components/SummaryTable/components/FieldInspector";
+import { ChartImageMenuSection } from "./export/ChartImageMenu";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -183,6 +184,7 @@ export function useAxisFieldActions(
                   Copy field name
                 </DropdownMenuItem>
               )}
+              <ChartImageMenuSection />
             </DropdownMenuContent>
           </DropdownMenu>,
           document.body

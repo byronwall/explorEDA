@@ -1,25 +1,14 @@
 import { compileViews, type AnalysisSourceRow } from "exploreda";
 import { evaluateAnalysisQuery } from "exploreda/analysis";
-import { parseCsvData } from "@/csvParser";
+import { readTableText } from "exploreda/readers";
 import type { ExampleView } from "../exampleViews";
 import type { ExampleAnalysis } from "./types";
 
 export type AnalysisTables = Record<string, readonly AnalysisSourceRow[]>;
 
-/**
- * Parses one source table. The CSV parser turns full ISO timestamps into
- * Date objects; tables keep them as text, like every other date.
- */
+/** Parses one source table. Dates keep the text the file gives them. */
 export async function parseTable(text: string) {
-  const rows = (await parseCsvData(text)) as AnalysisSourceRow[];
-  for (const row of rows) {
-    for (const [key, value] of Object.entries(row)) {
-      if ((value as unknown) instanceof Date) {
-        row[key] = (value as unknown as Date).toISOString();
-      }
-    }
-  }
-  return rows;
+  return readTableText(text).rows;
 }
 
 /** Fetches and parses every source table of an analysis. */

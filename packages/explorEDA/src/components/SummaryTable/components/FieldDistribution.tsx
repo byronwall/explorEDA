@@ -567,6 +567,9 @@ export function summarizeField(
     if (dates) {
       const first = format(dates.first);
       const last = format(dates.last);
+      // Full ISO date-times outgrow the reading track; show them to the minute.
+      const short = (text: string) =>
+        text.replace(/^(\d{4}-\d{2}-\d{2})[T ](\d{2}:\d{2})[^\s]*$/, "$1 $2");
       const bars = mark(dateBars(dates.times, dates.firstTime, dates.lastTime));
       return {
         graphic: (
@@ -578,8 +581,8 @@ export function summarizeField(
           />
         ),
         bars,
-        low: first,
-        high: first === last ? undefined : last,
+        low: short(first),
+        high: first === last ? undefined : short(last),
         description: `Dates from ${first} to ${last}`,
       };
     }

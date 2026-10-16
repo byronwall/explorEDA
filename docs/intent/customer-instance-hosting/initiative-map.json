@@ -5,10 +5,10 @@
     "slug": "customer-instance-hosting",
     "scale": "program",
     "current_phase": "shape",
-    "last_updated": "2026-10-12",
+    "last_updated": "2026-10-13",
     "summary": "Shape a low-maintenance per-customer runtime and operator lifecycle automation, beginning with two synthetic local instances that use one image and separate identity, secrets, and state.",
-    "status": "planned",
-    "next_action": "Review the provisional service-level isolation promise and local proof; align snapshot, query, driver, and transport contracts before selecting a provider."
+    "status": "paused",
+    "next_action": "Paused 2026-10-12: seed for runtime-modes. Merge its managed-hosting research into runtime-modes when the paid (managed) mode is shaped."
   },
   "artifacts": {
     "intent_brief": {
@@ -435,6 +435,20 @@
       "Supported customer save format, retention, and recovery target."
     ]
   },
-  "history": [],
+  "history": [
+    {
+      "date": "2026-10-12",
+      "event": "status-change",
+      "summary": "Paused on Byron's direction: this was a starter seed for the runtime-modes program. Its research on where to host managed versions merges into runtime-modes at the managed-server stage.",
+      "status": "paused"
+    },
+    {
+      "date": "2026-10-13",
+      "action": "Scope note",
+      "reason": "Database-adapters scope questions (round 3): stays paused under the managed mode; database-adapters targets CLI and self-hosted.",
+      "status": "paused",
+      "evidence": "../database-adapters/initiative-map.json question_rounds"
+    }
+  ],
   "closure": null
 }

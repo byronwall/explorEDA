@@ -1,3 +1,4 @@
+import { useChartImageActions } from "../export/chartImageContext";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { BaseChartProps } from "@/types/ChartTypes";
@@ -188,6 +189,7 @@ export function CompositionChart({
   const zoomed = zoomer.view.k !== 1;
   /** Screen pixels per artboard unit, after any zoom. */
   const unitSize = scale * zoomer.view.k;
+  const imageActions = useChartImageActions();
 
   if (!editing && definition.elements.length === 0) {
     return (
@@ -544,7 +546,10 @@ export function CompositionChart({
       : null;
 
   const glyph =
-    hovered && (hovered.type === "rect" || hovered.type === "circle")
+    hovered &&
+    (hovered.type === "rect" ||
+      hovered.type === "circle" ||
+      hovered.type === "arc")
       ? hovered.glyph
       : undefined;
   const hoveredField = definition.elements.find(
@@ -574,6 +579,7 @@ export function CompositionChart({
             hasFilters: settings.filters.length > 0,
           })}
           container={svgRef.current?.closest<HTMLElement>("[role='dialog']")}
+          image={imageActions}
           onRun={(action: QuickAction) => action.run(quickApi)}
           onClose={() => setMenu(undefined)}
         />

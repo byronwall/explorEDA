@@ -3,6 +3,7 @@ import {
   largeShopDashboard,
   calculationDashboard,
   scatterTraceDashboard,
+  chartControlsDashboard,
   activityDashboard,
   timeSeriesDashboard,
   groupedBarsDashboard,
@@ -61,10 +62,16 @@ import {
   MapPin,
   Bird,
   BarChart3,
+  ChartColumnStacked,
   Calculator,
   Spline,
   TableProperties,
   AreaChart,
+  BatteryCharging,
+  Donut as DonutIcon,
+  ArrowDownWideNarrow as FunnelIcon,
+  Grid2x2 as RetentionIcon,
+  ChartGantt as TimelineIcon,
   LayoutGrid as GridIcon,
   Columns3,
   Grid3x3,
@@ -106,6 +113,17 @@ import { earthquakesAnalysis } from "./analyses/earthquakes";
 import { flightsAnalysis } from "./analyses/flights";
 import { shopText } from "./analyses/shop";
 import { wineText } from "./analyses/wine";
+import {
+  batteryDayDashboard,
+  budgetBridgeDashboard,
+  budgetReportDashboard,
+  channelShareDashboard,
+} from "./partsAndChangeDashboards";
+import {
+  productFunnelDashboard,
+  productRetentionDashboard,
+  roomBookingsDashboard,
+} from "./journeyDashboards";
 import { worldBankAnalysis } from "./analyses/worldbank";
 import type { ExampleAnalysis } from "./analyses/types";
 import { categoricalChartSettings } from "./categoricalChartSettings";
@@ -182,6 +200,10 @@ const viewNames: Record<string, string> = {
   boxplot: "box plot",
   "color-legend": "legend",
   composition: "composition",
+  waterfall: "waterfall",
+  funnel: "funnel",
+  retention: "retention",
+  timeline: "timeline",
   "data-table": "table",
   heatmap: "heatmap",
   ecdf: "ECDF",
@@ -365,6 +387,7 @@ export const examples: ExampleData[] = [
     listed: true,
     tabs: [
       { name: "Where they struck", capabilities: ["Maps", "Distributions"] },
+      { name: "By country", capabilities: ["Maps"] },
       { name: "When they happened", capabilities: ["Time and calendars"] },
       {
         name: "Magnitude and depth",
@@ -684,6 +707,17 @@ export const examples: ExampleData[] = [
     savedData: scatterTraceDashboard,
   },
   {
+    id: "dense-chart-controls",
+    title: "Change a chart where it sits",
+    description:
+      "Change a scatter's color field from the label above the plot. The choice applies at once, keeps the chart's filter, and undoes in one step.",
+    dataset: { rows: "18 orders", fields: 6, source: "Synthetic" },
+    shows: ["Color in place", "Shared color scale", "One-step undo"],
+    icon: ScatterChart,
+    data: "/datasets/scatter-trace.csv",
+    savedData: chartControlsDashboard,
+  },
+  {
     id: "calculated-orders",
     title: "From orders to contribution",
     description:
@@ -812,6 +846,91 @@ export const examples: ExampleData[] = [
     icon: Layers,
     data: "/datasets/causes-by-age.csv",
     savedData: causesByAgeDashboard,
+  },
+  {
+    id: "budget-bridge",
+    title: "Lab budget: plan to actual",
+    description:
+      "A research lab planned a $104K surplus and ended $39K short. A waterfall bridges plan to actual one line item at a time, with a subtotal for funding, staff, and operations; pick quarters to bridge part of the year, and click a step to see its rows.",
+    dataset: {
+      rows: "96 budget rows",
+      fields: 6,
+      source: "Synthetic",
+    },
+    shows: ["Waterfall bridge", "Group subtotals", "Plan and actual states"],
+    icon: ChartColumnStacked,
+    data: "/datasets/lab-budget.csv",
+    savedData: budgetBridgeDashboard,
+  },
+  {
+    id: "battery-day",
+    title: "A day in the battery",
+    description:
+      "A building's battery starts the day at 40 kWh. A running-total waterfall adds each hour's solar, grid, and load flows to its charge, with a subtotal for each part of the day; pick flows to see what solar alone added.",
+    dataset: { rows: "45 hourly flows", fields: 4, source: "Synthetic" },
+    shows: ["Running total", "Ordered steps", "Period subtotals"],
+    icon: BatteryCharging,
+    data: "/datasets/battery-day.csv",
+    savedData: batteryDayDashboard,
+  },
+  {
+    id: "channel-share",
+    title: "Shares of the order book",
+    description:
+      "500 orders split by sales channel and product. A donut shows each channel's share of revenue beside 100% bars of the same mix in each region, in the same colors; a second donut pools the smaller products into Other. Click a slice and every view narrows.",
+    dataset: { rows: "500 orders", fields: 15, source: "Synthetic" },
+    shows: ["Donut shares", "Other slice", "Shared channel colors"],
+    icon: DonutIcon,
+    data: "/datasets/shop-operations.csv",
+    savedData: channelShareDashboard,
+  },
+  {
+    id: "product-funnel",
+    title: "Who gets from a first visit to a paid plan",
+    description:
+      "2,000 visitors to a fictional app, one row per event. A funnel follows each user through visit, signup, first project, team invite, and upgrade in order, so a step done too early never counts. Click a step to see everything its users did; click a channel to compare funnels.",
+    dataset: { rows: "11,296 events", fields: 5, source: "Synthetic" },
+    shows: [
+      "Ordered funnel steps",
+      "Drop-off between steps",
+      "Users behind a step",
+    ],
+    icon: FunnelIcon,
+    data: "/datasets/product-events.csv",
+    savedData: productFunnelDashboard,
+  },
+  {
+    id: "product-retention",
+    title: "Who keeps coming back after signing up",
+    description:
+      "The same 2,000 visitors, grouped by the week they signed up. Each cell is the share of that week's signups active in each week after, so the newest cohorts end where the data ends. Click a cell to see everything its users did; click a channel to compare retention.",
+    dataset: { rows: "11,296 events", fields: 5, source: "Synthetic" },
+    shows: ["Weekly cohorts", "Share active by week", "Users behind a cell"],
+    icon: RetentionIcon,
+    data: "/datasets/product-events.csv",
+    savedData: productRetentionDashboard,
+  },
+  {
+    id: "room-bookings",
+    title: "Which rooms are booked, and when",
+    description:
+      "Four weeks of bookings across 12 fictional rooms, one row per booking, with double bookings, cancellations, and holds that have no end yet. Drag across the timeline to keep the bookings that overlap that time, or click a bar to select one booking; the team chart and table follow.",
+    dataset: { rows: "673 bookings", fields: 8, source: "Synthetic" },
+    shows: ["Lanes per room", "Brush a time window", "Open-ended holds"],
+    icon: TimelineIcon,
+    data: "/datasets/room-bookings.csv",
+    savedData: roomBookingsDashboard,
+  },
+  {
+    id: "budget-report",
+    title: "Lab budget report",
+    description:
+      "A report page built in Composition: each quarter's plan-to-actual bridge as small multiples on one scale, and a donut per budget group of where its actual money came from and went. Filters and traces work as on any chart.",
+    dataset: { rows: "96 budget rows", fields: 6, source: "Synthetic" },
+    shows: ["Waterfall marks", "Donut marks", "Small multiples"],
+    icon: LayoutTemplate,
+    data: "/datasets/lab-budget.csv",
+    savedData: budgetReportDashboard,
   },
   {
     id: "consumer-confidence",
@@ -1072,6 +1191,3 @@ export const examples: ExampleData[] = [
 
 /** The catalogue: complete analyses, in the order the landing page lists them. */
 export const catalogue = examples.filter((example) => example.listed);
-
-/** The analysis the landing page features. */
-export const FEATURED_ANALYSIS_ID = "january-flights";

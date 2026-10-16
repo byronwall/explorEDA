@@ -1,7 +1,7 @@
 import { useColorContext } from "@/hooks/useDisplayColorScales";
 import { defaultCategoricalColors } from "@/lib/colorScaleMath";
 import { THEME_PALETTE, resolvePaletteColor } from "@/lib/themePalettes";
-import { finiteNumber, finiteNumbers } from "@/lib/valueParsing";
+import { finiteNumber, timestampOf } from "@/lib/valueParsing";
 import {
   boundedDomain,
   hasAxisBounds,
@@ -15,9 +15,9 @@ import { ChartMessage } from "../ChartMessage";
 import { reduceDataPoints } from "@/lib/chartUtils";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { hasFieldDisplayFormat } from "@/lib/fieldSettings";
-import { type BaseChartProps } from "@/types/ChartTypes";
+import { type BaseChartProps, type datum } from "@/types/ChartTypes";
 import { extent } from "d3-array";
-import { scaleLinear } from "d3-scale";
+import { scaleLinear, scaleUtc } from "d3-scale";
 import { curveLinear, curveMonotoneX, curveStepAfter, line } from "d3-shape";
 import { useEffect, useMemo, useState, type FC } from "react";
 import { BaseChart } from "../BaseChart";
@@ -85,6 +85,14 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
       ? (formatFieldValue?.(field, value) ?? String(value))
       : value.toLocaleString("en-US", { maximumFractionDigits: 3 });
   const seriesLabel = (field: string) => getFieldLabel?.(field) ?? field;
+  // Dates on the x axis plot at their time, such as ISO text read as UTC.
+  const xIsDate = useDataLayer(
+    (state) =>
+      state.fieldProfiles.find((profile) => profile.name === settings.xField)
+        ?.dataType === "datetime"
+  );
+  const xNumber = (value: datum) =>
+    xIsDate ? timestampOf(value) : finiteNumber(value);
 
   // Get all data for axis limits calculation
   const allXData = useGetColumnDataForIds(settings.xField);
@@ -194,8 +202,8 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
       .sort((a, b) => {
         const aValue = liveXData[a];
         const bValue = liveXData[b];
-        const aX = finiteNumber(aValue) ?? NaN;
-        const bX = finiteNumber(bValue) ?? NaN;
+        const aX = xNumber(aValue) ?? NaN;
+        const bX = xNumber(bValue) ?? NaN;
         const aFinite = Number.isFinite(aX);
         const bFinite = Number.isFinite(bX);
         if (aFinite !== bFinite) return aFinite ? -1 : 1;
@@ -217,7 +225,7 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
       orderedIndices.forEach((i) => {
         const value = data[i];
         const xValue = liveXData[i];
-        const x = finiteNumber(xValue) ?? NaN;
+        const x = xNumber(xValue) ?? NaN;
         const y = finiteNumber(value) ?? NaN;
         if (!Number.isFinite(x) || !Number.isFinite(y)) {
           flushSegment();
@@ -329,7 +337,7 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
 
   // Process data and create scales
   const xExtent = extent(
-    allXData.map((value) => finiteNumber(value) ?? NaN).filter(Number.isFinite)
+    allXData.map((value) => xNumber(value) ?? NaN).filter(Number.isFinite)
   ) as [number, number];
 
   // Calculate y extent across all series
@@ -342,7 +350,18 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
   const xScale = numericScale(settings.xAxis)
     .domain(boundedDomain(xExtent, settings.xAxis))
     .range([0, innerWidth]);
-  if (!hasAxisBounds(settings.xAxis)) xScale.nice();
+  // A date axis takes calendar ticks: days, weeks, or months.
+  const xTime = xIsDate ? scaleUtc().domain(xScale.domain()) : undefined;
+  if (xTime) {
+    if (!hasAxisBounds(settings.xAxis)) {
+      xScale.domain(xTime.nice().domain().map(Number));
+    }
+    xScale.ticks = (count?: number) => xTime.ticks(count).map(Number);
+  } else if (!hasAxisBounds(settings.xAxis)) xScale.nice();
+  const xDateText = xTime?.tickFormat();
+  const xTickFormatter = xDateText
+    ? (value: string | number) => xDateText(new Date(Number(value)))
+    : undefined;
   // The left axis can use a true log scale. It has no place for values at
   // or below zero, so their points are not drawn and the axis counts them.
   const leftLog = settings.yAxis.scaleType === "log";
@@ -361,7 +380,7 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
     .flatMap((field) =>
       (liveSeriesData[field] ?? []).flatMap((value, index) => {
         const y = finiteNumber(value);
-        return y === undefined || finiteNumber(liveXData[index]) === undefined
+        return y === undefined || xNumber(liveXData[index]) === undefined
           ? []
           : [y];
       })
@@ -398,7 +417,7 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
           attach.yField && settings.seriesField.includes(attach.yField)
             ? attach.yField
             : settings.seriesField[0];
-        const x = finiteNumber(xs[id]);
+        const x = xNumber(xs[id]);
         const y = field ? finiteNumber(getColumnData(field)[id]) : undefined;
         if (x === undefined || y === undefined || offScale(field!, y))
           return undefined;
@@ -516,7 +535,12 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
   );
   const hoverPx = hoverX === null ? 0 : xScale(hoverX);
   const labelsLeft = hoverPx > innerWidth - 64;
-  const xText = hoverX === null ? "" : displayValue(settings.xField, hoverX);
+  const xText =
+    hoverX === null
+      ? ""
+      : xIsDate
+        ? new Date(hoverX).toISOString().slice(0, 16).replace("T", " ")
+        : displayValue(settings.xField, hoverX);
 
   const range = settings.filters.find(
     (filter) => filter.type === "range" && filter.field === settings.xField
@@ -527,9 +551,11 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
     2 - Math.floor(Math.log10(Math.abs(xExtent[1] - xExtent[0]) || 1))
   );
   const rangeValue = (value: number) =>
-    hasFieldDisplayFormat(fieldSettings[settings.xField])
-      ? displayValue(settings.xField, value)
-      : value.toLocaleString("en-US", { maximumFractionDigits: spanDigits });
+    xIsDate
+      ? new Date(value).toISOString().slice(0, 16).replace("T", " ")
+      : hasFieldDisplayFormat(fieldSettings[settings.xField])
+        ? displayValue(settings.xField, value)
+        : value.toLocaleString("en-US", { maximumFractionDigits: spanDigits });
   const rangeText =
     range?.type === "range"
       ? `${rangeValue(range.min ?? xExtent[0])} to ${rangeValue(range.max ?? xExtent[1])}`
@@ -539,14 +565,14 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
     (range.min === undefined || value >= range.min) &&
     (range.max === undefined || value <= range.max);
   const liveRows = liveXData.filter(
-    (value) => finiteNumber(value) !== undefined
+    (value) => xNumber(value) !== undefined
   ).length;
   const statusParts = [
     // Counts lead, so a narrow chart that cuts the line keeps them.
     rangeText &&
       `${liveXData
         .filter((value) => {
-          const x = finiteNumber(value);
+          const x = xNumber(value);
           return x !== undefined && inRange(x);
         })
         .length.toLocaleString()} of ${liveRows.toLocaleString()} rows selected: ${xAxisLabel || settings.xField} ${rangeText}`,
@@ -602,12 +628,13 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
         height={height}
         xScale={xScale}
         yScale={leftYScale}
+        xTickFormatter={xTickFormatter}
         annotations={annotationSlot(settings, annotationFrame)}
         hidden={{
           x: hiddenByBounds(
             settings.xAxis,
             xScale.domain() as [number, number],
-            finiteNumbers(liveXData)
+            liveXData.flatMap((value) => xNumber(value) ?? [])
           ),
           y: withNonpositive(
             hiddenByBounds(

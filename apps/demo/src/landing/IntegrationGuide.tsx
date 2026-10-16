@@ -1,7 +1,7 @@
 import orderBookSource from "./OrderBook.example.tsx?raw";
 import ordersExplorerSource from "./OrdersExplorer.example.tsx?raw";
 import { ArrowDownToLine, ArrowUpFromLine } from "lucide-react";
-import { CodePanel } from "./CodePanel";
+import { CodePanel, InstallCommand } from "./CodePanel";
 import { PACKAGE_README_URL, REPO_URL } from "./links";
 import { SectionHeading } from "./SectionHeading";
 
@@ -47,6 +47,10 @@ const boundaries = [
 const inlineCode =
   "rounded bg-muted px-[0.3em] py-0.5 font-mono text-[0.9em] text-foreground";
 
+/** The page's link style: teal text, underlined on hover. */
+const textLinkClass =
+  "rounded-sm font-medium text-site-accent underline-offset-4 transition-colors duration-150 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
+
 const facts = [
   {
     label: "Framework",
@@ -88,6 +92,9 @@ export function IntegrationGuide() {
         <code className={inlineCode}>getSettings()</code> reads the current
         settings whenever your app asks.
       </SectionHeading>
+      <div className="mt-6">
+        <InstallCommand command="pnpm add exploreda" />
+      </div>
 
       <div className="mt-10 grid gap-8 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
         <div className="min-w-0">
@@ -101,23 +108,20 @@ export function IntegrationGuide() {
               {
                 name: "OrderBook.tsx",
                 code: orderBookSource,
-                note: "The featured example: its CSV as data and its typed settings as savedData. parseCsvData and shopDashboard come from this demo app, not the package.",
+                note: "The featured example: its CSV as data and its typed settings as savedData. readTableText comes from exploreda/readers; shopDashboard comes from this demo app.",
               },
             ]}
           />
           <p className="mt-3 text-sm text-muted-foreground">
             Browse the{" "}
             <a
-              className="font-medium text-foreground underline underline-offset-4"
+              className={textLinkClass}
               href={`${REPO_URL}/blob/main/apps/demo/src/demos/dashboardSettings.ts`}
             >
               typed saved settings
             </a>{" "}
             or download the{" "}
-            <a
-              className="font-medium text-foreground underline underline-offset-4"
-              href="/datasets/shop-operations.csv"
-            >
+            <a className={textLinkClass} href="/datasets/shop-operations.csv">
               example CSV
             </a>
             .
@@ -145,11 +149,11 @@ export function IntegrationGuide() {
                 <dl className="mt-3 grid gap-4">
                   {group.items.map((item) => (
                     <div key={item.name}>
-                      <dt className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+                      <dt className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
                         <code className="break-all font-mono text-[13px] font-semibold">
                           {item.name}
                         </code>
-                        <span className="rounded-full border border-border bg-background px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
+                        <span className="text-xs text-muted-foreground">
                           {item.role}
                         </span>
                       </dt>
@@ -165,19 +169,16 @@ export function IntegrationGuide() {
         </div>
       </div>
 
-      <div className="mt-10 rounded-xl border border-border bg-card">
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border px-5 py-3">
-          <h3 className="text-sm font-semibold">Before you integrate</h3>
-          <a
-            className="text-sm font-medium text-site-accent underline-offset-4 hover:underline"
-            href={PACKAGE_README_URL}
-          >
+      <div className="mt-12">
+        <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-border pb-3">
+          <h3 className="font-semibold text-site-ink">Before you integrate</h3>
+          <a className={`text-sm ${textLinkClass}`} href={PACKAGE_README_URL}>
             Package README and API details
           </a>
         </div>
-        <dl className="grid gap-px overflow-hidden rounded-b-xl bg-border sm:grid-cols-2 lg:grid-cols-4">
+        <dl className="mt-5 grid gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-4">
           {facts.map((fact) => (
-            <div key={fact.label} className="bg-card p-5">
+            <div key={fact.label}>
               <dt className="text-sm font-semibold">{fact.label}</dt>
               <dd className="mt-1 text-sm leading-relaxed text-muted-foreground">
                 {fact.value}

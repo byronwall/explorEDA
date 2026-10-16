@@ -21,7 +21,7 @@ The Examples section links to these same-origin query routes:
 - `?view=docs&topic=scatter` and `?view=docs&topic=bar`: guides with matching example links.
 
 Navigation resets scroll and focuses the destination heading. Direct URLs and refresh use the existing demo route system.
-The full chart catalogue and expanded rendering guide remain in the [chart documentation initiative](intent/chart-and-rendering-docs/intent-brief.md).
+The full chart catalogue and rendering guide are in the docs site: one page per chart type under [`apps/demo/src/docs/pages/`](../apps/demo/src/docs/pages/), including [Rendering](../apps/demo/src/docs/pages/rendering.mdx).
 
 ## Add, edit, inspect, and reset
 
@@ -38,7 +38,8 @@ Project navigation, multiple sources, and host persistence policy also remain se
 
 ## Host settings access
 
-The public `ExplorEdaHandle` exposes `getSettings()` through a React ref after mount.
+The public `ExplorEdaHandle` exposes `getSettings()` and `exportChartPng(chartId, options)` through a React ref after mount.
+`exportChartPng` captures a mounted chart through the same path as its Export image menu (`components/charts/export/`), looking in that workspace's grid first and then in an open details view. It rejects with "Chart is not rendered." rather than rendering off screen; that is the [headless rendering](intent/headless-chart-rendering/intent-brief.md) seed.
 It returns the current `SavedDataStructure` from the provider's `saveToStructure` function.
 Hosts can read initial settings and later settings after edits.
 The inspector, host read, and edit callback use the same workspace definitions.

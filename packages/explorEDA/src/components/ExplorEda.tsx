@@ -1,5 +1,6 @@
 import { ChartDraftProvider } from "./plot/ChartDraftContext";
 import type { DatumObject } from "@/providers/DataLayerProvider";
+import type { DeclaredFieldType } from "@/lib/declaredFieldTypes";
 import { DataLayerProvider, useDataLayer } from "@/providers/DataLayerProvider";
 import {
   SavedAnalysisStructure,
@@ -46,7 +47,9 @@ import {
   exportDocument,
   highlightDsl,
   exportViews,
+  formatDsl,
   formatDslDiagnostics,
+  normalizeDashboard,
   type DslChartResult,
   type DslView,
   type DslViewResult,
@@ -71,18 +74,38 @@ import { GlobalAlertDialog } from "./GlobalAlertDialog";
 
 import "../index.css";
 import { CalculationEditorProvider } from "./calculations/CalculationEditor";
-import { forwardRef, useImperativeHandle, type ReactNode } from "react";
+import { forwardRef, useImperativeHandle, useRef, type ReactNode } from "react";
+import {
+  exportWorkspaceChartPng,
+  type ExportChartPngOptions,
+} from "./charts/export/exportChartPng";
+import type { ChartImage } from "./charts/export/rasterizePanel";
 
 registerAllCharts();
 
 export interface ExplorEdaHandle {
   getSettings: () => SavedDataStructure;
+  /**
+   * The chart's PNG as drawn: the image its Download image action saves, at
+   * twice its on-screen size unless `pixelRatio` says otherwise. Rejects with
+   * "Chart is not rendered." when the chart is not mounted.
+   */
+  exportChartPng: (
+    chartId: string,
+    options?: ExportChartPngOptions
+  ) => Promise<ChartImage>;
 }
 
 export interface ExplorEdaProps {
   data: DatumObject[];
   /** Declared output columns, including when the result contains no rows. */
   fieldNames?: string[];
+  /**
+   * Field types the data's source declares, such as `fields` from
+   * `readTableFile` in `exploreda/readers`. Detection fills in the rest, and
+   * a type chosen in field settings wins.
+   */
+  fieldTypes?: Record<string, DeclaredFieldType>;
   savedData?: SavedDataStructure;
   onStateChange?: (state: SavedDataStructure) => void;
   /** Host panels on the right edge, each with a toolbar button. */
@@ -114,6 +137,7 @@ export const ExplorEda = forwardRef<ExplorEdaHandle, ExplorEdaProps>(
     {
       data,
       fieldNames,
+      fieldTypes,
       savedData,
       onStateChange,
       sidePanels,
@@ -129,6 +153,7 @@ export const ExplorEda = forwardRef<ExplorEdaHandle, ExplorEdaProps>(
       <DataLayerProvider
         data={data}
         fieldNames={fieldNames}
+        fieldTypes={fieldTypes}
         savedData={savedData}
         onStateChange={onStateChange}
       >
@@ -160,10 +185,20 @@ const Workspace = forwardRef<
   ref
 ) {
   const getSettings = useDataLayer((state) => state.saveToStructure);
-  useImperativeHandle(ref, () => ({ getSettings }), [getSettings]);
+  const charts = useDataLayer((state) => state.charts);
+  const rootRef = useRef<HTMLDivElement>(null);
+  useImperativeHandle(
+    ref,
+    () => ({
+      getSettings,
+      exportChartPng: (chartId, options) =>
+        exportWorkspaceChartPng(rootRef.current, charts, chartId, options),
+    }),
+    [getSettings, charts]
+  );
 
   return (
-    <div className="bg-background text-foreground">
+    <div ref={rootRef} className="bg-background text-foreground">
       <CalculationEditorProvider>
         <ChartDraftProvider>
           <PlotManager
@@ -185,6 +220,7 @@ export type { SavedDataStructure, ExplorEdaSidePanel, ExplorEdaSchema };
 export type { GeometryAsset, RegionGeometry } from "@/lib/geometryAssets";
 export type { WorkspaceTheme, WorkspaceThemeId } from "@/lib/themes";
 export type { ChartStyleOverrides } from "@/types/ChartTypes";
+export type { ChartImage, ExportChartPngOptions };
 export type {
   SchemaEdge,
   SchemaEndpoint,
@@ -238,8 +274,10 @@ export {
   exportDocument,
   exportViews,
   compileViews,
+  formatDsl,
   formatDslDiagnostics,
   highlightDsl,
+  normalizeDashboard,
   parseSavedAnalysis,
   parseSavedData,
   saveAnalysisToClipboard,
@@ -255,6 +293,30 @@ export {
   hasFieldDisplayFormat,
 };
 
+// Project folders: project text, analysis files, and their data, read
+// through any file adapter.
+export * from "@/lib/project";
+// Notebooks: Markdown with eda blocks, and chart edits written back to them.
+export * from "@/lib/notebook";
+export {
+  ExplorEdaNotebook,
+  useNotebookResult,
+  type ExplorEdaNotebookProps,
+} from "./notebook/ExplorEdaNotebook";
+export {
+  listBoundarySets,
+  registerBoundarySet,
+} from "@/lib/boundaries/registry";
+export type { BoundarySet } from "@/lib/boundaries/registry";
+export {
+  OPENFREEMAP_STYLES,
+  registerMapLibre,
+} from "@/components/charts/Map/mapEngine";
+export type {
+  MapLibreModule,
+  StreetMapOptions,
+  StreetMapStyles,
+} from "@/components/charts/Map/mapEngine";
 export type * from "@/types/AnalysisProject";
 export { ExplorEdaProject } from "./ExplorEdaProject";
 export type {

@@ -40,7 +40,12 @@ export function useCreateCharts() {
       .map((profile) => profile.name);
     const selectedField =
       field ||
-      (type === "row" || type === "heatmap" ? categories[0] : numeric[0]) ||
+      (type === "row" ||
+      type === "heatmap" ||
+      type === "waterfall" ||
+      type === "donut"
+        ? categories[0]
+        : numeric[0]) ||
       profiles[0]?.name ||
       "";
     const settings = definition.createDefaultSettings(layout, selectedField);
@@ -79,10 +84,76 @@ export function useCreateCharts() {
     if (settings.type === "sankey") {
       // Few-valued categories make readable stages.
       const stages = profiles
-        .filter((profile) => profile.dataType !== "numeric" && profile.uniqueCount <= 12)
+        .filter(
+          (profile) =>
+            profile.dataType !== "numeric" && profile.uniqueCount <= 12
+        )
         .map((profile) => profile.name);
       const start = stages.includes(selectedField) ? [selectedField] : [];
       settings.stages = [...new Set([...start, ...stages])].slice(0, 3);
+    }
+    if (settings.type === "funnel") {
+      // An event log: a few-valued event field, a date, and a many-valued ID.
+      const fewValued = (name: string) => {
+        const profile = profiles.find((item) => item.name === name);
+        return (
+          profile?.dataType === "categorical" &&
+          profile.uniqueCount >= 2 &&
+          profile.uniqueCount <= 30
+        );
+      };
+      const event = fewValued(field)
+        ? field
+        : (profiles.find((profile) => fewValued(profile.name))?.name ?? "");
+      const time =
+        profiles.find((profile) => profile.dataType === "datetime")?.name ?? "";
+      const entity =
+        profiles
+          .filter(
+            (profile) =>
+              profile.dataType === "categorical" &&
+              profile.name !== event &&
+              profile.name !== time
+          )
+          .sort((a, b) => b.uniqueCount - a.uniqueCount)[0]?.name ?? "";
+      settings.field = event;
+      settings.timeField = time;
+      settings.entityField = entity;
+      settings.steps = (
+        profiles.find((profile) => profile.name === event)?.categories
+          ?.topValues ?? []
+      )
+        .slice(0, 4)
+        .map((item) => item.value);
+    }
+    if (settings.type === "timeline") {
+      // Two dates make an interval; a few-valued category makes the lanes.
+      const dates = profiles
+        .filter((profile) => profile.dataType === "datetime")
+        .map((profile) => profile.name);
+      settings.startField = dates[0] ?? "";
+      settings.endField = dates[1] ?? "";
+      settings.field =
+        profiles.find(
+          (profile) =>
+            profile.dataType === "categorical" &&
+            profile.uniqueCount >= 2 &&
+            profile.uniqueCount <= 40
+        )?.name ?? "";
+    }
+    if (settings.type === "retention") {
+      // An event log: a date and a many-valued ID; every event counts.
+      settings.timeField =
+        profiles.find((profile) => profile.dataType === "datetime")?.name ?? "";
+      settings.entityField =
+        profiles
+          .filter(
+            (profile) =>
+              profile.dataType === "categorical" &&
+              profile.name !== settings.timeField
+          )
+          .sort((a, b) => b.uniqueCount - a.uniqueCount)[0]?.name ?? "";
+      settings.field = "";
     }
     if (settings.type === "hierarchy") {
       // Nest few-valued categories, the selected one outermost.

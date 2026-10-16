@@ -37,7 +37,24 @@ import type {
   SerializedColorScale,
 } from "@/types/SavedDataTypes";
 import { validateSavedData } from "@/utils/saveDataUtils";
+import { parseDateText } from "@/lib/valueParsing";
 import { parsePath, setPath } from "./paths";
+import { settingWords } from "./schema";
+import { parseLayout, placeLayout, type LayoutProblem } from "./layout";
+import { lowerComposition, type CompositionProblem } from "./composition";
+import {
+  ANNOTATION_KEYWORDS,
+  lowerAnnotation,
+  rawItems,
+  splitColon,
+  type AnnotationProblem,
+} from "./annotations";
+import type { ChartAnnotation } from "@/lib/annotations/types";
+import { listChildWords, lowerListChild } from "./lists";
+import { DEFAULT_TIME_SERIES } from "@/components/charts/LineChart/definition";
+import { isCompositionDefinition } from "@/components/charts/Composition/validateComposition";
+import { boundaryAssetId, listBoundarySets } from "@/lib/boundaries/registry";
+import "@/lib/boundaries/regionFunction";
 import {
   CHART_SETTING_KEYS,
   FIELD_SETTING_WORDS,
@@ -158,7 +175,41 @@ export const DSL_CHART_KEYWORDS: Record<string, string> = {
   metric: "metric-card",
   table: "data-table",
   summary: "summary",
+  composition: "composition",
+  boxplot: "boxplot",
+  calendar: "calendar",
+  ecdf: "ecdf",
+  heatmap: "heatmap",
+  line: "line",
+  pivot: "pivot",
+  parallel: "parallel-coordinates",
+  sankey: "sankey",
+  hierarchy: "hierarchy",
+  markdown: "markdown",
+  map: "map",
 };
+
+/** Chart words whose head names one field, as in `row Region`. */
+const ONE_FIELD_WORDS = [
+  "row",
+  "hist",
+  "histogram",
+  "bar",
+  "boxplot",
+  "calendar",
+  "ecdf",
+  "heatmap",
+];
+
+/** Chart words that need no field in the head. */
+const NO_FIELD_WORDS = [
+  "line",
+  "pivot",
+  "sankey",
+  "hierarchy",
+  "markdown",
+  "map",
+];
 
 export const DSL_OTHER_KEYWORDS = [
   "scale",
@@ -174,6 +225,7 @@ export const DSL_OTHER_KEYWORDS = [
   "field",
   "chart",
   "view",
+  "layout",
 ];
 
 /** Declarations that hold for every view, wherever they appear. */
@@ -193,13 +245,32 @@ export function viewHeaders(declarations: DslDeclaration[]) {
   return declarations.filter((item) => item.keyword === "view");
 }
 
-/** A view's name: `view "Overview"` or `view name=Overview`. */
+/** A view's name: `view "Overview" { … }`. */
 export function viewName(header: DslDeclaration, index: number): string {
   const value =
     header.positional[0]?.value ??
     header.pairs.find((pair) => pair.key === "name")?.value;
   return (value && single(value)) || `View ${index + 1}`;
 }
+
+/** Words applySetting reads itself, with checks beyond setting a path. */
+const SETTING_WORDS_HANDLED = new Set([
+  "x.title",
+  "x.scale",
+  "x.min",
+  "x.max",
+  "x.grid",
+  "x.ticks",
+  "y.title",
+  "y.scale",
+  "y.min",
+  "y.max",
+  "y.grid",
+  "y.ticks",
+  "bins",
+  "opacity",
+  "size.max",
+]);
 
 /** Keys a field line takes; `as=` for the type is read on its own. */
 const FIELD_SETTING_KEYS = Object.entries(FIELD_SETTING_WORDS)
@@ -232,6 +303,11 @@ const FORMATS: FieldFormat[] = [
 
 const DEFAULT_SIZES: Record<string, { w: number; h: number }> = {
   "metric-card": { w: 3, h: 2 },
+  waterfall: { w: 6, h: 6 },
+  donut: { w: 5, h: 4 },
+  funnel: { w: 6, h: 4 },
+  retention: { w: 7, h: 6 },
+  timeline: { w: 12, h: 6 },
   "data-table": { w: 12, h: 5 },
   summary: { w: 12, h: 5 },
 };
@@ -340,19 +416,10 @@ export function compileDocument(
   const headers = viewHeaders(parsed.declarations);
   const viewIndex = internal.view ?? 0;
   const header = headers[viewIndex];
-  let section = -1;
+  // Lines outside every view belong to all of them, except charts: those
+  // are defined once and placed by the views that use them.
   const declarations = headers.length
-    ? parsed.declarations.filter((item) => {
-        if (item.keyword === "view") {
-          section = headers.indexOf(item);
-          return false;
-        }
-        return (
-          section === -1 ||
-          section === viewIndex ||
-          SHARED_KEYWORDS.has(item.keyword)
-        );
-      })
+    ? viewDeclarations(parsed.declarations, viewIndex)
     : parsed.declarations;
   const diagnostics: DslDiagnostic[] = problems.map((problem) => ({
     severity: "error",
@@ -371,8 +438,25 @@ export function compileDocument(
     diagnostics.push({ severity, effect, message, ...spanOf(span), ...extra });
 
   if (header) {
+    if (!header.hasBody) {
+      report(
+        "error",
+        "chart-skipped",
+        header.span,
+        `${viewName(header, viewIndex)} has no body, so it shows no charts.`,
+        {
+          suggestion: `Put the view's charts in braces: view ${JSON.stringify(viewName(header, viewIndex))} { … }.`,
+        }
+      );
+    }
     for (const pair of header.pairs) {
-      if (pair.key !== "name") {
+      // A project's analysis file names each view's query and inputs; the
+      // host reads them and supplies that query's rows.
+      if (
+        pair.key !== "name" &&
+        pair.key !== "query" &&
+        !pair.key.startsWith("bind.")
+      ) {
         report(
           "warning",
           "setting-ignored",
@@ -415,6 +499,7 @@ export function compileDocument(
   const sharedDeclarations: DslDeclaration[] = [];
   const filterDeclarations: DslDeclaration[] = [];
   const chartDeclarations: DslDeclaration[] = [];
+  const layoutDeclarations: DslDeclaration[] = [];
 
   const applyFieldPairs = (
     field: string,
@@ -614,6 +699,18 @@ export function compileDocument(
         break;
       }
       case "dashboard":
+        if (declaration.positional[0]) {
+          metadataName = single(declaration.positional.shift()!.value);
+        }
+        for (const item of declaration.positional) {
+          report(
+            "warning",
+            "setting-ignored",
+            item.span,
+            `${item.value.raw} is not a dashboard setting, so it was ignored.`,
+            { suggestion: 'Name the dashboard once: dashboard "Sales".' }
+          );
+        }
         for (const pair of declaration.pairs) {
           if (pair.key === "name") {
             metadataName = single(pair.value);
@@ -624,7 +721,7 @@ export function compileDocument(
               pair.span,
               `${pair.key} is not a dashboard setting, so it was ignored.`,
               {
-                suggestion: "Use name=.",
+                suggestion: 'Name it as dashboard "Sales".',
               }
             );
           }
@@ -675,7 +772,14 @@ export function compileDocument(
         }
         break;
       case "theme":
-        for (const pair of declaration.pairs) {
+        for (const pair of [
+          ...declaration.positional.map((item) => ({
+            key: "name",
+            value: item.value,
+            span: item.span,
+          })),
+          ...declaration.pairs,
+        ]) {
           const id = single(pair.value);
           if (pair.key !== "name") {
             report(
@@ -683,7 +787,7 @@ export function compileDocument(
               "setting-ignored",
               pair.span,
               `${pair.key} is not a theme setting, so it was ignored.`,
-              { suggestion: "Use name=." }
+              { suggestion: "Name the theme, as in theme newsprint." }
             );
           } else if (!isWorkspaceThemeId(id)) {
             const near = closestName(
@@ -719,6 +823,9 @@ export function compileDocument(
         break;
       case "filter":
         filterDeclarations.push(declaration);
+        break;
+      case "layout":
+        layoutDeclarations.push(declaration);
         break;
       default:
         if (DSL_CHART_KEYWORDS[keyword] || keyword === "chart") {
@@ -1089,7 +1196,7 @@ export function compileDocument(
         `A ${keyword} needs an @name so charts can refer to it, so this line was skipped.`,
         {
           subject,
-          suggestion: `Write it as ${keyword} @${keyword === "scale" ? "channelColors field=Channel" : "byRegion groupField=Region aggregation=sum measureField=Revenue"}.`,
+          suggestion: `Write it as ${keyword} @${keyword === "scale" ? "channelColors field=Channel" : "byRegion sum(Revenue) by=Region"}.`,
         }
       );
       continue;
@@ -1104,9 +1211,35 @@ export function compileDocument(
           subject,
           `${subject} starts empty`
         );
-      let scale: unknown = field
-        ? { ...defaultScale(field), id: name, name: field }
-        : { id: name, name, type: "categorical", palette: [], mapping: [] };
+      // map=Web:#3479a8,Store:#c77a45 gives each value its own color.
+      const mapPair = take("map");
+      const entries = mapPair
+        ? rawItems(mapPair.value.raw).map((item) => splitColon(item))
+        : [];
+      if (entries.some((entry) => !entry)) {
+        report(
+          "warning",
+          "setting-ignored",
+          mapPair!.span,
+          "map= pairs each value with a color, as in map=Web:#3479a8,Store:#c77a45.",
+          { subject, suggestion: "Quote a value with spaces or commas." }
+        );
+      }
+      const mapping = entries
+        .filter((entry): entry is [string, string | number] => !!entry)
+        .map(([value, color]) => [value, String(color)] as [string, string]);
+      let scale: unknown = mapPair
+        ? {
+            id: name,
+            name: field ?? name,
+            type: "categorical",
+            palette: [...new Set(mapping.map(([, color]) => color))],
+            mapping,
+            ...(field ? { sourceField: field } : {}),
+          }
+        : field
+          ? { ...defaultScale(field), id: name, name: field }
+          : { id: name, name, type: "categorical", palette: [], mapping: [] };
       scale = applyRecordPaths(scale, pairs, subject);
       if (
         !validateSavedData({
@@ -1129,11 +1262,47 @@ export function compileDocument(
       }
       colorScales.push(scale as SerializedColorScale);
     } else if (keyword === "group") {
-      const spec = applyRecordPaths(
-        { id: name, name, groupField: "", aggregation: "count" },
-        pairs,
-        subject
-      ) as AggregateSpec;
+      // group @byRegion sum(Revenue) by=Region
+      const call = declaration.positional[0];
+      const parsed = call && aggregateCall(call.value.raw);
+      const by = take("by");
+      const start: Record<string, unknown> = {
+        id: name,
+        name,
+        groupField: "",
+        aggregation: parsed?.aggregation ?? "count",
+      };
+      if (by) {
+        start.groupField =
+          resolveField(
+            single(by.value),
+            by.span,
+            subject,
+            `${subject} has no group field`
+          ) ?? "";
+      }
+      if (parsed?.field) {
+        start.measureField =
+          resolveField(
+            parsed.field,
+            call!.span,
+            subject,
+            `${subject} has no measure`
+          ) ?? "";
+      }
+      if (call && !parsed) {
+        report(
+          "warning",
+          "setting-ignored",
+          call.span,
+          `${call.value.raw} is not an aggregation, so ${subject} counts rows.`,
+          {
+            subject,
+            suggestion: "Write count, sum(field), or avg(field).",
+          }
+        );
+      }
+      const spec = applyRecordPaths(start, pairs, subject) as AggregateSpec;
       const valid =
         spec.groupField &&
         ["count", "sum", "average"].includes(spec.aggregation) &&
@@ -1143,11 +1312,10 @@ export function compileDocument(
           "error",
           "setting-ignored",
           declaration.span,
-          `${subject} needs groupField=, and measureField= unless it counts, so it was skipped.`,
+          `${subject} needs by=, and a field to sum or average unless it counts, so it was skipped.`,
           {
             subject,
-            suggestion:
-              "Write it as group @byRegion groupField=Region aggregation=sum measureField=Revenue.",
+            suggestion: "Write it as group @byRegion sum(Revenue) by=Region.",
           }
         );
         continue;
@@ -1184,6 +1352,32 @@ export function compileDocument(
         pairs,
         subject
       ) as SavedRowsSettings;
+      // column lines set the Rows view's columns, as in a table.
+      const started = new Set<string>();
+      const holder = { ...next, type: "data-table" } as Record<string, unknown>;
+      for (const child of declaration.children) {
+        if (
+          !lowerListChild(
+            holder,
+            child,
+            started,
+            (field) => aliases.get(field) ?? field
+          )
+        ) {
+          report(
+            "warning",
+            "setting-ignored",
+            child.span,
+            `${child.keyword} can't go inside the Rows view, so it was ignored.`,
+            {
+              subject,
+              suggestion:
+                "List columns as column lines: column Revenue width=120.",
+            }
+          );
+        }
+      }
+      next.columns = holder.columns as SavedRowsSettings["columns"];
       if (!validateSavedData({ ...EMPTY_SETTINGS, rowsSettings: next })) {
         report(
           "error",
@@ -1248,6 +1442,21 @@ export function compileDocument(
     }
   }
 
+  // Charts go by their @name, or by their field when that is unambiguous,
+  // so a layout can place them.
+  const explicitNames = new Set(
+    chartDeclarations.flatMap((item) => (item.name ? [item.name] : []))
+  );
+  const chartNames = new Map<string, string>();
+  const ambiguousNames = new Set<string>();
+  const chartLines = new Map<string, { span: DslSpan; subject: string }>();
+  const nameChart = (name: string, id: string) => {
+    if (chartNames.has(name) && chartNames.get(name) !== id) {
+      ambiguousNames.add(name);
+    } else {
+      chartNames.set(name, id);
+    }
+  };
   for (const declaration of chartDeclarations) {
     const subject = subjectOf(declaration);
     const type =
@@ -1257,7 +1466,15 @@ export function compileDocument(
           : ""
         : DSL_CHART_KEYWORDS[declaration.keyword]!;
     const summary = { line: declaration.span.line, subject, type };
-    const chart = buildChart(declaration, type, subject);
+    const implicit = declaration.name ? undefined : implicitName(declaration);
+    const chart = buildChart(declaration, type, subject, implicit);
+    if (chart) {
+      nameChart(chart.id, chart.id);
+      if (implicit) {
+        nameChart(implicit, chart.id);
+      }
+      chartLines.set(chart.id, { span: declaration.span, subject });
+    }
     if (chart?.type === "row" && chart.aggregateId) {
       // A row chart ranks its own field, so its summary must group by it.
       const spec = aggregates.find((item) => item.id === chart.aggregateId);
@@ -1269,7 +1486,7 @@ export function compileDocument(
           `${spec.name} groups by ${spec.groupField}, not ${chart.field}, so ${subject} shows a message instead of bars.`,
           {
             subject,
-            suggestion: `Write it as row ${/^[A-Za-z_][\w.]*$/.test(spec.groupField) ? spec.groupField : JSON.stringify(spec.groupField)} aggregateId=${spec.id}.`,
+            suggestion: `Write it as row ${/^[A-Za-z_][\w.]*$/.test(spec.groupField) ? spec.groupField : JSON.stringify(spec.groupField)} group=${spec.id}.`,
           }
         );
       }
@@ -1549,7 +1766,8 @@ export function compileDocument(
   function buildChart(
     declaration: DslDeclaration,
     type: string,
-    subject: string
+    subject: string,
+    implicit?: string
   ): ChartSettings | undefined {
     if (!type) {
       report(
@@ -1630,41 +1848,27 @@ export function compileDocument(
         break;
       }
       case "metric": {
-        const aggregations = {
-          sum: "sum",
-          avg: "average",
-          mean: "average",
-          average: "average",
-        } as const;
-        const measurePair = [...pairs.values()].find(
-          (pair) => pair.key in aggregations
-        );
-        const count = positional.some((item) => single(item.value) === "count");
-        if (count) {
-          positional.splice(
-            positional.findIndex((item) => single(item.value) === "count"),
-            1
+        // metric count, metric sum(Revenue), metric avg(Revenue).
+        const call = positional.shift();
+        const parsed = call && aggregateCall(call.value.raw);
+        chart = definition.createDefaultSettings(layout) as ChartSettings;
+        if (!parsed || (parsed.aggregation !== "count" && !parsed.field)) {
+          return fail(
+            call?.span ?? declaration.span,
+            `${subject} needs count, sum(field), or avg(field), so it was skipped.`,
+            "Write it as metric sum(Revenue) or metric count."
           );
         }
-        chart = definition.createDefaultSettings(layout) as ChartSettings;
-        if (measurePair) {
-          take(measurePair.key);
-          const measure = fieldFrom(measurePair);
+        if (parsed.aggregation !== "count") {
+          const measure = resolveField(parsed.field!, call!.span, subject);
           if (!measure) {
             return undefined;
           }
           chart = {
             ...chart,
-            aggregation:
-              aggregations[measurePair.key as keyof typeof aggregations],
+            aggregation: parsed.aggregation,
             measureField: measure,
           } as ChartSettings;
-        } else if (!count) {
-          return fail(
-            declaration.span,
-            `${subject} needs count, sum=, or avg=, so it was skipped.`,
-            "Write it as metric sum=revenue or metric count."
-          );
         }
         break;
       }
@@ -1694,6 +1898,70 @@ export function compileDocument(
       case "summary":
         chart = definition.createDefaultSettings(layout) as ChartSettings;
         break;
+      case "parallel": {
+        // parallel a,b,c: one axis per field, in order.
+        const list = positional.shift();
+        const fields = (list?.value.items ?? []).map((item) =>
+          resolveField(item.text, list!.span, subject)
+        );
+        if (fields.some((item) => !item)) {
+          return undefined;
+        }
+        chart = {
+          ...definition.createDefaultSettings(layout),
+          axes: (fields as string[]).map((item) => ({
+            field: item,
+            inverted: false,
+          })),
+        } as ChartSettings;
+        break;
+      }
+      case "composition": {
+        // The head sizes the artboard; the body holds the graphic's parts.
+        const size = (key: string) => {
+          const pair = take(key);
+          const value = pair && numberValue(pair.value);
+          if (pair && (value === undefined || value <= 0)) {
+            report(
+              "warning",
+              "setting-default",
+              pair.span,
+              `${key} needs a positive number, so ${subject} keeps the default.`,
+              { subject }
+            );
+          }
+          return value && value > 0 ? value : undefined;
+        };
+        const background = take("background");
+        const problems: CompositionProblem[] = [];
+        const composition = lowerComposition(
+          declaration,
+          {
+            width: size("width"),
+            height: size("height"),
+            background: background && single(background.value),
+          },
+          problems
+        );
+        for (const problem of problems) {
+          report("warning", "setting-ignored", problem.span, problem.message, {
+            subject,
+            suggestion: problem.suggestion,
+          });
+        }
+        if (!isCompositionDefinition(composition)) {
+          return fail(
+            declaration.span,
+            `${subject} doesn't describe a complete graphic, so it was skipped.`,
+            "Check that every mark names scales of the right kind."
+          );
+        }
+        chart = {
+          ...definition.createDefaultSettings(layout),
+          composition,
+        } as ChartSettings;
+        break;
+      }
       case "chart": {
         // Any registered type: defaults first, then settings by path.
         const named = take("field");
@@ -1711,8 +1979,16 @@ export function compileDocument(
         }
         break;
       }
+      case "line":
+      case "pivot":
+      case "sankey":
+      case "hierarchy":
+      case "markdown":
+      case "map":
+        chart = definition.createDefaultSettings(layout) as ChartSettings;
+        break;
       default: {
-        // hist, bar, row: one field, positionally or as field=.
+        // hist, bar, row, boxplot, …: one field, positionally or as field=.
         const named = take("field");
         const first =
           named ??
@@ -1769,6 +2045,13 @@ export function compileDocument(
         );
       }
       chart.id = declaration.name;
+    } else if (
+      implicit &&
+      /^[\w-]+$/.test(implicit) &&
+      !usedIds.has(implicit) &&
+      !explicitNames.has(implicit)
+    ) {
+      chart.id = implicit;
     }
 
     // Filters first: a broken one skips the chart instead of widening it.
@@ -1806,7 +2089,11 @@ export function compileDocument(
       chart.filters = linked;
     }
 
-    for (const [key, pair] of pairs) {
+    for (const [written, pair] of pairs) {
+      // A word that stands for a saved path, such as x= for a line's xField.
+      const word = settingWords(chart.type)[written];
+      const key =
+        word && !SETTING_WORDS_HANDLED.has(written) ? word.path : written;
       let result = applySetting(chart, key, pair, subject);
       if (result === "unknown") {
         const before = chart;
@@ -1865,6 +2152,55 @@ export function compileDocument(
       }
     }
 
+    // Child lines: annotations, and lists of records such as columns.
+    if (type !== "composition") {
+      const annotations: ChartAnnotation[] = [];
+      const counts = {};
+      const started = new Set<string>();
+      const problems: AnnotationProblem[] = [];
+      for (const child of declaration.children) {
+        if (ANNOTATION_KEYWORDS[child.keyword]) {
+          const annotation = lowerAnnotation(child, counts, chart.id, problems);
+          if (annotation) {
+            annotations.push(annotation);
+          }
+          continue;
+        }
+        if (
+          lowerListChild(
+            chart as unknown as Record<string, unknown>,
+            child,
+            started,
+            (name) => aliases.get(name) ?? name
+          )
+        ) {
+          continue;
+        }
+        report(
+          "warning",
+          "setting-ignored",
+          child.span,
+          `${child.keyword} can't go inside ${subject}, so it was ignored.`,
+          {
+            subject,
+            suggestion: `Inside a chart: settings as key=value, annotations (${Object.keys(ANNOTATION_KEYWORDS).join(", ")}), or ${listChildWords(chart.type).join(", ") || "no lists"}.`,
+          }
+        );
+      }
+      for (const problem of problems) {
+        report("warning", "setting-ignored", problem.span, problem.message, {
+          subject,
+          suggestion: problem.suggestion,
+        });
+      }
+      if (annotations.length) {
+        (chart as { annotations?: ChartAnnotation[] }).annotations = [
+          ...((chart as { annotations?: ChartAnnotation[] }).annotations ?? []),
+          ...annotations,
+        ];
+      }
+    }
+
     if (
       !internal.keepIncomplete &&
       !definition.validateSettings(chart as never)
@@ -1901,6 +2237,15 @@ export function compileDocument(
     ) {
       return "unknown";
     }
+    // A line's time settings are one record; the first key starts it whole.
+    if (
+      top === "time" &&
+      chart.type === "line" &&
+      !chart.time &&
+      path.segments.length > 1
+    ) {
+      chart = { ...chart, time: { ...DEFAULT_TIME_SERIES } };
+    }
     const references = {
       colorScaleId: [
         "color scale",
@@ -1912,7 +2257,14 @@ export function compileDocument(
         aggregates.map((item) => item.id),
         "group",
       ],
-      geometryAssetId: ["map shape", geometryAssets.map((item) => item.id), ""],
+      geometryAssetId: [
+        "map shape",
+        [
+          ...geometryAssets.map((item) => item.id),
+          ...listBoundarySets().map((set) => boundaryAssetId(set.id)),
+        ],
+        "",
+      ],
     } as const;
     if (top in references && path.segments.length === 1) {
       const [noun, ids, keyword] = references[top as keyof typeof references];
@@ -1957,24 +2309,14 @@ export function compileDocument(
       "title",
       "at",
       "color",
-      "x.title",
-      "x.scale",
-      "x.min",
-      "x.max",
-      "y.title",
-      "y.scale",
-      "y.min",
-      "y.max",
-      "xGridLines",
-      "yGridLines",
+      ...Object.keys(settingWords(chart.type)),
       "margin.top",
       "margin.right",
       "margin.bottom",
       "margin.left",
       "where.<field>",
       "select.<field>",
-      ...(chart.type === "bar" ? ["bins"] : []),
-      ...(chart.type === "scatter" ? ["size", "opacity", "regression"] : []),
+      ...(chart.type === "scatter" ? ["size", "regression"] : []),
     ];
   }
 
@@ -2068,19 +2410,36 @@ export function compileDocument(
         return "ok";
       case "xGridLines":
       case "yGridLines":
+      case "x.ticks":
+      case "y.ticks":
         if (number === undefined || number < 0) {
           return needNumber();
         }
-        target[key] = number;
+        target[key.endsWith("ticks") ? `${key[0]}GridLines` : key] = number;
+        return "ok";
+      case "size.max":
+        if (chart.type !== "scatter") {
+          return "unknown";
+        }
+        if (number === undefined || number <= 0) {
+          return needNumber();
+        }
+        chart.maxBubbleRadius = number;
         return "ok";
     }
-    const axis = /^(x|y)\.(title|scale|min|max)$/.exec(key);
+    const axis = /^(x|y)\.(title|scale|min|max|grid)$/.exec(key);
     if (axis) {
       const name = axis[1] === "x" ? "xAxis" : "yAxis";
       const next = { ...chart[name] };
       if (axis[2] === "title") {
-        next.title = text;
         chart[name === "xAxis" ? "xAxisLabel" : "yAxisLabel"] = text;
+        return "ok";
+      } else if (axis[2] === "grid") {
+        const flag = booleanValue(value);
+        if (flag === undefined) {
+          return `${key} must be true or false, so ${subject} keeps the default.`;
+        }
+        next.grid = flag;
       } else if (axis[2] === "scale") {
         const scales = ["linear", "log", "symlog", "time", "band"] as const;
         if (!scales.includes(text as never)) {
@@ -2088,10 +2447,12 @@ export function compileDocument(
         }
         next.scaleType = text as (typeof scales)[number];
       } else {
-        if (number === undefined) {
-          return needNumber();
+        // A date axis reads its range as ISO dates, as annotations do.
+        const bound = number ?? parseDateText(text, "iso");
+        if (!Number.isFinite(bound)) {
+          return `${key} needs a number or an ISO date, so ${subject} keeps the default.`;
         }
-        next.limits = { ...next.limits, [axis[2] as "min"]: number };
+        next.limits = { ...next.limits, [axis[2] as "min"]: bound };
       }
       chart[name] = next;
       return "ok";
@@ -2145,6 +2506,80 @@ export function compileDocument(
     return "unknown";
   }
 
+  const layout = layoutDeclarations.at(-1);
+  for (const extra of layoutDeclarations.slice(0, -1)) {
+    report(
+      "warning",
+      "setting-ignored",
+      extra.span,
+      "Only the last layout block places charts, so this one was ignored.",
+      { suggestion: "Keep one layout block per view." }
+    );
+  }
+  if (layout) {
+    const problems: LayoutProblem[] = [];
+    const rows = parseLayout(layout, problems);
+    const placed = placeLayout(
+      rows,
+      gridSettings.columnCount,
+      (name, span) => {
+        if (ambiguousNames.has(name)) {
+          problems.push({
+            message: `${name} names more than one chart, so the layout can't place it.`,
+            span,
+            suggestion: "Give each chart its own @name and use that.",
+          });
+          return undefined;
+        }
+        const id = chartNames.get(name);
+        if (id === undefined) {
+          const near = closestName(name, chartNames.keys());
+          problems.push({
+            message: `${name} is not a chart in this view, so the layout skipped it.`,
+            span,
+            suggestion: near
+              ? `Did you mean ${near}?`
+              : "Name a chart with @name or by its field.",
+          });
+        }
+        return id;
+      },
+      problems
+    );
+    for (const problem of problems) {
+      report("warning", "setting-ignored", problem.span, problem.message, {
+        suggestion: problem.suggestion,
+      });
+    }
+    for (const chart of charts) {
+      const info = chartLines.get(chart.id);
+      const position = placed.get(chart.id);
+      if (position) {
+        if (explicitLayouts.has(chart.id) && info) {
+          report(
+            "warning",
+            "setting-ignored",
+            info.span,
+            `${info.subject} has at= and a place in the layout; the layout wins.`,
+            { subject: info.subject, suggestion: "Place it one way." }
+          );
+        }
+        chart.layout = position;
+        explicitLayouts.add(chart.id);
+      } else if (!explicitLayouts.has(chart.id) && info) {
+        report(
+          "warning",
+          "setting-default",
+          info.span,
+          `${info.subject} isn't in the layout, so it takes the first free space.`,
+          {
+            subject: info.subject,
+            suggestion: "Add it to the layout block, or give it at=.",
+          }
+        );
+      }
+    }
+  }
   placeCharts(charts, explicitLayouts, gridSettings.columnCount);
   if (header) {
     metadataName = viewName(header, viewIndex);
@@ -2196,6 +2631,156 @@ export function compileDocument(
     skippedCharts: skipped,
     complete: diagnostics.length === 0,
   };
+}
+
+function isChartDeclaration(declaration: DslDeclaration) {
+  return (
+    Object.hasOwn(DSL_CHART_KEYWORDS, declaration.keyword) ||
+    declaration.keyword === "chart"
+  );
+}
+
+/** A name as written: an override line may quote it, as in "Order band". */
+function unquoted(text: string) {
+  return text.startsWith('"') && text.endsWith('"') && text.length > 1
+    ? (JSON.parse(text) as string)
+    : text;
+}
+
+/** The names a layout block's cells use. */
+function layoutNames(layout: DslDeclaration): string[] {
+  return layout.children.flatMap((row) =>
+    row.positional.flatMap((cell) => {
+      const match = /^(?:"((?:[^"\\]|\\.)*)"|([^\s":]+))(?::\d+)?$/.exec(
+        cell.value.raw
+      );
+      if (!match) return [];
+      return match[1] !== undefined
+        ? [JSON.parse(`"${match[1]}"`) as string]
+        : match[2] === "."
+          ? []
+          : [match[2]!];
+    })
+  );
+}
+
+/**
+ * One view's declarations in a text with several views. Charts at the top
+ * level are defined once; a view shows one when its layout places it or an
+ * override line names it (`species select.species=Gentoo`), and a view that
+ * names none shows them all. An override's settings replace the chart's
+ * settings of the same name, and its child lines replace the chart's.
+ * Charts keep the order of the view's own lines.
+ */
+export function viewDeclarations(
+  all: DslDeclaration[],
+  viewIndex: number
+): DslDeclaration[] {
+  const library = all.filter(
+    (item) => item.view === undefined && isChartDeclaration(item)
+  );
+  const named = new Map<string, DslDeclaration>();
+  for (const chart of library) {
+    const name = chart.name ?? implicitName(chart);
+    if (name !== undefined && !named.has(name)) {
+      named.set(name, chart);
+    }
+  }
+  const shared = all.filter(
+    (item) =>
+      item.keyword !== "view" &&
+      !isChartDeclaration(item) &&
+      (item.view === undefined || SHARED_KEYWORDS.has(item.keyword))
+  );
+  const own = all.filter(
+    (item) =>
+      item.view === viewIndex &&
+      item.keyword !== "view" &&
+      !SHARED_KEYWORDS.has(item.keyword)
+  );
+  const used = new Set<DslDeclaration>();
+  const charts: DslDeclaration[] = [];
+  const rest: DslDeclaration[] = [];
+  for (const item of own) {
+    const base = named.get(unquoted(item.keyword));
+    if (
+      base &&
+      !isChartDeclaration(item) &&
+      !DSL_OTHER_KEYWORDS.includes(item.keyword)
+    ) {
+      used.add(base);
+      const keys = new Set(item.pairs.map((pair) => pair.key));
+      charts.push({
+        ...base,
+        positional: [...base.positional],
+        pairs: [
+          ...base.pairs.filter((pair) => !keys.has(pair.key)),
+          ...item.pairs,
+        ],
+        children: item.children.length ? item.children : base.children,
+        view: viewIndex,
+      });
+      continue;
+    }
+    (isChartDeclaration(item) ? charts : rest).push(item);
+  }
+  const layout = own.filter((item) => item.keyword === "layout").at(-1);
+  // A view that names no shared chart, by line or layout, shows them all.
+  const showAll = !layout && !used.size;
+  const placed = layout ? layoutNames(layout) : [];
+  for (const chart of library) {
+    if (used.has(chart)) continue;
+    const name = chart.name ?? implicitName(chart);
+    if (showAll || (name !== undefined && placed.includes(name))) {
+      used.add(chart);
+      charts.push({ ...chart, positional: [...chart.positional] });
+    }
+  }
+  return [...shared, ...rest, ...charts];
+}
+
+/**
+ * Reads `count`, `sum(Revenue)`, `avg("Net sales")`, and the like. Average
+ * reads as avg, mean, or average.
+ */
+export function aggregateCall(
+  raw: string
+): { aggregation: string; field?: string } | undefined {
+  if (raw === "count" || raw === "count()") {
+    return { aggregation: "count" };
+  }
+  const match = /^(\w+)\((.*)\)$/.exec(raw);
+  if (!match) {
+    return undefined;
+  }
+  const names: Record<string, string> = {
+    sum: "sum",
+    avg: "average",
+    mean: "average",
+    average: "average",
+    count: "count",
+  };
+  const aggregation = names[match[1]!];
+  if (!aggregation) {
+    return undefined;
+  }
+  const inner = match[2]!.trim();
+  const field = inner.startsWith('"')
+    ? (JSON.parse(inner) as string)
+    : inner || undefined;
+  return { aggregation, field };
+}
+
+/**
+ * The name a chart goes by without an @name: the field its head names,
+ * for charts that show one field, such as `row Region`.
+ */
+export function implicitName(declaration: DslDeclaration): string | undefined {
+  const field = declaration.pairs.find((pair) => pair.key === "field");
+  const oneField = ONE_FIELD_WORDS.includes(declaration.keyword);
+  const value =
+    field?.value ?? (oneField ? declaration.positional[0]?.value : undefined);
+  return value && value.items.length === 1 ? value.items[0]!.text : undefined;
 }
 
 /**

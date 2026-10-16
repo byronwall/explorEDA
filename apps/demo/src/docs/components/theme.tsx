@@ -81,6 +81,24 @@ export function useDocsTheme() {
   return { theme, toggle };
 }
 
+/** Whether the page root is in the dark theme, following later changes. */
+export function useRootIsDark() {
+  const [dark, setDark] = useState(() =>
+    typeof document === "undefined"
+      ? false
+      : document.documentElement.classList.contains("dark")
+  );
+  useEffect(() => {
+    const root = document.documentElement;
+    const read = () => setDark(root.classList.contains("dark"));
+    read();
+    const observer = new MutationObserver(read);
+    observer.observe(root, { attributes: true, attributeFilter: ["class"] });
+    return () => observer.disconnect();
+  }, []);
+  return dark;
+}
+
 export function ThemeToggle({
   theme,
   onToggle,

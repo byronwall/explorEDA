@@ -11,6 +11,7 @@ import {
   waitFor,
   within,
 } from "@testing-library/react";
+import { readFileSync } from "node:fs";
 import { useState } from "react";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -31,12 +32,14 @@ vi.mock("exploreda", async () => {
     ...actual,
     ExplorEda: ({
       data,
+      fieldTypes,
       savedData,
       onStateChange,
       toolbarStart,
       toolbarEnd,
     }: {
       data: unknown[];
+      fieldTypes?: Record<string, string>;
       savedData?: unknown;
       onStateChange?: (state: unknown) => void;
       toolbarStart?: React.ReactNode;
@@ -68,6 +71,8 @@ vi.mock("exploreda", async () => {
         <div
           data-testid="workspace"
           data-rows={data.length}
+          data-first-row={JSON.stringify(data[0] ?? null)}
+          data-field-types={JSON.stringify(fieldTypes ?? null)}
           data-has-saved-data={savedData !== undefined}
           data-chart-count={settings?.charts?.length ?? 0}
           data-filter-count={settings?.rowsSettings?.filters?.length ?? 0}
@@ -117,7 +122,10 @@ describe("LandingPage routing", () => {
     );
 
     render(<RouterProvider router={router} />);
-    expect(await screen.findByTestId("workspace")).toBeInTheDocument();
+    // The example loads lazily; under a full test run it can take over 1 s.
+    expect(
+      await screen.findByTestId("workspace", {}, { timeout: 5000 })
+    ).toBeInTheDocument();
 
     await act(async () => {
       await router.navigate(-1);
@@ -126,40 +134,76 @@ describe("LandingPage routing", () => {
     await waitFor(() =>
       expect(
         screen.getByRole("heading", {
-          name: /Explore a CSV with charts that filter each other/i,
+          name: /Explore data with charts that filter each other/i,
         })
       ).toBeInTheDocument()
     );
     expect(screen.queryByTestId("workspace")).not.toBeInTheDocument();
   });
 
-  it("leads with the featured analysis before import and restore", () => {
+  it("routes each way to run explorEDA to its docs", () => {
     const router = createMemoryRouter(
       [{ path: "/*", element: <LandingPage /> }],
       { initialEntries: ["/"] }
     );
 
     render(<RouterProvider router={router} />);
-    const featured = screen.getByRole("heading", {
+    const [heroCopy] = screen.getAllByRole("button", { name: "Copy command" });
+    expect(heroCopy!.closest("header")).not.toBeNull();
+    const section = screen
+      .getByRole("heading", { name: "Run it where your data lives" })
+      .closest("section") as HTMLElement;
+    const routes = within(section)
+      .getAllByRole("link")
+      .map((link) => [link.textContent, link.getAttribute("href")]);
+    expect(routes).toEqual([
+      [
+        "Work in a project folder",
+        "/docs/project-folders#try-it-with-the-sample-project",
+      ],
+      [
+        "Read from a database",
+        "/docs/database-sources#try-it-with-a-sample-database",
+      ],
+      ["Write a notebook", "/docs/notebooks#try-it-with-the-sample-notebook"],
+      ["Run a team server", "/docs/team-server#try-it-with-sample-accounts"],
+      ["Embed it in React", "/docs/developers#quick-start"],
+    ]);
+  });
+
+  it("puts opening your own data right after the demo, before the guides", () => {
+    const router = createMemoryRouter(
+      [{ path: "/*", element: <LandingPage /> }],
+      { initialEntries: ["/"] }
+    );
+
+    render(<RouterProvider router={router} />);
+    const openData = screen.getByRole("heading", {
       level: 2,
-      name: "Where January's flights lost time",
+      name: "Open your own data",
     });
-    const featuredSection = featured.closest("section") as HTMLElement;
-    expect(
-      within(featuredSection).getByRole("button", {
-        name: /Weather at the scheduled hour/,
-      })
-    ).toBeInTheDocument();
+    const examples = screen.getByRole("heading", { name: "Example analyses" });
     const integration = screen.getByRole("heading", {
       name: "Embed it in a React app",
     });
-    const importHeading = screen.getByRole("heading", {
-      name: "Import your data",
-    });
     const follows = (a: Element, b: Element) =>
       Boolean(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING);
-    expect(follows(featured, integration)).toBe(true);
-    expect(follows(integration, importHeading)).toBe(true);
+    expect(follows(openData, examples)).toBe(true);
+    expect(follows(examples, integration)).toBe(true);
+    // Each example's tabs open the analysis at that tab.
+    const list = examples.closest("section") as HTMLElement;
+    expect(
+      within(list).getByRole("button", {
+        name: /Weather at the scheduled hour/,
+      })
+    ).toBeInTheDocument();
+    // Saved analysis JSON opens in a dialog, out of the page's way.
+    expect(
+      screen.queryByRole("textbox", { name: "Full analysis JSON" })
+    ).not.toBeInTheDocument();
+    fireEvent.click(
+      screen.getByRole("button", { name: "Reopen it from JSON" })
+    );
     expect(
       screen.getByRole("textbox", { name: "Full analysis JSON" })
     ).toBeInTheDocument();
@@ -345,19 +389,79 @@ describe("LandingPage routing", () => {
     expect(screen.queryByText("Drop to explore your data")).toBeNull();
   });
 
-  it("explains when a dropped file is not CSV or JSON", async () => {
+  it("opens a dropped TSV with its identifier text and field types", async () => {
     const router = createMemoryRouter(
       [{ path: "/*", element: <LandingPage /> }],
       { initialEntries: ["/"] }
     );
     render(<RouterProvider router={router} />);
 
-    const file = new File(["hi"], "notes.txt", { type: "text/plain" });
+    const file = new File(
+      ["order_id\tamount\n0012\t4.5\n0040\t\n"],
+      "orders.tsv",
+      { type: "text/tab-separated-values" }
+    );
+    fireEvent.drop(window, {
+      dataTransfer: { types: ["Files"], files: [file] },
+    });
+    const workspace = await screen.findByTestId("workspace");
+    expect(workspace).toHaveAttribute("data-rows", "2");
+    expect(JSON.parse(workspace.dataset.firstRow!)).toEqual({
+      order_id: "0012",
+      amount: 4.5,
+    });
+    expect(JSON.parse(workspace.dataset.fieldTypes!)).toEqual({
+      order_id: "string",
+      amount: "number",
+    });
+  });
+
+  it("asks which sheet to open from a dropped workbook", async () => {
+    const router = createMemoryRouter(
+      [{ path: "/*", element: <LandingPage /> }],
+      { initialEntries: ["/"] }
+    );
+    render(<RouterProvider router={router} />);
+
+    const bytes = readFileSync(
+      "../../packages/explorEDA/src/lib/readers/fixtures/orders.xlsx"
+    );
+    const file = new File([bytes], "orders.xlsx");
+    fireEvent.drop(window, {
+      dataTransfer: { types: ["Files"], files: [file] },
+    });
+    const picker = await screen.findByRole("group", {
+      name: "Choose a sheet from orders.xlsx",
+    });
+    expect(
+      within(picker).getByRole("button", { name: /Orders/ })
+    ).toHaveTextContent("Largest");
+    expect(screen.queryByTestId("workspace")).toBeNull();
+    fireEvent.click(within(picker).getByRole("button", { name: /Returns/ }));
+    const workspace = await screen.findByTestId("workspace");
+    expect(workspace).toHaveAttribute("data-rows", "10");
+    expect(JSON.parse(workspace.dataset.firstRow!)).toEqual({
+      order_id: "00003",
+      reason: "late",
+      refund: 4.5,
+    });
+  });
+
+  it("explains when a dropped file is not a readable format", async () => {
+    const router = createMemoryRouter(
+      [{ path: "/*", element: <LandingPage /> }],
+      { initialEntries: ["/"] }
+    );
+    render(<RouterProvider router={router} />);
+
+    const file = new File(["%PDF"], "slides.pdf", {
+      type: "application/pdf",
+    });
     fireEvent.drop(window, {
       dataTransfer: { types: ["Files"], files: [file] },
     });
     expect(await screen.findByRole("alert")).toHaveTextContent(
-      "notes.txt is not a CSV or JSON file."
+      "slides.pdf is not a CSV, TSV, JSON, JSON Lines, Excel, Parquet, or Arrow file."
     );
     expect(screen.queryByTestId("workspace")).toBeNull();
   });
@@ -444,7 +548,7 @@ describe("LandingPage routing", () => {
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
     expect(localStorage.getItem("exploreda.saved-views.v1")).toBeNull();
     expect(
-      screen.getByRole("heading", { name: "Import your data" })
+      screen.getByRole("heading", { name: "Open your own data" })
     ).toBeInTheDocument();
   });
 
@@ -533,6 +637,9 @@ describe("LandingPage routing", () => {
     );
 
     render(<RouterProvider router={router} />);
+    fireEvent.click(
+      screen.getByRole("button", { name: "Reopen it from JSON" })
+    );
     const input = screen.getByRole("textbox", { name: "Full analysis JSON" });
     const base = {
       format: "exploreda-analysis",
@@ -638,7 +745,7 @@ describe("LandingPage routing", () => {
 
       expect(
         screen.getByRole("heading", {
-          name: /Explore a CSV with charts that filter each other/i,
+          name: /Explore data with charts that filter each other/i,
         })
       ).toBeInTheDocument();
       expect(screen.queryByTestId("workspace")).toBeNull();

@@ -1,0 +1,1218 @@
+/* The project shell: rail, tabs, forms. Every class starts with app-. */
+.app {
+  display: grid;
+  grid-template-columns: 264px minmax(0, 1fr);
+  min-height: 100%;
+}
+
+/*
+ * The rail keeps one text edge: headings, rows, and meta lines all start
+ * 8px inside the rail's padding, and panels and the notice span the full
+ * width. Actions are small and quiet; the content outweighs them.
+ */
+.app-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 14px 12px;
+  border-right: 1px solid var(--border);
+  background: var(--card);
+  min-width: 0;
+}
+
+.app-rail h1 {
+  margin: 0;
+  padding: 0 8px;
+  font-size: 15px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.app-rail h2 {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+.app-rail-head > .app-muted {
+  padding: 0 8px;
+}
+
+.app-muted {
+  color: var(--muted-foreground);
+  font-size: 12px;
+}
+
+.app-path {
+  margin: 2px 0 0;
+  overflow-wrap: anywhere;
+}
+
+.app-rail-head .app-path {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.app-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.app-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  width: 100%;
+  padding: 6px 8px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.app-item:hover {
+  background: var(--accent);
+}
+
+.app-item[aria-current="page"] {
+  background: var(--accent);
+}
+
+.app-item[aria-current="page"] > span:first-child {
+  font-weight: 600;
+}
+
+/* Rename and Delete, under the analysis they act on. */
+.app-item-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 4px 6px;
+}
+
+.app-item-actions input {
+  flex: 1 1 100%;
+  min-width: 0;
+  height: 28px;
+  padding: 0 8px;
+  border: 1px solid var(--input);
+  border-radius: 6px;
+  background: var(--background);
+  color: var(--foreground);
+  font: inherit;
+  font-size: 13px;
+}
+
+.app-item-actions .app-muted {
+  flex-basis: 100%;
+  padding: 0 4px;
+}
+
+.app-item:focus-visible,
+.app-tab:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+
+/* A source: its name, one meta line, and at most one quiet action. */
+.app-source {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 8px;
+  row-gap: 1px;
+  padding: 6px 4px 6px 8px;
+  border-radius: 6px;
+}
+
+.app-source-name {
+  grid-column: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.app-source-meta {
+  grid-column: 1;
+  min-width: 0;
+  color: var(--muted-foreground);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.app-source > .app-button {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+}
+
+.app-source[aria-busy] .app-source-meta {
+  color: var(--foreground);
+}
+
+/* A state word in a meta line, marked by a dot in its color. */
+.app-status {
+  white-space: nowrap;
+}
+
+.app-status::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 5px;
+  border-radius: 999px;
+  background: currentColor;
+  vertical-align: 1px;
+}
+
+.app-status-warning {
+  color: var(--foreground);
+}
+
+.app-status-warning::before {
+  background: var(--warning);
+}
+
+.app-status-error {
+  color: var(--destructive);
+}
+
+.app-badge {
+  padding: 0 6px;
+  border-radius: 999px;
+  font-size: 11px;
+  line-height: 18px;
+}
+
+.app-badge-error {
+  border: 1px solid var(--destructive);
+  color: var(--destructive);
+}
+
+.app-badge-warning {
+  border: 1px solid var(--border);
+  color: var(--muted-foreground);
+}
+
+.app-section-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.app-read-problem {
+  grid-column: 1 / -1;
+  padding-right: 4px;
+}
+
+.app-source .app-secret-form {
+  margin: 6px 0 0;
+}
+
+.app-secret-note {
+  margin: 0;
+  font-size: 12px;
+}
+
+.app-message .app-read-problem {
+  margin-top: 8px;
+}
+
+.app-refresh-error {
+  padding: 0 8px 4px;
+}
+
+.app-source-error {
+  overflow-wrap: anywhere;
+  margin: 4px 0 0;
+  color: var(--destructive);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.app-problems summary {
+  padding: 0 8px;
+  cursor: pointer;
+  color: var(--warning);
+  font-weight: 500;
+}
+
+.app-problems ul {
+  margin: 6px 0 0;
+  padding-left: 16px;
+  font-size: 12px;
+}
+
+.app-problems li + li {
+  margin-top: 4px;
+}
+
+.app-main {
+  min-width: 0;
+  padding: 10px 14px;
+}
+
+.app-tabs {
+  display: flex;
+  gap: 2px;
+  overflow-x: auto;
+  min-width: 0;
+}
+
+.app-tab {
+  flex: none;
+  height: 28px;
+  padding: 0 10px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted-foreground);
+  font: inherit;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.app-tab:hover {
+  color: var(--foreground);
+}
+
+.app-tab[aria-selected="true"] {
+  border-color: var(--border);
+  background: var(--card);
+  color: var(--foreground);
+  font-weight: 500;
+}
+
+.app-message {
+  max-width: 560px;
+  margin: 12vh auto;
+  padding: 0 16px;
+}
+
+.app-message h1,
+.app-message h2 {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* Below 960 px the project list sits above the workspace. */
+@media (max-width: 959px) {
+  .app {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .app-rail {
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .app-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .app-item {
+    width: auto;
+  }
+
+  .app-sources {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 2px 16px;
+  }
+
+  .app-main {
+    padding: 8px;
+  }
+}
+
+/* On a phone the list keeps only names; the workspace needs the height. */
+@media (max-width: 639px) {
+  .app-rail {
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .app-path,
+  .app-rail-head .app-path,
+  .app-item .app-muted {
+    display: none;
+  }
+}
+
+.app-save {
+  margin: 6px 0 0;
+}
+
+.app-save-failed {
+  color: var(--destructive);
+  font-size: 12px;
+}
+
+.app-notice {
+  margin: 6px 0 0;
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.app-section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px 8px;
+  min-height: 28px;
+  margin-bottom: 2px;
+  padding-left: 8px;
+}
+
+.app-section-head h2 {
+  margin: 0;
+}
+
+.app-button {
+  height: 28px;
+  padding: 0 10px;
+  border: 1px solid var(--input);
+  border-radius: 6px;
+  background: var(--card);
+  color: var(--foreground);
+  font: inherit;
+  font-size: 13px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.app-button:hover {
+  background: var(--accent);
+}
+
+/* Small actions inside the rail's lists and headers. */
+.app-button-sm {
+  height: 26px;
+  padding: 0 8px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.app-button-ghost {
+  border-color: transparent;
+  background: transparent;
+  color: var(--muted-foreground);
+}
+
+.app-button-ghost:hover,
+.app-button-ghost[aria-expanded="true"] {
+  background: var(--accent);
+  color: var(--foreground);
+}
+
+.app-button:focus-visible,
+.app-segment:focus-visible,
+.app-form input:focus-visible,
+.app-form select:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+
+.app-button-primary {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.app-button-primary:hover {
+  background: var(--primary);
+  opacity: 0.92;
+}
+
+.app-button-danger {
+  border-color: var(--destructive);
+  color: var(--destructive);
+}
+
+.app-button-danger:hover {
+  background: var(--destructive);
+  color: var(--destructive-foreground, #fff);
+}
+
+.app-form {
+  display: grid;
+  gap: 10px;
+  margin: 0 0 8px;
+}
+
+/* A form or tool opened inline in the rail, set into the page color. */
+.app-panel {
+  display: grid;
+  gap: 10px;
+  margin: 2px 0 8px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--background);
+}
+
+.app-form label {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--muted-foreground);
+}
+
+.app-form input,
+.app-form select,
+.app-form-inline input {
+  height: 28px;
+  min-width: 0;
+  padding: 0 8px;
+  border: 1px solid var(--input);
+  border-radius: 6px;
+  background: var(--background);
+  color: var(--foreground);
+  font: inherit;
+  font-size: 13px;
+}
+
+.app-form-actions,
+.app-form-inline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+}
+
+.app-panel .app-form-actions {
+  padding: 2px 0 0;
+}
+
+.app-form-inline input {
+  flex: 1 1 120px;
+}
+
+.app-start-list {
+  display: grid;
+  gap: 8px;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.app-start-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card);
+}
+
+.app-theme {
+  display: inline-flex;
+  margin-top: auto;
+  margin-left: 4px;
+  padding: 2px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  align-self: flex-start;
+}
+
+.app-segment {
+  height: 24px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted-foreground);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.app-segment[aria-checked="true"] {
+  background: var(--accent);
+  color: var(--foreground);
+}
+
+/* Adding a database source: a connection, then a table or a query. */
+.app-add-database .app-database-form {
+  margin: 0;
+}
+
+/* A label over its control, as the team server's forms set them. */
+.app-form label.app-field,
+.app-field {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted-foreground);
+}
+
+.app-field input,
+.app-field select,
+.app-field textarea,
+.app-panel > input,
+.app-database-form > input {
+  width: 100%;
+  min-width: 0;
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid var(--input);
+  border-radius: 6px;
+  background: var(--card);
+  color: var(--foreground);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.app-field textarea {
+  height: auto;
+  padding: 6px 8px;
+}
+
+.app-field input:focus-visible,
+.app-field select:focus-visible,
+.app-field textarea:focus-visible,
+.app-panel > input:focus-visible,
+.app-database-form > input:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+
+.app-add-database textarea {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 12px;
+  resize: vertical;
+}
+
+.app-database-form .app-form-actions {
+  padding: 0;
+}
+
+.app-database-form > .app-source-error {
+  margin: 0;
+}
+
+.app-segmented {
+  display: inline-flex;
+  padding: 2px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  justify-self: start;
+}
+
+.app-table-list {
+  max-height: 220px;
+  margin: 0;
+  padding: 2px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--card);
+  list-style: none;
+}
+
+.app-table-list button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 4px 8px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--foreground);
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.app-table-list button:hover {
+  background: var(--accent);
+}
+
+.app-table-list button[aria-pressed="true"] {
+  background: var(--accent);
+  font-weight: 600;
+}
+
+.app-table-list button:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+
+.app-table-list li.app-muted {
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+/* Team server: sign-in, the project list, and the bar above a project. */
+.team-auth {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  padding: 16px;
+}
+
+.team-card {
+  display: grid;
+  gap: 12px;
+  width: min(360px, 100%);
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--card);
+}
+
+.team-card h1 {
+  margin: 0 0 4px;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.team-card p {
+  margin: 0;
+}
+
+.team-field {
+  display: grid;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--muted-foreground);
+}
+
+.team-field input,
+.team-field select {
+  height: 32px;
+  min-width: 0;
+  padding: 0 8px;
+  border: 1px solid var(--input);
+  border-radius: 6px;
+  background: var(--background);
+  color: var(--foreground);
+  font: inherit;
+  font-size: 14px;
+}
+
+.team-field input:focus-visible,
+.team-field select:focus-visible,
+.team-project:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+
+.team-card .app-button {
+  height: 32px;
+}
+
+.team-error {
+  color: var(--destructive);
+  font-size: 13px;
+}
+
+.team-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.team-top {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--card);
+}
+
+.app-rail > .team-bar {
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.team-account {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  margin-right: auto;
+  line-height: 1.25;
+}
+
+.app-rail .team-account {
+  order: -1;
+  flex-basis: 100%;
+}
+
+.team-account-name {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.team-account .app-muted {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.team-main {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.team-heading {
+  margin: 0 0 12px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.team-projects {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.team-project {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.team-project:hover {
+  background: var(--accent);
+}
+
+.team-project-name {
+  font-weight: 500;
+}
+
+.team-hint {
+  font-size: 12px;
+  color: var(--muted-foreground);
+}
+
+.team-email {
+  overflow-wrap: anywhere;
+}
+
+.team-link-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.team-brand {
+  font-weight: 600;
+}
+
+.team-nav {
+  display: flex;
+  gap: 2px;
+  margin-right: auto;
+}
+
+.team-top .team-account {
+  margin-right: 0;
+  text-align: right;
+}
+
+.team-nav-item {
+  height: 28px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted-foreground);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.team-nav-item:hover {
+  color: var(--foreground);
+}
+
+.team-nav-item[aria-current="page"] {
+  background: var(--accent);
+  color: var(--foreground);
+  font-weight: 500;
+}
+
+.team-nav-item:focus-visible,
+.team-check input:focus-visible,
+.team-link-row input:focus-visible,
+.team-new-project input:focus-visible,
+.team-person-actions select:focus-visible,
+.team-member select:focus-visible,
+.team-member-add select:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+
+.team-stack {
+  display: grid;
+  gap: 14px;
+}
+
+.team-heading-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.team-heading-row .team-heading {
+  margin: 0;
+}
+
+.team-lede {
+  margin: -6px 0 0;
+  font-size: 13px;
+}
+
+.team-subheading,
+.team-panel h2 {
+  margin: 0 0 8px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+.team-panel {
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card);
+}
+
+.team-add {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  align-items: end;
+  gap: 10px;
+}
+
+.team-check {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  font-size: 13px;
+}
+
+.team-new-project {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.team-new-project input,
+.team-link-row input,
+.team-person-actions select,
+.team-member select,
+.team-member-add select {
+  height: 28px;
+  min-width: 0;
+  padding: 0 8px;
+  border: 1px solid var(--input);
+  border-radius: 6px;
+  background: var(--background);
+  color: var(--foreground);
+  font: inherit;
+  font-size: 13px;
+}
+
+.team-new-project input {
+  flex: 1 1 200px;
+}
+
+.team-new-project .team-error {
+  flex-basis: 100%;
+}
+
+.team-link {
+  display: grid;
+  gap: 6px;
+  margin-top: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--background);
+  font-size: 13px;
+}
+
+.team-link p {
+  margin: 0;
+}
+
+.team-link-row {
+  display: flex;
+  gap: 6px;
+}
+
+.team-link-row input {
+  flex: 1 1 auto;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+}
+
+.team-people {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.team-person {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 6px 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card);
+}
+
+.team-person[data-disabled] .team-person-who {
+  opacity: 0.6;
+}
+
+.team-person .team-link {
+  grid-column: 1 / -1;
+  margin-top: 4px;
+}
+
+.team-person-who {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.3;
+}
+
+.team-person-name {
+  font-weight: 500;
+}
+
+.team-person-tags {
+  display: flex;
+  gap: 4px;
+}
+
+.team-badge {
+  border: 1px solid var(--border);
+  color: var(--muted-foreground);
+}
+
+.team-person-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.app-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* The popover hangs from the whole bar, so it stays on screen at any width. */
+.team-bar {
+  position: relative;
+}
+
+.team-popover {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 50;
+  display: grid;
+  gap: 10px;
+  width: min(360px, calc(100vw - 32px));
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--popover, var(--card));
+  color: var(--popover-foreground, var(--foreground));
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.12);
+}
+
+.team-member-list {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.team-member {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.team-member-actions {
+  display: flex;
+  flex: none;
+  gap: 4px;
+}
+
+.team-member-add {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.team-member-add select:first-child {
+  flex: 1 1 100%;
+}
+
+.team-member-add .team-hint {
+  flex-basis: 100%;
+  margin: 0;
+}
+
+@media (max-width: 639px) {
+  .team-person {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .team-person-actions {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+  }
+
+  .team-top .team-account {
+    display: none;
+  }
+}
+
+/* Adding data on a team server. */
+.app-add-data {
+  display: grid;
+  gap: 10px;
+  margin: 4px 0 8px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--background);
+  font-size: 12px;
+}
+
+.app-message > .app-button-primary {
+  margin-top: 8px;
+}
+
+.app-message .app-add-data {
+  margin-top: 16px;
+  padding: 14px;
+  background: var(--card);
+}
+
+.app-file,
+.app-url label {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  color: var(--muted-foreground);
+}
+
+.app-file input {
+  max-width: 100%;
+  font: inherit;
+  font-size: 12px;
+  color: var(--foreground);
+}
+
+.app-url {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.app-url label {
+  flex: 1 1 160px;
+}
+
+.app-url input {
+  height: 28px;
+  min-width: 0;
+  padding: 0 8px;
+  border: 1px solid var(--input);
+  border-radius: 6px;
+  background: var(--background);
+  color: var(--foreground);
+  font: inherit;
+  font-size: 13px;
+}
+
+.app-url input:focus-visible,
+.app-file input:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+
+.app-hint {
+  margin: 0;
+}
+
+.app-fetched {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  flex-basis: 100%;
+}
+
+.app-source .app-fetched .app-button {
+  margin-left: 0;
+}

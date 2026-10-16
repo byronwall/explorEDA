@@ -51,21 +51,34 @@ import {
   SavedRow,
 } from "@/types/SavedDataStructure";
 import { createContext, useContext, useEffect, useRef } from "react";
+import { onLocatorReady } from "@/lib/boundaries/locate";
+import "@/lib/boundaries/regionFunction";
 import { createStore, useStore } from "zustand";
 import isEqual from "react-fast-compare";
 import { compactChartLayouts } from "@/utils/compactChartLayouts";
 import { IdType, initializeData } from "./lib/dataLayerState";
+import {
+  declaredDataTypes,
+  type DeclaredFieldType,
+} from "@/lib/declaredFieldTypes";
 
 type DatumObject = { [key: string]: datum };
 export type { DatumObject };
 export type { IdType } from "./lib/dataLayerState";
 
-function typeOverrides(settings: FieldSettingsMap): Record<string, DataType> {
-  return Object.fromEntries(
-    Object.entries(settings)
-      .filter(([, value]) => value.type)
-      .map(([field, value]) => [field, value.type as DataType])
-  );
+/** Declared field types, then any type a field's settings choose. */
+function typeOverrides(
+  settings: FieldSettingsMap,
+  fieldTypes?: Record<string, DeclaredFieldType>
+): Record<string, DataType> {
+  return {
+    ...declaredDataTypes(fieldTypes),
+    ...Object.fromEntries(
+      Object.entries(settings)
+        .filter(([, value]) => value.type)
+        .map(([field, value]) => [field, value.type as DataType])
+    ),
+  };
 }
 
 function validateFieldSettings(settings: FieldSettingsMap) {
@@ -258,9 +271,22 @@ function getSavedStateFingerprint(savedData: SavedDataStructure): string {
 interface DataLayerProps<T extends DatumObject> {
   data?: T[];
   fieldNames?: string[];
+  /** Field types the data's source declares. Field settings take precedence. */
+  fieldTypes?: Record<string, DeclaredFieldType>;
   charts?: ChartSettings[];
   savedData?: SavedDataStructure;
   onStateChange?: (state: SavedDataStructure) => void;
+  /**
+   * Keeps each chart's clicks and brushes to that chart, as a notebook
+   * does. Workspace filters still narrow every chart.
+   */
+  localSelections?: boolean;
+  /**
+   * The settings as the workspace holds them once `savedData` is applied,
+   * at mount and after each restore. Edits reported to `onStateChange`
+   * start from these.
+   */
+  onSavedDataApplied?: (state: SavedDataStructure) => void;
 }
 
 // Add ID to the data type
@@ -361,6 +387,8 @@ interface DataLayerState<T extends DatumObject> extends DataLayerProps<T> {
     resultColumnName: string,
     newCalculation: CalculationDefinition
   ) => void;
+  /** Recompute every calculation, such as after boundaries finish loading. */
+  rerunCalculations: () => void;
 
   calcColumnCache: Record<string, Record<IdType, datum> | undefined>;
 
@@ -386,13 +414,15 @@ type DataLayerStore<T extends DatumObject> = ReturnType<
 function getDataAndCrossfilterWrapper<T extends DatumObject>(
   data: T[],
   fieldGetter?: (name: string) => Record<IdType, datum>,
-  charts?: ChartSettings[]
+  charts?: ChartSettings[],
+  localSelections = false
 ): Partial<DataLayerState<T>> {
   const { dataWithIds, emptyColumn } = initializeData(data);
   const newCrossFilter = new CrossfilterWrapper<T & HasId>(
     dataWithIds,
     (d) => d.__ID
   );
+  newCrossFilter.localSelections = localSelections;
 
   if (fieldGetter) {
     newCrossFilter.setFieldGetter(fieldGetter);
@@ -458,6 +488,7 @@ const getInitialStoreState = <T extends DatumObject>(
     DataLayerState<T>,
     | "rawData"
     | "fieldNames"
+    | "fieldTypes"
     | "data"
     | "fieldProfiles"
     | "emptyColumn"
@@ -482,12 +513,15 @@ const getInitialStoreState = <T extends DatumObject>(
 > => {
   const rawData = initProps?.data ?? [];
   const fieldNames = initProps?.fieldNames ?? [];
+  const fieldTypes = initProps?.fieldTypes ?? {};
   const fieldSettings = initProps?.savedData?.fieldSettings ?? {};
   validateFieldSettings(fieldSettings);
   const inferredTypes = Object.fromEntries(
-    buildFieldProfiles(rawData, typeOverrides(fieldSettings), fieldNames).map(
-      (profile) => [profile.name, profile.dataType]
-    )
+    buildFieldProfiles(
+      rawData,
+      typeOverrides(fieldSettings, fieldTypes),
+      fieldNames
+    ).map((profile) => [profile.name, profile.dataType])
   );
   const runtimeData = applyFieldSettings(rawData, fieldSettings, inferredTypes);
   const {
@@ -495,10 +529,15 @@ const getInitialStoreState = <T extends DatumObject>(
     emptyColumn: initialEmptyColumn,
     crossfilterWrapper,
     calculationManager: ogCalculationManager,
-  } = getDataAndCrossfilterWrapper(runtimeData);
+  } = getDataAndCrossfilterWrapper(
+    runtimeData,
+    undefined,
+    undefined,
+    initProps?.localSelections
+  );
   const fieldProfiles = buildFieldProfiles(
     runtimeData,
-    typeOverrides(fieldSettings),
+    typeOverrides(fieldSettings, fieldTypes),
     fieldNames
   );
 
@@ -538,6 +577,7 @@ const getInitialStoreState = <T extends DatumObject>(
     return {
       rawData,
       fieldNames,
+      fieldTypes,
       data: initData,
       fieldProfiles,
       emptyColumn: initialEmptyColumn!,
@@ -570,6 +610,7 @@ const getInitialStoreState = <T extends DatumObject>(
   return {
     rawData,
     fieldNames,
+    fieldTypes,
     data: initData,
     fieldProfiles,
     emptyColumn: initialEmptyColumn!,
@@ -623,6 +664,7 @@ const createDataLayerStore = <T extends DatumObject>(
     });
     return {
       ...initialState,
+      localSelections: initProps?.localSelections ?? false,
       liveItems: {},
       filterReset: 0,
       stateChangeHolds: 0,
@@ -639,10 +681,13 @@ const createDataLayerStore = <T extends DatumObject>(
       },
       setData: (rawData, fileName, useDefaults = true) => {
         const fieldNames = get().fieldNames ?? [];
+        const fieldTypes = get().fieldTypes;
         const inferredTypes = Object.fromEntries(
-          buildFieldProfiles(rawData, typeOverrides({}), fieldNames).map(
-            (profile) => [profile.name, profile.dataType]
-          )
+          buildFieldProfiles(
+            rawData,
+            typeOverrides({}, fieldTypes),
+            fieldNames
+          ).map((profile) => [profile.name, profile.dataType])
         );
         const runtimeData = applyFieldSettings(rawData, {}, inferredTypes);
         // Get fresh crossfilter and data with IDs
@@ -651,10 +696,15 @@ const createDataLayerStore = <T extends DatumObject>(
           emptyColumn: newEmptyColumn,
           crossfilterWrapper: newCrossfilter,
           calculationManager: newCalculationManager,
-        } = getDataAndCrossfilterWrapper(runtimeData, get().getColumnData);
+        } = getDataAndCrossfilterWrapper(
+          runtimeData,
+          get().getColumnData,
+          undefined,
+          get().localSelections
+        );
         const fieldProfiles = buildFieldProfiles(
           runtimeData,
-          typeOverrides({}),
+          typeOverrides({}, fieldTypes),
           fieldNames
         );
 
@@ -747,7 +797,7 @@ const createDataLayerStore = <T extends DatumObject>(
         const inferredTypes = Object.fromEntries(
           buildFieldProfiles(
             get().rawData,
-            typeOverrides(nextFieldSettingsMap)
+            typeOverrides(nextFieldSettingsMap, get().fieldTypes)
           ).map((profile) => [profile.name, profile.dataType])
         );
         const runtimeRows = applyFieldSettings(
@@ -760,6 +810,7 @@ const createDataLayerStore = <T extends DatumObject>(
           nextData.dataWithIds,
           (row) => row.__ID
         );
+        nextCrossfilter.localSelections = get().localSelections ?? false;
         const nextCharts = get().charts.map((chart) => ({
           ...chart,
           filters: chart.filters.filter((filter) => filter.field !== field),
@@ -786,7 +837,7 @@ const createDataLayerStore = <T extends DatumObject>(
           emptyColumn: nextData.emptyColumn,
           fieldProfiles: buildFieldProfiles(
             runtimeRows,
-            typeOverrides(nextFieldSettingsMap),
+            typeOverrides(nextFieldSettingsMap, get().fieldTypes),
             state.fieldNames
           ),
           crossfilterWrapper: nextCrossfilter,
@@ -1227,6 +1278,13 @@ const createDataLayerStore = <T extends DatumObject>(
         refreshCalculations();
       },
 
+      rerunCalculations: () => {
+        const manager = get().calculationManager;
+        if (!manager.getCalculations().length) return;
+        manager.setCalculations(manager.getCalculations());
+        refreshCalculations();
+      },
+
       updateGridSettings: (settings) => {
         set((state) => ({
           gridSettings: {
@@ -1303,7 +1361,7 @@ const createDataLayerStore = <T extends DatumObject>(
         const inferredTypes = Object.fromEntries(
           buildFieldProfiles(
             rawData,
-            typeOverrides(fieldSettings),
+            typeOverrides(fieldSettings, get().fieldTypes),
             get().fieldNames
           ).map((profile) => [profile.name, profile.dataType])
         );
@@ -1312,7 +1370,12 @@ const createDataLayerStore = <T extends DatumObject>(
           fieldSettings,
           inferredTypes
         );
-        const next = getDataAndCrossfilterWrapper(runtimeData);
+        const next = getDataAndCrossfilterWrapper(
+          runtimeData,
+          undefined,
+          undefined,
+          get().localSelections
+        );
         const nextData = next.data;
         const nextCrossfilter = next.crossfilterWrapper;
         const nextEmptyColumn = next.emptyColumn;
@@ -1333,7 +1396,7 @@ const createDataLayerStore = <T extends DatumObject>(
         );
         const fieldProfiles = buildFieldProfiles(
           runtimeData,
-          typeOverrides(fieldSettings),
+          typeOverrides(fieldSettings, get().fieldTypes),
           get().fieldNames
         );
         validateAggregateState(
@@ -1527,11 +1590,14 @@ export function DataLayerProvider<T extends DatumObject>({
   const storeRef = useRef<DataLayerStore<T> | null>(null);
   const propsRef = useRef(props);
   const onStateChangeRef = useRef(props.onStateChange);
+  const onAppliedRef = useRef(props.onSavedDataApplied);
+  onAppliedRef.current = props.onSavedDataApplied;
   const suppressStateChangeRef = useRef(false);
   const savedStateFingerprintRef = useRef<string | undefined>(undefined);
   onStateChangeRef.current = props.onStateChange;
   const nextData = props.data;
   const nextFieldNames = props.fieldNames;
+  const nextFieldTypes = props.fieldTypes;
   const nextSavedData = props.savedData;
   if (!storeRef.current) {
     storeRef.current = createDataLayerStore<T>(props);
@@ -1540,7 +1606,9 @@ export function DataLayerProvider<T extends DatumObject>({
   useEffect(() => {
     const store = storeRef.current!;
     const previousProps = propsRef.current;
-    const fieldNamesChanged = previousProps.fieldNames !== nextFieldNames;
+    const fieldNamesChanged =
+      previousProps.fieldNames !== nextFieldNames ||
+      previousProps.fieldTypes !== nextFieldTypes;
     const dataChanged = previousProps.data !== nextData || fieldNamesChanged;
     const savedDataChanged = previousProps.savedData !== nextSavedData;
 
@@ -1548,7 +1616,10 @@ export function DataLayerProvider<T extends DatumObject>({
     try {
       if (dataChanged) {
         if (fieldNamesChanged) {
-          store.setState({ fieldNames: nextFieldNames ?? [] });
+          store.setState({
+            fieldNames: nextFieldNames ?? [],
+            fieldTypes: nextFieldTypes ?? {},
+          });
         }
         store.getState().setData(nextData ?? [], undefined, !nextSavedData);
         if (nextSavedData) {
@@ -1568,23 +1639,33 @@ export function DataLayerProvider<T extends DatumObject>({
       }
     } finally {
       suppressStateChangeRef.current = false;
-      savedStateFingerprintRef.current = getSavedStateFingerprint(
-        store.getState().saveToStructure()
-      );
+      const applied = store.getState().saveToStructure();
+      savedStateFingerprintRef.current = getSavedStateFingerprint(applied);
+      if (dataChanged || savedDataChanged) {
+        onAppliedRef.current?.(applied);
+      }
     }
 
     propsRef.current = {
       data: nextData,
       fieldNames: nextFieldNames,
+      fieldTypes: nextFieldTypes,
       savedData: nextSavedData,
     };
-  }, [nextData, nextFieldNames, nextSavedData]);
+  }, [nextData, nextFieldNames, nextFieldTypes, nextSavedData]);
+
+  // region() reports "loading" until its boundaries arrive.
+  useEffect(
+    () =>
+      onLocatorReady(() => storeRef.current!.getState().rerunCalculations()),
+    []
+  );
 
   useEffect(() => {
     const store = storeRef.current!;
-    savedStateFingerprintRef.current = getSavedStateFingerprint(
-      store.getState().saveToStructure()
-    );
+    const applied = store.getState().saveToStructure();
+    savedStateFingerprintRef.current = getSavedStateFingerprint(applied);
+    onAppliedRef.current?.(applied);
 
     return store.subscribe((state) => {
       // A held edit reports once, when its last hold is released.

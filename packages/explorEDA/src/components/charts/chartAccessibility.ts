@@ -23,6 +23,11 @@ const chartNames: Record<string, string> = {
   ecdf: "Cumulative distribution",
   "metric-card": "Metric card",
   composition: "Composition",
+  waterfall: "Waterfall",
+  donut: "Donut",
+  funnel: "Funnel",
+  retention: "Retention",
+  timeline: "Timeline",
 };
 
 export function getChartTitle(
@@ -61,6 +66,36 @@ export function getChartTitle(
     return settings.measureField
       ? `${metric} of ${getFieldLabel(settings.measureField)}${once}`
       : "Metric card";
+  }
+  if (settings.type === "donut") {
+    if (!settings.field) return getChartDefinition(settings.type).name;
+    const field = getFieldLabel(settings.field);
+    return settings.aggregation === "sum" && settings.measureField
+      ? `Share of ${getFieldLabel(settings.measureField)} by ${field}`
+      : `Share of rows by ${field}`;
+  }
+  if (settings.type === "funnel") {
+    const first = settings.steps[0];
+    const last = settings.steps[settings.steps.length - 1];
+    return settings.steps.length >= 2 && settings.entityField
+      ? `${getFieldLabel(settings.entityField)} from ${String(first)} to ${String(last)}`
+      : getChartDefinition(settings.type).name;
+  }
+  if (settings.type === "timeline") {
+    return settings.field
+      ? `${getFieldLabel(settings.field)} timeline`
+      : getChartDefinition(settings.type).name;
+  }
+  if (settings.type === "retention") {
+    return settings.entityField
+      ? `${getFieldLabel(settings.entityField)} retention by ${settings.period}`
+      : getChartDefinition(settings.type).name;
+  }
+  if (settings.type === "waterfall") {
+    const [start, end] = settings.states;
+    return start?.label && end?.label && settings.field
+      ? `${start.label} to ${end.label} by ${getFieldLabel(settings.field)}`
+      : getChartDefinition(settings.type).name;
   }
   if (settings.type === "sankey") {
     const labels = settings.stages.filter(Boolean).map(getFieldLabel);
@@ -145,7 +180,15 @@ export function getChartFields(settings: ChartSettings): string[] {
             ]
           : [settings.xField, ...settings.seriesField];
       case "map":
-        return [settings.latitudeField, settings.longitudeField, settings.labelField, settings.colorField, settings.sizeField, settings.regionField, settings.measureField];
+        return [
+          settings.latitudeField,
+          settings.longitudeField,
+          settings.labelField,
+          settings.colorField,
+          settings.sizeField,
+          settings.regionField,
+          settings.measureField,
+        ];
       case "scatter":
         return [
           settings.xField,
@@ -190,6 +233,35 @@ export function getChartFields(settings: ChartSettings): string[] {
         return [
           settings.aggregation === "count" ? undefined : settings.measureField,
           settings.entityField,
+        ];
+      case "timeline":
+        return [
+          settings.field,
+          settings.startField,
+          settings.endField,
+          settings.colorField,
+        ];
+      case "funnel":
+      case "retention":
+        return [settings.entityField, settings.field, settings.timeField];
+      case "donut":
+        return [
+          settings.field,
+          settings.aggregation === "sum" ? settings.measureField : undefined,
+        ];
+      case "waterfall":
+        return [
+          settings.field,
+          settings.parentField,
+          ...(settings.aggregation === "count"
+            ? []
+            : [
+                settings.measureField,
+                ...settings.states.map((state) => state.measureField),
+              ]),
+          ...settings.states.flatMap((state) =>
+            state.filters.map((filter) => filter.field)
+          ),
         ];
       default:
         return [settings.field, settings.colorField];

@@ -479,8 +479,17 @@ export function ScatterSvg({
     innerHeight: plan.plotHeight,
     mode: "2d",
     onBrushChange,
-    onPlotClick: (_, event) =>
-      event.altKey || altAtDown.current || Boolean(plan.size),
+    // Bubbles select in the click handler, where their DOM marks are hit.
+    // Canvas points have no DOM, so a plain click selects one here, before
+    // the brush treats it as a click on empty space.
+    // Marks that answer first, such as hex bins, select in the click handler.
+    onPlotClick: ([x, y], event) =>
+      event.altKey ||
+      altAtDown.current ||
+      Boolean(plan.size) ||
+      (markFirst &&
+        Boolean((event.target as Element).closest?.("[data-mark-id]"))) ||
+      Boolean(onSelectPoint?.(x, y)),
     defaultExtent: plan.brushExtent,
     onDeadClick: (inside) => {
       if (inside) return;
@@ -726,7 +735,15 @@ export function ScatterSvg({
           </g>
         )}
         <g className="eda-brush" clipPath={`url(#${chartId}-plot)`}>
-          <Primitives items={overlay.brush} />
+          <Primitives
+            items={overlay.brush.filter((item) => item.id === "brush")}
+          />
+          {/* Resize grips are editor chrome; an exported image keeps the box. */}
+          <g data-export="omit">
+            <Primitives
+              items={overlay.brush.filter((item) => item.id !== "brush")}
+            />
+          </g>
         </g>
         {annotations?.(`url(#${chartId}-plot)`)}
         {marginals && (
@@ -747,6 +764,7 @@ export function ScatterSvg({
         />
         <g
           className="eda-axis-readout"
+          data-export="omit"
           role={overlay.readoutLabel ? "img" : undefined}
           aria-label={overlay.readoutLabel}
           pointerEvents="none"

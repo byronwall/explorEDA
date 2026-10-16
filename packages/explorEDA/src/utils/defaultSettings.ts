@@ -20,11 +20,18 @@ export const DEFAULT_AXIS_SETTINGS: AxisSettings = {
   max: 100,
 };
 
+/** A Y axis draws grid lines; an X axis doesn't. */
+export const DEFAULT_Y_AXIS_SETTINGS: AxisSettings = {
+  ...DEFAULT_AXIS_SETTINGS,
+  grid: true,
+};
+
+/** Room for tick labels and an axis title on the left and bottom. */
 export const DEFAULT_MARGIN_SETTINGS: MarginSettings = {
-  top: 20,
-  right: 20,
-  bottom: 20,
-  left: 20,
+  top: 16,
+  right: 24,
+  bottom: 44,
+  left: 62,
 };
 
 export const DEFAULT_FACET_SETTINGS: WrapFacetSettings = {
@@ -40,7 +47,7 @@ export const DEFAULT_CHART_SETTINGS: Omit<BaseChartSettings, "id"> = {
   field: "",
   layout: { x: 0, y: 0, w: 12, h: 7 },
   xAxis: DEFAULT_AXIS_SETTINGS,
-  yAxis: DEFAULT_AXIS_SETTINGS,
+  yAxis: DEFAULT_Y_AXIS_SETTINGS,
   margin: DEFAULT_MARGIN_SETTINGS,
   facet: DEFAULT_FACET_SETTINGS,
   colorScaleId: undefined,
@@ -48,7 +55,7 @@ export const DEFAULT_CHART_SETTINGS: Omit<BaseChartSettings, "id"> = {
   xAxisLabel: "",
   yAxisLabel: "",
   xGridLines: 5,
-  yGridLines: 5,
+  yGridLines: 4,
   filters: [] as Filter[],
 };
 
@@ -63,8 +70,11 @@ export const DEFAULT_PIVOT_SETTINGS: Omit<PivotTableSettings, "id"> = {
 export const DEFAULT_ROW_SETTINGS: Omit<RowChartSettings, "id"> = {
   ...DEFAULT_CHART_SETTINGS,
   type: "row",
-  minRowHeight: 30,
-  maxRowHeight: 50,
+  // Rows run across, so the count axis is horizontal and carries the grid.
+  xAxis: DEFAULT_Y_AXIS_SETTINGS,
+  yAxis: DEFAULT_AXIS_SETTINGS,
+  minRowHeight: 22,
+  maxRowHeight: 36,
   filters: [],
 };
 
@@ -101,9 +111,13 @@ export function mergeWithDefaultSettings<T extends ChartSettings>(
   return {
     ...defaults,
     ...settings,
-    xAxis: { ...DEFAULT_AXIS_SETTINGS, ...settings.xAxis },
-    yAxis: { ...DEFAULT_AXIS_SETTINGS, ...settings.yAxis },
-    margin: { ...DEFAULT_MARGIN_SETTINGS, ...settings.margin },
-    facet: { ...DEFAULT_FACET_SETTINGS, ...settings.facet },
+    xAxis: { ...DEFAULT_AXIS_SETTINGS, ...defaults.xAxis, ...settings.xAxis },
+    yAxis: { ...DEFAULT_AXIS_SETTINGS, ...defaults.yAxis, ...settings.yAxis },
+    margin: {
+      ...DEFAULT_MARGIN_SETTINGS,
+      ...defaults.margin,
+      ...settings.margin,
+    },
+    facet: { ...DEFAULT_FACET_SETTINGS, ...defaults.facet, ...settings.facet },
   } as T;
 }

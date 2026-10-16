@@ -43,6 +43,8 @@ const PROPS: Record<keyof ExplorEdaProps, string> = {
   data: "The rows to explore. Pass a new array when rows change.",
   fieldNames:
     "Declared output columns, including when the result contains no rows.",
+  fieldTypes:
+    "Field types the data's source declares, such as fieldTypes from readTableFile in exploreda/readers. Detection fills in the rest; a type chosen in field settings wins.",
   savedData:
     "Settings to restore: charts, calculations, Rows, grid, metadata, color scales, field settings, and grouped summaries. An input for the first or a replacement restore, not a controlled value.",
   onStateChange:
@@ -56,7 +58,7 @@ const PROPS: Record<keyof ExplorEdaProps, string> = {
   schema:
     "What the Schema diagram shows: a project's schema, whether it can be edited, and which view it opens on. Without it, the diagram shows this workspace's table and its calculated fields.",
   onAddSource:
-    "Shows Add source in the Schema diagram. The host picks a file, then can turn the workspace into a project with singleTableProject and addSourceFromRows from exploreda/analysis.",
+    "Shows Add source in the Schema diagram. The host reads the file with readTableFile from exploreda/readers, then can turn the workspace into a project with singleTableProject and addSourceFromRows from exploreda/analysis.",
 };
 
 export function PropsReference() {

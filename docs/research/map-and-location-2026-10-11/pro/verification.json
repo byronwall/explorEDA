@@ -1,0 +1,774 @@
+{
+  "schema_version": "1.0",
+  "research_date": "2026-10-11",
+  "research_status": "GO",
+  "archive_name": "exploreda-map-location-research.zip",
+  "archive_root_manifest": [
+    "README.md",
+    "report.md",
+    "capability-matrix.csv",
+    "geography-catalog.csv",
+    "recommendations.json",
+    "intent-amendments.md",
+    "proof-plan.md",
+    "sources.md",
+    "repository-review.md",
+    "verification.json"
+  ],
+  "scope": "Research and artifacts only; no implementation, repository mutation, runtime or provider acceptance.",
+  "input_packet": {
+    "repository": "https://github.com/byronwall/explorEDA",
+    "revision": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+    "scope": "Selected source packet, not a runnable checkout. Initiative files are new planning artifacts.",
+    "declared_files": 44,
+    "actual_files": 45,
+    "missing": [],
+    "unexpected": [],
+    "hashes_provided_by_manifest": false,
+    "zip_sha256": "cc0adaad275efdc1fbbee09a9ace56ebd5bd1261cbc1c0a4472db0802e906b09",
+    "zip_crc_first_bad_file": null,
+    "extracted_bytes_match_archive": true,
+    "file_hashes": {
+      "AGENTS.md": "2800c1d79eb04d1ece4be1ed6f1a816270c6270b42df70bba9cf0467f13c93fe",
+      "README.md": "4690f7b91a3473eff7e12aaa0493954c5401efbf885a88351765ba423f2d431a",
+      "SOURCE-MANIFEST.json": "ec441ad401bb1d9eea398ce7334f108fb9fb9d4aa7ffe0fc4bbae50f05b64038",
+      "apps/demo/src/demos/analyses/earthquakes.ts": "39eff16ef468b89d96af1894a09c433b7ba8e4343056cdd5438d5a64a172fe92",
+      "apps/demo/src/demos/analyses/worldbank.ts": "784972f3ee14ddd24772321aac892a99fce8c3df410041f9cdf6dcea596a1e09",
+      "apps/demo/src/demos/dashboardSettings.ts": "6f2041ef7ba2a159e6a1a0990cd6f6b81d27ad105ae8d7ae034d6f1461ec60cc",
+      "apps/demo/src/demos/regionMapGeometry.ts": "80d309e2b371aca1c67f7a928698c2fb657d8fb2052c431587d44c9919daad35",
+      "apps/demo/src/docs/pages/map.mdx": "1495632ca8fdae67d94e1af3b5a0c9a7295d886e80d19ca05c484512a5712632",
+      "docs/agent-guide.md": "55533196306ebdb9b19b09375ac952fbf0465117b963e7d48e23728295bedb89",
+      "docs/intent/composed-analytical-graphics/intent-brief.md": "7c60227541989a0da59204087521925d831914d746de4b4ee7c53cc811dd7a85",
+      "docs/intent/map-and-location/chatgpt-pro-map-research-prompt.md": "1a31d4409b130927570e0f103078e485237f268560060a2d36962759c391f36a",
+      "docs/intent/map-and-location/initiative-map.json": "91909054b4ee2dee8df5836401c1b98b68e1f0b9350ad640534473b46cc8301c",
+      "docs/intent/map-and-location/intent-brief.md": "c726c987a419d1b9d36a93c62f9f6dc697f7ffd8eb660bcf1ac78770f805aff6",
+      "docs/intent/map-and-location/references/repository-baseline.md": "6946aff8da600749c28069ef29fde9f9b98b27de74012fc24c54085a3dddc52e",
+      "docs/intent/map-and-location/references/user-request.md": "c64441c6afa18a27a04e61844ac87760b143d9921980856d3919c7bcdb697e5b",
+      "docs/intent/network-and-edge-flow/intent-brief.md": "71a767ca74624ecd9be31f7f74cba3382d31da5908231fe8a9dda62e087018fe",
+      "docs/intent/renderer-independent-replay/intent-brief.md": "dd0019e384a3a92213b2e4c7dadfb287acc20d37366e584fa98abfae0c63b904",
+      "docs/ui-defaults.md": "3b6b28b962973c27279edc56094ea1d7c674d542d88280e34dd4a7c5b554a42a",
+      "package.json": "956f8078046ee2fcc2d67898c6a7dc53accf29d76ea8f740e3c5561840161cab",
+      "packages/explorEDA/package.json": "4ef54367be79eaf36e739191f68d533102a24433cfeff925253bd7cfbeeefa13",
+      "packages/explorEDA/src/components/charts/Map/MapChart.tsx": "64ebb42f3c6e35b1526396d5c49a148c3f8675cd461873a0640a0df53b6c0774",
+      "packages/explorEDA/src/components/charts/Map/MapSettingsPanel.tsx": "657214d739992d5871ae2eaf52c5a0102d79a48b0d8d2c3398721ea33c0fcf91",
+      "packages/explorEDA/src/components/charts/Map/MapToolbar.tsx": "d431b0099fb497b922121e24cec623fa1d64d3e579fe6e472db0b4d4fdf8a0dc",
+      "packages/explorEDA/src/components/charts/Map/MapTraceBody.tsx": "b48404c762c08ae607087e3eab8d7149130f8a1a6f68f96beef82b9064cee58c",
+      "packages/explorEDA/src/components/charts/Map/PointMap.tsx": "d21611a4a0b66383b7efaaef6b9f0e373cf6b2f8855bf7784b41175a3bb47ec5",
+      "packages/explorEDA/src/components/charts/Map/RegionMap.tsx": "b4ab995653fe9ed8f6f5a4f05bb75ca63b59f86156c4d5a783ac4bd417e94f97",
+      "packages/explorEDA/src/components/charts/Map/RegionMapSettings.tsx": "c3bab83bb1ffefb4580378befef85e48c97a8685d856fed882a21fa4a7c0e83a",
+      "packages/explorEDA/src/components/charts/Map/RegionTraceBody.tsx": "37ff561e9f433790e00cb1751ad6bff8b1e868adcd24f7cbcf67861c3093c303",
+      "packages/explorEDA/src/components/charts/Map/definition.ts": "670cb2b1abf33f708a56ebee2131a89edffdf6721a20c1fc3ff748f624319a38",
+      "packages/explorEDA/src/components/charts/Map/mapGeometry.ts": "587bf7ba415be301d3549e1edbecb6d541aa372152a98867cc140e807b61bd49",
+      "packages/explorEDA/src/components/charts/Map/mapTrace.ts": "bec522ad3d1ff94f83f24ac9d1ea4a888c922796d46a734f511f2b85f1740a14",
+      "packages/explorEDA/src/components/charts/Map/pointMap.test.tsx": "9a982f7a3e1936e899cb2a192d794bf357073ddf3dd42388d5ef4a7122f47eaa",
+      "packages/explorEDA/src/components/charts/Map/pointMapPlan.ts": "90747b51e122dfce10da3a42eadf1c2875cb09a65fda3a3ebc75beeec5e65c61",
+      "packages/explorEDA/src/components/charts/Map/regionGeometry.ts": "b103e0c2251de53ed5800ba28167059407c6f4902541a73f942cd37b001a668e",
+      "packages/explorEDA/src/components/charts/Map/regionMap.test.tsx": "f31715e78cdc87f19999ae7cb0645e6d083666d98a433432e27a9a446d80b5ca",
+      "packages/explorEDA/src/components/charts/Map/regionMapPlan.ts": "66068b61acba2784865a3ba2c2eca996a2f6f20d2dc41c8b999c6b1227c96861",
+      "packages/explorEDA/src/components/charts/Map/regionTrace.ts": "73a10941ac45c6e23507a35d001a6f037dccd3a6037993a17e251f4c0d0dfa95",
+      "packages/explorEDA/src/components/charts/Map/useMapData.ts": "037b649b80bd88fe55a8c3503ba129951a1ac590009bea80c7a9a468f5b0e58f",
+      "packages/explorEDA/src/components/charts/Map/useMapPan.ts": "5fddc7156ab57ac7186ff962b0264cb5a9d82a84a84ecb75890c37839a1f3797",
+      "packages/explorEDA/src/lib/dsl/settingKeys.ts": "454342631086858bf12010837c03b30001e220cb9f5d2ced8f0d4aa5ca042865",
+      "packages/explorEDA/src/lib/geometryAssets.ts": "0cf3120847925c1a4eb76ff9fe77a28ee433a0a4c8f98b2b866602fad98d7fcb",
+      "packages/explorEDA/src/providers/DataLayerProvider.tsx": "4026e73ef46413f8f57d3e1f59dc1bc68ac4b97435ff9f1c2880ac8d416d9ed0",
+      "packages/explorEDA/src/types/ChartTypes.ts": "4be08a17e6dd7a8e2d3cf109e2c913c93b018ebfe2978c53540eb7d2eca5d0fd",
+      "packages/explorEDA/src/types/SavedDataStructure.ts": "d06d902c2e9ba967adb39f25502405153b2b582bfd2bf7305ad51bec9b9dfebb",
+      "packages/explorEDA/src/utils/saveDataUtils.ts": "245ad8a2591516e186cccf225d0d0ba85b14f21e1cfe6caef4b4a6b8eb53357e"
+    }
+  },
+  "exact_ref_access": {
+    "research_date": "2026-10-11",
+    "repository": "byronwall/explorEDA",
+    "baseline_commit": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+    "baseline_message": "Merge pull request #296 from byronwall/codex/chart-annotation-research\n\nExpand chart annotation scope and preserve research sources",
+    "planning_branch_search": {
+      "branches": [],
+      "cursor": null
+    },
+    "main_commit": "396fb9ed3e6ce920635e3487c663373db5df0d2a",
+    "main_message": "Merge pull request #300 from byronwall/claude/boxplot-y-axis-margin\n\nFit the box plot's left margin to its Y tick labels",
+    "compare": {
+      "repository_full_name": "byronwall/explorEDA",
+      "base": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+      "head": "396fb9ed3e6ce920635e3487c663373db5df0d2a",
+      "status": "ahead",
+      "ahead_by": 5,
+      "behind_by": 0,
+      "total_commits": 5,
+      "too_large": null,
+      "base_commit": {
+        "sha": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+        "url": "https://api.github.com/repos/byronwall/explorEDA/commits/12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+        "html_url": "https://github.com/byronwall/explorEDA/commit/12bd64d359f03c54a50b1ff97f20f42284cf4dc6"
+      },
+      "merge_base_commit": {
+        "sha": "12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+        "url": "https://api.github.com/repos/byronwall/explorEDA/commits/12bd64d359f03c54a50b1ff97f20f42284cf4dc6",
+        "html_url": "https://github.com/byronwall/explorEDA/commit/12bd64d359f03c54a50b1ff97f20f42284cf4dc6"
+      },
+      "files": [
+        {
+          "filename": ".changeset/box-plot-y-axes-now-use-compact-value-labels-suc.md",
+          "status": "added",
+          "additions": 5,
+          "deletions": 0,
+          "changes": 5,
+          "previous_filename": null
+        },
+        {
+          "filename": "apps/demo/src/docs/reference/settingDescriptions.ts",
+          "status": "modified",
+          "additions": 3,
+          "deletions": 0,
+          "changes": 3,
+          "previous_filename": null
+        },
+        {
+          "filename": "packages/explorEDA/src/components/charts/BoxPlot/BoxPlot.tsx",
+          "status": "modified",
+          "additions": 60,
+          "deletions": 25,
+          "changes": 85,
+          "previous_filename": null
+        },
+        {
+          "filename": "packages/explorEDA/src/components/charts/BoxPlot/BoxPlotAxis.test.tsx",
+          "status": "added",
+          "additions": 100,
+          "deletions": 0,
+          "changes": 100,
+          "previous_filename": null
+        }
+      ]
+    },
+    "packet_remote_checks": [
+      {
+        "status": "fulfilled",
+        "path": "AGENTS.md",
+        "isError": false,
+        "sha": "2e864bd32ee6c1de3fd4e5006fccded6101eb652",
+        "local_blob_sha": "2e864bd32ee6c1de3fd4e5006fccded6101eb652",
+        "blob_match": true
+      },
+      {
+        "status": "fulfilled",
+        "path": "README.md",
+        "isError": false,
+        "sha": "c9ea42b84d3281e41c987855fbf3cdc07dac1783",
+        "local_blob_sha": "c9ea42b84d3281e41c987855fbf3cdc07dac1783",
+        "blob_match": true
+      },
+      {
+        "status": "fulfilled",
+        "path": "package.json",
+        "isError": false,
+        "sha": "aec716a97cbc37e81fb00dad4a64983c12e67e58",
+        "local_blob_sha": "aec716a97cbc37e81fb00dad4a64983c12e67e58",
+        "blob_match": true
+      },
+      {
+        "status": "fulfilled",
+        "path": "docs/agent-guide.md",
+        "isError": false,
+        "sha": "8887297c3d79b837139eb1e29622e6f6a848bc0a",
+        "local_blob_sha": "8887297c3d79b837139eb1e29622e6f6a848bc0a",
+        "blob_match": true
+      },
+      {
+        "status": "fulfilled",
+        "path": "docs/ui-defaults.md",
+        "isError": false,
+        "sha": "527ba4331a7202761d6e67227d491eed8bde5677",
+        "local_blob_sha": "527ba4331a7202761d6e67227d491eed8bde5677",
+        "blob_match": true
+      },
+      {
+        "status": "fulfilled",
+        "path": "packages/explorEDA/package.json",
+        "isError": false,
+        "sha": "d42d7f0859ecda3327152362a2a63b56403ae575",
+        "local_blob_sha": "d42d7f0859ecda3327152362a2a63b56403ae575",
+        "blob_match": true
+      },
+      {
+        "status": "fulfilled",
+        "path": "packages/explorEDA/src/lib/geometryAssets.ts",
+        "isError": false,
+        "sha": "2edf6f09333d037ec3c6b4f326514cd487ad1041",
+        "local_blob_sha": "2edf6f09333d037ec3c6b4f326514cd487ad1041",
+        "blob_match": true
+      },
+      {
+        "status": "fulfilled",
+        "path": "packages/explorEDA/src/types/SavedDataStructure.ts",
+        "isError": false,
+        "sha": "cb2537cf95b1e698cb11a362f43a1e7885c8a440",
+        "local_blob_sha": "cb2537cf95b1e698cb11a362f43a1e7885c8a440",
+        "blob_match": true
+      },
+      {
+        "status": "fulfilled",
+        "path": "packages/explorEDA/src/types/ChartTypes.ts",
+        "isError": false,
+        "sha": "076d530a037d3d8a6592945b031803d1a512f7f7",
+        "local_blob_sha": "076d530a037d3d8a6592945b031803d1a512f7f7",
+        "blob_match": true
+      },
+      {
+        "status": "fulfilled",
+        "path": "packages/explorEDA/src/utils/saveDataUtils.ts",
+        "isError": false,
+        "sha": "6ef736b920d53f3e049fed0a381bef1322f8c7f4",
+        "local_blob_sha": "6ef736b920d53f3e049fed0a381bef1322f8c7f4",
+        "blob_match": true
+      },
+      {
+        "status": "fulfilled",
+        "path": "packages/explorEDA/src/providers/DataLayerProvider.tsx",
+        "isError": false,
+        "sha": "9b413c46156f90e39795b69caa597d7d8b909bae",
+        "local_blob_sha": "9b413c46156f90e39795b69caa597d7d8b909bae",
+        "blob_match": true
+      },
+      {
+        "status": "fulfilled",
+        "path": "packages/explorEDA/src/lib/dsl/settingKeys.ts",
+        "isError": false,
+        "sha": "6a1bb71af6433a33e44f27ad01c2f7010dd9823f",
+        "local_blob_sha": "6a1bb71af6433a33e44f27ad01c2f7010dd9823f",
+        "blob_match": true
+      },
+      {
+        "status": "fulfilled",
+        "path": "apps/demo/src/demos/dashboardSettings.ts",
+        "isError": false,
+        "sha": "8aa97a7288e35d63b8fcb6c6dbeb6b281b516f7e",
+        "local_blob_sha": "8aa97a7288e35d63b8fcb6c6dbeb6b281b516f7e",
+        "blob_match": true
+      },
+      {
+        "status": "fulfilled",
+        "path": "apps/demo/src/demos/regionMapGeometry.ts",
+        "isError": false,
+        "sha": "9562057a53585a1012ba39dab725f87e55dae041",
+        "local_blob_sha": "9562057a53585a1012ba39dab725f87e55dae041",
+        "blob_match": true
+      },
+      {
+        "status": "fulfilled",
+        "path": "apps/demo/src/demos/analyses/earthquakes.ts",
+        "isError": false,
+        "sha": "36d6909642466d8a5e5c7c69bf0b3f7916709101",
+        "local_blob_sha": "36d6909642466d8a5e5c7c69bf0b3f7916709101",
+        "blob_match": true
+      },
+      {
+        "status": "fulfilled",
+        "path": "apps/demo/src/demos/analyses/worldbank.ts",
+        "isError": false,
+        "sha": "d1089b56d487cce324e0a176b2dc130eb18a9711",
+        "local_blob_sha": "d1089b56d487cce324e0a176b2dc130eb18a9711",
+        "blob_match": true
+      },
+      {
+        "status": "fulfilled",
+        "path": "apps/demo/src/docs/pages/map.mdx",
+        "isError": false,
+        "sha": "353adaa1962fd1e6161640b5033b46e58c59b1e6",
+        "local_blob_sha": "353adaa1962fd1e6161640b5033b46e58c59b1e6",
+        "blob_match": true
+      },
+      {
+        "status": "fulfilled",
+        "path": "docs/intent/composed-analytical-graphics/intent-brief.md",
+        "isError": false,
+        "sha": "ce052f02d2245386c84aab8cd073845e44fd9fee",
+        "local_blob_sha": "ce052f02d2245386c84aab8cd073845e44fd9fee",
+        "blob_match": true
+      },
+      {
+        "status": "fulfilled",
+        "path": "docs/intent/renderer-independent-replay/intent-brief.md",
+        "isError": false,
+        "sha": "631cefa5a90b0cff0abeaf1b237095a0cfc7d29b",
+        "local_blob_sha": "631cefa5a90b0cff0abeaf1b237095a0cfc7d29b",
+        "blob_match": true
+      },
+      {
+        "status": "fulfilled",
+        "path": "docs/intent/network-and-edge-flow/intent-brief.md",
+        "isError": false,
+        "sha": "ff47c6f41bfc17850343729ee394c97003162cc1",
+        "local_blob_sha": "ff47c6f41bfc17850343729ee394c97003162cc1",
+        "blob_match": true
+      },
+      {
+        "status": "fulfilled",
+        "path": "packages/explorEDA/src/components/charts/Map/RegionMap.tsx",
+        "isError": false,
+        "sha": "ecc2199930a77a909277144f6eb694edbcd1127a",
+        "local_blob_sha": "ecc2199930a77a909277144f6eb694edbcd1127a",
+        "blob_match": true
+      },
+      {
+        "status": "fulfilled",
+        "path": "packages/explorEDA/src/components/charts/Map/pointMap.test.tsx",
+        "isError": false,
+        "sha": "ce8fd19e49cdc52e305e664d2b1d195e3b6ee157",
+        "local_blob_sha": "ce8fd19e49cdc52e305e664d2b1d195e3b6ee157",
+        "blob_match": true
+      },
+      {
+        "status": "fulfilled",
+        "path": "packages/explorEDA/src/components/charts/Map/MapChart.tsx",
+        "isError": false,
+        "sha": "1678de347364e9429cffdead9272d9c4beb0b281",
+        "local_blob_sha": "1678de347364e9429cffdead9272d9c4beb0b281",
+        "blob_match": true
+      },
+      {
+        "status": "fulfilled",
+        "path": "packages/explorEDA/src/components/charts/Map/MapSettingsPanel.tsx",
+        "isError": false,
+        "sha": "f15288c16bfc0516841d905e905dfb09da7e02f5",
+        "local_blob_sha": "f15288c16bfc0516841d905e905dfb09da7e02f5",
+        "blob_match": true
+      },
+      {
+        "status": "fulfilled",
+        "path": "packages/explorEDA/src/components/charts/Map/regionTrace.ts",
+        "isError": false,
+        "sha": "0a89646071e8ef7a68d8742a24ca54167482fb5d",
+        "local_blob_sha": "0a89646071e8ef7a68d8742a24ca54167482fb5d",
+        "blob_match": true
+      },
+      {
+        "status": "fulfilled",
+        "path": "packages/explorEDA/src/components/charts/Map/useMapData.ts",
+        "isError": false,
+        "sha": "d9fa2653ae747d6a7f3f9516ee9c18de98786fbd",
+        "local_blob_sha": "d9fa2653ae747d6a7f3f9516ee9c18de98786fbd",
+        "blob_match": true
+      },
+      {
+        "status": "fulfilled",
+        "path": "packages/explorEDA/src/components/charts/Map/RegionTraceBody.tsx",
+        "isError": false,
+        "sha": "7c9962d4de757098031344415b84d3bfb8166b8e",
+        "local_blob_sha": "7c9962d4de757098031344415b84d3bfb8166b8e",
+        "blob_match": true
+      },
+      {
+        "status": "fulfilled",
+        "path": "packages/explorEDA/src/components/charts/Map/RegionMapSettings.tsx",
+        "isError": false,
+        "sha": "9af0f579cde1bb4709ebc197c4016c379ac89d00",
+        "local_blob_sha": "9af0f579cde1bb4709ebc197c4016c379ac89d00",
+        "blob_match": true
+      },
+      {
+        "status": "fulfilled",
+        "path": "packages/explorEDA/src/components/charts/Map/PointMap.tsx",
+        "isError": false,
+        "sha": "ddb54ee7daf4c82306461d6ab307a170cfdec600",
+        "local_blob_sha": "ddb54ee7daf4c82306461d6ab307a170cfdec600",
+        "blob_match": true
+      },
+      {
+        "status": "fulfilled",
+        "path": "packages/explorEDA/src/components/charts/Map/definition.ts",
+        "isError": false,
+        "sha": "3c83ce8fa136a52d7b38f193c54d68950ccea9aa",
+        "local_blob_sha": "3c83ce8fa136a52d7b38f193c54d68950ccea9aa",
+        "blob_match": true
+      },
+      {
+        "status": "fulfilled",
+        "path": "packages/explorEDA/src/components/charts/Map/regionMap.test.tsx",
+        "isError": false,
+        "sha": "e9192ca2beac8e38a0814ec48b88ed0818748e14",
+        "local_blob_sha": "e9192ca2beac8e38a0814ec48b88ed0818748e14",
+        "blob_match": true
+      },
+      {
+        "status": "fulfilled",
+        "path": "packages/explorEDA/src/components/charts/Map/useMapPan.ts",
+        "isError": false,
+        "sha": "b71692284a659714ad924947802a8c2191673bd4",
+        "local_blob_sha": "b71692284a659714ad924947802a8c2191673bd4",
+        "blob_match": true
+      },
+      {
+        "status": "fulfilled",
+        "path": "packages/explorEDA/src/components/charts/Map/regionGeometry.ts",
+        "isError": false,
+        "sha": "49d6773b05be10fc9a27297dbfa69abe9a3a3a03",
+        "local_blob_sha": "49d6773b05be10fc9a27297dbfa69abe9a3a3a03",
+        "blob_match": true
+      },
+      {
+        "status": "fulfilled",
+        "path": "packages/explorEDA/src/components/charts/Map/mapGeometry.ts",
+        "isError": false,
+        "sha": "0c1ce265b9ef5390fd48ff4f55cd859db6c3b402",
+        "local_blob_sha": "0c1ce265b9ef5390fd48ff4f55cd859db6c3b402",
+        "blob_match": true
+      },
+      {
+        "status": "fulfilled",
+        "path": "packages/explorEDA/src/components/charts/Map/MapToolbar.tsx",
+        "isError": false,
+        "sha": "3c64469edbddd370ad9d6b0eadb229cb265f4d74",
+        "local_blob_sha": "3c64469edbddd370ad9d6b0eadb229cb265f4d74",
+        "blob_match": true
+      },
+      {
+        "status": "fulfilled",
+        "path": "packages/explorEDA/src/components/charts/Map/MapTraceBody.tsx",
+        "isError": false,
+        "sha": "778bd8061c4d1d48904938273954ac57d46cf424",
+        "local_blob_sha": "778bd8061c4d1d48904938273954ac57d46cf424",
+        "blob_match": true
+      },
+      {
+        "status": "fulfilled",
+        "path": "packages/explorEDA/src/components/charts/Map/pointMapPlan.ts",
+        "isError": false,
+        "sha": "5b12281b9bdf64b6ad6d52bda7f92ea356fb056f",
+        "local_blob_sha": "5b12281b9bdf64b6ad6d52bda7f92ea356fb056f",
+        "blob_match": true
+      },
+      {
+        "status": "fulfilled",
+        "path": "packages/explorEDA/src/components/charts/Map/mapTrace.ts",
+        "isError": false,
+        "sha": "ca0653ac647212e7e4ba499d72a962d8e2c39494",
+        "local_blob_sha": "ca0653ac647212e7e4ba499d72a962d8e2c39494",
+        "blob_match": true
+      },
+      {
+        "status": "fulfilled",
+        "path": "packages/explorEDA/src/components/charts/Map/regionMapPlan.ts",
+        "isError": false,
+        "sha": "c1a76a47c25d9f996fc43a3aca1d8fba5747396a",
+        "local_blob_sha": "c1a76a47c25d9f996fc43a3aca1d8fba5747396a",
+        "blob_match": true
+      }
+    ],
+    "supplemental": [
+      {
+        "path": "packages/explorEDA/src/lib/aggregates.ts",
+        "blob_sha": "f7b445d26a653f4a512f7281bbb613d91efffb12",
+        "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/lib/aggregates.ts",
+        "local_blob_sha": "f7b445d26a653f4a512f7281bbb613d91efffb12",
+        "blob_match": true
+      },
+      {
+        "path": "packages/explorEDA/src/lib/valueParsing.ts",
+        "blob_sha": "73e0fa9d3071a7d21a9d85ec568f92bd027548a6",
+        "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/lib/valueParsing.ts",
+        "local_blob_sha": "73e0fa9d3071a7d21a9d85ec568f92bd027548a6",
+        "blob_match": true
+      },
+      {
+        "path": "packages/explorEDA/src/lib/categories.ts",
+        "blob_sha": "8f600ae636966910c9169e2ef914cdf914c4693f",
+        "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/lib/categories.ts",
+        "local_blob_sha": "8f600ae636966910c9169e2ef914cdf914c4693f",
+        "blob_match": true
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/BaseChart.tsx",
+        "blob_sha": "4107b00b5f2f01c52f4107b4e7053b3a6bcb53c4",
+        "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/BaseChart.tsx",
+        "local_blob_sha": "4107b00b5f2f01c52f4107b4e7053b3a6bcb53c4",
+        "blob_match": true
+      },
+      {
+        "path": "packages/explorEDA/src/types/SavedDataTypes.ts",
+        "blob_sha": "eec45e83b4deebce977fd2bc0fb7066c80f9c29e",
+        "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/types/SavedDataTypes.ts",
+        "local_blob_sha": "eec45e83b4deebce977fd2bc0fb7066c80f9c29e",
+        "blob_match": true
+      },
+      {
+        "path": "packages/explorEDA/src/components/PlotChartPanel.tsx",
+        "blob_sha": "e2c5f5c7e39061f12ab0ccb9f055ce205292435f",
+        "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/PlotChartPanel.tsx",
+        "local_blob_sha": "e2c5f5c7e39061f12ab0ccb9f055ce205292435f",
+        "blob_match": true
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/ChartRenderer.tsx",
+        "blob_sha": "a45e1682015e3bffe74956f04dc2b9da15716bc8",
+        "url": "https://github.com/byronwall/explorEDA/blob/12bd64d359f03c54a50b1ff97f20f42284cf4dc6/packages/explorEDA/src/components/charts/ChartRenderer.tsx",
+        "local_blob_sha": "a45e1682015e3bffe74956f04dc2b9da15716bc8",
+        "blob_match": true
+      }
+    ]
+  },
+  "final_input_integrity_rechecked": true,
+  "checks_performed": {
+    "csv": [
+      {
+        "file": "capability-matrix.csv",
+        "records": 198,
+        "columns": 8,
+        "all_cells_match_source": true,
+        "utf8": true,
+        "crlf": true,
+        "quoted_fields_roundtrip": true,
+        "formula_injection_candidates": 0,
+        "source_ids_resolve": true
+      },
+      {
+        "file": "geography-catalog.csv",
+        "records": 10,
+        "columns": 11,
+        "all_cells_match_source": true,
+        "utf8": true,
+        "crlf": true,
+        "quoted_fields_roundtrip": true,
+        "formula_injection_candidates": 0,
+        "source_ids_resolve": true
+      }
+    ],
+    "product_families": 10,
+    "product_entries": 11,
+    "capability_dimensions": 18,
+    "capability_status_counts": {
+      "documented": 87,
+      "conditional": 72,
+      "unknown": 36,
+      "not-supported-documented": 3
+    },
+    "geography_candidates": 10,
+    "external_primary_sources": 123,
+    "source_ledger_ids_including_repository_and_intent": 125,
+    "recommendations": {
+      "count": 20,
+      "required_fields_present": true,
+      "unique_ids": true,
+      "dependencies_resolve": true,
+      "dependency_graph_acyclic": true,
+      "repository_anchor_count": 89,
+      "all_paths_at_baseline": true,
+      "plain_identifier_presence_checked": true,
+      "contextual_symbols_manually_reviewed": true,
+      "sources_resolve": true,
+      "proofs_resolve": true
+    },
+    "intent_amendment_words": 780,
+    "intent_under_1000_words": true,
+    "proof_ids": [
+      "P01",
+      "P02",
+      "P03",
+      "P04",
+      "P05",
+      "P06",
+      "P07",
+      "P08"
+    ],
+    "all_proofs_not_run": true,
+    "future_pnpm_commands_match_prompt": true,
+    "markdown": [
+      {
+        "file": "README.md",
+        "word_count_whitespace": 1320,
+        "internal_links_resolve": true,
+        "explicit_reference_definitions_resolve": true
+      },
+      {
+        "file": "report.md",
+        "word_count_whitespace": 4499,
+        "internal_links_resolve": true,
+        "explicit_reference_definitions_resolve": true
+      },
+      {
+        "file": "intent-amendments.md",
+        "word_count_whitespace": 780,
+        "internal_links_resolve": true,
+        "explicit_reference_definitions_resolve": true
+      },
+      {
+        "file": "proof-plan.md",
+        "word_count_whitespace": 3090,
+        "internal_links_resolve": true,
+        "explicit_reference_definitions_resolve": true
+      },
+      {
+        "file": "sources.md",
+        "word_count_whitespace": 6418,
+        "internal_links_resolve": true,
+        "explicit_reference_definitions_resolve": true
+      },
+      {
+        "file": "repository-review.md",
+        "word_count_whitespace": 4510,
+        "internal_links_resolve": true,
+        "explicit_reference_definitions_resolve": true
+      }
+    ],
+    "skeptical_content_review": "Completed for product/task coverage, renderer/provider claims, source risks, symbol anchors and dependencies; corrections integrated.",
+    "csv_authoring_validation": [
+      {
+        "file": "capability-matrix.csv",
+        "rows": 198,
+        "columns": 8,
+        "headers": [
+          "product",
+          "capability",
+          "support_status",
+          "conditions",
+          "official_source_url",
+          "access_date",
+          "relevance_to_exploreda",
+          "source_ids"
+        ],
+        "source_sha256": "74b8f6e0edc87650f727cd98c568593e8b13d674dfa6eba72702fef16b1c03d9",
+        "csv_sha256": "d0ce86dd8d0370ea85d21b1bf1f6e1b950d04d405aae832c0d3bcbae7aed323f",
+        "utf8": true,
+        "line_endings": "CRLF",
+        "all_authored_values_match_source": true,
+        "formula_like_cells": 0,
+        "formulas": 0,
+        "authoring": "@oai/artifact-tool",
+        "export_method": "Documented range.values getter; RFC 4180 serializer. ISO access dates formatted from authored typed dates."
+      },
+      {
+        "file": "geography-catalog.csv",
+        "rows": 10,
+        "columns": 11,
+        "headers": [
+          "candidate_geography",
+          "publisher",
+          "url",
+          "license_source_terms",
+          "identifiers",
+          "vintage",
+          "size_resolution_evidence",
+          "loading_strategy",
+          "recommendation",
+          "source_ids",
+          "access_date"
+        ],
+        "source_sha256": "7ed206447151fd8fdb734814bc928c92543f323a0189181ca1fc5c5a4f24040d",
+        "csv_sha256": "95a8dfe68529e4c2a729309458b81f399002c822d2acf8dc678ca974d3337e32",
+        "utf8": true,
+        "line_endings": "CRLF",
+        "all_authored_values_match_source": true,
+        "formula_like_cells": 0,
+        "formulas": 0,
+        "authoring": "@oai/artifact-tool",
+        "export_method": "Documented range.values getter; RFC 4180 serializer. ISO access dates formatted from authored typed dates."
+      }
+    ],
+    "csv_independent_validation": [
+      {
+        "file": "capability-matrix.csv",
+        "records": 198,
+        "columns": 8,
+        "all_cells_exact": true,
+        "utf8_strict_decode": true,
+        "rfc4180_csv_parse": true,
+        "crlf_line_endings": true,
+        "source_ids_valid": true,
+        "access_dates_valid": true,
+        "formula_injection_candidates": 0,
+        "size_bytes": 51738,
+        "sha256": "d0ce86dd8d0370ea85d21b1bf1f6e1b950d04d405aae832c0d3bcbae7aed323f"
+      },
+      {
+        "file": "geography-catalog.csv",
+        "records": 10,
+        "columns": 11,
+        "all_cells_exact": true,
+        "utf8_strict_decode": true,
+        "rfc4180_csv_parse": true,
+        "crlf_line_endings": true,
+        "source_ids_valid": true,
+        "access_dates_valid": true,
+        "formula_injection_candidates": 0,
+        "size_bytes": 12730,
+        "sha256": "95a8dfe68529e4c2a729309458b81f399002c822d2acf8dc678ca974d3337e32"
+      }
+    ],
+    "archive": {
+      "members": 10,
+      "all_at_root": true,
+      "crc_ok": true,
+      "members_match_companion_bytes": true
+    }
+  },
+  "not_run": [
+    "dependency installation",
+    "application tests",
+    "type checking",
+    "demo/dev server",
+    "UI checks",
+    "full project checks",
+    "application build",
+    "browser interaction acceptance",
+    "performance benchmark",
+    "geometry conversion",
+    "live tile/provider check",
+    "map image export",
+    "assistive-technology acceptance"
+  ],
+  "known_limits": [
+    "Selected source packet is not a runnable checkout.",
+    "Map image-export ownership is unverified.",
+    "Full facet/axis ancestor clearing and preview caller reachability remain runtime/caller proof questions.",
+    "Specific current provider entitlement is not established; Mapbox product-terms PDF body unreadable.",
+    "Catalog schema/alias audits, conversions and runtime costs are future proofs."
+  ],
+  "companion_files": [
+    {
+      "name": "README.md",
+      "size_bytes": 10695,
+      "sha256": "ac7308a93179e5cbdbcd3ec3e311c1bb284a2c4fcac770d8172062ef1f65524e"
+    },
+    {
+      "name": "report.md",
+      "size_bytes": 37621,
+      "sha256": "abe934853d916dc293ac9d9133ddb654fbf95f34c03426fc8b08ce5b02436196"
+    },
+    {
+      "name": "capability-matrix.csv",
+      "size_bytes": 51738,
+      "sha256": "d0ce86dd8d0370ea85d21b1bf1f6e1b950d04d405aae832c0d3bcbae7aed323f"
+    },
+    {
+      "name": "geography-catalog.csv",
+      "size_bytes": 12730,
+      "sha256": "95a8dfe68529e4c2a729309458b81f399002c822d2acf8dc678ca974d3337e32"
+    },
+    {
+      "name": "recommendations.json",
+      "size_bytes": 79136,
+      "sha256": "e0e477414a371410d0d4f9a23f35fd0368c98ef8f08d0cc7c6432a85c0fff947"
+    },
+    {
+      "name": "intent-amendments.md",
+      "size_bytes": 5995,
+      "sha256": "3184c84aea308a4f1882ddeddf18341543707434df22a3848c78c23f21dfc909"
+    },
+    {
+      "name": "proof-plan.md",
+      "size_bytes": 27909,
+      "sha256": "7ff57ae7377dcf9c9d9cda4e1104fe9e709f52809da630979b12092a0cd3b146"
+    },
+    {
+      "name": "sources.md",
+      "size_bytes": 63070,
+      "sha256": "7cac556b14aff06d5590d6103f2d30a3516e6dd06538208ced6e247bdc7c170d"
+    },
+    {
+      "name": "repository-review.md",
+      "size_bytes": 42471,
+      "sha256": "71b463f62ff5daa4c3b69c44b7d45ec98ea8901f60e487fa56965f9a3a8368ec"
+    }
+  ],
+  "hash_policy": "SHA-256 covers the other nine companion files. This file and its enclosing archive omit self-referential hashes."
+}

@@ -36,4 +36,15 @@ describe("detectColumnType dates", () => {
       "categorical"
     );
   });
+
+  it("keeps identifier text that a number would change", () => {
+    expect(detectColumnType(column("0012", "0040"))).toBe("categorical");
+    expect(detectColumnType(column("9007199254740993", "1"))).toBe(
+      "categorical"
+    );
+    expect(detectColumnType(column("1,234", "5"))).toBe("categorical");
+    expect(detectColumnType(column("0", "0.5", "-3e2", ".25", "NaN"))).toBe(
+      "numeric"
+    );
+  });
 });

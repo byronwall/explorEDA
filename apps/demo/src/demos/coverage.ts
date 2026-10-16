@@ -288,6 +288,56 @@ export const coverageFeatures = [
     chartType: "ecdf",
   },
   {
+    id: "chart:donut",
+    label: "Donut",
+    family: "Chart types",
+    description:
+      "Show each category's share of a small whole, with the smaller categories pooled into Other.",
+    required: true,
+    status: "supported",
+    chartType: "donut",
+  },
+  {
+    id: "chart:funnel",
+    label: "Funnel",
+    family: "Chart types",
+    description:
+      "Follow entities through ordered steps of an event log, with drop-off between steps.",
+    required: true,
+    status: "supported",
+    chartType: "funnel",
+  },
+  {
+    id: "chart:retention",
+    label: "Retention",
+    family: "Chart types",
+    description:
+      "Group entities by when they started and show the share active in each period after.",
+    required: true,
+    status: "supported",
+    chartType: "retention",
+  },
+  {
+    id: "chart:timeline",
+    label: "Timeline",
+    family: "Chart types",
+    description:
+      "Lay out start-to-end intervals in lanes, and brush a time window to keep every overlapping row.",
+    required: true,
+    status: "supported",
+    chartType: "timeline",
+  },
+  {
+    id: "chart:waterfall",
+    label: "Waterfall",
+    family: "Chart types",
+    description:
+      "Bridge one total to another, such as plan to actual, with one signed step per category and group subtotals.",
+    required: true,
+    status: "supported",
+    chartType: "waterfall",
+  },
+  {
     id: "chart:composition",
     label: "Composition",
     family: "Chart types",
@@ -1065,6 +1115,81 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId: "budget-bridge",
+    intent:
+      "Bridge a lab's planned net position to its actual one line item at a time, with group subtotals, quarter filters, and the rows behind each step.",
+    features: {
+      "chart:waterfall": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+      "interaction:cross-filter": "shown",
+    },
+  },
+  {
+    exampleId: "battery-day",
+    intent:
+      "Run a battery's state of charge through a day, adding each hour's signed energy flows to a start value, with a subtotal per part of the day.",
+    features: {
+      "chart:waterfall": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+      "interaction:cross-filter": "shown",
+    },
+  },
+  {
+    exampleId: "channel-share",
+    intent:
+      "Show revenue's share by channel beside 100% bars of the same mix by region, in shared colors, and pool smaller products into Other.",
+    features: {
+      "chart:donut": "shown",
+      "chart:bar": "shown",
+      "mode:stacked-bars": "shown",
+      "chart:data-table": "shown",
+      "interaction:cross-filter": "shown",
+    },
+  },
+  {
+    exampleId: "product-funnel",
+    intent:
+      "Follow users from a first visit to a paid plan in order, and select a step to see everything its users did.",
+    features: {
+      "chart:funnel": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+      "interaction:cross-filter": "shown",
+    },
+  },
+  {
+    exampleId: "product-retention",
+    intent:
+      "Group users by signup week, show the share active in each week after, and select a cell to see everything its users did.",
+    features: {
+      "chart:retention": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+      "interaction:cross-filter": "shown",
+    },
+  },
+  {
+    exampleId: "room-bookings",
+    intent:
+      "Lay out four weeks of room bookings in lanes, brush a time window to keep overlapping bookings, and select one booking.",
+    features: {
+      "chart:timeline": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+      "interaction:cross-filter": "shown",
+    },
+  },
+  {
+    exampleId: "budget-report",
+    intent:
+      "Lay out each quarter's plan-to-actual bridge and each group's shares as Composition marks, on shared scales and colors.",
+    features: {
+      "chart:composition": "shown",
+    },
+  },
+  {
     exampleId: "consumer-confidence",
     intent:
       "Draw every country in every panel and light up its own, with the latest point per series on a date scale.",
@@ -1313,6 +1438,19 @@ export const exampleCoverage = [
       "color:legend": "shown",
       "interaction:brushing": "shown",
       "interaction:cross-filter": "shown",
+      "layout:dashboard": "shown",
+    },
+  },
+  {
+    exampleId: "dense-chart-controls",
+    intent:
+      "Change a scatter's color field in place while its filter stays and a peer shares the scale.",
+    features: {
+      "chart:scatter": "shown",
+      "chart:markdown": "shown",
+      "guides:grids": "shown",
+      "color:categorical": "shown",
+      "color:legend": "shown",
       "layout:dashboard": "shown",
     },
   },

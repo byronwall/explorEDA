@@ -18,6 +18,7 @@ import {
   Copy,
   FilterX,
   GripVertical,
+  ArrowLeftRight,
   Maximize2,
   Minimize2,
   Scaling,
@@ -37,6 +38,9 @@ import {
 import { getWorkspaceTheme } from "@/lib/themes";
 import { ChartReadoutProvider } from "./charts/ChartReadout";
 import { ChartColorLegend } from "./charts/ColorLegend/ChartColorLegend";
+import { hasRoleLabels } from "./charts/roles/chartRoles";
+import { RolePickerPopover } from "./charts/roles/RolePickerPopover";
+import { DropdownMenuItem } from "./ui/dropdown-menu";
 import { ChartTraceControl } from "./charts/ChartTraceControl";
 import {
   ChartTraceScope,
@@ -49,7 +53,10 @@ import type { TraceSource } from "./charts/trace/traceTypes";
 import { FacetContainer } from "./charts/FacetRelated/FacetContainer";
 import { FacetBarSlotContext } from "./charts/FacetRelated/facetBarSlot";
 import { useAxisFieldActions } from "./charts/AxisFieldActions";
-import { useAxisEditing } from "./charts/InPlace/useAxisEditing";
+import {
+  axisEditTarget,
+  useAxisEditing,
+} from "./charts/InPlace/useAxisEditing";
 import {
   TITLE_EDIT_DESCRIPTION,
   useTitleEditing,
@@ -64,6 +71,12 @@ import {
   PopoverTrigger,
 } from "./ui/popover";
 import { useAlertStore } from "@/stores/alertStore";
+import {
+  ChartImageContextMenu,
+  ChartImageMenu,
+} from "./charts/export/ChartImageMenu";
+import { ChartImageContext } from "./charts/export/chartImageContext";
+import { useChartImageExport } from "./charts/export/useChartImageExport";
 import {
   SettingsPopoverContext,
   useChartDetailsStore,
@@ -84,13 +97,14 @@ import {
 
 interface PlotChartPanelProps {
   settings: ChartSettings;
-  onDelete: () => void;
-  onDuplicate: () => void;
+  /** Omitted where charts come from text, such as a notebook. */
+  onDelete?: () => void;
+  onDuplicate?: () => void;
   width: number;
   height: number;
 }
 
-const CATEGORY_LABELED_CHART_TYPES = new Set(["row", "boxplot"]);
+const CATEGORY_LABELED_CHART_TYPES = new Set(["row", "boxplot", "donut"]);
 
 const TRACE_COPY = {
   row: {
@@ -115,6 +129,36 @@ const TRACE_COPY = {
     emptyText:
       "Alt-click a point to inspect its period's calculation and source rows.",
     ariaLabel: "Time series trace inspector",
+  },
+  donut: {
+    heading: "Donut trace",
+    emptyText:
+      "Alt-click a slice to see its share of the whole and its source rows.",
+    ariaLabel: "Donut trace inspector",
+  },
+  funnel: {
+    heading: "Funnel trace",
+    emptyText:
+      "Alt-click a step to see how it was counted, who dropped off, and the events that counted.",
+    ariaLabel: "Funnel trace inspector",
+  },
+  timeline: {
+    heading: "Timeline trace",
+    emptyText:
+      "Alt-click a bar to see its start, end, and whether it overlaps the selected window.",
+    ariaLabel: "Timeline trace inspector",
+  },
+  retention: {
+    heading: "Retention trace",
+    emptyText:
+      "Alt-click a cell to see its cohort, how its rate was counted, and the events that counted.",
+    ariaLabel: "Retention trace inspector",
+  },
+  waterfall: {
+    heading: "Waterfall trace",
+    emptyText:
+      "Alt-click a bar to see how its value was calculated and the rows in each state.",
+    ariaLabel: "Waterfall trace inspector",
   },
   "metric-card": {
     heading: "Metric trace",
@@ -388,7 +432,46 @@ export function PlotChartPanel({
   const detailsRef = useRef<HTMLDivElement>(null);
   const details = detailsLayout(useViewport(expanded));
   const axisEditing = useAxisEditing(settings, panelRef);
-  const axisFieldActions = useAxisFieldActions(axisEditing.menuItems);
+  // Charts with role labels change an axis's field from its menu too.
+  const [axisPicker, setAxisPicker] = useState<{
+    role: "x" | "y";
+    at: { x: number; y: number };
+    side: "top" | "bottom";
+    container: HTMLElement | null;
+  }>();
+  const axisMenuItems = (element: Element) => {
+    const axis = axisEditTarget(element)?.axis;
+    return (
+      <>
+        {hasRoleLabels(settings) && (axis === "x" || axis === "y") && (
+          <DropdownMenuItem
+            onSelect={() => {
+              const box = element.getBoundingClientRect();
+              // The X title sits at the chart's foot, so its picker opens
+              // upward over the plot.
+              setAxisPicker({
+                role: axis,
+                at: {
+                  x: box.left,
+                  y: axis === "x" ? box.top - 4 : box.bottom + 4,
+                },
+                side: axis === "x" ? "top" : "bottom",
+                container: element.closest<HTMLElement>("[role='dialog']"),
+              });
+            }}
+          >
+            <ArrowLeftRight
+              aria-hidden="true"
+              className={axis === "y" ? "rotate-90" : undefined}
+            />
+            Change {axis.toUpperCase()} field…
+          </DropdownMenuItem>
+        )}
+        {axisEditing.menuItems(element)}
+      </>
+    );
+  };
+  const axisFieldActions = useAxisFieldActions(axisMenuItems);
   const settingsRef = useRef<HTMLButtonElement>(null);
   const settingsAnchor = useRef<HTMLElement | null>(null);
   const expandRef = useRef<HTMLButtonElement>(null);
@@ -540,13 +623,17 @@ export function PlotChartPanel({
   const fieldStripHeight =
     (settings.type !== "scatter" && calculatedFields.length ? 28 : 0) +
     (localFilters.length ? LOCAL_FILTER_STRIP_HEIGHT : 0);
-  // Row charts and box plots color marks by their own labeled category, so a
-  // legend repeats them.
+  // Row charts, box plots, and donuts color marks by their own labeled
+  // category, so a legend repeats them.
+  // Charts with role labels keep the line even without a color field, so
+  // their Color role stays in reach.
+  const roleLabels = hasRoleLabels(settings);
   const autoLegendHeight =
-    settings.colorField &&
-    settings.colorScaleId &&
-    !(settings.type === "scatter" && settings.display === "density") &&
-    !CATEGORY_LABELED_CHART_TYPES.has(settings.type)
+    roleLabels ||
+    (settings.colorField &&
+      settings.colorScaleId &&
+      !(settings.type === "scatter" && settings.display === "density") &&
+      !CATEGORY_LABELED_CHART_TYPES.has(settings.type))
       ? 36
       : 0;
   const faceted = Boolean(
@@ -575,6 +662,38 @@ export function PlotChartPanel({
     settings.type === "data-table" ? settings.globalSearch : "";
   const hasFilter = settings.filters.some(isActiveFilter);
 
+  const imageExport = useChartImageExport(
+    panelRef,
+    settings.id,
+    settings.type,
+    chartTitle
+  );
+  // A right-click that no axis, title, table, or composition menu answers
+  // offers the chart's image. Shift keeps the browser's own menu in reach.
+  const [imageMenu, setImageMenu] = useState<{ x: number; y: number }>();
+  const onPanelContextMenu = (event: React.MouseEvent) => {
+    axisFieldActions.handlers.onContextMenu(event);
+    if (event.defaultPrevented || event.shiftKey) {
+      return;
+    }
+    const target = event.target;
+    if (
+      target instanceof Element &&
+      target.closest(
+        "input, textarea, select, [contenteditable='true'], .eda-panel-actions"
+      )
+    ) {
+      return;
+    }
+    event.preventDefault();
+    const box = event.currentTarget.getBoundingClientRect();
+    const fromKeyboard = event.clientX === 0 && event.clientY === 0;
+    setImageMenu({
+      x: fromKeyboard ? box.left + 16 : event.clientX,
+      y: fromKeyboard ? box.top + 32 : event.clientY,
+    });
+  };
+
   const handleDelete = async () => {
     const confirmed = await showAlert(
       "Delete chart?",
@@ -582,7 +701,7 @@ export function PlotChartPanel({
       { confirmLabel: "Delete", destructive: true }
     );
     if (confirmed) {
-      onDelete();
+      onDelete?.();
     }
   };
 
@@ -594,7 +713,7 @@ export function PlotChartPanel({
         event.altKey ||
         event.ctrlKey ||
         event.metaKey ||
-        event.shiftKey ||
+        (event.shiftKey && event.key.toLowerCase() !== "e") ||
         document.querySelector("[role='menu']") ||
         Array.from(document.querySelectorAll("[role='dialog']")).some(
           (dialog) => !dialog.contains(panelRef.current)
@@ -621,17 +740,22 @@ export function PlotChartPanel({
         return;
 
       const key = event.key.toLowerCase();
-      if (!["s", "d", "x", "v", "c"].includes(key)) return;
+      if (!["s", "d", "x", "v", "c", "e"].includes(key)) return;
       if (key === "v" && !canViewData) return;
       // Duplicating would move focus to the copy behind the details view.
       if (key === "d" && expanded) return;
       event.preventDefault();
-      if (key === "s") {
+      if (key === "e") {
+        // Shift+E downloads; E copies, which needs this key press as its gesture.
+        if (event.shiftKey) imageExport.download();
+        else imageExport.copy();
+      } else if (key === "s") {
         if (expanded) setDetailsTab("settings");
         else settingsRef.current?.click();
-      } else if (key === "d") onDuplicate();
-      else if (key === "x") void handleDelete();
-      else if (key === "v") {
+      } else if (key === "d") onDuplicate?.();
+      else if (key === "x") {
+        if (onDelete) void handleDelete();
+      } else if (key === "v") {
         if (expanded) setDetailsTab("data");
         else setDataOpen(true);
       } else clearFilter(settings);
@@ -652,6 +776,7 @@ export function PlotChartPanel({
       className={`eda-panel relative bg-card border rounded-lg flex min-w-0 flex-col overflow-hidden ${expanded ? "eda-panel-expanded" : ""}`}
       data-eda-theme={theme.id}
       data-headline={theme.headline}
+      data-chart-panel={settings.id}
       // Ring the chart while its settings are open so the editor has a clear owner.
       data-settings-open={(settingsOpen && !expanded) || undefined}
       onPointerEnter={(event) =>
@@ -669,6 +794,7 @@ export function PlotChartPanel({
       role="region"
       {...axisFieldActions.handlers}
       {...axisEditing.handlers}
+      onContextMenu={onPanelContextMenu}
       aria-labelledby={titleId}
       aria-describedby={descriptionId}
     >
@@ -683,6 +809,7 @@ export function PlotChartPanel({
           <GripVertical
             className="eda-drag absolute top-1/2 left-0 h-3 w-2.5 -translate-y-1/2 text-muted-foreground"
             aria-hidden="true"
+            data-export="omit"
           />
           {titleEditing.editor ? (
             <h3
@@ -717,6 +844,7 @@ export function PlotChartPanel({
             <ActionTooltip content="Title clipped: widen or heighten the chart, or shorten the title">
               <span
                 className="eda-clip-marker"
+                data-export="omit"
                 role="img"
                 tabIndex={0}
                 aria-label="Title clipped"
@@ -730,7 +858,7 @@ export function PlotChartPanel({
           <p className="eda-panel-subtitle drag-handle">{subtitle}</p>
         )}
         {/* Values under the pointer, beside the title and off the plot. */}
-        <div className="eda-panel-status">
+        <div className="eda-panel-status" data-export="omit">
           <div
             ref={setReadoutTarget}
             className="eda-panel-readout"
@@ -774,7 +902,10 @@ export function PlotChartPanel({
             </ActionTooltip>
           )}
         </div>
-        <div className="eda-panel-actions flex shrink-0 items-center gap-0">
+        <div
+          className="eda-panel-actions flex shrink-0 items-center gap-0"
+          data-export="omit"
+        >
           {isTableLike && <div ref={setToolbarTarget} />}
           {isTraceable(settings.type) &&
             (settings.type !== "line" || settings.time) && (
@@ -802,7 +933,8 @@ export function PlotChartPanel({
               </PopoverContent>
             </Popover>
           )}
-          {!expanded && (
+          <ChartImageMenu chartTitle={chartTitle} {...imageExport} />
+          {!expanded && onDuplicate && (
             <Button
               variant="ghost"
               size="icon"
@@ -867,6 +999,9 @@ export function PlotChartPanel({
                 }
                 align="start"
                 collisionPadding={12}
+                // Stay on screen even when the chart starts low in a tall
+                // page, as a notebook's charts do; partial would hang below.
+                sticky="always"
               >
                 <SettingsPopoverContext.Provider value={true}>
                   <ChartSettingsContent settings={settings} />
@@ -874,16 +1009,18 @@ export function PlotChartPanel({
               </PopoverContent>
             </Popover>
           )}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="eda-panel-delete"
-            aria-label={`Delete ${chartTitle}`}
-            tooltip="Delete chart (X)"
-            onClick={() => void handleDelete()}
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
+          {onDelete && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="eda-panel-delete"
+              aria-label={`Delete ${chartTitle}`}
+              tooltip="Delete chart (X)"
+              onClick={() => void handleDelete()}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          )}
         </div>
       </div>
       {settings.type !== "scatter" && calculatedFields.length > 0 && (
@@ -901,6 +1038,16 @@ export function PlotChartPanel({
         {chartSummary}
       </p>
       {axisFieldActions.overlay}
+      {axisPicker && (
+        <RolePickerPopover
+          settings={settings}
+          role={axisPicker.role}
+          at={axisPicker.at}
+          side={axisPicker.side}
+          container={axisPicker.container}
+          onClose={() => setAxisPicker(undefined)}
+        />
+      )}
       {axisEditing.overlay}
       <AxisTypographyProvider value={axisTypography}>
         <ChartReadoutProvider value={readoutTarget}>
@@ -912,6 +1059,7 @@ export function PlotChartPanel({
                   <ChartColorLegend
                     settings={settings}
                     width={Math.max(1, panelWidth - 24 - FACET_SLOT_WIDTH)}
+                    editable={roleLabels}
                   />
                 )}
                 <div ref={setFacetBarSlot} className="eda-facet-bar-slot" />
@@ -921,6 +1069,7 @@ export function PlotChartPanel({
                 <ChartColorLegend
                   settings={settings}
                   width={Math.max(1, panelWidth - 24)}
+                  editable={roleLabels}
                 />
               )
             )}
@@ -948,6 +1097,14 @@ export function PlotChartPanel({
           {noteText}
         </p>
       )}
+      {imageMenu && (
+        <ChartImageContextMenu
+          chartTitle={chartTitle}
+          at={imageMenu}
+          onClose={() => setImageMenu(undefined)}
+          {...imageExport}
+        />
+      )}
     </div>
   );
   // Escape closes a nested editor first, and a tooltip must not swallow it.
@@ -974,71 +1131,73 @@ export function PlotChartPanel({
   }, [expanded]);
 
   return (
-    <ChartTraceScope>
-      <Dialog open={expanded} onOpenChange={setExpanded}>
-        {expanded ? (
-          <DialogContent
-            ref={detailsRef}
-            showCloseButton={false}
-            className="eda-details max-w-none w-auto border-0 bg-transparent p-0 shadow-none"
-            onOpenAutoFocus={(event) => {
-              event.preventDefault();
-              detailsRef.current
-                ?.querySelector<HTMLElement>(
-                  ".eda-details-tabs [role='tab'][data-state='active']"
-                )
-                ?.focus({ preventScroll: true });
-            }}
-            onCloseAutoFocus={(event) => {
-              event.preventDefault();
-              requestAnimationFrame(() => expandRef.current?.focus());
-            }}
-          >
-            <DialogTitle className="sr-only">{chartTitle}</DialogTitle>
-            <DialogDescription className="sr-only">
-              {chartSummary}
-            </DialogDescription>
-            <div
-              className="eda-details-body"
-              data-stacked={details.stacked || undefined}
+    <ChartImageContext.Provider value={imageExport}>
+      <ChartTraceScope>
+        <Dialog open={expanded} onOpenChange={setExpanded}>
+          {expanded ? (
+            <DialogContent
+              ref={detailsRef}
+              showCloseButton={false}
+              className="eda-details max-w-none w-auto border-0 bg-transparent p-0 shadow-none"
+              onOpenAutoFocus={(event) => {
+                event.preventDefault();
+                detailsRef.current
+                  ?.querySelector<HTMLElement>(
+                    ".eda-details-tabs [role='tab'][data-state='active']"
+                  )
+                  ?.focus({ preventScroll: true });
+              }}
+              onCloseAutoFocus={(event) => {
+                event.preventDefault();
+                requestAnimationFrame(() => expandRef.current?.focus());
+              }}
             >
-              {panel}
-              <aside
-                className="eda-details-side"
-                aria-label={`Controls for ${chartTitle}`}
-                style={details.side}
+              <DialogTitle className="sr-only">{chartTitle}</DialogTitle>
+              <DialogDescription className="sr-only">
+                {chartSummary}
+              </DialogDescription>
+              <div
+                className="eda-details-body"
+                data-stacked={details.stacked || undefined}
               >
-                <Tabs
-                  value={canViewData ? detailsTab : "settings"}
-                  onValueChange={setDetailsTab}
-                  className="eda-details-tabs"
+                {panel}
+                <aside
+                  className="eda-details-side"
+                  aria-label={`Controls for ${chartTitle}`}
+                  style={details.side}
                 >
-                  <TabsList className="w-full">
-                    <TabsTrigger value="settings" className="flex-1">
-                      Settings
-                    </TabsTrigger>
-                    {canViewData && (
-                      <TabsTrigger value="data" className="flex-1">
-                        Chart data
+                  <Tabs
+                    value={canViewData ? detailsTab : "settings"}
+                    onValueChange={setDetailsTab}
+                    className="eda-details-tabs"
+                  >
+                    <TabsList className="w-full">
+                      <TabsTrigger value="settings" className="flex-1">
+                        Settings
                       </TabsTrigger>
-                    )}
-                  </TabsList>
-                  <TabsContent value="settings">
-                    <ChartSettingsContent settings={settings} />
-                  </TabsContent>
-                  {canViewData && (
-                    <TabsContent value="data">
-                      <ChartDataPreview settings={settings} fill />
+                      {canViewData && (
+                        <TabsTrigger value="data" className="flex-1">
+                          Chart data
+                        </TabsTrigger>
+                      )}
+                    </TabsList>
+                    <TabsContent value="settings">
+                      <ChartSettingsContent settings={settings} />
                     </TabsContent>
-                  )}
-                </Tabs>
-              </aside>
-            </div>
-          </DialogContent>
-        ) : (
-          panel
-        )}
-      </Dialog>
-    </ChartTraceScope>
+                    {canViewData && (
+                      <TabsContent value="data">
+                        <ChartDataPreview settings={settings} fill />
+                      </TabsContent>
+                    )}
+                  </Tabs>
+                </aside>
+              </div>
+            </DialogContent>
+          ) : (
+            panel
+          )}
+        </Dialog>
+      </ChartTraceScope>
+    </ChartImageContext.Provider>
   );
 }

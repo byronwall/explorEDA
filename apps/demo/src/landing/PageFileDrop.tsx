@@ -1,25 +1,27 @@
+import type { AnalysisProjectFile } from "exploreda/analysis";
 import {
-  parseAnalysisProject,
-  type AnalysisProjectFile,
-} from "exploreda/analysis";
+  tableFormatList,
+  tableFormatOf,
+  type TableFile,
+} from "exploreda/readers";
 import { Button } from "@/components/ui/button";
 import { FileUp } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import type { DatumObject } from "../LandingPage";
-import { isSupportedDataFile, readDataFile } from "../readDataFile";
+import { useImportChoice } from "../ImportChoice";
+import { readImportFile } from "../tableImport";
 
 const carriesFiles = (event: DragEvent) =>
   Array.from(event.dataTransfer?.types ?? []).includes("Files");
 
 /**
- * Accepts a CSV or JSON file dropped anywhere on the page and opens it
+ * Accepts a data file dropped anywhere on the page and opens it
  * through the same import path as the upload box.
  */
 export function PageFileDrop({
   onImport,
   onProjectImport,
 }: {
-  onImport: (data: DatumObject[], fileName: string) => void;
+  onImport: (table: TableFile) => void;
   onProjectImport?: (file: AnalysisProjectFile) => void;
 }) {
   const [active, setActive] = useState(false);
@@ -27,8 +29,13 @@ export function PageFileDrop({
   const depth = useRef(0);
   const onProjectImportRef = useRef(onProjectImport);
   onProjectImportRef.current = onProjectImport;
-  const onImportRef = useRef(onImport);
-  onImportRef.current = onImport;
+  const sheets = useImportChoice(
+    (table) => onImport(table),
+    (message) => setError(message),
+    true
+  );
+  const offerRef = useRef(sheets.offer);
+  offerRef.current = sheets.offer;
 
   useEffect(() => {
     const reset = () => {
@@ -79,23 +86,21 @@ export function PageFileDrop({
       if (!file) {
         return;
       }
-      if (!isSupportedDataFile(file)) {
-        setError(`${file.name} is not a CSV or JSON file.`);
+      if (!tableFormatOf(file.name)) {
+        setError(`${file.name} is not a ${tableFormatList()} file.`);
         return;
       }
       setError(null);
       (async () => {
-        if (file.name.toLowerCase().endsWith(".json")) {
-          const text = await file.text();
-          if (JSON.parse(text).format === "exploreda-project") {
-            if (!onProjectImportRef.current) {
-              throw new Error("Open this project from the project workspace");
-            }
-            onProjectImportRef.current(parseAnalysisProject(text));
-            return;
+        const imported = await readImportFile(file);
+        if (imported.kind === "project") {
+          if (!onProjectImportRef.current) {
+            throw new Error("Open this project from the project workspace");
           }
+          onProjectImportRef.current(imported.project);
+          return;
         }
-        onImportRef.current(await readDataFile(file), file.name);
+        offerRef.current(file, imported.table);
       })().catch((reason: unknown) => {
         const message =
           reason instanceof Error ? reason.message : "Unknown error";
@@ -131,11 +136,12 @@ export function PageFileDrop({
               Drop to explore your data
             </p>
             <p className="text-sm text-muted-foreground">
-              CSV or JSON. It opens in the workspace right away.
+              {tableFormatList()}. It opens in the workspace right away.
             </p>
           </div>
         </div>
       )}
+      {sheets.prompt}
       {error && (
         <div
           role="alert"

@@ -22,7 +22,7 @@ export function ExamplesIndex() {
     <div className="pb-16">
       <header className="mx-auto max-w-6xl px-4 sm:px-6">
         <SiteNav current="examples" />
-        <h1 className="mt-10 text-4xl font-bold tracking-[-0.03em] text-brand-navy sm:text-5xl">
+        <h1 className="mt-10 text-4xl font-bold tracking-[-0.03em] text-site-ink sm:text-5xl">
           All examples
         </h1>
         <p className="mt-3 max-w-3xl text-base leading-relaxed text-muted-foreground sm:text-lg">

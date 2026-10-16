@@ -5,10 +5,10 @@
     "slug": "columnar-data-transport",
     "scale": "capability",
     "current_phase": "shape",
-    "last_updated": "2026-10-12",
+    "last_updated": "2026-10-13",
     "summary": "Prove whether Arrow IPC improves a bounded, complete database result through current row consumers compared with lossless row JSON, while preserving exact meaning and measured capacity.",
     "status": "planned",
-    "next_action": "Review the shaped proof and align snapshot, type, coverage, completion, and instance contracts with query, adapter, and hosting tracks. No implementation plan was requested."
+    "next_action": "Later: start when database-adapters snapshot cost is measured and found too high."
   },
   "artifacts": {
     "intent_brief": {
@@ -378,6 +378,13 @@
         "CODE-05"
       ],
       "notes": "No implementation plan requested. Raw files remain unchanged."
+    },
+    {
+      "date": "2026-10-13",
+      "action": "Scope note",
+      "reason": "Database-adapters scope questions (round 3): stays separate, triggered by measured snapshot cost.",
+      "status": "planned",
+      "evidence": "../database-adapters/initiative-map.json question_rounds"
     }
   ],
   "closure": null,

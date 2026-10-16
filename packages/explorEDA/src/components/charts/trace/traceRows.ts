@@ -8,6 +8,19 @@ export function traceRowIds(trace: ChartTrace): number[] | undefined {
   switch (trace.kind) {
     case "metric-card":
       return trace.plan.contributors.map((item) => item.sourceId);
+    case "timeline-interval":
+      return [trace.interval.id];
+    case "retention-cell":
+      return trace.cell.rows;
+    case "funnel-step":
+      return trace.step.contributors.map((item) => item.sourceId);
+    case "donut-slice":
+      return trace.slice.row.contributors.map((item) => item.sourceId);
+    case "waterfall-bar":
+      return [
+        ...(trace.bar.states ?? []),
+        ...(trace.bar.rows ? [trace.bar.rows] : []),
+      ].flatMap((state) => state.contributors.map((item) => item.sourceId));
     case "bar":
       return trace.mark.row.contributors.map((item) => item.sourceId);
     case "time-bucket":

@@ -12,6 +12,8 @@ import {
   type CompositionDefinition,
   type BandMark,
   type DensityMark,
+  type DonutMark,
+  type WaterfallMark,
   type FrameWindow,
   type InsetFrame,
   type InstanceOverride,
@@ -47,6 +49,13 @@ import { evaluateCalc, formatCalcValue, type CalcResult } from "./calculations";
 import { dodgePositions } from "./labelDodge";
 import { swarmOffsets } from "./swarm";
 import { MISSING, orderedRows } from "./ordering";
+import {
+  donutNodes,
+  donutOrder,
+  waterfallDomain,
+  waterfallNodes,
+  waterfallPlan,
+} from "./partsMarks";
 
 /** The rows a composition draws from. */
 export interface CompositionData {
@@ -185,6 +194,24 @@ export interface GlyphDatum {
     normalize: boolean;
     categoryField: string;
   };
+  /** A waterfall bar; the glyph's value is a step's change or a total's running total. */
+  waterfall?: {
+    kind: "start" | "step" | "subtotal" | "end";
+    mode: "bridge" | "accumulate";
+    stepField: string;
+    /** Each state's value behind a bridge's bar. */
+    states?: { label: string; value: number }[];
+  };
+  /** A donut slice; the glyph's value is its amount. */
+  donut?: {
+    share: number;
+    total: number;
+    categoryField: string;
+    aggregation: "count" | "sum";
+    measureField?: string;
+    /** The categories an Other slice pools. */
+    members?: string[];
+  };
   /** The group's quartiles, for summary marks; the glyph's value is the median. */
   summary?: SummaryStats & {
     groupField: string;
@@ -286,6 +313,8 @@ type ResolvedWaffle = { type: "waffle"; mark: WaffleMark };
 type ResolvedBar = { type: "bar"; mark: BarMark };
 type ResolvedHorizon = { type: "horizon"; mark: HorizonMark; x: NumericScale };
 type ResolvedDensity = { type: "density"; mark: DensityMark; x: NumericScale };
+type ResolvedWaterfall = { type: "waterfall"; mark: WaterfallMark };
+type ResolvedDonut = { type: "donut"; mark: DonutMark };
 type ResolvedMark =
   | ResolvedStrip
   | ResolvedXy
@@ -294,7 +323,9 @@ type ResolvedMark =
   | ResolvedWaffle
   | ResolvedBar
   | ResolvedHorizon
-  | ResolvedDensity;
+  | ResolvedDensity
+  | ResolvedWaterfall
+  | ResolvedDonut;
 
 /** One group of a summary mark in one repeat. */
 interface SummaryGroup {
@@ -329,6 +360,10 @@ export function resolveUnit(
       marks.push({ type: "waffle", mark });
     } else if (mark.type === "bar") {
       marks.push({ type: "bar", mark });
+    } else if (mark.type === "waterfall") {
+      marks.push({ type: "waterfall", mark });
+    } else if (mark.type === "donut") {
+      marks.push({ type: "donut", mark });
     } else if (mark.type === "horizon") {
       const x = scale(mark.xScaleId);
       if (x?.kind === "numeric") marks.push({ type: "horizon", mark, x });
@@ -382,6 +417,21 @@ export function resolveUnit(
     (item): item is ResolvedWaffle => item.type === "waffle"
   );
   const bars = marks.filter((item): item is ResolvedBar => item.type === "bar");
+  const waterfalls = marks.filter(
+    (item): item is ResolvedWaterfall => item.type === "waterfall"
+  );
+  const donuts = marks.filter(
+    (item): item is ResolvedDonut => item.type === "donut"
+  );
+  // Each waterfall's bars per repeat, and one value axis across repeats.
+  const waterfallPlans = waterfalls.map(({ mark }) =>
+    subsets.map((subset) =>
+      waterfallPlan(mark, windowed(subset, unit.window, data), data)
+    )
+  );
+  const waterfallDomains = waterfallPlans.map(waterfallDomain);
+  // Donut categories keep one color order across repeats.
+  const donutOrders = donuts.map(({ mark }) => donutOrder(mark, data));
   const horizons = marks.filter(
     (item): item is ResolvedHorizon => item.type === "horizon"
   );
@@ -421,10 +471,7 @@ export function resolveUnit(
       ))
         longest = Math.max(longest, Math.abs(bar.value));
     const max =
-      mark.max ??
-      scaleLinear().domain([0, longest]).nice().domain()[1] ??
-      1 ??
-      1;
+      mark.max ?? scaleLinear().domain([0, longest]).nice().domain()[1] ?? 1;
     return { mark, domain: [mark.mirror ? -max : 0, max] as [number, number] };
   });
   // A binned waffle's whole values along x, shared across repeats.
@@ -1224,6 +1271,34 @@ export function resolveUnit(
             anchor: "middle",
           })
         );
+    });
+    waterfalls.forEach(({ mark }, markIndex) => {
+      nodes.push(
+        ...waterfallNodes(
+          unit,
+          override?.accent
+            ? { ...mark, up: override.accent, down: override.accent }
+            : mark,
+          subset,
+          waterfallPlans[markIndex]![index]!,
+          waterfallDomains[markIndex]!,
+          frame,
+          definition.artboard.background
+        )
+      );
+    });
+    donuts.forEach(({ mark }, markIndex) => {
+      nodes.push(
+        ...donutNodes(
+          unit,
+          mark,
+          windowed(subset, unit.window, data),
+          donutOrders[markIndex]!,
+          frame,
+          data,
+          definition.artboard.background
+        )
+      );
     });
     bars.forEach(({ mark }, markIndex) => {
       nodes.push(
@@ -3268,6 +3343,13 @@ export function markCategories(
       key: category.key,
       color: mark.colors[category.index % mark.colors.length]!,
     }));
+  if (mark.type === "donut")
+    return [...donutOrder(mark, data)]
+      .filter(([key]) => key !== "")
+      .map(([key, index]) => ({
+        key,
+        color: mark.colors[index % mark.colors.length]!,
+      }));
   if (mark.type === "waffle")
     return stackCategories({ ...mark, aggregation: "count" }, data).map(
       (category) => ({

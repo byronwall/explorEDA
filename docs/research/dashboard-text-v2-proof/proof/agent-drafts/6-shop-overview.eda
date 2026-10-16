@@ -1,0 +1,23 @@
+dashboard "Shop overview"
+
+field Revenue format=currency currency=USD
+filter Region=West,East
+
+metric @orders count title="Orders"
+metric @revenue sum(Revenue) title="Total revenue"
+metric @avg-revenue avg(Revenue) title="Average revenue"
+row Region color=Region title="Revenue by region" {
+  set value=sum(Revenue)
+}
+hist "Delivery Days" bins=24
+line @weekly x="Order Date" y=Revenue series=Channel interval=week display=stacked-area {
+  band x=2024-06-01..2024-08-31 "Summer sale"
+}
+table @orders-table Order,"Order Date",Region,Channel,Revenue
+
+layout {
+  2: orders revenue avg-revenue
+  5: Region Region "Delivery Days"
+  5: weekly weekly
+  6: orders-table
+}

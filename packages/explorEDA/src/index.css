@@ -40,6 +40,10 @@
   --eda-heat-high: oklch(0.43 0.14 257);
   --eda-heat-mid: oklch(0.96 0.004 250);
   --eda-heat-negative: oklch(0.53 0.17 28);
+  /* Waterfall bars: rising steps, falling steps, and start, subtotal, and end totals. */
+  --eda-waterfall-up: oklch(0.52 0.13 160);
+  --eda-waterfall-down: var(--eda-heat-negative);
+  --eda-waterfall-total: oklch(0.45 0.03 257);
   /* Sankey flow opacity: resting, hovered, dimmed, and context under a selection. */
   --eda-flow: 0.48;
   --eda-flow-strong: 0.82;
@@ -103,6 +107,8 @@
   --eda-heat-high: oklch(0.82 0.12 228);
   --eda-heat-mid: oklch(0.26 0.006 250);
   --eda-heat-negative: oklch(0.74 0.15 32);
+  --eda-waterfall-up: oklch(0.72 0.13 160);
+  --eda-waterfall-total: oklch(0.72 0.03 257);
   /* Flows sit on a dark card, so they need more opacity to keep their hue. */
   --eda-flow: 0.66;
   --eda-flow-strong: 0.92;
@@ -859,12 +865,15 @@
   gap: 6px;
   min-width: 0;
 }
+/* Long enough to read a value's place between the ends; it shrinks first
+   when the header is short of room. */
 .eda-heat-legend-ramp {
   flex: 0 1 auto;
-  width: 72px;
+  width: 128px;
   min-width: 24px;
   height: 10px;
   border-radius: 2px;
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--foreground) 8%, transparent);
 }
 /* Short of room, the scale keeps its ends and the metric name goes; the
    panel header names it while a cell is under the pointer. */
@@ -2960,6 +2969,17 @@ html {
     overflow: visible;
     pointer-events: auto;
   }
+  /* An image export reads the header at rest, so a hover or an open menu
+     never narrows the title in the picture. */
+  .eda-panel[data-exporting]:not(.eda-panel-expanded)
+    .eda-panel-header
+    .eda-panel-actions {
+    max-width: 0;
+    overflow: hidden;
+  }
+}
+.eda-panel[data-exporting] .eda-panel-readout {
+  display: none;
 }
 
 .eda-table-toolbar-compact {
@@ -3308,23 +3328,60 @@ html {
    wraps onto the hidden second line instead of being clipped. */
 .eda-summary-reading {
   display: flex;
+  flex: 1 1 0;
   flex-wrap: wrap;
-  align-items: baseline;
+  align-items: center;
   column-gap: 12px;
   min-width: 0;
-  height: 16px;
+  height: 28px;
   overflow: hidden;
-  line-height: 16px;
+  line-height: 14px;
   white-space: nowrap;
 }
+/* The range takes the width it needs, or the whole reading when the cell is
+   narrower. While it fits, each bound's flex basis is its track width and the
+   bounds share one line. Once it does not, the basis turns huge and they
+   stack: the low bound and dash over the high bound. */
 .eda-summary-range {
-  display: grid;
+  display: flex;
   flex: none;
-  grid-template-columns: var(--eda-summary-low, auto) 2ch var(
-      --eda-summary-high,
-      auto
-    );
-  max-width: 100%;
+  flex-wrap: wrap;
+  align-content: center;
+  /* A pixel of slack keeps rounding from tipping a range that fits into the
+     stacked layout. */
+  width: min(100%, calc(var(--eda-summary-range, 100%) + 1px));
+  height: 28px;
+}
+.eda-summary-low,
+.eda-summary-high {
+  --eda-summary-stack: calc((var(--eda-summary-range, 0px) - 100%) * 999);
+  display: flex;
+  flex: 0 1 auto;
+  justify-content: flex-end;
+  min-width: 0;
+}
+.eda-summary-low {
+  flex-basis: max(
+    calc(var(--eda-summary-low, 0px) + 2ch),
+    var(--eda-summary-stack)
+  );
+}
+.eda-summary-low:only-child {
+  flex-basis: max(var(--eda-summary-low, 0px), var(--eda-summary-stack));
+}
+.eda-summary-high {
+  flex-basis: max(var(--eda-summary-high, 0px), var(--eda-summary-stack));
+  /* Once stacked, the high bound lines up under the low bound, not its dash. */
+  padding-right: clamp(
+    0px,
+    calc((100% - var(--eda-summary-range, 0px)) * -999),
+    2ch
+  );
+}
+.eda-summary-bound {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .eda-summary-stat-group {
   display: grid;
@@ -3338,17 +3395,24 @@ html {
   color: var(--muted-foreground);
   font-size: 11px;
 }
-.eda-summary-low,
-.eda-summary-high,
 .eda-summary-stat {
   text-align: right;
 }
+/* Long readings, such as ISO date-times, truncate inside their track. */
+.eda-summary-low,
+.eda-summary-high {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .eda-summary-sep {
+  flex: none;
+  width: 2ch;
   color: var(--muted-foreground);
   text-align: center;
 }
 .eda-summary-label {
-  grid-column: 1 / -1;
+  flex: 1 1 100%;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -3827,6 +3891,16 @@ html {
     flex-basis: auto;
     height: 14px;
   }
+  /* Under the sparkline the reading spans the cell and takes one line, or
+     two when the range stacks. */
+  .eda-summary-reading,
+  .eda-summary-range {
+    height: auto;
+  }
+  .eda-summary-reading {
+    flex: none;
+    align-self: stretch;
+  }
   .eda-summary-table tbody th,
   .eda-summary-table tbody td {
     white-space: normal;
@@ -3991,6 +4065,73 @@ html {
   white-space: nowrap;
   font-size: 11px;
   font-weight: 500;
+  color: var(--muted-foreground);
+}
+/* A chart role's field, such as the color legend's title. It reads as the
+   legend's label and shows a chevron on hover or focus. */
+.eda-role-button {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 3px;
+  min-height: 24px;
+  max-width: 14rem;
+  margin: 0 0 0 -6px;
+  padding: 0 4px 0 6px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted-foreground);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.eda-role-button:hover,
+.eda-role-button[data-state="open"] {
+  border-color: var(--border);
+  background: var(--muted);
+  color: var(--foreground);
+}
+.eda-role-button:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+.eda-role-button .eda-role-field {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.eda-role-button[data-empty] .eda-role-field {
+  font-weight: 400;
+}
+.eda-role-button svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+/* The role button stays at the start of the line, so a preview that swaps
+   a categorical legend for a numeric one never moves the picker. */
+.eda-chart-color-legend:has(.eda-legend-numeric) .eda-role-button {
+  margin-left: -6px;
+}
+.eda-role-picker-scope {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 10px 6px;
+  border-bottom: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--muted-foreground);
+}
+.eda-role-picker-scope > span:first-child {
+  font-weight: 500;
+  color: var(--foreground);
+}
+.eda-role-picker-shared {
+  flex-shrink: 0;
+  font-size: 11px;
   color: var(--muted-foreground);
 }
 .eda-legend-items {
@@ -7367,6 +7508,15 @@ td[data-null] {
   letter-spacing: 0.02em;
   text-transform: uppercase;
 }
+.eda-quick-menu-separator {
+  height: 1px;
+  margin: 4px 0;
+  background: var(--border);
+}
+.eda-quick-menu-item:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
 .eda-quick-menu-item {
   display: flex;
   flex-direction: column;
@@ -7503,14 +7653,6 @@ td[data-null] {
 .eda-composition-ramp-stop > div {
   width: 64px;
 }
-.eda-composition-copy-status {
-  margin-top: -4px;
-  color: var(--muted-foreground);
-  font-size: 11px;
-}
-.eda-composition-copy-status[data-state="failed"] {
-  color: var(--destructive);
-}
 
 /* Colors defined inside compositions, listed under the workspace scales. */
 .eda-composition-scales {
@@ -7598,4 +7740,160 @@ td[data-null] {
   border: 1px solid var(--input);
   border-radius: 4px;
   background: none;
+}
+
+/* A dashed rule carries the running total from one waterfall bar to the next. */
+.eda-waterfall-connector {
+  stroke: var(--muted-foreground);
+  stroke-width: 1;
+  stroke-dasharray: 2 2;
+}
+
+/* Step values sit beside their bars and may cross the zero line or a connector. */
+.eda-waterfall-value {
+  fill: var(--foreground);
+  font-size: 11px;
+  paint-order: stroke;
+  stroke: var(--card);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+
+/* A subtotal is a checkpoint on the running total, not another bar. */
+.eda-waterfall-checkpoint line {
+  stroke: var(--eda-waterfall-total);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.eda-waterfall-checkpoint circle {
+  fill: var(--card);
+  stroke: var(--eda-waterfall-total);
+  stroke-width: 2;
+}
+.eda-waterfall-checkpoint[data-selected] circle {
+  fill: var(--eda-waterfall-total);
+}
+.eda-waterfall-checkpoint-value {
+  fill: var(--muted-foreground);
+}
+/* The row behind a checkpoint takes its clicks and shows only on hover or focus. */
+.eda-waterfall-checkpoint-hit {
+  fill: var(--muted);
+  fill-opacity: 0;
+}
+.eda-waterfall-checkpoint-hit:hover,
+.eda-waterfall-checkpoint-hit:focus-visible {
+  fill-opacity: 0.6;
+}
+.eda-waterfall-divider {
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+/* Start and end totals: a hairline from zero to a filled dot. */
+.eda-waterfall-total line {
+  stroke: var(--eda-waterfall-total);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.eda-waterfall-total circle {
+  fill: var(--eda-waterfall-total);
+  stroke: var(--card);
+  stroke-width: 1.5;
+}
+.eda-waterfall-total[data-selected] circle {
+  stroke: var(--foreground);
+  stroke-width: 2;
+}
+
+/* Donut: the ring and its legend, side by side or stacked on narrow charts. */
+.eda-donut {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 12px;
+}
+.eda-donut-side {
+  flex-direction: row;
+  justify-content: center;
+}
+.eda-donut-stacked {
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 8px;
+}
+.eda-donut svg {
+  flex: none;
+}
+/* Under the ring, entries wrap into rows so the ring keeps its size. */
+.eda-donut-stacked .eda-donut-legend {
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  min-height: 0;
+}
+.eda-donut-stacked .eda-donut-legend-item {
+  width: auto;
+}
+.eda-donut-slice {
+  stroke: var(--card);
+  stroke-width: 1;
+  transition: opacity 120ms;
+}
+.eda-donut-slice[data-selected] {
+  stroke: var(--foreground);
+  stroke-width: 1.5;
+}
+.eda-donut-total {
+  fill: var(--foreground);
+  font-weight: 600;
+}
+.eda-donut-measure {
+  fill: var(--muted-foreground);
+  font-size: 11px;
+}
+.eda-donut-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  max-height: 100%;
+  overflow: auto;
+}
+.eda-donut-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  text-align: left;
+}
+.eda-donut-legend-item:hover,
+.eda-donut-legend-item:focus-visible {
+  background: var(--muted);
+}
+.eda-donut-legend-item[data-dimmed] {
+  opacity: 0.45;
+}
+.eda-donut-legend-item[aria-pressed="true"] {
+  font-weight: 600;
+}
+.eda-donut-swatch {
+  width: 10px;
+  height: 10px;
+  flex: none;
+  border-radius: 2px;
+}
+.eda-donut-legend-label {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.eda-donut-legend-share {
+  color: var(--muted-foreground);
+  font-variant-numeric: tabular-nums;
 }

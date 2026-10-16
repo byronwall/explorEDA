@@ -1,0 +1,23 @@
+dashboard "Shop overview"
+field Revenue format=currency currency=USD
+
+group @byRegion sum(Revenue) by=Region
+
+metric @orderCount count
+metric @totalRevenue sum(Revenue)
+metric @avgRevenue avg(Revenue)
+row Region group=byRegion color=Region
+hist @delivery "Delivery Days" bins=24
+line @weekly x="Order Date" time.interval=week time.aggregation=sum time.measureField=Revenue time.splitField=Channel time.display=stacked-area {
+  band x=2024-06-01..2024-08-31 "Summer sale"
+}
+table @orders Order,"Order Date",Region,Channel,Revenue
+
+filter Region=West,East
+
+layout {
+  2: orderCount totalRevenue avgRevenue
+  4: Region delivery
+  4: weekly
+  4: orders
+}
