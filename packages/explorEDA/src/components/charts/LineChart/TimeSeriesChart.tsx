@@ -31,6 +31,8 @@ import {
 } from "./timeSeriesPlan";
 import { timeSeriesTraceSource } from "./timeSeriesTrace";
 
+const DENSE_PERIODS = 60;
+
 export function TimeSeriesChart({
   settings,
   width,
@@ -210,6 +212,10 @@ export function TimeSeriesChart({
       (!plan.stacked || point.band?.complete) &&
       !point.offScale
   );
+  // Past this many periods per series, a dot on each one hides the line.
+  // The dots stay as hit and keyboard targets and show when active.
+  const denseMarks =
+    marks.length / Math.max(1, plan.series.length) > DENSE_PERIODS;
   const periodText =
     time.interval === "day"
       ? "Daily"
@@ -350,7 +356,16 @@ export function TimeSeriesChart({
                       : point.color
                   }
                   strokeWidth={2}
-                  opacity={point.selected ? 1 : 0.3}
+                  opacity={
+                    denseMarks
+                      ? activeId === point.id ||
+                        (settings.filters.length > 0 && point.selected)
+                        ? 1
+                        : 0
+                      : point.selected
+                        ? 1
+                        : 0.3
+                  }
                   role="button"
                   tabIndex={
                     active?.id === point.id ||

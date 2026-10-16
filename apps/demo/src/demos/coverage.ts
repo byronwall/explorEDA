@@ -1219,6 +1219,49 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId: "income-life-scatter",
+    intent:
+      "Rebuild the income and life composition as a bubble scatter on a log income axis, colored by region, with Country-keyed callouts.",
+    features: {
+      "chart:scatter": "shown",
+      "mode:bubble-scatter": "shown",
+      "chart:row": "shown",
+      "chart:bar": "shown",
+    },
+  },
+  {
+    exampleId: "media-deaths-bar",
+    intent:
+      "Rebuild the media and deaths composition as a 100% bar chart of summed counts by source, split by cause.",
+    features: {
+      "chart:bar": "shown",
+      "mode:stacked-bars": "shown",
+      "chart:row": "shown",
+    },
+  },
+  {
+    exampleId: "du-bois-income-bar",
+    intent:
+      "Rebuild Du Bois's income plate as a 100% bar chart of summed shares by income class, split by spending category.",
+    features: {
+      "chart:bar": "shown",
+      "mode:stacked-bars": "shown",
+      "chart:row": "shown",
+    },
+  },
+  {
+    exampleId: "unemployment-area",
+    intent:
+      "Rebuild the unemployment streamgraph as a monthly summed stacked-area line, split by industry.",
+    features: {
+      "chart:line": "shown",
+      "mode:area": "shown",
+      "mode:calendar-series": "shown",
+      "chart:row": "shown",
+      "chart:bar": "shown",
+    },
+  },
+  {
     exampleId: "covid-tiles",
     intent:
       "Place each state's weekly case-rate path at its cell on a tile grid, on one shared scale.",
