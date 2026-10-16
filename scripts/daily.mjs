@@ -220,7 +220,7 @@ function newPiece(kind, target, options) {
     `Wrote ${files.map(([f]) => `projects/${familyId}/${f}`).join(", ")}`
   );
   console.log(
-    `Registered ${values.id}. Open http://…/daily/${fullSlug} on pnpm dev:agent.`
+    `Registered ${values.id}. Next: write it, declare findings, then pnpm daily schedule, pnpm daily thumbs ${fullSlug}, and pnpm daily check.`
   );
 }
 
