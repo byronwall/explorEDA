@@ -26,14 +26,14 @@ export const WORKFLOWS: readonly Workflow[] = [
     where: "Your computer",
     body: "Turn a folder of CSV and JSON files into a project. Analyses save as text files you can read, diff, and commit.",
     command: "npx exploreda",
-    to: docsPath("project-folders"),
+    to: `${docsPath("project-folders")}#try-it-with-the-sample-project`,
     icon: FolderOpen,
   },
   {
     title: "Read from a database",
     where: "Your computer or a team server",
     body: "Read SQLite, DuckDB, PostgreSQL, MySQL, or SQL Server into a saved copy. It reads again only when you choose Refresh.",
-    to: docsPath("database-sources"),
+    to: `${docsPath("database-sources")}#try-it-with-a-sample-database`,
     icon: Database,
   },
   {

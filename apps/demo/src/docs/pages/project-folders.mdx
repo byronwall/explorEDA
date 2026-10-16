@@ -1,3 +1,14 @@
+## Try it with the sample project
+
+You need [Node.js](https://nodejs.org) 22 or later. In a terminal, in any empty folder:
+
+1. **Copy and open the sample.** Run `npx exploreda --example`. It copies a small shop project into `./exploreda-example` and opens your browser on its **Orders** analysis: 80 orders, with counts, revenue, and charts by region and channel.
+2. **Filter from a chart.** Click **East** in **Orders by region**. Every other chart and the row count narrow to the 22 orders from the East. Click it again to clear the filter.
+3. **Change the analysis.** Choose **Add chart**, pick **Histogram**, and choose **Add to grid**. The sidebar says **Saved to the folder**, and `exploreda-example/orders.eda` now has a `hist` line for the new chart.
+4. **Reopen it.** Stop the server with Ctrl-C and run `npx exploreda --example` again. It opens the same folder, and the new chart is still there.
+
+Run `npx exploreda` in a folder of your own data files to do the same with your data.
+
 ## Open a folder as a project
 
 Run explorEDA in any folder of data files:
@@ -8,15 +19,13 @@ npx exploreda
 
 It starts a server on this computer, opens your browser on the folder, and lists its CSV and JSON files. Choose **Chart** beside a file to start: explorEDA adds the file to the project and opens a new analysis on a summary of its fields and its rows. Every change saves to the folder a moment after you make it, as text files you can read, diff, and commit.
 
-Run `npx exploreda --example` to copy a sample shop project into `./exploreda-example` and open it.
-
-| Option | What it does |
-| --- | --- |
-| `exploreda <folder>` | Opens that folder instead of the current one. |
-| `--port <n>` | Tries this port first (3939 by default), then the next free one. |
-| `--no-open` | Prints the link instead of opening the browser. |
-| `--hidden` | Keeps a new project's text in `.exploreda/project.eda` instead of `exploreda.eda`. |
-| `--example` | Copies the sample project to `./exploreda-example` and opens it. |
+| Option               | What it does                                                                       |
+| -------------------- | ---------------------------------------------------------------------------------- |
+| `exploreda <folder>` | Opens that folder instead of the current one.                                      |
+| `--port <n>`         | Tries this port first (3939 by default), then the next free one.                   |
+| `--no-open`          | Prints the link instead of opening the browser.                                    |
+| `--hidden`           | Keeps a new project's text in `.exploreda/project.eda` instead of `exploreda.eda`. |
+| `--example`          | Copies the sample project to `./exploreda-example` and opens it.                   |
 
 Only this computer can connect. Each run prints a link with its own key, and the server answers only requests that carry it.
 
@@ -67,13 +76,13 @@ param @from From date required
 
 A declaration's head sits on one line. `@name` gives it an ID, `{ }` holds its body, and a value with spaces is quoted. Leave out anything a default supplies.
 
-| Declaration | Form | Defaults |
-| --- | --- | --- |
-| `source` | `source @id ["Name"] [glyph=X] [key=field] path=file { fields }` | With no `field` lines, the fields and their types come from the data, and so does `key=`. The name comes from the ID (`customers` → Customers). |
-| `field` | `field id ["Label"] [string \| number \| boolean \| date]` | The label comes from the ID: `orderId` → Order ID, `flight_date` → Flight date. |
-| `relate` | `relate @id source.field -> source.field [cardinality] ["Name"]` | `many-to-one`. The others are `one-to-one`, `one-to-many`, and `many-to-many`. |
-| `query` | `query @id ["Name"] glyph=X [frame=label] [output=step] { steps }` | The frame is the first source's ID, and the output is the last step. |
-| `param` | `param @id ["Name"] type [required] [pick=source[.labelField]]` | Parameters belong to the project, so any query can read them. |
+| Declaration | Form                                                               | Defaults                                                                                                                                        |
+| ----------- | ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `source`    | `source @id ["Name"] [glyph=X] [key=field] path=file { fields }`   | With no `field` lines, the fields and their types come from the data, and so does `key=`. The name comes from the ID (`customers` → Customers). |
+| `field`     | `field id ["Label"] [string \| number \| boolean \| date]`         | The label comes from the ID: `orderId` → Order ID, `flight_date` → Flight date.                                                                 |
+| `relate`    | `relate @id source.field -> source.field [cardinality] ["Name"]`   | `many-to-one`. The others are `one-to-one`, `one-to-many`, and `many-to-many`.                                                                  |
+| `query`     | `query @id ["Name"] glyph=X [frame=label] [output=step] { steps }` | The frame is the first source's ID, and the output is the last step.                                                                            |
+| `param`     | `param @id ["Name"] type [required] [pick=source[.labelField]]`    | Parameters belong to the project, so any query can read them.                                                                                   |
 
 Every source can also be charted on its own: a source with no query of its name gets one that reads it.
 
@@ -81,14 +90,14 @@ Every source can also be charted on its own: a source with no query of its name 
 
 Each step reads the step before it. Use `from=step` to read another one, and add `@id` to name a step differently.
 
-| Step | Form | What it adds |
-| --- | --- | --- |
-| `source` | `source orders` | The source's rows, with fields named `orders.amount`. |
-| `lookup` | `lookup customer via=order-customer [on=field]` | The one related row's fields, named `customer.name`. `on=` matches with a different field of the rows so far, such as `on=order.customerId` after an earlier lookup. |
-| `expand` | `expand item via=item-order [keep-unmatched]` | One row per related row. `keep-unmatched` keeps a row that has none. |
-| `calc` | `calc fieldId ["Label"] = formula` | A calculated field. The formula runs to the end of the line and refers to fields as `["orders.amount"]`. |
-| `filter` | `filter @id field op value` | Keeps rows that match: `=`, `!=`, `>`, `>=`, `<`, or `<=`, or `field is-null` / `not-null`. `$from` reads a parameter, and both ends of a range are inclusive. |
-| `aggregate` | `aggregate @id [by=field,field] { measures }` | One row per group. Grouped fields keep their names; each measure is a field named by its ID. |
+| Step        | Form                                            | What it adds                                                                                                                                                         |
+| ----------- | ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `source`    | `source orders`                                 | The source's rows, with fields named `orders.amount`.                                                                                                                |
+| `lookup`    | `lookup customer via=order-customer [on=field]` | The one related row's fields, named `customer.name`. `on=` matches with a different field of the rows so far, such as `on=order.customerId` after an earlier lookup. |
+| `expand`    | `expand item via=item-order [keep-unmatched]`   | One row per related row. `keep-unmatched` keeps a row that has none.                                                                                                 |
+| `calc`      | `calc fieldId ["Label"] = formula`              | A calculated field. The formula runs to the end of the line and refers to fields as `["orders.amount"]`.                                                             |
+| `filter`    | `filter @id field op value`                     | Keeps rows that match: `=`, `!=`, `>`, `>=`, `<`, or `<=`, or `field is-null` / `not-null`. `$from` reads a parameter, and both ends of a range are inclusive.       |
+| `aggregate` | `aggregate @id [by=field,field] { measures }`   | One row per group. Grouped fields keep their names; each measure is a field named by its ID.                                                                         |
 
 Measures are `sum @id field`, `average @id field`, and `count @id [field]`, each with an optional `label="…"`. Add `per=field` to count each entity's value once, such as an order's amount on every one of its items.
 

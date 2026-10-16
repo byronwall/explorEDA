@@ -45,7 +45,9 @@ export function ClosingBand() {
             asChild
             className="flex-1 bg-white font-semibold text-brand-navy hover:bg-white/90"
           >
-            <Link to={docsPath("project-folders")}>
+            <Link
+              to={`${docsPath("project-folders")}#try-it-with-the-sample-project`}
+            >
               Start a project
               <ArrowRight aria-hidden="true" />
             </Link>

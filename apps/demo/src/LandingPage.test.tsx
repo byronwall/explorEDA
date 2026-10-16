@@ -157,8 +157,14 @@ describe("LandingPage routing", () => {
       .getAllByRole("link")
       .map((link) => [link.textContent, link.getAttribute("href")]);
     expect(routes).toEqual([
-      ["Work in a project folder", "/docs/project-folders"],
-      ["Read from a database", "/docs/database-sources"],
+      [
+        "Work in a project folder",
+        "/docs/project-folders#try-it-with-the-sample-project",
+      ],
+      [
+        "Read from a database",
+        "/docs/database-sources#try-it-with-a-sample-database",
+      ],
       ["Write a notebook", "/docs/notebooks"],
       ["Run a team server", "/docs/team-server"],
       ["Embed it in React", "/docs/developers#quick-start"],

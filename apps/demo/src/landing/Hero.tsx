@@ -43,7 +43,7 @@ export function Hero({
           </Button>
           <InstallCommand command="npx exploreda" label="command" />
           <Link
-            to={docsPath("project-folders")}
+            to={`${docsPath("project-folders")}#try-it-with-the-sample-project`}
             className="-mt-1 text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline lg:self-start"
           >
             Open a folder as a project

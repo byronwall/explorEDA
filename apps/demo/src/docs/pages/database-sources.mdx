@@ -2,13 +2,14 @@
 
 A [project folder](/docs/project-folders) can read tables and queries from SQLite, DuckDB, PostgreSQL, MySQL, and SQL Server as well as from files. Name the database once as a `connection`, then point each source at a table or a `select` query. explorEDA reads each source once and keeps a copy of its rows in the folder. Opening the project reads that copy, so the database is queried only when you ask it to be.
 
-Try it with a sample shop kept in a SQLite file:
+## Try it with a sample database
 
-```bash
-npx exploreda --example database
-```
+You need [Node.js](https://nodejs.org) 22.16 or later, which can read SQLite files. In a terminal, in any empty folder:
 
-The first time the project opens, its analyses need data. Choose **Read all** to read every source, or **Read** beside one. After that, each source shows how many rows it holds and when it was read. Choose **Refresh** to read it again.
+1. **Copy and open the sample.** Run `npx exploreda --example database`. It copies a shop project into `./exploreda-example-database`, with its orders, customers, and returns in `data/shop.db`.
+2. **Read the data.** The **Orders** analysis says it needs data. Choose **Read orders and customers**, or **Read all** beside **Data**. Each source then shows its rows and when it was read, such as **80 rows · shop · just now**, and the charts appear.
+3. **Reopen without reading.** Stop the server with Ctrl-C and run the command again. The charts open from the copy explorEDA kept, and the database isn't read.
+4. **Read it again.** When the database changes, choose **Refresh** beside a source, or **Refresh all**. The row count, the read time, and the charts update together.
 
 ## Add a database from the app
 
