@@ -8,6 +8,8 @@ last_updated: "2026-10-13"
 
 # Notebook analysis with synchronized definitions
 
+> **Current status (2026-10-15):** notebooks have shipped. Projects list and render `.eda.md` files, and chart and text edits write back to the file. See [Notebooks](../../../apps/demo/src/docs/pages/notebooks.mdx) for current behavior. The text below is the original intent; its notes on what exists today are out of date.
+
 ## My read
 
 Make an analysis readable as a notebook: explanatory text, calculation blocks, and graphics interleaved in one reading column. Each block spans that column. The experience should feel closer to Observable than to a dashboard grid.

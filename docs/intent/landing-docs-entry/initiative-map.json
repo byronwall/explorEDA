@@ -4,11 +4,11 @@
     "title": "Landing and docs entry paths",
     "slug": "landing-docs-entry",
     "scale": "capability",
-    "current_phase": "plan",
+    "current_phase": "execution",
     "last_updated": "2026-10-15",
     "summary": "Act on the 2026-10-15 landing/docs Pro review: lead with linked exploration, expose local, database, notebook, team and React routes, and fix onboarding.",
-    "status": "planned",
-    "next_action": "Commit planning docs and open stacked PR on #430, then start M1 task runs"
+    "status": "active",
+    "next_action": "M2: landing and docs-home routes"
   },
   "artifacts": {
     "intent_brief": {
@@ -240,8 +240,15 @@
         "proof": "Run record in map; docs:check",
         "valid_intermediate_state": "Docs-only PR; landing unchanged",
         "rollback": "Revert the PR; earlier PRs stand alone.",
-        "status": "planned",
-        "evidence": []
+        "status": "completed",
+        "evidence": [
+          "Local folder (CLI --example, source build): pass. Added a histogram; orders.eda gained it; after restarting the CLI the analysis reopened with 8 charts.",
+          "Database (--example database, SQLite): pass. Read all gave Orders 80 rows; inserted O999 into shop.db; Refresh all showed 81 rows.",
+          "Notebook (forecast folder via CLI): prose Edit text wrote only line 9 (pass). Edit block on @demand changed its title but also rewrote the untouched @delta block (reformatted and added series delta lineColor). Fix in M4.",
+          "Team (server --seed-dev): pass. ana (author) added a chart, saved; vic (viewer) saw 8 charts with 'Viewing · your changes aren't saved'. Sample project files remained in team-data/projects/shop.",
+          "First render of a project grid can take several seconds after 'Reading the project folder…'; not a docs failure.",
+          "Claim fixes: database write guards scoped per driver; team network wording names databases; seed wording; docs-home live promise narrowed; status notes on notebook-analysis and database-adapters briefs. docs:check 73 passed."
+        ]
       },
       {
         "id": "M2",

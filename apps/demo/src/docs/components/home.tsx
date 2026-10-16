@@ -97,8 +97,8 @@ export function Hero() {
           </h1>
           <p className="mt-4 max-w-xl text-lg leading-relaxed text-muted-foreground">
             Charts that filter each other, on your own rows. Learn what each
-            view computes and which rows it reads, then try it live on every
-            page.
+            view computes and which rows it reads, and try the chart guides live
+            as you read.
           </p>
           <SearchButton className="mt-7 h-11 w-full max-w-md text-base shadow-sm" />
           <ul className="mt-5 flex flex-wrap gap-2">

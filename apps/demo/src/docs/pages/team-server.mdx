@@ -8,7 +8,7 @@ Try it on your own computer with sample accounts and the sample shop project:
 npx exploreda server --data ./team-data --seed-dev
 ```
 
-It prints the address to open and the sample accounts to sign in with. With `--seed-dev`, accounts last only until the server stops.
+It prints the address to open and the sample accounts to sign in with. With `--seed-dev`, the sample accounts last only until the server stops. The sample project is copied into the data folder and stays there.
 
 To run it for real, leave out `--seed-dev`:
 
@@ -79,7 +79,7 @@ eda.example.com {
 }
 ```
 
-The server makes no calls home. It reaches the network only to download the data addresses that authors give it.
+The server makes no calls home. It reaches the network only to download the data addresses that authors give it and to read the databases that projects connect to.
 
 ### Back up and upgrade
 

@@ -8,6 +8,8 @@ last_updated: "2026-10-13"
 
 # Database sources
 
+> **Current status (2026-10-15):** SQLite, DuckDB, PostgreSQL, MySQL, and SQL Server sources have shipped for the CLI and the team server. See [Database sources](../../../apps/demo/src/docs/pages/database-sources.mdx) for current behavior. The text below is the original intent; its notes on what exists today are out of date.
+
 ## My read
 
 Authors should be able to use their real databases as explorEDA sources, in the same project folders they already use for CSV and JSON. This targets the two server-backed modes together: the `npx exploreda` CLI and the self-hosted Compose server. It ships after self-hosted v1, which stays file-only.
