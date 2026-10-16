@@ -10,6 +10,7 @@ import { DensitySettings } from "./DensitySettings";
 import { RegressionSettings } from "./RegressionSettings";
 import { SurfaceSettings } from "./SurfaceSettings";
 import { PointSizeSetting } from "./PointSizeSetting";
+import { ConnectSettings } from "./ConnectSettings";
 import { ColorScaleControl } from "@/components/colorScales/ColorScaleControl";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
@@ -200,6 +201,13 @@ export function ScatterPlotSettingsPanel({
                 />
               </>
             )}
+            {settings.display !== "hexbin" &&
+              settings.display !== "contour" && (
+                <ConnectSettings
+                  settings={settings}
+                  onSettingsChange={onSettingsChange}
+                />
+              )}
             {showRegression && (
               <RegressionSettings
                 settings={settings}

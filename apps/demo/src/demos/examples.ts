@@ -50,6 +50,10 @@ import {
   mediaDeathsBarDashboard,
   duBoisIncomeBarDashboard,
   unemploymentAreaDashboard,
+  drivingScatterDashboard,
+  taxSlopeScatterDashboard,
+  pewMeaningScatterDashboard,
+  middleClassJobsScatterDashboard,
 } from "./dashboardSettings";
 import { demoSettings } from "@/demos/lorenz";
 import type {
@@ -769,6 +773,10 @@ export const examples: ExampleData[] = [
     icon: Spline,
     data: "/datasets/driving.csv",
     savedData: drivingDashboard,
+    counterpart: {
+      id: "driving-scatter",
+      label: "The same analysis as a built-in scatter",
+    },
   },
   {
     id: "tech-sparklines",
@@ -974,6 +982,10 @@ export const examples: ExampleData[] = [
     icon: Dumbbell,
     data: "/datasets/pew-meaning.csv",
     savedData: pewMeaningDashboard,
+    counterpart: {
+      id: "pew-meaning-scatter",
+      label: "The same analysis as a built-in scatter",
+    },
   },
   {
     id: "income-life",
@@ -1089,6 +1101,10 @@ export const examples: ExampleData[] = [
     icon: TrendingUp,
     data: "/datasets/middle-class-jobs.csv",
     savedData: middleClassJobsDashboard,
+    counterpart: {
+      id: "middle-class-jobs-scatter",
+      label: "The same analysis as a built-in scatter",
+    },
   },
   {
     id: "du-bois-income",
@@ -1119,6 +1135,10 @@ export const examples: ExampleData[] = [
     icon: TrendingUp,
     data: "/datasets/tax-slope.csv",
     savedData: taxSlopeDashboard,
+    counterpart: {
+      id: "tax-slope-scatter",
+      label: "The same analysis as a built-in scatter",
+    },
   },
   {
     id: "titanic-waffle",
@@ -1262,6 +1282,58 @@ export const examples: ExampleData[] = [
       id: "unemployment-stream",
       label: "The authored composition",
     },
+  },
+  {
+    id: "driving-scatter",
+    title: "Driving shifts into reverse, as a connected scatter",
+    description:
+      "Miles driven against the price of gas, 1956 to 2010, as an ordinary scatter with Connect points ordered by Year. The path doubles back whenever driving fell, and a filtered-out year breaks it instead of being skipped.",
+    dataset: { rows: "55 years", fields: 4, source: "Real" },
+    shows: ["Connected points", "Order by a field", "Record callouts"],
+    icon: Spline,
+    data: "/datasets/driving.csv",
+    savedData: drivingScatterDashboard,
+    counterpart: { id: "driving-shifts", label: "The authored composition" },
+  },
+  {
+    id: "tax-slope-scatter",
+    title: "Central government tax revenue, as a slope scatter",
+    description:
+      "Each OECD country's two readings joined by Year into a slope, named at both ends, and colored by whether its share rose or fell. Pick a direction to see only those countries.",
+    dataset: { rows: "68 readings", fields: 6, source: "Real" },
+    shows: [
+      "One path per country",
+      "Labels at both ends",
+      "Color by direction",
+    ],
+    icon: TrendingUp,
+    data: "/datasets/tax-slope.csv",
+    savedData: taxSlopeScatterDashboard,
+    counterpart: { id: "tax-slope", label: "The authored composition" },
+  },
+  {
+    id: "pew-meaning-scatter",
+    title: "What makes life meaningful, by party, as dumbbells",
+    description:
+      "Each topic's two party shares on one percentage scale, joined into a dumbbell by connecting points per Topic. Connected points sit at the center of their row instead of jittering.",
+    dataset: { rows: "14 topic-party shares", fields: 4, source: "Real" },
+    shows: ["Paired dots", "Categorical rows", "Color by party"],
+    icon: Dumbbell,
+    data: "/datasets/pew-meaning.csv",
+    savedData: pewMeaningScatterDashboard,
+    counterpart: { id: "pew-meaning", label: "The authored composition" },
+  },
+  {
+    id: "middle-class-jobs-scatter",
+    title: "The changing nature of middle-class jobs, as slope panels",
+    description:
+      "Every occupation's jobs per 1,000 from 1980 to 2012 as a connected path, one panel per occupation group, colored through a diverging scale from mostly men to mostly women.",
+    dataset: { rows: "134 occupation-years", fields: 8, source: "Synthetic" },
+    shows: ["One path per occupation", "Facets", "Numerical color"],
+    icon: TrendingUp,
+    data: "/datasets/middle-class-jobs.csv",
+    savedData: middleClassJobsScatterDashboard,
+    counterpart: { id: "middle-class-jobs", label: "The authored composition" },
   },
 ];
 

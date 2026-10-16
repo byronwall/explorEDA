@@ -81,6 +81,20 @@ The **Fit** tab draws a regression for each color group in each facet: linear, p
   caption="Points sized by a value, from the bubble scatter example."
 />
 
+## Connected points
+
+Turn on **Connect points** to join points with straight lines in the order of a field, such as Year. The path keeps that order even when it doubles back along X, which a line chart would sort away.
+
+- **Order by** sorts each path. Without a field, rows join in source order.
+- **One path per** draws a path for each value, such as a country or an occupation. With Facets, each panel draws its own paths.
+- **Path labels** names each path at its last point, or at both ends for a slope chart. Labels that would overlap move apart, with a thin leader back to their point.
+- Each segment takes the color of the point it starts from, so a color field carries along the path.
+- A row that another chart's filter removes, or that has no position on an axis, breaks the path instead of being skipped. Rows with no order value join no path.
+- Connected points on a categorical axis sit at the center of their band instead of jittering, so a path over a category axis draws a dumbbell.
+- Alt-click a path to list its rows in order, with each break and its reason. Alt-click a point to trace that row.
+
+See [driving against gas prices](/examples/driving-scatter), [tax revenue as a slope chart](/examples/tax-slope-scatter), [party shares as dumbbells](/examples/pew-meaning-scatter), and [occupations in group panels](/examples/middle-class-jobs-scatter).
+
 ## Annotations
 
 The **Notes** tab adds annotations that save with the chart.

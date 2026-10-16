@@ -6794,3 +6794,162 @@ export const unemploymentAreaDashboard = dashboard(
     ),
   ]
 );
+
+/** Miles driven against gas price, joined year by year. */
+export const drivingScatterDashboard = dashboard("Driving, built in", [
+  {
+    ...scatter(
+      "driving-scatter",
+      "Driving shifts into reverse",
+      "Miles",
+      "Gas",
+      layout(0, 0, 12, 7),
+      ["Miles driven per capita", "Gas price per gallon (2010 $)"]
+    ),
+    pointSize: 4,
+    pointOpacity: 0.9,
+    connect: { orderField: "Year" },
+    annotations: [
+      ...[1956, 1974, 1980, 1990, 2000, 2010].map((year) => ({
+        id: `driving-year-${year}`,
+        type: "callout" as const,
+        text: String(year),
+        attach: {
+          kind: "record" as const,
+          keyFields: ["Year"],
+          key: [year],
+        },
+        offset: { dx: 14, dy: -16 },
+      })),
+    ],
+  },
+  histogram("driving-scatter-years", "Years", "Year", layout(0, 7, 12, 4)),
+]);
+
+/** Each country's two tax readings joined as a slope. */
+export const taxSlopeScatterDashboard = dashboard(
+  "Tax revenue slope, built in",
+  [
+    {
+      ...scatter(
+        "tax-slope-scatter",
+        "Central government tax revenue, 2000 and 2023",
+        "Year",
+        "Tax revenue",
+        layout(0, 0, 8, 10),
+        ["Year", "Tax revenue (% of GDP)"],
+        "Direction",
+        "tax-direction"
+      ),
+      pointSize: 3,
+      pointOpacity: 0.9,
+      connect: { orderField: "Year", groupField: "Country", labels: "both" },
+    },
+    row(
+      "tax-slope-direction",
+      "Countries by direction",
+      "Direction",
+      layout(8, 0, 4, 3),
+      "tax-direction"
+    ),
+    row("tax-slope-countries", "Countries", "Country", layout(8, 3, 4, 7)),
+  ],
+  [
+    mappedScale(
+      "tax-direction",
+      "Direction",
+      ["Rose", "Fell"],
+      ["#c4553a", "#3b6ea8"]
+    ),
+  ]
+);
+
+/** Each topic's two party shares as a dumbbell row. */
+export const pewMeaningScatterDashboard = dashboard(
+  "Life's meaning by party, built in",
+  [
+    {
+      ...scatter(
+        "pew-scatter",
+        "What makes life meaningful, by party",
+        "Share",
+        "Topic",
+        layout(0, 0, 12, 6),
+        ["Share mentioning the topic (%)", ""],
+        "Party",
+        "pew-party"
+      ),
+      pointSize: 6,
+      pointOpacity: 1,
+      margin: { top: 16, right: 24, bottom: 44, left: 200 },
+      connect: { orderField: "Party", groupField: "Topic" },
+    },
+    row(
+      "pew-scatter-parties",
+      "Rows by party",
+      "Party",
+      layout(0, 6, 6, 4),
+      "pew-party"
+    ),
+    row("pew-scatter-topics", "Rows by topic", "Topic", layout(6, 6, 6, 4)),
+  ],
+  [
+    mappedScale(
+      "pew-party",
+      "Party",
+      ["Dem/Lean Dem", "Rep/Lean Rep"],
+      ["#3b6ea8", "#c4553a"]
+    ),
+  ]
+);
+
+/** Every occupation's change as a slope, one panel per group. */
+export const middleClassJobsScatterDashboard = dashboard(
+  "Middle-class jobs, built in",
+  [
+    {
+      ...scatter(
+        "jobs-scatter",
+        "The changing nature of middle-class jobs",
+        "Year",
+        "Jobs per 1000",
+        layout(0, 0, 12, 10),
+        ["Year", "Jobs per 1,000"],
+        "Women minus men",
+        "jobs-gender"
+      ),
+      pointSize: 3,
+      pointOpacity: 0.9,
+      connect: { orderField: "Year", groupField: "Occupation" },
+      facet: {
+        enabled: true,
+        type: "wrap",
+        rowVariable: "Group",
+        columnCount: 5,
+      },
+    },
+    row(
+      "jobs-scatter-groups",
+      "Occupations by group",
+      "Group",
+      layout(0, 10, 12, 5)
+    ),
+  ],
+  [
+    {
+      id: "jobs-gender",
+      name: "Women minus men",
+      sourceField: "Women minus men",
+      type: "numerical",
+      palette: "RdBu",
+      min: -80,
+      max: 80,
+      midpoint: 0,
+    },
+  ]
+);
+// Two readings per country: Year reads as two bands, not a number line.
+taxSlopeScatterDashboard.fieldSettings = { Year: { type: "categorical" } };
+middleClassJobsScatterDashboard.fieldSettings = {
+  Year: { type: "categorical" },
+};

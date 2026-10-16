@@ -23,6 +23,7 @@ import type { TimeSeriesTrace } from "../LineChart/timeSeriesTrace";
 import type { ScatterTrace } from "../ScatterPlot/scatterTrace";
 import type { DensityTrace } from "../ScatterPlot/densityPlan";
 import type { FitTrace } from "../ScatterPlot/FitTraceBody";
+import type { ConnectionTrace } from "../ScatterPlot/ConnectionTraceBody";
 import type { MarginalTrace } from "../ScatterPlot/marginalPlan";
 import type { HexTrace } from "../ScatterPlot/hexPlan";
 import type { ContourTrace } from "../ScatterPlot/contourPlan";
@@ -117,6 +118,7 @@ export type ChartTrace =
   | MapTrace
   | DensityTrace
   | FitTrace
+  | ConnectionTrace
   | MarginalTrace
   | HexTrace
   | ContourTrace

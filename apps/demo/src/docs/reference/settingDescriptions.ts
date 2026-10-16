@@ -333,6 +333,8 @@ export const CHART_SETTINGS: Readonly<
     summary: "Shows the paired summary line: correlation and pair count.",
     marginals:
       "X and Y histograms beside the plot, with their bin count. Absent when off.",
+    connect:
+      "Joins points with straight lines: ordered by a field (or row order), one path per group value, with names at the end or both ends. A row a filter removes, or with no position, breaks the path. Absent when off.",
   },
   bar: {
     field: "Field to count by category, or to bin when it is numeric.",

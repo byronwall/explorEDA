@@ -50,6 +50,8 @@ export function useScatterData(
       yData: column(settings.yField),
       colorData: column(settings.colorField),
       sizeData: column(settings.sizeField),
+      orderData: column(settings.connect?.orderField),
+      groupData: column(settings.connect?.groupField),
       xType: profileType(settings.xField),
       yType: profileType(settings.yField),
       facetRowData: settings.facet.enabled
@@ -93,6 +95,8 @@ export function useScatterData(
     settings.yField,
     settings.colorField,
     settings.sizeField,
+    settings.connect?.orderField,
+    settings.connect?.groupField,
     settings.facet,
     settings.localFilters,
     facetIds,

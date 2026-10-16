@@ -1262,6 +1262,43 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId: "driving-scatter",
+    intent:
+      "Join a scatter's points in Year order so the path keeps every reversal along the X axis.",
+    features: { "chart:scatter": "shown", "chart:bar": "shown" },
+  },
+  {
+    exampleId: "tax-slope-scatter",
+    intent:
+      "Draw a slope chart as a connected scatter: one path per country, named at both ends.",
+    features: {
+      "chart:scatter": "shown",
+      "chart:row": "shown",
+      "color:categorical": "shown",
+    },
+  },
+  {
+    exampleId: "pew-meaning-scatter",
+    intent:
+      "Draw dumbbell rows as a connected scatter over a categorical Y axis.",
+    features: {
+      "chart:scatter": "shown",
+      "chart:row": "shown",
+      "scale:band": "shown",
+    },
+  },
+  {
+    exampleId: "middle-class-jobs-scatter",
+    intent:
+      "Draw one slope per occupation in each group's facet, colored on a diverging numerical scale.",
+    features: {
+      "chart:scatter": "shown",
+      "chart:row": "shown",
+      "facet:wrap": "shown",
+      "color:numerical": "shown",
+    },
+  },
+  {
     exampleId: "covid-tiles",
     intent:
       "Place each state's weekly case-rate path at its cell on a tile grid, on one shared scale.",

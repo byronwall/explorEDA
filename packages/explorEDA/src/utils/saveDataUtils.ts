@@ -474,6 +474,16 @@ function isChart(value: unknown): boolean {
               (flag) => flag === undefined || typeof flag === "boolean"
             ))) &&
         (value.summary === undefined || typeof value.summary === "boolean") &&
+        (value.connect === undefined ||
+          (isRecord(value.connect) &&
+            [value.connect.orderField, value.connect.groupField].every(
+              (field) =>
+                field === undefined ||
+                (typeof field === "string" && field.length > 0)
+            ) &&
+            (value.connect.labels === undefined ||
+              value.connect.labels === "end" ||
+              value.connect.labels === "both"))) &&
         (value.marginals === undefined ||
           (isRecord(value.marginals) &&
             (value.marginals.bins === undefined ||
