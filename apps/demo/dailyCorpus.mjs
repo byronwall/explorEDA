@@ -2,7 +2,7 @@
 // names. Everything else the site needs (paths, chart types, related pieces,
 // table sizes, static pages, the sitemap) is derived here, so an author edits
 // `catalog.json` and the piece's own files and nothing else.
-import { readFile, mkdir, writeFile } from "node:fs/promises";
+import { access, readFile, mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import MarkdownIt from "markdown-it";
 import { CORPUS_URL, SITE, corpusLinks } from "./dailyLinks.mjs";
@@ -225,8 +225,14 @@ export async function buildIndex(corpusDir) {
     catalog.map(async (entry) => {
       const folder = `projects/${entry.family}`;
       const text = await readText(path.join(corpusDir, folder, entry.entry));
+      const thumb = `thumbs/${entry.slug}.jpg`;
+      const hasThumb = await access(path.join(corpusDir, thumb)).then(
+        () => true,
+        () => false
+      );
       return {
         ...entry,
+        ...(hasThumb && { thumb }),
         entryPath: `${folder}/${entry.entry}`,
         projectPath: `${folder}/exploreda.eda`,
         ...(entry.companion && {

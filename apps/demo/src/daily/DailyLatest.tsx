@@ -1,13 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import {
-  dailyPath,
-  formatDay,
-  kindLabels,
-  publishedEntries,
-  type DailyEntry,
-} from "./corpus";
+import { publishedEntries, type DailyEntry } from "./corpus";
+import { DailyCard } from "./DailyCard";
 import { useDailyCatalog } from "./useDailyCatalog";
 
 type LatestProps = {
@@ -36,7 +31,7 @@ export function DailyLatest(props: LatestProps) {
   }, []);
   return (
     // Reserve the list's height so it doesn't push the page when it loads.
-    <div ref={ref} style={{ minHeight: (props.count ?? 4) * 69 }}>
+    <div ref={ref} className="min-h-72">
       {near && <LatestList {...props} />}
     </div>
   );
@@ -49,22 +44,11 @@ function LatestList({ count = 4, filter }: LatestProps) {
     .filter((entry) => !filter || filter(entry))
     .slice(0, count);
   return (
-    <ul className="divide-y divide-border border-y border-border">
+    <div className="grid grid-cols-1 gap-x-5 gap-y-7 sm:grid-cols-2 lg:grid-cols-4">
       {entries.map((entry) => (
-        <li key={entry.id} className="relative py-3">
-          <p className="text-xs tabular-nums text-muted-foreground">
-            {formatDay(entry.published)} · {kindLabels[entry.kind]} ·{" "}
-            {entry.industry}
-          </p>
-          <Link
-            to={dailyPath(entry)}
-            className="mt-0.5 block font-medium leading-snug text-brand-navy after:absolute after:inset-0 hover:text-site-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          >
-            {entry.title}
-          </Link>
-        </li>
+        <DailyCard key={entry.id} entry={entry} showQuestion={false} />
       ))}
-    </ul>
+    </div>
   );
 }
 

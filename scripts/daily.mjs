@@ -13,6 +13,8 @@
 //   schedule                 give each piece without a date the next free day,
 //                            ordered so neighboring days differ; --reseed
 //                            reorders everything to end on --end (default today)
+//   thumbs [slug...]         capture the top of each piece's lead graphic as a
+//                            JPEG in daily-viz/thumbs/ (all pieces by default)
 //   review <slug>...         screenshot pieces at 1280 px and tile them into
 //                            tmp/daily-review.png, to look over a batch at once
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -236,6 +238,58 @@ function schedule({ reseed, end }) {
   );
 }
 
+/** The element whose top shows a piece best: a notebook's first chart, a
+ * composition's artboard, or a dashboard's grid. */
+const LEAD = {
+  notebook: ".eda-notebook .eda-panel",
+  composition: ".react-grid-item .eda-chart-content",
+  dashboard: ".react-grid-layout",
+};
+
+async function thumbs(slugs) {
+  const { chromium } = await import("playwright");
+  const { ensureDevServer } = await import("./dev.mjs");
+  const base = await ensureDevServer({ quiet: true });
+  const catalog = readJson(catalogFile);
+  const targets = slugs.length
+    ? catalog.filter((entry) => slugs.includes(entry.slug))
+    : catalog;
+  const folder = path.join(corpus, "thumbs");
+  mkdirSync(folder, { recursive: true });
+  const browser = await chromium.launch();
+  // Up to 960 CSS pixels wide at two-thirds scale: 640-pixel images.
+  const context = await browser.newContext({
+    viewport: { width: 1280, height: 1200 },
+    deviceScaleFactor: 2 / 3,
+    reducedMotion: "reduce",
+  });
+  const page = await context.newPage();
+  for (const entry of targets) {
+    await page.goto(new URL(`/daily/${entry.slug}`, base).href);
+    const lead = page.locator(LEAD[entry.kind]).first();
+    await lead.waitFor({ timeout: 30_000 });
+    await page.waitForLoadState("networkidle");
+    await page.waitForTimeout(800);
+    await lead.scrollIntoViewIfNeeded();
+    const box = await lead.boundingBox();
+    const width = Math.min(960, box.width);
+    await page.screenshot({
+      path: path.join(folder, `${entry.slug}.jpg`),
+      type: "jpeg",
+      quality: 72,
+      clip: {
+        x: box.x,
+        y: box.y,
+        width,
+        // Never past the element: cards crop the image to fit.
+        height: Math.min(box.height, width * 0.75),
+      },
+    });
+    console.log(`thumbs/${entry.slug}.jpg`);
+  }
+  await browser.close();
+}
+
 async function review(slugs) {
   if (!slugs.length) fail("Usage: pnpm daily review <slug>...");
   const shots = slugs.map((slug) => {
@@ -292,6 +346,7 @@ else if (command === "family") family(rest[0], rest.slice(1));
 else if (command === "new") newPiece(rest[0], rest[1], values);
 else if (command === "review") await review(rest);
 else if (command === "schedule") schedule(values);
+else if (command === "thumbs") await thumbs(rest);
 else if (command === "check")
   execFileSync(
     "pnpm",

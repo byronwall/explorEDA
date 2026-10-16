@@ -56,7 +56,7 @@ export function SiteNav({ current }: { current?: "examples" | "daily" }) {
         <Link className={`${navLinkClass} hidden sm:block`} to="/#integration">
           Embed
         </Link>
-        <a className={navLinkClass} href={REPO_URL}>
+        <a className={`${navLinkClass} hidden sm:block`} href={REPO_URL}>
           GitHub
         </a>
         <ThemeToggle theme={theme} onToggle={toggle} />

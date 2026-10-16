@@ -139,6 +139,13 @@ describe("daily visualization corpus", () => {
     }
   });
 
+  it("has a thumbnail for every piece (pnpm daily thumbs)", () => {
+    const missing = index.entries
+      .filter((entry) => !entry.thumb)
+      .map((entry) => entry.slug);
+    expect(missing).toEqual([]);
+  });
+
   it("derives chart types, related pieces, and table sizes", () => {
     const signed = index.entries.find(
       (entry) => entry.id === "nb-ercot-signed-error"
