@@ -13,7 +13,7 @@ export function SectionHeading({
     <div className="max-w-3xl">
       <h2
         id={id}
-        className="text-3xl font-bold tracking-[-0.025em] text-brand-navy text-balance sm:text-4xl"
+        className="text-3xl font-bold tracking-[-0.025em] text-site-ink text-balance sm:text-4xl"
       >
         {heading}
       </h2>

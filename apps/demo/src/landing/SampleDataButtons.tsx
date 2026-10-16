@@ -106,12 +106,12 @@ export function SampleDataButtons({
               type="button"
               disabled={loading !== null}
               onClick={() => void load(sample)}
-              className="flex w-full items-baseline justify-between gap-3 rounded-sm py-1 text-left text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-60 [&:hover>span:first-child]:text-brand-navy"
+              className="group flex w-full items-baseline gap-2 rounded-sm py-1 text-left text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-60"
             >
-              <span className="font-medium text-site-accent transition-colors">
+              <span className="font-medium text-site-accent transition-colors duration-150 group-hover:text-site-ink group-disabled:text-site-accent">
                 {loading === sample.id ? "Loading…" : sample.label}
               </span>
-              <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
+              <span className="shrink-0 text-xs tabular-nums text-muted-foreground transition-colors duration-150 group-hover:text-foreground group-disabled:text-muted-foreground">
                 {sample.detail}
               </span>
             </button>

@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, FileJson, Upload } from "lucide-react";
+import { ArrowRight, FileJson } from "lucide-react";
 import { useRef, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { WORKFLOWS } from "./workflows";
@@ -35,9 +35,8 @@ export function StartSection({
         <div className="min-w-0">
           <h2
             id="your-data-heading"
-            className="flex items-center gap-2 text-2xl font-bold tracking-[-0.02em] text-brand-navy"
+            className="text-2xl font-bold tracking-[-0.02em] text-site-ink"
           >
-            <Upload aria-hidden="true" className="size-5 text-site-accent" />
             Open your own data
           </h2>
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
@@ -51,7 +50,7 @@ export function StartSection({
             <button
               type="button"
               onClick={() => dialog.current?.showModal()}
-              className="inline-flex items-center gap-1 font-medium text-site-accent transition-colors hover:text-brand-navy focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="inline-flex items-center gap-1 rounded-sm font-medium text-site-accent transition-colors duration-150 hover:text-site-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               <FileJson aria-hidden="true" className="size-3.5" />
               Reopen it from JSON
@@ -74,7 +73,7 @@ export function StartSection({
         <div className="min-w-0">
           <h2
             id="workflows-heading"
-            className="text-2xl font-bold tracking-[-0.02em] text-brand-navy"
+            className="text-2xl font-bold tracking-[-0.02em] text-site-ink"
           >
             Run it where your data lives
           </h2>
@@ -90,7 +89,7 @@ export function StartSection({
               ({ title, where, body, command, to, icon: Icon }) => (
                 <li
                   key={title}
-                  className="group relative grid grid-cols-[1.25rem_minmax(0,1fr)_1rem] gap-x-3 py-3.5 transition-colors"
+                  className="group relative grid grid-cols-[1.25rem_minmax(0,1fr)_1rem] gap-x-3 rounded-sm py-3.5 has-[a:focus-visible]:ring-2 has-[a:focus-visible]:ring-ring"
                 >
                   <Icon
                     aria-hidden="true"
@@ -98,10 +97,10 @@ export function StartSection({
                   />
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-baseline gap-x-2">
-                      <h3 className="font-semibold text-brand-navy transition-colors group-hover:text-site-accent">
+                      <h3 className="font-semibold text-site-ink transition-colors duration-150 group-hover:text-site-accent">
                         <Link
                           to={to}
-                          className="after:absolute after:inset-0 after:content-[''] focus-visible:outline-none group-focus-within:underline"
+                          className="after:absolute after:inset-0 after:content-[''] focus-visible:outline-none"
                         >
                           {title}
                         </Link>

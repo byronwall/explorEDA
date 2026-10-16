@@ -1,6 +1,7 @@
 import { Check, Copy } from "lucide-react";
 import { Highlight, themes } from "prism-react-renderer";
 import { useState, type ReactNode } from "react";
+import { useRootIsDark } from "../docs/components/theme";
 
 export function CopyButton({
   text,
@@ -36,8 +37,13 @@ export function CopyButton({
 }
 
 function HighlightedCode({ code }: { code: string }) {
+  const dark = useRootIsDark();
   return (
-    <Highlight code={code} language="tsx" theme={themes.github}>
+    <Highlight
+      code={code}
+      language="tsx"
+      theme={dark ? themes.vsDark : themes.github}
+    >
       {({ tokens, getLineProps, getTokenProps }) => (
         <code>
           {tokens.map((line, lineIndex) => (
@@ -129,7 +135,7 @@ export function InstallCommand({
       className={
         dark
           ? "inline-flex items-center justify-between gap-3 rounded-lg border border-band-border bg-white/5 py-1.5 pl-4 pr-1.5"
-          : "inline-flex items-center justify-between gap-3 rounded-lg border border-border bg-card py-1.5 pl-4 pr-1.5 shadow-sm"
+          : "inline-flex items-center justify-between gap-3 rounded-lg border border-border bg-card py-1.5 pl-4 pr-1.5"
       }
     >
       <code className="font-mono text-sm">

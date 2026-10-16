@@ -599,14 +599,14 @@ export function LandingPage() {
                                 : undefined
                             }
                             placeholder="Paste full analysis JSON here"
-                            className="mt-3 min-h-40 w-full rounded-md border border-input bg-background p-3 font-mono text-xs"
+                            className="mt-3 max-h-[50vh] min-h-40 w-full resize-y rounded-md border border-input bg-background p-3 font-mono text-xs transition-[border-color,box-shadow] duration-150 focus-visible:border-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
                           />
                           {analysisJsonError && (
                             <p
                               id="analysis-json-error"
                               role="alert"
                               aria-live="assertive"
-                              className="mt-2 rounded-md border border-destructive/50 bg-destructive/10 p-2 text-sm text-destructive"
+                              className="mt-2 text-sm text-destructive"
                             >
                               {analysisJsonError}
                             </p>

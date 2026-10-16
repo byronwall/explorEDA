@@ -13,7 +13,7 @@ export function LandingFooter() {
         <img
           src="/brand/wordmark.svg"
           alt="explorEDA"
-          className="inline h-4 w-auto align-[-2px]"
+          className="inline h-4 w-auto align-[-2px] dark:brightness-0 dark:invert"
         />{" "}
         · Linked charts for exploring data, in your browser, on your computer,
         or on your team's server
@@ -23,7 +23,7 @@ export function LandingFooter() {
           <a
             key={link.label}
             href={link.href}
-            className="underline-offset-4 hover:text-foreground hover:underline"
+            className="rounded-sm underline-offset-4 transition-colors duration-150 hover:text-foreground hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             {link.label}
           </a>

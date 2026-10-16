@@ -38,10 +38,6 @@ export function Hero() {
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 opacity-60 [background-image:radial-gradient(color-mix(in_oklab,var(--foreground)_14%,transparent)_1px,transparent_1px)] [background-size:18px_18px] [mask-image:linear-gradient(to_bottom_right,black,transparent_70%)]"
       />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-24 -top-24 size-96 rounded-full bg-docs-accent/15 blur-3xl"
-      />
       <div className="relative grid items-start gap-x-10 gap-y-8 p-6 sm:p-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
         <div>
           <h1
@@ -57,14 +53,14 @@ export function Hero() {
             view computes and which rows it reads, and try the chart guides live
             as you read.
           </p>
-          <ul className="mt-6 flex flex-wrap gap-2">
+          <ul className="mt-6 flex flex-wrap gap-x-6 gap-y-2">
             {START_LINKS.map(({ to, label, icon: Icon }) => (
               <li key={label}>
                 <Link
                   to={to}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:border-docs-accent/50 hover:text-docs-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className="inline-flex items-center gap-1.5 rounded-sm text-sm font-medium text-docs-accent underline-offset-4 transition-colors duration-150 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
-                  <Icon aria-hidden="true" className="size-3.5" />
+                  <Icon aria-hidden="true" className="size-4" />
                   {label}
                 </Link>
               </li>
@@ -91,8 +87,10 @@ function PickCard({
   const gestures = page.chartType ? GLANCES[page.chartType]?.gestures : [];
   return (
     <article className={cn(cardLinkClass, "flex flex-col overflow-hidden")}>
-      <div className="relative aspect-[16/9] overflow-hidden border-b border-border bg-muted/60">
-        {page.thumbnail && !thumbMissing ? (
+      {/* Without a live shot (a dev server that hasn't made them), the card
+          is text only rather than a grey placeholder. */}
+      {page.thumbnail && !thumbMissing && (
+        <div className="aspect-[16/9] overflow-hidden border-b border-border bg-muted/60">
           <img
             src={liveShotPath(page.thumbnail)}
             alt=""
@@ -100,23 +98,22 @@ function PickCard({
             onError={() => setThumbMissing(true)}
             className="h-full w-full object-cover object-left-top transition-transform duration-300 group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
           />
-        ) : (
-          <div className="flex h-full items-center justify-center">
-            <Icon aria-hidden="true" className="size-10 text-docs-accent/30" />
-          </div>
-        )}
-        {best && (
-          <span className="absolute left-3 top-3 rounded-full bg-docs-accent px-2.5 py-0.5 text-xs font-semibold text-docs-accent-foreground shadow-sm">
-            Best fit
-          </span>
-        )}
-      </div>
+        </div>
+      )}
       <div className="flex flex-1 flex-col p-4">
-        <h3 className="flex items-center gap-2 font-semibold">
-          <Icon aria-hidden="true" className="size-4 text-docs-accent" />
+        <h3 className="flex items-baseline gap-2 font-semibold">
+          <Icon
+            aria-hidden="true"
+            className="size-4 shrink-0 translate-y-0.5 text-docs-accent"
+          />
           <Link className={stretchedLinkClass} to={docsPath(page.topic)}>
             {page.title}
           </Link>
+          {best && (
+            <span className="ml-auto shrink-0 text-xs font-semibold text-docs-accent">
+              Best fit
+            </span>
+          )}
         </h3>
         <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
           {why}
@@ -280,7 +277,7 @@ export function ChartChooser() {
         that suit it.
         <Link
           to={docsPath("fields")}
-          className="inline-flex items-center gap-0.5 font-medium text-docs-accent hover:underline"
+          className="inline-flex items-center gap-0.5 rounded-sm font-medium text-docs-accent underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           Fields
           <ArrowRight aria-hidden="true" className="size-3.5" />

@@ -21,7 +21,7 @@ export function Hero({
 
       <div className="grid gap-6 pb-8 pt-8 sm:pt-10 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end lg:gap-12">
         <div>
-          <h1 className="text-[2.5rem] font-bold leading-[1.04] tracking-[-0.035em] text-brand-navy text-balance sm:text-5xl lg:text-[3.25rem]">
+          <h1 className="text-[2.5rem] font-bold leading-[1.04] tracking-[-0.035em] text-site-ink text-balance sm:text-5xl lg:text-[3.25rem]">
             Explore data with charts that filter each other
           </h1>
           <p className="mt-4 max-w-[62ch] text-base leading-relaxed text-muted-foreground sm:text-lg">
@@ -44,14 +44,14 @@ export function Hero({
           <InstallCommand command="npx exploreda" label="command" />
           <Link
             to={`${docsPath("project-folders")}#try-it-with-the-sample-project`}
-            className="-mt-1 text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline lg:self-start"
+            className="-mt-1 rounded-sm text-sm text-muted-foreground underline-offset-4 transition-colors duration-150 hover:text-foreground hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring lg:self-start"
           >
             Open a folder as a project
           </Link>
           {canResume && (
             <Link
               to={VIEWER_PATH}
-              className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline lg:self-start"
+              className="rounded-sm text-sm text-muted-foreground underline-offset-4 transition-colors duration-150 hover:text-foreground hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring lg:self-start"
             >
               or reopen your last analysis
             </Link>
