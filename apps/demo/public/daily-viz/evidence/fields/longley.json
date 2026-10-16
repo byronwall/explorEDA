@@ -1,0 +1,197 @@
+{
+  "r": {
+    "source_id": "r",
+    "path": "projects/longley/data/r.csv",
+    "row_count": 16,
+    "grain": "one historical US annual observation",
+    "key": "id",
+    "fields": [
+      {
+        "name": "id",
+        "source_field": "r.id",
+        "type": "string",
+        "unit": "identifier",
+        "missing_count": 0,
+        "valid_count": 16,
+        "description": "id; identifier"
+      },
+      {
+        "name": "employment",
+        "source_field": "r.employment",
+        "type": "number",
+        "unit": "source employment units",
+        "missing_count": 0,
+        "valid_count": 16,
+        "description": "employment; source employment units"
+      },
+      {
+        "name": "deflator",
+        "source_field": "r.deflator",
+        "type": "number",
+        "unit": "source GNP deflator index",
+        "missing_count": 0,
+        "valid_count": 16,
+        "description": "deflator; source GNP deflator index"
+      },
+      {
+        "name": "gnp",
+        "source_field": "r.gnp",
+        "type": "number",
+        "unit": "source nominal GNP units",
+        "missing_count": 0,
+        "valid_count": 16,
+        "description": "gnp; source nominal GNP units"
+      },
+      {
+        "name": "unemployed",
+        "source_field": "r.unemployed",
+        "type": "number",
+        "unit": "source unemployment-count units",
+        "missing_count": 0,
+        "valid_count": 16,
+        "description": "unemployed; source unemployment-count units"
+      },
+      {
+        "name": "armed",
+        "source_field": "r.armed",
+        "type": "number",
+        "unit": "source armed-forces-count units",
+        "missing_count": 0,
+        "valid_count": 16,
+        "description": "armed; source armed-forces-count units"
+      },
+      {
+        "name": "population",
+        "source_field": "r.population",
+        "type": "number",
+        "unit": "source population units",
+        "missing_count": 0,
+        "valid_count": 16,
+        "description": "population; source population units"
+      },
+      {
+        "name": "year",
+        "source_field": "r.year",
+        "type": "number",
+        "unit": "year",
+        "missing_count": 0,
+        "valid_count": 16,
+        "description": "year; year"
+      },
+      {
+        "name": "employment_change",
+        "source_field": "r.employment_change",
+        "type": "number",
+        "unit": "source employment units per year",
+        "missing_count": 1,
+        "valid_count": 15,
+        "description": "employment change; source employment units per year"
+      },
+      {
+        "name": "gnp_change",
+        "source_field": "r.gnp_change",
+        "type": "number",
+        "unit": "source GNP units per year",
+        "missing_count": 1,
+        "valid_count": 15,
+        "description": "gnp change; source GNP units per year"
+      },
+      {
+        "name": "population_change",
+        "source_field": "r.population_change",
+        "type": "number",
+        "unit": "source population units per year",
+        "missing_count": 1,
+        "valid_count": 15,
+        "description": "population change; source population units per year"
+      },
+      {
+        "name": "era",
+        "source_field": "r.era",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 16,
+        "description": "era; category"
+      },
+      {
+        "name": "employment_index",
+        "source_field": "r.employment_index",
+        "type": "number",
+        "unit": "1947 = 100",
+        "missing_count": 0,
+        "valid_count": 16,
+        "description": "employment index; 1947 = 100"
+      },
+      {
+        "name": "gnp_index",
+        "source_field": "r.gnp_index",
+        "type": "number",
+        "unit": "1947 = 100",
+        "missing_count": 0,
+        "valid_count": 16,
+        "description": "gnp index; 1947 = 100"
+      },
+      {
+        "name": "population_index",
+        "source_field": "r.population_index",
+        "type": "number",
+        "unit": "1947 = 100",
+        "missing_count": 0,
+        "valid_count": 16,
+        "description": "population index; 1947 = 100"
+      }
+    ],
+    "transformations": "Retain historical regression benchmark values; successive differences have first value null; first observation indices = 100. This small benchmark is not a modern labor-market model.",
+    "sha256": "5e2b152c0455828c869b9e7f731127298fe216b1e858852494556d958c35860a",
+    "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+  },
+  "indexed": {
+    "source_id": "indexed",
+    "path": "projects/longley/data/indexed.csv",
+    "row_count": 48,
+    "grain": "one annual indexed series value",
+    "key": "id",
+    "fields": [
+      {
+        "name": "id",
+        "source_field": "indexed.id",
+        "type": "string",
+        "unit": "identifier",
+        "missing_count": 0,
+        "valid_count": 48,
+        "description": "id; identifier"
+      },
+      {
+        "name": "year",
+        "source_field": "indexed.year",
+        "type": "number",
+        "unit": "year",
+        "missing_count": 0,
+        "valid_count": 48,
+        "description": "year; year"
+      },
+      {
+        "name": "series",
+        "source_field": "indexed.series",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 48,
+        "description": "series; category"
+      },
+      {
+        "name": "value",
+        "source_field": "indexed.value",
+        "type": "number",
+        "unit": "1947 = 100",
+        "missing_count": 0,
+        "valid_count": 48,
+        "description": "value; 1947 = 100"
+      }
+    ],
+    "transformations": "Unpivot three separately rebased indices; all use first supplied year = 100; units are comparable indices, not original amounts.",
+    "sha256": "93ed4a08104c86a52bc5706ae1c1a88a1d87d6f304828b32283f237deb5a8980",
+    "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+  }
+}

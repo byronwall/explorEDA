@@ -1,0 +1,3138 @@
+{
+  "ercot": {
+    "r": {
+      "source_id": "r",
+      "path": "projects/ercot/data/r.csv",
+      "row_count": 1417,
+      "grain": "one supplied hour",
+      "key": "id",
+      "fields": [
+        {
+          "name": "id",
+          "source_field": "r.id",
+          "type": "string",
+          "unit": "identifier",
+          "missing_count": 0,
+          "valid_count": 1417,
+          "description": "id; identifier"
+        },
+        {
+          "name": "date",
+          "source_field": "r.date",
+          "type": "date",
+          "unit": "calendar label",
+          "missing_count": 0,
+          "valid_count": 1417,
+          "description": "date; calendar label"
+        },
+        {
+          "name": "actual",
+          "source_field": "r.actual",
+          "type": "number",
+          "unit": "MWh for the supplied hour",
+          "missing_count": 0,
+          "valid_count": 1417,
+          "description": "actual; MWh for the supplied hour"
+        },
+        {
+          "name": "forecast",
+          "source_field": "r.forecast",
+          "type": "number",
+          "unit": "MWh for the supplied hour",
+          "missing_count": 0,
+          "valid_count": 1417,
+          "description": "forecast; MWh for the supplied hour"
+        },
+        {
+          "name": "year",
+          "source_field": "r.year",
+          "type": "number",
+          "unit": "year",
+          "missing_count": 0,
+          "valid_count": 1417,
+          "description": "year; year"
+        },
+        {
+          "name": "month",
+          "source_field": "r.month",
+          "type": "number",
+          "unit": "month number",
+          "missing_count": 0,
+          "valid_count": 1417,
+          "description": "month; month number"
+        },
+        {
+          "name": "month_label",
+          "source_field": "r.month_label",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 1417,
+          "description": "month label; category"
+        },
+        {
+          "name": "decade",
+          "source_field": "r.decade",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 1417,
+          "description": "decade; category"
+        },
+        {
+          "name": "hour",
+          "source_field": "r.hour",
+          "type": "number",
+          "unit": "UTC clock hour",
+          "missing_count": 0,
+          "valid_count": 1417,
+          "description": "hour; UTC clock hour"
+        },
+        {
+          "name": "hour_label",
+          "source_field": "r.hour_label",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 1417,
+          "description": "hour label; category"
+        },
+        {
+          "name": "error",
+          "source_field": "r.error",
+          "type": "number",
+          "unit": "MWh for the supplied hour",
+          "missing_count": 0,
+          "valid_count": 1417,
+          "description": "error; MWh for the supplied hour"
+        },
+        {
+          "name": "abs_error",
+          "source_field": "r.abs_error",
+          "type": "number",
+          "unit": "MWh for the supplied hour",
+          "missing_count": 0,
+          "valid_count": 1417,
+          "description": "abs error; MWh for the supplied hour"
+        },
+        {
+          "name": "pct_error",
+          "source_field": "r.pct_error",
+          "type": "number",
+          "unit": "% of positive forecast",
+          "missing_count": 0,
+          "valid_count": 1417,
+          "description": "pct error; % of positive forecast"
+        },
+        {
+          "name": "abs_pct_error",
+          "source_field": "r.abs_pct_error",
+          "type": "number",
+          "unit": "% of positive forecast",
+          "missing_count": 0,
+          "valid_count": 1417,
+          "description": "abs pct error; % of positive forecast"
+        },
+        {
+          "name": "direction",
+          "source_field": "r.direction",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 1417,
+          "description": "direction; category"
+        }
+      ],
+      "transformations": "Preserve all supplied rows; signed error = actual - forecast; percentages divide by positive forecast; calendar fields derived in UTC.",
+      "sha256": "9221900ed072a24e46bbb33900a2ca18f51238511cc8f28111c94651301d69f0",
+      "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+    },
+    "daily": {
+      "source_id": "daily",
+      "path": "projects/ercot/data/daily.csv",
+      "row_count": 60,
+      "grain": "one supplied UTC date",
+      "key": "id",
+      "fields": [
+        {
+          "name": "id",
+          "source_field": "daily.id",
+          "type": "string",
+          "unit": "identifier",
+          "missing_count": 0,
+          "valid_count": 60,
+          "description": "id; identifier"
+        },
+        {
+          "name": "date",
+          "source_field": "daily.date",
+          "type": "date",
+          "unit": "calendar label",
+          "missing_count": 0,
+          "valid_count": 60,
+          "description": "date; calendar label"
+        },
+        {
+          "name": "actual",
+          "source_field": "daily.actual",
+          "type": "number",
+          "unit": "MWh for the supplied hour",
+          "missing_count": 0,
+          "valid_count": 60,
+          "description": "actual; MWh for the supplied hour"
+        },
+        {
+          "name": "forecast",
+          "source_field": "daily.forecast",
+          "type": "number",
+          "unit": "MWh for the supplied hour",
+          "missing_count": 0,
+          "valid_count": 60,
+          "description": "forecast; MWh for the supplied hour"
+        },
+        {
+          "name": "error",
+          "source_field": "daily.error",
+          "type": "number",
+          "unit": "MWh for the supplied hour",
+          "missing_count": 0,
+          "valid_count": 60,
+          "description": "error; MWh for the supplied hour"
+        },
+        {
+          "name": "abs_error",
+          "source_field": "daily.abs_error",
+          "type": "number",
+          "unit": "MWh for the supplied hour",
+          "missing_count": 0,
+          "valid_count": 60,
+          "description": "abs error; MWh for the supplied hour"
+        },
+        {
+          "name": "hours",
+          "source_field": "daily.hours",
+          "type": "number",
+          "unit": "supplied hours",
+          "missing_count": 0,
+          "valid_count": 60,
+          "description": "hours; supplied hours"
+        }
+      ],
+      "transformations": "Arithmetic means across available hours; hours retained; partial boundary days not completed.",
+      "sha256": "3609b73e8e4fbf4f678cb9455430b53d8e44550d013616f404f49a9c915ca36b",
+      "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+    },
+    "clock": {
+      "source_id": "clock",
+      "path": "projects/ercot/data/clock.csv",
+      "row_count": 53,
+      "grain": "one month and UTC clock hour",
+      "key": "id",
+      "fields": [
+        {
+          "name": "id",
+          "source_field": "clock.id",
+          "type": "string",
+          "unit": "identifier",
+          "missing_count": 0,
+          "valid_count": 53,
+          "description": "id; identifier"
+        },
+        {
+          "name": "month_label",
+          "source_field": "clock.month_label",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 53,
+          "description": "month label; category"
+        },
+        {
+          "name": "hour",
+          "source_field": "clock.hour",
+          "type": "number",
+          "unit": "UTC clock hour",
+          "missing_count": 0,
+          "valid_count": 53,
+          "description": "hour; UTC clock hour"
+        },
+        {
+          "name": "hour_label",
+          "source_field": "clock.hour_label",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 53,
+          "description": "hour label; category"
+        },
+        {
+          "name": "error",
+          "source_field": "clock.error",
+          "type": "number",
+          "unit": "MWh for the supplied hour",
+          "missing_count": 0,
+          "valid_count": 53,
+          "description": "error; MWh for the supplied hour"
+        },
+        {
+          "name": "abs_error",
+          "source_field": "clock.abs_error",
+          "type": "number",
+          "unit": "MWh for the supplied hour",
+          "missing_count": 0,
+          "valid_count": 53,
+          "description": "abs error; MWh for the supplied hour"
+        },
+        {
+          "name": "hours",
+          "source_field": "clock.hours",
+          "type": "number",
+          "unit": "supplied hours",
+          "missing_count": 0,
+          "valid_count": 53,
+          "description": "hours; supplied hours"
+        }
+      ],
+      "transformations": "Mean errors, with observed hour denominator.",
+      "sha256": "978a943e5ea9b2452aa251501cee4bed075c915242fb91ed430913f7d4906c57",
+      "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+    }
+  },
+  "co2": {
+    "r": {
+      "source_id": "r",
+      "path": "projects/co2/data/r.csv",
+      "row_count": 2284,
+      "grain": "one supplied weekly date",
+      "key": "id",
+      "fields": [
+        {
+          "name": "id",
+          "source_field": "r.id",
+          "type": "string",
+          "unit": "identifier",
+          "missing_count": 0,
+          "valid_count": 2284,
+          "description": "id; identifier"
+        },
+        {
+          "name": "date",
+          "source_field": "r.date",
+          "type": "date",
+          "unit": "calendar label",
+          "missing_count": 0,
+          "valid_count": 2284,
+          "description": "date; calendar label"
+        },
+        {
+          "name": "co2",
+          "source_field": "r.co2",
+          "type": "number",
+          "unit": "parts per million by volume (ppmv)",
+          "missing_count": 59,
+          "valid_count": 2225,
+          "description": "co2; parts per million by volume (ppmv)"
+        },
+        {
+          "name": "year",
+          "source_field": "r.year",
+          "type": "number",
+          "unit": "year",
+          "missing_count": 0,
+          "valid_count": 2284,
+          "description": "year; year"
+        },
+        {
+          "name": "month",
+          "source_field": "r.month",
+          "type": "number",
+          "unit": "month number",
+          "missing_count": 0,
+          "valid_count": 2284,
+          "description": "month; month number"
+        },
+        {
+          "name": "month_label",
+          "source_field": "r.month_label",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 2284,
+          "description": "month label; category"
+        },
+        {
+          "name": "decade",
+          "source_field": "r.decade",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 2284,
+          "description": "decade; category"
+        },
+        {
+          "name": "coverage",
+          "source_field": "r.coverage",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 2284,
+          "description": "coverage; category"
+        },
+        {
+          "name": "observed",
+          "source_field": "r.observed",
+          "type": "number",
+          "unit": "1 measured; 0 missing",
+          "missing_count": 0,
+          "valid_count": 2284,
+          "description": "observed; 1 measured; 0 missing"
+        },
+        {
+          "name": "annual_center",
+          "source_field": "r.annual_center",
+          "type": "number",
+          "unit": "ppmv",
+          "missing_count": 0,
+          "valid_count": 2284,
+          "description": "annual center; ppmv"
+        },
+        {
+          "name": "residual",
+          "source_field": "r.residual",
+          "type": "number",
+          "unit": "ppmv relative to annual available-week mean",
+          "missing_count": 59,
+          "valid_count": 2225,
+          "description": "residual; ppmv relative to annual available-week mean"
+        }
+      ],
+      "transformations": "No gap filling; residual subtracts that year's available-week mean, not a fitted trend.",
+      "sha256": "fa105e8860d685c0cfc3615f67ee740e265ad29ee806069b6303957166f886eb",
+      "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+    },
+    "annual": {
+      "source_id": "annual",
+      "path": "projects/co2/data/annual.csv",
+      "row_count": 44,
+      "grain": "one supplied year",
+      "key": "id",
+      "fields": [
+        {
+          "name": "id",
+          "source_field": "annual.id",
+          "type": "string",
+          "unit": "identifier",
+          "missing_count": 0,
+          "valid_count": 44,
+          "description": "id; identifier"
+        },
+        {
+          "name": "year",
+          "source_field": "annual.year",
+          "type": "number",
+          "unit": "year",
+          "missing_count": 0,
+          "valid_count": 44,
+          "description": "year; year"
+        },
+        {
+          "name": "mean",
+          "source_field": "annual.mean",
+          "type": "number",
+          "unit": "ppmv",
+          "missing_count": 0,
+          "valid_count": 44,
+          "description": "mean; ppmv"
+        },
+        {
+          "name": "low",
+          "source_field": "annual.low",
+          "type": "number",
+          "unit": "ppmv",
+          "missing_count": 0,
+          "valid_count": 44,
+          "description": "low; ppmv"
+        },
+        {
+          "name": "high",
+          "source_field": "annual.high",
+          "type": "number",
+          "unit": "ppmv",
+          "missing_count": 0,
+          "valid_count": 44,
+          "description": "high; ppmv"
+        },
+        {
+          "name": "valid",
+          "source_field": "annual.valid",
+          "type": "number",
+          "unit": "measured weeks",
+          "missing_count": 0,
+          "valid_count": 44,
+          "description": "valid; measured weeks"
+        },
+        {
+          "name": "slots",
+          "source_field": "annual.slots",
+          "type": "number",
+          "unit": "supplied weekly slots",
+          "missing_count": 0,
+          "valid_count": 44,
+          "description": "slots; supplied weekly slots"
+        },
+        {
+          "name": "coverage_pct",
+          "source_field": "annual.coverage_pct",
+          "type": "number",
+          "unit": "% supplied slots measured",
+          "missing_count": 0,
+          "valid_count": 44,
+          "description": "coverage pct; % supplied slots measured"
+        }
+      ],
+      "transformations": "Available-week annual means/extrema and valid/supplied coverage; first and last years may be partial.",
+      "sha256": "5ccb07afc5e6ecb5d1f68120d61062c9a282b941eb472b9b40e795e1a52f2d88",
+      "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+    },
+    "gaps": {
+      "source_id": "gaps",
+      "path": "projects/co2/data/gaps.csv",
+      "row_count": 22,
+      "grain": "one consecutive missing run",
+      "key": "id",
+      "fields": [
+        {
+          "name": "id",
+          "source_field": "gaps.id",
+          "type": "string",
+          "unit": "identifier",
+          "missing_count": 0,
+          "valid_count": 22,
+          "description": "id; identifier"
+        },
+        {
+          "name": "date",
+          "source_field": "gaps.date",
+          "type": "date",
+          "unit": "calendar label",
+          "missing_count": 0,
+          "valid_count": 22,
+          "description": "date; calendar label"
+        },
+        {
+          "name": "end_date",
+          "source_field": "gaps.end_date",
+          "type": "date",
+          "unit": "calendar label",
+          "missing_count": 0,
+          "valid_count": 22,
+          "description": "end date; calendar label"
+        },
+        {
+          "name": "length",
+          "source_field": "gaps.length",
+          "type": "number",
+          "unit": "consecutive missing weekly slots",
+          "missing_count": 0,
+          "valid_count": 22,
+          "description": "length; consecutive missing weekly slots"
+        },
+        {
+          "name": "year",
+          "source_field": "gaps.year",
+          "type": "number",
+          "unit": "year",
+          "missing_count": 0,
+          "valid_count": 22,
+          "description": "year; year"
+        },
+        {
+          "name": "before",
+          "source_field": "gaps.before",
+          "type": "number",
+          "unit": "ppmv",
+          "missing_count": 0,
+          "valid_count": 22,
+          "description": "before; ppmv"
+        },
+        {
+          "name": "after",
+          "source_field": "gaps.after",
+          "type": "number",
+          "unit": "ppmv",
+          "missing_count": 0,
+          "valid_count": 22,
+          "description": "after; ppmv"
+        }
+      ],
+      "transformations": "Consecutive means adjacent rows in the supplied weekly calendar; before/after values are observations, not interpolated replacements.",
+      "sha256": "3d0a0d178c676d87538ece0463a04a8c8fbb2d859bc709e0f9a1d4cc6e700d5d",
+      "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+    }
+  },
+  "elnino": {
+    "r": {
+      "source_id": "r",
+      "path": "projects/elnino/data/r.csv",
+      "row_count": 732,
+      "grain": "one Niño 1+2 calendar month",
+      "key": "id",
+      "fields": [
+        {
+          "name": "id",
+          "source_field": "r.id",
+          "type": "string",
+          "unit": "identifier",
+          "missing_count": 0,
+          "valid_count": 732,
+          "description": "id; identifier"
+        },
+        {
+          "name": "year",
+          "source_field": "r.year",
+          "type": "number",
+          "unit": "year",
+          "missing_count": 0,
+          "valid_count": 732,
+          "description": "year; year"
+        },
+        {
+          "name": "month_name",
+          "source_field": "r.month_name",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 732,
+          "description": "month name; category"
+        },
+        {
+          "name": "sst",
+          "source_field": "r.sst",
+          "type": "number",
+          "unit": "degrees Celsius, Niño 1+2 region",
+          "missing_count": 0,
+          "valid_count": 732,
+          "description": "sst; degrees Celsius, Niño 1+2 region"
+        },
+        {
+          "name": "month",
+          "source_field": "r.month",
+          "type": "number",
+          "unit": "month number",
+          "missing_count": 0,
+          "valid_count": 732,
+          "description": "month; month number"
+        },
+        {
+          "name": "date",
+          "source_field": "r.date",
+          "type": "date",
+          "unit": "calendar label",
+          "missing_count": 0,
+          "valid_count": 732,
+          "description": "date; calendar label"
+        },
+        {
+          "name": "month_label",
+          "source_field": "r.month_label",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 732,
+          "description": "month label; category"
+        },
+        {
+          "name": "decade",
+          "source_field": "r.decade",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 732,
+          "description": "decade; category"
+        },
+        {
+          "name": "climatology",
+          "source_field": "r.climatology",
+          "type": "number",
+          "unit": "degrees Celsius; 1981–2010 calendar-month mean",
+          "missing_count": 0,
+          "valid_count": 732,
+          "description": "climatology; degrees Celsius; 1981–2010 calendar-month mean"
+        },
+        {
+          "name": "anomaly",
+          "source_field": "r.anomaly",
+          "type": "number",
+          "unit": "degrees Celsius relative to 1981–2010 month mean",
+          "missing_count": 0,
+          "valid_count": 732,
+          "description": "anomaly; degrees Celsius relative to 1981–2010 month mean"
+        },
+        {
+          "name": "era",
+          "source_field": "r.era",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 732,
+          "description": "era; category"
+        }
+      ],
+      "transformations": "Wide months unpivoted; anomaly = temperature - 1981–2010 mean for the same month. No standardization by variance.",
+      "sha256": "60a9b927ce853aa85f648f7eb3ac3c23c86cabf70d3d22aad966ebf92dbef4c4",
+      "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+    },
+    "annual": {
+      "source_id": "annual",
+      "path": "projects/elnino/data/annual.csv",
+      "row_count": 61,
+      "grain": "one year",
+      "key": "id",
+      "fields": [
+        {
+          "name": "id",
+          "source_field": "annual.id",
+          "type": "string",
+          "unit": "identifier",
+          "missing_count": 0,
+          "valid_count": 61,
+          "description": "id; identifier"
+        },
+        {
+          "name": "year",
+          "source_field": "annual.year",
+          "type": "number",
+          "unit": "year",
+          "missing_count": 0,
+          "valid_count": 61,
+          "description": "year; year"
+        },
+        {
+          "name": "mean",
+          "source_field": "annual.mean",
+          "type": "number",
+          "unit": "degrees Celsius",
+          "missing_count": 0,
+          "valid_count": 61,
+          "description": "mean; degrees Celsius"
+        },
+        {
+          "name": "low",
+          "source_field": "annual.low",
+          "type": "number",
+          "unit": "degrees Celsius",
+          "missing_count": 0,
+          "valid_count": 61,
+          "description": "low; degrees Celsius"
+        },
+        {
+          "name": "high",
+          "source_field": "annual.high",
+          "type": "number",
+          "unit": "degrees Celsius",
+          "missing_count": 0,
+          "valid_count": 61,
+          "description": "high; degrees Celsius"
+        },
+        {
+          "name": "range",
+          "source_field": "annual.range",
+          "type": "number",
+          "unit": "degrees Celsius",
+          "missing_count": 0,
+          "valid_count": 61,
+          "description": "range; degrees Celsius"
+        },
+        {
+          "name": "months",
+          "source_field": "annual.months",
+          "type": "number",
+          "unit": "observed months",
+          "missing_count": 0,
+          "valid_count": 61,
+          "description": "months; observed months"
+        },
+        {
+          "name": "anomaly",
+          "source_field": "annual.anomaly",
+          "type": "number",
+          "unit": "degrees Celsius",
+          "missing_count": 0,
+          "valid_count": 61,
+          "description": "anomaly; degrees Celsius"
+        }
+      ],
+      "transformations": "Unweighted monthly means and observed minimum/maximum; range is not uncertainty.",
+      "sha256": "efdc920324c3e70ae30d4b844c945f761f3d36d3168a238311de67245712e11d",
+      "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+    },
+    "episodes": {
+      "source_id": "episodes",
+      "path": "projects/elnino/data/episodes.csv",
+      "row_count": 48,
+      "grain": "one calendar month in either selected two-year window",
+      "key": "id",
+      "fields": [
+        {
+          "name": "id",
+          "source_field": "episodes.id",
+          "type": "string",
+          "unit": "identifier",
+          "missing_count": 0,
+          "valid_count": 48,
+          "description": "id; identifier"
+        },
+        {
+          "name": "year",
+          "source_field": "episodes.year",
+          "type": "number",
+          "unit": "year",
+          "missing_count": 0,
+          "valid_count": 48,
+          "description": "year; year"
+        },
+        {
+          "name": "month_name",
+          "source_field": "episodes.month_name",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 48,
+          "description": "month name; category"
+        },
+        {
+          "name": "sst",
+          "source_field": "episodes.sst",
+          "type": "number",
+          "unit": "degrees Celsius, Niño 1+2 region",
+          "missing_count": 0,
+          "valid_count": 48,
+          "description": "sst; degrees Celsius, Niño 1+2 region"
+        },
+        {
+          "name": "month",
+          "source_field": "episodes.month",
+          "type": "number",
+          "unit": "month number",
+          "missing_count": 0,
+          "valid_count": 48,
+          "description": "month; month number"
+        },
+        {
+          "name": "date",
+          "source_field": "episodes.date",
+          "type": "date",
+          "unit": "calendar label",
+          "missing_count": 0,
+          "valid_count": 48,
+          "description": "date; calendar label"
+        },
+        {
+          "name": "month_label",
+          "source_field": "episodes.month_label",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 48,
+          "description": "month label; category"
+        },
+        {
+          "name": "decade",
+          "source_field": "episodes.decade",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 48,
+          "description": "decade; category"
+        },
+        {
+          "name": "climatology",
+          "source_field": "episodes.climatology",
+          "type": "number",
+          "unit": "degrees Celsius; 1981–2010 calendar-month mean",
+          "missing_count": 0,
+          "valid_count": 48,
+          "description": "climatology; degrees Celsius; 1981–2010 calendar-month mean"
+        },
+        {
+          "name": "anomaly",
+          "source_field": "episodes.anomaly",
+          "type": "number",
+          "unit": "degrees Celsius relative to 1981–2010 month mean",
+          "missing_count": 0,
+          "valid_count": 48,
+          "description": "anomaly; degrees Celsius relative to 1981–2010 month mean"
+        },
+        {
+          "name": "era",
+          "source_field": "episodes.era",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 48,
+          "description": "era; category"
+        },
+        {
+          "name": "episode",
+          "source_field": "episodes.episode",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 48,
+          "description": "episode; category"
+        },
+        {
+          "name": "episode_month",
+          "source_field": "episodes.episode_month",
+          "type": "number",
+          "unit": "month index from January of the first year",
+          "missing_count": 0,
+          "valid_count": 48,
+          "description": "episode month; month index from January of the first year"
+        }
+      ],
+      "transformations": "Illustrative predeclared 1982–1983 and 1997–1998 windows; same baseline and 1–24 aligned months; not event classification.",
+      "sha256": "06142ca9ae88ffb549a4fbacf3e0073e1904b91c4b2cb0baeaff38021bf43f98",
+      "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+    }
+  },
+  "sunspots": {
+    "r": {
+      "source_id": "r",
+      "path": "projects/sunspots/data/r.csv",
+      "row_count": 309,
+      "grain": "one year",
+      "key": "id",
+      "fields": [
+        {
+          "name": "id",
+          "source_field": "r.id",
+          "type": "string",
+          "unit": "identifier",
+          "missing_count": 0,
+          "valid_count": 309,
+          "description": "id; identifier"
+        },
+        {
+          "name": "year",
+          "source_field": "r.year",
+          "type": "number",
+          "unit": "year",
+          "missing_count": 0,
+          "valid_count": 309,
+          "description": "year; year"
+        },
+        {
+          "name": "activity",
+          "source_field": "r.activity",
+          "type": "number",
+          "unit": "historical annual sunspot number",
+          "missing_count": 0,
+          "valid_count": 309,
+          "description": "activity; historical annual sunspot number"
+        },
+        {
+          "name": "era",
+          "source_field": "r.era",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 309,
+          "description": "era; category"
+        },
+        {
+          "name": "smooth11",
+          "source_field": "r.smooth11",
+          "type": "number",
+          "unit": "11-year mean sunspot number",
+          "missing_count": 10,
+          "valid_count": 299,
+          "description": "smooth11; 11-year mean sunspot number"
+        },
+        {
+          "name": "departure",
+          "source_field": "r.departure",
+          "type": "number",
+          "unit": "sunspot-number difference",
+          "missing_count": 10,
+          "valid_count": 299,
+          "description": "departure; sunspot-number difference"
+        }
+      ],
+      "transformations": "Centered 11-year arithmetic mean requires all 11 observations; five edge years at either end have no smooth value. Historical supplied revision retained.",
+      "sha256": "da9c89bba8e669ed20622e8cd154911d872a99f36d5a8acb2578f1d914edb1c9",
+      "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+    }
+  },
+  "nile": {
+    "r": {
+      "source_id": "r",
+      "path": "projects/nile/data/r.csv",
+      "row_count": 100,
+      "grain": "one annual flow observation at Aswan",
+      "key": "id",
+      "fields": [
+        {
+          "name": "id",
+          "source_field": "r.id",
+          "type": "string",
+          "unit": "identifier",
+          "missing_count": 0,
+          "valid_count": 100,
+          "description": "id; identifier"
+        },
+        {
+          "name": "year",
+          "source_field": "r.year",
+          "type": "number",
+          "unit": "year",
+          "missing_count": 0,
+          "valid_count": 100,
+          "description": "year; year"
+        },
+        {
+          "name": "volume",
+          "source_field": "r.volume",
+          "type": "number",
+          "unit": "10^8 cubic metres per year",
+          "missing_count": 0,
+          "valid_count": 100,
+          "description": "volume; 10^8 cubic metres per year"
+        },
+        {
+          "name": "era",
+          "source_field": "r.era",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 100,
+          "description": "era; category"
+        },
+        {
+          "name": "rank",
+          "source_field": "r.rank",
+          "type": "number",
+          "unit": "percentile rank",
+          "missing_count": 0,
+          "valid_count": 100,
+          "description": "rank; percentile rank"
+        },
+        {
+          "name": "tail",
+          "source_field": "r.tail",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 100,
+          "description": "tail; category"
+        },
+        {
+          "name": "centered",
+          "source_field": "r.centered",
+          "type": "number",
+          "unit": "10^8 cubic metres relative to full mean",
+          "missing_count": 0,
+          "valid_count": 100,
+          "description": "centered; 10^8 cubic metres relative to full mean"
+        }
+      ],
+      "transformations": "Era cutoff 1898 is descriptive, not causal; rank is average-rank percentile; tails use linear 10th/90th percentiles and strict inequalities.",
+      "sha256": "b434608328e6c23464f00172e58cb4b8edf8dc433814f34560c207e10f307c6b",
+      "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+    }
+  },
+  "macro": {
+    "r": {
+      "source_id": "r",
+      "path": "projects/macro/data/r.csv",
+      "row_count": 203,
+      "grain": "one US calendar quarter",
+      "key": "id",
+      "fields": [
+        {
+          "name": "id",
+          "source_field": "r.id",
+          "type": "string",
+          "unit": "identifier",
+          "missing_count": 0,
+          "valid_count": 203,
+          "description": "id; identifier"
+        },
+        {
+          "name": "year",
+          "source_field": "r.year",
+          "type": "number",
+          "unit": "year",
+          "missing_count": 0,
+          "valid_count": 203,
+          "description": "year; year"
+        },
+        {
+          "name": "quarter",
+          "source_field": "r.quarter",
+          "type": "number",
+          "unit": "quarter number",
+          "missing_count": 0,
+          "valid_count": 203,
+          "description": "quarter; quarter number"
+        },
+        {
+          "name": "realgdp",
+          "source_field": "r.realgdp",
+          "type": "number",
+          "unit": "billions of chained 2005 US dollars (source vintage)",
+          "missing_count": 0,
+          "valid_count": 203,
+          "description": "realgdp; billions of chained 2005 US dollars (source vintage)"
+        },
+        {
+          "name": "realcons",
+          "source_field": "r.realcons",
+          "type": "number",
+          "unit": "billions of chained 2005 US dollars (source vintage)",
+          "missing_count": 0,
+          "valid_count": 203,
+          "description": "realcons; billions of chained 2005 US dollars (source vintage)"
+        },
+        {
+          "name": "realinv",
+          "source_field": "r.realinv",
+          "type": "number",
+          "unit": "billions of chained 2005 US dollars (source vintage)",
+          "missing_count": 0,
+          "valid_count": 203,
+          "description": "realinv; billions of chained 2005 US dollars (source vintage)"
+        },
+        {
+          "name": "realgovt",
+          "source_field": "r.realgovt",
+          "type": "number",
+          "unit": "billions of chained 2005 US dollars (source vintage)",
+          "missing_count": 0,
+          "valid_count": 203,
+          "description": "realgovt; billions of chained 2005 US dollars (source vintage)"
+        },
+        {
+          "name": "realdpi",
+          "source_field": "r.realdpi",
+          "type": "number",
+          "unit": "billions of chained 2005 US dollars (source vintage)",
+          "missing_count": 0,
+          "valid_count": 203,
+          "description": "realdpi; billions of chained 2005 US dollars (source vintage)"
+        },
+        {
+          "name": "cpi",
+          "source_field": "r.cpi",
+          "type": "number",
+          "unit": "CPI index",
+          "missing_count": 0,
+          "valid_count": 203,
+          "description": "cpi; CPI index"
+        },
+        {
+          "name": "m1",
+          "source_field": "r.m1",
+          "type": "number",
+          "unit": "billions of nominal US dollars",
+          "missing_count": 0,
+          "valid_count": 203,
+          "description": "m1; billions of nominal US dollars"
+        },
+        {
+          "name": "tbilrate",
+          "source_field": "r.tbilrate",
+          "type": "number",
+          "unit": "Treasury bill rate, %",
+          "missing_count": 0,
+          "valid_count": 203,
+          "description": "tbilrate; Treasury bill rate, %"
+        },
+        {
+          "name": "unemp",
+          "source_field": "r.unemp",
+          "type": "number",
+          "unit": "unemployment rate, %",
+          "missing_count": 0,
+          "valid_count": 203,
+          "description": "unemp; unemployment rate, %"
+        },
+        {
+          "name": "pop",
+          "source_field": "r.pop",
+          "type": "number",
+          "unit": "millions of people",
+          "missing_count": 0,
+          "valid_count": 203,
+          "description": "pop; millions of people"
+        },
+        {
+          "name": "infl",
+          "source_field": "r.infl",
+          "type": "number",
+          "unit": "source annualized inflation, %",
+          "missing_count": 0,
+          "valid_count": 203,
+          "description": "infl; source annualized inflation, %"
+        },
+        {
+          "name": "realint",
+          "source_field": "r.realint",
+          "type": "number",
+          "unit": "source real interest rate, %",
+          "missing_count": 0,
+          "valid_count": 203,
+          "description": "realint; source real interest rate, %"
+        },
+        {
+          "name": "date",
+          "source_field": "r.date",
+          "type": "date",
+          "unit": "calendar label",
+          "missing_count": 0,
+          "valid_count": 203,
+          "description": "date; calendar label"
+        },
+        {
+          "name": "decade",
+          "source_field": "r.decade",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 203,
+          "description": "decade; category"
+        },
+        {
+          "name": "gdp_growth",
+          "source_field": "r.gdp_growth",
+          "type": "number",
+          "unit": "annualized quarter-on-quarter %",
+          "missing_count": 1,
+          "valid_count": 202,
+          "description": "gdp growth; annualized quarter-on-quarter %"
+        },
+        {
+          "name": "consumption_share",
+          "source_field": "r.consumption_share",
+          "type": "number",
+          "unit": "% ratio of chained-dollar series; not additive budget share",
+          "missing_count": 0,
+          "valid_count": 203,
+          "description": "consumption share; % ratio of chained-dollar series; not additive budget share"
+        },
+        {
+          "name": "gdp_change",
+          "source_field": "r.gdp_change",
+          "type": "number",
+          "unit": "billions of chained 2005 US dollars (source vintage)",
+          "missing_count": 1,
+          "valid_count": 202,
+          "description": "gdp change; billions of chained 2005 US dollars (source vintage)"
+        },
+        {
+          "name": "unemp_change",
+          "source_field": "r.unemp_change",
+          "type": "number",
+          "unit": "percentage points",
+          "missing_count": 1,
+          "valid_count": 202,
+          "description": "unemp change; percentage points"
+        }
+      ],
+      "transformations": "Derived annualized GDP growth uses the preceding supplied quarter; first growth is null. Source initial infl/realint zero preserved, not inferred measured inflation.",
+      "sha256": "40c39fd427817801e3cec5f07afddb503a6913e539a01e980d577b51bece9d37",
+      "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+    }
+  },
+  "grunfeld": {
+    "r": {
+      "source_id": "r",
+      "path": "projects/grunfeld/data/r.csv",
+      "row_count": 220,
+      "grain": "one firm-year",
+      "key": "id",
+      "fields": [
+        {
+          "name": "id",
+          "source_field": "r.id",
+          "type": "string",
+          "unit": "identifier",
+          "missing_count": 0,
+          "valid_count": 220,
+          "description": "id; identifier"
+        },
+        {
+          "name": "invest",
+          "source_field": "r.invest",
+          "type": "number",
+          "unit": "source 1947-dollar units; no multiplier assumed",
+          "missing_count": 0,
+          "valid_count": 220,
+          "description": "invest; source 1947-dollar units; no multiplier assumed"
+        },
+        {
+          "name": "value",
+          "source_field": "r.value",
+          "type": "number",
+          "unit": "source 1947-dollar units; no multiplier assumed",
+          "missing_count": 0,
+          "valid_count": 220,
+          "description": "value; source 1947-dollar units; no multiplier assumed"
+        },
+        {
+          "name": "capital",
+          "source_field": "r.capital",
+          "type": "number",
+          "unit": "source 1947-dollar units; no multiplier assumed",
+          "missing_count": 0,
+          "valid_count": 220,
+          "description": "capital; source 1947-dollar units; no multiplier assumed"
+        },
+        {
+          "name": "firm",
+          "source_field": "r.firm",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 220,
+          "description": "firm; category"
+        },
+        {
+          "name": "year",
+          "source_field": "r.year",
+          "type": "number",
+          "unit": "year",
+          "missing_count": 0,
+          "valid_count": 220,
+          "description": "year; year"
+        },
+        {
+          "name": "invest_index",
+          "source_field": "r.invest_index",
+          "type": "number",
+          "unit": "first supplied firm year = 100",
+          "missing_count": 0,
+          "valid_count": 220,
+          "description": "invest index; first supplied firm year = 100"
+        },
+        {
+          "name": "value_index",
+          "source_field": "r.value_index",
+          "type": "number",
+          "unit": "first supplied firm year = 100",
+          "missing_count": 0,
+          "valid_count": 220,
+          "description": "value index; first supplied firm year = 100"
+        },
+        {
+          "name": "invest_change",
+          "source_field": "r.invest_change",
+          "type": "number",
+          "unit": "source 1947-dollar units; no multiplier assumed",
+          "missing_count": 11,
+          "valid_count": 209,
+          "description": "invest change; source 1947-dollar units; no multiplier assumed"
+        },
+        {
+          "name": "value_change",
+          "source_field": "r.value_change",
+          "type": "number",
+          "unit": "source 1947-dollar units; no multiplier assumed",
+          "missing_count": 11,
+          "valid_count": 209,
+          "description": "value change; source 1947-dollar units; no multiplier assumed"
+        },
+        {
+          "name": "capital_change",
+          "source_field": "r.capital_change",
+          "type": "number",
+          "unit": "source 1947-dollar units; no multiplier assumed",
+          "missing_count": 11,
+          "valid_count": 209,
+          "description": "capital change; source 1947-dollar units; no multiplier assumed"
+        }
+      ],
+      "transformations": "Sort within firm; differences never cross firm boundaries; indices divide by each firm's first supplied positive value.",
+      "sha256": "e0c07b128ab4c11f2ddce353d48305c0480dd2d24badc33ff634169cf7f5649c",
+      "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+    },
+    "firms": {
+      "source_id": "firms",
+      "path": "projects/grunfeld/data/firms.csv",
+      "row_count": 11,
+      "grain": "one firm summary",
+      "key": "id",
+      "fields": [
+        {
+          "name": "id",
+          "source_field": "firms.id",
+          "type": "string",
+          "unit": "identifier",
+          "missing_count": 0,
+          "valid_count": 11,
+          "description": "id; identifier"
+        },
+        {
+          "name": "firm",
+          "source_field": "firms.firm",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 11,
+          "description": "firm; category"
+        },
+        {
+          "name": "years",
+          "source_field": "firms.years",
+          "type": "number",
+          "unit": "observed firm-years",
+          "missing_count": 0,
+          "valid_count": 11,
+          "description": "years; observed firm-years"
+        },
+        {
+          "name": "invest_mean",
+          "source_field": "firms.invest_mean",
+          "type": "number",
+          "unit": "source 1947-dollar units; no multiplier assumed",
+          "missing_count": 0,
+          "valid_count": 11,
+          "description": "invest mean; source 1947-dollar units; no multiplier assumed"
+        },
+        {
+          "name": "value_mean",
+          "source_field": "firms.value_mean",
+          "type": "number",
+          "unit": "source 1947-dollar units; no multiplier assumed",
+          "missing_count": 0,
+          "valid_count": 11,
+          "description": "value mean; source 1947-dollar units; no multiplier assumed"
+        },
+        {
+          "name": "invest_total",
+          "source_field": "firms.invest_total",
+          "type": "number",
+          "unit": "source 1947-dollar units; no multiplier assumed",
+          "missing_count": 0,
+          "valid_count": 11,
+          "description": "invest total; source 1947-dollar units; no multiplier assumed"
+        }
+      ],
+      "transformations": "Means and observation counts across supplied years; total investment is historical sum, not firm value.",
+      "sha256": "7e14c47e0d89d5b3caabab2c31c3c7c73362e2e7e23dffc0875e7d59e6c7a632",
+      "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+    }
+  },
+  "stackloss": {
+    "r": {
+      "source_id": "r",
+      "path": "projects/stackloss/data/r.csv",
+      "row_count": 21,
+      "grain": "one recorded plant operating day",
+      "key": "id",
+      "fields": [
+        {
+          "name": "id",
+          "source_field": "r.id",
+          "type": "string",
+          "unit": "identifier",
+          "missing_count": 0,
+          "valid_count": 21,
+          "description": "id; identifier"
+        },
+        {
+          "name": "stackloss",
+          "source_field": "r.stackloss",
+          "type": "number",
+          "unit": "10 × percent ammonia lost",
+          "missing_count": 0,
+          "valid_count": 21,
+          "description": "stackloss; 10 × percent ammonia lost"
+        },
+        {
+          "name": "airflow",
+          "source_field": "r.airflow",
+          "type": "number",
+          "unit": "source airflow units",
+          "missing_count": 0,
+          "valid_count": 21,
+          "description": "airflow; source airflow units"
+        },
+        {
+          "name": "watertemp",
+          "source_field": "r.watertemp",
+          "type": "number",
+          "unit": "degrees Celsius",
+          "missing_count": 0,
+          "valid_count": 21,
+          "description": "watertemp; degrees Celsius"
+        },
+        {
+          "name": "acidconc",
+          "source_field": "r.acidconc",
+          "type": "number",
+          "unit": "source-coded acid concentration",
+          "missing_count": 0,
+          "valid_count": 21,
+          "description": "acidconc; source-coded acid concentration"
+        },
+        {
+          "name": "sequence",
+          "source_field": "r.sequence",
+          "type": "number",
+          "unit": "source row sequence",
+          "missing_count": 0,
+          "valid_count": 21,
+          "description": "sequence; source row sequence"
+        },
+        {
+          "name": "loss_pct",
+          "source_field": "r.loss_pct",
+          "type": "number",
+          "unit": "% ammonia lost",
+          "missing_count": 0,
+          "valid_count": 21,
+          "description": "loss pct; % ammonia lost"
+        },
+        {
+          "name": "fitted",
+          "source_field": "r.fitted",
+          "type": "number",
+          "unit": "10 × percent ammonia lost",
+          "missing_count": 0,
+          "valid_count": 21,
+          "description": "fitted; 10 × percent ammonia lost"
+        },
+        {
+          "name": "residual",
+          "source_field": "r.residual",
+          "type": "number",
+          "unit": "10 × percentage-point loss residual",
+          "missing_count": 0,
+          "valid_count": 21,
+          "description": "residual; 10 × percentage-point loss residual"
+        },
+        {
+          "name": "loo_slope",
+          "source_field": "r.loo_slope",
+          "type": "number",
+          "unit": "stackloss units per airflow unit",
+          "missing_count": 0,
+          "valid_count": 21,
+          "description": "loo slope; stackloss units per airflow unit"
+        },
+        {
+          "name": "slope_shift",
+          "source_field": "r.slope_shift",
+          "type": "number",
+          "unit": "slope units",
+          "missing_count": 0,
+          "valid_count": 21,
+          "description": "slope shift; slope units"
+        },
+        {
+          "name": "air_band",
+          "source_field": "r.air_band",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 21,
+          "description": "air band; category"
+        }
+      ],
+      "transformations": "Loss percent = source stackloss / 10. Ordinary least-squares single-predictor fits include an intercept. Leave-one-out slopes omit exactly that row. Observation sequence is not a verified date.",
+      "sha256": "174ad453516351b0b90d46de33de37e10e01f666c1e92e7618c68adaadbdc453",
+      "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+    }
+  },
+  "engel": {
+    "r": {
+      "source_id": "r",
+      "path": "projects/engel/data/r.csv",
+      "row_count": 235,
+      "grain": "one surveyed working-class household",
+      "key": "id",
+      "fields": [
+        {
+          "name": "id",
+          "source_field": "r.id",
+          "type": "string",
+          "unit": "identifier",
+          "missing_count": 0,
+          "valid_count": 235,
+          "description": "id; identifier"
+        },
+        {
+          "name": "income",
+          "source_field": "r.income",
+          "type": "number",
+          "unit": "Belgian francs per year, 1857",
+          "missing_count": 0,
+          "valid_count": 235,
+          "description": "income; Belgian francs per year, 1857"
+        },
+        {
+          "name": "foodexp",
+          "source_field": "r.foodexp",
+          "type": "number",
+          "unit": "Belgian francs per year, 1857",
+          "missing_count": 0,
+          "valid_count": 235,
+          "description": "foodexp; Belgian francs per year, 1857"
+        },
+        {
+          "name": "food_share",
+          "source_field": "r.food_share",
+          "type": "number",
+          "unit": "% household income spent on food",
+          "missing_count": 0,
+          "valid_count": 235,
+          "description": "food share; % household income spent on food"
+        },
+        {
+          "name": "income_band",
+          "source_field": "r.income_band",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 235,
+          "description": "income band; category"
+        }
+      ],
+      "transformations": "Food share = 100 × food expenditure / income; equal-count income quartiles use pandas linear quantiles.",
+      "sha256": "5b5f9d776babb34e6031ea0471ff45c54270f384b16d319b14a8fbb281b986b0",
+      "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+    },
+    "bands": {
+      "source_id": "bands",
+      "path": "projects/engel/data/bands.csv",
+      "row_count": 4,
+      "grain": "one income quartile",
+      "key": "id",
+      "fields": [
+        {
+          "name": "id",
+          "source_field": "bands.id",
+          "type": "string",
+          "unit": "identifier",
+          "missing_count": 0,
+          "valid_count": 4,
+          "description": "id; identifier"
+        },
+        {
+          "name": "income_band",
+          "source_field": "bands.income_band",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 4,
+          "description": "income band; category"
+        },
+        {
+          "name": "households",
+          "source_field": "bands.households",
+          "type": "number",
+          "unit": "households",
+          "missing_count": 0,
+          "valid_count": 4,
+          "description": "households; households"
+        },
+        {
+          "name": "income_sum",
+          "source_field": "bands.income_sum",
+          "type": "number",
+          "unit": "Belgian francs per year, 1857",
+          "missing_count": 0,
+          "valid_count": 4,
+          "description": "income sum; Belgian francs per year, 1857"
+        },
+        {
+          "name": "food_sum",
+          "source_field": "bands.food_sum",
+          "type": "number",
+          "unit": "Belgian francs per year, 1857",
+          "missing_count": 0,
+          "valid_count": 4,
+          "description": "food sum; Belgian francs per year, 1857"
+        },
+        {
+          "name": "mean_share",
+          "source_field": "bands.mean_share",
+          "type": "number",
+          "unit": "% unweighted household mean",
+          "missing_count": 0,
+          "valid_count": 4,
+          "description": "mean share; % unweighted household mean"
+        },
+        {
+          "name": "median_share",
+          "source_field": "bands.median_share",
+          "type": "number",
+          "unit": "% household median",
+          "missing_count": 0,
+          "valid_count": 4,
+          "description": "median share; % household median"
+        },
+        {
+          "name": "weighted_share",
+          "source_field": "bands.weighted_share",
+          "type": "number",
+          "unit": "% income-weighted ratio",
+          "missing_count": 0,
+          "valid_count": 4,
+          "description": "weighted share; % income-weighted ratio"
+        },
+        {
+          "name": "order",
+          "source_field": "bands.order",
+          "type": "number",
+          "unit": "income quartile order",
+          "missing_count": 0,
+          "valid_count": 4,
+          "description": "order; income quartile order"
+        }
+      ],
+      "transformations": "Mean share gives households equal weight; weighted share is 100 × sum(food) / sum(income); retain denominator totals.",
+      "sha256": "684369171443165fef4ec876849e455b0800f8bc458835d2a7fe1df6685f78cc",
+      "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+    }
+  },
+  "strikes": {
+    "r": {
+      "source_id": "r",
+      "path": "projects/strikes/data/r.csv",
+      "row_count": 62,
+      "grain": "one selected manufacturing strike",
+      "key": "id",
+      "fields": [
+        {
+          "name": "id",
+          "source_field": "r.id",
+          "type": "string",
+          "unit": "identifier",
+          "missing_count": 0,
+          "valid_count": 62,
+          "description": "id; identifier"
+        },
+        {
+          "name": "duration",
+          "source_field": "r.duration",
+          "type": "number",
+          "unit": "days",
+          "missing_count": 0,
+          "valid_count": 62,
+          "description": "duration; days"
+        },
+        {
+          "name": "iprod",
+          "source_field": "r.iprod",
+          "type": "number",
+          "unit": "source industrial-production deviation units",
+          "missing_count": 0,
+          "valid_count": 62,
+          "description": "iprod; source industrial-production deviation units"
+        },
+        {
+          "name": "sequence",
+          "source_field": "r.sequence",
+          "type": "number",
+          "unit": "source row sequence",
+          "missing_count": 0,
+          "valid_count": 62,
+          "description": "sequence; source row sequence"
+        },
+        {
+          "name": "production_band",
+          "source_field": "r.production_band",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 62,
+          "description": "production band; category"
+        },
+        {
+          "name": "log_duration",
+          "source_field": "r.log_duration",
+          "type": "number",
+          "unit": "log10(days)",
+          "missing_count": 0,
+          "valid_count": 62,
+          "description": "log duration; log10(days)"
+        }
+      ],
+      "transformations": "All positive durations retained; log10 duration is a scale transformation; production bands use zero, not fitted cutoffs.",
+      "sha256": "b7fa38e3b3aeaf6ad69ede08ddfa0e47847c569f44d9a45ce4f5f2a3bc4d1ecf",
+      "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+    }
+  },
+  "danish": {
+    "r": {
+      "source_id": "r",
+      "path": "projects/danish/data/r.csv",
+      "row_count": 55,
+      "grain": "one Danish calendar quarter",
+      "key": "id",
+      "fields": [
+        {
+          "name": "id",
+          "source_field": "r.id",
+          "type": "string",
+          "unit": "identifier",
+          "missing_count": 0,
+          "valid_count": 55,
+          "description": "id; identifier"
+        },
+        {
+          "name": "period",
+          "source_field": "r.period",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 55,
+          "description": "period; category"
+        },
+        {
+          "name": "lrm",
+          "source_field": "r.lrm",
+          "type": "number",
+          "unit": "log real money, source definition",
+          "missing_count": 0,
+          "valid_count": 55,
+          "description": "lrm; log real money, source definition"
+        },
+        {
+          "name": "lry",
+          "source_field": "r.lry",
+          "type": "number",
+          "unit": "log real income, source definition",
+          "missing_count": 0,
+          "valid_count": 55,
+          "description": "lry; log real income, source definition"
+        },
+        {
+          "name": "lpy",
+          "source_field": "r.lpy",
+          "type": "number",
+          "unit": "log price level",
+          "missing_count": 0,
+          "valid_count": 55,
+          "description": "lpy; log price level"
+        },
+        {
+          "name": "ibo",
+          "source_field": "r.ibo",
+          "type": "number",
+          "unit": "source bond-rate units (fraction)",
+          "missing_count": 0,
+          "valid_count": 55,
+          "description": "ibo; source bond-rate units (fraction)"
+        },
+        {
+          "name": "ide",
+          "source_field": "r.ide",
+          "type": "number",
+          "unit": "source deposit-rate units (fraction)",
+          "missing_count": 0,
+          "valid_count": 55,
+          "description": "ide; source deposit-rate units (fraction)"
+        },
+        {
+          "name": "year",
+          "source_field": "r.year",
+          "type": "number",
+          "unit": "year",
+          "missing_count": 0,
+          "valid_count": 55,
+          "description": "year; year"
+        },
+        {
+          "name": "quarter",
+          "source_field": "r.quarter",
+          "type": "number",
+          "unit": "quarter number",
+          "missing_count": 0,
+          "valid_count": 55,
+          "description": "quarter; quarter number"
+        },
+        {
+          "name": "date",
+          "source_field": "r.date",
+          "type": "date",
+          "unit": "calendar label",
+          "missing_count": 0,
+          "valid_count": 55,
+          "description": "date; calendar label"
+        },
+        {
+          "name": "money_index",
+          "source_field": "r.money_index",
+          "type": "number",
+          "unit": "first quarter = 100",
+          "missing_count": 0,
+          "valid_count": 55,
+          "description": "money index; first quarter = 100"
+        },
+        {
+          "name": "income_index",
+          "source_field": "r.income_index",
+          "type": "number",
+          "unit": "first quarter = 100",
+          "missing_count": 0,
+          "valid_count": 55,
+          "description": "income index; first quarter = 100"
+        },
+        {
+          "name": "dmoney",
+          "source_field": "r.dmoney",
+          "type": "number",
+          "unit": "quarterly log change",
+          "missing_count": 1,
+          "valid_count": 54,
+          "description": "dmoney; quarterly log change"
+        },
+        {
+          "name": "dincome",
+          "source_field": "r.dincome",
+          "type": "number",
+          "unit": "quarterly log change",
+          "missing_count": 1,
+          "valid_count": 54,
+          "description": "dincome; quarterly log change"
+        },
+        {
+          "name": "spread",
+          "source_field": "r.spread",
+          "type": "number",
+          "unit": "difference in source rate fractions",
+          "missing_count": 0,
+          "valid_count": 55,
+          "description": "spread; difference in source rate fractions"
+        },
+        {
+          "name": "era",
+          "source_field": "r.era",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 55,
+          "description": "era; category"
+        }
+      ],
+      "transformations": "Source logged real money/income rebased using exp(log value - first log value) × 100; first log changes null; spread = bond rate - deposit rate, in source rate units.",
+      "sha256": "b0a4ec67aac09cba8a764084845e57458597ba0024623586b21a48dce5d53ae9",
+      "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+    }
+  },
+  "fertility": {
+    "r": {
+      "source_id": "r",
+      "path": "projects/fertility/data/r.csv",
+      "row_count": 648,
+      "grain": "one selected country-year",
+      "key": "id",
+      "fields": [
+        {
+          "name": "id",
+          "source_field": "r.id",
+          "type": "string",
+          "unit": "identifier",
+          "missing_count": 0,
+          "valid_count": 648,
+          "description": "id; identifier"
+        },
+        {
+          "name": "country",
+          "source_field": "r.country",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 648,
+          "description": "country; category"
+        },
+        {
+          "name": "code",
+          "source_field": "r.code",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 648,
+          "description": "code; category"
+        },
+        {
+          "name": "year",
+          "source_field": "r.year",
+          "type": "number",
+          "unit": "year",
+          "missing_count": 0,
+          "valid_count": 648,
+          "description": "year; year"
+        },
+        {
+          "name": "fertility",
+          "source_field": "r.fertility",
+          "type": "number",
+          "unit": "period total fertility rate, births per woman",
+          "missing_count": 24,
+          "valid_count": 624,
+          "description": "fertility; period total fertility rate, births per woman"
+        },
+        {
+          "name": "decade",
+          "source_field": "r.decade",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 648,
+          "description": "decade; category"
+        },
+        {
+          "name": "year_label",
+          "source_field": "r.year_label",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 648,
+          "description": "year label; category"
+        },
+        {
+          "name": "coverage",
+          "source_field": "r.coverage",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 648,
+          "description": "coverage; category"
+        },
+        {
+          "name": "observed",
+          "source_field": "r.observed",
+          "type": "number",
+          "unit": "1 published; 0 missing",
+          "missing_count": 0,
+          "valid_count": 648,
+          "description": "observed; 1 published; 0 missing"
+        }
+      ],
+      "transformations": "Predeclared illustrative set of 12 country codes; all returned year cells 1960–2013 retained including nulls. No world-population inference.",
+      "sha256": "8c78c83b830c6eee2bdee14ac12ef7b071b66b90537986b8ddecd8675ab22b9d",
+      "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+    },
+    "endpoints": {
+      "source_id": "endpoints",
+      "path": "projects/fertility/data/endpoints.csv",
+      "row_count": 12,
+      "grain": "one selected country",
+      "key": "id",
+      "fields": [
+        {
+          "name": "id",
+          "source_field": "endpoints.id",
+          "type": "string",
+          "unit": "identifier",
+          "missing_count": 0,
+          "valid_count": 12,
+          "description": "id; identifier"
+        },
+        {
+          "name": "code",
+          "source_field": "endpoints.code",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 12,
+          "description": "code; category"
+        },
+        {
+          "name": "country",
+          "source_field": "endpoints.country",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 12,
+          "description": "country; category"
+        },
+        {
+          "name": "start",
+          "source_field": "endpoints.start",
+          "type": "number",
+          "unit": "births per woman in 1960",
+          "missing_count": 0,
+          "valid_count": 12,
+          "description": "start; births per woman in 1960"
+        },
+        {
+          "name": "end",
+          "source_field": "endpoints.end",
+          "type": "number",
+          "unit": "births per woman in 2011",
+          "missing_count": 0,
+          "valid_count": 12,
+          "description": "end; births per woman in 2011"
+        },
+        {
+          "name": "change",
+          "source_field": "endpoints.change",
+          "type": "number",
+          "unit": "births per woman, 2011 minus 1960",
+          "missing_count": 0,
+          "valid_count": 12,
+          "description": "change; births per woman, 2011 minus 1960"
+        },
+        {
+          "name": "complete",
+          "source_field": "endpoints.complete",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 12,
+          "description": "complete; category"
+        },
+        {
+          "name": "annual_change",
+          "source_field": "endpoints.annual_change",
+          "type": "number",
+          "unit": "births per woman per elapsed year",
+          "missing_count": 0,
+          "valid_count": 12,
+          "description": "annual change; births per woman per elapsed year"
+        }
+      ],
+      "transformations": "1960 and 2011 cells joined by code; change only when both published; annual change divides by 51 elapsed years.",
+      "sha256": "428bdadf31a0e881818c9fa7e4960da06e17e356c5e08242dfe8b9c6a63a6b12",
+      "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+    },
+    "paired": {
+      "source_id": "paired",
+      "path": "projects/fertility/data/paired.csv",
+      "row_count": 24,
+      "grain": "one matched country-endpoint",
+      "key": "id",
+      "fields": [
+        {
+          "name": "id",
+          "source_field": "paired.id",
+          "type": "string",
+          "unit": "identifier",
+          "missing_count": 0,
+          "valid_count": 24,
+          "description": "id; identifier"
+        },
+        {
+          "name": "code",
+          "source_field": "paired.code",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 24,
+          "description": "code; category"
+        },
+        {
+          "name": "country",
+          "source_field": "paired.country",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 24,
+          "description": "country; category"
+        },
+        {
+          "name": "endpoint",
+          "source_field": "paired.endpoint",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 24,
+          "description": "endpoint; category"
+        },
+        {
+          "name": "fertility",
+          "source_field": "paired.fertility",
+          "type": "number",
+          "unit": "births per woman",
+          "missing_count": 0,
+          "valid_count": 24,
+          "description": "fertility; births per woman"
+        },
+        {
+          "name": "year",
+          "source_field": "paired.year",
+          "type": "number",
+          "unit": "year",
+          "missing_count": 0,
+          "valid_count": 24,
+          "description": "year; year"
+        }
+      ],
+      "transformations": "Same complete country cohort at each endpoint; unweighted countries.",
+      "sha256": "aebdf11e416b899102d42d5e7c4b4c7401962e5ac0c24d5b8f15b986ffd1d7f6",
+      "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+    },
+    "decades": {
+      "source_id": "decades",
+      "path": "projects/fertility/data/decades.csv",
+      "row_count": 60,
+      "grain": "one country and complete named decade",
+      "key": "id",
+      "fields": [
+        {
+          "name": "id",
+          "source_field": "decades.id",
+          "type": "string",
+          "unit": "identifier",
+          "missing_count": 0,
+          "valid_count": 60,
+          "description": "id; identifier"
+        },
+        {
+          "name": "code",
+          "source_field": "decades.code",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 60,
+          "description": "code; category"
+        },
+        {
+          "name": "country",
+          "source_field": "decades.country",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 60,
+          "description": "country; category"
+        },
+        {
+          "name": "decade",
+          "source_field": "decades.decade",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 60,
+          "description": "decade; category"
+        },
+        {
+          "name": "year",
+          "source_field": "decades.year",
+          "type": "number",
+          "unit": "first year of decade",
+          "missing_count": 0,
+          "valid_count": 60,
+          "description": "year; first year of decade"
+        },
+        {
+          "name": "start",
+          "source_field": "decades.start",
+          "type": "number",
+          "unit": "births per woman",
+          "missing_count": 0,
+          "valid_count": 60,
+          "description": "start; births per woman"
+        },
+        {
+          "name": "end",
+          "source_field": "decades.end",
+          "type": "number",
+          "unit": "births per woman",
+          "missing_count": 0,
+          "valid_count": 60,
+          "description": "end; births per woman"
+        },
+        {
+          "name": "change",
+          "source_field": "decades.change",
+          "type": "number",
+          "unit": "births per woman",
+          "missing_count": 0,
+          "valid_count": 60,
+          "description": "change; births per woman"
+        },
+        {
+          "name": "annual_change",
+          "source_field": "decades.annual_change",
+          "type": "number",
+          "unit": "births per woman per elapsed year",
+          "missing_count": 0,
+          "valid_count": 60,
+          "description": "annual change; births per woman per elapsed year"
+        },
+        {
+          "name": "valid",
+          "source_field": "decades.valid",
+          "type": "number",
+          "unit": "published years",
+          "missing_count": 0,
+          "valid_count": 60,
+          "description": "valid; published years"
+        }
+      ],
+      "transformations": "Compare first and last year of each 10-observation decade, dividing by nine elapsed years; 2010s excluded.",
+      "sha256": "a77d028c8858076ba02a727819f3251ea0c461990ee034d2fbdc74760cd6d6c8",
+      "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+    }
+  },
+  "iris": {
+    "r": {
+      "source_id": "r",
+      "path": "projects/iris/data/r.csv",
+      "row_count": 150,
+      "grain": "one sampled iris flower",
+      "key": "id",
+      "fields": [
+        {
+          "name": "id",
+          "source_field": "r.id",
+          "type": "string",
+          "unit": "identifier",
+          "missing_count": 0,
+          "valid_count": 150,
+          "description": "id; identifier"
+        },
+        {
+          "name": "sepal_length",
+          "source_field": "r.sepal_length",
+          "type": "number",
+          "unit": "centimetres",
+          "missing_count": 0,
+          "valid_count": 150,
+          "description": "sepal length; centimetres"
+        },
+        {
+          "name": "sepal_width",
+          "source_field": "r.sepal_width",
+          "type": "number",
+          "unit": "centimetres",
+          "missing_count": 0,
+          "valid_count": 150,
+          "description": "sepal width; centimetres"
+        },
+        {
+          "name": "petal_length",
+          "source_field": "r.petal_length",
+          "type": "number",
+          "unit": "centimetres",
+          "missing_count": 0,
+          "valid_count": 150,
+          "description": "petal length; centimetres"
+        },
+        {
+          "name": "petal_width",
+          "source_field": "r.petal_width",
+          "type": "number",
+          "unit": "centimetres",
+          "missing_count": 0,
+          "valid_count": 150,
+          "description": "petal width; centimetres"
+        },
+        {
+          "name": "species",
+          "source_field": "r.species",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 150,
+          "description": "species; category"
+        },
+        {
+          "name": "petal_ratio",
+          "source_field": "r.petal_ratio",
+          "type": "number",
+          "unit": "length / width, dimensionless",
+          "missing_count": 0,
+          "valid_count": 150,
+          "description": "petal ratio; length / width, dimensionless"
+        }
+      ],
+      "transformations": "Preserve scikit-learn corrected source variant; decode class labels; petal ratio = length / width.",
+      "sha256": "2d29182611141f573e5dfe64cb648421159ea94ff7ec02b868cc38fa90922288",
+      "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+    }
+  },
+  "wine": {
+    "r": {
+      "source_id": "r",
+      "path": "projects/wine/data/r.csv",
+      "row_count": 178,
+      "grain": "one Italian wine chemical analysis",
+      "key": "id",
+      "fields": [
+        {
+          "name": "id",
+          "source_field": "r.id",
+          "type": "string",
+          "unit": "identifier",
+          "missing_count": 0,
+          "valid_count": 178,
+          "description": "id; identifier"
+        },
+        {
+          "name": "alcohol",
+          "source_field": "r.alcohol",
+          "type": "number",
+          "unit": "source assay units; publisher does not specify units",
+          "missing_count": 0,
+          "valid_count": 178,
+          "description": "alcohol; source assay units; publisher does not specify units"
+        },
+        {
+          "name": "malic_acid",
+          "source_field": "r.malic_acid",
+          "type": "number",
+          "unit": "source assay units; publisher does not specify units",
+          "missing_count": 0,
+          "valid_count": 178,
+          "description": "malic acid; source assay units; publisher does not specify units"
+        },
+        {
+          "name": "ash",
+          "source_field": "r.ash",
+          "type": "number",
+          "unit": "source assay units; publisher does not specify units",
+          "missing_count": 0,
+          "valid_count": 178,
+          "description": "ash; source assay units; publisher does not specify units"
+        },
+        {
+          "name": "ash_alkalinity",
+          "source_field": "r.ash_alkalinity",
+          "type": "number",
+          "unit": "source assay units; publisher does not specify units",
+          "missing_count": 0,
+          "valid_count": 178,
+          "description": "ash alkalinity; source assay units; publisher does not specify units"
+        },
+        {
+          "name": "magnesium",
+          "source_field": "r.magnesium",
+          "type": "number",
+          "unit": "source assay units; publisher does not specify units",
+          "missing_count": 0,
+          "valid_count": 178,
+          "description": "magnesium; source assay units; publisher does not specify units"
+        },
+        {
+          "name": "total_phenols",
+          "source_field": "r.total_phenols",
+          "type": "number",
+          "unit": "source assay units; publisher does not specify units",
+          "missing_count": 0,
+          "valid_count": 178,
+          "description": "total phenols; source assay units; publisher does not specify units"
+        },
+        {
+          "name": "flavanoids",
+          "source_field": "r.flavanoids",
+          "type": "number",
+          "unit": "source assay units; publisher does not specify units",
+          "missing_count": 0,
+          "valid_count": 178,
+          "description": "flavanoids; source assay units; publisher does not specify units"
+        },
+        {
+          "name": "nonflavanoid_phenols",
+          "source_field": "r.nonflavanoid_phenols",
+          "type": "number",
+          "unit": "source assay units; publisher does not specify units",
+          "missing_count": 0,
+          "valid_count": 178,
+          "description": "nonflavanoid phenols; source assay units; publisher does not specify units"
+        },
+        {
+          "name": "proanthocyanins",
+          "source_field": "r.proanthocyanins",
+          "type": "number",
+          "unit": "source assay units; publisher does not specify units",
+          "missing_count": 0,
+          "valid_count": 178,
+          "description": "proanthocyanins; source assay units; publisher does not specify units"
+        },
+        {
+          "name": "color_intensity",
+          "source_field": "r.color_intensity",
+          "type": "number",
+          "unit": "source assay units; publisher does not specify units",
+          "missing_count": 0,
+          "valid_count": 178,
+          "description": "color intensity; source assay units; publisher does not specify units"
+        },
+        {
+          "name": "hue",
+          "source_field": "r.hue",
+          "type": "number",
+          "unit": "source assay units; publisher does not specify units",
+          "missing_count": 0,
+          "valid_count": 178,
+          "description": "hue; source assay units; publisher does not specify units"
+        },
+        {
+          "name": "od_ratio",
+          "source_field": "r.od_ratio",
+          "type": "number",
+          "unit": "source assay units; publisher does not specify units",
+          "missing_count": 0,
+          "valid_count": 178,
+          "description": "od ratio; source assay units; publisher does not specify units"
+        },
+        {
+          "name": "proline",
+          "source_field": "r.proline",
+          "type": "number",
+          "unit": "source assay units; publisher does not specify units",
+          "missing_count": 0,
+          "valid_count": 178,
+          "description": "proline; source assay units; publisher does not specify units"
+        },
+        {
+          "name": "cultivar",
+          "source_field": "r.cultivar",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 178,
+          "description": "cultivar; category"
+        }
+      ],
+      "transformations": "Decode source class to cultivar labels; this is UCI Wine recognition, not Wine Quality. No quality ratings inferred.",
+      "sha256": "a8333d11aee5495ce4ab170475f17bde0149e3370b232da9b1dd6c10bba3ec1e",
+      "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+    },
+    "profiles": {
+      "source_id": "profiles",
+      "path": "projects/wine/data/profiles.csv",
+      "row_count": 2314,
+      "grain": "one wine-measure observation",
+      "key": "id",
+      "fields": [
+        {
+          "name": "id",
+          "source_field": "profiles.id",
+          "type": "string",
+          "unit": "identifier",
+          "missing_count": 0,
+          "valid_count": 2314,
+          "description": "id; identifier"
+        },
+        {
+          "name": "cultivar",
+          "source_field": "profiles.cultivar",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 2314,
+          "description": "cultivar; category"
+        },
+        {
+          "name": "measure",
+          "source_field": "profiles.measure",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 2314,
+          "description": "measure; category"
+        },
+        {
+          "name": "value",
+          "source_field": "profiles.value",
+          "type": "number",
+          "unit": "source units, different for each measure",
+          "missing_count": 0,
+          "valid_count": 2314,
+          "description": "value; source units, different for each measure"
+        },
+        {
+          "name": "unit",
+          "source_field": "profiles.unit",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 2314,
+          "description": "unit; category"
+        }
+      ],
+      "transformations": "Unpivot all 13 assays without standardization; repeat-specific value domains necessary because units differ.",
+      "sha256": "562f001229be292027fb483b29066d65218ab9d1e042167eb93f232f700397f9",
+      "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+    }
+  },
+  "longley": {
+    "r": {
+      "source_id": "r",
+      "path": "projects/longley/data/r.csv",
+      "row_count": 16,
+      "grain": "one historical US annual observation",
+      "key": "id",
+      "fields": [
+        {
+          "name": "id",
+          "source_field": "r.id",
+          "type": "string",
+          "unit": "identifier",
+          "missing_count": 0,
+          "valid_count": 16,
+          "description": "id; identifier"
+        },
+        {
+          "name": "employment",
+          "source_field": "r.employment",
+          "type": "number",
+          "unit": "source employment units",
+          "missing_count": 0,
+          "valid_count": 16,
+          "description": "employment; source employment units"
+        },
+        {
+          "name": "deflator",
+          "source_field": "r.deflator",
+          "type": "number",
+          "unit": "source GNP deflator index",
+          "missing_count": 0,
+          "valid_count": 16,
+          "description": "deflator; source GNP deflator index"
+        },
+        {
+          "name": "gnp",
+          "source_field": "r.gnp",
+          "type": "number",
+          "unit": "source nominal GNP units",
+          "missing_count": 0,
+          "valid_count": 16,
+          "description": "gnp; source nominal GNP units"
+        },
+        {
+          "name": "unemployed",
+          "source_field": "r.unemployed",
+          "type": "number",
+          "unit": "source unemployment-count units",
+          "missing_count": 0,
+          "valid_count": 16,
+          "description": "unemployed; source unemployment-count units"
+        },
+        {
+          "name": "armed",
+          "source_field": "r.armed",
+          "type": "number",
+          "unit": "source armed-forces-count units",
+          "missing_count": 0,
+          "valid_count": 16,
+          "description": "armed; source armed-forces-count units"
+        },
+        {
+          "name": "population",
+          "source_field": "r.population",
+          "type": "number",
+          "unit": "source population units",
+          "missing_count": 0,
+          "valid_count": 16,
+          "description": "population; source population units"
+        },
+        {
+          "name": "year",
+          "source_field": "r.year",
+          "type": "number",
+          "unit": "year",
+          "missing_count": 0,
+          "valid_count": 16,
+          "description": "year; year"
+        },
+        {
+          "name": "employment_change",
+          "source_field": "r.employment_change",
+          "type": "number",
+          "unit": "source employment units per year",
+          "missing_count": 1,
+          "valid_count": 15,
+          "description": "employment change; source employment units per year"
+        },
+        {
+          "name": "gnp_change",
+          "source_field": "r.gnp_change",
+          "type": "number",
+          "unit": "source GNP units per year",
+          "missing_count": 1,
+          "valid_count": 15,
+          "description": "gnp change; source GNP units per year"
+        },
+        {
+          "name": "population_change",
+          "source_field": "r.population_change",
+          "type": "number",
+          "unit": "source population units per year",
+          "missing_count": 1,
+          "valid_count": 15,
+          "description": "population change; source population units per year"
+        },
+        {
+          "name": "era",
+          "source_field": "r.era",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 16,
+          "description": "era; category"
+        },
+        {
+          "name": "employment_index",
+          "source_field": "r.employment_index",
+          "type": "number",
+          "unit": "1947 = 100",
+          "missing_count": 0,
+          "valid_count": 16,
+          "description": "employment index; 1947 = 100"
+        },
+        {
+          "name": "gnp_index",
+          "source_field": "r.gnp_index",
+          "type": "number",
+          "unit": "1947 = 100",
+          "missing_count": 0,
+          "valid_count": 16,
+          "description": "gnp index; 1947 = 100"
+        },
+        {
+          "name": "population_index",
+          "source_field": "r.population_index",
+          "type": "number",
+          "unit": "1947 = 100",
+          "missing_count": 0,
+          "valid_count": 16,
+          "description": "population index; 1947 = 100"
+        }
+      ],
+      "transformations": "Retain historical regression benchmark values; successive differences have first value null; first observation indices = 100. This small benchmark is not a modern labor-market model.",
+      "sha256": "5e2b152c0455828c869b9e7f731127298fe216b1e858852494556d958c35860a",
+      "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+    },
+    "indexed": {
+      "source_id": "indexed",
+      "path": "projects/longley/data/indexed.csv",
+      "row_count": 48,
+      "grain": "one annual indexed series value",
+      "key": "id",
+      "fields": [
+        {
+          "name": "id",
+          "source_field": "indexed.id",
+          "type": "string",
+          "unit": "identifier",
+          "missing_count": 0,
+          "valid_count": 48,
+          "description": "id; identifier"
+        },
+        {
+          "name": "year",
+          "source_field": "indexed.year",
+          "type": "number",
+          "unit": "year",
+          "missing_count": 0,
+          "valid_count": 48,
+          "description": "year; year"
+        },
+        {
+          "name": "series",
+          "source_field": "indexed.series",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 48,
+          "description": "series; category"
+        },
+        {
+          "name": "value",
+          "source_field": "indexed.value",
+          "type": "number",
+          "unit": "1947 = 100",
+          "missing_count": 0,
+          "valid_count": 48,
+          "description": "value; 1947 = 100"
+        }
+      ],
+      "transformations": "Unpivot three separately rebased indices; all use first supplied year = 100; units are comparable indices, not original amounts.",
+      "sha256": "93ed4a08104c86a52bc5706ae1c1a88a1d87d6f304828b32283f237deb5a8980",
+      "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+    }
+  },
+  "football": {
+    "r": {
+      "source_id": "r",
+      "path": "projects/football/data/r.csv",
+      "row_count": 48,
+      "grain": "one 2018 World Cup group-stage match",
+      "key": "id",
+      "fields": [
+        {
+          "name": "id",
+          "source_field": "r.id",
+          "type": "string",
+          "unit": "identifier",
+          "missing_count": 0,
+          "valid_count": 48,
+          "description": "id; identifier"
+        },
+        {
+          "name": "group",
+          "source_field": "r.group",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 48,
+          "description": "group; category"
+        },
+        {
+          "name": "date",
+          "source_field": "r.date",
+          "type": "date",
+          "unit": "calendar label",
+          "missing_count": 0,
+          "valid_count": 48,
+          "description": "date; calendar label"
+        },
+        {
+          "name": "team1",
+          "source_field": "r.team1",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 48,
+          "description": "team1; category"
+        },
+        {
+          "name": "team2",
+          "source_field": "r.team2",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 48,
+          "description": "team2; category"
+        },
+        {
+          "name": "goals1",
+          "source_field": "r.goals1",
+          "type": "number",
+          "unit": "goals by first listed team",
+          "missing_count": 0,
+          "valid_count": 48,
+          "description": "goals1; goals by first listed team"
+        },
+        {
+          "name": "goals2",
+          "source_field": "r.goals2",
+          "type": "number",
+          "unit": "goals by second listed team",
+          "missing_count": 0,
+          "valid_count": 48,
+          "description": "goals2; goals by second listed team"
+        },
+        {
+          "name": "total_goals",
+          "source_field": "r.total_goals",
+          "type": "number",
+          "unit": "goals per match",
+          "missing_count": 0,
+          "valid_count": 48,
+          "description": "total goals; goals per match"
+        },
+        {
+          "name": "margin",
+          "source_field": "r.margin",
+          "type": "number",
+          "unit": "absolute final goal difference",
+          "missing_count": 0,
+          "valid_count": 48,
+          "description": "margin; absolute final goal difference"
+        },
+        {
+          "name": "result",
+          "source_field": "r.result",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 48,
+          "description": "result; category"
+        }
+      ],
+      "transformations": "All final scores from the 48 supplied group matches; halftime/scorers/venues omitted; calendar dates not kickoff instants.",
+      "sha256": "4b636b2b3f78ad1425013476f093697bdc1353d7000eb55367502be790217c83",
+      "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+    },
+    "appearances": {
+      "source_id": "appearances",
+      "path": "projects/football/data/appearances.csv",
+      "row_count": 96,
+      "grain": "one team appearance in a group match",
+      "key": "id",
+      "fields": [
+        {
+          "name": "id",
+          "source_field": "appearances.id",
+          "type": "string",
+          "unit": "identifier",
+          "missing_count": 0,
+          "valid_count": 96,
+          "description": "id; identifier"
+        },
+        {
+          "name": "match_id",
+          "source_field": "appearances.match_id",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 96,
+          "description": "match id; category"
+        },
+        {
+          "name": "team",
+          "source_field": "appearances.team",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 96,
+          "description": "team; category"
+        },
+        {
+          "name": "opponent",
+          "source_field": "appearances.opponent",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 96,
+          "description": "opponent; category"
+        },
+        {
+          "name": "group",
+          "source_field": "appearances.group",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 96,
+          "description": "group; category"
+        },
+        {
+          "name": "date",
+          "source_field": "appearances.date",
+          "type": "date",
+          "unit": "calendar label",
+          "missing_count": 0,
+          "valid_count": 96,
+          "description": "date; calendar label"
+        },
+        {
+          "name": "goals_for",
+          "source_field": "appearances.goals_for",
+          "type": "number",
+          "unit": "goals per team appearance",
+          "missing_count": 0,
+          "valid_count": 96,
+          "description": "goals for; goals per team appearance"
+        },
+        {
+          "name": "goals_against",
+          "source_field": "appearances.goals_against",
+          "type": "number",
+          "unit": "goals conceded per team appearance",
+          "missing_count": 0,
+          "valid_count": 96,
+          "description": "goals against; goals conceded per team appearance"
+        },
+        {
+          "name": "points",
+          "source_field": "appearances.points",
+          "type": "number",
+          "unit": "group points, win 3 / draw 1 / loss 0",
+          "missing_count": 0,
+          "valid_count": 96,
+          "description": "points; group points, win 3 / draw 1 / loss 0"
+        },
+        {
+          "name": "result",
+          "source_field": "appearances.result",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 96,
+          "description": "result; category"
+        }
+      ],
+      "transformations": "Exactly two appearances per match; goals duplicated across opponent roles, not for match totals; 3/1/0 point rule.",
+      "sha256": "f316eebd1846f6f2ca35bc0c8a57311ab1d883e430154f453cb8d4d3436d8749",
+      "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+    },
+    "teams": {
+      "source_id": "teams",
+      "path": "projects/football/data/teams.csv",
+      "row_count": 32,
+      "grain": "one team in the completed group stage",
+      "key": "id",
+      "fields": [
+        {
+          "name": "id",
+          "source_field": "teams.id",
+          "type": "string",
+          "unit": "identifier",
+          "missing_count": 0,
+          "valid_count": 32,
+          "description": "id; identifier"
+        },
+        {
+          "name": "team",
+          "source_field": "teams.team",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 32,
+          "description": "team; category"
+        },
+        {
+          "name": "group",
+          "source_field": "teams.group",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 32,
+          "description": "group; category"
+        },
+        {
+          "name": "matches",
+          "source_field": "teams.matches",
+          "type": "number",
+          "unit": "group matches",
+          "missing_count": 0,
+          "valid_count": 32,
+          "description": "matches; group matches"
+        },
+        {
+          "name": "goals_for",
+          "source_field": "teams.goals_for",
+          "type": "number",
+          "unit": "group-stage goals",
+          "missing_count": 0,
+          "valid_count": 32,
+          "description": "goals for; group-stage goals"
+        },
+        {
+          "name": "goals_against",
+          "source_field": "teams.goals_against",
+          "type": "number",
+          "unit": "group-stage goals conceded",
+          "missing_count": 0,
+          "valid_count": 32,
+          "description": "goals against; group-stage goals conceded"
+        },
+        {
+          "name": "points",
+          "source_field": "teams.points",
+          "type": "number",
+          "unit": "group-stage points",
+          "missing_count": 0,
+          "valid_count": 32,
+          "description": "points; group-stage points"
+        },
+        {
+          "name": "goal_difference",
+          "source_field": "teams.goal_difference",
+          "type": "number",
+          "unit": "group-stage goals for minus against",
+          "missing_count": 0,
+          "valid_count": 32,
+          "description": "goal difference; group-stage goals for minus against"
+        }
+      ],
+      "transformations": "Sum three appearances per team; no knockout results, tie-break advancement or total tournament claims.",
+      "sha256": "40f0d38b106dedfbc6119611363425648f89bd4523dd21d66199e5e503ffb78d",
+      "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+    }
+  },
+  "tate": {
+    "r": {
+      "source_id": "r",
+      "path": "projects/tate/data/r.csv",
+      "row_count": 60,
+      "grain": "one artist-catalogue record in the first 60 alphabetic records",
+      "key": "id",
+      "fields": [
+        {
+          "name": "id",
+          "source_field": "r.id",
+          "type": "string",
+          "unit": "identifier",
+          "missing_count": 0,
+          "valid_count": 60,
+          "description": "id; identifier"
+        },
+        {
+          "name": "catalogue_id",
+          "source_field": "r.catalogue_id",
+          "type": "number",
+          "unit": "original Tate catalogue identifier",
+          "missing_count": 0,
+          "valid_count": 60,
+          "description": "catalogue id; original Tate catalogue identifier"
+        },
+        {
+          "name": "name",
+          "source_field": "r.name",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 60,
+          "description": "name; category"
+        },
+        {
+          "name": "birth_year",
+          "source_field": "r.birth_year",
+          "type": "number",
+          "unit": "year in October 2014 archive",
+          "missing_count": 0,
+          "valid_count": 60,
+          "description": "birth year; year in October 2014 archive"
+        },
+        {
+          "name": "death_year",
+          "source_field": "r.death_year",
+          "type": "number",
+          "unit": "year in October 2014 archive",
+          "missing_count": 19,
+          "valid_count": 41,
+          "description": "death year; year in October 2014 archive"
+        },
+        {
+          "name": "date_span",
+          "source_field": "r.date_span",
+          "type": "number",
+          "unit": "years between two catalogue dates; not necessarily a lifespan",
+          "missing_count": 19,
+          "valid_count": 41,
+          "description": "date span; years between two catalogue dates; not necessarily a lifespan"
+        },
+        {
+          "name": "entity",
+          "source_field": "r.entity",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 60,
+          "description": "entity; category"
+        },
+        {
+          "name": "death_status",
+          "source_field": "r.death_status",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 60,
+          "description": "death status; category"
+        },
+        {
+          "name": "birth_century",
+          "source_field": "r.birth_century",
+          "type": "string",
+          "unit": "category",
+          "missing_count": 0,
+          "valid_count": 60,
+          "description": "birth century; category"
+        }
+      ],
+      "transformations": "Select four supplied fields; span = death year - birth year only when both recorded; identify explicit Alken Family name without inferring other entities. No current-life status inferred from old missing death dates.",
+      "sha256": "8dd3f837fb047f83d0a0bde56f52a4e07c3e7ee6e28e0cfce58c161fcb15f272",
+      "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+    }
+  }
+}

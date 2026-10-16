@@ -1,0 +1,62 @@
+project @fertility
+
+source @r key=id path=data/r.csv {
+  field id "id" string
+  field country "country" string
+  field code "code" string
+  field year "year" number
+  field fertility "fertility" number
+  field decade "decade" string
+  field year_label "year label" string
+  field coverage "coverage" string
+  field observed "observed" number
+}
+
+source @endpoints key=id path=data/endpoints.csv {
+  field id "id" string
+  field code "code" string
+  field country "country" string
+  field start "start" number
+  field end "end" number
+  field change "change" number
+  field complete "complete" string
+  field annual_change "annual change" number
+}
+
+source @paired key=id path=data/paired.csv {
+  field id "id" string
+  field code "code" string
+  field country "country" string
+  field endpoint "endpoint" string
+  field fertility "fertility" number
+  field year "year" number
+}
+
+source @decades key=id path=data/decades.csv {
+  field id "id" string
+  field code "code" string
+  field country "country" string
+  field decade "decade" string
+  field year "year" number
+  field start "start" number
+  field end "end" number
+  field change "change" number
+  field annual_change "annual change" number
+  field valid "valid" number
+}
+
+query @r "r" glyph=◆ {
+  source r
+}
+
+query @endpoints "endpoints" glyph=◆ {
+  source endpoints
+}
+
+query @paired "paired" glyph=◆ {
+  source paired
+}
+
+query @decades "decades" glyph=◆ {
+  source decades
+}

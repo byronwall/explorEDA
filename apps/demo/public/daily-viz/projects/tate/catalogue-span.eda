@@ -1,0 +1,16 @@
+eda query=r
+dashboard "Two catalogue dates do not necessarily make a lifespan"
+grid columns=12 rowHeight=76
+composition @cp-tate-catalogue-span width=1010 height=730 at=0,0,12,9 {
+  title "Two catalogue dates do not necessarily make a lifespan" at=32,28 fontSize=24
+  subtitle "A swarmed dot row compares recorded date spans while separating the explicitly named family entity." at=32,78 fontSize=13
+  scale numeric r.date_span zero=true
+  unit Entities at=40,200 size=705x90 axisTitles.x="Recorded date span (years; not necessarily lifespan)" {
+    repeat r.entity arrangement=rows gap=80 order=label
+    label width=210 fontSize=12
+    point Records x=r.date_span spread=swarm radius=4
+  }
+  note "Blank death dates remain missing. This is an alphabetic prefix of an old archive, not current biographies." at=75,540 leader=false
+  footnote "Tate collection metadata, October 2014 archive; first 60 records; CC0 1.0." at=32,676 fontSize=10
+  footnote "Units, denominator, transformation and evidence: companion design note; snapshot findings do not change with filters." at=32,698 fontSize=10
+}

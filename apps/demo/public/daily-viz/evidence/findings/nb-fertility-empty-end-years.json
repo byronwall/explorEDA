@@ -1,0 +1,110 @@
+{
+  "piece_id": "nb-fertility-empty-end-years",
+  "data_query": "r",
+  "findings": [
+    {
+      "statement": "In the selected 2012 rows, the missing-value share was 100.0%.",
+      "value": 100.0,
+      "operation": "missing_share",
+      "field": "fertility",
+      "unit": "%",
+      "denominator": 12,
+      "denominator_definition": "eligible rows after the declared filter and required-field null exclusions",
+      "numerator": 12,
+      "input_rows": 648,
+      "filtered_rows": 12,
+      "eligible_rows": 12,
+      "excluded_for_missing": 0,
+      "filter": [
+        [
+          "year",
+          "eq",
+          2012
+        ]
+      ],
+      "expression": {
+        "op": "missing_share",
+        "field": "fertility",
+        "sentence": "In the selected 2012 rows, the missing-value share was {value:.1f}%.",
+        "where": [
+          [
+            "year",
+            "eq",
+            2012
+          ]
+        ]
+      },
+      "rounding": ".1f",
+      "data_path": "projects/fertility/data/r.csv",
+      "data_sha256": "8c78c83b830c6eee2bdee14ac12ef7b071b66b90537986b8ddecd8675ab22b9d",
+      "contributing_row_ids": [
+        "fertility-r-00053",
+        "fertility-r-00107",
+        "fertility-r-00161",
+        "fertility-r-00215",
+        "fertility-r-00269",
+        "fertility-r-00323",
+        "fertility-r-00377",
+        "fertility-r-00431",
+        "fertility-r-00485",
+        "fertility-r-00539",
+        "fertility-r-00593",
+        "fertility-r-00647"
+      ],
+      "reproduction": "python evidence/scripts/build.py; calculate() uses the archived expression, no narrative constants",
+      "id": "nb-fertility-empty-end-years-finding-1"
+    },
+    {
+      "statement": "In the selected 2011 rows, the missing-value share was 0.0%.",
+      "value": 0.0,
+      "operation": "missing_share",
+      "field": "fertility",
+      "unit": "%",
+      "denominator": 12,
+      "denominator_definition": "eligible rows after the declared filter and required-field null exclusions",
+      "numerator": 0,
+      "input_rows": 648,
+      "filtered_rows": 12,
+      "eligible_rows": 12,
+      "excluded_for_missing": 0,
+      "filter": [
+        [
+          "year",
+          "eq",
+          2011
+        ]
+      ],
+      "expression": {
+        "op": "missing_share",
+        "field": "fertility",
+        "sentence": "In the selected 2011 rows, the missing-value share was {value:.1f}%.",
+        "where": [
+          [
+            "year",
+            "eq",
+            2011
+          ]
+        ]
+      },
+      "rounding": ".1f",
+      "data_path": "projects/fertility/data/r.csv",
+      "data_sha256": "8c78c83b830c6eee2bdee14ac12ef7b071b66b90537986b8ddecd8675ab22b9d",
+      "contributing_row_ids": [
+        "fertility-r-00052",
+        "fertility-r-00106",
+        "fertility-r-00160",
+        "fertility-r-00214",
+        "fertility-r-00268",
+        "fertility-r-00322",
+        "fertility-r-00376",
+        "fertility-r-00430",
+        "fertility-r-00484",
+        "fertility-r-00538",
+        "fertility-r-00592",
+        "fertility-r-00646"
+      ],
+      "reproduction": "python evidence/scripts/build.py; calculate() uses the archived expression, no narrative constants",
+      "id": "nb-fertility-empty-end-years-finding-2"
+    }
+  ]
+}

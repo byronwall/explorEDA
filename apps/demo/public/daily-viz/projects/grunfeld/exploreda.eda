@@ -1,0 +1,38 @@
+project @grunfeld
+
+source @r key=id path=data/r.csv {
+  field id "id" string
+  field invest "invest" number
+  field value "value" number
+  field capital "capital" number
+  field firm "firm" string
+  field year "year" number
+  field invest_index "invest index" number
+  field value_index "value index" number
+  field invest_change "invest change" number
+  field value_change "value change" number
+  field capital_change "capital change" number
+}
+
+source @firms key=id path=data/firms.csv {
+  field id "id" string
+  field firm "firm" string
+  field years "years" number
+  field invest_mean "invest mean" number
+  field value_mean "value mean" number
+  field invest_total "invest total" number
+}
+
+query @r "r" glyph=◆ {
+  source r
+}
+
+query @firms "firms" glyph=◆ {
+  source firms
+}
+
+relate @firm-link r.firm -> firms.firm
+query @linked "Firm-years with firm summaries" glyph=◆ {
+  source r
+  lookup company via=firm-link
+}

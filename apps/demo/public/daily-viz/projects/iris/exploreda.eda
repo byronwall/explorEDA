@@ -1,0 +1,15 @@
+project @iris
+
+source @r key=id path=data/r.csv {
+  field id "id" string
+  field sepal_length "sepal length" number
+  field sepal_width "sepal width" number
+  field petal_length "petal length" number
+  field petal_width "petal width" number
+  field species "species" string
+  field petal_ratio "petal ratio" number
+}
+
+query @r "r" glyph=◆ {
+  source r
+}

@@ -1,0 +1,18 @@
+eda query=r
+dashboard "Follow the same flowers across several measurements"
+grid columns=12 rowHeight=76
+id:cat=r.id label="Id"
+sepal_length:num=r.sepal_length label="Sepal length (cm)"
+sepal_width:num=r.sepal_width label="Sepal width (cm)"
+petal_length:num=r.petal_length label="Petal length (cm)"
+petal_width:num=r.petal_width label="Petal width (cm)"
+species:cat=r.species label="Species"
+petal_ratio:num=r.petal_ratio label="Petal ratio (length / width, dimensionless)"
+markdown @db-iris-flower-investigation-guide content="<p><strong>Which flowers remain when a species selection and a petal-length range intersect?</strong></p><p>Selections filter peer views and records. The written findings describe the unfiltered snapshot, not the current selection.</p>" title="Entry question and filter scope" at=0,0,12,2
+scatter @db-iris-flower-investigation-view-1 x=petal_length y=petal_width color=species title="Petal dimensions" at=0,2,8,5 note="Fisher / UCI Iris, scikit-learn corrected variant; CC BY 4.0." x.title="Petal length (cm)" y.title="Petal width (cm)"
+row @db-iris-flower-investigation-view-2 species title="Select species" at=8,2,4,5 note="Fisher / UCI Iris, scikit-learn corrected variant; CC BY 4.0." x.title="Source rows"
+scatter @db-iris-flower-investigation-view-3 x=sepal_length y=sepal_width color=species title="Sepal dimensions of the same flowers" at=0,7,6,4 note="Fisher / UCI Iris, scikit-learn corrected variant; CC BY 4.0." x.title="Sepal length (cm)" y.title="Sepal width (cm)"
+hist @db-iris-flower-investigation-view-4 petal_length bins=20 title="Brush petal length" at=6,7,6,4 note="Fisher / UCI Iris, scikit-learn corrected variant; CC BY 4.0." x.title="Petal length (cm)" y.title="Source rows"
+parallel @db-iris-flower-investigation-view-5 sepal_length,sepal_width,petal_length,petal_width color=species title="Four measurements per flower" at=0,11,8,5 note="Fisher / UCI Iris, scikit-learn corrected variant; CC BY 4.0."
+metric @db-iris-flower-investigation-view-6 count title="Flowers matching the filters" at=8,11,4,2 note="Fisher / UCI Iris, scikit-learn corrected variant; CC BY 4.0."
+table @db-iris-flower-investigation-records species,sepal_length,sepal_width,petal_length,petal_width title="Matching source records and lookup values" at=0,16,12,5

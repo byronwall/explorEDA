@@ -1,0 +1,13 @@
+id,code,country,start,end,change,complete,annual_change
+fertility-endpoints-00001,BRA,Brazil,6.21,1.822,-4.388,Both endpoints,-0.0860392156863
+fertility-endpoints-00002,CHN,China,5.758,1.657,-4.101,Both endpoints,-0.0804117647059
+fertility-endpoints-00003,EGY,"Egypt, Arab Rep.",6.63,2.845,-3.785,Both endpoints,-0.0742156862745
+fertility-endpoints-00004,FRA,France,2.85,2.03,-0.82,Both endpoints,-0.0160784313725
+fertility-endpoints-00005,IDN,Indonesia,5.666,2.403,-3.263,Both endpoints,-0.0639803921569
+fertility-endpoints-00006,IND,India,5.87,2.532,-3.338,Both endpoints,-0.0654509803922
+fertility-endpoints-00007,JPN,Japan,2.001,1.39,-0.611,Both endpoints,-0.0119803921569
+fertility-endpoints-00008,KOR,"Korea, Rep.",6.155,1.244,-4.911,Both endpoints,-0.0962941176471
+fertility-endpoints-00009,MEX,Mexico,6.783,2.248,-4.535,Both endpoints,-0.0889215686275
+fertility-endpoints-00010,NGA,Nigeria,6.354,6.017,-0.337,Both endpoints,-0.00660784313725
+fertility-endpoints-00011,USA,United States,3.654,1.895,-1.759,Both endpoints,-0.0344901960784
+fertility-endpoints-00012,ZAF,South Africa,6.173,2.438,-3.735,Both endpoints,-0.0732352941176

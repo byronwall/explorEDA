@@ -1,0 +1,35 @@
+project @wine
+
+source @r key=id path=data/r.csv {
+  field id "id" string
+  field alcohol "alcohol" number
+  field malic_acid "malic acid" number
+  field ash "ash" number
+  field ash_alkalinity "ash alkalinity" number
+  field magnesium "magnesium" number
+  field total_phenols "total phenols" number
+  field flavanoids "flavanoids" number
+  field nonflavanoid_phenols "nonflavanoid phenols" number
+  field proanthocyanins "proanthocyanins" number
+  field color_intensity "color intensity" number
+  field hue "hue" number
+  field od_ratio "od ratio" number
+  field proline "proline" number
+  field cultivar "cultivar" string
+}
+
+source @profiles key=id path=data/profiles.csv {
+  field id "id" string
+  field cultivar "cultivar" string
+  field measure "measure" string
+  field value "value" number
+  field unit "unit" string
+}
+
+query @r "r" glyph=◆ {
+  source r
+}
+
+query @profiles "profiles" glyph=◆ {
+  source profiles
+}

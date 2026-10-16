@@ -1,0 +1,347 @@
+{
+  "r": {
+    "source_id": "r",
+    "path": "projects/fertility/data/r.csv",
+    "row_count": 648,
+    "grain": "one selected country-year",
+    "key": "id",
+    "fields": [
+      {
+        "name": "id",
+        "source_field": "r.id",
+        "type": "string",
+        "unit": "identifier",
+        "missing_count": 0,
+        "valid_count": 648,
+        "description": "id; identifier"
+      },
+      {
+        "name": "country",
+        "source_field": "r.country",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 648,
+        "description": "country; category"
+      },
+      {
+        "name": "code",
+        "source_field": "r.code",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 648,
+        "description": "code; category"
+      },
+      {
+        "name": "year",
+        "source_field": "r.year",
+        "type": "number",
+        "unit": "year",
+        "missing_count": 0,
+        "valid_count": 648,
+        "description": "year; year"
+      },
+      {
+        "name": "fertility",
+        "source_field": "r.fertility",
+        "type": "number",
+        "unit": "period total fertility rate, births per woman",
+        "missing_count": 24,
+        "valid_count": 624,
+        "description": "fertility; period total fertility rate, births per woman"
+      },
+      {
+        "name": "decade",
+        "source_field": "r.decade",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 648,
+        "description": "decade; category"
+      },
+      {
+        "name": "year_label",
+        "source_field": "r.year_label",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 648,
+        "description": "year label; category"
+      },
+      {
+        "name": "coverage",
+        "source_field": "r.coverage",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 648,
+        "description": "coverage; category"
+      },
+      {
+        "name": "observed",
+        "source_field": "r.observed",
+        "type": "number",
+        "unit": "1 published; 0 missing",
+        "missing_count": 0,
+        "valid_count": 648,
+        "description": "observed; 1 published; 0 missing"
+      }
+    ],
+    "transformations": "Predeclared illustrative set of 12 country codes; all returned year cells 1960–2013 retained including nulls. No world-population inference.",
+    "sha256": "8c78c83b830c6eee2bdee14ac12ef7b071b66b90537986b8ddecd8675ab22b9d",
+    "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+  },
+  "endpoints": {
+    "source_id": "endpoints",
+    "path": "projects/fertility/data/endpoints.csv",
+    "row_count": 12,
+    "grain": "one selected country",
+    "key": "id",
+    "fields": [
+      {
+        "name": "id",
+        "source_field": "endpoints.id",
+        "type": "string",
+        "unit": "identifier",
+        "missing_count": 0,
+        "valid_count": 12,
+        "description": "id; identifier"
+      },
+      {
+        "name": "code",
+        "source_field": "endpoints.code",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 12,
+        "description": "code; category"
+      },
+      {
+        "name": "country",
+        "source_field": "endpoints.country",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 12,
+        "description": "country; category"
+      },
+      {
+        "name": "start",
+        "source_field": "endpoints.start",
+        "type": "number",
+        "unit": "births per woman in 1960",
+        "missing_count": 0,
+        "valid_count": 12,
+        "description": "start; births per woman in 1960"
+      },
+      {
+        "name": "end",
+        "source_field": "endpoints.end",
+        "type": "number",
+        "unit": "births per woman in 2011",
+        "missing_count": 0,
+        "valid_count": 12,
+        "description": "end; births per woman in 2011"
+      },
+      {
+        "name": "change",
+        "source_field": "endpoints.change",
+        "type": "number",
+        "unit": "births per woman, 2011 minus 1960",
+        "missing_count": 0,
+        "valid_count": 12,
+        "description": "change; births per woman, 2011 minus 1960"
+      },
+      {
+        "name": "complete",
+        "source_field": "endpoints.complete",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 12,
+        "description": "complete; category"
+      },
+      {
+        "name": "annual_change",
+        "source_field": "endpoints.annual_change",
+        "type": "number",
+        "unit": "births per woman per elapsed year",
+        "missing_count": 0,
+        "valid_count": 12,
+        "description": "annual change; births per woman per elapsed year"
+      }
+    ],
+    "transformations": "1960 and 2011 cells joined by code; change only when both published; annual change divides by 51 elapsed years.",
+    "sha256": "428bdadf31a0e881818c9fa7e4960da06e17e356c5e08242dfe8b9c6a63a6b12",
+    "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+  },
+  "paired": {
+    "source_id": "paired",
+    "path": "projects/fertility/data/paired.csv",
+    "row_count": 24,
+    "grain": "one matched country-endpoint",
+    "key": "id",
+    "fields": [
+      {
+        "name": "id",
+        "source_field": "paired.id",
+        "type": "string",
+        "unit": "identifier",
+        "missing_count": 0,
+        "valid_count": 24,
+        "description": "id; identifier"
+      },
+      {
+        "name": "code",
+        "source_field": "paired.code",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 24,
+        "description": "code; category"
+      },
+      {
+        "name": "country",
+        "source_field": "paired.country",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 24,
+        "description": "country; category"
+      },
+      {
+        "name": "endpoint",
+        "source_field": "paired.endpoint",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 24,
+        "description": "endpoint; category"
+      },
+      {
+        "name": "fertility",
+        "source_field": "paired.fertility",
+        "type": "number",
+        "unit": "births per woman",
+        "missing_count": 0,
+        "valid_count": 24,
+        "description": "fertility; births per woman"
+      },
+      {
+        "name": "year",
+        "source_field": "paired.year",
+        "type": "number",
+        "unit": "year",
+        "missing_count": 0,
+        "valid_count": 24,
+        "description": "year; year"
+      }
+    ],
+    "transformations": "Same complete country cohort at each endpoint; unweighted countries.",
+    "sha256": "aebdf11e416b899102d42d5e7c4b4c7401962e5ac0c24d5b8f15b986ffd1d7f6",
+    "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+  },
+  "decades": {
+    "source_id": "decades",
+    "path": "projects/fertility/data/decades.csv",
+    "row_count": 60,
+    "grain": "one country and complete named decade",
+    "key": "id",
+    "fields": [
+      {
+        "name": "id",
+        "source_field": "decades.id",
+        "type": "string",
+        "unit": "identifier",
+        "missing_count": 0,
+        "valid_count": 60,
+        "description": "id; identifier"
+      },
+      {
+        "name": "code",
+        "source_field": "decades.code",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 60,
+        "description": "code; category"
+      },
+      {
+        "name": "country",
+        "source_field": "decades.country",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 60,
+        "description": "country; category"
+      },
+      {
+        "name": "decade",
+        "source_field": "decades.decade",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 60,
+        "description": "decade; category"
+      },
+      {
+        "name": "year",
+        "source_field": "decades.year",
+        "type": "number",
+        "unit": "first year of decade",
+        "missing_count": 0,
+        "valid_count": 60,
+        "description": "year; first year of decade"
+      },
+      {
+        "name": "start",
+        "source_field": "decades.start",
+        "type": "number",
+        "unit": "births per woman",
+        "missing_count": 0,
+        "valid_count": 60,
+        "description": "start; births per woman"
+      },
+      {
+        "name": "end",
+        "source_field": "decades.end",
+        "type": "number",
+        "unit": "births per woman",
+        "missing_count": 0,
+        "valid_count": 60,
+        "description": "end; births per woman"
+      },
+      {
+        "name": "change",
+        "source_field": "decades.change",
+        "type": "number",
+        "unit": "births per woman",
+        "missing_count": 0,
+        "valid_count": 60,
+        "description": "change; births per woman"
+      },
+      {
+        "name": "annual_change",
+        "source_field": "decades.annual_change",
+        "type": "number",
+        "unit": "births per woman per elapsed year",
+        "missing_count": 0,
+        "valid_count": 60,
+        "description": "annual change; births per woman per elapsed year"
+      },
+      {
+        "name": "valid",
+        "source_field": "decades.valid",
+        "type": "number",
+        "unit": "published years",
+        "missing_count": 0,
+        "valid_count": 60,
+        "description": "valid; published years"
+      }
+    ],
+    "transformations": "Compare first and last year of each 10-observation decade, dividing by nine elapsed years; 2010s excluded.",
+    "sha256": "a77d028c8858076ba02a727819f3251ea0c461990ee034d2fbdc74760cd6d6c8",
+    "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+  }
+}

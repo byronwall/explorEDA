@@ -1,0 +1,48 @@
+project @co2
+
+source @r key=id path=data/r.csv {
+  field id "id" string
+  field date "date" date
+  field co2 "co2" number
+  field year "year" number
+  field month "month" number
+  field month_label "month label" string
+  field decade "decade" string
+  field coverage "coverage" string
+  field observed "observed" number
+  field annual_center "annual center" number
+  field residual "residual" number
+}
+
+source @annual key=id path=data/annual.csv {
+  field id "id" string
+  field year "year" number
+  field mean "mean" number
+  field low "low" number
+  field high "high" number
+  field valid "valid" number
+  field slots "slots" number
+  field coverage_pct "coverage pct" number
+}
+
+source @gaps key=id path=data/gaps.csv {
+  field id "id" string
+  field date "date" date
+  field end_date "end date" date
+  field length "length" number
+  field year "year" number
+  field before "before" number
+  field after "after" number
+}
+
+query @r "r" glyph=◆ {
+  source r
+}
+
+query @annual "annual" glyph=◆ {
+  source annual
+}
+
+query @gaps "gaps" glyph=◆ {
+  source gaps
+}

@@ -1,0 +1,15 @@
+eda query=r
+dashboard "Each household remains a dot in the food-share comparison"
+grid columns=12 rowHeight=76
+composition @cp-engel-household-share-swarm width=960 height=730 at=0,0,12,9 {
+  title "Each household remains a dot in the food-share comparison" at=32,28 fontSize=24
+  subtitle "One dot per household is spread into a swarm along its food-share value within its income quartile." at=32,78 fontSize=13
+  scale numeric r.food_share zero=true
+  unit Quartiles at=42,165 size=710x68 axisTitles.x="Food expenditure / household income (%)" {
+    repeat r.income_band arrangement=rows gap=30 order=label
+    label width=200 fontSize=12
+    point Households x=r.food_share spread=swarm radius=3
+  }
+  footnote "Engel household data via statsmodels; historical Belgian sample; public domain." at=32,676 fontSize=10
+  footnote "Units, denominator, transformation and evidence: companion design note; snapshot findings do not change with filters." at=32,698 fontSize=10
+}

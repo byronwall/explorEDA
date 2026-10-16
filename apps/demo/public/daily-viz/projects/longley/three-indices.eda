@@ -1,0 +1,17 @@
+eda query=indexed
+dashboard "A common starting index is an analytical choice"
+grid columns=12 rowHeight=76
+composition @cp-longley-three-indices width=960 height=690 at=0,0,12,9 {
+  title "A common starting index is an analytical choice" at=32,28 fontSize=24
+  subtitle "Three colored paths compare proportional movement after each series is rebased to its first value." at=32,78 fontSize=13
+  scale numeric indexed.year nice=false
+  scale numeric indexed.value zero=false
+  unit Years at=90,165 size=800x315 axisTitles.x=Year axisTitles.y="First supplied year = 100" {
+    label show=false
+    path Indices x=indexed.year y=indexed.value orderField=indexed.year seriesField=indexed.series colorField=indexed.series
+  }
+  rule "Initial index" at=6,0 unit=Years axis=y value.value=100
+  legend Series at=110,535 unit=Years mark=Indices
+  footnote "Longley historical employment benchmark via statsmodels; public domain." at=32,636 fontSize=10
+  footnote "Units, denominator, transformation and evidence: companion design note; snapshot findings do not change with filters." at=32,658 fontSize=10
+}

@@ -1,0 +1,203 @@
+{
+  "r": {
+    "source_id": "r",
+    "path": "projects/macro/data/r.csv",
+    "row_count": 203,
+    "grain": "one US calendar quarter",
+    "key": "id",
+    "fields": [
+      {
+        "name": "id",
+        "source_field": "r.id",
+        "type": "string",
+        "unit": "identifier",
+        "missing_count": 0,
+        "valid_count": 203,
+        "description": "id; identifier"
+      },
+      {
+        "name": "year",
+        "source_field": "r.year",
+        "type": "number",
+        "unit": "year",
+        "missing_count": 0,
+        "valid_count": 203,
+        "description": "year; year"
+      },
+      {
+        "name": "quarter",
+        "source_field": "r.quarter",
+        "type": "number",
+        "unit": "quarter number",
+        "missing_count": 0,
+        "valid_count": 203,
+        "description": "quarter; quarter number"
+      },
+      {
+        "name": "realgdp",
+        "source_field": "r.realgdp",
+        "type": "number",
+        "unit": "billions of chained 2005 US dollars (source vintage)",
+        "missing_count": 0,
+        "valid_count": 203,
+        "description": "realgdp; billions of chained 2005 US dollars (source vintage)"
+      },
+      {
+        "name": "realcons",
+        "source_field": "r.realcons",
+        "type": "number",
+        "unit": "billions of chained 2005 US dollars (source vintage)",
+        "missing_count": 0,
+        "valid_count": 203,
+        "description": "realcons; billions of chained 2005 US dollars (source vintage)"
+      },
+      {
+        "name": "realinv",
+        "source_field": "r.realinv",
+        "type": "number",
+        "unit": "billions of chained 2005 US dollars (source vintage)",
+        "missing_count": 0,
+        "valid_count": 203,
+        "description": "realinv; billions of chained 2005 US dollars (source vintage)"
+      },
+      {
+        "name": "realgovt",
+        "source_field": "r.realgovt",
+        "type": "number",
+        "unit": "billions of chained 2005 US dollars (source vintage)",
+        "missing_count": 0,
+        "valid_count": 203,
+        "description": "realgovt; billions of chained 2005 US dollars (source vintage)"
+      },
+      {
+        "name": "realdpi",
+        "source_field": "r.realdpi",
+        "type": "number",
+        "unit": "billions of chained 2005 US dollars (source vintage)",
+        "missing_count": 0,
+        "valid_count": 203,
+        "description": "realdpi; billions of chained 2005 US dollars (source vintage)"
+      },
+      {
+        "name": "cpi",
+        "source_field": "r.cpi",
+        "type": "number",
+        "unit": "CPI index",
+        "missing_count": 0,
+        "valid_count": 203,
+        "description": "cpi; CPI index"
+      },
+      {
+        "name": "m1",
+        "source_field": "r.m1",
+        "type": "number",
+        "unit": "billions of nominal US dollars",
+        "missing_count": 0,
+        "valid_count": 203,
+        "description": "m1; billions of nominal US dollars"
+      },
+      {
+        "name": "tbilrate",
+        "source_field": "r.tbilrate",
+        "type": "number",
+        "unit": "Treasury bill rate, %",
+        "missing_count": 0,
+        "valid_count": 203,
+        "description": "tbilrate; Treasury bill rate, %"
+      },
+      {
+        "name": "unemp",
+        "source_field": "r.unemp",
+        "type": "number",
+        "unit": "unemployment rate, %",
+        "missing_count": 0,
+        "valid_count": 203,
+        "description": "unemp; unemployment rate, %"
+      },
+      {
+        "name": "pop",
+        "source_field": "r.pop",
+        "type": "number",
+        "unit": "millions of people",
+        "missing_count": 0,
+        "valid_count": 203,
+        "description": "pop; millions of people"
+      },
+      {
+        "name": "infl",
+        "source_field": "r.infl",
+        "type": "number",
+        "unit": "source annualized inflation, %",
+        "missing_count": 0,
+        "valid_count": 203,
+        "description": "infl; source annualized inflation, %"
+      },
+      {
+        "name": "realint",
+        "source_field": "r.realint",
+        "type": "number",
+        "unit": "source real interest rate, %",
+        "missing_count": 0,
+        "valid_count": 203,
+        "description": "realint; source real interest rate, %"
+      },
+      {
+        "name": "date",
+        "source_field": "r.date",
+        "type": "date",
+        "unit": "calendar label",
+        "missing_count": 0,
+        "valid_count": 203,
+        "description": "date; calendar label"
+      },
+      {
+        "name": "decade",
+        "source_field": "r.decade",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 203,
+        "description": "decade; category"
+      },
+      {
+        "name": "gdp_growth",
+        "source_field": "r.gdp_growth",
+        "type": "number",
+        "unit": "annualized quarter-on-quarter %",
+        "missing_count": 1,
+        "valid_count": 202,
+        "description": "gdp growth; annualized quarter-on-quarter %"
+      },
+      {
+        "name": "consumption_share",
+        "source_field": "r.consumption_share",
+        "type": "number",
+        "unit": "% ratio of chained-dollar series; not additive budget share",
+        "missing_count": 0,
+        "valid_count": 203,
+        "description": "consumption share; % ratio of chained-dollar series; not additive budget share"
+      },
+      {
+        "name": "gdp_change",
+        "source_field": "r.gdp_change",
+        "type": "number",
+        "unit": "billions of chained 2005 US dollars (source vintage)",
+        "missing_count": 1,
+        "valid_count": 202,
+        "description": "gdp change; billions of chained 2005 US dollars (source vintage)"
+      },
+      {
+        "name": "unemp_change",
+        "source_field": "r.unemp_change",
+        "type": "number",
+        "unit": "percentage points",
+        "missing_count": 1,
+        "valid_count": 202,
+        "description": "unemp change; percentage points"
+      }
+    ],
+    "transformations": "Derived annualized GDP growth uses the preceding supplied quarter; first growth is null. Source initial infl/realint zero preserved, not inferred measured inflation.",
+    "sha256": "40c39fd427817801e3cec5f07afddb503a6913e539a01e980d577b51bece9d37",
+    "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+  }
+}

@@ -1,0 +1,25 @@
+id,code,country,endpoint,fertility,year
+fertility-paired-00001,BRA,Brazil,start,6.21,1960
+fertility-paired-00002,CHN,China,start,5.758,1960
+fertility-paired-00003,EGY,"Egypt, Arab Rep.",start,6.63,1960
+fertility-paired-00004,FRA,France,start,2.85,1960
+fertility-paired-00005,IDN,Indonesia,start,5.666,1960
+fertility-paired-00006,IND,India,start,5.87,1960
+fertility-paired-00007,JPN,Japan,start,2.001,1960
+fertility-paired-00008,KOR,"Korea, Rep.",start,6.155,1960
+fertility-paired-00009,MEX,Mexico,start,6.783,1960
+fertility-paired-00010,NGA,Nigeria,start,6.354,1960
+fertility-paired-00011,USA,United States,start,3.654,1960
+fertility-paired-00012,ZAF,South Africa,start,6.173,1960
+fertility-paired-00013,BRA,Brazil,end,1.822,2011
+fertility-paired-00014,CHN,China,end,1.657,2011
+fertility-paired-00015,EGY,"Egypt, Arab Rep.",end,2.845,2011
+fertility-paired-00016,FRA,France,end,2.03,2011
+fertility-paired-00017,IDN,Indonesia,end,2.403,2011
+fertility-paired-00018,IND,India,end,2.532,2011
+fertility-paired-00019,JPN,Japan,end,1.39,2011
+fertility-paired-00020,KOR,"Korea, Rep.",end,1.244,2011
+fertility-paired-00021,MEX,Mexico,end,2.248,2011
+fertility-paired-00022,NGA,Nigeria,end,6.017,2011
+fertility-paired-00023,USA,United States,end,1.895,2011
+fertility-paired-00024,ZAF,South Africa,end,2.438,2011

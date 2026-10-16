@@ -1,0 +1,12 @@
+id,firm,years,invest_mean,value_mean,invest_total
+grunfeld-firms-00001,American Steel,20,6.8484,57.54485,136.968
+grunfeld-firms-00002,Atlantic Refining,20,61.8025,231.47,1236.05
+grunfeld-firms-00003,Chrysler,20,86.1235,693.21,1722.47
+grunfeld-firms-00004,Diamond Match,20,3.0845,70.921,61.69
+grunfeld-firms-00005,General Electric,20,102.29,1941.325,2045.8
+grunfeld-firms-00006,General Motors,20,608.02,4333.845,12160.4
+grunfeld-firms-00007,Goodyear,20,41.889,333.65,837.78
+grunfeld-firms-00008,IBM,20,55.411,419.865,1108.22
+grunfeld-firms-00009,US Steel,20,410.475,1971.825,8209.5
+grunfeld-firms-00010,Union Oil,20,47.5955,149.79,951.91
+grunfeld-firms-00011,Westinghouse,20,42.8915,670.91,857.83

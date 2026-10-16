@@ -1,0 +1,22 @@
+eda query=r
+dashboard "Investigate warm months against their own season"
+grid columns=12 rowHeight=76
+id:cat=r.id label="Id"
+year:num=r.year label="Year"
+month_name:cat=r.month_name label="Month name"
+sst:num=r.sst label="Sst (°C)"
+month:num=r.month label="Month"
+date:date=r.date label="Calendar date"
+month_label:cat=r.month_label label="Month label"
+decade:cat=r.decade label="Decade"
+climatology:num=r.climatology label="Climatology (°C)"
+anomaly:num=r.anomaly label="Anomaly (°C)"
+era:cat=r.era label="Era"
+markdown @db-elnino-season-investigation-guide content="<p><strong>Are extreme Niño 1+2 anomalies concentrated in particular months or decades?</strong></p><p>Selections filter peer views and records. The written findings describe the unfiltered snapshot, not the current selection.</p>" title="Entry question and filter scope" at=0,0,12,2
+scatter @db-elnino-season-investigation-view-1 x=sst y=anomaly color=decade title="Temperature and seasonal anomaly" at=0,2,8,5 note="NOAA CPC, ERSST v3b Niño 1+2; historical snapshot; public domain." x.title="Sst (°C)" y.title="Anomaly (°C)"
+row @db-elnino-season-investigation-view-2 decade title="Select a decade" at=8,2,4,5 note="NOAA CPC, ERSST v3b Niño 1+2; historical snapshot; public domain." x.title="Source rows"
+boxplot @db-elnino-season-investigation-view-3 anomaly color=month_label title="Anomalies by calendar month" at=0,7,6,4 note="NOAA CPC, ERSST v3b Niño 1+2; historical snapshot; public domain." y.title="Anomaly (°C)"
+hist @db-elnino-season-investigation-view-4 anomaly bins=30 title="Brush an anomaly range" at=6,7,6,4 note="NOAA CPC, ERSST v3b Niño 1+2; historical snapshot; public domain." x.title="Anomaly (°C)" y.title="Source rows"
+line @db-elnino-season-investigation-view-5 x=date y=anomaly title="Monthly anomalies in time" at=0,11,8,5 note="NOAA CPC, ERSST v3b Niño 1+2; historical snapshot; public domain." x.title="Calendar date" y.title="Anomaly (°C)"
+metric @db-elnino-season-investigation-view-6 count title="Calendar months matching the filters" at=8,11,4,2 note="NOAA CPC, ERSST v3b Niño 1+2; historical snapshot; public domain."
+table @db-elnino-season-investigation-records date,sst,climatology,anomaly,month_label title="Matching source records and lookup values" at=0,16,12,5

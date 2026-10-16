@@ -1,0 +1,179 @@
+{
+  "r": {
+    "source_id": "r",
+    "path": "projects/grunfeld/data/r.csv",
+    "row_count": 220,
+    "grain": "one firm-year",
+    "key": "id",
+    "fields": [
+      {
+        "name": "id",
+        "source_field": "r.id",
+        "type": "string",
+        "unit": "identifier",
+        "missing_count": 0,
+        "valid_count": 220,
+        "description": "id; identifier"
+      },
+      {
+        "name": "invest",
+        "source_field": "r.invest",
+        "type": "number",
+        "unit": "source 1947-dollar units; no multiplier assumed",
+        "missing_count": 0,
+        "valid_count": 220,
+        "description": "invest; source 1947-dollar units; no multiplier assumed"
+      },
+      {
+        "name": "value",
+        "source_field": "r.value",
+        "type": "number",
+        "unit": "source 1947-dollar units; no multiplier assumed",
+        "missing_count": 0,
+        "valid_count": 220,
+        "description": "value; source 1947-dollar units; no multiplier assumed"
+      },
+      {
+        "name": "capital",
+        "source_field": "r.capital",
+        "type": "number",
+        "unit": "source 1947-dollar units; no multiplier assumed",
+        "missing_count": 0,
+        "valid_count": 220,
+        "description": "capital; source 1947-dollar units; no multiplier assumed"
+      },
+      {
+        "name": "firm",
+        "source_field": "r.firm",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 220,
+        "description": "firm; category"
+      },
+      {
+        "name": "year",
+        "source_field": "r.year",
+        "type": "number",
+        "unit": "year",
+        "missing_count": 0,
+        "valid_count": 220,
+        "description": "year; year"
+      },
+      {
+        "name": "invest_index",
+        "source_field": "r.invest_index",
+        "type": "number",
+        "unit": "first supplied firm year = 100",
+        "missing_count": 0,
+        "valid_count": 220,
+        "description": "invest index; first supplied firm year = 100"
+      },
+      {
+        "name": "value_index",
+        "source_field": "r.value_index",
+        "type": "number",
+        "unit": "first supplied firm year = 100",
+        "missing_count": 0,
+        "valid_count": 220,
+        "description": "value index; first supplied firm year = 100"
+      },
+      {
+        "name": "invest_change",
+        "source_field": "r.invest_change",
+        "type": "number",
+        "unit": "source 1947-dollar units; no multiplier assumed",
+        "missing_count": 11,
+        "valid_count": 209,
+        "description": "invest change; source 1947-dollar units; no multiplier assumed"
+      },
+      {
+        "name": "value_change",
+        "source_field": "r.value_change",
+        "type": "number",
+        "unit": "source 1947-dollar units; no multiplier assumed",
+        "missing_count": 11,
+        "valid_count": 209,
+        "description": "value change; source 1947-dollar units; no multiplier assumed"
+      },
+      {
+        "name": "capital_change",
+        "source_field": "r.capital_change",
+        "type": "number",
+        "unit": "source 1947-dollar units; no multiplier assumed",
+        "missing_count": 11,
+        "valid_count": 209,
+        "description": "capital change; source 1947-dollar units; no multiplier assumed"
+      }
+    ],
+    "transformations": "Sort within firm; differences never cross firm boundaries; indices divide by each firm's first supplied positive value.",
+    "sha256": "e0c07b128ab4c11f2ddce353d48305c0480dd2d24badc33ff634169cf7f5649c",
+    "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+  },
+  "firms": {
+    "source_id": "firms",
+    "path": "projects/grunfeld/data/firms.csv",
+    "row_count": 11,
+    "grain": "one firm summary",
+    "key": "id",
+    "fields": [
+      {
+        "name": "id",
+        "source_field": "firms.id",
+        "type": "string",
+        "unit": "identifier",
+        "missing_count": 0,
+        "valid_count": 11,
+        "description": "id; identifier"
+      },
+      {
+        "name": "firm",
+        "source_field": "firms.firm",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 11,
+        "description": "firm; category"
+      },
+      {
+        "name": "years",
+        "source_field": "firms.years",
+        "type": "number",
+        "unit": "observed firm-years",
+        "missing_count": 0,
+        "valid_count": 11,
+        "description": "years; observed firm-years"
+      },
+      {
+        "name": "invest_mean",
+        "source_field": "firms.invest_mean",
+        "type": "number",
+        "unit": "source 1947-dollar units; no multiplier assumed",
+        "missing_count": 0,
+        "valid_count": 11,
+        "description": "invest mean; source 1947-dollar units; no multiplier assumed"
+      },
+      {
+        "name": "value_mean",
+        "source_field": "firms.value_mean",
+        "type": "number",
+        "unit": "source 1947-dollar units; no multiplier assumed",
+        "missing_count": 0,
+        "valid_count": 11,
+        "description": "value mean; source 1947-dollar units; no multiplier assumed"
+      },
+      {
+        "name": "invest_total",
+        "source_field": "firms.invest_total",
+        "type": "number",
+        "unit": "source 1947-dollar units; no multiplier assumed",
+        "missing_count": 0,
+        "valid_count": 11,
+        "description": "invest total; source 1947-dollar units; no multiplier assumed"
+      }
+    ],
+    "transformations": "Means and observation counts across supplied years; total investment is historical sum, not firm value.",
+    "sha256": "7e14c47e0d89d5b3caabab2c31c3c7c73362e2e7e23dffc0875e7d59e6c7a632",
+    "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+  }
+}

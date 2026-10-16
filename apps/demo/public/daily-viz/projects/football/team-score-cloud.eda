@@ -1,0 +1,16 @@
+eda query=teams
+dashboard "Scoring and conceding form different group-stage profiles"
+grid columns=12 rowHeight=76
+composition @cp-football-team-score-cloud width=960 height=690 at=0,0,12,9 {
+  title "Scoring and conceding form different group-stage profiles" at=32,28 fontSize=24
+  subtitle "One team is one point positioned by goals for and against, with group membership encoded by color." at=32,78 fontSize=13
+  scale numeric teams.goals_for zero=true
+  scale numeric teams.goals_against zero=true
+  unit Teams at=95,165 size=785x320 axisTitles.x="Group-stage goals scored" axisTitles.y="Group-stage goals conceded" {
+    label show=false
+    point Profiles x=teams.goals_for y=teams.goals_against colorField=teams.group radius=5
+  }
+  legend Groups at=110,535 unit=Teams mark=Profiles
+  footnote "OpenFootball World Cup 2018 group-stage final scores; public-domain dedication." at=32,636 fontSize=10
+  footnote "Units, denominator, transformation and evidence: companion design note; snapshot findings do not change with filters." at=32,658 fontSize=10
+}

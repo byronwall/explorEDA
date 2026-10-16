@@ -1,0 +1,110 @@
+{
+  "piece_id": "cp-fertility-pace-strips",
+  "data_query": "decades",
+  "findings": [
+    {
+      "statement": "The selected-country mean pace in the 1960s was -0.050 births per woman per elapsed year.",
+      "value": -0.05048148148149167,
+      "operation": "mean",
+      "field": "annual_change",
+      "unit": "births per woman per elapsed year",
+      "denominator": 12,
+      "denominator_definition": "eligible rows after the declared filter and required-field null exclusions",
+      "numerator": null,
+      "input_rows": 60,
+      "filtered_rows": 12,
+      "eligible_rows": 12,
+      "excluded_for_missing": 0,
+      "filter": [
+        [
+          "decade",
+          "eq",
+          "1960s"
+        ]
+      ],
+      "expression": {
+        "op": "mean",
+        "field": "annual_change",
+        "sentence": "The selected-country mean pace in the 1960s was {value:.3f} births per woman per elapsed year.",
+        "where": [
+          [
+            "decade",
+            "eq",
+            "1960s"
+          ]
+        ]
+      },
+      "rounding": ".3f",
+      "data_path": "projects/fertility/data/decades.csv",
+      "data_sha256": "a77d028c8858076ba02a727819f3251ea0c461990ee034d2fbdc74760cd6d6c8",
+      "contributing_row_ids": [
+        "fertility-decades-00001",
+        "fertility-decades-00006",
+        "fertility-decades-00011",
+        "fertility-decades-00016",
+        "fertility-decades-00021",
+        "fertility-decades-00026",
+        "fertility-decades-00031",
+        "fertility-decades-00036",
+        "fertility-decades-00041",
+        "fertility-decades-00046",
+        "fertility-decades-00051",
+        "fertility-decades-00056"
+      ],
+      "reproduction": "python evidence/scripts/build.py; calculate() uses the archived expression, no narrative constants",
+      "id": "cp-fertility-pace-strips-finding-1"
+    },
+    {
+      "statement": "The corresponding pace in the 2000s was -0.022 births per woman per elapsed year.",
+      "value": -0.02195370370371083,
+      "operation": "mean",
+      "field": "annual_change",
+      "unit": "births per woman per elapsed year",
+      "denominator": 12,
+      "denominator_definition": "eligible rows after the declared filter and required-field null exclusions",
+      "numerator": null,
+      "input_rows": 60,
+      "filtered_rows": 12,
+      "eligible_rows": 12,
+      "excluded_for_missing": 0,
+      "filter": [
+        [
+          "decade",
+          "eq",
+          "2000s"
+        ]
+      ],
+      "expression": {
+        "op": "mean",
+        "field": "annual_change",
+        "sentence": "The corresponding pace in the 2000s was {value:.3f} births per woman per elapsed year.",
+        "where": [
+          [
+            "decade",
+            "eq",
+            "2000s"
+          ]
+        ]
+      },
+      "rounding": ".3f",
+      "data_path": "projects/fertility/data/decades.csv",
+      "data_sha256": "a77d028c8858076ba02a727819f3251ea0c461990ee034d2fbdc74760cd6d6c8",
+      "contributing_row_ids": [
+        "fertility-decades-00005",
+        "fertility-decades-00010",
+        "fertility-decades-00015",
+        "fertility-decades-00020",
+        "fertility-decades-00025",
+        "fertility-decades-00030",
+        "fertility-decades-00035",
+        "fertility-decades-00040",
+        "fertility-decades-00045",
+        "fertility-decades-00050",
+        "fertility-decades-00055",
+        "fertility-decades-00060"
+      ],
+      "reproduction": "python evidence/scripts/build.py; calculate() uses the archived expression, no narrative constants",
+      "id": "cp-fertility-pace-strips-finding-2"
+    }
+  ]
+}

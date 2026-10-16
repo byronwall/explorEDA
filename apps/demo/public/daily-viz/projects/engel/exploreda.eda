@@ -1,0 +1,29 @@
+project @engel
+
+source @r key=id path=data/r.csv {
+  field id "id" string
+  field income "income" number
+  field foodexp "foodexp" number
+  field food_share "food share" number
+  field income_band "income band" string
+}
+
+source @bands key=id path=data/bands.csv {
+  field id "id" string
+  field income_band "income band" string
+  field households "households" number
+  field income_sum "income sum" number
+  field food_sum "food sum" number
+  field mean_share "mean share" number
+  field median_share "median share" number
+  field weighted_share "weighted share" number
+  field order "order" number
+}
+
+query @r "r" glyph=◆ {
+  source r
+}
+
+query @bands "bands" glyph=◆ {
+  source bands
+}

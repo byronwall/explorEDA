@@ -1,0 +1,20 @@
+eda query=r
+dashboard "Separate historical counts instead of inventing a rate"
+grid columns=12 rowHeight=76
+composition @cp-longley-counts-not-rates width=1090 height=660 at=0,0,12,9 {
+  title "Separate historical counts instead of inventing a rate" at=32,28 fontSize=24
+  subtitle "Two independently labeled historical count paths keep distinct populations separate." at=32,78 fontSize=13
+  scale numeric r.year nice=false ticks=ends
+  scale numeric r.unemployed zero=true
+  scale numeric r.armed zero=true
+  unit Unemployed at=100,165 size=350x300 axisTitles.x=Year axisTitles.y="Unemployed (source count units)" {
+    label show=false
+    path Count x=r.year y=r.unemployed orderField=r.year
+  }
+  unit Armed at=610,165 size=350x300 axisTitles.x=Year axisTitles.y="Armed forces (source count units)" {
+    label show=false
+    path Count x=r.year y=r.armed orderField=r.year
+  }
+  footnote "Longley historical employment benchmark via statsmodels; public domain." at=32,606 fontSize=10
+  footnote "Units, denominator, transformation and evidence: companion design note; snapshot findings do not change with filters." at=32,628 fontSize=10
+}

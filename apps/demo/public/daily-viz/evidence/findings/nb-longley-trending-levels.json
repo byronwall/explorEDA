@@ -1,0 +1,93 @@
+{
+  "piece_id": "nb-longley-trending-levels",
+  "data_query": "r",
+  "findings": [
+    {
+      "statement": "Employment and nominal GNP in levels had correlation 0.984.",
+      "value": 0.9835516111796694,
+      "operation": "corr",
+      "field": "employment",
+      "unit": "Pearson correlation coefficient",
+      "denominator": 16,
+      "denominator_definition": "eligible rows after the declared filter and required-field null exclusions",
+      "numerator": null,
+      "input_rows": 16,
+      "filtered_rows": 16,
+      "eligible_rows": 16,
+      "excluded_for_missing": 0,
+      "filter": [],
+      "expression": {
+        "op": "corr",
+        "field": "employment",
+        "sentence": "Employment and nominal GNP in levels had correlation {value:.3f}.",
+        "other": "gnp"
+      },
+      "rounding": ".3f",
+      "data_path": "projects/longley/data/r.csv",
+      "data_sha256": "5e2b152c0455828c869b9e7f731127298fe216b1e858852494556d958c35860a",
+      "contributing_row_ids": [
+        "longley-r-00001",
+        "longley-r-00002",
+        "longley-r-00003",
+        "longley-r-00004",
+        "longley-r-00005",
+        "longley-r-00006",
+        "longley-r-00007",
+        "longley-r-00008",
+        "longley-r-00009",
+        "longley-r-00010",
+        "longley-r-00011",
+        "longley-r-00012",
+        "longley-r-00013",
+        "longley-r-00014",
+        "longley-r-00015",
+        "longley-r-00016"
+      ],
+      "reproduction": "python evidence/scripts/build.py; calculate() uses the archived expression, no narrative constants",
+      "id": "nb-longley-trending-levels-finding-1"
+    },
+    {
+      "statement": "Their valid annual changes had correlation 0.892.",
+      "value": 0.8919562957782733,
+      "operation": "corr",
+      "field": "employment_change",
+      "unit": "Pearson correlation coefficient",
+      "denominator": 15,
+      "denominator_definition": "eligible rows after the declared filter and required-field null exclusions",
+      "numerator": null,
+      "input_rows": 16,
+      "filtered_rows": 16,
+      "eligible_rows": 15,
+      "excluded_for_missing": 1,
+      "filter": [],
+      "expression": {
+        "op": "corr",
+        "field": "employment_change",
+        "sentence": "Their valid annual changes had correlation {value:.3f}.",
+        "other": "gnp_change"
+      },
+      "rounding": ".3f",
+      "data_path": "projects/longley/data/r.csv",
+      "data_sha256": "5e2b152c0455828c869b9e7f731127298fe216b1e858852494556d958c35860a",
+      "contributing_row_ids": [
+        "longley-r-00002",
+        "longley-r-00003",
+        "longley-r-00004",
+        "longley-r-00005",
+        "longley-r-00006",
+        "longley-r-00007",
+        "longley-r-00008",
+        "longley-r-00009",
+        "longley-r-00010",
+        "longley-r-00011",
+        "longley-r-00012",
+        "longley-r-00013",
+        "longley-r-00014",
+        "longley-r-00015",
+        "longley-r-00016"
+      ],
+      "reproduction": "python evidence/scripts/build.py; calculate() uses the archived expression, no narrative constants",
+      "id": "nb-longley-trending-levels-finding-2"
+    }
+  ]
+}

@@ -1,0 +1,152 @@
+{
+  "r": {
+    "source_id": "r",
+    "path": "projects/engel/data/r.csv",
+    "row_count": 235,
+    "grain": "one surveyed working-class household",
+    "key": "id",
+    "fields": [
+      {
+        "name": "id",
+        "source_field": "r.id",
+        "type": "string",
+        "unit": "identifier",
+        "missing_count": 0,
+        "valid_count": 235,
+        "description": "id; identifier"
+      },
+      {
+        "name": "income",
+        "source_field": "r.income",
+        "type": "number",
+        "unit": "Belgian francs per year, 1857",
+        "missing_count": 0,
+        "valid_count": 235,
+        "description": "income; Belgian francs per year, 1857"
+      },
+      {
+        "name": "foodexp",
+        "source_field": "r.foodexp",
+        "type": "number",
+        "unit": "Belgian francs per year, 1857",
+        "missing_count": 0,
+        "valid_count": 235,
+        "description": "foodexp; Belgian francs per year, 1857"
+      },
+      {
+        "name": "food_share",
+        "source_field": "r.food_share",
+        "type": "number",
+        "unit": "% household income spent on food",
+        "missing_count": 0,
+        "valid_count": 235,
+        "description": "food share; % household income spent on food"
+      },
+      {
+        "name": "income_band",
+        "source_field": "r.income_band",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 235,
+        "description": "income band; category"
+      }
+    ],
+    "transformations": "Food share = 100 × food expenditure / income; equal-count income quartiles use pandas linear quantiles.",
+    "sha256": "5b5f9d776babb34e6031ea0471ff45c54270f384b16d319b14a8fbb281b986b0",
+    "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+  },
+  "bands": {
+    "source_id": "bands",
+    "path": "projects/engel/data/bands.csv",
+    "row_count": 4,
+    "grain": "one income quartile",
+    "key": "id",
+    "fields": [
+      {
+        "name": "id",
+        "source_field": "bands.id",
+        "type": "string",
+        "unit": "identifier",
+        "missing_count": 0,
+        "valid_count": 4,
+        "description": "id; identifier"
+      },
+      {
+        "name": "income_band",
+        "source_field": "bands.income_band",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 4,
+        "description": "income band; category"
+      },
+      {
+        "name": "households",
+        "source_field": "bands.households",
+        "type": "number",
+        "unit": "households",
+        "missing_count": 0,
+        "valid_count": 4,
+        "description": "households; households"
+      },
+      {
+        "name": "income_sum",
+        "source_field": "bands.income_sum",
+        "type": "number",
+        "unit": "Belgian francs per year, 1857",
+        "missing_count": 0,
+        "valid_count": 4,
+        "description": "income sum; Belgian francs per year, 1857"
+      },
+      {
+        "name": "food_sum",
+        "source_field": "bands.food_sum",
+        "type": "number",
+        "unit": "Belgian francs per year, 1857",
+        "missing_count": 0,
+        "valid_count": 4,
+        "description": "food sum; Belgian francs per year, 1857"
+      },
+      {
+        "name": "mean_share",
+        "source_field": "bands.mean_share",
+        "type": "number",
+        "unit": "% unweighted household mean",
+        "missing_count": 0,
+        "valid_count": 4,
+        "description": "mean share; % unweighted household mean"
+      },
+      {
+        "name": "median_share",
+        "source_field": "bands.median_share",
+        "type": "number",
+        "unit": "% household median",
+        "missing_count": 0,
+        "valid_count": 4,
+        "description": "median share; % household median"
+      },
+      {
+        "name": "weighted_share",
+        "source_field": "bands.weighted_share",
+        "type": "number",
+        "unit": "% income-weighted ratio",
+        "missing_count": 0,
+        "valid_count": 4,
+        "description": "weighted share; % income-weighted ratio"
+      },
+      {
+        "name": "order",
+        "source_field": "bands.order",
+        "type": "number",
+        "unit": "income quartile order",
+        "missing_count": 0,
+        "valid_count": 4,
+        "description": "order; income quartile order"
+      }
+    ],
+    "transformations": "Mean share gives households equal weight; weighted share is 100 × sum(food) / sum(income); retain denominator totals.",
+    "sha256": "684369171443165fef4ec876849e455b0800f8bc458835d2a7fe1df6685f78cc",
+    "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+  }
+}

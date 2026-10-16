@@ -1,0 +1,68 @@
+{
+  "r": {
+    "source_id": "r",
+    "path": "projects/strikes/data/r.csv",
+    "row_count": 62,
+    "grain": "one selected manufacturing strike",
+    "key": "id",
+    "fields": [
+      {
+        "name": "id",
+        "source_field": "r.id",
+        "type": "string",
+        "unit": "identifier",
+        "missing_count": 0,
+        "valid_count": 62,
+        "description": "id; identifier"
+      },
+      {
+        "name": "duration",
+        "source_field": "r.duration",
+        "type": "number",
+        "unit": "days",
+        "missing_count": 0,
+        "valid_count": 62,
+        "description": "duration; days"
+      },
+      {
+        "name": "iprod",
+        "source_field": "r.iprod",
+        "type": "number",
+        "unit": "source industrial-production deviation units",
+        "missing_count": 0,
+        "valid_count": 62,
+        "description": "iprod; source industrial-production deviation units"
+      },
+      {
+        "name": "sequence",
+        "source_field": "r.sequence",
+        "type": "number",
+        "unit": "source row sequence",
+        "missing_count": 0,
+        "valid_count": 62,
+        "description": "sequence; source row sequence"
+      },
+      {
+        "name": "production_band",
+        "source_field": "r.production_band",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 62,
+        "description": "production band; category"
+      },
+      {
+        "name": "log_duration",
+        "source_field": "r.log_duration",
+        "type": "number",
+        "unit": "log10(days)",
+        "missing_count": 0,
+        "valid_count": 62,
+        "description": "log duration; log10(days)"
+      }
+    ],
+    "transformations": "All positive durations retained; log10 duration is a scale transformation; production bands use zero, not fitted cutoffs.",
+    "sha256": "b7fa38e3b3aeaf6ad69ede08ddfa0e47847c569f44d9a45ce4f5f2a3bc4d1ecf",
+    "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+  }
+}

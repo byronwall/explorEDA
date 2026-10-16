@@ -1,0 +1,16 @@
+eda query=r
+dashboard "One zero line makes the forecast miss readable"
+grid columns=12 rowHeight=76
+composition @cp-ercot-error-zero width=960 height=640 at=0,0,12,9 {
+  title "One zero line makes the forecast miss readable" at=32,28 fontSize=24
+  subtitle "A chronological path encodes the signed MWh difference. A constant horizontal rule marks equality." at=32,78 fontSize=13
+  scale numeric r.date nice=false
+  scale numeric r.error zero=true
+  unit Hours at=92,148 size=820x350 axisTitles.x="UTC supplied hour" axisTitles.y="Actual minus forecast (MWh)" {
+    label show=false
+    path Error x=r.date y=r.error orderField=r.date strokeWidth=1.3
+  }
+  rule "On forecast" at=6,0 unit=Hours axis=y value.value=0
+  footnote "EIA / ERCOT; authorized repository snapshot; U.S. public-domain data." at=32,586 fontSize=10
+  footnote "Units, denominator, transformation and evidence: companion design note; snapshot findings do not change with filters." at=32,608 fontSize=10
+}

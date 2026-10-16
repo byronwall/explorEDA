@@ -1,0 +1,17 @@
+eda query=r
+dashboard "A source-rate spread, with the subtraction made explicit"
+grid columns=12 rowHeight=76
+composition @cp-danish-spread-path width=960 height=640 at=0,0,12,9 {
+  title "A source-rate spread, with the subtraction made explicit" at=32,28 fontSize=24
+  subtitle "A single path encodes bond rate minus deposit rate, with each supplied quarter marked." at=32,78 fontSize=13
+  scale numeric r.date nice=false
+  scale numeric r.spread zero=true
+  unit Quarters at=92,165 size=810x325 axisTitles.x="Historical Danish quarter" axisTitles.y="Bond minus deposit (source rate fractions)" {
+    label show=false
+    path Spread x=r.date y=r.spread orderField=r.date
+    point Observed x=r.date y=r.spread radius=2.5
+  }
+  rule Equality at=6,0 unit=Quarters axis=y value.value=0
+  footnote "Johansen and Juselius Danish data via statsmodels; public domain." at=32,586 fontSize=10
+  footnote "Units, denominator, transformation and evidence: companion design note; snapshot findings do not change with filters." at=32,608 fontSize=10
+}

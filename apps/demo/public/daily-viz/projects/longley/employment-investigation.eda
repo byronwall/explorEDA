@@ -1,0 +1,26 @@
+eda query=r
+dashboard "Investigate a small historical employment benchmark"
+grid columns=12 rowHeight=76
+id:cat=r.id label="Id"
+employment:num=r.employment label="Employment (source employment units)"
+deflator:num=r.deflator label="Deflator (source GNP deflator index)"
+gnp:num=r.gnp label="Gnp (source nominal GNP units)"
+unemployed:num=r.unemployed label="Unemployed (source unemployment-count units)"
+armed:num=r.armed label="Armed (source armed-forces-count units)"
+population:num=r.population label="Population (source population units)"
+year:num=r.year label="Year"
+employment_change:num=r.employment_change label="Employment change (source employment units per year)"
+gnp_change:num=r.gnp_change label="Gnp change (source GNP units per year)"
+population_change:num=r.population_change label="Population change (source population units per year)"
+era:cat=r.era label="Era"
+employment_index:num=r.employment_index label="Employment index (1947 = 100)"
+gnp_index:num=r.gnp_index label="Gnp index (1947 = 100)"
+population_index:num=r.population_index label="Population index (1947 = 100)"
+markdown @db-longley-employment-investigation-guide content="<p><strong>Which annual observations drive the difference between the levels and changes views?</strong></p><p>Selections filter peer views and records. The written findings describe the unfiltered snapshot, not the current selection.</p>" title="Entry question and filter scope" at=0,0,12,2
+scatter @db-longley-employment-investigation-view-1 x=gnp y=employment color=era title="Nominal output and employment levels" at=0,2,8,5 note="Longley historical employment benchmark via statsmodels; public domain." x.title="Gnp (source nominal GNP units)" y.title="Employment (source employment units)"
+row @db-longley-employment-investigation-view-2 era title="Select a broad historical span" at=8,2,4,5 note="Longley historical employment benchmark via statsmodels; public domain." x.title="Source rows"
+scatter @db-longley-employment-investigation-view-3 x=gnp_change y=employment_change title="Output and employment changes" at=0,7,6,4 note="Longley historical employment benchmark via statsmodels; public domain." x.title="Gnp change (source GNP units per year)" y.title="Employment change (source employment units per year)"
+line @db-longley-employment-investigation-view-4 x=year y=unemployed title="Unemployment counts over time" at=6,7,6,4 note="Longley historical employment benchmark via statsmodels; public domain." x.title="Year" y.title="Unemployed (source unemployment-count units)"
+hist @db-longley-employment-investigation-view-5 employment_change bins=10 title="Brush annual employment change" at=0,11,8,5 note="Longley historical employment benchmark via statsmodels; public domain." x.title="Employment change (source employment units per year)" y.title="Source rows"
+metric @db-longley-employment-investigation-view-6 count title="Annual source rows in selection" at=8,11,4,2 note="Longley historical employment benchmark via statsmodels; public domain."
+table @db-longley-employment-investigation-records year,employment,gnp,employment_change,gnp_change,unemployed title="Matching source records and lookup values" at=0,16,12,5

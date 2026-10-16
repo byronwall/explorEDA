@@ -1,0 +1,15 @@
+project @nile
+
+source @r key=id path=data/r.csv {
+  field id "id" string
+  field year "year" number
+  field volume "volume" number
+  field era "era" string
+  field rank "rank" number
+  field tail "tail" string
+  field centered "centered" number
+}
+
+query @r "r" glyph=◆ {
+  source r
+}

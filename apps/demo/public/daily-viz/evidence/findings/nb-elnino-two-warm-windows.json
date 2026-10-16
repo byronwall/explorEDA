@@ -1,0 +1,134 @@
+{
+  "piece_id": "nb-elnino-two-warm-windows",
+  "data_query": "episodes",
+  "findings": [
+    {
+      "statement": "The largest monthly anomaly in the 1982–1983 window was 4.35 °C.",
+      "value": 4.35066666667,
+      "operation": "max",
+      "field": "anomaly",
+      "unit": "degrees Celsius relative to 1981–2010 month mean",
+      "denominator": 24,
+      "denominator_definition": "eligible rows after the declared filter and required-field null exclusions",
+      "numerator": null,
+      "input_rows": 48,
+      "filtered_rows": 24,
+      "eligible_rows": 24,
+      "excluded_for_missing": 0,
+      "filter": [
+        [
+          "episode",
+          "eq",
+          "1982–1983"
+        ]
+      ],
+      "expression": {
+        "op": "max",
+        "field": "anomaly",
+        "sentence": "The largest monthly anomaly in the 1982–1983 window was {value:.2f} °C.",
+        "where": [
+          [
+            "episode",
+            "eq",
+            "1982–1983"
+          ]
+        ]
+      },
+      "rounding": ".2f",
+      "data_path": "projects/elnino/data/episodes.csv",
+      "data_sha256": "06142ca9ae88ffb549a4fbacf3e0073e1904b91c4b2cb0baeaff38021bf43f98",
+      "contributing_row_ids": [
+        "elnino-episodes-00001",
+        "elnino-episodes-00002",
+        "elnino-episodes-00003",
+        "elnino-episodes-00004",
+        "elnino-episodes-00005",
+        "elnino-episodes-00006",
+        "elnino-episodes-00007",
+        "elnino-episodes-00008",
+        "elnino-episodes-00009",
+        "elnino-episodes-00010",
+        "elnino-episodes-00011",
+        "elnino-episodes-00012",
+        "elnino-episodes-00013",
+        "elnino-episodes-00014",
+        "elnino-episodes-00015",
+        "elnino-episodes-00016",
+        "elnino-episodes-00017",
+        "elnino-episodes-00018",
+        "elnino-episodes-00019",
+        "elnino-episodes-00020",
+        "elnino-episodes-00021",
+        "elnino-episodes-00022",
+        "elnino-episodes-00023",
+        "elnino-episodes-00024"
+      ],
+      "reproduction": "python evidence/scripts/build.py; calculate() uses the archived expression, no narrative constants",
+      "id": "nb-elnino-two-warm-windows-finding-1"
+    },
+    {
+      "statement": "The largest monthly anomaly in the 1997–1998 window was 4.07 °C.",
+      "value": 4.068,
+      "operation": "max",
+      "field": "anomaly",
+      "unit": "degrees Celsius relative to 1981–2010 month mean",
+      "denominator": 24,
+      "denominator_definition": "eligible rows after the declared filter and required-field null exclusions",
+      "numerator": null,
+      "input_rows": 48,
+      "filtered_rows": 24,
+      "eligible_rows": 24,
+      "excluded_for_missing": 0,
+      "filter": [
+        [
+          "episode",
+          "eq",
+          "1997–1998"
+        ]
+      ],
+      "expression": {
+        "op": "max",
+        "field": "anomaly",
+        "sentence": "The largest monthly anomaly in the 1997–1998 window was {value:.2f} °C.",
+        "where": [
+          [
+            "episode",
+            "eq",
+            "1997–1998"
+          ]
+        ]
+      },
+      "rounding": ".2f",
+      "data_path": "projects/elnino/data/episodes.csv",
+      "data_sha256": "06142ca9ae88ffb549a4fbacf3e0073e1904b91c4b2cb0baeaff38021bf43f98",
+      "contributing_row_ids": [
+        "elnino-episodes-00025",
+        "elnino-episodes-00026",
+        "elnino-episodes-00027",
+        "elnino-episodes-00028",
+        "elnino-episodes-00029",
+        "elnino-episodes-00030",
+        "elnino-episodes-00031",
+        "elnino-episodes-00032",
+        "elnino-episodes-00033",
+        "elnino-episodes-00034",
+        "elnino-episodes-00035",
+        "elnino-episodes-00036",
+        "elnino-episodes-00037",
+        "elnino-episodes-00038",
+        "elnino-episodes-00039",
+        "elnino-episodes-00040",
+        "elnino-episodes-00041",
+        "elnino-episodes-00042",
+        "elnino-episodes-00043",
+        "elnino-episodes-00044",
+        "elnino-episodes-00045",
+        "elnino-episodes-00046",
+        "elnino-episodes-00047",
+        "elnino-episodes-00048"
+      ],
+      "reproduction": "python evidence/scripts/build.py; calculate() uses the archived expression, no narrative constants",
+      "id": "nb-elnino-two-warm-windows-finding-2"
+    }
+  ]
+}

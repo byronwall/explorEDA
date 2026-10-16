@@ -1,0 +1,290 @@
+{
+  "r": {
+    "source_id": "r",
+    "path": "projects/football/data/r.csv",
+    "row_count": 48,
+    "grain": "one 2018 World Cup group-stage match",
+    "key": "id",
+    "fields": [
+      {
+        "name": "id",
+        "source_field": "r.id",
+        "type": "string",
+        "unit": "identifier",
+        "missing_count": 0,
+        "valid_count": 48,
+        "description": "id; identifier"
+      },
+      {
+        "name": "group",
+        "source_field": "r.group",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 48,
+        "description": "group; category"
+      },
+      {
+        "name": "date",
+        "source_field": "r.date",
+        "type": "date",
+        "unit": "calendar label",
+        "missing_count": 0,
+        "valid_count": 48,
+        "description": "date; calendar label"
+      },
+      {
+        "name": "team1",
+        "source_field": "r.team1",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 48,
+        "description": "team1; category"
+      },
+      {
+        "name": "team2",
+        "source_field": "r.team2",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 48,
+        "description": "team2; category"
+      },
+      {
+        "name": "goals1",
+        "source_field": "r.goals1",
+        "type": "number",
+        "unit": "goals by first listed team",
+        "missing_count": 0,
+        "valid_count": 48,
+        "description": "goals1; goals by first listed team"
+      },
+      {
+        "name": "goals2",
+        "source_field": "r.goals2",
+        "type": "number",
+        "unit": "goals by second listed team",
+        "missing_count": 0,
+        "valid_count": 48,
+        "description": "goals2; goals by second listed team"
+      },
+      {
+        "name": "total_goals",
+        "source_field": "r.total_goals",
+        "type": "number",
+        "unit": "goals per match",
+        "missing_count": 0,
+        "valid_count": 48,
+        "description": "total goals; goals per match"
+      },
+      {
+        "name": "margin",
+        "source_field": "r.margin",
+        "type": "number",
+        "unit": "absolute final goal difference",
+        "missing_count": 0,
+        "valid_count": 48,
+        "description": "margin; absolute final goal difference"
+      },
+      {
+        "name": "result",
+        "source_field": "r.result",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 48,
+        "description": "result; category"
+      }
+    ],
+    "transformations": "All final scores from the 48 supplied group matches; halftime/scorers/venues omitted; calendar dates not kickoff instants.",
+    "sha256": "4b636b2b3f78ad1425013476f093697bdc1353d7000eb55367502be790217c83",
+    "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+  },
+  "appearances": {
+    "source_id": "appearances",
+    "path": "projects/football/data/appearances.csv",
+    "row_count": 96,
+    "grain": "one team appearance in a group match",
+    "key": "id",
+    "fields": [
+      {
+        "name": "id",
+        "source_field": "appearances.id",
+        "type": "string",
+        "unit": "identifier",
+        "missing_count": 0,
+        "valid_count": 96,
+        "description": "id; identifier"
+      },
+      {
+        "name": "match_id",
+        "source_field": "appearances.match_id",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 96,
+        "description": "match id; category"
+      },
+      {
+        "name": "team",
+        "source_field": "appearances.team",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 96,
+        "description": "team; category"
+      },
+      {
+        "name": "opponent",
+        "source_field": "appearances.opponent",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 96,
+        "description": "opponent; category"
+      },
+      {
+        "name": "group",
+        "source_field": "appearances.group",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 96,
+        "description": "group; category"
+      },
+      {
+        "name": "date",
+        "source_field": "appearances.date",
+        "type": "date",
+        "unit": "calendar label",
+        "missing_count": 0,
+        "valid_count": 96,
+        "description": "date; calendar label"
+      },
+      {
+        "name": "goals_for",
+        "source_field": "appearances.goals_for",
+        "type": "number",
+        "unit": "goals per team appearance",
+        "missing_count": 0,
+        "valid_count": 96,
+        "description": "goals for; goals per team appearance"
+      },
+      {
+        "name": "goals_against",
+        "source_field": "appearances.goals_against",
+        "type": "number",
+        "unit": "goals conceded per team appearance",
+        "missing_count": 0,
+        "valid_count": 96,
+        "description": "goals against; goals conceded per team appearance"
+      },
+      {
+        "name": "points",
+        "source_field": "appearances.points",
+        "type": "number",
+        "unit": "group points, win 3 / draw 1 / loss 0",
+        "missing_count": 0,
+        "valid_count": 96,
+        "description": "points; group points, win 3 / draw 1 / loss 0"
+      },
+      {
+        "name": "result",
+        "source_field": "appearances.result",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 96,
+        "description": "result; category"
+      }
+    ],
+    "transformations": "Exactly two appearances per match; goals duplicated across opponent roles, not for match totals; 3/1/0 point rule.",
+    "sha256": "f316eebd1846f6f2ca35bc0c8a57311ab1d883e430154f453cb8d4d3436d8749",
+    "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+  },
+  "teams": {
+    "source_id": "teams",
+    "path": "projects/football/data/teams.csv",
+    "row_count": 32,
+    "grain": "one team in the completed group stage",
+    "key": "id",
+    "fields": [
+      {
+        "name": "id",
+        "source_field": "teams.id",
+        "type": "string",
+        "unit": "identifier",
+        "missing_count": 0,
+        "valid_count": 32,
+        "description": "id; identifier"
+      },
+      {
+        "name": "team",
+        "source_field": "teams.team",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 32,
+        "description": "team; category"
+      },
+      {
+        "name": "group",
+        "source_field": "teams.group",
+        "type": "string",
+        "unit": "category",
+        "missing_count": 0,
+        "valid_count": 32,
+        "description": "group; category"
+      },
+      {
+        "name": "matches",
+        "source_field": "teams.matches",
+        "type": "number",
+        "unit": "group matches",
+        "missing_count": 0,
+        "valid_count": 32,
+        "description": "matches; group matches"
+      },
+      {
+        "name": "goals_for",
+        "source_field": "teams.goals_for",
+        "type": "number",
+        "unit": "group-stage goals",
+        "missing_count": 0,
+        "valid_count": 32,
+        "description": "goals for; group-stage goals"
+      },
+      {
+        "name": "goals_against",
+        "source_field": "teams.goals_against",
+        "type": "number",
+        "unit": "group-stage goals conceded",
+        "missing_count": 0,
+        "valid_count": 32,
+        "description": "goals against; group-stage goals conceded"
+      },
+      {
+        "name": "points",
+        "source_field": "teams.points",
+        "type": "number",
+        "unit": "group-stage points",
+        "missing_count": 0,
+        "valid_count": 32,
+        "description": "points; group-stage points"
+      },
+      {
+        "name": "goal_difference",
+        "source_field": "teams.goal_difference",
+        "type": "number",
+        "unit": "group-stage goals for minus against",
+        "missing_count": 0,
+        "valid_count": 32,
+        "description": "goal difference; group-stage goals for minus against"
+      }
+    ],
+    "transformations": "Sum three appearances per team; no knockout results, tie-break advancement or total tournament claims.",
+    "sha256": "40f0d38b106dedfbc6119611363425648f89bd4523dd21d66199e5e503ffb78d",
+    "missing_value_rule": "Empty CSV cells are null. Valid zero and negative values retained. No interpolation."
+  }
+}

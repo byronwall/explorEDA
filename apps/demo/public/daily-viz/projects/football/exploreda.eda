@@ -1,0 +1,58 @@
+project @football
+
+source @r key=id path=data/r.csv {
+  field id "id" string
+  field group "group" string
+  field date "date" date
+  field team1 "team1" string
+  field team2 "team2" string
+  field goals1 "goals1" number
+  field goals2 "goals2" number
+  field total_goals "total goals" number
+  field margin "margin" number
+  field result "result" string
+}
+
+source @appearances key=id path=data/appearances.csv {
+  field id "id" string
+  field match_id "match id" string
+  field team "team" string
+  field opponent "opponent" string
+  field group "group" string
+  field date "date" date
+  field goals_for "goals for" number
+  field goals_against "goals against" number
+  field points "points" number
+  field result "result" string
+}
+
+source @teams key=id path=data/teams.csv {
+  field id "id" string
+  field team "team" string
+  field group "group" string
+  field matches "matches" number
+  field goals_for "goals for" number
+  field goals_against "goals against" number
+  field points "points" number
+  field goal_difference "goal difference" number
+}
+
+query @r "r" glyph=◆ {
+  source r
+}
+
+query @appearances "appearances" glyph=◆ {
+  source appearances
+}
+
+query @teams "teams" glyph=◆ {
+  source teams
+}
+
+relate @team-link appearances.team -> teams.team
+relate @match-link appearances.match_id -> r.id
+query @linked "Team appearances with explicit lookups" glyph=◆ {
+  source appearances
+  lookup squad via=team-link
+  lookup match via=match-link
+}

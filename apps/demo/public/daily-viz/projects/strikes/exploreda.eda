@@ -1,0 +1,14 @@
+project @strikes
+
+source @r key=id path=data/r.csv {
+  field id "id" string
+  field duration "duration" number
+  field iprod "iprod" number
+  field sequence "sequence" number
+  field production_band "production band" string
+  field log_duration "log duration" number
+}
+
+query @r "r" glyph=◆ {
+  source r
+}

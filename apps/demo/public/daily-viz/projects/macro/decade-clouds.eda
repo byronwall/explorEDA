@@ -1,0 +1,16 @@
+eda query=r
+dashboard "Decade clouds complicate a pooled economic relationship"
+grid columns=12 rowHeight=76
+composition @cp-macro-decade-clouds width=960 height=690 at=0,0,12,9 {
+  title "Decade clouds complicate a pooled economic relationship" at=32,28 fontSize=24
+  subtitle "Individual quarterly observations are positioned by unemployment and inflation and colored by decade." at=32,78 fontSize=13
+  scale numeric r.unemp zero=false
+  scale numeric r.infl zero=true
+  unit Quarters at=90,155 size=790x325 axisTitles.x="Unemployment rate (%)" axisTitles.y="Source annualized inflation (%)" {
+    label show=false
+    point Observations x=r.unemp y=r.infl colorField=r.decade radius=3
+  }
+  legend Decades at=110,535 unit=Quarters mark=Observations
+  footnote "U.S. macroeconomic sources via statsmodels; historical vintage; public domain." at=32,636 fontSize=10
+  footnote "Units, denominator, transformation and evidence: companion design note; snapshot findings do not change with filters." at=32,658 fontSize=10
+}

@@ -1,0 +1,16 @@
+eda query=annual
+dashboard "A historical CO2 rise, one available-week mean per year"
+grid columns=12 rowHeight=76
+composition @cp-co2-annual-concentration width=960 height=640 at=0,0,12,9 {
+  title "A historical CO2 rise, one available-week mean per year" at=32,28 fontSize=24
+  subtitle "A thin path and dots show the available-week annual means. Dots retain the annual sampling unit." at=32,78 fontSize=13
+  scale numeric annual.year nice=false
+  scale numeric annual.mean zero=false
+  unit Years at=88,150 size=820x345 axisTitles.x="Supplied year" axisTitles.y="Annual mean CO2 (ppmv)" {
+    label show=false
+    path Mean x=annual.year y=annual.mean orderField=annual.year
+    point Annual x=annual.year y=annual.mean radius=2
+  }
+  footnote "Keeling and Whorf / CDIAC; statsmodels historical snapshot; public domain." at=32,586 fontSize=10
+  footnote "Units, denominator, transformation and evidence: companion design note; snapshot findings do not change with filters." at=32,608 fontSize=10
+}
