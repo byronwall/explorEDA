@@ -15,7 +15,8 @@ export function LandingFooter() {
           alt="explorEDA"
           className="inline h-4 w-auto align-[-2px]"
         />{" "}
-        · A React workspace for exploratory data analysis
+        · Linked charts for exploring data, in your browser, on your computer,
+        or on your team's server
       </p>
       <nav aria-label="Project links" className="flex gap-5">
         {links.map((link) => (

@@ -1,6 +1,6 @@
 import { EXAMPLES_PATH } from "@/routes";
 import { cn } from "@/lib/utils";
-import { ArrowRight, Code, House, LayoutGrid } from "lucide-react";
+import { ArrowRight, House, LayoutGrid, Upload } from "lucide-react";
 import {
   useId,
   useLayoutEffect,
@@ -13,6 +13,7 @@ import { catalogue, type DocsPage } from "../catalogue";
 import { CHART_QUESTIONS } from "../chooser";
 import { GLANCES } from "../glance";
 import { liveExamples } from "../live/examples";
+import { WORKFLOWS } from "../../landing/workflows";
 import { docsPath, liveShotPath } from "../paths";
 import { cardLinkClass, stretchedLinkClass } from "./chrome";
 import { SearchButton } from "./search";
@@ -49,11 +50,7 @@ function HeroShots() {
 }
 
 const START_LINKS = [
-  {
-    to: `${docsPath("developers")}#quick-start`,
-    label: "Embed it in React",
-    icon: Code,
-  },
+  { to: docsPath("load-data"), label: "Open a file", icon: Upload },
   { to: docsPath("workspace"), label: "Tour the workspace", icon: House },
   { to: EXAMPLES_PATH, label: "Browse the examples", icon: LayoutGrid },
 ] as const;
@@ -196,6 +193,40 @@ function PickCard({
 }
 
 /** Pick a question, see the charts that answer it. */
+/** Where each way of running explorEDA starts, before the chart guides. */
+export function ChoosePath() {
+  return (
+    <section aria-labelledby="docs-paths" className="mt-16">
+      <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-border pb-3">
+        <h2 id="docs-paths" className="text-xl font-semibold tracking-tight">
+          Choose your path
+        </h2>
+        <p className="text-sm text-muted-foreground">
+          Beyond files in the browser, explorEDA runs in these places.
+        </p>
+      </div>
+      <ul className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {WORKFLOWS.map(({ title, where, body, to, icon: Icon }) => (
+          <li key={title} className={cn(cardLinkClass, "flex flex-col p-4")}>
+            <p className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+              <Icon aria-hidden="true" className="size-3.5 text-docs-accent" />
+              {where}
+            </p>
+            <h3 className="mt-2 text-sm font-semibold">
+              <Link className={stretchedLinkClass} to={to}>
+                {title}
+              </Link>
+            </h3>
+            <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+              {body}
+            </p>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
 export function ChartChooser() {
   const [selected, setSelected] = useState(0);
   const baseId = useId();

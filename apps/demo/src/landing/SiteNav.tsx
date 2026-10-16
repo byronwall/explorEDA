@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { BrandIcon } from "./BrandMark";
 import { REPO_URL } from "./links";
+import { docsPath } from "../docs/paths";
 import { EXAMPLES_PATH } from "../routes";
 
 const navLinkClass =
@@ -31,6 +32,12 @@ export function SiteNav({ current }: { current?: "examples" }) {
           aria-current={current === "examples" ? "page" : undefined}
         >
           Examples
+        </Link>
+        <Link
+          className={`${navLinkClass} hidden sm:block`}
+          to={docsPath("team-server")}
+        >
+          Self-host
         </Link>
         <Link className={`${navLinkClass} hidden sm:block`} to="/#integration">
           Embed

@@ -134,11 +134,35 @@ describe("LandingPage routing", () => {
     await waitFor(() =>
       expect(
         screen.getByRole("heading", {
-          name: /Explore a CSV with charts that filter each other/i,
+          name: /Explore data with charts that filter each other/i,
         })
       ).toBeInTheDocument()
     );
     expect(screen.queryByTestId("workspace")).not.toBeInTheDocument();
+  });
+
+  it("routes each way to run explorEDA to its docs", () => {
+    const router = createMemoryRouter(
+      [{ path: "/*", element: <LandingPage /> }],
+      { initialEntries: ["/"] }
+    );
+
+    render(<RouterProvider router={router} />);
+    const [heroCopy] = screen.getAllByRole("button", { name: "Copy command" });
+    expect(heroCopy!.closest("header")).not.toBeNull();
+    const section = screen
+      .getByRole("heading", { name: "Run it where your data lives" })
+      .closest("section") as HTMLElement;
+    const routes = within(section)
+      .getAllByRole("link")
+      .map((link) => [link.textContent, link.getAttribute("href")]);
+    expect(routes).toEqual([
+      ["Work in a project folder", "/docs/project-folders"],
+      ["Read from a database", "/docs/database-sources"],
+      ["Write a notebook", "/docs/notebooks"],
+      ["Run a team server", "/docs/team-server"],
+      ["Embed it in React", "/docs/developers#quick-start"],
+    ]);
   });
 
   it("leads with the featured analysis before import and restore", () => {
@@ -706,7 +730,7 @@ describe("LandingPage routing", () => {
 
       expect(
         screen.getByRole("heading", {
-          name: /Explore a CSV with charts that filter each other/i,
+          name: /Explore data with charts that filter each other/i,
         })
       ).toBeInTheDocument();
       expect(screen.queryByTestId("workspace")).toBeNull();

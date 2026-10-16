@@ -1,7 +1,7 @@
 import orderBookSource from "./OrderBook.example.tsx?raw";
 import ordersExplorerSource from "./OrdersExplorer.example.tsx?raw";
 import { ArrowDownToLine, ArrowUpFromLine } from "lucide-react";
-import { CodePanel } from "./CodePanel";
+import { CodePanel, InstallCommand } from "./CodePanel";
 import { PACKAGE_README_URL, REPO_URL } from "./links";
 import { SectionHeading } from "./SectionHeading";
 
@@ -88,6 +88,9 @@ export function IntegrationGuide() {
         <code className={inlineCode}>getSettings()</code> reads the current
         settings whenever your app asks.
       </SectionHeading>
+      <div className="mt-6">
+        <InstallCommand command="pnpm add exploreda" />
+      </div>
 
       <div className="mt-10 grid gap-8 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
         <div className="min-w-0">

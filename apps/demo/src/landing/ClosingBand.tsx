@@ -3,7 +3,6 @@ import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { InstallCommand } from "./CodePanel";
 import { docsPath } from "../docs/paths";
-import { EXAMPLES_PATH } from "../routes";
 
 /** The page's last call to action, the one dark band on the page. */
 export function ClosingBand() {
@@ -17,23 +16,37 @@ export function ClosingBand() {
           id="closing-heading"
           className="text-3xl font-bold tracking-[-0.025em] text-balance sm:text-4xl"
         >
-          Add explorEDA to a React app
+          Explore your own data
         </h2>
         <p className="mt-3 max-w-xl text-base leading-relaxed text-white/80">
-          Pass your rows as <code className="font-mono">data</code> and save the
-          settings it hands back. The quick start covers the rest.
+          Run explorEDA on a folder of data files, and your analyses save as
+          text beside them. For a team, run the{" "}
+          <Link
+            to={docsPath("team-server")}
+            className="font-medium text-white underline underline-offset-4"
+          >
+            server
+          </Link>
+          ; for an app, use the{" "}
+          <Link
+            to={`${docsPath("developers")}#quick-start`}
+            className="font-medium text-white underline underline-offset-4"
+          >
+            React component
+          </Link>
+          .
         </p>
       </div>
       <div className="flex flex-col gap-3 sm:min-w-80">
-        <InstallCommand command="pnpm add exploreda" tone="dark" />
+        <InstallCommand command="npx exploreda" label="command" tone="dark" />
         <div className="flex flex-wrap gap-3">
           <Button
             size="lg"
             asChild
             className="flex-1 bg-white font-semibold text-brand-navy hover:bg-white/90"
           >
-            <Link to={`${docsPath("developers")}#quick-start`}>
-              Read the quick start
+            <Link to={docsPath("project-folders")}>
+              Start a project
               <ArrowRight aria-hidden="true" />
             </Link>
           </Button>
@@ -43,7 +56,7 @@ export function ClosingBand() {
             asChild
             className="flex-1 text-white hover:bg-white/10 hover:text-white"
           >
-            <Link to={EXAMPLES_PATH}>Browse examples</Link>
+            <a href="#your-data">Open a file</a>
           </Button>
         </div>
       </div>

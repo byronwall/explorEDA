@@ -50,6 +50,7 @@ import { FeaturedExample } from "./landing/FeaturedExample";
 import { IntegrationGuide } from "./landing/IntegrationGuide";
 import { ChartGallery } from "./landing/ChartGallery";
 import { ClosingBand } from "./landing/ClosingBand";
+import { WorkflowRoutes } from "./landing/WorkflowRoutes";
 import { WhyWorkspace } from "./landing/WhyWorkspace";
 import { Hero } from "./landing/Hero";
 import { LandingFooter } from "./landing/LandingFooter";
@@ -575,6 +576,7 @@ export function LandingPage() {
                     />
                   )}
                   <div className="mx-auto mt-16 max-w-6xl space-y-28 px-4 pb-10 sm:px-6">
+                    <WorkflowRoutes />
                     <WhyWorkspace />
                     <ChartGallery />
                     {featuredAnalysis && (

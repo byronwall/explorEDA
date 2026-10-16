@@ -114,9 +114,12 @@ export function CodePanel({ files }: { files: CodeFile[] }) {
 
 export function InstallCommand({
   command,
+  label = "install command",
   tone = "light",
 }: {
   command: string;
+  /** What the copy button says it copies. */
+  label?: string;
   /** "dark" sits on the navy hero band. */
   tone?: "light" | "dark";
 }) {
@@ -140,7 +143,7 @@ export function InstallCommand({
       </code>
       <CopyButton
         text={command}
-        label="install command"
+        label={label}
         className={
           dark ? "text-white/70 hover:bg-white/10 hover:text-white" : undefined
         }
