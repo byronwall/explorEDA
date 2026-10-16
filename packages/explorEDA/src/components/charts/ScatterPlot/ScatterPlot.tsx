@@ -1,5 +1,5 @@
 import { useAxisTypography } from "../chartTypography";
-import type { BaseChartProps } from "@/types/ChartTypes";
+import type { BaseChartProps, datum } from "@/types/ChartTypes";
 import { ChartMessage, NO_MATCHING_ROWS } from "../ChartMessage";
 import {
   useCallback,
@@ -51,9 +51,12 @@ import { ChartPlotMenu, type PlotMenuTarget } from "../roles/ChartPlotMenu";
 import { hasRoleLabels } from "../roles/chartRoles";
 import { Button } from "@/components/ui/button";
 import { ActionTooltip } from "@/components/ui/tooltip";
+import { planConnections, segmentCount } from "./connectPlan";
+import type { ConnectionTrace } from "./ConnectionTraceBody";
 import {
   BADGE_GAP,
   brushFilters,
+  display,
   planScatter,
   scatterHoverReadout,
   scatterPointAt,
@@ -111,6 +114,41 @@ function ScatterPoints({
     [settings, snapshot, width, height, typography]
   );
   const fits = useScatterFits(settings, snapshot, plan);
+  const connections = useMemo(
+    () => planConnections(settings, snapshot, plan),
+    [settings, snapshot, plan]
+  );
+  const [activeConnectionId, setActiveConnectionId] = useState<string>();
+  const resolveConnection = (
+    kind: string,
+    id: string
+  ): ConnectionTrace | undefined => {
+    const path =
+      kind === "connection"
+        ? connections?.paths.find((item) => item.id === id)
+        : undefined;
+    if (!path || !connections) return undefined;
+    const field = {
+      x: settings.xField,
+      y: settings.yField,
+      order: settings.connect?.orderField,
+    };
+    return {
+      kind: "connection",
+      id,
+      revision: plan.revision,
+      plan: connections,
+      path,
+      xLabel: plan.xDisplay,
+      yLabel: plan.yDisplay,
+      format: (axis, value) => {
+        const name = field[axis];
+        return name
+          ? display(name, value as datum, snapshot.fieldSettings)
+          : String(value);
+      },
+    };
+  };
   const annotationFrame = useMemo((): ChartAnnotationFrame | undefined => {
     if (!settings.annotations?.length) return undefined;
     const points = new Map(plan.points.map((point) => [point.sourceId, point]));
@@ -218,6 +256,7 @@ function ScatterPoints({
       revision: plan.revision,
       resolve: (kind, id) =>
         fits.resolve(kind, id) ??
+        resolveConnection(kind, id) ??
         resolveMarginal(kind, id) ??
         resolveSurface(kind, id) ??
         resolveScatterTrace(
@@ -238,6 +277,11 @@ function ScatterPoints({
       },
       targets: () => [
         ...fits.targets(),
+        ...(connections?.paths.map((path) => ({
+          kind: "connection",
+          id: path.id,
+          label: `Path · ${path.label}: ${segmentCount(path)}`,
+        })) ?? []),
         ...(hex?.bins.map((bin) => ({
           kind: "hex-bin",
           id: bin.id,
@@ -267,6 +311,7 @@ function ScatterPoints({
       profiles,
       manager,
       fits,
+      connections,
       marginals,
     ]
   );
@@ -586,6 +631,15 @@ function ScatterPoints({
             activeFitId={activeFitId}
             onActiveFit={setActiveFitId}
             onInspectFit={(id) => choose("fit", id)}
+            connections={connections?.paths}
+            activeConnectionId={
+              activeConnectionId ??
+              (activeSelection?.kind === "connection"
+                ? activeSelection.id
+                : undefined)
+            }
+            onActiveConnection={setActiveConnectionId}
+            onInspectConnection={(id) => choose("connection", id)}
             onInspectGuide={(id) => choose("guide", id)}
             onInspectOverlay={(id) => choose("overlay", id)}
             selectedId={

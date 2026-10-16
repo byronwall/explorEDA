@@ -19,6 +19,7 @@ import { TimeSeriesTraceBody } from "../LineChart/TimeSeriesTraceBody";
 import { ScatterTraceBody } from "../ScatterPlot/ScatterTraceBody";
 import { DensityTraceBody } from "../ScatterPlot/DensityTraceBody";
 import { FitTraceBody } from "../ScatterPlot/FitTraceBody";
+import { ConnectionTraceBody } from "../ScatterPlot/ConnectionTraceBody";
 import { MarginalTraceBody } from "../ScatterPlot/MarginalTraceBody";
 import { SurfaceTraceBody } from "../ScatterPlot/SurfaceTraceBody";
 import { CompositionTraceBody } from "../Composition/CompositionTraceBody";
@@ -65,6 +66,8 @@ function TraceBody({ trace }: { trace: ChartTrace }) {
     case "fit-results":
     case "paired-summary":
       return <FitTraceBody trace={trace} />;
+    case "connection":
+      return <ConnectionTraceBody key={trace.id} trace={trace} />;
     case "hex-bin":
     case "contour-level":
       return <SurfaceTraceBody trace={trace} />;

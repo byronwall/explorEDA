@@ -22,6 +22,20 @@ export interface ScatterRegressionSettings {
   overall?: boolean;
 }
 
+/**
+ * Joins points in order into paths. Absent when the chart draws none. A path
+ * breaks wherever an in-order row is not drawn, so a filtered-out or invalid
+ * observation never becomes a straight jump.
+ */
+export interface ScatterConnectSettings {
+  /** Orders each path; absent keeps source row order. */
+  orderField?: string;
+  /** One path per value of this field; absent draws one path. */
+  groupField?: string;
+  /** Names each path at its last point, or at both ends. */
+  labels?: "end" | "both";
+}
+
 export interface ScatterPlotSettings extends BaseChartSettings {
   type: "scatter";
   /** Density is rectangular bins; contour is smoothed 2D density. */
@@ -44,6 +58,7 @@ export interface ScatterPlotSettings extends BaseChartSettings {
   regression?: ScatterRegressionSettings;
   /** Shows the paired summary line: correlation and pair count. */
   summary?: boolean;
+  connect?: ScatterConnectSettings;
   /** X and Y histograms beside the plot; absent when off. */
   marginals?: { bins?: number };
   xField: string;

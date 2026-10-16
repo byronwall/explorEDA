@@ -33,6 +33,7 @@ import {
 import { getChartTitle } from "../chartAccessibility";
 import { planScatterPoints, type ScatterPointStyle } from "./planScatterPoints";
 import { MARGINAL_GAP, MARGINAL_SIZE } from "./marginalPlan";
+import { connectionLabelRoom } from "./connectPlan";
 import type { ScatterPlotSettings } from "./definition";
 import {
   DOMAIN_PADDING,
@@ -121,6 +122,9 @@ export interface ScatterSnapshot {
   yData: Record<IdType, datum>;
   colorData: Record<IdType, datum>;
   sizeData?: Record<IdType, datum>;
+  /** Connection order and path fields, read only when connecting points. */
+  orderData?: Record<IdType, datum>;
+  groupData?: Record<IdType, datum>;
   /** Detected field types; omitted types are detected from the column. */
   xType?: DataType;
   yType?: DataType;
@@ -224,7 +228,12 @@ function fieldLabel(field: string, settings: FieldSettingsMap) {
     : getFieldLabel(field, settings[field]);
 }
 
-function display(field: string, value: datum, settings: FieldSettingsMap) {
+/** A value as the chart shows it: the field's format, else plain text. */
+export function display(
+  field: string,
+  value: datum,
+  settings: FieldSettingsMap
+) {
   return hasFieldDisplayFormat(settings[field])
     ? formatFieldValue(field, value, settings[field])
     : typeof value === "number"
@@ -364,9 +373,11 @@ export function planScatter(
   const plotWidth = width - margin.left - margin.right;
   const plotHeight = height - margin.top - margin.bottom;
   const inset = size ? bubbleRadius : 0;
+  // Path labels sit inside the plot, beside the first and last points.
+  const labelRoom = connectionLabelRoom(settings, snapshot, plotWidth);
   const xAxis = axisFor(snapshot.xData, snapshot.xType, settings.xAxis, [
-    inset,
-    Math.max(inset, plotWidth - inset),
+    inset + labelRoom.start,
+    Math.max(inset + labelRoom.start, plotWidth - inset - labelRoom.end),
   ]);
   // Bands list top to bottom; numbers grow upward.
   const yAxis = axisFor(

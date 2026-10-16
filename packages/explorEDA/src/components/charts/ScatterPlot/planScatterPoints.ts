@@ -48,10 +48,24 @@ export function planScatterPoints({
     (filter) => filter.field === settings.colorField
   );
   const points = [];
+  // Connected points share exact band positions, so paths join them cleanly.
+  const centered = Boolean(settings.connect);
 
   for (const sourceId of ids) {
-    const x = scatterPosition(xAxis, xData[sourceId], sourceId, X_SALT);
-    const y = scatterPosition(yAxis, yData[sourceId], sourceId, Y_SALT);
+    const x = scatterPosition(
+      xAxis,
+      xData[sourceId],
+      sourceId,
+      X_SALT,
+      centered
+    );
+    const y = scatterPosition(
+      yAxis,
+      yData[sourceId],
+      sourceId,
+      Y_SALT,
+      centered
+    );
     if (!x || !y) {
       continue;
     }

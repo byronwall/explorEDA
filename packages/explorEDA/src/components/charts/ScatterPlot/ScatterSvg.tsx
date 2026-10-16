@@ -18,6 +18,8 @@ import {
 import { findAxisGuide } from "../Axis/axisPlan";
 import { PlannedAxes, PlannedGrid } from "../Axis/AxisLayer";
 import type { FitMark } from "./fitPlan";
+import { ConnectionLabels, ConnectionLines } from "./ConnectionLines";
+import type { ConnectionPath } from "./connectPlan";
 import {
   MARGINAL_GAP,
   MARGINAL_SIZE,
@@ -430,8 +432,17 @@ export function ScatterSvg({
   activeFitId,
   onActiveFit,
   onInspectFit,
+  connections = [],
+  activeConnectionId,
+  onActiveConnection,
+  onInspectConnection,
   annotations,
 }: {
+  /** Paths joining points in order, drawn under the fits. */
+  connections?: ConnectionPath[];
+  activeConnectionId?: string;
+  onActiveConnection?: (id: string | undefined) => void;
+  onInspectConnection?: (id: string) => void;
   /** Saved annotations, drawn over the marks; given the plot clip path. */
   annotations?: (clipPath: string) => ReactNode;
   fitMarks?: FitMark[];
@@ -532,7 +543,8 @@ export function ScatterSvg({
       className="absolute select-none"
       style={{
         cursor:
-          altHover && (hoveredId || hoveredGuideId || activeFitId)
+          altHover &&
+          (hoveredId || hoveredGuideId || activeFitId || activeConnectionId)
             ? "pointer"
             : brush.getCursor(),
         touchAction: "none",
@@ -608,6 +620,12 @@ export function ScatterSvg({
         setHoveredGuideId(
           event.altKey && id && findAxisGuide(plan.axes, id) ? id : null
         );
+        if (connections.length && !event.buttons)
+          onActiveConnection?.(
+            (event.target as Element)
+              .closest("[data-connection-id]")
+              ?.getAttribute("data-connection-id") ?? undefined
+          );
         if (fitMarks.length && !event.buttons)
           onActiveFit?.(
             (event.target as Element)
@@ -618,6 +636,7 @@ export function ScatterSvg({
       onPointerLeave={() => {
         setHoveredGuideId(null);
         if (fitMarks.length) onActiveFit?.(undefined);
+        if (connections.length) onActiveConnection?.(undefined);
         setAltHover(false);
       }}
       onPointerUpCapture={brush.handlePointerUp}
@@ -681,6 +700,13 @@ export function ScatterSvg({
           onInspectPoint(x, y)
         )
           return;
+        const connectionId = (event.target as Element)
+          .closest("[data-connection-id]")
+          ?.getAttribute("data-connection-id");
+        if (connectionId && onInspectConnection) {
+          onInspectConnection(connectionId);
+          return;
+        }
         if (!markFirst && tryMark()) return;
         const id = (event.target as Element)
           .closest("[data-plan-id]")
@@ -729,9 +755,25 @@ export function ScatterSvg({
             ))}
           </g>
         )}
+        {connections.length > 0 && (
+          <g clipPath={`url(#${chartId}-plot)`}>
+            <ConnectionLines
+              paths={connections}
+              activeId={activeConnectionId}
+            />
+          </g>
+        )}
         {fitMarks.length > 0 && (
           <g clipPath={`url(#${chartId}-plot)`}>
             <FitCurves marks={fitMarks} activeId={activeFitId} />
+          </g>
+        )}
+        {connections.length > 0 && (
+          <g clipPath={`url(#${chartId}-plot)`}>
+            <ConnectionLabels
+              paths={connections}
+              activeId={activeConnectionId}
+            />
           </g>
         )}
         <g className="eda-brush" clipPath={`url(#${chartId}-plot)`}>
