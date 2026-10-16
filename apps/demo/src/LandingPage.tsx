@@ -1,10 +1,5 @@
 import { Button } from "@/components/ui/button";
-import {
-  ExampleData,
-  examples,
-  FEATURED_ANALYSIS_ID,
-  FEATURED_EXAMPLE_ID,
-} from "@/demos/examples";
+import { ExampleData, examples, FEATURED_EXAMPLE_ID } from "@/demos/examples";
 import {
   parseSavedAnalysis,
   validateSavedAnalysisForData,
@@ -46,10 +41,10 @@ import {
 import { toast } from "sonner";
 import { CsvUpload } from "./CsvUpload";
 import { ExampleSelector } from "./ExampleSelector";
-import { FeaturedExample } from "./landing/FeaturedExample";
 import { IntegrationGuide } from "./landing/IntegrationGuide";
 import { ChartGallery } from "./landing/ChartGallery";
 import { ClosingBand } from "./landing/ClosingBand";
+import { StartSection } from "./landing/StartSection";
 import { WhyWorkspace } from "./landing/WhyWorkspace";
 import { Hero } from "./landing/Hero";
 import { LandingFooter } from "./landing/LandingFooter";
@@ -77,9 +72,6 @@ import {
 // The hero's live order book opens the full order book.
 const featuredExample = examples.find(
   (item) => item.id === FEATURED_EXAMPLE_ID
-);
-const featuredAnalysis = examples.find(
-  (item) => item.id === FEATURED_ANALYSIS_ID
 );
 
 // Feature coverage is a development tool. Production builds drop it.
@@ -574,15 +566,65 @@ export function LandingPage() {
                       canResume={canResume}
                     />
                   )}
-                  <div className="mx-auto mt-16 max-w-6xl space-y-28 px-4 pb-10 sm:px-6">
+                  <div className="mx-auto mt-14 max-w-6xl space-y-24 px-4 pb-10 sm:px-6">
+                    <StartSection
+                      upload={
+                        <CsvUpload
+                          onProjectImport={handleProjectImport}
+                          onImport={handleTableImport}
+                        />
+                      }
+                      samples={
+                        <SampleDataButtons onImport={handleTableImport} />
+                      }
+                      savedAnalysis={
+                        <>
+                          <h3 id="json-heading" className="font-semibold">
+                            Reopen a saved analysis
+                          </h3>
+                          <p className="mt-1 text-sm text-muted-foreground">
+                            Paste full analysis JSON to restore its source rows
+                            and settings.
+                          </p>
+                          <textarea
+                            value={analysisJson}
+                            onChange={(event) => {
+                              setAnalysisJson(event.target.value);
+                              setAnalysisJsonError(null);
+                            }}
+                            aria-label="Full analysis JSON"
+                            aria-describedby={
+                              analysisJsonError
+                                ? "analysis-json-error"
+                                : undefined
+                            }
+                            placeholder="Paste full analysis JSON here"
+                            className="mt-3 max-h-[50vh] min-h-40 w-full resize-y rounded-md border border-input bg-background p-3 font-mono text-xs transition-[border-color,box-shadow] duration-150 focus-visible:border-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+                          />
+                          {analysisJsonError && (
+                            <p
+                              id="analysis-json-error"
+                              role="alert"
+                              aria-live="assertive"
+                              className="mt-2 text-sm text-destructive"
+                            >
+                              {analysisJsonError}
+                            </p>
+                          )}
+                        </>
+                      }
+                      openAnalysis={
+                        <Button
+                          variant="brand"
+                          onClick={handleAnalysisJson}
+                          disabled={!analysisJson.trim()}
+                        >
+                          Open analysis JSON
+                        </Button>
+                      }
+                    />
                     <WhyWorkspace />
                     <ChartGallery />
-                    {featuredAnalysis && (
-                      <FeaturedExample
-                        example={featuredAnalysis}
-                        onOpen={handleExampleSelect}
-                      />
-                    )}
                     {loadError && (
                       <div
                         role="alert"
@@ -622,93 +664,6 @@ export function LandingPage() {
                     </section>
                     <ReportGraphics />
                     <IntegrationGuide />
-                    <section
-                      aria-labelledby="your-data-heading"
-                      id="your-data"
-                      className="scroll-mt-8"
-                    >
-                      <SectionHeading
-                        id="your-data-heading"
-                        heading="Open your own data"
-                      >
-                        Import a file into this demo, or reopen an analysis you
-                        exported earlier. In your app, rows arrive through{" "}
-                        <code>data</code> instead.
-                      </SectionHeading>
-                      <div className="mt-10 grid gap-6 lg:grid-cols-2">
-                        <section
-                          aria-labelledby="import-heading"
-                          className="rounded-xl border border-border bg-card p-6"
-                        >
-                          <h3
-                            id="import-heading"
-                            className="mb-4 font-semibold"
-                          >
-                            Import your data
-                          </h3>
-                          <CsvUpload
-                            onProjectImport={handleProjectImport}
-                            onImport={handleTableImport}
-                          />
-                          <SampleDataButtons onImport={handleTableImport} />
-                          <p className="mt-4 text-sm text-muted-foreground">
-                            Working in a folder of files?{" "}
-                            <Link
-                              to="/folder"
-                              className="font-medium text-site-accent underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                            >
-                              Open a project folder
-                            </Link>{" "}
-                            and save analyses back to it.
-                          </p>
-                        </section>
-                        <section
-                          aria-labelledby="json-heading"
-                          className="rounded-xl border border-border bg-card p-6"
-                        >
-                          <h3 id="json-heading" className="mb-1 font-semibold">
-                            Open a saved analysis
-                          </h3>
-                          <p className="mb-3 text-sm text-muted-foreground">
-                            Paste full analysis JSON to restore its source rows
-                            and settings.
-                          </p>
-                          <textarea
-                            value={analysisJson}
-                            onChange={(event) => {
-                              setAnalysisJson(event.target.value);
-                              setAnalysisJsonError(null);
-                            }}
-                            aria-label="Full analysis JSON"
-                            aria-describedby={
-                              analysisJsonError
-                                ? "analysis-json-error"
-                                : undefined
-                            }
-                            placeholder="Paste full analysis JSON here"
-                            className="min-h-32 w-full rounded-md border border-input bg-background p-3 font-mono text-xs"
-                          />
-                          <Button
-                            variant="brand"
-                            className="mt-3"
-                            onClick={handleAnalysisJson}
-                            disabled={!analysisJson.trim()}
-                          >
-                            Open analysis JSON
-                          </Button>
-                          {analysisJsonError && (
-                            <p
-                              id="analysis-json-error"
-                              role="alert"
-                              aria-live="assertive"
-                              className="mt-2 rounded-md border border-destructive/50 bg-destructive/10 p-2 text-sm text-destructive"
-                            >
-                              {analysisJsonError}
-                            </p>
-                          )}
-                        </section>
-                      </div>
-                    </section>
                     <ClosingBand />
                   </div>
                   <div className="mx-auto max-w-6xl px-4 sm:px-6">

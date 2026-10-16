@@ -52,7 +52,7 @@ export function WhyWorkspace() {
                 {gesture}
               </kbd>
             </div>
-            <dt className="font-semibold text-brand-navy">{title}</dt>
+            <dt className="font-semibold text-site-ink">{title}</dt>
             <dd className="text-sm leading-relaxed text-muted-foreground">
               {body}
             </dd>

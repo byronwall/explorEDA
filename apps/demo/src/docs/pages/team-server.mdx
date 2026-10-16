@@ -2,15 +2,82 @@
 
 `exploreda server` runs explorEDA for a group of people. Authors build analyses on the server, and colleagues sign in to explore them. Each project is the same kind of [project folder](/docs/project-folders) that `npx exploreda` opens, kept in a data folder on the server.
 
-Try it on your own computer with sample accounts and the sample shop project:
+## Try it with sample accounts
 
-```bash
-npx exploreda server --data ./team-data --seed-dev
+You need [Node.js](https://nodejs.org) 22.5 or later. On your own computer, in any empty folder:
+
+1. **Start a trial server.** Run `npx exploreda server --data ./team-data --seed-dev`. It prints `http://localhost:8080/`, three sample accounts, and their password.
+2. **Edit as an author.** Open the address and sign in as `ana@example.com`. Open **Shop orders**, choose **Add chart**, pick a chart, and choose **Add to grid**. The page says **Saved**.
+3. **Look as a viewer.** Choose **Sign out** and sign in as `vic@example.com`. **Shop orders** shows Ana's new chart, and the page says **Viewing · your changes aren't saved**. Vic can filter and change charts while looking, but nothing Vic changes is kept.
+4. **Stop it.** Press Ctrl-C. The sample accounts are gone, since `--seed-dev` keeps them in memory. The sample project stays in `./team-data/projects/shop`.
+
+To keep a server running for real, leave out `--seed-dev`, as in [Docker Compose](#keep-one-running-with-docker-compose) below.
+
+## Keep one running with Docker Compose
+
+The server is also an image, `ghcr.io/byronwall/exploreda`, with the same version numbers as the npm package. On the machine that will run it:
+
+1. **Start it.** Save the `compose.yaml` below in an empty folder and run `docker compose up -d`.
+2. **Create the admin account.** Open port 8080 on that machine. The first person to open it creates the admin account.
+3. **Add a project and data.** Choose **New project** and name it. Under **Or download from an address**, enter `https://exploreda.dev/datasets/shop-operations.csv` and choose **Download**, then choose **Chart** beside the file.
+4. **Add a person.** Open **People**, enter a name and email, and choose **Add person**. Copy the password link it shows. In the project, choose **Members** and add them with **Can view**.
+5. **Restart it.** Run `docker compose restart`. Accounts, the project, and the link are all still there, in the `exploreda-data` volume. Open the link in another browser to set that person's password, and they see the project, read-only.
+
+```yaml
+services:
+  exploreda:
+    image: ghcr.io/byronwall/exploreda:latest
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      EXPLOREDA_PUBLIC_URL: ""
+      EXPLOREDA_UPLOAD_LIMIT: "100"
+    volumes:
+      - exploreda-data:/data
+
+volumes:
+  exploreda-data:
+    name: exploreda-data
 ```
 
-It prints the address to open and the sample accounts to sign in with. With `--seed-dev`, accounts last only until the server stops.
+Each command-line option has an environment variable for the container: `EXPLOREDA_PUBLIC_URL`, `EXPLOREDA_UPLOAD_LIMIT`, `EXPLOREDA_PORT`, `EXPLOREDA_HOST`, and `EXPLOREDA_DATA`. An empty value leaves the default.
 
-To run it for real, leave out `--seed-dev`:
+The server speaks plain HTTP. For HTTPS, put a proxy in front of it and set `EXPLOREDA_PUBLIC_URL` to the HTTPS address. With [Caddy](https://caddyserver.com), which gets its own certificate, the whole proxy configuration is:
+
+```text
+eda.example.com {
+	reverse_proxy exploreda:8080
+}
+```
+
+The server makes no calls home. It reaches the network only to download the data addresses that authors give it and to read the databases that projects connect to.
+
+### Back up and upgrade
+
+Everything the server keeps is in the `exploreda-data` volume: `exploreda.db` holds accounts, sessions, projects, and members, and `projects/` holds each project's folder. To back it up, stop the server and copy the volume:
+
+```bash
+docker compose stop && docker run --rm -v exploreda-data:/data -v "$PWD":/backup busybox tar czf /backup/exploreda-backup.tgz -C /data . && docker compose start
+```
+
+To upgrade, pull the new image and start it again:
+
+```bash
+docker compose pull && docker compose up -d
+```
+
+When a new version needs to change the account store, it first copies the store into `backups/<time>/` in the data folder, then changes it, and says so in its log. If the change fails, the server stops and leaves the data as it was. A version older than the one that last wrote the data folder refuses to start, so going back means restoring a backup.
+
+To restore, stop the server and put the backup back:
+
+```bash
+docker compose stop && docker run --rm -v exploreda-data:/data -v "$PWD":/backup busybox sh -c "rm -rf /data/* && tar xzf /backup/exploreda-backup.tgz -C /data && chown -R 1000:1000 /data" && docker compose start
+```
+
+## Run it with Node
+
+Without Docker, run the same server with Node:
 
 ```bash
 npx exploreda server --data /srv/exploreda --public-url https://eda.example.com
@@ -40,68 +107,6 @@ docker compose -f docker/demo/compose.yaml up -d
 ```
 
 Open `http://localhost:8080`, sign in as `ana@example.com` with the password `exploreda-dev`, and choose **Read all**. The demo's accounts and passwords are public and its accounts last only while it runs, so use it to look around or as a starting point, never as a server people rely on.
-
-## Run it with Docker Compose
-
-The server is also an image, `ghcr.io/byronwall/exploreda`, with the same version numbers as the npm package. Save this as `compose.yaml`:
-
-```yaml
-services:
-  exploreda:
-    image: ghcr.io/byronwall/exploreda:latest
-    restart: unless-stopped
-    ports:
-      - "8080:8080"
-    environment:
-      EXPLOREDA_PUBLIC_URL: ""
-      EXPLOREDA_UPLOAD_LIMIT: "100"
-    volumes:
-      - exploreda-data:/data
-
-volumes:
-  exploreda-data:
-    name: exploreda-data
-```
-
-Then start it, open port 8080 on that machine, and create the admin account:
-
-```bash
-docker compose up -d
-```
-
-Each command-line option has an environment variable for the container: `EXPLOREDA_PUBLIC_URL`, `EXPLOREDA_UPLOAD_LIMIT`, `EXPLOREDA_PORT`, `EXPLOREDA_HOST`, and `EXPLOREDA_DATA`. An empty value leaves the default.
-
-The server speaks plain HTTP. For HTTPS, put a proxy in front of it and set `EXPLOREDA_PUBLIC_URL` to the HTTPS address. With [Caddy](https://caddyserver.com), which gets its own certificate, the whole proxy configuration is:
-
-```text
-eda.example.com {
-	reverse_proxy exploreda:8080
-}
-```
-
-The server makes no calls home. It reaches the network only to download the data addresses that authors give it.
-
-### Back up and upgrade
-
-Everything the server keeps is in the `exploreda-data` volume: `exploreda.db` holds accounts, sessions, projects, and members, and `projects/` holds each project's folder. To back it up, stop the server and copy the volume:
-
-```bash
-docker compose stop && docker run --rm -v exploreda-data:/data -v "$PWD":/backup busybox tar czf /backup/exploreda-backup.tgz -C /data . && docker compose start
-```
-
-To upgrade, pull the new image and start it again:
-
-```bash
-docker compose pull && docker compose up -d
-```
-
-When a new version needs to change the account store, it first copies the store into `backups/<time>/` in the data folder, then changes it, and says so in its log. If the change fails, the server stops and leaves the data as it was. A version older than the one that last wrote the data folder refuses to start, so going back means restoring a backup.
-
-To restore, stop the server and put the backup back:
-
-```bash
-docker compose stop && docker run --rm -v exploreda-data:/data -v "$PWD":/backup busybox sh -c "rm -rf /data/* && tar xzf /backup/exploreda-backup.tgz -C /data && chown -R 1000:1000 /data" && docker compose start
-```
 
 ## People and roles
 

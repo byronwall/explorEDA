@@ -303,6 +303,40 @@ function insertEdit(
   return { line: declaration.span.line, start: at, end: at, text: ` ${token}` };
 }
 
+/**
+ * Adds a one-line child as the last line of the declaration's block, with
+ * its children's indent. Undefined when the declaration has no block to add
+ * it to, or the line opens one of its own.
+ */
+function addChildEdit(
+  lines: string[],
+  declaration: DslDeclaration,
+  child: string
+): Edit | undefined {
+  const close = lines[declaration.endLine - 1];
+  if (
+    /[{}]/.test(child) ||
+    declaration.endLine <= declaration.span.line ||
+    close?.trim() !== "}"
+  ) {
+    return undefined;
+  }
+  const last = lines[declaration.endLine - 2]!;
+  const head = lines[declaration.span.line - 1]!;
+  const indentOf = (line: string) =>
+    line.slice(0, line.length - line.trimStart().length);
+  const indent =
+    declaration.endLine - 1 > declaration.span.line
+      ? indentOf(last)
+      : `${indentOf(head)}  `;
+  return {
+    line: declaration.endLine - 1,
+    start: last.length,
+    end: last.length,
+    text: `\n${indent}${child}`,
+  };
+}
+
 function sameList(a: string[], b: string[]) {
   return a.length === b.length && a.every((item, index) => item === b[index]);
 }
@@ -342,19 +376,38 @@ function spliceEdits(
     return undefined;
   }
   const edits: Edit[] = [];
-  if (!sameList(before.children, after.children)) {
+  let children = after.children;
+  if (children.length === before.children.length + 1) {
+    // One new child line, such as a series the text didn't style yet, goes
+    // at the end of the declaration's block.
+    const without = (index: number) =>
+      children.filter((_, other) => other !== index);
+    const added = children.findIndex((_, index) =>
+      sameList(before.children, without(index))
+    );
+    const edit =
+      added === -1
+        ? undefined
+        : addChildEdit(lines, declaration, children[added]!);
+    if (!edit) {
+      return undefined;
+    }
+    edits.push(edit);
+    children = without(added);
+  }
+  if (!sameList(before.children, children)) {
     if (
-      before.children.length !== after.children.length ||
-      [...before.children, ...after.children].some((line) => /[{}]/.test(line))
+      before.children.length !== children.length ||
+      [...before.children, ...children].some((line) => /[{}]/.test(line))
     ) {
       return undefined;
     }
     for (const [index, line] of before.children.entries()) {
-      if (line === after.children[index]) {
+      if (line === children[index]) {
         continue;
       }
       const was = readChild(line);
-      const now = readChild(after.children[index]!);
+      const now = readChild(children[index]!);
       const identity = childIdentity(was);
       const written = declaration.children.filter(
         (child) => declarationIdentity(child) === identity
@@ -558,6 +611,40 @@ function textPart(chart: SavedChartSettings) {
   return rest;
 }
 
+type SeriesColors = Record<string, { lineColor?: string } | undefined>;
+
+/**
+ * The chart after, without the colors a line chart picks for series that
+ * had none before. It saves them as it draws, and a chart can draw while
+ * someone edits another block; that pick is not an edit to write.
+ */
+function withoutDrawnColors(
+  before: SavedChartSettings,
+  after: SavedChartSettings
+): SavedChartSettings {
+  const was = (before as { seriesSettings?: SeriesColors }).seriesSettings;
+  const now = (after as { seriesSettings?: SeriesColors }).seriesSettings;
+  if (!isRecord(now)) {
+    return after;
+  }
+  let changed = false;
+  const kept: SeriesColors = { ...now };
+  for (const [field, settings] of Object.entries(now)) {
+    const color = was?.[field]?.lineColor;
+    if (settings?.lineColor && (!color || color === "default")) {
+      changed = true;
+      if (was?.[field]) {
+        kept[field] = was[field];
+      } else {
+        delete kept[field];
+      }
+    }
+  }
+  return changed
+    ? ({ ...after, seriesSettings: kept } as SavedChartSettings)
+    : after;
+}
+
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
@@ -672,10 +759,14 @@ export function writeBackSettings(
   let current = text;
   let state = compiled;
   const results: NotebookWriteBack["results"] = [];
-  for (const chart of next.charts) {
-    const before = previous.charts.find((item) => item.id === chart.id);
-    const base = state.settings.charts.find((item) => item.id === chart.id);
-    if (!before || !base || isEqual(textPart(before), textPart(chart))) {
+  for (const drawn of next.charts) {
+    const before = previous.charts.find((item) => item.id === drawn.id);
+    const base = state.settings.charts.find((item) => item.id === drawn.id);
+    if (!before || !base) {
+      continue;
+    }
+    const chart = withoutDrawnColors(before, drawn);
+    if (isEqual(textPart(before), textPart(chart))) {
       continue;
     }
     const edited =

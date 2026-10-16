@@ -1,6 +1,7 @@
 import { Check, Copy } from "lucide-react";
 import { Highlight, themes } from "prism-react-renderer";
 import { useState, type ReactNode } from "react";
+import { useRootIsDark } from "../docs/components/theme";
 
 export function CopyButton({
   text,
@@ -36,8 +37,13 @@ export function CopyButton({
 }
 
 function HighlightedCode({ code }: { code: string }) {
+  const dark = useRootIsDark();
   return (
-    <Highlight code={code} language="tsx" theme={themes.github}>
+    <Highlight
+      code={code}
+      language="tsx"
+      theme={dark ? themes.vsDark : themes.github}
+    >
       {({ tokens, getLineProps, getTokenProps }) => (
         <code>
           {tokens.map((line, lineIndex) => (
@@ -99,7 +105,7 @@ export function CodePanel({ files }: { files: CodeFile[] }) {
       <pre
         role="tabpanel"
         aria-label={file.name}
-        className="whitespace-pre-wrap break-words bg-card p-4 text-xs leading-relaxed sm:p-5 sm:text-[13px]"
+        className="h-[28rem] overflow-auto whitespace-pre-wrap break-words bg-card p-4 text-xs leading-relaxed [scrollbar-width:thin] sm:p-5 sm:text-[13px]"
       >
         <HighlightedCode code={code} />
       </pre>
@@ -114,9 +120,12 @@ export function CodePanel({ files }: { files: CodeFile[] }) {
 
 export function InstallCommand({
   command,
+  label = "install command",
   tone = "light",
 }: {
   command: string;
+  /** What the copy button says it copies. */
+  label?: string;
   /** "dark" sits on the navy hero band. */
   tone?: "light" | "dark";
 }) {
@@ -126,7 +135,7 @@ export function InstallCommand({
       className={
         dark
           ? "inline-flex items-center justify-between gap-3 rounded-lg border border-band-border bg-white/5 py-1.5 pl-4 pr-1.5"
-          : "inline-flex items-center justify-between gap-3 rounded-lg border border-border bg-card py-1.5 pl-4 pr-1.5 shadow-sm"
+          : "inline-flex items-center justify-between gap-3 rounded-lg border border-border bg-card py-1.5 pl-4 pr-1.5"
       }
     >
       <code className="font-mono text-sm">
@@ -140,7 +149,7 @@ export function InstallCommand({
       </code>
       <CopyButton
         text={command}
-        label="install command"
+        label={label}
         className={
           dark ? "text-white/70 hover:bg-white/10 hover:text-white" : undefined
         }

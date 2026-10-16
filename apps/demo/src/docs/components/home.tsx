@@ -1,6 +1,6 @@
 import { EXAMPLES_PATH } from "@/routes";
 import { cn } from "@/lib/utils";
-import { ArrowRight, Code, House, LayoutGrid } from "lucide-react";
+import { ArrowRight, House, LayoutGrid, Upload } from "lucide-react";
 import {
   useId,
   useLayoutEffect,
@@ -12,48 +12,11 @@ import { Link } from "react-router-dom";
 import { catalogue, type DocsPage } from "../catalogue";
 import { CHART_QUESTIONS } from "../chooser";
 import { GLANCES } from "../glance";
-import { liveExamples } from "../live/examples";
+import { WORKFLOWS } from "../../landing/workflows";
 import { docsPath, liveShotPath } from "../paths";
 import { cardLinkClass, stretchedLinkClass } from "./chrome";
-import { SearchButton } from "./search";
-
-/** Three example screenshots, fanned out beside the hero's text. */
-const HERO_SHOTS = ["scatter-density", "sankey", "heatmap"] as const;
-
-function HeroShots() {
-  const [missing, setMissing] = useState<ReadonlySet<string>>(new Set());
-  const shown = HERO_SHOTS.filter((id) => !missing.has(id));
-  if (shown.length < HERO_SHOTS.length) {
-    // A dev server may not have the screenshots the docs check writes.
-    return null;
-  }
-  return (
-    <div aria-hidden="true" className="relative hidden h-72 lg:block">
-      {shown.map((id, index) => (
-        <img
-          key={id}
-          src={liveShotPath(id)}
-          alt=""
-          onError={() => setMissing((set) => new Set(set).add(id))}
-          className={cn(
-            "landing-shot absolute w-[78%] rounded-lg border border-border bg-card object-cover object-left-top",
-            index === 0 && "left-0 top-6 -rotate-3",
-            index === 1 && "left-[11%] top-0 rotate-1",
-            index === 2 && "left-[22%] top-12 rotate-3"
-          )}
-          style={{ aspectRatio: "16 / 10", zIndex: index }}
-        />
-      ))}
-    </div>
-  );
-}
 
 const START_LINKS = [
-  {
-    to: `${docsPath("developers")}#quick-start`,
-    label: "Embed it in React",
-    icon: Code,
-  },
   { to: docsPath("workspace"), label: "Tour the workspace", icon: House },
   { to: EXAMPLES_PATH, label: "Browse the examples", icon: LayoutGrid },
 ] as const;
@@ -65,12 +28,6 @@ export function Hero() {
     window.scrollTo(0, 0);
     heading.current?.focus({ preventScroll: true });
   }, []);
-  const chartCount = catalogue.filter((page) => page.chartType).length;
-  const stats = [
-    [chartCount, "views to build with"],
-    [Object.keys(liveExamples).length, "live examples to try"],
-    [catalogue.length, "guides"],
-  ] as const;
 
   return (
     <section
@@ -81,11 +38,7 @@ export function Hero() {
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 opacity-60 [background-image:radial-gradient(color-mix(in_oklab,var(--foreground)_14%,transparent)_1px,transparent_1px)] [background-size:18px_18px] [mask-image:linear-gradient(to_bottom_right,black,transparent_70%)]"
       />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-24 -top-24 size-96 rounded-full bg-docs-accent/15 blur-3xl"
-      />
-      <div className="relative grid items-center gap-10 p-6 sm:p-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
+      <div className="relative grid items-start gap-x-10 gap-y-8 p-6 sm:p-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
         <div>
           <h1
             id="docs-hero"
@@ -97,35 +50,24 @@ export function Hero() {
           </h1>
           <p className="mt-4 max-w-xl text-lg leading-relaxed text-muted-foreground">
             Charts that filter each other, on your own rows. Learn what each
-            view computes and which rows it reads, then try it live on every
-            page.
+            view computes and which rows it reads, and try the chart guides live
+            as you read.
           </p>
-          <SearchButton className="mt-7 h-11 w-full max-w-md text-base shadow-sm" />
-          <ul className="mt-5 flex flex-wrap gap-2">
+          <ul className="mt-6 flex flex-wrap gap-x-6 gap-y-2">
             {START_LINKS.map(({ to, label, icon: Icon }) => (
               <li key={label}>
                 <Link
                   to={to}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:border-docs-accent/50 hover:text-docs-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className="inline-flex items-center gap-1.5 rounded-sm text-sm font-medium text-docs-accent underline-offset-4 transition-colors duration-150 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
-                  <Icon aria-hidden="true" className="size-3.5" />
+                  <Icon aria-hidden="true" className="size-4" />
                   {label}
                 </Link>
               </li>
             ))}
           </ul>
-          <dl className="mt-8 flex flex-wrap gap-x-8 gap-y-3">
-            {stats.map(([value, label]) => (
-              <div key={label} className="flex flex-col-reverse">
-                <dt className="text-sm text-muted-foreground">{label}</dt>
-                <dd className="text-2xl font-semibold tabular-nums tracking-tight">
-                  {value}
-                </dd>
-              </div>
-            ))}
-          </dl>
         </div>
-        <HeroShots />
+        <PathList />
       </div>
     </section>
   );
@@ -145,8 +87,10 @@ function PickCard({
   const gestures = page.chartType ? GLANCES[page.chartType]?.gestures : [];
   return (
     <article className={cn(cardLinkClass, "flex flex-col overflow-hidden")}>
-      <div className="relative aspect-[16/9] overflow-hidden border-b border-border bg-muted/60">
-        {page.thumbnail && !thumbMissing ? (
+      {/* Without a live shot (a dev server that hasn't made them), the card
+          is text only rather than a grey placeholder. */}
+      {page.thumbnail && !thumbMissing && (
+        <div className="aspect-[16/9] overflow-hidden border-b border-border bg-muted/60">
           <img
             src={liveShotPath(page.thumbnail)}
             alt=""
@@ -154,23 +98,22 @@ function PickCard({
             onError={() => setThumbMissing(true)}
             className="h-full w-full object-cover object-left-top transition-transform duration-300 group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
           />
-        ) : (
-          <div className="flex h-full items-center justify-center">
-            <Icon aria-hidden="true" className="size-10 text-docs-accent/30" />
-          </div>
-        )}
-        {best && (
-          <span className="absolute left-3 top-3 rounded-full bg-docs-accent px-2.5 py-0.5 text-xs font-semibold text-docs-accent-foreground shadow-sm">
-            Best fit
-          </span>
-        )}
-      </div>
+        </div>
+      )}
       <div className="flex flex-1 flex-col p-4">
-        <h3 className="flex items-center gap-2 font-semibold">
-          <Icon aria-hidden="true" className="size-4 text-docs-accent" />
+        <h3 className="flex items-baseline gap-2 font-semibold">
+          <Icon
+            aria-hidden="true"
+            className="size-4 shrink-0 translate-y-0.5 text-docs-accent"
+          />
           <Link className={stretchedLinkClass} to={docsPath(page.topic)}>
             {page.title}
           </Link>
+          {best && (
+            <span className="ml-auto shrink-0 text-xs font-semibold text-docs-accent">
+              Best fit
+            </span>
+          )}
         </h3>
         <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
           {why}
@@ -196,6 +139,55 @@ function PickCard({
 }
 
 /** Pick a question, see the charts that answer it. */
+/** Where to start: a file in this browser, or each other way to run it. */
+const PATHS = [
+  {
+    title: "Open a file",
+    where: "This browser",
+    to: docsPath("load-data"),
+    icon: Upload,
+  },
+  ...WORKFLOWS,
+];
+
+function PathList() {
+  return (
+    <nav aria-labelledby="docs-paths">
+      <h2
+        id="docs-paths"
+        className="text-xs font-semibold uppercase tracking-wide text-muted-foreground"
+      >
+        Choose your path
+      </h2>
+      <ul className="mt-2 divide-y divide-border border-y border-border">
+        {PATHS.map(({ title, where, to, icon: Icon }) => (
+          <li key={title} className="group relative">
+            <Link
+              to={to}
+              className="flex items-center gap-3 py-2.5 text-sm transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <Icon
+                aria-hidden="true"
+                className="size-4 shrink-0 text-docs-accent"
+              />
+              <span className="flex min-w-0 flex-1 flex-col sm:flex-row sm:items-baseline sm:justify-between sm:gap-3">
+                <span className="font-medium text-foreground transition-colors duration-150 group-hover:text-docs-accent">
+                  {title}
+                </span>
+                <span className="text-xs text-muted-foreground">{where}</span>
+              </span>
+              <ArrowRight
+                aria-hidden="true"
+                className="size-3.5 shrink-0 text-muted-foreground transition-[color,transform] duration-150 group-hover:translate-x-0.5 group-hover:text-docs-accent"
+              />
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  );
+}
+
 export function ChartChooser() {
   const [selected, setSelected] = useState(0);
   const baseId = useId();
@@ -285,7 +277,7 @@ export function ChartChooser() {
         that suit it.
         <Link
           to={docsPath("fields")}
-          className="inline-flex items-center gap-0.5 font-medium text-docs-accent hover:underline"
+          className="inline-flex items-center gap-0.5 rounded-sm font-medium text-docs-accent underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           Fields
           <ArrowRight aria-hidden="true" className="size-3.5" />

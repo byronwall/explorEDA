@@ -1191,6 +1191,3 @@ export const examples: ExampleData[] = [
 
 /** The catalogue: complete analyses, in the order the landing page lists them. */
 export const catalogue = examples.filter((example) => example.listed);
-
-/** The analysis the landing page features. */
-export const FEATURED_ANALYSIS_ID = "january-flights";

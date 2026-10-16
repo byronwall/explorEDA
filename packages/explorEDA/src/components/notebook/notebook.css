@@ -2,6 +2,7 @@
 .eda-notebook {
   min-height: 100%;
   padding: 2rem 1rem 4rem;
+  container: eda-notebook / inline-size;
 }
 
 .eda-notebook-column {
@@ -194,6 +195,8 @@
     right: 0;
     margin: 0;
     opacity: 0;
+    /* Hidden tools mustn't take the clicks meant for what's under them. */
+    pointer-events: none;
     transition: opacity 120ms ease;
   }
 
@@ -201,12 +204,33 @@
   .eda-notebook-segment:focus-within > .eda-notebook-segment-tools,
   .eda-notebook-segment[data-open] > .eda-notebook-segment-tools {
     opacity: 1;
+    pointer-events: auto;
   }
 
+  /*
+   * A chart keeps its own buttons at its top right, so a block's tools get a
+   * row of their own above it rather than covering them.
+   */
+  .eda-notebook-block > .eda-notebook-segment-tools,
   .eda-notebook-segment[data-open] > .eda-notebook-segment-tools {
     position: static;
     justify-content: flex-end;
     margin-bottom: 0.25rem;
+  }
+}
+
+/* With room beside the column, the tools sit there instead, for every segment. */
+@container eda-notebook (min-width: 1120px) {
+  @media (hover: hover) and (pointer: fine) {
+    .eda-notebook-segment:not([data-open]) > .eda-notebook-segment-tools {
+      position: absolute;
+      top: 0;
+      right: auto;
+      left: 100%;
+      margin: 0;
+      /* Padding, not a gap, so the pointer can cross to the button. */
+      padding-left: 0.75rem;
+    }
   }
 }
 

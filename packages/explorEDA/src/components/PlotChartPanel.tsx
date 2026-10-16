@@ -999,6 +999,9 @@ export function PlotChartPanel({
                 }
                 align="start"
                 collisionPadding={12}
+                // Stay on screen even when the chart starts low in a tall
+                // page, as a notebook's charts do; partial would hang below.
+                sticky="always"
               >
                 <SettingsPopoverContext.Provider value={true}>
                   <ChartSettingsContent settings={settings} />

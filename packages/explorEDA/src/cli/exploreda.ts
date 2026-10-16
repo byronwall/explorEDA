@@ -8,6 +8,7 @@ import { globalConfigStore } from "../node/globalConfig";
 import { nodeProjectFiles } from "../node/projectFiles";
 import { fileSecretStore } from "../node/secrets";
 import { startServer } from "../server/server";
+import { EXAMPLES } from "./examples";
 import { serverCommand } from "./serverCommand";
 
 declare const __EXPLOREDA_VERSION__: string;
@@ -20,9 +21,10 @@ exploreda.eda describes its data; each other .eda file is an analysis.
 Options:
   --port <n>     first port to try (default 3939; the next free one is used)
   --no-open      print the link instead of opening the browser
-  --example [database]
+  --example [database|forecast]
                  copy a sample project to ./exploreda-example and open it;
-                 "database" copies one that reads a SQLite file instead
+                 "database" copies one that reads a SQLite file, and
+                 "forecast" one with a notebook
   --hidden       keep a new project's text in .exploreda/ instead of
                  exploreda.eda at the folder's top
   -h, --help     show this help`;
@@ -34,15 +36,9 @@ interface Options {
   port: number;
   open: boolean;
   /** The sample project to copy and open, if any. */
-  example?: "shop" | "database";
+  example?: keyof typeof EXAMPLES;
   hidden: boolean;
 }
-
-/** Sample projects, by the name `--example` takes, with their folders. */
-const EXAMPLES = {
-  shop: { from: "shop", to: "exploreda-example" },
-  database: { from: "database", to: "exploreda-example-database" },
-} as const;
 
 function parseArgs(args: string[]): Options | string {
   const options: Options = {
