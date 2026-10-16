@@ -13,7 +13,7 @@ points:num=appearances.points label="Points (group points, win 3 / draw 1 / loss
 result:cat=appearances.result label="Result"
 group_points:num=squad.points label="Team full group-stage points"
 match_total:num=match.total_goals label="Original match total goals"
-markdown @db-football-team-match-investigation-guide content="<p><strong>Which individual match appearances produced a team’s group-stage scoring and points?</strong></p><p>Selections filter peer views and records. The written findings describe the unfiltered snapshot, not the current selection.</p>" title="Entry question and filter scope" at=0,0,12,2
+markdown @db-football-team-match-investigation-guide content="<p>Select a category or range to filter the other views. Written findings describe the full snapshot.</p>" title="Explore the linked views" at=0,0,12,2
 scatter @db-football-team-match-investigation-view-1 x=goals_for y=goals_against color=result title="Goals scored and conceded in one appearance" at=0,2,8,5 note="OpenFootball World Cup 2018 group-stage final scores; public-domain dedication." x.title="Goals for (goals per team appearance)" y.title="Goals against (goals conceded per team appearance)"
 row @db-football-team-match-investigation-view-2 team title="Select a team" at=8,2,4,5 note="OpenFootball World Cup 2018 group-stage final scores; public-domain dedication." x.title="Source rows"
 row @db-football-team-match-investigation-view-3 result title="Select a match result" at=0,7,6,4 note="OpenFootball World Cup 2018 group-stage final scores; public-domain dedication." x.title="Source rows"

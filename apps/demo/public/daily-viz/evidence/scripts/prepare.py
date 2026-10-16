@@ -200,11 +200,11 @@ def prepare():
                 lines.append(f'  field {f["name"]} {json.dumps(f["name"].replace("_"," "),ensure_ascii=False)} {f["type"]}')
             lines.extend(['}',''])
         for sid in tables:
-            lines += [f'query @{sid} {json.dumps(sid.replace("_"," "))} {{',f'  source {sid}','}','']
+            lines += [f'query @{sid} {json.dumps(sid.replace("_"," "))} glyph=◆ {{',f'  source {sid}','}','']
         if family=='football':
-            lines += ['relate @team-link appearances.team -> teams.team','relate @match-link appearances.match_id -> r.id','query @linked "Team appearances with explicit lookups" {','  source appearances','  lookup squad via=team-link','  lookup match via=match-link','}','']
+            lines += ['relate @team-link appearances.team -> teams.team','relate @match-link appearances.match_id -> r.id','query @linked "Team appearances with explicit lookups" glyph=◆ {','  source appearances','  lookup squad via=team-link','  lookup match via=match-link','}','']
         if family=='grunfeld':
-            lines += ['relate @firm-link r.firm -> firms.firm','query @linked "Firm-years with firm summaries" {','  source r','  lookup company via=firm-link','}','']
+            lines += ['relate @firm-link r.firm -> firms.firm','query @linked "Firm-years with firm summaries" glyph=◆ {','  source r','  lookup company via=firm-link','}','']
         (ROOT/f'projects/{family}/exploreda.eda').write_text('\n'.join(lines),encoding='utf-8')
         dump(ROOT/f'evidence/fields/{family}.json',tables)
     dump(ROOT/'evidence/prepared-tables.json',TABLES)

@@ -12,7 +12,7 @@
   "computed_finding_records": 150,
   "distinct_finding_expressions": 80,
   "qualified_bindings_checked": 1243,
-  "json_files_parsed": 108,
+  "json_files_parsed": 110,
   "csv_files_parsed": 50,
   "chart_declarations": {
     "line": 25,

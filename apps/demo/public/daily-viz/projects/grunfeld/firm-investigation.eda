@@ -13,7 +13,7 @@ invest_change:num=r.invest_change label="Invest change (source 1947-dollar units
 value_change:num=r.value_change label="Value change (source 1947-dollar units)"
 capital_change:num=r.capital_change label="Capital change (source 1947-dollar units)"
 company_mean:num=company.invest_mean label="Firm full-panel mean investment"
-markdown @db-grunfeld-firm-investigation-guide content="<p><strong>How do a selected firm’s annual changes compare with its own panel summary?</strong></p><p>Selections filter peer views and records. The written findings describe the unfiltered snapshot, not the current selection.</p>" title="Entry question and filter scope" at=0,0,12,2
+markdown @db-grunfeld-firm-investigation-guide content="<p>Select a category or range to filter the other views. Written findings describe the full snapshot.</p>" title="Explore the linked views" at=0,0,12,2
 scatter @db-grunfeld-firm-investigation-view-1 x=value y=invest color=firm title="Market value and investment" at=0,2,8,5 note="Grunfeld investment panel, Kleiber and Zeileis / statsmodels; public domain." x.title="Value (source 1947-dollar units)" y.title="Invest (source 1947-dollar units)"
 row @db-grunfeld-firm-investigation-view-2 firm title="Select a firm" at=8,2,4,5 note="Grunfeld investment panel, Kleiber and Zeileis / statsmodels; public domain." x.title="Source rows"
 scatter @db-grunfeld-firm-investigation-view-3 x=value_change y=invest_change title="Within-firm annual changes" at=0,7,6,4 note="Grunfeld investment panel, Kleiber and Zeileis / statsmodels; public domain." x.title="Value change (source 1947-dollar units)" y.title="Invest change (source 1947-dollar units)"

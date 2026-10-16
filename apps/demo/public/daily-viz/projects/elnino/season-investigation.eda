@@ -12,7 +12,7 @@ decade:cat=r.decade label="Decade"
 climatology:num=r.climatology label="Climatology (°C)"
 anomaly:num=r.anomaly label="Anomaly (°C)"
 era:cat=r.era label="Era"
-markdown @db-elnino-season-investigation-guide content="<p><strong>Are extreme Niño 1+2 anomalies concentrated in particular months or decades?</strong></p><p>Selections filter peer views and records. The written findings describe the unfiltered snapshot, not the current selection.</p>" title="Entry question and filter scope" at=0,0,12,2
+markdown @db-elnino-season-investigation-guide content="<p>Select a category or range to filter the other views. Written findings describe the full snapshot.</p>" title="Explore the linked views" at=0,0,12,2
 scatter @db-elnino-season-investigation-view-1 x=sst y=anomaly color=decade title="Temperature and seasonal anomaly" at=0,2,8,5 note="NOAA CPC, ERSST v3b Niño 1+2; historical snapshot; public domain." x.title="Sst (°C)" y.title="Anomaly (°C)"
 row @db-elnino-season-investigation-view-2 decade title="Select a decade" at=8,2,4,5 note="NOAA CPC, ERSST v3b Niño 1+2; historical snapshot; public domain." x.title="Source rows"
 boxplot @db-elnino-season-investigation-view-3 anomaly color=month_label title="Anomalies by calendar month" at=0,7,6,4 note="NOAA CPC, ERSST v3b Niño 1+2; historical snapshot; public domain." y.title="Anomaly (°C)"

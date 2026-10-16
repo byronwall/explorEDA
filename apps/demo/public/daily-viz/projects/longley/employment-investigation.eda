@@ -16,7 +16,7 @@ era:cat=r.era label="Era"
 employment_index:num=r.employment_index label="Employment index (1947 = 100)"
 gnp_index:num=r.gnp_index label="Gnp index (1947 = 100)"
 population_index:num=r.population_index label="Population index (1947 = 100)"
-markdown @db-longley-employment-investigation-guide content="<p><strong>Which annual observations drive the difference between the levels and changes views?</strong></p><p>Selections filter peer views and records. The written findings describe the unfiltered snapshot, not the current selection.</p>" title="Entry question and filter scope" at=0,0,12,2
+markdown @db-longley-employment-investigation-guide content="<p>Select a category or range to filter the other views. Written findings describe the full snapshot.</p>" title="Explore the linked views" at=0,0,12,2
 scatter @db-longley-employment-investigation-view-1 x=gnp y=employment color=era title="Nominal output and employment levels" at=0,2,8,5 note="Longley historical employment benchmark via statsmodels; public domain." x.title="Gnp (source nominal GNP units)" y.title="Employment (source employment units)"
 row @db-longley-employment-investigation-view-2 era title="Select a broad historical span" at=8,2,4,5 note="Longley historical employment benchmark via statsmodels; public domain." x.title="Source rows"
 scatter @db-longley-employment-investigation-view-3 x=gnp_change y=employment_change title="Output and employment changes" at=0,7,6,4 note="Longley historical employment benchmark via statsmodels; public domain." x.title="Gnp change (source GNP units per year)" y.title="Employment change (source employment units per year)"

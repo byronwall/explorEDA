@@ -1,3 +1,11 @@
+# Local integration status
+
+This copy is integrated into the demo at `/daily`. All 75 entries pass the repository's native compiler with full local data. The project queries include the required glyph. The original Pro delivery is preserved separately; its production-time report and gaps below describe the handoff, before Codex validation. See `integration.json` for the local validation record. Written findings refer to unfiltered snapshots.
+
+The source archive served here contains this corrected integration copy. `original-manifest.json` describes Pro's original archive. `manifest.json` describes this integration copy, excluding the source ZIP itself.
+
+---
+
 # explorEDA daily visualization corpus
 
 ## Delivery status

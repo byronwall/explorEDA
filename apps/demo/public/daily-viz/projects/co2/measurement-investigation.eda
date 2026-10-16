@@ -12,7 +12,7 @@ coverage:cat=r.coverage label="Coverage"
 observed:num=r.observed label="Observed (1 measured; 0 missing)"
 annual_center:num=r.annual_center label="Annual center (ppmv)"
 residual:num=r.residual label="Residual (ppmv)"
-markdown @db-co2-measurement-investigation-guide content="<p><strong>Which concentrations and missing dates belong to a selected decade and calendar month?</strong></p><p>Selections filter peer views and records. The written findings describe the unfiltered snapshot, not the current selection.</p>" title="Entry question and filter scope" at=0,0,12,2
+markdown @db-co2-measurement-investigation-guide content="<p>Select a category or range to filter the other views. Written findings describe the full snapshot.</p>" title="Explore the linked views" at=0,0,12,2
 line @db-co2-measurement-investigation-view-1 x=date y=co2 title="Historical weekly concentrations" at=0,2,8,5 note="Keeling and Whorf / CDIAC; statsmodels historical snapshot; public domain." x.title="Calendar date" y.title="Co2 (ppmv)"
 row @db-co2-measurement-investigation-view-2 decade title="Select a decade" at=8,2,4,5 note="Keeling and Whorf / CDIAC; statsmodels historical snapshot; public domain." x.title="Source rows"
 row @db-co2-measurement-investigation-view-3 coverage title="Measured or missing" at=0,7,6,4 note="Keeling and Whorf / CDIAC; statsmodels historical snapshot; public domain." x.title="Source rows"

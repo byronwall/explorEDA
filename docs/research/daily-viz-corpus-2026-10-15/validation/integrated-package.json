@@ -1,0 +1,13 @@
+{
+  "zip": "/Users/byronwall/.codex/worktrees/8575/explorEDA/apps/demo/public/daily-viz/exploreda-daily-viz-corpus.zip",
+  "zip_size_bytes": 820586,
+  "sha256": "aebc80889582a3621f9aef8dfa85da07ae4f9fc0aa1421e62ffe3aa4fb0dc96a",
+  "file_count": 320,
+  "uncompressed_bytes": 3600052,
+  "archive_status": "passed",
+  "delivered_counts": {
+    "notebook": 40,
+    "composition": 25,
+    "dashboard": 10
+  }
+}

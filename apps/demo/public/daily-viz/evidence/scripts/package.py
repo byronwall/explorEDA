@@ -6,7 +6,7 @@ from __future__ import annotations
 import collections,hashlib,json,stat,sys,zipfile
 from pathlib import Path,PurePosixPath
 ROOT=Path(__file__).resolve().parents[2]
-ZIP=ROOT.parent/'exploreda-daily-viz-corpus.zip'
+ZIP=ROOT/'exploreda-daily-viz-corpus.zip'
 MANIFEST=ROOT/'manifest.json'
 AUDIT=ROOT/'evidence/validation/archive-audit.json'
 def sha(data:bytes)->str:return hashlib.sha256(data).hexdigest()
@@ -15,7 +15,7 @@ def safe(name:str)->bool:
     return bool(name) and not p.is_absolute() and '..' not in p.parts and '\\' not in name
 
 def payload():
-    return sorted(p for p in ROOT.rglob('*') if p.is_file() and '__pycache__' not in p.parts and p.suffix!='.pyc')
+    return sorted(p for p in ROOT.rglob('*') if p.is_file() and '__pycache__' not in p.parts and p.suffix!='.pyc' and p not in (ZIP, ZIP.with_name(ZIP.name+'.sha256')))
 
 def write_manifest():
     catalog=json.loads((ROOT/'catalog.json').read_text());datasets=json.loads((ROOT/'datasets.json').read_text())
@@ -24,6 +24,9 @@ def write_manifest():
     records.append({'path':'manifest.json','size_bytes':0,'sha256':None,'hash_omission_reason':'The manifest does not hash itself; ZIP SHA-256 is supplied in an external companion.'})
     records.sort(key=lambda x:x['path'])
     result={'schema_version':1,'repository':'byronwall/explorEDA','baseline':'ea8b52ff742f11d1fb89457acabbcd27b0bd04e7','delivery_status':'authored-local-data-evidence-complete; pending native compiler, browser and integration verification','delivered_counts':dict(collections.Counter(p['kind'] for p in catalog)),'target_counts':{'notebook':40,'composition':25,'dashboard':10},'dataset_families':len(datasets),'new_dataset_families_conservative':sum(d['existing_material_status']=='new' for d in datasets),'prepared_tables':sum(len(d['output_tables']) for d in datasets),'prepared_rows_across_grains':sum(d['output_row_count'] for d in datasets),'computed_finding_records':150,'distinct_finding_expressions':80,'native_compiler_verified_entries':0,'browser_verified_entries':0,'repository_files_or_commits_created':False,'file_count':len(records),'total_uncompressed_bytes':0,'files':records}
+    if (ROOT/'integration.json').exists():
+        local=json.loads((ROOT/'integration.json').read_text())
+        result.update(delivery_status=local['status'],native_compiler_verified_entries=local['native_compiler_verified_entries'],browser_verified_entries=local['browser_verified_entries'],repository_files_or_commits_created=True)
     own=next(x for x in records if x['path']=='manifest.json')
     for _ in range(20):
         result['total_uncompressed_bytes']=sum(x['size_bytes'] for x in records)
@@ -60,7 +63,7 @@ def audit_zip():
         for p in catalog:
             for ref in [p['entry_path'],p['project_path'],*p['evidence_paths']]:
                 if ref not in names:raise ValueError(f'Unresolved catalogue path in ZIP: {ref}')
-        return {'status':'passed','archive_file_name':ZIP.name,'member_count':len(names),'safe_relative_paths':True,'duplicate_members':0,'symlinks':0,'crc_test':'passed','member_sizes_match_manifest':True,'sha256_matches_manifest_except_self':True,'catalogue_entries_resolve_inside_archive':len(catalog),'manifest_self_hash':'intentionally omitted; own size verified','archive_sha256':'external .zip.sha256 companion, not recursively embedded','native_dsl_compilation':'not run','browser_rendering':'not run'}
+        return {'status':'passed','archive_file_name':ZIP.name,'member_count':len(names),'safe_relative_paths':True,'duplicate_members':0,'symlinks':0,'crc_test':'passed','member_sizes_match_manifest':True,'sha256_matches_manifest_except_self':True,'catalogue_entries_resolve_inside_archive':len(catalog),'manifest_self_hash':'intentionally omitted; own size verified','archive_sha256':'external .zip.sha256 companion, not recursively embedded','native_dsl_compilation':'see integration.json','browser_rendering':'see integration.json for exact scope'}
 
 if __name__=='__main__':
     for name in ('static-audit.json','reproducibility.json','notebook-parser.json'):

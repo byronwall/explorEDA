@@ -365,11 +365,11 @@ def build_dashboards(catalog):
         original=BY[(d['family'],d['reference'])];n=deepcopy(original);n.update(title=d['title'],slug=d['slug'],question=d['question'],query=d['query'])
         id_=f'db-{d["family"]}-{d["slug"]}';fs,ep=B.evidence_for(original,id_);path=f'projects/{d["family"]}/{d["slug"]}.eda'
         query='linked' if d['lookup'] else d['query']
-        intro=f'<p><strong>{html.escape(d["question"])}</strong></p><p>Selections filter peer views and records. The written findings describe the unfiltered snapshot, not the current selection.</p>'
+        intro='<p>Select a category or range to filter the other views. Written findings describe the full snapshot.</p>'
         lines=[f'eda query={query}',f'dashboard {B.quote(d["title"])}','grid columns=12 rowHeight=76',B.aliases(d['family'],d['query'])]
         if d['family']=='grunfeld':lines += ['company_mean:num=company.invest_mean label="Firm full-panel mean investment"']
         if d['family']=='football':lines += ['group_points:num=squad.points label="Team full group-stage points"','match_total:num=match.total_goals label="Original match total goals"']
-        lines += [f'markdown @{id_}-guide content={B.quote(intro)} title="Entry question and filter scope" at=0,0,12,2']
+        lines += [f'markdown @{id_}-guide content={B.quote(intro)} title="Explore the linked views" at=0,0,12,2']
         pos=['0,2,8,5','8,2,4,5','0,7,6,4','6,7,6,4','0,11,8,5','8,11,4,2']
         for i,step in enumerate(d['steps']):
             # Multiple firms share years: use a scatter until a firm is selected, never an inter-firm connecting line.

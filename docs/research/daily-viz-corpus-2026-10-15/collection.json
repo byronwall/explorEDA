@@ -5,5 +5,8 @@
   "bytes": 801466,
   "sha256": "352b714d33ba8afa8bc8ca6ebbdaa77f8f28c53bed337ff8cbb6c5d16a0f5a17",
   "integrity": "CRC passed; safe paths; no links or duplicate members",
-  "downloadEvent": "Browser wait timed out; actual file existed in Downloads and was copied and verified."
+  "downloadEvent": "Browser wait timed out; actual file existed in Downloads and was copied and verified.",
+  "original_archive_member_count": 318,
+  "original_manifest": "All 318 file sizes and hashes verified against original archive.",
+  "companions": "Standalone reports and metadata preserved from the archive; external ZIP checksum downloaded and matched."
 }

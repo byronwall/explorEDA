@@ -85,7 +85,7 @@ def main():
             require(safe(path) and (ROOT/path).is_file(),f'{id_}: unresolved path {path}')
         require(all(x in ids and x!=id_ for x in item['related_ids']),f'{id_}: invalid related IDs')
         require(item['query_id'] in project_queries[family],f'{id_}: unknown query')
-        require(item['readiness']=='pending-local-compiler-verification' and item['compiler_status']=='not-run',f'{id_}: false compiler status')
+        require((item['readiness'], item['compiler_status']) in [('pending-local-compiler-verification', 'not-run'), ('native-compiler-verified', 'passed')], f'{id_}: inconsistent compiler status')
         text=(ROOT/item['entry_path']).read_text();require(len(text)>500,f'{id_}: empty/outline entry')
         h=sha(ROOT/item['entry_path']);require(h not in file_hashes,f'{id_}: duplicate piece bytes');file_hashes.add(h)
         blocks=re.findall(r'^```eda\s*\n(.*?)^```\s*$',text,re.M|re.S) if item['kind']=='notebook' else [text]

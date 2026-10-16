@@ -16,7 +16,7 @@ hue:num=r.hue label="Hue (source units)"
 od_ratio:num=r.od_ratio label="Od ratio (source units)"
 proline:num=r.proline label="Proline (source units)"
 cultivar:cat=r.cultivar label="Cultivar"
-markdown @db-wine-assay-investigation-guide content="<p><strong>Which assay profiles remain after selecting a cultivar and a chemical range?</strong></p><p>Selections filter peer views and records. The written findings describe the unfiltered snapshot, not the current selection.</p>" title="Entry question and filter scope" at=0,0,12,2
+markdown @db-wine-assay-investigation-guide content="<p>Select a category or range to filter the other views. Written findings describe the full snapshot.</p>" title="Explore the linked views" at=0,0,12,2
 scatter @db-wine-assay-investigation-view-1 x=flavanoids y=color_intensity color=cultivar title="Flavanoids and color intensity" at=0,2,8,5 note="Aeberhard and Forina / UCI Wine recognition; CC BY 4.0; source assay units." x.title="Flavanoids (source units)" y.title="Color intensity (source units)"
 row @db-wine-assay-investigation-view-2 cultivar title="Select a supplied cultivar" at=8,2,4,5 note="Aeberhard and Forina / UCI Wine recognition; CC BY 4.0; source assay units." x.title="Source rows"
 hist @db-wine-assay-investigation-view-3 flavanoids bins=24 title="Brush flavanoid values" at=0,7,6,4 note="Aeberhard and Forina / UCI Wine recognition; CC BY 4.0; source assay units." x.title="Flavanoids (source units)" y.title="Source rows"

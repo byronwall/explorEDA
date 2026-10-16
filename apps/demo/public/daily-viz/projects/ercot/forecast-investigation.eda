@@ -16,7 +16,7 @@ abs_error:num=r.abs_error label="Abs error (MWh)"
 pct_error:num=r.pct_error label="Pct error (%)"
 abs_pct_error:num=r.abs_pct_error label="Abs pct error (%)"
 direction:cat=r.direction label="Direction"
-markdown @db-ercot-forecast-investigation-guide content="<p><strong>Which hours combine large errors, unusual forecast levels, and a particular clock-hour context?</strong></p><p>Selections filter peer views and records. The written findings describe the unfiltered snapshot, not the current selection.</p>" title="Entry question and filter scope" at=0,0,12,2
+markdown @db-ercot-forecast-investigation-guide content="<p>Select a category or range to filter the other views. Written findings describe the full snapshot.</p>" title="Explore the linked views" at=0,0,12,2
 scatter @db-ercot-forecast-investigation-view-1 x=forecast y=error color=direction title="Forecast level and signed error" at=0,2,8,5 note="EIA / ERCOT; authorized repository snapshot; U.S. public-domain data." x.title="Forecast (MWh)" y.title="Error (MWh)"
 row @db-ercot-forecast-investigation-view-2 direction title="Select an error direction" at=8,2,4,5 note="EIA / ERCOT; authorized repository snapshot; U.S. public-domain data." x.title="Source rows"
 hist @db-ercot-forecast-investigation-view-3 abs_error bins=30 title="Brush an absolute-error range" at=0,7,6,4 note="EIA / ERCOT; authorized repository snapshot; U.S. public-domain data." x.title="Abs error (MWh)" y.title="Source rows"

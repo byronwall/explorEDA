@@ -10,7 +10,7 @@ decade:cat=r.decade label="Decade"
 year_label:cat=r.year_label label="Year label"
 coverage:cat=r.coverage label="Coverage"
 observed:num=r.observed label="Observed (1 published; 0 missing)"
-markdown @db-fertility-country-investigation-guide content="<p><strong>Which selected country-years support a comparison, and which year cells are null?</strong></p><p>Selections filter peer views and records. The written findings describe the unfiltered snapshot, not the current selection.</p>" title="Entry question and filter scope" at=0,0,12,2
+markdown @db-fertility-country-investigation-guide content="<p>Select a category or range to filter the other views. Written findings describe the full snapshot.</p>" title="Explore the linked views" at=0,0,12,2
 scatter @db-fertility-country-investigation-view-1 x=year y=fertility color=country title="Recorded country-year rates" at=0,2,8,5 note="World Bank, UN and national statistical sources; historical snapshot; CC BY 4.0." x.title="Year" y.title="Fertility (births/woman)"
 row @db-fertility-country-investigation-view-2 country title="Select a country" at=8,2,4,5 note="World Bank, UN and national statistical sources; historical snapshot; CC BY 4.0." x.title="Source rows"
 hist @db-fertility-country-investigation-view-3 year bins=54 title="Brush a year range" at=0,7,6,4 note="World Bank, UN and national statistical sources; historical snapshot; CC BY 4.0." x.title="Year" y.title="Source rows"

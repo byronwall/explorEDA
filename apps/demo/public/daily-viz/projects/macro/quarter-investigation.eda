@@ -22,7 +22,7 @@ gdp_growth:num=r.gdp_growth label="Gdp growth (%)"
 consumption_share:num=r.consumption_share label="Consumption share (%)"
 gdp_change:num=r.gdp_change label="Gdp change (billions, chained 2005 US$)"
 unemp_change:num=r.unemp_change label="Unemp change (percentage points)"
-markdown @db-macro-quarter-investigation-guide content="<p><strong>Which quarters combine GDP contraction, unemployment change, and a particular inflation context?</strong></p><p>Selections filter peer views and records. The written findings describe the unfiltered snapshot, not the current selection.</p>" title="Entry question and filter scope" at=0,0,12,2
+markdown @db-macro-quarter-investigation-guide content="<p>Select a category or range to filter the other views. Written findings describe the full snapshot.</p>" title="Explore the linked views" at=0,0,12,2
 scatter @db-macro-quarter-investigation-view-1 x=gdp_change y=unemp_change color=decade title="GDP change and unemployment change" at=0,2,8,5 note="U.S. macroeconomic sources via statsmodels; historical vintage; public domain." x.title="Gdp change (billions, chained 2005 US$)" y.title="Unemp change (percentage points)"
 row @db-macro-quarter-investigation-view-2 decade title="Select a historical decade" at=8,2,4,5 note="U.S. macroeconomic sources via statsmodels; historical vintage; public domain." x.title="Source rows"
 hist @db-macro-quarter-investigation-view-3 gdp_growth bins=26 title="Brush annualized GDP growth" at=0,7,6,4 note="U.S. macroeconomic sources via statsmodels; historical vintage; public domain." x.title="Gdp growth (%)" y.title="Source rows"
