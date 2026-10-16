@@ -6999,3 +6999,94 @@ export const fanLineDashboard = dashboard("Forecast fan, built in", [
   row("fan-line-kind", "Rows by kind", "Kind", layout(0, 7, 6, 4)),
   row("fan-line-measure", "Rows by measure", "Measure", layout(6, 7, 6, 4)),
 ]);
+
+const heatmap = (
+  id: string,
+  title: string,
+  field: string,
+  columnField: string,
+  position: ReturnType<typeof layout>,
+  extra: Partial<Extract<Chart, { type: "heatmap" }>>
+): Extract<Chart, { type: "heatmap" }> => ({
+  ...base,
+  id,
+  type: "heatmap",
+  title,
+  field,
+  columnField,
+  aggregation: "count",
+  maxCategories: 20,
+  sortBy: "count",
+  showValues: false,
+  layout: position,
+  margin: { top: 8, right: 16, bottom: 8, left: 8 },
+  ...extra,
+});
+
+/** Six years of messages by correspondent and month, every month shown. */
+export const messageHeatmapDashboard = dashboard("Message log, built in", [
+  heatmap(
+    "message-heatmap",
+    "Messages by correspondent and month",
+    "Correspondent",
+    "Date",
+    layout(0, 0, 12, 7),
+    {
+      maxColumns: 80,
+      columnInterval: "month",
+      colorDomain: { min: 0, transform: "sqrt" },
+    }
+  ),
+  row("message-heatmap-roles", "Messages by role", "Role", layout(0, 7, 6, 4)),
+  row(
+    "message-heatmap-direction",
+    "Sent and received",
+    "Direction",
+    layout(6, 7, 6, 4)
+  ),
+]);
+
+/** Every state and year of measles reports, in the publisher's state order. */
+export const measlesHeatmapDashboard = dashboard("Measles, built in", [
+  heatmap(
+    "measles-heatmap",
+    "Measles cases per 100,000, 1928 to 2012",
+    "State",
+    "Year",
+    layout(0, 0, 12, 10),
+    {
+      aggregation: "average",
+      measureField: "Rate",
+      maxCategories: 51,
+      maxColumns: 85,
+      sortBy: "data",
+      columnSortBy: "label",
+      colorDomain: { min: 0, max: 1000, transform: "sqrt" },
+    }
+  ),
+  row("measles-heatmap-status", "Cell status", "Status", layout(0, 10, 6, 4)),
+]);
+
+/** Each state's Democratic margin per election on a fixed signed scale. */
+export const electionsHeatmapDashboard = dashboard("Elections, built in", [
+  heatmap(
+    "elections-heatmap",
+    "How each state voted, 1976 to 2016",
+    "State",
+    "Year",
+    layout(0, 0, 12, 10),
+    {
+      aggregation: "average",
+      measureField: "Margin",
+      maxCategories: 51,
+      sortBy: "label",
+      colorDomain: { min: -40, max: 40 },
+    }
+  ),
+  row(
+    "elections-heatmap-winner",
+    "Rows by winner",
+    "Winner",
+    layout(0, 10, 6, 4)
+  ),
+]);

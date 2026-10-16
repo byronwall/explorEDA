@@ -758,7 +758,22 @@ function isChart(value: unknown): boolean {
         (value.measureField === undefined ||
           typeof value.measureField === "string") &&
         isFiniteNumber(value.maxCategories) &&
-        ["count", "label"].includes(value.sortBy as string) &&
+        (value.maxColumns === undefined || isFiniteNumber(value.maxColumns)) &&
+        ["count", "label", "data"].includes(value.sortBy as string) &&
+        (value.columnSortBy === undefined ||
+          ["count", "label", "data"].includes(value.columnSortBy as string)) &&
+        (value.columnInterval === undefined ||
+          ["year", "month", "week", "day"].includes(
+            value.columnInterval as string
+          )) &&
+        (value.colorDomain === undefined ||
+          (isRecord(value.colorDomain) &&
+            (value.colorDomain.min === undefined ||
+              isFiniteNumber(value.colorDomain.min)) &&
+            (value.colorDomain.max === undefined ||
+              isFiniteNumber(value.colorDomain.max)) &&
+            (value.colorDomain.transform === undefined ||
+              value.colorDomain.transform === "sqrt"))) &&
         typeof value.showValues === "boolean"
       );
     case "ecdf":
