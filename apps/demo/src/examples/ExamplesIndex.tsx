@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { exampleGroups } from "../demos/exampleIndex";
 import { examples } from "../demos/examples";
 import { SectionHeading } from "../landing/SectionHeading";
@@ -28,6 +28,14 @@ export function ExamplesIndex() {
         <p className="mt-3 max-w-3xl text-base leading-relaxed text-muted-foreground sm:text-lg">
           {examples.length} examples, each opening as a live workspace you can
           filter, inspect, and change.
+        </p>
+        <p className="mt-4 text-sm">
+          <Link
+            to="/daily"
+            className="font-medium text-site-accent underline underline-offset-4"
+          >
+            Daily data viz: 40 notebooks, 25 compositions, and 10 dashboards
+          </Link>
         </p>
         <nav
           aria-label="Example groups"

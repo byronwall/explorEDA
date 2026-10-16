@@ -15,12 +15,31 @@ void Promise.all([
 ]).then(([maplibre]) => registerMapLibre(maplibre));
 
 // Opening a project folder loads the app shell only when it's used.
+const DailyIndex = lazy(() => import("./daily/DailyIndex"));
+const DailyEntryPage = lazy(() => import("./daily/DailyEntryPage"));
+
 const FolderPage = lazy(() => import("./folder/FolderPage"));
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
       <Routes>
+        <Route
+          path="/daily"
+          element={
+            <Suspense fallback={null}>
+              <DailyIndex />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/daily/:slug"
+          element={
+            <Suspense fallback={null}>
+              <DailyEntryPage />
+            </Suspense>
+          }
+        />
         <Route
           path="/folder"
           element={

@@ -1,0 +1,17 @@
+/* The article owns the page scroll; the existing workspace owns its tools. */
+.daily-workspace {
+  height: 1050px;
+  min-width: 0;
+  border-block: 1px solid var(--border);
+}
+
+.daily-notebook .eda-notebook {
+  padding-inline: 0;
+  padding-top: 0;
+}
+
+@media (max-width: 640px) {
+  .daily-workspace {
+    height: 950px;
+  }
+}
