@@ -26,28 +26,26 @@ export function ChartGallery() {
           <ArrowRight className="size-4" aria-hidden="true" />
         </Link>
       </div>
-      <ul className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3">
+      <ul className="mt-8 grid grid-cols-1 gap-x-6 gap-y-1 sm:grid-cols-2 lg:grid-cols-4">
         {views.map(({ topic, title, summary, icon: Icon }) => (
           <li
             key={topic}
-            className="group relative flex items-center gap-3 rounded-xl sm:items-start border border-border bg-card p-3.5 transition-colors focus-within:ring-2 focus-within:ring-ring hover:border-site-accent/50"
+            className="group relative -mx-2.5 flex items-start gap-2.5 rounded-lg px-2.5 py-2 transition-colors duration-150 focus-within:ring-2 focus-within:ring-ring hover:bg-muted"
           >
-            <span
+            <Icon
               aria-hidden="true"
-              className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted text-brand-navy transition-colors group-hover:text-site-accent"
-            >
-              <Icon className="size-[18px]" />
-            </span>
+              className="mt-0.5 size-4 shrink-0 text-brand-navy transition-colors duration-150 group-hover:text-site-accent"
+            />
             <div className="min-w-0">
               <h3 className="text-sm font-semibold leading-snug">
                 <Link
                   to={docsPath(topic)}
-                  className="after:absolute after:inset-0 after:rounded-xl after:content-[''] focus-visible:outline-none"
+                  className="after:absolute after:inset-0 after:rounded-lg after:content-[''] focus-visible:outline-none"
                 >
                   {title}
                 </Link>
               </h3>
-              <p className="mt-0.5 hidden text-xs leading-relaxed text-muted-foreground sm:line-clamp-2">
+              <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">
                 {summary}
               </p>
             </div>

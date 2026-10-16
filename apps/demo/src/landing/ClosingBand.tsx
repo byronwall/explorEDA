@@ -16,7 +16,7 @@ export function ClosingBand() {
           id="closing-heading"
           className="text-3xl font-bold tracking-[-0.025em] text-balance sm:text-4xl"
         >
-          Explore your own data
+          Turn a folder into a project
         </h2>
         <p className="mt-3 max-w-xl text-base leading-relaxed text-white/80">
           Run explorEDA on a folder of data files, and your analyses save as

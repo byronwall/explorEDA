@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import {
   readTableFile,
@@ -98,24 +97,27 @@ export function SampleDataButtons({
   return (
     <div className="mt-5">
       <p className="text-sm text-muted-foreground">
-        No file handy? Start with one of these:
+        No file handy? Open one of these:
       </p>
-      <div className="mt-2 flex flex-wrap gap-2">
+      <ul className="mt-1.5 grid gap-x-6 sm:grid-cols-2">
         {samples.map((sample) => (
-          <Button
-            key={sample.id}
-            variant="outline"
-            size="sm"
-            disabled={loading !== null}
-            onClick={() => void load(sample)}
-          >
-            {loading === sample.id ? "Loading…" : sample.label}
-            <span className="text-xs font-normal text-muted-foreground">
-              {sample.detail}
-            </span>
-          </Button>
+          <li key={sample.id}>
+            <button
+              type="button"
+              disabled={loading !== null}
+              onClick={() => void load(sample)}
+              className="flex w-full items-baseline justify-between gap-3 rounded-sm py-1 text-left text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-60 [&:hover>span:first-child]:text-brand-navy"
+            >
+              <span className="font-medium text-site-accent transition-colors">
+                {loading === sample.id ? "Loading…" : sample.label}
+              </span>
+              <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
+                {sample.detail}
+              </span>
+            </button>
+          </li>
         ))}
-      </div>
+      </ul>
       {sheets.prompt && <div className="mt-3">{sheets.prompt}</div>}
       {error && (
         <p role="alert" className="mt-2 text-sm text-destructive">

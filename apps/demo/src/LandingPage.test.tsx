@@ -171,33 +171,39 @@ describe("LandingPage routing", () => {
     ]);
   });
 
-  it("leads with the featured analysis before import and restore", () => {
+  it("puts opening your own data right after the demo, before the guides", () => {
     const router = createMemoryRouter(
       [{ path: "/*", element: <LandingPage /> }],
       { initialEntries: ["/"] }
     );
 
     render(<RouterProvider router={router} />);
-    const featured = screen.getByRole("heading", {
+    const openData = screen.getByRole("heading", {
       level: 2,
-      name: "Where January's flights lost time",
+      name: "Open your own data",
     });
-    const featuredSection = featured.closest("section") as HTMLElement;
-    expect(
-      within(featuredSection).getByRole("button", {
-        name: /Weather at the scheduled hour/,
-      })
-    ).toBeInTheDocument();
+    const examples = screen.getByRole("heading", { name: "Example analyses" });
     const integration = screen.getByRole("heading", {
       name: "Embed it in a React app",
     });
-    const importHeading = screen.getByRole("heading", {
-      name: "Import your data",
-    });
     const follows = (a: Element, b: Element) =>
       Boolean(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING);
-    expect(follows(featured, integration)).toBe(true);
-    expect(follows(integration, importHeading)).toBe(true);
+    expect(follows(openData, examples)).toBe(true);
+    expect(follows(examples, integration)).toBe(true);
+    // Each example's tabs open the analysis at that tab.
+    const list = examples.closest("section") as HTMLElement;
+    expect(
+      within(list).getByRole("button", {
+        name: /Weather at the scheduled hour/,
+      })
+    ).toBeInTheDocument();
+    // Saved analysis JSON opens in a dialog, out of the page's way.
+    expect(
+      screen.queryByRole("textbox", { name: "Full analysis JSON" })
+    ).not.toBeInTheDocument();
+    fireEvent.click(
+      screen.getByRole("button", { name: "Reopen it from JSON" })
+    );
     expect(
       screen.getByRole("textbox", { name: "Full analysis JSON" })
     ).toBeInTheDocument();
@@ -542,7 +548,7 @@ describe("LandingPage routing", () => {
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
     expect(localStorage.getItem("exploreda.saved-views.v1")).toBeNull();
     expect(
-      screen.getByRole("heading", { name: "Import your data" })
+      screen.getByRole("heading", { name: "Open your own data" })
     ).toBeInTheDocument();
   });
 
@@ -631,6 +637,9 @@ describe("LandingPage routing", () => {
     );
 
     render(<RouterProvider router={router} />);
+    fireEvent.click(
+      screen.getByRole("button", { name: "Reopen it from JSON" })
+    );
     const input = screen.getByRole("textbox", { name: "Full analysis JSON" });
     const base = {
       format: "exploreda-analysis",

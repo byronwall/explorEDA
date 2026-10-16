@@ -1,6 +1,6 @@
 import { ActionTooltip } from "@/components/ui/tooltip";
 import { ArrowRight } from "lucide-react";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import {
   capabilities,
   catalogue,
@@ -11,7 +11,7 @@ import {
 const labelClass =
   "text-xs font-medium uppercase tracking-wide text-muted-foreground";
 const chipClass =
-  "rounded-md border px-2.5 py-1 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
+  "rounded-md px-2 py-1 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
 
 interface ExampleSelectorProps {
   onSelect: (exampleId: string, tab?: string) => void;
@@ -52,8 +52,8 @@ export function ExampleSelector({
           onClick={() => setCapability(undefined)}
           className={`${chipClass} ${
             capability === undefined
-              ? "border-site-accent bg-site-accent/10 text-site-accent"
-              : "border-border bg-card text-foreground hover:bg-accent/50"
+              ? "bg-site-accent/10 text-site-accent"
+              : "text-muted-foreground hover:bg-muted hover:text-foreground"
           }`}
         >
           All
@@ -70,8 +70,8 @@ export function ExampleSelector({
               }
               className={`${chipClass} ${
                 capability === name
-                  ? "border-site-accent bg-site-accent/10 text-site-accent"
-                  : "border-border bg-card text-foreground hover:bg-accent/50"
+                  ? "bg-site-accent/10 text-site-accent"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
               }`}
             >
               {name}
@@ -120,28 +120,37 @@ export function ExampleSelector({
                 {tabs.length > 0 && (
                   <>
                     <dt className={labelClass}>Tabs</dt>
-                    <dd className="flex min-w-0 flex-wrap gap-1.5">
-                      {tabs.map((tab) => {
+                    <dd className="min-w-0 leading-relaxed">
+                      {tabs.map((tab, index) => {
                         const match =
                           capability !== undefined &&
                           tab.capabilities.includes(capability);
                         return (
-                          <ActionTooltip
-                            key={tab.name}
-                            content={`Open at this tab · ${tab.capabilities.join(", ")}`}
-                          >
-                            <button
-                              type="button"
-                              onClick={() => onSelect(example.id, tab.name)}
-                              className={`relative z-10 rounded-md px-2 py-0.5 text-left text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
-                                match
-                                  ? "bg-site-accent/10 text-site-accent"
-                                  : "bg-muted text-foreground hover:bg-accent"
-                              }`}
+                          <Fragment key={tab.name}>
+                            <ActionTooltip
+                              content={`Open at this tab · ${tab.capabilities.join(", ")}`}
                             >
-                              {tab.name}
-                            </button>
-                          </ActionTooltip>
+                              <button
+                                type="button"
+                                onClick={() => onSelect(example.id, tab.name)}
+                                className={`relative z-10 whitespace-nowrap rounded-sm text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                                  match
+                                    ? "font-semibold text-site-accent"
+                                    : "text-foreground hover:text-site-accent"
+                                }`}
+                              >
+                                {tab.name}
+                              </button>
+                            </ActionTooltip>
+                            {index < tabs.length - 1 && (
+                              <span
+                                aria-hidden="true"
+                                className="text-muted-foreground"
+                              >
+                                {" · "}
+                              </span>
+                            )}
+                          </Fragment>
                         );
                       })}
                     </dd>

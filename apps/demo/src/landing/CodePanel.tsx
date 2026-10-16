@@ -99,7 +99,7 @@ export function CodePanel({ files }: { files: CodeFile[] }) {
       <pre
         role="tabpanel"
         aria-label={file.name}
-        className="whitespace-pre-wrap break-words bg-card p-4 text-xs leading-relaxed sm:p-5 sm:text-[13px]"
+        className="h-[28rem] overflow-auto whitespace-pre-wrap break-words bg-card p-4 text-xs leading-relaxed [scrollbar-width:thin] sm:p-5 sm:text-[13px]"
       >
         <HighlightedCode code={code} />
       </pre>

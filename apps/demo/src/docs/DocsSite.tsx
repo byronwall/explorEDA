@@ -23,7 +23,7 @@ import {
   stretchedLinkClass,
 } from "./components/chrome";
 import { DocsLink, mdxComponents } from "./components/content";
-import { ChartChooser, ChoosePath, Hero } from "./components/home";
+import { ChartChooser, Hero } from "./components/home";
 import { DocsLayout, Rail } from "./components/layout";
 import { AtAGlance, SavedSettings } from "./components/template";
 import {
@@ -224,7 +224,6 @@ function IndexPage() {
   return (
     <>
       <Hero />
-      <ChoosePath />
       <ChartChooser />
       {groups.map((group) => {
         const pages = catalogue.filter((page) => page.group === group);

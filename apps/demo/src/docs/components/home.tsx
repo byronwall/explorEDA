@@ -12,45 +12,11 @@ import { Link } from "react-router-dom";
 import { catalogue, type DocsPage } from "../catalogue";
 import { CHART_QUESTIONS } from "../chooser";
 import { GLANCES } from "../glance";
-import { liveExamples } from "../live/examples";
 import { WORKFLOWS } from "../../landing/workflows";
 import { docsPath, liveShotPath } from "../paths";
 import { cardLinkClass, stretchedLinkClass } from "./chrome";
-import { SearchButton } from "./search";
-
-/** Three example screenshots, fanned out beside the hero's text. */
-const HERO_SHOTS = ["scatter-density", "sankey", "heatmap"] as const;
-
-function HeroShots() {
-  const [missing, setMissing] = useState<ReadonlySet<string>>(new Set());
-  const shown = HERO_SHOTS.filter((id) => !missing.has(id));
-  if (shown.length < HERO_SHOTS.length) {
-    // A dev server may not have the screenshots the docs check writes.
-    return null;
-  }
-  return (
-    <div aria-hidden="true" className="relative hidden h-72 lg:block">
-      {shown.map((id, index) => (
-        <img
-          key={id}
-          src={liveShotPath(id)}
-          alt=""
-          onError={() => setMissing((set) => new Set(set).add(id))}
-          className={cn(
-            "landing-shot absolute w-[78%] rounded-lg border border-border bg-card object-cover object-left-top",
-            index === 0 && "left-0 top-6 -rotate-3",
-            index === 1 && "left-[11%] top-0 rotate-1",
-            index === 2 && "left-[22%] top-12 rotate-3"
-          )}
-          style={{ aspectRatio: "16 / 10", zIndex: index }}
-        />
-      ))}
-    </div>
-  );
-}
 
 const START_LINKS = [
-  { to: docsPath("load-data"), label: "Open a file", icon: Upload },
   { to: docsPath("workspace"), label: "Tour the workspace", icon: House },
   { to: EXAMPLES_PATH, label: "Browse the examples", icon: LayoutGrid },
 ] as const;
@@ -62,12 +28,6 @@ export function Hero() {
     window.scrollTo(0, 0);
     heading.current?.focus({ preventScroll: true });
   }, []);
-  const chartCount = catalogue.filter((page) => page.chartType).length;
-  const stats = [
-    [chartCount, "views to build with"],
-    [Object.keys(liveExamples).length, "live examples to try"],
-    [catalogue.length, "guides"],
-  ] as const;
 
   return (
     <section
@@ -82,7 +42,7 @@ export function Hero() {
         aria-hidden="true"
         className="pointer-events-none absolute -right-24 -top-24 size-96 rounded-full bg-docs-accent/15 blur-3xl"
       />
-      <div className="relative grid items-center gap-10 p-6 sm:p-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
+      <div className="relative grid items-start gap-x-10 gap-y-8 p-6 sm:p-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
         <div>
           <h1
             id="docs-hero"
@@ -97,8 +57,7 @@ export function Hero() {
             view computes and which rows it reads, and try the chart guides live
             as you read.
           </p>
-          <SearchButton className="mt-7 h-11 w-full max-w-md text-base shadow-sm" />
-          <ul className="mt-5 flex flex-wrap gap-2">
+          <ul className="mt-6 flex flex-wrap gap-2">
             {START_LINKS.map(({ to, label, icon: Icon }) => (
               <li key={label}>
                 <Link
@@ -111,18 +70,8 @@ export function Hero() {
               </li>
             ))}
           </ul>
-          <dl className="mt-8 flex flex-wrap gap-x-8 gap-y-3">
-            {stats.map(([value, label]) => (
-              <div key={label} className="flex flex-col-reverse">
-                <dt className="text-sm text-muted-foreground">{label}</dt>
-                <dd className="text-2xl font-semibold tabular-nums tracking-tight">
-                  {value}
-                </dd>
-              </div>
-            ))}
-          </dl>
         </div>
-        <HeroShots />
+        <PathList />
       </div>
     </section>
   );
@@ -193,37 +142,52 @@ function PickCard({
 }
 
 /** Pick a question, see the charts that answer it. */
-/** Where each way of running explorEDA starts, before the chart guides. */
-export function ChoosePath() {
+/** Where to start: a file in this browser, or each other way to run it. */
+const PATHS = [
+  {
+    title: "Open a file",
+    where: "This browser",
+    to: docsPath("load-data"),
+    icon: Upload,
+  },
+  ...WORKFLOWS,
+];
+
+function PathList() {
   return (
-    <section aria-labelledby="docs-paths" className="mt-16">
-      <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-border pb-3">
-        <h2 id="docs-paths" className="text-xl font-semibold tracking-tight">
-          Choose your path
-        </h2>
-        <p className="text-sm text-muted-foreground">
-          Beyond files in the browser, explorEDA runs in these places.
-        </p>
-      </div>
-      <ul className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {WORKFLOWS.map(({ title, where, body, to, icon: Icon }) => (
-          <li key={title} className={cn(cardLinkClass, "flex flex-col p-4")}>
-            <p className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-              <Icon aria-hidden="true" className="size-3.5 text-docs-accent" />
-              {where}
-            </p>
-            <h3 className="mt-2 text-sm font-semibold">
-              <Link className={stretchedLinkClass} to={to}>
-                {title}
-              </Link>
-            </h3>
-            <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
-              {body}
-            </p>
+    <nav aria-labelledby="docs-paths">
+      <h2
+        id="docs-paths"
+        className="text-xs font-semibold uppercase tracking-wide text-muted-foreground"
+      >
+        Choose your path
+      </h2>
+      <ul className="mt-2 divide-y divide-border border-y border-border">
+        {PATHS.map(({ title, where, to, icon: Icon }) => (
+          <li key={title} className="group relative">
+            <Link
+              to={to}
+              className="flex items-center gap-3 py-2.5 text-sm transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <Icon
+                aria-hidden="true"
+                className="size-4 shrink-0 text-docs-accent"
+              />
+              <span className="flex min-w-0 flex-1 flex-col sm:flex-row sm:items-baseline sm:justify-between sm:gap-3">
+                <span className="font-medium text-foreground transition-colors duration-150 group-hover:text-docs-accent">
+                  {title}
+                </span>
+                <span className="text-xs text-muted-foreground">{where}</span>
+              </span>
+              <ArrowRight
+                aria-hidden="true"
+                className="size-3.5 shrink-0 text-muted-foreground transition-[color,transform] duration-150 group-hover:translate-x-0.5 group-hover:text-docs-accent"
+              />
+            </Link>
           </li>
         ))}
       </ul>
-    </section>
+    </nav>
   );
 }
 

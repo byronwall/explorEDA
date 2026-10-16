@@ -8,7 +8,7 @@
     "last_updated": "2026-10-15",
     "summary": "Act on the 2026-10-15 landing/docs Pro review: lead with linked exploration, expose local, database, notebook, team and React routes, and fix onboarding.",
     "status": "active",
-    "next_action": "M6: redesign landing and docs home"
+    "next_action": "Review and merge the stacked PRs #431-#437 in order; then mark the initiative completed"
   },
   "artifacts": {
     "intent_brief": {
@@ -312,8 +312,10 @@
         "proof": "Before/after shots at three widths; check:ui; docs:verify; pnpm check",
         "valid_intermediate_state": "Revert restores M5 layout with same content",
         "rollback": "Revert the PR; earlier PRs stand alone.",
-        "status": "planned",
-        "evidence": []
+        "status": "completed",
+        "evidence": [
+          "10x pass: Start section (open data + five routes) right after the demo; featured-flights duplicate removed; JSON paste in a dialog; example tabs and capability filters de-pilled; chart list 4 borderless columns; code panel fixed 28rem; docs hero holds Choose your path instead of decorative screenshots, duplicate search and stats. Landing 9,498 -> 6,957px at 1440. pnpm check passed (library 1636/45 skipped, app 32, demo 215); docs:verify 49 passed."
+        ]
       }
     ],
     "cut_line": [
