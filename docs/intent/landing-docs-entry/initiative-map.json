@@ -1,0 +1,427 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "Landing and docs entry paths",
+    "slug": "landing-docs-entry",
+    "scale": "capability",
+    "current_phase": "plan",
+    "last_updated": "2026-10-15",
+    "summary": "Act on the 2026-10-15 landing/docs Pro review: lead with linked exploration, expose local, database, notebook, team and React routes, and fix onboarding.",
+    "status": "planned",
+    "next_action": "Commit planning docs and open stacked PR on #430, then start M1 task runs"
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-15"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-15"
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "current",
+      "updated_at": "2026-10-15"
+    }
+  },
+  "sources": [
+    {
+      "id": "pro-review",
+      "type": "research",
+      "location": "docs/research/landing-docs-2026-10-15/README.md",
+      "anchor": "PR #430",
+      "authority": "research"
+    },
+    {
+      "id": "qa-round-1",
+      "type": "question-round",
+      "location": "conversation",
+      "anchor": "1",
+      "authority": "user"
+    },
+    {
+      "id": "qa-round-2",
+      "type": "question-round",
+      "location": "conversation",
+      "anchor": "2",
+      "authority": "user"
+    },
+    {
+      "id": "qa-round-3",
+      "type": "question-round",
+      "location": "conversation",
+      "anchor": "3",
+      "authority": "user"
+    },
+    {
+      "id": "repo-check",
+      "type": "repository",
+      "location": "npm view exploreda; git log exploreda@0.2.0..main",
+      "anchor": "2026-10-15",
+      "authority": "repository"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "C1",
+        "statement": "Landing leads with linked exploration (option B): broader data noun, file/example CTAs, early workflow routes; browser and CLI analysts first.",
+        "kind": "decision",
+        "sources": ["qa-round-1"],
+        "confidence": "high"
+      },
+      {
+        "id": "C2",
+        "statement": "Implement the important parts now; the question rounds set the cut line.",
+        "kind": "goal",
+        "sources": ["qa-round-1"],
+        "confidence": "high"
+      },
+      {
+        "id": "C3",
+        "statement": "The landing page gets a full redesign pass, not only copy and new sections.",
+        "kind": "decision",
+        "sources": ["qa-round-1"],
+        "confidence": "high"
+      },
+      {
+        "id": "C4",
+        "statement": "Write four walkthroughs now: local folder, database, notebook, team server. File and React walkthroughs are below the line.",
+        "kind": "decision",
+        "sources": ["qa-round-2", "qa-round-3"],
+        "confidence": "high"
+      },
+      {
+        "id": "C5",
+        "statement": "Every walkthrough step is executed on local example data before merge; failures become fixes or copy changes.",
+        "kind": "constraint",
+        "sources": ["qa-round-2"],
+        "confidence": "high"
+      },
+      {
+        "id": "C6",
+        "statement": "Order: claim fixes and copy/routes first, then one redesign pass covering the landing page and the docs home path entry.",
+        "kind": "decision",
+        "sources": ["qa-round-2"],
+        "confidence": "high"
+      },
+      {
+        "id": "C7",
+        "statement": "Hero: Open a file, Try an example, plus a copyable npx exploreda command; database, notebook, team and React routes sit below the demo; React install moves to a developer section.",
+        "kind": "decision",
+        "sources": ["qa-round-2"],
+        "confidence": "high"
+      },
+      {
+        "id": "C8",
+        "statement": "Walkthroughs are verified from source on main; each PR carries its changeset and the public site catches up with the next release (npm 0.2.0 is 116 commits behind main).",
+        "kind": "decision",
+        "sources": ["qa-round-3", "repo-check"],
+        "confidence": "high"
+      },
+      {
+        "id": "C9",
+        "statement": "The redesign is built straight through and reviewed via PR screenshots at three widths; no comp checkpoint.",
+        "kind": "decision",
+        "sources": ["qa-round-3"],
+        "confidence": "high"
+      },
+      {
+        "id": "C10",
+        "statement": "Out: file and React walkthroughs, landing proof strip, search-metadata tuning, replacing the order-book example, new demo datasets, sidebar restructure, and the product expansions in REC-14.",
+        "kind": "boundary",
+        "sources": ["qa-round-3"],
+        "confidence": "high"
+      }
+    ],
+    "themes": [],
+    "conflicts": [],
+    "human_questions": []
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "current",
+    "appetite": "Six stacked PRs on PR #430; docs/landing work plus small fixes walkthroughs reveal; no new demo system, datasets, or navigation structure.",
+    "problem": "The landing page and docs home present CSV exploration and React embedding while the product also runs as a CLI project, team server, database snapshots, and notebooks; their docs bury first steps and some claims overreach.",
+    "recommended_shape": "Run the four tasks first; fix claims; settle hero (file, example, npx exploreda) and five workflow routes plus a docs-home path panel; add run-verified walkthroughs for local folder, database, notebook, team; then redesign landing and docs home.",
+    "success_moves": [
+      "Run the four tasks from main before writing route copy, so copy only promises verified paths.",
+      "Add npx exploreda --example forecast instead of sending notebook readers to the repository.",
+      "Link routes to page tops first and repoint each to its walkthrough anchor as that walkthrough lands, keeping every PR shippable.",
+      "Prove the team trial path with --seed-dev before introducing Docker; build the image from source rather than relying on ghcr 0.2.0.",
+      "Redesign last over fixed content so the PR is reviewable from screenshots and reverts cleanly."
+    ],
+    "first_proof": {
+      "question": "Do the local-folder, database, notebook, and team-server tasks work from main as the docs describe them today?",
+      "artifact": "Per-step pass/fail run record in M1 evidence, with failing output.",
+      "decision_rule": "A passing path gets its route and walkthrough as planned; a failing step gets fixed in its walkthrough milestone, or its route links the docs without a walkthrough promise until it passes."
+    },
+    "rabbit_holes": [
+      "A walkthrough exposes a product bug larger than a patch.",
+      "Docs describe main while npm is 0.2.0.",
+      "Redesign reopening copy decisions."
+    ],
+    "open_decisions": []
+  },
+  "implementation": {
+    "status": "current",
+    "repository_snapshot": {
+      "root": "/Users/byronwall/Projects/explorEDA",
+      "revision": "ea8b52ff (PR #430 base)",
+      "worktree_status": "branch claude/landing-docs-shape on codex/landing-docs-pro-review",
+      "subsystems": [
+        "apps/demo/src/landing",
+        "apps/demo/src/docs (pages, components/home.tsx, gate.ts)",
+        "packages/explorEDA/src/cli/exploreda.ts",
+        "packages/explorEDA/examples",
+        "docker/"
+      ],
+      "test_commands": [
+        "pnpm --filter demo docs:check",
+        "pnpm --filter demo docs:verify",
+        "pnpm --filter exploreda exec vitest run <files>",
+        "pnpm check"
+      ],
+      "deployment_surfaces": [
+        "exploreda.dev via Pages deploy",
+        "npm exploreda via Version Packages",
+        "ghcr.io/byronwall/exploreda"
+      ]
+    },
+    "dependencies": [
+      {
+        "id": "docker",
+        "name": "Docker and Compose",
+        "material": true,
+        "application_seam": "team-server walkthrough persistent setup only; trial path uses --seed-dev without Docker",
+        "failure_modes": [
+          "image build fails",
+          "volume permissions",
+          "restart loses data"
+        ],
+        "proof_rungs": [
+          "--seed-dev trial run",
+          "source-built image with named volume and restart"
+        ],
+        "first_proof_role": {
+          "mode": "absent",
+          "rationale": "M1 runs the team task with --seed-dev; Docker enters in M5."
+        },
+        "local_proof": "docker compose with image built from docker/Dockerfile, restart preserves accounts and projects",
+        "live_proof": "none; release workflow publishes the image",
+        "rollout": "docs only; no image publish"
+      }
+    ],
+    "fast_local_loop": {
+      "command": "pnpm --filter demo dev; pnpm --filter demo docs:check; pnpm --filter exploreda build && node packages/explorEDA/dist/cli/exploreda.js --example <name>",
+      "starts": "demo dev server; local CLI project server",
+      "network": "none except Docker image build",
+      "failure_injection": "none needed; walkthrough failures are observed directly"
+    },
+    "milestones": [
+      {
+        "id": "M1",
+        "title": "Run records and true claims",
+        "outcome": "Four tasks run from main with per-step results; overreaching claims scoped; stale intent pointers added.",
+        "dependencies_introduced": [],
+        "proof": "Run record in map; docs:check",
+        "valid_intermediate_state": "Docs-only PR; landing unchanged",
+        "rollback": "Revert the PR; earlier PRs stand alone.",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "M2",
+        "title": "Landing and docs home show every path",
+        "outcome": "Hero with file, example, npx exploreda; five workflow cards; React install moved; docs-home path panel.",
+        "dependencies_introduced": [],
+        "proof": "pnpm shot at three widths; docs gate; LandingPage tests",
+        "valid_intermediate_state": "Routes link page tops",
+        "rollback": "Revert the PR; earlier PRs stand alone.",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "M3",
+        "title": "Local-folder and database walkthroughs",
+        "outcome": "Walkthroughs at the top of Project folders and Database sources, run step by step.",
+        "dependencies_introduced": [],
+        "proof": "Step records; app-shot captures",
+        "valid_intermediate_state": "Two routes point to verified walkthroughs",
+        "rollback": "Revert the PR; earlier PRs stand alone.",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "M4",
+        "title": "Notebook in one command",
+        "outcome": "npx exploreda --example forecast plus notebook walkthrough with on-disk round trip.",
+        "dependencies_introduced": [],
+        "proof": "CLI test; walkthrough run; file diff",
+        "valid_intermediate_state": "Minor changeset; notebook route verified",
+        "rollback": "Revert the PR; earlier PRs stand alone.",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "M5",
+        "title": "Team server trial and persistent setup",
+        "outcome": "Seed-dev trial and Compose persistent walkthroughs with roles and restart.",
+        "dependencies_introduced": ["docker"],
+        "proof": "Step records; team-shot captures; restart preserves data",
+        "valid_intermediate_state": "All four routes verified",
+        "rollback": "Revert the PR; earlier PRs stand alone.",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "M6",
+        "title": "Redesigned landing and docs home",
+        "outcome": "Full /10x then /100x pass over fixed content.",
+        "dependencies_introduced": [],
+        "proof": "Before/after shots at three widths; check:ui; docs:verify; pnpm check",
+        "valid_intermediate_state": "Revert restores M5 layout with same content",
+        "rollback": "Revert the PR; earlier PRs stand alone.",
+        "status": "planned",
+        "evidence": []
+      }
+    ],
+    "cut_line": [
+      "File and React walkthroughs; landing proof strip",
+      "Search-metadata tuning; runtime-orientation page; sidebar restructure",
+      "Replacing the order-book example; new datasets",
+      "PostgreSQL walkthrough",
+      "Publishing a release or image; managed hosting; SSO; new adapters"
+    ],
+    "open_decisions": []
+  },
+  "history": [
+    {
+      "date": "2026-10-15",
+      "change": "Created from PR #430 research; recorded question round 1."
+    },
+    {
+      "date": "2026-10-15",
+      "change": "Recorded rounds 2-3 and wrote the intent brief; intent is shape-ready."
+    },
+    {
+      "date": "2026-10-15",
+      "change": "Wrote shape brief and implementation plan."
+    }
+  ],
+  "closure": null,
+  "question_rounds": {
+    "focus": "cut line for implementing the Pro review",
+    "per_round": 5,
+    "planned_rounds": 3,
+    "status": "complete",
+    "rounds": [
+      {
+        "round": 1,
+        "theme": "goals and stakes",
+        "source": "qa-round-1",
+        "questions": [
+          {
+            "n": 1,
+            "question": "Landing lead",
+            "answer": "B: linked exploration",
+            "effect": "Hierarchy B confirmed"
+          },
+          {
+            "n": 2,
+            "question": "Milestone scope M0-M3",
+            "answer": "idk; implement the important stuff now, use questions to set the cut",
+            "effect": "Reframe scope as concrete work items in round 2"
+          },
+          {
+            "n": 3,
+            "question": "Lesson done bar",
+            "answer": "Unclear what a lesson is",
+            "effect": "Re-ask with a definition"
+          },
+          {
+            "n": 4,
+            "question": "Landing visual depth",
+            "answer": "Full redesign pass",
+            "effect": "Landing redesign in scope"
+          }
+        ]
+      },
+      {
+        "round": 2,
+        "theme": "behavior and limits",
+        "source": "qa-round-2",
+        "questions": [
+          {
+            "n": 5,
+            "question": "Which walkthroughs now",
+            "answer": "Database, notebook, team",
+            "effect": "C4"
+          },
+          {
+            "n": 6,
+            "question": "Proof bar",
+            "answer": "Run every step",
+            "effect": "C5"
+          },
+          {
+            "n": 7,
+            "question": "Redesign scope and order",
+            "answer": "Landing + docs home, after copy",
+            "effect": "C6"
+          },
+          {
+            "n": 8,
+            "question": "Check B layout",
+            "answer": "Put the CLI in the hero",
+            "effect": "C7; CLI promotion implies npm availability check and possibly the local-folder walkthrough"
+          }
+        ]
+      },
+      {
+        "round": 3,
+        "theme": "boundaries and confirmation",
+        "source": "qa-round-3",
+        "questions": [
+          {
+            "n": 9,
+            "question": "Add local-folder walkthrough",
+            "answer": "Yes",
+            "effect": "C4 now four walkthroughs"
+          },
+          {
+            "n": 10,
+            "question": "Verify against which version",
+            "answer": "Main, ship with next release",
+            "effect": "C8"
+          },
+          {
+            "n": 11,
+            "question": "Redesign review",
+            "answer": "Build through, review in PR",
+            "effect": "C9"
+          },
+          {
+            "n": 12,
+            "question": "Cut line check",
+            "answer": "Confirmed",
+            "effect": "C10"
+          }
+        ]
+      }
+    ]
+  }
+}
