@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "review_date": "2026-10-12",
+  "repository": "https://github.com/byronwall/explorEDA",
+  "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+  "example_count": 29,
+  "verdict_counts": {
+    "small-extension": 14,
+    "already-built-in": 4,
+    "mixed": 3,
+    "composition-justified": 1,
+    "new-built-in-family": 7
+  },
+  "workflow_answer_counts": {
+    "required_today": {
+      "yes": 14,
+      "conditional": 11,
+      "no": 4
+    },
+    "should_remain_required": {
+      "no": 25,
+      "conditional": 3,
+      "yes": 1
+    },
+    "teaching_value": {
+      "yes": 25,
+      "conditional": 4
+    }
+  },
+  "recommendation_count": 26,
+  "files": [
+    {
+      "name": "composition-builtins-review.md",
+      "bytes": 283343,
+      "sha256": "44b178e48e343f0d0ae17a17774fb14c411c2226151c746cea11d64b374a159b"
+    },
+    {
+      "name": "composition-verdicts.json",
+      "bytes": 171392,
+      "sha256": "96f4a44c9d849e2cd24be5ea31b0004786e89f34219ccbeff582e754a211fe3b"
+    },
+    {
+      "name": "composition-recommendations.json",
+      "bytes": 279781,
+      "sha256": "58342361890816a823539ca9182c56032f88eaa2a3a9700a49a9fe8ce5212bde"
+    },
+    {
+      "name": "sources.json",
+      "bytes": 169350,
+      "sha256": "e283ccc938fafef49199b59489a1044a96e75c9c7908fe5b96dfa56f6eb3a90c"
+    },
+    {
+      "name": "manifest.json",
+      "bytes": 2413,
+      "sha256": null,
+      "hash_omission_reason": "A file cannot contain its own ordinary SHA-256 digest without a recursive self-reference; all other companion digests are included."
+    }
+  ],
+  "archive": {
+    "name": "composition-builtins-review.zip",
+    "bytes": 199711,
+    "members": [
+      "composition-builtins-review.md",
+      "composition-verdicts.json",
+      "composition-recommendations.json",
+      "sources.json",
+      "manifest.json"
+    ],
+    "member_location": "archive root",
+    "archive_hash_policy": "The ZIP hash is not stored in its own contents. Archive integrity and companion byte equality are checked after creation."
+  },
+  "missing_deliverables": [],
+  "validation": {
+    "json_parse": "passed",
+    "inventory_and_counts": "passed",
+    "source_paths_and_ranges": "passed",
+    "source_packet_unchanged": "passed",
+    "zip_members_and_byte_equality": "passed"
+  },
+  "scope": "Research artifacts only; no repository file, issue, branch, commit, push or PR was created or modified."
+}

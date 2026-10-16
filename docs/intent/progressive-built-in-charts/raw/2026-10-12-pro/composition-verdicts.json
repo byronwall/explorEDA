@@ -1,0 +1,2917 @@
+[
+  {
+    "id": "message-log",
+    "category": "small-extension",
+    "verdict": "Make a full monthly history matrix an advanced Heatmap configuration; repetition and ordinary callouts should not require composition.",
+    "analytical_task": "Compare the timing, persistence and volume of conversations for 12 correspondents over all 72 months, while retaining message-level selection and trace.",
+    "required_today": {
+      "answer": "yes",
+      "reason": "The baseline Heatmap has neither native date bins nor a public column limit above 60; Calendar shows days of one year, and the companion monthly Line aggregates across correspondents."
+    },
+    "should_remain_required": {
+      "answer": "no",
+      "reason": "Date bins, independent axes and a bounded color/summaries extension complete this ordinary matrix task."
+    },
+    "teaching_value": {
+      "answer": "yes",
+      "reason": "Keep as an advanced demonstration of repeat calculations, mark placement and an anchored callout, with a built-in route taught first."
+    },
+    "nearest_builtin": "Heatmap with rows=Correspondent, columns=Date binned by month, count; Calendar and monthly Line are useful linked companions.",
+    "supported": [
+      "Observed: Heatmap already aggregates count/sum/average over exact cell contributors, distinguishes absent cells from invalid measures, and supports cell/axis filtering plus keyboard and Alt-trace.",
+      "Observed: Calendar uses daily rollups and source rows, with day/month range selection; it is not a repeated monthly matrix.",
+      "Observed: ordinary Line calendar summaries can count messages by month, and public Line facets can compare groups, with panel-size/paging and domain limitations."
+    ],
+    "gaps": [
+      "New preparation logic: monthly UTC bins on Date must preserve original messages and select a date interval plus Correspondent, rather than replace source rows with preaggregated totals.",
+      "New public settings/planning: independent row/column limits and order; the current single 2–60 limit applies to both axes and would omit 12 of the 72 months even at its maximum.",
+      "New numerical option: the composition uses logarithmic intensity; the built-in heat helper only supplies an automatic linear sequential/diverging scale from currently shown cells. Explicit all-source/fixed domains are also needed for stable comparison under filters.",
+      "Bounded summaries and rendering: count beside each correspondent; existing Notes require an actual Heatmap annotation frame before the Avery Lin maximum callout can be authored without composition.",
+      "The composition itself computes shared strip color maxima from live glyphs, so it is not evidence that its colors are already stable under external filters."
+    ],
+    "change_ids": [
+      "REC-01",
+      "REC-04",
+      "REC-05"
+    ],
+    "analytical_parity": "Not complete through baseline public controls. Proposed Heatmap bins, independent limits/order and trace-preserving aggregation cover the analytical matrix; current Calendar or one aggregate Line loses simultaneous correspondence histories.",
+    "presentation_parity": "The precise 960×520 article, label placement and callout styling remain different. Those differences do not require a new chart family. Authored composition export is a separate contract from dashboard rendering.",
+    "catalog_action": "Add a built-in counterpart and move the primary lesson to Heatmap; retain the composition as advanced authored presentation.",
+    "evidence": [
+      {
+        "path": "apps/demo/src/demos/dashboardSettings.ts",
+        "symbol": "messageDashboard",
+        "lines": "1675–1859",
+        "kind": "observed-source",
+        "claim": "Complete definition, monthly strip, repeat count/order, callout and companion views."
+      },
+      {
+        "path": "apps/demo/public/datasets/message-log.csv",
+        "symbol": "complete CSV profile",
+        "lines": "complete file",
+        "kind": "observed-source",
+        "claim": "10,376 messages, 12 correspondents, Date range 2019-01-02 to 2024-12-31: 72 distinct months."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Heatmap/HeatmapSettingsPanel.tsx",
+        "symbol": "HeatmapSettingsPanel",
+        "lines": "109–158",
+        "kind": "observed-source",
+        "claim": "Public shared category limit 2–60 and one count/label order for both axes."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Heatmap/heatmapPlan.ts",
+        "symbol": "rankCategories; planHeatmap",
+        "lines": "111–193;240–308;339–354",
+        "kind": "observed-source",
+        "claim": "Top categories from all source; current-cell aggregation, contributors, missing state and live color domain."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Heatmap/Heatmap.tsx",
+        "symbol": "Heatmap",
+        "lines": "80–140;307–364",
+        "kind": "observed-source",
+        "claim": "Actual selection/trace/keyboard renderer, with no annotation slot."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Calendar/calendarPlan.ts",
+        "symbol": "planCalendar",
+        "lines": "117–202;317–354",
+        "kind": "observed-source",
+        "claim": "One-year daily layout and date interval selection."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Composition/resolveUnit.ts",
+        "symbol": "strip glyphs and sharedMax",
+        "lines": "554–565;684–742",
+        "kind": "observed-source",
+        "claim": "Full-source bin positions but live strip values/color maximum."
+      },
+      {
+        "path": "packages/explorEDA/src/components/ChartSettingsContent.tsx",
+        "symbol": "ChartSettingsContent",
+        "lines": "68–95",
+        "kind": "observed-source",
+        "claim": "Heatmap and Calendar lack the general public Facets/Axes tabs."
+      }
+    ],
+    "confidence": "high",
+    "open_questions": [
+      "Try 12×72 at the intended dashboard width before choosing compact labels versus a local horizontal viewport; either must preserve all columns and keyboard access."
+    ],
+    "assessment_basis": "Category, parity and workflow decisions are inferences from observed baseline source and prepared data; change requests and catalogue actions are proposals, not implemented behavior.",
+    "shared_output_recommendation": "REC-24"
+  },
+  {
+    "id": "driving-shifts",
+    "category": "small-extension",
+    "verdict": "Add ordered connections to Scatter so annual trajectories can turn back along either numeric axis without composition.",
+    "analytical_task": "Follow Year through Miles and Gas simultaneously, preserving temporal order and source-year identification.",
+    "required_today": {
+      "answer": "yes",
+      "reason": "The complete temporal x–y trajectory is absent: Scatter has no connections and raw Line orders by x=Miles, changing the path."
+    },
+    "should_remain_required": {
+      "answer": "no",
+      "reason": "Independent order and optional grouping are a bounded advanced observation-chart contract; existing Notes handles the callouts/reference."
+    },
+    "teaching_value": {
+      "answer": "yes",
+      "reason": "Useful advanced comparison when its composition-specific behavior and current limits are explained; keeping the lesson does not require users to author the ordinary task in composition."
+    },
+    "nearest_builtin": "Scatter Plot with numeric Miles/Gas and Notes; raw Line is a weaker comparator because it sorts x.",
+    "supported": [
+      "Scatter numeric axes, stable full-source coordinate domains, source point traces and Notes.",
+      "The dashboard already supplies a plain Scatter and Year histogram.",
+      "Notes supports keyed callouts and calculated reference marks; no new annotation system is needed."
+    ],
+    "gaps": [
+      "No order-field/grouped connection preparation or renderer in Scatter.",
+      "Raw Line sorts x and reduces rows to {x,y}, with no per-path source trace.",
+      "Normal Scatter point activation/keyboard navigation is gated on bubble sizing; connected mode must explicitly opt in.",
+      "Ordered sampled year labels are not an existing bulk label setting."
+    ],
+    "change_ids": [
+      "REC-02"
+    ],
+    "analytical_parity": "Incomplete today: a plain scatter omits chronology and a miles-sorted line changes reversals. REC-02 preserves each original year row and full-source average-Miles reference; no new aggregate denominator. Connection and skipped-row traces must retain original IDs.",
+    "presentation_parity": "Analytical graphic achievable after REC-02 plus Notes. The exact authored artboard, label offsets, title/note placement and composition export are separate fidelity concerns.",
+    "catalog_action": "Add built-in counterpart and move primary connected-scatter teaching path; retain optional advanced composition.",
+    "evidence": [
+      {
+        "path": "apps/demo/src/demos/dashboardSettings.ts",
+        "symbol": "drivingDashboard",
+        "lines": "1866-2053",
+        "kind": "observed",
+        "claim": "Ordered Year path, sampled labels, average guide, two callouts, plain Scatter companion."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+        "symbol": "ObservationLineChart/processLiveSeriesData",
+        "lines": "190-233",
+        "kind": "observed",
+        "claim": "Sorts by numeric x and drops source IDs while reducing points."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/ScatterPlot/ScatterSvg.tsx",
+        "symbol": "ScatterSvg",
+        "lines": "482-566;645-657",
+        "kind": "observed",
+        "claim": "Bubble-only point activation and keyboard gates need deliberate extension."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Composition/resolveUnit.ts",
+        "symbol": "pathNodes",
+        "lines": "3301-3387",
+        "kind": "observed",
+        "claim": "Independent ordering, run breaks and source row IDs."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Composition/paths.test.ts",
+        "symbol": "x–y unit tests",
+        "lines": "88-168",
+        "kind": "observed",
+        "claim": "Tests specify backward x trajectory, missing-value runs, original rows and nth labels; inspected, not run."
+      }
+    ],
+    "confidence": "high",
+    "open_questions": [],
+    "assessment_basis": "Category, parity and workflow decisions are inferences from observed baseline source and prepared data; change requests and catalogue actions are proposals, not implemented behavior.",
+    "shared_output_recommendation": "REC-24"
+  },
+  {
+    "id": "tech-sparklines",
+    "category": "small-extension",
+    "verdict": "Extend source-aware grouped Line with compact facets, bounded summary labels and extrema/end markers; this is medium work, not a rich-table family.",
+    "analytical_task": "Compare 14 company price trajectories on a shared date range with per-company value scales, min/max/latest markers and first-to-last percentage change ordered consistently.",
+    "required_today": {
+      "answer": "yes",
+      "reason": "Raw Line lacks grouped date observations, source-point activation, extrema and summary facets. Daily calendar means would preserve this unique Company×Date data but exceed the 2,000-period guard; weekly/monthly summaries have actual collisions and do not preserve every retained source observation."
+    },
+    "should_remain_required": {
+      "answer": "no",
+      "reason": "A bounded compact Line view can cover the analysis without introducing arbitrary chart cells or manual marks."
+    },
+    "teaching_value": {
+      "answer": "yes",
+      "reason": "The authored arrangement still teaches calculations independent of filters and distinct shared/instance scale scopes."
+    },
+    "nearest_builtin": "Line in a proposed grouped-observation mode with compact Company facets; existing calendar Line and tables are partial alternatives.",
+    "supported": [
+      "Observed: raw Line draws ordered numeric wide-series paths, styling and annotations, with public facets.",
+      "Observed: calendar Line exposes interval, average/sum/count, split field and missing-period policy. The CSV has five fields and one row per Company×Date, so daily average itself preserves each value; however all companies span 3,904–4,743 days, over the 2,000-period guard, and average gap mode separates sampled days.",
+      "Observed: the strongest existing weekly summary has 9,029 Company×Monday-week groups for 9,030 rows. Only Tesla's final week combines two rows (117.5 and 120.39 become 118.945), while X is shifted to week start. Monthly average collapses 9,030 rows into 2,152 Company×month groups, 2,151 of them multiple-source groups.",
+      "Observed: public facet chips can be manually reordered; regular facet wrap/grid layouts have minimum panel sizes and pagination.",
+      "Observed: DataTable has scalar record cells and optional header distributions; SummaryTable profiles fields; Pivot aggregates groups. None embeds per-group time-series cells."
+    ],
+    "gaps": [
+      "Foundational dependency: raw grouped Line needs readable dates, grouping, explicit ordering, source-preserving points/segments and exact selection/trace; do not describe this as a style toggle.",
+      "Compact Line facets need shared X and explicit shared/per-panel Y scopes, suppressed repeated axes, adequate focus targets and a way to inspect a panel without changing dashboard filters.",
+      "Named summaries first/last percentage change, average and maximum require source-population versus filtered-population choices; tech uses unfiltered first/last values and stable order.",
+      "Min/max/latest point selectors and automatic value labels require source-ID tie and missing-value rules. Monthly averages cannot stand in for source extrema.",
+      "Catalog says table rows, but the delivered repeat is a three-column grid. A generalized table-cell renderer is not justified by this example."
+    ],
+    "change_ids": [
+      "REC-01",
+      "REC-07",
+      "REC-06"
+    ],
+    "analytical_parity": "Proposed grouped observation Line plus REC-06 can preserve trajectories, selected source extrema and change summaries. Weekly calendar Line is a strong broad-trend alternative but changes one actual source pair and all within-week positions; daily avoids numeric aggregation loss but cannot show this full range through the baseline guard and gap policy. Monthly Line loses substantially more detail.",
+    "presentation_parity": "A named compact facet mode can approach the delivered three-column grid. It need not clone the fixed article typography, and it does not cover arbitrary tables of mixed graphics. Separate export fidelity remains unproven.",
+    "catalog_action": "Add a compact Line counterpart and teach it first. Keep the composition as an advanced scale/scope lesson; correct the table/rows wording to match the delivered grid.",
+    "evidence": [
+      {
+        "path": "apps/demo/src/demos/dashboardSettings.ts",
+        "symbol": "sparklinesDashboard",
+        "lines": "2060–2241",
+        "kind": "observed-source",
+        "claim": "Complete grid, shared Date, instance Open scales, unfiltered change, selected extrema/latest and monthly companion."
+      },
+      {
+        "path": "apps/demo/src/demos/examples.ts",
+        "symbol": "tech-sparklines entry",
+        "lines": "731–743",
+        "kind": "observed-source",
+        "claim": "Catalog calls it a table with company rows, unlike the grid definition."
+      },
+      {
+        "path": "apps/demo/public/datasets/big-tech-prices.csv",
+        "symbol": "complete CSV and period-multiplicity profile",
+        "lines": "complete file",
+        "kind": "observed-source",
+        "claim": "Five fields Symbol, Company, Date, Observation, Open; 9,030 unique Company×Date rows, 9,029 Monday-week groups and 2,152 month groups."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+        "symbol": "ObservationLineChart",
+        "lines": "55–128;190–233;711–783",
+        "kind": "observed-source",
+        "claim": "Raw numeric preparation, global domains, reduced coordinate paths and noninteractive point circles."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/TimeSeriesSettingsPanel.tsx",
+        "symbol": "TimeSeriesSettingsPanel",
+        "lines": "43–77;147–162;221–258",
+        "kind": "observed-source",
+        "claim": "Actual public calendar modes, periods, split and gaps."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/timeSeriesPlan.ts",
+        "symbol": "planTimeSeries",
+        "lines": "136–174;193–220;314–386",
+        "kind": "observed-source",
+        "claim": "Period aggregation/guard and differing X/Y scope behavior."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/FacetRelated/facetLayout.ts",
+        "symbol": "planFacetWrapLayout; planFacetGridLayout",
+        "lines": "5–88",
+        "kind": "observed-source",
+        "claim": "Regular minimum panel sizing and pages."
+      },
+      {
+        "path": "packages/explorEDA/src/components/settings/FacetSettingsTab.tsx",
+        "symbol": "FacetSettingsTab",
+        "lines": "1–240",
+        "kind": "observed-source",
+        "claim": "Current wrap/grid authoring and manually reorderable visible facets."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Composition/calculations.ts",
+        "symbol": "evaluateCalc; orderedEnds",
+        "lines": "85–198",
+        "kind": "observed-source",
+        "claim": "Percentage change uses first/last valid ordered values and rejects zero baseline."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Composition/sparklines.test.ts",
+        "symbol": "sparklines tests",
+        "lines": "1–185",
+        "kind": "observed-source",
+        "claim": "Source tests exercise first/last ordering, selected extrema and stable repeat order; not executed."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/DataTable/DataTableBody.tsx",
+        "symbol": "DataTableBody",
+        "lines": "1–137",
+        "kind": "observed-source",
+        "claim": "Scalar record cells, not embedded group charts."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/SummaryTable/SummaryTable.tsx",
+        "symbol": "SummaryTable",
+        "lines": "1–148",
+        "kind": "observed-source",
+        "claim": "Field profiling, not group sparkline rows."
+      }
+    ],
+    "confidence": "high",
+    "open_questions": [
+      "Prove readable 14-panel keyboard navigation and trace on a compact grid before expanding to 51 tile panels.",
+      "Try the weekly calendar counterpart first; retain REC-07 when exact within-week/latest source observations and connected gaps are required."
+    ],
+    "assessment_basis": "Category, parity and workflow decisions are inferences from observed baseline source and prepared data; change requests and catalogue actions are proposals, not implemented behavior.",
+    "shared_output_recommendation": "REC-24"
+  },
+  {
+    "id": "forecast-fan",
+    "category": "small-extension",
+    "verdict": "Harden the already delivered raw-Line Notes Interval feature instead of inventing a new fan-chart grammar.",
+    "analytical_task": "Compare central observations and four supplied percentile intervals for each measure, with projection/reference context and exact bounds provenance.",
+    "required_today": {
+      "answer": "yes",
+      "reason": "Public Notes intervals approximate the drawing but lose interval source/run metadata and interior missing-value breaks; raw Line domains do not include bound fields automatically."
+    },
+    "should_remain_required": {
+      "answer": "no",
+      "reason": "Supplied intervals are already a public built-in concept; repair its complete useful behavior and facet-scale handling."
+    },
+    "teaching_value": {
+      "answer": "yes",
+      "reason": "Useful advanced comparison when its composition-specific behavior and current limits are explained; keeping the lesson does not require users to author the ordinary task in composition."
+    },
+    "nearest_builtin": "Raw-observation Line with four Notes → Interval annotations, reference line/band Notes, and Measure facets or two charts.",
+    "supported": [
+      "Raw Line public Notes already enables Interval with lower field, upper field and meaning.",
+      "Existing interval renderer projects supplied bounds and counts reversed bounds; Notes also supplies projection bands and reference lines.",
+      "Line supports multiple measure columns, styles, facets and explicit local axis bounds."
+    ],
+    "gaps": [
+      "Interval projection drops invalid rows and draws one polygon, bridging interior missing bounds; source IDs and omission reasons are absent from IntervalPoint.",
+      "Automatic raw-Line y bounds ignore interval columns; raw facets share source-wide axes.",
+      "Current interval drawing has fixed opacity, endpoint meaning labels, no band-level source interaction; exact legend/style can follow correctness.",
+      "The fan-central companion mixes measures into one unsplit raw series and is not an equivalent counterpart."
+    ],
+    "change_ids": [
+      "REC-03",
+      "REC-06"
+    ],
+    "analytical_parity": "Incomplete supplied-bound/source-trace parity today. Proposed repaired intervals preserve one quarter row per bound pair, without estimating forecasts or aggregating percentile columns. Four pairs must each report valid/skipped/reversed bound rows.",
+    "presentation_parity": "Nested bands already render through Notes; independent measure domains, interval-aware autoscale and segmented polygons close useful drawing gaps. Exact artboard legend and export are not claimed equivalent.",
+    "catalog_action": "Add repaired Line counterpart; move the primary supplied-interval lesson and keep the composition as an advanced layer/guide demonstration.",
+    "evidence": [
+      {
+        "path": "apps/demo/src/demos/dashboardSettings.ts",
+        "symbol": "fanBand/fanDashboard",
+        "lines": "2243-2442",
+        "kind": "observed",
+        "claim": "Four supplied pairs, independent Measure panels, guides and central-line companion."
+      },
+      {
+        "path": "packages/explorEDA/src/lib/annotations/context.ts",
+        "symbol": "annotationContext",
+        "lines": "35-56",
+        "kind": "observed",
+        "claim": "Raw Line advertises intervals; calendar Line does not."
+      },
+      {
+        "path": "packages/explorEDA/src/components/settings/annotations/AnnotationFields.tsx",
+        "symbol": "IntervalFields",
+        "lines": "605-642",
+        "kind": "observed",
+        "claim": "Public lower/upper/meaning inputs."
+      },
+      {
+        "path": "packages/explorEDA/src/lib/annotations/resolve.ts",
+        "symbol": "project annotation interval branch",
+        "lines": "466-490",
+        "kind": "observed",
+        "claim": "Drops unreadable rows, sorts surviving points, no original IDs/runs."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/annotations/AnnotationLayer.tsx",
+        "symbol": "Intervals",
+        "lines": "143-185",
+        "kind": "observed",
+        "claim": "Single polygon, fixed .14 opacity, endpoint label and pointerEvents none."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+        "symbol": "yValuesByAxis/leftYScale",
+        "lines": "116-128;330-373",
+        "kind": "observed",
+        "claim": "Domains derive from selected series only."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Composition/resolveUnit.ts",
+        "symbol": "scaleFields/bandNodes",
+        "lines": "566-583;3565-3625",
+        "kind": "observed",
+        "claim": "Composition includes bound columns, run gaps and skipped source rows."
+      }
+    ],
+    "confidence": "high",
+    "open_questions": [
+      "For the first counterpart, are two separate charts with explicit ranges sufficient before a shared/free facet-scale control ships?",
+      "How should interval-specific trace entry be exposed through the existing Notes and chart trace UI without creating duplicate systems?"
+    ],
+    "assessment_basis": "Category, parity and workflow decisions are inferences from observed baseline source and prepared data; change requests and catalogue actions are proposals, not implemented behavior.",
+    "shared_output_recommendation": "REC-24"
+  },
+  {
+    "id": "time-use",
+    "category": "small-extension",
+    "verdict": "Extend Box Plot with a cohort-summary display and explicit change semantics; no bespoke composition is needed for twelve distribution comparisons.",
+    "analytical_task": "Compare unweighted Minutes quartiles between 2019 and 2020 within Activity, including relative median change and the number of valid/source diary entries.",
+    "required_today": {
+      "answer": "conditional",
+      "reason": "Existing grouped, faceted Box Plot answers basic quartile comparison. Complete compact connected quartiles plus relative-median-change encoding and activity selection scope still require composition."
+    },
+    "should_remain_required": {
+      "answer": "no",
+      "reason": "Existing distribution statistics/contributor traces support a bounded named summary display; retain ordinary Box/Violin defaults."
+    },
+    "teaching_value": {
+      "answer": "yes",
+      "reason": "Useful advanced comparison when its composition-specific behavior and current limits are explained; keeping the lesson does not require users to author the ordinary task in composition."
+    },
+    "nearest_builtin": "Box Plot: Numeric field Minutes, Group by Year, facet Activity; optional linked Age/Weekday rows.",
+    "supported": [
+      "Public Box Plot supports grouped quartiles, median, facets, outliers/violin/observations and exact contributor traces.",
+      "Its quantile interpolation matches the supplied composition's unweighted quartile calculation.",
+      "Source rows already hold respondent activity entries; no weighted survey estimates are being computed."
+    ],
+    "gaps": [
+      "No connected quartile/median display or relative cohort-change calculation/readout.",
+      "Box facets use full raw-source y bounds, whereas the source summary uses live quartile extents per activity.",
+      "Mark selection currently targets Year grouping; a counterpart must preserve Activity scope instead of silently selecting all activities.",
+      "Percent change needs earlier-cohort median denominator and explicit neutral/undefined state at zero or absent cohort."
+    ],
+    "change_ids": [
+      "REC-10",
+      "REC-06"
+    ],
+    "analytical_parity": "Basic quartile analytics already available; REC-10 completes change/compact-summary parity. Preserve valid-entry n per Activity/Year and all invalid-input IDs; do not add zero rows for nonparticipants or use 400 respondents as every activity's denominator.",
+    "presentation_parity": "Connected bands, points and independent quartile domains require the named display. Side legend, title and layout are ordinary authored presentation; exact export remains separate.",
+    "catalog_action": "Add faceted Box counterpart, then cohort-summary mode; move the primary lesson when change/trace scope is complete; retain advanced composition.",
+    "evidence": [
+      {
+        "path": "apps/demo/src/demos/dashboardSettings.ts",
+        "symbol": "timeUseDashboard",
+        "lines": "2450-2624",
+        "kind": "observed",
+        "claim": "Activity summary grid, Year cohorts, diverging color and activity-entry count; supporting Box pools activities until filtered."
+      },
+      {
+        "path": "apps/demo/public/datasets/time-use.csv",
+        "symbol": "entire CSV",
+        "lines": "1-5743",
+        "kind": "observed",
+        "claim": "5,742 rows, 12 activities and 400 respondents per year; full CSV summary inspected."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Composition/resolveUnit.ts",
+        "symbol": "changeOf/summarizeGroups/summaryNodes",
+        "lines": "530-551;1907-2063",
+        "kind": "observed",
+        "claim": "Relative median change, zero undefined, unweighted valid measures and group IDs."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/BoxPlot/boxPlotCalculations.ts",
+        "symbol": "calculateBoxPlotStats/getQuartile",
+        "lines": "19-53",
+        "kind": "observed",
+        "claim": "Existing interpolated quartiles."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/BoxPlot/BoxPlot.tsx",
+        "symbol": "yDomain/traceGroups/source/handleBoxClick",
+        "lines": "84-138;318-436",
+        "kind": "observed",
+        "claim": "Shared raw-domain behavior, exact contributor trace and Year-only group selection."
+      }
+    ],
+    "confidence": "high",
+    "open_questions": [
+      "Use the term cohort comparison, not paired respondents; the two yearly respondent identifiers differ.",
+      "Decide whether independent domains track all-source quartile extents or live summaries; source composition currently recomputes under filtering."
+    ],
+    "assessment_basis": "Category, parity and workflow decisions are inferences from observed baseline source and prepared data; change requests and catalogue actions are proposals, not implemented behavior.",
+    "shared_output_recommendation": "REC-24"
+  },
+  {
+    "id": "media-deaths",
+    "category": "already-built-in",
+    "verdict": "Use the current Bar chart at 100% with Source groups, Cause series and sum(Count); composition is optional authored presentation.",
+    "analytical_task": "Compare cause shares within each source, retaining the fact that death counts and article counts have different denominators and units.",
+    "required_today": {
+      "answer": "no",
+      "reason": "All four source-by-cause distributions fit the public percent-series Bar mode, with exact numerator/denominator source tracing."
+    },
+    "should_remain_required": {
+      "answer": "no",
+      "reason": "Internal labels and emphasis placement are polish, not new analytical semantics."
+    },
+    "teaching_value": {
+      "answer": "conditional",
+      "reason": "Keep it to teach deliberate separation/emphasis and carefully authored source context; move the ordinary normalization lesson to Bar."
+    },
+    "nearest_builtin": "Bar: group Source, aggregate sum Count, split Cause, display 100%; retain the source/denominator note in chart or dashboard text.",
+    "supported": [
+      "Observed: Bar publicly exposes grouped, stacked and percent series, with category ordering and shared series colors.",
+      "Observed: percent values are numerator divided by current source-group total. Trace includes the numerator, denominator parts and exact source IDs; source tests cover filtering and Alt-Enter denominator tracing.",
+      "Observed: four categories and 15 series fit the planner limits of 30 categories and 20 series.",
+      "Observed: companion row charts can select Source or Cause. Existing chart labels/notes can preserve what the denominators mean."
+    ],
+    "gaps": [
+      "Presentation only: current Bar lacks composition-style segment name/value labels and the separate horizontal offset for Deaths; a bounded fit-aware labels option is optional.",
+      "Series order is source-discovery based; the composition orders by total across causes. A stable declared series order is useful polish, not a reason to require composition.",
+      "The separate authored graphic/export contract is not covered by analytical Bar parity.",
+      "Do not precompute percentages into new rows: that would discard original Count numerators and obscure denominator tracing."
+    ],
+    "change_ids": [
+      "REC-01",
+      "REC-23"
+    ],
+    "analytical_parity": "Yes through baseline public controls. Imported totals are Deaths 2,308,565, Fox News 19,407, The New York Times 15,421 and The Washington Post 11,812 across the 15 listed causes. Percent stacks recompute within each Source under filters. These are not all stories published or one common denominator.",
+    "presentation_parity": "Partial: the comparable percentages, colors/legend and interactions are available; internal labels, exact source-column spacing and fixed composition export differ.",
+    "catalog_action": "Add a current-settings Bar counterpart immediately and make it the primary teaching path; keep or demote the composition as an advanced editorial-label example rather than deleting it automatically.",
+    "evidence": [
+      {
+        "path": "apps/demo/src/demos/dashboardSettings.ts",
+        "symbol": "mediaDeathsDashboard",
+        "lines": "2632–2768",
+        "kind": "observed-source",
+        "claim": "Complete normalized stack and source note specifying 15 causes and article-count scope."
+      },
+      {
+        "path": "apps/demo/public/datasets/media-deaths.csv",
+        "symbol": "60 source/cause rows",
+        "lines": "1–61",
+        "kind": "observed-source",
+        "claim": "Four sets of 15 count rows; exact denominator totals computed in source-only CSV profiling."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/BarChart/BarChartSettingsPanel.tsx",
+        "symbol": "BarChartSettingsPanel",
+        "lines": "36–153",
+        "kind": "observed-source",
+        "claim": "Public split field, 100% display, ordering and aggregate creation."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/BarChart/seriesBarPlan.ts",
+        "symbol": "planSeriesBars",
+        "lines": "77–183;217–287",
+        "kind": "observed-source",
+        "claim": "Normalization, guardrails, exact series selection and numerator/denominator trace."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/BarChart/SeriesBarChart.tsx",
+        "symbol": "SeriesBarChart",
+        "lines": "58–118;152–181;256–351",
+        "kind": "observed-source",
+        "claim": "Stable series colors, actual rectangle renderer and keyboard activation; no segment text."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/BarChart/stackedBars.test.tsx",
+        "symbol": "stacked bar tests",
+        "lines": "1–216",
+        "kind": "observed-source",
+        "claim": "Percent computation and filtered denominator/source trace assertions; not executed."
+      }
+    ],
+    "confidence": "high",
+    "open_questions": [
+      "Does the desired standalone output need all 15 internal labels, or does the existing legend/readout suffice? This changes optional polish, not the category."
+    ],
+    "assessment_basis": "Category, parity and workflow decisions are inferences from observed baseline source and prepared data; change requests and catalogue actions are proposals, not implemented behavior.",
+    "shared_output_recommendation": "REC-24"
+  },
+  {
+    "id": "measles",
+    "category": "small-extension",
+    "verdict": "Make the dense state-by-year rate matrix an advanced Heatmap; correct the absence fixture before treating the example as evidence of missing-row behavior.",
+    "analytical_task": "Compare rate histories for all 51 state labels across 85 years, preserve geographic row order and distinguish unavailable rates from truly absent state-years around the 1963 reference.",
+    "required_today": {
+      "answer": "yes",
+      "reason": "Heatmap public controls stop at 60 categories per axis, with one order rule; this omits 25 of the 85 years even at maximum."
+    },
+    "should_remain_required": {
+      "answer": "no",
+      "reason": "Independent limits/order, explicit heat scales and an existing-Notes integration are bounded matrix features."
+    },
+    "teaching_value": {
+      "answer": "yes",
+      "reason": "The nonlinear ramp and shared position scale are useful advanced lessons once the advertised absence behavior is made accurate."
+    },
+    "nearest_builtin": "Heatmap: rows State/Label, columns Year, average Rate; Calendar is unsuitable for 85 categorical/numeric years by state.",
+    "supported": [
+      "Observed: Heatmap has average measures, numeric label order, exact per-cell source contributors and distinct empty/invalid states.",
+      "Observed: value zero remains a valid measured value; invalid cells retain contributors and can be traced, while empty cells have no source selection.",
+      "Observed: source category domains survive external filters, but current color normalization uses only currently shown live cells.",
+      "Observed: the composition uses Rate average per state-year, a supplied Order field, a nonlinear multistop ramp and a 1963 guide."
+    ],
+    "gaps": [
+      "Independent row/column limits and orders are needed for 51×85; a single label/count toggle cannot express prepared geographic row rank plus chronological columns.",
+      "A compact full-matrix layout or honest local viewport must preserve keyboard and trace access; raising a numeric validator alone is insufficient.",
+      "A fixed/full-source heat domain and optional monotonic multistop ramp are new numerical settings. Heatmap needs actual annotation-frame integration to support the existing 1963 Notes guide.",
+      "Data discrepancy: the supplied CSV has all 4,335 state-year combinations. Alaska 2003 is an explicit row with blank Rate and Status=absent; the composition reads no Status mapping. The resolver therefore appears to render it as missing, not absent. This is a source inference pending confirmation of the generic load path.",
+      "The companion called Average rate by year is a raw Year/Rate Line without an average transform and likely connects multiple state rows; it is not evidence of a built-in annual-mean alternative."
+    ],
+    "change_ids": [
+      "REC-01",
+      "REC-04",
+      "REC-05"
+    ],
+    "analytical_parity": "Not complete through baseline public controls because of column coverage and order. Proposed Heatmap changes cover the matrix, while source semantics must preserve three distinct cases: measured zero, an invalid rate in an existing row, and no row.",
+    "presentation_parity": "The nonlinear source ramp and exact guide placement require optional scale/Notes support. Typography does not justify composition. Composition export remains a separate issue.",
+    "catalog_action": "Add a Heatmap counterpart and move the default lesson there; retain the composition for custom scales and authoring. Repair or qualify the no-record claim and the annual-average companion title.",
+    "evidence": [
+      {
+        "path": "apps/demo/src/demos/dashboardSettings.ts",
+        "symbol": "measlesDashboard",
+        "lines": "2775–2954",
+        "kind": "observed-source",
+        "claim": "Complete matrix, supplied rank, custom ramp, missing marker, guide and raw companion."
+      },
+      {
+        "path": "apps/demo/public/datasets/measles.csv",
+        "symbol": "state-year data and Alaska 2003",
+        "lines": "complete file;77",
+        "kind": "observed-source",
+        "claim": "4,335 rows, 51×85 pairs, 494 blank rates and explicit Alaska 2003 absent-status row."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Composition/resolveUnit.ts",
+        "symbol": "strip glyph aggregation",
+        "lines": "684–742",
+        "kind": "observed-source",
+        "claim": "Absent bucket skipped; existing nonnumeric bucket renders missing mark; no Status interpretation."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Composition/useCompositionData.ts",
+        "symbol": "useCompositionData",
+        "lines": "1–22",
+        "kind": "observed-source",
+        "claim": "Passes source/live rows and field columns directly."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Composition/measles.test.ts",
+        "symbol": "measles tests",
+        "lines": "1–167",
+        "kind": "observed-source",
+        "claim": "Synthetic fixture tests truly absent versus invalid rows and multistop colors, not the supplied CSV."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Heatmap/HeatmapSettingsPanel.tsx",
+        "symbol": "HeatmapSettingsPanel",
+        "lines": "109–158",
+        "kind": "observed-source",
+        "claim": "Public limit/order restriction."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Heatmap/heatmapPlan.ts",
+        "symbol": "planHeatmap",
+        "lines": "111–193;246–308",
+        "kind": "observed-source",
+        "claim": "Actual domain, averaging, live scale and missing states."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Heatmap/Heatmap.tsx",
+        "symbol": "Heatmap",
+        "lines": "133–140;307–364",
+        "kind": "observed-source",
+        "claim": "Invalid/empty selection and keyboard/trace behavior."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+        "symbol": "ObservationLineChart",
+        "lines": "190–233",
+        "kind": "observed-source",
+        "claim": "Raw source values sorted by numeric X; no mean rollup."
+      }
+    ],
+    "confidence": "high",
+    "open_questions": [
+      "Confirm generic CSV loading does not specially interpret Status; no example-specific transformation was found in the selected demo source.",
+      "Choose blank versus patterned empty-cell styling only after the source truly contains an absent pair."
+    ],
+    "assessment_basis": "Category, parity and workflow decisions are inferences from observed baseline source and prepared data; change requests and catalogue actions are proposals, not implemented behavior.",
+    "shared_output_recommendation": "REC-24"
+  },
+  {
+    "id": "causes-by-age",
+    "category": "small-extension",
+    "verdict": "Extend Line with grouped numeric-X summaries and a 100% area display; this is a real aggregation and trace addition, not a calendar setting.",
+    "analytical_task": "Show how nine causes divide the total at each numeric age from 0 to 100, retaining each cause count and the all-cause denominator at that age.",
+    "required_today": {
+      "answer": "yes",
+      "reason": "Current area/stacked-area modes are tied to calendar summaries; raw numeric Line does not aggregate long Cause rows or normalize by age. Percent Bar refuses 101 categories."
+    },
+    "should_remain_required": {
+      "answer": "no",
+      "reason": "Numeric grouped summaries and 100% area form a bounded continuation of existing Line summary/area modes."
+    },
+    "teaching_value": {
+      "answer": "conditional",
+      "reason": "Keep for advanced stack labels and an age reference, with the ordinary percentage-area path taught through Line."
+    },
+    "nearest_builtin": "Line, proposed numeric grouped summary mode: X Age, split Cause, sum Count, display 100% area. Current 100% Bar is a useful cross-section alternative for selected ages.",
+    "supported": [
+      "Observed: raw Line already draws numeric X and uses ordinary axes/Notes; calendar Line already aggregates counts/sums, forms stacked areas, rejects unsupported negative/average stacks and traces contributors.",
+      "Observed: percent Bar supplies sound numerator/denominator logic and source tracing that can inform, but not substitute for, normalized area.",
+      "Observed: composition uses sum Count by Cause at each numeric Age, normalizes the stack and places a guide at age 65; the data is explicitly labeled synthetic."
+    ],
+    "gaps": [
+      "New preparation: group by numeric X plus split field and aggregate exact contributing rows; never parse Age as a calendar date or require a lossy wide pivot.",
+      "New display: normalize each nonnegative age stack to 100%, use stable series order/colors and define how absent category/X pairs differ from invalid input and a true zero total.",
+      "New interaction/trace: a band interval or source point must identify the selected cause, numerator rows and all-cause denominator rows for that age; baselines also depend on preceding series.",
+      "A stable X domain and local X limits must not become dashboard filters. Existing Notes should provide the age-65 guide once the numeric summary frame is wired.",
+      "The composition stack resolver only groups observed numeric X values; an entirely absent age does not automatically insert a gap. Tests with comments about a missing age do not establish a different behavior."
+    ],
+    "change_ids": [
+      "REC-09"
+    ],
+    "analytical_parity": "Requires the proposed numeric summary and normalization slice. Existing percent Bar can compare a small selected set of ages; a grouped calendar Line changes the meaning of Age and is not equivalent.",
+    "presentation_parity": "Useful normalized area and reference guide can be built in. Exact thick-region labels and authored typography are optional later polish; separate composition export is not included in this claim.",
+    "catalog_action": "Add a numeric 100% area counterpart and move the default lesson to Line; retain composition as an advanced labeling example.",
+    "evidence": [
+      {
+        "path": "apps/demo/src/demos/dashboardSettings.ts",
+        "symbol": "causesByAgeDashboard",
+        "lines": "2961–3093",
+        "kind": "observed-source",
+        "claim": "Complete normalized numeric-age stack, total calculation, labels and age-65 guide."
+      },
+      {
+        "path": "apps/demo/public/datasets/causes-by-age.csv",
+        "symbol": "complete CSV profile",
+        "lines": "complete file",
+        "kind": "observed-source",
+        "claim": "909 complete rows: 101 numeric ages × nine causes."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/definition.ts",
+        "symbol": "LineChartSettings",
+        "lines": "1–140",
+        "kind": "observed-source",
+        "claim": "Raw wide-series mode versus calendar summary and area display contract."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/TimeSeriesSettingsPanel.tsx",
+        "symbol": "TimeSeriesSettingsPanel",
+        "lines": "43–162;221–258",
+        "kind": "observed-source",
+        "claim": "Public modes and time-only aggregate/area control path."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/timeSeriesPlan.ts",
+        "symbol": "planTimeSeries",
+        "lines": "193–243;283–327;409–416",
+        "kind": "observed-source",
+        "claim": "Current period source summaries, stacking validity and area path preparation."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/areaCharts.test.tsx",
+        "symbol": "area tests",
+        "lines": "1–194",
+        "kind": "observed-source",
+        "claim": "Band values, zero/gap policy, selection and baseline-dependent trace; not executed."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/BarChart/seriesBarPlan.ts",
+        "symbol": "planSeriesBars",
+        "lines": "178–183;217–287",
+        "kind": "observed-source",
+        "claim": "Percent domain, 30-category guard and numerator/denominator tracing."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Composition/resolveUnit.ts",
+        "symbol": "stackColumns; stackAreaNodes",
+        "lines": "2978–3007;3047–3190",
+        "kind": "observed-source",
+        "claim": "Only observed X buckets, normalized denominators and label selection."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Composition/stackedAreas.test.ts",
+        "symbol": "stacked area tests",
+        "lines": "1–163",
+        "kind": "observed-source",
+        "claim": "Test expects observed X values [0,2,3]; its absent-age comments do not prove inserted gap behavior."
+      }
+    ],
+    "confidence": "high",
+    "open_questions": [
+      "Decide the missing numeric-X contract explicitly; either ordered observed positions or a declared numeric step is needed before filling or breaking absent ages.",
+      "Prototype this after shared Line source-point infrastructure; reject scope expansion to arbitrary stacked coordinates."
+    ],
+    "assessment_basis": "Category, parity and workflow decisions are inferences from observed baseline source and prepared data; change requests and catalogue actions are proposals, not implemented behavior.",
+    "shared_output_recommendation": "REC-24"
+  },
+  {
+    "id": "consumer-confidence",
+    "category": "small-extension",
+    "verdict": "Add a focused-series facet option on Line with explicit peer population and common scale plans.",
+    "analytical_task": "Read each country's trajectory against all peers without losing the peer context in focus panels, and identify each country's latest actual observation.",
+    "required_today": {
+      "answer": "conditional",
+      "reason": "A current nine-series monthly Line overlay compares the source values. The complete simultaneous focused-panel comparison, shared scales and truthful peer mark scope remain unavailable outside composition."
+    },
+    "should_remain_required": {
+      "answer": "no",
+      "reason": "Focus-with-peers is a reusable bounded Line facet mode rather than arbitrary arrangement."
+    },
+    "teaching_value": {
+      "answer": "yes",
+      "reason": "Useful advanced comparison when its composition-specific behavior and current limits are explained; keeping the lesson does not require users to author the ordinary task in composition."
+    },
+    "nearest_builtin": "Calendar Line, monthly Average Index, Split by Country; current facets alone remove peer populations.",
+    "supported": [
+      "Calendar Line exposes monthly aggregation, split series, date rules and exact period/series contributor traces.",
+      "For this CSV each country-month has exactly one row, so monthly Average preserves its value.",
+      "Notes can supply the constant 100 reference line."
+    ],
+    "gaps": [
+      "No secondary peer/reference population within a focused facet; standard facets restrict all and live rows before planning.",
+      "No explicit shared x/y domain policy across Calendar facets; x domain currently follows live dates.",
+      "Latest-per-series marker and summary label are absent as public calendar display settings.",
+      "Muted peer point selection must not inherit the focused country's facet filter; source rows and focus identity are different scopes."
+    ],
+    "change_ids": [
+      "REC-08",
+      "REC-06"
+    ],
+    "analytical_parity": "Current overlay is the strongest smaller alternative. Full focused comparison needs REC-08; keep all 467 unique Country/Month row identities. China's October 2022 row is absent and latest must remain September, not a fabricated zero or duplicated peer point.",
+    "presentation_parity": "Shared 3×3 focus panels require the mode; a one-panel overlay differs in arrangement but preserves numerical comparisons. Exact typography/page export remains separate.",
+    "catalog_action": "Add a simple split-Line counterpart first; add focus facet mode only if the smaller overlay proves insufficient; retain composition as focus/population teaching.",
+    "evidence": [
+      {
+        "path": "apps/demo/src/demos/dashboardSettings.ts",
+        "symbol": "consumerConfidenceDashboard",
+        "lines": "3100-3288",
+        "kind": "observed",
+        "claim": "Every peer in each repeat, focused own path, latest markers, global scales; companion averages across countries."
+      },
+      {
+        "path": "apps/demo/public/datasets/consumer-confidence.csv",
+        "symbol": "entire CSV",
+        "lines": "1-468",
+        "kind": "observed",
+        "claim": "467 unique pairs, 9 countries and 52 months; China lacks October 2022."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/TimeSeriesChart.tsx",
+        "symbol": "plan snapshot/timePointFilters call",
+        "lines": "68-116;200-205",
+        "kind": "observed",
+        "claim": "Facets trim all/live rows before planning and feed facet filters into selection."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/timeSeriesPlan.ts",
+        "symbol": "planTimeSeries/timePointFilters",
+        "lines": "71-99;136-174;314-384",
+        "kind": "observed",
+        "claim": "Current selection scope, live date extent and panel-specific all-source value extent."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Composition/resolveUnit.ts",
+        "symbol": "pathNodes/pointNodes",
+        "lines": "3314-3425;3673-3692",
+        "kind": "observed",
+        "claim": "Composition-wide population, focus drawing order, latest within each series."
+      }
+    ],
+    "confidence": "high",
+    "open_questions": [
+      "Reject the extra focus mode if the ordinary split-Line overlay is sufficient in real use.",
+      "Specify whether external country filtering narrows peer context or an explicitly separate reference population is required; the source currently follows composition live rows."
+    ],
+    "assessment_basis": "Category, parity and workflow decisions are inferences from observed baseline source and prepared data; change requests and catalogue actions are proposals, not implemented behavior.",
+    "shared_output_recommendation": "REC-24"
+  },
+  {
+    "id": "pew-meaning",
+    "category": "small-extension",
+    "verdict": "Add a bounded Paired dots mode to Scatter using the shared grouped-connection work; a separate chart family is unnecessary.",
+    "analytical_task": "Compare two named party percentages for each topic on one numeric axis and state the signed Rep-minus-Dem gap in percentage points.",
+    "required_today": {
+      "answer": "yes",
+      "reason": "Categorical Scatter plots the endpoints but forcibly jitters them, cannot connect by Topic, cannot use supplied category order or derive a named signed difference, and lacks normal point keyboard activation unless size is set."
+    },
+    "should_remain_required": {
+      "answer": "no",
+      "reason": "Existing mixed numeric/category Scatter, source points and colors make this a bounded paired-comparison preset."
+    },
+    "teaching_value": {
+      "answer": "conditional",
+      "reason": "Keep as an authored typography/value-column lesson after the analytical paired comparison is available in Scatter."
+    },
+    "nearest_builtin": "Scatter with X Share, Y Topic, color Party; proposed Paired dots mode names Democrat/Republican endpoints, disables jitter and connects each Topic pair.",
+    "supported": [
+      "Observed: Scatter renders categorical Y bands with labels, numeric X, source-row IDs, stable all-source axes/color population, typed brushes and point tracing.",
+      "Observed: the CSV already contains exactly one source percentage for each Topic×Party pair: 14 rows, seven topics, two parties. No survey microdata or respondent denominators are provided.",
+      "Observed: grouped Bar can show both percentages, but does not preserve the compact paired-dot/explicit gap comparison without additional logic."
+    ],
+    "gaps": [
+      "New display/preparation: connect by Topic using explicit named endpoint roles; do not infer semantic sign from alphabetical Party order.",
+      "New scoped settings: categorical jitter off, category order from supplied Order or explicit sequence, value labels and signed difference in percentage points. Existing jitter is unconditional and category order is alphabetical.",
+      "New semantic policy: require one valid value per role or an explicitly chosen aggregation; incomplete pairs retain the valid endpoint and show unavailable difference, not zero. Duplicate role rows must be diagnosed.",
+      "New activation: generalize non-size Scatter point click/keyboard handling; pair connector selection and trace must identify both source rows, while endpoint trace stays one row.",
+      "Baseline composition calculation returns last minus first; after a filter leaves one valid party row, this can return zero. The built-in proposal should correct that ambiguity rather than reproduce it."
+    ],
+    "change_ids": [
+      "REC-02"
+    ],
+    "analytical_parity": "Not complete today; it becomes complete with a shared connection helper plus the narrow paired-dot semantics. Retain imported percentages, report differences in points and trace only the available aggregate source rows.",
+    "presentation_parity": "A signed readout/label can preserve the useful comparison without cloning the tinted Diff column and article layout. Those cosmetic details and authored export remain composition options.",
+    "catalog_action": "Add a Scatter Paired dots counterpart and move primary teaching there. Retain composition as an optional authored layout example.",
+    "evidence": [
+      {
+        "path": "apps/demo/src/demos/dashboardSettings.ts",
+        "symbol": "pewMeaningDashboard",
+        "lines": "3295–3447",
+        "kind": "observed-source",
+        "claim": "Complete paired marks, supplied topic rank, party-order difference and styled signed value column."
+      },
+      {
+        "path": "apps/demo/public/datasets/pew-meaning.csv",
+        "symbol": "seven topic pairs",
+        "lines": "1–15",
+        "kind": "observed-source",
+        "claim": "Imported party percentages; spirituality 8 versus 22 gives +14 R."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/ScatterPlot/scatterAxis.ts",
+        "symbol": "scatterAxisKind; planScatterAxis; scatterPosition",
+        "lines": "105–181;185–214",
+        "kind": "observed-source",
+        "claim": "Actual categorical axes, label sorting, stable domains and unconditional categorical jitter."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/ScatterPlot/ScatterPlotSettingsPanel.tsx",
+        "symbol": "ScatterPlotSettingsPanel",
+        "lines": "40–225",
+        "kind": "observed-source",
+        "claim": "Current public points/density modes, fields, colors and sizes; no pairing or jitter toggle."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/ScatterPlot/planScatterPoints.ts",
+        "symbol": "planScatterPoints",
+        "lines": "22–103",
+        "kind": "observed-source",
+        "claim": "Source IDs, axis positioning and typed own-filter checks."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/ScatterPlot/ScatterSvg.tsx",
+        "symbol": "ScatterSvg",
+        "lines": "482–500;536–566;637–657",
+        "kind": "observed-source",
+        "claim": "Non-size point activation is gated from ordinary click and keyboard flow."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/ScatterPlot/scatterPlan.test.ts",
+        "symbol": "categorical scatter axes tests",
+        "lines": "79–151",
+        "kind": "observed-source",
+        "claim": "Band labels, deterministic jitter and type-correct restored brushes; not executed."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Composition/calculations.ts",
+        "symbol": "evaluateCalc; orderedEnds",
+        "lines": "105–133;171–198",
+        "kind": "observed-source",
+        "claim": "Last-minus-first permits a singleton zero difference."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Composition/dumbbells.test.ts",
+        "symbol": "dumbbell tests",
+        "lines": "1–268",
+        "kind": "observed-source",
+        "claim": "Paired geometry and +R/+D source examples; not executed."
+      }
+    ],
+    "confidence": "high",
+    "open_questions": [
+      "The initial mode should accept exactly two named roles; reject implicit merging of duplicate role rows until an aggregation is chosen.",
+      "Evaluate whether differences need a dedicated value column or a stable per-pair readout; either must preserve the comparison in ordinary output."
+    ],
+    "assessment_basis": "Category, parity and workflow decisions are inferences from observed baseline source and prepared data; change requests and catalogue actions are proposals, not implemented behavior.",
+    "shared_output_recommendation": "REC-24"
+  },
+  {
+    "id": "income-life",
+    "category": "already-built-in",
+    "verdict": "Use current Scatter log axes, size/color fields and twelve keyed Notes callouts; bulk labels are optional convenience.",
+    "analytical_task": "Compare country income and life expectancy, population and region, and identify chosen economies.",
+    "required_today": {
+      "answer": "no",
+      "reason": "The chart's meaningful encodings and selected record labels are reachable through public Scatter/Axes/Notes controls with original rows."
+    },
+    "should_remain_required": {
+      "answer": "no",
+      "reason": "Neither bubble sizing, true log x nor ordinary selected-country labels warrants composition."
+    },
+    "teaching_value": {
+      "answer": "yes",
+      "reason": "Useful advanced comparison when its composition-specific behavior and current limits are explained; keeping the lesson does not require users to author the ordinary task in composition."
+    },
+    "nearest_builtin": "Scatter Plot: GDP per capita x, Life expectancy y, Population size, Region color, log x, Country-keyed Notes callouts.",
+    "supported": [
+      "Public X/Y, Color Field, Size by and max radius controls are wired to the actual renderer.",
+      "True log axis uses positive domain/exclusions and decade ticks; it is not absent or secretly symlog.",
+      "Bubble area uses fixed full-source maximum, row selection and keyboard trace access.",
+      "Notes Record Callout public key field/value supports the twelve uniquely named countries."
+    ],
+    "gaps": [
+      "Bulk listed-record labels would reduce repeated callout authoring, but are not necessary for the analytical task.",
+      "Exact composition tiny-size floor, nonpositive-log pinning and arbitrary label offsets differ from built-in policy; do not copy these divergences to claim pixel parity."
+    ],
+    "change_ids": [
+      "REC-01",
+      "REC-22"
+    ],
+    "analytical_parity": "Available today for the positive, valid snapshot encodings. Each of 197 economies remains an original row; bubble normalization is the full-source Population maximum, stable during filters. Region colors, source-row traces and record callouts retain identity.",
+    "presentation_parity": "Similar annotated bubble graphic is current functionality; exact artboard/source-note wrapping and generated image export are not pixel-equivalent. No dedicated bulk label setting is required to establish analytical reachability.",
+    "catalog_action": "Move primary lesson to a configured built-in Scatter and optionally retain the composition as an authored-layout variant; do not keep it as evidence that log/bubbles need composition.",
+    "evidence": [
+      {
+        "path": "apps/demo/src/demos/dashboardSettings.ts",
+        "symbol": "incomeLifeDashboard",
+        "lines": "3454-3600",
+        "kind": "observed",
+        "claim": "Log income, population-sized region-colored points and twelve labels."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/ScatterPlot/ScatterPlotSettingsPanel.tsx",
+        "symbol": "ScatterPlotSettingsPanel",
+        "lines": "97-179",
+        "kind": "observed",
+        "claim": "Public x/y/color/size controls."
+      },
+      {
+        "path": "packages/explorEDA/src/components/settings/AxisSettingsTab.tsx",
+        "symbol": "AxisSettingsTab",
+        "lines": "63-108",
+        "kind": "observed",
+        "claim": "Public Log control."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/ScatterPlot/scatterAxis.ts",
+        "symbol": "paddedDomain/planScatterAxis",
+        "lines": "56-103;141-181",
+        "kind": "observed",
+        "claim": "True log domains and positive-only behavior."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/ScatterPlot/planScatterPoints.ts",
+        "symbol": "planScatterPoints",
+        "lines": "52-99",
+        "kind": "observed",
+        "claim": "Source IDs, nonnegative size and sqrt radius."
+      },
+      {
+        "path": "packages/explorEDA/src/components/settings/annotations/AnnotationFields.tsx",
+        "symbol": "record callout fields",
+        "lines": "277-299",
+        "kind": "observed",
+        "claim": "Public key field/value authoring."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/ScatterPlot/ScatterPlot.tsx",
+        "symbol": "annotationFrame/selectPoint",
+        "lines": "112-145;277-289;474-476",
+        "kind": "observed",
+        "claim": "Actual record projection and exact source point selection."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/ScatterPlot/bubbles.test.tsx",
+        "symbol": "bubble integration tests",
+        "lines": "43-77;109-192",
+        "kind": "observed",
+        "claim": "Full-source sizes, exclusion distinctions, keyboard and pointer traces; inspected only."
+      }
+    ],
+    "confidence": "high",
+    "open_questions": [],
+    "assessment_basis": "Category, parity and workflow decisions are inferences from observed baseline source and prepared data; change requests and catalogue actions are proposals, not implemented behavior.",
+    "shared_output_recommendation": "REC-24"
+  },
+  {
+    "id": "covid-tiles",
+    "category": "mixed",
+    "verdict": "Build ordinary state-history comparison through Line facets; keep the authored geographic tile arrangement in composition until a small layout proof earns a shared helper.",
+    "analytical_task": "Compare state trajectories and peak rates on a common timeline/value scale; the authored tile map additionally supports approximate geographic scanning.",
+    "required_today": {
+      "answer": "conditional",
+      "reason": "Calendar Line with State facets can show source weekly rates, but exact spatial tiles, compact simultaneous coverage and dynamic peak labels are not public built-in features."
+    },
+    "should_remain_required": {
+      "answer": "conditional",
+      "reason": "Ordinary repeated histories should be built in; explicit tile placement can remain composition until a bounded two-example layout proves usable."
+    },
+    "teaching_value": {
+      "answer": "yes",
+      "reason": "The authored grid legitimately demonstrates repeat placement with holes and shared scales."
+    },
+    "nearest_builtin": "Weekly Line summaries with State facets, plus a state filter; proposed source-aware compact Line for exact observation paths and peak/latest summaries.",
+    "supported": [
+      "Observed: Line calendar summaries support weekly average, split/facets, source aggregation and gaps; each provided state-date row is already a weekly rate observation.",
+      "Observed: facets support wrap/grid and manual visible group order, with pagination; they do not support tile-address placement.",
+      "Observed: the composition reads Tile addresses and places 51 state paths with a shared Date and rate domain, latest point and a peak calculation in each label."
+    ],
+    "gaps": [
+      "Repeated-history improvements: compact panels, global shared timeline/domain choices and named peak/latest values, with readable keyboard and source trace access.",
+      "Optional layout: explicit grid addresses, persistent empty cells, collision/missing-address behavior, spatial keyboard navigation and single-graphic export are new work, not a Facets tab toggle.",
+      "Current calendar facets restrict allIds per panel and compute X periods from live rows, so default facets do not prove a stable globally shared timeline/value domain.",
+      "The helper comment says latest value, but actual label calculation is max Cases per 100k. The companion called National average by week averages available state-rate rows equally, not a supplied national series."
+    ],
+    "change_ids": [
+      "REC-01",
+      "REC-06",
+      "REC-19"
+    ],
+    "analytical_parity": "Current faceted weekly Line covers individual state histories; REC-06 and source-aware Line domain/trace work improve compact simultaneous comparison. Geographic tile scanning is retained as a separate authored capability.",
+    "presentation_parity": "No current public tile facet mode. Keep composition for this exact geographic arrangement; do not equate paged regular facets with the whole tile map or promise export equivalence.",
+    "catalog_action": "Keep as advanced composition and add a linked Line-facet counterpart. Clarify peak versus latest wording and qualify the equal-weight companion average.",
+    "evidence": [
+      {
+        "path": "apps/demo/src/demos/dashboardSettings.ts",
+        "symbol": "covidTilesDashboard",
+        "lines": "3607–3765",
+        "kind": "observed-source",
+        "claim": "Complete shared scales, peak label, latest point, Tile placement and weekly average companion."
+      },
+      {
+        "path": "apps/demo/public/datasets/covid-tiles.csv",
+        "symbol": "complete CSV profile",
+        "lines": "complete file",
+        "kind": "observed-source",
+        "claim": "8,109 observations, 51 states and 160 distinct dates."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Composition/resolveUnit.ts",
+        "symbol": "tileAddresses; repeatSubsets",
+        "lines": "1503–1544;1595–1663",
+        "kind": "observed-source",
+        "claim": "Tile address parsing, fallback placements and stable source repeats."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Composition/tiles.test.ts",
+        "symbol": "tile tests",
+        "lines": "1–142",
+        "kind": "observed-source",
+        "claim": "Positions/holes, missing-address fallback and ordinary grid fallback; no duplicate-address proof."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/TimeSeriesChart.tsx",
+        "symbol": "TimeSeriesChart",
+        "lines": "68–97",
+        "kind": "observed-source",
+        "claim": "Facet-scoped allIds and live inputs."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/timeSeriesPlan.ts",
+        "symbol": "planTimeSeries",
+        "lines": "136–174;314–386",
+        "kind": "observed-source",
+        "claim": "Live X period domain, series guard and panel-scope Y bounds."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/FacetRelated/facetLayout.ts",
+        "symbol": "planFacetWrapLayout; planFacetGridLayout",
+        "lines": "5–88",
+        "kind": "observed-source",
+        "claim": "Regular panel layout and paging only."
+      }
+    ],
+    "confidence": "high",
+    "open_questions": [
+      "Can a deliberately limited tile-address layout serve both this Line view and elections without renderer-specific coupling? Defer unless the two-example proof succeeds.",
+      "Measure whether 51 compact paths remain legible and keyboard-operable; the 14-company proof is the prerequisite."
+    ],
+    "assessment_basis": "Category, parity and workflow decisions are inferences from observed baseline source and prepared data; change requests and catalogue actions are proposals, not implemented behavior.",
+    "shared_output_recommendation": "REC-24"
+  },
+  {
+    "id": "covid-compare",
+    "category": "composition-justified",
+    "verdict": "Keep composition for repeated state-versus-national comparisons with a recent-window main frame and a differently scaled full-history inset.",
+    "analytical_task": "For six states, compare the recent rate with the national benchmark while retaining the historical magnitude and trajectory in an inset; each repeated panel has two populations and two windows.",
+    "required_today": {
+      "answer": "yes",
+      "reason": "Ordinary facets exclude the national rows when scoped to a state, and Line has no per-panel inset with an independent time/value frame."
+    },
+    "should_remain_required": {
+      "answer": "yes",
+      "reason": "This multi-population, multi-window arrangement exceeds a modest repeated-Line contract; improve reusable focus/benchmark comparison separately."
+    },
+    "teaching_value": {
+      "answer": "yes",
+      "reason": "It demonstrates substantive composition capabilities: independent frames, contextual population and repeat exclusion without deleting benchmark data."
+    },
+    "nearest_builtin": "Line with State split plus a national benchmark, or two linked recent/full-history Line views; proposed focus/context Line reduces part of the gap.",
+    "supported": [
+      "Observed: Line calendar summaries show date series, source traces and facets. Ordinary dashboard views can separate recent and full history.",
+      "Observed: composition repeats six states, skips United States as a panel, but national Code=US paths use composition population in both main and inset frames.",
+      "Observed: the main frame starts 2022-07-04, while the inset retains the complete date history with a separate value scale; the latest state value is labeled."
+    ],
+    "gaps": [
+      "Public facets receive only each state subset, so the nation is not automatically retained as context inside every panel. A focus/benchmark population is distinct from a dashboard filter.",
+      "Current Line does not have an independently positioned inset with its own window, clipping, scale, source trace and keyboard target.",
+      "Two ordinary dashboard views can answer related questions but do not preserve the simultaneous recent-versus-history, state-versus-nation comparisons within each of six panels.",
+      "The national paths still use composition live rows: this is not evidence of an always-unfiltered benchmark. Filtering the national rows out can remove context unless the policy is explicitly changed.",
+      "The companion titled Average of the six states by week has no exclusion of the United States; the provided dataset contains seven State values, so the average includes the national row where present."
+    ],
+    "change_ids": [
+      "REC-01",
+      "REC-25",
+      "REC-08"
+    ],
+    "analytical_parity": "No single current built-in preserves both benchmark populations and paired windows. Focus/context Line would cover a useful subset; two linked views are the strongest smaller alternative, with a real simultaneous-comparison loss.",
+    "presentation_parity": "Composition is justified by the nested frame semantics, not the title or colors. Dashboard rendering and standalone export fidelity must be assessed separately.",
+    "catalog_action": "Keep as a primary advanced composition example. Add a simpler benchmark/focus Line counterpart if that bounded feature ships; correct the companion average description or population.",
+    "evidence": [
+      {
+        "path": "apps/demo/src/demos/dashboardSettings.ts",
+        "symbol": "covidCompareDashboard",
+        "lines": "3773–3994",
+        "kind": "observed-source",
+        "claim": "Complete recent-window/inset scales, composition-level US paths, state repeat skip and companion."
+      },
+      {
+        "path": "apps/demo/public/datasets/covid-compare.csv",
+        "symbol": "complete CSV profile",
+        "lines": "complete file",
+        "kind": "observed-source",
+        "claim": "1,119 rows across six states plus United States; 160 distinct dates."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Composition/resolveUnit.ts",
+        "symbol": "numeric domains; drawFrame; pathNodes",
+        "lines": "617–665;1037–1063;3301–3426",
+        "kind": "observed-source",
+        "claim": "Window domains/clipping and repeat versus composition live path populations."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Composition/insets.test.ts",
+        "symbol": "inset tests",
+        "lines": "1–221",
+        "kind": "observed-source",
+        "claim": "Different full/recent frames and skipped US still available to benchmark paths; not executed."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/TimeSeriesChart.tsx",
+        "symbol": "TimeSeriesChart",
+        "lines": "68–97",
+        "kind": "observed-source",
+        "claim": "All source IDs narrowed to facet population."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/definition.ts",
+        "symbol": "LineChartSettings",
+        "lines": "1–140",
+        "kind": "observed-source",
+        "claim": "No independent inset or contextual population contract."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/FacetRelated/FacetContainer.tsx",
+        "symbol": "FacetContainer",
+        "lines": "370–438",
+        "kind": "observed-source",
+        "claim": "Child views receive per-facet IDs."
+      }
+    ],
+    "confidence": "high",
+    "open_questions": [
+      "Define whether a future benchmark follows dashboard filters or remains a named reference population; the current composition follows live rows.",
+      "Do users still need insets after a focused comparison Line and linked context view? Keep inset work deferred pending that evidence."
+    ],
+    "assessment_basis": "Category, parity and workflow decisions are inferences from observed baseline source and prepared data; change requests and catalogue actions are proposals, not implemented behavior.",
+    "shared_output_recommendation": "REC-24"
+  },
+  {
+    "id": "elections",
+    "category": "mixed",
+    "verdict": "Expose the ordinary state-by-election matrix through Heatmap with an explicit centered capped scale; retain the geographic strip arrangement as composition.",
+    "analytical_task": "Compare signed two-party margins across 51 states and 11 elections, with a stable party-direction color meaning; the tile layout adds approximate geographic scanning.",
+    "required_today": {
+      "answer": "conditional",
+      "reason": "The 51×11 matrix fits Heatmap at public maxCategories=60, but a fixed symmetric ±40 color cap and the tile placement are not available."
+    },
+    "should_remain_required": {
+      "answer": "conditional",
+      "reason": "State/election margin analysis should be built in; explicit geographic tiles can remain composition until a small reusable layout is proved."
+    },
+    "teaching_value": {
+      "answer": "yes",
+      "reason": "Keep to teach explicit tile positions, persistent holes and a centered square-root magnitude scale."
+    },
+    "nearest_builtin": "Heatmap with rows Code/State, columns Year, average Margin, maxCategories=60, numeric label ordering; a Line view is a useful linked numerical trend.",
+    "supported": [
+      "Observed: Heatmap can show all 51×11 existing source pairs, average Margin, retain contributors, and support typed row/column/cell filters with keyboard trace.",
+      "Observed: the built-in heat helper automatically diverges when currently shown values straddle zero, but has no fixed domain, explicit center or square-root magnitude setting.",
+      "Observed: the composition uses a fixed 40-point magnitude cap, signed colors and Tile addresses; actual repeat order is label, despite a helper comment about latest margin."
+    ],
+    "gaps": [
+      "A centered divergent scale with explicit symmetric cap and optional square-root magnitude transform is needed to preserve meaning under filtering. This is reusable heat-scale work, not only color polish.",
+      "Tile-address layout with holes and regional adjacency is a separate authored treatment. Exposing a generic Facets tab would not implement it.",
+      "Heatmap currently receives facetIds only for liveIds while retaining global allIds for categories; a per-state strip facet needs deliberate local position-domain scope and a separately shared value-color domain.",
+      "The source already includes Margin. Do not silently recompute it from rounded Democratic/Republican shares or normalize selected states as if they were parts of one total."
+    ],
+    "change_ids": [
+      "REC-01",
+      "REC-05",
+      "REC-19"
+    ],
+    "analytical_parity": "The state-year values and source tracing are reachable today as a matrix. Stable explicit party-direction/cap behavior needs REC-05. The geographic scanning is a separate useful capability not preserved by a regular matrix.",
+    "presentation_parity": "Regular Heatmap is not the fixed US tile-strip graphic. Keep composition for that arrangement and assess its standalone export separately.",
+    "catalog_action": "Keep as advanced composition and add a built-in Heatmap counterpart; move the signed-margin lesson to Heatmap once explicit centered scales exist.",
+    "evidence": [
+      {
+        "path": "apps/demo/src/demos/dashboardSettings.ts",
+        "symbol": "electionsDashboard",
+        "lines": "4001–4124",
+        "kind": "observed-source",
+        "claim": "Complete 11-column strips, centered sqrt scale with max=40 and Tile layout."
+      },
+      {
+        "path": "apps/demo/public/datasets/elections.csv",
+        "symbol": "complete CSV profile",
+        "lines": "complete file",
+        "kind": "observed-source",
+        "claim": "561 complete source pairs: 51 states × 11 election years, including supplied Margin."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Heatmap/HeatmapSettingsPanel.tsx",
+        "symbol": "HeatmapSettingsPanel",
+        "lines": "109–158",
+        "kind": "observed-source",
+        "claim": "Public 60-category option suffices here; one label order applies to both axes."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/heatScale.ts",
+        "symbol": "planHeatScale; heatFill",
+        "lines": "1–68",
+        "kind": "observed-source",
+        "claim": "Automatic sequential/diverging linear extent from supplied visible values."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Heatmap/Heatmap.tsx",
+        "symbol": "Heatmap",
+        "lines": "80–107;307–364",
+        "kind": "observed-source",
+        "claim": "Facet live/all-source mismatch and real cell interactions."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Composition/elections.test.ts",
+        "symbol": "election scale tests",
+        "lines": "1–245",
+        "kind": "observed-source",
+        "claim": "Centered magnitude, cap, missing text and legends; not executed."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Composition/resolveUnit.ts",
+        "symbol": "tileAddresses; repeatSubsets",
+        "lines": "1503–1544;1595–1663",
+        "kind": "observed-source",
+        "claim": "Tile mechanics and actual stable repeat ordering."
+      }
+    ],
+    "confidence": "high",
+    "open_questions": [
+      "A tile-facet proposal must prove both this one-row Heatmap case and the Covid Line case; otherwise retain composition.",
+      "Whether square-root color is a necessary advanced control should be checked against a fixed linear centered counterpart, with the same numeric readout."
+    ],
+    "assessment_basis": "Category, parity and workflow decisions are inferences from observed baseline source and prepared data; change requests and catalogue actions are proposals, not implemented behavior.",
+    "shared_output_recommendation": "REC-24"
+  },
+  {
+    "id": "lincoln-ridgeline",
+    "category": "new-built-in-family",
+    "verdict": "Add a named Ridgeline display to the current Box Plot/Violin capability; the common-grid probability-density height is new numerical and drawing behavior, not a rotated violin.",
+    "analytical_task": "Compare the shape, spread, and movement of all twelve monthly temperature distributions on common value and density scales.",
+    "required_today": {
+      "answer": "conditional",
+      "reason": "Monthly location/spread and independently normalized density shapes are already available through Box/Violin; common-grid ridges with comparable peak height currently require composition."
+    },
+    "should_remain_required": {
+      "answer": "no",
+      "reason": "A bounded density display can expose field, group, bandwidth, order, and overlap through ordinary chart controls."
+    },
+    "teaching_value": {
+      "answer": "yes",
+      "reason": "The example teaches shared scales, density height semantics, negative repeat gaps, and value shading; retain as an optional advanced reference."
+    },
+    "nearest_builtin": [
+      "Box Plot: Box/Violin by Month",
+      "Histogram: Mean temperature",
+      "ECDF for threshold comparisons"
+    ],
+    "supported": [
+      "Observed: Box/Violin already exposes grouping, KDE bandwidth, source traces, a stable all-row value domain, group selection, and optional observations.",
+      "Observed: the dashboard already includes a Box Plot companion for the same numeric field and month grouping.",
+      "Observed: current Box Plot observations are source-ID jittered and capped at 300 per group; an unused beeswarm helper does not prove collision layout is rendered."
+    ],
+    "gaps": [
+      "Observed: built-in KDE samples each group on its own min/max and divides by its own maximum; common density peaks cannot be compared.",
+      "Observed: built-in numeric values project vertically; horizontal overlapping ridges and order by Month number are absent.",
+      "Proposed: positive bandwidth in field units must support 3.4; the current UI advertises 0.1–1.",
+      "Proposed: declare stable population-referenced versus live peak heights; current composition recomputes the common peak from live rows."
+    ],
+    "change_ids": [
+      "REC-12"
+    ],
+    "analytical_parity": {
+      "current": "Partial: current Box Plot/Violin preserves monthly summaries and independently scaled shapes, not common probability-density heights.",
+      "after_proposal": "Complete for common-grid monthly density comparisons if contributors, exclusions, stable group positions, and the declared height reference pass proof."
+    },
+    "presentation_parity": {
+      "current": "Different geometry and peak normalization. Authored gradient, overlap, text, and fixed-artboard output are not delivered by the Box companion.",
+      "after_proposal": "Named ridge mode can reproduce density geometry and value shading; exact authored page and export remain separately assessed."
+    },
+    "catalog_action": "Add a built-in Ridgeline counterpart and move routine monthly distribution teaching there; retain composition for advanced shared-scale density teaching.",
+    "evidence": [
+      {
+        "path": "apps/demo/src/demos/dashboardSettings.ts",
+        "symbol": "lincolnRidgelineDashboard",
+        "lines": "4131–4285",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "apps/demo/src/demos/dashboardSettings.ts",
+        "symbol": "box helper",
+        "lines": "86–122",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/BoxPlot/BoxPlotSettingsPanel.tsx",
+        "symbol": "Display, Observations, bandwidth controls",
+        "lines": "100–167",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/BoxPlot/boxPlotCalculations.ts",
+        "symbol": "calculateKernelDensity",
+        "lines": "111–142",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/BoxPlot/BoxPlot.tsx",
+        "symbol": "density preparation, trace, observations",
+        "lines": "210–309;318–409;583–620",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Composition/resolveUnit.ts",
+        "symbol": "densityCurves, densityCurve, densityNodes",
+        "lines": "668–683;1264–1287;2719–2795",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Composition/ridgeline.test.ts",
+        "symbol": "shared-height and density assertions",
+        "lines": "1–202",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      }
+    ],
+    "confidence": {
+      "level": "high",
+      "basis": "Complete example definition, actual mark resolver, public built-in controls and implementation, and relevant source tests were read. No product tests or browser rendering ran."
+    },
+    "open_questions": [
+      "Proposed stable height-reference policy needs a proof on filters that increase concentration.",
+      "Whether twelve rows remain readable at normal saved dashboard sizes was not rendered."
+    ],
+    "assessment_basis": "Category, parity and workflow decisions are inferences from observed baseline source and prepared data; change requests and catalogue actions are proposals, not implemented behavior.",
+    "shared_output_recommendation": "REC-24"
+  },
+  {
+    "id": "climate-ridgeline",
+    "category": "new-built-in-family",
+    "verdict": "Share the Ridgeline display with Lincoln, then prove dense ordering and ordinary group-anchored notes; 84 repeats do not require a general artboard.",
+    "analytical_task": "Compare annual distribution shapes across all 84 years, retaining each year identity and a common density/value scale.",
+    "required_today": {
+      "answer": "yes",
+      "reason": "Box/Violin changes density-height semantics; the un-faceted ECDF planner keeps ten largest live groups and combines the rest into Other, losing the full annual comparison."
+    },
+    "should_remain_required": {
+      "answer": "no",
+      "reason": "A reusable ordered density display with label cadence and existing notes can cover this bounded analytical arrangement."
+    },
+    "teaching_value": {
+      "answer": "yes",
+      "reason": "Keep the dense case to teach overlap, label cadence, diverging value shading, and repeat-anchored notes, while clearly identifying its illustrative synthetic data."
+    },
+    "nearest_builtin": [
+      "Box Plot: Violin grouped by Year",
+      "ECDF grouped by Year (partial threshold comparison; no current public Facets tab)",
+      "Scatter: Year × Difference"
+    ],
+    "supported": [
+      "Observed: grouping, numeric extents, KDE, source traces, and ordinary annotations exist in the library.",
+      "Observed: ECDF has exact threshold denominators and source IDs, but is a different distribution question and has no current public Facets tab.",
+      "Observed: included dashboard has Scatter and Histogram companions; neither supplies the annual ridge behavior."
+    ],
+    "gaps": [
+      "Observed: Box/Violin per-group peak normalization loses shared density heights.",
+      "Observed: ECDF groups beyond its largest ten become Other in one frame.",
+      "Proposed: add a common-grid density mode, ascending Year order, overlap, every-nth labels, fixed x bounds, and optional diverging value shading.",
+      "Observed: Box Plot passes only a scale frame to annotation rendering; group-specific density notes require a real subject projection callback."
+    ],
+    "change_ids": [
+      "REC-12"
+    ],
+    "analytical_parity": {
+      "current": "Partial: summaries or threshold curves are available, but no current public view retains all 84 comparable annual density shapes.",
+      "after_proposal": "Complete only if the dense proof preserves all groups, numeric density units, source rows, and readable output without manual per-year placement."
+    },
+    "presentation_parity": {
+      "current": "The 84 overlapping filled ridges and selected-year callouts are composition-specific.",
+      "after_proposal": "Shared ridge mode plus group subject callbacks can reproduce the meaningful geometry and notes; exact page typography/output remains separate."
+    },
+    "catalog_action": "Add a built-in dense Ridgeline counterpart, retain this composition as the dense-case teaching reference, and keep the synthetic-data disclosure visible.",
+    "evidence": [
+      {
+        "path": "apps/demo/src/demos/dashboardSettings.ts",
+        "symbol": "climateRidgelineDashboard",
+        "lines": "5063–5258",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/BoxPlot/boxPlotCalculations.ts",
+        "symbol": "calculateKernelDensity",
+        "lines": "111–142",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/BoxPlot/BoxPlot.tsx",
+        "symbol": "AnnotationLayer input",
+        "lines": "513–535",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Ecdf/ecdfPlan.ts",
+        "symbol": "MAX_ECDF_GROUPS, step sources, group limit/Other",
+        "lines": "94;129–193;321–327;389–421",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Composition/resolveUnit.ts",
+        "symbol": "density common grid and height",
+        "lines": "668–683;1264–1287;2719–2795",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/ChartSettingsContent.tsx",
+        "symbol": "public settings tab gates",
+        "lines": "68–95",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      }
+    ],
+    "confidence": {
+      "level": "high",
+      "basis": "Complete example definition, actual mark resolver, public built-in controls and implementation, and relevant source tests were read. No product tests or browser rendering ran."
+    },
+    "open_questions": [
+      "The 84-row visual density requires a saved-size rendering proof; no browser rendering occurred.",
+      "The new annotation callback must anchor to a named group even when labels are suppressed or that group has no live density."
+    ],
+    "assessment_basis": "Category, parity and workflow decisions are inferences from observed baseline source and prepared data; change requests and catalogue actions are proposals, not implemented behavior.",
+    "shared_output_recommendation": "REC-24"
+  },
+  {
+    "id": "banana-yields",
+    "category": "mixed",
+    "verdict": "Use linked Pivot, Heatmap and Line for ordinary yields analysis; keep the aligned mixed-content article in composition rather than build a universal rich table.",
+    "analytical_task": "Compare per-country decade means, the valid-year overall mean and the illustrative yearly trajectory while keeping explicit unavailable decades and source contributions understandable.",
+    "required_today": {
+      "answer": "conditional",
+      "reason": "Current Pivot covers decade means and correctly recomputed totals, and numeric Line covers broad trends; the exact aligned trend/mean/heat-cell graphic and uniform trace behavior still need composition or extensions."
+    },
+    "should_remain_required": {
+      "answer": "conditional",
+      "reason": "Ordinary tables, heat matrices and trends should remain built in. The authored combination of different marks/scales in one country row can remain composition."
+    },
+    "teaching_value": {
+      "answer": "yes",
+      "reason": "It is a useful advanced example of aligned heterogeneous fields, inset trends and scoped summaries, with explicit synthetic/real data context."
+    },
+    "nearest_builtin": "Pivot: row Country, column Decade, value average Yield, totals and optional cell shading; linked Heatmap for cell selection and numeric Year/Yield Line or facets for trends.",
+    "supported": [
+      "Observed: Pivot computes average over valid source values and recomputes totals over all covered source rows, rather than averaging already averaged decade cells.",
+      "Observed: Pivot contributor details include source IDs, grouping keys, raw input and inclusion/exclusion status; row/column headers filter, while cell click opens inspection.",
+      "Observed: Heatmap can show 15×6 averages with exact cell selection/trace. Raw numeric Line draws Year/Yield observations and offers public facets, but its rendered paths lack comparable point/path trace.",
+      "Observed: DataTable and SummaryTable do not supply per-row sparkline cells; tech-sparklines is a grid, so it is not second evidence for a universal rich-table contract."
+    ],
+    "gaps": [
+      "The authored row combines a trend on a per-country Y scale, one valid-year mean column and six shared-color decade means, with shared country ordering and row alignment.",
+      "Separate linked views preserve values and drill-down but do not preserve simultaneous cross-row/cross-decade alignment or make cell, overall-mean and yearly-point traces interchangeable.",
+      "Reusable improvements are source-aware Line points, named average/ordering summaries and explicit heat domains; arbitrary embedded chart cells would introduce a new layout, interaction, trace and export model.",
+      "Dataset context: 814 physical rows include 806 valid country-years and eight explicit blank Year/Yield decade placeholders. The source note calls yearly trends illustrative and says the 2010s end in 2018; do not present those trajectories as observed annual yields.",
+      "The overall average is over valid annual rows, so a 2010–2018 decade contributes nine years and earlier complete decades ten. An unweighted mean of six decade means is not parity."
+    ],
+    "change_ids": [
+      "REC-01",
+      "REC-05",
+      "REC-06",
+      "REC-20",
+      "REC-07"
+    ],
+    "analytical_parity": "Substantial baseline coverage through Pivot+Heatmap+Line; proposed source-aware Line and summary ordering complete useful linked analysis. Preserve separate trace populations: a decade cell, the valid-year overall mean and individual illustrative year points.",
+    "presentation_parity": "The linked-view alternative is not the same single aligned graphic. Composition remains justified for its mixed-content layout; a general table grammar is deferred and export equivalence is not claimed.",
+    "catalog_action": "Keep the composition as an advanced authored example and add a linked Pivot/Heatmap/Line counterpart. Clarify 806 valid country-years plus eight NA placeholders and the illustrative trend note.",
+    "evidence": [
+      {
+        "path": "apps/demo/src/demos/dashboardSettings.ts",
+        "symbol": "bananaYieldsDashboard",
+        "lines": "4464–4652",
+        "kind": "observed-source",
+        "claim": "Complete shared decade colors, per-country trend scale, average column, inset paths and contextual note."
+      },
+      {
+        "path": "apps/demo/public/datasets/banana-yields.csv",
+        "symbol": "complete CSV profile",
+        "lines": "complete file",
+        "kind": "observed-source",
+        "claim": "814 rows, 15 countries, six decades; eight blank Year/Yield placeholders and 806 valid yearly rows."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/PivotTable/definition.ts",
+        "symbol": "PivotTableSettings",
+        "lines": "1–124",
+        "kind": "observed-source",
+        "claim": "Public grouped values, totals and shading; no chart-cell mode."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/PivotTable/utils/calculations.ts",
+        "symbol": "aggregate; makeContributors; generateCell; calculatePivotData",
+        "lines": "95–112;205–279;371–426",
+        "kind": "observed-source",
+        "claim": "Mean denominator, inclusion/source IDs, invalid versus empty and raw-row total recomputation."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/PivotTable/PivotTable.tsx",
+        "symbol": "PivotTable",
+        "lines": "181–294;340–405;602–724",
+        "kind": "observed-source",
+        "claim": "Header selection, live cell shading, inspect action and exact contributor dialog."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Heatmap/heatmapPlan.ts",
+        "symbol": "planHeatmap",
+        "lines": "270–308",
+        "kind": "observed-source",
+        "claim": "15×6 cells can retain separate means, contributor sets and missing states."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+        "symbol": "ObservationLineChart",
+        "lines": "190–233;751–783",
+        "kind": "observed-source",
+        "claim": "Numeric yearly paths without source-point activation."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/DataTable/DataTableBody.tsx",
+        "symbol": "DataTableBody",
+        "lines": "1–137",
+        "kind": "observed-source",
+        "claim": "Record cells are scalar, not per-group charts."
+      }
+    ],
+    "confidence": "high",
+    "open_questions": [
+      "Do readers require aligned trend cells after trying the linked Pivot/Heatmap/Line counterpart? Do not add a rich table until that need survives the smaller alternative.",
+      "If row order by overall average is added to Pivot or compact Line, define a stable source scope separately from filtered value labels."
+    ],
+    "assessment_basis": "Category, parity and workflow decisions are inferences from observed baseline source and prepared data; change requests and catalogue actions are proposals, not implemented behavior.",
+    "shared_output_recommendation": "REC-24"
+  },
+  {
+    "id": "yield-gap",
+    "category": "new-built-in-family",
+    "verdict": "A unit-count display is coherent but deferred pending proof that exact per-cell tracing adds value beyond a color-split histogram.",
+    "analytical_task": "Compare crop-specific distributions of yield gap by continent, optionally retaining one visible and traceable cell per country/crop row.",
+    "required_today": {
+      "answer": "conditional",
+      "reason": "The integer fixture supports an existing stacked categorical count by Gap and Continent, and Scatter offers source points; the complete numeric-bin, one-cell-per-source-row display currently requires composition."
+    },
+    "should_remain_required": {
+      "answer": "no",
+      "reason": "If the record-unit task proves useful, it should use a bounded named display sharing a cell plan with Titanic; free-form marks are unnecessary for that contract."
+    },
+    "teaching_value": {
+      "answer": "yes",
+      "reason": "The composition distinguishes a numerical bin, a category count, one-row cells, and aggregate versus cell provenance; keep it during the smaller-alternative proof."
+    },
+    "nearest_builtin": [
+      "Bar: numeric histogram",
+      "Bar: stacked categorical count of integer Gap split by Continent",
+      "Scatter: Gap × Crop colored by Continent"
+    ],
+    "supported": [
+      "Observed: numeric Histogram preserves whole-number-centered bins when all field values are integers.",
+      "Observed: the selected 197-row fixture already has integral gaps, making stacked exact-value counts a useful current counterpart.",
+      "Observed: stacked Bar preserves group/series counts, selection scopes, exact source lists, and keyboard trace.",
+      "Observed: one-row waffle cells have exact source IDs, but ordinary composition clicks select the crop repeat; cell trace uses Alt-click; current keyboard trace targets are repeat-oriented."
+    ],
+    "gaps": [
+      "Observed: the series Bar branch groups exact categories rather than using the numeric-bin preparation path; absent bins and live category bands can collapse.",
+      "Proposed: a split histogram needs interval bins, stable empty positions, per-bin/category denominators, and source IDs before any cell renderer.",
+      "Proposed: a record-unit renderer additionally needs a bounded cell plan, stable colors and geometry, exact contributor mapping, hit targets, and keyboard traversal.",
+      "Boundary: rounded multi-row cells and normalized hundred-cell grids are different transforms and are deferred."
+    ],
+    "change_ids": [
+      "REC-13"
+    ],
+    "analytical_parity": {
+      "current": "Substantial for this integer fixture using stacked category counts; partial for general numerical bins and not the one-row-per-visible-cell encoding.",
+      "after_proposal": "Split bins complete the distribution task; a separately proved unit display completes source-cell presentation and tracing."
+    },
+    "presentation_parity": {
+      "current": "Aggregate bars or jittered circles replace the authored per-bin squares.",
+      "after_proposal": "Unit cells can preserve the bounded data layout; exact labels, fixed artboard, and its output are separate from analytical parity."
+    },
+    "catalog_action": "Add the simpler built-in split-histogram counterpart first; retain the composition and defer a unit renderer until a user-facing source-cell proof warrants it.",
+    "evidence": [
+      {
+        "path": "apps/demo/src/demos/dashboardSettings.ts",
+        "symbol": "yieldGapDashboard",
+        "lines": "4659–4787",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Composition/resolveUnit.ts",
+        "symbol": "integer waffle bins and source-cell mapping",
+        "lines": "430–449;1155–1197;2324–2418",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Composition/waffle.test.ts",
+        "symbol": "one-row cells, bin semantics",
+        "lines": "76–138;145–219",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/BarChart/bins.ts",
+        "symbol": "numericBins",
+        "lines": "1–38",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/BarChart/BarChart.tsx",
+        "symbol": "series renderer branch",
+        "lines": "98–103",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/BarChart/SeriesBarChart.tsx",
+        "symbol": "grouped aggregation preparation",
+        "lines": "58–93",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/BarChart/seriesBarPlan.ts",
+        "symbol": "live categories and equal bands",
+        "lines": "77–91;205–225",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      }
+    ],
+    "confidence": {
+      "level": "high",
+      "basis": "Complete example definition, actual mark resolver, public built-in controls and implementation, and relevant source tests were read. No product tests or browser rendering ran."
+    },
+    "open_questions": [
+      "Whether one-cell source access is useful enough to maintain a renderer, compared with the histogram source list, remains a deliberate decision gate.",
+      "Only prepared synthetic data were available; the absent preparation directory was not audited."
+    ],
+    "assessment_basis": "Category, parity and workflow decisions are inferences from observed baseline source and prepared data; change requests and catalogue actions are proposals, not implemented behavior.",
+    "shared_output_recommendation": "REC-24"
+  },
+  {
+    "id": "middle-class-jobs",
+    "category": "small-extension",
+    "verdict": "Use grouped ordered Scatter connections with numeric colors and Group facets; keep supplied group labels separate from recalculated filtered summaries.",
+    "analytical_task": "Compare each occupation's two job-share observations within Group while retaining gender difference encoding and supplied group changes.",
+    "required_today": {
+      "answer": "yes",
+      "reason": "Unconnected point clouds lose occupation pairing; raw Line lacks row-grouped series and data-bound path color, and cannot retain the full trace contract through a one-setting change."
+    },
+    "should_remain_required": {
+      "answer": "no",
+      "reason": "Grouped numeric observations and their ordered facets are reusable built-in controls; frame callouts and typography are ordinary presentation."
+    },
+    "teaching_value": {
+      "answer": "yes",
+      "reason": "Useful advanced comparison when its composition-specific behavior and current limits are explained; keeping the lesson does not require users to author the ordinary task in composition."
+    },
+    "nearest_builtin": "Scatter numeric Year/Jobs per 1000, color Women minus men, facet Group, extended with Connect by Occupation; alternative grouped raw Line after REC-07.",
+    "supported": [
+      "Scatter has numeric axes, full-source domains, numeric color mapping, facets, original point traces and Notes.",
+      "Fixed y axis 0–85 is already a public local view range; ColorScaleControl already exposes diverging palettes, numeric endpoints and midpoint.",
+      "Current Facets chips can manually order all ten groups. The CSV supplies Group order, Group change and Women minus men; no source transformation is required for those values."
+    ],
+    "gaps": [
+      "Grouped ordered connections and path source interaction are absent.",
+      "Automatic facet order by supplied field and signed facet summary labels need public controls; manual chip order is already a viable snapshot alternative, so these are separate conveniences rather than prerequisites for connecting occupations.",
+      "Path color currently comes from the first ordered composition row while endpoints use their own values; a built-in needs an explicit stable rule.",
+      "Raw Line's wide measure-column data shape is not the supplied long Occupation/Year shape."
+    ],
+    "change_ids": [
+      "REC-02"
+    ],
+    "analytical_parity": "REC-02 plus existing manual facet ordering completes the occupation comparison without new aggregation; a supplied facet-label readout can follow. Retain 134 occupation-year rows, 67 occupation pairs and supplied gender/color fields. Group change is a supplied max-reduced field that ignores filters, not a recomputed sum of currently visible lines.",
+    "presentation_parity": "A normal facet grid with connected observations preserves comparisons. Exact ten-panel dimensions/frame callouts are optional; export/layout not claimed identical.",
+    "catalog_action": "Add a connected built-in counterpart and move primary teaching path; keep authored composition for illustrating scales and labelled facets.",
+    "evidence": [
+      {
+        "path": "apps/demo/src/demos/dashboardSettings.ts",
+        "symbol": "middleClassJobsDashboard",
+        "lines": "4795-5062",
+        "kind": "observed",
+        "claim": "Group order/change ignore filters; numeric color Occupation paths, fixed y, point endpoints and frame notes."
+      },
+      {
+        "path": "apps/demo/public/datasets/middle-class-jobs.csv",
+        "symbol": "entire CSV",
+        "lines": "1-135",
+        "kind": "observed",
+        "claim": "134 rows, 67 occupations, 10 groups; shade value constant within every occupation pair."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Composition/resolveUnit.ts",
+        "symbol": "pathNodes/pointNodes/repeatSubsets",
+        "lines": "1638-1659;3348-3360;3693-3729",
+        "kind": "observed",
+        "claim": "Stable unfiltered repeat ordering, first-row path color, per-row point color."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+        "symbol": "ObservationLineChart",
+        "lines": "190-233",
+        "kind": "observed",
+        "claim": "Wide-series x sort and source-ID loss."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/ScatterPlot/scatterPlan.ts",
+        "symbol": "planScatter",
+        "lines": "280-434;619-669",
+        "kind": "observed",
+        "claim": "Existing numeric scale and value/categorical color infrastructure."
+      },
+      {
+        "path": "packages/explorEDA/src/components/colorScales/ColorScaleEditor.tsx",
+        "symbol": "NumericalScaleEditor",
+        "lines": "309-425;463-489",
+        "kind": "observed",
+        "claim": "Public diverging palette, bounds/midpoint and balanced sides."
+      },
+      {
+        "path": "packages/explorEDA/src/components/settings/FacetSettingsTab.tsx",
+        "symbol": "Visible facets",
+        "lines": "200-231",
+        "kind": "observed",
+        "claim": "Public manual facet order supports the snapshot ordering without a new field-sort setting."
+      }
+    ],
+    "confidence": "high",
+    "open_questions": [
+      "Does the initial counterpart need signed facet labels immediately, or can supplied Group change remain in a visible subtitle/table while the core connections ship?",
+      "If color varies within a series, should path color use first source row, an explicit summary, or segments? Scope the first release to a documented single color."
+    ],
+    "assessment_basis": "Category, parity and workflow decisions are inferences from observed baseline source and prepared data; change requests and catalogue actions are proposals, not implemented behavior.",
+    "alternative_change_ids": [
+      "REC-07"
+    ],
+    "shared_output_recommendation": "REC-24"
+  },
+  {
+    "id": "du-bois-income",
+    "category": "already-built-in",
+    "verdict": "Current 100% Bar, grouped by Class, summed by Share, and split by Category, covers the analytical task; historical texture does not justify requiring composition.",
+    "analytical_task": "Compare the division of expenditure across income classes using the supplied class-share records.",
+    "required_today": {
+      "answer": "no",
+      "reason": "The needed class totals, conditional shares, linked category/series filters, and exact aggregation traces are reachable through current public series Bar controls."
+    },
+    "should_remain_required": {
+      "answer": "no",
+      "reason": "Orientation, segment labels, boundary connectors, and historical styling are optional presentation enhancements; the core numerical comparison is already built in."
+    },
+    "teaching_value": {
+      "answer": "conditional",
+      "reason": "Keep for intentional historical artboard recreation and connectors; do not teach composition as a prerequisite for normalized categorical sums."
+    },
+    "nearest_builtin": [
+      "Bar: Class, grouped Sum of Share, split by Category, 100% layout",
+      "Table or linked source view for Average income"
+    ],
+    "supported": [
+      "Observed: public controls expose Sum, measure field, series split, and 100% display.",
+      "Observed: series planner preserves segment numerator, class denominator, shares, contributing rows, stable source series order, and class/category selection.",
+      "Observed: 33 supplied share records form seven classes and each class totals 100; the two highest classes have no Rent row.",
+      "Observed: companion Row charts count share records, which is a selection affordance rather than expenditure or family totals."
+    ],
+    "gaps": [
+      "Optional presentation: horizontal orientation, segment value/share labels, and adjacent-class cumulative-boundary connectors.",
+      "Optional presentation: category-side Average income must use the per-class value without multiplying it by the number of Share records.",
+      "Exact authored historical paper, lettering, and fixed-artboard output remain outside current Bar presentation."
+    ],
+    "change_ids": [
+      "REC-01",
+      "REC-11"
+    ],
+    "analytical_parity": {
+      "current": "Yes for expenditure shares, linked comparisons, and exact class-share source rows using current public settings.",
+      "qualification": "The data are 33 class-share records, not 150 individual household records; counterpart trace must preserve that grain."
+    },
+    "presentation_parity": {
+      "current": "Different vertical bar geometry, no historical texture or cumulative connectors.",
+      "after_proposal": "Optional horizontal geometry and labels/connectors improve resemblance; exact historical page remains an optional composition task."
+    },
+    "catalog_action": "Move primary teaching to a built-in 100% summed-share Bar; keep the authored composition as an optional historical recreation. Do not retire by deletion without user direction.",
+    "evidence": [
+      {
+        "path": "apps/demo/src/demos/dashboardSettings.ts",
+        "symbol": "duBoisIncomeDashboard",
+        "lines": "4287–4456",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "apps/demo/src/demos/dashboardSettings.ts",
+        "symbol": "row helper defaults",
+        "lines": "26–46",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/BarChart/BarChartSettingsPanel.tsx",
+        "symbol": "series split, 100%, aggregate controls",
+        "lines": "34–98;126–146;209–278",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/BarChart/seriesBarPlan.ts",
+        "symbol": "share denominators and source selection",
+        "lines": "115–139;230–286",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/BarChart/SeriesBarChart.tsx",
+        "symbol": "keyboard/pointer marks",
+        "lines": "270–349",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/BarChart/stackedBars.test.tsx",
+        "symbol": "source numerator, denominator and live filters",
+        "lines": "181–215",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Composition/resolveUnit.ts",
+        "symbol": "across stacks and connectors",
+        "lines": "2162–2316",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      }
+    ],
+    "confidence": {
+      "level": "high",
+      "basis": "Complete example definition, actual mark resolver, public built-in controls and implementation, and relevant source tests were read. No product tests or browser rendering ran."
+    },
+    "open_questions": [
+      "The seven-class current counterpart should be visually compared before optional connectors are funded; no new analytical transform is needed.",
+      "Exact historical print output is outside the analytical built-in claim."
+    ],
+    "assessment_basis": "Category, parity and workflow decisions are inferences from observed baseline source and prepared data; change requests and catalogue actions are proposals, not implemented behavior.",
+    "shared_output_recommendation": "REC-24"
+  },
+  {
+    "id": "tax-slope",
+    "category": "small-extension",
+    "verdict": "Provide a Slope comparison preset over grouped connections, with both-end labels and original Country/Year trace identity.",
+    "analytical_task": "Compare two tax-share readings per country and their direction of change in a labeled single graphic.",
+    "required_today": {
+      "answer": "yes",
+      "reason": "Current Scatter lacks connectors/endpoint labels and Line lacks long-form country groups; a calendar workaround also exceeds its 30-series cap for 34 countries."
+    },
+    "should_remain_required": {
+      "answer": "no",
+      "reason": "Two-period grouped connections and paired endpoint labels fit a bounded preset; no free arrangement is essential."
+    },
+    "teaching_value": {
+      "answer": "yes",
+      "reason": "Useful advanced comparison when its composition-specific behavior and current limits are explained; keeping the lesson does not require users to author the ordinary task in composition."
+    },
+    "nearest_builtin": "Connected Scatter numeric Year/Tax revenue, group Country, color supplied Direction; alternative grouped raw Line after REC-07.",
+    "supported": [
+      "Numeric Scatter axes, data colors, original-row traces, Notes, normal filtering and bounds.",
+      "Raw Line already supports straight/step/smooth lines on numeric x, but only wide measure-column series."
+    ],
+    "gaps": [
+      "No row-grouped connections in current Scatter/Line public settings.",
+      "Persistent both-end name/value labels need margin planning, simple vertical collision dodge and trace/keyboard association.",
+      "Endpoint-only tick convenience is absent as a specific mode.",
+      "Thirty-four countries exceed Calendar Line's thirty-series limit; pivoting/date conversion is not a complete current route."
+    ],
+    "change_ids": [
+      "REC-02"
+    ],
+    "analytical_parity": "REC-02 can preserve all 68 original readings and the supplied Direction and Change fields. Six precomputed change values differ from subtraction of rounded endpoints; do not silently recompute or claim exact equivalence. Missing endpoints must remain incomplete and traceable.",
+    "presentation_parity": "Both-end labels are useful in the single comparison and belong in the preset; exact side margins/title layout and composition export remain optional authored fidelity.",
+    "catalog_action": "Add Slope preset counterpart and move primary lesson; keep composition as advanced endpoint-label placement example.",
+    "evidence": [
+      {
+        "path": "apps/demo/src/demos/dashboardSettings.ts",
+        "symbol": "taxSlopeDashboard",
+        "lines": "5262-5409",
+        "kind": "observed",
+        "claim": "Country paths, Direction colors, both-end labels and companion Change histogram."
+      },
+      {
+        "path": "apps/demo/public/datasets/tax-slope.csv",
+        "symbol": "entire CSV",
+        "lines": "1-69",
+        "kind": "observed",
+        "claim": "34 countries/68 readings; six supplied changes differ from rounded endpoint subtraction."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Composition/resolveUnit.ts",
+        "symbol": "pathNodes/endLabelNodes",
+        "lines": "3348-3418;3437-3474",
+        "kind": "observed",
+        "claim": "First-row category color, both-end values, order-preserving label dodge."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/timeSeriesPlan.ts",
+        "symbol": "tooMany",
+        "lines": "169-174",
+        "kind": "observed",
+        "claim": "Calendar rejects more than 30 live series."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/definition.ts",
+        "symbol": "LineChartSettings",
+        "lines": "44-58",
+        "kind": "observed",
+        "claim": "Current seriesField is wide list of measure columns."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Composition/slope.test.ts",
+        "symbol": "slope labels/colors tests",
+        "lines": "106-182",
+        "kind": "observed",
+        "claim": "Expected endpoint label and color behavior; inspected not run."
+      }
+    ],
+    "confidence": "high",
+    "open_questions": [],
+    "assessment_basis": "Category, parity and workflow decisions are inferences from observed baseline source and prepared data; change requests and catalogue actions are proposals, not implemented behavior.",
+    "alternative_change_ids": [
+      "REC-07"
+    ],
+    "shared_output_recommendation": "REC-24"
+  },
+  {
+    "id": "titanic-waffle",
+    "category": "new-built-in-family",
+    "verdict": "Count and 100% Bar already cover survival analysis; a reusable Unit counts mode is justified only by the one-passenger-per-cell presentation and exact cell trace.",
+    "analytical_task": "Compare class size and survival counts/shares, optionally representing every passenger as one traceable visual unit.",
+    "required_today": {
+      "answer": "conditional",
+      "reason": "Class/Fate stacked counts and shares are already built in; showing all 1,309 individual passenger cells with one-row trace currently requires composition."
+    },
+    "should_remain_required": {
+      "answer": "no",
+      "reason": "A bounded unit-count display can provide this reusable record-unit contract without manual marks if the proof warrants the maintenance cost."
+    },
+    "teaching_value": {
+      "answer": "yes",
+      "reason": "The example usefully teaches count units, population size, cell provenance, live reflow, and the distinction from normalized 100-cell waffles."
+    },
+    "nearest_builtin": [
+      "Bar: Class split by Fate, Count, Stacked",
+      "Bar: Class split by Fate, Count, 100%"
+    ],
+    "supported": [
+      "Observed: existing series Bar preserves counts, conditional shares, denominators, exact passenger source lists, linked filtering, and keyboard trace.",
+      "Observed: supplied file has 1,309 rows: first/second/third class counts 323/277/709 and survived counts 200/119/181.",
+      "Observed: each:1 and normalize:false produce one exact row ID per cell; normal composition click selects Class repeat, not that passenger."
+    ],
+    "gaps": [
+      "Proposed: a cell plan and bounded layout must preserve one row per square, common area, class grouping, Fate order/colors, and live source identity.",
+      "Proposed: keyboard traversal and hit/trace access require renderer work; they are not implied by reusing an aggregate Bar setting.",
+      "Boundary: do not silently downsample, round to 100 cells, or change to multi-person cells when the chart is small."
+    ],
+    "change_ids": [
+      "REC-13"
+    ],
+    "analytical_parity": {
+      "current": "Yes for class size, survival counts/shares, linked filters and exact aggregate source provenance; no for individually visible passenger units.",
+      "after_proposal": "A proved cell display adds exact source-cell presentation and trace without pretending the baseline already has per-cell selection."
+    },
+    "presentation_parity": {
+      "current": "Stacked counts and 100% bars encode the figures with aggregates rather than passenger cells.",
+      "after_proposal": "A unit display can reproduce the useful grid semantics; authored page sizing and exported artboard remain separate."
+    },
+    "catalog_action": "Make stacked Count and 100% the primary built-in analytical counterparts now; retain composition as unit-display teaching and defer a built-in cell renderer pending the shared REC-13 proof.",
+    "evidence": [
+      {
+        "path": "apps/demo/src/demos/dashboardSettings.ts",
+        "symbol": "titanicWaffleDashboard",
+        "lines": "5411–5520",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Composition/resolveUnit.ts",
+        "symbol": "waffleNodes",
+        "lines": "2324–2418",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Composition/waffle.test.ts",
+        "symbol": "one-row cell sources and count semantics",
+        "lines": "76–138",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/BarChart/definition.ts",
+        "symbol": "series layout and filters",
+        "lines": "10–20;47–65",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/BarChart/seriesBarPlan.ts",
+        "symbol": "denominators, sources and selection",
+        "lines": "115–139;230–286",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/BarChart/SeriesBarChart.tsx",
+        "symbol": "mark rendering and keyboard trace",
+        "lines": "270–349",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      }
+    ],
+    "confidence": {
+      "level": "high",
+      "basis": "Complete example definition, actual mark resolver, public built-in controls and implementation, and relevant source tests were read. No product tests or browser rendering ran."
+    },
+    "open_questions": [
+      "The unit renderer is intentionally deferred until a comparison shows useful per-cell provenance beyond existing aggregate source lists.",
+      "Keyboard traversal and a visible-cell budget need user-facing proof at 1,309 rows."
+    ],
+    "assessment_basis": "Category, parity and workflow decisions are inferences from observed baseline source and prepared data; change requests and catalogue actions are proposals, not implemented behavior.",
+    "shared_output_recommendation": "REC-24"
+  },
+  {
+    "id": "unemployment-stream",
+    "category": "already-built-in",
+    "verdict": "Use current monthly stacked-area Line for the analytical comparison; retain wiggle as a deferred specialist presentation option.",
+    "analytical_task": "Compare each industry's unemployed magnitude and changes over months while retaining total magnitude and source contributors.",
+    "required_today": {
+      "answer": "no",
+      "reason": "Monthly Sum with Industry split and stacked-area display reproduces every supplied industry-month value and total. The zero baseline preserves the essential comparison."
+    },
+    "should_remain_required": {
+      "answer": "no",
+      "reason": "The useful task is current built-in functionality; exact wiggle/smooth treatment can remain an optional composition lesson or later mode."
+    },
+    "teaching_value": {
+      "answer": "yes",
+      "reason": "Useful advanced comparison when its composition-specific behavior and current limits are explained; keeping the lesson does not require users to author the ordinary task in composition."
+    },
+    "nearest_builtin": "Calendar Line: Month date, monthly interval, Sum Unemployed (thousands), Split Industry, Stacked area.",
+    "supported": [
+      "Public calendar sum, split series, stacked area and missing-period settings.",
+      "Exact per-period lower/upper bounds, period/series filters, contributor rows and stack-baseline trace.",
+      "The source grid is complete: 14 industries × 122 months, with unique keys and no blank amounts."
+    ],
+    "gaps": [
+      "Exact composition wiggle baseline, total-based stack order, smooth edges and internal band labels differ from current built-in presentation.",
+      "A future smooth stream mode must update area hit testing and trace offsets, not only appearance."
+    ],
+    "change_ids": [
+      "REC-01",
+      "REC-21"
+    ],
+    "analytical_parity": "Available today on the complete 1,708-row input: monthly Sum equals each original observation; stack totals add amounts in thousands, never unemployment rates. Built-in period/series traces offer finer source access than the source composition's whole-industry band trace.",
+    "presentation_parity": "Zero-baseline stacked area differs from the exact wiggle/smooth artboard, but preserves thickness and total. REC-21 is deferred and optional. Composition export remains distinct.",
+    "catalog_action": "Add current built-in counterpart and move the primary magnitude/time lesson; keep composition as an advanced stream-baseline example.",
+    "evidence": [
+      {
+        "path": "apps/demo/src/demos/dashboardSettings.ts",
+        "symbol": "unemploymentStreamDashboard",
+        "lines": "5522-5667",
+        "kind": "observed",
+        "claim": "Month/Industry summed stack with total order, wiggle baseline and smooth curves."
+      },
+      {
+        "path": "apps/demo/public/datasets/unemployment-industries.csv",
+        "symbol": "entire CSV",
+        "lines": "1-1709",
+        "kind": "observed",
+        "claim": "Complete 14×122 unique industry-month grid; all amounts present."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/TimeSeriesSettingsPanel.tsx",
+        "symbol": "TimeSeriesSettingsPanel",
+        "lines": "97-278",
+        "kind": "observed",
+        "claim": "Public stacked area/monthly sum/split/missing controls."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/timeSeriesPlan.ts",
+        "symbol": "planTimeSeries/timeAreaAt",
+        "lines": "180-308;464-479",
+        "kind": "observed",
+        "claim": "Contributor values, additive stack bounds, invalid/empty distinctions and area hit resolution."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/areaCharts.test.tsx",
+        "symbol": "stack trace integration",
+        "lines": "161-193",
+        "kind": "observed",
+        "claim": "Exact period/series selection and lower-series contributor inspection; inspected only."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Composition/resolveUnit.ts",
+        "symbol": "streamOffsets/stackAreaNodes",
+        "lines": "3010-3190",
+        "kind": "observed",
+        "claim": "Exact wiggle/smooth presentation requires a separate offset/helper contract."
+      }
+    ],
+    "confidence": "high",
+    "open_questions": [],
+    "assessment_basis": "Category, parity and workflow decisions are inferences from observed baseline source and prepared data; change requests and catalogue actions are proposals, not implemented behavior.",
+    "shared_output_recommendation": "REC-24"
+  },
+  {
+    "id": "population-pyramid",
+    "category": "small-extension",
+    "verdict": "Extend series Bar with horizontal geometry, a constrained mirror-one-series option, stable age order, and symmetric shared numeric limits.",
+    "analytical_task": "Compare age/sex population profiles for 1900 and 2000 on a shared magnitude scale while preserving local year scopes and true source sums.",
+    "required_today": {
+      "answer": "conditional",
+      "reason": "Current grouped sums show all underlying values; the mirrored profiles and their direct shape comparison currently require composition."
+    },
+    "should_remain_required": {
+      "answer": "no",
+      "reason": "The transformation is a bounded directional encoding over existing nonnegative grouped sums and should be an advanced Bar mode."
+    },
+    "teaching_value": {
+      "answer": "yes",
+      "reason": "Keep the composition to teach independent Year windows and shared numeric limits, while moving ordinary mirrored profiles to Bar."
+    },
+    "nearest_builtin": [
+      "Bar: Age group, grouped Sum of People, Sex split",
+      "Row: grouped Sum of People (partial horizontal comparison only)"
+    ],
+    "supported": [
+      "Observed: series Bar already has grouped sums, positive/negative geometry, exact contributor records, facet-aware category/series selection, and numeric bounds.",
+      "Observed: Row supplies horizontal sums but no series split; its ranking and Other grouping cannot be assumed to preserve ordered age bands.",
+      "Observed: original source People remain positive; composition mirrors the plotted Male aggregate only and retains source IDs.",
+      "Observed: Filters → Chart rows already exposes localFilters; useGetAllIds restricts both chart reference and live populations without filtering other charts.",
+      "Observed: default companions count preaggregated year-age-sex records, even when titled People; a real numerical counterpart must sum People."
+    ],
+    "gaps": [
+      "Missing behavior: horizontal category/series geometry with axis capability and pointer projection updates.",
+      "Missing behavior: a two-series nonnegative count/sum mirror contract with signed plotted direction and unsigned magnitude labels/trace.",
+      "Missing behavior: stable order by numeric Age or explicit age-band sequence, retaining empty slots under filters.",
+      "Preservation requirement: reuse the existing public Chart rows local Year scopes and numeric limits; the rotated/mirrored mode must retain symmetric ±12 million bounds without creating global Year filters."
+    ],
+    "change_ids": [
+      "REC-01",
+      "REC-11"
+    ],
+    "analytical_parity": {
+      "current": "Current grouped sums preserve numbers and source rows; the mirrored shape comparison is incomplete.",
+      "after_proposal": "Complete if age order, shared magnitudes, local scope, missing buckets, source selection, keyboard trace, and save/text round trips are preserved."
+    },
+    "presentation_parity": {
+      "current": "Vertical grouped bars replace the two mirrored profiles.",
+      "after_proposal": "Mirrored Bar can reproduce meaningful profile geometry in linked scoped views; exact fixed artboard and page labels remain separate."
+    },
+    "catalog_action": "Add a built-in pyramid counterpart after horizontal series bars; keep composition as advanced local-window teaching and correct count-based companion labels or measures.",
+    "evidence": [
+      {
+        "path": "apps/demo/src/demos/dashboardSettings.ts",
+        "symbol": "pyramidUnit and populationPyramidDashboard",
+        "lines": "5669–5822",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "apps/demo/src/demos/dashboardSettings.ts",
+        "symbol": "row helper",
+        "lines": "26–46",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Composition/resolveUnit.ts",
+        "symbol": "barValues and barNodes",
+        "lines": "2440–2553",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Composition/pyramid.test.ts",
+        "symbol": "mirrored magnitude and local windows",
+        "lines": "83–153",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/BarChart/seriesBarPlan.ts",
+        "symbol": "signed geometry, bands, selection and trace",
+        "lines": "125–319",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/RowChart/rowChartPlan.ts",
+        "symbol": "ranking and Other aggregation",
+        "lines": "35–46;75–117",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/settings/FiltersSettingsTab.tsx",
+        "symbol": "Chart rows controls",
+        "lines": "201–258",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/useGetLiveData.tsx",
+        "symbol": "useGetAllIds local population",
+        "lines": "60–79",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      }
+    ],
+    "confidence": {
+      "level": "high",
+      "basis": "Complete example definition, actual mark resolver, public built-in controls and implementation, and relevant source tests were read. No product tests or browser rendering ran."
+    },
+    "open_questions": [
+      "The mirrored plan must retain existing chart-local Year population in trace without promoting it to a linked global filter.",
+      "Missing sex-age buckets must remain distinguishable from recorded zero People."
+    ],
+    "assessment_basis": "Category, parity and workflow decisions are inferences from observed baseline source and prepared data; change requests and catalogue actions are proposals, not implemented behavior.",
+    "shared_output_recommendation": "REC-24"
+  },
+  {
+    "id": "gdp-bump",
+    "category": "new-built-in-family",
+    "verdict": "Treat dynamic ranking as a separately costed ranked-Line mode with competitor scope and tie policy, not a small style setting.",
+    "analytical_task": "Follow each selected economy's rank at every year among the eligible source economy population, recomputing under filters.",
+    "required_today": {
+      "answer": "yes",
+      "reason": "Existing built-ins have no dynamic per-x rank transformation. Static prepared ranks fail the source's live eligible-population semantics."
+    },
+    "should_remain_required": {
+      "answer": "no",
+      "reason": "A reusable named ranked mode could support ordinary authoring once source identity, tie/scope and trace contracts are implemented; not necessarily a new top-level chart type."
+    },
+    "teaching_value": {
+      "answer": "yes",
+      "reason": "Useful advanced comparison when its composition-specific behavior and current limits are explained; keeping the lesson does not require users to author the ordinary task in composition."
+    },
+    "nearest_builtin": "Grouped observation Line plus a new rank preparation stage; a sorted table is a partial one-year alternative.",
+    "supported": [
+      "Current Line supplies numeric/calendar paths, axes, per-series styling and limited summary trace infrastructure.",
+      "Composition already has an isolated rankRows numerical helper that can inform tests/helper reuse without compiling built-ins into composition."
+    ],
+    "gaps": [
+      "Per-year dynamic ranking, explicit filtered/source competitor population and tie policy.",
+      "Unique series/x validation or an explicit duplicate aggregation rule.",
+      "Reversed rank coordinates and rank readouts alongside raw GDP, with competitor-row trace context.",
+      "Source-aware grouped observations/end labels are prerequisites; a precomputed column is not dynamic parity."
+    ],
+    "change_ids": [
+      "REC-07",
+      "REC-17"
+    ],
+    "analytical_parity": "Unavailable dynamically today. Preserve 740 original rows, 17 eligible countries and 44 years; ranking is within those source economies, not all world economies. New traces need own row plus all per-year eligible comparator rows, invalid omissions and policy.",
+    "presentation_parity": "Straight ranked paths and end labels are sufficient first parity; smooth curves/color/typography can follow. New mode may live within Line but has a distinct analytical contract. Exact composition export is separate.",
+    "catalog_action": "Keep as advanced composition; add a minimal ranked-Line proof/counterpart only after grouped-source preparation; move primary path when rank scope is complete.",
+    "evidence": [
+      {
+        "path": "apps/demo/src/demos/dashboardSettings.ts",
+        "symbol": "gdpBumpDashboard",
+        "lines": "5824-5957",
+        "kind": "observed",
+        "claim": "Live-ranked country GDP paths, Region colors, latest rank labels and source-population note."
+      },
+      {
+        "path": "apps/demo/public/datasets/gdp-ranks.csv",
+        "symbol": "entire CSV",
+        "lines": "1-741",
+        "kind": "observed",
+        "claim": "17 countries/44 years/740 unique Country-Year pairs."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Composition/resolveUnit.ts",
+        "symbol": "rank computation/rankRows/rank scale",
+        "lines": "508-527;625-630;2888-2944",
+        "kind": "observed",
+        "claim": "Live rows rank within x, sequential tie ordering, reversed scale and transformed y lookup."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Composition/bump.test.ts",
+        "symbol": "ranked mark tests",
+        "lines": "110-168",
+        "kind": "observed",
+        "claim": "Dynamic reranking, omitted values, rank labels and points; inspected only."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/definition.ts",
+        "symbol": "LineChartSettings/TimeSeriesSettings",
+        "lines": "16-67",
+        "kind": "observed",
+        "claim": "No current rank transformation or rank mode."
+      }
+    ],
+    "confidence": "high",
+    "open_questions": [
+      "Choose sequential, competition or dense ranking and a stable secondary tie key; baseline sequential ties use input row order.",
+      "What should a duplicate Country-Year mean? Reject in the first proof rather than silently ranking two rows as separate countries."
+    ],
+    "assessment_basis": "Category, parity and workflow decisions are inferences from observed baseline source and prepared data; change requests and catalogue actions are proposals, not implemented behavior.",
+    "shared_output_recommendation": "REC-24"
+  },
+  {
+    "id": "scotus-timeline",
+    "category": "new-built-in-family",
+    "verdict": "A narrow interval-lane family should expose Start, End and Lane with exact record trace; correct the current open-end-to-domain-edge claim separately.",
+    "analytical_task": "Show chronological seat occupancy, succession, gaps and open terms with one interval per justice record.",
+    "required_today": {
+      "answer": "yes",
+      "reason": "Current built-in duration summaries, Line and Scatter do not provide a record interval with start/end, lane identity and explicit open-end semantics."
+    },
+    "should_remain_required": {
+      "answer": "no",
+      "reason": "A reusable supplied-lane interval contract is bounded; automatic Gantt packing, dependencies and resource scheduling can remain outside it."
+    },
+    "teaching_value": {
+      "answer": "yes",
+      "reason": "Retain this composition for span/window teaching, but correct its claim that blank End means today."
+    },
+    "nearest_builtin": [
+      "Bar/Row/Histogram of Years served (supporting summary, not parity)",
+      "Scatter of Start by Seat (supporting start-date view, not parity)"
+    ],
+    "supported": [
+      "Observed: numeric date scales, ordinary notes, categorical colors, linked filters, and source-trace patterns exist in the library.",
+      "Observed: composition expands x extent from both Start and End and emits one exact-row rectangle per valid start.",
+      "Observed: nine End cells are blank; source maximum Start/End is 2022-06-30. nice:false with no fixed maximum sends open spans to this domain edge, not the clock."
+    ],
+    "gaps": [
+      "Missing behavior: endpoint preparation with valid, missing, reversed and open interval states and preserved original source values.",
+      "Missing behavior: clipped interval rectangles in supplied lanes with label fitting, endpoint hit/trace access, keyboard navigation and stable lane order.",
+      "Missing behavior: an explicit saved as-of/open-end reference; true current-date behavior must be separately named and intentionally time-dependent.",
+      "Boundary: duplicate endpoint records for Line and hand-authored annotations are not ordinary settings parity."
+    ],
+    "change_ids": [
+      "REC-01",
+      "REC-14"
+    ],
+    "analytical_parity": {
+      "current": "No: duration and starting-point views lose occupancy intervals, gaps or succession.",
+      "after_proposal": "Complete for supplied lanes with explicit endpoint policy; validation must preserve null End as open and not fabricate a departure date."
+    },
+    "presentation_parity": {
+      "current": "Composition alone supplies the lane spans; even its title overstates current-date behavior.",
+      "after_proposal": "The bounded interval display covers meaningful lane geometry and labels. Authored page/export context remains separately assessed."
+    },
+    "catalog_action": "Correct the today copy/open-end explanation now as research integration; add a supplied-lane interval counterpart if family proof passes; retain composition as optional span teaching.",
+    "evidence": [
+      {
+        "path": "apps/demo/src/demos/dashboardSettings.ts",
+        "symbol": "scotusTimelineDashboard",
+        "lines": "5959–6092",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Composition/resolveUnit.ts",
+        "symbol": "domain fields and spanNodes",
+        "lines": "574–578;619–665;3482–3562",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Composition/spans.test.ts",
+        "symbol": "domain endpoints and open spans",
+        "lines": "103–157",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Composition/compositionTypes.ts",
+        "symbol": "SpanMark",
+        "lines": "357–378",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      }
+    ],
+    "confidence": {
+      "level": "high",
+      "basis": "Complete example definition, actual mark resolver, public built-in controls and implementation, and relevant source tests were read. No product tests or browser rendering ran."
+    },
+    "open_questions": [
+      "Product should choose explicit fixed as-of semantics before adding a true-current-date option.",
+      "A first family should report overlapping records in supplied lanes; automatic packing is deferred."
+    ],
+    "assessment_basis": "Category, parity and workflow decisions are inferences from observed baseline source and prepared data; change requests and catalogue actions are proposals, not implemented behavior.",
+    "shared_output_recommendation": "REC-24"
+  },
+  {
+    "id": "stocks-horizon",
+    "category": "new-built-in-family",
+    "verdict": "Defer a specialist Horizon mode until a simpler relative-series Line proves insufficient and baseline/band semantics are explicit.",
+    "analytical_task": "Read within-company growth/loss trajectories in very compact rows using signed folded magnitude bands and a declared reference value.",
+    "required_today": {
+      "answer": "yes",
+      "reason": "The complete compact folded-series task needs baseline-relative transformation and sign/band layout not present in ordinary Line/area. A simple growth Line is a useful but different lower-density alternative."
+    },
+    "should_remain_required": {
+      "answer": "no",
+      "reason": "The semantics form a reusable specialist mode; it can remain deferred while its authored example teaches the advanced technique."
+    },
+    "teaching_value": {
+      "answer": "yes",
+      "reason": "Useful advanced comparison when its composition-specific behavior and current limits are explained; keeping the lesson does not require users to author the ordinary task in composition."
+    },
+    "nearest_builtin": "Relative/indexed grouped Line as the smaller first capability; specialist Horizon display as a later mode/family.",
+    "supported": [
+      "Line can show numeric/calendar trajectories and ordinary areas with source summaries.",
+      "Existing facets can repeat companies, but do not implement baseline growth or folded negative bands.",
+      "The composition's pure horizonValues/horizonNodes separate numerical transformation from band layout and provide useful reference cases."
+    ],
+    "gaps": [
+      "Explicit baseline date/value and policy for external filters, delayed starts and zero/invalid baselines.",
+      "Relative transformation with raw and baseline source rows retained; current composition silently falls back to absolute difference at zero.",
+      "Positive/negative band folding, reconstruction trace, shared/per-series magnitude scale and band-value key.",
+      "Keyboard trace/selection of original points through folded areas; no generic area checkbox supplies this contract."
+    ],
+    "change_ids": [
+      "REC-01",
+      "REC-07",
+      "REC-18"
+    ],
+    "analytical_parity": "Current simple Line lacks dynamic rebasing and the constrained-height folded display. Preserve 560 source prices; Google starts August 2004, not January 2000. Source composition rebases from the first live valid row and uses per-company live maximum magnitude, so colors are not equal percent gains across stocks.",
+    "presentation_parity": "Exact folded three-band rows require specialist drawing and legend. Ordinary percent-change Line is preferable when readable height is available. Exact artboard/export remains composition-specific pending explicit proof.",
+    "catalog_action": "Keep advanced composition, correct unconditional since-2000 wording, add a simple relative-Line comparison when available, defer Horizon mode pending demand.",
+    "evidence": [
+      {
+        "path": "apps/demo/src/demos/dashboardSettings.ts",
+        "symbol": "stocksHorizonDashboard",
+        "lines": "6094-6196",
+        "kind": "observed",
+        "claim": "First baseline, relative 3 bands, mirrored losses, instance domains and delayed-Google note."
+      },
+      {
+        "path": "apps/demo/public/datasets/tech-stocks.csv",
+        "symbol": "entire CSV",
+        "lines": "1-561",
+        "kind": "observed",
+        "claim": "560 rows, positive prices; four January-2000 starts and Google August-2004 start."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Composition/resolveUnit.ts",
+        "symbol": "horizonValues/horizonNodes",
+        "lines": "2583-2690",
+        "kind": "observed",
+        "claim": "First live baseline, zero fallback, peak, folded geometry and series-level band trace IDs."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Composition/horizon.test.ts",
+        "symbol": "horizon tests",
+        "lines": "90-132",
+        "kind": "observed",
+        "claim": "Folded levels, per-instance maximum and mean/zero baselines; inspected only."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/definition.ts",
+        "symbol": "TimeSeriesSettings",
+        "lines": "16-31",
+        "kind": "observed",
+        "claim": "Current area modes have no relative baseline or folded-band options."
+      }
+    ],
+    "confidence": "high",
+    "open_questions": [
+      "Choose stable source baseline versus first visible row; the current source changes its meaning under date filters.",
+      "Require explicit units/undefined handling at zero baseline and band keys for independent magnitudes before ordinary users can rely on this mode."
+    ],
+    "assessment_basis": "Category, parity and workflow decisions are inferences from observed baseline source and prepared data; change requests and catalogue actions are proposals, not implemented behavior.",
+    "shared_output_recommendation": "REC-24"
+  },
+  {
+    "id": "co2-swarm",
+    "category": "small-extension",
+    "verdict": "Use the existing categorical Scatter for the analysis and keyed notes; add bounded Swarm placement after numeric projection and bubble sizing.",
+    "analytical_task": "Compare economy-level CO2 per person across regions with population area and income color, while retaining source identity and selected record labels.",
+    "required_today": {
+      "answer": "conditional",
+      "reason": "Current log-X × categorical-Y bubbles plus existing keyed record notes cover the analysis. The authored variable-radius collision layout still requires composition."
+    },
+    "should_remain_required": {
+      "answer": "no",
+      "reason": "A categorical-axis placement option reuses current Scatter fields, colors, radii, source selection, notes and accessibility."
+    },
+    "teaching_value": {
+      "answer": "yes",
+      "reason": "Keep collision placement as an advanced example, with its crowded-layout limit disclosed and baseline log-zero clamping corrected."
+    },
+    "nearest_builtin": [
+      "Scatter: X=CO2 per person, Y=Region, Size by=Population, Color=Income group, log X, keyed record notes"
+    ],
+    "supported": [
+      "Observed: scatterAxisKind selects category bands; scatterPosition applies deterministic source-ID jitter.",
+      "Observed: bubble radius uses the all-row size maximum and point plans preserve exact source IDs.",
+      "Observed: record callouts resolve through ScatterPlot plotted positions and therefore work on categorical axes; no duplicate Notes system is needed.",
+      "Observed: current Scatter excludes nonpositive log coordinates with reason metadata; composition instead pins the two zero CO2 rows to its positive log floor."
+    ],
+    "gaps": [
+      "Missing behavior: variable-radius collision packing constrained to a categorical lane, preserving the numerical coordinate.",
+      "Missing behavior: one displaced point plan must feed drawing, hit testing, source trace and record-note anchors consistently.",
+      "Missing behavior: declare stable population packing versus live reflow, and an explicit crowded-layout outcome; current helper clamps and may overlap.",
+      "Optional polish: batch labels are convenience because the eight selected records can already use keyed notes; a minimum visible radius would require truthful size legend/trace semantics."
+    ],
+    "change_ids": [
+      "REC-01",
+      "REC-15"
+    ],
+    "analytical_parity": {
+      "current": "Yes for the log categorical bubble analysis, exact source selection and eight keyed notes; partial if collision separation is essential.",
+      "after_proposal": "Complete bounded placement if numerical coordinates remain exact and crowded cases are honest.",
+      "intentional_correction": "Do not preserve composition log clamping. Exclude and report the two zero values on log X; linear X can display them."
+    },
+    "presentation_parity": {
+      "current": "Jitter can overlap and does not match the authored swarm or 2.5-pixel minimum bubble radius.",
+      "after_proposal": "Swarm mode completes useful layout; exact radius floor, artboard spacing and output remain separate optional presentation decisions."
+    },
+    "catalog_action": "Move primary analytical teaching to existing Scatter now; add Swarm under point placement after proof and keep composition as optional layout teaching.",
+    "evidence": [
+      {
+        "path": "apps/demo/src/demos/dashboardSettings.ts",
+        "symbol": "co2SwarmDashboard",
+        "lines": "6198–6334",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/ScatterPlot/scatterAxis.ts",
+        "symbol": "scatterAxisKind, axis planning, scatterPosition",
+        "lines": "105–181;193–214",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/ScatterPlot/planScatterPoints.ts",
+        "symbol": "source and bubble radius plan",
+        "lines": "52–99",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/ScatterPlot/ScatterPlot.tsx",
+        "symbol": "annotationFrame plotted callback",
+        "lines": "112–137",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/lib/annotations/resolve.ts",
+        "symbol": "record callout resolution",
+        "lines": "516–544",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Composition/swarm.ts",
+        "symbol": "swarmOffsets",
+        "lines": "1–38",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Composition/resolveUnit.ts",
+        "symbol": "numericPixel and pointNodes",
+        "lines": "3202–3215;3629–3657;3770–3793",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/ScatterPlot/scatterPlan.test.ts",
+        "symbol": "categorical jitter and nonpositive log exclusion",
+        "lines": "79–151;261–285",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/ScatterPlot/bubbles.test.tsx",
+        "symbol": "keyboard source selection and trace",
+        "lines": "100–213",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      }
+    ],
+    "confidence": {
+      "level": "high",
+      "basis": "Complete example definition, actual mark resolver, public built-in controls and implementation, and relevant source tests were read. No product tests or browser rendering ran."
+    },
+    "open_questions": [
+      "Crowded-lane policy must be tested at small saved chart sizes; zero-overlap cannot be promised from the existing clamped helper.",
+      "Stable all-row packing versus live filtered repacking is a product choice that should be explicit."
+    ],
+    "assessment_basis": "Category, parity and workflow decisions are inferences from observed baseline source and prepared data; change requests and catalogue actions are proposals, not implemented behavior.",
+    "shared_output_recommendation": "REC-24"
+  },
+  {
+    "id": "titanic-mosaic",
+    "category": "small-extension",
+    "verdict": "Add a named Mosaic width mode to 100% series Bar, with variable category geometry and both conditional and marginal denominators.",
+    "analytical_task": "Show class size as marginal width and fate within class as conditional height, retaining joint-count area meaning in one graphic.",
+    "required_today": {
+      "answer": "conditional",
+      "reason": "A count Bar plus 100% Bar already provides all numbers and source traces; the single marginal-width × conditional-height encoding currently requires composition."
+    },
+    "should_remain_required": {
+      "answer": "no",
+      "reason": "A variable-width percent-bar mode is a bounded extension over existing aggregate data and selections; it does not need arbitrary weighted repeats."
+    },
+    "teaching_value": {
+      "answer": "yes",
+      "reason": "Keep composition as weighted-repeat teaching, with the distinction between data-area proportions and decorative gaps/insets stated."
+    },
+    "nearest_builtin": [
+      "Bar: Class split by Fate, Count, 100%",
+      "Companion Bar: Class Count"
+    ],
+    "supported": [
+      "Observed: current percent Bar computes segment count/share, class denominator, cumulative stack bounds and contributor records.",
+      "Observed: category/series selection and keyboard trace already exist.",
+      "Observed: composition count weights follow filters, so class widths deliberately reweight with the live population.",
+      "Observed: six-pixel gaps and two-pixel insets mean exact painted area differs from the ideal data-layout area."
+    ],
+    "gaps": [
+      "Missing behavior: variable-width category bounds and explicit tick centers in place of equal scaleBand geometry.",
+      "Missing behavior: compute class/grand-total marginal width from the same live/facet population as segment/class height, with explicit zero and empty cases.",
+      "Missing behavior: trace must expose both denominators and their contributor IDs, and hit/keyboard paths must use the new bounds.",
+      "Boundary: first mode accepts nonnegative count/sum with one categorical split; arbitrary nested weighted mosaics remain outside it."
+    ],
+    "change_ids": [
+      "REC-16"
+    ],
+    "analytical_parity": {
+      "current": "Underlying counts/shares and exact sources are available in two built-in views; the single joint-area encoding is incomplete.",
+      "after_proposal": "Complete for a nonnegative one-split mosaic if both denominator populations agree and filtering reweights widths deliberately."
+    },
+    "presentation_parity": {
+      "current": "Equal-width percent bars replace marginal widths.",
+      "after_proposal": "Named width mode completes meaningful mosaic geometry; exact artboard labels/export are separately assessed. With decorative gaps, do not claim exact painted-pixel area."
+    },
+    "catalog_action": "Add a named Mosaic width mode and counterpart; retain composition as an optional weighted-repeat lesson.",
+    "evidence": [
+      {
+        "path": "apps/demo/src/demos/dashboardSettings.ts",
+        "symbol": "titanicMosaicDashboard",
+        "lines": "6336–6448",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Composition/resolveUnit.ts",
+        "symbol": "weighted repeat frames and stacks",
+        "lines": "769–819;2162–2240",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Composition/weights.test.ts",
+        "symbol": "weighted widths and live filters",
+        "lines": "81–119",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/BarChart/seriesBarPlan.ts",
+        "symbol": "share totals, equal bands, selection and trace",
+        "lines": "115–139;205–216;230–319",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/BarChart/SeriesBarChart.tsx",
+        "symbol": "bar marks and keyboard/source interactions",
+        "lines": "270–349",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/BarChart/stackedBars.test.tsx",
+        "symbol": "shares and exact denominator rows",
+        "lines": "81–153;181–215",
+        "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+        "status": "observed-source",
+        "kind": "observed-source"
+      }
+    ],
+    "confidence": {
+      "level": "high",
+      "basis": "Complete example definition, actual mark resolver, public built-in controls and implementation, and relevant source tests were read. No product tests or browser rendering ran."
+    },
+    "open_questions": [
+      "Decision gate: does the single joint-area graphic improve the real task enough over paired count/100% views to justify nonuniform category-axis maintenance?",
+      "Specify whether visual gaps subtract from data rectangles or only overlay them; only zero-gap proof should assert exact area equality."
+    ],
+    "assessment_basis": "Category, parity and workflow decisions are inferences from observed baseline source and prepared data; change requests and catalogue actions are proposals, not implemented behavior.",
+    "shared_output_recommendation": "REC-24"
+  }
+]
