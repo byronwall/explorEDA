@@ -1,0 +1,442 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "Find a paid use for explorEDA",
+    "slug": "monetization-opportunities",
+    "scale": "capability",
+    "current_phase": "intent",
+    "last_updated": "2026-10-10",
+    "summary": "Preserve the complete research and compare ten recurring SaaS opportunities, with emphasis on Shopify and DevOps.",
+    "status": "planned",
+    "next_action": "Compare Actions cost regressions with Shopify promotion leakage; select a buyer and repeated task before shaping one product."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-10"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "not-created",
+      "updated_at": null
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "not-created",
+      "updated_at": null
+    }
+  },
+  "sources": [
+    {
+      "id": "user-research",
+      "type": "direct-user-input",
+      "location": "sources/user-requests.md",
+      "anchor": "Original research request",
+      "authority": "Explicit user intent; Shopify and DevOps are examples, not selections."
+    },
+    {
+      "id": "user-intake",
+      "type": "direct-user-input",
+      "location": "sources/user-requests.md",
+      "anchor": "Research intake request",
+      "authority": "Explicit instruction to preserve materials and create concise helper documents."
+    },
+    {
+      "id": "generated-prompt",
+      "type": "agent-authored-prompt",
+      "location": "sources/chatgpt-pro-research-prompt.md",
+      "anchor": "Decision context; ranking weights; exact deliverables",
+      "authority": "Submitted research framing. Assumptions are not independent user decisions."
+    },
+    {
+      "id": "pro-report",
+      "type": "generated-research",
+      "location": "sources/exploreda-monetization-research/exploreda-monetization-opportunities.md",
+      "anchor": "Sections 1–11; opportunity-o001 through opportunity-o075",
+      "authority": "Research evidence and proposals; no adopted product direction or verified customer demand."
+    },
+    {
+      "id": "pro-catalog",
+      "type": "generated-research",
+      "location": "sources/exploreda-monetization-research/opportunity-catalog.csv",
+      "anchor": "75 rows and 26 columns",
+      "authority": "Structured index of the report, including uncertain and rejected candidates."
+    },
+    {
+      "id": "pro-completion",
+      "type": "browser-capture",
+      "location": "sources/pro-completion-note.txt",
+      "anchor": "Visible final response from Research deliverables complete",
+      "authority": "Pro self-report; local intake checks are recorded separately."
+    },
+    {
+      "id": "intake-checks",
+      "type": "local-verification",
+      "location": "sources/manifest.json",
+      "anchor": "verified; files",
+      "authority": "Observed archive integrity, byte preservation, counts, score arithmetic, and source-reference structure."
+    },
+    {
+      "id": "user-saas",
+      "type": "direct-user-input",
+      "location": "sources/2026-10-10-recurring-saas-request.md",
+      "anchor": "Recurring SaaS preference",
+      "authority": "Explicit preference for recurring SaaS over audits; ten strongest candidates, especially Shopify and DevOps. No individual product selected."
+    },
+    {
+      "id": "saas-comparison",
+      "type": "agent-research-synthesis",
+      "location": "recurring-saas-shortlist.md",
+      "anchor": "Ten recurring SaaS directions; numbered candidates and inline primary-source links",
+      "authority": "Provisional ranking under the latest user preference. Limited official API and vendor checks on 2026-10-10; not customer demand or a complete competitor review."
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "paid-use",
+        "type": "goal",
+        "statement": "Find practical paid applications of explorEDA with a specific customer and useful surrounding product.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "eventual",
+        "sources": [
+          "user-research"
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "vertical-hypothesis",
+        "type": "implementation hypothesis",
+        "statement": "A vertical product may monetize better than a general-purpose component.",
+        "commitment": "tentative",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "sources": [
+          "user-research"
+        ],
+        "confidence": "medium",
+        "notes": "The user suspects this; it is not an established business conclusion."
+      },
+      {
+        "id": "four-questions",
+        "type": "constraint",
+        "statement": "Evaluate data sources, integration, supporting application, and required component changes for each candidate.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "sources": [
+          "user-research"
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "broad-options",
+        "type": "preference",
+        "statement": "Prioritize Shopify and DevOps in the current comparison while retaining the broader catalogue.",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "sources": [
+          "user-research",
+          "user-saas"
+        ],
+        "confidence": "high",
+        "notes": "The later preference promotes these areas from examples to comparison priorities; neither is the selected market."
+      },
+      {
+        "id": "preserve-sources",
+        "type": "constraint",
+        "statement": "Keep the source files in the new initiative without losing research detail.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "sources": [
+          "user-intake"
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "short-reading",
+        "type": "desired experience",
+        "statement": "Use a concise summary and likely next steps to digest the report over several sessions.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "sources": [
+          "user-intake"
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "service-ranking",
+        "type": "current research reality",
+        "statement": "Pro favors paid exception reviews under speed-to-first-sale assumptions.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "proof",
+        "sources": [
+          "generated-prompt",
+          "pro-report"
+        ],
+        "confidence": "medium",
+        "notes": "Retained as a fact about the original research. Superseded as a recommendation order by the explicit recurring SaaS preference."
+      },
+      {
+        "id": "no-selected-product",
+        "type": "constraint",
+        "statement": "Keep research recommendations separate from an approved product build.",
+        "commitment": "derived",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "sources": [
+          "user-intake",
+          "user-research",
+          "user-saas"
+        ],
+        "confidence": "medium",
+        "notes": "Recurring SaaS is preferred. No specific product, price, outreach, or implementation has been selected."
+      },
+      {
+        "id": "reuse-workspace",
+        "type": "derived implication",
+        "statement": "Assess one candidate against existing component features before proposing new library work.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "pro-report"
+        ],
+        "confidence": "medium",
+        "notes": "Recheck at the implementation revision; Pro reviewed newer main than this checkout."
+      },
+      {
+        "id": "recurring-saas",
+        "type": "preference",
+        "statement": "Prefer recurring SaaS to selling audits; prioritize ongoing software value when selecting opportunities.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": [
+          "user-saas"
+        ],
+        "confidence": "high",
+        "notes": "A preference, not a permanent prohibition on services. A sample-data proof does not establish an audit business."
+      },
+      {
+        "id": "ten-saas-options",
+        "type": "desired experience",
+        "statement": "Compare ten strong recurring ideas, especially Shopify and DevOps, with concrete surrounding app requirements.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "sources": [
+          "user-saas"
+        ],
+        "confidence": "high",
+        "notes": "Four Shopify ideas, one related commerce idea, and five developer/operations ideas. No ten-product implementation programme."
+      }
+    ],
+    "themes": [
+      "Paid customer outcomes",
+      "Practical source access",
+      "Component versus host work",
+      "Preserved research with short reading aids",
+      "Recurring software value before product selection"
+    ],
+    "conflicts": [
+      {
+        "topic": "Service-first ranking versus recurring-product interest",
+        "resolution": "Resolved for this comparison: Byron explicitly prefers recurring SaaS. Re-rank for repeated value and automated delivery; retain original service proposals unchanged.",
+        "sources": [
+          "user-research",
+          "generated-prompt",
+          "pro-report",
+          "user-saas"
+        ]
+      },
+      {
+        "topic": "Different repository revisions",
+        "resolution": "Preserve Pro findings at its stated c66d8bf snapshot. Recheck selected gaps against current code during shaping.",
+        "sources": [
+          "pro-report",
+          "intake-checks"
+        ]
+      }
+    ],
+    "human_questions": [
+      {
+        "question": "For the first experiment, is a recurring software product, a paid service, or a service-to-product path most appealing?",
+        "status": "resolved",
+        "blocking": "None. Byron explicitly prefers recurring SaaS; see user-saas."
+      },
+      {
+        "question": "Which customer group is interesting enough to serve and realistically reachable?",
+        "status": "open",
+        "blocking": "Product selection and later shape; the provisional ten-idea comparison can proceed."
+      }
+    ],
+    "shape_readiness": {
+      "status": "not-ready-for-product-shape",
+      "reason": "Recurring SaaS and priority areas are clear. A specific buyer, paid task, first-release scope, and appetite remain unselected."
+    }
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "not-started",
+    "appetite": null,
+    "problem": null,
+    "recommended_shape": null,
+    "success_moves": [],
+    "first_proof": null,
+    "rabbit_holes": [
+      "Converting every idea into a separate initiative",
+      "Treating Pro prices as validated",
+      "Expanding the component before testing one workflow",
+      "Reintroducing a service-first offer despite the stated recurring SaaS preference"
+    ],
+    "open_decisions": []
+  },
+  "implementation": {
+    "status": "not-started",
+    "repository_snapshot": {
+      "root": "/Users/byronwall/.codex/worktrees/05b2/explorEDA",
+      "revision": "29b402349f7ee1214cb5f71dc17bc8c5cac84458",
+      "worktree_status": "Branch codex/monetization-saas-research starts from current main for the documentation PR. Original intake and component-review revisions remain in sources/manifest.json.",
+      "subsystems": [
+        "Existing React analysis workspace and demo host; no code changes in this intake."
+      ],
+      "test_commands": [
+        "node /Users/byronwall/.agents/skills/software-design-sleuth-full/scripts/validate-sleuth.mjs docs/intent/monetization-opportunities"
+      ],
+      "deployment_surfaces": []
+    },
+    "dependencies": [],
+    "fast_local_loop": null,
+    "milestones": [],
+    "cut_line": [
+      "No product implementation or connector installation",
+      "No outreach, purchases, pricing commitment, or publication",
+      "No separate initiative per catalogue item",
+      "No component backlog from speculative markets"
+    ],
+    "open_decisions": []
+  },
+  "history": [
+    {
+      "date": "2026-10-10",
+      "event": "created",
+      "status": "planned",
+      "phase": "intent",
+      "reason": "Byron requested a new initiative, complete source preservation, a summary, and likely next steps.",
+      "sources": [
+        "user-intake"
+      ],
+      "evidence": "Archive downloaded and preserved with unchanged report and catalogue; source counts and score arithmetic checked."
+    },
+    {
+      "date": "2026-10-10",
+      "event": "intake-complete",
+      "reason": "Readable intake artifacts created. Commercial initiative remains planned; no market or product has been selected.",
+      "evidence": "sources/manifest.json"
+    },
+    {
+      "date": "2026-10-10",
+      "event": "saas-preference-applied",
+      "status": "planned",
+      "phase": "intent",
+      "reason": "Byron prefers recurring SaaS and requests ten strong options, especially Shopify and DevOps. Updated intent, entry point, summary context, and next steps; no shape or plan existed to invalidate.",
+      "sources": [
+        "user-saas",
+        "saas-comparison"
+      ],
+      "evidence": "recurring-saas-shortlist.md; original six manifest-listed files retain their hashes."
+    },
+    {
+      "date": "2026-10-10",
+      "event": "pr-prepared",
+      "status": "planned",
+      "phase": "intent",
+      "reason": "Byron requested a PR containing the complete research packet and SaaS comparison. Product implementation remains unselected.",
+      "evidence": {
+        "branch": "codex/monetization-saas-research",
+        "base_revision": "29b402349f7ee1214cb5f71dc17bc8c5cac84458",
+        "scope": "Original prompt and the complete monetization-opportunities initiative; documentation only."
+      }
+    }
+  ],
+  "closure": null,
+  "supporting_artifacts": [
+    {
+      "path": "README.md",
+      "role": "Reading entry point"
+    },
+    {
+      "path": "recurring-saas-shortlist.md",
+      "role": "Current ten-option comparison with source integration, host app, component fit, recurring value, and limitations",
+      "ranked_original_ids": [
+        "O026",
+        "O003",
+        "O023",
+        "O002",
+        "O027",
+        "O004",
+        "O040",
+        "O033",
+        "O001",
+        "O037"
+      ],
+      "ranking_basis": [
+        "repeated customer problem",
+        "practical source access",
+        "narrow first release",
+        "investigation value",
+        "manual support burden",
+        "existing alternatives"
+      ],
+      "selected_product": null
+    },
+    {
+      "path": "summary.md",
+      "role": "Short synthesis with assumption warning and family map"
+    },
+    {
+      "path": "likely-next-steps.md",
+      "role": "Provisional discussion and proof sequence; not an implementation plan"
+    },
+    {
+      "path": "sources/README.md",
+      "role": "Source packet guide"
+    },
+    {
+      "path": "sources/manifest.json",
+      "role": "Preservation and local structural verification"
+    }
+  ]
+}
