@@ -6953,3 +6953,49 @@ taxSlopeScatterDashboard.fieldSettings = { Year: { type: "categorical" } };
 middleClassJobsScatterDashboard.fieldSettings = {
   Year: { type: "categorical" },
 };
+
+/** One measure's central path with its four supplied percentile bands. */
+const fanLine = (
+  id: string,
+  measure: string,
+  position: ReturnType<typeof layout>,
+  color: string
+): Extract<Chart, { type: "line" }> => ({
+  ...line(id, measure, ["Central"], position, `${measure} (%)`),
+  xField: "Year",
+  xAxisLabel: "Year",
+  seriesSettings: {
+    Central: {
+      showPoints: false,
+      pointSize: 3,
+      pointOpacity: 0.8,
+      lineWidth: 2,
+      lineOpacity: 1,
+      lineColor: color,
+      lineStyle: "solid",
+      useRightAxis: false,
+    },
+  },
+  localFilters: [{ type: "value", field: "Measure", values: [measure] }],
+  annotations: [
+    ["P10", "P90", "10–90%"],
+    ["P20", "P80", "20–80%"],
+    ["P30", "P70", "30–70%"],
+    ["P40", "P60", "40–60%"],
+  ].map(([lowerField, upperField, range]) => ({
+    id: `${id}-${lowerField}`,
+    type: "interval" as const,
+    lowerField: lowerField!,
+    upperField: upperField!,
+    meaning: range === "10–90%" ? "Supplied 10–90% range" : `${range}`,
+    color,
+  })),
+});
+
+/** The forecast fans as two ordinary line charts with supplied intervals. */
+export const fanLineDashboard = dashboard("Forecast fan, built in", [
+  fanLine("fan-inflation", "Inflation", layout(0, 0, 6, 7), "#b0413e"),
+  fanLine("fan-gdp", "GDP growth", layout(6, 0, 6, 7), "#3b6ea8"),
+  row("fan-line-kind", "Rows by kind", "Kind", layout(0, 7, 6, 4)),
+  row("fan-line-measure", "Rows by measure", "Measure", layout(6, 7, 6, 4)),
+]);

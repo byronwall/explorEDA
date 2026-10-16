@@ -103,6 +103,7 @@ describe("example coverage manifest", () => {
       "tax-slope-scatter",
       "pew-meaning-scatter",
       "middle-class-jobs-scatter",
+      "forecast-fan-line",
       "covid-tiles",
       "covid-compare",
       "elections",

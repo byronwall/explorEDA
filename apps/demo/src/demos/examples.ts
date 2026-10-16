@@ -54,6 +54,7 @@ import {
   taxSlopeScatterDashboard,
   pewMeaningScatterDashboard,
   middleClassJobsScatterDashboard,
+  fanLineDashboard,
 } from "./dashboardSettings";
 import { demoSettings } from "@/demos/lorenz";
 import type {
@@ -807,6 +808,10 @@ export const examples: ExampleData[] = [
     icon: AreaChart,
     data: "/datasets/inflation-fan.csv",
     savedData: fanDashboard,
+    counterpart: {
+      id: "forecast-fan-line",
+      label: "The same analysis as built-in line charts",
+    },
   },
   {
     id: "time-use",
@@ -1334,6 +1339,22 @@ export const examples: ExampleData[] = [
     data: "/datasets/middle-class-jobs.csv",
     savedData: middleClassJobsScatterDashboard,
     counterpart: { id: "middle-class-jobs", label: "The authored composition" },
+  },
+  {
+    id: "forecast-fan-line",
+    title: "Inflation and growth forecasts, as line charts with intervals",
+    description:
+      "The forecast fan as two ordinary line charts, one per measure through a chart-local filter. Each draws the central path and four supplied percentile ranges as Interval notes; the bounds widen the y axis, and the Notes list says how many rows each ribbon reads.",
+    dataset: { rows: "104 quarter-measures", fields: 13, source: "Synthetic" },
+    shows: [
+      "Supplied intervals",
+      "Chart-local filters",
+      "Bounds in the domain",
+    ],
+    icon: AreaChart,
+    data: "/datasets/inflation-fan.csv",
+    savedData: fanLineDashboard,
+    counterpart: { id: "forecast-fan", label: "The authored composition" },
   },
 ];
 
