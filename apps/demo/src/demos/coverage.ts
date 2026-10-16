@@ -1299,6 +1299,12 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId: "forecast-fan-line",
+    intent:
+      "Draw supplied percentile ranges as Interval notes on two line charts, one per measure, with the bounds in each y domain.",
+    features: { "chart:line": "shown", "chart:row": "shown" },
+  },
+  {
     exampleId: "covid-tiles",
     intent:
       "Place each state's weekly case-rate path at its cell on a tile grid, on one shared scale.",
