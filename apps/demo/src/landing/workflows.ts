@@ -47,7 +47,7 @@ export const WORKFLOWS: readonly Workflow[] = [
     title: "Run a team server",
     where: "Your server, with Docker",
     body: "Authors build analyses and colleagues sign in to explore them. Accounts and projects stay on your server.",
-    to: docsPath("team-server"),
+    to: `${docsPath("team-server")}#try-it-with-sample-accounts`,
     icon: Users,
   },
   {
