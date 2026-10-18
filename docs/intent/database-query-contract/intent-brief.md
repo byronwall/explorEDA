@@ -56,3 +56,7 @@ The current `ExplorEdaProject` already accepts source tables and runs the existi
 ## Next step after confirmation
 
 This intent and initial shaping work is authorized and complete. The proposed next product proof, after implementation is authorized, uses a host-owned source reader that resolves one customer's registered sources and returns complete immutable source arrays to the existing tables input. A deterministic fake tests the evaluator and linked views. Consider source-column projections only when their dependency closure preserves every admitted analysis and inspection behavior.
+
+## Preparation research follow-up
+
+The 2026-10-18 [preparation research](../../research/data-preparation-boundary-2026-10-16/README.md) found no workload evidence for server execution. The proposed boundary keeps complete source snapshots and local queries. Reconsider execution placement only after a named workload misses its agreed target.

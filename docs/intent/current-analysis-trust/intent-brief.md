@@ -47,3 +47,7 @@ Expand only when a fixture exposes disagreement, a restore changes the result, o
 First compare one category selection across bar, card, and exported rows. Continue only after their group membership, valid contributors, and values agree. Then add undo/restore and a second chart family.
 
 See the [reference packet](references/README.md) and [comparison collection](../comparison-opportunities/README.md) for context.
+
+## Preparation research follow-up
+
+The 2026-10-18 [preparation research](../../research/data-preparation-boundary-2026-10-16/README.md) supplies a proposed 18-row semantic proof. It does not verify selection, export, undo, reopen, or refresh identity. The [research queue](../../research/data-preparation-boundary-2026-10-16/research-queue.md) retains those journeys under this initiative.

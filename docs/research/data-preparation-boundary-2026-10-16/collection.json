@@ -1,0 +1,51 @@
+{
+  "conversation": "https://chatgpt.com/c/6ad517a7-8bf8-83e9-a28b-71c17ff5afc1",
+  "retrieved_at": "2026-10-18T20:04:51.848039+00:00",
+  "archive": {
+    "name": "exploreda-data-preparation-research.zip",
+    "bytes": 38002,
+    "sha256": "2d63790d6bcffa5cd5e42ed9f850406a61a2f9f82ec79215a725a8eb97a6e3e1"
+  },
+  "checks": [
+    "exact four-member inventory",
+    "CRC",
+    "safe relative paths and no symlinks",
+    "UTF-8",
+    "all published SHA-256 hashes match"
+  ],
+  "files": [
+    {
+      "name": "report.md",
+      "bytes": 26289,
+      "sha256": "746e54fefaa33314e5ae9e84c0978c179dc1635fb6ac3a7a5221bb38278ec863",
+      "retrieval": "unchanged ZIP member",
+      "standalone_download_name": "report (2).md",
+      "standalone_download_matches_archive": true
+    },
+    {
+      "name": "proof-plan.md",
+      "bytes": 51269,
+      "sha256": "c44b75209a6810817d0cbdbd15e5ad6375c6a738468cb93daef1c8b0960983ea",
+      "retrieval": "unchanged ZIP member",
+      "standalone_download_name": "proof-plan (2).md",
+      "standalone_download_matches_archive": true
+    },
+    {
+      "name": "recommendations.md",
+      "bytes": 16939,
+      "sha256": "5093111c2cbb15b5b3dfba1bfb46072c90788b0ab9955a857ef6d7584e5e7d87",
+      "retrieval": "unchanged ZIP member",
+      "standalone_download_name": "recommendations.md",
+      "standalone_download_matches_archive": true
+    },
+    {
+      "name": "research-queue.md",
+      "bytes": 11896,
+      "sha256": "4dcf6fa07fbdcc457de983c7aed184b3985a3c5623c2ab839e2a4234dbb52257",
+      "retrieval": "unchanged ZIP member",
+      "standalone_download_name": "research-queue.md",
+      "standalone_download_matches_archive": true
+    }
+  ],
+  "download_note": "Browser interception timed out after 20 seconds; normal archive download succeeded. All four separately downloaded companions match the archive members byte for byte. Downloads with colliding names received suffixes; selected by exact hash. Originals preserved unchanged."
+}

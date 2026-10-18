@@ -1,0 +1,22 @@
+# Recommendation decisions
+
+Reviewed on 2026-10-18 against source commit `b07f3cf3483130f6cc3391bba47a87f616c93321`.
+
+These decisions reconcile all ten [Pro recommendations](originals/recommendations.md). Adopt means accept a research direction or constraint. It does not mean a feature shipped or the proposed proof passed.
+
+| ID    | Decision                | Reason and destination                                                                                                                                                                                                                                                       |
+| ----- | ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| DP-01 | Adopt as a proposal     | Test current preparation before adding scope. Keep the guide and runnable example in the same future milestone. The [proof plan](originals/proof-plan.md) remains proposed.                                                                                                  |
+| DP-02 | Adopt                   | `aggregateFrame` reduces expansion copies by source identity. Shared query views and further same-query aggregation exist. Teach grain and denominators in that proof. Keep [reusable outputs](../../intent/reusable-analysis-outputs/intent-brief.md) unprioritized.        |
+| DP-03 | Adopt                   | Ambiguous lookup and absent lookup both project unavailable fields. Require valid sources and keys before an absence claim. A supplied expected domain is essential. Do not infer demand from the synthetic fixture.                                                         |
+| DP-04 | Adopt as a boundary     | Keep reshaping and separate relation composition upstream for now. Require scalar result keys, null policy, grain, and provenance limits. The SQL docs example repeats order amounts at return grain; a future guide correction must explain that risk.                      |
+| DP-05 | Investigate             | Inspectable related rows are not an exact numeric-contributor list. First run the proposed author task. Repair only a specific observed explanation failure. The missing-cell dash is a confirmed source-level difference from UI defaults; no UI repair was attempted here. |
+| DP-06 | Defer                   | No recurring file-only task has rejected the upstream handoff. Reconsider bounded unpivot/append only after that evidence exists.                                                                                                                                            |
+| DP-07 | Defer                   | SQL-first preparation may suit a real author. No actual task owner has chosen it. Prove one dialect and task before expanding recipes.                                                                                                                                       |
+| DP-08 | Adopt                   | Preserve explicit refresh, server-held secrets, and complete-or-refuse reads per source. Publication follows a completed read. This does not prove a common database moment across sources.                                                                                  |
+| DP-09 | Defer                   | Execution, transport, warehouse access, and cross-query results retain their existing evidence gates. See the ranked queue. No new infrastructure follows from these invented tasks.                                                                                         |
+| DP-10 | Reject for this mission | A general graph editor, portability compiler, cleaning engine, or result cache exceeds the evidence and current question.                                                                                                                                                    |
+
+No material gap requires a Pro follow-up. All five tasks, four directions, four tool comparisons, evidence limits, proof gates, and queue were supplied. Two follow-ups remain unused.
+
+The evidence supports a cheap next proof, not a conclusion that documentation alone is sufficient. Correct values and an acceptable author handoff must both pass. A failed gate can change the proposed boundary.
