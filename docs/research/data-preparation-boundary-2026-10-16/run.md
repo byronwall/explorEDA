@@ -11,7 +11,7 @@
 - Source manifest: [source-manifest.json](source-manifest.json).
 - Packet: `tmp/pro-data-preparation-2026-10-16/source-packet.txt`; 285265 bytes, 31 selected files; SHA-256 `8600b15832886513d908fd65bca6744f1a373d1cbedab80ee32433737c4bd4fb`. Selected snapshot, not runnable checkout. No local changes at capture.
 - Queue and candidate comparison: [research-queue.md](research-queue.md).
-- Phase: collected and reconciled; validation and review PR in progress. Round: 0. Follow-up limit: two after initial submission.
+- Phase: collected, reconciled, and validated; review PR creation in progress. Round: 0. Follow-up limit: two after initial submission.
 - Browser evidence: `cua.getState()` returned no browsers and reported a locked Mac. Explicit `cua.createBrowserTab('chrome', 'https://chatgpt.com', {sessionName: '🔬 explorEDA research'})` returned `Browser is not available: chrome`. Parent also confirmed no connection. This is browser access failure, not evidence of a signed-out account.
 - Model/mode: Pro selected and observed as "Pro, 5 of 5" on 2026-10-18. Submission was later verified below.
 - Conversation URL: https://chatgpt.com/c/6ad517a7-8bf8-83e9-a28b-71c17ff5afc1. Submitted prompt, both attachments, Thinking, and Stop control verified.
@@ -73,3 +73,9 @@ Read all substantive outputs. No material gap needs a follow-up. Reconciled DP-0
 Source review confirms grouping, same-chain aggregation, identity-based entity reduction, ambiguity/null distinctions, candidate metadata limits, and per-source publication. Checked identity/read helpers absent from Pro's packet. Independently opened current official DuckDB, Observable, Evidence, and OpenRefine documentation. See evidence.md. No product UI or published package changed; no changeset or viewport screenshots apply.
 
 Root `pnpm check` is running. It reached library tests after UI, build and type gates. Sandboxed localhost socket failures and a file-watch test failure are visible; final result and focused approved retries will be recorded before PR completion.
+
+## Validation: 2026-10-18
+
+`pnpm check` passed UI, package/app/demo builds, docs build checks, and all type checks. Its library test run had 242 passing files and five affected files (localhost EPERM and file-watch EMFILE). The five files pass with approved access: 50 tests. The separate demo run passes 18 files and 419 tests. `pnpm check:pr` passes. The full root command was not rerun; no all-green root run is claimed. See validation.json and the named tmp logs.
+
+Original hashes still match after the commit hook. Local Markdown links and JSON parse checks pass. Authored diff whitespace passes; the unchanged original queue retains two Markdown hard-break spaces. No package changeset is required. The synthetic proof and SQL handoff remain unrun and proposed.

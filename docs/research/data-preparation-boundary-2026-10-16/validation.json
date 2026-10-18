@@ -1,0 +1,36 @@
+{
+  "source_commit": "b07f3cf3483130f6cc3391bba47a87f616c93321",
+  "pnpm_check": {
+    "result": "failed in sandbox; affected files pass with approved access",
+    "ui_build_types": "passed",
+    "library_tests": {
+      "passed_files": 242,
+      "failed_files": 5,
+      "skipped_files": 3,
+      "passed_tests": 1600,
+      "failed_tests": 10,
+      "skipped_tests": 72
+    },
+    "limits": ["localhost listen EPERM", "file-watch EMFILE"],
+    "log": "tmp/data-preparation-check.log"
+  },
+  "approved_retry": {
+    "result": "passed",
+    "files": 5,
+    "tests": 50,
+    "command": "pnpm --filter exploreda exec vitest run src/node/projectFiles.test.ts src/server/handler.test.ts src/server/team/accountRoutes.test.ts src/server/team/fileIntake.test.ts src/server/team/teamHandler.test.ts",
+    "log": "tmp/data-preparation-retry.log"
+  },
+  "demo_tests": {
+    "result": "passed",
+    "files": 18,
+    "tests": 419,
+    "command": "pnpm --filter demo test",
+    "log": "tmp/data-preparation-demo-tests.log"
+  },
+  "check_pr": "passed",
+  "artifact_checks": "all original hashes, standalone/archive equality, exact inventory, CRC, safe paths, no symlinks, UTF-8, JSON and local links passed",
+  "proof_18_rows": "proposed; not implemented or executed",
+  "browser_product_tests": "not applicable: no product UI or behavior changed",
+  "diff_check": "authored files pass; unchanged original queue retains two Markdown hard-break trailing spaces"
+}
