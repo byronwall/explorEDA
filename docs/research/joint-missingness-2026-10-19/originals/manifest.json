@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "artifact": "joint-missingness-research",
+  "repository": "https://github.com/byronwall/explorEDA",
+  "baseline": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+  "baseline_origin": "supplied selected source packet; two local research additions are not baseline files",
+  "created_at": "2026-10-19T07:06:39Z",
+  "source_packet": {
+    "uploaded_name": "source-packet(5).txt",
+    "size_bytes": 403190,
+    "sha256": "cffd94b5eee4bbe11c81caa4e1725c070948afabdaaaec7557dc64ac79eb67ba"
+  },
+  "files": [
+    {
+      "name": "joint-missingness-decision.md",
+      "size_bytes": 48547,
+      "sha256": "2adc342e5e573e00c8662f9c5741eae15fa5a6fb19e33eff4bd54ca900cabb9f"
+    },
+    {
+      "name": "recommendations.md",
+      "size_bytes": 22361,
+      "sha256": "538ae1885ed59de0266883c3dc0090ca44907328df1cbe2af4ad15dbeba59a0c"
+    },
+    {
+      "name": "proof-plan.md",
+      "size_bytes": 52607,
+      "sha256": "4e4211e69dfc3e43c1848b8bb86744c2d3245a40471b8054d74dfa76c529195f"
+    },
+    {
+      "name": "research-queue.md",
+      "size_bytes": 9857,
+      "sha256": "fca90f8c6e5ae9e394708eae90170aef57e3141bf75bf1b794827d6f9be0c433"
+    }
+  ],
+  "evidence_status": {
+    "repository_tests_executed": false,
+    "browser_checks_executed": false,
+    "author_task_executed": false,
+    "source_helpers_executed": false,
+    "independent_classification_arithmetic_executed": true,
+    "implementation": "proposed only"
+  },
+  "archive_contract": "Exactly the four listed Markdown companions plus manifest.json; root-level regular files; standalone bytes equal member bytes."
+}

@@ -47,3 +47,9 @@ Expand only when a fixture exposes disagreement, a restore changes the result, o
 First compare one category selection across bar, card, and exported rows. Continue only after their group membership, valid contributors, and values agree. Then add undo/restore and a second chart family.
 
 See the [reference packet](references/README.md) and [comparison collection](../comparison-opportunities/README.md) for context.
+
+## Joint eligibility research follow-up
+
+The 2026-10-19 [missingness review](../../research/joint-missingness-2026-10-19/README.md) preserves this journey as the first local proof. Check record keys and finite contributors separately. A raw conversion preview, a filtered profile, a finite pair, and a complete parallel line can describe different populations.
+
+The proposed ten-record fixture supplies exact sets, not an executed export/history/restore result. Keep those runtime checks proposed. Do not add another diagnostic to resolve a disagreement before observing the existing selection/export journey.

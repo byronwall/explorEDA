@@ -47,3 +47,11 @@ Expand when field summaries hide a recurring pattern, or a real source includes 
 Use a small fixture with missing X, missing Y, both missing, and valid zero. Show exact pattern counts and source IDs. Add one absent expected key only in a separate proof with an explicit expected set.
 
 See the [reference packet](references/README.md) and [comparison collection](../comparison-opportunities/README.md) for context.
+
+## Joint-missingness research follow-up
+
+The 2026-10-19 [research review](../../research/joint-missingness-2026-10-19/README.md) keeps a new diagnostic deferred. Equal field missing counts can hide different complete-case sets. This establishes a semantic difference, not demand.
+
+First observe one author using existing controls and a short indicator recipe. Raw-field conversion previews use all raw rows; filtered profiles use effective values and owner-aware scope. Scatter already explains peer scope and offers excluded-record inspection. Investigate only a specific remaining explanation or access failure.
+
+Keep raw missing inputs, conversion failures, finite eligibility, and expected records distinct. The categorical blank-count/filter discrepancy needs local observation before any semantic repair. If current controls plus the recipe answer the task, stop at docs. Any later feature milestone must include matching docs and a runnable example. No diagnostic, example, or browser author proof shipped in this research.

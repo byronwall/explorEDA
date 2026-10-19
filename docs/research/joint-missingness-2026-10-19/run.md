@@ -7,7 +7,7 @@
 - Branch: `codex/missingness-research-2026-10-19`, independent from origin/main. Clean before creation. No unrelated edits.
 - Prompt: [pro-prompt.md](pro-prompt.md). Candidate scores and continuing queue: [research-queue.md](research-queue.md).
 - Packet: `tmp/pro-missingness-2026-10-19/source-packet.txt`; 39 UTF-8 files, 403190 bytes, SHA-256 `cffd94b5eee4bbe11c81caa4e1725c070948afabdaaaec7557dc64ac79eb67ba`. [Manifest](source-manifest.json). Selected snapshot, not runnable. All 37 tracked files match baseline bytes; prompt and queue are local additions.
-- Phase: submitted and processing; collection pending.
+- Phase: collected, reviewed and integrated; validation and review PR pending.
 - Pro conversation: https://chatgpt.com/c/6ad5bb54-afe0-83ea-be36-258520267a3f. Submitted approximately 2026-10-19T06:40Z. Follow-ups: 0/2.
 - Chrome profile: byroni.us. ChatGPT greets Byron; live selector shows Pro, 5 of 5. Extension works while the Mac is locked. No unlock or login required.
 - Authorization: direct standing human approval covers this prompt and necessary repository packet to Byron's signed-in ChatGPT Pro. No secrets or unrelated data are selected.
@@ -36,3 +36,17 @@ Both attachments completed before Send. Actual display names: pro-prompt(8).md a
 Temporary heartbeat collect-exploreda-joint-missingness-research was created through automation_update and its saved TOML verified. It targets this local chat, checks around one hour after submission, and owns collection through verified review PR. The six-hour discovery task remains ACTIVE. No unregistered wakeup is promised.
 
 The source manifest records the exact uploaded pre-format bytes. The packet remains unchanged under tmp even if the commit hook formats authored Markdown. Original submitted prompt SHA-256: e244184321282b1b4e912e14bf52bf9d9a86d4e45ec989af6acfb591e0ffc3a3. All selected files are source, tests, instructions or research docs; no environment, credential store, private account files, dependency tree or build output is selected. No approval rejection occurred.
+
+## Collection and review: 2026-10-19
+
+Pro completed after 31m43s. Collected all four independent Markdown companions and the ZIP. A ten-second ZIP event wait timed out, but the ordinary download succeeded. One duplicate decision download is identical. All four companions match their archive members and manifest sizes/hashes. Safe paths, no symlinks, CRC, exact inventory and UTF-8 pass. See collection.json. Originals remain unchanged and have a scoped formatting exclusion.
+
+Read every substantive report, including the embedded arithmetic program. Did not execute downloaded code. Reviewed all nine recommendations. Local source checks resolve raw-field preview scope and establish existing scatter exclusion inspection. Narrowed JM-02/JM-03 to investigation rather than adopting UI work. Keep the diagnostic deferred; reject imputation, quality grading and mechanism diagnosis. No material gap needs a follow-up; 0/2.
+
+Integrated README, evidence, decisions, continuing queue, and short follow-ups in the existing missingness/trust intents. The local trust journey remains first. No application source, docs-site page, runnable example or package output changed. Author, fixture-helper and browser product proofs remain proposed. Independently reopened primary sources for missingno, naniar, VIM, DataExplorer, UpSet, Orange and van Buuren. See evidence.md for exact claims and limits. Refreshed origin/main still matches the declared baseline. PRs 451, 452 and 454 remain open. Available labels exclude codex and codex-automation.
+
+## Required validation
+
+Node 22.21.1 and pnpm 11.9.0. This is research integration, not a release-runtime change. Root pnpm check passed UI rules, all builds, 73 docs build tests and all type checks. The library stage reported 245 passing files, five failed files, three skipped files, 1619 passing tests, 10 failed tests and 72 skipped tests. Localhost EPERM and watcher EMFILE affected those five files. Approved retry passes all five files and 50 tests. Separate app suite passes eight files and 32 tests. Demo suite is still running at this checkpoint. No all-green aggregate check is claimed.
+
+Original companion hashes/sizes and authored local file links pass. Full pnpm check was not repeated after its environment failures. No changed product flow requires screenshots or a changeset. Final PR checks and saved-body verification remain pending.
