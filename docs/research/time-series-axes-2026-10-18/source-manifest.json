@@ -1,0 +1,177 @@
+{
+  "repository": "https://github.com/byronwall/explorEDA",
+  "baseline": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+  "coverage": "Selected source snapshot, not runnable. No local source changes.",
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "bytes": 4033,
+      "sha256": "802990c1bacd76b4b867239da78fd011fb32653f891d4a88560e9ee629979a33"
+    },
+    {
+      "path": "docs/agent-guide.md",
+      "bytes": 19779,
+      "sha256": "0992949f205d1ae72a8249c69bccb33f1eb70763b14a526a6384a7a91f9c9f00"
+    },
+    {
+      "path": "docs/ui-defaults.md",
+      "bytes": 19093,
+      "sha256": "93ee25ebd3917a1e56d7db818ff4b6edcfe7e063f390ff9d5e9b83a0cc32f84a"
+    },
+    {
+      "path": "CODING_STANDARDS.md",
+      "bytes": 2213,
+      "sha256": "b4358fe75d063d53aea1edbc58d0dc6fd8df6e6165aa5792d8d2aa35eefe7ac5"
+    },
+    {
+      "path": "README.md",
+      "bytes": 10263,
+      "sha256": "1f05b6c4992b07d1fc2b38d7bf9273db9e4a3a0d94513b7265e13b81cd7c5e28"
+    },
+    {
+      "path": "package.json",
+      "bytes": 1258,
+      "sha256": "f9b14daf225872f605d9435ddfb46fdede88b203c87a0e8507fe20743536f6e3"
+    },
+    {
+      "path": "packages/explorEDA/package.json",
+      "bytes": 6082,
+      "sha256": "17a71fd8852bcfbfb92cf76a9faf03766e934d0a5f0afcdcc9a5d0fd563b452a"
+    },
+    {
+      "path": "packages/explorEDA/src/types/ChartTypes.ts",
+      "bytes": 7239,
+      "sha256": "af8e1bfd423816317b3e37965f8231c722ece77f397bfb54598ee5499ac5e61e"
+    },
+    {
+      "path": "apps/demo/src/docs/pages/line.mdx",
+      "bytes": 2652,
+      "sha256": "e8127d3ea2dd875e5598aebf430d47504a7e584f347d96dbbe7d5c836ca1db34"
+    },
+    {
+      "path": "apps/demo/src/demos/examples.ts",
+      "bytes": 56494,
+      "sha256": "b67518e290d939f719babdb5dc2723649701f8b60e4601f9a1d041b2aa8dfb93"
+    },
+    {
+      "path": "apps/demo/src/demos/coverage.ts",
+      "bytes": 52454,
+      "sha256": "3f3eeeda86aecf8cdbaf3cdcc59dadc622767e41b68c1a5a508c0c14e01da6c0"
+    },
+    {
+      "path": "apps/demo/src/demos/dashboardSettings.ts",
+      "bytes": 186846,
+      "sha256": "43afb014d90f556690413ec876364c80f0726c616ccd74bfd4f316cc64be630e"
+    },
+    {
+      "path": "docs/intent/progressive-built-in-charts/shape-brief.md",
+      "bytes": 5245,
+      "sha256": "31d72c3e50f73ffff1aa5c2a84f3949558d5ad81fa89de2a4ed5f3d12c1f7552"
+    },
+    {
+      "path": "docs/intent/progressive-built-in-charts/implementation-plan.md",
+      "bytes": 12910,
+      "sha256": "41bb2233b1a64e925aa22761287f7baee85a7d43c225000600d1c0b10859ee13"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/LineChart/TimeSeriesSettingsPanel.tsx",
+      "bytes": 9709,
+      "sha256": "52248e30fe1fa03902c874cdd9283a7e5736a2ce4769c20420fb121e401aabd3"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/LineChart/timeSeriesPlan.ts",
+      "bytes": 15867,
+      "sha256": "6e86dd6a596a7357bf59abca9b567fe982a7c837e8ffa598593e8e1eff241ec3"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/LineChart/TimeSeriesChart.tsx",
+      "bytes": 17625,
+      "sha256": "6e279c4c0862e3b4a5b07bd504e7e817925c5451548e720201833e49d5f6e497"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/LineChart/TimeSeriesChart.test.tsx",
+      "bytes": 6132,
+      "sha256": "1658774db772741851feefa3f0edb382f86f65b618946d750f72e23ff59dc575"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/LineChart/definition.ts",
+      "bytes": 3679,
+      "sha256": "22c8ce9b100146abe4614b871022804f110aeb826c21c06370e617852e4c935a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/LineChart/LineChart.test.tsx",
+      "bytes": 4233,
+      "sha256": "bfa91aad63bac814f3c893af90d8f792cd78eb8fa1bca084bdcd651999274ef9"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/LineChart/timeSeriesTrace.ts",
+      "bytes": 1490,
+      "sha256": "15396d0c761d90e1388c1da2ac521ad26041651846147b87a541e09133c2d0e0"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/LineChart/LineSeriesSettings.tsx",
+      "bytes": 3689,
+      "sha256": "7d3490d90a6c66a897f882522b2a2d81269cc845c5d0ba9d205d97d6a477a6e0"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/LineChart/areaCharts.test.tsx",
+      "bytes": 5947,
+      "sha256": "3f4c2d50bb8cdc5f341c01bb3894149a5fd56d9ac6321eebe7e09ad722a0b516"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/LineChart/LineChartSettingsPanel.tsx",
+      "bytes": 5473,
+      "sha256": "d4c00eb7a204f2914bcf04958ce9e59192f4e2eb0cc595e17fb1ea6347705513"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/LineChart/TimeSeriesTraceBody.tsx",
+      "bytes": 8266,
+      "sha256": "717702deefcdeffbc98b363a82c0179e56a9fede833a3d8d5e46a651611990ed"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+      "bytes": 30249,
+      "sha256": "e032cb9ecf5d4601f7a816c53d2f4d57f82f34bcb611951c47af42c67d75d50b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Axis/axisPlan.ts",
+      "bytes": 16789,
+      "sha256": "d035606361910fbfb94600dec68ac961eaf2f009872a09802dafda66fc591337"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Axis/axisBounds.ts",
+      "bytes": 6463,
+      "sha256": "dcd665c7f30971a980339ceb26475dc169fb60259298191cb302e3ee531a45be"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Axis/numericScale.ts",
+      "bytes": 923,
+      "sha256": "6d2f90d8063c87e620c0dbf11d01389d785885a0f5bcd55c099ae0dca47f867d"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Axis/AxisLayer.tsx",
+      "bytes": 10241,
+      "sha256": "05a73597bae5e82531b105915e09376b3dac5da182c4a9179df16950ee9b71c7"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/InPlace/useAxisEditing.tsx",
+      "bytes": 16253,
+      "sha256": "2c0f4c2151cdd75ef7957ee43c988e5e33aa78912a21627229ad69abaaf33d23"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/chartUtils.ts",
+      "bytes": 2932,
+      "sha256": "86fc3b6a6019dd25dfc17ecc445f74b395244b37789f241b8d2c8c0fc9fa7431"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dailyRollup.ts",
+      "bytes": 5589,
+      "sha256": "89b04b18a22e617d7be09987aa5212523f2e1f8887f3f25471eaa2c53ffdd7c2"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/valueParsing.ts",
+      "bytes": 10226,
+      "sha256": "18793ed3c9f09e3ac6c184fd658ad68b88f564c5c2d800bac7108188afd845d6"
+    }
+  ]
+}
