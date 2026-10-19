@@ -51,3 +51,9 @@ See the [reference packet](references/README.md) and [comparison collection](../
 ## Preparation research follow-up
 
 The 2026-10-18 [preparation research](../../research/data-preparation-boundary-2026-10-16/README.md) supplies a proposed 18-row semantic proof. It does not verify selection, export, undo, reopen, or refresh identity. The [research queue](../../research/data-preparation-boundary-2026-10-16/research-queue.md) retains those journeys under this initiative.
+
+## Freshness research follow-up
+
+The 2026-10-19 [freshness review](../../research/source-freshness-2026-10-18/README.md) separates database read consistency, publication, and row identity. Its fixture can hide missing members behind a plausible total. Check member IDs and numeric contributors separately.
+
+The [continuing queue](../../research/source-freshness-2026-10-18/research-queue.md) puts this existing trust journey first. Selection after refresh stays a separate observed-behavior question. The freshness research ran no browser journey and proves no saved-state or refresh-selection policy.
