@@ -1,0 +1,173 @@
+{
+  "repository": "https://github.com/byronwall/explorEDA",
+  "baseline": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "bytes": 4033,
+      "sha256": "802990c1bacd76b4b867239da78fd011fb32653f891d4a88560e9ee629979a33",
+      "local_addition": false
+    },
+    {
+      "path": "docs/agent-guide.md",
+      "bytes": 19779,
+      "sha256": "0992949f205d1ae72a8249c69bccb33f1eb70763b14a526a6384a7a91f9c9f00",
+      "local_addition": false
+    },
+    {
+      "path": "CODING_STANDARDS.md",
+      "bytes": 2213,
+      "sha256": "b4358fe75d063d53aea1edbc58d0dc6fd8df6e6165aa5792d8d2aa35eefe7ac5",
+      "local_addition": false
+    },
+    {
+      "path": "README.md",
+      "bytes": 10263,
+      "sha256": "1f05b6c4992b07d1fc2b38d7bf9273db9e4a3a0d94513b7265e13b81cd7c5e28",
+      "local_addition": false
+    },
+    {
+      "path": "package.json",
+      "bytes": 1258,
+      "sha256": "f9b14daf225872f605d9435ddfb46fdede88b203c87a0e8507fe20743536f6e3",
+      "local_addition": false
+    },
+    {
+      "path": "packages/explorEDA/package.json",
+      "bytes": 6082,
+      "sha256": "17a71fd8852bcfbfb92cf76a9faf03766e934d0a5f0afcdcc9a5d0fd563b452a",
+      "local_addition": false
+    },
+    {
+      "path": "docs/intent/relationship-discovery/intent-brief.md",
+      "bytes": 3438,
+      "sha256": "61092e273e3e768825958c99a361520057a99c8a1ead9f89e57755bb3f4e377f",
+      "local_addition": false
+    },
+    {
+      "path": "docs/intent/relationship-discovery/initiative-map.json",
+      "bytes": 13646,
+      "sha256": "38a925cf476fb63d4a7967cb305d1eab9f84fd14b765956d704b3bf3093d5ad2",
+      "local_addition": false
+    },
+    {
+      "path": "docs/intent/current-analysis-trust/intent-brief.md",
+      "bytes": 3006,
+      "sha256": "d6b2d620753c1ea532fffcb1cb43cc42711e03daa898e989a7f283f475186bd7",
+      "local_addition": false
+    },
+    {
+      "path": "docs/intent/reusable-analysis-metrics/intent-brief.md",
+      "bytes": 3280,
+      "sha256": "3f92d7e337343b877103c2afd83a923f529153ab736350a58c34d91de1627336",
+      "local_addition": false
+    },
+    {
+      "path": "apps/demo/src/docs/pages/scatter-matrix.mdx",
+      "bytes": 739,
+      "sha256": "25f30cee82684fc15a31e73f36259402c5603468459d0bee782e2ea274e3d2a4",
+      "local_addition": false
+    },
+    {
+      "path": "apps/demo/src/docs/pages/scatter.mdx",
+      "bytes": 6569,
+      "sha256": "b0ea4d6b0d0866e18ad5955e3c18f2f0288d4098c12a0aee24947f6f3b06e646",
+      "local_addition": false
+    },
+    {
+      "path": "apps/demo/src/docs/pages/trace.mdx",
+      "bytes": 1259,
+      "sha256": "0506cf10ef5e2b8bb64de9956e2f478c7a3a24526da6123f6f416d00f8f57922",
+      "local_addition": false
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterMatrix/definition.ts",
+      "bytes": 3673,
+      "sha256": "6b9d4dcd73add20db27ff9157564e29ec2b2952e2e56dba771c66d7708d445b9",
+      "local_addition": false
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterMatrix/matrixPlan.ts",
+      "bytes": 29368,
+      "sha256": "5144a04d50fedeb2b7fce566201d8db61fb7e56d113c5a43bbda9b4371389747",
+      "local_addition": false
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterMatrix/matrixPlan.test.ts",
+      "bytes": 16936,
+      "sha256": "4bf905274a2ea45806f6c32283313c5aa3b0231dab8633664dd7e25349967175",
+      "local_addition": false
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterMatrix/matrixCells.ts",
+      "bytes": 8047,
+      "sha256": "ba5054a5e38aa46cc0806721ce572c8558eef6532a442739c9d6778ecb3da08d",
+      "local_addition": false
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterMatrix/matrixTrace.ts",
+      "bytes": 4905,
+      "sha256": "f95e0b51d1b699afce6b3fb51adaa268b5e62f81c21b521293dec5a1a33cd8d6",
+      "local_addition": false
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterMatrix/MatrixTraceBody.tsx",
+      "bytes": 3850,
+      "sha256": "9597e56af47e4bae95e7b256f8fa404f7ba33889f6788ad36260998d64715e08",
+      "local_addition": false
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterMatrix/ScatterMatrix.tsx",
+      "bytes": 41799,
+      "sha256": "10365d9bf79a904b4790aa28b4481526f7ae13e8c4afb4c18d6cb1ddcad5ffe1",
+      "local_addition": false
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterMatrix/ScatterMatrixSettingsPanel.tsx",
+      "bytes": 12991,
+      "sha256": "abfaf29f0ad233319353c3937e9cb38f62a06e66d0629b0e06f80911d6ebc62c",
+      "local_addition": false
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/pairedSummary.ts",
+      "bytes": 3907,
+      "sha256": "f8bd85e25c78ced5024836e4c3e813628f68386f8fdc3ba4e76fd4639276109b",
+      "local_addition": false
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/definition.ts",
+      "bytes": 3356,
+      "sha256": "b19d1183b5d2a5e31c3fca27140f25a111e446d8158b2f1573b7f9f9a510172b",
+      "local_addition": false
+    },
+    {
+      "path": "packages/explorEDA/src/lib/valueParsing.ts",
+      "bytes": 10226,
+      "sha256": "18793ed3c9f09e3ac6c184fd658ad68b88f564c5c2d800bac7108188afd845d6",
+      "local_addition": false
+    },
+    {
+      "path": "packages/explorEDA/src/lib/fieldProfiles.ts",
+      "bytes": 2011,
+      "sha256": "22258fd930d4b63dd64a63972642f10392df2eaf8922ad870b2ec2d3c5457988",
+      "local_addition": false
+    },
+    {
+      "path": "docs/research/relationship-discovery-2026-10-19/pro-prompt.md",
+      "bytes": 8892,
+      "sha256": "87fdd4b4ac1e2f4c13363b3b8a4c785e3e021288af8f8f8f9fa8aba5f1888b35",
+      "local_addition": true
+    },
+    {
+      "path": "docs/research/relationship-discovery-2026-10-19/research-queue.md",
+      "bytes": 2377,
+      "sha256": "e278c40a9300c181c7db228af52db7d99a37b73c3ca9a544083b5854b892e7a6",
+      "local_addition": true
+    }
+  ],
+  "packet": {
+    "path": "tmp/pro-relationship-2026-10-19/source-packet.txt",
+    "bytes": 229929,
+    "sha256": "584ff9284e520ab3451d4626ef21194a71d4f3e0c8a048ab6f4e89260dd2a4d5"
+  }
+}
