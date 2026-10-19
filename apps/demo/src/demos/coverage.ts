@@ -1219,6 +1219,110 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId: "income-life-scatter",
+    intent:
+      "Rebuild the income and life composition as a bubble scatter on a log income axis, colored by region, with Country-keyed callouts.",
+    features: {
+      "chart:scatter": "shown",
+      "mode:bubble-scatter": "shown",
+      "chart:row": "shown",
+      "chart:bar": "shown",
+    },
+  },
+  {
+    exampleId: "media-deaths-bar",
+    intent:
+      "Rebuild the media and deaths composition as a 100% bar chart of summed counts by source, split by cause.",
+    features: {
+      "chart:bar": "shown",
+      "mode:stacked-bars": "shown",
+      "chart:row": "shown",
+    },
+  },
+  {
+    exampleId: "du-bois-income-bar",
+    intent:
+      "Rebuild Du Bois's income plate as a 100% bar chart of summed shares by income class, split by spending category.",
+    features: {
+      "chart:bar": "shown",
+      "mode:stacked-bars": "shown",
+      "chart:row": "shown",
+    },
+  },
+  {
+    exampleId: "unemployment-area",
+    intent:
+      "Rebuild the unemployment streamgraph as a monthly summed stacked-area line, split by industry.",
+    features: {
+      "chart:line": "shown",
+      "mode:area": "shown",
+      "mode:calendar-series": "shown",
+      "chart:row": "shown",
+      "chart:bar": "shown",
+    },
+  },
+  {
+    exampleId: "driving-scatter",
+    intent:
+      "Join a scatter's points in Year order so the path keeps every reversal along the X axis.",
+    features: { "chart:scatter": "shown", "chart:bar": "shown" },
+  },
+  {
+    exampleId: "tax-slope-scatter",
+    intent:
+      "Draw a slope chart as a connected scatter: one path per country, named at both ends.",
+    features: {
+      "chart:scatter": "shown",
+      "chart:row": "shown",
+      "color:categorical": "shown",
+    },
+  },
+  {
+    exampleId: "pew-meaning-scatter",
+    intent:
+      "Draw dumbbell rows as a connected scatter over a categorical Y axis.",
+    features: {
+      "chart:scatter": "shown",
+      "chart:row": "shown",
+      "scale:band": "shown",
+    },
+  },
+  {
+    exampleId: "middle-class-jobs-scatter",
+    intent:
+      "Draw one slope per occupation in each group's facet, colored on a diverging numerical scale.",
+    features: {
+      "chart:scatter": "shown",
+      "chart:row": "shown",
+      "facet:wrap": "shown",
+      "color:numerical": "shown",
+    },
+  },
+  {
+    exampleId: "forecast-fan-line",
+    intent:
+      "Draw supplied percentile ranges as Interval notes on two line charts, one per measure, with the bounds in each y domain.",
+    features: { "chart:line": "shown", "chart:row": "shown" },
+  },
+  {
+    exampleId: "message-log-heatmap",
+    intent:
+      "Bin a date column by month in a heatmap, every month shown, with square-root color and date-range cell selection.",
+    features: { "chart:heatmap": "shown", "chart:row": "shown" },
+  },
+  {
+    exampleId: "measles-heatmap",
+    intent:
+      "Show a complete 51 × 85 state-year matrix in source order with fixed color ends.",
+    features: { "chart:heatmap": "shown", "chart:row": "shown" },
+  },
+  {
+    exampleId: "elections-heatmap",
+    intent:
+      "Color each state-election by its margin on a fixed diverging scale from −40 to +40.",
+    features: { "chart:heatmap": "shown", "chart:row": "shown" },
+  },
+  {
     exampleId: "covid-tiles",
     intent:
       "Place each state's weekly case-rate path at its cell on a tile grid, on one shared scale.",

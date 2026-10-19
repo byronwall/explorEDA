@@ -8,7 +8,7 @@ export function HeatLegend({
   hasEmpty,
   hasInvalid,
 }: {
-  scale: HeatScale;
+  scale: HeatScale & { transform?: "sqrt" };
   metricLabel: string;
   format: (value: number) => string;
   hasEmpty: boolean;
@@ -27,6 +27,9 @@ export function HeatLegend({
         />
         <span>{format(scale.kind === "diverging" ? span : high)}</span>
       </span>
+      {scale.transform === "sqrt" && (
+        <span className="eda-heat-legend-key">square-root color</span>
+      )}
       {hasEmpty && (
         <span className="eda-heat-legend-key">
           <span className="eda-heat-swatch" data-state="empty" />

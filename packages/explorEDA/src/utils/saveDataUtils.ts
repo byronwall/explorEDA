@@ -474,6 +474,16 @@ function isChart(value: unknown): boolean {
               (flag) => flag === undefined || typeof flag === "boolean"
             ))) &&
         (value.summary === undefined || typeof value.summary === "boolean") &&
+        (value.connect === undefined ||
+          (isRecord(value.connect) &&
+            [value.connect.orderField, value.connect.groupField].every(
+              (field) =>
+                field === undefined ||
+                (typeof field === "string" && field.length > 0)
+            ) &&
+            (value.connect.labels === undefined ||
+              value.connect.labels === "end" ||
+              value.connect.labels === "both"))) &&
         (value.marginals === undefined ||
           (isRecord(value.marginals) &&
             (value.marginals.bins === undefined ||
@@ -748,7 +758,22 @@ function isChart(value: unknown): boolean {
         (value.measureField === undefined ||
           typeof value.measureField === "string") &&
         isFiniteNumber(value.maxCategories) &&
-        ["count", "label"].includes(value.sortBy as string) &&
+        (value.maxColumns === undefined || isFiniteNumber(value.maxColumns)) &&
+        ["count", "label", "data"].includes(value.sortBy as string) &&
+        (value.columnSortBy === undefined ||
+          ["count", "label", "data"].includes(value.columnSortBy as string)) &&
+        (value.columnInterval === undefined ||
+          ["year", "month", "week", "day"].includes(
+            value.columnInterval as string
+          )) &&
+        (value.colorDomain === undefined ||
+          (isRecord(value.colorDomain) &&
+            (value.colorDomain.min === undefined ||
+              isFiniteNumber(value.colorDomain.min)) &&
+            (value.colorDomain.max === undefined ||
+              isFiniteNumber(value.colorDomain.max)) &&
+            (value.colorDomain.transform === undefined ||
+              value.colorDomain.transform === "sqrt"))) &&
         typeof value.showValues === "boolean"
       );
     case "ecdf":

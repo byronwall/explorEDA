@@ -1,0 +1,809 @@
+{
+  "repository": "https://github.com/byronwall/explorEDA",
+  "baseline": "269485c6c94b411e27f440ea495ef225110c9a84",
+  "method": "Evaluated dashboardSettings.ts after stripping types, with its local geometry import. Matched top-level example records and selected savedData with chart.type === composition. Cross-check exampleIndex.ts, coverage.ts, and docs/live/examples.ts.",
+  "count": 29,
+  "aliases": [
+    {
+      "location": "apps/demo/src/docs/live/examples.ts",
+      "id": "composition",
+      "baseExample": "message-log",
+      "distinctChart": false
+    }
+  ],
+  "examples": [
+    {
+      "id": "message-log",
+      "title": "Six years of correspondence",
+      "description": "Six years of messages with 12 correspondents: one strip of monthly squares per person, darker for busier months, with a count beside each name and a callout on the busiest month.",
+      "datasetPath": "apps/demo/public/datasets/message-log.csv",
+      "dashboardExport": "messageDashboard",
+      "definitionPath": "apps/demo/src/demos/dashboardSettings.ts",
+      "catalogLine": 708,
+      "listed": false,
+      "charts": [
+        {
+          "id": "messages-composition",
+          "marks": [
+            "strip"
+          ],
+          "elementTypes": [
+            null
+          ],
+          "artboard": {
+            "width": 960,
+            "height": 520,
+            "background": "#ffffff"
+          }
+        }
+      ],
+      "definitionLine": 1675
+    },
+    {
+      "id": "driving-shifts",
+      "title": "Driving shifts into reverse",
+      "description": "Fifty-five years of miles driven against the price of gas, as one connected path. The composition orders shuffled rows by year through shared numeric scales, labels every fourth year, and anchors callouts to 1980 and 2008.",
+      "datasetPath": "apps/demo/public/datasets/driving.csv",
+      "dashboardExport": "drivingDashboard",
+      "definitionPath": "apps/demo/src/demos/dashboardSettings.ts",
+      "catalogLine": 719,
+      "listed": false,
+      "charts": [
+        {
+          "id": "driving-composition",
+          "marks": [
+            "path",
+            "point"
+          ],
+          "elementTypes": [
+            null
+          ],
+          "artboard": {
+            "width": 960,
+            "height": 600,
+            "background": "#ffffff"
+          }
+        }
+      ],
+      "definitionLine": 1866
+    },
+    {
+      "id": "tech-sparklines",
+      "title": "Big-tech sparkline table",
+      "description": "Fourteen company rows, each a line through 13 years of opening prices with the low, high, and latest marked. Rows order by a first-to-last change calculation that also prints beside each name.",
+      "datasetPath": "apps/demo/public/datasets/big-tech-prices.csv",
+      "dashboardExport": "sparklinesDashboard",
+      "definitionPath": "apps/demo/src/demos/dashboardSettings.ts",
+      "catalogLine": 730,
+      "listed": false,
+      "charts": [
+        {
+          "id": "sparklines-composition",
+          "marks": [
+            "path",
+            "point"
+          ],
+          "elementTypes": [
+            null
+          ],
+          "artboard": {
+            "width": 760,
+            "height": 780,
+            "background": "#ffffff"
+          }
+        }
+      ],
+      "definitionLine": 2060
+    },
+    {
+      "id": "forecast-fan",
+      "title": "Forecast fan",
+      "description": "Two measures with quarterly history and three projected years. Four nested bands come straight from supplied percentile columns, under a central path, a shaded projection period, and a 2% reference line.",
+      "datasetPath": "apps/demo/public/datasets/inflation-fan.csv",
+      "dashboardExport": "fanDashboard",
+      "definitionPath": "apps/demo/src/demos/dashboardSettings.ts",
+      "catalogLine": 745,
+      "listed": false,
+      "charts": [
+        {
+          "id": "fan-composition",
+          "marks": [
+            "band",
+            "path"
+          ],
+          "elementTypes": [
+            null
+          ],
+          "artboard": {
+            "width": 960,
+            "height": 540,
+            "background": "#ffffff"
+          }
+        }
+      ],
+      "definitionLine": 2267
+    },
+    {
+      "id": "time-use",
+      "title": "How the day changed in 2020",
+      "description": "Twelve activities in a grid. Each panel summarizes minutes a day for the 2019 and 2020 cohorts on the spot: quartile bands joined across the years, medians marked, and a diverging color for the change in median.",
+      "datasetPath": "apps/demo/public/datasets/time-use.csv",
+      "dashboardExport": "timeUseDashboard",
+      "definitionPath": "apps/demo/src/demos/dashboardSettings.ts",
+      "catalogLine": 760,
+      "listed": false,
+      "charts": [
+        {
+          "id": "time-use-composition",
+          "marks": [
+            "summary"
+          ],
+          "elementTypes": [
+            null
+          ],
+          "artboard": {
+            "width": 960,
+            "height": 640,
+            "background": "#ffffff"
+          }
+        }
+      ],
+      "definitionLine": 2450
+    },
+    {
+      "id": "media-deaths",
+      "title": "What Americans die from, and what the news covers",
+      "description": "Four normalized columns: deaths in 2023, then the causes three outlets wrote about. Each column stacks fifteen causes as shares of its own total, in one order and color, with the denominator spelled out in every segment's trace.",
+      "datasetPath": "apps/demo/public/datasets/media-deaths.csv",
+      "dashboardExport": "mediaDeathsDashboard",
+      "definitionPath": "apps/demo/src/demos/dashboardSettings.ts",
+      "catalogLine": 775,
+      "listed": false,
+      "charts": [
+        {
+          "id": "media-deaths-composition",
+          "marks": [
+            "stack"
+          ],
+          "elementTypes": [
+            null
+          ],
+          "artboard": {
+            "width": 960,
+            "height": 720,
+            "background": "#ffffff"
+          }
+        }
+      ],
+      "definitionLine": 2632
+    },
+    {
+      "id": "measles",
+      "title": "Measles before and after the vaccine",
+      "description": "Fifty-one state strips, one cell per year from 1928 to 2012, colored by a placed multistop ramp. Years a state did not report draw as neutral cells, the one missing record stays blank, and the 1963 vaccine guide holds while you filter.",
+      "datasetPath": "apps/demo/public/datasets/measles.csv",
+      "dashboardExport": "measlesDashboard",
+      "definitionPath": "apps/demo/src/demos/dashboardSettings.ts",
+      "catalogLine": 790,
+      "listed": false,
+      "charts": [
+        {
+          "id": "measles-composition",
+          "marks": [
+            "strip"
+          ],
+          "elementTypes": [
+            null
+          ],
+          "artboard": {
+            "width": 900,
+            "height": 806,
+            "background": "#ffffff"
+          }
+        }
+      ],
+      "definitionLine": 2775
+    },
+    {
+      "id": "causes-by-age",
+      "title": "What people die from, by age",
+      "description": "One stack spread across age from 0 to 100. Nine causes draw as areas of their share of each age's total, labeled where each band is thickest, with every denominator open to inspection.",
+      "datasetPath": "apps/demo/public/datasets/causes-by-age.csv",
+      "dashboardExport": "causesByAgeDashboard",
+      "definitionPath": "apps/demo/src/demos/dashboardSettings.ts",
+      "catalogLine": 805,
+      "listed": false,
+      "charts": [
+        {
+          "id": "causes-composition",
+          "marks": [
+            "stack"
+          ],
+          "elementTypes": [
+            null
+          ],
+          "artboard": {
+            "width": 960,
+            "height": 600,
+            "background": "#ffffff"
+          }
+        }
+      ],
+      "definitionLine": 2961
+    },
+    {
+      "id": "consumer-confidence",
+      "title": "Consumer confidence around the world",
+      "description": "Nine countries in a 3 \u00d7 3 grid. Every panel draws all nine index paths on one shared scale and lights up its own, with the latest value marked and a 100 reference line; the x axis is a real date scale.",
+      "datasetPath": "apps/demo/public/datasets/consumer-confidence.csv",
+      "dashboardExport": "consumerConfidenceDashboard",
+      "definitionPath": "apps/demo/src/demos/dashboardSettings.ts",
+      "catalogLine": 816,
+      "listed": false,
+      "charts": [
+        {
+          "id": "confidence-composition",
+          "marks": [
+            "path",
+            "point"
+          ],
+          "elementTypes": [
+            null
+          ],
+          "artboard": {
+            "width": 960,
+            "height": 870,
+            "background": "#ffffff"
+          }
+        }
+      ],
+      "definitionLine": 3100
+    },
+    {
+      "id": "pew-meaning",
+      "title": "What makes life meaningful, by party",
+      "description": "Seven topics as dumbbell rows: each party's share as a colored dot on one percentage scale, a connector between them, a legend, and the signed gap beside every row from a difference calculation.",
+      "datasetPath": "apps/demo/public/datasets/pew-meaning.csv",
+      "dashboardExport": "pewMeaningDashboard",
+      "definitionPath": "apps/demo/src/demos/dashboardSettings.ts",
+      "catalogLine": 831,
+      "listed": false,
+      "charts": [
+        {
+          "id": "pew-composition",
+          "marks": [
+            "path",
+            "point"
+          ],
+          "elementTypes": [
+            null
+          ],
+          "artboard": {
+            "width": 840,
+            "height": 560,
+            "background": "#ffffff"
+          }
+        }
+      ],
+      "definitionLine": 3295
+    },
+    {
+      "id": "income-life",
+      "title": "Richer countries live longer",
+      "description": "One annotated scatter of 197 economies in 2023: life expectancy against income on a log scale, circles sized by population and colored by region, a region legend, and labels on a dozen chosen countries.",
+      "datasetPath": "apps/demo/public/datasets/gapminder-2023.csv",
+      "dashboardExport": "incomeLifeDashboard",
+      "definitionPath": "apps/demo/src/demos/dashboardSettings.ts",
+      "catalogLine": 846,
+      "listed": false,
+      "charts": [
+        {
+          "id": "income-life-composition",
+          "marks": [
+            "point"
+          ],
+          "elementTypes": [
+            null
+          ],
+          "artboard": {
+            "width": 960,
+            "height": 620,
+            "background": "#ffffff"
+          }
+        }
+      ],
+      "definitionLine": 3454
+    },
+    {
+      "id": "covid-tiles",
+      "title": "Three years of Covid, state by state",
+      "description": "Fifty-one small case-rate paths, each at its state's cell on a US tile grid, on one shared scale with the latest week marked and the worst week in every label.",
+      "datasetPath": "apps/demo/public/datasets/covid-tiles.csv",
+      "dashboardExport": "covidTilesDashboard",
+      "definitionPath": "apps/demo/src/demos/dashboardSettings.ts",
+      "catalogLine": 861,
+      "listed": false,
+      "charts": [
+        {
+          "id": "covid-tiles-composition",
+          "marks": [
+            "path",
+            "point"
+          ],
+          "elementTypes": [
+            null
+          ],
+          "artboard": {
+            "width": 960,
+            "height": 700,
+            "background": "#ffffff"
+          }
+        }
+      ],
+      "definitionLine": 3607
+    },
+    {
+      "id": "covid-compare",
+      "title": "The last nine months, against three years",
+      "description": "Six state panels with two frames each: the recent window in the main frame against the national rate, and the full three-year history in an inset, on a separate scale, for the state and the nation.",
+      "datasetPath": "apps/demo/public/datasets/covid-compare.csv",
+      "dashboardExport": "covidCompareDashboard",
+      "definitionPath": "apps/demo/src/demos/dashboardSettings.ts",
+      "catalogLine": 872,
+      "listed": false,
+      "charts": [
+        {
+          "id": "covid-compare-composition",
+          "marks": [
+            "path",
+            "point"
+          ],
+          "elementTypes": [
+            null
+          ],
+          "artboard": {
+            "width": 960,
+            "height": 720,
+            "background": "#ffffff"
+          }
+        }
+      ],
+      "definitionLine": 3773
+    },
+    {
+      "id": "elections",
+      "title": "How each state voted, 1976 to 2016",
+      "description": "Fifty-one states on a tile map, each a strip of its eleven presidential elections. Cell color follows the signed Democratic margin through a diverging ramp capped at 40 points, so swings read state by state and region by region.",
+      "datasetPath": "apps/demo/public/datasets/elections.csv",
+      "dashboardExport": "electionsDashboard",
+      "definitionPath": "apps/demo/src/demos/dashboardSettings.ts",
+      "catalogLine": 887,
+      "listed": false,
+      "charts": [
+        {
+          "id": "elections-composition",
+          "marks": [
+            "strip"
+          ],
+          "elementTypes": [
+            null
+          ],
+          "artboard": {
+            "width": 960,
+            "height": 660,
+            "background": "#ffffff"
+          }
+        }
+      ],
+      "definitionLine": 4001
+    },
+    {
+      "id": "lincoln-ridgeline",
+      "title": "Temperatures in Lincoln, Nebraska, in 2016",
+      "description": "Twelve overlapping ridges, one per month: the density of each month's daily mean temperatures on one shared scale and height, computed on the spot from the daily readings.",
+      "datasetPath": "apps/demo/public/datasets/lincoln-weather.csv",
+      "dashboardExport": "lincolnRidgelineDashboard",
+      "definitionPath": "apps/demo/src/demos/dashboardSettings.ts",
+      "catalogLine": 898,
+      "listed": false,
+      "charts": [
+        {
+          "id": "lincoln-composition",
+          "marks": [
+            "density"
+          ],
+          "elementTypes": [
+            null
+          ],
+          "artboard": {
+            "width": 760,
+            "height": 746,
+            "background": "#ffffff"
+          }
+        }
+      ],
+      "definitionLine": 4131
+    },
+    {
+      "id": "climate-ridgeline",
+      "title": "More days at the highest temperatures",
+      "description": "Eighty-four overlapping ridges, one per year since 1940: the spread of each year's daily global temperatures against the 1991\u20132020 average, shaded from colder to warmer, with El Ni\u00f1o years and 2023 called out.",
+      "datasetPath": "apps/demo/public/datasets/daily-global-temperature.csv",
+      "dashboardExport": "climateRidgelineDashboard",
+      "definitionPath": "apps/demo/src/demos/dashboardSettings.ts",
+      "catalogLine": 909,
+      "listed": false,
+      "charts": [
+        {
+          "id": "climate-composition",
+          "marks": [
+            "density"
+          ],
+          "elementTypes": [
+            null
+          ],
+          "artboard": {
+            "width": 760,
+            "height": 936,
+            "background": "#ffffff"
+          }
+        }
+      ],
+      "definitionLine": 5069
+    },
+    {
+      "id": "banana-yields",
+      "title": "Long-term top yielding banana-producing countries",
+      "description": "A sparkline table: fifteen countries in order of their long-term banana yield, each with a trend line, a heat cell per decade with its value written in, NA where a decade has no figure, and the overall average in a tinted column.",
+      "datasetPath": "apps/demo/public/datasets/banana-yields.csv",
+      "dashboardExport": "bananaYieldsDashboard",
+      "definitionPath": "apps/demo/src/demos/dashboardSettings.ts",
+      "catalogLine": 924,
+      "listed": false,
+      "charts": [
+        {
+          "id": "banana-composition",
+          "marks": [
+            "strip",
+            "path"
+          ],
+          "elementTypes": [
+            null
+          ],
+          "artboard": {
+            "width": 960,
+            "height": 714,
+            "background": "#ffffff"
+          }
+        }
+      ],
+      "definitionLine": 4464
+    },
+    {
+      "id": "yield-gap",
+      "title": "The yield gap",
+      "description": "A waffle histogram: for wheat and maize, one square per country stacked over its yield gap in whole tonnes per hectare and colored by continent, so the spread and the regional mix read together.",
+      "datasetPath": "apps/demo/public/datasets/yield-gap.csv",
+      "dashboardExport": "yieldGapDashboard",
+      "definitionPath": "apps/demo/src/demos/dashboardSettings.ts",
+      "catalogLine": 935,
+      "listed": false,
+      "charts": [
+        {
+          "id": "yield-gap-composition",
+          "marks": [
+            "waffle"
+          ],
+          "elementTypes": [
+            null
+          ],
+          "artboard": {
+            "width": 960,
+            "height": 590,
+            "background": "#ffffff"
+          }
+        }
+      ],
+      "definitionLine": 4659
+    },
+    {
+      "id": "middle-class-jobs",
+      "title": "The changing nature of middle-class jobs",
+      "description": "Ten occupation groups as small slope charts from 1980 to 2012, every occupation's line colored through a diverging scale from mostly men to mostly women, with the group's change in each label.",
+      "datasetPath": "apps/demo/public/datasets/middle-class-jobs.csv",
+      "dashboardExport": "middleClassJobsDashboard",
+      "definitionPath": "apps/demo/src/demos/dashboardSettings.ts",
+      "catalogLine": 946,
+      "listed": false,
+      "charts": [
+        {
+          "id": "jobs-composition",
+          "marks": [
+            "path",
+            "point"
+          ],
+          "elementTypes": [
+            null
+          ],
+          "artboard": {
+            "width": 960,
+            "height": 704,
+            "background": "#ffffff"
+          }
+        }
+      ],
+      "definitionLine": 4795
+    },
+    {
+      "id": "du-bois-income",
+      "title": "Income and expenditure of 150 families in Atlanta",
+      "description": "W. E. B. Du Bois's 1900 plate rebuilt: one bar per income class, its spending stacked left to right as shares, joined class to class by lines at each share's edge, in a hand-colored texture on paper.",
+      "datasetPath": "apps/demo/public/datasets/du-bois-income.csv",
+      "dashboardExport": "duBoisIncomeDashboard",
+      "definitionPath": "apps/demo/src/demos/dashboardSettings.ts",
+      "catalogLine": 957,
+      "listed": false,
+      "charts": [
+        {
+          "id": "du-bois-composition",
+          "marks": [
+            "stack"
+          ],
+          "elementTypes": [
+            null
+          ],
+          "artboard": {
+            "width": 960,
+            "height": 660,
+            "background": "#e9e0d1"
+          }
+        }
+      ],
+      "definitionLine": 4292
+    },
+    {
+      "id": "tax-slope",
+      "title": "Central government tax revenue, 2000 and 2023",
+      "description": "A slope chart: one line per OECD country between its two readings of tax revenue as a share of GDP, named and valued at both ends, colored by whether the share rose or fell.",
+      "datasetPath": "apps/demo/public/datasets/tax-slope.csv",
+      "dashboardExport": "taxSlopeDashboard",
+      "definitionPath": "apps/demo/src/demos/dashboardSettings.ts",
+      "catalogLine": 972,
+      "listed": false,
+      "charts": [
+        {
+          "id": "tax-composition",
+          "marks": [
+            "path",
+            "point"
+          ],
+          "elementTypes": [
+            null
+          ],
+          "artboard": {
+            "width": 760,
+            "height": 720,
+            "background": "#ffffff"
+          }
+        }
+      ],
+      "definitionLine": 5262
+    },
+    {
+      "id": "titanic-waffle",
+      "title": "Every passenger on the Titanic",
+      "description": "A waffle per class: one cell per passenger, filled from the bottom with those who died and then those who survived, so column heights compare class sizes and the blue blocks compare survival.",
+      "datasetPath": "apps/demo/public/datasets/titanic.csv",
+      "dashboardExport": "titanicWaffleDashboard",
+      "definitionPath": "apps/demo/src/demos/dashboardSettings.ts",
+      "catalogLine": 983,
+      "listed": false,
+      "charts": [
+        {
+          "id": "titanic-composition",
+          "marks": [
+            "waffle"
+          ],
+          "elementTypes": [
+            null
+          ],
+          "artboard": {
+            "width": 760,
+            "height": 620,
+            "background": "#ffffff"
+          }
+        }
+      ],
+      "definitionLine": 5411
+    },
+    {
+      "id": "unemployment-stream",
+      "title": "Unemployed Americans by industry, 2000 to 2010",
+      "description": "A streamgraph: fourteen industries' unemployed stacked month by month on a wiggling baseline with smooth edges, so the stream's thickness is the total and each layer's swell is its own.",
+      "datasetPath": "apps/demo/public/datasets/unemployment-industries.csv",
+      "dashboardExport": "unemploymentStreamDashboard",
+      "definitionPath": "apps/demo/src/demos/dashboardSettings.ts",
+      "catalogLine": 994,
+      "listed": false,
+      "charts": [
+        {
+          "id": "unemployment-composition",
+          "marks": [
+            "stack"
+          ],
+          "elementTypes": [
+            null
+          ],
+          "artboard": {
+            "width": 760,
+            "height": 620,
+            "background": "#ffffff"
+          }
+        }
+      ],
+      "definitionLine": 5522
+    },
+    {
+      "id": "population-pyramid",
+      "title": "The United States grew older",
+      "description": "Two population pyramids, 1900 and 2000: bar marks per age group with men mirrored left of the baseline, on one shared length axis, each unit windowed to its census.",
+      "datasetPath": "apps/demo/public/datasets/us-population.csv",
+      "dashboardExport": "populationPyramidDashboard",
+      "definitionPath": "apps/demo/src/demos/dashboardSettings.ts",
+      "catalogLine": 1005,
+      "listed": false,
+      "charts": [
+        {
+          "id": "population-composition",
+          "marks": [
+            "bar"
+          ],
+          "elementTypes": [
+            null
+          ],
+          "artboard": {
+            "width": 800,
+            "height": 560,
+            "background": "#ffffff"
+          }
+        }
+      ],
+      "definitionLine": 5714
+    },
+    {
+      "id": "gdp-bump",
+      "title": "The world's largest economies, ranked each year since 1980",
+      "description": "A bump chart: each economy's rank by GDP at every year, computed on the spot among the rows shown, joined into smooth paths colored by region and named at the right with the latest rank.",
+      "datasetPath": "apps/demo/public/datasets/gdp-ranks.csv",
+      "dashboardExport": "gdpBumpDashboard",
+      "definitionPath": "apps/demo/src/demos/dashboardSettings.ts",
+      "catalogLine": 1016,
+      "listed": false,
+      "charts": [
+        {
+          "id": "gdp-composition",
+          "marks": [
+            "path"
+          ],
+          "elementTypes": [
+            null
+          ],
+          "artboard": {
+            "width": 800,
+            "height": 640,
+            "background": "#ffffff"
+          }
+        }
+      ],
+      "definitionLine": 5824
+    },
+    {
+      "id": "scotus-timeline",
+      "title": "Every seat on the Supreme Court, 1789 to today",
+      "description": "A timeline: one lane per seat, one span per justice from oath to departure, colored by the appointing president's party, with open ends for sitting justices and names inside the longer terms.",
+      "datasetPath": "apps/demo/public/datasets/scotus.csv",
+      "dashboardExport": "scotusTimelineDashboard",
+      "definitionPath": "apps/demo/src/demos/dashboardSettings.ts",
+      "catalogLine": 1027,
+      "listed": false,
+      "charts": [
+        {
+          "id": "scotus-composition",
+          "marks": [
+            "span"
+          ],
+          "elementTypes": [
+            null
+          ],
+          "artboard": {
+            "width": 800,
+            "height": 600,
+            "background": "#ffffff"
+          }
+        }
+      ],
+      "definitionLine": 5959
+    },
+    {
+      "id": "stocks-horizon",
+      "title": "Five tech stocks, 2000 to 2010, as horizon bands",
+      "description": "A horizon chart: each stock's growth since 2000 folded into three stacked bands per row, gains in blue and losses mirrored upward in red, so five decades-long swings fit in a few rows.",
+      "datasetPath": "apps/demo/public/datasets/tech-stocks.csv",
+      "dashboardExport": "stocksHorizonDashboard",
+      "definitionPath": "apps/demo/src/demos/dashboardSettings.ts",
+      "catalogLine": 1038,
+      "listed": false,
+      "charts": [
+        {
+          "id": "stocks-composition",
+          "marks": [
+            "horizon"
+          ],
+          "elementTypes": [
+            null
+          ],
+          "artboard": {
+            "width": 800,
+            "height": 460,
+            "background": "#ffffff"
+          }
+        }
+      ],
+      "definitionLine": 6094
+    },
+    {
+      "id": "co2-swarm",
+      "title": "Carbon dioxide per person, 2020",
+      "description": "A beeswarm per region: every economy as a dot sized by population and colored by income group, pushed off the line just far enough to clear its neighbors along a shared log scale.",
+      "datasetPath": "apps/demo/public/datasets/co2-per-capita.csv",
+      "dashboardExport": "co2SwarmDashboard",
+      "definitionPath": "apps/demo/src/demos/dashboardSettings.ts",
+      "catalogLine": 1049,
+      "listed": false,
+      "charts": [
+        {
+          "id": "co2-composition",
+          "marks": [
+            "point"
+          ],
+          "elementTypes": [
+            null
+          ],
+          "artboard": {
+            "width": 800,
+            "height": 640,
+            "background": "#ffffff"
+          }
+        }
+      ],
+      "definitionLine": 6198
+    },
+    {
+      "id": "titanic-mosaic",
+      "title": "Who survived the Titanic, by class",
+      "description": "A mosaic plot: columns sized by each class's share of passengers through a per-repeat calculation, each stacking the shares who survived and died, so area reads as people and filters resize the columns.",
+      "datasetPath": "apps/demo/public/datasets/titanic.csv",
+      "dashboardExport": "titanicMosaicDashboard",
+      "definitionPath": "apps/demo/src/demos/dashboardSettings.ts",
+      "catalogLine": 1060,
+      "listed": false,
+      "charts": [
+        {
+          "id": "mosaic-composition",
+          "marks": [
+            "stack"
+          ],
+          "elementTypes": [
+            null
+          ],
+          "artboard": {
+            "width": 760,
+            "height": 600,
+            "background": "#ffffff"
+          }
+        }
+      ],
+      "definitionLine": 6336
+    }
+  ]
+}

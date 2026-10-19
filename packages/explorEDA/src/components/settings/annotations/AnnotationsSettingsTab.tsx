@@ -3,7 +3,10 @@ import { useEffect, useMemo, useRef } from "react";
 import { useDataLayer, type IdType } from "@/providers/DataLayerProvider";
 import type { ChartSettings } from "@/types/ChartTypes";
 import { useAnnotationRows } from "../../charts/annotations/useAnnotationRows";
-import { useAnnotationStatuses } from "../../charts/annotations/annotationStatus";
+import {
+  useAnnotationDetails,
+  useAnnotationStatuses,
+} from "../../charts/annotations/annotationStatus";
 import { Button } from "../../ui/button";
 import { Label } from "../../ui/label";
 import {
@@ -108,6 +111,7 @@ export function AnnotationsSettingsTab({
   }, [annotations]);
   const { ids, getColumn } = useAnnotationRows();
   const drawn = useAnnotationStatuses(settings.id);
+  const details = useAnnotationDetails(settings.id);
   const getColumnNames = useDataLayer((state) => state.getColumnNames);
   const crossfilter = useDataLayer((state) => state.crossfilterWrapper);
   // Filter changes arrive as new live items for this chart.
@@ -257,6 +261,7 @@ export function AnnotationsSettingsTab({
                   : (drawn[annotation.id] ??
                     listStatus(annotation, ids, getColumn, visible))
               }
+              detail={annotation.hidden ? undefined : details[annotation.id]}
               context={context}
               facetOptions={facetOptions}
               keyFields={keyFields}
@@ -307,6 +312,7 @@ export function AnnotationsSettingsTab({
 function AnnotationCard({
   annotation,
   status,
+  detail,
   context,
   facetOptions,
   keyFields,
@@ -320,6 +326,8 @@ function AnnotationCard({
 }: {
   annotation: ChartAnnotation;
   status: AnnotationStatus;
+  /** What the drawn annotation read, such as an interval's rows and runs. */
+  detail?: string;
   context: AnnotationContext;
   facetOptions: { id: string; label: string }[];
   keyFields: string[];
@@ -408,6 +416,11 @@ function AnnotationCard({
           <Trash2 className="size-3.5" aria-hidden="true" />
         </Button>
       </div>
+      {detail && (
+        <p className="text-[11px] text-muted-foreground" role="note">
+          Drawn from {detail}.
+        </p>
+      )}
       <div className="eda-setting-grid">
         <Label htmlFor={`${annotation.id}-name`}>Name</Label>
         <HeldInput

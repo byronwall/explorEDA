@@ -194,7 +194,9 @@ export function scatterPosition(
   axis: ScatterAxisScale,
   raw: datum,
   sourceId: IdType,
-  salt: number
+  salt: number,
+  /** Places band rows at the band's center instead of jittering them. */
+  centered = false
 ): { value: datum; pixel: number } | undefined {
   if (axis.kind === "numeric") {
     const value = finiteNumber(raw);
@@ -210,7 +212,10 @@ export function scatterPosition(
   const width = axis.scale.bandwidth();
   return {
     value,
-    pixel: start + width / 2 + jitter(sourceId, salt) * width * JITTER_SHARE,
+    pixel:
+      start +
+      width / 2 +
+      (centered ? 0 : jitter(sourceId, salt) * width * JITTER_SHARE),
   };
 }
 

@@ -116,3 +116,47 @@ it("marks an event date on a time series", () => {
   expect(rule).not.toBeNull();
   expect(container.textContent).toContain("Launch");
 });
+
+it("widens the y axis to supplied bounds within the chart's own rows", () => {
+  const data = [
+    { measure: "A", x: 1, y: 10, lo: null, hi: null },
+    { measure: "A", x: 2, y: 12, lo: 2, hi: 40 },
+    { measure: "A", x: 3, y: 11, lo: 1, hi: 44 },
+    // Another measure the chart-local filter leaves out.
+    { measure: "B", x: 1, y: -500, lo: -900, hi: 900 },
+  ];
+  const settings: LineChartSettings = {
+    ...lineChartDefinition.createDefaultSettings({ x: 0, y: 0, w: 6, h: 4 }),
+    xField: "x",
+    seriesField: ["y"],
+    showLegend: false,
+    seriesSettings: { y: DEFAULT_SERIES_SETTINGS },
+    localFilters: [{ type: "value", field: "measure", values: ["A"] }],
+    annotations: [
+      {
+        id: "range",
+        type: "interval",
+        lowerField: "lo",
+        upperField: "hi",
+        meaning: "Supplied range",
+      },
+    ],
+  };
+  const { container } = render(
+    <DataLayerProvider data={data} charts={[settings]}>
+      <LineChart settings={settings} width={500} height={300} />
+    </DataLayerProvider>
+  );
+  const ticks = [...container.querySelectorAll("text")]
+    .map((node) => Number(node.textContent))
+    .filter(Number.isFinite);
+  // The ribbon reaches 44, far past every series value; measure B is ignored.
+  expect(Math.max(...ticks)).toBeGreaterThanOrEqual(40);
+  expect(Math.min(...ticks)).toBeGreaterThan(-100);
+  const ribbon = container.querySelector('path[data-annotation-id="range"]')!;
+  const ys = ribbon
+    .getAttribute("d")!
+    .match(/-?[\d.]+,-?[\d.]+/g)!
+    .map((pair) => Number(pair.split(",")[1]));
+  expect(Math.min(...ys)).toBeGreaterThanOrEqual(0);
+});

@@ -40,6 +40,7 @@ import {
 } from "../useGetColumnData";
 import { useGetAllIds, useGetLiveIds } from "../useGetLiveData";
 import { type LineChartSettings, DEFAULT_SERIES_SETTINGS } from "./definition";
+import type { IntervalAnnotation } from "@/lib/annotations/types";
 import { TimeSeriesChart } from "./TimeSeriesChart";
 
 const curveTypes = {
@@ -94,8 +95,11 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
   const xNumber = (value: datum) =>
     xIsDate ? timestampOf(value) : finiteNumber(value);
 
-  // Get all data for axis limits calculation
-  const allXData = useGetColumnDataForIds(settings.xField);
+  // Every row this panel can draw, whatever the filters: what "all rows"
+  // calculations and the automatic domains read. A chart-local filter
+  // narrows it; facets share it, so their panels share one scale.
+  const allIds = useGetAllIds(settings);
+  const allXData = useGetColumnDataForIds(settings.xField, allIds);
 
   // Get filtered data for rendering
   const liveIds = useGetLiveIds(settings);
@@ -104,15 +108,29 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
     [liveIds, facetIds]
   );
   const liveXData = useGetColumnDataForIds(settings.xField, selectedIds);
-  // Every row this panel can draw, whatever the filters: what "all rows"
-  // calculations read.
-  const allIds = useGetAllIds(settings);
   const panelIds = useMemo(() => {
     if (!facetIds) return allIds;
     const facet = new Set(facetIds);
     return allIds.filter((id) => facet.has(id));
   }, [allIds, facetIds]);
-  const allSeriesData = useGetColumnDataForMultipleIds(settings.seriesField);
+  const allSeriesData = useGetColumnDataForMultipleIds(
+    settings.seriesField,
+    allIds
+  );
+  // Supplied intervals widen the automatic domain to show their bounds.
+  const intervals = useMemo(
+    () =>
+      (settings.annotations ?? []).filter(
+        (item): item is IntervalAnnotation =>
+          item.type === "interval" && !item.hidden
+      ),
+    [settings.annotations]
+  );
+  const intervalFields = useMemo(
+    () => intervals.flatMap((item) => [item.lowerField, item.upperField]),
+    [intervals]
+  );
+  const intervalData = useGetColumnDataForMultipleIds(intervalFields, allIds);
 
   // Get all series data using the new hook
   const liveSeriesData = useGetColumnDataForMultipleIds(
@@ -134,6 +152,16 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
     },
     { left: [] as number[], right: [] as number[] }
   );
+  for (const item of intervals) {
+    const lows = intervalData[item.lowerField] ?? [];
+    const highs = intervalData[item.upperField] ?? [];
+    lows.forEach((value, index) => {
+      const low = finiteNumber(value);
+      const high = finiteNumber(highs[index]);
+      if (low === undefined || high === undefined) return;
+      yValuesByAxis[item.yAxis === "right" ? "right" : "left"].push(low, high);
+    });
+  }
   const leftYExtent = extent(yValuesByAxis.left) as [number, number];
   const leftYTicks = Number.isFinite(leftYExtent[0])
     ? scaleLinear().domain(leftYExtent).nice().ticks(5)

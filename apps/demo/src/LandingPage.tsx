@@ -215,6 +215,7 @@ export function LandingPage() {
   const motionY = shouldReduceMotion ? 0 : 20;
 
   const example = workspaceExample(workspace);
+  const counterpart = counterpartLink(example);
   const hasData = workspace !== null;
   const canResume = isHome && !hasData && hasStoredSession();
 
@@ -715,6 +716,18 @@ export function LandingPage() {
                     {example?.description}
                   </p>
                 </div>
+                {counterpart && (
+                  <Link
+                    className="inline-flex shrink-0 items-center gap-1 rounded-sm text-xs font-medium text-site-accent underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    to={examplePath(counterpart.id)}
+                  >
+                    <span className="sm:hidden">{counterpart.short}</span>
+                    <span className="hidden sm:inline">
+                      {counterpart.label}
+                    </span>
+                    <ArrowRight className="size-3" aria-hidden="true" />
+                  </Link>
+                )}
                 <Link
                   className="inline-flex shrink-0 items-center gap-1 rounded-sm text-xs text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   to="/#integration"
@@ -789,4 +802,19 @@ export function LandingPage() {
       </div>
     </div>
   );
+}
+
+/** The header link to the same analysis built the other way. */
+function counterpartLink(example: ExampleData | null | undefined) {
+  const target = example?.counterpart;
+  if (!target) {
+    return null;
+  }
+  const composed = examples
+    .find(({ id }) => id === target.id)
+    ?.savedData?.charts.some(({ type }) => type === "composition");
+  return {
+    ...target,
+    short: composed ? "Composition" : "Built-in chart",
+  };
 }

@@ -15,7 +15,20 @@ export interface HeatmapSettings extends BaseChartSettings {
   measureField?: string;
   /** Most categories shown on each axis, ranked by row count. */
   maxCategories: number;
-  sortBy: "count" | "label";
+  /** Most columns; absent uses `maxCategories`. */
+  maxColumns?: number;
+  /** Data keeps the order values first appear in the source. */
+  sortBy: "count" | "label" | "data";
+  /** Column order; absent uses `sortBy`. */
+  columnSortBy?: "count" | "label" | "data";
+  /**
+   * Bins a date column field into UTC calendar periods, with a column for
+   * every period from the first to the last. A cell selects its rows by date
+   * range. Past the column limit, the latest periods show.
+   */
+  columnInterval?: "year" | "month" | "week" | "day";
+  /** Fixed color ends and a transform. Absent: the shown cells' range. */
+  colorDomain?: { min?: number; max?: number; transform?: "sqrt" };
   showValues: boolean;
 }
 
@@ -53,12 +66,16 @@ export const heatmapDefinition: ChartDefinition<HeatmapSettings> = {
     settings: HeatmapSettings,
     fieldGetter: (name: string) => Record<IdType, datum>
   ) => {
-    // A selected cell is one value on the row field and one on the column field.
+    // A selected cell is one value on the row field and one on the column
+    // field, or a date range on a binned column field.
     const active = settings.filters
       .filter(
         (filter) =>
-          filter.type === "value" &&
-          (filter.field === settings.field ||
+          (filter.type === "value" &&
+            (filter.field === settings.field ||
+              filter.field === settings.columnField)) ||
+          (filter.type === "date-range" &&
+            settings.columnInterval &&
             filter.field === settings.columnField)
       )
       .map((filter) => ({ filter, data: fieldGetter(filter.field) }));

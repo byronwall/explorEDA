@@ -151,14 +151,20 @@ function Intervals({
   return (
     <>
       <g clipPath={clipPath} pointerEvents="none">
-        {intervals.map(({ annotation, points }) => {
-          const upper = points.map((p) => `${p.x},${p.upper}`);
-          const lower = points.map((p) => `${p.x},${p.lower}`).reverse();
+        {intervals.map(({ annotation, runs }) => {
+          // One closed ribbon per run; a gap between runs stays empty.
+          const d = runs
+            .map((points) => {
+              const upper = points.map((p) => `${p.x},${p.upper}`);
+              const lower = points.map((p) => `${p.x},${p.lower}`).reverse();
+              return `M${[...upper, ...lower].join("L")}Z`;
+            })
+            .join("");
           return (
             <path
               key={annotation.id}
               data-annotation-id={annotation.id}
-              d={`M${[...upper, ...lower].join("L")}Z`}
+              d={d}
               fill={colorOf(annotation)}
               fillOpacity={0.14}
               stroke={colorOf(annotation)}
@@ -168,8 +174,8 @@ function Intervals({
           );
         })}
       </g>
-      {intervals.map(({ annotation, points }) => {
-        const last = points[points.length - 1]!;
+      {intervals.map(({ annotation, runs }) => {
+        const last = runs.at(-1)!.at(-1)!;
         return (
           <Label
             key={`${annotation.id}:label`}

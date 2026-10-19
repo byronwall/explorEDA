@@ -174,3 +174,22 @@ it("separates zero, missing periods, and invalid measures without averaging dail
   );
   expect(average.points[1]?.value).toBeUndefined();
 });
+
+it("hides dense period dots until one is active, keeping them reachable", () => {
+  const data = Array.from({ length: 72 }, (_, month) => ({
+    Date: new Date(Date.UTC(2020, month, 1)).toISOString(),
+    Amount: month + 1,
+    Channel: "Web",
+  }));
+  render(
+    <DataLayerProvider data={data} charts={[chart]}>
+      <LineChart settings={chart} width={650} height={340} />
+    </DataLayerProvider>
+  );
+  const dots = screen.getAllByRole("button", { name: /^Web · / });
+  expect(dots).toHaveLength(72);
+  expect(dots.every((dot) => dot.getAttribute("opacity") === "0")).toBe(true);
+  fireEvent.focus(dots[5]!);
+  expect(dots[5]).toHaveAttribute("opacity", "1");
+  expect(dots[6]).toHaveAttribute("opacity", "0");
+});
