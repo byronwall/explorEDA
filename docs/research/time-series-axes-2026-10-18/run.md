@@ -23,7 +23,7 @@ The user’s incomplete plant-tool sentence is interpreted as per-line independe
 
 ## Live run
 
-- Phase: collected, verified, and integrated as a proposal; final validation and review PR in progress.
+- Phase: complete. Research is collected, reconciled, validated, and in an open attached review PR.
 - Round: initial request; zero of two permitted follow-ups used.
 - Conversation: https://chatgpt.com/c/6ad59131-5e44-83ea-a362-9192357f37a2.
 - Title observed: Research Time Series Design.
@@ -33,9 +33,9 @@ The user’s incomplete plant-tool sentence is interpreted as per-line independe
 - Verified attachments in submitted message: `pro-prompt(7).md`, `source-packet(4).txt`.
 - Processing evidence: submitted user message, ChatGPT is responding, then Working and Thinking.
 - First scheduled check: 2026-10-19 04:42 UTC (October 19, 12:42 a.m. Eastern).
-- Heartbeat: `collect-time-series-axes-pro-research`, ACTIVE, hourly at minute 42, attached to this chat.
+- Heartbeat: `collect-time-series-axes-pro-research`, PAUSED after verified completion.
 - Goal: none requested; none created.
-- PR: pending after final checks.
+- PR: https://github.com/byronwall/explorEDA/pull/454 — OPEN, non-draft, verified main base and research branch head; attached to this chat.
 
 ## Review events
 
@@ -93,3 +93,16 @@ The five affected files passed separately with host access: 50 tests. Full aggre
 Separate demo tests passed (431); app tests passed (32). They ran separately because the recursive gate stopped at the library failure.
 Markdown relative links, balanced fences, JSON parsing, and all 34 unchanged source hashes passed.
 No application code, example, public docs page, package output, or changeset was edited.
+
+## Completion
+
+PR #454 is open and attached. Saved body, 16-file scope, base/head and document links were reviewed.
+All committed changes are research/planning documents plus the scoped original-artifact formatting exclusion.
+The pre-commit formatter initially reformatted raw companions. Restored all raw bytes from the verified archive.
+Added a narrow `.prettierignore` entry, matching the repository's existing preserved-handoff pattern.
+Final raw sizes and hashes still match the original manifest; originals are unchanged.
+`pnpm check:pr` passed for changeset scope and commit identities. All commits use Byron's author and committer identities.
+Temporary pnpm SQLite sidecars were removed; no dependency or application changes were committed.
+The temporary collection heartbeat was disabled through automation_update and verified PAUSED.
+No merge, deployment, or application implementation occurred. The feature proposal remains unapproved.
+The full requested Pro handoff process is complete. Stop for review.
