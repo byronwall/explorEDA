@@ -1,0 +1,234 @@
+{
+  "repository": "https://github.com/byronwall/explorEDA",
+  "sourceCommit": "0984715cb4c0c85d0d6efa8436ab38368bd20ae1",
+  "kind": "selected source snapshot; not runnable",
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "bytes": 4033,
+      "sha256": "802990c1bacd76b4b867239da78fd011fb32653f891d4a88560e9ee629979a33",
+      "origin": "baseline"
+    },
+    {
+      "path": "docs/agent-guide.md",
+      "bytes": 19779,
+      "sha256": "0992949f205d1ae72a8249c69bccb33f1eb70763b14a526a6384a7a91f9c9f00",
+      "origin": "baseline"
+    },
+    {
+      "path": "CODING_STANDARDS.md",
+      "bytes": 2213,
+      "sha256": "b4358fe75d063d53aea1edbc58d0dc6fd8df6e6165aa5792d8d2aa35eefe7ac5",
+      "origin": "baseline"
+    },
+    {
+      "path": "README.md",
+      "bytes": 10263,
+      "sha256": "1f05b6c4992b07d1fc2b38d7bf9273db9e4a3a0d94513b7265e13b81cd7c5e28",
+      "origin": "baseline"
+    },
+    {
+      "path": "package.json",
+      "bytes": 1258,
+      "sha256": "f9b14daf225872f605d9435ddfb46fdede88b203c87a0e8507fe20743536f6e3",
+      "origin": "baseline"
+    },
+    {
+      "path": "packages/explorEDA/package.json",
+      "bytes": 6082,
+      "sha256": "17a71fd8852bcfbfb92cf76a9faf03766e934d0a5f0afcdcc9a5d0fd563b452a",
+      "origin": "baseline"
+    },
+    {
+      "path": "packages/explorEDA/src/server/sources/refresh.ts",
+      "bytes": 7695,
+      "sha256": "40a951900a9210ae076b2e6159ea5d61ef1f3515daacdff4cf705d296efc5680",
+      "origin": "baseline"
+    },
+    {
+      "path": "packages/explorEDA/src/server/sources/read.ts",
+      "bytes": 4891,
+      "sha256": "3994f5a5cb75215867338978309286b24a20f306b0a4eb92b759966f8321646f",
+      "origin": "baseline"
+    },
+    {
+      "path": "packages/explorEDA/src/server/sources/types.ts",
+      "bytes": 3502,
+      "sha256": "7957f917d1d879a3b71485c405470846408534d646a46e8165fcc2ef42d5eb81",
+      "origin": "baseline"
+    },
+    {
+      "path": "packages/explorEDA/src/server/sources/routes.ts",
+      "bytes": 3512,
+      "sha256": "24e49032f4e29471271fd0f56a4488c5fcb65f4e45e398d52ea662d52128de00",
+      "origin": "baseline"
+    },
+    {
+      "path": "packages/explorEDA/src/server/sources/refresh.test.ts",
+      "bytes": 6738,
+      "sha256": "8d88f8247124b5cc84b2f0b6611742492f45cd04d06b029d48358bd17432eee5",
+      "origin": "baseline"
+    },
+    {
+      "path": "packages/explorEDA/src/server/sources/fake.ts",
+      "bytes": 3568,
+      "sha256": "7c4854400ce4b38cd5712523209f76b580613258e2d3b8dd48d97f4b647ee561",
+      "origin": "baseline"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/project/snapshots.ts",
+      "bytes": 3572,
+      "sha256": "f986a6d7a2081666c34bed7c8501197b2380d609da0511196d22f2dc7ee3e061",
+      "origin": "baseline"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/project/folder.ts",
+      "bytes": 13652,
+      "sha256": "fe3bb269372fff7bf6df1e0fe22f3e15aac5c2edb2fd986f31fec370775d90b9",
+      "origin": "baseline"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/project/files.ts",
+      "bytes": 4011,
+      "sha256": "cbd2459b265e6cf8202528822ec4c1815b388ee763ca97bad7f011d73e9e7b6e",
+      "origin": "baseline"
+    },
+    {
+      "path": "apps/app/src/App.tsx",
+      "bytes": 15203,
+      "sha256": "3f0a026212bbbd997bffe3dc819fb95353d811d99fb7c29f19ebf46762b5d4f9",
+      "origin": "baseline"
+    },
+    {
+      "path": "apps/app/src/httpFiles.ts",
+      "bytes": 9908,
+      "sha256": "3d116898f08c16962f69d09dc403e08fa3cc4a69d40420333cb0afabca9321d9",
+      "origin": "baseline"
+    },
+    {
+      "path": "apps/app/src/DatabaseSourceViews.tsx",
+      "bytes": 9328,
+      "sha256": "de4423b81dc8dcaeab1209087a24a1551b45e9ff68a3bfaaf6f8084c973dcb38",
+      "origin": "baseline"
+    },
+    {
+      "path": "packages/explorEDA/src/components/project/sourceRowIdentity.ts",
+      "bytes": 2403,
+      "sha256": "b2367c44a980701ae8483a4f7e3b7e22935ff04dabf927100a934aa8765f947c",
+      "origin": "baseline"
+    },
+    {
+      "path": "packages/explorEDA/examples/database/exploreda.eda",
+      "bytes": 523,
+      "sha256": "7cb1795b660ffeb51ccd0c8b4b3baecb9fc7ebdd0250b7defea3088ac40ac306",
+      "origin": "baseline"
+    },
+    {
+      "path": "packages/explorEDA/examples/database/orders.eda",
+      "bytes": 492,
+      "sha256": "933c273ffde8a9d99d2cee26e3cfee4fb7a9abee01007368ef605950dd84717b",
+      "origin": "baseline"
+    },
+    {
+      "path": "packages/explorEDA/examples/database/returns.eda",
+      "bytes": 457,
+      "sha256": "c25b34d5b9c5f4e6865b1c8f4a636b7b797cd8e2749da6a1b92e24eb4321a320",
+      "origin": "baseline"
+    },
+    {
+      "path": "apps/demo/src/docs/pages/database-sources.mdx",
+      "bytes": 9658,
+      "sha256": "b5a877ba84102e8c6a02b7bce92afddcdd4c0bcf2eb2920a0396f502191684e7",
+      "origin": "baseline"
+    },
+    {
+      "path": "docs/intent/database-query-contract/intent-brief.md",
+      "bytes": 5105,
+      "sha256": "a6816cbf60ecdd9185fb074300031988ff4e4b8e01489ebac86c825f6125ef2c",
+      "origin": "baseline"
+    },
+    {
+      "path": "docs/intent/database-adapters/intent-brief.md",
+      "bytes": 4164,
+      "sha256": "5fba223b6860b70bde5ed62744911168c136c0347f09b54cd94b7844996dedd8",
+      "origin": "baseline"
+    },
+    {
+      "path": "docs/intent/current-analysis-trust/intent-brief.md",
+      "bytes": 3397,
+      "sha256": "50a0488944c916060d7002b1ff44a0b01a28181c4ff8f28252f42e474eefcaa2",
+      "origin": "baseline"
+    },
+    {
+      "path": "docs/research/data-preparation-boundary-2026-10-16/decisions.md",
+      "bytes": 4406,
+      "sha256": "b7455019614233a39066f69a4215b6550fc8e4dac6d1e32576cd625d2bd67aca",
+      "origin": "baseline"
+    },
+    {
+      "path": "docs/research/data-preparation-boundary-2026-10-16/research-queue.md",
+      "bytes": 5122,
+      "sha256": "a26dd2a0967d7e273a22844bc7ab1d227bbf537316f98d00c4890ec42551a6ab",
+      "origin": "baseline"
+    },
+    {
+      "path": "packages/explorEDA/src/node/projectFiles.ts",
+      "bytes": 5987,
+      "sha256": "31bd320b864ed96f36a88a2ae38897182bce2e71d3790c85aed61e4c6f7d751c",
+      "origin": "baseline"
+    },
+    {
+      "path": "packages/explorEDA/src/server/handler.ts",
+      "bytes": 4993,
+      "sha256": "6590cde88339d2975890178167775b17bb1fec5178ceb7e062720a419a759104",
+      "origin": "baseline"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/project/directoryFiles.ts",
+      "bytes": 5701,
+      "sha256": "ddcc08fabbd12fc2054f99568c0ff7f0e528202fd7d2d73646cad1f5ceaa095d",
+      "origin": "baseline"
+    },
+    {
+      "path": "packages/explorEDA/src/server/sources/drivers/mysql.ts",
+      "bytes": 11328,
+      "sha256": "a216c577de02321842a3cf0da07fc0dfe39e9a3a22d6f6818ed4b2ddd52dda40",
+      "origin": "baseline"
+    },
+    {
+      "path": "packages/explorEDA/src/server/sources/drivers/duckdb.ts",
+      "bytes": 9419,
+      "sha256": "f82cc04d3a49084d1ae2e47a0cf0828411b2221b0aa69ae937b5ef2eab70e5ed",
+      "origin": "baseline"
+    },
+    {
+      "path": "packages/explorEDA/src/server/sources/drivers/postgres.ts",
+      "bytes": 11159,
+      "sha256": "81e54137a9c4d48c0856951c9049d0de0ae3a1bb1aff8883b228f09f725fa504",
+      "origin": "baseline"
+    },
+    {
+      "path": "packages/explorEDA/src/server/sources/drivers/sqlite.ts",
+      "bytes": 6687,
+      "sha256": "14e81654fad0e10b1d981f33d16bfe384daed46e299644ed6e12e10d64fa8a16",
+      "origin": "baseline"
+    },
+    {
+      "path": "packages/explorEDA/src/server/sources/drivers/sqlserver.ts",
+      "bytes": 10919,
+      "sha256": "995e90e34e6e1d7b57dedaebf610456f47a5f1a3053e571e7a7e8826ed726a46",
+      "origin": "baseline"
+    },
+    {
+      "path": "docs/research/source-freshness-2026-10-18/research-queue.md",
+      "bytes": 2248,
+      "sha256": "85d61f49b31844897083d11c69498cb1b5f63daee95db8c8b6ab7b0d8cfce92e",
+      "origin": "new research context"
+    }
+  ],
+  "packet": {
+    "path": "tmp/pro-source-freshness-2026-10-18/source-packet.txt",
+    "bytes": 243555,
+    "sha256": "f527df2b00bdb9da84f2a7e2789fc94188d66e1b0c60bd82ef2dc182c1d29b02"
+  }
+}
