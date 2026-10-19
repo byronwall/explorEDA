@@ -38,5 +38,13 @@
   "fixture_audit": "nine independent arithmetic anchors; no product execution",
   "browser_author_performance_export_history": "not run; proposed proof only",
   "changeset_screenshot": "not applicable; no product or docs-site flow changed",
-  "logs": "tmp/pro-relationship-2026-10-19/"
+  "logs": "tmp/pro-relationship-2026-10-19/",
+  "check_pr": "passed",
+  "authored_links": "passed",
+  "review_pr": {
+    "url": "https://github.com/byronwall/explorEDA/pull/456",
+    "state": "OPEN",
+    "files": 19,
+    "body_and_branches_verified": true
+  }
 }
