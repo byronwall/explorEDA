@@ -1,0 +1,42 @@
+{
+  "runtime": {
+    "node": "22.21.1",
+    "pnpm": "11.9.0"
+  },
+  "pnpm_check": {
+    "result": "failed on sandbox localhost EPERM and watcher EMFILE",
+    "ui": "passed",
+    "builds": "passed",
+    "docs_build_tests": 73,
+    "types": "passed",
+    "library": {
+      "passed_files": 245,
+      "failed_files": 5,
+      "skipped_files": 3,
+      "passed_tests": 1619,
+      "failed_tests": 10,
+      "skipped_tests": 72
+    },
+    "aggregate_rerun": false
+  },
+  "approved_retry": {
+    "files": 5,
+    "tests": 50,
+    "result": "passed"
+  },
+  "app_suite": {
+    "files": 8,
+    "tests": 32,
+    "result": "passed"
+  },
+  "demo_suite": {
+    "files": 18,
+    "tests": 431,
+    "result": "passed"
+  },
+  "integrity": "passed all six assets and five companion matches",
+  "fixture_audit": "nine independent arithmetic anchors; no product execution",
+  "browser_author_performance_export_history": "not run; proposed proof only",
+  "changeset_screenshot": "not applicable; no product or docs-site flow changed",
+  "logs": "tmp/pro-relationship-2026-10-19/"
+}

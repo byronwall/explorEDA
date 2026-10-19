@@ -1,0 +1,53 @@
+{
+  "kind": "independent arithmetic; no explorEDA runtime or author proof",
+  "cases": {
+    "linear": {
+      "n": 12,
+      "r": 1.0,
+      "moments": ["935", "3740", "1870"]
+    },
+    "curve": {
+      "n": 11,
+      "r": 0.0,
+      "moments": ["110", "858", "0"]
+    },
+    "reversal": {
+      "n": 12,
+      "r": -0.8241206030150754,
+      "moments": ["398", "398", "-328"]
+    },
+    "groupA": {
+      "n": 6,
+      "r": 1.0,
+      "moments": ["35/2", "35/2", "35/2"]
+    },
+    "groupB": {
+      "n": 6,
+      "r": 1.0,
+      "moments": ["35/2", "35/2", "35/2"]
+    },
+    "constant": {
+      "n": 12,
+      "r": null,
+      "moments": ["935", "0", "0"]
+    },
+    "sparse": {
+      "n": 4,
+      "r": 1.0,
+      "moments": ["5", "500", "50"]
+    },
+    "leverage": {
+      "n": 12,
+      "r": 0.9387819356417902,
+      "moments": ["935", "2180849/3", "24475"]
+    },
+    "leverage_core": {
+      "n": 11,
+      "r": 0.0,
+      "moments": ["110", "858", "0"]
+    }
+  },
+  "sparse_pair_keys": ["r01", "r02", "r03", "r04"],
+  "matrix_independent_missing": [4, 6],
+  "scatter_priority_missing": [4, 4]
+}

@@ -1,6 +1,6 @@
 # Relationship discovery Pro run
 
-- Phase: submitted; Pro is researching. Outputs pending.
+- Phase: collected, reviewed and integrated; validation and review PR completion pending.
 - Repository: https://github.com/byronwall/explorEDA
 - Checkout: /Users/byronwall/Projects/explorEDA. No worktree.
 - Baseline: 9b16d78e3ed0742ed4d5858c1939fec9e758b510, refreshed origin/main on 2026-10-19.
@@ -26,3 +26,13 @@ Signed-in Chrome byroni.us profile and Byron Wall Pro account verified. Live sel
 All 27 packet source hashes pass; 25 tracked files match baseline bytes exactly. The prompt and queue are local additions. The packet/manifest preserve uploaded bytes even if commit hooks format authored Markdown. Existing matrix planner tests pass: one file, 16 tests. Authored whitespace passes. No author observation, product browser test, new UI, changeset or full pnpm check ran. Full gates remain due for integration.
 
 Temporary collection heartbeat was created through automation_update and saved TOML verified ACTIVE, hourly minute 05, attached to this chat. Discovery automation remains ACTIVE every six hours. No goal or worktree. No new PR yet. Do not call the cycle complete until collection, review, integration, validation and verified review PR finish.
+
+## Collection and integration: 2026-10-19
+
+Pro finished after 27m50s. All four standalone Markdown reports, ZIP and standalone manifest are collected. Safe paths, no symlinks, CRC, exact inventory, UTF-8, hashes, sizes and all five companion matches pass. Read all substantive outputs. No downloaded code ran. See collection.json.
+
+Locally authenticated all 25 tracked source excerpts against baseline Git objects and current files. Pro's packet receipt hash matches the uploaded packet. Pro did not receive the separate source manifest; originals retain that limitation. Independent primary references checked for Orange, JMP, KNIME, SciPy and NIST. Nine fixture arithmetic anchors pass, without explorEDA runtime. No material gap needs a follow-up; 0/2.
+
+Integrated seven dispositions, summary, evidence, ranked queue and corrected existing relationship intent/map. Keep the matrix. Keep the lesson/example proposed until a named author task exists. Investigate population semantics and pair-opening only for demonstrated need. Defer coefficient/ranking/Spearman expansion; reject universal mixed scores. Local trust stays first. Corrected the hook path to useGetLiveData.tsx and qualified source-wide references by chart-local population filters. No application source, docs-site page or runnable example changed.
+
+Root pnpm check passes UI, builds, 73 docs checks and all type checks. The library stage has 245 passing files/1619 passing tests; five files fail on sandbox localhost EPERM/watcher EMFILE. Approved retry passes all five/50 tests. Separate app passes eight/32. See validation.json for demo results. No all-green aggregate rerun is claimed. Author, browser, handoff, export/history and performance proofs remain proposed. No changeset or product screenshot applies. Current origin/main remains the baseline. Prior research PRs remain open; codex and codex-automation labels are unavailable.
