@@ -23,7 +23,7 @@ The user’s incomplete plant-tool sentence is interpreted as per-line independe
 
 ## Live run
 
-- Phase: submitted; awaiting Pro research. Full process remains unfinished.
+- Phase: collected, verified, and integrated as a proposal; final validation and review PR in progress.
 - Round: initial request; zero of two permitted follow-ups used.
 - Conversation: https://chatgpt.com/c/6ad59131-5e44-83ea-a362-9192357f37a2.
 - Title observed: Research Time Series Design.
@@ -35,7 +35,7 @@ The user’s incomplete plant-tool sentence is interpreted as per-line independe
 - First scheduled check: 2026-10-19 04:42 UTC (October 19, 12:42 a.m. Eastern).
 - Heartbeat: `collect-time-series-axes-pro-research`, ACTIVE, hourly at minute 42, attached to this chat.
 - Goal: none requested; none created.
-- PR: not yet created. Collection and integration must happen first.
+- PR: pending after final checks.
 
 ## Review events
 
@@ -68,3 +68,28 @@ The successful create used destination=thread. Do not create a duplicate automat
 Prompt paths exist; manifest source hashes match public baseline. Prompt has no unresolved placeholders.
 No application edits. No product tests or browser acceptance tests run.
 Full repository gate is due before the final review PR, not claimed now.
+
+## Collection and integration, October 19
+
+Pro completed after 51m 25s. Collected the original archive and all five standalone companions through Chrome.
+Every standalone file matches its archive copy. CRC, safe paths, sizes and four companion SHA-256 hashes passed.
+See `docs/intent/time-series-axes/collection-manifest.json` for retrieval details and file hashes.
+The initial 20-second download-event wait timed out, but Chrome completed the archive download. No resend.
+
+All 15 recommendations were read and classified: 10 adopt as proposed intent, 3 investigate, 2 defer.
+No bounded follow-up was needed. Original files remain unchanged in the raw folder.
+The main review surface is `docs/intent/time-series-axes/intent-brief.md`, with design, plan, dispositions and evidence linked.
+
+Independent code checks confirm separate renderers, limited right-axis behavior, reduced-geometry hover, and Calendar domain behavior.
+The full checkout resolves a Pro question: existing `FieldSettings.unit` supplies field-series unit metadata.
+Actual hook filename is `useGetLiveData.tsx`. Old-save support remains an explicit product decision; no compatibility layer is adopted.
+Calendar fixes are split from original-value work so they do not block arbitrary observation scales.
+Eight decisive provider sources were reopened. No vendor UI or proposed product behavior was tested.
+
+Dependencies installed with the frozen lockfile on Node 24.21.0/pnpm 11.9.0.
+`pnpm check` passed UI rules, package/app/demo builds, 73 build-time docs tests, and all typechecks.
+Library tests reported 1619 pass/72 skip, with five files affected by socket EPERM and watcher EMFILE.
+The five affected files passed separately with host access: 50 tests. Full aggregate command remains nonzero.
+Separate demo tests passed (431); app tests passed (32). They ran separately because the recursive gate stopped at the library failure.
+Markdown relative links, balanced fences, JSON parsing, and all 34 unchanged source hashes passed.
+No application code, example, public docs page, package output, or changeset was edited.

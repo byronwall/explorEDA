@@ -1,0 +1,3538 @@
+[
+  {
+    "id": "TS-01",
+    "title": "Establish renderer truth and honest mode documentation",
+    "problem": "One line-chart entry point dispatches observation lines and Calendar summaries to different renderers. Documentation and demo coverage overgeneralize right-axis, style and log behavior; critical filter, draft and persistence owners are outside the packet.",
+    "proposal": "Publish an explicit observation-versus-Calendar contract, confirm local state owners, and align docs and coverage with verified renderer behavior before adding controls. Preserve intended source-domain, header-readout, Alt-trace and view-without-filtering rules while naming current exceptions.",
+    "scope": {
+      "renderers": ["observation", "calendar"],
+      "milestones": ["M0", "M1"],
+      "exclusions": [],
+      "dependencies": ["M0: actual local baseline and state-owner inspection"]
+    },
+    "value": {
+      "assessment": "Very high: prevents a polished feature from promising behavior in the wrong renderer.",
+      "basis": "Task-specific engineering judgment; no measured usability or benchmark result."
+    },
+    "priority": {
+      "rank": 1,
+      "kind": "core",
+      "report_reference": "time-series-axes-research.md, section 8"
+    },
+    "confidence": {
+      "level": "high",
+      "basis": "Dispatch, settings and documentation mismatches are directly visible in the packet. Omitted owners and all runtime behavior still require local proof."
+    },
+    "cost": {
+      "level": "small",
+      "estimate_type": "engineering judgment",
+      "additive": false,
+      "shared_milestone_envelopes": [
+        {
+          "milestone": "M0",
+          "developer_days": [0.5, 1.5]
+        },
+        {
+          "milestone": "M1",
+          "developer_days": [1, 3]
+        }
+      ],
+      "note": "Ownership inspection belongs to M0; documentation/demo repair shares M1 with inspection and calendar work. These are shared milestone envelopes, not per-recommendation estimates to sum. M0-M2 together are 4.5-10.5 developer-days; conditional M3-M4 add 5-10."
+    },
+    "affected_paths": [
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/definition.ts",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/LineChartSettingsPanel.tsx",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/TimeSeriesSettingsPanel.tsx",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "docs/ui-defaults.md",
+        "status": "inspected",
+        "purpose": "Preserve and clarify the relevant domain and interaction rules",
+        "review_depth": "full"
+      },
+      {
+        "path": "apps/demo/src/docs/pages/line.mdx",
+        "status": "inspected",
+        "purpose": "Update the milestone documentation",
+        "review_depth": "full"
+      },
+      {
+        "path": "apps/demo/src/demos/examples.ts",
+        "status": "inspected",
+        "purpose": "Register and demonstrate the same tested synthetic scenario and coverage",
+        "review_depth": "targeted relevant sections"
+      },
+      {
+        "path": "apps/demo/src/demos/coverage.ts",
+        "status": "inspected",
+        "purpose": "Register and demonstrate the same tested synthetic scenario and coverage",
+        "review_depth": "targeted relevant sections"
+      },
+      {
+        "path": "apps/demo/src/demos/dashboardSettings.ts",
+        "status": "inspected",
+        "purpose": "Register and demonstrate the same tested synthetic scenario and coverage",
+        "review_depth": "targeted relevant sections"
+      },
+      {
+        "path": "apps/demo/src/docs/live/examples.ts",
+        "status": "uninspected-dependency",
+        "purpose": "Register the live example after confirming registry ownership",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      },
+      {
+        "path": "packages/explorEDA/src/providers/DataLayerProvider",
+        "status": "uninspected-dependency",
+        "purpose": "Verify actual source/filter/settings ownership",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/useGetLiveData",
+        "status": "uninspected-dependency",
+        "purpose": "Verify all/live IDs and own-filter scope",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      }
+    ],
+    "evidence": {
+      "repo": [
+        {
+          "source_id": "repo:packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+          "path": "packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+          "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+          "claim": "settings.time dispatches to the separate Calendar renderer.",
+          "evidence_type": "verified source packet",
+          "source_index": "sources.md#complete-packet-inventory",
+          "limit": "Inspected packet bytes at the supplied baseline; URL is a navigation aid. Independent Git tree verification was unavailable.",
+          "symbol": "LineChart"
+        },
+        {
+          "source_id": "repo:packages/explorEDA/src/components/charts/LineChart/definition.ts",
+          "path": "packages/explorEDA/src/components/charts/LineChart/definition.ts",
+          "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/components/charts/LineChart/definition.ts",
+          "claim": "Observation field series and Calendar aggregation settings have different contracts.",
+          "evidence_type": "verified source packet",
+          "source_index": "sources.md#complete-packet-inventory",
+          "limit": "Inspected packet bytes at the supplied baseline; URL is a navigation aid. Independent Git tree verification was unavailable.",
+          "symbol": "SeriesSettings; TimeSeriesSettings"
+        },
+        {
+          "source_id": "repo:apps/demo/src/docs/pages/line.mdx",
+          "path": "apps/demo/src/docs/pages/line.mdx",
+          "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/apps/demo/src/docs/pages/line.mdx",
+          "claim": "Right-axis and style prose lacks an explicit observation-only boundary.",
+          "evidence_type": "verified source packet",
+          "source_index": "sources.md#complete-packet-inventory",
+          "limit": "Inspected packet bytes at the supplied baseline; URL is a navigation aid. Independent Git tree verification was unavailable."
+        },
+        {
+          "source_id": "repo:docs/ui-defaults.md",
+          "path": "docs/ui-defaults.md",
+          "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/docs/ui-defaults.md",
+          "claim": "Documents stable source references, header readouts and trace/view rules.",
+          "evidence_type": "verified source packet",
+          "source_index": "sources.md#complete-packet-inventory",
+          "limit": "Inspected packet bytes at the supplied baseline; URL is a navigation aid. Independent Git tree verification was unavailable."
+        }
+      ],
+      "external": [
+        {
+          "source_id": "IND-08",
+          "url": "https://pisystem.feedback.aveva.com/ideas/PIVISION-I-736",
+          "claim": "PI Vision grouping and right-side placement are distinct capabilities.",
+          "evidence_type": "documented",
+          "accessed_at": "2026-10-19 UTC",
+          "source_index": "sources.md",
+          "limit": "Version and access limits are recorded in sources.md; no live interaction quality was observed."
+        },
+        {
+          "source_id": "IND-14",
+          "url": "https://support.seeq.com/latest/cloud/interpolation",
+          "claim": "Interval aggregates and raw interpolated observations have different meaning.",
+          "evidence_type": "documented",
+          "accessed_at": "2026-10-19 UTC",
+          "source_index": "sources.md",
+          "limit": "Version and access limits are recorded in sources.md; no live interaction quality was observed."
+        }
+      ]
+    },
+    "alternatives": [
+      "Keep one generic Line description: rejected because it conceals real renderer differences.",
+      "Unify renderers before improving them: unnecessary scope; maintain explicit contracts and shared helpers where useful."
+    ],
+    "proof": {
+      "status": "UNRUN",
+      "plan_reference": "proof-plan.md",
+      "checks": [
+        {
+          "name": "Mode and owner audit",
+          "status": "UNRUN",
+          "procedure": "In the full checkout inspect data/filter/draft/save owners, then reproduce date-valued raw lines, Calendar count/sum/average, and left/right/log variants.",
+          "acceptance": "Record which control each renderer consumes; docs and coverage match the observed states, and all critical state owners are located.",
+          "rejection": "Any public control or sentence claims arbitrary/right axes in Calendar, or runtime behavior is guessed from an omitted hook."
+        },
+        {
+          "name": "Cross-mode primary settings",
+          "status": "UNRUN",
+          "procedure": "Switch Observations to Calendar and back with primary label/log/manual limits plus additional groups.",
+          "acceptance": "Extra yScales and scaleId assignments remain dormant in Calendar. Primary yAxis/yAxisLabel are treated as shared; documented Calendar actions may alter them, and return does not promise exact primary restoration.",
+          "rejection": "The UI promises separate primary settings per mode or Calendar reads unrelated observation-group unit metadata."
+        }
+      ],
+      "docs_and_demo": {
+        "status": "UNRUN",
+        "visible_change": true,
+        "ships_with": ["M1"],
+        "docs_path": "apps/demo/src/docs/pages/line.mdx",
+        "docs_sections": [
+          "Observation lines and Calendar summaries",
+          "Read original values",
+          "Missing calendar periods and stable ranges"
+        ],
+        "demo_ids": ["line-original-values", "line-calendar-missing-weeks"],
+        "demo_paths": [
+          "apps/demo/src/demos/examples.ts",
+          "apps/demo/src/demos/coverage.ts",
+          "apps/demo/src/demos/dashboardSettings.ts"
+        ],
+        "live_registry_path": "apps/demo/src/docs/live/examples.ts",
+        "coverage_required": [
+          "Mode-specific controls and supported scales",
+          "Observed runtime versus intended contract"
+        ],
+        "gate": "An accepted user-visible milestone includes its docs section, registered demo and actual proof result in the same milestone."
+      },
+      "actual_results": [],
+      "completion_rule": "Do not mark complete from static source reading, a screenshot, generated fixture data or an old test name."
+    },
+    "proposed_disposition": "adopt",
+    "approval_status": "unapproved",
+    "codex_disposition": null,
+    "codex_decision_note": "Codex must separately classify adopt, investigate, defer or reject before implementation; this proposed disposition is not authorization."
+  },
+  {
+    "id": "TS-02",
+    "title": "Add arbitrary named scale groups and an explicit Own scale action",
+    "problem": "SeriesSettings.useRightAxis is a boolean selecting at most two shared extents. There is no stable arbitrary scale assignment or per-group semantic state.",
+    "proposal": "Keep primary bounds/type in yAxis and its label in yAxisLabel. Store only additional groups in yScales and assign series through scaleId, omitted meaning primary. Resolve all groups through one small helper. Own scale preserves transform and manual bounds; automatic ranges may change with membership and must be previewed. Join adopts the target limits/type, rejects known incompatible units and retains an unresolved-unit state unless measurement metadata is explicitly declared. A group label never declares or converts a source unit.",
+    "scope": {
+      "renderers": [
+        "observation first; Calendar keeps one shared metric scale"
+      ],
+      "milestones": ["M0", "M2"],
+      "exclusions": [
+        "Arbitrary Calendar groups",
+        "Multiple calendar measures",
+        "Automatic unit conversion",
+        "Enterprise scale registry"
+      ],
+      "dependencies": [
+        "M0 ownership and legacy decision",
+        "M1 original-value inspection"
+      ]
+    },
+    "value": {
+      "assessment": "Very high: directly delivers one scale per line without requiring a ruler for every line.",
+      "basis": "Task-specific engineering judgment; no measured usability or benchmark result."
+    },
+    "priority": {
+      "rank": 3,
+      "kind": "core",
+      "report_reference": "time-series-axes-research.md, section 8"
+    },
+    "confidence": {
+      "level": "high",
+      "basis": "The current two-group limitation and external grouping primitives are documented; exact metadata, save and Notes ownership need local confirmation."
+    },
+    "cost": {
+      "level": "medium",
+      "estimate_type": "engineering judgment",
+      "additive": false,
+      "shared_milestone_envelopes": [
+        {
+          "milestone": "M0",
+          "developer_days": [0.5, 1.5]
+        },
+        {
+          "milestone": "M2",
+          "developer_days": [3, 6]
+        }
+      ],
+      "note": "Schema, pure resolver and deterministic legacy decision share the M0/M2 envelopes with presentation and editing. These are shared milestone envelopes, not per-recommendation estimates to sum. M0-M2 together are 4.5-10.5 developer-days; conditional M3-M4 add 5-10."
+    },
+    "affected_paths": [
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/definition.ts",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/LineSeriesSettings.tsx",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/LineChartSettingsPanel.tsx",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/types/ChartTypes.ts",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/lineScalePlan.ts",
+        "status": "proposed-new",
+        "purpose": "Optional small pure group/domain resolver; not an existing module"
+      },
+      {
+        "path": "packages/explorEDA/src/lib/fieldSettings",
+        "status": "uninspected-dependency",
+        "purpose": "Confirm unit/format metadata owner; do not infer it",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      },
+      {
+        "path": "packages/explorEDA/src/utils/saveDataUtils",
+        "status": "uninspected-dependency",
+        "purpose": "Confirm canonical settings boundary and validation",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      },
+      {
+        "path": "apps/demo/src/docs/pages/line.mdx",
+        "status": "inspected",
+        "purpose": "Update the milestone documentation",
+        "review_depth": "full"
+      },
+      {
+        "path": "apps/demo/src/demos/examples.ts",
+        "status": "inspected",
+        "purpose": "Register and demonstrate the same tested synthetic scenario and coverage",
+        "review_depth": "targeted relevant sections"
+      },
+      {
+        "path": "apps/demo/src/demos/coverage.ts",
+        "status": "inspected",
+        "purpose": "Register and demonstrate the same tested synthetic scenario and coverage",
+        "review_depth": "targeted relevant sections"
+      },
+      {
+        "path": "apps/demo/src/demos/dashboardSettings.ts",
+        "status": "inspected",
+        "purpose": "Register and demonstrate the same tested synthetic scenario and coverage",
+        "review_depth": "targeted relevant sections"
+      },
+      {
+        "path": "apps/demo/src/docs/live/examples.ts",
+        "status": "uninspected-dependency",
+        "purpose": "Register the live example after confirming registry ownership",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      }
+    ],
+    "evidence": {
+      "repo": [
+        {
+          "source_id": "repo:packages/explorEDA/src/components/charts/LineChart/definition.ts",
+          "path": "packages/explorEDA/src/components/charts/LineChart/definition.ts",
+          "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/components/charts/LineChart/definition.ts",
+          "claim": "SeriesSettings contains useRightAxis and has no arbitrary scale ID.",
+          "evidence_type": "verified source packet",
+          "source_index": "sources.md#complete-packet-inventory",
+          "limit": "Inspected packet bytes at the supplied baseline; URL is a navigation aid. Independent Git tree verification was unavailable.",
+          "symbol": "SeriesSettings"
+        },
+        {
+          "source_id": "repo:packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+          "path": "packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+          "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+          "claim": "All right-marked fields share one right extent.",
+          "evidence_type": "verified source packet",
+          "source_index": "sources.md#complete-packet-inventory",
+          "limit": "Inspected packet bytes at the supplied baseline; URL is a navigation aid. Independent Git tree verification was unavailable.",
+          "symbol": "rightAxisSeries; rightYScale"
+        },
+        {
+          "source_id": "repo:packages/explorEDA/src/types/ChartTypes.ts",
+          "path": "packages/explorEDA/src/types/ChartTypes.ts",
+          "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/types/ChartTypes.ts",
+          "claim": "Axis limits and row filters are separate settings.",
+          "evidence_type": "verified source packet",
+          "source_index": "sources.md#complete-packet-inventory",
+          "limit": "Inspected packet bytes at the supplied baseline; URL is a navigation aid. Independent Git tree verification was unavailable.",
+          "symbol": "AxisSettings; BaseChartSettings"
+        }
+      ],
+      "external": [
+        {
+          "source_id": "IND-07",
+          "url": "https://pisystem.feedback.aveva.com/ideas/PIVISION-I-17",
+          "claim": "PI Vision 2025 includes grouped scales.",
+          "evidence_type": "documented",
+          "accessed_at": "2026-10-19 UTC",
+          "source_index": "sources.md",
+          "limit": "Version and access limits are recorded in sources.md; no live interaction quality was observed."
+        },
+        {
+          "source_id": "IND-01",
+          "url": "https://support.seeq.com/latest/cloud/adjusting-signal-lanes-axes-formatting",
+          "claim": "Seeq distinguishes axis grouping from lane assignment.",
+          "evidence_type": "documented",
+          "accessed_at": "2026-10-19 UTC",
+          "source_index": "sources.md",
+          "limit": "Version and access limits are recorded in sources.md; no live interaction quality was observed."
+        },
+        {
+          "source_id": "P19",
+          "url": "https://leeoniya.github.io/uPlot/docs/",
+          "claim": "uPlot separates scale keys from optional visible axes.",
+          "evidence_type": "documented",
+          "accessed_at": "2026-10-19 UTC",
+          "source_index": "sources.md",
+          "limit": "Version and access limits are recorded in sources.md; no live interaction quality was observed."
+        }
+      ]
+    },
+    "alternatives": [
+      "One independent scale for every line by default: reject because it hides same-unit magnitude comparisons.",
+      "Keep only left/right boolean: does not answer the arbitrary-group question.",
+      "Duplicate primary settings inside yScales or create a general scale service: reject competing owners and unnecessary scope.",
+      "Legacy saves: prefer one restore/import normalization to primary plus one shared extra group if preservation is required; an intentional documented 0.x break is a separate product decision."
+    ],
+    "proof": {
+      "status": "UNRUN",
+      "plan_reference": "proof-plan.md",
+      "checks": [
+        {
+          "name": "Group membership and unit meaning",
+          "status": "UNRUN",
+          "procedure": "Use S1 and S2 to create, rename, join, split and remove groups; test known incompatible units and unknown input units.",
+          "acceptance": "Stable IDs survive renaming; own-scale manual limits are preserved; auto changes follow source membership; incompatible known units cannot silently join; unknown units stay visibly unresolved.",
+          "rejection": "A label establishes a source unit, manual bounds reset on Own scale, values convert implicitly, or a dangling ID silently adopts an unrelated group."
+        },
+        {
+          "name": "Canonical and legacy state",
+          "status": "UNRUN",
+          "procedure": "Round-trip primary plus two extras; test old useRightAxis saves with global linear/log/symlog and limits after choosing the legacy policy in M0.",
+          "acceptance": "No primary entry exists in yScales. Old true flags map to one extra group with old auto and symlog/otherwise-linear semantics, without inheriting primary limits, or an approved breaking policy is documented.",
+          "rejection": "Two renderer schemas coexist without need, old right series become independent from each other, or a primary log/limit is silently copied to the old right group."
+        },
+        {
+          "name": "Population stability",
+          "status": "UNRUN",
+          "procedure": "Apply linked filters, own selection, time zoom, hide/show, facet subdivision and then an intentional local-filter or assignment edit.",
+          "acceptance": "Ordinary view/linked-filter changes leave reference domains fixed; only deliberate source/local-filter/membership edits recalculate them.",
+          "rejection": "A focus, resize, hide or linked filter refits a source group."
+        }
+      ],
+      "docs_and_demo": {
+        "status": "UNRUN",
+        "visible_change": true,
+        "ships_with": ["M2"],
+        "docs_path": "apps/demo/src/docs/pages/line.mdx",
+        "docs_sections": [
+          "Shared and independent scale groups",
+          "Save and share scale meaning"
+        ],
+        "demo_ids": ["line-mixed-units-scale-groups", "line-same-unit-outlier"],
+        "demo_paths": [
+          "apps/demo/src/demos/examples.ts",
+          "apps/demo/src/demos/coverage.ts",
+          "apps/demo/src/demos/dashboardSettings.ts"
+        ],
+        "live_registry_path": "apps/demo/src/docs/live/examples.ts",
+        "coverage_required": [
+          "Group IDs and membership",
+          "Known/unknown units",
+          "Legacy policy and canonical saves"
+        ],
+        "gate": "An accepted user-visible milestone includes its docs section, registered demo and actual proof result in the same milestone."
+      },
+      "actual_results": [],
+      "completion_rule": "Do not mark complete from static source reading, a screenshot, generated fixture data or an old test name."
+    },
+    "proposed_disposition": "adopt",
+    "approval_status": "unapproved",
+    "codex_disposition": null,
+    "codex_decision_note": "Codex must separately classify adopt, investigate, defer or reject before implementation; this proposed disposition is not authorization."
+  },
+  {
+    "id": "TS-03",
+    "title": "Prove focused-axis overlays with an optional two-axis presentation",
+    "problem": "An unlimited set of visible axes consumes plot width, while hidden independent scales make ownership ambiguous. The current custom right rail bypasses the planned-axis system.",
+    "proposal": "Use one planned Y ruler for an explicitly focused series/group, plus a semantic roster retaining every series unit/group/range. Hover may emphasize but never swap the ruler. Exactly two groups may use planned paired axes only when measured labels leave at least 280 CSS px of plot. Resizing changes presentation without changing groups or domains. Disable horizontal gridlines by default in multi-group overlays, or label the focused grid owner explicitly.",
+    "scope": {
+      "renderers": ["observation"],
+      "milestones": ["M0", "M2"],
+      "exclusions": ["Twenty peripheral rulers", "Hover-driven axis changes"],
+      "dependencies": [
+        "M0 presentation and identity experiments",
+        "TS-02 group resolver",
+        "TS-04 original values"
+      ]
+    },
+    "value": {
+      "assessment": "High if the attribution experiment passes: preserves timing comparison while bounding gutters.",
+      "basis": "Task-specific engineering judgment; no measured usability or benchmark result."
+    },
+    "priority": {
+      "rank": 3,
+      "kind": "core after bounded experiment",
+      "report_reference": "time-series-axes-research.md, section 8"
+    },
+    "confidence": {
+      "level": "moderate",
+      "basis": "Scale/axis separation is documented, but the exact focus-only UX is a new design hypothesis and has not been operated."
+    },
+    "cost": {
+      "level": "medium",
+      "estimate_type": "engineering judgment",
+      "additive": false,
+      "shared_milestone_envelopes": [
+        {
+          "milestone": "M0",
+          "developer_days": [0.5, 1.5]
+        },
+        {
+          "milestone": "M2",
+          "developer_days": [3, 6]
+        }
+      ],
+      "note": "M0 includes a half-day presentation experiment with one revision; accepted presentation shares M2. These are shared milestone envelopes, not per-recommendation estimates to sum. M0-M2 together are 4.5-10.5 developer-days; conditional M3-M4 add 5-10."
+    },
+    "affected_paths": [
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/LineSeriesSettings.tsx",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Axis/axisPlan.ts",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Axis/AxisLayer.tsx",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/InPlace/useAxisEditing.tsx",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/TrendSeriesList.tsx",
+        "status": "proposed-new",
+        "purpose": "Proposed accessible roster and focus/value control"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/lineScalePlan.ts",
+        "status": "proposed-new",
+        "purpose": "Use the same resolved group plans"
+      },
+      {
+        "path": "apps/demo/src/docs/pages/line.mdx",
+        "status": "inspected",
+        "purpose": "Update the milestone documentation",
+        "review_depth": "full"
+      },
+      {
+        "path": "apps/demo/src/demos/examples.ts",
+        "status": "inspected",
+        "purpose": "Register and demonstrate the same tested synthetic scenario and coverage",
+        "review_depth": "targeted relevant sections"
+      },
+      {
+        "path": "apps/demo/src/demos/coverage.ts",
+        "status": "inspected",
+        "purpose": "Register and demonstrate the same tested synthetic scenario and coverage",
+        "review_depth": "targeted relevant sections"
+      },
+      {
+        "path": "apps/demo/src/demos/dashboardSettings.ts",
+        "status": "inspected",
+        "purpose": "Register and demonstrate the same tested synthetic scenario and coverage",
+        "review_depth": "targeted relevant sections"
+      },
+      {
+        "path": "apps/demo/src/docs/live/examples.ts",
+        "status": "uninspected-dependency",
+        "purpose": "Register the live example after confirming registry ownership",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      }
+    ],
+    "evidence": {
+      "repo": [
+        {
+          "source_id": "repo:packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+          "path": "packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+          "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+          "claim": "The right tick rail is rendered directly outside the main planned axis.",
+          "evidence_type": "verified source packet",
+          "source_index": "sources.md#complete-packet-inventory",
+          "limit": "Inspected packet bytes at the supplied baseline; URL is a navigation aid. Independent Git tree verification was unavailable.",
+          "symbol": "right-axis tick rendering"
+        },
+        {
+          "source_id": "repo:packages/explorEDA/src/components/charts/Axis/axisPlan.ts",
+          "path": "packages/explorEDA/src/components/charts/Axis/axisPlan.ts",
+          "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/components/charts/Axis/axisPlan.ts",
+          "claim": "Axis identity and guide planning currently center on X/Y.",
+          "evidence_type": "verified source packet",
+          "source_index": "sources.md#complete-packet-inventory",
+          "limit": "Inspected packet bytes at the supplied baseline; URL is a navigation aid. Independent Git tree verification was unavailable.",
+          "symbol": "AxisName; planAxes"
+        }
+      ],
+      "external": [
+        {
+          "source_id": "P19",
+          "url": "https://leeoniya.github.io/uPlot/docs/",
+          "claim": "Visible axes can be separate from scale assignment.",
+          "evidence_type": "documented",
+          "accessed_at": "2026-10-19 UTC",
+          "source_index": "sources.md",
+          "limit": "Version and access limits are recorded in sources.md; no live interaction quality was observed."
+        },
+        {
+          "source_id": "IND-01",
+          "url": "https://support.seeq.com/latest/cloud/adjusting-signal-lanes-axes-formatting",
+          "claim": "Multiple same-lane scales require explicit label/grid handling.",
+          "evidence_type": "documented",
+          "accessed_at": "2026-10-19 UTC",
+          "source_index": "sources.md",
+          "limit": "Version and access limits are recorded in sources.md; no live interaction quality was observed."
+        }
+      ]
+    },
+    "alternatives": [
+      "One visible ruler per group: reject as the default for six/twenty series.",
+      "Bare independent overlay with hidden rulers: reject ambiguous ownership.",
+      "If focus still confuses after one bounded revision, retain shared-scale overlay and investigate a small lanes presentation; do not force the hypothesis to pass."
+    ],
+    "proof": {
+      "status": "UNRUN",
+      "plan_reference": "proof-plan.md",
+      "checks": [
+        {
+          "name": "Blind attribution experiment",
+          "status": "UNRUN",
+          "procedure": "At 1280, 783 and 390 CSS px compare the same 2/6/20-series values/domains in focused, full-rail and small-lane prototypes; record unit/scale/value/outlier/crossover task errors. Cap at half a day and one revision.",
+          "acceptance": "Every intended group is reachable without hover, and no task requires guessing ownership. Recorded results support focused overlay or an explicit fallback.",
+          "rejection": "Persistent axis confusion, an unreachable series, hover-induced ruler swaps or collisions with Notes/readouts."
+        },
+        {
+          "name": "Focus and paired fallback",
+          "status": "UNRUN",
+          "procedure": "Focus A to B to A, then resize around the measured width threshold with manual bounds on B.",
+          "acceptance": "No settings/domain/filter change occurs; B edits always target B. Paired axes appear only for exactly two groups with the proved width; narrow mode keeps full labels reachable.",
+          "rejection": "Focus overwrites primary yAxis, resize recomputes a domain, or the active ruler appears to own all units."
+        }
+      ],
+      "docs_and_demo": {
+        "status": "UNRUN",
+        "visible_change": true,
+        "ships_with": ["M2"],
+        "docs_path": "apps/demo/src/docs/pages/line.mdx",
+        "docs_sections": [
+          "Focus a scale",
+          "Shared and independent scale groups"
+        ],
+        "demo_ids": ["line-mixed-units-scale-groups", "line-same-unit-outlier"],
+        "demo_paths": [
+          "apps/demo/src/demos/examples.ts",
+          "apps/demo/src/demos/coverage.ts",
+          "apps/demo/src/demos/dashboardSettings.ts"
+        ],
+        "live_registry_path": "apps/demo/src/docs/live/examples.ts",
+        "coverage_required": [
+          "Deliberate focus versus hover/selection",
+          "Paired/focused width policy",
+          "Multi-scale crossover interpretation"
+        ],
+        "gate": "An accepted user-visible milestone includes its docs section, registered demo and actual proof result in the same milestone."
+      },
+      "actual_results": [],
+      "completion_rule": "Do not mark complete from static source reading, a screenshot, generated fixture data or an old test name."
+    },
+    "proposed_disposition": "investigate",
+    "approval_status": "unapproved",
+    "codex_disposition": null,
+    "codex_decision_note": "Codex must separately classify adopt, investigate, defer or reject before implementation; this proposed disposition is not authorization."
+  },
+  {
+    "id": "TS-04",
+    "title": "Drive precise shared-cursor inspection from original samples",
+    "problem": "Observation hover searches reduced geometry, then exact-X matches each series. Independent reduction, irregular timestamps and duplicates can omit or ambiguously summarize original observations.",
+    "proposal": "Retain original row IDs, timestamps, values, status and stable series keys in a small preparation/lookup plan separate from reduced geometry. Report Exact, Nearest with actual time/delta, No nearby sample, Missing/invalid or Multiple samples. Require an explicit nearest tolerance before asserting freshness. Ties use the earlier timestamp; duplicate rows remain a set with all IDs and conservative separate markers/ambiguous-connection breaks. Keep active values in the header and a bounded Values list; use existing Alt-trace for original records.",
+    "scope": {
+      "renderers": [
+        "observation first",
+        "Calendar inspection retains interval and contributor meaning"
+      ],
+      "milestones": ["M1", "M4"],
+      "exclusions": [
+        "Implicit interpolation as recorded data",
+        "Persistent hover/cursor history"
+      ],
+      "dependencies": ["M0 source/filter/trace ownership"]
+    },
+    "value": {
+      "assessment": "Very high: scales are useful only if original values and evidence remain correct.",
+      "basis": "Task-specific engineering judgment; no measured usability or benchmark result."
+    },
+    "priority": {
+      "rank": 2,
+      "kind": "core",
+      "report_reference": "time-series-axes-research.md, section 8"
+    },
+    "confidence": {
+      "level": "high",
+      "basis": "The lookup/reducer coupling is visible in source; exact readout and duplicate policies are proposed and unrun."
+    },
+    "cost": {
+      "level": "medium",
+      "estimate_type": "engineering judgment",
+      "additive": false,
+      "shared_milestone_envelopes": [
+        {
+          "milestone": "M1",
+          "developer_days": [1, 3]
+        },
+        {
+          "milestone": "M4",
+          "developer_days": [3, 6]
+        }
+      ],
+      "note": "The original lookup foundation ships in M1; dense long-form verification shares conditional M4. These are shared milestone envelopes, not per-recommendation estimates to sum. M0-M2 together are 4.5-10.5 developer-days; conditional M3-M4 add 5-10."
+    },
+    "affected_paths": [
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/LineChart.test.tsx",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/timeSeriesTrace.ts",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/TimeSeriesTraceBody.tsx",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/observationSeriesPlan.ts",
+        "status": "proposed-new",
+        "purpose": "Optional pure original-sample/run/lookup preparation"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/TrendSeriesList.tsx",
+        "status": "proposed-new",
+        "purpose": "Accessible bounded Values and ownership list"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/trace/ChartTraceScope",
+        "status": "uninspected-dependency",
+        "purpose": "Register exact observation evidence through the real trace owner",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/trace/traceTypes",
+        "status": "uninspected-dependency",
+        "purpose": "Confirm original-row and duplicate target contract",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      },
+      {
+        "path": "apps/demo/src/docs/pages/line.mdx",
+        "status": "inspected",
+        "purpose": "Update the milestone documentation",
+        "review_depth": "full"
+      },
+      {
+        "path": "apps/demo/src/demos/examples.ts",
+        "status": "inspected",
+        "purpose": "Register and demonstrate the same tested synthetic scenario and coverage",
+        "review_depth": "targeted relevant sections"
+      },
+      {
+        "path": "apps/demo/src/demos/coverage.ts",
+        "status": "inspected",
+        "purpose": "Register and demonstrate the same tested synthetic scenario and coverage",
+        "review_depth": "targeted relevant sections"
+      },
+      {
+        "path": "apps/demo/src/demos/dashboardSettings.ts",
+        "status": "inspected",
+        "purpose": "Register and demonstrate the same tested synthetic scenario and coverage",
+        "review_depth": "targeted relevant sections"
+      },
+      {
+        "path": "apps/demo/src/docs/live/examples.ts",
+        "status": "uninspected-dependency",
+        "purpose": "Register the live example after confirming registry ownership",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      }
+    ],
+    "evidence": {
+      "repo": [
+        {
+          "source_id": "repo:packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+          "path": "packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+          "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+          "claim": "Hover uses reduced X candidates and per-series exact-X matching.",
+          "evidence_type": "verified source packet",
+          "source_index": "sources.md#complete-packet-inventory",
+          "limit": "Inspected packet bytes at the supplied baseline; URL is a navigation aid. Independent Git tree verification was unavailable.",
+          "symbol": "hover readout; pointer search"
+        },
+        {
+          "source_id": "repo:packages/explorEDA/src/lib/chartUtils.ts",
+          "path": "packages/explorEDA/src/lib/chartUtils.ts",
+          "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/lib/chartUtils.ts",
+          "claim": "ReducedDataPoint carries coordinates/type, not source IDs.",
+          "evidence_type": "verified source packet",
+          "source_index": "sources.md#complete-packet-inventory",
+          "limit": "Inspected packet bytes at the supplied baseline; URL is a navigation aid. Independent Git tree verification was unavailable.",
+          "symbol": "ReducedDataPoint; reduceDataPoints"
+        },
+        {
+          "source_id": "repo:packages/explorEDA/src/components/charts/LineChart/TimeSeriesTraceBody.tsx",
+          "path": "packages/explorEDA/src/components/charts/LineChart/TimeSeriesTraceBody.tsx",
+          "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/components/charts/LineChart/TimeSeriesTraceBody.tsx",
+          "claim": "Calendar trace already exposes aggregate contributor semantics.",
+          "evidence_type": "verified source packet",
+          "source_index": "sources.md#complete-packet-inventory",
+          "limit": "Inspected packet bytes at the supplied baseline; URL is a navigation aid. Independent Git tree verification was unavailable.",
+          "symbol": "TimeSeriesTraceBody"
+        }
+      ],
+      "external": [
+        {
+          "source_id": "P10",
+          "url": "https://plotly.com/javascript/reference/layout/",
+          "claim": "Unified hover exposes at most one label per trace, not every duplicate record.",
+          "evidence_type": "documented",
+          "accessed_at": "2026-10-19 UTC",
+          "source_index": "sources.md",
+          "limit": "Version and access limits are recorded in sources.md; no live interaction quality was observed."
+        },
+        {
+          "source_id": "P20",
+          "url": "https://leeoniya.github.io/uPlot/docs/data-modes.html",
+          "claim": "Faceted cursor lookup can remain an application responsibility.",
+          "evidence_type": "documented",
+          "accessed_at": "2026-10-19 UTC",
+          "source_index": "sources.md",
+          "limit": "Version and access limits are recorded in sources.md; no live interaction quality was observed."
+        },
+        {
+          "source_id": "IND-06",
+          "url": "https://osicdn.blob.core.windows.net/learningcontent/Online%20Course%20Workbooks/PI%20Vision%20Basics%20v2024.pdf",
+          "claim": "PI Vision documents shared trend cursors.",
+          "evidence_type": "documented",
+          "accessed_at": "2026-10-19 UTC",
+          "source_index": "sources.md",
+          "limit": "Version and access limits are recorded in sources.md; no live interaction quality was observed."
+        }
+      ]
+    },
+    "alternatives": [
+      "Use nearest rendered vertex as authority: reject width/reduction-dependent evidence.",
+      "Interpolate all tags onto a shared grid: reject fabricated simultaneous observations.",
+      "Always choose first/last/average duplicate: reject without an explicit domain policy."
+    ],
+    "proof": {
+      "status": "UNRUN",
+      "plan_reference": "proof-plan.md",
+      "checks": [
+        {
+          "name": "Exact and asynchronous readout",
+          "status": "UNRUN",
+          "procedure": "Use S1 at 12:02 plus A at 00:00/00:10 and B at 00:03/00:13; inspect 00:10 with a declared tolerance.",
+          "acceptance": "S1 reads 189 °C, 3.40 bar and 980 L/min at the exact shared time. A is exact; B discloses its actual selected time and delta or reports no nearby sample.",
+          "rejection": "Any interpolated or earlier sample is labeled recorded at cursor time, or a fresh/stale threshold is invented."
+        },
+        {
+          "name": "Duplicate and reduced evidence",
+          "status": "UNRUN",
+          "procedure": "Inspect two same-time rows with values 4 and 9, expand beyond the reduction threshold and resize/filter/zoom; later repeat S3 Tag 02.",
+          "acceptance": "Both IDs remain reachable; S3 reports 183.9 and 188.9 °C at 12:03:11Z. Pointer and keyboard reach the same evidence; Alt-trace returns exact original rows.",
+          "rejection": "Only one duplicate silently wins, width changes traceability, or lookup reads reduced/averaged values."
+        }
+      ],
+      "docs_and_demo": {
+        "status": "UNRUN",
+        "visible_change": true,
+        "ships_with": ["M1", "M4"],
+        "docs_path": "apps/demo/src/docs/pages/line.mdx",
+        "docs_sections": [
+          "Read original values",
+          "Irregular samples, duplicate timestamps and gaps"
+        ],
+        "demo_ids": ["line-original-values", "line-irregular-process-tags"],
+        "demo_paths": [
+          "apps/demo/src/demos/examples.ts",
+          "apps/demo/src/demos/coverage.ts",
+          "apps/demo/src/demos/dashboardSettings.ts"
+        ],
+        "live_registry_path": "apps/demo/src/docs/live/examples.ts",
+        "coverage_required": [
+          "Actual sample time and offset",
+          "Duplicate/missing states",
+          "Original IDs after reduction",
+          "Header and keyboard trace"
+        ],
+        "gate": "An accepted user-visible milestone includes its docs section, registered demo and actual proof result in the same milestone."
+      },
+      "actual_results": [],
+      "completion_rule": "Do not mark complete from static source reading, a screenshot, generated fixture data or an old test name."
+    },
+    "proposed_disposition": "adopt",
+    "approval_status": "unapproved",
+    "codex_disposition": null,
+    "codex_decision_note": "Codex must separately classify adopt, investigate, defer or reject before implementation; this proposed disposition is not authorization."
+  },
+  {
+    "id": "TS-05",
+    "title": "Make ranges, transforms, clipping and resets truthful per group",
+    "problem": "The current right scale ignores primary manual limits, does not enable true log, formats ticks from its first field and lacks the main axis editing/guide infrastructure.",
+    "proposal": "Route each resolved group through shared axis-bound and numeric-scale helpers; carry scaleId through axis editing, labels, Notes, guides and omitted counts. Support finite one/two-sided limits, explicit linear/log/symlog, and group/end Reset range. Keep nonpositive-log exclusions separate from lower/upper clipping and trace every original record. Reject invalid limits and never silently substitute symlog. Primary uses yAxis/yAxisLabel; extra groups own their own limits/type/label.",
+    "scope": {
+      "renderers": [
+        "observation scale groups",
+        "Calendar keeps its shared Y and linear filled-area rules"
+      ],
+      "milestones": ["M2"],
+      "exclusions": [
+        "Automatic visible-window Y fitting",
+        "Independent stacked scales"
+      ],
+      "dependencies": ["TS-02 resolver", "M0 actual edit/Notes ownership"]
+    },
+    "value": {
+      "assessment": "Very high: makes arbitrary scales numerically and interactively trustworthy.",
+      "basis": "Task-specific engineering judgment; no measured usability or benchmark result."
+    },
+    "priority": {
+      "rank": 3,
+      "kind": "core",
+      "report_reference": "time-series-axes-research.md, section 8"
+    },
+    "confidence": {
+      "level": "high",
+      "basis": "Current asymmetry and reusable helper seams are inspected; all proposed group-aware interactions require runtime proof."
+    },
+    "cost": {
+      "level": "medium",
+      "estimate_type": "engineering judgment",
+      "additive": false,
+      "shared_milestone_envelopes": [
+        {
+          "milestone": "M2",
+          "developer_days": [3, 6]
+        }
+      ],
+      "note": "Group editing and notices are part of M2, not an additional milestone estimate. These are shared milestone envelopes, not per-recommendation estimates to sum. M0-M2 together are 4.5-10.5 developer-days; conditional M3-M4 add 5-10."
+    },
+    "affected_paths": [
+      {
+        "path": "packages/explorEDA/src/components/charts/Axis/axisPlan.ts",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Axis/axisBounds.ts",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Axis/numericScale.ts",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Axis/AxisLayer.tsx",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/InPlace/useAxisEditing.tsx",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/types/ChartTypes.ts",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/lineScalePlan.ts",
+        "status": "proposed-new",
+        "purpose": "One resolved group domain/type/format/omission plan"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/InPlace/useChartEdit",
+        "status": "uninspected-dependency",
+        "purpose": "Confirm actual begin/apply/commit/cancel ownership",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      },
+      {
+        "path": "apps/demo/src/docs/pages/line.mdx",
+        "status": "inspected",
+        "purpose": "Update the milestone documentation",
+        "review_depth": "full"
+      },
+      {
+        "path": "apps/demo/src/demos/examples.ts",
+        "status": "inspected",
+        "purpose": "Register and demonstrate the same tested synthetic scenario and coverage",
+        "review_depth": "targeted relevant sections"
+      },
+      {
+        "path": "apps/demo/src/demos/coverage.ts",
+        "status": "inspected",
+        "purpose": "Register and demonstrate the same tested synthetic scenario and coverage",
+        "review_depth": "targeted relevant sections"
+      },
+      {
+        "path": "apps/demo/src/demos/dashboardSettings.ts",
+        "status": "inspected",
+        "purpose": "Register and demonstrate the same tested synthetic scenario and coverage",
+        "review_depth": "targeted relevant sections"
+      },
+      {
+        "path": "apps/demo/src/docs/live/examples.ts",
+        "status": "uninspected-dependency",
+        "purpose": "Register the live example after confirming registry ownership",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      }
+    ],
+    "evidence": {
+      "repo": [
+        {
+          "source_id": "repo:packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+          "path": "packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+          "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+          "claim": "Left and right scale construction differ in limits and log behavior.",
+          "evidence_type": "verified source packet",
+          "source_index": "sources.md#complete-packet-inventory",
+          "limit": "Inspected packet bytes at the supplied baseline; URL is a navigation aid. Independent Git tree verification was unavailable.",
+          "symbol": "yScale; rightYScale"
+        },
+        {
+          "source_id": "repo:packages/explorEDA/src/components/charts/Axis/numericScale.ts",
+          "path": "packages/explorEDA/src/components/charts/Axis/numericScale.ts",
+          "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/components/charts/Axis/numericScale.ts",
+          "claim": "Shared scale factory has explicit linear/log/symlog choices.",
+          "evidence_type": "verified source packet",
+          "source_index": "sources.md#complete-packet-inventory",
+          "limit": "Inspected packet bytes at the supplied baseline; URL is a navigation aid. Independent Git tree verification was unavailable.",
+          "symbol": "numericScale"
+        },
+        {
+          "source_id": "repo:packages/explorEDA/src/components/charts/InPlace/useAxisEditing.tsx",
+          "path": "packages/explorEDA/src/components/charts/InPlace/useAxisEditing.tsx",
+          "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/components/charts/InPlace/useAxisEditing.tsx",
+          "claim": "Axis edits delegate to a transaction hook.",
+          "evidence_type": "verified source packet",
+          "source_index": "sources.md#complete-packet-inventory",
+          "limit": "Inspected packet bytes at the supplied baseline; URL is a navigation aid. Independent Git tree verification was unavailable.",
+          "symbol": "useAxisEditing"
+        }
+      ],
+      "external": [
+        {
+          "source_id": "IND-01",
+          "url": "https://support.seeq.com/latest/cloud/adjusting-signal-lanes-axes-formatting",
+          "claim": "Fixed bounds and automatic ranges are separate controls.",
+          "evidence_type": "documented",
+          "accessed_at": "2026-10-19 UTC",
+          "source_index": "sources.md",
+          "limit": "Version and access limits are recorded in sources.md; no live interaction quality was observed."
+        },
+        {
+          "source_id": "P17",
+          "url": "https://echarts.apache.org/en/changelog.html",
+          "claim": "ECharts documents exclusion of nonpositive data on log axes.",
+          "evidence_type": "documented",
+          "accessed_at": "2026-10-19 UTC",
+          "source_index": "sources.md",
+          "limit": "Version and access limits are recorded in sources.md; no live interaction quality was observed."
+        }
+      ]
+    },
+    "alternatives": [
+      "Replicate the existing right rail for each group: reject missing edit/guide/format ownership.",
+      "Silently fit or switch to symlog: reject hidden changes in interpretation.",
+      "Globally reset all bounds for a one-group request: reject overbroad state mutation."
+    ],
+    "proof": {
+      "status": "UNRUN",
+      "plan_reference": "proof-plan.md",
+      "checks": [
+        {
+          "name": "Log versus clipping",
+          "status": "UNRUN",
+          "procedure": "Apply log to [-2,0,1,10,100], then limits [2,50], in a secondary group while primary has different bounds.",
+          "acceptance": "Two nonpositive records are reported separately; positive 1 and 100 are outside the manual view; all five remain traceable and only the secondary group changes.",
+          "rejection": "Negative values disappear without explanation, a clip filters rows, secondary edits reach primary, or log silently becomes symlog."
+        },
+        {
+          "name": "Bounds and reset isolation",
+          "status": "UNRUN",
+          "procedure": "Test finite/reversed/nonfinite one-sided bounds, empty/constant groups and signed symlog; reset one group/end with another still manually bounded.",
+          "acceptance": "Invalid bounds fail visibly; empty/constant fallbacks are deterministic; named reset affects only its target; Escape restores exact state and one commit yields one undo entry.",
+          "rejection": "A reset clears filters/another group, labels use competing owners, or a focus change moves Notes to another scale."
+        }
+      ],
+      "docs_and_demo": {
+        "status": "UNRUN",
+        "visible_change": true,
+        "ships_with": ["M2"],
+        "docs_path": "apps/demo/src/docs/pages/line.mdx",
+        "docs_sections": [
+          "Ranges, log values and clipping",
+          "Save and share scale meaning"
+        ],
+        "demo_ids": ["line-mixed-units-scale-groups", "line-same-unit-outlier"],
+        "demo_paths": [
+          "apps/demo/src/demos/examples.ts",
+          "apps/demo/src/demos/coverage.ts",
+          "apps/demo/src/demos/dashboardSettings.ts"
+        ],
+        "live_registry_path": "apps/demo/src/docs/live/examples.ts",
+        "coverage_required": [
+          "Per-group limits/transforms",
+          "Separate clipping/log counts",
+          "Isolated reset and Notes projection"
+        ],
+        "gate": "An accepted user-visible milestone includes its docs section, registered demo and actual proof result in the same milestone."
+      },
+      "actual_results": [],
+      "completion_rule": "Do not mark complete from static source reading, a screenshot, generated fixture data or an old test name."
+    },
+    "proposed_disposition": "adopt",
+    "approval_status": "unapproved",
+    "codex_disposition": null,
+    "codex_decision_note": "Codex must separately classify adopt, investigate, defer or reject before implementation; this proposed disposition is not authorization."
+  },
+  {
+    "id": "TS-06",
+    "title": "Separate row selection from time zoom, pan and reset",
+    "problem": "The chart already uses brushing for linked row selection; adding standard chart zoom gestures without explicit scope could accidentally change filters or destroy selected evidence.",
+    "proposal": "Keep Select as the default brush mode and add explicit transient Select/Zoom state, direct time limits and X-axis pan. Committed navigation edits only X view state through the existing transaction. Reset range targets its named group/end; Reset time view clears X limits; Reset view clears X plus limits for all groups used by the active renderer in one action: primary and extra groups in Observations, shared primary only in Calendar, leaving dormant extra scales unchanged. Preserve assignments, transforms and row filters. Do not rebase Y while navigating.",
+    "scope": {
+      "renderers": [
+        "observation",
+        "Calendar with period/category selection preserved"
+      ],
+      "milestones": ["M2"],
+      "exclusions": [
+        "Automatic Y fit on zoom",
+        "Cross-chart viewport sync",
+        "Navigator before need"
+      ],
+      "dependencies": [
+        "M0 brush/filter/edit ownership",
+        "TS-07 stable Calendar X for Calendar navigation"
+      ]
+    },
+    "value": {
+      "assessment": "High: enables investigation without destabilizing linked filtering.",
+      "basis": "Task-specific engineering judgment; no measured usability or benchmark result."
+    },
+    "priority": {
+      "rank": 5,
+      "kind": "core",
+      "report_reference": "time-series-axes-research.md, section 8"
+    },
+    "confidence": {
+      "level": "high",
+      "basis": "Brush/provider writes and separate limits/filter contracts are inspected; the actual event and undo owners still need proof."
+    },
+    "cost": {
+      "level": "medium",
+      "estimate_type": "engineering judgment",
+      "additive": false,
+      "shared_milestone_envelopes": [
+        {
+          "milestone": "M2",
+          "developer_days": [3, 6]
+        }
+      ],
+      "note": "Navigation shares M2. A navigator overview is deferred until direct navigation demonstrates need. These are shared milestone envelopes, not per-recommendation estimates to sum. M0-M2 together are 4.5-10.5 developer-days; conditional M3-M4 add 5-10."
+    },
+    "affected_paths": [
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/TimeSeriesChart.tsx",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/timeSeriesPlan.ts",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/InPlace/useAxisEditing.tsx",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/types/ChartTypes.ts",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/hooks/applyFilter",
+        "status": "uninspected-dependency",
+        "purpose": "Preserve exact selection behavior",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/BaseChart",
+        "status": "uninspected-dependency",
+        "purpose": "Confirm pointer/brush host ownership",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      },
+      {
+        "path": "apps/demo/src/docs/pages/line.mdx",
+        "status": "inspected",
+        "purpose": "Update the milestone documentation",
+        "review_depth": "full"
+      },
+      {
+        "path": "apps/demo/src/demos/examples.ts",
+        "status": "inspected",
+        "purpose": "Register and demonstrate the same tested synthetic scenario and coverage",
+        "review_depth": "targeted relevant sections"
+      },
+      {
+        "path": "apps/demo/src/demos/coverage.ts",
+        "status": "inspected",
+        "purpose": "Register and demonstrate the same tested synthetic scenario and coverage",
+        "review_depth": "targeted relevant sections"
+      },
+      {
+        "path": "apps/demo/src/demos/dashboardSettings.ts",
+        "status": "inspected",
+        "purpose": "Register and demonstrate the same tested synthetic scenario and coverage",
+        "review_depth": "targeted relevant sections"
+      },
+      {
+        "path": "apps/demo/src/docs/live/examples.ts",
+        "status": "uninspected-dependency",
+        "purpose": "Register the live example after confirming registry ownership",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      }
+    ],
+    "evidence": {
+      "repo": [
+        {
+          "source_id": "repo:packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+          "path": "packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+          "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+          "claim": "Brush interactions update row filters through the provider.",
+          "evidence_type": "verified source packet",
+          "source_index": "sources.md#complete-packet-inventory",
+          "limit": "Inspected packet bytes at the supplied baseline; URL is a navigation aid. Independent Git tree verification was unavailable.",
+          "symbol": "brush handler"
+        },
+        {
+          "source_id": "repo:packages/explorEDA/src/components/charts/LineChart/TimeSeriesChart.tsx",
+          "path": "packages/explorEDA/src/components/charts/LineChart/TimeSeriesChart.tsx",
+          "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/components/charts/LineChart/TimeSeriesChart.tsx",
+          "claim": "Calendar selection and brush map to period/category source IDs.",
+          "evidence_type": "verified source packet",
+          "source_index": "sources.md#complete-packet-inventory",
+          "limit": "Inspected packet bytes at the supplied baseline; URL is a navigation aid. Independent Git tree verification was unavailable.",
+          "symbol": "selection and brush handlers"
+        },
+        {
+          "source_id": "repo:packages/explorEDA/src/types/ChartTypes.ts",
+          "path": "packages/explorEDA/src/types/ChartTypes.ts",
+          "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/types/ChartTypes.ts",
+          "claim": "Explicit limits are separate from filters.",
+          "evidence_type": "verified source packet",
+          "source_index": "sources.md#complete-packet-inventory",
+          "limit": "Inspected packet bytes at the supplied baseline; URL is a navigation aid. Independent Git tree verification was unavailable.",
+          "symbol": "AxisSettings; BaseChartSettings"
+        }
+      ],
+      "external": [
+        {
+          "source_id": "P10",
+          "url": "https://plotly.com/javascript/reference/layout/",
+          "claim": "Plotly distinguishes zoom, pan and selection drag modes.",
+          "evidence_type": "documented",
+          "accessed_at": "2026-10-19 UTC",
+          "source_index": "sources.md",
+          "limit": "Version and access limits are recorded in sources.md; no live interaction quality was observed."
+        },
+        {
+          "source_id": "IND-02",
+          "url": "https://support.seeq.com/latest/cloud/adjusting-time-ranges",
+          "claim": "Displayed time and broader investigation context are separate.",
+          "evidence_type": "documented",
+          "accessed_at": "2026-10-19 UTC",
+          "source_index": "sources.md",
+          "limit": "Version and access limits are recorded in sources.md; no live interaction quality was observed."
+        },
+        {
+          "source_id": "P13",
+          "url": "https://plotly.com/javascript/range-slider/",
+          "claim": "Range controls are available navigation primitives.",
+          "evidence_type": "documented",
+          "accessed_at": "2026-10-19 UTC",
+          "source_index": "sources.md",
+          "limit": "Version and access limits are recorded in sources.md; no live interaction quality was observed."
+        }
+      ]
+    },
+    "alternatives": [
+      "Reuse brush as silent zoom: reject regression of linked selection.",
+      "Make zoom a row filter: reject changes to analytical population.",
+      "Add minimap/navigator immediately: defer until direct input/pan/reset proves insufficient."
+    ],
+    "proof": {
+      "status": "UNRUN",
+      "plan_reference": "proof-plan.md",
+      "checks": [
+        {
+          "name": "Gesture scope and cancellation",
+          "status": "UNRUN",
+          "procedure": "Select source rows, switch to Zoom, drag/pan, edit time bounds and cancel a drag; repeat on Calendar weeks.",
+          "acceptance": "Selected provider IDs remain unchanged during navigation; Y reference domains stay fixed; Select still yields original period/category or observation IDs; Escape cancels the pending edit.",
+          "rejection": "A viewport edit applies a filter, a select drag zooms instead, or a lost focus changes the gesture meaning."
+        },
+        {
+          "name": "Three reset scopes",
+          "status": "UNRUN",
+          "procedure": "Give X, primary and two extra groups manual limits, then invoke each reset separately in Observations and Calendar and inspect store/history.",
+          "acceptance": "Reset range clears only its named group/end. Reset time view clears only X. Reset view clears X plus all group limits used by the active renderer as one view action: primary and extra groups in Observations; shared primary only in Calendar, leaving dormant extra scales unchanged. Types, assignments and filters remain unchanged.",
+          "rejection": "Any reset clears row filters or an unrelated bound outside its advertised scope, or emits several undo steps for one action."
+        }
+      ],
+      "docs_and_demo": {
+        "status": "UNRUN",
+        "visible_change": true,
+        "ships_with": ["M2"],
+        "docs_path": "apps/demo/src/docs/pages/line.mdx",
+        "docs_sections": [
+          "Select versus zoom",
+          "Ranges, log values and clipping"
+        ],
+        "demo_ids": ["line-mixed-units-scale-groups", "line-same-unit-outlier"],
+        "demo_paths": [
+          "apps/demo/src/demos/examples.ts",
+          "apps/demo/src/demos/coverage.ts",
+          "apps/demo/src/demos/dashboardSettings.ts"
+        ],
+        "live_registry_path": "apps/demo/src/docs/live/examples.ts",
+        "coverage_required": [
+          "Row selection versus navigation",
+          "Direct time bounds",
+          "Reset range/time/view scopes",
+          "Undo and Escape"
+        ],
+        "gate": "An accepted user-visible milestone includes its docs section, registered demo and actual proof result in the same milestone."
+      },
+      "actual_results": [],
+      "completion_rule": "Do not mark complete from static source reading, a screenshot, generated fixture data or an old test name."
+    },
+    "proposed_disposition": "adopt",
+    "approval_status": "unapproved",
+    "codex_disposition": null,
+    "codex_decision_note": "Codex must separately classify adopt, investigate, defer or reject before implementation; this proposed disposition is not authorization."
+  },
+  {
+    "id": "TS-07",
+    "title": "Stabilize Calendar time references and preserve aggregate meaning",
+    "problem": "Calendar X is based on live periods; full/current Y reference planning can depend on length checks and capped recursive plans. Missing, invalid and zero buckets have meaningful distinctions that generic time-series changes could erase.",
+    "proposal": "Derive Calendar X from full chart-source periods across facets and honor explicit time view limits without filtering. Compute full/current bucket extrema at the displayed facet-by-split-by-period grain outside display caps, then union extrema across facets; never combine separate facet buckets into one aggregate. Allow filtered sums/averages to expand Y above the full reference, with explicit limits taking precedence. Preserve interval/contributor trace, count/sum zero-fill policy, average missingness and linear shared-scale areas/stacks.",
+    "scope": {
+      "renderers": ["calendar"],
+      "milestones": ["M1"],
+      "exclusions": [
+        "Multiple Calendar measures",
+        "Arbitrary Calendar scale groups",
+        "Independent facet scales",
+        "Subdaily/local-time aggregation"
+      ],
+      "dependencies": ["M0 actual reference/live population ownership"]
+    },
+    "value": {
+      "assessment": "Very high: prevents missing weeks and filtered aggregates from acquiring misleading geometry.",
+      "basis": "Task-specific engineering judgment; no measured usability or benchmark result."
+    },
+    "priority": {
+      "rank": 1,
+      "kind": "core",
+      "report_reference": "time-series-axes-research.md, section 8"
+    },
+    "confidence": {
+      "level": "high",
+      "basis": "Planner and test intentions are inspected; hook scope, equal-length population invalidation and parser mismatch require local reproduction."
+    },
+    "cost": {
+      "level": "medium",
+      "estimate_type": "engineering judgment",
+      "additive": false,
+      "shared_milestone_envelopes": [
+        {
+          "milestone": "M1",
+          "developer_days": [1, 3]
+        }
+      ],
+      "note": "Calendar source/aggregate work shares M1. Fix date parsing only if the actual conversion path reproduces the suspected mismatch. These are shared milestone envelopes, not per-recommendation estimates to sum. M0-M2 together are 4.5-10.5 developer-days; conditional M3-M4 add 5-10."
+    },
+    "affected_paths": [
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/timeSeriesPlan.ts",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/TimeSeriesChart.tsx",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/TimeSeriesChart.test.tsx",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/areaCharts.test.tsx",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/TimeSeriesSettingsPanel.tsx",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/timeSeriesTrace.ts",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/TimeSeriesTraceBody.tsx",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/lib/dailyRollup.ts",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/lib/valueParsing.ts",
+        "status": "inspected",
+        "purpose": "Change only for a locally confirmed parsing inconsistency",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/useGetLiveData",
+        "status": "uninspected-dependency",
+        "purpose": "Verify reference/current/own-filter scope",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      },
+      {
+        "path": "packages/explorEDA/src/lib/aggregates",
+        "status": "uninspected-dependency",
+        "purpose": "Verify actual grain and contributor semantics",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      },
+      {
+        "path": "apps/demo/src/docs/pages/line.mdx",
+        "status": "inspected",
+        "purpose": "Update the milestone documentation",
+        "review_depth": "full"
+      },
+      {
+        "path": "apps/demo/src/demos/examples.ts",
+        "status": "inspected",
+        "purpose": "Register and demonstrate the same tested synthetic scenario and coverage",
+        "review_depth": "targeted relevant sections"
+      },
+      {
+        "path": "apps/demo/src/demos/coverage.ts",
+        "status": "inspected",
+        "purpose": "Register and demonstrate the same tested synthetic scenario and coverage",
+        "review_depth": "targeted relevant sections"
+      },
+      {
+        "path": "apps/demo/src/demos/dashboardSettings.ts",
+        "status": "inspected",
+        "purpose": "Register and demonstrate the same tested synthetic scenario and coverage",
+        "review_depth": "targeted relevant sections"
+      },
+      {
+        "path": "apps/demo/src/docs/live/examples.ts",
+        "status": "uninspected-dependency",
+        "purpose": "Register the live example after confirming registry ownership",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      }
+    ],
+    "evidence": {
+      "repo": [
+        {
+          "source_id": "repo:packages/explorEDA/src/components/charts/LineChart/timeSeriesPlan.ts",
+          "path": "packages/explorEDA/src/components/charts/LineChart/timeSeriesPlan.ts",
+          "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/components/charts/LineChart/timeSeriesPlan.ts",
+          "claim": "Calendar X follows live periods; Y unions full/current aggregate values with planning caps.",
+          "evidence_type": "verified source packet",
+          "source_index": "sources.md#complete-packet-inventory",
+          "limit": "Inspected packet bytes at the supplied baseline; URL is a navigation aid. Independent Git tree verification was unavailable.",
+          "symbol": "planTimeSeries; domainValues"
+        },
+        {
+          "source_id": "repo:packages/explorEDA/src/components/charts/LineChart/TimeSeriesChart.tsx",
+          "path": "packages/explorEDA/src/components/charts/LineChart/TimeSeriesChart.tsx",
+          "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/components/charts/LineChart/TimeSeriesChart.tsx",
+          "claim": "Planner receives facet-scoped all/live IDs.",
+          "evidence_type": "verified source packet",
+          "source_index": "sources.md#complete-packet-inventory",
+          "limit": "Inspected packet bytes at the supplied baseline; URL is a navigation aid. Independent Git tree verification was unavailable.",
+          "symbol": "TimeSeriesChart"
+        },
+        {
+          "source_id": "repo:packages/explorEDA/src/lib/dailyRollup.ts",
+          "path": "packages/explorEDA/src/lib/dailyRollup.ts",
+          "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/lib/dailyRollup.ts",
+          "claim": "Calendar helpers define UTC period boundaries and string-input constraints.",
+          "evidence_type": "verified source packet",
+          "source_index": "sources.md#complete-packet-inventory",
+          "limit": "Inspected packet bytes at the supplied baseline; URL is a navigation aid. Independent Git tree verification was unavailable.",
+          "symbol": "utcPeriod"
+        },
+        {
+          "source_id": "repo:packages/explorEDA/src/components/charts/LineChart/areaCharts.test.tsx",
+          "path": "packages/explorEDA/src/components/charts/LineChart/areaCharts.test.tsx",
+          "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/components/charts/LineChart/areaCharts.test.tsx",
+          "claim": "Tests express complete-stack, signed-area and missingness intentions; not executed.",
+          "evidence_type": "verified source packet",
+          "source_index": "sources.md#complete-packet-inventory",
+          "limit": "Inspected packet bytes at the supplied baseline; URL is a navigation aid. Independent Git tree verification was unavailable."
+        }
+      ],
+      "external": [
+        {
+          "source_id": "IND-14",
+          "url": "https://support.seeq.com/latest/cloud/interpolation",
+          "claim": "Aggregates represent intervals and can be misrepresented by continuous interpolation.",
+          "evidence_type": "documented",
+          "accessed_at": "2026-10-19 UTC",
+          "source_index": "sources.md",
+          "limit": "Version and access limits are recorded in sources.md; no live interaction quality was observed."
+        },
+        {
+          "source_id": "P04",
+          "url": "https://api.highcharts.com/highstock/xAxis.ordinal",
+          "claim": "Ordinal time can suppress physical missing-period gaps.",
+          "evidence_type": "documented",
+          "accessed_at": "2026-10-19 UTC",
+          "source_index": "sources.md",
+          "limit": "Version and access limits are recorded in sources.md; no live interaction quality was observed."
+        }
+      ]
+    },
+    "alternatives": [
+      "Freeze Y to full aggregate values only: reject clipping legitimate filtered averages/signed sums.",
+      "Use a capped display plan as the complete domain reference: reject missing baseline coverage.",
+      "Route Calendar split series to independent scales while stacking: reject invalid addition.",
+      "Create separate primary settings per mode now: defer; current primary yAxis/yAxisLabel remain shared."
+    ],
+    "proof": {
+      "status": "UNRUN",
+      "plan_reference": "proof-plan.md",
+      "checks": [
+        {
+          "name": "Weekly positions and missingness",
+          "status": "UNRUN",
+          "procedure": "Run S4 with another chart filtering boundary weeks; toggle gap/zero-fill and sum/count/average; inspect original contributors.",
+          "acceptance": "X remains Jan 5 through Feb 2 UTC exclusive. Jan 12 absence and Jan 19 real Web zero remain distinct from the invalid Store Sum/Average bucket. Count counts the Store source record even though its metric value is null. First-week Web sum is 300 and average 150; trace selects s1/s2 mapped to actual provider IDs.",
+          "rejection": "Boundary weeks disappear, invalid Sum/Average silently becomes zero, Count becomes invalid merely because a source metric is null, empty averages zero-fill, or bucket midpoint is presented as a source acquisition time."
+        },
+        {
+          "name": "Full/current domain grain",
+          "status": "UNRUN",
+          "procedure": "Use [0,100] average and [-100,101] signed-sum buckets, two equal-length but content-changing selected populations, and multiple facets beyond display caps.",
+          "acceptance": "Automatic domains retain full baseline and include filtered 100/101 where applicable; facet bucket extrema are unioned without pooling buckets; manual bounds stay authoritative.",
+          "rejection": "Length-only invalidation hides a change, caps erase the reference, facets are pooled into different aggregates, or legitimate filtered values clip under a false stability rule."
+        },
+        {
+          "name": "Modes and filled areas",
+          "status": "UNRUN",
+          "procedure": "Round-trip Observation groups through Calendar line/area/stack and change selected metric/labels.",
+          "acceptance": "Calendar retains one metric/shared Y; filled areas remain linear and incomplete stacks break. Extras/assignments stay dormant; primary type/label changes follow the shared-owner contract and unit meaning comes from the Calendar metric.",
+          "rejection": "Observation groups leak into Calendar stacks or exact restoration of a separate primary configuration is promised."
+        }
+      ],
+      "docs_and_demo": {
+        "status": "UNRUN",
+        "visible_change": true,
+        "ships_with": ["M1"],
+        "docs_path": "apps/demo/src/docs/pages/line.mdx",
+        "docs_sections": [
+          "Observation lines and Calendar summaries",
+          "Missing calendar periods and stable ranges"
+        ],
+        "demo_ids": ["line-calendar-missing-weeks"],
+        "demo_paths": [
+          "apps/demo/src/demos/examples.ts",
+          "apps/demo/src/demos/coverage.ts",
+          "apps/demo/src/demos/dashboardSettings.ts"
+        ],
+        "live_registry_path": "apps/demo/src/docs/live/examples.ts",
+        "coverage_required": [
+          "Full-source weekly X",
+          "Full/current aggregate Y union",
+          "Missing/invalid/observed zero",
+          "Period/contributor trace",
+          "Shared primary mode transitions"
+        ],
+        "gate": "An accepted user-visible milestone includes its docs section, registered demo and actual proof result in the same milestone."
+      },
+      "actual_results": [],
+      "completion_rule": "Do not mark complete from static source reading, a screenshot, generated fixture data or an old test name."
+    },
+    "proposed_disposition": "adopt",
+    "approval_status": "unapproved",
+    "codex_disposition": null,
+    "codex_decision_note": "Codex must separately classify adopt, investigate, defer or reject before implementation; this proposed disposition is not authorization."
+  },
+  {
+    "id": "TS-08",
+    "title": "Investigate shared-time lanes as a layout of scale groups",
+    "problem": "Focused overlays retain line occlusion and can burden physical-value reading at six or twenty groups. Twenty full axes cannot fit a small tile, but lane layout adds height, scrolling, Notes and export complexity.",
+    "proposal": "After M2 succeeds, prototype one lane per scale group using the same domains, assignments and time/cursor state. Initial lane order follows first group appearance in series order; no separate lane-scale registry or drag framework. Preserve same-group magnitude comparison, keep all groups reachable through vertical navigation, and disclose a partial viewport such as 6 of 20 lanes visible. Use overlay for close timing tasks.",
+    "scope": {
+      "renderers": ["observation"],
+      "milestones": ["M3"],
+      "exclusions": [
+        "A guarantee that twenty full lanes fit a chart tile",
+        "Independent scale registries for lanes",
+        "Multiple scale groups inside one lane"
+      ],
+      "dependencies": [
+        "Accepted M2",
+        "TS-11 identity/export",
+        "TS-12 keyboard/narrow proof"
+      ]
+    },
+    "value": {
+      "assessment": "High for dense physical-value comparison if it improves attribution over M2; not required to ship the core.",
+      "basis": "Task-specific engineering judgment; no measured usability or benchmark result."
+    },
+    "priority": {
+      "rank": 6,
+      "kind": "conditional",
+      "report_reference": "time-series-axes-research.md, section 8"
+    },
+    "confidence": {
+      "level": "moderate",
+      "basis": "Industrial lanes and shared-axis primitives are documented, but required density, scroll and export behavior are untested."
+    },
+    "cost": {
+      "level": "medium",
+      "estimate_type": "engineering judgment",
+      "additive": false,
+      "shared_milestone_envelopes": [
+        {
+          "milestone": "M3",
+          "developer_days": [2, 4]
+        }
+      ],
+      "note": "M3 is a conditional 2-4 developer-day shared envelope after M2; do not include it automatically in core scope. These are shared milestone envelopes, not per-recommendation estimates to sum. M0-M2 together are 4.5-10.5 developer-days; conditional M3-M4 add 5-10."
+    },
+    "affected_paths": [
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/LineChartSettingsPanel.tsx",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Axis/axisPlan.ts",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Axis/AxisLayer.tsx",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/TrendLanes.tsx",
+        "status": "proposed-new",
+        "purpose": "Conditional group-lane presentation only after the proof passes"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/lineScalePlan.ts",
+        "status": "proposed-new",
+        "purpose": "Reuse one group plan across layouts"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/TrendSeriesList.tsx",
+        "status": "proposed-new",
+        "purpose": "Keep all group values/focus reachable"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/annotations/ChartAnnotations",
+        "status": "uninspected-dependency",
+        "purpose": "Confirm group and facet projection in lanes",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      },
+      {
+        "path": "apps/demo/src/docs/pages/line.mdx",
+        "status": "inspected",
+        "purpose": "Update the milestone documentation",
+        "review_depth": "full"
+      },
+      {
+        "path": "apps/demo/src/demos/examples.ts",
+        "status": "inspected",
+        "purpose": "Register and demonstrate the same tested synthetic scenario and coverage",
+        "review_depth": "targeted relevant sections"
+      },
+      {
+        "path": "apps/demo/src/demos/coverage.ts",
+        "status": "inspected",
+        "purpose": "Register and demonstrate the same tested synthetic scenario and coverage",
+        "review_depth": "targeted relevant sections"
+      },
+      {
+        "path": "apps/demo/src/demos/dashboardSettings.ts",
+        "status": "inspected",
+        "purpose": "Register and demonstrate the same tested synthetic scenario and coverage",
+        "review_depth": "targeted relevant sections"
+      },
+      {
+        "path": "apps/demo/src/docs/live/examples.ts",
+        "status": "uninspected-dependency",
+        "purpose": "Register the live example after confirming registry ownership",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      }
+    ],
+    "evidence": {
+      "repo": [
+        {
+          "source_id": "repo:packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+          "path": "packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+          "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+          "claim": "Observation source domains precede facet intersection while marks use facet-scoped live rows.",
+          "evidence_type": "verified source packet",
+          "source_index": "sources.md#complete-packet-inventory",
+          "limit": "Inspected packet bytes at the supplied baseline; URL is a navigation aid. Independent Git tree verification was unavailable.",
+          "symbol": "ObservationLineChart"
+        },
+        {
+          "source_id": "repo:packages/explorEDA/src/types/ChartTypes.ts",
+          "path": "packages/explorEDA/src/types/ChartTypes.ts",
+          "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/types/ChartTypes.ts",
+          "claim": "Facet/source settings and chart annotations have existing identities to preserve.",
+          "evidence_type": "verified source packet",
+          "source_index": "sources.md#complete-packet-inventory",
+          "limit": "Inspected packet bytes at the supplied baseline; URL is a navigation aid. Independent Git tree verification was unavailable."
+        }
+      ],
+      "external": [
+        {
+          "source_id": "IND-01",
+          "url": "https://support.seeq.com/latest/cloud/adjusting-signal-lanes-axes-formatting",
+          "claim": "Lane and axis-group assignment are orthogonal.",
+          "evidence_type": "documented",
+          "accessed_at": "2026-10-19 UTC",
+          "source_index": "sources.md",
+          "limit": "Version and access limits are recorded in sources.md; no live interaction quality was observed."
+        },
+        {
+          "source_id": "P12",
+          "url": "https://plotly.com/javascript/subplots/",
+          "claim": "Shared-axis subplots provide lane primitives.",
+          "evidence_type": "documented",
+          "accessed_at": "2026-10-19 UTC",
+          "source_index": "sources.md",
+          "limit": "Version and access limits are recorded in sources.md; no live interaction quality was observed."
+        }
+      ]
+    },
+    "alternatives": [
+      "Stop at accepted focused/paired M2 overlay: valid lower-cost outcome.",
+      "One lane per series regardless of shared meaning: not the initial model; create an own group explicitly.",
+      "Many independently scaled additive areas in a stack: reject.",
+      "Multiple independent scales within one lane or drag-reorder framework: defer."
+    ],
+    "proof": {
+      "status": "UNRUN",
+      "plan_reference": "proof-plan.md",
+      "checks": [
+        {
+          "name": "Layout-only transition",
+          "status": "UNRUN",
+          "procedure": "Use S1/S2 and wide-field groups to compare overlay and lanes; switch repeatedly with manual limits, Notes, filters and a pinned requested time.",
+          "acceptance": "Resolved domains, X viewport, assignments, row IDs and selected evidence remain identical; each lane owns one group and cursor values retain actual sample timestamps.",
+          "rejection": "A layout switch refits/clears a bound, creates a facet/filter, moves a threshold to another group or invents simultaneous values."
+        },
+        {
+          "name": "Reachability and export",
+          "status": "UNRUN",
+          "procedure": "At required widths navigate twenty groups by keyboard/touch/scroll; export full and intentionally partial layouts through the actual supported owner.",
+          "acceptance": "All groups remain reachable; scroll does not select/pan; partial views disclose their subset; complete exports materialize every intended lane.",
+          "rejection": "Tiny unreadable lanes, unreachable offscreen content, accidental gesture mutations or silently omitted export lanes."
+        }
+      ],
+      "docs_and_demo": {
+        "status": "UNRUN",
+        "visible_change": true,
+        "ships_with": ["M3"],
+        "docs_path": "apps/demo/src/docs/pages/line.mdx",
+        "docs_sections": ["Compare in shared-time lanes"],
+        "demo_ids": ["line-shared-time-lanes"],
+        "demo_paths": [
+          "apps/demo/src/demos/examples.ts",
+          "apps/demo/src/demos/coverage.ts",
+          "apps/demo/src/demos/dashboardSettings.ts"
+        ],
+        "live_registry_path": "apps/demo/src/docs/live/examples.ts",
+        "coverage_required": [
+          "Group versus facet identity",
+          "Same data/domains in overlay and lanes",
+          "Shared time/cursor",
+          "Scroll/keyboard and export completeness"
+        ],
+        "gate": "An accepted user-visible milestone includes its docs section, registered demo and actual proof result in the same milestone."
+      },
+      "actual_results": [],
+      "completion_rule": "Do not mark complete from static source reading, a screenshot, generated fixture data or an old test name."
+    },
+    "proposed_disposition": "investigate",
+    "approval_status": "unapproved",
+    "codex_disposition": null,
+    "codex_decision_note": "Codex must separately classify adopt, investigate, defer or reject before implementation; this proposed disposition is not authorization."
+  },
+  {
+    "id": "TS-09",
+    "title": "Investigate exact long-form irregular observation series",
+    "problem": "Current raw series are numeric columns sharing one X field. Calendar category splitting aggregates intervals and cannot substitute for twenty independently sampled raw tags; universal wide null padding confuses absent observations with explicit invalid samples.",
+    "proposal": "Add a bounded observationSplitField option valid only with one numeric measure. Preserve original row keys/provider IDs, timestamps, values and declared measurement units. Derive stable type-aware series keys from measure field, split field and split value. Keep absent rows distinct from present nulls and duplicates. Support a declared per-series cadence/maximum connection gap and explicit actual-point display; no historian ingestion or automatic grid interpolation.",
+    "scope": {
+      "renderers": ["observation; wide-field mode retained"],
+      "milestones": ["M4"],
+      "exclusions": [
+        "Calendar aggregation workaround",
+        "Historian connectors",
+        "Live streaming",
+        "Automatic unit inference/conversion"
+      ],
+      "dependencies": [
+        "M1 original lookup",
+        "M2 scale groups",
+        "M3 only for lanes"
+      ]
+    },
+    "value": {
+      "assessment": "High for the required twenty-tag scenario, with broader data-model cost than the first scale release.",
+      "basis": "Task-specific engineering judgment; no measured usability or benchmark result."
+    },
+    "priority": {
+      "rank": 7,
+      "kind": "conditional",
+      "report_reference": "time-series-axes-research.md, section 8"
+    },
+    "confidence": {
+      "level": "moderate",
+      "basis": "The existing wide/raw versus Calendar distinction is verified; the new keyed-series contract, metadata owner and UI are proposed."
+    },
+    "cost": {
+      "level": "medium to large",
+      "estimate_type": "engineering judgment",
+      "additive": false,
+      "shared_milestone_envelopes": [
+        {
+          "milestone": "M4",
+          "developer_days": [3, 6]
+        }
+      ],
+      "note": "Long-form preparation and settings share conditional M4 with reduction; M3 is needed only when using lanes. These are shared milestone envelopes, not per-recommendation estimates to sum. M0-M2 together are 4.5-10.5 developer-days; conditional M3-M4 add 5-10."
+    },
+    "affected_paths": [
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/definition.ts",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/LineChartSettingsPanel.tsx",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/LineSeriesSettings.tsx",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/observationSeriesPlan.ts",
+        "status": "proposed-new",
+        "purpose": "Preserve per-series originals and typed keys for long-form rows"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/lineScalePlan.ts",
+        "status": "proposed-new",
+        "purpose": "Assign derived raw series to the same scale model"
+      },
+      {
+        "path": "packages/explorEDA/src/lib/categories",
+        "status": "uninspected-dependency",
+        "purpose": "Confirm stable typed split identity",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      },
+      {
+        "path": "packages/explorEDA/src/lib/fieldSettings",
+        "status": "uninspected-dependency",
+        "purpose": "Locate declared unit/formatter ownership",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/trace/ChartTraceScope",
+        "status": "uninspected-dependency",
+        "purpose": "Keep exact long-form row trace",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      },
+      {
+        "path": "apps/demo/src/docs/pages/line.mdx",
+        "status": "inspected",
+        "purpose": "Update the milestone documentation",
+        "review_depth": "full"
+      },
+      {
+        "path": "apps/demo/src/demos/examples.ts",
+        "status": "inspected",
+        "purpose": "Register and demonstrate the same tested synthetic scenario and coverage",
+        "review_depth": "targeted relevant sections"
+      },
+      {
+        "path": "apps/demo/src/demos/coverage.ts",
+        "status": "inspected",
+        "purpose": "Register and demonstrate the same tested synthetic scenario and coverage",
+        "review_depth": "targeted relevant sections"
+      },
+      {
+        "path": "apps/demo/src/demos/dashboardSettings.ts",
+        "status": "inspected",
+        "purpose": "Register and demonstrate the same tested synthetic scenario and coverage",
+        "review_depth": "targeted relevant sections"
+      },
+      {
+        "path": "apps/demo/src/docs/live/examples.ts",
+        "status": "uninspected-dependency",
+        "purpose": "Register the live example after confirming registry ownership",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      }
+    ],
+    "evidence": {
+      "repo": [
+        {
+          "source_id": "repo:packages/explorEDA/src/components/charts/LineChart/definition.ts",
+          "path": "packages/explorEDA/src/components/charts/LineChart/definition.ts",
+          "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/components/charts/LineChart/definition.ts",
+          "claim": "Observation seriesField is an array of numeric fields; Calendar has separate split/aggregation settings.",
+          "evidence_type": "verified source packet",
+          "source_index": "sources.md#complete-packet-inventory",
+          "limit": "Inspected packet bytes at the supplied baseline; URL is a navigation aid. Independent Git tree verification was unavailable.",
+          "symbol": "LineChartSettings; TimeSeriesSettings"
+        },
+        {
+          "source_id": "repo:packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+          "path": "packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+          "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+          "claim": "Raw preparation creates one series per selected field.",
+          "evidence_type": "verified source packet",
+          "source_index": "sources.md#complete-packet-inventory",
+          "limit": "Inspected packet bytes at the supplied baseline; URL is a navigation aid. Independent Git tree verification was unavailable.",
+          "symbol": "processed series preparation"
+        },
+        {
+          "source_id": "repo:packages/explorEDA/src/components/charts/LineChart/timeSeriesPlan.ts",
+          "path": "packages/explorEDA/src/components/charts/LineChart/timeSeriesPlan.ts",
+          "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/components/charts/LineChart/timeSeriesPlan.ts",
+          "claim": "Calendar split series are interval aggregates, not raw tag series.",
+          "evidence_type": "verified source packet",
+          "source_index": "sources.md#complete-packet-inventory",
+          "limit": "Inspected packet bytes at the supplied baseline; URL is a navigation aid. Independent Git tree verification was unavailable.",
+          "symbol": "planTimeSeries"
+        }
+      ],
+      "external": [
+        {
+          "source_id": "P20",
+          "url": "https://leeoniya.github.io/uPlot/docs/data-modes.html",
+          "claim": "Per-series faceted arrays avoid a universal aligned X array but leave cursor logic to the application.",
+          "evidence_type": "documented",
+          "accessed_at": "2026-10-19 UTC",
+          "source_index": "sources.md",
+          "limit": "Version and access limits are recorded in sources.md; no live interaction quality was observed."
+        },
+        {
+          "source_id": "IND-14",
+          "url": "https://support.seeq.com/latest/cloud/interpolation",
+          "claim": "Explicit maximum interpolation gaps and invalid samples have different causes.",
+          "evidence_type": "documented",
+          "accessed_at": "2026-10-19 UTC",
+          "source_index": "sources.md",
+          "limit": "Version and access limits are recorded in sources.md; no live interaction quality was observed."
+        }
+      ]
+    },
+    "alternatives": [
+      "Pivot onto a union grid with null padding: reject if it erases absence/null/duplicate meaning.",
+      "Use Calendar summaries for raw tags: reject changed analytical grain.",
+      "Implement historian ingestion/live streaming or a generic provider framework: out of scope."
+    ],
+    "proof": {
+      "status": "UNRUN",
+      "plan_reference": "proof-plan.md",
+      "checks": [
+        {
+          "name": "Canonical long-form fixture",
+          "status": "UNRUN",
+          "procedure": "Run the exact S3 generator with sample_count=60; map rowKey to provider row IDs and explicitly give every tag its own scale.",
+          "acceptance": "There are 1195 records, 20 tags, one present null and one within-tag duplicate pair. Reordering does not change typed series identity or drop records; three unit groups are not misreported as the twenty-group test.",
+          "rejection": "Duplicate averaging/deduplication occurs silently, row order changes series identity or an unannounced tag cutoff applies."
+        },
+        {
+          "name": "Gap and original evidence",
+          "status": "UNRUN",
+          "procedure": "Set Tag 00 max connection gap to 90 seconds and inspect Tag 01 null, Tag 02 duplicate and Tag 03 spike.",
+          "acceptance": "The 118-second Tag 00 gap breaks; Tag 01 null remains a traceable invalid record; Tag 02 has both exact rows; the 226.1 °C spike at 12:13:24Z remains inspectable.",
+          "rejection": "Absent timestamps become present nulls, an outage threshold is invented, gaps reconnect, or reduced geometry removes original evidence."
+        }
+      ],
+      "docs_and_demo": {
+        "status": "UNRUN",
+        "visible_change": true,
+        "ships_with": ["M4"],
+        "docs_path": "apps/demo/src/docs/pages/line.mdx",
+        "docs_sections": [
+          "Raw tags in long-form data",
+          "Irregular samples, duplicate timestamps and gaps"
+        ],
+        "demo_ids": ["line-irregular-process-tags"],
+        "demo_paths": [
+          "apps/demo/src/demos/examples.ts",
+          "apps/demo/src/demos/coverage.ts",
+          "apps/demo/src/demos/dashboardSettings.ts"
+        ],
+        "live_registry_path": "apps/demo/src/docs/live/examples.ts",
+        "coverage_required": [
+          "One measure plus raw split field",
+          "Typed stable series keys",
+          "Absent versus present null",
+          "Duplicate and elapsed-gap policy"
+        ],
+        "gate": "An accepted user-visible milestone includes its docs section, registered demo and actual proof result in the same milestone."
+      },
+      "actual_results": [],
+      "completion_rule": "Do not mark complete from static source reading, a screenshot, generated fixture data or an old test name."
+    },
+    "proposed_disposition": "investigate",
+    "approval_status": "unapproved",
+    "codex_disposition": null,
+    "codex_decision_note": "Codex must separately classify adopt, investigate, defer or reject before implementation; this proposed disposition is not authorization."
+  },
+  {
+    "id": "TS-10",
+    "title": "Preserve extrema and provenance under bounded rendering reduction",
+    "problem": "The current reducer retains bucket start/min/max but not guaranteed final samples or source IDs, collapses large all-equal-X input to one point and can exceed a whole-chart budget across many short segments.",
+    "proposal": "Keep original lookup authoritative and reduce only paint geometry. Retain original first/last and local min/max indices per pixel bucket/run, or prove an equivalent explicit fidelity contract. Preserve null/elapsed-gap boundaries and duplicate access. Budget output across all series and segments; expose an honest density/cap state when fidelity exceeds the budget. Show reduction status and measure a declared workload before claiming performance.",
+    "scope": {
+      "renderers": ["observation; measure Calendar DOM/caps separately"],
+      "milestones": ["M4"],
+      "exclusions": [
+        "Universal performance promises",
+        "Automatic statistical aggregation",
+        "Unbounded optional benchmark matrix"
+      ],
+      "dependencies": [
+        "TS-04 original lookup",
+        "M2 source-domain contract",
+        "M4 long-form fixture for density proof"
+      ]
+    },
+    "value": {
+      "assessment": "Very high for trustworthy dense data: faster painting must not rewrite evidence.",
+      "basis": "Task-specific engineering judgment; no measured usability or benchmark result."
+    },
+    "priority": {
+      "rank": 7,
+      "kind": "conditional fidelity work",
+      "report_reference": "time-series-axes-research.md, section 8"
+    },
+    "confidence": {
+      "level": "high",
+      "basis": "Reducer failure branches are visible in the packet. Correctness and proposed latency budgets are unrun; no vendor benchmark is adopted."
+    },
+    "cost": {
+      "level": "medium",
+      "estimate_type": "engineering judgment",
+      "additive": false,
+      "shared_milestone_envelopes": [
+        {
+          "milestone": "M4",
+          "developer_days": [3, 6]
+        }
+      ],
+      "note": "The dense geometry and performance work shares M4; M1 already decouples cursor lookup from reduced points. These are shared milestone envelopes, not per-recommendation estimates to sum. M0-M2 together are 4.5-10.5 developer-days; conditional M3-M4 add 5-10."
+    },
+    "affected_paths": [
+      {
+        "path": "packages/explorEDA/src/lib/chartUtils.ts",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/LineChart.test.tsx",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/observationSeriesPlan.ts",
+        "status": "proposed-new",
+        "purpose": "Carry original indices/IDs outside reduced geometry"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/TimeSeriesChart.tsx",
+        "status": "inspected",
+        "purpose": "Measure Calendar DOM behavior separately; do not assume this reducer solves it",
+        "review_depth": "full"
+      },
+      {
+        "path": "apps/demo/src/docs/pages/line.mdx",
+        "status": "inspected",
+        "purpose": "Update the milestone documentation",
+        "review_depth": "full"
+      },
+      {
+        "path": "apps/demo/src/demos/examples.ts",
+        "status": "inspected",
+        "purpose": "Register and demonstrate the same tested synthetic scenario and coverage",
+        "review_depth": "targeted relevant sections"
+      },
+      {
+        "path": "apps/demo/src/demos/coverage.ts",
+        "status": "inspected",
+        "purpose": "Register and demonstrate the same tested synthetic scenario and coverage",
+        "review_depth": "targeted relevant sections"
+      },
+      {
+        "path": "apps/demo/src/demos/dashboardSettings.ts",
+        "status": "inspected",
+        "purpose": "Register and demonstrate the same tested synthetic scenario and coverage",
+        "review_depth": "targeted relevant sections"
+      },
+      {
+        "path": "apps/demo/src/docs/live/examples.ts",
+        "status": "uninspected-dependency",
+        "purpose": "Register the live example after confirming registry ownership",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      }
+    ],
+    "evidence": {
+      "repo": [
+        {
+          "source_id": "repo:packages/explorEDA/src/lib/chartUtils.ts",
+          "path": "packages/explorEDA/src/lib/chartUtils.ts",
+          "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/lib/chartUtils.ts",
+          "claim": "Reducer has start/min/max output and a first-point-only all-equal-X branch.",
+          "evidence_type": "verified source packet",
+          "source_index": "sources.md#complete-packet-inventory",
+          "limit": "Inspected packet bytes at the supplied baseline; URL is a navigation aid. Independent Git tree verification was unavailable.",
+          "symbol": "reduceDataPoints"
+        },
+        {
+          "source_id": "repo:packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+          "path": "packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+          "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+          "claim": "Reduction is applied across prepared gap-separated runs.",
+          "evidence_type": "verified source packet",
+          "source_index": "sources.md#complete-packet-inventory",
+          "limit": "Inspected packet bytes at the supplied baseline; URL is a navigation aid. Independent Git tree verification was unavailable.",
+          "symbol": "series segment reduction"
+        },
+        {
+          "source_id": "repo:packages/explorEDA/src/components/charts/LineChart/TimeSeriesChart.tsx",
+          "path": "packages/explorEDA/src/components/charts/LineChart/TimeSeriesChart.tsx",
+          "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/components/charts/LineChart/TimeSeriesChart.tsx",
+          "claim": "Dense Calendar marks remain DOM elements with inactive opacity changes.",
+          "evidence_type": "verified source packet",
+          "source_index": "sources.md#complete-packet-inventory",
+          "limit": "Inspected packet bytes at the supplied baseline; URL is a navigation aid. Independent Git tree verification was unavailable.",
+          "symbol": "mark rendering"
+        }
+      ],
+      "external": [
+        {
+          "source_id": "IND-03",
+          "url": "https://support.seeq.com/latest/cloud/signal-summarization",
+          "claim": "Visual summarization and analytical source values are separated.",
+          "evidence_type": "documented",
+          "accessed_at": "2026-10-19 UTC",
+          "source_index": "sources.md",
+          "limit": "Version and access limits are recorded in sources.md; no live interaction quality was observed."
+        },
+        {
+          "source_id": "P03",
+          "url": "https://www.highcharts.com/docs/stock/data-grouping",
+          "claim": "Default line averaging is a different operation from retaining extrema.",
+          "evidence_type": "documented",
+          "accessed_at": "2026-10-19 UTC",
+          "source_index": "sources.md",
+          "limit": "Version and access limits are recorded in sources.md; no live interaction quality was observed."
+        },
+        {
+          "source_id": "P17",
+          "url": "https://echarts.apache.org/en/changelog.html",
+          "claim": "Processed chart indices can differ from original data indices.",
+          "evidence_type": "documented",
+          "accessed_at": "2026-10-19 UTC",
+          "source_index": "sources.md",
+          "limit": "Version and access limits are recorded in sources.md; no live interaction quality was observed."
+        }
+      ]
+    },
+    "alternatives": [
+      "Use line averages or LTTB naming as an unconditional spike guarantee: reject unsupported fidelity.",
+      "Keep every rendered point without a supported envelope: reject unbounded interaction cost.",
+      "Sample source records before cursor/trace lookup: reject lost provenance.",
+      "Replace the renderer before measuring this contract: defer to TS-15."
+    ],
+    "proof": {
+      "status": "UNRUN",
+      "plan_reference": "proof-plan.md",
+      "checks": [
+        {
+          "name": "Geometry fidelity",
+          "status": "UNRUN",
+          "procedure": "Exercise known first/last/min/max values, a single spike, explicit gaps, many short segments and duplicate clusters below/above the reducer threshold at several widths.",
+          "acceptance": "The declared retained-index contract holds; all originals remain inspectable/traceable and width changes cannot alter source values or duplicate access.",
+          "rejection": "First/last/extrema disappear under the guarantee, gaps reconnect, all-equal-X data loses evidence or source IDs are reconstructed from pixels."
+        },
+        {
+          "name": "Bounded performance",
+          "status": "UNRUN",
+          "procedure": "On recorded hardware/browser measure 2x500, 6x10000 and exact S3 sample_count=5000 (99995 actual records). Use five constructions, twenty interactions and one declared warm-up.",
+          "acceptance": "At the proposed target: first usable plot <=2s, cursor p95 <=50ms, committed zoom/pan p95 <=250ms, no interaction stall >250ms, with documented total-output budget and explicit out-of-envelope behavior.",
+          "rejection": "Measured budget fails, global output grows without a bound, hover locks the UI, or a metric is reported as passing without an actual timing record."
+        }
+      ],
+      "docs_and_demo": {
+        "status": "UNRUN",
+        "visible_change": true,
+        "ships_with": ["M4"],
+        "docs_path": "apps/demo/src/docs/pages/line.mdx",
+        "docs_sections": [
+          "Dense data and source fidelity",
+          "Irregular samples, duplicate timestamps and gaps"
+        ],
+        "demo_ids": ["line-irregular-process-tags"],
+        "demo_paths": [
+          "apps/demo/src/demos/examples.ts",
+          "apps/demo/src/demos/coverage.ts",
+          "apps/demo/src/demos/dashboardSettings.ts"
+        ],
+        "live_registry_path": "apps/demo/src/docs/live/examples.ts",
+        "coverage_required": [
+          "Reduced geometry versus originals",
+          "Extrema/final/duplicate/gap invariants",
+          "Measured supported envelope",
+          "Visible density/reduction status"
+        ],
+        "gate": "An accepted user-visible milestone includes its docs section, registered demo and actual proof result in the same milestone."
+      },
+      "actual_results": [],
+      "completion_rule": "Do not mark complete from static source reading, a screenshot, generated fixture data or an old test name."
+    },
+    "proposed_disposition": "adopt",
+    "approval_status": "unapproved",
+    "codex_disposition": null,
+    "codex_decision_note": "Codex must separately classify adopt, investigate, defer or reject before implementation; this proposed disposition is not authorization."
+  },
+  {
+    "id": "TS-11",
+    "title": "Carry stable scale identity through Notes, trace, save, undo and export",
+    "problem": "Axis/guide identities are currently X/Y-oriented, while actual save, DSL, Notes, trace and editor owners are partly omitted. A secondary scale could look correct but edit the wrong owner, lose record identity or export an ambiguous image.",
+    "proposal": "Thread stable scaleId and series identity through existing contracts rather than adding a new Notes system. Primary remains yAxis/yAxisLabel; extra groups own their metadata. Record callouts follow original series/rows, data-space Notes own a scale group, and time notes own X. Keep focus/cursor transient, commit logical edits once, validate/round-trip canonical saved and Dashboard text state, and make every supported static export disclose all visible scale ranges/types and any omitted lane subset.",
+    "scope": {
+      "renderers": [
+        "both renderers; mode-specific record versus aggregate meaning"
+      ],
+      "milestones": ["M0", "M1", "M2", "M3", "M4"],
+      "exclusions": [
+        "New annotation kinds/editor",
+        "Version coexistence without demonstrated need",
+        "Assumed exporter path"
+      ],
+      "dependencies": ["M0 full-checkout owner map and explicit legacy policy"]
+    },
+    "value": {
+      "assessment": "Essential: prevents source, annotation, persistence and export regressions across every visible milestone.",
+      "basis": "Task-specific engineering judgment; no measured usability or benchmark result."
+    },
+    "priority": {
+      "rank": 4,
+      "kind": "cross-cutting release gate",
+      "report_reference": "time-series-axes-research.md, section 8"
+    },
+    "confidence": {
+      "level": "high about necessity; moderate about exact integration cost",
+      "basis": "Calls, settings and existing Notes/trace contracts are visible or documented, but complete owner implementations require M0 inspection."
+    },
+    "cost": {
+      "level": "medium to large",
+      "estimate_type": "engineering judgment",
+      "additive": false,
+      "shared_milestone_envelopes": [
+        {
+          "milestone": "M0",
+          "developer_days": [0.5, 1.5]
+        },
+        {
+          "milestone": "M1",
+          "developer_days": [1, 3]
+        },
+        {
+          "milestone": "M2",
+          "developer_days": [3, 6]
+        },
+        {
+          "milestone": "M3",
+          "developer_days": [2, 4]
+        },
+        {
+          "milestone": "M4",
+          "developer_days": [3, 6]
+        }
+      ],
+      "note": "This is a gate embedded in every changed milestone, not a separate additive feature estimate. These are shared milestone envelopes, not per-recommendation estimates to sum. M0-M2 together are 4.5-10.5 developer-days; conditional M3-M4 add 5-10."
+    },
+    "affected_paths": [
+      {
+        "path": "packages/explorEDA/src/types/ChartTypes.ts",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/definition.ts",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Axis/axisPlan.ts",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/InPlace/useAxisEditing.tsx",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/timeSeriesTrace.ts",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/TimeSeriesTraceBody.tsx",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/providers/DataLayerProvider",
+        "status": "uninspected-dependency",
+        "purpose": "Inspect source/settings/history and callback ownership",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/BaseChart",
+        "status": "uninspected-dependency",
+        "purpose": "Inspect draft preview and render host",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/InPlace/useChartEdit",
+        "status": "uninspected-dependency",
+        "purpose": "Inspect commit/cancel/undo implementation",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      },
+      {
+        "path": "packages/explorEDA/src/utils/saveDataUtils",
+        "status": "uninspected-dependency",
+        "purpose": "Inspect validation/import/save",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      },
+      {
+        "path": "packages/explorEDA/src/utils/defaultSettings",
+        "status": "uninspected-dependency",
+        "purpose": "Inspect canonical defaults",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      },
+      {
+        "path": "packages/explorEDA/src/types/SavedDataStructure",
+        "status": "uninspected-dependency",
+        "purpose": "Inspect saved shape",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      },
+      {
+        "path": "packages/explorEDA/src/lib/dsl/compile.ts",
+        "status": "uninspected-dependency",
+        "purpose": "Inspect Dashboard text import",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      },
+      {
+        "path": "packages/explorEDA/src/lib/dsl/export.ts",
+        "status": "uninspected-dependency",
+        "purpose": "Inspect Dashboard text export",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      },
+      {
+        "path": "packages/explorEDA/src/lib/dsl/settingKeys.ts",
+        "status": "uninspected-dependency",
+        "purpose": "Inspect allowed settings registry",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      },
+      {
+        "path": "packages/explorEDA/src/lib/annotations/types",
+        "status": "uninspected-dependency",
+        "purpose": "Inspect saved Note identity",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      },
+      {
+        "path": "packages/explorEDA/src/lib/annotations/context",
+        "status": "uninspected-dependency",
+        "purpose": "Inspect Note context",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      },
+      {
+        "path": "packages/explorEDA/src/lib/annotations/resolve",
+        "status": "uninspected-dependency",
+        "purpose": "Inspect Note projection",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      },
+      {
+        "path": "packages/explorEDA/src/lib/annotations/validate",
+        "status": "uninspected-dependency",
+        "purpose": "Inspect Note validation",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/annotations/ChartAnnotations",
+        "status": "uninspected-dependency",
+        "purpose": "Locate actual Notes renderer and image export owner; exact exporter path is not established",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/trace/ChartTraceScope",
+        "status": "uninspected-dependency",
+        "purpose": "Inspect evidence scope",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      },
+      {
+        "path": "apps/demo/src/docs/pages/line.mdx",
+        "status": "inspected",
+        "purpose": "Update the milestone documentation",
+        "review_depth": "full"
+      },
+      {
+        "path": "apps/demo/src/demos/examples.ts",
+        "status": "inspected",
+        "purpose": "Register and demonstrate the same tested synthetic scenario and coverage",
+        "review_depth": "targeted relevant sections"
+      },
+      {
+        "path": "apps/demo/src/demos/coverage.ts",
+        "status": "inspected",
+        "purpose": "Register and demonstrate the same tested synthetic scenario and coverage",
+        "review_depth": "targeted relevant sections"
+      },
+      {
+        "path": "apps/demo/src/demos/dashboardSettings.ts",
+        "status": "inspected",
+        "purpose": "Register and demonstrate the same tested synthetic scenario and coverage",
+        "review_depth": "targeted relevant sections"
+      },
+      {
+        "path": "apps/demo/src/docs/live/examples.ts",
+        "status": "uninspected-dependency",
+        "purpose": "Register the live example after confirming registry ownership",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      }
+    ],
+    "evidence": {
+      "repo": [
+        {
+          "source_id": "repo:packages/explorEDA/src/types/ChartTypes.ts",
+          "path": "packages/explorEDA/src/types/ChartTypes.ts",
+          "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/types/ChartTypes.ts",
+          "claim": "Settings include annotations and a declared draft onSettingsChange callback.",
+          "evidence_type": "verified source packet",
+          "source_index": "sources.md#complete-packet-inventory",
+          "limit": "Inspected packet bytes at the supplied baseline; URL is a navigation aid. Independent Git tree verification was unavailable.",
+          "symbol": "BaseChartSettings; BaseChartProps"
+        },
+        {
+          "source_id": "repo:packages/explorEDA/src/components/charts/InPlace/useAxisEditing.tsx",
+          "path": "packages/explorEDA/src/components/charts/InPlace/useAxisEditing.tsx",
+          "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/components/charts/InPlace/useAxisEditing.tsx",
+          "claim": "Visible edit code delegates transactional behavior to an omitted owner.",
+          "evidence_type": "verified source packet",
+          "source_index": "sources.md#complete-packet-inventory",
+          "limit": "Inspected packet bytes at the supplied baseline; URL is a navigation aid. Independent Git tree verification was unavailable.",
+          "symbol": "useChartEdit calls"
+        },
+        {
+          "source_id": "repo:packages/explorEDA/src/components/charts/LineChart/areaCharts.test.tsx",
+          "path": "packages/explorEDA/src/components/charts/LineChart/areaCharts.test.tsx",
+          "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/components/charts/LineChart/areaCharts.test.tsx",
+          "claim": "Existing tests assert save/JSON/validation behavior but were only read.",
+          "evidence_type": "verified source packet",
+          "source_index": "sources.md#complete-packet-inventory",
+          "limit": "Inspected packet bytes at the supplied baseline; URL is a navigation aid. Independent Git tree verification was unavailable."
+        },
+        {
+          "source_id": "repo:docs/agent-guide.md",
+          "path": "docs/agent-guide.md",
+          "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/docs/agent-guide.md",
+          "claim": "Documents save, Dashboard text, history and Notes ownership seams.",
+          "evidence_type": "verified source packet",
+          "source_index": "sources.md#complete-packet-inventory",
+          "limit": "Inspected packet bytes at the supplied baseline; URL is a navigation aid. Independent Git tree verification was unavailable."
+        }
+      ],
+      "external": [
+        {
+          "source_id": "IND-05",
+          "url": "https://github.com/AVEVA/AVEVA-Samples-PI-System/blob/main/docs/PI-Vision-Extensibility-Docs/PI%20Vision%20Extensibility%20Guide.md",
+          "claim": "Trend metadata distinguishes scale and recorded-value information.",
+          "evidence_type": "documented",
+          "accessed_at": "2026-10-19 UTC",
+          "source_index": "sources.md",
+          "limit": "Version and access limits are recorded in sources.md; no live interaction quality was observed."
+        },
+        {
+          "source_id": "P17",
+          "url": "https://echarts.apache.org/en/changelog.html",
+          "claim": "Source and processed indices are not interchangeable.",
+          "evidence_type": "documented",
+          "accessed_at": "2026-10-19 UTC",
+          "source_index": "sources.md",
+          "limit": "Version and access limits are recorded in sources.md; no live interaction quality was observed."
+        }
+      ]
+    },
+    "alternatives": [
+      "Introduce a second annotation/serialization framework: reject duplicated ownership.",
+      "Copy the focused settings into primary yAxis: reject unstable identity.",
+      "Save transient cursor/hover/focus: reject undo and persistence churn.",
+      "Ship controls now and repair export later: reject an incomplete visible milestone."
+    ],
+    "proof": {
+      "status": "UNRUN",
+      "plan_reference": "proof-plan.md",
+      "checks": [
+        {
+          "name": "One-extra-scale ownership round trip",
+          "status": "UNRUN",
+          "procedure": "After inspecting actual owners, use M0 experiment B: focus, range edit, cancel, commit, undo/redo, Note projection, exact trace, JSON/Dashboard text and actual supported export; cap the initial experiment at half a day.",
+          "acceptance": "A secondary edit changes only its owner; cancel restores exact state; one commit yields one logical undo; focus writes nothing; Notes and row/contributor IDs remain correct throughout.",
+          "rejection": "A draft leaks into live settings, an ID collides, a secondary edit mutates primary or evidence must be reconstructed from display pixels."
+        },
+        {
+          "name": "Saved identities, modes and exports",
+          "status": "UNRUN",
+          "procedure": "Rename/reorder/remove series/groups; test dangling references and chosen legacy mapping; traverse Calendar and return; export overlays and full/partial lanes.",
+          "acceptance": "Canonical IDs survive supported round trips; extras/assignments remain dormant in Calendar while shared primary behavior is disclosed; raw exports retain original values where supported and static images reveal every necessary scale/subset.",
+          "rejection": "A bad ID silently adopts unrelated units, exported lines imply one global magnitude scale, a lane is silently omitted or a Calendar bucket becomes a fictitious single record."
+        }
+      ],
+      "docs_and_demo": {
+        "status": "UNRUN",
+        "visible_change": true,
+        "ships_with": ["M1", "M2", "M3", "M4"],
+        "docs_path": "apps/demo/src/docs/pages/line.mdx",
+        "docs_sections": [
+          "Read original values",
+          "Save and share scale meaning",
+          "Compare in shared-time lanes",
+          "Dense data and source fidelity"
+        ],
+        "demo_ids": [
+          "line-original-values",
+          "line-mixed-units-scale-groups",
+          "line-same-unit-outlier",
+          "line-shared-time-lanes",
+          "line-irregular-process-tags"
+        ],
+        "demo_paths": [
+          "apps/demo/src/demos/examples.ts",
+          "apps/demo/src/demos/coverage.ts",
+          "apps/demo/src/demos/dashboardSettings.ts"
+        ],
+        "live_registry_path": "apps/demo/src/docs/live/examples.ts",
+        "coverage_required": [
+          "Notes and scale identity",
+          "Original trace after transformations",
+          "Draft/save/DSL/undo",
+          "Complete truthful export",
+          "Cross-mode shared primary behavior"
+        ],
+        "gate": "An accepted user-visible milestone includes its docs section, registered demo and actual proof result in the same milestone."
+      },
+      "actual_results": [],
+      "completion_rule": "Do not mark complete from static source reading, a screenshot, generated fixture data or an old test name."
+    },
+    "proposed_disposition": "adopt",
+    "approval_status": "unapproved",
+    "codex_disposition": null,
+    "codex_decision_note": "Codex must separately classify adopt, investigate, defer or reject before implementation; this proposed disposition is not authorization."
+  },
+  {
+    "id": "TS-12",
+    "title": "Make every value and scale control keyboard and narrow-layout accessible",
+    "problem": "Existing observation emphasis is hover-oriented and density/axis ownership can become unreadable at narrow widths. Calendar has useful keyboard bucket access, but no source evidence establishes complete accessibility for new groups or lanes.",
+    "proposal": "Use semantic focusable series/group controls with names, units, ranges/types and visible focus; keep original values reachable through the header/Values list without hover. Preserve Alt-trace and row selection routes. Adapt paired axes to focused presentation by measured plot width without changing scale state. Test actual keyboard/pointer and one declared screen-reader pairing at 1280, 783 and 390 CSS px in every visible milestone.",
+    "scope": {
+      "renderers": ["both renderers with separate raw/bucket semantics"],
+      "milestones": ["M0", "M1", "M2", "M3", "M4"],
+      "exclusions": [
+        "Universal accessibility certification",
+        "Hover-only interaction",
+        "A new unrelated workspace sidebar"
+      ],
+      "dependencies": [
+        "M0 presentation experiment",
+        "Actual demo and accessibility owner inspection"
+      ]
+    },
+    "value": {
+      "assessment": "Essential: scale ownership and precise evidence must work beyond mouse hover and desktop width.",
+      "basis": "Task-specific engineering judgment; no measured usability or benchmark result."
+    },
+    "priority": {
+      "rank": 4,
+      "kind": "cross-cutting release gate",
+      "report_reference": "time-series-axes-research.md, section 8"
+    },
+    "confidence": {
+      "level": "high about necessity; moderate about proposed presentation",
+      "basis": "The current source exposes different interaction foundations, while provider accessibility docs are capability references rather than conformance proof."
+    },
+    "cost": {
+      "level": "medium",
+      "estimate_type": "engineering judgment",
+      "additive": false,
+      "shared_milestone_envelopes": [
+        {
+          "milestone": "M0",
+          "developer_days": [0.5, 1.5]
+        },
+        {
+          "milestone": "M1",
+          "developer_days": [1, 3]
+        },
+        {
+          "milestone": "M2",
+          "developer_days": [3, 6]
+        },
+        {
+          "milestone": "M3",
+          "developer_days": [2, 4]
+        },
+        {
+          "milestone": "M4",
+          "developer_days": [3, 6]
+        }
+      ],
+      "note": "Accessibility and width proofs are embedded in each milestone; do not add their full envelopes again. These are shared milestone envelopes, not per-recommendation estimates to sum. M0-M2 together are 4.5-10.5 developer-days; conditional M3-M4 add 5-10."
+    },
+    "affected_paths": [
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/TimeSeriesChart.tsx",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/LineSeriesSettings.tsx",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/Axis/AxisLayer.tsx",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/InPlace/useAxisEditing.tsx",
+        "status": "inspected",
+        "purpose": "Proposed change surface",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/TrendSeriesList.tsx",
+        "status": "proposed-new",
+        "purpose": "Semantic ownership/focus and original-value controls"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/TrendLanes.tsx",
+        "status": "proposed-new",
+        "purpose": "Conditional reachable lane order and partial-view disclosures"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/chartAccessibility",
+        "status": "uninspected-dependency",
+        "purpose": "Inspect existing reusable keyboard/semantic helpers",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      },
+      {
+        "path": "apps/demo/src/docs/pages/line.mdx",
+        "status": "inspected",
+        "purpose": "Update the milestone documentation",
+        "review_depth": "full"
+      },
+      {
+        "path": "apps/demo/src/demos/examples.ts",
+        "status": "inspected",
+        "purpose": "Register and demonstrate the same tested synthetic scenario and coverage",
+        "review_depth": "targeted relevant sections"
+      },
+      {
+        "path": "apps/demo/src/demos/coverage.ts",
+        "status": "inspected",
+        "purpose": "Register and demonstrate the same tested synthetic scenario and coverage",
+        "review_depth": "targeted relevant sections"
+      },
+      {
+        "path": "apps/demo/src/demos/dashboardSettings.ts",
+        "status": "inspected",
+        "purpose": "Register and demonstrate the same tested synthetic scenario and coverage",
+        "review_depth": "targeted relevant sections"
+      },
+      {
+        "path": "apps/demo/src/docs/live/examples.ts",
+        "status": "uninspected-dependency",
+        "purpose": "Register the live example after confirming registry ownership",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      }
+    ],
+    "evidence": {
+      "repo": [
+        {
+          "source_id": "repo:packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+          "path": "packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+          "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+          "claim": "Observation legend emphasis is local hover state.",
+          "evidence_type": "verified source packet",
+          "source_index": "sources.md#complete-packet-inventory",
+          "limit": "Inspected packet bytes at the supplied baseline; URL is a navigation aid. Independent Git tree verification was unavailable.",
+          "symbol": "legendHover"
+        },
+        {
+          "source_id": "repo:packages/explorEDA/src/components/charts/LineChart/TimeSeriesChart.tsx",
+          "path": "packages/explorEDA/src/components/charts/LineChart/TimeSeriesChart.tsx",
+          "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/components/charts/LineChart/TimeSeriesChart.tsx",
+          "claim": "Calendar has keyboard-reachable marks and trace routes.",
+          "evidence_type": "verified source packet",
+          "source_index": "sources.md#complete-packet-inventory",
+          "limit": "Inspected packet bytes at the supplied baseline; URL is a navigation aid. Independent Git tree verification was unavailable.",
+          "symbol": "mark keyboard handlers"
+        },
+        {
+          "source_id": "repo:docs/ui-defaults.md",
+          "path": "docs/ui-defaults.md",
+          "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/docs/ui-defaults.md",
+          "claim": "Documents header readouts, keyboard/Alt trace and interaction conventions.",
+          "evidence_type": "verified source packet",
+          "source_index": "sources.md#complete-packet-inventory",
+          "limit": "Inspected packet bytes at the supplied baseline; URL is a navigation aid. Independent Git tree verification was unavailable."
+        }
+      ],
+      "external": [
+        {
+          "source_id": "P06",
+          "url": "https://www.highcharts.com/docs/accessibility/accessibility-module-feature-overview",
+          "claim": "Highcharts documents optional keyboard and screen-reader navigation.",
+          "evidence_type": "documented",
+          "accessed_at": "2026-10-19 UTC",
+          "source_index": "sources.md",
+          "limit": "Version and access limits are recorded in sources.md; no live interaction quality was observed."
+        },
+        {
+          "source_id": "P16",
+          "url": "https://echarts.apache.org/handbook/en/best-practices/aria/",
+          "claim": "ARIA descriptions and decals address specific needs but are not a full workflow guarantee.",
+          "evidence_type": "documented",
+          "accessed_at": "2026-10-19 UTC",
+          "source_index": "sources.md",
+          "limit": "Version and access limits are recorded in sources.md; no live interaction quality was observed."
+        }
+      ]
+    },
+    "alternatives": [
+      "Color or hover as sole axis ownership: reject.",
+      "A long generated ARIA sentence as complete accessibility: reject.",
+      "Hide controls on mobile without another reachable path: reject.",
+      "Claim general WCAG conformance from a single pairing: reject unsupported certification."
+    ],
+    "proof": {
+      "status": "UNRUN",
+      "plan_reference": "proof-plan.md",
+      "checks": [
+        {
+          "name": "Real input and width matrix",
+          "status": "UNRUN",
+          "procedure": "Operate the actual demo at 1280/783/390 CSS px with Tab, arrows, Home/End where offered, Enter/Space, Escape and Alt+Enter/Alt-click. Include long unit labels, clipped/all-hidden data and twenty reachable groups.",
+          "acceptance": "Every intended control/value is reachable without hover; full labels and missing/duplicate states are discoverable; no essential content is cropped; page scroll and selection/zoom remain distinct.",
+          "rejection": "Unreachable offscreen values, color-only ownership, invisible focus, horizontal page overflow hiding controls or a gesture silently changing semantic state."
+        },
+        {
+          "name": "Recorded assistive-technology task",
+          "status": "UNRUN",
+          "procedure": "Record browser/OS/zoom/screen-reader pairing for focus-scale -> edit-range -> cancel -> inspect-original-value -> trace.",
+          "acceptance": "The actual tested pairing announces owner/unit/type/limits and reaches the same original evidence as pointer input; material limits are reported.",
+          "rejection": "A claimed pass lacks real input evidence or a semantic control announces the wrong scale/record."
+        }
+      ],
+      "docs_and_demo": {
+        "status": "UNRUN",
+        "visible_change": true,
+        "ships_with": ["M1", "M2", "M3", "M4"],
+        "docs_path": "apps/demo/src/docs/pages/line.mdx",
+        "docs_sections": [
+          "Read original values",
+          "Focus a scale",
+          "Ranges, log values and clipping",
+          "Compare in shared-time lanes"
+        ],
+        "demo_ids": [
+          "line-original-values",
+          "line-calendar-missing-weeks",
+          "line-mixed-units-scale-groups",
+          "line-same-unit-outlier",
+          "line-shared-time-lanes",
+          "line-irregular-process-tags"
+        ],
+        "demo_paths": [
+          "apps/demo/src/demos/examples.ts",
+          "apps/demo/src/demos/coverage.ts",
+          "apps/demo/src/demos/dashboardSettings.ts"
+        ],
+        "live_registry_path": "apps/demo/src/docs/live/examples.ts",
+        "coverage_required": [
+          "Real keyboard/pointer at three widths",
+          "Full-label access and visible focus",
+          "Same original evidence",
+          "Declared screen-reader pairing"
+        ],
+        "gate": "An accepted user-visible milestone includes its docs section, registered demo and actual proof result in the same milestone."
+      },
+      "actual_results": [],
+      "completion_rule": "Do not mark complete from static source reading, a screenshot, generated fixture data or an old test name."
+    },
+    "proposed_disposition": "adopt",
+    "approval_status": "unapproved",
+    "codex_disposition": null,
+    "codex_decision_note": "Codex must separately classify adopt, investigate, defer or reject before implementation; this proposed disposition is not authorization."
+  },
+  {
+    "id": "TS-13",
+    "title": "Defer normalized and indexed overlays until a named task needs them",
+    "problem": "Independent scaling already changes screen position without changing values. Adding min-max, z-score or index-to-baseline transforms prematurely would obscure magnitude, introduce baseline/population choices and complicate zero/negative/constant cases.",
+    "proposal": "Keep shared physical values and explicit Own scale in the core. Reopen normalization only for a concrete analytical task inadequately served by groups/lanes. A future mode must name its transformed quantity, fixed reference population and baseline, retain original values/trace, define zero/constant/nonpositive handling and never silently rebase on brush, filter or viewport changes.",
+    "scope": {
+      "renderers": [
+        "future observation comparison; Calendar needs a separate explicit requirement"
+      ],
+      "milestones": [],
+      "exclusions": [
+        "Any normalized mode in M0-M4",
+        "Implicit baseline/window rebasing"
+      ],
+      "dependencies": [
+        "Concrete unmet task after groups/lanes",
+        "Explicit transform/reference decision"
+      ]
+    },
+    "value": {
+      "assessment": "Potential shape-comparison value, below current evidence and magnitude priorities.",
+      "basis": "Task-specific engineering judgment; no measured usability or benchmark result."
+    },
+    "priority": {
+      "rank": 8,
+      "kind": "deferred",
+      "report_reference": "time-series-axes-research.md, section 8"
+    },
+    "confidence": {
+      "level": "high about deferral; moderate about a future mode",
+      "basis": "Known baseline effects and mathematical tradeoffs are clear; no concrete unmet task or normalization usability experiment was established."
+    },
+    "cost": {
+      "level": "not estimated before reopening",
+      "estimate_type": "engineering judgment",
+      "additive": false,
+      "shared_milestone_envelopes": [],
+      "note": "Excluded from M0-M4. Choose one normalization task and bound its experiment before estimating implementation. These are shared milestone envelopes, not per-recommendation estimates to sum. M0-M2 together are 4.5-10.5 developer-days; conditional M3-M4 add 5-10."
+    },
+    "affected_paths": [
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/definition.ts",
+        "status": "inspected",
+        "purpose": "Future transform state only after reopening",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+        "status": "inspected",
+        "purpose": "Future display transform only after an explicit task",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/lineScalePlan.ts",
+        "status": "proposed-new",
+        "purpose": "If created for groups, reuse its projection boundary; do not transform source lookup"
+      },
+      {
+        "path": "packages/explorEDA/src/lib/fieldSettings",
+        "status": "uninspected-dependency",
+        "purpose": "Confirm original versus transformed formatting ownership",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      },
+      {
+        "path": "apps/demo/src/docs/pages/line.mdx",
+        "status": "inspected",
+        "purpose": "Future explicit quantity/baseline documentation if reopened",
+        "review_depth": "full"
+      }
+    ],
+    "evidence": {
+      "repo": [
+        {
+          "source_id": "repo:packages/explorEDA/src/components/charts/LineChart/definition.ts",
+          "path": "packages/explorEDA/src/components/charts/LineChart/definition.ts",
+          "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/components/charts/LineChart/definition.ts",
+          "claim": "Current observation settings have no normalized/indexed display-quantity contract.",
+          "evidence_type": "verified source packet",
+          "source_index": "sources.md#complete-packet-inventory",
+          "limit": "Inspected packet bytes at the supplied baseline; URL is a navigation aid. Independent Git tree verification was unavailable.",
+          "symbol": "SeriesSettings"
+        },
+        {
+          "source_id": "repo:packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+          "path": "packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+          "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+          "claim": "Current series originate in physical field values.",
+          "evidence_type": "verified source packet",
+          "source_index": "sources.md#complete-packet-inventory",
+          "limit": "Inspected packet bytes at the supplied baseline; URL is a navigation aid. Independent Git tree verification was unavailable.",
+          "symbol": "ObservationLineChart"
+        }
+      ],
+      "external": [
+        {
+          "source_id": "P08",
+          "url": "https://www.highcharts.com/docs/stock/compare",
+          "claim": "Highcharts comparison can use visible/pre-range baselines, making baseline choice consequential.",
+          "evidence_type": "documented",
+          "accessed_at": "2026-10-19 UTC",
+          "source_index": "sources.md",
+          "limit": "Version and access limits are recorded in sources.md; no live interaction quality was observed."
+        }
+      ]
+    },
+    "alternatives": [
+      "Own scale for detail while retaining original values: preferred core route.",
+      "Shared-time lanes: preferred conditional route for dense physical comparisons.",
+      "Automatic per-series normalization as default or hidden within Own scale: reject."
+    ],
+    "proof": {
+      "status": "UNRUN",
+      "plan_reference": "proof-plan.md",
+      "checks": [
+        {
+          "name": "Reopening and baseline test",
+          "status": "UNRUN",
+          "procedure": "Name one task, choose one transform and fixed source/baseline policy, then compare it against accepted groups/lanes on S2 and zero/constant/negative/absent-base fixtures.",
+          "acceptance": "The new mode measurably solves the named task; labels disclose transformed quantity; original values/IDs remain visible; viewport/ordinary linked filters do not silently change the baseline.",
+          "rejection": "No task benefit, lost outlier magnitude without disclosure, undefined base behavior or rebasing caused by zoom/selection."
+        }
+      ],
+      "docs_and_demo": {
+        "status": "UNRUN",
+        "visible_change": false,
+        "ships_with": [],
+        "docs_path": "apps/demo/src/docs/pages/line.mdx",
+        "docs_sections": [
+          "Future normalized/indexed quantity and fixed reference policy; scope only after reopening"
+        ],
+        "demo_ids": [],
+        "demo_paths": [
+          "apps/demo/src/demos/examples.ts",
+          "apps/demo/src/demos/coverage.ts",
+          "apps/demo/src/demos/dashboardSettings.ts"
+        ],
+        "live_registry_path": "apps/demo/src/docs/live/examples.ts",
+        "coverage_required": [
+          "Named analytical task",
+          "Zero/constant/nonpositive and missing baseline",
+          "Original-value preservation"
+        ],
+        "gate": "No visible feature ships under this decision. Any later visible experiment must carry the applicable docs, demo and proof together."
+      },
+      "actual_results": [],
+      "completion_rule": "Do not mark complete from static source reading, a screenshot, generated fixture data or an old test name."
+    },
+    "proposed_disposition": "defer",
+    "approval_status": "unapproved",
+    "codex_disposition": null,
+    "codex_decision_note": "Codex must separately classify adopt, investigate, defer or reject before implementation; this proposed disposition is not authorization."
+  },
+  {
+    "id": "TS-14",
+    "title": "Defer synchronized navigation across separate charts",
+    "problem": "The app already links filtering, but shared row selection is not the same state as synchronized cursor time or viewport. Cross-chart navigation adds ownership, source alignment and feedback-loop risk beyond shared-time lanes.",
+    "proposal": "Use within-chart shared time/cursor for the first lane implementation. Reopen separate-chart synchronization only for a concrete investigation requiring coordinated views. Keep viewport/cursor state distinct from shared filters, make synchronization scope explicit, preserve actual sample times and define subscription disposal and loop prevention against the real owners.",
+    "scope": {
+      "renderers": ["future separate observation/Calendar views"],
+      "milestones": [],
+      "exclusions": [
+        "Separate-chart synchronization in M0-M4",
+        "A new global store without demonstrated need"
+      ],
+      "dependencies": [
+        "Accepted within-chart navigation/lanes",
+        "Concrete multi-chart task",
+        "Local lifecycle/state-owner inspection"
+      ]
+    },
+    "value": {
+      "assessment": "Potential comparison value after core navigation; not required for arbitrary scales.",
+      "basis": "Task-specific engineering judgment; no measured usability or benchmark result."
+    },
+    "priority": {
+      "rank": 8,
+      "kind": "deferred",
+      "report_reference": "time-series-axes-research.md, section 8"
+    },
+    "confidence": {
+      "level": "high about deferral; moderate about eventual coordination design",
+      "basis": "Existing filtering seams and external synchronized cursor/timeline patterns are known, but the local coordination owner was not inspected."
+    },
+    "cost": {
+      "level": "not estimated before reopening",
+      "estimate_type": "engineering judgment",
+      "additive": false,
+      "shared_milestone_envelopes": [],
+      "note": "Excluded from M0-M4. A later bounded synchronization experiment must choose an actual owner and workload first. These are shared milestone envelopes, not per-recommendation estimates to sum. M0-M2 together are 4.5-10.5 developer-days; conditional M3-M4 add 5-10."
+    },
+    "affected_paths": [
+      {
+        "path": "packages/explorEDA/src/providers/DataLayerProvider",
+        "status": "uninspected-dependency",
+        "purpose": "Confirm separation from shared-filter state",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/BaseChart",
+        "status": "uninspected-dependency",
+        "purpose": "Locate viewport/cursor lifecycle owner",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+        "status": "inspected",
+        "purpose": "Future explicit synchronization adapter only if needed",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/TimeSeriesChart.tsx",
+        "status": "inspected",
+        "purpose": "Future interval-aware adapter only if needed",
+        "review_depth": "full"
+      },
+      {
+        "path": "apps/demo/src/docs/pages/line.mdx",
+        "status": "inspected",
+        "purpose": "Future cross-chart scope/lifecycle documentation if reopened",
+        "review_depth": "full"
+      }
+    ],
+    "evidence": {
+      "repo": [
+        {
+          "source_id": "repo:packages/explorEDA/src/types/ChartTypes.ts",
+          "path": "packages/explorEDA/src/types/ChartTypes.ts",
+          "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/types/ChartTypes.ts",
+          "claim": "Filters and localFilters are chart settings with distinct scope.",
+          "evidence_type": "verified source packet",
+          "source_index": "sources.md#complete-packet-inventory",
+          "limit": "Inspected packet bytes at the supplied baseline; URL is a navigation aid. Independent Git tree verification was unavailable.",
+          "symbol": "BaseChartSettings"
+        },
+        {
+          "source_id": "repo:packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+          "path": "packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+          "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+          "claim": "Observation inspection uses local state and provider filter writes, not a verified cross-chart navigation protocol.",
+          "evidence_type": "verified source packet",
+          "source_index": "sources.md#complete-packet-inventory",
+          "limit": "Inspected packet bytes at the supplied baseline; URL is a navigation aid. Independent Git tree verification was unavailable.",
+          "symbol": "hoverX; brush handler"
+        }
+      ],
+      "external": [
+        {
+          "source_id": "IND-06",
+          "url": "https://osicdn.blob.core.windows.net/learningcontent/Online%20Course%20Workbooks/PI%20Vision%20Basics%20v2024.pdf",
+          "claim": "PI Vision describes a cursor shared across trends in one display.",
+          "evidence_type": "documented",
+          "accessed_at": "2026-10-19 UTC",
+          "source_index": "sources.md",
+          "limit": "Version and access limits are recorded in sources.md; no live interaction quality was observed."
+        },
+        {
+          "source_id": "IND-10",
+          "url": "https://esupport.aspentech.com/UniversityCourse?id=a3p0B0000004YoIQAU",
+          "claim": "Aspen training distinguishes global and private timeline scopes.",
+          "evidence_type": "documented",
+          "accessed_at": "2026-10-19 UTC",
+          "source_index": "sources.md",
+          "limit": "Version and access limits are recorded in sources.md; no live interaction quality was observed."
+        },
+        {
+          "source_id": "P21",
+          "url": "https://github.com/leeoniya/uPlot",
+          "claim": "uPlot lists cursor synchronization as a project capability.",
+          "evidence_type": "documented",
+          "accessed_at": "2026-10-19 UTC",
+          "source_index": "sources.md",
+          "limit": "Version and access limits are recorded in sources.md; no live interaction quality was observed."
+        }
+      ]
+    },
+    "alternatives": [
+      "Shared-time lanes within one chart: preferred bounded first route.",
+      "Use linked row filters as a navigation bus: reject semantic coupling.",
+      "Add a global coordination service before a named task: defer unnecessary ownership scope."
+    ],
+    "proof": {
+      "status": "UNRUN",
+      "plan_reference": "proof-plan.md",
+      "checks": [
+        {
+          "name": "Explicit synchronization scope",
+          "status": "UNRUN",
+          "procedure": "After naming a task, synchronize two charts with different sample schedules, local filters and renderer grain; repeatedly move/pin/zoom then remove one view.",
+          "acceptance": "Only opted-in viewport/cursor state propagates; original sample timestamps remain disclosed; no filter writes, event feedback loops or retained subscriptions appear after disposal.",
+          "rejection": "Navigation filters rows, chart-local populations are overwritten, cursor values imply simultaneous recording or listeners continue after a chart is removed."
+        }
+      ],
+      "docs_and_demo": {
+        "status": "UNRUN",
+        "visible_change": false,
+        "ships_with": [],
+        "docs_path": "apps/demo/src/docs/pages/line.mdx",
+        "docs_sections": [
+          "Future synchronized viewport/cursor scope; define with the reopened task"
+        ],
+        "demo_ids": [],
+        "demo_paths": [
+          "apps/demo/src/demos/examples.ts",
+          "apps/demo/src/demos/coverage.ts",
+          "apps/demo/src/demos/dashboardSettings.ts"
+        ],
+        "live_registry_path": "apps/demo/src/docs/live/examples.ts",
+        "coverage_required": [
+          "Opt-in view scope",
+          "No shared-filter feedback loop",
+          "Asynchronous actual times",
+          "Disposal and undo ownership"
+        ],
+        "gate": "No visible feature ships under this decision. Any later visible experiment must carry the applicable docs, demo and proof together."
+      },
+      "actual_results": [],
+      "completion_rule": "Do not mark complete from static source reading, a screenshot, generated fixture data or an old test name."
+    },
+    "proposed_disposition": "defer",
+    "approval_status": "unapproved",
+    "codex_disposition": null,
+    "codex_decision_note": "Codex must separately classify adopt, investigate, defer or reject before implementation; this proposed disposition is not authorization."
+  },
+  {
+    "id": "TS-15",
+    "title": "Keep React, TypeScript and D3; allow one measured renderer spike only if needed",
+    "problem": "Industrial UX and library multi-axis APIs establish useful patterns, but do not prove that replacing the current renderer would preserve filters, original trace, Notes, drafts, undo and exports or improve the required workload.",
+    "proposal": "Retain the current React/TypeScript/D3 foundation. Implement and measure the accepted fidelity and interaction contract first. Reopen a renderer decision only after a worthwhile workload fails a documented gate despite bounded repair. Compare the current renderer with one pinned candidate on identical data, state, accessibility and source-evidence requirements; verify the chosen version license/embedding terms then. uPlot is a possible density spike and Highcharts a possible accessible-navigation spike, not selected dependencies.",
+    "scope": {
+      "renderers": ["whole implementation constraint"],
+      "milestones": ["M0"],
+      "exclusions": [
+        "Renderer replacement now",
+        "Historian/live-streaming implementation",
+        "License/procurement recommendation",
+        "Vendor benchmarks as local results"
+      ],
+      "dependencies": ["Measured failure after bounded repair before any spike"]
+    },
+    "value": {
+      "assessment": "High: concentrates effort on analytical/state improvements and avoids replacement work unsupported by measurements.",
+      "basis": "Task-specific engineering judgment; no measured usability or benchmark result."
+    },
+    "priority": {
+      "rank": null,
+      "kind": "constraint",
+      "report_reference": "time-series-axes-research.md, section 8"
+    },
+    "confidence": {
+      "level": "high",
+      "basis": "The existing stack and contract complexity are source-backed. No comparative local benchmark, license selection or provider usability test was performed."
+    },
+    "cost": {
+      "level": "minimal for retain decision; spike unestimated until triggered",
+      "estimate_type": "engineering judgment",
+      "additive": false,
+      "shared_milestone_envelopes": [
+        {
+          "milestone": "M0",
+          "developer_days": [0.5, 1.5]
+        }
+      ],
+      "note": "The retain decision belongs to M0. No renderer spike is included in M0-M4 effort; a triggered spike needs its own explicit bound. These are shared milestone envelopes, not per-recommendation estimates to sum. M0-M2 together are 4.5-10.5 developer-days; conditional M3-M4 add 5-10."
+    },
+    "affected_paths": [
+      {
+        "path": "package.json",
+        "status": "inspected",
+        "purpose": "Retain the established package/runtime setup",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/package.json",
+        "status": "inspected",
+        "purpose": "Retain existing React/TypeScript/D3 dependencies",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+        "status": "inspected",
+        "purpose": "Baseline renderer for measured contract",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/LineChart/TimeSeriesChart.tsx",
+        "status": "inspected",
+        "purpose": "Preserve existing Calendar behavior",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/lib/chartUtils.ts",
+        "status": "inspected",
+        "purpose": "Measure bounded repair before changing renderer",
+        "review_depth": "full"
+      },
+      {
+        "path": "packages/explorEDA/src/components/charts/BaseChart",
+        "status": "uninspected-dependency",
+        "purpose": "Verify complete host/draft/export contract for any future candidate",
+        "path_kind": "documented candidate or import stem; resolve exact filename locally",
+        "gate": "Locate and inspect the actual owner in the full checkout before editing; no implementation behavior is assumed."
+      }
+    ],
+    "evidence": {
+      "repo": [
+        {
+          "source_id": "repo:package.json",
+          "path": "package.json",
+          "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/package.json",
+          "claim": "Repository declares pnpm 11.9.0.",
+          "evidence_type": "verified source packet",
+          "source_index": "sources.md#complete-packet-inventory",
+          "limit": "Inspected packet bytes at the supplied baseline; URL is a navigation aid. Independent Git tree verification was unavailable."
+        },
+        {
+          "source_id": "repo:packages/explorEDA/package.json",
+          "path": "packages/explorEDA/package.json",
+          "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/package.json",
+          "claim": "Existing package uses React/TypeScript and D3 visualization dependencies.",
+          "evidence_type": "verified source packet",
+          "source_index": "sources.md#complete-packet-inventory",
+          "limit": "Inspected packet bytes at the supplied baseline; URL is a navigation aid. Independent Git tree verification was unavailable."
+        },
+        {
+          "source_id": "repo:packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+          "path": "packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+          "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+          "claim": "Renderer integrates local inspection, provider filters and axis/annotation behavior.",
+          "evidence_type": "verified source packet",
+          "source_index": "sources.md#complete-packet-inventory",
+          "limit": "Inspected packet bytes at the supplied baseline; URL is a navigation aid. Independent Git tree verification was unavailable."
+        }
+      ],
+      "external": [
+        {
+          "source_id": "P02",
+          "url": "https://www.highcharts.com/docs/chart-concepts/axes",
+          "claim": "Multiple-axis primitives exist without supplying explorEDA state semantics.",
+          "evidence_type": "documented",
+          "accessed_at": "2026-10-19 UTC",
+          "source_index": "sources.md",
+          "limit": "Version and access limits are recorded in sources.md; no live interaction quality was observed."
+        },
+        {
+          "source_id": "P20",
+          "url": "https://leeoniya.github.io/uPlot/docs/data-modes.html",
+          "claim": "Data-mode choice can still require application cursor and range logic.",
+          "evidence_type": "documented",
+          "accessed_at": "2026-10-19 UTC",
+          "source_index": "sources.md",
+          "limit": "Version and access limits are recorded in sources.md; no live interaction quality was observed."
+        },
+        {
+          "source_id": "P06",
+          "url": "https://www.highcharts.com/docs/accessibility/accessibility-module-feature-overview",
+          "claim": "Accessible navigation is an optional provider capability requiring integration.",
+          "evidence_type": "documented",
+          "accessed_at": "2026-10-19 UTC",
+          "source_index": "sources.md",
+          "limit": "Version and access limits are recorded in sources.md; no live interaction quality was observed."
+        },
+        {
+          "source_id": "P22",
+          "url": "https://github.com/leeoniya/uPlot/releases",
+          "claim": "Published uPlot release context does not bind all current source-tree APIs.",
+          "evidence_type": "documented",
+          "accessed_at": "2026-10-19 UTC",
+          "source_index": "sources.md",
+          "limit": "Version and access limits are recorded in sources.md; no live interaction quality was observed."
+        }
+      ]
+    },
+    "alternatives": [
+      "Immediate provider replacement for arbitrary axes: reject.",
+      "All-provider benchmark bakeoff: reject unbounded scope.",
+      "One pinned candidate after a measured unmet gate: investigate only when the trigger and complete contract are explicit."
+    ],
+    "proof": {
+      "status": "UNRUN",
+      "plan_reference": "proof-plan.md",
+      "checks": [
+        {
+          "name": "Retain-first and conditional trigger",
+          "status": "UNRUN",
+          "procedure": "Run the bounded proof-plan workload and accessibility/source-fidelity gates on the existing renderer; record any failure and one bounded attempted repair.",
+          "acceptance": "Keep D3 if gates pass. A spike starts only with a measured worthwhile failure, a chosen single version/candidate, verified license terms and an agreed time bound.",
+          "rejection": "Replacement is justified by feature checkmarks, vendor benchmarks, assumed licenses or unmeasured dissatisfaction."
+        },
+        {
+          "name": "Candidate parity if reopened",
+          "status": "UNRUN",
+          "procedure": "Run the same fixtures/input/routes through one candidate, covering original values/duplicates, source domains, Notes, filters, drafts, save/DSL, undo, exports and required widths.",
+          "acceptance": "The candidate meets the original contract and measured improvement addresses the trigger without losing evidence or behavior.",
+          "rejection": "Faster paint is bought by lost originals, changed aggregation/time spacing, inaccessible controls or untested state/export parity."
+        }
+      ],
+      "docs_and_demo": {
+        "status": "UNRUN",
+        "visible_change": false,
+        "ships_with": ["M0"],
+        "docs_path": "apps/demo/src/docs/pages/line.mdx",
+        "docs_sections": [],
+        "demo_ids": [],
+        "demo_paths": [
+          "apps/demo/src/demos/examples.ts",
+          "apps/demo/src/demos/coverage.ts",
+          "apps/demo/src/demos/dashboardSettings.ts"
+        ],
+        "live_registry_path": "apps/demo/src/docs/live/examples.ts",
+        "coverage_required": [
+          "No public feature in the retain decision",
+          "Any candidate must reproduce the same applicable milestone docs/demos and evidence"
+        ],
+        "gate": "No visible feature ships under this decision. Any later visible experiment must carry the applicable docs, demo and proof together."
+      },
+      "actual_results": [],
+      "completion_rule": "Do not mark complete from static source reading, a screenshot, generated fixture data or an old test name."
+    },
+    "proposed_disposition": "adopt",
+    "approval_status": "unapproved",
+    "codex_disposition": null,
+    "codex_decision_note": "Codex must separately classify adopt, investigate, defer or reject before implementation; this proposed disposition is not authorization."
+  }
+]
