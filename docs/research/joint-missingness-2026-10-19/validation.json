@@ -1,0 +1,58 @@
+{
+  "checked_at": "2026-10-19T07:48:11.841653+00:00",
+  "runtime": {
+    "node": "22.21.1",
+    "pnpm": "11.9.0"
+  },
+  "root_check": {
+    "command": "pnpm check",
+    "exit_code": 1,
+    "passed": [
+      "UI rules",
+      "all builds",
+      "73 build-time docs tests",
+      "all type checks"
+    ],
+    "library_tests": {
+      "passed_files": 245,
+      "failed_files": 5,
+      "skipped_files": 3,
+      "passed_tests": 1619,
+      "failed_tests": 10,
+      "skipped_tests": 72
+    },
+    "limits": ["Sandbox localhost EPERM", "Watcher EMFILE"],
+    "aggregate_rerun": false,
+    "log": "tmp/pro-missingness-2026-10-19/check.log"
+  },
+  "approved_retry": {
+    "command": "pnpm --filter exploreda exec vitest run src/node/projectFiles.test.ts src/server/handler.test.ts src/server/team/accountRoutes.test.ts src/server/team/fileIntake.test.ts src/server/team/teamHandler.test.ts",
+    "passed_files": 5,
+    "passed_tests": 50,
+    "log": "tmp/pro-missingness-2026-10-19/retry.log"
+  },
+  "app": {
+    "command": "pnpm --filter app test",
+    "passed_files": 8,
+    "passed_tests": 32
+  },
+  "demo": {
+    "command": "pnpm --filter demo test",
+    "passed_files": 18,
+    "passed_tests": 431
+  },
+  "pr_check": {
+    "command": "pnpm check:pr",
+    "result": "pass"
+  },
+  "artifact_integrity": "all original hashes/sizes, archive safety/CRC, exact inventory and standalone companions pass",
+  "authored_local_links": "pass",
+  "proposed_unrun": [
+    "Fixture source-helper execution",
+    "Author comparator",
+    "Keyboard and browser viewport tasks",
+    "Selection/export/undo/reopen journey",
+    "Product performance"
+  ],
+  "no_product_code_change": true
+}
