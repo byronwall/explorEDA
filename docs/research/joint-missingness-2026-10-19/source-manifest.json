@@ -1,0 +1,247 @@
+{
+  "repository": "https://github.com/byronwall/explorEDA",
+  "baseline": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+  "created_at": "2026-10-19T06:40:03.324312+00:00",
+  "kind": "Selected UTF-8 source snapshot; not runnable",
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "bytes": 4033,
+      "sha256": "802990c1bacd76b4b867239da78fd011fb32653f891d4a88560e9ee629979a33",
+      "origin": "baseline tracked"
+    },
+    {
+      "path": "docs/agent-guide.md",
+      "bytes": 19779,
+      "sha256": "0992949f205d1ae72a8249c69bccb33f1eb70763b14a526a6384a7a91f9c9f00",
+      "origin": "baseline tracked"
+    },
+    {
+      "path": "CODING_STANDARDS.md",
+      "bytes": 2213,
+      "sha256": "b4358fe75d063d53aea1edbc58d0dc6fd8df6e6165aa5792d8d2aa35eefe7ac5",
+      "origin": "baseline tracked"
+    },
+    {
+      "path": "docs/ui-defaults.md",
+      "bytes": 19093,
+      "sha256": "93ee25ebd3917a1e56d7db818ff4b6edcfe7e063f390ff9d5e9b83a0cc32f84a",
+      "origin": "baseline tracked"
+    },
+    {
+      "path": "README.md",
+      "bytes": 10263,
+      "sha256": "1f05b6c4992b07d1fc2b38d7bf9273db9e4a3a0d94513b7265e13b81cd7c5e28",
+      "origin": "baseline tracked"
+    },
+    {
+      "path": "package.json",
+      "bytes": 1258,
+      "sha256": "f9b14daf225872f605d9435ddfb46fdede88b203c87a0e8507fe20743536f6e3",
+      "origin": "baseline tracked"
+    },
+    {
+      "path": "docs/intent/missingness-and-expected-records/intent-brief.md",
+      "bytes": 2851,
+      "sha256": "1a9747d348dd5124206ffac7866dac6030d2ffd41f00132406d74a1aa9fdb4b2",
+      "origin": "baseline tracked"
+    },
+    {
+      "path": "docs/intent/current-analysis-trust/intent-brief.md",
+      "bytes": 3006,
+      "sha256": "d6b2d620753c1ea532fffcb1cb43cc42711e03daa898e989a7f283f475186bd7",
+      "origin": "baseline tracked"
+    },
+    {
+      "path": "docs/intent/scientific-multivariate-analysis/intent-brief.md",
+      "bytes": 3595,
+      "sha256": "e71f21742a2143011a2e675b79190b9ae873892f3ca22e09b07a3e0d5a3ff841",
+      "origin": "baseline tracked"
+    },
+    {
+      "path": "docs/intent/comparison-opportunities/README.md",
+      "bytes": 10392,
+      "sha256": "6d7eccdc17a830e139145940c6b1f7cd45dec13a2ce62aee84f5e8b2a036559e",
+      "origin": "baseline tracked"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/valueParsing.ts",
+      "bytes": 10226,
+      "sha256": "18793ed3c9f09e3ac6c184fd658ad68b88f564c5c2d800bac7108188afd845d6",
+      "origin": "baseline tracked"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/valueParsing.test.ts",
+      "bytes": 7406,
+      "sha256": "e3d2a86ad3d28494429cf8596da15cd74b3683d5d71b49e7060d2444653bb81a",
+      "origin": "baseline tracked"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/fieldSettings.ts",
+      "bytes": 10610,
+      "sha256": "12381672c4bd38ddb826cc2ac8b671e4714ee3f965c0ce2db2e6beb5b8a05236",
+      "origin": "baseline tracked"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/fieldSettings.test.ts",
+      "bytes": 4691,
+      "sha256": "83b2b9b5b5b01b5305bab7f005f3f614c0e9ce1b6394631b8aacdfa123c4cf78",
+      "origin": "baseline tracked"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/fieldProfiles.ts",
+      "bytes": 2011,
+      "sha256": "22258fd930d4b63dd64a63972642f10392df2eaf8922ad870b2ec2d3c5457988",
+      "origin": "baseline tracked"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/fieldProfiles.test.ts",
+      "bytes": 3058,
+      "sha256": "d6d0c7ffdd0ff261144da23dc72ab1f0e3c8c92c40127de29feb04a658202087",
+      "origin": "baseline tracked"
+    },
+    {
+      "path": "packages/explorEDA/src/components/SummaryTable/utils/statisticsCalculator.ts",
+      "bytes": 4810,
+      "sha256": "bb630d2f003d0f98e6dced59839b84a812d4d7438cd15ef65fb1277337a6e097",
+      "origin": "baseline tracked"
+    },
+    {
+      "path": "packages/explorEDA/src/components/FieldList/FieldRowReadings.tsx",
+      "bytes": 3205,
+      "sha256": "356c5ecb5340f55017cf6e4d8588c9d658f4c84045ecf7affd21c44b5d737c8b",
+      "origin": "baseline tracked"
+    },
+    {
+      "path": "packages/explorEDA/src/components/SummaryTable/components/FieldInspector.tsx",
+      "bytes": 23271,
+      "sha256": "54a92d51d031af549d0ffc8fa9784f0dee5da8072fad47d94740ba488b9e9335",
+      "origin": "baseline tracked"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/useFilteredFieldProfiles.ts",
+      "bytes": 6357,
+      "sha256": "cd8a3a8f2fe0e9b958027a58348934b11b5ce1196f66b4800d10d1cbaba7447e",
+      "origin": "baseline tracked"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/applyFilter.ts",
+      "bytes": 1974,
+      "sha256": "d8f0610999aa93372bbbb29d9811d9106b71e1c40675b5bc3f3714ea5bbc3953",
+      "origin": "baseline tracked"
+    },
+    {
+      "path": "packages/explorEDA/src/types/FilterTypes.ts",
+      "bytes": 1207,
+      "sha256": "5779e19b22a73dbfc6c9c66b7d12f5b7cba149b5da7e1cfa1ed316afe3a9011f",
+      "origin": "baseline tracked"
+    },
+    {
+      "path": "packages/explorEDA/src/components/WorkspaceFilterEditor.tsx",
+      "bytes": 4831,
+      "sha256": "d32d9afc621514fdb8ed3ade390854c2148284ecbfdbf0aac8823b7756ecde5a",
+      "origin": "baseline tracked"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/pairedSummary.ts",
+      "bytes": 3907,
+      "sha256": "f8bd85e25c78ced5024836e4c3e813628f68386f8fdc3ba4e76fd4639276109b",
+      "origin": "baseline tracked"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/summaryMarginals.test.ts",
+      "bytes": 6161,
+      "sha256": "c9b90e0f137db7fb8e73e2752de3285d94f217120650b08ffb1dba9632fe570a",
+      "origin": "baseline tracked"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterMatrix/matrixPlan.ts",
+      "bytes": 29368,
+      "sha256": "5144a04d50fedeb2b7fce566201d8db61fb7e56d113c5a43bbda9b4371389747",
+      "origin": "baseline tracked"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterMatrix/matrixPlan.test.ts",
+      "bytes": 16936,
+      "sha256": "4bf905274a2ea45806f6c32283313c5aa3b0231dab8633664dd7e25349967175",
+      "origin": "baseline tracked"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ParallelCoordinates/parallelPlan.ts",
+      "bytes": 18093,
+      "sha256": "08e1e655d407d6337964d8f3dd941f85e89f9b37c1ba8eb5287fcf410c6474c5",
+      "origin": "baseline tracked"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ParallelCoordinates/parallelPlan.test.ts",
+      "bytes": 9848,
+      "sha256": "e7bc63e4935790333b7641f1387fe3572098b378976ee6509f385b32cc5389db",
+      "origin": "baseline tracked"
+    },
+    {
+      "path": "apps/demo/src/docs/pages/fields.mdx",
+      "bytes": 1052,
+      "sha256": "6684572ef2332d4edf136e2458ce7f6b013d3d420407f642d0ac1449ceaca872",
+      "origin": "baseline tracked"
+    },
+    {
+      "path": "apps/demo/src/docs/pages/summary.mdx",
+      "bytes": 258,
+      "sha256": "6b47411aa431f11b3383e8c064e6ef4243c310da02df77a0aaf3ccde8f00b3e1",
+      "origin": "baseline tracked"
+    },
+    {
+      "path": "apps/demo/src/docs/pages/scatter.mdx",
+      "bytes": 6569,
+      "sha256": "b0ea4d6b0d0866e18ad5955e3c18f2f0288d4098c12a0aee24947f6f3b06e646",
+      "origin": "baseline tracked"
+    },
+    {
+      "path": "apps/demo/src/docs/pages/scatter-matrix.mdx",
+      "bytes": 739,
+      "sha256": "25f30cee82684fc15a31e73f36259402c5603468459d0bee782e2ea274e3d2a4",
+      "origin": "baseline tracked"
+    },
+    {
+      "path": "apps/demo/src/docs/pages/parallel-coordinates.mdx",
+      "bytes": 365,
+      "sha256": "1ac7421e48bf7c50b1eb052511a7f10e12e60795f215baf56bd25ba0ed72b6d4",
+      "origin": "baseline tracked"
+    },
+    {
+      "path": "apps/demo/src/docs/pages/filters.mdx",
+      "bytes": 1298,
+      "sha256": "2900d282a67aac459cef111e19e227f55df5fd0cd2cff40721ee9d3059e9cc70",
+      "origin": "baseline tracked"
+    },
+    {
+      "path": "apps/demo/src/demos/examples.ts",
+      "bytes": 56494,
+      "sha256": "b67518e290d939f719babdb5dc2723649701f8b60e4601f9a1d041b2aa8dfb93",
+      "origin": "baseline tracked"
+    },
+    {
+      "path": "docs/research/demo-datasets/dataset-research.md",
+      "bytes": 74148,
+      "sha256": "5ada2bd98ad326a4936edab6ba291e5712d6d97f88fa3036b15b68b7241e83a8",
+      "origin": "baseline tracked"
+    },
+    {
+      "path": "docs/research/joint-missingness-2026-10-19/pro-prompt.md",
+      "bytes": 10737,
+      "sha256": "e244184321282b1b4e912e14bf52bf9d9a86d4e45ec989af6acfb591e0ffc3a3",
+      "origin": "local addition"
+    },
+    {
+      "path": "docs/research/joint-missingness-2026-10-19/research-queue.md",
+      "bytes": 3319,
+      "sha256": "5fc64b67242daf2463f6c335b0f6a890c22d01d281dc080c51b4730d272a5957",
+      "origin": "local addition"
+    }
+  ],
+  "packet": {
+    "path": "tmp/pro-missingness-2026-10-19/source-packet.txt",
+    "bytes": 403190,
+    "sha256": "cffd94b5eee4bbe11c81caa4e1725c070948afabdaaaec7557dc64ac79eb67ba"
+  }
+}
