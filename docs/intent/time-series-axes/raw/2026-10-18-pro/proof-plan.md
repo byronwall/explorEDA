@@ -36,13 +36,13 @@ Evidence: exact baseline files `packages/explorEDA/src/components/charts/LineCha
 
 ## 3. Milestones and cut line
 
-| Milestone       | Intended result                                                                   | Estimated effort       |
-| --------------- | --------------------------------------------------------------------------------- | ---------------------- |
-| M0              | Confirm ownership and settle two bounded prototype questions                      | 0.5–1.5 developer-days |
-| M1              | Trustworthy original-value inspection and calendar stability                      | 1–3 developer-days     |
-| M2              | Named scale groups, focused/paired overlay, truthful range editing and navigation | 3–6 developer-days     |
-| M3, conditional | Shared-time group lanes                                                           | 2–4 developer-days     |
-| M4, conditional | Long-form irregular observation tags and bounded reduction                        | 3–6 developer-days     |
+| Milestone | Intended result | Estimated effort |
+| --- | --- | --- |
+| M0 | Confirm ownership and settle two bounded prototype questions | 0.5–1.5 developer-days |
+| M1 | Trustworthy original-value inspection and calendar stability | 1–3 developer-days |
+| M2 | Named scale groups, focused/paired overlay, truthful range editing and navigation | 3–6 developer-days |
+| M3, conditional | Shared-time group lanes | 2–4 developer-days |
+| M4, conditional | Long-form irregular observation tags and bounded reduction | 3–6 developer-days |
 
 The core M0–M2 range is **4.5–10.5 developer-days**. M3 and M4 add **5–10** only if their gates are worth the added scope. Do not package all fifteen recommendations as one release. M1 can provide useful value while a difficult scale-identity dependency delays M2.
 
@@ -168,12 +168,12 @@ Record an ownership map for:
 
 S1, S2 and S4 use the exact synthetic values and walkthroughs in `time-series-axes-research.md`; S3's canonical generator is specified in full below. Copy these contracts into Codex's local proof fixtures; record the fixture record keys and corresponding provider row IDs, timestamp basis, actual row count and SHA-256 before measuring. All data are synthetic. The generator is fixture preparation, not application implementation or a passed renderer proof.
 
-| Fixture                                           | Must prove                                                                                                                                 |
-| ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| S1: temperature, pressure and flow                | Three distinct units/ranges, explicit group ownership, exact values, non-equivalence of crossovers, focused axis and Notes/range behavior  |
-| S2: six same-unit sensors, one of them an outlier | Shared-scale magnitude comparison remains available; explicit own-scale action improves detail without hiding that the outlier is larger   |
-| S3: twenty irregular process tags                 | Long-form raw identity, unrelated timestamps, missing/stale/duplicate states, elapsed-time gaps, density and keyboard reachability         |
-| S4: weekly sales calendar summaries               | Stable full-source week positions; observed zero versus absent/invalid periods; correct count/sum/average semantics and exact contributors |
+| Fixture | Must prove |
+| --- | --- |
+| S1: temperature, pressure and flow | Three distinct units/ranges, explicit group ownership, exact values, non-equivalence of crossovers, focused axis and Notes/range behavior |
+| S2: six same-unit sensors, one of them an outlier | Shared-scale magnitude comparison remains available; explicit own-scale action improves detail without hiding that the outlier is larger |
+| S3: twenty irregular process tags | Long-form raw identity, unrelated timestamps, missing/stale/duplicate states, elapsed-time gaps, density and keyboard reachability |
+| S4: weekly sales calendar summaries | Stable full-source week positions; observed zero versus absent/invalid periods; correct count/sum/average semantics and exact contributors |
 
 ### Exact small-fixture values
 
@@ -182,18 +182,88 @@ S1 and S2 both use six one-minute timestamps beginning `2026-01-01T12:00:00Z`. S
 ```json
 {
   "S1": {
-    "minute": [0, 1, 2, 3, 4, 5],
-    "Temperature_C": [180, 182, 189, 184, 181, 180],
-    "Pressure_bar": [3.0, 3.05, 3.4, 3.2, 3.05, 3.0],
-    "Flow_L_per_min": [900, 920, 980, 870, 900, 910]
+    "minute": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "Temperature_C": [
+      180,
+      182,
+      189,
+      184,
+      181,
+      180
+    ],
+    "Pressure_bar": [
+      3.0,
+      3.05,
+      3.4,
+      3.2,
+      3.05,
+      3.0
+    ],
+    "Flow_L_per_min": [
+      900,
+      920,
+      980,
+      870,
+      900,
+      910
+    ]
   },
   "S2": {
-    "T1": [20.0, 20.2, 20.1, 20.4, 20.2, 20.1],
-    "T2": [20.1, 20.3, 20.2, 20.5, 20.3, 20.2],
-    "T3": [19.9, 20.1, 20.0, 20.3, 20.1, 20.0],
-    "T4": [20.2, 20.4, 20.3, 20.6, 20.4, 20.3],
-    "T5": [20.0, 20.1, 20.0, 20.2, 20.1, 20.0],
-    "T6": [20.1, 20.2, 20.1, 80.0, 20.2, 20.1]
+    "T1": [
+      20.0,
+      20.2,
+      20.1,
+      20.4,
+      20.2,
+      20.1
+    ],
+    "T2": [
+      20.1,
+      20.3,
+      20.2,
+      20.5,
+      20.3,
+      20.2
+    ],
+    "T3": [
+      19.9,
+      20.1,
+      20.0,
+      20.3,
+      20.1,
+      20.0
+    ],
+    "T4": [
+      20.2,
+      20.4,
+      20.3,
+      20.6,
+      20.4,
+      20.3
+    ],
+    "T5": [
+      20.0,
+      20.1,
+      20.0,
+      20.2,
+      20.1,
+      20.0
+    ],
+    "T6": [
+      20.1,
+      20.2,
+      20.1,
+      80.0,
+      20.2,
+      20.1
+    ]
   }
 }
 ```

@@ -15,15 +15,15 @@ Public research used current official sources. Decisive documentation was opened
 
 ## Repository access and packet integrity
 
-| Audit item                                     | Result                                                                                                                                                 |
-| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Repository identified by the supplied manifest | [byronwall/explorEDA](https://github.com/byronwall/explorEDA)                                                                                          |
-| Selected baseline                              | `9b16d78e3ed0742ed4d5858c1939fec9e758b510`                                                                                                             |
-| Source route actually used                     | The attached `source-packet.txt` selected-source snapshot                                                                                              |
-| Integrity checks                               | All **34 files** matched their manifest byte counts and SHA-256 hashes; **568,336 source bytes** in total                                              |
-| Review coverage                                | **31 files read in full**: 21 code/test files and 10 governance, documentation and package files; relevant sections inspected in 3 large demo catalogs |
-| Independent GitHub baseline check              | Opening the exact GitHub commit tree returned `DisabledError`; no independent Git-tree proof was obtained                                              |
-| Execution status                               | No runnable checkout, application tests, builds, live product demos or benchmarks were used                                                            |
+| Audit item | Result |
+| --- | --- |
+| Repository identified by the supplied manifest | [byronwall/explorEDA](https://github.com/byronwall/explorEDA) |
+| Selected baseline | `9b16d78e3ed0742ed4d5858c1939fec9e758b510` |
+| Source route actually used | The attached `source-packet.txt` selected-source snapshot |
+| Integrity checks | All **34 files** matched their manifest byte counts and SHA-256 hashes; **568,336 source bytes** in total |
+| Review coverage | **31 files read in full**: 21 code/test files and 10 governance, documentation and package files; relevant sections inspected in 3 large demo catalogs |
+| Independent GitHub baseline check | Opening the exact GitHub commit tree returned `DisabledError`; no independent Git-tree proof was obtained |
+| Execution status | No runnable checkout, application tests, builds, live product demos or benchmarks were used |
 
 The integrity checks establish that the inspected bytes match the supplied manifest. They do not independently authenticate the manifest's association with a Git object. Attribution to the exact baseline therefore relies on the user-provided packet. Repository paths cited throughout the deliverables refer to that packet, not to an independently inspected current default branch.
 

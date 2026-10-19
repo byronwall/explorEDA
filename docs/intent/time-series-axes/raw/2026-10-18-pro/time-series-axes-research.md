@@ -52,15 +52,15 @@ Current primary sources were reachable. Decisive scale, grouping, cursor and sam
 
 **V:** `LineChart` dispatches on `settings.time`; `ObservationLineChart` and `TimeSeriesChart` are different implementations. A date-valued X field alone is not proof of aggregation: the observation tests include an ISO-date line. See [LineChart.tsx, LineChart / ObservationLineChart](https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/components/charts/LineChart/LineChart.tsx#L61-L110) and [LineChart.test.tsx](https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/components/charts/LineChart/LineChart.test.tsx#L93-L118). Baseline links in this report are navigation aids; the packet supplied the inspected bytes.
 
-| Concern               | Observation lines                                                                                    | Calendar summaries                                                                            |
-| --------------------- | ---------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| Series identity       | A numeric field in `seriesField[]`                                                                   | One aggregation/measure, optionally split into category series                                |
-| Y assignment          | `useRightAxis` partitions fields into two shared groups                                              | One `plan.yScale`; does not read `useRightAxis` or observation series styles                  |
-| X position            | Numeric X or actual parsed timestamp                                                                 | Midpoint of a UTC day/week/month/year interval                                                |
-| Domain population     | All chart-source IDs before facet intersection; live IDs draw marks                                  | Facet-scoped all/live IDs; X window uses live periods; Y unions full/current aggregate values |
-| View bounds           | X and left Y apply `limits`; right Y does not                                                        | Y applies `limits`; X limits are not consumed by this planner                                 |
-| True log              | Left Y allows log; right path does not enable it                                                     | Unfilled line Y allows log; filled areas force linear                                         |
-| Exact evidence access | Shared hover exists, but depends on reduced points; no raw-series trace registration is visible here | Bucket/guide trace, contributors, exclusions, period selection and keyboard mark navigation   |
+| Concern | Observation lines | Calendar summaries |
+| --- | --- | --- |
+| Series identity | A numeric field in `seriesField[]` | One aggregation/measure, optionally split into category series |
+| Y assignment | `useRightAxis` partitions fields into two shared groups | One `plan.yScale`; does not read `useRightAxis` or observation series styles |
+| X position | Numeric X or actual parsed timestamp | Midpoint of a UTC day/week/month/year interval |
+| Domain population | All chart-source IDs before facet intersection; live IDs draw marks | Facet-scoped all/live IDs; X window uses live periods; Y unions full/current aggregate values |
+| View bounds | X and left Y apply `limits`; right Y does not | Y applies `limits`; X limits are not consumed by this planner |
+| True log | Left Y allows log; right path does not enable it | Unfilled line Y allows log; filled areas force linear |
+| Exact evidence access | Shared hover exists, but depends on reduced points; no raw-series trace registration is visible here | Bucket/guide trace, contributors, exclusions, period selection and keyboard mark navigation |
 
 The exact definitions are in [definition.ts, SeriesSettings / TimeSeriesSettings](https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/components/charts/LineChart/definition.ts#L17-L68). Calendar wiring is in [TimeSeriesChart.tsx](https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/components/charts/LineChart/TimeSeriesChart.tsx#L70-L100), and the population/range logic is in [timeSeriesPlan.ts, planTimeSeries](https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/components/charts/LineChart/timeSeriesPlan.ts#L136-L185).
 
@@ -96,13 +96,13 @@ The [agent guide](https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4
 
 All behavior in this section is **D**, with access on 2026-10-19 UTC. Borrow/adapt/avoid judgments are **P**. No live interaction quality was observed.
 
-| Product and evidence context                                  | Documented capability                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | Implication for explorEDA                                                                                                                                                                      |
-| ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Seeq Workbench**, rolling latest/cloud                      | Lane membership and axis groups are separate. Combining lanes retains limits; sharing a Y axis unifies limits; spreading signals also resets to automatic scales. Fixed limits and visible-time autoranging are separate controls. [IND-01](https://support.seeq.com/latest/cloud/adjusting-signal-lanes-axes-formatting)                                                                                                                                                                 | Borrow the independent concepts. Make layout changes preserve bounds; give reset its own action. Avoid copying a full industrial formatting pane or visible-window autoranging as the default. |
-| **AVEVA PI Vision**, official guide plus 2025 vendor response | Independent per-trace scales exist; grouped scales were delivered in PI Vision 2025. The vendor explicitly distinguishes grouping from right-side axis placement. [IND-05](https://github.com/AVEVA/AVEVA-Samples-PI-System/blob/main/docs/PI-Vision-Extensibility-Docs/PI%20Vision%20Extensibility%20Guide.md), [IND-07](https://pisystem.feedback.aveva.com/ideas/PIVISION-I-17), [IND-08](https://pisystem.feedback.aveva.com/ideas/PIVISION-I-736)                                    | Borrow named groups for related variables and deliberate independent scaling. Avoid outdated “only single versus multiple scales” comparisons and unsupported two-sided-axis checkmarks.       |
-| **PI ProcessBook**, legacy context                            | AVEVA's 2021-10-20 announcement describes retirement and transition toward PI Vision. An exact support-end date was not verified. [IND-09](https://www.aveva.com/en/perspectives/blog/why-we-are-retiring-aveva-pi-systems-pi-processbook/)                                                                                                                                                                                                                                               | Retain useful historical trend ideas; do not select it as a current new platform or identify it as the remembered browser tool.                                                                |
-| **Aspen Process Explorer / aspenONE Process Explorer**        | Current vendor training distinguishes desktop Process Explorer, A1PE, the Process Data Add-in and IP.21 Process Browser. Its agenda covers time shifts, zoom, scooters, pen scaling/sampling, tables and global/private timelines. Exact arbitrary group/focused-axis behavior is not verified. [IND-10](https://esupport.aspentech.com/UniversityCourse?id=a3p0B0000004YoIQAU)                                                                                                           | Borrow visible time scope and immediate tabular evidence. Avoid assuming a course agenda proves usability or a precise scale implementation.                                                   |
-| **Aspen Process Data**                                        | Separately documented as an Excel add-in for plant-data retrieval. A1PE also has a 2025 web-visualization datasheet and appears in the V15 platform matrix. [IND-11](https://esupport.aspentech.com/UniversityCourse?id=a3p0B0000004YmhQAE), [IND-12](https://home.aspentech.com/-/media/aspentech/home/resources/data-sheet/pdf/fy25/q5/at-4592-update-branding-a1pe-data-sheet-v1.pdf), [IND-13](https://www.aspentech.com/-/media/aspentech/home/platform-support/v15/v15messpecs.pdf) | Keep product names distinct. “Process Data” is not established as a rename of Process Explorer. No historian integration follows from this comparison.                                         |
+| Product and evidence context | Documented capability | Implication for explorEDA |
+| --- | --- | --- |
+| **Seeq Workbench**, rolling latest/cloud | Lane membership and axis groups are separate. Combining lanes retains limits; sharing a Y axis unifies limits; spreading signals also resets to automatic scales. Fixed limits and visible-time autoranging are separate controls. [IND-01](https://support.seeq.com/latest/cloud/adjusting-signal-lanes-axes-formatting) | Borrow the independent concepts. Make layout changes preserve bounds; give reset its own action. Avoid copying a full industrial formatting pane or visible-window autoranging as the default. |
+| **AVEVA PI Vision**, official guide plus 2025 vendor response | Independent per-trace scales exist; grouped scales were delivered in PI Vision 2025. The vendor explicitly distinguishes grouping from right-side axis placement. [IND-05](https://github.com/AVEVA/AVEVA-Samples-PI-System/blob/main/docs/PI-Vision-Extensibility-Docs/PI%20Vision%20Extensibility%20Guide.md), [IND-07](https://pisystem.feedback.aveva.com/ideas/PIVISION-I-17), [IND-08](https://pisystem.feedback.aveva.com/ideas/PIVISION-I-736) | Borrow named groups for related variables and deliberate independent scaling. Avoid outdated “only single versus multiple scales” comparisons and unsupported two-sided-axis checkmarks. |
+| **PI ProcessBook**, legacy context | AVEVA's 2021-10-20 announcement describes retirement and transition toward PI Vision. An exact support-end date was not verified. [IND-09](https://www.aveva.com/en/perspectives/blog/why-we-are-retiring-aveva-pi-systems-pi-processbook/) | Retain useful historical trend ideas; do not select it as a current new platform or identify it as the remembered browser tool. |
+| **Aspen Process Explorer / aspenONE Process Explorer** | Current vendor training distinguishes desktop Process Explorer, A1PE, the Process Data Add-in and IP.21 Process Browser. Its agenda covers time shifts, zoom, scooters, pen scaling/sampling, tables and global/private timelines. Exact arbitrary group/focused-axis behavior is not verified. [IND-10](https://esupport.aspentech.com/UniversityCourse?id=a3p0B0000004YoIQAU) | Borrow visible time scope and immediate tabular evidence. Avoid assuming a course agenda proves usability or a precise scale implementation. |
+| **Aspen Process Data** | Separately documented as an Excel add-in for plant-data retrieval. A1PE also has a 2025 web-visualization datasheet and appears in the V15 platform matrix. [IND-11](https://esupport.aspentech.com/UniversityCourse?id=a3p0B0000004YmhQAE), [IND-12](https://home.aspentech.com/-/media/aspentech/home/resources/data-sheet/pdf/fy25/q5/at-4592-update-branding-a1pe-data-sheet-v1.pdf), [IND-13](https://www.aspentech.com/-/media/aspentech/home/platform-support/v15/v15messpecs.pdf) | Keep product names distinct. “Process Data” is not established as a rename of Process Explorer. No historian integration follows from this comparison. |
 
 Two additional industrial lessons are decisive. Seeq separates the displayed time range from a broader investigation range, and distinguishes visual summarization from the values used analytically. Its interpolation documentation also treats maximum permissible gaps and interval aggregates explicitly. Borrow those distinctions while retaining explorEDA's own filter semantics. [IND-02](https://support.seeq.com/latest/cloud/adjusting-time-ranges), [IND-03](https://support.seeq.com/latest/cloud/signal-summarization), [IND-14](https://support.seeq.com/latest/cloud/interpolation).
 
@@ -112,13 +112,13 @@ Two additional industrial lessons are decisive. Seeq separates the displayed tim
 
 These are five mainstream comparisons: Grafana plus four suitable libraries. They answer what to borrow and what integration would still cost, not which vendor “wins.” Sources are official and accessed 2026-10-19 UTC.
 
-| Provider                         | Documented strengths relevant to this task                                                                                                                                                                                                                                                                                                                                                                                         | Borrow, adapt or avoid                                                                                                                                                                                                                                                                                              |
-| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Grafana**, mutable latest docs | Field overrides, multiple Y axes, unit-based placement, all-series tooltip with hovered-series emphasis, configurable null gaps and time navigation. Its documented data format expects unique timestamps per series. [P01](https://grafana.com/docs/grafana/latest/visualizations/panels-visualizations/visualizations/time-series/)                                                                                              | Borrow visible units/group ownership and focus emphasis. Adapt values to the existing header. Avoid equating dashboard time changes with linked row filtering or assuming duplicate support. No focused-axis behavior is established.                                                                               |
-| **Highcharts Stock**             | Series can share/reference multiple axes; navigator, crosshair/readout controls and an optional keyboard/screen-reader module are documented. [P02](https://www.highcharts.com/docs/chart-concepts/axes), [P05](https://www.highcharts.com/docs/stock/navigator), [P06](https://www.highcharts.com/docs/accessibility/accessibility-module-feature-overview), [P07](https://www.highcharts.com/docs/chart-concepts/tooltip)        | Borrow navigation and keyboard inspection patterns. Default line grouping averages samples; default ordinal X compresses elapsed gaps. Explicitly override those semantics in any experiment. [P03](https://www.highcharts.com/docs/stock/data-grouping), [P04](https://api.highcharts.com/highstock/xAxis.ordinal) |
-| **Plotly.js**                    | Named Y-axis references, overlaid axes, shared-axis subplots, unified hover, range controls and explicit drag modes. Unified hover gives no more than one entry per trace at the closest coordinate. [P09](https://plotly.com/javascript/multiple-axes/), [P10](https://plotly.com/javascript/reference/layout/), [P12](https://plotly.com/javascript/subplots/), [P13](https://plotly.com/javascript/range-slider/)               | Borrow coordinated lanes and explicit Zoom/Select modes. Duplicate/sample-time disclosure still needs application logic; selection availability depends on trace representation. Automatic layout is not proof of readable twenty-axis attribution.                                                                 |
-| **Apache ECharts**               | Multiple axes with `yAxisIndex`, offsets, time axes, axis pointers and zoom configuration. Optional ARIA descriptions and decals address specific accessibility needs. [P15](https://echarts.apache.org/handbook/en/concepts/axis/), [P16](https://echarts.apache.org/handbook/en/best-practices/aria/)                                                                                                                            | Borrow separation of pointer and axis coordination. Do not treat generated descriptions as full keyboard access or processed point indices as row IDs. Its changelog explicitly distinguishes raw indices in a dataZoom-related tooltip change. [P17](https://echarts.apache.org/en/changelog.html)                 |
-| **uPlot**                        | Scale keys are independent of optional visible axes. Current source-tree docs distinguish aligned shared-X arrays from per-series faceted arrays; faceted mode delegates nearest-X lookup to the app/plugin. Cursor sync, focus and live legend values are project features. [P19](https://leeoniya.github.io/uPlot/docs/), [P20](https://leeoniya.github.io/uPlot/docs/data-modes.html), [P21](https://github.com/leeoniya/uPlot) | Borrow the small scale mapping and dense value roster. Avoid the outdated claim that all data must be aligned. Faceted data does not automatically solve cursor lookup, source identity or accessibility. No vendor benchmark is adopted as an explorEDA result.                                                    |
+| Provider | Documented strengths relevant to this task | Borrow, adapt or avoid |
+| --- | --- | --- |
+| **Grafana**, mutable latest docs | Field overrides, multiple Y axes, unit-based placement, all-series tooltip with hovered-series emphasis, configurable null gaps and time navigation. Its documented data format expects unique timestamps per series. [P01](https://grafana.com/docs/grafana/latest/visualizations/panels-visualizations/visualizations/time-series/) | Borrow visible units/group ownership and focus emphasis. Adapt values to the existing header. Avoid equating dashboard time changes with linked row filtering or assuming duplicate support. No focused-axis behavior is established. |
+| **Highcharts Stock** | Series can share/reference multiple axes; navigator, crosshair/readout controls and an optional keyboard/screen-reader module are documented. [P02](https://www.highcharts.com/docs/chart-concepts/axes), [P05](https://www.highcharts.com/docs/stock/navigator), [P06](https://www.highcharts.com/docs/accessibility/accessibility-module-feature-overview), [P07](https://www.highcharts.com/docs/chart-concepts/tooltip) | Borrow navigation and keyboard inspection patterns. Default line grouping averages samples; default ordinal X compresses elapsed gaps. Explicitly override those semantics in any experiment. [P03](https://www.highcharts.com/docs/stock/data-grouping), [P04](https://api.highcharts.com/highstock/xAxis.ordinal) |
+| **Plotly.js** | Named Y-axis references, overlaid axes, shared-axis subplots, unified hover, range controls and explicit drag modes. Unified hover gives no more than one entry per trace at the closest coordinate. [P09](https://plotly.com/javascript/multiple-axes/), [P10](https://plotly.com/javascript/reference/layout/), [P12](https://plotly.com/javascript/subplots/), [P13](https://plotly.com/javascript/range-slider/) | Borrow coordinated lanes and explicit Zoom/Select modes. Duplicate/sample-time disclosure still needs application logic; selection availability depends on trace representation. Automatic layout is not proof of readable twenty-axis attribution. |
+| **Apache ECharts** | Multiple axes with `yAxisIndex`, offsets, time axes, axis pointers and zoom configuration. Optional ARIA descriptions and decals address specific accessibility needs. [P15](https://echarts.apache.org/handbook/en/concepts/axis/), [P16](https://echarts.apache.org/handbook/en/best-practices/aria/) | Borrow separation of pointer and axis coordination. Do not treat generated descriptions as full keyboard access or processed point indices as row IDs. Its changelog explicitly distinguishes raw indices in a dataZoom-related tooltip change. [P17](https://echarts.apache.org/en/changelog.html) |
+| **uPlot** | Scale keys are independent of optional visible axes. Current source-tree docs distinguish aligned shared-X arrays from per-series faceted arrays; faceted mode delegates nearest-X lookup to the app/plugin. Cursor sync, focus and live legend values are project features. [P19](https://leeoniya.github.io/uPlot/docs/), [P20](https://leeoniya.github.io/uPlot/docs/data-modes.html), [P21](https://github.com/leeoniya/uPlot) | Borrow the small scale mapping and dense value roster. Avoid the outdated claim that all data must be aligned. Faceted data does not automatically solve cursor lookup, source identity or accessibility. No vendor benchmark is adopted as an explorEDA result. |
 
 **Version limits:** Grafana and Seeq use rolling documentation. PI Vision's grouped-scale claim is explicitly version 2025; the training workbook is 2024. Provider release inventories at access listed Highcharts Stock 13.1.1, Plotly.js 4.1.2, ECharts 6.1.0 and uPlot 1.6.32, but some Highcharts API pages identify earlier versions and uPlot's source-tree docs are not a release contract. These numbers are source context, not selected dependencies. [P23](https://changelog.highcharts.com/), [P14](https://github.com/plotly/plotly.js/releases), [P17](https://echarts.apache.org/en/changelog.html), [P22](https://github.com/leeoniya/uPlot/releases).
 
@@ -150,57 +150,57 @@ Options:
 - **F — shared-time lanes:** one lane per semantic scale group.
 - **G — preferred staged hybrid:** named groups + focused overlay, optional two-axis display, lanes after proof.
 
-| Option | Scale attribution                         | Physical-value reading                      |
-| ------ | ----------------------------------------- | ------------------------------------------- |
-| A      | 2 — hidden mapping is easy to miss        | 3 — exact roster helps, ruler does not      |
-| B      | 8 — clear while groups fit two axes       | 9 — direct shared-value comparisons         |
-| C      | 6 — explicit labels become crowded        | 7 — good at two; scanning degrades          |
-| D      | 8 — focus and group name must agree       | 8 — active ruler plus original-value roster |
-| E      | 8 — common transformed quantity is clear  | 3 — raw values require a second reading     |
-| F      | 9 — local labels accompany each lane      | 9 — rulers remain attached to groups        |
-| G      | 9 — task chooses an explicit presentation | 9 — values/groups survive each transition   |
+| Option | Scale attribution | Physical-value reading |
+| --- | --- | --- |
+| A | 2 — hidden mapping is easy to miss | 3 — exact roster helps, ruler does not |
+| B | 8 — clear while groups fit two axes | 9 — direct shared-value comparisons |
+| C | 6 — explicit labels become crowded | 7 — good at two; scanning degrades |
+| D | 8 — focus and group name must agree | 8 — active ruler plus original-value roster |
+| E | 8 — common transformed quantity is clear | 3 — raw values require a second reading |
+| F | 9 — local labels accompany each lane | 9 — rulers remain attached to groups |
+| G | 9 — task chooses an explicit presentation | 9 — values/groups survive each transition |
 
-| Option | Timing/shape comparison                      | Twenty-series density                         |
-| ------ | -------------------------------------------- | --------------------------------------------- |
-| A      | 9 — signals overlay closely                  | 5 — many overlapping strokes                  |
-| B      | 6 — large within-group ranges flatten detail | 4 — mixed units exceed its display vocabulary |
-| C      | 8 — overlay aids timing                      | 1 — gutters consume the chart                 |
-| D      | 9 — overlay and deliberate emphasis          | 6 — roster helps; occlusion remains           |
-| E      | 9 — relative shapes align                    | 6 — transformation does not remove occlusion  |
-| F      | 8 — aligned cursor, more vertical scanning   | 8 — scroll/expanded height is required        |
-| G      | 9 — overlay for timing, lanes for density    | 8 — no promise that twenty fit a small tile   |
+| Option | Timing/shape comparison | Twenty-series density |
+| --- | --- | --- |
+| A | 9 — signals overlay closely | 5 — many overlapping strokes |
+| B | 6 — large within-group ranges flatten detail | 4 — mixed units exceed its display vocabulary |
+| C | 8 — overlay aids timing | 1 — gutters consume the chart |
+| D | 9 — overlay and deliberate emphasis | 6 — roster helps; occlusion remains |
+| E | 9 — relative shapes align | 6 — transformation does not remove occlusion |
+| F | 8 — aligned cursor, more vertical scanning | 8 — scroll/expanded height is required |
+| G | 9 — overlay for timing, lanes for density | 8 — no promise that twenty fit a small tile |
 
-| Option | Filter stability                                  | Accessibility potential                         |
-| ------ | ------------------------------------------------- | ----------------------------------------------- |
-| A      | 9 — source-based domains are possible             | 3 — hidden rulers burden nonvisual explanation  |
-| B      | 9 — group domains can remain fixed                | 8 — small number of clearly named scales        |
-| C      | 9 — number of rulers does not force rescaling     | 4 — reading/focus order becomes long            |
-| D      | 9 — focus must never refit                        | 8 — explicit focus + semantic value list        |
-| E      | 8 — pinned baseline needed; moving baseline fails | 6 — raw and transformed values need explanation |
-| F      | 9 — shared X and stable group domains             | 9 — linear lane order and inspectable records   |
-| G      | 9 — one resolved source policy across layouts     | 8 — transitions add keyboard/focus complexity   |
+| Option | Filter stability | Accessibility potential |
+| --- | --- | --- |
+| A | 9 — source-based domains are possible | 3 — hidden rulers burden nonvisual explanation |
+| B | 9 — group domains can remain fixed | 8 — small number of clearly named scales |
+| C | 9 — number of rulers does not force rescaling | 4 — reading/focus order becomes long |
+| D | 9 — focus must never refit | 8 — explicit focus + semantic value list |
+| E | 8 — pinned baseline needed; moving baseline fails | 6 — raw and transformed values need explanation |
+| F | 9 — shared X and stable group domains | 9 — linear lane order and inspectable records |
+| G | 9 — one resolved source policy across layouts | 8 — transitions add keyboard/focus complexity |
 
-| Option | Build economy (10 = least work) | Principal failure case                                       |
-| ------ | ------------------------------- | ------------------------------------------------------------ |
-| A      | 8                               | Easy implementation produces an unclear analytical product   |
-| B      | 8                               | Does not solve twenty different groups or tiny outlier peers |
-| C      | 4                               | Editing, labels and exports grow with gutter count           |
-| D      | 6                               | Reader mistakes the active axis for every line's axis        |
-| E      | 6                               | Rebaselining, zero/negative bases and lost magnitude         |
-| F      | 5                               | Height, scrolling and annotation/export coordination         |
-| G      | 4                               | Scope grows unless the overlay ships before lanes            |
+| Option | Build economy (10 = least work) | Principal failure case |
+| --- | --- | --- |
+| A | 8 | Easy implementation produces an unclear analytical product |
+| B | 8 | Does not solve twenty different groups or tiny outlier peers |
+| C | 4 | Editing, labels and exports grow with gutter count |
+| D | 6 | Reader mistakes the active axis for every line's axis |
+| E | 6 | Rebaselining, zero/negative bases and lost magnitude |
+| F | 5 | Height, scrolling and annotation/export coordination |
+| G | 4 | Scope grows unless the overlay ships before lanes |
 
 Filter scores are intentionally similar: stability is a domain-policy requirement, not an automatic benefit of a visualization type. The hybrid is preferred because it retains the B/D analytical strengths and introduces F only when density justifies its cost. It does not dominate on implementation economy or simplicity.
 
 ### 5.3 Defaults for 2, 6 and 20 series
 
-| Situation                               | Initial presentation                                         | Explicit next action                                                                 |
-| --------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
-| Two same-unit, comparable signals       | One shared group/axis                                        | Own scale only for a shape task; preserve shared comparison                          |
-| Two different known units               | Two named groups; paired axes if labels fit                  | Focused axis on narrow width; lanes if attribution fails                             |
-| Six same-unit sensors with one outlier  | One shared group reveals the outlier                         | Put outlier in its own group/lane, or temporarily give selected peers own scales     |
-| Six mixed-unit or widely ranged signals | Named groups, focused overlay                                | Lanes for value reading; overlay selected signals for event timing                   |
-| Twenty irregular tags                   | Proposed lane/details workflow, after raw-grouped-data proof | Search/focus a small subset; all groups remain reachable; no twenty-axis gutter wall |
+| Situation | Initial presentation | Explicit next action |
+| --- | --- | --- |
+| Two same-unit, comparable signals | One shared group/axis | Own scale only for a shape task; preserve shared comparison |
+| Two different known units | Two named groups; paired axes if labels fit | Focused axis on narrow width; lanes if attribution fails |
+| Six same-unit sensors with one outlier | One shared group reveals the outlier | Put outlier in its own group/lane, or temporarily give selected peers own scales |
+| Six mixed-unit or widely ranged signals | Named groups, focused overlay | Lanes for value reading; overlay selected signals for event timing |
+| Twenty irregular tags | Proposed lane/details workflow, after raw-grouped-data proof | Search/focus a small subset; all groups remain reachable; no twenty-axis gutter wall |
 
 Changing from two to three groups must switch axis presentation, not data scale values. Narrow resizing may reduce paired axes to the focused ruler without changing saved groups or limits. Initial breakpoint policy should use **available plot width**, not the viewport alone: allow paired axes only if measured labels leave at least 280 CSS px of plot; otherwise use focused presentation. The 280 px floor is a proposed experiment threshold, not a validated design standard.
 
@@ -229,7 +229,7 @@ type NumericYType = "linear" | "log" | "symlog";
 
 interface ExtraYScale {
   label: string;
-  unit?: string; // Display metadata, never an automatic conversion.
+  unit?: string;        // Display metadata, never an automatic conversion.
   formatField?: string; // Reuse an existing field formatter where appropriate.
   scaleType?: NumericYType;
   limits?: AxisLimits;
@@ -275,16 +275,12 @@ The existing unused `AxisSettings.title` must not become another competing label
   "yAxis": { "scaleType": "linear", "unit": "°C" },
   "yScales": {
     "pressure": {
-      "label": "Pressure",
-      "unit": "bar",
-      "formatField": "Pressure_bar",
-      "scaleType": "linear"
+      "label": "Pressure", "unit": "bar",
+      "formatField": "Pressure_bar", "scaleType": "linear"
     },
     "flow": {
-      "label": "Flow",
-      "unit": "L/min",
-      "formatField": "Flow_L_per_min",
-      "scaleType": "linear",
+      "label": "Flow", "unit": "L/min",
+      "formatField": "Flow_L_per_min", "scaleType": "linear",
       "limits": { "min": 850, "max": 1000 }
     }
   },
@@ -333,15 +329,15 @@ The header keeps the active series' precise value/time in one line. A **Values**
 
 ### 6.5 State, Notes, export, trace and compatibility
 
-| Boundary          | Proposed rule                                                                                                                                       | Proof required                                                                                                            |
-| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| Settings/undo     | `updateChart` through the existing edit transaction; one commit for a group change or drag; Escape cancels. Hover/cursor/focus remain transient.    | One callback/checkpoint per committed edit; none for cancel or cursor movement; draft preview isolation                   |
-| Scale identity    | Stable IDs survive label/order changes; primary is reserved; groups cannot be deleted with dangling members                                         | Reject dangling IDs before saving; explicit compatible reassignment; no label-as-ID lookup                                |
-| Notes             | Data-space references carry group identity; record callouts follow series identity; time annotations use shared X; intervals widen only their owner | Focus/lane changes cannot move a saved physical threshold onto another scale; preserve facet key and original record keys |
-| Calendar trace    | Preserve bucket interval, aggregation, raw/converted contributors, exclusions and stack components                                                  | No fake single record for an aggregate; date endpoints and source IDs unchanged                                           |
-| Observation trace | Add explicit sample/duplicate/segment evidence through existing trace scope                                                                         | Alt-click/Alt-Enter returns exact original rows after reduction and clipping                                              |
-| Save/DSL/export   | Extend actual validators/defaults/setting keys and export path coherently; freeze a truthful current scale key in images                            | JSON and Dashboard text round trip; group labels/units/ranges survive image export; editor controls omitted               |
-| Facets vs lanes   | Facets partition rows; lanes arrange scale groups; source domains shared across facets initially                                                    | Do not turn a lane switch into a filter or per-facet rescale                                                              |
+| Boundary | Proposed rule | Proof required |
+| --- | --- | --- |
+| Settings/undo | `updateChart` through the existing edit transaction; one commit for a group change or drag; Escape cancels. Hover/cursor/focus remain transient. | One callback/checkpoint per committed edit; none for cancel or cursor movement; draft preview isolation |
+| Scale identity | Stable IDs survive label/order changes; primary is reserved; groups cannot be deleted with dangling members | Reject dangling IDs before saving; explicit compatible reassignment; no label-as-ID lookup |
+| Notes | Data-space references carry group identity; record callouts follow series identity; time annotations use shared X; intervals widen only their owner | Focus/lane changes cannot move a saved physical threshold onto another scale; preserve facet key and original record keys |
+| Calendar trace | Preserve bucket interval, aggregation, raw/converted contributors, exclusions and stack components | No fake single record for an aggregate; date endpoints and source IDs unchanged |
+| Observation trace | Add explicit sample/duplicate/segment evidence through existing trace scope | Alt-click/Alt-Enter returns exact original rows after reduction and clipping |
+| Save/DSL/export | Extend actual validators/defaults/setting keys and export path coherently; freeze a truthful current scale key in images | JSON and Dashboard text round trip; group labels/units/ranges survive image export; editor controls omitted |
+| Facets vs lanes | Facets partition rows; lanes arrange scale groups; source domains shared across facets initially | Do not turn a lane switch into a filter or per-facet rescale |
 
 **Existing `useRightAxis` saves are a product/API decision, not a reason for a migration framework.** Preferred proposed disposition: if retaining existing saved analyses is required, add one small normalization boundary in the existing restore/import path, then emit only canonical `scaleId` settings. Map all false/omitted flags to primary and all true flags to **one shared extra group**, not one group per old line. Preserve the right group's actual old auto-range semantics: symlog only when old global symlog was selected; otherwise linear, including when primary was log; no inherited primary limits. Preserve styles and convert actual legacy Notes bindings after inspecting their schema.
 
@@ -369,7 +365,7 @@ Six wide observation rows use timestamps from `2026-01-01T12:00:00Z` through `12
 {
   "minute": [0, 1, 2, 3, 4, 5],
   "Temperature_C": [180, 182, 189, 184, 181, 180],
-  "Pressure_bar": [3.0, 3.05, 3.4, 3.2, 3.05, 3.0],
+  "Pressure_bar": [3.00, 3.05, 3.40, 3.20, 3.05, 3.00],
   "Flow_L_per_min": [900, 920, 980, 870, 900, 910]
 }
 ```
@@ -390,12 +386,12 @@ At the same six timestamps, use °C series:
 
 ```json
 {
-  "T1": [20.0, 20.2, 20.1, 20.4, 20.2, 20.1],
-  "T2": [20.1, 20.3, 20.2, 20.5, 20.3, 20.2],
-  "T3": [19.9, 20.1, 20.0, 20.3, 20.1, 20.0],
-  "T4": [20.2, 20.4, 20.3, 20.6, 20.4, 20.3],
-  "T5": [20.0, 20.1, 20.0, 20.2, 20.1, 20.0],
-  "T6": [20.1, 20.2, 20.1, 80.0, 20.2, 20.1]
+  "T1": [20.0,20.2,20.1,20.4,20.2,20.1],
+  "T2": [20.1,20.3,20.2,20.5,20.3,20.2],
+  "T3": [19.9,20.1,20.0,20.3,20.1,20.0],
+  "T4": [20.2,20.4,20.3,20.6,20.4,20.3],
+  "T5": [20.0,20.1,20.0,20.2,20.1,20.0],
+  "T6": [20.1,20.2,20.1,80.0,20.2,20.1]
 }
 ```
 
@@ -421,13 +417,13 @@ Use Monday-start UTC weeks and synthetic rows:
 
 ```json
 [
-  { "id": "s1", "date": "2026-01-05", "channel": "Web", "sales": 100 },
-  { "id": "s2", "date": "2026-01-06", "channel": "Web", "sales": 200 },
-  { "id": "s3", "date": "2026-01-05", "channel": "Store", "sales": 50 },
-  { "id": "s4", "date": "2026-01-19", "channel": "Web", "sales": 0 },
-  { "id": "s5", "date": "2026-01-20", "channel": "Store", "sales": null },
-  { "id": "s6", "date": "2026-01-26", "channel": "Web", "sales": 120 },
-  { "id": "s7", "date": "2026-01-27", "channel": "Store", "sales": 80 }
+  {"id":"s1","date":"2026-01-05","channel":"Web","sales":100},
+  {"id":"s2","date":"2026-01-06","channel":"Web","sales":200},
+  {"id":"s3","date":"2026-01-05","channel":"Store","sales":50},
+  {"id":"s4","date":"2026-01-19","channel":"Web","sales":0},
+  {"id":"s5","date":"2026-01-20","channel":"Store","sales":null},
+  {"id":"s6","date":"2026-01-26","channel":"Web","sales":120},
+  {"id":"s7","date":"2026-01-27","channel":"Store","sales":80}
 ]
 ```
 
@@ -443,17 +439,17 @@ For the domain-expansion variant, filter the first week's Web average to the 200
 
 The priorities below are **P** and are linked to falsifiable gates in the JSON and proof plan. Value/cost are estimates for this project, not general provider rankings.
 
-| Rank / recommendations  | Essential analytical outcome                                                                               | Renderer scope                                                      |
-| ----------------------- | ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| 1 — TS-01, TS-07        | Honest mode documentation, stable source/time references and explicit missing/aggregate meaning            | Both, with separate calendar work                                   |
-| 2 — TS-04               | Shared crosshair with original values, actual sample times, duplicate/gap status and exact trace           | Observation first; calendar bucket values retain interval semantics |
-| 3 — TS-02, TS-03, TS-05 | Arbitrary named groups, own-scale action, clear attribution, bounds/reset and true log exclusions          | Observation first; calendar retains shared Y                        |
-| 4 — TS-11, TS-12        | Correct Notes/trace/export/save/undo, keyboard access and reachable narrow controls                        | Required gates for every changed mode                               |
-| 5 — TS-06               | Explicit Select versus Zoom, direct time bounds and reset; no accidental linked filtering                  | Both, preserving period-snapped calendar selection                  |
-| 6 — TS-08               | Shared-time lanes and a discoverable subset for dense comparisons                                          | Observation first, conditional proof                                |
-| 7 — TS-09, TS-10        | Exact grouped irregular tags, gap/duplicate policies, extrema-preserving reduction and bounded performance | Raw observations; calendar performance measured separately          |
-| 8 — TS-13, TS-14        | Optional indexed/normalized comparisons and separate-chart view synchronization                            | Deferred until core tasks show a concrete need                      |
-| Constraint — TS-15      | Preserve D3/React/TypeScript unless a measured gate justifies one candidate experiment                     | Whole integration                                                   |
+| Rank / recommendations | Essential analytical outcome | Renderer scope |
+| --- | --- | --- |
+| 1 — TS-01, TS-07 | Honest mode documentation, stable source/time references and explicit missing/aggregate meaning | Both, with separate calendar work |
+| 2 — TS-04 | Shared crosshair with original values, actual sample times, duplicate/gap status and exact trace | Observation first; calendar bucket values retain interval semantics |
+| 3 — TS-02, TS-03, TS-05 | Arbitrary named groups, own-scale action, clear attribution, bounds/reset and true log exclusions | Observation first; calendar retains shared Y |
+| 4 — TS-11, TS-12 | Correct Notes/trace/export/save/undo, keyboard access and reachable narrow controls | Required gates for every changed mode |
+| 5 — TS-06 | Explicit Select versus Zoom, direct time bounds and reset; no accidental linked filtering | Both, preserving period-snapped calendar selection |
+| 6 — TS-08 | Shared-time lanes and a discoverable subset for dense comparisons | Observation first, conditional proof |
+| 7 — TS-09, TS-10 | Exact grouped irregular tags, gap/duplicate policies, extrema-preserving reduction and bounded performance | Raw observations; calendar performance measured separately |
+| 8 — TS-13, TS-14 | Optional indexed/normalized comparisons and separate-chart view synchronization | Deferred until core tasks show a concrete need |
+| Constraint — TS-15 | Preserve D3/React/TypeScript unless a measured gate justifies one candidate experiment | Whole integration |
 
 **Annotations:** preserve and correctly project the existing Notes capabilities now. New alarms, collaborative notes, historian events, interval computation, automated anomaly detection and a second annotation editor are attractive scope expansion. No such feature is required to answer the scale question. Existing source tracing and supplied interval evidence are more valuable than adding new annotation kinds.
 

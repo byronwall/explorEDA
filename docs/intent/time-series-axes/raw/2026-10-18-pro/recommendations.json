@@ -5,10 +5,18 @@
     "problem": "One line-chart entry point dispatches observation lines and Calendar summaries to different renderers. Documentation and demo coverage overgeneralize right-axis, style and log behavior; critical filter, draft and persistence owners are outside the packet.",
     "proposal": "Publish an explicit observation-versus-Calendar contract, confirm local state owners, and align docs and coverage with verified renderer behavior before adding controls. Preserve intended source-domain, header-readout, Alt-trace and view-without-filtering rules while naming current exceptions.",
     "scope": {
-      "renderers": ["observation", "calendar"],
-      "milestones": ["M0", "M1"],
+      "renderers": [
+        "observation",
+        "calendar"
+      ],
+      "milestones": [
+        "M0",
+        "M1"
+      ],
       "exclusions": [],
-      "dependencies": ["M0: actual local baseline and state-owner inspection"]
+      "dependencies": [
+        "M0: actual local baseline and state-owner inspection"
+      ]
     },
     "value": {
       "assessment": "Very high: prevents a polished feature from promising behavior in the wrong renderer.",
@@ -30,11 +38,17 @@
       "shared_milestone_envelopes": [
         {
           "milestone": "M0",
-          "developer_days": [0.5, 1.5]
+          "developer_days": [
+            0.5,
+            1.5
+          ]
         },
         {
           "milestone": "M1",
-          "developer_days": [1, 3]
+          "developer_days": [
+            1,
+            3
+          ]
         }
       ],
       "note": "Ownership inspection belongs to M0; documentation/demo repair shares M1 with inspection and calendar work. These are shared milestone envelopes, not per-recommendation estimates to sum. M0-M2 together are 4.5-10.5 developer-days; conditional M3-M4 add 5-10."
@@ -204,14 +218,19 @@
       "docs_and_demo": {
         "status": "UNRUN",
         "visible_change": true,
-        "ships_with": ["M1"],
+        "ships_with": [
+          "M1"
+        ],
         "docs_path": "apps/demo/src/docs/pages/line.mdx",
         "docs_sections": [
           "Observation lines and Calendar summaries",
           "Read original values",
           "Missing calendar periods and stable ranges"
         ],
-        "demo_ids": ["line-original-values", "line-calendar-missing-weeks"],
+        "demo_ids": [
+          "line-original-values",
+          "line-calendar-missing-weeks"
+        ],
         "demo_paths": [
           "apps/demo/src/demos/examples.ts",
           "apps/demo/src/demos/coverage.ts",
@@ -241,7 +260,10 @@
       "renderers": [
         "observation first; Calendar keeps one shared metric scale"
       ],
-      "milestones": ["M0", "M2"],
+      "milestones": [
+        "M0",
+        "M2"
+      ],
       "exclusions": [
         "Arbitrary Calendar groups",
         "Multiple calendar measures",
@@ -273,11 +295,17 @@
       "shared_milestone_envelopes": [
         {
           "milestone": "M0",
-          "developer_days": [0.5, 1.5]
+          "developer_days": [
+            0.5,
+            1.5
+          ]
         },
         {
           "milestone": "M2",
-          "developer_days": [3, 6]
+          "developer_days": [
+            3,
+            6
+          ]
         }
       ],
       "note": "Schema, pure resolver and deterministic legacy decision share the M0/M2 envelopes with presentation and editing. These are shared milestone envelopes, not per-recommendation estimates to sum. M0-M2 together are 4.5-10.5 developer-days; conditional M3-M4 add 5-10."
@@ -462,13 +490,18 @@
       "docs_and_demo": {
         "status": "UNRUN",
         "visible_change": true,
-        "ships_with": ["M2"],
+        "ships_with": [
+          "M2"
+        ],
         "docs_path": "apps/demo/src/docs/pages/line.mdx",
         "docs_sections": [
           "Shared and independent scale groups",
           "Save and share scale meaning"
         ],
-        "demo_ids": ["line-mixed-units-scale-groups", "line-same-unit-outlier"],
+        "demo_ids": [
+          "line-mixed-units-scale-groups",
+          "line-same-unit-outlier"
+        ],
         "demo_paths": [
           "apps/demo/src/demos/examples.ts",
           "apps/demo/src/demos/coverage.ts",
@@ -496,9 +529,17 @@
     "problem": "An unlimited set of visible axes consumes plot width, while hidden independent scales make ownership ambiguous. The current custom right rail bypasses the planned-axis system.",
     "proposal": "Use one planned Y ruler for an explicitly focused series/group, plus a semantic roster retaining every series unit/group/range. Hover may emphasize but never swap the ruler. Exactly two groups may use planned paired axes only when measured labels leave at least 280 CSS px of plot. Resizing changes presentation without changing groups or domains. Disable horizontal gridlines by default in multi-group overlays, or label the focused grid owner explicitly.",
     "scope": {
-      "renderers": ["observation"],
-      "milestones": ["M0", "M2"],
-      "exclusions": ["Twenty peripheral rulers", "Hover-driven axis changes"],
+      "renderers": [
+        "observation"
+      ],
+      "milestones": [
+        "M0",
+        "M2"
+      ],
+      "exclusions": [
+        "Twenty peripheral rulers",
+        "Hover-driven axis changes"
+      ],
       "dependencies": [
         "M0 presentation and identity experiments",
         "TS-02 group resolver",
@@ -525,11 +566,17 @@
       "shared_milestone_envelopes": [
         {
           "milestone": "M0",
-          "developer_days": [0.5, 1.5]
+          "developer_days": [
+            0.5,
+            1.5
+          ]
         },
         {
           "milestone": "M2",
-          "developer_days": [3, 6]
+          "developer_days": [
+            3,
+            6
+          ]
         }
       ],
       "note": "M0 includes a half-day presentation experiment with one revision; accepted presentation shares M2. These are shared milestone envelopes, not per-recommendation estimates to sum. M0-M2 together are 4.5-10.5 developer-days; conditional M3-M4 add 5-10."
@@ -678,13 +725,18 @@
       "docs_and_demo": {
         "status": "UNRUN",
         "visible_change": true,
-        "ships_with": ["M2"],
+        "ships_with": [
+          "M2"
+        ],
         "docs_path": "apps/demo/src/docs/pages/line.mdx",
         "docs_sections": [
           "Focus a scale",
           "Shared and independent scale groups"
         ],
-        "demo_ids": ["line-mixed-units-scale-groups", "line-same-unit-outlier"],
+        "demo_ids": [
+          "line-mixed-units-scale-groups",
+          "line-same-unit-outlier"
+        ],
         "demo_paths": [
           "apps/demo/src/demos/examples.ts",
           "apps/demo/src/demos/coverage.ts",
@@ -716,12 +768,17 @@
         "observation first",
         "Calendar inspection retains interval and contributor meaning"
       ],
-      "milestones": ["M1", "M4"],
+      "milestones": [
+        "M1",
+        "M4"
+      ],
       "exclusions": [
         "Implicit interpolation as recorded data",
         "Persistent hover/cursor history"
       ],
-      "dependencies": ["M0 source/filter/trace ownership"]
+      "dependencies": [
+        "M0 source/filter/trace ownership"
+      ]
     },
     "value": {
       "assessment": "Very high: scales are useful only if original values and evidence remain correct.",
@@ -743,11 +800,17 @@
       "shared_milestone_envelopes": [
         {
           "milestone": "M1",
-          "developer_days": [1, 3]
+          "developer_days": [
+            1,
+            3
+          ]
         },
         {
           "milestone": "M4",
-          "developer_days": [3, 6]
+          "developer_days": [
+            3,
+            6
+          ]
         }
       ],
       "note": "The original lookup foundation ships in M1; dense long-form verification shares conditional M4. These are shared milestone envelopes, not per-recommendation estimates to sum. M0-M2 together are 4.5-10.5 developer-days; conditional M3-M4 add 5-10."
@@ -923,13 +986,19 @@
       "docs_and_demo": {
         "status": "UNRUN",
         "visible_change": true,
-        "ships_with": ["M1", "M4"],
+        "ships_with": [
+          "M1",
+          "M4"
+        ],
         "docs_path": "apps/demo/src/docs/pages/line.mdx",
         "docs_sections": [
           "Read original values",
           "Irregular samples, duplicate timestamps and gaps"
         ],
-        "demo_ids": ["line-original-values", "line-irregular-process-tags"],
+        "demo_ids": [
+          "line-original-values",
+          "line-irregular-process-tags"
+        ],
         "demo_paths": [
           "apps/demo/src/demos/examples.ts",
           "apps/demo/src/demos/coverage.ts",
@@ -962,12 +1031,17 @@
         "observation scale groups",
         "Calendar keeps its shared Y and linear filled-area rules"
       ],
-      "milestones": ["M2"],
+      "milestones": [
+        "M2"
+      ],
       "exclusions": [
         "Automatic visible-window Y fitting",
         "Independent stacked scales"
       ],
-      "dependencies": ["TS-02 resolver", "M0 actual edit/Notes ownership"]
+      "dependencies": [
+        "TS-02 resolver",
+        "M0 actual edit/Notes ownership"
+      ]
     },
     "value": {
       "assessment": "Very high: makes arbitrary scales numerically and interactively trustworthy.",
@@ -989,7 +1063,10 @@
       "shared_milestone_envelopes": [
         {
           "milestone": "M2",
-          "developer_days": [3, 6]
+          "developer_days": [
+            3,
+            6
+          ]
         }
       ],
       "note": "Group editing and notices are part of M2, not an additional milestone estimate. These are shared milestone envelopes, not per-recommendation estimates to sum. M0-M2 together are 4.5-10.5 developer-days; conditional M3-M4 add 5-10."
@@ -1162,13 +1239,18 @@
       "docs_and_demo": {
         "status": "UNRUN",
         "visible_change": true,
-        "ships_with": ["M2"],
+        "ships_with": [
+          "M2"
+        ],
         "docs_path": "apps/demo/src/docs/pages/line.mdx",
         "docs_sections": [
           "Ranges, log values and clipping",
           "Save and share scale meaning"
         ],
-        "demo_ids": ["line-mixed-units-scale-groups", "line-same-unit-outlier"],
+        "demo_ids": [
+          "line-mixed-units-scale-groups",
+          "line-same-unit-outlier"
+        ],
         "demo_paths": [
           "apps/demo/src/demos/examples.ts",
           "apps/demo/src/demos/coverage.ts",
@@ -1200,7 +1282,9 @@
         "observation",
         "Calendar with period/category selection preserved"
       ],
-      "milestones": ["M2"],
+      "milestones": [
+        "M2"
+      ],
       "exclusions": [
         "Automatic Y fit on zoom",
         "Cross-chart viewport sync",
@@ -1231,7 +1315,10 @@
       "shared_milestone_envelopes": [
         {
           "milestone": "M2",
-          "developer_days": [3, 6]
+          "developer_days": [
+            3,
+            6
+          ]
         }
       ],
       "note": "Navigation shares M2. A navigator overview is deferred until direct navigation demonstrates need. These are shared milestone envelopes, not per-recommendation estimates to sum. M0-M2 together are 4.5-10.5 developer-days; conditional M3-M4 add 5-10."
@@ -1403,13 +1490,18 @@
       "docs_and_demo": {
         "status": "UNRUN",
         "visible_change": true,
-        "ships_with": ["M2"],
+        "ships_with": [
+          "M2"
+        ],
         "docs_path": "apps/demo/src/docs/pages/line.mdx",
         "docs_sections": [
           "Select versus zoom",
           "Ranges, log values and clipping"
         ],
-        "demo_ids": ["line-mixed-units-scale-groups", "line-same-unit-outlier"],
+        "demo_ids": [
+          "line-mixed-units-scale-groups",
+          "line-same-unit-outlier"
+        ],
         "demo_paths": [
           "apps/demo/src/demos/examples.ts",
           "apps/demo/src/demos/coverage.ts",
@@ -1438,15 +1530,21 @@
     "problem": "Calendar X is based on live periods; full/current Y reference planning can depend on length checks and capped recursive plans. Missing, invalid and zero buckets have meaningful distinctions that generic time-series changes could erase.",
     "proposal": "Derive Calendar X from full chart-source periods across facets and honor explicit time view limits without filtering. Compute full/current bucket extrema at the displayed facet-by-split-by-period grain outside display caps, then union extrema across facets; never combine separate facet buckets into one aggregate. Allow filtered sums/averages to expand Y above the full reference, with explicit limits taking precedence. Preserve interval/contributor trace, count/sum zero-fill policy, average missingness and linear shared-scale areas/stacks.",
     "scope": {
-      "renderers": ["calendar"],
-      "milestones": ["M1"],
+      "renderers": [
+        "calendar"
+      ],
+      "milestones": [
+        "M1"
+      ],
       "exclusions": [
         "Multiple Calendar measures",
         "Arbitrary Calendar scale groups",
         "Independent facet scales",
         "Subdaily/local-time aggregation"
       ],
-      "dependencies": ["M0 actual reference/live population ownership"]
+      "dependencies": [
+        "M0 actual reference/live population ownership"
+      ]
     },
     "value": {
       "assessment": "Very high: prevents missing weeks and filtered aggregates from acquiring misleading geometry.",
@@ -1468,7 +1566,10 @@
       "shared_milestone_envelopes": [
         {
           "milestone": "M1",
-          "developer_days": [1, 3]
+          "developer_days": [
+            1,
+            3
+          ]
         }
       ],
       "note": "Calendar source/aggregate work shares M1. Fix date parsing only if the actual conversion path reproduces the suspected mismatch. These are shared milestone envelopes, not per-recommendation estimates to sum. M0-M2 together are 4.5-10.5 developer-days; conditional M3-M4 add 5-10."
@@ -1672,13 +1773,17 @@
       "docs_and_demo": {
         "status": "UNRUN",
         "visible_change": true,
-        "ships_with": ["M1"],
+        "ships_with": [
+          "M1"
+        ],
         "docs_path": "apps/demo/src/docs/pages/line.mdx",
         "docs_sections": [
           "Observation lines and Calendar summaries",
           "Missing calendar periods and stable ranges"
         ],
-        "demo_ids": ["line-calendar-missing-weeks"],
+        "demo_ids": [
+          "line-calendar-missing-weeks"
+        ],
         "demo_paths": [
           "apps/demo/src/demos/examples.ts",
           "apps/demo/src/demos/coverage.ts",
@@ -1708,8 +1813,12 @@
     "problem": "Focused overlays retain line occlusion and can burden physical-value reading at six or twenty groups. Twenty full axes cannot fit a small tile, but lane layout adds height, scrolling, Notes and export complexity.",
     "proposal": "After M2 succeeds, prototype one lane per scale group using the same domains, assignments and time/cursor state. Initial lane order follows first group appearance in series order; no separate lane-scale registry or drag framework. Preserve same-group magnitude comparison, keep all groups reachable through vertical navigation, and disclose a partial viewport such as 6 of 20 lanes visible. Use overlay for close timing tasks.",
     "scope": {
-      "renderers": ["observation"],
-      "milestones": ["M3"],
+      "renderers": [
+        "observation"
+      ],
+      "milestones": [
+        "M3"
+      ],
       "exclusions": [
         "A guarantee that twenty full lanes fit a chart tile",
         "Independent scale registries for lanes",
@@ -1741,7 +1850,10 @@
       "shared_milestone_envelopes": [
         {
           "milestone": "M3",
-          "developer_days": [2, 4]
+          "developer_days": [
+            2,
+            4
+          ]
         }
       ],
       "note": "M3 is a conditional 2-4 developer-day shared envelope after M2; do not include it automatically in core scope. These are shared milestone envelopes, not per-recommendation estimates to sum. M0-M2 together are 4.5-10.5 developer-days; conditional M3-M4 add 5-10."
@@ -1896,10 +2008,16 @@
       "docs_and_demo": {
         "status": "UNRUN",
         "visible_change": true,
-        "ships_with": ["M3"],
+        "ships_with": [
+          "M3"
+        ],
         "docs_path": "apps/demo/src/docs/pages/line.mdx",
-        "docs_sections": ["Compare in shared-time lanes"],
-        "demo_ids": ["line-shared-time-lanes"],
+        "docs_sections": [
+          "Compare in shared-time lanes"
+        ],
+        "demo_ids": [
+          "line-shared-time-lanes"
+        ],
         "demo_paths": [
           "apps/demo/src/demos/examples.ts",
           "apps/demo/src/demos/coverage.ts",
@@ -1928,8 +2046,12 @@
     "problem": "Current raw series are numeric columns sharing one X field. Calendar category splitting aggregates intervals and cannot substitute for twenty independently sampled raw tags; universal wide null padding confuses absent observations with explicit invalid samples.",
     "proposal": "Add a bounded observationSplitField option valid only with one numeric measure. Preserve original row keys/provider IDs, timestamps, values and declared measurement units. Derive stable type-aware series keys from measure field, split field and split value. Keep absent rows distinct from present nulls and duplicates. Support a declared per-series cadence/maximum connection gap and explicit actual-point display; no historian ingestion or automatic grid interpolation.",
     "scope": {
-      "renderers": ["observation; wide-field mode retained"],
-      "milestones": ["M4"],
+      "renderers": [
+        "observation; wide-field mode retained"
+      ],
+      "milestones": [
+        "M4"
+      ],
       "exclusions": [
         "Calendar aggregation workaround",
         "Historian connectors",
@@ -1962,7 +2084,10 @@
       "shared_milestone_envelopes": [
         {
           "milestone": "M4",
-          "developer_days": [3, 6]
+          "developer_days": [
+            3,
+            6
+          ]
         }
       ],
       "note": "Long-form preparation and settings share conditional M4 with reduction; M3 is needed only when using lanes. These are shared milestone envelopes, not per-recommendation estimates to sum. M0-M2 together are 4.5-10.5 developer-days; conditional M3-M4 add 5-10."
@@ -2136,13 +2261,17 @@
       "docs_and_demo": {
         "status": "UNRUN",
         "visible_change": true,
-        "ships_with": ["M4"],
+        "ships_with": [
+          "M4"
+        ],
         "docs_path": "apps/demo/src/docs/pages/line.mdx",
         "docs_sections": [
           "Raw tags in long-form data",
           "Irregular samples, duplicate timestamps and gaps"
         ],
-        "demo_ids": ["line-irregular-process-tags"],
+        "demo_ids": [
+          "line-irregular-process-tags"
+        ],
         "demo_paths": [
           "apps/demo/src/demos/examples.ts",
           "apps/demo/src/demos/coverage.ts",
@@ -2171,8 +2300,12 @@
     "problem": "The current reducer retains bucket start/min/max but not guaranteed final samples or source IDs, collapses large all-equal-X input to one point and can exceed a whole-chart budget across many short segments.",
     "proposal": "Keep original lookup authoritative and reduce only paint geometry. Retain original first/last and local min/max indices per pixel bucket/run, or prove an equivalent explicit fidelity contract. Preserve null/elapsed-gap boundaries and duplicate access. Budget output across all series and segments; expose an honest density/cap state when fidelity exceeds the budget. Show reduction status and measure a declared workload before claiming performance.",
     "scope": {
-      "renderers": ["observation; measure Calendar DOM/caps separately"],
-      "milestones": ["M4"],
+      "renderers": [
+        "observation; measure Calendar DOM/caps separately"
+      ],
+      "milestones": [
+        "M4"
+      ],
       "exclusions": [
         "Universal performance promises",
         "Automatic statistical aggregation",
@@ -2204,7 +2337,10 @@
       "shared_milestone_envelopes": [
         {
           "milestone": "M4",
-          "developer_days": [3, 6]
+          "developer_days": [
+            3,
+            6
+          ]
         }
       ],
       "note": "The dense geometry and performance work shares M4; M1 already decouples cursor lookup from reduced points. These are shared milestone envelopes, not per-recommendation estimates to sum. M0-M2 together are 4.5-10.5 developer-days; conditional M3-M4 add 5-10."
@@ -2362,13 +2498,17 @@
       "docs_and_demo": {
         "status": "UNRUN",
         "visible_change": true,
-        "ships_with": ["M4"],
+        "ships_with": [
+          "M4"
+        ],
         "docs_path": "apps/demo/src/docs/pages/line.mdx",
         "docs_sections": [
           "Dense data and source fidelity",
           "Irregular samples, duplicate timestamps and gaps"
         ],
-        "demo_ids": ["line-irregular-process-tags"],
+        "demo_ids": [
+          "line-irregular-process-tags"
+        ],
         "demo_paths": [
           "apps/demo/src/demos/examples.ts",
           "apps/demo/src/demos/coverage.ts",
@@ -2400,13 +2540,21 @@
       "renderers": [
         "both renderers; mode-specific record versus aggregate meaning"
       ],
-      "milestones": ["M0", "M1", "M2", "M3", "M4"],
+      "milestones": [
+        "M0",
+        "M1",
+        "M2",
+        "M3",
+        "M4"
+      ],
       "exclusions": [
         "New annotation kinds/editor",
         "Version coexistence without demonstrated need",
         "Assumed exporter path"
       ],
-      "dependencies": ["M0 full-checkout owner map and explicit legacy policy"]
+      "dependencies": [
+        "M0 full-checkout owner map and explicit legacy policy"
+      ]
     },
     "value": {
       "assessment": "Essential: prevents source, annotation, persistence and export regressions across every visible milestone.",
@@ -2428,23 +2576,38 @@
       "shared_milestone_envelopes": [
         {
           "milestone": "M0",
-          "developer_days": [0.5, 1.5]
+          "developer_days": [
+            0.5,
+            1.5
+          ]
         },
         {
           "milestone": "M1",
-          "developer_days": [1, 3]
+          "developer_days": [
+            1,
+            3
+          ]
         },
         {
           "milestone": "M2",
-          "developer_days": [3, 6]
+          "developer_days": [
+            3,
+            6
+          ]
         },
         {
           "milestone": "M3",
-          "developer_days": [2, 4]
+          "developer_days": [
+            2,
+            4
+          ]
         },
         {
           "milestone": "M4",
-          "developer_days": [3, 6]
+          "developer_days": [
+            3,
+            6
+          ]
         }
       ],
       "note": "This is a gate embedded in every changed milestone, not a separate additive feature estimate. These are shared milestone envelopes, not per-recommendation estimates to sum. M0-M2 together are 4.5-10.5 developer-days; conditional M3-M4 add 5-10."
@@ -2713,7 +2876,12 @@
       "docs_and_demo": {
         "status": "UNRUN",
         "visible_change": true,
-        "ships_with": ["M1", "M2", "M3", "M4"],
+        "ships_with": [
+          "M1",
+          "M2",
+          "M3",
+          "M4"
+        ],
         "docs_path": "apps/demo/src/docs/pages/line.mdx",
         "docs_sections": [
           "Read original values",
@@ -2757,8 +2925,16 @@
     "problem": "Existing observation emphasis is hover-oriented and density/axis ownership can become unreadable at narrow widths. Calendar has useful keyboard bucket access, but no source evidence establishes complete accessibility for new groups or lanes.",
     "proposal": "Use semantic focusable series/group controls with names, units, ranges/types and visible focus; keep original values reachable through the header/Values list without hover. Preserve Alt-trace and row selection routes. Adapt paired axes to focused presentation by measured plot width without changing scale state. Test actual keyboard/pointer and one declared screen-reader pairing at 1280, 783 and 390 CSS px in every visible milestone.",
     "scope": {
-      "renderers": ["both renderers with separate raw/bucket semantics"],
-      "milestones": ["M0", "M1", "M2", "M3", "M4"],
+      "renderers": [
+        "both renderers with separate raw/bucket semantics"
+      ],
+      "milestones": [
+        "M0",
+        "M1",
+        "M2",
+        "M3",
+        "M4"
+      ],
       "exclusions": [
         "Universal accessibility certification",
         "Hover-only interaction",
@@ -2789,23 +2965,38 @@
       "shared_milestone_envelopes": [
         {
           "milestone": "M0",
-          "developer_days": [0.5, 1.5]
+          "developer_days": [
+            0.5,
+            1.5
+          ]
         },
         {
           "milestone": "M1",
-          "developer_days": [1, 3]
+          "developer_days": [
+            1,
+            3
+          ]
         },
         {
           "milestone": "M2",
-          "developer_days": [3, 6]
+          "developer_days": [
+            3,
+            6
+          ]
         },
         {
           "milestone": "M3",
-          "developer_days": [2, 4]
+          "developer_days": [
+            2,
+            4
+          ]
         },
         {
           "milestone": "M4",
-          "developer_days": [3, 6]
+          "developer_days": [
+            3,
+            6
+          ]
         }
       ],
       "note": "Accessibility and width proofs are embedded in each milestone; do not add their full envelopes again. These are shared milestone envelopes, not per-recommendation estimates to sum. M0-M2 together are 4.5-10.5 developer-days; conditional M3-M4 add 5-10."
@@ -2971,7 +3162,12 @@
       "docs_and_demo": {
         "status": "UNRUN",
         "visible_change": true,
-        "ships_with": ["M1", "M2", "M3", "M4"],
+        "ships_with": [
+          "M1",
+          "M2",
+          "M3",
+          "M4"
+        ],
         "docs_path": "apps/demo/src/docs/pages/line.mdx",
         "docs_sections": [
           "Read original values",
@@ -3168,7 +3364,9 @@
     "problem": "The app already links filtering, but shared row selection is not the same state as synchronized cursor time or viewport. Cross-chart navigation adds ownership, source alignment and feedback-loop risk beyond shared-time lanes.",
     "proposal": "Use within-chart shared time/cursor for the first lane implementation. Reopen separate-chart synchronization only for a concrete investigation requiring coordinated views. Keep viewport/cursor state distinct from shared filters, make synchronization scope explicit, preserve actual sample times and define subscription disposal and loop prevention against the real owners.",
     "scope": {
-      "renderers": ["future separate observation/Calendar views"],
+      "renderers": [
+        "future separate observation/Calendar views"
+      ],
       "milestones": [],
       "exclusions": [
         "Separate-chart synchronization in M0-M4",
@@ -3341,15 +3539,21 @@
     "problem": "Industrial UX and library multi-axis APIs establish useful patterns, but do not prove that replacing the current renderer would preserve filters, original trace, Notes, drafts, undo and exports or improve the required workload.",
     "proposal": "Retain the current React/TypeScript/D3 foundation. Implement and measure the accepted fidelity and interaction contract first. Reopen a renderer decision only after a worthwhile workload fails a documented gate despite bounded repair. Compare the current renderer with one pinned candidate on identical data, state, accessibility and source-evidence requirements; verify the chosen version license/embedding terms then. uPlot is a possible density spike and Highcharts a possible accessible-navigation spike, not selected dependencies.",
     "scope": {
-      "renderers": ["whole implementation constraint"],
-      "milestones": ["M0"],
+      "renderers": [
+        "whole implementation constraint"
+      ],
+      "milestones": [
+        "M0"
+      ],
       "exclusions": [
         "Renderer replacement now",
         "Historian/live-streaming implementation",
         "License/procurement recommendation",
         "Vendor benchmarks as local results"
       ],
-      "dependencies": ["Measured failure after bounded repair before any spike"]
+      "dependencies": [
+        "Measured failure after bounded repair before any spike"
+      ]
     },
     "value": {
       "assessment": "High: concentrates effort on analytical/state improvements and avoids replacement work unsupported by measurements.",
@@ -3371,7 +3575,10 @@
       "shared_milestone_envelopes": [
         {
           "milestone": "M0",
-          "developer_days": [0.5, 1.5]
+          "developer_days": [
+            0.5,
+            1.5
+          ]
         }
       ],
       "note": "The retain decision belongs to M0. No renderer spike is included in M0-M4 effort; a triggered spike needs its own explicit bound. These are shared milestone envelopes, not per-recommendation estimates to sum. M0-M2 together are 4.5-10.5 developer-days; conditional M3-M4 add 5-10."
@@ -3511,7 +3718,9 @@
       "docs_and_demo": {
         "status": "UNRUN",
         "visible_change": false,
-        "ships_with": ["M0"],
+        "ships_with": [
+          "M0"
+        ],
         "docs_path": "apps/demo/src/docs/pages/line.mdx",
         "docs_sections": [],
         "demo_ids": [],
