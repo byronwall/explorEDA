@@ -41,3 +41,9 @@ Read all substantive outputs. Nine SF recommendations are reconciled in decision
 Independently checked current refresh, conversion, driver lifecycle, UI refresh, folder, watcher, source identity, and example evidence. Checked omitted isDataFile and workspace error ownership. Opened official SQLite, PostgreSQL, MySQL, SQL Server, DuckDB, Metabase, Tableau and Power BI sources. See evidence.md for findings and limits. Integrated short research follow-ups into three existing intents; no product source or user-facing page changed.
 
 Current parent PR #451 remains OPEN. No existing PR for this research branch exists. gh-stack reports that the existing branch is not registered in its catalogue; keep the recorded parent base using gh PR commands. Available repository labels exclude codex and codex-automation; do not invent availability. No merge, deployment, server provisioning, or unrelated edits.
+
+## Validation: 2026-10-19
+
+Root `pnpm check` passed UI, all builds, docs gates (73 tests), and all type checks. Its library run had 242 passing files, five failed files, three skipped files, 1600 passing tests, 10 failed tests, and 72 skipped tests. Localhost EPERM and file-watch EMFILE caused the affected checks. All five affected files pass with approved access: 50 tests. Separate app tests pass eight files/32 tests; demo passes 18 files/419 tests. `pnpm check:pr` passes. The root command was not rerun; no all-green root result is claimed. See validation.json.
+
+Authored local links and whitespace pass. Originals retain their published hashes after formatting hooks. Both Git identities are Byron Wall <byron@byroni.us>. No SQL fixture, proposed concurrency proof, browser product journey, or author session ran. These remain explicit future evidence gates.
