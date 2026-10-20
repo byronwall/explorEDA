@@ -1,0 +1,66 @@
+{
+  "checked_at": "2026-10-20T08:01:40.483696+00:00",
+  "runtime": {
+    "node": "22.21.1",
+    "pnpm": "11.9.0"
+  },
+  "root_gate": {
+    "command": "pnpm check",
+    "result": "partial; failed in library tests on sandbox socket/watch limits",
+    "passed": [
+      "UI rules",
+      "package/app/demo builds",
+      "73 docs checks",
+      "all type checks",
+      "245 library test files;1619 tests"
+    ],
+    "failed_files": [
+      "src/node/projectFiles.test.ts",
+      "src/server/handler.test.ts",
+      "src/server/team/accountRoutes.test.ts",
+      "src/server/team/fileIntake.test.ts",
+      "src/server/team/teamHandler.test.ts"
+    ],
+    "limits": [
+      "localhost EPERM",
+      "watcher EMFILE",
+      "No all-green aggregate rerun claimed"
+    ],
+    "log": "tmp/pro-task-navigation-2026-10-20/pnpm-check.log"
+  },
+  "approved_retries": {
+    "result": "pass",
+    "files": 6,
+    "tests": 60,
+    "detail": "All five affected files/50 tests pass. Also ran existing source-refresh suite/10 tests.",
+    "logs": [
+      "tmp/pro-task-navigation-2026-10-20/retry-tests.log",
+      "tmp/pro-task-navigation-2026-10-20/file-intake-retry.log"
+    ]
+  },
+  "app": {
+    "files": 8,
+    "tests": 32,
+    "result": "pass"
+  },
+  "demo": {
+    "files": 18,
+    "tests": 431,
+    "result": "pass"
+  },
+  "other": [
+    "pnpm check:pr passes",
+    "authored local links and pinned historical targets pass",
+    "original bytes/hashes unchanged after commit hooks",
+    "12 independent arithmetic anchors pass",
+    "all30 baseline packet excerpts authenticate;three intent excerpts intentionally updated"
+  ],
+  "not_run": [
+    "actual author task",
+    "new runnable fixture",
+    "product navigation/browser/keyboard/viewports",
+    "filter/export/history/reload round trip",
+    "performance measurement"
+  ],
+  "product_changes": false
+}

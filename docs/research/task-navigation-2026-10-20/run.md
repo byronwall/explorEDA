@@ -39,3 +39,9 @@ Pro completed after 17m 51s. Downloaded the ZIP under direct standing human appr
 Read all four reports. Reviewed TN01–TN06 against current source and four official Tableau/PowerBI/Metabase pages. Keep navigation deferred and current controls as comparator. Preserve population/range/instance/conflict/authoring choices. Host mapping remains conditional. No material follow-up needed; 0/2. Pro's104 arithmetic assertions remain attributed; local fixture anchors are separate arithmetic checks, not application proof.
 
 Integrated summary, evidence, six dispositions, navigation intent/map, saved-view boundary and concise queue. No application source, docs-site page or runnable example changed. No changeset or product viewport screenshot applies. Author/browser/navigation/export/history/reload/performance proofs remain proposed. Full pnpm check and PR gates remain pending.
+
+## Validation before review PR
+
+Node22.21.1/pnpm11.9.0. Root pnpm check passes UI rules, package/app/demo builds,73 docs checks and all types. Library tests pass245 files/1619 tests;five files fail on sandbox localhost EPERM or watcher EMFILE. Approved retries pass all five affected files/50 tests, plus the source-refresh regression/10 tests. Separate app8files/32tests and demo18files/431tests pass. No all-green aggregate rerun is claimed. See validation.json and named logs.
+
+PR gate, authored links, pinned historical targets, original hashes and12 independent arithmetic anchors pass. All30 baseline source receipts match Git objects;three intent files intentionally have reviewed updates. Current origin/main still matches the source baseline. No actual author/browser/navigation/lifecycle/performance proof is claimed.
