@@ -1,0 +1,20 @@
+{
+  "scope": "15 independent integer/rational anchors only. No formula, serializer, query, application, browser or recipient trial.",
+  "checks": {
+    "full_rows": true,
+    "selected_rows": true,
+    "searched_rows": true,
+    "full_sum": true,
+    "selected_sum": true,
+    "searched_sum": true,
+    "full_contributors": true,
+    "selected_contributors": true,
+    "double_full": true,
+    "double_selected": true,
+    "double_searched": true,
+    "triple_full": true,
+    "triple_selected": true,
+    "triple_searched": true,
+    "share": true
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "environment": {
+    "node": "22.21.1",
+    "pnpm": "11.9.0",
+    "date": "2026-10-20"
+  },
+  "root": {
+    "command": "pnpm check",
+    "exit_code": 1,
+    "log": "tmp/analysis-handoff-check.log",
+    "passed": [
+      "UI rules",
+      "library/app/demo builds",
+      "73 docs build checks",
+      "all type checks",
+      "245 library test files / 1619 tests"
+    ],
+    "failed": "Five library files affected by sandbox localhost EPERM and watch EMFILE. Full aggregate command not rerun."
+  },
+  "approved_retry": {
+    "command": "pnpm --filter exploreda exec vitest run src/node/projectFiles.test.ts src/server/handler.test.ts src/server/team/teamHandler.test.ts src/server/team/fileIntake.test.ts src/server/team/accountRoutes.test.ts",
+    "result": "5 files / 50 tests pass",
+    "log": "tmp/analysis-handoff-retry.log"
+  },
+  "app": {
+    "command": "pnpm --filter app test",
+    "result": "8 files / 32 tests pass",
+    "log": "tmp/analysis-handoff-app-tests.log"
+  },
+  "demo": {
+    "command": "pnpm --filter demo test",
+    "result": "18 files / 431 tests pass",
+    "log": "tmp/analysis-handoff-demo-tests.log"
+  },
+  "preparation_checks": [
+    "serialization/reliability 2 files / 23 tests",
+    "demo history 1 file / 12 tests"
+  ],
+  "independent_checks": [
+    "38 packet receipt matches",
+    "35 baseline Git objects",
+    "12 supplemental Git object and current-byte matches",
+    "15 arithmetic anchors",
+    "archive and all four report integrity checks"
+  ],
+  "pr_gate": "pending after integration commit",
+  "links": "pending final check",
+  "unrun": [
+    "proposed seven-row product fixture",
+    "project dependency probes",
+    "browser/recipient handoff",
+    "new guide/example",
+    "image fidelity",
+    "performance"
+  ],
+  "scope": "Research and intent only. No package source, changeset or product screenshots required. No downloaded program executed."
+}

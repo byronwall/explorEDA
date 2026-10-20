@@ -1,0 +1,9 @@
+{
+  "baseline": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+  "packet_receipts_matched": 38,
+  "baseline_files_attested": 35,
+  "supplemental_receipts_matched": 12,
+  "supplements_match_current_bytes": true,
+  "method": "Authenticated report receipts against uploaded manifest and local Git objects. Supplemental Git blob IDs recomputed. Intent integration intentionally supersedes its baseline snapshot.",
+  "application_execution": false
+}

@@ -4,7 +4,7 @@ Updated 2026-10-20. Scores are local judgments, not demand evidence.
 
 | Candidate                                                                           | Novelty | Product value | Evidence gap | Pro fit | Decision and next action                                                           |
 | ----------------------------------------------------------------------------------- | ------- | ------------- | ------------ | ------- | ---------------------------------------------------------------------------------- |
-| Portable analytical handoff after existing exports                                  | 8       | 8             | 8            | 9       | Selected. Compare existing formats, one guide, a small companion, and deferral.    |
+| Portable analytical handoff after existing exports                                  | 8       | 8             | 8            | 9       | Synthesis complete. Current exports first; named-task guide comparison only.       |
 | Local selection/export/undo/reopen trust                                            | 3       | 9             | 8            | 3       | First local proof. Execute one task; another survey cannot accept it.              |
 | Refresh identity and capacity                                                       | 5       | 8             | 8            | 4       | Declare keys, device and workload before measurement.                              |
 | Reusable result tables                                                              | 4       | 7             | 7            | 5       | Still gated on repeated downstream analysis. Handoff research cannot approve this. |
@@ -20,7 +20,7 @@ The new decision is whether these paths already meet a recipient's needs. Compar
 ## Continuing queue
 
 1. **Local trust remains first:** compare one category across bar, card and exported rows, then undo, redo and reopen. Stop at disagreement.
-2. **Handoff mission:** map the current contracts. Compare current controls plus a proposed guide against one minimal companion and deferral. Require a named failed handoff before product work.
+2. **Handoff:** synthesis complete. Observe a named task with ordinary explanation. Trial the proposed guide only for observed confusion after local trust. A note remains deferred.
 3. **Completed topics:** observe named tasks and apply existing gates. Do not generate another broad survey.
 4. **Database preparation/freshness:** use PR451/452 with SQLite and a declared grain. No adapter or shared transaction without a blocked task.
 5. **Identity/capacity:** declare keys, device, workload and selection.
@@ -28,3 +28,10 @@ The new decision is whether these paths already meet a recipient's needs. Compar
 7. **Domain views:** identify an event log and a blocked question first.
 
 Previous queue: https://github.com/byronwall/explorEDA/blob/350df70b/docs/research/quantity-semantics-2026-10-20/research-queue.md.
+
+## Review outcome
+
+[Five dispositions](decisions.md) keep existing exports and reject a larger bundle for this mission.
+The [original queue](originals/research-queue.md) adds bounded parameter-option and binding closure probes.
+They remain unrun. Local trust stays first; completed topics need task evidence, not more surveys.
+Record exchange does not satisfy the separate demand gate for analytical result tables.
