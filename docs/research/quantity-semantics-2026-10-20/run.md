@@ -1,6 +1,6 @@
 # Quantity semantics Pro run
 
-- Phase: collected and reviewed; integration validation pending. Follow-ups: 0/2.
+- Phase: integrated and validated; review PR pending. Follow-ups: 0/2.
 - Mission: compare current labels/descriptions/calculations, upstream preparation, one bounded metadata proposal and deferral.
 - Repository: https://github.com/byronwall/explorEDA
 - Checkout: /Users/byronwall/Projects/explorEDA. No worktree.
@@ -38,3 +38,9 @@ Pro finished after 17m48 s. Downloaded ZIP under direct standing human approval.
 Read all substantive reports. Reviewed QS01–QS05: adopt existing local trust priority and explicit derivation review guidance; investigate one conditional current-controls lesson; defer new metadata and machinery; reject inference and silent reinterpretation. Fifteen independent arithmetic anchors pass;Pro's 43 assertions remain attributed. All35 baseline packet receipts and16 extra source receipts match current Git objects. Main remains baseline 9b16d78e. Primary-source verification and limits appear in evidence.md. No material follow-up;0/2.
 
 Integrated summary,evidence,five decisions,scientific intent/map/references and ranked queue. No application source,docs-site page or runnable example changed. No changeset or product screenshot applies. Author/browser/quantity/export/history/reload/performance proofs remain proposed. Required root and PR gates remain due.
+
+## Validation before review PR
+
+Node22.21.1/pnpm11.9.0. Root pnpm check passes UI rules,library/app/demo builds,73docs checks and all types. Library tests pass245files/1619tests;five files fail on sandbox localhost EPERM or watcher EMFILE. Approved retries pass all five affected files/50tests. Separate app8files/32tests and demo18files/431tests pass. No all-green aggregate rerun is claimed. See validation.json and named tmp logs.
+
+PR gate,authored local links,JSON parse,original hashes after hook and15independent rational anchors pass. All35 baseline and16extra source receipts match. Existing tests do not establish a fresh author/browser/quantity/lifecycle proof. No material follow-up needed;0/2. Documentation label is available;codex/codex-automation are unavailable. No changeset or product screenshot applies.

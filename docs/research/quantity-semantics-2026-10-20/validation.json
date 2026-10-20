@@ -8,12 +8,45 @@
   },
   "rootCheck": {
     "command": "pnpm check",
-    "status": "running",
-    "log": "tmp/quantity-pnpm-check.log"
+    "exitCode": 1,
+    "log": "tmp/quantity-pnpm-check.log",
+    "passed": [
+      "UI rules",
+      "library/app/demo builds",
+      "73 docs checks",
+      "all package types",
+      "245 library test files/1619 tests"
+    ],
+    "limits": ["localhost EPERM", "watcher EMFILE", "5 library files failed"],
+    "aggregateRerun": "not run; no all-green aggregate result claimed"
   },
   "artifactIntegrity": "pass; collection.json",
   "sourceReceipts": "35 baseline plus16 additional pass",
   "localArithmetic": "15 independent rational anchors pass; not application proof",
   "authoredLinks": "pass",
-  "applicationProof": "author/browser/quantity/export/history/restore/performance remain proposed"
+  "applicationProof": "author/browser/quantity/export/history/restore/performance remain proposed",
+  "retries": [
+    {
+      "command": "pnpm --filter exploreda exec vitest run src/node/projectFiles.test.ts src/server/handler.test.ts src/server/team/accountRoutes.test.ts src/server/team/fileIntake.test.ts src/server/team/teamHandler.test.ts",
+      "access": "approved localhost/watch access",
+      "exitCode": 0,
+      "result": "5 files/50 tests pass",
+      "log": "tmp/quantity-library-retry.log"
+    },
+    {
+      "command": "pnpm --filter app test",
+      "access": "approved local access",
+      "exitCode": 0,
+      "result": "8 files/32 tests pass",
+      "log": "tmp/quantity-app-tests.log"
+    },
+    {
+      "command": "pnpm --filter demo test",
+      "exitCode": 0,
+      "result": "18 files/431 tests pass",
+      "log": "tmp/quantity-demo-tests.log"
+    }
+  ],
+  "prGate": "pnpm check:pr passes",
+  "originalHashesAfterHook": "pass"
 }
