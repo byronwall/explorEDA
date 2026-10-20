@@ -1,0 +1,208 @@
+{
+  "repository": "https://github.com/byronwall/explorEDA",
+  "baseline": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+  "created_at": "2026-10-20T06:47:53.325292+00:00",
+  "packet": "tmp/pro-task-navigation-2026-10-20/source-packet.txt",
+  "packet_bytes": 319470,
+  "packet_sha256": "680bb720fc819cd7133efb0dde5a1dfda31e6f35d366336a0e17592b7d18d420",
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "bytes": 4033,
+      "sha256": "802990c1bacd76b4b867239da78fd011fb32653f891d4a88560e9ee629979a33",
+      "kind": "baseline"
+    },
+    {
+      "path": "docs/agent-guide.md",
+      "bytes": 19779,
+      "sha256": "0992949f205d1ae72a8249c69bccb33f1eb70763b14a526a6384a7a91f9c9f00",
+      "kind": "baseline"
+    },
+    {
+      "path": "CODING_STANDARDS.md",
+      "bytes": 2213,
+      "sha256": "b4358fe75d063d53aea1edbc58d0dc6fd8df6e6165aa5792d8d2aa35eefe7ac5",
+      "kind": "baseline"
+    },
+    {
+      "path": "README.md",
+      "bytes": 10263,
+      "sha256": "1f05b6c4992b07d1fc2b38d7bf9273db9e4a3a0d94513b7265e13b81cd7c5e28",
+      "kind": "baseline"
+    },
+    {
+      "path": "package.json",
+      "bytes": 1258,
+      "sha256": "f9b14daf225872f605d9435ddfb46fdede88b203c87a0e8507fe20743536f6e3",
+      "kind": "baseline"
+    },
+    {
+      "path": "docs/intent/parameterized-task-navigation/intent-brief.md",
+      "bytes": 2554,
+      "sha256": "911538447f16f3d5cef18a4b3f4dc54a8862058bc82672eb731d65d5fde7d6c6",
+      "kind": "baseline"
+    },
+    {
+      "path": "docs/intent/parameterized-task-navigation/initiative-map.json",
+      "bytes": 5265,
+      "sha256": "12b6f0b0c3434f97d681d52e91361bc2873620527675fb90c195059bcc1b620a",
+      "kind": "baseline"
+    },
+    {
+      "path": "docs/intent/saved-view-templates/intent-brief.md",
+      "bytes": 3082,
+      "sha256": "4201b38fd835b03d66581c689461d0d2d2dc287a4c9470c60d5e74ecdc8dbfc2",
+      "kind": "baseline"
+    },
+    {
+      "path": "docs/intent/current-analysis-trust/intent-brief.md",
+      "bytes": 3006,
+      "sha256": "d6b2d620753c1ea532fffcb1cb43cc42711e03daa898e989a7f283f475186bd7",
+      "kind": "baseline"
+    },
+    {
+      "path": "packages/explorEDA/src/types/AnalysisProject.ts",
+      "bytes": 4839,
+      "sha256": "374ffd46c8143f95c7256859d0a1bcc24e1eabe82a80dce9d465a2c4ba693408",
+      "kind": "baseline"
+    },
+    {
+      "path": "packages/explorEDA/src/types/SavedDataStructure.ts",
+      "bytes": 1926,
+      "sha256": "d06d902c2e9ba967adb39f25502405153b2b582bfd2bf7305ad51bec9b9dfebb",
+      "kind": "baseline"
+    },
+    {
+      "path": "packages/explorEDA/src/components/ExplorEdaProject.tsx",
+      "bytes": 15265,
+      "sha256": "5574df5b5dcbba664b0ce4764e9de300b112f951f9da1f55024245c0160c6618",
+      "kind": "baseline"
+    },
+    {
+      "path": "packages/explorEDA/src/components/AnalysisChartContext.tsx",
+      "bytes": 1174,
+      "sha256": "b8a65a3f78230682ce2355df68f2e1780886c899f33c42646271d0acedb3de08",
+      "kind": "baseline"
+    },
+    {
+      "path": "packages/explorEDA/src/components/project/parameterBindings.ts",
+      "bytes": 2474,
+      "sha256": "d0c2601c5bb775f925ac5cf029964f0ff3f14535a69e1455a9a06321549addbe",
+      "kind": "baseline"
+    },
+    {
+      "path": "packages/explorEDA/src/components/project/QueryParameters.tsx",
+      "bytes": 4626,
+      "sha256": "24033b13bf756ec2d46a445f3314f849f2bcf14e9aaa3de1f9304f271bad8b0a",
+      "kind": "baseline"
+    },
+    {
+      "path": "packages/explorEDA/src/components/project/ProjectQueryPanel.tsx",
+      "bytes": 9324,
+      "sha256": "b88ea2277d52a757951667b70ff37d001d9cd21d442caaa48ebbbf12bac655e7",
+      "kind": "baseline"
+    },
+    {
+      "path": "packages/explorEDA/src/components/project/QueryStageRows.tsx",
+      "bytes": 12400,
+      "sha256": "b144071164143e21cf66e68bec9a6837dfb86b9d6eda7f7f17cb3e125068b233",
+      "kind": "baseline"
+    },
+    {
+      "path": "packages/explorEDA/src/components/project/ProjectSchemaPanel.tsx",
+      "bytes": 24142,
+      "sha256": "1249aa51555343f15f91d9c7e7eec335c90e89abeccf9ca6adb7710b577cab14",
+      "kind": "baseline"
+    },
+    {
+      "path": "packages/explorEDA/src/components/project/queryEditing.ts",
+      "bytes": 7070,
+      "sha256": "3a2e1e69d91d0334f5a39d1652d464c38af5fd9461d327b67c7fdad372715b42",
+      "kind": "baseline"
+    },
+    {
+      "path": "packages/explorEDA/src/components/project/analysisRowKeys.ts",
+      "bytes": 1919,
+      "sha256": "e086e580fa7b6e0feed7caf79a85a778fcfa0823dd09fcb91978709773058b74",
+      "kind": "baseline"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/analysis/evaluateProject.ts",
+      "bytes": 29524,
+      "sha256": "0e92ca221ab5c2ae78c5b0454dcf09902d1372638c1fe28a93fccdc1e6bd75d1",
+      "kind": "baseline"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/analysis/useAnalysisEvaluation.ts",
+      "bytes": 5805,
+      "sha256": "33e6f5cc1154078342028a998bfac97159cc9612869024492f4354c660418708",
+      "kind": "baseline"
+    },
+    {
+      "path": "apps/demo/src/SavedViewsWorkspace.tsx",
+      "bytes": 41082,
+      "sha256": "75fa5ee6649939c264603991399b5a55897e33a97d8bccd2ad3f9780c6c48523",
+      "kind": "baseline"
+    },
+    {
+      "path": "apps/demo/src/savedViewsSession.ts",
+      "bytes": 6957,
+      "sha256": "69784a461ca0df7a355fff5427b6d93e9dc6d0e3ff79bbf310f81f0387ed23f3",
+      "kind": "baseline"
+    },
+    {
+      "path": "apps/demo/src/savedViewsHistory.ts",
+      "bytes": 34392,
+      "sha256": "64013981d656cc65b62a5716626782b98bd1808ca5409aeb345ea64603aa5cda",
+      "kind": "baseline"
+    },
+    {
+      "path": "packages/explorEDA/src/test/fixtures/shopProject.ts",
+      "bytes": 14422,
+      "sha256": "dceb807341e6023b1270a0c53df4d37177cb0ac3fb495794d8a2b5c9aef8107a",
+      "kind": "baseline"
+    },
+    {
+      "path": "packages/explorEDA/src/test/lib/analysis/parameterBindings.test.ts",
+      "bytes": 1698,
+      "sha256": "682aa069bf65aecab38b251edf96b1b7ea5d959cb8be15dce8938ba3821de211",
+      "kind": "baseline"
+    },
+    {
+      "path": "packages/explorEDA/src/test/lib/analysis/evaluateProject.test.ts",
+      "bytes": 12780,
+      "sha256": "13a1f675f5055a702c16384f2aee5835108a0725dd0fc8d979703e3e8a11f88b",
+      "kind": "baseline"
+    },
+    {
+      "path": "apps/demo/src/SavedViewsWorkspace.integration.test.tsx",
+      "bytes": 5707,
+      "sha256": "b1fd21ed45cfee54ff09132e26d6dc58385ab39ea07ad143650141015fc572a3",
+      "kind": "baseline"
+    },
+    {
+      "path": "apps/demo/src/demos/analyses/shop.ts",
+      "bytes": 7141,
+      "sha256": "84fa5b4749a4818424ad7aee34c40e327e23151dd0ecdd76880b26980b0067f3",
+      "kind": "baseline"
+    },
+    {
+      "path": "docs/research/task-navigation-2026-10-20/pro-prompt.md",
+      "bytes": 11209,
+      "sha256": "1a7037dd4325be1bbea9bc184231d1e0d27dd12b4b0ee3084d156772883c853d",
+      "kind": "local-addition"
+    },
+    {
+      "path": "docs/research/task-navigation-2026-10-20/research-queue.md",
+      "bytes": 3096,
+      "sha256": "e9e8db04638ce4732b991a37e033f9fbcb4b81fadf7c1bc89ff599290ee1c4d2",
+      "kind": "local-addition"
+    },
+    {
+      "path": "docs/research/task-navigation-2026-10-20/prior-research-summary.md",
+      "bytes": 3047,
+      "sha256": "00b068740e1e196a88bdc59af4fe830b0806f4a080e0beb55f6b1b6993deca11",
+      "kind": "local-addition"
+    }
+  ]
+}
