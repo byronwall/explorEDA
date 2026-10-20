@@ -1,6 +1,6 @@
 # Task navigation Pro run
 
-- Phase: submitted; Pro is researching. Follow-ups: 0/2.
+- Phase: collected and reviewed; integration validation and review PR pending. Follow-ups: 0/2.
 - Mission: compare deferral, current controls and explicit overview-to-detail connections. Population rules and tab reuse remain proposed choices.
 - Repository: https://github.com/byronwall/explorEDA
 - Checkout: /Users/byronwall/Projects/explorEDA. No worktree.
@@ -30,4 +30,12 @@ Signed-in Chrome profile byroni.us and Byron Wall Pro verified. Live model menu 
 
 Registered collection heartbeat through automation_update and verified its saved TOML and tool view. It owns full collection, bounded follow-up, review, integration, gates and verified review PR. Stop only that temporary monitor when complete or blocked on essential user action. Six-hour discovery stays ACTIVE. No goal.
 
-Baseline parameter-input and query-evaluation tests pass: two files,nine tests. All33 source/packet hashes passed before submission;30 tracked excerpts match baseline Git objects. Source manifest preserves uploaded bytes. No author/browser/product navigation proof ran. No application source changed and no changeset or product screenshot applies. Demo saved-view integration also passes: one file,three tests. These tests cover existing behavior only. Full pnpm check remains due during integration.
+Baseline parameter-input and query-evaluation tests pass: two files,nine tests. All 33 source/packet hashes passed before submission;30 tracked excerpts match baseline Git objects. Source manifest preserves uploaded bytes. No author/browser/product navigation proof ran. No application source changed and no changeset or product screenshot applies. Demo saved-view integration also passes: one file,three tests. These tests cover existing behavior only. Full pnpm check remains due during integration.
+
+## Collection and review: 2026-10-20
+
+Pro completed after 17m 51s. Downloaded the ZIP under direct standing human approval. Its published SHA-256, CRC, safe paths, no symlinks, exact inventory, UTF-8 and report hashes/sizes pass. Four Markdown originals and manifest are preserved unchanged. One standalone report download opened raw text and its event timed out. No independent standalone/ZIP equality is claimed. All required contents are present locally. See collection.json. No Library upload prerequisite or approval rejection occurred.
+
+Read all four reports. Reviewed TN01–TN06 against current source and four official Tableau/PowerBI/Metabase pages. Keep navigation deferred and current controls as comparator. Preserve population/range/instance/conflict/authoring choices. Host mapping remains conditional. No material follow-up needed; 0/2. Pro's104 arithmetic assertions remain attributed; local fixture anchors are separate arithmetic checks, not application proof.
+
+Integrated summary, evidence, six dispositions, navigation intent/map, saved-view boundary and concise queue. No application source, docs-site page or runnable example changed. No changeset or product viewport screenshot applies. Author/browser/navigation/export/history/reload/performance proofs remain proposed. Full pnpm check and PR gates remain pending.

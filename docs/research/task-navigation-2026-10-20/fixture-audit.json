@@ -1,0 +1,91 @@
+{
+  "checked_at": "2026-10-20T07:59:01.278417+00:00",
+  "method": "Local authored Fraction arithmetic over parsed report tables; no downloaded program or application module executed.",
+  "cases": [
+    {
+      "case": "B00",
+      "members": ["O01", "O02", "O03", "O10", "O11"],
+      "rows": 5,
+      "contributors": 4,
+      "total": 130
+    },
+    {
+      "case": "B01",
+      "members": ["O01", "O03", "O10", "O11"],
+      "rows": 4,
+      "contributors": 3,
+      "total": 80
+    },
+    {
+      "case": "B02",
+      "members": ["O04", "O05"],
+      "rows": 2,
+      "contributors": 2,
+      "total": 280
+    },
+    {
+      "case": "B04",
+      "members": ["O01", "O02", "O10", "O11"],
+      "rows": 4,
+      "contributors": 3,
+      "total": 150
+    },
+    {
+      "case": "B05",
+      "members": ["O02"],
+      "rows": 1,
+      "contributors": 1,
+      "total": 50
+    },
+    {
+      "case": "B10",
+      "members": ["O07"],
+      "rows": 1,
+      "contributors": 1,
+      "total": 900
+    },
+    {
+      "case": "B11",
+      "members": ["O10"],
+      "rows": 1,
+      "contributors": 0,
+      "total": null
+    },
+    {
+      "case": "B12",
+      "members": ["O11"],
+      "rows": 1,
+      "contributors": 1,
+      "total": 0
+    },
+    {
+      "case": "E00",
+      "members": ["S02", "S03", "S06", "S07"],
+      "rows": 4,
+      "contributors": 3,
+      "total": 10
+    },
+    {
+      "case": "E02",
+      "members": ["S04", "S05"],
+      "rows": 2,
+      "contributors": 2,
+      "total": 18
+    },
+    {
+      "case": "E03",
+      "members": ["S05"],
+      "rows": 1,
+      "contributors": 1,
+      "total": 10
+    },
+    {
+      "case": "E05",
+      "members": ["S03"],
+      "rows": 1,
+      "contributors": 1,
+      "total": 6
+    }
+  ],
+  "limit": "12 independent arithmetic anchors only. Pro reports104 assertions; those remain attributed. No application or user-task proof."
+}

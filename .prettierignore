@@ -2,3 +2,6 @@
 apps/demo/public/daily-viz/
 # The first corpus's handoff, kept byte for byte.
 docs/research/daily-viz-corpus-2026-10-15/handoff/
+
+# Preserve the original Pro navigation research files byte for byte.
+docs/research/task-navigation-2026-10-20/originals/

@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "research_date": "2026-10-20",
+  "repository": "https://github.com/byronwall/explorEDA",
+  "source_commit": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+  "encoding": "UTF-8",
+  "files": [
+    {
+      "name": "decision-report.md",
+      "bytes": 47799,
+      "sha256": "bcea985dd303dd62b95b6f2c20d7e1cd5db247af951b6184b38aed9e7c1bcda0"
+    },
+    {
+      "name": "recommendations.md",
+      "bytes": 26804,
+      "sha256": "d371b59242f4b8042156ee6f927f8c09966464bc1526c83e0a576fbc12059b2a"
+    },
+    {
+      "name": "proof-plan.md",
+      "bytes": 34525,
+      "sha256": "e1c6e36227dc47c4a8b8e9b5027131b0f86c384257e5c3e442d7a4d154bb8f98"
+    },
+    {
+      "name": "research-queue.md",
+      "bytes": 13721,
+      "sha256": "a8cde3079b4856b2d755511adb4fbd93b9bfaf0de1ce905392a1a624ac34c090"
+    }
+  ]
+}
