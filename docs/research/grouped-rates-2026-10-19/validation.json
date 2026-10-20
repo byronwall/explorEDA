@@ -1,8 +1,37 @@
 {
-  "updated_at": "2026-10-20T00:47:04.827277+00:00",
+  "updated_at": "2026-10-20T00:49:42.304077+00:00",
   "node": "22.21.1",
   "pnpm": "11.9.0",
-  "root_check": "running",
+  "root_check": {
+    "command": "pnpm check",
+    "exit_code": 1,
+    "ui": "passed",
+    "build": "passed",
+    "docs": {
+      "files": 3,
+      "tests": 73,
+      "status": "passed"
+    },
+    "types": "all passed",
+    "library": {
+      "files_passed": 245,
+      "files_failed": 5,
+      "files_skipped": 3,
+      "tests_passed": 1619,
+      "tests_failed": 10,
+      "tests_skipped": 72,
+      "errors": 2,
+      "cause": "Sandbox localhost listen EPERM and filesystem watcher EMFILE",
+      "failed_files": [
+        "src/node/projectFiles.test.ts",
+        "src/server/handler.test.ts",
+        "src/server/team/accountRoutes.test.ts",
+        "src/server/team/teamHandler.test.ts",
+        "src/server/team/fileIntake.test.ts"
+      ]
+    },
+    "aggregate_all_green_claimed": false
+  },
   "baseline_tests": {
     "files": 3,
     "tests": 22,
@@ -15,5 +44,26 @@
   },
   "product_proofs": "Author, browser, formula entry, filter/export/history/restore and performance remain proposed",
   "changeset": "Not applicable: no package source changes",
-  "screenshots": "No product UI changed"
+  "screenshots": "No product UI changed",
+  "approved_retry": {
+    "files": 5,
+    "tests": 50,
+    "exit_code": 0,
+    "status": "passed"
+  },
+  "app": {
+    "files": 8,
+    "tests": 32,
+    "exit_code": 0,
+    "status": "passed"
+  },
+  "demo": {
+    "files": 18,
+    "tests": 431,
+    "exit_code": 0,
+    "status": "passed"
+  },
+  "pr_gate": "passed",
+  "authored_links": "passed",
+  "original_hashes": "passed after commit hook"
 }

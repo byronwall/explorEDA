@@ -93,7 +93,7 @@
       "id": "grouped-rates-research",
       "type": "agent-authored-analysis",
       "location": "../../research/grouped-rates-2026-10-19/README.md",
-      "anchor": "GR01\u2013GR07, independently reviewed 2026-10-20 at 9b16d78e",
+      "anchor": "GR01–GR07, independently reviewed 2026-10-20 at 9b16d78e",
       "authority": "Reviewed research; no implementation approval or author/browser proof"
     }
   ],
@@ -352,13 +352,19 @@
       "event": "status-checked",
       "status": "planned",
       "evidence": ["No implementation of this scope found at 91b627d"]
+    },
+    {
+      "date": "2026-10-20",
+      "action": "Reviewed grouped-rate research and retained the deferred seed.",
+      "reason": "Current recipes or declared-grain preparation can reject a new API before product expansion.",
+      "evidence": "Seven dispositions, baseline source authentication, five primary sources and twelve independent arithmetic anchors. Author/browser/lifecycle proof remains proposed."
     }
   ],
   "closure": null,
   "intake": {
     "kind": "seed",
     "priority_basis": "Pro recommendations reconciled with current source; proposed priority, no implementation approval",
-    "expand_when": "Expand when the same hand-computed rate or pivot-only reducer is repeatedly needed outside Pivot. Prefer one requested metric to a general language.",
+    "expand_when": "For rates, require a named repeated two-consumer task after local trust that fails current controls and acceptable upstream preparation. Make quantity, population and identity rules explicit. Keep pivot-only reducer demand separate.",
     "related_initiatives": [],
     "audience": "End users; developers deliver their experience.",
     "priority": "seed-demand-unconfirmed"
