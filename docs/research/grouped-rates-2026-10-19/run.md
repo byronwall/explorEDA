@@ -1,6 +1,6 @@
 # Grouped rates Pro run
 
-- Phase: collected and reviewed; integration validation in progress. Follow-ups: 0/2.
+- Phase: complete; verified open review PR #457. Follow-ups: 0/2.
 - Repository: https://github.com/byronwall/explorEDA
 - Checkout: /Users/byronwall/Projects/explorEDA. No worktree.
 - Baseline: 9b16d78e3ed0742ed4d5858c1939fec9e758b510; refreshed origin/main on 2026-10-19. Clean before branch creation.
@@ -12,7 +12,7 @@
 - Scope: research, intent, documentation, examples and directly useful bounded proofs. No large implementation, merge, deployment or paid services.
 - Standing direct human approval permits scoped necessary repository uploads to Byron's signed-in Chrome Pro. No secrets or unrelated private data selected.
 - Browser: Chrome extension profile byroni.us available despite locked native Mac. Byron Wall Pro account and Pro 5/5 observed. No login or unlock needed.
-- Conversation: https://chatgpt.com/c/6ad66875-bc28-83ea-8341-3263d0d8cdec. Submission approximately 2026-10-19T19:00Z. Temporary monitor: collect-exploreda-grouped-rates-research, ACTIVE. No goal.
+- Conversation: https://chatgpt.com/c/6ad66875-bc28-83ea-8341-3263d0d8cdec. Submission approximately 2026-10-19T19:00Z. Temporary monitor: collect-exploreda-grouped-rates-research, PAUSED after completion. No goal.
 - Six-hour exploreda-pro-research-pipeline remains ACTIVE, GPT-6.1 Sol Medium.
 
 ## Recovery and completion
@@ -44,3 +44,11 @@ Byron directly renewed download pre-approval after the archive action waited for
 ## Validation before review PR
 
 Node22.21.1/pnpm11.9.0. Root pnpm check passes UI, package/app/demo builds, 73 docs checks and all type checks. Library stage: 245 files/1619 tests pass; five files fail on sandbox localhost EPERM or watcher EMFILE. Approved retry passes all five files/50 tests. Separate app suite passes eight files/32 tests. Separate demo suite passes 18 files/431 tests. No all-green aggregate rerun is claimed. pnpm check:pr and authored links pass. Original hashes remain unchanged after commit hooks. No product UI flow changed; browser widths and screenshot proof are not claimed.
+
+## Completion: 2026-10-20
+
+Review PR: https://github.com/byronwall/explorEDA/pull/457. Verified OPEN, main ← codex/grouped-rates-research-2026-10-19. Saved body, 20 files, head/base, committed links and open state checked. Attached to this chat. Documentation label applied; codex/codex-automation labels unavailable.
+
+Four report originals, ZIP and manifest are collected, readable and unchanged. Seven recommendations are reconciled into research, rates intent/map/references and continuing queue. Validation results and limits are recorded. No material follow-up needed; 0/2. No application change or new user-visible example is approved. Author/browser/lifecycle/performance proof remains proposed. No all-green aggregate rerun is claimed.
+
+Paused only collect-exploreda-grouped-rates-research through automation_update. Saved TOML verifies PAUSED. Discovery exploreda-pro-research-pipeline remains ACTIVE every six hours with GPT-6.1 Sol Medium. Both saved prompts retain explicit human download pre-approval, renewed in this chat. No goal, worktree, merge, deployment or paid provisioning. Stop for review.
