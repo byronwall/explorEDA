@@ -1,6 +1,6 @@
 # Quantity semantics Pro run
 
-- Phase: integrated and validated; review PR pending. Follow-ups: 0/2.
+- Phase: complete; verified open review PR #459. Follow-ups: 0/2.
 - Mission: compare current labels/descriptions/calculations, upstream preparation, one bounded metadata proposal and deferral.
 - Repository: https://github.com/byronwall/explorEDA
 - Checkout: /Users/byronwall/Projects/explorEDA. No worktree.
@@ -44,3 +44,11 @@ Integrated summary,evidence,five decisions,scientific intent/map/references and 
 Node22.21.1/pnpm11.9.0. Root pnpm check passes UI rules,library/app/demo builds,73docs checks and all types. Library tests pass245files/1619tests;five files fail on sandbox localhost EPERM or watcher EMFILE. Approved retries pass all five affected files/50tests. Separate app8files/32tests and demo18files/431tests pass. No all-green aggregate rerun is claimed. See validation.json and named tmp logs.
 
 PR gate,authored local links,JSON parse,original hashes after hook and15independent rational anchors pass. All35 baseline and16extra source receipts match. Existing tests do not establish a fresh author/browser/quantity/lifecycle proof. No material follow-up needed;0/2. Documentation label is available;codex/codex-automation are unavailable. No changeset or product screenshot applies.
+
+## Completion, 2026-10-20
+
+Review PR: https://github.com/byronwall/explorEDA/pull/459. Verified OPEN, main ← codex/quantity-semantics-research-2026-10-20. Saved body,20files,head/base and committed document links pass. PR attached to this chat. Documentation label applied;codex/codex-automation unavailable.
+
+All four original reports,ZIP and manifest are collected,readable,reviewed and unchanged. Five dispositions are integrated into research,scientific intent/map/references and ranked queue. Validation and limits are recorded. No material follow-up;0/2. No new quantity capability,docs-site lesson or runnable example is approved. Author/browser/quantity/export/history/restore/performance proofs remain proposed. No all-green aggregate rerun is claimed.
+
+Paused only collect-exploreda-quantity-semantics-research through automation_update. Saved TOML verifies PAUSED. Six-hour exploreda-pro-research-pipeline remains ACTIVE indefinitely with GPT-6.1 Sol Medium and standing upload/download approval. No goal,worktree,merge,deployment or paid provisioning. Stop for review.

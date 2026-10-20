@@ -48,5 +48,18 @@
     }
   ],
   "prGate": "pnpm check:pr passes",
-  "originalHashesAfterHook": "pass"
+  "originalHashesAfterHook": "pass",
+  "reviewPr": {
+    "url": "https://github.com/byronwall/explorEDA/pull/459",
+    "state": "OPEN",
+    "files": 20,
+    "bodyBranchesLinks": "verified",
+    "attached": true,
+    "labels": ["documentation"],
+    "unavailableLabels": ["codex", "codex-automation"]
+  },
+  "schedules": {
+    "collect-exploreda-quantity-semantics-research": "PAUSED",
+    "exploreda-pro-research-pipeline": "ACTIVE"
+  }
 }
