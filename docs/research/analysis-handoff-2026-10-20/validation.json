@@ -43,8 +43,8 @@
     "15 arithmetic anchors",
     "archive and all four report integrity checks"
   ],
-  "pr_gate": "pending after integration commit",
-  "links": "pending final check",
+  "pr_gate": "pnpm check:pr passes",
+  "links": "Authored local links, pinned historical targets, committed PR-body paths and JSON pass.",
   "unrun": [
     "proposed seven-row product fixture",
     "project dependency probes",
