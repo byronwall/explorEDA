@@ -24,3 +24,7 @@ Current source was inspected at `a50df9985ed3ff54d0f6ca368c0b369829b8a927` on 20
 ## Product feedback
 
 [Annotated product direction](../../comparison-opportunities/resources/product-feedback-2026-10-06.md) supplies the current audience and priorities. The [full records](../../comparison-opportunities/resources/product-feedback-2026-10-06.json) preserve uncertainty.
+
+## Quantity boundary review, 2026-10-20
+
+[Review and dispositions](../../../research/quantity-semantics-2026-10-20/README.md) preserve existing units, descriptions and calculations. New metadata and conversion stay deferred. [Originals](../../../research/quantity-semantics-2026-10-20/originals/decision-report.md) and [independent evidence](../../../research/quantity-semantics-2026-10-20/evidence.md) separate research from proposed product proof. The local trust journey remains first.

@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "research_date": "2026-10-20",
+  "repository": "https://github.com/byronwall/explorEDA",
+  "source_commit": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+  "research_access": "GO",
+  "feature_adoption": "NO-GO",
+  "implementation_status": "Proposed only; no repository or product mutation.",
+  "recommendation_count": 5,
+  "input_packet": {
+    "name": "source-packet(9).txt",
+    "bytes": 352960,
+    "sha256": "12e86526a073b45993d1babe778ae37127193cad22bc4f3352b692ca60054f6f",
+    "verified_entries": 38,
+    "baseline_entries": 35,
+    "local_additions": 2,
+    "historical_context_entries": 1
+  },
+  "files": [
+    {
+      "name": "decision-report.md",
+      "bytes": 59430,
+      "sha256": "7c59114b381915fea557cbe663770978fff61c304cf1823ebad2c2f39fe30ac4"
+    },
+    {
+      "name": "recommendations.md",
+      "bytes": 29282,
+      "sha256": "37031c9ab885a568cdfa0ce4b391cba32dc23e6bc99c7512a6544a957abcb1cd"
+    },
+    {
+      "name": "proof-plan.md",
+      "bytes": 32713,
+      "sha256": "5996f6531f45d264cc16c039ddee8b2a207b2e14f08050349dcc7fdfbe3d8754"
+    },
+    {
+      "name": "research-queue.md",
+      "bytes": 14429,
+      "sha256": "8fa5ccff79eb9517db9f0883eba2d307dae6748b4fb0770c52b97c463c05370a"
+    }
+  ],
+  "archive": {
+    "name": "quantity-semantics-research.zip",
+    "members": [
+      "decision-report.md",
+      "recommendations.md",
+      "proof-plan.md",
+      "research-queue.md",
+      "manifest.json"
+    ],
+    "sha256_location": "Reported separately in the delivery response; not embedded in the archive."
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "kind": "independent rational arithmetic; no application imports or downloaded code",
+  "checks": [
+    {
+      "name": "scale",
+      "expected": "1",
+      "actual": "1",
+      "passed": true
+    },
+    {
+      "name": "signed",
+      "expected": "-1/2",
+      "actual": "-1/2",
+      "passed": true
+    },
+    {
+      "name": "zero",
+      "expected": "0",
+      "actual": "0",
+      "passed": true
+    },
+    {
+      "name": "absoluteK",
+      "expected": "5863/20",
+      "actual": "5863/20",
+      "passed": true
+    },
+    {
+      "name": "absoluteF",
+      "expected": "68",
+      "actual": "68",
+      "passed": true
+    },
+    {
+      "name": "deltaK",
+      "expected": "5",
+      "actual": "5",
+      "passed": true
+    },
+    {
+      "name": "deltaF",
+      "expected": "9",
+      "actual": "9",
+      "passed": true
+    },
+    {
+      "name": "meanC",
+      "expected": "67/3",
+      "actual": "67/3",
+      "passed": true
+    },
+    {
+      "name": "meanK",
+      "expected": "17729/60",
+      "actual": "17729/60",
+      "passed": true
+    },
+    {
+      "name": "volumeRate",
+      "expected": "1000",
+      "actual": "1000",
+      "passed": true
+    },
+    {
+      "name": "leapRate",
+      "expected": "182500/183",
+      "actual": "182500/183",
+      "passed": true
+    },
+    {
+      "name": "fixedResidual",
+      "expected": "1",
+      "actual": "1",
+      "passed": true
+    },
+    {
+      "name": "recentered",
+      "expected": "0",
+      "actual": "0",
+      "passed": true
+    },
+    {
+      "name": "percentScale",
+      "expected": "1/2",
+      "actual": "1/2",
+      "passed": true
+    },
+    {
+      "name": "trustMean",
+      "expected": "6",
+      "actual": "6",
+      "passed": true
+    }
+  ],
+  "proClaim": "43 rational assertions attributed to Pro; not rerun as Pro code",
+  "applicationProof": "unrun"
+}

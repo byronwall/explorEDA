@@ -1,0 +1,19 @@
+{
+  "node": "22.21.1",
+  "pnpm": "11.9.0",
+  "scope": "research and intent documents only; no application source",
+  "baselineChecks": {
+    "fieldSettings": "2 files/10 tests pass before submission",
+    "docs": "3 files/73 tests pass before submission"
+  },
+  "rootCheck": {
+    "command": "pnpm check",
+    "status": "running",
+    "log": "tmp/quantity-pnpm-check.log"
+  },
+  "artifactIntegrity": "pass; collection.json",
+  "sourceReceipts": "35 baseline plus16 additional pass",
+  "localArithmetic": "15 independent rational anchors pass; not application proof",
+  "authoredLinks": "pass",
+  "applicationProof": "author/browser/quantity/export/history/restore/performance remain proposed"
+}

@@ -1,6 +1,6 @@
 # Quantity semantics Pro run
 
-- Phase: submitted; Pro researching. Follow-ups: 0/2.
+- Phase: collected and reviewed; integration validation pending. Follow-ups: 0/2.
 - Mission: compare current labels/descriptions/calculations, upstream preparation, one bounded metadata proposal and deferral.
 - Repository: https://github.com/byronwall/explorEDA
 - Checkout: /Users/byronwall/Projects/explorEDA. No worktree.
@@ -23,10 +23,18 @@ Use pnpm and React/TypeScript. Follow identity, changeset, browser and screensho
 
 Submitted around 2026-10-20T12:50Z. Conversation: https://chatgpt.com/c/6ad763b3-ecac-83ea-a53c-9099c304ebcd. Verified signed-in Chrome profile byroni.us, account Byron Wall Pro and live Pro power5/5. Both attachments completed before submission: pro-prompt(20261020-125024).md and source-packet(9).txt. Submitted user message, both attachment cards, responding/Stop, Thinking and durable conversation URL verified. No output collected. Follow-ups0/2. No Library upload prerequisite or approval rejection.
 
-Packet: tmp/pro-quantity-semantics-2026-10-20/source-packet.txt;38 text files,352960bytes,SHA25612e86526a073b45993d1babe778ae37127193cad22bc4f3352b692ca60054f6f. Thirty-five tracked files match baseline Git objects. Prompt and queue are local additions; navigation README is identified historical context at3d1ffebb. The manifest preserves the actual uploaded bytes. No data files, credentials or unrelated private context included.
+Packet: tmp/pro-quantity-semantics-2026-10-20/source-packet.txt;38 text files,352960 bytes,SHA25612e86526a073b45993d1babe778ae37127193cad22bc4f3352b692ca60054f6f. Thirty-five tracked files match baseline Git objects. Prompt and queue are local additions; navigation README is identified historical context at3d1ffebb. The manifest preserves the actual uploaded bytes. No data files, credentials or unrelated private context included.
 
 Registered temporary heartbeat collect-exploreda-quantity-semantics-research, hourly minute52, attached to this chat. Intended first normal check2026-10-20T13:52Z. Saved TOML and tool view verify ACTIVE and this chat target. Early ticks must preserve the response. Six-hour discovery stays ACTIVE indefinitely. No goal.
 
-Existing field settings/provider checks pass two files/10tests. Demo docs checks pass three files/73tests, with existing React act warnings. No actual author/browser/quantity/filter/export/reload/performance proof ran. No application source changed. No changeset or product viewport screenshot applies. Full pnpm check and final PR gates remain due during integration. No new PR yet. Use scoped commits and preserve originals when collected.
+Existing field settings/provider checks pass two files/10 tests. Demo docs checks pass three files/73 tests, with existing React act warnings. No actual author/browser/quantity/filter/export/reload/performance proof ran. No application source changed. No changeset or product viewport screenshot applies. Full pnpm check and final PR gates remain due during integration. No new PR yet. Use scoped commits and preserve originals when collected.
 
-Pro acknowledged all38 entries matching declared bytes/hashes and exact GitHub commit access. This is attributed Pro progress, not independently adopted research. Screenshot: tmp/pro-quantity-semantics-2026-10-20/pro-submitted.jpg. No outputs yet.
+Pro acknowledged all 38 entries matching declared bytes/hashes and exact GitHub commit access. This is attributed Pro progress, not independently adopted research. Screenshot: tmp/pro-quantity-semantics-2026-10-20/pro-submitted.jpg. No outputs yet.
+
+## Collection and review, 2026-10-20
+
+Pro finished after 17m48 s. Downloaded ZIP under direct standing human approval. Published ZIP/manifest hashes,CRC,safe paths,no symlinks,exact inventory,UTF-8,sizes/report hashes pass. Four Markdown originals and manifest preserved unchanged. Standalone report opened raw text;12 s event timed out. No independent standalone/archive equality claimed. All required content is present. No Library upload prerequisite or rejected download.
+
+Read all substantive reports. Reviewed QS01–QS05: adopt existing local trust priority and explicit derivation review guidance; investigate one conditional current-controls lesson; defer new metadata and machinery; reject inference and silent reinterpretation. Fifteen independent arithmetic anchors pass;Pro's 43 assertions remain attributed. All35 baseline packet receipts and16 extra source receipts match current Git objects. Main remains baseline 9b16d78e. Primary-source verification and limits appear in evidence.md. No material follow-up;0/2.
+
+Integrated summary,evidence,five decisions,scientific intent/map/references and ranked queue. No application source,docs-site page or runnable example changed. No changeset or product screenshot applies. Author/browser/quantity/export/history/reload/performance proofs remain proposed. Required root and PR gates remain due.
