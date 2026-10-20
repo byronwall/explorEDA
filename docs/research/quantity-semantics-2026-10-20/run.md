@@ -1,0 +1,32 @@
+# Quantity semantics Pro run
+
+- Phase: submitted; Pro researching. Follow-ups: 0/2.
+- Mission: compare current labels/descriptions/calculations, upstream preparation, one bounded metadata proposal and deferral.
+- Repository: https://github.com/byronwall/explorEDA
+- Checkout: /Users/byronwall/Projects/explorEDA. No worktree.
+- Baseline: 9b16d78e3ed0742ed4d5858c1939fec9e758b510. Origin/main refreshed 2026-10-20. Clean before branch creation.
+- Branch: codex/quantity-semantics-research-2026-10-20.
+- Prompt: [pro-prompt.md](pro-prompt.md). Queue: [research-queue.md](research-queue.md). Inventory: [source-manifest.json](source-manifest.json).
+- Prior cycles451/452/455–458 complete in open review PRs. PR454 owns time-series axes. Never resubmit completed missions.
+- Standing direct human upload/download approvals apply to scoped research context and outputs. Exclude secrets and unrelated files. Respect automatic review.
+- Scope: research/docs/intent/examples and bounded validation. Keep large implementation proposed. No merge/deploy/paid provisioning.
+- No observed demand, wrong-unit defect or author/browser proof is established. Local trust remains first local proof.
+- This chat is not a starred orchestrator. It works directly; no delegation is required. No goal.
+
+## Recovery and completion
+
+Inspect the recorded conversation before any resend. Never duplicate submission or mutate concurrently. Collect four Markdown originals, ZIP and manifest. Verify safe entries, no symlinks, CRC, inventory, UTF-8, sizes, hashes and companions. Read every substantive output. Verify decisive source and primary claims. Record dispositions and integrate research, intent and queue. Use at most two focused follow-ups for material gaps.
+
+Use pnpm and React/TypeScript. Follow identity, changeset, browser and screenshot rules when applicable. Run relevant checks and pnpm check before a scoped review PR. Use gh --body-file. Verify saved body, links, files, branches and OPEN state; attach it. Stop only this cycle's collection monitor after completion or essential user-action blocker. Keep six-hour discovery ACTIVE indefinitely.
+
+## Submission and independent preparation
+
+Submitted around 2026-10-20T12:50Z. Conversation: https://chatgpt.com/c/6ad763b3-ecac-83ea-a53c-9099c304ebcd. Verified signed-in Chrome profile byroni.us, account Byron Wall Pro and live Pro power5/5. Both attachments completed before submission: pro-prompt(20261020-125024).md and source-packet(9).txt. Submitted user message, both attachment cards, responding/Stop, Thinking and durable conversation URL verified. No output collected. Follow-ups0/2. No Library upload prerequisite or approval rejection.
+
+Packet: tmp/pro-quantity-semantics-2026-10-20/source-packet.txt;38 text files,352960bytes,SHA25612e86526a073b45993d1babe778ae37127193cad22bc4f3352b692ca60054f6f. Thirty-five tracked files match baseline Git objects. Prompt and queue are local additions; navigation README is identified historical context at3d1ffebb. The manifest preserves the actual uploaded bytes. No data files, credentials or unrelated private context included.
+
+Registered temporary heartbeat collect-exploreda-quantity-semantics-research, hourly minute52, attached to this chat. Intended first normal check2026-10-20T13:52Z. Saved TOML and tool view verify ACTIVE and this chat target. Early ticks must preserve the response. Six-hour discovery stays ACTIVE indefinitely. No goal.
+
+Existing field settings/provider checks pass two files/10tests. Demo docs checks pass three files/73tests, with existing React act warnings. No actual author/browser/quantity/filter/export/reload/performance proof ran. No application source changed. No changeset or product viewport screenshot applies. Full pnpm check and final PR gates remain due during integration. No new PR yet. Use scoped commits and preserve originals when collected.
+
+Pro acknowledged all38 entries matching declared bytes/hashes and exact GitHub commit access. This is attributed Pro progress, not independently adopted research. Screenshot: tmp/pro-quantity-semantics-2026-10-20/pro-submitted.jpg. No outputs yet.
