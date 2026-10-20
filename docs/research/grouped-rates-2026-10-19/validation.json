@@ -1,0 +1,19 @@
+{
+  "updated_at": "2026-10-20T00:47:04.827277+00:00",
+  "node": "22.21.1",
+  "pnpm": "11.9.0",
+  "root_check": "running",
+  "baseline_tests": {
+    "files": 3,
+    "tests": 22,
+    "status": "passed during preparation"
+  },
+  "local_arithmetic": {
+    "checks": 12,
+    "application_code_executed": false,
+    "status": "passed"
+  },
+  "product_proofs": "Author, browser, formula entry, filter/export/history/restore and performance remain proposed",
+  "changeset": "Not applicable: no package source changes",
+  "screenshots": "No product UI changed"
+}

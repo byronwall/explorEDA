@@ -1,0 +1,80 @@
+{
+  "kind": "Independent local arithmetic anchors; no downloaded code executed",
+  "application_code_executed": false,
+  "sqlite_or_duckdb_executed": false,
+  "checks_passed": 12,
+  "checks": [
+    {
+      "name": "core pooled exposure",
+      "actual": "10/3",
+      "expected": "10/3",
+      "passed": true
+    },
+    {
+      "name": "mean run rates",
+      "actual": "136/27",
+      "expected": "136/27",
+      "passed": true
+    },
+    {
+      "name": "mean rig rates",
+      "actual": "3",
+      "expected": "3",
+      "passed": true
+    },
+    {
+      "name": "exposure weighted mean",
+      "actual": "10/3",
+      "expected": "10/3",
+      "passed": true
+    },
+    {
+      "name": "stress pooled exposure",
+      "actual": "50/17",
+      "expected": "50/17",
+      "passed": true
+    },
+    {
+      "name": "stress rig B",
+      "actual": "10/3",
+      "expected": "10/3",
+      "passed": true
+    },
+    {
+      "name": "valid zero events",
+      "actual": "0",
+      "expected": "0",
+      "passed": true
+    },
+    {
+      "name": "separate positive populations",
+      "actual": "130/41",
+      "expected": "130/41",
+      "passed": true
+    },
+    {
+      "name": "pooled flight proportion",
+      "actual": "1/5",
+      "expected": "1/5",
+      "passed": true
+    },
+    {
+      "name": "mean airline proportions",
+      "actual": "5/16",
+      "expected": "5/16",
+      "passed": true
+    },
+    {
+      "name": "unknown as zero",
+      "actual": "1/6",
+      "expected": "1/6",
+      "passed": true
+    },
+    {
+      "name": "deduplicated components",
+      "actual": "10/3",
+      "expected": "10/3",
+      "passed": true
+    }
+  ]
+}

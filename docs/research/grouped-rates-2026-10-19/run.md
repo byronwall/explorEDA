@@ -1,6 +1,6 @@
 # Grouped rates Pro run
 
-- Phase: submitted; Pro researching. Follow-ups: 0/2.
+- Phase: collected and reviewed; integration validation in progress. Follow-ups: 0/2.
 - Repository: https://github.com/byronwall/explorEDA
 - Checkout: /Users/byronwall/Projects/explorEDA. No worktree.
 - Baseline: 9b16d78e3ed0742ed4d5858c1939fec9e758b510; refreshed origin/main on 2026-10-19. Clean before branch creation.
@@ -30,3 +30,13 @@ Created heartbeat through automation_update: collect-exploreda-grouped-rates-res
 Current baseline tests pass: aggregates, bar planner and MetricCard; three files, 22 tests. Source packet authenticates 35 tracked files against baseline. Three additions contain prompt, queue and identified historical research summary. No product/author/browser/round-trip/performance proof ran. No application source changed; no changeset or product screenshot applies. Full pnpm check remains due before integration PR.
 
 GitHub reads and fetch initially failed sandbox DNS, then passed approved network retry. Current origin/main remains baseline. Open research PRs inspected; no overlapping grouped-rate cycle found. This chat is not an orchestrator, so it works directly. No new PR yet; cycle remains incomplete.
+
+## Collection and integration: 2026-10-20
+
+Pro finished after 32m39s. Downloaded grouped-rates-research.zip and preserved four Markdown originals plus manifest from its verified members. SHA-256 matches the final response. Safe paths, no symlinks, CRC, exact inventory, UTF-8, hashes and sizes pass. No independent standalone/ZIP equality is claimed: a standalone Download file action opened raw text and its download event timed out. See collection.json for exact provenance. All required substantive contents are local and readable.
+
+Read every substantive report. All 38 Pro source receipts match the local manifest; 35 tracked entries authenticate against baseline Git objects. Independently checked current source and five official JMP/DAX/DuckDB pages. BarChart passes live IDs explicitly, narrowing Pro's provider-default caution. Twelve independent arithmetic anchors pass without executing downloaded code or application modules. Pro's 47 arithmetic/SQLite assertions remain Pro-reported evidence. No material follow-up needed; 0/2.
+
+Integrated seven dispositions, research summary/evidence, rates intent/map/references and continuing queue. Keep rates deferred. Investigate recipes or upstream preparation only for a named repeated author task. Keep local trust first. Reject broad metric/platform expansion for this cycle. No application source, docs-site page or runnable example changed. Author/browser/formula/export/history/restore/performance proofs remain proposed. Full pnpm check is running; final validation and review PR remain pending.
+
+Byron directly renewed download pre-approval after the archive action waited for approval. Updated both discovery and collection schedules through automation_update and verified saved prompts. Future runs must show this explicit authorization to review and download routine task assets without another question. Pro separately reports a rejected Library upload; local downloads do not require Library persistence. No rejected upload was retried or bypassed.
