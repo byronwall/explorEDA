@@ -1,6 +1,8 @@
 # Quantity research evidence review
 
-Reviewed 2026-10-20. Baseline9b16d78e3ed0742ed4d5858c1939fec9e758b510 still equals refreshed origin/main. Application source is unchanged. The packet manifest authenticates35 baseline files. All16 extra source receipts in Pro's appendix also match Git objects and current local bytes.
+Reviewed 2026-10-20. Baseline9b16d78e3ed0742ed4d5858c1939fec9e758b510 still equals refreshed origin/main. Application source is unchanged. The packet manifest authenticates 35 baseline files. All16 extra source receipts in Pro's appendix also match Git objects and current local bytes.
+
+The scientific intent now has reviewed updates. Its packet copy remains the baseline record; current intent text intentionally supersedes it.
 
 ## Collection
 
