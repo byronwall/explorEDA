@@ -1,5 +1,5 @@
 {
-  "phase": "validated; review PR next",
+  "phase": "complete; verified open review PR",
   "runtime": {
     "node": "22.21.1",
     "pnpm": "11.9.0"
@@ -63,5 +63,19 @@
   "pr_gate": "pnpm check:pr passed",
   "authored_local_links": 81,
   "original_hashes_after_commit_hook": "passed",
-  "baseline_drift": "none at origin/main refresh"
+  "baseline_drift": "none at origin/main refresh",
+  "review_pr": {
+    "number": 465,
+    "url": "https://github.com/byronwall/explorEDA/pull/465",
+    "state": "OPEN",
+    "base": "main",
+    "head": "codex/missing-state-accounting-research-2026-10-21",
+    "files": 27,
+    "attached": true,
+    "body_and_links": "verified",
+    "labels": ["documentation"],
+    "unavailable_labels": ["codex", "codex-automation"]
+  },
+  "collector_status": "PAUSED",
+  "discovery_status": "ACTIVE"
 }
