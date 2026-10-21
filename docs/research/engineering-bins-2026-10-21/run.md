@@ -1,6 +1,6 @@
 # Engineering histogram boundaries Pro run
 
-- Phase: collected and reviewed; integration checks pending. Follow-ups: 0/2.
+- Phase: collected, reviewed and validated; review PR pending. Follow-ups: 0/2.
 - Mission: decide whether engineering thresholds justify authored histogram boundaries after current bins and ECDF.
 - Repository: https://github.com/byronwall/explorEDA
 - Checkout: /Users/byronwall/Projects/explorEDA. No worktree or goal.
@@ -71,3 +71,13 @@ Twenty-two independent arithmetic anchors pass; Pro's76 assertions remain attrib
 Integrated summary,evidence,decisions,two intents/maps/references and concise queue.
 No package source,docs-site lesson or runnable example changed. No changeset or product screenshot applies.
 Product/browser/author/refresh/export/history/restore proofs remain unrun. Full checks and open review PR remain due.
+
+## Validation before review PR
+
+Node22.21.1/pnpm11.9.0. Approved full pnpm check exits0.
+UI,library/app/demo builds,73docs tests and all types pass.
+Library250files/1656tests pass;3files/45conditional tests skipped. App8files/32tests and demo18files/431tests pass.
+No affected-file retry or aggregate rerun needed. pnpm check:pr passes.
+Original hashes,53authored local links,JSON,45source objects and22arithmetic anchors pass.
+No new fixture,author/browser/refresh/export-history/reopen/performance proof. See validation.json.
+Documentation label available;codex/codex-automation unavailable. Scoped review PR is next.

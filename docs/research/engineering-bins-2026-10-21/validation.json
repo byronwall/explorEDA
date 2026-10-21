@@ -1,0 +1,55 @@
+{
+  "checkedAt": "2026-10-21T08:09:42.380012+00:00",
+  "node": "22.21.1",
+  "pnpm": "11.9.0",
+  "pnpmCheck": {
+    "status": "passed",
+    "exitCode": 0,
+    "access": "Approved full run with localhost/file-watcher access.",
+    "log": "tmp/pro-engineering-bins-2026-10-21/pnpm-check.log",
+    "ui": "passed",
+    "builds": "library/app/demo passed",
+    "types": "library/app/demo passed",
+    "docsBuildTests": 73,
+    "library": {
+      "filesPassed": 250,
+      "filesSkipped": 3,
+      "testsPassed": 1656,
+      "testsSkipped": 45
+    },
+    "app": {
+      "filesPassed": 8,
+      "testsPassed": 32
+    },
+    "demo": {
+      "filesPassed": 18,
+      "testsPassed": 431
+    }
+  },
+  "prGate": "passed",
+  "originalHashes": "passed after commit hook",
+  "authoredLocalLinks": {
+    "checked": 53,
+    "status": "passed"
+  },
+  "jsonParsing": "passed",
+  "sourceObjects": 45,
+  "independentArithmeticAnchors": 22,
+  "productChanges": false,
+  "changesetRequired": false,
+  "productScreenshotsRequired": false,
+  "unrun": [
+    "new endpoint fixture",
+    "author/usability task",
+    "browser flow",
+    "source refresh",
+    "export/history/reopen",
+    "performance proof"
+  ],
+  "proFollowupsUsed": 0,
+  "labels": {
+    "documentation": "available",
+    "codex": "unavailable",
+    "codex-automation": "unavailable"
+  }
+}

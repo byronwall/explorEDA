@@ -19,9 +19,11 @@ Keep that bounded proof separate from the case for new controls. Local trust rem
 - [Original decision report](originals/decision-report.md) and [comparison report](originals/evidence-and-comparisons.md).
 - [Original proof plan](originals/proof-plan.md) and [original queue](originals/research-queue.md).
 - [Original archive](engineering-bins-research.zip), [collection record](collection.json), and [original manifest](originals/manifest.json).
-- [Source checks](source-checks.json), [arithmetic checks](arithmetic-checks.json), and [run record](run.md).
+- [Source checks](source-checks.json), [arithmetic checks](arithmetic-checks.json), and [run record](run.md), and [validation](validation.json).
 
 The archive and reports passed integrity checks. Forty-five Git objects match the reported source hashes.
 Twenty-two independent arithmetic anchors pass. Pro's separate 76-assertion claim remains attributed to Pro.
 No downloaded program ran. No new product fixture, browser flow, author study or restoration proof ran.
 No package source, docs-site lesson or runnable example changed. The proposed proof remains future work for review.
+
+Full pnpm check passes builds, docs, types and all test suites. The PR gate also passes.
