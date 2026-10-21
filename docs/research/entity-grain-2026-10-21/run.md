@@ -93,3 +93,14 @@ Research summary, decisions, evidence/probe/results, two intents/maps/references
 R077 remains next eligible broad study. Shared helper deferred; forced unification rejected.
 No docs-site lesson or runnable example was implemented. Proposed visible milestones pair both.
 No changeset or product screenshot applies. Full pnpm check is running; final PR gates remain due.
+
+## Validation before review PR
+
+Approved full pnpm check passed, exit0, Node22.21.1/pnpm11.9.0. UI, builds, all types, and 73 docs tests pass.
+Library250files/1656tests pass;3files/45conditional tests skipped. App8/32 and demo18/431 pass.
+Three separate research probes and submission baseline2files/17tests pass. No aggregate retry needed.
+PR gate,82 authored local links,JSON,36 source receipts,original hashes,archive and companion checks pass.
+Authored whitespace passes; original Markdown line breaks/trailing whitespace remain unchanged for integrity.
+See validation.json for exact commands, environment, logs, and unrun proof limits.
+No package behavior changed;no changeset or product screenshot applies.
+Documentation label available;codex and codex-automation labels unavailable. Scoped review PR is next.

@@ -1,5 +1,5 @@
 {
-  "status": "in-progress",
+  "status": "passed",
   "baseline": "f4cacdde180e16ad814451a8c064e394535565d6",
   "local_probe": {
     "files": 1,
@@ -13,8 +13,36 @@
   },
   "full_check": {
     "command": "pnpm check",
-    "status": "running",
-    "log": "tmp/pro-entity-grain-2026-10-21/full-check.log"
+    "exit_code": 0,
+    "approved_localhost_access": true,
+    "log": "tmp/pro-entity-grain-2026-10-21/full-check.log",
+    "log_sha256": "4a51af3e74595b4857fff7dce35d7f00d3312d067e3c8f466a71ca70b1ec8f4f",
+    "ui": "pass",
+    "builds": "pass",
+    "docs_tests": {
+      "files": 3,
+      "tests": 73,
+      "passed": true
+    },
+    "types": "all pass",
+    "library": {
+      "files_passed": 250,
+      "files_skipped": 3,
+      "tests_passed": 1656,
+      "tests_skipped": 45
+    },
+    "app": {
+      "files": 8,
+      "tests": 32
+    },
+    "demo": {
+      "files": 18,
+      "tests": 431
+    },
+    "limits": [
+      "45 conditional library tests skipped.",
+      "Existing chunk-size and jsdom canvas diagnostic output did not fail the gate."
+    ]
   },
   "unrun": [
     "browser",
@@ -29,5 +57,21 @@
     "restore",
     "export",
     "performance"
-  ]
+  ],
+  "environment": {
+    "node": "22.21.1",
+    "pnpm": "11.9.0"
+  },
+  "pr_gate": {
+    "command": "pnpm check:pr",
+    "exit_code": 0
+  },
+  "research_checks": {
+    "authored_local_links": 82,
+    "json": "pass",
+    "source_receipts": 36,
+    "original_hashes": "pass",
+    "archive_and_companions": "pass",
+    "whitespace": "Authored files pass; original Markdown line-break/trailing whitespace retained byte for byte."
+  }
 }
