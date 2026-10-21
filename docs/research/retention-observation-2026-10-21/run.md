@@ -1,6 +1,6 @@
 # Retention observation Pro run
 
-- Phase: integrated and validated; open PR pending. Follow-ups: 0/2.
+- Phase: complete; verified open review PR #461. Follow-ups: 0/2.
 - Mission: observation completeness after existing Retention.
 - Repository: https://github.com/byronwall/explorEDA
 - Checkout: /Users/byronwall/Projects/explorEDA. No worktree or goal.
@@ -45,3 +45,11 @@ Integrated summary,evidence,six decisions,domain status/intent/plan/map/referenc
 Node22.21.1/pnpm11.9.0. Root pnpm check passes UI,library/app/demo builds,73docs checks and all types. Library245files/1619tests pass;five files fail with localhost EPERM,file-watch EMFILE or server-setup hook timeout. Approved affected-file retry and separate app/demo suites are running. No all-green aggregate rerun is claimed. PR gate,authored links,JSON,original hashes and source receipts pass. Documentation label available;codex/codex-automation unavailable.
 
 Approved retry passes all five affected files/50tests. Separate app8files/32tests and demo18files/431tests pass. Root aggregate was not rerun. Original hashes,authored links and JSON pass after commit hook. New retention fixture,author/browser and export/history/restore proofs remain unrun. Ready for scoped review PR.
+
+## Completion, 2026-10-21
+
+Review PR: https://github.com/byronwall/explorEDA/pull/461. Verified OPEN,main ← codex/retention-observation-research-2026-10-21. Saved body,24files,branches,head and committed document links match. PR attached. Documentation label applied;codex/codex-automation unavailable.
+
+Four required originals,ZIP and manifest collected,read,reviewed and preserved. Six dispositions integrated into research,domain status/intent/plan/map/references,calendar boundary and ranked queue. Validation and sandbox limits recorded honestly. Approved affected-file retry passes5files/50tests;app8/32 and demo18/431 pass. PR gate,authored links,JSON,original hashes and source receipts pass. No all-green aggregate rerun claimed. Follow-ups0/2. No product implementation or new browser/author acceptance.
+
+Paused only collect-exploreda-retention-observation-research through automation_update; saved TOML verifies PAUSED. Six-hour exploreda-pro-research-pipeline remains ACTIVE indefinitely,GPT-6.1 Sol Medium,standing approvals intact. No goal,worktree,merge,deployment or paid services. Stop for review.
