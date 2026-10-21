@@ -1,0 +1,2650 @@
+{
+  "repository": "https://github.com/byronwall/explorEDA",
+  "baseline": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+  "kind": "selected source snapshot, not runnable checkout",
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "bytes": 4033,
+      "sha256": "802990c1bacd76b4b867239da78fd011fb32653f891d4a88560e9ee629979a33"
+    },
+    {
+      "path": "CODING_STANDARDS.md",
+      "bytes": 2213,
+      "sha256": "b4358fe75d063d53aea1edbc58d0dc6fd8df6e6165aa5792d8d2aa35eefe7ac5"
+    },
+    {
+      "path": "README.md",
+      "bytes": 10263,
+      "sha256": "1f05b6c4992b07d1fc2b38d7bf9273db9e4a3a0d94513b7265e13b81cd7c5e28"
+    },
+    {
+      "path": "apps/demo/src/daily/findings.ts",
+      "bytes": 8070,
+      "sha256": "c648a45829603f0d51282c4f089a9002af86ee3a15ab4eca412ae3a9d276e227"
+    },
+    {
+      "path": "apps/demo/src/demos/dashboardSettings.ts",
+      "bytes": 186846,
+      "sha256": "43afb014d90f556690413ec876364c80f0726c616ccd74bfd4f316cc64be630e"
+    },
+    {
+      "path": "apps/demo/src/demos/examples.ts",
+      "bytes": 56494,
+      "sha256": "b67518e290d939f719babdb5dc2723649701f8b60e4601f9a1d041b2aa8dfb93"
+    },
+    {
+      "path": "apps/demo/src/docs/pages/filters.mdx",
+      "bytes": 1298,
+      "sha256": "2900d282a67aac459cef111e19e227f55df5fd0cd2cff40721ee9d3059e9cc70"
+    },
+    {
+      "path": "apps/demo/src/docs/pages/heatmap.mdx",
+      "bytes": 2193,
+      "sha256": "fd5bccd3db7d07215306df02a10ce6c6ada291425b6d59542e64b81ba0897d6c"
+    },
+    {
+      "path": "docs/agent-guide.md",
+      "bytes": 19779,
+      "sha256": "0992949f205d1ae72a8249c69bccb33f1eb70763b14a526a6384a7a91f9c9f00"
+    },
+    {
+      "path": "docs/composition-mode.md",
+      "bytes": 20206,
+      "sha256": "0034e1e9b2a859e3f395fe119d57722d9c80b0b3ba05dcb1c5e5f528c8e1e09b"
+    },
+    {
+      "path": "docs/intent/current-analysis-trust/intent-brief.md",
+      "bytes": 3006,
+      "sha256": "d6b2d620753c1ea532fffcb1cb43cc42711e03daa898e989a7f283f475186bd7"
+    },
+    {
+      "path": "docs/intent/data-bound-narrative/intent-brief.md",
+      "bytes": 2776,
+      "sha256": "58cbf1154483f6586a2e40c366848f1ae6e83a9854274a6a9dcdca022739642d"
+    },
+    {
+      "path": "docs/intent/population-baselines/intent-brief.md",
+      "bytes": 3508,
+      "sha256": "9e4045b93ccb770fae6ea13988db3c25f78856ac6b80203574e0d2e81166d483"
+    },
+    {
+      "path": "docs/intent/precise-composite-selection/intent-brief.md",
+      "bytes": 3420,
+      "sha256": "cf4226d7b400f3c958b81dee7a0ce78d0d464f36e27d32b74f451f366e936fd7"
+    },
+    {
+      "path": "docs/intent/progressive-built-in-charts/implementation-plan.md",
+      "bytes": 12910,
+      "sha256": "41bb2233b1a64e925aa22761287f7baee85a7d43c225000600d1c0b10859ee13"
+    },
+    {
+      "path": "docs/intent/progressive-built-in-charts/intent-brief.md",
+      "bytes": 4114,
+      "sha256": "8423a6a5ec442eef98720df37803b762c7328bda68d5258899a6dc89d0c825a6"
+    },
+    {
+      "path": "docs/performance-checks.md",
+      "bytes": 13317,
+      "sha256": "9dcaf64e27d37016372faae8e07165b0de2c390602787a9eff96e2c8a73ea80f"
+    },
+    {
+      "path": "docs/ui-defaults.md",
+      "bytes": 19093,
+      "sha256": "93ee25ebd3917a1e56d7db818ff4b6edcfe7e063f390ff9d5e9b83a0cc32f84a"
+    },
+    {
+      "path": "package.json",
+      "bytes": 1258,
+      "sha256": "f9b14daf225872f605d9435ddfb46fdede88b203c87a0e8507fe20743536f6e3"
+    },
+    {
+      "path": "packages/explorEDA/README.md",
+      "bytes": 27554,
+      "sha256": "53aa57886a6b8920a02a39bb1e2f7701359016fe30e01afbe761a528142c0ce6"
+    },
+    {
+      "path": "packages/explorEDA/package.json",
+      "bytes": 6082,
+      "sha256": "17a71fd8852bcfbfb92cf76a9faf03766e934d0a5f0afcdcc9a5d0fd563b452a"
+    },
+    {
+      "path": "packages/explorEDA/src/charts/registerAllCharts.ts",
+      "bytes": 3384,
+      "sha256": "fba92bb3564cde0e66c325e1fd0d9614da9a6a66d09fafa3ac1eca26eabd00f4"
+    },
+    {
+      "path": "packages/explorEDA/src/charts/registry.ts",
+      "bytes": 3090,
+      "sha256": "8938b10f0c249a0710517352c78eb8c56d461240c21afd4f0e24142b484c4b9a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Axis/Axis.test.tsx",
+      "bytes": 4193,
+      "sha256": "79d00bdffb6d7f85ec58ed76c10b3a567c5c5efdffc9a9b6ffe6f4688932e6e1"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Axis/Axis.tsx",
+      "bytes": 285,
+      "sha256": "e3d594566cfe479271d78477478810d1383242585312d50b6ff7b308ad87ebcf"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Axis/AxisLayer.tsx",
+      "bytes": 10241,
+      "sha256": "05a73597bae5e82531b105915e09376b3dac5da182c4a9179df16950ee9b71c7"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Axis/axisBounds.test.ts",
+      "bytes": 4885,
+      "sha256": "692b2d4058677d7ed101bf9736773ded8eb4ec712fb224c8817050f6ae600aa2"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Axis/axisBounds.ts",
+      "bytes": 6463,
+      "sha256": "dcd665c7f30971a980339ceb26475dc169fb60259298191cb302e3ee531a45be"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Axis/axisPlan.ts",
+      "bytes": 16789,
+      "sha256": "d035606361910fbfb94600dec68ac961eaf2f009872a09802dafda66fc591337"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Axis/axisTypography.test.ts",
+      "bytes": 2756,
+      "sha256": "2060942672da2c2df7f3ede5babbbf515f6eb71c63fc61c7d0c98784b001ed90"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Axis/numericScale.ts",
+      "bytes": 923,
+      "sha256": "6d2f90d8063c87e620c0dbf11d01389d785885a0f5bcd55c099ae0dca47f867d"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/AxisFieldActions.tsx",
+      "bytes": 7358,
+      "sha256": "255bc6292bfa2ebb603c0cf58d8fbac1ff06fa5c4a3e0449a6450edf3d01fa64"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/BarChart.select.test.tsx",
+      "bytes": 3600,
+      "sha256": "17341d0a06854ed3fb5feef1c440617dbe4b738a5dfbb106e57aebd20f8a75a1"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/BarChart.test.tsx",
+      "bytes": 1345,
+      "sha256": "17c7d876c95eb14bc42c2d5e1fa5e469a1aa0998e0600298d55e2c3ad7f86979"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/BarChart.tsx",
+      "bytes": 19773,
+      "sha256": "a4805c5391d3707a1c799e48dd2764b3ddec0ea2bf485bed3813619dedc186c7"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/BarChartSettingsPanel.test.tsx",
+      "bytes": 3649,
+      "sha256": "753cbf4d8a3ab5b181ae1c51085ad8b9f3a6e588947865d9bf8ef70def3e2c11"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/BarChartSettingsPanel.tsx",
+      "bytes": 15063,
+      "sha256": "cd9c1429b73ea42628c1c39ca2a76237e9475d8fc9ea37635ac0de669b0ce04c"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/BarTraceBody.tsx",
+      "bytes": 6280,
+      "sha256": "ec6c8519e5f34921a05266864c921b0a69acc5341a630a4c2dde507782e4ccac"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/GroupedAggregateInspector.tsx",
+      "bytes": 4100,
+      "sha256": "cc3f938e9715fe12e0f64fca3db003c097c6117994de9b6a7adc15c39c1fde35"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/SeriesBarChart.test.tsx",
+      "bytes": 7495,
+      "sha256": "7acb1b226bd909c4ed11a57e85cfb3b602c5d4a556247502924b877e230cb23a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/SeriesBarChart.tsx",
+      "bytes": 13048,
+      "sha256": "45f80f470e33feebd21eb16062a9036893fd0e4d0b5bda734b9a6e06bc71c5dd"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/barPlan.test.ts",
+      "bytes": 7480,
+      "sha256": "de17c61d954e1bdff69b07eb5447bbe0f2224f6e06aef2519139a29ff5bf5726"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/barPlan.ts",
+      "bytes": 23319,
+      "sha256": "79933db557b72b3326342b1eb3e0667f4f2a1ce924093f17e3939f78e0399834"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/barTrace.ts",
+      "bytes": 1725,
+      "sha256": "7b19e7f433ffc0acf2ae57a4fc68359eafa4ce32b3aff45f0ed97cb9ef40b6e8"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/bins.test.ts",
+      "bytes": 2613,
+      "sha256": "03e40d5f4d38c9ae3e118fb93f902e696a6c752ce8b5df2c2c2307665149a8fd"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/bins.ts",
+      "bytes": 3723,
+      "sha256": "fb6428b2dd359f2f104666ea203c6a6d393415c89e9405709ad04ec1c34d3bcb"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/definition.test.ts",
+      "bytes": 1500,
+      "sha256": "428825d46bd9f9ed86fe3febe16d7cd5e5968e71d6db693f61b682ae4b0c07d5"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/definition.ts",
+      "bytes": 2722,
+      "sha256": "7567d38cf9a8b52d65cffa387a38e61cdab6a3c19f9c60302c4999899a62293e"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/seriesBarPlan.ts",
+      "bytes": 13672,
+      "sha256": "363d9714b9c99ef18e79de7ec19396c3a10d2aa0edd1cc7d63d8d49fc85ffe07"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/stackedBars.test.tsx",
+      "bytes": 7156,
+      "sha256": "907ad36fd67c4f114ca6b46917439f68ec2d7c831d29c48e8d9cc2681d7d1916"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BaseChart.test.tsx",
+      "bytes": 1820,
+      "sha256": "0cb9892dafc65561454c69c071be0812bd57f6e27540ab8fa93a886f600da63f"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BaseChart.tsx",
+      "bytes": 14197,
+      "sha256": "6996d12e1743cd6da2e82f70709d0e4b572f361b8255e984452d93d48377c281"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BoxPlot/BoxPlot.tsx",
+      "bytes": 25921,
+      "sha256": "81db3c771463a33168786aaf9014051f5fb316a781207726fe7a85a795647347"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BoxPlot/BoxPlotAxis.test.tsx",
+      "bytes": 3376,
+      "sha256": "ac131ea25764528a4f890db6c20114fd9c467e7784ed5aa496b4b1bf575aa178"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BoxPlot/BoxPlotIcon.tsx",
+      "bytes": 460,
+      "sha256": "98060a06f7624f1303ef8c39ee1b7c1ddd7251e13bc97fe06db9f0a630e9b204"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BoxPlot/BoxPlotSettingsPanel.tsx",
+      "bytes": 6325,
+      "sha256": "ad5e3027d7ee185cc6ced4048e1fceb6e456fbb782340f406b492e56dd5f2adc"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BoxPlot/Distribution.test.tsx",
+      "bytes": 2740,
+      "sha256": "911af9249d36b449b84ea57dd3dd747d1d883e1753c5bbb4970151051cbe81c4"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BoxPlot/DistributionTraceBody.tsx",
+      "bytes": 3520,
+      "sha256": "95eeb1970f780425f53d108baff2a21f868751c8031a9f711edc09e5813503f6"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BoxPlot/boxPlotCalculations.test.ts",
+      "bytes": 2741,
+      "sha256": "e794b1a9700f1a5b56606a028c052c40466a5385cc2db339f5b027f5fe1ad6fb"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BoxPlot/boxPlotCalculations.ts",
+      "bytes": 6784,
+      "sha256": "93635d540cbde8209b59655f1e817075612fc586106a64f4874199ea3bee4f61"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BoxPlot/definition.ts",
+      "bytes": 2859,
+      "sha256": "d2b8341adc2c8faf6f1bba20eb798db76dbc3be18a6fde5eb270748f33a7e236"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Calendar/CalendarHeatmap.test.tsx",
+      "bytes": 2230,
+      "sha256": "766969f715c702d8bfc19966471228f72a11625e5c10e95682391b77e5722ab0"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Calendar/CalendarHeatmap.tsx",
+      "bytes": 16045,
+      "sha256": "da3e2a6eba7acf60fb487cde32d4ca09d5defcc02d72f735f4abb632ed2f1ef4"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Calendar/CalendarSettingsPanel.tsx",
+      "bytes": 4940,
+      "sha256": "3e47daf03b0401216e3a925d32f0524e9db6e252d1148c087772aad1fd89690f"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Calendar/CalendarTraceBody.tsx",
+      "bytes": 2514,
+      "sha256": "6611133bebda1816e19efe6d1f192c9cf31b8e2c28bfe566487cb08da3ff2b43"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Calendar/calendarPlan.test.ts",
+      "bytes": 6289,
+      "sha256": "957a97cdf10f2f3a4f1c3df31cd284107e3a7a66af89447a786f9227b016ddc7"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Calendar/calendarPlan.ts",
+      "bytes": 13396,
+      "sha256": "5ad2199d2e20b20796d6eb74d64de015e7a23ef50fab0f2eb5f7a9047f05f917"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Calendar/calendarTrace.ts",
+      "bytes": 1385,
+      "sha256": "b7dcb37e2db7dc2a6645e157b891f5592b29e90c73ba72d4fb668732ef8d2efb"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Calendar/definition.ts",
+      "bytes": 1937,
+      "sha256": "530c80051a8c776b5b80d1fadf16a1505b7e6e4375bfc36b5e9f75deec39a9fa"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ChartMessage.tsx",
+      "bytes": 730,
+      "sha256": "bfcdfd289d7e2a2347a7b4a7ebdbe0b59cb586deba600f02dfcea478d8e61581"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ChartReadout.tsx",
+      "bytes": 880,
+      "sha256": "92c9d14252f60c0be6ffc2df5b2c8122fdcd4c1a55d4ed45bd20b60167025615"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ChartRenderer.tsx",
+      "bytes": 1941,
+      "sha256": "1a4955f172d078e340f737122846af5bdc4590a3e9cda43946ac4f91e1583f77"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ChartStatusLine.tsx",
+      "bytes": 1208,
+      "sha256": "4fd50dc25453d4bae6dab9935bd771e3b9b94d9f6cb3aba45619b22a92da6beb"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ChartTraceControl.test.tsx",
+      "bytes": 978,
+      "sha256": "0c25c5df807e99750b5852c89f03b438cb46e5a6621032f1a238ca3771508054"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ChartTraceControl.tsx",
+      "bytes": 2633,
+      "sha256": "71f324b4719fa2252281ca7e8b99869ccae439e64e5e9ffc4fe000863642a5b3"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ChartTraceDetails.tsx",
+      "bytes": 6881,
+      "sha256": "6f3696c5658f0ee0946e89eebf2602664a81230e7329ba4f35c5591adaa59e61"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ColorLegend/ChartColorLegend.tsx",
+      "bytes": 9384,
+      "sha256": "d719cec7a1977518fdee8bd9105e4827beeb16ed00149ccc2dd3ac6379cf9e97"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ColorLegend/ColorLegendChart.tsx",
+      "bytes": 5893,
+      "sha256": "62db7b887bf539b2825d85eeed816ac3314c26d2c0137bbd174837c1f6819242"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ColorLegend/ColorLegendSettingsPanel.tsx",
+      "bytes": 2025,
+      "sha256": "ef843b6be8089811d1fc6f72e7cc940fb0110e62fc594e573fc52c2ac7edb349"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ColorLegend/ColorScale.test.tsx",
+      "bytes": 3382,
+      "sha256": "2842f452f8bd93a528778e64c1073facc120075db6881784c55bf175b4b6a750"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ColorLegend/ColorScale.tsx",
+      "bytes": 4532,
+      "sha256": "1a8e77f3cee9f4150dc8429626a579f3f599686c6116a26336349d44369f0686"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ColorLegend/definition.ts",
+      "bytes": 2028,
+      "sha256": "b11c90a08910685d303568b753aff6848c6270814fcdd1e70911b706aacda8a0"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/AnnotationInspector.tsx",
+      "bytes": 23469,
+      "sha256": "fddeda800f8b2598fd19d53d80cb1e770f0a4afb7f0687595900dbf58213116d"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/CompositionChart.tsx",
+      "bytes": 23823,
+      "sha256": "0636b0b286df2fef5e502b4a4db6e9b563c63ca6472a2c33bf5e958a51b70294"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/CompositionInspector.tsx",
+      "bytes": 28751,
+      "sha256": "6f81466d3ef93ee908c522ea8c5d5b81c104c64179a3a078b934ba15fc35c378"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/CompositionQuickMenu.tsx",
+      "bytes": 4330,
+      "sha256": "36a6c0545954c0d37eef2e727d7a0276a2dba2d468e0d335c2b8aff32a3e6cb0"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/CompositionSvg.tsx",
+      "bytes": 12123,
+      "sha256": "fa9683ecbf1883f1eff1b3025c90bd973c73505cde0cc623fa90ec2ea2a7c851"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/CompositionTraceBody.tsx",
+      "bytes": 22959,
+      "sha256": "9ac6a706c56433bf58e7d667193bc4981d83ad49e92d01f6bd1a91a64605d47a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/ScaleInspector.tsx",
+      "bytes": 20625,
+      "sha256": "aac7a641c5d180e809062ec44ed687df36e3801f72f85081183c86a9655dcf76"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/UnitInspector.tsx",
+      "bytes": 101612,
+      "sha256": "8eba20d33558ac8c09dc16c09af60b576e23ad85bd394d01182d810cadfac848"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/artboardZoom.test.ts",
+      "bytes": 1947,
+      "sha256": "e87357e910471deaee9626fa3eb6ba126790d8d6a5cdf04375f5dde96adf322a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/artboardZoom.ts",
+      "bytes": 4640,
+      "sha256": "c154f5924ab56c015e8cb8aae5d1e5d65acedc8e1b4907f8f0e44f80d39e769c"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/bands.test.ts",
+      "bytes": 12325,
+      "sha256": "4c8c87d988386bf5b5a6a5a4280ad85c623c59f232191d9da8fdd44e0e327329"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/bump.test.ts",
+      "bytes": 5600,
+      "sha256": "ba276025c11e3d3289a8030bd9efb0713f9e4377be30ffb90bd7de1b7d1365c6"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/calculations.test.ts",
+      "bytes": 5536,
+      "sha256": "39f6f5cc75bf98e4ce32bc25d84e8956931fe1507b4feed5a3398c21b6d36fed"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/calculations.ts",
+      "bytes": 7971,
+      "sha256": "d1c4b50605fecd13a8e8b9da8fd6910cddfe3fce2729684fef5a077cb6d9fe8b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/composition.test.ts",
+      "bytes": 2946,
+      "sha256": "2e1857bbe6067fe3ce67a0138107b6c8980383453cb488136bfc8a2aa4c111ec"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/compositionEditorEntry.test.tsx",
+      "bytes": 3471,
+      "sha256": "5f978864aa5a8cc0c4a7fef216201cd80ebea474440ce2273147976cb3541877"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/compositionEditorStore.ts",
+      "bytes": 3247,
+      "sha256": "cb9e5e2112affee84199674b8c1299d7843c5d8b1c87d42e66bedc16e3c14321"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/compositionEdits.ts",
+      "bytes": 17700,
+      "sha256": "3e8138648834596d82652f6bafaf6bb851d15aff19baca1265e937f9f1726912"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/compositionOutput.test.tsx",
+      "bytes": 1308,
+      "sha256": "bf15f967130312b2c53d9a09c4b71a0ade9086adfb0fd76c2ef2e497194a23f2"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/compositionOutput.ts",
+      "bytes": 3064,
+      "sha256": "5b5f2b0a09d308efc10826f4b3397117968fd05f174dafc80488a61ff6dcab1b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/compositionTrace.ts",
+      "bytes": 12805,
+      "sha256": "e1f764904bf3b80eed0a8145a29b9ef6a66ba26ff9dddf1fc3de7b5ab1d5cdc8"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/compositionTypes.ts",
+      "bytes": 48259,
+      "sha256": "e00d612c62d29f2da42dda1377801ae63b2152bd6e64203ce003d2fbc767c377"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/definition.ts",
+      "bytes": 1523,
+      "sha256": "4da429571f5d0a3df145cc01172521c0996cd4307cdf982900c7ab1484d18213"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/dumbbells.test.ts",
+      "bytes": 8740,
+      "sha256": "ff8ab93d2d7c8aa0e77e5713cd07cdf44bcf5edcd1dd6f6ae155e055e1ffe0a2"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/elections.test.ts",
+      "bytes": 8218,
+      "sha256": "88624a51a23b37785b250627023e2566532f80f36949a5e64275704c77c81386"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/horizon.test.ts",
+      "bytes": 4625,
+      "sha256": "4115e86f81f4880bec66c0c11653619814fb7edc31aebf57806102773a0ced3b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/insets.test.ts",
+      "bytes": 6664,
+      "sha256": "8d785981133d380f738337e73eb4baab2b76340f25e3703547f63729a2722920"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/inspectorControls.tsx",
+      "bytes": 3160,
+      "sha256": "fd7caf2bdb3e4871e998b22b02bd568a6fcf8f2631cc52ee67c7ca64f45f1bb0"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/labelDodge.test.ts",
+      "bytes": 1018,
+      "sha256": "49b714515dbdd020b6eaf2c2d8b7b1512ffa55f62746cee8ffe7389f540acb98"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/labelDodge.ts",
+      "bytes": 1441,
+      "sha256": "f34c528eb2ba55f841d14a1730d4521f2b02db465b12cfed17f6f341c70d5d33"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/markSummary.ts",
+      "bytes": 4396,
+      "sha256": "a01366367a4642e71fb7bb832b232477979f3bd981f979e0825c342789553837"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/measles.test.ts",
+      "bytes": 5659,
+      "sha256": "84095caf6787421271291900ea98462056c0aad7a0105d84bc82f2ddbd36e67b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/measureText.ts",
+      "bytes": 1290,
+      "sha256": "1437706aa3ca7320cb4f5af275702aff096b46f73ebe328747c3042156faf333"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/multiples.test.ts",
+      "bytes": 6735,
+      "sha256": "7f863c0d519227394ccdac8d7942721d00177bcfa9b879e1fffa125e064dfb8f"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/ordering.ts",
+      "bytes": 2180,
+      "sha256": "db1a1a9c95a5c4625c1c268ec171c430c9772b535e3fe9c19b0310690129ad0a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/overrides.test.ts",
+      "bytes": 3536,
+      "sha256": "993adbf8ca2058d46e0169c5e649e63afe1c15fd5bb8adb2a8306aa69325d2a3"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/partsMarks.test.ts",
+      "bytes": 8190,
+      "sha256": "64eb637896e4746e9d4ec28ca945947133b57fe13930fc6a64613967944c28e9"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/partsMarks.ts",
+      "bytes": 12332,
+      "sha256": "2f299635587c3569549ff04c334a962c397ce2eb193eec53b13be06a2e53f4c5"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/paths.test.ts",
+      "bytes": 12914,
+      "sha256": "9064fd6ff0ee8f54868f1e31005f9c3cb7bc8de82a5bae786d48c5b49effa0a5"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/pyramid.test.ts",
+      "bytes": 6452,
+      "sha256": "47ebaf45dae76cc693d510f38b5db10950a1535a5287367d75f5e7dbbe38b011"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/quickActions.test.ts",
+      "bytes": 5682,
+      "sha256": "8945d1fcb4f7803a0d756d11e98d979b7aa06f8ed77538ffc68bf9797a4b801a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/quickActions.ts",
+      "bytes": 6470,
+      "sha256": "381a58a71e1a7f9330a53d7dd10a0ad4f83bab372e59aca2cd6631f23d77f2a0"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/resolveComposition.ts",
+      "bytes": 40602,
+      "sha256": "4a494f6271d3af1e6311cc148543957079cf655161a80d965aeaf448c0a1f012"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/resolveUnit.test.ts",
+      "bytes": 6255,
+      "sha256": "891388a5434b6016ec2e199e3a12121b291582d5cd62274fc3747842db2fbd8e"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/resolveUnit.ts",
+      "bytes": 137286,
+      "sha256": "10b2447e7a3a36509d768e600c58d309cb53a21e3828eee1bf1bf0217c25531b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/ridgeline.test.ts",
+      "bytes": 7391,
+      "sha256": "65dca350a0217094c8e3f17201ffdeb6509056e129ebc648a2528e8288303f36"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/scatter.test.ts",
+      "bytes": 5072,
+      "sha256": "a5735c97e611bacce64064fb47a349415a0731580ccdd8e438ad26f9eda7ce1e"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/slope.test.ts",
+      "bytes": 6305,
+      "sha256": "20b0e89222b1a37725a9f0c11fe7003fdd180d9afb4cf05aeb6fbdf316baa96c"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/spans.test.ts",
+      "bytes": 4559,
+      "sha256": "7f2fb8b39f9569d8e3c0e44d0b836c70afcb7d7929000538f6fe186472849ca6"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/sparklines.test.ts",
+      "bytes": 6591,
+      "sha256": "c20b99e50fd9d31452b6cab02f2d49e2b1f533e25dd6808da06dc1d846c1b956"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/stackedAreas.test.ts",
+      "bytes": 5869,
+      "sha256": "c444a901d7128c8c1296c638a2590de5029cb364a39b299830269237451b39fa"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/stacks.test.ts",
+      "bytes": 11286,
+      "sha256": "6f55356f266f04ac56aab8b1ba189995d03c86a6fac140336d5d7ec8d03b56de"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/streams.test.ts",
+      "bytes": 4862,
+      "sha256": "82f76a618d3753dac293d90605b83e63fcef9fc55df7ca5fd693c431adbc9eab"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/summaries.test.ts",
+      "bytes": 8641,
+      "sha256": "beabf3916e2d33eca74235e0c01ec6120bd6bbfc7bf85fc70b4de13a02a59688"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/swarm.test.ts",
+      "bytes": 4922,
+      "sha256": "269649b712e84e6457ab0a0b273f612076c06182ecf334e0e09fa11a21f10d0b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/swarm.ts",
+      "bytes": 1430,
+      "sha256": "214312171442753bb6b99fc989f3f99dd60e6bd5e83cee61e7efb267749aa2b9"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/tiles.test.ts",
+      "bytes": 4375,
+      "sha256": "348c2caa43f9488dde1fb72c13055a222baff77322cd6a36a172e040fac7675b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/useCompositionData.ts",
+      "bytes": 895,
+      "sha256": "ae5f48a1b3b01f40a86c3d73a51427586701e163a20ded76def7ba55809f629f"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/validateComposition.ts",
+      "bytes": 23055,
+      "sha256": "8d3f049472ca04b67e2decdb1e12c60b3d2b4b9e6b0e2f8f89ba67da64c8a6e5"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/valueShading.test.ts",
+      "bytes": 3589,
+      "sha256": "2f3a358b29b3937786e01ef0dfc34137aa7799c720b93f123ac614296ff34bcb"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/waffle.test.ts",
+      "bytes": 7363,
+      "sha256": "cc02de375ccf51cb0ca9284b933657f54462d1bd3a8206e392bcf4682aa43337"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/weights.test.ts",
+      "bytes": 4003,
+      "sha256": "3eca184a3198cde89afec3f392e8efb425bb4823341115961ed3d28cef8bee1f"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/DataTable.tsx",
+      "bytes": 8968,
+      "sha256": "0039f22156ef1dd3f0cd6ef58e73115a7f3b5ae12eaf8c4e04e2677295bc74c1"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/DataTableBody.tsx",
+      "bytes": 4812,
+      "sha256": "2e1dd3e7e05d119545c364f48c2be563d0d7a0daeaac1749c8713d9ee6a7cd70"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/DataTableContextMenu.tsx",
+      "bytes": 11177,
+      "sha256": "76ca913d4fd68eaa674dfefc69ad784be0080370232a1f9f23caca1741235b7a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/DataTableHeader.tsx",
+      "bytes": 19157,
+      "sha256": "2eef148e040fd012fe59a23fc860d8fffda727749fccec3e10caba222d2a7ea3"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/DataTableSettingsPanel.tsx",
+      "bytes": 1828,
+      "sha256": "dd180c0a6e73f6ce43314e9efd7bba0372921241aef9c5425c961434c3846595"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/DataTableToolbar.tsx",
+      "bytes": 5533,
+      "sha256": "401418aac8f4c132ccdb3b906ccefad82392e94db56e1bd558eb582e74bf65a7"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/README.md",
+      "bytes": 1398,
+      "sha256": "288468c5fa9fffce4afe1f8386d19f79eb7aaaad413a847acde9ad494776243d"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/__tests__/ColumnFilter.test.tsx",
+      "bytes": 8909,
+      "sha256": "f21fc732848d9d260bb0a16beb9a7fd9fe8018f0713183a966b7057a9b935b29"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/__tests__/DataTable.test.tsx",
+      "bytes": 4552,
+      "sha256": "5bc175b5fdb57b48a05b79da2a351eb130363df6297b4ee58a81e583a9d6d05c"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/__tests__/DataTableBody.test.tsx",
+      "bytes": 6630,
+      "sha256": "08dc06c558d121276e6d29f51a4e8aad50b7011117dd800858e3b2b80c8c07b1"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/__tests__/DataTableContextMenu.test.tsx",
+      "bytes": 4071,
+      "sha256": "1375d2d0f92ffd57f6d93b596bd59717cd9f50c3fc7e005fe313fcb683d6a476"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/__tests__/DataTableHeader.test.tsx",
+      "bytes": 16192,
+      "sha256": "2f2a43ac4454a55f397922254cffa5e5345309cf089011ad79529f0f286f35c3"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/__tests__/columnOps.test.ts",
+      "bytes": 1358,
+      "sha256": "fc841833c96e629d44b42a559df7f81450c2981bdb73455c92d3cd4f4e9753c5"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/__tests__/columnWidths.test.ts",
+      "bytes": 685,
+      "sha256": "7a05c619ff6b92b0f3b0ed9f08ec05cb6d4ee90cd41e3cc73d0752362fe38fcb"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/__tests__/highlightMatches.test.tsx",
+      "bytes": 1054,
+      "sha256": "742e802b79057cfb336a47ce952c76d0b7c58d72ec8f2d7c274e6367a7b50bf1"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/columnOps.ts",
+      "bytes": 1264,
+      "sha256": "257d30dcd7df70b4020990133dd1c9ee9f63052689a0fee516cdcbf4ec48a594"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/columnWidths.ts",
+      "bytes": 1001,
+      "sha256": "556aa94d0a7eee01989f7219eeb6a44c9204b2b6ca1069aaf69951da4cd7e87b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/components/ColumnFilter.tsx",
+      "bytes": 16961,
+      "sha256": "41bd81c4ca5fc39a00ace5543e296b941e699d87463369b981400accace7a886"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/components/ColumnHeader.tsx",
+      "bytes": 1146,
+      "sha256": "dd73438c0882064ed30d3f9dc7119798d9065d12a3ae1fc9c558d4f89f590833"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/components/ColumnTooltip.tsx",
+      "bytes": 3547,
+      "sha256": "c5e360bddd9cb731919c768d94bae3e2e96a43d51bc6e3a9ecd5a0802d72f4aa"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/definition.ts",
+      "bytes": 2249,
+      "sha256": "d40fd095ef8e2244b9d178b172ef4e132f2265e0c3588eec6e62c183eece853c"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/filteredRows.ts",
+      "bytes": 2197,
+      "sha256": "0723f9d5341214b0522d6c8231a0ee9ec32dd816b6e0a6067c9d49bedb5c147b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/highlightMatches.tsx",
+      "bytes": 1032,
+      "sha256": "18114cac92411d0d54c544ad6a31bc255f8386864066490393f2c0d3046dcf43"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/useColumnDrag.tsx",
+      "bytes": 6398,
+      "sha256": "a59c16884b04701ccad0c688455af7473a830562ba2c7dea3fb8ea0ce3c96f57"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Donut/Donut.test.tsx",
+      "bytes": 4325,
+      "sha256": "fe5cae7ec3082fb36a1ccfd9336bc81c590accb4824871ebf73d5242339613ce"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Donut/Donut.tsx",
+      "bytes": 14301,
+      "sha256": "d0f0dd25437d728408aca5cbdcca7ef062be70f67265182e6daa7f7c9a50aa87"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Donut/DonutSettingsPanel.tsx",
+      "bytes": 3921,
+      "sha256": "62735e4226c230f65dfd4e1dc6b0a037a342b1b044b86dd170d6674a09124713"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Donut/DonutTraceBody.tsx",
+      "bytes": 2427,
+      "sha256": "69860a0cb7e226f9bcc657fda03cd2f9363f9619e00df7cf8d6d89570b1278c3"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Donut/definition.ts",
+      "bytes": 1585,
+      "sha256": "c0d099e14053c5d2fa57b9798b03eca4a1684749f58f1ee562b3a58e64da340f"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Donut/donutPlan.test.ts",
+      "bytes": 2865,
+      "sha256": "a6a3157ac278264f3d96bd6e8eb1fd06538f8bb983d0fd9f9bcecdb685591a6a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Donut/donutPlan.ts",
+      "bytes": 3937,
+      "sha256": "4934825829ef207974c4d9ff6981afdc3e9cfe225381711e150364d65e44967e"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Ecdf/EcdfChart.test.tsx",
+      "bytes": 1956,
+      "sha256": "73109cbc6b437b2fdfa3e5fa686df33df407bf0fc60b2a58489cf31c85649c39"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Ecdf/EcdfChart.tsx",
+      "bytes": 23725,
+      "sha256": "7c904c193448078c28f24261ead61690b88efba2f16156e73a8a9825f8ddb159"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Ecdf/EcdfSettingsPanel.tsx",
+      "bytes": 6605,
+      "sha256": "8c28bd80248c7ee6c106ac28336009be9b3de50c7266a2fffd1383356bc71856"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Ecdf/EcdfTraceBody.tsx",
+      "bytes": 2770,
+      "sha256": "0346c5b588291c44792e0f8b176dc1739b56bd4fb1f942d7bcd6a861acec52f0"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Ecdf/definition.ts",
+      "bytes": 2036,
+      "sha256": "ac5b154835778aec2ea727f618718134e6961b60e48d5d8441f124cf12ff7ce2"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Ecdf/ecdfPlan.test.ts",
+      "bytes": 5499,
+      "sha256": "081459fc279711ea31b82a10b1d86d6ef617c9f3414538223e7ceee0a47daa24"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Ecdf/ecdfPlan.ts",
+      "bytes": 14306,
+      "sha256": "3814a434bcec72e222f3b5dbc1c3f570a51bc7c73fc9e37754051121127af142"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Ecdf/ecdfTrace.ts",
+      "bytes": 2198,
+      "sha256": "b7e1a14694202cf13984e0bbd6d22ce1a39d4fb923213dd8543622824a7e7b0e"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/FacetRelated/FacetContainer.tsx",
+      "bytes": 14524,
+      "sha256": "f71b07a7cf2fa19b3fad0cc6970c7c54cb9390b7c44a1107238c6772249bfe05"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/FacetRelated/FacetGridLayout.tsx",
+      "bytes": 10153,
+      "sha256": "30f3606f7de1a10d264197c5cd049d7923782e7742de3b79a4a77a3f4ec4652d"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/FacetRelated/FacetPager.tsx",
+      "bytes": 5012,
+      "sha256": "74b33f28b28d6f2227f30e51e109ca3ab9ee4a4ec3ef7a1c71e79f79227cd545"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/FacetRelated/FacetWrapLayout.test.tsx",
+      "bytes": 4827,
+      "sha256": "a0449be51869140ec1403c9e7ff31a8c52e46aef5a9e80b992d1943367db501c"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/FacetRelated/FacetWrapLayout.tsx",
+      "bytes": 4626,
+      "sha256": "16db6c073d5fcf4c08cfdc2f41f5fe54eb451d59b17022a97b0a644eda93cc14"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/FacetRelated/facetBarSlot.tsx",
+      "bytes": 756,
+      "sha256": "a1fb7eda5fcc1f2603fc1344fce18716c80527980f40aa9a4578a11acefc3dc8"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/FacetRelated/facetLayout.test.ts",
+      "bytes": 960,
+      "sha256": "ac1564f45275018b4a0b53ba71168f375119cb6eaae34280cf29dda8240b8c47"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/FacetRelated/facetLayout.ts",
+      "bytes": 2592,
+      "sha256": "81a2624595c51126fc8b63530c7fef7b012a3606472966d7548945167f9c8a79"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/FacetRelated/facetTrace.ts",
+      "bytes": 358,
+      "sha256": "de7609d640a5e3039284b60c46b2c89b03739eb7aa64a31a61d21a2a6422dd7a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Funnel/Funnel.test.tsx",
+      "bytes": 5105,
+      "sha256": "17458bdb5ff91c9a4a10a04f9800ee62ee73b852496e345ce001d2e0b4059ca8"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Funnel/Funnel.tsx",
+      "bytes": 15348,
+      "sha256": "09dbbbd7f891944c4df8a5313bc14a5a32a2d8833d46f323498d86ae57aff040"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Funnel/FunnelSettingsPanel.tsx",
+      "bytes": 7260,
+      "sha256": "8d3bd04a89c53b33eb5b96a0a8d880c2b659c95d0021978c33ce7ebd6b24a980"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Funnel/FunnelTraceBody.tsx",
+      "bytes": 3682,
+      "sha256": "dc3a9cd717d4638049c50d3bac63ac08c5e210b07a234bda4babfc84a5c19334"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Funnel/definition.ts",
+      "bytes": 3112,
+      "sha256": "e32c88af9aed50f8e23d85e48f8c7e58b31de8549ecd9a2a237e1963c9e7851d"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Funnel/funnelPlan.test.ts",
+      "bytes": 4401,
+      "sha256": "be6248c64c75086b4f4a426747d85dbead4e6b4d764d62198d6f1f1b25a84a3c"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Funnel/funnelPlan.ts",
+      "bytes": 5980,
+      "sha256": "0b3412137c46997d3c2fedee5a78ea6ffd77d0b2ae5ba225bdbf954bd834c401"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/HeatLegend.tsx",
+      "bytes": 1430,
+      "sha256": "24c3bbae16a3bb9f96977449d5c63d006894cc2f5129e5d23141ec249496f4fe"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Heatmap/Heatmap.test.tsx",
+      "bytes": 2175,
+      "sha256": "a390d09a8c13603e131d2babf94d7c2d62dff5ccc63bd49928e402a33ed1c2fa"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Heatmap/Heatmap.tsx",
+      "bytes": 18055,
+      "sha256": "34f9a042cbe1bbf61d4cbcccb24ae080658c5dd5c63a57704602620fdcd6f369"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Heatmap/HeatmapSettingsPanel.tsx",
+      "bytes": 11889,
+      "sha256": "4c7509bb7114c7889bd3dd8f7353c07800d735860324f4a02510819b72854f89"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Heatmap/HeatmapTraceBody.tsx",
+      "bytes": 2796,
+      "sha256": "c4a7ac2420e4028ee236be732c266627e77724e4daebfd593763607793c413df"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Heatmap/definition.ts",
+      "bytes": 3115,
+      "sha256": "b73ec84817a13c299c4fd193956588fdd323120bda356cb962c51ceac4eb39cb"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Heatmap/heatmapHistories.test.ts",
+      "bytes": 6779,
+      "sha256": "c1e82768c55548c085f0d2902839db91d21d0542e95a92e780735540db899d0b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Heatmap/heatmapPlan.test.ts",
+      "bytes": 6934,
+      "sha256": "7c1ee13ccdf42f2cc810f96525ad98acb23c445cedcc32387f6b3ee185614974"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Heatmap/heatmapPlan.ts",
+      "bytes": 19568,
+      "sha256": "21d9308c759f6dab72f856e60f651227aa8afc09cdc5d350af818ac971b9c7af"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Heatmap/heatmapTrace.ts",
+      "bytes": 1530,
+      "sha256": "859e4ba7febb1e19a475088de19799b6907c7f1383fc10ea1cadbb65211fa48d"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Hierarchy/HierarchyChart.test.tsx",
+      "bytes": 8726,
+      "sha256": "2f694d7c36298ac496ae67f319922f6d19890493e4c327df53d5b8a925c188f1"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Hierarchy/HierarchyChart.tsx",
+      "bytes": 28353,
+      "sha256": "853c60dbb52cb5db0b288d6bb1ebbc7d36a50be8cc8c336ba658ed9b5c9b7c93"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Hierarchy/HierarchySettingsPanel.tsx",
+      "bytes": 10492,
+      "sha256": "bc3b02fb68169bca3dd163adf2a87b67dabb7c06c64cc8e93d1f0872086957c6"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Hierarchy/HierarchyTraceBody.tsx",
+      "bytes": 3203,
+      "sha256": "251e35cdfdd5a615c5a31d1510dd5be860416c7edae4abf9b485b0cd7499957a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Hierarchy/arrangements.ts",
+      "bytes": 772,
+      "sha256": "5b295b7fcf8af2342255bb854e234494d4a0f279ba04c258a00ef6867f08cf79"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Hierarchy/definition.ts",
+      "bytes": 2775,
+      "sha256": "af36fd5277bf3cf9680654d0c59ca404098edc237370f573bb78415f70709882"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Hierarchy/hierarchyPlan.test.ts",
+      "bytes": 13063,
+      "sha256": "6e30b39f5c136af896adca05f42e6c36639e8306ced409ce55f3e449c68426d7"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Hierarchy/hierarchyPlan.ts",
+      "bytes": 15924,
+      "sha256": "5eb289ecef9afdae704b87e191cac8581af9f8c70fe747b35d13b6d1a3f16cb7"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Hierarchy/hierarchyTrace.ts",
+      "bytes": 2296,
+      "sha256": "9bb8f9573941ba7ae6e11e0316dac10cfebcf7318984c2dda92f44ead87e8804"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Hierarchy/partitionLayout.test.ts",
+      "bytes": 2610,
+      "sha256": "5987c99e811a3033d4a777881916e03457d334943b09de8f0867ae0316cccbbb"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Hierarchy/partitionLayout.ts",
+      "bytes": 3481,
+      "sha256": "8fc5163f80841354ea520dc3bcb47220046ae1a881d8c8b76ef426abb81001a3"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Hierarchy/treemapLayout.test.ts",
+      "bytes": 3075,
+      "sha256": "4b9659c7815f899d9cb63c6b231fc7bca020556f075247393127c3f7f26bc4e5"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Hierarchy/treemapLayout.ts",
+      "bytes": 4669,
+      "sha256": "6fafe162c2832ed2149139b81ee67d84fece6fb4dcb48725ee4e46860967a03a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/InPlace/AxisLimitFields.test.tsx",
+      "bytes": 2693,
+      "sha256": "72a9e7e4ee14ee34b2ba88c0b83bf22d0d07eab20f3df9ff76084d865dd49908"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/InPlace/AxisLimitFields.tsx",
+      "bytes": 5739,
+      "sha256": "ccc084a33fe74b6c4517a275fac18377b83fc4d3f7635a1287acdf4ecc60e4e1"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/InPlace/InlineTextEditor.tsx",
+      "bytes": 2546,
+      "sha256": "fe860cfdbc7c58aac567b902f6e04024c5bd6857dbc7e24cca971b4e2df6a234"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/InPlace/axisDrag.test.ts",
+      "bytes": 3973,
+      "sha256": "5050b28beb6bdbaa8ac2ee4ca7c1f166ab74c7cdadf5c1acff2654aca689ae06"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/InPlace/axisDrag.ts",
+      "bytes": 3894,
+      "sha256": "f0d2545d73fa0af7c5bf8f5f0b9e38755b31ad20b9fd9cf8612a1b141c027014"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/InPlace/axisEditing.test.tsx",
+      "bytes": 6319,
+      "sha256": "24e0466d899a602efb15a7d44c4115b98f4ac44228d14492bac07e5809a65ad6"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/InPlace/hiddenNotice.test.tsx",
+      "bytes": 3161,
+      "sha256": "3b1376a2a5429e3a5b77a3c759308e315cc4ea488631d6518396447a62a3d57d"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/InPlace/hiddenNoticeCharts.test.tsx",
+      "bytes": 3917,
+      "sha256": "b8f9b0eba64e94dc2e1153c0203f14d38ea32945575c022e1533b135fa00e10b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/InPlace/logScale.test.tsx",
+      "bytes": 4935,
+      "sha256": "7e3c36f5710ded591ce64e668d21cb065060fb76b29c867225eca1b5de87a594"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/InPlace/titleEditing.test.tsx",
+      "bytes": 3809,
+      "sha256": "443f9a8553c7afb801fde36af9e153fca0501ca1709b6d35162128feb19786c2"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/InPlace/useAxisEditing.tsx",
+      "bytes": 16253,
+      "sha256": "2c0f4c2151cdd75ef7957ee43c988e5e33aa78912a21627229ad69abaaf33d23"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/InPlace/useChartEdit.ts",
+      "bytes": 2190,
+      "sha256": "a7ac4f2276c48897792e06b88b3462b25a9245afb0dd4dbb287ef496d2f114d9"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/InPlace/useHiddenNotice.tsx",
+      "bytes": 8285,
+      "sha256": "29ab3b252fb35c692e103f76713acdea44a6cda42f889fb5a0c83b222ec3319d"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/InPlace/useTitleEditing.tsx",
+      "bytes": 5569,
+      "sha256": "08287cb1d3dbd52a9f66c4731bd6e60b28aaff6804e524c0f7469faca7252ef3"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/LineChart/LineChart.test.tsx",
+      "bytes": 4233,
+      "sha256": "bfa91aad63bac814f3c893af90d8f792cd78eb8fa1bca084bdcd651999274ef9"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+      "bytes": 30249,
+      "sha256": "e032cb9ecf5d4601f7a816c53d2f4d57f82f34bcb611951c47af42c67d75d50b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/LineChart/LineChartSettingsPanel.tsx",
+      "bytes": 5473,
+      "sha256": "d4c00eb7a204f2914bcf04958ce9e59192f4e2eb0cc595e17fb1ea6347705513"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/LineChart/LineSeriesSettings.tsx",
+      "bytes": 3689,
+      "sha256": "7d3490d90a6c66a897f882522b2a2d81269cc845c5d0ba9d205d97d6a477a6e0"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/LineChart/TimeSeriesChart.test.tsx",
+      "bytes": 6132,
+      "sha256": "1658774db772741851feefa3f0edb382f86f65b618946d750f72e23ff59dc575"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/LineChart/TimeSeriesChart.tsx",
+      "bytes": 17625,
+      "sha256": "6e279c4c0862e3b4a5b07bd504e7e817925c5451548e720201833e49d5f6e497"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/LineChart/TimeSeriesSettingsPanel.tsx",
+      "bytes": 9709,
+      "sha256": "52248e30fe1fa03902c874cdd9283a7e5736a2ce4769c20420fb121e401aabd3"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/LineChart/TimeSeriesTraceBody.tsx",
+      "bytes": 8266,
+      "sha256": "717702deefcdeffbc98b363a82c0179e56a9fede833a3d8d5e46a651611990ed"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/LineChart/areaCharts.test.tsx",
+      "bytes": 5947,
+      "sha256": "3f4c2d50bb8cdc5f341c01bb3894149a5fd56d9ac6321eebe7e09ad722a0b516"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/LineChart/definition.ts",
+      "bytes": 3679,
+      "sha256": "22c8ce9b100146abe4614b871022804f110aeb826c21c06370e617852e4c935a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/LineChart/timeSeriesPlan.ts",
+      "bytes": 15867,
+      "sha256": "6e86dd6a596a7357bf59abca9b567fe982a7c837e8ffa598593e8e1eff241ec3"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/LineChart/timeSeriesTrace.ts",
+      "bytes": 1490,
+      "sha256": "15396d0c761d90e1388c1da2ac521ad26041651846147b87a541e09133c2d0e0"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/MapChart.tsx",
+      "bytes": 369,
+      "sha256": "64ebb42f3c6e35b1526396d5c49a148c3f8675cd461873a0640a0df53b6c0774"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/MapLayersControl.tsx",
+      "bytes": 7757,
+      "sha256": "424c9bf56d9f19ba8b4a8d7d629cf6a4ad8da5369f4a283814017780409178d4"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/MapSettingsPanel.tsx",
+      "bytes": 9722,
+      "sha256": "bbf5b0e1a7dfa75496c4c71831f8f29f3b9529b2a73255df47df16c036eaee6e"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/MapToolbar.tsx",
+      "bytes": 5791,
+      "sha256": "363688d924034da491b6bb1fe2579593baff33e471b45fe63b2df0973fd79473"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/MapTraceBody.tsx",
+      "bytes": 7528,
+      "sha256": "b48404c762c08ae607087e3eab8d7149130f8a1a6f68f96beef82b9064cee58c"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/PointMap.tsx",
+      "bytes": 23441,
+      "sha256": "c6a6601e988ee1b8b0028d1963a086ce225dfb9bd8eebbc8783272b9e7ba2c3e"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/RegionMap.tsx",
+      "bytes": 17168,
+      "sha256": "4c287d8a40183371dfb049fc9c7f55adb7549a8ecc2907e39efa84ba935a4d3d"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/RegionMapSettings.tsx",
+      "bytes": 15151,
+      "sha256": "e7454ccb355c5951b4e32ae4aaafb2c95e9a87bc7beb950e471e53651b728c11"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/RegionTraceBody.tsx",
+      "bytes": 12457,
+      "sha256": "37ff561e9f433790e00cb1751ad6bff8b1e868adcd24f7cbcf67861c3093c303"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/StreetBasemap.tsx",
+      "bytes": 4798,
+      "sha256": "e7fbb62fe458f8d8653c951e37ae86de9ceac8419cf8a2507ba48fc160b3f7b4"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/definition.ts",
+      "bytes": 2651,
+      "sha256": "9df07132d086e8cae4a7005ef12b587dcbde90b113844b526d0e702e783c126d"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/mapEngine.ts",
+      "bytes": 2437,
+      "sha256": "3b4b124942a421613e071b003b2fd1ac281d3f1f0add9e38eefd55341c27aec1"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/mapGeometry.ts",
+      "bytes": 3378,
+      "sha256": "241533a746e84e0d43390452065c9014ad4c4ba08e77ac0bcda0b1b49a47f772"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/mapImage.ts",
+      "bytes": 4733,
+      "sha256": "c5b86522bbe67176a5941ece2cf2b71544a03b5bf42e149e646d08c37e24829c"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/mapLayers.test.tsx",
+      "bytes": 4027,
+      "sha256": "988d4fde5ec9dd272d69c6292dc7afeff67e5fd28d696143caa0d2761f14005c"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/mapTrace.ts",
+      "bytes": 411,
+      "sha256": "bec522ad3d1ff94f83f24ac9d1ea4a888c922796d46a734f511f2b85f1740a14"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/pointClusters.test.tsx",
+      "bytes": 3223,
+      "sha256": "e2e536d3b77bf26562a95aa21aaa9c8706d6bc4e8fd2da73c05440070ad7c72b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/pointClusters.ts",
+      "bytes": 3149,
+      "sha256": "8b8c00bf21ac2961e609c4260f3370b8d3d49d6a7fa765629bf7b225835f8849"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/pointMap.test.tsx",
+      "bytes": 10246,
+      "sha256": "a40f022a48badf3937dd52d8649a808e8a47f16dd9ea8b6998fcee8bf369b7e8"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/pointMapPlan.ts",
+      "bytes": 5694,
+      "sha256": "844246ad8a61a9cc45793f5e7e168fa0316cd30643551b649e2a92c408fb479c"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/regionGeometry.ts",
+      "bytes": 2682,
+      "sha256": "5928527e93dee024771e70590f9b98be031ff152aa6bfa5c96f6a306e149f6d0"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/regionMap.test.tsx",
+      "bytes": 14748,
+      "sha256": "7ea940a811b8eff9a92ddfba869f20ca32ddaa4399c37f3bc5a5d592de1f3807"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/regionMapPlan.ts",
+      "bytes": 7757,
+      "sha256": "66068b61acba2784865a3ba2c2eca996a2f6f20d2dc41c8b999c6b1227c96861"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/regionMapSettings.test.tsx",
+      "bytes": 4464,
+      "sha256": "2f0d2c5d61162f9ca7ac3349babec1898c91b82522e1792402c6ec454a0f7c99"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/regionTrace.ts",
+      "bytes": 437,
+      "sha256": "73a10941ac45c6e23507a35d001a6f037dccd3a6037993a17e251f4c0d0dfa95"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/streetCamera.ts",
+      "bytes": 2367,
+      "sha256": "f452abf63b934399a5a524e29ff910f72c6dda40e7ef60f048be01fc3353ad99"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/streetMap.test.tsx",
+      "bytes": 6593,
+      "sha256": "3a7bb1e0b11e1a18d9f5c96211cd257714332d04317f3898356b60006db35766"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/useMapData.ts",
+      "bytes": 3603,
+      "sha256": "037b649b80bd88fe55a8c3503ba129951a1ac590009bea80c7a9a468f5b0e58f"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/useMapPan.ts",
+      "bytes": 2031,
+      "sha256": "5fddc7156ab57ac7186ff962b0264cb5a9d82a84a84ecb75890c37839a1f3797"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/useRegionAsset.ts",
+      "bytes": 638,
+      "sha256": "1d82d4d54cbb4165aafaebf51e22bbd58f182e4db32581bd22e40c5aec5a4ed1"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/useRegionInference.ts",
+      "bytes": 759,
+      "sha256": "7a4c35b92923db98a83ce739dd0105c0267de1758f8d63852e65af9ef6d7b226"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/useZoomDetail.ts",
+      "bytes": 3150,
+      "sha256": "c458dcfb4a0651e5c2210730616c97235cd94616a1e95d8c6530863929b71392"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Markdown/Markdown.tsx",
+      "bytes": 11449,
+      "sha256": "39647f08765a9647ee0f01f2920d6aeb3c3ae078aefef3b40ef1a80b335bf5f9"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Markdown/blocks.test.ts",
+      "bytes": 2323,
+      "sha256": "8a572862f5b63cacef6ca17fee466f9dd97448567d3e105b3b13c3be7b22ac76"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Markdown/blocks.ts",
+      "bytes": 3686,
+      "sha256": "543e4541fac5feb857d8a4a6875dfedb5c08becd5cd89eeeb0c6b9ff0c8ec05d"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Markdown/definition.ts",
+      "bytes": 900,
+      "sha256": "406963f36cee3026f2267b603477979ef05ad2e789d60388cf62195d52789754"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Markdown/styles.css",
+      "bytes": 3022,
+      "sha256": "bb30c7684de55cfd548e83fbe0c46f0f53a66bbec6b58dd73b4b5a92189c637c"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/MetricCard/MetricCard.test.tsx",
+      "bytes": 7017,
+      "sha256": "5cd60586675935e8a649d7db26839e10621e86b163021062d571929ebcad4f20"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/MetricCard/MetricCard.tsx",
+      "bytes": 7258,
+      "sha256": "f229d8e75ae2c5f3604e7df9fbc28c25a6d5fafd31dec3eda0ffbbbb5bd89813"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/MetricCard/MetricCardSettingsPanel.tsx",
+      "bytes": 3471,
+      "sha256": "78912a6feb545fadb70d6e95c047404e12b538bae00205a5443d5317231837f0"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/MetricCard/MetricCardTraceBody.tsx",
+      "bytes": 2261,
+      "sha256": "609d4a60747be2394314f66efaa70e26f3a129fa7989c68ea1bba211b85b8f9d"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/MetricCard/definition.ts",
+      "bytes": 1520,
+      "sha256": "199024f211d1037d2936e164f018a5d310e5db2e5e8bf76280649e19ea524ff6"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/MetricCard/metricCardPlan.ts",
+      "bytes": 5485,
+      "sha256": "d557faa6313df2f96d84f0dcc4df980e9c8f5cd0f6ab3a41e588634c2b4a5254"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/MetricCard/metricCardTrace.ts",
+      "bytes": 935,
+      "sha256": "81949272b9e6551b279f11fda60f13789b00a37e78f45a2ecf5bd56682956bda"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ParallelCoordinates/ParallelCoordinates.test.tsx",
+      "bytes": 2723,
+      "sha256": "5129150fcc0bb69afa5e547f8387e38c15ef09684aa19e5cd7e043596cf5385f"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ParallelCoordinates/ParallelCoordinates.tsx",
+      "bytes": 34230,
+      "sha256": "586ff3ab4e797985c3cc1e8a9a0bde413d6eed7490d252123299b49132b95c85"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ParallelCoordinates/ParallelCoordinatesSettingsPanel.tsx",
+      "bytes": 11286,
+      "sha256": "8a2e1d3d995cd4909e4fad6f4ca490f455833ba4ac3d207bd6d2d043ec66eccf"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ParallelCoordinates/ParallelTraceBody.tsx",
+      "bytes": 4506,
+      "sha256": "6c0ee57d9f614cee6635fab359b3bcbd5c882ad0c5589e553dc124cd06aac928"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ParallelCoordinates/definition.ts",
+      "bytes": 2325,
+      "sha256": "e1d96ef3941680625c92b972fcd228dadff8df95553c84390ecb924b3780449d"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ParallelCoordinates/parallelPlan.test.ts",
+      "bytes": 9848,
+      "sha256": "e7bc63e4935790333b7641f1387fe3572098b378976ee6509f385b32cc5389db"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ParallelCoordinates/parallelPlan.ts",
+      "bytes": 18093,
+      "sha256": "08e1e655d407d6337964d8f3dd941f85e89f9b37c1ba8eb5287fcf410c6474c5"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ParallelCoordinates/parallelTrace.ts",
+      "bytes": 3111,
+      "sha256": "bceec8ef2b8f2d76c4a3bc36c3ea0a61386275bf7f046d7e90cb3c78703650b7"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/PivotTable/PivotTable.tsx",
+      "bytes": 25826,
+      "sha256": "f26242bcda4f9ff41cbdc5db4597fa29f785e6dc929b1a83a33c7c3d18e9be2d"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/PivotTable/PivotTableSettingsPanel.tsx",
+      "bytes": 6719,
+      "sha256": "f4b02c0ccc0b61cc7e9e8623f83e204fc62f4a2625e6b31d25e98639e4f16db8"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/PivotTable/__tests__/calculations.test.ts",
+      "bytes": 13341,
+      "sha256": "9cb7aba00ddb1ccc80dd726658380a5fa8aa1545ceaac04bacdd017e58b88cfb"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/PivotTable/definition.ts",
+      "bytes": 3618,
+      "sha256": "fc7c6121f491c9e136ed18f9e92d3c35e1cdae7acd007a8e615ddf1e47039356"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/PivotTable/types.ts",
+      "bytes": 1432,
+      "sha256": "d1e6e51dd351aa1799b96ef4d63b088ba188ebe2a73fea0944fb5e1af4de05e0"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/PivotTable/useColumnNames.tsx",
+      "bytes": 243,
+      "sha256": "8e4ca2075d460d03ee081179c1983544cf7ddb113daaf7681144e6e26e56eab2"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/PivotTable/utils/calculations.ts",
+      "bytes": 12063,
+      "sha256": "0ea92194bd12f38acaadfa2cf855ef4f0508b434b1a89a0be806df1bc9204ad0"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/PlotValueLabels.tsx",
+      "bytes": 1362,
+      "sha256": "e7b8f07f07252b2f366e5cae5accf0e639636a3ed52f76350b32218afcd8677b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Retention/Retention.test.tsx",
+      "bytes": 5319,
+      "sha256": "502592c06e590382953802ae209fc8c49e07e950aa9f4503a854912baa4dcf8b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Retention/Retention.tsx",
+      "bytes": 17881,
+      "sha256": "1f29a537217da6d060ea1dafd7832f62126f42feb7d2664afa6f47468eb7d7bb"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Retention/RetentionSettingsPanel.tsx",
+      "bytes": 7226,
+      "sha256": "fff0a5193a15a4d16b07872ca2b315adc2834e4c48b18625913a3fd5b031052a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Retention/RetentionTraceBody.tsx",
+      "bytes": 3458,
+      "sha256": "b64f8a64882787c186b92e929b3045621d891097051acb8a33293c62005e833d"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Retention/definition.ts",
+      "bytes": 2440,
+      "sha256": "a3b97d3a83c017e639f6114e53c3cee751c7a62fc152a2baacc81631a80ad0b4"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Retention/retentionPlan.test.ts",
+      "bytes": 3957,
+      "sha256": "71c62181f366cac6f95327c4aebf1648a69e5b06f81efba1502b259740e8e831"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Retention/retentionPlan.ts",
+      "bytes": 8311,
+      "sha256": "2cefa6a9cdb2a739fb7ed42e536cd6f06bcf5f228c4b3ad2a98f621d4e8bb7c4"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/RowChart/RowChart.test.tsx",
+      "bytes": 11391,
+      "sha256": "06d40ba07d0406a0688072e46274561d2fc12197a9f188748974f01ac9038fa7"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/RowChart/RowChart.tsx",
+      "bytes": 27130,
+      "sha256": "670083aabd562bc5eeb24bad3fa4cf6a2621552a52e56cccbabca957ead1043f"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/RowChart/RowChartSettingsPanel.test.tsx",
+      "bytes": 2969,
+      "sha256": "8a0c93b2bc8fd27de6d354b75b81ae08891ed6d106ef5830539494ac5bd4588b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/RowChart/RowChartSettingsPanel.tsx",
+      "bytes": 11258,
+      "sha256": "711b0df71b09b9e7a772421a2e3a9bcd18e19e2edf4391c9965c31fd4b55146e"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/RowChart/RowTraceBody.tsx",
+      "bytes": 7523,
+      "sha256": "f077cde952552848c515b4d92068ff2a7b28bf0a0424bcf581bf166a57c53669"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/RowChart/definition.ts",
+      "bytes": 1500,
+      "sha256": "e4fc072a508902d353e265bbdce076faaa1de81985aa49ef970e10db729fa98f"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/RowChart/rowChartPlan.test.ts",
+      "bytes": 6079,
+      "sha256": "794114c5ef48a1ff24dddafe00a634a3e3ce5c8a11f21d95708a66132561d6fe"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/RowChart/rowChartPlan.ts",
+      "bytes": 3640,
+      "sha256": "33ff57afca9265a9abccbce6f5d58b056c8823148caa2b9ee84862a0f3b96cd0"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Sankey/SankeyChart.test.tsx",
+      "bytes": 2798,
+      "sha256": "45019332349f115e22649a74ad9aae885309104e4d35da480aff5498ba272c92"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Sankey/SankeyChart.tsx",
+      "bytes": 23616,
+      "sha256": "ddf9b8c771956bbbaf3deb7af3e264325823fd2ad2382091c30cfd3cc65f242c"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Sankey/SankeySettingsPanel.tsx",
+      "bytes": 10522,
+      "sha256": "648704a4709a020e11aeb92b3988f3485e204477f79537293008faa49e39661b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Sankey/SankeyTraceBody.tsx",
+      "bytes": 5931,
+      "sha256": "247a7f1633c6a2bd53cc18ebad6a364b1f8af64770da95f3653390bbc8efe2fa"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Sankey/definition.ts",
+      "bytes": 2515,
+      "sha256": "1828ce165e5e95c37e543f810f1e4350282b8a60bf2635fa38115d25d6b5b7c4"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Sankey/sankeyPlan.test.ts",
+      "bytes": 7757,
+      "sha256": "1b8901cf6baf93d5441255fd5e420c0b0eab13f790f8e27f6a3437127c3667fc"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Sankey/sankeyPlan.ts",
+      "bytes": 19813,
+      "sha256": "e3e8f8dc20b331ef5cbde45c8736fe007e574e294a833bc0605408060b712627"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Sankey/sankeyTrace.ts",
+      "bytes": 2847,
+      "sha256": "f6ceab1496e6e2447354e66a725ec90df33a8786bf4fd03e6228f4317e56dfd4"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterMatrix/MatrixTraceBody.tsx",
+      "bytes": 3850,
+      "sha256": "9597e56af47e4bae95e7b256f8fa404f7ba33889f6788ad36260998d64715e08"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterMatrix/ScatterMatrix.tsx",
+      "bytes": 41799,
+      "sha256": "10365d9bf79a904b4790aa28b4481526f7ae13e8c4afb4c18d6cb1ddcad5ffe1"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterMatrix/ScatterMatrixSettingsPanel.tsx",
+      "bytes": 12991,
+      "sha256": "abfaf29f0ad233319353c3937e9cb38f62a06e66d0629b0e06f80911d6ebc62c"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterMatrix/definition.ts",
+      "bytes": 3673,
+      "sha256": "6b9d4dcd73add20db27ff9157564e29ec2b2952e2e56dba771c66d7708d445b9"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterMatrix/matrixBands.ts",
+      "bytes": 5354,
+      "sha256": "7d0bb05daabbd7898497d9c5cbde9e55743efe0f6ba678016fa5ec202a419952"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterMatrix/matrixCanvas.ts",
+      "bytes": 7946,
+      "sha256": "414841b7ebd34f3391c20b73f65ea1b83f8ea56294387533897b6e94e0931e70"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterMatrix/matrixCells.ts",
+      "bytes": 8047,
+      "sha256": "ba5054a5e38aa46cc0806721ce572c8558eef6532a442739c9d6778ecb3da08d"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterMatrix/matrixPlan.bench.ts",
+      "bytes": 2047,
+      "sha256": "48233bbb3b89d53907e9f00a7869ccf3cdc06f1259b34c9c9165995b1bf737af"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterMatrix/matrixPlan.test.ts",
+      "bytes": 16936,
+      "sha256": "4bf905274a2ea45806f6c32283313c5aa3b0231dab8633664dd7e25349967175"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterMatrix/matrixPlan.ts",
+      "bytes": 29368,
+      "sha256": "5144a04d50fedeb2b7fce566201d8db61fb7e56d113c5a43bbda9b4371389747"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterMatrix/matrixTrace.ts",
+      "bytes": 4905,
+      "sha256": "f95e0b51d1b699afce6b3fb51adaa268b5e62f81c21b521293dec5a1a33cd8d6"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/BubbleLegend.tsx",
+      "bytes": 2040,
+      "sha256": "a29d54a0cd26d02306f8b2670b9a6c8a7c25271bd49d831728cfa2b064c162a8"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/ConnectSettings.tsx",
+      "bytes": 3880,
+      "sha256": "9cab946f5084b79fe9e04c76628248e51be9fdaf6d1540bf6e87e63b78335180"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/ConnectionLines.tsx",
+      "bytes": 2750,
+      "sha256": "1d4ffa7cdbdb40de14f2f3e515690edb957f418572931c07dc82285be837481e"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/ConnectionTraceBody.tsx",
+      "bytes": 3888,
+      "sha256": "2eb27343ea37267c24b3cd1fcd9f25f947067ca498c3d05264af66bbb5e7907b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/DensityScatter.tsx",
+      "bytes": 12060,
+      "sha256": "0cd39f45ab4cec7e44bbb8a264c56787af1591b64cafef6265fd268f239a7da5"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/DensitySettings.tsx",
+      "bytes": 2443,
+      "sha256": "9073c2045e1b6a88ce881c3075bcd5777ba91327fc29ecc04d0a378626169522"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/DensityTraceBody.tsx",
+      "bytes": 8627,
+      "sha256": "8aadcfcf2e5cb0a7e84e4d643141c31877c238ab8804de93a415612f1821f876"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/FitLabels.tsx",
+      "bytes": 7730,
+      "sha256": "c0330e95267335076afa835e480dc413b4c65b6bfba823e1ca802adf757f9bb4"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/FitTraceBody.tsx",
+      "bytes": 8722,
+      "sha256": "873c9069d754b4a93a27f1c56a96e30c5148b3027d151d7e698e282660795d27"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/MarginalTraceBody.tsx",
+      "bytes": 1882,
+      "sha256": "0cb0891827ee667e8e7d4fa63bdb9d8c69e23be6599ae0e520e1b78c9aa90d2a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/PairedSummaryBody.tsx",
+      "bytes": 3492,
+      "sha256": "e82c95d460d47ecdf406f252c6584ab23ef110d3618872c83f50ff7e6ebbb384"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/PointSizeSetting.tsx",
+      "bytes": 1596,
+      "sha256": "1c4f41458243eba175821837730aa0f612d95afa4b324947e94fa741736cba71"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/RegressionSettings.tsx",
+      "bytes": 7049,
+      "sha256": "4e018687036d6820102c9653739cf677419b4a7a9470952691ac861401cddc1e"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/ScatterPlot.tsx",
+      "bytes": 29798,
+      "sha256": "f9be0e4377aa20efe1ce1c22a7e82bf677b1d0a7a05a83dad9d90031e5838a7a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/ScatterPlotSettingsPanel.tsx",
+      "bytes": 9046,
+      "sha256": "33313a91849a7e45d91d9a7bca358d325687f9e90a82df25bd55e591ae5bf371"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/ScatterSvg.test.tsx",
+      "bytes": 10404,
+      "sha256": "3c663f6142e1ad1eb4cc8f88f2f044522bf3b2b3a0f470131069beae1d52f0aa"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/ScatterSvg.tsx",
+      "bytes": 25552,
+      "sha256": "c8493e1ab97d9d41f88d20a97ae0ed6fb3ca8d556d7c97bd921d1ed08cee3825"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/ScatterTraceBody.tsx",
+      "bytes": 10200,
+      "sha256": "9d71fccc1147309524c8dbc3a5d2311cc6e6e8e289f8de4f94b744de94059d61"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/SurfaceLayer.tsx",
+      "bytes": 6052,
+      "sha256": "e77566d14f8c63942e7c4be8ba489a569783777f62df670c56cd4eb78b3989ba"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/SurfaceSettings.tsx",
+      "bytes": 5869,
+      "sha256": "a184d25f0cd38cf318ef9e1b8eeeff1753f3448e13141c38bbbdb3376081ca5d"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/SurfaceTraceBody.tsx",
+      "bytes": 5785,
+      "sha256": "c168ec71976a5359d665f5206f4a64d033e51f5af4c98c70ee7e32ea08c760ad"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/bubbles.test.tsx",
+      "bytes": 9091,
+      "sha256": "18036ac379bb8100d829e00d420032768b6435bcf31588cc140ae7fcef6a0fa0"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/connectPlan.test.ts",
+      "bytes": 5709,
+      "sha256": "dba436fe9b87087a32b7aba1085c6bb85d45760a34d4c973237447699feaf045"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/connectPlan.ts",
+      "bytes": 9647,
+      "sha256": "c00e254b087797c278a19c593650fb47b2cf70c8cd04fa1e8c2988de48010d22"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/connections.test.tsx",
+      "bytes": 1827,
+      "sha256": "f711d617355c89a287391ef0c2bb13c665f903a2a156d58c5e7869f772784799"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/contourPlan.ts",
+      "bytes": 8053,
+      "sha256": "f45889cb27139aa2ee12a3d347d44a0e4a23bab17b32cd57f9dced4b1f40e309"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/definition.ts",
+      "bytes": 3356,
+      "sha256": "b19d1183b5d2a5e31c3fca27140f25a111e446d8158b2f1573b7f9f9a510172b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/density.test.tsx",
+      "bytes": 7051,
+      "sha256": "087bc4bb9b9a89576c3067091b9547be42cd4f52b01c5ba86132124cc9dafa8d"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/densityPlan.ts",
+      "bytes": 5776,
+      "sha256": "72e5d2c5eb92189432c79fa68d3197e9b566fa95074e0f6ea16b2aa734e0a7fe"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/fitPlan.ts",
+      "bytes": 10164,
+      "sha256": "172be90883434fd36451407c0a30f7241ef9fd27f2a2c2d1068529db59e63214"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/hexPlan.ts",
+      "bytes": 7098,
+      "sha256": "c85c501e7c56d4cb0c333e607eeca7e7964e7784cc86633158e0fac59ad9c083"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/marginalPlan.ts",
+      "bytes": 8168,
+      "sha256": "37cbd5f162b10d45b70578d0947b5c42e6a9d0351c02b7802b790dd15252afcf"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/pairedSummary.ts",
+      "bytes": 3907,
+      "sha256": "f8bd85e25c78ced5024836e4c3e813628f68386f8fdc3ba4e76fd4639276109b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/planScatterPoints.ts",
+      "bytes": 3346,
+      "sha256": "a49f6f0e6c89d87f36b04b9dc6d2821ac6ca3ed6f5c5c77bd28f9fce51e7937d"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/pointSize.test.tsx",
+      "bytes": 3188,
+      "sha256": "a4514a30d9c11316a6df77057fb319faea5d07032ecb01b3330770e223779481"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/regression.test.ts",
+      "bytes": 11832,
+      "sha256": "966a797b759602e759522b38cf56ca7ec1ce717322a3532d40659cb5ba1cf7ea"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/regression.ts",
+      "bytes": 15060,
+      "sha256": "f29ed8bb097eb49f4be4906cbac257b040588f89a51fab41a5353b33b74fda96"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/scatterAxis.ts",
+      "bytes": 9739,
+      "sha256": "568ee13f3d309324514bc30040c7251b6ca4a5f1d077569df87d703edf17b5ac"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/scatterPlan.test.ts",
+      "bytes": 9754,
+      "sha256": "ee72c8fed3cb558ed445b6ce671bc94d21e4138501b5ec0a5e27391b17919ab1"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/scatterPlan.ts",
+      "bytes": 29630,
+      "sha256": "c871ba298010412b8efc20d91bff6499351cbb8cded781f5d5b5437d0b3df4ef"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/scatterTrace.ts",
+      "bytes": 8221,
+      "sha256": "494eaa37f2c4fdf6d43839235d57cb6c1bc4c9b25164742daf716d0b34fc132e"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/summaryMarginals.test.ts",
+      "bytes": 6161,
+      "sha256": "c9b90e0f137db7fb8e73e2752de3285d94f217120650b08ffb1dba9632fe570a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/surfaces.test.ts",
+      "bytes": 5959,
+      "sha256": "7191f8ef1ebd9f787bc6511b4017439d151fcd02a18c1556324e8dd5282d36e1"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/useScatterData.ts",
+      "bytes": 4085,
+      "sha256": "63c650c5c83a1b7bd19d2a05f793c5b6f64b4f31623adff68bc0c08cbdb8e8e9"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/useScatterFits.ts",
+      "bytes": 2870,
+      "sha256": "7d9a67e6e23d63ff59b2c0f1b47cd5e25e2d6383891478a6d33bc56ff099b725"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/SummaryTable/SummaryTable.tsx",
+      "bytes": 4309,
+      "sha256": "57a9c45db7829960323e54e70ba4b629ddcc9d0b76fb7276d6ebd1f9069fa7c8"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/SummaryTable/SummaryTableSettingsPanel.tsx",
+      "bytes": 134,
+      "sha256": "8be1e6d258dd10def64a196f2c0aae81fba0fbb13fb4e86881be28227bf0e90a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/SummaryTable/definition.test.ts",
+      "bytes": 859,
+      "sha256": "40bf9bb0b67a29fb048f6d2d67a7c23619fa25c5d6c834ba9695384a7176f86f"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/SummaryTable/definition.ts",
+      "bytes": 1604,
+      "sha256": "fcca2db32f260ddd7cf944dd62caae80ad746d1bb0e58e90d9c33a4ec2c50d20"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ThreeDScatter/ThreeDScatterAxes.tsx",
+      "bytes": 3287,
+      "sha256": "de55cfe0365ec5fc4bf4248a643401d643bad7c63058c58c6f65f3654920d2f4"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ThreeDScatter/ThreeDScatterChart.tsx",
+      "bytes": 18995,
+      "sha256": "87f1a1e4c4ae3ac79b6afa01b90394ed72169296cbe2dc44a6cd1796281ab366"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ThreeDScatter/ThreeDScatterPoints.tsx",
+      "bytes": 2936,
+      "sha256": "c135d7b4c522d6b8dc60f28f91274699be859e4427a1ad1780a5a238fea2edb4"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ThreeDScatter/ThreeDScatterSettingsPanel.tsx",
+      "bytes": 3877,
+      "sha256": "9a88824eed0514b9f7cac3b219e615e99b755d1c4319774306bc992767b8af30"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ThreeDScatter/defaultSettings.ts",
+      "bytes": 722,
+      "sha256": "c746f7d67743a4cf84facbd0f0366b39593d76a96df703aec7325eb2957dd5f0"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ThreeDScatter/definition.ts",
+      "bytes": 1597,
+      "sha256": "8a0727bf0c8b6b2f32faba91dabfca6bd6d8b10b01344d2f1d1f45d571fe688a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ThreeDScatter/showBackFaces.ts",
+      "bytes": 541,
+      "sha256": "5e33daa3d0a20d540e0b34b2fc616c0ba2aaccd282cf1182a2cc02a732a1bf93"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ThreeDScatter/types.ts",
+      "bytes": 1209,
+      "sha256": "e84ecc1053c72a42b4e7b32e97dfefbcf62411339fb38fcec0d4a35c0fb1fa5b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ThreeDScatter/useThreeDScatterData.ts",
+      "bytes": 7128,
+      "sha256": "f9a98fe640bafc488f55cf244c5157ab201f9a57cb0295019790aeed543b84af"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Timeline/Timeline.test.tsx",
+      "bytes": 5118,
+      "sha256": "32f511c1fc7a142fa8a9043ce5647ab9605137896ac64a417476ab4fa58af7bd"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Timeline/Timeline.tsx",
+      "bytes": 17157,
+      "sha256": "efe0a2e65447ec4e4cd1b2c6c2f0a5b215106d195861bce61ff3ac018b164945"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Timeline/TimelineSettingsPanel.tsx",
+      "bytes": 2142,
+      "sha256": "f13ef77256d6512d2b2c53b5a77e631e0d3a86f79c465bf6b21a1e4ccb9ccda5"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Timeline/TimelineTraceBody.tsx",
+      "bytes": 2448,
+      "sha256": "26ef20a920391a76ec116c4e3b0b78a6df553b3324b45d8fb6e3b9ed66d95009"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Timeline/definition.ts",
+      "bytes": 3793,
+      "sha256": "9316b849ec975539cd5f180ccc4036ef8743ad7db1dc3e16ec446365a7923c33"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Timeline/timelinePlan.test.ts",
+      "bytes": 2721,
+      "sha256": "d2bce930b07f5acfa1b42fca3a62f027cd8f8cd82aa779b29e8aa89c2b149d9c"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Timeline/timelinePlan.ts",
+      "bytes": 4479,
+      "sha256": "31114fcd2afdf92748bc6f03818c35433a3d5615104b686f1c611d0b9be96040"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Waterfall/Waterfall.test.tsx",
+      "bytes": 8193,
+      "sha256": "0ec9f79e11b4f4f1aabb28613f758170a5cbf8c545a07930d68571d755c4b54e"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Waterfall/Waterfall.tsx",
+      "bytes": 23868,
+      "sha256": "3d24cb13482f7b00c0ab814bec24bd34e75784973b22d68e67525454019d0c23"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Waterfall/WaterfallSettingsPanel.tsx",
+      "bytes": 9381,
+      "sha256": "d61cbdba6413826a4c18c7d501a9b634505dbfb949f0654670f641f42917dcd3"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Waterfall/WaterfallTraceBody.tsx",
+      "bytes": 6432,
+      "sha256": "7ea113dbd1c48cc4c21bee881630fc91271bb6b5017753f4834472198ce5f8f9"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Waterfall/definition.ts",
+      "bytes": 1491,
+      "sha256": "94e95f958f4f5ca68359c3e6abc23e7a7e32a4875951925797ecb636172d5fd0"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Waterfall/waterfallPlan.test.ts",
+      "bytes": 11485,
+      "sha256": "2e9b954748650626b2b698d6fd9c910e3af05cb5c3a8f65093c37843065a8877"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Waterfall/waterfallPlan.ts",
+      "bytes": 12550,
+      "sha256": "4a8d74d3a7413481233c67d81b58dd1a07fb7e0539468e18213f26e765fa81a2"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Waterfall/waterfallTypes.ts",
+      "bytes": 1886,
+      "sha256": "20342b63396d1b557b45c266c7bdd85ae344af514297c4effd7e44e0469b2c9b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/aggregateFields.ts",
+      "bytes": 1940,
+      "sha256": "044574381490ce64686c30e288dca63a6fdf1ebaccd2f90c5980b29ff77bf109"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/annotations/AnnotationLayer.tsx",
+      "bytes": 17296,
+      "sha256": "0202f1d12cdcf193c341ff6db384b7c21a2343524d7acf68171f3c5552b4ecbe"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/annotations/ChartAnnotations.tsx",
+      "bytes": 2355,
+      "sha256": "5f73b75067d609e0fe4a3265dba88662ad7c816bc03c1732a8100758b50b89f7"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/annotations/aggregateAnnotations.test.tsx",
+      "bytes": 5051,
+      "sha256": "58f3f740ace6eb1077f444666473db53db3a066b99d168ba7453ed0f55973c40"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/annotations/annotationStatus.ts",
+      "bytes": 4783,
+      "sha256": "e841c878cbe884eda9eae8e363f15874edee1adf0375b0ca57ec83aa2e800e03"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/annotations/annotations.test.tsx",
+      "bytes": 8669,
+      "sha256": "911a969c8d373050b3fd18df4d28339a1bd2d177aec1bb5475f547e86e834b28"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/annotations/lineAnnotations.test.tsx",
+      "bytes": 5231,
+      "sha256": "ba2fe1a17102c2f724de3579125608b5242d9224f011600622a795b035b6226e"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/annotations/useAnnotationRows.ts",
+      "bytes": 697,
+      "sha256": "28523b77a0bbc6daf43912e9a2f84c26f5331daae5856dea98d0662770e737aa"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/chartAccessibility.ts",
+      "bytes": 11030,
+      "sha256": "b33fb76d45749ca4811bff8865a04d2060d8cc3e51855daf739e759abea9ef0c"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/chartTypography.test.tsx",
+      "bytes": 1734,
+      "sha256": "9c9335b87742e1ab0b848a616f2b7b0a7643e1f5cf9d927df8e53b46592af4dd"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/chartTypography.tsx",
+      "bytes": 3626,
+      "sha256": "ec9788afe2811711050d484c6d72b522aae82cde12cfa857652dfb966886114e"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/emptyPlotClick.ts",
+      "bytes": 882,
+      "sha256": "3c2f2c058f6fb8e6a391f155575381d008dfe0073a5f0dd9a4ea3931340b5ce2"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/export/ChartImageMenu.tsx",
+      "bytes": 3616,
+      "sha256": "27fca9cb48a886875f90527426be2f285f72192fe9d21a87e0ace5a2e31e1fb7"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/export/chartImage.test.ts",
+      "bytes": 2591,
+      "sha256": "f57c9279ad77e474ca899c7a8deaac14332fa94e0649047b41529ea4da365687"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/export/chartImage.ts",
+      "bytes": 3266,
+      "sha256": "a5f8020e3ea769bbd41e5d080d9abf126cf2e5e1a584d9ea66257d208090adab"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/export/chartImageContext.ts",
+      "bytes": 520,
+      "sha256": "86b79f22a0a3e0ca26960e8f2a4759c08930de22b0436a5384b0f37bd435502e"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/export/embedFonts.ts",
+      "bytes": 3817,
+      "sha256": "883dcdf58ae080b60b6d434d989c45de0dd71cef0ee794408bf39800a5144afa"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/export/exportChartPng.test.ts",
+      "bytes": 2244,
+      "sha256": "20390806d376bb9f616cfa37aa96b6e050f33579e7a0c22ddf91b112e181bbe7"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/export/exportChartPng.ts",
+      "bytes": 1503,
+      "sha256": "92f51f2c4b0b26f67c4c1d346c6c64bd47546f1a8c8ec6e27e1c21b9dcc03866"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/export/rasterizePanel.test.ts",
+      "bytes": 3070,
+      "sha256": "e6150b38353ea096e028c3d1028859872d860dc54a507571cdb592cfb440d2c6"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/export/rasterizePanel.ts",
+      "bytes": 12371,
+      "sha256": "214b97ca6a8108016b288a0d6ee947a1b85cfc1a1aa98422b080a6b488981da4"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/export/useChartImageExport.ts",
+      "bytes": 1760,
+      "sha256": "a20f19f8e786d8fa4cd5507ac8fc994d47eda7b03bb22881148a66473891a178"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/heatScale.ts",
+      "bytes": 3874,
+      "sha256": "c5115b9d951d122f6522729b1f41797d0a3b4c23bea3724193252e0412c140e2"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/icons/ChartTypeIcons.tsx",
+      "bytes": 1012,
+      "sha256": "ab8a28721636c3f2749512dad35233e3f2deae6c8ab9d3bcc3ec1254257a1c60"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/panelBody.test.ts",
+      "bytes": 1267,
+      "sha256": "bcc34e7b9a671a3114b72be85d341f74e195ee30b62d7dc485bdfdd4a83c9177"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/panelBody.ts",
+      "bytes": 1337,
+      "sha256": "8b13fbcfd919a7256d89b9795c0514557f0c854fcfdfb98ab8d66c6d5b94dd17"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/roles/ChartPlotMenu.test.tsx",
+      "bytes": 6062,
+      "sha256": "215b6a80b60106a13dd483a6d7be746c1cf75be93e4a1e58e53bf0acacdfa3cb"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/roles/ChartPlotMenu.tsx",
+      "bytes": 3396,
+      "sha256": "db56fc7b507407e3f9bc49a6f90867729426841c6f49cd1dd016fc0ddcd56883"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/roles/ChartRoleButton.test.tsx",
+      "bytes": 9157,
+      "sha256": "5ebb2f4ce96add65496722cd650998a2bd4575dd8355f5b37f2a296a442c3f90"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/roles/ChartRoleButton.tsx",
+      "bytes": 4616,
+      "sha256": "6cd6110a3c5c025117cd3694ac648558b0262ba681fa3e9256abdfd5a56a35d4"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/roles/RoleFieldPicker.tsx",
+      "bytes": 5882,
+      "sha256": "9ca559006d398e1519a6d143ddb1b0ff216620dc344dd877b7a206ff2e5a375a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/roles/RolePickerPopover.tsx",
+      "bytes": 2098,
+      "sha256": "2c779b0dc4c7ed097ab007299c0d7484d0064923c6958a07ea8365861197f1af"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/roles/chartRoles.ts",
+      "bytes": 2207,
+      "sha256": "265c92fac72762c790b5d2d5971975336e74f68072fc689641b553f48e9b3f33"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/roles/useRoleEdit.ts",
+      "bytes": 3509,
+      "sha256": "a8409aed81c1b4fce265a8440d1fd7a72633c2cead3e9d3bd8025278c6c7c3b5"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/stableAxes.test.tsx",
+      "bytes": 4786,
+      "sha256": "2ce190c8b519059575f9331a78bde480fc83ec15952dd4ca379d7ce1b474f786"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/trace/ChartTracePanel.tsx",
+      "bytes": 9190,
+      "sha256": "8296f16ebb4f6ad3734f24463f0f8172369c6de0f43db234e07b6bdd71f0be9b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/trace/ChartTraceScope.test.tsx",
+      "bytes": 4616,
+      "sha256": "6737c837403e3ee8b87352212c2dcc4f087ddfc508f364f8dbe88e5ffb390d3a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/trace/ChartTraceScope.tsx",
+      "bytes": 5523,
+      "sha256": "f6cce9aac17364bf9833de76169b249d9ce990e1d9641bc8d1e36b12099b2dad"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/trace/TraceBodies.tsx",
+      "bytes": 8365,
+      "sha256": "4eac440729653164bd28716dd25fa504fe4ec4b760b2becce7062ab9a4812327"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/trace/traceRows.ts",
+      "bytes": 1201,
+      "sha256": "39968b571109484599663a0249b87632a33aeb6d12df541b14040f7cb8c24a9f"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/trace/traceTypes.ts",
+      "bytes": 5363,
+      "sha256": "f1a0263c3d75a3b8d5574d302a81e01efbd64a55eb854f1e68f8383e3f52faa0"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/useEventValues.ts",
+      "bytes": 1367,
+      "sha256": "a7fbd1343f01525787d468d29a9889fb4c5009b657194e75df1b3149602f0159"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/useGetColumnData.tsx",
+      "bytes": 1765,
+      "sha256": "03ad6ffe51073a3db4a95786f597c8b1833257c64d6fdbbc0b8d07a496f60f01"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/useGetLiveData.tsx",
+      "bytes": 2222,
+      "sha256": "6222156b36ba1d8accc05fd01888543a5bd4dc07b0673db01f74e27570a04478"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/CrossfilterWrapper.test.ts",
+      "bytes": 8386,
+      "sha256": "a193e9ec416216098d5406a024f4799733ed106867ee57a311a4a57afd49b109"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/CrossfilterWrapper.ts",
+      "bytes": 6855,
+      "sha256": "444f228baffb694c82f7826da6a2eee88ce0296b47ec5e3f59c36b0d1070b483"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/applyFilter.test.ts",
+      "bytes": 2513,
+      "sha256": "d534a71213abbe95fd982f275a3dc0069aabb474f0653eb5ca158a9c1f89756e"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/applyFilter.ts",
+      "bytes": 1974,
+      "sha256": "d8f0610999aa93372bbbb29d9811d9106b71e1c40675b5bc3f3714ea5bbc3953"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/cloneDeep.ts",
+      "bytes": 86,
+      "sha256": "80f08f774a1e42eb619aa9d0f08f226ff437ef05c430eef8d41706e6c3630392"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/getAxisFilter.ts",
+      "bytes": 265,
+      "sha256": "1d3c118119c8e22d192c414771bd3e95a79175e9f5547cb33e9a11d3a0f58e94"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/use-mobile.ts",
+      "bytes": 584,
+      "sha256": "464e778a9da49481e3c6dac4f92ff589e01349b33063a74c45435cfeed81e1c0"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/useBrush.test.tsx",
+      "bytes": 2147,
+      "sha256": "036702039bfc14d2088ac8c9657631a32f41a1896bd0d84420e13a7086b1e534"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/useBrush.tsx",
+      "bytes": 7435,
+      "sha256": "c07994d2913cf846a4ebcec672b39529b3f1c9d681ee3d6a2086f9d8c6d75517"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/useColorScales.ts",
+      "bytes": 5776,
+      "sha256": "fbb3c789c81c5658c3c6c80167184ae9dfb4aee903d5127226c12c581a857576"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/useCreateCharts.ts",
+      "bytes": 7723,
+      "sha256": "181ecd2a9932549e61335904556939cc48936459d9ec9c4d018a39f7a204966b"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/useDisplayColorScales.ts",
+      "bytes": 1664,
+      "sha256": "0a0c3986cac328a387527ea3f8684904ad2bb4871598006bb2f36e4543f5990a"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/useEscapeOutside.ts",
+      "bytes": 1614,
+      "sha256": "68554b89c0190ce8c3e0554825f9727abbc9e166cc4a2bd23d3a728897c8de84"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/useFieldDistribution.ts",
+      "bytes": 2530,
+      "sha256": "b963dabc02478e321c919e92748b878e0d2b1fea0b695b55f7973055a0e6a40a"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/useFieldFilter.ts",
+      "bytes": 2606,
+      "sha256": "ca0cf2ff3c9b4468dd9c2d0599327ec671a15e7c2ef481c0b1dbfdded4c57410"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/useFilterExtent.ts",
+      "bytes": 3248,
+      "sha256": "b71f55756a54b2d90dd2af56ed431d7c9216d20bb472a2301c886a5ca76c9d84"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/useFilteredFieldProfiles.ts",
+      "bytes": 6357,
+      "sha256": "cd8a3a8f2fe0e9b958027a58348934b11b5ce1196f66b4800d10d1cbaba7447e"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/categories.ts",
+      "bytes": 2168,
+      "sha256": "6a0f2450cc369a188091ce0533e26dc5775e1b647a37e64e2590eb3f3d68e123"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/chartPopulation.ts",
+      "bytes": 1425,
+      "sha256": "3108817ced390197b9b90708d5ee76386c992470716d9326adbc12ce1d0bab86"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/annotations.ts",
+      "bytes": 17372,
+      "sha256": "b5d673d6e3cfe8a4d0f7989d9e7db8d07a846f230581224fff3863a0135e78ab"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/compile.test.tsx",
+      "bytes": 8869,
+      "sha256": "54542c819d40a2b2a5179e8806f3270b1264b6096aa7abce166844e04c8f0400"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/compile.ts",
+      "bytes": 88842,
+      "sha256": "d9e8c4e478d0e4c93ec990b0ba32ccb83f4aba2934a1a22696c0c7468d91dc9b"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/composition.test.ts",
+      "bytes": 8090,
+      "sha256": "ee96db603d95e3096c4b4b68e2fd9a7e7bc6dc60ef3eaa4bb9e3efc44d96737c"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/composition.ts",
+      "bytes": 62763,
+      "sha256": "fdcf70f6c66ba88b6f6727c6829300dacb8ee167da1e8f9ec5a5665b99a2826d"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/describe.ts",
+      "bytes": 11970,
+      "sha256": "01532d8ab9fc5f9f1ace435f35d900da920ee74e7d96d90833e7db69cdb0cfa5"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/export.test.ts",
+      "bytes": 11089,
+      "sha256": "f86451592067935591da19053423d5ed6925ca2b6b9818a1015188646c25c367"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/export.ts",
+      "bytes": 20402,
+      "sha256": "522575e4f1bc8b4a6927b2dd504d280c99a49fc5e27feb37bb0b461a8b5b08af"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/format.test.ts",
+      "bytes": 1119,
+      "sha256": "c43e7d8137219187047e2e337cedfeced324908a75fcfe885cc788a077e6ae6a"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/format.ts",
+      "bytes": 2096,
+      "sha256": "6aca1e58f272e2cf9fa42910eb3c3b6599189a71eb8628fb72badceb2a16f2e0"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/highlight.test.ts",
+      "bytes": 4742,
+      "sha256": "ad46fdcb85c75e366680dc90423f8644a290956a150b51698eaf47d311f8222e"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/highlight.ts",
+      "bytes": 8473,
+      "sha256": "d1d872f5cc19d1b17cd0e2f771307283343e895beda7e62f941bcbf2cbcd6383"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/index.ts",
+      "bytes": 930,
+      "sha256": "78856e23f75dd3769405931679b7e90534c00d7db743d10e4ffee2d52c92cb80"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/layout.test.ts",
+      "bytes": 5961,
+      "sha256": "e025442f71b1989468ad30adb2d1588409c2e391a30ead1e8c2486ab2b161134"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/layout.ts",
+      "bytes": 10030,
+      "sha256": "20b867018724a1db0effed79ab5466c093ee8301067236e9fcd99fe7942e3c57"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/lists.ts",
+      "bytes": 5966,
+      "sha256": "a955946beb5f36902b79532918939d171224377dff00657072c4f60868f99b00"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/normalize.ts",
+      "bytes": 1764,
+      "sha256": "d008fea6f43e0dc60efd6eb9c6ce4dc3a97a6ea2f04dbff48a3f3f48af859b72"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/parse.test.ts",
+      "bytes": 3214,
+      "sha256": "7b01a39c3760bb7dd87a1c9856162e1e1791791fc6ddd82e6d66524ce01d557d"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/parse.ts",
+      "bytes": 16309,
+      "sha256": "47259be5d119f3b30165cb9a6a0000558673acafc402828988a7beaacbf855a9"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/paths.ts",
+      "bytes": 8818,
+      "sha256": "195d577be7dd8c12591346ee92ca030e15c50c2b4cd6b3fcb0c48ba4b5420755"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/print.ts",
+      "bytes": 1311,
+      "sha256": "a4cfee638c2e2984b5ba598816fb201842363d6a029644255b20d0bce6e554d9"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/project.test.ts",
+      "bytes": 7591,
+      "sha256": "a59f3bd17f56f9fdb3a253d4f3fa6086c062c624d2b53ae383ebfca9b0273833"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/project.ts",
+      "bytes": 36432,
+      "sha256": "c5667a63d5b9da7219bc1eaaee996e06cbb9f736e4a5a436377bad87265e8f75"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/schema.test.ts",
+      "bytes": 2832,
+      "sha256": "9f9f6cd1cad49fc05fff0dc91e6401dbfcf37bd00993aca64a9a5f09c8297b15"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/schema.ts",
+      "bytes": 6249,
+      "sha256": "a837e2c85685e9e77575396421c5a5f0aac4999010b3bc98ff9debb4cf59093c"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/settingKeys.test.ts",
+      "bytes": 7122,
+      "sha256": "c805e6faba2c7b968db9c0f6a42d7ec57274f3183913c85a70af3bb2924de835"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/settingKeys.ts",
+      "bytes": 15004,
+      "sha256": "9ce7c76e532b4386653b2670ab746df0ffe9e81bfad618e8ab1331e9fcde764c"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/values.test.ts",
+      "bytes": 6835,
+      "sha256": "e708e538a36404f016565ba3657021b4666861ce907aba25a406dc30770d68a8"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/views.test.ts",
+      "bytes": 6826,
+      "sha256": "9b0dbbba11c32df0d1b702a136cff03e4998424bd4e42a0d84f8bcf571490948"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/views.ts",
+      "bytes": 7849,
+      "sha256": "5e54004f04c5feded74976c61909293abeae51d77fe60639b5740b2f6547eb72"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/valueParsing.ts",
+      "bytes": 10226,
+      "sha256": "18793ed3c9f09e3ac6c184fd658ad68b88f564c5c2d800bac7108188afd845d6"
+    },
+    {
+      "path": "packages/explorEDA/src/providers/DataLayerProvider.tsx",
+      "bytes": 55689,
+      "sha256": "c0ab7260c912fb628d393e7cbae1c752e44db4a20e347d9ec07f755b3ae7771d"
+    },
+    {
+      "path": "packages/explorEDA/src/providers/lib/dataLayerState.ts",
+      "bytes": 804,
+      "sha256": "2469556f6e39537ff394ff4b242cd0da5aee866907568f0f2685e87525ec1569"
+    },
+    {
+      "path": "packages/explorEDA/src/test/providers/DataLayerCalculations.test.tsx",
+      "bytes": 14223,
+      "sha256": "fb5e1d8df0fdb7816a4e49a9a59a4525b66ff0154a5b4a8b880a7509bc59f508"
+    },
+    {
+      "path": "packages/explorEDA/src/test/providers/DataLayerProvider.test.tsx",
+      "bytes": 41254,
+      "sha256": "69a9801fb7a17dc9d15f77684185f12f907bd9376ec6a54ed80139491daea91a"
+    },
+    {
+      "path": "packages/explorEDA/src/test/providers/analysisReliability.test.tsx",
+      "bytes": 4724,
+      "sha256": "3c8974c33ddc4042bd66da2daca4ece1e2a8bdb3327c924199cf618ce06ef934"
+    },
+    {
+      "path": "packages/explorEDA/src/test/providers/dataLayerState.test.ts",
+      "bytes": 843,
+      "sha256": "a49447136dff69c3fe89bb2b77ee7aaad605010c7dcba44eaa6bc850095faefb"
+    },
+    {
+      "path": "packages/explorEDA/src/test/providers/displayOnlyKeys.test.ts",
+      "bytes": 2973,
+      "sha256": "91ffae762d2d00874271962a88edde9563ab011c3828da66365b51938f829f3f"
+    },
+    {
+      "path": "packages/explorEDA/src/test/providers/fieldSettingsProvider.test.tsx",
+      "bytes": 2229,
+      "sha256": "c7ad5bee766aeb379abd9f0b000334f2c8d975f78d6b8c7727262ea00e8f90d4"
+    },
+    {
+      "path": "packages/explorEDA/src/test/providers/filterColumnLookups.test.ts",
+      "bytes": 1742,
+      "sha256": "3a9b0004f92d14794788ceebe4ecef8cb23dff82c5de290e0cbadc8d2eacf2af"
+    },
+    {
+      "path": "packages/explorEDA/src/test/providers/projectIdentity.test.tsx",
+      "bytes": 4749,
+      "sha256": "cee05e7ca3dd8983b15e6a05df77dd332b30096d04731a10cfd6fd0fd44ffd20"
+    },
+    {
+      "path": "packages/explorEDA/src/test/utils/saveDataUtils.test.ts",
+      "bytes": 12581,
+      "sha256": "2c7e7e86d742154a11790fc984cb6525a76b49add80bce6878d30f4a3816f624"
+    },
+    {
+      "path": "packages/explorEDA/src/types/AnalysisProject.ts",
+      "bytes": 4839,
+      "sha256": "374ffd46c8143f95c7256859d0a1bcc24e1eabe82a80dce9d465a2c4ba693408"
+    },
+    {
+      "path": "packages/explorEDA/src/types/ChartTypes.ts",
+      "bytes": 7239,
+      "sha256": "af8e1bfd423816317b3e37965f8231c722ece77f397bfb54598ee5499ac5e61e"
+    },
+    {
+      "path": "packages/explorEDA/src/types/ColorScaleTypes.ts",
+      "bytes": 2807,
+      "sha256": "54b2b20ee05907891a44d1e477fb6dc66f358026f23f06c2bec38750f956355b"
+    },
+    {
+      "path": "packages/explorEDA/src/types/FilterTypes.ts",
+      "bytes": 1207,
+      "sha256": "5779e19b22a73dbfc6c9c66b7d12f5b7cba149b5da7e1cfa1ed316afe3a9011f"
+    },
+    {
+      "path": "packages/explorEDA/src/types/SavedDataStructure.ts",
+      "bytes": 1926,
+      "sha256": "d06d902c2e9ba967adb39f25502405153b2b582bfd2bf7305ad51bec9b9dfebb"
+    },
+    {
+      "path": "packages/explorEDA/src/types/SavedDataTypes.ts",
+      "bytes": 1509,
+      "sha256": "35ab73e36930b3e058daa6396133b690468a265964270c8bc9f16954e3caada3"
+    },
+    {
+      "path": "packages/explorEDA/src/types/createScatterChartSettings.ts",
+      "bytes": 432,
+      "sha256": "02ced8b537880e2ebebbedc973a475da2413466e729654cd4d2e653b582c9353"
+    },
+    {
+      "path": "packages/explorEDA/src/utils/saveDataUtils.ts",
+      "bytes": 38882,
+      "sha256": "aad0e318e8453f09980ce6627c0dd7c4e314de4f220a78dc0fd52f90f468a4d8"
+    }
+  ],
+  "local_additions": [
+    "prompt.md"
+  ]
+}
