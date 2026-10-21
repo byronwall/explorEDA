@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "research_id": "R043",
+  "repository": "https://github.com/byronwall/explorEDA",
+  "baseline": "f4cacdde180e16ad814451a8c064e394535565d6",
+  "research_date": "2026-10-21",
+  "encoding": "UTF-8",
+  "hash_algorithm": "SHA-256",
+  "scope": "Read-only source research. Product, browser, SQL, and author proofs were not executed.",
+  "files": [
+    {
+      "filename": "report.md",
+      "bytes": 48968,
+      "sha256": "727653cac564c9edd017efbbe9a0f5caf79bd0f8ae9038739bfb0f59b283ecf2",
+      "baseline": "f4cacdde180e16ad814451a8c064e394535565d6"
+    },
+    {
+      "filename": "recommendations.md",
+      "bytes": 26034,
+      "sha256": "751c777daa00fdc4dce962d196b919e7964b115a1cd084286c7d63f7762ac7b5",
+      "baseline": "f4cacdde180e16ad814451a8c064e394535565d6"
+    },
+    {
+      "filename": "proof-plan.md",
+      "bytes": 52613,
+      "sha256": "cc804a9b3440e183d2f3639bea5a63b8e1db0dddcc0a51b677c81bda64742c2a",
+      "baseline": "f4cacdde180e16ad814451a8c064e394535565d6"
+    },
+    {
+      "filename": "research-queue.md",
+      "bytes": 3030,
+      "sha256": "fa406144ba3ade90ad53fd7c9ce1cc24373eedff63af87417ade7812639938af",
+      "baseline": "f4cacdde180e16ad814451a8c064e394535565d6"
+    }
+  ]
+}

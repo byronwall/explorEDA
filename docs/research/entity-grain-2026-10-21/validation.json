@@ -1,0 +1,33 @@
+{
+  "status": "in-progress",
+  "baseline": "f4cacdde180e16ad814451a8c064e394535565d6",
+  "local_probe": {
+    "files": 1,
+    "tests": 3,
+    "exit_code": 0
+  },
+  "submission_baseline_tests": {
+    "files": 2,
+    "tests": 17,
+    "exit_code": 0
+  },
+  "full_check": {
+    "command": "pnpm check",
+    "status": "running",
+    "log": "tmp/pro-entity-grain-2026-10-21/full-check.log"
+  },
+  "unrun": [
+    "browser",
+    "author",
+    "full F1 matrix",
+    "filter hooks",
+    "pooling additions",
+    "raw representation",
+    "signed zero",
+    "SQL",
+    "persistence",
+    "restore",
+    "export",
+    "performance"
+  ]
+}

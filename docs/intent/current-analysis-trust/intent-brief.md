@@ -3,7 +3,7 @@ title: "Agreement across charts, selections, and saved state"
 slug: "current-analysis-trust"
 phase: intent
 status: current
-last_updated: "2026-10-06"
+last_updated: "2026-10-21"
 ---
 
 # Agreement across charts, selections, and saved state
@@ -47,3 +47,14 @@ Expand only when a fixture exposes disagreement, a restore changes the result, o
 First compare one category selection across bar, card, and exported rows. Continue only after their group membership, valid contributors, and values agree. Then add undo/restore and a second chart family.
 
 See the [reference packet](references/README.md) and [comparison collection](../comparison-opportunities/README.md) for context.
+
+## R043 entity-grain review, October 21
+
+Keep source-occurrence identity and selected-value identity separate. Compare exact partitions before requiring aggregate agreement.
+Three local research probes reproduce measured-count conflict disagreement, intentional missing/duplicate-key differences, and card trace row wording.
+The proposed repair makes a measured count unavailable when one entity has conflicting values. Its policy remains for implementation review.
+Preserve ordinary count eligibility, independent equal-valued events, typed keys, and complete group references.
+Test diagnostic details and prior-stage navigation before expanding contributor records. Defer helper extraction and optional upstream recipes.
+No application repair, new lesson, or runnable example shipped. Browser and author proofs remain pending.
+Each visible milestone pairs project-folders or metric-card guidance with the proposed entity-grain example in the research folder.
+See the [R043 research](../../research/entity-grain-2026-10-21/README.md) and [six decisions](../../research/entity-grain-2026-10-21/decisions.md).

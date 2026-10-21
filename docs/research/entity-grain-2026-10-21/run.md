@@ -1,6 +1,6 @@
 # R043 entity-grain Pro run
 
-Phase: submitted; Pro is working. Follow-ups: 0/2. No output collected.
+Phase: collected and reviewed; integration and final validation underway. Follow-ups: 0/2.
 Repository: https://github.com/byronwall/explorEDA.
 Baseline: `f4cacdde180e16ad814451a8c064e394535565d6`.
 Checkout: /Users/byronwall/Projects/explorEDA.
@@ -69,3 +69,27 @@ Complete only after collection, review, integration, validation, and verified op
 Pause only the temporary collector on completion or essential user-action blocker.
 Keep six-hour exploreda-pro-research-pipeline ACTIVE indefinitely.
 No merge, deployment, paid provisioning, or unrelated changes.
+
+## Collection and local review, October 21
+
+Pro completed after 25m57s. Collected four standalone Markdown reports, ZIP, and manifest.
+Published ZIP and manifest hashes, CRC, safe flat paths, no links, exact five-entry inventory, UTF8,
+report hashes/sizes, and all five standalone/archive companions pass. ZIP event wait timed out; normal download succeeded.
+No Library upload or downloaded-program execution. Standing direct human download approval applied.
+Read all four reports. Six EG dispositions integrated. No material Pro gap; no follow-up submitted (0/2).
+Three locally authored probes pass: exact x/x/y conflict/control; F4 source/value/copied-null identity/control; static card wording.
+These call the real shared reducer, evaluator, parser/calculator, planner, and static trace component.
+Shared measured count unavailable versus project1 reproduces. Whole-result conflict policy stays a repair proposal.
+F4 source4/30/7.5 versus copied4/27/6.75 versus shared2/17/8.5 confirms intentional partition differences.
+Exact source references and representative sets are checked; clean-key control converges. No source or product repair changed.
+Probe moved from temporary package test location into research evidence. Three tests, not a full frozen-matrix proof.
+Browser, author, full F1, filter-hook, pooling additions, signed-zero, SQL, persistence, restore, export, and performance proofs unrun.
+Original freeze provenance remains attributed to Pro; its assembled declared oracle is preserved in proof-plan.md.
+
+Refreshed origin/main remains f4cacdde.31 baseline/historical and five supplemental source receipts pass.
+Two official DuckDB primary pages independently checked; direct opens failed, visible LTS redirects resolved.
+Recipe runtime and driver compatibility remain untested. Historical PR451 links are pinned in evidence.
+Research summary, decisions, evidence/probe/results, two intents/maps/references, catalogue follow-up, and queue integrated.
+R077 remains next eligible broad study. Shared helper deferred; forced unification rejected.
+No docs-site lesson or runnable example was implemented. Proposed visible milestones pair both.
+No changeset or product screenshot applies. Full pnpm check is running; final PR gates remain due.

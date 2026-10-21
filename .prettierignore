@@ -2,3 +2,6 @@
 apps/demo/public/daily-viz/
 # The first corpus's handoff, kept byte for byte.
 docs/research/daily-viz-corpus-2026-10-15/handoff/
+
+# Preserve the R043 Pro originals byte for byte.
+docs/research/entity-grain-2026-10-21/originals/
