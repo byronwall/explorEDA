@@ -1,6 +1,6 @@
 # R026 missing-state accounting Pro run
 
-Phase: submitted; Pro processing. Follow-ups0/2. No required outputs collected.
+Phase: collected and reviewed; integration and final validation in progress. Follow-ups0/2. No required outputs collected.
 Repository: https://github.com/byronwall/explorEDA. Baseline `f4cacdde180e16ad814451a8c064e394535565d6`.
 Checkout: /Users/byronwall/Projects/explorEDA. Branch codex/missing-state-accounting-research-2026-10-21.
 No worktree or goal. Clean checkout before branch creation; no unrelated edits.
@@ -15,7 +15,7 @@ This is not a starred orchestrator. Work directly;no delegation required.
 
 Prompt: [pro-prompt.md](pro-prompt.md). Inventory: [source-manifest.json](source-manifest.json).
 Packet: `tmp/pro-missing-state-2026-10-21/source-packet.txt`, 285788bytes, SHA256 `00610a0f82398652b9cab4db0f0ad0801d393cc6bf1946a072e0fb80c1ce3b2e`.
-All33 baseline entries match Git objects. Local additions and pinned historical summary are separate.
+All 33 baseline entries match Git objects. Local additions and pinned historical summary are separate.
 Selected catalogue JSON records are exact parsed projections. No runnable checkout promised.
 Standing direct human upload/download approvals apply. Exclude secrets;respect enforced review.
 
@@ -53,3 +53,17 @@ Packet hash and33baseline file receipts pass. No new experiment or product/brows
 No application source changed. No changeset or product screenshot requirement.
 Full pnpm check and PR gates remain due after integration. No review PR yet.
 Preserve uploaded byte receipts if commit hooks format authored prose. Pin historical relative links during integration.
+
+## Collection and review, October 21
+
+Pro finished after20m32s. Collected four Markdown originals,ZIP and manifest under standing human approval.
+Published digests,CRC,safe paths,no links,exact inventory,UTF8,report hashes/sizes and all five standalone/archive matches pass.
+ZIP/decision event waits timed out;normal downloads succeeded. No Library upload or downloaded program execution.
+All four reports read. Six MS dispositions integrated;no follow-up needed0/2.
+Keep existing semantics. Defer shared classifier. Reject universal model.
+Four locally authored tests reproduce numeric accounting plus MS02 predicate,MS03 rendered provider,and MS04 real parser/manager findings.
+Browser/editor confirmation and repairs remain proposed. R051 zero-chart hook finding remains source-predicted and unrun.
+Refreshed origin/main remainsf4cacdde.33baseline,one historical and nine supplemental source receipts authenticate.
+Eight official primary pages checked. Historical summary links remain pinned in evidence.md.
+Integrated research,intent/maps/references,catalogue follow-up and ranked queue. No package source or user-facing lesson/example changed.
+No changeset/product screenshot applies. Full pnpm check and final PR gates remain due.

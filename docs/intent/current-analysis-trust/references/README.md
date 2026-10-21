@@ -21,3 +21,8 @@ Current source was inspected at `a50df9985ed3ff54d0f6ca368c0b369829b8a927` on 20
 ## Product feedback
 
 [Annotated product direction](../../comparison-opportunities/resources/product-feedback-2026-10-06.md) supplies the current audience and priorities. The [full records](../../comparison-opportunities/resources/product-feedback-2026-10-06.json) preserve uncertainty.
+
+## October 21 R026 review
+
+[Research summary](../../../research/missing-state-accounting-2026-10-21/README.md), [evidence](../../../research/missing-state-accounting-2026-10-21/evidence.md), and [decisions](../../../research/missing-state-accounting-2026-10-21/decisions.md) preserve the new value-accounting result.
+Four local probes passed; browser and repair work remain proposed. Historical evidence above retains its original date and scope.

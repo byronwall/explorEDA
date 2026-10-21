@@ -1,0 +1,40 @@
+{
+  "phase": "final repository gate running",
+  "runtime": {
+    "node": "22.21.1",
+    "pnpm": "11.9.0"
+  },
+  "local_probes": {
+    "files": 1,
+    "tests": 4,
+    "status": "passed",
+    "source": "local-probe.test.tsx",
+    "output": "local-probe-results.txt"
+  },
+  "baseline_tests": {
+    "files": 4,
+    "tests": 56,
+    "status": "passed at submission"
+  },
+  "integrity": "ZIP/manifest published digests,CRC,safe paths,no symlinks,inventory,UTF8,all report hashes and all five standalone/archive companions pass",
+  "source_receipts": {
+    "baseline": 33,
+    "historical": 1,
+    "supplemental": 9,
+    "status": "authenticated"
+  },
+  "primary_sources_checked": 8,
+  "followups_used": 0,
+  "product_limits": [
+    "No browser click or field inspector flow",
+    "No author repair study",
+    "No filtered-hook execution",
+    "No export,history,restore,performance or comparator product proof"
+  ],
+  "changes": "research,intent,catalogue follow-up only; no package source or user-facing behavior",
+  "full_gate": {
+    "command": "pnpm check",
+    "status": "running",
+    "log": "tmp/pro-missing-state-2026-10-21/pnpm-check.log"
+  }
+}

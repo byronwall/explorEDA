@@ -3,7 +3,7 @@ title: "Agreement across charts, selections, and saved state"
 slug: "current-analysis-trust"
 phase: intent
 status: current
-last_updated: "2026-10-06"
+last_updated: "2026-10-21"
 ---
 
 # Agreement across charts, selections, and saved state
@@ -47,3 +47,13 @@ Expand only when a fixture exposes disagreement, a restore changes the result, o
 First compare one category selection across bar, card, and exported rows. Continue only after their group membership, valid contributors, and values agree. Then add undo/restore and a second chart family.
 
 See the [reference packet](references/README.md) and [comparison collection](../comparison-opportunities/README.md) for context.
+
+## R026 value accounting review, October 21
+
+Keep category and measurement rules separate. Name population, stage, type, and operation for each count.
+Numeric conversion can report failures that later become effective missing values. Both stages can reconcile without equal labels or totals.
+R026 local probes reproduce three bounded disagreements: categorical count versus missing predicate, host-type preview versus Apply, and absent-property batch versus trace.
+These are helper/provider/manager results, not browser confirmation or implemented repairs.
+Review each repair locally. Keep the shared classifier deferred and the universal state model rejected for this mission.
+A visible repair must include fields/summary/calculated-fields guidance and its runnable example in the same milestone.
+See the [R026 research](../../research/missing-state-accounting-2026-10-21/README.md) and [six decisions](../../research/missing-state-accounting-2026-10-21/decisions.md).

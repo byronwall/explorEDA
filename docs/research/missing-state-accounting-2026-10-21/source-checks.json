@@ -1,0 +1,221 @@
+{
+  "baseline": "f4cacdde180e16ad814451a8c064e394535565d6",
+  "origin_main": "f4cacdde180e16ad814451a8c064e394535565d6",
+  "checks": [
+    {
+      "path": "AGENTS.md",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "sha256": "802990c1bacd76b4b867239da78fd011fb32653f891d4a88560e9ee629979a33"
+    },
+    {
+      "path": "docs/agent-guide.md",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "sha256": "0992949f205d1ae72a8249c69bccb33f1eb70763b14a526a6384a7a91f9c9f00"
+    },
+    {
+      "path": "CODING_STANDARDS.md",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "sha256": "b4358fe75d063d53aea1edbc58d0dc6fd8df6e6165aa5792d8d2aa35eefe7ac5"
+    },
+    {
+      "path": "docs/ui-defaults.md",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "sha256": "93ee25ebd3917a1e56d7db818ff4b6edcfe7e063f390ff9d5e9b83a0cc32f84a"
+    },
+    {
+      "path": "README.md",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "sha256": "1f05b6c4992b07d1fc2b38d7bf9273db9e4a3a0d94513b7265e13b81cd7c5e28"
+    },
+    {
+      "path": "package.json",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "sha256": "f9b14daf225872f605d9435ddfb46fdede88b203c87a0e8507fe20743536f6e3"
+    },
+    {
+      "path": "packages/explorEDA/package.json",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "sha256": "17a71fd8852bcfbfb92cf76a9faf03766e934d0a5f0afcdcc9a5d0fd563b452a"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/valueParsing.ts",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "sha256": "18793ed3c9f09e3ac6c184fd658ad68b88f564c5c2d800bac7108188afd845d6"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/valueParsing.test.ts",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "sha256": "e3d2a86ad3d28494429cf8596da15cd74b3683d5d71b49e7060d2444653bb81a"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/fieldSettings.ts",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "sha256": "12381672c4bd38ddb826cc2ac8b671e4714ee3f965c0ce2db2e6beb5b8a05236"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/fieldSettings.test.ts",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "sha256": "83b2b9b5b5b01b5305bab7f005f3f614c0e9ce1b6394631b8aacdfa123c4cf78"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/fieldProfiles.ts",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "sha256": "22258fd930d4b63dd64a63972642f10392df2eaf8922ad870b2ec2d3c5457988"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/fieldProfiles.test.ts",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "sha256": "d6d0c7ffdd0ff261144da23dc72ab1f0e3c8c92c40127de29feb04a658202087"
+    },
+    {
+      "path": "packages/explorEDA/src/components/SummaryTable/utils/statisticsCalculator.ts",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "sha256": "bb630d2f003d0f98e6dced59839b84a812d4d7438cd15ef65fb1277337a6e097"
+    },
+    {
+      "path": "packages/explorEDA/src/components/SummaryTable/utils/dataTypeDetection.ts",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "sha256": "8bba727e0e4205a0df8762770d27a83be212089397e3d19d76055a8bfd1a8db1"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/fieldDistribution.ts",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "sha256": "69d2e246d8b6fb6947c35855c4245b348fbd82752ef5b2cc40f2312058c71f32"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/useFilteredFieldProfiles.ts",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "sha256": "cd8a3a8f2fe0e9b958027a58348934b11b5ce1196f66b4800d10d1cbaba7447e"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/applyFilter.ts",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "sha256": "d8f0610999aa93372bbbb29d9811d9106b71e1c40675b5bc3f3714ea5bbc3953"
+    },
+    {
+      "path": "packages/explorEDA/src/components/FieldList/FieldOverview.tsx",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "sha256": "be58521bd593f91088998917a4d4cf328ca28ce4bddcd918fff592fc3919d970"
+    },
+    {
+      "path": "packages/explorEDA/src/components/FieldList/FieldRowReadings.tsx",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "sha256": "356c5ecb5340f55017cf6e4d8588c9d658f4c84045ecf7affd21c44b5d737c8b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/FieldMetadata.tsx",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "sha256": "b141b6708594ce779a6a2f4cebdb8ace1d51f40949a29edf3454bbe24559b0eb"
+    },
+    {
+      "path": "packages/explorEDA/src/test/providers/fieldSettingsProvider.test.tsx",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "sha256": "c7ad5bee766aeb379abd9f0b000334f2c8d975f78d6b8c7727262ea00e8f90d4"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/calculations/engine/Calculator.ts",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "sha256": "cbe2114e76c1fcfcd95ad35114b5f205a595ac29134ec3d040c4573aca3dd117"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/calculations/CalculationState.ts",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "sha256": "bc4c855f7fd491f743f1f6e460b31d68844aea674e07a7ff50a27fb238b41ed0"
+    },
+    {
+      "path": "packages/explorEDA/src/components/calculations/CalculationPreview.tsx",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "sha256": "cdd7d6f8ac30a5edad4455f97712d8098ff1c7cc1a97890f55b7a2aa592ef268"
+    },
+    {
+      "path": "docs/intent/missingness-and-expected-records/intent-brief.md",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "sha256": "1a9747d348dd5124206ffac7866dac6030d2ffd41f00132406d74a1aa9fdb4b2"
+    },
+    {
+      "path": "docs/intent/current-analysis-trust/intent-brief.md",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "sha256": "d6b2d620753c1ea532fffcb1cb43cc42711e03daa898e989a7f283f475186bd7"
+    },
+    {
+      "path": "apps/demo/src/docs/pages/fields.mdx",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "sha256": "6684572ef2332d4edf136e2458ce7f6b013d3d420407f642d0ac1449ceaca872"
+    },
+    {
+      "path": "apps/demo/src/docs/pages/summary.mdx",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "sha256": "6b47411aa431f11b3383e8c064e6ef4243c310da02df77a0aaf3ccde8f00b3e1"
+    },
+    {
+      "path": "apps/demo/src/docs/pages/calculated-fields.mdx",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "sha256": "27580a0568ac5bdb798466a65ccd5c439615824f7af4eea1a45bc6f83f46073c"
+    },
+    {
+      "path": "docs/intent/research-ideas-100/README.md",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "sha256": "63ec0d118382fcbe7551e5556f10cd2970e0120414766612fab1e54ca6477512"
+    },
+    {
+      "path": "docs/intent/research-ideas-100/ideas/R026-missing-state-accounting.md",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "sha256": "cfac6110e0637ee8dd943a5ef5603af0ffe87c9f248cbeb1231e1315451f7d44"
+    },
+    {
+      "path": "docs/research/joint-missingness-2026-10-19/README.md",
+      "ref": "dcd9cfaea4d170eb881c2cca9e7f6178b904330e",
+      "sha256": "e37d12c7efd3f514999a63643b0a6650762cd85cfe9ebf2bcc918d2201fc374b"
+    },
+    {
+      "path": "packages/explorEDA/src/providers/DataLayerProvider.tsx",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "sha256": "c0ab7260c912fb628d393e7cbae1c752e44db4a20e347d9ec07f755b3ae7771d"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/calculations/functions/registry.ts",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "sha256": "75be6d61404101b3dc4dc6c88de8a6f72a132b1aa1258fbac899e71a814527dc"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/calculations/types.ts",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "sha256": "d71fb207511f9767a9456a8e1ef04a92d5e757b27b1f91fbc7663b097f4a3917"
+    },
+    {
+      "path": "packages/explorEDA/src/components/FieldList/FieldListRow.tsx",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "sha256": "845d96317146265fb6ae40597ff66d30a5339f806596ff5e5b8881aac5e9278f"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/useFieldDistribution.ts",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "sha256": "b963dabc02478e321c919e92748b878e0d2b1fea0b695b55f7973055a0e6a40a"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/categories.ts",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "sha256": "6a0f2450cc369a188091ce0533e26dc5775e1b647a37e64e2590eb3f3d68e123"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/useFieldFilter.ts",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "sha256": "ca0cf2ff3c9b4468dd9c2d0599327ec671a15e7c2ef481c0b1dbfdded4c57410"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/declaredFieldTypes.ts",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "sha256": "7d93680df986f01768e16dafb4ea2fccc7449f64d2c229919ce199ca63f3f951"
+    },
+    {
+      "path": "packages/explorEDA/src/components/SummaryTable/components/FieldInspector.tsx",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "sha256": "54a92d51d031af549d0ffc8fa9784f0dee5da8072fad47d94740ba488b9e9335"
+    },
+    {
+      "path": "packages/explorEDA/src/providers/lib/dataLayerState.ts",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "sha256": "2469556f6e39537ff394ff4b242cd0da5aee866907568f0f2685e87525ec1569"
+    }
+  ]
+}
