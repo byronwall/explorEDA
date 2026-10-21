@@ -1,6 +1,6 @@
 # Engineering histogram boundaries Pro run
 
-- Phase: submitted; Pro is researching. Follow-ups: 0/2.
+- Phase: collected and reviewed; integration checks pending. Follow-ups: 0/2.
 - Mission: decide whether engineering thresholds justify authored histogram boundaries after current bins and ECDF.
 - Repository: https://github.com/byronwall/explorEDA
 - Checkout: /Users/byronwall/Projects/explorEDA. No worktree or goal.
@@ -53,3 +53,21 @@ No new fixture, author task, browser flow, source-replacement, export/history/re
 Source-predicted endpoint behavior is unconfirmed. No product code, changeset or product screenshot applies.
 Full pnpm check and final PR gates are due during integration. No review PR created yet.
 Historical links must be pinned during integration. Preserve actual uploaded bytes in source-manifest.json if hooks format local prose.
+
+## Collection and review, October 21
+
+Pro completed after21m39s. ZIP downloaded under standing direct human approval.
+Published ZIP/manifest hashes, CRC, safe paths, no symlinks, exact inventory, UTF8 and four report sizes/hashes pass.
+Standalone decision download entered preview state;12-second event timed out. No independent companion equality claimed.
+All required original contents are preserved from verified ZIP. No Library upload or downloaded program execution.
+
+Read all four reports; reviewed EB01–EB04. Retain current controls; defer width/origin and explicit edges.
+Investigate exact-edge agreement after local trust. Lesson/example need an observed reader gap.
+New capability needs a named recurring task that defeats current ECDF/range/category comparators.
+No runtime defect, demand or browser usability established. No follow-up needed0/2.
+
+All34 packet receipts,30baseline and15historical/supplemental Git objects match. Current source matches baseline.
+Twenty-two independent arithmetic anchors pass; Pro's76 assertions remain attributed. Six official primary pages checked.
+Integrated summary,evidence,decisions,two intents/maps/references and concise queue.
+No package source,docs-site lesson or runnable example changed. No changeset or product screenshot applies.
+Product/browser/author/refresh/export/history/restore proofs remain unrun. Full checks and open review PR remain due.

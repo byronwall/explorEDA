@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "package": "engineering-bins-research",
+  "research_date": "2026-10-21",
+  "repository": "https://github.com/byronwall/explorEDA",
+  "source_baseline": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+  "report_encoding": "UTF-8",
+  "scope": "Research only; no product implementation.",
+  "reports": [
+    {
+      "filename": "decision-report.md",
+      "bytes": 45415,
+      "sha256": "655eb30d0206057dc55f0f17379f917ecd4fde22350d1b47a9708633662ddb42"
+    },
+    {
+      "filename": "evidence-and-comparisons.md",
+      "bytes": 53464,
+      "sha256": "11b0477d8182977068ee6c0f0d28f74c3ce46e665ccb323267de5945647e629d"
+    },
+    {
+      "filename": "proof-plan.md",
+      "bytes": 42942,
+      "sha256": "a80df6bbe0671c95ea79b4de9bd9676c14c09a776a6b68f100847d70214f89be"
+    },
+    {
+      "filename": "research-queue.md",
+      "bytes": 16072,
+      "sha256": "ca2daeb9c9c947c427cdbabe3006c4d0a9756e1071e588bc650bcf6308b65cda"
+    }
+  ]
+}

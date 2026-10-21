@@ -3,7 +3,7 @@ title: "Agreement across charts, selections, and saved state"
 slug: "current-analysis-trust"
 phase: intent
 status: current
-last_updated: "2026-10-06"
+last_updated: "2026-10-21"
 ---
 
 # Agreement across charts, selections, and saved state
@@ -47,3 +47,11 @@ Expand only when a fixture exposes disagreement, a restore changes the result, o
 First compare one category selection across bar, card, and exported rows. Continue only after their group membership, valid contributors, and values agree. Then add undo/restore and a second chart family.
 
 See the [reference packet](references/README.md) and [comparison collection](../comparison-opportunities/README.md) for context.
+
+## Histogram boundary proof, October 21
+
+[Engineering-boundary research](../../research/engineering-bins-2026-10-21/README.md) identifies a separate endpoint question after the first local trust task.
+Source bins exclude interior upper endpoints; linked numeric ranges include them. The fixture predicts four versus six matching rows.
+This is source and arithmetic evidence, not a runtime defect. Compare the actual mark, trace, stored predicate and stable record keys.
+Start without local filters or facets. Check those populations separately, then test count edits and the declared restore path.
+Any confirmed repair needs its own scope. It does not approve authored histogram boundaries.

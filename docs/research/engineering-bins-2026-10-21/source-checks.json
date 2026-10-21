@@ -1,0 +1,294 @@
+{
+  "checkedAt": "2026-10-21T08:04:56.535110+00:00",
+  "baseline": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+  "originMain": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+  "packetReceipts": 34,
+  "baselineGitObjects": 30,
+  "historicalGitObjects": 2,
+  "supplementalGitObjects": 13,
+  "checks": [
+    {
+      "path": "AGENTS.md",
+      "ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "sha256": "802990c1bacd76b4b867239da78fd011fb32653f891d4a88560e9ee629979a33",
+      "match": true
+    },
+    {
+      "path": "README.md",
+      "ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "sha256": "1f05b6c4992b07d1fc2b38d7bf9273db9e4a3a0d94513b7265e13b81cd7c5e28",
+      "match": true
+    },
+    {
+      "path": "package.json",
+      "ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "sha256": "f9b14daf225872f605d9435ddfb46fdede88b203c87a0e8507fe20743536f6e3",
+      "match": true
+    },
+    {
+      "path": "CODING_STANDARDS.md",
+      "ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "sha256": "b4358fe75d063d53aea1edbc58d0dc6fd8df6e6165aa5792d8d2aa35eefe7ac5",
+      "match": true
+    },
+    {
+      "path": "docs/agent-guide.md",
+      "ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "sha256": "0992949f205d1ae72a8249c69bccb33f1eb70763b14a526a6384a7a91f9c9f00",
+      "match": true
+    },
+    {
+      "path": "docs/ui-defaults.md",
+      "ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "sha256": "93ee25ebd3917a1e56d7db818ff4b6edcfe7e063f390ff9d5e9b83a0cc32f84a",
+      "match": true
+    },
+    {
+      "path": "docs/intent/population-baselines/intent-brief.md",
+      "ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "sha256": "9e4045b93ccb770fae6ea13988db3c25f78856ac6b80203574e0d2e81166d483",
+      "match": true
+    },
+    {
+      "path": "docs/intent/current-analysis-trust/intent-brief.md",
+      "ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "sha256": "d6b2d620753c1ea532fffcb1cb43cc42711e03daa898e989a7f283f475186bd7",
+      "match": true
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/bins.ts",
+      "ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "sha256": "fb6428b2dd359f2f104666ea203c6a6d393415c89e9405709ad04ec1c34d3bcb",
+      "match": true
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/bins.test.ts",
+      "ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "sha256": "03e40d5f4d38c9ae3e118fb93f902e696a6c752ce8b5df2c2c2307665149a8fd",
+      "match": true
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/barPlan.ts",
+      "ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "sha256": "79933db557b72b3326342b1eb3e0667f4f2a1ce924093f17e3939f78e0399834",
+      "match": true
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/barPlan.test.ts",
+      "ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "sha256": "de17c61d954e1bdff69b07eb5447bbe0f2224f6e06aef2519139a29ff5bf5726",
+      "match": true
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/BarChart.tsx",
+      "ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "sha256": "a4805c5391d3707a1c799e48dd2764b3ddec0ea2bf485bed3813619dedc186c7",
+      "match": true
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/BarChart.select.test.tsx",
+      "ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "sha256": "17341d0a06854ed3fb5feef1c440617dbe4b738a5dfbb106e57aebd20f8a75a1",
+      "match": true
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/definition.ts",
+      "ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "sha256": "7567d38cf9a8b52d65cffa387a38e61cdab6a3c19f9c60302c4999899a62293e",
+      "match": true
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/BarChartSettingsPanel.tsx",
+      "ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "sha256": "cd9c1429b73ea42628c1c39ca2a76237e9475d8fc9ea37635ac0de669b0ce04c",
+      "match": true
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/BarTraceBody.tsx",
+      "ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "sha256": "ec6c8519e5f34921a05266864c921b0a69acc5341a630a4c2dde507782e4ccac",
+      "match": true
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/applyFilter.ts",
+      "ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "sha256": "d8f0610999aa93372bbbb29d9811d9106b71e1c40675b5bc3f3714ea5bbc3953",
+      "match": true
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/applyFilter.test.ts",
+      "ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "sha256": "d534a71213abbe95fd982f275a3dc0069aabb474f0653eb5ca158a9c1f89756e",
+      "match": true
+    },
+    {
+      "path": "packages/explorEDA/src/types/FilterTypes.ts",
+      "ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "sha256": "5779e19b22a73dbfc6c9c66b7d12f5b7cba149b5da7e1cfa1ed316afe3a9011f",
+      "match": true
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/useGetLiveData.tsx",
+      "ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "sha256": "6222156b36ba1d8accc05fd01888543a5bd4dc07b0673db01f74e27570a04478",
+      "match": true
+    },
+    {
+      "path": "packages/explorEDA/src/lib/chartPopulation.ts",
+      "ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "sha256": "3108817ced390197b9b90708d5ee76386c992470716d9326adbc12ce1d0bab86",
+      "match": true
+    },
+    {
+      "path": "packages/explorEDA/src/lib/valueParsing.ts",
+      "ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "sha256": "18793ed3c9f09e3ac6c184fd658ad68b88f564c5c2d800bac7108188afd845d6",
+      "match": true
+    },
+    {
+      "path": "packages/explorEDA/src/providers/DataLayerProvider.tsx",
+      "ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "sha256": "c0ab7260c912fb628d393e7cbae1c752e44db4a20e347d9ec07f755b3ae7771d",
+      "match": true
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Ecdf/ecdfPlan.ts",
+      "ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "sha256": "3814a434bcec72e222f3b5dbc1c3f570a51bc7c73fc9e37754051121127af142",
+      "match": true
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Ecdf/ecdfPlan.test.ts",
+      "ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "sha256": "081459fc279711ea31b82a10b1d86d6ef617c9f3414538223e7ceee0a47daa24",
+      "match": true
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Ecdf/definition.ts",
+      "ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "sha256": "ac5b154835778aec2ea727f618718134e6961b60e48d5d8441f124cf12ff7ce2",
+      "match": true
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Ecdf/EcdfChart.tsx",
+      "ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "sha256": "7c904c193448078c28f24261ead61690b88efba2f16156e73a8a9825f8ddb159",
+      "match": true
+    },
+    {
+      "path": "apps/demo/src/docs/pages/bar.mdx",
+      "ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "sha256": "a78c8f1b5572944e0fdba332ad56b3942eaac9625dc12bc6658bc3fd5dab626d",
+      "match": true
+    },
+    {
+      "path": "apps/demo/src/docs/pages/ecdf.mdx",
+      "ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "sha256": "409a22e4b066eb6f3277ba9ec997c1fef8b409b41f4a1137f8ad99b6250be040",
+      "match": true
+    },
+    {
+      "path": "docs/intent/research-ideas-100/ideas/R008-engineering-bin-boundaries.md",
+      "ref": "476a1be3544f93baf7c4732a436163609fbbd02f",
+      "sha256": "f17f257c7a22f1c692f7be6a396cf28cba655425456dd4ec4cfcc3fbc2893125",
+      "match": true
+    },
+    {
+      "path": "docs/research/retention-observation-2026-10-21/research-queue.md",
+      "ref": "a915f6965055d1b69f9bccfaddf50e4b5986468a",
+      "sha256": "586ef86892c42d80be53d8bb30e0af91245bfb2534e02e07cff490d316213cf4",
+      "match": true
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/useGetColumnData.tsx",
+      "ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "sha256": "03ad6ffe51073a3db4a95786f597c8b1833257c64d6fdbbc0b8d07a496f60f01",
+      "match": true,
+      "currentMatch": true
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/CrossfilterWrapper.ts",
+      "ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "sha256": "444f228baffb694c82f7826da6a2eee88ce0296b47ec5e3f59c36b0d1070b483",
+      "match": true,
+      "currentMatch": true
+    },
+    {
+      "path": "packages/explorEDA/src/utils/saveDataUtils.ts",
+      "ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "sha256": "aad0e318e8453f09980ce6627c0dd7c4e314de4f220a78dc0fd52f90f468a4d8",
+      "match": true,
+      "currentMatch": true
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/barTrace.ts",
+      "ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "sha256": "7b19e7f433ffc0acf2ae57a4fc68359eafa4ce32b3aff45f0ed97cb9ef40b6e8",
+      "match": true,
+      "currentMatch": true
+    },
+    {
+      "path": "apps/demo/src/docs/live/examples.ts",
+      "ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "sha256": "206e73137d436350ef5edbee610139a209f21f5786b1b7e5313a676becb5ee3f",
+      "match": true,
+      "currentMatch": true
+    },
+    {
+      "path": "apps/demo/src/demos/examples.ts",
+      "ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "sha256": "b67518e290d939f719babdb5dc2723649701f8b60e4601f9a1d041b2aa8dfb93",
+      "match": true,
+      "currentMatch": true
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/bins.ts",
+      "ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "sha256": "fb6428b2dd359f2f104666ea203c6a6d393415c89e9405709ad04ec1c34d3bcb",
+      "match": true,
+      "currentMatch": true
+    },
+    {
+      "path": "packages/explorEDA/src/providers/lib/dataLayerState.ts",
+      "ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "sha256": "2469556f6e39537ff394ff4b242cd0da5aee866907568f0f2685e87525ec1569",
+      "match": true,
+      "currentMatch": true
+    },
+    {
+      "path": "packages/explorEDA/src/components/ChartSettingsContent.tsx",
+      "ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "sha256": "dacdd56f15a69bb9b94d683adc2f4669f29acabc7a9ec5a5fe7b1d249cd7d993",
+      "match": true,
+      "currentMatch": true
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Ecdf/ecdfTrace.ts",
+      "ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "sha256": "b7e1a14694202cf13984e0bbd6d22ce1a39d4fb923213dd8543622824a7e7b0e",
+      "match": true,
+      "currentMatch": true
+    },
+    {
+      "path": "packages/explorEDA/src/components/settings/FiltersSettingsTab.tsx",
+      "ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "sha256": "bb5eb95708e2a42ce97d46d432693d58ddc34bb0936479dffb3892ee8e460e20",
+      "match": true,
+      "currentMatch": true
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/components/ColumnFilter.tsx",
+      "ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "sha256": "41bd81c4ca5fc39a00ace5543e296b941e699d87463369b981400accace7a886",
+      "match": true,
+      "currentMatch": true
+    },
+    {
+      "path": "docs/intent/research-ideas-100/catalogue.md",
+      "ref": "476a1be3544f93baf7c4732a436163609fbbd02f",
+      "sha256": "b17ba05624aff799b2d998c0b779bfe73c7bcc0ef99ebd5bf93f011585b8f853",
+      "match": true,
+      "currentMatch": "historical-only"
+    }
+  ]
+}

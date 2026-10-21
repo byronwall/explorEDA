@@ -36,3 +36,11 @@ R011 overlaps completed retention research and must use PR461's proof gates.
 
 Catalogue: https://github.com/byronwall/explorEDA/blob/codex/research-ideas-100/docs/intent/research-ideas-100/catalogue.md.
 Previous queue: https://github.com/byronwall/explorEDA/blob/a915f696/docs/research/retention-observation-2026-10-21/research-queue.md.
+
+## Reviewed outcome
+
+R008 synthesis is complete. Keep current controls; apply [EB01–EB04](decisions.md).
+After local trust, the exact-edge proof is the next bounded histogram action. Do not schedule another broad bin survey.
+A lesson needs observed confusion. A new mode needs a named recurring task that defeats current comparators.
+R018 remains conditional on a changed decision; R043/R077 need local grain/identity proofs; R073 needs one example counterexample.
+The [original revised queue](originals/research-queue.md) preserves Pro's detailed gates without replacing this concise queue.
