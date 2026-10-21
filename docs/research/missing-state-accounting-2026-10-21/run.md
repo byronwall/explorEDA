@@ -67,3 +67,12 @@ Refreshed origin/main remainsf4cacdde.33baseline,one historical and nine supplem
 Eight official primary pages checked. Historical summary links remain pinned in evidence.md.
 Integrated research,intent/maps/references,catalogue follow-up and ranked queue. No package source or user-facing lesson/example changed.
 No changeset/product screenshot applies. Full pnpm check and final PR gates remain due.
+
+## Validation before review PR
+
+Approved full pnpm check exits0 on Node22.21.1/pnpm11.9.0. UI,builds,73docs tests and all types pass.
+Library250files/1656tests pass;3files/45conditional tests skipped. App8files/32tests and demo18files/431tests pass.
+Separate four local probes pass;56baseline tests passed at submission. No aggregate retry was needed.
+pnpm check:pr,81authored local links,JSON,original hashes,frozen expectation hash and43source receipts pass.
+No browser/editor/author/filtered-hook/export-history/restore/performance proof. See validation.json.
+Documentation label available;codex/codex-automation unavailable. Scoped review PR is next.
