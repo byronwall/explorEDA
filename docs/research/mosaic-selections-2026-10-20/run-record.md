@@ -16,7 +16,7 @@ The user requested the full handoff process on October 20, 2026. No application 
 
 ## Submission
 
-- Phase: results collected; reconciliation complete; validation passed; review PR pending.
+- Phase: complete; review PR open, verified, and attached to this chat.
 - Round: initial request; up to two bounded follow-ups remain.
 - Prompt: [prompt.md](prompt.md)
 - Source packet: [mosaic-source-packet.zip](mosaic-source-packet.zip)
@@ -29,7 +29,7 @@ The user requested the full handoff process on October 20, 2026. No application 
 - Submission time: approximately `2026-10-21T03:35:00Z` (October 20, 11:35 p.m. Indianapolis).
 - Conversation URL: https://chatgpt.com/c/6ad832d1-932c-83ea-82de-8135c5715ea4
 - First check: about one hour after submission.
-- Heartbeat: `collect-mosaic-selections-pro-research`, active, hourly checks.
+- Heartbeat: `collect-mosaic-selections-pro-research`, disabled (`PAUSED`) after completion.
 
 ## Approval evidence
 
@@ -49,7 +49,8 @@ Run relevant document checks and `pnpm check` before the review PR. No changeset
 
 No new product behavior or performance result is established. The full existing repository check passed with Node 24.21.0.
 A proposed proof is not an executed product test.
-No PR yet. Disable the heartbeat only after verified completion or a blocker that requires user action.
+Review PR: https://github.com/byronwall/explorEDA/pull/462 . Open, verified, and attached.
+The heartbeat is disabled after the full-process endpoint was reached.
 
 ## Preparation checks
 
@@ -90,3 +91,15 @@ No application code changed; no UI screenshots or changeset is required for this
 The first sandboxed `pnpm check` failed because existing server tests could not listen on `127.0.0.1` (`EPERM`).
 The same command was restarted with local server access. This is an environment retry, not a product change.
 Raw originals retain their supplied whitespace. The authored-file Git whitespace check excludes `raw/` and passes.
+
+## Completion
+
+- Pro initial research finished. No bounded follow-up was needed.
+- Originals, source access records, complete analysis, and collected licensed source material are readable in the repo.
+- Every substantive recommendation has a disposition. Runtime proofs remain proposals.
+- `pnpm check` and `pnpm check:pr` pass. Authored local links and whitespace pass.
+- [PR #462](https://github.com/byronwall/explorEDA/pull/462) is open against `main` from `codex/mosaic-selections-research`.
+- Saved PR body and all 92 file paths were inspected; only research/docs and the raw-format exclusion are included.
+- PR attached to the current chat. No merge or application implementation occurred.
+- Heartbeat `collect-mosaic-selections-pro-research` was disabled and its saved status is `PAUSED`.
+- No active goal was created; the user requested a full process, not a separate goal.
