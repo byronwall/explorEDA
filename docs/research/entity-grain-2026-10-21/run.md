@@ -1,6 +1,6 @@
 # R043 entity-grain Pro run
 
-Phase: collected and reviewed; integration and final validation underway. Follow-ups: 0/2.
+Phase: complete; verified open review PR466. Follow-ups: 0/2.
 Repository: https://github.com/byronwall/explorEDA.
 Baseline: `f4cacdde180e16ad814451a8c064e394535565d6`.
 Checkout: /Users/byronwall/Projects/explorEDA.
@@ -104,3 +104,18 @@ Authored whitespace passes; original Markdown line breaks/trailing whitespace re
 See validation.json for exact commands, environment, logs, and unrun proof limits.
 No package behavior changed;no changeset or product screenshot applies.
 Documentation label available;codex and codex-automation labels unavailable. Scoped review PR is next.
+
+## Completion, October 21
+
+Review PR: https://github.com/byronwall/explorEDA/pull/466.
+Verified OPEN, main ← codex/entity-grain-research-2026-10-21. Saved body,27files,head/base and linked paths match.
+Description links use explicit repository branch URLs. PR attached. Documentation label applied;codex labels unavailable.
+Four reports,ZIP,manifest collected,read,reviewed,and preserved. All five companions independently match.
+EG01–EG06 integrated into research,two intents/maps/references,catalogue follow-up,and continuing queue.
+Three local probes reproduce the bounded findings and intentional identity differences. No package repair shipped.
+Full pnpm check and PR gate pass. Unrun product/browser/author/SQL/persistence/performance limits remain explicit.
+No material follow-up required;0/2 submitted. R077 is the next eligible catalogue mission.
+
+Paused only collect-exploreda-entity-grain-research through automation_update; saved TOML verifies PAUSED.
+Six-hour exploreda-pro-research-pipeline stays ACTIVE indefinitely. Standing upload/download approvals persist.
+No goal,worktree,merge,deployment,or paid service. Stop for review.

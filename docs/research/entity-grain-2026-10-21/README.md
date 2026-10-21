@@ -24,5 +24,5 @@ The [Pro report](originals/report.md), [recommendations](originals/recommendatio
 remain unchanged. The [collection record](collection.json) records safe archive and companion checks.
 [Validation](validation.json) separates executed checks from pending proofs.
 
-R043 synthesis is complete after the review PR is verified. R077 remains the next eligible broad study.
+R043 synthesis is complete in verified open [PR466](https://github.com/byronwall/explorEDA/pull/466). R077 remains the next eligible broad study.
 No new lesson, runnable project, application repair, SQL execution, or customer-demand claim is included.
