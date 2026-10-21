@@ -1,6 +1,6 @@
 # Retention observation Pro run
 
-- Phase: collected and reviewed; integration validation pending. Follow-ups: 0/2.
+- Phase: integrated and validated; open PR pending. Follow-ups: 0/2.
 - Mission: observation completeness after existing Retention.
 - Repository: https://github.com/byronwall/explorEDA
 - Checkout: /Users/byronwall/Projects/explorEDA. No worktree or goal.
@@ -39,3 +39,9 @@ Pro completed after15m38s. Downloaded ZIP under standing direct human approval. 
 Six dispositions retain current snapshot behavior. Local trust stays first;day-rounded partial flags and All disclosure need bounded contract proof. Endpoint,denominator change and lesson remain proposed. Seven supplemental source files and all29 baseline entries authenticate. Sixteen independent rational/calendar anchors pass;new product/browser/author/export/history/refresh proofs remain unrun. Five official comparison pages independently checked;GA4 cohort retrieval timed out twice and remains Pro-attributed. No follow-up needed0/2.
 
 Integrated summary,evidence,six decisions,domain status/intent/plan/map/references,calendar boundary and ranked queue. No application source,docs-site lesson or runnable example changed. No changeset or product screenshot applies. Root pnpm check is running;final validation and verified open review PR remain due.
+
+## Validation before PR
+
+Node22.21.1/pnpm11.9.0. Root pnpm check passes UI,library/app/demo builds,73docs checks and all types. Library245files/1619tests pass;five files fail with localhost EPERM,file-watch EMFILE or server-setup hook timeout. Approved affected-file retry and separate app/demo suites are running. No all-green aggregate rerun is claimed. PR gate,authored links,JSON,original hashes and source receipts pass. Documentation label available;codex/codex-automation unavailable.
+
+Approved retry passes all five affected files/50tests. Separate app8files/32tests and demo18files/431tests pass. Root aggregate was not rerun. Original hashes,authored links and JSON pass after commit hook. New retention fixture,author/browser and export/history/restore proofs remain unrun. Ready for scoped review PR.
