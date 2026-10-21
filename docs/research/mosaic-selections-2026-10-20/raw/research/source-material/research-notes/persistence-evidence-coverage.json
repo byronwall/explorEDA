@@ -1,0 +1,299 @@
+{
+  "artifact": "Mosaic Selections research: persistence/evidence coverage",
+  "repository": "byronwall/explorEDA",
+  "baseline": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+  "agent": "persistence_evidence",
+  "audit_date": "2026-10-21",
+  "status": "Source inspection only. No application tests/build/browser runtime checks executed.",
+  "packet_root": "source-snapshot",
+  "supplement_root": "research-work/repo-supplement",
+  "fully_read": [
+    "AGENTS.md",
+    "apps/demo/src/daily/findings.ts",
+    "apps/demo/src/docs/pages/filters.mdx",
+    "apps/demo/src/docs/pages/heatmap.mdx",
+    "docs/composition-mode.md",
+    "docs/intent/current-analysis-trust/intent-brief.md",
+    "docs/intent/data-bound-narrative/intent-brief.md",
+    "docs/intent/population-baselines/intent-brief.md",
+    "docs/intent/precise-composite-selection/intent-brief.md",
+    "docs/intent/progressive-built-in-charts/implementation-plan.md",
+    "docs/intent/progressive-built-in-charts/intent-brief.md",
+    "packages/explorEDA/src/components/charts/DataTable/DataTable.tsx",
+    "packages/explorEDA/src/components/charts/DataTable/DataTableBody.tsx",
+    "packages/explorEDA/src/components/charts/DataTable/DataTableContextMenu.tsx",
+    "packages/explorEDA/src/components/charts/DataTable/DataTableHeader.tsx",
+    "packages/explorEDA/src/components/charts/DataTable/DataTableSettingsPanel.tsx",
+    "packages/explorEDA/src/components/charts/DataTable/DataTableToolbar.tsx",
+    "packages/explorEDA/src/components/charts/DataTable/README.md",
+    "packages/explorEDA/src/components/charts/DataTable/__tests__/ColumnFilter.test.tsx",
+    "packages/explorEDA/src/components/charts/DataTable/__tests__/DataTable.test.tsx",
+    "packages/explorEDA/src/components/charts/DataTable/__tests__/DataTableBody.test.tsx",
+    "packages/explorEDA/src/components/charts/DataTable/__tests__/DataTableContextMenu.test.tsx",
+    "packages/explorEDA/src/components/charts/DataTable/__tests__/DataTableHeader.test.tsx",
+    "packages/explorEDA/src/components/charts/DataTable/__tests__/columnOps.test.ts",
+    "packages/explorEDA/src/components/charts/DataTable/__tests__/columnWidths.test.ts",
+    "packages/explorEDA/src/components/charts/DataTable/__tests__/highlightMatches.test.tsx",
+    "packages/explorEDA/src/components/charts/DataTable/columnOps.ts",
+    "packages/explorEDA/src/components/charts/DataTable/columnWidths.ts",
+    "packages/explorEDA/src/components/charts/DataTable/components/ColumnFilter.tsx",
+    "packages/explorEDA/src/components/charts/DataTable/components/ColumnHeader.tsx",
+    "packages/explorEDA/src/components/charts/DataTable/components/ColumnTooltip.tsx",
+    "packages/explorEDA/src/components/charts/DataTable/definition.ts",
+    "packages/explorEDA/src/components/charts/DataTable/filteredRows.ts",
+    "packages/explorEDA/src/components/charts/DataTable/highlightMatches.tsx",
+    "packages/explorEDA/src/components/charts/DataTable/useColumnDrag.tsx",
+    "packages/explorEDA/src/components/charts/Markdown/blocks.ts",
+    "packages/explorEDA/src/components/charts/Markdown/definition.ts",
+    "packages/explorEDA/src/lib/dsl/compile.test.tsx",
+    "packages/explorEDA/src/lib/dsl/export.test.ts",
+    "packages/explorEDA/src/lib/dsl/export.ts",
+    "packages/explorEDA/src/lib/dsl/normalize.ts",
+    "packages/explorEDA/src/lib/dsl/views.test.ts",
+    "packages/explorEDA/src/lib/dsl/views.ts",
+    "packages/explorEDA/src/providers/lib/dataLayerState.ts",
+    "packages/explorEDA/src/test/providers/fieldSettingsProvider.test.tsx",
+    "packages/explorEDA/src/test/providers/projectIdentity.test.tsx",
+    "packages/explorEDA/src/test/utils/saveDataUtils.test.ts",
+    "packages/explorEDA/src/types/AnalysisProject.ts",
+    "packages/explorEDA/src/types/SavedDataStructure.ts",
+    "packages/explorEDA/src/types/SavedDataTypes.ts",
+    "packages/explorEDA/src/utils/saveDataUtils.ts",
+    "prompt.md"
+  ],
+  "excerpt_read": [
+    {
+      "path": "packages/explorEDA/src/providers/DataLayerProvider.tsx",
+      "ranges": [
+        [
+          682,
+          875
+        ],
+        [
+          1000,
+          1180
+        ],
+        [
+          1260,
+          1478
+        ]
+      ],
+      "notes": "Provider owner inspected the full file separately; this agent focused save/restore, reset, type change, table ownership and lifecycle."
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/compile.ts",
+      "ranges": [
+        [
+          1300,
+          1450
+        ],
+        [
+          1630,
+          1765
+        ],
+        [
+          2020,
+          2105
+        ],
+        [
+          2580,
+          2625
+        ]
+      ],
+      "notes": "Also searched full file for filters, export, type resolution, compiler declarations."
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/composition.ts",
+      "ranges": [
+        [
+          1,
+          100
+        ],
+        [
+          390,
+          440
+        ],
+        [
+          780,
+          810
+        ],
+        [
+          930,
+          956
+        ],
+        [
+          2110,
+          2250
+        ]
+      ],
+      "notes": "Measure population/filter policy, part refs, validation and partial drawable fallback; not the whole compiler."
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Markdown/Markdown.tsx",
+      "ranges": [
+        [
+          1,
+          220
+        ]
+      ],
+      "notes": "Editor initialization/update, static content, slash-menu semantics; not rest of rendering toolbar."
+    },
+    {
+      "path": "packages/explorEDA/README.md",
+      "ranges": [
+        [
+          1,
+          180
+        ],
+        [
+          270,
+          410
+        ],
+        [
+          430,
+          605
+        ]
+      ],
+      "notes": "Lifecycle, API, table/notebook/project semantics and desktop support; omitted UI styling sections."
+    },
+    {
+      "path": "apps/demo/src/demos/examples.ts",
+      "ranges": [
+        [
+          145,
+          255
+        ],
+        [
+          449,
+          483
+        ],
+        [
+          534,
+          577
+        ],
+        [
+          604,
+          634
+        ],
+        [
+          716,
+          775
+        ],
+        [
+          1220,
+          1360
+        ],
+        [
+          1370,
+          1430
+        ]
+      ],
+      "notes": "Relevant examples and delivered heatmap registry; did not rely on truncated 578–603 output for a detailed claim."
+    },
+    {
+      "path": "apps/demo/src/demos/dashboardSettings.ts",
+      "ranges": [
+        [
+          1,
+          210
+        ],
+        [
+          1227,
+          1268
+        ],
+        [
+          7027,
+          7115
+        ]
+      ],
+      "notes": "Helpers, density proof arrangement, delivered heatmap settings."
+    },
+    {
+      "path": "docs/agent-guide.md",
+      "ranges": [
+        [
+          1,
+          45
+        ]
+      ],
+      "notes": "Also searched file for history, Rows, demos, tests and identity-related routing."
+    }
+  ],
+  "searched_only": [
+    "README.md",
+    "packages/explorEDA/src/lib/dsl/project.ts",
+    "packages/explorEDA/src/lib/dsl/composition.test.ts"
+  ],
+  "supplemental_fully_read": [
+    "packages/explorEDA/src/components/RowsView.tsx",
+    "packages/explorEDA/src/components/ExplorEdaProject.tsx",
+    "packages/explorEDA/src/components/project/analysisRowKeys.ts",
+    "packages/explorEDA/src/components/project/settingsCompatibility.ts",
+    "apps/demo/src/savedViewsSession.ts",
+    "apps/demo/src/SavedViewsWorkspace.tsx",
+    "apps/demo/src/savedViewsHistory.test.ts",
+    "apps/demo/src/daily/corpus.test.ts"
+  ],
+  "supplemental_excerpt_read": [
+    {
+      "path": "apps/demo/src/savedViewsHistory.ts",
+      "ranges": [
+        [
+          1,
+          220
+        ],
+        [
+          280,
+          365
+        ],
+        [
+          468,
+          556
+        ]
+      ],
+      "notes": "Full file searched for exports, change descriptions and lifecycle, but not all timeline rendering/bundling implementation read. The tests were read in full."
+    }
+  ],
+  "missing_from_packet_closed_at_exact_ref": [
+    "packages/explorEDA/src/components/RowsView.tsx",
+    "packages/explorEDA/src/components/ExplorEdaProject.tsx",
+    "packages/explorEDA/src/components/project/analysisRowKeys.ts",
+    "packages/explorEDA/src/components/project/settingsCompatibility.ts",
+    "apps/demo/src/savedViewsSession.ts",
+    "apps/demo/src/SavedViewsWorkspace.tsx",
+    "apps/demo/src/savedViewsHistory.test.ts",
+    "apps/demo/src/daily/corpus.test.ts",
+    "apps/demo/src/savedViewsHistory.ts"
+  ],
+  "not_fetched_peripheral": [
+    "apps/demo/src/docs/live/examples.ts",
+    "apps/demo/src/daily/corpus.ts",
+    "apps/demo/dailyCorpus.mjs",
+    "apps/demo/public/daily-viz/catalog.json",
+    "apps/demo/public/daily-viz/datasets.json",
+    "apps/demo/src/HistoryTimeline.tsx",
+    "apps/demo/src/SavedViewTabs.tsx",
+    "apps/demo/src/DashboardTextPanel.tsx"
+  ],
+  "peripheral_limit": "Imports were followed for bounded selection, identity and persistence semantics; this is not a complete repository or dependency audit. Daily corpus tests depend on omitted corpus data and readers. Full runnable checkout is required for actual verification.",
+  "retrieval_index": "persistence-supplement-access.json",
+  "checks_executed": [
+    "Text/source inspection",
+    "Read-only exact-baseline GitHub retrieval",
+    "Research artifact path and JSON integrity checks only"
+  ],
+  "checks_not_executed": [
+    "pnpm/application unit tests",
+    "browser interaction tests",
+    "production builds",
+    "lint/typecheck",
+    "performance benchmarks",
+    "proposed selection/DSL regression tests"
+  ],
+  "candidate_risks_not_runtime_confirmed": [
+    "Hidden DataTable filtered-column local/linked divergence",
+    "Mixed-type workspace DSL value identity collision",
+    "Project row-key and field-compatibility traversal omissions for workspace/local/new predicate containers"
+  ],
+  "notes": "The fully_read list describes this agent's work. Do not infer that other files were unread by the full research team. Test source inspection is not evidence of tests passing."
+}

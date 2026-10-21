@@ -1,0 +1,749 @@
+{
+  "agent": "selection_flow",
+  "audit_date": "2026-10-21",
+  "repository": "https://github.com/byronwall/explorEDA",
+  "baseline": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+  "scope": "Core selection writers/resolution, Bar/Scatter/Heatmap/Metric plans and trace, facets, Provider lifecycle, relevant test source. Complements parent and sibling audits.",
+  "method": "Static source reading only. Full means every line read, sometimes in chunks; search matches are not counted as full reads.",
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 4033,
+      "sha256": "802990c1bacd76b4b867239da78fd011fb32653f891d4a88560e9ee629979a33",
+      "line_count": 39
+    },
+    {
+      "path": "docs/agent-guide.md",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 19779,
+      "sha256": "0992949f205d1ae72a8249c69bccb33f1eb70763b14a526a6384a7a91f9c9f00",
+      "line_count": 150
+    },
+    {
+      "path": "packages/explorEDA/src/charts/registerAllCharts.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 3384,
+      "sha256": "fba92bb3564cde0e66c325e1fd0d9614da9a6a66d09fafa3ac1eca26eabd00f4",
+      "line_count": 56
+    },
+    {
+      "path": "packages/explorEDA/src/charts/registry.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 3090,
+      "sha256": "8938b10f0c249a0710517352c78eb8c56d461240c21afd4f0e24142b484c4b9a",
+      "line_count": 116
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/BarChart.select.test.tsx",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 3600,
+      "sha256": "17341d0a06854ed3fb5feef1c440617dbe4b738a5dfbb106e57aebd20f8a75a1",
+      "line_count": 117
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/BarChart.tsx",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 19773,
+      "sha256": "a4805c5391d3707a1c799e48dd2764b3ddec0ea2bf485bed3813619dedc186c7",
+      "line_count": 593
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/BarTraceBody.tsx",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 6280,
+      "sha256": "ec6c8519e5f34921a05266864c921b0a69acc5341a630a4c2dde507782e4ccac",
+      "line_count": 167
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/GroupedAggregateInspector.tsx",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 4100,
+      "sha256": "cc3f938e9715fe12e0f64fca3db003c097c6117994de9b6a7adc15c39c1fde35",
+      "line_count": 130
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/SeriesBarChart.tsx",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 13048,
+      "sha256": "45f80f470e33feebd21eb16062a9036893fd0e4d0b5bda734b9a6e06bc71c5dd",
+      "line_count": 372
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/barPlan.test.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 7480,
+      "sha256": "de17c61d954e1bdff69b07eb5447bbe0f2224f6e06aef2519139a29ff5bf5726",
+      "line_count": 206
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/barPlan.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 23319,
+      "sha256": "79933db557b72b3326342b1eb3e0667f4f2a1ce924093f17e3939f78e0399834",
+      "line_count": 736
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/barTrace.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 1725,
+      "sha256": "7b19e7f433ffc0acf2ae57a4fc68359eafa4ce32b3aff45f0ed97cb9ef40b6e8",
+      "line_count": 68
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/bins.test.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 2613,
+      "sha256": "03e40d5f4d38c9ae3e118fb93f902e696a6c752ce8b5df2c2c2307665149a8fd",
+      "line_count": 70
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/bins.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 3723,
+      "sha256": "fb6428b2dd359f2f104666ea203c6a6d393415c89e9405709ad04ec1c34d3bcb",
+      "line_count": 103
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/definition.test.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 1500,
+      "sha256": "428825d46bd9f9ed86fe3febe16d7cd5e5968e71d6db693f61b682ae4b0c07d5",
+      "line_count": 47
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/definition.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 2722,
+      "sha256": "7567d38cf9a8b52d65cffa387a38e61cdab6a3c19f9c60302c4999899a62293e",
+      "line_count": 88
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/seriesBarPlan.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 13672,
+      "sha256": "363d9714b9c99ef18e79de7ec19396c3a10d2aa0edd1cc7d63d8d49fc85ffe07",
+      "line_count": 406
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BaseChart.tsx",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 14197,
+      "sha256": "6996d12e1743cd6da2e82f70709d0e4b572f361b8255e984452d93d48377c281",
+      "line_count": 437
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/FacetRelated/FacetContainer.tsx",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 14524,
+      "sha256": "f71b07a7cf2fa19b3fad0cc6970c7c54cb9390b7c44a1107238c6772249bfe05",
+      "line_count": 438
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/FacetRelated/FacetGridLayout.tsx",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 10153,
+      "sha256": "30f3606f7de1a10d264197c5cd049d7923782e7742de3b79a4a77a3f4ec4652d",
+      "line_count": 277
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/FacetRelated/FacetWrapLayout.tsx",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 4626,
+      "sha256": "16db6c073d5fcf4c08cfdc2f41f5fe54eb451d59b17022a97b0a644eda93cc14",
+      "line_count": 139
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/FacetRelated/facetLayout.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 2592,
+      "sha256": "81a2624595c51126fc8b63530c7fef7b012a3606472966d7548945167f9c8a79",
+      "line_count": 94
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/FacetRelated/facetTrace.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 358,
+      "sha256": "de7609d640a5e3039284b60c46b2c89b03739eb7aa64a31a61d21a2a6422dd7a",
+      "line_count": 11
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Heatmap/Heatmap.test.tsx",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 2175,
+      "sha256": "a390d09a8c13603e131d2babf94d7c2d62dff5ccc63bd49928e402a33ed1c2fa",
+      "line_count": 60
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Heatmap/Heatmap.tsx",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 18055,
+      "sha256": "34f9a042cbe1bbf61d4cbcccb24ae080658c5dd5c63a57704602620fdcd6f369",
+      "line_count": 519
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Heatmap/HeatmapTraceBody.tsx",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 2796,
+      "sha256": "c4a7ac2420e4028ee236be732c266627e77724e4daebfd593763607793c413df",
+      "line_count": 78
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Heatmap/definition.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 3115,
+      "sha256": "b73ec84817a13c299c4fd193956588fdd323120bda356cb962c51ceac4eb39cb",
+      "line_count": 85
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Heatmap/heatmapHistories.test.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 6779,
+      "sha256": "c1e82768c55548c085f0d2902839db91d21d0542e95a92e780735540db899d0b",
+      "line_count": 204
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Heatmap/heatmapPlan.test.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 6934,
+      "sha256": "7c1ee13ccdf42f2cc810f96525ad98acb23c445cedcc32387f6b3ee185614974",
+      "line_count": 168
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Heatmap/heatmapPlan.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 19568,
+      "sha256": "21d9308c759f6dab72f856e60f651227aa8afc09cdc5d350af818ac971b9c7af",
+      "line_count": 613
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Heatmap/heatmapTrace.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 1530,
+      "sha256": "859e4ba7febb1e19a475088de19799b6907c7f1383fc10ea1cadbb65211fa48d",
+      "line_count": 56
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/MetricCard/MetricCard.test.tsx",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 7017,
+      "sha256": "5cd60586675935e8a649d7db26839e10621e86b163021062d571929ebcad4f20",
+      "line_count": 245
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/MetricCard/MetricCard.tsx",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 7258,
+      "sha256": "f229d8e75ae2c5f3604e7df9fbc28c25a6d5fafd31dec3eda0ffbbbb5bd89813",
+      "line_count": 215
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/MetricCard/MetricCardTraceBody.tsx",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 2261,
+      "sha256": "609d4a60747be2394314f66efaa70e26f3a129fa7989c68ea1bba211b85b8f9d",
+      "line_count": 59
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/MetricCard/definition.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 1520,
+      "sha256": "199024f211d1037d2936e164f018a5d310e5db2e5e8bf76280649e19ea524ff6",
+      "line_count": 44
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/MetricCard/metricCardPlan.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 5485,
+      "sha256": "d557faa6313df2f96d84f0dcc4df980e9c8f5cd0f6ab3a41e588634c2b4a5254",
+      "line_count": 167
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/MetricCard/metricCardTrace.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 935,
+      "sha256": "81949272b9e6551b279f11fda60f13789b00a37e78f45a2ecf5bd56682956bda",
+      "line_count": 33
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/DensityScatter.tsx",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 12060,
+      "sha256": "0cd39f45ab4cec7e44bbb8a264c56787af1591b64cafef6265fd268f239a7da5",
+      "line_count": 348
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/DensityTraceBody.tsx",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 8627,
+      "sha256": "8aadcfcf2e5cb0a7e84e4d643141c31877c238ab8804de93a415612f1821f876",
+      "line_count": 231
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/MarginalTraceBody.tsx",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 1882,
+      "sha256": "0cb0891827ee667e8e7d4fa63bdb9d8c69e23be6599ae0e520e1b78c9aa90d2a",
+      "line_count": 47
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/ScatterPlot.tsx",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 29798,
+      "sha256": "f9be0e4377aa20efe1ce1c22a7e82bf677b1d0a7a05a83dad9d90031e5838a7a",
+      "line_count": 870
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/ScatterSvg.tsx",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 25552,
+      "sha256": "c8493e1ab97d9d41f88d20a97ae0ed6fb3ca8d556d7c97bd921d1ed08cee3825",
+      "line_count": 819
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/ScatterTraceBody.tsx",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 10200,
+      "sha256": "9d71fccc1147309524c8dbc3a5d2311cc6e6e8e289f8de4f94b744de94059d61",
+      "line_count": 263
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/SurfaceTraceBody.tsx",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 5785,
+      "sha256": "c168ec71976a5359d665f5206f4a64d033e51f5af4c98c70ee7e32ea08c760ad",
+      "line_count": 156
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/definition.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 3356,
+      "sha256": "b19d1183b5d2a5e31c3fca27140f25a111e446d8158b2f1573b7f9f9a510172b",
+      "line_count": 104
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/density.test.tsx",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 7051,
+      "sha256": "087bc4bb9b9a89576c3067091b9547be42cd4f52b01c5ba86132124cc9dafa8d",
+      "line_count": 207
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/densityPlan.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 5776,
+      "sha256": "72e5d2c5eb92189432c79fa68d3197e9b566fa95074e0f6ea16b2aa734e0a7fe",
+      "line_count": 176
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/hexPlan.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 7098,
+      "sha256": "c85c501e7c56d4cb0c333e607eeca7e7964e7784cc86633158e0fac59ad9c083",
+      "line_count": 219
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/marginalPlan.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 8168,
+      "sha256": "37cbd5f162b10d45b70578d0947b5c42e6a9d0351c02b7802b790dd15252afcf",
+      "line_count": 271
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/planScatterPoints.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 3346,
+      "sha256": "a49f6f0e6c89d87f36b04b9dc6d2821ac6ca3ed6f5c5c77bd28f9fce51e7937d",
+      "line_count": 117
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/scatterAxis.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 9739,
+      "sha256": "568ee13f3d309324514bc30040c7251b6ca4a5f1d077569df87d703edf17b5ac",
+      "line_count": 315
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/scatterPlan.test.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 9754,
+      "sha256": "ee72c8fed3cb558ed445b6ce671bc94d21e4138501b5ec0a5e27391b17919ab1",
+      "line_count": 295
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/scatterPlan.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 29630,
+      "sha256": "c871ba298010412b8efc20d91bff6499351cbb8cded781f5d5b5437d0b3df4ef",
+      "line_count": 976
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/scatterTrace.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 8221,
+      "sha256": "494eaa37f2c4fdf6d43839235d57cb6c1bc4c9b25164742daf716d0b34fc132e",
+      "line_count": 278
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/summaryMarginals.test.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 6161,
+      "sha256": "c9b90e0f137db7fb8e73e2752de3285d94f217120650b08ffb1dba9632fe570a",
+      "line_count": 164
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/useScatterData.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 4085,
+      "sha256": "63c650c5c83a1b7bd19d2a05f793c5b6f64b4f31623adff68bc0c08cbdb8e8e9",
+      "line_count": 114
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/SummaryTable/definition.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 1604,
+      "sha256": "fcca2db32f260ddd7cf944dd62caae80ad746d1bb0e58e90d9c33a4ec2c50d20",
+      "line_count": 47
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/heatScale.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 3874,
+      "sha256": "c5115b9d951d122f6522729b1f41797d0a3b4c23bea3724193252e0412c140e2",
+      "line_count": 106
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/trace/ChartTracePanel.tsx",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 9190,
+      "sha256": "8296f16ebb4f6ad3734f24463f0f8172369c6de0f43db234e07b6bdd71f0be9b",
+      "line_count": 251
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/trace/ChartTraceScope.test.tsx",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 4616,
+      "sha256": "6737c837403e3ee8b87352212c2dcc4f087ddfc508f364f8dbe88e5ffb390d3a",
+      "line_count": 148
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/trace/ChartTraceScope.tsx",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 5523,
+      "sha256": "f6cce9aac17364bf9833de76169b249d9ce990e1d9641bc8d1e36b12099b2dad",
+      "line_count": 176
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/trace/TraceBodies.tsx",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 8365,
+      "sha256": "4eac440729653164bd28716dd25fa504fe4ec4b760b2becce7062ab9a4812327",
+      "line_count": 238
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/trace/traceRows.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 1201,
+      "sha256": "39968b571109484599663a0249b87632a33aeb6d12df541b14040f7cb8c24a9f",
+      "line_count": 35
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/trace/traceTypes.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 5363,
+      "sha256": "f1a0263c3d75a3b8d5574d302a81e01efbd64a55eb854f1e68f8383e3f52faa0",
+      "line_count": 193
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/useGetColumnData.tsx",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 1765,
+      "sha256": "03ad6ffe51073a3db4a95786f597c8b1833257c64d6fdbbc0b8d07a496f60f01",
+      "line_count": 65
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/useGetLiveData.tsx",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 2222,
+      "sha256": "6222156b36ba1d8accc05fd01888543a5bd4dc07b0673db01f74e27570a04478",
+      "line_count": 80
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/CrossfilterWrapper.test.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 8386,
+      "sha256": "a193e9ec416216098d5406a024f4799733ed106867ee57a311a4a57afd49b109",
+      "line_count": 241
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/CrossfilterWrapper.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 6855,
+      "sha256": "444f228baffb694c82f7826da6a2eee88ce0296b47ec5e3f59c36b0d1070b483",
+      "line_count": 222
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/applyFilter.test.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 2513,
+      "sha256": "d534a71213abbe95fd982f275a3dc0069aabb474f0653eb5ca158a9c1f89756e",
+      "line_count": 69
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/applyFilter.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 1974,
+      "sha256": "d8f0610999aa93372bbbb29d9811d9106b71e1c40675b5bc3f3714ea5bbc3953",
+      "line_count": 68
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/useBrush.test.tsx",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 2147,
+      "sha256": "036702039bfc14d2088ac8c9657631a32f41a1896bd0d84420e13a7086b1e534",
+      "line_count": 71
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/useBrush.tsx",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 7435,
+      "sha256": "c07994d2913cf846a4ebcec672b39529b3f1c9d681ee3d6a2086f9d8c6d75517",
+      "line_count": 232
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/useFieldFilter.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 2606,
+      "sha256": "ca0cf2ff3c9b4468dd9c2d0599327ec671a15e7c2ef481c0b1dbfdded4c57410",
+      "line_count": 74
+    },
+    {
+      "path": "packages/explorEDA/src/lib/categories.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 2168,
+      "sha256": "6a0f2450cc369a188091ce0533e26dc5775e1b647a37e64e2590eb3f3d68e123",
+      "line_count": 66
+    },
+    {
+      "path": "packages/explorEDA/src/lib/chartPopulation.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 1425,
+      "sha256": "3108817ced390197b9b90708d5ee76386c992470716d9326adbc12ce1d0bab86",
+      "line_count": 42
+    },
+    {
+      "path": "packages/explorEDA/src/lib/valueParsing.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 10226,
+      "sha256": "18793ed3c9f09e3ac6c184fd658ad68b88f564c5c2d800bac7108188afd845d6",
+      "line_count": 306
+    },
+    {
+      "path": "packages/explorEDA/src/providers/DataLayerProvider.tsx",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 55689,
+      "sha256": "c0ab7260c912fb628d393e7cbae1c752e44db4a20e347d9ec07f755b3ae7771d",
+      "line_count": 1734
+    },
+    {
+      "path": "packages/explorEDA/src/providers/lib/dataLayerState.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 804,
+      "sha256": "2469556f6e39537ff394ff4b242cd0da5aee866907568f0f2685e87525ec1569",
+      "line_count": 33
+    },
+    {
+      "path": "packages/explorEDA/src/test/providers/DataLayerCalculations.test.tsx",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 14223,
+      "sha256": "fb5e1d8df0fdb7816a4e49a9a59a4525b66ff0154a5b4a8b880a7509bc59f508",
+      "line_count": 449
+    },
+    {
+      "path": "packages/explorEDA/src/test/providers/DataLayerProvider.test.tsx",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 41254,
+      "sha256": "69a9801fb7a17dc9d15f77684185f12f907bd9376ec6a54ed80139491daea91a",
+      "line_count": 1323
+    },
+    {
+      "path": "packages/explorEDA/src/types/ChartTypes.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 7239,
+      "sha256": "af8e1bfd423816317b3e37965f8231c722ece77f397bfb54598ee5499ac5e61e",
+      "line_count": 219
+    },
+    {
+      "path": "packages/explorEDA/src/types/FilterTypes.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 1207,
+      "sha256": "5779e19b22a73dbfc6c9c66b7d12f5b7cba149b5da7e1cfa1ed316afe3a9011f",
+      "line_count": 54
+    },
+    {
+      "path": "packages/explorEDA/src/types/SavedDataStructure.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 1926,
+      "sha256": "d06d902c2e9ba967adb39f25502405153b2b582bfd2bf7305ad51bec9b9dfebb",
+      "line_count": 63
+    },
+    {
+      "path": "prompt.md",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "full",
+      "bytes": 14118,
+      "sha256": "cdf4ec89d0723ba369512277c525e755fa3970b1313d1e58764db30732b975d2",
+      "line_count": 88
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/definition.ts",
+      "origin": "supplied_selected_snapshot",
+      "read_status": "excerpt",
+      "bytes": 2249,
+      "sha256": "d40fd095ef8e2244b9d178b172ef4e132f2265e0c3588eec6e62c183eece853c",
+      "line_count": 81,
+      "read_line_ranges": [
+        [
+          54,
+          81
+        ]
+      ],
+      "note": "Other DataTable files are owned by a sibling audit; this record covers this agent only."
+    },
+    {
+      "path": "packages/explorEDA/src/lib/aggregates.ts",
+      "origin": "github_exact_baseline_supplement",
+      "read_status": "full",
+      "bytes": 8924,
+      "sha256": "075fdd755f228895d5ac32288cf78ec05b0572a524ae2668db2375a03e7e7c85",
+      "line_count": 288,
+      "baseline": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "original_packet_availability": "missing",
+      "access_note": "Retrieved by parent through the connected GitHub exact-ref file reader; read full supplemental file locally."
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dailyRollup.ts",
+      "origin": "github_exact_baseline_supplement",
+      "read_status": "full",
+      "bytes": 5589,
+      "sha256": "89b04b18a22e617d7be09987aa5212523f2e1f8887f3f25471eaa2c53ffdd7c2",
+      "line_count": 179,
+      "baseline": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "original_packet_availability": "missing",
+      "access_note": "Retrieved by parent through the connected GitHub exact-ref file reader; read full supplemental file locally."
+    }
+  ],
+  "counts": {
+    "fully_read": 86,
+    "excerpt_read": 1,
+    "exact_baseline_supplements": 2
+  },
+  "unexecuted": [
+    "Application unit tests",
+    "Integration tests",
+    "UI interaction checks",
+    "Keyboard checks",
+    "Responsive-width checks",
+    "Build/type check",
+    "Performance benchmarks",
+    "Proposed counterexample fixtures"
+  ],
+  "completed_checks": [
+    "Read source files listed in coverage",
+    "Read existing test source as specifications, without execution",
+    "Followed relevant writers, predicate definitions, index updates, live-ID and contributor readers",
+    "Compared interval partition rules with outgoing filters",
+    "Enumerated source/facet/population/no-selection semantics",
+    "Distinguished exact-baseline supplemental reducers from supplied packet"
+  ],
+  "remaining_scope_limits": [
+    "Peripheral Scatter regression/fit/connection and chart settings implementations are not fully audited by this agent.",
+    "Standard UI availability of MetricCard faceting was not established; facet omission is reported as a conditional component/API edge.",
+    "No runtime reproduction is claimed for static source counterexamples.",
+    "Paper and current Mosaic implementation are researched by parent; findings, persistence, DSL and table/export paths by sibling agents."
+  ],
+  "notes_file": "research-work/selection-flow-notes.md"
+}

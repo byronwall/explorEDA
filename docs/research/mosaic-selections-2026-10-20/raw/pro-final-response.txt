@@ -1,0 +1,210 @@
+You said:
+prompt(7).md
+Document
+mosaic-source-packet.zip
+File
+Run the complete research assignment in the attached prompt(7).md (also prompt.md inside mosaic-source-packet.zip). Use the attached source snapshot. Read the full Mosaic Selections paper and official implementation sources. Return the detailed report, recommendations, sources, proof plan, source material, and downloadable ZIP specified in the prompt. Research only; Codex will review and integrate the artifacts into the repo.
+Worked for 36m 32s
+ChatGPT said:
+
+Hi, the complete research assignment is finished. The recommended first step is a small internal selection contract over the existing React/TypeScript and Crossfilter implementation, followed by an exact lasso proof across four consumers. Mosaic packages, DuckDB, its optimizer, and renderer replacement should remain deferred.
+
+The handoff contains the detailed report, fifteen structured recommendations, fifty source records, a complete proof plan, preserved source material, and an integrity manifest. Application implementation, tests, browser checks, benchmarks, and Git/PR work remain for Codex.
+
+Downloads
+Output	Contents
+
+mosaic-selections-research.zip
+	Complete handoff: all five companion documents plus the full permitted source-material/ directory.
+
+mosaic-selections-report.md
+	Executive decision, current selection flow, semantic truth tables, scored alternatives, proposed TypeScript contract and pseudocode, correctness analysis, performance research, milestones, unresolved decisions, and evidence appendix.
+
+mosaic-selections-recommendations.json
+	MOS-001–MOS-015, each with classification, problem, workflow, evidence, proposed change, benefit, cost, exactness/performance/API impact, alternative, confidence, and proof gates.
+
+mosaic-selections-sources.json
+	50 source records with immutable refs, URLs, symbols/sections, supported claims, retrieval dates, access limits, and collected-file details.
+
+mosaic-selections-proof-plan.md
+	Twelve-row fixture, exact expected IDs, procedures, 12 semantic gates, 5 optional acceleration gates, lifecycle/accessibility checks, benchmark design, and GO/NO-GO/stop decisions.
+
+source-material.zip
+	Standalone copy of source-material/: original supplied packet and prompt, licensed Mosaic sources, research notes, coverage records, access indexes, and fixture arithmetic.
+
+manifest.json
+	Baseline, coverage, payload byte sizes and SHA-256 hashes, checks completed, unrun checks, omitted assets, and bounded open questions.
+Principal recommendation
+
+Use Mosaic’s model selectively before adopting its implementation. Its useful contribution here is explicit ownership of selection clauses and deliberate resolution for each consuming view. Official Mosaic supports conjunction, disjunction, most-recent-clause resolution, and exclusion of associated clients during cross-filtering. Those concepts fit this investigation. 
+Mosaic
+
+The repository already has substantial foundations: one Crossfilter dimension per chart, workspace filters, chart-local populations, exact filtered IDs, contributor traces, and project-level logical row keys. The missing piece is a consistent contract connecting those paths—including a written finding—without erasing their intentional differences.
+
+The report compares four options using semantic fit, exactness, consumer work, maintenance, performance potential, migration cost, and public API size:
+
+Option	Research score / 100	Decision
+Retain architecture and document contracts	65	Valid fallback, alongside bounded correctness fixes.
+Small internal contract over Crossfilter	91	Recommended experiment.
+Adopt Mosaic Selection through an adapter	61	Defer until it demonstrably removes more work than it adds.
+Adopt Mosaic/DuckDB interaction backend	58	Defer until profiling and exactness gates justify migration.
+
+These scores are design judgments, not measured performance. The external options have potential, but they still require durable identity, serialization, row evaluation, scope rules, React lifecycle handling, and exact evidence retrieval.
+
+A dependency adoption decision can therefore remain “no” even if the semantic experiment succeeds.
+
+Findings that most affect the next implementation
+1. Histogram boundaries can disagree with linked evidence
+
+The source partitions an internal numeric bin as half-open, while the emitted range is evaluated inclusively.
+
+For values 0, 0.5, and 1 in two bins:
+
+The first displayed bin is [0, 0.5) and contains only 0.
+Its emitted filter can be { min: 0, max: 0.5 }.
+The common evaluator accepts 0.5, adding a record that belongs to the adjacent bin.
+
+The same pattern appears in Scatter marginals. This is a concrete static counterexample, not a runtime reproduction. The recommended fix is explicit interval closure, preserving the inclusive meaning of existing saved ranges—not subtracting an arbitrary floating-point epsilon. Sources: 
+histogram plan, 
+selection writer, and 
+filter evaluator.
+
+2. Source-chart context must be distinguished from selected evidence
+
+A source histogram may intentionally show records passing other charts’ selections while excluding its own selection from its context distribution. Its selected overlay, table, export, and written count can still use the full intersection.
+
+The proposed contract therefore distinguishes:
+
+Population restrictions, including workspace, chart-local, and facet scope.
+Interactive predicates and their originating chart.
+Source-chart context versus exact selected evidence.
+Highlighting, viewport changes, and encoding domains.
+
+Two charts selecting the same field must remain separate owners. Clearing one must preserve the other. This extends the existing 
+Crossfilter resolution behavior, rather than replacing it with a field-keyed global selection.
+
+3. Hiding a filtered table column can create a scope discrepancy
+
+The dashboard table’s local evaluator continues applying saved filters, while its linked definition looks up fields through the configured columns. Removing a filtered column from that list can therefore leave the table and its siblings using different predicates.
+
+The recommended policy is to retain the filter with a visible indication; explicitly clearing it on hide is another defensible choice. The implementation should not choose implicitly through presentation state. This is also a source-derived candidate requiring reproduction. Sources: 
+table definition, 
+local row filtering, and 
+column operations.
+
+4. Persistence needs deliberate extension
+
+Existing project row-key adaptation is valuable and should be reused. It currently traverses particular chart and Rows filter locations; a new polygon, workspace/local filter location, or binding does not automatically inherit that handling.
+
+The report also identifies typed-value risks in dashboard text: numeric 1 and string "1" can collide through string-based lookup. Export paths have different fallback guarantees. A richer selection must either round-trip exactly or be explicitly rejected by an unsupported export path. Sources: 
+logical row-key adapter, 
+DSL compiler, and 
+DSL exporter.
+
+The lifecycle plan covers chart/view duplication, deletion, undo, restore, source replacement, field edits, and calculated-field invalidation. It also preserves the existing Clear All behavior rather than silently redefining it.
+
+5. Daily findings do not already follow workspace selections
+
+The current daily findings evaluator uses its own conditions, coercion, and empty-result behavior. The first live narrative feature should therefore be a bounded selected-count binding with a named denominator and an inspection route. Authored prose should remain authored; evaluated values should remain derived. Source: 
+daily findings evaluator.
+
+A denominator distinction is explicit in the handoff:
+
+The proposed workspace-eligible finding can show 3 of 7 with workspace East active.
+The existing MetricCard, with the same unrestricted local population, uses a full-source baseline and can show 3 of 12.
+
+Those ratios describe different baselines. The proof compares count numerators unless denominator scopes are deliberately aligned. Sources: 
+MetricCard and 
+the actual shared live-data hook.
+
+6. Delivered density and Heatmap behavior should remain intact
+
+The study treats stable Scatter density bins, exact contributors, and the merged Heatmap histories/date-bin/fixed-color-end work as existing behavior to preserve. It does not reopen those features based on older intent documents. The requested baseline is the 
+PR #450 merge commit.
+
+The smallest proof is specified concretely
+
+The proposed experiment uses a histogram, Scatter, evidence table, and written count over twelve explicit records.
+
+Its two principal selections are:
+
+A: numeric X in the proposed half-open interval [1,3), owned by the histogram.
+B: a lasso triangle with vertices (0,0), (3,0), and (0,3), including boundary points, owned by Scatter.
+
+With both active:
+
+Consumer	Resolved population	Expected count
+Histogram context, own selection excluded	B	5
+Scatter context, own selection excluded	A	7
+Evidence table and proposed finding	A ∩ B	4
+
+The exact intersection is r02, r07, r10, r11. Its valid amount contributors are r02 and r11, producing sum 25 and mean 12.5. The other two records remain selected evidence, with blank/invalid-measure exclusions explained.
+
+The plan deliberately detects a rectangle substituted for the triangle. Mosaic’s documented region interactor selects rendered elements inside a rectangle; it is not an arbitrary lasso implementation. 
+Mosaic
+
+Additional cases cover same-field competing selections, source-self filtering on/off, clear/restore, zero rows, typed values, UTC boundaries and offsets, tuple unions, explicit empty facets, notebook scope, logical identity, full CSV membership, and trace contributors. It specifies a keyboard-equivalent operation and checks at 1280, 783, and 390 CSS pixels.
+
+The fixture also records a necessary setup condition: its raw scalar types must be reconciled with the application’s prepared-data conversion before interpreting typed-equality results.
+
+Performance conclusions
+
+Metadata alone will not bring Mosaic’s optimizer to Crossfilter. The inspected optimizer works through structured queries, compatible grouping and selection dimensions, sufficient aggregate measures, and a supporting query backend. Its benefits must be weighed against materialization, memory, active-source switching, invalidation, and exact evidence retrieval. The report grounds this in the pinned 
+pre-aggregation implementation.
+
+The study separately addresses two correctness risks:
+
+Aggregation can be exact for quantized bins while admitting records outside the intended source-space interval.
+Support for union selection semantics does not by itself prove compatibility with an optimization derived around prefiltering by other clauses.
+
+Both are treated as static concerns requiring targeted parity tests, not reproduced upstream failures.
+
+The benchmark analysis distinguishes query-group completion from interaction-to-paint latency, separates loading and materialization from updates, explains favorable prefetch lead time, and records unresolved paper/harness cardinality discrepancies. No paper speedup is presented as an explorEDA result.
+
+The proposed benchmark uses:
+
+Existing January flights plus deterministic 10k/100k datasets, with optional 1M.
+Four, eight, and twelve views.
+Cold setup and warm committed interactions.
+p50/p95 coherent-update and evidence-query latency.
+Setup cost, memory, source switching, and invalidation.
+Exact row-ID equality as a hard gate.
+
+The native baseline measures existing functionality. Once the semantic implementation exists, it becomes the identical-workload control for optional acceleration; the baseline is not falsely credited with the new lasso or finding.
+
+Access, coverage, and verification
+
+The access gate passed for byronwall/explorEDA at 9b16d78e3ed0742ed4d5858c1939fec9e758b510.
+
+Completed research includes:
+
+All 528 manifest-listed repository file sizes and SHA-256 hashes verified; the supplied archive and extracted snapshot remain unchanged.
+The two supplied prompt copies confirmed byte-identical.
+137 repository files from the packet read in full, plus its prompt; five additional packet files read in excerpts.
+Eleven exact-baseline supplements inspected to close semantic dependencies: ten full reads and one excerpt read.
+The full paper v1, references, appendices, and figure material inspected.
+Official Mosaic pinned to 9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce: 32 curated files fully read and three inspected in excerpts, with collected-only context distinguished.
+Fourteen official benchmark source/result files inspected.
+Independent fixture arithmetic, source-reference validation, recommendation-field validation, and ZIP integrity checks completed.
+
+No application tests, build, typecheck, browser experiment, runtime bug reproduction, or new benchmark was run. The selected snapshot is not a runnable checkout, and every product acceptance check is labeled proposed/unrun.
+
+The source bundle includes the original supplied packet and licensed Mosaic implementation material. The full paper and figures were inspected but omitted from redistribution: the linked arXiv license grants distribution rights to arXiv and does not establish a general redistribution grant for this ZIP. Citations, access notes, a short excerpt, and original analysis are included instead. 
+Non-exclusive license to distribute
+
+The next work is bounded: M1 correct and prove the immediate contracts; M2 build the four-consumer lasso experiment; M3 complete durable lifecycle and scope gates; M4 measure and decide whether acceleration earns its cost. Each milestone includes documentation and a reachable demo. Codex has the source locators, expected IDs, acceptance gates, and stop conditions needed to review and integrate the research.
+
+mosaic-selections-report.md
+Open file
+mosaic-selections-recommendations.json
+Code
+mosaic-selections-sources.json
+Code
+2 more
+ChatGPT can make mistakes. Check important info.
+Latest response
+
+
+
+
+Pro

@@ -1,0 +1,135 @@
+{
+  "repository": "uwdata/mosaic-selection-benchmarks",
+  "version_ref": "72b82e1bad3e96786e63bb10877b4d5cd48cc2f5",
+  "retrieval_date": "2026-10-21",
+  "files": [
+    {
+      "path": "README.md",
+      "original_filename": "README.md",
+      "url": "https://github.com/uwdata/mosaic-selection-benchmarks/blob/72b82e1bad3e96786e63bb10877b4d5cd48cc2f5/README.md",
+      "bytes": 2650,
+      "sha256": "c37dd83ef1eaf908a9c637e98cbd74d493417e1e106b08af852561be588835d2",
+      "inspection": "full",
+      "redistribution": "Omitted; access note retained"
+    },
+    {
+      "path": "bin/bench.js",
+      "original_filename": "bench.js",
+      "url": "https://github.com/uwdata/mosaic-selection-benchmarks/blob/72b82e1bad3e96786e63bb10877b4d5cd48cc2f5/bin/bench.js",
+      "bytes": 1567,
+      "sha256": "06b75d69507820d3e4bb7add6a58dfedffc99324cc27dba3d305066b3e2fe2b0",
+      "inspection": "full",
+      "redistribution": "Omitted; access note retained"
+    },
+    {
+      "path": "bin/sparsity.js",
+      "original_filename": "sparsity.js",
+      "url": "https://github.com/uwdata/mosaic-selection-benchmarks/blob/72b82e1bad3e96786e63bb10877b4d5cd48cc2f5/bin/sparsity.js",
+      "bytes": 3548,
+      "sha256": "608d9698dcf2954a3ba7ac72fbb6b34c374293f0c72b5753c437ef7158da36e3",
+      "inspection": "full",
+      "redistribution": "Omitted; access note retained"
+    },
+    {
+      "path": "package.json",
+      "original_filename": "package.json",
+      "url": "https://github.com/uwdata/mosaic-selection-benchmarks/blob/72b82e1bad3e96786e63bb10877b4d5cd48cc2f5/package.json",
+      "bytes": 450,
+      "sha256": "c88756887ec6e1c2b9a90c220ff93298654798e62fd935774e90ec78abd3aeef",
+      "inspection": "full",
+      "redistribution": "Omitted; access note retained"
+    },
+    {
+      "path": "results/bench/flights-node-opt-1e8.csv",
+      "original_filename": "flights-node-opt-1e8.csv",
+      "url": "https://github.com/uwdata/mosaic-selection-benchmarks/blob/72b82e1bad3e96786e63bb10877b4d5cd48cc2f5/results/bench/flights-node-opt-1e8.csv",
+      "bytes": 279659,
+      "sha256": "d6a582ffa11e706fd6edc7bfa0ecb4e85ce89b728093c904e47f3315d72597ba",
+      "inspection": "full",
+      "redistribution": "Omitted; access note retained"
+    },
+    {
+      "path": "results/bench/flights-node-std-1e8.csv",
+      "original_filename": "flights-node-std-1e8.csv",
+      "url": "https://github.com/uwdata/mosaic-selection-benchmarks/blob/72b82e1bad3e96786e63bb10877b4d5cd48cc2f5/results/bench/flights-node-std-1e8.csv",
+      "bytes": 278498,
+      "sha256": "a6a97746f534d761d0702eaf3fa02bac86e7801fcec13f911044a062dbc3c9f6",
+      "inspection": "full",
+      "redistribution": "Omitted; access note retained"
+    },
+    {
+      "path": "results/bench/property-node-opt-1e4.csv",
+      "original_filename": "property-node-opt-1e4.csv",
+      "url": "https://github.com/uwdata/mosaic-selection-benchmarks/blob/72b82e1bad3e96786e63bb10877b4d5cd48cc2f5/results/bench/property-node-opt-1e4.csv",
+      "bytes": 81014,
+      "sha256": "247cd0ab860f8fc1f0a1f1206387ce8cbd993b814848ac1e8d0a6d295ea1bc44",
+      "inspection": "full",
+      "redistribution": "Omitted; access note retained"
+    },
+    {
+      "path": "results/bench/property-node-std-1e4.csv",
+      "original_filename": "property-node-std-1e4.csv",
+      "url": "https://github.com/uwdata/mosaic-selection-benchmarks/blob/72b82e1bad3e96786e63bb10877b4d5cd48cc2f5/results/bench/property-node-std-1e4.csv",
+      "bytes": 81008,
+      "sha256": "3008974f4924887fc9bcfb4d8ccc6128f2d14403fee6a40a5971a8a8209aa354",
+      "inspection": "full",
+      "redistribution": "Omitted; access note retained"
+    },
+    {
+      "path": "src/analyze.js",
+      "original_filename": "analyze.js",
+      "url": "https://github.com/uwdata/mosaic-selection-benchmarks/blob/72b82e1bad3e96786e63bb10877b4d5cd48cc2f5/src/analyze.js",
+      "bytes": 336,
+      "sha256": "bb9d97a548b1e1c7e438fcb3b18770b41d3f5940c17ed468531513bb8463f381",
+      "inspection": "full",
+      "redistribution": "Omitted; access note retained"
+    },
+    {
+      "path": "src/benchmark.js",
+      "original_filename": "benchmark.js",
+      "url": "https://github.com/uwdata/mosaic-selection-benchmarks/blob/72b82e1bad3e96786e63bb10877b4d5cd48cc2f5/src/benchmark.js",
+      "bytes": 3850,
+      "sha256": "ea2481be5215cbd718934c47def1409ebb7f63735943a683f5a00475dcea43c5",
+      "inspection": "full",
+      "redistribution": "Omitted; access note retained"
+    },
+    {
+      "path": "src/run.js",
+      "original_filename": "run.js",
+      "url": "https://github.com/uwdata/mosaic-selection-benchmarks/blob/72b82e1bad3e96786e63bb10877b4d5cd48cc2f5/src/run.js",
+      "bytes": 507,
+      "sha256": "a9626b4224f62e01d3effeb03f65d324f9007b39725a837a42e5e4fc8a863c43",
+      "inspection": "full",
+      "redistribution": "Omitted; access note retained"
+    },
+    {
+      "path": "src/tile-pan.js",
+      "original_filename": "tile-pan.js",
+      "url": "https://github.com/uwdata/mosaic-selection-benchmarks/blob/72b82e1bad3e96786e63bb10877b4d5cd48cc2f5/src/tile-pan.js",
+      "bytes": 4422,
+      "sha256": "254bfa5a7948e3f638cd92b6fe541a4e0ebaf0c60f5d443ba55cdade2380b4a5",
+      "inspection": "full",
+      "redistribution": "Omitted; access note retained"
+    },
+    {
+      "path": "web/results/results.js",
+      "original_filename": "results.js",
+      "url": "https://github.com/uwdata/mosaic-selection-benchmarks/blob/72b82e1bad3e96786e63bb10877b4d5cd48cc2f5/web/results/results.js",
+      "bytes": 3107,
+      "sha256": "18e4c3f1b04e41f8e60ac1f5b4f544179a93ebc5091f6892dda39d791d3d30ab",
+      "inspection": "full",
+      "redistribution": "Omitted; access note retained"
+    },
+    {
+      "path": "web/results/tile-pan.js",
+      "original_filename": "tile-pan.js",
+      "url": "https://github.com/uwdata/mosaic-selection-benchmarks/blob/72b82e1bad3e96786e63bb10877b4d5cd48cc2f5/web/results/tile-pan.js",
+      "bytes": 4564,
+      "sha256": "654b5de7b32336611d3c3bbf5727e8312ac90056dcc780727da7b0538d84db63",
+      "inspection": "full",
+      "redistribution": "Omitted; access note retained"
+    }
+  ],
+  "permission": "No redistribution grant established; no full source/results included.",
+  "executed": "Only descriptive arithmetic on already-published CSVs; no benchmark execution."
+}

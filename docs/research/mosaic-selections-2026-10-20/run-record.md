@@ -16,7 +16,7 @@ The user requested the full handoff process on October 20, 2026. No application 
 
 ## Submission
 
-- Phase: submitted; research running.
+- Phase: results collected; reconciliation and repository validation in progress.
 - Round: initial request; up to two bounded follow-ups remain.
 - Prompt: [prompt.md](prompt.md)
 - Source packet: [mosaic-source-packet.zip](mosaic-source-packet.zip)
@@ -40,16 +40,44 @@ The retry was allowed. Both uploads completed before submission.
 
 ## Integration and validation
 
-Pending Pro results. No Pro research has been collected or accepted yet.
+Pro finished the initial request after 36m 32s. Collected at the first scheduled check on October 21.
+No follow-up was needed. The principal recommendation is a small internal contract; dependency/backend adoption remains deferred.
 The prompt requires a report, stable recommendation IDs, source ledger, proof plan, source material, ZIP, and manifest.
 Preserve originals separately from Codex analysis. Verify archives, hashes, JSON, and consequential claims.
 Give each recommendation an adopt, investigate, defer, or reject disposition.
 Run relevant document checks and `pnpm check` before the review PR. No changeset is needed for docs-only work.
 
-No product tests ran in this preparation turn. No performance result or proposed feature is established.
+No new product behavior or performance result is established. The full existing repository check is running with Node 24.21.0.
+A proposed proof is not an executed product test.
 No PR yet. Disable the heartbeat only after verified completion or a blocker that requires user action.
 
 ## Preparation checks
 
 All 528 selected source paths are tracked in the baseline. Source hashes match the packet manifest.
 The archive passes ZIP integrity checks. No application files changed.
+
+## Collection and reconciliation
+
+- Original complete ZIP: `raw/mosaic-selections-research.zip`, 1,638,862 bytes, 78 entries.
+- Original standalone source ZIP: `raw/source-material.zip`, 1,531,743 bytes, 73 source members.
+- Five companions and permitted source material preserved unchanged in `raw/research/`.
+- All 77 manifest-listed payload sizes/hashes match. Both archives pass integrity/safety checks.
+- Standalone source members match the complete archive. All JSON parses.
+- Browser download-event wait timed out, but the actual ZIP existed and passed checks. No resubmission occurred.
+- The report's standalone controls opened a preview without saving a file. The verified ZIP member preserves the complete original.
+- Final response preserved in `raw/pro-final-response.txt`. Inventory and SHA-256 are in `raw/collection-manifest.json`.
+- Fifteen recommendations have explicit dispositions in `recommendation-review.md`; fifty source records resolve.
+- Main integration: `README.md`. Source evidence and correction: `source-checks.md`.
+- Linked research from precise-composite-selection and data-bound-narrative intent briefs. Neither initiative changed phase.
+- Paper hardware correction: M1 Pro, not the raw report's M2 Pro. No Pro follow-up was needed for this isolated error.
+- Independently matched official pinned Selection, PreAggregator, sufficient-statistics, and LICENSE bytes.
+- Recalculated principal fixture sets and measure arithmetic without running downloaded programs.
+- Added the raw folder to Prettier exclusions to preserve original hashes through the commit hook.
+- Full paper/figure and benchmark redistribution limits are recorded in the original access notes. No delivered content is missing.
+
+## Current validation
+
+Archive/hash/JSON checks, recommendation/source references, fixture arithmetic, and authored local links pass.
+Static source supports the interval/table concerns; runtime reproduction remains unrun.
+`pnpm check` is in progress; detailed output is under ignored `tmp/mosaic-pnpm-check.log`.
+No application code changed; no UI screenshots or changeset is required for this docs-only PR.

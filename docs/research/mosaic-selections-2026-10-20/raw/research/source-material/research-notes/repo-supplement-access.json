@@ -1,0 +1,127 @@
+{
+  "repository": "byronwall/explorEDA",
+  "baseline": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+  "files": [
+    {
+      "path": "apps/demo/src/SavedViewsWorkspace.tsx",
+      "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/apps/demo/src/SavedViewsWorkspace.tsx",
+      "version_ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "retrieval_date": "2026-10-21",
+      "git_blob_sha": "ae40ce605a1413f51adbd6841d5d405ac852fb01",
+      "bytes": 41082,
+      "sha256": "75fa5ee6649939c264603991399b5a55897e33a97d8bccd2ad3f9780c6c48523",
+      "inspection": "full",
+      "redistribution": "Full source omitted: no separate redistribution grant established. Exact-ref citation and short excerpts/access note retained."
+    },
+    {
+      "path": "apps/demo/src/daily/corpus.test.ts",
+      "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/apps/demo/src/daily/corpus.test.ts",
+      "version_ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "retrieval_date": "2026-10-21",
+      "git_blob_sha": "38cc75f7ba09490016fa1c82a62c87a803268feb",
+      "bytes": 7417,
+      "sha256": "714084ada6e376d2c401d4dfc4a1096c587f82bdf11e8b575bcc5e6833a4b007",
+      "inspection": "full",
+      "redistribution": "Full source omitted: no separate redistribution grant established. Exact-ref citation and short excerpts/access note retained."
+    },
+    {
+      "path": "apps/demo/src/savedViewsHistory.test.ts",
+      "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/apps/demo/src/savedViewsHistory.test.ts",
+      "version_ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "retrieval_date": "2026-10-21",
+      "git_blob_sha": "4994a2ef7a1264e5361e8009a2dbf2d3bf6ac23d",
+      "bytes": 11455,
+      "sha256": "6c193c6ae707a8a3d505be60d4b714f2e7f187a5fa270d58f47fee9116863d4d",
+      "inspection": "full",
+      "redistribution": "Full source omitted: no separate redistribution grant established. Exact-ref citation and short excerpts/access note retained."
+    },
+    {
+      "path": "apps/demo/src/savedViewsHistory.ts",
+      "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/apps/demo/src/savedViewsHistory.ts",
+      "version_ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "retrieval_date": "2026-10-21",
+      "git_blob_sha": "aef7008780f396ad0eff07768baec955b205d710",
+      "bytes": 34392,
+      "sha256": "64013981d656cc65b62a5716626782b98bd1808ca5409aeb345ea64603aa5cda",
+      "inspection": "excerpt",
+      "redistribution": "Full source omitted: no separate redistribution grant established. Exact-ref citation and short excerpts/access note retained."
+    },
+    {
+      "path": "apps/demo/src/savedViewsSession.ts",
+      "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/apps/demo/src/savedViewsSession.ts",
+      "version_ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "retrieval_date": "2026-10-21",
+      "git_blob_sha": "3ee33cbb6517bb87a0c87c304a1fdcbd7e0fb05a",
+      "bytes": 6957,
+      "sha256": "69784a461ca0df7a355fff5427b6d93e9dc6d0e3ff79bbf310f81f0387ed23f3",
+      "inspection": "full",
+      "redistribution": "Full source omitted: no separate redistribution grant established. Exact-ref citation and short excerpts/access note retained."
+    },
+    {
+      "path": "packages/explorEDA/src/components/ExplorEdaProject.tsx",
+      "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/components/ExplorEdaProject.tsx",
+      "version_ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "retrieval_date": "2026-10-21",
+      "git_blob_sha": "51d1fe56aab2386cc75554969e8d75692011c1d3",
+      "bytes": 15265,
+      "sha256": "5574df5b5dcbba664b0ce4764e9de300b112f951f9da1f55024245c0160c6618",
+      "inspection": "full",
+      "redistribution": "Full source omitted: no separate redistribution grant established. Exact-ref citation and short excerpts/access note retained."
+    },
+    {
+      "path": "packages/explorEDA/src/components/RowsView.tsx",
+      "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/components/RowsView.tsx",
+      "version_ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "retrieval_date": "2026-10-21",
+      "git_blob_sha": "ec132ee589090154c101c128ef8e32c8eca5d7da",
+      "bytes": 1758,
+      "sha256": "34c1d5c2df55089d49c3711c6b65548f8652ad1f4285e5111ef37569c52024c0",
+      "inspection": "full",
+      "redistribution": "Full source omitted: no separate redistribution grant established. Exact-ref citation and short excerpts/access note retained."
+    },
+    {
+      "path": "packages/explorEDA/src/components/project/analysisRowKeys.ts",
+      "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/components/project/analysisRowKeys.ts",
+      "version_ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "retrieval_date": "2026-10-21",
+      "git_blob_sha": "9240b7248f71238c29b045f4ace3a861ba7b4e5c",
+      "bytes": 1919,
+      "sha256": "e086e580fa7b6e0feed7caf79a85a778fcfa0823dd09fcb91978709773058b74",
+      "inspection": "full",
+      "redistribution": "Full source omitted: no separate redistribution grant established. Exact-ref citation and short excerpts/access note retained."
+    },
+    {
+      "path": "packages/explorEDA/src/components/project/settingsCompatibility.ts",
+      "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/components/project/settingsCompatibility.ts",
+      "version_ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "retrieval_date": "2026-10-21",
+      "git_blob_sha": "b79b05b3343c23b3c8e7a41b480be19e5f7ed9a0",
+      "bytes": 5498,
+      "sha256": "92a119f1158040b54bb0ede78e332cc9e30b5fc0d443872aa6e97714e994c22a",
+      "inspection": "full",
+      "redistribution": "Full source omitted: no separate redistribution grant established. Exact-ref citation and short excerpts/access note retained."
+    },
+    {
+      "path": "packages/explorEDA/src/lib/aggregates.ts",
+      "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/lib/aggregates.ts",
+      "version_ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "retrieval_date": "2026-10-21",
+      "git_blob_sha": "f7b445d26a653f4a512f7281bbb613d91efffb12",
+      "bytes": 8924,
+      "sha256": "075fdd755f228895d5ac32288cf78ec05b0572a524ae2668db2375a03e7e7c85",
+      "inspection": "full",
+      "redistribution": "Full source omitted: no separate redistribution grant established. Exact-ref citation and short excerpts/access note retained."
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dailyRollup.ts",
+      "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/src/lib/dailyRollup.ts",
+      "version_ref": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "retrieval_date": "2026-10-21",
+      "git_blob_sha": "29c916c7744f08712f4d20f71f3aa364cfe173b7",
+      "bytes": 5589,
+      "sha256": "89b04b18a22e617d7be09987aa5212523f2e1f8887f3f25471eaa2c53ffdd7c2",
+      "inspection": "full",
+      "redistribution": "Full source omitted: no separate redistribution grant established. Exact-ref citation and short excerpts/access note retained."
+    }
+  ]
+}

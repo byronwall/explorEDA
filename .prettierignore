@@ -2,3 +2,6 @@
 apps/demo/public/daily-viz/
 # The first corpus's handoff, kept byte for byte.
 docs/research/daily-viz-corpus-2026-10-15/handoff/
+
+# Mosaic Pro research originals: preserve supplied hashes.
+docs/research/mosaic-selections-2026-10-20/raw/
