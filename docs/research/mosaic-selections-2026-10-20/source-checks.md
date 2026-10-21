@@ -96,6 +96,12 @@ Dependencies were installed from the frozen lockfile with Node 24.21.0 and pnpm 
 Installation warned that local CLI bins did not yet exist before the package build.
 The lockfile and package manifests were not changed.
 
-The full repository check result is recorded in the run record after completion.
+`pnpm check` passed: UI checks, builds, type checks, 1,656 library tests, 32 app tests, and 431 demo tests.
+The library also reported 45 skipped tests. The demo build passed 73 content/example tests.
+Existing chunk-size and jsdom Canvas warnings did not fail the command.
 Document links, JSON, recommendation coverage, archive safety, and Git whitespace were checked separately.
 No application implementation, browser proof, performance benchmark, or bug fix was run as part of this research.
+
+The first sandboxed full check hit `listen EPERM` in existing local-server tests.
+The command was restarted with local server access. See the final result in the run record.
+Raw originals retain supplied whitespace; the authored-file whitespace check excludes `raw/` and passes.

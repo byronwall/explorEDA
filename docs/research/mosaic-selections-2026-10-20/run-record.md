@@ -16,7 +16,7 @@ The user requested the full handoff process on October 20, 2026. No application 
 
 ## Submission
 
-- Phase: results collected; reconciliation and repository validation in progress.
+- Phase: results collected; reconciliation complete; validation passed; review PR pending.
 - Round: initial request; up to two bounded follow-ups remain.
 - Prompt: [prompt.md](prompt.md)
 - Source packet: [mosaic-source-packet.zip](mosaic-source-packet.zip)
@@ -47,7 +47,7 @@ Preserve originals separately from Codex analysis. Verify archives, hashes, JSON
 Give each recommendation an adopt, investigate, defer, or reject disposition.
 Run relevant document checks and `pnpm check` before the review PR. No changeset is needed for docs-only work.
 
-No new product behavior or performance result is established. The full existing repository check is running with Node 24.21.0.
+No new product behavior or performance result is established. The full existing repository check passed with Node 24.21.0.
 A proposed proof is not an executed product test.
 No PR yet. Disable the heartbeat only after verified completion or a blocker that requires user action.
 
@@ -79,5 +79,14 @@ The archive passes ZIP integrity checks. No application files changed.
 
 Archive/hash/JSON checks, recommendation/source references, fixture arithmetic, and authored local links pass.
 Static source supports the interval/table concerns; runtime reproduction remains unrun.
-`pnpm check` is in progress; detailed output is under ignored `tmp/mosaic-pnpm-check.log`.
+`pnpm check` passed with local server access. Output: ignored `tmp/mosaic-pnpm-check-unrestricted.log`.
+UI checks, all builds, and all package type checks passed.
+Library: 1,656 tests passed, 45 skipped; app: 32 passed; demo: 431 passed.
+The demo build also passed 73 content/example tests.
+The skipped tests are reported as skipped, not passes. No new test was added.
+Existing chunk-size and jsdom Canvas warnings appeared; the command exited successfully.
 No application code changed; no UI screenshots or changeset is required for this docs-only PR.
+
+The first sandboxed `pnpm check` failed because existing server tests could not listen on `127.0.0.1` (`EPERM`).
+The same command was restarted with local server access. This is an environment retry, not a product change.
+Raw originals retain their supplied whitespace. The authored-file Git whitespace check excludes `raw/` and passes.
