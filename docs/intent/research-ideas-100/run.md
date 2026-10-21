@@ -9,7 +9,7 @@
 - Prompt: pro-prompt.md
 - Packet: tmp/exploreda-research-source.zip; selected source, not runnable.
 - Source manifest: source-manifest.json
-- Phase: submitted; Pro processing was verified.
+- Phase: collected and reconciled; repository validation and review PR remain.
 - Round: initial, with at most two material-gap follow-ups.
 - Conversation: https://chatgpt.com/c/6ad83315-6d1c-83e9-9ab8-007e59401093
 - Model: Pro, 5 of 5; signed-in Chrome profile byroni.us.
@@ -27,3 +27,29 @@
 - Selected source files: 1,099.
 - Baseline worktree was clean and detached; created codex/research-ideas-100 in the existing checkout.
 - Application checks: not run yet; this phase adds research preparation documents only.
+
+## Early monitor check
+
+- Checked: 2026-10-21 at about 03:38 UTC. The monitor woke before the planned first check.
+- Pro was still running after about two minutes. It confirmed packet access and the requested baseline.
+- Three research subagents were active. No output files were available.
+- Kept the existing run and hourly monitor. Next planned check remains 04:38 UTC.
+- No follow-up was sent and no collection was attempted.
+
+## Collection and review
+
+- Collected: 2026-10-21 at about 04:44 UTC.
+- Pro finished after 29 minutes, 51 seconds. No follow-up was needed.
+- Archive: raw/exploreda-100-research-ideas.zip; 104 files; CRC and safe-path checks passed.
+- Archive SHA-256: b9dba8749bec085bd2c0c42b2151f939e53bf7bbf41c469ccd920a60ea80916e.
+- All four standalone companions matched the archive byte for byte.
+- Local review read all 100 briefs. Retained the proposed ranking and recorded 97 investigate and 3 defer decisions.
+- Deferred: R021 until a reference graphic exists; R075 until a large-edit use case exists; R098 until a failure is reproduced.
+- All 183 evidence paths and 605 literal references match the baseline and current checkout.
+- All 103 non-self payload hashes passed. IDs, priorities, paths, paragraph counts, and word counts passed.
+- Source checks support research questions; they do not establish runtime defects.
+- pnpm check first attempted dependency setup without network access. It was stopped after DNS failures.
+- pnpm run check passed with network access for locked dependency setup (Node 22.21.1, pnpm 11.9.0).
+- UI rules, builds, and all type checks passed. Library: 1,656 tests passed, 45 skipped. App: 32 passed. Demo: 431 passed.
+- Demo build also passed 73 tests. No browser product study or proposed research experiment was run.
+- No application changes, changeset, or UI screenshots are required for this docs-only collection.
