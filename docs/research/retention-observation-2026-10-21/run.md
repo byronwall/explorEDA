@@ -1,6 +1,6 @@
 # Retention observation Pro run
 
-- Phase: submitted; Pro researching. Follow-ups: 0/2.
+- Phase: collected and reviewed; integration validation pending. Follow-ups: 0/2.
 - Mission: observation completeness after existing Retention.
 - Repository: https://github.com/byronwall/explorEDA
 - Checkout: /Users/byronwall/Projects/explorEDA. No worktree or goal.
@@ -31,3 +31,11 @@ Verified signed-in Chrome byroni.us and Byron Wall Pro account. Live Pro5/5 obse
 Registered temporary heartbeat `collect-exploreda-retention-observation-research`, hourly minute14, attached to chat01a15bf1-e72b-7e21-be5f-6f42f9d65ea8. Intended first normal check2026-10-21T02:14Z. Tool view and saved TOML verify ACTIVE and correct target. Early ticks must preserve a running response. Six-hour discovery remains ACTIVE indefinitely, GPT-6.1 Sol Medium. No goal.
 
 Submission screenshot: tmp/pro-retention-observation-2026-10-21/pro-submitted.jpg. Tab2010997440 marked handoff. Pro is researching; outputs not yet collected; follow-ups0/2. Collection, independent review, integration, full checks and verified open PR remain due. No new PR yet. No merge/deploy/paid provisioning.
+
+## Collection and review, 2026-10-21
+
+Pro completed after15m38s. Downloaded ZIP under standing direct human approval. Published archive/manifest hashes,CRC,safe paths,no symlinks,exact inventory,UTF8 and all report sizes/hashes pass. Four substantive originals read and preserved unchanged. Standalone decision click opened raw text;12s download event timed out. No independent companion equality claimed. All required contents are local. No Library upload or downloaded program execution.
+
+Six dispositions retain current snapshot behavior. Local trust stays first;day-rounded partial flags and All disclosure need bounded contract proof. Endpoint,denominator change and lesson remain proposed. Seven supplemental source files and all29 baseline entries authenticate. Sixteen independent rational/calendar anchors pass;new product/browser/author/export/history/refresh proofs remain unrun. Five official comparison pages independently checked;GA4 cohort retrieval timed out twice and remains Pro-attributed. No follow-up needed0/2.
+
+Integrated summary,evidence,six decisions,domain status/intent/plan/map/references,calendar boundary and ranked queue. No application source,docs-site lesson or runnable example changed. No changeset or product screenshot applies. Root pnpm check is running;final validation and verified open review PR remain due.

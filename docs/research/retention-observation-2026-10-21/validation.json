@@ -1,0 +1,25 @@
+{
+  "node": "22.21.1",
+  "pnpm": "11.9.0",
+  "root_gate": {
+    "command": "pnpm check",
+    "status": "running",
+    "log": "tmp/pro-retention-observation-2026-10-21/pnpm-check.log"
+  },
+  "preparation_tests": {
+    "files": 2,
+    "tests": 11,
+    "status": "passed"
+  },
+  "new_fixture_runtime": "unrun",
+  "browser_author_task": "unrun",
+  "checks": {
+    "source_receipts": "passed",
+    "independent_arithmetic_anchors": 16,
+    "local_links": "pending",
+    "original_hashes": "passed"
+  },
+  "limits": [
+    "No application or docs-site behavior changed. No new fixture, browser or author acceptance is claimed."
+  ]
+}

@@ -2,14 +2,14 @@
 
 Updated 2026-10-21 UTC. Scores are local judgments, not user demand.
 
-| Candidate                                                                                    | Novelty | Product value | Evidence gap | Pro fit | Decision and next action                                                                                     |
-| -------------------------------------------------------------------------------------------- | ------- | ------------- | ------------ | ------- | ------------------------------------------------------------------------------------------------------------ |
-| Retention observation windows after the delivered chart                                      | 8       | 8             | 9            | 9       | Primary mission. Compare current contract, lesson, upstream table and a small explicit observation boundary. |
-| Local selection/export/undo/reopen trust                                                     | 3       | 9             | 8            | 3       | First local proof. Execute one task; another survey cannot accept it.                                        |
-| Calendar stepping and rolling summaries                                                      | 5       | 7             | 7            | 6       | Existing intent and PR454 own adjacent time scope. Capture a repeated task before choosing semantics.        |
-| Refresh identity and capacity                                                                | 5       | 8             | 8            | 4       | Declare keys, device and workload before measuring.                                                          |
-| Reusable result tables                                                                       | 4       | 7             | 7            | 5       | Retain the repeated downstream analysis gate.                                                                |
-| More preparation, freshness, missingness, relationships, rates, navigation, units or handoff | 1       | 6             | 2            | 2       | Completed surveys in PR451/452/455–460. Apply proof gates.                                                   |
+| Candidate                                                                                    | Novelty | Product value | Evidence gap | Pro fit | Decision and next action                                                                              |
+| -------------------------------------------------------------------------------------------- | ------- | ------------- | ------------ | ------- | ----------------------------------------------------------------------------------------------------- |
+| Retention observation windows after the delivered chart                                      | 8       | 8             | 9            | 9       | Synthesis complete. Next: bounded contract proof after local trust; no new broad survey.              |
+| Local selection/export/undo/reopen trust                                                     | 3       | 9             | 8            | 3       | First local proof. Execute one task; another survey cannot accept it.                                 |
+| Calendar stepping and rolling summaries                                                      | 5       | 7             | 7            | 6       | Existing intent and PR454 own adjacent time scope. Capture a repeated task before choosing semantics. |
+| Refresh identity and capacity                                                                | 5       | 8             | 8            | 4       | Declare keys, device and workload before measuring.                                                   |
+| Reusable result tables                                                                       | 4       | 7             | 7            | 5       | Retain the repeated downstream analysis gate.                                                         |
+| More preparation, freshness, missingness, relationships, rates, navigation, units or handoff | 1       | 6             | 2            | 2       | Completed surveys in PR451/452/455–460. Apply proof gates.                                            |
 
 ## Why this mission
 
@@ -28,3 +28,9 @@ planRetention derives its observation end from the maximum readable timestamp in
 7. Domain views are delivered. Research an observed semantic gap rather than proposing their initial creation.
 
 Previous queue: https://github.com/byronwall/explorEDA/blob/ae2716a2/docs/research/analysis-handoff-2026-10-20/research-queue.md.
+
+## Reviewed outcome
+
+[Six dispositions](decisions.md) retain the snapshot contract and keep observation metadata deferred.
+Check day-rounded partial flags and All disclosure separately. A denominator change needs its own task.
+Keep the new eight-row proof and named-reader comparison proposed. Apply existing gates before another survey.

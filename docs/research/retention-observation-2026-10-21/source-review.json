@@ -1,0 +1,57 @@
+{
+  "baseline": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+  "packet_entries_authenticated": 32,
+  "baseline_entries_authenticated": 29,
+  "supplemental": [
+    {
+      "path": "packages/explorEDA/src/components/PlotChartPanel.tsx",
+      "bytes": 42150,
+      "sha256": "0491886b1d275957947eab1ba38edf9cdedf5c44b599d6d99306d5833a937f3e",
+      "git_blob": "2200120bc971c2d9435bc1b7c475c6249a38ef15",
+      "matches_current": true
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ChartRenderer.tsx",
+      "bytes": 1941,
+      "sha256": "1a4955f172d078e340f737122846af5bdc4590a3e9cda43946ac4f91e1583f77",
+      "git_blob": "3f3c2c030700b63f49b2adf23fb45c2936abfae7",
+      "matches_current": true
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/FacetRelated/FacetContainer.tsx",
+      "bytes": 14524,
+      "sha256": "f71b07a7cf2fa19b3fad0cc6970c7c54cb9390b7c44a1107238c6772249bfe05",
+      "git_blob": "88c509cf73c4074aba528f304dbf48553f3a60df",
+      "matches_current": true
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/FacetRelated/FacetGridLayout.tsx",
+      "bytes": 10153,
+      "sha256": "30f3606f7de1a10d264197c5cd049d7923782e7742de3b79a4a77a3f4ec4652d",
+      "git_blob": "dfdd2675d6293ec8eb2b8fdee3ff13b641e7db25",
+      "matches_current": true
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/FacetRelated/FacetWrapLayout.tsx",
+      "bytes": 4626,
+      "sha256": "16db6c073d5fcf4c08cfdc2f41f5fe54eb451d59b17022a97b0a644eda93cc14",
+      "git_blob": "dcd6414778c9ee40224205933e970efefda96cc4",
+      "matches_current": true
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/CrossfilterWrapper.test.ts",
+      "bytes": 8386,
+      "sha256": "a193e9ec416216098d5406a024f4799733ed106867ee57a311a4a57afd49b109",
+      "git_blob": "b64489e4b7c0513a39370ac2f9a5358fdf597086",
+      "matches_current": true
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/CrossfilterWrapper.ts",
+      "bytes": 6855,
+      "sha256": "444f228baffb694c82f7826da6a2eee88ce0296b47ec5e3f59c36b0d1070b483",
+      "git_blob": "8560522bd2712fcd371f5472322fc27df3d100e3",
+      "matches_current": true
+    }
+  ],
+  "current_main": "9b16d78e3ed0742ed4d5858c1939fec9e758b510"
+}

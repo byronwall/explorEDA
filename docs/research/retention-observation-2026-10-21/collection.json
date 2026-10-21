@@ -1,0 +1,41 @@
+{
+  "conversation": "https://chatgpt.com/c/6ad81152-cf28-83e9-90b4-a00baadd0d51",
+  "retrieved": "2026-10-21T03:31:28.222420+00:00",
+  "archive": {
+    "path": "retention-observation-research.zip",
+    "bytes": 42403,
+    "sha256": "be934eca699c87b49a62c6b3911ffb9596a8196c063bfceb0d7e8700b61b8db8"
+  },
+  "checks": [
+    "published archive and manifest hashes",
+    "CRC",
+    "safe relative root paths",
+    "no symlinks",
+    "exact five-file inventory",
+    "UTF8",
+    "all report sizes and hashes"
+  ],
+  "standalone_companions": "Decision Download file opened raw text; 12-second download event timed out. No independent standalone/archive equality claimed. All required original reports preserved from verified ZIP.",
+  "files": [
+    {
+      "path": "decision-report.md",
+      "bytes": 30667,
+      "sha256": "eea27da5c92fa17546737b14e59aa44466b3c3ff49253e3babe55a89261d000a"
+    },
+    {
+      "path": "evidence-and-comparisons.md",
+      "bytes": 46038,
+      "sha256": "7ec2b0834e94cb1daf771b4be508ae159edf620347c96cf923d84484e672c910"
+    },
+    {
+      "path": "proof-plan.md",
+      "bytes": 24527,
+      "sha256": "1ba1b0999fd1ff7d9a4d0214dae7f51e2d72354f13cd9ccf37f4230a37fe522e"
+    },
+    {
+      "path": "research-queue.md",
+      "bytes": 14900,
+      "sha256": "f36c4661cebd02b6b3f14e62d0569a97cdf17defcfc9a9a29b3520a67759900e"
+    }
+  ]
+}

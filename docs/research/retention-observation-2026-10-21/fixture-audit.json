@@ -1,0 +1,105 @@
+{
+  "kind": "independent rational/calendar anchors; not product execution",
+  "count": 16,
+  "anchors": [
+    {
+      "id": "A01 core pooled fractions",
+      "result": "[Fraction(1, 3), Fraction(2, 3), Fraction(1, 2), None]",
+      "expected": "[Fraction(1, 3), Fraction(2, 3), Fraction(1, 2), None]",
+      "passed": true,
+      "working": "(1+0)/(2+1), (1+1)/(2+1), 1/2, no eligible cohort"
+    },
+    {
+      "id": "A02 late row adds eligibility",
+      "result": "[Fraction(1, 3), Fraction(2, 3), Fraction(1, 3), Fraction(0, 1)]",
+      "expected": "[Fraction(1, 3), Fraction(2, 3), Fraction(1, 3), Fraction(0, 1)]",
+      "passed": true
+    },
+    {
+      "id": "A03 core excludes partial",
+      "result": "[Fraction(1, 3), Fraction(1, 2), None, None]",
+      "expected": "[Fraction(1, 3), Fraction(1, 2), None, None]",
+      "passed": true
+    },
+    {
+      "id": "A04 late excludes partial",
+      "result": "[Fraction(1, 3), Fraction(2, 3), Fraction(1, 2), None]",
+      "expected": "[Fraction(1, 3), Fraction(2, 3), Fraction(1, 2), None]",
+      "passed": true
+    },
+    {
+      "id": "A05 entry UTC",
+      "result": "2024-03-31T23:55:00+00:00",
+      "expected": "2024-03-31T23:55:00+00:00",
+      "passed": true
+    },
+    {
+      "id": "A06 return UTC",
+      "result": "2024-04-01T00:05:00+00:00",
+      "expected": "2024-04-01T00:05:00+00:00",
+      "passed": true
+    },
+    {
+      "id": "A07 elapsed minutes",
+      "result": "10.0",
+      "expected": "10",
+      "passed": true
+    },
+    {
+      "id": "A08 Sunday",
+      "result": "6",
+      "expected": "6",
+      "passed": true
+    },
+    {
+      "id": "A09 Monday",
+      "result": "0",
+      "expected": "0",
+      "passed": true
+    },
+    {
+      "id": "A10 daily partial",
+      "result": "False",
+      "expected": "False",
+      "passed": true
+    },
+    {
+      "id": "A11 weekly partial",
+      "result": "True",
+      "expected": "True",
+      "passed": true
+    },
+    {
+      "id": "A12 monthly partial",
+      "result": "True",
+      "expected": "True",
+      "passed": true
+    },
+    {
+      "id": "A13 final Sunday rounded boundary",
+      "result": "False",
+      "expected": "False",
+      "passed": true
+    },
+    {
+      "id": "A14 final month date rounded boundary",
+      "result": "False",
+      "expected": "False",
+      "passed": true
+    },
+    {
+      "id": "A15 duplicate entity count",
+      "result": "1",
+      "expected": "1",
+      "passed": true
+    },
+    {
+      "id": "A16 selected entity event rows",
+      "result": "[0, 1, 2, 7]",
+      "expected": "[0, 1, 2, 7]",
+      "passed": true
+    }
+  ],
+  "application_fixture": "unrun",
+  "browser_author_flow": "unrun"
+}
