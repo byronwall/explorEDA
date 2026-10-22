@@ -6,8 +6,8 @@
   "submission_tests": "2files/21tests pass",
   "local_tests": "3tests pass",
   "library_types": "pass with local probe",
-  "root_gate": "pending",
-  "pr_gate": "pending",
+  "root_gate": "PASS exit0; approved run; no aggregate retry",
+  "pr_gate": "pass",
   "participants": 0,
   "unrun": [
     "browser",
@@ -18,5 +18,16 @@
     "human study",
     "performance",
     "downloaded proof code"
-  ]
+  ],
+  "runtime": "Node22.21.1/pnpm11.9.0",
+  "checks": {
+    "ui": "pass",
+    "builds": "pass",
+    "types": "pass",
+    "docs": "73tests pass",
+    "library": "255files/1702tests pass;3files/45conditional tests skipped",
+    "app": "8files/32tests pass",
+    "demo": "18files/482tests pass"
+  },
+  "authored_local_links": 39
 }

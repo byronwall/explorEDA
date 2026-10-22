@@ -110,3 +110,13 @@ Trust intent/map/references, R051 follow-up, synthesis, evidence and concise que
 R086 next, then R031. Larger application changes remain proposed.
 Full pnpm check is running. No browser, full mounted consumer, trace, clear-one, export/history/restore or participant proof claimed.
 Review PR, final validation and collector shutdown remain due.
+
+## Required repository validation
+
+Full approved pnpm check PASSED,exit0,Node22.21.1/pnpm11.9.0. No aggregate retry.
+UI,builds,types,and73docs tests pass. Library255files/1702tests pass;3files/45conditional tests skip.
+App8files/32tests and demo18files/482tests pass. PRgate,39authored local links and JSON parse checks pass.
+Original/companion/embedded hashes and61Git receipts rechecked.
+No package source/build output changed; no changeset or product screenshot applies.
+Browser/full mounted consumers/clear-one/trace/export/history/restore/human study limits remain explicit.
+Only the scoped review PR and collector shutdown remain due.
