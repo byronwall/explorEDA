@@ -243,7 +243,18 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
 
-  // Convert data to numbers for d3
+  // Convert data to numbers for d3. The drawn lines thin each run of points
+  // to the plot's width; the hover readout reads every live row.
+  const liveSeries = useMemo(
+    () =>
+      planObservationSeries({
+        fields: settings.seriesField,
+        xs: liveXData.map(xNumber),
+        ys: liveSeriesData,
+        groups: splitField ? liveGroupData : undefined,
+      }),
+    [settings.seriesField, liveSeriesData, liveXData, liveGroupData, splitField]
+  );
   const processedLiveSeriesData = useMemo(
     () =>
       planObservationSeries({
@@ -262,6 +273,24 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
       innerWidth,
     ]
   );
+  // Each line's values by x, and every x a row has, in order: the hover
+  // finds the nearest x and its values without scanning the rows.
+  const hoverIndex = useMemo(() => {
+    const xs = new Set<number>();
+    const series = liveSeries.map((item) => {
+      const valuesAt = new Map<number, number[]>();
+      for (const point of item.data) {
+        if (!Number.isFinite(point.x)) continue;
+        xs.add(point.x);
+        if (point.y == null) continue;
+        const values = valuesAt.get(point.x);
+        if (values) values.push(point.y);
+        else valuesAt.set(point.x, [point.y]);
+      }
+      return { series: item, valuesAt };
+    });
+    return { series, xs: [...xs].sort((a, b) => a - b) };
+  }, [liveSeries]);
 
   // Ensure consistent color assignment for series with better distribution
   const seriesColors = useMemo(() => {
@@ -553,29 +582,27 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
     );
   };
 
-  // Each series' value at the hovered x, top of the plot first.
+  // Each series' values at the hovered x, top of the plot first.
   const hoverPoints =
     hoverX === null
       ? []
-      : processedLiveSeriesData
-          .flatMap((series) => {
-            const point = series.data.find(
-              (item) => item.x === hoverX && item.y != null
-            );
-            if (!point) return [];
+      : hoverIndex.series
+          .flatMap(({ series, valuesAt }) => {
             const right = settings.seriesSettings[series.field]?.useRightAxis;
-            const y = point.y!;
-            if (offScale(series.field, y)) return [];
-            return [
-              {
-                name: series.name,
-                field: series.field,
-                label: lineLabel(series),
-                color: lineColor(series),
-                value: y,
-                py: (right ? rightYScale : leftYScale)(y),
-              },
-            ];
+            return (valuesAt.get(hoverX) ?? []).flatMap((y, index) =>
+              offScale(series.field, y)
+                ? []
+                : [
+                    {
+                      key: `${series.name}\u0000${index}`,
+                      field: series.field,
+                      label: lineLabel(series),
+                      color: lineColor(series),
+                      value: y,
+                      py: (right ? rightYScale : leftYScale)(y),
+                    },
+                  ]
+            );
           })
           .sort((a, b) => a.py - b.py);
   const labelYs = spreadLabels(
@@ -656,23 +683,29 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
           return;
         }
         const target = xScale.invert(x);
-        let nearestX = NaN;
-        let distance = Infinity;
-        for (const series of processedLiveSeriesData) {
-          for (const point of series.data) {
-            if (!Number.isFinite(point.x)) continue;
-            const next = Math.abs(point.x - target);
-            if (next < distance) {
-              nearestX = point.x;
-              distance = next;
-            }
-          }
+        // The x a row has nearest the pointer, by binary search.
+        const { xs } = hoverIndex;
+        let low = 0;
+        let high = xs.length;
+        while (low < high) {
+          const mid = (low + high) >> 1;
+          if (xs[mid]! < target) low = mid + 1;
+          else high = mid;
         }
+        const before = xs[low - 1];
+        const after = xs[low];
+        const nearestX =
+          before === undefined ||
+          (after !== undefined && after - target < target - before)
+            ? after
+            : before;
         // A gap where no series has a value reads as nothing, not a neighbor.
-        const observed = processedLiveSeriesData.some((series) =>
-          series.data.some((point) => point.x === nearestX && point.y != null)
+        setHoverX(
+          nearestX !== undefined &&
+            hoverIndex.series.some(({ valuesAt }) => valuesAt.has(nearestX))
+            ? nearestX
+            : null
         );
-        setHoverX(observed ? nearestX : null);
       }}
     >
       <BaseChart
@@ -757,7 +790,7 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
                 />
                 {hoverPoints.map((point) => (
                   <circle
-                    key={point.name}
+                    key={point.key}
                     cx={hoverPx}
                     cy={point.py}
                     r={3.5}
@@ -768,7 +801,7 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
                 ))}
                 {hoverPoints.map((point, index) => (
                   <text
-                    key={point.name}
+                    key={point.key}
                     x={hoverPx + (labelsLeft ? -8 : 8)}
                     y={labelYs[index]}
                     textAnchor={labelsLeft ? "end" : "start"}
@@ -875,7 +908,7 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
             <b>{xText}</b>
           </span>
           {hoverPoints.map((point) => (
-            <span key={point.name} className="eda-readout-item">
+            <span key={point.key} className="eda-readout-item">
               <span>{point.label}</span>
               <b>{displayValue(point.field, point.value)}</b>
             </span>
