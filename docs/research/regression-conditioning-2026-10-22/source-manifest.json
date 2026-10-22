@@ -1,0 +1,171 @@
+{
+  "repository": "https://github.com/byronwall/explorEDA",
+  "baseline": "63dfa75851ef57bb3782e6d7c1ef104784cd4064",
+  "packet": "tmp/pro-regression-conditioning-2026-10-22/source-packet.txt",
+  "bytes": 216314,
+  "sha256": "96a5c73689957c37fba380cf79cec32d60990fb02b645758e549c79130c98a1a",
+  "entries": [
+    {
+      "path": "AGENTS.md",
+      "kind": "baseline",
+      "bytes": 4033,
+      "sha256": "802990c1bacd76b4b867239da78fd011fb32653f891d4a88560e9ee629979a33"
+    },
+    {
+      "path": "docs/agent-guide.md",
+      "kind": "baseline",
+      "bytes": 19985,
+      "sha256": "0f7eb4898ca494692c5157b5164d368e4591dc1838513e8ec111a4ae03d7d83f"
+    },
+    {
+      "path": "CODING_STANDARDS.md",
+      "kind": "baseline",
+      "bytes": 2213,
+      "sha256": "b4358fe75d063d53aea1edbc58d0dc6fd8df6e6165aa5792d8d2aa35eefe7ac5"
+    },
+    {
+      "path": "README.md",
+      "kind": "baseline",
+      "bytes": 10263,
+      "sha256": "1f05b6c4992b07d1fc2b38d7bf9273db9e4a3a0d94513b7265e13b81cd7c5e28"
+    },
+    {
+      "path": "package.json",
+      "kind": "baseline",
+      "bytes": 1258,
+      "sha256": "f9b14daf225872f605d9435ddfb46fdede88b203c87a0e8507fe20743536f6e3"
+    },
+    {
+      "path": "packages/explorEDA/package.json",
+      "kind": "baseline",
+      "bytes": 6082,
+      "sha256": "17a71fd8852bcfbfb92cf76a9faf03766e934d0a5f0afcdcc9a5d0fd563b452a"
+    },
+    {
+      "path": "docs/intent/research-ideas-100/README.md",
+      "kind": "baseline",
+      "bytes": 6362,
+      "sha256": "63ec0d118382fcbe7551e5556f10cd2970e0120414766612fab1e54ca6477512"
+    },
+    {
+      "path": "docs/intent/research-ideas-100/catalogue.md",
+      "kind": "baseline",
+      "bytes": 23594,
+      "sha256": "b17ba05624aff799b2d998c0b779bfe73c7bcc0ef99ebd5bf93f011585b8f853"
+    },
+    {
+      "path": "docs/intent/research-ideas-100/ideas/R001-regression-conditioning.md",
+      "kind": "baseline",
+      "bytes": 3557,
+      "sha256": "caed13776289cae6d2530134f8a5735e2c56c303b2b934e125d6f69ccfb25a9b"
+    },
+    {
+      "path": "docs/intent/scientific-multivariate-analysis/intent-brief.md",
+      "kind": "baseline",
+      "bytes": 3595,
+      "sha256": "e71f21742a2143011a2e675b79190b9ae873892f3ca22e09b07a3e0d5a3ff841"
+    },
+    {
+      "path": "docs/intent/current-analysis-trust/intent-brief.md",
+      "kind": "baseline",
+      "bytes": 3006,
+      "sha256": "d6b2d620753c1ea532fffcb1cb43cc42711e03daa898e989a7f283f475186bd7"
+    },
+    {
+      "path": "docs/ui-defaults.md",
+      "kind": "baseline",
+      "bytes": 19093,
+      "sha256": "93ee25ebd3917a1e56d7db818ff4b6edcfe7e063f390ff9d5e9b83a0cc32f84a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/regression.ts",
+      "kind": "baseline",
+      "bytes": 15060,
+      "sha256": "f29ed8bb097eb49f4be4906cbac257b040588f89a51fab41a5353b33b74fda96"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/regression.test.ts",
+      "kind": "baseline",
+      "bytes": 11832,
+      "sha256": "966a797b759602e759522b38cf56ca7ec1ce717322a3532d40659cb5ba1cf7ea"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/fitPlan.ts",
+      "kind": "baseline",
+      "bytes": 10164,
+      "sha256": "172be90883434fd36451407c0a30f7241ef9fd27f2a2c2d1068529db59e63214"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/FitLabels.tsx",
+      "kind": "baseline",
+      "bytes": 7730,
+      "sha256": "c0330e95267335076afa835e480dc413b4c65b6bfba823e1ca802adf757f9bb4"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/FitTraceBody.tsx",
+      "kind": "baseline",
+      "bytes": 8722,
+      "sha256": "873c9069d754b4a93a27f1c56a96e30c5148b3027d151d7e698e282660795d27"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/useScatterFits.ts",
+      "kind": "baseline",
+      "bytes": 2870,
+      "sha256": "7d9a67e6e23d63ff59b2c0f1b47cd5e25e2d6383891478a6d33bc56ff099b725"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/definition.ts",
+      "kind": "baseline",
+      "bytes": 3356,
+      "sha256": "b19d1183b5d2a5e31c3fca27140f25a111e446d8158b2f1573b7f9f9a510172b"
+    },
+    {
+      "path": "apps/demo/src/docs/pages/scatter.mdx",
+      "kind": "baseline",
+      "bytes": 6569,
+      "sha256": "b0ea4d6b0d0866e18ad5955e3c18f2f0288d4098c12a0aee24947f6f3b06e646"
+    },
+    {
+      "path": "docs/intent/research-ideas-100/ideas.json [selected IDs]",
+      "kind": "parsed baseline projection",
+      "bytes": 21608,
+      "sha256": "6115cc6688314c25fa9a251971859e8f4952ea67e50b0438faeb5b9e4c0e30c4"
+    },
+    {
+      "path": "docs/intent/research-ideas-100/review.json [selected IDs]",
+      "kind": "parsed baseline projection",
+      "bytes": 3228,
+      "sha256": "0b8c6eaf4ed447c5349e0af4de9a46ff1e8d81630ae6e93085241be0acb36ed3"
+    },
+    {
+      "path": "apps/demo/src/demos/dashboardSettings.ts [lines 1410-1530]",
+      "kind": "baseline excerpt",
+      "bytes": 3050,
+      "sha256": "24668f06ac58afb60c3437cecb2c3f5beebac3f3235fdffe9cf942f5ed7160f1"
+    },
+    {
+      "path": "apps/demo/src/docs/live/examples.ts [lines 495-548]",
+      "kind": "baseline excerpt",
+      "bytes": 2044,
+      "sha256": "1fa6ad85aa4694eac583ad5ac4479ebfe2d2e414d79ea296ddc23131241e2eed"
+    },
+    {
+      "path": "apps/demo/src/demos/examples.ts [lines 540-562]",
+      "kind": "baseline excerpt",
+      "bytes": 1124,
+      "sha256": "6e4e479e9089aa968d140e157c283f5e2ac6ce1895919de18ea604c7911a4d28"
+    },
+    {
+      "path": "docs/research/regression-conditioning-2026-10-22/pro-prompt.md",
+      "kind": "local addition",
+      "bytes": 10087,
+      "sha256": "23d2f690545c3659416e004a56e4d833239fca49790a0898ecb494b336c78094"
+    },
+    {
+      "path": "docs/research/regression-conditioning-2026-10-22/research-queue.md",
+      "kind": "local addition",
+      "bytes": 1535,
+      "sha256": "ea32a4cb0e29c04f1e55b9bdc5b822a90724943f29640dbb460d09eacbdb4f84"
+    }
+  ]
+}
