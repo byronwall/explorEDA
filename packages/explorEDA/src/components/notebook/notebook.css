@@ -14,6 +14,70 @@
   margin-top: 1.25rem;
 }
 
+/* A sections layout spans its container; narrow, it keeps the column. */
+.eda-notebook-column[data-layout="sections"] {
+  max-width: none;
+}
+
+.eda-notebook-column[data-layout="sections"]:not([data-wide]) > * {
+  max-width: 880px;
+  margin-inline: auto;
+}
+
+.eda-notebook-column[data-wide] > * + * {
+  margin-top: 2.5rem;
+}
+
+/* Each section's text beside its charts; the text stays in view while the
+   charts scroll past. */
+.eda-notebook-section {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  column-gap: 40px;
+  align-items: start;
+}
+
+.eda-notebook-section > .eda-notebook-notes {
+  position: sticky;
+  top: 1rem;
+}
+
+.eda-notebook-notes .eda-notebook-prose {
+  font-size: 0.9375rem;
+  line-height: 1.55;
+}
+
+.eda-notebook-notes .eda-notebook-prose h2 {
+  font-size: 1.125rem;
+}
+
+.eda-notebook-figures > * + * {
+  margin-top: 1.25rem;
+}
+
+.eda-notebook-intro .eda-notebook-prose {
+  max-width: 72ch;
+}
+
+.eda-notebook-closing {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  column-gap: 40px;
+}
+
+/* A chart titled like its section needs no second title; its actions float
+   in the corner so the chart starts at the top of its panel. */
+.eda-notebook-output[data-title-repeats] .eda-panel-heading {
+  display: none;
+}
+
+.eda-notebook-output[data-title-repeats] .eda-panel-header {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+}
+
 .eda-notebook-prose {
   color: var(--foreground);
   font-size: 1rem;

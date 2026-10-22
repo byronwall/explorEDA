@@ -21,7 +21,6 @@ import {
 import { DailyCard } from "./DailyCard";
 import { useDailyCatalog } from "./useDailyCatalog";
 import { DailyMeta } from "./DailyMeta";
-import { NotebookOutline } from "./NotebookOutline";
 import "./daily.css";
 
 type LoadedEntry = Awaited<ReturnType<typeof loadDailyEntry>>;
@@ -182,19 +181,15 @@ function NotebookContent({
   entry: DailyEntry;
   loaded: LoadedEntry;
 }) {
-  const root = useRef<HTMLDivElement>(null);
   return (
-    <div
-      ref={root}
-      className="daily-notebook relative mx-auto max-w-[1440px] px-4 sm:px-6"
-    >
-      <NotebookOutline root={root} />
+    <div className="daily-notebook mx-auto max-w-6xl px-4 sm:px-6">
       <ExplorEdaNotebook
         // The page header shows the title; the notebook starts at its lede.
         text={loaded.text.replace(/^# .+\n/, "")}
         data={loaded.rows}
         fieldTypes={loaded.fieldTypes}
         name={entry.title}
+        layout="sections"
       />
     </div>
   );

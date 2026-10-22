@@ -157,3 +157,69 @@ describe("ExplorEdaNotebook", () => {
     expect(screen.queryByRole("button", { name: /Edit/ })).toBeNull();
   });
 });
+
+describe("ExplorEdaNotebook sections layout", () => {
+  const SECTIONS = [
+    "Lede before any section.",
+    "",
+    "## 1. Actual minus forecast",
+    "",
+    "Why the gap matters.",
+    "",
+    "```eda",
+    "calc delta = actual - forecast",
+    'line @delta x=time y=delta title="Actual minus forecast"',
+    "```",
+    "",
+    "**Finding.** The gap closes.",
+    "",
+    "## Takeaway",
+    "",
+    "Short.",
+    "",
+    "## Limits",
+    "",
+    "Three rows.",
+  ].join("\n");
+
+  function renderAt(px: number) {
+    Object.defineProperty(HTMLElement.prototype, "clientWidth", {
+      configurable: true,
+      get() {
+        return px;
+      },
+    });
+    return render(
+      <ExplorEdaNotebook text={SECTIONS} data={rows} layout="sections" />
+    );
+  }
+
+  it("sets each section's text, finding included, beside its charts", () => {
+    const { container } = renderAt(1200);
+    const section = container.querySelector<HTMLElement>(
+      "#actual-minus-forecast"
+    )!;
+    expect(section).toHaveClass("eda-notebook-section");
+    const notes = section.querySelector(".eda-notebook-notes")!;
+    expect(notes).toHaveTextContent("Why the gap matters.");
+    expect(notes).toHaveTextContent("Finding. The gap closes.");
+    const output = section.querySelector<HTMLElement>(
+      ".eda-notebook-figures [data-chart-id='delta']"
+    )!;
+    // The chart repeats the heading, so its title is not shown twice.
+    expect(output.dataset.titleRepeats).toBe("true");
+    // Text-only sections in a row share one.
+    const closing = container.querySelector(".eda-notebook-closing")!;
+    expect(closing).toHaveTextContent("Takeaway");
+    expect(closing).toHaveTextContent("Limits");
+    expect(container.querySelector(".eda-notebook-intro")).toHaveTextContent(
+      "Lede before any section."
+    );
+  });
+
+  it("keeps the reading column below 960 pixels", () => {
+    const { container } = renderAt(720);
+    expect(container.querySelector(".eda-notebook-section")).toBeNull();
+    expect(container.querySelector("[data-chart-id='delta']")).not.toBeNull();
+  });
+});
