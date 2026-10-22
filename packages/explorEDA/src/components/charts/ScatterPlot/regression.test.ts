@@ -5,6 +5,7 @@ import { fitInputKey, planFitMarks, planScatterFits } from "./fitPlan";
 import {
   fitLinear,
   fitLoess,
+  fitEquation,
   fitPolynomial,
   formatCoefficient,
   formatPolynomial,
@@ -49,6 +50,131 @@ describe("linear least squares", () => {
     const fit = fitLinear([1, 2, 3], [4, 4, 4]);
     expect(fit.ok && fit.slope).toBe(0);
     expect(fit.ok && fit.r2).toBeUndefined();
+  });
+});
+
+/** Offsets whose X values double precision stores exactly. */
+const u = [-2, -1, 0, 1, 2];
+const held = [-1.5, -0.5, 0.5, 1.5];
+const line = (x: number) => 1.234567 + 0.234567 * x;
+const quad = (x: number) => 1.234567 + 0.234567 * x + 0.034567 * x * x;
+// Residuals [1, −4, 6, −4, 1] / 10000 are orthogonal to 1, u, u².
+const noisyQuad = [0.903801, 1.034167, 1.235167, 1.503301, 1.842069];
+
+/** Evaluates equation text as a reader would, from its displayed digits. */
+function evaluateEquation(text: string) {
+  const powers: Record<string, string> = { "²": "**2", "³": "**3" };
+  const expression = text
+    .replace(/^y = /, "")
+    .replaceAll("−", "-")
+    .replaceAll(",", "")
+    .replace(/[²³]/g, (digit) => powers[digit]!)
+    .replace(/(\d)(x|\()/g, "$1*$2");
+  return new Function("x", `return ${expression}`) as (x: number) => number;
+}
+
+/** Residual standard error from the fit's own predictions. */
+function directResidualSe(
+  fit: { predict: (x: number) => number },
+  xs: number[],
+  ys: number[],
+  parameters: number
+) {
+  const sse = xs.reduce((sum, x, i) => sum + (ys[i]! - fit.predict(x)) ** 2, 0);
+  return Math.sqrt(sse / (xs.length - parameters));
+}
+
+describe("fits far from X = 0", () => {
+  it("predicts an exact line on timestamps near 2³⁰ and reports matching residuals", () => {
+    const xs = u.map((x) => 2 ** 30 + x * 2 ** -20);
+    const fit = fitLinear(xs, u.map(line));
+    expect(fit.ok).toBe(true);
+    if (!fit.ok) return;
+    for (const x of [...u, ...held])
+      expect(fit.predict(2 ** 30 + x * 2 ** -20)).toBeCloseTo(line(x), 12);
+    expect(fit.residualSe).toBeCloseTo(
+      directResidualSe(fit, xs, u.map(line), 2),
+      12
+    );
+    expect(fit.r2).toBeCloseTo(1, 12);
+    expect(fit.r).toBeCloseTo(1, 12);
+    const equation = evaluateEquation(fitEquation(fit)!);
+    for (const x of [...u, ...held])
+      expect(Math.abs(equation(2 ** 30 + x * 2 ** -20) - line(x))).toBeLessThan(
+        0.01
+      );
+  });
+
+  it("keeps residual SE, slope SE, and correlation consistent on a noisy line", () => {
+    const xs = [1, 2, 3, 4, 5, 6].map((x) => 1e9 + x);
+    const ys = [2.1, 3.9, 6.2, 7.8, 10.1, 12.2];
+    const fit = fitLinear(xs, ys);
+    expect(fit.ok).toBe(true);
+    if (!fit.ok) return;
+    const se = directResidualSe(fit, xs, ys, 2);
+    expect(fit.residualSe).toBeCloseTo(se, 12);
+    // Σ(x − x̄)² of 1..6 is 17.5.
+    expect(fit.slopeSe).toBeCloseTo(se / Math.sqrt(17.5), 12);
+    const my = ys.reduce((a, b) => a + b) / ys.length;
+    const sst = ys.reduce((sum, y) => sum + (y - my) ** 2, 0);
+    expect(fit.r2).toBeCloseTo(1 - (se ** 2 * 4) / sst, 12);
+    expect(fit.r! ** 2).toBeCloseTo(fit.r2!, 12);
+  });
+
+  it("states a translated quadratic so its displayed digits reproduce the curve", () => {
+    const xs = u.map((x) => 1e9 + x);
+    const fit = fitPolynomial(xs, noisyQuad, 2);
+    expect(fit.ok).toBe(true);
+    if (!fit.ok) return;
+    for (const x of [...u, ...held])
+      expect(fit.predict(1e9 + x)).toBeCloseTo(quad(x), 12);
+    expect(fit.predict(1e9 + 0.5)).toBeCloseTo(1.36049225, 12);
+    expect(fit.residualSe).toBeCloseTo(
+      directResidualSe(fit, xs, noisyQuad, 3),
+      15
+    );
+    const text = fitEquation(fit)!;
+    expect(text).toBe(
+      "y = 0.0346(x − 1,000,000,000)² + 0.235(x − 1,000,000,000) + 1.23"
+    );
+    const equation = evaluateEquation(text);
+    for (const x of [...u, ...held])
+      expect(Math.abs(equation(1e9 + x) - quad(x))).toBeLessThan(0.01);
+  });
+
+  it("states the same curve in metres around a metre center", () => {
+    const xs = u.map((x) => (1e9 + x) / 1000);
+    const fit = fitPolynomial(xs, noisyQuad, 2);
+    expect(fit.ok).toBe(true);
+    if (!fit.ok) return;
+    const equation = evaluateEquation(fitEquation(fit)!);
+    for (const x of [...u, ...held])
+      expect(Math.abs(equation((1e9 + x) / 1000) - quad(x))).toBeLessThan(0.01);
+  });
+
+  it("keeps the plain form when X sits near zero", () => {
+    const fit = fitPolynomial(u, noisyQuad, 2);
+    expect(fit.ok && fitEquation(fit)).toBe("y = 0.0346x² + 0.235x + 1.23");
+    const line = fitLinear([1e9, 1e9 + 1, 1e9 + 2], [5, 7, 9]);
+    expect(line.ok && fitEquation(line)).toBe("y = 2x − 1,999,999,995");
+  });
+
+  it("keeps repeated-X and minimum-row fits available", () => {
+    const repeated = [-2, -1, 0, 1, 2, 0, 1];
+    expect(fitPolynomial(repeated, repeated.map(quad), 2).ok).toBe(true);
+    for (let degree = 2; degree <= 6; degree++) {
+      const xs = Array.from({ length: degree + 1 }, (_, i) => i - degree / 2);
+      const fit = fitPolynomial(xs, xs.map(quad), degree);
+      expect(fit.ok).toBe(true);
+      if (fit.ok) expect(fit.residualSe).toBeUndefined();
+    }
+    expect(
+      fitPolynomial(
+        [-1, 0, 1].map((x) => 2 ** 54 + x),
+        [1, 2, 3],
+        2
+      ).ok
+    ).toBe(false);
   });
 });
 

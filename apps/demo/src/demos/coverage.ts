@@ -676,6 +676,16 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId: "scatter-regression-units",
+    intent:
+      "Read a quadratic fit whose X sits far from zero, and see its equation keep the curve in two units.",
+    features: {
+      "mode:scatter-regression": "shown",
+      "chart:scatter": "shown",
+      "chart:data-table": "shown",
+    },
+  },
+  {
     exampleId: "scatter-matrix",
     intent:
       "Compare every pair of measurements, species, and sex, then brush one cell to follow the same penguins everywhere.",

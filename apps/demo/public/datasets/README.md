@@ -509,3 +509,10 @@ Each quarter has a plan row and an actual row for twelve line items in three gro
 - Generation: fixed daily curves in `apps/data-samples/battery_day.ts`
 
 Each row is one hour's energy flow in kWh: solar and grid import are positive, and building load and grid export are negative. Hours with no flow of a kind have no row.
+
+## Regression units
+
+- File: `regression-units.csv`
+- Size: 5 rows and 4 fields
+- Use: a quadratic fit whose X sits a billion millimetres from zero, stated in millimetres and metres
+- Generation: the curve y = 1.234567 + 0.234567u + 0.034567u², with u the offset from 1,000,000,000 mm, plus residuals (1, −4, 6, −4, 1) / 10,000 V that leave the fitted coefficients exact

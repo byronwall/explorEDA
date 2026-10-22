@@ -15,6 +15,17 @@ export interface FitMeasures {
   residualSe?: number;
 }
 
+/**
+ * The coefficients as solved, in ascending powers of (x − origin) / scale.
+ * Predictions use this basis; expanded powers of x lose precision when X sits
+ * far from zero.
+ */
+export interface FitBasis {
+  origin: number;
+  scale: number;
+  coefficients: number[];
+}
+
 export interface LinearFit extends FitMeasures {
   ok: true;
   method: "linear";
@@ -25,6 +36,8 @@ export interface LinearFit extends FitMeasures {
   slopeSe?: number;
   /** Coefficients in ascending powers of x: [intercept, slope]. */
   coefficients: number[];
+  /** Mean Y at mean X, with the slope. */
+  basis: FitBasis;
   xRange: [number, number];
   predict: (x: number) => number;
 }
@@ -35,6 +48,8 @@ export interface PolynomialFit extends FitMeasures {
   degree: number;
   /** Coefficients in ascending powers of x. */
   coefficients: number[];
+  /** Coefficients of standardized X, (x − mean) / standard deviation. */
+  basis: FitBasis;
   adjustedR2?: number;
   xRange: [number, number];
   predict: (x: number) => number;
@@ -86,7 +101,10 @@ function mean(values: ArrayLike<number>) {
   return sum / values.length;
 }
 
-/** Ordinary least squares on centered sums, so large offsets keep precision. */
+/**
+ * Ordinary least squares on centered sums, evaluated around the mean X, so
+ * large offsets keep precision.
+ */
 export function fitLinear(
   xs: ArrayLike<number>,
   ys: ArrayLike<number>,
@@ -122,7 +140,10 @@ export function fitLinear(
   }
   const slope = sxy / sxx;
   const intercept = my - slope * mx;
-  const sse = Math.max(0, syy - slope * sxy);
+  // Residuals come from the same centered line the chart draws.
+  const predict = (x: number) => my + slope * (x - mx);
+  let sse = 0;
+  for (let i = 0; i < n; i++) sse += (ys[i]! - predict(xs[i]!)) ** 2;
   const residualSe = n > 2 ? Math.sqrt(sse / (n - 2)) : undefined;
   return {
     ok: true,
@@ -131,12 +152,13 @@ export function fitLinear(
     slope,
     intercept,
     coefficients: [intercept, slope],
+    basis: { origin: mx, scale: 1, coefficients: [my, slope] },
     r2: syy > 0 ? Math.min(1, Math.max(0, 1 - sse / syy)) : undefined,
     r: syy > 0 ? sxy / Math.sqrt(sxx * syy) : undefined,
     residualSe,
     slopeSe: residualSe === undefined ? undefined : residualSe / Math.sqrt(sxx),
     xRange,
-    predict: (x) => intercept + slope * x,
+    predict,
   };
 }
 
@@ -196,6 +218,19 @@ function solveLeastSquares(design: number[][], ys: ArrayLike<number>) {
   return solution;
 }
 
+/** y = Σ b_k ((x − origin) / scale)^k, expanded into powers of (x − center). */
+export function coefficientsAround(basis: FitBasis, center: number) {
+  const { origin, scale, coefficients: standardized } = basis;
+  const shift = center - origin;
+  const coefficients = new Array<number>(standardized.length).fill(0);
+  for (let k = 0; k < standardized.length; k++) {
+    const factor = standardized[k]! / scale ** k;
+    for (let j = 0; j <= k; j++)
+      coefficients[j]! += factor * binomial(k, j) * shift ** (k - j);
+  }
+  return coefficients;
+}
+
 /**
  * Polynomial least squares on standardized X, so higher powers stay well
  * conditioned. The reported equation converts back to powers of X.
@@ -245,13 +280,7 @@ export function fitPolynomial(
     for (let k = terms - 1; k >= 0; k--) value = value * t + standardized[k]!;
     return value;
   };
-  // y = Σ b_k ((x − m) / s)^k, expanded into powers of x.
-  const coefficients = new Array<number>(terms).fill(0);
-  for (let k = 0; k < terms; k++) {
-    const scale = standardized[k]! / sx ** k;
-    for (let j = 0; j <= k; j++)
-      coefficients[j]! += scale * binomial(k, j) * (-mx) ** (k - j);
-  }
+  const basis = { origin: mx, scale: sx, coefficients: standardized };
   const my = mean(ys);
   let sse = 0;
   let sst = 0;
@@ -265,7 +294,8 @@ export function fitPolynomial(
     method: "polynomial",
     degree,
     n,
-    coefficients,
+    coefficients: coefficientsAround(basis, 0),
+    basis,
     r2,
     adjustedR2:
       r2 !== undefined && n > terms
@@ -456,23 +486,28 @@ export function formatCoefficient(value: number) {
 }
 
 const SUPERSCRIPT = "⁰¹²³⁴⁵⁶⁷⁸⁹";
-const power = (exponent: number) =>
+const power = (variable: string, exponent: number) =>
   exponent === 1
-    ? "x"
-    : `x${String(exponent)
+    ? variable
+    : `${variable}${String(exponent)
         .split("")
         .map((digit) => SUPERSCRIPT[Number(digit)])
         .join("")}`;
 
-/** "y = 2.1x² − 0.5x + 3", highest power first, from ascending coefficients. */
-export function formatPolynomial(coefficients: number[]) {
+/**
+ * "y = 2.1x² − 0.5x + 3", highest power first, from ascending coefficients.
+ * A centered equation passes "(x − 1,000)" as its variable.
+ */
+export function formatPolynomial(coefficients: number[], variable = "x") {
   const terms: string[] = [];
   for (let i = coefficients.length - 1; i >= 0; i--) {
     const value = coefficients[i]!;
     if (value === 0 && coefficients.length > 1) continue;
     const magnitude = formatCoefficient(Math.abs(value));
     const body =
-      i === 0 ? magnitude : `${magnitude === "1" ? "" : magnitude}${power(i)}`;
+      i === 0
+        ? magnitude
+        : `${magnitude === "1" ? "" : magnitude}${power(variable, i)}`;
     terms.push(
       terms.length === 0
         ? `${value < 0 ? MINUS : ""}${body}`
@@ -482,11 +517,87 @@ export function formatPolynomial(coefficients: number[]) {
   return `y = ${terms.join(" ") || "0"}`;
 }
 
+/** The value a reader takes from a formatted coefficient. */
+const displayed = (value: number) =>
+  Number(formatCoefficient(value).replaceAll(",", "").replace(MINUS, "-"));
+
+const EQUATION_CHECKS = 9;
+
+/**
+ * Whether the rounded coefficients, read in powers of (x − center), stay
+ * within rounding distance of the fitted curve across the observed X range.
+ */
+function reproduces(
+  fit: LinearFit | PolynomialFit,
+  coefficients: number[],
+  center: number
+) {
+  const rounded = coefficients.map(displayed);
+  const [lo, hi] = fit.xRange;
+  const fitted: number[] = [];
+  const stated: number[] = [];
+  for (let i = 0; i < EQUATION_CHECKS; i++) {
+    const x = lo + ((hi - lo) * i) / (EQUATION_CHECKS - 1);
+    fitted.push(fit.predict(x));
+    stated.push(rounded.reduceRight((value, c) => value * (x - center) + c, 0));
+  }
+  const span = Math.max(...fitted) - Math.min(...fitted);
+  const size = Math.max(...fitted.map(Math.abs));
+  // Three significant digits move each term by up to 0.5%.
+  const tolerance = 0.01 * span + 0.005 * size;
+  return fitted.every((y, i) => Math.abs(stated[i]! - y) <= tolerance);
+}
+
+export interface EquationTerms {
+  /** X value the powers are taken around; 0 for plain powers of x. */
+  center: number;
+  centerText: string;
+  /** Ascending coefficients of (x − center). */
+  coefficients: number[];
+}
+
+/**
+ * The basis a fit's equation is stated in. Plain powers of x when their rounded
+ * digits reproduce the curve; otherwise powers of (x − c), with c a round
+ * number near the mean X, so a far-off X range keeps a usable equation.
+ */
+export function fitEquationTerms(
+  fit: RegressionFit
+): EquationTerms | undefined {
+  if (fit.method === "loess") return undefined;
+  const plain = { center: 0, centerText: "0", coefficients: fit.coefficients };
+  if (reproduces(fit, fit.coefficients, 0)) return plain;
+  const [lo, hi] = fit.xRange;
+  const exponent = Math.floor(Math.log10(hi - lo));
+  const digits = Math.min(20, Math.max(0, -exponent));
+  const center = Number(
+    (Math.round(fit.basis.origin / 10 ** exponent) * 10 ** exponent).toFixed(
+      digits
+    )
+  );
+  if (center === 0) return plain;
+  return {
+    center,
+    centerText: center.toLocaleString("en-US", {
+      maximumFractionDigits: digits,
+    }),
+    coefficients: coefficientsAround(fit.basis, center),
+  };
+}
+
+/** "(x − 1,000)" for a centered equation, "x" otherwise. */
+export function equationVariable(terms: EquationTerms) {
+  if (terms.center === 0) return "x";
+  const magnitude = terms.centerText.replace("-", "");
+  return `(x ${terms.center < 0 ? "+" : MINUS} ${magnitude})`;
+}
+
 /** The equation a fit can honestly state; LOESS has none. */
 export function fitEquation(fit: RegressionFit) {
-  return fit.method === "loess"
-    ? undefined
-    : formatPolynomial(fit.coefficients);
+  const terms = fitEquationTerms(fit);
+  return terms
+    ? formatPolynomial(terms.coefficients, equationVariable(terms))
+    : undefined;
 }
 
 export const formatR2 = (value: number | undefined) =>

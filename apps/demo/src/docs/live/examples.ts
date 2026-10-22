@@ -9,6 +9,7 @@ import {
   histogram,
   lincolnCalendarDashboard,
   scatterRegressionDashboard,
+  scatterRegressionUnitsDashboard,
   scatterSurfaceDashboard,
   stackedBarsDashboard,
   messageDashboard,
@@ -504,6 +505,18 @@ export const liveExamples = {
     exampleId: "scatter-regression",
     shotAlt: "Bill depth against bill length with a fit line for each species.",
     steps: [{ expectRows: 344 }],
+  },
+  "scatter-regression-units": {
+    label: "Live quadratic fit far from zero",
+    data: "/datasets/regression-units.csv",
+    savedData: focus(scatterRegressionUnitsDashboard, {
+      "units-mm": [0, 0, 6, 6],
+      "units-m": [6, 0, 6, 6],
+    }),
+    exampleId: "scatter-regression-units",
+    shotAlt:
+      "Five readings near one billion millimetres, each panel labeled with a quadratic written around a round center.",
+    steps: [{ expectRows: 5 }],
   },
   "scatter-bubble": {
     label: "Live bubble scatter",

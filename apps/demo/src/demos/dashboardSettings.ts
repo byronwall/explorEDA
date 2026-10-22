@@ -1429,6 +1429,44 @@ export const distributionDashboard = dashboard(
 );
 distributionDashboard.fieldSettings = { Hours: { type: "numeric" } };
 
+/**
+ * Five readings a billion millimetres from zero: expanded powers of X would
+ * need more digits than a label shows, so the equations state a center.
+ */
+export const scatterRegressionUnitsDashboard = dashboard(
+  "A curve far from zero, in two units",
+  [
+    {
+      ...scatter(
+        "units-mm",
+        "Signal along position in millimetres",
+        "Position (mm)",
+        "Signal (V)",
+        layout(0, 0, 6, 6),
+        ["Position (mm)", "Signal (V)"]
+      ),
+      regression: { method: "polynomial", degree: 2 },
+    },
+    {
+      ...scatter(
+        "units-m",
+        "The same readings in metres",
+        "Position (m)",
+        "Signal (V)",
+        layout(6, 0, 6, 6),
+        ["Position (m)", "Signal (V)"]
+      ),
+      regression: { method: "polynomial", degree: 2 },
+    },
+    table(
+      "units-readings",
+      "Readings",
+      ["Reading", "Position (mm)", "Position (m)", "Signal (V)"],
+      layout(0, 6, 12, 3)
+    ),
+  ]
+);
+
 export const scatterRegressionDashboard = dashboard(
   "Bill shape within each species",
   [
