@@ -1,3 +1,4 @@
+import { isAdditiveAggregation } from "@/lib/aggregates";
 import { FieldSelector } from "@/components/FieldSelector";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
@@ -20,6 +21,7 @@ export function BarChartSettingsPanel({
   const aggregate = useDataLayer((state) =>
     settings.aggregateId ? state.getAggregate(settings.aggregateId) : undefined
   );
+  const additive = !aggregate || isAdditiveAggregation(aggregate.aggregation);
   const addAggregate = useDataLayer((state) => state.addAggregate);
   const updateAggregate = useDataLayer((state) => state.updateAggregate);
   const { fieldNames, measureFields } = useMeasureFields(
@@ -73,23 +75,17 @@ export function BarChartSettingsPanel({
               }
             >
               <option value="grouped">Grouped</option>
-              <option
-                value="stacked"
-                disabled={aggregate?.aggregation === "average"}
-              >
+              <option value="stacked" disabled={!additive}>
                 Stacked
               </option>
-              <option
-                value="percent"
-                disabled={aggregate?.aggregation === "average"}
-              >
+              <option value="percent" disabled={!additive}>
                 100%
               </option>
             </select>
           </ActionTooltip>
           <p className="col-span-2 text-xs text-muted-foreground">
-            {aggregate?.aggregation === "average"
-              ? "Choose count or sum to stack series. Compare averages side by side."
+            {!additive
+              ? "Choose count or sum to stack series. Compare the bars side by side."
               : settings.seriesLayout === "percent"
                 ? "Each category totals 100%. Shares use its nonnegative series totals after other filters."
                 : settings.seriesLayout === "stacked"

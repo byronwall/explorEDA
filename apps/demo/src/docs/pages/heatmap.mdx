@@ -8,6 +8,7 @@
 ## How it reads
 
 - Rows group by one field and columns by another. Each cell's shade shows its count or measure.
+- **Metric** counts rows, or sums, averages, or takes the maximum or minimum of a measure. A maximum shows each cell's peak, such as a state's highest weekly rate in each wave; write it as `aggregation=max measureField=rate`.
 - Click a cell to filter every other chart to rows with both of its values.
 - Each axis shows at most a set number of values, the ones with the most rows. Rows with other values are left out and counted below the chart. **Rows shown** and **Columns shown** set the two limits apart, up to 200 each.
 - **Order** puts values by row count, A to Z, or the order they first appear in the data. **Column order** sets the columns apart from the rows.

@@ -115,11 +115,12 @@ Charts (each starts from the app's defaults):
   row <field>                         horizontal category bars; group=<@group>
   boxplot | calendar | ecdf | heatmap <field>; boxplot color=<field> draws
                                       one box per value
-  line x=<field> y=<field>,<field>    one line per y field
+  line x=<field> y=<field>,<field>    one line per y field; color=<field>
+                                      splits each into one line per value
   line x=<date> time.interval=week time.aggregation=sum time.measureField=Revenue
        time.splitField=Channel time.display=stacked-area
                                       a total per period, one line per Channel
-  metric count | sum(<field>) | avg(<field>)
+  metric count | sum(<field>) | avg(<field>) | max(<field>) | min(<field>)
   table <field>,<field>,...           data table (all fields when omitted)
   pivot rows=<field> columns=<field>  values as child lines (below)
   parallel <field>,<field>,...        parallel coordinates, one axis per field
@@ -201,7 +202,8 @@ Shared definitions (charts point at them by @name):
   scale @channels field=Channel map=Web:#3479a8,Store:#c77a45
                                       color scale; charts: colorScale=channels
   group @byRegion sum(Revenue) by=Region
-                                      grouped summary; charts: group=byRegion
+                                      grouped summary; charts: group=byRegion;
+                                      count, sum(), avg(), max(), or min()
   rows sortBy=Revenue where.Units=2.. the Rows view
 
 Filters:

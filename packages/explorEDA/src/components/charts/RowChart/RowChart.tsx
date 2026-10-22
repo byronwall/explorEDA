@@ -1,3 +1,4 @@
+import { isAdditiveAggregation } from "@/lib/aggregates";
 import { useThemeColors } from "@/hooks/useDisplayColorScales";
 import {
   annotationSlot,
@@ -503,10 +504,10 @@ export function RowChart({
     return { x: Math.min(zero, end), width: Math.abs(end - zero) };
   };
   // The all-row value draws as a faint bar behind a part of it, such as a
-  // filtered count or sum. An average, or a value the faint bar would hide,
+  // filtered count or sum. An average, max, or min, or a value the faint bar would hide,
   // marks it with a tick instead.
   const contextAsTick = (count: number | undefined, total: number) =>
-    spec?.aggregation === "average" ||
+    (spec !== undefined && !isAdditiveAggregation(spec.aggregation)) ||
     !(
       count === undefined ||
       count === 0 ||

@@ -1,3 +1,4 @@
+import type { AggregateAggregation } from "@/lib/aggregates";
 import type { SavedDataStructure } from "./SavedDataStructure";
 import type { datum } from "./ChartTypes";
 
@@ -84,7 +85,7 @@ export interface FilterStep {
 export interface AggregateMeasure {
   id: string;
   label: string;
-  operation: "count" | "sum" | "average";
+  operation: AggregateAggregation;
   fieldId?: string;
   /** Reduce repeated values once per entity. Conflicting values are unavailable. */
   entityFieldId?: string;
