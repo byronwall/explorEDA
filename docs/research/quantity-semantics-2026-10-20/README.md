@@ -14,16 +14,14 @@ The inspected daily loader does not read the corpus field sidecars. Table CSV co
 
 ## Proposed proof and documentation
 
-The [original proof plan](originals/proof-plan.md) supplies six synthetic fixture families. It proposes one lesson, using scale conversion and a supplied reference. Pair the sections “Units, stored values, and scientific reference” in fields.mdx and “Explicit scientific transformations” in calculated-fields.mdx with the proposed quantityMeaning.ts demo. Keep their implementation together if the task earns that work.
+The [original proof plan](https://chatgpt.com/c/6ad763b3-ecac-83ea-a53c-9099c304ebcd) supplies six synthetic fixture families. It proposes one lesson, using scale conversion and a supplied reference. Pair the sections “Units, stored values, and scientific reference” in fields.mdx and “Explicit scientific transformations” in calculated-fields.mdx with the proposed quantityMeaning.ts demo. Keep their implementation together if the task earns that work.
 
-No docs-site page, runnable example or application behavior changed here. Author trials, formula execution, selection, export, history, restore and performance proofs remain proposed. Pro's 43 arithmetic assertions are attributed; [15 local arithmetic anchors](fixture-audit.json) do not establish application behavior.
+No docs-site page, runnable example or application behavior changed here. Author trials, formula execution, selection, export, history, restore and performance proofs remain proposed. Pro's 43 arithmetic assertions are attributed; 15 local arithmetic anchors do not establish application behavior.
 
 ## Records
 
 - [Run and completion record](run.md)
 - [Ranked continuing queue](research-queue.md)
-- [Original decision report](originals/decision-report.md) and [recommendations](originals/recommendations.md)
-- [Original queue](originals/research-queue.md), [manifest](originals/manifest.json) and [archive](originals/quantity-semantics-research.zip)
-- [Collection checks](collection.json), [source inventory](source-manifest.json) and [validation](validation.json)
+- [Pro conversation](https://chatgpt.com/c/6ad763b3-ecac-83ea-a53c-9099c304ebcd)
 
 The scientific intent retains this as a conditional boundary, with existing overlay work still separate. No feature adoption or implementation approval follows from this review.

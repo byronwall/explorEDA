@@ -6,7 +6,7 @@ The scientific intent now has reviewed updates. Its packet copy remains the base
 
 ## Collection
 
-Pro completed after 17m48 s. The ZIP downloaded under direct human approval. Published ZIP and manifest hashes match. CRC, exact five-entry inventory, safe paths, no symlinks, UTF-8, all four report sizes and hashes pass. Originals remain unchanged. See [collection.json](collection.json).
+Pro completed after 17m48 s. The ZIP downloaded under direct human approval. Published ZIP and manifest hashes match. CRC, exact five-entry inventory, safe paths, no symlinks, UTF-8, all four report sizes and hashes pass. Originals remain unchanged.
 
 A standalone decision-report action opened raw text; its12 s download wait timed out. No independent standalone/archive equality is claimed. Every required original exists from the verified archive. No Library upload or downloaded-program execution was needed. No approval rejection occurred.
 
@@ -38,6 +38,6 @@ These checks support the bounded comparison, not feature demand. The JMP19.2 pag
 
 ## Proposed work remains separate
 
-No actual author trial, quantity formula/parser fixture, browser selection, export/undo/reopen or performance proof ran. No statistical inference follows from the synthetic fixtures. Existing tests cover their existing contracts only. [Validation](validation.json) records repository gates without promoting them to author evidence.
+No actual author trial, quantity formula/parser fixture, browser selection, export/undo/reopen or performance proof ran. No statistical inference follows from the synthetic fixtures. Existing tests cover their existing contracts only. Validation records repository gates without promoting them to author evidence.
 
 The named task, fixed versus recomputed center, weighting, declaration ownership and required handoff format remain human choices. Research is sufficient for a defer decision. No follow-up is needed to force a feature choice.

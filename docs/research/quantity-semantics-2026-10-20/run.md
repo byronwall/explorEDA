@@ -6,7 +6,7 @@
 - Checkout: /Users/byronwall/Projects/explorEDA. No worktree.
 - Baseline: 9b16d78e3ed0742ed4d5858c1939fec9e758b510. Origin/main refreshed 2026-10-20. Clean before branch creation.
 - Branch: codex/quantity-semantics-research-2026-10-20.
-- Prompt: [pro-prompt.md](pro-prompt.md). Queue: [research-queue.md](research-queue.md). Inventory: [source-manifest.json](source-manifest.json).
+- Prompt: [pro-prompt.md](pro-prompt.md). Queue: [research-queue.md](research-queue.md).
 - Prior cycles451/452/455–458 complete in open review PRs. PR454 owns time-series axes. Never resubmit completed missions.
 - Standing direct human upload/download approvals apply to scoped research context and outputs. Exclude secrets and unrelated files. Respect automatic review.
 - Scope: research/docs/intent/examples and bounded validation. Keep large implementation proposed. No merge/deploy/paid provisioning.

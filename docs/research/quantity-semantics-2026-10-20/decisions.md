@@ -14,4 +14,4 @@ The proposed recurrence threshold of two real sessions is Pro's research suggest
 
 The source confirms the main boundary. Unit edits update display settings without rebuilding numbers. CSV serialization omits settings; a saved analysis retains provider-input rows and settings. In a project view those input rows can already be query results. No export or restore defect is demonstrated.
 
-No material gap needs a follow-up;0/2 used. The [evidence review](evidence.md) records independent checks and limits. The [original recommendations](originals/recommendations.md) remain unchanged.
+No material gap needs a follow-up;0/2 used. The [evidence review](evidence.md) records independent checks and limits. The [original recommendations](https://chatgpt.com/c/6ad763b3-ecac-83ea-a53c-9099c304ebcd) remain unchanged.

@@ -31,6 +31,6 @@ Previous queue: https://github.com/byronwall/explorEDA/blob/3d1ffebb/docs/resear
 
 ## Review outcome
 
-[Five dispositions](decisions.md) defer new metadata and conversion machinery. Existing scientific explanations already cover the supplied cases. The [original queue](originals/research-queue.md) supplies detailed gates. Reusable-result work now has a concrete context question: CSV has scalar values and identifiers, while saved analysis carries settings/formulas. Inspect one actual downstream handoff before proposing richer export metadata.
+[Five dispositions](decisions.md) defer new metadata and conversion machinery. Existing scientific explanations already cover the supplied cases. The [original queue](https://chatgpt.com/c/6ad763b3-ecac-83ea-a53c-9099c304ebcd) supplies detailed gates. Reusable-result work now has a concrete context question: CSV has scalar values and identifiers, while saved analysis carries settings/formulas. Inspect one actual downstream handoff before proposing richer export metadata.
 
 Scientific quantity research is complete at this boundary. Do not queue another broad survey without new discriminating evidence. Proposed fixture arithmetic does not establish author demand or application acceptance.

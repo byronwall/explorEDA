@@ -46,7 +46,7 @@ Native scatter files implement regression, fit planning, paired covariance, marg
 
 Preserve original fields when deriving a quantity. Name its reference, row meaning and missing-value rule. A temperature difference needs a different conversion from a reading. A concentration residual keeps its scale but changes its reference. An annual total divided by a declared duration gives an interval mean. These distinctions do not approve automatic inference or propagation.
 
-Keep the existing local selection/export/undo/reopen proof first. Then compare current controls and upstream preparation for one named scientific task. Stop if they work. A lesson is conditional too. If adopted, pair the proposed fields.mdx and calculated-fields.mdx sections with one quantityMeaning.ts demo in the same milestone. The [proof plan](../../research/quantity-semantics-2026-10-20/originals/proof-plan.md) defines that bounded comparator. No runnable example or application proof is complete.
+Keep the existing local selection/export/undo/reopen proof first. Then compare current controls and upstream preparation for one named scientific task. Stop if they work. A lesson is conditional too. If adopted, pair the proposed fields.mdx and calculated-fields.mdx sections with one quantityMeaning.ts demo in the same milestone. The [proof plan](https://chatgpt.com/c/6ad763b3-ecac-83ea-a53c-9099c304ebcd) defines that bounded comparator. No runnable example or application proof is complete.
 
 Another reference-note property may duplicate description. Reopen metadata or conversion only after a repeated task rejects the taught current flow. Reference ownership, population, weighting and required export context remain open. Existing overlay work stays separate.
 
