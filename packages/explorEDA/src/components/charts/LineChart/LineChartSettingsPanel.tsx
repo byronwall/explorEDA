@@ -1,6 +1,7 @@
 import { FieldSelector } from "@/components/FieldSelector";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { useColorScales } from "@/hooks/useColorScales";
 import { type ChartSettingsPanelProps } from "@/types/ChartTypes";
 import { type FC } from "react";
 import {
@@ -56,6 +57,7 @@ const ObservationLineSettingsPanel: FC<
   };
 
   const availableFields = useColumnNames();
+  const { getOrCreateScaleForField } = useColorScales();
 
   return (
     <div className="space-y-2.5">
@@ -100,6 +102,22 @@ const ObservationLineSettingsPanel: FC<
               seriesSettings: newSeriesSettings,
             });
           }}
+        />
+
+        <Label>Split by</Label>
+        <FieldSelector
+          label=""
+          placeholder="One line per value"
+          value={settings.colorField ?? ""}
+          allowClear
+          onChange={(colorField) =>
+            updateSettings({
+              colorField: colorField || undefined,
+              colorScaleId: colorField
+                ? getOrCreateScaleForField(colorField)
+                : undefined,
+            })
+          }
         />
       </div>
 

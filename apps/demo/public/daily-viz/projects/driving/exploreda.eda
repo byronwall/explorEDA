@@ -1,0 +1,14 @@
+project @driving
+
+source @driving key=Year path=../../../datasets/driving.csv {
+  field Year number
+  field Miles number
+  field Gas number
+  field "Label side" string
+}
+
+query @years "One row per year" glyph=◆ {
+  source driving
+  calc decade "Decade" = ["driving.Year"] < 1960 ? "1950s" : ["driving.Year"] < 1970 ? "1960s" : ["driving.Year"] < 1980 ? "1970s" : ["driving.Year"] < 1990 ? "1980s" : ["driving.Year"] < 2000 ? "1990s" : "2000s"
+  calc miles_per_gas_dollar "Miles per gas dollar" = ["driving.Miles"] / ["driving.Gas"]
+}

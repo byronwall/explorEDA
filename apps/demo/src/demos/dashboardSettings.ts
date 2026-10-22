@@ -6514,3 +6514,579 @@ export const titanicMosaicDashboard = dashboard("Titanic mosaic", [
   row("mosaic-age", "Passengers by age group", "Age group", layout(4, 9, 4, 5)),
   row("mosaic-port", "Passengers by port", "Embarked", layout(8, 9, 4, 5)),
 ]);
+
+/*
+ * Built-in counterparts. Each answers the same question as a composition
+ * example above with an ordinary chart and its public settings, so the
+ * analysis needs no artboard. The composed originals stay as authored
+ * graphics.
+ */
+
+const regionColors = [
+  "#4e79a7",
+  "#f28e2b",
+  "#59a14f",
+  "#e15759",
+  "#76b7b2",
+  "#b07aa1",
+  "#edc948",
+];
+const mappedScale = (
+  id: string,
+  name: string,
+  labels: string[],
+  colors: string[]
+): SavedDataStructure["colorScales"][number] => ({
+  id,
+  name,
+  sourceField: name,
+  type: "categorical",
+  palette: colors,
+  mapping: labels.map((label, i) => [label, colors[i % colors.length]!]),
+});
+const labelled = (country: string, dx: number, dy: number) => ({
+  id: `income-life-label-${country.toLowerCase().replace(/\W+/g, "-")}`,
+  type: "callout" as const,
+  text: country,
+  attach: {
+    kind: "record" as const,
+    keyFields: ["Country"],
+    key: [country],
+  },
+  offset: { dx, dy },
+});
+
+/** Income against life expectancy as an ordinary bubble scatter. */
+export const incomeLifeScatterDashboard = dashboard(
+  "Income and life, built in",
+  [
+    {
+      ...scatter(
+        "income-life-scatter",
+        "Richer countries live longer",
+        "GDP per capita",
+        "Life expectancy",
+        layout(0, 0, 12, 7),
+        ["GDP per capita (PPP, 2021 $)", "Life expectancy (years)"],
+        "Region",
+        "income-life-region"
+      ),
+      xAxis: { grid: false, scaleType: "log" },
+      sizeField: "Population",
+      maxBubbleRadius: 22,
+      pointOpacity: 0.7,
+      annotations: [
+        labelled("China", 18, -26),
+        labelled("India", -18, -28),
+        labelled("United States", -34, -30),
+        labelled("Nigeria", -26, 24),
+        labelled("Japan", 18, -24),
+        labelled("Chad", -18, 24),
+        labelled("Qatar", 18, 26),
+        labelled("Brazil", -24, -22),
+        labelled("Indonesia", -26, -20),
+        labelled("Lesotho", 20, 20),
+        labelled("Luxembourg", -20, -24),
+        labelled("Afghanistan", -22, -22),
+      ],
+    },
+    row(
+      "income-life-scatter-regions",
+      "Economies by region",
+      "Region",
+      layout(0, 7, 5, 5),
+      "income-life-region"
+    ),
+    histogram(
+      "income-life-scatter-expectancy",
+      "Life expectancy",
+      "Life expectancy",
+      layout(5, 7, 7, 5)
+    ),
+  ],
+  [
+    mappedScale(
+      "income-life-region",
+      "Region",
+      [
+        "East Asia & Pacific",
+        "Europe & Central Asia",
+        "Latin America & Caribbean",
+        "Middle East, North Africa, Afghanistan & Pakistan",
+        "North America",
+        "South Asia",
+        "Sub-Saharan Africa",
+      ],
+      regionColors
+    ),
+  ]
+);
+
+/** Each source's causes as shares of that source's own total. */
+export const mediaDeathsBarDashboard = dashboard(
+  "Media and deaths, built in",
+  [
+    {
+      ...base,
+      id: "media-deaths-bar",
+      type: "bar",
+      title: "What Americans die from, and what the news covers",
+      field: "Count",
+      aggregateId: "media-deaths-by-source",
+      seriesField: "Cause",
+      seriesLayout: "percent",
+      categoryOrder: "data",
+      colorField: "Cause",
+      colorScaleId: "media-deaths-cause",
+      layout: layout(0, 0, 12, 8),
+      xAxisLabel: "Source",
+      yAxisLabel: "Share of the source's total (%)",
+    },
+    row(
+      "media-deaths-bar-causes",
+      "Rows by cause",
+      "Cause",
+      layout(0, 8, 6, 6),
+      "media-deaths-cause"
+    ),
+    row(
+      "media-deaths-bar-sources",
+      "Rows by source",
+      "Source",
+      layout(6, 8, 6, 6)
+    ),
+  ],
+  [
+    mappedScale(
+      "media-deaths-cause",
+      "Cause",
+      [
+        "Accidents",
+        "Alzheimer's",
+        "Cancer",
+        "COVID-19",
+        "Diabetes",
+        "Drug overdose",
+        "Heart disease",
+        "Homicide",
+        "Influenza",
+        "Kidney disease",
+        "Liver disease",
+        "Respiratory disease",
+        "Stroke",
+        "Suicide",
+        "Terrorism",
+      ],
+      [
+        "#4e79a7",
+        "#f28e2b",
+        "#e15759",
+        "#76b7b2",
+        "#59a14f",
+        "#edc948",
+        "#b07aa1",
+        "#ff9da7",
+        "#9c755f",
+        "#bab0ac",
+        "#1f77b4",
+        "#8c564b",
+        "#17becf",
+        "#bcbd22",
+        "#7f7f7f",
+      ]
+    ),
+  ]
+);
+mediaDeathsBarDashboard.aggregates = [
+  {
+    id: "media-deaths-by-source",
+    name: "Count by source",
+    groupField: "Source",
+    measureField: "Count",
+    aggregation: "sum",
+  },
+];
+
+/** Each income class's spending as shares of its own total. */
+export const duBoisIncomeBarDashboard = dashboard(
+  "Income and expenditure, built in",
+  [
+    {
+      ...base,
+      id: "du-bois-bar",
+      type: "bar",
+      title: "Income and expenditure of 150 families in Atlanta",
+      field: "Share",
+      aggregateId: "du-bois-by-class",
+      seriesField: "Category",
+      seriesLayout: "percent",
+      categoryOrder: "data",
+      colorField: "Category",
+      colorScaleId: "du-bois-category",
+      layout: layout(0, 0, 12, 8),
+      xAxisLabel: "Annual income class",
+      yAxisLabel: "Share of spending (%)",
+    },
+    row(
+      "du-bois-bar-categories",
+      "Rows by category",
+      "Category",
+      layout(0, 8, 6, 5),
+      "du-bois-category"
+    ),
+    row("du-bois-bar-classes", "Rows by class", "Class", layout(6, 8, 6, 5)),
+  ],
+  [
+    mappedScale(
+      "du-bois-category",
+      "Category",
+      ["Rent", "Food", "Clothes", "Direct taxes", "Other expenses and savings"],
+      ["#2b2b2b", "#7b5aa6", "#d2849a", "#9aa7b8", "#d8c7a2"]
+    ),
+  ]
+);
+duBoisIncomeBarDashboard.aggregates = [
+  {
+    id: "du-bois-by-class",
+    name: "Share by class",
+    groupField: "Class",
+    measureField: "Share",
+    aggregation: "sum",
+  },
+];
+
+/** Monthly unemployed by industry as an ordinary stacked area. */
+export const unemploymentAreaDashboard = dashboard(
+  "Unemployment by industry, built in",
+  [
+    {
+      ...line(
+        "unemployment-area",
+        "Unemployed Americans by industry, 2000 to 2010",
+        [],
+        layout(0, 0, 12, 8),
+        "Unemployed (thousands)"
+      ),
+      xField: "Month",
+      xAxisLabel: "Month · UTC",
+      colorField: "Industry",
+      time: {
+        interval: "month",
+        weekStart: "monday",
+        aggregation: "sum",
+        measureField: "Unemployed (thousands)",
+        splitField: "Industry",
+        missingPeriods: "gap",
+        display: "stacked-area",
+      },
+    },
+    row(
+      "unemployment-area-industry",
+      "Industries",
+      "Industry",
+      layout(0, 8, 4, 5)
+    ),
+    histogram(
+      "unemployment-area-rate",
+      "Unemployment rate",
+      "Unemployment rate",
+      layout(4, 8, 8, 5)
+    ),
+  ]
+);
+
+/** Miles driven against gas price, joined year by year. */
+export const drivingScatterDashboard = dashboard("Driving, built in", [
+  {
+    ...scatter(
+      "driving-scatter",
+      "Driving shifts into reverse",
+      "Miles",
+      "Gas",
+      layout(0, 0, 12, 7),
+      ["Miles driven per capita", "Gas price per gallon (2010 $)"]
+    ),
+    pointSize: 4,
+    pointOpacity: 0.9,
+    connect: { orderField: "Year" },
+    annotations: [
+      ...[1956, 1974, 1980, 1990, 2000, 2010].map((year) => ({
+        id: `driving-year-${year}`,
+        type: "callout" as const,
+        text: String(year),
+        attach: {
+          kind: "record" as const,
+          keyFields: ["Year"],
+          key: [year],
+        },
+        offset: { dx: 14, dy: -16 },
+      })),
+    ],
+  },
+  histogram("driving-scatter-years", "Years", "Year", layout(0, 7, 12, 4)),
+]);
+
+/** Each country's two tax readings joined as a slope. */
+export const taxSlopeScatterDashboard = dashboard(
+  "Tax revenue slope, built in",
+  [
+    {
+      ...scatter(
+        "tax-slope-scatter",
+        "Central government tax revenue, 2000 and 2023",
+        "Year",
+        "Tax revenue",
+        layout(0, 0, 8, 10),
+        ["Year", "Tax revenue (% of GDP)"],
+        "Direction",
+        "tax-direction"
+      ),
+      pointSize: 3,
+      pointOpacity: 0.9,
+      connect: { orderField: "Year", groupField: "Country", labels: "both" },
+    },
+    row(
+      "tax-slope-direction",
+      "Countries by direction",
+      "Direction",
+      layout(8, 0, 4, 3),
+      "tax-direction"
+    ),
+    row("tax-slope-countries", "Countries", "Country", layout(8, 3, 4, 7)),
+  ],
+  [
+    mappedScale(
+      "tax-direction",
+      "Direction",
+      ["Rose", "Fell"],
+      ["#c4553a", "#3b6ea8"]
+    ),
+  ]
+);
+
+/** Each topic's two party shares as a dumbbell row. */
+export const pewMeaningScatterDashboard = dashboard(
+  "Life's meaning by party, built in",
+  [
+    {
+      ...scatter(
+        "pew-scatter",
+        "What makes life meaningful, by party",
+        "Share",
+        "Topic",
+        layout(0, 0, 12, 6),
+        ["Share mentioning the topic (%)", ""],
+        "Party",
+        "pew-party"
+      ),
+      pointSize: 6,
+      pointOpacity: 1,
+      margin: { top: 16, right: 24, bottom: 44, left: 200 },
+      connect: { orderField: "Party", groupField: "Topic" },
+    },
+    row(
+      "pew-scatter-parties",
+      "Rows by party",
+      "Party",
+      layout(0, 6, 6, 4),
+      "pew-party"
+    ),
+    row("pew-scatter-topics", "Rows by topic", "Topic", layout(6, 6, 6, 4)),
+  ],
+  [
+    mappedScale(
+      "pew-party",
+      "Party",
+      ["Dem/Lean Dem", "Rep/Lean Rep"],
+      ["#3b6ea8", "#c4553a"]
+    ),
+  ]
+);
+
+/** Every occupation's change as a slope, one panel per group. */
+export const middleClassJobsScatterDashboard = dashboard(
+  "Middle-class jobs, built in",
+  [
+    {
+      ...scatter(
+        "jobs-scatter",
+        "The changing nature of middle-class jobs",
+        "Year",
+        "Jobs per 1000",
+        layout(0, 0, 12, 10),
+        ["Year", "Jobs per 1,000"],
+        "Women minus men",
+        "jobs-gender"
+      ),
+      pointSize: 3,
+      pointOpacity: 0.9,
+      connect: { orderField: "Year", groupField: "Occupation" },
+      facet: {
+        enabled: true,
+        type: "wrap",
+        rowVariable: "Group",
+        columnCount: 5,
+      },
+    },
+    row(
+      "jobs-scatter-groups",
+      "Occupations by group",
+      "Group",
+      layout(0, 10, 12, 5)
+    ),
+  ],
+  [
+    {
+      id: "jobs-gender",
+      name: "Women minus men",
+      sourceField: "Women minus men",
+      type: "numerical",
+      palette: "RdBu",
+      min: -80,
+      max: 80,
+      midpoint: 0,
+    },
+  ]
+);
+// Two readings per country: Year reads as two bands, not a number line.
+taxSlopeScatterDashboard.fieldSettings = { Year: { type: "categorical" } };
+middleClassJobsScatterDashboard.fieldSettings = {
+  Year: { type: "categorical" },
+};
+
+/** One measure's central path with its four supplied percentile bands. */
+const fanLine = (
+  id: string,
+  measure: string,
+  position: ReturnType<typeof layout>,
+  color: string
+): Extract<Chart, { type: "line" }> => ({
+  ...line(id, measure, ["Central"], position, `${measure} (%)`),
+  xField: "Year",
+  xAxisLabel: "Year",
+  seriesSettings: {
+    Central: {
+      showPoints: false,
+      pointSize: 3,
+      pointOpacity: 0.8,
+      lineWidth: 2,
+      lineOpacity: 1,
+      lineColor: color,
+      lineStyle: "solid",
+      useRightAxis: false,
+    },
+  },
+  localFilters: [{ type: "value", field: "Measure", values: [measure] }],
+  annotations: [
+    ["P10", "P90", "10–90%"],
+    ["P20", "P80", "20–80%"],
+    ["P30", "P70", "30–70%"],
+    ["P40", "P60", "40–60%"],
+  ].map(([lowerField, upperField, range]) => ({
+    id: `${id}-${lowerField}`,
+    type: "interval" as const,
+    lowerField: lowerField!,
+    upperField: upperField!,
+    meaning: range === "10–90%" ? "Supplied 10–90% range" : `${range}`,
+    color,
+  })),
+});
+
+/** The forecast fans as two ordinary line charts with supplied intervals. */
+export const fanLineDashboard = dashboard("Forecast fan, built in", [
+  fanLine("fan-inflation", "Inflation", layout(0, 0, 6, 7), "#b0413e"),
+  fanLine("fan-gdp", "GDP growth", layout(6, 0, 6, 7), "#3b6ea8"),
+  row("fan-line-kind", "Rows by kind", "Kind", layout(0, 7, 6, 4)),
+  row("fan-line-measure", "Rows by measure", "Measure", layout(6, 7, 6, 4)),
+]);
+
+const heatmap = (
+  id: string,
+  title: string,
+  field: string,
+  columnField: string,
+  position: ReturnType<typeof layout>,
+  extra: Partial<Extract<Chart, { type: "heatmap" }>>
+): Extract<Chart, { type: "heatmap" }> => ({
+  ...base,
+  id,
+  type: "heatmap",
+  title,
+  field,
+  columnField,
+  aggregation: "count",
+  maxCategories: 20,
+  sortBy: "count",
+  showValues: false,
+  layout: position,
+  margin: { top: 8, right: 16, bottom: 8, left: 8 },
+  ...extra,
+});
+
+/** Six years of messages by correspondent and month, every month shown. */
+export const messageHeatmapDashboard = dashboard("Message log, built in", [
+  heatmap(
+    "message-heatmap",
+    "Messages by correspondent and month",
+    "Correspondent",
+    "Date",
+    layout(0, 0, 12, 7),
+    {
+      maxColumns: 80,
+      columnInterval: "month",
+      colorDomain: { min: 0, transform: "sqrt" },
+    }
+  ),
+  row("message-heatmap-roles", "Messages by role", "Role", layout(0, 7, 6, 4)),
+  row(
+    "message-heatmap-direction",
+    "Sent and received",
+    "Direction",
+    layout(6, 7, 6, 4)
+  ),
+]);
+
+/** Every state and year of measles reports, in the publisher's state order. */
+export const measlesHeatmapDashboard = dashboard("Measles, built in", [
+  heatmap(
+    "measles-heatmap",
+    "Measles cases per 100,000, 1928 to 2012",
+    "State",
+    "Year",
+    layout(0, 0, 12, 10),
+    {
+      aggregation: "average",
+      measureField: "Rate",
+      maxCategories: 51,
+      maxColumns: 85,
+      sortBy: "data",
+      columnSortBy: "label",
+      colorDomain: { min: 0, max: 1000, transform: "sqrt" },
+    }
+  ),
+  row("measles-heatmap-status", "Cell status", "Status", layout(0, 10, 6, 4)),
+]);
+
+/** Each state's Democratic margin per election on a fixed signed scale. */
+export const electionsHeatmapDashboard = dashboard("Elections, built in", [
+  heatmap(
+    "elections-heatmap",
+    "How each state voted, 1976 to 2016",
+    "State",
+    "Year",
+    layout(0, 0, 12, 10),
+    {
+      aggregation: "average",
+      measureField: "Margin",
+      maxCategories: 51,
+      sortBy: "label",
+      colorDomain: { min: -40, max: 40 },
+    }
+  ),
+  row(
+    "elections-heatmap-winner",
+    "Rows by winner",
+    "Winner",
+    layout(0, 10, 6, 4)
+  ),
+]);

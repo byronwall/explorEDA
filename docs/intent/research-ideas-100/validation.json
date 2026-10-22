@@ -1,0 +1,44 @@
+{
+  "count": 100,
+  "priorities": "1\u2013100, unique",
+  "paragraphs": 400,
+  "prose_words": 32964,
+  "minimum_words": 299,
+  "maximum_words": 361,
+  "evidence_paths": 183,
+  "literal_references": 605,
+  "payload_hashes": 103,
+  "errors": [],
+  "internal_links": "README, catalogue, and source-ledger file targets passed",
+  "review_decisions": {
+    "investigate": 97,
+    "defer": 3
+  },
+  "raw_archive_matches_reported_sha256": true,
+  "standalone_companions_match_archive": true,
+  "review_limits": "Source references were checked, not all source claims reproduced. No research experiment was executed.",
+  "repository_check": {
+    "command": "pnpm run check",
+    "result": "passed",
+    "node": "22.21.1",
+    "pnpm": "11.9.0",
+    "library": {
+      "passed": 1656,
+      "skipped": 45
+    },
+    "app": {
+      "passed": 32
+    },
+    "demo": {
+      "passed": 431
+    },
+    "demo_build": {
+      "passed": 73
+    },
+    "notes": [
+      "Existing conditional library tests were skipped.",
+      "No product UI changed; browser workflow checks do not apply.",
+      "Research experiments remain proposals."
+    ]
+  }
+}

@@ -3,7 +3,7 @@ title: "Use one analytical result as another view’s input"
 slug: "reusable-analysis-outputs"
 phase: intent
 status: current
-last_updated: "2026-10-06"
+last_updated: "2026-10-20"
 ---
 
 # Use one analytical result as another view’s input
@@ -53,3 +53,11 @@ See the [reference packet](references/README.md) and [comparison collection](../
 ## Preparation research follow-up
 
 The 2026-10-18 [preparation research](../../research/data-preparation-boundary-2026-10-16/README.md) confirms grouped outputs and shared query views already exist. Further same-query aggregation also exists. These do not establish cross-query result demand. Keep this seed unprioritized until an actual export/import task remains blocked.
+
+## Analytical handoff research, 2026-10-20
+
+The [handoff review](../../research/analysis-handoff-2026-10-20/README.md) separates record exchange from result reuse.
+Current table CSV can include calculated values. Native files retain settings and source data for compatible reopening.
+Neither proves demand for a reusable grouped, modeled or density output.
+Keep this seed unprioritized until an actual repeated downstream task passes the existing gate.
+A guide or companion note does not pass it. No new result catalogue or larger bundle is selected.

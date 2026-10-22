@@ -3,7 +3,7 @@ title: "Find missing values and missing observations"
 slug: "missingness-and-expected-records"
 phase: intent
 status: current
-last_updated: "2026-10-06"
+last_updated: "2026-10-21"
 ---
 
 # Find missing values and missing observations
@@ -47,3 +47,13 @@ Expand when field summaries hide a recurring pattern, or a real source includes 
 Use a small fixture with missing X, missing Y, both missing, and valid zero. Show exact pattern counts and source IDs. Add one absent expected key only in a separate proof with an explicit expected set.
 
 See the [reference packet](references/README.md) and [comparison collection](../comparison-opportunities/README.md) for context.
+
+## R026 value accounting review, October 21
+
+Keep category and measurement rules separate. Name population, stage, type, and operation for each count.
+Numeric conversion can report failures that later become effective missing values. Both stages can reconcile without equal labels or totals.
+R026 local probes reproduce three bounded disagreements: categorical count versus missing predicate, host-type preview versus Apply, and absent-property batch versus trace.
+These are helper/provider/manager results, not browser confirmation or implemented repairs.
+Review each repair locally. Keep the shared classifier deferred and the universal state model rejected for this mission.
+A visible repair must include fields/summary/calculated-fields guidance and its runnable example in the same milestone.
+See the [R026 research](../../research/missing-state-accounting-2026-10-21/README.md) and [six decisions](../../research/missing-state-accounting-2026-10-21/decisions.md).

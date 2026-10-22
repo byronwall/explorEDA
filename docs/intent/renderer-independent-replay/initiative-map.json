@@ -5,7 +5,7 @@
     "slug": "renderer-independent-replay",
     "scale": "feature",
     "current_phase": "intent",
-    "last_updated": "2026-10-09",
+    "last_updated": "2026-10-22",
     "summary": "Developers may need to reproduce the meaning of an analysis independently of the mounted React workspace.",
     "status": "planned",
     "next_action": "Evaluate one active scatter plan twice from a fixed source and settings. Compare semantic output with the mounted trace. Decide whether a small headless API meets the need before designing a broader interchange format."
@@ -14,7 +14,7 @@
     "intent_brief": {
       "path": "intent-brief.md",
       "status": "current",
-      "updated_at": "2026-10-06"
+      "updated_at": "2026-10-22"
     },
     "brainstorm": {
       "path": "brainstorm.md",
@@ -88,6 +88,13 @@
       "location": "../comparison-opportunities/resources/product-feedback-2026-10-06.json",
       "anchor": "Annotation 3: end users determine product choices",
       "authority": "Explicit human feedback; tentative answers remain tentative"
+    },
+    {
+      "id": "r077-research",
+      "type": "agent-authored-analysis",
+      "location": "../../research/selection-identity-2026-10-22/README.md",
+      "anchor": "SI01\u2013SI08; four locally authored probes; source and artifact review",
+      "authority": "Research and bounded runtime evidence; no implementation approval"
     }
   ],
   "intent": {
@@ -315,18 +322,20 @@
       "date": "2026-10-06",
       "action": "Reconciled annotated product feedback and priority.",
       "reason": "User provided clearer goals and indicated lower interest in unclear topics.",
-      "source_annotation_indices": [
-        3
-      ],
+      "source_annotation_indices": [3],
       "evidence": "Current brief changes where applicable; source inspection only. No implementation, pause, or cancellation."
     },
     {
       "date": "2026-10-09",
       "event": "status-checked",
       "status": "planned",
-      "evidence": [
-        "No implementation of this scope found at 91b627d"
-      ]
+      "evidence": ["No implementation of this scope found at 91b627d"]
+    },
+    {
+      "date": "2026-10-22",
+      "action": "Reconciled R077 selection identity research.",
+      "reason": "Bounded replacement and key-resolution evidence before API expansion.",
+      "evidence": "Four local probes; full browser/host/export/worker proof remains proposed."
     }
   ],
   "closure": null,
@@ -334,9 +343,7 @@
     "kind": "seed",
     "priority_basis": "Pro recommendations reconciled with current source; proposed priority, no implementation approval",
     "expand_when": "Expand when an external export, independent verification process, or second renderer needs more than reopening the same React component.",
-    "related_initiatives": [
-      "composed-analytical-graphics"
-    ],
+    "related_initiatives": ["composed-analytical-graphics"],
     "audience": "End users; developers deliver their experience.",
     "priority": "Unranked candidate or future seed"
   }

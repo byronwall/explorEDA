@@ -6,10 +6,15 @@ import {
   STATUS_LINE_HEIGHT,
 } from "../ChartStatusLine";
 import { ChartMessage, NO_MATCHING_ROWS } from "../ChartMessage";
-import { formatFieldValue as formatValue } from "@/lib/fieldSettings";
+import {
+  formatFieldValue as formatValue,
+  hasFieldDisplayFormat,
+} from "@/lib/fieldSettings";
 import { useCallback, useId, useMemo, useRef, useState } from "react";
 import { ChartReadout } from "../ChartReadout";
 import { HeatLegend } from "../HeatLegend";
+import { annotationSlot } from "../annotations/ChartAnnotations";
+import { heatmapAnnotationFrame } from "./heatmapAnnotations";
 import {
   useChartTrace,
   useChartTraceApi,
@@ -29,6 +34,9 @@ import {
   type HeatmapCell,
   type HeatmapPlan,
 } from "./heatmapPlan";
+
+/** Cells narrower than this lose the gap between them. */
+const MIN_GAPPED_CELL = 8;
 import {
   findHeatmapTraceRow,
   heatmapTraceTargets,
@@ -77,7 +85,13 @@ const formatShare = (share: number) =>
         maximumFractionDigits: share < 0.1 ? 1 : 0,
       });
 
-export function Heatmap({ settings, width, height, facetIds }: BaseChartProps<HeatmapSettings>) {
+export function Heatmap({
+  settings,
+  width,
+  height,
+  facetIds,
+  facetKey,
+}: BaseChartProps<HeatmapSettings>) {
   const getFieldLabel = useDataLayer((s) => s.getFieldLabel);
   const formatFieldValue = useDataLayer((s) => s.formatFieldValue);
   const fieldSettings = useDataLayer((s) => s.fieldSettings);
@@ -104,13 +118,32 @@ export function Heatmap({ settings, width, height, facetIds }: BaseChartProps<He
         settings,
         width,
         height,
-        snapshot: { revision, allIds, liveIds, rowData, columnData, measureData },
+        snapshot: {
+          revision,
+          allIds,
+          liveIds,
+          rowData,
+          columnData,
+          measureData,
+        },
         getFieldLabel,
         formatFieldValue,
+        formatsCategory: (field) => hasFieldDisplayFormat(fieldSettings[field]),
       }),
     // Label and format getters are stable; field settings carry their changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [settings, width, height, revision, allIds, liveIds, rowData, columnData, measureData, fieldSettings]
+    [
+      settings,
+      width,
+      height,
+      revision,
+      allIds,
+      liveIds,
+      rowData,
+      columnData,
+      measureData,
+      fieldSettings,
+    ]
   );
 
   const source = useMemo(
@@ -124,15 +157,27 @@ export function Heatmap({ settings, width, height, facetIds }: BaseChartProps<He
     [plan]
   );
   useTraceSource(owner, source);
+  const annotationFrame = useMemo(
+    () =>
+      settings.annotations?.length
+        ? heatmapAnnotationFrame(plan, facetKey)
+        : undefined,
+    [settings.annotations, plan, facetKey]
+  );
   const inspect = useCallback(
     (id: string) => traceApi?.inspect(owner, "cell", id),
     [owner, traceApi]
   );
-  const traced = trace?.selection?.owner === owner ? trace.selection.id : undefined;
+  const traced =
+    trace?.selection?.owner === owner ? trace.selection.id : undefined;
 
   const select = (cell: HeatmapCell) => {
-    if (cell.state === "empty") {return;}
-    updateChart(settings.id, { filters: toggleCellFilters(settings, plan, cell) });
+    if (cell.state === "empty") {
+      return;
+    }
+    updateChart(settings.id, {
+      filters: toggleCellFilters(settings, plan, cell),
+    });
   };
   const selectAxis = (axis: "row" | "column", category: HeatmapCategory) =>
     updateChart(settings.id, {
@@ -140,10 +185,16 @@ export function Heatmap({ settings, width, height, facetIds }: BaseChartProps<He
     });
   const formatLegend = (value: number) =>
     measureField
-      ? formatValue(measureField, value, fieldSettings[measureField], { compact: true })
+      ? formatValue(measureField, value, fieldSettings[measureField], {
+          compact: true,
+        })
       : formatValue("", value, {}, { compact: true });
 
-  if (!settings.field || !settings.columnField || settings.field === settings.columnField) {
+  if (
+    !settings.field ||
+    !settings.columnField ||
+    settings.field === settings.columnField
+  ) {
     return (
       <ChartMessage width={width} height={height}>
         Choose two different fields for the rows and columns in chart settings.
@@ -160,34 +211,49 @@ export function Heatmap({ settings, width, height, facetIds }: BaseChartProps<He
 
   const columnCount = plan.columns.length;
   const tabStop =
-    (focused && plan.cells.some((cell) => cell.id === focused) ? focused : undefined) ??
+    (focused && plan.cells.some((cell) => cell.id === focused)
+      ? focused
+      : undefined) ??
     plan.cells.find((cell) => cell.selected)?.id ??
     plan.cells[0]?.id;
   const moveFocus = (index: number, key: string) => {
     const row = Math.floor(index / columnCount);
     const column = index % columnCount;
     const next =
-      key === "ArrowRight" ? index + (column < columnCount - 1 ? 1 : 0)
-      : key === "ArrowLeft" ? index - (column > 0 ? 1 : 0)
-      : key === "ArrowDown" ? index + (row < plan.rows.length - 1 ? columnCount : 0)
-      : key === "ArrowUp" ? index - (row > 0 ? columnCount : 0)
-      : index;
+      key === "ArrowRight"
+        ? index + (column < columnCount - 1 ? 1 : 0)
+        : key === "ArrowLeft"
+          ? index - (column > 0 ? 1 : 0)
+          : key === "ArrowDown"
+            ? index + (row < plan.rows.length - 1 ? columnCount : 0)
+            : key === "ArrowUp"
+              ? index - (row > 0 ? columnCount : 0)
+              : index;
     const id = plan.cells[next]?.id;
-    if (!id) {return;}
+    if (!id) {
+      return;
+    }
     setFocused(id);
     setHovered(id);
     cellRefs.current.get(id)?.focus();
   };
-  const singleSelection = plan.cells.filter((cell) => cell.selected).length === 1;
+  const singleSelection =
+    plan.cells.filter((cell) => cell.selected).length === 1;
+  // Narrow cells draw edge to edge, so their color still reads.
+  const gapX = plan.cellWidth < MIN_GAPPED_CELL ? 0 : 1;
+  const gapY = plan.cellHeight < MIN_GAPPED_CELL ? 0 : 1;
   const hoveredCell = plan.cells.find((cell) => cell.id === hovered);
   const omittedText = [
-    plan.omitted.rows > 0 && `${plan.rows.length} of ${plan.rows.length + plan.omitted.rows} ${plan.rowFieldLabel}`,
-    plan.omitted.columns > 0 && `${plan.columns.length} of ${plan.columns.length + plan.omitted.columns} ${plan.columnFieldLabel}`,
+    plan.omitted.rows > 0 &&
+      `${plan.rows.length} of ${plan.rows.length + plan.omitted.rows} ${plan.rowFieldLabel}`,
+    plan.omitted.columns > 0 &&
+      `${plan.columns.length} of ${plan.columns.length + plan.omitted.columns} ${plan.columnFieldLabel}`,
   ].filter(Boolean);
   const rowsIn = (cells: HeatmapCell[]) =>
     cells.reduce((total, cell) => total + cell.rowCount, 0);
   const selectedCells = plan.cells.filter((cell) => cell.selected);
-  const { rows: selectedRowKeys, columns: selectedColumnKeys } = plan.selectedKeys;
+  const { rows: selectedRowKeys, columns: selectedColumnKeys } =
+    plan.selectedKeys;
   const listNames = (names: string[]) =>
     names.length > 3
       ? `${names.slice(0, 3).join(", ")} and ${names.length - 3} more`
@@ -196,9 +262,17 @@ export function Heatmap({ settings, width, height, facetIds }: BaseChartProps<He
     selectedCells.length === 0
       ? ""
       : selectedRowKeys && !selectedColumnKeys
-        ? listNames(plan.rows.filter((row) => selectedRowKeys.has(row.key)).map((row) => row.label))
+        ? listNames(
+            plan.rows
+              .filter((row) => selectedRowKeys.has(row.key))
+              .map((row) => row.label)
+          )
         : selectedColumnKeys && !selectedRowKeys
-          ? listNames(plan.columns.filter((column) => selectedColumnKeys.has(column.key)).map((column) => column.label))
+          ? listNames(
+              plan.columns
+                .filter((column) => selectedColumnKeys.has(column.key))
+                .map((column) => column.label)
+            )
           : selectedCells.length === 1
             ? `${selectedCells[0]!.row.label}, ${selectedCells[0]!.column.label}`
             : `${selectedCells.length} cells`;
@@ -214,14 +288,20 @@ export function Heatmap({ settings, width, height, facetIds }: BaseChartProps<He
     "Click a cell or label to select · Alt-click to inspect";
   const bandTop = plan.margin.top - LEGEND_HEIGHT;
   // The column labels end 16px above the bottom margin; their field name fills that gap.
-  const columnTitleTop = height - settings.margin.bottom - 16 - STATUS_LINE_HEIGHT;
+  const columnTitleTop =
+    height - settings.margin.bottom - 16 - STATUS_LINE_HEIGHT;
 
   return (
     <div className="relative" style={{ width, height }}>
       {/* Field names title the axes; the legend names the metric. */}
       <div
         className="absolute flex items-center gap-3"
-        style={{ top: bandTop, left: 8, right: plan.margin.right, height: LEGEND_HEIGHT - 6 }}
+        style={{
+          top: bandTop,
+          left: 8,
+          right: plan.margin.right,
+          height: LEGEND_HEIGHT - 6,
+        }}
       >
         <span
           className="eda-heat-axis-title flex-none text-right"
@@ -244,15 +324,40 @@ export function Heatmap({ settings, width, height, facetIds }: BaseChartProps<He
       </div>
       <span
         className="eda-heat-axis-title absolute text-center"
-        style={{ top: columnTitleTop, left: plan.margin.left, width: plan.plotWidth }}
+        style={{
+          top: columnTitleTop,
+          left: plan.margin.left,
+          width: plan.plotWidth,
+        }}
       >
         {plan.columnFieldLabel}
       </span>
-      <svg width={width} height={height} className="block select-none overflow-visible">
+      <svg
+        width={width}
+        height={height}
+        className="block select-none overflow-visible"
+      >
         <defs>
-          <pattern id={hatchId} width={6} height={6} patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-            <line x1={0} y1={0} x2={0} y2={6} stroke="var(--muted-foreground)" strokeWidth={1.2} opacity={0.55} />
+          <pattern
+            id={hatchId}
+            width={6}
+            height={6}
+            patternUnits="userSpaceOnUse"
+            patternTransform="rotate(45)"
+          >
+            <line
+              x1={0}
+              y1={0}
+              x2={0}
+              y2={6}
+              stroke="var(--muted-foreground)"
+              strokeWidth={1.2}
+              opacity={0.55}
+            />
           </pattern>
+          <clipPath id={`${hatchId}-plot`}>
+            <rect width={plan.plotWidth} height={plan.plotHeight} />
+          </clipPath>
         </defs>
         <g transform={`translate(${plan.margin.left},${plan.margin.top})`}>
           {/* A click on a label selects its whole row or column. */}
@@ -261,7 +366,10 @@ export function Heatmap({ settings, width, height, facetIds }: BaseChartProps<He
               <text
                 key={row.key}
                 className="eda-heat-label"
-                data-selected={plan.selectedKeys.rows?.has(row.key) && !plan.selectedKeys.columns}
+                data-selected={
+                  plan.selectedKeys.rows?.has(row.key) &&
+                  !plan.selectedKeys.columns
+                }
                 x={-8}
                 y={row.position + plan.cellHeight / 2}
                 textAnchor="end"
@@ -271,11 +379,14 @@ export function Heatmap({ settings, width, height, facetIds }: BaseChartProps<He
                 {truncate(row.label, plan.margin.left - 12)}
               </text>
             ))}
-            {plan.columns.map((column) => {
+            {plan.columns.map((column, index) => {
               const x = column.position + plan.cellWidth / 2;
               const y = plan.plotHeight + 14;
               const selected =
-                plan.selectedKeys.columns?.has(column.key) && !plan.selectedKeys.rows;
+                plan.selectedKeys.columns?.has(column.key) &&
+                !plan.selectedKeys.rows;
+              // Dense columns label every few; a selected one always.
+              if (index % plan.columnLabelEvery !== 0 && !selected) return null;
               return plan.rotateColumnLabels ? (
                 <text
                   key={column.key}
@@ -304,24 +415,31 @@ export function Heatmap({ settings, width, height, facetIds }: BaseChartProps<He
               );
             })}
           </g>
-          <g role="group" aria-label={`${plan.metricLabel} by ${plan.rowFieldLabel} and ${plan.columnFieldLabel}`}>
+          <g
+            role="group"
+            aria-label={`${plan.metricLabel} by ${plan.rowFieldLabel} and ${plan.columnFieldLabel}`}
+          >
             {plan.cells.map((cell, index) => {
               // One selected cell is outlined; a larger selection reads from the dimming.
-              const active = traced === cell.id || (cell.selected && singleSelection);
+              const active =
+                traced === cell.id || (cell.selected && singleSelection);
               const dimmed = cell.selected === false;
               const isHovered = hovered === cell.id;
               return (
                 <g key={cell.id}>
                   <rect
                     ref={(node) => {
-                      if (node) {cellRefs.current.set(cell.id, node);}
-                      else {cellRefs.current.delete(cell.id);}
+                      if (node) {
+                        cellRefs.current.set(cell.id, node);
+                      } else {
+                        cellRefs.current.delete(cell.id);
+                      }
                     }}
                     data-plan-id={cell.id}
-                    x={cell.x + 1}
-                    y={cell.y + 1}
-                    width={Math.max(0, cell.width - 2)}
-                    height={Math.max(0, cell.height - 2)}
+                    x={cell.x + gapX}
+                    y={cell.y + gapY}
+                    width={Math.max(0, cell.width - 2 * gapX)}
+                    height={Math.max(0, cell.height - 2 * gapY)}
                     rx={2}
                     role="button"
                     tabIndex={cell.id === tabStop ? 0 : -1}
@@ -330,26 +448,39 @@ export function Heatmap({ settings, width, height, facetIds }: BaseChartProps<He
                     aria-disabled={cell.state === "empty" || undefined}
                     className={`chart-mark eda-heat-cell ${cell.state === "empty" ? "" : "cursor-pointer"}`}
                     style={{
-                      fill: cell.state === "invalid" ? `url(#${hatchId})` : cell.fill,
+                      fill:
+                        cell.state === "invalid"
+                          ? `url(#${hatchId})`
+                          : cell.fill,
                       stroke:
                         active || (isHovered && cell.state !== "empty")
                           ? "var(--foreground)"
-                          : cell.state === "value" ? "none" : "var(--border)",
+                          : cell.state === "value"
+                            ? "none"
+                            : "var(--border)",
                     }}
                     strokeWidth={active ? 2 : isHovered ? 1.5 : 1}
-                    strokeDasharray={cell.state === "empty" && !active ? "3 3" : undefined}
+                    strokeDasharray={
+                      cell.state === "empty" && !active ? "3 3" : undefined
+                    }
                     opacity={dimmed && !isHovered ? 0.3 : 1}
                     onPointerEnter={() => setHovered(cell.id)}
-                    onPointerLeave={() => setHovered((id) => (id === cell.id ? null : id))}
+                    onPointerLeave={() =>
+                      setHovered((id) => (id === cell.id ? null : id))
+                    }
                     onFocus={() => {
                       setFocused(cell.id);
                     }}
-                    onBlur={() => setHovered((id) => (id === cell.id ? null : id))}
+                    onBlur={() =>
+                      setHovered((id) => (id === cell.id ? null : id))
+                    }
                     onClick={(event) => {
                       if (event.altKey) {
                         event.preventDefault();
                         inspect(cell.id);
-                      } else {select(cell);}
+                      } else {
+                        select(cell);
+                      }
                     }}
                     onKeyDown={(event) => {
                       if (event.key.startsWith("Arrow")) {
@@ -357,8 +488,11 @@ export function Heatmap({ settings, width, height, facetIds }: BaseChartProps<He
                         moveFocus(index, event.key);
                       } else if (event.key === "Enter" || event.key === " ") {
                         event.preventDefault();
-                        if (event.altKey && event.key === "Enter") {inspect(cell.id);}
-                        else {select(cell);}
+                        if (event.altKey && event.key === "Enter") {
+                          inspect(cell.id);
+                        } else {
+                          select(cell);
+                        }
                       }
                     }}
                   />
@@ -369,7 +503,10 @@ export function Heatmap({ settings, width, height, facetIds }: BaseChartProps<He
                       textAnchor="middle"
                       dominantBaseline="central"
                       fontSize={11}
-                      style={{ fill: cell.textFill, fontVariantNumeric: "tabular-nums" }}
+                      style={{
+                        fill: cell.textFill,
+                        fontVariantNumeric: "tabular-nums",
+                      }}
                       opacity={dimmed ? 0.4 : 1}
                       pointerEvents="none"
                       aria-hidden="true"
@@ -381,6 +518,7 @@ export function Heatmap({ settings, width, height, facetIds }: BaseChartProps<He
               );
             })}
           </g>
+          {annotationSlot(settings, annotationFrame)?.(`url(#${hatchId}-plot)`)}
         </g>
       </svg>
       {hoveredCell && <Readout cell={hoveredCell} plan={plan} />}

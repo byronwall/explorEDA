@@ -229,7 +229,15 @@ export const CHART_SETTINGS: Readonly<
     measureField: "Field the metric summarizes, when it is not a count.",
     maxCategories:
       "Most values on each axis, ranked by rows. Rows with other values are left out and counted below the chart.",
-    sortBy: "Axis order: by row count, or by label.",
+    maxColumns:
+      "Most columns, when it differs from `maxCategories`. Binned dates keep the latest periods.",
+    sortBy:
+      "Axis order: by row count, by label, or the order values first appear in the data.",
+    columnSortBy: "Column order, when it differs from `sortBy`.",
+    columnInterval:
+      "Groups a date column into UTC years, months, weeks, or days, with a column for every period from the first to the last. A cell selects its period's dates.",
+    colorDomain:
+      "Fixed color ends (`min`, `max`) and an optional square-root transform (`transform: sqrt`). Absent uses the shown cells' range.",
     showValues: "Prints each value in its cell when the text fits.",
   },
   ecdf: {
@@ -333,6 +341,8 @@ export const CHART_SETTINGS: Readonly<
     summary: "Shows the paired summary line: correlation and pair count.",
     marginals:
       "X and Y histograms beside the plot, with their bin count. Absent when off.",
+    connect:
+      "Joins points with straight lines: ordered by a field (or row order), one path per group value, with names at the end or both ends. A row a filter removes, or with no position, breaks the path. Absent when off.",
   },
   bar: {
     field: "Field to count by category, or to bin when it is numeric.",
@@ -340,7 +350,7 @@ export const CHART_SETTINGS: Readonly<
     forceString:
       "Counts each distinct value as its own bar, even for a numeric field.",
     categoryOrder:
-      "Category bars in data order, or sorted by label from A to Z.",
+      "Category bars in data order, sorted by label from A to Z, or by value with the largest first.",
     aggregateId:
       "A named grouped summary to draw, which counts, sums, or averages a measure per group.",
     seriesField: "A second field that splits each bar into series.",

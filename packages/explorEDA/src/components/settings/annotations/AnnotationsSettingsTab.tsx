@@ -3,7 +3,10 @@ import { useEffect, useMemo, useRef } from "react";
 import { useDataLayer, type IdType } from "@/providers/DataLayerProvider";
 import type { ChartSettings } from "@/types/ChartTypes";
 import { useAnnotationRows } from "../../charts/annotations/useAnnotationRows";
-import { useAnnotationStatuses } from "../../charts/annotations/annotationStatus";
+import {
+  useAnnotationDetails,
+  useAnnotationStatuses,
+} from "../../charts/annotations/annotationStatus";
 import { Button } from "../../ui/button";
 import { Label } from "../../ui/label";
 import {
@@ -108,6 +111,7 @@ export function AnnotationsSettingsTab({
   }, [annotations]);
   const { ids, getColumn } = useAnnotationRows();
   const drawn = useAnnotationStatuses(settings.id);
+  const details = useAnnotationDetails(settings.id);
   const getColumnNames = useDataLayer((state) => state.getColumnNames);
   const crossfilter = useDataLayer((state) => state.crossfilterWrapper);
   // Filter changes arrive as new live items for this chart.
@@ -179,38 +183,45 @@ export function AnnotationsSettingsTab({
           tooltip={
             context.records
               ? "Add a label attached to the record with the largest value. Change the record or text below."
-              : context.categoryField
-                ? "Add a label on the category with the most rows. Change the category or text below."
-                : "Add a label at a fixed point. Change its position and text below."
+              : context.cellFields
+                ? "Add a label on one cell. Change the cell or text below."
+                : context.categoryField
+                  ? "Add a label on the category with the most rows. Change the category or text below."
+                  : "Add a label at a fixed point. Change its position and text below."
           }
           onClick={() => add(createCallout(source))}
         >
           Callout
         </Button>
-        <Button
-          size="sm"
-          variant="outline"
-          tooltip={
-            context.xDate
-              ? "Add a vertical line at a date, such as a release. Change its date below."
-              : "Add a fixed target line at a typical value. Change its axis and value below."
-          }
-          onClick={() => add(createReferenceLine(source))}
-        >
-          Line
-        </Button>
-        <Button
-          size="sm"
-          variant="outline"
-          tooltip={
-            context.xDate
-              ? "Add a shaded period between two dates. Change its dates below."
-              : "Add a shaded range between two values, such as a tolerance. Change it below."
-          }
-          onClick={() => add(createBand(source))}
-        >
-          Band
-        </Button>
+        {/* A grid of cells has no value axis for a line or band. */}
+        {!context.cellFields && (
+          <>
+            <Button
+              size="sm"
+              variant="outline"
+              tooltip={
+                context.xDate
+                  ? "Add a vertical line at a date, such as a release. Change its date below."
+                  : "Add a fixed target line at a typical value. Change its axis and value below."
+              }
+              onClick={() => add(createReferenceLine(source))}
+            >
+              Line
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              tooltip={
+                context.xDate
+                  ? "Add a shaded period between two dates. Change its dates below."
+                  : "Add a shaded range between two values, such as a tolerance. Change it below."
+              }
+              onClick={() => add(createBand(source))}
+            >
+              Band
+            </Button>
+          </>
+        )}
         {context.plane && (
           <Button
             size="sm"
@@ -257,6 +268,7 @@ export function AnnotationsSettingsTab({
                   : (drawn[annotation.id] ??
                     listStatus(annotation, ids, getColumn, visible))
               }
+              detail={annotation.hidden ? undefined : details[annotation.id]}
               context={context}
               facetOptions={facetOptions}
               keyFields={keyFields}
@@ -307,6 +319,7 @@ export function AnnotationsSettingsTab({
 function AnnotationCard({
   annotation,
   status,
+  detail,
   context,
   facetOptions,
   keyFields,
@@ -320,6 +333,8 @@ function AnnotationCard({
 }: {
   annotation: ChartAnnotation;
   status: AnnotationStatus;
+  /** What the drawn annotation read, such as an interval's rows and runs. */
+  detail?: string;
   context: AnnotationContext;
   facetOptions: { id: string; label: string }[];
   keyFields: string[];
@@ -408,6 +423,11 @@ function AnnotationCard({
           <Trash2 className="size-3.5" aria-hidden="true" />
         </Button>
       </div>
+      {detail && (
+        <p className="text-[11px] text-muted-foreground" role="note">
+          Drawn from {detail}.
+        </p>
+      )}
       <div className="eda-setting-grid">
         <Label htmlFor={`${annotation.id}-name`}>Name</Label>
         <HeldInput

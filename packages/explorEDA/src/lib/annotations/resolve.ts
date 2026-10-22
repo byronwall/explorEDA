@@ -2,7 +2,7 @@ import {
   buildScale,
   type ScaleDescriptor,
 } from "@/components/charts/Axis/axisPlan";
-import { finiteNumber, isMissingValue } from "@/lib/valueParsing";
+import { finiteNumber, isMissingValue, timestampOf } from "@/lib/valueParsing";
 import type { IdType } from "@/providers/DataLayerProvider";
 import type { datum } from "@/types/ChartTypes";
 import type {
@@ -230,8 +230,24 @@ export interface AnnotationFrame {
    * pass the current filters. Charts of grouped values leave it out.
    */
   population?: Record<AnnotationPopulation, IdType[]>;
+  /**
+   * Values calculations read on an axis whose marks summarize rows, such as
+   * a grouped row chart's per-group measure. They take the place of
+   * `population` for that axis.
+   */
+  axisValues?: Partial<
+    Record<"x" | "y", Record<AnnotationPopulation, number[]>>
+  >;
   /** Where an aggregate mark, such as a bar, is drawn for a category. */
   category?: (attach: CategoryAttachment) => PlottedRecord | undefined;
+  /**
+   * On a chart drawn as a grid of cells, such as a heatmap or calendar, where
+   * the cell a record callout's key values name is drawn. Its key fields must
+   * be the fields that place a cell, since a cell holds many rows.
+   */
+  cell?: (
+    attach: RecordAttachment
+  ) => PlottedRecord | Exclude<AnnotationStatus, "shown">;
   /** The facet panel this frame draws, by its facet values. */
   facetKey?: string;
 }
@@ -244,9 +260,17 @@ export function calculate(
   getColumn: ColumnGetter
 ) {
   const column = getColumn(field);
-  const values = ids
-    .map((id) => finiteNumber(column[id]))
-    .filter((value): value is number => value !== undefined);
+  return statisticOf(
+    statistic,
+    ids
+      .map((id) => finiteNumber(column[id]))
+      .filter((value): value is number => value !== undefined)
+  );
+}
+
+/** A statistic of some values, or undefined without any. */
+export function statisticOf(statistic: AnnotationStatistic, input: number[]) {
+  const values = input.filter(Number.isFinite);
   if (!values.length) return undefined;
   if (statistic === "mean")
     return values.reduce((sum, value) => sum + value, 0) / values.length;
@@ -323,11 +347,40 @@ export type ProjectedAnnotation =
   | Shown<
       IntervalAnnotation,
       {
-        points: IntervalPoint[];
-        /** Rows whose lower bound is above the upper bound. */
-        reversed: number;
+        /** Points in X order, split wherever an in-order row lacks bounds. */
+        runs: IntervalPoint[][];
+        evidence: IntervalEvidence;
       }
     >;
+
+/** What a supplied interval was drawn from, for the Notes list. */
+export interface IntervalEvidence {
+  /** Rows with both bounds that the ribbon passes through. */
+  rows: number;
+  /** Rows inside the ribbon's X span that lack a bound and split it. */
+  breaks: number;
+  /** Rows whose lower bound is above the upper bound, drawn swapped. */
+  reversed: number;
+  /** X values shared by several rows; the ribbon takes their outer bounds. */
+  duplicates: number;
+}
+
+/** "16 rows in 2 runs · 1 row splits it", for an interval's Notes entry. */
+export function intervalEvidenceText(evidence: IntervalEvidence, runs: number) {
+  const plural = (n: number, word: string) =>
+    `${n.toLocaleString()} ${word}${n === 1 ? "" : "s"}`;
+  return [
+    `${plural(evidence.rows, "row")} in ${plural(runs, "run")}`,
+    evidence.breaks &&
+      `${plural(evidence.breaks, "row")} without bounds ${evidence.breaks === 1 ? "splits" : "split"} it`,
+    evidence.reversed &&
+      `${plural(evidence.reversed, "reversed pair")} swapped`,
+    evidence.duplicates &&
+      `${plural(evidence.duplicates, "repeated X value")} use the outer bounds`,
+  ]
+    .filter(Boolean)
+    .join(" · ");
+}
 
 function numericPosition(descriptor: ScaleDescriptor, value: number) {
   if (descriptor.type === "band") return undefined;
@@ -369,15 +422,19 @@ function projectOne(
     if (annotation.type === "reference-line") {
       let value = annotation.value;
       if (annotation.calculated) {
+        const { statistic, population } = annotation.calculated;
         const field = vertical ? frame.xField : frame.yField;
-        if (!frame.population || !field)
+        const values = frame.axisValues?.[annotation.axis];
+        if (!values && (!frame.population || !field))
           return { annotation, status: "unsupported" };
-        const result = calculate(
-          annotation.calculated.statistic,
-          field,
-          frame.population[annotation.calculated.population],
-          frame.getColumn
-        );
+        const result = values
+          ? statisticOf(statistic, values[population])
+          : calculate(
+              statistic,
+              field!,
+              frame.population![population],
+              frame.getColumn
+            );
         if (result === undefined) return { annotation, status: "empty" };
         value = result;
       }
@@ -469,25 +526,72 @@ function projectOne(
     const xs = frame.getColumn(frame.xField);
     const lows = frame.getColumn(annotation.lowerField);
     const highs = frame.getColumn(annotation.upperField);
+    // Every visible row with an X takes its place in order; one without
+    // both bounds ends a run, so the ribbon never bridges a gap.
+    const rows: { x: number; bounds?: [number, number] }[] = [];
     let reversed = 0;
-    const points: IntervalPoint[] = [];
     for (const id of frame.visibleIds) {
-      const xValue = finiteNumber(xs[id]);
+      const xValue = finiteNumber(xs[id]) ?? timestampOf(xs[id]);
+      const x =
+        xValue === undefined
+          ? undefined
+          : numericPosition(frame.xScale, xValue);
+      if (x === undefined) continue;
       const low = finiteNumber(lows[id]);
       const high = finiteNumber(highs[id]);
-      if (xValue === undefined || low === undefined || high === undefined)
+      const lower =
+        low === undefined || high === undefined
+          ? undefined
+          : numericPosition(yScale, Math.min(low, high));
+      const upper =
+        low === undefined || high === undefined
+          ? undefined
+          : numericPosition(yScale, Math.max(low, high));
+      if (lower === undefined || upper === undefined) {
+        rows.push({ x });
         continue;
-      if (low > high) reversed++;
-      const x = numericPosition(frame.xScale, xValue);
-      const lower = numericPosition(yScale, Math.min(low, high));
-      const upper = numericPosition(yScale, Math.max(low, high));
-      if (x === undefined || lower === undefined || upper === undefined)
-        continue;
-      points.push({ x, lower, upper });
+      }
+      if (low! > high!) reversed++;
+      rows.push({ x, bounds: [lower, upper] });
     }
-    if (!points.length) return { annotation, status: "invalid" };
-    points.sort((a, b) => a.x - b.x);
-    return { annotation, status: "shown", points, reversed };
+    rows.sort((a, b) => a.x - b.x);
+    const evidence: IntervalEvidence = {
+      rows: 0,
+      breaks: 0,
+      reversed,
+      duplicates: 0,
+    };
+    const runs: IntervalPoint[][] = [];
+    let run: IntervalPoint[] = [];
+    let pendingBreaks = 0;
+    for (const row of rows) {
+      if (!row.bounds) {
+        if (run.length) {
+          runs.push(run);
+          run = [];
+        }
+        if (runs.length) pendingBreaks++;
+        continue;
+      }
+      if (!run.length) {
+        evidence.breaks += pendingBreaks;
+        pendingBreaks = 0;
+      }
+      evidence.rows++;
+      const previous = run.at(-1);
+      // Pixel bounds grow downward: the upper bound has the smaller pixel.
+      const [lower, upper] = row.bounds;
+      if (previous && previous.x === row.x) {
+        evidence.duplicates++;
+        previous.lower = Math.max(previous.lower, lower);
+        previous.upper = Math.min(previous.upper, upper);
+        continue;
+      }
+      run.push({ x: row.x, lower, upper });
+    }
+    if (run.length) runs.push(run);
+    if (!runs.length) return { annotation, status: "invalid" };
+    return { annotation, status: "shown", runs, evidence };
   }
   const attach = annotation.attach;
   if (attach.kind === "coordinate") {
@@ -511,6 +615,13 @@ function projectOne(
     if (!inside(point.x, frame.plotWidth) || !inside(point.y, frame.plotHeight))
       return { annotation, status: "offscreen" };
     // An aggregate mark stays drawn when filters dim it, so its note does too.
+    return { annotation, status: "shown", x: point.x, y: point.y };
+  }
+  if (attach.kind === "record" && frame.cell) {
+    const point = frame.cell(attach);
+    if (typeof point === "string") return { annotation, status: point };
+    if (!inside(point.x, frame.plotWidth) || !inside(point.y, frame.plotHeight))
+      return { annotation, status: "offscreen" };
     return { annotation, status: "shown", x: point.x, y: point.y };
   }
   if (!frame.plotted) return { annotation, status: "unsupported" };

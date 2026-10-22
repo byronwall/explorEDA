@@ -46,6 +46,18 @@ import {
   stocksHorizonDashboard,
   co2SwarmDashboard,
   titanicMosaicDashboard,
+  incomeLifeScatterDashboard,
+  mediaDeathsBarDashboard,
+  duBoisIncomeBarDashboard,
+  unemploymentAreaDashboard,
+  drivingScatterDashboard,
+  taxSlopeScatterDashboard,
+  pewMeaningScatterDashboard,
+  middleClassJobsScatterDashboard,
+  fanLineDashboard,
+  messageHeatmapDashboard,
+  measlesHeatmapDashboard,
+  electionsHeatmapDashboard,
 } from "./dashboardSettings";
 import { demoSettings } from "@/demos/lorenz";
 import type {
@@ -191,6 +203,11 @@ export interface ExampleData {
   savedData?: SavedDataStructure;
   /** More saved views that open as tabs beside the main one. */
   views?: ExampleView[];
+  /**
+   * The same analysis built another way: a composition's ordinary-chart
+   * route, or the authored composition a built-in example stands beside.
+   */
+  counterpart?: { id: string; label: string };
 }
 
 const viewNames: Record<string, string> = {
@@ -749,6 +766,10 @@ export const examples: ExampleData[] = [
     icon: LayoutTemplate,
     data: "/datasets/message-log.csv",
     savedData: messageDashboard,
+    counterpart: {
+      id: "message-log-heatmap",
+      label: "The same analysis as a built-in heatmap",
+    },
   },
   {
     id: "driving-shifts",
@@ -760,6 +781,10 @@ export const examples: ExampleData[] = [
     icon: Spline,
     data: "/datasets/driving.csv",
     savedData: drivingDashboard,
+    counterpart: {
+      id: "driving-scatter",
+      label: "The same analysis as a built-in scatter",
+    },
   },
   {
     id: "tech-sparklines",
@@ -790,6 +815,10 @@ export const examples: ExampleData[] = [
     icon: AreaChart,
     data: "/datasets/inflation-fan.csv",
     savedData: fanDashboard,
+    counterpart: {
+      id: "forecast-fan-line",
+      label: "The same analysis as built-in line charts",
+    },
   },
   {
     id: "time-use",
@@ -820,6 +849,10 @@ export const examples: ExampleData[] = [
     icon: Columns3,
     data: "/datasets/media-deaths.csv",
     savedData: mediaDeathsDashboard,
+    counterpart: {
+      id: "media-deaths-bar",
+      label: "The same analysis as a built-in bar chart",
+    },
   },
   {
     id: "measles",
@@ -835,6 +868,10 @@ export const examples: ExampleData[] = [
     icon: Grid3x3,
     data: "/datasets/measles.csv",
     savedData: measlesDashboard,
+    counterpart: {
+      id: "measles-heatmap",
+      label: "The same analysis as a built-in heatmap",
+    },
   },
   {
     id: "causes-by-age",
@@ -961,6 +998,10 @@ export const examples: ExampleData[] = [
     icon: Dumbbell,
     data: "/datasets/pew-meaning.csv",
     savedData: pewMeaningDashboard,
+    counterpart: {
+      id: "pew-meaning-scatter",
+      label: "The same analysis as a built-in scatter",
+    },
   },
   {
     id: "income-life",
@@ -976,6 +1017,10 @@ export const examples: ExampleData[] = [
     icon: CircleDot,
     data: "/datasets/gapminder-2023.csv",
     savedData: incomeLifeDashboard,
+    counterpart: {
+      id: "income-life-scatter",
+      label: "The same analysis as a built-in scatter",
+    },
   },
   {
     id: "covid-tiles",
@@ -1013,6 +1058,10 @@ export const examples: ExampleData[] = [
     icon: Vote,
     data: "/datasets/elections.csv",
     savedData: electionsDashboard,
+    counterpart: {
+      id: "elections-heatmap",
+      label: "The same analysis as a built-in heatmap",
+    },
   },
   {
     id: "lincoln-ridgeline",
@@ -1072,6 +1121,10 @@ export const examples: ExampleData[] = [
     icon: TrendingUp,
     data: "/datasets/middle-class-jobs.csv",
     savedData: middleClassJobsDashboard,
+    counterpart: {
+      id: "middle-class-jobs-scatter",
+      label: "The same analysis as a built-in scatter",
+    },
   },
   {
     id: "du-bois-income",
@@ -1087,6 +1140,10 @@ export const examples: ExampleData[] = [
     icon: Columns3,
     data: "/datasets/du-bois-income.csv",
     savedData: duBoisIncomeDashboard,
+    counterpart: {
+      id: "du-bois-income-bar",
+      label: "The same analysis as a built-in bar chart",
+    },
   },
   {
     id: "tax-slope",
@@ -1098,6 +1155,10 @@ export const examples: ExampleData[] = [
     icon: TrendingUp,
     data: "/datasets/tax-slope.csv",
     savedData: taxSlopeDashboard,
+    counterpart: {
+      id: "tax-slope-scatter",
+      label: "The same analysis as a built-in scatter",
+    },
   },
   {
     id: "titanic-waffle",
@@ -1120,6 +1181,10 @@ export const examples: ExampleData[] = [
     icon: Waves,
     data: "/datasets/unemployment-industries.csv",
     savedData: unemploymentStreamDashboard,
+    counterpart: {
+      id: "unemployment-area",
+      label: "The same analysis as a built-in line chart",
+    },
   },
   {
     id: "population-pyramid",
@@ -1186,6 +1251,161 @@ export const examples: ExampleData[] = [
     icon: Columns3,
     data: "/datasets/titanic.csv",
     savedData: titanicMosaicDashboard,
+  },
+  {
+    id: "income-life-scatter",
+    title: "Richer countries live longer, as a scatter",
+    description:
+      "The income and life composition rebuilt as an ordinary scatter: 197 economies on a log income axis, circles sized by population and colored by region, with a dozen countries labeled by Country-keyed callouts in Notes.",
+    dataset: { rows: "197 economies", fields: 7, source: "Real" },
+    shows: ["Log x axis", "Bubble size", "Record callouts"],
+    icon: CircleDot,
+    data: "/datasets/gapminder-2023.csv",
+    savedData: incomeLifeScatterDashboard,
+    counterpart: { id: "income-life", label: "The authored composition" },
+  },
+  {
+    id: "media-deaths-bar",
+    title: "What Americans die from, and what the news covers, as bars",
+    description:
+      "The media and deaths composition rebuilt as an ordinary 100% bar chart: each source sums its counts and splits them by cause, so every column is a share of its own total. Alt-click a segment for the source's denominator.",
+    dataset: { rows: "60 source-cause counts", fields: 5, source: "Real" },
+    shows: ["100% series bars", "Summed groups", "Per-source denominators"],
+    icon: Columns3,
+    data: "/datasets/media-deaths.csv",
+    savedData: mediaDeathsBarDashboard,
+    counterpart: { id: "media-deaths", label: "The authored composition" },
+  },
+  {
+    id: "du-bois-income-bar",
+    title: "Income and expenditure of 150 families, as bars",
+    description:
+      "Du Bois's 1900 plate as an ordinary 100% bar chart: one column per income class in its own order, each class's spending split by category as shares of its total. The traces list the 33 class shares, the data the plate was drawn from.",
+    dataset: { rows: "33 class shares", fields: 5, source: "Real" },
+    shows: ["100% series bars", "Data order", "Shared category colors"],
+    icon: Columns3,
+    data: "/datasets/du-bois-income.csv",
+    savedData: duBoisIncomeBarDashboard,
+    counterpart: { id: "du-bois-income", label: "The authored composition" },
+  },
+  {
+    id: "unemployment-area",
+    title: "Unemployed Americans by industry, as stacked areas",
+    description:
+      "The unemployment streamgraph as an ordinary line chart: fourteen industries' unemployed summed per month and stacked from zero, so the top edge is the national total and each band is one industry. Pick an industry to see it alone.",
+    dataset: { rows: "1,708 months", fields: 5, source: "Real" },
+    shows: ["Stacked areas", "Monthly sums", "Split by industry"],
+    icon: Layers,
+    data: "/datasets/unemployment-industries.csv",
+    savedData: unemploymentAreaDashboard,
+    counterpart: {
+      id: "unemployment-stream",
+      label: "The authored composition",
+    },
+  },
+  {
+    id: "driving-scatter",
+    title: "Driving shifts into reverse, as a connected scatter",
+    description:
+      "Miles driven against the price of gas, 1956 to 2010, as an ordinary scatter with Connect points ordered by Year. The path doubles back whenever driving fell, and a filtered-out year breaks it instead of being skipped.",
+    dataset: { rows: "55 years", fields: 4, source: "Real" },
+    shows: ["Connected points", "Order by a field", "Record callouts"],
+    icon: Spline,
+    data: "/datasets/driving.csv",
+    savedData: drivingScatterDashboard,
+    counterpart: { id: "driving-shifts", label: "The authored composition" },
+  },
+  {
+    id: "tax-slope-scatter",
+    title: "Central government tax revenue, as a slope scatter",
+    description:
+      "Each OECD country's two readings joined by Year into a slope, named at both ends, and colored by whether its share rose or fell. Pick a direction to see only those countries.",
+    dataset: { rows: "68 readings", fields: 6, source: "Real" },
+    shows: [
+      "One path per country",
+      "Labels at both ends",
+      "Color by direction",
+    ],
+    icon: TrendingUp,
+    data: "/datasets/tax-slope.csv",
+    savedData: taxSlopeScatterDashboard,
+    counterpart: { id: "tax-slope", label: "The authored composition" },
+  },
+  {
+    id: "pew-meaning-scatter",
+    title: "What makes life meaningful, by party, as dumbbells",
+    description:
+      "Each topic's two party shares on one percentage scale, joined into a dumbbell by connecting points per Topic. Connected points sit at the center of their row instead of jittering.",
+    dataset: { rows: "14 topic-party shares", fields: 4, source: "Real" },
+    shows: ["Paired dots", "Categorical rows", "Color by party"],
+    icon: Dumbbell,
+    data: "/datasets/pew-meaning.csv",
+    savedData: pewMeaningScatterDashboard,
+    counterpart: { id: "pew-meaning", label: "The authored composition" },
+  },
+  {
+    id: "middle-class-jobs-scatter",
+    title: "The changing nature of middle-class jobs, as slope panels",
+    description:
+      "Every occupation's jobs per 1,000 from 1980 to 2012 as a connected path, one panel per occupation group, colored through a diverging scale from mostly men to mostly women.",
+    dataset: { rows: "134 occupation-years", fields: 8, source: "Synthetic" },
+    shows: ["One path per occupation", "Facets", "Numerical color"],
+    icon: TrendingUp,
+    data: "/datasets/middle-class-jobs.csv",
+    savedData: middleClassJobsScatterDashboard,
+    counterpart: { id: "middle-class-jobs", label: "The authored composition" },
+  },
+  {
+    id: "forecast-fan-line",
+    title: "Inflation and growth forecasts, as line charts with intervals",
+    description:
+      "The forecast fan as two ordinary line charts, one per measure through a chart-local filter. Each draws the central path and four supplied percentile ranges as Interval notes; the bounds widen the y axis, and the Notes list says how many rows each ribbon reads.",
+    dataset: { rows: "104 quarter-measures", fields: 13, source: "Synthetic" },
+    shows: [
+      "Supplied intervals",
+      "Chart-local filters",
+      "Bounds in the domain",
+    ],
+    icon: AreaChart,
+    data: "/datasets/inflation-fan.csv",
+    savedData: fanLineDashboard,
+    counterpart: { id: "forecast-fan", label: "The authored composition" },
+  },
+  {
+    id: "message-log-heatmap",
+    title: "Six years of messages, as a heatmap",
+    description:
+      "Twelve correspondents by month, 2019 to 2024, in an ordinary heatmap that bins the Date column by month: all 72 months show, a quiet month stays an empty cell, and color follows the square root of each count so light months still read. Click a cell for that month's messages.",
+    dataset: { rows: "10,376 messages", fields: 5, source: "Synthetic" },
+    shows: ["Monthly date bins", "Square-root color", "Date-range selection"],
+    icon: LayoutTemplate,
+    data: "/datasets/message-log.csv",
+    savedData: messageHeatmapDashboard,
+    counterpart: { id: "message-log", label: "The authored composition" },
+  },
+  {
+    id: "measles-heatmap",
+    title: "Measles before and after the vaccine, as a heatmap",
+    description:
+      "All 51 states and 85 years in an ordinary heatmap, states in the publisher's order and years in sequence. Color runs on fixed ends with a square root, so a state-year keeps its color through filters; years a state did not report read as cells without a valid value.",
+    dataset: { rows: "4,335 state-years", fields: 6, source: "Real" },
+    shows: ["51 × 85 cells", "Data order", "Fixed color ends"],
+    icon: Grid3x3,
+    data: "/datasets/measles.csv",
+    savedData: measlesHeatmapDashboard,
+    counterpart: { id: "measles", label: "The authored composition" },
+  },
+  {
+    id: "elections-heatmap",
+    title: "How each state voted, as a heatmap",
+    description:
+      "Fifty-one states by eleven elections, colored by the Democratic margin on a fixed signed scale from −40 to +40, so a margin keeps its color when you filter to a region or a winner. The tile map stays in the composed version.",
+    dataset: { rows: "561 state-elections", fields: 8, source: "Real" },
+    shows: ["Diverging fixed scale", "Average margin", "51 × 11 cells"],
+    icon: Vote,
+    data: "/datasets/elections.csv",
+    savedData: electionsHeatmapDashboard,
+    counterpart: { id: "elections", label: "The authored composition" },
   },
 ];
 
