@@ -1,68 +1,52 @@
-# Logs, levels, and rebased money in a historical Danish series
+# Danish real money grew 47% in 13 years; real income, 16%
 
-**Does the relationship between real money and real income persist after taking quarterly log changes?** Each row is one Danish calendar quarter.
+**Do real money and real income move together?** Each row is one Danish quarter from 1974 to 1987, with the logs of real money and real income from a classic cointegration dataset, rebased here so that both start at 100 in the first quarter of 1974. In levels the two series look married. Quarter by quarter, they barely speak.
 
 ```eda
 eda query=r
-period:cat=r.period label="Period"
+period:cat=r.period label="Quarter"
 lrm:num=r.lrm label="Log real money"
 lry:num=r.lry label="Log real income"
-quarter:num=r.quarter label="Quarter"
-date:date=r.date label="Date"
-money_index:num=r.money_index label="Money index (first quarter = 100)"
-income_index:num=r.income_index label="Income index (first quarter = 100)"
-dmoney:num=r.dmoney label="Money growth (log change)"
-dincome:num=r.dincome label="Income growth (log change)"
+date:date=r.date label="Quarter"
+money_index:num=r.money_index label="Real money (1974 Q1 = 100)"
+income_index:num=r.income_index label="Real income (1974 Q1 = 100)"
+dmoney:num=r.dmoney label="Real money, quarterly log change"
+dincome:num=r.dincome label="Real income, quarterly log change"
 ```
 
-## 1. Rebase both series to the first quarter
+## The two indices parted ways in 1984
 
-Exponentiating each log difference from its initial value yields a comparable starting index. It does not put the two original series into the same currency quantity.
+For ten years the lines cross and recross within a few points of each other. From 1984 real money climbs away: by the third quarter of 1987 the real money index stood at 146.63, while the real income index stood at 115.86. Real money peaked at 155.72 in the second quarter of 1986.
 
 ```eda
-line @nb-danish-logs-and-indices-chart-1 x=date y=money_index,income_index title="Rebase both series to the first quarter" x.title="Date" y.title="Money index (first quarter = 100) / Income index (first quarter = 100)"
+line @nb-danish-logs-and-indices-chart-1 x=date y=money_index,income_index title="Real money and real income, indexed to 1974 Q1" x.title="Quarter" y.title="Index (1974 Q1 = 100)" {
+  rule x=1984-01-01 "Money pulls ahead"
+}
 ```
 
-## 2. The relationship in logged levels
+## In levels, the two are tightly correlated
 
-Trending variables can share a strong levels association. Each point is a quarter in one connected historical sequence.
+Each point is one quarter, placed by its log real income and log real money. The cloud leans up and to the right: logged real money and logged real income had correlation 0.868. Much of that is the shared climb after 1984, when both rose together.
 
 ```eda
-scatter @nb-danish-logs-and-indices-chart-2 x=lry y=lrm title="The relationship in logged levels" x.title="Log real income" y.title="Log real money"
+scatter @nb-danish-logs-and-indices-chart-2 x=lry y=lrm regression=linear title="Log real money against log real income, Danish quarters 1974 to 1987" x.title="Log real income" y.title="Log real money"
 ```
 
-**Finding.** Logged real money and logged real income had correlation 0.868.
+## Quarter to quarter, the link is faint
 
-## 3. The relationship in quarterly log changes
-
-Differencing removes the initial level and leaves the first quarter without a valid comparison. The result still needs time-series caution.
+Replace each quarter's level with its change from the quarter before. The cloud rounds out: the quarterly log changes had correlation 0.490. In 55.6% of quarters, real money and real income moved in the same direction, barely better than a coin toss.
 
 ```eda
-scatter @nb-danish-logs-and-indices-chart-3 x=dincome y=dmoney title="The relationship in quarterly log changes" x.title="Income growth (log change)" y.title="Money growth (log change)"
-```
-
-## 4. Quarterly log changes in real money
-
-A distribution view exposes asymmetry and extreme changes. It discards persistence and should be read alongside the time series.
-
-```eda
-hist @nb-danish-logs-and-indices-chart-4 dmoney bins=16 title="Quarterly log changes in real money" x.title="Money growth (log change)" y.title="Rows"
-```
-
-**Finding.** Their valid quarterly log changes had correlation 0.490.
-
-## 5. The rows behind the charts
-
-Sort a column or select rows to check any value above. Selections in a notebook stay with their own chart.
-
-```eda
-table @nb-danish-logs-and-indices-records period,lrm,lry,money_index,income_index,dmoney,dincome title="Records behind this comparison"
+scatter @nb-danish-logs-and-indices-chart-3 x=dincome y=dmoney regression=linear title="Quarterly log changes in real money and real income" x.title="Real income, quarterly log change" y.title="Real money, quarterly log change" {
+  rule x=0 "No change in income"
+  rule y=0 "No change in money"
+}
 ```
 
 ## Takeaway
 
-A close relationship in trending levels can look different after differencing. Present the transformation as a different analytical view rather than claiming it reveals the one correct relationship.
+Danish real money and real income rose together because both rose, and real money rose three times as far. The levels correlation of 0.87 is mostly that shared trend; the quarterly correlation of 0.49 is what the two series have to say to each other.
 
 ## Limits
 
-These are source-defined logged economic series from a historical Danish model dataset. First differences do not remove all confounding or serial dependence. Indices describe changes, not absolute currency levels.
+Fifty-five quarters from one country, taken from a textbook dataset and already logged at the source. Indices describe growth from 1974, not amounts of money. A first difference removes the trend but not the dependence between neighboring quarters.

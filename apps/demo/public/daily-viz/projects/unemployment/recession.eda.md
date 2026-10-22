@@ -13,7 +13,7 @@ unemployed:num="industries.Unemployed (thousands)" label="Unemployed (thousands)
 
 ## Every industry rose; construction rose furthest
 
-One line per industry. All of them climb from 2008, but construction starts high, swings with the seasons every winter, and ends far above the rest.
+One line per industry. All of them climb from 2008, but construction starts high, swings with the seasons every winter, and ends far above the rest. Construction's unemployment rate peaked at 27.1%. Its lowest rate in the decade was 4.4%.
 
 ```eda
 line @nb-unemployment-recession-1 x=month y=rate color=industry title="Unemployment rate by industry" x.title="Month" y.title="Unemployment rate (%)" {
@@ -22,19 +22,24 @@ line @nb-unemployment-recession-1 x=month y=rate color=industry title="Unemploym
 }
 ```
 
-**Finding.** Construction's unemployment rate peaked at 27.1%.
-
-**Finding.** Its lowest rate in the decade was 4.4%.
-
 ## The same story, year by year
 
-Each cell is one industry's average rate in one year. Construction's row turns dark first, in 2008, and darkest in 2009; government and education stay the palest rows throughout.
+Each cell is one industry's average rate in one year. Construction's row turns dark first, in 2008, and darkest in 2009; government and education stay the palest rows throughout. Government's unemployment rate never went above 5.1%.
 
 ```eda
 heatmap @nb-unemployment-recession-2 industry columnField=year aggregation=average measureField=rate sortBy=label title="Average unemployment rate by industry and year" x.title="Year"
 ```
 
-**Finding.** Government's unemployment rate never went above 5.1%.
+## Construction's 2009 rate was five times government's
+
+Each bar is an industry's average unemployment rate across 2009, the recession's worst full year, ranked. Construction averaged 19.0% in 2009 and government 3.6%, with all industries together at 9.6%. Three years earlier, in 2006, construction had averaged 6.7%: the recession nearly tripled it.
+
+```eda
+group @nb-unemployment-recession-2009 average(rate) by=industry
+row @nb-unemployment-recession-3 industry group=nb-unemployment-recession-2009 topN=14 title="Average unemployment rate by industry, 2009" x.title="Unemployment rate (%)" where.year=2009 {
+  rule x=9.65 "All industries"
+}
+```
 
 ## Takeaway
 

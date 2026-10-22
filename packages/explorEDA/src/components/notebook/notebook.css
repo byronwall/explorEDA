@@ -14,6 +14,70 @@
   margin-top: 1.25rem;
 }
 
+/* A sections layout spans its container; narrow, it keeps the column. */
+.eda-notebook-column[data-layout="sections"] {
+  max-width: none;
+}
+
+.eda-notebook-column[data-layout="sections"]:not([data-wide]) > * {
+  max-width: 880px;
+  margin-inline: auto;
+}
+
+.eda-notebook-column[data-wide] > * + * {
+  margin-top: 2.5rem;
+}
+
+/* Each section's text beside its charts; the text stays in view while the
+   charts scroll past. */
+.eda-notebook-section {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  column-gap: 40px;
+  align-items: start;
+}
+
+.eda-notebook-section > .eda-notebook-notes {
+  position: sticky;
+  top: 1rem;
+}
+
+.eda-notebook-notes .eda-notebook-prose {
+  font-size: 0.9375rem;
+  line-height: 1.55;
+}
+
+.eda-notebook-notes .eda-notebook-prose h2 {
+  font-size: 1.125rem;
+}
+
+.eda-notebook-figures > * + * {
+  margin-top: 1.25rem;
+}
+
+.eda-notebook-intro .eda-notebook-prose {
+  max-width: 72ch;
+}
+
+.eda-notebook-closing {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  column-gap: 40px;
+}
+
+/* A chart titled like its section needs no second title; its actions float
+   in the corner so the chart starts at the top of its panel. */
+.eda-notebook-output[data-title-repeats] .eda-panel-heading {
+  display: none;
+}
+
+.eda-notebook-output[data-title-repeats] .eda-panel-header {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+}
+
 .eda-notebook-prose {
   color: var(--foreground);
   font-size: 1rem;
@@ -344,4 +408,81 @@
 
 .eda-notebook-source .eda-dsl-input::selection {
   background: color-mix(in oklab, var(--ring) 28%, transparent);
+}
+
+/* A book's sheets: one row of tabs under the lede, read one sheet at a time.
+   The active tab carries a rule in the accent color; the rest are quiet. */
+.eda-notebook-sheets {
+  display: flex;
+  gap: 1.75rem;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--border);
+  scrollbar-width: none;
+}
+
+.eda-notebook-sheets::-webkit-scrollbar {
+  display: none;
+}
+
+.eda-notebook-sheet-tab {
+  position: relative;
+  flex: none;
+  padding: 0.55rem 0 0.7rem;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--muted-foreground);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 140ms ease;
+}
+
+.eda-notebook-sheet-tab:hover,
+.eda-notebook-sheet-tab[aria-selected="true"] {
+  color: var(--foreground);
+}
+
+.eda-notebook-sheet-tab[aria-selected="true"]::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 2px;
+  background: var(--primary);
+}
+
+.eda-notebook-sheet-tab:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.eda-notebook-sheet-index {
+  margin-right: 0.4em;
+  font-size: 0.8em;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted-foreground);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eda-notebook-sheet-tab {
+    transition: none;
+  }
+}
+
+/* A sheet's own contents keep the column's rhythm. */
+.eda-notebook-sheet > * + *,
+.eda-notebook-lede > * + * {
+  margin-top: 1.25rem;
+}
+
+.eda-notebook-column[data-wide]
+  :is(.eda-notebook-sheet, .eda-notebook-lede)
+  > *
+  + * {
+  margin-top: 2.5rem;
 }

@@ -42,6 +42,39 @@ Open the project with `npx exploreda`, and the notebook is listed under **Notebo
 
 [Daily data viz](/daily) publishes a narrative notebook, composed graphic, or dashboard every day over real datasets. Each piece includes local data, source credit, and findings the tests recompute. Notebook chart selections stay local to their chart; dashboards link their views.
 
+## Set each section beside its charts
+
+A published notebook can read like a figure-led report. Pass `layout="sections"` to `ExplorEdaNotebook`, and once the notebook is at least 960 pixels wide each `##` section puts its text in a column beside its charts. A finding written after a chart stays with its section's text, and the text stays in view while a tall chart or table scrolls past. A chart titled like its section drops the repeated title. Sections with no charts, such as a takeaway and its limits, share a row.
+
+Narrower notebooks, and notebooks you can edit with `onTextChange`, keep the single reading column. [Daily data viz](/daily) notebooks use this layout.
+
+## Split a notebook into sheets
+
+A notebook with two or more `#` headings is a book of sheets. Each heading starts a sheet, named by its text, and the sheets show as tabs, read one at a time. The text before the first heading is the lede, shown above the tabs. A notebook with one `#` heading has a title, not sheets, so nothing changes for notebooks already written.
+
+````markdown
+**Did Texas demand run off forecast?** ERCOT forecasts each hour a day ahead.
+
+```eda
+eda query=demand
+calc delta = actual - forecast
+```
+
+# Two months
+
+```eda
+line @delta x=time y=delta title="Actual minus forecast"
+```
+
+# The storm week
+
+```eda
+line @storm x=time y=delta where.time=2021-02-14..2021-02-20
+```
+````
+
+Sheets split the reading, not the analysis: every sheet charts the same rows, and a calculation or alias defined on one sheet works on all of them. Arrow keys move between tabs. A host can set the open sheet with `sheet="the-storm-week"` (a heading as a URL-safe id) and hear a choice through `onSheetChange`, which [Daily data viz](/daily) uses to put the sheet in the address. When a notebook can be edited, each sheet's heading stays in its text, so editing it renames the sheet.
+
 ## How blocks work together
 
 - **Definitions reach the whole notebook.** A calculation or field alias in any block applies to every block, in any order. Define `delta` once and chart it anywhere.
