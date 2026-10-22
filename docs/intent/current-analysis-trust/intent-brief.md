@@ -107,3 +107,14 @@ No application repair, precision control, or new solver is approved here.
 A visible milestone must include `/docs/scatter` and a focused runnable unit/offset example.
 Full browser, copy/export, refit/restore, and continuous-interval proof remain unrun.
 See the [local dispositions](../../research/regression-conditioning-2026-10-22/decisions.md) for the retained gates.
+
+## R051 filter ownership evidence, October 22,2026
+
+[Filter ownership research](../../research/filter-ownership-2026-10-22/summary.md) preserves different consumer populations.
+Three local probes check exact memberships, notebook scope, aggregate input differences and the provider's clear-all action.
+Keep chart context, linked membership, valid numeric contributors and searched rows distinct.
+Retain current filtering rules and existing owner help. No participant evidence supports added UI.
+Queue a narrow grouped-summary documentation correction with one native-JSON runnable example.
+Pair rendering/filter guidance and the related bar warning with the proposed FilterOwnershipExample and explicit browser coverage.
+The actual bar consumer flow, clear-one, trace, exports/history/restore and moderated predictions remain unrun.
+[Seven local decisions](../../research/filter-ownership-2026-10-22/decisions.md) retain the proof order and rejection gates.

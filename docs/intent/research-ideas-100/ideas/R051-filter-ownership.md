@@ -24,3 +24,10 @@ This is a bounded follow-up to current-analysis-trust, whose open proof concerns
 - `packages/explorEDA/src/components/ActiveFilterStatus.tsx` — `ActiveFilterStatus`, `formatFilterLabel`. Workspace, chart, search, and Rows scope labels already exist.
 - `packages/explorEDA/src/components/LocalFilterStrip.tsx` — `LocalFilterStrip`. Local restrictions are already named beside a chart.
 - `docs/intent/current-analysis-trust/intent-brief.md` — related intent; status and overlap are discussed above.
+
+## Research follow-up, October 22,2026
+
+[Completed synthesis](../../../research/filter-ownership-2026-10-22/summary.md) retains current filtering rules and interface.
+Three local probes support exact membership and clear-all retention; no human comprehension study ran.
+Queue a bounded grouped-summary docs correction with one runnable example. Keep the five-task A/B study gate.
+A trace sentence remains deferred. R086 is the next discovery candidate, then R031.
