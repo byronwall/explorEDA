@@ -1,7 +1,7 @@
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { memoryProjectFiles } from "../../lib/project/files";
 import { readProjectFolder } from "../../lib/project/folder";
 import { parseSnapshot, snapshotPath } from "../../lib/project/snapshots";
@@ -172,6 +172,44 @@ source @orders db=db table=orders
     );
     expect(error.message).toBe("Lost the connection.");
     expect(state.open).toBe(0);
+  });
+
+  it("reports a published snapshot when the connection fails to close", async () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const { driver, state } = fakeDriver({
+      tables: { orders },
+      failClose: new Error("close failed"),
+    });
+    const info = await refreshSource("orders", {
+      root,
+      drivers: { fake: driver },
+    });
+    expect(info.rowCount).toBe(3);
+    const text = await readFile(
+      path.join(root, snapshotPath("orders")),
+      "utf8"
+    );
+    expect(parseSnapshot(text).rows).toHaveLength(3);
+    expect(state.open).toBe(0);
+    expect(warn).toHaveBeenCalledOnce();
+    warn.mockRestore();
+  });
+
+  it("keeps the read error when the connection also fails to close", async () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const { driver } = fakeDriver({
+      tables: { orders },
+      failAfter: {
+        rows: 2,
+        error: new SourceReadError("query", "Lost the connection."),
+      },
+      failClose: new Error("close failed"),
+    });
+    const error = await failure(
+      refreshSource("orders", { root, drivers: { fake: driver } })
+    );
+    expect(error.message).toBe("Lost the connection.");
+    warn.mockRestore();
   });
 
   it("gives up when a read takes too long", async () => {

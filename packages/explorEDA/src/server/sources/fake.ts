@@ -1,7 +1,7 @@
 /**
  * A database in memory, for tests. It answers like a real driver and can
- * fail on purpose: at connect, at read, partway through the rows, or by
- * stalling. It counts open sessions, so a test can see each one close.
+ * fail on purpose: at connect, at read, partway through the rows, by
+ * stalling, or at close. It counts open sessions, so a test can see each one close.
  */
 import { columnFromValues, refuseBinary } from "./columnKinds";
 import {
@@ -29,6 +29,8 @@ export interface FakeDatabase {
   /** Answers sql= with a table's rows, keyed by the exact SQL. */
   queries?: Record<string, FakeTable>;
   batchSize?: number;
+  /** Throws this from `close`, after counting the session closed. */
+  failClose?: Error;
 }
 
 export function fakeDriver(database: FakeDatabase) {
@@ -101,6 +103,9 @@ export function fakeDriver(database: FakeDatabase) {
           if (!closed) {
             closed = true;
             state.open -= 1;
+          }
+          if (database.failClose) {
+            throw database.failClose;
           }
         },
       };
