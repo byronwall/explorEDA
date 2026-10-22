@@ -2,7 +2,7 @@
 
 Keep a new joint-missingness diagnostic deferred. First observe whether existing controls and a short indicator recipe answer one author's task. If they do, stop at documentation. Clearer field and chart explanations remain a conditional proposal.
 
-Pro finished the [research](originals/joint-missingness-decision.md) on 2026-10-19 after 31 minutes and 43 seconds. All four Markdown reports and their ZIP are preserved. [Collection checks](collection.json), [source review](evidence.md), and [nine decisions](decisions.md) separate research from executed product checks.
+Pro finished the [research](https://chatgpt.com/c/6ad5bb54-afe0-83ea-be36-258520267a3f) on 2026-10-19 after 31 minutes and 43 seconds. All four Markdown reports and their ZIP remain in the Pro conversation. The [source review](evidence.md) and [nine decisions](decisions.md) separate research from executed product checks.
 
 ## What changes the decision
 
@@ -14,7 +14,7 @@ The local source review narrows the proposal. Conversion previews use all raw ro
 
 ## Next useful proof
 
-Keep the existing selection/export/undo/reopen journey first in the [queue](research-queue.md). Then name one author and a recurring measurement or import task. Compare current controls, then current controls plus the [proposed indicator recipe](originals/proof-plan.md#ordinary-indicator-recipe-a-serious-small-alternative).
+Keep the existing selection/export/undo/reopen journey first in the [queue](research-queue.md). Then name one author and a recurring measurement or import task. Compare current controls, then current controls plus the [proposed indicator recipe](https://chatgpt.com/c/6ad5bb54-afe0-83ea-be36-258520267a3f).
 
 Check exact keys and denominators. Stop if the recipe answers the task. Test a small explanation change only after a specific failure. A dedicated pattern table remains deferred. Imputation, quality scores, automatic cleaning, and missingness-mechanism diagnosis remain excluded.
 

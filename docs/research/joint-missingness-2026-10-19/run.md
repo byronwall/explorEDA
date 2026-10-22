@@ -6,7 +6,7 @@
 - Baseline: `9b16d78e3ed0742ed4d5858c1939fec9e758b510`, refreshed origin/main. New built-ins are included; prior source snapshots are older.
 - Branch: `codex/missingness-research-2026-10-19`, independent from origin/main. Clean before creation. No unrelated edits.
 - Prompt: [pro-prompt.md](pro-prompt.md). Candidate scores and continuing queue: [research-queue.md](research-queue.md).
-- Packet: `tmp/pro-missingness-2026-10-19/source-packet.txt`; 39 UTF-8 files, 403190 bytes, SHA-256 `cffd94b5eee4bbe11c81caa4e1725c070948afabdaaaec7557dc64ac79eb67ba`. [Manifest](source-manifest.json). Selected snapshot, not runnable. All 37 tracked files match baseline bytes; prompt and queue are local additions.
+- Packet: `tmp/pro-missingness-2026-10-19/source-packet.txt`; 39 UTF-8 files, 403190 bytes, SHA-256 `cffd94b5eee4bbe11c81caa4e1725c070948afabdaaaec7557dc64ac79eb67ba`. Manifest. Selected snapshot, not runnable. All 37 tracked files match baseline bytes; prompt and queue are local additions.
 - Phase: complete; verified open review PR #455.
 - Pro conversation: https://chatgpt.com/c/6ad5bb54-afe0-83ea-be36-258520267a3f. Submitted approximately 2026-10-19T06:40Z. Follow-ups: 0/2.
 - Chrome profile: byroni.us. ChatGPT greets Byron; live selector shows Pro, 5 of 5. Extension works while the Mac is locked. No unlock or login required.
@@ -39,7 +39,7 @@ The source manifest records the exact uploaded pre-format bytes. The packet rema
 
 ## Collection and review: 2026-10-19
 
-Pro completed after 31m43s. Collected all four independent Markdown companions and the ZIP. A ten-second ZIP event wait timed out, but the ordinary download succeeded. One duplicate decision download is identical. All four companions match their archive members and manifest sizes/hashes. Safe paths, no symlinks, CRC, exact inventory and UTF-8 pass. See collection.json. Originals remain unchanged and have a scoped formatting exclusion.
+Pro completed after 31m43s. Collected all four independent Markdown companions and the ZIP. A ten-second ZIP event wait timed out, but the ordinary download succeeded. One duplicate decision download is identical. All four companions match their archive members and manifest sizes/hashes. Safe paths, no symlinks, CRC, exact inventory and UTF-8 pass. Originals remain unchanged and have a scoped formatting exclusion.
 
 Read every substantive report, including the embedded arithmetic program. Did not execute downloaded code. Reviewed all nine recommendations. Local source checks resolve raw-field preview scope and establish existing scatter exclusion inspection. Narrowed JM-02/JM-03 to investigation rather than adopting UI work. Keep the diagnostic deferred; reject imputation, quality grading and mechanism diagnosis. No material gap needs a follow-up; 0/2.
 
@@ -55,6 +55,6 @@ Original companion hashes/sizes and authored local file links pass. Full pnpm ch
 
 Review PR: https://github.com/byronwall/explorEDA/pull/455. OPEN, main ← codex/missingness-research-2026-10-19. Saved body, all 18 files, head/base and open status verified with gh. All branch-file links resolve to committed paths. Attached the PR to this chat. Documentation label applied; codex and codex-automation labels are unavailable. No product screenshot applies.
 
-All four reports and ZIP are collected and readable. Nine recommendations are reconciled and research/intent/queue changes integrated. Required checks and honest environment limits are recorded in validation.json. Product author, fixture-helper, browser and performance proofs remain proposed. No material gap required a follow-up; 0/2. Original hashes pass after commit hooks.
+All four reports and ZIP are collected and readable. Nine recommendations are reconciled and research/intent/queue changes integrated. Required checks and honest environment limits are recorded here. Product author, fixture-helper, browser and performance proofs remain proposed. No material gap required a follow-up; 0/2. Original hashes pass after commit hooks.
 
 Stopped only collect-exploreda-joint-missingness-research with automation_update. Saved TOML verifies PAUSED. Six-hour exploreda-pro-research-pipeline remains ACTIVE. No merge, deployment, paid provisioning, worktree, goal or unrelated edit. Stop for review.
