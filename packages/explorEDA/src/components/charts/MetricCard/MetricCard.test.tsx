@@ -9,6 +9,7 @@ import { ChartTracePanel } from "../trace/ChartTracePanel";
 import { MetricCard } from "./MetricCard";
 import { metricCardDefinition, type MetricCardSettings } from "./definition";
 import { planMetricCard } from "./metricCardPlan";
+import { MetricCardTraceBody } from "./MetricCardTraceBody";
 
 beforeAll(registerAllCharts);
 const layout = { x: 0, y: 0, w: 4, h: 2 };
@@ -242,4 +243,58 @@ it("sums one agreeing amount per declared entity and traces every row", () => {
     excludedCount: 0,
   });
   expect(plan.contributors).toHaveLength(8);
+});
+
+it("traces an entity count in IDs and names each row's ID", () => {
+  const plan = planMetricCard(
+    { ...metric, aggregation: "count", entityField: "orderId" },
+    {
+      revision: "test",
+      liveIds: [0, 1, 2],
+      measureData: {},
+      entityData: { 0: "O1", 1: "O1", 2: "O2" },
+    },
+    (field) => (field === "orderId" ? "Order" : field),
+    formatFieldValue
+  );
+  render(
+    <MetricCardTraceBody
+      trace={{ kind: "metric-card", id: "metric", revision: "test", plan }}
+    />
+  );
+  const trace = screen.getByLabelText("Metric card trace");
+  expect(trace).toHaveTextContent("Each distinct Order adds 1.");
+  expect(trace).not.toHaveTextContent("Each matching row adds 1.");
+  expect(trace).toHaveTextContent("Matching IDs: 2");
+  expect(trace).toHaveTextContent("Source rows: 3");
+  expect(trace).toHaveTextContent("Used IDs: 2");
+  const table = within(trace).getByRole("table");
+  expect(
+    within(table).getByRole("columnheader", { name: "Order" })
+  ).toBeInTheDocument();
+  expect(
+    within(table)
+      .getAllByRole("row")
+      .slice(1)
+      .map((row) => row.textContent)
+  ).toEqual(['0"O1"Yes', '1"O1"Repeats an ID already counted', '2"O2"Yes']);
+});
+
+it("keeps row units when the card counts rows", () => {
+  const plan = planMetricCard(
+    { ...metric, aggregation: "count" },
+    { revision: "test", liveIds: [0, 1], measureData: {} },
+    (field) => field,
+    formatFieldValue
+  );
+  render(
+    <MetricCardTraceBody
+      trace={{ kind: "metric-card", id: "metric", revision: "test", plan }}
+    />
+  );
+  const trace = screen.getByLabelText("Metric card trace");
+  expect(trace).toHaveTextContent("Each matching row adds 1.");
+  expect(trace).toHaveTextContent("Matching rows: 2");
+  expect(trace).not.toHaveTextContent("Source rows");
+  expect(within(trace).getAllByRole("columnheader")).toHaveLength(2);
 });

@@ -630,8 +630,10 @@ function aggregateFrame(
           : candidates.filter(
               (row) => measure.fieldId && row.values[measure.fieldId] != null
             );
+      // Like the shared summary, one conflicting entity makes the whole
+      // result unavailable rather than counting only the entities that agree.
       if (measure.operation === "count")
-        values[measure.id] = measureRows.length;
+        values[measure.id] = conflictingEntity ? undefined : measureRows.length;
       else {
         const numeric = measureRows
           .map((row) => ({ row, value: row.values[measure.fieldId!] }))

@@ -15,10 +15,13 @@ export interface MetricCardPlan {
   aggregation: MetricCardSettings["aggregation"];
   measureField?: string;
   measureLabel?: string;
+  /** Label of the field that counts each entity once. */
+  entityLabel?: string;
   metricLabel: string;
   state: MetricCardState;
   value?: number;
   valueText: string;
+  /** Rows, or entities when the card counts each entity once. */
   rowCount: number;
   includedCount: number;
   excludedCount: number;
@@ -71,12 +74,15 @@ export function planMetricCard(
     snapshot.exclusionReasons
   );
   const measureLabel = measureField ? getFieldLabel(measureField) : undefined;
+  const entityLabel = settings.entityField
+    ? getFieldLabel(settings.entityField)
+    : undefined;
   const metricLabel =
     settings.aggregation === "count"
-      ? settings.entityField
-        ? `Distinct ${getFieldLabel(settings.entityField)}`
+      ? entityLabel
+        ? `Distinct ${entityLabel}`
         : "Row count"
-      : `${aggregationLabel(settings.aggregation)} of ${measureLabel}${settings.entityField ? `, once per ${getFieldLabel(settings.entityField)}` : ""}`;
+      : `${aggregationLabel(settings.aggregation)} of ${measureLabel}${entityLabel ? `, once per ${entityLabel}` : ""}`;
   const state: MetricCardState =
     group.length === 0
       ? "empty"
@@ -148,6 +154,7 @@ export function planMetricCard(
     aggregation: settings.aggregation,
     measureField,
     measureLabel,
+    entityLabel,
     metricLabel,
     state,
     value: result.value,
@@ -162,8 +169,8 @@ export function planMetricCard(
     contributors: result.contributors,
     totalRows: filtered ? totalRows : undefined,
     comparison,
-    scopeNote: settings.entityField
-      ? `Each ${getFieldLabel(settings.entityField)} once, among rows that pass this chart's filters and the other active filters.`
+    scopeNote: entityLabel
+      ? `Each ${entityLabel} once, among rows that pass this chart's filters and the other active filters.`
       : "Rows that pass this chart's filters and the other active filters.",
   };
 }

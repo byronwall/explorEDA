@@ -87,7 +87,10 @@ export interface AggregateMeasure {
   label: string;
   operation: AggregateAggregation;
   fieldId?: string;
-  /** Reduce repeated values once per entity. Conflicting values are unavailable. */
+  /**
+   * Reduce repeated values once per entity. When one entity's rows disagree
+   * on the measure, the whole result is unavailable, measured counts included.
+   */
   entityFieldId?: string;
 }
 
