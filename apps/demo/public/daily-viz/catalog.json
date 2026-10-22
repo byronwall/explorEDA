@@ -5006,5 +5006,800 @@
         ]
       }
     ]
+  },
+  {
+    "id": "nb-elections-drift",
+    "slug": "elections-drift",
+    "kind": "notebook",
+    "title": "West Virginia swung 58 points to the Republicans; Vermont swung 38 the other way",
+    "question": "How did each state's lean change from 1976 to 2016?",
+    "summary": "Between 1976 and 2016 West Virginia’s Democratic margin fell 58 points and Vermont’s rose 38, while the median state moved three. Sixteen Carter states went Republican and thirteen Ford states went Democratic: a realignment, not a tide.",
+    "family": "elections",
+    "entry": "drift.eda.md",
+    "query": "drift",
+    "industry": "Politics",
+    "analysis": "Ranking",
+    "findings": [
+      {
+        "text": "West Virginia’s margin moved {value} points",
+        "format": ".1f",
+        "op": "min",
+        "field": "drift"
+      },
+      {
+        "text": "Arkansas’s {value}",
+        "format": ".1f",
+        "op": "max",
+        "field": "drift",
+        "where": [
+          [
+            "State",
+            "eq",
+            "Arkansas"
+          ]
+        ]
+      },
+      {
+        "text": "Vermont gained {value} points",
+        "format": ".1f",
+        "op": "max",
+        "field": "drift"
+      },
+      {
+        "text": "and California {value}.",
+        "format": ".1f",
+        "op": "max",
+        "field": "drift",
+        "where": [
+          [
+            "State",
+            "eq",
+            "California"
+          ]
+        ]
+      },
+      {
+        "text": "The median state drifted {value} points",
+        "format": ".1f",
+        "op": "median",
+        "field": "drift"
+      },
+      {
+        "text": "The two margins have a correlation of {value}.",
+        "format": ".3f",
+        "op": "corr",
+        "field": "margin_1976",
+        "other": "margin_2016"
+      },
+      {
+        "text": "{value} states that Carter won in 1976 voted Republican in 2016",
+        "format": ".0f",
+        "op": "count",
+        "field": "drift",
+        "where": [
+          [
+            "margin_1976",
+            "gt",
+            0
+          ],
+          [
+            "margin_2016",
+            "lt",
+            0
+          ]
+        ]
+      },
+      {
+        "text": "and {value} that Ford won voted Democratic.",
+        "format": ".0f",
+        "op": "count",
+        "field": "drift",
+        "where": [
+          [
+            "margin_1976",
+            "lt",
+            0
+          ],
+          [
+            "margin_2016",
+            "gt",
+            0
+          ]
+        ]
+      },
+      {
+        "text": "States that leaned Democratic in 1976 drifted {value} points on average",
+        "format": ".1f",
+        "op": "mean",
+        "field": "drift",
+        "where": [
+          [
+            "margin_1976",
+            "gt",
+            0
+          ]
+        ]
+      },
+      {
+        "text": "states that leaned Republican drifted {value}.",
+        "format": ".1f",
+        "op": "mean",
+        "field": "drift",
+        "where": [
+          [
+            "margin_1976",
+            "lt",
+            0
+          ]
+        ]
+      },
+      {
+        "text": "{value} states voted Republican in all eleven elections",
+        "format": ".0f",
+        "op": "count",
+        "field": "dem_wins",
+        "where": [
+          [
+            "dem_wins",
+            "eq",
+            0
+          ]
+        ]
+      },
+      {
+        "text": "The {value} that flipped at least once",
+        "format": ".0f",
+        "op": "count",
+        "field": "dem_wins",
+        "where": [
+          [
+            "record",
+            "eq",
+            "Flipped at least once"
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "nb-measles-resurgence",
+    "slug": "measles-resurgence",
+    "kind": "notebook",
+    "title": "Measles came back in 1989: the average state's rate more than doubled",
+    "question": "What did the 1989–1991 measles resurgence look like state by state?",
+    "summary": "From 1989 to 1991 the average reporting state had 4.2 measles cases per 100,000, up from 1.7 in the six years before, with California, Texas, Illinois, Ohio, and Idaho carrying the peak. From 1992 on the average fell to 0.17.",
+    "family": "measles",
+    "entry": "resurgence.eda.md",
+    "query": "reported",
+    "industry": "Public health",
+    "analysis": "Trend",
+    "findings": [
+      {
+        "text": "From 1983 to 1988 the average state-year had {value} cases per 100,000.",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Rate",
+        "where": [
+          [
+            "Year",
+            "ge",
+            1983
+          ],
+          [
+            "Year",
+            "le",
+            1988
+          ]
+        ]
+      },
+      {
+        "text": "From 1989 to 1991 it had {value}.",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Rate",
+        "where": [
+          [
+            "Year",
+            "ge",
+            1989
+          ],
+          [
+            "Year",
+            "le",
+            1991
+          ]
+        ]
+      },
+      {
+        "text": "From 1992 to 2012 it had {value}.",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Rate",
+        "where": [
+          [
+            "Year",
+            "ge",
+            1992
+          ]
+        ]
+      },
+      {
+        "text": "In 1990, California’s rate reached {value} cases per 100,000.",
+        "format": ".2f",
+        "op": "max",
+        "field": "Rate",
+        "where": [
+          [
+            "Year",
+            "eq",
+            1990
+          ],
+          [
+            "State",
+            "eq",
+            "California"
+          ]
+        ]
+      },
+      {
+        "text": "In 1991, Idaho’s reached {value}",
+        "format": ".2f",
+        "op": "max",
+        "field": "Rate",
+        "where": [
+          [
+            "Year",
+            "eq",
+            1991
+          ],
+          [
+            "State",
+            "eq",
+            "Idaho"
+          ]
+        ]
+      },
+      {
+        "text": "During 1989–1991, {value}% of state-years were at or above 5 cases per 100,000.",
+        "format": ".1f",
+        "op": "share",
+        "field": "Rate",
+        "where": [
+          [
+            "Year",
+            "ge",
+            1989
+          ],
+          [
+            "Year",
+            "le",
+            1991
+          ]
+        ],
+        "condition": [
+          [
+            "Rate",
+            "ge",
+            5
+          ]
+        ]
+      },
+      {
+        "text": "From 1983 to 1988, {value}% were.",
+        "format": ".1f",
+        "op": "share",
+        "field": "Rate",
+        "where": [
+          [
+            "Year",
+            "ge",
+            1983
+          ],
+          [
+            "Year",
+            "le",
+            1988
+          ]
+        ],
+        "condition": [
+          [
+            "Rate",
+            "ge",
+            5
+          ]
+        ]
+      },
+      {
+        "text": "From 1992 to 2012, {value}% were.",
+        "format": ".1f",
+        "op": "share",
+        "field": "Rate",
+        "where": [
+          [
+            "Year",
+            "ge",
+            1992
+          ]
+        ],
+        "condition": [
+          [
+            "Rate",
+            "ge",
+            5
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "nb-titanic-age-and-fare",
+    "slug": "titanic-age-and-fare",
+    "kind": "notebook",
+    "title": "Children first, in first and second class",
+    "question": "Did age and the price of a ticket change who survived the Titanic?",
+    "summary": "Nearly nine in ten children in first and second class survived; in third class, fewer than four in ten did, a lower rate than first-class adults. A first-class ticket cost a median £60 against £8 in third.",
+    "family": "titanic",
+    "entry": "age-and-fare.eda.md",
+    "query": "passengers",
+    "industry": "History",
+    "analysis": "Comparison",
+    "findings": [
+      {
+        "text": "{value}% of first-class children survived",
+        "format": ".1f",
+        "op": "share",
+        "field": "Fate",
+        "where": [
+          [
+            "Class",
+            "eq",
+            "First class"
+          ],
+          [
+            "Age group",
+            "eq",
+            "Child"
+          ]
+        ],
+        "condition": [
+          [
+            "Fate",
+            "eq",
+            "Survived"
+          ]
+        ]
+      },
+      {
+        "text": "and {value}% of second-class children.",
+        "format": ".1f",
+        "op": "share",
+        "field": "Fate",
+        "where": [
+          [
+            "Class",
+            "eq",
+            "Second class"
+          ],
+          [
+            "Age group",
+            "eq",
+            "Child"
+          ]
+        ],
+        "condition": [
+          [
+            "Fate",
+            "eq",
+            "Survived"
+          ]
+        ]
+      },
+      {
+        "text": "In third class, {value}% of children survived",
+        "format": ".1f",
+        "op": "share",
+        "field": "Fate",
+        "where": [
+          [
+            "Class",
+            "eq",
+            "Third class"
+          ],
+          [
+            "Age group",
+            "eq",
+            "Child"
+          ]
+        ],
+        "condition": [
+          [
+            "Fate",
+            "eq",
+            "Survived"
+          ]
+        ]
+      },
+      {
+        "text": "first-class adults, {value}% of whom lived.",
+        "format": ".1f",
+        "op": "share",
+        "field": "Fate",
+        "where": [
+          [
+            "Class",
+            "eq",
+            "First class"
+          ],
+          [
+            "Age group",
+            "eq",
+            "Adult"
+          ]
+        ],
+        "condition": [
+          [
+            "Fate",
+            "eq",
+            "Survived"
+          ]
+        ]
+      },
+      {
+        "text": "{value}% of boys under 13 survived",
+        "format": ".1f",
+        "op": "share",
+        "field": "Fate",
+        "where": [
+          [
+            "Sex",
+            "eq",
+            "Male"
+          ],
+          [
+            "age_band",
+            "eq",
+            "0–12"
+          ]
+        ],
+        "condition": [
+          [
+            "Fate",
+            "eq",
+            "Survived"
+          ]
+        ]
+      },
+      {
+        "text": "and {value}% of males aged 13 to 19.",
+        "format": ".1f",
+        "op": "share",
+        "field": "Fate",
+        "where": [
+          [
+            "Sex",
+            "eq",
+            "Male"
+          ],
+          [
+            "age_band",
+            "eq",
+            "13–19"
+          ]
+        ],
+        "condition": [
+          [
+            "Fate",
+            "eq",
+            "Survived"
+          ]
+        ]
+      },
+      {
+        "text": "{value}% of girls under 13 survived",
+        "format": ".1f",
+        "op": "share",
+        "field": "Fate",
+        "where": [
+          [
+            "Sex",
+            "eq",
+            "Female"
+          ],
+          [
+            "age_band",
+            "eq",
+            "0–12"
+          ]
+        ],
+        "condition": [
+          [
+            "Fate",
+            "eq",
+            "Survived"
+          ]
+        ]
+      },
+      {
+        "text": "against {value}% of women in their thirties",
+        "format": ".1f",
+        "op": "share",
+        "field": "Fate",
+        "where": [
+          [
+            "Sex",
+            "eq",
+            "Female"
+          ],
+          [
+            "age_band",
+            "eq",
+            "30–39"
+          ]
+        ],
+        "condition": [
+          [
+            "Fate",
+            "eq",
+            "Survived"
+          ]
+        ]
+      },
+      {
+        "text": "The median first-class fare was £{value}",
+        "format": ".2f",
+        "op": "median",
+        "field": "Fare",
+        "where": [
+          [
+            "Class",
+            "eq",
+            "First class"
+          ]
+        ]
+      },
+      {
+        "text": "the median third-class fare £{value}.",
+        "format": ".2f",
+        "op": "median",
+        "field": "Fare",
+        "where": [
+          [
+            "Class",
+            "eq",
+            "Third class"
+          ]
+        ]
+      },
+      {
+        "text": "four passengers in the Cardeza party paid £{value} each",
+        "format": ".2f",
+        "op": "max",
+        "field": "Fare"
+      },
+      {
+        "text": "{value} passengers paid nothing",
+        "format": ".0f",
+        "op": "count",
+        "field": "Fare",
+        "where": [
+          [
+            "Fare",
+            "eq",
+            0
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "nb-penguins-bills",
+    "slug": "penguins-bills",
+    "kind": "notebook",
+    "title": "Bill depth separates the species that body mass cannot",
+    "question": "Which measurement tells the three penguin species apart?",
+    "summary": "Pooled across species, longer penguin bills look shallower, with a correlation of −0.24; within each species the correlation is positive, 0.39 to 0.65. Two cuts on the bill, at 17 mm deep and 44 mm long, sort nearly every bird, which body mass cannot.",
+    "family": "penguins",
+    "entry": "bills.eda.md",
+    "query": "penguins",
+    "industry": "Ecology",
+    "analysis": "Relationship",
+    "findings": [
+      {
+        "text": "across all {value} measured birds",
+        "format": ".0f",
+        "op": "count",
+        "field": "bill_length_mm",
+        "where": [
+          [
+            "bill_length_mm",
+            "gt",
+            0
+          ]
+        ]
+      },
+      {
+        "text": "bill length and bill depth have a correlation of {value}.",
+        "format": ".3f",
+        "op": "corr",
+        "field": "bill_length_mm",
+        "other": "bill_depth_mm"
+      },
+      {
+        "text": "Within Adélies the correlation is {value}",
+        "format": ".3f",
+        "op": "corr",
+        "field": "bill_length_mm",
+        "other": "bill_depth_mm",
+        "where": [
+          [
+            "species",
+            "eq",
+            "Adelie"
+          ]
+        ]
+      },
+      {
+        "text": "within Chinstraps {value}",
+        "format": ".3f",
+        "op": "corr",
+        "field": "bill_length_mm",
+        "other": "bill_depth_mm",
+        "where": [
+          [
+            "species",
+            "eq",
+            "Chinstrap"
+          ]
+        ]
+      },
+      {
+        "text": "and within Gentoos {value}.",
+        "format": ".3f",
+        "op": "corr",
+        "field": "bill_length_mm",
+        "other": "bill_depth_mm",
+        "where": [
+          [
+            "species",
+            "eq",
+            "Gentoo"
+          ]
+        ]
+      },
+      {
+        "text": "the deepest Gentoo bill is {value} mm",
+        "format": ".1f",
+        "op": "max",
+        "field": "bill_depth_mm",
+        "where": [
+          [
+            "species",
+            "eq",
+            "Gentoo"
+          ]
+        ]
+      },
+      {
+        "text": "and {value}% of the other two species sit above 17.",
+        "format": ".1f",
+        "op": "share",
+        "field": "bill_depth_mm",
+        "where": [
+          [
+            "species",
+            "ne",
+            "Gentoo"
+          ],
+          [
+            "bill_depth_mm",
+            "gt",
+            0
+          ]
+        ],
+        "condition": [
+          [
+            "bill_depth_mm",
+            "gt",
+            17
+          ]
+        ]
+      },
+      {
+        "text": "{value}% of Adélie bills are under 44 mm",
+        "format": ".1f",
+        "op": "share",
+        "field": "bill_length_mm",
+        "where": [
+          [
+            "species",
+            "eq",
+            "Adelie"
+          ],
+          [
+            "bill_length_mm",
+            "gt",
+            0
+          ]
+        ],
+        "condition": [
+          [
+            "bill_length_mm",
+            "lt",
+            44
+          ]
+        ]
+      },
+      {
+        "text": "and {value}% of Chinstrap bills are 44 mm or longer.",
+        "format": ".1f",
+        "op": "share",
+        "field": "bill_length_mm",
+        "where": [
+          [
+            "species",
+            "eq",
+            "Chinstrap"
+          ]
+        ],
+        "condition": [
+          [
+            "bill_length_mm",
+            "ge",
+            44
+          ]
+        ]
+      },
+      {
+        "text": "Adélies average {value} g",
+        "format": ",.0f",
+        "op": "mean",
+        "field": "body_mass_g",
+        "where": [
+          [
+            "species",
+            "eq",
+            "Adelie"
+          ]
+        ]
+      },
+      {
+        "text": "and Chinstraps {value} g",
+        "format": ",.0f",
+        "op": "mean",
+        "field": "body_mass_g",
+        "where": [
+          [
+            "species",
+            "eq",
+            "Chinstrap"
+          ]
+        ]
+      },
+      {
+        "text": "{value}% of Chinstraps weigh within the middle 80% of Adélies.",
+        "format": ".1f",
+        "op": "share",
+        "field": "body_mass_g",
+        "where": [
+          [
+            "species",
+            "eq",
+            "Chinstrap"
+          ]
+        ],
+        "condition": [
+          [
+            "body_mass_g",
+            "ge",
+            3150
+          ],
+          [
+            "body_mass_g",
+            "le",
+            4300
+          ]
+        ]
+      }
+    ]
   }
 ]
