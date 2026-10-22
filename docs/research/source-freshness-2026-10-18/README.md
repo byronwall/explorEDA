@@ -2,7 +2,7 @@
 
 Keep complete, independently refreshed snapshots as the default. For reconciliation, first test one SQLite SQL source at the required grain. Do not build a shared-refresh feature from this research alone.
 
-Pro completed the [research](originals/freshness-decision.md) on 2026-10-19. All four reports and the ZIP are preserved unchanged. [Collection checks](collection.json), [local evidence review](evidence.md), and [recommendation decisions](decisions.md) separate research from executed checks.
+Pro completed the [research](https://chatgpt.com/c/6ad56cea-12a8-83ea-b1e9-ee15a649fd1a) on 2026-10-19. All four reports and the ZIP remain in the Pro conversation. The [local evidence review](evidence.md) and [recommendation decisions](decisions.md) separate research from executed checks.
 
 ## What changes the decision
 
@@ -14,7 +14,7 @@ Publishing those mixed inputs together would preserve the wrong result. A shared
 
 ## Next useful proof
 
-The [proposed proof](originals/proof-plan.md) compares exact IDs, gross, refunds, net, and missing-member diagnostics. It aggregates refunds per order before joining. It also tests a valid customer-region change and multiple refunds on one order.
+The [proposed proof](https://chatgpt.com/c/6ad56cea-12a8-83ea-b1e9-ee15a649fd1a) compares exact IDs, gross, refunds, net, and missing-member diagnostics. It aggregates refunds per order before joining. It also tests a valid customer-region change and multiple refunds on one order.
 
 First use the existing SQLite `sql=` source. Observe one author completing the task and explaining its grain. No author session or database fixture ran in this cycle. A passing arithmetic check alone would not prove a useful author handoff.
 

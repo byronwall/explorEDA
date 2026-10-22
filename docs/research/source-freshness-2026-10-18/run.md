@@ -7,7 +7,7 @@
 - Branch: `codex/source-freshness-research-2026-10-18`; base `codex/data-preparation-research-2026-10-16` (open PR #451). Clean before branch creation. Stack keeps completed prior research separate.
 - Previous cycle: complete; open https://github.com/byronwall/explorEDA/pull/451 verified 2026-10-19 UTC.
 - Prompt: [pro-prompt.md](pro-prompt.md). Candidates and continuing backlog: [research-queue.md](research-queue.md).
-- Packet: `tmp/pro-source-freshness-2026-10-18/source-packet.txt`. 37 selected text files; 243555 bytes. SHA-256 `f527df2b00bdb9da84f2a7e2789fc94188d66e1b0c60bd82ef2dc182c1d29b02`. [Manifest](source-manifest.json).
+- Packet: `tmp/pro-source-freshness-2026-10-18/source-packet.txt`. 37 selected text files; 243555 bytes. SHA-256 `f527df2b00bdb9da84f2a7e2789fc94188d66e1b0c60bd82ef2dc182c1d29b02`. Manifest.
 - Phase: complete; verified open review PR #452. Round 0, follow-ups 0/2.
 - Pro conversation: https://chatgpt.com/c/6ad56cea-12a8-83ea-b1e9-ee15a649fd1a. Submission approximately 2026-10-19T01:05Z; verified durable URL and processing at 01:06Z. Collection began at 2026-10-19T02:11Z. Temporary monitor is PAUSED after verified PR completion.
 - Model: Chrome profile byroni.us and ChatGPT Byron Wall Pro verified. Live model selector shows Pro, 5 of 5.
@@ -34,7 +34,7 @@ No product source changed. No changeset or product viewport screenshot applies. 
 
 ## Collection and reconciliation: 2026-10-19
 
-Pro completed after 33m 11s. Collected freshness-decision.md, recommendations.md, proof-plan.md, research-queue.md, and source-freshness-research.zip. The archive event wait timed out; the normal download succeeded. All four standalone downloads match archive members and published hashes. Safe paths, no symlinks, CRC, exact inventory and UTF-8 pass. See collection.json. Originals are excluded from formatting.
+Pro completed after 33m 11s. Collected freshness-decision.md, recommendations.md, proof-plan.md, research-queue.md, and source-freshness-research.zip. The archive event wait timed out; the normal download succeeded. All four standalone downloads match archive members and published hashes. Safe paths, no symlinks, CRC, exact inventory and UTF-8 pass. Originals are excluded from formatting.
 
 Read all substantive outputs. Nine SF recommendations are reconciled in decisions.md. No material gap requires a follow-up; counter remains 0/2. Keep independent snapshots, investigate the existing SQL author proof, defer a shared transaction, reject grouped publication as a consistency fix, and keep wider platforms excluded. The revised queue moves the local trust journey first. The proposed SQL/browser/author proofs remain unrun.
 
@@ -44,7 +44,7 @@ Current parent PR #451 remains OPEN. No existing PR for this research branch exi
 
 ## Validation: 2026-10-19
 
-Root `pnpm check` passed UI, all builds, docs gates (73 tests), and all type checks. Its library run had 242 passing files, five failed files, three skipped files, 1600 passing tests, 10 failed tests, and 72 skipped tests. Localhost EPERM and file-watch EMFILE caused the affected checks. All five affected files pass with approved access: 50 tests. Separate app tests pass eight files/32 tests; demo passes 18 files/419 tests. `pnpm check:pr` passes. The root command was not rerun; no all-green root result is claimed. See validation.json.
+Root `pnpm check` passed UI, all builds, docs gates (73 tests), and all type checks. Its library run had 242 passing files, five failed files, three skipped files, 1600 passing tests, 10 failed tests, and 72 skipped tests. Localhost EPERM and file-watch EMFILE caused the affected checks. All five affected files pass with approved access: 50 tests. Separate app tests pass eight files/32 tests; demo passes 18 files/419 tests. `pnpm check:pr` passes. The root command was not rerun; no all-green root result is claimed.
 
 Authored local links and whitespace pass. Originals retain their published hashes after formatting hooks. Both Git identities are Byron Wall <byron@byroni.us>. No SQL fixture, proposed concurrency proof, browser product journey, or author session ran. These remain explicit future evidence gates.
 
