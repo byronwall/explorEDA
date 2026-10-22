@@ -10,6 +10,7 @@ import type { datum } from "@/types/ChartTypes";
 import type { ColorScaleType } from "@/types/ColorScaleTypes";
 import type { RangeFilter } from "@/types/FilterTypes";
 import { scaleLinear, scaleLog } from "d3-scale";
+import { describeScale, type ScaleDescriptor } from "../Axis/axisPlan";
 import type { EcdfSettings } from "./definition";
 
 export interface EcdfSnapshot {
@@ -80,6 +81,9 @@ export interface EcdfPlan {
   scopeNote: string;
   px: (value: number) => number;
   py: (share: number) => number;
+  /** The scales annotations project through: values on x, shares on y. */
+  xScale: ScaleDescriptor;
+  yScale: ScaleDescriptor;
 }
 
 export interface EcdfPlanInput {
@@ -476,6 +480,8 @@ export function planEcdf({
       "Rows after other filters. Each curve's shares use its own rows with a valid value, so curves of different sizes compare fairly.",
     px,
     py,
+    xScale: describeScale(scale),
+    yScale: { type: "linear", domain: [0, 1], range: [plotHeight, 0] },
   };
 }
 

@@ -12,4 +12,8 @@ source @r key=id path=data/r.csv {
 
 query @r "r" glyph=◆ {
   source r
+  calc petal_guess "Species by petal length" = ["r.petal_length"] <= 1.9 ? "setosa" : ["r.petal_length"] <= 4.7 ? "versicolor" : "virginica"
+  calc petal_guess_ok "Petal-length rule is right" = petal_guess == ["r.species"] ? 1 : 0
+  calc sepal_guess "Species by sepal width" = ["r.sepal_width"] <= 2.9 ? "versicolor" : ["r.sepal_width"] <= 3.3 ? "virginica" : "setosa"
+  calc sepal_guess_ok "Sepal-width rule is right" = sepal_guess == ["r.species"] ? 1 : 0
 }

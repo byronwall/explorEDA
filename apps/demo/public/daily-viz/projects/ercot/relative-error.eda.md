@@ -1,68 +1,50 @@
-# Half of ERCOT hours missed by less than 2.3%
+# Half of ERCOT's hours missed by under 2.3%; the storm week missed by 18%
 
-**Which hours look worse when the miss is measured as a share of the forecast?** Each row is one hour.
+**How big is a typical miss once you measure it against the size of the forecast?** Each row is one hour of January and February 2021 on the Texas grid, with the forecast error divided by the forecast. A 2,000 MWh miss is a rounding error at 70,000 MWh and a real problem at 35,000. The percentage view shows that most hours were close, and that Winter Storm Uri was not a few bad hours but a bad week.
 
 ```eda
 eda query=r
 date:date=r.date label="Hour (UTC)"
 forecast:num=r.forecast label="Forecast (MWh)"
 month:num=r.month label="Month"
-month_label:cat=r.month_label label="Calendar month"
-error:num=r.error label="Error (MWh)"
-abs_error:num=r.abs_error label="Absolute error (MWh)"
-pct_error:num=r.pct_error label="Error (% of forecast)"
 abs_pct_error:num=r.abs_pct_error label="Absolute error (% of forecast)"
-direction:cat=r.direction label="Direction"
+calc day = extractDateComponent(date, "day")
+calc period = month == 1 || (month == 2 && day < 14) ? "Before the storm" : month == 2 && day <= 20 ? "Storm week" : "After the storm"
 ```
 
-## 1. Does absolute miss grow with the forecast?
+## Most hours missed by a few percent
 
-Each point is one hour. A large forecast and a large absolute miss can coexist without implying that the forecast caused the error.
+The tall bars sit left of the median line. The median absolute percentage error was 2.26% of forecast. The 90th percentile of absolute percentage error was 14.23% of forecast. The bars beyond the second line are the long tail, and the worst hour missed by 39.5% of forecast.
 
 ```eda
-scatter @nb-ercot-relative-error-chart-1 x=forecast y=abs_error opacity=0.4 title="Does absolute miss grow with the forecast?" x.title="Forecast (MWh)" y.title="Absolute error (MWh)"
+hist @nb-ercot-relative-error-chart-1 abs_pct_error bins=80 title="Hours by absolute error, as a share of the forecast" x.title="Absolute error (% of forecast)" y.title="Hours" {
+  rule x=2.26 "Median 2.3%"
+  rule x=14.23 "90th percentile 14.2%"
+}
 ```
 
-## 2. The same denominator made explicit
+## The tail is the storm week
 
-Keep forecast on the horizontal axis and replace the vertical measure with an absolute percentage. The denominator is now visible instead of being hidden inside the metric.
+Each point is one hour, placed by the size of its forecast. The storm-week hours sit high and to the right: the forecast expected record winter demand, and the grid served far less. During the storm week, the mean absolute percentage error was 17.5% of forecast. 70.2% of storm-week hours missed by more than 10%. 16.7% of hours missed by more than 10%.
 
 ```eda
-scatter @nb-ercot-relative-error-chart-2 x=forecast y=abs_pct_error opacity=0.4 title="The same denominator made explicit" x.title="Forecast (MWh)" y.title="Absolute error (% of forecast)"
+scatter @nb-ercot-relative-error-chart-2 x=forecast y=abs_pct_error color=period opacity=0.5 title="Forecast size and percentage miss, one point per hour" x.title="Forecast (MWh)" y.title="Absolute error (% of forecast)" {
+  callout "Feb 16, 06:00 UTC: 39% short" pick=max offset=-40,20
+}
 ```
 
-**Finding.** The median absolute percentage error was 2.26% of forecast.
+## The week after the storm was still off
 
-## 3. Percentage-error distributions by UTC month
-
-Compare distributions, not just their means. The small March boundary slice is not a third complete month and must not be treated as an equally supported estimate.
+The cumulative curves separate three periods. Before February 14 the curve rises almost straight up; before the storm, the median absolute percentage error was 1.63% of forecast. The storm-week curve barely leaves the floor until 10%. The week after sits between them: after February 20, the median absolute percentage error was 7.73% of forecast, as the forecast kept expecting demand that had not returned.
 
 ```eda
-boxplot @nb-ercot-relative-error-chart-3 abs_pct_error color=month_label title="Percentage-error distributions by UTC month" y.title="Absolute error (% of forecast)"
-```
-
-## 4. What share stays below a percentage threshold?
-
-A cumulative curve avoids arbitrary histogram bins. Its percentage denominator is the number of valid hourly percentage errors, not the sum of forecast MWh.
-
-```eda
-ecdf @nb-ercot-relative-error-chart-4 abs_pct_error direction=below title="What share stays below a percentage threshold?" x.title="Absolute error (% of forecast)"
-```
-
-**Finding.** The 90th percentile of absolute percentage error was 14.23% of forecast.
-
-## 5. The rows behind the charts
-
-Sort a column or select rows to check any value above. Selections in a notebook stay with their own chart.
-
-```eda
-table @nb-ercot-relative-error-records date,forecast,error,abs_error,pct_error,abs_pct_error title="Records behind this comparison"
+ecdf @nb-ercot-relative-error-chart-3 abs_pct_error color=period direction=below title="Share of hours under each percentage miss, by period" x.title="Absolute error (% of forecast)"
 ```
 
 ## Takeaway
 
-Absolute errors retain the grid-scale quantity. Relative errors describe that miss against the size of the forecast. Keep both rather than allowing the percentage plot to erase the operational magnitude.
+Measured against the forecast, the day-ahead model was within a few percent in a typical hour and within 14% in nine hours of ten. The storm week missed by almost a fifth of the forecast, hour after hour, and the forecast took another week to settle. Quote the median for the model and the storm week for the risk.
 
 ## Limits
 
-Percentage errors divide by the positive forecast, not actual demand. Changing that denominator changes the statistic. Both summaries describe this historical snapshot and are not forecast-model rankings.
+Percentage errors divide by the forecast, not by served demand; the storm-week numbers would be larger against actual. Served demand during the storm reflects rolling outages, not what Texans wanted to use. March contributes five hours.

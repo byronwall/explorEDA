@@ -12,3 +12,10 @@ source @measles path=../../../datasets/measles.csv {
 query @measles "measles" glyph=◆ {
   source measles
 }
+
+query @reported "Reported state-years, 1975 to 2012" glyph=◇ {
+  source measles
+  filter @has-rate measles.Rate not-null
+  filter @from-1975 measles.Year >= 1975
+  calc period "Period" = ["measles.Year"] < 1983 ? "1975–1982" : ["measles.Year"] < 1989 ? "1983–1988" : ["measles.Year"] < 1992 ? "1989–1991 resurgence" : "1992–2012"
+}
