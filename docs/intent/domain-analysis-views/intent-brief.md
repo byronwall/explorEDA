@@ -83,4 +83,4 @@ Do not add a coverage engine, fabricated zero events or survival model.
 
 If explanation work earns a milestone, pair “Read the observation window” in retention.mdx with its runnable example.
 Both remain proposed. No docs-site lesson or application behavior changed in this research review.
-See [six dispositions](../../research/retention-observation-2026-10-21/decisions.md) and [proof plan](../../research/retention-observation-2026-10-21/originals/proof-plan.md).
+See [six dispositions](../../research/retention-observation-2026-10-21/decisions.md) and [proof plan](https://chatgpt.com/c/6ad81152-cf28-83e9-90b4-a00baadd0d51).

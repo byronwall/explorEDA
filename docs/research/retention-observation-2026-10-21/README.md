@@ -21,7 +21,7 @@ In the proposed fixture, excluding partial cells changes Week 1 from 2/3 to 1/2.
 That changes the contributing population. Keep it separate from observation metadata.
 
 Local selection/export/undo/reopen trust remains first.
-Then compare the [eight-row fixture](originals/proof-plan.md) with actual behavior and one named reading task.
+Then compare the [eight-row fixture](https://chatgpt.com/c/6ad81152-cf28-83e9-90b4-a00baadd0d51) with actual behavior and one named reading task.
 The new fixture and browser/author checks remain proposed and unrun.
 Existing Retention tests passed during preparation; they do not accept these new scenarios.
 
@@ -33,7 +33,7 @@ Neither a lesson nor a product change was implemented here.
 
 ## Evidence and records
 
-- [Independent evidence](evidence.md), [source receipts](source-review.json) and [16 arithmetic anchors](fixture-audit.json)
-- [Ranked queue](research-queue.md), [run record](run.md) and [validation](validation.json)
-- [Collection checks](collection.json), [report manifest](originals/manifest.json) and [ZIP](retention-observation-research.zip)
-- Originals: [decision](originals/decision-report.md), [evidence](originals/evidence-and-comparisons.md), [proof](originals/proof-plan.md), [queue](originals/research-queue.md)
+- [Independent evidence](evidence.md), source receipts and 16 arithmetic anchors
+- [Ranked queue](research-queue.md), [run record](run.md) and validation
+- [Pro conversation](https://chatgpt.com/c/6ad81152-cf28-83e9-90b4-a00baadd0d51)
+- Originals: [decision](https://chatgpt.com/c/6ad81152-cf28-83e9-90b4-a00baadd0d51), [evidence](https://chatgpt.com/c/6ad81152-cf28-83e9-90b4-a00baadd0d51), [proof](https://chatgpt.com/c/6ad81152-cf28-83e9-90b4-a00baadd0d51), [queue](https://chatgpt.com/c/6ad81152-cf28-83e9-90b4-a00baadd0d51)

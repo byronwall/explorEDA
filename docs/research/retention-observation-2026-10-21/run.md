@@ -7,7 +7,7 @@
 - Baseline: 9b16d78e3ed0742ed4d5858c1939fec9e758b510. Refreshed origin/main; unchanged.
 - Branch: codex/retention-observation-research-2026-10-21. Clean before creation.
 - Preparation451, freshness452 and cycles455–460 are complete in open review PRs. PR454 owns axes. Previous collector paused; no active prior research. Do not resubmit.
-- Prompt: [pro-prompt.md](pro-prompt.md). Queue: [research-queue.md](research-queue.md). Inventory: [source-manifest.json](source-manifest.json).
+- Prompt: [pro-prompt.md](pro-prompt.md). Queue: [research-queue.md](research-queue.md).
 - Packet: 32 text files, 319350 bytes, SHA256 5534f51a533d8cfeeb0f938396ac3cc7e4bc3f0ed0c19b967879c64cd08b2829. All 29 baseline files authenticate against Git objects. Two local additions and a historical summary at ae2716a2. Historical relative links belong to the original folder; pin during integration.
 - Current source already delivers Retention, Funnel and Timeline. Correct the stale queue. No actual observation outage, demand or verified runtime defect is established.
 - Local trust stays first local proof. Compare current contract, lesson, upstream table and one small authored observation boundary. Large implementation remains proposed.

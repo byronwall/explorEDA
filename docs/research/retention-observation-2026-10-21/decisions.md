@@ -15,4 +15,4 @@ Reject automatic completeness inference, fabricated zero events, implicit denomi
 One clear task failure can justify a bounded comparison. Do not require all alternatives to fail in a fixed sequence.
 The day-rounding source/prose discrepancy is a specific contract check, independent of demand for metadata.
 
-See [original recommendations](originals/decision-report.md), [checked evidence](evidence.md) and [continuing queue](research-queue.md).
+See [original recommendations](https://chatgpt.com/c/6ad81152-cf28-83e9-90b4-a00baadd0d51), [checked evidence](evidence.md) and [continuing queue](research-queue.md).

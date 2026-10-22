@@ -10,10 +10,9 @@ CRC, safe root paths, no symlinks, exact inventory, UTF8 and every report size/h
 All four substantive reports were read. Originals remain unchanged.
 The standalone decision click opened raw text; its 12-second download event timed out.
 No independent standalone/archive equality is claimed. All required contents are preserved from the verified ZIP.
-See [collection.json](collection.json).
 
 All32 uploaded entries authenticate against their headers. All29 baseline files match Git objects.
-Seven supplemental source files match baseline and current bytes. See [source-review.json](source-review.json).
+Seven supplemental source files match baseline and current bytes.
 The historical handoff summary is from ae2716a2; local links now point to that original folder.
 The source manifest preserves the uploaded bytes, including the queue before hook formatting.
 
@@ -30,7 +29,7 @@ The source manifest preserves the uploaded bytes, including the queue before hoo
 
 These checks establish source behavior and a source/prose discrepancy. They do not establish a runtime defect or reader failure.
 The new fixture, facet flow, browser checks, source refresh, export/history/restore and author task remain unrun.
-[16 rational/calendar anchors](fixture-audit.json) passed independently. Pro's own16 checks remain attributed, not inherited product acceptance.
+16 rational/calendar anchors passed independently. Pro's own16 checks remain attributed, not inherited product acceptance.
 
 ## Current primary sources
 
