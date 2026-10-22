@@ -936,9 +936,9 @@
     "id": "nb-strikes-duration-tail",
     "slug": "strikes-duration-tail",
     "kind": "notebook",
-    "title": "A typical strike and a long strike tell different stories",
-    "question": "How far apart are the mean and median durations in this selected strike sample?",
-    "summary": "The median U.S. manufacturing strike from 1968 to 1976 lasted 27 days; the mean, pulled up by a few very long ones, was 43.",
+    "title": "The average strike lasted 43 days; the typical one, 27",
+    "question": "How long does a strike last?",
+    "summary": "The median US manufacturing strike from 1968 to 1976 lasted 27 days; the mean was 43, because one strike in eight ran past a hundred days. The five longest strikes alone account for 29% of all strike days in the sample.",
     "family": "strikes",
     "entry": "duration-tail.eda.md",
     "query": "r",
@@ -946,16 +946,68 @@
     "analysis": "Distribution",
     "findings": [
       {
-        "text": "The mean recorded duration was {value} days.",
+        "text": "The median recorded duration was {value} days",
+        "format": ".2f",
+        "op": "median",
+        "field": "duration"
+      },
+      {
+        "text": "the mean recorded duration was {value} days",
         "format": ".2f",
         "op": "mean",
         "field": "duration"
       },
       {
-        "text": "The median recorded duration was {value} days.",
-        "format": ".2f",
-        "op": "median",
+        "text": "{value}% of strikes ended within two weeks",
+        "format": ".1f",
+        "op": "share",
+        "field": "duration",
+        "condition": [
+          [
+            "duration",
+            "le",
+            14
+          ]
+        ]
+      },
+      {
+        "text": "{value}% of strikes lasted more than 60 days.",
+        "format": ".1f",
+        "op": "share",
+        "field": "duration",
+        "condition": [
+          [
+            "duration",
+            "gt",
+            60
+          ]
+        ]
+      },
+      {
+        "text": "the longest strike, at {value} days.",
+        "format": ".0f",
+        "op": "max",
         "field": "duration"
+      },
+      {
+        "text": "The {value} strikes that ran longer than 100 days",
+        "format": ".0f",
+        "op": "count",
+        "field": "duration",
+        "where": [
+          [
+            "duration",
+            "gt",
+            100
+          ]
+        ]
+      },
+      {
+        "text": "the five longest together account for {value}% of all strike days in the sample.",
+        "format": ".2f",
+        "op": "top_share",
+        "field": "duration",
+        "k": 5
       }
     ],
     "published": "2026-07-29"
@@ -2425,7 +2477,7 @@
     "analysis": "Trend",
     "findings": [
       {
-        "text": "Netflix's highest opening price in the sample was ${value}.",
+        "text": "Netflix's highest opening price in the sample was ${value}",
         "format": ".2f",
         "op": "max",
         "field": "Open",
@@ -2438,7 +2490,7 @@
         ]
       },
       {
-        "text": "IBM never opened above ${value}.",
+        "text": "IBM never opened above ${value}",
         "format": ".2f",
         "op": "max",
         "field": "Open",
@@ -2447,6 +2499,98 @@
             "Company",
             "eq",
             "International Business Machines"
+          ]
+        ]
+      },
+      {
+        "text": "Netflix's lowest open in the window was ${value}",
+        "format": ".2f",
+        "op": "min",
+        "field": "Open",
+        "where": [
+          [
+            "Company",
+            "eq",
+            "Netflix"
+          ],
+          [
+            "Date",
+            "ge",
+            "2021-11-01"
+          ],
+          [
+            "Date",
+            "le",
+            "2022-12-31"
+          ]
+        ]
+      },
+      {
+        "text": "Tesla's lowest was ${value}",
+        "format": ".2f",
+        "op": "min",
+        "field": "Open",
+        "where": [
+          [
+            "Company",
+            "eq",
+            "Tesla"
+          ],
+          [
+            "Date",
+            "ge",
+            "2021-11-01"
+          ],
+          [
+            "Date",
+            "le",
+            "2022-12-31"
+          ]
+        ]
+      },
+      {
+        "text": "Microsoft's lowest was ${value}",
+        "format": ".2f",
+        "op": "min",
+        "field": "Open",
+        "where": [
+          [
+            "Company",
+            "eq",
+            "Microsoft"
+          ],
+          [
+            "Date",
+            "ge",
+            "2021-11-01"
+          ],
+          [
+            "Date",
+            "le",
+            "2022-12-31"
+          ]
+        ]
+      },
+      {
+        "text": "Apple's ${value}.",
+        "format": ".2f",
+        "op": "min",
+        "field": "Open",
+        "where": [
+          [
+            "Company",
+            "eq",
+            "Apple"
+          ],
+          [
+            "Date",
+            "ge",
+            "2021-11-01"
+          ],
+          [
+            "Date",
+            "le",
+            "2022-12-31"
           ]
         ]
       }
@@ -3691,9 +3835,9 @@
     "id": "nb-strikes-production-context",
     "slug": "strikes-production-context",
     "kind": "notebook",
-    "title": "Strikes ran longer when production was below trend",
-    "question": "Do strikes last longer when industrial production is below trend?",
-    "summary": "Strikes that began when industrial production was below trend lasted a median 38 days, against 25 when it was above.",
+    "title": "Strikes ran 13 days longer when production was below trend",
+    "question": "Do strikes last longer in a slump?",
+    "summary": "Among 62 US manufacturing strikes from 1968 to 1976, those that began with industrial production below trend lasted a median 38 days, against 25 when production was at or above trend. Two in five of the slump strikes ran past two months; one in nine of the others did.",
     "family": "strikes",
     "entry": "production-context.eda.md",
     "query": "r",
@@ -3701,7 +3845,40 @@
     "analysis": "Relationship",
     "findings": [
       {
-        "text": "Median duration at negative production deviations was {value} days.",
+        "text": "{value} strikes began with production below trend",
+        "format": ".0f",
+        "op": "count",
+        "field": "duration",
+        "where": [
+          [
+            "iprod",
+            "lt",
+            0
+          ]
+        ]
+      },
+      {
+        "text": "{value} with production at or above it.",
+        "format": ".0f",
+        "op": "count",
+        "field": "duration",
+        "where": [
+          [
+            "iprod",
+            "ge",
+            0
+          ]
+        ]
+      },
+      {
+        "text": "production deviation and duration had correlation {value}.",
+        "format": ".3f",
+        "op": "corr",
+        "field": "iprod",
+        "other": "duration"
+      },
+      {
+        "text": "Median duration at negative production deviations was {value} days",
         "format": ".2f",
         "op": "median",
         "field": "duration",
@@ -3714,7 +3891,7 @@
         ]
       },
       {
-        "text": "Median duration at nonnegative production deviations was {value} days.",
+        "text": "median duration at nonnegative production deviations was {value} days.",
         "format": ".2f",
         "op": "median",
         "field": "duration",
@@ -3723,6 +3900,72 @@
             "iprod",
             "ge",
             0
+          ]
+        ]
+      },
+      {
+        "text": "The means are further apart: {value} days",
+        "format": ".1f",
+        "op": "mean",
+        "field": "duration",
+        "where": [
+          [
+            "iprod",
+            "lt",
+            0
+          ]
+        ]
+      },
+      {
+        "text": "against {value}, because",
+        "format": ".1f",
+        "op": "mean",
+        "field": "duration",
+        "where": [
+          [
+            "iprod",
+            "ge",
+            0
+          ]
+        ]
+      },
+      {
+        "text": "{value}% of strikes that began below trend lasted more than 60 days",
+        "format": ".1f",
+        "op": "share",
+        "field": "duration",
+        "where": [
+          [
+            "iprod",
+            "lt",
+            0
+          ]
+        ],
+        "condition": [
+          [
+            "duration",
+            "gt",
+            60
+          ]
+        ]
+      },
+      {
+        "text": "against {value}% of strikes that began at or above trend.",
+        "format": ".1f",
+        "op": "share",
+        "field": "duration",
+        "where": [
+          [
+            "iprod",
+            "ge",
+            0
+          ]
+        ],
+        "condition": [
+          [
+            "duration",
+            "gt",
+            60
           ]
         ]
       }

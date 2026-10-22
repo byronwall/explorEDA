@@ -55,7 +55,7 @@ Set time aside and count quarters by their growth rate. The mean annualized grow
 ```eda
 hist @nb-macro-level-versus-growth-chart-4 gdp_growth bins=30 title="Quarters by annualized GDP growth" x.title="GDP growth (annualized %)" y.title="Quarters" {
   rule x=0 "No change"
-  rule x=mean "Mean"
+  rule x=3.22 "Mean: 3.2%"
 }
 ```
 
