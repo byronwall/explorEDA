@@ -44,4 +44,7 @@ query @latest "2023 only" glyph=◆ {
   source years
   lookup country via=year-country
   filter @in-2023 years.year = 2023
+  calc pop_east_asia "Population in East Asia & Pacific" = ["country.region"] == "East Asia & Pacific" ? ["years.population"] : 0
+  calc pop_middle "Population in middle-income economies" = ["country.income"] == "Lower middle income" || ["country.income"] == "Upper middle income" ? ["years.population"] : 0
+  calc pop_high "Population in high-income economies" = ["country.income"] == "High income" ? ["years.population"] : 0
 }

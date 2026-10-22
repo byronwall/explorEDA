@@ -66,3 +66,9 @@ An author adds a Postgres connection by name, with the password in an env var or
 ## Next step after confirmation
 
 Start Milestone 1 of the [implementation plan](implementation-plan.md).
+
+## Related-source freshness research
+
+The 2026-10-19 [freshness review](../../research/source-freshness-2026-10-18/README.md) keeps independent complete snapshots as the default. Refresh All does not establish a shared database view. Read completion time does not identify one.
+
+First test one existing SQLite SQL source at the task's required grain. A future proof pairs the database-sources guide with a runnable reconciliation example. Shared reads remain deferred until a named author needs separate source grains that SQL cannot preserve. Grouped publication alone cannot fix incompatible reads. No new feature is approved.

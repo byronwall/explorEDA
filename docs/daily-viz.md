@@ -55,17 +55,19 @@ The demo's `/daily` collection holds narrative notebooks, compositions, and dash
 - `industry` and `analysis` are the browse facets. Reuse a value from `pnpm daily coverage` when one fits; add a new one when it does not.
 - `published` is the day the piece appears; `pnpm daily schedule` writes it.
 - `series` (optional) is `{ "id", "title", "part" }`; see below.
-- A finding has `text` with `{value}`, a Python-style `format` (`.2f`, `,.0f`), and a calculation: `op` is one of `count`, `mean`, `median`, `min`, `max`, `sum`, `quantile` (with `q`), `corr` (with `other`), `share` (percent of rows matching `condition`), `missing_share`, `top_share` (with `k`), `ratio_sums` (with `other`, optional `scale`), or `weighted_mean` (with `weight`). `where` filters rows first: `[["decade", "eq", "1990s"]]`, with `eq`, `ne`, `lt`, `le`, `gt`, `ge`; ISO dates compare as text, so `["date", "ge", "2021-02-14"]` works. `query` reads another query of the family.
+- A finding has `text` with `{value}`, a Python-style `format` (`.2f`, `,.0f`), and a calculation: `op` is one of `count`, `mean`, `median`, `min`, `max`, `sum`, `quantile` (with `q`), `corr` (with `other`), `share` (percent of rows matching `condition`), `missing_share`, `top_share` (with `k`), `ratio_sums` (with `other`, optional `scale`), or `weighted_mean` (with `weight`); `earliest` and `latest` read a date field and take a date `format` instead: `iso` (1986-04-26), `day` (26 April 1986), or `month` (April 1986), so "the first week above 350 ppm was 26 April 1986" is checked like any number. `where` filters rows first: `[["decade", "eq", "1990s"]]`, with `eq`, `ne`, `lt`, `le`, `gt`, `ge`; ISO dates compare as text, so `["date", "ge", "2021-02-14"]` works. `query` reads another query of the family.
 
 ## Writing rules
+
+The [editorial standard](daily-editorial.md) is the bar: a finding-led title, a comparison with its difference stated, an annotated moment, numbers woven into sentences, and no boilerplate. The rules here are the mechanics.
 
 - **The title states the finding or the tension**, in plain words. Vary the form; a collection where every title reads "X is not Y" is monotonous.
 - **The question is one a person would ask**, not a description of the chart.
 - **Each heading is a claim the chart under it supports.** The paragraph says what to look at.
 - **Labels are readable names with units:** `CO₂ (ppm)`, not `Co2 (ppmv)` or `co2`. Don't label key or id fields.
 - **Say the source once.** The page prints the dataset's credit, license, tables, and downloads under every piece. Don't repeat them in prose, panel notes, or footnotes beyond one artboard credit line.
-- **Findings are computed, not typed from memory.** Copy the sentence `pnpm daily check` reports.
-- **Notebooks** have three to six charts. End with `## Takeaway` and `## Limits`. A records table is optional; add one when a reader would want to check rows.
+- **Findings are computed, not typed from memory.** Copy the sentence `pnpm daily check` reports into the paragraph that needs it; the check matches the sentence anywhere in the prose.
+- **Notebooks** have three to six charts. End with `## Takeaway` and `## Limits`. Add a records table only when the argument turns on specific rows, titled for those rows.
 - **Compositions** are designed graphics, not a default chart in a frame. Use the mark the question needs; the [composition mode](composition-mode.md) table lists them with reference examples. The design note says what a default chart would show and what this design gives up.
 - **Dashboards** link six or so views of one query. The guide lists two or three selections to try and what each should change. Don't spend a panel on instructions.
 
@@ -92,4 +94,6 @@ The demo's `/daily` collection holds narrative notebooks, compositions, and dash
 
 ## Series and deep dives
 
-Breadth first: the collection should span many industries, kinds of question, and chart forms. Once a dataset has earned it, a series goes deep: three to six pieces that build on each other, each standing alone. Give each entry `"series": { "id": "flights-january", "title": "A month of New York flights", "part": 1 }`. The page links the parts in order.
+Breadth first: the collection should span many industries, kinds of question, and chart forms. Once a dataset has earned it, a series goes deep: three to six pieces that build on each other, each standing alone. Give each entry `"series": { "id": "flights-january", "title": "A month of New York flights", "part": 1, "label": "The delay tail" }`. The page shows the parts as tabs, named by `label` in two or three words, and the open part is the current page.
+
+A single piece whose question has two or three faces can be one notebook with **sheets** instead of a series: each `#` heading after the lede starts a sheet, shown as a tab. Use sheets when the faces share one query and a reader would switch between them (the whole span, the storm week, the clock); use a series when each part stands alone or needs its own data. A sheet is a short notebook of its own: two to four sections, each a claim with its chart. The Takeaway and Limits go at the end of the last sheet, and every sheet's last section says what that sheet showed. Name sheets in two to four words.

@@ -551,3 +551,60 @@ describe("label placement", () => {
     });
   });
 });
+
+describe("charts whose marks summarize rows", () => {
+  const mean: ReferenceLineAnnotation = {
+    id: "m",
+    type: "reference-line",
+    axis: "x",
+    value: 0,
+    calculated: { statistic: "mean", population: "filtered" },
+  };
+
+  it("calculates over an axis's own values, such as one per group", () => {
+    const projected = projectAnnotations([mean], {
+      ...frame(rows),
+      plotted: undefined,
+      axisValues: { x: { all: [2, 4, 9], filtered: [2, 4] } },
+    })[0]!;
+    // The filtered groups' mean, 3, at 10 pixels per unit.
+    expect(projected).toMatchObject({
+      status: "shown",
+      value: 3,
+      position: 30,
+    });
+    expect(
+      projectAnnotations([mean], {
+        ...frame(rows),
+        axisValues: { x: { all: [], filtered: [] } },
+      })[0]!.status
+    ).toBe("empty");
+  });
+
+  it("places a record callout on a grid cell by its key values", () => {
+    const cellFrame: AnnotationFrame = {
+      ...frame(rows),
+      plotted: undefined,
+      cell: (attach) =>
+        attach.keyFields[0] !== "lot"
+          ? "unsupported"
+          : attach.key[0] === "A"
+            ? { x: 25, y: 50, selected: true }
+            : "missing",
+    };
+    const on = (key: string): CalloutAnnotation => ({
+      ...callout(key),
+      attach: { kind: "record", keyFields: ["lot"], key: [key] },
+    });
+    // Two rows share lot A; a cell holds them all, so the key is no problem.
+    expect(projectAnnotations([on("A")], cellFrame)[0]).toMatchObject({
+      status: "shown",
+      x: 25,
+      y: 50,
+    });
+    expect(projectAnnotations([on("Z")], cellFrame)[0]!.status).toBe("missing");
+    expect(projectAnnotations([callout("E-17")], cellFrame)[0]!.status).toBe(
+      "unsupported"
+    );
+  });
+});

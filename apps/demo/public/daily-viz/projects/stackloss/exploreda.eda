@@ -17,4 +17,5 @@ source @r key=id path=data/r.csv {
 
 query @r "r" glyph=◆ {
   source r
+  calc full_slope "Airflow slope, all 21 days" = ["r.loo_slope"] - ["r.slope_shift"]
 }

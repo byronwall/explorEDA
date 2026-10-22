@@ -115,11 +115,12 @@ Charts (each starts from the app's defaults):
   row <field>                         horizontal category bars; group=<@group>
   boxplot | calendar | ecdf | heatmap <field>; boxplot color=<field> draws
                                       one box per value
-  line x=<field> y=<field>,<field>    one line per y field
+  line x=<field> y=<field>,<field>    one line per y field; color=<field>
+                                      splits each into one line per value
   line x=<date> time.interval=week time.aggregation=sum time.measureField=Revenue
        time.splitField=Channel time.display=stacked-area
                                       a total per period, one line per Channel
-  metric count | sum(<field>) | avg(<field>)
+  metric count | sum(<field>) | avg(<field>) | max(<field>) | min(<field>)
   table <field>,<field>,...           data table (all fields when omitted)
   pivot rows=<field> columns=<field>  values as child lines (below)
   parallel <field>,<field>,...        parallel coordinates, one axis per field
@@ -150,6 +151,7 @@ Lists of records are child lines, named by their main field:
 
 Annotations are child lines of the chart they mark (dates read as ISO):
   callout "Day 31" on=Day:31 offset=-24,-28   or at=x,y, pick=max, category=West
+  callout "Peak" category=Tue,9               a heatmap cell; a calendar day: on=date:2016-12-16
   rule y=4 "Target"   rule x=mean "Mean"      also median, min, max
   band x=2024-06-01..2024-08-31 "Sale" display=bracket
   region x=275..345 y=4.1..5.15 shape=ellipse "Fast days"
@@ -201,7 +203,8 @@ Shared definitions (charts point at them by @name):
   scale @channels field=Channel map=Web:#3479a8,Store:#c77a45
                                       color scale; charts: colorScale=channels
   group @byRegion sum(Revenue) by=Region
-                                      grouped summary; charts: group=byRegion
+                                      grouped summary; charts: group=byRegion;
+                                      count, sum(), avg(), max(), or min()
   rows sortBy=Revenue where.Units=2.. the Rows view
 
 Filters:

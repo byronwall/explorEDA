@@ -2,5 +2,9 @@
 apps/demo/public/daily-viz/
 # The first corpus's handoff, kept byte for byte.
 docs/research/daily-viz-corpus-2026-10-15/handoff/
-# Preserve original Pro research bytes.
-docs/research/relationship-discovery-2026-10-19/originals/
+
+# R077 frozen oracle keeps the bytes the local probe was written against.
+docs/research/selection-identity-2026-10-22/evidence/frozen-oracle.json
+
+# Pro's time-series axes proposal, kept as written.
+docs/intent/time-series-axes/raw/2026-10-18-pro/
