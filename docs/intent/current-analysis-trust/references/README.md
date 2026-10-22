@@ -21,3 +21,8 @@ Current source was inspected at `a50df9985ed3ff54d0f6ca368c0b369829b8a927` on 20
 ## Product feedback
 
 [Annotated product direction](../../comparison-opportunities/resources/product-feedback-2026-10-06.md) supplies the current audience and priorities. The [full records](../../comparison-opportunities/resources/product-feedback-2026-10-06.json) preserve uncertainty.
+
+## R077 replacement identity
+
+[Reviewed research](../../../research/selection-identity-2026-10-22/README.md) includes unchanged Pro originals and four local probes.
+Read its evidence limits and dispositions before proposing a replacement-identity repair.

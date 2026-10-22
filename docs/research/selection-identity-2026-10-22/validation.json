@@ -1,0 +1,43 @@
+{
+  "phase": "final gate running",
+  "baseline": "f4cacdde180e16ad814451a8c064e394535565d6",
+  "node": "22.21.1",
+  "pnpm": "11.9.0",
+  "baseline_tests": {
+    "files": 3,
+    "tests": 5,
+    "exit_code": 0
+  },
+  "local_probes": {
+    "files": 1,
+    "tests": 4,
+    "exit_code": 0,
+    "log": "evidence/local-probe.txt",
+    "scope": "Locally authored observation tests; no repaired contract or full frozen matrix claimed"
+  },
+  "full_check": {
+    "command": "pnpm check",
+    "status": "running",
+    "log": "tmp/pro-selection-identity-2026-10-22/pnpm-check.txt"
+  },
+  "source_receipts": 37,
+  "original_companions_verified": 5,
+  "primary_pages_checked": [
+    "https://tanstack.com/table/latest/docs/framework/react/guide/row-selection",
+    "https://www.ag-grid.com/react-data-grid/data-update-row-data/",
+    "https://www.ag-grid.com/react-data-grid/row-ids/"
+  ],
+  "not_run": [
+    "Full frozen mutation/ownership matrix",
+    "Product browser at wide/intermediate/narrow widths",
+    "Representative author/host task",
+    "Real CSV/JSON exports",
+    "Pending-worker and saved-inspection lifecycle",
+    "History/reopen/restore lifecycle",
+    "Performance proof"
+  ],
+  "changeset": "Not applicable: no package source or build output changed",
+  "product_screenshots": "Not applicable: no visible application change",
+  "pro_followups": 0,
+  "authored_local_links_checked": 56
+}

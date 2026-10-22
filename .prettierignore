@@ -2,3 +2,7 @@
 apps/demo/public/daily-viz/
 # The first corpus's handoff, kept byte for byte.
 docs/research/daily-viz-corpus-2026-10-15/handoff/
+
+# R077 Pro originals and frozen oracle retain their published hashes.
+docs/research/selection-identity-2026-10-22/originals/
+docs/research/selection-identity-2026-10-22/evidence/frozen-oracle.json

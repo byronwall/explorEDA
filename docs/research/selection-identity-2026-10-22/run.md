@@ -1,6 +1,6 @@
 # R077 selection identity Pro run
 
-Phase: submitted; Pro working; collection pending. Follow-ups: 0/2.
+Phase: collected and reviewed; integration and validation in progress. Follow-ups: 0/2.
 Repository: https://github.com/byronwall/explorEDA.
 Baseline: f4cacdde180e16ad814451a8c064e394535565d6 (refreshed origin/main).
 Checkout: /Users/byronwall/Projects/explorEDA.
@@ -22,40 +22,40 @@ PR462 owns Mosaic; PR454 owns axes. R008/PR464 and R011/PR461 are not repeated.
 
 [Prompt](pro-prompt.md), [packet manifest](source-manifest.json), [queue](research-queue.md).
 Packet: tmp/pro-selection-identity-2026-10-22/source-packet.txt.
-33 entries,325105bytes,SHA256 de813c89251f4a5cdf5b8149bb2821c6be494ab968d127725a3deba7d5d03ee6.
-27 baseline files,two catalogue projections,two historical R043 documents,two local additions.
+33 entries, 325105bytes, SHA256 de813c89251f4a5cdf5b8149bb2821c6be494ab968d127725a3deba7d5d03ee6.
+27 baseline files, two catalogue projections, two historical R043 documents, two local additions.
 Selected text snapshot; not runnable. Excludes secrets and unrelated files.
 Historical relative links require pinning during integration.
 Initial sandbox DNS failed; approved git fetch and gh open-PR inspection passed.
 Current main remains f4cacdde. Open PRs checked; no R077 duplicate found.
 Previous discovery turn was interrupted before submission; reused its clean branch.
 The initial checkout was clean on unrelated claude/10x-notebook-layout; no unrelated edits were changed.
-Chrome byroni.us and Byron Wall Pro account verified. Live model shows Pro,5 of5.
+Chrome byroni.us and Byron Wall Pro account verified. Live model shows Pro, 5 of5.
 ChatGPT initially timed out; one reload recovered it. No login or unlock required.
 Standing human upload approval applied; no rejection. Both completed attachments and submitted message verified.
 Submitted about 2026-10-22T07:08Z to https://chatgpt.com/c/6ad9b651-6728-83e9-88d4-6279b7905715.
 Pro responding/Stop observed; acknowledgement names exact baseline and evidence separation.
 Actual upload names: pro-prompt(20261022-070802).md and source-packet(20261022-070802).txt.
 Tab2010998279 marked handoff. Screenshot: tmp/pro-selection-identity-2026-10-22/pro-submitted.png.
-No outputs collected; no followup. Do not resubmit.
+At submission no outputs were collected. No followup was sent. Do not resubmit.
 
 ## Recovery and completion
 
 Read this record before any send. Inspect recorded conversation before a retry; never duplicate submission.
 Preserve running Pro. Arrange and verify a temporary collection heartbeat about one hour after submission.
-Collect four Markdown reports,ZIP and manifest. Preserve originals; inspect archive paths,links,CRC,inventory,UTF8,sizes and hashes.
+Collect four Markdown reports, ZIP and manifest. Preserve originals; inspect archive paths, links, CRC, inventory, UTF8, sizes and hashes.
 Compare standalone/archive companions. Read all substantive outputs.
 Present direct standing download approval and recorded conversation to automatic review before downloads.
 Do not require a Library upload. Do not execute downloaded programs or bypass review rejection.
-Verify decisive source and primary-source claims. Separate predictions,arithmetic,local tests and product/browser proof.
-Record SI recommendation dispositions: adopt,investigate,defer,reject. At most two focused followups.
-Integrate research,intent,and concise catalogue queue. Pair any visible milestone with docs and an example.
-Run relevant checks and pnpm check before review PR. Follow Git identity,changeset and screenshot rules.
-Use gh --body-file; verify OPEN state,body,files,branches and links. Attach PR to this chat.
-Complete only after collection,review,integration,validation,and verified open review PR.
+Verify decisive source and primary-source claims. Separate predictions, arithmetic, local tests and product/browser proof.
+Record SI recommendation dispositions: adopt, investigate, defer, reject. At most two focused followups.
+Integrate research, intent, and concise catalogue queue. Pair any visible milestone with docs and an example.
+Run relevant checks and pnpm check before review PR. Follow Git identity, changeset and screenshot rules.
+Use gh --body-file; verify OPEN state, body, files, branches and links. Attach PR to this chat.
+Complete only after collection, review, integration, validation, and verified open review PR.
 Pause only temporary collector at completion or essential user-action blocker.
 Keep six-hour exploreda-pro-research-pipeline ACTIVE indefinitely.
-No merge,deployment,paid provisioning,or unrelated changes.
+No merge, deployment, paid provisioning, or unrelated changes.
 
 ## Continuation and baseline checks
 
@@ -63,8 +63,29 @@ Temporary heartbeat: collect-exploreda-selection-identity-research, ACTIVE.
 Hourly at minute09; target chat01a1626c-0ba8-7da0-a598-c5c80a1dd5b9.
 First normal check about 2026-10-22T08:09Z. Preserve running response on early ticks.
 Tool view and saved TOML verified. Six-hour discovery remains ACTIVE.
-Existing projectIdentity,sourceRowIdentity,dataLayerState tests pass:3files,5tests.
+Existing projectIdentity, sourceRowIdentity, dataLayerState tests pass:3files, 5tests.
 All29 baseline/historical Git-object receipts and packet hash pass.
-No new fixture,browser product,author,persistence,export or performance proof ran.
+No new fixture, browser product, author, persistence, export or performance proof ran.
 No package source changed. No changeset or product screenshot applies.
 Full pnpm check and PR gate remain due after integration. No review PR yet.
+
+## Collection and review, October 22
+
+Pro completed after 29m4s. Collected four standalone Markdown reports, ZIP, and manifest.
+All five companions, published hashes, report sizes, UTF8, CRC, safe paths, no links, and inventory pass.
+ZIP download event timed out; normal download succeeded. Two standalone decision copies match.
+No Library upload or downloaded-program execution. Frozen oracle hash passes; freeze chronology remains attributed.
+Read all four reports. No material research gap; follow-ups remain 0/2.
+
+Four locally authored probes pass against actual mapper, resolver, mounted provider, and evaluator.
+They reproduce owner mapping differences, positional supplied restore, suffix resolution, occurrence reuse, and output-key collision.
+Chart/Rows mapping, ordinary keyed reversal, restrictive missing-chart inclusion, and no-save reset remain controls.
+The probe moved from the temporary package test path into research evidence. No permanent package test or repair was added.
+Full frozen matrix, browser, host, real exports, pending-worker, saved inspection, history, and performance proofs remain unrun.
+
+Refreshed origin/main still f4cacdde. All 37 baseline/historical/supplemental receipts authenticate.
+Three official TanStack/AG Grid primary pages were checked. Pin historical R043 links at their source ref.
+Research summary, SI01–SI08 decisions, evidence, two intents/maps/references, R077 brief follow-up, and concise queue integrated.
+R001 remains next eligible, then R051. New key API deferred; platform expansion rejected.
+No product source, docs-site lesson, runnable example, changeset, or product screenshot applies.
+Full pnpm check is running. Final validation, scoped review PR, and monitor stop remain due.

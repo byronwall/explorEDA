@@ -26,3 +26,10 @@ The implementation cost would be moderate if a new public prop were justified, b
 - `packages/explorEDA/src/test/providers/projectIdentity.test.tsx` — `keeps a logical order selection through source reorder and removal`. Already checks unique-key project selection across reorder and removal.
 - `docs/intent/current-analysis-trust/intent-brief.md` — related intent; status reconciled against implementation in the brief.
 - `docs/intent/renderer-independent-replay/intent-brief.md` — related intent; status reconciled against implementation in the brief.
+
+## Research follow-up, October 22, 2026
+
+[Completed synthesis](../../../research/selection-identity-2026-10-22/README.md) retains snapshot-scoped plain selection as a proposed contract.
+Use existing project keys conditionally; defer a new key API. Four local probes reproduce mapping, restore, resolver, and output-key boundaries.
+No repair is implemented. Browser, host, exports, worker scheduling, and full mutation proofs remain due for any chosen implementation.
+Review [SI01–SI08](../../../research/selection-identity-2026-10-22/decisions.md). Continue catalogue discovery with R001, then R051.
