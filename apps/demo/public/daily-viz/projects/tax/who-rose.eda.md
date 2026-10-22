@@ -27,11 +27,11 @@ parallel @nb-tax-who-rose-1 share_2000,share_2023 color=direction colorScale=dir
 The median country's share rose 0.70 points; the mean change was 0.11 points because the big falls outweigh the many small rises. The United States' change was -2.4 points, to 10.6% of GDP, the second-lowest share in the group after Switzerland's 8.7%. Denmark kept the highest share, 32.0% of GDP, in both years.
 
 ```eda
-row @nb-tax-who-rose-2 country group=bychange topN=20 minRowHeight=9 maxRowHeight=11 where.direction=Rose title="The twenty countries whose share rose, 2000 to 2023 (points of GDP)" x.title="Change (points of GDP)"
+bar @nb-tax-who-rose-2 country group=bychange where.direction=Rose title="The twenty countries whose share rose, 2000 to 2023 (points of GDP)" y.title="Change (points of GDP)" x.title="Country"
 ```
 
 ```eda
-row @nb-tax-who-rose-3 country group=bychange topN=14 where.direction=Fell title="The fourteen whose share fell, 2000 to 2023 (points of GDP)" x.title="Change (points of GDP)"
+bar @nb-tax-who-rose-3 country group=bychange where.direction=Fell title="The fourteen whose share fell, 2000 to 2023 (points of GDP)" y.title="Change (points of GDP)" x.title="Country"
 ```
 
 ## Countries that started high came down
