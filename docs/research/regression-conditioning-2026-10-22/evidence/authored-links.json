@@ -1,0 +1,214 @@
+{
+  "checked": 52,
+  "broken": 0,
+  "links": [
+    {
+      "file": "docs/research/regression-conditioning-2026-10-22/summary.md",
+      "target": "evidence/local-proof.test.ts"
+    },
+    {
+      "file": "docs/research/regression-conditioning-2026-10-22/summary.md",
+      "target": "evidence.md"
+    },
+    {
+      "file": "docs/research/regression-conditioning-2026-10-22/summary.md",
+      "target": "decisions.md"
+    },
+    {
+      "file": "docs/research/regression-conditioning-2026-10-22/summary.md",
+      "target": "raw/R001-report.md"
+    },
+    {
+      "file": "docs/research/regression-conditioning-2026-10-22/summary.md",
+      "target": "validation.json"
+    },
+    {
+      "file": "docs/research/regression-conditioning-2026-10-22/decisions.md",
+      "target": "summary.md"
+    },
+    {
+      "file": "docs/research/regression-conditioning-2026-10-22/decisions.md",
+      "target": "raw/R001-decisions.md"
+    },
+    {
+      "file": "docs/research/regression-conditioning-2026-10-22/evidence.md",
+      "target": "raw/collection.json"
+    },
+    {
+      "file": "docs/research/regression-conditioning-2026-10-22/evidence.md",
+      "target": "evidence/embedded-integrity.json"
+    },
+    {
+      "file": "docs/research/regression-conditioning-2026-10-22/evidence.md",
+      "target": "evidence/local-proof.test.ts"
+    },
+    {
+      "file": "docs/research/regression-conditioning-2026-10-22/run.md",
+      "target": "research-queue.md"
+    },
+    {
+      "file": "docs/research/regression-conditioning-2026-10-22/run.md",
+      "target": "pro-prompt.md"
+    },
+    {
+      "file": "docs/research/regression-conditioning-2026-10-22/run.md",
+      "target": "source-manifest.json"
+    },
+    {
+      "file": "docs/research/regression-conditioning-2026-10-22/run.md",
+      "target": "research-queue.md"
+    },
+    {
+      "file": "docs/intent/scientific-multivariate-analysis/intent-brief.md",
+      "target": "../../application-feature-inventory.md#scatter-matrix"
+    },
+    {
+      "file": "docs/intent/scientific-multivariate-analysis/intent-brief.md",
+      "target": "references/README.md"
+    },
+    {
+      "file": "docs/intent/scientific-multivariate-analysis/intent-brief.md",
+      "target": "../comparison-opportunities/README.md"
+    },
+    {
+      "file": "docs/intent/scientific-multivariate-analysis/intent-brief.md",
+      "target": "../../research/regression-conditioning-2026-10-22/summary.md"
+    },
+    {
+      "file": "docs/intent/scientific-multivariate-analysis/intent-brief.md",
+      "target": "../../research/regression-conditioning-2026-10-22/decisions.md"
+    },
+    {
+      "file": "docs/intent/scientific-multivariate-analysis/references/README.md",
+      "target": "pro-candidates.json"
+    },
+    {
+      "file": "docs/intent/scientific-multivariate-analysis/references/README.md",
+      "target": "../../comparison-opportunities/resources/pro-chart-review/exploreda-chart-interaction-review/review.md"
+    },
+    {
+      "file": "docs/intent/scientific-multivariate-analysis/references/README.md",
+      "target": "../../comparison-opportunities/resources/pro-gap-analysis/explorEDA-gap-analysis-2026-10-05/reports/00-executive-report.md"
+    },
+    {
+      "file": "docs/intent/scientific-multivariate-analysis/references/README.md",
+      "target": "../../comparison-opportunities/resources/pro-gap-analysis/explorEDA-gap-analysis-2026-10-05/reports/02-comprehensive-gap-register.md"
+    },
+    {
+      "file": "docs/intent/scientific-multivariate-analysis/references/README.md",
+      "target": "../../comparison-opportunities/resources/README.md"
+    },
+    {
+      "file": "docs/intent/scientific-multivariate-analysis/references/README.md",
+      "target": "../../../../packages/explorEDA/src/components/charts/ScatterPlot/regression.ts"
+    },
+    {
+      "file": "docs/intent/scientific-multivariate-analysis/references/README.md",
+      "target": "../../../../packages/explorEDA/src/components/charts/ScatterPlot/pairedSummary.ts"
+    },
+    {
+      "file": "docs/intent/scientific-multivariate-analysis/references/README.md",
+      "target": "../../../../packages/explorEDA/src/components/charts/ScatterPlot/hexPlan.ts"
+    },
+    {
+      "file": "docs/intent/scientific-multivariate-analysis/references/README.md",
+      "target": "../../../../packages/explorEDA/src/components/charts/ScatterPlot/contourPlan.ts"
+    },
+    {
+      "file": "docs/intent/scientific-multivariate-analysis/references/README.md",
+      "target": "../../comparison-opportunities/resources/product-feedback-2026-10-06.md"
+    },
+    {
+      "file": "docs/intent/scientific-multivariate-analysis/references/README.md",
+      "target": "../../comparison-opportunities/resources/product-feedback-2026-10-06.json"
+    },
+    {
+      "file": "docs/intent/scientific-multivariate-analysis/references/README.md",
+      "target": "../../../research/regression-conditioning-2026-10-22/summary.md"
+    },
+    {
+      "file": "docs/intent/scientific-multivariate-analysis/references/README.md",
+      "target": "../../../research/regression-conditioning-2026-10-22/decisions.md"
+    },
+    {
+      "file": "docs/intent/current-analysis-trust/intent-brief.md",
+      "target": "references/README.md"
+    },
+    {
+      "file": "docs/intent/current-analysis-trust/intent-brief.md",
+      "target": "../comparison-opportunities/README.md"
+    },
+    {
+      "file": "docs/intent/current-analysis-trust/intent-brief.md",
+      "target": "../../research/regression-conditioning-2026-10-22/summary.md"
+    },
+    {
+      "file": "docs/intent/current-analysis-trust/intent-brief.md",
+      "target": "../../research/regression-conditioning-2026-10-22/decisions.md"
+    },
+    {
+      "file": "docs/intent/current-analysis-trust/references/README.md",
+      "target": "pro-candidates.json"
+    },
+    {
+      "file": "docs/intent/current-analysis-trust/references/README.md",
+      "target": "../../comparison-opportunities/resources/pro-chart-review/exploreda-chart-interaction-review/review.md"
+    },
+    {
+      "file": "docs/intent/current-analysis-trust/references/README.md",
+      "target": "../../comparison-opportunities/resources/pro-gap-analysis/explorEDA-gap-analysis-2026-10-05/reports/00-executive-report.md"
+    },
+    {
+      "file": "docs/intent/current-analysis-trust/references/README.md",
+      "target": "../../comparison-opportunities/resources/pro-gap-analysis/explorEDA-gap-analysis-2026-10-05/reports/02-comprehensive-gap-register.md"
+    },
+    {
+      "file": "docs/intent/current-analysis-trust/references/README.md",
+      "target": "../../comparison-opportunities/resources/README.md"
+    },
+    {
+      "file": "docs/intent/current-analysis-trust/references/README.md",
+      "target": "../../../../packages/explorEDA/src/charts/registerAllCharts.ts"
+    },
+    {
+      "file": "docs/intent/current-analysis-trust/references/README.md",
+      "target": "../../../../packages/explorEDA/src/lib/aggregates.ts"
+    },
+    {
+      "file": "docs/intent/current-analysis-trust/references/README.md",
+      "target": "../../../../apps/demo/src/SavedViewsWorkspace.tsx"
+    },
+    {
+      "file": "docs/intent/current-analysis-trust/references/README.md",
+      "target": "../../../../apps/demo/src/savedViewsHistory.ts"
+    },
+    {
+      "file": "docs/intent/current-analysis-trust/references/README.md",
+      "target": "../../../../docs/analytical-chart-coverage.md"
+    },
+    {
+      "file": "docs/intent/current-analysis-trust/references/README.md",
+      "target": "../../comparison-opportunities/resources/product-feedback-2026-10-06.md"
+    },
+    {
+      "file": "docs/intent/current-analysis-trust/references/README.md",
+      "target": "../../comparison-opportunities/resources/product-feedback-2026-10-06.json"
+    },
+    {
+      "file": "docs/intent/current-analysis-trust/references/README.md",
+      "target": "../../../research/regression-conditioning-2026-10-22/summary.md"
+    },
+    {
+      "file": "docs/intent/current-analysis-trust/references/README.md",
+      "target": "../../../research/regression-conditioning-2026-10-22/decisions.md"
+    },
+    {
+      "file": "docs/intent/research-ideas-100/ideas/R001-regression-conditioning.md",
+      "target": "../../../research/regression-conditioning-2026-10-22/summary.md"
+    },
+    {
+      "file": "docs/intent/research-ideas-100/ideas/R001-regression-conditioning.md",
+      "target": "../../../research/regression-conditioning-2026-10-22/decisions.md"
+    }
+  ]
+}

@@ -47,3 +47,14 @@ Expand only when a fixture exposes disagreement, a restore changes the result, o
 First compare one category selection across bar, card, and exported rows. Continue only after their group membership, valid contributors, and values agree. Then add undo/restore and a second chart family.
 
 See the [reference packet](references/README.md) and [comparison collection](../comparison-opportunities/README.md) for context.
+
+## R001 numerical evidence, October 22, 2026
+
+[Regression research](../../research/regression-conditioning-2026-10-22/summary.md) separates prediction accuracy from equation representation.
+Three local probes reproduce linear evaluation/metric disagreement and a valid polynomial with an unreliable expanded equation.
+Retain standardized polynomial QR. Propose centered linear evaluation with matching residual measures, then a stable trace equation.
+Preserve units, origin, scale, coefficient order, and sufficient precision. Do not reject a valid curve for a representation failure.
+No application repair, precision control, or new solver is approved here.
+A visible milestone must include `/docs/scatter` and a focused runnable unit/offset example.
+Full browser, copy/export, refit/restore, and continuous-interval proof remain unrun.
+See the [local dispositions](../../research/regression-conditioning-2026-10-22/decisions.md) for the retained gates.

@@ -1,0 +1,73 @@
+{
+  "payloads": [
+    {
+      "name": "research/freeze_fixtures.py",
+      "bytes": 9536,
+      "sha256": "f369b491683baf180df9161d8f31d9b78bb11f54da1eb79b09b2c029c805e259"
+    },
+    {
+      "name": "research/run_check.mjs",
+      "bytes": 7934,
+      "sha256": "2dca5d90de894978ea066e163b5d490a9cc16479002d6adb8ff44f322730e7b1"
+    },
+    {
+      "name": "research/analyze.py",
+      "bytes": 7271,
+      "sha256": "5310d2406cce49d53f9ec9155621f9e7d9c8930e0ae4017c3fffdedf42711831"
+    },
+    {
+      "name": "research/frozen-fixtures.json",
+      "bytes": 70361,
+      "sha256": "977a61ee606ed9dc0c98fd00fbc406bffe31fe9db02e8e3bd817500a9e9a2c75"
+    },
+    {
+      "name": "research/freeze-receipt.json",
+      "bytes": 368,
+      "sha256": "06cc3bb77ee4f008087e168ba0ac57a94a4f729b7b220eb1e2b2c66d82715d39"
+    },
+    {
+      "name": "research/external/Pontius.web-transcribed.dat",
+      "bytes": 1378,
+      "sha256": "255dfc23825a7d1ec7e30577344989d0d6dc79cebabb0d7da27db21ff29fcddd"
+    },
+    {
+      "name": "research/observed/executed-results.json",
+      "bytes": 97839,
+      "sha256": "39382428325ba96a186e427171ba7ef3633328f523abf5d6ab5d67711305329c"
+    },
+    {
+      "name": "research/observed/analysis-results.json",
+      "bytes": 156626,
+      "sha256": "ed639bbd251755362c6f179d25c3a8777224d23c2da9e6ac64246f717639e085"
+    },
+    {
+      "name": "research/observed/independent-audit-results.json",
+      "bytes": 5813,
+      "sha256": "db7cdc43f96e495d05813aa6b87807f19c133b5c74c40e30530ff5caeaec51dc"
+    },
+    {
+      "name": "research/observed/packet-ledger.json",
+      "bytes": 13656,
+      "sha256": "b2d1ef163657fd5ca35a409e614990cfff0ece490bbfbb90c5f98b40f231c85e"
+    },
+    {
+      "name": "research/snapshot/packages/explorEDA/src/components/charts/ScatterPlot/regression.ts",
+      "bytes": 15060,
+      "sha256": "f29ed8bb097eb49f4be4906cbac257b040588f89a51fab41a5353b33b74fda96"
+    },
+    {
+      "name": "research/snapshot/packages/explorEDA/src/components/charts/ScatterPlot/FitTraceBody.tsx",
+      "bytes": 8722,
+      "sha256": "873c9069d754b4a93a27f1c56a96e30c5148b3027d151d7e698e282660795d27"
+    },
+    {
+      "name": "research/snapshot/packages/explorEDA/package.json",
+      "bytes": 6082,
+      "sha256": "17a71fd8852bcfbfb92cf76a9faf03766e934d0a5f0afcdcc9a5d0fd563b452a"
+    }
+  ],
+  "all_hashes": true,
+  "all_json_parse": true,
+  "source_copies_match_git": true,
+  "execution": "Downloaded scripts were not executed."
+}

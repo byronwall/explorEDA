@@ -95,6 +95,13 @@
       "location": "../comparison-opportunities/resources/product-feedback-2026-10-06.json",
       "anchor": "Annotation 3: end users determine product choices",
       "authority": "Explicit human feedback; tentative answers remain tentative"
+    },
+    {
+      "id": "r001-research-2026-10-22",
+      "type": "repository",
+      "location": "../../research/regression-conditioning-2026-10-22/summary.md",
+      "anchor": "Three local numerical probes; eight dispositions; no product change",
+      "authority": "evidence"
     }
   ],
   "intent": {
@@ -327,18 +334,20 @@
       "date": "2026-10-06",
       "action": "Reconciled annotated product feedback and priority.",
       "reason": "User provided clearer goals and indicated lower interest in unclear topics.",
-      "source_annotation_indices": [
-        3
-      ],
+      "source_annotation_indices": [3],
       "evidence": "Current brief changes where applicable; source inspection only. No implementation, pause, or cancellation."
     },
     {
       "date": "2026-10-09",
       "event": "status-checked",
       "status": "planned",
-      "evidence": [
-        "No implementation of this scope found at 91b627d"
-      ]
+      "evidence": ["No implementation of this scope found at 91b627d"]
+    },
+    {
+      "date": "2026-10-22",
+      "action": "Reconciled R001 prediction and equation evidence.",
+      "reason": "Preserve valid fits and isolate bounded evaluation/representation proposals.",
+      "evidence": "Three locally authored source probes pass. Pro matrix remains attributed; browser/copy/export/refit/restore proof unrun. Visible milestones pair docs/scatter and a runnable example."
     }
   ],
   "closure": null,

@@ -25,3 +25,13 @@ The likely cost is a compact numerical investigation and potentially clearer equ
 - Related intent: `docs/intent/scientific-multivariate-analysis/intent-brief.md`.
 - Related intent: `docs/intent/current-analysis-trust/intent-brief.md`.
 - External: <https://www.nist.gov/itl/sed/statistical-reference-datasets/strd-background-information/linear-regression>. Accessed 2026-10-20; comparison or numerical reference only.
+
+## Research follow-up, October 22, 2026
+
+R001 research is complete for review. See the [local synthesis](../../../research/regression-conditioning-2026-10-22/summary.md) and [eight dispositions](../../../research/regression-conditioning-2026-10-22/decisions.md).
+Three locally written source probes reproduce separate linear prediction/metric disagreement and polynomial equation representation loss.
+Retain standardized polynomial QR. Investigate centered linear evaluation and a stable trace equation with origin, scale, units, and adequate precision.
+Keep valid curves when their expanded representation is unsuitable. No product repair or new public API ships in this study.
+The full26-case matrix remains Pro evidence; browser, copy, export, restore, and continuous-range checks remain unrun.
+Any visible repair milestone includes `/docs/scatter` and a focused runnable unit/offset example.
+R051 is next eligible; reuse prior filter-ownership findings.

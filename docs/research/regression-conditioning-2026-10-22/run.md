@@ -1,6 +1,6 @@
 # R001 regression-conditioning Pro run
 
-Phase: submitted; Pro working. Follow-ups: 0/2. No review PR yet.
+Phase: collected, reviewed, integrated; full validation running. Follow-ups: 0/2. No review PR yet.
 Repository: https://github.com/byronwall/explorEDA.
 Baseline: `63dfa75851ef57bb3782e6d7c1ef104784cd4064`, refreshed origin/main.
 Checkout: /Users/byronwall/Projects/explorEDA.
@@ -90,3 +90,28 @@ Open/update scoped PR through gh --body-file. Verify saved body, files, branches
 Complete only after all outputs are collected, reviewed, integrated, validated, and in a verified open review PR.
 Update this run and pipeline memory. Stop only temporary collection monitor.
 No merge, deployment, paid provisioning, or unrelated changes.
+
+## Collection and local review, October 22
+
+Pro finished after115m14s. Collected all four reports, ZIP, and standalone manifest.
+Published archive/manifest hashes, safe paths, no links, CRC, exact inventory, UTF8 and five independent companions pass.
+One duplicate source download matches. Preview download controls required an Original file/JSON menu selection.
+Pro reported a rejected Library save; no Library upload was needed or attempted locally.
+No downloaded program ran. All substantive reports were read. Thirteen embedded payload hashes and JSON parse checks pass.
+Three embedded source copies and25 packet source receipts match baseline Git evidence.
+Frozen hash verifies; chronology and full26-case results remain attributed to Pro.
+
+Three locally authored source probes pass: exact-X linear prediction/metric mismatch; translated quadratic equation divergence; ordinary/availability controls.
+The linear direct residualSE is0.02357638V versus reported0. Polynomial predictions stay accurate despite7.096299V expanded error.
+Actual formatted quadratic text diverges by about3.30e13V. No repair was implemented.
+Probe moved into research evidence; no permanent package test remains.
+
+Refreshed main remains63dfa758. Primary NIST reference/methodology and official NumPy conversion guidance checked.
+Checked package entries; no direct numerical fit-type export found in the inspected entry files. Transitive API audit remains unrun.
+Eight local RC dispositions, summary, evidence, both related intents/maps/references, catalogue follow-up and queue integrated.
+Retain QR; investigate centered linear evaluation and stable trace representation; defer new API/warning policy and docs until repair.
+R051 is next, thenR086 andR031. Any visible repair pairs `/docs/scatter` and a focused runnable example.
+
+Existing regression17tests and local3probes pass. Full approved pnpm check is running.
+No browser/copy/export/filter/refit/restore/performance or full matrix replay is claimed.
+No changeset or product screenshot applies. Review PR and collector shutdown remain due.

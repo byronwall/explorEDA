@@ -1,0 +1,132 @@
+{
+  "baseline": "63dfa75851ef57bb3782e6d7c1ef104784cd4064",
+  "current_main": "63dfa75851ef57bb3782e6d7c1ef104784cd4064",
+  "packet_hash_pass": true,
+  "receipts": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "802990c1bacd76b4b867239da78fd011fb32653f891d4a88560e9ee629979a33",
+      "verified": true
+    },
+    {
+      "path": "docs/agent-guide.md",
+      "sha256": "0f7eb4898ca494692c5157b5164d368e4591dc1838513e8ec111a4ae03d7d83f",
+      "verified": true
+    },
+    {
+      "path": "CODING_STANDARDS.md",
+      "sha256": "b4358fe75d063d53aea1edbc58d0dc6fd8df6e6165aa5792d8d2aa35eefe7ac5",
+      "verified": true
+    },
+    {
+      "path": "README.md",
+      "sha256": "1f05b6c4992b07d1fc2b38d7bf9273db9e4a3a0d94513b7265e13b81cd7c5e28",
+      "verified": true
+    },
+    {
+      "path": "package.json",
+      "sha256": "f9b14daf225872f605d9435ddfb46fdede88b203c87a0e8507fe20743536f6e3",
+      "verified": true
+    },
+    {
+      "path": "packages/explorEDA/package.json",
+      "sha256": "17a71fd8852bcfbfb92cf76a9faf03766e934d0a5f0afcdcc9a5d0fd563b452a",
+      "verified": true
+    },
+    {
+      "path": "docs/intent/research-ideas-100/README.md",
+      "sha256": "63ec0d118382fcbe7551e5556f10cd2970e0120414766612fab1e54ca6477512",
+      "verified": true
+    },
+    {
+      "path": "docs/intent/research-ideas-100/catalogue.md",
+      "sha256": "b17ba05624aff799b2d998c0b779bfe73c7bcc0ef99ebd5bf93f011585b8f853",
+      "verified": true
+    },
+    {
+      "path": "docs/intent/research-ideas-100/ideas/R001-regression-conditioning.md",
+      "sha256": "caed13776289cae6d2530134f8a5735e2c56c303b2b934e125d6f69ccfb25a9b",
+      "verified": true
+    },
+    {
+      "path": "docs/intent/scientific-multivariate-analysis/intent-brief.md",
+      "sha256": "e71f21742a2143011a2e675b79190b9ae873892f3ca22e09b07a3e0d5a3ff841",
+      "verified": true
+    },
+    {
+      "path": "docs/intent/current-analysis-trust/intent-brief.md",
+      "sha256": "d6b2d620753c1ea532fffcb1cb43cc42711e03daa898e989a7f283f475186bd7",
+      "verified": true
+    },
+    {
+      "path": "docs/ui-defaults.md",
+      "sha256": "93ee25ebd3917a1e56d7db818ff4b6edcfe7e063f390ff9d5e9b83a0cc32f84a",
+      "verified": true
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/regression.ts",
+      "sha256": "f29ed8bb097eb49f4be4906cbac257b040588f89a51fab41a5353b33b74fda96",
+      "verified": true
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/regression.test.ts",
+      "sha256": "966a797b759602e759522b38cf56ca7ec1ce717322a3532d40659cb5ba1cf7ea",
+      "verified": true
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/fitPlan.ts",
+      "sha256": "172be90883434fd36451407c0a30f7241ef9fd27f2a2c2d1068529db59e63214",
+      "verified": true
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/FitLabels.tsx",
+      "sha256": "c0330e95267335076afa835e480dc413b4c65b6bfba823e1ca802adf757f9bb4",
+      "verified": true
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/FitTraceBody.tsx",
+      "sha256": "873c9069d754b4a93a27f1c56a96e30c5148b3027d151d7e698e282660795d27",
+      "verified": true
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/useScatterFits.ts",
+      "sha256": "7d9a67e6e23d63ff59b2c0f1b47cd5e25e2d6383891478a6d33bc56ff099b725",
+      "verified": true
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/definition.ts",
+      "sha256": "b19d1183b5d2a5e31c3fca27140f25a111e446d8158b2f1573b7f9f9a510172b",
+      "verified": true
+    },
+    {
+      "path": "apps/demo/src/docs/pages/scatter.mdx",
+      "sha256": "b0ea4d6b0d0866e18ad5955e3c18f2f0288d4098c12a0aee24947f6f3b06e646",
+      "verified": true
+    },
+    {
+      "path": "docs/intent/research-ideas-100/ideas.json [selected IDs]",
+      "sha256": "6115cc6688314c25fa9a251971859e8f4952ea67e50b0438faeb5b9e4c0e30c4",
+      "verified": true
+    },
+    {
+      "path": "docs/intent/research-ideas-100/review.json [selected IDs]",
+      "sha256": "0b8c6eaf4ed447c5349e0af4de9a46ff1e8d81630ae6e93085241be0acb36ed3",
+      "verified": true
+    },
+    {
+      "path": "apps/demo/src/demos/dashboardSettings.ts [lines 1410-1530]",
+      "sha256": "24668f06ac58afb60c3437cecb2c3f5beebac3f3235fdffe9cf942f5ed7160f1",
+      "verified": true
+    },
+    {
+      "path": "apps/demo/src/docs/live/examples.ts [lines 495-548]",
+      "sha256": "1fa6ad85aa4694eac583ad5ac4479ebfe2d2e414d79ea296ddc23131241e2eed",
+      "verified": true
+    },
+    {
+      "path": "apps/demo/src/demos/examples.ts [lines 540-562]",
+      "sha256": "6e4e479e9089aa968d140e157c283f5e2ac6ce1895919de18ea604c7911a4d28",
+      "verified": true
+    }
+  ]
+}

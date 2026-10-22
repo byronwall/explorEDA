@@ -1,0 +1,40 @@
+{
+  "status": "Full pnpm check running",
+  "baseline": "63dfa75851ef57bb3782e6d7c1ef104784cd4064",
+  "commands": [
+    {
+      "command": "pnpm --filter exploreda exec vitest run src/components/charts/ScatterPlot/regression.test.ts",
+      "result": "pass",
+      "files": 1,
+      "tests": 17
+    },
+    {
+      "command": "pnpm --filter exploreda exec vitest run src/components/charts/ScatterPlot/r001-research-probe.test.ts",
+      "result": "pass",
+      "files": 1,
+      "tests": 3
+    },
+    {
+      "command": "pnpm check:pr",
+      "result": "pass"
+    },
+    {
+      "command": "pnpm check",
+      "result": "running",
+      "log": "tmp/pro-regression-conditioning-2026-10-22/pnpm-check.log"
+    }
+  ],
+  "integrity": {
+    "archive": true,
+    "companions": 5,
+    "embedded_payloads": 13,
+    "source_receipts": 25
+  },
+  "unrun": [
+    "Full26-case harness replay",
+    "Product browser and real copied expression",
+    "Export/history/restore/filter workflows",
+    "Cross-engine and continuous-domain proof"
+  ],
+  "scope": "Research and intent only; no package source/build change or changeset."
+}

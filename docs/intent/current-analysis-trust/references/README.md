@@ -21,3 +21,8 @@ Current source was inspected at `a50df9985ed3ff54d0f6ca368c0b369829b8a927` on 20
 ## Product feedback
 
 [Annotated product direction](../../comparison-opportunities/resources/product-feedback-2026-10-06.md) supplies the current audience and priorities. The [full records](../../comparison-opportunities/resources/product-feedback-2026-10-06.json) preserve uncertainty.
+
+## R001 regression conditioning
+
+[Local research](../../../research/regression-conditioning-2026-10-22/summary.md) and [dispositions](../../../research/regression-conditioning-2026-10-22/decisions.md) retain the solver and isolate prediction/representation proposals.
+Three local numerical probes pass. Product and browser proofs remain unrun.
