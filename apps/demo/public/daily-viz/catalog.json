@@ -3919,9 +3919,9 @@
     "id": "nb-co2-missing-runs",
     "slug": "co2-missing-runs",
     "kind": "notebook",
-    "title": "Missing CO₂ weeks arrive in runs",
-    "question": "How long are the consecutive missing stretches in the weekly calendar?",
-    "summary": "The CO₂ record is missing 59 weeks, and they arrive in runs, the longest 18 weeks long.",
+    "title": "The CO₂ record is missing 59 weeks, and 35 of them are four outages",
+    "question": "When the Mauna Loa record goes blank, how long does it stay blank?",
+    "summary": "The weekly CO₂ record has 22 runs of missing weeks; most are a single week, but four outages of a month or more hold three in five of the 59 blanks, led by 18 weeks in early 1964. Readings on either side of every gap sit within 2.2 ppm of each other.",
     "family": "co2",
     "entry": "missing-runs.eda.md",
     "query": "gaps",
@@ -3929,13 +3929,64 @@
     "analysis": "Data quality",
     "findings": [
       {
-        "text": "The longest missing run spans {value} weekly slots.",
+        "text": "The longest run spans {value} weeks",
         "format": ".0f",
         "op": "max",
         "field": "length"
       },
       {
-        "text": "All missing runs together account for {value} weekly slots.",
+        "text": "Nineteen of the {value} runs fall before 1970",
+        "format": ".0f",
+        "op": "count",
+        "field": "length"
+      },
+      {
+        "text": "{value}% of runs are a single missing week",
+        "format": ".1f",
+        "op": "share",
+        "field": "length",
+        "condition": [
+          [
+            "length",
+            "eq",
+            1
+          ]
+        ]
+      },
+      {
+        "text": "and the median run is {value} week.",
+        "format": ".0f",
+        "op": "median",
+        "field": "length"
+      },
+      {
+        "text": "The four runs of four weeks or more hold {value}% of all missing weeks",
+        "format": ".1f",
+        "op": "top_share",
+        "field": "length",
+        "k": 4
+      },
+      {
+        "text": "the reading after averaged {value} ppm different from the reading before",
+        "format": ".2f",
+        "op": "mean",
+        "field": "change"
+      },
+      {
+        "text": "Even the four-month gap closed with CO₂ {value} ppm higher",
+        "format": ".1f",
+        "op": "max",
+        "field": "change",
+        "where": [
+          [
+            "length",
+            "eq",
+            18
+          ]
+        ]
+      },
+      {
+        "text": "{value} blanks in 2,284 weekly slots",
         "format": ".0f",
         "op": "sum",
         "field": "length"
