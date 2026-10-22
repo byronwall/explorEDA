@@ -657,9 +657,9 @@
     "id": "nb-danish-logs-and-indices",
     "slug": "danish-logs-and-indices",
     "kind": "notebook",
-    "title": "Logs, levels, and rebased money in a historical Danish series",
-    "question": "Does the relationship between real money and real income persist after taking quarterly log changes?",
-    "summary": "Danish real money and real income move together in levels (r = 0.87). Their quarterly changes agree far less (r = 0.49).",
+    "title": "Danish real money grew 47% in 13 years; real income, 16%",
+    "question": "Do real money and real income move together?",
+    "summary": "Indexed to 1974, Danish real money reached 147 by 1987 while real income reached 116, and the two levels correlate at 0.87. Quarter to quarter the correlation falls to 0.49, and the two moved in the same direction only 56% of the time.",
     "family": "danish",
     "entry": "logs-and-indices.eda.md",
     "query": "r",
@@ -667,18 +667,70 @@
     "analysis": "Trend",
     "findings": [
       {
-        "text": "Logged real money and logged real income had correlation {value}.",
+        "text": "by the third quarter of 1987 the real money index stood at {value}",
+        "format": ".2f",
+        "op": "max",
+        "field": "money_index",
+        "where": [
+          [
+            "period",
+            "eq",
+            "1987Q3"
+          ]
+        ]
+      },
+      {
+        "text": "while the real income index stood at {value}.",
+        "format": ".2f",
+        "op": "max",
+        "field": "income_index",
+        "where": [
+          [
+            "period",
+            "eq",
+            "1987Q3"
+          ]
+        ]
+      },
+      {
+        "text": "Real money peaked at {value} in the second quarter of 1986.",
+        "format": ".2f",
+        "op": "max",
+        "field": "money_index"
+      },
+      {
+        "text": "logged real money and logged real income had correlation {value}.",
         "format": ".3f",
         "op": "corr",
         "field": "lrm",
         "other": "lry"
       },
       {
-        "text": "Their valid quarterly log changes had correlation {value}.",
+        "text": "the quarterly log changes had correlation {value}.",
         "format": ".3f",
         "op": "corr",
         "field": "dmoney",
         "other": "dincome"
+      },
+      {
+        "text": "In {value}% of quarters, real money and real income moved in the same direction",
+        "format": ".1f",
+        "op": "share",
+        "field": "same_sign",
+        "where": [
+          [
+            "same_sign",
+            "ne",
+            ""
+          ]
+        ],
+        "condition": [
+          [
+            "same_sign",
+            "eq",
+            1
+          ]
+        ]
       }
     ],
     "published": "2026-07-26"
@@ -2281,9 +2333,9 @@
     "id": "nb-danish-rate-spread",
     "slug": "danish-rate-spread",
     "kind": "notebook",
-    "title": "Two interest-rate lines become one historical spread",
-    "question": "How wide was the gap between Danish bond and deposit rates?",
-    "summary": "The gap between Danish bond and deposit rates ranged from 2.5 to 10.5 percentage points between 1974 and 1987.",
+    "title": "Danish bonds paid 2.5 to 10.5 points more than deposits",
+    "question": "How much more did a Danish bond pay than a bank deposit?",
+    "summary": "From 1974 to 1987 Danish bonds out-yielded bank deposits in every quarter, by 6.6 points on average and 10.5 at the 1978 peak. After 1981 the typical gap narrowed from 7.5 points to 5.",
     "family": "danish",
     "entry": "rate-spread.eda.md",
     "query": "r",
@@ -2291,16 +2343,79 @@
     "analysis": "Comparison",
     "findings": [
       {
-        "text": "The smallest recorded bond-minus-deposit spread was {value} in source rate fractions.",
-        "format": ".4f",
-        "op": "min",
-        "field": "spread"
+        "text": "by {value} points on average",
+        "format": ".2f",
+        "op": "mean",
+        "field": "spread_pct"
       },
       {
-        "text": "The largest recorded spread was {value} in source rate fractions.",
-        "format": ".4f",
+        "text": "The bond rate peaked at {value}% in the second quarter of 1982.",
+        "format": ".2f",
         "op": "max",
-        "field": "spread"
+        "field": "ibo_pct"
+      },
+      {
+        "text": "The deposit rate peaked at {value}% in the second quarter of 1980.",
+        "format": ".2f",
+        "op": "max",
+        "field": "ide_pct"
+      },
+      {
+        "text": "the mean bond rate was {value}%",
+        "format": ".2f",
+        "op": "mean",
+        "field": "ibo_pct"
+      },
+      {
+        "text": "the mean deposit rate was {value}%.",
+        "format": ".2f",
+        "op": "mean",
+        "field": "ide_pct"
+      },
+      {
+        "text": "The spread peaked at {value} points in the last quarter of 1978",
+        "format": ".2f",
+        "op": "max",
+        "field": "spread_pct"
+      },
+      {
+        "text": "fell to {value} points in the first quarter of 1986.",
+        "format": ".2f",
+        "op": "min",
+        "field": "spread_pct"
+      },
+      {
+        "text": "The median spread from 1974 to 1980 was {value} points",
+        "format": ".2f",
+        "op": "median",
+        "field": "spread_pct",
+        "where": [
+          [
+            "era",
+            "eq",
+            "1974–1980"
+          ]
+        ]
+      },
+      {
+        "text": "from 1981 to 1987 it was {value} points.",
+        "format": ".2f",
+        "op": "median",
+        "field": "spread_pct",
+        "where": [
+          [
+            "era",
+            "eq",
+            "1981–1987"
+          ]
+        ]
+      },
+      {
+        "text": "The deposit rate rose and fell with the bond rate (correlation {value})",
+        "format": ".3f",
+        "op": "corr",
+        "field": "ibo_pct",
+        "other": "ide_pct"
       }
     ],
     "published": "2026-09-07"
