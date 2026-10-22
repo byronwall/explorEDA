@@ -242,7 +242,7 @@ function schedule({ reseed, end }) {
  * composition's artboard, or a dashboard's grid. */
 const LEAD = {
   notebook: ".eda-notebook .eda-panel",
-  composition: ".react-grid-item .eda-chart-content",
+  composition: ".react-grid-item .eda-composition-artboard",
   dashboard: ".react-grid-layout",
 };
 
@@ -257,7 +257,7 @@ async function thumbs(slugs) {
   const folder = path.join(corpus, "thumbs");
   mkdirSync(folder, { recursive: true });
   const browser = await chromium.launch();
-  // Up to 960 CSS pixels wide at two-thirds scale: 640-pixel images.
+  // Two-thirds scale keeps a full-width dashboard near 800 pixels.
   const context = await browser.newContext({
     viewport: { width: 1280, height: 1200 },
     deviceScaleFactor: 2 / 3,
@@ -272,7 +272,8 @@ async function thumbs(slugs) {
     await page.waitForTimeout(800);
     await lead.scrollIntoViewIfNeeded();
     const box = await lead.boundingBox();
-    const width = Math.min(960, box.width);
+    // A composition's whole artboard; otherwise the whole width, at most as
+    // tall as the cards' 16:10 frame. Cards fit the image inside that frame.
     await page.screenshot({
       path: path.join(folder, `${entry.slug}.jpg`),
       type: "jpeg",
@@ -280,9 +281,11 @@ async function thumbs(slugs) {
       clip: {
         x: box.x,
         y: box.y,
-        width,
-        // Never past the element: cards crop the image to fit.
-        height: Math.min(box.height, width * 0.75),
+        width: box.width,
+        height:
+          entry.kind === "composition"
+            ? box.height
+            : Math.min(box.height, box.width * 0.625),
       },
     });
     console.log(`thumbs/${entry.slug}.jpg`);

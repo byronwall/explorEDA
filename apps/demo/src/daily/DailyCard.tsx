@@ -32,7 +32,10 @@ export function highlight(text: string, query: string): ReactNode {
   return parts;
 }
 
-/** A picture of the piece's lead graphic, or a quiet placeholder of the same size. */
+/**
+ * A picture of the piece's lead graphic, whole and centered in a 16:10 frame,
+ * or a quiet placeholder of the same size.
+ */
 export function DailyThumb({
   entry,
   className = "",
@@ -50,7 +53,7 @@ export function DailyThumb({
           alt=""
           loading="lazy"
           decoding="async"
-          className="size-full object-cover object-left-top"
+          className="size-full object-contain"
         />
       )}
     </div>
