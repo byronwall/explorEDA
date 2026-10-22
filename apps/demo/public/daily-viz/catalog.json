@@ -747,9 +747,9 @@
     "id": "nb-nile-tail-sensitivity",
     "slug": "nile-tail-sensitivity",
     "kind": "notebook",
-    "title": "How much do extreme flow years move the Nile average?",
-    "question": "How much do the wettest and driest years move the Nile average?",
-    "summary": "Trim the wettest and driest years and the Nile's century average barely moves, from 919 to 915 (10⁸ m³).",
+    "title": "Trim the Nile's extreme years and the average moves by 4, because the tails cancel",
+    "question": "How much do the wettest and driest years move the Nile's average?",
+    "summary": "The Nile's century average at Aswan is 919 (10⁸ m³); without its wettest and driest tenths it is 915. Each tail alone shifts the figure by about 30, in opposite directions, and the wet tail is all before 1898 while the dry tail is all after.",
     "family": "nile",
     "entry": "tail-sensitivity.eda.md",
     "query": "r",
@@ -757,13 +757,91 @@
     "analysis": "Distribution",
     "findings": [
       {
-        "text": "The mean across every year was {value} ×10^8 m³.",
+        "text": "the driest tenth of years sit below {value}",
+        "format": ".1f",
+        "op": "quantile",
+        "field": "volume",
+        "q": 0.1
+      },
+      {
+        "text": "and the wettest tenth above {value}.",
+        "format": ".1f",
+        "op": "quantile",
+        "field": "volume",
+        "q": 0.9
+      },
+      {
+        "text": "The wettest year on record was 1879, at {value} (10⁸ m³)",
+        "format": ".0f",
+        "op": "max",
+        "field": "volume"
+      },
+      {
+        "text": "and the driest was 1913, at {value}.",
+        "format": ".0f",
+        "op": "min",
+        "field": "volume"
+      },
+      {
+        "text": "The 9 wettest years averaged {value}",
+        "format": ".2f",
+        "op": "mean",
+        "field": "volume",
+        "where": [
+          [
+            "tail",
+            "eq",
+            "Upper tail"
+          ]
+        ]
+      },
+      {
+        "text": "and the 10 driest {value}",
+        "format": ".2f",
+        "op": "mean",
+        "field": "volume",
+        "where": [
+          [
+            "tail",
+            "eq",
+            "Lower tail"
+          ]
+        ]
+      },
+      {
+        "text": "below the century mean of {value}.",
         "format": ".2f",
         "op": "mean",
         "field": "volume"
       },
       {
-        "text": "The mean between the declared tail cutoffs was {value} ×10^8 m³.",
+        "text": "Drop only the wettest years and the average falls to {value}",
+        "format": ".2f",
+        "op": "mean",
+        "field": "volume",
+        "where": [
+          [
+            "tail",
+            "ne",
+            "Upper tail"
+          ]
+        ]
+      },
+      {
+        "text": "drop only the driest and it rises to {value}.",
+        "format": ".2f",
+        "op": "mean",
+        "field": "volume",
+        "where": [
+          [
+            "tail",
+            "ne",
+            "Lower tail"
+          ]
+        ]
+      },
+      {
+        "text": "Drop both and it lands at {value}",
         "format": ".2f",
         "op": "mean",
         "field": "volume",
@@ -774,6 +852,48 @@
             "Middle 80% cutoffs"
           ]
         ]
+      },
+      {
+        "text": "{value} of the 9 wettest years come before 1898",
+        "format": ".0f",
+        "op": "count",
+        "field": "volume",
+        "where": [
+          [
+            "tail",
+            "eq",
+            "Upper tail"
+          ],
+          [
+            "year",
+            "lt",
+            1898
+          ]
+        ]
+      },
+      {
+        "text": "and {value} of the 10 driest come after.",
+        "format": ".0f",
+        "op": "count",
+        "field": "volume",
+        "where": [
+          [
+            "tail",
+            "eq",
+            "Lower tail"
+          ],
+          [
+            "year",
+            "ge",
+            1898
+          ]
+        ]
+      },
+      {
+        "text": "The median year carried {value} against a mean of",
+        "format": ".1f",
+        "op": "median",
+        "field": "volume"
       }
     ],
     "published": "2026-07-31"
@@ -1823,9 +1943,9 @@
     "id": "nb-nile-before-and-after",
     "slug": "nile-before-and-after",
     "kind": "notebook",
-    "title": "The Nile carried 22% less water after 1898",
-    "question": "How different are Nile flows before and after 1898?",
-    "summary": "The Nile at Aswan averaged 1,098 (10⁸ m³) a year before 1898 and 853 after, a drop of 22%.",
+    "title": "After 1898 the Nile carried 22% less water, and 99 years in 100 fell below the old median",
+    "question": "How different was the Nile before and after 1898?",
+    "summary": "The Nile at Aswan averaged 1,098 (10⁸ m³) a year before 1898 and 853 after, a drop of 22% that arrived as a step, not a slide. From 1898 on, 98.6% of years fell below the earlier era's median.",
     "family": "nile",
     "entry": "before-and-after.eda.md",
     "query": "r",
@@ -1833,7 +1953,20 @@
     "analysis": "Comparison",
     "findings": [
       {
-        "text": "Mean annual volume before 1898 was {value} ×10^8 m³.",
+        "text": "The {value} years before 1898 averaged",
+        "format": ".0f",
+        "op": "count",
+        "field": "volume",
+        "where": [
+          [
+            "year",
+            "lt",
+            1898
+          ]
+        ]
+      },
+      {
+        "text": "The 27 years before 1898 averaged {value} (10⁸ m³) a year.",
         "format": ".2f",
         "op": "mean",
         "field": "volume",
@@ -1846,7 +1979,20 @@
         ]
       },
       {
-        "text": "Mean annual volume from 1898 onward was {value} ×10^8 m³.",
+        "text": "The {value} years from 1898 on averaged",
+        "format": ".0f",
+        "op": "count",
+        "field": "volume",
+        "where": [
+          [
+            "year",
+            "ge",
+            1898
+          ]
+        ]
+      },
+      {
+        "text": "The 73 years from 1898 on averaged {value}, a drop of 244",
         "format": ".2f",
         "op": "mean",
         "field": "volume",
@@ -1855,6 +2001,138 @@
             "year",
             "ge",
             1898
+          ]
+        ]
+      },
+      {
+        "text": "The median year before 1898 carried {value}; from 1898 on",
+        "format": ".0f",
+        "op": "median",
+        "field": "volume",
+        "where": [
+          [
+            "year",
+            "lt",
+            1898
+          ]
+        ]
+      },
+      {
+        "text": "from 1898 on, {value}% of years fell below that figure.",
+        "format": ".1f",
+        "op": "share",
+        "field": "volume",
+        "where": [
+          [
+            "year",
+            "ge",
+            1898
+          ]
+        ],
+        "condition": [
+          [
+            "volume",
+            "lt",
+            1140
+          ]
+        ]
+      },
+      {
+        "text": "Run it the other way and {value}% of pre-1898 years sat above the later era's median",
+        "format": ".1f",
+        "op": "share",
+        "field": "volume",
+        "where": [
+          [
+            "year",
+            "lt",
+            1898
+          ]
+        ],
+        "condition": [
+          [
+            "volume",
+            "gt",
+            845
+          ]
+        ]
+      },
+      {
+        "text": "sat above the later era's median of {value}.",
+        "format": ".0f",
+        "op": "median",
+        "field": "volume",
+        "where": [
+          [
+            "year",
+            "ge",
+            1898
+          ]
+        ]
+      },
+      {
+        "text": "The driest year before 1898 carried {value}, and",
+        "format": ".0f",
+        "op": "min",
+        "field": "volume",
+        "where": [
+          [
+            "year",
+            "lt",
+            1898
+          ]
+        ]
+      },
+      {
+        "text": "and {value}% of later years came in below it.",
+        "format": ".1f",
+        "op": "share",
+        "field": "volume",
+        "where": [
+          [
+            "year",
+            "ge",
+            1898
+          ]
+        ],
+        "condition": [
+          [
+            "volume",
+            "lt",
+            799
+          ]
+        ]
+      },
+      {
+        "text": "The wettest year from 1898 on carried {value}, and",
+        "format": ".0f",
+        "op": "max",
+        "field": "volume",
+        "where": [
+          [
+            "year",
+            "ge",
+            1898
+          ]
+        ]
+      },
+      {
+        "text": "and {value}% of earlier years came in above it.",
+        "format": ".1f",
+        "op": "share",
+        "field": "volume",
+        "where": [
+          [
+            "year",
+            "lt",
+            1898
+          ]
+        ],
+        "condition": [
+          [
+            "volume",
+            "gt",
+            1170
           ]
         ]
       }
