@@ -219,8 +219,8 @@ export function planSeriesBars({
       ? "Choose count or sum to stack series. Compare averages with grouped bars."
       : percent && rows.some(({ row }) => (row.value ?? 0) < 0)
         ? "100% bars need nonnegative series totals. Choose stacked bars to compare signed totals."
-        : categories.size > 30 || legend.length > 20
-          ? "Filter the data in another view to show at most 30 categories and 20 series."
+        : legend.length > 20
+          ? "Filter the series field in another view to show at most 20 series."
           : (stacked ? x.bandwidth() : nested.bandwidth()) < 2 && rows.length
             ? "Widen this chart or filter another view to make each bar visible."
             : undefined;
