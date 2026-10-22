@@ -21,6 +21,10 @@ Current source was inspected at `a50df9985ed3ff54d0f6ca368c0b369829b8a927` on 20
 
 [Annotated product direction](../../comparison-opportunities/resources/product-feedback-2026-10-06.md) supplies the current audience and priorities. The [full records](../../comparison-opportunities/resources/product-feedback-2026-10-06.json) preserve uncertainty.
 
+## October 19 grouped-rates research
+
+[Reviewed research](../../../research/grouped-rates-2026-10-19/README.md) retains the deferred seed. [Seven dispositions](../../../research/grouped-rates-2026-10-19/decisions.md) record recipes, preparation and proof gates. Source and primary references were independently checked on October 20. Author and browser proof remains proposed.
+
 ## R043 follow-up
 
 [Research review](../../../research/entity-grain-2026-10-21/README.md), [decisions](../../../research/entity-grain-2026-10-21/decisions.md),
