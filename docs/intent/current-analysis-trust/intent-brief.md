@@ -96,3 +96,14 @@ Review bounded mapper, restore, and key-resolution repairs before adding a plain
 The full mutation matrix, browser, host, export, and pending-worker checks remain proposed.
 Any visible repair must include the developers docs section and one runnable replacement example in the same milestone.
 Keep the broader replay architecture deferred. See [decisions and proof gates](../../research/selection-identity-2026-10-22/decisions.md).
+
+## R001 numerical evidence, October 22, 2026
+
+[Regression research](../../research/regression-conditioning-2026-10-22/summary.md) separates prediction accuracy from equation representation.
+Three local probes reproduce linear evaluation/metric disagreement and a valid polynomial with an unreliable expanded equation.
+Retain standardized polynomial QR. Propose centered linear evaluation with matching residual measures, then a stable trace equation.
+Preserve units, origin, scale, coefficient order, and sufficient precision. Do not reject a valid curve for a representation failure.
+No application repair, precision control, or new solver is approved here.
+A visible milestone must include `/docs/scatter` and a focused runnable unit/offset example.
+Full browser, copy/export, refit/restore, and continuous-interval proof remain unrun.
+See the [local dispositions](../../research/regression-conditioning-2026-10-22/decisions.md) for the retained gates.

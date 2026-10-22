@@ -47,3 +47,8 @@ The source/reference and value-identity contracts remain distinct. No product im
 
 [Reviewed research](../../../research/selection-identity-2026-10-22/README.md) includes unchanged Pro originals and four local probes.
 Read its evidence limits and dispositions before proposing a replacement-identity repair.
+
+## R001 regression conditioning
+
+[Local research](../../../research/regression-conditioning-2026-10-22/summary.md) and [dispositions](../../../research/regression-conditioning-2026-10-22/decisions.md) retain the solver and isolate prediction/representation proposals.
+Three local numerical probes pass. Product and browser proofs remain unrun.

@@ -130,6 +130,13 @@
       "location": "../../research/selection-identity-2026-10-22/README.md",
       "anchor": "SI01\u2013SI08; four locally authored probes; source and artifact review",
       "authority": "Research and bounded runtime evidence; no implementation approval"
+    },
+    {
+      "id": "r001-research-2026-10-22",
+      "type": "repository",
+      "location": "../../research/regression-conditioning-2026-10-22/summary.md",
+      "anchor": "Three local numerical probes; eight dispositions; no product change",
+      "authority": "evidence"
     }
   ],
   "intent": {
@@ -399,6 +406,12 @@
       "action": "Reconciled R077 selection identity research.",
       "reason": "Bounded replacement and key-resolution evidence before API expansion.",
       "evidence": "Four local probes; full browser/host/export/worker proof remains proposed."
+    },
+    {
+      "date": "2026-10-22",
+      "action": "Reconciled R001 prediction and equation evidence.",
+      "reason": "Preserve valid fits and isolate bounded evaluation/representation proposals.",
+      "evidence": "Three locally authored source probes pass. Pro matrix remains attributed; browser/copy/export/refit/restore proof unrun. Visible milestones pair docs/scatter and a runnable example."
     }
   ],
   "closure": null,

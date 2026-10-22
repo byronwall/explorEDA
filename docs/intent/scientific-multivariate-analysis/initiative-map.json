@@ -109,6 +109,13 @@
       "location": "../../research/quantity-semantics-2026-10-20/README.md",
       "anchor": "QS01\u2013QS05 reviewed; current display/formula controls first",
       "authority": "Reviewed research, not product implementation approval"
+    },
+    {
+      "id": "r001-research-2026-10-22",
+      "type": "repository",
+      "location": "../../research/regression-conditioning-2026-10-22/summary.md",
+      "anchor": "Three local numerical probes; eight dispositions; no product change",
+      "authority": "evidence"
     }
   ],
   "intent": {
@@ -373,6 +380,12 @@
       "action": "Integrated quantity research and retained feature deferral.",
       "reason": "Existing display units and explicit formulas need a named-task comparator before new machinery.",
       "evidence": "Four original reports reviewed; source and arithmetic checks recorded. Author/browser/quantity proof remains proposed."
+    },
+    {
+      "date": "2026-10-22",
+      "action": "Reconciled R001 prediction and equation evidence.",
+      "reason": "Preserve valid fits and isolate bounded evaluation/representation proposals.",
+      "evidence": "Three locally authored source probes pass. Pro matrix remains attributed; browser/copy/export/refit/restore proof unrun. Visible milestones pair docs/scatter and a runnable example."
     }
   ],
   "closure": null,

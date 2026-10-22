@@ -28,3 +28,8 @@ Current source was inspected at `a50df9985ed3ff54d0f6ca368c0b369829b8a927` on 20
 ## Quantity boundary review, 2026-10-20
 
 [Review and dispositions](../../../research/quantity-semantics-2026-10-20/README.md) preserve existing units, descriptions and calculations. New metadata and conversion stay deferred. [Originals](https://chatgpt.com/c/6ad763b3-ecac-83ea-a53c-9099c304ebcd) and [independent evidence](../../../research/quantity-semantics-2026-10-20/evidence.md) separate research from proposed product proof. The local trust journey remains first.
+
+## R001 regression conditioning
+
+[Local research](../../../research/regression-conditioning-2026-10-22/summary.md) and [dispositions](../../../research/regression-conditioning-2026-10-22/decisions.md) retain the solver and isolate prediction/representation proposals.
+Three local numerical probes pass. Product and browser proofs remain unrun.
