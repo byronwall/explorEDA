@@ -151,6 +151,7 @@ Lists of records are child lines, named by their main field:
 
 Annotations are child lines of the chart they mark (dates read as ISO):
   callout "Day 31" on=Day:31 offset=-24,-28   or at=x,y, pick=max, category=West
+  callout "Peak" category=Tue,9               a heatmap cell; a calendar day: on=date:2016-12-16
   rule y=4 "Target"   rule x=mean "Mean"      also median, min, max
   band x=2024-06-01..2024-08-31 "Sale" display=bracket
   region x=275..345 y=4.1..5.15 shape=ellipse "Fast days"

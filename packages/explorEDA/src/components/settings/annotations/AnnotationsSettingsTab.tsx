@@ -183,38 +183,45 @@ export function AnnotationsSettingsTab({
           tooltip={
             context.records
               ? "Add a label attached to the record with the largest value. Change the record or text below."
-              : context.categoryField
-                ? "Add a label on the category with the most rows. Change the category or text below."
-                : "Add a label at a fixed point. Change its position and text below."
+              : context.cellFields
+                ? "Add a label on one cell. Change the cell or text below."
+                : context.categoryField
+                  ? "Add a label on the category with the most rows. Change the category or text below."
+                  : "Add a label at a fixed point. Change its position and text below."
           }
           onClick={() => add(createCallout(source))}
         >
           Callout
         </Button>
-        <Button
-          size="sm"
-          variant="outline"
-          tooltip={
-            context.xDate
-              ? "Add a vertical line at a date, such as a release. Change its date below."
-              : "Add a fixed target line at a typical value. Change its axis and value below."
-          }
-          onClick={() => add(createReferenceLine(source))}
-        >
-          Line
-        </Button>
-        <Button
-          size="sm"
-          variant="outline"
-          tooltip={
-            context.xDate
-              ? "Add a shaded period between two dates. Change its dates below."
-              : "Add a shaded range between two values, such as a tolerance. Change it below."
-          }
-          onClick={() => add(createBand(source))}
-        >
-          Band
-        </Button>
+        {/* A grid of cells has no value axis for a line or band. */}
+        {!context.cellFields && (
+          <>
+            <Button
+              size="sm"
+              variant="outline"
+              tooltip={
+                context.xDate
+                  ? "Add a vertical line at a date, such as a release. Change its date below."
+                  : "Add a fixed target line at a typical value. Change its axis and value below."
+              }
+              onClick={() => add(createReferenceLine(source))}
+            >
+              Line
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              tooltip={
+                context.xDate
+                  ? "Add a shaded period between two dates. Change its dates below."
+                  : "Add a shaded range between two values, such as a tolerance. Change it below."
+              }
+              onClick={() => add(createBand(source))}
+            >
+              Band
+            </Button>
+          </>
+        )}
         {context.plane && (
           <Button
             size="sm"

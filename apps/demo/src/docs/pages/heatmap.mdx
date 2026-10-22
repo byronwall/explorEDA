@@ -33,3 +33,7 @@ By default, color runs across the shown cells' range, diverging around 0 when th
 - Cells with no rows and cells with no valid measure stay apart from a measured zero, in the legend and in the trace.
 
 See [state election margins on a fixed scale from −40 to +40](/examples/elections-heatmap).
+
+## Annotations
+
+A callout attaches to one cell, at its center, by the cell's row and column values: `callout "Peak" category=Tue,9`, or `callout "Peak" on=day:Tue,hour:9` with the field names. Quote a value that holds a comma. A cell holds many rows, so it never stands for one record. Both axes name categories, so a heatmap takes no lines, bands, or regions.

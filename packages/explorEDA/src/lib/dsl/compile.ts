@@ -2161,7 +2161,13 @@ export function compileDocument(
       const problems: AnnotationProblem[] = [];
       for (const child of declaration.children) {
         if (ANNOTATION_KEYWORDS[child.keyword]) {
-          const annotation = lowerAnnotation(child, counts, chart.id, problems);
+          const annotation = lowerAnnotation(
+            child,
+            counts,
+            chart.id,
+            problems,
+            (name) => aliases.get(name) ?? name
+          );
           if (annotation) {
             annotations.push(annotation);
           }
