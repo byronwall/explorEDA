@@ -94,14 +94,19 @@ function chartHeight(chart: ChartSettings, categories?: number) {
   switch (chart.type) {
     case "metric-card":
       return 150;
-    // A few bars need a short chart, not the full height.
+    // A few bars need a short chart; two dozen need a tall one.
     case "row":
       return categories === undefined
         ? 380
         : Math.min(
-            380,
+            640,
             150 + categories * Math.max(chart.minRowHeight, chart.maxRowHeight)
           );
+    // A heatmap with many rows, such as 24 clock hours, needs room for each.
+    case "heatmap":
+      return categories === undefined
+        ? 380
+        : Math.max(380, Math.min(640, 120 + categories * 20));
     case "data-table":
     case "pivot":
     case "summary":
@@ -798,7 +803,12 @@ function NotebookBlockView({
                   chart,
                   chart.type === "row"
                     ? new Set(rows.map((row) => row[chart.field])).size
-                    : undefined
+                    : chart.type === "heatmap"
+                      ? Math.min(
+                          new Set(rows.map((row) => row[chart.field])).size,
+                          chart.maxCategories ?? Infinity
+                        )
+                      : undefined
                 )}
               />
             </div>
