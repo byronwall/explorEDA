@@ -41,6 +41,7 @@ Category-count bars use rows that remain after other filters and the current fac
 
 Set the grouping field, choose category counts or numeric bins, and adjust the bin count. For a grouped summary, choose a group field, an operation, and—when needed—a numeric measure.
 
+- **Order** keeps category bars in data order, sorts them A to Z (`categoryOrder=label`), or puts the largest first (`categoryOrder=value`). Category counts, grouped summaries, and series bars all follow it. The value order comes from all source rows, so bars keep their places as other charts filter; series bars sort by their category total. Numeric bins keep their numeric order.
 - Missing or non-finite measurements do not enter numeric bins.
 - Alt-click a bar or use the chart trace action to inspect how it was computed.
 

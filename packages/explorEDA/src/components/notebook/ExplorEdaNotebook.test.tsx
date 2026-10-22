@@ -84,6 +84,39 @@ describe("ExplorEdaNotebook", () => {
     ).toBeNull();
   });
 
+  it("draws a wrap facet tall enough for every panel, up to a cap", () => {
+    const groups = (count: number) =>
+      Array.from({ length: count * 2 }, (_, index) => ({
+        group: `G${index % count}`,
+        x: index,
+        y: index * 2,
+      }));
+    const facet = (count: number) => {
+      const { container, unmount } = render(
+        <ExplorEdaNotebook
+          text={[
+            "```eda",
+            "line @facet x=x y=y facet.enabled=true facet.type=wrap facet.rowVariable=group facet.columnCount=4",
+            "```",
+          ].join("\n")}
+          data={groups(count)}
+        />
+      );
+      const panel = container.querySelector<HTMLElement>(
+        '[data-chart-id="facet"] [role="region"]'
+      );
+      const height = parseFloat(panel!.style.height);
+      unmount();
+      return height;
+    };
+    // 720 pixels fit two 260-pixel columns: six groups make three rows.
+    expect(facet(6)).toBe(100 + 3 * 248 - 8 - 12);
+    // A facet that fits one row keeps the usual chart height.
+    expect(facet(2)).toBe(380 - 12);
+    // Past the cap the facet pages instead of growing.
+    expect(facet(20)).toBe(1100 - 12);
+  });
+
   it("names a broken block's problem at its file line", () => {
     const broken = TEXT.replace('title="Rows"', 'title="Rows');
     const { container } = render(
@@ -215,6 +248,36 @@ describe("ExplorEdaNotebook sections layout", () => {
     expect(container.querySelector(".eda-notebook-intro")).toHaveTextContent(
       "Lede before any section."
     );
+  });
+
+  it("gives small multiples the full width, with the section's text above", () => {
+    Object.defineProperty(HTMLElement.prototype, "clientWidth", {
+      configurable: true,
+      get() {
+        return 1200;
+      },
+    });
+    const text = [
+      "## Each month on its own",
+      "",
+      "One panel per value.",
+      "",
+      "```eda",
+      "line @months x=time y=actual facet.enabled=true facet.type=wrap facet.rowVariable=time facet.columnCount=4",
+      "```",
+    ].join("\n");
+    const { container } = render(
+      <ExplorEdaNotebook text={text} data={rows} layout="sections" />
+    );
+    const section = container.querySelector<HTMLElement>(
+      "#each-month-on-its-own"
+    )!;
+    expect(section).toHaveAttribute("data-wide");
+    const panel = section.querySelector<HTMLElement>(
+      "[data-chart-id='months'] [role='region']"
+    )!;
+    // The panel spans the notebook, not the column beside the text.
+    expect(parseFloat(panel.style.width)).toBeGreaterThan(1200 - 300 - 40);
   });
 
   it("keeps the reading column below 960 pixels", () => {

@@ -33,14 +33,12 @@ scatter @nb-grunfeld-within-firm-chart-2 x=value_change y=invest_change regressi
 
 ## IBM tracked its value; Diamond Match ignored it
 
-Two firms, each on its own axes. Inside IBM, market value and investment had correlation 0.975: twenty years on a line. Inside Diamond Match, the correlation was -0.096, a cloud with no lean at all. The pooled 0.86 is an average over eleven firms that range from lockstep to no relationship.
+One panel per firm, on log axes so that a $70 million firm and a $4 billion one each show their own twenty years. Inside IBM, market value and investment had correlation 0.975: twenty years on a line. Inside Diamond Match, the correlation was -0.096, a cloud with no lean at all. The pooled 0.86 is an average over eleven firms that range from lockstep to no relationship.
 
 ```eda
-scatter @nb-grunfeld-within-firm-chart-3 x=value y=invest regression=linear where.firm=IBM title="IBM: investment against market value, 1935 to 1954" x.title="Market value ($M, 1947)" y.title="Investment ($M, 1947)"
-```
-
-```eda
-scatter @nb-grunfeld-within-firm-chart-4 x=value y=invest regression=linear where.firm="Diamond Match" title="Diamond Match: investment against market value, 1935 to 1954" x.title="Market value ($M, 1947)" y.title="Investment ($M, 1947)"
+scatter @nb-grunfeld-within-firm-chart-3 x=value y=invest regression=linear x.scale=log y.scale=log title="Investment against market value, one panel per firm, 1935 to 1954" x.title="Market value ($M, 1947)" y.title="Investment ($M, 1947)" {
+  facet.enabled=true facet.type=wrap facet.rowVariable=r.firm facet.columnCount=4
+}
 ```
 
 ## Takeaway

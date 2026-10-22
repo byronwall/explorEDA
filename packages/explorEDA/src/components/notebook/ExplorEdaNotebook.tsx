@@ -32,6 +32,11 @@ import type { SavedDataStructure } from "@/types/SavedDataStructure";
 import { CalculationEditorProvider } from "../calculations/CalculationEditor";
 import { GlobalAlertDialog } from "../GlobalAlertDialog";
 import { ChartDraftProvider } from "../plot/ChartDraftContext";
+import {
+  FACET_GAP,
+  FACET_MIN_HEIGHT,
+  wrapFacetColumns,
+} from "../charts/FacetRelated/facetLayout";
 import { GridChartPanel } from "../GridChartPanel";
 import { Button } from "../ui/button";
 import { Toaster } from "../ui/sonner";
@@ -88,6 +93,44 @@ const NOTES_WIDTH = 300;
 const NOTES_GAP = 40;
 /** The reading column's widest charts. */
 const COLUMN_MAX_WIDTH = 880;
+
+/** A notebook facet panel's height; the layout's minimum plus some air. */
+const FACET_PANEL_HEIGHT = FACET_MIN_HEIGHT + 10;
+/** The chart panel's frame, header, and the facet bar above the panels. */
+const FACET_CHROME = 100;
+/** Past this, a facet pages instead of growing. */
+const FACET_MAX_HEIGHT = 1100;
+
+/**
+ * How tall a wrap facet draws: one row of panels for each row the facet
+ * layout makes at this width, so none page until the cap. Undefined for a
+ * chart that is not a wrap facet.
+ */
+function facetHeight(chart: ChartSettings, width: number, rows: DatumObject[]) {
+  const facet = chart.facet;
+  if (!facet?.enabled || facet.type !== "wrap" || !facet.rowVariable) return;
+  // Aggregate charts facet only as series bars, as the chart panel does.
+  if (
+    "aggregateId" in chart &&
+    chart.aggregateId &&
+    !(chart.type === "bar" && chart.seriesField)
+  )
+    return;
+  const panels = Math.min(
+    new Set(rows.map((row) => row[facet.rowVariable])).size,
+    facet.visibleFacetIds?.length ?? Infinity
+  );
+  // The chart panel insets its body 12 pixels on each side.
+  const columns = wrapFacetColumns(width - 24, facet.columnCount);
+  const rowCount = Math.max(1, Math.ceil(panels / columns));
+  return Math.max(
+    380,
+    Math.min(
+      FACET_MAX_HEIGHT,
+      FACET_CHROME + rowCount * (FACET_PANEL_HEIGHT + FACET_GAP) - FACET_GAP
+    )
+  );
+}
 
 /** How tall each kind of chart draws in the reading column. */
 function chartHeight(chart: ChartSettings, categories?: number) {
@@ -385,7 +428,19 @@ function NotebookSectionsView({
   width: number;
 }) {
   const figureWidth = width - NOTES_WIDTH - NOTES_GAP;
+  const charts = useDataLayer((state) => state.charts);
   const sections = notebookSections(segments, blocks);
+  // Small multiples need the notebook's width for their columns, so a
+  // section that draws them puts its text above them instead of beside.
+  const wrapFacets = new Set(
+    charts
+      .filter((chart) => chart.facet?.enabled && chart.facet.type === "wrap")
+      .map((chart) => chart.id)
+  );
+  const wide = (section: NotebookSection) =>
+    section.blocks.some((block) =>
+      block.charts.some(({ id }) => wrapFacets.has(id))
+    );
   // A block that only defines fields draws nothing, so a section with no
   // other block is text, such as a lede followed by its field list.
   const draws = (section: NotebookSection) =>
@@ -434,6 +489,30 @@ function NotebookSectionsView({
             </div>
           ))}
         </div>
+      );
+    if (wide(section!))
+      return (
+        <section
+          key={index}
+          id={section!.heading ? slug(section!.heading) : undefined}
+          className="eda-notebook-section"
+          data-wide=""
+        >
+          <div className="eda-notebook-notes eda-notebook-segment">
+            <NotebookProse text={section!.notes.join("\n\n")} />
+          </div>
+          <div className="eda-notebook-figures">
+            {section!.blocks.map((block) => (
+              <NotebookBlockView
+                key={block.index}
+                block={block}
+                width={width}
+                open={false}
+                heading={section!.heading}
+              />
+            ))}
+          </div>
+        </section>
       );
     return (
       <section
@@ -800,17 +879,20 @@ function NotebookBlockView({
               <GridChartPanel
                 settings={chart}
                 width={width}
-                height={chartHeight(
-                  chart,
-                  chart.type === "row"
-                    ? new Set(rows.map((row) => row[chart.field])).size
-                    : chart.type === "heatmap"
-                      ? Math.min(
-                          new Set(rows.map((row) => row[chart.field])).size,
-                          chart.maxCategories ?? Infinity
-                        )
-                      : undefined
-                )}
+                height={
+                  facetHeight(chart, width, rows) ??
+                  chartHeight(
+                    chart,
+                    chart.type === "row"
+                      ? new Set(rows.map((row) => row[chart.field])).size
+                      : chart.type === "heatmap"
+                        ? Math.min(
+                            new Set(rows.map((row) => row[chart.field])).size,
+                            chart.maxCategories ?? Infinity
+                          )
+                        : undefined
+                  )
+                }
               />
             </div>
           ) : null;
