@@ -58,6 +58,12 @@ The 2026-10-19 [freshness review](../../research/source-freshness-2026-10-18/REA
 
 The [continuing queue](../../research/source-freshness-2026-10-18/research-queue.md) puts this existing trust journey first. Selection after refresh stays a separate observed-behavior question. The freshness research ran no browser journey and proves no saved-state or refresh-selection policy.
 
+## Joint eligibility research follow-up
+
+The 2026-10-19 [missingness review](../../research/joint-missingness-2026-10-19/README.md) preserves this journey as the first local proof. Check record keys and finite contributors separately. A raw conversion preview, a filtered profile, a finite pair, and a complete parallel line can describe different populations.
+
+The proposed ten-record fixture supplies exact sets, not an executed export/history/restore result. Keep those runtime checks proposed. Do not add another diagnostic to resolve a disagreement before observing the existing selection/export journey.
+
 ## Analytical handoff research, 2026-10-20
 
 The [handoff review](../../research/analysis-handoff-2026-10-20/README.md) keeps this local proof first.
