@@ -20,7 +20,7 @@ PR462 owns Mosaic; PR454 owns axes. R008/PR464 and R011/PR461 are not repeated.
 
 ## Preparation
 
-[Prompt](pro-prompt.md), [packet manifest](source-manifest.json), [queue](research-queue.md).
+[Prompt](pro-prompt.md), [queue](research-queue.md).
 Packet: tmp/pro-selection-identity-2026-10-22/source-packet.txt.
 33 entries, 325105bytes, SHA256 de813c89251f4a5cdf5b8149bb2821c6be494ab968d127725a3deba7d5d03ee6.
 27 baseline files, two catalogue projections, two historical R043 documents, two local additions.
@@ -98,7 +98,7 @@ App8files/32tests and demo18files/431tests pass. No aggregate retry required.
 Four research probes pass again after correcting the local fixture's project type; library type check with that probe also passes.
 The temporary package probe was removed. Final source remains unchanged.
 PR gate, authored links, JSON, all37 source receipts, original hashes, and frozen oracle hash pass.
-See validation.json for scope and logs. Browser, real exports, host task, worker lifecycle, and full frozen matrix remain unrun.
+Browser, real exports, host task, worker lifecycle, and full frozen matrix remain unrun.
 No changeset or product screenshot applies. Scoped open review PR and final verification are next.
 
 ## Completion, October 22

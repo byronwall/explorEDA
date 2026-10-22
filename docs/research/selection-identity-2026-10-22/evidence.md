@@ -4,7 +4,7 @@
 
 Baseline and refreshed origin/main are `f4cacdde180e16ad814451a8c064e394535565d6`.
 The application sources did not change during this run. Open PRs were checked before submission and integration.
-[Source receipts](evidence/source-receipts.json) authenticate27 baseline files, two pinned historical files, and eight supplemental source files.
+Source receipts authenticate27 baseline files, two pinned historical files, and eight supplemental source files.
 The packet hash matches Pro's input receipt. The uploaded prompt predates hook formatting; the manifest retains its original byte receipt.
 
 Pro finished after29m4s in the [recorded conversation](https://chatgpt.com/c/6ad9b651-6728-83e9-88d4-6279b7905715).

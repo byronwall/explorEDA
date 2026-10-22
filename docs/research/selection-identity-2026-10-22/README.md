@@ -15,9 +15,8 @@ No application repair, new API, published lesson, or runnable demo was implement
 
 Read the [eight decisions](decisions.md), [checked evidence](evidence.md), [local results](evidence/local-results.json),
 [continuing catalogue queue](research-queue.md), and [run record](run.md).
-The [four Pro reports](originals/decision.md), [source audit](originals/evidence.md),
-[proof proposal](originals/proof-plan.md), and [integration proposal](originals/integration-plan.md) remain unchanged.
-[Collection](collection.json) records hashes and standalone/archive equality. [Validation](validation.json) records checks and limits.
+The four Pro reports (decision, source audit, proof proposal, and integration proposal) remain in the [Pro conversation](https://chatgpt.com/c/6ad9b651-6728-83e9-88d4-6279b7905715).
+The [run record](run.md) records checks and limits.
 
 R026/PR465 and R043/PR466 remain complete. R008/PR464 and R011/PR461 are not repeated.
 R001 is next, then R051. Local repair proofs inform the queue without replacing catalogue discovery.
