@@ -34,7 +34,7 @@ pivot @nb-penguins-species-2 title="Penguins by species and island" {
 
 ## Longer flippers, heavier birds
 
-Across all three species, flipper length tracks body mass closely: flipper length and body mass had correlation 0.871, and the fitted line gains about 50 g per millimeter of flipper. Gentoos sit apart at the top right. The heaviest bird weighed 6,300 g, a male Gentoo from Biscoe.
+Across all three species, flipper length tracks body mass closely: flipper length and body mass had correlation 0.871. Within each species the fitted line is shallower than the trend across all three, and Gentoos sit apart at the top right. The heaviest bird weighed 6,300 g, a male Gentoo from Biscoe.
 
 ```eda
 scatter @nb-penguins-species-3 x=flipper y=mass color=species regression=linear title="Flipper length and body mass" x.title="Flipper length (mm)" y.title="Body mass (g)" {

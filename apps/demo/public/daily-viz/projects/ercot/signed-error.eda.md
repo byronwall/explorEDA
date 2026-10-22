@@ -47,7 +47,7 @@ hist @nb-ercot-signed-error-chart-3 error bins=30 title="Hours by size of miss" 
 
 ## A typical hour missed by under a thousand
 
-The cumulative curve answers threshold questions directly: pick a miss size and read the share of hours that missed by less. The median absolute error was 915 MWh per hour, and 70.9% of hours missed by less than 2,000 MWh. The mean absolute error was 2,591.7 MWh per hour. That is nearly three times the median, because the storm-week hours sit at the far end of the curve.
+The cumulative curve answers threshold questions directly: pick a miss size and read the share of hours that missed by less. The median absolute error was 915 MWh per hour. 70.9% of hours missed by less than 2,000 MWh. The mean absolute error was 2,591.7 MWh per hour. That is nearly three times the median, because the storm-week hours sit at the far end of the curve.
 
 ```eda
 ecdf @nb-ercot-signed-error-chart-4 abs_error direction=below title="Share of hours under each miss size" x.title="Absolute error (MWh)"
