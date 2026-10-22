@@ -274,18 +274,21 @@ async function thumbs(slugs) {
     const box = await lead.boundingBox();
     // A composition's whole artboard; otherwise the whole width, at most as
     // tall as the cards' 16:10 frame. Cards fit the image inside that frame.
+    // A notebook panel's own border sits inside the card's, so step past it.
+    const inset = entry.kind === "notebook" ? 2 : 0;
     await page.screenshot({
       path: path.join(folder, `${entry.slug}.jpg`),
       type: "jpeg",
       quality: 72,
       clip: {
-        x: box.x,
-        y: box.y,
-        width: box.width,
+        x: box.x + inset,
+        y: box.y + inset,
+        width: box.width - inset * 2,
         height:
-          entry.kind === "composition"
+          (entry.kind === "composition"
             ? box.height
-            : Math.min(box.height, box.width * 0.625),
+            : Math.min(box.height, box.width * 0.625)) -
+          inset * 2,
       },
     });
     console.log(`thumbs/${entry.slug}.jpg`);

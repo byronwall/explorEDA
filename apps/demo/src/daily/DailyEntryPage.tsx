@@ -378,7 +378,7 @@ export default function DailyEntryPage() {
               <DayLink entry={newer} direction="newer" />
             </nav>
           </div>
-          <h1 className="mt-4 max-w-4xl text-3xl font-bold leading-tight tracking-tight text-brand-navy text-balance sm:text-4xl">
+          <h1 className="mt-4 max-w-4xl text-3xl font-bold leading-tight tracking-tight text-site-ink text-balance sm:text-4xl">
             {entry.title}
           </h1>
           <p className="mt-3 max-w-3xl text-lg leading-relaxed text-muted-foreground">
@@ -407,7 +407,7 @@ export default function DailyEntryPage() {
             >
               <h2
                 id="data-heading"
-                className="text-lg font-semibold text-brand-navy"
+                className="text-lg font-semibold text-site-ink"
               >
                 Data
               </h2>
@@ -473,7 +473,7 @@ export default function DailyEntryPage() {
             <section aria-labelledby="related-heading">
               <h2
                 id="related-heading"
-                className="text-lg font-semibold text-brand-navy"
+                className="text-lg font-semibold text-site-ink"
               >
                 More on this data
               </h2>

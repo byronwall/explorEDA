@@ -1,4 +1,5 @@
-import { useMemo } from "react";
+import { LayoutGrid, List } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { SiteNav } from "../landing/SiteNav";
 import {
@@ -10,7 +11,7 @@ import {
   type DailyEntry,
   type DailyKind,
 } from "./corpus";
-import { DailyCard, DailyThumb, highlight } from "./DailyCard";
+import { DailyCard, DailyRow, DailyThumb } from "./DailyCard";
 import { DailyMeta } from "./DailyMeta";
 import { useDailyCatalog } from "./useDailyCatalog";
 
@@ -64,16 +65,17 @@ function monthOf(day: string) {
 
 function TodayLead({ entry }: { entry: DailyEntry }) {
   return (
-    <article className="group relative grid gap-6 md:grid-cols-2 md:items-center">
+    <article className="group relative grid gap-6 md:grid-cols-[3fr_2fr] md:items-center">
       <DailyThumb
         entry={entry}
+        aspect="aspect-[2/1]"
         className="transition-colors duration-150 group-hover:border-site-accent/60"
       />
       <div className="min-w-0">
         <p className="text-sm font-medium text-site-accent">
           Today · {formatDay(entry.published)}
         </p>
-        <h2 className="mt-2 text-2xl font-bold leading-tight tracking-tight text-brand-navy text-balance sm:text-3xl">
+        <h2 className="mt-2 text-2xl font-bold leading-tight tracking-tight text-site-ink text-balance sm:text-3xl">
           <Link
             to={dailyPath(entry)}
             className="after:absolute after:inset-0 after:content-[''] group-hover:text-site-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -103,7 +105,7 @@ function Series({ entries }: { entries: DailyEntry[] }) {
   if (!series.size) return null;
   return (
     <section aria-labelledby="series-heading" className="mt-12">
-      <h2 id="series-heading" className="text-lg font-semibold text-brand-navy">
+      <h2 id="series-heading" className="text-lg font-semibold text-site-ink">
         Deep dives
       </h2>
       <div className="mt-4 grid gap-6 lg:grid-cols-2">
@@ -160,7 +162,33 @@ export default function DailyIndex() {
   const entries = all.filter((entry) => matches(entry, params));
   const filtering = FILTERS.some((key) => params.get(key));
   const query = params.get("q") ?? "";
-  const set = (key: (typeof FILTERS)[number], value: string) =>
+  // The box keeps its own text: a fast keystroke must not be overwritten by
+  // a URL update still in flight. The URL catches up and drives back/forward.
+  const [draft, setDraft] = useState(query);
+  const list = params.get("view") === "list";
+  const search = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (document.activeElement !== search.current) setDraft(query);
+  }, [query]);
+  // "/" jumps to search from anywhere on the page, as on most archives.
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (
+        event.key !== "/" ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.altKey ||
+        target?.closest("input, textarea, select, [contenteditable='true']")
+      )
+        return;
+      event.preventDefault();
+      search.current?.focus();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+  const set = (key: (typeof FILTERS)[number] | "view", value: string) =>
     setParams(
       (current) => {
         const next = new URLSearchParams(current);
@@ -188,7 +216,7 @@ export default function DailyIndex() {
       <SiteNav current="daily" />
       <main>
         <header className="max-w-2xl pb-8 pt-10">
-          <h1 className="text-4xl font-bold tracking-[-0.03em] text-brand-navy sm:text-5xl">
+          <h1 className="text-4xl font-bold tracking-[-0.03em] text-site-ink sm:text-5xl">
             Daily data viz
           </h1>
           <p className="mt-3 text-base leading-relaxed text-muted-foreground sm:text-lg">
@@ -198,8 +226,8 @@ export default function DailyIndex() {
           </p>
           {data && (
             <p className="mt-2 text-sm tabular-nums text-muted-foreground">
-              {all.length} pieces · {families} datasets · {industries}{" "}
-              industries since {formatDay(all.at(-1)!.published, true)}
+              {families} datasets · {industries} industries since{" "}
+              {formatDay(all.at(-1)!.published, true)}
             </p>
           )}
         </header>
@@ -212,20 +240,32 @@ export default function DailyIndex() {
         {data && !filtering && <Series entries={all} />}
         {data && (
           <section aria-labelledby="archive-heading" className="mt-12">
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-border pb-3">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-border bg-background py-3 sm:sticky sm:top-0 sm:z-10">
               <h2
                 id="archive-heading"
-                className="mr-1 text-lg font-semibold text-brand-navy"
+                className="mr-1 text-lg font-semibold text-site-ink"
               >
                 Archive
               </h2>
               <input
+                ref={search}
                 type="search"
                 aria-label="Search the archive"
-                placeholder="Search titles, topics, or charts"
-                value={query}
-                onChange={(event) => set("q", event.target.value)}
-                className={`${controlClass} w-full min-w-0 sm:w-56`}
+                placeholder="Search, or press /"
+                value={draft}
+                onChange={(event) => {
+                  setDraft(event.target.value);
+                  set("q", event.target.value);
+                }}
+                onKeyDown={(event) => {
+                  if (event.key !== "Escape") return;
+                  event.preventDefault();
+                  if (draft) {
+                    setDraft("");
+                    set("q", "");
+                  } else event.currentTarget.blur();
+                }}
+                className={`${controlClass} w-full min-w-0 sm:w-48`}
               />
               <div
                 role="group"
@@ -260,7 +300,7 @@ export default function DailyIndex() {
                 aria-label="Industry"
                 value={params.get("industry") ?? ""}
                 onChange={(event) => set("industry", event.target.value)}
-                className={`${controlClass} w-40`}
+                className={`${controlClass} w-36`}
               >
                 <option value="">Industry</option>
                 {facet(all, "industry").map(([value, count]) => (
@@ -273,7 +313,7 @@ export default function DailyIndex() {
                 aria-label="Kind of question"
                 value={params.get("analysis") ?? ""}
                 onChange={(event) => set("analysis", event.target.value)}
-                className={`${controlClass} w-40`}
+                className={`${controlClass} w-36`}
               >
                 <option value="">Question</option>
                 {facet(all, "analysis").map(([value, count]) => (
@@ -292,13 +332,49 @@ export default function DailyIndex() {
                 {filtering && (
                   <button
                     type="button"
-                    onClick={() => setParams({}, { replace: true })}
+                    onClick={() => {
+                      setDraft("");
+                      setParams(list ? { view: "list" } : {}, {
+                        replace: true,
+                      });
+                    }}
                     className="ml-3 text-site-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   >
                     Clear
                   </button>
                 )}
               </p>
+              <div
+                role="group"
+                aria-label="Layout"
+                className="flex rounded-md border border-input p-0.5"
+              >
+                {(
+                  [
+                    ["", "Grid", LayoutGrid],
+                    ["list", "List", List],
+                  ] as const
+                ).map(([value, label, Icon]) => {
+                  const active = (params.get("view") ?? "") === value;
+                  return (
+                    <button
+                      key={label}
+                      type="button"
+                      aria-label={label}
+                      aria-pressed={active}
+                      title={label}
+                      onClick={() => set("view", value)}
+                      className={`grid size-7 place-items-center rounded transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                        active
+                          ? "bg-muted text-foreground"
+                          : "text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      <Icon className="size-4" aria-hidden="true" />
+                    </button>
+                  );
+                })}
+              </div>
             </div>
             {params.get("chart") && (
               <p className="mt-3 text-sm text-muted-foreground">
@@ -315,11 +391,19 @@ export default function DailyIndex() {
                 <h3 className="text-sm font-medium text-muted-foreground">
                   {month} <span className="tabular-nums">· {items.length}</span>
                 </h3>
-                <div className="mt-3 grid grid-cols-1 gap-x-5 gap-y-7 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                  {items.map((entry) => (
-                    <DailyCard key={entry.id} entry={entry} query={query} />
-                  ))}
-                </div>
+                {list ? (
+                  <ol className="mt-1">
+                    {items.map((entry) => (
+                      <DailyRow key={entry.id} entry={entry} query={query} />
+                    ))}
+                  </ol>
+                ) : (
+                  <div className="mt-3 grid grid-cols-1 gap-x-5 gap-y-7 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                    {items.map((entry) => (
+                      <DailyCard key={entry.id} entry={entry} query={query} />
+                    ))}
+                  </div>
+                )}
               </section>
             ))}
           </section>
