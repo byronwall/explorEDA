@@ -873,9 +873,11 @@ const createDataLayerStore = <T extends DatumObject>(
 
       getFieldConversionPreview: (field, previewSettings) => {
         const rawRows = get().rawData;
-        const rawProfile = buildFieldProfiles(rawRows).find(
-          (profile) => profile.name === field
-        );
+        // An Automatic type reads as the declared type, as it does on Apply.
+        const rawProfile = buildFieldProfiles(
+          rawRows,
+          typeOverrides({}, get().fieldTypes)
+        ).find((profile) => profile.name === field);
         return buildConversionPreview(
           field,
           rawRows,
