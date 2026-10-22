@@ -21,3 +21,5 @@ The [four Pro reports](originals/decision.md), [source audit](originals/evidence
 
 R026/PR465 and R043/PR466 remain complete. R008/PR464 and R011/PR461 are not repeated.
 R001 is next, then R051. Local repair proofs inform the queue without replacing catalogue discovery.
+
+R077 synthesis is complete in verified open [PR484](https://github.com/byronwall/explorEDA/pull/484).

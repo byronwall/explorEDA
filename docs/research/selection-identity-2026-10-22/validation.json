@@ -1,5 +1,5 @@
 {
-  "phase": "required gates passed; review PR pending",
+  "phase": "complete; verified open review PR",
   "baseline": "f4cacdde180e16ad814451a8c064e394535565d6",
   "node": "22.21.1",
   "pnpm": "11.9.0",
@@ -68,5 +68,18 @@
     "log": "tmp/pro-selection-identity-2026-10-22/pr-gate.txt"
   },
   "original_and_oracle_hashes": "passed",
-  "source_receipts_verified": 37
+  "source_receipts_verified": 37,
+  "pull_request": {
+    "url": "https://github.com/byronwall/explorEDA/pull/484",
+    "state": "OPEN",
+    "base": "main",
+    "head": "codex/selection-identity-research-2026-10-22",
+    "files": 28,
+    "body_links_verified": true,
+    "attached": true,
+    "label": "documentation",
+    "unavailable_labels": ["codex", "codex-automation"]
+  },
+  "temporary_collector": "deleted after verified review PR",
+  "discovery_automation": "ACTIVE, every six hours"
 }
