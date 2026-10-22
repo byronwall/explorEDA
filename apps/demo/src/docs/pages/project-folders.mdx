@@ -99,7 +99,7 @@ Each step reads the step before it. Use `from=step` to read another one, and add
 | `filter`    | `filter @id field op value`                     | Keeps rows that match: `=`, `!=`, `>`, `>=`, `<`, or `<=`, or `field is-null` / `not-null`. `$from` reads a parameter, and both ends of a range are inclusive.       |
 | `aggregate` | `aggregate @id [by=field,field] { measures }`   | One row per group. Grouped fields keep their names; each measure is a field named by its ID.                                                                         |
 
-Measures are `sum @id field`, `average @id field`, and `count @id [field]`, each with an optional `label="…"`. Add `per=field` to count each entity's value once, such as an order's amount on every one of its items.
+Measures are `sum @id field`, `average @id field`, `max @id field`, `min @id field`, and `count @id [field]`, each with an optional `label="…"`. `max` and `min` keep the largest and smallest valid value in each group, such as each state's peak rate. Add `per=field` to count each entity's value once, such as an order's amount on every one of its items.
 
 A parameter picked from a source with `pick=customers.name` holds that row's key, `customerId`, and shows its `name`.
 

@@ -1,3 +1,4 @@
+import { aggregationLabel, isAdditiveAggregation } from "@/lib/aggregates";
 import { scaleBand } from "d3-scale";
 import { applyFilter } from "@/hooks/applyFilter";
 import type { AggregateResult } from "@/lib/aggregates";
@@ -66,7 +67,7 @@ export function planSeriesBars({
   const metricLabel =
     operation === "count"
       ? "Row count"
-      : `${operation === "sum" ? "Sum" : "Average"} of ${getLabel(spec?.measureField ?? "")}`;
+      : `${aggregationLabel(operation)} of ${getLabel(spec?.measureField ?? "")}`;
   const formatValue = (value: number) =>
     operation === "count"
       ? value.toLocaleString("en-US")
@@ -215,8 +216,8 @@ export function planSeriesBars({
     .domain(boundedDomain(domain, settings.yAxis))
     .range([plotHeight, 0]);
   const notice =
-    stacked && operation === "average"
-      ? "Choose count or sum to stack series. Compare averages with grouped bars."
+    stacked && !isAdditiveAggregation(operation)
+      ? `Choose count or sum to stack series. Compare ${operation === "average" ? "averages" : operation === "max" ? "maxima" : "minima"} with grouped bars.`
       : percent && rows.some(({ row }) => (row.value ?? 0) < 0)
         ? "100% bars need nonnegative series totals. Choose stacked bars to compare signed totals."
         : legend.length > 20

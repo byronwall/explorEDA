@@ -3,6 +3,7 @@ import { beforeAll, describe, expect, it } from "vitest";
 import { registerAllCharts } from "@/charts/registerAllCharts";
 import { DataLayerProvider, useDataLayer } from "@/providers/DataLayerProvider";
 import { validateSavedData } from "@/utils/saveDataUtils";
+import { calculateGroupedAggregate } from "@/lib/aggregates";
 import { compileDocument } from "./compile";
 import { formatDslDiagnostics } from "./describe";
 
@@ -242,5 +243,53 @@ hist Revnue`);
 a.eda:2:6: error: Revnue is not a field, alias, or calculation, so hist (line 2) was skipped.
   fix: Did you mean Revenue?
 failed: no chart can be built; fix the errors above`);
+  });
+
+  it("summarizes with max and min in groups and charts", () => {
+    const result = compile(`group @peak max(Revenue) by=Channel
+group @low min(Revenue) by=Channel
+row Channel group=peak
+row Channel group=low
+heatmap Channel columnField=Category aggregation=max measureField=Revenue
+line x=Revenue y=Cost color=Channel`);
+
+    expect(result.diagnostics).toEqual([]);
+    expect(validateSavedData(result.settings)).toBe(true);
+    expect(result.settings.aggregates).toMatchObject([
+      { id: "peak", aggregation: "max", measureField: "Revenue" },
+      { id: "low", aggregation: "min", measureField: "Revenue" },
+    ]);
+    const [peak, low] = result.settings.aggregates!.map((spec) =>
+      Object.fromEntries(
+        calculateGroupedAggregate(
+          rows.map((row, __ID) => ({ __ID, ...row })),
+          spec
+        ).rows.map((row) => [row.groupLabel, row.value])
+      )
+    );
+    expect(peak).toEqual({ Web: 160, Store: 75, Wholesale: 0 });
+    expect(low).toEqual({ Web: 50, Store: 20, Wholesale: 0 });
+    const [, , heatmap, line] = result.settings.charts;
+    expect(heatmap).toMatchObject({ aggregation: "max" });
+    expect(line).toMatchObject({
+      type: "line",
+      xField: "Revenue",
+      seriesField: ["Cost"],
+      colorField: "Channel",
+    });
+  });
+
+  it("rolls dates up by max and min", () => {
+    const dated = compileDocument(
+      `line x=day time.interval=month time.aggregation=max time.measureField=n
+calendar day aggregation=min measureField=n`,
+      { rows: [{ day: "2026-01-02", n: 3 }], now }
+    );
+    expect(dated.diagnostics).toEqual([]);
+    expect(validateSavedData(dated.settings)).toBe(true);
+    expect(dated.settings.charts).toMatchObject([
+      { time: { aggregation: "max", missingPeriods: "gap" } },
+      { type: "calendar", aggregation: "min" },
+    ]);
   });
 });

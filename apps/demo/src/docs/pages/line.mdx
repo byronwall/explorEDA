@@ -7,10 +7,20 @@
 
 ## How it reads
 
-- With a date on the X axis, the chart summarizes rows into periods. Choose the interval, the week start, and the metric: a count, or a summary of a measure.
+- With a date on the X axis, the chart summarizes rows into periods. Choose the interval, the week start, and the metric: a count, or a sum, average, maximum, or minimum of a measure.
 - **Display** draws a line between period values, an area filled to zero, or stacked areas that add nonnegative counts or sums across series.
-- **Missing periods** either leave a gap, or draw an empty count or sum at zero. An average needs observations, so an empty period has no average to draw.
+- **Missing periods** either leave a gap, or draw an empty count or sum at zero. An average, maximum, or minimum needs observations, so an empty period has none to draw.
 - Each series can use the right axis, its own line style, and points.
+
+## One line per category
+
+Without date periods, a line draws its rows as they are, in X order. **Split by** a category field, written `color=firm`, draws one line per value of it, each taking its own rows in X order, such as one line per firm over a numeric year:
+
+```text
+line x=year y=invest_index color=firm
+```
+
+The panel's color legend names the lines, and the hover readout lists each value at the hovered X. Nothing is summed: with two rows at one X for the same value, its line passes through both. With several Y fields, each splits, and the line style tells the fields apart. Use a date X with `time.splitField` to summarize rows into periods first.
 
 ## Areas
 
