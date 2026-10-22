@@ -305,6 +305,19 @@
             "EWR"
           ]
         ]
+      },
+      {
+        "text": "LaGuardia's mean departure delay was {value} minutes.",
+        "format": ".1f",
+        "op": "mean",
+        "field": "dep_delay",
+        "where": [
+          [
+            "flights.origin",
+            "eq",
+            "LGA"
+          ]
+        ]
       }
     ],
     "published": "2026-07-18"
@@ -1223,6 +1236,56 @@
             "sched_dep_hour",
             "eq",
             19
+          ]
+        ]
+      },
+      {
+        "text": "{value}% of 6:00 flights left more than an hour late.",
+        "format": ".1f",
+        "op": "share",
+        "field": "dep_delay",
+        "where": [
+          [
+            "sched_dep_hour",
+            "eq",
+            6
+          ],
+          [
+            "dep_delay",
+            "ge",
+            -10000
+          ]
+        ],
+        "condition": [
+          [
+            "dep_delay",
+            "gt",
+            60
+          ]
+        ]
+      },
+      {
+        "text": "{value}% of 19:00 flights left more than an hour late.",
+        "format": ".1f",
+        "op": "share",
+        "field": "dep_delay",
+        "where": [
+          [
+            "sched_dep_hour",
+            "eq",
+            19
+          ],
+          [
+            "dep_delay",
+            "ge",
+            -10000
+          ]
+        ],
+        "condition": [
+          [
+            "dep_delay",
+            "gt",
+            60
           ]
         ]
       }
@@ -2587,6 +2650,26 @@
             5
           ]
         ]
+      },
+      {
+        "text": "With visibility of five miles or more, the mean departure delay was {value} minutes.",
+        "format": ".1f",
+        "op": "mean",
+        "field": "dep_delay",
+        "where": [
+          [
+            "weather.visib",
+            "ge",
+            5
+          ]
+        ]
+      },
+      {
+        "text": "Wind speed and departure delay had correlation {value}.",
+        "format": ".3f",
+        "op": "corr",
+        "field": "weather.wind_speed",
+        "other": "dep_delay"
       }
     ],
     "published": "2026-09-17"
