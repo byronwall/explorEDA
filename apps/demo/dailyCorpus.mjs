@@ -273,8 +273,11 @@ export function dailyHtml(template, entry, text) {
     /^```eda\s*\n[\s\S]*?^```\s*$/gm,
     "\n_Interactive chart available when JavaScript loads._\n"
   );
+  // A notebook with one title carries it; a book's headings name its sheets.
   const title =
-    entry.kind === "notebook" ? "" : `<h1>${escape(entry.title)}</h1>`;
+    entry.kind === "notebook" && /^# /.test(text)
+      ? ""
+      : `<h1>${escape(entry.title)}</h1>`;
   return head(template, entry.title, entry.summary, url).replace(
     '<div id="root"></div>',
     `<div id="root">${shell(`<a href="/daily">Daily data viz</a>${title}${markdown.render(prose)}`)}</div>`

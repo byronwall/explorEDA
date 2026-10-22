@@ -26,8 +26,11 @@ export interface DailyCatalogEntry {
   analysis: string;
   /** The day the piece appears, `YYYY-MM-DD`; later days stay hidden. */
   published: string;
-  /** Parts of a deep dive, read in order. */
-  series?: { id: string; title: string; part: number };
+  /**
+   * Parts of a deep dive, read in order. `label` names the part on the
+   * series tabs in a few words; without it the tab says "Part n".
+   */
+  series?: { id: string; title: string; part: number; label?: string };
   findings: DailyFinding[];
 }
 

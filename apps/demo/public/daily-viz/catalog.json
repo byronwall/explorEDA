@@ -238,7 +238,8 @@
     "series": {
       "id": "flights-january",
       "title": "A month of New York flights",
-      "part": 1
+      "part": 1,
+      "label": "The delay tail"
     },
     "findings": [
       {
@@ -424,7 +425,8 @@
     "series": {
       "id": "beijing-2016",
       "title": "A year of Beijing air",
-      "part": 1
+      "part": 1,
+      "label": "The calendar"
     },
     "findings": [
       {
@@ -1197,7 +1199,8 @@
     "series": {
       "id": "flights-january",
       "title": "A month of New York flights",
-      "part": 2
+      "part": 2,
+      "label": "By hour"
     },
     "findings": [
       {
@@ -1346,7 +1349,8 @@
     "series": {
       "id": "beijing-2016",
       "title": "A year of Beijing air",
-      "part": 2
+      "part": 2,
+      "label": "Pollutants"
     },
     "findings": [
       {
@@ -1735,7 +1739,8 @@
     "series": {
       "id": "flights-january",
       "title": "A month of New York flights",
-      "part": 3
+      "part": 3,
+      "label": "Airlines"
     },
     "findings": [
       {
@@ -2360,7 +2365,8 @@
     "series": {
       "id": "beijing-2016",
       "title": "A year of Beijing air",
-      "part": 3
+      "part": 3,
+      "label": "Stations"
     },
     "findings": [
       {
@@ -2546,7 +2552,8 @@
     "series": {
       "id": "flights-january",
       "title": "A month of New York flights",
-      "part": 4
+      "part": 4,
+      "label": "Weather"
     },
     "findings": [
       {
@@ -3211,7 +3218,8 @@
     "series": {
       "id": "beijing-2016",
       "title": "A year of Beijing air",
-      "part": 4
+      "part": 4,
+      "label": "Month by month"
     },
     "findings": [
       {
@@ -3462,7 +3470,8 @@
     "series": {
       "id": "flights-january",
       "title": "A month of New York flights",
-      "part": 5
+      "part": 5,
+      "label": "Day by day"
     },
     "findings": [
       {

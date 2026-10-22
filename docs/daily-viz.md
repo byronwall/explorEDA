@@ -94,4 +94,6 @@ The [editorial standard](daily-editorial.md) is the bar: a finding-led title, a 
 
 ## Series and deep dives
 
-Breadth first: the collection should span many industries, kinds of question, and chart forms. Once a dataset has earned it, a series goes deep: three to six pieces that build on each other, each standing alone. Give each entry `"series": { "id": "flights-january", "title": "A month of New York flights", "part": 1 }`. The page links the parts in order.
+Breadth first: the collection should span many industries, kinds of question, and chart forms. Once a dataset has earned it, a series goes deep: three to six pieces that build on each other, each standing alone. Give each entry `"series": { "id": "flights-january", "title": "A month of New York flights", "part": 1, "label": "The delay tail" }`. The page shows the parts as tabs, named by `label` in two or three words, and the open part is the current page.
+
+A single piece whose question has two or three faces can be one notebook with **sheets** instead of a series: each `#` heading after the lede starts a sheet, shown as a tab. Use sheets when the faces share one query and a reader would switch between them (the whole span, the storm week, the clock); use a series when each part stands alone or needs its own data. A sheet is a short notebook of its own: two to four sections, each a claim with its chart. The Takeaway and Limits go at the end of the last sheet, and every sheet's last section says what that sheet showed. Name sheets in two to four words.
