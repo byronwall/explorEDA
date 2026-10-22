@@ -1,0 +1,240 @@
+{
+  "repository": "https://github.com/byronwall/explorEDA",
+  "baseline": "f4cacdde180e16ad814451a8c064e394535565d6",
+  "packet_path": "tmp/pro-selection-identity-2026-10-22/source-packet.txt",
+  "packet_bytes": 325105,
+  "packet_sha256": "de813c89251f4a5cdf5b8149bb2821c6be494ab968d127725a3deba7d5d03ee6",
+  "entries": [
+    {
+      "path": "AGENTS.md",
+      "kind": "baseline",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "bytes": 4033,
+      "sha256": "802990c1bacd76b4b867239da78fd011fb32653f891d4a88560e9ee629979a33"
+    },
+    {
+      "path": "docs/agent-guide.md",
+      "kind": "baseline",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "bytes": 19779,
+      "sha256": "0992949f205d1ae72a8249c69bccb33f1eb70763b14a526a6384a7a91f9c9f00"
+    },
+    {
+      "path": "README.md",
+      "kind": "baseline",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "bytes": 10263,
+      "sha256": "1f05b6c4992b07d1fc2b38d7bf9273db9e4a3a0d94513b7265e13b81cd7c5e28"
+    },
+    {
+      "path": "package.json",
+      "kind": "baseline",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "bytes": 1258,
+      "sha256": "f9b14daf225872f605d9435ddfb46fdede88b203c87a0e8507fe20743536f6e3"
+    },
+    {
+      "path": "packages/explorEDA/README.md",
+      "kind": "baseline",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "bytes": 27554,
+      "sha256": "53aa57886a6b8920a02a39bb1e2f7701359016fe30e01afbe761a528142c0ce6"
+    },
+    {
+      "path": "packages/explorEDA/src/providers/lib/dataLayerState.ts",
+      "kind": "baseline",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "bytes": 804,
+      "sha256": "2469556f6e39537ff394ff4b242cd0da5aee866907568f0f2685e87525ec1569"
+    },
+    {
+      "path": "packages/explorEDA/src/providers/DataLayerProvider.tsx",
+      "kind": "baseline",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "bytes": 55689,
+      "sha256": "c0ab7260c912fb628d393e7cbae1c752e44db4a20e347d9ec07f755b3ae7771d"
+    },
+    {
+      "path": "packages/explorEDA/src/components/ExplorEdaProject.tsx",
+      "kind": "baseline",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "bytes": 15265,
+      "sha256": "5574df5b5dcbba664b0ce4764e9de300b112f951f9da1f55024245c0160c6618"
+    },
+    {
+      "path": "packages/explorEDA/src/components/ExplorEda.tsx",
+      "kind": "baseline",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "bytes": 8728,
+      "sha256": "60e64d6dbf0bdddede24400ae80bb609beb6de7a0613be73b2ad959bb1fb7913"
+    },
+    {
+      "path": "packages/explorEDA/src/components/project/sourceRowIdentity.ts",
+      "kind": "baseline",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "bytes": 2403,
+      "sha256": "b2367c44a980701ae8483a4f7e3b7e22935ff04dabf927100a934aa8765f947c"
+    },
+    {
+      "path": "packages/explorEDA/src/components/project/analysisRowKeys.ts",
+      "kind": "baseline",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "bytes": 1919,
+      "sha256": "e086e580fa7b6e0feed7caf79a85a778fcfa0823dd09fcb91978709773058b74"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/analysis/evaluateProject.ts",
+      "kind": "baseline",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "bytes": 29524,
+      "sha256": "0e92ca221ab5c2ae78c5b0454dcf09902d1372638c1fe28a93fccdc1e6bd75d1"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/analysis/useAnalysisEvaluation.ts",
+      "kind": "baseline",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "bytes": 5805,
+      "sha256": "33e6f5cc1154078342028a998bfac97159cc9612869024492f4354c660418708"
+    },
+    {
+      "path": "packages/explorEDA/src/types/AnalysisProject.ts",
+      "kind": "baseline",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "bytes": 4839,
+      "sha256": "374ffd46c8143f95c7256859d0a1bcc24e1eabe82a80dce9d465a2c4ba693408"
+    },
+    {
+      "path": "packages/explorEDA/src/types/SavedDataStructure.ts",
+      "kind": "baseline",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "bytes": 1926,
+      "sha256": "d06d902c2e9ba967adb39f25502405153b2b582bfd2bf7305ad51bec9b9dfebb"
+    },
+    {
+      "path": "packages/explorEDA/src/types/FilterTypes.ts",
+      "kind": "baseline",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "bytes": 1207,
+      "sha256": "5779e19b22a73dbfc6c9c66b7d12f5b7cba149b5da7e1cfa1ed316afe3a9011f"
+    },
+    {
+      "path": "packages/explorEDA/src/test/providers/projectIdentity.test.tsx",
+      "kind": "baseline",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "bytes": 4749,
+      "sha256": "cee05e7ca3dd8983b15e6a05df77dd332b30096d04731a10cfd6fd0fd44ffd20"
+    },
+    {
+      "path": "packages/explorEDA/src/test/providers/DataLayerProvider.test.tsx",
+      "kind": "baseline",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "bytes": 41254,
+      "sha256": "69a9801fb7a17dc9d15f77684185f12f907bd9376ec6a54ed80139491daea91a"
+    },
+    {
+      "path": "packages/explorEDA/src/test/providers/dataLayerState.test.ts",
+      "kind": "baseline",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "bytes": 843,
+      "sha256": "a49447136dff69c3fe89bb2b77ee7aaad605010c7dcba44eaa6bc850095faefb"
+    },
+    {
+      "path": "packages/explorEDA/src/test/lib/analysis/sourceRowIdentity.test.ts",
+      "kind": "baseline",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "bytes": 1175,
+      "sha256": "84d7f9fe54981ee6c34555e237a4baf10fb198b46cad847b479993a5fcb7ee4b"
+    },
+    {
+      "path": "packages/explorEDA/src/test/lib/analysis/evaluateProject.test.ts",
+      "kind": "baseline",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "bytes": 12780,
+      "sha256": "13a1f675f5055a702c16384f2aee5835108a0725dd0fc8d979703e3e8a11f88b"
+    },
+    {
+      "path": "packages/explorEDA/src/test/fixtures/shopProject.ts",
+      "kind": "baseline",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "bytes": 14422,
+      "sha256": "dceb807341e6023b1270a0c53df4d37177cb0ac3fb495794d8a2b5c9aef8107a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/useGetLiveData.tsx",
+      "kind": "baseline",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "bytes": 2222,
+      "sha256": "6222156b36ba1d8accc05fd01888543a5bd4dc07b0673db01f74e27570a04478"
+    },
+    {
+      "path": "docs/intent/current-analysis-trust/intent-brief.md",
+      "kind": "baseline",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "bytes": 3006,
+      "sha256": "d6b2d620753c1ea532fffcb1cb43cc42711e03daa898e989a7f283f475186bd7"
+    },
+    {
+      "path": "docs/intent/renderer-independent-replay/intent-brief.md",
+      "kind": "baseline",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "bytes": 2994,
+      "sha256": "dd0019e384a3a92213b2e4c7dadfb287acc20d37366e584fa98abfae0c63b904"
+    },
+    {
+      "path": "docs/intent/research-ideas-100/README.md",
+      "kind": "baseline",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "bytes": 6362,
+      "sha256": "63ec0d118382fcbe7551e5556f10cd2970e0120414766612fab1e54ca6477512"
+    },
+    {
+      "path": "docs/intent/research-ideas-100/ideas/R077-selection-identity-when-source-rows-are-replaced.md",
+      "kind": "baseline",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "bytes": 3617,
+      "sha256": "368b1252c1d34581e03d4139bb5519859cc35613e6714dd49daceb7f26178e06"
+    },
+    {
+      "path": "catalogue-selected.json",
+      "kind": "parsed projection",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "bytes": 16561,
+      "sha256": "6b435a948e8c3fadd6e95149f3cb8097e937c40d905a3b9fe6ea29c2766d270b"
+    },
+    {
+      "path": "catalogue-review-selected.json",
+      "kind": "parsed projection",
+      "ref": "f4cacdde180e16ad814451a8c064e394535565d6",
+      "bytes": 2508,
+      "sha256": "6d7ec0c9febf6176a47aa2e1e92c99af7cd8e73361ebec8cff8a55bbf1307fc1"
+    },
+    {
+      "path": "docs/research/entity-grain-2026-10-21/README.md",
+      "kind": "historical R043",
+      "ref": "89e85dead29dd61f1b7b79d359f4bad0c38fab4d",
+      "bytes": 2210,
+      "sha256": "ba94aca6204c5790ce3e685f685a845a6ae8d92f0039fca2f31a7b2cfd53b5d9"
+    },
+    {
+      "path": "docs/research/entity-grain-2026-10-21/decisions.md",
+      "kind": "historical R043",
+      "ref": "89e85dead29dd61f1b7b79d359f4bad0c38fab4d",
+      "bytes": 4347,
+      "sha256": "9293a88fb3b3d2720662be2239ee9ffea495631324035e70312a6c38e989bf39"
+    },
+    {
+      "path": "docs/research/selection-identity-2026-10-22/pro-prompt.md",
+      "kind": "local addition",
+      "ref": null,
+      "bytes": 8730,
+      "sha256": "01b4a3c2381edf513742732be9680492b58aa511144d48608cf183fce7671da7"
+    },
+    {
+      "path": "docs/research/selection-identity-2026-10-22/research-queue.md",
+      "kind": "local addition",
+      "ref": null,
+      "bytes": 1447,
+      "sha256": "264a23bfb781b93cbbc11f9628a69c5c999656d1f50ef31b6199c8c9d751c686"
+    }
+  ]
+}
