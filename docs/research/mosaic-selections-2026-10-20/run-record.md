@@ -19,8 +19,7 @@ The user requested the full handoff process on October 20, 2026. No application 
 - Phase: complete; review PR open, verified, and attached to this chat.
 - Round: initial request; up to two bounded follow-ups remain.
 - Prompt: [prompt.md](prompt.md)
-- Source packet: [mosaic-source-packet.zip](mosaic-source-packet.zip)
-- Coverage and SHA-256: [source-packet-manifest.json](source-packet-manifest.json)
+- Source packet: `mosaic-source-packet.zip` (removed before merge with its SHA-256 manifest).
 - Packet: 528 tracked baseline files, selected source snapshot, not a runnable checkout.
 - Attachments observed: `prompt(7).md` (ChatGPT renamed `prompt.md`) and `mosaic-source-packet.zip`.
 - Browser: Chrome, profile `byroni.us`. Existing signed-in ChatGPT session.
@@ -59,14 +58,9 @@ The archive passes ZIP integrity checks. No application files changed.
 
 ## Collection and reconciliation
 
-- Original complete ZIP: `raw/mosaic-selections-research.zip`, 1,638,862 bytes, 78 entries.
-- Original standalone source ZIP: `raw/source-material.zip`, 1,531,743 bytes, 73 source members.
-- Five companions and permitted source material preserved unchanged in `raw/research/`.
-- All 77 manifest-listed payload sizes/hashes match. Both archives pass integrity/safety checks.
-- Standalone source members match the complete archive. All JSON parses.
+- Collected the complete ZIP (1,638,862 bytes, 78 entries), the standalone source ZIP (73 members), five companions and the final response. They were removed before merge; the [Pro conversation](https://chatgpt.com/c/6ad832d1-932c-83ea-82de-8135c5715ea4) remains the source.
+- All 77 manifest-listed payload sizes/hashes matched. Both archives passed integrity/safety checks. All JSON parsed.
 - Browser download-event wait timed out, but the actual ZIP existed and passed checks. No resubmission occurred.
-- The report's standalone controls opened a preview without saving a file. The verified ZIP member preserves the complete original.
-- Final response preserved in `raw/pro-final-response.txt`. Inventory and SHA-256 are in `raw/collection-manifest.json`.
 - Fifteen recommendations have explicit dispositions in `recommendation-review.md`; fifty source records resolve.
 - Main integration: `README.md`. Source evidence and correction: `source-checks.md`.
 - Linked research from precise-composite-selection and data-bound-narrative intent briefs. Neither initiative changed phase.
@@ -90,7 +84,6 @@ No application code changed; no UI screenshots or changeset is required for this
 
 The first sandboxed `pnpm check` failed because existing server tests could not listen on `127.0.0.1` (`EPERM`).
 The same command was restarted with local server access. This is an environment retry, not a product change.
-Raw originals retain their supplied whitespace. The authored-file Git whitespace check excludes `raw/` and passes.
 
 ## Completion
 

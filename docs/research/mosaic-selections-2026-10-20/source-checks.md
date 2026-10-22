@@ -18,7 +18,7 @@ The standalone report controls opened a preview without producing a local downlo
 No report content is missing: its original ZIP member passed the manifest checks.
 The browser download-event wait also timed out for the complete ZIP, but the actual downloaded file was present and verified.
 
-The originals remain under `raw/`. Codex analysis is outside that folder.
+The originals were removed before merge; the [Pro conversation](https://chatgpt.com/c/6ad832d1-932c-83ea-82de-8135c5715ea4) remains the source.
 No downloaded program was executed. The included fixture generator was preserved as source only.
 
 ## Independent source checks
@@ -39,7 +39,7 @@ These are source observations, not UI reproductions or new feature tests.
 | Heatmap color stability is configurable                           | `Heatmap/heatmapPlan.ts`: scale provenance                                                                        | Fixed ends are explicit. Otherwise the scale uses shown cells after other filters. Histories/fixed-end work is already delivered.                                                |
 
 Package-relative paths in this table start at `packages/explorEDA/src/`.
-The [source register](raw/research/mosaic-selections-sources.json) provides the full reading route and pinned URLs.
+The [source register](https://chatgpt.com/c/6ad832d1-932c-83ea-82de-8135c5715ea4) provides the full reading route and pinned URLs.
 
 ## Primary-source verification
 
@@ -87,7 +87,7 @@ Raw scalar types must be reconciled with prepared data before application compar
 
 All MOS-001 through MOS-015 IDs are unique and have a review disposition.
 All recommendation source IDs resolve in the fifty-entry source register.
-The [proof plan](raw/research/mosaic-selections-proof-plan.md) has twelve semantic gates and five optional acceleration gates.
+The [proof plan](https://chatgpt.com/c/6ad832d1-932c-83ea-82de-8135c5715ea4) has twelve semantic gates and five optional acceleration gates.
 Every new product gate remains proposed and unrun.
 
 ## Repository checks
@@ -104,4 +104,3 @@ No application implementation, browser proof, performance benchmark, or bug fix 
 
 The first sandboxed full check hit `listen EPERM` in existing local-server tests.
 The command was restarted with local server access. See the final result in the run record.
-Raw originals retain supplied whitespace; the authored-file whitespace check excludes `raw/` and passes.

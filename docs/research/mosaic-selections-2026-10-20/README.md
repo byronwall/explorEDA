@@ -30,7 +30,7 @@ Keep these meanings separate:
 - Exact evidence: records that satisfy the resolved predicates and declared population.
 - Viewport and encoding domains: display choices that do not redefine committed membership.
 
-The [Pro report](raw/research/mosaic-selections-report.md) maps the current flow and proposes truth tables and TypeScript shapes.
+The [Pro report](https://chatgpt.com/c/6ad832d1-932c-83ea-82de-8135c5715ea4) maps the current flow and proposes truth tables and TypeScript shapes.
 Those shapes are examples for review, not an approved public API.
 
 ## How it would help
@@ -48,7 +48,7 @@ The proposed proof uses a twelve-row fixture and two independent sources:
 - Exact evidence contains `r02`, `r07`, `r10`, and `r11`.
 
 The current precise-selection intent favors lasso. A rectangle cannot complete that proof.
-The [proof plan](raw/research/mosaic-selections-proof-plan.md) specifies boundaries, expected IDs, scope, lifecycle, and acceptance gates.
+The [proof plan](https://chatgpt.com/c/6ad832d1-932c-83ea-82de-8135c5715ea4) specifies boundaries, expected IDs, scope, lifecycle, and acceptance gates.
 Its fixture arithmetic is separate from application verification.
 
 ## What needs care
@@ -104,14 +104,7 @@ All fifteen recommendations have a [review disposition](recommendation-review.md
 
 ## Evidence and originals
 
-- [Detailed Pro report](raw/research/mosaic-selections-report.md)
-- [Fifteen recommendations](raw/research/mosaic-selections-recommendations.json)
-- [Fifty source records](raw/research/mosaic-selections-sources.json)
-- [Proof plan](raw/research/mosaic-selections-proof-plan.md)
-- [Source material and research notes](raw/research/source-material/README.md)
-- [Complete original research ZIP](raw/mosaic-selections-research.zip)
-- [Standalone original source ZIP](raw/source-material.zip)
-- [Collection manifest](raw/collection-manifest.json)
+- [Pro conversation](https://chatgpt.com/c/6ad832d1-932c-83ea-82de-8135c5715ea4)
 - [Codex source checks and corrections](source-checks.md)
 - [Submitted prompt](prompt.md) and [run record](run-record.md)
 
