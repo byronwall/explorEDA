@@ -39,6 +39,8 @@ source @teams key=id path=data/teams.csv {
 
 query @r "r" glyph=◆ {
   source r
+  calc points_awarded "Points awarded" = ["r.result"] == "Draw" ? 2 : 3
+  calc points_possible "Points possible" = 3
 }
 
 query @appearances "appearances" glyph=◆ {

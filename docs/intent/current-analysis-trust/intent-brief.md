@@ -48,6 +48,44 @@ First compare one category selection across bar, card, and exported rows. Contin
 
 See the [reference packet](references/README.md) and [comparison collection](../comparison-opportunities/README.md) for context.
 
+## Analytical handoff research, 2026-10-20
+
+The [handoff review](../../research/analysis-handoff-2026-10-20/README.md) keeps this local proof first.
+Compare source, linked selection and table-search populations separately: the proposed fixture has 7/5/2 rows and totals 100/35/15.
+Ordinary native export includes source rows; project-view export retains whole included tables.
+The proposed parameter-option and unused-binding closure probes remain unrun.
+Verify them before claiming complete reopening. A reproduced failure earns a bounded repair, not a new format.
+Author, browser and recipient acceptance remain proposed.
+
+## Histogram boundary proof, October 21
+
+[Engineering-boundary research](../../research/engineering-bins-2026-10-21/README.md) identifies a separate endpoint question after the first local trust task.
+Source bins exclude interior upper endpoints; linked numeric ranges include them. The fixture predicts four versus six matching rows.
+This is source and arithmetic evidence, not a runtime defect. Compare the actual mark, trace, stored predicate and stable record keys.
+Start without local filters or facets. Check those populations separately, then test count edits and the declared restore path.
+Any confirmed repair needs its own scope. It does not approve authored histogram boundaries.
+
+## R026 value accounting review, October 21
+
+Keep category and measurement rules separate. Name population, stage, type, and operation for each count.
+Numeric conversion can report failures that later become effective missing values. Both stages can reconcile without equal labels or totals.
+R026 local probes reproduce three bounded disagreements: categorical count versus missing predicate, host-type preview versus Apply, and absent-property batch versus trace.
+These are helper/provider/manager results, not browser confirmation or implemented repairs.
+Review each repair locally. Keep the shared classifier deferred and the universal state model rejected for this mission.
+A visible repair must include fields/summary/calculated-fields guidance and its runnable example in the same milestone.
+See the [R026 research](../../research/missing-state-accounting-2026-10-21/README.md) and [six decisions](../../research/missing-state-accounting-2026-10-21/decisions.md).
+
+## R043 entity-grain review, October 21
+
+Keep source-occurrence identity and selected-value identity separate. Compare exact partitions before requiring aggregate agreement.
+Three local research probes reproduce measured-count conflict disagreement, intentional missing/duplicate-key differences, and card trace row wording.
+The proposed repair makes a measured count unavailable when one entity has conflicting values. Its policy remains for implementation review.
+Preserve ordinary count eligibility, independent equal-valued events, typed keys, and complete group references.
+Test diagnostic details and prior-stage navigation before expanding contributor records. Defer helper extraction and optional upstream recipes.
+No application repair, new lesson, or runnable example shipped. Browser and author proofs remain pending.
+Each visible milestone pairs project-folders or metric-card guidance with the proposed entity-grain example in the research folder.
+See the [R043 research](../../research/entity-grain-2026-10-21/README.md) and [six decisions](../../research/entity-grain-2026-10-21/decisions.md).
+
 ## R077 source-replacement review, October 22
 
 The [R077 research](../../research/selection-identity-2026-10-22/README.md) separates source records, positions, predicates, and query outputs.

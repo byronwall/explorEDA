@@ -97,6 +97,34 @@
       "authority": "Explicit human feedback; tentative answers remain tentative"
     },
     {
+      "id": "analytical-handoff-research",
+      "type": "agent-authored-analysis",
+      "location": "../../research/analysis-handoff-2026-10-20/README.md",
+      "anchor": "AH01–AH05; source and primary-source review at9b16d78e",
+      "authority": "Research and proposed proof, not implementation approval or runtime acceptance"
+    },
+    {
+      "id": "engineering-bins-research-2026-10-21",
+      "type": "agent-authored-analysis",
+      "location": "../../research/engineering-bins-2026-10-21/README.md",
+      "anchor": "EB01\u2013EB04",
+      "authority": "Reviewed research and proposed gates; no product approval or new browser proof"
+    },
+    {
+      "id": "r026-accounting",
+      "type": "agent-authored-analysis",
+      "location": "../../research/missing-state-accounting-2026-10-21/evidence.md",
+      "anchor": "MS01\u2013MS06; four local probes",
+      "authority": "Research and helper/provider/manager evidence; no browser or implemented repair"
+    },
+    {
+      "id": "r043-research",
+      "type": "agent-authored-analysis",
+      "location": "../../research/entity-grain-2026-10-21/README.md",
+      "anchor": "EG01\u2013EG06, three local research probes, October21",
+      "authority": "Reviewed research constraints and repair proposals; no implementation approval"
+    },
+    {
       "id": "r077-research",
       "type": "agent-authored-analysis",
       "location": "../../research/selection-identity-2026-10-22/README.md",
@@ -342,6 +370,29 @@
       "event": "status-checked",
       "status": "planned",
       "evidence": ["No implementation of this scope found at 91b627d"]
+    },
+    {
+      "date": "2026-10-20",
+      "action": "Integrated analytical handoff research and preserved existing proof and demand gates.",
+      "evidence": "Four originals collected; source receipts checked. No recipient, browser or new product proof."
+    },
+    {
+      "date": "2026-10-21",
+      "action": "Reconciled engineering histogram boundary research.",
+      "reason": "Retain current controls and separate endpoint proof from new capability.",
+      "evidence": "Source receipts and independent arithmetic; named-task and complete product proofs remain unrun."
+    },
+    {
+      "date": "2026-10-21",
+      "action": "Reconciled R026 value accounting and three bounded consistency witnesses.",
+      "evidence": "Four locally authored probes pass; no product repair or browser claim.",
+      "reason": "Keep stage-specific counts and proposed repairs separate from a universal state model."
+    },
+    {
+      "date": "2026-10-21",
+      "action": "Reconciled R043 entity-grain research and three local probes.",
+      "evidence": "Measured-count conflict split, source/value partition controls, static trace wording; browser/author proofs remain pending.",
+      "reason": "Retain distinct identity contracts and bound repair proposals."
     },
     {
       "date": "2026-10-22",

@@ -1,0 +1,27 @@
+project @pew
+
+source @pew path=../../../datasets/pew-meaning.csv {
+  field Topic string
+  field Order number
+  field Party string
+  field Share number
+}
+
+query @answers "Shares by topic and party" glyph=◆ {
+  source pew
+  calc party "Party" = ["pew.Party"] == "Rep/Lean Rep" ? "Republicans" : "Democrats"
+  calc rep_share "Republican share" = ["pew.Party"] == "Rep/Lean Rep" ? ["pew.Share"] : 0
+  calc dem_share "Democratic share" = ["pew.Party"] == "Dem/Lean Dem" ? ["pew.Share"] : 0
+}
+
+query @gaps "Gap by topic" glyph=◇ {
+  source pew
+  calc rep_share "Republican share" = ["pew.Party"] == "Rep/Lean Rep" ? ["pew.Share"] : 0
+  calc dem_share "Democratic share" = ["pew.Party"] == "Dem/Lean Dem" ? ["pew.Share"] : 0
+  aggregate @by-topic by=pew.Topic {
+    sum @republicans rep_share label="Republicans (%)"
+    sum @democrats dem_share label="Democrats (%)"
+  }
+  calc gap "Republican minus Democratic (points)" = republicans - democrats
+  calc leans "Who names it more" = gap > 0 ? "Republicans" : "Democrats"
+}

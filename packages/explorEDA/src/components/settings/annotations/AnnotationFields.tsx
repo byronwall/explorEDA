@@ -160,6 +160,11 @@ export function CalloutFields({
         label: "Category",
         help: "Attach to one bar by its category. A bar sums many rows, so it is never one record.",
       },
+      context.cellFields && {
+        value: "category" as const,
+        label: "Cell",
+        help: "Attach to one cell by its values. A cell holds many rows, so it is never one record.",
+      },
       context.plane && {
         value: "coordinate" as const,
         label: "Fixed point",
@@ -219,11 +224,19 @@ export function CalloutFields({
       )}
       {attach.kind === "category" ? (
         <>
-          <Label htmlFor={`${callout.id}-category`}>Category</Label>
+          <Label htmlFor={`${callout.id}-category`}>
+            {context.cellFields ? "Cell" : "Category"}
+          </Label>
           <HeldInput
             id={`${callout.id}-category`}
             value={attach.value}
-            placeholder="The bar's category, as labeled"
+            placeholder={
+              context.cellFields?.length === 1
+                ? "A date, as 2024-06-01"
+                : context.cellFields
+                  ? "Row, column, as Mon,9"
+                  : "The bar's category, as labeled"
+            }
             onChange={(value) =>
               onChange({ ...callout, attach: { kind: "category", value } })
             }

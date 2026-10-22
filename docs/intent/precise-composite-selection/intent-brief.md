@@ -3,7 +3,7 @@ title: "Select exact category pairs and facet-local regions"
 slug: "precise-composite-selection"
 phase: intent
 status: current
-last_updated: "2026-10-06"
+last_updated: "2026-10-21"
 ---
 
 # Select exact category pairs and facet-local regions
@@ -51,3 +51,11 @@ Expand when a real comparison requires separated cell pairs or selecting one fac
 Shape lasso selection against a small point fixture before choosing how it is saved. Compare exact polygon membership with linked rows and dimmed context. Keep the earlier tuple-union proof available for a task that needs it; it no longer defines the preferred first selection extension.
 
 See the [reference packet](references/README.md) and [comparison collection](../comparison-opportunities/README.md) for context.
+
+## Mosaic research follow-up
+
+The [Mosaic study](../../research/mosaic-selections-2026-10-20/README.md) proposes a small internal contract over Crossfilter.
+It preserves this intent’s lasso priority and separates source context from exact evidence.
+The proposed twelve-row proof links a histogram, Scatter, table, and selected-count finding.
+Reproduce the interval-boundary concern before extending selection shapes.
+Mosaic packages and a new backend remain deferred. No implementation was delivered by this study.

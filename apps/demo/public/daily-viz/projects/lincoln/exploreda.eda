@@ -1,0 +1,17 @@
+project @lincoln
+
+source @weather key=Date path=../../../datasets/lincoln-weather.csv {
+  field Date date
+  field Month string
+  field "Month number" number
+  field "Mean temperature" number
+  field "Max temperature" number
+  field "Min temperature" number
+}
+
+query @days "Days of 2016" glyph=◆ {
+  source weather
+  calc range "Daily range (°F)" = ["weather.Max temperature"] - ["weather.Min temperature"]
+  calc month_label "Month" = ["weather.Month number"] == 1 ? "01 Jan" : ["weather.Month number"] == 2 ? "02 Feb" : ["weather.Month number"] == 3 ? "03 Mar" : ["weather.Month number"] == 4 ? "04 Apr" : ["weather.Month number"] == 5 ? "05 May" : ["weather.Month number"] == 6 ? "06 Jun" : ["weather.Month number"] == 7 ? "07 Jul" : ["weather.Month number"] == 8 ? "08 Aug" : ["weather.Month number"] == 9 ? "09 Sep" : ["weather.Month number"] == 10 ? "10 Oct" : ["weather.Month number"] == 11 ? "11 Nov" : "12 Dec"
+  calc freeze "Froze" = ["weather.Min temperature"] <= 32 ? "At or below 32°F" : "Above 32°F"
+}

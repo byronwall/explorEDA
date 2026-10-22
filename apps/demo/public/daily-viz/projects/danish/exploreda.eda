@@ -21,4 +21,8 @@ source @r key=id path=data/r.csv {
 
 query @r "r" glyph=◆ {
   source r
+  calc ibo_pct "Bond rate (%)" = ["r.ibo"] * 100
+  calc ide_pct "Deposit rate (%)" = ["r.ide"] * 100
+  calc spread_pct "Bond minus deposit rate (points)" = ["r.spread"] * 100
+  calc same_sign "Quarterly changes agree" = ["r.dmoney"] == null ? null : ["r.dmoney"] * ["r.dincome"] > 0 ? 1 : 0
 }

@@ -69,3 +69,11 @@ Pro did not review omitted historical research archives. Check those records bef
 The original files remain in the ZIP. `pro-manifest.json` describes that ZIP's payload, including its original README.
 The local README and catalogue replace that overview for repository use. `validation.json` records the local results.
 Product experiments remain unrun. The final repository check result is recorded in the run record and PR.
+
+## Research follow-ups
+
+[R026 value accounting](../../research/missing-state-accounting-2026-10-21/README.md) now has a synthesis and four local probes.
+Three bounded repairs remain proposed. R043 is the next eligible broad study. The original catalogue ranking remains unchanged.
+
+[R043 entity-grain research](../../research/entity-grain-2026-10-21/README.md) preserves distinct identity contracts.
+Three local probes support narrow conflict-policy and trace proposals. R077 is next eligible. No package repair was made.
