@@ -4384,5 +4384,627 @@
       "title": "Three years of Covid case rates",
       "part": 3
     }
+  },
+  {
+    "id": "nb-scotus-tenure",
+    "slug": "scotus-tenure",
+    "kind": "notebook",
+    "title": "Death no longer ends a Supreme Court term",
+    "question": "How long do justices serve, and how do their terms end?",
+    "summary": "Justices sworn in since 1950 have served a median of 23 years, three times the founders’ appointees. Two-thirds of terms that ended before 1900 ended in death; since 1950, three-quarters have ended in retirement.",
+    "family": "scotus",
+    "entry": "tenure.eda.md",
+    "query": "justices",
+    "industry": "Politics",
+    "analysis": "Trend",
+    "findings": [
+      {
+        "text": "justices sworn in before 1800 served a median of {value} years",
+        "format": ".1f",
+        "op": "median",
+        "field": "Years served",
+        "where": [
+          [
+            "start_year",
+            "lt",
+            1800
+          ],
+          [
+            "status",
+            "eq",
+            "Completed"
+          ]
+        ]
+      },
+      {
+        "text": "Justices sworn in from 1950 to 1999 whose terms have ended served a median of {value} years.",
+        "format": ".1f",
+        "op": "median",
+        "field": "Years served",
+        "where": [
+          [
+            "era",
+            "eq",
+            "1950–1999"
+          ],
+          [
+            "status",
+            "eq",
+            "Completed"
+          ]
+        ]
+      },
+      {
+        "text": "The longest term, William O. Douglas’s, ran {value} years.",
+        "format": ".1f",
+        "op": "max",
+        "field": "Years served"
+      },
+      {
+        "text": "The 1900–1949 appointees served the shortest terms since the founding, a median of {value} years",
+        "format": ".1f",
+        "op": "median",
+        "field": "Years served",
+        "where": [
+          [
+            "era",
+            "eq",
+            "1900–1949"
+          ],
+          [
+            "status",
+            "eq",
+            "Completed"
+          ]
+        ]
+      },
+      {
+        "text": "Of the terms that ended before 1900, {value}% ended with the justice’s death.",
+        "format": ".1f",
+        "op": "share",
+        "field": "ended",
+        "where": [
+          [
+            "end_year",
+            "lt",
+            1900
+          ]
+        ],
+        "condition": [
+          [
+            "ended",
+            "eq",
+            "Died in office"
+          ]
+        ]
+      },
+      {
+        "text": "Of those that have ended since 1950, {value}% did",
+        "format": ".1f",
+        "op": "share",
+        "field": "ended",
+        "where": [
+          [
+            "end_year",
+            "ge",
+            1950
+          ]
+        ],
+        "condition": [
+          [
+            "ended",
+            "eq",
+            "Died in office"
+          ]
+        ]
+      },
+      {
+        "text": "and {value}% ended in retirement.",
+        "format": ".1f",
+        "op": "share",
+        "field": "ended",
+        "where": [
+          [
+            "end_year",
+            "ge",
+            1950
+          ]
+        ],
+        "condition": [
+          [
+            "ended",
+            "eq",
+            "Retired"
+          ]
+        ]
+      },
+      {
+        "text": "Since 1950, Republican presidents have appointed {value} justices",
+        "format": ".0f",
+        "op": "count",
+        "field": "Party",
+        "where": [
+          [
+            "start_year",
+            "ge",
+            1950
+          ],
+          [
+            "Party",
+            "eq",
+            "Republican"
+          ]
+        ]
+      },
+      {
+        "text": "and Democratic presidents {value}.",
+        "format": ".0f",
+        "op": "count",
+        "field": "Party",
+        "where": [
+          [
+            "start_year",
+            "ge",
+            1950
+          ],
+          [
+            "Party",
+            "eq",
+            "Democratic"
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "nb-media-coverage",
+    "slug": "media-coverage",
+    "kind": "notebook",
+    "title": "Homicide is 1% of deaths and nearly half of the coverage",
+    "question": "Do the news outlets cover what Americans die from?",
+    "summary": "Heart disease and cancer were 56% of deaths in 2023 and 7% of the articles; homicide was 1% of deaths and 47% of the articles. The Times, the Post, and Fox News over-cover the same causes by nearly the same amounts.",
+    "family": "media",
+    "entry": "coverage.eda.md",
+    "query": "media",
+    "industry": "Media",
+    "analysis": "Ranking",
+    "findings": [
+      {
+        "text": "Heart disease was {value}% of deaths",
+        "format": ".1f",
+        "op": "weighted_mean",
+        "field": "is_heart",
+        "weight": "Count",
+        "scale": 100,
+        "where": [
+          [
+            "Source",
+            "eq",
+            "Deaths"
+          ]
+        ]
+      },
+      {
+        "text": "and cancer {value}%.",
+        "format": ".1f",
+        "op": "weighted_mean",
+        "field": "is_cancer",
+        "weight": "Count",
+        "scale": 100,
+        "where": [
+          [
+            "Source",
+            "eq",
+            "Deaths"
+          ]
+        ]
+      },
+      {
+        "text": "Homicide was {value}% of deaths",
+        "format": ".2f",
+        "op": "weighted_mean",
+        "field": "is_homicide",
+        "weight": "Count",
+        "scale": 100,
+        "where": [
+          [
+            "Source",
+            "eq",
+            "Deaths"
+          ]
+        ]
+      },
+      {
+        "text": "terrorism killed {value} people in the year",
+        "format": ".0f",
+        "op": "sum",
+        "field": "Count",
+        "where": [
+          [
+            "Source",
+            "eq",
+            "Deaths"
+          ],
+          [
+            "Cause",
+            "eq",
+            "Terrorism"
+          ]
+        ]
+      },
+      {
+        "text": "Homicide was {value}% of articles",
+        "format": ".1f",
+        "op": "weighted_mean",
+        "field": "is_homicide",
+        "weight": "Count",
+        "scale": 100,
+        "where": [
+          [
+            "Source",
+            "ne",
+            "Deaths"
+          ]
+        ]
+      },
+      {
+        "text": "terrorism, with sixteen deaths, was {value}%.",
+        "format": ".1f",
+        "op": "weighted_mean",
+        "field": "is_terrorism",
+        "weight": "Count",
+        "scale": 100,
+        "where": [
+          [
+            "Source",
+            "ne",
+            "Deaths"
+          ]
+        ]
+      },
+      {
+        "text": "Heart disease and cancer together were {value}% of articles",
+        "format": ".1f",
+        "op": "weighted_mean",
+        "field": "is_top_two",
+        "weight": "Count",
+        "scale": 100,
+        "where": [
+          [
+            "Source",
+            "ne",
+            "Deaths"
+          ]
+        ]
+      },
+      {
+        "text": "against {value}% of deaths.",
+        "format": ".1f",
+        "op": "weighted_mean",
+        "field": "is_top_two",
+        "weight": "Count",
+        "scale": 100,
+        "where": [
+          [
+            "Source",
+            "eq",
+            "Deaths"
+          ]
+        ]
+      },
+      {
+        "text": "{value}% of The New York Times’s articles",
+        "format": ".1f",
+        "op": "weighted_mean",
+        "field": "is_homicide",
+        "weight": "Count",
+        "scale": 100,
+        "where": [
+          [
+            "Source",
+            "eq",
+            "The New York Times"
+          ]
+        ]
+      },
+      {
+        "text": "{value}% of The Washington Post’s",
+        "format": ".1f",
+        "op": "weighted_mean",
+        "field": "is_homicide",
+        "weight": "Count",
+        "scale": 100,
+        "where": [
+          [
+            "Source",
+            "eq",
+            "The Washington Post"
+          ]
+        ]
+      },
+      {
+        "text": "and {value}% of Fox News’s.",
+        "format": ".1f",
+        "op": "weighted_mean",
+        "field": "is_homicide",
+        "weight": "Count",
+        "scale": 100,
+        "where": [
+          [
+            "Source",
+            "eq",
+            "Fox News"
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "nb-pew-partisan-gaps",
+    "slug": "pew-partisan-gaps",
+    "kind": "notebook",
+    "title": "Republicans name faith three times as often as Democrats",
+    "question": "Where do the parties differ on what makes life meaningful?",
+    "summary": "Faith is the widest partisan gap in what Americans say makes life meaningful: 22% of Republicans named it against 8% of Democrats. Democrats lead on hobbies, health, nature, pets, and Covid, all by six points or less.",
+    "family": "pew",
+    "entry": "partisan-gaps.eda.md",
+    "query": "gaps",
+    "industry": "Politics",
+    "analysis": "Comparison",
+    "findings": [
+      {
+        "text": "Republicans lead by {value} points.",
+        "format": ".0f",
+        "op": "max",
+        "field": "gap"
+      },
+      {
+        "text": "The gap on hobbies and recreation is {value} points, the largest Democratic lead.",
+        "format": ".0f",
+        "op": "min",
+        "field": "gap"
+      },
+      {
+        "text": "Republicans lead on {value} of the seven topics.",
+        "format": ".0f",
+        "op": "count",
+        "field": "gap",
+        "where": [
+          [
+            "gap",
+            "gt",
+            0
+          ]
+        ]
+      },
+      {
+        "text": "On faith, {value}% of Republicans mentioned it",
+        "format": ".0f",
+        "op": "max",
+        "field": "republicans",
+        "where": [
+          [
+            "Topic",
+            "eq",
+            "Spirituality, faith and religion"
+          ]
+        ]
+      },
+      {
+        "text": "and {value}% of Democrats did",
+        "format": ".0f",
+        "op": "max",
+        "field": "democrats",
+        "where": [
+          [
+            "Topic",
+            "eq",
+            "Spirituality, faith and religion"
+          ]
+        ]
+      },
+      {
+        "text": "On hobbies and recreation, {value}% of Democrats",
+        "format": ".0f",
+        "op": "max",
+        "field": "democrats",
+        "where": [
+          [
+            "Topic",
+            "eq",
+            "Hobbies and recreation"
+          ]
+        ]
+      },
+      {
+        "text": "and {value}% of Republicans.",
+        "format": ".0f",
+        "op": "max",
+        "field": "republicans",
+        "where": [
+          [
+            "Topic",
+            "eq",
+            "Hobbies and recreation"
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "nb-lincoln-swings",
+    "slug": "lincoln-swings",
+    "kind": "notebook",
+    "title": "Lincoln’s 2016 ran from −26°F to 98°F",
+    "question": "How much does a Nebraska day swing?",
+    "summary": "Lincoln’s 2016 hit 98°F in July and −26°F in December, and the low was at or under freezing on 152 days. The widest daily swings came in March and October, not summer: October days spanned 33 degrees on average, July days 23.",
+    "family": "lincoln",
+    "entry": "swings.eda.md",
+    "query": "days",
+    "industry": "Weather",
+    "analysis": "Seasonality",
+    "findings": [
+      {
+        "text": "The hottest day was July 22, with a high of {value}°F",
+        "format": ".0f",
+        "op": "max",
+        "field": "Max temperature"
+      },
+      {
+        "text": "the coldest was December 18, when the low reached {value}°F",
+        "format": ".0f",
+        "op": "min",
+        "field": "Min temperature"
+      },
+      {
+        "text": "The low crossed 32°F on {value} days",
+        "format": ".0f",
+        "op": "count",
+        "field": "Min temperature",
+        "where": [
+          [
+            "Min temperature",
+            "le",
+            32
+          ]
+        ]
+      },
+      {
+        "text": "The widest day of the year was {value} degrees",
+        "format": ".0f",
+        "op": "max",
+        "field": "range"
+      },
+      {
+        "text": "The average day spanned {value} degrees.",
+        "format": ".1f",
+        "op": "mean",
+        "field": "range"
+      },
+      {
+        "text": "October’s days averaged a {value}-degree range",
+        "format": ".1f",
+        "op": "mean",
+        "field": "range",
+        "where": [
+          [
+            "Month number",
+            "eq",
+            10
+          ]
+        ]
+      },
+      {
+        "text": "and July’s a {value}-degree range.",
+        "format": ".1f",
+        "op": "mean",
+        "field": "range",
+        "where": [
+          [
+            "Month number",
+            "eq",
+            7
+          ]
+        ]
+      },
+      {
+        "text": "{value} days had a range of 40 degrees or more",
+        "format": ".0f",
+        "op": "count",
+        "field": "range",
+        "where": [
+          [
+            "range",
+            "ge",
+            40
+          ]
+        ]
+      },
+      {
+        "text": "and {value} had a range of 10 degrees or less",
+        "format": ".0f",
+        "op": "count",
+        "field": "range",
+        "where": [
+          [
+            "range",
+            "le",
+            10
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "nb-driving-miles-and-gas",
+    "slug": "driving-miles-and-gas",
+    "kind": "notebook",
+    "title": "Americans drove more every year for fifty years, whatever gas cost",
+    "question": "Did the price of gas change how much Americans drove?",
+    "summary": "Miles driven per person rose from 3,675 in 1956 to 10,067 in 2005 while gas swung between $1.39 and $3.31, with almost no correlation between the two. Oil shocks cost one year of driving each; the only sustained decline began in 2006, before the price peak.",
+    "family": "driving",
+    "entry": "miles-and-gas.eda.md",
+    "query": "years",
+    "industry": "Transportation",
+    "analysis": "Relationship",
+    "findings": [
+      {
+        "text": "gas swings between ${value}",
+        "format": ".2f",
+        "op": "min",
+        "field": "Gas"
+      },
+      {
+        "text": "and ${value}",
+        "format": ".2f",
+        "op": "max",
+        "field": "Gas"
+      },
+      {
+        "text": "Miles per person went from {value} in 1956",
+        "format": ",.0f",
+        "op": "min",
+        "field": "Miles"
+      },
+      {
+        "text": "to {value} in 2005.",
+        "format": ",.0f",
+        "op": "max",
+        "field": "Miles"
+      },
+      {
+        "text": "miles and gas price have a correlation of {value}",
+        "format": ".3f",
+        "op": "corr",
+        "field": "Miles",
+        "other": "Gas"
+      },
+      {
+        "text": "The 1990s averaged ${value} a gallon",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Gas",
+        "where": [
+          [
+            "decade",
+            "eq",
+            "1990s"
+          ]
+        ]
+      },
+      {
+        "text": "The 2000s averaged ${value}",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Gas",
+        "where": [
+          [
+            "decade",
+            "eq",
+            "2000s"
+          ]
+        ]
+      }
+    ]
   }
 ]
