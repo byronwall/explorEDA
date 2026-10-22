@@ -1,0 +1,56 @@
+[
+  {
+    "id": "T0",
+    "A_region": null,
+    "B_category": null,
+    "W_region": null,
+    "table_search": "",
+    "rows_search": "",
+    "rows_status": null
+  },
+  {
+    "id": "T1",
+    "A_region": "West",
+    "B_category": null,
+    "W_region": null,
+    "table_search": "",
+    "rows_search": "",
+    "rows_status": null
+  },
+  {
+    "id": "T2",
+    "A_region": "West",
+    "B_category": "Tech",
+    "W_region": "West",
+    "table_search": "rush",
+    "rows_search": "red",
+    "rows_status": "Open"
+  },
+  {
+    "id": "T3",
+    "A_region": "West",
+    "B_category": "Tech",
+    "W_region": "East",
+    "table_search": "rush",
+    "rows_search": "red",
+    "rows_status": "Open"
+  },
+  {
+    "id": "T4",
+    "A_region": null,
+    "B_category": "Tech",
+    "W_region": "East",
+    "table_search": "rush",
+    "rows_search": "red",
+    "rows_status": "Open"
+  },
+  {
+    "id": "T5",
+    "A_region": null,
+    "B_category": null,
+    "W_region": null,
+    "table_search": "",
+    "rows_search": "",
+    "rows_status": null
+  }
+]

@@ -15,7 +15,9 @@ export function MetricCardTraceBody({ trace }: { trace: MetricCardTrace }) {
               ? "A result needs at least one valid measure value."
               : plan.aggregation === "sum"
                 ? `Sum of ${plan.includedCount} valid measure values.`
-                : `Sum of valid measure values ÷ ${plan.includedCount} used rows.`}
+                : plan.aggregation === "average"
+                  ? `Sum of valid measure values ÷ ${plan.includedCount} used rows.`
+                  : `${plan.aggregation === "max" ? "Largest" : "Smallest"} of ${plan.includedCount} valid measure values.`}
         </TraceReadout>
         {plan.state === "value" && plan.aggregation !== "count" && (
           <TraceReadout label="Before formatting">

@@ -1,0 +1,391 @@
+{
+  "method": "Hand enumeration from frozen twelve-row ledger; no production evaluator used to derive any expected IDs or values.",
+  "fixture_id": "R051-orders-v1",
+  "definitions": {
+    "G": "Global all-active-dimension membership",
+    "P_A": "Peer context before A local population restriction",
+    "P_B": "Peer context before B local population restriction; B has no local restriction",
+    "C_A": "P_A intersect Web local population",
+    "M_A": "G intersect Web local population; in linked mode also C_A intersect A own predicate",
+    "Q_workspace_region": "Workspace region group, omitting only workspace region dimension; null means no active workspace region group key",
+    "card_value": "Sum of finite numeric contributors; null for absent numeric value, distinguished by card_state"
+  },
+  "full": [
+    "O01",
+    "O02",
+    "O03",
+    "O04",
+    "O05",
+    "O06",
+    "O07",
+    "O08",
+    "O09",
+    "O10",
+    "O11",
+    "O12"
+  ],
+  "A_local_population": ["O01", "O02", "O05", "O06", "O09", "O10", "O12"],
+  "B_full_source_reference_counts": {
+    "Furniture": 6,
+    "Tech": 6
+  },
+  "tasks": [
+    {
+      "id": "T0",
+      "G": [
+        "O01",
+        "O02",
+        "O03",
+        "O04",
+        "O05",
+        "O06",
+        "O07",
+        "O08",
+        "O09",
+        "O10",
+        "O11",
+        "O12"
+      ],
+      "P_A": [
+        "O01",
+        "O02",
+        "O03",
+        "O04",
+        "O05",
+        "O06",
+        "O07",
+        "O08",
+        "O09",
+        "O10",
+        "O11",
+        "O12"
+      ],
+      "P_B": [
+        "O01",
+        "O02",
+        "O03",
+        "O04",
+        "O05",
+        "O06",
+        "O07",
+        "O08",
+        "O09",
+        "O10",
+        "O11",
+        "O12"
+      ],
+      "C_A": ["O01", "O02", "O05", "O06", "O09", "O10", "O12"],
+      "M_A": ["O01", "O02", "O05", "O06", "O09", "O10", "O12"],
+      "Q_workspace_region": null,
+      "A_counts": {
+        "West": 4,
+        "East": 2,
+        "South": 1
+      },
+      "B_counts": {
+        "Furniture": 6,
+        "Tech": 6
+      },
+      "table_rows": [
+        "O01",
+        "O02",
+        "O03",
+        "O04",
+        "O05",
+        "O06",
+        "O07",
+        "O08",
+        "O09",
+        "O10",
+        "O11",
+        "O12"
+      ],
+      "rows_rows": [
+        "O01",
+        "O02",
+        "O03",
+        "O04",
+        "O05",
+        "O06",
+        "O07",
+        "O08",
+        "O09",
+        "O10",
+        "O11",
+        "O12"
+      ],
+      "card_valid": [
+        "O01",
+        "O02",
+        "O04",
+        "O05",
+        "O07",
+        "O08",
+        "O10",
+        "O11",
+        "O12"
+      ],
+      "card_excluded": ["O03", "O06", "O09"],
+      "card_value": 980,
+      "card_state": "value"
+    },
+    {
+      "id": "T1",
+      "G": ["O01", "O02", "O03", "O04", "O09", "O12"],
+      "P_A": [
+        "O01",
+        "O02",
+        "O03",
+        "O04",
+        "O05",
+        "O06",
+        "O07",
+        "O08",
+        "O09",
+        "O10",
+        "O11",
+        "O12"
+      ],
+      "P_B": ["O01", "O02", "O03", "O04", "O09", "O12"],
+      "C_A": ["O01", "O02", "O05", "O06", "O09", "O10", "O12"],
+      "M_A": ["O01", "O02", "O09", "O12"],
+      "Q_workspace_region": null,
+      "A_counts": {
+        "West": 4,
+        "East": 2,
+        "South": 1
+      },
+      "B_counts": {
+        "Furniture": 3,
+        "Tech": 3
+      },
+      "table_rows": ["O01", "O02", "O03", "O04", "O09", "O12"],
+      "rows_rows": ["O01", "O02", "O03", "O04", "O09", "O12"],
+      "card_valid": ["O01", "O02", "O04", "O12"],
+      "card_excluded": ["O03", "O09"],
+      "card_value": 280,
+      "card_state": "value"
+    },
+    {
+      "id": "T2",
+      "G": ["O02", "O04", "O09"],
+      "P_A": ["O02", "O04", "O09"],
+      "P_B": ["O01", "O02", "O03", "O04", "O09", "O12"],
+      "C_A": ["O02", "O09"],
+      "M_A": ["O02", "O09"],
+      "Q_workspace_region": ["O02", "O04", "O09"],
+      "A_counts": {
+        "West": 2,
+        "East": 0,
+        "South": 0
+      },
+      "B_counts": {
+        "Furniture": 3,
+        "Tech": 3
+      },
+      "table_rows": ["O04", "O09"],
+      "rows_rows": ["O04"],
+      "card_valid": ["O02", "O04"],
+      "card_excluded": ["O09"],
+      "card_value": 200,
+      "card_state": "value"
+    },
+    {
+      "id": "T3",
+      "G": [],
+      "P_A": ["O06", "O08"],
+      "P_B": [],
+      "C_A": ["O06"],
+      "M_A": [],
+      "Q_workspace_region": ["O02", "O04", "O09"],
+      "A_counts": {
+        "West": 0,
+        "East": 1,
+        "South": 0
+      },
+      "B_counts": {
+        "Furniture": 0,
+        "Tech": 0
+      },
+      "table_rows": [],
+      "rows_rows": [],
+      "card_valid": [],
+      "card_excluded": [],
+      "card_value": null,
+      "card_state": "empty"
+    },
+    {
+      "id": "T4",
+      "G": ["O06", "O08"],
+      "P_A": ["O06", "O08"],
+      "P_B": ["O05", "O06", "O07", "O08"],
+      "C_A": ["O06"],
+      "M_A": ["O06"],
+      "Q_workspace_region": ["O02", "O04", "O06", "O08", "O09", "O11"],
+      "A_counts": {
+        "West": 0,
+        "East": 1,
+        "South": 0
+      },
+      "B_counts": {
+        "Furniture": 2,
+        "Tech": 2
+      },
+      "table_rows": ["O06"],
+      "rows_rows": [],
+      "card_valid": ["O08"],
+      "card_excluded": ["O06"],
+      "card_value": 300,
+      "card_state": "value"
+    },
+    {
+      "id": "T5",
+      "G": [
+        "O01",
+        "O02",
+        "O03",
+        "O04",
+        "O05",
+        "O06",
+        "O07",
+        "O08",
+        "O09",
+        "O10",
+        "O11",
+        "O12"
+      ],
+      "P_A": [
+        "O01",
+        "O02",
+        "O03",
+        "O04",
+        "O05",
+        "O06",
+        "O07",
+        "O08",
+        "O09",
+        "O10",
+        "O11",
+        "O12"
+      ],
+      "P_B": [
+        "O01",
+        "O02",
+        "O03",
+        "O04",
+        "O05",
+        "O06",
+        "O07",
+        "O08",
+        "O09",
+        "O10",
+        "O11",
+        "O12"
+      ],
+      "C_A": ["O01", "O02", "O05", "O06", "O09", "O10", "O12"],
+      "M_A": ["O01", "O02", "O05", "O06", "O09", "O10", "O12"],
+      "Q_workspace_region": null,
+      "A_counts": {
+        "West": 4,
+        "East": 2,
+        "South": 1
+      },
+      "B_counts": {
+        "Furniture": 6,
+        "Tech": 6
+      },
+      "table_rows": [
+        "O01",
+        "O02",
+        "O03",
+        "O04",
+        "O05",
+        "O06",
+        "O07",
+        "O08",
+        "O09",
+        "O10",
+        "O11",
+        "O12"
+      ],
+      "rows_rows": [
+        "O01",
+        "O02",
+        "O03",
+        "O04",
+        "O05",
+        "O06",
+        "O07",
+        "O08",
+        "O09",
+        "O10",
+        "O11",
+        "O12"
+      ],
+      "card_valid": [
+        "O01",
+        "O02",
+        "O04",
+        "O05",
+        "O07",
+        "O08",
+        "O10",
+        "O11",
+        "O12"
+      ],
+      "card_excluded": ["O03", "O06", "O09"],
+      "card_value": 980,
+      "card_state": "value"
+    }
+  ],
+  "notebook_T3": {
+    "mode": "localSelections=true; stored task T3 predicates retained; new mode initialized before chart registration",
+    "G": ["O05", "O06", "O07", "O08"],
+    "P_A": ["O05", "O06", "O07", "O08"],
+    "P_B": ["O05", "O06", "O07", "O08"],
+    "C_A": ["O05", "O06"],
+    "getChartFilteredRowIds_A": ["O05", "O06"],
+    "A_own_highlight": [],
+    "B_own_highlight": ["O06", "O08"],
+    "Q_workspace_region": [
+      "O01",
+      "O02",
+      "O03",
+      "O04",
+      "O05",
+      "O06",
+      "O07",
+      "O08",
+      "O09",
+      "O10",
+      "O11",
+      "O12"
+    ],
+    "A_counts": {
+      "West": 0,
+      "East": 2,
+      "South": 0
+    },
+    "B_counts": {
+      "Furniture": 2,
+      "Tech": 2
+    },
+    "table_rows": ["O06", "O07"],
+    "rows_rows": ["O05", "O07"],
+    "card_valid": ["O05", "O07", "O08"],
+    "card_excluded": ["O06"],
+    "card_value": 500,
+    "card_state": "value"
+  },
+  "A_full_local_population_counts": {
+    "West": 4,
+    "East": 2,
+    "South": 1
+  },
+  "A_full_source_reference_counts": {
+    "West": 6,
+    "East": 4,
+    "South": 2
+  },
+  "reference_scope_note": "Ordinary count bar allValues uses full column data, not useGetAllIds(settings); faint reference and domain count all source rows even when foreground local population is Web."
+}

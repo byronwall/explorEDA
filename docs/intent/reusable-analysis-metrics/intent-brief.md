@@ -3,7 +3,7 @@ title: "Reusable rates and richer grouped measures"
 slug: "reusable-analysis-metrics"
 phase: intent
 status: current
-last_updated: "2026-10-20"
+last_updated: "2026-10-21"
 ---
 
 # Reusable rates and richer grouped measures
@@ -55,3 +55,14 @@ If explanatory work becomes useful, pair calculated-fields.mdx (In charts and ta
 See the [reviewed research](../../research/grouped-rates-2026-10-19/README.md), [seven dispositions](../../research/grouped-rates-2026-10-19/decisions.md) and [proposed proof](../../research/grouped-rates-2026-10-19/originals/proof-plan.md).
 
 See the [reference packet](references/README.md) and [comparison collection](../comparison-opportunities/README.md) for context.
+
+## R043 entity-grain review, October 21
+
+Keep source-occurrence identity and selected-value identity separate. Compare exact partitions before requiring aggregate agreement.
+Three local research probes reproduce measured-count conflict disagreement, intentional missing/duplicate-key differences, and card trace row wording.
+The proposed repair makes a measured count unavailable when one entity has conflicting values. Its policy remains for implementation review.
+Preserve ordinary count eligibility, independent equal-valued events, typed keys, and complete group references.
+Test diagnostic details and prior-stage navigation before expanding contributor records. Defer helper extraction and optional upstream recipes.
+No application repair, new lesson, or runnable example shipped. Browser and author proofs remain pending.
+Each visible milestone pairs project-folders or metric-card guidance with the proposed entity-grain example in the research folder.
+See the [R043 research](../../research/entity-grain-2026-10-21/README.md) and [six decisions](../../research/entity-grain-2026-10-21/decisions.md).

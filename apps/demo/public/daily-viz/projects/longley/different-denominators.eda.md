@@ -1,65 +1,58 @@
-# Unemployment swung 2.6-fold, with no labor force to divide by
+# Unemployment swung 2.6-fold while employment rose 17%
 
-**What can raw employment and unemployment counts tell you without a labor-force total?** Each row is one historical US annual observation.
+**How did American joblessness move in the fifteen years after the war?** Each row is one year from 1947 to 1962 in the Longley benchmark, with the number of people employed, unemployed, and in the armed forces, all in thousands. There is no labor-force total, so none of these can become a rate. The counts still tell a story: employment crept up while unemployment lurched.
 
 ```eda
 eda query=r
 employment:num=r.employment label="Employed (thousands)"
 unemployed:num=r.unemployed label="Unemployed (thousands)"
 armed:num=r.armed label="Armed forces (thousands)"
-population:num=r.population label="Population 14+ (thousands)"
 year:num=r.year label="Year"
 era:cat=r.era label="Era"
+employment_index:num=r.employment_index label="Employed (1947 = 100)"
+calc unemployed_index = unemployed / 2356 * 100
+calc armed_index = armed / 1590 * 100
+field unemployed_index label="Unemployed (1947 = 100)"
+field armed_index label="Armed forces (1947 = 100)"
 ```
 
-## 1. Unemployment counts across the years
+## Set all three counts to 100 in 1947
 
-This line is a count series. Calling it an unemployment rate would silently add a denominator the analysis has not verified.
+On a shared index, employment is nearly a flat line: it was 60,323 thousand in 1947 and 70,551 thousand in 1962. Unemployment and the armed forces swing around it. The armed forces more than doubled during the Korean War, reaching 3,594 thousand in 1952, and never fell back to the 1948 low of 1,456 thousand.
 
 ```eda
-line @nb-longley-different-denominators-chart-1 x=year y=unemployed title="Unemployment counts across the years" x.title="Year" y.title="Unemployed (thousands)"
+line @nb-longley-different-denominators-chart-1 x=year y=employment_index,unemployed_index,armed_index title="Employed, unemployed, and armed forces, indexed to 1947" x.title="Year" y.title="Index (1947 = 100)" {
+  rule y=100 "1947 level"
+}
 ```
 
-## 2. Armed-forces counts provide different context
+## Unemployment jumped in four recessions
 
-The second count has a different population meaning. Its separate panel avoids suggesting that the two series partition a complete labor force.
+The raw count shows where the swings come from. Unemployment fell to 1,870 thousand in 1953 and reached 4,806 thousand in 1961, 2.6 times as many people. Each jump lines up with an NBER recession: 1949, 1954, 1958, and 1961. The 1958 jump was the sharpest, and the count never returned to its 1950s lows.
 
 ```eda
-line @nb-longley-different-denominators-chart-2 x=year y=armed title="Armed-forces counts provide different context" x.title="Year" y.title="Armed forces (thousands)"
+line @nb-longley-different-denominators-chart-2 x=year y=unemployed title="Unemployed, thousands, 1947 to 1962" x.title="Year" y.title="Unemployed (thousands)" {
+  band x=1948.83..1949.75 "1949"
+  band x=1953.5..1954.33 "1954"
+  band x=1957.58..1958.25 "1958"
+  band x=1960.25..1961.08
+  callout "1961: 4,806 thousand" pick=max offset=-150,24
+  callout "1953: 1,870 thousand" pick=min
+}
 ```
 
-**Finding.** The smallest recorded unemployment count was 1,870 source count units.
+## Both counts rose, so neither is a rate
 
-## 3. Employment and unemployment can both move
-
-A two-count plot makes the changing scale of the economy relevant. There is no identity requiring the two plotted numbers to sum to a constant.
+Each point is one year, placed by its employed and unemployed counts and colored by era. The later years sit up and to the right: mean unemployment was 2,649 thousand from 1947 to 1954 and 3,738 thousand from 1955 to 1962, while employment rose through both eras. More people working and more people looking for work are not in tension; the population was growing.
 
 ```eda
-scatter @nb-longley-different-denominators-chart-3 x=employment y=unemployed color=era title="Employment and unemployment can both move" x.title="Employed (thousands)" y.title="Unemployed (thousands)"
-```
-
-## 4. Population is context, not a rate denominator
-
-Population does not establish who participates in the labor force. This view describes scale without converting the ratio into an official labor statistic.
-
-```eda
-scatter @nb-longley-different-denominators-chart-4 x=population y=unemployed title="Population is context, not a rate denominator" x.title="Population 14+ (thousands)" y.title="Unemployed (thousands)"
-```
-
-**Finding.** The largest recorded unemployment count was 4,806 source count units.
-
-## 5. The rows behind the charts
-
-Sort a column or select rows to check any value above. Selections in a notebook stay with their own chart.
-
-```eda
-table @nb-longley-different-denominators-records year,employment,unemployed,armed,population title="Records behind this comparison"
+scatter @nb-longley-different-denominators-chart-3 x=employment y=unemployed color=era title="Unemployed against employed, one point per year" x.title="Employed (thousands)" y.title="Unemployed (thousands)"
 ```
 
 ## Takeaway
 
-A dashboard can be useful without manufacturing a familiar metric. Keep the count series separate, name their units, and make the missing denominator an analytical limit.
+Between 1947 and 1962 the number of Americans employed grew by a sixth, and the number unemployed in the worst year was two and a half times the best. Read the second number against the first, not alone: a bigger workforce has more of everyone in it.
 
 ## Limits
 
-The selected columns do not provide a verified labor-force denominator for constructing a standard unemployment rate. Population is not a substitute. These source counts belong to an old benchmark vintage.
+Sixteen annual rows from a 1967 regression benchmark, in the vintage Longley used. The file has no labor-force total, so no unemployment rate can be built from it, and the population column counts everyone aged 14 and over, not participants.

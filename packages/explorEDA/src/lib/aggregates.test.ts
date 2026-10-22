@@ -56,6 +56,19 @@ describe("calculateGroupedAggregate", () => {
     expect(average.rows[0]?.value).toBeUndefined();
   });
 
+  it("takes the largest and smallest valid value", () => {
+    const value = (aggregation: "max" | "min") =>
+      calculateGroupedAggregate(rows, {
+        id: aggregation,
+        name: aggregation,
+        groupField: "region",
+        measureField: "revenue",
+        aggregation,
+      }).rows.map((row) => row.value);
+    expect(value("max")).toEqual([10, 7, 3]);
+    expect(value("min")).toEqual([5, 7, 3]);
+  });
+
   it("keeps numeric and string group identities separate", () => {
     const result = calculateGroupedAggregate(
       [

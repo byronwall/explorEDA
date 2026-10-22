@@ -8,6 +8,7 @@
 - When shaping or planning an initiative under `docs/intent/`, treat docs and demo examples as part of each user-visible feature's scope. List the docs page or section and the example in the same milestone as the feature. The docs gate (`apps/demo/src/docs/gate.ts`) requires a page only for registered chart types; nothing enforces examples, Composition marks, or other features.
 - Verify changed flows in the browser at wide, intermediate, and narrow widths.
 - Keep existing user edits. Do not commit on `main` without an explicit request.
+- For any ChatGPT Pro research run, read [Pro research direction](docs/research/DIRECTION.md) first. It decides topic choice and what a run hands back, ahead of catalogue rank and earlier run queues.
 
 ## Verifying changes
 

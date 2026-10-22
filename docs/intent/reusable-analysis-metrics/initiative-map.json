@@ -5,7 +5,7 @@
     "slug": "reusable-analysis-metrics",
     "scale": "feature",
     "current_phase": "intent",
-    "last_updated": "2026-10-20",
+    "last_updated": "2026-10-21",
     "summary": "Analysts may need the same meaningful measure in a card, bar, matrix, and trend.",
     "status": "planned",
     "next_action": "Keep rates deferred. After local trust, require a named repeated task that fails current recipes and acceptable upstream preparation."
@@ -95,6 +95,13 @@
       "location": "../../research/grouped-rates-2026-10-19/README.md",
       "anchor": "GR01–GR07, independently reviewed 2026-10-20 at 9b16d78e",
       "authority": "Reviewed research; no implementation approval or author/browser proof"
+    },
+    {
+      "id": "r043-research",
+      "type": "agent-authored-analysis",
+      "location": "../../research/entity-grain-2026-10-21/README.md",
+      "anchor": "EG01\u2013EG06, three local research probes, October21",
+      "authority": "Reviewed research constraints and repair proposals; no implementation approval"
     }
   ],
   "intent": {
@@ -358,6 +365,12 @@
       "action": "Reviewed grouped-rate research and retained the deferred seed.",
       "reason": "Current recipes or declared-grain preparation can reject a new API before product expansion.",
       "evidence": "Seven dispositions, baseline source authentication, five primary sources and twelve independent arithmetic anchors. Author/browser/lifecycle proof remains proposed."
+    },
+    {
+      "date": "2026-10-21",
+      "action": "Reconciled R043 entity-grain research and three local probes.",
+      "evidence": "Measured-count conflict split, source/value partition controls, static trace wording; browser/author proofs remain pending.",
+      "reason": "Retain distinct identity contracts and bound repair proposals."
     }
   ],
   "closure": null,

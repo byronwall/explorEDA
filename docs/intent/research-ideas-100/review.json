@@ -1,0 +1,602 @@
+[
+  {
+    "id": "R001",
+    "disposition": "investigate",
+    "reason": "Check whether existing linear and polynomial fits retain reliable predictions and honest equations on awkward engineering scales. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R001-regression-conditioning.md"
+  },
+  {
+    "id": "R002",
+    "disposition": "investigate",
+    "reason": "Evaluate a small residual view that explains departures from an existing scatter fit while preserving exact fit membership. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R002-residual-diagnostics.md"
+  },
+  {
+    "id": "R003",
+    "disposition": "investigate",
+    "reason": "Determine whether comparing existing polynomial degrees and LOESS spans is more useful than expanding the method catalogue. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R003-fit-sensitivity.md"
+  },
+  {
+    "id": "R004",
+    "disposition": "investigate",
+    "reason": "Define a useful descriptive ellipse without implying confidence in a mean or automatically classifying outliers. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R004-covariance-ellipse.md"
+  },
+  {
+    "id": "R005",
+    "disposition": "investigate",
+    "reason": "Test whether rank correlation reveals useful monotonic relationships that the delivered Pearson matrix obscures. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R005-rank-correlation.md"
+  },
+  {
+    "id": "R006",
+    "disposition": "investigate",
+    "reason": "Investigate when pairwise-valid correlation cells need a common-population comparison to support honest ranking. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R006-matrix-populations.md"
+  },
+  {
+    "id": "R007",
+    "disposition": "investigate",
+    "reason": "Assess how bandwidth, domain, and normalization affect the interpretation of existing density displays. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R007-density-sensitivity.md"
+  },
+  {
+    "id": "R008",
+    "disposition": "investigate",
+    "reason": "Evaluate explicit bin boundaries for measurements with known specification thresholds, using the current histogram as the baseline. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R008-engineering-bin-boundaries.md"
+  },
+  {
+    "id": "R009",
+    "disposition": "investigate",
+    "reason": "Define the smallest honest weighted distribution workflow for samples whose rows represent different amounts. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R009-weighted-ecdf.md"
+  },
+  {
+    "id": "R010",
+    "disposition": "investigate",
+    "reason": "Evaluate whether existing pooled and grouped summaries can make contradictory relationship directions easier to notice. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R010-pooled-group-reversals.md"
+  },
+  {
+    "id": "R011",
+    "disposition": "investigate",
+    "reason": "Study whether the latest event is sufficient evidence that a retention period is observable and complete. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R011-retention-observation-cutoff.md"
+  },
+  {
+    "id": "R012",
+    "disposition": "investigate",
+    "reason": "Measure how chosen event-order and entry rules affect funnel conclusions when the log cannot resolve sequence reliably. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R012-funnel-ambiguous-order.md"
+  },
+  {
+    "id": "R013",
+    "disposition": "investigate",
+    "reason": "Investigate a bounded occupancy or overlap summary on top of the delivered interval timeline. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R013-timeline-concurrency.md"
+  },
+  {
+    "id": "R014",
+    "disposition": "investigate",
+    "reason": "Resolve incident-edge versus induced-subgraph selection while preserving exact edge records, duplicate links, and self-loop accounting. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R014-explicit-edge-selection.md"
+  },
+  {
+    "id": "R015",
+    "disposition": "investigate",
+    "reason": "Test whether row-frequency ranking hides rare categories that carry a large share of a weighted flow. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R015-sankey-important-flows.md"
+  },
+  {
+    "id": "R016",
+    "disposition": "investigate",
+    "reason": "Determine whether geographic rate comparisons need native denominator support or a clearer prepared-data contract. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R016-regional-rate-denominators.md"
+  },
+  {
+    "id": "R017",
+    "disposition": "investigate",
+    "reason": "Test when a mathematically closed waterfall needs a qualification because missing categories and invalid measures have different meanings. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R017-waterfall-state-reconciliation.md"
+  },
+  {
+    "id": "R018",
+    "disposition": "investigate",
+    "reason": "Explain and verify intentional differences between empirical threshold crossings and interpolated box statistics. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R018-quantile-conventions.md"
+  },
+  {
+    "id": "R019",
+    "disposition": "investigate",
+    "reason": "Resolve how stable composition extents should handle averages or signed sums that exceed the unfiltered aggregate. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R019-composition-scale-envelopes.md"
+  },
+  {
+    "id": "R020",
+    "disposition": "investigate",
+    "reason": "Investigate whether normalizing crossed supplied bounds hides information that matters when a band claims an uncertainty meaning. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R020-supplied-band-meaning.md"
+  },
+  {
+    "id": "R021",
+    "disposition": "defer",
+    "reason": "Wait for a source graphic that needs color along a path. The current intent places this below the cut line.",
+    "destination": "ideas/R021-path-gradient-semantics.md"
+  },
+  {
+    "id": "R022",
+    "disposition": "investigate",
+    "reason": "Evaluate whether authors understand the separate effects of repeat population, filter policy, and display windows. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R022-composition-population-windows.md"
+  },
+  {
+    "id": "R023",
+    "disposition": "investigate",
+    "reason": "Choose an honest label-overflow policy without introducing a general automatic annotation layout solver. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R023-composition-label-budget.md"
+  },
+  {
+    "id": "R024",
+    "disposition": "investigate",
+    "reason": "Investigate whether small wrapper differences undermine shared donut and waterfall calculation contracts. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R024-shared-reducer-adapters.md"
+  },
+  {
+    "id": "R025",
+    "disposition": "investigate",
+    "reason": "Compare the delivered 3D scatter with existing two-dimensional alternatives before expanding or reducing its product prominence. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R025-three-dimensional-value.md"
+  },
+  {
+    "id": "R026",
+    "disposition": "investigate",
+    "reason": "Compare state accounting before and after field conversion so exclusions remain explainable without collapsing meaningful categories. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R026-missing-state-accounting.md"
+  },
+  {
+    "id": "R027",
+    "disposition": "investigate",
+    "reason": "Compare exact missingness pattern counts with a row-by-field view, using affected-record investigation as the success criterion. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R027-joint-missingness-triage.md"
+  },
+  {
+    "id": "R028",
+    "disposition": "investigate",
+    "reason": "Investigate a small expected-key or schedule comparison that distinguishes absent observations from incomplete existing rows. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R028-expected-record-reconciliation.md"
+  },
+  {
+    "id": "R029",
+    "disposition": "investigate",
+    "reason": "Investigate when inferred field types should remain suggestions and when an analyst should pin an explicit interpretation. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R029-inference-stability.md"
+  },
+  {
+    "id": "R030",
+    "disposition": "investigate",
+    "reason": "Compare explicit numeric input presets with preprocessing guidance for decimal separators, grouping characters, and signed accounting text. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R030-locale-numeric-conversion.md"
+  },
+  {
+    "id": "R031",
+    "disposition": "investigate",
+    "reason": "Compare interpretation previews for ambiguous date strings while preserving the existing explicit presets and UTC rules. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R031-date-ambiguity-preview.md"
+  },
+  {
+    "id": "R032",
+    "disposition": "investigate",
+    "reason": "Investigate the minimum temporal metadata needed to distinguish calendar labels from exact instants and numeric epoch inputs. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R032-temporal-meaning-contract.md"
+  },
+  {
+    "id": "R033",
+    "disposition": "investigate",
+    "reason": "Audit accepted offsets, fractional seconds, endpoint precision, and representable date ranges with explicit expected outcomes. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R033-date-boundary-validity.md"
+  },
+  {
+    "id": "R034",
+    "disposition": "investigate",
+    "reason": "Compare absolute stepped ranges with declared relative periods while preserving source-anchored behavior across reloads. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R034-calendar-window-stepping.md"
+  },
+  {
+    "id": "R035",
+    "disposition": "investigate",
+    "reason": "Compare row-weighted and period-weighted rolling summaries with explicit missing-period and incomplete-window policies. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R035-rolling-contributor-semantics.md"
+  },
+  {
+    "id": "R036",
+    "disposition": "investigate",
+    "reason": "Compare descriptive units with a limited dimensional compatibility check for derived measurements. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R036-quantity-unit-semantics.md"
+  },
+  {
+    "id": "R037",
+    "disposition": "investigate",
+    "reason": "Compare ordinary numeric arithmetic, scaled integers, and exact-decimal preparation against a concrete precision requirement. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R037-decimal-precision-contract.md"
+  },
+  {
+    "id": "R038",
+    "disposition": "investigate",
+    "reason": "Investigate explicit derived-category mappings that reduce accidental splits while preserving raw labels and typed identity. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R038-category-normalization.md"
+  },
+  {
+    "id": "R039",
+    "disposition": "investigate",
+    "reason": "Compare alternate keys, grouped duplicate inspection, and explicit deduplication while preserving evidence about distinct observations. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R039-duplicate-key-repair.md"
+  },
+  {
+    "id": "R040",
+    "disposition": "investigate",
+    "reason": "Compare before-and-after grain explanations with a bounded preflight summary for one-to-many and many-to-many expansions. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R040-expansion-cardinality-preflight.md"
+  },
+  {
+    "id": "R041",
+    "disposition": "investigate",
+    "reason": "Compare derived canonical keys and relationship-level mapping while keeping current typed and null-safe matching intact. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R041-join-key-preparation.md"
+  },
+  {
+    "id": "R042",
+    "disposition": "investigate",
+    "reason": "Compare an explicit unpivot step with upstream preparation for repeated measures while preserving row meaning and source references. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R042-wide-long-reshape.md"
+  },
+  {
+    "id": "R043",
+    "disposition": "investigate",
+    "reason": "Compare shared grouped summaries and project aggregates on equivalent entity populations, especially missing IDs and conflicting repeated values. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R043-entity-grain-parity.md"
+  },
+  {
+    "id": "R044",
+    "disposition": "investigate",
+    "reason": "Investigate whether downstream calculated fields can distinguish legitimate missing inputs from upstream computation failures. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R044-calculation-error-propagation.md"
+  },
+  {
+    "id": "R045",
+    "disposition": "investigate",
+    "reason": "Compare contextual labels and narrower function exposure to reduce confusion between row-wise functions and grouped aggregation. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R045-scalar-function-names.md"
+  },
+  {
+    "id": "R046",
+    "disposition": "investigate",
+    "reason": "Investigate whether a bounded reference rewrite is worth replacing the existing block on renaming used calculated fields. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R046-calculation-rename-contract.md"
+  },
+  {
+    "id": "R047",
+    "disposition": "investigate",
+    "reason": "Compare existing truthiness with explicit boolean preparation or diagnostic guidance for conditions over strings, zero, and missing values. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R047-conditional-truthiness.md"
+  },
+  {
+    "id": "R048",
+    "disposition": "investigate",
+    "reason": "Compare a few deterministic string functions with explicit upstream preparation, using real cleaning tasks to bound scope. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R048-text-preparation-functions.md"
+  },
+  {
+    "id": "R049",
+    "disposition": "investigate",
+    "reason": "Investigate a bounded ordered transform for changes between observations, with explicit grouping, ties, and filter scope. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R049-ordered-difference-transforms.md"
+  },
+  {
+    "id": "R050",
+    "disposition": "investigate",
+    "reason": "Compare ordinary boolean calculated fields and filtered rows with a dedicated assertion result for a few named quality conditions. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R050-bounded-quality-assertions.md"
+  },
+  {
+    "id": "R051",
+    "disposition": "investigate",
+    "reason": "Test whether existing scope explanations support correct interpretation of self-excluding chart context. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R051-filter-ownership.md"
+  },
+  {
+    "id": "R052",
+    "disposition": "investigate",
+    "reason": "Compare bounded, reversible explanations of conflicting filters when a result is empty. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R052-empty-selection-recovery.md"
+  },
+  {
+    "id": "R053",
+    "disposition": "investigate",
+    "reason": "Compare typed tuple predicates, captured IDs, and a prepared composite field for separated category combinations. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R053-exact-tuple-selections.md"
+  },
+  {
+    "id": "R054",
+    "disposition": "investigate",
+    "reason": "Resolve data-space geometry, boundary rules, and identity semantics for a lasso before adding the gesture. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R054-lasso-membership.md"
+  },
+  {
+    "id": "R055",
+    "disposition": "investigate",
+    "reason": "Differentiate absence causes when an existing source-row trace finder cannot locate a visible mark. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R055-row-visibility-explanations.md"
+  },
+  {
+    "id": "R056",
+    "disposition": "investigate",
+    "reason": "Test a temporary comparison of two traces to explain legitimate and unexpected membership differences. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R056-contributor-set-comparison.md"
+  },
+  {
+    "id": "R057",
+    "disposition": "investigate",
+    "reason": "Compare source order, spatial traversal, and a synchronized record list for dense keyboard exploration. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R057-dense-scatter-keyboard.md"
+  },
+  {
+    "id": "R058",
+    "disposition": "investigate",
+    "reason": "Evaluate modifier-free touch tracing using the existing header browser versus a bounded picking mode. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R058-touch-trace-access.md"
+  },
+  {
+    "id": "R059",
+    "disposition": "investigate",
+    "reason": "Check concrete nested editing journeys before choosing a shared overlay contract or simplifying a nesting path. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R059-nested-focus-ownership.md"
+  },
+  {
+    "id": "R060",
+    "disposition": "investigate",
+    "reason": "Compare plan-derived summaries, authored purpose, and aggregate tables for nonvisual analytical tasks. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R060-analytical-text-alternatives.md"
+  },
+  {
+    "id": "R061",
+    "disposition": "investigate",
+    "reason": "Test selection, missingness, invalidity, and category reading when color alone is insufficient. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R061-noncolor-meaning.md"
+  },
+  {
+    "id": "R062",
+    "disposition": "investigate",
+    "reason": "Assess whether shared policies or control consolidation can reduce field-choice complexity without losing metadata. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R062-field-choice-simplification.md"
+  },
+  {
+    "id": "R063",
+    "disposition": "investigate",
+    "reason": "Decide which reading tasks the existing narrow layouts should support without promising full mobile editing. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R063-narrow-analysis-reading.md"
+  },
+  {
+    "id": "R064",
+    "disposition": "investigate",
+    "reason": "Test whether readers understand formula freshness and source scope when a notebook uses last-valid block text. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R064-notebook-frozen-results.md"
+  },
+  {
+    "id": "R065",
+    "disposition": "investigate",
+    "reason": "Compare named chart groups, copied filters, and a bounded notebook parameter for opt-in linked exploration. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R065-notebook-linked-scopes.md"
+  },
+  {
+    "id": "R066",
+    "disposition": "investigate",
+    "reason": "Compare inline definition links, a document outline, and authoring conventions for understanding shared notebook measures. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R066-notebook-definition-navigation.md"
+  },
+  {
+    "id": "R067",
+    "disposition": "investigate",
+    "reason": "Compare result references, typed bindings, and retaining a metric card for one live narrative value. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R067-single-narrative-binding.md"
+  },
+  {
+    "id": "R068",
+    "disposition": "investigate",
+    "reason": "Investigate author-controlled evidence scope for qualitative claims whose truth may change after filtering. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R068-narrative-claim-scope.md"
+  },
+  {
+    "id": "R069",
+    "disposition": "investigate",
+    "reason": "Resolve origin-versus-destination filter precedence for authored navigation over existing parameterized views. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R069-detail-filter-inheritance.md"
+  },
+  {
+    "id": "R070",
+    "disposition": "investigate",
+    "reason": "Compare contextual hints, optional task teaching, and reduced duplicate wording for shipped direct manipulation. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R070-gesture-discoverability.md"
+  },
+  {
+    "id": "R071",
+    "disposition": "investigate",
+    "reason": "Test whether existing question and workflow routes expose the preparation needed for a valid analysis. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R071-task-based-doc-routing.md"
+  },
+  {
+    "id": "R072",
+    "disposition": "investigate",
+    "reason": "Test concise contextual qualifiers and examples for settings reused across modes with different effects. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R072-contextual-setting-help.md"
+  },
+  {
+    "id": "R073",
+    "disposition": "investigate",
+    "reason": "Extend existing finding checks with explicit scope and falsifying counterexamples for consequential example headlines. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R073-example-claim-challenges.md"
+  },
+  {
+    "id": "R074",
+    "disposition": "investigate",
+    "reason": "Evaluate consolidation of overlapping examples by unique analytical lesson and verification value. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R074-example-catalogue-simplification.md"
+  },
+  {
+    "id": "R075",
+    "disposition": "defer",
+    "reason": "Wait for a large text edit or agent workflow that shows a gap in the current change summary.",
+    "destination": "ideas/R075-applied-edit-explanations.md"
+  },
+  {
+    "id": "R076",
+    "disposition": "investigate",
+    "reason": "Investigate whether semantically unchanged settings remain cheap and callback-stable after realistic host serialization. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R076-canonical-settings-across-host-echo-and-restore.md"
+  },
+  {
+    "id": "R077",
+    "disposition": "investigate",
+    "reason": "Clarify how row-specific selections survive or invalidate across immutable source replacement in plain and project workspaces. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R077-selection-identity-when-source-rows-are-replaced.md"
+  },
+  {
+    "id": "R078",
+    "disposition": "investigate",
+    "reason": "Test whether two embedded workspaces remain independent when chart IDs repeat and UI is portaled outside the root. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R078-independent-workspace-ownership-for-dialogs-and-exports.md"
+  },
+  {
+    "id": "R079",
+    "disposition": "investigate",
+    "reason": "Investigate whether saved-state validation can explain a failing path while preserving the current strict restore boundary. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R079-actionable-diagnostics-for-rejected-saved-analyses.md"
+  },
+  {
+    "id": "R080",
+    "disposition": "investigate",
+    "reason": "Decide whether selective chart registration should remain a low-level primitive or become a complete documented embedding route. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R080-a-credible-selective-chart-integration-contract.md"
+  },
+  {
+    "id": "R081",
+    "disposition": "investigate",
+    "reason": "Choose the smallest route from saved rows and settings to a reproducible image when no interactive workspace is open. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R081-headless-chart-images-through-a-minimal-existing-renderer.md"
+  },
+  {
+    "id": "R082",
+    "disposition": "investigate",
+    "reason": "Extend existing reader equivalence evidence into a complete import, analysis, save, and reopen comparison. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R082-cross-format-fidelity-through-the-full-analysis-lifecycle.md"
+  },
+  {
+    "id": "R083",
+    "disposition": "investigate",
+    "reason": "Measure whether aborting a large file read prevents meaningful work and keeps the previous analysis usable. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R083-cancellation-that-stops-expensive-file-preparation.md"
+  },
+  {
+    "id": "R084",
+    "disposition": "investigate",
+    "reason": "Determine when plain CSV is adequate and when an accompanying schema or existing full-analysis export is needed. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R084-an-explicit-analytical-contract-for-exported-csv.md"
+  },
+  {
+    "id": "R085",
+    "disposition": "investigate",
+    "reason": "Identify the smallest reproducible export checks for fonts, canvas layers, and changing chart state. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R085-image-export-fidelity-under-fonts-and-mixed-rendering.md"
+  },
+  {
+    "id": "R086",
+    "disposition": "investigate",
+    "reason": "Investigate whether autosave status and retries remain truthful when related files finish or fail in different orders. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R086-recoverable-autosave-after-mixed-file-outcomes.md"
+  },
+  {
+    "id": "R087",
+    "disposition": "investigate",
+    "reason": "Evaluate whether the current outside-edits-win policy needs a small recovery buffer for conflicting local edits. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R087-external-file-edits-without-losing-the-analyst-s-draft.md"
+  },
+  {
+    "id": "R088",
+    "disposition": "investigate",
+    "reason": "Determine how a cached snapshot should be identified when its SQL, connection, or declared source changes. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R088-bind-cached-database-snapshots-to-their-source-definition.md"
+  },
+  {
+    "id": "R089",
+    "disposition": "investigate",
+    "reason": "Measure how the existing approximate byte budget relates to serialized size and peak resident memory for different row shapes. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R089-calibrate-snapshot-byte-limits-against-actual-resource-cost.md"
+  },
+  {
+    "id": "R090",
+    "disposition": "investigate",
+    "reason": "Compare the actual interruption and cleanup behavior of the shipped database drivers across query phases. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R090-database-cancellation-before-and-between-result-batches.md"
+  },
+  {
+    "id": "R091",
+    "disposition": "investigate",
+    "reason": "Evaluate the smallest readiness check that makes existing SQLite and optional DuckDB workflows predictable on supported installations. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R091-local-database-readiness-with-optional-native-dependencies.md"
+  },
+  {
+    "id": "R092",
+    "disposition": "investigate",
+    "reason": "Test a specific trigger for reopening the earlier JSON decision: wide or text-heavy snapshots and replacement overlap. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R092-when-wider-snapshots-change-the-row-json-transport-decision.md"
+  },
+  {
+    "id": "R093",
+    "disposition": "investigate",
+    "reason": "Measure whether obsolete queued analysis work delays the latest parameter result despite correct stale-result suppression. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R093-discard-stale-worker-computation-as-well-as-stale-results.md"
+  },
+  {
+    "id": "R094",
+    "disposition": "investigate",
+    "reason": "Extend the existing targeted performance guards into a small workload-based budget that detects costly complete interactions. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R094-performance-budgets-for-complete-analytical-interactions.md"
+  },
+  {
+    "id": "R095",
+    "disposition": "investigate",
+    "reason": "Measure high-water cache and buffer retention across repeated analysis loads, large exports, and later small workspaces. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R095-bound-retained-memory-during-repeated-dataset-changes.md"
+  },
+  {
+    "id": "R096",
+    "disposition": "investigate",
+    "reason": "Measure whether a small spatial index improves exact hover and click lookup without changing current nearest-point or overlapping-bubble semantics. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R096-exact-point-picking-when-scatter-clouds-become-dense.md"
+  },
+  {
+    "id": "R097",
+    "disposition": "investigate",
+    "reason": "Identify a compact set of metamorphic checks that expose cross-layer analytical disagreements without mirroring implementation details. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R097-small-analytical-invariants-across-complete-user-workflows.md"
+  },
+  {
+    "id": "R098",
+    "disposition": "defer",
+    "reason": "Wait for a large, reproduced analytical failure. A reduction tool needs a known failure and a useful test.",
+    "destination": "ideas/R098-small-reproducible-cases-that-preserve-analytical-failures.md"
+  },
+  {
+    "id": "R099",
+    "disposition": "investigate",
+    "reason": "Measure whether the existing bounded checkpoint history needs deduplication or a different persistence strategy as view definitions grow. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R099-checkpoint-representation-for-fast-and-recoverable-browser-history.md"
+  },
+  {
+    "id": "R100",
+    "disposition": "investigate",
+    "reason": "Evaluate a minimal packed-package consumer check for declared exports, React peers, styles, and the packaged analysis worker. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "destination": "ideas/R100-published-package-behavior-in-small-real-consumer-projects.md"
+  }
+]

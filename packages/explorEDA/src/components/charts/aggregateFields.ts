@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import type { AggregateAggregation } from "@/lib/aggregates";
+import { aggregationLabel, type AggregateAggregation } from "@/lib/aggregates";
 import { finiteNumber } from "@/lib/valueParsing";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 
@@ -13,7 +13,7 @@ export function getAggregateName(
   if (aggregation === "count") {
     return `Count${entityField ? ` distinct ${entityField}` : ""} by ${groupField}`;
   }
-  return `${aggregation === "sum" ? "Sum" : "Average"} of ${measureField ?? ""}${entityField ? ` once per ${entityField}` : ""} by ${groupField}`;
+  return `${aggregationLabel(aggregation)} of ${measureField ?? ""}${entityField ? ` once per ${entityField}` : ""} by ${groupField}`;
 }
 
 /** Every field and numeric calculation that a sum or average can measure. */

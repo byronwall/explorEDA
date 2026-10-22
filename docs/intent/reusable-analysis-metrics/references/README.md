@@ -24,3 +24,9 @@ Current source was inspected at `a50df9985ed3ff54d0f6ca368c0b369829b8a927` on 20
 ## October 19 grouped-rates research
 
 [Reviewed research](../../../research/grouped-rates-2026-10-19/README.md) retains the deferred seed. [Seven dispositions](../../../research/grouped-rates-2026-10-19/decisions.md) record recipes, preparation and proof gates. Source and primary references were independently checked on October 20. Author and browser proof remains proposed.
+
+## R043 follow-up
+
+[Research review](../../../research/entity-grain-2026-10-21/README.md), [decisions](../../../research/entity-grain-2026-10-21/decisions.md),
+and [local evidence](../../../research/entity-grain-2026-10-21/evidence.md) separate three executed probes from pending browser/author work.
+The source/reference and value-identity contracts remain distinct. No product implementation is approved by this review.

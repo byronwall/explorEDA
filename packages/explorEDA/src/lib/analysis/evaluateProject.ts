@@ -1,3 +1,4 @@
+import { reduceNumbers } from "@/lib/aggregates";
 import {
   isDateText,
   numericExclusionReason,
@@ -638,12 +639,10 @@ function aggregateFrame(
         if (!numeric.length || conflictingEntity)
           values[measure.id] = undefined;
         else {
-          const total = numeric.reduce<number>(
-            (sum, item) => sum + parseNumber(item.value),
-            0
+          values[measure.id] = reduceNumbers(
+            measure.operation,
+            numeric.map((item) => parseNumber(item.value))
           );
-          values[measure.id] =
-            measure.operation === "sum" ? total : total / numeric.length;
         }
         measureContributors[measure.id] = candidates.map((row) => {
           const value = row.values[measure.fieldId!];

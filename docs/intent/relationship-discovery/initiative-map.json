@@ -5,16 +5,16 @@
     "slug": "relationship-discovery",
     "scale": "feature",
     "current_phase": "intent",
-    "last_updated": "2026-10-09",
+    "last_updated": "2026-10-19",
     "summary": "Users should find useful relationships among several numeric fields before choosing a scatter pair.",
     "status": "active",
-    "next_action": "The scatter matrix shows Pearson r per pair. Remaining: open a scatter from a correlation cell, and decide whether a coefficient-only matrix for more than ten fields is worth adding."
+    "next_action": "After local trust proof, observe one named task with existing mixed-type matrix controls and a short lesson. Investigate pair-to-Scatter only if repeated detail setup causes problems."
   },
   "artifacts": {
     "intent_brief": {
       "path": "intent-brief.md",
       "status": "current",
-      "updated_at": "2026-10-06"
+      "updated_at": "2026-10-19"
     },
     "brainstorm": {
       "path": "brainstorm.md",
@@ -88,6 +88,13 @@
       "location": "../comparison-opportunities/resources/product-feedback-2026-10-06.json",
       "anchor": "Annotation 3: end users determine product choices",
       "authority": "Explicit human feedback; tentative answers remain tentative"
+    },
+    {
+      "id": "relationship-research-2026-10-19",
+      "type": "repository",
+      "location": "../../research/relationship-discovery-2026-10-19/README.md",
+      "anchor": "Reviewed seven recommendations against 9b16d78e source and primary references.",
+      "authority": "Research direction; no author/browser proof or application approval"
     }
   ],
   "intent": {
@@ -226,27 +233,19 @@
       {
         "id": "current-foundation",
         "type": "current repository reality",
-        "statement": "pairedSummary.ts already computes Pearson correlation for grouped finite pairs and unavailable constant cases. The registry has no relationship-matrix view. Scatter regression and surfaces are live source implementations, unlike the older Pro snapshot.",
+        "statement": "The mixed-type ScatterMatrix supplies points, correlations, boxes, tiles, shares and traces. Current settings support a coefficient-focused view. Its renderer has no pair-opening action.",
         "commitment": "derived",
         "importance": "supporting",
         "status": "active",
         "time_horizon": "proof",
         "source_anchors": [
           {
-            "source_id": "repository-1",
-            "anchor": "a50df9985ed3ff54d0f6ca368c0b369829b8a927: inspected source file; no fresh runtime proof"
-          },
-          {
-            "source_id": "repository-2",
-            "anchor": "a50df9985ed3ff54d0f6ca368c0b369829b8a927: inspected source file; no fresh runtime proof"
-          },
-          {
-            "source_id": "repository-3",
-            "anchor": "a50df9985ed3ff54d0f6ca368c0b369829b8a927: inspected source file; no fresh runtime proof"
+            "source_id": "relationship-research-2026-10-19",
+            "anchor": "evidence.md: current mixed-type matrix and source provenance checks"
           }
         ],
         "confidence": "high",
-        "notes": "Does not establish runtime or browser acceptance."
+        "notes": "Verified source at 9b16d78e on 2026-10-19. Historical evidence anchors remain historical. No author or browser acceptance is claimed."
       },
       {
         "id": "scatter-matrix-owner",
@@ -333,9 +332,7 @@
       "date": "2026-10-06",
       "action": "Reconciled annotated product feedback and priority.",
       "reason": "User provided clearer goals and indicated lower interest in unclear topics.",
-      "source_annotation_indices": [
-        3
-      ],
+      "source_annotation_indices": [3],
       "evidence": "Current brief changes where applicable; source inspection only. No implementation, pause, or cancellation."
     },
     {
@@ -346,6 +343,12 @@
       "evidence": [
         "ScatterMatrix correlation cells (components/charts/ScatterMatrix/ScatterMatrix.tsx CorrelationCell), PRs #185-#199"
       ]
+    },
+    {
+      "date": "2026-10-19",
+      "action": "Reconcile relationship research with the delivered mixed-type matrix.",
+      "reason": "Prefer a current-controls lesson and author proof before new UI. Defer coefficient/ranking expansion; reject universal mixed scores.",
+      "evidence": "../../research/relationship-discovery-2026-10-19/README.md; seven dispositions, source checks and original reports. No product implementation or author/browser proof."
     }
   ],
   "closure": null,
@@ -353,10 +356,7 @@
     "kind": "gap",
     "priority_basis": "Pro recommendations reconciled with current source; proposed priority, no implementation approval",
     "expand_when": "Expand when repeated analyses involve choosing among many numeric pairs. Add rank correlation only when monotonic nonlinear relationships make Pearson misleading for the task.",
-    "related_initiatives": [
-      "advanced-scatter-analysis",
-      "scatter-plot-matrix"
-    ],
+    "related_initiatives": ["advanced-scatter-analysis", "scatter-plot-matrix"],
     "audience": "End users; developers deliver their experience.",
     "priority": "Unranked candidate or future seed"
   }
