@@ -836,9 +836,9 @@
     "id": "nb-engel-food-and-income",
     "slug": "engel-food-and-income",
     "kind": "notebook",
-    "title": "Food spending can rise while its income share falls",
-    "question": "How do absolute food spending and the food budget share differ across these households?",
-    "summary": "Richer Belgian households in 1857 spent more francs on food (r = 0.91) but a smaller share of their income on it (r = −0.42).",
+    "title": "Food took 70% of a poor household's income and 62% of a rich one's",
+    "question": "Do richer households spend more on food, or less?",
+    "summary": "In an 1857 survey of 235 Belgian working-class households, richer households spent more francs on food (r = 0.91) but a smaller share of their income on it (r = −0.42). The median food share fell from 70% in the poorest quartile to 62% in the richest.",
     "family": "engel",
     "entry": "food-and-income.eda.md",
     "query": "r",
@@ -846,18 +846,88 @@
     "analysis": "Relationship",
     "findings": [
       {
-        "text": "Income and food expenditure had correlation {value}.",
+        "text": "income and food spending had correlation {value}.",
         "format": ".3f",
         "op": "corr",
         "field": "income",
         "other": "foodexp"
       },
       {
-        "text": "Income and food share had correlation {value}.",
+        "text": "The median household spent {value} francs on food in a year",
+        "format": ",.0f",
+        "op": "median",
+        "field": "foodexp"
+      },
+      {
+        "text": "the biggest food budget was {value} francs.",
+        "format": ",.0f",
+        "op": "max",
+        "field": "foodexp"
+      },
+      {
+        "text": "which puts {value} household",
+        "format": ".0f",
+        "op": "count",
+        "field": "income",
+        "where": [
+          [
+            "income",
+            "gt",
+            3000
+          ]
+        ]
+      },
+      {
+        "text": "the richest at {value} francs",
+        "format": ",.0f",
+        "op": "max",
+        "field": "income"
+      },
+      {
+        "text": "income and food share had correlation {value}.",
         "format": ".3f",
         "op": "corr",
         "field": "income",
         "other": "food_share"
+      },
+      {
+        "text": "{value}% of households spent more than half their income on it.",
+        "format": ".1f",
+        "op": "share",
+        "field": "food_share",
+        "condition": [
+          [
+            "food_share",
+            "gt",
+            50
+          ]
+        ]
+      },
+      {
+        "text": "The median food share in the poorest quartile was {value}%",
+        "format": ".2f",
+        "op": "median",
+        "field": "food_share",
+        "where": [
+          [
+            "income_band",
+            "eq",
+            "Q1 lowest income"
+          ]
+        ]
+      },
+      {
+        "text": "in the richest quartile it was {value}%.",
+        "format": ".2f",
+        "op": "median",
+        "field": "food_share",
+        "where": [
+          [
+            "income_band",
+            "eq",
+            "Q4 highest income"
+          ]
+        ]
       }
     ],
     "published": "2026-07-28"
@@ -3452,8 +3522,8 @@
     "slug": "engel-weighting",
     "kind": "notebook",
     "title": "Food took 64% of all income, but more of the typical household's",
-    "question": "Does the food share change when you weight by francs instead of households?",
-    "summary": "Pooled, food took 64% of all household income. The average household spent 66% of its own, because poorer households spend a larger share.",
+    "question": "What share of income went to food: 64% or 66%?",
+    "summary": "Pool every franc in the 1857 Engel survey and food took 63.5% of income; average the households and it took 65.6%. The gap is the richest quartile, which earned 42% of all income and had the lowest food share.",
     "family": "engel",
     "entry": "weighting.eda.md",
     "query": "bands",
@@ -3461,7 +3531,7 @@
     "analysis": "Part-to-whole",
     "findings": [
       {
-        "text": "Food expenditure divided by pooled income was {value}%.",
+        "text": "Pool every franc and food took {value}% of income.",
         "format": ".2f",
         "op": "ratio_sums",
         "field": "food_sum",
@@ -3469,11 +3539,43 @@
         "scale": 100
       },
       {
-        "text": "The household-count-weighted mean of the quartile household means was {value}%.",
+        "text": "the mean food share was {value}%.",
         "format": ".2f",
         "op": "weighted_mean",
         "field": "mean_share",
         "weight": "households"
+      },
+      {
+        "text": "In the poorest quartile the mean household share was {value}%",
+        "format": ".2f",
+        "op": "max",
+        "field": "mean_share"
+      },
+      {
+        "text": "in the richest it was {value}%",
+        "format": ".2f",
+        "op": "min",
+        "field": "mean_share"
+      },
+      {
+        "text": "the richest quartile's pooled share was {value}%.",
+        "format": ".2f",
+        "op": "min",
+        "field": "weighted_share"
+      },
+      {
+        "text": "The richest quartile earned {value}% of all income in the survey",
+        "format": ".2f",
+        "op": "top_share",
+        "field": "income_sum",
+        "k": 1
+      },
+      {
+        "text": "spent {value}% of all food francs.",
+        "format": ".2f",
+        "op": "top_share",
+        "field": "food_sum",
+        "k": 1
       }
     ],
     "published": "2026-09-29"
