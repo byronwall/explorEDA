@@ -29,5 +29,9 @@
     "app": "8files/32tests pass",
     "demo": "18files/482tests pass"
   },
-  "authored_local_links": 39
+  "authored_local_links": 39,
+  "review_pr": "https://github.com/byronwall/explorEDA/pull/493",
+  "pr_verification": "OPEN;main/head/body/26files/links verified;attached",
+  "temporary_collector": "deleted",
+  "cycle": "complete research synthesis;no application implementation"
 }
