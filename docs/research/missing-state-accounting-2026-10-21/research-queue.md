@@ -27,4 +27,4 @@ Three repairs remain proposed. Browser confirmation and intended-contract choice
 R043 remains the next eligible broad catalogue study, then R077,R001,R051.
 R051 also receives a source-predicted zero-chart workspace-filter distribution probe; it remains unrun.
 Local trust and the R026 repair queue guide proofs without replacing catalogue discovery order.
-The [original queue](originals/research-queue.md) preserves Pro's full recommendations.
+The [original queue](https://chatgpt.com/c/6ad8b665-4f54-83ea-9741-6cee79983faa) preserves Pro's full recommendations.

@@ -5,7 +5,7 @@
 Source baseline: `f4cacdde180e16ad814451a8c064e394535565d6`. Refreshed origin/main still points there.
 The current research branch adds documents only. Open PRs462 and454 own Mosaic and time-series axes.
 All 33 uploaded baseline entries and the historical PR455 summary authenticate against Git objects.
-Nine supplemental source receipts match baseline objects and current bytes. See [source checks](source-checks.json).
+Nine supplemental source receipts match baseline objects and current bytes.
 Local prompt/queue additions have their own uploaded-byte receipts. Commit hooks later formatted those files.
 The packet contains 38 sections:33 complete baseline files, two selected JSON projections, two local additions, and one historical summary.
 

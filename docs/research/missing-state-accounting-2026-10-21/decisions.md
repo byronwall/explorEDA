@@ -11,7 +11,7 @@ These decisions integrate research. They do not approve application changes.
 | MS05 | Defer                                 | Existing raw values, failure rows, and traces may answer the repair task. No shared classifier or stored provenance is justified yet.                                                                                              |
 | MS06 | Reject for this mission               | Universal states would collapse category, measurement, date, and expression rules. No public state API, inferred expected records, imputation, or quality platform.                                                                |
 
-The [original decision](originals/missing-state-decision.md) records alternatives, costs, confidence, and rejection conditions.
+The [original decision](https://chatgpt.com/c/6ad8b665-4f54-83ea-9741-6cee79983faa) records alternatives, costs, confidence, and rejection conditions.
 The [evidence review](evidence.md) distinguishes executed probes from source predictions and proposed browser work.
 
 ## Proposed repair milestones

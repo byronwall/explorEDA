@@ -13,7 +13,7 @@ Current origin/main refreshed. Catalogue merged in PR463;application baseline re
 No actual defect or customer demand inferred. Bounded correctness research does not require named demand.
 This is not a starred orchestrator. Work directly;no delegation required.
 
-Prompt: [pro-prompt.md](pro-prompt.md). Inventory: [source-manifest.json](source-manifest.json).
+Prompt: [pro-prompt.md](pro-prompt.md).
 Packet: `tmp/pro-missing-state-2026-10-21/source-packet.txt`, 285788bytes, SHA256 `00610a0f82398652b9cab4db0f0ad0801d393cc6bf1946a072e0fb80c1ce3b2e`.
 All 33 baseline entries match Git objects. Local additions and pinned historical summary are separate.
 Selected catalogue JSON records are exact parsed projections. No runnable checkout promised.
@@ -74,7 +74,7 @@ Approved full pnpm check exits0 on Node22.21.1/pnpm11.9.0. UI,builds,73docs test
 Library250files/1656tests pass;3files/45conditional tests skipped. App8files/32tests and demo18files/431tests pass.
 Separate four local probes pass;56baseline tests passed at submission. No aggregate retry was needed.
 pnpm check:pr,81authored local links,JSON,original hashes,frozen expectation hash and43source receipts pass.
-No browser/editor/author/filtered-hook/export-history/restore/performance proof. See validation.json.
+No browser/editor/author/filtered-hook/export-history/restore/performance proof.
 Documentation label available;codex/codex-automation unavailable. Scoped review PR is next.
 
 ## Completion, October 21

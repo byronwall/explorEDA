@@ -4,9 +4,8 @@ Retain the current category and measurement rules. Explain each count with its p
 Defer a shared diagnostic classifier. Reject a universal state model and automatic cleaning for this scope.
 
 This completes the synthesis for catalogue [R026](../../intent/research-ideas-100/ideas/R026-missing-state-accounting.md), priority 1.
-The [Pro decision](originals/missing-state-decision.md) supplies six recommendations.
+The [Pro decision](https://chatgpt.com/c/6ad8b665-4f54-83ea-9741-6cee79983faa) supplies six recommendations.
 The [local decisions](decisions.md) and [evidence review](evidence.md) state what was independently checked.
-The [collection manifest](collection.json) protects all original reports and the archive.
 
 ## What the counts mean
 
@@ -28,7 +27,7 @@ Four locally authored probes passed against the repository source. They reproduc
 MS02 confirms helper membership and the source callback route. It does not claim an executed browser click.
 MS03 includes a rendered provider probe. MS04 uses the real expression parser and calculation manager.
 The probes are characterization evidence, not intended regression contracts for incorrect behavior.
-See [probe source](local-probe.test.tsx), [results](local-probe-results.txt), and [validation](validation.json).
+See [probe source](local-probe.test.tsx) and [results](local-probe-results.txt).
 
 ## Next actions
 
