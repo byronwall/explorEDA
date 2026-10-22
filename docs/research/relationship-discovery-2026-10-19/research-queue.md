@@ -23,4 +23,4 @@ Updated 2026-10-19. Scores are local judgments from 0–10, not demand measureme
 Prior queue: https://github.com/byronwall/explorEDA/blob/codex/missingness-research-2026-10-19/docs/research/joint-missingness-2026-10-19/research-queue.md.
 Open PR 454 owns time-series axes. No research result approves application work.
 
-The [seven local dispositions](decisions.md) keep the teaching example proposed until an author task is named. Original Pro queue: [originals/research-queue.md](originals/research-queue.md). Product observation remains unperformed.
+The [seven local dispositions](decisions.md) keep the teaching example proposed until an author task is named. The original Pro queue is in the [Pro conversation](https://chatgpt.com/c/6ad6151f-e494-83e9-aa90-ac1ead6838f9). Product observation remains unperformed.

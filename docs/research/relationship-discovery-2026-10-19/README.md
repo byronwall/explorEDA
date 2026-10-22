@@ -2,7 +2,7 @@
 
 The current mixed-type matrix already supports much of pair discovery. Keep it. Test a short lesson before proposing another view.
 
-The [Pro research](https://chatgpt.com/c/6ad6151f-e494-83e9-aa90-ac1ead6838f9) finished after 27m50s. All four reports, ZIP and manifest are preserved under [originals](originals/relationship-discovery-decision.md). These are research proposals, not product approval.
+The [Pro research](https://chatgpt.com/c/6ad6151f-e494-83e9-aa90-ac1ead6838f9) finished after 27m50s. All four reports, ZIP and manifest remain in that conversation. These are research proposals, not product approval.
 
 ## Decisions
 
@@ -18,7 +18,7 @@ Defer a separate coefficient view, numeric ranking and Spearman. Reject a univer
 
 All 25 supplied repository excerpts match the baseline and current source. Pro did not receive the separate source manifest. Local checks resolve that provenance limit; raw reports retain their original caveat.
 
-The [fixture audit](fixture-audit.json) checks nine arithmetic anchors and sparse record sets. It does not run explorEDA. The existing matrix planner passed 16 tests during preparation. Author, browser, export/history, handoff and performance proofs remain proposed.
+The fixture audit checks nine arithmetic anchors and sparse record sets. It does not run explorEDA. The existing matrix planner passed 16 tests during preparation. Author, browser, export/history, handoff and performance proofs remain proposed.
 
 No product source, docs-site page or runnable example changed. The proposed example must ship with its owning docs if later selected. No package changeset or product screenshot applies.
 
@@ -27,8 +27,7 @@ No product source, docs-site page or runnable example changed. The proposed exam
 - [Seven dispositions](decisions.md)
 - [Independent evidence and source checks](evidence.md)
 - [Ranked continuing queue](research-queue.md)
-- [Original proof plan](originals/proof-plan.md)
-- [Collection integrity](collection.json)
+- [Pro conversation](https://chatgpt.com/c/6ad6151f-e494-83e9-aa90-ac1ead6838f9)
 - [Run and validation record](run.md)
 
 Baseline: `9b16d78e3ed0742ed4d5858c1939fec9e758b510`. Repository: https://github.com/byronwall/explorEDA. Use React/TypeScript and pnpm for any later work.

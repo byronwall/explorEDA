@@ -4,9 +4,9 @@ Checked 2026-10-19 against baseline and refreshed origin/main `9b16d78e3ed0742ed
 
 ## Original assets and provenance
 
-Read all four reports in full. The [collection record](collection.json) records original names, sizes, hashes and retrieval time. ZIP CRC, exact five-member inventory, safe paths, no symlinks, UTF-8 and all five independent companion matches pass. Originals remain unchanged. No downloaded program was executed.
+Read all four reports in full. Collection recorded original names, sizes, hashes and retrieval time. ZIP CRC, exact five-member inventory, safe paths, no symlinks, UTF-8 and all five independent companion matches pass. Originals remain unchanged. No downloaded program was executed.
 
-Pro lacked the separate source manifest. The local [source manifest](source-manifest.json) authenticates all 25 tracked excerpts against Git objects and current files. The uploaded packet hash matches Pro's receipt hash. The hook later formatted the authored prompt/queue; the packet preserves the uploaded bytes. This resolves the local provenance question without rewriting originals.
+Pro lacked the separate source manifest. A local source manifest authenticated all 25 tracked excerpts against Git objects and current files. The uploaded packet hash matches Pro's receipt hash. The hook later formatted the authored prompt/queue; the packet preserves the uploaded bytes. This resolves the local provenance question without rewriting originals.
 
 ## Repository claims
 
@@ -34,6 +34,6 @@ Exact advertised product releases in the originals are not decisive to the local
 
 ## Arithmetic and product evidence
 
-Independently recomputed nine fixture anchors with standard-library rational centered sums. Linear r=1, U r=0, pooled reversal r=-164/199, both groups r=1, constant unavailable, sparse four-pair r=1, and leverage full/core values pass. Exact sparse contributors are r01–r04. Independent missing counts are [4,6]; priority exclusions are [4,4]. See fixture-audit.json. This audit does not independently certify every Spearman/covariance figure in the original plan.
+Independently recomputed nine fixture anchors with standard-library rational centered sums. Linear r=1, U r=0, pooled reversal r=-164/199, both groups r=1, constant unavailable, sparse four-pair r=1, and leverage full/core values pass. Exact sparse contributors are r01–r04. Independent missing counts are [4,6]; priority exclusions are [4,4]. This audit does not independently certify every Spearman/covariance figure in the original plan.
 
 No synthetic fixture ran through explorEDA. No author task, browser flow, export/history/restore, navigation or performance proof ran. Those gates stay proposed. No material output gap needs a Pro follow-up; 0/2 used.

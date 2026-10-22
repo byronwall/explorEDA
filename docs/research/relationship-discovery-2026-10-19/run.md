@@ -6,7 +6,7 @@
 - Baseline: 9b16d78e3ed0742ed4d5858c1939fec9e758b510, refreshed origin/main on 2026-10-19.
 - Branch: codex/relationship-discovery-research-2026-10-19, independent from main. Clean before creation.
 - Prompt: [pro-prompt.md](pro-prompt.md). Ranked choices and continuing queue: [research-queue.md](research-queue.md).
-- Packet: tmp/pro-relationship-2026-10-19/source-packet.txt, 27 UTF-8 files, 229929 bytes, SHA-256 584ff9284e520ab3451d4626ef21194a71d4f3e0c8a048ab6f4e89260dd2a4d5. Selected snapshot, not runnable. [Manifest](source-manifest.json).
+- Packet: tmp/pro-relationship-2026-10-19/source-packet.txt, 27 UTF-8 files, 229929 bytes, SHA-256 584ff9284e520ab3451d4626ef21194a71d4f3e0c8a048ab6f4e89260dd2a4d5. Selected snapshot, not runnable. Manifest.
 - Prior preparation, freshness and missingness cycles complete in open PRs 451, 452 and 455. Do not resubmit. PR454 owns axes; no overlap.
 - Mission: choose the smallest useful relationship-discovery boundary after current mixed-type ScatterMatrix. Demand unconfirmed. Existing trust journey stays first local proof.
 - Authorization: direct standing human approval covers necessary repository uploads to Byron's signed-in Chrome Pro. No secrets, unrelated private files, build output or dependencies selected.
@@ -29,7 +29,7 @@ Temporary collection heartbeat was created through automation_update and saved T
 
 ## Collection and integration: 2026-10-19
 
-Pro finished after 27m50s. All four standalone Markdown reports, ZIP and standalone manifest are collected. Safe paths, no symlinks, CRC, exact inventory, UTF-8, hashes, sizes and all five companion matches pass. Read all substantive outputs. No downloaded code ran. See collection.json.
+Pro finished after 27m50s. All four standalone Markdown reports, ZIP and standalone manifest are collected. Safe paths, no symlinks, CRC, exact inventory, UTF-8, hashes, sizes and all five companion matches pass. Read all substantive outputs. No downloaded code ran.
 
 Locally authenticated all 25 tracked source excerpts against baseline Git objects and current files. Pro's packet receipt hash matches the uploaded packet. Pro did not receive the separate source manifest; originals retain that limitation. Independent primary references checked for Orange, JMP, KNIME, SciPy and NIST. Nine fixture arithmetic anchors pass, without explorEDA runtime. No material gap needs a follow-up; 0/2.
 
