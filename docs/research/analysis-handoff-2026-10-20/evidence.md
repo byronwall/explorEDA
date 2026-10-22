@@ -18,7 +18,7 @@ No downloaded programs were executed. No follow-up was needed.
 
 All 38 report receipts match the uploaded manifest. All 35 baseline files authenticate against local Git objects.
 All 12 supplemental receipts match their baseline bytes, SHA-256 and Git blob IDs.
-Supplemental files also match current checkout bytes. See source-review.json.
+Supplemental files also match current checkout bytes.
 Intent edits below intentionally supersede their baseline snapshots.
 
 - DataTable resolves calculated columns before getFilteredRows and passes matching rows to the toolbar. CSV uses configured field IDs.
@@ -55,5 +55,5 @@ They do not establish demand or justify importing their machinery into explorEDA
 Read every substantive report. Parsed the structured manifest and authenticated its complete inventories.
 Fifteen independent integer/rational anchors confirm the proposed totals, populations and formula arithmetic.
 No downloaded fixture code ran. No new serializer, query, author, browser, recipient or performance proof ran.
-Existing test results and the required repository gate appear in validation.json.
+Existing test results and the required repository gate appear in [run.md](run.md).
 The proposed docs section, runnable example and manual note remain future comparisons.

@@ -23,7 +23,7 @@ This proposed threshold is a product discriminator, not a release rule approved 
 
 ## Proposed proof
 
-The [original proof plan](originals/proof-plan.md) specifies seven source rows, five selected rows and two searched rows.
+The [original proof plan](https://chatgpt.com/c/6ad7bc52-215c-83e9-baa5-50baceffb947) specifies seven source rows, five selected rows and two searched rows.
 Their amount totals are 100, 35 and 15. Table-only search must not change linked chart totals.
 It also proposes two project dependency probes and one optional storage probe.
 These remain source-predicted questions, not verified defects.
@@ -32,13 +32,12 @@ If a guide earns work, pair “Choose an export for your recipient” in export.
 Keep that docs section and example in one milestone.
 Neither was implemented here. No application source or export behavior changed.
 
-Artifact checks, [source authentication](source-review.json) and [15 arithmetic anchors](fixture-audit.json) passed.
+Artifact checks, source authentication and 15 arithmetic anchors passed.
 They do not establish application, browser, recipient, history, refresh or performance acceptance.
 No follow-up was needed: 0/2.
 
 ## Records
 
-- [Run record](run.md), [ranked queue](research-queue.md) and [validation](validation.json)
-- [Collection manifest](collection.json) and [source inventory](source-manifest.json)
-- Originals: [decision](originals/decision-report.md), [evidence](originals/evidence-and-comparisons.md), [proof](originals/proof-plan.md), [queue](originals/research-queue.md)
-- [Archive](originals/analysis-handoff-research.zip) and [report manifest](originals/manifest.json)
+- [Run record](run.md), [ranked queue](research-queue.md) and validation
+- [Pro conversation](https://chatgpt.com/c/6ad7bc52-215c-83e9-baa5-50baceffb947)
+- Originals: [decision](https://chatgpt.com/c/6ad7bc52-215c-83e9-baa5-50baceffb947), [evidence](https://chatgpt.com/c/6ad7bc52-215c-83e9-baa5-50baceffb947), [proof](https://chatgpt.com/c/6ad7bc52-215c-83e9-baa5-50baceffb947), [queue](https://chatgpt.com/c/6ad7bc52-215c-83e9-baa5-50baceffb947)

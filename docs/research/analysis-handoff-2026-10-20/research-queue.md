@@ -32,6 +32,6 @@ Previous queue: https://github.com/byronwall/explorEDA/blob/350df70b/docs/resear
 ## Review outcome
 
 [Five dispositions](decisions.md) keep existing exports and reject a larger bundle for this mission.
-The [original queue](originals/research-queue.md) adds bounded parameter-option and binding closure probes.
+The [original queue](https://chatgpt.com/c/6ad7bc52-215c-83e9-baa5-50baceffb947) adds bounded parameter-option and binding closure probes.
 They remain unrun. Local trust stays first; completed topics need task evidence, not more surveys.
 Record exchange does not satisfy the separate demand gate for analytical result tables.

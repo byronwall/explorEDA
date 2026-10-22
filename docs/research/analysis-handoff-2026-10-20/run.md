@@ -7,7 +7,7 @@
 - Baseline: 9b16d78e3ed0742ed4d5858c1939fec9e758b510. Refreshed origin/main; unchanged since prior cycle.
 - Branch: codex/analysis-handoff-research-2026-10-20. Clean before creation.
 - Prior preparation and cycles451/452/455–459 complete in open review PRs. PR454 owns axes. No active prior collector. Do not resubmit.
-- Prompt: [pro-prompt.md](pro-prompt.md). Queue: [research-queue.md](research-queue.md). Packet inventory: [source-manifest.json](source-manifest.json).
+- Prompt: [pro-prompt.md](pro-prompt.md). Queue: [research-queue.md](research-queue.md).
 - Packet: 38 selected text files; 475336 bytes; SHA256 0a496740782d35fc22b911698f533a3ed494a1e30997d4153e3de03e0631b233. All 35 baseline entries match Git objects. Two local additions and one identified historical summary. Not runnable.
 - No observed recipient demand, verified export defect or product proof is established. Local trust remains first local proof.
 - Allowed: research/docs/intent/examples, bounded experiments, scoped commits/push and review PR. Large implementation stays proposed. No merge/deploy/paid services.
