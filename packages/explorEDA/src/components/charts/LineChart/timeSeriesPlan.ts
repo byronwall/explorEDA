@@ -1,4 +1,5 @@
 import type { ThemeColors } from "@/lib/themePalettes";
+import { aggregationLabel, isAdditiveAggregation } from "@/lib/aggregates";
 import { applyFilter } from "@/hooks/applyFilter";
 import { DEFAULT_AXIS_TYPOGRAPHY, type AxisTypography } from "../Axis/axisPlan";
 import { categoryKey, categoryLabel, categoryValue } from "@/lib/categories";
@@ -128,7 +129,7 @@ export function planTimeSeries(
   const metricLabel =
     time.aggregation === "count"
       ? "Row count"
-      : `${time.aggregation === "sum" ? "Sum" : "Average"} of ${getLabel(time.measureField ?? "")}`;
+      : `${aggregationLabel(time.aggregation)} of ${getLabel(time.measureField ?? "")}`;
   const formatValue = (value: number) =>
     time.aggregation === "count"
       ? value.toLocaleString("en-US")
@@ -214,7 +215,7 @@ export function planTimeSeries(
           const value =
             bucket?.value ??
             (!bucket &&
-            time.aggregation !== "average" &&
+            isAdditiveAggregation(time.aggregation) &&
             time.missingPeriods === "zero"
               ? 0
               : undefined);
@@ -301,8 +302,8 @@ export function planTimeSeries(
   }
   const notice =
     tooMany ??
-    (stacked && time.aggregation === "average"
-      ? "Choose count or sum to stack series. Use Area to compare averages."
+    (stacked && !isAdditiveAggregation(time.aggregation)
+      ? `Choose count or sum to stack series. Use Area to compare ${time.aggregation === "average" ? "averages" : time.aggregation === "max" ? "maxima" : "minima"}.`
       : stacked && points.some((point) => (point.value ?? 0) < 0)
         ? "Stacked areas need nonnegative period totals. Use Area or Line to compare signed totals."
         : undefined);

@@ -268,5 +268,155 @@
     "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
     "version": "U.S. President 1976–2020 state returns (1976–2016 file)",
     "notes": "Democratic and Republican shares of all votes cast in 51 jurisdictions for 11 elections. Margin is Democratic minus Republican share, in points."
+  },
+  {
+    "id": "gdp",
+    "title": "Largest economies by GDP, 1980 to 2023",
+    "publisher": "World Bank, World Development Indicators",
+    "url": "https://data.worldbank.org/indicator/NY.GDP.MKTP.CD",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "version": "Indicator NY.GDP.MKTP.CD through the World Bank API, as shipped in the demo's gdp-ranks.csv",
+    "notes": "One row per year for the 17 economies that ranked in the world's top twelve in any year from 1980 to 2023, with the World Bank region and GDP in current US dollars. Russia starts in 1988. Regional and income aggregates are left out."
+  },
+  {
+    "id": "gapminder",
+    "title": "Income, life expectancy, and population, 2023",
+    "publisher": "World Bank, World Development Indicators",
+    "url": "https://data.worldbank.org/",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "version": "World Development Indicators tables in the demo's worldbank folder, joined for 2023 by prepare/gapminder.ts",
+    "notes": "One row per economy with a 2023 population, GDP per capita (PPP, constant 2021 dollars), life expectancy at birth, World Bank region, and income group. Economies missing any of the three measures are left out, which drops Cuba, Venezuela, and Vietnam among others."
+  },
+  {
+    "id": "co2pc",
+    "title": "Carbon dioxide per person, 2020",
+    "publisher": "World Bank, World Development Indicators",
+    "url": "https://data.worldbank.org/indicator/EN.GHG.CO2.PC.CE.AR5",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "version": "Indicators EN.GHG.CO2.PC.CE.AR5 and SP.POP.TOTL for 2020 through the World Bank API, as shipped in the demo's co2-per-capita.csv",
+    "notes": "One row per economy with tonnes of CO2 per person (excluding land use change), population, World Bank region, and income group for 2020. Aggregates are left out. Total emissions here are per-person emissions multiplied by population."
+  },
+  {
+    "id": "bananas",
+    "title": "Banana yields by decade, fifteen top-yielding countries",
+    "publisher": "Our World in Data (FAO figures), as tabulated by Joel Soroos",
+    "url": "https://ourworldindata.org/grapher/banana-yields",
+    "license": "CC BY 4.0 (Our World in Data)",
+    "license_url": "https://ourworldindata.org/about#legal",
+    "version": "Decade averages from the 1960s to the 2010s as published in the tabulated sparkline table; shipped in the demo's banana-yields.csv",
+    "notes": "The fifteen countries with the highest long-term average banana yield, in tonnes per hectare. Only the decade averages are published figures; the yearly rows are drawn so that each decade's years average to its published value, so every chart and finding here reads decades, not years. The 2010s run 2010 to 2018. South Korea, Palestine, and Morocco have decades without a figure."
+  },
+  {
+    "id": "tax",
+    "title": "Central government tax revenue as a share of GDP, 2000 and 2023",
+    "publisher": "World Bank, World Development Indicators",
+    "url": "https://data.worldbank.org/indicator/GC.TAX.TOTL.GD.ZS",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "version": "Indicator GC.TAX.TOTL.GD.ZS through the World Bank API, as shipped in the demo's tax-slope.csv",
+    "notes": "Two rows per OECD member, for 2000 and 2023, with tax revenue as a percentage of GDP, the change across the span, and its direction. Members without both readings are left out: Japan, Australia, New Zealand, and Türkiye. The measure is central government revenue only, so federal countries read low."
+  },
+  {
+    "id": "confidence",
+    "title": "OECD consumer confidence indicator, nine countries",
+    "publisher": "OECD, as prepared for the R Graph Gallery",
+    "url": "https://r-graph-gallery.com/",
+    "license": "OECD data; the gallery's file carries no separate license statement",
+    "license_url": "https://www.oecd.org/en/about/terms-conditions.html",
+    "version": "Monthly, July 2018 to October 2022, as shipped in the demo's consumer-confidence.csv",
+    "notes": "One row per country and month for France, Germany, Italy, Japan, the United Kingdom, the United States, China, Australia, and South Korea. The indicator is an amplitude-adjusted index centred on 100, its long-run average; above 100 households expect to spend more, below 100 less. China ends in September 2022."
+  },
+  {
+    "id": "stocks",
+    "title": "Five technology stocks, monthly closing prices 2000 to 2010",
+    "publisher": "vega-datasets (stocks.csv)",
+    "url": "https://github.com/vega/vega-datasets",
+    "license": "BSD-3-Clause (vega-datasets)",
+    "license_url": "https://github.com/vega/vega-datasets/blob/main/LICENSE",
+    "version": "vega-datasets stocks.csv, as shipped in the demo's tech-stocks.csv",
+    "notes": "One row per company and month from January 2000 to March 2010 for Apple, Amazon, IBM, and Microsoft, and from August 2004 for Google, with the month's closing price. Prices are not adjusted for dividends or splits made after the file was prepared."
+  },
+  {
+    "id": "dubois",
+    "title": "Income and expenditure of 150 Black families in Atlanta, 1900",
+    "publisher": "W. E. B. Du Bois, plate for the 1900 Paris Exposition (Library of Congress); values as read for the #DuBoisChallenge",
+    "url": "https://www.loc.gov/item/2005676812/",
+    "license": "Public domain (Library of Congress); challenge data CC0",
+    "license_url": "https://www.loc.gov/item/2005676812/",
+    "version": "Values read from the plate, as shipped in the demo's du-bois-income.csv",
+    "notes": "One row per income class and spending category: seven annual income classes, each with its families' actual average income and the share of it spent on rent, food, clothes, direct taxes, and other expenses and savings. The two highest classes paid no rent and have no rent row, so the 33 rows cover 35 class-category cells."
+  },
+  {
+    "id": "census",
+    "title": "United States population by age and sex, 1850 to 2000",
+    "publisher": "U.S. Census Bureau decennial censuses, as packaged in vega-datasets (population.json)",
+    "url": "https://github.com/vega/vega-datasets",
+    "license": "BSD-3-Clause (vega-datasets); public US government statistics",
+    "license_url": "https://github.com/vega/vega-datasets/blob/main/LICENSE",
+    "version": "vega-datasets population.json, as shipped in the demo's us-population.csv",
+    "notes": "One row per census year, five-year age group, and sex, with the number of people counted. Fifteen censuses from 1850 to 2000; the 1890 census is absent from the source. Ages are grouped to 90 and over."
+  },
+  {
+    "id": "covid",
+    "title": "Covid-19 case rates by state, weekly",
+    "publisher": "The New York Times",
+    "url": "https://github.com/nytimes/covid-19-data",
+    "license": "CC BY-NC 4.0, with credit to The New York Times",
+    "license_url": "https://github.com/nytimes/covid-19-data/blob/master/LICENSE",
+    "version": "rolling-averages/us-states.csv and us.csv, through 2023-03-20",
+    "notes": "Seven-day average new cases per 100,000 people, sampled every seventh day from March 2020 to March 2023. One table holds California, Florida, New York, Texas, Vermont, Washington, and the United States as code US; the other holds all 50 states and D.C. with each state’s row and column on an 8 × 11 tile grid."
+  },
+  {
+    "id": "scotus",
+    "title": "Justices of the Supreme Court of the United States",
+    "publisher": "Wikipedia contributors",
+    "url": "https://en.wikipedia.org/wiki/List_of_justices_of_the_Supreme_Court_of_the_United_States",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "version": "Article wikitext through the MediaWiki API, as prepared for the explorEDA timeline example",
+    "notes": "One row per term: 121 terms held by justices from 1789 on, with the seat, oath and departure dates (blank for sitting justices), years served, how the term ended, and the appointing president and party. A justice who held two seats has two rows."
+  },
+  {
+    "id": "media",
+    "title": "Deaths and media coverage by cause, 2023",
+    "publisher": "Our World in Data",
+    "url": "https://ourworldindata.org/does-the-news-reflect-what-we-die-from",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "version": "Analysis package media-deaths-analysis-data.zip, 2023 figures",
+    "notes": "Fifteen causes: the CDC’s twelve most common leading causes plus drug overdoses, homicides, and terrorism from the Global Terrorism Index. Deaths come from the CDC; article counts from Media Cloud for The New York Times, The Washington Post, and Fox News, counting an article only when it mentions a cause several times."
+  },
+  {
+    "id": "pew",
+    "title": "What makes life meaningful, by party",
+    "publisher": "Pew Research Center",
+    "url": "https://www.pewresearch.org/global/2021/11/18/what-makes-life-meaningful-views-from-17-advanced-economies/",
+    "license": "Free to use with attribution",
+    "license_url": "https://www.pewresearch.org/about/terms-and-conditions/",
+    "version": "November 2021 report, as transcribed for the R Graph Gallery dumbbell recreation",
+    "notes": "Seven topics that Republicans and Democrats mention at different rates when asked what makes life meaningful, with the share of each party’s respondents who mentioned the topic. Fourteen rows."
+  },
+  {
+    "id": "lincoln",
+    "title": "Lincoln, Nebraska daily weather, 2016",
+    "publisher": "Claus Wilke (ggridges), from Weather Underground",
+    "url": "https://github.com/wilkelab/ggridges",
+    "license": "Factual weather records, reused with credit; ggridges is GPL-2",
+    "license_url": "https://github.com/wilkelab/ggridges/blob/master/LICENSE.md",
+    "version": "ggridges raw lincoln-weather.csv",
+    "notes": "Daily mean, maximum, and minimum temperatures in degrees Fahrenheit for every day of 2016, with the month."
+  },
+  {
+    "id": "driving",
+    "title": "Driving shifts into reverse",
+    "publisher": "vega-datasets, after Hannah Fairfield (The New York Times, 2010)",
+    "url": "https://github.com/vega/vega-datasets",
+    "license": "BSD-3-Clause (vega-datasets); the figures are reused, not the graphic",
+    "license_url": "https://github.com/vega/vega-datasets/blob/main/LICENSE",
+    "version": "vega-datasets driving.json",
+    "notes": "One row per year from 1956 to 2010: miles driven per person and the inflation-adjusted price of a gallon of gas."
   }
 ]

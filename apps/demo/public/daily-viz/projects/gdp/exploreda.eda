@@ -1,0 +1,24 @@
+project @gdp
+
+source @gdp path=../../../datasets/gdp-ranks.csv {
+  field Country string
+  field Code string
+  field Region string
+  field Year number
+  field "GDP (current US$)" number
+}
+
+query @gdp "Economies by year" glyph=◆ {
+  source gdp
+  calc trillions "GDP (trillion US$)" = ["gdp.GDP (current US$)"] / 1000000000000
+  calc billions "GDP (billion US$)" = ["gdp.GDP (current US$)"] / 1000000000
+  calc us_gdp "United States GDP" = ["gdp.Country"] == "United States" ? ["gdp.GDP (current US$)"] : 0
+  calc china_gdp "China GDP" = ["gdp.Country"] == "China" ? ["gdp.GDP (current US$)"] : 0
+  calc japan_gdp "Japan GDP" = ["gdp.Country"] == "Japan" ? ["gdp.GDP (current US$)"] : 0
+  calc gdp_1980 "GDP in 1980" = ["gdp.Year"] == 1980 ? ["gdp.GDP (current US$)"] : 0
+  calc gdp_2023 "GDP in 2023" = ["gdp.Year"] == 2023 ? ["gdp.GDP (current US$)"] : 0
+  calc trillions_1980 "GDP in 1980 (trillion US$)" = ["gdp.Year"] == 1980 ? ["gdp.GDP (current US$)"] / 1000000000000 : null
+  calc trillions_2023 "GDP in 2023 (trillion US$)" = ["gdp.Year"] == 2023 ? ["gdp.GDP (current US$)"] / 1000000000000 : null
+  calc bloc "Bloc" = ["gdp.Country"] == "United States" ? "United States" : ["gdp.Country"] == "China" ? "China" : ["gdp.Country"] == "Japan" ? "Japan" : "The other fourteen"
+  calc status "Top-twelve status" = ["gdp.Country"] == "India" ? "Joined" : ["gdp.Country"] == "Russia" ? "Joined" : ["gdp.Country"] == "South Korea" ? "Joined" : ["gdp.Country"] == "Spain" ? "Left" : ["gdp.Country"] == "Mexico" ? "Left" : ["gdp.Country"] == "Netherlands" ? "Left" : ["gdp.Country"] == "Australia" ? "Passed through" : ["gdp.Country"] == "Iran" ? "Passed through" : "Stayed"
+}

@@ -5,16 +5,16 @@
     "slug": "reusable-analysis-metrics",
     "scale": "feature",
     "current_phase": "intent",
-    "last_updated": "2026-10-09",
+    "last_updated": "2026-10-21",
     "summary": "Analysts may need the same meaningful measure in a card, bar, matrix, and trend.",
     "status": "planned",
-    "next_action": "Retain as an unprioritized seed until tool use reveals a concrete unmet task."
+    "next_action": "Keep rates deferred. After local trust, require a named repeated task that fails current recipes and acceptable upstream preparation."
   },
   "artifacts": {
     "intent_brief": {
       "path": "intent-brief.md",
       "status": "current",
-      "updated_at": "2026-10-06"
+      "updated_at": "2026-10-20"
     },
     "brainstorm": {
       "path": "brainstorm.md",
@@ -88,6 +88,20 @@
       "location": "../comparison-opportunities/resources/product-feedback-2026-10-06.json",
       "anchor": "Annotations 13",
       "authority": "Explicit human feedback; tentative answers remain tentative"
+    },
+    {
+      "id": "grouped-rates-research",
+      "type": "agent-authored-analysis",
+      "location": "../../research/grouped-rates-2026-10-19/README.md",
+      "anchor": "GR01–GR07, independently reviewed 2026-10-20 at 9b16d78e",
+      "authority": "Reviewed research; no implementation approval or author/browser proof"
+    },
+    {
+      "id": "r043-research",
+      "type": "agent-authored-analysis",
+      "location": "../../research/entity-grain-2026-10-21/README.md",
+      "anchor": "EG01\u2013EG06, three local research probes, October21",
+      "authority": "Reviewed research constraints and repair proposals; no implementation approval"
     }
   ],
   "intent": {
@@ -137,7 +151,7 @@
       {
         "id": "claim-3",
         "type": "future possibility",
-        "statement": "Expand when the same hand-computed rate or pivot-only reducer is repeatedly needed outside Pivot. Prefer one requested metric to a general language.",
+        "statement": "For rates, require repeated two-consumer need that fails current recipes and acceptable upstream preparation, after local trust. Keep population and identity rules explicit.",
         "commitment": "tentative",
         "importance": "supporting",
         "status": "active",
@@ -150,10 +164,14 @@
           {
             "source_id": "pro-chart-review",
             "anchor": "C03, C05, C06"
+          },
+          {
+            "source_id": "grouped-rates-research",
+            "anchor": "GR01, GR03, GR04, GR07"
           }
         ],
         "confidence": "medium",
-        "notes": "Candidate interpretation; no feature implementation has been selected."
+        "notes": "Reviewed research keeps demand unconfirmed; no new reducer, API or implementation is selected."
       },
       {
         "id": "priority-1",
@@ -333,25 +351,33 @@
       "date": "2026-10-06",
       "action": "Reconciled annotated product feedback and priority.",
       "reason": "User provided clearer goals and indicated lower interest in unclear topics.",
-      "source_annotation_indices": [
-        13
-      ],
+      "source_annotation_indices": [13],
       "evidence": "Current brief changes where applicable; source inspection only. No implementation, pause, or cancellation."
     },
     {
       "date": "2026-10-09",
       "event": "status-checked",
       "status": "planned",
-      "evidence": [
-        "No implementation of this scope found at 91b627d"
-      ]
+      "evidence": ["No implementation of this scope found at 91b627d"]
+    },
+    {
+      "date": "2026-10-20",
+      "action": "Reviewed grouped-rate research and retained the deferred seed.",
+      "reason": "Current recipes or declared-grain preparation can reject a new API before product expansion.",
+      "evidence": "Seven dispositions, baseline source authentication, five primary sources and twelve independent arithmetic anchors. Author/browser/lifecycle proof remains proposed."
+    },
+    {
+      "date": "2026-10-21",
+      "action": "Reconciled R043 entity-grain research and three local probes.",
+      "evidence": "Measured-count conflict split, source/value partition controls, static trace wording; browser/author proofs remain pending.",
+      "reason": "Retain distinct identity contracts and bound repair proposals."
     }
   ],
   "closure": null,
   "intake": {
     "kind": "seed",
     "priority_basis": "Pro recommendations reconciled with current source; proposed priority, no implementation approval",
-    "expand_when": "Expand when the same hand-computed rate or pivot-only reducer is repeatedly needed outside Pivot. Prefer one requested metric to a general language.",
+    "expand_when": "For rates, require a named repeated two-consumer task after local trust that fails current controls and acceptable upstream preparation. Make quantity, population and identity rules explicit. Keep pivot-only reducer demand separate.",
     "related_initiatives": [],
     "audience": "End users; developers deliver their experience.",
     "priority": "seed-demand-unconfirmed"

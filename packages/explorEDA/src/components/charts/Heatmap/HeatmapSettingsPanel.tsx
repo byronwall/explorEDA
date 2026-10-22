@@ -98,6 +98,12 @@ export function HeatmapSettingsPanel({
           <option value="average" disabled={!measureFields.length}>
             Average
           </option>
+          <option value="max" disabled={!measureFields.length}>
+            Maximum
+          </option>
+          <option value="min" disabled={!measureFields.length}>
+            Minimum
+          </option>
         </select>
 
         {settings.aggregation !== "count" && (

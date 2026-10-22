@@ -13,6 +13,8 @@ import {
 import { useCallback, useId, useMemo, useRef, useState } from "react";
 import { ChartReadout } from "../ChartReadout";
 import { HeatLegend } from "../HeatLegend";
+import { annotationSlot } from "../annotations/ChartAnnotations";
+import { heatmapAnnotationFrame } from "./heatmapAnnotations";
 import {
   useChartTrace,
   useChartTraceApi,
@@ -88,6 +90,7 @@ export function Heatmap({
   width,
   height,
   facetIds,
+  facetKey,
 }: BaseChartProps<HeatmapSettings>) {
   const getFieldLabel = useDataLayer((s) => s.getFieldLabel);
   const formatFieldValue = useDataLayer((s) => s.formatFieldValue);
@@ -154,6 +157,13 @@ export function Heatmap({
     [plan]
   );
   useTraceSource(owner, source);
+  const annotationFrame = useMemo(
+    () =>
+      settings.annotations?.length
+        ? heatmapAnnotationFrame(plan, facetKey)
+        : undefined,
+    [settings.annotations, plan, facetKey]
+  );
   const inspect = useCallback(
     (id: string) => traceApi?.inspect(owner, "cell", id),
     [owner, traceApi]
@@ -345,6 +355,9 @@ export function Heatmap({
               opacity={0.55}
             />
           </pattern>
+          <clipPath id={`${hatchId}-plot`}>
+            <rect width={plan.plotWidth} height={plan.plotHeight} />
+          </clipPath>
         </defs>
         <g transform={`translate(${plan.margin.left},${plan.margin.top})`}>
           {/* A click on a label selects its whole row or column. */}
@@ -505,6 +518,7 @@ export function Heatmap({
               );
             })}
           </g>
+          {annotationSlot(settings, annotationFrame)?.(`url(#${hatchId}-plot)`)}
         </g>
       </svg>
       {hoveredCell && <Readout cell={hoveredCell} plan={plan} />}

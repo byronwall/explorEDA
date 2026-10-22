@@ -1,3 +1,4 @@
+import { isAggregation } from "@/lib/aggregates";
 /**
  * Project text: a project's sources, relationships, queries, and parameters
  * as declarations in the dashboard-text syntax. `exportProjectText` writes
@@ -85,7 +86,6 @@ const CARDINALITIES = new Set([
   "many-to-many",
 ]);
 const DEFAULT_CARDINALITY = "many-to-one";
-const OPERATIONS = new Set(["count", "sum", "average"]);
 const OPERATORS: Record<string, AnalysisFilterOperator> = {
   "=": "eq",
   "!=": "neq",
@@ -816,11 +816,11 @@ function compileStep(
       const measures: AggregateMeasure[] = [];
       for (const child of declaration.children) {
         const measureId = idOf(child);
-        if (!OPERATIONS.has(child.keyword) || !measureId) {
+        if (!isAggregation(child.keyword) || !measureId) {
           report(
             child.span,
             `${child.keyword} isn't a measure.`,
-            "Write a measure as sum @amount orders.amount, average @mean …, or count @rows."
+            "Write a measure as sum @amount orders.amount, average @mean …, max @peak …, min @low …, or count @rows."
           );
           continue;
         }

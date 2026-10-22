@@ -230,8 +230,24 @@ export interface AnnotationFrame {
    * pass the current filters. Charts of grouped values leave it out.
    */
   population?: Record<AnnotationPopulation, IdType[]>;
+  /**
+   * Values calculations read on an axis whose marks summarize rows, such as
+   * a grouped row chart's per-group measure. They take the place of
+   * `population` for that axis.
+   */
+  axisValues?: Partial<
+    Record<"x" | "y", Record<AnnotationPopulation, number[]>>
+  >;
   /** Where an aggregate mark, such as a bar, is drawn for a category. */
   category?: (attach: CategoryAttachment) => PlottedRecord | undefined;
+  /**
+   * On a chart drawn as a grid of cells, such as a heatmap or calendar, where
+   * the cell a record callout's key values name is drawn. Its key fields must
+   * be the fields that place a cell, since a cell holds many rows.
+   */
+  cell?: (
+    attach: RecordAttachment
+  ) => PlottedRecord | Exclude<AnnotationStatus, "shown">;
   /** The facet panel this frame draws, by its facet values. */
   facetKey?: string;
 }
@@ -244,9 +260,17 @@ export function calculate(
   getColumn: ColumnGetter
 ) {
   const column = getColumn(field);
-  const values = ids
-    .map((id) => finiteNumber(column[id]))
-    .filter((value): value is number => value !== undefined);
+  return statisticOf(
+    statistic,
+    ids
+      .map((id) => finiteNumber(column[id]))
+      .filter((value): value is number => value !== undefined)
+  );
+}
+
+/** A statistic of some values, or undefined without any. */
+export function statisticOf(statistic: AnnotationStatistic, input: number[]) {
+  const values = input.filter(Number.isFinite);
   if (!values.length) return undefined;
   if (statistic === "mean")
     return values.reduce((sum, value) => sum + value, 0) / values.length;
@@ -398,15 +422,19 @@ function projectOne(
     if (annotation.type === "reference-line") {
       let value = annotation.value;
       if (annotation.calculated) {
+        const { statistic, population } = annotation.calculated;
         const field = vertical ? frame.xField : frame.yField;
-        if (!frame.population || !field)
+        const values = frame.axisValues?.[annotation.axis];
+        if (!values && (!frame.population || !field))
           return { annotation, status: "unsupported" };
-        const result = calculate(
-          annotation.calculated.statistic,
-          field,
-          frame.population[annotation.calculated.population],
-          frame.getColumn
-        );
+        const result = values
+          ? statisticOf(statistic, values[population])
+          : calculate(
+              statistic,
+              field!,
+              frame.population![population],
+              frame.getColumn
+            );
         if (result === undefined) return { annotation, status: "empty" };
         value = result;
       }
@@ -587,6 +615,13 @@ function projectOne(
     if (!inside(point.x, frame.plotWidth) || !inside(point.y, frame.plotHeight))
       return { annotation, status: "offscreen" };
     // An aggregate mark stays drawn when filters dim it, so its note does too.
+    return { annotation, status: "shown", x: point.x, y: point.y };
+  }
+  if (attach.kind === "record" && frame.cell) {
+    const point = frame.cell(attach);
+    if (typeof point === "string") return { annotation, status: point };
+    if (!inside(point.x, frame.plotWidth) || !inside(point.y, frame.plotHeight))
+      return { annotation, status: "offscreen" };
     return { annotation, status: "shown", x: point.x, y: point.y };
   }
   if (!frame.plotted) return { annotation, status: "unsupported" };

@@ -1,63 +1,46 @@
-# Pooled, iris sepals look unrelated; within a species they move together
+# Pooled, iris sepals look unrelated; within each species they grow together
 
-**Does sepal width rise with sepal length?** Each row is one sampled iris flower.
+**Does sepal width rise with sepal length?** Each row is one of 150 iris flowers, 50 from each of three species, measured by Edgar Anderson in 1935. Ask the question of all 150 at once and the answer is no. Ask it of any one species and the answer is yes. The pooled correlation was -0.118; within setosa it was 0.743.
 
 ```eda
 eda query=r
 sepal_length:num=r.sepal_length label="Sepal length (cm)"
 sepal_width:num=r.sepal_width label="Sepal width (cm)"
-petal_length:num=r.petal_length label="Petal length (cm)"
 species:cat=r.species label="Species"
 ```
 
-## 1. One pooled cloud, no grouping
+## Pool the species and the line goes flat
 
-The fitted line describes every flower together. It mixes between-species differences with within-species variation.
+One fit through every flower slopes slightly downward. Sepal length and sepal width had correlation -0.118 across all 150 flowers. The cloud in the box is the reason: setosa has the shortest sepals and the widest, so it sits high on the left and drags the line down to the right.
 
 ```eda
-scatter @nb-iris-pooled-versus-grouped-chart-1 x=sepal_length y=sepal_width regression=linear title="One pooled cloud, no grouping" x.title="Sepal length (cm)" y.title="Sepal width (cm)"
+scatter @nb-iris-pooled-versus-grouped-chart-1 x=sepal_length y=sepal_width regression=linear title="Sepal width against sepal length, all 150 flowers" x.title="Sepal length (cm)" y.title="Sepal width (cm)" {
+  region x=4.2..5.9 y=2.2..4.5 "Setosa: short and wide"
+}
 ```
 
-## 2. Show the groups the pooled fit hid
+## Within each species, width rises with length
 
-Grouping makes the conditional comparisons explicit. These are descriptive straight fits, not independent tests of a causal model.
+Color the same points by species and fit each one alone: all three lines slope upward. Within setosa, the correlation was 0.743. Within versicolor it was 0.526, and within virginica 0.457. Setosa's mean sepal width was 3.43 cm, against 2.77 cm for versicolor, a gap of two thirds of a centimeter between the species with the shortest sepals and the one next to it.
 
 ```eda
-scatter @nb-iris-pooled-versus-grouped-chart-2 x=sepal_length y=sepal_width color=species regression=linear title="Show the groups the pooled fit hid" x.title="Sepal length (cm)" y.title="Sepal width (cm)"
+scatter @nb-iris-pooled-versus-grouped-chart-2 x=sepal_length y=sepal_width color=species regression=linear title="Sepal width against sepal length, fitted per species" x.title="Sepal length (cm)" y.title="Sepal width (cm)"
 ```
 
-**Finding.** The pooled sepal length–width correlation was -0.118.
+## Setosa is the shortest species and the widest
 
-## 3. Sepal width differs across the groups
-
-Group locations help explain why the pooled cloud can behave differently from each species cloud. A box still loses the paired length measurement.
+The boxes show why the pooled line tilts the wrong way. Setosa's mean sepal length was 5.01 cm and virginica's 6.59 cm, yet setosa has the widest sepals of the three, and alone sits above the dashed line: the mean sepal width of all 150 flowers was 3.06 cm. Between species, longer goes with narrower; within each species, longer goes with wider, and the pooled fit averages the two into nothing.
 
 ```eda
-boxplot @nb-iris-pooled-versus-grouped-chart-3 sepal_width color=species title="Sepal width differs across the groups" y.title="Sepal width (cm)"
-```
-
-## 4. The entire width distribution by species
-
-Cumulative curves expose overlap and tails without relying on a fitted equation. They preserve the equal weighting of flowers.
-
-```eda
-ecdf @nb-iris-pooled-versus-grouped-chart-4 sepal_width color=species direction=below title="The entire width distribution by species" x.title="Sepal width (cm)"
-```
-
-**Finding.** Within setosa, the correlation was 0.743.
-
-## 5. The rows behind the charts
-
-Sort a column or select rows to check any value above. Selections in a notebook stay with their own chart.
-
-```eda
-table @nb-iris-pooled-versus-grouped-records species,sepal_length,sepal_width,petal_length title="Records behind this comparison"
+boxplot @nb-iris-pooled-versus-grouped-chart-3 sepal_width color=species title="Sepal width by species" y.title="Sepal width (cm)" {
+  rule y=3.06 "All flowers: 3.06 cm"
+}
 ```
 
 ## Takeaway
 
-The pooled cloud combines within-group movement with differences between group centers. Report which population a correlation describes instead of calling one coefficient the relationship.
+Sepal width does rise with sepal length, in every species. The pooled coefficient near zero is not a weaker version of that fact but a different one: it measures the differences between species, which run the other way. Say which population a correlation describes.
 
 ## Limits
 
-Grouping is descriptive and does not prove a biological mechanism. Correlations use complete numerical pairs. Equal class counts in this teaching dataset should not be mistaken for natural species prevalence.
+Fifty flowers per species from one collection, chosen for a classification exercise; equal counts are a design choice, not a prevalence. The fits are descriptive lines, not a model of how a flower grows.
