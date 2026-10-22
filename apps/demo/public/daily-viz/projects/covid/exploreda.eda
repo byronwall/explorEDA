@@ -1,0 +1,30 @@
+project @covid
+
+source @compare path=../../../datasets/covid-compare.csv {
+  field State string
+  field Code string
+  field Date date
+  field "Cases per 100k" number
+}
+
+source @tiles path=../../../datasets/covid-tiles.csv {
+  field State string
+  field Code string
+  field Tile string
+  field Date date
+  field "Cases per 100k" number
+}
+
+query @compare "Six states and the nation, weekly" glyph=◆ {
+  source compare
+  calc year "Year" = extractDateComponent(["compare.Date"], "year")
+  calc month "Month" = extractDateComponent(["compare.Date"], "month")
+  calc wave "Wave" = ["compare.Date"] == null ? null : year == 2020 && month <= 5 ? "Spring 2020" : year == 2020 && month <= 9 ? "Summer 2020" : (year == 2020 || (year == 2021 && month <= 3)) ? "Winter 2020-21" : year == 2021 && month <= 6 ? "Lull 2021" : year == 2021 && month <= 11 ? "Delta 2021" : (year == 2021 || (year == 2022 && month <= 3)) ? "Omicron 2022" : "After Omicron"
+}
+
+query @tiles "Fifty states and D.C., weekly" glyph=◆ {
+  source tiles
+  calc year "Year" = extractDateComponent(["tiles.Date"], "year")
+  calc month "Month" = extractDateComponent(["tiles.Date"], "month")
+  calc wave "Wave" = ["tiles.Date"] == null ? null : year == 2020 && month <= 5 ? "Spring 2020" : year == 2020 && month <= 9 ? "Summer 2020" : (year == 2020 || (year == 2021 && month <= 3)) ? "Winter 2020-21" : year == 2021 && month <= 6 ? "Lull 2021" : year == 2021 && month <= 11 ? "Delta 2021" : (year == 2021 || (year == 2022 && month <= 3)) ? "Omicron 2022" : "After Omicron"
+}

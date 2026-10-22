@@ -3714,5 +3714,274 @@
       }
     ],
     "published": "2026-10-16"
+  },
+  {
+    "id": "nb-covid-six-states",
+    "slug": "covid-six-states",
+    "kind": "notebook",
+    "title": "Each Covid wave had its own state, until Omicron took all six",
+    "question": "When did each state's worst weeks come, and how high did they go?",
+    "summary": "New York peaked alone in spring 2020, Florida and Texas led the summer, and the winter wave reached every state. Omicron then hit all six states within two weeks in January 2022, at two to five times any earlier peak.",
+    "family": "covid",
+    "entry": "six-states.eda.md",
+    "query": "compare",
+    "industry": "Public health",
+    "analysis": "Trend",
+    "findings": [
+      {
+        "text": "New York’s spring 2020 peak was {value} new cases per 100,000 a day",
+        "format": ".2f",
+        "op": "max",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "NY"
+          ],
+          [
+            "wave",
+            "eq",
+            "Spring 2020"
+          ]
+        ]
+      },
+      {
+        "text": "the nation’s was {value}.",
+        "format": ".2f",
+        "op": "max",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "US"
+          ],
+          [
+            "wave",
+            "eq",
+            "Spring 2020"
+          ]
+        ]
+      },
+      {
+        "text": "The other five states never passed {value} that spring.",
+        "format": ".2f",
+        "op": "max",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "ne",
+            "US"
+          ],
+          [
+            "Code",
+            "ne",
+            "NY"
+          ],
+          [
+            "wave",
+            "eq",
+            "Spring 2020"
+          ]
+        ]
+      },
+      {
+        "text": "Florida’s summer 2020 weeks averaged {value} new cases per 100,000",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "FL"
+          ],
+          [
+            "wave",
+            "eq",
+            "Summer 2020"
+          ]
+        ]
+      },
+      {
+        "text": "New York’s averaged {value}.",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "NY"
+          ],
+          [
+            "wave",
+            "eq",
+            "Summer 2020"
+          ]
+        ]
+      },
+      {
+        "text": "Vermont’s winter weeks averaged {value}",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "VT"
+          ],
+          [
+            "wave",
+            "eq",
+            "Winter 2020-21"
+          ]
+        ]
+      },
+      {
+        "text": "against the nation’s {value}.",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "US"
+          ],
+          [
+            "wave",
+            "eq",
+            "Winter 2020-21"
+          ]
+        ]
+      },
+      {
+        "text": "Delta was Florida’s again, at {value} a week",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "FL"
+          ],
+          [
+            "wave",
+            "eq",
+            "Delta 2021"
+          ]
+        ]
+      },
+      {
+        "text": "against {value} nationally.",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "US"
+          ],
+          [
+            "wave",
+            "eq",
+            "Delta 2021"
+          ]
+        ]
+      },
+      {
+        "text": "New York’s Omicron peak was {value}",
+        "format": ".2f",
+        "op": "max",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "NY"
+          ],
+          [
+            "wave",
+            "eq",
+            "Omicron 2022"
+          ]
+        ]
+      },
+      {
+        "text": "Texas’s was {value}",
+        "format": ".2f",
+        "op": "max",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "TX"
+          ],
+          [
+            "wave",
+            "eq",
+            "Omicron 2022"
+          ]
+        ]
+      },
+      {
+        "text": "and the nation’s was {value}.",
+        "format": ".2f",
+        "op": "max",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "US"
+          ],
+          [
+            "wave",
+            "eq",
+            "Omicron 2022"
+          ]
+        ]
+      }
+    ],
+    "series": {
+      "id": "covid-waves",
+      "title": "Three years of Covid case rates",
+      "part": 1
+    }
+  },
+  {
+    "id": "nb-covid-vermont-florida",
+    "slug": "covid-vermont-florida",
+    "kind": "notebook",
+    "title": "Vermont kept Covid low for 21 months, then Omicron caught up",
+    "question": "Did the state with the lowest case rates stay lowest?",
+    "summary": "TODO: two sentences on what the reader learns.",
+    "family": "covid",
+    "entry": "vermont-florida.eda.md",
+    "query": "compare",
+    "industry": "Public health",
+    "analysis": "Comparison",
+    "findings": []
+  },
+  {
+    "id": "nb-covid-fifty-states",
+    "slug": "covid-fifty-states",
+    "kind": "notebook",
+    "title": "The winter wave began in the Dakotas; Omicron needed one month for all 51",
+    "question": "Which states peaked first in each Covid wave?",
+    "summary": "TODO: two sentences on what the reader learns.",
+    "family": "covid",
+    "entry": "fifty-states.eda.md",
+    "query": "tiles",
+    "industry": "Public health",
+    "analysis": "Geography",
+    "findings": []
   }
 ]

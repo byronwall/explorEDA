@@ -268,5 +268,15 @@
     "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
     "version": "U.S. President 1976–2020 state returns (1976–2016 file)",
     "notes": "Democratic and Republican shares of all votes cast in 51 jurisdictions for 11 elections. Margin is Democratic minus Republican share, in points."
+  },
+  {
+    "id": "covid",
+    "title": "Covid-19 case rates by state, weekly",
+    "publisher": "The New York Times",
+    "url": "https://github.com/nytimes/covid-19-data",
+    "license": "CC BY-NC 4.0, with credit to The New York Times",
+    "license_url": "https://github.com/nytimes/covid-19-data/blob/master/LICENSE",
+    "version": "rolling-averages/us-states.csv and us.csv, through 2023-03-20",
+    "notes": "Seven-day average new cases per 100,000 people, sampled every seventh day from March 2020 to March 2023. One table holds California, Florida, New York, Texas, Vermont, Washington, and the United States as code US; the other holds all 50 states and D.C. with each state’s row and column on an 8 × 11 tile grid."
   }
 ]
