@@ -1366,9 +1366,9 @@
     "id": "nb-fertility-matched-endpoints",
     "slug": "fertility-matched-endpoints",
     "kind": "notebook",
-    "title": "Compare fertility endpoints only when both are present",
-    "question": "What changed between 1960 and 2011 for the same selected country cohort?",
-    "summary": "In the countries with both a 1960 and a 2011 value, fertility fell by three births per woman on average, and by almost five at most.",
+    "title": "The median country went from six births to two in fifty years",
+    "question": "How much did each country's fertility fall between 1960 and 2011?",
+    "summary": "All twelve countries had fewer births per woman in 2011 than in 1960, by a third of a birth in Nigeria and almost five in Korea. The higher a country started, the further it fell.",
     "family": "fertility",
     "entry": "matched-endpoints.eda.md",
     "query": "endpoints",
@@ -1376,16 +1376,67 @@
     "analysis": "Comparison",
     "findings": [
       {
-        "text": "The mean matched-country change was {value} births per woman.",
-        "format": ".3f",
+        "text": "The median country's rate was {value} births per woman in 1960.",
+        "format": ".2f",
+        "op": "median",
+        "field": "start"
+      },
+      {
+        "text": "By 2011 it was {value}.",
+        "format": ".2f",
+        "op": "median",
+        "field": "end"
+      },
+      {
+        "text": "The average change was {value} births per woman.",
+        "format": ".2f",
         "op": "mean",
         "field": "change"
       },
       {
-        "text": "The largest decline in the selected cohort was {value} births per woman.",
-        "format": ".3f",
+        "text": "Korea's change was {value} births per woman, the largest fall of the twelve.",
+        "format": ".2f",
         "op": "min",
         "field": "change"
+      },
+      {
+        "text": "Nigeria's was {value}, the smallest.",
+        "format": ".2f",
+        "op": "max",
+        "field": "change"
+      },
+      {
+        "text": "the correlation between the 1960 rate and the change was {value}.",
+        "format": ".2f",
+        "op": "corr",
+        "field": "start",
+        "other": "change"
+      },
+      {
+        "text": "The nine countries that started above five births fell by an average of {value} births per woman.",
+        "format": ".2f",
+        "op": "mean",
+        "field": "change",
+        "where": [
+          [
+            "start",
+            "gt",
+            5
+          ]
+        ]
+      },
+      {
+        "text": "The three that started below four fell by {value}.",
+        "format": ".2f",
+        "op": "mean",
+        "field": "change",
+        "where": [
+          [
+            "start",
+            "lt",
+            4
+          ]
+        ]
       }
     ],
     "published": "2026-08-13"
