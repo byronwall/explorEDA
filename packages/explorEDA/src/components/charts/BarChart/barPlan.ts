@@ -34,7 +34,7 @@ import {
 } from "../Axis/axisBounds";
 import { numericScale } from "../Axis/numericScale";
 import { getChartAxisLabel } from "../chartAccessibility";
-import { binInRange, numericBins } from "./bins";
+import { binIndex, binInRange, numericBins } from "./bins";
 import type { BarChartSettings } from "./definition";
 
 /** Grouped aggregate, count per category, or count per numeric bin. */
@@ -288,17 +288,10 @@ function binRows(settings: BarChartSettings, snapshot: BarSnapshot): BinRow[] {
     settings.binCount || 20
   );
   const members = bins.map(() => [] as { id: IdType; value: number }[]);
-  if (bins.length) {
-    const min = bins[0]!.start;
-    const max = bins[bins.length - 1]!.end;
-    const step = (max - min) / bins.length;
-    // Same rule as numericBins: half-open bins, with the last bin closed.
-    for (const item of live) {
-      if (item.value < min || item.value > max) continue;
-      members[
-        Math.min(bins.length - 1, Math.floor((item.value - min) / step))
-      ]!.push(item);
-    }
+  // Same rule as numericBins: half-open bins, with the last bin closed.
+  for (const item of live) {
+    const index = binIndex(bins, item.value);
+    if (index !== undefined) members[index]!.push(item);
   }
   return bins.map((bin, index) => ({
     bin: { start: bin.start, end: bin.end },

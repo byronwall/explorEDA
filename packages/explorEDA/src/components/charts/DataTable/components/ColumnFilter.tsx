@@ -374,7 +374,7 @@ export function ColumnFilter({
               />
             </label>
             <label className="grid gap-0.5 text-xs">
-              At most
+              {rangeFilter?.maxExclusive ? "Below" : "At most"}
               <Input
                 type="number"
                 aria-label={`Maximum ${columnLabel}`}

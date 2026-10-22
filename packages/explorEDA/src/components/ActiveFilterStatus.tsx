@@ -72,15 +72,19 @@ export function formatFilterLabel(
     case "range":
     case "date-range": {
       const { min, max } = filter;
+      // A histogram bar's range leaves out its upper edge.
+      const below = filter.type === "range" && filter.maxExclusive;
       if (min !== undefined && max !== undefined) {
         const [low, high] = format.bounds(filter.field, min, max);
-        return `${name}: ${low}–${high}`;
+        return below
+          ? `${name}: ${low} to < ${high}`
+          : `${name}: ${low}–${high}`;
       }
       if (min !== undefined) {
         return `${name}: ≥ ${format.value(filter.field, min)}`;
       }
       if (max !== undefined) {
-        return `${name}: ≤ ${format.value(filter.field, max)}`;
+        return `${name}: ${below ? "<" : "≤"} ${format.value(filter.field, max)}`;
       }
       return `${name}: active`;
     }

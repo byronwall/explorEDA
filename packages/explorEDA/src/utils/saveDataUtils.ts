@@ -174,7 +174,9 @@ function isFilter(value: unknown): boolean {
   if (value.type === "range") {
     return (
       (value.min === undefined || isFiniteNumber(value.min)) &&
-      (value.max === undefined || isFiniteNumber(value.max))
+      (value.max === undefined || isFiniteNumber(value.max)) &&
+      (value.maxExclusive === undefined ||
+        typeof value.maxExclusive === "boolean")
     );
   }
   if (value.type === "date-range") {
