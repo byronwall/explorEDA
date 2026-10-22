@@ -4592,5 +4592,219 @@
         ]
       }
     ]
+  },
+  {
+    "id": "nb-co2pc-who-emits",
+    "slug": "co2pc-who-emits",
+    "kind": "notebook",
+    "title": "Ten countries emit 71% of the world's CO₂; the ten highest per person emit 3%",
+    "question": "Who emits the carbon: the biggest countries, or the people who burn the most each?",
+    "summary": "China, the United States, and eight other large economies emitted 71% of the world's carbon dioxide in 2020; the ten highest per-person emitters, Gulf states and islands, emitted 3%. Upper-middle-income economies made half of it with 39% of the world's people.",
+    "family": "co2pc",
+    "entry": "who-emits.eda.md",
+    "query": "co2",
+    "industry": "Environment",
+    "analysis": "Part-to-whole",
+    "findings": [
+      {
+        "text": "Upper-middle-income economies, China first among them, emitted {value}% of the world's CO₂ in 2020",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "tons_upper",
+        "other": "tons",
+        "scale": 100
+      },
+      {
+        "text": "while holding {value}% of its people.",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "pop_upper",
+        "other": "Population",
+        "scale": 100
+      },
+      {
+        "text": "High-income economies emitted {value}%",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "tons_high",
+        "other": "tons",
+        "scale": 100
+      },
+      {
+        "text": "with {value}% of people. Lower-middle-income",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "pop_high",
+        "other": "Population",
+        "scale": 100
+      },
+      {
+        "text": "Lower-middle-income economies emitted {value}%",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "tons_lower",
+        "other": "tons",
+        "scale": 100
+      },
+      {
+        "text": "with {value}% of people, and low-income",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "pop_lower",
+        "other": "Population",
+        "scale": 100
+      },
+      {
+        "text": "low-income economies {value}%",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "tons_low",
+        "other": "tons",
+        "scale": 100
+      },
+      {
+        "text": "with {value}%.",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "pop_low",
+        "other": "Population",
+        "scale": 100
+      },
+      {
+        "text": "The ten largest emitters produced {value}% of the world's CO₂",
+        "format": ".1f",
+        "op": "top_share",
+        "field": "tons",
+        "k": 10
+      },
+      {
+        "text": "led by China with {value}%",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "tons_china",
+        "other": "tons",
+        "scale": 100
+      },
+      {
+        "text": "the United States with {value}%.",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "tons_us",
+        "other": "tons",
+        "scale": 100
+      },
+      {
+        "text": "Qatar, the highest with a population over a million, emitted {value} tonnes a person",
+        "format": ".1f",
+        "op": "mean",
+        "field": "CO2 per person",
+        "where": [
+          [
+            "Economy",
+            "eq",
+            "Qatar"
+          ]
+        ]
+      },
+      {
+        "text": "24 times India's {value} tonnes.",
+        "format": ".2f",
+        "op": "mean",
+        "field": "CO2 per person",
+        "where": [
+          [
+            "Economy",
+            "eq",
+            "India"
+          ]
+        ]
+      },
+      {
+        "text": "The {value} economies above 10 tonnes a person",
+        "format": ".0f",
+        "op": "count",
+        "field": "CO2 per person",
+        "where": [
+          [
+            "CO2 per person",
+            "gt",
+            10
+          ]
+        ]
+      },
+      {
+        "text": "held {value}% of the world's people",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "pop_over10",
+        "other": "Population",
+        "scale": 100
+      },
+      {
+        "text": "and emitted {value}% of its CO₂.",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "tons_over10",
+        "other": "tons",
+        "scale": 100
+      },
+      {
+        "text": "The {value} economies below 1 tonne a person",
+        "format": ".0f",
+        "op": "count",
+        "field": "CO2 per person",
+        "where": [
+          [
+            "CO2 per person",
+            "lt",
+            1
+          ]
+        ]
+      },
+      {
+        "text": "held {value}% of people",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "pop_under1",
+        "other": "Population",
+        "scale": 100
+      },
+      {
+        "text": "and emitted {value}%. The population-weighted",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "tons_under1",
+        "other": "tons",
+        "scale": 100
+      },
+      {
+        "text": "The population-weighted average high-income economy emitted {value} tonnes a person",
+        "format": ".2f",
+        "op": "weighted_mean",
+        "field": "CO2 per person",
+        "weight": "Population",
+        "where": [
+          [
+            "Income group",
+            "eq",
+            "High"
+          ]
+        ]
+      },
+      {
+        "text": "the average low-income economy emitted {value} tonnes.",
+        "format": ".2f",
+        "op": "weighted_mean",
+        "field": "CO2 per person",
+        "weight": "Population",
+        "where": [
+          [
+            "Income group",
+            "eq",
+            "Low"
+          ]
+        ]
+      }
+    ]
   }
 ]
