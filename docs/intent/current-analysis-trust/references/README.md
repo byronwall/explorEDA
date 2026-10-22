@@ -58,4 +58,4 @@ Three local numerical probes pass. Product and browser proofs remain unrun.
 [Reviewed synthesis](../../../research/filter-ownership-2026-10-22/summary.md),
 [decisions](../../../research/filter-ownership-2026-10-22/decisions.md), and
 [local proof limits](../../../research/filter-ownership-2026-10-22/evidence/local-results.md) separate exact membership from comprehension.
-The raw Pro study kit and source receipts are linked from that synthesis. No new interface or participant result is claimed.
+The Pro study kit remains in the [Pro conversation](https://chatgpt.com/c/6ada64dd-7800-83ea-a8b4-e861b4f06fbe). No new interface or participant result is claimed.

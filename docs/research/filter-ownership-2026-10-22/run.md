@@ -30,7 +30,7 @@ Notebook selections have separate ownership. Preserve self-exclusion and current
 No participants or customer demand are inferred. Human comprehension cannot pass through source arithmetic alone.
 Keep larger changes proposed. Pair visible milestones with filters/rendering docs and a runnable example.
 
-[Prompt](pro-prompt.md), [manifest](source-manifest.json), [continuing queue](research-queue.md).
+[Prompt](pro-prompt.md), [continuing queue](research-queue.md).
 Packet: tmp/pro-filter-ownership-2026-10-22/source-packet.txt.
 39entries:29 complete baseline files,2 exact R051 JSON projections,3 historical complete dispositions,3 baseline excerpts,2 local additions.
 226162bytes; SHA256 `c53c80b2a48187f2ed8f0f566d7ccce3c13176062ed9b14c00bd35ff7a7c83a8`.

@@ -52,8 +52,7 @@ Only first exposure counts as primary evidence. Four volunteers can reject poor 
 Defer a new trace sentence and a persistent comparison control. Retain the current UI when results are inconclusive.
 
 [Seven local decisions](decisions.md), [evidence review](evidence.md), and [local proof limits](evidence/local-results.md) explain the boundaries.
-[Original decision](originals/decision.md), [source report](originals/evidence.md), [study kit](originals/proof-plan.md), and
-[integration proposal](originals/integration-plan.md) retain Pro's complete work.
+The [Pro conversation](https://chatgpt.com/c/6ada64dd-7800-83ea-a8b4-e861b4f06fbe) retains Pro's complete work: original decision, source report, study kit, and integration proposal.
 
 ## Continuation
 

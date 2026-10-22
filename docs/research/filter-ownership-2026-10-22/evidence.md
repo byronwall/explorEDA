@@ -10,13 +10,13 @@ Pro finished after 26m54s in the recorded conversation.
 Four standalone reports, an independent manifest and ZIP were downloaded under Byron's standing approval.
 The archive event wait timed out; the normal download succeeded. No output was regenerated or resubmitted.
 All report sizes/hashes, ZIP hash, manifest hash, safe paths, no links, CRC, exact inventory and UTF8 pass.
-All five standalone files equal their archive copies. [Collection manifest](collection.json) records hashes and retrieval names.
+All five standalone files equal their archive copies. Collection checked hashes and retrieval names.
 Five embedded assets pass their declared sizes and hashes. Three JSON assets parse and are preserved under evidence/.
 No downloaded program was executed. Pro's 121-check result and claimed hand-enumeration chronology remain attributed.
 
 The uploaded packet's37 baseline/historical/projection/excerpt receipts and24 supplemental complete file receipts match local Git objects.
-[Source receipts](evidence/source-receipts.json) preserve all 61 checks.
-Two local additions have their uploaded hashes in source-manifest.json. The commit hook later formatted the queue.
+All 61 source receipt checks passed.
+The commit hook later formatted the queue.
 Do not compare the formatted queue with uploaded bytes and call it source drift.
 
 ## Source and local checks
@@ -59,4 +59,4 @@ The local provider clear-all action is a real action check; replayed T4 settings
 No downloaded checker or proposed production test ran. Frozen input integrity does not prove the claimed freeze chronology.
 The full proposed bar-planner/reference test remains unrun.
 No follow-up is needed to integrate a useful, bounded proposal with these limits.
-See [decisions](decisions.md) and [validation](validation.json) for current local outcomes.
+See [decisions](decisions.md) and the [run record](run.md) for current local outcomes.
