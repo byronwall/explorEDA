@@ -1,5 +1,5 @@
 {
-  "status": "Full pnpm check running",
+  "status": "passed",
   "baseline": "63dfa75851ef57bb3782e6d7c1ef104784cd4064",
   "commands": [
     {
@@ -20,8 +20,28 @@
     },
     {
       "command": "pnpm check",
-      "result": "running",
-      "log": "tmp/pro-regression-conditioning-2026-10-22/pnpm-check.log"
+      "result": "pass",
+      "log": "tmp/pro-regression-conditioning-2026-10-22/pnpm-check.log",
+      "exit_code": 0,
+      "ui": true,
+      "builds": true,
+      "types": true,
+      "docs_tests": 73,
+      "library": {
+        "files": 255,
+        "tests": 1702,
+        "skipped_files": 3,
+        "skipped_tests": 45
+      },
+      "app": {
+        "files": 8,
+        "tests": 32
+      },
+      "demo": {
+        "files": 18,
+        "tests": 482
+      },
+      "log_sha256": "59fc82a9b596d789511301086aab9f57dd0ced1ced615d4b60c7dcf2bbc42a54"
     }
   ],
   "integrity": {
@@ -36,5 +56,9 @@
     "Export/history/restore/filter workflows",
     "Cross-engine and continuous-domain proof"
   ],
-  "scope": "Research and intent only; no package source/build change or changeset."
+  "scope": "Research and intent only; no package source/build change or changeset.",
+  "runtime": {
+    "node": "22.21.1",
+    "pnpm": "11.9.0"
+  }
 }

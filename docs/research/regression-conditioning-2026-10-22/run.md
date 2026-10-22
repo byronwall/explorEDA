@@ -1,6 +1,6 @@
 # R001 regression-conditioning Pro run
 
-Phase: collected, reviewed, integrated; full validation running. Follow-ups: 0/2. No review PR yet.
+Phase: collected, reviewed, integrated, validated; review PR pending. Follow-ups: 0/2.
 Repository: https://github.com/byronwall/explorEDA.
 Baseline: `63dfa75851ef57bb3782e6d7c1ef104784cd4064`, refreshed origin/main.
 Checkout: /Users/byronwall/Projects/explorEDA.
@@ -115,3 +115,15 @@ R051 is next, thenR086 andR031. Any visible repair pairs `/docs/scatter` and a f
 Existing regression17tests and local3probes pass. Full approved pnpm check is running.
 No browser/copy/export/filter/refit/restore/performance or full matrix replay is claimed.
 No changeset or product screenshot applies. Review PR and collector shutdown remain due.
+
+## Required validation before review
+
+Full approved pnpm check PASSED,exit0,Node22.21.1/pnpm11.9.0. No aggregate retry needed.
+UI,builds,types,and73docs tests pass. Library255files/1702tests pass;3files/45conditional tests skip.
+App8files/32tests and demo18files/482tests pass. Existing regression17tests and local3probes passed separately.
+PRgate,52authored links,JSON,original/companion/embedded integrity,and25source receipts pass.
+The root gate ran after removing the temporary probe; no package source or build output changed.
+Raw original whitespace is retained; authored whitespace passes.
+The full26-case harness, browser, actual copied-expression/export/refit/restore, cross-engine and continuous-domain proofs remain unrun.
+See validation.json and evidence.md. No changeset or product screenshot applies.
+Scoped review PR,final verification,and collector stop remain due.
