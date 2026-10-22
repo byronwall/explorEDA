@@ -238,7 +238,8 @@
     "series": {
       "id": "flights-january",
       "title": "A month of New York flights",
-      "part": 1
+      "part": 1,
+      "label": "The delay tail"
     },
     "findings": [
       {
@@ -424,7 +425,8 @@
     "series": {
       "id": "beijing-2016",
       "title": "A year of Beijing air",
-      "part": 1
+      "part": 1,
+      "label": "The calendar"
     },
     "findings": [
       {
@@ -1620,7 +1622,8 @@
     "series": {
       "id": "flights-january",
       "title": "A month of New York flights",
-      "part": 2
+      "part": 2,
+      "label": "By hour"
     },
     "findings": [
       {
@@ -1769,7 +1772,8 @@
     "series": {
       "id": "beijing-2016",
       "title": "A year of Beijing air",
-      "part": 2
+      "part": 2,
+      "label": "Pollutants"
     },
     "findings": [
       {
@@ -2364,7 +2368,8 @@
     "series": {
       "id": "flights-january",
       "title": "A month of New York flights",
-      "part": 3
+      "part": 3,
+      "label": "Airlines"
     },
     "findings": [
       {
@@ -3278,7 +3283,8 @@
     "series": {
       "id": "beijing-2016",
       "title": "A year of Beijing air",
-      "part": 3
+      "part": 3,
+      "label": "Stations"
     },
     "findings": [
       {
@@ -3464,7 +3470,8 @@
     "series": {
       "id": "flights-january",
       "title": "A month of New York flights",
-      "part": 4
+      "part": 4,
+      "label": "Weather"
     },
     "findings": [
       {
@@ -4319,7 +4326,8 @@
     "series": {
       "id": "beijing-2016",
       "title": "A year of Beijing air",
-      "part": 4
+      "part": 4,
+      "label": "Month by month"
     },
     "findings": [
       {
@@ -4570,7 +4578,8 @@
     "series": {
       "id": "flights-january",
       "title": "A month of New York flights",
-      "part": 5
+      "part": 5,
+      "label": "Day by day"
     },
     "findings": [
       {
@@ -4963,5 +4972,391 @@
       }
     ],
     "published": "2026-10-16"
+  },
+  {
+    "id": "nb-earthquakes-four-questions",
+    "slug": "earthquakes-four-questions",
+    "kind": "notebook",
+    "title": "Twenty strong earthquakes a day, nearly all on the Pacific rim",
+    "question": "Where, when, how deep, and how big were 2023's strong earthquakes?",
+    "summary": "Twenty strong earthquakes a day traced the Pacific rim in 2023, four in five of them in the crust. The days after the Kahramanmaraş and Mindanao shocks held eight times the usual count, and only 19 of 7,643 reached magnitude 7.",
+    "family": "earthquakes",
+    "entry": "four-questions.eda.md",
+    "query": "events",
+    "industry": "Geoscience",
+    "analysis": "Geography",
+    "findings": [
+      {
+        "text": "The Philippines alone recorded {value} earthquakes",
+        "format": ",.0f",
+        "op": "count",
+        "field": "area",
+        "where": [
+          [
+            "area",
+            "eq",
+            "Philippines"
+          ]
+        ]
+      },
+      {
+        "text": "its share of the year's catalogue was {value}%",
+        "format": ".1f",
+        "op": "share",
+        "field": "area",
+        "condition": [
+          [
+            "area",
+            "eq",
+            "Philippines"
+          ]
+        ]
+      },
+      {
+        "text": "On December 2 the catalogue recorded {value} earthquakes",
+        "format": ",.0f",
+        "op": "count",
+        "field": "date",
+        "where": [
+          [
+            "date",
+            "eq",
+            "2023-12-02"
+          ]
+        ]
+      },
+      {
+        "text": "December as a whole holds {value}",
+        "format": ",.0f",
+        "op": "count",
+        "field": "date",
+        "where": [
+          [
+            "date",
+            "ge",
+            "2023-12-01"
+          ]
+        ]
+      },
+      {
+        "text": "February 6, the day of the Kahramanmaraş shocks, recorded {value}",
+        "format": ",.0f",
+        "op": "count",
+        "field": "date",
+        "where": [
+          [
+            "date",
+            "eq",
+            "2023-02-06"
+          ]
+        ]
+      },
+      {
+        "text": "The share that began shallower than 70 km was {value}%",
+        "format": ".1f",
+        "op": "share",
+        "field": "depth",
+        "condition": [
+          [
+            "depth",
+            "lt",
+            70
+          ]
+        ]
+      },
+      {
+        "text": "the median depth was {value} km",
+        "format": ".0f",
+        "op": "median",
+        "field": "depth"
+      },
+      {
+        "text": "Earthquakes 300 km or deeper numbered {value}",
+        "format": ",.0f",
+        "op": "count",
+        "field": "depth",
+        "where": [
+          [
+            "depth",
+            "ge",
+            300
+          ]
+        ]
+      },
+      {
+        "text": "the share east of 170°E was {value}%",
+        "format": ".1f",
+        "op": "share",
+        "field": "longitude",
+        "where": [
+          [
+            "depth",
+            "ge",
+            300
+          ]
+        ],
+        "condition": [
+          [
+            "longitude",
+            "ge",
+            170
+          ]
+        ]
+      },
+      {
+        "text": "the share west of 170°W was {value}%",
+        "format": ".1f",
+        "op": "share",
+        "field": "longitude",
+        "where": [
+          [
+            "depth",
+            "ge",
+            300
+          ]
+        ],
+        "condition": [
+          [
+            "longitude",
+            "le",
+            -170
+          ]
+        ]
+      },
+      {
+        "text": "The deepest of the year started {value} km down",
+        "format": ".1f",
+        "op": "max",
+        "field": "depth"
+      },
+      {
+        "text": "The median earthquake in this catalogue is a magnitude {value}",
+        "format": ".1f",
+        "op": "median",
+        "field": "mag"
+      },
+      {
+        "text": "The share that reached magnitude 6 was {value}%",
+        "format": ".1f",
+        "op": "share",
+        "field": "mag",
+        "condition": [
+          [
+            "mag",
+            "ge",
+            6
+          ]
+        ]
+      },
+      {
+        "text": "the number that reached 7 was {value}",
+        "format": ",.0f",
+        "op": "count",
+        "field": "mag",
+        "where": [
+          [
+            "mag",
+            "ge",
+            7
+          ]
+        ]
+      },
+      {
+        "text": "The year's largest earthquake was magnitude {value}",
+        "format": ".1f",
+        "op": "max",
+        "field": "mag"
+      }
+    ],
+    "published": "2026-10-22"
+  },
+  {
+    "id": "nb-ercot-storm-by-the-hour",
+    "slug": "ercot-storm-by-the-hour",
+    "kind": "notebook",
+    "title": "Before Uri, ERCOT's forecast missed by under 3%; during the storm, by 18%",
+    "question": "How did the day-ahead forecast fail, hour by hour, when Winter Storm Uri hit Texas?",
+    "summary": "For six weeks ERCOT's day-ahead forecast missed by under 3% of load. In the week of Winter Storm Uri the grid served 11,000 MWh an hour less than forecast, and the worst hour missed by 28,885 MWh.",
+    "family": "ercot",
+    "entry": "storm-by-the-hour.eda.md",
+    "query": "r",
+    "industry": "Energy",
+    "analysis": "Error and uncertainty",
+    "findings": [
+      {
+        "text": "the forecast's mean absolute miss was {value}% of the forecast",
+        "format": ".2f",
+        "op": "mean",
+        "field": "abs_pct_error",
+        "where": [
+          [
+            "date",
+            "lt",
+            "2021-02-14"
+          ]
+        ]
+      },
+      {
+        "text": "the mean signed error before February 14 was {value} MWh",
+        "format": ",.0f",
+        "op": "mean",
+        "field": "error",
+        "where": [
+          [
+            "date",
+            "lt",
+            "2021-02-14"
+          ]
+        ]
+      },
+      {
+        "text": "the mean signed error from February 14 to 20 was {value} MWh",
+        "format": ",.0f",
+        "op": "mean",
+        "field": "error",
+        "where": [
+          [
+            "date",
+            "ge",
+            "2021-02-14"
+          ],
+          [
+            "date",
+            "lt",
+            "2021-02-21"
+          ]
+        ]
+      },
+      {
+        "text": "the mean signed error from February 21 was {value} MWh",
+        "format": ",.0f",
+        "op": "mean",
+        "field": "error",
+        "where": [
+          [
+            "date",
+            "ge",
+            "2021-02-21"
+          ]
+        ]
+      },
+      {
+        "text": "The share of hours before February 14 that missed by 2% of the forecast or less was {value}%",
+        "format": ".1f",
+        "op": "share",
+        "field": "abs_pct_error",
+        "where": [
+          [
+            "date",
+            "lt",
+            "2021-02-14"
+          ]
+        ],
+        "condition": [
+          [
+            "abs_pct_error",
+            "le",
+            2
+          ]
+        ]
+      },
+      {
+        "text": "the 90th percentile miss before the storm was {value}% of the forecast",
+        "format": ".1f",
+        "op": "quantile",
+        "q": 0.9,
+        "field": "abs_pct_error",
+        "where": [
+          [
+            "date",
+            "lt",
+            "2021-02-14"
+          ]
+        ]
+      },
+      {
+        "text": "it peaked at {value} MWh for the hour of 21:00 UTC on February 15",
+        "format": ",.0f",
+        "op": "max",
+        "field": "forecast"
+      },
+      {
+        "text": "Served load peaked at {value} MWh",
+        "format": ",.0f",
+        "op": "max",
+        "field": "actual"
+      },
+      {
+        "text": "the deepest miss of the two months was {value} MWh",
+        "format": ",.0f",
+        "op": "min",
+        "field": "error"
+      },
+      {
+        "text": "The number of storm-week hours more than 10,000 MWh below forecast was {value}",
+        "format": ",.0f",
+        "op": "count",
+        "field": "error",
+        "where": [
+          [
+            "date",
+            "ge",
+            "2021-02-14"
+          ],
+          [
+            "date",
+            "lt",
+            "2021-02-21"
+          ],
+          [
+            "error",
+            "lt",
+            -10000
+          ]
+        ]
+      },
+      {
+        "text": "The mean absolute miss for the week was {value}% of the forecast",
+        "format": ".2f",
+        "op": "mean",
+        "field": "abs_pct_error",
+        "where": [
+          [
+            "date",
+            "ge",
+            "2021-02-14"
+          ],
+          [
+            "date",
+            "lt",
+            "2021-02-21"
+          ]
+        ]
+      },
+      {
+        "text": "the mean signed error at 19:00 UTC was {value} MWh",
+        "format": ",.0f",
+        "op": "mean",
+        "field": "error",
+        "where": [
+          [
+            "date",
+            "ge",
+            "2021-02-14"
+          ],
+          [
+            "date",
+            "lt",
+            "2021-02-21"
+          ],
+          [
+            "hour",
+            "eq",
+            19
+          ]
+        ]
+      }
+    ],
+    "published": "2026-10-23"
   }
 ]
