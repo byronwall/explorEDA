@@ -1,8 +1,10 @@
 import {
   useEffect,
+  useId,
   useMemo,
   useRef,
   useState,
+  type KeyboardEvent,
   type MutableRefObject,
   type ReactNode,
 } from "react";
@@ -11,10 +13,13 @@ import { toast } from "sonner";
 import type { DeclaredFieldType } from "@/lib/declaredFieldTypes";
 import {
   compileNotebook,
+  notebookSheets,
+  withoutHeading,
   writeBackSettings,
   type NotebookBlockResult,
   type NotebookCompileResult,
   type NotebookSegment,
+  type NotebookSheet,
 } from "@/lib/notebook";
 import { resolveThemeId } from "@/lib/themes";
 import {
@@ -64,6 +69,16 @@ export interface ExplorEdaNotebookProps {
    * keep the single reading column.
    */
   layout?: "column" | "sections";
+  /**
+   * The sheet to show, by its id, in a notebook with two or more `#`
+   * headings. Each heading starts a sheet, read one at a time; the text
+   * before the first is the lede above them. Omit it and the notebook keeps
+   * its own choice, starting from `defaultSheet` or the first sheet.
+   */
+  sheet?: string;
+  defaultSheet?: string;
+  /** Someone chose a sheet, by its id. */
+  onSheetChange?: (id: string) => void;
 }
 
 /** Below this width, a sections layout falls back to the reading column. */
@@ -79,14 +94,20 @@ function chartHeight(chart: ChartSettings, categories?: number) {
   switch (chart.type) {
     case "metric-card":
       return 150;
-    // A few bars need a short chart, not the full height.
+    // A few bars need a short chart; two dozen need a tall one.
     case "row":
       return categories === undefined
         ? 380
         : Math.min(
-            380,
+            640,
             150 + categories * Math.max(chart.minRowHeight, chart.maxRowHeight)
           );
+    // A heatmap with many rows, such as 24 clock hours or 51 states, needs
+    // room for each.
+    case "heatmap":
+      return categories === undefined
+        ? 380
+        : Math.max(380, Math.min(1120, 120 + categories * 20));
     case "data-table":
     case "pivot":
     case "summary":
@@ -182,6 +203,9 @@ export function ExplorEdaNotebook({
   onTextChange,
   lastValid,
   layout = "column",
+  sheet,
+  defaultSheet,
+  onSheetChange,
 }: ExplorEdaNotebookProps) {
   const ownMemory = useRef<Record<number, string>>({});
   const memory = lastValid ?? ownMemory;
@@ -258,6 +282,9 @@ export function ExplorEdaNotebook({
           <NotebookColumn
             result={result}
             layout={layout}
+            sheet={sheet}
+            defaultSheet={defaultSheet}
+            onSheetChange={onSheetChange}
             onSegmentChange={
               onTextChange
                 ? (segment, next) =>
@@ -312,17 +339,18 @@ interface NotebookSection {
 }
 
 /**
- * Groups the notebook by its `##` headings: each section's text, including
+ * Groups segments by their `##` headings: each section's text, including
  * a finding written after a chart, and the blocks that chart it.
  */
 export function notebookSections(
-  result: NotebookCompileResult
+  segments: readonly NotebookSegment[],
+  blocks: readonly NotebookBlockResult[]
 ): NotebookSection[] {
   const sections: NotebookSection[] = [{ notes: [], blocks: [] }];
   const current = () => sections[sections.length - 1]!;
-  for (const segment of result.notebook.segments) {
+  for (const segment of segments) {
     if (segment.kind !== "prose") {
-      current().blocks.push(result.blocks[segment.index]!);
+      current().blocks.push(blocks[segment.index]!);
       continue;
     }
     let fenced = false;
@@ -348,23 +376,31 @@ export function notebookSections(
 }
 
 function NotebookSectionsView({
-  result,
+  segments,
+  blocks,
   width,
 }: {
-  result: NotebookCompileResult;
+  segments: readonly NotebookSegment[];
+  blocks: readonly NotebookBlockResult[];
   width: number;
 }) {
   const figureWidth = width - NOTES_WIDTH - NOTES_GAP;
-  const sections = notebookSections(result);
+  const sections = notebookSections(segments, blocks);
+  // A block that only defines fields draws nothing, so a section with no
+  // other block is text, such as a lede followed by its field list.
+  const draws = (section: NotebookSection) =>
+    section.blocks.some(
+      (block) => block.charts.length || block.diagnostics.length
+    );
   // Text-only sections in a row, such as a takeaway and its limits, share it.
   const rows: NotebookSection[][] = [];
   for (const section of sections) {
     const last = rows[rows.length - 1];
     if (
       section.heading &&
-      !section.blocks.length &&
+      !draws(section) &&
       last?.[0]?.heading &&
-      !last[0].blocks.length &&
+      !draws(last[0]) &&
       last.length < 2
     )
       last.push(section);
@@ -372,7 +408,7 @@ function NotebookSectionsView({
   }
   return rows.map((row, index) => {
     const [section] = row;
-    if (row.length > 1 || !section!.blocks.length)
+    if (row.length > 1 || !draws(section!))
       return (
         <div
           key={index}
@@ -387,6 +423,14 @@ function NotebookSectionsView({
               className="eda-notebook-segment"
             >
               <NotebookProse text={item.notes.join("\n\n")} />
+              {item.blocks.map((block) => (
+                <NotebookBlockView
+                  key={block.index}
+                  block={block}
+                  width={width}
+                  open={false}
+                />
+              ))}
             </div>
           ))}
         </div>
@@ -416,17 +460,115 @@ function NotebookSectionsView({
   });
 }
 
+/** The sheets of a book, as tabs; arrows, Home, and End move between them. */
+function SheetTabs({
+  sheets,
+  active,
+  prefix,
+  onSelect,
+}: {
+  sheets: NotebookSheet[];
+  active: NotebookSheet;
+  prefix: string;
+  onSelect: (sheet: NotebookSheet) => void;
+}) {
+  const tabs = useRef<(HTMLButtonElement | null)[]>([]);
+  const onKeyDown = (event: KeyboardEvent, index: number) => {
+    const last = sheets.length - 1;
+    const next =
+      event.key === "ArrowRight"
+        ? (index + 1) % sheets.length
+        : event.key === "ArrowLeft"
+          ? (index + last) % sheets.length
+          : event.key === "Home"
+            ? 0
+            : event.key === "End"
+              ? last
+              : undefined;
+    if (next === undefined) return;
+    event.preventDefault();
+    onSelect(sheets[next]!);
+    tabs.current[next]?.focus();
+  };
+  return (
+    <div className="eda-notebook-sheets" role="tablist" aria-label="Sheets">
+      {sheets.map((sheet, index) => (
+        <button
+          key={sheet.id}
+          ref={(element) => {
+            tabs.current[index] = element;
+          }}
+          type="button"
+          role="tab"
+          id={`${prefix}-tab-${sheet.id}`}
+          aria-selected={sheet === active}
+          aria-controls={`${prefix}-sheet-${sheet.id}`}
+          tabIndex={sheet === active ? 0 : -1}
+          className="eda-notebook-sheet-tab"
+          onClick={() => onSelect(sheet)}
+          onKeyDown={(event) => onKeyDown(event, index)}
+        >
+          <span className="eda-notebook-sheet-index" aria-hidden="true">
+            {index + 1}
+          </span>
+          {sheet.title}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+/** A sheet's segments as a reader sees them: the heading is its tab. */
+function withoutSheetHeading(segments: NotebookSegment[]): NotebookSegment[] {
+  const [first, ...rest] = segments;
+  if (!first || first.kind !== "prose") return segments;
+  const text = withoutHeading(first.text);
+  return text.trim() ? [{ ...first, text }, ...rest] : rest;
+}
+
 function NotebookColumn({
   result,
   layout,
+  sheet,
+  defaultSheet,
+  onSheetChange,
   onSegmentChange,
 }: {
   result: NotebookCompileResult;
   layout: "column" | "sections";
+  sheet?: string;
+  defaultSheet?: string;
+  onSheetChange?: (id: string) => void;
   /** Present when the notebook's text can change. */
   onSegmentChange?: (segment: NotebookSegment, text: string) => void;
 }) {
   const { ref, width } = useWidth();
+  const prefix = useId();
+  const { lede, sheets } = useMemo(
+    () => notebookSheets(result.notebook),
+    [result.notebook]
+  );
+  const book = sheets.length > 1;
+  const [ownSheet, setOwnSheet] = useState(defaultSheet);
+  const wanted = sheet ?? ownSheet;
+  const active = sheets.find((item) => item.id === wanted) ?? sheets[0]!;
+  const select = (next: NotebookSheet) => {
+    if (next === active) return;
+    if (sheet === undefined) setOwnSheet(next.id);
+    onSheetChange?.(next.id);
+  };
+  // Prose segments go by their order in the file, which typing in them
+  // doesn't change, so an open editor stays open while its neighbors change.
+  const keys = useMemo(() => {
+    const map = new Map<NotebookSegment, string>();
+    let prose = 0;
+    for (const segment of [...lede, ...sheets.flatMap((item) => item.segments)])
+      map.set(
+        segment,
+        segment.kind === "prose" ? `prose-${prose++}` : `block-${segment.index}`
+      );
+    return map;
+  }, [lede, sheets]);
   const themeId = resolveThemeId(useDataLayer((state) => state.theme));
   const setDarkMode = useDataLayer((state) => state.setDarkMode);
   const [editing, setEditing] = useState<ReadonlySet<string>>(new Set());
@@ -454,14 +596,68 @@ function NotebookColumn({
     return () => observer.disconnect();
   }, [ref, setDarkMode]);
 
-  // Prose segments go by their order, which typing in them doesn't change.
-  let proseCount = 0;
   const sections =
     layout === "sections" && !onSegmentChange && width >= SECTIONS_MIN_WIDTH;
+  const shown =
+    book && !onSegmentChange
+      ? withoutSheetHeading(active.segments)
+      : active.segments;
+  const render = (segments: NotebookSegment[]) =>
+    sections ? (
+      <NotebookSectionsView
+        segments={segments}
+        blocks={result.blocks}
+        width={width}
+      />
+    ) : (
+      segments.map((segment) => {
+        const key = keys.get(segment) ?? `line-${segment.startLine}`;
+        const open = editing.has(key);
+        const edit = onSegmentChange && (
+          <EditToggle
+            open={open}
+            kind={segment.kind}
+            onToggle={() => toggle(key)}
+          />
+        );
+        const editor = open && onSegmentChange && (
+          <NotebookSourceEditor
+            value={segment.text}
+            language={segment.kind === "prose" ? "markdown" : "eda"}
+            label={
+              segment.kind === "prose"
+                ? "Markdown text"
+                : `Block ${segment.index + 1} text`
+            }
+            onChange={(next) => onSegmentChange(segment, next)}
+          />
+        );
+        return segment.kind === "prose" ? (
+          <div
+            key={key}
+            className="eda-notebook-segment"
+            data-open={open || undefined}
+          >
+            {edit}
+            {editor || <NotebookProse text={segment.text} />}
+          </div>
+        ) : (
+          <NotebookBlockView
+            key={key}
+            block={result.blocks[segment.index]!}
+            width={Math.min(width, COLUMN_MAX_WIDTH)}
+            edit={edit}
+            editor={editor}
+            open={open}
+          />
+        );
+      })
+    );
   return (
     <div
       className="eda-workspace eda-notebook bg-background text-foreground"
       data-eda-theme={themeId}
+      data-sheets={book || undefined}
     >
       <article
         ref={ref}
@@ -471,54 +667,30 @@ function NotebookColumn({
         }
         data-wide={sections || undefined}
       >
-        {sections ? (
-          <NotebookSectionsView result={result} width={width} />
+        {book && lede.length > 0 && (
+          <div className="eda-notebook-lede">{render(lede)}</div>
+        )}
+        {book && (
+          <SheetTabs
+            sheets={sheets}
+            active={active}
+            prefix={prefix}
+            onSelect={select}
+          />
+        )}
+        {book ? (
+          <div
+            key={active.id}
+            role="tabpanel"
+            id={`${prefix}-sheet-${active.id}`}
+            aria-labelledby={`${prefix}-tab-${active.id}`}
+            className="eda-notebook-sheet"
+            data-sheet={active.id}
+          >
+            {render(shown)}
+          </div>
         ) : (
-          result.notebook.segments.map((segment) => {
-            const key =
-              segment.kind === "prose"
-                ? `prose-${proseCount++}`
-                : `block-${segment.index}`;
-            const open = editing.has(key);
-            const edit = onSegmentChange && (
-              <EditToggle
-                open={open}
-                kind={segment.kind}
-                onToggle={() => toggle(key)}
-              />
-            );
-            const editor = open && onSegmentChange && (
-              <NotebookSourceEditor
-                value={segment.text}
-                language={segment.kind === "prose" ? "markdown" : "eda"}
-                label={
-                  segment.kind === "prose"
-                    ? "Markdown text"
-                    : `Block ${segment.index + 1} text`
-                }
-                onChange={(next) => onSegmentChange(segment, next)}
-              />
-            );
-            return segment.kind === "prose" ? (
-              <div
-                key={key}
-                className="eda-notebook-segment"
-                data-open={open || undefined}
-              >
-                {edit}
-                {editor || <NotebookProse text={segment.text} />}
-              </div>
-            ) : (
-              <NotebookBlockView
-                key={key}
-                block={result.blocks[segment.index]!}
-                width={Math.min(width, COLUMN_MAX_WIDTH)}
-                edit={edit}
-                editor={editor}
-                open={open}
-              />
-            );
-          })
+          render(shown)
         )}
       </article>
     </div>
@@ -632,7 +804,12 @@ function NotebookBlockView({
                   chart,
                   chart.type === "row"
                     ? new Set(rows.map((row) => row[chart.field])).size
-                    : undefined
+                    : chart.type === "heatmap"
+                      ? Math.min(
+                          new Set(rows.map((row) => row[chart.field])).size,
+                          chart.maxCategories ?? Infinity
+                        )
+                      : undefined
                 )}
               />
             </div>

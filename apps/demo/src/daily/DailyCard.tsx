@@ -4,7 +4,7 @@ import {
   assetPath,
   dailyPath,
   formatDay,
-  kindLabels,
+  kindLabel,
   type DailyEntry,
 } from "./corpus";
 
@@ -81,7 +81,7 @@ export function DailyCard({
       />
       <p className="mt-2 text-xs tabular-nums text-muted-foreground">
         <time dateTime={entry.published}>{formatDay(entry.published)}</time> ·{" "}
-        {kindLabels[entry.kind]} · {highlight(entry.industry, query)}
+        {kindLabel(entry)} · {highlight(entry.industry, query)}
       </p>
       <h3 className="mt-0.5 text-[15px] font-semibold leading-snug text-site-ink">
         <Link
@@ -127,13 +127,13 @@ export function DailyRow({
           {highlight(entry.question, query)}
         </p>
         <p className="mt-0.5 text-xs tabular-nums text-muted-foreground sm:hidden">
-          {formatDay(entry.published)} · {kindLabels[entry.kind]} ·{" "}
+          {formatDay(entry.published)} · {kindLabel(entry)} ·{" "}
           {highlight(entry.industry, query)}
         </p>
       </div>
       <p className="hidden text-xs leading-relaxed tabular-nums text-muted-foreground sm:block">
         <time dateTime={entry.published}>{formatDay(entry.published)}</time> ·{" "}
-        {kindLabels[entry.kind]}
+        {kindLabel(entry)}
         <br />
         {highlight(entry.industry, query)}
       </p>
