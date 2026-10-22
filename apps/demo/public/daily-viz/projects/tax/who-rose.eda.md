@@ -22,7 +22,7 @@ Each line is one country from its 2000 reading to its 2023 reading. The lines cr
 parallel @nb-tax-who-rose-1 share_2000,share_2023 color=direction colorScale=dir title="Central government tax revenue, 2000 and 2023 (% of GDP)"
 ```
 
-## Ranked by change, Colombia leads and Ireland trails
+## Colombia rose most; Ireland fell most
 
 The median country's share rose 0.70 points; the mean change was 0.11 points because the big falls outweigh the many small rises. The United States' change was -2.4 points, to 10.6% of GDP, the second-lowest share in the group after Switzerland's 8.7%. Denmark kept the highest share, 32.0% of GDP, in both years.
 
