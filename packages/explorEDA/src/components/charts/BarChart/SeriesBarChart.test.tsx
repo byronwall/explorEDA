@@ -7,6 +7,7 @@ import { calculateGroupedAggregate } from "@/lib/aggregates";
 import { ChartTraceScope } from "../trace/ChartTraceScope";
 import { ChartTracePanel } from "../trace/ChartTracePanel";
 import { BarChart } from "./BarChart";
+import { orderSeriesCategories } from "./SeriesBarChart";
 import { barChartDefinition, type BarChartSettings } from "./definition";
 import { planSeriesBars } from "./seriesBarPlan";
 import { rowChartDefinition } from "../RowChart/definition";
@@ -221,4 +222,28 @@ it("resets aggregate edits with the grouped-bar settings session", () => {
   expect(screen.getByRole("combobox", { name: "Operation" })).toHaveValue(
     "sum"
   );
+});
+
+it("orders series bar categories by their total across series, largest first", () => {
+  const rows = [
+    { __ID: 1, Region: "North", Amount: 2 },
+    { __ID: 2, Region: "South", Amount: 4 },
+    { __ID: 3, Region: "South", Amount: 3 },
+    { __ID: 4, Region: "East", Amount: 1 },
+  ];
+  const summary = (value: string, ids: number[]) => ({
+    value,
+    result: calculateGroupedAggregate(
+      rows.filter((row) => ids.includes(row.__ID)),
+      saved.aggregates![0]!
+    ),
+  });
+  const summaries = [summary("Store", [1, 2]), summary("Web", [3, 4])];
+  const regions = ["North", "South", "South", "East"];
+  expect(orderSeriesCategories("value", regions, summaries)).toEqual([
+    "South",
+    "North",
+    "East",
+  ]);
+  expect(orderSeriesCategories(undefined, regions, summaries)).toBe(regions);
 });

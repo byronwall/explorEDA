@@ -42,6 +42,17 @@
   top: 1rem;
 }
 
+/* Small multiples take the full width, with the section's text above. */
+.eda-notebook-section[data-wide] {
+  display: block;
+}
+
+.eda-notebook-section[data-wide] > .eda-notebook-notes {
+  position: static;
+  max-width: 72ch;
+  margin-bottom: 1.25rem;
+}
+
 .eda-notebook-notes .eda-notebook-prose {
   font-size: 0.9375rem;
   line-height: 1.55;

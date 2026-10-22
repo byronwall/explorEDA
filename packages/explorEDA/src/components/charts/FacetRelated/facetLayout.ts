@@ -1,6 +1,18 @@
 /** The pager's own row; 0 when it shares the chart's legend line. */
 export const PAGER_HEIGHT = 20;
 const TABLE_HEADER_HEIGHT = 32;
+/** A wrap facet's narrowest and shortest panel, and the gap between panels. */
+export const FACET_MIN_WIDTH = 260;
+export const FACET_MIN_HEIGHT = 230;
+export const FACET_GAP = 8;
+
+/** How many columns a wrap facet uses at this width. */
+export function wrapFacetColumns(width: number, requestedColumns: number) {
+  return Math.max(
+    1,
+    Math.min(requestedColumns, Math.floor(width / FACET_MIN_WIDTH) || 1)
+  );
+}
 
 export function planFacetGridLayout(
   width: number,
@@ -58,13 +70,15 @@ export function planFacetWrapLayout(
   page: number,
   pagerHeight = PAGER_HEIGHT
 ) {
-  const columnCount = Math.max(
-    1,
-    Math.min(requestedColumns, Math.floor(width / 260) || 1)
-  );
+  const columnCount = wrapFacetColumns(width, requestedColumns);
+  // Rows that fit, but no more than the facets fill, so a few facets in a
+  // tall chart grow instead of leaving empty rows.
   const rowCount = Math.max(
     1,
-    Math.floor(Math.max(1, height - pagerHeight) / 230) || 1
+    Math.min(
+      Math.floor(Math.max(1, height - pagerHeight) / FACET_MIN_HEIGHT) || 1,
+      Math.ceil(facetCount / columnCount)
+    )
   );
   const pageSize = columnCount * rowCount;
   const pageCount = Math.max(1, Math.ceil(facetCount / pageSize));
@@ -80,10 +94,13 @@ export function planFacetWrapLayout(
     pageSize,
     pageCount,
     page: currentPage,
-    facetWidth: Math.max(1, (width - (columnCount - 1) * 8) / columnCount),
+    facetWidth: Math.max(
+      1,
+      (width - (columnCount - 1) * FACET_GAP) / columnCount
+    ),
     facetHeight: Math.max(
       1,
-      (height - pagerHeight - (rowCount - 1) * 8) / rowCount
+      (height - pagerHeight - (rowCount - 1) * FACET_GAP) / rowCount
     ),
   };
 }

@@ -46,14 +46,63 @@ function plan(
 describe("planBarChart", () => {
   it("keeps data order by default and sorts category labels on request", () => {
     const values = ["3 High", "1 Low", null, "10 Top", "2 Mid"];
-    expect(plan("level", values, { extra: { forceString: true } }).bars.map((bar) => bar.label)).toEqual(
-      ["3 High", "1 Low", "(missing)", "10 Top", "2 Mid"]
-    );
+    expect(
+      plan("level", values, { extra: { forceString: true } }).bars.map(
+        (bar) => bar.label
+      )
+    ).toEqual(["3 High", "1 Low", "(missing)", "10 Top", "2 Mid"]);
     expect(
       plan("level", values, {
         extra: { forceString: true, categoryOrder: "label" },
       }).bars.map((bar) => bar.label)
     ).toEqual(["1 Low", "2 Mid", "3 High", "10 Top", "(missing)"]);
+  });
+
+  it("places count bars left to right in label order", () => {
+    const bars = plan("region", ["West", "East", "North", "East"], {
+      extra: { categoryOrder: "label" },
+    });
+    expect(bars.mode).toBe("count");
+    expect(bars.xScale.domain).toEqual(["East", "North", "West"]);
+    const leftToRight = [...bars.bars].sort((a, b) => a.x - b.x);
+    expect(leftToRight.map((bar) => bar.label)).toEqual([
+      "East",
+      "North",
+      "West",
+    ]);
+  });
+
+  it("sorts count bars by their all-row counts, so filters keep the order", () => {
+    const values = ["A", "B", "B", "C", "C", "C"];
+    const bars = plan("category", values, {
+      liveIds: [0, 1],
+      extra: { categoryOrder: "value" },
+    });
+    expect(bars.xScale.domain).toEqual(["C", "B", "A"]);
+  });
+
+  it("sorts grouped-summary bars by value, largest first", () => {
+    const result = calculateGroupedAggregate(
+      [
+        { __ID: 1, group: "Small", amount: 2 },
+        { __ID: 2, group: "Big", amount: 9 },
+        { __ID: 3, group: "Mid", amount: 5 },
+        { __ID: 4, group: "None", amount: "bad" },
+      ],
+      {
+        id: "sales",
+        name: "Sales",
+        groupField: "group",
+        measureField: "amount",
+        aggregation: "sum",
+      }
+    );
+    const bars = plan("group", ["Small", "Big", "Mid", "None"], {
+      aggregate: result,
+      extra: { aggregateId: "sales", categoryOrder: "value" },
+    });
+    expect(bars.mode).toBe("aggregate");
+    expect(bars.xScale.domain.slice(0, 3)).toEqual(["Big", "Mid", "Small"]);
   });
 
   it("marks selected groups of a grouped result and fades the rest", () => {
@@ -110,8 +159,16 @@ describe("planBarChart", () => {
     expect(bars.mode).toBe("aggregate");
     expect(bars.groupOrder).toEqual(["Z", "A"]);
     expect(bars.yScale.domain).toEqual([-2.8, 6.8]);
-    expect(bars.domain.lower).toMatchObject({ source: "bar", label: "A", value: -2 });
-    expect(bars.domain.upper).toMatchObject({ source: "bar", label: "Z", value: 6 });
+    expect(bars.domain.lower).toMatchObject({
+      source: "bar",
+      label: "A",
+      value: -2,
+    });
+    expect(bars.domain.upper).toMatchObject({
+      source: "bar",
+      label: "Z",
+      value: 6,
+    });
     const [positive, negative] = bars.bars;
     expect(positive).toMatchObject({
       id: 'bar:sales:["string","Z"]',
@@ -141,7 +198,9 @@ describe("planBarChart", () => {
     });
     expect(resolveBarTrace(bars, "bar", "bar:gone")).toBeUndefined();
     expect(findBarForRow(bars, 3)?.id).toBe(negative!.id);
-    expect(barAt(bars, positive!.x + 1, positive!.y + 1)?.id).toBe(positive!.id);
+    expect(barAt(bars, positive!.x + 1, positive!.y + 1)?.id).toBe(
+      positive!.id
+    );
   });
 
   it("keeps count bars in source order, dims filtered categories and uses stable ids", () => {
@@ -176,8 +235,9 @@ describe("planBarChart", () => {
     const values: datum[] = [1, 1.5, "", "  ", Infinity, "NaN", 10, null];
     const bins = plan("value", values, { extra: { binCount: 3 } });
     expect(bins.mode).toBe("bin");
-    expect(bins.bars.map((bar) => bar.row.contributors.map((c) => c.sourceId)))
-      .toEqual([[0, 1], [], [6]]);
+    expect(
+      bins.bars.map((bar) => bar.row.contributors.map((c) => c.sourceId))
+    ).toEqual([[0, 1], [], [6]]);
     expect(bins.bars.map((bar) => bar.value)).toEqual([2, 0, 1]);
     // The last bin includes its end value.
     expect(bins.bars.at(-1)!.bin).toMatchObject({ end: 10, closed: true });

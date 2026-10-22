@@ -46,6 +46,8 @@ Open the project with `npx exploreda`, and the notebook is listed under **Notebo
 
 A published notebook can read like a figure-led report. Pass `layout="sections"` to `ExplorEdaNotebook`, and once the notebook is at least 960 pixels wide each `##` section puts its text in a column beside its charts. A finding written after a chart stays with its section's text, and the text stays in view while a tall chart or table scrolls past. A chart titled like its section drops the repeated title. Sections with no charts, such as a takeaway and its limits, share a row.
 
+Each chart takes the height its contents need. A row chart or heatmap grows with its categories. Small multiples (`facet.enabled=true facet.type=wrap facet.rowVariable=…`) grow by one row of panels for each row the [facet layout](/docs/facets) makes at the notebook's width, up to about 1,100 pixels, so a facet of a dozen panels shows them all without a pager. In the sections layout, a section that draws small multiples puts its text above them and gives them the notebook's full width, so they get more columns.
+
 Narrower notebooks, and notebooks you can edit with `onTextChange`, keep the single reading column. [Daily data viz](/daily) notebooks use this layout.
 
 ## Split a notebook into sheets

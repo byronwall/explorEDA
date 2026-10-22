@@ -104,7 +104,7 @@ export function BarChartSettingsPanel({
   const orderControl = (
     <>
       <Label htmlFor="bar-category-order">Order</Label>
-      <ActionTooltip content="Data order keeps categories in the order rows first show them. A to Z sorts by label, with numbers in numeric order.">
+      <ActionTooltip content="Data order keeps categories in the order rows first show them. A to Z sorts by label, with numbers in numeric order. Largest first sorts by each bar's value over all rows; binned bars keep their numeric order.">
         <select
           id="bar-category-order"
           className="h-9 rounded-md border-input bg-background px-2 text-sm"
@@ -112,12 +112,13 @@ export function BarChartSettingsPanel({
           onChange={(event) =>
             onSettingsChange({
               ...settings,
-              categoryOrder: event.target.value as "data" | "label",
+              categoryOrder: event.target.value as "data" | "label" | "value",
             })
           }
         >
           <option value="data">Data order</option>
           <option value="label">A to Z</option>
+          <option value="value">Largest first</option>
         </select>
       </ActionTooltip>
     </>
