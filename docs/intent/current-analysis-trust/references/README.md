@@ -21,3 +21,24 @@ Current source was inspected at `a50df9985ed3ff54d0f6ca368c0b369829b8a927` on 20
 ## Product feedback
 
 [Annotated product direction](../../comparison-opportunities/resources/product-feedback-2026-10-06.md) supplies the current audience and priorities. The [full records](../../comparison-opportunities/resources/product-feedback-2026-10-06.json) preserve uncertainty.
+
+## Analytical handoff review
+
+[Research summary](../../../research/analysis-handoff-2026-10-20/README.md), [dispositions](../../../research/analysis-handoff-2026-10-20/decisions.md) and [independent evidence](../../../research/analysis-handoff-2026-10-20/evidence.md) retain the current boundary.
+Originals and proposed proof remain linked from that collection. No feature or complete workflow acceptance is claimed.
+
+## Engineering histogram boundaries, October 21
+
+[Reviewed research](../../../research/engineering-bins-2026-10-21/README.md) and [four dispositions](../../../research/engineering-bins-2026-10-21/decisions.md)
+keep current controls. Endpoint agreement needs a bounded proof after local trust. New controls and a lesson remain conditional.
+
+## October 21 R026 review
+
+[Research summary](../../../research/missing-state-accounting-2026-10-21/README.md), [evidence](../../../research/missing-state-accounting-2026-10-21/evidence.md), and [decisions](../../../research/missing-state-accounting-2026-10-21/decisions.md) preserve the new value-accounting result.
+Four local probes passed; browser and repair work remain proposed. Historical evidence above retains its original date and scope.
+
+## R043 follow-up
+
+[Research review](../../../research/entity-grain-2026-10-21/README.md), [decisions](../../../research/entity-grain-2026-10-21/decisions.md),
+and [local evidence](../../../research/entity-grain-2026-10-21/evidence.md) separate three executed probes from pending browser/author work.
+The source/reference and value-identity contracts remain distinct. No product implementation is approved by this review.

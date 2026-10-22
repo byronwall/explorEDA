@@ -3,7 +3,7 @@ title: "Compare a selection with a named baseline"
 slug: "population-baselines"
 phase: intent
 status: current
-last_updated: "2026-10-06"
+last_updated: "2026-10-21"
 ---
 
 # Compare a selection with a named baseline
@@ -30,7 +30,7 @@ Choose a reference segment, give it a name, and explore another segment through 
 
 A dimmed context layer is not automatically a baseline. Do not store positional row IDs as durable membership across reordered imports. Count and within-group percentage answer different questions. Keep source versions, multi-source cohorts, and a general experiment platform outside the first comparison.
 
-Later distribution controls can expose bin width or explicit boundaries, independent grouping and color, and direct value-range selection. These are separate refinements. They should reuse current histogram and distribution renderers after population comparison proves useful.
+Later distribution controls can expose bin width or explicit boundaries, independent grouping and color, and direct value-range selection. These are separate refinements. Reuse current histogram and distribution renderers only after the relevant distribution task proves useful.
 
 Those distribution refinements do not depend on implementing named baselines. Do not make useful engineering exploration wait for this lower-interest scope.
 
@@ -51,3 +51,10 @@ Expand when a real analysis needs to retain a reference while changing filters, 
 Wait for a concrete comparison task before shaping this work. If one appears, compare two small predicates on one fixed source. Check distribution denominators and source membership before choosing any snapshot behavior. No further baseline questions are needed for the current priorities.
 
 See the [reference packet](references/README.md) and [comparison collection](../comparison-opportunities/README.md) for context.
+
+## Histogram research, October 21
+
+[Engineering-boundary research](../../research/engineering-bins-2026-10-21/README.md) retains current controls and defers authored boundaries.
+Compare ECDF, exact numeric filters and upstream categories before adding a mode. No named blocked task was supplied.
+A repeated grid task could reopen width/origin. Irregular edges need a distinct requirement and clear height/denominator meaning.
+Named baselines remain independent and low priority. This research does not approve a new control or lesson.
