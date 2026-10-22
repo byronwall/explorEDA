@@ -342,9 +342,9 @@
     "id": "nb-macro-level-versus-growth",
     "slug": "macro-level-versus-growth",
     "kind": "notebook",
-    "title": "A rising GDP level can conceal falling quarterly growth",
-    "question": "What does U.S. GDP look like once you chart its growth rate instead of its level?",
-    "summary": "U.S. GDP rose almost every quarter from 1959 to 2009, but its annualized growth swung from −8% to +17%. The level hides the recessions the growth rate shows.",
+    "title": "GDP grew almost fivefold; 28 quarters still shrank",
+    "question": "How much of fifty years of American growth was actually growth?",
+    "summary": "US real GDP rose from $2.7 trillion in 1959 to $13 trillion in 2009, but 28 of the 202 quarters shrank. In those quarters unemployment rose half a point on average; in growing quarters it barely moved.",
     "family": "macro",
     "entry": "level-versus-growth.eda.md",
     "query": "r",
@@ -352,16 +352,100 @@
     "analysis": "Trend",
     "findings": [
       {
-        "text": "The smallest derived annualized quarterly GDP growth rate was {value}%.",
+        "text": "Real GDP began at ${value} billion in 1959",
+        "format": ",.0f",
+        "op": "min",
+        "field": "realgdp"
+      },
+      {
+        "text": "stood at ${value} billion in the third quarter of 2009",
+        "format": ",.0f",
+        "op": "max",
+        "field": "realgdp",
+        "where": [
+          [
+            "date",
+            "eq",
+            "2009-07-01"
+          ]
+        ]
+      },
+      {
+        "text": "{value} of the 202 quarters shrank.",
+        "format": ".0f",
+        "op": "count",
+        "field": "gdp_growth",
+        "where": [
+          [
+            "gdp_growth",
+            "lt",
+            0
+          ]
+        ]
+      },
+      {
+        "text": "annualized GDP growth fell to {value}%.",
         "format": ".2f",
         "op": "min",
         "field": "gdp_growth"
       },
       {
-        "text": "The largest derived annualized quarterly GDP growth rate was {value}%.",
+        "text": "The fastest was 1978's second quarter, at {value}%.",
         "format": ".2f",
         "op": "max",
         "field": "gdp_growth"
+      },
+      {
+        "text": "In quarters when GDP shrank, unemployment rose by {value} points on average.",
+        "format": ".2f",
+        "op": "mean",
+        "field": "unemp_change",
+        "where": [
+          [
+            "gdp_growth",
+            "lt",
+            0
+          ]
+        ]
+      },
+      {
+        "text": "In quarters when GDP grew, unemployment changed by {value} points on average.",
+        "format": ".2f",
+        "op": "mean",
+        "field": "unemp_change",
+        "where": [
+          [
+            "gdp_growth",
+            "ge",
+            0
+          ]
+        ]
+      },
+      {
+        "text": "The mean annualized growth rate was {value}%",
+        "format": ".2f",
+        "op": "mean",
+        "field": "gdp_growth"
+      },
+      {
+        "text": "{value}% of quarters shrank",
+        "format": ".1f",
+        "op": "share",
+        "field": "gdp_growth",
+        "where": [
+          [
+            "gdp_growth",
+            "ne",
+            ""
+          ]
+        ],
+        "condition": [
+          [
+            "gdp_growth",
+            "lt",
+            0
+          ]
+        ]
       }
     ],
     "published": "2026-07-20"
@@ -3406,9 +3490,9 @@
     "id": "nb-macro-inflation-unemployment",
     "slug": "macro-inflation-unemployment",
     "kind": "notebook",
-    "title": "Pooled, inflation and unemployment look unrelated; each decade tells its own story",
-    "question": "Does the pooled historical association resemble the association within the 1970s?",
-    "summary": "Across 1959 to 2009, inflation and unemployment look unrelated (r = 0.07). Within one decade the picture changes.",
+    "title": "The Phillips curve held in the 1960s, then broke",
+    "question": "Does higher inflation come with lower unemployment?",
+    "summary": "Across fifty years of US quarters, inflation and unemployment are unrelated (r = 0.07). Inside the 1960s the correlation was −0.74, the textbook trade-off; the 1970s pushed both up at once and the link never returned.",
     "family": "macro",
     "entry": "inflation-unemployment.eda.md",
     "query": "r",
@@ -3416,7 +3500,7 @@
     "analysis": "Relationship",
     "findings": [
       {
-        "text": "The pooled inflation–unemployment correlation, excluding the initial placeholder quarter, was {value}.",
+        "text": "the pooled correlation between inflation and unemployment was {value}.",
         "format": ".3f",
         "op": "corr",
         "field": "infl",
@@ -3430,7 +3514,21 @@
         ]
       },
       {
-        "text": "Within the 1970s quarters, the correlation was {value}.",
+        "text": "In the 1960s the correlation was {value}",
+        "format": ".3f",
+        "op": "corr",
+        "field": "infl",
+        "other": "unemp",
+        "where": [
+          [
+            "decade",
+            "eq",
+            "1960s"
+          ]
+        ]
+      },
+      {
+        "text": "In the 1970s the correlation was {value}",
         "format": ".3f",
         "op": "corr",
         "field": "infl",
@@ -3440,6 +3538,50 @@
             "decade",
             "eq",
             "1970s"
+          ]
+        ]
+      },
+      {
+        "text": "in the 1990s it was {value}",
+        "format": ".3f",
+        "op": "corr",
+        "field": "infl",
+        "other": "unemp",
+        "where": [
+          [
+            "decade",
+            "eq",
+            "1990s"
+          ]
+        ]
+      },
+      {
+        "text": "Inflation peaked at {value}% in the last quarter of 1979",
+        "format": ".2f",
+        "op": "max",
+        "field": "infl"
+      },
+      {
+        "text": "Unemployment peaked at {value}% in the last quarter of 1982",
+        "format": ".1f",
+        "op": "max",
+        "field": "unemp"
+      },
+      {
+        "text": "{value} quarters had inflation of 5% or more and unemployment of 7% or more",
+        "format": ".0f",
+        "op": "count",
+        "field": "infl",
+        "where": [
+          [
+            "infl",
+            "ge",
+            5
+          ],
+          [
+            "unemp",
+            "ge",
+            7
           ]
         ]
       }
