@@ -60,14 +60,9 @@ export const dataTableDefinition: ChartDefinition<DataTableSettings> = {
       return () => true;
     }
 
-    // Create filter functions for each active filter
+    // A hidden column keeps filtering, as it does in the table's own rows.
     const filterFunctions = settings.filters.map((filter) => {
-      const column = settings.columns.find((col) => col.field === filter.field);
-      if (!column) {
-        return () => true;
-      }
-
-      const dataHash = fieldGetter(column.field);
+      const dataHash = fieldGetter(filter.field);
 
       return (d: IdType) => {
         const value = dataHash[d];
