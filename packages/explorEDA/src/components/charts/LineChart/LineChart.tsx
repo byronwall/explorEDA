@@ -583,7 +583,8 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
       ? ""
       : xIsDate
         ? new Date(hoverX).toISOString().slice(0, 16).replace("T", " ")
-        : displayValue(settings.xField, hoverX);
+        : (formatFieldValue?.(settings.xField, hoverX) ??
+          displayValue(settings.xField, hoverX));
 
   const range = settings.filters.find(
     (filter) => filter.type === "range" && filter.field === settings.xField

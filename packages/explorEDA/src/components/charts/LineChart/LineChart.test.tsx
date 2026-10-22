@@ -164,6 +164,7 @@ it("draws one line per split value on a numeric x, each in x order", () => {
     clientX: 220,
     clientY: 150,
   });
-  // Each firm reads at the hovered year, named by its value.
-  expect(screen.getByRole("status")).toHaveTextContent("year1,936GM40IBM4");
+  // Each firm reads at the hovered year, named by its value; the year
+  // reads as 1936, not 1,936.
+  expect(screen.getByRole("status")).toHaveTextContent("year1936GM40IBM4");
 });

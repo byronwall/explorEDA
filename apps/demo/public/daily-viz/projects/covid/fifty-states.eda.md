@@ -22,6 +22,14 @@ field ym label="Month"
 heatmap @nb-covid-fifty-states-1 wave columnField=code aggregation=average measureField=cases maxCategories=51 maxColumns=51 sortBy=data columnSortBy=label title="Average weekly case rate by state and wave, per 100,000"
 ```
 
+## Each state's worst week, wave by wave
+
+The same grid with each cell's highest week instead of its average, so a short spike counts in full. The median state's peak was 7.41 new cases per 100,000 in spring 2020, 86.48 in the winter wave, 61.55 in Delta, and 255.99 in Omicron. Omicron is the darkest cell in every column: all 51 had their worst week of the three years in it. Before Omicron the darkest cells scatter. North Dakota's winter peak, 177.02, was more than twice its Delta peak of 82.0, and Alaska's Delta peak of 179.44 was the highest of that wave.
+
+```eda
+heatmap @nb-covid-fifty-states-peak wave columnField=code aggregation=max measureField=cases maxCategories=51 maxColumns=51 sortBy=data columnSortBy=label colorDomain.transform=sqrt title="Highest weekly case rate by state and wave, per 100,000"
+```
+
 ## The winter wave began in the Dakotas, ten weeks before the coasts
 
 Each row is a month from October 2020 to March 2021. The Dakotas, Iowa, and Wisconsin are dark in November, when most of the map is still pale; the coasts darken in January. North Dakota’s peak week was 177.02 new cases per 100,000, in the week of November 9, when the median state was at 30.47. Hawaii’s winter peak was 13.82, a thirteenth of North Dakota’s.
@@ -48,4 +56,4 @@ Before Omicron, a wave was a region: it took two to four months to travel from t
 
 ## Limits
 
-Rates depend on each state’s testing, which differed widely and shrank after home tests arrived in 2022. Every seventh day is sampled, so a peak between samples is dated up to six days late. Averaging a month hides a short spike inside it, which is why the winter wave section looks at single months.
+Rates depend on each state’s testing, which differed widely and shrank after home tests arrived in 2022. Every seventh day is sampled, so a peak between samples is dated up to six days late. Averaging a month or a wave hides a short spike inside it, which is why one grid shows each wave's highest week and the winter wave section looks at single months.

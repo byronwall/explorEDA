@@ -12439,6 +12439,24 @@
             "ME"
           ]
         ]
+      },
+      {
+        "text": "more than twice its Delta peak of {value}",
+        "format": ".1f",
+        "op": "max",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "ND"
+          ],
+          [
+            "wave",
+            "eq",
+            "Delta 2021"
+          ]
+        ]
       }
     ],
     "series": {
