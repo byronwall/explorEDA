@@ -5,12 +5,12 @@ description: Add, extend, or review pieces in explorEDA's daily data viz collect
 
 # Daily data viz
 
-Read [docs/daily-viz.md](../../../docs/daily-viz.md) and follow its workflow in order. In short:
+Read [docs/daily-viz.md](../../../docs/daily-viz.md) for the workflow and [docs/daily-editorial.md](../../../docs/daily-editorial.md) for the bar each piece must clear. In short:
 
 1. `pnpm daily coverage` to choose a gap. Breadth first: a new industry, kind of question, or unused chart word or mark. Depth comes as a series.
 2. Reuse a demo dataset when one fits (`apps/demo/public/datasets/README.md`); otherwise prepare a small licensed CSV with a script.
 3. `pnpm daily family <family> <csv>...` for a new family, then `pnpm daily new <kind> <family>/<slug> --title … --question … --industry … --analysis …`.
-4. Write to the writing rules, declare findings in `catalog.json`, and copy each computed sentence into the prose.
+4. Write to the editorial standard: a finding-led title, claims as headings, one comparison with its difference stated, one annotated chart, numbers woven into sentences. Declare findings in `catalog.json` and copy each computed sentence into the prose.
 5. `pnpm daily check`, then look at `/daily/<slug>` on `pnpm dev:agent` at 1280, 783, and 390 px.
 
 When adding several pieces, run `pnpm daily coverage` again between them so the collection stays varied.

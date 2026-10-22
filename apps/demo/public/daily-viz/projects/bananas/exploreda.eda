@@ -1,0 +1,25 @@
+project @bananas
+
+source @yields path=../../../datasets/banana-yields.csv {
+  field Country string
+  field Year number
+  field Decade string
+  field Yield number
+}
+
+query @yields "Country-years" glyph=◆ {
+  source yields
+}
+
+query @decades "Country-decades" glyph=◆ {
+  source yields
+  aggregate @cells by=yields.Country,yields.Decade {
+    average @yield yields.Yield label="Yield (t/ha)"
+    count @years yields.Year label="Years"
+  }
+  calc decade_start "Decade start" = ["yields.Decade"] == "1960s" ? 1960 : ["yields.Decade"] == "1970s" ? 1970 : ["yields.Decade"] == "1980s" ? 1980 : ["yields.Decade"] == "1990s" ? 1990 : ["yields.Decade"] == "2000s" ? 2000 : 2010
+  calc yield_1960s "Yield in the 1960s (t/ha)" = ["yields.Decade"] == "1960s" ? yield : null
+  calc yield_2010s "Yield in the 2010s (t/ha)" = ["yields.Decade"] == "2010s" ? yield : null
+  calc yield_1960s_or_zero "Yield in the 1960s, zero when missing (t/ha)" = ["yields.Decade"] == "1960s" ? yield : 0
+  calc yield_2010s_or_zero "Yield in the 2010s, zero when missing (t/ha)" = ["yields.Decade"] == "2010s" ? yield : 0
+}

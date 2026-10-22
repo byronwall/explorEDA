@@ -1,0 +1,16 @@
+project @gapminder
+
+source @economies key=Country path=../../../datasets/gapminder-2023.csv {
+  field Country string
+  field Code string
+  field Region string
+  field Income string
+  field Population number
+  field "GDP per capita" number
+  field "Life expectancy" number
+}
+
+query @economies "Economies in 2023" glyph=◆ {
+  source economies
+  calc millions "Population (millions)" = ["economies.Population"] / 1000000
+}

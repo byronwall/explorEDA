@@ -23,17 +23,24 @@ boxplot @nb-elections-polarization-1 margin color=year_label title="State margin
 
 ## Fewer states near the line
 
-Each dot is one state in one election. The band within five points of a tie was crowded in 1976 and nearly empty in 2012.
+Each dot is one state in one election. The band within five points of a tie was crowded in 1976 and nearly empty in 2012. In 1976, 37.3% of states were decided by under five points. In 2012, 7.8% were. The closest of all sits on the line: Florida's 2000 margin was 0.0 points, and it decided the presidency.
 
 ```eda
 scatter @nb-elections-polarization-2 x=year y=margin color=winner title="Every state's margin, every election" x.title="Year" y.title="Democratic margin (points)" {
   band y=-5..5 "Within five points"
+  callout "Florida 2000: a tie" on=State:Florida,Year:2000 offset=-110,-30
 }
 ```
 
-**Finding.** In 1976, 37.3% of states were decided by under five points.
+## Utah and the District anchor the ends
 
-**Finding.** In 2012, 7.8% were.
+Each cell is one state's margin in one election, blue for Democratic and red for Republican, on a scale fixed from 40 points either way. The District of Columbia's margin reached 86.4 points in 2016, and Utah's reached -52.2 in 1980. Down the middle, the pale rows of the 1970s give way to columns of saturated color: the same states, further apart.
+
+```eda
+heatmap @nb-elections-polarization-3 state columnField=year_label aggregation=average measureField=margin maxCategories=51 maxColumns=11 sortBy=label showValues=false title="Democratic margin by state and election, 1976 to 2016" x.title="Election" {
+  colorDomain.min=-40 colorDomain.max=40
+}
+```
 
 ## Takeaway
 

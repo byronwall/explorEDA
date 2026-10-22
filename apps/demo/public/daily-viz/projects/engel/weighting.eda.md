@@ -1,66 +1,51 @@
 # Food took 64% of all income, but more of the typical household's
 
-**Does the food share change when you weight by francs instead of households?** Each row is one income quartile.
+**What share of income went to food: 64% or 66%?** Each row is one income quartile of the 235 Belgian households in the 1857 Engel survey, with the quartile's total income, total food spending, and mean household food share. Pool every franc and food took 63.53% of income. Average the households and the mean food share was 65.58%. The two-point gap is the richest quartile's weight.
 
 ```eda
 eda query=bands
-income_band:cat=bands.income_band label="Income band"
+income_band:cat=bands.income_band label="Income quartile"
 households:num=bands.households label="Households"
 income_sum:num=bands.income_sum label="Total income (francs)"
 food_sum:num=bands.food_sum label="Total food spending (francs)"
-mean_share:num=bands.mean_share label="Mean share (%)"
-weighted_share:num=bands.weighted_share label="Weighted share (%)"
-order:num=bands.order label="Order"
+mean_share:num=bands.mean_share label="Mean household share (%)"
+weighted_share:num=bands.weighted_share label="Pooled share (%)"
+order:num=bands.order label="Quartile (1 = poorest)"
 ```
 
-## 1. Two legitimate shares for each income group
+## Inside a quartile, weighting barely matters
 
-Compare an equally weighted household mean with the group’s pooled-franc ratio. Their difference is about weights, not rounding.
+Two shares per quartile: the mean of its households' shares, and its pooled food francs over its pooled income francs. The lines almost coincide. In the poorest quartile the mean household share was 69.73%; in the richest it was 60.11%, and the richest quartile's pooled share was 58.85%. The gap opens only at the top, where incomes spread out.
 
 ```eda
-scatter @nb-engel-weighting-chart-1 x=mean_share y=weighted_share color=income_band title="Two legitimate shares for each income group" x.title="Mean share (%)" y.title="Weighted share (%)"
+line @nb-engel-weighting-chart-1 x=order y=mean_share,weighted_share title="Food share by income quartile, two ways of averaging" x.title="Income quartile (1 = poorest)" x.ticks=4 y.title="Food share of income (%)" {
+  rule y=63.53 "All households pooled"
+}
 ```
 
-## 2. Follow the groups from lower to higher income
+## The richest quarter held 42% of the francs
 
-The ordered line makes the comparison compact. The horizontal steps are quartile positions, not equal intervals of income.
+The pooled share is an income-weighted average, and here is the weighting. The richest quartile earned 42.12% of all income in the survey but spent 39.02% of all food francs. Pooling the whole survey hands that quartile, with the lowest food share, three times the weight of the poorest.
 
 ```eda
-line @nb-engel-weighting-chart-2 x=order y=mean_share,weighted_share title="Follow the groups from lower to higher income" x.title="Order" y.title="Mean share (%) / Weighted share (%)"
+group @income sum(income_sum) by=income_band
+row @nb-engel-weighting-chart-2 income_band group=income title="Total income by quartile, 235 households" x.title="Total income (francs)" {
+  callout "42% of all income" category="Q4 highest income" offset=-110,44
+}
 ```
 
-**Finding.** Food expenditure divided by pooled income was 63.53%.
+## The four rows that make the argument
 
-## 3. The denominators behind the ratio
-
-The group totals explain why a pooled ratio cannot be obtained by taking an unweighted mean of the four displayed ratios.
+Every number above comes from these four rows. Divide each quartile's food total by its income total to recover its pooled share; divide the grand totals to get 63.53%.
 
 ```eda
-scatter @nb-engel-weighting-chart-3 x=income_sum y=food_sum color=income_band title="The denominators behind the ratio" x.title="Total income (francs)" y.title="Total food spending (francs)"
-```
-
-## 4. How many households contribute to each group?
-
-Nearly equal group sizes are a consequence of the quartile construction. Exact counts remain necessary when reconstructing the household-weighted overall mean.
-
-```eda
-scatter @nb-engel-weighting-chart-4 x=order y=households title="How many households contribute to each group?" x.title="Order" y.title="Households"
-```
-
-**Finding.** The household-count-weighted mean of the quartile household means was 65.58%.
-
-## 5. The rows behind the charts
-
-Sort a column or select rows to check any value above. Selections in a notebook stay with their own chart.
-
-```eda
-table @nb-engel-weighting-records income_band,households,income_sum,food_sum,mean_share,weighted_share title="Records behind this comparison"
+table @nb-engel-weighting-chart-3 income_band,households,income_sum,food_sum,mean_share,weighted_share title="Income quartiles of the 1857 Engel survey"
 ```
 
 ## Takeaway
 
-A change of weights is a change of question. State the denominator on the chart and retain group totals so the weighted rate can be reconstructed rather than averaged incorrectly.
+Food took 64% of the survey's income and 66% of a typical household's: the difference is whether a rich household counts once or by its francs. Report the one that matches the question, and say which it is.
 
 ## Limits
 
-The grouping is based on sample income quartiles. Income-weighted ratios do not measure a typical household, while equally weighted means do not describe the allocation of all pooled income.
+Four summary rows of a 235-household survey. Quartiles are cut on this sample's incomes, with 58 or 59 households each. No prices, household sizes, or non-food categories are recorded.

@@ -14,7 +14,7 @@ calc survived = fate == "Survived" ? 1 : 0
 
 ## Follow every passenger from class to fate
 
-Each band is a group of passengers flowing from their class, through their sex, to their fate. The widest band into "Died" comes from third-class men.
+Each band is a group of passengers flowing from their class, through their sex, to their fate. 72.7% of women survived and 19.1% of men. The widest band into "Died" comes from third-class men: 493 of them boarded, and 418 died.
 
 ```eda
 sankey @nb-titanic-class-and-sex-1 title="Class, then sex, then fate" {
@@ -22,13 +22,9 @@ sankey @nb-titanic-class-and-sex-1 title="Class, then sex, then fate" {
 }
 ```
 
-**Finding.** 72.7% of women survived.
-
-**Finding.** 19.1% of men survived.
-
 ## The survival rate in every cell
 
-Each cell is the share of that group who survived. Read across a row for the effect of sex, down a column for the effect of class.
+Each cell is the share of that group who survived. Read down a column for class: 61.9% of first-class passengers survived, 43.0% of second, and 25.5% of third. Read across a row for sex, which is the larger effect: 49.1% of third-class women survived, against 34.1% of first-class men.
 
 ```eda
 pivot @nb-titanic-class-and-sex-2 title="Share who survived, by class and sex" {
