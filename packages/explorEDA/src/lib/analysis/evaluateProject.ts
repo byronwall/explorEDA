@@ -412,7 +412,9 @@ function expandedFrame(
       const ref = referenceByRow.get(target)!;
       return {
         ...row,
-        key: `${step.id}:${row.key}:${ref.rowKey}`,
+        // Either key can hold ":", so joining them with it lets two pairs
+        // print alike. A JSON pair keeps every parent and child apart.
+        key: `${step.id}:${JSON.stringify([row.key, ref.rowKey])}`,
         values,
         data: values,
         sourceRows: [...row.sourceRows, ref],

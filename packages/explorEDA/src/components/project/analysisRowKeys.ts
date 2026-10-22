@@ -1,5 +1,6 @@
 import type { SavedDataStructure } from "@/types/SavedDataStructure";
-import type { Filter, datum } from "@/types/FilterTypes";
+import type { datum } from "@/types/FilterTypes";
+import { mapRowIdFilters, rowIdFilters } from "@/lib/rowIdFilters";
 
 const unresolvedPrefix = "__unresolved-analysis-row-key__:";
 
@@ -7,25 +8,10 @@ function mapIdFilters(
   settings: SavedDataStructure,
   mapValue: (value: datum) => datum
 ): SavedDataStructure {
-  const mapFilters = (filters: Filter[]) =>
-    filters.map((filter) =>
-      filter.type === "value" && filter.field === "__ID"
-        ? { ...filter, values: filter.values.map(mapValue) }
-        : filter
-    );
-  return {
-    ...settings,
-    charts: settings.charts.map((chart) => ({
-      ...chart,
-      filters: mapFilters(chart.filters),
-    })),
-    rowsSettings: settings.rowsSettings
-      ? {
-          ...settings.rowsSettings,
-          filters: mapFilters(settings.rowsSettings.filters),
-        }
-      : undefined,
-  };
+  return mapRowIdFilters(settings, (filter) => ({
+    ...filter,
+    values: filter.values.map(mapValue),
+  }));
 }
 
 export function encodeAnalysisRowKeys(
@@ -51,14 +37,10 @@ export function decodeAnalysisRowKeys(
 
 export function unresolvedAnalysisRowKeys(settings?: SavedDataStructure) {
   if (!settings) return [];
-  const values = [
-    ...settings.charts.flatMap((chart) => chart.filters),
-    ...(settings.rowsSettings?.filters ?? []),
-  ].flatMap((filter) =>
-    filter.type === "value" && filter.field === "__ID" ? filter.values : []
-  );
-  return values.filter(
-    (value): value is string =>
-      typeof value === "string" && value.startsWith(unresolvedPrefix)
-  );
+  return rowIdFilters(settings)
+    .flatMap((filter) => filter.values)
+    .filter(
+      (value): value is string =>
+        typeof value === "string" && value.startsWith(unresolvedPrefix)
+    );
 }
