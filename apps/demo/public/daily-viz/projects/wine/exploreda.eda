@@ -28,6 +28,9 @@ source @profiles key=id path=data/profiles.csv {
 
 query @r "r" glyph=◆ {
   source r
+  calc guess "Cultivar by two assays" = ["r.color_intensity"] <= 3.8 ? "Cultivar 2" : ["r.flavanoids"] <= 1.57 ? "Cultivar 3" : "Cultivar 1"
+  calc guess_ok "Two-assay rule is right" = guess == ["r.cultivar"] ? 1 : 0
+  calc proline_high "Proline at or above 760" = ["r.proline"] >= 760 ? 1 : 0
 }
 
 query @profiles "profiles" glyph=◆ {
