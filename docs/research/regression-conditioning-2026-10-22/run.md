@@ -1,6 +1,6 @@
 # R001 regression-conditioning Pro run
 
-Phase: collected, reviewed, integrated, validated; review PR pending. Follow-ups: 0/2.
+Phase: complete; verified open review PR492. Follow-ups: 0/2.
 Repository: https://github.com/byronwall/explorEDA.
 Baseline: `63dfa75851ef57bb3782e6d7c1ef104784cd4064`, refreshed origin/main.
 Checkout: /Users/byronwall/Projects/explorEDA.
@@ -127,3 +127,17 @@ Raw original whitespace is retained; authored whitespace passes.
 The full26-case harness, browser, actual copied-expression/export/refit/restore, cross-engine and continuous-domain proofs remain unrun.
 See validation.json and evidence.md. No changeset or product screenshot applies.
 Scoped review PR,final verification,and collector stop remain due.
+
+## Completion, October 22
+
+Review PR: https://github.com/byronwall/explorEDA/pull/492.
+Verified OPEN,main ← codex/regression-conditioning-research-2026-10-22; saved body,27files,branches,and description links checked.
+PR attached to this chat. Documentation label applied;codex/codex-automation labels unavailable.
+Required originals are collected,read,preserved,and reconciled. Eight RC dispositions and three local probes support bounded repair proposals.
+No material followup needed;0/2 sent. Full pnpm check,PRgate,links,JSON,source receipts,and artifact integrity pass.
+Product/browser/copy/export/restore/refit and full26-case replay limits remain explicit. No application repair ships.
+R001 synthesis is complete. R051 is next,thenR086 andR031. Never repeat this survey;use its repair proof gates.
+
+Deleted only collect-exploreda-regression-conditioning-research through automation_update;deleteStatus=deleted.
+Six-hour exploreda-pro-research-pipeline remains ACTIVE;tool view and saved TOML verify it.
+No goal,worktree,merge,deployment,or paid provisioning. Stop for review.
