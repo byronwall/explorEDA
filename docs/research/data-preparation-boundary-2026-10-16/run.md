@@ -8,7 +8,6 @@
 - Baseline: `b07f3cf3483130f6cc3391bba47a87f616c93321`; clean `main` at inspection.
 - Branch: `codex/data-preparation-research-2026-10-16`, created after checking that only this research folder was untracked.
 - Prompt: [pro-prompt.md](pro-prompt.md).
-- Source manifest: [source-manifest.json](source-manifest.json).
 - Packet: `tmp/pro-data-preparation-2026-10-16/source-packet.txt`; 285265 bytes, 31 selected files; SHA-256 `8600b15832886513d908fd65bca6744f1a373d1cbedab80ee32433737c4bd4fb`. Selected snapshot, not runnable checkout. No local changes at capture.
 - Queue and candidate comparison: [research-queue.md](research-queue.md).
 - Phase: complete; verified open review PR #451. Round: 0. Follow-up limit: two after initial submission.
@@ -21,7 +20,7 @@
 - Scheduler/goal: six-hour discovery recurrence stays active. This chat registered the temporary collection heartbeat. No goal was created.
 - Open PR inspection: #447–450 progressive built-ins, #364 built-ins research, #220 monetization research, plus license/release PRs. No overlapping data-preparation research PR found.
 - Prior research checked: completed daily corpus run; comparison intents; shipped adapter status; query-contract/warehouse/reusable-output intents. This cycle must not reopen deferred scope as established demand.
-- Collection and reconciliation: complete. [Manifest](collection.json), [decisions](decisions.md), [evidence](evidence.md), and [validation](validation.json) record checks and limits. Proposed proof remains unrun. Review PR: https://github.com/byronwall/explorEDA/pull/451.
+- Collection and reconciliation: complete. Manifest, [decisions](decisions.md), [evidence](evidence.md), and this run record keep checks and limits. Proposed proof remains unrun. Review PR: https://github.com/byronwall/explorEDA/pull/451.
 
 ## Resume
 
