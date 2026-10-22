@@ -58,6 +58,7 @@ import { createStore, useStore } from "zustand";
 import isEqual from "react-fast-compare";
 import { compactChartLayouts } from "@/utils/compactChartLayouts";
 import { IdType, initializeData } from "./lib/dataLayerState";
+import { carryRowSelections } from "./lib/carryRowSelections";
 import {
   declaredDataTypes,
   type DeclaredFieldType,
@@ -1590,6 +1591,8 @@ export function DataLayerProvider<T extends DatumObject>({
 }: DataLayerProviderProps<T>) {
   const storeRef = useRef<DataLayerStore<T> | null>(null);
   const propsRef = useRef(props);
+  // The rows `savedData` arrived with. Its row positions point into these.
+  const savedRowsRef = useRef(props.data);
   const onStateChangeRef = useRef(props.onStateChange);
   const onAppliedRef = useRef(props.onSavedDataApplied);
   onAppliedRef.current = props.onSavedDataApplied;
@@ -1624,7 +1627,19 @@ export function DataLayerProvider<T extends DatumObject>({
         }
         store.getState().setData(nextData ?? [], undefined, !nextSavedData);
         if (nextSavedData) {
-          store.getState().restoreFromStructure(nextSavedData);
+          // The same settings over new rows: their row positions were taken
+          // in the rows they arrived with, so move them to those records.
+          store
+            .getState()
+            .restoreFromStructure(
+              savedDataChanged
+                ? nextSavedData
+                : carryRowSelections(
+                    nextSavedData,
+                    savedRowsRef.current ?? [],
+                    nextData ?? []
+                  )
+            );
         }
       } else if (savedDataChanged) {
         if (!nextSavedData) {
@@ -1647,6 +1662,9 @@ export function DataLayerProvider<T extends DatumObject>({
       }
     }
 
+    if (savedDataChanged) {
+      savedRowsRef.current = nextData;
+    }
     propsRef.current = {
       data: nextData,
       fieldNames: nextFieldNames,
