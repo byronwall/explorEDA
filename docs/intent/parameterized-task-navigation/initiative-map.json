@@ -5,16 +5,16 @@
     "slug": "parameterized-task-navigation",
     "scale": "feature",
     "current_phase": "intent",
-    "last_updated": "2026-10-09",
-    "summary": "Deferred overview-to-detail connections over saved views; destination filter inheritance is unresolved.",
+    "last_updated": "2026-10-20",
+    "summary": "Deferred overview-to-detail connections after research; existing query inputs and open-view actions remain the comparator.",
     "status": "planned",
-    "next_action": "After saved tabs are useful, choose destination filter behavior and tab reuse before shaping navigation."
+    "next_action": "Run local trust proof, observe one repeated task with current controls, then review population/range/instance/conflict choices before a conditional host binding."
   },
   "artifacts": {
     "intent_brief": {
       "path": "intent-brief.md",
       "status": "current",
-      "updated_at": "2026-10-04"
+      "updated_at": "2026-10-20"
     },
     "brainstorm": {
       "path": "brainstorm.md",
@@ -60,6 +60,13 @@
       "location": "2026-09-29 response annotation 14",
       "anchor": "Choose and build their own.  Also devs can create htem too",
       "authority": "direct product feedback"
+    },
+    {
+      "id": "navigation-research-2026-10-20",
+      "type": "research-review",
+      "location": "../../research/task-navigation-2026-10-20/README.md",
+      "anchor": "TN01–TN06; existing controls first; unresolved human choices preserved",
+      "authority": "research evidence and proposals, not product approval"
     }
   ],
   "intent": {
@@ -84,9 +91,7 @@
         "importance": "core",
         "status": "active",
         "time_horizon": "later",
-        "source_anchors": [
-          "product-feedback-14"
-        ]
+        "source_anchors": ["product-feedback-14"]
       }
     ],
     "themes": [
@@ -100,16 +105,12 @@
       {
         "question": "Should detail inherit overview filters, use destination filters, or ask?",
         "status": "deferred",
-        "source_anchors": [
-          "saved-tabs-feedback-2026-10-04"
-        ]
+        "source_anchors": ["saved-tabs-feedback-2026-10-04"]
       },
       {
         "question": "Reuse one detail tab or retain multiple parameter instances?",
         "status": "deferred",
-        "source_anchors": [
-          "product-feedback-13"
-        ]
+        "source_anchors": ["product-feedback-13"]
       }
     ]
   },
@@ -149,16 +150,20 @@
     {
       "date": "2026-10-04",
       "event": "Extracted navigation scope from Project and task views after user prioritized saved tabs.",
-      "source_anchors": [
-        "saved-tabs-feedback-2026-10-04"
-      ]
+      "source_anchors": ["saved-tabs-feedback-2026-10-04"]
     },
     {
       "date": "2026-10-09",
       "event": "status-checked",
       "status": "planned",
+      "evidence": ["No implementation of this scope found at 91b627d"]
+    },
+    {
+      "date": "2026-10-20",
+      "event": "research-reviewed",
       "evidence": [
-        "No implementation of this scope found at 91b627d"
+        "Six dispositions preserve deferral and later authoring intent.",
+        "Current controls, population and history boundaries checked; application proof remains proposed."
       ]
     }
   ],

@@ -3,7 +3,7 @@ title: "Complete saved analyses and optional templates"
 slug: "saved-view-templates"
 phase: intent
 status: current
-last_updated: "2026-10-06"
+last_updated: "2026-10-20"
 ---
 
 # Complete saved analyses and optional templates
@@ -49,3 +49,9 @@ Expand when duplicated views repeatedly require clearing incidental selections, 
 Check that current save and restore retain the whole analysis. Shape a template only when repeated use reveals a need to omit state deliberately. Do not require another policy answer before advancing the four first-pass priorities.
 
 See the [reference packet](references/README.md) and [comparison collection](../comparison-opportunities/README.md) for context.
+
+## Navigation research boundary: 2026-10-20
+
+[Navigation research](../../research/task-navigation-2026-10-20/README.md) confirms that duplication is a current comparator. It does not authorize clearing selections or local restrictions. Tabs with the same query share its definition and some settings. Use the existing query-copy route when independent query editing is intended.
+
+Return by tab, Undo, reload and project export have different contracts. Keep their proof with the owning trust/navigation work. No template policy or new saving feature is selected here.
