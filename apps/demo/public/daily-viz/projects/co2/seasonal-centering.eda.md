@@ -1,6 +1,6 @@
-# Remove the annual level to see the CO₂ calendar
+# CO₂ breathes: May sits 2.8 ppm above its year, September 2.8 below
 
-**Which calendar months sit above or below their own year’s measured-week mean?** Each row is one weekly date.
+**Why does the CO₂ curve wobble, and is the wobble changing?** Each row is one week at Mauna Loa from 1958 to 2001, with its reading expressed as a difference from the mean of its own year. Subtracting the year's level leaves the calendar: a peak every May, a trough every September and October, and a swing that has grown by almost a part per million since the 1960s.
 
 ```eda
 eda query=r
@@ -9,60 +9,54 @@ co2:num=r.co2 label="CO₂ (ppm)"
 month:num=r.month label="Month"
 month_label:cat=r.month_label label="Calendar month"
 decade:cat=r.decade label="Decade"
-annual_center:num=r.annual_center label="Annual mean (ppm)"
-residual:num=r.residual label="Difference from annual mean (ppm)"
+residual:num=r.residual label="Difference from year mean (ppm)"
+field r.residual precision=2
 ```
 
-## 1. The level removed from each observation
+## The peak is May, the trough is September
 
-The annual center is derived from the same year’s measured weeks. Plotting it against raw concentration shows how much variation remains around that annual reference.
-
-```eda
-scatter @nb-co2-seasonal-centering-chart-1 x=annual_center y=co2 opacity=0.35 title="The level removed from each observation" x.title="Annual mean (ppm)" y.title="CO₂ (ppm)"
-```
-
-## 2. Weekly deviations from the annual mean
-
-The zero line is different for each underlying year even though the residual axis is shared. Long-run level information has intentionally been removed.
+Every May week in 44 years sits above its year's mean, and every September week sits below it. May weeks averaged 2.76 ppm above their year's mean, and September weeks averaged -2.77 ppm. That is a swing of 5.5 ppm, about four years of the underlying rise, repeated every twelve months as northern forests leaf out and then shed.
 
 ```eda
-line @nb-co2-seasonal-centering-chart-2 x=date y=residual title="Weekly deviations from the annual mean" x.title="Date" y.title="Difference from annual mean (ppm)" {
-  rule y=0 "Annual measured-week mean"
+boxplot @nb-co2-seasonal-centering-chart-1 residual color=month_label title="Weekly CO₂ minus the year's mean, by calendar month" y.title="Difference from year mean (ppm)" {
+  rule y=0 "The year's mean"
 }
 ```
 
-**Finding.** The mean centered value for May weeks was 2.76 ppm.
+## The breath has deepened
 
-## 3. Centered concentration by calendar month
-
-Order the month labels chronologically. A pooled monthly box summarizes many years and must not be read as one observed calendar year.
+Each cell is one calendar month in one decade. Read down the May column and the September column: both move away from zero over time. In the 1960s, May weeks averaged 2.69 ppm above their year and September weeks -2.51 ppm, a swing of 5.2. In the 1990s, May averaged 2.95 ppm and September -3.18 ppm, a swing of 6.1.
 
 ```eda
-boxplot @nb-co2-seasonal-centering-chart-3 residual color=month_label title="Centered concentration by calendar month" y.title="Difference from annual mean (ppm)"
+heatmap @nb-co2-seasonal-centering-chart-2 month_label columnField=decade aggregation=average measureField=residual sortBy=label columnSortBy=label showValues=true title="Mean difference from the year's mean, by month and decade (ppm)"
 ```
 
-## 4. Calendar pattern within each decade
+## One breath, close up
 
-Cross month with decade to test whether a pooled seasonal pattern is supported across different spans. Blank cells are not zero residuals.
+Two years, 1990 and 1991, with no missing weeks. The reading climbs from January to a May peak, falls through the summer, bottoms in September, and climbs again. Across the two years the weekly reading ran from 350.7 ppm, in September 1990, to 360.0 ppm, in May 1991, a span that is mostly season and only partly trend.
 
 ```eda
-heatmap @nb-co2-seasonal-centering-chart-4 month_label columnField=decade aggregation=average measureField=residual title="Calendar pattern within each decade"
+line @nb-co2-seasonal-centering-chart-3 x=date y=co2 where.date=1990-01-01..1991-12-31 title="Weekly CO₂, 1990–1991" x.title="Date" y.title="CO₂ (ppm)" {
+  callout "May 1991 peak" pick=max offset=-80,30
+  callout "September 1990 trough" pick=min offset=40,-30
+}
 ```
 
-**Finding.** The mean centered value for September weeks was -2.77 ppm.
+## The rhythm never misses a year
 
-## 5. The rows behind the charts
-
-Sort a column or select rows to check any value above. Selections in a notebook stay with their own chart.
+With the level removed, 44 years of weeks look like a metronome. The widest departures are 4.43 ppm above the year's mean, in May 1991, and -4.17 ppm, in September 1982. The typical week sits 1.58 ppm from its year's mean in one direction or the other.
 
 ```eda
-table @nb-co2-seasonal-centering-records date,co2,annual_center,residual,month_label title="Records behind this comparison"
+line @nb-co2-seasonal-centering-chart-4 x=date y=residual title="Weekly CO₂ minus the year's mean, 1958–2001" x.title="Date" y.title="Difference from year mean (ppm)" {
+  rule y=0 "The year's mean"
+  band x=1990-01-01..1991-12-31 "The two years above"
+}
 ```
 
 ## Takeaway
 
-The centered view makes the within-year rhythm easier to compare while explicitly surrendering the long-run concentration level. Keep the raw plot nearby whenever absolute concentration matters.
+The CO₂ record has two signals: a rise of about 1.3 ppm a year and a seasonal swing of 5 to 6 ppm that repeats without fail. The swing has widened since the 1960s, so a single May-to-September comparison overstates the trend and a single September-to-May one hides it.
 
 ## Limits
 
-Centering by an available-week annual mean does not remove every within-year trend. Incomplete years and uneven missingness can shift the reference. Residuals are not a fitted seasonal model.
+Each year's mean comes from its measured weeks, so a year with gaps centers on an uneven calendar; 1964 lost four months. The differences are not a fitted seasonal model, and one station's rhythm is not the globe's.

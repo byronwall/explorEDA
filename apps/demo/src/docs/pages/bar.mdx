@@ -41,6 +41,7 @@ Category-count bars use rows that remain after other filters and the current fac
 
 Set the grouping field, choose category counts or numeric bins, and adjust the bin count. For a grouped summary, choose a group field, an operation, and—when needed—a numeric measure.
 
+- **Order** keeps category bars in data order, sorts them A to Z (`categoryOrder=label`), or puts the largest first (`categoryOrder=value`). Category counts, grouped summaries, and series bars all follow it. The value order comes from all source rows, so bars keep their places as other charts filter; series bars sort by their category total. Numeric bins keep their numeric order.
 - Missing or non-finite measurements do not enter numeric bins.
 - Alt-click a bar or use the chart trace action to inspect how it was computed.
 
@@ -65,3 +66,5 @@ Set the grouping field, choose category counts or numeric bins, and adjust the b
 ## Annotations
 
 The **Notes** tab adds lines and bands on the value axis, such as a goal. A **callout** attaches to a bar by its **Category**: a bar sums many rows, so it never stands for one record. Series bars group their marks, so they take lines and bands only.
+
+On a histogram the x axis is the binned field, so `rule x=mean`, `median`, `min`, and `max` compute from that field's values in the rows the chart draws. `rule x=mean population=all` reads every row instead of the filtered ones.

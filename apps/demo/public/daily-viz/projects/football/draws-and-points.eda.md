@@ -1,6 +1,6 @@
-# A drawn group match distributes fewer points
+# Nine draws cost the 2018 group stage nine points
 
-**How does the draw rate affect the number of group-stage points available to teams?** Each row is one 2018 World Cup group-stage match.
+**How much did draws shrink the points on offer?** Each row is one of the 48 group matches at the 2018 World Cup. A win pays three points to one side; a draw pays one to each, two in all. So every draw removes a point from the pool, and the groups that drew most had the least to divide.
 
 ```eda
 eda query=r
@@ -8,60 +8,43 @@ group_field:cat=r.group label="Group"
 date:date=r.date label="Date"
 team1:cat=r.team1 label="First team"
 team2:cat=r.team2 label="Second team"
-goals1:num=r.goals1 label="Goals, first team"
-goals2:num=r.goals2 label="Goals, second team"
 total_goals:num=r.total_goals label="Goals in the match"
 result:cat=r.result label="Result"
+points_awarded:num=points_awarded label="Points awarded"
+points_possible:num=points_possible label="Points possible"
 ```
 
-## 1. First separate drawn from decisive matches
+## Group B drew three times; three groups never drew
 
-The result categories are defined directly from equal or unequal final goals. They do not incorporate shootouts or subjective assessments of play.
+Each cell counts a group's matches by result. 9 of the 48 matches were drawn, 18.75% of the group stage. Group B, with Portugal, Spain, Iran, and Morocco, drew three of its six, starting with Portugal 3-3 Spain. Groups A, F, and G produced a winner every time.
 
 ```eda
-row @nb-football-draws-and-points-chart-1 result title="First separate drawn from decisive matches" x.title="Rows"
+heatmap @nb-football-draws-and-points-chart-1 group_field columnField=result aggregation=count showValues=true sortBy=label title="Matches by group and result, 2018 World Cup" x.title="Result" y.title="Group"
 ```
 
-## 2. Result counts inside each group
+## The points pool: 135 of a possible 144
 
-The count cells reveal differences in group draws under the same schedule length. A missing category should not be confused with a missing match.
+Each bar is the points a group handed out over its six matches, with the full eighteen marked. Six decisive matches would pay 144 points across the stage; the nine draws cut the total awarded to 135. Group B's teams shared 15 points, three fewer than Groups A, F, and G, which paid the full 18 each.
 
 ```eda
-heatmap @nb-football-draws-and-points-chart-2 group_field columnField=result aggregation=count showValues=true title="Result counts inside each group"
+group @nb-football-draws-and-points-pool sum(points_awarded) by=group_field
+row @nb-football-draws-and-points-chart-2 group_field group=nb-football-draws-and-points-pool title="Points awarded in each group's six matches" x.title="Points awarded" {
+  rule x=18 "Full 18"
+}
 ```
 
-**Finding.** Draws represent 18.75% of the group-stage matches.
+## The draws were not dull ones
 
-## 3. Draws can still have different goal totals
-
-A draw may be scoreless or high-scoring. This distribution prevents the draw category from being treated as a synonym for a low-event match.
+Each box holds the goals in one result type. Draws averaged 2.89 goals a match, more than the decisive matches at 2.46. Only one draw was goalless, Denmark 0-0 France on the last matchday, and four others finished 2-2 or 3-3.
 
 ```eda
-boxplot @nb-football-draws-and-points-chart-3 total_goals color=result title="Draws can still have different goal totals" y.title="Goals in the match"
-```
-
-## 4. The two final goal counts
-
-Draws lie where the two scores are equal. First and second are listing order, not home advantage, and coincident scorelines still represent separate games.
-
-```eda
-scatter @nb-football-draws-and-points-chart-4 x=goals1 y=goals2 color=result title="The two final goal counts" x.title="Goals, first team" y.title="Goals, second team"
-```
-
-**Finding.** The group-stage matches contain 122 total goals.
-
-## 5. The rows behind the charts
-
-Sort a column or select rows to check any value above. Selections in a notebook stay with their own chart.
-
-```eda
-table @nb-football-draws-and-points-records date,group_field,team1,team2,goals1,goals2,result title="Records behind this comparison"
+boxplot @nb-football-draws-and-points-chart-3 total_goals color=result title="Goals per match, drawn against decisive" y.title="Goals in the match"
 ```
 
 ## Takeaway
 
-A decisive match supplies three total team points; a draw supplies two. Comparing groups by points without acknowledging that rule can obscure why equal schedules produce different point pools.
+Nine draws took nine points out of the group stage, and they fell unevenly: Group B lost three, three groups lost none. A group's points total is partly a record of how often its matches ended level, before it says anything about how strong its teams were.
 
 ## Limits
 
-This is arithmetic under the declared three-points-for-a-win and one-for-a-draw rule, not a measure of match quality. It describes group-stage final scores only and says nothing about later knockout results.
+One tournament's group stage, under the three-one-zero points rule. Points awarded is arithmetic on the result, not the official table, which also applies tie-breaks. Nothing here says why a match ended level.

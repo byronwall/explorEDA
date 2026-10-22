@@ -1,65 +1,54 @@
-# Compare two warm-water windows on an aligned clock
+# 1982–83 peaked higher, but 1997–98 stayed hot four months longer
 
-**How do the 1982–1983 and 1997–1998 windows differ after seasonal centering?** Each row is one calendar month in either selected two-year window.
+**Which of the two great El Niños was bigger off Peru?** Each row is one month in one of two 24-month windows, January 1982 to December 1983 and January 1997 to December 1998, with its Niño 1+2 anomaly against the 1981–2010 calendar mean. Lined up month by month, the two events have different shapes: one tall spike, one long plateau.
 
 ```eda
 eda query=episodes
 sst:num=episodes.sst label="Sea-surface temperature (°C)"
-month:num=episodes.month label="Month"
 date:date=episodes.date label="Date"
 anomaly:num=episodes.anomaly label="Anomaly (°C)"
-episode:cat=episodes.episode label="Episode"
-episode_month:num=episodes.episode_month label="Month of episode"
+episode:cat=episodes.episode label="Window"
+episode_month:num=episodes.episode_month label="Month of window (1 = January of the first year)"
 ```
 
-## 1. An aligned month number, not aligned peaks
+## A spike against a plateau
 
-Every point keeps its position in the two-year window. Use color to distinguish the windows without shifting either to maximize apparent agreement.
+Both paths start near zero in January of their first year. The 1982–83 path climbs slowly for a year and spikes in month 18, June 1983, at 4.35 °C above normal, then falls away within four months. The 1997–98 path reaches 4.07 °C in month 12, December 1997, and had already been above 2 °C for seven months by then.
 
 ```eda
-scatter @nb-elnino-two-warm-windows-chart-1 x=episode_month y=anomaly color=episode title="An aligned month number, not aligned peaks" x.title="Month of episode" y.title="Anomaly (°C)"
+scatter @nb-elnino-two-warm-windows-chart-1 x=episode_month y=anomaly color=episode title="Monthly anomaly through each 24-month window" x.title="Month of window (1 = January of the first year)" y.title="Anomaly (°C)" {
+  connect.orderField=episode_month connect.groupField=episode
+  rule y=0 "Calendar-month mean"
+  rule y=2 "2 °C above normal"
+  callout "June 1983, +4.35 °C" on=episodes.id:elnino-episodes-00018 offset=40,-10
+}
 ```
 
-## 2. The same windows in raw Celsius
+## The later event ran warmer for longer
 
-Return to raw temperature to see the seasonal cycle that the anomaly view removed. The difference in vertical meaning is the point of the comparison.
+Same 48 months, sorted into two boxes. The 1982–83 window averaged 1.46 °C above normal and the 1997–98 window 2.03 °C. In the 1982–83 window, 41.7% of months ran more than 2 °C warm; in the 1997–98 window, 58.3% did, 14 months against 10.
 
 ```eda
-scatter @nb-elnino-two-warm-windows-chart-2 x=episode_month y=sst color=episode title="The same windows in raw Celsius" x.title="Month of episode" y.title="Sea-surface temperature (°C)"
+boxplot @nb-elnino-two-warm-windows-chart-2 anomaly color=episode title="Monthly anomaly in each window" y.title="Anomaly (°C)" {
+  rule y=2 "2 °C above normal"
+}
 ```
 
-**Finding.** The largest monthly anomaly in the 1982–1983 window was 4.35 °C.
+## In raw degrees, 1998 holds the record
 
-## 3. Compare the full anomaly distribution
-
-A higher maximum does not establish that every month was warmer. The full cumulative distribution exposes the remainder of each window.
+Put the seasons back and the two windows look alike until the second year. The warmest month was 29.24 °C, in March 1998, when a +2.7 °C anomaly landed on the warmest month of the calendar. June 1983's larger anomaly produced only 27.43 °C, because June is a cooling month.
 
 ```eda
-ecdf @nb-elnino-two-warm-windows-chart-3 anomaly color=episode direction=below title="Compare the full anomaly distribution" x.title="Anomaly (°C)"
-```
-
-## 4. Centers and spreads across the two windows
-
-Each summary has the same intended window length. It still loses serial ordering, so return to the aligned scatter before describing persistence.
-
-```eda
-boxplot @nb-elnino-two-warm-windows-chart-4 anomaly color=episode title="Centers and spreads across the two windows" y.title="Anomaly (°C)"
-```
-
-**Finding.** The largest monthly anomaly in the 1997–1998 window was 4.07 °C.
-
-## 5. The rows behind the charts
-
-Sort a column or select rows to check any value above. Selections in a notebook stay with their own chart.
-
-```eda
-table @nb-elnino-two-warm-windows-records episode,episode_month,date,sst,anomaly title="Records behind this comparison"
+scatter @nb-elnino-two-warm-windows-chart-3 x=episode_month y=sst color=episode title="Monthly sea-surface temperature through each window" x.title="Month of window (1 = January of the first year)" y.title="Sea-surface temperature (°C)" {
+  connect.orderField=episode_month connect.groupField=episode connect.labels=end
+  callout "March 1998, 29.24 °C" on=episodes.id:elnino-episodes-00039 offset=-150,-10
+}
 ```
 
 ## Takeaway
 
-Keep a common clock and baseline rather than shifting the curves until they appear to match. Differences in duration and amplitude should remain visible rather than being normalized away.
+By peak anomaly, 1982–83 was the bigger event off Peru, by 0.28 °C. By duration and average warmth, 1997–98 was bigger: four more months above 2 °C and a window mean 0.57 °C higher. Which one was "the strongest El Niño" depends on whether the question is about the hottest month or the hottest year.
 
 ## Limits
 
-The two windows are illustrative, predeclared spans, not an automated event sample. Alignment begins in January of each first year and does not align peaks or event onset. No causal attribution follows.
+The windows are two fixed calendar spans, not event onsets, and the anomaly baseline is the same 1981–2010 mean for both. Niño 1+2 is the coastal region; rankings by the central-Pacific Niño 3.4 index differ.

@@ -1,0 +1,38 @@
+{
+  "conversation": "https://chatgpt.com/c/6ad83315-6d1c-83e9-9ab8-007e59401093",
+  "retrieved_at": "2026-10-21T04:44:03.915610+00:00",
+  "archive": {
+    "path": "exploreda-100-research-ideas.zip",
+    "bytes": 273492,
+    "sha256": "b9dba8749bec085bd2c0c42b2151f939e53bf7bbf41c469ccd920a60ea80916e"
+  },
+  "checks": [
+    "archive hash matches Pro response",
+    "CRC passed",
+    "no absolute paths, traversal paths, or symbolic links"
+  ],
+  "download_note": "Browser download-event wait timed out; the normal browser download succeeded in Downloads. Verified the file before any retry.",
+  "companions": [
+    {
+      "name": "README.md",
+      "sha256": "ee4ce8410df3b017807f98c6d10f48a3419b34a26fa5061015faa19fab38b7ba",
+      "matches_archive": true
+    },
+    {
+      "name": "ideas.json",
+      "sha256": "99243be426cb75ce225885b82b55ff4a9507a12b8b4260a5b9d32b0329751cea",
+      "matches_archive": true
+    },
+    {
+      "name": "sources.md",
+      "sha256": "8b8c286c42d86c8537e0b6992f07d6bd6f37aba1e1f70daef3ebdbdb0395c80c",
+      "matches_archive": true
+    },
+    {
+      "name": "manifest.json",
+      "sha256": "4f5ccbf2ebb911cbcdce1040ea242770742719edd952642d8f2d3287e2b62faa",
+      "matches_archive": true
+    }
+  ],
+  "originals": "ZIP preserves all original bytes; standalone companions match their archived copies."
+}

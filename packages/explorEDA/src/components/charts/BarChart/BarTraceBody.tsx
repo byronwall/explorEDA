@@ -70,7 +70,11 @@ export function BarTraceBody({ trace }: { trace: BarTrace }) {
               ? "Each row adds one."
               : trace.aggregation.startsWith("average")
                 ? "Sum of valid inputs divided by used rows."
-                : "Sum of valid inputs."}
+                : trace.aggregation.startsWith("max")
+                  ? "Largest valid input."
+                  : trace.aggregation.startsWith("min")
+                    ? "Smallest valid input."
+                    : "Sum of valid inputs."}
           </TraceReadout>
         )}
         {mark.bin && (

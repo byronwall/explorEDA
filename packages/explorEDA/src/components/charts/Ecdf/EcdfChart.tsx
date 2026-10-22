@@ -24,6 +24,10 @@ import { useGetColumnData } from "../useGetColumnData";
 import { useGetAllIds, useGetLiveIds } from "../useGetLiveData";
 import { ChartReadout } from "../ChartReadout";
 import {
+  annotationSlot,
+  type ChartAnnotationFrame,
+} from "../annotations/ChartAnnotations";
+import {
   AxisValuePill as AxisValue,
   pillX,
   spreadLabels as spread,
@@ -91,6 +95,7 @@ export function EcdfChart({
   width,
   height,
   facetIds,
+  facetKey,
 }: BaseChartProps<EcdfSettings>) {
   const getFieldLabel = useDataLayer((s) => s.getFieldLabel);
   const formatFieldValue = useDataLayer((s) => s.formatFieldValue);
@@ -162,6 +167,32 @@ export function EcdfChart({
     [plan]
   );
   useTraceSource(owner, source);
+  const annotationFrame = useMemo((): ChartAnnotationFrame | undefined => {
+    if (!settings.annotations?.length) return undefined;
+    // A facet's calculations read only that facet's rows.
+    const facet = facetIds && new Set(facetIds);
+    return {
+      xScale: plan.xScale,
+      yScale: plan.yScale,
+      plotWidth: plan.plotWidth,
+      plotHeight: plan.plotHeight,
+      xField: settings.field,
+      facetKey,
+      population: {
+        all: facet ? allIds.filter((id) => facet.has(id)) : allIds,
+        filtered: liveIds,
+      },
+    };
+  }, [
+    settings.annotations,
+    settings.field,
+    plan,
+    facetIds,
+    facetKey,
+    allIds,
+    liveIds,
+  ]);
+  const clipId = `${owner.replace(/:/g, "")}-plot`;
   const inspect = useCallback(
     (kind: string, id: string) => traceApi?.inspect(owner, kind, id),
     [owner, traceApi]
@@ -403,6 +434,11 @@ export function EcdfChart({
         height={height}
         className="block overflow-visible"
       >
+        <defs>
+          <clipPath id={clipId}>
+            <rect width={plan.plotWidth} height={plan.plotHeight} />
+          </clipPath>
+        </defs>
         <g transform={`translate(${plan.margin.left},${plan.margin.top})`}>
           <g aria-hidden="true">
             {plan.yTicks.map((tick) => (
@@ -709,6 +745,7 @@ export function EcdfChart({
             onBlur={() => setHovered(null)}
             onKeyDown={handleKey}
           />
+          {annotationSlot(settings, annotationFrame)?.(`url(#${clipId})`)}
         </g>
       </svg>
       {readout && <Readout {...readout} />}

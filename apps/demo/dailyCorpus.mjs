@@ -51,14 +51,22 @@ const NOT_CHARTS = new Set(["eda", "dashboard", "grid", "project", "source"]);
 
 const ANNOTATIONS = ["rule", "band", "callout", "label", "region"];
 
-/** Chart words, composition marks, and options a piece's text uses. */
+/**
+ * Chart words, composition marks, and options a piece's text uses, and how
+ * many sheets a notebook has: its `#` headings outside fenced blocks, when
+ * there are two or more (one is the title).
+ */
 export function describeText(text) {
   const charts = new Set();
   const marks = new Set();
   const features = new Set();
   let depth = 0;
   let block = "";
+  let fenced = false;
+  let headings = 0;
   for (const raw of text.split("\n")) {
+    if (/^\s*(```|~~~)/.test(raw)) fenced = !fenced;
+    if (!fenced && /^#\s+\S/.test(raw)) headings++;
     const line = raw.trim();
     const head = /^([a-z]+)\b/.exec(line)?.[1];
     if (
@@ -83,7 +91,12 @@ export function describeText(text) {
     depth += (line.match(/\{/g) ?? []).length;
     depth -= (line.match(/\}/g) ?? []).length;
   }
-  return { charts: [...charts], marks: [...marks], features: [...features] };
+  return {
+    charts: [...charts],
+    marks: [...marks],
+    features: [...features],
+    sheets: headings >= 2 ? headings : 0,
+  };
 }
 
 const DAY = 86_400_000;
@@ -273,8 +286,11 @@ export function dailyHtml(template, entry, text) {
     /^```eda\s*\n[\s\S]*?^```\s*$/gm,
     "\n_Interactive chart available when JavaScript loads._\n"
   );
+  // A notebook with one title carries it; a book's headings name its sheets.
   const title =
-    entry.kind === "notebook" ? "" : `<h1>${escape(entry.title)}</h1>`;
+    entry.kind === "notebook" && /^# /.test(text)
+      ? ""
+      : `<h1>${escape(entry.title)}</h1>`;
   return head(template, entry.title, entry.summary, url).replace(
     '<div id="root"></div>',
     `<div id="root">${shell(`<a href="/daily">Daily data viz</a>${title}${markdown.render(prose)}`)}</div>`

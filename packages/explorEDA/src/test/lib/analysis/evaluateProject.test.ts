@@ -7,6 +7,7 @@ import {
   stringifyAnalysisProject,
 } from "@/lib/analysis/projectFile";
 import type { AnalysisProject } from "@/types/AnalysisProject";
+import { compileProjectText, exportProjectText } from "@/lib/dsl/project";
 
 describe("multi-source analysis", () => {
   it("keeps lookup row counts and totals at their declared grain", () => {
@@ -390,5 +391,43 @@ describe("multi-source analysis", () => {
         "order-totals"
       )
     ).toThrow("duplicate field id");
+  });
+
+  it("reads and evaluates max and min measures", () => {
+    const { project, sources } = createShopFixture();
+    const step = project.queries.find((query) => query.id === "order-totals")!
+      .steps[1]!;
+    if (step.kind !== "aggregate") throw new Error("expected an aggregate");
+    step.measures.push(
+      {
+        id: "largestOrder",
+        label: "Largest order",
+        operation: "max",
+        fieldId: "orders.amount",
+      },
+      {
+        id: "smallestOrder",
+        label: "Smallest order",
+        operation: "min",
+        fieldId: "orders.amount",
+      }
+    );
+    const text = exportProjectText(project);
+    expect(text).toContain("max @largestOrder orders.amount");
+    expect(text).toContain("min @smallestOrder orders.amount");
+    const compiled = compileProjectText(text);
+    expect(compiled.diagnostics).toEqual([]);
+    expect(compiled.project).toEqual(project);
+
+    const result = evaluateAnalysisQuery(
+      compiled.project,
+      sources,
+      "order-totals"
+    );
+    expect(result.rows[0]!.values).toMatchObject({
+      orderAmount: 150,
+      largestOrder: 50,
+      smallestOrder: 10,
+    });
   });
 });

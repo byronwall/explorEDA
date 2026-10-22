@@ -350,7 +350,7 @@ export const CHART_SETTINGS: Readonly<
     forceString:
       "Counts each distinct value as its own bar, even for a numeric field.",
     categoryOrder:
-      "Category bars in data order, or sorted by label from A to Z.",
+      "Category bars in data order, sorted by label from A to Z, or by value with the largest first.",
     aggregateId:
       "A named grouped summary to draw, which counts, sums, or averages a measure per group.",
     seriesField: "A second field that splits each bar into series.",

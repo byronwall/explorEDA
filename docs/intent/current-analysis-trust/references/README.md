@@ -21,3 +21,8 @@ Current source was inspected at `a50df9985ed3ff54d0f6ca368c0b369829b8a927` on 20
 ## Product feedback
 
 [Annotated product direction](../../comparison-opportunities/resources/product-feedback-2026-10-06.md) supplies the current audience and priorities. The [full records](../../comparison-opportunities/resources/product-feedback-2026-10-06.json) preserve uncertainty.
+
+## Analytical handoff review
+
+[Research summary](../../../research/analysis-handoff-2026-10-20/README.md), [dispositions](../../../research/analysis-handoff-2026-10-20/decisions.md) and [independent evidence](../../../research/analysis-handoff-2026-10-20/evidence.md) retain the current boundary.
+Originals and proposed proof remain linked from that collection. No feature or complete workflow acceptance is claimed.
