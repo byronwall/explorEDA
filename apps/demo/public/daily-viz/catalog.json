@@ -995,9 +995,9 @@
     "id": "nb-elnino-season-and-anomaly",
     "slug": "elnino-season-and-anomaly",
     "kind": "notebook",
-    "title": "A warm month and an unusually warm month are different questions",
-    "question": "How much of Niño 1+2 temperature is just the calendar?",
-    "summary": "Niño 1+2 waters swing about 5 °C between February and September every year. Subtract that calendar and the unusual months, the El Niños, stand out.",
+    "title": "Niño 1+2 water swings 5.7 °C every year; the El Niños are what's left",
+    "question": "How much of a warm month off Peru is just the calendar?",
+    "summary": "The sea off Peru runs 5.7 °C warmer in March than in September, so a raw temperature says little. Subtract each month's normal and the El Niños stand alone: June 1983 sat 4.35 °C above its calendar mean, and cool months outnumber warm ones two to one.",
     "family": "elnino",
     "entry": "season-and-anomaly.eda.md",
     "query": "r",
@@ -1005,7 +1005,7 @@
     "analysis": "Seasonality",
     "findings": [
       {
-        "text": "The mean February temperature across years was {value} °C.",
+        "text": "March months averaged {value} °C",
         "format": ".2f",
         "op": "mean",
         "field": "sst",
@@ -1013,12 +1013,12 @@
           [
             "month",
             "eq",
-            2
+            3
           ]
         ]
       },
       {
-        "text": "The mean September temperature across years was {value} °C.",
+        "text": "and September months {value} °C",
         "format": ".2f",
         "op": "mean",
         "field": "sst",
@@ -1029,6 +1029,99 @@
             9
           ]
         ]
+      },
+      {
+        "text": "The warmest month on record, {value} °C in March 1998",
+        "format": ".2f",
+        "op": "max",
+        "field": "sst"
+      },
+      {
+        "text": "The largest anomaly was {value} °C, in June 1983",
+        "format": ".2f",
+        "op": "max",
+        "field": "anomaly"
+      },
+      {
+        "text": "{value}% of months ran more than 2 °C warm.",
+        "format": ".1f",
+        "op": "share",
+        "field": "anomaly",
+        "condition": [
+          [
+            "anomaly",
+            "gt",
+            2
+          ]
+        ]
+      },
+      {
+        "text": "{value}% of months ran more than 1 °C cool",
+        "format": ".1f",
+        "op": "share",
+        "field": "anomaly",
+        "condition": [
+          [
+            "anomaly",
+            "lt",
+            -1
+          ]
+        ]
+      },
+      {
+        "text": "against {value}% that ran more than 1 °C warm",
+        "format": ".1f",
+        "op": "share",
+        "field": "anomaly",
+        "condition": [
+          [
+            "anomaly",
+            "gt",
+            1
+          ]
+        ]
+      },
+      {
+        "text": "in 1983, {value} months sat more than 2 °C warm",
+        "format": ".0f",
+        "op": "count",
+        "field": "anomaly",
+        "where": [
+          [
+            "year",
+            "eq",
+            1983
+          ],
+          [
+            "anomaly",
+            "gt",
+            2
+          ]
+        ]
+      },
+      {
+        "text": "and in 1997, {value} did",
+        "format": ".0f",
+        "op": "count",
+        "field": "anomaly",
+        "where": [
+          [
+            "year",
+            "eq",
+            1997
+          ],
+          [
+            "anomaly",
+            "gt",
+            2
+          ]
+        ]
+      },
+      {
+        "text": "the coldest anomaly, {value} °C in May 1954",
+        "format": ".2f",
+        "op": "min",
+        "field": "anomaly"
       }
     ],
     "published": "2026-08-06"
@@ -2362,26 +2455,66 @@
     "id": "nb-elnino-annual-range",
     "slug": "elnino-annual-range",
     "kind": "notebook",
-    "title": "The annual mean hides a 6 °C swing inside each year",
-    "question": "Do years with high means also have unusually wide within-year temperature ranges?",
-    "summary": "A year's mean sea-surface temperature hides a gap of about 6 °C between its warmest and coolest months.",
+    "title": "The warmest year off Peru had the narrowest seasonal swing",
+    "question": "Do hot years come with wider swings between their warm and cool months?",
+    "summary": "A year off Peru swings about 6 °C between its warmest and coolest months whatever its mean, and warmer years swing slightly less. 1997, the warmest year on record, had the narrowest swing, 3.47 °C; 1998, right after it, had the widest.",
     "family": "elnino",
     "entry": "annual-range.eda.md",
     "query": "annual",
     "industry": "Climate",
-    "analysis": "Distribution",
+    "analysis": "Relationship",
     "findings": [
       {
-        "text": "The average within-year observed monthly range was {value} °C.",
+        "text": "The average swing was {value} °C.",
         "format": ".2f",
         "op": "mean",
         "field": "range"
       },
       {
-        "text": "The largest within-year observed monthly range was {value} °C.",
+        "text": "The widest was {value} °C, in 1998",
         "format": ".2f",
         "op": "max",
         "field": "range"
+      },
+      {
+        "text": "and the narrowest {value} °C, in 1997",
+        "format": ".2f",
+        "op": "min",
+        "field": "range"
+      },
+      {
+        "text": "the correlation between a year's mean and its swing was {value}.",
+        "format": ".3f",
+        "op": "corr",
+        "field": "mean",
+        "other": "range"
+      },
+      {
+        "text": "their correlation was {value}.",
+        "format": ".3f",
+        "op": "corr",
+        "field": "low",
+        "other": "high"
+      },
+      {
+        "text": "Its correlation with the coolest month was {value}",
+        "format": ".3f",
+        "op": "corr",
+        "field": "mean",
+        "other": "low"
+      },
+      {
+        "text": "against {value} with the warmest.",
+        "format": ".3f",
+        "op": "corr",
+        "field": "mean",
+        "other": "high"
+      },
+      {
+        "text": "Every year has all {value} months",
+        "format": ".0f",
+        "op": "min",
+        "field": "months"
       }
     ],
     "published": "2026-09-09"
@@ -3726,9 +3859,9 @@
     "id": "nb-elnino-two-warm-windows",
     "slug": "elnino-two-warm-windows",
     "kind": "notebook",
-    "title": "Compare two warm-water windows on an aligned clock",
-    "question": "How do the 1982–1983 and 1997–1998 windows differ after seasonal centering?",
-    "summary": "The 1982–83 and 1997–98 El Niños, aligned month by month from their start, peaked 4.35 °C and 4.07 °C above normal.",
+    "title": "1982–83 peaked higher, but 1997–98 stayed hot four months longer",
+    "question": "Which of the two great El Niños was bigger off Peru?",
+    "summary": "Aligned month by month, the 1982–83 El Niño spiked to 4.35 °C above normal and fell away within four months, while 1997–98 peaked at 4.07 °C and held above 2 °C for 14 months. The later event averaged 0.57 °C warmer across its window.",
     "family": "elnino",
     "entry": "two-warm-windows.eda.md",
     "query": "episodes",
@@ -3736,7 +3869,7 @@
     "analysis": "Comparison",
     "findings": [
       {
-        "text": "The largest monthly anomaly in the 1982–1983 window was {value} °C.",
+        "text": "spikes in month 18, June 1983, at {value} °C above normal",
         "format": ".2f",
         "op": "max",
         "field": "anomaly",
@@ -3749,7 +3882,7 @@
         ]
       },
       {
-        "text": "The largest monthly anomaly in the 1997–1998 window was {value} °C.",
+        "text": "The 1997–98 path reaches {value} °C in month 12",
         "format": ".2f",
         "op": "max",
         "field": "anomaly",
@@ -3760,6 +3893,96 @@
             "1997–1998"
           ]
         ]
+      },
+      {
+        "text": "The 1982–83 window averaged {value} °C above normal",
+        "format": ".2f",
+        "op": "mean",
+        "field": "anomaly",
+        "where": [
+          [
+            "episode",
+            "eq",
+            "1982–1983"
+          ]
+        ]
+      },
+      {
+        "text": "and the 1997–98 window {value} °C.",
+        "format": ".2f",
+        "op": "mean",
+        "field": "anomaly",
+        "where": [
+          [
+            "episode",
+            "eq",
+            "1997–1998"
+          ]
+        ]
+      },
+      {
+        "text": "In the 1982–83 window, {value}% of months ran more than 2 °C warm",
+        "format": ".1f",
+        "op": "share",
+        "field": "anomaly",
+        "where": [
+          [
+            "episode",
+            "eq",
+            "1982–1983"
+          ]
+        ],
+        "condition": [
+          [
+            "anomaly",
+            "gt",
+            2
+          ]
+        ]
+      },
+      {
+        "text": "in the 1997–98 window, {value}% did",
+        "format": ".1f",
+        "op": "share",
+        "field": "anomaly",
+        "where": [
+          [
+            "episode",
+            "eq",
+            "1997–1998"
+          ]
+        ],
+        "condition": [
+          [
+            "anomaly",
+            "gt",
+            2
+          ]
+        ]
+      },
+      {
+        "text": "{value} months against 10",
+        "format": ".0f",
+        "op": "count",
+        "field": "anomaly",
+        "where": [
+          [
+            "episode",
+            "eq",
+            "1997–1998"
+          ],
+          [
+            "anomaly",
+            "gt",
+            2
+          ]
+        ]
+      },
+      {
+        "text": "The warmest month was {value} °C, in March 1998",
+        "format": ".2f",
+        "op": "max",
+        "field": "sst"
       }
     ],
     "published": "2026-10-11"
