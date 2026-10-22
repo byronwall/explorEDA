@@ -190,9 +190,9 @@
     "id": "nb-football-group-goals",
     "slug": "football-group-goals",
     "kind": "notebook",
-    "title": "Most 2018 group matches were decided by one goal or fewer",
-    "question": "How close were the 48 group-stage matches of the 2018 World Cup?",
-    "summary": "The 2018 group stage averaged 2.5 goals a match, and more than two matches in three were decided by one goal or fewer.",
+    "title": "Two in three World Cup group matches were decided by a goal or less",
+    "question": "How close were the 2018 World Cup's group matches?",
+    "summary": "Half of the 48 group matches at the 2018 World Cup were won by exactly one goal and another fifth were drawn. The groups differed in goals, from four a match in Group G to one and a half in Group C, far more than in closeness.",
     "family": "football",
     "entry": "group-goals.eda.md",
     "query": "r",
@@ -200,13 +200,33 @@
     "analysis": "Distribution",
     "findings": [
       {
-        "text": "The mean group-stage match total was {value} goals.",
-        "format": ".3f",
-        "op": "mean",
-        "field": "total_goals"
+        "text": "{value}% of matches were won by exactly one goal",
+        "format": ".2f",
+        "op": "share",
+        "field": "margin",
+        "condition": [
+          [
+            "margin",
+            "eq",
+            1
+          ]
+        ]
       },
       {
-        "text": "Matches with a margin no greater than one goal represented {value}% of the group stage.",
+        "text": "and {value}% were drawn.",
+        "format": ".2f",
+        "op": "share",
+        "field": "margin",
+        "condition": [
+          [
+            "margin",
+            "eq",
+            0
+          ]
+        ]
+      },
+      {
+        "text": "Together, {value}% of the group stage was decided by one goal or less.",
         "format": ".2f",
         "op": "share",
         "field": "margin",
@@ -215,6 +235,74 @@
             "margin",
             "le",
             1
+          ]
+        ]
+      },
+      {
+        "text": "{value}% of matches finished 1-0",
+        "format": ".2f",
+        "op": "share",
+        "field": "margin",
+        "condition": [
+          [
+            "margin",
+            "eq",
+            1
+          ],
+          [
+            "total_goals",
+            "eq",
+            1
+          ]
+        ]
+      },
+      {
+        "text": "and {value}% finished 2-1.",
+        "format": ".2f",
+        "op": "share",
+        "field": "margin",
+        "condition": [
+          [
+            "margin",
+            "eq",
+            1
+          ],
+          [
+            "total_goals",
+            "eq",
+            3
+          ]
+        ]
+      },
+      {
+        "text": "The tournament averaged {value} goals a match.",
+        "format": ".2f",
+        "op": "mean",
+        "field": "total_goals"
+      },
+      {
+        "text": "averaged {value} goals a match.",
+        "format": ".2f",
+        "op": "mean",
+        "field": "total_goals",
+        "where": [
+          [
+            "group",
+            "eq",
+            "G"
+          ]
+        ]
+      },
+      {
+        "text": "managed one goal or none in four of six games, averaged {value}.",
+        "format": ".2f",
+        "op": "mean",
+        "field": "total_goals",
+        "where": [
+          [
+            "group",
+            "eq",
+            "C"
           ]
         ]
       }
@@ -1640,9 +1728,9 @@
     "id": "nb-football-draws-and-points",
     "slug": "football-draws-and-points",
     "kind": "notebook",
-    "title": "A drawn group match distributes fewer points",
-    "question": "How does the draw rate affect the number of group-stage points available to teams?",
-    "summary": "Nine of the 48 group matches ended level. A draw hands out two points instead of three, so fewer draws mean more points to share.",
+    "title": "Nine draws cost the 2018 group stage nine points",
+    "question": "How much did draws shrink the points on offer?",
+    "summary": "Nine of the 48 group matches at the 2018 World Cup ended level, so the stage handed out 135 points of a possible 144. Group B lost three of those points; Groups A, F, and G lost none, and the draws averaged more goals than the wins.",
     "family": "football",
     "entry": "draws-and-points.eda.md",
     "query": "r",
@@ -1650,7 +1738,20 @@
     "analysis": "Part-to-whole",
     "findings": [
       {
-        "text": "Draws represent {value}% of the group-stage matches.",
+        "text": "{value} of the 48 matches were drawn",
+        "format": ".0f",
+        "op": "count",
+        "field": "result",
+        "where": [
+          [
+            "result",
+            "eq",
+            "Draw"
+          ]
+        ]
+      },
+      {
+        "text": "{value}% of the group stage.",
         "format": ".2f",
         "op": "share",
         "field": "result",
@@ -1663,10 +1764,55 @@
         ]
       },
       {
-        "text": "The group-stage matches contain {value} total goals.",
+        "text": "Six decisive matches would pay {value} points across the stage",
         "format": ".0f",
         "op": "sum",
-        "field": "total_goals"
+        "field": "points_possible"
+      },
+      {
+        "text": "the nine draws cut the total awarded to {value}.",
+        "format": ".0f",
+        "op": "sum",
+        "field": "points_awarded"
+      },
+      {
+        "text": "Group B's teams shared {value} points",
+        "format": ".0f",
+        "op": "sum",
+        "field": "points_awarded",
+        "where": [
+          [
+            "group",
+            "eq",
+            "B"
+          ]
+        ]
+      },
+      {
+        "text": "Draws averaged {value} goals a match",
+        "format": ".2f",
+        "op": "mean",
+        "field": "total_goals",
+        "where": [
+          [
+            "result",
+            "eq",
+            "Draw"
+          ]
+        ]
+      },
+      {
+        "text": "more than the decisive matches at {value}.",
+        "format": ".2f",
+        "op": "mean",
+        "field": "total_goals",
+        "where": [
+          [
+            "result",
+            "eq",
+            "Decisive"
+          ]
+        ]
       }
     ],
     "published": "2026-08-20"
@@ -3829,9 +3975,9 @@
     "id": "nb-football-points-and-goals",
     "slug": "football-points-and-goals",
     "kind": "notebook",
-    "title": "Goals scored and group points reward different things",
-    "question": "How do team-level scoring, defending, and points compare over the same three matches?",
-    "summary": "The highest-scoring team managed nine goals in three matches, but points come from results: only five of 32 teams earned seven or more.",
+    "title": "Goal difference predicted group points, except for the teams that drew",
+    "question": "Did the teams that scored most also take the most points?",
+    "summary": "Across the 32 teams at the 2018 World Cup, goal difference and group points moved almost in step. The exceptions came from the points rule: three level-on-goals teams stuck on four points, and Mexico took six from a negative goal difference.",
     "family": "football",
     "entry": "points-and-goals.eda.md",
     "query": "teams",
@@ -3839,13 +3985,65 @@
     "analysis": "Relationship",
     "findings": [
       {
-        "text": "The largest team group-stage goal total was {value} goals.",
+        "text": "the correlation between goal difference and points was {value}.",
+        "format": ".2f",
+        "op": "corr",
+        "field": "goal_difference",
+        "other": "points"
+      },
+      {
+        "text": "Teams with a positive goal difference averaged {value} points",
+        "format": ".2f",
+        "op": "mean",
+        "field": "points",
+        "where": [
+          [
+            "goal_difference",
+            "gt",
+            0
+          ]
+        ]
+      },
+      {
+        "text": "teams with a negative one averaged {value}.",
+        "format": ".2f",
+        "op": "mean",
+        "field": "points",
+        "where": [
+          [
+            "goal_difference",
+            "lt",
+            0
+          ]
+        ]
+      },
+      {
+        "text": "Belgium's {value} goals was the most any team scored",
         "format": ".0f",
         "op": "max",
         "field": "goals_for"
       },
       {
-        "text": "Teams earning at least seven group points represented {value}% of the selected teams.",
+        "text": "Panama's {value} conceded was the most any team let in",
+        "format": ".0f",
+        "op": "max",
+        "field": "goals_against"
+      },
+      {
+        "text": "{value} teams won all three matches",
+        "format": ".0f",
+        "op": "count",
+        "field": "points",
+        "where": [
+          [
+            "points",
+            "eq",
+            9
+          ]
+        ]
+      },
+      {
+        "text": "Five of the 32, {value}%, reached seven or more.",
         "format": ".2f",
         "op": "share",
         "field": "points",
