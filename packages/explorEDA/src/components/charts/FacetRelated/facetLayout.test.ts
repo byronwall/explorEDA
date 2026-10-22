@@ -29,3 +29,11 @@ it("gives the pager's row to the facets when it shares the legend line", () => {
   const grid = planFacetGridLayout(500, 430, 4, 3, 0, 40, 0);
   expect(grid.cellHeight).toBe(195);
 });
+
+it("grows a few facets to fill a tall chart instead of leaving empty rows", () => {
+  const wrap = planFacetWrapLayout(800, 1000, 3, 3, 0, 0);
+  expect(wrap).toMatchObject({ columnCount: 3, rowCount: 1, pageCount: 1 });
+  expect(wrap.facetHeight).toBe(1000);
+  const eleven = planFacetWrapLayout(856, 1000, 11, 4, 0, 0);
+  expect(eleven).toMatchObject({ columnCount: 3, rowCount: 4, pageCount: 1 });
+});

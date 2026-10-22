@@ -12,6 +12,7 @@ latitude:num=country.latitude label="Latitude"
 longitude:num=country.longitude label="Longitude"
 population:num=years.population label="Population"
 gdp:num=gdp.log10_gdp_pc label="GDP per person (log₁₀ PPP $)"
+gdp_dollars:num=gdp.gdp_pc label="GDP per person (PPP $)"
 life:num=life.life_expectancy label="Life expectancy (years)"
 ```
 
@@ -27,25 +28,23 @@ map @nb-worldbank-wealth-and-health-1 color=region title="Economies at their cap
 
 ## Income and lifespan rise together
 
-Plot life expectancy against GDP per person on a log scale and the countries fall along one rising band. Each step up in income adds fewer years than the last: the curve is straight only because the income axis is logarithmic.
+Each dot is one economy in 2023, placed by GDP per person on a log scale and life expectancy. In 2023, log GDP per person and life expectancy had correlation 0.861, and the band of dots is straight only because the income axis is logarithmic: each step up in income adds fewer years than the last. Singapore, the richest at $130,297 per person, does not live longest; San Marino does, at 85.7 years among the economies with a GDP figure.
 
 ```eda
-scatter @nb-worldbank-wealth-and-health-2 x=gdp y=life color=region title="Life expectancy and GDP per person, every country-year" x.title="GDP per person (log₁₀ PPP $)" y.title="Life expectancy (years)"
+scatter @nb-worldbank-wealth-and-health-2 x=gdp y=life color=region title="Life expectancy and GDP per person, 2023" x.title="GDP per person (log₁₀ PPP $)" y.title="Life expectancy (years)" where.year=2023 where.gdp_dollars=0.. {
+  callout "Singapore, richest" on=country.name:Singapore,years.year:2023 offset=-40,30
+  callout "San Marino, longest-lived" on=country.name:"San Marino",years.year:2023 offset=-120,-20
+  callout "Nigeria, shortest-lived" on=country.name:Nigeria,years.year:2023 offset=20,20
+}
 ```
-
-**Finding.** In 2023, log GDP per person and life expectancy had correlation 0.861.
 
 ## Lifespans rose almost everywhere
 
-The world's average economy gained six years of life expectancy in 23 years. The box plot by region shows the gain was largest where lifespans were shortest: Sub-Saharan Africa gained eleven years, North America under three.
+Each box holds a region's economies across all 24 years. The mean economy's life expectancy was 67.6 years in 2000. By 2023, it was 73.8 years. The gain was largest where lifespans were shortest: Sub-Saharan Africa's mean economy went from 53.5 years in 2000 to 64.6 in 2023, while North America's went from 78.0 to 80.8.
 
 ```eda
-boxplot @nb-worldbank-wealth-and-health-3 life color=region title="Life expectancy by region, all years" y.title="Life expectancy (years)"
+boxplot @nb-worldbank-wealth-and-health-3 life color=region title="Life expectancy by region, 2000 to 2023" y.title="Life expectancy (years)"
 ```
-
-**Finding.** The mean economy's life expectancy was 67.6 years in 2000.
-
-**Finding.** By 2023, it was 73.8 years.
 
 ## Takeaway
 

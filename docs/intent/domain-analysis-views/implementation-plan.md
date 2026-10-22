@@ -8,6 +8,11 @@ last_updated: "2026-10-13"
 
 # Funnels, retention, and interval schedules — implementation plan
 
+> Status check,2026-10-21: all three chart families are present in the current registry.
+> Keep the original milestones as delivery history, not new work.
+> The [retention review](../../research/retention-observation-2026-10-21/README.md) proposes a bounded contract proof.
+> It does not authorize observation metadata or retire this initiative.
+
 ## Plan at a glance
 
 The order is Funnel, then Retention, then Timeline, one stacked PR each. Funnel goes first because it carries the riskiest new idea: a selection that depends on other rows. Clicking a stage has to select every event of the entities who reached it, and today's filter functions test one row at a time against stored values. If the per-entity filter works for Funnel, Retention reuses it unchanged. Timeline needs no per-entity logic, only an overlap rule on two fields, so it goes last.

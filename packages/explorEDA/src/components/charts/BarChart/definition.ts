@@ -14,8 +14,11 @@ export interface BarChartSettings extends BaseChartSettings {
   aggregateId?: string;
   seriesField?: string;
   seriesLayout?: "grouped" | "stacked" | "percent";
-  /** Category bars in data order (the default) or sorted by their labels. */
-  categoryOrder?: "data" | "label";
+  /**
+   * Category bars in data order (the default), sorted by their labels, or by
+   * their values, largest first. Binned bars keep their numeric order.
+   */
+  categoryOrder?: "data" | "label" | "value";
   filters: Filter[];
 }
 

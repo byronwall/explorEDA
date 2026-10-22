@@ -1,0 +1,24 @@
+{
+  "authorship": "Local probes written independently; no downloaded programs executed.",
+  "tests": 3,
+  "passed": 3,
+  "linear": {
+    "sse": 0.0016675373350000064,
+    "reportedResidualSe": 0,
+    "directResidualSe": 0.023576381790540623,
+    "heldError": 0.023533500000000096,
+    "centeredError": 2.220446049250313e-16
+  },
+  "polynomial": {
+    "internalError": 4.440892098500626e-16,
+    "expandedError": 7.096299,
+    "equationError": 32999765564978.156,
+    "sse": 6.999999999998903e-7,
+    "heldActual": 1.3604922499999996,
+    "heldExpected": 1.36049225
+  },
+  "limits": [
+    "Binary64 closed-form identity references; not a full exact-rational matrix replay.",
+    "Production metrics and browser flows unchanged and unrun."
+  ]
+}

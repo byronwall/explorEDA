@@ -1,0 +1,19 @@
+project @media
+
+source @media path=../../../datasets/media-deaths.csv {
+  field Source string
+  field Cause string
+  field Year number
+  field Measure string
+  field Count number
+}
+
+query @media "Deaths and articles by cause, 2023" glyph=◆ {
+  source media
+  calc is_homicide "Homicide" = ["media.Cause"] == "Homicide" ? 1 : 0
+  calc is_terrorism "Terrorism" = ["media.Cause"] == "Terrorism" ? 1 : 0
+  calc is_heart "Heart disease" = ["media.Cause"] == "Heart disease" ? 1 : 0
+  calc is_cancer "Cancer" = ["media.Cause"] == "Cancer" ? 1 : 0
+  calc is_overdose "Drug overdose" = ["media.Cause"] == "Drug overdose" ? 1 : 0
+  calc is_top_two "Heart disease or cancer" = ["media.Cause"] == "Heart disease" || ["media.Cause"] == "Cancer" ? 1 : 0
+}
