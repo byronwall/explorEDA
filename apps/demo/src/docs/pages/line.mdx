@@ -7,10 +7,20 @@
 
 ## How it reads
 
-- With a date on the X axis, the chart summarizes rows into periods. Choose the interval, the week start, and the metric: a count, or a summary of a measure.
+- With a date on the X axis, the chart summarizes rows into periods. Choose the interval, the week start, and the metric: a count, or a sum, average, maximum, or minimum of a measure.
 - **Display** draws a line between period values, an area filled to zero, or stacked areas that add nonnegative counts or sums across series.
-- **Missing periods** either leave a gap, or draw an empty count or sum at zero. An average needs observations, so an empty period has no average to draw.
+- **Missing periods** either leave a gap, or draw an empty count or sum at zero. An average, maximum, or minimum needs observations, so an empty period has none to draw.
 - Each series can use the right axis, its own line style, and points.
+
+## One line per category
+
+Without date periods, a line draws its rows as they are, in X order. **Split by** a category field, written as `color` in dashboard text, draws one line per value of it, each taking its own rows in X order, such as one line per firm over a numeric year:
+
+```text
+line x=year y=invest_index color=firm
+```
+
+The panel's color legend names the lines, and the hover readout lists each value at the hovered X. Nothing is summed: with two rows at one X for the same value, its line passes through both. With several Y fields, each splits, and the line style tells the fields apart. Use a date X with `time.splitField` to summarize rows into periods first.
 
 ## Areas
 
@@ -27,5 +37,10 @@ The **Notes** tab marks what the lines mean:
 - A **band** shades a span of Y values, such as a tolerance, or a period of dates or X values. **Bracket** marks the span along the top edge instead of shading the plot.
 - A **callout** labels one row of a line chart by its key and the series it sits on. A chart that sums rows into periods has no single rows, so its callouts sit at a fixed date and value.
 - An **interval** shades between lower and upper bounds that each row already holds, such as a supplied forecast range. Its **Meaning** says what the bounds are; the chart computes no interval itself. Rows whose lower bound is above the upper bound are drawn with the bounds swapped.
+  - The bounds widen the automatic Y axis, so a ribbon is never cut off. Axis limits you set still clip it.
+  - Rows are ordered by X. A row inside the ribbon's span without both bounds splits it, so the ribbon never bridges a gap. Rows without bounds before or after it, such as history before a forecast, are left out.
+  - Several rows at one X take the outer bounds; nothing is averaged.
+  - The Notes list says what each interval read, such as "Drawn from 12 rows in 1 run", and counts any rows that split it, swapped pairs, and repeated X values.
+  - Several intervals over the same path draw a fan. See [the forecast fans](/examples/forecast-fan-line), one chart per measure through a chart-local filter.
 
 Regions, saved records, extreme callouts, and calculated lines work as they do on a [scatter plot](/docs/scatter#annotations), on line charts that draw rows. On a chart with a right axis, choose which axis a value reads on. The product activity example marks the release period and a 4% target; the calendar example brackets a summer sale.

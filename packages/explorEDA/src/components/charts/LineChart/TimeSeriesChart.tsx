@@ -5,6 +5,7 @@ import { useId, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { convertFieldValue } from "@/lib/fieldSettings";
 import { utcPeriod } from "@/lib/dailyRollup";
+import { isAdditiveAggregation } from "@/lib/aggregates";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { BaseChartProps, datum } from "@/types/ChartTypes";
 import { BaseChart } from "../BaseChart";
@@ -30,6 +31,8 @@ import {
   type TimePoint,
 } from "./timeSeriesPlan";
 import { timeSeriesTraceSource } from "./timeSeriesTrace";
+
+const DENSE_PERIODS = 60;
 
 export function TimeSeriesChart({
   settings,
@@ -210,6 +213,10 @@ export function TimeSeriesChart({
       (!plan.stacked || point.band?.complete) &&
       !point.offScale
   );
+  // Past this many periods per series, a dot on each one hides the line.
+  // The dots stay as hit and keyboard targets and show when active.
+  const denseMarks =
+    marks.length / Math.max(1, plan.series.length) > DENSE_PERIODS;
   const periodText =
     time.interval === "day"
       ? "Daily"
@@ -350,7 +357,16 @@ export function TimeSeriesChart({
                       : point.color
                   }
                   strokeWidth={2}
-                  opacity={point.selected ? 1 : 0.3}
+                  opacity={
+                    denseMarks
+                      ? activeId === point.id ||
+                        (settings.filters.length > 0 && point.selected)
+                        ? 1
+                        : 0
+                      : point.selected
+                        ? 1
+                        : 0.3
+                  }
                   role="button"
                   tabIndex={
                     active?.id === point.id ||
@@ -437,7 +453,8 @@ export function TimeSeriesChart({
         <span className="min-w-0 truncate">
           {plan.stacked && plan.incompletePeriods
             ? `${plan.incompletePeriods} incomplete ${plan.incompletePeriods === 1 ? "period breaks" : "periods break"} the stack`
-            : time.aggregation === "average" || time.missingPeriods === "gap"
+            : !isAdditiveAggregation(time.aggregation) ||
+                time.missingPeriods === "gap"
               ? "Missing periods are gaps"
               : "Missing periods are zero"}
         </span>

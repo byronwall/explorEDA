@@ -2,7 +2,56 @@ import { categoryKey, categoryLabel, categoryValue } from "@/lib/categories";
 import type { datum } from "@/types/ChartTypes";
 import { numericExclusionReason, parseNumber } from "@/lib/valueParsing";
 
-export type AggregateAggregation = "count" | "sum" | "average";
+/**
+ * Every way the library summarizes a group: query `aggregate` measures,
+ * `group` declarations, and chart `aggregation` settings all take this list.
+ */
+export const AGGREGATIONS = ["count", "sum", "average", "max", "min"] as const;
+
+export type AggregateAggregation = (typeof AGGREGATIONS)[number];
+
+export function isAggregation(value: unknown): value is AggregateAggregation {
+  return (AGGREGATIONS as readonly unknown[]).includes(value);
+}
+
+/**
+ * Whether group values add up to the total of their parts. Counts and sums
+ * stack, fill empty periods with zero, and share a total; averages, maxima,
+ * and minima do none of that.
+ */
+export function isAdditiveAggregation(aggregation: AggregateAggregation) {
+  return aggregation === "count" || aggregation === "sum";
+}
+
+const AGGREGATION_LABELS: Record<AggregateAggregation, string> = {
+  count: "Count",
+  sum: "Sum",
+  average: "Average",
+  max: "Max",
+  min: "Min",
+};
+
+export function aggregationLabel(aggregation: AggregateAggregation): string {
+  return AGGREGATION_LABELS[aggregation];
+}
+
+/** Reduces numbers with a measure other than count. Empty input has no value. */
+export function reduceNumbers(
+  aggregation: Exclude<AggregateAggregation, "count">,
+  values: number[]
+): number | undefined {
+  if (!values.length) return undefined;
+  switch (aggregation) {
+    case "max":
+      return values.reduce((best, value) => (value > best ? value : best));
+    case "min":
+      return values.reduce((best, value) => (value < best ? value : best));
+    default: {
+      const total = values.reduce((sum, value) => sum + value, 0);
+      return aggregation === "sum" ? total : total / values.length;
+    }
+  }
+}
 
 export interface AggregateSpec {
   id: string;
@@ -112,9 +161,11 @@ function aggregateValues(
     return { value: undefined, included: new Set(), exclusions };
   }
 
-  const total = inputs.reduce((sum, input) => sum + input.value, 0);
   return {
-    value: aggregation === "sum" ? total : total / inputs.length,
+    value: reduceNumbers(
+      aggregation,
+      inputs.map((input) => input.value)
+    ),
     included: new Set(inputs.map((input) => input.index)),
     exclusions,
   };

@@ -4,6 +4,7 @@ import type { datum } from "@/types/ChartTypes";
 import type { ScaleDescriptor } from "@/components/charts/Axis/axisPlan";
 import {
   calculate,
+  intervalEvidenceText,
   projectAnnotations,
   resolveRecord,
   uniqueKeyFields,
@@ -293,17 +294,89 @@ describe("bands, intervals, and axes", () => {
       xField: "x",
       visibleIds: [0, 1, 2, 3],
     })[0]!;
-    expect(projected).toMatchObject({ status: "shown", reversed: 1 });
-    if (projected.status === "shown" && "points" in projected)
-      expect(projected.points).toEqual([
-        { x: 10, lower: 90, upper: 70 },
-        { x: 20, lower: 75, upper: 50 },
-        { x: 30, lower: 80, upper: 60 },
+    expect(projected).toMatchObject({
+      status: "shown",
+      evidence: { rows: 3, breaks: 0, reversed: 1, duplicates: 0 },
+    });
+    if (projected.status === "shown" && "runs" in projected)
+      expect(projected.runs).toEqual([
+        [
+          { x: 10, lower: 90, upper: 70 },
+          { x: 20, lower: 75, upper: 50 },
+          { x: 30, lower: 80, upper: 60 },
+        ],
       ]);
     // A chart of grouped values has no rows to draw bounds for.
     expect(projectAnnotations([interval], frame(data))[0]!.status).toBe(
       "unsupported"
     );
+  });
+
+  it("splits a ribbon at an interior row without bounds", () => {
+    // History rows lead with no bounds; x = 3 is an invalid pair inside.
+    const data: Row[] = [
+      { x: 0, lo: null, hi: null },
+      { x: 1, lo: 10, hi: 30 },
+      { x: 2, lo: 12, hi: 34 },
+      { x: 3, lo: "n/a", hi: 36 },
+      { x: 4, lo: 14, hi: 38 },
+      { x: 5, lo: 15, hi: 40 },
+    ];
+    const interval: IntervalAnnotation = {
+      id: "i",
+      type: "interval",
+      lowerField: "lo",
+      upperField: "hi",
+      meaning: "Supplied range",
+    };
+    const projected = projectAnnotations([interval], {
+      ...frame(data),
+      xField: "x",
+      visibleIds: [0, 1, 2, 3, 4, 5],
+    })[0]!;
+    if (projected.status !== "shown" || !("runs" in projected))
+      throw new Error("expected a shown interval");
+    expect(projected.runs.map((run) => run.map((point) => point.x))).toEqual([
+      [10, 20],
+      [40, 50],
+    ]);
+    expect(projected.evidence).toEqual({
+      rows: 4,
+      breaks: 1,
+      reversed: 0,
+      duplicates: 0,
+    });
+    expect(intervalEvidenceText(projected.evidence, 2)).toBe(
+      "4 rows in 2 runs · 1 row without bounds splits it"
+    );
+  });
+
+  it("takes the outer bounds at a repeated x and reads date x values", () => {
+    const data: Row[] = [
+      { x: "2025-01-01", lo: 10, hi: 20 },
+      { x: "2025-01-01", lo: 5, hi: 15 },
+      { x: "2025-01-02", lo: 10, hi: 20 },
+    ];
+    const day = Date.UTC(2025, 0, 1);
+    const interval: IntervalAnnotation = {
+      id: "i",
+      type: "interval",
+      lowerField: "lo",
+      upperField: "hi",
+      meaning: "Supplied range",
+    };
+    const projected = projectAnnotations([interval], {
+      ...frame(data),
+      xScale: linear([day, day + 86_400_000], [0, 100]),
+      xField: "x",
+      visibleIds: [0, 1, 2],
+    })[0]!;
+    if (projected.status !== "shown" || !("runs" in projected))
+      throw new Error("expected a shown interval");
+    expect(projected.evidence.duplicates).toBe(1);
+    const [first] = projected.runs[0]!;
+    // Outer bounds 5 to 20: the lower pixel of 5, the upper pixel of 20.
+    expect(first).toEqual({ x: 0, lower: 95, upper: 80 });
   });
 
   it("reads a right-axis value on the right scale", () => {
@@ -476,5 +549,62 @@ describe("label placement", () => {
       ly: 50,
       anchor: "start",
     });
+  });
+});
+
+describe("charts whose marks summarize rows", () => {
+  const mean: ReferenceLineAnnotation = {
+    id: "m",
+    type: "reference-line",
+    axis: "x",
+    value: 0,
+    calculated: { statistic: "mean", population: "filtered" },
+  };
+
+  it("calculates over an axis's own values, such as one per group", () => {
+    const projected = projectAnnotations([mean], {
+      ...frame(rows),
+      plotted: undefined,
+      axisValues: { x: { all: [2, 4, 9], filtered: [2, 4] } },
+    })[0]!;
+    // The filtered groups' mean, 3, at 10 pixels per unit.
+    expect(projected).toMatchObject({
+      status: "shown",
+      value: 3,
+      position: 30,
+    });
+    expect(
+      projectAnnotations([mean], {
+        ...frame(rows),
+        axisValues: { x: { all: [], filtered: [] } },
+      })[0]!.status
+    ).toBe("empty");
+  });
+
+  it("places a record callout on a grid cell by its key values", () => {
+    const cellFrame: AnnotationFrame = {
+      ...frame(rows),
+      plotted: undefined,
+      cell: (attach) =>
+        attach.keyFields[0] !== "lot"
+          ? "unsupported"
+          : attach.key[0] === "A"
+            ? { x: 25, y: 50, selected: true }
+            : "missing",
+    };
+    const on = (key: string): CalloutAnnotation => ({
+      ...callout(key),
+      attach: { kind: "record", keyFields: ["lot"], key: [key] },
+    });
+    // Two rows share lot A; a cell holds them all, so the key is no problem.
+    expect(projectAnnotations([on("A")], cellFrame)[0]).toMatchObject({
+      status: "shown",
+      x: 25,
+      y: 50,
+    });
+    expect(projectAnnotations([on("Z")], cellFrame)[0]!.status).toBe("missing");
+    expect(projectAnnotations([callout("E-17")], cellFrame)[0]!.status).toBe(
+      "unsupported"
+    );
   });
 });

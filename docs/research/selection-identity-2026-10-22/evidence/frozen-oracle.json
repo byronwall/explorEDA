@@ -1,0 +1,48 @@
+{
+  "oracle_id": "R077-12-v1",
+  "frozen_before_behavior_analysis": true,
+  "baseline": "f4cacdde180e16ad814451a8c064e394535565d6",
+  "meaning": "Normative hand-written oracle, not observed product behavior. logicalId is test-only provenance. Source id is records; entityKey is key. Row-specific selections preserve a record only with a unique, unchanged typed key in the same source and unchanged output grain. Otherwise retained intent is explicitly unresolved, never rebound by position or equal display values. Plain unkeyed replacement deliberately invalidates row-specific selections and transient references.",
+  "ledger": [
+    {"logicalId":"L01","key":101,"name":"Mira","cohort":"keep","measure":1},
+    {"logicalId":"L02","key":"101","name":"Mira","cohort":"keep","measure":2},
+    {"logicalId":"L03","key":202,"name":"Theo","cohort":"other","measure":4},
+    {"logicalId":"L04","key":"k4","name":"Theo","cohort":"keep","measure":8},
+    {"logicalId":"L05","key":true,"name":"Sana","cohort":"other","measure":16},
+    {"logicalId":"L06","key":false,"name":"Sana","cohort":"keep","measure":32},
+    {"logicalId":"L07","key":0,"name":"Devon","cohort":"other","measure":64},
+    {"logicalId":"L08","key":"0","name":"Devon","cohort":"keep","measure":128},
+    {"logicalId":"L09","key":"k9","name":"Imani","cohort":"other","measure":256},
+    {"logicalId":"L10","key":303,"name":"Imani","cohort":"keep","measure":512},
+    {"logicalId":"L11","key":"k11","name":"Jules","cohort":"other","measure":1024},
+    {"logicalId":"L12","key":404,"name":"Jules","cohort":"keep","measure":2048}
+  ],
+  "selections": {
+    "C_chart": ["L02","L05","L10"],
+    "T_rowsSettings": ["L04","L08","L10"],
+    "W_workspace_rows": ["L01","L10","L12"],
+    "P_workspace_predicate": {"field":"cohort","operator":"eq","value":"keep","matches":["L01","L02","L04","L06","L08","L10","L12"]},
+    "combined_intersection": ["L10"],
+    "trace_targets": ["L02","L10"]
+  },
+  "mutations": [
+    {"id":"M00","operation":"Unchanged object and array references; no source replacement.","preserved":{"C":["L02","L05","L10"],"T":["L04","L08","L10"],"W":["L01","L10","L12"]},"unresolved":[],"P":["L01","L02","L04","L06","L08","L10","L12"],"combined":["L10"]},
+    {"id":"M01","operation":"Fresh array and fresh row objects; identical order, keys, fields and values.","preserved":{"C":["L02","L05","L10"],"T":["L04","L08","L10"],"W":["L01","L10","L12"]},"unresolved":[],"P":["L01","L02","L04","L06","L08","L10","L12"],"combined":["L10"]},
+    {"id":"M02","operation":"Reverse all 12 records in a fresh source array.","preserved":{"C":["L02","L05","L10"],"T":["L04","L08","L10"],"W":["L01","L10","L12"]},"unresolved":[],"P":["L01","L02","L04","L06","L08","L10","L12"],"combined":["L10"]},
+    {"id":"M03","operation":"Append L13: key string k13, name Mira, cohort keep, measure 4096.","preserved":{"C":["L02","L05","L10"],"T":["L04","L08","L10"],"W":["L01","L10","L12"]},"unresolved":[],"P":["L01","L02","L04","L06","L08","L10","L12","L13"],"combined":["L10"]},
+    {"id":"M04","operation":"Delete selected L10, leave all other records in baseline order.","preserved":{"C":["L02","L05"],"T":["L04","L08"],"W":["L01","L12"]},"unresolved":["L10"],"P":["L01","L02","L04","L06","L08","L12"],"combined":[]},
+    {"id":"M05","operation":"Delete unselected L03, leave all other records in baseline order.","preserved":{"C":["L02","L05","L10"],"T":["L04","L08","L10"],"W":["L01","L10","L12"]},"unresolved":[],"P":["L01","L02","L04","L06","L08","L10","L12"],"combined":["L10"]},
+    {"id":"M06","operation":"Change only L09.key from string k9 to number 303, duplicating selected L10's key.","preserved":{"C":["L02","L05"],"T":["L04","L08"],"W":["L01","L12"]},"unresolved":["L10"],"P":["L01","L02","L04","L06","L08","L10","L12"],"combined":[]},
+    {"id":"M07","operation":"Remove only L10.key; do not infer identity from its name or measure.","preserved":{"C":["L02","L05"],"T":["L04","L08"],"W":["L01","L12"]},"unresolved":["L10"],"P":["L01","L02","L04","L06","L08","L10","L12"],"combined":[]},
+    {"id":"M08","operation":"Change only L10.key from number 303 to string 303.","preserved":{"C":["L02","L05"],"T":["L04","L08"],"W":["L01","L12"]},"unresolved":["L10"],"P":["L01","L02","L04","L06","L08","L10","L12"],"combined":[]},
+    {"id":"M09","operation":"Change query from one output per record to two child outputs per record. Child keys are string <logicalId>-a and <logicalId>-b, uniquely keyed; preserve source references, do not promote old output-row selection to both children.","preserved":{"C":[],"T":[],"W":[]},"unresolved":["all previously selected output rows; grain changed"],"P_source":["L01","L02","L04","L06","L08","L10","L12"],"P_output":["L01/a","L01/b","L02/a","L02/b","L04/a","L04/b","L06/a","L06/b","L08/a","L08/b","L10/a","L10/b","L12/a","L12/b"],"combined":[],"source_trace_preserved":["L02","L10"]},
+    {"id":"M10","operation":"Clean-key positive control: set all keys to unique strings stable-L01 through stable-L12 before selecting, then reverse. This is a separate initial selection, not identity migration.","preserved":{"C":["L02","L05","L10"],"T":["L04","L08","L10"],"W":["L01","L10","L12"]},"unresolved":[],"P":["L01","L02","L04","L06","L08","L10","L12"],"combined":["L10"]},
+    {"id":"M11","operation":"Remove cohort from schema and every row; retain key and measure. P becomes invalid; no accidental match-all fallback. Combined export remains unavailable until P is explicitly cleared or repaired.","preserved":{"C":["L02","L05","L10"],"T":["L04","L08","L10"],"W":["L01","L10","L12"]},"unresolved":["P: missing field cohort"],"P":[],"combined":[],"status":"invalid-schema"},
+    {"id":"M12","operation":"Mutate the same source array in place by reversing it. Outside supported immutable input; no correctness pass inferred from incidental updates.","preserved":null,"unresolved":null,"status":"unsupported-input"}
+  ],
+  "fallback_control": "F01: before selecting, make L09 and L10 duplicate number 303, or remove L10.key. Select the physical occurrence L10. Then immutably reverse or prepend a record. Its old position must be invalidated/unresolved, never rebound to the new occupant. It does not acquire a stable identity through position.",
+  "predicate_control": "N01: name == Mira is intentionally a value predicate and selects L01 plus L02, then also L13 after M03; it is not a row-identity promise.",
+  "plain_contract": "For M01-M11 in plain mode with positional IDs, invalidate all row-specific filters across C/T/W and transient row refs on source replacement; retain semantic predicates only if schema-valid and explicitly restored. M00 preserves. M12 unsupported. Clearing must be observable, and a vacuous row filter must not silently become match-all.",
+  "unresolved_policy": "The oracle retains unresolved intent and excludes unresolved targets from selected membership. Partial resolutions remain exact; all-unresolved positive inclusion filters match no rows until deliberate user clear/reselect. An explicit whole-selection reset is an alternative contract, not oracle equivalence, and requires a visible/reportable reset event.",
+  "evidence_limit": "Freezing and hash validation are artifact operations, not a product experiment. No pnpm, browser, component lifecycle, worker scheduling, export, or host task result is asserted."
+}

@@ -1,0 +1,13 @@
+project @stocks
+
+source @prices path=../../../datasets/tech-stocks.csv {
+  field Symbol string
+  field Company string
+  field Month date
+  field Price number
+}
+
+query @prices "Company-months" glyph=◆ {
+  source prices
+  calc indexed "Price, first month = 100" = ["prices.Symbol"] == "AMZN" ? 100 * ["prices.Price"] / 64.56 : ["prices.Symbol"] == "AAPL" ? 100 * ["prices.Price"] / 25.94 : ["prices.Symbol"] == "GOOG" ? 100 * ["prices.Price"] / 102.37 : ["prices.Symbol"] == "IBM" ? 100 * ["prices.Price"] / 100.52 : 100 * ["prices.Price"] / 39.81
+}

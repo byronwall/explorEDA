@@ -1,0 +1,59 @@
+
+ RUN  v3.0.8 /Users/byronwall/Projects/explorEDA/packages/explorEDA
+
+stdout | src/test/providers/r026-local-probe.test.tsx > measures the categorical null count and broad missing predicate separately
+MS02 {
+  displayedNullCount: 3,
+  predicateIds: [ 'r01', 'r02', 'r03', 'r04', 'r05' ]
+}
+
+stdout | src/test/providers/r026-local-probe.test.tsx > compares absent-property batch and trace status through the real parser
+MS04 {
+  batchError: undefined,
+  absentTraceError: 'Undefined variable: x',
+  undefinedTraceError: undefined
+}
+
+stdout | src/test/providers/r026-local-probe.test.tsx > compares a token-only preview and Apply with a host numeric declaration
+MS03 {
+  preview: {
+    field: 'x',
+    inferredType: 'categorical',
+    effectiveType: 'categorical',
+    totalCount: 12,
+    validCount: 8,
+    missingCount: 4,
+    failedCount: 0,
+    examples: [
+      [Object], [Object],
+      [Object], [Object],
+      [Object], [Object],
+      [Object], [Object]
+    ],
+    failures: []
+  },
+  appliedProfile: {
+    name: 'x',
+    dataType: 'numeric',
+    totalCount: 12,
+    uniqueCount: 2,
+    nullCount: 10,
+    excludedCount: 0,
+    statistics: {
+      min: 0,
+      max: 12.5,
+      mean: 6.25,
+      median: 6.25,
+      stdDev: 6.25,
+      bins: [Array]
+    }
+  }
+}
+
+ ✓ src/test/providers/r026-local-probe.test.tsx (4 tests) 12ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  09:57:00
+   Duration  870ms (transform 126ms, setup 139ms, collect 244ms, tests 12ms, environment 288ms, prepare 41ms)
+

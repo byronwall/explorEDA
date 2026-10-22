@@ -2,6 +2,10 @@
 apps/demo/public/daily-viz/
 # The first corpus's handoff, kept byte for byte.
 docs/research/daily-viz-corpus-2026-10-15/handoff/
+
+# R077 frozen oracle keeps the bytes the local probe was written against.
+docs/research/selection-identity-2026-10-22/evidence/frozen-oracle.json
+
 # Pro research originals and the submitted prompt retain their published hashes.
 docs/research/data-preparation-boundary-2026-10-16/originals/
 docs/research/data-preparation-boundary-2026-10-16/pro-prompt.md

@@ -20,6 +20,12 @@ export interface AnnotationContext {
   valueAxis: "x" | "y";
   /** Aggregate marks a callout can attach to, by this field's values. */
   categoryField?: string;
+  /**
+   * On a chart drawn as a grid of cells, the fields that place a cell: a
+   * heatmap's row and column, or a calendar's date. A callout attaches to a
+   * cell by their values; the grid has no axis for lines or bands.
+   */
+  cellFields?: string[];
 }
 
 const BASE = {
@@ -74,6 +80,13 @@ export function annotationContext(settings: ChartSettings): AnnotationContext {
       return { ...BASE, valueAxis: "x", categoryField: settings.field };
     case "boxplot":
       return { ...BASE, yField: settings.field };
+    case "ecdf":
+      // Values on x, the share of rows on y.
+      return { ...BASE, xField: settings.field, valueAxis: "x", plane: true };
+    case "heatmap":
+      return { ...BASE, cellFields: [settings.field, settings.columnField] };
+    case "calendar":
+      return { ...BASE, cellFields: [settings.field] };
     default:
       return BASE;
   }

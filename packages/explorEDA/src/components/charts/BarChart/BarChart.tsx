@@ -175,6 +175,12 @@ function SingleBarChart({
     nonce,
   ]);
 
+  // Every row this panel can draw, for calculated annotations.
+  const facetAllIds = useMemo(() => {
+    const facets = facetIds?.length ? new Set(facetIds) : undefined;
+    return facets ? allIds.filter((id) => facets.has(id)) : allIds;
+  }, [allIds, facetIds]);
+
   const typography = useAxisTypography();
   const themeColors = useThemeColors();
   const plan = useMemo(
@@ -434,6 +440,14 @@ function SingleBarChart({
         annotations={annotationSlot(settings, {
           ...scaleFrame(xScale, yScale, { y: settings.yAxis.scaleType }),
           facetKey,
+          // A histogram's x axis is its field, so rule x=mean reads its rows.
+          ...(plan.mode === "bin" && {
+            xField: settings.field,
+            population: {
+              all: facetAllIds,
+              filtered: liveIds,
+            },
+          }),
           // A bar sums its rows, so a note attaches to its category.
           category: ({ value }) => {
             const bar = plan.bars.find(

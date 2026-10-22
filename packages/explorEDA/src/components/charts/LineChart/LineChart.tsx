@@ -1,5 +1,10 @@
-import { useColorContext } from "@/hooks/useDisplayColorScales";
-import { defaultCategoricalColors } from "@/lib/colorScaleMath";
+import {
+  useColorContext,
+  useDisplayColorScale,
+} from "@/hooks/useDisplayColorScales";
+import { categoryKey, categoryLabel } from "@/lib/categories";
+import { defaultCategoricalColors, makeColorScale } from "@/lib/colorScaleMath";
+import { planObservationSeries } from "./observationSeries";
 import { THEME_PALETTE, resolvePaletteColor } from "@/lib/themePalettes";
 import { finiteNumber, timestampOf } from "@/lib/valueParsing";
 import {
@@ -40,6 +45,7 @@ import {
 } from "../useGetColumnData";
 import { useGetAllIds, useGetLiveIds } from "../useGetLiveData";
 import { type LineChartSettings, DEFAULT_SERIES_SETTINGS } from "./definition";
+import type { IntervalAnnotation } from "@/lib/annotations/types";
 import { TimeSeriesChart } from "./TimeSeriesChart";
 
 const curveTypes = {
@@ -94,8 +100,11 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
   const xNumber = (value: datum) =>
     xIsDate ? timestampOf(value) : finiteNumber(value);
 
-  // Get all data for axis limits calculation
-  const allXData = useGetColumnDataForIds(settings.xField);
+  // Every row this panel can draw, whatever the filters: what "all rows"
+  // calculations and the automatic domains read. A chart-local filter
+  // narrows it; facets share it, so their panels share one scale.
+  const allIds = useGetAllIds(settings);
+  const allXData = useGetColumnDataForIds(settings.xField, allIds);
 
   // Get filtered data for rendering
   const liveIds = useGetLiveIds(settings);
@@ -104,15 +113,44 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
     [liveIds, facetIds]
   );
   const liveXData = useGetColumnDataForIds(settings.xField, selectedIds);
-  // Every row this panel can draw, whatever the filters: what "all rows"
-  // calculations read.
-  const allIds = useGetAllIds(settings);
+  // A color field other than the axes splits each y field into one line per
+  // value, such as a firm's path over a numeric year.
+  const splitField =
+    settings.colorField &&
+    settings.colorField !== settings.xField &&
+    !settings.seriesField.includes(settings.colorField)
+      ? settings.colorField
+      : undefined;
+  const liveGroupData = useGetColumnDataForIds(splitField, selectedIds);
+  // Split lines take the panel's color legend; this one names the fields.
+  const fieldLegend =
+    settings.showLegend && (!splitField || settings.seriesField.length > 1);
+  const splitScale = useDisplayColorScale(
+    splitField ? settings.colorScaleId : undefined
+  );
   const panelIds = useMemo(() => {
     if (!facetIds) return allIds;
     const facet = new Set(facetIds);
     return allIds.filter((id) => facet.has(id));
   }, [allIds, facetIds]);
-  const allSeriesData = useGetColumnDataForMultipleIds(settings.seriesField);
+  const allSeriesData = useGetColumnDataForMultipleIds(
+    settings.seriesField,
+    allIds
+  );
+  // Supplied intervals widen the automatic domain to show their bounds.
+  const intervals = useMemo(
+    () =>
+      (settings.annotations ?? []).filter(
+        (item): item is IntervalAnnotation =>
+          item.type === "interval" && !item.hidden
+      ),
+    [settings.annotations]
+  );
+  const intervalFields = useMemo(
+    () => intervals.flatMap((item) => [item.lowerField, item.upperField]),
+    [intervals]
+  );
+  const intervalData = useGetColumnDataForMultipleIds(intervalFields, allIds);
 
   // Get all series data using the new hook
   const liveSeriesData = useGetColumnDataForMultipleIds(
@@ -134,6 +172,16 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
     },
     { left: [] as number[], right: [] as number[] }
   );
+  for (const item of intervals) {
+    const lows = intervalData[item.lowerField] ?? [];
+    const highs = intervalData[item.upperField] ?? [];
+    lows.forEach((value, index) => {
+      const low = finiteNumber(value);
+      const high = finiteNumber(highs[index]);
+      if (low === undefined || high === undefined) return;
+      yValuesByAxis[item.yAxis === "right" ? "right" : "left"].push(low, high);
+    });
+  }
   const leftYExtent = extent(yValuesByAxis.left) as [number, number];
   const leftYTicks = Number.isFinite(leftYExtent[0])
     ? scaleLinear().domain(leftYExtent).nice().ticks(5)
@@ -175,7 +223,7 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
   }
 
   // Adjust margins based on legend position
-  if (settings.showLegend) {
+  if (fieldLegend) {
     switch (settings.legendPosition) {
       case "top":
         margin.top += 18;
@@ -196,49 +244,24 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
   const innerHeight = height - margin.top - margin.bottom;
 
   // Convert data to numbers for d3
-  const processedLiveSeriesData = useMemo(() => {
-    const orderedIndices = liveXData
-      .map((_, index) => index)
-      .sort((a, b) => {
-        const aValue = liveXData[a];
-        const bValue = liveXData[b];
-        const aX = xNumber(aValue) ?? NaN;
-        const bX = xNumber(bValue) ?? NaN;
-        const aFinite = Number.isFinite(aX);
-        const bFinite = Number.isFinite(bX);
-        if (aFinite !== bFinite) return aFinite ? -1 : 1;
-        return aFinite ? aX - bX || a - b : a - b;
-      });
-
-    return settings.seriesField.map((field) => {
-      const data = liveSeriesData[field] ?? [];
-      const reducedData: Array<{ x: number; y: number | null }> = [];
-      let segment: Array<{ x: number; y: number }> = [];
-
-      const flushSegment = () => {
-        if (segment.length > 0) {
-          reducedData.push(...reduceDataPoints(segment, innerWidth));
-          segment = [];
-        }
-      };
-
-      orderedIndices.forEach((i) => {
-        const value = data[i];
-        const xValue = liveXData[i];
-        const x = xNumber(xValue) ?? NaN;
-        const y = finiteNumber(value) ?? NaN;
-        if (!Number.isFinite(x) || !Number.isFinite(y)) {
-          flushSegment();
-          reducedData.push({ x, y: null });
-          return;
-        }
-        segment.push({ x, y });
-      });
-      flushSegment();
-
-      return { name: field, data: reducedData };
-    });
-  }, [settings.seriesField, liveSeriesData, liveXData, innerWidth]);
+  const processedLiveSeriesData = useMemo(
+    () =>
+      planObservationSeries({
+        fields: settings.seriesField,
+        xs: liveXData.map(xNumber),
+        ys: liveSeriesData,
+        groups: splitField ? liveGroupData : undefined,
+        reduce: (points) => reduceDataPoints(points, innerWidth),
+      }),
+    [
+      settings.seriesField,
+      liveSeriesData,
+      liveXData,
+      liveGroupData,
+      splitField,
+      innerWidth,
+    ]
+  );
 
   // Ensure consistent color assignment for series with better distribution
   const seriesColors = useMemo(() => {
@@ -287,6 +310,31 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
       ),
     [seriesColors, colorContext]
   );
+  const splitColor = useMemo(
+    () => (splitScale ? makeColorScale(splitScale) : undefined),
+    [splitScale]
+  );
+  // Without a color scale, split values take palette colors in draw order.
+  const groupOrder = [
+    ...new Set(
+      processedLiveSeriesData.map((series) => categoryKey(series.group))
+    ),
+  ];
+  const lineColor = (series: (typeof processedLiveSeriesData)[number]) =>
+    series.group === undefined && !splitField
+      ? drawnColors[series.field]
+      : (splitColor?.(series.group) ??
+        defaultCategoricalColors[
+          groupOrder.indexOf(categoryKey(series.group)) %
+            defaultCategoricalColors.length
+        ]!);
+  // A split line reads as its value, and its field too when there are several.
+  const lineLabel = (series: (typeof processedLiveSeriesData)[number]) =>
+    !splitField
+      ? seriesLabel(series.field)
+      : settings.seriesField.length > 1
+        ? `${categoryLabel(series.group)} · ${seriesLabel(series.field)}`
+        : categoryLabel(series.group);
 
   // Store assigned colors back into settings using updateChart
   useEffect(() => {
@@ -342,7 +390,7 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
 
   // Calculate y extent across all series
   const rightAxisSeries = processedLiveSeriesData.filter(
-    (series) => settings.seriesSettings[series.name]?.useRightAxis
+    (series) => settings.seriesSettings[series.field]?.useRightAxis
   );
 
   const rightYExtent = extent(yValuesByAxis.right) as [number, number];
@@ -444,7 +492,7 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
       .curve(curveTypes[settings.styles.curveType as CurveType]);
 
   const renderLegend = () => {
-    if (!settings.showLegend) return null;
+    if (!fieldLegend) return null;
     const vertical =
       settings.legendPosition === "left" || settings.legendPosition === "right";
     const sideWidth = Math.min(100, width * 0.22);
@@ -482,7 +530,7 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
                 x2="14"
                 y1="3"
                 y2="3"
-                stroke={drawnColors[name]}
+                stroke={splitField ? "var(--foreground)" : drawnColors[name]}
                 strokeWidth="2"
                 strokeDasharray={
                   settings.seriesSettings[name]?.lineStyle === "dashed"
@@ -515,12 +563,15 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
               (item) => item.x === hoverX && item.y != null
             );
             if (!point) return [];
-            const right = settings.seriesSettings[series.name]?.useRightAxis;
+            const right = settings.seriesSettings[series.field]?.useRightAxis;
             const y = point.y!;
-            if (offScale(series.name, y)) return [];
+            if (offScale(series.field, y)) return [];
             return [
               {
                 name: series.name,
+                field: series.field,
+                label: lineLabel(series),
+                color: lineColor(series),
                 value: y,
                 py: (right ? rightYScale : leftYScale)(y),
               },
@@ -540,7 +591,8 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
       ? ""
       : xIsDate
         ? new Date(hoverX).toISOString().slice(0, 16).replace("T", " ")
-        : displayValue(settings.xField, hoverX);
+        : (formatFieldValue?.(settings.xField, hoverX) ??
+          displayValue(settings.xField, hoverX));
 
   const range = settings.filters.find(
     (filter) => filter.type === "range" && filter.field === settings.xField
@@ -709,7 +761,7 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
                     cx={hoverPx}
                     cy={point.py}
                     r={3.5}
-                    fill={drawnColors[point.name]}
+                    fill={point.color}
                     stroke="var(--background)"
                     strokeWidth={1.5}
                   />
@@ -723,7 +775,7 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
                     dominantBaseline="middle"
                     className="eda-ecdf-value"
                   >
-                    {displayValue(point.name, point.value)}
+                    {displayValue(point.field, point.value)}
                   </text>
                 ))}
                 <AxisValuePill
@@ -760,8 +812,8 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
         <g>
           {/* Lines */}
           {processedLiveSeriesData.map((series) => {
-            const lineGenerator = createLineGenerator(series.name);
-            const seriesSettings = settings.seriesSettings[series.name] ?? {
+            const lineGenerator = createLineGenerator(series.field);
+            const seriesSettings = settings.seriesSettings[series.field] ?? {
               showPoints: false,
               pointSize: 4,
               pointOpacity: 1,
@@ -771,7 +823,7 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
               useRightAxis: false,
             };
 
-            const seriesColor = drawnColors[series.name];
+            const seriesColor = lineColor(series);
 
             return (
               <g key={series.name}>
@@ -781,7 +833,7 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
                   stroke={seriesColor}
                   strokeWidth={seriesSettings.lineWidth}
                   strokeOpacity={
-                    seriesSettings.lineOpacity * seriesOpacity(series.name)
+                    seriesSettings.lineOpacity * seriesOpacity(series.field)
                   }
                   style={{ transition: "stroke-opacity 140ms ease-out" }}
                   strokeDasharray={
@@ -794,7 +846,7 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
                 />
                 {seriesSettings.showPoints &&
                   series.data.map((d, j) =>
-                    d.y == null || offScale(series.name, d.y) ? null : (
+                    d.y == null || offScale(series.field, d.y) ? null : (
                       <circle
                         key={j}
                         cx={xScale(d.x)}
@@ -805,7 +857,7 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
                         fill={seriesColor}
                         fillOpacity={
                           seriesSettings.pointOpacity *
-                          seriesOpacity(series.name)
+                          seriesOpacity(series.field)
                         }
                       />
                     )
@@ -824,8 +876,8 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
           </span>
           {hoverPoints.map((point) => (
             <span key={point.name} className="eda-readout-item">
-              <span>{seriesLabel(point.name)}</span>
-              <b>{displayValue(point.name, point.value)}</b>
+              <span>{point.label}</span>
+              <b>{displayValue(point.field, point.value)}</b>
             </span>
           ))}
         </ChartReadout>

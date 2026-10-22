@@ -2,11 +2,11 @@
 
 Reviewed on 2026-10-18 against source commit `b07f3cf3483130f6cc3391bba47a87f616c93321`.
 
-These decisions reconcile all ten [Pro recommendations](originals/recommendations.md). Adopt means accept a research direction or constraint. It does not mean a feature shipped or the proposed proof passed.
+These decisions reconcile all ten [Pro recommendations](https://chatgpt.com/c/6ad517a7-8bf8-83e9-a28b-71c17ff5afc1). Adopt means accept a research direction or constraint. It does not mean a feature shipped or the proposed proof passed.
 
 | ID    | Decision                | Reason and destination                                                                                                                                                                                                                                                       |
 | ----- | ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| DP-01 | Adopt as a proposal     | Test current preparation before adding scope. Keep the guide and runnable example in the same future milestone. The [proof plan](originals/proof-plan.md) remains proposed.                                                                                                  |
+| DP-01 | Adopt as a proposal     | Test current preparation before adding scope. Keep the guide and runnable example in the same future milestone. The [proof plan](https://chatgpt.com/c/6ad517a7-8bf8-83e9-a28b-71c17ff5afc1) remains proposed.                                                               |
 | DP-02 | Adopt                   | `aggregateFrame` reduces expansion copies by source identity. Shared query views and further same-query aggregation exist. Teach grain and denominators in that proof. Keep [reusable outputs](../../intent/reusable-analysis-outputs/intent-brief.md) unprioritized.        |
 | DP-03 | Adopt                   | Ambiguous lookup and absent lookup both project unavailable fields. Require valid sources and keys before an absence claim. A supplied expected domain is essential. Do not infer demand from the synthetic fixture.                                                         |
 | DP-04 | Adopt as a boundary     | Keep reshaping and separate relation composition upstream for now. Require scalar result keys, null policy, grain, and provenance limits. The SQL docs example repeats order amounts at return grain; a future guide correction must explain that risk.                      |

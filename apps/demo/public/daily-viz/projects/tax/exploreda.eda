@@ -1,0 +1,26 @@
+project @tax
+
+source @readings path=../../../datasets/tax-slope.csv {
+  field Country string
+  field Code string
+  field Year number
+  field "Tax revenue" number
+  field "Change 2000–2023" number
+  field Direction string
+}
+
+query @readings "Readings" glyph=◆ {
+  source readings
+}
+
+query @countries "Countries" glyph=◆ {
+  source readings
+  calc in_2000 = ["readings.Year"] == 2000 ? ["readings.Tax revenue"] : 0
+  calc in_2023 = ["readings.Year"] == 2023 ? ["readings.Tax revenue"] : 0
+  aggregate @wide by=readings.Country,readings.Direction {
+    sum @share_2000 in_2000 label="2000 (% of GDP)"
+    sum @share_2023 in_2023 label="2023 (% of GDP)"
+    average @change "readings.Change 2000–2023" label="Change, 2000 to 2023 (points)"
+  }
+  calc start_band "Starting share" = share_2000 >= 20 ? "20% of GDP or more in 2000" : "Under 20% of GDP in 2000"
+}

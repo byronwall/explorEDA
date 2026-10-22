@@ -8,6 +8,32 @@
 ## How it reads
 
 - Rows group by one field and columns by another. Each cell's shade shows its count or measure.
+- **Metric** counts rows, or sums, averages, or takes the maximum or minimum of a measure. A maximum shows each cell's peak, such as a state's highest weekly rate in each wave; write it as `aggregation=max measureField=rate`.
 - Click a cell to filter every other chart to rows with both of its values.
-- Each axis shows at most a set number of values, the ones with the most rows. Rows with other values are left out and counted below the chart.
+- Each axis shows at most a set number of values, the ones with the most rows. Rows with other values are left out and counted below the chart. **Rows shown** and **Columns shown** set the two limits apart, up to 200 each.
+- **Order** puts values by row count, A to Z, or the order they first appear in the data. **Column order** sets the columns apart from the rows.
 - **Show values in cells** prints each value inside its cell when the cell is large enough for the text.
+
+## Long histories
+
+Set **Column dates** on a date column to group it by year, month, week, or day. Every period from the first date to the last gets a column, so a quiet month shows as an empty cell instead of disappearing. Past the column limit, the latest periods show, and the rest are counted below the chart.
+
+Click a cell to select its row value and the dates of its period; the other charts narrow to those exact rows.
+
+With many columns, labels show every few columns so they never overlap. Every cell still names its row, column, and value.
+
+See [six years of messages by month](/examples/message-log-heatmap) and [every state and year of measles reports](/examples/measles-heatmap).
+
+## Color
+
+By default, color runs across the shown cells' range, diverging around 0 when the values cross it. Filtering then recolors the cells.
+
+- **Color ends** fix the low and high values, so a value keeps its color whatever the filters show. Values past an end take the end's color. Set only one end to fix just that side.
+- **Square-root color** spreads small values apart, which helps when a few cells are far larger than the rest. Zero stays the lowest color, and negative values mirror positive ones.
+- Cells with no rows and cells with no valid measure stay apart from a measured zero, in the legend and in the trace.
+
+See [state election margins on a fixed scale from −40 to +40](/examples/elections-heatmap).
+
+## Annotations
+
+A callout attaches to one cell, at its center, by the cell's row and column values: `callout "Peak" category=Tue,9`, or `callout "Peak" on=day:Tue,hour:9` with the field names. Quote a value that holds a comma. A cell holds many rows, so it never stands for one record. Both axes name categories, so a heatmap takes no lines, bands, or regions.

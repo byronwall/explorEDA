@@ -1,4 +1,6 @@
 import {
+  aggregationLabel,
+  isAdditiveAggregation,
   summarizeGroup,
   type AggregateContributor,
   type AggregateInputRow,
@@ -7,7 +9,10 @@ import { STATUS_LINE_HEIGHT } from "../ChartStatusLine";
 import { categoryKey, categoryLabel, categoryValue } from "@/lib/categories";
 import { applyFilter } from "@/hooks/applyFilter";
 import type { datum } from "@/types/ChartTypes";
-import type { ValueFilter } from "@/types/FilterTypes";
+import type { DateRangeFilter, Filter, ValueFilter } from "@/types/FilterTypes";
+import { utcPeriod } from "@/lib/dailyRollup";
+import { dateBound } from "@/lib/valueParsing";
+import { periodFilter } from "../LineChart/timeSeriesPlan";
 import { heatFill, heatText, planHeatScale } from "../heatScale";
 import type { HeatmapSettings } from "./definition";
 
@@ -82,16 +87,25 @@ export interface HeatmapPlan {
   scale: {
     kind: "sequential" | "diverging";
     domain: [number, number];
+    transform?: "sqrt";
     population: string;
   };
   hasEmpty: boolean;
   hasInvalid: boolean;
   showValues: boolean;
   rotateColumnLabels: boolean;
+  /**
+   * Label every this many columns, so rotated labels never overlap. Cells
+   * keep their own names; a selected column always shows its label.
+   */
+  columnLabelEvery: number;
   /** The selected cell's row and column values, when exactly one cell is selected. */
   selection?: { row: datum; column: datum };
   /** Row and column values this chart's selection covers, by category key. */
-  selectedKeys: { rows: Set<string> | undefined; columns: Set<string> | undefined };
+  selectedKeys: {
+    rows: Set<string> | undefined;
+    columns: Set<string> | undefined;
+  };
   scopeNote: string;
 }
 
@@ -102,11 +116,15 @@ export interface HeatmapPlanInput {
   snapshot: HeatmapSnapshot;
   getFieldLabel: (field: string) => string;
   formatFieldValue?: (field: string, value: datum) => string;
+  /** Whether a row or column field's values take its display format. */
+  formatsCategory?: (field: string) => boolean;
 }
 
 export const LEGEND_HEIGHT = 30;
 const LABEL_CHAR_WIDTH = 6.5;
 const VALUE_FONT_SIZE = 11;
+/** Room each rotated column label needs along the axis. */
+const ROTATED_LABEL_SPACING = 16;
 
 function rankCategories(
   ids: number[],
@@ -115,18 +133,25 @@ function rankCategories(
   sortBy: HeatmapSettings["sortBy"],
   format: (value: datum) => string
 ) {
-  const counts = new Map<string, { value: datum; total: number }>();
+  const counts = new Map<
+    string,
+    { value: datum; total: number; first: number }
+  >();
   for (const id of ids) {
     const value = categoryValue(data[id]);
     const key = categoryKey(value);
     const item = counts.get(key);
-    if (item) {item.total += 1;}
-    else {counts.set(key, { value, total: 1 });}
+    if (item) {
+      item.total += 1;
+    } else {
+      counts.set(key, { value, total: 1, first: counts.size });
+    }
   }
   const ranked = [...counts]
     .map(([key, item]) => ({ key, ...item, label: format(item.value) }))
     .sort((a, b) => b.total - a.total || a.label.localeCompare(b.label));
   const shown = ranked.slice(0, Math.max(1, limit));
+  if (sortBy === "data") shown.sort((a, b) => a.first - b.first);
   if (sortBy === "label") {
     shown.sort((a, b) =>
       typeof a.value === "number" && typeof b.value === "number"
@@ -137,6 +162,73 @@ function rankCategories(
   return { shown, omitted: ranked.slice(shown.length) };
 }
 
+type ColumnInterval = NonNullable<HeatmapSettings["columnInterval"]>;
+
+/** The UTC period a date value falls in, or undefined for an unreadable date. */
+export function heatmapPeriod(value: datum, interval: ColumnInterval) {
+  const text =
+    typeof value === "number" && Number.isFinite(value)
+      ? new Date(value).toISOString()
+      : value;
+  return utcPeriod(text, interval);
+}
+
+/** A period's column label: 2019, 2019-02, or 2019-02-11. */
+function periodLabel(start: number, interval: ColumnInterval) {
+  const day = new Date(start).toISOString().slice(0, 10);
+  return interval === "year"
+    ? day.slice(0, 4)
+    : interval === "month"
+      ? day.slice(0, 7)
+      : day;
+}
+
+/**
+ * Every period from the first dated row to the last, so a period with no
+ * rows still has its column. Past the limit, the latest periods show.
+ */
+function rankPeriods(
+  ids: number[],
+  data: Record<number, datum>,
+  limit: number,
+  interval: ColumnInterval
+) {
+  const totals = new Map<number, number>();
+  for (const id of ids) {
+    const period = heatmapPeriod(data[id], interval);
+    if (period) totals.set(period.start, (totals.get(period.start) ?? 0) + 1);
+  }
+  const starts = [...totals.keys()];
+  const periods: {
+    key: string;
+    value: number;
+    label: string;
+    total: number;
+  }[] = [];
+  if (starts.length) {
+    const last = Math.max(...starts);
+    let start = Math.min(...starts);
+    // A guard for a stray far-off date: never build more than 10,000 columns.
+    while (start <= last && periods.length < 10_000) {
+      periods.push({
+        key: categoryKey(start),
+        value: start,
+        label: periodLabel(start, interval),
+        total: totals.get(start) ?? 0,
+      });
+      start = heatmapPeriod(
+        new Date(start).toISOString().slice(0, 10),
+        interval
+      )!.end;
+    }
+  }
+  const keep = Math.max(1, limit);
+  return {
+    shown: periods.slice(-keep),
+    omitted: periods.slice(0, Math.max(0, periods.length - keep)),
+  };
+}
+
 export function planHeatmap({
   settings,
   width,
@@ -144,15 +236,20 @@ export function planHeatmap({
   snapshot,
   getFieldLabel,
   formatFieldValue,
+  formatsCategory,
 }: HeatmapPlanInput): HeatmapPlan {
   const rowField = settings.field;
   const columnField = settings.columnField;
   const measureField =
     settings.aggregation === "count" ? undefined : settings.measureField;
+  // A category prints as itself, so a year reads 1928, unless its field
+  // has a display format of its own.
   const label = (field: string) => (value: datum) =>
     value == null
       ? categoryLabel(value)
-      : formatFieldValue && typeof value !== "string"
+      : formatFieldValue &&
+          typeof value !== "string" &&
+          (!formatsCategory || formatsCategory(field))
         ? formatFieldValue(field, value)
         : categoryLabel(value);
   const rowRank = rankCategories(
@@ -162,34 +259,52 @@ export function planHeatmap({
     settings.sortBy,
     label(rowField)
   );
-  const columnRank = rankCategories(
-    snapshot.allIds,
-    snapshot.columnData,
-    settings.maxCategories,
-    settings.sortBy,
-    label(columnField)
-  );
+  const interval = settings.columnInterval;
+  const columnLimit = settings.maxColumns ?? settings.maxCategories;
+  const columnRank = interval
+    ? rankPeriods(snapshot.allIds, snapshot.columnData, columnLimit, interval)
+    : rankCategories(
+        snapshot.allIds,
+        snapshot.columnData,
+        columnLimit,
+        settings.columnSortBy ?? settings.sortBy,
+        label(columnField)
+      );
+  // A binned column is the period its date falls in; an unreadable date
+  // has no column.
+  const columnKeyOf = (id: number) => {
+    if (!interval) return categoryKey(categoryValue(snapshot.columnData[id]));
+    const period = heatmapPeriod(snapshot.columnData[id], interval);
+    return period ? categoryKey(period.start) : undefined;
+  };
   const omittedRowKeys = new Set(rowRank.omitted.map((item) => item.key));
-  const omittedColumnKeys = new Set(
-    columnRank.omitted.map((item) => item.key)
-  );
+  const omittedColumnKeys = new Set(columnRank.omitted.map((item) => item.key));
 
   // Group live rows into shown cells.
   const groups = new Map<string, AggregateInputRow[]>();
   let omittedSourceRows = 0;
   for (const id of snapshot.liveIds) {
     const rowKey = categoryKey(categoryValue(snapshot.rowData[id]));
-    const columnKey = categoryKey(categoryValue(snapshot.columnData[id]));
-    if (omittedRowKeys.has(rowKey) || omittedColumnKeys.has(columnKey)) {
+    const columnKey = columnKeyOf(id);
+    if (
+      columnKey === undefined ||
+      omittedRowKeys.has(rowKey) ||
+      omittedColumnKeys.has(columnKey)
+    ) {
       omittedSourceRows += 1;
       continue;
     }
     const key = `${rowKey}|${columnKey}`;
     const input: AggregateInputRow = { __ID: id };
-    if (measureField) {input[measureField] = snapshot.measureData[id];}
+    if (measureField) {
+      input[measureField] = snapshot.measureData[id];
+    }
     const group = groups.get(key);
-    if (group) {group.push(input);}
-    else {groups.set(key, [input]);}
+    if (group) {
+      group.push(input);
+    } else {
+      groups.set(key, [input]);
+    }
   }
 
   // Layout: row labels on the left under their field name, legend above,
@@ -240,7 +355,10 @@ export function planHeatmap({
   const summaries = new Map(
     [...groups].map(([key, group]) => [
       key,
-      summarizeGroup(group, { aggregation: settings.aggregation, measureField }),
+      summarizeGroup(group, {
+        aggregation: settings.aggregation,
+        measureField,
+      }),
     ])
   );
   const values = [...summaries.values()].flatMap((summary) =>
@@ -248,19 +366,24 @@ export function planHeatmap({
       ? [summary.value]
       : []
   );
-  const scale = planHeatScale(values);
+  const scale = planHeatScale(values, settings.colorDomain);
   const total = values.reduce((sum, value) => sum + value, 0);
   const additive =
-    settings.aggregation !== "average" && scale.domain[0] >= 0 && total > 0;
+    isAdditiveAggregation(settings.aggregation) &&
+    scale.domain[0] >= 0 &&
+    total > 0;
 
   const rowFilter = settings.filters.find(
     (filter): filter is ValueFilter =>
       filter.type === "value" && filter.field === rowField
   );
-  const columnFilter = settings.filters.find(
-    (filter): filter is ValueFilter =>
-      filter.type === "value" && filter.field === columnField
-  );
+  // A binned column selects by a date range; it covers the periods it spans.
+  const columnFilter: ValueFilter | undefined = interval
+    ? periodSelection(settings, columnRank.shown)
+    : settings.filters.find(
+        (filter): filter is ValueFilter =>
+          filter.type === "value" && filter.field === columnField
+      );
   const hasSelection = Boolean(rowFilter || columnFilter);
   const format = (value: number) =>
     measureField && formatFieldValue
@@ -298,7 +421,8 @@ export function planHeatmap({
         width: cellWidth,
         height: cellHeight,
         position,
-        share: additive && state === "value" ? summary!.value! / total : undefined,
+        share:
+          additive && state === "value" ? summary!.value! / total : undefined,
         fill,
         textFill: state === "value" ? heatText(position) : "currentColor",
         selected: hasSelection
@@ -312,7 +436,7 @@ export function planHeatmap({
   const metricLabel =
     settings.aggregation === "count"
       ? "Row count"
-      : `${settings.aggregation === "sum" ? "Sum" : "Average"} of ${getFieldLabel(measureField ?? "")}`;
+      : `${aggregationLabel(settings.aggregation)} of ${getFieldLabel(measureField ?? "")}`;
   const longestValue = Math.max(
     0,
     ...cells.map((cell) => (cell.state === "value" ? cell.valueText.length : 0))
@@ -350,22 +474,37 @@ export function planHeatmap({
     scale: {
       kind: scale.kind,
       domain: scale.domain,
-      population: "shown cells after other filters",
+      transform: scale.transform,
+      population:
+        scale.fixed.min && scale.fixed.max
+          ? "fixed ends from the chart's settings"
+          : scale.fixed.min || scale.fixed.max
+            ? "shown cells after other filters, with a fixed end"
+            : "shown cells after other filters",
     },
     hasEmpty: cells.some((cell) => cell.state === "empty"),
     hasInvalid: cells.some((cell) => cell.state === "invalid"),
     showValues: settings.showValues && fits,
     rotateColumnLabels,
+    columnLabelEvery: rotateColumnLabels
+      ? Math.max(1, Math.ceil(ROTATED_LABEL_SPACING / Math.max(1, cellWidth)))
+      : 1,
     selection:
       rowFilter?.values.length === 1 && columnFilter?.values.length === 1
         ? { row: rowFilter.values[0], column: columnFilter.values[0] }
         : undefined,
     selectedKeys: {
       rows: rowFilter
-        ? new Set(rowFilter.values.map((value) => categoryKey(categoryValue(value))))
+        ? new Set(
+            rowFilter.values.map((value) => categoryKey(categoryValue(value)))
+          )
         : undefined,
       columns: columnFilter
-        ? new Set(columnFilter.values.map((value) => categoryKey(categoryValue(value))))
+        ? new Set(
+            columnFilter.values.map((value) =>
+              categoryKey(categoryValue(value))
+            )
+          )
         : undefined,
     },
     scopeNote:
@@ -379,25 +518,19 @@ export function toggleCellFilters(
   plan: HeatmapPlan,
   cell: HeatmapCell
 ) {
-  const rest = settings.filters.filter(
-    (filter) =>
-      filter.type !== "value" ||
-      (filter.field !== settings.field && filter.field !== settings.columnField)
-  );
+  const rest = ownFiltersRemoved(settings);
   const current = plan.selection;
   const same =
     current &&
     categoryKey(categoryValue(current.row)) === cell.row.key &&
     categoryKey(categoryValue(current.column)) === cell.column.key;
-  if (same) {return rest;}
+  if (same) {
+    return rest;
+  }
   return [
     ...rest,
     { type: "value" as const, field: settings.field, values: [cell.row.value] },
-    {
-      type: "value" as const,
-      field: settings.columnField,
-      values: [cell.column.value],
-    },
+    columnFilterFor(settings, cell.column),
   ];
 }
 
@@ -412,14 +545,73 @@ export function toggleAxisFilters(
   category: HeatmapCategory
 ) {
   const field = axis === "row" ? settings.field : settings.columnField;
-  const rest = settings.filters.filter(
-    (filter) =>
-      filter.type !== "value" ||
-      (filter.field !== settings.field && filter.field !== settings.columnField)
-  );
-  const own = axis === "row" ? plan.selectedKeys.rows : plan.selectedKeys.columns;
-  const other = axis === "row" ? plan.selectedKeys.columns : plan.selectedKeys.rows;
+  const rest = ownFiltersRemoved(settings);
+  const own =
+    axis === "row" ? plan.selectedKeys.rows : plan.selectedKeys.columns;
+  const other =
+    axis === "row" ? plan.selectedKeys.columns : plan.selectedKeys.rows;
   const same = !other && own?.size === 1 && own.has(category.key);
-  if (same) {return rest;}
-  return [...rest, { type: "value" as const, field, values: [category.value] }];
+  if (same) {
+    return rest;
+  }
+  return [
+    ...rest,
+    axis === "column"
+      ? columnFilterFor(settings, category)
+      : { type: "value" as const, field, values: [category.value] },
+  ];
+}
+
+/** This chart's filters without its own row and column selection. */
+function ownFiltersRemoved(settings: HeatmapSettings) {
+  return settings.filters.filter(
+    (filter) =>
+      !(
+        (filter.type === "value" &&
+          (filter.field === settings.field ||
+            filter.field === settings.columnField)) ||
+        (filter.type === "date-range" &&
+          settings.columnInterval &&
+          filter.field === settings.columnField)
+      )
+  );
+}
+
+/** Selects one column: its value, or its period's dates when binned. */
+function columnFilterFor(
+  settings: HeatmapSettings,
+  column: HeatmapCategory
+): Filter {
+  if (!settings.columnInterval || typeof column.value !== "number")
+    return {
+      type: "value",
+      field: settings.columnField,
+      values: [column.value],
+    };
+  const period = heatmapPeriod(column.value, settings.columnInterval)!;
+  return periodFilter(settings.columnField, period.start, period.end);
+}
+
+/**
+ * A binned column's date-range selection, read back as the period starts it
+ * covers, so cells and labels mark it like a value selection.
+ */
+function periodSelection(
+  settings: HeatmapSettings,
+  columns: { value: datum }[]
+): ValueFilter | undefined {
+  const range = settings.filters.find(
+    (filter): filter is DateRangeFilter =>
+      filter.type === "date-range" && filter.field === settings.columnField
+  );
+  if (!range) return undefined;
+  const min = range.min ? dateBound(range.min) : -Infinity;
+  const max = range.max ? dateBound(range.max) : Infinity;
+  return {
+    type: "value",
+    field: settings.columnField,
+    values: columns
+      .map((column) => column.value as number)
+      .filter((start) => start >= min && start <= max),
+  };
 }

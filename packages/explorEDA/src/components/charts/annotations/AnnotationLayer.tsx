@@ -151,14 +151,20 @@ function Intervals({
   return (
     <>
       <g clipPath={clipPath} pointerEvents="none">
-        {intervals.map(({ annotation, points }) => {
-          const upper = points.map((p) => `${p.x},${p.upper}`);
-          const lower = points.map((p) => `${p.x},${p.lower}`).reverse();
+        {intervals.map(({ annotation, runs }) => {
+          // One closed ribbon per run; a gap between runs stays empty.
+          const d = runs
+            .map((points) => {
+              const upper = points.map((p) => `${p.x},${p.upper}`);
+              const lower = points.map((p) => `${p.x},${p.lower}`).reverse();
+              return `M${[...upper, ...lower].join("L")}Z`;
+            })
+            .join("");
           return (
             <path
               key={annotation.id}
               data-annotation-id={annotation.id}
-              d={`M${[...upper, ...lower].join("L")}Z`}
+              d={d}
               fill={colorOf(annotation)}
               fillOpacity={0.14}
               stroke={colorOf(annotation)}
@@ -168,8 +174,8 @@ function Intervals({
           );
         })}
       </g>
-      {intervals.map(({ annotation, points }) => {
-        const last = points[points.length - 1]!;
+      {intervals.map(({ annotation, runs }) => {
+        const last = runs.at(-1)!.at(-1)!;
         return (
           <Label
             key={`${annotation.id}:label`}
@@ -184,6 +190,40 @@ function Intervals({
       })}
     </>
   );
+}
+
+const RULE_LABEL_STEP = LABEL_FONT_SIZE + 4;
+
+/**
+ * Where each vertical rule's label goes: beside its line, flipped left near
+ * the plot's right edge, and a line lower when it would run into a label
+ * beside a nearby rule. Widths are estimated from the text's length.
+ */
+function stackRuleLabels(rules: Shown<"reference-line">[], plotWidth: number) {
+  const places = new Map<
+    string,
+    { x: number; row: number; anchor: "start" | "end" }
+  >();
+  const rowEnds: number[] = [];
+  const vertical = rules
+    .filter((rule) => rule.annotation.axis === "x")
+    .sort((a, b) => a.position - b.position);
+  for (const { annotation, position, value } of vertical) {
+    const text = ruleText(annotation, value);
+    if (!text) continue;
+    const width = text.length * LABEL_FONT_SIZE * 0.6;
+    const flip = position + 4 + width > plotWidth && position - 4 - width >= 0;
+    const left = flip ? position - 4 - width : position + 4;
+    let row = rowEnds.findIndex((end) => end + 4 <= left);
+    if (row < 0) row = rowEnds.length;
+    rowEnds[row] = left + width;
+    places.set(annotation.id, {
+      x: flip ? position - 4 : position + 4,
+      row,
+      anchor: flip ? "end" : "start",
+    });
+  }
+  return places;
 }
 
 /** A rule's label; a calculated rule says what it read and the result. */
@@ -311,6 +351,7 @@ function Rules({
   plotHeight: number;
   clipPath: string;
 }) {
+  const stacked = stackRuleLabels(rules, plotWidth);
   return (
     <>
       <g clipPath={clipPath} pointerEvents="none">
@@ -337,12 +378,15 @@ function Rules({
         const text = ruleText(annotation, value);
         if (!text) return null;
         const vertical = annotation.axis === "x";
+        const place = vertical ? stacked.get(annotation.id) : undefined;
         return (
           <Label
             key={`${annotation.id}:label`}
-            x={vertical ? position + 4 : plotWidth - 4}
-            y={vertical ? 10 : position - 4}
-            anchor={vertical ? "start" : "end"}
+            x={vertical ? (place?.x ?? position + 4) : plotWidth - 4}
+            y={
+              vertical ? 10 + (place?.row ?? 0) * RULE_LABEL_STEP : position - 4
+            }
+            anchor={vertical ? (place?.anchor ?? "start") : "end"}
             color={colorOf(annotation)}
           >
             {text}

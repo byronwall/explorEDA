@@ -1,9 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useDataLayer } from "@/providers/DataLayerProvider";
-import {
-  ChartStatusLine,
-  STATUS_HINT_MIN_WIDTH,
-} from "../ChartStatusLine";
+import { ChartStatusLine, STATUS_HINT_MIN_WIDTH } from "../ChartStatusLine";
 import { ChartMessage } from "../ChartMessage";
 import type { BaseChartProps } from "@/types/ChartTypes";
 import { formatFieldValue as formatValue } from "@/lib/fieldSettings";
@@ -19,6 +16,8 @@ import {
 } from "../trace/ChartTraceScope";
 import type { TraceSource } from "../trace/traceTypes";
 import { useGetColumnData } from "../useGetColumnData";
+import { annotationSlot } from "../annotations/ChartAnnotations";
+import { calendarAnnotationFrame } from "./calendarAnnotations";
 import { useGetAllIds, useGetLiveIds } from "../useGetLiveData";
 import {
   extendDayFilter,
@@ -37,8 +36,18 @@ import {
 import type { CalendarSettings } from "./definition";
 
 const MONTH_NAMES = [
-  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
 ];
 
 /** The hovered day's values, one line in the panel header. */
@@ -66,7 +75,13 @@ function Readout({ day, plan }: { day: CalendarDay; plan: CalendarPlan }) {
   );
 }
 
-export function CalendarHeatmap({ settings, width, height, facetIds }: BaseChartProps<CalendarSettings>) {
+export function CalendarHeatmap({
+  settings,
+  width,
+  height,
+  facetIds,
+  facetKey,
+}: BaseChartProps<CalendarSettings>) {
   const getFieldLabel = useDataLayer((s) => s.getFieldLabel);
   const formatFieldValue = useDataLayer((s) => s.formatFieldValue);
   const fieldSettings = useDataLayer((s) => s.fieldSettings);
@@ -100,7 +115,18 @@ export function CalendarHeatmap({ settings, width, height, facetIds }: BaseChart
       }),
     // Label and format getters are stable; field settings carry their changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [settings, width, height, month, revision, allIds, liveIds, dateData, measureData, fieldSettings]
+    [
+      settings,
+      width,
+      height,
+      month,
+      revision,
+      allIds,
+      liveIds,
+      dateData,
+      measureData,
+      fieldSettings,
+    ]
   );
 
   const source = useMemo(
@@ -114,11 +140,19 @@ export function CalendarHeatmap({ settings, width, height, facetIds }: BaseChart
     [plan]
   );
   useTraceSource(owner, source);
+  const annotationFrame = useMemo(
+    () =>
+      settings.annotations?.length
+        ? calendarAnnotationFrame(plan, settings.field, facetKey)
+        : undefined,
+    [settings.annotations, settings.field, plan, facetKey]
+  );
   const inspect = useCallback(
     (id: string) => traceApi?.inspect(owner, "day", id),
     [owner, traceApi]
   );
-  const traced = trace?.selection?.owner === owner ? trace.selection.id : undefined;
+  const traced =
+    trace?.selection?.owner === owner ? trace.selection.id : undefined;
 
   if (!settings.field) {
     return (
@@ -137,7 +171,9 @@ export function CalendarHeatmap({ settings, width, height, facetIds }: BaseChart
 
   // Shift stretches the selection over a run of days.
   const select = (day: CalendarDay, extend = false) => {
-    if (day.state === "empty" && !extend) {return;}
+    if (day.state === "empty" && !extend) {
+      return;
+    }
     updateChart(settings.id, {
       filters: extend
         ? extendDayFilter(settings, plan, day)
@@ -145,24 +181,33 @@ export function CalendarHeatmap({ settings, width, height, facetIds }: BaseChart
     });
   };
   const selectRange = (min: string, max: string) =>
-    updateChart(settings.id, { filters: toggleDayRange(settings, plan, min, max) });
+    updateChart(settings.id, {
+      filters: toggleDayRange(settings, plan, min, max),
+    });
   const formatLegend = (value: number) =>
     measureField
-      ? formatValue(measureField, value, fieldSettings[measureField], { compact: true })
+      ? formatValue(measureField, value, fieldSettings[measureField], {
+          compact: true,
+        })
       : formatValue("", value, {}, { compact: true });
   const yearIndex = plan.years.indexOf(plan.year);
   const isYear = plan.view === "year";
   const step = (direction: -1 | 1) => {
     if (isYear) {
       const next = plan.years[yearIndex + direction];
-      if (next !== undefined) {updateChart(settings.id, { year: next } as Partial<CalendarSettings>);}
+      if (next !== undefined) {
+        updateChart(settings.id, { year: next } as Partial<CalendarSettings>);
+      }
       return;
     }
     const next = plan.month + direction;
-    if (next >= 0 && next <= 11) {setMonth(next);}
-    else {
+    if (next >= 0 && next <= 11) {
+      setMonth(next);
+    } else {
       const year = plan.years[yearIndex + direction];
-      if (year === undefined) {return;}
+      if (year === undefined) {
+        return;
+      }
       updateChart(settings.id, { year } as Partial<CalendarSettings>);
       setMonth(direction === 1 ? 0 : 11);
     }
@@ -172,29 +217,39 @@ export function CalendarHeatmap({ settings, width, height, facetIds }: BaseChart
       ? plan.years[yearIndex + direction] !== undefined
       : (direction === -1 ? plan.month > 0 : plan.month < 11) ||
         plan.years[yearIndex + direction] !== undefined;
-  const period = isYear ? String(plan.year) : `${MONTH_NAMES[plan.month]} ${plan.year}`;
+  const period = isYear
+    ? String(plan.year)
+    : `${MONTH_NAMES[plan.month]} ${plan.year}`;
   const unit = isYear ? "year" : "month";
   const periodRange = isYear
     ? [`${plan.year}-01-01`, `${plan.year}-12-31`]
     : [
         new Date(Date.UTC(plan.year, plan.month, 1)).toISOString().slice(0, 10),
-        new Date(Date.UTC(plan.year, plan.month + 1, 0)).toISOString().slice(0, 10),
+        new Date(Date.UTC(plan.year, plan.month + 1, 0))
+          .toISOString()
+          .slice(0, 10),
       ];
   const isRange = (min: string, max: string) =>
     plan.selection?.min === min && plan.selection?.max === max;
 
   const tabStop =
-    (focused && plan.days.some((day) => day.id === focused) ? focused : undefined) ??
+    (focused && plan.days.some((day) => day.id === focused)
+      ? focused
+      : undefined) ??
     plan.days.find((day) => day.selected)?.id ??
     plan.days.find((day) => day.state !== "empty")?.id ??
     plan.days[0]?.id;
   // Arrow keys move by day along the reading direction and by week across it.
   const moveFocus = (index: number, key: string) => {
-    const byDay = isYear ? ["ArrowUp", "ArrowDown"] : ["ArrowLeft", "ArrowRight"];
+    const byDay = isYear
+      ? ["ArrowUp", "ArrowDown"]
+      : ["ArrowLeft", "ArrowRight"];
     const forward = key === "ArrowDown" || key === "ArrowRight";
     const delta = (byDay.includes(key) ? 1 : 7) * (forward ? 1 : -1);
     const next = plan.days[index + delta];
-    if (!next) {return;}
+    if (!next) {
+      return;
+    }
     setFocused(next.id);
     setHovered(next.id);
     cellRefs.current.get(next.id)?.focus();
@@ -218,8 +273,10 @@ export function CalendarHeatmap({ settings, width, height, facetIds }: BaseChart
     // Counts lead, so a narrow chart that cuts the line keeps them.
     selectionText &&
       `${rowsIn(selectedDays).toLocaleString()} of ${rowsIn(plan.days).toLocaleString()} rows in ${period} selected: ${selectionText}`,
-    plan.omitted.invalidDates > 0 && `${plan.omitted.invalidDates.toLocaleString()} rows have no readable date`,
-    plan.omitted.otherYears > 0 && `${plan.omitted.otherYears.toLocaleString()} rows fall in other years`,
+    plan.omitted.invalidDates > 0 &&
+      `${plan.omitted.invalidDates.toLocaleString()} rows have no readable date`,
+    plan.omitted.otherYears > 0 &&
+      `${plan.omitted.otherYears.toLocaleString()} rows fall in other years`,
   ];
   const statusHint =
     !selectionText &&
@@ -232,7 +289,12 @@ export function CalendarHeatmap({ settings, width, height, facetIds }: BaseChart
     <div className="relative" style={{ width, height }}>
       <div
         className="absolute flex items-center gap-3"
-        style={{ left: plan.margin.left - (isYear ? 34 : 0), top: 2, height: HEADER_HEIGHT - 4, right: plan.margin.right }}
+        style={{
+          left: plan.margin.left - (isYear ? 34 : 0),
+          top: 2,
+          height: HEADER_HEIGHT - 4,
+          right: plan.margin.right,
+        }}
       >
         <div className="flex items-center">
           <Button
@@ -279,9 +341,35 @@ export function CalendarHeatmap({ settings, width, height, facetIds }: BaseChart
       </div>
       <svg width={width} height={height} className="block select-none">
         <defs>
-          <pattern id={`${baseId}-hatch`} width={5} height={5} patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-            <line x1={0} y1={0} x2={0} y2={5} stroke="var(--muted-foreground)" strokeWidth={1.2} opacity={0.55} />
+          <pattern
+            id={`${baseId}-hatch`}
+            width={5}
+            height={5}
+            patternUnits="userSpaceOnUse"
+            patternTransform="rotate(45)"
+          >
+            <line
+              x1={0}
+              y1={0}
+              x2={0}
+              y2={5}
+              stroke="var(--muted-foreground)"
+              strokeWidth={1.2}
+              opacity={0.55}
+            />
           </pattern>
+          <clipPath id={`${baseId}-plot`}>
+            <rect
+              width={Math.max(
+                0,
+                plan.width - plan.margin.left - plan.margin.right
+              )}
+              height={Math.max(
+                0,
+                plan.height - plan.margin.top - plan.margin.bottom
+              )}
+            />
+          </clipPath>
         </defs>
         <g transform={`translate(${plan.margin.left},${plan.margin.top})`}>
           <g className="fill-muted-foreground" fontSize={10} aria-hidden="true">
@@ -300,28 +388,46 @@ export function CalendarHeatmap({ settings, width, height, facetIds }: BaseChart
             ))}
             {plan.weekdayLabels.map((label) =>
               isYear ? (
-                <text key={label.label} x={-6} y={label.position} textAnchor="end" dominantBaseline="middle">
+                <text
+                  key={label.label}
+                  x={-6}
+                  y={label.position}
+                  textAnchor="end"
+                  dominantBaseline="middle"
+                >
                   {label.label}
                 </text>
               ) : (
-                <text key={label.label} x={label.position} y={-5} textAnchor="middle">
+                <text
+                  key={label.label}
+                  x={label.position}
+                  y={-5}
+                  textAnchor="middle"
+                >
                   {label.label}
                 </text>
               )
             )}
           </g>
-          <g role="group" aria-label={`${plan.metricLabel} by day of ${plan.fieldLabel}, ${period}`}>
+          <g
+            role="group"
+            aria-label={`${plan.metricLabel} by day of ${plan.fieldLabel}, ${period}`}
+          >
             {plan.days.map((day, index) => {
               // One selected day is outlined; a larger selection reads from the dimming.
-              const active = traced === day.id || (day.selected && singleSelection);
+              const active =
+                traced === day.id || (day.selected && singleSelection);
               const dimmed = day.selected === false;
               const isHovered = hovered === day.id;
               return (
                 <g key={day.id}>
                   <rect
                     ref={(node) => {
-                      if (node) {cellRefs.current.set(day.id, node);}
-                      else {cellRefs.current.delete(day.id);}
+                      if (node) {
+                        cellRefs.current.set(day.id, node);
+                      } else {
+                        cellRefs.current.delete(day.id);
+                      }
                     }}
                     data-plan-id={day.id}
                     x={day.x + 1}
@@ -336,24 +442,37 @@ export function CalendarHeatmap({ settings, width, height, facetIds }: BaseChart
                     aria-disabled={day.state === "empty" || undefined}
                     className={`chart-mark eda-heat-cell ${day.state === "empty" ? "" : "cursor-pointer"}`}
                     style={{
-                      fill: day.state === "invalid" ? `url(#${baseId}-hatch)` : day.fill,
+                      fill:
+                        day.state === "invalid"
+                          ? `url(#${baseId}-hatch)`
+                          : day.fill,
                       stroke:
                         active || (isHovered && day.state !== "empty")
                           ? "var(--foreground)"
-                          : day.state === "value" ? "none" : "var(--border)",
+                          : day.state === "value"
+                            ? "none"
+                            : "var(--border)",
                     }}
                     strokeWidth={active ? 2 : isHovered ? 1.5 : 1}
-                    strokeDasharray={day.state === "empty" && !active ? "2 2" : undefined}
+                    strokeDasharray={
+                      day.state === "empty" && !active ? "2 2" : undefined
+                    }
                     opacity={dimmed && !isHovered ? 0.3 : 1}
                     onPointerEnter={() => setHovered(day.id)}
-                    onPointerLeave={() => setHovered((id) => (id === day.id ? null : id))}
+                    onPointerLeave={() =>
+                      setHovered((id) => (id === day.id ? null : id))
+                    }
                     onFocus={() => setFocused(day.id)}
-                    onBlur={() => setHovered((id) => (id === day.id ? null : id))}
+                    onBlur={() =>
+                      setHovered((id) => (id === day.id ? null : id))
+                    }
                     onClick={(event) => {
                       if (event.altKey) {
                         event.preventDefault();
                         inspect(day.id);
-                      } else {select(day, event.shiftKey);}
+                      } else {
+                        select(day, event.shiftKey);
+                      }
                     }}
                     onKeyDown={(event) => {
                       if (event.key.startsWith("Arrow")) {
@@ -361,8 +480,11 @@ export function CalendarHeatmap({ settings, width, height, facetIds }: BaseChart
                         moveFocus(index, event.key);
                       } else if (event.key === "Enter" || event.key === " ") {
                         event.preventDefault();
-                        if (event.altKey && event.key === "Enter") {inspect(day.id);}
-                        else {select(day, event.shiftKey);}
+                        if (event.altKey && event.key === "Enter") {
+                          inspect(day.id);
+                        } else {
+                          select(day, event.shiftKey);
+                        }
                       }
                     }}
                   />
@@ -371,8 +493,16 @@ export function CalendarHeatmap({ settings, width, height, facetIds }: BaseChart
                       x={day.x + 5}
                       y={day.y + 13}
                       fontSize={10}
-                      style={day.state === "value" ? { fill: day.textFill } : undefined}
-                      className={day.state === "value" ? undefined : "fill-muted-foreground"}
+                      style={
+                        day.state === "value"
+                          ? { fill: day.textFill }
+                          : undefined
+                      }
+                      className={
+                        day.state === "value"
+                          ? undefined
+                          : "fill-muted-foreground"
+                      }
                       opacity={dimmed ? 0.4 : 1}
                       pointerEvents="none"
                       aria-hidden="true"
@@ -393,6 +523,7 @@ export function CalendarHeatmap({ settings, width, height, facetIds }: BaseChart
             pointerEvents="none"
             aria-hidden="true"
           />
+          {annotationSlot(settings, annotationFrame)?.(`url(#${baseId}-plot)`)}
         </g>
       </svg>
       <ChartStatusLine

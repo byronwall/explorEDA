@@ -1,6 +1,6 @@
 # Big firms invest more, but a firm's good year is a weaker signal
 
-**Does a firm invest more in a year its market value rises?** Each row is one firm-year.
+**Does a firm invest more in a year its market value rises?** Each row is one firm-year: eleven large American companies from 1935 to 1954, with gross investment and market value in millions of 1947 dollars. Across the panel the answer looks like a resounding yes. Within one firm, from one year to the next, it is a quieter yes, and for some firms no answer at all.
 
 ```eda
 eda query=r
@@ -12,54 +12,39 @@ invest_change:num=r.invest_change label="Change in investment ($M, 1947)"
 value_change:num=r.value_change label="Change in market value ($M, 1947)"
 ```
 
-## 1. Firm size in the pooled levels
+## Across firms, size explains most of it
 
-Each point is a firm-year rather than a distinct firm. Large firms can dominate the visual range without receiving more statistical weight per point.
+Each point is one firm-year, colored by firm, with a fitted line per firm. Across firm-year levels, market value and investment had correlation 0.862, but most of that is General Motors sitting far up and to the right of everyone else: its mean market value was $4,334 million, against $71 million for Diamond Match. The other ten firms crowd the bottom-left corner.
 
 ```eda
-scatter @nb-grunfeld-within-firm-chart-1 x=value y=invest color=firm opacity=0.6 title="Firm size in the pooled levels" x.title="Market value ($M, 1947)" y.title="Investment ($M, 1947)"
+scatter @nb-grunfeld-within-firm-chart-1 x=value y=invest color=firm opacity=0.7 regression=linear title="Investment against market value, one point per firm-year" x.title="Market value ($M, 1947)" y.title="Investment ($M, 1947)"
 ```
 
-## 2. Change within a firm, not between firms
+## Within a firm, the link is weaker
 
-The preparation resets the difference at each firm boundary. No final year from one company is subtracted from the first year of another.
+Replace each firm-year with its change from the firm's previous year. Size drops out, and what remains is whether a firm that gained value invested more. Across within-firm annual changes, the correlation was 0.562. The cloud leans the right way, but it is a cloud.
 
 ```eda
-scatter @nb-grunfeld-within-firm-chart-2 x=value_change y=invest_change color=firm title="Change within a firm, not between firms" x.title="Change in market value ($M, 1947)" y.title="Change in investment ($M, 1947)"
+scatter @nb-grunfeld-within-firm-chart-2 x=value_change y=invest_change regression=linear title="Change in investment against change in market value, firm-years 1936 to 1954" x.title="Change in market value ($M, 1947)" y.title="Change in investment ($M, 1947)" {
+  rule x=0
+  rule y=0 "No change in investment"
+}
 ```
 
-**Finding.** Across firm-year levels, market value and investment had correlation 0.862.
+## IBM tracked its value; Diamond Match ignored it
 
-## 3. Investment changes differ across firms
-
-Group summaries retain the selected firms separately. They do not turn the repeated annual observations into independent experimental units.
+One panel per firm, on log axes so that a $70 million firm and a $4 billion one each show their own twenty years. Inside IBM, market value and investment had correlation 0.975: twenty years on a line. Inside Diamond Match, the correlation was -0.096, a cloud with no lean at all. The pooled 0.86 is an average over eleven firms that range from lockstep to no relationship.
 
 ```eda
-boxplot @nb-grunfeld-within-firm-chart-3 invest_change color=firm title="Investment changes differ across firms" y.title="Change in investment ($M, 1947)"
-```
-
-## 4. How large are the recorded investment changes?
-
-The cumulative distribution reveals negative and positive changes without bin choices. It weights each eligible firm-year difference equally.
-
-```eda
-ecdf @nb-grunfeld-within-firm-chart-4 invest_change direction=below title="How large are the recorded investment changes?" x.title="Change in investment ($M, 1947)"
-```
-
-**Finding.** Across valid within-firm annual changes, the correlation was 0.562.
-
-## 5. The rows behind the charts
-
-Sort a column or select rows to check any value above. Selections in a notebook stay with their own chart.
-
-```eda
-table @nb-grunfeld-within-firm-records firm,year,invest,value,invest_change,value_change title="Records behind this comparison"
+scatter @nb-grunfeld-within-firm-chart-3 x=value y=invest regression=linear x.scale=log y.scale=log title="Investment against market value, one panel per firm, 1935 to 1954" x.title="Market value ($M, 1947)" y.title="Investment ($M, 1947)" {
+  facet.enabled=true facet.type=wrap facet.rowVariable=r.firm facet.columnCount=4
+}
 ```
 
 ## Takeaway
 
-The pooled levels cloud mixes firm size with time movement. Within-firm differences change the unit of comparison to adjacent observations and should be named as a separate question.
+Bigger firms invest more; that is the 0.86. Whether a firm's good year brings more investment is a different question, and the answer varies by firm from 0.98 to below zero. A pooled correlation on panel data answers the between question while sounding like the within one.
 
 ## Limits
 
-These selected historical firms are not a random sample of all businesses. First differences remain observational and can amplify measurement noise. Source monetary units are retained without an unverified multiplier.
+Eleven firms chosen in 1958 for a regression textbook, not a sample of industry. Twenty years per firm give each within-firm correlation only nineteen changes. The dollars are deflated to 1947 but not adjusted for the firms' very different capital stocks.

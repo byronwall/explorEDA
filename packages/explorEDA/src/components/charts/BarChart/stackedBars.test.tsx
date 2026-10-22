@@ -151,6 +151,29 @@ it("stacks signed sums from zero and proves each share's numerator and category 
     })
   ).toBe(false);
 });
+it("draws stacked bars over many categories and limits only the series count", () => {
+  const years = Array.from({ length: 54 }, (_, index) => String(1960 + index));
+  const many = plan(
+    years.flatMap((Region, index) => [
+      { __ID: index * 2, Region, Channel: "Web", Amount: 3 },
+      { __ID: index * 2 + 1, Region, Channel: "Store", Amount: 1 },
+    ]),
+    "stacked"
+  );
+  expect(many.notice).toBeUndefined();
+  expect(many.bars).toHaveLength(108);
+  const series = plan(
+    Array.from({ length: 21 }, (_, index) => ({
+      __ID: index,
+      Region: "A",
+      Channel: `C${index}`,
+      Amount: 1,
+    })),
+    "stacked"
+  );
+  expect(series.notice).toContain("at most 20 series");
+  expect(series.bars).toEqual([]);
+});
 function Workspace() {
   const settings = useDataLayer((s) => s.charts[0]) as BarChartSettings;
   const update = useDataLayer((s) => s.updateChart);

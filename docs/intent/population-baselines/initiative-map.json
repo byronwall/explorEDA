@@ -5,7 +5,7 @@
     "slug": "population-baselines",
     "scale": "feature",
     "current_phase": "intent",
-    "last_updated": "2026-10-09",
+    "last_updated": "2026-10-21",
     "summary": "Analysts should compare the current selection with a reference population they can name and understand.",
     "status": "planned",
     "next_action": "Retain as a low-priority seed until a concrete comparison task emerges."
@@ -14,7 +14,7 @@
     "intent_brief": {
       "path": "intent-brief.md",
       "status": "current",
-      "updated_at": "2026-10-06"
+      "updated_at": "2026-10-21"
     },
     "brainstorm": {
       "path": "brainstorm.md",
@@ -88,6 +88,13 @@
       "location": "../comparison-opportunities/resources/product-feedback-2026-10-06.json",
       "anchor": "Annotations 12",
       "authority": "Explicit human feedback; tentative answers remain tentative"
+    },
+    {
+      "id": "engineering-bins-research-2026-10-21",
+      "type": "agent-authored-analysis",
+      "location": "../../research/engineering-bins-2026-10-21/README.md",
+      "anchor": "EB01\u2013EB04",
+      "authority": "Reviewed research and proposed gates; no product approval or new browser proof"
     }
   ],
   "intent": {
@@ -333,18 +340,20 @@
       "date": "2026-10-06",
       "action": "Reconciled annotated product feedback and priority.",
       "reason": "User provided clearer goals and indicated lower interest in unclear topics.",
-      "source_annotation_indices": [
-        12
-      ],
+      "source_annotation_indices": [12],
       "evidence": "Current brief changes where applicable; source inspection only. No implementation, pause, or cancellation."
     },
     {
       "date": "2026-10-09",
       "event": "status-checked",
       "status": "planned",
-      "evidence": [
-        "No implementation of this scope found at 91b627d"
-      ]
+      "evidence": ["No implementation of this scope found at 91b627d"]
+    },
+    {
+      "date": "2026-10-21",
+      "action": "Reconciled engineering histogram boundary research.",
+      "reason": "Retain current controls and separate endpoint proof from new capability.",
+      "evidence": "Source receipts and independent arithmetic; named-task and complete product proofs remain unrun."
     }
   ],
   "closure": null,
