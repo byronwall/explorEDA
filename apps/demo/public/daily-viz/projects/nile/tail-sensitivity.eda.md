@@ -45,12 +45,11 @@ scatter @nb-nile-tail-sensitivity-chart-3 x=year y=volume color=tail title="Each
 
 ## The mean sits 26 above the median
 
-Count the years by flow and the stack leans right: a long run of years between 700 and 950 and a stretched wet tail. The median year carried 893.5 against a mean of 919.35, so the wet tail does slightly more pulling than the dry one, even with 1913 in the record.
+Count the years by flow and the stack leans right of the dashed mean: a long run of years between 700 and 950 and a stretched wet tail. The median year carried 893.5 against a mean of 919.35, so the wet tail does slightly more pulling than the dry one, even with 1913 in the record.
 
 ```eda
 hist @nb-nile-tail-sensitivity-chart-4 volume bins=20 title="Years by annual flow" x.title="Annual flow (10⁸ m³)" y.title="Years" {
   rule x=919.35 "Mean, 919"
-  rule x=893.5 "Median, 894"
 }
 ```
 
