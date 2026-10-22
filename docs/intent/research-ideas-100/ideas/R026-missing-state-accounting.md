@@ -26,3 +26,9 @@ This is a bounded robustness follow-up to the missingness and current-analysis-t
 - Repository: `packages/explorEDA/src/lib/valueParsing.test.ts` — `numeric eligibility`. Tests compare eligibility across profiles and reducers.
 - Related intent: `docs/intent/missingness-and-expected-records/intent-brief.md`.
 - Related intent: `docs/intent/current-analysis-trust/intent-brief.md`.
+
+## Research follow-up, October 21
+
+The [R026 synthesis](../../../research/missing-state-accounting-2026-10-21/README.md) retains current semantics and defers shared classification.
+Four local probes reproduce count/predicate, preview/Apply, and batch/trace disagreements. Repairs remain proposed for review.
+See [MS01–MS06](../../../research/missing-state-accounting-2026-10-21/decisions.md); do not repeat the broad survey.

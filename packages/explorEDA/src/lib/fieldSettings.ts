@@ -226,6 +226,9 @@ export function formatTimestamp(time: number): string {
   return `${date} ${clock}`;
 }
 
+/** A field named for years, such as "year", "fiscal_year", or "gaps.year". */
+const YEAR_FIELD = /(^|[\s_.-])years?($|[\s_.-])/i;
+
 export function formatFieldValue(
   field: string,
   value: datum,
@@ -233,7 +236,6 @@ export function formatFieldValue(
   /** Short numbers such as $46.5K, for legends and other tight labels. */
   { compact = false }: { compact?: boolean } = {}
 ): string {
-  void field;
   if (value == null) {
     return "—";
   }
@@ -285,6 +287,16 @@ export function formatFieldValue(
       settings.precision <= 20
         ? settings.precision
         : undefined;
+    // Years read as 1960, never 1,960 or 2K.
+    if (
+      format === "auto" &&
+      !settings.unit &&
+      YEAR_FIELD.test(field) &&
+      Number.isInteger(numberValue) &&
+      numberValue >= 1000 &&
+      numberValue < 3000
+    )
+      return String(numberValue);
     const short = compact && Math.abs(numberValue) >= 10_000;
     const options: Intl.NumberFormatOptions = short
       ? { notation: "compact", maximumFractionDigits: 1 }

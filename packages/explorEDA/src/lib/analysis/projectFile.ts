@@ -1,3 +1,4 @@
+import { isAggregation } from "@/lib/aggregates";
 import { isDateText } from "@/lib/valueParsing";
 import type {
   AnalysisProject,
@@ -477,7 +478,7 @@ export function validateAnalysisProjectFile(value: AnalysisProjectFile): void {
             if (
               typeof measure.id !== "string" ||
               typeof measure.label !== "string" ||
-              !["count", "sum", "average"].includes(measure.operation) ||
+              !isAggregation(measure.operation) ||
               (measure.operation !== "count" && !measure.fieldId)
             )
               throw new Error(

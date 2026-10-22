@@ -1,0 +1,16 @@
+project @dubois
+
+source @shares path=../../../datasets/du-bois-income.csv {
+  field Class string
+  field Order number
+  field "Average income" number
+  field Category string
+  field Share number
+}
+
+query @shares "Class shares" glyph=◆ {
+  source shares
+  calc dollars "Spending ($ a year)" = ["shares.Average income"] * ["shares.Share"] / 100
+  calc food_share "Food share (%)" = ["shares.Category"] == "Food" ? ["shares.Share"] : null
+  calc other_share "Other expenses and savings share (%)" = ["shares.Category"] == "Other expenses and savings" ? ["shares.Share"] : null
+}

@@ -41,7 +41,9 @@ export function TimeSeriesTraceBody({ trace }: { trace: TimeSeriesTrace }) {
                 ? "Each row adds one."
                 : plan.aggregation === "sum"
                   ? "Sum of valid inputs."
-                  : "Sum of valid inputs divided by used rows."}
+                  : plan.aggregation === "average"
+                    ? "Sum of valid inputs divided by used rows."
+                    : `${plan.aggregation === "max" ? "Largest" : "Smallest"} valid input.`}
             </TraceReadout>
             <TraceReadout label="Rows">
               {point.contributors.filter((row) => row.included).length} used of{" "}

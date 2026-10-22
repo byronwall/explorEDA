@@ -1,4 +1,4 @@
-import type { AggregateContributor } from "@/lib/aggregates";
+import { aggregationLabel, type AggregateContributor } from "@/lib/aggregates";
 import { DAY_MS, rollupByDay, utcDay } from "@/lib/dailyRollup";
 import type { datum } from "@/types/ChartTypes";
 import type { DateRangeFilter } from "@/types/FilterTypes";
@@ -56,7 +56,13 @@ export interface CalendarPlan {
   height: number;
   margin: { top: number; right: number; bottom: number; left: number };
   days: CalendarDay[];
-  monthLabels: { label: string; x: number; month: number; first: string; last: string }[];
+  monthLabels: {
+    label: string;
+    x: number;
+    month: number;
+    first: string;
+    last: string;
+  }[];
   /** Year view: lines between months, in plot coordinates. */
   monthBoundaries: string[];
   weekdayLabels: { label: string; position: number }[];
@@ -92,7 +98,20 @@ export const HEADER_HEIGHT = 30;
 const MONTH_LABEL_HEIGHT = 16;
 /** Smallest year-view cell that still takes a pointer comfortably. */
 const MIN_YEAR_CELL = 9;
-const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const MONTHS = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const dateLabel = new Intl.DateTimeFormat("en-US", {
   timeZone: "UTC",
@@ -116,7 +135,9 @@ export function planCalendar({
   const yearSet = new Set<number>();
   for (const id of snapshot.allIds) {
     const parsed = utcDay(snapshot.dateData[id]);
-    if (parsed) {yearSet.add(new Date(parsed.start).getUTCFullYear());}
+    if (parsed) {
+      yearSet.add(new Date(parsed.start).getUTCFullYear());
+    }
   }
   const years = [...yearSet].sort((a, b) => a - b);
   const year =
@@ -124,20 +145,28 @@ export function planCalendar({
       ? settings.year
       : (years.at(-1) ?? new Date().getUTCFullYear());
 
-  const rollup = rollupByDay(snapshot.liveIds, snapshot.dateData, snapshot.measureData, {
-    dateField: settings.field,
-    aggregation: settings.aggregation,
-    measureField,
-  });
+  const rollup = rollupByDay(
+    snapshot.liveIds,
+    snapshot.dateData,
+    snapshot.measureData,
+    {
+      dateField: settings.field,
+      aggregation: settings.aggregation,
+      measureField,
+    }
+  );
   let otherYears = 0;
   for (const bucket of rollup.days.values()) {
-    if (new Date(bucket.start).getUTCFullYear() !== year) {otherYears += bucket.rowCount;}
+    if (new Date(bucket.start).getUTCFullYear() !== year) {
+      otherYears += bucket.rowCount;
+    }
   }
 
   const yearStart = Date.UTC(year, 0, 1);
   const dayCount = (Date.UTC(year + 1, 0, 1) - yearStart) / DAY_MS;
   const weekStartDay = settings.weekStart === "sunday" ? 0 : 1;
-  const weekdayRow = (start: number) => (new Date(start).getUTCDay() - weekStartDay + 7) % 7;
+  const weekdayRow = (start: number) =>
+    (new Date(start).getUTCDay() - weekStartDay + 7) % 7;
   const firstOffset = weekdayRow(yearStart);
   const weekCount = Math.ceil((dayCount + firstOffset) / 7);
 
@@ -148,11 +177,17 @@ export function planCalendar({
   const bottom = settings.margin.bottom + 16;
   // Cells may widen up to 1.8 times their height so a year fills wide panels.
   const yearCellHeight = Math.min((height - yearTop - bottom) / 7, 22);
-  const yearCellWidth = Math.min((width - left - right) / weekCount, yearCellHeight * 1.8);
+  const yearCellWidth = Math.min(
+    (width - left - right) / weekCount,
+    yearCellHeight * 1.8
+  );
   const view: CalendarPlan["view"] =
     Math.min(yearCellWidth, yearCellHeight) >= MIN_YEAR_CELL ? "year" : "month";
 
-  const allDays = Array.from({ length: dayCount }, (_, index) => yearStart + index * DAY_MS);
+  const allDays = Array.from(
+    { length: dayCount },
+    (_, index) => yearStart + index * DAY_MS
+  );
   const latestWithRows = [...rollup.days.values()]
     .filter((bucket) => new Date(bucket.start).getUTCFullYear() === year)
     .reduce((latest, bucket) => Math.max(latest, bucket.start), yearStart);
@@ -166,7 +201,10 @@ export function planCalendar({
   let cellWidth: number;
   let cellHeight: number;
   let top: number;
-  const place: (start: number, index: number) => { column: number; row: number } =
+  const place: (
+    start: number,
+    index: number
+  ) => { column: number; row: number } =
     view === "year"
       ? (start, index) => ({
           column: Math.floor((index + firstOffset) / 7),
@@ -191,13 +229,20 @@ export function planCalendar({
     columns = 7;
     top = settings.margin.top + HEADER_HEIGHT + MONTH_LABEL_HEIGHT;
     cellWidth = Math.max(8, (width - settings.margin.left - right) / 7);
-    cellHeight = Math.max(8, Math.min(cellWidth, (height - top - bottom) / rows));
+    cellHeight = Math.max(
+      8,
+      Math.min(cellWidth, (height - top - bottom) / rows)
+    );
   }
   const marginLeft = view === "year" ? left : settings.margin.left;
 
-  const buckets = allDays.map((start) => rollup.days.get(new Date(start).toISOString().slice(0, 10)));
+  const buckets = allDays.map((start) =>
+    rollup.days.get(new Date(start).toISOString().slice(0, 10))
+  );
   const values = buckets.flatMap((bucket) =>
-    bucket && typeof bucket.value === "number" && Number.isFinite(bucket.value) ? [bucket.value] : []
+    bucket && typeof bucket.value === "number" && Number.isFinite(bucket.value)
+      ? [bucket.value]
+      : []
   );
   const scale = planHeatScale(values);
   const format = (value: number) =>
@@ -223,7 +268,8 @@ export function planCalendar({
         ? "value"
         : "invalid";
     const position = state === "value" ? scale.position(bucket!.value!) : 0;
-    const fill = state === "value" ? heatFill(position, scale.kind) : "transparent";
+    const fill =
+      state === "value" ? heatFill(position, scale.kind) : "transparent";
     const { column, row } = place(start, index);
     return {
       id: `day:${day}`,
@@ -234,7 +280,11 @@ export function planCalendar({
       state,
       value: bucket?.value,
       valueText:
-        state === "value" ? format(bucket!.value!) : state === "empty" ? "No rows" : "No valid values",
+        state === "value"
+          ? format(bucket!.value!)
+          : state === "empty"
+            ? "No rows"
+            : "No valid values",
       rowCount: bucket?.rowCount ?? 0,
       contributors: bucket?.contributors ?? [],
       column,
@@ -256,8 +306,14 @@ export function planCalendar({
           label,
           month: index,
           first: new Date(Date.UTC(year, index, 1)).toISOString().slice(0, 10),
-          last: new Date(Date.UTC(year, index + 1, 0)).toISOString().slice(0, 10),
-          x: place(Date.UTC(year, index, 1), (Date.UTC(year, index, 1) - yearStart) / DAY_MS).column * cellWidth,
+          last: new Date(Date.UTC(year, index + 1, 0))
+            .toISOString()
+            .slice(0, 10),
+          x:
+            place(
+              Date.UTC(year, index, 1),
+              (Date.UTC(year, index, 1) - yearStart) / DAY_MS
+            ).column * cellWidth,
         }))
       : [];
   // Each month after January starts with a step: down its first week's
@@ -274,13 +330,22 @@ export function planCalendar({
             : `M${x + cellWidth},0V${row * cellHeight}H${x}V${bottom}`;
         })
       : [];
-  const weekdayOrder = Array.from({ length: 7 }, (_, row) => WEEKDAYS[(row + weekStartDay) % 7]!);
+  const weekdayOrder = Array.from(
+    { length: 7 },
+    (_, row) => WEEKDAYS[(row + weekStartDay) % 7]!
+  );
   const weekdayLabels =
     view === "year"
       ? weekdayOrder
-          .map((label, row) => ({ label, position: row * cellHeight + cellHeight / 2 }))
+          .map((label, row) => ({
+            label,
+            position: row * cellHeight + cellHeight / 2,
+          }))
           .filter((_, row) => cellHeight >= 13 || row % 2 === 1)
-      : weekdayOrder.map((label, column) => ({ label, position: column * cellWidth + cellWidth / 2 }));
+      : weekdayOrder.map((label, column) => ({
+          label,
+          position: column * cellWidth + cellWidth / 2,
+        }));
 
   return {
     revision: snapshot.revision,
@@ -299,7 +364,7 @@ export function planCalendar({
     metricLabel:
       settings.aggregation === "count"
         ? "Row count"
-        : `${settings.aggregation === "sum" ? "Sum" : "Average"} of ${getFieldLabel(measureField ?? "")}`,
+        : `${aggregationLabel(settings.aggregation)} of ${getFieldLabel(measureField ?? "")}`,
     fieldLabel: getFieldLabel(settings.field),
     scale: {
       kind: scale.kind,
@@ -310,34 +375,64 @@ export function planCalendar({
     hasInvalid: days.some((day) => day.state === "invalid"),
     omitted: { invalidDates: rollup.invalidDateIds.length, otherYears },
     selection: filter ? { min: filter.min, max: filter.max } : undefined,
-    scopeNote: "Days in UTC. Rows after other filters; this chart's selected day is outlined",
+    scopeNote:
+      "Days in UTC. Rows after other filters; this chart's selected day is outlined",
   };
 }
 
 /** The filter change that selects one day, or clears it when that day is already selected. */
-export function toggleDayFilter(settings: CalendarSettings, plan: CalendarPlan, day: CalendarDay) {
+export function toggleDayFilter(
+  settings: CalendarSettings,
+  plan: CalendarPlan,
+  day: CalendarDay
+) {
   const rest = settings.filters.filter(
     (item) => item.type !== "date-range" || item.field !== settings.field
   );
   const current = plan.selection;
-  if (current?.min === day.day && current?.max === day.day) {return rest;}
-  return [...rest, { type: "date-range" as const, field: settings.field, min: day.day, max: day.day }];
+  if (current?.min === day.day && current?.max === day.day) {
+    return rest;
+  }
+  return [
+    ...rest,
+    {
+      type: "date-range" as const,
+      field: settings.field,
+      min: day.day,
+      max: day.day,
+    },
+  ];
 }
 
 /**
  * The filter change that stretches the selection to take in a day, as a
  * Shift-click does. Without a selection it selects the day.
  */
-export function extendDayFilter(settings: CalendarSettings, plan: CalendarPlan, day: CalendarDay) {
+export function extendDayFilter(
+  settings: CalendarSettings,
+  plan: CalendarPlan,
+  day: CalendarDay
+) {
   const current = plan.selection;
-  if (!current?.min || !current.max) {return toggleDayFilter(settings, plan, day);}
+  if (!current?.min || !current.max) {
+    return toggleDayFilter(settings, plan, day);
+  }
   const min = current.min.slice(0, 10);
   const max = current.max.slice(0, 10);
-  return selectDayRange(settings, day.day < min ? day.day : min, day.day > max ? day.day : max);
+  return selectDayRange(
+    settings,
+    day.day < min ? day.day : min,
+    day.day > max ? day.day : max
+  );
 }
 
 /** The filter change that selects a run of days, or clears it when it is already the selection. */
-export function toggleDayRange(settings: CalendarSettings, plan: CalendarPlan, min: string, max: string) {
+export function toggleDayRange(
+  settings: CalendarSettings,
+  plan: CalendarPlan,
+  min: string,
+  max: string
+) {
   if (plan.selection?.min === min && plan.selection?.max === max) {
     return settings.filters.filter(
       (item) => item.type !== "date-range" || item.field !== settings.field

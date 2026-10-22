@@ -67,9 +67,7 @@ describe("field settings", () => {
     expect(getFieldSettingsError({ precision: 21 })).toMatch(/whole number/);
     expect(getFieldSettingsError({ currency: "US" })).toMatch(/three-letter/);
     expect(formatFieldValue("value", "", { format: "currency" })).toBe("—");
-    expect(
-      formatFieldValue("date", 0, { format: "date" })
-    ).toMatch(/1970/);
+    expect(formatFieldValue("date", 0, { format: "date" })).toMatch(/1970/);
     expect(
       formatFieldValue("at", "2025-01-10T23:30", { format: "datetime" })
     ).toMatch(/Jan 10, 2025.*11:30/);
@@ -79,15 +77,15 @@ describe("field settings", () => {
     const date = { type: "datetime" as const };
     const stored = convertFieldValue("2025-02-15", "datetime").value;
     expect(formatFieldValue("at", stored, date)).toBe("2025-02-15");
-    expect(
-      formatFieldValue("at", "2025-02-15T13:45:00.000Z", date)
-    ).toBe("2025-02-15 13:45");
-    expect(
-      formatFieldValue("at", "2025-02-15T13:45:07.000Z", date)
-    ).toBe("2025-02-15 13:45:07");
-    expect(
-      formatFieldValue("at", "2025-02-15T13:45:07.250Z", date)
-    ).toBe("2025-02-15 13:45:07.250");
+    expect(formatFieldValue("at", "2025-02-15T13:45:00.000Z", date)).toBe(
+      "2025-02-15 13:45"
+    );
+    expect(formatFieldValue("at", "2025-02-15T13:45:07.000Z", date)).toBe(
+      "2025-02-15 13:45:07"
+    );
+    expect(formatFieldValue("at", "2025-02-15T13:45:07.250Z", date)).toBe(
+      "2025-02-15 13:45:07.250"
+    );
     expect(formatFieldValue("at", "not a date", date)).toBe("not a date");
     expect(formatFieldValue("at", "2025-02-15T00:00:00.000Z")).toBe(
       "2025-02-15T00:00:00.000Z"
@@ -139,5 +137,23 @@ describe("field settings", () => {
       })
     ).toBe("$12.50");
     expect(formatFieldValue("flag", false)).toBe("No");
+  });
+});
+
+describe("year fields", () => {
+  it("shows whole years without digit grouping", () => {
+    expect(formatFieldValue("year", 1960)).toBe("1960");
+    expect(formatFieldValue("Fiscal Year", 2024)).toBe("2024");
+    expect(formatFieldValue("gaps.year", 1985)).toBe("1985");
+    expect(formatFieldValue("fiscal_year", 2024, {}, { compact: true })).toBe(
+      "2024"
+    );
+  });
+
+  it("keeps grouping for other fields and other numbers", () => {
+    expect(formatFieldValue("yearly_sales", 1960)).toBe("1,960");
+    expect(formatFieldValue("year", 1960.5)).toBe("1,960.5");
+    expect(formatFieldValue("year", 12000)).toBe("12,000");
+    expect(formatFieldValue("year", 1960, { format: "number" })).toBe("1,960");
   });
 });

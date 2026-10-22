@@ -5,6 +5,7 @@ import { useId, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { convertFieldValue } from "@/lib/fieldSettings";
 import { utcPeriod } from "@/lib/dailyRollup";
+import { isAdditiveAggregation } from "@/lib/aggregates";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { BaseChartProps, datum } from "@/types/ChartTypes";
 import { BaseChart } from "../BaseChart";
@@ -452,7 +453,8 @@ export function TimeSeriesChart({
         <span className="min-w-0 truncate">
           {plan.stacked && plan.incompletePeriods
             ? `${plan.incompletePeriods} incomplete ${plan.incompletePeriods === 1 ? "period breaks" : "periods break"} the stack`
-            : time.aggregation === "average" || time.missingPeriods === "gap"
+            : !isAdditiveAggregation(time.aggregation) ||
+                time.missingPeriods === "gap"
               ? "Missing periods are gaps"
               : "Missing periods are zero"}
         </span>

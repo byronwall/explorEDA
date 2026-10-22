@@ -18,9 +18,13 @@ import {
   useTraceRevision,
   useTraceSource,
 } from "../trace/ChartTraceScope";
-import { barAt, sortByLabel } from "./barPlan";
+import { barAt, sortByLabel, sortByValue } from "./barPlan";
 import { barTraceTargets, findBarTraceRow, resolveBarTrace } from "./barTrace";
-import { planSeriesBars, selectSeriesBar } from "./seriesBarPlan";
+import {
+  planSeriesBars,
+  selectSeriesBar,
+  type SeriesSummary,
+} from "./seriesBarPlan";
 import type { BarChartSettings } from "./definition";
 
 export function SeriesBarChart({
@@ -166,13 +170,11 @@ export function SeriesBarChart({
       getLabel,
       format,
       facetFilters,
-      categoryOrder:
-        settings.categoryOrder === "label"
-          ? sortByLabel(
-              allIds.map((id) => groupData[id]),
-              (value) => value
-            )
-          : allIds.map((id) => groupData[id]),
+      categoryOrder: orderSeriesCategories(
+        settings.categoryOrder,
+        allIds.map((id) => groupData[id]),
+        domainSummaries
+      ),
       getColor: (value) =>
         getColorForValue(
           settings.colorScaleId,
@@ -369,4 +371,28 @@ export function SeriesBarChart({
       )}
     </div>
   );
+}
+
+/**
+ * Series bar categories in data order, A to Z, or by their total across the
+ * series over every row, largest first, so filters elsewhere keep the order.
+ */
+export function orderSeriesCategories(
+  order: BarChartSettings["categoryOrder"],
+  values: datum[],
+  summaries: SeriesSummary[]
+) {
+  if (order === "label") return sortByLabel(values, (value) => value);
+  if (order !== "value") return values;
+  const totals = new Map<string, number>();
+  for (const { result } of summaries)
+    for (const row of result.rows)
+      if (row.value !== undefined && Number.isFinite(row.value)) {
+        const key = categoryKey(row.groupValue);
+        totals.set(key, (totals.get(key) ?? 0) + row.value);
+      }
+  const unique = [
+    ...new Map(values.map((value) => [categoryKey(value), value])).values(),
+  ];
+  return sortByValue(unique, (value) => totals.get(categoryKey(value)));
 }

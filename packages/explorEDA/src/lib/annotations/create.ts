@@ -2,6 +2,7 @@ import { finiteNumber, timestampOf } from "@/lib/valueParsing";
 import type { IdType } from "@/providers/DataLayerProvider";
 import type { AnnotationContext } from "./context";
 import { categoryText } from "./categoryText";
+import { cellText } from "./cells";
 import { recordKey, uniqueKeyFields, type ColumnGetter } from "./resolve";
 import type {
   BandAnnotation,
@@ -87,6 +88,19 @@ export function createCallout(source: AnnotationSource): CalloutAnnotation {
     type: "callout" as const,
     offset: { dx: 24, dy: -24 },
   };
+  if (source.cellFields?.length) {
+    // A cell holds many rows: attach to the first row's cell by its values.
+    const id = source.ids[0];
+    const value =
+      id === undefined
+        ? undefined
+        : cellText(
+            source.cellFields.map((field) => source.getColumn(field)[id]),
+            source.cellFields.length === 1
+          );
+    if (value !== undefined)
+      return { ...base, text: "Note", attach: { kind: "category", value } };
+  }
   if (source.categoryField) {
     // A bar sums many rows: attach to the largest category, not a row.
     const [largest] = [...categoryCounts(source)].sort((a, b) => b[1] - a[1]);
@@ -215,8 +229,9 @@ export function createRegion(source: AnnotationSource): RegionAnnotation {
     shape: "rect",
     x0: quantile(xs, 0.25),
     x1: quantile(xs, 0.75),
-    y0: quantile(ys, 0.25),
-    y1: quantile(ys, 0.75),
+    // Without a y measure, as on an ECDF, y is a share from 0 to 1.
+    y0: source.yField ? quantile(ys, 0.25) : 0.25,
+    y1: source.yField ? quantile(ys, 0.75) : 0.75,
     label: "Region",
   };
 }
