@@ -43,4 +43,4 @@ R008 synthesis is complete. Keep current controls; apply [EB01–EB04](decisions
 After local trust, the exact-edge proof is the next bounded histogram action. Do not schedule another broad bin survey.
 A lesson needs observed confusion. A new mode needs a named recurring task that defeats current comparators.
 R018 remains conditional on a changed decision; R043/R077 need local grain/identity proofs; R073 needs one example counterexample.
-The [original revised queue](originals/research-queue.md) preserves Pro's detailed gates without replacing this concise queue.
+The [original revised queue](https://chatgpt.com/c/6ad86336-1690-83ea-b3a3-5f2fe1e7dc35) preserves Pro's detailed gates without replacing this concise queue.

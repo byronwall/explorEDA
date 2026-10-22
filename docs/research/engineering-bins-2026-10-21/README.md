@@ -16,10 +16,8 @@ Keep that bounded proof separate from the case for new controls. Local trust rem
 - [Four dispositions](decisions.md): retain current tools, investigate endpoint agreement, defer a lesson, and keep the task gate.
 - [Independent evidence review](evidence.md): current source, primary references, arithmetic and limits.
 - [Continuing queue](research-queue.md): next actions and adjacent ownership.
-- [Original decision report](originals/decision-report.md) and [comparison report](originals/evidence-and-comparisons.md).
-- [Original proof plan](originals/proof-plan.md) and [original queue](originals/research-queue.md).
-- [Original archive](engineering-bins-research.zip), [collection record](collection.json), and [original manifest](originals/manifest.json).
-- [Source checks](source-checks.json), [arithmetic checks](arithmetic-checks.json), and [run record](run.md), and [validation](validation.json).
+- [Pro conversation](https://chatgpt.com/c/6ad86336-1690-83ea-b3a3-5f2fe1e7dc35)
+- Source checks, arithmetic checks, and [run record](run.md), and validation.
 
 The archive and reports passed integrity checks. Forty-five Git objects match the reported source hashes.
 Twenty-two independent arithmetic anchors pass. Pro's separate 76-assertion claim remains attributed to Pro.

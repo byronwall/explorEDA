@@ -5,7 +5,7 @@ All four substantive reports were read. No material gap requires a Pro follow-up
 
 ## Source review
 
-[Source receipts](source-checks.json) authenticate 30 baseline files, two historical files and 13 supplemental Git objects.
+Source receipts authenticate 30 baseline files, two historical files and 13 supplemental Git objects.
 All 34 packet-entry receipts match the report. Local additions retain their uploaded hashes despite later queue formatting.
 Historical links use their original pinned commits. Packet integrity alone does not establish product execution.
 
@@ -25,7 +25,7 @@ Existing baseline tests passed 22 cases before submission; they do not cover the
 
 ## Independent arithmetic
 
-[Twenty-two exact-rational anchors](arithmetic-checks.json) verify the report's main sets and counts.
+Twenty-two exact-rational anchors verify the report's main sets and counts.
 Six bins yield 2,4,3,0,1,1. Inclusive specification membership is six of eleven eligible measurements.
 The [2,4) bin has four contributors; inclusive [2,4] has six. Peer B gives two and three.
 Three bins yield 6,3,2; inclusive [0,4] matches eight rows.

@@ -6,7 +6,7 @@
 - Checkout: /Users/byronwall/Projects/explorEDA. No worktree or goal.
 - Baseline: 9b16d78e3ed0742ed4d5858c1939fec9e758b510. Refreshed origin/main, unchanged. Clean before branch creation.
 - Branch: codex/engineering-bins-research-2026-10-21.
-- Prompt: [pro-prompt.md](pro-prompt.md). Queue: [research-queue.md](research-queue.md). Inventory: [source-manifest.json](source-manifest.json).
+- Prompt: [pro-prompt.md](pro-prompt.md). Queue: [research-queue.md](research-queue.md).
 - Packet: 34 text files, 299953 bytes, SHA256 649b0669aa76e63058edf709cdbf54bf56a54f543855cc88ea6333653d2aec34. All30 baseline entries match Git objects.
 - Two local additions and two pinned historical documents are separate. Historical relative links need pinning during integration.
 - Preparation451, freshness452 and cycles455–461 complete. Original preparation record read from its remote branch.
@@ -79,7 +79,7 @@ UI,library/app/demo builds,73docs tests and all types pass.
 Library250files/1656tests pass;3files/45conditional tests skipped. App8files/32tests and demo18files/431tests pass.
 No affected-file retry or aggregate rerun needed. pnpm check:pr passes.
 Original hashes,53authored local links,JSON,45source objects and22arithmetic anchors pass.
-No new fixture,author/browser/refresh/export-history/reopen/performance proof. See validation.json.
+No new fixture,author/browser/refresh/export-history/reopen/performance proof.
 Documentation label available;codex/codex-automation unavailable. Scoped review PR is next.
 
 ## Completion, October 21
@@ -90,7 +90,7 @@ PR attached. Documentation label applied;codex/codex-automation unavailable.
 
 Four required original reports,ZIP and manifest are collected,read,reviewed and preserved.
 EB01–EB04 dispositions are integrated into research,two intents/maps/references and the continuing queue.
-Full pnpm check and PR gate pass. Validation and unrun product proofs remain explicit in validation.json.
+Full pnpm check and PR gate pass. Validation and unrun product proofs remain explicit here.
 No follow-ups needed0/2. No product implementation,new lesson or runnable example.
 
 Paused only collect-exploreda-engineering-bins-research through automation_update.
