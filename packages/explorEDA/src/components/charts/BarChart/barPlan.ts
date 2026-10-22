@@ -160,6 +160,11 @@ export interface BarChartPlan {
   bars: BarMark[];
   /** Bin boundaries in bin mode, lowest first. Range filters snap to them. */
   binEdges: number[];
+  /**
+   * Whole-number bins centered on integers. Their edges fall halfway between
+   * values, so no value sits on one.
+   */
+  wholeNumberBins: boolean;
   groupOrder: string[];
   /** Rows without a finite value have no bar. */
   unplotted: { row: AggregateResultRow; reason: string }[];
@@ -720,6 +725,8 @@ export function planBarChart({
     yScale: describeScale(yScale, settings.yAxis.scaleType),
     bars,
     binEdges,
+    wholeNumberBins:
+      mode === "bin" && rows.length > 0 && !rows[0]!.groupLabel.startsWith("["),
     groupOrder: rows.map((row) => row.groupLabel),
     unplotted,
     domain: {

@@ -121,4 +121,8 @@ it("leaves out the upper edge of a range that ends before the last bar", () => {
     min: 0.5,
     max: 1,
   });
+  // Whole-number bins have half-step edges that no value can sit on.
+  expect(binRangeFilter([0.5, 1.5, 2.5], { min: 0.5, max: 1.5 }, true)).toEqual(
+    { min: 0.5, max: 1.5 }
+  );
 });

@@ -375,6 +375,7 @@ export function planSeriesBars({
     yScale: describeScale(y, yScaleType),
     bars,
     binEdges: [],
+    wholeNumberBins: false,
     groupOrder: bars.map((bar) => bar.label),
     unplotted: [],
     zeroBaseline: y(0),

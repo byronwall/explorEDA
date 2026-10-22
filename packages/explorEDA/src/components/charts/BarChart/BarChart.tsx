@@ -303,7 +303,7 @@ function SingleBarChart({
         newFilters.push({
           type: "range",
           field: settings.field,
-          ...binRangeFilter(plan.binEdges, range),
+          ...binRangeFilter(plan.binEdges, range, plan.wholeNumberBins),
         });
       } else if (extent) {
         return;
@@ -313,6 +313,7 @@ function SingleBarChart({
     [
       plan.mode,
       plan.binEdges,
+      plan.wholeNumberBins,
       settings.field,
       settings.filters,
       settings.id,
@@ -341,10 +342,11 @@ function SingleBarChart({
     if (!bin) return false;
     const rest = settings.filters.filter((f) => f.field !== settings.field);
     const current = getRangeFilterForField(settings.filters, settings.field);
-    const range = binRangeFilter(plan.binEdges, {
-      min: bin.start,
-      max: bin.end,
-    });
+    const range = binRangeFilter(
+      plan.binEdges,
+      { min: bin.start, max: bin.end },
+      plan.wholeNumberBins
+    );
     updateChart(settings.id, {
       filters:
         current && sameRange(current, range, plan.binEdges)
@@ -366,7 +368,8 @@ function SingleBarChart({
     if (!filter || filter.type !== "range") return;
     const snapped = binRangeFilter(
       plan.binEdges,
-      snapRangeToBins(plan.binEdges, filter)
+      snapRangeToBins(plan.binEdges, filter),
+      plan.wholeNumberBins
     );
     if (
       sameRange(snapped, filter, plan.binEdges) &&
@@ -382,6 +385,7 @@ function SingleBarChart({
   }, [
     plan.mode,
     plan.binEdges,
+    plan.wholeNumberBins,
     settings.field,
     settings.filters,
     settings.id,

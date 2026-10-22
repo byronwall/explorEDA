@@ -117,14 +117,18 @@ export function snapRangeToBins(
 /**
  * A range over whole bins, as a filter. Bins leave out their upper edge, all
  * but the last, so a range that ends inside the bins leaves out its max too.
+ * Whole-number bins skip that: no value sits on their half-step edges, and
+ * "1.5–4.5" reads better than "1.5 to < 4.5".
  */
 export function binRangeFilter(
   edges: number[],
-  range: { min?: number; max?: number }
+  range: { min?: number; max?: number },
+  wholeNumbers = false
 ): { min?: number; max?: number; maxExclusive?: boolean } {
   const tolerance = edges.length > 1 ? edgeTolerance(edges) : 0;
   const last = edges.at(-1);
-  return range.max !== undefined &&
+  return !wholeNumbers &&
+    range.max !== undefined &&
     last !== undefined &&
     range.max < last - tolerance
     ? { min: range.min, max: range.max, maxExclusive: true }

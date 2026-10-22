@@ -139,26 +139,7 @@ it("selects exactly a histogram bar's rows when values sit on its upper edge", (
       <Filters />
     </DataLayerProvider>
   );
-  const svg = container.querySelector<SVGSVGElement>("svg[role='group']")!;
-  const plot = svg.querySelector<SVGGElement>("g[transform]")!;
-  const [left, top] = plot
-    .getAttribute("transform")!
-    .match(/-?[\d.]+/g)!
-    .map(Number);
-  const clickBar = (name: string) => {
-    const bar = screen.getByRole("button", { name });
-    const clientX =
-      left! +
-      Number(bar.getAttribute("x")) +
-      Number(bar.getAttribute("width")) / 2;
-    const clientY =
-      top! +
-      Number(bar.getAttribute("y")) +
-      Number(bar.getAttribute("height")) / 2;
-    fireEvent.pointerDown(svg, { button: 0, clientX, clientY });
-    fireEvent.pointerUp(svg, { button: 0, clientX, clientY });
-    fireEvent.click(svg, { button: 0, clientX, clientY });
-  };
+  const clickBar = (name: string) => clickHistogramBar(container, name);
   const selectedRows = () => {
     const filters = JSON.parse(
       screen.getByTestId("filters").textContent!
@@ -174,4 +155,52 @@ it("selects exactly a histogram bar's rows when values sit on its upper edge", (
 
   clickBar("0.5 to 1: 3 records");
   expect(selectedRows()).toBe(3);
+});
+
+/** Clicks a histogram bar where it is drawn, as a pointer would. */
+function clickHistogramBar(container: HTMLElement, name: string) {
+  const svg = container.querySelector<SVGSVGElement>("svg[role='group']")!;
+  const plot = svg.querySelector<SVGGElement>("g[transform]")!;
+  const [left, top] = plot
+    .getAttribute("transform")!
+    .match(/-?[\d.]+/g)!
+    .map(Number);
+  const bar = screen.getByRole("button", { name });
+  const clientX =
+    left! +
+    Number(bar.getAttribute("x")) +
+    Number(bar.getAttribute("width")) / 2;
+  const clientY =
+    top! +
+    Number(bar.getAttribute("y")) +
+    Number(bar.getAttribute("height")) / 2;
+  fireEvent.pointerDown(svg, { button: 0, clientX, clientY });
+  fireEvent.pointerUp(svg, { button: 0, clientX, clientY });
+  fireEvent.click(svg, { button: 0, clientX, clientY });
+}
+
+it("keeps whole-number bins' ranges inclusive, since no value sits on a half-step edge", () => {
+  window.PointerEvent = MouseEvent as typeof PointerEvent;
+  const histogram: BarChartSettings = {
+    ...barChartDefinition.createDefaultSettings(
+      { x: 0, y: 0, w: 6, h: 4 },
+      "Days"
+    ),
+    id: "days",
+    binCount: 4,
+  };
+  const { container } = render(
+    <DataLayerProvider
+      data={[1, 2, 2, 3, 4].map((Days) => ({ Days }))}
+      savedData={{ ...savedData, charts: [histogram], aggregates: [] }}
+    >
+      <LiveBar />
+      <Filters />
+    </DataLayerProvider>
+  );
+
+  clickHistogramBar(container, "2: 2 records");
+  expect(screen.getByTestId("filters").textContent).toBe(
+    JSON.stringify([{ type: "range", field: "Days", min: 1.5, max: 2.5 }])
+  );
 });
