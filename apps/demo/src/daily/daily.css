@@ -22,6 +22,11 @@
   padding-top: 0;
 }
 
+/* Readers need the charts, not the list of fields a query defines. */
+.daily-notebook .eda-notebook-segment:has(> .eda-notebook-defines) {
+  display: none;
+}
+
 /* Keep category names and counts visible in the narrow article column. */
 .daily-page .eda-chart-color-legend {
   max-height: none;

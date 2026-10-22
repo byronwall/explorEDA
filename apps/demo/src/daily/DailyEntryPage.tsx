@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { ChevronLeft, ChevronRight, Download } from "lucide-react";
 import {
   ExplorEda,
@@ -21,6 +21,7 @@ import {
 import { DailyCard } from "./DailyCard";
 import { useDailyCatalog } from "./useDailyCatalog";
 import { DailyMeta } from "./DailyMeta";
+import { NotebookOutline } from "./NotebookOutline";
 import "./daily.css";
 
 type LoadedEntry = Awaited<ReturnType<typeof loadDailyEntry>>;
@@ -181,19 +182,22 @@ function NotebookContent({
   entry: DailyEntry;
   loaded: LoadedEntry;
 }) {
-  {
-    return (
-      <div className="daily-notebook mx-auto max-w-[1440px] px-4 sm:px-6">
-        <ExplorEdaNotebook
-          // The page header shows the title; the notebook starts at its lede.
-          text={loaded.text.replace(/^# .+\n/, "")}
-          data={loaded.rows}
-          fieldTypes={loaded.fieldTypes}
-          name={entry.title}
-        />
-      </div>
-    );
-  }
+  const root = useRef<HTMLDivElement>(null);
+  return (
+    <div
+      ref={root}
+      className="daily-notebook relative mx-auto max-w-[1440px] px-4 sm:px-6"
+    >
+      <NotebookOutline root={root} />
+      <ExplorEdaNotebook
+        // The page header shows the title; the notebook starts at its lede.
+        text={loaded.text.replace(/^# .+\n/, "")}
+        data={loaded.rows}
+        fieldTypes={loaded.fieldTypes}
+        name={entry.title}
+      />
+    </div>
+  );
 }
 
 function WorkspaceContent({
@@ -315,6 +319,40 @@ function SeriesNav({ entry, all }: { entry: DailyEntry; all: DailyEntry[] }) {
   );
 }
 
+/**
+ * Left and right arrows step to the previous and next day, unless a control,
+ * chart, or text field has focus and may use the arrows itself.
+ */
+function useDayKeys(older?: DailyEntry, newer?: DailyEntry) {
+  const navigate = useNavigate();
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (
+        event.defaultPrevented ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.altKey ||
+        event.shiftKey ||
+        (event.target instanceof HTMLElement &&
+          event.target !== document.body &&
+          !event.target.matches("a"))
+      )
+        return;
+      const to =
+        event.key === "ArrowLeft"
+          ? older
+          : event.key === "ArrowRight"
+            ? newer
+            : undefined;
+      if (!to) return;
+      event.preventDefault();
+      navigate(dailyPath(to));
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [navigate, older, newer]);
+}
+
 export default function DailyEntryPage() {
   const { slug } = useParams();
   const { data, error } = useDailyCatalog();
@@ -322,6 +360,17 @@ export default function DailyEntryPage() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [slug]);
+  const published = data ? publishedEntries(data.entries) : [];
+  const index = entry
+    ? published.findIndex((item) => item.id === entry.id)
+    : -1;
+  const newer = index > 0 ? published[index - 1] : undefined;
+  const older = !entry
+    ? undefined
+    : index >= 0
+      ? published[index + 1]
+      : published[0];
+  useDayKeys(older, newer);
   if (!data)
     return (
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
@@ -341,10 +390,6 @@ export default function DailyEntryPage() {
         </Link>
       </div>
     );
-  const published = publishedEntries(data.entries);
-  const index = published.findIndex((item) => item.id === entry.id);
-  const newer = index > 0 ? published[index - 1] : undefined;
-  const older = index >= 0 ? published[index + 1] : published[0];
   const related = entry.related
     .map((id) => published.find((item) => item.id === id))
     .filter((item): item is DailyEntry => Boolean(item))
