@@ -31,3 +31,8 @@ Originals and proposed proof remain linked from that collection. No feature or c
 
 [Reviewed research](../../../research/engineering-bins-2026-10-21/README.md) and [four dispositions](../../../research/engineering-bins-2026-10-21/decisions.md)
 keep current controls. Endpoint agreement needs a bounded proof after local trust. New controls and a lesson remain conditional.
+
+## October 21 R026 review
+
+[Research summary](../../../research/missing-state-accounting-2026-10-21/README.md), [evidence](../../../research/missing-state-accounting-2026-10-21/evidence.md), and [decisions](../../../research/missing-state-accounting-2026-10-21/decisions.md) preserve the new value-accounting result.
+Four local probes passed; browser and repair work remain proposed. Historical evidence above retains its original date and scope.

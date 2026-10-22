@@ -109,6 +109,13 @@
       "location": "../../research/engineering-bins-2026-10-21/README.md",
       "anchor": "EB01\u2013EB04",
       "authority": "Reviewed research and proposed gates; no product approval or new browser proof"
+    },
+    {
+      "id": "r026-accounting",
+      "type": "agent-authored-analysis",
+      "location": "../../research/missing-state-accounting-2026-10-21/evidence.md",
+      "anchor": "MS01\u2013MS06; four local probes",
+      "authority": "Research and helper/provider/manager evidence; no browser or implemented repair"
     }
   ],
   "intent": {
@@ -360,6 +367,12 @@
       "action": "Reconciled engineering histogram boundary research.",
       "reason": "Retain current controls and separate endpoint proof from new capability.",
       "evidence": "Source receipts and independent arithmetic; named-task and complete product proofs remain unrun."
+    },
+    {
+      "date": "2026-10-21",
+      "action": "Reconciled R026 value accounting and three bounded consistency witnesses.",
+      "evidence": "Four locally authored probes pass; no product repair or browser claim.",
+      "reason": "Keep stage-specific counts and proposed repairs separate from a universal state model."
     }
   ],
   "closure": null,

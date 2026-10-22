@@ -64,3 +64,13 @@ Source bins exclude interior upper endpoints; linked numeric ranges include them
 This is source and arithmetic evidence, not a runtime defect. Compare the actual mark, trace, stored predicate and stable record keys.
 Start without local filters or facets. Check those populations separately, then test count edits and the declared restore path.
 Any confirmed repair needs its own scope. It does not approve authored histogram boundaries.
+
+## R026 value accounting review, October 21
+
+Keep category and measurement rules separate. Name population, stage, type, and operation for each count.
+Numeric conversion can report failures that later become effective missing values. Both stages can reconcile without equal labels or totals.
+R026 local probes reproduce three bounded disagreements: categorical count versus missing predicate, host-type preview versus Apply, and absent-property batch versus trace.
+These are helper/provider/manager results, not browser confirmation or implemented repairs.
+Review each repair locally. Keep the shared classifier deferred and the universal state model rejected for this mission.
+A visible repair must include fields/summary/calculated-fields guidance and its runnable example in the same milestone.
+See the [R026 research](../../research/missing-state-accounting-2026-10-21/README.md) and [six decisions](../../research/missing-state-accounting-2026-10-21/decisions.md).
