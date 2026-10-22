@@ -362,7 +362,6 @@ export default function DailyIndex() {
                       type="button"
                       aria-label={label}
                       aria-pressed={active}
-                      title={label}
                       onClick={() => set("view", value)}
                       className={`grid size-7 place-items-center rounded transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
                         active
