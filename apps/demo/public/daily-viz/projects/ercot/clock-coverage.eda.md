@@ -17,7 +17,7 @@ hours:num=clock.hours label="Hours"
 The position of each cell carries calendar structure. Signed values retain direction, while the shared unit keeps all cells comparable.
 
 ```eda
-heatmap @nb-ercot-clock-coverage-chart-1 hour_label columnField=month_label aggregation=average measureField=error showValues=true title="Signed error by UTC clock hour and month"
+heatmap @nb-ercot-clock-coverage-chart-1 hour_label maxCategories=24 columnField=month_label aggregation=average measureField=error showValues=true title="Signed error by UTC clock hour and month"
 ```
 
 ## 2. Absolute error asks a different question
@@ -25,7 +25,7 @@ heatmap @nb-ercot-clock-coverage-chart-1 hour_label columnField=month_label aggr
 Absolute errors measure miss size regardless of sign. A cell can have a small signed mean even when its positive and negative errors are both substantial.
 
 ```eda
-heatmap @nb-ercot-clock-coverage-chart-2 hour_label columnField=month_label aggregation=average measureField=abs_error title="Absolute error asks a different question"
+heatmap @nb-ercot-clock-coverage-chart-2 hour_label maxCategories=24 columnField=month_label aggregation=average measureField=abs_error title="Absolute error asks a different question"
 ```
 
 **Finding.** The best-supported month-hour cell contains 31 hours.

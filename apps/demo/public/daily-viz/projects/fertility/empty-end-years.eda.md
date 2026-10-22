@@ -45,7 +45,7 @@ row @nb-fertility-empty-end-years-chart-3 coverage title="Published versus missi
 Each cell has one selected country-year: one means a published rate and zero means a null rate. These are measurement-availability indicators, not imputed fertility values.
 
 ```eda
-heatmap @nb-fertility-empty-end-years-chart-4 country columnField=year_label aggregation=average measureField=observed title="Coverage by country and year"
+heatmap @nb-fertility-empty-end-years-chart-4 country columnField=year_label maxColumns=60 aggregation=average measureField=observed title="Coverage by country and year"
 ```
 
 **Finding.** In the selected 2011 rows, the missing-value share was 0.0%.
