@@ -3954,607 +3954,8 @@
       "id": "covid-waves",
       "title": "Three years of Covid case rates",
       "part": 1
-    }
-  },
-  {
-    "id": "nb-covid-vermont-florida",
-    "slug": "covid-vermont-florida",
-    "kind": "notebook",
-    "title": "Vermont kept Covid at a fifth of Florida’s rate for a year, then Omicron erased the gap",
-    "question": "Did the state with the lowest case rates stay lowest?",
-    "summary": "Through 2020 Vermont averaged a fifth of Florida’s weekly case rate, and half its weeks before Omicron were under 10 per 100,000. In January 2022 Vermont peaked higher than Florida, and the two states have tracked each other since.",
-    "family": "covid",
-    "entry": "vermont-florida.eda.md",
-    "query": "vtfl",
-    "industry": "Public health",
-    "analysis": "Comparison",
-    "findings": [
-      {
-        "text": "Vermont’s 2020 weeks averaged {value} new cases per 100,000",
-        "format": ".2f",
-        "op": "mean",
-        "field": "Cases per 100k",
-        "where": [
-          [
-            "Code",
-            "eq",
-            "VT"
-          ],
-          [
-            "Date",
-            "lt",
-            "2021-01-01"
-          ]
-        ]
-      },
-      {
-        "text": "Florida’s averaged {value}.",
-        "format": ".2f",
-        "op": "mean",
-        "field": "Cases per 100k",
-        "where": [
-          [
-            "Code",
-            "eq",
-            "FL"
-          ],
-          [
-            "Date",
-            "lt",
-            "2021-01-01"
-          ]
-        ]
-      },
-      {
-        "text": "Vermont averaged {value} a week",
-        "format": ".2f",
-        "op": "mean",
-        "field": "Cases per 100k",
-        "where": [
-          [
-            "Code",
-            "eq",
-            "VT"
-          ],
-          [
-            "Date",
-            "lt",
-            "2021-12-01"
-          ]
-        ]
-      },
-      {
-        "text": "against Florida’s {value}.",
-        "format": ".2f",
-        "op": "mean",
-        "field": "Cases per 100k",
-        "where": [
-          [
-            "Code",
-            "eq",
-            "FL"
-          ],
-          [
-            "Date",
-            "lt",
-            "2021-12-01"
-          ]
-        ]
-      },
-      {
-        "text": "Before Omicron, {value}% of Vermont’s weeks were under 10 new cases per 100,000",
-        "format": ".1f",
-        "op": "share",
-        "field": "Cases per 100k",
-        "where": [
-          [
-            "Code",
-            "eq",
-            "VT"
-          ],
-          [
-            "Date",
-            "lt",
-            "2021-12-01"
-          ]
-        ],
-        "condition": [
-          [
-            "Cases per 100k",
-            "lt",
-            10
-          ]
-        ]
-      },
-      {
-        "text": "and {value}% of Florida’s were.",
-        "format": ".1f",
-        "op": "share",
-        "field": "Cases per 100k",
-        "where": [
-          [
-            "Code",
-            "eq",
-            "FL"
-          ],
-          [
-            "Date",
-            "lt",
-            "2021-12-01"
-          ]
-        ],
-        "condition": [
-          [
-            "Cases per 100k",
-            "lt",
-            10
-          ]
-        ]
-      },
-      {
-        "text": "Vermont’s Omicron peak was {value} new cases per 100,000",
-        "format": ".2f",
-        "op": "max",
-        "field": "Cases per 100k",
-        "where": [
-          [
-            "Code",
-            "eq",
-            "VT"
-          ],
-          [
-            "wave",
-            "eq",
-            "Omicron 2022"
-          ]
-        ]
-      },
-      {
-        "text": "Florida’s was {value}.",
-        "format": ".2f",
-        "op": "max",
-        "field": "Cases per 100k",
-        "where": [
-          [
-            "Code",
-            "eq",
-            "FL"
-          ],
-          [
-            "wave",
-            "eq",
-            "Omicron 2022"
-          ]
-        ]
-      },
-      {
-        "text": "Vermont’s weeks averaged {value}",
-        "format": ".2f",
-        "op": "mean",
-        "field": "Cases per 100k",
-        "where": [
-          [
-            "Code",
-            "eq",
-            "VT"
-          ],
-          [
-            "wave",
-            "eq",
-            "Omicron 2022"
-          ]
-        ]
-      },
-      {
-        "text": "Florida’s {value}.",
-        "format": ".2f",
-        "op": "mean",
-        "field": "Cases per 100k",
-        "where": [
-          [
-            "Code",
-            "eq",
-            "FL"
-          ],
-          [
-            "wave",
-            "eq",
-            "Omicron 2022"
-          ]
-        ]
-      },
-      {
-        "text": "Vermont averaged {value} a week, Florida",
-        "format": ".2f",
-        "op": "mean",
-        "field": "Cases per 100k",
-        "where": [
-          [
-            "Code",
-            "eq",
-            "VT"
-          ],
-          [
-            "wave",
-            "eq",
-            "After Omicron"
-          ]
-        ]
-      },
-      {
-        "text": "Florida {value}.",
-        "format": ".2f",
-        "op": "mean",
-        "field": "Cases per 100k",
-        "where": [
-          [
-            "Code",
-            "eq",
-            "FL"
-          ],
-          [
-            "wave",
-            "eq",
-            "After Omicron"
-          ]
-        ]
-      }
-    ],
-    "series": {
-      "id": "covid-waves",
-      "title": "Three years of Covid case rates",
-      "part": 2
-    }
-  },
-  {
-    "id": "nb-covid-fifty-states",
-    "slug": "covid-fifty-states",
-    "kind": "notebook",
-    "title": "The winter wave began in the Dakotas; Omicron needed one month for all 51",
-    "question": "Which states peaked first in each Covid wave?",
-    "summary": "The winter 2020–21 wave peaked in North Dakota ten weeks before the coasts, and Delta took sixteen weeks to run from Arkansas to Rhode Island. Omicron peaked in all 51 states within four weeks of January 2022, and that was every state’s highest week.",
-    "family": "covid",
-    "entry": "fifty-states.eda.md",
-    "query": "tiles",
-    "industry": "Public health",
-    "analysis": "Geography",
-    "findings": [
-      {
-        "text": "the average rate was {value} new cases per 100,000",
-        "format": ".2f",
-        "op": "mean",
-        "field": "Cases per 100k"
-      },
-      {
-        "text": "the highest week anywhere was {value}.",
-        "format": ".2f",
-        "op": "max",
-        "field": "Cases per 100k"
-      },
-      {
-        "text": "North Dakota’s peak week was {value} new cases per 100,000",
-        "format": ".2f",
-        "op": "max",
-        "field": "Cases per 100k",
-        "where": [
-          [
-            "Code",
-            "eq",
-            "ND"
-          ],
-          [
-            "wave",
-            "eq",
-            "Winter 2020-21"
-          ]
-        ]
-      },
-      {
-        "text": "when the median state was at {value}.",
-        "format": ".2f",
-        "op": "median",
-        "field": "Cases per 100k",
-        "where": [
-          [
-            "Date",
-            "eq",
-            "2020-11-09"
-          ]
-        ]
-      },
-      {
-        "text": "Hawaii’s winter peak was {value}",
-        "format": ".2f",
-        "op": "max",
-        "field": "Cases per 100k",
-        "where": [
-          [
-            "Code",
-            "eq",
-            "HI"
-          ],
-          [
-            "wave",
-            "eq",
-            "Winter 2020-21"
-          ]
-        ]
-      },
-      {
-        "text": "Alaska’s Delta peak was {value}",
-        "format": ".2f",
-        "op": "max",
-        "field": "Cases per 100k",
-        "where": [
-          [
-            "Code",
-            "eq",
-            "AK"
-          ],
-          [
-            "wave",
-            "eq",
-            "Delta 2021"
-          ]
-        ]
-      },
-      {
-        "text": "Maryland’s was {value}.",
-        "format": ".2f",
-        "op": "max",
-        "field": "Cases per 100k",
-        "where": [
-          [
-            "Code",
-            "eq",
-            "MD"
-          ],
-          [
-            "wave",
-            "eq",
-            "Delta 2021"
-          ]
-        ]
-      },
-      {
-        "text": "Rhode Island’s Omicron peak was {value}",
-        "format": ".2f",
-        "op": "max",
-        "field": "Cases per 100k",
-        "where": [
-          [
-            "Code",
-            "eq",
-            "RI"
-          ],
-          [
-            "wave",
-            "eq",
-            "Omicron 2022"
-          ]
-        ]
-      },
-      {
-        "text": "Maine’s was {value}, the lowest of the 51.",
-        "format": ".2f",
-        "op": "max",
-        "field": "Cases per 100k",
-        "where": [
-          [
-            "Code",
-            "eq",
-            "ME"
-          ],
-          [
-            "wave",
-            "eq",
-            "Omicron 2022"
-          ]
-        ]
-      },
-      {
-        "text": "Rhode Island’s three-year average was {value} a week",
-        "format": ".2f",
-        "op": "mean",
-        "field": "Cases per 100k",
-        "where": [
-          [
-            "Code",
-            "eq",
-            "RI"
-          ]
-        ]
-      },
-      {
-        "text": "Maine’s was {value}",
-        "format": ".2f",
-        "op": "mean",
-        "field": "Cases per 100k",
-        "where": [
-          [
-            "Code",
-            "eq",
-            "ME"
-          ]
-        ]
-      }
-    ],
-    "series": {
-      "id": "covid-waves",
-      "title": "Three years of Covid case rates",
-      "part": 3
-    }
-  },
-  {
-    "id": "nb-scotus-tenure",
-    "slug": "scotus-tenure",
-    "kind": "notebook",
-    "title": "Death no longer ends a Supreme Court term",
-    "question": "How long do justices serve, and how do their terms end?",
-    "summary": "Justices sworn in since 1950 have served a median of 23 years, three times the founders’ appointees. Two-thirds of terms that ended before 1900 ended in death; since 1950, three-quarters have ended in retirement.",
-    "family": "scotus",
-    "entry": "tenure.eda.md",
-    "query": "justices",
-    "industry": "Politics",
-    "analysis": "Trend",
-    "findings": [
-      {
-        "text": "justices sworn in before 1800 served a median of {value} years",
-        "format": ".1f",
-        "op": "median",
-        "field": "Years served",
-        "where": [
-          [
-            "start_year",
-            "lt",
-            1800
-          ],
-          [
-            "status",
-            "eq",
-            "Completed"
-          ]
-        ]
-      },
-      {
-        "text": "Justices sworn in from 1950 to 1999 whose terms have ended served a median of {value} years.",
-        "format": ".1f",
-        "op": "median",
-        "field": "Years served",
-        "where": [
-          [
-            "era",
-            "eq",
-            "1950–1999"
-          ],
-          [
-            "status",
-            "eq",
-            "Completed"
-          ]
-        ]
-      },
-      {
-        "text": "The longest term, William O. Douglas’s, ran {value} years.",
-        "format": ".1f",
-        "op": "max",
-        "field": "Years served"
-      },
-      {
-        "text": "The 1900–1949 appointees served the shortest terms since the founding, a median of {value} years",
-        "format": ".1f",
-        "op": "median",
-        "field": "Years served",
-        "where": [
-          [
-            "era",
-            "eq",
-            "1900–1949"
-          ],
-          [
-            "status",
-            "eq",
-            "Completed"
-          ]
-        ]
-      },
-      {
-        "text": "Of the terms that ended before 1900, {value}% ended with the justice’s death.",
-        "format": ".1f",
-        "op": "share",
-        "field": "ended",
-        "where": [
-          [
-            "end_year",
-            "lt",
-            1900
-          ]
-        ],
-        "condition": [
-          [
-            "ended",
-            "eq",
-            "Died in office"
-          ]
-        ]
-      },
-      {
-        "text": "Of those that have ended since 1950, {value}% did",
-        "format": ".1f",
-        "op": "share",
-        "field": "ended",
-        "where": [
-          [
-            "end_year",
-            "ge",
-            1950
-          ]
-        ],
-        "condition": [
-          [
-            "ended",
-            "eq",
-            "Died in office"
-          ]
-        ]
-      },
-      {
-        "text": "and {value}% ended in retirement.",
-        "format": ".1f",
-        "op": "share",
-        "field": "ended",
-        "where": [
-          [
-            "end_year",
-            "ge",
-            1950
-          ]
-        ],
-        "condition": [
-          [
-            "ended",
-            "eq",
-            "Retired"
-          ]
-        ]
-      },
-      {
-        "text": "Since 1950, Republican presidents have appointed {value} justices",
-        "format": ".0f",
-        "op": "count",
-        "field": "Party",
-        "where": [
-          [
-            "start_year",
-            "ge",
-            1950
-          ],
-          [
-            "Party",
-            "eq",
-            "Republican"
-          ]
-        ]
-      },
-      {
-        "text": "and Democratic presidents {value}.",
-        "format": ".0f",
-        "op": "count",
-        "field": "Party",
-        "where": [
-          [
-            "start_year",
-            "ge",
-            1950
-          ],
-          [
-            "Party",
-            "eq",
-            "Democratic"
-          ]
-        ]
-      }
-    ]
+    },
+    "published": "2026-10-22"
   },
   {
     "id": "nb-media-coverage",
@@ -4737,7 +4138,8 @@
           ]
         ]
       }
-    ]
+    ],
+    "published": "2026-10-23"
   },
   {
     "id": "nb-pew-partisan-gaps",
@@ -4829,7 +4231,8 @@
           ]
         ]
       }
-    ]
+    ],
+    "published": "2026-10-24"
   },
   {
     "id": "nb-lincoln-swings",
@@ -4933,7 +4336,8 @@
           ]
         ]
       }
-    ]
+    ],
+    "published": "2026-10-25"
   },
   {
     "id": "nb-driving-miles-and-gas",
@@ -5005,161 +4409,8 @@
           ]
         ]
       }
-    ]
-  },
-  {
-    "id": "nb-elections-drift",
-    "slug": "elections-drift",
-    "kind": "notebook",
-    "title": "West Virginia swung 58 points to the Republicans; Vermont swung 38 the other way",
-    "question": "How did each state's lean change from 1976 to 2016?",
-    "summary": "Between 1976 and 2016 West Virginia’s Democratic margin fell 58 points and Vermont’s rose 38, while the median state moved three. Sixteen Carter states went Republican and thirteen Ford states went Democratic: a realignment, not a tide.",
-    "family": "elections",
-    "entry": "drift.eda.md",
-    "query": "drift",
-    "industry": "Politics",
-    "analysis": "Ranking",
-    "findings": [
-      {
-        "text": "West Virginia’s margin moved {value} points",
-        "format": ".1f",
-        "op": "min",
-        "field": "drift"
-      },
-      {
-        "text": "Arkansas’s {value}",
-        "format": ".1f",
-        "op": "max",
-        "field": "drift",
-        "where": [
-          [
-            "State",
-            "eq",
-            "Arkansas"
-          ]
-        ]
-      },
-      {
-        "text": "Vermont gained {value} points",
-        "format": ".1f",
-        "op": "max",
-        "field": "drift"
-      },
-      {
-        "text": "and California {value}.",
-        "format": ".1f",
-        "op": "max",
-        "field": "drift",
-        "where": [
-          [
-            "State",
-            "eq",
-            "California"
-          ]
-        ]
-      },
-      {
-        "text": "The median state drifted {value} points",
-        "format": ".1f",
-        "op": "median",
-        "field": "drift"
-      },
-      {
-        "text": "The two margins have a correlation of {value}.",
-        "format": ".3f",
-        "op": "corr",
-        "field": "margin_1976",
-        "other": "margin_2016"
-      },
-      {
-        "text": "{value} states that Carter won in 1976 voted Republican in 2016",
-        "format": ".0f",
-        "op": "count",
-        "field": "drift",
-        "where": [
-          [
-            "margin_1976",
-            "gt",
-            0
-          ],
-          [
-            "margin_2016",
-            "lt",
-            0
-          ]
-        ]
-      },
-      {
-        "text": "and {value} that Ford won voted Democratic.",
-        "format": ".0f",
-        "op": "count",
-        "field": "drift",
-        "where": [
-          [
-            "margin_1976",
-            "lt",
-            0
-          ],
-          [
-            "margin_2016",
-            "gt",
-            0
-          ]
-        ]
-      },
-      {
-        "text": "States that leaned Democratic in 1976 drifted {value} points on average",
-        "format": ".1f",
-        "op": "mean",
-        "field": "drift",
-        "where": [
-          [
-            "margin_1976",
-            "gt",
-            0
-          ]
-        ]
-      },
-      {
-        "text": "states that leaned Republican drifted {value}.",
-        "format": ".1f",
-        "op": "mean",
-        "field": "drift",
-        "where": [
-          [
-            "margin_1976",
-            "lt",
-            0
-          ]
-        ]
-      },
-      {
-        "text": "{value} states voted Republican in all eleven elections",
-        "format": ".0f",
-        "op": "count",
-        "field": "dem_wins",
-        "where": [
-          [
-            "dem_wins",
-            "eq",
-            0
-          ]
-        ]
-      },
-      {
-        "text": "The {value} that flipped at least once",
-        "format": ".0f",
-        "op": "count",
-        "field": "dem_wins",
-        "where": [
-          [
-            "record",
-            "eq",
-            "Flipped at least once"
-          ]
-        ]
-      }
-    ]
+    ],
+    "published": "2026-10-26"
   },
   {
     "id": "nb-measles-resurgence",
@@ -5329,7 +4580,163 @@
           ]
         ]
       }
-    ]
+    ],
+    "published": "2026-10-27"
+  },
+  {
+    "id": "nb-elections-drift",
+    "slug": "elections-drift",
+    "kind": "notebook",
+    "title": "West Virginia swung 58 points to the Republicans; Vermont swung 38 the other way",
+    "question": "How did each state's lean change from 1976 to 2016?",
+    "summary": "Between 1976 and 2016 West Virginia’s Democratic margin fell 58 points and Vermont’s rose 38, while the median state moved three. Sixteen Carter states went Republican and thirteen Ford states went Democratic: a realignment, not a tide.",
+    "family": "elections",
+    "entry": "drift.eda.md",
+    "query": "drift",
+    "industry": "Politics",
+    "analysis": "Ranking",
+    "findings": [
+      {
+        "text": "West Virginia’s margin moved {value} points",
+        "format": ".1f",
+        "op": "min",
+        "field": "drift"
+      },
+      {
+        "text": "Arkansas’s {value}",
+        "format": ".1f",
+        "op": "max",
+        "field": "drift",
+        "where": [
+          [
+            "State",
+            "eq",
+            "Arkansas"
+          ]
+        ]
+      },
+      {
+        "text": "Vermont gained {value} points",
+        "format": ".1f",
+        "op": "max",
+        "field": "drift"
+      },
+      {
+        "text": "and California {value}.",
+        "format": ".1f",
+        "op": "max",
+        "field": "drift",
+        "where": [
+          [
+            "State",
+            "eq",
+            "California"
+          ]
+        ]
+      },
+      {
+        "text": "The median state drifted {value} points",
+        "format": ".1f",
+        "op": "median",
+        "field": "drift"
+      },
+      {
+        "text": "The two margins have a correlation of {value}.",
+        "format": ".3f",
+        "op": "corr",
+        "field": "margin_1976",
+        "other": "margin_2016"
+      },
+      {
+        "text": "{value} states that Carter won in 1976 voted Republican in 2016",
+        "format": ".0f",
+        "op": "count",
+        "field": "drift",
+        "where": [
+          [
+            "margin_1976",
+            "gt",
+            0
+          ],
+          [
+            "margin_2016",
+            "lt",
+            0
+          ]
+        ]
+      },
+      {
+        "text": "and {value} that Ford won voted Democratic.",
+        "format": ".0f",
+        "op": "count",
+        "field": "drift",
+        "where": [
+          [
+            "margin_1976",
+            "lt",
+            0
+          ],
+          [
+            "margin_2016",
+            "gt",
+            0
+          ]
+        ]
+      },
+      {
+        "text": "States that leaned Democratic in 1976 drifted {value} points on average",
+        "format": ".1f",
+        "op": "mean",
+        "field": "drift",
+        "where": [
+          [
+            "margin_1976",
+            "gt",
+            0
+          ]
+        ]
+      },
+      {
+        "text": "states that leaned Republican drifted {value}.",
+        "format": ".1f",
+        "op": "mean",
+        "field": "drift",
+        "where": [
+          [
+            "margin_1976",
+            "lt",
+            0
+          ]
+        ]
+      },
+      {
+        "text": "{value} states voted Republican in all eleven elections",
+        "format": ".0f",
+        "op": "count",
+        "field": "dem_wins",
+        "where": [
+          [
+            "dem_wins",
+            "eq",
+            0
+          ]
+        ]
+      },
+      {
+        "text": "The {value} that flipped at least once",
+        "format": ".0f",
+        "op": "count",
+        "field": "dem_wins",
+        "where": [
+          [
+            "record",
+            "eq",
+            "Flipped at least once"
+          ]
+        ]
+      }
+    ],
+    "published": "2026-10-28"
   },
   {
     "id": "nb-titanic-age-and-fare",
@@ -5589,7 +4996,8 @@
           ]
         ]
       }
-    ]
+    ],
+    "published": "2026-10-29"
   },
   {
     "id": "nb-penguins-bills",
@@ -5800,6 +5208,610 @@
           ]
         ]
       }
-    ]
+    ],
+    "published": "2026-10-30"
+  },
+  {
+    "id": "nb-covid-vermont-florida",
+    "slug": "covid-vermont-florida",
+    "kind": "notebook",
+    "title": "Vermont kept Covid at a fifth of Florida’s rate for a year, then Omicron erased the gap",
+    "question": "Did the state with the lowest case rates stay lowest?",
+    "summary": "Through 2020 Vermont averaged a fifth of Florida’s weekly case rate, and half its weeks before Omicron were under 10 per 100,000. In January 2022 Vermont peaked higher than Florida, and the two states have tracked each other since.",
+    "family": "covid",
+    "entry": "vermont-florida.eda.md",
+    "query": "vtfl",
+    "industry": "Public health",
+    "analysis": "Comparison",
+    "findings": [
+      {
+        "text": "Vermont’s 2020 weeks averaged {value} new cases per 100,000",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "VT"
+          ],
+          [
+            "Date",
+            "lt",
+            "2021-01-01"
+          ]
+        ]
+      },
+      {
+        "text": "Florida’s averaged {value}.",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "FL"
+          ],
+          [
+            "Date",
+            "lt",
+            "2021-01-01"
+          ]
+        ]
+      },
+      {
+        "text": "Vermont averaged {value} a week",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "VT"
+          ],
+          [
+            "Date",
+            "lt",
+            "2021-12-01"
+          ]
+        ]
+      },
+      {
+        "text": "against Florida’s {value}.",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "FL"
+          ],
+          [
+            "Date",
+            "lt",
+            "2021-12-01"
+          ]
+        ]
+      },
+      {
+        "text": "Before Omicron, {value}% of Vermont’s weeks were under 10 new cases per 100,000",
+        "format": ".1f",
+        "op": "share",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "VT"
+          ],
+          [
+            "Date",
+            "lt",
+            "2021-12-01"
+          ]
+        ],
+        "condition": [
+          [
+            "Cases per 100k",
+            "lt",
+            10
+          ]
+        ]
+      },
+      {
+        "text": "and {value}% of Florida’s were.",
+        "format": ".1f",
+        "op": "share",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "FL"
+          ],
+          [
+            "Date",
+            "lt",
+            "2021-12-01"
+          ]
+        ],
+        "condition": [
+          [
+            "Cases per 100k",
+            "lt",
+            10
+          ]
+        ]
+      },
+      {
+        "text": "Vermont’s Omicron peak was {value} new cases per 100,000",
+        "format": ".2f",
+        "op": "max",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "VT"
+          ],
+          [
+            "wave",
+            "eq",
+            "Omicron 2022"
+          ]
+        ]
+      },
+      {
+        "text": "Florida’s was {value}.",
+        "format": ".2f",
+        "op": "max",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "FL"
+          ],
+          [
+            "wave",
+            "eq",
+            "Omicron 2022"
+          ]
+        ]
+      },
+      {
+        "text": "Vermont’s weeks averaged {value}",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "VT"
+          ],
+          [
+            "wave",
+            "eq",
+            "Omicron 2022"
+          ]
+        ]
+      },
+      {
+        "text": "Florida’s {value}.",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "FL"
+          ],
+          [
+            "wave",
+            "eq",
+            "Omicron 2022"
+          ]
+        ]
+      },
+      {
+        "text": "Vermont averaged {value} a week, Florida",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "VT"
+          ],
+          [
+            "wave",
+            "eq",
+            "After Omicron"
+          ]
+        ]
+      },
+      {
+        "text": "Florida {value}.",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "FL"
+          ],
+          [
+            "wave",
+            "eq",
+            "After Omicron"
+          ]
+        ]
+      }
+    ],
+    "series": {
+      "id": "covid-waves",
+      "title": "Three years of Covid case rates",
+      "part": 2
+    },
+    "published": "2026-10-31"
+  },
+  {
+    "id": "nb-scotus-tenure",
+    "slug": "scotus-tenure",
+    "kind": "notebook",
+    "title": "Death no longer ends a Supreme Court term",
+    "question": "How long do justices serve, and how do their terms end?",
+    "summary": "Justices sworn in since 1950 have served a median of 23 years, three times the founders’ appointees. Two-thirds of terms that ended before 1900 ended in death; since 1950, three-quarters have ended in retirement.",
+    "family": "scotus",
+    "entry": "tenure.eda.md",
+    "query": "justices",
+    "industry": "Politics",
+    "analysis": "Trend",
+    "findings": [
+      {
+        "text": "justices sworn in before 1800 served a median of {value} years",
+        "format": ".1f",
+        "op": "median",
+        "field": "Years served",
+        "where": [
+          [
+            "start_year",
+            "lt",
+            1800
+          ],
+          [
+            "status",
+            "eq",
+            "Completed"
+          ]
+        ]
+      },
+      {
+        "text": "Justices sworn in from 1950 to 1999 whose terms have ended served a median of {value} years.",
+        "format": ".1f",
+        "op": "median",
+        "field": "Years served",
+        "where": [
+          [
+            "era",
+            "eq",
+            "1950–1999"
+          ],
+          [
+            "status",
+            "eq",
+            "Completed"
+          ]
+        ]
+      },
+      {
+        "text": "The longest term, William O. Douglas’s, ran {value} years.",
+        "format": ".1f",
+        "op": "max",
+        "field": "Years served"
+      },
+      {
+        "text": "The 1900–1949 appointees served the shortest terms since the founding, a median of {value} years",
+        "format": ".1f",
+        "op": "median",
+        "field": "Years served",
+        "where": [
+          [
+            "era",
+            "eq",
+            "1900–1949"
+          ],
+          [
+            "status",
+            "eq",
+            "Completed"
+          ]
+        ]
+      },
+      {
+        "text": "Of the terms that ended before 1900, {value}% ended with the justice’s death.",
+        "format": ".1f",
+        "op": "share",
+        "field": "ended",
+        "where": [
+          [
+            "end_year",
+            "lt",
+            1900
+          ]
+        ],
+        "condition": [
+          [
+            "ended",
+            "eq",
+            "Died in office"
+          ]
+        ]
+      },
+      {
+        "text": "Of those that have ended since 1950, {value}% did",
+        "format": ".1f",
+        "op": "share",
+        "field": "ended",
+        "where": [
+          [
+            "end_year",
+            "ge",
+            1950
+          ]
+        ],
+        "condition": [
+          [
+            "ended",
+            "eq",
+            "Died in office"
+          ]
+        ]
+      },
+      {
+        "text": "and {value}% ended in retirement.",
+        "format": ".1f",
+        "op": "share",
+        "field": "ended",
+        "where": [
+          [
+            "end_year",
+            "ge",
+            1950
+          ]
+        ],
+        "condition": [
+          [
+            "ended",
+            "eq",
+            "Retired"
+          ]
+        ]
+      },
+      {
+        "text": "Since 1950, Republican presidents have appointed {value} justices",
+        "format": ".0f",
+        "op": "count",
+        "field": "Party",
+        "where": [
+          [
+            "start_year",
+            "ge",
+            1950
+          ],
+          [
+            "Party",
+            "eq",
+            "Republican"
+          ]
+        ]
+      },
+      {
+        "text": "and Democratic presidents {value}.",
+        "format": ".0f",
+        "op": "count",
+        "field": "Party",
+        "where": [
+          [
+            "start_year",
+            "ge",
+            1950
+          ],
+          [
+            "Party",
+            "eq",
+            "Democratic"
+          ]
+        ]
+      }
+    ],
+    "published": "2026-11-01"
+  },
+  {
+    "id": "nb-covid-fifty-states",
+    "slug": "covid-fifty-states",
+    "kind": "notebook",
+    "title": "The winter wave began in the Dakotas; Omicron needed one month for all 51",
+    "question": "Which states peaked first in each Covid wave?",
+    "summary": "The winter 2020–21 wave peaked in North Dakota ten weeks before the coasts, and Delta took sixteen weeks to run from Arkansas to Rhode Island. Omicron peaked in all 51 states within four weeks of January 2022, and that was every state’s highest week.",
+    "family": "covid",
+    "entry": "fifty-states.eda.md",
+    "query": "tiles",
+    "industry": "Public health",
+    "analysis": "Geography",
+    "findings": [
+      {
+        "text": "the average rate was {value} new cases per 100,000",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Cases per 100k"
+      },
+      {
+        "text": "the highest week anywhere was {value}.",
+        "format": ".2f",
+        "op": "max",
+        "field": "Cases per 100k"
+      },
+      {
+        "text": "North Dakota’s peak week was {value} new cases per 100,000",
+        "format": ".2f",
+        "op": "max",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "ND"
+          ],
+          [
+            "wave",
+            "eq",
+            "Winter 2020-21"
+          ]
+        ]
+      },
+      {
+        "text": "when the median state was at {value}.",
+        "format": ".2f",
+        "op": "median",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Date",
+            "eq",
+            "2020-11-09"
+          ]
+        ]
+      },
+      {
+        "text": "Hawaii’s winter peak was {value}",
+        "format": ".2f",
+        "op": "max",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "HI"
+          ],
+          [
+            "wave",
+            "eq",
+            "Winter 2020-21"
+          ]
+        ]
+      },
+      {
+        "text": "Alaska’s Delta peak was {value}",
+        "format": ".2f",
+        "op": "max",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "AK"
+          ],
+          [
+            "wave",
+            "eq",
+            "Delta 2021"
+          ]
+        ]
+      },
+      {
+        "text": "Maryland’s was {value}.",
+        "format": ".2f",
+        "op": "max",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "MD"
+          ],
+          [
+            "wave",
+            "eq",
+            "Delta 2021"
+          ]
+        ]
+      },
+      {
+        "text": "Rhode Island’s Omicron peak was {value}",
+        "format": ".2f",
+        "op": "max",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "RI"
+          ],
+          [
+            "wave",
+            "eq",
+            "Omicron 2022"
+          ]
+        ]
+      },
+      {
+        "text": "Maine’s was {value}, the lowest of the 51.",
+        "format": ".2f",
+        "op": "max",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "ME"
+          ],
+          [
+            "wave",
+            "eq",
+            "Omicron 2022"
+          ]
+        ]
+      },
+      {
+        "text": "Rhode Island’s three-year average was {value} a week",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "RI"
+          ]
+        ]
+      },
+      {
+        "text": "Maine’s was {value}",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "ME"
+          ]
+        ]
+      }
+    ],
+    "series": {
+      "id": "covid-waves",
+      "title": "Three years of Covid case rates",
+      "part": 3
+    },
+    "published": "2026-11-02"
   }
 ]
