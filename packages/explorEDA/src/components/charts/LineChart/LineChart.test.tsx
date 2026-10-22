@@ -146,6 +146,10 @@ it("draws one line per split value on a numeric x, each in x order", () => {
     (path) => path.getAttribute("d")?.startsWith("M")
   );
   expect(paths).toHaveLength(2);
+  // Without a color scale, each value still takes its own color.
+  expect(new Set(paths.map((path) => path.getAttribute("stroke"))).size).toBe(
+    2
+  );
   // Each firm's path runs left to right through its three years.
   for (const path of paths) {
     const xs = path

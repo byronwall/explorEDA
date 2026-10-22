@@ -2,7 +2,7 @@ import {
   useColorContext,
   useDisplayColorScale,
 } from "@/hooks/useDisplayColorScales";
-import { categoryLabel } from "@/lib/categories";
+import { categoryKey, categoryLabel } from "@/lib/categories";
 import { defaultCategoricalColors, makeColorScale } from "@/lib/colorScaleMath";
 import { planObservationSeries } from "./observationSeries";
 import { THEME_PALETTE, resolvePaletteColor } from "@/lib/themePalettes";
@@ -314,12 +314,20 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
     () => (splitScale ? makeColorScale(splitScale) : undefined),
     [splitScale]
   );
+  // Without a color scale, split values take palette colors in draw order.
+  const groupOrder = [
+    ...new Set(
+      processedLiveSeriesData.map((series) => categoryKey(series.group))
+    ),
+  ];
   const lineColor = (series: (typeof processedLiveSeriesData)[number]) =>
     series.group === undefined && !splitField
       ? drawnColors[series.field]
       : (splitColor?.(series.group) ??
-        drawnColors[series.field] ??
-        defaultCategoricalColors[0]);
+        defaultCategoricalColors[
+          groupOrder.indexOf(categoryKey(series.group)) %
+            defaultCategoricalColors.length
+        ]!);
   // A split line reads as its value, and its field too when there are several.
   const lineLabel = (series: (typeof processedLiveSeriesData)[number]) =>
     !splitField
