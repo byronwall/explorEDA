@@ -842,9 +842,9 @@
         "field": "error"
       },
       {
-        "text": "The mean absolute error was {value} MWh per hour.",
-        "format": ",.1f",
-        "op": "mean",
+        "text": "The largest miss in one hour was {value} MWh.",
+        "format": ",.0f",
+        "op": "max",
         "field": "abs_error"
       },
       {
@@ -875,6 +875,31 @@
             "date",
             "lt",
             "2021-02-14"
+          ]
+        ]
+      },
+      {
+        "text": "The mean absolute error was {value} MWh per hour.",
+        "format": ",.1f",
+        "op": "mean",
+        "field": "abs_error"
+      },
+      {
+        "text": "The median absolute error was {value} MWh per hour.",
+        "format": ",.0f",
+        "op": "median",
+        "field": "abs_error"
+      },
+      {
+        "text": "{value}% of hours missed by less than 2,000 MWh.",
+        "format": ".1f",
+        "op": "share",
+        "field": "abs_error",
+        "condition": [
+          [
+            "abs_error",
+            "lt",
+            2000
           ]
         ]
       }
@@ -1492,9 +1517,9 @@
     "id": "nb-ercot-relative-error",
     "slug": "ercot-relative-error",
     "kind": "notebook",
-    "title": "Half of ERCOT hours missed by less than 2.3%",
-    "question": "Which hours look worse when the miss is measured as a share of the forecast?",
-    "summary": "Measured against the forecast, half of ERCOT's hours missed by under 2.3% and nine in ten by under 14%.",
+    "title": "Half of ERCOT's hours missed by under 2.3%; the storm week missed by 18%",
+    "question": "How big is a typical forecast miss once you measure it against the size of the forecast?",
+    "summary": "Half of ERCOT's hours missed by under 2.3% of the forecast and nine in ten by under 14%. The storm week missed by 17.5% on average, and the week after was still off by 7.7%.",
     "family": "ercot",
     "entry": "relative-error.eda.md",
     "query": "r",
@@ -1513,6 +1538,94 @@
         "op": "quantile",
         "field": "abs_pct_error",
         "q": 0.9
+      },
+      {
+        "text": "The worst hour missed by {value}% of forecast.",
+        "format": ".1f",
+        "op": "max",
+        "field": "abs_pct_error"
+      },
+      {
+        "text": "During the storm week, the mean absolute percentage error was {value}% of forecast.",
+        "format": ".1f",
+        "op": "mean",
+        "field": "abs_pct_error",
+        "where": [
+          [
+            "date",
+            "ge",
+            "2021-02-14"
+          ],
+          [
+            "date",
+            "lt",
+            "2021-02-21"
+          ]
+        ]
+      },
+      {
+        "text": "{value}% of storm-week hours missed by more than 10%.",
+        "format": ".1f",
+        "op": "share",
+        "field": "abs_pct_error",
+        "where": [
+          [
+            "date",
+            "ge",
+            "2021-02-14"
+          ],
+          [
+            "date",
+            "lt",
+            "2021-02-21"
+          ]
+        ],
+        "condition": [
+          [
+            "abs_pct_error",
+            "gt",
+            10
+          ]
+        ]
+      },
+      {
+        "text": "{value}% of hours missed by more than 10%.",
+        "format": ".1f",
+        "op": "share",
+        "field": "abs_pct_error",
+        "condition": [
+          [
+            "abs_pct_error",
+            "gt",
+            10
+          ]
+        ]
+      },
+      {
+        "text": "Before the storm, the median absolute percentage error was {value}% of forecast.",
+        "format": ".2f",
+        "op": "median",
+        "field": "abs_pct_error",
+        "where": [
+          [
+            "date",
+            "lt",
+            "2021-02-14"
+          ]
+        ]
+      },
+      {
+        "text": "After February 20, the median absolute percentage error was {value}% of forecast.",
+        "format": ".2f",
+        "op": "median",
+        "field": "abs_pct_error",
+        "where": [
+          [
+            "date",
+            "ge",
+            "2021-02-21"
+          ]
+        ]
       }
     ],
     "published": "2026-08-18"
@@ -3461,15 +3574,106 @@
     "id": "nb-ercot-clock-coverage",
     "slug": "ercot-clock-coverage",
     "kind": "notebook",
-    "title": "The clock-hour pattern depends on which days were supplied",
-    "question": "Do recurring UTC hours have similar signed and absolute errors within each month?",
-    "summary": "The hour-by-hour error pattern depends on which days are in each cell: some month-hour cells hold 31 hours and one holds a single hour.",
+    "title": "February's forecast missed six times January's at every hour of the clock",
+    "question": "Does the ERCOT day-ahead forecast have a bad time of day?",
+    "summary": "In January the forecast missed most in the Texas evening and least in the small hours, by about 1,150 against 600 MWh. February's storm week put nearly six times January's error into every clock hour, and March's five cells hold one hour each.",
     "family": "ercot",
     "entry": "clock-coverage.eda.md",
     "query": "clock",
     "industry": "Energy",
     "analysis": "Data quality",
     "findings": [
+      {
+        "text": "In January the clock-hour cells averaged {value} MWh of absolute error.",
+        "format": ",.0f",
+        "op": "mean",
+        "field": "abs_error",
+        "where": [
+          [
+            "month_label",
+            "eq",
+            "01 Jan"
+          ]
+        ]
+      },
+      {
+        "text": "In February the clock-hour cells averaged {value} MWh of absolute error.",
+        "format": ",.0f",
+        "op": "mean",
+        "field": "abs_error",
+        "where": [
+          [
+            "month_label",
+            "eq",
+            "02 Feb"
+          ]
+        ]
+      },
+      {
+        "text": "January's worst clock hour, 04:00 UTC, averaged {value} MWh of absolute error.",
+        "format": ",.0f",
+        "op": "max",
+        "field": "abs_error",
+        "where": [
+          [
+            "month_label",
+            "eq",
+            "01 Jan"
+          ]
+        ]
+      },
+      {
+        "text": "January's best clock hour, 08:00 UTC, averaged {value} MWh.",
+        "format": ",.0f",
+        "op": "min",
+        "field": "abs_error",
+        "where": [
+          [
+            "month_label",
+            "eq",
+            "01 Jan"
+          ]
+        ]
+      },
+      {
+        "text": "February's best clock hour, 12:00 UTC, still averaged {value} MWh.",
+        "format": ",.0f",
+        "op": "min",
+        "field": "abs_error",
+        "where": [
+          [
+            "month_label",
+            "eq",
+            "02 Feb"
+          ]
+        ]
+      },
+      {
+        "text": "In January the clock-hour cells averaged {value} MWh above forecast.",
+        "format": ",.0f",
+        "op": "mean",
+        "field": "error",
+        "where": [
+          [
+            "month_label",
+            "eq",
+            "01 Jan"
+          ]
+        ]
+      },
+      {
+        "text": "In February the clock-hour cells averaged {value} MWh",
+        "format": ",.0f",
+        "op": "mean",
+        "field": "error",
+        "where": [
+          [
+            "month_label",
+            "eq",
+            "02 Feb"
+          ]
+        ]
+      },
       {
         "text": "The best-supported month-hour cell contains {value} hours.",
         "format": ".0f",
