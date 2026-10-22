@@ -15,6 +15,16 @@ The reader to write for likes the Financial Times data desk, Our World in Data, 
 7. **Takeaway.** The answer in one sentence, then what it changes about how a reader should hear the headline number. Two or three sentences; specific to this data.
 8. **Limits.** Two or three sentences naming what this data cannot say: grain, coverage, sample, vintage, a denominator that is missing. Once, here, not scattered through the piece.
 
+## The page it lands on
+
+From 960 px wide, a daily notebook sets each `##` section's text in a 300 px column beside its charts, and that text stays in view while the charts scroll. Write for that column:
+
+- A section's text is its heading, two to four sentences, and the finding inside them: about 40 to 90 words. Longer text scrolls away from its chart.
+- Headings are short enough to wrap once at 300 px: eight words or fewer.
+- The lede sits before the first heading and spans the page. Takeaway and Limits share one row at the end, so each is two or three sentences.
+- A chart titled with the same words as its heading hides that title; giving the title the population and unit instead keeps both useful.
+- Below 960 px, and in an editable notebook, the same text reads as one column, so each paragraph must also make sense directly above its chart.
+
 ## Prose
 
 - **Observations, not instructions.** Write what the data shows: "December's median is twice October's." Never tell the reader what they must not conclude: "Do not treat the cells as equally supported." A caveat that matters goes in Limits, once.
