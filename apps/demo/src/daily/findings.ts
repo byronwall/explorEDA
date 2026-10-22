@@ -10,7 +10,11 @@ export type Condition = [field: string, comparison: Comparison, value: unknown];
 export interface DailyFinding {
   /** The sentence, with `{value}` where the computed number goes. */
   text: string;
-  /** Python-style number format: `.2f`, `,.1f`, `.0f`. */
+  /**
+   * Python-style number format: `.2f`, `,.1f`, `.0f`. For `earliest` and
+   * `latest`, a date format: `iso` (1986-04-26), `day` (26 April 1986),
+   * or `month` (April 1986).
+   */
   format: string;
   op:
     | "count"
@@ -25,7 +29,9 @@ export interface DailyFinding {
     | "missing_share"
     | "top_share"
     | "ratio_sums"
-    | "weighted_mean";
+    | "weighted_mean"
+    | "earliest"
+    | "latest";
   field: string;
   /** Query id when it differs from the piece's own query. */
   query?: string;
@@ -41,6 +47,7 @@ export interface DailyFinding {
 
 export interface FindingResult {
   statement: string;
+  /** The number, or for a date finding the time in milliseconds since 1970. */
   value: number;
   /** Rows the calculation read, after `where` and missing values. */
   rows: Row[];
@@ -133,6 +140,41 @@ export function formatValue(value: number, format: string) {
   return fraction === undefined ? grouped : `${grouped}.${fraction}`;
 }
 
+const MONTHS = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
+/** An ISO date cell as a UTC time, or null for a blank or non-date cell. */
+export function dateValue(value: unknown) {
+  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}/.test(value))
+    return null;
+  const time = Date.parse(value.length === 10 ? `${value}T00:00:00Z` : value);
+  return Number.isFinite(time) ? time : null;
+}
+
+/** Formats a UTC time for a date finding: `iso`, `day`, or `month`. */
+export function formatDate(time: number, format: string) {
+  const date = new Date(time);
+  const year = date.getUTCFullYear();
+  const month = MONTHS[date.getUTCMonth()]!;
+  const day = date.getUTCDate();
+  if (format === "iso") return date.toISOString().slice(0, 10);
+  if (format === "day") return `${day} ${month} ${year}`;
+  if (format === "month") return `${month} ${year}`;
+  throw new Error(`Unsupported date finding format "${format}".`);
+}
+
 /**
  * Query rows key fields by source, as `r.co2` or `weather.precip`. A finding
  * may name the field either way; a bare name works when only one source has it.
@@ -167,6 +209,23 @@ export function evaluateFinding(
   let rows: Row[];
   let value: number;
   switch (finding.op) {
+    case "earliest":
+    case "latest": {
+      rows = scoped.filter((row) => dateValue(row[finding.field]) !== null);
+      const times = rows.map((row) => dateValue(row[finding.field])!);
+      value =
+        finding.op === "earliest" ? Math.min(...times) : Math.max(...times);
+      if (!rows.length || !Number.isFinite(value))
+        throw new Error(`Finding "${finding.text}" has no rows to read.`);
+      return {
+        value,
+        rows,
+        statement: finding.text.replace(
+          "{value}",
+          formatDate(value, finding.format)
+        ),
+      };
+    }
     case "count":
       rows = scoped;
       value = rows.length;

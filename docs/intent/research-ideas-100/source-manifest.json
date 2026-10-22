@@ -1,0 +1,4403 @@
+{
+  "repository": "https://github.com/byronwall/explorEDA",
+  "baseline": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+  "snapshot": "selected source; not runnable",
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "802990c1bacd76b4b867239da78fd011fb32653f891d4a88560e9ee629979a33"
+    },
+    {
+      "path": "CODING_STANDARDS.md",
+      "sha256": "b4358fe75d063d53aea1edbc58d0dc6fd8df6e6165aa5792d8d2aa35eefe7ac5"
+    },
+    {
+      "path": "README.md",
+      "sha256": "1f05b6c4992b07d1fc2b38d7bf9273db9e4a3a0d94513b7265e13b81cd7c5e28"
+    },
+    {
+      "path": "apps/demo/src/CoverageMatrix.css",
+      "sha256": "18d7137fe4c2e8b7c6624e0f895b1da859ed9a386378622380707f22d0d561bf"
+    },
+    {
+      "path": "apps/demo/src/CoverageMatrix.test.tsx",
+      "sha256": "43c4a2556aeb957129193ad0ca9abe783e5b0ccd4c5d58bab64cd308d8ad7a74"
+    },
+    {
+      "path": "apps/demo/src/CoverageMatrix.tsx",
+      "sha256": "ea0f2b540a9cd2af3107f15f45af5bef06991de586201316fd158900a2ac2be7"
+    },
+    {
+      "path": "apps/demo/src/CsvUpload.tsx",
+      "sha256": "faf11ce850d9f90fc480f3f43075e3d0173c8c9c2cc61203b34c92072b593d01"
+    },
+    {
+      "path": "apps/demo/src/DashboardTextPanel.tsx",
+      "sha256": "e1113ade093d737db95e95aa82252dc72888587cf3b2d352eca68446869e562f"
+    },
+    {
+      "path": "apps/demo/src/DslCode.tsx",
+      "sha256": "bca2f9430b6466b49ca2a5d15320028422f2d7948a1313ad8d1c81a9b05f4666"
+    },
+    {
+      "path": "apps/demo/src/ExampleSelector.tsx",
+      "sha256": "5758be72213fd3f3d8c28970c8cfcc65ee50d28579961e094e80eef2da0453fc"
+    },
+    {
+      "path": "apps/demo/src/HistoryTimeline.tsx",
+      "sha256": "ef6d7915ea7e7959009a30263c596f6a07b55e18867c0a6a146e91855896c135"
+    },
+    {
+      "path": "apps/demo/src/ImportChoice.test.tsx",
+      "sha256": "4492374ef318c02147b66248f89d77f70912b491592daf46b0d45ff68a0f8117"
+    },
+    {
+      "path": "apps/demo/src/ImportChoice.tsx",
+      "sha256": "f1e110e5d536545c8c977ef5dc4e3634ce16de8bf9cb005f440e621832a06571"
+    },
+    {
+      "path": "apps/demo/src/LandingPage.test.tsx",
+      "sha256": "d71ef894c2f9735ea56511d0b5de1776256fb8f9c492e9ec89761e6b3aea4d17"
+    },
+    {
+      "path": "apps/demo/src/LandingPage.tsx",
+      "sha256": "8dc3cfa2c6eea1846cac21820898d1b9754705eeba83674b7fd795e3a2090551"
+    },
+    {
+      "path": "apps/demo/src/SavedViewTabs.tsx",
+      "sha256": "1ac96c40938be3d23de74216c6de64162a59f00379376105654a88fdd72b0387"
+    },
+    {
+      "path": "apps/demo/src/SavedViewsWorkspace.integration.test.tsx",
+      "sha256": "b1fd21ed45cfee54ff09132e26d6dc58385ab39ea07ad143650141015fc572a3"
+    },
+    {
+      "path": "apps/demo/src/SavedViewsWorkspace.test.tsx",
+      "sha256": "9b730184a09ebfc5c7a880624b86843ffe082471d18dc221be689318f21e3ea7"
+    },
+    {
+      "path": "apps/demo/src/SavedViewsWorkspace.tsx",
+      "sha256": "75fa5ee6649939c264603991399b5a55897e33a97d8bccd2ad3f9780c6c48523"
+    },
+    {
+      "path": "apps/demo/src/components/ui/button.tsx",
+      "sha256": "9d97837e9d9c6e1bae1c8de957456f28420c1c18469c85658198ec5794ad23f2"
+    },
+    {
+      "path": "apps/demo/src/components/ui/card.tsx",
+      "sha256": "3665cc677759fbb8ea07aba27eb963065a8ca39edb24799a181af178fec24b31"
+    },
+    {
+      "path": "apps/demo/src/components/ui/dropdown-menu.tsx",
+      "sha256": "9d8e6dbd8fb07bb0194a6bca482e185f249f3ee100d68b5a1448270faf12c35a"
+    },
+    {
+      "path": "apps/demo/src/components/ui/tooltip.tsx",
+      "sha256": "ca592f4c3fb1ba5e72df0e16f821f9ed6c4425724ae4cdb56325b5f5acdf222a"
+    },
+    {
+      "path": "apps/demo/src/daily/DailyCard.tsx",
+      "sha256": "cd6f4b58bf7f38fa7780a5b913508a97eaa9e6571c188593bd0fffa3b413325c"
+    },
+    {
+      "path": "apps/demo/src/daily/DailyEntryPage.tsx",
+      "sha256": "6089fbb47a0b691b2f2ac686b8ca0e72700029d0bde0d6ba7ba493d1214e5124"
+    },
+    {
+      "path": "apps/demo/src/daily/DailyIndex.tsx",
+      "sha256": "f45732f6eba8f8d5408eb7c068a481dc672de4aef3ffa5ff90bc66af58746726"
+    },
+    {
+      "path": "apps/demo/src/daily/DailyLatest.tsx",
+      "sha256": "e8fa1fcc3df9f563e28ed75906311d95aac8c7ec7afde106ff207d8cb8a367bc"
+    },
+    {
+      "path": "apps/demo/src/daily/DailyMeta.test.tsx",
+      "sha256": "a39347363d948e0a1abbd32fa30423963467d707adb33ac89c472f54f8f7c116"
+    },
+    {
+      "path": "apps/demo/src/daily/DailyMeta.tsx",
+      "sha256": "7dd7c0a39faf39597e41932e6f165bcdf7953362f79184b49f1cbb3f01b02aff"
+    },
+    {
+      "path": "apps/demo/src/daily/corpus.test.ts",
+      "sha256": "714084ada6e376d2c401d4dfc4a1096c587f82bdf11e8b575bcc5e6833a4b007"
+    },
+    {
+      "path": "apps/demo/src/daily/corpus.ts",
+      "sha256": "a00bd8097d24292070146a2d1047ed3fdd0019d3d30902766aac490c3b6a5a0e"
+    },
+    {
+      "path": "apps/demo/src/daily/daily.css",
+      "sha256": "4175fb75aea6e6aeb645190f54614b000b752ea38be00205a900d887186b415b"
+    },
+    {
+      "path": "apps/demo/src/daily/findings.ts",
+      "sha256": "c648a45829603f0d51282c4f089a9002af86ee3a15ab4eca412ae3a9d276e227"
+    },
+    {
+      "path": "apps/demo/src/daily/staticPages.test.ts",
+      "sha256": "ae0a1da83c3c5d138a557b2e1de5eabc07f153c8e5feda2816bfe660a1a2787f"
+    },
+    {
+      "path": "apps/demo/src/daily/useDailyCatalog.ts",
+      "sha256": "06f11685966c1827a4b453d191a06b326d39fb366013cb06fd2bb6888797a72a"
+    },
+    {
+      "path": "apps/demo/src/dashboardText.test.ts",
+      "sha256": "92c91d8469d88b301bdab05cefad286fcd65ba216ad415d90c35af764616c832"
+    },
+    {
+      "path": "apps/demo/src/dashboardText.ts",
+      "sha256": "22e7fe5727824705f23ed6aa60e16c9fdf8f33684cbf31110cc8901dc3e4bdc6"
+    },
+    {
+      "path": "apps/demo/src/demos/analyses/analyses.test.ts",
+      "sha256": "4da6ac1aea943ccd1d518a68f1bb2a7ef70ee0415d3317b8d49552c7c7500144"
+    },
+    {
+      "path": "apps/demo/src/demos/analyses/beijing.ts",
+      "sha256": "a8fea3ede7ba2acd016ec7060bb981fb5a9da09049424302dfe280cda78d594b"
+    },
+    {
+      "path": "apps/demo/src/demos/analyses/earthquakes.ts",
+      "sha256": "f3ba62c5a4c22bf5cbb40df0f252b317eb440e985ba2f875557a8ed98bee6a78"
+    },
+    {
+      "path": "apps/demo/src/demos/analyses/facts/beijing.ts",
+      "sha256": "fc0cb30594dd80198d6eac39f53b295f03fb89ea279c36331430797b63bc64d2"
+    },
+    {
+      "path": "apps/demo/src/demos/analyses/facts/earthquakes.ts",
+      "sha256": "63810eadb47f448cfab45e60bb157ff572bba7c7f1107923a9655289533dd893"
+    },
+    {
+      "path": "apps/demo/src/demos/analyses/facts/flights.ts",
+      "sha256": "c1fdddb62d1a8d13316f3c493dfd2d3e458ff981e508960782eca38671408cb7"
+    },
+    {
+      "path": "apps/demo/src/demos/analyses/facts/wine.ts",
+      "sha256": "501ea5fd7ee50b662d93555ffbedc0e42f1ee67d2e60ac3f0a89ba3a06116073"
+    },
+    {
+      "path": "apps/demo/src/demos/analyses/facts/worldbank.ts",
+      "sha256": "28727c4f7ac9c1eca56efbc253cb34b3ecbf18c649620b95bcefdb1e3b5e31b2"
+    },
+    {
+      "path": "apps/demo/src/demos/analyses/flights.ts",
+      "sha256": "edba51f42d80e70ce294cb9c22351f489a5b9aea45ffe376cc6d1b3ff4a29a51"
+    },
+    {
+      "path": "apps/demo/src/demos/analyses/loadAnalysis.ts",
+      "sha256": "be69417418b481f8e9c30f34341c22089382870621a940d35412d22e618f19e9"
+    },
+    {
+      "path": "apps/demo/src/demos/analyses/projectText.test.ts",
+      "sha256": "522af9740d0795bde8ee7b4bb4c0e314b3d9a2093ab29a1c8a1a4a39677afae7"
+    },
+    {
+      "path": "apps/demo/src/demos/analyses/shop.ts",
+      "sha256": "84fa5b4749a4818424ad7aee34c40e327e23151dd0ecdd76880b26980b0067f3"
+    },
+    {
+      "path": "apps/demo/src/demos/analyses/types.ts",
+      "sha256": "d87425683543d36b2416c9f9d45e4e05b5719d5b4cbd404c9e8309f80b9a54c2"
+    },
+    {
+      "path": "apps/demo/src/demos/analyses/wine.ts",
+      "sha256": "af09e683e8e1b8fc841931dc21a4235d2a1c556314b1aebe601f7769eda0aa56"
+    },
+    {
+      "path": "apps/demo/src/demos/analyses/worldbank.ts",
+      "sha256": "020f26e98fb7f00ce4f7601e7578db7326376b68b1b07325250ce5e91aa43131"
+    },
+    {
+      "path": "apps/demo/src/demos/boxPlotSettings.ts",
+      "sha256": "e6eef13b67507e2abbab9038300fc279e918fa549ac265de7dade8abab95fcff"
+    },
+    {
+      "path": "apps/demo/src/demos/categoricalChartSettings.ts",
+      "sha256": "b1c2a63feb0a9c5c5a373ac85859efb73aacf59c67979cb09eed2f376dbfb2bb"
+    },
+    {
+      "path": "apps/demo/src/demos/coverage.test.ts",
+      "sha256": "8ab72c065b1543d7fe02cf697a51a030b33542825e63bdbe8969fa21362794ca"
+    },
+    {
+      "path": "apps/demo/src/demos/coverage.ts",
+      "sha256": "3f3eeeda86aecf8cdbaf3cdcc59dadc622767e41b68c1a5a508c0c14e01da6c0"
+    },
+    {
+      "path": "apps/demo/src/demos/dashboardSettings.ts",
+      "sha256": "43afb014d90f556690413ec876364c80f0726c616ccd74bfd4f316cc64be630e"
+    },
+    {
+      "path": "apps/demo/src/demos/exampleIndex.ts",
+      "sha256": "a286d35e974c6d25926734171f19dbdfb4ff4494dd09506776af31a13227f9f8"
+    },
+    {
+      "path": "apps/demo/src/demos/exampleViews.test.ts",
+      "sha256": "ac1dd3edd5315f73a97aa0421fa1055690aa232ee42cb1e43be7acf0baab7328"
+    },
+    {
+      "path": "apps/demo/src/demos/exampleViews.ts",
+      "sha256": "99b9ed96bce4cafa3e15cb445f01f46d2cb3190e000f5dfd8c54695491b9aa35"
+    },
+    {
+      "path": "apps/demo/src/demos/examples.ts",
+      "sha256": "b67518e290d939f719babdb5dc2723649701f8b60e4601f9a1d041b2aa8dfb93"
+    },
+    {
+      "path": "apps/demo/src/demos/journeyDashboards.ts",
+      "sha256": "f3a40f9aeced159df6ed337e12dc135855e20af1a7b5e01f2241df28963116a7"
+    },
+    {
+      "path": "apps/demo/src/demos/lorenz.ts",
+      "sha256": "704061b76ed6e977e51981bf9196f8eec4ab9815a4e1a56a629422dbb1eef244"
+    },
+    {
+      "path": "apps/demo/src/demos/multiSourceShop.ts",
+      "sha256": "95e0444d54b287e9af76e0411051828cb270609868629996135671ad704f7443"
+    },
+    {
+      "path": "apps/demo/src/demos/nbaStatsSettings.ts",
+      "sha256": "37c483899e4a4b3d6110ac9ea2263ff36a5abc0132f6d5ee684230bd9bf0827a"
+    },
+    {
+      "path": "apps/demo/src/demos/partsAndChangeDashboards.ts",
+      "sha256": "28a65ba7495fe3762baa39fc98f0c1c4651ba99eae54a2e7a2484b2663c85c3d"
+    },
+    {
+      "path": "apps/demo/src/demos/regionMapGeometry.ts",
+      "sha256": "80d309e2b371aca1c67f7a928698c2fb657d8fb2052c431587d44c9919daad35"
+    },
+    {
+      "path": "apps/demo/src/docs/DocsSite.test.tsx",
+      "sha256": "75ddd2ec69a5f270bf436b1f437401879105d9fde2498b867d0e251feef74851"
+    },
+    {
+      "path": "apps/demo/src/docs/DocsSite.tsx",
+      "sha256": "3f036e062b6df5649a9fd622c3c5f45c99ec01135990d7bb26279ff878acec73"
+    },
+    {
+      "path": "apps/demo/src/docs/catalogue.ts",
+      "sha256": "3ed239741cb5e71f45d8378146612ff8f9cce300a62cb54a7095addbdb8f3fbf"
+    },
+    {
+      "path": "apps/demo/src/docs/chooser.ts",
+      "sha256": "b8df76d0c0f4676d0743ba4bfabe6f86f32a0281708228d78ea175f1cca8010f"
+    },
+    {
+      "path": "apps/demo/src/docs/components/chrome.tsx",
+      "sha256": "a3dbb8dcd9cca0a42d0e8576a2ec29b742c057eb93ce3be216762c496b862a19"
+    },
+    {
+      "path": "apps/demo/src/docs/components/code.tsx",
+      "sha256": "71928e64e8fe3163c46ecfb56398e9ad9850baf9a5dd72c44c44a4271d14277b"
+    },
+    {
+      "path": "apps/demo/src/docs/components/content.tsx",
+      "sha256": "ba56c7714fb2e94b977e15a0dc9968009645e2fdb245bc32ed40c2123313dd5d"
+    },
+    {
+      "path": "apps/demo/src/docs/components/home.tsx",
+      "sha256": "c292f33165e689527ce6351ccc144feece98389880108e6130a41b4997b944cc"
+    },
+    {
+      "path": "apps/demo/src/docs/components/layout.tsx",
+      "sha256": "8b022d8913ac86dbd01ab01d7a70f9e2a224beb34a9f4ca43eb91b16d2b23b7c"
+    },
+    {
+      "path": "apps/demo/src/docs/components/search.tsx",
+      "sha256": "879eab789acd71e429ee29e149ff7cf45f4acc0b1391e1830bb2446aa13b3ce8"
+    },
+    {
+      "path": "apps/demo/src/docs/components/template.tsx",
+      "sha256": "bfd2d435623968ce70827308b48bdfd2e9106215ac6ca02c0b781d0a9818f4a4"
+    },
+    {
+      "path": "apps/demo/src/docs/components/theme.tsx",
+      "sha256": "50ad95481632c58c067718a64119a3ee058a8e23dc54af2b773556e209eb88a7"
+    },
+    {
+      "path": "apps/demo/src/docs/components/toc.tsx",
+      "sha256": "ef9483e2ae3eb6746beb40990446a25de11e1eae367c466be9dec9a3a132017a"
+    },
+    {
+      "path": "apps/demo/src/docs/components/workedOrder.tsx",
+      "sha256": "d555c4862a8d24063db82b03faae8134e699566a5229881fd3147a34a457f8a6"
+    },
+    {
+      "path": "apps/demo/src/docs/gate.test.ts",
+      "sha256": "7b2c479cdb4461f241ef5259998807e4773d4314f26f982f24e23c88eb2bd172"
+    },
+    {
+      "path": "apps/demo/src/docs/gate.ts",
+      "sha256": "681a9a53d90a5d048e05b7285c7178662f3b7ebc352f393f08a81c70df8b7de5"
+    },
+    {
+      "path": "apps/demo/src/docs/glance.ts",
+      "sha256": "660b40b51a51ab1d10de5462aa44e0ec701928f8fdc2126a1c6a7f9fd856028a"
+    },
+    {
+      "path": "apps/demo/src/docs/live/LiveExample.tsx",
+      "sha256": "e7b3690eaff936811e9348eb98b0322859b8385223b5bf7113b725a4e91689bc"
+    },
+    {
+      "path": "apps/demo/src/docs/live/examples.ts",
+      "sha256": "206e73137d436350ef5edbee610139a209f21f5786b1b7e5313a676becb5ee3f"
+    },
+    {
+      "path": "apps/demo/src/docs/paths.ts",
+      "sha256": "a39601d89d6ed9c045b2914fac7e5e46a5a713a87ed899e985abd5dd92529b02"
+    },
+    {
+      "path": "apps/demo/src/docs/reference/SettingsReference.tsx",
+      "sha256": "ec067a0e27e7cf6988845cb82125b5fbd4006286c84cd7d3d93b6351d210a00a"
+    },
+    {
+      "path": "apps/demo/src/docs/reference/formatDefault.ts",
+      "sha256": "4f2a170cb75e83e1b603ba9b9aff124daf7cd4cd76376c1dfced052575d7a420"
+    },
+    {
+      "path": "apps/demo/src/docs/reference/generated.tsx",
+      "sha256": "5f33858284665b555e05bde95b4506cbb0a22930a94707f687d195b9e5f3483b"
+    },
+    {
+      "path": "apps/demo/src/docs/reference/settingDescriptions.ts",
+      "sha256": "87514ff3a5c94ca84f07e01b600361b3b68f567ec8ce5291a12dbd1251a7af61"
+    },
+    {
+      "path": "apps/demo/src/docs/search.test.ts",
+      "sha256": "074c88325ece5a885264631ce26fb85c30846c8532c3048b5318e35efe745688"
+    },
+    {
+      "path": "apps/demo/src/docs/search.ts",
+      "sha256": "6fa5f06f148ce97fd40379b11e542b5e4144fe328af0fb1eb14a9555ae7ff928"
+    },
+    {
+      "path": "apps/demo/src/docs/searchIndex.ts",
+      "sha256": "a8e04e8b96e38aa8f5ab4de20789a00d77c6b594dad011fd35a81dcea4db1ac9"
+    },
+    {
+      "path": "apps/demo/src/docs/targets.ts",
+      "sha256": "9a13b9ba67dfed1d2f70f17821e969053403593c1c5b1eea2d41a9e7532adf97"
+    },
+    {
+      "path": "apps/demo/src/examples/ExampleCard.tsx",
+      "sha256": "268de09900265efe06f60d201bd9c1b39a3fb2c3c8fe6fa56721dd4281bd4119"
+    },
+    {
+      "path": "apps/demo/src/examples/ExamplesIndex.tsx",
+      "sha256": "062cb9d52d738f194fb50ea08f8a03daab51f6e5a1ee6898bbf7fc38c91daa28"
+    },
+    {
+      "path": "apps/demo/src/folder/FolderPage.tsx",
+      "sha256": "62cd7eb712997df259d9f7ad1b1dd12bf8e8acb3c89d3faecfd86771b7685229"
+    },
+    {
+      "path": "apps/demo/src/index.css",
+      "sha256": "74fd97a7855d7559f6af12f124b9e2a0332d9e5a5b2d6e7829e98ac3c81ce409"
+    },
+    {
+      "path": "apps/demo/src/landing/BrandMark.tsx",
+      "sha256": "93431443c0df278ce3845f1d635683ab74eeeb85c50bd89996a50a9ce4aa0c96"
+    },
+    {
+      "path": "apps/demo/src/landing/ChartGallery.tsx",
+      "sha256": "27f5941a9a8f2f2d943921051cedafeb25cf783eed8ddd72534ca5bdd4205b39"
+    },
+    {
+      "path": "apps/demo/src/landing/ClosingBand.tsx",
+      "sha256": "b1bfd291cc880e492790899ee9e0ee2df5ff87779fe6d056184b3fd3e448b9ff"
+    },
+    {
+      "path": "apps/demo/src/landing/CodePanel.tsx",
+      "sha256": "45d7407311cf914d610477df5dfb5b4b6616f85e301e67bbde42de8f3359323e"
+    },
+    {
+      "path": "apps/demo/src/landing/Hero.tsx",
+      "sha256": "ad6e829f96931272175a94512287637b5d5c42f3688b2573df9a643463089da0"
+    },
+    {
+      "path": "apps/demo/src/landing/IntegrationGuide.tsx",
+      "sha256": "f07b933c095e29a42d4f6f074d72866b226ae67b2429147a1df36a36ba097b8d"
+    },
+    {
+      "path": "apps/demo/src/landing/LandingFooter.tsx",
+      "sha256": "0ee964ea4776f96868063fbe5a516016f1853362708cac7ac81085c099a9759f"
+    },
+    {
+      "path": "apps/demo/src/landing/LiveOrderBook.test.tsx",
+      "sha256": "e73b554342f3763c9d1f864f52205973063a2029c91c169e7aac501dad33279c"
+    },
+    {
+      "path": "apps/demo/src/landing/LiveOrderBook.tsx",
+      "sha256": "4ef43d3ef84e447bfd26cfc29d536a479edbb23c9cbbd79a0aba1e0a1e008acf"
+    },
+    {
+      "path": "apps/demo/src/landing/OrderBook.example.tsx",
+      "sha256": "aa0aa39f900814818888aa18a327d62e1f12cb5e8536c82130860d48e150a751"
+    },
+    {
+      "path": "apps/demo/src/landing/OrdersExplorer.example.tsx",
+      "sha256": "09e85c5725021a06571a926b8c570c23c9c8a72263c72f0e7eb61c798c12fec4"
+    },
+    {
+      "path": "apps/demo/src/landing/PageFileDrop.tsx",
+      "sha256": "a66e7e9979c885bb8f419ca44ddfadeef6645a6cec171dc5b931de8caf7e6856"
+    },
+    {
+      "path": "apps/demo/src/landing/ReportGraphics.tsx",
+      "sha256": "65f54cd629fc49394881861cfc13536cdf6615d3bfecfe2b33d2816b5c78a734"
+    },
+    {
+      "path": "apps/demo/src/landing/SampleDataButtons.tsx",
+      "sha256": "0b5ba6dca94e7b439067215904f7c5433dbf7bbbc19244fb5e4dd95f590dd4ad"
+    },
+    {
+      "path": "apps/demo/src/landing/SectionHeading.tsx",
+      "sha256": "e206e76585e013616e62e054f2c905aeeaaff7cd3bd6d7e519ef4228b4185f62"
+    },
+    {
+      "path": "apps/demo/src/landing/SiteNav.tsx",
+      "sha256": "8ed663254bf8fcf78812fe44032232529f9500bb32169c2a41e6fd8617bcd3b9"
+    },
+    {
+      "path": "apps/demo/src/landing/StartSection.tsx",
+      "sha256": "fa4b24110f4366fefc69c5d76be62195c424e0e3f768ffe92890a7a8b81dfdcc"
+    },
+    {
+      "path": "apps/demo/src/landing/WhyWorkspace.tsx",
+      "sha256": "05e1696722a94b587daad77a9cfbab3735c99916f996e1af19b2f0ba9520b71a"
+    },
+    {
+      "path": "apps/demo/src/landing/links.ts",
+      "sha256": "22c7bd6410825a523535695644dd9c50fc7471907a876306f770b493592daab4"
+    },
+    {
+      "path": "apps/demo/src/landing/workflows.ts",
+      "sha256": "ba97b26ce83b7a761a33e05466c1e4de868600c363a612038cc66edc412b6a64"
+    },
+    {
+      "path": "apps/demo/src/lib/utils.ts",
+      "sha256": "7c8c3dfc0cdd370d44932828eb067ef771c8fe7996693221d5d4b90af6d54f2d"
+    },
+    {
+      "path": "apps/demo/src/main.tsx",
+      "sha256": "2db55894a55b95ec8ad7495a666408dea159220f794f3335bfd80d8fac307324"
+    },
+    {
+      "path": "apps/demo/src/routes.ts",
+      "sha256": "94b7db0763b48518619c4705cb6d93fd4edd20c1567d72b1d360f7df0fc91243"
+    },
+    {
+      "path": "apps/demo/src/savedViewsHistory.test.ts",
+      "sha256": "6c193c6ae707a8a3d505be60d4b714f2e7f187a5fa270d58f47fee9116863d4d"
+    },
+    {
+      "path": "apps/demo/src/savedViewsHistory.ts",
+      "sha256": "64013981d656cc65b62a5716626782b98bd1808ca5409aeb345ea64603aa5cda"
+    },
+    {
+      "path": "apps/demo/src/savedViewsSession.ts",
+      "sha256": "69784a461ca0df7a355fff5427b6d93e9dc6d0e3ff79bbf310f81f0387ed23f3"
+    },
+    {
+      "path": "apps/demo/src/tableImport.ts",
+      "sha256": "d859b3b42cacda63c7029bc90a396d3f88bc94807660e08f818f744cf2efe834"
+    },
+    {
+      "path": "apps/demo/src/test/environment.ts",
+      "sha256": "17af064f8ebccd5600358644bb3ef55c732cf1b8db1f648b70f44313b84eaa03"
+    },
+    {
+      "path": "apps/demo/src/test/setup.ts",
+      "sha256": "153a7669a2e4d473cf3a8adb8c9605148cd31c7521cb933cf8777b5ec34f50cb"
+    },
+    {
+      "path": "apps/demo/src/vite-env.d.ts",
+      "sha256": "65996936fbb042915f7b74a200fcdde7e410f32a669b1ab9597cfaa4b0faddb5"
+    },
+    {
+      "path": "docs/agent-guide.md",
+      "sha256": "0992949f205d1ae72a8249c69bccb33f1eb70763b14a526a6384a7a91f9c9f00"
+    },
+    {
+      "path": "docs/analytical-chart-coverage.md",
+      "sha256": "c5c7508832d1ec86dfb181d5bf7c0f403c29b79abb3eb80925a4b157d122bacc"
+    },
+    {
+      "path": "docs/application-feature-inventory.md",
+      "sha256": "a355adae74828956935d38270fd09614ff8e85b64ff45575fb76f9c240d6103a"
+    },
+    {
+      "path": "docs/beeswarm-performance.md",
+      "sha256": "b2a63cc7a99e14cf3ec690fbb95cd608cd1e9b1f06adb3717e70f2b6d2e52465"
+    },
+    {
+      "path": "docs/calculation-workflow.md",
+      "sha256": "f665fd125f548cfbd43d89c9e8c6de05c234e80d3dffde36b19ac9664b7cf9e2"
+    },
+    {
+      "path": "docs/composition-mode.md",
+      "sha256": "0034e1e9b2a859e3f395fe119d57722d9c80b0b3ba05dcb1c5e5f528c8e1e09b"
+    },
+    {
+      "path": "docs/daily-viz.md",
+      "sha256": "b2c99e3ff1c22b19893d9e668150a7650f83f908d6e70365b4cf3d3bd501fec9"
+    },
+    {
+      "path": "docs/developer-workspace.md",
+      "sha256": "14cc971aba7514a26ecd9cd954e2a3580cd2b11b28ab85bb85f9c970eecb532c"
+    },
+    {
+      "path": "docs/example-coverage.md",
+      "sha256": "9ad0bd1f0ba4ee94a54f6d08336856b2cc4fdd859f11c77069aa282b13b377fa"
+    },
+    {
+      "path": "docs/initiative-history.json",
+      "sha256": "3caa5898c3e5e855a391d6ca39938294c359564c5b83db1248b8441bbd9097c3"
+    },
+    {
+      "path": "docs/intent/browser-only-site/initiative-map.json",
+      "sha256": "282686035302e83255039a37d0b0b507f53cb12875e40301e4e854dde13a75e6"
+    },
+    {
+      "path": "docs/intent/browser-only-site/intent-brief.md",
+      "sha256": "f9c7d95697f10a6e36fac9270e94f2e3f41998aae7cad11bb366dba91d571cee"
+    },
+    {
+      "path": "docs/intent/calendar-period-analysis/initiative-map.json",
+      "sha256": "6d14bc77d6d44af20c2684ffc99c249008659c1ce52f73170f852b1831e7c0a5"
+    },
+    {
+      "path": "docs/intent/calendar-period-analysis/intent-brief.md",
+      "sha256": "34ada8c694eff0bbc940736552daa3027c06a6cda9d09944d679b97944a5fee1"
+    },
+    {
+      "path": "docs/intent/columnar-data-transport/evidence/recommendation-review.md",
+      "sha256": "0963c827d7ac4d1e77416951bfcd0712c9c547a34d41348a1f514f04e8ff1be8"
+    },
+    {
+      "path": "docs/intent/columnar-data-transport/initiative-map.json",
+      "sha256": "09139f525adf90d84bb06e82a53389e755a4b2e184fa1124e3ca6305f4cf930b"
+    },
+    {
+      "path": "docs/intent/columnar-data-transport/intent-brief.md",
+      "sha256": "954a6904f6325940a88e2219aaf992959390334dad4c71c5cdbb3e119ce908b1"
+    },
+    {
+      "path": "docs/intent/columnar-data-transport/shape-brief.md",
+      "sha256": "9e71e4558dd5e3c31d6d4ab8fa7dbcee94aaad47a42c5203794c20c91cb58cfc"
+    },
+    {
+      "path": "docs/intent/comparison-opportunities/README.md",
+      "sha256": "6d7eccdc17a830e139145940c6b1f7cd45dec13a2ce62aee84f5e8b2a036559e"
+    },
+    {
+      "path": "docs/intent/comparison-opportunities/initiative-map.json",
+      "sha256": "31d6fd6a1e10abdad44f4b6eb19eb95185aca42b63210d0b64a6647a764fd5a3"
+    },
+    {
+      "path": "docs/intent/comparison-opportunities/intent-brief.md",
+      "sha256": "37cbb2cbbeaaee6b67338c521ed53aa60bb3745f0ed1727900394dbad13be012"
+    },
+    {
+      "path": "docs/intent/composed-analytical-graphics/implementation-plan.md",
+      "sha256": "c45dc53f26e962bdac3d35914c790829e228df7afd03955f5c81d378cc2e4d7a"
+    },
+    {
+      "path": "docs/intent/composed-analytical-graphics/initiative-map.json",
+      "sha256": "26a6e25d30c815931d98226aa6f11fb03eba011202d0c6725a70b9fdaf70a5d6"
+    },
+    {
+      "path": "docs/intent/composed-analytical-graphics/intent-brief.md",
+      "sha256": "7c60227541989a0da59204087521925d831914d746de4b4ee7c53cc811dd7a85"
+    },
+    {
+      "path": "docs/intent/composed-analytical-graphics/shape-brief.md",
+      "sha256": "826f90c6f2563664939e0c5291b81f1c8a86c7d78f8ecc1bd855008a63449571"
+    },
+    {
+      "path": "docs/intent/current-analysis-trust/initiative-map.json",
+      "sha256": "c6b8183faee41df41b676f4ae42b26a99753c75df2d9f3148cfb8bf722959f36"
+    },
+    {
+      "path": "docs/intent/current-analysis-trust/intent-brief.md",
+      "sha256": "d6b2d620753c1ea532fffcb1cb43cc42711e03daa898e989a7f283f475186bd7"
+    },
+    {
+      "path": "docs/intent/customer-instance-hosting/evidence/recommendation-review.md",
+      "sha256": "1a67eff0d5e4a5a9ca33980f3f2e914fefc107a323fdb3cd819f8828c4e3a136"
+    },
+    {
+      "path": "docs/intent/customer-instance-hosting/initiative-map.json",
+      "sha256": "79dd5472a852a49905a9ac6332639fcb45e8a6fb5e1d888fb5a24a6fe2218898"
+    },
+    {
+      "path": "docs/intent/customer-instance-hosting/intent-brief.md",
+      "sha256": "f9ca8a2d737c19169f4784fd4c25055cb4b76edd64a6e419dedc8789e154347d"
+    },
+    {
+      "path": "docs/intent/customer-instance-hosting/shape-brief.md",
+      "sha256": "954423e2974ce232979a9aef34b61451f1aabb08d7e0071897b8a7545769b441"
+    },
+    {
+      "path": "docs/intent/data-bound-narrative/initiative-map.json",
+      "sha256": "225a47de932eae411ebf6e6549211829cd61505971bcf453ee13c4702fdae5ad"
+    },
+    {
+      "path": "docs/intent/data-bound-narrative/intent-brief.md",
+      "sha256": "58cbf1154483f6586a2e40c366848f1ae6e83a9854274a6a9dcdca022739642d"
+    },
+    {
+      "path": "docs/intent/database-adapters/evidence/recommendation-review.md",
+      "sha256": "4b3d2c5ff91379bfacd0dcd087312b8406fad21dc4e30efa62adc952cf0321ff"
+    },
+    {
+      "path": "docs/intent/database-adapters/implementation-plan.md",
+      "sha256": "51039b1aaea3663f0352dceb2b9de1fb8b3e10fc8ffd6bd2c90131e15f8ea0a6"
+    },
+    {
+      "path": "docs/intent/database-adapters/initiative-map.json",
+      "sha256": "5791ebe3ff1105628f0ef93da66458d9375ea087336ec486998f83ac0bc800fa"
+    },
+    {
+      "path": "docs/intent/database-adapters/intent-brief.md",
+      "sha256": "5fba223b6860b70bde5ed62744911168c136c0347f09b54cd94b7844996dedd8"
+    },
+    {
+      "path": "docs/intent/database-adapters/shape-brief.md",
+      "sha256": "a0ed11ee240ef41e595627c11374cb9a838d64fe946f6142cd7558687960f24d"
+    },
+    {
+      "path": "docs/intent/database-query-contract/evidence/recommendation-review.md",
+      "sha256": "bca578ae5fdaf8dede22b62a6b14b6fe0313430ec34df83c1eb6e9e4a659df1a"
+    },
+    {
+      "path": "docs/intent/database-query-contract/initiative-map.json",
+      "sha256": "233b93987706e9fcbfe7b8fb5d87e8a03c53ccf6cbab0e68ca2f7fc6dd51ac8b"
+    },
+    {
+      "path": "docs/intent/database-query-contract/intent-brief.md",
+      "sha256": "6639e34e66b94ac5382e2e282d0da2782ab69a37925ed10fe754e149b726ff06"
+    },
+    {
+      "path": "docs/intent/database-query-contract/shape-brief.md",
+      "sha256": "aa7f1187350f50cba2b734a0b9e6a129f87d236161312022bc7d28d715e27128"
+    },
+    {
+      "path": "docs/intent/date-time-handling/initiative-map.json",
+      "sha256": "611f90ece3bf23d2b3faef6b209c5c7ee63ec36db0e8a090b6ea0d7b0f9aa622"
+    },
+    {
+      "path": "docs/intent/date-time-handling/intent-brief.md",
+      "sha256": "9dca96b99e5f1e8397f5811d2ab63193aba8295c429791822d3c4aa6b380c956"
+    },
+    {
+      "path": "docs/intent/domain-analysis-views/implementation-plan.md",
+      "sha256": "74d86987ff2dd61851a9351e26b0ec095afd21d7a7b73620db569848406efba9"
+    },
+    {
+      "path": "docs/intent/domain-analysis-views/initiative-map.json",
+      "sha256": "f3e970697de079ebe65430392256ec15df3b2ab64c618121df97242eeab4a272"
+    },
+    {
+      "path": "docs/intent/domain-analysis-views/intent-brief.md",
+      "sha256": "317163b261edbfcddb4899842d9b4b390f577945ee038200ad79298f6ec88912"
+    },
+    {
+      "path": "docs/intent/domain-analysis-views/shape-brief.md",
+      "sha256": "06876abc7d1df76ece92fe78197874611d90fbb4c2f2bbca20bda6279f5ec887"
+    },
+    {
+      "path": "docs/intent/headless-chart-rendering/initiative-map.json",
+      "sha256": "833a8a5b57bfe23c2064661845cac6cc86797c6f47989234059c88654fb7c109"
+    },
+    {
+      "path": "docs/intent/headless-chart-rendering/intent-brief.md",
+      "sha256": "60f5a217f0c56d14f87772bde301aef61d96ee39bc3875eb2e3f3f52f038dc58"
+    },
+    {
+      "path": "docs/intent/in-app-analysis-agent/initiative-map.json",
+      "sha256": "2f5e8fd530067efe1da80d8c9ecdc4b59f4fd2032ac9a697c75ad2b9173690c7"
+    },
+    {
+      "path": "docs/intent/in-app-analysis-agent/intent-brief.md",
+      "sha256": "b7daac877a599a28fc2d7c32084c5497326c12f2cb3e494fd82727b45cf03fba"
+    },
+    {
+      "path": "docs/intent/in-app-analysis-agent/shape-brief.md",
+      "sha256": "5fea07606293e0d4c0ff65126e8bcde3a051af09434a547ccdd180d01c2c9d12"
+    },
+    {
+      "path": "docs/intent/landing-docs-entry/implementation-plan.md",
+      "sha256": "65e53cfab9679bb2679f7bd880c7c41e3b326023bc6152d41ee56e6f614c81f5"
+    },
+    {
+      "path": "docs/intent/landing-docs-entry/initiative-map.json",
+      "sha256": "991b338f1595ce28c87772fb551ea7cb27977f24c1edb0b5a04ed5ef58874c30"
+    },
+    {
+      "path": "docs/intent/landing-docs-entry/intent-brief.md",
+      "sha256": "9de3ff0dddc23361baab05bcb1369c039937991fbd1e84c9373312597935c84c"
+    },
+    {
+      "path": "docs/intent/landing-docs-entry/shape-brief.md",
+      "sha256": "af4a3b7df247e2b6e13f2dd580d4d88cfb9b37217593e54015b84b8e15e4c667"
+    },
+    {
+      "path": "docs/intent/mcp-server/implementation-plan.md",
+      "sha256": "75f4c62c80a89fe654984f1585e90a3b1dcb9c4e321b96dd78b1a32717398b02"
+    },
+    {
+      "path": "docs/intent/mcp-server/initiative-map.json",
+      "sha256": "2f9939a57534f6981db2ce0a538760eccc843ecae1bccc385d3beaf923d9a9aa"
+    },
+    {
+      "path": "docs/intent/mcp-server/intent-brief.md",
+      "sha256": "23511ee79ba5f6c01c34aac7edc983a54c9e4df0f2feb4322481665ca434f1b3"
+    },
+    {
+      "path": "docs/intent/mcp-server/shape-brief.md",
+      "sha256": "4726a2ba939ba3e768585e132ed81ecc0cce3a0be5503bf5d04c5a1b74a57b67"
+    },
+    {
+      "path": "docs/intent/missingness-and-expected-records/initiative-map.json",
+      "sha256": "f0a68dfa7a6e48c2946bb2ce2f4b66ca44ffde5ffedd9882ad0daa17c4f777e3"
+    },
+    {
+      "path": "docs/intent/missingness-and-expected-records/intent-brief.md",
+      "sha256": "1a9747d348dd5124206ffac7866dac6030d2ffd41f00132406d74a1aa9fdb4b2"
+    },
+    {
+      "path": "docs/intent/network-and-edge-flow/initiative-map.json",
+      "sha256": "6dfb0aa07617d7e331ec340b7df68078d97737b2fd0418ecfa0432648336b4af"
+    },
+    {
+      "path": "docs/intent/network-and-edge-flow/intent-brief.md",
+      "sha256": "71a767ca74624ecd9be31f7f74cba3382d31da5908231fe8a9dda62e087018fe"
+    },
+    {
+      "path": "docs/intent/notebook-analysis/implementation-plan.md",
+      "sha256": "9b008810f3579548db21402c8f24d9ca45c47940787ed153f6824bd6db0b27d8"
+    },
+    {
+      "path": "docs/intent/notebook-analysis/initiative-map.json",
+      "sha256": "779266acb026bcad0e854ea67b56ff3dda9df5d6bc275b9bb7257c81e7792b05"
+    },
+    {
+      "path": "docs/intent/notebook-analysis/intent-brief.md",
+      "sha256": "d9fe0597c1e4c28c822a492edc4c54292a43492c52ab8d68e4cf44ddc73384e4"
+    },
+    {
+      "path": "docs/intent/notebook-analysis/research-synthesis.md",
+      "sha256": "db4c539c206572d956a04da2f9570c8eb81d269892d225aba6c18a495e8c8797"
+    },
+    {
+      "path": "docs/intent/notebook-analysis/shape-brief.md",
+      "sha256": "3e1bac98401557952afc5464bb5da1c3deb40fd6aebaed98e92023f4003f3408"
+    },
+    {
+      "path": "docs/intent/parameterized-task-navigation/initiative-map.json",
+      "sha256": "12b6f0b0c3434f97d681d52e91361bc2873620527675fb90c195059bcc1b620a"
+    },
+    {
+      "path": "docs/intent/parameterized-task-navigation/intent-brief.md",
+      "sha256": "911538447f16f3d5cef18a4b3f4dc54a8862058bc82672eb731d65d5fde7d6c6"
+    },
+    {
+      "path": "docs/intent/population-baselines/initiative-map.json",
+      "sha256": "a9806ccc4539fd878d4da9d6f3a2ea4e9cf2b2edea48f04f90d2cfb82494bbeb"
+    },
+    {
+      "path": "docs/intent/population-baselines/intent-brief.md",
+      "sha256": "9e4045b93ccb770fae6ea13988db3c25f78856ac6b80203574e0d2e81166d483"
+    },
+    {
+      "path": "docs/intent/precise-composite-selection/initiative-map.json",
+      "sha256": "abf60007bf3d9f97acd5ab221b3f52cf8785e487fd26ee74d9e85ff7c8defac9"
+    },
+    {
+      "path": "docs/intent/precise-composite-selection/intent-brief.md",
+      "sha256": "cf4226d7b400f3c958b81dee7a0ce78d0d464f36e27d32b74f451f366e936fd7"
+    },
+    {
+      "path": "docs/intent/progressive-built-in-charts/example-review.md",
+      "sha256": "6508834875f710dac7c3bb8ab724da632358fbcaf4ad8ef436464bc06b03067d"
+    },
+    {
+      "path": "docs/intent/progressive-built-in-charts/implementation-plan.md",
+      "sha256": "41bb2233b1a64e925aa22761287f7baee85a7d43c225000600d1c0b10859ee13"
+    },
+    {
+      "path": "docs/intent/progressive-built-in-charts/initiative-map.json",
+      "sha256": "05a45c1c3eebcef4fa0248d011b456b2c81ada9f2cf12c7e4a66c24757b0b286"
+    },
+    {
+      "path": "docs/intent/progressive-built-in-charts/intent-brief.md",
+      "sha256": "8423a6a5ec442eef98720df37803b762c7328bda68d5258899a6dc89d0c825a6"
+    },
+    {
+      "path": "docs/intent/progressive-built-in-charts/recommendation-decisions.md",
+      "sha256": "a9deb010ac971f65e219f47a64d9b38fa9dfae3abbf3f096b3823b1869a0e235"
+    },
+    {
+      "path": "docs/intent/progressive-built-in-charts/shape-brief.md",
+      "sha256": "31d72c3e50f73ffff1aa5c2a84f3949558d5ad81fa89de2a4ed5f3d12c1f7552"
+    },
+    {
+      "path": "docs/intent/progressive-built-in-charts/source-checks.md",
+      "sha256": "0dba019f26f130e80d52e854e10c9db4556075f016749e9cf13ee749f6a1443b"
+    },
+    {
+      "path": "docs/intent/relationship-discovery/initiative-map.json",
+      "sha256": "38a925cf476fb63d4a7967cb305d1eab9f84fd14b765956d704b3bf3093d5ad2"
+    },
+    {
+      "path": "docs/intent/relationship-discovery/intent-brief.md",
+      "sha256": "61092e273e3e768825958c99a361520057a99c8a1ead9f89e57755bb3f4e377f"
+    },
+    {
+      "path": "docs/intent/release-gated-checks/initiative-map.json",
+      "sha256": "8a0a919be095400fe03d322d0512690787056510549f3f022f223934c904998f"
+    },
+    {
+      "path": "docs/intent/release-gated-checks/intent-brief.md",
+      "sha256": "5f086f0dfee34828af8a8078e57dea21ce88ed3f4f265b84099bc43ff54e200c"
+    },
+    {
+      "path": "docs/intent/renderer-independent-replay/initiative-map.json",
+      "sha256": "fca7a1bd02a7d999d91be987b92ff0fb38f75a1954fdef1d88be75939d6abd58"
+    },
+    {
+      "path": "docs/intent/renderer-independent-replay/intent-brief.md",
+      "sha256": "dd0019e384a3a92213b2e4c7dadfb287acc20d37366e584fa98abfae0c63b904"
+    },
+    {
+      "path": "docs/intent/reusable-analysis-metrics/initiative-map.json",
+      "sha256": "2f3cbccb40a70d14d46e1ce23e5ba8061c318f636b4f110d0c928178c59a8867"
+    },
+    {
+      "path": "docs/intent/reusable-analysis-metrics/intent-brief.md",
+      "sha256": "3f92d7e337343b877103c2afd83a923f529153ab736350a58c34d91de1627336"
+    },
+    {
+      "path": "docs/intent/reusable-analysis-outputs/initiative-map.json",
+      "sha256": "f44f23b3819c747c7aef755266b37b1349763b1b33cb5a2fdfa4e47e174d7ce9"
+    },
+    {
+      "path": "docs/intent/reusable-analysis-outputs/intent-brief.md",
+      "sha256": "3f57173fe3d02c1a2b76759f55d87480d38aba5f897f665733ee7282fbd556d5"
+    },
+    {
+      "path": "docs/intent/runtime-modes/initiative-map.json",
+      "sha256": "08e5e1a5dbdd63c188a4b6320b36644b099415ad2f62a9f7a8b27fac9a62ac02"
+    },
+    {
+      "path": "docs/intent/runtime-modes/intent-brief.md",
+      "sha256": "7494445affd212e03af9820abea4a79cb507a5225428d7502c6b881f82ee3ab1"
+    },
+    {
+      "path": "docs/intent/saved-view-templates/initiative-map.json",
+      "sha256": "01ddffc833e1b9f48171121208b3be0c3be8ce36841721b1badfab551d2f1dbe"
+    },
+    {
+      "path": "docs/intent/saved-view-templates/intent-brief.md",
+      "sha256": "4201b38fd835b03d66581c689461d0d2d2dc287a4c9470c60d5e74ecdc8dbfc2"
+    },
+    {
+      "path": "docs/intent/scientific-multivariate-analysis/initiative-map.json",
+      "sha256": "52c9c0b461daa5d77c54c598cb7057ce29b5acfad03007df636c920be85447a2"
+    },
+    {
+      "path": "docs/intent/scientific-multivariate-analysis/intent-brief.md",
+      "sha256": "e71f21742a2143011a2e675b79190b9ae873892f3ca22e09b07a3e0d5a3ff841"
+    },
+    {
+      "path": "docs/intent/standalone-app/initiative-map.json",
+      "sha256": "f4afad221ad3f47167ca4fcde8061035d6a7389a6b23190f4d4bbd7c83e5c549"
+    },
+    {
+      "path": "docs/intent/standalone-app/intent-brief.md",
+      "sha256": "a0012db1d73be56448ee08ea4ed336916ea8ef54f94a24655031961dc97d7d8d"
+    },
+    {
+      "path": "docs/intent/table-content-fit/initiative-map.json",
+      "sha256": "a05aa2cd101a5c3c7a243e474cb211b544fe58d7f92de0098c96f2b3b486367e"
+    },
+    {
+      "path": "docs/intent/table-content-fit/intent-brief.md",
+      "sha256": "7581b2a49668c99b426f6fe9f4b506fea8b1f5a78f1c61c9017a494cadc2256a"
+    },
+    {
+      "path": "docs/intent/warehouse-sources/initiative-map.json",
+      "sha256": "42f83d0736e034fc1a4b56fff0b90d615081f6ca3208199253f4d280f777635a"
+    },
+    {
+      "path": "docs/intent/warehouse-sources/intent-brief.md",
+      "sha256": "f9e62d2da47d262732268f36c12f3ebc2252594a771b5d1b055baf7189ea3350"
+    },
+    {
+      "path": "docs/performance-checks.md",
+      "sha256": "9dcaf64e27d37016372faae8e07165b0de2c390602787a9eff96e2c8a73ea80f"
+    },
+    {
+      "path": "docs/scatter-matrix-performance.md",
+      "sha256": "8117c400b18110b820441680f815073bbc1ac15aa77b6c879a0d3fef354b51e1"
+    },
+    {
+      "path": "docs/transcript-gap-analysis.md",
+      "sha256": "48db27259997dceec1433b62f14478d2fd3e52a0ebdc76a776519676fab356c9"
+    },
+    {
+      "path": "docs/transcript-trust-fixes.md",
+      "sha256": "64cd6aa7d2577ec7fafdfd7f4c9079234b3eb3aa8fd301e2576e80c352807744"
+    },
+    {
+      "path": "docs/ui-defaults.md",
+      "sha256": "93ee25ebd3917a1e56d7db818ff4b6edcfe7e063f390ff9d5e9b83a0cc32f84a"
+    },
+    {
+      "path": "package.json",
+      "sha256": "f9b14daf225872f605d9435ddfb46fdede88b203c87a0e8507fe20743536f6e3"
+    },
+    {
+      "path": "packages/explorEDA/README.md",
+      "sha256": "53aa57886a6b8920a02a39bb1e2f7701359016fe30e01afbe761a528142c0ce6"
+    },
+    {
+      "path": "packages/explorEDA/package.json",
+      "sha256": "17a71fd8852bcfbfb92cf76a9faf03766e934d0a5f0afcdcc9a5d0fd563b452a"
+    },
+    {
+      "path": "packages/explorEDA/src/analysis.ts",
+      "sha256": "8ee227eefaa34a1dbc9732297e7633f796b5aa35b9c4884d5204bcd6f28b5175"
+    },
+    {
+      "path": "packages/explorEDA/src/charts/registerAllCharts.ts",
+      "sha256": "fba92bb3564cde0e66c325e1fd0d9614da9a6a66d09fafa3ac1eca26eabd00f4"
+    },
+    {
+      "path": "packages/explorEDA/src/charts/registry.ts",
+      "sha256": "8938b10f0c249a0710517352c78eb8c56d461240c21afd4f0e24142b484c4b9a"
+    },
+    {
+      "path": "packages/explorEDA/src/cli/examples.test.ts",
+      "sha256": "f24d27047dc58ae5cfaef90a4b30630c404699da7c35f7986f2ee2f727ef5b16"
+    },
+    {
+      "path": "packages/explorEDA/src/cli/examples.ts",
+      "sha256": "6ee37d5e1ae6f5a0667790883d81ddb1379beaaff80be84ebc2546dcb81a7d49"
+    },
+    {
+      "path": "packages/explorEDA/src/cli/exploreda.ts",
+      "sha256": "7b7daee86266cd2802bd89e2411fc83958e7cd86eff9486c9bb542ec870d6439"
+    },
+    {
+      "path": "packages/explorEDA/src/cli/exploredaDsl.ts",
+      "sha256": "ab40d58967f93de8ee403ca7972595de2dd59b7f36cfdccd379e360c8dbbf807"
+    },
+    {
+      "path": "packages/explorEDA/src/cli/serverCommand.test.ts",
+      "sha256": "699e64c3abf9c183b1b399b4210eeb2ee1324ac18ec4cf5afb67c85d38722da4"
+    },
+    {
+      "path": "packages/explorEDA/src/cli/serverCommand.ts",
+      "sha256": "763e87e22f3252dd7723b739129448c231d33eceacb113b1f434ff89f344f99d"
+    },
+    {
+      "path": "packages/explorEDA/src/components/ActiveFilterStatus.test.tsx",
+      "sha256": "f73a7467d4241a6e363a764f1cefbabd33a415cbee3427bfce6c52ab4aa7c0d1"
+    },
+    {
+      "path": "packages/explorEDA/src/components/ActiveFilterStatus.tsx",
+      "sha256": "fdf70a73786eb604f0192a0cfe6dda5724188be82a4394f5c3b2bef361dc197f"
+    },
+    {
+      "path": "packages/explorEDA/src/components/AnalysisChartContext.tsx",
+      "sha256": "b8a65a3f78230682ce2355df68f2e1780886c899f33c42646271d0acedb3de08"
+    },
+    {
+      "path": "packages/explorEDA/src/components/ChartDataPreview.tsx",
+      "sha256": "de172fdeed6429e24c93e6f934d62b862376092c5c1a42b453e3b0a247e81bb5"
+    },
+    {
+      "path": "packages/explorEDA/src/components/ChartGridLayout.tsx",
+      "sha256": "f6a448fe7e391d837a0caafe3c524a2e0a2c922857913f376a64599a145375e6"
+    },
+    {
+      "path": "packages/explorEDA/src/components/ChartSettingsContent.tsx",
+      "sha256": "dacdd56f15a69bb9b94d683adc2f4669f29acabc7a9ec5a5fe7b1d249cd7d993"
+    },
+    {
+      "path": "packages/explorEDA/src/components/ChartSpecPanel.tsx",
+      "sha256": "9d275f44c2afda98dffb59665b7e1687b5c4c8d789d41dbfee98b80039cfcd17"
+    },
+    {
+      "path": "packages/explorEDA/src/components/ColorScaleManager.tsx",
+      "sha256": "ce9f122296747bd8c7a39e2a88a7f77ed9a5a40672ecaffa8e271759505bb2bc"
+    },
+    {
+      "path": "packages/explorEDA/src/components/ComboBox.tsx",
+      "sha256": "ae5cd9203ef564ad539666f64874d056639768169a133a61c57e3b63bd9f69a5"
+    },
+    {
+      "path": "packages/explorEDA/src/components/ExplorEda.tsx",
+      "sha256": "60e64d6dbf0bdddede24400ae80bb609beb6de7a0613be73b2ad959bb1fb7913"
+    },
+    {
+      "path": "packages/explorEDA/src/components/ExplorEdaProject.tsx",
+      "sha256": "5574df5b5dcbba664b0ce4764e9de300b112f951f9da1f55024245c0160c6618"
+    },
+    {
+      "path": "packages/explorEDA/src/components/FieldList/FieldDragContext.tsx",
+      "sha256": "5dad7f5968201d726cc53ab95e453485e1c3802acd7f5f3c59e7cdbbde0fa26a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/FieldList/FieldList.test.tsx",
+      "sha256": "6e3f39b783dd01d47731e989498d375750451dbe09cf8b5fc47f2751169fac89"
+    },
+    {
+      "path": "packages/explorEDA/src/components/FieldList/FieldList.tsx",
+      "sha256": "131445d5b9184e799ea4e8166dcec29c120d097b52798028adcb7d2129b72f5c"
+    },
+    {
+      "path": "packages/explorEDA/src/components/FieldList/FieldListRow.tsx",
+      "sha256": "845d96317146265fb6ae40597ff66d30a5339f806596ff5e5b8881aac5e9278f"
+    },
+    {
+      "path": "packages/explorEDA/src/components/FieldList/FieldOverview.tsx",
+      "sha256": "be58521bd593f91088998917a4d4cf328ca28ce4bddcd918fff592fc3919d970"
+    },
+    {
+      "path": "packages/explorEDA/src/components/FieldList/FieldPicker.test.tsx",
+      "sha256": "b75bc2801237a5a8e17aac33edb6121a874c492c2d332a7073b842688250c541"
+    },
+    {
+      "path": "packages/explorEDA/src/components/FieldList/FieldPicker.tsx",
+      "sha256": "4acac175feb066949c68a554c334d71e9b59319a889504358995c47d9bc9a7df"
+    },
+    {
+      "path": "packages/explorEDA/src/components/FieldList/FieldRowReadings.tsx",
+      "sha256": "356c5ecb5340f55017cf6e4d8588c9d658f4c84045ecf7affd21c44b5d737c8b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/FieldList/fieldAxis.test.ts",
+      "sha256": "1a7d49ffb109814a04e8bcda42d16cb1f4b4d41d1e6c0c88108a12468ae15b39"
+    },
+    {
+      "path": "packages/explorEDA/src/components/FieldList/fieldAxis.ts",
+      "sha256": "d7cb40c7ddac9771ba1ce9e78c3366bbee0ac3d33a365485ec9ddd6db022f3d3"
+    },
+    {
+      "path": "packages/explorEDA/src/components/FieldList/useAxisField.ts",
+      "sha256": "9b429f54c96f3c8b1c07091b5e90e0b3b3e212307161f8e12aa2d45848598676"
+    },
+    {
+      "path": "packages/explorEDA/src/components/FieldMetadata.test.ts",
+      "sha256": "e51f701f61816c27cbbd8dd054ca4421699088f6a8e0f662b7a7feea1634e291"
+    },
+    {
+      "path": "packages/explorEDA/src/components/FieldMetadata.tsx",
+      "sha256": "b141b6708594ce779a6a2f4cebdb8ace1d51f40949a29edf3454bbe24559b0eb"
+    },
+    {
+      "path": "packages/explorEDA/src/components/FieldSelector.tsx",
+      "sha256": "0e48b8ef526f749c917aa21e9cc3bedd461c3cf6c9fd521afbd42f5e5f3ff701"
+    },
+    {
+      "path": "packages/explorEDA/src/components/GlobalAlertDialog.tsx",
+      "sha256": "1ebca328e6f719cfdd6f0891fa09698c639da1c4dbe7a27aedfaa818be5df753"
+    },
+    {
+      "path": "packages/explorEDA/src/components/GridBackground.tsx",
+      "sha256": "75a8ac61d76c1b609d39d294c51abc89c71af5528e93dbcd9edc7f21c4fec962"
+    },
+    {
+      "path": "packages/explorEDA/src/components/GridChartPanel.tsx",
+      "sha256": "dda89f3b492b13ab020a75d5872f9a8c4d6fc6fe827754edb6dcd778bcb92a8f"
+    },
+    {
+      "path": "packages/explorEDA/src/components/KeyboardShortcutsDialog.test.tsx",
+      "sha256": "51da1c21bf5a7dc625931ba39b0f14f56d9d9ce6c020893d1c7a2c675bfca443"
+    },
+    {
+      "path": "packages/explorEDA/src/components/KeyboardShortcutsDialog.tsx",
+      "sha256": "8b01fe106eb6030b93cbf2956c7797334599528175fd1db29b1e1155e8233e2f"
+    },
+    {
+      "path": "packages/explorEDA/src/components/LocalFilterStrip.tsx",
+      "sha256": "f2851abd2c6929fe11d180a181b7997bfedf33884fdd9304c7f692bbe75ed2a0"
+    },
+    {
+      "path": "packages/explorEDA/src/components/NullValue.tsx",
+      "sha256": "429b6079dd791a963e1828f5b7208be05e836a5f60e78ef07f0a794438cf28b1"
+    },
+    {
+      "path": "packages/explorEDA/src/components/NumericInputEnter.tsx",
+      "sha256": "47d495abd47fb78db24b5b738b9111891587bffa38ee9c6975a5fb7f7cb1c41f"
+    },
+    {
+      "path": "packages/explorEDA/src/components/PlotChartPanel.tsx",
+      "sha256": "0491886b1d275957947eab1ba38edf9cdedf5c44b599d6d99306d5833a937f3e"
+    },
+    {
+      "path": "packages/explorEDA/src/components/PlotManager.tsx",
+      "sha256": "086e81dfac8b05f48c222d48f31467d5cba9d011719395e741db43c911bbce6a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/RowsPeek.tsx",
+      "sha256": "62e3f7868ba8b0a515e60b5a549323a0c3bdf6a514cd5d47d0f598135c8b3c50"
+    },
+    {
+      "path": "packages/explorEDA/src/components/RowsView.tsx",
+      "sha256": "34c1d5c2df55089d49c3711c6b65548f8652ad1f4285e5111ef37569c52024c0"
+    },
+    {
+      "path": "packages/explorEDA/src/components/SummaryTable/components/ChartActions.tsx",
+      "sha256": "44191ab8ffdb016c1583535333c4cb6e87bda0e891aed6aeedd3b91d275e945b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/SummaryTable/components/CompactSummaryTable.tsx",
+      "sha256": "dbd2d45cc650b37bc920cbda88fdbea91bdb1d17a6d712bbcba909ac03b2b871"
+    },
+    {
+      "path": "packages/explorEDA/src/components/SummaryTable/components/FieldDistribution.test.tsx",
+      "sha256": "5611d91a656db9b489360b93f4b116987913cdc799b0c2d652d0ced1b2f7140e"
+    },
+    {
+      "path": "packages/explorEDA/src/components/SummaryTable/components/FieldDistribution.tsx",
+      "sha256": "d954ca886d084bf3859db3e215d3a8ebffd755f70f61c270bf05e7c1c152a8d3"
+    },
+    {
+      "path": "packages/explorEDA/src/components/SummaryTable/components/FieldInspector.test.tsx",
+      "sha256": "1ffbc61fda2e0c424c4f2e25acbe997ac0e3af7d99d92bedd8d1d3957b5ff921"
+    },
+    {
+      "path": "packages/explorEDA/src/components/SummaryTable/components/FieldInspector.tsx",
+      "sha256": "54a92d51d031af549d0ffc8fa9784f0dee5da8072fad47d94740ba488b9e9335"
+    },
+    {
+      "path": "packages/explorEDA/src/components/SummaryTable/components/FieldValues.tsx",
+      "sha256": "3b3eb79777937997c34868fe540ac7791505ce72b3b3916e24c950aa30c3b6e2"
+    },
+    {
+      "path": "packages/explorEDA/src/components/SummaryTable/utils/dataTypeDetection.test.ts",
+      "sha256": "22d1bc40910627205ee52f7318c8a44a4b39bcc30d92a4303bdabc3415e3496d"
+    },
+    {
+      "path": "packages/explorEDA/src/components/SummaryTable/utils/dataTypeDetection.ts",
+      "sha256": "8bba727e0e4205a0df8762770d27a83be212089397e3d19d76055a8bfd1a8db1"
+    },
+    {
+      "path": "packages/explorEDA/src/components/SummaryTable/utils/samplingStrategy.ts",
+      "sha256": "c81ce64ac279e1176fbcbaef53eecc8b3a776fd7f924f03324eedcf1005e4ccd"
+    },
+    {
+      "path": "packages/explorEDA/src/components/SummaryTable/utils/statisticsCalculator.ts",
+      "sha256": "bb630d2f003d0f98e6dced59839b84a812d4d7438cd15ef65fb1277337a6e097"
+    },
+    {
+      "path": "packages/explorEDA/src/components/WorkspaceDrawer.tsx",
+      "sha256": "fb11e74615d8cebfaeaeb434c5ffd04d7a489042c22791a08daa12ea8768b8aa"
+    },
+    {
+      "path": "packages/explorEDA/src/components/WorkspaceFilterEditor.tsx",
+      "sha256": "d32d9afc621514fdb8ed3ade390854c2148284ecbfdbf0aac8823b7756ecde5a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/WorkspaceSettingsDrawer.tsx",
+      "sha256": "e698316d2acff9722bf1387949d8425d0decbdcb89586bdc8f038daca7e2224e"
+    },
+    {
+      "path": "packages/explorEDA/src/components/WorkspaceSidePanel.tsx",
+      "sha256": "e25de2f6c1ff273fb1dd3a53020a065ddcb11e71eb01aa1c4f469d5f11b3ec3b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/__tests__/ChartGridLayout.test.tsx",
+      "sha256": "c49b898b97a55dc11d829be218b5780bd966236a6e2bd909d250592e58303492"
+    },
+    {
+      "path": "packages/explorEDA/src/components/__tests__/ChartSpecPanel.test.tsx",
+      "sha256": "43f7d4d62784581f384ceddc92f5100a3a853092c8f41a9a169d0ba3449259d1"
+    },
+    {
+      "path": "packages/explorEDA/src/components/__tests__/ExplorEda.test.tsx",
+      "sha256": "3407364b95cd69bf1db2e13500a5614bda8c5319faa4fcfc6585719cd9b992d7"
+    },
+    {
+      "path": "packages/explorEDA/src/components/__tests__/NumericInputEnter.test.tsx",
+      "sha256": "0cc9678d565aba757ca864b16cce01415623af026bdb62437d91e23929f4ed92"
+    },
+    {
+      "path": "packages/explorEDA/src/components/__tests__/PlotChartPanel.test.tsx",
+      "sha256": "c82886c86631bd516d5912c04d8a562c3f0c626465ea8d9f3d48c6df22958b53"
+    },
+    {
+      "path": "packages/explorEDA/src/components/__tests__/PlotManager.test.tsx",
+      "sha256": "98632a8b114d29c2f4ec5efe847e3d1b5835b02c662e8ceebc2e3f26fbd6f723"
+    },
+    {
+      "path": "packages/explorEDA/src/components/__tests__/WorkspaceSidePanel.test.tsx",
+      "sha256": "c6c27d7505d5d0213bce0db921e937403ebffea663a742f6e49b2c97bf23cfda"
+    },
+    {
+      "path": "packages/explorEDA/src/components/__tests__/WorkspaceToolbar.test.tsx",
+      "sha256": "6d25e8914f30ed256024098cb497361225a7207b67b10cb7230f2aa0e7fd48d9"
+    },
+    {
+      "path": "packages/explorEDA/src/components/__tests__/chartImageExport.test.tsx",
+      "sha256": "d37d4afebfb11de2c1694684f537a3a60b2dd246d43e9d925d58a92c5fbb64af"
+    },
+    {
+      "path": "packages/explorEDA/src/components/__tests__/chartRenderIsolation.test.tsx",
+      "sha256": "e0715a6caa6f87f0f286be5a17cd10bfcaa0321f5b625cd12d605cc96fb227dd"
+    },
+    {
+      "path": "packages/explorEDA/src/components/calculations/CalculatedFieldBadge.tsx",
+      "sha256": "ef2fdb609235e971903a52c3d692b107a6407bcacb0bd8830207ae14983df474"
+    },
+    {
+      "path": "packages/explorEDA/src/components/calculations/CalculationEditor.test.tsx",
+      "sha256": "c7839bcae2eb92f2415e0ee2b69f779320b196c6c37c7e30dc207634aee9fd80"
+    },
+    {
+      "path": "packages/explorEDA/src/components/calculations/CalculationEditor.tsx",
+      "sha256": "66bf083316786b0ea51a9b85ccf8dfcc9d384c0b5fc5ea2dfff3c2c1fb95d95a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/calculations/CalculationForm.tsx",
+      "sha256": "81140894d1c6155c4a809855729d69a9ebcd8757e5aee6053068689400c74b76"
+    },
+    {
+      "path": "packages/explorEDA/src/components/calculations/CalculationManager.tsx",
+      "sha256": "8fa11241e907871009b388de944f63e470862653e4d667f6850c38f4427ba860"
+    },
+    {
+      "path": "packages/explorEDA/src/components/calculations/CalculationPreview.tsx",
+      "sha256": "cdd7d6f8ac30a5edad4455f97712d8098ff1c7cc1a97890f55b7a2aa592ef268"
+    },
+    {
+      "path": "packages/explorEDA/src/components/calculations/CalculationTrace.tsx",
+      "sha256": "c4065e99269dcf23000a10cce3ccf5368d6e43714cfde83ab9f2349775971444"
+    },
+    {
+      "path": "packages/explorEDA/src/components/calculations/FunctionExplorer.tsx",
+      "sha256": "eaba99e6d9b4a510da5fc85e0ac1aa75d47c7905e5025d6e5bd20947b658b3c4"
+    },
+    {
+      "path": "packages/explorEDA/src/components/calculations/ValidationPanel.tsx",
+      "sha256": "99fc6432b60e4875ecb3119fa1e10f93c81327fa08a3374949d6e44c5d4bf705"
+    },
+    {
+      "path": "packages/explorEDA/src/components/calculations/calculationHelpers.ts",
+      "sha256": "d1e66e6b79d821138557b04427c18643c2b7100d8fb2d729a735a6331627ad43"
+    },
+    {
+      "path": "packages/explorEDA/src/components/chartDetailsStore.ts",
+      "sha256": "93fa0ba068c23cb558e9e8cf599baab9776aef0d3b79c8075c64f8541170479c"
+    },
+    {
+      "path": "packages/explorEDA/src/components/chartFocus.ts",
+      "sha256": "6b98718e92962e95383fc1732f3d2d807961c9ce183dea3891059482af316d08"
+    },
+    {
+      "path": "packages/explorEDA/src/components/chartGridPlacement.flow.test.ts",
+      "sha256": "aae33b1f3efd1b92bd8bd0d628548202a1260cfe4deac899e7c9ff12061ddf2c"
+    },
+    {
+      "path": "packages/explorEDA/src/components/chartGridPlacement.ts",
+      "sha256": "14af94f2425548f066f2ec4564bf74b25bd11fc373e9937f4425d5c7f8cc36ef"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Axis/Axis.test.tsx",
+      "sha256": "79d00bdffb6d7f85ec58ed76c10b3a567c5c5efdffc9a9b6ffe6f4688932e6e1"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Axis/Axis.tsx",
+      "sha256": "e3d594566cfe479271d78477478810d1383242585312d50b6ff7b308ad87ebcf"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Axis/AxisLayer.tsx",
+      "sha256": "05a73597bae5e82531b105915e09376b3dac5da182c4a9179df16950ee9b71c7"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Axis/axisBounds.test.ts",
+      "sha256": "692b2d4058677d7ed101bf9736773ded8eb4ec712fb224c8817050f6ae600aa2"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Axis/axisBounds.ts",
+      "sha256": "dcd665c7f30971a980339ceb26475dc169fb60259298191cb302e3ee531a45be"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Axis/axisPlan.ts",
+      "sha256": "d035606361910fbfb94600dec68ac961eaf2f009872a09802dafda66fc591337"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Axis/axisTypography.test.ts",
+      "sha256": "2060942672da2c2df7f3ede5babbbf515f6eb71c63fc61c7d0c98784b001ed90"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Axis/numericScale.ts",
+      "sha256": "6d2f90d8063c87e620c0dbf11d01389d785885a0f5bcd55c099ae0dca47f867d"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/AxisFieldActions.tsx",
+      "sha256": "255bc6292bfa2ebb603c0cf58d8fbac1ff06fa5c4a3e0449a6450edf3d01fa64"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/BarChart.select.test.tsx",
+      "sha256": "17341d0a06854ed3fb5feef1c440617dbe4b738a5dfbb106e57aebd20f8a75a1"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/BarChart.test.tsx",
+      "sha256": "17c7d876c95eb14bc42c2d5e1fa5e469a1aa0998e0600298d55e2c3ad7f86979"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/BarChart.tsx",
+      "sha256": "a4805c5391d3707a1c799e48dd2764b3ddec0ea2bf485bed3813619dedc186c7"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/BarChartSettingsPanel.test.tsx",
+      "sha256": "753cbf4d8a3ab5b181ae1c51085ad8b9f3a6e588947865d9bf8ef70def3e2c11"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/BarChartSettingsPanel.tsx",
+      "sha256": "cd9c1429b73ea42628c1c39ca2a76237e9475d8fc9ea37635ac0de669b0ce04c"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/BarTraceBody.tsx",
+      "sha256": "ec6c8519e5f34921a05266864c921b0a69acc5341a630a4c2dde507782e4ccac"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/GroupedAggregateInspector.tsx",
+      "sha256": "cc3f938e9715fe12e0f64fca3db003c097c6117994de9b6a7adc15c39c1fde35"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/SeriesBarChart.test.tsx",
+      "sha256": "7acb1b226bd909c4ed11a57e85cfb3b602c5d4a556247502924b877e230cb23a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/SeriesBarChart.tsx",
+      "sha256": "45f80f470e33feebd21eb16062a9036893fd0e4d0b5bda734b9a6e06bc71c5dd"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/barPlan.test.ts",
+      "sha256": "de17c61d954e1bdff69b07eb5447bbe0f2224f6e06aef2519139a29ff5bf5726"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/barPlan.ts",
+      "sha256": "79933db557b72b3326342b1eb3e0667f4f2a1ce924093f17e3939f78e0399834"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/barTrace.ts",
+      "sha256": "7b19e7f433ffc0acf2ae57a4fc68359eafa4ce32b3aff45f0ed97cb9ef40b6e8"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/bins.test.ts",
+      "sha256": "03e40d5f4d38c9ae3e118fb93f902e696a6c752ce8b5df2c2c2307665149a8fd"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/bins.ts",
+      "sha256": "fb6428b2dd359f2f104666ea203c6a6d393415c89e9405709ad04ec1c34d3bcb"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/definition.test.ts",
+      "sha256": "428825d46bd9f9ed86fe3febe16d7cd5e5968e71d6db693f61b682ae4b0c07d5"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/definition.ts",
+      "sha256": "7567d38cf9a8b52d65cffa387a38e61cdab6a3c19f9c60302c4999899a62293e"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/seriesBarPlan.ts",
+      "sha256": "363d9714b9c99ef18e79de7ec19396c3a10d2aa0edd1cc7d63d8d49fc85ffe07"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BarChart/stackedBars.test.tsx",
+      "sha256": "907ad36fd67c4f114ca6b46917439f68ec2d7c831d29c48e8d9cc2681d7d1916"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BaseChart.test.tsx",
+      "sha256": "0cb9892dafc65561454c69c071be0812bd57f6e27540ab8fa93a886f600da63f"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BaseChart.tsx",
+      "sha256": "6996d12e1743cd6da2e82f70709d0e4b572f361b8255e984452d93d48377c281"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BoxPlot/BoxPlot.tsx",
+      "sha256": "81db3c771463a33168786aaf9014051f5fb316a781207726fe7a85a795647347"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BoxPlot/BoxPlotAxis.test.tsx",
+      "sha256": "ac131ea25764528a4f890db6c20114fd9c467e7784ed5aa496b4b1bf575aa178"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BoxPlot/BoxPlotIcon.tsx",
+      "sha256": "98060a06f7624f1303ef8c39ee1b7c1ddd7251e13bc97fe06db9f0a630e9b204"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BoxPlot/BoxPlotSettingsPanel.tsx",
+      "sha256": "ad5e3027d7ee185cc6ced4048e1fceb6e456fbb782340f406b492e56dd5f2adc"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BoxPlot/Distribution.test.tsx",
+      "sha256": "911af9249d36b449b84ea57dd3dd747d1d883e1753c5bbb4970151051cbe81c4"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BoxPlot/DistributionTraceBody.tsx",
+      "sha256": "95eeb1970f780425f53d108baff2a21f868751c8031a9f711edc09e5813503f6"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BoxPlot/boxPlotCalculations.test.ts",
+      "sha256": "e794b1a9700f1a5b56606a028c052c40466a5385cc2db339f5b027f5fe1ad6fb"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BoxPlot/boxPlotCalculations.ts",
+      "sha256": "93635d540cbde8209b59655f1e817075612fc586106a64f4874199ea3bee4f61"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/BoxPlot/definition.ts",
+      "sha256": "d2b8341adc2c8faf6f1bba20eb798db76dbc3be18a6fde5eb270748f33a7e236"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Calendar/CalendarHeatmap.test.tsx",
+      "sha256": "766969f715c702d8bfc19966471228f72a11625e5c10e95682391b77e5722ab0"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Calendar/CalendarHeatmap.tsx",
+      "sha256": "da3e2a6eba7acf60fb487cde32d4ca09d5defcc02d72f735f4abb632ed2f1ef4"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Calendar/CalendarSettingsPanel.tsx",
+      "sha256": "3e47daf03b0401216e3a925d32f0524e9db6e252d1148c087772aad1fd89690f"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Calendar/CalendarTraceBody.tsx",
+      "sha256": "6611133bebda1816e19efe6d1f192c9cf31b8e2c28bfe566487cb08da3ff2b43"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Calendar/calendarPlan.test.ts",
+      "sha256": "957a97cdf10f2f3a4f1c3df31cd284107e3a7a66af89447a786f9227b016ddc7"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Calendar/calendarPlan.ts",
+      "sha256": "5ad2199d2e20b20796d6eb74d64de015e7a23ef50fab0f2eb5f7a9047f05f917"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Calendar/calendarTrace.ts",
+      "sha256": "b7dcb37e2db7dc2a6645e157b891f5592b29e90c73ba72d4fb668732ef8d2efb"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Calendar/definition.ts",
+      "sha256": "530c80051a8c776b5b80d1fadf16a1505b7e6e4375bfc36b5e9f75deec39a9fa"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ChartMessage.tsx",
+      "sha256": "bfcdfd289d7e2a2347a7b4a7ebdbe0b59cb586deba600f02dfcea478d8e61581"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ChartReadout.tsx",
+      "sha256": "92c9d14252f60c0be6ffc2df5b2c8122fdcd4c1a55d4ed45bd20b60167025615"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ChartRenderer.tsx",
+      "sha256": "1a4955f172d078e340f737122846af5bdc4590a3e9cda43946ac4f91e1583f77"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ChartStatusLine.tsx",
+      "sha256": "4fd50dc25453d4bae6dab9935bd771e3b9b94d9f6cb3aba45619b22a92da6beb"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ChartTraceControl.test.tsx",
+      "sha256": "0c25c5df807e99750b5852c89f03b438cb46e5a6621032f1a238ca3771508054"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ChartTraceControl.tsx",
+      "sha256": "71f324b4719fa2252281ca7e8b99869ccae439e64e5e9ffc4fe000863642a5b3"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ChartTraceDetails.tsx",
+      "sha256": "6f3696c5658f0ee0946e89eebf2602664a81230e7329ba4f35c5591adaa59e61"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ColorLegend/ChartColorLegend.tsx",
+      "sha256": "d719cec7a1977518fdee8bd9105e4827beeb16ed00149ccc2dd3ac6379cf9e97"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ColorLegend/ColorLegendChart.tsx",
+      "sha256": "62db7b887bf539b2825d85eeed816ac3314c26d2c0137bbd174837c1f6819242"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ColorLegend/ColorLegendSettingsPanel.tsx",
+      "sha256": "ef843b6be8089811d1fc6f72e7cc940fb0110e62fc594e573fc52c2ac7edb349"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ColorLegend/ColorScale.test.tsx",
+      "sha256": "2842f452f8bd93a528778e64c1073facc120075db6881784c55bf175b4b6a750"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ColorLegend/ColorScale.tsx",
+      "sha256": "1a8e77f3cee9f4150dc8429626a579f3f599686c6116a26336349d44369f0686"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ColorLegend/definition.ts",
+      "sha256": "b11c90a08910685d303568b753aff6848c6270814fcdd1e70911b706aacda8a0"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/AnnotationInspector.tsx",
+      "sha256": "fddeda800f8b2598fd19d53d80cb1e770f0a4afb7f0687595900dbf58213116d"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/CompositionChart.tsx",
+      "sha256": "0636b0b286df2fef5e502b4a4db6e9b563c63ca6472a2c33bf5e958a51b70294"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/CompositionInspector.tsx",
+      "sha256": "6f81466d3ef93ee908c522ea8c5d5b81c104c64179a3a078b934ba15fc35c378"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/CompositionQuickMenu.tsx",
+      "sha256": "36a6c0545954c0d37eef2e727d7a0276a2dba2d468e0d335c2b8aff32a3e6cb0"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/CompositionSvg.tsx",
+      "sha256": "fa9683ecbf1883f1eff1b3025c90bd973c73505cde0cc623fa90ec2ea2a7c851"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/CompositionTraceBody.tsx",
+      "sha256": "9ac6a706c56433bf58e7d667193bc4981d83ad49e92d01f6bd1a91a64605d47a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/ScaleInspector.tsx",
+      "sha256": "aac7a641c5d180e809062ec44ed687df36e3801f72f85081183c86a9655dcf76"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/UnitInspector.tsx",
+      "sha256": "8eba20d33558ac8c09dc16c09af60b576e23ad85bd394d01182d810cadfac848"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/artboardZoom.test.ts",
+      "sha256": "e87357e910471deaee9626fa3eb6ba126790d8d6a5cdf04375f5dde96adf322a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/artboardZoom.ts",
+      "sha256": "c154f5924ab56c015e8cb8aae5d1e5d65acedc8e1b4907f8f0e44f80d39e769c"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/bands.test.ts",
+      "sha256": "4c8c87d988386bf5b5a6a5a4280ad85c623c59f232191d9da8fdd44e0e327329"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/bump.test.ts",
+      "sha256": "ba276025c11e3d3289a8030bd9efb0713f9e4377be30ffb90bd7de1b7d1365c6"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/calculations.test.ts",
+      "sha256": "39f6f5cc75bf98e4ce32bc25d84e8956931fe1507b4feed5a3398c21b6d36fed"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/calculations.ts",
+      "sha256": "d1c4b50605fecd13a8e8b9da8fd6910cddfe3fce2729684fef5a077cb6d9fe8b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/composition.test.ts",
+      "sha256": "2e1857bbe6067fe3ce67a0138107b6c8980383453cb488136bfc8a2aa4c111ec"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/compositionEditorEntry.test.tsx",
+      "sha256": "5f978864aa5a8cc0c4a7fef216201cd80ebea474440ce2273147976cb3541877"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/compositionEditorStore.ts",
+      "sha256": "cb9e5e2112affee84199674b8c1299d7843c5d8b1c87d42e66bedc16e3c14321"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/compositionEdits.ts",
+      "sha256": "3e8138648834596d82652f6bafaf6bb851d15aff19baca1265e937f9f1726912"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/compositionOutput.test.tsx",
+      "sha256": "bf15f967130312b2c53d9a09c4b71a0ade9086adfb0fd76c2ef2e497194a23f2"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/compositionOutput.ts",
+      "sha256": "5b5f2b0a09d308efc10826f4b3397117968fd05f174dafc80488a61ff6dcab1b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/compositionTrace.ts",
+      "sha256": "e1f764904bf3b80eed0a8145a29b9ef6a66ba26ff9dddf1fc3de7b5ab1d5cdc8"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/compositionTypes.ts",
+      "sha256": "e00d612c62d29f2da42dda1377801ae63b2152bd6e64203ce003d2fbc767c377"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/definition.ts",
+      "sha256": "4da429571f5d0a3df145cc01172521c0996cd4307cdf982900c7ab1484d18213"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/dumbbells.test.ts",
+      "sha256": "ff8ab93d2d7c8aa0e77e5713cd07cdf44bcf5edcd1dd6f6ae155e055e1ffe0a2"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/elections.test.ts",
+      "sha256": "88624a51a23b37785b250627023e2566532f80f36949a5e64275704c77c81386"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/horizon.test.ts",
+      "sha256": "4115e86f81f4880bec66c0c11653619814fb7edc31aebf57806102773a0ced3b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/insets.test.ts",
+      "sha256": "8d785981133d380f738337e73eb4baab2b76340f25e3703547f63729a2722920"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/inspectorControls.tsx",
+      "sha256": "fd7caf2bdb3e4871e998b22b02bd568a6fcf8f2631cc52ee67c7ca64f45f1bb0"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/labelDodge.test.ts",
+      "sha256": "49b714515dbdd020b6eaf2c2d8b7b1512ffa55f62746cee8ffe7389f540acb98"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/labelDodge.ts",
+      "sha256": "f34c528eb2ba55f841d14a1730d4521f2b02db465b12cfed17f6f341c70d5d33"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/markSummary.ts",
+      "sha256": "a01366367a4642e71fb7bb832b232477979f3bd981f979e0825c342789553837"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/measles.test.ts",
+      "sha256": "84095caf6787421271291900ea98462056c0aad7a0105d84bc82f2ddbd36e67b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/measureText.ts",
+      "sha256": "1437706aa3ca7320cb4f5af275702aff096b46f73ebe328747c3042156faf333"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/multiples.test.ts",
+      "sha256": "7f863c0d519227394ccdac8d7942721d00177bcfa9b879e1fffa125e064dfb8f"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/ordering.ts",
+      "sha256": "db1a1a9c95a5c4625c1c268ec171c430c9772b535e3fe9c19b0310690129ad0a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/overrides.test.ts",
+      "sha256": "993adbf8ca2058d46e0169c5e649e63afe1c15fd5bb8adb2a8306aa69325d2a3"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/partsMarks.test.ts",
+      "sha256": "64eb637896e4746e9d4ec28ca945947133b57fe13930fc6a64613967944c28e9"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/partsMarks.ts",
+      "sha256": "2f299635587c3569549ff04c334a962c397ce2eb193eec53b13be06a2e53f4c5"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/paths.test.ts",
+      "sha256": "9064fd6ff0ee8f54868f1e31005f9c3cb7bc8de82a5bae786d48c5b49effa0a5"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/pyramid.test.ts",
+      "sha256": "47ebaf45dae76cc693d510f38b5db10950a1535a5287367d75f5e7dbbe38b011"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/quickActions.test.ts",
+      "sha256": "8945d1fcb4f7803a0d756d11e98d979b7aa06f8ed77538ffc68bf9797a4b801a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/quickActions.ts",
+      "sha256": "381a58a71e1a7f9330a53d7dd10a0ad4f83bab372e59aca2cd6631f23d77f2a0"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/resolveComposition.ts",
+      "sha256": "4a494f6271d3af1e6311cc148543957079cf655161a80d965aeaf448c0a1f012"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/resolveUnit.test.ts",
+      "sha256": "891388a5434b6016ec2e199e3a12121b291582d5cd62274fc3747842db2fbd8e"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/resolveUnit.ts",
+      "sha256": "10b2447e7a3a36509d768e600c58d309cb53a21e3828eee1bf1bf0217c25531b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/ridgeline.test.ts",
+      "sha256": "65dca350a0217094c8e3f17201ffdeb6509056e129ebc648a2528e8288303f36"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/scatter.test.ts",
+      "sha256": "a5735c97e611bacce64064fb47a349415a0731580ccdd8e438ad26f9eda7ce1e"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/slope.test.ts",
+      "sha256": "20b0e89222b1a37725a9f0c11fe7003fdd180d9afb4cf05aeb6fbdf316baa96c"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/spans.test.ts",
+      "sha256": "7f2fb8b39f9569d8e3c0e44d0b836c70afcb7d7929000538f6fe186472849ca6"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/sparklines.test.ts",
+      "sha256": "c20b99e50fd9d31452b6cab02f2d49e2b1f533e25dd6808da06dc1d846c1b956"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/stackedAreas.test.ts",
+      "sha256": "c444a901d7128c8c1296c638a2590de5029cb364a39b299830269237451b39fa"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/stacks.test.ts",
+      "sha256": "6f55356f266f04ac56aab8b1ba189995d03c86a6fac140336d5d7ec8d03b56de"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/streams.test.ts",
+      "sha256": "82f76a618d3753dac293d90605b83e63fcef9fc55df7ca5fd693c431adbc9eab"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/summaries.test.ts",
+      "sha256": "beabf3916e2d33eca74235e0c01ec6120bd6bbfc7bf85fc70b4de13a02a59688"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/swarm.test.ts",
+      "sha256": "269649b712e84e6457ab0a0b273f612076c06182ecf334e0e09fa11a21f10d0b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/swarm.ts",
+      "sha256": "214312171442753bb6b99fc989f3f99dd60e6bd5e83cee61e7efb267749aa2b9"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/tiles.test.ts",
+      "sha256": "348c2caa43f9488dde1fb72c13055a222baff77322cd6a36a172e040fac7675b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/useCompositionData.ts",
+      "sha256": "ae5f48a1b3b01f40a86c3d73a51427586701e163a20ded76def7ba55809f629f"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/validateComposition.ts",
+      "sha256": "8d3f049472ca04b67e2decdb1e12c60b3d2b4b9e6b0e2f8f89ba67da64c8a6e5"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/valueShading.test.ts",
+      "sha256": "2f3a358b29b3937786e01ef0dfc34137aa7799c720b93f123ac614296ff34bcb"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/waffle.test.ts",
+      "sha256": "cc02de375ccf51cb0ca9284b933657f54462d1bd3a8206e392bcf4682aa43337"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Composition/weights.test.ts",
+      "sha256": "3eca184a3198cde89afec3f392e8efb425bb4823341115961ed3d28cef8bee1f"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/DataTable.tsx",
+      "sha256": "0039f22156ef1dd3f0cd6ef58e73115a7f3b5ae12eaf8c4e04e2677295bc74c1"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/DataTableBody.tsx",
+      "sha256": "2e1dd3e7e05d119545c364f48c2be563d0d7a0daeaac1749c8713d9ee6a7cd70"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/DataTableContextMenu.tsx",
+      "sha256": "76ca913d4fd68eaa674dfefc69ad784be0080370232a1f9f23caca1741235b7a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/DataTableHeader.tsx",
+      "sha256": "2eef148e040fd012fe59a23fc860d8fffda727749fccec3e10caba222d2a7ea3"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/DataTableSettingsPanel.tsx",
+      "sha256": "dd180c0a6e73f6ce43314e9efd7bba0372921241aef9c5425c961434c3846595"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/DataTableToolbar.tsx",
+      "sha256": "401418aac8f4c132ccdb3b906ccefad82392e94db56e1bd558eb582e74bf65a7"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/README.md",
+      "sha256": "288468c5fa9fffce4afe1f8386d19f79eb7aaaad413a847acde9ad494776243d"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/__tests__/ColumnFilter.test.tsx",
+      "sha256": "f21fc732848d9d260bb0a16beb9a7fd9fe8018f0713183a966b7057a9b935b29"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/__tests__/DataTable.test.tsx",
+      "sha256": "5bc175b5fdb57b48a05b79da2a351eb130363df6297b4ee58a81e583a9d6d05c"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/__tests__/DataTableBody.test.tsx",
+      "sha256": "08dc06c558d121276e6d29f51a4e8aad50b7011117dd800858e3b2b80c8c07b1"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/__tests__/DataTableContextMenu.test.tsx",
+      "sha256": "1375d2d0f92ffd57f6d93b596bd59717cd9f50c3fc7e005fe313fcb683d6a476"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/__tests__/DataTableHeader.test.tsx",
+      "sha256": "2f2a43ac4454a55f397922254cffa5e5345309cf089011ad79529f0f286f35c3"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/__tests__/columnOps.test.ts",
+      "sha256": "fc841833c96e629d44b42a559df7f81450c2981bdb73455c92d3cd4f4e9753c5"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/__tests__/columnWidths.test.ts",
+      "sha256": "7a05c619ff6b92b0f3b0ed9f08ec05cb6d4ee90cd41e3cc73d0752362fe38fcb"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/__tests__/highlightMatches.test.tsx",
+      "sha256": "742e802b79057cfb336a47ce952c76d0b7c58d72ec8f2d7c274e6367a7b50bf1"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/columnOps.ts",
+      "sha256": "257d30dcd7df70b4020990133dd1c9ee9f63052689a0fee516cdcbf4ec48a594"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/columnWidths.ts",
+      "sha256": "556aa94d0a7eee01989f7219eeb6a44c9204b2b6ca1069aaf69951da4cd7e87b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/components/ColumnFilter.tsx",
+      "sha256": "41bd81c4ca5fc39a00ace5543e296b941e699d87463369b981400accace7a886"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/components/ColumnHeader.tsx",
+      "sha256": "dd73438c0882064ed30d3f9dc7119798d9065d12a3ae1fc9c558d4f89f590833"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/components/ColumnTooltip.tsx",
+      "sha256": "c5e360bddd9cb731919c768d94bae3e2e96a43d51bc6e3a9ecd5a0802d72f4aa"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/definition.ts",
+      "sha256": "d40fd095ef8e2244b9d178b172ef4e132f2265e0c3588eec6e62c183eece853c"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/filteredRows.ts",
+      "sha256": "0723f9d5341214b0522d6c8231a0ee9ec32dd816b6e0a6067c9d49bedb5c147b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/highlightMatches.tsx",
+      "sha256": "18114cac92411d0d54c544ad6a31bc255f8386864066490393f2c0d3046dcf43"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/DataTable/useColumnDrag.tsx",
+      "sha256": "a59c16884b04701ccad0c688455af7473a830562ba2c7dea3fb8ea0ce3c96f57"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Donut/Donut.test.tsx",
+      "sha256": "fe5cae7ec3082fb36a1ccfd9336bc81c590accb4824871ebf73d5242339613ce"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Donut/Donut.tsx",
+      "sha256": "d0f0dd25437d728408aca5cbdcca7ef062be70f67265182e6daa7f7c9a50aa87"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Donut/DonutSettingsPanel.tsx",
+      "sha256": "62735e4226c230f65dfd4e1dc6b0a037a342b1b044b86dd170d6674a09124713"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Donut/DonutTraceBody.tsx",
+      "sha256": "69860a0cb7e226f9bcc657fda03cd2f9363f9619e00df7cf8d6d89570b1278c3"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Donut/definition.ts",
+      "sha256": "c0d099e14053c5d2fa57b9798b03eca4a1684749f58f1ee562b3a58e64da340f"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Donut/donutPlan.test.ts",
+      "sha256": "a6a3157ac278264f3d96bd6e8eb1fd06538f8bb983d0fd9f9bcecdb685591a6a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Donut/donutPlan.ts",
+      "sha256": "4934825829ef207974c4d9ff6981afdc3e9cfe225381711e150364d65e44967e"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Ecdf/EcdfChart.test.tsx",
+      "sha256": "73109cbc6b437b2fdfa3e5fa686df33df407bf0fc60b2a58489cf31c85649c39"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Ecdf/EcdfChart.tsx",
+      "sha256": "7c904c193448078c28f24261ead61690b88efba2f16156e73a8a9825f8ddb159"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Ecdf/EcdfSettingsPanel.tsx",
+      "sha256": "8c28bd80248c7ee6c106ac28336009be9b3de50c7266a2fffd1383356bc71856"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Ecdf/EcdfTraceBody.tsx",
+      "sha256": "0346c5b588291c44792e0f8b176dc1739b56bd4fb1f942d7bcd6a861acec52f0"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Ecdf/definition.ts",
+      "sha256": "ac5b154835778aec2ea727f618718134e6961b60e48d5d8441f124cf12ff7ce2"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Ecdf/ecdfPlan.test.ts",
+      "sha256": "081459fc279711ea31b82a10b1d86d6ef617c9f3414538223e7ceee0a47daa24"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Ecdf/ecdfPlan.ts",
+      "sha256": "3814a434bcec72e222f3b5dbc1c3f570a51bc7c73fc9e37754051121127af142"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Ecdf/ecdfTrace.ts",
+      "sha256": "b7e1a14694202cf13984e0bbd6d22ce1a39d4fb923213dd8543622824a7e7b0e"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/FacetRelated/FacetContainer.tsx",
+      "sha256": "f71b07a7cf2fa19b3fad0cc6970c7c54cb9390b7c44a1107238c6772249bfe05"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/FacetRelated/FacetGridLayout.tsx",
+      "sha256": "30f3606f7de1a10d264197c5cd049d7923782e7742de3b79a4a77a3f4ec4652d"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/FacetRelated/FacetPager.tsx",
+      "sha256": "74b33f28b28d6f2227f30e51e109ca3ab9ee4a4ec3ef7a1c71e79f79227cd545"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/FacetRelated/FacetWrapLayout.test.tsx",
+      "sha256": "a0449be51869140ec1403c9e7ff31a8c52e46aef5a9e80b992d1943367db501c"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/FacetRelated/FacetWrapLayout.tsx",
+      "sha256": "16db6c073d5fcf4c08cfdc2f41f5fe54eb451d59b17022a97b0a644eda93cc14"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/FacetRelated/facetBarSlot.tsx",
+      "sha256": "a1fb7eda5fcc1f2603fc1344fce18716c80527980f40aa9a4578a11acefc3dc8"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/FacetRelated/facetLayout.test.ts",
+      "sha256": "ac1564f45275018b4a0b53ba71168f375119cb6eaae34280cf29dda8240b8c47"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/FacetRelated/facetLayout.ts",
+      "sha256": "81a2624595c51126fc8b63530c7fef7b012a3606472966d7548945167f9c8a79"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/FacetRelated/facetTrace.ts",
+      "sha256": "de7609d640a5e3039284b60c46b2c89b03739eb7aa64a31a61d21a2a6422dd7a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Funnel/Funnel.test.tsx",
+      "sha256": "17458bdb5ff91c9a4a10a04f9800ee62ee73b852496e345ce001d2e0b4059ca8"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Funnel/Funnel.tsx",
+      "sha256": "09dbbbd7f891944c4df8a5313bc14a5a32a2d8833d46f323498d86ae57aff040"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Funnel/FunnelSettingsPanel.tsx",
+      "sha256": "8d3bd04a89c53b33eb5b96a0a8d880c2b659c95d0021978c33ce7ebd6b24a980"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Funnel/FunnelTraceBody.tsx",
+      "sha256": "dc3a9cd717d4638049c50d3bac63ac08c5e210b07a234bda4babfc84a5c19334"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Funnel/definition.ts",
+      "sha256": "e32c88af9aed50f8e23d85e48f8c7e58b31de8549ecd9a2a237e1963c9e7851d"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Funnel/funnelPlan.test.ts",
+      "sha256": "be6248c64c75086b4f4a426747d85dbead4e6b4d764d62198d6f1f1b25a84a3c"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Funnel/funnelPlan.ts",
+      "sha256": "0b3412137c46997d3c2fedee5a78ea6ffd77d0b2ae5ba225bdbf954bd834c401"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/HeatLegend.tsx",
+      "sha256": "24c3bbae16a3bb9f96977449d5c63d006894cc2f5129e5d23141ec249496f4fe"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Heatmap/Heatmap.test.tsx",
+      "sha256": "a390d09a8c13603e131d2babf94d7c2d62dff5ccc63bd49928e402a33ed1c2fa"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Heatmap/Heatmap.tsx",
+      "sha256": "34f9a042cbe1bbf61d4cbcccb24ae080658c5dd5c63a57704602620fdcd6f369"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Heatmap/HeatmapSettingsPanel.tsx",
+      "sha256": "4c7509bb7114c7889bd3dd8f7353c07800d735860324f4a02510819b72854f89"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Heatmap/HeatmapTraceBody.tsx",
+      "sha256": "c4a7ac2420e4028ee236be732c266627e77724e4daebfd593763607793c413df"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Heatmap/definition.ts",
+      "sha256": "b73ec84817a13c299c4fd193956588fdd323120bda356cb962c51ceac4eb39cb"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Heatmap/heatmapHistories.test.ts",
+      "sha256": "c1e82768c55548c085f0d2902839db91d21d0542e95a92e780735540db899d0b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Heatmap/heatmapPlan.test.ts",
+      "sha256": "7c1ee13ccdf42f2cc810f96525ad98acb23c445cedcc32387f6b3ee185614974"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Heatmap/heatmapPlan.ts",
+      "sha256": "21d9308c759f6dab72f856e60f651227aa8afc09cdc5d350af818ac971b9c7af"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Heatmap/heatmapTrace.ts",
+      "sha256": "859e4ba7febb1e19a475088de19799b6907c7f1383fc10ea1cadbb65211fa48d"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Hierarchy/HierarchyChart.test.tsx",
+      "sha256": "2f694d7c36298ac496ae67f319922f6d19890493e4c327df53d5b8a925c188f1"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Hierarchy/HierarchyChart.tsx",
+      "sha256": "853c60dbb52cb5db0b288d6bb1ebbc7d36a50be8cc8c336ba658ed9b5c9b7c93"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Hierarchy/HierarchySettingsPanel.tsx",
+      "sha256": "bc3b02fb68169bca3dd163adf2a87b67dabb7c06c64cc8e93d1f0872086957c6"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Hierarchy/HierarchyTraceBody.tsx",
+      "sha256": "251e35cdfdd5a615c5a31d1510dd5be860416c7edae4abf9b485b0cd7499957a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Hierarchy/arrangements.ts",
+      "sha256": "5b295b7fcf8af2342255bb854e234494d4a0f279ba04c258a00ef6867f08cf79"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Hierarchy/definition.ts",
+      "sha256": "af36fd5277bf3cf9680654d0c59ca404098edc237370f573bb78415f70709882"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Hierarchy/hierarchyPlan.test.ts",
+      "sha256": "6e30b39f5c136af896adca05f42e6c36639e8306ced409ce55f3e449c68426d7"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Hierarchy/hierarchyPlan.ts",
+      "sha256": "5eb289ecef9afdae704b87e191cac8581af9f8c70fe747b35d13b6d1a3f16cb7"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Hierarchy/hierarchyTrace.ts",
+      "sha256": "9bb8f9573941ba7ae6e11e0316dac10cfebcf7318984c2dda92f44ead87e8804"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Hierarchy/partitionLayout.test.ts",
+      "sha256": "5987c99e811a3033d4a777881916e03457d334943b09de8f0867ae0316cccbbb"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Hierarchy/partitionLayout.ts",
+      "sha256": "8fc5163f80841354ea520dc3bcb47220046ae1a881d8c8b76ef426abb81001a3"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Hierarchy/treemapLayout.test.ts",
+      "sha256": "4b9659c7815f899d9cb63c6b231fc7bca020556f075247393127c3f7f26bc4e5"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Hierarchy/treemapLayout.ts",
+      "sha256": "6fafe162c2832ed2149139b81ee67d84fece6fb4dcb48725ee4e46860967a03a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/InPlace/AxisLimitFields.test.tsx",
+      "sha256": "72a9e7e4ee14ee34b2ba88c0b83bf22d0d07eab20f3df9ff76084d865dd49908"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/InPlace/AxisLimitFields.tsx",
+      "sha256": "ccc084a33fe74b6c4517a275fac18377b83fc4d3f7635a1287acdf4ecc60e4e1"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/InPlace/InlineTextEditor.tsx",
+      "sha256": "fe860cfdbc7c58aac567b902f6e04024c5bd6857dbc7e24cca971b4e2df6a234"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/InPlace/axisDrag.test.ts",
+      "sha256": "5050b28beb6bdbaa8ac2ee4ca7c1f166ab74c7cdadf5c1acff2654aca689ae06"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/InPlace/axisDrag.ts",
+      "sha256": "f0d2545d73fa0af7c5bf8f5f0b9e38755b31ad20b9fd9cf8612a1b141c027014"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/InPlace/axisEditing.test.tsx",
+      "sha256": "24e0466d899a602efb15a7d44c4115b98f4ac44228d14492bac07e5809a65ad6"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/InPlace/hiddenNotice.test.tsx",
+      "sha256": "3b1376a2a5429e3a5b77a3c759308e315cc4ea488631d6518396447a62a3d57d"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/InPlace/hiddenNoticeCharts.test.tsx",
+      "sha256": "b8f9b0eba64e94dc2e1153c0203f14d38ea32945575c022e1533b135fa00e10b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/InPlace/logScale.test.tsx",
+      "sha256": "7e3c36f5710ded591ce64e668d21cb065060fb76b29c867225eca1b5de87a594"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/InPlace/titleEditing.test.tsx",
+      "sha256": "443f9a8553c7afb801fde36af9e153fca0501ca1709b6d35162128feb19786c2"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/InPlace/useAxisEditing.tsx",
+      "sha256": "2c0f4c2151cdd75ef7957ee43c988e5e33aa78912a21627229ad69abaaf33d23"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/InPlace/useChartEdit.ts",
+      "sha256": "a7ac4f2276c48897792e06b88b3462b25a9245afb0dd4dbb287ef496d2f114d9"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/InPlace/useHiddenNotice.tsx",
+      "sha256": "29ab3b252fb35c692e103f76713acdea44a6cda42f889fb5a0c83b222ec3319d"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/InPlace/useTitleEditing.tsx",
+      "sha256": "08287cb1d3dbd52a9f66c4731bd6e60b28aaff6804e524c0f7469faca7252ef3"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/LineChart/LineChart.test.tsx",
+      "sha256": "bfa91aad63bac814f3c893af90d8f792cd78eb8fa1bca084bdcd651999274ef9"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/LineChart/LineChart.tsx",
+      "sha256": "e032cb9ecf5d4601f7a816c53d2f4d57f82f34bcb611951c47af42c67d75d50b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/LineChart/LineChartSettingsPanel.tsx",
+      "sha256": "d4c00eb7a204f2914bcf04958ce9e59192f4e2eb0cc595e17fb1ea6347705513"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/LineChart/LineSeriesSettings.tsx",
+      "sha256": "7d3490d90a6c66a897f882522b2a2d81269cc845c5d0ba9d205d97d6a477a6e0"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/LineChart/TimeSeriesChart.test.tsx",
+      "sha256": "1658774db772741851feefa3f0edb382f86f65b618946d750f72e23ff59dc575"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/LineChart/TimeSeriesChart.tsx",
+      "sha256": "6e279c4c0862e3b4a5b07bd504e7e817925c5451548e720201833e49d5f6e497"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/LineChart/TimeSeriesSettingsPanel.tsx",
+      "sha256": "52248e30fe1fa03902c874cdd9283a7e5736a2ce4769c20420fb121e401aabd3"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/LineChart/TimeSeriesTraceBody.tsx",
+      "sha256": "717702deefcdeffbc98b363a82c0179e56a9fede833a3d8d5e46a651611990ed"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/LineChart/areaCharts.test.tsx",
+      "sha256": "3f4c2d50bb8cdc5f341c01bb3894149a5fd56d9ac6321eebe7e09ad722a0b516"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/LineChart/definition.ts",
+      "sha256": "22c8ce9b100146abe4614b871022804f110aeb826c21c06370e617852e4c935a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/LineChart/timeSeriesPlan.ts",
+      "sha256": "6e86dd6a596a7357bf59abca9b567fe982a7c837e8ffa598593e8e1eff241ec3"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/LineChart/timeSeriesTrace.ts",
+      "sha256": "15396d0c761d90e1388c1da2ac521ad26041651846147b87a541e09133c2d0e0"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/MapChart.tsx",
+      "sha256": "64ebb42f3c6e35b1526396d5c49a148c3f8675cd461873a0640a0df53b6c0774"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/MapLayersControl.tsx",
+      "sha256": "424c9bf56d9f19ba8b4a8d7d629cf6a4ad8da5369f4a283814017780409178d4"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/MapSettingsPanel.tsx",
+      "sha256": "bbf5b0e1a7dfa75496c4c71831f8f29f3b9529b2a73255df47df16c036eaee6e"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/MapToolbar.tsx",
+      "sha256": "363688d924034da491b6bb1fe2579593baff33e471b45fe63b2df0973fd79473"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/MapTraceBody.tsx",
+      "sha256": "b48404c762c08ae607087e3eab8d7149130f8a1a6f68f96beef82b9064cee58c"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/PointMap.tsx",
+      "sha256": "c6a6601e988ee1b8b0028d1963a086ce225dfb9bd8eebbc8783272b9e7ba2c3e"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/RegionMap.tsx",
+      "sha256": "4c287d8a40183371dfb049fc9c7f55adb7549a8ecc2907e39efa84ba935a4d3d"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/RegionMapSettings.tsx",
+      "sha256": "e7454ccb355c5951b4e32ae4aaafb2c95e9a87bc7beb950e471e53651b728c11"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/RegionTraceBody.tsx",
+      "sha256": "37ff561e9f433790e00cb1751ad6bff8b1e868adcd24f7cbcf67861c3093c303"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/StreetBasemap.tsx",
+      "sha256": "e7fbb62fe458f8d8653c951e37ae86de9ceac8419cf8a2507ba48fc160b3f7b4"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/definition.ts",
+      "sha256": "9df07132d086e8cae4a7005ef12b587dcbde90b113844b526d0e702e783c126d"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/mapEngine.ts",
+      "sha256": "3b4b124942a421613e071b003b2fd1ac281d3f1f0add9e38eefd55341c27aec1"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/mapGeometry.ts",
+      "sha256": "241533a746e84e0d43390452065c9014ad4c4ba08e77ac0bcda0b1b49a47f772"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/mapImage.ts",
+      "sha256": "c5b86522bbe67176a5941ece2cf2b71544a03b5bf42e149e646d08c37e24829c"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/mapLayers.test.tsx",
+      "sha256": "988d4fde5ec9dd272d69c6292dc7afeff67e5fd28d696143caa0d2761f14005c"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/mapTrace.ts",
+      "sha256": "bec522ad3d1ff94f83f24ac9d1ea4a888c922796d46a734f511f2b85f1740a14"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/pointClusters.test.tsx",
+      "sha256": "e2e536d3b77bf26562a95aa21aaa9c8706d6bc4e8fd2da73c05440070ad7c72b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/pointClusters.ts",
+      "sha256": "8b8c00bf21ac2961e609c4260f3370b8d3d49d6a7fa765629bf7b225835f8849"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/pointMap.test.tsx",
+      "sha256": "a40f022a48badf3937dd52d8649a808e8a47f16dd9ea8b6998fcee8bf369b7e8"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/pointMapPlan.ts",
+      "sha256": "844246ad8a61a9cc45793f5e7e168fa0316cd30643551b649e2a92c408fb479c"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/regionGeometry.ts",
+      "sha256": "5928527e93dee024771e70590f9b98be031ff152aa6bfa5c96f6a306e149f6d0"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/regionMap.test.tsx",
+      "sha256": "7ea940a811b8eff9a92ddfba869f20ca32ddaa4399c37f3bc5a5d592de1f3807"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/regionMapPlan.ts",
+      "sha256": "66068b61acba2784865a3ba2c2eca996a2f6f20d2dc41c8b999c6b1227c96861"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/regionMapSettings.test.tsx",
+      "sha256": "2f0d2c5d61162f9ca7ac3349babec1898c91b82522e1792402c6ec454a0f7c99"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/regionTrace.ts",
+      "sha256": "73a10941ac45c6e23507a35d001a6f037dccd3a6037993a17e251f4c0d0dfa95"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/streetCamera.ts",
+      "sha256": "f452abf63b934399a5a524e29ff910f72c6dda40e7ef60f048be01fc3353ad99"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/streetMap.test.tsx",
+      "sha256": "3a7bb1e0b11e1a18d9f5c96211cd257714332d04317f3898356b60006db35766"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/useMapData.ts",
+      "sha256": "037b649b80bd88fe55a8c3503ba129951a1ac590009bea80c7a9a468f5b0e58f"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/useMapPan.ts",
+      "sha256": "5fddc7156ab57ac7186ff962b0264cb5a9d82a84a84ecb75890c37839a1f3797"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/useRegionAsset.ts",
+      "sha256": "1d82d4d54cbb4165aafaebf51e22bbd58f182e4db32581bd22e40c5aec5a4ed1"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/useRegionInference.ts",
+      "sha256": "7a4c35b92923db98a83ce739dd0105c0267de1758f8d63852e65af9ef6d7b226"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Map/useZoomDetail.ts",
+      "sha256": "c458dcfb4a0651e5c2210730616c97235cd94616a1e95d8c6530863929b71392"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Markdown/Markdown.tsx",
+      "sha256": "39647f08765a9647ee0f01f2920d6aeb3c3ae078aefef3b40ef1a80b335bf5f9"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Markdown/blocks.test.ts",
+      "sha256": "8a572862f5b63cacef6ca17fee466f9dd97448567d3e105b3b13c3be7b22ac76"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Markdown/blocks.ts",
+      "sha256": "543e4541fac5feb857d8a4a6875dfedb5c08becd5cd89eeeb0c6b9ff0c8ec05d"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Markdown/definition.ts",
+      "sha256": "406963f36cee3026f2267b603477979ef05ad2e789d60388cf62195d52789754"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Markdown/styles.css",
+      "sha256": "bb30c7684de55cfd548e83fbe0c46f0f53a66bbec6b58dd73b4b5a92189c637c"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/MetricCard/MetricCard.test.tsx",
+      "sha256": "5cd60586675935e8a649d7db26839e10621e86b163021062d571929ebcad4f20"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/MetricCard/MetricCard.tsx",
+      "sha256": "f229d8e75ae2c5f3604e7df9fbc28c25a6d5fafd31dec3eda0ffbbbb5bd89813"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/MetricCard/MetricCardSettingsPanel.tsx",
+      "sha256": "78912a6feb545fadb70d6e95c047404e12b538bae00205a5443d5317231837f0"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/MetricCard/MetricCardTraceBody.tsx",
+      "sha256": "609d4a60747be2394314f66efaa70e26f3a129fa7989c68ea1bba211b85b8f9d"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/MetricCard/definition.ts",
+      "sha256": "199024f211d1037d2936e164f018a5d310e5db2e5e8bf76280649e19ea524ff6"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/MetricCard/metricCardPlan.ts",
+      "sha256": "d557faa6313df2f96d84f0dcc4df980e9c8f5cd0f6ab3a41e588634c2b4a5254"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/MetricCard/metricCardTrace.ts",
+      "sha256": "81949272b9e6551b279f11fda60f13789b00a37e78f45a2ecf5bd56682956bda"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ParallelCoordinates/ParallelCoordinates.test.tsx",
+      "sha256": "5129150fcc0bb69afa5e547f8387e38c15ef09684aa19e5cd7e043596cf5385f"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ParallelCoordinates/ParallelCoordinates.tsx",
+      "sha256": "586ff3ab4e797985c3cc1e8a9a0bde413d6eed7490d252123299b49132b95c85"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ParallelCoordinates/ParallelCoordinatesSettingsPanel.tsx",
+      "sha256": "8a2e1d3d995cd4909e4fad6f4ca490f455833ba4ac3d207bd6d2d043ec66eccf"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ParallelCoordinates/ParallelTraceBody.tsx",
+      "sha256": "6c0ee57d9f614cee6635fab359b3bcbd5c882ad0c5589e553dc124cd06aac928"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ParallelCoordinates/definition.ts",
+      "sha256": "e1d96ef3941680625c92b972fcd228dadff8df95553c84390ecb924b3780449d"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ParallelCoordinates/parallelPlan.test.ts",
+      "sha256": "e7bc63e4935790333b7641f1387fe3572098b378976ee6509f385b32cc5389db"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ParallelCoordinates/parallelPlan.ts",
+      "sha256": "08e1e655d407d6337964d8f3dd941f85e89f9b37c1ba8eb5287fcf410c6474c5"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ParallelCoordinates/parallelTrace.ts",
+      "sha256": "bceec8ef2b8f2d76c4a3bc36c3ea0a61386275bf7f046d7e90cb3c78703650b7"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/PivotTable/PivotTable.tsx",
+      "sha256": "f26242bcda4f9ff41cbdc5db4597fa29f785e6dc929b1a83a33c7c3d18e9be2d"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/PivotTable/PivotTableSettingsPanel.tsx",
+      "sha256": "f4b02c0ccc0b61cc7e9e8623f83e204fc62f4a2625e6b31d25e98639e4f16db8"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/PivotTable/__tests__/calculations.test.ts",
+      "sha256": "9cb7aba00ddb1ccc80dd726658380a5fa8aa1545ceaac04bacdd017e58b88cfb"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/PivotTable/definition.ts",
+      "sha256": "fc7c6121f491c9e136ed18f9e92d3c35e1cdae7acd007a8e615ddf1e47039356"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/PivotTable/types.ts",
+      "sha256": "d1e6e51dd351aa1799b96ef4d63b088ba188ebe2a73fea0944fb5e1af4de05e0"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/PivotTable/useColumnNames.tsx",
+      "sha256": "8e4ca2075d460d03ee081179c1983544cf7ddb113daaf7681144e6e26e56eab2"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/PivotTable/utils/calculations.ts",
+      "sha256": "0ea92194bd12f38acaadfa2cf855ef4f0508b434b1a89a0be806df1bc9204ad0"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/PlotValueLabels.tsx",
+      "sha256": "e7b8f07f07252b2f366e5cae5accf0e639636a3ed52f76350b32218afcd8677b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Retention/Retention.test.tsx",
+      "sha256": "502592c06e590382953802ae209fc8c49e07e950aa9f4503a854912baa4dcf8b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Retention/Retention.tsx",
+      "sha256": "1f29a537217da6d060ea1dafd7832f62126f42feb7d2664afa6f47468eb7d7bb"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Retention/RetentionSettingsPanel.tsx",
+      "sha256": "fff0a5193a15a4d16b07872ca2b315adc2834e4c48b18625913a3fd5b031052a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Retention/RetentionTraceBody.tsx",
+      "sha256": "b64f8a64882787c186b92e929b3045621d891097051acb8a33293c62005e833d"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Retention/definition.ts",
+      "sha256": "a3b97d3a83c017e639f6114e53c3cee751c7a62fc152a2baacc81631a80ad0b4"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Retention/retentionPlan.test.ts",
+      "sha256": "71c62181f366cac6f95327c4aebf1648a69e5b06f81efba1502b259740e8e831"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Retention/retentionPlan.ts",
+      "sha256": "2cefa6a9cdb2a739fb7ed42e536cd6f06bcf5f228c4b3ad2a98f621d4e8bb7c4"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/RowChart/RowChart.test.tsx",
+      "sha256": "06d40ba07d0406a0688072e46274561d2fc12197a9f188748974f01ac9038fa7"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/RowChart/RowChart.tsx",
+      "sha256": "670083aabd562bc5eeb24bad3fa4cf6a2621552a52e56cccbabca957ead1043f"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/RowChart/RowChartSettingsPanel.test.tsx",
+      "sha256": "8a0c93b2bc8fd27de6d354b75b81ae08891ed6d106ef5830539494ac5bd4588b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/RowChart/RowChartSettingsPanel.tsx",
+      "sha256": "711b0df71b09b9e7a772421a2e3a9bcd18e19e2edf4391c9965c31fd4b55146e"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/RowChart/RowTraceBody.tsx",
+      "sha256": "f077cde952552848c515b4d92068ff2a7b28bf0a0424bcf581bf166a57c53669"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/RowChart/definition.ts",
+      "sha256": "e4fc072a508902d353e265bbdce076faaa1de81985aa49ef970e10db729fa98f"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/RowChart/rowChartPlan.test.ts",
+      "sha256": "794114c5ef48a1ff24dddafe00a634a3e3ce5c8a11f21d95708a66132561d6fe"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/RowChart/rowChartPlan.ts",
+      "sha256": "33ff57afca9265a9abccbce6f5d58b056c8823148caa2b9ee84862a0f3b96cd0"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Sankey/SankeyChart.test.tsx",
+      "sha256": "45019332349f115e22649a74ad9aae885309104e4d35da480aff5498ba272c92"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Sankey/SankeyChart.tsx",
+      "sha256": "ddf9b8c771956bbbaf3deb7af3e264325823fd2ad2382091c30cfd3cc65f242c"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Sankey/SankeySettingsPanel.tsx",
+      "sha256": "648704a4709a020e11aeb92b3988f3485e204477f79537293008faa49e39661b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Sankey/SankeyTraceBody.tsx",
+      "sha256": "247a7f1633c6a2bd53cc18ebad6a364b1f8af64770da95f3653390bbc8efe2fa"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Sankey/definition.ts",
+      "sha256": "1828ce165e5e95c37e543f810f1e4350282b8a60bf2635fa38115d25d6b5b7c4"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Sankey/sankeyPlan.test.ts",
+      "sha256": "1b8901cf6baf93d5441255fd5e420c0b0eab13f790f8e27f6a3437127c3667fc"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Sankey/sankeyPlan.ts",
+      "sha256": "e3e8f8dc20b331ef5cbde45c8736fe007e574e294a833bc0605408060b712627"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Sankey/sankeyTrace.ts",
+      "sha256": "f6ceab1496e6e2447354e66a725ec90df33a8786bf4fd03e6228f4317e56dfd4"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterMatrix/MatrixTraceBody.tsx",
+      "sha256": "9597e56af47e4bae95e7b256f8fa404f7ba33889f6788ad36260998d64715e08"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterMatrix/ScatterMatrix.tsx",
+      "sha256": "10365d9bf79a904b4790aa28b4481526f7ae13e8c4afb4c18d6cb1ddcad5ffe1"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterMatrix/ScatterMatrixSettingsPanel.tsx",
+      "sha256": "abfaf29f0ad233319353c3937e9cb38f62a06e66d0629b0e06f80911d6ebc62c"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterMatrix/definition.ts",
+      "sha256": "6b9d4dcd73add20db27ff9157564e29ec2b2952e2e56dba771c66d7708d445b9"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterMatrix/matrixBands.ts",
+      "sha256": "7d0bb05daabbd7898497d9c5cbde9e55743efe0f6ba678016fa5ec202a419952"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterMatrix/matrixCanvas.ts",
+      "sha256": "414841b7ebd34f3391c20b73f65ea1b83f8ea56294387533897b6e94e0931e70"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterMatrix/matrixCells.ts",
+      "sha256": "ba5054a5e38aa46cc0806721ce572c8558eef6532a442739c9d6778ecb3da08d"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterMatrix/matrixPlan.bench.ts",
+      "sha256": "48233bbb3b89d53907e9f00a7869ccf3cdc06f1259b34c9c9165995b1bf737af"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterMatrix/matrixPlan.test.ts",
+      "sha256": "4bf905274a2ea45806f6c32283313c5aa3b0231dab8633664dd7e25349967175"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterMatrix/matrixPlan.ts",
+      "sha256": "5144a04d50fedeb2b7fce566201d8db61fb7e56d113c5a43bbda9b4371389747"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterMatrix/matrixTrace.ts",
+      "sha256": "f95e0b51d1b699afce6b3fb51adaa268b5e62f81c21b521293dec5a1a33cd8d6"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/BubbleLegend.tsx",
+      "sha256": "a29d54a0cd26d02306f8b2670b9a6c8a7c25271bd49d831728cfa2b064c162a8"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/ConnectSettings.tsx",
+      "sha256": "9cab946f5084b79fe9e04c76628248e51be9fdaf6d1540bf6e87e63b78335180"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/ConnectionLines.tsx",
+      "sha256": "1d4ffa7cdbdb40de14f2f3e515690edb957f418572931c07dc82285be837481e"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/ConnectionTraceBody.tsx",
+      "sha256": "2eb27343ea37267c24b3cd1fcd9f25f947067ca498c3d05264af66bbb5e7907b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/DensityScatter.tsx",
+      "sha256": "0cd39f45ab4cec7e44bbb8a264c56787af1591b64cafef6265fd268f239a7da5"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/DensitySettings.tsx",
+      "sha256": "9073c2045e1b6a88ce881c3075bcd5777ba91327fc29ecc04d0a378626169522"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/DensityTraceBody.tsx",
+      "sha256": "8aadcfcf2e5cb0a7e84e4d643141c31877c238ab8804de93a415612f1821f876"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/FitLabels.tsx",
+      "sha256": "c0330e95267335076afa835e480dc413b4c65b6bfba823e1ca802adf757f9bb4"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/FitTraceBody.tsx",
+      "sha256": "873c9069d754b4a93a27f1c56a96e30c5148b3027d151d7e698e282660795d27"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/MarginalTraceBody.tsx",
+      "sha256": "0cb0891827ee667e8e7d4fa63bdb9d8c69e23be6599ae0e520e1b78c9aa90d2a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/PairedSummaryBody.tsx",
+      "sha256": "e82c95d460d47ecdf406f252c6584ab23ef110d3618872c83f50ff7e6ebbb384"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/PointSizeSetting.tsx",
+      "sha256": "1c4f41458243eba175821837730aa0f612d95afa4b324947e94fa741736cba71"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/RegressionSettings.tsx",
+      "sha256": "4e018687036d6820102c9653739cf677419b4a7a9470952691ac861401cddc1e"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/ScatterPlot.tsx",
+      "sha256": "f9be0e4377aa20efe1ce1c22a7e82bf677b1d0a7a05a83dad9d90031e5838a7a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/ScatterPlotSettingsPanel.tsx",
+      "sha256": "33313a91849a7e45d91d9a7bca358d325687f9e90a82df25bd55e591ae5bf371"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/ScatterSvg.test.tsx",
+      "sha256": "3c663f6142e1ad1eb4cc8f88f2f044522bf3b2b3a0f470131069beae1d52f0aa"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/ScatterSvg.tsx",
+      "sha256": "c8493e1ab97d9d41f88d20a97ae0ed6fb3ca8d556d7c97bd921d1ed08cee3825"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/ScatterTraceBody.tsx",
+      "sha256": "9d71fccc1147309524c8dbc3a5d2311cc6e6e8e289f8de4f94b744de94059d61"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/SurfaceLayer.tsx",
+      "sha256": "e77566d14f8c63942e7c4be8ba489a569783777f62df670c56cd4eb78b3989ba"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/SurfaceSettings.tsx",
+      "sha256": "a184d25f0cd38cf318ef9e1b8eeeff1753f3448e13141c38bbbdb3376081ca5d"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/SurfaceTraceBody.tsx",
+      "sha256": "c168ec71976a5359d665f5206f4a64d033e51f5af4c98c70ee7e32ea08c760ad"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/bubbles.test.tsx",
+      "sha256": "18036ac379bb8100d829e00d420032768b6435bcf31588cc140ae7fcef6a0fa0"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/connectPlan.test.ts",
+      "sha256": "dba436fe9b87087a32b7aba1085c6bb85d45760a34d4c973237447699feaf045"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/connectPlan.ts",
+      "sha256": "c00e254b087797c278a19c593650fb47b2cf70c8cd04fa1e8c2988de48010d22"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/connections.test.tsx",
+      "sha256": "f711d617355c89a287391ef0c2bb13c665f903a2a156d58c5e7869f772784799"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/contourPlan.ts",
+      "sha256": "f45889cb27139aa2ee12a3d347d44a0e4a23bab17b32cd57f9dced4b1f40e309"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/definition.ts",
+      "sha256": "b19d1183b5d2a5e31c3fca27140f25a111e446d8158b2f1573b7f9f9a510172b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/density.test.tsx",
+      "sha256": "087bc4bb9b9a89576c3067091b9547be42cd4f52b01c5ba86132124cc9dafa8d"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/densityPlan.ts",
+      "sha256": "72e5d2c5eb92189432c79fa68d3197e9b566fa95074e0f6ea16b2aa734e0a7fe"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/fitPlan.ts",
+      "sha256": "172be90883434fd36451407c0a30f7241ef9fd27f2a2c2d1068529db59e63214"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/hexPlan.ts",
+      "sha256": "c85c501e7c56d4cb0c333e607eeca7e7964e7784cc86633158e0fac59ad9c083"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/marginalPlan.ts",
+      "sha256": "37cbd5f162b10d45b70578d0947b5c42e6a9d0351c02b7802b790dd15252afcf"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/pairedSummary.ts",
+      "sha256": "f8bd85e25c78ced5024836e4c3e813628f68386f8fdc3ba4e76fd4639276109b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/planScatterPoints.ts",
+      "sha256": "a49f6f0e6c89d87f36b04b9dc6d2821ac6ca3ed6f5c5c77bd28f9fce51e7937d"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/pointSize.test.tsx",
+      "sha256": "a4514a30d9c11316a6df77057fb319faea5d07032ecb01b3330770e223779481"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/regression.test.ts",
+      "sha256": "966a797b759602e759522b38cf56ca7ec1ce717322a3532d40659cb5ba1cf7ea"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/regression.ts",
+      "sha256": "f29ed8bb097eb49f4be4906cbac257b040588f89a51fab41a5353b33b74fda96"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/scatterAxis.ts",
+      "sha256": "568ee13f3d309324514bc30040c7251b6ca4a5f1d077569df87d703edf17b5ac"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/scatterPlan.test.ts",
+      "sha256": "ee72c8fed3cb558ed445b6ce671bc94d21e4138501b5ec0a5e27391b17919ab1"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/scatterPlan.ts",
+      "sha256": "c871ba298010412b8efc20d91bff6499351cbb8cded781f5d5b5437d0b3df4ef"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/scatterTrace.ts",
+      "sha256": "494eaa37f2c4fdf6d43839235d57cb6c1bc4c9b25164742daf716d0b34fc132e"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/summaryMarginals.test.ts",
+      "sha256": "c9b90e0f137db7fb8e73e2752de3285d94f217120650b08ffb1dba9632fe570a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/surfaces.test.ts",
+      "sha256": "7191f8ef1ebd9f787bc6511b4017439d151fcd02a18c1556324e8dd5282d36e1"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/useScatterData.ts",
+      "sha256": "63c650c5c83a1b7bd19d2a05f793c5b6f64b4f31623adff68bc0c08cbdb8e8e9"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ScatterPlot/useScatterFits.ts",
+      "sha256": "7d9a67e6e23d63ff59b2c0f1b47cd5e25e2d6383891478a6d33bc56ff099b725"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/SummaryTable/SummaryTable.tsx",
+      "sha256": "57a9c45db7829960323e54e70ba4b629ddcc9d0b76fb7276d6ebd1f9069fa7c8"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/SummaryTable/SummaryTableSettingsPanel.tsx",
+      "sha256": "8be1e6d258dd10def64a196f2c0aae81fba0fbb13fb4e86881be28227bf0e90a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/SummaryTable/definition.test.ts",
+      "sha256": "40bf9bb0b67a29fb048f6d2d67a7c23619fa25c5d6c834ba9695384a7176f86f"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/SummaryTable/definition.ts",
+      "sha256": "fcca2db32f260ddd7cf944dd62caae80ad746d1bb0e58e90d9c33a4ec2c50d20"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ThreeDScatter/ThreeDScatterAxes.tsx",
+      "sha256": "de55cfe0365ec5fc4bf4248a643401d643bad7c63058c58c6f65f3654920d2f4"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ThreeDScatter/ThreeDScatterChart.tsx",
+      "sha256": "87f1a1e4c4ae3ac79b6afa01b90394ed72169296cbe2dc44a6cd1796281ab366"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ThreeDScatter/ThreeDScatterPoints.tsx",
+      "sha256": "c135d7b4c522d6b8dc60f28f91274699be859e4427a1ad1780a5a238fea2edb4"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ThreeDScatter/ThreeDScatterSettingsPanel.tsx",
+      "sha256": "9a88824eed0514b9f7cac3b219e615e99b755d1c4319774306bc992767b8af30"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ThreeDScatter/defaultSettings.ts",
+      "sha256": "c746f7d67743a4cf84facbd0f0366b39593d76a96df703aec7325eb2957dd5f0"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ThreeDScatter/definition.ts",
+      "sha256": "8a0727bf0c8b6b2f32faba91dabfca6bd6d8b10b01344d2f1d1f45d571fe688a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ThreeDScatter/showBackFaces.ts",
+      "sha256": "5e33daa3d0a20d540e0b34b2fc616c0ba2aaccd282cf1182a2cc02a732a1bf93"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ThreeDScatter/types.ts",
+      "sha256": "e84ecc1053c72a42b4e7b32e97dfefbcf62411339fb38fcec0d4a35c0fb1fa5b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/ThreeDScatter/useThreeDScatterData.ts",
+      "sha256": "f9a98fe640bafc488f55cf244c5157ab201f9a57cb0295019790aeed543b84af"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Timeline/Timeline.test.tsx",
+      "sha256": "32f511c1fc7a142fa8a9043ce5647ab9605137896ac64a417476ab4fa58af7bd"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Timeline/Timeline.tsx",
+      "sha256": "efe0a2e65447ec4e4cd1b2c6c2f0a5b215106d195861bce61ff3ac018b164945"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Timeline/TimelineSettingsPanel.tsx",
+      "sha256": "f13ef77256d6512d2b2c53b5a77e631e0d3a86f79c465bf6b21a1e4ccb9ccda5"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Timeline/TimelineTraceBody.tsx",
+      "sha256": "26ef20a920391a76ec116c4e3b0b78a6df553b3324b45d8fb6e3b9ed66d95009"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Timeline/definition.ts",
+      "sha256": "9316b849ec975539cd5f180ccc4036ef8743ad7db1dc3e16ec446365a7923c33"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Timeline/timelinePlan.test.ts",
+      "sha256": "d2bce930b07f5acfa1b42fca3a62f027cd8f8cd82aa779b29e8aa89c2b149d9c"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Timeline/timelinePlan.ts",
+      "sha256": "31114fcd2afdf92748bc6f03818c35433a3d5615104b686f1c611d0b9be96040"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Waterfall/Waterfall.test.tsx",
+      "sha256": "0ec9f79e11b4f4f1aabb28613f758170a5cbf8c545a07930d68571d755c4b54e"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Waterfall/Waterfall.tsx",
+      "sha256": "3d24cb13482f7b00c0ab814bec24bd34e75784973b22d68e67525454019d0c23"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Waterfall/WaterfallSettingsPanel.tsx",
+      "sha256": "d61cbdba6413826a4c18c7d501a9b634505dbfb949f0654670f641f42917dcd3"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Waterfall/WaterfallTraceBody.tsx",
+      "sha256": "7ea113dbd1c48cc4c21bee881630fc91271bb6b5017753f4834472198ce5f8f9"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Waterfall/definition.ts",
+      "sha256": "94e95f958f4f5ca68359c3e6abc23e7a7e32a4875951925797ecb636172d5fd0"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Waterfall/waterfallPlan.test.ts",
+      "sha256": "2e9b954748650626b2b698d6fd9c910e3af05cb5c3a8f65093c37843065a8877"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Waterfall/waterfallPlan.ts",
+      "sha256": "4a8d74d3a7413481233c67d81b58dd1a07fb7e0539468e18213f26e765fa81a2"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/Waterfall/waterfallTypes.ts",
+      "sha256": "20342b63396d1b557b45c266c7bdd85ae344af514297c4effd7e44e0469b2c9b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/aggregateFields.ts",
+      "sha256": "044574381490ce64686c30e288dca63a6fdf1ebaccd2f90c5980b29ff77bf109"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/annotations/AnnotationLayer.tsx",
+      "sha256": "0202f1d12cdcf193c341ff6db384b7c21a2343524d7acf68171f3c5552b4ecbe"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/annotations/ChartAnnotations.tsx",
+      "sha256": "5f73b75067d609e0fe4a3265dba88662ad7c816bc03c1732a8100758b50b89f7"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/annotations/aggregateAnnotations.test.tsx",
+      "sha256": "58f3f740ace6eb1077f444666473db53db3a066b99d168ba7453ed0f55973c40"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/annotations/annotationStatus.ts",
+      "sha256": "e841c878cbe884eda9eae8e363f15874edee1adf0375b0ca57ec83aa2e800e03"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/annotations/annotations.test.tsx",
+      "sha256": "911a969c8d373050b3fd18df4d28339a1bd2d177aec1bb5475f547e86e834b28"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/annotations/lineAnnotations.test.tsx",
+      "sha256": "ba2fe1a17102c2f724de3579125608b5242d9224f011600622a795b035b6226e"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/annotations/useAnnotationRows.ts",
+      "sha256": "28523b77a0bbc6daf43912e9a2f84c26f5331daae5856dea98d0662770e737aa"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/chartAccessibility.ts",
+      "sha256": "b33fb76d45749ca4811bff8865a04d2060d8cc3e51855daf739e759abea9ef0c"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/chartTypography.test.tsx",
+      "sha256": "9c9335b87742e1ab0b848a616f2b7b0a7643e1f5cf9d927df8e53b46592af4dd"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/chartTypography.tsx",
+      "sha256": "ec9788afe2811711050d484c6d72b522aae82cde12cfa857652dfb966886114e"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/emptyPlotClick.ts",
+      "sha256": "3c2f2c058f6fb8e6a391f155575381d008dfe0073a5f0dd9a4ea3931340b5ce2"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/export/ChartImageMenu.tsx",
+      "sha256": "27fca9cb48a886875f90527426be2f285f72192fe9d21a87e0ace5a2e31e1fb7"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/export/chartImage.test.ts",
+      "sha256": "f57c9279ad77e474ca899c7a8deaac14332fa94e0649047b41529ea4da365687"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/export/chartImage.ts",
+      "sha256": "a5f8020e3ea769bbd41e5d080d9abf126cf2e5e1a584d9ea66257d208090adab"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/export/chartImageContext.ts",
+      "sha256": "86b79f22a0a3e0ca26960e8f2a4759c08930de22b0436a5384b0f37bd435502e"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/export/embedFonts.ts",
+      "sha256": "883dcdf58ae080b60b6d434d989c45de0dd71cef0ee794408bf39800a5144afa"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/export/exportChartPng.test.ts",
+      "sha256": "20390806d376bb9f616cfa37aa96b6e050f33579e7a0c22ddf91b112e181bbe7"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/export/exportChartPng.ts",
+      "sha256": "92f51f2c4b0b26f67c4c1d346c6c64bd47546f1a8c8ec6e27e1c21b9dcc03866"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/export/rasterizePanel.test.ts",
+      "sha256": "e6150b38353ea096e028c3d1028859872d860dc54a507571cdb592cfb440d2c6"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/export/rasterizePanel.ts",
+      "sha256": "214b97ca6a8108016b288a0d6ee947a1b85cfc1a1aa98422b080a6b488981da4"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/export/useChartImageExport.ts",
+      "sha256": "a20f19f8e786d8fa4cd5507ac8fc994d47eda7b03bb22881148a66473891a178"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/heatScale.ts",
+      "sha256": "c5115b9d951d122f6522729b1f41797d0a3b4c23bea3724193252e0412c140e2"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/icons/ChartTypeIcons.tsx",
+      "sha256": "ab8a28721636c3f2749512dad35233e3f2deae6c8ab9d3bcc3ec1254257a1c60"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/panelBody.test.ts",
+      "sha256": "bcc34e7b9a671a3114b72be85d341f74e195ee30b62d7dc485bdfdd4a83c9177"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/panelBody.ts",
+      "sha256": "8b13fbcfd919a7256d89b9795c0514557f0c854fcfdfb98ab8d66c6d5b94dd17"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/roles/ChartPlotMenu.test.tsx",
+      "sha256": "215b6a80b60106a13dd483a6d7be746c1cf75be93e4a1e58e53bf0acacdfa3cb"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/roles/ChartPlotMenu.tsx",
+      "sha256": "db56fc7b507407e3f9bc49a6f90867729426841c6f49cd1dd016fc0ddcd56883"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/roles/ChartRoleButton.test.tsx",
+      "sha256": "5ebb2f4ce96add65496722cd650998a2bd4575dd8355f5b37f2a296a442c3f90"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/roles/ChartRoleButton.tsx",
+      "sha256": "6cd6110a3c5c025117cd3694ac648558b0262ba681fa3e9256abdfd5a56a35d4"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/roles/RoleFieldPicker.tsx",
+      "sha256": "9ca559006d398e1519a6d143ddb1b0ff216620dc344dd877b7a206ff2e5a375a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/roles/RolePickerPopover.tsx",
+      "sha256": "2c779b0dc4c7ed097ab007299c0d7484d0064923c6958a07ea8365861197f1af"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/roles/chartRoles.ts",
+      "sha256": "265c92fac72762c790b5d2d5971975336e74f68072fc689641b553f48e9b3f33"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/roles/useRoleEdit.ts",
+      "sha256": "a8409aed81c1b4fce265a8440d1fd7a72633c2cead3e9d3bd8025278c6c7c3b5"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/stableAxes.test.tsx",
+      "sha256": "2ce190c8b519059575f9331a78bde480fc83ec15952dd4ca379d7ce1b474f786"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/trace/ChartTracePanel.tsx",
+      "sha256": "8296f16ebb4f6ad3734f24463f0f8172369c6de0f43db234e07b6bdd71f0be9b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/trace/ChartTraceScope.test.tsx",
+      "sha256": "6737c837403e3ee8b87352212c2dcc4f087ddfc508f364f8dbe88e5ffb390d3a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/trace/ChartTraceScope.tsx",
+      "sha256": "f6cce9aac17364bf9833de76169b249d9ce990e1d9641bc8d1e36b12099b2dad"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/trace/TraceBodies.tsx",
+      "sha256": "4eac440729653164bd28716dd25fa504fe4ec4b760b2becce7062ab9a4812327"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/trace/traceRows.ts",
+      "sha256": "39968b571109484599663a0249b87632a33aeb6d12df541b14040f7cb8c24a9f"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/trace/traceTypes.ts",
+      "sha256": "f1a0263c3d75a3b8d5574d302a81e01efbd64a55eb854f1e68f8383e3f52faa0"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/useEventValues.ts",
+      "sha256": "a7fbd1343f01525787d468d29a9889fb4c5009b657194e75df1b3149602f0159"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/useGetColumnData.tsx",
+      "sha256": "03ad6ffe51073a3db4a95786f597c8b1833257c64d6fdbbc0b8d07a496f60f01"
+    },
+    {
+      "path": "packages/explorEDA/src/components/charts/useGetLiveData.tsx",
+      "sha256": "6222156b36ba1d8accc05fd01888543a5bd4dc07b0673db01f74e27570a04478"
+    },
+    {
+      "path": "packages/explorEDA/src/components/colorScales/ColorScaleControl.tsx",
+      "sha256": "33fb89b45eccbe80de41164fe7d14a027b1e9922468b6f0362177e31a34ccb93"
+    },
+    {
+      "path": "packages/explorEDA/src/components/colorScales/ColorScaleEditor.test.tsx",
+      "sha256": "573e1e03742e00bd6d63ccc35973446cf0b8802702493318d56c1763e96e38fc"
+    },
+    {
+      "path": "packages/explorEDA/src/components/colorScales/ColorScaleEditor.tsx",
+      "sha256": "0ef30e4453649c7bcf0f57f3e8b3a00d470bddfd2aa1a76643717c6a6e5e4def"
+    },
+    {
+      "path": "packages/explorEDA/src/components/colorScales/CompositionScales.test.tsx",
+      "sha256": "3a18a2c32bed069111471c03f657435d38799b0d515be1e9eea42232e24227ca"
+    },
+    {
+      "path": "packages/explorEDA/src/components/colorScales/CompositionScales.tsx",
+      "sha256": "03bd4f5d0a7ccbbc86297f8f57047a7dce0b56e7f9a8f6dcf1c9d2f3fb2ec952"
+    },
+    {
+      "path": "packages/explorEDA/src/components/colorScales/DomainEditor.tsx",
+      "sha256": "7953e6ceb061856b06424bb89d23a1c2ece00acfe137b87c1fa6cebc6eb7b38a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/colorScales/PaletteGallery.tsx",
+      "sha256": "f21f90e2ad1e17f380e0b76bab0d22437a1068098e6654c0f6c26d88a45943d4"
+    },
+    {
+      "path": "packages/explorEDA/src/components/colorScales/vision.tsx",
+      "sha256": "6768f8ef5d24fc0ac4656939bc614ddcbb3c17d9f50204e0c94634121b1cf98c"
+    },
+    {
+      "path": "packages/explorEDA/src/components/notebook/ExplorEdaNotebook.test.tsx",
+      "sha256": "6868e233b17d044aaa67b7b7ce67aebc08397afa025ae17cb86453229882f7df"
+    },
+    {
+      "path": "packages/explorEDA/src/components/notebook/ExplorEdaNotebook.tsx",
+      "sha256": "ba85622562c0814509fef9dc11b7e8db81d2417abaa7027e111bee2a40ac94f7"
+    },
+    {
+      "path": "packages/explorEDA/src/components/notebook/NotebookProse.tsx",
+      "sha256": "ec56c16e1a4d2cc74978c4a35b8a33dfc3b50ead3d7f778acbd02f3493355917"
+    },
+    {
+      "path": "packages/explorEDA/src/components/notebook/NotebookSourceEditor.tsx",
+      "sha256": "786884a833c4f36f3e7f1f884fd92ddb5a88461bd1269ca11418069a1020d37c"
+    },
+    {
+      "path": "packages/explorEDA/src/components/notebook/notebook.css",
+      "sha256": "32e595ddfd7fad8a527a1b3535a8f38c1b3464f0b07c020b39b11a2570d795b1"
+    },
+    {
+      "path": "packages/explorEDA/src/components/plot/AddChartDialog.tsx",
+      "sha256": "6a79d45edeb864d232fdc7ead85c5b8f27ecbd0919244c02decf7ac379af2725"
+    },
+    {
+      "path": "packages/explorEDA/src/components/plot/AddChartFlow.test.tsx",
+      "sha256": "5cdec193a34f0864de18d14f406ba8feef17ca28b31c14960fccbb4bd36cb070"
+    },
+    {
+      "path": "packages/explorEDA/src/components/plot/ChartCreationButtons.tsx",
+      "sha256": "c53974ee249f42fd69915a710a300fcf49ed80482da27c93807a981dbafbf3c2"
+    },
+    {
+      "path": "packages/explorEDA/src/components/plot/ChartDraftContext.tsx",
+      "sha256": "644d41c0325a74a6c982acb3300433b8ec2c77c04cb3f8752e4d4b3bcbb91b6c"
+    },
+    {
+      "path": "packages/explorEDA/src/components/plot/ChartPlacementLayer.tsx",
+      "sha256": "c2a6fb493be01be74956a9a8a1ebdc1a9cb2489b3e65d0523be1903417cd76df"
+    },
+    {
+      "path": "packages/explorEDA/src/components/plot/chartPlacement.test.ts",
+      "sha256": "51ef9d1897dd36e4f7603ffe17c10f190660d341b1788af50054b38fd20f9540"
+    },
+    {
+      "path": "packages/explorEDA/src/components/plot/chartPlacement.ts",
+      "sha256": "802d75d51fd4a17305302db07d50ecef2e1491323dc39fba62a746f8967abe9d"
+    },
+    {
+      "path": "packages/explorEDA/src/components/project/ProjectQueryPanel.test.tsx",
+      "sha256": "d8c2c744ebd0c238dec34cc1b4f02b92a6910ce3b5cfc5a1605022eae2644bea"
+    },
+    {
+      "path": "packages/explorEDA/src/components/project/ProjectQueryPanel.tsx",
+      "sha256": "b88ea2277d52a757951667b70ff37d001d9cd21d442caaa48ebbbf12bac655e7"
+    },
+    {
+      "path": "packages/explorEDA/src/components/project/ProjectSchemaPanel.test.tsx",
+      "sha256": "9fcddf08ca4cde246d12f6220d6e19e528cb9e9418f76798a331a5f92dc78899"
+    },
+    {
+      "path": "packages/explorEDA/src/components/project/ProjectSchemaPanel.tsx",
+      "sha256": "1249aa51555343f15f91d9c7e7eec335c90e89abeccf9ca6adb7710b577cab14"
+    },
+    {
+      "path": "packages/explorEDA/src/components/project/QueryFlow.tsx",
+      "sha256": "fcadc0e753fe407cba17f46a84b787ca9420dd3b0fc2ffaf8c9850f0d0141a14"
+    },
+    {
+      "path": "packages/explorEDA/src/components/project/QueryParameters.tsx",
+      "sha256": "24033b13bf756ec2d46a445f3314f849f2bcf14e9aaa3de1f9304f271bad8b0a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/project/QueryRelationshipBuilder.tsx",
+      "sha256": "69a38ca037efc63fecc723d8e787184a73a4121c3e5265fa883b23a441337dc2"
+    },
+    {
+      "path": "packages/explorEDA/src/components/project/QueryStageRows.tsx",
+      "sha256": "b144071164143e21cf66e68bec9a6837dfb86b9d6eda7f7f17cb3e125068b233"
+    },
+    {
+      "path": "packages/explorEDA/src/components/project/analysisRowKeys.ts",
+      "sha256": "e086e580fa7b6e0feed7caf79a85a778fcfa0823dd09fcb91978709773058b74"
+    },
+    {
+      "path": "packages/explorEDA/src/components/project/parameterBindings.ts",
+      "sha256": "d0c2601c5bb775f925ac5cf029964f0ff3f14535a69e1455a9a06321549addbe"
+    },
+    {
+      "path": "packages/explorEDA/src/components/project/queryEditing.ts",
+      "sha256": "3a2e1e69d91d0334f5a39d1652d464c38af5fd9461d327b67c7fdad372715b42"
+    },
+    {
+      "path": "packages/explorEDA/src/components/project/relationshipEditing.test.ts",
+      "sha256": "916fa796bd9d01d42e4fda68427df5584a295d9d53238e09a73fbe35ee8884c4"
+    },
+    {
+      "path": "packages/explorEDA/src/components/project/relationshipEditing.ts",
+      "sha256": "cd859c61aaf16ca239446f75b59c4eba06644ec9a02a902363907b440210a635"
+    },
+    {
+      "path": "packages/explorEDA/src/components/project/settingsCompatibility.ts",
+      "sha256": "92a119f1158040b54bb0ede78e332cc9e30b5fc0d443872aa6e97714e994c22a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/project/sourceRowIdentity.ts",
+      "sha256": "b2367c44a980701ae8483a4f7e3b7e22935ff04dabf927100a934aa8765f947c"
+    },
+    {
+      "path": "packages/explorEDA/src/components/project/stepEditing.test.ts",
+      "sha256": "65f92d38e79b2641b377fd319fa6b855bc23d48262205f8953bd5812d431e050"
+    },
+    {
+      "path": "packages/explorEDA/src/components/project/stepEditing.ts",
+      "sha256": "d17ef8351e3080d12383907afda06143db31dbf82c31d3588d67af70e3d192f9"
+    },
+    {
+      "path": "packages/explorEDA/src/components/schema/InspectorControls.tsx",
+      "sha256": "28c105ed4865a6f187212e005faf1807ca781a3d508830972c11bb43c7f7e98f"
+    },
+    {
+      "path": "packages/explorEDA/src/components/schema/SchemaDiagram.tsx",
+      "sha256": "d3e5860cc464f4ca9cd9bad6e6b4b306ea715fca383c8c75571e5b333f9c63ac"
+    },
+    {
+      "path": "packages/explorEDA/src/components/schema/SchemaDrawer.tsx",
+      "sha256": "5b3157f2aeeb18611ab4b282275787f74be90b22db75928eaecf2b798d00f97f"
+    },
+    {
+      "path": "packages/explorEDA/src/components/schema/SchemaInspector.tsx",
+      "sha256": "f6a7340e51abaff081c91b549246cceafccd54286bbb91f97098906dfaae0b68"
+    },
+    {
+      "path": "packages/explorEDA/src/components/schema/SchemaStepEditors.tsx",
+      "sha256": "341a48fda606eb733beabd17b817fb89ae223525faea1b0f074e3904223e50bf"
+    },
+    {
+      "path": "packages/explorEDA/src/components/schema/__tests__/SchemaDiagram.test.tsx",
+      "sha256": "468fedffa860191511d0655789c98e5cbcc401d45f1f752348ded5469dd14cf7"
+    },
+    {
+      "path": "packages/explorEDA/src/components/schema/schemaEditing.ts",
+      "sha256": "684cd2322d9e584ef39d30a19444450a0d2efee1bdb3f41cad129f4343ed4b31"
+    },
+    {
+      "path": "packages/explorEDA/src/components/settings/AdvancedSettingsTab.tsx",
+      "sha256": "eb7a559d853fed99fc99e8247c00bd4e6739f2edc72da16864b3fc7c8e287bc8"
+    },
+    {
+      "path": "packages/explorEDA/src/components/settings/AxisSettingsTab.tsx",
+      "sha256": "467cc718bc4e0e5672a329c9a4b4e478c539b8155d4b8ee3f6ea636a3c90668c"
+    },
+    {
+      "path": "packages/explorEDA/src/components/settings/FacetSettingsTab.tsx",
+      "sha256": "28efac6a5fa947666b55957cb7923a533cd5d5bdbd74059c1b1affdc50e90865"
+    },
+    {
+      "path": "packages/explorEDA/src/components/settings/FiltersSettingsTab.test.tsx",
+      "sha256": "400ba9acd29e6cfb71e25340e07c5d24f8ff96850e9892e12e5e494d55077ab6"
+    },
+    {
+      "path": "packages/explorEDA/src/components/settings/FiltersSettingsTab.tsx",
+      "sha256": "bb5eb95708e2a42ce97d46d432693d58ddc34bb0936479dffb3892ee8e460e20"
+    },
+    {
+      "path": "packages/explorEDA/src/components/settings/GridSettingsPanel.tsx",
+      "sha256": "f876e1907bf3187967cdd3253ec6b9b03e43730cd82048ad17262a3d5fe80897"
+    },
+    {
+      "path": "packages/explorEDA/src/components/settings/LabelsSettingsTab.tsx",
+      "sha256": "eacc77375d6cd7fb97dc3c859981108cbd599fb66637f8f9fb265274a9d194f3"
+    },
+    {
+      "path": "packages/explorEDA/src/components/settings/MainSettingsTab.tsx",
+      "sha256": "137bf113394f55d781bf213dbaa8aad86800f1354646033d1342a2923c3688c1"
+    },
+    {
+      "path": "packages/explorEDA/src/components/settings/TabContainer.tsx",
+      "sha256": "1e4483d7caac49637251fdc6bf18745a9e20dce3b8cc090bc43fae3248ae3327"
+    },
+    {
+      "path": "packages/explorEDA/src/components/settings/ThemeSettingsPanel.test.tsx",
+      "sha256": "e470a60746581d41f0cb9fac033c06ace5ee7c5ac06fd7a1883b47d097d9e1f5"
+    },
+    {
+      "path": "packages/explorEDA/src/components/settings/ThemeSettingsPanel.tsx",
+      "sha256": "fb0f5f3005b15da10dce31a3a56dc0d973787c5232be8eb99e9c753db21a40e0"
+    },
+    {
+      "path": "packages/explorEDA/src/components/settings/annotations/AnnotationFields.tsx",
+      "sha256": "089ca8a9cac581255557e6f3c61ead1c6747c5a6241b1c54b77ab7ff1889226c"
+    },
+    {
+      "path": "packages/explorEDA/src/components/settings/annotations/AnnotationsSettingsTab.tsx",
+      "sha256": "c8adf20c637ea7dc73379372ba460c318cc1de99124542c213914605d368837e"
+    },
+    {
+      "path": "packages/explorEDA/src/components/settings/annotations/annotationInputs.tsx",
+      "sha256": "f84eec7e2c00b7c797314cb4d816d570155f868f51ea7577ee197fc2b7227410"
+    },
+    {
+      "path": "packages/explorEDA/src/components/ui/alert-dialog.tsx",
+      "sha256": "48aa92e02ef991fd0866d030b8cd825a095bbbb8ad4c9464bd41c92b5e166757"
+    },
+    {
+      "path": "packages/explorEDA/src/components/ui/alert.tsx",
+      "sha256": "651843443a2ca6d32f88fbe10d4db8380ee296715391e6f993e7d8a629e384ff"
+    },
+    {
+      "path": "packages/explorEDA/src/components/ui/badge.tsx",
+      "sha256": "2e056fdd2aaf7f6669c548cace03b01e1fb763dacf848ebf1b0b41a4acd82302"
+    },
+    {
+      "path": "packages/explorEDA/src/components/ui/button.tsx",
+      "sha256": "b0bc824d890dd1540a6d47402cb69d0e8eda03e001668ade1ea8e56d8961d1ae"
+    },
+    {
+      "path": "packages/explorEDA/src/components/ui/card.tsx",
+      "sha256": "0005419428a01affc90e2e242feb27b1e3f6e8995d7e33c62947473bdd91865b"
+    },
+    {
+      "path": "packages/explorEDA/src/components/ui/command.tsx",
+      "sha256": "24c51dcce0ee377fecf75df09bc20b443927fb811a7fd8a7c7372926e9f83c9f"
+    },
+    {
+      "path": "packages/explorEDA/src/components/ui/dialog.tsx",
+      "sha256": "6f73c183441768c8aa5dd38eeb0daed2eae7a10e6c8e536f511f689fde1a7a5a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/ui/dropdown-menu.tsx",
+      "sha256": "ca2b4f07808a1412945b5cd349c02afd2c3fb72df645bb21e3704e6b4f19f9dd"
+    },
+    {
+      "path": "packages/explorEDA/src/components/ui/input.tsx",
+      "sha256": "b66b670db83e5a82273bee5a860ef410e6ef0e880e679a346aa18d0a9e6f7101"
+    },
+    {
+      "path": "packages/explorEDA/src/components/ui/label.tsx",
+      "sha256": "22327fe6f5b4abf83bbb1c943d9de5c9052e9afdd77e174d67d0b4f70d72e96a"
+    },
+    {
+      "path": "packages/explorEDA/src/components/ui/multi-select.tsx",
+      "sha256": "d7b1cf6ffbb37b2da80c1dd0b2b366fc924a18dedb19eca3f25f1c4ace9f3458"
+    },
+    {
+      "path": "packages/explorEDA/src/components/ui/popover.tsx",
+      "sha256": "8f0fc725e7fe755bc69d957a1bf9da5d76feb25c772ff0e510b9ad5ddbb1964e"
+    },
+    {
+      "path": "packages/explorEDA/src/components/ui/progress.tsx",
+      "sha256": "07b588dc969af02cae119359a9fb93139db7cf68de24b46185c234ad48ee3971"
+    },
+    {
+      "path": "packages/explorEDA/src/components/ui/scroll-area.tsx",
+      "sha256": "7e05b16ed8b7830279d94fd329e36f41a191f6d545d353d857d6ac467a0ff115"
+    },
+    {
+      "path": "packages/explorEDA/src/components/ui/select.tsx",
+      "sha256": "e64887d30d523a4b10720b0c34eeb5f78b21fa5e512ef9f0884bb9cb519ef5c8"
+    },
+    {
+      "path": "packages/explorEDA/src/components/ui/slider.tsx",
+      "sha256": "10804069625528f65566dbcf0ff75ba828c9f57f54ff1b5069a8516898af96fb"
+    },
+    {
+      "path": "packages/explorEDA/src/components/ui/sonner.tsx",
+      "sha256": "aa200fa00c975cf840aed38e1a0bdfac54f55c7095826c4a61f28033fb5be566"
+    },
+    {
+      "path": "packages/explorEDA/src/components/ui/switch.tsx",
+      "sha256": "fc956bd636fb3477d0bd4fc81bd5f54b15f50c722d7806d5a4cca44ea3e373e8"
+    },
+    {
+      "path": "packages/explorEDA/src/components/ui/table.tsx",
+      "sha256": "8010a5a2ddaa88fab8b8547dc285b85d8cfe4d5eb7b7a9bfc3be1baf332e51bd"
+    },
+    {
+      "path": "packages/explorEDA/src/components/ui/tabs.tsx",
+      "sha256": "6cc5b9e62afd21eab4428a91c4420998a9a27dd64cf3093035a8f0be3e81336d"
+    },
+    {
+      "path": "packages/explorEDA/src/components/ui/toggle-group.tsx",
+      "sha256": "130da22659d3356cbc5ae3160931f514485359d1749a625460ad27aceee488d5"
+    },
+    {
+      "path": "packages/explorEDA/src/components/ui/toggle.tsx",
+      "sha256": "4b276dab4122742539bc80c6959d5cd52f62681c56c00db4aa0b90afa25dc021"
+    },
+    {
+      "path": "packages/explorEDA/src/components/ui/tooltip.tsx",
+      "sha256": "95a45cfb1680166cb3e0666798881fff15f6a07232e144102759bdea4ab282b7"
+    },
+    {
+      "path": "packages/explorEDA/src/data/sample-array.json",
+      "sha256": "9b90faafab65b872da1c912c16905983cc588ee41bbb368f7fda6c9280a39646"
+    },
+    {
+      "path": "packages/explorEDA/src/data/sample.json",
+      "sha256": "7d9faa5a3ebc7537da6047000d33fa27460a9cfa22ef35fbc50b42329316bb98"
+    },
+    {
+      "path": "packages/explorEDA/src/docsKit/ChartSettingsSurface.tsx",
+      "sha256": "061234b87ca2024686b83e6d00d9efe7a102a4844142a06136fa51e3febafecd"
+    },
+    {
+      "path": "packages/explorEDA/src/docsKit/index.ts",
+      "sha256": "709057ede69dcab1fefc8090c54febd84468eb5e10ff14eeaf10aef6bf6150da"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/CrossfilterWrapper.test.ts",
+      "sha256": "a193e9ec416216098d5406a024f4799733ed106867ee57a311a4a57afd49b109"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/CrossfilterWrapper.ts",
+      "sha256": "444f228baffb694c82f7826da6a2eee88ce0296b47ec5e3f59c36b0d1070b483"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/applyFilter.test.ts",
+      "sha256": "d534a71213abbe95fd982f275a3dc0069aabb474f0653eb5ca158a9c1f89756e"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/applyFilter.ts",
+      "sha256": "d8f0610999aa93372bbbb29d9811d9106b71e1c40675b5bc3f3714ea5bbc3953"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/cloneDeep.ts",
+      "sha256": "80f08f774a1e42eb619aa9d0f08f226ff437ef05c430eef8d41706e6c3630392"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/getAxisFilter.ts",
+      "sha256": "1d3c118119c8e22d192c414771bd3e95a79175e9f5547cb33e9a11d3a0f58e94"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/use-mobile.ts",
+      "sha256": "464e778a9da49481e3c6dac4f92ff589e01349b33063a74c45435cfeed81e1c0"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/useBrush.test.tsx",
+      "sha256": "036702039bfc14d2088ac8c9657631a32f41a1896bd0d84420e13a7086b1e534"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/useBrush.tsx",
+      "sha256": "c07994d2913cf846a4ebcec672b39529b3f1c9d681ee3d6a2086f9d8c6d75517"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/useColorScales.ts",
+      "sha256": "fbb3c789c81c5658c3c6c80167184ae9dfb4aee903d5127226c12c581a857576"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/useCreateCharts.ts",
+      "sha256": "181ecd2a9932549e61335904556939cc48936459d9ec9c4d018a39f7a204966b"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/useDisplayColorScales.ts",
+      "sha256": "0a0c3986cac328a387527ea3f8684904ad2bb4871598006bb2f36e4543f5990a"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/useEscapeOutside.ts",
+      "sha256": "68554b89c0190ce8c3e0554825f9727abbc9e166cc4a2bd23d3a728897c8de84"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/useFieldDistribution.ts",
+      "sha256": "b963dabc02478e321c919e92748b878e0d2b1fea0b695b55f7973055a0e6a40a"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/useFieldFilter.ts",
+      "sha256": "ca0cf2ff3c9b4468dd9c2d0599327ec671a15e7c2ef481c0b1dbfdded4c57410"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/useFilterExtent.ts",
+      "sha256": "b71f55756a54b2d90dd2af56ed431d7c9216d20bb472a2301c886a5ca76c9d84"
+    },
+    {
+      "path": "packages/explorEDA/src/hooks/useFilteredFieldProfiles.ts",
+      "sha256": "cd8a3a8f2fe0e9b958027a58348934b11b5ce1196f66b4800d10d1cbaba7447e"
+    },
+    {
+      "path": "packages/explorEDA/src/index.css",
+      "sha256": "ead52086cd481bbb238edb1b6c8118f4d97cdf44706f744ad357943359011d37"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/aggregates.test.ts",
+      "sha256": "2bf7c05132bc5e1919966ab86b8ca27596944b71512b3f485ad052c624ad33a0"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/aggregates.ts",
+      "sha256": "075fdd755f228895d5ac32288cf78ec05b0572a524ae2668db2375a03e7e7c85"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/analysis/analysisWorker.ts",
+      "sha256": "a54dfb45b17ee66d9a21a7436396008da2c2172eb58aa29a274f959eb2170857"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/analysis/analysisWorkerProtocol.ts",
+      "sha256": "5ad9c95a7d354f773e43e68cb3fa7d25dc8ddd8d93ea7a23e5675baf62d2f6c5"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/analysis/createAnalysisWorker.ts",
+      "sha256": "82b2238f94d5af0296748f079242ce226cbb396455f8ffb8f14ebf1a2e9127d4"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/analysis/evaluateProject.ts",
+      "sha256": "0e92ca221ab5c2ae78c5b0454dcf09902d1372638c1fe28a93fccdc1e6bd75d1"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/analysis/projectFile.ts",
+      "sha256": "58c0d7462eb14be5597e296aed1b0dcca47f8b91993a2063952f6809631f52b4"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/analysis/sources.ts",
+      "sha256": "69af4a242ab546a2a86a2baa033a395d4572d2937bdf2b958fa470799d6cd5ad"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/analysis/useAnalysisEvaluation.ts",
+      "sha256": "33e6f5cc1154078342028a998bfac97159cc9612869024492f4354c660418708"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/annotations/categoryText.ts",
+      "sha256": "62508af428409ad3fe7e4069a0ddf0a0f9d7bcffba81f5472383f469271ef082"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/annotations/context.ts",
+      "sha256": "368ad129f7ff242b6613013deaec35b643531b9a0afcbfb075a4f05c960eecd4"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/annotations/create.ts",
+      "sha256": "ac008fd37aa2251fec022aedcca304e7b7093b684310c9492483164da7d7f3e4"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/annotations/persistence.test.ts",
+      "sha256": "a406cced72afb42a56a62ab2abd457914e4d168342a269a351e02586cb9552c4"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/annotations/placeLabel.ts",
+      "sha256": "5b2623c93d4703bae168428ff99d5958be38156fa118e24151461c0bc919c90f"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/annotations/resolve.test.ts",
+      "sha256": "9d30cd8a2ece9cf6bb0105b6c41365f4463870223c4307154d4ae5dd72ee5512"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/annotations/resolve.ts",
+      "sha256": "290d3894648c383f255588a12d058b515428226603e28d5f62b9368e84ec9c75"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/annotations/types.ts",
+      "sha256": "eda56b06cef7fced81387f8b9c2fa674c3388cef4460d95e9868ca4220d69691"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/annotations/validate.ts",
+      "sha256": "23493fb4f26b7ed696c038e4cddce1ae94bd51dcea1c84632f52ae224cee2858"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/boundaries/boundaries.test.ts",
+      "sha256": "ebdb71d38406e6e94b232e95554c936d44b6cbf7cfd9035b893a07bbe53af2b7"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/boundaries/builtIn.ts",
+      "sha256": "a29e01947f9684ad9e56e8e01b33867bfd331655c379572ff0f655cd3eb83d3e"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/boundaries/countryCodes.ts",
+      "sha256": "04d3afb68c41908ae6b08a4d7288b8b34c2f08c33d318b818241c9fd590f4cc4"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/boundaries/infer.test.ts",
+      "sha256": "e8e0f3f3bf7b181075370cb18daa904437e16fa29aa92bea17402b4b0e759f40"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/boundaries/infer.ts",
+      "sha256": "e9a3031f05190667afcd26df26d60392c53b48203924973a717af11b07db1747"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/boundaries/locate.test.tsx",
+      "sha256": "1889e54fccc8c5cc7ce2fbecca3d3ac1b5a5e53bb4bb1acd4e26dc794c02925e"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/boundaries/locate.ts",
+      "sha256": "9a5e3c38e821ce7592f43c84b14791e41e9ae6f4c755d7ad64868d331f2cfdf9"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/boundaries/regionFunction.ts",
+      "sha256": "8a52d2e63e11a3a4ab56c94a756f0327a30887c64939a743ba9df554c9fb3b72"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/boundaries/registry.ts",
+      "sha256": "27c395e96094eca61a5a1a20ca2cc9caa430651368089ef3b304c3b7b6485e4f"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/calculations/CalculationState.ts",
+      "sha256": "bc4c855f7fd491f743f1f6e460b31d68844aea674e07a7ff50a27fb238b41ed0"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/calculations/engine/Calculator.ts",
+      "sha256": "cbe2114e76c1fcfcd95ad35114b5f205a595ac29134ec3d040c4573aca3dd117"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/calculations/functions/registry.ts",
+      "sha256": "75be6d61404101b3dc4dc6c88de8a6f72a132b1aa1258fbac899e71a814527dc"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/calculations/parser/semantics.ts",
+      "sha256": "f454127324744273205501973245df3274013f20b22ad884fb5f53e723a0a4c5"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/calculations/types.ts",
+      "sha256": "d71fb207511f9767a9456a8e1ef04a92d5e757b27b1f91fbc7663b097f4a3917"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/categories.test.tsx",
+      "sha256": "f7ebd32d021e1e5c67943e30a4f79acdb5b6c50199fc58f075bd2e73e4aa5d6b"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/categories.ts",
+      "sha256": "6a0f2450cc369a188091ce0533e26dc5775e1b647a37e64e2590eb3f3d68e123"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/chartPopulation.ts",
+      "sha256": "3108817ced390197b9b90708d5ee76386c992470716d9326adbc12ce1d0bab86"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/chartUtils.test.ts",
+      "sha256": "2222a0e52b08885486ee596973a74500fae9ec1825787e4574265549c4f51838"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/chartUtils.ts",
+      "sha256": "86fc3b6a6019dd25dfc17ecc445f74b395244b37789f241b8d2c8c0fc9fa7431"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/colorPalettes.ts",
+      "sha256": "557efd32282d1110a9f7d16daf6447b30097e06532faf00645219878d674d94c"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/colorScaleMath.test.ts",
+      "sha256": "0b20ad39699eeb656c774f0e193ae6f3c8c93076fcc808f2e1e14cd05ded672b"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/colorScaleMath.ts",
+      "sha256": "bd512dc0f5d5f5cec5f7608c82a322e980b60fcb63e1302f66ee5b6ac819b453"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dailyRollup.test.ts",
+      "sha256": "128bd5bba876d693179e579ef7fd97a43aac0456f40d122cbabe5c451b42ff73"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dailyRollup.ts",
+      "sha256": "89b04b18a22e617d7be09987aa5212523f2e1f8887f3f25471eaa2c53ffdd7c2"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/datePresets.test.ts",
+      "sha256": "d67776edbd71daf7beadfb5d35ecb3e796111a8a1752f0f601ec0db37d88f401"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/datePresets.ts",
+      "sha256": "279497a00afa6c2e6117ca687dbb2fd1e4cf17e5c7829294caebf08b1e0dfa35"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/declaredFieldTypes.ts",
+      "sha256": "7d93680df986f01768e16dafb4ea2fccc7449f64d2c229919ce199ca63f3f951"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/annotations.ts",
+      "sha256": "b5d673d6e3cfe8a4d0f7989d9e7db8d07a846f230581224fff3863a0135e78ab"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/compile.test.tsx",
+      "sha256": "54542c819d40a2b2a5179e8806f3270b1264b6096aa7abce166844e04c8f0400"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/compile.ts",
+      "sha256": "d9e8c4e478d0e4c93ec990b0ba32ccb83f4aba2934a1a22696c0c7468d91dc9b"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/composition.test.ts",
+      "sha256": "ee96db603d95e3096c4b4b68e2fd9a7e7bc6dc60ef3eaa4bb9e3efc44d96737c"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/composition.ts",
+      "sha256": "fdcf70f6c66ba88b6f6727c6829300dacb8ee167da1e8f9ec5a5665b99a2826d"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/describe.ts",
+      "sha256": "01532d8ab9fc5f9f1ace435f35d900da920ee74e7d96d90833e7db69cdb0cfa5"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/export.test.ts",
+      "sha256": "f86451592067935591da19053423d5ed6925ca2b6b9818a1015188646c25c367"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/export.ts",
+      "sha256": "522575e4f1bc8b4a6927b2dd504d280c99a49fc5e27feb37bb0b461a8b5b08af"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/format.test.ts",
+      "sha256": "c43e7d8137219187047e2e337cedfeced324908a75fcfe885cc788a077e6ae6a"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/format.ts",
+      "sha256": "6aca1e58f272e2cf9fa42910eb3c3b6599189a71eb8628fb72badceb2a16f2e0"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/highlight.test.ts",
+      "sha256": "ad46fdcb85c75e366680dc90423f8644a290956a150b51698eaf47d311f8222e"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/highlight.ts",
+      "sha256": "d1d872f5cc19d1b17cd0e2f771307283343e895beda7e62f941bcbf2cbcd6383"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/index.ts",
+      "sha256": "78856e23f75dd3769405931679b7e90534c00d7db743d10e4ffee2d52c92cb80"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/layout.test.ts",
+      "sha256": "e025442f71b1989468ad30adb2d1588409c2e391a30ead1e8c2486ab2b161134"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/layout.ts",
+      "sha256": "20b867018724a1db0effed79ab5466c093ee8301067236e9fcd99fe7942e3c57"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/lists.ts",
+      "sha256": "a955946beb5f36902b79532918939d171224377dff00657072c4f60868f99b00"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/normalize.ts",
+      "sha256": "d008fea6f43e0dc60efd6eb9c6ce4dc3a97a6ea2f04dbff48a3f3f48af859b72"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/parse.test.ts",
+      "sha256": "7b01a39c3760bb7dd87a1c9856162e1e1791791fc6ddd82e6d66524ce01d557d"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/parse.ts",
+      "sha256": "47259be5d119f3b30165cb9a6a0000558673acafc402828988a7beaacbf855a9"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/paths.ts",
+      "sha256": "195d577be7dd8c12591346ee92ca030e15c50c2b4cd6b3fcb0c48ba4b5420755"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/print.ts",
+      "sha256": "a4cfee638c2e2984b5ba598816fb201842363d6a029644255b20d0bce6e554d9"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/project.test.ts",
+      "sha256": "a59f3bd17f56f9fdb3a253d4f3fa6086c062c624d2b53ae383ebfca9b0273833"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/project.ts",
+      "sha256": "c5667a63d5b9da7219bc1eaaee996e06cbb9f736e4a5a436377bad87265e8f75"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/schema.test.ts",
+      "sha256": "9f9f6cd1cad49fc05fff0dc91e6401dbfcf37bd00993aca64a9a5f09c8297b15"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/schema.ts",
+      "sha256": "a837e2c85685e9e77575396421c5a5f0aac4999010b3bc98ff9debb4cf59093c"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/settingKeys.test.ts",
+      "sha256": "c805e6faba2c7b968db9c0f6a42d7ec57274f3183913c85a70af3bb2924de835"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/settingKeys.ts",
+      "sha256": "9ce7c76e532b4386653b2670ab746df0ffe9e81bfad618e8ab1331e9fcde764c"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/values.test.ts",
+      "sha256": "e708e538a36404f016565ba3657021b4666861ce907aba25a406dc30770d68a8"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/views.test.ts",
+      "sha256": "9b0dbbba11c32df0d1b702a136cff03e4998424bd4e42a0d84f8bcf571490948"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/dsl/views.ts",
+      "sha256": "5e54004f04c5feded74976c61909293abeae51d77fe60639b5740b2f6547eb72"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/fieldDistribution.test.ts",
+      "sha256": "fcc85c1c833abd115c786298b212af3e031d781f603d3d55cb1377b2823a2186"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/fieldDistribution.ts",
+      "sha256": "69d2e246d8b6fb6947c35855c4245b348fbd82752ef5b2cc40f2312058c71f32"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/fieldProfiles.test.ts",
+      "sha256": "d6d0c7ffdd0ff261144da23dc72ab1f0e3c8c92c40127de29feb04a658202087"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/fieldProfiles.ts",
+      "sha256": "22258fd930d4b63dd64a63972642f10392df2eaf8922ad870b2ec2d3c5457988"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/fieldSettings.test.ts",
+      "sha256": "83b2b9b5b5b01b5305bab7f005f3f614c0e9ce1b6394631b8aacdfa123c4cf78"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/fieldSettings.ts",
+      "sha256": "12381672c4bd38ddb826cc2ac8b671e4714ee3f965c0ce2db2e6beb5b8a05236"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/geometryAssets.test.ts",
+      "sha256": "284a864ba600a75b0cec4716407e09d52de1753bc69b6e9c1550415493456723"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/geometryAssets.ts",
+      "sha256": "b4084590c6573190dd1bb162f97eeb13f6544f06f69962ad08305dce09561b14"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/notebook/compileNotebook.test.ts",
+      "sha256": "26bbc8932b05b9fdf9029098a2511630e705d1b00db6190a6ed32c482d238c10"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/notebook/compileNotebook.ts",
+      "sha256": "ec8257785e1a912d9e6a3a4766615cda9fe6cfb423aa9d8d0f212b49ee1c42eb"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/notebook/forecast.test.ts",
+      "sha256": "2c90a82502ffbbc1db0c3f39e9d7e03a30cccad54e3eec73a9e8905aecfaefd2"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/notebook/formatNotebook.ts",
+      "sha256": "5d9a220b0a4732f862f778677695e336e9bf8b5ea05e4ca8f079d51b0dc257f9"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/notebook/index.ts",
+      "sha256": "a91c2b3929acc9a81cc7ba8619737143c6f4d22ea25717fe19ddd8c52e4fd268"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/notebook/parseNotebook.ts",
+      "sha256": "4fdee9cd2462d9cb5ec7f7dacdc3e5d49bfe92bcfab0e67e51790e1ec34a6eea"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/notebook/readNotebook.ts",
+      "sha256": "3567277dd615c44e6a1acdcfb0dc103dce27d84794080e07140a06f25fd3fcbb"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/notebook/readmeExample.test.ts",
+      "sha256": "776be459d598c084ac5343bee01ee1dd614422f94c01865a5a21c05f75b95fa6"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/notebook/writeBack.test.ts",
+      "sha256": "f2b1e931d077e3411676d8ad28dc5f15d203ee31f5289879d3ae08a8aa8fdba3"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/notebook/writeBack.ts",
+      "sha256": "65274d8cf5b3e775eb8eeeb44a9440faf39f5328e33e5cba95b730d08cabd908"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/project/analysisText.ts",
+      "sha256": "6e05b58602a1004e01f007733df9f7d22df77949fa7fbb5e8f415bc2d84b65b1"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/project/createFolder.test.ts",
+      "sha256": "3ac3a22100af8d694e9e1d6fa26b9fc6fba78e12b5d0701513a58cd32328e8ce"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/project/createFolder.ts",
+      "sha256": "72031a5cee6baf08a752749627396ed657c4ce94dbe5342a0b116837ed9d0358"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/project/directoryFiles.test.ts",
+      "sha256": "c7eef648e5fd30178612aa3caff54bd76cf1ace2b83b0df428daa65ed2c1fe0c"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/project/directoryFiles.ts",
+      "sha256": "ddcc08fabbd12fc2054f99568c0ff7f0e528202fd7d2d73646cad1f5ceaa095d"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/project/files.ts",
+      "sha256": "cbd2459b265e6cf8202528822ec4c1815b388ee763ca97bad7f011d73e9e7b6e"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/project/folder.test.ts",
+      "sha256": "c7d712489da907de641c3f48b88b8b3ad948db8d668407b3b7576d1c2684c77b"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/project/folder.ts",
+      "sha256": "fe3bb269372fff7bf6df1e0fe22f3e15aac5c2edb2fd986f31fec370775d90b9"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/project/index.ts",
+      "sha256": "f9ead99c86ba086839f6fd88f06196728993558e1fe9512a6c06c89bcca72912"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/project/snapshots.ts",
+      "sha256": "f986a6d7a2081666c34bed7c8501197b2380d609da0511196d22f2dc7ee3e061"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/project/tables.ts",
+      "sha256": "10b91168536c90e8b9dcfdbbc772c93f212b2df643ff85d7fc1a2bfa85916358"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/project/writeFolder.test.ts",
+      "sha256": "3890b040b454d357d8f78956c2da9f5fa52162b6f21f4102f9477ed4d433b3ac"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/project/writeFolder.ts",
+      "sha256": "9e495f7268c9cf8f0f36685306177e5841abfe05ed86bd8bf951f85d42fc774d"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/queryGlyph.ts",
+      "sha256": "c0ae7b0a9b6072183aae625a51293f13acdf90f84eaaeeea81c8634c879ad80f"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/readers/arrow.ts",
+      "sha256": "6f07ff83f48015e68d295225bb42b660c580de9ef41d6e9a742037cb676e9381"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/readers/columns.ts",
+      "sha256": "af4914b88861580d04750796d0e6a50c26f9af62812c12bc8042bc35653d821d"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/readers/delimited.ts",
+      "sha256": "0f8533a043e56a2a8b04a6c128787261497f1e0a0c2a002085afc102f9377b76"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/readers/fixtures/events-api.json",
+      "sha256": "40b049cfac017bc74552fbf40f9b237c75a08d17a22ef80816a0ef94f894ee51"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/readers/flechette.d.ts",
+      "sha256": "d69a8ddd2650cf0414be27ee152176e5ddf0536f50bbea61a0c0dfeaaa703857"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/readers/formats.ts",
+      "sha256": "849d9a11c70f3e243e6790314293dde05031a6fd1daa805cc0d0be9ccab4e3d5"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/readers/json.ts",
+      "sha256": "a18e99a913e3d7dd691bbb7a34eab5a7fbccbb6f0134630e7e0466d8060ee80b"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/readers/lz4.test.ts",
+      "sha256": "3b399b6727a93f72ec5b6f326c1231f76efe9fe584592315022dd0a0c81548ca"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/readers/lz4.ts",
+      "sha256": "642c749d63ecb3b1d64d7ab4e160b913a8d20a59371dd803683240bcdd6a8e34"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/readers/parquet.ts",
+      "sha256": "f15ce364b015a6ce051d63313251c3002207a06d31d317add0ee9fa560a2480d"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/readers/readTable.ts",
+      "sha256": "268cc2194c90feffd983d3166c1dd8a354e14d1b506868863ddc91b3bbda3174"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/readers/readers.test.ts",
+      "sha256": "e640fa65ca3176be74ee1afe546ed3d14e220b4cf8a99e8b93dc18dc8791c03f"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/readers/typedColumns.ts",
+      "sha256": "212f5c1f5e3e6271adfc3dcd8ada5b3e697c11c50456a75026bde8dd39dfab85"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/readers/types.ts",
+      "sha256": "84d4c57e9631125b72f3ca3d68be1c8d1d00a9e1584754356fea38bb6ef63c4f"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/readers/xlsx.ts",
+      "sha256": "c33f37a9f3a4b1f321b88b6fcd3c740e021643f93d8a72e1c6f9c5256ba71527"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/schema/schemaCompact.ts",
+      "sha256": "8e3da11392d17475e6f0e51007a6641bfd0bca1d90c18202d91d02689cf549ef"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/schema/schemaGraph.ts",
+      "sha256": "2985c0f07890539a05fbd0447e4b56518c42ffe58b53ec32aff97f2202d94520"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/schema/schemaLayout.ts",
+      "sha256": "6f6b33998d4506b69799ca57a4108336b667292c5963561fe0f41c03a1ad5b8d"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/schema/schemaTrace.ts",
+      "sha256": "159b8489d84c332cbf2909975e3469ff77a37ce60bbaf9b727a03b288731592e"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/styleOverrides.test.ts",
+      "sha256": "e82bb84b3e6eac34a8b5b0069323fb9dcb05fc6f44b485bdcc64b7e32d6100ca"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/styleOverrides.ts",
+      "sha256": "3dd8928db16ca7430daa9a5a65a15a79ddb0f7b96df5b03861e0cc28fd8a7751"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/textMeasure.ts",
+      "sha256": "e74bc8bf12b324f4505d53c787c54d371d5cf4acff0ef0865b8ce952bc842830"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/themePalettes.test.ts",
+      "sha256": "c70f263e1e8a21b8ccf92f2eccee0bf832dec75e69bdb0f6700cd2919beb2e66"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/themePalettes.ts",
+      "sha256": "989da5915b9e8e5992cd5d9103fa7fcd642beda0bbd3ac1c2a6f5072b5cf2450"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/themes.ts",
+      "sha256": "745190dbb1158b1a66302b82e68ba0d803fa71c718aafe6458efb544a5e2d83a"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/utils.ts",
+      "sha256": "4acbc7165a8d54738ff62b51414e772c08fe78434e524e6d8770180d3ba2925f"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/valueParsing.test.ts",
+      "sha256": "e3d2a86ad3d28494429cf8596da15cd74b3683d5d71b49e7060d2444653bb81a"
+    },
+    {
+      "path": "packages/explorEDA/src/lib/valueParsing.ts",
+      "sha256": "18793ed3c9f09e3ac6c184fd658ad68b88f564c5c2d800bac7108188afd845d6"
+    },
+    {
+      "path": "packages/explorEDA/src/node/globalConfig.test.ts",
+      "sha256": "e16e79b7810ae0227484b858f4296e2a61402889fc31ab474ac53848207b11dd"
+    },
+    {
+      "path": "packages/explorEDA/src/node/globalConfig.ts",
+      "sha256": "867dbbb7085427f7e037aeae4cba4daf9e8f2473c84550e365abd2e869d045f8"
+    },
+    {
+      "path": "packages/explorEDA/src/node/projectFiles.test.ts",
+      "sha256": "9feb87b3ac8d6cf21b8da4c9c29e00d76311150b15aa77eb97bab46b92da0e79"
+    },
+    {
+      "path": "packages/explorEDA/src/node/projectFiles.ts",
+      "sha256": "31bd320b864ed96f36a88a2ae38897182bce2e71d3790c85aed61e4c6f7d751c"
+    },
+    {
+      "path": "packages/explorEDA/src/node/secrets.test.ts",
+      "sha256": "a3096011e008147e940579ff8b92a98cfb54fe900e9e6c5f8c002f63e983a8be"
+    },
+    {
+      "path": "packages/explorEDA/src/node/secrets.ts",
+      "sha256": "e2c60e93147abc147cfdac46c4139cf76e3f478708567f6c9852b855f9549bc5"
+    },
+    {
+      "path": "packages/explorEDA/src/providers/DataLayerProvider.tsx",
+      "sha256": "c0ab7260c912fb628d393e7cbae1c752e44db4a20e347d9ec07f755b3ae7771d"
+    },
+    {
+      "path": "packages/explorEDA/src/providers/lib/dataLayerState.ts",
+      "sha256": "2469556f6e39537ff394ff4b242cd0da5aee866907568f0f2685e87525ec1569"
+    },
+    {
+      "path": "packages/explorEDA/src/readers.ts",
+      "sha256": "e6e02839e51bb28c3a66463f3222beab109c42854912e1f3573365359e10fa93"
+    },
+    {
+      "path": "packages/explorEDA/src/server/handler.test.ts",
+      "sha256": "f378c37ae126ee6ac7c7aed2f33f85883acc7679aabfbc7cc975f611cb547aab"
+    },
+    {
+      "path": "packages/explorEDA/src/server/handler.ts",
+      "sha256": "6590cde88339d2975890178167775b17bb1fec5178ceb7e062720a419a759104"
+    },
+    {
+      "path": "packages/explorEDA/src/server/http.ts",
+      "sha256": "4309c8433ee7d4143b12525c422eb0019890496923611f13eb0dfeab99fb14a1"
+    },
+    {
+      "path": "packages/explorEDA/src/server/server.ts",
+      "sha256": "49244ec2786ac534d5dd96817b6250dd5389226c6936dbbdf74bd7c58711fcfe"
+    },
+    {
+      "path": "packages/explorEDA/src/server/sources/columnKinds.ts",
+      "sha256": "403622f7b0431723943db344d075afcf66693f28271268ccb979531ca72aa16e"
+    },
+    {
+      "path": "packages/explorEDA/src/server/sources/contract.ts",
+      "sha256": "e3bef98ccf0ba0463b2ce5eebd88569883bfc74a31ae07203eed2a8b20acdbee"
+    },
+    {
+      "path": "packages/explorEDA/src/server/sources/drivers/duckdb.test.ts",
+      "sha256": "82090a3c0081f0cb6ce0bff03e45f6e590b8ab1b4bcf131bf7865bfca92e122f"
+    },
+    {
+      "path": "packages/explorEDA/src/server/sources/drivers/duckdb.ts",
+      "sha256": "f82cc04d3a49084d1ae2e47a0cf0828411b2221b0aa69ae937b5ef2eab70e5ed"
+    },
+    {
+      "path": "packages/explorEDA/src/server/sources/drivers/mysql.test.ts",
+      "sha256": "f4c431471178a83a3a9757a182935f65647a21f9cbeb65efbbe3a592f6df7f6f"
+    },
+    {
+      "path": "packages/explorEDA/src/server/sources/drivers/mysql.ts",
+      "sha256": "a216c577de02321842a3cf0da07fc0dfe39e9a3a22d6f6818ed4b2ddd52dda40"
+    },
+    {
+      "path": "packages/explorEDA/src/server/sources/drivers/postgres.test.ts",
+      "sha256": "7e406745fc0063b044ebc321e67376b02b65325346e069fbd89be99b1e3eb3c0"
+    },
+    {
+      "path": "packages/explorEDA/src/server/sources/drivers/postgres.ts",
+      "sha256": "81e54137a9c4d48c0856951c9049d0de0ae3a1bb1aff8883b228f09f725fa504"
+    },
+    {
+      "path": "packages/explorEDA/src/server/sources/drivers/sqlite.test.ts",
+      "sha256": "7e606bf2cf24691dc390da27242e3853cd127e90008157e5087012f9693666c6"
+    },
+    {
+      "path": "packages/explorEDA/src/server/sources/drivers/sqlite.ts",
+      "sha256": "14e81654fad0e10b1d981f33d16bfe384daed46e299644ed6e12e10d64fa8a16"
+    },
+    {
+      "path": "packages/explorEDA/src/server/sources/drivers/sqlserver.test.ts",
+      "sha256": "3d7f60d7358b760800db2239b77fd963de554552b35ca4ec538f0ea5603fb5c9"
+    },
+    {
+      "path": "packages/explorEDA/src/server/sources/drivers/sqlserver.ts",
+      "sha256": "995e90e34e6e1d7b57dedaebf610456f47a5f1a3053e571e7a7e8826ed726a46"
+    },
+    {
+      "path": "packages/explorEDA/src/server/sources/example.test.ts",
+      "sha256": "c377bc4197e72c05b183afdea21b02301885ec9f9f7b8d68c37784e2e010fedd"
+    },
+    {
+      "path": "packages/explorEDA/src/server/sources/fake.ts",
+      "sha256": "7c4854400ce4b38cd5712523209f76b580613258e2d3b8dd48d97f4b647ee561"
+    },
+    {
+      "path": "packages/explorEDA/src/server/sources/fixtures/duckdbContract.ts",
+      "sha256": "59b3d089fd9ba0fc75495e8370813a1895736f7618e3524d69c3879e91ae0194"
+    },
+    {
+      "path": "packages/explorEDA/src/server/sources/fixtures/mysqlContract.ts",
+      "sha256": "2ac957d553b31ad34ac4c6d69e1e26de3b4eda0fc7b64105516ad1f15d0dbb4d"
+    },
+    {
+      "path": "packages/explorEDA/src/server/sources/fixtures/postgresContract.ts",
+      "sha256": "e568454d010accaee844603b3159f9e519886a986934dd914390d4d471a5bb63"
+    },
+    {
+      "path": "packages/explorEDA/src/server/sources/fixtures/sqliteContract.ts",
+      "sha256": "b2bc7065abdc124b949a6524228c8cf32e169a7f7be521bf8ab600692a1fb0e7"
+    },
+    {
+      "path": "packages/explorEDA/src/server/sources/fixtures/sqlserverContract.ts",
+      "sha256": "f12d914dbef0afdb48b408eea4ad72158a1e7c9f0b62134f27cefd5159059474"
+    },
+    {
+      "path": "packages/explorEDA/src/server/sources/read.ts",
+      "sha256": "3994f5a5cb75215867338978309286b24a20f306b0a4eb92b759966f8321646f"
+    },
+    {
+      "path": "packages/explorEDA/src/server/sources/refresh.test.ts",
+      "sha256": "8d88f8247124b5cc84b2f0b6611742492f45cd04d06b029d48358bd17432eee5"
+    },
+    {
+      "path": "packages/explorEDA/src/server/sources/refresh.ts",
+      "sha256": "40a951900a9210ae076b2e6159ea5d61ef1f3515daacdff4cf705d296efc5680"
+    },
+    {
+      "path": "packages/explorEDA/src/server/sources/routes.ts",
+      "sha256": "24e49032f4e29471271fd0f56a4488c5fcb65f4e45e398d52ea662d52128de00"
+    },
+    {
+      "path": "packages/explorEDA/src/server/sources/types.ts",
+      "sha256": "7957f917d1d879a3b71485c405470846408534d646a46e8165fcc2ef42d5eb81"
+    },
+    {
+      "path": "packages/explorEDA/src/server/team/accountRoutes.test.ts",
+      "sha256": "c3d6f4937f4c5cd215ef305a8f4d380cfe16430d2b86537cb2d9c76b30d7386a"
+    },
+    {
+      "path": "packages/explorEDA/src/server/team/accountRoutes.ts",
+      "sha256": "89066f700f02652888af067e722d846d0195d530709ee113e20f4f3946907625"
+    },
+    {
+      "path": "packages/explorEDA/src/server/team/accounts.test.ts",
+      "sha256": "4b84991a10d404dd4782207d8a1fa68602b6d208c4f61358779b699a9f3a6f7a"
+    },
+    {
+      "path": "packages/explorEDA/src/server/team/accounts.ts",
+      "sha256": "1628a275ff728e6fab45b9c2264042359de9e46d2cd16836d5d20af29a06c0e8"
+    },
+    {
+      "path": "packages/explorEDA/src/server/team/dataFolder.test.ts",
+      "sha256": "78733eafd3e31c5443708fc2fdd42ce53e8821d72f9ac71769ed98fa49e5bf17"
+    },
+    {
+      "path": "packages/explorEDA/src/server/team/dataFolder.ts",
+      "sha256": "a216c62c467392b918a91fb795a02b0113aae759f2c5d369b4b2bcbf19e8c90a"
+    },
+    {
+      "path": "packages/explorEDA/src/server/team/fileIntake.test.ts",
+      "sha256": "eea6b7d72f816672178cd697518f9a5bdadb799a09c08017272ed04f07388694"
+    },
+    {
+      "path": "packages/explorEDA/src/server/team/fileIntake.ts",
+      "sha256": "d4344efa51bdc6fc2048b5764e7abaf4594e4714439986bda101abd25eaa992b"
+    },
+    {
+      "path": "packages/explorEDA/src/server/team/fixtures/data-v1/README.md",
+      "sha256": "0b34b1c03680e3825bddc27238206fc0a4ee4199da658ef3894c1e4ed944228f"
+    },
+    {
+      "path": "packages/explorEDA/src/server/team/fixtures/data-v1/exploreda-data.json",
+      "sha256": "3835a937225edb5d8d91467ae286e54271e4863ae3c42b993c343bdc5f5515b6"
+    },
+    {
+      "path": "packages/explorEDA/src/server/team/fixtures/data-v1/projects/shop/.exploreda/fetched.json",
+      "sha256": "da94e9d0125eceeb5520360edea2289f907e7ce3b92d54618957a51e2c23ea5d"
+    },
+    {
+      "path": "packages/explorEDA/src/server/team/seed.ts",
+      "sha256": "68695b1b7e9e6e47d9d95fdbda7ac21ebb9a27d02d9fa08ecbc067092509799b"
+    },
+    {
+      "path": "packages/explorEDA/src/server/team/signInLimiter.ts",
+      "sha256": "afe9078d0a5071dcafe9878e56f2848c688188ff889d0813af63b242fc080f43"
+    },
+    {
+      "path": "packages/explorEDA/src/server/team/sqliteStore.test.ts",
+      "sha256": "75fec0f322c690f75eac61adeb4cbe6795041667df215f4b227fd8d2b81387e1"
+    },
+    {
+      "path": "packages/explorEDA/src/server/team/sqliteStore.ts",
+      "sha256": "365243adb359d9e2684ed18f560cec37c61b235b5322ffa9dccb338eee78149e"
+    },
+    {
+      "path": "packages/explorEDA/src/server/team/teamHandler.test.ts",
+      "sha256": "57e7f53ecb34c9e4d407d5d830afc6b54c6adb65a3bea744741ebf4264b1aade"
+    },
+    {
+      "path": "packages/explorEDA/src/server/team/teamHandler.ts",
+      "sha256": "4497035922aed6e7bf3ddfa1dc76de18067bf2f788f6bed48a7c28a418724f8a"
+    },
+    {
+      "path": "packages/explorEDA/src/stores/alertStore.ts",
+      "sha256": "05fc68f501861cc64efd72fd631de2cf165eef5febdc9e9dd0701a05429ceae8"
+    },
+    {
+      "path": "packages/explorEDA/src/test/accountStoreContract.ts",
+      "sha256": "00dd851ff434ce2cd403f906a335992e5625a4050153ef7485c3f87e5914745a"
+    },
+    {
+      "path": "packages/explorEDA/src/test/charts/chartAccessibility.test.ts",
+      "sha256": "5bac4c68b5bd74daa97d556ec830db188d08466eb60d788434a88f948ee0ab8e"
+    },
+    {
+      "path": "packages/explorEDA/src/test/charts/chartRuntime.test.ts",
+      "sha256": "1b5ec85aafcf738716f5a7ca68be9e97cf0d3b6d04d2befdf18eafca5e0236bb"
+    },
+    {
+      "path": "packages/explorEDA/src/test/charts/planScatterPoints.test.ts",
+      "sha256": "8910a53058d0eefae021076feb805bd969cb9f54934b2d88057ce44865ba5a94"
+    },
+    {
+      "path": "packages/explorEDA/src/test/charts/scatterPlan.test.ts",
+      "sha256": "9b07338ece6a6702da54734049a27c209fb671ded675f3c1c261d06bcaaed5f1"
+    },
+    {
+      "path": "packages/explorEDA/src/test/charts/scatterTrace.test.ts",
+      "sha256": "5fa1cda7301943d3db3167071c27950e7006afcb589a99ca7ef620c5fe7bf1c1"
+    },
+    {
+      "path": "packages/explorEDA/src/test/fixtures/matrixData.ts",
+      "sha256": "9facbad819752fcc192843b7823bc95376394d8e716437abdaa3fe4beb01c945"
+    },
+    {
+      "path": "packages/explorEDA/src/test/fixtures/shopProject.ts",
+      "sha256": "dceb807341e6023b1270a0c53df4d37177cb0ac3fb495794d8a2b5c9aef8107a"
+    },
+    {
+      "path": "packages/explorEDA/src/test/lib/analysis/evaluateProject.test.ts",
+      "sha256": "13a1f675f5055a702c16384f2aee5835108a0725dd0fc8d979703e3e8a11f88b"
+    },
+    {
+      "path": "packages/explorEDA/src/test/lib/analysis/parameterBindings.test.ts",
+      "sha256": "682aa069bf65aecab38b251edf96b1b7ea5d959cb8be15dce8938ba3821de211"
+    },
+    {
+      "path": "packages/explorEDA/src/test/lib/analysis/sourceRowIdentity.test.ts",
+      "sha256": "84d7f9fe54981ee6c34555e237a4baf10fb198b46cad847b479993a5fcb7ee4b"
+    },
+    {
+      "path": "packages/explorEDA/src/test/lib/analysis/sources.test.ts",
+      "sha256": "656f96492f77fd6a7178f5957a9b6a93078a17eda0a5c6c6d4e3a3c2f9eafcfd"
+    },
+    {
+      "path": "packages/explorEDA/src/test/lib/analysis/useAnalysisEvaluation.test.tsx",
+      "sha256": "393b63fd2dd9c45c63f7e26eade7db057ec702355c394f3c9a2423ffc0192498"
+    },
+    {
+      "path": "packages/explorEDA/src/test/lib/calculations/engine/Calculator.test.ts",
+      "sha256": "da66f5eec5aa03033ef1b670688d9dfb5fdc9d83a3795a4d36c84e79a5248871"
+    },
+    {
+      "path": "packages/explorEDA/src/test/lib/calculations/parser/parser.test.ts",
+      "sha256": "2066f918eaa41870e91048bcb3c2f6110b4f7b5d210b0f7536ef804751109e6c"
+    },
+    {
+      "path": "packages/explorEDA/src/test/lib/calculations/traceRow.test.ts",
+      "sha256": "02e12f3d9e8041abf25ca7e82bba69e5f851eb143aee3c1152d1f6c8278d9de6"
+    },
+    {
+      "path": "packages/explorEDA/src/test/lib/schema/schemaCompact.test.ts",
+      "sha256": "eb741b2677ae2a569aad0561ddcc1edc315ffa7c24e7f1f473990229c5362476"
+    },
+    {
+      "path": "packages/explorEDA/src/test/lib/schema/schemaGraph.test.ts",
+      "sha256": "371354f587e4568b03947731e507db44da37e590d7f6ed07826185bee4fcfbd6"
+    },
+    {
+      "path": "packages/explorEDA/src/test/lib/schema/schemaLineage.test.ts",
+      "sha256": "ce4f9b37db61d8d581e87ce00e86102eeba5f2aa25787f10e57737eba123bab2"
+    },
+    {
+      "path": "packages/explorEDA/src/test/lib/schema/schemaTrace.test.ts",
+      "sha256": "858e82a6097a40e18e8d01addf7372f826a82fb19508c6db71b02b5687345f58"
+    },
+    {
+      "path": "packages/explorEDA/src/test/projectFilesContract.ts",
+      "sha256": "771dfcf51409581c3a4f6b88c89f1b9d16e3c07c1a2c4ba437a58cb2477fea25"
+    },
+    {
+      "path": "packages/explorEDA/src/test/providers/DataLayerCalculations.test.tsx",
+      "sha256": "fb5e1d8df0fdb7816a4e49a9a59a4525b66ff0154a5b4a8b880a7509bc59f508"
+    },
+    {
+      "path": "packages/explorEDA/src/test/providers/DataLayerProvider.test.tsx",
+      "sha256": "69a9801fb7a17dc9d15f77684185f12f907bd9376ec6a54ed80139491daea91a"
+    },
+    {
+      "path": "packages/explorEDA/src/test/providers/analysisReliability.test.tsx",
+      "sha256": "3c8974c33ddc4042bd66da2daca4ece1e2a8bdb3327c924199cf618ce06ef934"
+    },
+    {
+      "path": "packages/explorEDA/src/test/providers/dataLayerState.test.ts",
+      "sha256": "a49447136dff69c3fe89bb2b77ee7aaad605010c7dcba44eaa6bc850095faefb"
+    },
+    {
+      "path": "packages/explorEDA/src/test/providers/displayOnlyKeys.test.ts",
+      "sha256": "91ffae762d2d00874271962a88edde9563ab011c3828da66365b51938f829f3f"
+    },
+    {
+      "path": "packages/explorEDA/src/test/providers/fieldSettingsProvider.test.tsx",
+      "sha256": "c7ad5bee766aeb379abd9f0b000334f2c8d975f78d6b8c7727262ea00e8f90d4"
+    },
+    {
+      "path": "packages/explorEDA/src/test/providers/filterColumnLookups.test.ts",
+      "sha256": "3a9b0004f92d14794788ceebe4ecef8cb23dff82c5de290e0cbadc8d2eacf2af"
+    },
+    {
+      "path": "packages/explorEDA/src/test/providers/projectIdentity.test.tsx",
+      "sha256": "cee05e7ca3dd8983b15e6a05df77dd332b30096d04731a10cfd6fd0fd44ffd20"
+    },
+    {
+      "path": "packages/explorEDA/src/test/setup.ts",
+      "sha256": "de5845180e0d5586577053acaa049a6601dbdd667b35e536b8da8f34446701df"
+    },
+    {
+      "path": "packages/explorEDA/src/test/utils/saveDataUtils.test.ts",
+      "sha256": "2c7e7e86d742154a11790fc984cb6525a76b49add80bce6878d30f4a3816f624"
+    },
+    {
+      "path": "packages/explorEDA/src/types/AnalysisProject.ts",
+      "sha256": "374ffd46c8143f95c7256859d0a1bcc24e1eabe82a80dce9d465a2c4ba693408"
+    },
+    {
+      "path": "packages/explorEDA/src/types/ChartTypes.ts",
+      "sha256": "af8e1bfd423816317b3e37965f8231c722ece77f397bfb54598ee5499ac5e61e"
+    },
+    {
+      "path": "packages/explorEDA/src/types/ColorScaleTypes.ts",
+      "sha256": "54b2b20ee05907891a44d1e477fb6dc66f358026f23f06c2bec38750f956355b"
+    },
+    {
+      "path": "packages/explorEDA/src/types/FilterTypes.ts",
+      "sha256": "5779e19b22a73dbfc6c9c66b7d12f5b7cba149b5da7e1cfa1ed316afe3a9011f"
+    },
+    {
+      "path": "packages/explorEDA/src/types/SavedDataStructure.ts",
+      "sha256": "d06d902c2e9ba967adb39f25502405153b2b582bfd2bf7305ad51bec9b9dfebb"
+    },
+    {
+      "path": "packages/explorEDA/src/types/SavedDataTypes.ts",
+      "sha256": "35ab73e36930b3e058daa6396133b690468a265964270c8bc9f16954e3caada3"
+    },
+    {
+      "path": "packages/explorEDA/src/types/createScatterChartSettings.ts",
+      "sha256": "02ced8b537880e2ebebbedc973a475da2413466e729654cd4d2e653b582c9353"
+    },
+    {
+      "path": "packages/explorEDA/src/utils/compactChartLayouts.ts",
+      "sha256": "25c55713c5d8c36144c76d0fca312927a666181c3d563c5b52cf0fc2001449c7"
+    },
+    {
+      "path": "packages/explorEDA/src/utils/defaultSettings.ts",
+      "sha256": "a2bd9e507780532f170dad5f9d79a4d40e41dd0898fbcbcaaefa71dc80418242"
+    },
+    {
+      "path": "packages/explorEDA/src/utils/saveDataUtils.ts",
+      "sha256": "aad0e318e8453f09980ce6627c0dd7c4e314de4f220a78dc0fd52f90f468a4d8"
+    },
+    {
+      "path": "packages/explorEDA/src/vite-env.d.ts",
+      "sha256": "65996936fbb042915f7b74a200fcdde7e410f32a669b1ab9597cfaa4b0faddb5"
+    },
+    {
+      "path": "pnpm-workspace.yaml",
+      "sha256": "370f57ba0ece65433c1cfa3d2b5a4ff54a8f676eccc161df27ac235a7761f755"
+    }
+  ]
+}

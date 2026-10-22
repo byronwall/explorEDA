@@ -1,0 +1,116 @@
+{
+  "fixture_id": "R051-orders-v1",
+  "source_order_is_fixed": true,
+  "source_identity": "orderId",
+  "runtime_id_mapping": "__ID is zero-based row position; assert mapping before any product proof",
+  "rows": [
+    {
+      "orderId": "O01",
+      "region": "West",
+      "category": "Furniture",
+      "channel": "Web",
+      "amount": 100,
+      "note": "rush red",
+      "status": "Open"
+    },
+    {
+      "orderId": "O02",
+      "region": "West",
+      "category": "Tech",
+      "channel": "Web",
+      "amount": 200,
+      "note": "standard blue",
+      "status": "Open"
+    },
+    {
+      "orderId": "O03",
+      "region": "West",
+      "category": "Furniture",
+      "channel": "Store",
+      "amount": null,
+      "note": "rush blue",
+      "status": "Closed"
+    },
+    {
+      "orderId": "O04",
+      "region": "West",
+      "category": "Tech",
+      "channel": "Store",
+      "amount": 0,
+      "note": "rush red",
+      "status": "Open"
+    },
+    {
+      "orderId": "O05",
+      "region": "East",
+      "category": "Furniture",
+      "channel": "Web",
+      "amount": 50,
+      "note": "standard red",
+      "status": "Open"
+    },
+    {
+      "orderId": "O06",
+      "region": "East",
+      "category": "Tech",
+      "channel": "Web",
+      "amount": "invalid",
+      "note": "rush blue",
+      "status": "Closed"
+    },
+    {
+      "orderId": "O07",
+      "region": "East",
+      "category": "Furniture",
+      "channel": "Store",
+      "amount": 150,
+      "note": "rush red",
+      "status": "Open"
+    },
+    {
+      "orderId": "O08",
+      "region": "East",
+      "category": "Tech",
+      "channel": "Store",
+      "amount": 300,
+      "note": "standard blue",
+      "status": "Open"
+    },
+    {
+      "orderId": "O09",
+      "region": "West",
+      "category": "Tech",
+      "channel": "Web",
+      "amount": null,
+      "note": "rush red",
+      "status": "Closed"
+    },
+    {
+      "orderId": "O10",
+      "region": "South",
+      "category": "Furniture",
+      "channel": "Web",
+      "amount": 80,
+      "note": "rush blue",
+      "status": "Open"
+    },
+    {
+      "orderId": "O11",
+      "region": "South",
+      "category": "Tech",
+      "channel": "Store",
+      "amount": 120,
+      "note": "standard red",
+      "status": "Closed"
+    },
+    {
+      "orderId": "O12",
+      "region": "West",
+      "category": "Furniture",
+      "channel": "Web",
+      "amount": -20,
+      "note": "standard red",
+      "status": "Open"
+    }
+  ]
+}

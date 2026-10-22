@@ -304,8 +304,29 @@ function planAxis(
       : "base" in scale
         ? logTicks(scale, requested)
         : scale.ticks(requested));
+  // Crowded band labels keep every stride-th category, so each shown label
+  // has room for about six characters instead of two or three.
+  const stride =
+    axis === "x" && band
+      ? Math.max(
+          1,
+          Math.ceil(
+            (Math.min(
+              6 * tickFontSize * 0.7,
+              Math.max(
+                0,
+                ...candidates.map((tick) =>
+                  textWidth(typography, format(tick), tickFontSize, 0.7)
+                )
+              )
+            ) +
+              MIN_LABEL_GAP) /
+              Math.max(1, scale.step())
+          )
+        )
+      : 1;
   const shown = band
-    ? candidates
+    ? candidates.filter((_, index) => index % stride === 0)
     : spacedTicks(
         candidates,
         (tick) => position(scale, tick),
@@ -316,14 +337,20 @@ function planAxis(
   const maxLabelChars =
     axis === "x"
       ? band
-        ? Math.max(3, Math.floor(scale.step() / (tickFontSize * 0.7)))
+        ? Math.max(
+            3,
+            Math.floor((stride * scale.step()) / (tickFontSize * 0.7))
+          )
         : 20
       : Math.max(5, Math.floor((margin.left - 12 - 4) / tickCharWidth));
   // Tick text fits the room the layout gives it, measured in its own font.
   const maxTickWidth =
     axis === "x"
       ? band
-        ? Math.max(3 * tickFontSize * 0.7, scale.step())
+        ? Math.max(
+            3 * tickFontSize * 0.7,
+            stride * scale.step() - MIN_LABEL_GAP
+          )
         : 20 * tickCharWidth
       : Math.max(5 * tickCharWidth, margin.left - 12 - 4);
   const tickText = (text: string) =>

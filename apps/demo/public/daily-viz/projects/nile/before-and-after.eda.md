@@ -1,6 +1,6 @@
-# The Nile carried 22% less water after 1898
+# After 1898 the Nile carried 22% less water, and 99 years in 100 fell below the old median
 
-**How different are Nile flows before and after 1898?** Each row is one annual flow observation at Aswan.
+**How different was the Nile before and after 1898?** Each row is one year of flow past Aswan, 1871 to 1970, in hundreds of millions of cubic metres. 1898 is the usual break point in this record: construction of the first Aswan dam began that year, and statisticians have used the series ever since as the textbook case of a level shift. The shift is not subtle. The two eras barely overlap.
 
 ```eda
 eda query=r
@@ -9,56 +9,40 @@ volume:num=r.volume label="Annual flow (10⁸ m³)"
 era:cat=r.era label="Era"
 ```
 
-## 1. Annual flow across the chosen boundary
+## A step down, not a slide
 
-The line preserves individual wet and dry years. The marked year defines the comparison; it does not prove why the distribution differs.
+The 27 years before 1898 averaged 1097.67 (10⁸ m³) a year. The 73 years from 1898 on averaged 853.40, a drop of 244, or 22%. The line does not drift down to the new level; it arrives there within two years of the break and stays for seven decades.
 
 ```eda
-line @nb-nile-before-and-after-chart-1 x=year y=volume title="Annual flow across the chosen boundary" x.title="Year" y.title="Annual flow (10⁸ m³)" {
-  rule x=1898 "Comparison boundary"
+line @nb-nile-before-and-after-chart-1 x=year y=volume title="Annual Nile flow at Aswan, 1871–1970" x.title="Year" y.title="Annual flow (10⁸ m³)" {
+  rule x=1898 "1898: the usual break point"
+  rule y=1097.67 "Mean before 1898"
+  rule y=853.4 "Mean from 1898"
 }
 ```
 
-## 2. Two eras, the same volume scale
+## The later era's typical year was a dry year before
 
-Compare the medians and middle halves while keeping extreme annual volumes visible. Different sample lengths are not automatically comparable precision.
+Two boxes on one scale, with the pre-1898 median drawn across both. The median year before 1898 carried 1140; from 1898 on, 98.6% of years fell below that figure. Run it the other way and 92.6% of pre-1898 years sat above the later era's median of 845.
 
 ```eda
-boxplot @nb-nile-before-and-after-chart-2 volume color=era title="Two eras, the same volume scale" y.title="Annual flow (10⁸ m³)"
+boxplot @nb-nile-before-and-after-chart-2 volume color=era title="Annual flow by era" y.title="Annual flow (10⁸ m³)" {
+  rule y=1140 "Median before 1898"
+}
 ```
 
-**Finding.** Mean annual volume before 1898 was 1097.67 ×10^8 m³.
+## The whole distribution moved, not just the middle
 
-## 3. How much do the era distributions overlap?
-
-Cumulative curves make it possible to compare more than their centers. Crossing curves would warn against describing one era as uniformly lower.
+The cumulative curves barely touch. The driest year before 1898 carried 799, and 34.2% of later years came in below it. The wettest year from 1898 on carried 1170, and 29.6% of earlier years came in above it. A wet year after the break was an ordinary year before it.
 
 ```eda
-ecdf @nb-nile-before-and-after-chart-3 volume color=era direction=below title="How much do the era distributions overlap?" x.title="Annual flow (10⁸ m³)"
-```
-
-## 4. Years contributing to each era
-
-The later era contributes more observations. This count is the denominator for each era summary, not an adjustment for serial correlation.
-
-```eda
-row @nb-nile-before-and-after-chart-4 era title="Years contributing to each era" x.title="Rows"
-```
-
-**Finding.** Mean annual volume from 1898 onward was 853.40 ×10^8 m³.
-
-## 5. The rows behind the charts
-
-Sort a column or select rows to check any value above. Selections in a notebook stay with their own chart.
-
-```eda
-table @nb-nile-before-and-after-records year,volume,era title="Records behind this comparison"
+ecdf @nb-nile-before-and-after-chart-3 volume color=era direction=below title="Share of years at or below each annual flow, by era" x.title="Annual flow (10⁸ m³)"
 ```
 
 ## Takeaway
 
-Compare both location and overlap rather than allowing a vertical reference line to imply a causal experiment. The unequal era lengths remain visible in the count chart.
+The Nile at Aswan carried about a fifth less water after 1898, and the change was a step: the eras' middle halves do not overlap, and nearly every year in the later era would have been a dry year in the earlier one. Any century-long "average flow" for this river is an average of two different rivers.
 
 ## Limits
 
-The cutoff is an explicit historical comparison, not a randomized intervention. Many environmental and measurement factors could differ across eras. Annual volumes are measured at Aswan, not all reaches of the Nile.
+The break year is a convention from the literature, not an experiment; the dam, instrument changes, and a shift in East African rainfall are all candidates, and the data cannot separate them. Flow is measured at one point on the river, and 27 years is a short "before".

@@ -1,3 +1,4 @@
+import { isAdditiveAggregation } from "@/lib/aggregates";
 import { categoryKey, categoryLabel, categoryValue } from "@/lib/categories";
 import {
   poolAggregateRows,
@@ -84,8 +85,9 @@ export function planRowSummary(
   const liveRows = new Map(
     live.rows.map((row) => [categoryKey(row.groupValue), row])
   );
-  // A sum or count of no rows is zero; an average of none has no value.
-  const empty = all.spec.aggregation === "average" ? undefined : 0;
+  // A sum or count of no rows is zero; an average, max, or min of none has
+  // no value.
+  const empty = isAdditiveAggregation(all.spec.aggregation) ? 0 : undefined;
   const categories = all.rows.map((row): RowCategory => {
     const key = categoryKey(row.groupValue);
     const current = liveRows.get(key);

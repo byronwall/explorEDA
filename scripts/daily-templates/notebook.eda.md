@@ -1,32 +1,34 @@
 # {{title}}
 
-One short paragraph: why someone would ask "{{question}}", and what the charts below will show them. Name the population and its grain in plain words.
+**{{question}}** Two or three sentences: why anyone would ask, the unit of analysis in plain words (each row is one …), and where the piece is going. Lead with the answer's shape.
 
 ```eda
 eda query={{query}}
 TODO_field:num={{query}}.TODO_field label="Readable name (unit)"
 ```
 
-## A claim the first chart supports
+## A claim the first chart proves
 
-Say what to look at in the chart, not what the chart is.
+Say what to look at and give the number. Weave a finding from catalog.json into this paragraph, exactly as `pnpm daily check` computes it: The median TODO was 0.0 units.
 
 ```eda
-line @{{id}}-1 x=TODO y=TODO title="A short, specific title"
+line @{{id}}-1 x=TODO y=TODO title="What is drawn, with population and unit" y.title="Unit" {
+  rule y=0 "Name the reference"
+}
 ```
 
-**Finding.** Type a finding from catalog.json here exactly as `pnpm daily check` computes it.
+## The comparison that makes the point
 
-## A second view that changes the reading
+Two populations, side by side, with the difference stated as a number.
 
 ```eda
-hist @{{id}}-2 TODO title="A short, specific title"
+boxplot @{{id}}-2 TODO color=TODO_group title="Measure by group, population" y.title="Unit"
 ```
 
 ## Takeaway
 
-Two or three sentences a reader should leave with.
+The answer in one sentence, then what it changes about how to hear the headline number.
 
 ## Limits
 
-What this data cannot say: coverage, grain, sample, units.
+Two or three sentences: grain, coverage, sample, vintage, the denominator that is missing.

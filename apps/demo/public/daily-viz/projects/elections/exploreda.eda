@@ -14,3 +14,18 @@ source @elections path=../../../datasets/elections.csv {
 query @elections "elections" glyph=◆ {
   source elections
 }
+
+query @drift "Each state's drift from 1976 to 2016" glyph=◇ {
+  source elections
+  calc m76 "1976 margin" = ["elections.Year"] == 1976 ? ["elections.Margin"] : 0
+  calc m16 "2016 margin" = ["elections.Year"] == 2016 ? ["elections.Margin"] : 0
+  calc dem_win "Democratic win" = ["elections.Winner"] == "Democrat" ? 1 : 0
+  aggregate @by-state by=elections.State,elections.Code {
+    sum @margin_1976 m76 label="Democratic margin, 1976 (points)"
+    sum @margin_2016 m16 label="Democratic margin, 2016 (points)"
+    sum @dem_wins dem_win label="Democratic wins, 1976–2016"
+  }
+  calc drift "Change in Democratic margin, 1976 to 2016 (points)" = margin_2016 - margin_1976
+  calc direction "Drifted toward" = drift > 0 ? "Democrats" : "Republicans"
+  calc record "Record" = dem_wins == 0 ? "Republican every time" : dem_wins == 11 ? "Democratic every time" : "Flipped at least once"
+}

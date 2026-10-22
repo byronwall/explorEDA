@@ -1,63 +1,45 @@
-# Strikes ran longer when production was below trend
+# Strikes ran 13 days longer when production was below trend
 
-**Do strikes last longer when industrial production is below trend?** Each row is one selected manufacturing strike.
+**Do strikes last longer in a slump?** Each row is one of 62 US manufacturing strikes from 1968 to 1976, with its length in days and how far industrial production sat from its trend in the month the strike began. 25 strikes began with production below trend and 37 with production at or above it. The median strike in the first group ran 38 days; in the second, 25.
 
 ```eda
 eda query=r
 duration:num=r.duration label="Duration (days)"
-iprod:num=r.iprod label="Industrial production (detrended)"
-sequence:num=r.sequence label="Sequence"
-production_band:cat=r.production_band label="Production band"
+iprod:num=r.iprod label="Industrial production (deviation from trend)"
+calc slump = iprod < 0 ? "Production below trend" : "Production at or above trend"
 ```
 
-## 1. Keep the continuous contextual variable
+## The long strikes sit left of zero
 
-Inspect the actual indicator values before dividing them into two groups. A split can create an apparent discontinuity that the continuous cloud does not support.
+Each point is one strike, placed by the production deviation when it began and its length. The fitted line slopes down: production deviation and duration had correlation -0.348. Everything over 150 days is to the left of the zero line, where production was below trend. Strikes cluster in a few columns because the deviation is a monthly figure.
 
 ```eda
-scatter @nb-strikes-production-context-chart-1 x=iprod y=duration title="Keep the continuous contextual variable" x.title="Industrial production (detrended)" y.title="Duration (days)"
+scatter @nb-strikes-production-context-chart-1 x=iprod y=duration regression=linear title="Strike duration against production deviation at the start, 62 strikes" x.title="Industrial production (deviation from trend)" y.title="Duration (days)" {
+  rule x=0 "Production on trend"
+  callout "216 days" pick=max
+}
 ```
 
-## 2. Duration distributions across the declared split
+## Median 38 days against 25
 
-Median and spread make the contrast legible without assuming a normally distributed duration. Outlying events remain part of the sample.
+Split at zero and compare. Median duration at negative production deviations was 38.00 days, and median duration at nonnegative production deviations was 25.00 days. The means are further apart: 59.9 days against 31.0, because the below-trend group holds nearly all of the very long strikes.
 
 ```eda
-boxplot @nb-strikes-production-context-chart-2 duration color=production_band title="Duration distributions across the declared split" y.title="Duration (days)"
+boxplot @nb-strikes-production-context-chart-2 duration color=slump title="Strike duration by production at the start" y.title="Duration (days)"
 ```
 
-**Finding.** Median duration at negative production deviations was 38.00 days.
+## Below trend, two in five passed two months
 
-## 3. How much do the groups overlap?
-
-Cumulative curves show whether the contrast concerns the center, the tails, or both. They are conditional on the selected group sample.
+The cumulative curves show where the two groups differ: not in the first two weeks, where they overlap, but in the tail. 40.0% of strikes that began below trend lasted more than 60 days, against 10.8% of strikes that began at or above trend.
 
 ```eda
-ecdf @nb-strikes-production-context-chart-3 duration color=production_band direction=below title="How much do the groups overlap?" x.title="Duration (days)"
-```
-
-## 4. Count the events supporting each comparison
-
-Unequal counts matter even when both groups occupy equal chart space. Counts do not by themselves quantify statistical uncertainty.
-
-```eda
-row @nb-strikes-production-context-chart-4 production_band title="Count the events supporting each comparison" x.title="Rows"
-```
-
-**Finding.** Median duration at nonnegative production deviations was 25.00 days.
-
-## 5. The rows behind the charts
-
-Sort a column or select rows to check any value above. Selections in a notebook stay with their own chart.
-
-```eda
-table @nb-strikes-production-context-records sequence,iprod,production_band,duration title="Records behind this comparison"
+ecdf @nb-strikes-production-context-chart-3 duration color=slump direction=below title="Share of strikes ended by each duration, by production at the start" x.title="Duration (days)"
 ```
 
 ## Takeaway
 
-A group mean is only one part of the comparison. The overlap and sample support prevent a descriptive contrast from becoming an unsupported mechanism.
+Strikes that began in a slump ran a median 13 days longer and were four times as likely to pass two months. The sample cannot say why; it can say the pattern is in the tail, not the typical strike.
 
 ## Limits
 
-The source production variable is contextual, not a randomized exposure. Its zero split is an analyst-defined comparison. The dataset cannot identify whether production conditions caused a strike to last longer.
+Sixty-two strikes chosen for an econometrics exercise, split at zero by the analyst. The production deviation is a monthly figure, so several strikes share one value, and it describes conditions at the start, not during the strike. Nothing here identifies cause.

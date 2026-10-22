@@ -3,6 +3,7 @@ import { FieldSelector } from "@/components/FieldSelector";
 import { Label } from "@/components/ui/label";
 import { ActionTooltip } from "@/components/ui/tooltip";
 import { utcDay } from "@/lib/dailyRollup";
+import { isAdditiveAggregation } from "@/lib/aggregates";
 import { finiteNumber } from "@/lib/valueParsing";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { useColorScales } from "@/hooks/useColorScales";
@@ -116,7 +117,7 @@ export function TimeSeriesSettingsPanel({
             <option value="area">Area</option>
             <option
               value="stacked-area"
-              disabled={time.aggregation === "average"}
+              disabled={!isAdditiveAggregation(time.aggregation)}
             >
               Stacked area
             </option>
@@ -187,9 +188,11 @@ export function TimeSeriesSettingsPanel({
             change({
               aggregation: e.target.value as TimeSeriesSettings["aggregation"],
               measureField: time.measureField ?? fields.measures[0],
-              ...(e.target.value === "average"
-                ? { missingPeriods: "gap" }
-                : {}),
+              ...(isAdditiveAggregation(
+                e.target.value as TimeSeriesSettings["aggregation"]
+              )
+                ? {}
+                : { missingPeriods: "gap" }),
             })
           }
         >
@@ -205,6 +208,17 @@ export function TimeSeriesSettingsPanel({
           >
             Average
           </option>
+          {(["max", "min"] as const).map((aggregation) => (
+            <option
+              key={aggregation}
+              value={aggregation}
+              disabled={
+                !fields.measures.length || time.display === "stacked-area"
+              }
+            >
+              {aggregation === "max" ? "Maximum" : "Minimum"}
+            </option>
+          ))}
         </select>
         {time.aggregation !== "count" && (
           <>
@@ -239,12 +253,16 @@ export function TimeSeriesSettingsPanel({
           }
         />
         <Label htmlFor={`${settings.id}-missing`}>Missing periods</Label>
-        <ActionTooltip content="A gap leaves absent periods unconnected. Zero draws an empty count or sum at zero. Averages require observations.">
+        <ActionTooltip content="A gap leaves absent periods unconnected. Zero draws an empty count or sum at zero. Averages, maxima, and minima require observations.">
           <select
             id={`${settings.id}-missing`}
             className={inputClass}
-            value={time.aggregation === "average" ? "gap" : time.missingPeriods}
-            disabled={time.aggregation === "average"}
+            value={
+              isAdditiveAggregation(time.aggregation)
+                ? time.missingPeriods
+                : "gap"
+            }
+            disabled={!isAdditiveAggregation(time.aggregation)}
             onChange={(e) =>
               change({
                 missingPeriods: e.target

@@ -1,4 +1,6 @@
 import {
+  aggregationLabel,
+  isAdditiveAggregation,
   summarizeGroup,
   type AggregateContributor,
   type AggregateInputRow,
@@ -367,7 +369,9 @@ export function planHeatmap({
   const scale = planHeatScale(values, settings.colorDomain);
   const total = values.reduce((sum, value) => sum + value, 0);
   const additive =
-    settings.aggregation !== "average" && scale.domain[0] >= 0 && total > 0;
+    isAdditiveAggregation(settings.aggregation) &&
+    scale.domain[0] >= 0 &&
+    total > 0;
 
   const rowFilter = settings.filters.find(
     (filter): filter is ValueFilter =>
@@ -432,7 +436,7 @@ export function planHeatmap({
   const metricLabel =
     settings.aggregation === "count"
       ? "Row count"
-      : `${settings.aggregation === "sum" ? "Sum" : "Average"} of ${getFieldLabel(measureField ?? "")}`;
+      : `${aggregationLabel(settings.aggregation)} of ${getFieldLabel(measureField ?? "")}`;
   const longestValue = Math.max(
     0,
     ...cells.map((cell) => (cell.state === "value" ? cell.valueText.length : 0))

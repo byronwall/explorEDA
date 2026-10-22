@@ -1,0 +1,1820 @@
+{
+  "schema_version": 1,
+  "title": "100 research candidates for explorEDA",
+  "repository": "https://github.com/byronwall/explorEDA",
+  "baseline_commit": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+  "generated_date_utc": "2026-10-21",
+  "external_source_access_date_local": "2026-10-20",
+  "status": "research candidates; no implementation approved or performed",
+  "authoritative_archive": "exploreda-100-research-ideas.zip",
+  "archive_layout": "Paths are relative to the ZIP root; 100 idea files plus four top-level documents.",
+  "source_packet": {
+    "filename": "exploreda-research-source.zip",
+    "sha256": "f4ea9915ff85fbef40a3ada24b10ee5e0b5f055f827da3bdf119a666f69225e6",
+    "manifest_sha256": "3aaec426aee003442dc0b6f8df6906973a6b289cd1e70d0c091bd32396b25176",
+    "snapshot": "selected source; not runnable",
+    "file_count": 1101,
+    "manifest_listed_files_checked": 1099,
+    "hash_mismatches": 0,
+    "repository_files_modified": 0
+  },
+  "supplemental_sources": [
+    {
+      "path": "packages/explorEDA/tsup.config.ts",
+      "git_blob_sha": "c3ae530b4fb3231fda12ed0493cd6b99c738ede5",
+      "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/tsup.config.ts",
+      "baseline_commit": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "accessed": "2026-10-20",
+      "origin": "supplemental read-only GitHub fetch at the exact baseline",
+      "sha256": "d28fc4ba43f1eb1b933ae917e8f077def3c24ae387d859354e5daf582f2a38a0",
+      "size_bytes": 2198
+    },
+    {
+      "path": "packages/explorEDA/scripts/verify-lean-bundle.mjs",
+      "git_blob_sha": "2c281fdfff28099af595f229caddc2cf0c6b6f3b",
+      "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/scripts/verify-lean-bundle.mjs",
+      "baseline_commit": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "accessed": "2026-10-20",
+      "origin": "supplemental read-only GitHub fetch at the exact baseline",
+      "sha256": "015a9508f973763becde4fbe43236ecac42a04209db0dd9d7cbd5d9b28c94929",
+      "size_bytes": 1686
+    },
+    {
+      "path": "apps/app/src/App.tsx",
+      "git_blob_sha": "8fc9494558bdc51adc865eeef120853d075e43db",
+      "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/apps/app/src/App.tsx",
+      "baseline_commit": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "accessed": "2026-10-20",
+      "origin": "supplemental read-only GitHub fetch at the exact baseline",
+      "sha256": "3f0a026212bbbd997bffe3dc819fb95353d811d99fb7c29f19ebf46762b5d4f9",
+      "size_bytes": 15203
+    },
+    {
+      "path": "packages/explorEDA/entries.json",
+      "git_blob_sha": "8e042ae454add5d992af6dd77c029ec2b3068de2",
+      "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/packages/explorEDA/entries.json",
+      "baseline_commit": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "accessed": "2026-10-20",
+      "origin": "supplemental read-only GitHub fetch at the exact baseline",
+      "sha256": "810881d99571ec5559d24c887cc68ff4d034363cf95c4d733aa8466b760046a8",
+      "size_bytes": 1587
+    },
+    {
+      "path": "apps/app/src/saver.ts",
+      "git_blob_sha": "fefa0fd8e46c77371726ae89dd4db859a2faf714",
+      "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/apps/app/src/saver.ts",
+      "baseline_commit": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "accessed": "2026-10-20",
+      "origin": "supplemental read-only GitHub fetch at the exact baseline",
+      "sha256": "abede5ae6abb42ecbe794786882031fb862eb7f0cf6f11b29818f0b00e2459a9",
+      "size_bytes": 2644
+    },
+    {
+      "path": "apps/app/src/saver.test.ts",
+      "git_blob_sha": "4413a9e597bac5bcc33d5c8390e659de064dde2f",
+      "url": "https://github.com/byronwall/explorEDA/blob/9b16d78e3ed0742ed4d5858c1939fec9e758b510/apps/app/src/saver.test.ts",
+      "baseline_commit": "9b16d78e3ed0742ed4d5858c1939fec9e758b510",
+      "accessed": "2026-10-20",
+      "origin": "supplemental read-only GitHub fetch at the exact baseline",
+      "sha256": "02d582b0caaf50aa873a7a2a711720028cacffa8edbbb198f9e2c0d8eb08023c",
+      "size_bytes": 1949
+    }
+  ],
+  "total_idea_count": 100,
+  "total_generated_file_count": 104,
+  "total_prose_words": 32964,
+  "total_substantive_paragraphs": 400,
+  "word_count_rule": "Whitespace-separated tokens within prose paragraphs between ## Research brief and ## References. Title, metadata, and reference lists excluded. Inline code terms count as tokens; an unspaced hyphenated term counts once.",
+  "paragraph_rule": "Nonempty prose blocks separated by blank lines within the research brief. No bullets, headings, or isolated labels counted. Each observed paragraph has at least 64 words.",
+  "required_per_idea": {
+    "minimum_prose_words": 250,
+    "maximum_prose_words": 450,
+    "minimum_substantive_paragraphs": 4
+  },
+  "observed_per_idea": {
+    "minimum_prose_words": 299,
+    "maximum_prose_words": 361,
+    "minimum_substantive_paragraphs": 4,
+    "maximum_substantive_paragraphs": 4,
+    "minimum_paragraph_words": 64
+  },
+  "taxonomy_counts": {
+    "Scientific analysis": 9,
+    "Distribution semantics": 3,
+    "Domain analysis": 7,
+    "Composed graphics": 6,
+    "Data quality and missingness": 4,
+    "Types, quantities, and dates": 9,
+    "Data preparation and relationships": 7,
+    "Calculations and expressions": 5,
+    "Selection and analytical scope": 5,
+    "Inspection and provenance": 3,
+    "Accessibility and interaction": 8,
+    "Notebooks and narrative": 5,
+    "Documentation and examples": 4,
+    "Embedding and package contracts": 5,
+    "Import, export, and persistence": 6,
+    "Measured performance": 6,
+    "Local and database workflows": 6,
+    "Testing and reproducibility": 2
+  },
+  "research_kind_counts": {
+    "robustness": 41,
+    "follow-up": 34,
+    "simplification": 10,
+    "new-direction": 15
+  },
+  "confidence_counts": {
+    "high": 53,
+    "medium": 46,
+    "low": 1
+  },
+  "source_coverage": {
+    "content_files": 287,
+    "full_reads": 171,
+    "targeted_reads": 116,
+    "unique_evidence_paths": 183,
+    "literal_symbol_references_checked": 605,
+    "primary_external_sources": 18,
+    "intent_briefs_fully_read": 34,
+    "ranked_intent_artifacts_reviewed": 86,
+    "intent_artifacts_full": 46,
+    "intent_artifacts_targeted": 40,
+    "ledger": "sources.md"
+  },
+  "generated_files": [
+    "README.md",
+    "ideas.json",
+    "ideas/R001-regression-conditioning.md",
+    "ideas/R002-residual-diagnostics.md",
+    "ideas/R003-fit-sensitivity.md",
+    "ideas/R004-covariance-ellipse.md",
+    "ideas/R005-rank-correlation.md",
+    "ideas/R006-matrix-populations.md",
+    "ideas/R007-density-sensitivity.md",
+    "ideas/R008-engineering-bin-boundaries.md",
+    "ideas/R009-weighted-ecdf.md",
+    "ideas/R010-pooled-group-reversals.md",
+    "ideas/R011-retention-observation-cutoff.md",
+    "ideas/R012-funnel-ambiguous-order.md",
+    "ideas/R013-timeline-concurrency.md",
+    "ideas/R014-explicit-edge-selection.md",
+    "ideas/R015-sankey-important-flows.md",
+    "ideas/R016-regional-rate-denominators.md",
+    "ideas/R017-waterfall-state-reconciliation.md",
+    "ideas/R018-quantile-conventions.md",
+    "ideas/R019-composition-scale-envelopes.md",
+    "ideas/R020-supplied-band-meaning.md",
+    "ideas/R021-path-gradient-semantics.md",
+    "ideas/R022-composition-population-windows.md",
+    "ideas/R023-composition-label-budget.md",
+    "ideas/R024-shared-reducer-adapters.md",
+    "ideas/R025-three-dimensional-value.md",
+    "ideas/R026-missing-state-accounting.md",
+    "ideas/R027-joint-missingness-triage.md",
+    "ideas/R028-expected-record-reconciliation.md",
+    "ideas/R029-inference-stability.md",
+    "ideas/R030-locale-numeric-conversion.md",
+    "ideas/R031-date-ambiguity-preview.md",
+    "ideas/R032-temporal-meaning-contract.md",
+    "ideas/R033-date-boundary-validity.md",
+    "ideas/R034-calendar-window-stepping.md",
+    "ideas/R035-rolling-contributor-semantics.md",
+    "ideas/R036-quantity-unit-semantics.md",
+    "ideas/R037-decimal-precision-contract.md",
+    "ideas/R038-category-normalization.md",
+    "ideas/R039-duplicate-key-repair.md",
+    "ideas/R040-expansion-cardinality-preflight.md",
+    "ideas/R041-join-key-preparation.md",
+    "ideas/R042-wide-long-reshape.md",
+    "ideas/R043-entity-grain-parity.md",
+    "ideas/R044-calculation-error-propagation.md",
+    "ideas/R045-scalar-function-names.md",
+    "ideas/R046-calculation-rename-contract.md",
+    "ideas/R047-conditional-truthiness.md",
+    "ideas/R048-text-preparation-functions.md",
+    "ideas/R049-ordered-difference-transforms.md",
+    "ideas/R050-bounded-quality-assertions.md",
+    "ideas/R051-filter-ownership.md",
+    "ideas/R052-empty-selection-recovery.md",
+    "ideas/R053-exact-tuple-selections.md",
+    "ideas/R054-lasso-membership.md",
+    "ideas/R055-row-visibility-explanations.md",
+    "ideas/R056-contributor-set-comparison.md",
+    "ideas/R057-dense-scatter-keyboard.md",
+    "ideas/R058-touch-trace-access.md",
+    "ideas/R059-nested-focus-ownership.md",
+    "ideas/R060-analytical-text-alternatives.md",
+    "ideas/R061-noncolor-meaning.md",
+    "ideas/R062-field-choice-simplification.md",
+    "ideas/R063-narrow-analysis-reading.md",
+    "ideas/R064-notebook-frozen-results.md",
+    "ideas/R065-notebook-linked-scopes.md",
+    "ideas/R066-notebook-definition-navigation.md",
+    "ideas/R067-single-narrative-binding.md",
+    "ideas/R068-narrative-claim-scope.md",
+    "ideas/R069-detail-filter-inheritance.md",
+    "ideas/R070-gesture-discoverability.md",
+    "ideas/R071-task-based-doc-routing.md",
+    "ideas/R072-contextual-setting-help.md",
+    "ideas/R073-example-claim-challenges.md",
+    "ideas/R074-example-catalogue-simplification.md",
+    "ideas/R075-applied-edit-explanations.md",
+    "ideas/R076-canonical-settings-across-host-echo-and-restore.md",
+    "ideas/R077-selection-identity-when-source-rows-are-replaced.md",
+    "ideas/R078-independent-workspace-ownership-for-dialogs-and-exports.md",
+    "ideas/R079-actionable-diagnostics-for-rejected-saved-analyses.md",
+    "ideas/R080-a-credible-selective-chart-integration-contract.md",
+    "ideas/R081-headless-chart-images-through-a-minimal-existing-renderer.md",
+    "ideas/R082-cross-format-fidelity-through-the-full-analysis-lifecycle.md",
+    "ideas/R083-cancellation-that-stops-expensive-file-preparation.md",
+    "ideas/R084-an-explicit-analytical-contract-for-exported-csv.md",
+    "ideas/R085-image-export-fidelity-under-fonts-and-mixed-rendering.md",
+    "ideas/R086-recoverable-autosave-after-mixed-file-outcomes.md",
+    "ideas/R087-external-file-edits-without-losing-the-analyst-s-draft.md",
+    "ideas/R088-bind-cached-database-snapshots-to-their-source-definition.md",
+    "ideas/R089-calibrate-snapshot-byte-limits-against-actual-resource-cost.md",
+    "ideas/R090-database-cancellation-before-and-between-result-batches.md",
+    "ideas/R091-local-database-readiness-with-optional-native-dependencies.md",
+    "ideas/R092-when-wider-snapshots-change-the-row-json-transport-decision.md",
+    "ideas/R093-discard-stale-worker-computation-as-well-as-stale-results.md",
+    "ideas/R094-performance-budgets-for-complete-analytical-interactions.md",
+    "ideas/R095-bound-retained-memory-during-repeated-dataset-changes.md",
+    "ideas/R096-exact-point-picking-when-scatter-clouds-become-dense.md",
+    "ideas/R097-small-analytical-invariants-across-complete-user-workflows.md",
+    "ideas/R098-small-reproducible-cases-that-preserve-analytical-failures.md",
+    "ideas/R099-checkpoint-representation-for-fast-and-recoverable-browser-history.md",
+    "ideas/R100-published-package-behavior-in-small-real-consumer-projects.md",
+    "manifest.json",
+    "sources.md"
+  ],
+  "per_idea": [
+    {
+      "id": "R001",
+      "path": "ideas/R001-regression-conditioning.md",
+      "priority": 4,
+      "prose_word_count": 330,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [79, 78, 89, 84],
+      "sha256": "caed13776289cae6d2530134f8a5735e2c56c303b2b934e125d6f69ccfb25a9b"
+    },
+    {
+      "id": "R002",
+      "path": "ideas/R002-residual-diagnostics.md",
+      "priority": 62,
+      "prose_word_count": 333,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [82, 78, 91, 82],
+      "sha256": "5ef98ff06f44f3ed2bc7b840c8580b2bc463217d5ba7b02c9d8474eb9a0d55d7"
+    },
+    {
+      "id": "R003",
+      "path": "ideas/R003-fit-sensitivity.md",
+      "priority": 63,
+      "prose_word_count": 319,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [70, 80, 87, 82],
+      "sha256": "6895c279e0937925fae5a5b1d2a2353f697259889fb7090fc725636ed1af500d"
+    },
+    {
+      "id": "R004",
+      "path": "ideas/R004-covariance-ellipse.md",
+      "priority": 64,
+      "prose_word_count": 325,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [73, 79, 88, 85],
+      "sha256": "c3fef94e6ef1601eb0c80a7f1f07c9545911e644aefabfc414e8e753e807895d"
+    },
+    {
+      "id": "R005",
+      "path": "ideas/R005-rank-correlation.md",
+      "priority": 65,
+      "prose_word_count": 307,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [69, 77, 82, 79],
+      "sha256": "c91c58213533d8ea648d9d825f8acbacd4f188a05032d1f505c24882bb629c1b"
+    },
+    {
+      "id": "R006",
+      "path": "ideas/R006-matrix-populations.md",
+      "priority": 34,
+      "prose_word_count": 324,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [72, 78, 91, 83],
+      "sha256": "3461530e8f23bc027cf947cb93564a97299b6da78ce5cc2ba92d0effc6a2250b"
+    },
+    {
+      "id": "R007",
+      "path": "ideas/R007-density-sensitivity.md",
+      "priority": 61,
+      "prose_word_count": 327,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [78, 75, 89, 85],
+      "sha256": "f120e1d20e81e2bacae8217d55d06326cf9b2872f141b74c912b80efde7f0eea"
+    },
+    {
+      "id": "R008",
+      "path": "ideas/R008-engineering-bin-boundaries.md",
+      "priority": 51,
+      "prose_word_count": 331,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [78, 83, 86, 84],
+      "sha256": "f17f257c7a22f1c692f7be6a396cf28cba655425456dd4ec4cfcc3fbc2893125"
+    },
+    {
+      "id": "R009",
+      "path": "ideas/R009-weighted-ecdf.md",
+      "priority": 92,
+      "prose_word_count": 335,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [79, 80, 94, 82],
+      "sha256": "c83c0c039d2d1f61736c90090da80cc2c40ff33f2d7d68119ddd62a76b5d7f41"
+    },
+    {
+      "id": "R010",
+      "path": "ideas/R010-pooled-group-reversals.md",
+      "priority": 93,
+      "prose_word_count": 323,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [68, 79, 91, 85],
+      "sha256": "74f0d9010dd55f2943c426a6b895899463d9760c030b1a94a7c113fe6c3527fe"
+    },
+    {
+      "id": "R011",
+      "path": "ideas/R011-retention-observation-cutoff.md",
+      "priority": 8,
+      "prose_word_count": 330,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [74, 77, 95, 84],
+      "sha256": "684f017af16b96145196765960e56fe1e387d1eefbe03d99b61a7bc486d6993b"
+    },
+    {
+      "id": "R012",
+      "path": "ideas/R012-funnel-ambiguous-order.md",
+      "priority": 30,
+      "prose_word_count": 341,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [77, 82, 95, 87],
+      "sha256": "f2985be1a28537f06f909c9bc03a00b4e9ebfe6cc3bcb0445878a54e3f6ac206"
+    },
+    {
+      "id": "R013",
+      "path": "ideas/R013-timeline-concurrency.md",
+      "priority": 94,
+      "prose_word_count": 330,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [74, 78, 88, 90],
+      "sha256": "c06ae3305ffc63d0703359a415251ae9e8efd86fe1a90210aadb282c69dcfd10"
+    },
+    {
+      "id": "R014",
+      "path": "ideas/R014-explicit-edge-selection.md",
+      "priority": 99,
+      "prose_word_count": 336,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [80, 83, 88, 85],
+      "sha256": "89ccee8421ec590f301be929ef6a4560e7ca14d368e2055ce531e7451efc8ba9"
+    },
+    {
+      "id": "R015",
+      "path": "ideas/R015-sankey-important-flows.md",
+      "priority": 95,
+      "prose_word_count": 346,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [84, 80, 92, 90],
+      "sha256": "02262fa648186bb395ddc90ea79304cef46c6ca77c6352073f9ea91c39d2ca29"
+    },
+    {
+      "id": "R016",
+      "path": "ideas/R016-regional-rate-denominators.md",
+      "priority": 66,
+      "prose_word_count": 331,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [76, 85, 86, 84],
+      "sha256": "1350525b57685e175209b428d005ff79ff853e808066c5d66505a87d7aa58999"
+    },
+    {
+      "id": "R017",
+      "path": "ideas/R017-waterfall-state-reconciliation.md",
+      "priority": 39,
+      "prose_word_count": 332,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [77, 84, 86, 85],
+      "sha256": "c4f3b0fcbc9e83132bb86c9886e6c041e994a1755427a1d0600968d51e548019"
+    },
+    {
+      "id": "R018",
+      "path": "ideas/R018-quantile-conventions.md",
+      "priority": 29,
+      "prose_word_count": 335,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [79, 84, 87, 85],
+      "sha256": "4a50eb87d29c9105572ab0b531ab877b4419d5ce5c2ffb1b7961ed94d8846773"
+    },
+    {
+      "id": "R019",
+      "path": "ideas/R019-composition-scale-envelopes.md",
+      "priority": 33,
+      "prose_word_count": 332,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [80, 76, 93, 83],
+      "sha256": "baa9fae7c22123790659e49d0d528cdf6c2130159de059cd3e2200e30201f2ae"
+    },
+    {
+      "id": "R020",
+      "path": "ideas/R020-supplied-band-meaning.md",
+      "priority": 46,
+      "prose_word_count": 346,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [82, 85, 88, 91],
+      "sha256": "4a7aec4973677527a08f55019a6d1e2f1d6994c573472f704fa4d26ab8e15929"
+    },
+    {
+      "id": "R021",
+      "path": "ideas/R021-path-gradient-semantics.md",
+      "priority": 100,
+      "prose_word_count": 330,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [77, 79, 93, 81],
+      "sha256": "f15920e22f69c7292d533938d882cdea7aee80654e1f172b444e58f76802cb0d"
+    },
+    {
+      "id": "R022",
+      "path": "ideas/R022-composition-population-windows.md",
+      "priority": 45,
+      "prose_word_count": 342,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [78, 87, 89, 88],
+      "sha256": "97fedd9bb1611d3f279d4afba5ed2efc7a5ea1979e7c0c9978638d60520f7137"
+    },
+    {
+      "id": "R023",
+      "path": "ideas/R023-composition-label-budget.md",
+      "priority": 96,
+      "prose_word_count": 333,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [78, 82, 89, 84],
+      "sha256": "f91f882b4f54084b224cd84bd30e533158a13bd686864e8323d9e6e20a25b6db"
+    },
+    {
+      "id": "R024",
+      "path": "ideas/R024-shared-reducer-adapters.md",
+      "priority": 16,
+      "prose_word_count": 333,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [74, 83, 89, 87],
+      "sha256": "bc43fa93764445b8dcea878be8ac7f06577e80e2fe7859b920d7677e4d8668fc"
+    },
+    {
+      "id": "R025",
+      "path": "ideas/R025-three-dimensional-value.md",
+      "priority": 74,
+      "prose_word_count": 336,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [70, 85, 92, 89],
+      "sha256": "b8fbed26668bff8632a1593587b785edfd530b1dbe3dc5ad5a81e52ac4673651"
+    },
+    {
+      "id": "R026",
+      "path": "ideas/R026-missing-state-accounting.md",
+      "priority": 1,
+      "prose_word_count": 311,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [73, 80, 76, 82],
+      "sha256": "cfac6110e0637ee8dd943a5ef5603af0ffe87c9f248cbeb1231e1315451f7d44"
+    },
+    {
+      "id": "R027",
+      "path": "ideas/R027-joint-missingness-triage.md",
+      "priority": 49,
+      "prose_word_count": 310,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [71, 78, 79, 82],
+      "sha256": "08a28e4923ad4a88314231ec7641827d2c6011395a94b85520afb070a6653936"
+    },
+    {
+      "id": "R028",
+      "path": "ideas/R028-expected-record-reconciliation.md",
+      "priority": 48,
+      "prose_word_count": 308,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [71, 79, 78, 80],
+      "sha256": "8366f17a785f90139f9cc9b2a71068e06643dae2ffd81a1a4d91daded292f889"
+    },
+    {
+      "id": "R029",
+      "path": "ideas/R029-inference-stability.md",
+      "priority": 26,
+      "prose_word_count": 299,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [69, 71, 81, 78],
+      "sha256": "2cd6d5c0f340ac1d34807dfd52030d8ff303b614558378eebc1a2a265c592102"
+    },
+    {
+      "id": "R030",
+      "path": "ideas/R030-locale-numeric-conversion.md",
+      "priority": 72,
+      "prose_word_count": 307,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [64, 75, 81, 87],
+      "sha256": "907bbf72ae7c5ffe76cb712c9daaaa71a39bc4fd3a905c5be78fa9d4b7bdce4e"
+    },
+    {
+      "id": "R031",
+      "path": "ideas/R031-date-ambiguity-preview.md",
+      "priority": 7,
+      "prose_word_count": 310,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [68, 78, 75, 89],
+      "sha256": "7a6f81dae13c65130ffc786604fd587d0bb806ce51bffaafd55a02de232e24ea"
+    },
+    {
+      "id": "R032",
+      "path": "ideas/R032-temporal-meaning-contract.md",
+      "priority": 69,
+      "prose_word_count": 309,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [78, 78, 77, 76],
+      "sha256": "9f528495acb39a373408709c2dfe7e4be21d117fdfd305f0be2d7001a1e09fd9"
+    },
+    {
+      "id": "R033",
+      "path": "ideas/R033-date-boundary-validity.md",
+      "priority": 32,
+      "prose_word_count": 318,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [77, 75, 81, 85],
+      "sha256": "cf62e27420eb9a5f0b693f33d8a402cf1f6484b20812ba5206f7e915a1f6eb0e"
+    },
+    {
+      "id": "R034",
+      "path": "ideas/R034-calendar-window-stepping.md",
+      "priority": 70,
+      "prose_word_count": 309,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [70, 83, 76, 80],
+      "sha256": "62185526f01c975bcd4f406a9d1f7349aed8d23c2cc1dd7ab28016124d750a68"
+    },
+    {
+      "id": "R035",
+      "path": "ideas/R035-rolling-contributor-semantics.md",
+      "priority": 43,
+      "prose_word_count": 303,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [70, 73, 79, 81],
+      "sha256": "6266ae5126ffa5eb12b97d235adc4630145b1a2080bc3f55b041f18bc9a45eb3"
+    },
+    {
+      "id": "R036",
+      "path": "ideas/R036-quantity-unit-semantics.md",
+      "priority": 91,
+      "prose_word_count": 306,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [77, 75, 75, 79],
+      "sha256": "9f7be18209f8635c3e28a734c202937d5ad1289804ba0792307db4cac31867ca"
+    },
+    {
+      "id": "R037",
+      "path": "ideas/R037-decimal-precision-contract.md",
+      "priority": 90,
+      "prose_word_count": 317,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [75, 79, 81, 82],
+      "sha256": "daef5d2206fe287869a46b6c137c74e6848bbd0836fb5635e46836d6ad6626aa"
+    },
+    {
+      "id": "R038",
+      "path": "ideas/R038-category-normalization.md",
+      "priority": 73,
+      "prose_word_count": 307,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [68, 80, 78, 81],
+      "sha256": "611a447ce154a7402ff8ed7361fb31656095b0fd98ab4570f4e681c6d9226b47"
+    },
+    {
+      "id": "R039",
+      "path": "ideas/R039-duplicate-key-repair.md",
+      "priority": 53,
+      "prose_word_count": 310,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [75, 78, 76, 81],
+      "sha256": "96582d3cafac9986c3b7de5a28339bc72f5e2404375ae46732d43d8a011fbe65"
+    },
+    {
+      "id": "R040",
+      "path": "ideas/R040-expansion-cardinality-preflight.md",
+      "priority": 24,
+      "prose_word_count": 306,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [70, 79, 79, 78],
+      "sha256": "30a226486eea40340d3f5acc5ee49b6e6efc11af5a83486deff7c9503508aefa"
+    },
+    {
+      "id": "R041",
+      "path": "ideas/R041-join-key-preparation.md",
+      "priority": 71,
+      "prose_word_count": 311,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [72, 80, 78, 81],
+      "sha256": "702f16a13c678a28ee469a12566b3d62a7819b01f963f04b7d5a3d4ef390dc62"
+    },
+    {
+      "id": "R042",
+      "path": "ideas/R042-wide-long-reshape.md",
+      "priority": 75,
+      "prose_word_count": 314,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [77, 77, 79, 81],
+      "sha256": "436c73d90f10ba822f7ec4e40a0ffbbef8e027daab84bfbeb966a6f78b5cc8d3"
+    },
+    {
+      "id": "R043",
+      "path": "ideas/R043-entity-grain-parity.md",
+      "priority": 2,
+      "prose_word_count": 314,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [78, 76, 76, 84],
+      "sha256": "d7b167ad62d20cbc06e3e1ab559e6ad48b962ff16fdf618428d25bbb26f7ffde"
+    },
+    {
+      "id": "R044",
+      "path": "ideas/R044-calculation-error-propagation.md",
+      "priority": 25,
+      "prose_word_count": 315,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [71, 78, 82, 84],
+      "sha256": "8b8baa1893a6cf6490ded796b06bb06c2992c099f840751cc2d5e02911773574"
+    },
+    {
+      "id": "R045",
+      "path": "ideas/R045-scalar-function-names.md",
+      "priority": 56,
+      "prose_word_count": 311,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [73, 77, 76, 85],
+      "sha256": "b28254e155b0602ae7cac26e8f974818b1874cf34d900e4b479a866f2643529a"
+    },
+    {
+      "id": "R046",
+      "path": "ideas/R046-calculation-rename-contract.md",
+      "priority": 52,
+      "prose_word_count": 320,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [79, 79, 78, 84],
+      "sha256": "f9bda8d53b6ccce611d63714b8fbb6fe61b71c59a243f584b8741cab297e605a"
+    },
+    {
+      "id": "R047",
+      "path": "ideas/R047-conditional-truthiness.md",
+      "priority": 40,
+      "prose_word_count": 305,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [74, 70, 79, 82],
+      "sha256": "32d01e4470ce55fd1eb47f98967b4969cd78cd0aad0cfbd0a14dc2f7d22438f6"
+    },
+    {
+      "id": "R048",
+      "path": "ideas/R048-text-preparation-functions.md",
+      "priority": 77,
+      "prose_word_count": 316,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [75, 82, 80, 79],
+      "sha256": "f18a8bf2ba30335facc4233c7b2099a7dd6e87628746565c3fde6babc17db4be"
+    },
+    {
+      "id": "R049",
+      "path": "ideas/R049-ordered-difference-transforms.md",
+      "priority": 76,
+      "prose_word_count": 309,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [73, 79, 80, 77],
+      "sha256": "9baabf481c9b9c731452f7fe363dfd8075901490b35806aa4720e6bc3a747ab4"
+    },
+    {
+      "id": "R050",
+      "path": "ideas/R050-bounded-quality-assertions.md",
+      "priority": 78,
+      "prose_word_count": 322,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [73, 78, 83, 88],
+      "sha256": "d822600d319cd90f8d163c2c3650ce07f56d7e2cacc137a1ffd96f2bdfa6401d"
+    },
+    {
+      "id": "R051",
+      "path": "ideas/R051-filter-ownership.md",
+      "priority": 5,
+      "prose_word_count": 345,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [87, 81, 91, 86],
+      "sha256": "dc280f8285a1e4faa2b41ea917d968ec537b32f141a965d90f51e1e2ab4ed56b"
+    },
+    {
+      "id": "R052",
+      "path": "ideas/R052-empty-selection-recovery.md",
+      "priority": 50,
+      "prose_word_count": 348,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [85, 86, 87, 90],
+      "sha256": "7d548a5ec5f9028c83c9b41eff34e956b5d870e7d37d30b62ae9f50083b47c36"
+    },
+    {
+      "id": "R053",
+      "path": "ideas/R053-exact-tuple-selections.md",
+      "priority": 44,
+      "prose_word_count": 330,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [77, 84, 85, 84],
+      "sha256": "c84b36ff6b5fec3d4060c61c28f0a771e638775a3cc221adeacdc0f49800ede6"
+    },
+    {
+      "id": "R054",
+      "path": "ideas/R054-lasso-membership.md",
+      "priority": 18,
+      "prose_word_count": 353,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [79, 94, 92, 88],
+      "sha256": "478cc39ecbb95e2fbba983bcf2d48e56e76124b986634d4bd9a2df1824cf81a6"
+    },
+    {
+      "id": "R055",
+      "path": "ideas/R055-row-visibility-explanations.md",
+      "priority": 22,
+      "prose_word_count": 353,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [83, 88, 88, 94],
+      "sha256": "c5cef8678e1cccbf0567cfd9238067d1f640b1ba09eb16663cc6604149823ba1"
+    },
+    {
+      "id": "R056",
+      "path": "ideas/R056-contributor-set-comparison.md",
+      "priority": 14,
+      "prose_word_count": 342,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [80, 80, 96, 86],
+      "sha256": "8ebce21692a4b540a31e1ed9d47d1c23281e8985c445748c3207e053ce1bbeea"
+    },
+    {
+      "id": "R057",
+      "path": "ideas/R057-dense-scatter-keyboard.md",
+      "priority": 23,
+      "prose_word_count": 343,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [82, 84, 87, 90],
+      "sha256": "dfe4c62ad8688aea21ff0d6b54bd46f2d72d8a9ba9d4bc2414acdc5bbdb97b52"
+    },
+    {
+      "id": "R058",
+      "path": "ideas/R058-touch-trace-access.md",
+      "priority": 85,
+      "prose_word_count": 351,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [85, 83, 94, 89],
+      "sha256": "729cb8826c65b8e70b6be9afb5f706b65e0e7fac887f74af3d42efb839cf0707"
+    },
+    {
+      "id": "R059",
+      "path": "ideas/R059-nested-focus-ownership.md",
+      "priority": 12,
+      "prose_word_count": 343,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [78, 85, 91, 89],
+      "sha256": "eb7f905d79628e13abbac9dc1b51496e154a2eacf36d75c96240a8695a12e4f0"
+    },
+    {
+      "id": "R060",
+      "path": "ideas/R060-analytical-text-alternatives.md",
+      "priority": 38,
+      "prose_word_count": 350,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [87, 88, 87, 88],
+      "sha256": "e18039dbe7978b43368973a78cc63d9e3adc57a676266a9f07a4df0c78f78b78"
+    },
+    {
+      "id": "R061",
+      "path": "ideas/R061-noncolor-meaning.md",
+      "priority": 31,
+      "prose_word_count": 355,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [89, 85, 89, 92],
+      "sha256": "a35cb374a4c89b7fca5087626953881aeb8a64d8cfeeaf572cadc685a62ccffb"
+    },
+    {
+      "id": "R062",
+      "path": "ideas/R062-field-choice-simplification.md",
+      "priority": 79,
+      "prose_word_count": 348,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [82, 83, 89, 94],
+      "sha256": "d71465c279ce9e9aa1d5c7ed091abd41efa5767bdfdf9ba4dbbf2709ba28367e"
+    },
+    {
+      "id": "R063",
+      "path": "ideas/R063-narrow-analysis-reading.md",
+      "priority": 86,
+      "prose_word_count": 351,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [78, 95, 89, 89],
+      "sha256": "f85a90a17e2185499b9cb89d5d1170821fc00e9c7748f60385cd67a38b834e93"
+    },
+    {
+      "id": "R064",
+      "path": "ideas/R064-notebook-frozen-results.md",
+      "priority": 10,
+      "prose_word_count": 357,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [89, 82, 91, 95],
+      "sha256": "07ed10cce30fd63c01e854dd1cd3cfe1d5bcde8e4e8e22ef37b74c2ed3529a24"
+    },
+    {
+      "id": "R065",
+      "path": "ideas/R065-notebook-linked-scopes.md",
+      "priority": 82,
+      "prose_word_count": 354,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [83, 87, 92, 92],
+      "sha256": "b939bd6d2db4588c40537790b450f206a9cbcb8056fe684a93e63dc0075f33ac"
+    },
+    {
+      "id": "R066",
+      "path": "ideas/R066-notebook-definition-navigation.md",
+      "priority": 83,
+      "prose_word_count": 361,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [86, 88, 96, 91],
+      "sha256": "3450ef79db64b2806f4c06e747cd0bf9c0a5ecad868343ced7ab258ee434f807"
+    },
+    {
+      "id": "R067",
+      "path": "ideas/R067-single-narrative-binding.md",
+      "priority": 54,
+      "prose_word_count": 352,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [83, 92, 88, 89],
+      "sha256": "09ab7f7496b66f242bee60caea1ed48328fb951b0bf192edb16ef86b30ed1dc8"
+    },
+    {
+      "id": "R068",
+      "path": "ideas/R068-narrative-claim-scope.md",
+      "priority": 84,
+      "prose_word_count": 356,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [90, 85, 88, 93],
+      "sha256": "b39c203b817d08b979dd1cf2abed6120de3d491f3999f8f8e701d588b8e6b26e"
+    },
+    {
+      "id": "R069",
+      "path": "ideas/R069-detail-filter-inheritance.md",
+      "priority": 55,
+      "prose_word_count": 336,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [78, 81, 85, 92],
+      "sha256": "12e5a6e7a66dce26da38e9da118038a82a731dc55d239f0542211a5a94747a7c"
+    },
+    {
+      "id": "R070",
+      "path": "ideas/R070-gesture-discoverability.md",
+      "priority": 58,
+      "prose_word_count": 340,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [75, 89, 88, 88],
+      "sha256": "a3e072f4d3ad591e4c8a1ab04d09405bfca1b0b671da7b3d6ff3a266f1bdb387"
+    },
+    {
+      "id": "R071",
+      "path": "ideas/R071-task-based-doc-routing.md",
+      "priority": 81,
+      "prose_word_count": 348,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [82, 86, 87, 93],
+      "sha256": "ad5173128a8253dfd27454700f2fdbff4eb732a7265bcbb5a9ce926194cd6d2f"
+    },
+    {
+      "id": "R072",
+      "path": "ideas/R072-contextual-setting-help.md",
+      "priority": 80,
+      "prose_word_count": 359,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [88, 88, 88, 95],
+      "sha256": "8622de92af6ca130e478ca8f3bf0494486e6f1d8bf47d7edc203f1b6f19755cf"
+    },
+    {
+      "id": "R073",
+      "path": "ideas/R073-example-claim-challenges.md",
+      "priority": 9,
+      "prose_word_count": 347,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [83, 82, 90, 92],
+      "sha256": "d42f0736449d28f6d20db05605f389df9eeb6255c6c22629f5ea1e347c527d67"
+    },
+    {
+      "id": "R074",
+      "path": "ideas/R074-example-catalogue-simplification.md",
+      "priority": 57,
+      "prose_word_count": 347,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [82, 82, 92, 91],
+      "sha256": "f754654838ff3bd37bae458a13c3466aa0b598f84d13eb7dd3b944403a432f1f"
+    },
+    {
+      "id": "R075",
+      "path": "ideas/R075-applied-edit-explanations.md",
+      "priority": 98,
+      "prose_word_count": 356,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [85, 89, 88, 94],
+      "sha256": "60155865b5123b8eeed8fc1c98a82b0bf6b3fcfc3f5f17367d8ade86006658f9"
+    },
+    {
+      "id": "R076",
+      "path": "ideas/R076-canonical-settings-across-host-echo-and-restore.md",
+      "priority": 17,
+      "prose_word_count": 318,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [75, 74, 88, 81],
+      "sha256": "ee96d1ab7b5ec7f3d16ba8ab9c1889b26be222822cb50bdb3b2a32033552d5fa"
+    },
+    {
+      "id": "R077",
+      "path": "ideas/R077-selection-identity-when-source-rows-are-replaced.md",
+      "priority": 3,
+      "prose_word_count": 321,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [75, 78, 85, 83],
+      "sha256": "60ced8cd0b81d165d065d78ea3633eecf53025fd716e3323b527cda9db69b2ee"
+    },
+    {
+      "id": "R078",
+      "path": "ideas/R078-independent-workspace-ownership-for-dialogs-and-exports.md",
+      "priority": 11,
+      "prose_word_count": 321,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [75, 81, 85, 80],
+      "sha256": "e525f358a3795556558f07e0fb2d3085d4922a6c0f2747d6c4536a67a2ebfdc3"
+    },
+    {
+      "id": "R079",
+      "path": "ideas/R079-actionable-diagnostics-for-rejected-saved-analyses.md",
+      "priority": 27,
+      "prose_word_count": 319,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [75, 81, 87, 76],
+      "sha256": "86d8103bb4692331221dabf70c4948d35d075ba7387a1761978c710d20052d02"
+    },
+    {
+      "id": "R080",
+      "path": "ideas/R080-a-credible-selective-chart-integration-contract.md",
+      "priority": 87,
+      "prose_word_count": 317,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [76, 80, 83, 78],
+      "sha256": "edec7eadfcf4c28104da83e45ce1784390d3ecd17c81acf8c9df090bb64b73b8"
+    },
+    {
+      "id": "R081",
+      "path": "ideas/R081-headless-chart-images-through-a-minimal-existing-renderer.md",
+      "priority": 88,
+      "prose_word_count": 325,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [73, 82, 87, 83],
+      "sha256": "f281fa48832eb41b7859971e14dd4bd1b27d99967118d53124243007c2a558d5"
+    },
+    {
+      "id": "R082",
+      "path": "ideas/R082-cross-format-fidelity-through-the-full-analysis-lifecycle.md",
+      "priority": 19,
+      "prose_word_count": 321,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [74, 79, 89, 79],
+      "sha256": "53e408659663d28923a693eb308350e233da0345ae946f122f867533fa745608"
+    },
+    {
+      "id": "R083",
+      "path": "ideas/R083-cancellation-that-stops-expensive-file-preparation.md",
+      "priority": 47,
+      "prose_word_count": 322,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [75, 79, 90, 78],
+      "sha256": "4046ef7a7a079a56e5a8c5f2c67eeca5e6e9322a0c4ae65727b70e746bd2b0cd"
+    },
+    {
+      "id": "R084",
+      "path": "ideas/R084-an-explicit-analytical-contract-for-exported-csv.md",
+      "priority": 67,
+      "prose_word_count": 332,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [83, 79, 89, 81],
+      "sha256": "518058cb4e3babeaf81ef0de3d26fa8cf2409ca8db8bfc18483cc8d7d2801a4c"
+    },
+    {
+      "id": "R085",
+      "path": "ideas/R085-image-export-fidelity-under-fonts-and-mixed-rendering.md",
+      "priority": 42,
+      "prose_word_count": 330,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [76, 83, 89, 82],
+      "sha256": "9feb9bb422d65b552ad052e965de90a6759e27f0e6fa74394ba7e26a00e361ae"
+    },
+    {
+      "id": "R086",
+      "path": "ideas/R086-recoverable-autosave-after-mixed-file-outcomes.md",
+      "priority": 6,
+      "prose_word_count": 333,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [81, 86, 88, 78],
+      "sha256": "e05486790a97d85611d1b410bb01ae0cf222d09b6941d1bff6936c7480f7f76d"
+    },
+    {
+      "id": "R087",
+      "path": "ideas/R087-external-file-edits-without-losing-the-analyst-s-draft.md",
+      "priority": 35,
+      "prose_word_count": 335,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [83, 83, 86, 83],
+      "sha256": "db99af830ad909bdc3276164bbb3590fd47220b8ea51ba5928ac9e1f8ef7eac1"
+    },
+    {
+      "id": "R088",
+      "path": "ideas/R088-bind-cached-database-snapshots-to-their-source-definition.md",
+      "priority": 13,
+      "prose_word_count": 328,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [78, 84, 88, 78],
+      "sha256": "f3ffad6187bf288cfe44ba159f2a890f13b2cb55be10d75bcba4b63a7495e4e8"
+    },
+    {
+      "id": "R089",
+      "path": "ideas/R089-calibrate-snapshot-byte-limits-against-actual-resource-cost.md",
+      "priority": 36,
+      "prose_word_count": 330,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [77, 83, 88, 82],
+      "sha256": "d2aff900c4f0cf68c3fa291a6b239f6bae93fcf7f974e7cb79df414d691cfd6c"
+    },
+    {
+      "id": "R090",
+      "path": "ideas/R090-database-cancellation-before-and-between-result-batches.md",
+      "priority": 28,
+      "prose_word_count": 322,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [78, 79, 87, 78],
+      "sha256": "62fa2e74849b9bef19487209b964bf5b04732b50abef2492029ad481aa71749e"
+    },
+    {
+      "id": "R091",
+      "path": "ideas/R091-local-database-readiness-with-optional-native-dependencies.md",
+      "priority": 68,
+      "prose_word_count": 329,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [82, 80, 87, 80],
+      "sha256": "d05eaa151ff6e679d51dcb4c8dc9ce6b7096664ef8b071ad33294065995b451b"
+    },
+    {
+      "id": "R092",
+      "path": "ideas/R092-when-wider-snapshots-change-the-row-json-transport-decision.md",
+      "priority": 89,
+      "prose_word_count": 319,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [74, 77, 85, 83],
+      "sha256": "e7c29f8b4e57d780e48306516c65640b1aea98602a5bb4e38268aa8544885aed"
+    },
+    {
+      "id": "R093",
+      "path": "ideas/R093-discard-stale-worker-computation-as-well-as-stale-results.md",
+      "priority": 37,
+      "prose_word_count": 325,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [77, 82, 89, 77],
+      "sha256": "b2e5d9c9aa79947ebe4a370bd336b8efca3f46f7baa3de40f266900a77424cd7"
+    },
+    {
+      "id": "R094",
+      "path": "ideas/R094-performance-budgets-for-complete-analytical-interactions.md",
+      "priority": 21,
+      "prose_word_count": 331,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [80, 81, 90, 80],
+      "sha256": "27e120cbcd1ef19ff622e072397d2f7eeda6b631a0b827685417ca92befa189a"
+    },
+    {
+      "id": "R095",
+      "path": "ideas/R095-bound-retained-memory-during-repeated-dataset-changes.md",
+      "priority": 60,
+      "prose_word_count": 331,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [84, 81, 88, 78],
+      "sha256": "345c385668cb9f766d7be4cea0b8ba6860250484ecb226919dfc4aaad52a11c3"
+    },
+    {
+      "id": "R096",
+      "path": "ideas/R096-exact-point-picking-when-scatter-clouds-become-dense.md",
+      "priority": 59,
+      "prose_word_count": 333,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [82, 80, 86, 85],
+      "sha256": "9cff882c083a2aa4d5608351c7df312ca1815750e69543a129b2a16e8e34f92b"
+    },
+    {
+      "id": "R097",
+      "path": "ideas/R097-small-analytical-invariants-across-complete-user-workflows.md",
+      "priority": 20,
+      "prose_word_count": 326,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [80, 80, 84, 82],
+      "sha256": "1cd439273b1acf7dedc6dc1e65f2f89a44eb150bb9a55e57ed1b71b005f3c5c1"
+    },
+    {
+      "id": "R098",
+      "path": "ideas/R098-small-reproducible-cases-that-preserve-analytical-failures.md",
+      "priority": 97,
+      "prose_word_count": 340,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [84, 83, 88, 85],
+      "sha256": "9998e9c0ec2a781af4e81c52d1c497378b79efe66cd101a928b5809c2ce5821c"
+    },
+    {
+      "id": "R099",
+      "path": "ideas/R099-checkpoint-representation-for-fast-and-recoverable-browser-history.md",
+      "priority": 41,
+      "prose_word_count": 339,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [85, 88, 87, 79],
+      "sha256": "a1d4f09636c0ac15c9b399e11063e89c915dd46ac3178345e8087608f9f19a08"
+    },
+    {
+      "id": "R100",
+      "path": "ideas/R100-published-package-behavior-in-small-real-consumer-projects.md",
+      "priority": 15,
+      "prose_word_count": 338,
+      "paragraph_count": 4,
+      "paragraph_word_counts": [79, 81, 92, 86],
+      "sha256": "3be84775e87bb3be42f98ade37df5892bcff103eb2133e8e6b9e26f4be9f1fbc"
+    }
+  ],
+  "file_hashes": [
+    {
+      "path": "README.md",
+      "sha256": "ee4ce8410df3b017807f98c6d10f48a3419b34a26fa5061015faa19fab38b7ba",
+      "size_bytes": 41871
+    },
+    {
+      "path": "ideas.json",
+      "sha256": "99243be426cb75ce225885b82b55ff4a9507a12b8b4260a5b9d32b0329751cea",
+      "size_bytes": 235613
+    },
+    {
+      "path": "ideas/R001-regression-conditioning.md",
+      "sha256": "caed13776289cae6d2530134f8a5735e2c56c303b2b934e125d6f69ccfb25a9b",
+      "size_bytes": 3557
+    },
+    {
+      "path": "ideas/R002-residual-diagnostics.md",
+      "sha256": "5ef98ff06f44f3ed2bc7b840c8580b2bc463217d5ba7b02c9d8474eb9a0d55d7",
+      "size_bytes": 3517
+    },
+    {
+      "path": "ideas/R003-fit-sensitivity.md",
+      "sha256": "6895c279e0937925fae5a5b1d2a2353f697259889fb7090fc725636ed1af500d",
+      "size_bytes": 3049
+    },
+    {
+      "path": "ideas/R004-covariance-ellipse.md",
+      "sha256": "c3fef94e6ef1601eb0c80a7f1f07c9545911e644aefabfc414e8e753e807895d",
+      "size_bytes": 3196
+    },
+    {
+      "path": "ideas/R005-rank-correlation.md",
+      "sha256": "c91c58213533d8ea648d9d825f8acbacd4f188a05032d1f505c24882bb629c1b",
+      "size_bytes": 3447
+    },
+    {
+      "path": "ideas/R006-matrix-populations.md",
+      "sha256": "3461530e8f23bc027cf947cb93564a97299b6da78ce5cc2ba92d0effc6a2250b",
+      "size_bytes": 3305
+    },
+    {
+      "path": "ideas/R007-density-sensitivity.md",
+      "sha256": "f120e1d20e81e2bacae8217d55d06326cf9b2872f141b74c912b80efde7f0eea",
+      "size_bytes": 3445
+    },
+    {
+      "path": "ideas/R008-engineering-bin-boundaries.md",
+      "sha256": "f17f257c7a22f1c692f7be6a396cf28cba655425456dd4ec4cfcc3fbc2893125",
+      "size_bytes": 3162
+    },
+    {
+      "path": "ideas/R009-weighted-ecdf.md",
+      "sha256": "c83c0c039d2d1f61736c90090da80cc2c40ff33f2d7d68119ddd62a76b5d7f41",
+      "size_bytes": 3343
+    },
+    {
+      "path": "ideas/R010-pooled-group-reversals.md",
+      "sha256": "74f0d9010dd55f2943c426a6b895899463d9760c030b1a94a7c113fe6c3527fe",
+      "size_bytes": 3280
+    },
+    {
+      "path": "ideas/R011-retention-observation-cutoff.md",
+      "sha256": "684f017af16b96145196765960e56fe1e387d1eefbe03d99b61a7bc486d6993b",
+      "size_bytes": 3234
+    },
+    {
+      "path": "ideas/R012-funnel-ambiguous-order.md",
+      "sha256": "f2985be1a28537f06f909c9bc03a00b4e9ebfe6cc3bcb0445878a54e3f6ac206",
+      "size_bytes": 3245
+    },
+    {
+      "path": "ideas/R013-timeline-concurrency.md",
+      "sha256": "c06ae3305ffc63d0703359a415251ae9e8efd86fe1a90210aadb282c69dcfd10",
+      "size_bytes": 3393
+    },
+    {
+      "path": "ideas/R014-explicit-edge-selection.md",
+      "sha256": "89ccee8421ec590f301be929ef6a4560e7ca14d368e2055ce531e7451efc8ba9",
+      "size_bytes": 3184
+    },
+    {
+      "path": "ideas/R015-sankey-important-flows.md",
+      "sha256": "02262fa648186bb395ddc90ea79304cef46c6ca77c6352073f9ea91c39d2ca29",
+      "size_bytes": 3161
+    },
+    {
+      "path": "ideas/R016-regional-rate-denominators.md",
+      "sha256": "1350525b57685e175209b428d005ff79ff853e808066c5d66505a87d7aa58999",
+      "size_bytes": 3236
+    },
+    {
+      "path": "ideas/R017-waterfall-state-reconciliation.md",
+      "sha256": "c4f3b0fcbc9e83132bb86c9886e6c041e994a1755427a1d0600968d51e548019",
+      "size_bytes": 3399
+    },
+    {
+      "path": "ideas/R018-quantile-conventions.md",
+      "sha256": "4a50eb87d29c9105572ab0b531ab877b4419d5ce5c2ffb1b7961ed94d8846773",
+      "size_bytes": 3576
+    },
+    {
+      "path": "ideas/R019-composition-scale-envelopes.md",
+      "sha256": "baa9fae7c22123790659e49d0d528cdf6c2130159de059cd3e2200e30201f2ae",
+      "size_bytes": 3564
+    },
+    {
+      "path": "ideas/R020-supplied-band-meaning.md",
+      "sha256": "4a7aec4973677527a08f55019a6d1e2f1d6994c573472f704fa4d26ab8e15929",
+      "size_bytes": 3417
+    },
+    {
+      "path": "ideas/R021-path-gradient-semantics.md",
+      "sha256": "f15920e22f69c7292d533938d882cdea7aee80654e1f172b444e58f76802cb0d",
+      "size_bytes": 3326
+    },
+    {
+      "path": "ideas/R022-composition-population-windows.md",
+      "sha256": "97fedd9bb1611d3f279d4afba5ed2efc7a5ea1979e7c0c9978638d60520f7137",
+      "size_bytes": 3532
+    },
+    {
+      "path": "ideas/R023-composition-label-budget.md",
+      "sha256": "f91f882b4f54084b224cd84bd30e533158a13bd686864e8323d9e6e20a25b6db",
+      "size_bytes": 3195
+    },
+    {
+      "path": "ideas/R024-shared-reducer-adapters.md",
+      "sha256": "bc43fa93764445b8dcea878be8ac7f06577e80e2fe7859b920d7677e4d8668fc",
+      "size_bytes": 3690
+    },
+    {
+      "path": "ideas/R025-three-dimensional-value.md",
+      "sha256": "b8fbed26668bff8632a1593587b785edfd530b1dbe3dc5ad5a81e52ac4673651",
+      "size_bytes": 3659
+    },
+    {
+      "path": "ideas/R026-missing-state-accounting.md",
+      "sha256": "cfac6110e0637ee8dd943a5ef5603af0ffe87c9f248cbeb1231e1315451f7d44",
+      "size_bytes": 3372
+    },
+    {
+      "path": "ideas/R027-joint-missingness-triage.md",
+      "sha256": "08a28e4923ad4a88314231ec7641827d2c6011395a94b85520afb070a6653936",
+      "size_bytes": 2978
+    },
+    {
+      "path": "ideas/R028-expected-record-reconciliation.md",
+      "sha256": "8366f17a785f90139f9cc9b2a71068e06643dae2ffd81a1a4d91daded292f889",
+      "size_bytes": 3167
+    },
+    {
+      "path": "ideas/R029-inference-stability.md",
+      "sha256": "2cd6d5c0f340ac1d34807dfd52030d8ff303b614558378eebc1a2a265c592102",
+      "size_bytes": 3185
+    },
+    {
+      "path": "ideas/R030-locale-numeric-conversion.md",
+      "sha256": "907bbf72ae7c5ffe76cb712c9daaaa71a39bc4fd3a905c5be78fa9d4b7bdce4e",
+      "size_bytes": 3169
+    },
+    {
+      "path": "ideas/R031-date-ambiguity-preview.md",
+      "sha256": "7a6f81dae13c65130ffc786604fd587d0bb806ce51bffaafd55a02de232e24ea",
+      "size_bytes": 3091
+    },
+    {
+      "path": "ideas/R032-temporal-meaning-contract.md",
+      "sha256": "9f528495acb39a373408709c2dfe7e4be21d117fdfd305f0be2d7001a1e09fd9",
+      "size_bytes": 3215
+    },
+    {
+      "path": "ideas/R033-date-boundary-validity.md",
+      "sha256": "cf62e27420eb9a5f0b693f33d8a402cf1f6484b20812ba5206f7e915a1f6eb0e",
+      "size_bytes": 3260
+    },
+    {
+      "path": "ideas/R034-calendar-window-stepping.md",
+      "sha256": "62185526f01c975bcd4f406a9d1f7349aed8d23c2cc1dd7ab28016124d750a68",
+      "size_bytes": 3065
+    },
+    {
+      "path": "ideas/R035-rolling-contributor-semantics.md",
+      "sha256": "6266ae5126ffa5eb12b97d235adc4630145b1a2080bc3f55b041f18bc9a45eb3",
+      "size_bytes": 3204
+    },
+    {
+      "path": "ideas/R036-quantity-unit-semantics.md",
+      "sha256": "9f7be18209f8635c3e28a734c202937d5ad1289804ba0792307db4cac31867ca",
+      "size_bytes": 3128
+    },
+    {
+      "path": "ideas/R037-decimal-precision-contract.md",
+      "sha256": "daef5d2206fe287869a46b6c137c74e6848bbd0836fb5635e46836d6ad6626aa",
+      "size_bytes": 3455
+    },
+    {
+      "path": "ideas/R038-category-normalization.md",
+      "sha256": "611a447ce154a7402ff8ed7361fb31656095b0fd98ab4570f4e681c6d9226b47",
+      "size_bytes": 3153
+    },
+    {
+      "path": "ideas/R039-duplicate-key-repair.md",
+      "sha256": "96582d3cafac9986c3b7de5a28339bc72f5e2404375ae46732d43d8a011fbe65",
+      "size_bytes": 3172
+    },
+    {
+      "path": "ideas/R040-expansion-cardinality-preflight.md",
+      "sha256": "30a226486eea40340d3f5acc5ee49b6e6efc11af5a83486deff7c9503508aefa",
+      "size_bytes": 3121
+    },
+    {
+      "path": "ideas/R041-join-key-preparation.md",
+      "sha256": "702f16a13c678a28ee469a12566b3d62a7819b01f963f04b7d5a3d4ef390dc62",
+      "size_bytes": 3184
+    },
+    {
+      "path": "ideas/R042-wide-long-reshape.md",
+      "sha256": "436c73d90f10ba822f7ec4e40a0ffbbef8e027daab84bfbeb966a6f78b5cc8d3",
+      "size_bytes": 3121
+    },
+    {
+      "path": "ideas/R043-entity-grain-parity.md",
+      "sha256": "d7b167ad62d20cbc06e3e1ab559e6ad48b962ff16fdf618428d25bbb26f7ffde",
+      "size_bytes": 3491
+    },
+    {
+      "path": "ideas/R044-calculation-error-propagation.md",
+      "sha256": "8b8baa1893a6cf6490ded796b06bb06c2992c099f840751cc2d5e02911773574",
+      "size_bytes": 3117
+    },
+    {
+      "path": "ideas/R045-scalar-function-names.md",
+      "sha256": "b28254e155b0602ae7cac26e8f974818b1874cf34d900e4b479a866f2643529a",
+      "size_bytes": 3112
+    },
+    {
+      "path": "ideas/R046-calculation-rename-contract.md",
+      "sha256": "f9bda8d53b6ccce611d63714b8fbb6fe61b71c59a243f584b8741cab297e605a",
+      "size_bytes": 3200
+    },
+    {
+      "path": "ideas/R047-conditional-truthiness.md",
+      "sha256": "32d01e4470ce55fd1eb47f98967b4969cd78cd0aad0cfbd0a14dc2f7d22438f6",
+      "size_bytes": 3298
+    },
+    {
+      "path": "ideas/R048-text-preparation-functions.md",
+      "sha256": "f18a8bf2ba30335facc4233c7b2099a7dd6e87628746565c3fde6babc17db4be",
+      "size_bytes": 3207
+    },
+    {
+      "path": "ideas/R049-ordered-difference-transforms.md",
+      "sha256": "9baabf481c9b9c731452f7fe363dfd8075901490b35806aa4720e6bc3a747ab4",
+      "size_bytes": 3186
+    },
+    {
+      "path": "ideas/R050-bounded-quality-assertions.md",
+      "sha256": "d822600d319cd90f8d163c2c3650ce07f56d7e2cacc137a1ffd96f2bdfa6401d",
+      "size_bytes": 3210
+    },
+    {
+      "path": "ideas/R051-filter-ownership.md",
+      "sha256": "dc280f8285a1e4faa2b41ea917d968ec537b32f141a965d90f51e1e2ab4ed56b",
+      "size_bytes": 3365
+    },
+    {
+      "path": "ideas/R052-empty-selection-recovery.md",
+      "sha256": "7d548a5ec5f9028c83c9b41eff34e956b5d870e7d37d30b62ae9f50083b47c36",
+      "size_bytes": 3364
+    },
+    {
+      "path": "ideas/R053-exact-tuple-selections.md",
+      "sha256": "c84b36ff6b5fec3d4060c61c28f0a771e638775a3cc221adeacdc0f49800ede6",
+      "size_bytes": 3427
+    },
+    {
+      "path": "ideas/R054-lasso-membership.md",
+      "sha256": "478cc39ecbb95e2fbba983bcf2d48e56e76124b986634d4bd9a2df1824cf81a6",
+      "size_bytes": 3493
+    },
+    {
+      "path": "ideas/R055-row-visibility-explanations.md",
+      "sha256": "c5cef8678e1cccbf0567cfd9238067d1f640b1ba09eb16663cc6604149823ba1",
+      "size_bytes": 3512
+    },
+    {
+      "path": "ideas/R056-contributor-set-comparison.md",
+      "sha256": "8ebce21692a4b540a31e1ed9d47d1c23281e8985c445748c3207e053ce1bbeea",
+      "size_bytes": 3292
+    },
+    {
+      "path": "ideas/R057-dense-scatter-keyboard.md",
+      "sha256": "dfe4c62ad8688aea21ff0d6b54bd46f2d72d8a9ba9d4bc2414acdc5bbdb97b52",
+      "size_bytes": 3189
+    },
+    {
+      "path": "ideas/R058-touch-trace-access.md",
+      "sha256": "729cb8826c65b8e70b6be9afb5f706b65e0e7fac887f74af3d42efb839cf0707",
+      "size_bytes": 3586
+    },
+    {
+      "path": "ideas/R059-nested-focus-ownership.md",
+      "sha256": "eb7f905d79628e13abbac9dc1b51496e154a2eacf36d75c96240a8695a12e4f0",
+      "size_bytes": 3531
+    },
+    {
+      "path": "ideas/R060-analytical-text-alternatives.md",
+      "sha256": "e18039dbe7978b43368973a78cc63d9e3adc57a676266a9f07a4df0c78f78b78",
+      "size_bytes": 3644
+    },
+    {
+      "path": "ideas/R061-noncolor-meaning.md",
+      "sha256": "a35cb374a4c89b7fca5087626953881aeb8a64d8cfeeaf572cadc685a62ccffb",
+      "size_bytes": 3497
+    },
+    {
+      "path": "ideas/R062-field-choice-simplification.md",
+      "sha256": "d71465c279ce9e9aa1d5c7ed091abd41efa5767bdfdf9ba4dbbf2709ba28367e",
+      "size_bytes": 3504
+    },
+    {
+      "path": "ideas/R063-narrow-analysis-reading.md",
+      "sha256": "f85a90a17e2185499b9cb89d5d1170821fc00e9c7748f60385cd67a38b834e93",
+      "size_bytes": 3258
+    },
+    {
+      "path": "ideas/R064-notebook-frozen-results.md",
+      "sha256": "07ed10cce30fd63c01e854dd1cd3cfe1d5bcde8e4e8e22ef37b74c2ed3529a24",
+      "size_bytes": 3620
+    },
+    {
+      "path": "ideas/R065-notebook-linked-scopes.md",
+      "sha256": "b939bd6d2db4588c40537790b450f206a9cbcb8056fe684a93e63dc0075f33ac",
+      "size_bytes": 3535
+    },
+    {
+      "path": "ideas/R066-notebook-definition-navigation.md",
+      "sha256": "3450ef79db64b2806f4c06e747cd0bf9c0a5ecad868343ced7ab258ee434f807",
+      "size_bytes": 3640
+    },
+    {
+      "path": "ideas/R067-single-narrative-binding.md",
+      "sha256": "09ab7f7496b66f242bee60caea1ed48328fb951b0bf192edb16ef86b30ed1dc8",
+      "size_bytes": 3504
+    },
+    {
+      "path": "ideas/R068-narrative-claim-scope.md",
+      "sha256": "b39c203b817d08b979dd1cf2abed6120de3d491f3999f8f8e701d588b8e6b26e",
+      "size_bytes": 3573
+    },
+    {
+      "path": "ideas/R069-detail-filter-inheritance.md",
+      "sha256": "12e5a6e7a66dce26da38e9da118038a82a731dc55d239f0542211a5a94747a7c",
+      "size_bytes": 3498
+    },
+    {
+      "path": "ideas/R070-gesture-discoverability.md",
+      "sha256": "a3e072f4d3ad591e4c8a1ab04d09405bfca1b0b671da7b3d6ff3a266f1bdb387",
+      "size_bytes": 3442
+    },
+    {
+      "path": "ideas/R071-task-based-doc-routing.md",
+      "sha256": "ad5173128a8253dfd27454700f2fdbff4eb732a7265bcbb5a9ce926194cd6d2f",
+      "size_bytes": 3370
+    },
+    {
+      "path": "ideas/R072-contextual-setting-help.md",
+      "sha256": "8622de92af6ca130e478ca8f3bf0494486e6f1d8bf47d7edc203f1b6f19755cf",
+      "size_bytes": 3645
+    },
+    {
+      "path": "ideas/R073-example-claim-challenges.md",
+      "sha256": "d42f0736449d28f6d20db05605f389df9eeb6255c6c22629f5ea1e347c527d67",
+      "size_bytes": 3570
+    },
+    {
+      "path": "ideas/R074-example-catalogue-simplification.md",
+      "sha256": "f754654838ff3bd37bae458a13c3466aa0b598f84d13eb7dd3b944403a432f1f",
+      "size_bytes": 3427
+    },
+    {
+      "path": "ideas/R075-applied-edit-explanations.md",
+      "sha256": "60155865b5123b8eeed8fc1c98a82b0bf6b3fcfc3f5f17367d8ade86006658f9",
+      "size_bytes": 3553
+    },
+    {
+      "path": "ideas/R076-canonical-settings-across-host-echo-and-restore.md",
+      "sha256": "ee96d1ab7b5ec7f3d16ba8ab9c1889b26be222822cb50bdb3b2a32033552d5fa",
+      "size_bytes": 3378
+    },
+    {
+      "path": "ideas/R077-selection-identity-when-source-rows-are-replaced.md",
+      "sha256": "60ced8cd0b81d165d065d78ea3633eecf53025fd716e3323b527cda9db69b2ee",
+      "size_bytes": 3615
+    },
+    {
+      "path": "ideas/R078-independent-workspace-ownership-for-dialogs-and-exports.md",
+      "sha256": "e525f358a3795556558f07e0fb2d3085d4922a6c0f2747d6c4536a67a2ebfdc3",
+      "size_bytes": 3296
+    },
+    {
+      "path": "ideas/R079-actionable-diagnostics-for-rejected-saved-analyses.md",
+      "sha256": "86d8103bb4692331221dabf70c4948d35d075ba7387a1761978c710d20052d02",
+      "size_bytes": 3345
+    },
+    {
+      "path": "ideas/R080-a-credible-selective-chart-integration-contract.md",
+      "sha256": "edec7eadfcf4c28104da83e45ce1784390d3ecd17c81acf8c9df090bb64b73b8",
+      "size_bytes": 3264
+    },
+    {
+      "path": "ideas/R081-headless-chart-images-through-a-minimal-existing-renderer.md",
+      "sha256": "f281fa48832eb41b7859971e14dd4bd1b27d99967118d53124243007c2a558d5",
+      "size_bytes": 3520
+    },
+    {
+      "path": "ideas/R082-cross-format-fidelity-through-the-full-analysis-lifecycle.md",
+      "sha256": "53e408659663d28923a693eb308350e233da0345ae946f122f867533fa745608",
+      "size_bytes": 3435
+    },
+    {
+      "path": "ideas/R083-cancellation-that-stops-expensive-file-preparation.md",
+      "sha256": "4046ef7a7a079a56e5a8c5f2c67eeca5e6e9322a0c4ae65727b70e746bd2b0cd",
+      "size_bytes": 3240
+    },
+    {
+      "path": "ideas/R084-an-explicit-analytical-contract-for-exported-csv.md",
+      "sha256": "518058cb4e3babeaf81ef0de3d26fa8cf2409ca8db8bfc18483cc8d7d2801a4c",
+      "size_bytes": 3496
+    },
+    {
+      "path": "ideas/R085-image-export-fidelity-under-fonts-and-mixed-rendering.md",
+      "sha256": "9feb9bb422d65b552ad052e965de90a6759e27f0e6fa74394ba7e26a00e361ae",
+      "size_bytes": 3451
+    },
+    {
+      "path": "ideas/R086-recoverable-autosave-after-mixed-file-outcomes.md",
+      "sha256": "e05486790a97d85611d1b410bb01ae0cf222d09b6941d1bff6936c7480f7f76d",
+      "size_bytes": 3369
+    },
+    {
+      "path": "ideas/R087-external-file-edits-without-losing-the-analyst-s-draft.md",
+      "sha256": "db99af830ad909bdc3276164bbb3590fd47220b8ea51ba5928ac9e1f8ef7eac1",
+      "size_bytes": 3575
+    },
+    {
+      "path": "ideas/R088-bind-cached-database-snapshots-to-their-source-definition.md",
+      "sha256": "f3ffad6187bf288cfe44ba159f2a890f13b2cb55be10d75bcba4b63a7495e4e8",
+      "size_bytes": 3548
+    },
+    {
+      "path": "ideas/R089-calibrate-snapshot-byte-limits-against-actual-resource-cost.md",
+      "sha256": "d2aff900c4f0cf68c3fa291a6b239f6bae93fcf7f974e7cb79df414d691cfd6c",
+      "size_bytes": 3553
+    },
+    {
+      "path": "ideas/R090-database-cancellation-before-and-between-result-batches.md",
+      "sha256": "62fa2e74849b9bef19487209b964bf5b04732b50abef2492029ad481aa71749e",
+      "size_bytes": 3511
+    },
+    {
+      "path": "ideas/R091-local-database-readiness-with-optional-native-dependencies.md",
+      "sha256": "d05eaa151ff6e679d51dcb4c8dc9ce6b7096664ef8b071ad33294065995b451b",
+      "size_bytes": 3488
+    },
+    {
+      "path": "ideas/R092-when-wider-snapshots-change-the-row-json-transport-decision.md",
+      "sha256": "e7c29f8b4e57d780e48306516c65640b1aea98602a5bb4e38268aa8544885aed",
+      "size_bytes": 3697
+    },
+    {
+      "path": "ideas/R093-discard-stale-worker-computation-as-well-as-stale-results.md",
+      "sha256": "b2e5d9c9aa79947ebe4a370bd336b8efca3f46f7baa3de40f266900a77424cd7",
+      "size_bytes": 3648
+    },
+    {
+      "path": "ideas/R094-performance-budgets-for-complete-analytical-interactions.md",
+      "sha256": "27e120cbcd1ef19ff622e072397d2f7eeda6b631a0b827685417ca92befa189a",
+      "size_bytes": 3456
+    },
+    {
+      "path": "ideas/R095-bound-retained-memory-during-repeated-dataset-changes.md",
+      "sha256": "345c385668cb9f766d7be4cea0b8ba6860250484ecb226919dfc4aaad52a11c3",
+      "size_bytes": 3629
+    },
+    {
+      "path": "ideas/R096-exact-point-picking-when-scatter-clouds-become-dense.md",
+      "sha256": "9cff882c083a2aa4d5608351c7df312ca1815750e69543a129b2a16e8e34f92b",
+      "size_bytes": 3626
+    },
+    {
+      "path": "ideas/R097-small-analytical-invariants-across-complete-user-workflows.md",
+      "sha256": "1cd439273b1acf7dedc6dc1e65f2f89a44eb150bb9a55e57ed1b71b005f3c5c1",
+      "size_bytes": 3774
+    },
+    {
+      "path": "ideas/R098-small-reproducible-cases-that-preserve-analytical-failures.md",
+      "sha256": "9998e9c0ec2a781af4e81c52d1c497378b79efe66cd101a928b5809c2ce5821c",
+      "size_bytes": 3784
+    },
+    {
+      "path": "ideas/R099-checkpoint-representation-for-fast-and-recoverable-browser-history.md",
+      "sha256": "a1d4f09636c0ac15c9b399e11063e89c915dd46ac3178345e8087608f9f19a08",
+      "size_bytes": 3967
+    },
+    {
+      "path": "ideas/R100-published-package-behavior-in-small-real-consumer-projects.md",
+      "sha256": "3be84775e87bb3be42f98ade37df5892bcff103eb2133e8e6b9e26f4be9f1fbc",
+      "size_bytes": 3556
+    },
+    {
+      "path": "sources.md",
+      "sha256": "8b8c286c42d86c8537e0b6992f07d6bd6f37aba1e1f70daef3ebdbdb0395c80c",
+      "size_bytes": 102462
+    }
+  ],
+  "hash_scope": "SHA-256 entries cover all payload files except manifest.json itself. The manifest lists itself but omits a self-hash. The ZIP is outside the payload and is validated by CRC, inventory, and byte agreement rather than a circular in-manifest archive hash.",
+  "checks_executed": [
+    {
+      "check": "repository_and_baseline_identity",
+      "status": "pass",
+      "evidence": "Packet manifest and read-only GitHub commit agree on byronwall/explorEDA and the requested SHA."
+    },
+    {
+      "check": "packet_sha256_integrity",
+      "status": "pass",
+      "evidence": "All 1,099 manifest-listed files rehashed with zero mismatches after artifact creation."
+    },
+    {
+      "check": "supplemental_git_blob_integrity",
+      "status": "pass",
+      "evidence": "All six supplemental exact-baseline files match their returned Git blob SHA-1 hashes; provenance is explicit."
+    },
+    {
+      "check": "exact_idea_id_set",
+      "status": "pass",
+      "evidence": "Exactly R001–R100, no omissions or duplicates."
+    },
+    {
+      "check": "unique_priority_permutation",
+      "status": "pass",
+      "evidence": "Exactly priorities 1–100, synchronized with document metadata and overview ranking."
+    },
+    {
+      "check": "index_schema_and_enums",
+      "status": "pass",
+      "evidence": "All 18 requested fields present in every record; kinds, candidate status, confidence, string content, and list fields checked."
+    },
+    {
+      "check": "document_paths_and_metadata",
+      "status": "pass",
+      "evidence": "Exactly 100 Markdown idea files; all index paths, titles, category, priority, kind, status, confidence, and baseline metadata match."
+    },
+    {
+      "check": "prose_word_and_paragraph_counts",
+      "status": "pass",
+      "evidence": "32,964 prose words; each idea 299–361 words and four substantive paragraphs; minimum paragraph 64 words."
+    },
+    {
+      "check": "literal_duplicate_screen",
+      "status": "pass",
+      "evidence": "No duplicate normalized title, research question, or complete prose paragraph."
+    },
+    {
+      "check": "repository_reference_existence",
+      "status": "pass",
+      "evidence": "All 183 unique evidence paths and 605 literal cited symbols/headings/test strings resolve; related intent paths also resolve."
+    },
+    {
+      "check": "dependency_resolution",
+      "status": "pass",
+      "evidence": "All dependency IDs resolve and no idea depends on itself; all 100 first studies intentionally have no hard prerequisite."
+    },
+    {
+      "check": "external_source_registration",
+      "status": "pass",
+      "evidence": "Exactly 18 unique HTTPS primary sources match the idea references, with recorded access dates and limited roles."
+    },
+    {
+      "check": "second_reader_and_global_distinctness_review",
+      "status": "pass",
+      "evidence": "All 100 complete briefs received cross-review; all index records and close-overlap boundaries received global review; 40 lexical-similarity pairs were screened."
+    },
+    {
+      "check": "intent_and_shipped_work_reconciliation",
+      "status": "pass",
+      "evidence": "All 34 intent briefs fully read; all 86 ranked intent artifacts covered. Essential overlap and shipped-state corrections were repaired and re-reviewed."
+    },
+    {
+      "check": "overview_and_source_ledger_links",
+      "status": "pass",
+      "evidence": "Complete 100-item catalogue, top-15 priority agreement, exact content-coverage counts, and internal Markdown targets checked."
+    },
+    {
+      "check": "manifest_counts_and_hashes",
+      "status": "pass",
+      "evidence": "Per-idea counts, generated-file list, and all 103 non-self payload SHA-256 values checked against actual files."
+    },
+    {
+      "check": "zip_inventory_crc_and_payload",
+      "status": "pass",
+      "evidence": "Exactly 104 expected entries; ZIP CRC check passed; every archived file matches the standalone payload bytes."
+    }
+  ],
+  "editorial_corrections_resolved": [
+    {
+      "id": "R014",
+      "resolution": "Replaced the repeated geometry proof with incident/induced/directional explicit-edge membership and accounting."
+    },
+    {
+      "id": "R015",
+      "resolution": "Acceptance requires conserved totals and policy-specific recoverable Other membership, not unchanged membership across competing policies."
+    },
+    {
+      "id": "R046",
+      "resolution": "Narrowed current rename-guard wording to the reference set actually enumerated."
+    },
+    {
+      "id": "R060",
+      "resolution": "Credited existing aggregateId grouped preview and its source row counts; extension scoped beyond that branch."
+    },
+    {
+      "id": "R096",
+      "resolution": "Replaced a shipped canvas transition with exact-point lookup and spatial-index cost research."
+    },
+    {
+      "id": "R097",
+      "resolution": "Corrected the cited identity test name to its exact source text."
+    },
+    {
+      "id": "R098",
+      "resolution": "Corrected sourceRowIdentities symbol; retained distinct failure-minimization scope."
+    },
+    {
+      "id": "R099",
+      "resolution": "Removed unsupported notebook-history scope; studies actual browser view/composition/project definitions."
+    }
+  ],
+  "product_checks_not_run": [
+    "pnpm install",
+    "product unit/integration tests",
+    "build",
+    "typecheck",
+    "browser/e2e checks",
+    "accessibility/user studies",
+    "database execution",
+    "numerical reference experiments",
+    "performance/heap benchmarks",
+    "any proposed first experiment"
+  ],
+  "actions_not_taken": [
+    "application implementation",
+    "existing repository document edits",
+    "Git mutation",
+    "commit",
+    "PR creation",
+    "automation or recurring-task mutation"
+  ],
+  "limitations": [
+    "The packet is not a runnable checkout.",
+    "Assets, datasets, dependencies, generated output, and historical raw research were omitted.",
+    "Source inspection and literal reference checks do not establish runtime behavior.",
+    "Candidate novelty was checked against available source, intent, and this collection; omitted historical research was not reviewed.",
+    "All quantitative thresholds in proposed experiments are future acceptance criteria, not measured results.",
+    "Later Codex work owns local reconciliation, validation, commits, and a docs-only review PR."
+  ]
+}
