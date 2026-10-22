@@ -14,3 +14,9 @@ source @titanic path=../../../datasets/titanic.csv {
 query @titanic "titanic" glyph=◆ {
   source titanic
 }
+
+query @passengers "Passengers with age bands" glyph=◇ {
+  source titanic
+  calc survived "Survived (1 or 0)" = ["titanic.Fate"] == "Survived" ? 1 : 0
+  calc age_band "Age band" = ["titanic.Age"] == null ? "Unknown" : ["titanic.Age"] < 13 ? "0–12" : ["titanic.Age"] < 20 ? "13–19" : ["titanic.Age"] < 30 ? "20–29" : ["titanic.Age"] < 40 ? "30–39" : ["titanic.Age"] < 50 ? "40–49" : ["titanic.Age"] < 60 ? "50–59" : "60 and over"
+}

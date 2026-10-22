@@ -1,67 +1,48 @@
-# An empty 2012 column is not a fertility collapse
+# The 2012 and 2013 columns are empty, not zero
 
-**What happens to an average when the last year of an export is blank?** Each row is one selected country-year.
+**What do an export's blank last years do to a chart?** Each row is one of twelve countries in one year from 1960 to 2013, with its total fertility rate or a blank. The file's headers run to 2013, but no country has a value after 2011. A chart that reads blanks as zero shows fertility collapsing in a year; one that carries 2011 forward invents two years of data. This export keeps the blanks blank.
 
 ```eda
 eda query=r
 country:cat=r.country label="Country"
-code:cat=r.code label="Code"
 year:num=r.year label="Year"
-fertility:num=r.fertility label="Fertility (births/woman)"
-decade:cat=r.decade label="Decade"
-year_label:cat=r.year_label label="Year (as a category)"
-coverage:cat=r.coverage label="Coverage"
-observed:num=r.observed label="Published (1) or missing (0)"
+fertility:num=r.fertility label="Births per woman"
+year_label:cat=r.year_label label="Year"
+coverage:cat=r.coverage label="Cell"
+observed:num=r.observed label="Published"
 ```
 
-## 1. Recorded rates stop before the headers do
+## Every path stops at 2011
 
-The axis can contain dates without measured points. Do not connect a null to zero or carry the previous observation forward without declaring an imputation model.
+Each path is one country's last twelve years, and every one ends at the same point. The axis runs to 2013 because the file does, and the shaded band is what the file holds there: nothing. In the 2012 rows, 100.0% of values are missing. In the 2011 rows, 0.0% are.
 
 ```eda
-scatter @nb-fertility-empty-end-years-chart-1 x=year y=fertility color=country title="Recorded rates stop before the headers do" x.title="Year" y.title="Fertility (births/woman)"
+scatter @nb-fertility-empty-end-years-chart-1 x=year y=fertility color=country title="Births per woman, 2000 to 2013, as exported" x.title="Year" y.title="Births per woman" x.min=2000 x.max=2013 where.observed=1 {
+  connect.orderField=year connect.groupField=country connect.labels=end pointSize=2
+  band x=2012..2013 "No published values"
+}
 ```
 
-## 2. Published and missing cells in each year
+## Two blank columns in a full grid
 
-Count each selected country-year once and split the count by value availability. The missing segment records null source cells; it does not replace the missing rate with zero.
+Each cell is one country-year, dark where the file holds a value. Fifty-two columns are full and the last two are empty for every country, so the gap is the export's, not any one country's. 624 of the 648 country-years hold a value, and the 24 that do not all sit in 2012 and 2013.
 
 ```eda
-bar @nb-fertility-empty-end-years-chart-2 year_label seriesField=coverage seriesLayout=stacked color=coverage title="Published and missing cells in each year"
+heatmap @nb-fertility-empty-end-years-chart-2 country columnField=year_label maxColumns=60 aggregation=average measureField=observed sortBy=label showValues=false title="Country-years with a published rate, 1960 to 2013"
 ```
 
-**Finding.** In the selected 2012 rows, the missing-value share was 100.0%.
+## Twelve, twelve, twelve, zero, zero
 
-## 3. Published versus missing source values
-
-Count the two availability categories across the entire fixed country-year grid. This makes the missing-rate denominator explicit without deleting the incomplete rows.
+The last five years of the file, counted by whether each country-year holds a value. Twelve countries report through 2011; then the count drops to zero, not because fertility did anything but because the export ends. Overall, 3.70% of the file's cells are blank, every one of them in these two columns.
 
 ```eda
-row @nb-fertility-empty-end-years-chart-3 coverage title="Published versus missing source values" x.title="Rows"
-```
-
-## 4. Coverage by country and year
-
-Each cell has one selected country-year: one means a published rate and zero means a null rate. These are measurement-availability indicators, not imputed fertility values.
-
-```eda
-heatmap @nb-fertility-empty-end-years-chart-4 country columnField=year_label maxColumns=60 aggregation=average measureField=observed title="Coverage by country and year"
-```
-
-**Finding.** In the selected 2011 rows, the missing-value share was 0.0%.
-
-## 5. The rows behind the charts
-
-Sort a column or select rows to check any value above. Selections in a notebook stay with their own chart.
-
-```eda
-table @nb-fertility-empty-end-years-records country,code,year,fertility,decade title="Records behind this comparison"
+bar @nb-fertility-empty-end-years-chart-3 year_label seriesField=coverage seriesLayout=stacked color=coverage title="Country-years by whether a rate was published, 2009 to 2013" y.title="Country-years" where.year=2009..
 ```
 
 ## Takeaway
 
-Data coverage is part of the result. Keeping blank end years prevents a chart from inventing a decline to zero or presenting a carried-forward value as a fresh observation.
+The file ends in 2011; the headers end in 2013. Read the blanks as zero and twelve countries' fertility collapses in a year; carry 2011 forward and two years of data appear from nowhere. Leaving the cells empty is the only honest option, and it costs two columns of white space.
 
 ## Limits
 
-The export is a historical snapshot. Empty values mean unavailable in this file, not zero births per woman and not necessarily unavailable from later source revisions. The country subset is illustrative.
+This is a snapshot of a historical export, so the blanks say the values were unavailable in this file, not that they are unavailable now. Twelve countries chosen for contrast, not a sample.
