@@ -187,19 +187,17 @@ export default function DailyIndex() {
       />
       <SiteNav current="daily" />
       <main>
-        <header className="flex flex-wrap items-end justify-between gap-x-8 gap-y-2 pb-8 pt-10">
-          <div className="max-w-2xl">
-            <h1 className="text-4xl font-bold tracking-[-0.03em] text-brand-navy sm:text-5xl">
-              Daily data viz
-            </h1>
-            <p className="mt-3 text-base leading-relaxed text-muted-foreground sm:text-lg">
-              One notebook, composed graphic, or dashboard a day over real data.
-              Each opens live, with its data and every calculation behind its
-              numbers.
-            </p>
-          </div>
+        <header className="max-w-2xl pb-8 pt-10">
+          <h1 className="text-4xl font-bold tracking-[-0.03em] text-brand-navy sm:text-5xl">
+            Daily data viz
+          </h1>
+          <p className="mt-3 text-base leading-relaxed text-muted-foreground sm:text-lg">
+            One notebook, composed graphic, or dashboard a day over real data.
+            Each opens live, with its data and every calculation behind its
+            numbers.
+          </p>
           {data && (
-            <p className="text-sm tabular-nums text-muted-foreground">
+            <p className="mt-2 text-sm tabular-nums text-muted-foreground">
               {all.length} pieces · {families} datasets · {industries}{" "}
               industries since {formatDay(all.at(-1)!.published, true)}
             </p>
