@@ -11,4 +11,5 @@ source @r key=id path=data/r.csv {
 
 query @r "r" glyph=◆ {
   source r
+  calc abs_departure "Absolute departure" = ["r.departure"] == null ? null : max(["r.departure"], 0 - ["r.departure"])
 }

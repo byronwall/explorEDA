@@ -1,9 +1,22 @@
-import { useEffect, useRef, useState, type CSSProperties } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+} from "react";
+import {
+  Link,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import { ChevronLeft, ChevronRight, Download } from "lucide-react";
 import {
   ExplorEda,
   ExplorEdaNotebook,
+  notebookSheets,
+  parseNotebook,
   type SavedDataStructure,
 } from "exploreda";
 import { Button } from "@/components/ui/button";
@@ -12,6 +25,7 @@ import {
   assetPath,
   dailyPath,
   formatDay,
+  kindLabel,
   kindLabels,
   loadDailyEntry,
   publishedEntries,
@@ -181,15 +195,33 @@ function NotebookContent({
   entry: DailyEntry;
   loaded: LoadedEntry;
 }) {
+  const [params, setParams] = useSearchParams();
+  const sheets = useMemo(
+    () => notebookSheets(parseNotebook(loaded.text)).sheets,
+    [loaded.text]
+  );
+  // A book's sheets are named by its `#` headings and chosen in the URL, so
+  // a link opens the sheet it points at.
+  const book = sheets.length > 1;
+  const first = sheets[0]?.id ?? "";
+  const sheet = params.get("sheet") ?? first;
   return (
     <div className="daily-notebook mx-auto max-w-6xl px-4 sm:px-6">
       <ExplorEdaNotebook
-        // The page header shows the title; the notebook starts at its lede.
-        text={loaded.text.replace(/^# .+\n/, "")}
+        // The page header shows the title; a notebook with one starts at
+        // its lede.
+        text={book ? loaded.text : loaded.text.replace(/^# .+\n/, "")}
         data={loaded.rows}
         fieldTypes={loaded.fieldTypes}
         name={entry.title}
         layout="sections"
+        sheet={sheet}
+        onSheetChange={(id) => {
+          const next = new URLSearchParams(params);
+          if (id === first) next.delete("sheet");
+          else next.set("sheet", id);
+          setParams(next);
+        }}
       />
     </div>
   );
@@ -278,35 +310,37 @@ function DayLink({
   );
 }
 
-function SeriesNav({ entry, all }: { entry: DailyEntry; all: DailyEntry[] }) {
+/**
+ * A series read as one book: its parts are tabs, and the current part's
+ * page is the open sheet. Each part keeps its own day and address.
+ */
+function SeriesTabs({ entry, all }: { entry: DailyEntry; all: DailyEntry[] }) {
   if (!entry.series) return null;
   const parts = all
     .filter((item) => item.series?.id === entry.series!.id)
     .sort((a, b) => a.series!.part - b.series!.part);
   return (
-    <nav aria-label={entry.series.title} className="mt-4 text-sm">
-      <span className="text-muted-foreground">
-        Part {entry.series.part} of {parts.length} in{" "}
+    <nav aria-label={entry.series.title} className="daily-book mt-5">
+      <p className="text-sm text-muted-foreground">
         <span className="font-medium text-foreground">
           {entry.series.title}
         </span>
-        :
-      </span>
-      <ol className="mt-1 flex flex-wrap gap-x-4 gap-y-1">
+        {" · "}part {entry.series.part} of {parts.length}
+      </p>
+      <ol className="daily-book-tabs">
         {parts.map((part) => (
           <li key={part.id}>
-            {part.id === entry.id ? (
-              <span aria-current="page" className="font-medium">
-                {part.series!.part}. {part.title}
+            <Link
+              to={dailyPath(part)}
+              aria-current={part.id === entry.id ? "page" : undefined}
+              aria-label={`Part ${part.series!.part}: ${part.title}`}
+              className="daily-book-tab"
+            >
+              <span className="daily-book-index" aria-hidden="true">
+                {part.series!.part}
               </span>
-            ) : (
-              <Link
-                to={dailyPath(part)}
-                className="text-site-accent transition-colors duration-150 hover:text-foreground"
-              >
-                {part.series!.part}. {part.title}
-              </Link>
-            )}
+              {part.series!.label ?? `Part ${part.series!.part}`}
+            </Link>
           </li>
         ))}
       </ol>
@@ -425,7 +459,7 @@ export default function DailyEntryPage() {
             {entry.summary}
           </p>
           <p className="mt-3 text-sm text-muted-foreground">
-            {kindLabels[entry.kind]} · {entry.industry} · {entry.analysis} ·{" "}
+            {kindLabel(entry)} · {entry.industry} · {entry.analysis} ·{" "}
             <a
               href="#data"
               className="text-site-accent transition-colors duration-150 hover:text-foreground"
@@ -433,7 +467,7 @@ export default function DailyEntryPage() {
               {source?.title ?? entry.family}
             </a>
           </p>
-          <SeriesNav entry={entry} all={published} />
+          <SeriesTabs entry={entry} all={published} />
         </header>
       </div>
       <main>
