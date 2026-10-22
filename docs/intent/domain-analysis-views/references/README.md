@@ -19,3 +19,9 @@ Current source was inspected at `a50df9985ed3ff54d0f6ca368c0b369829b8a927` on 20
 ## Product feedback
 
 [Annotated product direction](../../comparison-opportunities/resources/product-feedback-2026-10-06.md) supplies the current audience and priorities. The [full records](../../comparison-opportunities/resources/product-feedback-2026-10-06.json) preserve uncertainty.
+
+## Retention observation research, 2026-10-21
+
+[Collected review](../../../research/retention-observation-2026-10-21/README.md) retains the event-snapshot contract.
+[Six dispositions](../../../research/retention-observation-2026-10-21/decisions.md) separate coverage, day rounding and All eligibility.
+Current registry presence corrects historical delivery language. New browser and author proofs remain proposed.
