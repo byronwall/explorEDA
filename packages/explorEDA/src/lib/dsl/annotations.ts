@@ -298,7 +298,9 @@ export function lowerAnnotation(
   declaration: DslDeclaration,
   index: { [type: string]: number },
   chartId: string,
-  problems: AnnotationProblem[]
+  problems: AnnotationProblem[],
+  /** The field a name stands for, as a notebook's aliases say. */
+  fieldOf: (name: string) => string = (name) => name
 ): ChartAnnotation | undefined {
   const type = ANNOTATION_KEYWORDS[declaration.keyword];
   if (!type) return undefined;
@@ -341,11 +343,11 @@ export function lowerAnnotation(
         }
         attach = {
           kind: "record",
-          keyFields: pieces.map((piece) => piece![0]),
+          keyFields: pieces.map((piece) => fieldOf(piece![0])),
           key: pieces.map((piece) => piece![1]),
         };
         const yField = take("yField");
-        if (yField) attach.yField = single(yField.value);
+        if (yField) attach.yField = fieldOf(single(yField.value));
       } else if (at) {
         const [x, y] = rawItems(at.value.raw).map(readNumber);
         if (x === undefined || y === undefined) {
@@ -360,7 +362,7 @@ export function lowerAnnotation(
           population: population ? single(population.value) : "filtered",
         };
         const field = take("field");
-        if (field) attach.field = single(field.value);
+        if (field) attach.field = fieldOf(single(field.value));
       } else if (category) {
         attach = { kind: "category", value: single(category.value) };
       } else {
@@ -474,8 +476,8 @@ export function lowerAnnotation(
       annotation = {
         id,
         type,
-        lowerField: single(lower.value),
-        upperField: single(upper.value),
+        lowerField: fieldOf(single(lower.value)),
+        upperField: fieldOf(single(upper.value)),
         meaning: text,
       };
       break;
@@ -489,7 +491,7 @@ export function lowerAnnotation(
           'Write them as records "Slow days" on=Day keys=31,44.'
         );
       }
-      const keyFields = on.value.items.map((item) => item.text);
+      const keyFields = on.value.items.map((item) => fieldOf(item.text));
       annotation = {
         id,
         type,
@@ -503,7 +505,7 @@ export function lowerAnnotation(
       };
       if (text !== undefined) annotation.label = text;
       const yField = take("yField");
-      if (yField) annotation.yField = single(yField.value);
+      if (yField) annotation.yField = fieldOf(single(yField.value));
       break;
     }
   }

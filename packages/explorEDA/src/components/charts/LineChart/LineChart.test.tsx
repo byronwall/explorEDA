@@ -116,3 +116,59 @@ it("plots ISO dates on the x axis with calendar ticks", () => {
   expect(container.textContent).toMatch(/Feb 07/);
   expect(container.textContent).not.toMatch(/1,612/);
 });
+
+it("draws one line per split value on a numeric x, each in x order", () => {
+  window.PointerEvent = MouseEvent as typeof PointerEvent;
+  registerAllCharts();
+  const settings = {
+    ...lineChartDefinition.createDefaultSettings({ x: 0, y: 0, w: 6, h: 4 }),
+    id: "line-split",
+    xField: "year",
+    seriesField: ["invest"],
+    colorField: "firm",
+  };
+  const { container } = render(
+    <DataLayerProvider
+      data={[
+        { year: 1936, firm: "GM", invest: 40 },
+        { year: 1935, firm: "IBM", invest: 2 },
+        { year: 1935, firm: "GM", invest: 30 },
+        { year: 1937, firm: "IBM", invest: 6 },
+        { year: 1936, firm: "IBM", invest: 4 },
+        { year: 1937, firm: "GM", invest: 50 },
+      ]}
+      charts={[settings]}
+    >
+      <LineChart settings={settings} width={400} height={300} />
+    </DataLayerProvider>
+  );
+  const paths = [...container.querySelectorAll("path[fill='none']")].filter(
+    (path) => path.getAttribute("d")?.startsWith("M")
+  );
+  expect(paths).toHaveLength(2);
+  // Without a color scale, each value still takes its own color.
+  expect(new Set(paths.map((path) => path.getAttribute("stroke"))).size).toBe(
+    2
+  );
+  // Each firm's path runs left to right through its three years.
+  for (const path of paths) {
+    const xs = path
+      .getAttribute("d")!
+      .slice(1)
+      .split("L")
+      .map((point) => Number(point.split(",")[0]));
+    expect(xs).toHaveLength(3);
+    expect(xs).toEqual([...xs].sort((a, b) => a - b));
+  }
+  // The split names each line by its value; no field legend repeats it.
+  expect(
+    container.querySelector("[aria-label='Chart series']")
+  ).not.toBeInTheDocument();
+  fireEvent.pointerMove(container.firstElementChild!, {
+    clientX: 220,
+    clientY: 150,
+  });
+  // Each firm reads at the hovered year, named by its value; the year
+  // reads as 1936, not 1,936.
+  expect(screen.getByRole("status")).toHaveTextContent("year1936GM40IBM4");
+});

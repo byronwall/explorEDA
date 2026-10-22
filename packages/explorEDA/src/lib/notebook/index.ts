@@ -18,6 +18,13 @@ export {
 } from "./compileNotebook";
 export { formatNotebook } from "./formatNotebook";
 export {
+  notebookSheets,
+  sheetId,
+  withoutHeading,
+  type NotebookSheet,
+  type NotebookSheets,
+} from "./sheets";
+export {
   readNotebookText,
   type NotebookContext,
   type NotebookReadResult,

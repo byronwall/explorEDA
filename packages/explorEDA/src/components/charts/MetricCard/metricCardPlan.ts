@@ -1,4 +1,6 @@
 import {
+  aggregationLabel,
+  isAdditiveAggregation,
   summarizeGroup,
   type AggregateContributor,
   type AggregateInputRow,
@@ -74,7 +76,7 @@ export function planMetricCard(
       ? settings.entityField
         ? `Distinct ${getFieldLabel(settings.entityField)}`
         : "Row count"
-      : `${settings.aggregation === "sum" ? "Sum" : "Average"} of ${measureLabel}${settings.entityField ? `, once per ${getFieldLabel(settings.entityField)}` : ""}`;
+      : `${aggregationLabel(settings.aggregation)} of ${measureLabel}${settings.entityField ? `, once per ${getFieldLabel(settings.entityField)}` : ""}`;
   const state: MetricCardState =
     group.length === 0
       ? "empty"
@@ -122,7 +124,7 @@ export function planMetricCard(
     const baseline = baselineResult.value;
     if (baseline !== undefined) {
       const value = result.value!;
-      if (settings.aggregation === "average") {
+      if (!isAdditiveAggregation(settings.aggregation)) {
         const delta = value - baseline;
         comparison = {
           kind: "delta",

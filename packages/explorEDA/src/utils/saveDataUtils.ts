@@ -1,5 +1,6 @@
 import { isChartAnnotations } from "@/lib/annotations/validate";
 import { isDateText } from "@/lib/valueParsing";
+import { isAdditiveAggregation, isAggregation } from "@/lib/aggregates";
 import { isCompositionDefinition } from "@/components/charts/Composition/validateComposition";
 import { isGeometryAsset } from "@/lib/geometryAssets";
 import { isSavedTheme } from "@/lib/themes";
@@ -253,7 +254,7 @@ function isAggregateSpec(value: unknown): value is AggregateSpec {
     (value.entityField === undefined ||
       (typeof value.entityField === "string" &&
         value.entityField.trim().length > 0)) &&
-    ["count", "sum", "average"].includes(value.aggregation as string) &&
+    isAggregation(value.aggregation) &&
     (value.measureField === undefined ||
       (typeof value.measureField === "string" &&
         value.measureField.trim().length > 0)) &&
@@ -738,14 +739,14 @@ function isChart(value: unknown): boolean {
       );
     case "metric-card":
       return (
-        ["count", "sum", "average"].includes(value.aggregation as string) &&
+        isAggregation(value.aggregation) &&
         (value.measureField === undefined ||
           typeof value.measureField === "string") &&
         (value.aggregation === "count" || Boolean(value.measureField))
       );
     case "calendar":
       return (
-        ["count", "sum", "average"].includes(value.aggregation as string) &&
+        isAggregation(value.aggregation) &&
         (value.measureField === undefined ||
           typeof value.measureField === "string") &&
         ["monday", "sunday"].includes(value.weekStart as string) &&
@@ -754,7 +755,7 @@ function isChart(value: unknown): boolean {
     case "heatmap":
       return (
         typeof value.columnField === "string" &&
-        ["count", "sum", "average"].includes(value.aggregation as string) &&
+        isAggregation(value.aggregation) &&
         (value.measureField === undefined ||
           typeof value.measureField === "string") &&
         isFiniteNumber(value.maxCategories) &&
@@ -791,22 +792,20 @@ function isChart(value: unknown): boolean {
               ["line", "area", "stacked-area"].includes(
                 value.time.display as string
               )) &&
+            isAggregation(value.time.aggregation) &&
             (value.time.display !== "stacked-area" ||
-              value.time.aggregation !== "average") &&
+              isAdditiveAggregation(value.time.aggregation)) &&
             ["day", "week", "month", "year"].includes(
               value.time.interval as string
             ) &&
             ["monday", "sunday"].includes(value.time.weekStart as string) &&
-            ["count", "sum", "average"].includes(
-              value.time.aggregation as string
-            ) &&
             (value.time.aggregation === "count" ||
               (typeof value.time.measureField === "string" &&
                 Boolean(value.time.measureField))) &&
             (value.time.splitField === undefined ||
               typeof value.time.splitField === "string") &&
             ["gap", "zero"].includes(value.time.missingPeriods as string) &&
-            (value.time.aggregation !== "average" ||
+            (isAdditiveAggregation(value.time.aggregation) ||
               value.time.missingPeriods === "gap"))) &&
         typeof value.xField === "string" &&
         isStringArray(value.seriesField) &&
@@ -1013,9 +1012,9 @@ export function validateSavedData(data: unknown): data is SavedDataStructure {
   const aggregateIds = new Set(
     (data.aggregates ?? []).map((aggregate) => aggregate.id)
   );
-  const averageIds = new Set(
+  const nonAdditiveIds = new Set(
     (data.aggregates ?? [])
-      .filter((aggregate) => aggregate.aggregation === "average")
+      .filter((aggregate) => !isAdditiveAggregation(aggregate.aggregation))
       .map((aggregate) => aggregate.id)
   );
   if (
@@ -1027,7 +1026,7 @@ export function validateSavedData(data: unknown): data is SavedDataStructure {
           (chart.type === "bar" &&
             chart.seriesField &&
             ["stacked", "percent"].includes(chart.seriesLayout as string) &&
-            averageIds.has(chart.aggregateId as string)))
+            nonAdditiveIds.has(chart.aggregateId as string)))
     )
   ) {
     return false;

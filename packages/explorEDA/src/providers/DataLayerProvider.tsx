@@ -23,6 +23,7 @@ import {
   AggregateResult,
   AggregateSpec,
   calculateGroupedAggregate,
+  isAggregation,
 } from "@/lib/aggregates";
 import {
   applyFieldSettings,
@@ -177,7 +178,7 @@ function validateAggregateState(
       !aggregate.id ||
       !aggregate.name.trim() ||
       !aggregate.groupField.trim() ||
-      !["count", "sum", "average"].includes(aggregate.aggregation) ||
+      !isAggregation(aggregate.aggregation) ||
       (aggregate.aggregation !== "count" && !aggregate.measureField?.trim())
     ) {
       throw new Error("Invalid grouped summary definition");

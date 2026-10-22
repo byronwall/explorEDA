@@ -5,7 +5,7 @@
     "slug": "scientific-multivariate-analysis",
     "scale": "feature",
     "current_phase": "intent",
-    "last_updated": "2026-10-09",
+    "last_updated": "2026-10-20",
     "summary": "Scientific users may need more than a fitted scatter curve.",
     "status": "planned",
     "next_action": "Select one method and a deterministic fixture where it changes the interpretation. Compare with an independent numerical result, inspect exclusions, and verify own-versus-peer filtering. Decide its statistical meaning before adding a display."
@@ -14,7 +14,7 @@
     "intent_brief": {
       "path": "intent-brief.md",
       "status": "current",
-      "updated_at": "2026-10-06"
+      "updated_at": "2026-10-20"
     },
     "brainstorm": {
       "path": "brainstorm.md",
@@ -102,6 +102,13 @@
       "location": "../comparison-opportunities/resources/product-feedback-2026-10-06.json",
       "anchor": "Annotation 3: end users determine product choices",
       "authority": "Explicit human feedback; tentative answers remain tentative"
+    },
+    {
+      "id": "quantity-research-2026-10-20",
+      "type": "agent-authored-analysis",
+      "location": "../../research/quantity-semantics-2026-10-20/README.md",
+      "anchor": "QS01\u2013QS05 reviewed; current display/formula controls first",
+      "authority": "Reviewed research, not product implementation approval"
     }
   ],
   "intent": {
@@ -352,18 +359,20 @@
       "date": "2026-10-06",
       "action": "Reconciled annotated product feedback and priority.",
       "reason": "User provided clearer goals and indicated lower interest in unclear topics.",
-      "source_annotation_indices": [
-        3
-      ],
+      "source_annotation_indices": [3],
       "evidence": "Current brief changes where applicable; source inspection only. No implementation, pause, or cancellation."
     },
     {
       "date": "2026-10-09",
       "event": "status-checked",
       "status": "planned",
-      "evidence": [
-        "No implementation of this scope found at 91b627d"
-      ]
+      "evidence": ["No implementation of this scope found at 91b627d"]
+    },
+    {
+      "date": "2026-10-20",
+      "action": "Integrated quantity research and retained feature deferral.",
+      "reason": "Existing display units and explicit formulas need a named-task comparator before new machinery.",
+      "evidence": "Four original reports reviewed; source and arithmetic checks recorded. Author/browser/quantity proof remains proposed."
     }
   ],
   "closure": null,
@@ -371,10 +380,7 @@
     "kind": "seed",
     "priority_basis": "Pro recommendations reconciled with current source; proposed priority, no implementation approval",
     "expand_when": "Expand when a concrete measurement, diagnostic, or multivariate task cannot be answered with the current scatter tools. Require independent numerical references before implementation.",
-    "related_initiatives": [
-      "advanced-scatter-analysis",
-      "scatter-plot-matrix"
-    ],
+    "related_initiatives": ["advanced-scatter-analysis", "scatter-plot-matrix"],
     "audience": "End users; developers deliver their experience.",
     "priority": "Unranked candidate or future seed"
   }

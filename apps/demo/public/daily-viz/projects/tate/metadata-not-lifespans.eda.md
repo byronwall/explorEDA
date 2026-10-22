@@ -1,66 +1,58 @@
-# A museum's birth and death years don't always describe a person
+# In the Tate's catalogue, the Alken family lived 138 years
 
-**What can go wrong when catalogue dates are read as lifespans?** Each row is one artist-catalogue record in the first 60 alphabetic records.
+**What happens when a museum's artist dates are read as lifespans?** Each row is one of the first 60 records, alphabetically, in Tate's 2014 artist catalogue, with its birth year, death year, and the years between them. For 59 of them that gap is a life. For one it is a family business that outlived three generations.
 
 ```eda
 eda query=r
-catalogue_id:num=r.catalogue_id label="Tate catalogue id"
 name:cat=r.name label="Name"
 birth_year:num=r.birth_year label="Birth year"
 death_year:num=r.death_year label="Death year"
 date_span:num=r.date_span label="Years between dates"
-entity:cat=r.entity label="Entity"
-death_status:cat=r.death_status label="Death status"
+entity:cat=r.entity label="Record"
+death_status:cat=r.death_status label="Death year"
+birth_century:cat=r.birth_century label="Born in"
 ```
 
-## 1. Birth-year coverage of the alphabetic prefix
+## One record spans 138 years
 
-The prefix is selected by catalogue ordering, not time or random sampling. Its birth-year distribution cannot describe Tate’s whole collection.
+Each dot is one record with both dates, placed by birth year and the span to its death year. The dots sit in a band from the forties to the nineties, as lifespans do, except one far above it. The largest span in these records is 138 years, and it belongs to the Alken Family, a line of sporting painters catalogued as one artist from 1756 to 1894. The median span is 69 years.
 
 ```eda
-hist @nb-tate-metadata-not-lifespans-chart-1 birth_year bins=16 title="Birth-year coverage of the alphabetic prefix" x.title="Birth year" y.title="Rows"
+scatter @nb-tate-metadata-not-lifespans-chart-1 x=birth_year y=date_span color=entity title="Years between birth and death dates, by birth year" x.title="Birth year" y.title="Years between dates" where.date_span=0.. {
+  callout "Alken Family, 1756 to 1894" pick=max offset=-60,24
+}
 ```
 
-## 2. Recorded versus blank death-year fields
+## Only two spans pass a century
 
-The labels describe the old metadata, not current living status. Both types remain in the full row population.
+Each bar counts records by their span. Of the 41 records with both dates, 2 run past 100 years. One is the Alken family; the other is the sculptor Julian Phelps Allan, who was born in 1892 and died in 1996 at 104. The histogram's centre is where a working artist's life ends: 7 spans reach 90 or more, and only 1 falls short of 40.
 
 ```eda
-row @nb-tate-metadata-not-lifespans-chart-2 death_status title="Recorded versus blank death-year fields" x.title="Rows"
+hist @nb-tate-metadata-not-lifespans-chart-2 date_span bins=12 title="Records by years between dates" x.title="Years between dates" y.title="Records" {
+  rule x=100 "One century"
+}
 ```
 
-**Finding.** The largest recorded date span in this prefix was 138 years; it belongs to the explicit family entity.
+## The longest spans, named
 
-## 3. Date span against birth year, with the family distinguished
-
-The span is a subtraction of date fields. Color identifies the explicitly named family entry without assuming that every other catalogue record is necessarily a single-person biography.
+The table lists the records with the longest spans first. The family entry heads it; below it are long-lived individuals whose dates are exactly what they look like.
 
 ```eda
-scatter @nb-tate-metadata-not-lifespans-chart-3 x=birth_year y=date_span color=entity title="Date span against birth year, with the family distinguished" x.title="Birth year" y.title="Years between dates"
+table @nb-tate-metadata-not-lifespans-chart-3 name,birth_year,death_year,date_span,entity sortBy=r.date_span sortDirection=desc where.date_span=0.. title="Records by span, longest first"
 ```
 
-## 4. Inspect long spans rather than deleting them
+## A third of death years are blank, all for artists born after 1927
 
-Only paired dates contribute. A long interval is a prompt to inspect entity semantics; it is not automatically a bad numeric measurement.
-
-```eda
-hist @nb-tate-metadata-not-lifespans-chart-4 date_span bins=15 title="Inspect long spans rather than deleting them" x.title="Years between dates" y.title="Rows"
-```
-
-**Finding.** Blank death-year fields represent 31.67% of this archive prefix.
-
-## 5. The rows behind the charts
-
-Sort a column or select rows to check any value above. Selections in a notebook stay with their own chart.
+Each bar counts records by birth century, split by whether the death year is filled. 31.67% of the 60 records have no death year, and the earliest birth year among them is 1927. The blanks are concentrated among artists who were alive, or recently dead, when the catalogue was made; nobody born before 1900 lacks one.
 
 ```eda
-table @nb-tate-metadata-not-lifespans-records catalogue_id,name,birth_year,death_year,date_span,entity,death_status title="Records behind this comparison"
+bar @nb-tate-metadata-not-lifespans-chart-4 birth_century seriesField=death_status seriesLayout=stacked color=death_status categoryOrder=label title="Records by birth century and whether a death year is recorded" x.title="Born in" y.title="Records"
 ```
 
 ## Takeaway
 
-An implausible-looking span can expose a mismatch between the analytical unit and the catalogue entity. Preserve the record and explain the mismatch instead of silently clipping it or inventing a death date.
+A span of 138 years is not a data error to clip; it is the catalogue telling you that one of its "artists" is a family. Read the dates as biography and 59 of 60 records cooperate. The sixtieth is why the entity type is worth a column of its own.
 
 ## Limits
 
-This is the first sixty alphabetically ordered records in Tate’s October 2014 archive, not a representative artist sample. A blank death year is not evidence that someone is alive today. The explicit Alken Family entry is not one person.
+Sixty records from the front of the alphabet in a 2014 snapshot: not a sample of the collection, and not current. A blank death year says the field was empty when the file was made, not that the artist is alive. Only the Alken family is flagged as a non-person; other collective entries, if any, are not marked.

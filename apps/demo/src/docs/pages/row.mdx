@@ -10,11 +10,11 @@
 - Each bar counts the rows in one category of the chart's field.
 - To rank something other than a count, pick a **Measure** and an **Operation** (sum or average, optionally once per ID). This saves a named grouped summary that bar charts can read too, so both show the same numbers.
 - Click a bar to filter every other chart to that category.
-- Categories keep their all-rows order while other charts filter. The filtered value draws over a faint all-rows bar, or a tick for averages.
+- Categories keep their all-rows order while other charts filter. The filtered value draws over a faint all-rows bar, or a tick for averages, maxima, and minima.
 - Negative values draw left of a zero line.
 - Row height stays between the minimum and maximum you set. When the rows would be shorter than the minimum, the chart shows fewer categories. Set **Top N** to keep the same categories, and the same members in **Other**, at every size.
 - Turn on **Use as color field** to give each category its own color from a shared scale, which other charts that color by the same field reuse.
 
 ## Annotations
 
-The **Notes** tab adds lines and bands on the horizontal value axis, and callouts that attach to a row by its category, at the end of its bar.
+The **Notes** tab adds lines and bands on the horizontal value axis, and callouts that attach to a row by its category, at the end of its bar. On a chart of a grouped summary, such as `row team group=byTeam`, `rule x=mean`, `median`, `min`, and `max` compute over the groups' values, one per group, including groups past **Top N**.

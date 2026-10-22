@@ -3,7 +3,7 @@ title: "Scientific overlays and multivariate discovery"
 slug: "scientific-multivariate-analysis"
 phase: intent
 status: current
-last_updated: "2026-10-06"
+last_updated: "2026-10-20"
 ---
 
 # Scientific overlays and multivariate discovery
@@ -38,7 +38,17 @@ Advanced scatter analysis retired on 2026-10-09 with fits, summaries, marginals,
 
 ## Current reality that matters
 
-Native scatter files implement regression, fit planning, paired covariance, marginal histograms, hexagonal counts, and density contours. No ellipse, distance, residual, or uncertainty display exists yet.
+Native scatter files implement regression, fit planning, paired covariance, marginal histograms, hexagonal counts, and density contours. No native ellipse, distance or uncertainty overlay is established here. Existing scientific notebooks already display prepared residuals and observed bounds.
+
+## Quantity meaning after existing formatting
+
+[Reviewed quantity research](../../research/quantity-semantics-2026-10-20/README.md) keeps new metadata, dimensional checks and conversion machinery deferred. Field units, descriptions and explicit formulas already exist. No repeated author task or wrong-unit defect is established.
+
+Preserve original fields when deriving a quantity. Name its reference, row meaning and missing-value rule. A temperature difference needs a different conversion from a reading. A concentration residual keeps its scale but changes its reference. An annual total divided by a declared duration gives an interval mean. These distinctions do not approve automatic inference or propagation.
+
+Keep the existing local selection/export/undo/reopen proof first. Then compare current controls and upstream preparation for one named scientific task. Stop if they work. A lesson is conditional too. If adopted, pair the proposed fields.mdx and calculated-fields.mdx sections with one quantityMeaning.ts demo in the same milestone. The [proof plan](https://chatgpt.com/c/6ad763b3-ecac-83ea-a53c-9099c304ebcd) defines that bounded comparator. No runnable example or application proof is complete.
+
+Another reference-note property may duplicate description. Reopen metadata or conversion only after a repeated task rejects the taught current flow. Reference ownership, population, weighting and required export context remain open. Existing overlay work stays separate.
 
 ## Expansion trigger
 

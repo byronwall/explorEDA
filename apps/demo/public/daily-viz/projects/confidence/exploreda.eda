@@ -1,0 +1,13 @@
+project @confidence
+
+source @cci path=../../../datasets/consumer-confidence.csv {
+  field Country string
+  field Month date
+  field Index number
+}
+
+query @cci "Country-months" glyph=◆ {
+  source cci
+  calc year "Year" = extractDateComponent(["cci.Month"], "year")
+  calc below_100 "Below the long-run average" = ["cci.Index"] < 100 ? "Below 100" : "At or above 100"
+}
