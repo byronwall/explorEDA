@@ -147,3 +147,25 @@ ecdf value {
     attach: { kind: "category", value: "Tue,pm" },
   });
 });
+
+it("reads an annotation's field names through the text's aliases", () => {
+  const days = [{ Date: "2016-12-16", PM: 300 }];
+  const { settings, diagnostics } = compileDocument(
+    `day:date=Date
+pm:num=PM
+calendar day {
+  callout "Red alert" on=day:2016-12-16
+}
+scatter x=day y=pm {
+  callout "Peak" pick=max field=pm
+}`,
+    { rows: days }
+  );
+  expect(diagnostics).toEqual([]);
+  expect(settings.charts[0]!.annotations![0]).toMatchObject({
+    attach: { kind: "record", keyFields: ["Date"], key: ["2016-12-16"] },
+  });
+  expect(settings.charts[1]!.annotations![0]).toMatchObject({
+    attach: { kind: "query", field: "PM" },
+  });
+});
