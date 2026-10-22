@@ -2543,9 +2543,9 @@
     "id": "nb-fertility-pace-by-decade",
     "slug": "fertility-pace-by-decade",
     "kind": "notebook",
-    "title": "Endpoint declines can arrive at different speeds",
-    "question": "Which complete decades contain the fastest average declines among the selected countries?",
-    "summary": "Average fertility in these countries fell 0.05 births per woman a year in the 1960s and less than half that in the 2000s.",
+    "title": "Fertility fell fastest in the 1970s, at a tenth of a birth a year",
+    "question": "Which decade saw fertility fall fastest?",
+    "summary": "Across twelve countries, fertility fell 0.10 births per woman a year in the 1970s, twice the 1960s pace and nearly five times the 2000s. China's 1970s plunge of 0.3 a year is the fastest decade of all.",
     "family": "fertility",
     "entry": "pace-by-decade.eda.md",
     "query": "decades",
@@ -2553,7 +2553,38 @@
     "analysis": "Trend",
     "findings": [
       {
-        "text": "The selected-country mean pace in the 1960s was {value} births per woman per elapsed year.",
+        "text": "China's yearly change through the 1970s was {value} births per woman",
+        "format": ".3f",
+        "op": "min",
+        "field": "annual_change",
+        "where": [
+          [
+            "country",
+            "eq",
+            "China"
+          ],
+          [
+            "decade",
+            "eq",
+            "1970s"
+          ]
+        ]
+      },
+      {
+        "text": "Across the twelve, the average pace was {value} births per woman a year in the 1970s.",
+        "format": ".3f",
+        "op": "mean",
+        "field": "annual_change",
+        "where": [
+          [
+            "decade",
+            "eq",
+            "1970s"
+          ]
+        ]
+      },
+      {
+        "text": "In the 1960s it was {value}",
         "format": ".3f",
         "op": "mean",
         "field": "annual_change",
@@ -2566,7 +2597,7 @@
         ]
       },
       {
-        "text": "The corresponding pace in the 2000s was {value} births per woman per elapsed year.",
+        "text": "and by the 2000s it was {value}.",
         "format": ".3f",
         "op": "mean",
         "field": "annual_change",
@@ -2575,6 +2606,19 @@
             "decade",
             "eq",
             "2000s"
+          ]
+        ]
+      },
+      {
+        "text": "{value} of the 60 country-decades rose.",
+        "format": ".0f",
+        "op": "count",
+        "field": "change",
+        "where": [
+          [
+            "change",
+            "gt",
+            0
           ]
         ]
       }
@@ -3028,9 +3072,9 @@
     "id": "nb-fertility-empty-end-years",
     "slug": "fertility-empty-end-years",
     "kind": "notebook",
-    "title": "An empty 2012 column is not a fertility collapse",
-    "question": "What happens to an average when the last year of an export is blank?",
-    "summary": "The 2012 column of this export is entirely blank. Read as zeros, it would show fertility collapsing to nothing in a year.",
+    "title": "The 2012 and 2013 columns are empty, not zero",
+    "question": "What do an export's blank last years do to a chart?",
+    "summary": "This export's headers run to 2013, but every one of twelve countries' values stop at 2011. Read as zeros, the last two columns would show fertility collapsing in a year; left blank, they show a file that ends early.",
     "family": "fertility",
     "entry": "empty-end-years.eda.md",
     "query": "r",
@@ -3038,7 +3082,7 @@
     "analysis": "Data quality",
     "findings": [
       {
-        "text": "In the selected 2012 rows, the missing-value share was {value}%.",
+        "text": "In the 2012 rows, {value}% of values are missing.",
         "format": ".1f",
         "op": "missing_share",
         "field": "fertility",
@@ -3051,7 +3095,7 @@
         ]
       },
       {
-        "text": "In the selected 2011 rows, the missing-value share was {value}%.",
+        "text": "In the 2011 rows, {value}% are.",
         "format": ".1f",
         "op": "missing_share",
         "field": "fertility",
@@ -3062,6 +3106,25 @@
             2011
           ]
         ]
+      },
+      {
+        "text": "{value} of the 648 country-years hold a value",
+        "format": ".0f",
+        "op": "count",
+        "field": "fertility",
+        "where": [
+          [
+            "observed",
+            "eq",
+            1
+          ]
+        ]
+      },
+      {
+        "text": "Overall, {value}% of the file's cells are blank",
+        "format": ".2f",
+        "op": "missing_share",
+        "field": "fertility"
       }
     ],
     "published": "2026-09-25"
