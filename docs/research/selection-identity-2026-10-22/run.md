@@ -1,6 +1,6 @@
 # R077 selection identity Pro run
 
-Phase: collected and reviewed; integration and validation in progress. Follow-ups: 0/2.
+Phase: collected, reviewed, integrated, validated; review PR pending. Follow-ups: 0/2.
 Repository: https://github.com/byronwall/explorEDA.
 Baseline: f4cacdde180e16ad814451a8c064e394535565d6 (refreshed origin/main).
 Checkout: /Users/byronwall/Projects/explorEDA.
@@ -89,3 +89,14 @@ Research summary, SI01–SI08 decisions, evidence, two intents/maps/references, 
 R001 remains next eligible, then R051. New key API deferred; platform expansion rejected.
 No product source, docs-site lesson, runnable example, changeset, or product screenshot applies.
 Full pnpm check is running. Final validation, scoped review PR, and monitor stop remain due.
+
+## Required validation before review
+
+Full approved pnpm check passed, exit0, Node22.21.1/pnpm11.9.0.
+UI, builds, all types, and73 docs tests pass. Library250files/1656tests pass;3files/45conditional tests skipped.
+App8files/32tests and demo18files/431tests pass. No aggregate retry required.
+Four research probes pass again after correcting the local fixture's project type; library type check with that probe also passes.
+The temporary package probe was removed. Final source remains unchanged.
+PR gate, authored links, JSON, all37 source receipts, original hashes, and frozen oracle hash pass.
+See validation.json for scope and logs. Browser, real exports, host task, worker lifecycle, and full frozen matrix remain unrun.
+No changeset or product screenshot applies. Scoped open review PR and final verification are next.

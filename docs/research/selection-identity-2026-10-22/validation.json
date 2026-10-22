@@ -1,5 +1,5 @@
 {
-  "phase": "final gate running",
+  "phase": "required gates passed; review PR pending",
   "baseline": "f4cacdde180e16ad814451a8c064e394535565d6",
   "node": "22.21.1",
   "pnpm": "11.9.0",
@@ -13,12 +13,34 @@
     "tests": 4,
     "exit_code": 0,
     "log": "evidence/local-probe.txt",
-    "scope": "Locally authored observation tests; no repaired contract or full frozen matrix claimed"
+    "scope": "Locally authored observation tests; no repaired contract or full frozen matrix claimed",
+    "type_check": "pnpm --filter exploreda check-types passed with probe in temporary package path",
+    "note": "Final rerun after correcting the locally authored fixture project type. No product code changed."
   },
   "full_check": {
     "command": "pnpm check",
-    "status": "running",
-    "log": "tmp/pro-selection-identity-2026-10-22/pnpm-check.txt"
+    "status": "passed",
+    "log": "tmp/pro-selection-identity-2026-10-22/pnpm-check.txt",
+    "exit_code": 0,
+    "docs": {
+      "files": 3,
+      "tests": 73
+    },
+    "library": {
+      "passed_files": 250,
+      "passed_tests": 1656,
+      "skipped_files": 3,
+      "skipped_tests": 45
+    },
+    "app": {
+      "files": 8,
+      "tests": 32
+    },
+    "demo": {
+      "files": 18,
+      "tests": 431
+    },
+    "note": "One approved full run. No retry required."
   },
   "source_receipts": 37,
   "original_companions_verified": 5,
@@ -39,5 +61,12 @@
   "changeset": "Not applicable: no package source or build output changed",
   "product_screenshots": "Not applicable: no visible application change",
   "pro_followups": 0,
-  "authored_local_links_checked": 56
+  "authored_local_links_checked": 56,
+  "pr_gate": {
+    "command": "pnpm check:pr",
+    "exit_code": 0,
+    "log": "tmp/pro-selection-identity-2026-10-22/pr-gate.txt"
+  },
+  "original_and_oracle_hashes": "passed",
+  "source_receipts_verified": 37
 }

@@ -13,10 +13,10 @@ R077 source references {"suffixIntended":"L02","suffixActual":"L10","occurrenceB
 stdout | src/test/selectionIdentityResearch.test.tsx > observes two distinct expansion rows sharing one output key
 R077 expansion {"keys":["e:records:string:x:children:string:y:children:string:z","e:records:string:x:children:string:y:children:string:z"],"contributorKeys":[["records:string:x","children:string:y:children:string:z"],["records:string:x:children:string:y","children:string:z"]]}
 
- ✓ src/test/selectionIdentityResearch.test.tsx (4 tests) 20ms
+ ✓ src/test/selectionIdentityResearch.test.tsx (4 tests) 19ms
 
  Test Files  1 passed (1)
       Tests  4 passed (4)
-   Start at  04:12:28
-   Duration  2.85s (transform 1.09s, setup 148ms, collect 2.04s, tests 20ms, environment 297ms, prepare 40ms)
+   Start at  04:18:27
+   Duration  2.50s (transform 1.07s, setup 105ms, collect 1.85s, tests 19ms, environment 193ms, prepare 34ms)
 
