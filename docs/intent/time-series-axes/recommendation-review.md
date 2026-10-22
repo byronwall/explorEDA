@@ -2,7 +2,7 @@
 
 Status: Codex dispositions for proposed intent. These decisions do not approve implementation.
 
-All 15 original recommendations are retained unchanged in [the source JSON](raw/2026-10-18-pro/recommendations.json).
+All 15 original recommendations are retained unchanged in [the source JSON](https://chatgpt.com/c/6ad59131-5e44-83ea-a362-9192357f37a2).
 Adopt means include in the proposal. Investigate means prove the hypothesis. Defer means omit from the core scope.
 
 | ID    | Recommendation                                                                  | Disposition | Reason or qualification                                                                                                                            |

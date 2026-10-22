@@ -8,7 +8,7 @@ Pro completed after 51m 25s. The response contains all four substantive files, t
 No follow-up was required. All 15 recommendation IDs are unique and sequential.
 
 Archive CRC, safe entry paths, absence of links, and all four manifest sizes and SHA-256 hashes passed.
-All companions were extracted unchanged. Standalone equality and file hashes are in [collection-manifest.json](collection-manifest.json).
+All companions were extracted unchanged. Standalone equality and file hashes were checked; the receipts were removed before merge.
 The initial download-event wait timed out; Chrome completed the archive download normally. No research was restarted.
 
 All 34 packet files still match the local source by SHA-256. The baseline also matched public origin HEAD at submission.

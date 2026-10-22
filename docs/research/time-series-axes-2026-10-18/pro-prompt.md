@@ -50,6 +50,7 @@ Research, comparison, proposed intent/design and implementation planning only. D
 ## Deliverables
 
 Create these standalone UTF-8 files, suitable for preservation under docs/intent/time-series-axes/raw/2026-10-18-pro/:
+
 - time-series-axes-research.md: concise decision summary, current-state audit, sourced provider comparison, scored alternatives, preferred UX/data model, four scenario walkthroughs, risks, unanswered questions.
 - recommendations.json: array of stable IDs with problem, proposal, evidence (repo and external), priority, confidence, cost, affected paths, alternatives, proof, and proposed disposition.
 - proof-plan.md: phased proof-first plan, milestone docs/demo scope, rejection/acceptance gates, measurements, and unrun checks.

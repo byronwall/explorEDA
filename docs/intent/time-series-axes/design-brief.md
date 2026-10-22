@@ -31,7 +31,7 @@ The complete [scored comparison](raw/2026-10-18-pro/time-series-axes-research.md
 ## Provider lessons
 
 These are documented capabilities. No vendor interface was operated or scored through live use.
-Sources were checked on October 19, 2026. Detailed versions and limits remain in the [source ledger](raw/2026-10-18-pro/sources.md).
+Sources were checked on October 19, 2026. Detailed versions and limits remain in the [source ledger](https://chatgpt.com/c/6ad59131-5e44-83ea-a362-9192357f37a2).
 
 | Provider                                                                                                            | Useful pattern                                          | Adaptation for explorEDA                                                               |
 | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- | -------------------------------------------------------------------------------------- |

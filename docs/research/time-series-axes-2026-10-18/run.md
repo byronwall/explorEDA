@@ -15,7 +15,6 @@ The user’s incomplete plant-tool sentence is interpreted as per-line independe
 - Baseline: `9b16d78e3ed0742ed4d5858c1939fec9e758b510`, also origin HEAD when checked.
 - Initial state: clean, detached HEAD. Created a branch in this existing checkout; no new worktree.
 - Prompt: [pro-prompt.md](pro-prompt.md).
-- Source manifest: [source-manifest.json](source-manifest.json).
 - Packet: `tmp/time-series-research/source-packet.txt`; 34 files, 577248 bytes.
 - Packet SHA-256: `3c4a2515861c113a236990735c2f71a052463340f2fc30a7dee7608256109242`.
 - Every source file exactly matches its public baseline blob by SHA-256. No private or untracked source content included.
@@ -73,7 +72,7 @@ Full repository gate is due before the final review PR, not claimed now.
 
 Pro completed after 51m 25s. Collected the original archive and all five standalone companions through Chrome.
 Every standalone file matches its archive copy. CRC, safe paths, sizes and four companion SHA-256 hashes passed.
-See `docs/intent/time-series-axes/collection-manifest.json` for retrieval details and file hashes.
+Retrieval details and file hashes were checked at collection; the receipts were removed before merge.
 The initial 20-second download-event wait timed out, but Chrome completed the archive download. No resend.
 
 All 15 recommendations were read and classified: 10 adopt as proposed intent, 3 investigate, 2 defer.
