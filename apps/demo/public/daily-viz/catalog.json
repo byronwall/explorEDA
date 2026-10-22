@@ -415,7 +415,7 @@
     "kind": "notebook",
     "title": "Beijing's worst air came in a few winter weeks",
     "question": "Which days of 2016 did Beijing breathe its worst air?",
-    "summary": "More than a third of station-days broke China's 24-hour PM2.5 limit, but the worst readings came in multi-day winter episodes, led by December's red alert.",
+    "summary": "More than a third of station-days broke China's 24-hour PM2.5 limit, but the worst readings came in multi-day winter episodes. December's red alert, six days from the 16th, averaged 248 µg/m³ and peaked at a citywide 395.",
     "family": "beijing",
     "entry": "calendar.eda.md",
     "query": "days",
@@ -428,7 +428,7 @@
     },
     "findings": [
       {
-        "text": "December's station-days averaged {value} µg/m³.",
+        "text": "December's station-days averaged {value} µg/m³",
         "format": ".1f",
         "op": "mean",
         "field": "pm25",
@@ -437,6 +437,56 @@
             "month",
             "eq",
             "12 Dec"
+          ]
+        ]
+      },
+      {
+        "text": "against {value} µg/m³ for the year.",
+        "format": ".1f",
+        "op": "mean",
+        "field": "pm25"
+      },
+      {
+        "text": "Across the six alert days, station-days averaged {value} µg/m³",
+        "format": ".1f",
+        "op": "mean",
+        "field": "pm25",
+        "where": [
+          [
+            "date",
+            "ge",
+            "2016-12-16"
+          ],
+          [
+            "date",
+            "le",
+            "2016-12-21"
+          ]
+        ]
+      },
+      {
+        "text": "on December 21 the citywide mean reached {value} µg/m³.",
+        "format": ".1f",
+        "op": "mean",
+        "field": "pm25",
+        "where": [
+          [
+            "date",
+            "eq",
+            "2016-12-21"
+          ]
+        ]
+      },
+      {
+        "text": "Two days later it was {value} µg/m³.",
+        "format": ".1f",
+        "op": "mean",
+        "field": "pm25",
+        "where": [
+          [
+            "date",
+            "eq",
+            "2016-12-23"
           ]
         ]
       },
@@ -461,7 +511,7 @@
         ]
       },
       {
-        "text": "The highest daily mean at any station was {value} µg/m³.",
+        "text": "the highest daily mean at any station was {value} µg/m³",
         "format": ".1f",
         "op": "max",
         "field": "pm25"
@@ -1295,7 +1345,7 @@
     "kind": "notebook",
     "title": "7,643 strong earthquakes, and where they cluster",
     "question": "Where and when did 2023's strong earthquakes strike?",
-    "summary": "The year's magnitude 4.5+ earthquakes trace the plate boundaries, arrive about twenty a day, and spike after each large shock. Fewer than one in fifty reached magnitude 6.",
+    "summary": "The year's magnitude 4.5+ earthquakes trace the plate boundaries, arrive about twenty a day, and spike after each large shock: 127 on the day of the Türkiye doublet and 164 after the Mindanao M7.6. Fewer than one in fifty reached magnitude 6.",
     "family": "earthquakes",
     "entry": "year-of-quakes.eda.md",
     "query": "events",
@@ -1303,13 +1353,52 @@
     "analysis": "Geography",
     "findings": [
       {
-        "text": "The year's largest earthquake was magnitude {value}.",
+        "text": "The year's largest earthquake was magnitude {value}",
         "format": ".1f",
         "op": "max",
         "field": "mag"
       },
       {
-        "text": "{value}% of the year's earthquakes reached magnitude 6 or more.",
+        "text": "The catalogue recorded {value} earthquakes on February 6",
+        "format": ".0f",
+        "op": "count",
+        "field": "mag",
+        "where": [
+          [
+            "date",
+            "eq",
+            "2023-02-06"
+          ]
+        ]
+      },
+      {
+        "text": "and {value} on December 2",
+        "format": ".0f",
+        "op": "count",
+        "field": "mag",
+        "where": [
+          [
+            "date",
+            "eq",
+            "2023-12-02"
+          ]
+        ]
+      },
+      {
+        "text": "{value}% of the year's earthquakes were below magnitude 5",
+        "format": ".1f",
+        "op": "share",
+        "field": "mag",
+        "condition": [
+          [
+            "mag",
+            "lt",
+            5
+          ]
+        ]
+      },
+      {
+        "text": "and {value}% reached magnitude 6 or more",
         "format": ".1f",
         "op": "share",
         "field": "mag",
@@ -1318,6 +1407,19 @@
             "mag",
             "ge",
             6
+          ]
+        ]
+      },
+      {
+        "text": "{value} reached magnitude 7.",
+        "format": ".0f",
+        "op": "count",
+        "field": "mag",
+        "where": [
+          [
+            "mag",
+            "ge",
+            7
           ]
         ]
       }
@@ -1658,7 +1760,7 @@
     "kind": "notebook",
     "title": "PM2.5 travels with carbon monoxide, not ozone",
     "question": "Which pollutants rise and fall with Beijing's fine particles?",
-    "summary": "Fine particles, carbon monoxide, and nitrogen dioxide share combustion sources and peak together in winter. Ozone peaks on clear summer days, when particles are lowest.",
+    "summary": "Fine particles, carbon monoxide, and nitrogen dioxide share combustion sources and peak together in winter, with correlations of 0.85 and 0.76. Ozone runs against particles in winter and with them in summer.",
     "family": "beijing",
     "entry": "pollutants.eda.md",
     "query": "days",
@@ -1671,18 +1773,66 @@
     },
     "findings": [
       {
-        "text": "PM2.5 and carbon monoxide had correlation {value}.",
+        "text": "PM2.5 and carbon monoxide had correlation {value}",
         "format": ".3f",
         "op": "corr",
         "field": "pm25",
         "other": "co"
       },
       {
-        "text": "PM2.5 and ozone had correlation {value}.",
+        "text": "and PM2.5 and nitrogen dioxide {value}.",
+        "format": ".3f",
+        "op": "corr",
+        "field": "pm25",
+        "other": "no2"
+      },
+      {
+        "text": "{value} station-days, all in winter smog, sit beyond it.",
+        "format": ".0f",
+        "op": "count",
+        "field": "co",
+        "where": [
+          [
+            "co",
+            "gt",
+            6000
+          ]
+        ]
+      },
+      {
+        "text": "PM2.5 and ozone had correlation {value}",
         "format": ".3f",
         "op": "corr",
         "field": "pm25",
         "other": "o3"
+      },
+      {
+        "text": "in winter the correlation was {value}",
+        "format": ".3f",
+        "op": "corr",
+        "field": "pm25",
+        "other": "o3",
+        "where": [
+          [
+            "season",
+            "eq",
+            "Winter"
+          ]
+        ]
+      },
+      {
+        "text": "but in summer it was {value}",
+        "format": ".3f",
+        "op": "corr",
+        "field": "pm25",
+        "other": "o3",
+        "where": [
+          [
+            "season",
+            "eq",
+            "Summer"
+          ]
+        ]
       }
     ],
     "published": "2026-08-15"
@@ -2469,7 +2619,7 @@
     "kind": "notebook",
     "title": "Measles nearly vanished within a decade of the vaccine",
     "question": "What happened to measles in the United States after 1963?",
-    "summary": "Before the vaccine, a state-year averaged over 300 cases per 100,000. By the 1970s the average was 17, a fall of about 95% in under a decade.",
+    "summary": "Before the vaccine, a state-year averaged over 300 measles cases per 100,000. By the 1970s the average was 17, by the 1980s 2, and in the 2000s most state-years reported none, a fall that hit every state in the same few years.",
     "family": "measles",
     "entry": "vaccine.eda.md",
     "query": "measles",
@@ -2495,7 +2645,7 @@
         ]
       },
       {
-        "text": "In the 1970s, it was {value}.",
+        "text": "In the 1970s, it was {value}",
         "format": ".1f",
         "op": "mean",
         "field": "Rate",
@@ -2509,6 +2659,145 @@
             "Year",
             "le",
             1979
+          ]
+        ]
+      },
+      {
+        "text": "and in the 1980s {value}.",
+        "format": ".1f",
+        "op": "mean",
+        "field": "Rate",
+        "where": [
+          [
+            "Year",
+            "ge",
+            1980
+          ],
+          [
+            "Year",
+            "le",
+            1989
+          ]
+        ]
+      },
+      {
+        "text": "California's 1990 rate, {value} per 100,000, was the highest of that year.",
+        "format": ".2f",
+        "op": "max",
+        "field": "Rate",
+        "where": [
+          [
+            "Year",
+            "eq",
+            1990
+          ]
+        ]
+      },
+      {
+        "text": "Before 1963, {value}% of state-years from 1950 on reported more than 100 cases per 100,000.",
+        "format": ".1f",
+        "op": "share",
+        "field": "Rate",
+        "where": [
+          [
+            "Year",
+            "ge",
+            1950
+          ],
+          [
+            "Year",
+            "le",
+            1962
+          ],
+          [
+            "Rate",
+            "ge",
+            0
+          ]
+        ],
+        "condition": [
+          [
+            "Rate",
+            "gt",
+            100
+          ]
+        ]
+      },
+      {
+        "text": "In the 1970s, {value}% did.",
+        "format": ".1f",
+        "op": "share",
+        "field": "Rate",
+        "where": [
+          [
+            "Year",
+            "ge",
+            1970
+          ],
+          [
+            "Year",
+            "le",
+            1979
+          ],
+          [
+            "Rate",
+            "ge",
+            0
+          ]
+        ],
+        "condition": [
+          [
+            "Rate",
+            "gt",
+            100
+          ]
+        ]
+      },
+      {
+        "text": "From 2000 to 2012, the average state-year reported {value} cases per 100,000",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Rate",
+        "where": [
+          [
+            "Year",
+            "ge",
+            2000
+          ],
+          [
+            "Year",
+            "le",
+            2012
+          ]
+        ]
+      },
+      {
+        "text": "and {value}% of state-years reported none at all.",
+        "format": ".1f",
+        "op": "share",
+        "field": "Rate",
+        "where": [
+          [
+            "Year",
+            "ge",
+            2000
+          ],
+          [
+            "Year",
+            "le",
+            2012
+          ],
+          [
+            "Rate",
+            "ge",
+            0
+          ]
+        ],
+        "condition": [
+          [
+            "Rate",
+            "eq",
+            0
           ]
         ]
       }
