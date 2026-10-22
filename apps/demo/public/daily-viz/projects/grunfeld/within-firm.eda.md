@@ -20,7 +20,7 @@ Each point is one firm-year, colored by firm, with a fitted line per firm. Acros
 scatter @nb-grunfeld-within-firm-chart-1 x=value y=invest color=firm opacity=0.7 regression=linear title="Investment against market value, one point per firm-year" x.title="Market value ($M, 1947)" y.title="Investment ($M, 1947)"
 ```
 
-## Within a firm, the link is two-thirds as strong
+## Within a firm, the link is weaker
 
 Replace each firm-year with its change from the firm's previous year. Size drops out, and what remains is whether a firm that gained value invested more. Across within-firm annual changes, the correlation was 0.562. The cloud leans the right way, but it is a cloud.
 

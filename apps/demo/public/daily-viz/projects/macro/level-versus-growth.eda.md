@@ -40,7 +40,7 @@ line @nb-macro-level-versus-growth-chart-2 x=date y=gdp_growth title="Annualized
 }
 ```
 
-## A shrinking quarter adds half a point of unemployment
+## Shrinking quarters add half a point of unemployment
 
 Split the quarters by the sign of growth and the jobs cost appears: the curve for shrinking quarters sits to the right of the curve for growing ones. In quarters when GDP shrank, unemployment rose by 0.51 points on average. In quarters when GDP grew, unemployment changed by -0.06 points on average. The biggest single jump, 1.6 points, came in the first quarter of 1975.
 

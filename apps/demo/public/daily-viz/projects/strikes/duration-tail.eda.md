@@ -29,7 +29,7 @@ The cumulative curve gives the share of strikes that had ended by any length. It
 ecdf @nb-strikes-duration-tail-chart-2 duration direction=below title="Share of strikes ended by each duration" x.title="Duration (days)"
 ```
 
-## Eight strikes over a hundred days set the mean
+## Eight hundred-day strikes set the mean
 
 Each strike in the order it appears in the file. The 8 strikes that ran longer than 100 days are easy to pick out, and the five longest together account for 29.11% of all strike days in the sample. Three of them, records 23 to 25, began in the same month, when production was below trend; the 216-day strike is one of those.
 

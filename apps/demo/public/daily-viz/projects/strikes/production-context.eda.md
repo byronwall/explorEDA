@@ -28,7 +28,7 @@ Split at zero and compare. Median duration at negative production deviations was
 boxplot @nb-strikes-production-context-chart-2 duration color=slump title="Strike duration by production at the start" y.title="Duration (days)"
 ```
 
-## Below trend, two in five ran past two months
+## Below trend, two in five passed two months
 
 The cumulative curves show where the two groups differ: not in the first two weeks, where they overlap, but in the tail. 40.0% of strikes that began below trend lasted more than 60 days, against 10.8% of strikes that began at or above trend.
 

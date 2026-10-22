@@ -32,7 +32,7 @@ line @nb-danish-rate-spread-chart-2 x=date y=spread_pct title="Bond rate minus d
 }
 ```
 
-## After 1981 the typical gap narrowed by 2.5 points
+## After 1981 the typical gap narrowed 2.5 points
 
 Split the quarters at 1981 and compare the boxes. The median spread from 1974 to 1980 was 7.51 points; from 1981 to 1987 it was 4.96 points. The later box also reaches lower: every spread under four points comes from 1985 on.
 

@@ -28,7 +28,7 @@ scatter @nb-engel-food-and-income-chart-2 x=income y=food_share opacity=0.6 regr
 }
 ```
 
-## From the poorest quarter to the richest, eight points
+## Poorest to richest quartile: eight points
 
 Split the households into income quartiles and compare the boxes. The median food share in the poorest quartile was 69.58%; in the richest quartile it was 61.83%. The two middle quartiles sit between them in order. The richest box is also the tallest: income freed from food went to different things in different households.
 
