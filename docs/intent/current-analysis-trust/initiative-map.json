@@ -5,7 +5,7 @@
     "slug": "current-analysis-trust",
     "scale": "feature",
     "current_phase": "intent",
-    "last_updated": "2026-10-09",
+    "last_updated": "2026-10-22",
     "summary": "Analysts should trust that linked views describe the same rows and use compatible metric definitions.",
     "status": "planned",
     "next_action": "First compare one category selection across bar, card, and exported rows. Continue only after their group membership, valid contributors, and values agree. Then add undo/restore and a second chart family."
@@ -14,7 +14,7 @@
     "intent_brief": {
       "path": "intent-brief.md",
       "status": "current",
-      "updated_at": "2026-10-06"
+      "updated_at": "2026-10-22"
     },
     "brainstorm": {
       "path": "brainstorm.md",
@@ -95,6 +95,48 @@
       "location": "../comparison-opportunities/resources/product-feedback-2026-10-06.json",
       "anchor": "Annotation 3: end users determine product choices",
       "authority": "Explicit human feedback; tentative answers remain tentative"
+    },
+    {
+      "id": "analytical-handoff-research",
+      "type": "agent-authored-analysis",
+      "location": "../../research/analysis-handoff-2026-10-20/README.md",
+      "anchor": "AH01–AH05; source and primary-source review at9b16d78e",
+      "authority": "Research and proposed proof, not implementation approval or runtime acceptance"
+    },
+    {
+      "id": "engineering-bins-research-2026-10-21",
+      "type": "agent-authored-analysis",
+      "location": "../../research/engineering-bins-2026-10-21/README.md",
+      "anchor": "EB01\u2013EB04",
+      "authority": "Reviewed research and proposed gates; no product approval or new browser proof"
+    },
+    {
+      "id": "r026-accounting",
+      "type": "agent-authored-analysis",
+      "location": "../../research/missing-state-accounting-2026-10-21/evidence.md",
+      "anchor": "MS01\u2013MS06; four local probes",
+      "authority": "Research and helper/provider/manager evidence; no browser or implemented repair"
+    },
+    {
+      "id": "r043-research",
+      "type": "agent-authored-analysis",
+      "location": "../../research/entity-grain-2026-10-21/README.md",
+      "anchor": "EG01\u2013EG06, three local research probes, October21",
+      "authority": "Reviewed research constraints and repair proposals; no implementation approval"
+    },
+    {
+      "id": "r077-research",
+      "type": "agent-authored-analysis",
+      "location": "../../research/selection-identity-2026-10-22/README.md",
+      "anchor": "SI01\u2013SI08; four locally authored probes; source and artifact review",
+      "authority": "Research and bounded runtime evidence; no implementation approval"
+    },
+    {
+      "id": "r001-research-2026-10-22",
+      "type": "repository",
+      "location": "../../research/regression-conditioning-2026-10-22/summary.md",
+      "anchor": "Three local numerical probes; eight dispositions; no product change",
+      "authority": "evidence"
     }
   ],
   "intent": {
@@ -335,6 +377,41 @@
       "event": "status-checked",
       "status": "planned",
       "evidence": ["No implementation of this scope found at 91b627d"]
+    },
+    {
+      "date": "2026-10-20",
+      "action": "Integrated analytical handoff research and preserved existing proof and demand gates.",
+      "evidence": "Four originals collected; source receipts checked. No recipient, browser or new product proof."
+    },
+    {
+      "date": "2026-10-21",
+      "action": "Reconciled engineering histogram boundary research.",
+      "reason": "Retain current controls and separate endpoint proof from new capability.",
+      "evidence": "Source receipts and independent arithmetic; named-task and complete product proofs remain unrun."
+    },
+    {
+      "date": "2026-10-21",
+      "action": "Reconciled R026 value accounting and three bounded consistency witnesses.",
+      "evidence": "Four locally authored probes pass; no product repair or browser claim.",
+      "reason": "Keep stage-specific counts and proposed repairs separate from a universal state model."
+    },
+    {
+      "date": "2026-10-21",
+      "action": "Reconciled R043 entity-grain research and three local probes.",
+      "evidence": "Measured-count conflict split, source/value partition controls, static trace wording; browser/author proofs remain pending.",
+      "reason": "Retain distinct identity contracts and bound repair proposals."
+    },
+    {
+      "date": "2026-10-22",
+      "action": "Reconciled R077 selection identity research.",
+      "reason": "Bounded replacement and key-resolution evidence before API expansion.",
+      "evidence": "Four local probes; full browser/host/export/worker proof remains proposed."
+    },
+    {
+      "date": "2026-10-22",
+      "action": "Reconciled R001 prediction and equation evidence.",
+      "reason": "Preserve valid fits and isolate bounded evaluation/representation proposals.",
+      "evidence": "Three locally authored source probes pass. Pro matrix remains attributed; browser/copy/export/refit/restore proof unrun. Visible milestones pair docs/scatter and a runnable example."
     },
     {
       "date": "2026-10-22",

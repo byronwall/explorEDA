@@ -1,0 +1,18 @@
+{
+  "tested_head": "ff508ba097ce29224ec36dc1a21086aeaaf26938",
+  "application_baseline": "f4cacdde180e16ad814451a8c064e394535565d6",
+  "command": "pnpm --filter exploreda exec vitest run src/test/lib/analysis/r043.probe.test.tsx",
+  "exit_code": 0,
+  "files": 1,
+  "tests": 3,
+  "probe_location_during_run": "packages/explorEDA/src/test/lib/analysis/r043.probe.test.tsx",
+  "observations": [
+    "F2-min: shared measured count unavailable, project1; equal-value control both2,sum15,mean7.5. Exact source witnesses retained.",
+    "F4: source4/30/7.5,project copied4/27/6.75,shared2/17/8.5. Unique-key control agrees4/30/7.5. Exact representative and source sets asserted.",
+    "Static entity-count card render confirms row wording; not browser evidence."
+  ],
+  "limits": [
+    "No product repairs implemented.",
+    "F1 full matrix,filter hooks,pooling,raw representation,signed-zero,browser,author,SQL,persistence,export,restore,performance proofs unrun."
+  ]
+}
