@@ -1,0 +1,35 @@
+project @co2pc
+
+source @co2 key=Economy path=../../../datasets/co2-per-capita.csv {
+  field Economy string
+  field Code string
+  field Region string
+  field "Income group" string
+  field "CO2 per person" number
+  field Population number
+}
+
+query @co2 "Economies in 2020" glyph=◆ {
+  source co2
+  calc tons "CO2 (tonnes)" = ["co2.CO2 per person"] * ["co2.Population"]
+  calc megatonnes "CO2 (million tonnes)" = ["co2.CO2 per person"] * ["co2.Population"] / 1000000
+  calc millions "Population (millions)" = ["co2.Population"] / 1000000
+  calc tons_high "CO2 of high-income economies (tonnes)" = ["co2.Income group"] == "High" ? ["co2.CO2 per person"] * ["co2.Population"] : 0
+  calc tons_upper "CO2 of upper-middle-income economies (tonnes)" = ["co2.Income group"] == "Upper middle" ? ["co2.CO2 per person"] * ["co2.Population"] : 0
+  calc tons_lower "CO2 of lower-middle-income economies (tonnes)" = ["co2.Income group"] == "Lower middle" ? ["co2.CO2 per person"] * ["co2.Population"] : 0
+  calc tons_low "CO2 of low-income economies (tonnes)" = ["co2.Income group"] == "Low" ? ["co2.CO2 per person"] * ["co2.Population"] : 0
+  calc pop_high "People in high-income economies" = ["co2.Income group"] == "High" ? ["co2.Population"] : 0
+  calc pop_upper "People in upper-middle-income economies" = ["co2.Income group"] == "Upper middle" ? ["co2.Population"] : 0
+  calc pop_lower "People in lower-middle-income economies" = ["co2.Income group"] == "Lower middle" ? ["co2.Population"] : 0
+  calc pop_low "People in low-income economies" = ["co2.Income group"] == "Low" ? ["co2.Population"] : 0
+  calc tons_over10 "CO2 of economies above 10 t per person (tonnes)" = ["co2.CO2 per person"] > 10 ? ["co2.CO2 per person"] * ["co2.Population"] : 0
+  calc pop_over10 "People in economies above 10 t per person" = ["co2.CO2 per person"] > 10 ? ["co2.Population"] : 0
+  calc tons_under1 "CO2 of economies below 1 t per person (tonnes)" = ["co2.CO2 per person"] < 1 ? ["co2.CO2 per person"] * ["co2.Population"] : 0
+  calc pop_under1 "People in economies below 1 t per person" = ["co2.CO2 per person"] < 1 ? ["co2.Population"] : 0
+  calc tons_china "China's CO2 (tonnes)" = ["co2.Economy"] == "China" ? ["co2.CO2 per person"] * ["co2.Population"] : 0
+  calc tons_us "United States CO2 (tonnes)" = ["co2.Economy"] == "United States" ? ["co2.CO2 per person"] * ["co2.Population"] : 0
+  calc tons_india "India's CO2 (tonnes)" = ["co2.Economy"] == "India" ? ["co2.CO2 per person"] * ["co2.Population"] : 0
+  calc pop_india "India's people" = ["co2.Economy"] == "India" ? ["co2.Population"] : 0
+  calc pop_us "United States people" = ["co2.Economy"] == "United States" ? ["co2.Population"] : 0
+  calc income_order "Income group" = ["co2.Income group"] == "High" ? "High income" : ["co2.Income group"] == "Upper middle" ? "Upper-middle income" : ["co2.Income group"] == "Lower middle" ? "Lower-middle income" : "Low income"
+}

@@ -1,3 +1,4 @@
+import { isAdditiveAggregation } from "@/lib/aggregates";
 import { useThemeColors } from "@/hooks/useDisplayColorScales";
 import {
   annotationSlot,
@@ -46,7 +47,7 @@ import {
 } from "../trace/ChartTraceScope";
 import type { TraceSource } from "../trace/traceTypes";
 import type { RowTrace } from "./RowTraceBody";
-import { poolAggregateRows } from "@/lib/aggregates";
+import { poolAggregateRows, type AggregateResult } from "@/lib/aggregates";
 import { ChartReadout } from "../ChartReadout";
 import {
   ChartStatusLine,
@@ -58,6 +59,10 @@ type RowChartProps = BaseChartProps<RowChartSettings>;
 
 /** The smallest row, in pixels, that Top N compresses to before it gives way. */
 const TOP_N_ROW_FLOOR = 12;
+
+/** Each group's value, for statistics such as rule x=mean. */
+const summaryValues = (summary: AggregateResult) =>
+  summary.rows.flatMap((row) => (row.value === undefined ? [] : [row.value]));
 
 export function RowChart({
   settings,
@@ -503,10 +508,10 @@ export function RowChart({
     return { x: Math.min(zero, end), width: Math.abs(end - zero) };
   };
   // The all-row value draws as a faint bar behind a part of it, such as a
-  // filtered count or sum. An average, or a value the faint bar would hide,
+  // filtered count or sum. An average, max, or min, or a value the faint bar would hide,
   // marks it with a tick instead.
   const contextAsTick = (count: number | undefined, total: number) =>
-    spec?.aggregation === "average" ||
+    (spec !== undefined && !isAdditiveAggregation(spec.aggregation)) ||
     !(
       count === undefined ||
       count === 0 ||
@@ -584,6 +589,14 @@ export function RowChart({
         annotations={annotationSlot(settings, {
           ...scaleFrame(xScale, yScale, { x: settings.xAxis.scaleType }),
           facetKey,
+          // A grouped summary's x axis is its measure, one value per group.
+          axisValues: allSummary &&
+            liveSummary && {
+              x: {
+                all: summaryValues(allSummary),
+                filtered: summaryValues(liveSummary),
+              },
+            },
           // A row sums its category's rows; a note attaches at its bar end.
           category: ({ value }) => {
             const item = displayCounts.find(

@@ -13,7 +13,7 @@ import {
   type FieldSettingsMap,
 } from "@/lib/fieldSettings";
 import { initializeData } from "@/providers/lib/dataLayerState";
-import type { AggregateSpec } from "@/lib/aggregates";
+import { isAggregation, type AggregateSpec } from "@/lib/aggregates";
 import type { GeometryAsset } from "@/lib/geometryAssets";
 import {
   WORKSPACE_THEMES,
@@ -1298,21 +1298,22 @@ export function compileDocument(
           `${call.value.raw} is not an aggregation, so ${subject} counts rows.`,
           {
             subject,
-            suggestion: "Write count, sum(field), or avg(field).",
+            suggestion:
+              "Write count, sum(field), avg(field), max(field), or min(field).",
           }
         );
       }
       const spec = applyRecordPaths(start, pairs, subject) as AggregateSpec;
       const valid =
         spec.groupField &&
-        ["count", "sum", "average"].includes(spec.aggregation) &&
+        isAggregation(spec.aggregation) &&
         (spec.aggregation === "count" || spec.measureField);
       if (!valid) {
         report(
           "error",
           "setting-ignored",
           declaration.span,
-          `${subject} needs by=, and a field to sum or average unless it counts, so it was skipped.`,
+          `${subject} needs by=, and a field to measure unless it counts, so it was skipped.`,
           {
             subject,
             suggestion: "Write it as group @byRegion sum(Revenue) by=Region.",
@@ -1848,7 +1849,7 @@ export function compileDocument(
         break;
       }
       case "metric": {
-        // metric count, metric sum(Revenue), metric avg(Revenue).
+        // metric count, metric sum(Revenue), metric max(Revenue), and the like.
         const call = positional.shift();
         const parsed = call && aggregateCall(call.value.raw);
         chart = definition.createDefaultSettings(layout) as ChartSettings;
@@ -2160,7 +2161,13 @@ export function compileDocument(
       const problems: AnnotationProblem[] = [];
       for (const child of declaration.children) {
         if (ANNOTATION_KEYWORDS[child.keyword]) {
-          const annotation = lowerAnnotation(child, counts, chart.id, problems);
+          const annotation = lowerAnnotation(
+            child,
+            counts,
+            chart.id,
+            problems,
+            (name) => aliases.get(name) ?? name
+          );
           if (annotation) {
             annotations.push(annotation);
           }
@@ -2740,8 +2747,8 @@ export function viewDeclarations(
 }
 
 /**
- * Reads `count`, `sum(Revenue)`, `avg("Net sales")`, and the like. Average
- * reads as avg, mean, or average.
+ * Reads `count`, `sum(Revenue)`, `avg("Net sales")`, `max(Rate)`, and the
+ * like. Average reads as avg, mean, or average.
  */
 export function aggregateCall(
   raw: string
@@ -2758,6 +2765,8 @@ export function aggregateCall(
     avg: "average",
     mean: "average",
     average: "average",
+    max: "max",
+    min: "min",
     count: "count",
   };
   const aggregation = names[match[1]!];

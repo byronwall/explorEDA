@@ -97,6 +97,13 @@
       "authority": "Explicit human feedback; tentative answers remain tentative"
     },
     {
+      "id": "analytical-handoff-research",
+      "type": "agent-authored-analysis",
+      "location": "../../research/analysis-handoff-2026-10-20/README.md",
+      "anchor": "AH01–AH05; source and primary-source review at9b16d78e",
+      "authority": "Research and proposed proof, not implementation approval or runtime acceptance"
+    },
+    {
       "id": "engineering-bins-research-2026-10-21",
       "type": "agent-authored-analysis",
       "location": "../../research/engineering-bins-2026-10-21/README.md",
@@ -342,6 +349,11 @@
       "event": "status-checked",
       "status": "planned",
       "evidence": ["No implementation of this scope found at 91b627d"]
+    },
+    {
+      "date": "2026-10-20",
+      "action": "Integrated analytical handoff research and preserved existing proof and demand gates.",
+      "evidence": "Four originals collected; source receipts checked. No recipient, browser or new product proof."
     },
     {
       "date": "2026-10-21",

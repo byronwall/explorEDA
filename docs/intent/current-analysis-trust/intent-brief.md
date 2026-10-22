@@ -48,6 +48,15 @@ First compare one category selection across bar, card, and exported rows. Contin
 
 See the [reference packet](references/README.md) and [comparison collection](../comparison-opportunities/README.md) for context.
 
+## Analytical handoff research, 2026-10-20
+
+The [handoff review](../../research/analysis-handoff-2026-10-20/README.md) keeps this local proof first.
+Compare source, linked selection and table-search populations separately: the proposed fixture has 7/5/2 rows and totals 100/35/15.
+Ordinary native export includes source rows; project-view export retains whole included tables.
+The proposed parameter-option and unused-binding closure probes remain unrun.
+Verify them before claiming complete reopening. A reproduced failure earns a bounded repair, not a new format.
+Author, browser and recipient acceptance remain proposed.
+
 ## Histogram boundary proof, October 21
 
 [Engineering-boundary research](../../research/engineering-bins-2026-10-21/README.md) identifies a separate endpoint question after the first local trust task.

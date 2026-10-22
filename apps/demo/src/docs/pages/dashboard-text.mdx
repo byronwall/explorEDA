@@ -2,6 +2,8 @@
 
 Dashboard text builds a whole dashboard from compact lines: each line declares a field alias, a calculation, or a chart. A line that ends in `{` opens a body for longer settings, and `}` closes it, so spacing never changes what the text means. A `layout` block places the charts, one line per band of the grid. In the demo, open **Dashboard text** (<kbd>T</kbd>) beside any view to read and edit the text that builds it.
 
+Summaries take `count`, `sum`, `average`, `max`, or `min` wherever they appear: a `group @peak max(Rate) by=State` declaration, a `metric min(Price)`, a chart's `aggregation=max`, or a line's `time.aggregation=min`. A max or min keeps the largest or smallest valid value in each group, so it never stacks or fills an empty period with zero.
+
 Workspace filters are `filter` lines, one per field, such as `filter Region=West,East`.
 
 Annotations, table columns, pivot values, and composed graphics are child lines inside a chart's braces, such as `rule y=4 "Target"` or `column Revenue width=140`. In a text with several views, a chart written above the views is defined once; each view places it by name and changes only what differs, such as `Region select.Region=West`.
