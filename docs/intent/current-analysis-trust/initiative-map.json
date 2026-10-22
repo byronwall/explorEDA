@@ -5,7 +5,7 @@
     "slug": "current-analysis-trust",
     "scale": "feature",
     "current_phase": "intent",
-    "last_updated": "2026-10-20",
+    "last_updated": "2026-10-21",
     "summary": "Analysts should trust that linked views describe the same rows and use compatible metric definitions.",
     "status": "planned",
     "next_action": "First compare one category selection across bar, card, and exported rows. Continue only after their group membership, valid contributors, and values agree. Then add undo/restore and a second chart family."
@@ -14,7 +14,7 @@
     "intent_brief": {
       "path": "intent-brief.md",
       "status": "current",
-      "updated_at": "2026-10-20"
+      "updated_at": "2026-10-21"
     },
     "brainstorm": {
       "path": "brainstorm.md",
@@ -102,6 +102,13 @@
       "location": "../../research/analysis-handoff-2026-10-20/README.md",
       "anchor": "AH01–AH05; source and primary-source review at9b16d78e",
       "authority": "Research and proposed proof, not implementation approval or runtime acceptance"
+    },
+    {
+      "id": "engineering-bins-research-2026-10-21",
+      "type": "agent-authored-analysis",
+      "location": "../../research/engineering-bins-2026-10-21/README.md",
+      "anchor": "EB01\u2013EB04",
+      "authority": "Reviewed research and proposed gates; no product approval or new browser proof"
     }
   ],
   "intent": {
@@ -347,6 +354,12 @@
       "date": "2026-10-20",
       "action": "Integrated analytical handoff research and preserved existing proof and demand gates.",
       "evidence": "Four originals collected; source receipts checked. No recipient, browser or new product proof."
+    },
+    {
+      "date": "2026-10-21",
+      "action": "Reconciled engineering histogram boundary research.",
+      "reason": "Retain current controls and separate endpoint proof from new capability.",
+      "evidence": "Source receipts and independent arithmetic; named-task and complete product proofs remain unrun."
     }
   ],
   "closure": null,

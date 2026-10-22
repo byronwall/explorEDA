@@ -26,3 +26,8 @@ Current source was inspected at `a50df9985ed3ff54d0f6ca368c0b369829b8a927` on 20
 
 [Research summary](../../../research/analysis-handoff-2026-10-20/README.md), [dispositions](../../../research/analysis-handoff-2026-10-20/decisions.md) and [independent evidence](../../../research/analysis-handoff-2026-10-20/evidence.md) retain the current boundary.
 Originals and proposed proof remain linked from that collection. No feature or complete workflow acceptance is claimed.
+
+## Engineering histogram boundaries, October 21
+
+[Reviewed research](../../../research/engineering-bins-2026-10-21/README.md) and [four dispositions](../../../research/engineering-bins-2026-10-21/decisions.md)
+keep current controls. Endpoint agreement needs a bounded proof after local trust. New controls and a lesson remain conditional.
