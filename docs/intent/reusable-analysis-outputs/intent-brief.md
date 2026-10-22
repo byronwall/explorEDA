@@ -50,6 +50,10 @@ Wait for an actual downstream-analysis task. If one appears, expose one grouped 
 
 See the [reference packet](references/README.md) and [comparison collection](../comparison-opportunities/README.md) for context.
 
+## Preparation research follow-up
+
+The 2026-10-18 [preparation research](../../research/data-preparation-boundary-2026-10-16/README.md) confirms grouped outputs and shared query views already exist. Further same-query aggregation also exists. These do not establish cross-query result demand. Keep this seed unprioritized until an actual export/import task remains blocked.
+
 ## Analytical handoff research, 2026-10-20
 
 The [handoff review](../../research/analysis-handoff-2026-10-20/README.md) separates record exchange from result reuse.
