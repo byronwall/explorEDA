@@ -1972,9 +1972,9 @@
     "id": "nb-sunspots-cycles",
     "slug": "sunspots-cycles",
     "kind": "notebook",
-    "title": "Sunspot peaks range from under 50 to 190",
-    "question": "How much does the height of the solar cycle vary from one peak to the next?",
-    "summary": "Solar cycles peak every eleven years or so, but the peaks range from under 50 sunspots to 190.",
+    "title": "The Sun peaks about every eleven years, at anything from 46 to 190",
+    "question": "How much does one solar maximum resemble the next?",
+    "summary": "Three centuries of annual sunspot numbers keep an eleven-year beat, but the peaks range from 46 in 1816 to 190 in 1957. The years 1950 to 1999 averaged 73 against 40 for 1800 to 1849, the busiest half-century in the record.",
     "family": "sunspots",
     "entry": "cycles.eda.md",
     "query": "r",
@@ -1982,16 +1982,126 @@
     "analysis": "Trend",
     "findings": [
       {
-        "text": "The largest annual sunspot number is {value}.",
+        "text": "The tallest, in 1957, reached {value}",
         "format": ".1f",
         "op": "max",
         "field": "activity"
       },
       {
-        "text": "The median annual sunspot number is {value}.",
+        "text": "reached only {value}, barely above the median year",
+        "format": ".1f",
+        "op": "max",
+        "field": "activity",
+        "where": [
+          [
+            "year",
+            "ge",
+            1810
+          ],
+          [
+            "year",
+            "le",
+            1822
+          ]
+        ]
+      },
+      {
+        "text": "barely above the median year of {value}.",
         "format": ".1f",
         "op": "median",
         "field": "activity"
+      },
+      {
+        "text": "its years averaged {value}, against",
+        "format": ".1f",
+        "op": "mean",
+        "field": "activity",
+        "where": [
+          [
+            "era",
+            "eq",
+            "1950–1999"
+          ]
+        ]
+      },
+      {
+        "text": "against {value} for 1800–1849.",
+        "format": ".1f",
+        "op": "mean",
+        "field": "activity",
+        "where": [
+          [
+            "era",
+            "eq",
+            "1800–1849"
+          ]
+        ]
+      },
+      {
+        "text": "In 1800–1849, {value}% of years had a sunspot number under 20",
+        "format": ".1f",
+        "op": "share",
+        "field": "activity",
+        "where": [
+          [
+            "era",
+            "eq",
+            "1800–1849"
+          ]
+        ],
+        "condition": [
+          [
+            "activity",
+            "lt",
+            20
+          ]
+        ]
+      },
+      {
+        "text": "in 1950–1999, {value}% did.",
+        "format": ".1f",
+        "op": "share",
+        "field": "activity",
+        "where": [
+          [
+            "era",
+            "eq",
+            "1950–1999"
+          ]
+        ],
+        "condition": [
+          [
+            "activity",
+            "lt",
+            20
+          ]
+        ]
+      },
+      {
+        "text": "{value}% of years had a sunspot number under 20, and",
+        "format": ".1f",
+        "op": "share",
+        "field": "activity",
+        "condition": [
+          [
+            "activity",
+            "lt",
+            20
+          ]
+        ]
+      },
+      {
+        "text": "and {value}% reached 100 or more.",
+        "format": ".1f",
+        "op": "share",
+        "field": "activity",
+        "condition": [
+          [
+            "activity",
+            "ge",
+            100
+          ]
+        ]
       }
     ],
     "published": "2026-08-28"
@@ -3454,9 +3564,9 @@
     "id": "nb-sunspots-smoothing-cost",
     "slug": "sunspots-smoothing-cost",
     "kind": "notebook",
-    "title": "What an eleven-year average removes from the sunspot record",
-    "question": "How different is annual activity from a centered eleven-observation mean?",
-    "summary": "An eleven-year moving average flattens the sunspot record; single years sit up to 102 above it and 91 below.",
+    "title": "An eleven-year average halves the solar peaks and misplaces the quiet years",
+    "question": "What does a smoothed sunspot curve throw away?",
+    "summary": "A centered eleven-year mean never rises above 96 in a record whose peak year reads 190, and it puts its own maximum at 1954, a year the Sun was almost blank. The typical year sits 30 away from its smoothed value.",
     "family": "sunspots",
     "entry": "smoothing-cost.eda.md",
     "query": "r",
@@ -3464,16 +3574,86 @@
     "analysis": "Trend",
     "findings": [
       {
-        "text": "The largest annual value above its centered mean was {value} sunspot-number units.",
+        "text": "The highest annual reading, {value} in 1957",
+        "format": ".1f",
+        "op": "max",
+        "field": "activity"
+      },
+      {
+        "text": "becomes a smoothed value of {value} at that year",
+        "format": ".1f",
+        "op": "max",
+        "field": "smooth11",
+        "where": [
+          [
+            "year",
+            "eq",
+            1957
+          ]
+        ]
+      },
+      {
+        "text": "the smoothed curve never rises above {value} anywhere in the record",
+        "format": ".1f",
+        "op": "max",
+        "field": "smooth11"
+      },
+      {
+        "text": "The largest departure above the average was {value}, in 1957",
         "format": ".2f",
         "op": "max",
         "field": "departure"
       },
       {
-        "text": "The largest annual value below its centered mean was {value} sunspot-number units.",
+        "text": "The largest below was {value}, in 1954",
         "format": ".2f",
         "op": "min",
         "field": "departure"
+      },
+      {
+        "text": "a year with a reading of {value} whose eleven-year window",
+        "format": ".1f",
+        "op": "max",
+        "field": "activity",
+        "where": [
+          [
+            "year",
+            "eq",
+            1954
+          ]
+        ]
+      },
+      {
+        "text": "the average year sits {value} from its eleven-year mean",
+        "format": ".2f",
+        "op": "mean",
+        "field": "abs_departure"
+      },
+      {
+        "text": "and {value}% of years sit more than 50 away",
+        "format": ".1f",
+        "op": "share",
+        "field": "abs_departure",
+        "where": [
+          [
+            "abs_departure",
+            "ge",
+            0
+          ]
+        ],
+        "condition": [
+          [
+            "abs_departure",
+            "gt",
+            50
+          ]
+        ]
+      },
+      {
+        "text": "For a series whose median year reads {value}",
+        "format": ".0f",
+        "op": "median",
+        "field": "activity"
       }
     ],
     "published": "2026-10-01"
