@@ -3870,393 +3870,8 @@
       "id": "gdp-table",
       "title": "The world GDP table since 1980",
       "part": 1
-    }
-  },
-  {
-    "id": "nb-gdp-leavers",
-    "slug": "gdp-leavers",
-    "kind": "notebook",
-    "title": "Spain, Mexico, and the Netherlands left the top twelve; India, Russia, and South Korea took their places",
-    "question": "Who dropped out of the world's twelve largest economies since 1980, and who replaced them?",
-    "summary": "Spain, Mexico, and the Netherlands grew six- to ninefold in dollars from 1980 to 2023 and still fell out of the world's top twelve, overtaken by India, Russia, and South Korea. In 2023 the three joiners produced $7.4 trillion to the leavers' $4.6 trillion.",
-    "family": "gdp",
-    "entry": "leavers.eda.md",
-    "query": "gdp",
-    "industry": "Economics",
-    "analysis": "Ranking",
-    "findings": [
-      {
-        "text": "Spain's economy grew {value}-fold from 1980 to 2023",
-        "format": ".1f",
-        "op": "ratio_sums",
-        "field": "gdp_2023",
-        "other": "gdp_1980",
-        "where": [
-          [
-            "Country",
-            "eq",
-            "Spain"
-          ]
-        ]
-      },
-      {
-        "text": "Mexico's {value}-fold",
-        "format": ".1f",
-        "op": "ratio_sums",
-        "field": "gdp_2023",
-        "other": "gdp_1980",
-        "where": [
-          [
-            "Country",
-            "eq",
-            "Mexico"
-          ]
-        ]
-      },
-      {
-        "text": "South Korea's grew {value}-fold",
-        "format": ".1f",
-        "op": "ratio_sums",
-        "field": "gdp_2023",
-        "other": "gdp_1980",
-        "where": [
-          [
-            "Country",
-            "eq",
-            "South Korea"
-          ]
-        ]
-      },
-      {
-        "text": "India's {value}-fold.",
-        "format": ".1f",
-        "op": "ratio_sums",
-        "field": "gdp_2023",
-        "other": "gdp_1980",
-        "where": [
-          [
-            "Country",
-            "eq",
-            "India"
-          ]
-        ]
-      },
-      {
-        "text": "The three economies that joined the top twelve produced ${value} trillion in 2023",
-        "format": ".2f",
-        "op": "sum",
-        "field": "trillions_2023",
-        "where": [
-          [
-            "status",
-            "eq",
-            "Joined"
-          ]
-        ]
-      },
-      {
-        "text": "the three that left produced ${value} trillion.",
-        "format": ".2f",
-        "op": "sum",
-        "field": "trillions_2023",
-        "where": [
-          [
-            "status",
-            "eq",
-            "Left"
-          ]
-        ]
-      },
-      {
-        "text": "India alone produced ${value} trillion",
-        "format": ".2f",
-        "op": "mean",
-        "field": "trillions",
-        "where": [
-          [
-            "Country",
-            "eq",
-            "India"
-          ],
-          [
-            "Year",
-            "eq",
-            2023
-          ]
-        ]
-      },
-      {
-        "text": "more than Spain's ${value} trillion",
-        "format": ".2f",
-        "op": "mean",
-        "field": "trillions",
-        "where": [
-          [
-            "Country",
-            "eq",
-            "Spain"
-          ],
-          [
-            "Year",
-            "eq",
-            2023
-          ]
-        ]
-      },
-      {
-        "text": "the Netherlands' ${value} trillion together.",
-        "format": ".2f",
-        "op": "mean",
-        "field": "trillions",
-        "where": [
-          [
-            "Country",
-            "eq",
-            "Netherlands"
-          ],
-          [
-            "Year",
-            "eq",
-            2023
-          ]
-        ]
-      },
-      {
-        "text": "South Korea, which produced ${value} billion in 1980",
-        "format": ".0f",
-        "op": "mean",
-        "field": "billions",
-        "where": [
-          [
-            "Country",
-            "eq",
-            "South Korea"
-          ],
-          [
-            "Year",
-            "eq",
-            1980
-          ]
-        ]
-      },
-      {
-        "text": "produced ${value} trillion in 2023.",
-        "format": ".2f",
-        "op": "mean",
-        "field": "trillions",
-        "where": [
-          [
-            "Country",
-            "eq",
-            "South Korea"
-          ],
-          [
-            "Year",
-            "eq",
-            2023
-          ]
-        ]
-      }
-    ],
-    "series": {
-      "id": "gdp-table",
-      "title": "The world GDP table since 1980",
-      "part": 2
-    }
-  },
-  {
-    "id": "nb-gdp-shares",
-    "slug": "gdp-shares",
-    "kind": "notebook",
-    "title": "Japan once made a quarter of the big economies' output; now China does",
-    "question": "How have the United States, China, and Japan divided the output of the world's largest economies?",
-    "summary": "The United States made a third of the seventeen biggest economies' combined output in 1980 and still does. Beneath it, Japan's share fell from 22% in 1995 to 5% in 2023 while China's rose from 2% to 22%.",
-    "family": "gdp",
-    "entry": "shares.eda.md",
-    "query": "gdp",
-    "industry": "Economics",
-    "analysis": "Part-to-whole",
-    "findings": [
-      {
-        "text": "In 1995 Japan made {value}% of the combined total",
-        "format": ".1f",
-        "op": "ratio_sums",
-        "field": "japan_gdp",
-        "other": "GDP (current US$)",
-        "scale": 100,
-        "where": [
-          [
-            "Year",
-            "eq",
-            1995
-          ]
-        ]
-      },
-      {
-        "text": "by 2023 it made {value}%.",
-        "format": ".1f",
-        "op": "ratio_sums",
-        "field": "japan_gdp",
-        "other": "GDP (current US$)",
-        "scale": 100,
-        "where": [
-          [
-            "Year",
-            "eq",
-            2023
-          ]
-        ]
-      },
-      {
-        "text": "China made {value}% in 1980",
-        "format": ".1f",
-        "op": "ratio_sums",
-        "field": "china_gdp",
-        "other": "GDP (current US$)",
-        "scale": 100,
-        "where": [
-          [
-            "Year",
-            "eq",
-            1980
-          ]
-        ]
-      },
-      {
-        "text": "and {value}% in 2023.",
-        "format": ".1f",
-        "op": "ratio_sums",
-        "field": "china_gdp",
-        "other": "GDP (current US$)",
-        "scale": 100,
-        "where": [
-          [
-            "Year",
-            "eq",
-            2023
-          ]
-        ]
-      },
-      {
-        "text": "The United States made {value}% of the combined total in 1980",
-        "format": ".1f",
-        "op": "ratio_sums",
-        "field": "us_gdp",
-        "other": "GDP (current US$)",
-        "scale": 100,
-        "where": [
-          [
-            "Year",
-            "eq",
-            1980
-          ]
-        ]
-      },
-      {
-        "text": "and {value}% in 2023.",
-        "format": ".1f",
-        "op": "ratio_sums",
-        "field": "us_gdp",
-        "other": "GDP (current US$)",
-        "scale": 100,
-        "where": [
-          [
-            "Year",
-            "eq",
-            2023
-          ]
-        ]
-      },
-      {
-        "text": "Its share peaked at {value}% in 1985",
-        "format": ".1f",
-        "op": "ratio_sums",
-        "field": "us_gdp",
-        "other": "GDP (current US$)",
-        "scale": 100,
-        "where": [
-          [
-            "Year",
-            "eq",
-            1985
-          ]
-        ]
-      },
-      {
-        "text": "bottomed at {value}% in 2011.",
-        "format": ".1f",
-        "op": "ratio_sums",
-        "field": "us_gdp",
-        "other": "GDP (current US$)",
-        "scale": 100,
-        "where": [
-          [
-            "Year",
-            "eq",
-            2011
-          ]
-        ]
-      },
-      {
-        "text": "In 1980 the United States produced {value} times China's output",
-        "format": ".1f",
-        "op": "ratio_sums",
-        "field": "us_gdp",
-        "other": "china_gdp",
-        "where": [
-          [
-            "Year",
-            "eq",
-            1980
-          ]
-        ]
-      },
-      {
-        "text": "in 2023 it produced {value} times.",
-        "format": ".2f",
-        "op": "ratio_sums",
-        "field": "us_gdp",
-        "other": "china_gdp",
-        "where": [
-          [
-            "Year",
-            "eq",
-            2023
-          ]
-        ]
-      },
-      {
-        "text": "The combined total grew from ${value} trillion in 1980",
-        "format": ".1f",
-        "op": "sum",
-        "field": "trillions",
-        "where": [
-          [
-            "Year",
-            "eq",
-            1980
-          ]
-        ]
-      },
-      {
-        "text": "to ${value} trillion in 2023",
-        "format": ".1f",
-        "op": "sum",
-        "field": "trillions",
-        "where": [
-          [
-            "Year",
-            "eq",
-            2023
-          ]
-        ]
-      }
-    ],
-    "series": {
-      "id": "gdp-table",
-      "title": "The world GDP table since 1980",
-      "part": 3
-    }
+    },
+    "published": "2026-10-22"
   },
   {
     "id": "nb-gapminder-income-and-years",
@@ -4591,7 +4206,8 @@
           ]
         ]
       }
-    ]
+    ],
+    "published": "2026-10-23"
   },
   {
     "id": "nb-co2pc-who-emits",
@@ -4805,6 +4421,1760 @@
           ]
         ]
       }
-    ]
+    ],
+    "published": "2026-10-24"
+  },
+  {
+    "id": "nb-bananas-tripled-and-stalled",
+    "slug": "bananas-tripled-and-stalled",
+    "kind": "notebook",
+    "title": "Indonesia's banana yields rose tenfold; Mali's fell by two fifths",
+    "question": "Which of the top banana producers raised their yields since the 1960s, and who stalled?",
+    "summary": "Among fifteen top banana producers, the average decade yield rose from 28 to 44 tonnes a hectare between the 1960s and the 2010s, and the spread between countries narrowed. Indonesia's yield rose almost tenfold; Mali's, the highest in the 1960s, fell by two fifths.",
+    "family": "bananas",
+    "entry": "tripled-and-stalled.eda.md",
+    "query": "decades",
+    "industry": "Agriculture",
+    "analysis": "Trend",
+    "findings": [
+      {
+        "text": "The group's average cell rose from {value} tonnes a hectare in the 1960s",
+        "format": ".1f",
+        "op": "mean",
+        "field": "yield",
+        "where": [
+          [
+            "Decade",
+            "eq",
+            "1960s"
+          ]
+        ]
+      },
+      {
+        "text": "to {value} in the 2010s",
+        "format": ".1f",
+        "op": "mean",
+        "field": "yield",
+        "where": [
+          [
+            "Decade",
+            "eq",
+            "2010s"
+          ]
+        ]
+      },
+      {
+        "text": "Indonesia's yield in the 2010s was {value} times its 1960s figure",
+        "format": ".2f",
+        "op": "ratio_sums",
+        "field": "yield_2010s_or_zero",
+        "other": "yield_1960s_or_zero",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "Indonesia"
+          ]
+        ]
+      },
+      {
+        "text": "from {value} to",
+        "format": ".1f",
+        "op": "mean",
+        "field": "yield",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "Indonesia"
+          ],
+          [
+            "Decade",
+            "eq",
+            "1960s"
+          ]
+        ]
+      },
+      {
+        "text": "to {value} tonnes a hectare, and Côte d'Ivoire's",
+        "format": ".1f",
+        "op": "mean",
+        "field": "yield",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "Indonesia"
+          ],
+          [
+            "Decade",
+            "eq",
+            "2010s"
+          ]
+        ]
+      },
+      {
+        "text": "Côte d'Ivoire's was {value} times.",
+        "format": ".2f",
+        "op": "ratio_sums",
+        "field": "yield_2010s_or_zero",
+        "other": "yield_1960s_or_zero",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "Cote d'Ivoire"
+          ]
+        ]
+      },
+      {
+        "text": "Mali's was {value} times",
+        "format": ".2f",
+        "op": "ratio_sums",
+        "field": "yield_2010s_or_zero",
+        "other": "yield_1960s_or_zero",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "Mali"
+          ]
+        ]
+      },
+      {
+        "text": "from {value} tonnes a hectare, the highest of the 1960s",
+        "format": ".1f",
+        "op": "max",
+        "field": "yield",
+        "where": [
+          [
+            "Decade",
+            "eq",
+            "1960s"
+          ]
+        ]
+      },
+      {
+        "text": "the highest of the 1960s, to {value}.",
+        "format": ".1f",
+        "op": "mean",
+        "field": "yield",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "Mali"
+          ],
+          [
+            "Decade",
+            "eq",
+            "2010s"
+          ]
+        ]
+      },
+      {
+        "text": "in the 2010s it ran from Palestine's {value}",
+        "format": ".1f",
+        "op": "min",
+        "field": "yield",
+        "where": [
+          [
+            "Decade",
+            "eq",
+            "2010s"
+          ]
+        ]
+      },
+      {
+        "text": "to Indonesia's {value}.",
+        "format": ".1f",
+        "op": "max",
+        "field": "yield",
+        "where": [
+          [
+            "Decade",
+            "eq",
+            "2010s"
+          ]
+        ]
+      },
+      {
+        "text": "Mali's 1990s peak of {value} tonnes a hectare was the highest cell in the table",
+        "format": ".1f",
+        "op": "max",
+        "field": "yield"
+      },
+      {
+        "text": "Indonesia, Nicaragua, and Costa Rica lead at {value},",
+        "format": ".1f",
+        "op": "mean",
+        "field": "yield",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "Indonesia"
+          ],
+          [
+            "Decade",
+            "eq",
+            "2010s"
+          ]
+        ]
+      },
+      {
+        "text": "{value}, and",
+        "format": ".1f",
+        "op": "mean",
+        "field": "yield",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "Nicaragua"
+          ],
+          [
+            "Decade",
+            "eq",
+            "2010s"
+          ]
+        ]
+      },
+      {
+        "text": "and {value} tonnes a hectare. Ranked by the 1960s",
+        "format": ".1f",
+        "op": "mean",
+        "field": "yield",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "Costa Rica"
+          ],
+          [
+            "Decade",
+            "eq",
+            "2010s"
+          ]
+        ]
+      }
+    ],
+    "published": "2026-10-25"
+  },
+  {
+    "id": "nb-tax-who-rose",
+    "slug": "tax-who-rose",
+    "kind": "notebook",
+    "title": "Twenty OECD countries raised their tax take since 2000; fourteen cut it",
+    "question": "Did rich countries tax more or less in 2023 than in 2000?",
+    "summary": "Across 34 OECD countries, central government tax revenue averaged 20.3% of GDP in 2000 and 20.4% in 2023. Beneath that flat average, twenty countries rose and fourteen fell, and the high-tax countries were the ones that came down.",
+    "family": "tax",
+    "entry": "who-rose.eda.md",
+    "query": "countries",
+    "industry": "Public finance",
+    "analysis": "Comparison",
+    "findings": [
+      {
+        "text": "The average country's share was {value}% of GDP in 2000",
+        "format": ".1f",
+        "op": "mean",
+        "field": "share_2000"
+      },
+      {
+        "text": "and {value}% in 2023",
+        "format": ".1f",
+        "op": "mean",
+        "field": "share_2023"
+      },
+      {
+        "text": "{value}% of the countries rose.",
+        "format": ".1f",
+        "op": "share",
+        "field": "change",
+        "condition": [
+          [
+            "change",
+            "gt",
+            0
+          ]
+        ]
+      },
+      {
+        "text": "Colombia rose {value} points",
+        "format": ".1f",
+        "op": "mean",
+        "field": "change",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "Colombia"
+          ]
+        ]
+      },
+      {
+        "text": "from {value}% to",
+        "format": ".1f",
+        "op": "mean",
+        "field": "share_2000",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "Colombia"
+          ]
+        ]
+      },
+      {
+        "text": "to {value}% of GDP, and Mexico",
+        "format": ".1f",
+        "op": "mean",
+        "field": "share_2023",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "Colombia"
+          ]
+        ]
+      },
+      {
+        "text": "Mexico {value} points.",
+        "format": ".1f",
+        "op": "mean",
+        "field": "change",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "Mexico"
+          ]
+        ]
+      },
+      {
+        "text": "Ireland's change was {value} points",
+        "format": ".1f",
+        "op": "min",
+        "field": "change"
+      },
+      {
+        "text": "Belgium's {value} points.",
+        "format": ".1f",
+        "op": "mean",
+        "field": "change",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "Belgium"
+          ]
+        ]
+      },
+      {
+        "text": "The median country's share rose {value} points",
+        "format": ".2f",
+        "op": "median",
+        "field": "change"
+      },
+      {
+        "text": "the mean change was {value} points",
+        "format": ".2f",
+        "op": "mean",
+        "field": "change"
+      },
+      {
+        "text": "The United States' change was {value} points",
+        "format": ".1f",
+        "op": "mean",
+        "field": "change",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "United States"
+          ]
+        ]
+      },
+      {
+        "text": "to {value}% of GDP, the second-lowest share",
+        "format": ".1f",
+        "op": "mean",
+        "field": "share_2023",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "United States"
+          ]
+        ]
+      },
+      {
+        "text": "after Switzerland's {value}%.",
+        "format": ".1f",
+        "op": "min",
+        "field": "share_2023"
+      },
+      {
+        "text": "Denmark kept the highest share, {value}% of GDP",
+        "format": ".1f",
+        "op": "max",
+        "field": "share_2023"
+      },
+      {
+        "text": "The {value} countries at or above 20% of GDP in 2000",
+        "format": ".0f",
+        "op": "count",
+        "field": "change",
+        "where": [
+          [
+            "share_2000",
+            "ge",
+            20
+          ]
+        ]
+      },
+      {
+        "text": "changed by {value} points on average",
+        "format": ".2f",
+        "op": "mean",
+        "field": "change",
+        "where": [
+          [
+            "share_2000",
+            "ge",
+            20
+          ]
+        ]
+      },
+      {
+        "text": "the {value} below 20% changed",
+        "format": ".0f",
+        "op": "count",
+        "field": "change",
+        "where": [
+          [
+            "share_2000",
+            "lt",
+            20
+          ]
+        ]
+      },
+      {
+        "text": "changed by {value} points on average.",
+        "format": ".2f",
+        "op": "mean",
+        "field": "change",
+        "where": [
+          [
+            "share_2000",
+            "lt",
+            20
+          ]
+        ]
+      }
+    ],
+    "published": "2026-10-26"
+  },
+  {
+    "id": "nb-dubois-engels-law",
+    "slug": "dubois-engels-law",
+    "kind": "notebook",
+    "title": "Du Bois's Atlanta families spent 43% on food at the bottom and 29% at the top",
+    "question": "Did Black families in 1900 Atlanta follow Engel's law, spending a smaller share on food as income rose?",
+    "summary": "Across the seven income classes on Du Bois's 1900 plate, the food share of spending fell from 43% in the poorest class to 29% in the richest, while the share left for other expenses and savings rose from 10% to 51%. In dollars, the richest class still spent five times as much on food as the poorest.",
+    "family": "dubois",
+    "entry": "engels-law.eda.md",
+    "query": "shares",
+    "industry": "History",
+    "analysis": "Part-to-whole",
+    "findings": [
+      {
+        "text": "The $100–200 class spent {value}% of its income on food",
+        "format": ".1f",
+        "op": "mean",
+        "field": "Share",
+        "where": [
+          [
+            "Class",
+            "eq",
+            "$100–200"
+          ],
+          [
+            "Category",
+            "eq",
+            "Food"
+          ]
+        ]
+      },
+      {
+        "text": "the $1,000-and-over class spent {value}%.",
+        "format": ".1f",
+        "op": "mean",
+        "field": "Share",
+        "where": [
+          [
+            "Class",
+            "eq",
+            "$1,000 and over"
+          ],
+          [
+            "Category",
+            "eq",
+            "Food"
+          ]
+        ]
+      },
+      {
+        "text": "The share of spending on food and income had correlation {value} across the seven classes.",
+        "format": ".3f",
+        "op": "corr",
+        "field": "Share",
+        "other": "Average income",
+        "where": [
+          [
+            "Category",
+            "eq",
+            "Food"
+          ]
+        ]
+      },
+      {
+        "text": "\"other expenses and savings\" rises from {value}% in the poorest class",
+        "format": ".1f",
+        "op": "mean",
+        "field": "Share",
+        "where": [
+          [
+            "Class",
+            "eq",
+            "$100–200"
+          ],
+          [
+            "Category",
+            "eq",
+            "Other expenses and savings"
+          ]
+        ]
+      },
+      {
+        "text": "to {value}% in the richest.",
+        "format": ".1f",
+        "op": "mean",
+        "field": "Share",
+        "where": [
+          [
+            "Class",
+            "eq",
+            "$1,000 and over"
+          ],
+          [
+            "Category",
+            "eq",
+            "Other expenses and savings"
+          ]
+        ]
+      },
+      {
+        "text": "Rent peaks at {value}% in the $300–400 class",
+        "format": ".1f",
+        "op": "max",
+        "field": "Share",
+        "where": [
+          [
+            "Category",
+            "eq",
+            "Rent"
+          ]
+        ]
+      },
+      {
+        "text": "Direct taxes never pass {value}%.",
+        "format": ".1f",
+        "op": "max",
+        "field": "Share",
+        "where": [
+          [
+            "Category",
+            "eq",
+            "Direct taxes"
+          ]
+        ]
+      },
+      {
+        "text": "The poorest class spent ${value} a year on food",
+        "format": ".1f",
+        "op": "mean",
+        "field": "dollars",
+        "where": [
+          [
+            "Class",
+            "eq",
+            "$100–200"
+          ],
+          [
+            "Category",
+            "eq",
+            "Food"
+          ]
+        ]
+      },
+      {
+        "text": "the richest ${value},",
+        "format": ".1f",
+        "op": "mean",
+        "field": "dollars",
+        "where": [
+          [
+            "Class",
+            "eq",
+            "$1,000 and over"
+          ],
+          [
+            "Category",
+            "eq",
+            "Food"
+          ]
+        ]
+      },
+      {
+        "text": "Spending on other expenses and savings rose from ${value} a year",
+        "format": ".1f",
+        "op": "mean",
+        "field": "dollars",
+        "where": [
+          [
+            "Class",
+            "eq",
+            "$100–200"
+          ],
+          [
+            "Category",
+            "eq",
+            "Other expenses and savings"
+          ]
+        ]
+      },
+      {
+        "text": "to ${value}.",
+        "format": ".1f",
+        "op": "mean",
+        "field": "dollars",
+        "where": [
+          [
+            "Class",
+            "eq",
+            "$1,000 and over"
+          ],
+          [
+            "Category",
+            "eq",
+            "Other expenses and savings"
+          ]
+        ]
+      }
+    ],
+    "published": "2026-10-27"
+  },
+  {
+    "id": "nb-confidence-two-dips",
+    "slug": "confidence-two-dips",
+    "kind": "notebook",
+    "title": "Consumer confidence fell further in 2022 than in the lockdowns",
+    "question": "How did consumer confidence in nine big economies fall and recover through the pandemic?",
+    "summary": "Across nine big economies, the OECD's consumer confidence index dipped two points in the lockdown spring of 2020 and recovered within a year. From early 2022 it fell for nine straight months to below the pandemic trough, and seven of the nine countries hit their lowest reading in 2022.",
+    "family": "confidence",
+    "entry": "two-dips.eda.md",
+    "query": "cci",
+    "industry": "Economics",
+    "analysis": "Trend",
+    "findings": [
+      {
+        "text": "the index fell from {value} in February 2020",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Index",
+        "where": [
+          [
+            "Month",
+            "eq",
+            "2020-02-01"
+          ]
+        ]
+      },
+      {
+        "text": "to {value} in April 2020",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Index",
+        "where": [
+          [
+            "Month",
+            "eq",
+            "2020-04-01"
+          ]
+        ]
+      },
+      {
+        "text": "to {value} in September 2022, lower than any month of the pandemic",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Index",
+        "where": [
+          [
+            "Month",
+            "eq",
+            "2022-09-01"
+          ]
+        ]
+      },
+      {
+        "text": "The United Kingdom fell furthest, to {value} in October 2022, the lowest reading in the data",
+        "format": ".2f",
+        "op": "min",
+        "field": "Index"
+      },
+      {
+        "text": "China, which spent 2019 above 104, fell to {value} in July 2022",
+        "format": ".2f",
+        "op": "min",
+        "field": "Index",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "China"
+          ]
+        ]
+      },
+      {
+        "text": "at {value} and",
+        "format": ".2f",
+        "op": "min",
+        "field": "Index",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "Japan"
+          ]
+        ]
+      },
+      {
+        "text": "and {value}.",
+        "format": ".2f",
+        "op": "min",
+        "field": "Index",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "South Korea"
+          ]
+        ]
+      },
+      {
+        "text": "In 2019, {value}% of country-months were below 100",
+        "format": ".1f",
+        "op": "share",
+        "field": "Index",
+        "where": [
+          [
+            "Month",
+            "ge",
+            "2019-01-01"
+          ],
+          [
+            "Month",
+            "lt",
+            "2020-01-01"
+          ]
+        ],
+        "condition": [
+          [
+            "Index",
+            "lt",
+            100
+          ]
+        ]
+      },
+      {
+        "text": "In 2022, {value}% were.",
+        "format": ".1f",
+        "op": "share",
+        "field": "Index",
+        "where": [
+          [
+            "Month",
+            "ge",
+            "2022-01-01"
+          ]
+        ],
+        "condition": [
+          [
+            "Index",
+            "lt",
+            100
+          ]
+        ]
+      }
+    ],
+    "published": "2026-10-28"
+  },
+  {
+    "id": "nb-stocks-two-crashes",
+    "slug": "stocks-two-crashes",
+    "kind": "notebook",
+    "title": "A decade on, Microsoft was still 28% below its 2000 price; Apple was up ninefold",
+    "question": "How did five technology stocks come through the dot-com crash and the 2008 crisis?",
+    "summary": "Indexed to January 2000, Apple closed the decade at 860 and Microsoft at 72, with Google, Amazon, and IBM between. The dot-com crash took 91% off Amazon and 72% off Apple; the 2008 crisis halved Google and Apple, and they made it back within a year.",
+    "family": "stocks",
+    "entry": "two-crashes.eda.md",
+    "query": "prices",
+    "industry": "Finance",
+    "analysis": "Trend",
+    "findings": [
+      {
+        "text": "By March 2010 Apple stood at {value}",
+        "format": ".0f",
+        "op": "mean",
+        "field": "indexed",
+        "where": [
+          [
+            "Company",
+            "eq",
+            "Apple"
+          ],
+          [
+            "Month",
+            "eq",
+            "2010-03-01"
+          ]
+        ]
+      },
+      {
+        "text": "Google at {value}",
+        "format": ".0f",
+        "op": "mean",
+        "field": "indexed",
+        "where": [
+          [
+            "Company",
+            "eq",
+            "Google"
+          ],
+          [
+            "Month",
+            "eq",
+            "2010-03-01"
+          ]
+        ]
+      },
+      {
+        "text": "Amazon at {value}",
+        "format": ".0f",
+        "op": "mean",
+        "field": "indexed",
+        "where": [
+          [
+            "Company",
+            "eq",
+            "Amazon"
+          ],
+          [
+            "Month",
+            "eq",
+            "2010-03-01"
+          ]
+        ]
+      },
+      {
+        "text": "IBM at {value}",
+        "format": ".0f",
+        "op": "mean",
+        "field": "indexed",
+        "where": [
+          [
+            "Company",
+            "eq",
+            "IBM"
+          ],
+          [
+            "Month",
+            "eq",
+            "2010-03-01"
+          ]
+        ]
+      },
+      {
+        "text": "Microsoft at {value}.",
+        "format": ".0f",
+        "op": "mean",
+        "field": "indexed",
+        "where": [
+          [
+            "Company",
+            "eq",
+            "Microsoft"
+          ],
+          [
+            "Month",
+            "eq",
+            "2010-03-01"
+          ]
+        ]
+      },
+      {
+        "text": "Amazon closed at ${value} in January 2000",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Price",
+        "where": [
+          [
+            "Company",
+            "eq",
+            "Amazon"
+          ],
+          [
+            "Month",
+            "eq",
+            "2000-01-01"
+          ]
+        ]
+      },
+      {
+        "text": "at ${value} in September 2001, its low",
+        "format": ".2f",
+        "op": "min",
+        "field": "Price",
+        "where": [
+          [
+            "Company",
+            "eq",
+            "Amazon"
+          ]
+        ]
+      },
+      {
+        "text": "Apple fell from ${value} to",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Price",
+        "where": [
+          [
+            "Company",
+            "eq",
+            "Apple"
+          ],
+          [
+            "Month",
+            "eq",
+            "2000-01-01"
+          ]
+        ]
+      },
+      {
+        "text": "to ${value} in March 2003",
+        "format": ".2f",
+        "op": "min",
+        "field": "Price",
+        "where": [
+          [
+            "Company",
+            "eq",
+            "Apple"
+          ]
+        ]
+      },
+      {
+        "text": "Microsoft fell from ${value} to",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Price",
+        "where": [
+          [
+            "Company",
+            "eq",
+            "Microsoft"
+          ],
+          [
+            "Month",
+            "eq",
+            "2000-01-01"
+          ]
+        ]
+      },
+      {
+        "text": "to ${value} by December 2000",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Price",
+        "where": [
+          [
+            "Company",
+            "eq",
+            "Microsoft"
+          ],
+          [
+            "Month",
+            "eq",
+            "2000-12-01"
+          ]
+        ]
+      },
+      {
+        "text": "fell least, to ${value} in September 2002",
+        "format": ".2f",
+        "op": "min",
+        "field": "Price",
+        "where": [
+          [
+            "Company",
+            "eq",
+            "IBM"
+          ]
+        ]
+      },
+      {
+        "text": "Google peaked at ${value} in October 2007",
+        "format": ".2f",
+        "op": "max",
+        "field": "Price",
+        "where": [
+          [
+            "Company",
+            "eq",
+            "Google"
+          ]
+        ]
+      },
+      {
+        "text": "closed at ${value} in March 2009",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Price",
+        "where": [
+          [
+            "Company",
+            "eq",
+            "Google"
+          ],
+          [
+            "Month",
+            "eq",
+            "2009-03-01"
+          ]
+        ]
+      },
+      {
+        "text": "Apple fell from ${value} to",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Price",
+        "where": [
+          [
+            "Company",
+            "eq",
+            "Apple"
+          ],
+          [
+            "Month",
+            "eq",
+            "2007-10-01"
+          ]
+        ]
+      },
+      {
+        "text": "to ${value} over the same months",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Price",
+        "where": [
+          [
+            "Company",
+            "eq",
+            "Apple"
+          ],
+          [
+            "Month",
+            "eq",
+            "2009-03-01"
+          ]
+        ]
+      },
+      {
+        "text": "Microsoft from ${value} to",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Price",
+        "where": [
+          [
+            "Company",
+            "eq",
+            "Microsoft"
+          ],
+          [
+            "Month",
+            "eq",
+            "2007-10-01"
+          ]
+        ]
+      },
+      {
+        "text": "to ${value}. Amazon and IBM",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Price",
+        "where": [
+          [
+            "Company",
+            "eq",
+            "Microsoft"
+          ],
+          [
+            "Month",
+            "eq",
+            "2009-03-01"
+          ]
+        ]
+      },
+      {
+        "text": "Apple had made a new high at ${value}",
+        "format": ".2f",
+        "op": "max",
+        "field": "Price",
+        "where": [
+          [
+            "Company",
+            "eq",
+            "Apple"
+          ]
+        ]
+      },
+      {
+        "text": "Microsoft, at ${value}, was still below",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Price",
+        "where": [
+          [
+            "Company",
+            "eq",
+            "Microsoft"
+          ],
+          [
+            "Month",
+            "eq",
+            "2010-03-01"
+          ]
+        ]
+      }
+    ],
+    "published": "2026-10-29"
+  },
+  {
+    "id": "nb-gdp-leavers",
+    "slug": "gdp-leavers",
+    "kind": "notebook",
+    "title": "Spain, Mexico, and the Netherlands left the top twelve; India, Russia, and South Korea took their places",
+    "question": "Who dropped out of the world's twelve largest economies since 1980, and who replaced them?",
+    "summary": "Spain, Mexico, and the Netherlands grew six- to ninefold in dollars from 1980 to 2023 and still fell out of the world's top twelve, overtaken by India, Russia, and South Korea. In 2023 the three joiners produced $7.4 trillion to the leavers' $4.6 trillion.",
+    "family": "gdp",
+    "entry": "leavers.eda.md",
+    "query": "gdp",
+    "industry": "Economics",
+    "analysis": "Ranking",
+    "findings": [
+      {
+        "text": "Spain's economy grew {value}-fold from 1980 to 2023",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "gdp_2023",
+        "other": "gdp_1980",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "Spain"
+          ]
+        ]
+      },
+      {
+        "text": "Mexico's {value}-fold",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "gdp_2023",
+        "other": "gdp_1980",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "Mexico"
+          ]
+        ]
+      },
+      {
+        "text": "South Korea's grew {value}-fold",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "gdp_2023",
+        "other": "gdp_1980",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "South Korea"
+          ]
+        ]
+      },
+      {
+        "text": "India's {value}-fold.",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "gdp_2023",
+        "other": "gdp_1980",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "India"
+          ]
+        ]
+      },
+      {
+        "text": "The three economies that joined the top twelve produced ${value} trillion in 2023",
+        "format": ".2f",
+        "op": "sum",
+        "field": "trillions_2023",
+        "where": [
+          [
+            "status",
+            "eq",
+            "Joined"
+          ]
+        ]
+      },
+      {
+        "text": "the three that left produced ${value} trillion.",
+        "format": ".2f",
+        "op": "sum",
+        "field": "trillions_2023",
+        "where": [
+          [
+            "status",
+            "eq",
+            "Left"
+          ]
+        ]
+      },
+      {
+        "text": "India alone produced ${value} trillion",
+        "format": ".2f",
+        "op": "mean",
+        "field": "trillions",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "India"
+          ],
+          [
+            "Year",
+            "eq",
+            2023
+          ]
+        ]
+      },
+      {
+        "text": "more than Spain's ${value} trillion",
+        "format": ".2f",
+        "op": "mean",
+        "field": "trillions",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "Spain"
+          ],
+          [
+            "Year",
+            "eq",
+            2023
+          ]
+        ]
+      },
+      {
+        "text": "the Netherlands' ${value} trillion together.",
+        "format": ".2f",
+        "op": "mean",
+        "field": "trillions",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "Netherlands"
+          ],
+          [
+            "Year",
+            "eq",
+            2023
+          ]
+        ]
+      },
+      {
+        "text": "South Korea, which produced ${value} billion in 1980",
+        "format": ".0f",
+        "op": "mean",
+        "field": "billions",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "South Korea"
+          ],
+          [
+            "Year",
+            "eq",
+            1980
+          ]
+        ]
+      },
+      {
+        "text": "produced ${value} trillion in 2023.",
+        "format": ".2f",
+        "op": "mean",
+        "field": "trillions",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "South Korea"
+          ],
+          [
+            "Year",
+            "eq",
+            2023
+          ]
+        ]
+      }
+    ],
+    "series": {
+      "id": "gdp-table",
+      "title": "The world GDP table since 1980",
+      "part": 2
+    },
+    "published": "2026-10-30"
+  },
+  {
+    "id": "nb-census-aging-pyramid",
+    "slug": "census-aging-pyramid",
+    "kind": "notebook",
+    "title": "One American in forty was over 65 in 1850; by 2000 it was one in eight",
+    "question": "How did the age and sex profile of the United States change from 1850 to 2000?",
+    "summary": "The under-15 share of Americans fell from 41% in 1850 to 21% in 2000 while the over-65 share rose from 3% to 12%. The baby boom crosses the age table as a diagonal, and above 65 the ratio of men to women fell from parity to 70 per 100.",
+    "family": "census",
+    "entry": "aging-pyramid.eda.md",
+    "query": "pop",
+    "industry": "Demography",
+    "analysis": "Trend",
+    "findings": [
+      {
+        "text": "People under 15 were {value}% of Americans in 1850",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "under_15",
+        "other": "People",
+        "scale": 100,
+        "where": [
+          [
+            "Year",
+            "eq",
+            1850
+          ]
+        ]
+      },
+      {
+        "text": "and {value}% in 2000. People 65 and over",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "under_15",
+        "other": "People",
+        "scale": 100,
+        "where": [
+          [
+            "Year",
+            "eq",
+            2000
+          ]
+        ]
+      },
+      {
+        "text": "People 65 and over were {value}% in 1850",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "over_64",
+        "other": "People",
+        "scale": 100,
+        "where": [
+          [
+            "Year",
+            "eq",
+            1850
+          ]
+        ]
+      },
+      {
+        "text": "and {value}% in 2000. The children's band",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "over_64",
+        "other": "People",
+        "scale": 100,
+        "where": [
+          [
+            "Year",
+            "eq",
+            2000
+          ]
+        ]
+      },
+      {
+        "text": "the 0–4 group held {value} million people in 1960",
+        "format": ".1f",
+        "op": "sum",
+        "field": "millions",
+        "where": [
+          [
+            "Year",
+            "eq",
+            1960
+          ],
+          [
+            "Age group",
+            "eq",
+            "0–4"
+          ]
+        ]
+      },
+      {
+        "text": "in 2000 the biggest group was 35–39, with {value} million people.",
+        "format": ".1f",
+        "op": "sum",
+        "field": "millions",
+        "where": [
+          [
+            "Year",
+            "eq",
+            2000
+          ],
+          [
+            "Age group",
+            "eq",
+            "35–39"
+          ]
+        ]
+      },
+      {
+        "text": "In 1850 there were {value} men per 100 women aged 65 and over",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "males",
+        "other": "females",
+        "scale": 100,
+        "where": [
+          [
+            "Year",
+            "eq",
+            1850
+          ],
+          [
+            "Age",
+            "ge",
+            65
+          ]
+        ]
+      },
+      {
+        "text": "By 2000 there were {value} men per 100 women aged 65 and over",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "males",
+        "other": "females",
+        "scale": 100,
+        "where": [
+          [
+            "Year",
+            "eq",
+            2000
+          ],
+          [
+            "Age",
+            "ge",
+            65
+          ]
+        ]
+      },
+      {
+        "text": "and {value} per 100 aged 80 and over.",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "males",
+        "other": "females",
+        "scale": 100,
+        "where": [
+          [
+            "Year",
+            "eq",
+            2000
+          ],
+          [
+            "Age",
+            "ge",
+            80
+          ]
+        ]
+      },
+      {
+        "text": "above 85 there were {value} million women",
+        "format": ".2f",
+        "op": "sum",
+        "field": "millions",
+        "where": [
+          [
+            "Year",
+            "eq",
+            2000
+          ],
+          [
+            "Age",
+            "ge",
+            85
+          ],
+          [
+            "Sex",
+            "eq",
+            "Female"
+          ]
+        ]
+      },
+      {
+        "text": "to {value} million men.",
+        "format": ".2f",
+        "op": "sum",
+        "field": "millions",
+        "where": [
+          [
+            "Year",
+            "eq",
+            2000
+          ],
+          [
+            "Age",
+            "ge",
+            85
+          ],
+          [
+            "Sex",
+            "eq",
+            "Male"
+          ]
+        ]
+      }
+    ],
+    "published": "2026-10-31"
+  },
+  {
+    "id": "nb-gdp-shares",
+    "slug": "gdp-shares",
+    "kind": "notebook",
+    "title": "Japan once made a quarter of the big economies' output; now China does",
+    "question": "How have the United States, China, and Japan divided the output of the world's largest economies?",
+    "summary": "The United States made a third of the seventeen biggest economies' combined output in 1980 and still does. Beneath it, Japan's share fell from 22% in 1995 to 5% in 2023 while China's rose from 2% to 22%.",
+    "family": "gdp",
+    "entry": "shares.eda.md",
+    "query": "gdp",
+    "industry": "Economics",
+    "analysis": "Part-to-whole",
+    "findings": [
+      {
+        "text": "In 1995 Japan made {value}% of the combined total",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "japan_gdp",
+        "other": "GDP (current US$)",
+        "scale": 100,
+        "where": [
+          [
+            "Year",
+            "eq",
+            1995
+          ]
+        ]
+      },
+      {
+        "text": "by 2023 it made {value}%.",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "japan_gdp",
+        "other": "GDP (current US$)",
+        "scale": 100,
+        "where": [
+          [
+            "Year",
+            "eq",
+            2023
+          ]
+        ]
+      },
+      {
+        "text": "China made {value}% in 1980",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "china_gdp",
+        "other": "GDP (current US$)",
+        "scale": 100,
+        "where": [
+          [
+            "Year",
+            "eq",
+            1980
+          ]
+        ]
+      },
+      {
+        "text": "and {value}% in 2023.",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "china_gdp",
+        "other": "GDP (current US$)",
+        "scale": 100,
+        "where": [
+          [
+            "Year",
+            "eq",
+            2023
+          ]
+        ]
+      },
+      {
+        "text": "The United States made {value}% of the combined total in 1980",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "us_gdp",
+        "other": "GDP (current US$)",
+        "scale": 100,
+        "where": [
+          [
+            "Year",
+            "eq",
+            1980
+          ]
+        ]
+      },
+      {
+        "text": "and {value}% in 2023.",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "us_gdp",
+        "other": "GDP (current US$)",
+        "scale": 100,
+        "where": [
+          [
+            "Year",
+            "eq",
+            2023
+          ]
+        ]
+      },
+      {
+        "text": "Its share peaked at {value}% in 1985",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "us_gdp",
+        "other": "GDP (current US$)",
+        "scale": 100,
+        "where": [
+          [
+            "Year",
+            "eq",
+            1985
+          ]
+        ]
+      },
+      {
+        "text": "bottomed at {value}% in 2011.",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "us_gdp",
+        "other": "GDP (current US$)",
+        "scale": 100,
+        "where": [
+          [
+            "Year",
+            "eq",
+            2011
+          ]
+        ]
+      },
+      {
+        "text": "In 1980 the United States produced {value} times China's output",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "us_gdp",
+        "other": "china_gdp",
+        "where": [
+          [
+            "Year",
+            "eq",
+            1980
+          ]
+        ]
+      },
+      {
+        "text": "in 2023 it produced {value} times.",
+        "format": ".2f",
+        "op": "ratio_sums",
+        "field": "us_gdp",
+        "other": "china_gdp",
+        "where": [
+          [
+            "Year",
+            "eq",
+            2023
+          ]
+        ]
+      },
+      {
+        "text": "The combined total grew from ${value} trillion in 1980",
+        "format": ".1f",
+        "op": "sum",
+        "field": "trillions",
+        "where": [
+          [
+            "Year",
+            "eq",
+            1980
+          ]
+        ]
+      },
+      {
+        "text": "to ${value} trillion in 2023",
+        "format": ".1f",
+        "op": "sum",
+        "field": "trillions",
+        "where": [
+          [
+            "Year",
+            "eq",
+            2023
+          ]
+        ]
+      }
+    ],
+    "series": {
+      "id": "gdp-table",
+      "title": "The world GDP table since 1980",
+      "part": 3
+    },
+    "published": "2026-11-01"
   }
 ]
