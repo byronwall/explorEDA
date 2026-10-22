@@ -1687,9 +1687,9 @@
     "id": "nb-longley-different-denominators",
     "slug": "longley-different-denominators",
     "kind": "notebook",
-    "title": "Unemployment swung 2.6-fold, with no labor force to divide by",
-    "question": "What can raw employment and unemployment counts tell you without a labor-force total?",
-    "summary": "U.S. unemployment counts ranged from 1.9 to 4.8 million between 1947 and 1962. Without a labor-force total, they can't become a rate.",
+    "title": "Unemployment swung 2.6-fold while employment rose 17%",
+    "question": "How did American joblessness move in the fifteen years after the war?",
+    "summary": "From 1947 to 1962 the number of Americans employed rose from 60.3 to 70.6 million, while the number unemployed ranged from 1.9 million in 1953 to 4.8 million in 1961. Each jump lines up with a recession, and the file has no labor-force total to turn either count into a rate.",
     "family": "longley",
     "entry": "different-denominators.eda.md",
     "query": "r",
@@ -1697,16 +1697,66 @@
     "analysis": "Data quality",
     "findings": [
       {
-        "text": "The smallest recorded unemployment count was {value} source count units.",
+        "text": "it was {value} thousand in 1947",
+        "format": ",.0f",
+        "op": "min",
+        "field": "employment"
+      },
+      {
+        "text": "{value} thousand in 1962.",
+        "format": ",.0f",
+        "op": "max",
+        "field": "employment"
+      },
+      {
+        "text": "reaching {value} thousand in 1952",
+        "format": ",.0f",
+        "op": "max",
+        "field": "armed"
+      },
+      {
+        "text": "the 1948 low of {value} thousand.",
+        "format": ",.0f",
+        "op": "min",
+        "field": "armed"
+      },
+      {
+        "text": "Unemployment fell to {value} thousand in 1953",
         "format": ",.0f",
         "op": "min",
         "field": "unemployed"
       },
       {
-        "text": "The largest recorded unemployment count was {value} source count units.",
+        "text": "reached {value} thousand in 1961",
         "format": ",.0f",
         "op": "max",
         "field": "unemployed"
+      },
+      {
+        "text": "mean unemployment was {value} thousand from 1947 to 1954",
+        "format": ",.0f",
+        "op": "mean",
+        "field": "unemployed",
+        "where": [
+          [
+            "era",
+            "eq",
+            "1947–1954"
+          ]
+        ]
+      },
+      {
+        "text": "{value} thousand from 1955 to 1962",
+        "format": ",.0f",
+        "op": "mean",
+        "field": "unemployed",
+        "where": [
+          [
+            "era",
+            "eq",
+            "1955–1962"
+          ]
+        ]
       }
     ],
     "published": "2026-08-22"
@@ -2704,9 +2754,9 @@
     "id": "nb-longley-trending-levels",
     "slug": "longley-trending-levels",
     "kind": "notebook",
-    "title": "A small employment benchmark contains several rising trends",
-    "question": "How similar are employment, population, and nominal output after rebasing their starting values?",
-    "summary": "U.S. employment, population, and GNP all rose from 1947 to 1962, so their levels correlate almost perfectly (r = 0.98). Shared trends do that.",
+    "title": "Anything that rose in the 1950s correlates with anything else that rose",
+    "question": "Does employment track output, or do both just track time?",
+    "summary": "In levels, US employment and nominal GNP from 1947 to 1962 correlate at 0.98, but so do employment and the price level. In year-on-year changes, the employment–output link survives at 0.89.",
     "family": "longley",
     "entry": "trending-levels.eda.md",
     "query": "r",
@@ -2714,18 +2764,69 @@
     "analysis": "Trend",
     "findings": [
       {
-        "text": "Employment and nominal GNP in levels had correlation {value}.",
+        "text": "nominal GNP reached {value} by 1962",
+        "format": ".2f",
+        "op": "max",
+        "field": "gnp_index"
+      },
+      {
+        "text": "population reached {value}",
+        "format": ".2f",
+        "op": "max",
+        "field": "population_index"
+      },
+      {
+        "text": "employment reached {value}.",
+        "format": ".2f",
+        "op": "max",
+        "field": "employment_index"
+      },
+      {
+        "text": "employment and nominal GNP in levels had correlation {value}.",
         "format": ".3f",
         "op": "corr",
         "field": "employment",
         "other": "gnp"
       },
       {
-        "text": "Their valid annual changes had correlation {value}.",
+        "text": "employment and the GNP deflator had correlation {value}",
+        "format": ".3f",
+        "op": "corr",
+        "field": "employment",
+        "other": "deflator"
+      },
+      {
+        "text": "the annual changes had correlation {value}.",
         "format": ".3f",
         "op": "corr",
         "field": "employment_change",
         "other": "gnp_change"
+      },
+      {
+        "text": "Employment fell in {value} of the fifteen years",
+        "format": ".0f",
+        "op": "count",
+        "field": "employment_change",
+        "where": [
+          [
+            "employment_change",
+            "lt",
+            0
+          ]
+        ]
+      },
+      {
+        "text": "GNP fell in {value} of them",
+        "format": ".0f",
+        "op": "count",
+        "field": "gnp_change",
+        "where": [
+          [
+            "gnp_change",
+            "lt",
+            0
+          ]
+        ]
       }
     ],
     "published": "2026-09-16"
