@@ -2967,9 +2967,9 @@
     "id": "nb-tate-metadata-not-lifespans",
     "slug": "tate-metadata-not-lifespans",
     "kind": "notebook",
-    "title": "A museum's birth and death years don't always describe a person",
-    "question": "What can go wrong when catalogue dates are read as lifespans?",
-    "summary": "In Tate's metadata, one record spans 138 years because it names a family, and a third of the death years are blank. Catalogue dates are not biographies.",
+    "title": "In the Tate's catalogue, the Alken family lived 138 years",
+    "question": "What happens when a museum's artist dates are read as lifespans?",
+    "summary": "Among the first 60 records in Tate's 2014 artist catalogue, one spans 138 years because it names a family of painters, not a person. The other 59 read as lives, and a third of them have no death year at all.",
     "family": "tate",
     "entry": "metadata-not-lifespans.eda.md",
     "query": "r",
@@ -2977,16 +2977,74 @@
     "analysis": "Data quality",
     "findings": [
       {
-        "text": "The largest recorded date span in this prefix was {value} years; it belongs to the explicit family entity.",
+        "text": "The largest span in these records is {value} years",
         "format": ".0f",
         "op": "max",
         "field": "date_span"
       },
       {
-        "text": "Blank death-year fields represent {value}% of this archive prefix.",
+        "text": "The median span is {value} years.",
+        "format": ".0f",
+        "op": "median",
+        "field": "date_span"
+      },
+      {
+        "text": "{value} run past 100 years.",
+        "format": ".0f",
+        "op": "count",
+        "field": "date_span",
+        "where": [
+          [
+            "date_span",
+            "ge",
+            100
+          ]
+        ]
+      },
+      {
+        "text": "{value} spans reach 90 or more",
+        "format": ".0f",
+        "op": "count",
+        "field": "date_span",
+        "where": [
+          [
+            "date_span",
+            "ge",
+            90
+          ]
+        ]
+      },
+      {
+        "text": "only {value} falls short of 40.",
+        "format": ".0f",
+        "op": "count",
+        "field": "date_span",
+        "where": [
+          [
+            "date_span",
+            "lt",
+            40
+          ]
+        ]
+      },
+      {
+        "text": "{value}% of the 60 records have no death year",
         "format": ".2f",
         "op": "missing_share",
         "field": "death_year"
+      },
+      {
+        "text": "the earliest birth year among them is {value}.",
+        "format": ".0f",
+        "op": "min",
+        "field": "birth_year",
+        "where": [
+          [
+            "death_status",
+            "eq",
+            "Death year blank in archive"
+          ]
+        ]
       }
     ],
     "published": "2026-09-19"
