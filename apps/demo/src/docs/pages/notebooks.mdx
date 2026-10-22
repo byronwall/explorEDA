@@ -42,6 +42,12 @@ Open the project with `npx exploreda`, and the notebook is listed under **Notebo
 
 [Daily data viz](/daily) publishes a narrative notebook, composed graphic, or dashboard every day over real datasets. Each piece includes local data, source credit, and findings the tests recompute. Notebook chart selections stay local to their chart; dashboards link their views.
 
+## Set each section beside its charts
+
+A published notebook can read like a figure-led report. Pass `layout="sections"` to `ExplorEdaNotebook`, and once the notebook is at least 960 pixels wide each `##` section puts its text in a column beside its charts. A finding written after a chart stays with its section's text, and the text stays in view while a tall chart or table scrolls past. A chart titled like its section drops the repeated title. Sections with no charts, such as a takeaway and its limits, share a row.
+
+Narrower notebooks, and notebooks you can edit with `onTextChange`, keep the single reading column. [Daily data viz](/daily) notebooks use this layout.
+
 ## How blocks work together
 
 - **Definitions reach the whole notebook.** A calculation or field alias in any block applies to every block, in any order. Define `delta` once and chart it anywhere.

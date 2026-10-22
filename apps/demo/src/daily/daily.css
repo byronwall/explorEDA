@@ -37,6 +37,14 @@
   flex-wrap: wrap;
 }
 
+/* A wrapped legend adds lines above a chart drawn at a fixed size, so a
+   notebook panel grows to fit instead of cutting off the X axis. */
+.daily-notebook .eda-notebook-output .eda-panel,
+.daily-notebook .eda-notebook-output .eda-chart-content {
+  height: auto !important;
+  overflow: visible;
+}
+
 .daily-artboard-scroll {
   overflow-x: auto;
 }

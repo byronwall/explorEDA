@@ -57,13 +57,36 @@ export interface ExplorEdaNotebookProps {
    * block keeps showing its last results.
    */
   lastValid?: MutableRefObject<Record<number, string>>;
+  /**
+   * `"sections"` sets each `##` section's text beside its charts once the
+   * notebook is at least 960 pixels wide, so the headings and findings read
+   * down one column. Narrower notebooks, and notebooks that can be edited,
+   * keep the single reading column.
+   */
+  layout?: "column" | "sections";
 }
 
+/** Below this width, a sections layout falls back to the reading column. */
+const SECTIONS_MIN_WIDTH = 960;
+/** The text column of a section, and the gap before its charts. */
+const NOTES_WIDTH = 300;
+const NOTES_GAP = 40;
+/** The reading column's widest charts. */
+const COLUMN_MAX_WIDTH = 880;
+
 /** How tall each kind of chart draws in the reading column. */
-function chartHeight(chart: ChartSettings) {
+function chartHeight(chart: ChartSettings, categories?: number) {
   switch (chart.type) {
     case "metric-card":
       return 150;
+    // A few bars need a short chart, not the full height.
+    case "row":
+      return categories === undefined
+        ? 380
+        : Math.min(
+            380,
+            150 + categories * Math.max(chart.minRowHeight, chart.maxRowHeight)
+          );
     case "data-table":
     case "pivot":
     case "summary":
@@ -158,6 +181,7 @@ export function ExplorEdaNotebook({
   onStateChange,
   onTextChange,
   lastValid,
+  layout = "column",
 }: ExplorEdaNotebookProps) {
   const ownMemory = useRef<Record<number, string>>({});
   const memory = lastValid ?? ownMemory;
@@ -233,6 +257,7 @@ export function ExplorEdaNotebook({
         <ChartDraftProvider>
           <NotebookColumn
             result={result}
+            layout={layout}
             onSegmentChange={
               onTextChange
                 ? (segment, next) =>
@@ -264,11 +289,140 @@ function replaceSegment(
   ].join("\n");
 }
 
+/** Words that name a section, without its number, for comparing titles. */
+function headingKey(text: string) {
+  return text
+    .replace(/^#+\s*/, "")
+    .replace(/^\d+[.)]\s*/, "")
+    .trim()
+    .toLowerCase();
+}
+
+function slug(text: string) {
+  return headingKey(text)
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+interface NotebookSection {
+  /** The `##` line that opens it; absent for text before the first one. */
+  heading?: string;
+  notes: string[];
+  blocks: NotebookBlockResult[];
+}
+
+/**
+ * Groups the notebook by its `##` headings: each section's text, including
+ * a finding written after a chart, and the blocks that chart it.
+ */
+export function notebookSections(
+  result: NotebookCompileResult
+): NotebookSection[] {
+  const sections: NotebookSection[] = [{ notes: [], blocks: [] }];
+  const current = () => sections[sections.length - 1]!;
+  for (const segment of result.notebook.segments) {
+    if (segment.kind !== "prose") {
+      current().blocks.push(result.blocks[segment.index]!);
+      continue;
+    }
+    let fenced = false;
+    let lines: string[] = [];
+    const flush = () => {
+      const text = lines.join("\n").trim();
+      if (text) current().notes.push(text);
+      lines = [];
+    };
+    for (const line of segment.text.split(/\r?\n/)) {
+      if (/^\s*(```|~~~)/.test(line)) fenced = !fenced;
+      if (!fenced && /^##\s/.test(line)) {
+        flush();
+        sections.push({ heading: line, notes: [], blocks: [] });
+      }
+      lines.push(line);
+    }
+    flush();
+  }
+  return sections.filter(
+    (section) => section.notes.length || section.blocks.length
+  );
+}
+
+function NotebookSectionsView({
+  result,
+  width,
+}: {
+  result: NotebookCompileResult;
+  width: number;
+}) {
+  const figureWidth = width - NOTES_WIDTH - NOTES_GAP;
+  const sections = notebookSections(result);
+  // Text-only sections in a row, such as a takeaway and its limits, share it.
+  const rows: NotebookSection[][] = [];
+  for (const section of sections) {
+    const last = rows[rows.length - 1];
+    if (
+      section.heading &&
+      !section.blocks.length &&
+      last?.[0]?.heading &&
+      !last[0].blocks.length &&
+      last.length < 2
+    )
+      last.push(section);
+    else rows.push([section]);
+  }
+  return rows.map((row, index) => {
+    const [section] = row;
+    if (row.length > 1 || !section!.blocks.length)
+      return (
+        <div
+          key={index}
+          className={
+            section!.heading ? "eda-notebook-closing" : "eda-notebook-intro"
+          }
+        >
+          {row.map((item, at) => (
+            <div
+              key={at}
+              id={item.heading ? slug(item.heading) : undefined}
+              className="eda-notebook-segment"
+            >
+              <NotebookProse text={item.notes.join("\n\n")} />
+            </div>
+          ))}
+        </div>
+      );
+    return (
+      <section
+        key={index}
+        id={section!.heading ? slug(section!.heading) : undefined}
+        className="eda-notebook-section"
+      >
+        <div className="eda-notebook-notes eda-notebook-segment">
+          <NotebookProse text={section!.notes.join("\n\n")} />
+        </div>
+        <div className="eda-notebook-figures">
+          {section!.blocks.map((block) => (
+            <NotebookBlockView
+              key={block.index}
+              block={block}
+              width={figureWidth}
+              open={false}
+              heading={section!.heading}
+            />
+          ))}
+        </div>
+      </section>
+    );
+  });
+}
+
 function NotebookColumn({
   result,
+  layout,
   onSegmentChange,
 }: {
   result: NotebookCompileResult;
+  layout: "column" | "sections";
   /** Present when the notebook's text can change. */
   onSegmentChange?: (segment: NotebookSegment, text: string) => void;
 }) {
@@ -302,57 +456,70 @@ function NotebookColumn({
 
   // Prose segments go by their order, which typing in them doesn't change.
   let proseCount = 0;
+  const sections =
+    layout === "sections" && !onSegmentChange && width >= SECTIONS_MIN_WIDTH;
   return (
     <div
       className="eda-workspace eda-notebook bg-background text-foreground"
       data-eda-theme={themeId}
     >
-      <article ref={ref} className="eda-notebook-column">
-        {result.notebook.segments.map((segment) => {
-          const key =
-            segment.kind === "prose"
-              ? `prose-${proseCount++}`
-              : `block-${segment.index}`;
-          const open = editing.has(key);
-          const edit = onSegmentChange && (
-            <EditToggle
-              open={open}
-              kind={segment.kind}
-              onToggle={() => toggle(key)}
-            />
-          );
-          const editor = open && onSegmentChange && (
-            <NotebookSourceEditor
-              value={segment.text}
-              language={segment.kind === "prose" ? "markdown" : "eda"}
-              label={
-                segment.kind === "prose"
-                  ? "Markdown text"
-                  : `Block ${segment.index + 1} text`
-              }
-              onChange={(next) => onSegmentChange(segment, next)}
-            />
-          );
-          return segment.kind === "prose" ? (
-            <div
-              key={key}
-              className="eda-notebook-segment"
-              data-open={open || undefined}
-            >
-              {edit}
-              {editor || <NotebookProse text={segment.text} />}
-            </div>
-          ) : (
-            <NotebookBlockView
-              key={key}
-              block={result.blocks[segment.index]!}
-              width={width}
-              edit={edit}
-              editor={editor}
-              open={open}
-            />
-          );
-        })}
+      <article
+        ref={ref}
+        className="eda-notebook-column"
+        data-layout={
+          layout === "sections" && !onSegmentChange ? "sections" : undefined
+        }
+        data-wide={sections || undefined}
+      >
+        {sections ? (
+          <NotebookSectionsView result={result} width={width} />
+        ) : (
+          result.notebook.segments.map((segment) => {
+            const key =
+              segment.kind === "prose"
+                ? `prose-${proseCount++}`
+                : `block-${segment.index}`;
+            const open = editing.has(key);
+            const edit = onSegmentChange && (
+              <EditToggle
+                open={open}
+                kind={segment.kind}
+                onToggle={() => toggle(key)}
+              />
+            );
+            const editor = open && onSegmentChange && (
+              <NotebookSourceEditor
+                value={segment.text}
+                language={segment.kind === "prose" ? "markdown" : "eda"}
+                label={
+                  segment.kind === "prose"
+                    ? "Markdown text"
+                    : `Block ${segment.index + 1} text`
+                }
+                onChange={(next) => onSegmentChange(segment, next)}
+              />
+            );
+            return segment.kind === "prose" ? (
+              <div
+                key={key}
+                className="eda-notebook-segment"
+                data-open={open || undefined}
+              >
+                {edit}
+                {editor || <NotebookProse text={segment.text} />}
+              </div>
+            ) : (
+              <NotebookBlockView
+                key={key}
+                block={result.blocks[segment.index]!}
+                width={Math.min(width, COLUMN_MAX_WIDTH)}
+                edit={edit}
+                editor={editor}
+                open={open}
+              />
+            );
+          })
+        )}
       </article>
     </div>
   );
@@ -400,14 +567,18 @@ function NotebookBlockView({
   edit,
   editor,
   open,
+  heading,
 }: {
   block: NotebookBlockResult;
   width: number;
   edit?: ReactNode;
   editor?: ReactNode;
   open: boolean;
+  /** The section's heading; a chart title that repeats it is not shown. */
+  heading?: string;
 }) {
   const charts = useDataLayer((state) => state.charts);
+  const rows = useDataLayer((state) => state.data);
   const byId = useMemo(
     () => new Map(charts.map((chart) => [chart.id, chart])),
     [charts]
@@ -446,12 +617,23 @@ function NotebookBlockView({
               key={id}
               className="eda-notebook-output"
               data-chart-id={id}
+              data-title-repeats={
+                (heading &&
+                  chart.title &&
+                  headingKey(chart.title) === headingKey(heading)) ||
+                undefined
+              }
               tabIndex={-1}
             >
               <GridChartPanel
                 settings={chart}
                 width={width}
-                height={chartHeight(chart)}
+                height={chartHeight(
+                  chart,
+                  chart.type === "row"
+                    ? new Set(rows.map((row) => row[chart.field])).size
+                    : undefined
+                )}
               />
             </div>
           ) : null;
