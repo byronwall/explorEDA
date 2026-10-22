@@ -1144,17 +1144,17 @@
     "id": "nb-co2-trend-and-coverage",
     "slug": "co2-trend-and-coverage",
     "kind": "notebook",
-    "title": "A CO₂ trend with the missing weeks left visible",
-    "question": "What does five decades of weekly CO₂ look like when the missing weeks stay missing?",
-    "summary": "Weekly CO₂ at Mauna Loa rose from about 320 ppm in the 1960s to 360 in the 1990s. The missing weeks stay blank instead of being drawn over.",
+    "title": "CO₂ rose 40 ppm in three decades, and each decade's step was bigger",
+    "question": "How fast is carbon dioxide rising at Mauna Loa, and how much of the record is really there?",
+    "summary": "Weekly CO₂ at Mauna Loa averaged 320 ppm in the 1960s and 360 ppm in the 1990s, and every decade's step was larger than the last. The record is 97% complete, and nearly every missing week falls before 1970.",
     "family": "co2",
     "entry": "trend-and-coverage.eda.md",
     "query": "r",
     "industry": "Climate",
-    "analysis": "Data quality",
+    "analysis": "Trend",
     "findings": [
       {
-        "text": "The mean measured concentration in the 1960s was {value} ppm.",
+        "text": "The 1960s averaged {value} ppm.",
         "format": ".2f",
         "op": "mean",
         "field": "co2",
@@ -1167,7 +1167,7 @@
         ]
       },
       {
-        "text": "The mean measured concentration in the 1990s was {value} ppm.",
+        "text": "The 1990s averaged {value} ppm.",
         "format": ".2f",
         "op": "mean",
         "field": "co2",
@@ -1178,6 +1178,114 @@
             "1990s"
           ]
         ]
+      },
+      {
+        "text": "{value}% of weekly slots have a measurement.",
+        "format": ".1f",
+        "op": "share",
+        "field": "coverage",
+        "condition": [
+          [
+            "coverage",
+            "eq",
+            "Measured"
+          ]
+        ]
+      },
+      {
+        "text": "The 1960s account for {value} of the 59 missing weeks",
+        "format": ".0f",
+        "op": "count",
+        "field": "coverage",
+        "where": [
+          [
+            "decade",
+            "eq",
+            "1960s"
+          ],
+          [
+            "coverage",
+            "eq",
+            "Missing"
+          ]
+        ]
+      },
+      {
+        "text": "every one of the 1990s' {value} slots has a reading.",
+        "format": ".0f",
+        "op": "count",
+        "field": "coverage",
+        "where": [
+          [
+            "decade",
+            "eq",
+            "1990s"
+          ]
+        ]
+      },
+      {
+        "text": "The 1970s averaged {value} ppm",
+        "format": ".2f",
+        "op": "mean",
+        "field": "co2",
+        "where": [
+          [
+            "decade",
+            "eq",
+            "1970s"
+          ]
+        ]
+      },
+      {
+        "text": "the 1980s {value} ppm",
+        "format": ".2f",
+        "op": "mean",
+        "field": "co2",
+        "where": [
+          [
+            "decade",
+            "eq",
+            "1980s"
+          ]
+        ]
+      },
+      {
+        "text": "The 1990s' lowest week, {value} ppm",
+        "format": ".1f",
+        "op": "min",
+        "field": "co2",
+        "where": [
+          [
+            "decade",
+            "eq",
+            "1990s"
+          ]
+        ]
+      },
+      {
+        "text": "sits above the 1970s' highest, {value} ppm.",
+        "format": ".1f",
+        "op": "max",
+        "field": "co2",
+        "where": [
+          [
+            "decade",
+            "eq",
+            "1970s"
+          ]
+        ]
+      },
+      {
+        "text": "The highest weekly reading, {value} ppm",
+        "format": ".1f",
+        "op": "max",
+        "field": "co2"
+      },
+      {
+        "text": "and the lowest, {value} ppm",
+        "format": ".1f",
+        "op": "min",
+        "field": "co2"
       }
     ],
     "published": "2026-08-10"
