@@ -34,23 +34,21 @@ pivot @nb-penguins-species-2 title="Penguins by species and island" {
 
 ## Longer flippers, heavier birds
 
-Across all three species, flipper length tracks body mass closely. Gentoos sit apart at the top right.
+Across all three species, flipper length tracks body mass closely: flipper length and body mass had correlation 0.871, and the fitted line gains about 50 g per millimeter of flipper. Gentoos sit apart at the top right. The heaviest bird weighed 6,300 g, a male Gentoo from Biscoe.
 
 ```eda
-scatter @nb-penguins-species-3 x=flipper y=mass color=species title="Flipper length and body mass" x.title="Flipper length (mm)" y.title="Body mass (g)"
+scatter @nb-penguins-species-3 x=flipper y=mass color=species regression=linear title="Flipper length and body mass" x.title="Flipper length (mm)" y.title="Body mass (g)" {
+  callout "Heaviest: 6.3 kg male Gentoo" pick=max offset=-60,30
+}
 ```
 
-**Finding.** Flipper length and body mass had correlation 0.871.
+## Gentoos weigh a kilogram more
 
-## Weight by species
+The boxes barely overlap. Gentoo penguins averaged 5,076 g. Adélie penguins averaged 3,701 g, and Chinstrap penguins averaged 3,733 g, so the two smaller species are within 32 g of each other while Gentoos carry 1.4 kg more.
 
 ```eda
 boxplot @nb-penguins-species-4 mass color=species title="Body mass by species" y.title="Body mass (g)"
 ```
-
-**Finding.** Gentoo penguins averaged 5,076 g.
-
-**Finding.** Adélie penguins averaged 3,701 g.
 
 ## Takeaway
 

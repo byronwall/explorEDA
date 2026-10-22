@@ -2364,11 +2364,17 @@
     "analysis": "Comparison",
     "findings": [
       {
-        "text": "Flipper length and body mass had correlation {value}.",
+        "text": "flipper length and body mass had correlation {value}",
         "format": ".3f",
         "op": "corr",
         "field": "flipper_length_mm",
         "other": "body_mass_g"
+      },
+      {
+        "text": "The heaviest bird weighed {value} g",
+        "format": ",.0f",
+        "op": "max",
+        "field": "body_mass_g"
       },
       {
         "text": "Gentoo penguins averaged {value} g.",
@@ -2384,7 +2390,7 @@
         ]
       },
       {
-        "text": "Adélie penguins averaged {value} g.",
+        "text": "Adélie penguins averaged {value} g",
         "format": ",.0f",
         "op": "mean",
         "field": "body_mass_g",
@@ -2393,6 +2399,19 @@
             "species",
             "eq",
             "Adelie"
+          ]
+        ]
+      },
+      {
+        "text": "and Chinstrap penguins averaged {value} g",
+        "format": ",.0f",
+        "op": "mean",
+        "field": "body_mass_g",
+        "where": [
+          [
+            "species",
+            "eq",
+            "Chinstrap"
           ]
         ]
       }
