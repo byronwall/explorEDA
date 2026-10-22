@@ -1093,7 +1093,7 @@
     "kind": "notebook",
     "title": "On the Titanic, sex mattered more than class",
     "question": "Who survived the Titanic?",
-    "summary": "Nearly three women in four survived, and fewer than one man in five. A first-class man was less likely to survive than a third-class woman.",
+    "summary": "Nearly three women in four survived, and fewer than one man in five. Class mattered too, from 62% in first to 26% in third, but a third-class woman was still likelier to live than a first-class man.",
     "family": "titanic",
     "entry": "class-and-sex.eda.md",
     "query": "titanic",
@@ -1101,7 +1101,7 @@
     "analysis": "Comparison",
     "findings": [
       {
-        "text": "{value}% of women survived.",
+        "text": "{value}% of women survived",
         "format": ".1f",
         "op": "share",
         "field": "Fate",
@@ -1121,11 +1121,162 @@
         ]
       },
       {
-        "text": "{value}% of men survived.",
+        "text": "and {value}% of men.",
         "format": ".1f",
         "op": "share",
         "field": "Fate",
         "where": [
+          [
+            "Sex",
+            "eq",
+            "Male"
+          ]
+        ],
+        "condition": [
+          [
+            "Fate",
+            "eq",
+            "Survived"
+          ]
+        ]
+      },
+      {
+        "text": "{value} of them boarded",
+        "format": ".0f",
+        "op": "count",
+        "field": "Fate",
+        "where": [
+          [
+            "Class",
+            "eq",
+            "Third class"
+          ],
+          [
+            "Sex",
+            "eq",
+            "Male"
+          ]
+        ]
+      },
+      {
+        "text": "and {value} died.",
+        "format": ".0f",
+        "op": "count",
+        "field": "Fate",
+        "where": [
+          [
+            "Class",
+            "eq",
+            "Third class"
+          ],
+          [
+            "Sex",
+            "eq",
+            "Male"
+          ],
+          [
+            "Fate",
+            "eq",
+            "Died"
+          ]
+        ]
+      },
+      {
+        "text": "{value}% of first-class passengers survived",
+        "format": ".1f",
+        "op": "share",
+        "field": "Fate",
+        "where": [
+          [
+            "Class",
+            "eq",
+            "First class"
+          ]
+        ],
+        "condition": [
+          [
+            "Fate",
+            "eq",
+            "Survived"
+          ]
+        ]
+      },
+      {
+        "text": "{value}% of second",
+        "format": ".1f",
+        "op": "share",
+        "field": "Fate",
+        "where": [
+          [
+            "Class",
+            "eq",
+            "Second class"
+          ]
+        ],
+        "condition": [
+          [
+            "Fate",
+            "eq",
+            "Survived"
+          ]
+        ]
+      },
+      {
+        "text": "and {value}% of third.",
+        "format": ".1f",
+        "op": "share",
+        "field": "Fate",
+        "where": [
+          [
+            "Class",
+            "eq",
+            "Third class"
+          ]
+        ],
+        "condition": [
+          [
+            "Fate",
+            "eq",
+            "Survived"
+          ]
+        ]
+      },
+      {
+        "text": "{value}% of third-class women survived",
+        "format": ".1f",
+        "op": "share",
+        "field": "Fate",
+        "where": [
+          [
+            "Class",
+            "eq",
+            "Third class"
+          ],
+          [
+            "Sex",
+            "eq",
+            "Female"
+          ]
+        ],
+        "condition": [
+          [
+            "Fate",
+            "eq",
+            "Survived"
+          ]
+        ]
+      },
+      {
+        "text": "against {value}% of first-class men.",
+        "format": ".1f",
+        "op": "share",
+        "field": "Fate",
+        "where": [
+          [
+            "Class",
+            "eq",
+            "First class"
+          ],
           [
             "Sex",
             "eq",
@@ -2299,7 +2450,7 @@
     "kind": "notebook",
     "title": "Close states became rare in presidential elections",
     "question": "How many states were genuinely competitive, election by election?",
-    "summary": "In 1976, nineteen states were decided by under five points. By 2012 there were four, and the spread of state margins kept widening.",
+    "summary": "In 1976, nineteen states were decided by under five points. By 2012 there were four, the spread of state margins kept widening, and the District of Columbia and Utah drifted to 86 and 52 points from a tie.",
     "family": "elections",
     "entry": "polarization.eda.md",
     "query": "elections",
@@ -2353,6 +2504,50 @@
             "Margin",
             "lt",
             5
+          ]
+        ]
+      },
+      {
+        "text": "Florida's 2000 margin was {value} points",
+        "format": ".1f",
+        "op": "mean",
+        "field": "Margin",
+        "where": [
+          [
+            "State",
+            "eq",
+            "Florida"
+          ],
+          [
+            "Year",
+            "eq",
+            2000
+          ]
+        ]
+      },
+      {
+        "text": "The District of Columbia's margin reached {value} points in 2016",
+        "format": ".1f",
+        "op": "max",
+        "field": "Margin",
+        "where": [
+          [
+            "State",
+            "eq",
+            "District of Columbia"
+          ]
+        ]
+      },
+      {
+        "text": "and Utah's reached {value} in 1980.",
+        "format": ".1f",
+        "op": "min",
+        "field": "Margin",
+        "where": [
+          [
+            "State",
+            "eq",
+            "Utah"
           ]
         ]
       }
@@ -3203,7 +3398,7 @@
     "kind": "notebook",
     "title": "Construction's unemployment rate hit 27% in the recession",
     "question": "Which industries did the 2008 recession hit hardest?",
-    "summary": "Unemployment rose in every industry after 2007, but construction started high, swung with every winter, and peaked at 27.1%. Government never passed 5.1%.",
+    "summary": "Unemployment rose in every industry after 2007, but construction started high, swung with every winter, and peaked at 27.1%. Across 2009 it averaged 19.0%, five times government's 3.6%.",
     "family": "unemployment",
     "entry": "recession.eda.md",
     "query": "industries",
@@ -3246,6 +3441,73 @@
             "Industry",
             "eq",
             "Government"
+          ]
+        ]
+      },
+      {
+        "text": "Construction averaged {value}% in 2009",
+        "format": ".1f",
+        "op": "mean",
+        "field": "Unemployment rate",
+        "where": [
+          [
+            "Industry",
+            "eq",
+            "Construction"
+          ],
+          [
+            "Year",
+            "eq",
+            2009
+          ]
+        ]
+      },
+      {
+        "text": "and government {value}%",
+        "format": ".1f",
+        "op": "mean",
+        "field": "Unemployment rate",
+        "where": [
+          [
+            "Industry",
+            "eq",
+            "Government"
+          ],
+          [
+            "Year",
+            "eq",
+            2009
+          ]
+        ]
+      },
+      {
+        "text": "with all industries together at {value}%.",
+        "format": ".1f",
+        "op": "mean",
+        "field": "Unemployment rate",
+        "where": [
+          [
+            "Year",
+            "eq",
+            2009
+          ]
+        ]
+      },
+      {
+        "text": "in 2006, construction had averaged {value}%",
+        "format": ".1f",
+        "op": "mean",
+        "field": "Unemployment rate",
+        "where": [
+          [
+            "Industry",
+            "eq",
+            "Construction"
+          ],
+          [
+            "Year",
+            "eq",
+            2006
           ]
         ]
       }
