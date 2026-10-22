@@ -154,7 +154,7 @@
     "kind": "notebook",
     "title": "Big firms invest more, but a firm's good year is a weaker signal",
     "question": "Does a firm invest more in a year its market value rises?",
-    "summary": "Across eleven firms, bigger market value goes with bigger investment (r = 0.86). Within one firm from year to year, the link is weaker (r = 0.56).",
+    "summary": "Across eleven firms and twenty years, bigger market value goes with bigger investment (r = 0.86), mostly because General Motors dwarfs the rest. Within a firm from year to year the link is 0.56, and it ranges from 0.98 at IBM to nothing at Diamond Match.",
     "family": "grunfeld",
     "entry": "within-firm.eda.md",
     "query": "r",
@@ -162,18 +162,72 @@
     "analysis": "Relationship",
     "findings": [
       {
-        "text": "Across firm-year levels, market value and investment had correlation {value}.",
+        "text": "Across firm-year levels, market value and investment had correlation {value}",
         "format": ".3f",
         "op": "corr",
         "field": "value",
         "other": "invest"
       },
       {
-        "text": "Across valid within-firm annual changes, the correlation was {value}.",
+        "text": "its mean market value was ${value} million",
+        "format": ",.0f",
+        "op": "mean",
+        "field": "value",
+        "where": [
+          [
+            "firm",
+            "eq",
+            "General Motors"
+          ]
+        ]
+      },
+      {
+        "text": "against ${value} million for Diamond Match",
+        "format": ",.0f",
+        "op": "mean",
+        "field": "value",
+        "where": [
+          [
+            "firm",
+            "eq",
+            "Diamond Match"
+          ]
+        ]
+      },
+      {
+        "text": "Across within-firm annual changes, the correlation was {value}.",
         "format": ".3f",
         "op": "corr",
         "field": "value_change",
         "other": "invest_change"
+      },
+      {
+        "text": "Inside IBM, market value and investment had correlation {value}",
+        "format": ".3f",
+        "op": "corr",
+        "field": "value",
+        "other": "invest",
+        "where": [
+          [
+            "firm",
+            "eq",
+            "IBM"
+          ]
+        ]
+      },
+      {
+        "text": "Inside Diamond Match, the correlation was {value}",
+        "format": ".3f",
+        "op": "corr",
+        "field": "value",
+        "other": "invest",
+        "where": [
+          [
+            "firm",
+            "eq",
+            "Diamond Match"
+          ]
+        ]
       }
     ],
     "published": "2026-07-16"
@@ -1537,9 +1591,9 @@
     "id": "nb-grunfeld-indexing-firms",
     "slug": "grunfeld-indexing-firms",
     "kind": "notebook",
-    "title": "Indexing investment changes the ranking question",
-    "question": "How different do historical firm trajectories look after each starts at 100?",
-    "summary": "Start each firm at 100 and the ranking changes: the fastest-growing firm's investment rose almost sevenfold, while the median firm-year sat near 184.",
+    "title": "Indexed to 1935, IBM's investment grew fastest; General Motors ranked fourth",
+    "question": "Which firm grew its investment fastest?",
+    "summary": "In dollars, General Motors' investment dwarfs the other ten Grunfeld firms. Indexed to each firm's own 1935 level, IBM grew fastest, to 667 by 1954, with General Electric and Westinghouse ahead of GM's 468.",
     "family": "grunfeld",
     "entry": "indexing-firms.eda.md",
     "query": "r",
@@ -1547,13 +1601,91 @@
     "analysis": "Ranking",
     "findings": [
       {
-        "text": "The highest first-year-normalized investment index in the panel was {value}.",
+        "text": "General Motors' investment reached ${value} million in 1954",
+        "format": ",.1f",
+        "op": "max",
+        "field": "invest",
+        "where": [
+          [
+            "firm",
+            "eq",
+            "General Motors"
+          ]
+        ]
+      },
+      {
+        "text": "Diamond Match's investment never passed ${value} million",
+        "format": ".1f",
+        "op": "max",
+        "field": "invest",
+        "where": [
+          [
+            "firm",
+            "eq",
+            "Diamond Match"
+          ]
+        ]
+      },
+      {
+        "text": "IBM's index reached {value} in 1954",
+        "format": ".1f",
+        "op": "max",
+        "field": "invest_index",
+        "where": [
+          [
+            "firm",
+            "eq",
+            "IBM"
+          ]
+        ]
+      },
+      {
+        "text": "General Electric's {value}",
+        "format": ".1f",
+        "op": "max",
+        "field": "invest_index",
+        "where": [
+          [
+            "firm",
+            "eq",
+            "General Electric"
+          ]
+        ]
+      },
+      {
+        "text": "Westinghouse touched the panel's high of {value} in 1953",
         "format": ".2f",
         "op": "max",
         "field": "invest_index"
       },
       {
-        "text": "The median firm-year investment index was {value}.",
+        "text": "General Motors' index peaked at {value}",
+        "format": ".1f",
+        "op": "max",
+        "field": "invest_index",
+        "where": [
+          [
+            "firm",
+            "eq",
+            "General Motors"
+          ]
+        ]
+      },
+      {
+        "text": "Goodyear grew least, ending 1954 at {value}.",
+        "format": ".1f",
+        "op": "min",
+        "field": "invest_index",
+        "where": [
+          [
+            "year",
+            "eq",
+            1954
+          ]
+        ]
+      },
+      {
+        "text": "The median firm-year index across the whole panel was {value}",
         "format": ".2f",
         "op": "median",
         "field": "invest_index"
@@ -3898,9 +4030,9 @@
     "id": "nb-grunfeld-investment-concentration",
     "slug": "grunfeld-investment-concentration",
     "kind": "notebook",
-    "title": "A selected corporate panel can be dominated by a few firms",
-    "question": "How concentrated is cumulative recorded investment among the firms in this panel?",
-    "summary": "One firm made 41% of the panel's investment over twenty years, and the top three made 76%.",
+    "title": "One firm made 41% of the panel's investment; three made 76%",
+    "question": "How concentrated was investment among the eleven Grunfeld firms?",
+    "summary": "General Motors made 41% of the eleven firms' investment over 1935 to 1954, and the top three made 76%. Scaled by market value the order changes: US Steel invested $21 per $100 of value each year, General Motors $14, General Electric $5.",
     "family": "grunfeld",
     "entry": "investment-concentration.eda.md",
     "query": "firms",
@@ -3908,18 +4040,82 @@
     "analysis": "Part-to-whole",
     "findings": [
       {
-        "text": "The largest firm accounts for {value}% of cumulative panel investment.",
+        "text": "General Motors invested ${value} million",
+        "format": ",.0f",
+        "op": "max",
+        "field": "invest_total"
+      },
+      {
+        "text": "{value}% of everything the panel spent.",
         "format": ".2f",
         "op": "top_share",
         "field": "invest_total",
         "k": 1
       },
       {
-        "text": "The three largest firms together account for {value}% of cumulative panel investment.",
+        "text": "General Motors and US Steel together account for {value}% of cumulative panel investment",
+        "format": ".2f",
+        "op": "top_share",
+        "field": "invest_total",
+        "k": 2
+      },
+      {
+        "text": "the three largest firms together account for {value}%.",
         "format": ".2f",
         "op": "top_share",
         "field": "invest_total",
         "k": 3
+      },
+      {
+        "text": "with a mean market value of ${value} million.",
+        "format": ",.0f",
+        "op": "max",
+        "field": "value_mean"
+      },
+      {
+        "text": "US Steel invested ${value} per $100 of market value each year",
+        "format": ".2f",
+        "op": "ratio_sums",
+        "field": "invest_mean",
+        "other": "value_mean",
+        "scale": 100,
+        "where": [
+          [
+            "firm",
+            "eq",
+            "US Steel"
+          ]
+        ]
+      },
+      {
+        "text": "General Motors ${value}",
+        "format": ".2f",
+        "op": "ratio_sums",
+        "field": "invest_mean",
+        "other": "value_mean",
+        "scale": 100,
+        "where": [
+          [
+            "firm",
+            "eq",
+            "General Motors"
+          ]
+        ]
+      },
+      {
+        "text": "only ${value}.",
+        "format": ".2f",
+        "op": "ratio_sums",
+        "field": "invest_mean",
+        "other": "value_mean",
+        "scale": 100,
+        "where": [
+          [
+            "firm",
+            "eq",
+            "General Electric"
+          ]
+        ]
       }
     ],
     "published": "2026-10-12"
