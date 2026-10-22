@@ -53,4 +53,4 @@ New tabs share query definitions and some settings. Return by tab differs from U
 
 Investigate one host-authored binding only when a repeated task rejects current controls. A workspace connection editor needs separate authoring evidence. Later user/developer authoring intent remains intact.
 
-Any future visible milestone must include its explanation and example. Pro proposes task-navigation.mdx sections for population and return, plus a taskNavigation.ts demo. These files remain proposed. See the [proof plan](../../research/task-navigation-2026-10-20/originals/proof-plan.md) and [six dispositions](../../research/task-navigation-2026-10-20/decisions.md).
+Any future visible milestone must include its explanation and example. Pro proposes task-navigation.mdx sections for population and return, plus a taskNavigation.ts demo. These files remain proposed. See the [proof plan](https://chatgpt.com/c/6ad70eaa-e010-83e9-bfbb-400c0766d937) and [six dispositions](../../research/task-navigation-2026-10-20/decisions.md).

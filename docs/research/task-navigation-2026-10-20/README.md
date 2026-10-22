@@ -26,13 +26,9 @@ Return by selecting a preserved overview tab differs from Undo. New tabs also sh
 
 Pro finished in 17m 51s in the [recorded conversation](https://chatgpt.com/c/6ad70eaa-e010-83e9-bfbb-400c0766d937).
 
-- [Decision report](originals/decision-report.md)
-- [Recommendations TN01–TN06](originals/recommendations.md)
-- [Proposed proof plan](originals/proof-plan.md)
-- [Original queue](originals/research-queue.md)
-- [Manifest](originals/manifest.json) and [ZIP](originals/task-navigation-research.zip)
+- [Pro conversation](https://chatgpt.com/c/6ad70eaa-e010-83e9-bfbb-400c0766d937)
 
-[Collection receipts](collection.json) record integrity and companion limits. All four reports were read. No material follow-up was needed; 0/2 used.
+Collection checked integrity and companion limits. All four reports were read. No material follow-up was needed; 0/2 used.
 
 ## Scope and validation
 

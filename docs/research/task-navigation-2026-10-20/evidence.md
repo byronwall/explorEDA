@@ -4,7 +4,7 @@ Checked 2026-10-20 against 9b16d78e3ed0742ed4d5858c1939fec9e758b510. Refreshed o
 
 ## Integrity and source
 
-The published ZIP hash, CRC, safe paths, no-symlink check, exact inventory, UTF-8, and report hashes/sizes pass. See [collection receipts](collection.json). Originals are excluded from formatting. One standalone download opened raw text and timed out; no independent companion equality is claimed.
+The published ZIP hash, CRC, safe paths, no-symlink check, exact inventory, UTF-8, and report hashes/sizes pass. One standalone download opened raw text and timed out; no independent companion equality is claimed.
 
 All 30 tracked packet files authenticate against baseline Git objects. The uploaded prompt/queue/historical summary are identified additions. The commit hook later formatted the queue table; the manifest retains the actual uploaded bytes. The local historical summary now uses pinned original links, so it cannot point to this cycle’s different reports.
 
@@ -22,7 +22,7 @@ All 30 tracked packet files authenticate against baseline Git objects. The uploa
 | Export differs from history                       | projectFile exports current definitions, tables, views and active ID. projectSession starts one checkpoint. HistoryEntry omits table snapshots.   | No source-version or old-timeline restoration promise.                                              |
 | Pending context can differ from requested context | useAnalysisEvaluation retains the last successful result/appliedBindings for the same pending query.                                              | A future action must prove which applied context it transfers.                                      |
 
-Paths are under packages/explorEDA/src/components/project, lib/analysis and apps/demo/src unless named otherwise. The [source manifest](source-manifest.json) lists exact files. The [original decision report](originals/decision-report.md) supplies pinned links and detailed source anchors.
+Paths are under packages/explorEDA/src/components/project, lib/analysis and apps/demo/src unless named otherwise. The [original decision report](https://chatgpt.com/c/6ad70eaa-e010-83e9-bfbb-400c0766d937) supplies pinned links and detailed source anchors.
 
 ## Current primary sources checked
 
@@ -35,6 +35,6 @@ These pages support explicit semantic choices. They do not establish explorEDA d
 
 ## Arithmetic and product evidence
 
-Pro reports 104 standalone arithmetic assertions across 24 populations. This is Pro evidence; no downloaded code was executed. Local review independently checks selected fixture memberships, contributor counts and totals in [fixture audit](fixture-audit.json).
+Pro reports 104 standalone arithmetic assertions across 24 populations. This is Pro evidence; no downloaded code was executed. Local review independently checks selected fixture memberships, contributor counts and totals in fixture audit.
 
 These checks validate arithmetic anchors only. They do not execute query helpers, chart filters, navigation, export/history/reload or UI interactions. No author observation, new runnable fixture, browser proof or performance measurement occurred. Existing baseline tests were run during preparation; final repository checks are recorded in run.md and validation.json.

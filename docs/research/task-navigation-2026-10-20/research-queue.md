@@ -30,4 +30,4 @@ The September/store example is illustrative, not observed demand. A synthetic cu
 Previous queue: https://github.com/byronwall/explorEDA/blob/codex/grouped-rates-research-2026-10-19/docs/research/grouped-rates-2026-10-19/research-queue.md.
 PR454 owns time-series axes. No research result approves application implementation.
 
-[Six reviewed dispositions](decisions.md) and the [original Pro queue](originals/research-queue.md) preserve distinct evidence gates. No author or product proof is claimed.
+[Six reviewed dispositions](decisions.md) and the [original Pro queue](https://chatgpt.com/c/6ad70eaa-e010-83e9-bfbb-400c0766d937) preserve distinct evidence gates. No author or product proof is claimed.

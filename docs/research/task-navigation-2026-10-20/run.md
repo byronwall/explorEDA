@@ -6,7 +6,7 @@
 - Checkout: /Users/byronwall/Projects/explorEDA. No worktree.
 - Baseline: 9b16d78e3ed0742ed4d5858c1939fec9e758b510; origin/main refreshed 2026-10-20. Clean before branch creation.
 - Branch: codex/task-navigation-research-2026-10-20.
-- Prompt: [pro-prompt.md](pro-prompt.md). Queue: [research-queue.md](research-queue.md). Inventory: [source-manifest.json](source-manifest.json).
+- Prompt: [pro-prompt.md](pro-prompt.md). Queue: [research-queue.md](research-queue.md).
 - Packet: tmp/pro-task-navigation-2026-10-20/source-packet.txt; 33 text files, 319470 bytes, SHA-256 680bb720fc819cd7133efb0dde5a1dfda31e6f35d366336a0e17592b7d18d420. Selected snapshot, not runnable. Thirty tracked files match baseline Git objects; three local additions.
 - Prior cycles 451,452,455,456,457 complete in open review PRs. PR454 owns time-series axes. Never resubmit completed missions.
 - Chrome byroni.us available despite locked Mac. Byron Wall Pro and Pro5/5 verified before upload.
@@ -34,7 +34,7 @@ Baseline parameter-input and query-evaluation tests pass: two files,nine tests. 
 
 ## Collection and review: 2026-10-20
 
-Pro completed after 17m 51s. Downloaded the ZIP under direct standing human approval. Its published SHA-256, CRC, safe paths, no symlinks, exact inventory, UTF-8 and report hashes/sizes pass. Four Markdown originals and manifest are preserved unchanged. One standalone report download opened raw text and its event timed out. No independent standalone/ZIP equality is claimed. All required contents are present locally. See collection.json. No Library upload prerequisite or approval rejection occurred.
+Pro completed after 17m 51s. Downloaded the ZIP under direct standing human approval. Its published SHA-256, CRC, safe paths, no symlinks, exact inventory, UTF-8 and report hashes/sizes pass. Four Markdown originals and manifest are preserved unchanged. One standalone report download opened raw text and its event timed out. No independent standalone/ZIP equality is claimed. All required contents are present locally. No Library upload prerequisite or approval rejection occurred.
 
 Read all four reports. Reviewed TN01–TN06 against current source and four official Tableau/PowerBI/Metabase pages. Keep navigation deferred and current controls as comparator. Preserve population/range/instance/conflict/authoring choices. Host mapping remains conditional. No material follow-up needed; 0/2. Pro's104 arithmetic assertions remain attributed; local fixture anchors are separate arithmetic checks, not application proof.
 
