@@ -1,0 +1,55 @@
+{
+  "conversation": "https://chatgpt.com/c/6ada0976-a8d4-83ea-9df8-c953d9d9b1c3",
+  "collected_at": "2026-10-22T15:23:27.865069+00:00",
+  "authorization": "Direct human standing download approval renewed October19,2026; presented before browser download.",
+  "archive": {
+    "name": "R001-research.zip",
+    "bytes": 120516,
+    "sha256": "ae62f63a5b95db1868e1c6d8ef114c507c0fd9f2fa8d8753ee1bf8c455794223",
+    "safe_flat_paths": true,
+    "no_links": true,
+    "crc": true,
+    "exact_inventory": true
+  },
+  "files": [
+    {
+      "name": "R001-report.md",
+      "bytes": 44596,
+      "sha256": "411e92037d7c3f3c5dd6046ce44b2297313efc868e38b2bd1b122cd6125f8130",
+      "standalone": "/Users/byronwall/Downloads/R001-report.md",
+      "archive_companion_equal": true
+    },
+    {
+      "name": "R001-sources.md",
+      "bytes": 34491,
+      "sha256": "6fadbaab8555ba8defa58a1ca4d76fb60ea320a4caa60965d134e98e6fd146c7",
+      "standalone": "/Users/byronwall/Downloads/R001-sources.md",
+      "archive_companion_equal": true
+    },
+    {
+      "name": "R001-decisions.md",
+      "bytes": 33140,
+      "sha256": "aeb6b54ca835f9e6afa31546f70bcd257304e84f5fb526d4739b807194e5328b",
+      "standalone": "/Users/byronwall/Downloads/R001-decisions.md",
+      "archive_companion_equal": true
+    },
+    {
+      "name": "R001-proof-and-docs.md",
+      "bytes": 452774,
+      "sha256": "739e103ed149bd6f95673cc021ccef63f298fd51c555d30436e4fffe386859aa",
+      "standalone": "/Users/byronwall/Downloads/R001-proof-and-docs.md",
+      "archive_companion_equal": true
+    },
+    {
+      "name": "R001-manifest.json",
+      "bytes": 4057,
+      "sha256": "79b6e6e4969ac206f4a8636f5d109b6066148ec7c9cc1d3a50cfc2418f28ef4e",
+      "standalone": "/Users/byronwall/Downloads/R001-manifest.json",
+      "archive_companion_equal": true
+    }
+  ],
+  "limits": [
+    "Original-file preview click opens a menu; initial waits timed out before menu choice. Standalone original-file clicks succeeded.",
+    "No Library upload or downloaded-program execution."
+  ]
+}
