@@ -68,8 +68,13 @@ function useFittedHeight() {
       const content = host.firstElementChild;
       if (!grid || !content) return false;
       // The workspace lays out at its natural height: toolbar, grid, and
-      // status line. Match it, so nothing spills over the page below.
-      const next = Math.round(content.getBoundingClientRect().height);
+      // status line. Match it, borders included, so nothing spills over the
+      // page below or gives the wrapper a scroll bar.
+      const next = Math.ceil(
+        content.getBoundingClientRect().height +
+          host.offsetHeight -
+          host.clientHeight
+      );
       setHeight((current) =>
         current && Math.abs(current - next) < 2 ? current : next
       );
