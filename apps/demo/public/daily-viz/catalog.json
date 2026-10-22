@@ -3960,15 +3960,251 @@
     "id": "nb-covid-vermont-florida",
     "slug": "covid-vermont-florida",
     "kind": "notebook",
-    "title": "Vermont kept Covid low for 21 months, then Omicron caught up",
+    "title": "Vermont kept Covid at a fifth of Florida’s rate for a year, then Omicron erased the gap",
     "question": "Did the state with the lowest case rates stay lowest?",
-    "summary": "TODO: two sentences on what the reader learns.",
+    "summary": "Through 2020 Vermont averaged a fifth of Florida’s weekly case rate, and half its weeks before Omicron were under 10 per 100,000. In January 2022 Vermont peaked higher than Florida, and the two states have tracked each other since.",
     "family": "covid",
     "entry": "vermont-florida.eda.md",
-    "query": "compare",
+    "query": "vtfl",
     "industry": "Public health",
     "analysis": "Comparison",
-    "findings": []
+    "findings": [
+      {
+        "text": "Vermont’s 2020 weeks averaged {value} new cases per 100,000",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "VT"
+          ],
+          [
+            "Date",
+            "lt",
+            "2021-01-01"
+          ]
+        ]
+      },
+      {
+        "text": "Florida’s averaged {value}.",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "FL"
+          ],
+          [
+            "Date",
+            "lt",
+            "2021-01-01"
+          ]
+        ]
+      },
+      {
+        "text": "Vermont averaged {value} a week",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "VT"
+          ],
+          [
+            "Date",
+            "lt",
+            "2021-12-01"
+          ]
+        ]
+      },
+      {
+        "text": "against Florida’s {value}.",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "FL"
+          ],
+          [
+            "Date",
+            "lt",
+            "2021-12-01"
+          ]
+        ]
+      },
+      {
+        "text": "Before Omicron, {value}% of Vermont’s weeks were under 10 new cases per 100,000",
+        "format": ".1f",
+        "op": "share",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "VT"
+          ],
+          [
+            "Date",
+            "lt",
+            "2021-12-01"
+          ]
+        ],
+        "condition": [
+          [
+            "Cases per 100k",
+            "lt",
+            10
+          ]
+        ]
+      },
+      {
+        "text": "and {value}% of Florida’s were.",
+        "format": ".1f",
+        "op": "share",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "FL"
+          ],
+          [
+            "Date",
+            "lt",
+            "2021-12-01"
+          ]
+        ],
+        "condition": [
+          [
+            "Cases per 100k",
+            "lt",
+            10
+          ]
+        ]
+      },
+      {
+        "text": "Vermont’s Omicron peak was {value} new cases per 100,000",
+        "format": ".2f",
+        "op": "max",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "VT"
+          ],
+          [
+            "wave",
+            "eq",
+            "Omicron 2022"
+          ]
+        ]
+      },
+      {
+        "text": "Florida’s was {value}.",
+        "format": ".2f",
+        "op": "max",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "FL"
+          ],
+          [
+            "wave",
+            "eq",
+            "Omicron 2022"
+          ]
+        ]
+      },
+      {
+        "text": "Vermont’s weeks averaged {value}",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "VT"
+          ],
+          [
+            "wave",
+            "eq",
+            "Omicron 2022"
+          ]
+        ]
+      },
+      {
+        "text": "Florida’s {value}.",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "FL"
+          ],
+          [
+            "wave",
+            "eq",
+            "Omicron 2022"
+          ]
+        ]
+      },
+      {
+        "text": "Vermont averaged {value} a week, Florida",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "VT"
+          ],
+          [
+            "wave",
+            "eq",
+            "After Omicron"
+          ]
+        ]
+      },
+      {
+        "text": "Florida {value}.",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "FL"
+          ],
+          [
+            "wave",
+            "eq",
+            "After Omicron"
+          ]
+        ]
+      }
+    ],
+    "series": {
+      "id": "covid-waves",
+      "title": "Three years of Covid case rates",
+      "part": 2
+    }
   },
   {
     "id": "nb-covid-fifty-states",
@@ -3976,12 +4212,177 @@
     "kind": "notebook",
     "title": "The winter wave began in the Dakotas; Omicron needed one month for all 51",
     "question": "Which states peaked first in each Covid wave?",
-    "summary": "TODO: two sentences on what the reader learns.",
+    "summary": "The winter 2020–21 wave peaked in North Dakota ten weeks before the coasts, and Delta took sixteen weeks to run from Arkansas to Rhode Island. Omicron peaked in all 51 states within four weeks of January 2022, and that was every state’s highest week.",
     "family": "covid",
     "entry": "fifty-states.eda.md",
     "query": "tiles",
     "industry": "Public health",
     "analysis": "Geography",
-    "findings": []
+    "findings": [
+      {
+        "text": "the average rate was {value} new cases per 100,000",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Cases per 100k"
+      },
+      {
+        "text": "the highest week anywhere was {value}.",
+        "format": ".2f",
+        "op": "max",
+        "field": "Cases per 100k"
+      },
+      {
+        "text": "North Dakota’s peak week was {value} new cases per 100,000",
+        "format": ".2f",
+        "op": "max",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "ND"
+          ],
+          [
+            "wave",
+            "eq",
+            "Winter 2020-21"
+          ]
+        ]
+      },
+      {
+        "text": "when the median state was at {value}.",
+        "format": ".2f",
+        "op": "median",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Date",
+            "eq",
+            "2020-11-09"
+          ]
+        ]
+      },
+      {
+        "text": "Hawaii’s winter peak was {value}",
+        "format": ".2f",
+        "op": "max",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "HI"
+          ],
+          [
+            "wave",
+            "eq",
+            "Winter 2020-21"
+          ]
+        ]
+      },
+      {
+        "text": "Alaska’s Delta peak was {value}",
+        "format": ".2f",
+        "op": "max",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "AK"
+          ],
+          [
+            "wave",
+            "eq",
+            "Delta 2021"
+          ]
+        ]
+      },
+      {
+        "text": "Maryland’s was {value}.",
+        "format": ".2f",
+        "op": "max",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "MD"
+          ],
+          [
+            "wave",
+            "eq",
+            "Delta 2021"
+          ]
+        ]
+      },
+      {
+        "text": "Rhode Island’s Omicron peak was {value}",
+        "format": ".2f",
+        "op": "max",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "RI"
+          ],
+          [
+            "wave",
+            "eq",
+            "Omicron 2022"
+          ]
+        ]
+      },
+      {
+        "text": "Maine’s was {value}, the lowest of the 51.",
+        "format": ".2f",
+        "op": "max",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "ME"
+          ],
+          [
+            "wave",
+            "eq",
+            "Omicron 2022"
+          ]
+        ]
+      },
+      {
+        "text": "Rhode Island’s three-year average was {value} a week",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "RI"
+          ]
+        ]
+      },
+      {
+        "text": "Maine’s was {value}",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Cases per 100k",
+        "where": [
+          [
+            "Code",
+            "eq",
+            "ME"
+          ]
+        ]
+      }
+    ],
+    "series": {
+      "id": "covid-waves",
+      "title": "Three years of Covid case rates",
+      "part": 3
+    }
   }
 ]
