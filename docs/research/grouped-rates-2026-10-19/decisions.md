@@ -12,4 +12,4 @@ Reviewed 2026-10-20 against baseline 9b16d78e and the current checkout. Adoption
 | GR06 | Adopt       | Preserve once-per-ID exclusions/conflicts and pooled reevaluation. Source members and numeric contributors remain distinct. No two-field identity policy is invented.                                                                           |
 | GR07 | Defer       | One common-population ratio may be explored only after repeated need survives simpler alternatives. Syntax, persistence and implementation remain unchosen. Reject a general measure grammar, semantic layer and pipeline graph for this cycle. |
 
-The source packet and current source support these decisions. None requires a follow-up to Pro. Follow-ups: 0/2. The original recommendation wording remains unchanged in [recommendations.md](originals/recommendations.md).
+The source packet and current source support these decisions. None requires a follow-up to Pro. Follow-ups: 0/2. The original recommendation wording remains unchanged in [recommendations.md](https://chatgpt.com/c/6ad66875-bc28-83ea-8341-3263d0d8cdec).

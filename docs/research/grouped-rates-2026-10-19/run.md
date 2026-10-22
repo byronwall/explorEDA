@@ -6,7 +6,7 @@
 - Baseline: 9b16d78e3ed0742ed4d5858c1939fec9e758b510; refreshed origin/main on 2026-10-19. Clean before branch creation.
 - Branch: codex/grouped-rates-research-2026-10-19, independent from main.
 - Mission: compare deferral, current recipes, upstream preparation and one bounded grouped-rate definition. Demand remains unconfirmed.
-- Prompt: [pro-prompt.md](pro-prompt.md). Choices/backlog: [research-queue.md](research-queue.md). Packet inventory: [source-manifest.json](source-manifest.json).
+- Prompt: [pro-prompt.md](pro-prompt.md). Choices/backlog: [research-queue.md](research-queue.md).
 - Packet: tmp/pro-grouped-rates-2026-10-19/source-packet.txt; 38 text files; 296375 bytes; SHA-256 88c5bc84d95608248ea1b96ab77e12be57514947db6a2a8ae2529867ec5211f0. Selected snapshot, not runnable. Tracked files verified against baseline. Local prompt/queue and identified historical summary are additions.
 - Prior preparation/freshness/missingness/relationship cycles complete in verified open PRs 451, 452, 455, 456. Read preparation run from remote branch because absent on main. Never resubmit. PR454 owns time-series axes.
 - Scope: research, intent, documentation, examples and directly useful bounded proofs. No large implementation, merge, deployment or paid services.

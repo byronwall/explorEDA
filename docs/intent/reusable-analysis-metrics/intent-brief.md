@@ -52,7 +52,7 @@ Name the real decision and repeated need. Try numeric 0/1 indicators for equal-o
 
 If explanatory work becomes useful, pair calculated-fields.mdx (In charts and tables), metric-card.mdx (How it reads), and bar.mdx (Selection and row scope/Series) with a verified runnable example. The existing flights carriers dashboard is a possible indicator comparator, after its data and grain are checked. A new science example remains conditional. No docs-site page or example is implemented by this intent update.
 
-See the [reviewed research](../../research/grouped-rates-2026-10-19/README.md), [seven dispositions](../../research/grouped-rates-2026-10-19/decisions.md) and [proposed proof](../../research/grouped-rates-2026-10-19/originals/proof-plan.md).
+See the [reviewed research](../../research/grouped-rates-2026-10-19/README.md), [seven dispositions](../../research/grouped-rates-2026-10-19/decisions.md) and [proposed proof](https://chatgpt.com/c/6ad66875-bc28-83ea-8341-3263d0d8cdec).
 
 See the [reference packet](references/README.md) and [comparison collection](../comparison-opportunities/README.md) for context.
 

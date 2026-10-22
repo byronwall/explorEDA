@@ -17,7 +17,7 @@ Reviewed 2026-10-20. Baseline and refreshed origin/main are 9b16d78e3ed0742ed4d5
 | Richer Pivot reducers do not compose metrics | PivotTable/definition.ts and utils/calculations.ts reduce one field per value setting. Composition/calculations.ts has a separate population/filter contract.                                                                                                                   |
 | Flights are a comparator, not rate demand    | Existing carriers.eda has count/median/mean and a source table. No requested reusable rate appears. Pro did not inspect CSVs. Local data were not used to validate its airline narrative or invented threshold.                                                                 |
 
-All 35 tracked packet entries authenticate against baseline Git objects. Pro's 38 receipts match the local source manifest. The three additions are the prompt, queue and identified historical summary. Post-upload formatting of the local queue does not change the uploaded receipt. See [collection.json](collection.json).
+All 35 tracked packet entries authenticate against baseline Git objects. Pro's 38 receipts match the local source manifest. The three additions are the prompt, queue and identified historical summary. Post-upload formatting of the local queue does not change the uploaded receipt.
 
 ## Current primary sources
 
@@ -31,7 +31,7 @@ These pages were opened independently on 2026-10-20. Their narrow claims support
 
 ## Executed evidence versus proposed proof
 
-Archive safety/integrity and source authentication are collection checks. Twelve Fraction arithmetic anchors are independent local checks in [fixture-audit.json](fixture-audit.json). Existing reducer/card/bar tests are baseline checks. Pro's 47 arithmetic/SQLite assertions are reported research evidence, not local application tests.
+Archive safety/integrity and source authentication are collection checks. Twelve Fraction arithmetic anchors were independent local checks. Existing reducer/card/bar tests are baseline checks. Pro's 47 arithmetic/SQLite assertions are reported research evidence, not local application tests.
 
 No new user task, formula-entry proof, chart flow, export/history/restore journey or performance trial ran. Do not promote the synthetic task or proposed docs/example into an implemented feature. No material follow-up is needed to preserve this bounded result.
 

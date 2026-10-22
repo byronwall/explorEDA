@@ -30,4 +30,4 @@ The flights dashboard already combines a pivot and cards, but uses count and mea
 Previous queue: https://github.com/byronwall/explorEDA/blob/codex/relationship-discovery-research-2026-10-19/docs/research/relationship-discovery-2026-10-19/research-queue.md.
 Open PR454 owns time-series axes. No research result approves application implementation.
 
-[Seven reviewed dispositions](decisions.md) preserve the demand gate. [Original Pro queue](originals/research-queue.md). All author and product proof remains proposed.
+[Seven reviewed dispositions](decisions.md) preserve the demand gate. [Original Pro queue](https://chatgpt.com/c/6ad66875-bc28-83ea-8341-3263d0d8cdec). All author and product proof remains proposed.

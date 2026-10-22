@@ -26,6 +26,6 @@ Twelve independent local arithmetic anchors pass. Pro reports 47 separate arithm
 ## Review packet
 
 - [Seven dispositions](decisions.md) and [independent source checks](evidence.md).
-- [Continuing queue](research-queue.md), [run record](run.md), [collection manifest](collection.json), [validation](validation.json) and [local arithmetic](fixture-audit.json).
-- Originals: [decision](originals/grouped-rates-decision.md), [recommendations](originals/recommendations.md), [proof plan](originals/proof-plan.md), [queue](originals/research-queue.md), [manifest](originals/manifest.json), [ZIP](originals/grouped-rates-research.zip).
+- [Continuing queue](research-queue.md), [run record](run.md), collection manifest, validation and local arithmetic.
+- Originals: [decision](https://chatgpt.com/c/6ad66875-bc28-83ea-8341-3263d0d8cdec), [recommendations](https://chatgpt.com/c/6ad66875-bc28-83ea-8341-3263d0d8cdec), [proof plan](https://chatgpt.com/c/6ad66875-bc28-83ea-8341-3263d0d8cdec), [queue](https://chatgpt.com/c/6ad66875-bc28-83ea-8341-3263d0d8cdec), [manifest](https://chatgpt.com/c/6ad66875-bc28-83ea-8341-3263d0d8cdec), [ZIP](https://chatgpt.com/c/6ad66875-bc28-83ea-8341-3263d0d8cdec).
 - [Updated rates intent](../../intent/reusable-analysis-metrics/intent-brief.md).
