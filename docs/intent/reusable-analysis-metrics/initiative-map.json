@@ -5,7 +5,7 @@
     "slug": "reusable-analysis-metrics",
     "scale": "feature",
     "current_phase": "intent",
-    "last_updated": "2026-10-09",
+    "last_updated": "2026-10-21",
     "summary": "Analysts may need the same meaningful measure in a card, bar, matrix, and trend.",
     "status": "planned",
     "next_action": "Retain as an unprioritized seed until tool use reveals a concrete unmet task."
@@ -88,6 +88,13 @@
       "location": "../comparison-opportunities/resources/product-feedback-2026-10-06.json",
       "anchor": "Annotations 13",
       "authority": "Explicit human feedback; tentative answers remain tentative"
+    },
+    {
+      "id": "r043-research",
+      "type": "agent-authored-analysis",
+      "location": "../../research/entity-grain-2026-10-21/README.md",
+      "anchor": "EG01\u2013EG06, three local research probes, October21",
+      "authority": "Reviewed research constraints and repair proposals; no implementation approval"
     }
   ],
   "intent": {
@@ -333,18 +340,20 @@
       "date": "2026-10-06",
       "action": "Reconciled annotated product feedback and priority.",
       "reason": "User provided clearer goals and indicated lower interest in unclear topics.",
-      "source_annotation_indices": [
-        13
-      ],
+      "source_annotation_indices": [13],
       "evidence": "Current brief changes where applicable; source inspection only. No implementation, pause, or cancellation."
     },
     {
       "date": "2026-10-09",
       "event": "status-checked",
       "status": "planned",
-      "evidence": [
-        "No implementation of this scope found at 91b627d"
-      ]
+      "evidence": ["No implementation of this scope found at 91b627d"]
+    },
+    {
+      "date": "2026-10-21",
+      "action": "Reconciled R043 entity-grain research and three local probes.",
+      "evidence": "Measured-count conflict split, source/value partition controls, static trace wording; browser/author proofs remain pending.",
+      "reason": "Retain distinct identity contracts and bound repair proposals."
     }
   ],
   "closure": null,

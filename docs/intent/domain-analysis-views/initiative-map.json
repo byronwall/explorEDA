@@ -5,16 +5,16 @@
     "slug": "domain-analysis-views",
     "scale": "feature",
     "current_phase": "execution",
-    "last_updated": "2026-10-14",
-    "summary": "Add Funnel, Retention, and interactive Timeline charts whose domain preparation is tested and visible in the trace.",
+    "last_updated": "2026-10-21",
+    "summary": "Funnel, Retention and Timeline are present in source, docs and examples. Review bounded retention interpretation questions without rebuilding the chart family.",
     "status": "active",
-    "next_action": "Review and merge the stacked PRs: #425 (Funnel), #427 (Retention), then the Timeline PR. Retire the initiative once merged."
+    "next_action": "Review delivered views and the retention observation research. Keep local trust first; new retention fixture/browser/author proof remains proposed. No endpoint or All denominator change approved."
   },
   "artifacts": {
     "intent_brief": {
       "path": "intent-brief.md",
       "status": "current",
-      "updated_at": "2026-10-13"
+      "updated_at": "2026-10-21"
     },
     "brainstorm": {
       "path": "brainstorm.md",
@@ -102,6 +102,13 @@
       "location": "conversation 2026-10-13",
       "anchor": "3",
       "authority": "explicit user direction"
+    },
+    {
+      "id": "retention-observation-review-2026-10-21",
+      "type": "agent-authored-analysis",
+      "location": "../../research/retention-observation-2026-10-21/README.md",
+      "anchor": "Six dispositions; current source versus proposed product proof",
+      "authority": "reviewed research, not product implementation approval"
     }
   ],
   "intent": {
@@ -570,6 +577,11 @@
       "date": "2026-10-14",
       "action": "Built all three milestones as stacked PRs; recorded selection storage as plain filters.",
       "evidence": "PRs #425, #427, and the M3 PR"
+    },
+    {
+      "date": "2026-10-21",
+      "event": "research-reviewed",
+      "evidence": "Current registry confirms three delivered chart families. Six retention dispositions retain snapshot semantics. New browser/author proofs remain proposed; no retirement or product change."
     }
   ],
   "closure": null,

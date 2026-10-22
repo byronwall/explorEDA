@@ -1,0 +1,22 @@
+
+ RUN  v3.0.8 /Users/byronwall/Projects/explorEDA/packages/explorEDA
+
+stdout | src/test/selectionIdentityResearch.test.tsx > records reverse mapping by owner and preserves the chart/Rows controls
+R077 owner mapping {"chart":["L10","L05","L02"],"table":["L10","L08","L04"],"workspace":["L12","L03","L01"],"local":["L12","L03","L01"],"unresolvedCollector":6,"workspaceMissingFieldDetected":false}
+
+stdout | src/test/selectionIdentityResearch.test.tsx > observes plain provider reset and supplied positional restore after replacement
+R077 plain provider {"restored":["L12","L03","L01"],"deliberateNoSaveResetCount":12}
+
+stdout | src/test/selectionIdentityResearch.test.tsx > observes source-reference suffix and duplicate-position reuse with keyed controls
+R077 source references {"suffixIntended":"L02","suffixActual":"L10","occurrenceBefore":"L10","occurrenceAfterSwap":"L09","keyedReverseControl":"L02"}
+
+stdout | src/test/selectionIdentityResearch.test.tsx > observes two distinct expansion rows sharing one output key
+R077 expansion {"keys":["e:records:string:x:children:string:y:children:string:z","e:records:string:x:children:string:y:children:string:z"],"contributorKeys":[["records:string:x","children:string:y:children:string:z"],["records:string:x:children:string:y","children:string:z"]]}
+
+ ✓ src/test/selectionIdentityResearch.test.tsx (4 tests) 19ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  04:18:27
+   Duration  2.50s (transform 1.07s, setup 105ms, collect 1.85s, tests 19ms, environment 193ms, prepare 34ms)
+
