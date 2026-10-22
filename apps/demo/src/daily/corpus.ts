@@ -44,6 +44,8 @@ export interface DailyEntry extends DailyCatalogEntry {
   charts: string[];
   marks: string[];
   features: string[];
+  /** How many sheets a notebook reads as; 0 for a single reading. */
+  sheets: number;
   related: string[];
 }
 
@@ -70,6 +72,12 @@ export const kindLabels: Record<DailyKind, string> = {
   dashboard: "Dashboard",
 };
 export const dailyPath = (entry: { slug: string }) => `/daily/${entry.slug}`;
+
+/** "Notebook", or "Notebook, 4 sheets" for a book. */
+export function kindLabel(entry: Pick<DailyEntry, "kind" | "sheets">) {
+  const label = kindLabels[entry.kind];
+  return entry.sheets ? `${label}, ${entry.sheets} sheets` : label;
+}
 
 /** Today in the reader's own time zone, as `YYYY-MM-DD`. */
 export const todayKey = () => new Date().toLocaleDateString("en-CA");

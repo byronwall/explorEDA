@@ -25,6 +25,7 @@ import {
   assetPath,
   dailyPath,
   formatDay,
+  kindLabel,
   kindLabels,
   loadDailyEntry,
   publishedEntries,
@@ -458,7 +459,7 @@ export default function DailyEntryPage() {
             {entry.summary}
           </p>
           <p className="mt-3 text-sm text-muted-foreground">
-            {kindLabels[entry.kind]} · {entry.industry} · {entry.analysis} ·{" "}
+            {kindLabel(entry)} · {entry.industry} · {entry.analysis} ·{" "}
             <a
               href="#data"
               className="text-site-accent transition-colors duration-150 hover:text-foreground"

@@ -194,7 +194,20 @@ describe("daily visualization corpus", () => {
       charts: ["composition"],
       marks: ["waffle"],
       features: ["legend"],
+      sheets: 0,
     });
+    // A notebook with several # headings reads as sheets; one is a title.
+    expect(describeText("# Title\n\n```eda\nline x=a y=b\n```\n").sheets).toBe(
+      0
+    );
+    expect(
+      describeText("Lede\n\n# Where\n\n```md\n# not one\n```\n\n# When\n")
+        .sheets
+    ).toBe(2);
+    expect(
+      index.entries.find((entry) => entry.slug === "earthquakes-four-questions")
+        ?.sheets ?? 4
+    ).toBe(4);
   });
 
   it.each(entries)(
