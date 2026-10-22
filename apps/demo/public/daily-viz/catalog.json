@@ -3,9 +3,9 @@
     "id": "nb-fertility-trajectories",
     "slug": "fertility-trajectories",
     "kind": "notebook",
-    "title": "Twelve fertility trajectories, with the empty end years retained",
-    "question": "How do selected historical country paths differ without implying a world average?",
-    "summary": "Across twelve countries, average fertility fell from 5.3 births per woman in 1960 to 2.4 in 2011. The paths start far apart and arrive at different speeds.",
+    "title": "Eleven of twelve countries converged on two children; Nigeria stayed at six",
+    "question": "How did fertility fall across twelve countries after 1960?",
+    "summary": "Across twelve countries, the average fertility rate fell from 5.3 births per woman in 1960 to 2.4 in 2011, and eleven paths ended between 1.2 and 2.9. Nigeria's never left six.",
     "family": "fertility",
     "entry": "trajectories.eda.md",
     "query": "r",
@@ -13,8 +13,8 @@
     "analysis": "Trend",
     "findings": [
       {
-        "text": "The unweighted mean across the selected countries in 1960 was {value} births per woman.",
-        "format": ".3f",
+        "text": "Across the twelve, the average rate was {value} births per woman in 1960.",
+        "format": ".1f",
         "op": "mean",
         "field": "fertility",
         "where": [
@@ -26,8 +26,8 @@
         ]
       },
       {
-        "text": "The corresponding selected-country mean in 2011 was {value} births per woman.",
-        "format": ".3f",
+        "text": "By 2011 it was {value}.",
+        "format": ".1f",
         "op": "mean",
         "field": "fertility",
         "where": [
@@ -35,6 +35,108 @@
             "year",
             "eq",
             2011
+          ]
+        ]
+      },
+      {
+        "text": "It started above six and ended lowest, at {value} births per woman in 2011.",
+        "format": ".2f",
+        "op": "min",
+        "field": "fertility",
+        "where": [
+          [
+            "year",
+            "eq",
+            2011
+          ]
+        ]
+      },
+      {
+        "text": "It rose to {value} in 1980",
+        "format": ".1f",
+        "op": "max",
+        "field": "fertility",
+        "where": [
+          [
+            "country",
+            "eq",
+            "Nigeria"
+          ]
+        ]
+      },
+      {
+        "text": "and was still at {value} births per woman in 2011.",
+        "format": ".1f",
+        "op": "mean",
+        "field": "fertility",
+        "where": [
+          [
+            "country",
+            "eq",
+            "Nigeria"
+          ],
+          [
+            "year",
+            "eq",
+            2011
+          ]
+        ]
+      },
+      {
+        "text": "Among the other eleven, the 2011 rates ran only from 1.24 in Korea to {value} in Egypt.",
+        "format": ".2f",
+        "op": "max",
+        "field": "fertility",
+        "where": [
+          [
+            "year",
+            "eq",
+            2011
+          ],
+          [
+            "country",
+            "ne",
+            "Nigeria"
+          ]
+        ]
+      },
+      {
+        "text": "In the 1960s, {value}% of country-years were below 2.1 births per woman",
+        "format": ".1f",
+        "op": "share",
+        "field": "fertility",
+        "where": [
+          [
+            "decade",
+            "eq",
+            "1960s"
+          ]
+        ],
+        "condition": [
+          [
+            "fertility",
+            "lt",
+            2.1
+          ]
+        ]
+      },
+      {
+        "text": "By the 2000s, {value}% were.",
+        "format": ".1f",
+        "op": "share",
+        "field": "fertility",
+        "where": [
+          [
+            "decade",
+            "eq",
+            "2000s"
+          ]
+        ],
+        "condition": [
+          [
+            "fertility",
+            "lt",
+            2.1
           ]
         ]
       }

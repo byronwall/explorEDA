@@ -1,64 +1,50 @@
-# Twelve fertility trajectories, with the empty end years retained
+# Eleven of twelve countries converged on two children; Nigeria stayed at six
 
-**How do selected historical country paths differ without implying a world average?** Each row is one selected country-year.
+**How did fertility fall across twelve countries after 1960?** Each row is one country in one year, 1960 to 2011, with the total fertility rate: the births a woman would have at that year's age-specific rates. The twelve are Brazil, China, Egypt, France, Indonesia, India, Japan, Korea, Mexico, Nigeria, South Africa, and the United States. They start almost five births apart and, with one exception, end within two.
 
 ```eda
 eda query=r
 country:cat=r.country label="Country"
 code:cat=r.code label="Code"
 year:num=r.year label="Year"
-fertility:num=r.fertility label="Fertility (births/woman)"
+fertility:num=r.fertility label="Births per woman"
 decade:cat=r.decade label="Decade"
+observed:num=r.observed label="Published"
+calc level = fertility == null ? null : fertility < 2.1 ? "Below 2.1" : "2.1 or more"
 ```
 
-## 1. Country-year observations with country colors
+## From 5.3 births to 2.4 in fifty years
 
-Unconnected points do not imply interpolation through null end years. Each country receives one point for each available annual value.
+Each path is one country. Across the twelve, the average rate was 5.3 births per woman in 1960. By 2011 it was 2.4. Korea's path is the steepest: it started above six and ended lowest, at 1.24 births per woman in 2011. Nigeria's path is the one that never bends. It rose to 6.8 in 1980 and was still at 6.0 births per woman in 2011.
 
 ```eda
-scatter @nb-fertility-trajectories-chart-1 x=year y=fertility color=country title="Country-year observations with country colors" x.title="Year" y.title="Fertility (births/woman)"
+scatter @nb-fertility-trajectories-chart-1 x=year y=fertility color=country title="Total fertility rate by country, 1960 to 2011" x.title="Year" y.title="Births per woman" where.observed=1 {
+  connect.orderField=year connect.groupField=country connect.labels=end pointSize=2
+  rule y=2.1 "Replacement level"
+  callout "Nigeria peaked at 6.8 in 1980" on=r.country:Nigeria,r.year:1980 offset=-30,-28
+}
 ```
 
-## 2. Country distributions across decades
+## Every row fades except one
 
-These boxes mix countries and years and therefore answer a country-year question. They are not population-weighted distributions of people.
+Each cell is a country's average rate over a decade. Read left to right, eleven rows pale from dark to light as rates fall. Nigeria's row stays dark across all six columns. Among the other eleven, the 2011 rates ran only from 1.24 in Korea to 2.85 in Egypt.
 
 ```eda
-boxplot @nb-fertility-trajectories-chart-2 fertility color=decade title="Country distributions across decades" y.title="Fertility (births/woman)"
+heatmap @nb-fertility-trajectories-chart-2 country columnField=decade aggregation=average measureField=fertility sortBy=label title="Average births per woman by country and decade"
 ```
 
-**Finding.** The unweighted mean across the selected countries in 1960 was 5.342 births per woman.
+## Below replacement, one country at a time
 
-## 3. Published rates across country and decade
-
-The cell is an available-year mean within a country and decade. Different decade coverage must be checked before treating cells as equally supported.
+Each bar counts country-years in a decade, split at 2.1 births per woman, the rate that holds a population level. In the 1960s, 5.8% of country-years were below 2.1 births per woman, all of them Japan's. By the 2000s, 44.2% were. The 2010s column holds only 2010 and 2011.
 
 ```eda
-heatmap @nb-fertility-trajectories-chart-3 country columnField=decade aggregation=average measureField=fertility title="Published rates across country and decade"
-```
-
-## 4. Rows retained for each country
-
-The row counts include null-valued year cells. Equal retained counts do not mean equal numbers of measured values.
-
-```eda
-row @nb-fertility-trajectories-chart-4 country title="Rows retained for each country" x.title="Rows"
-```
-
-**Finding.** The corresponding selected-country mean in 2011 was 2.377 births per woman.
-
-## 5. The rows behind the charts
-
-Sort a column or select rows to check any value above. Selections in a notebook stay with their own chart.
-
-```eda
-table @nb-fertility-trajectories-records country,code,year,fertility title="Records behind this comparison"
+bar @nb-fertility-trajectories-chart-3 decade seriesField=level seriesLayout=stacked color=level title="Country-years above and below replacement level, by decade" y.title="Country-years" where.observed=1
 ```
 
 ## Takeaway
 
-Keep trajectories separate and make the missing tail explicit. A pooled average would hide country paths and introduce an arbitrary weighting question that this selection cannot resolve globally.
+Over half a century, eleven countries that started anywhere from two to seven births per woman converged on two. The exception is the one that matters most for the world's population: Nigeria, the largest of the twelve by births, ended the period where it began.
 
 ## Limits
 
-The countries are an illustrative fixed set, not a representative sample. Total fertility rate is a period measure, not completed lifetime births for a cohort. The 2012 and 2013 columns contain no published values.
+Twelve countries chosen for contrast, not a sample of the world, and each counts once whatever its size. The total fertility rate is a period measure, not the completed family size of any real cohort. Values after 2011 are blank in this export.
