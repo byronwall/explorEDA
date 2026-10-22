@@ -327,18 +327,21 @@
       "date": "2026-10-06",
       "action": "Reconciled annotated product feedback and priority.",
       "reason": "User provided clearer goals and indicated lower interest in unclear topics.",
-      "source_annotation_indices": [
-        3
-      ],
+      "source_annotation_indices": [3],
       "evidence": "Current brief changes where applicable; source inspection only. No implementation, pause, or cancellation."
     },
     {
       "date": "2026-10-09",
       "event": "status-checked",
       "status": "planned",
-      "evidence": [
-        "No implementation of this scope found at 91b627d"
-      ]
+      "evidence": ["No implementation of this scope found at 91b627d"]
+    },
+    {
+      "date": "2026-10-22",
+      "action": "Reconciled R051 ownership research and three local probes.",
+      "reason": "Keep exact consumer populations distinct and test explanations before adding UI.",
+      "evidence": "Wrapper/metric/table and mounted provider checks; browser and human study unrun.",
+      "references": ["../../research/filter-ownership-2026-10-22/summary.md"]
     }
   ],
   "closure": null,

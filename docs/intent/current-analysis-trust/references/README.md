@@ -21,3 +21,10 @@ Current source was inspected at `a50df9985ed3ff54d0f6ca368c0b369829b8a927` on 20
 ## Product feedback
 
 [Annotated product direction](../../comparison-opportunities/resources/product-feedback-2026-10-06.md) supplies the current audience and priorities. The [full records](../../comparison-opportunities/resources/product-feedback-2026-10-06.json) preserve uncertainty.
+
+## R051 research
+
+[Reviewed synthesis](../../../research/filter-ownership-2026-10-22/summary.md),
+[decisions](../../../research/filter-ownership-2026-10-22/decisions.md), and
+[local proof limits](../../../research/filter-ownership-2026-10-22/evidence/local-results.md) separate exact membership from comprehension.
+The raw Pro study kit and source receipts are linked from that synthesis. No new interface or participant result is claimed.

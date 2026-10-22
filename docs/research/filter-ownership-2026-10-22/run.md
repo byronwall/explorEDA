@@ -1,6 +1,6 @@
 # R051 filter ownership Pro run
 
-Phase: submitted; Pro working. Follow-ups:0/2. Cycle unfinished; no PR yet.
+Phase: collected and reviewed; integration checks running. Follow-ups:0/2. No PR yet.
 Repository: https://github.com/byronwall/explorEDA.
 Baseline: `63dfa75851ef57bb3782e6d7c1ef104784cd4064`, refreshed origin/main.
 Checkout: /Users/byronwall/Projects/explorEDA.
@@ -13,7 +13,7 @@ Read pipeline memory and completed R001 run/queue first. R001 is complete in PR4
 R051, priority5, is highest unfinished. Higher R026/PR465,R043/PR466,R077/PR484,R001/PR492 have complete research.
 Compared R086 and R031 by priority, novelty, value, evidence gap and Pro fit.
 R051 earns this cycle through analytical interpretation value and a bounded membership/comprehension study.
-R086 is next, thenR031. R008/PR464 complete; R011 reuses retention PR461.
+R086 is next, then R031. R008/PR464 complete; R011 reuses retention PR461.
 Read full selected brief, local review, first experiment and rejection signal.
 Reuse navigation PR458, accounting PR465 and identity PR484 dispositions. Those repairs are not assumed merged.
 PR462 owns Mosaic integration. Compare semantics without repeating its survey.
@@ -86,3 +86,27 @@ Verify saved body,links,file list,branches and OPEN state. Add available codex/c
 Complete only after outputs collected,reviewed,integrated,validated,and available in verified open review PR.
 Update run and pipeline memory. Stop only temporary collector; keep discovery ACTIVE.
 No merge,deployment,paid provisioning or unrelated changes.
+
+## Collection and review, October 22
+
+Pro finished after 26m54s. All four reports, standalone manifest and ZIP were collected.
+Safe paths, no links, CRC, exact inventory, UTF8, sizes, hashes and five independent companions pass.
+Archive event wait timed out; normal download succeeded. No Library upload was needed. No downloaded program ran.
+All four substantive reports and embedded proof method, code and oracle were read.
+Five embedded assets and three JSON parses pass. All 61 source receipts match local Git objects.
+The frozen bytes verify; hand-enumeration chronology and Pro's 121-check result remain attributed.
+
+Three locally authored probes pass. Exact wrapper/metric/table memberships match T0–T5.
+A fresh notebook wrapper keeps workspace scope. The mounted provider confirms explicit aggregate sums 80/200 versus fallback 200.
+Its clearAllFilters action clears owners/searches and retains the local population.
+Initial import and strict-index errors were corrected. Final three tests and library type check pass.
+Probe source moved to research evidence; no package test or source change remains.
+
+Refreshed origin/main remains63dfa758. Current consumer code matches the evaluated baseline.
+Five official primary pages checked: Crossfilter2, Mosaic Selection, Plot interactions, Tableau filter and highlight actions.
+No material followup needed;0/2 sent. Seven local FO decisions retain current behavior and queue narrow docs/example proof.
+Related bar-page wording is included in the correction proposal. No docs-site change or runnable demo ships here.
+Trust intent/map/references, R051 follow-up, synthesis, evidence and concise queue integrated.
+R086 next, then R031. Larger application changes remain proposed.
+Full pnpm check is running. No browser, full mounted consumer, trace, clear-one, export/history/restore or participant proof claimed.
+Review PR, final validation and collector shutdown remain due.

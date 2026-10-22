@@ -1,0 +1,22 @@
+{
+  "date": "2026-10-22",
+  "baseline": "63dfa75851ef57bb3782e6d7c1ef104784cd4064",
+  "artifact_integrity": "pass:6files,5independent companions,5embedded assets",
+  "source_receipts": 61,
+  "submission_tests": "2files/21tests pass",
+  "local_tests": "3tests pass",
+  "library_types": "pass with local probe",
+  "root_gate": "pending",
+  "pr_gate": "pending",
+  "participants": 0,
+  "unrun": [
+    "browser",
+    "full real bar/card/table/Rows flow",
+    "clear-one action",
+    "trace",
+    "exports/history/restore",
+    "human study",
+    "performance",
+    "downloaded proof code"
+  ]
+}

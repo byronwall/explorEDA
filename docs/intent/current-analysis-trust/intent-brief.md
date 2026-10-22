@@ -47,3 +47,14 @@ Expand only when a fixture exposes disagreement, a restore changes the result, o
 First compare one category selection across bar, card, and exported rows. Continue only after their group membership, valid contributors, and values agree. Then add undo/restore and a second chart family.
 
 See the [reference packet](references/README.md) and [comparison collection](../comparison-opportunities/README.md) for context.
+
+## R051 filter ownership evidence, October 22,2026
+
+[Filter ownership research](../../research/filter-ownership-2026-10-22/summary.md) preserves different consumer populations.
+Three local probes check exact memberships, notebook scope, aggregate input differences and the provider's clear-all action.
+Keep chart context, linked membership, valid numeric contributors and searched rows distinct.
+Retain current filtering rules and existing owner help. No participant evidence supports added UI.
+Queue a narrow grouped-summary documentation correction with one native-JSON runnable example.
+Pair rendering/filter guidance and the related bar warning with the proposed FilterOwnershipExample and explicit browser coverage.
+The actual bar consumer flow, clear-one, trace, exports/history/restore and moderated predictions remain unrun.
+[Seven local decisions](../../research/filter-ownership-2026-10-22/decisions.md) retain the proof order and rejection gates.
