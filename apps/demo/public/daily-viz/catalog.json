@@ -6881,7 +6881,8 @@
     "series": {
       "id": "covid-waves",
       "title": "Three years of Covid case rates",
-      "part": 1
+      "part": 1,
+      "label": "Six states"
     },
     "published": "2026-10-22"
   },
@@ -8772,7 +8773,8 @@
     "series": {
       "id": "covid-waves",
       "title": "Three years of Covid case rates",
-      "part": 2
+      "part": 2,
+      "label": "Vermont and Florida"
     },
     "published": "2026-11-02"
   },
@@ -9124,7 +9126,8 @@
     "series": {
       "id": "covid-waves",
       "title": "Three years of Covid case rates",
-      "part": 3
+      "part": 3,
+      "label": "Fifty states"
     },
     "published": "2026-11-04"
   }
