@@ -646,6 +646,12 @@ function StepSettings({
                 <SelectItem value="average" disabled={!measure.fieldId}>
                   Average
                 </SelectItem>
+                <SelectItem value="max" disabled={!measure.fieldId}>
+                  Maximum
+                </SelectItem>
+                <SelectItem value="min" disabled={!measure.fieldId}>
+                  Minimum
+                </SelectItem>
               </SelectContent>
             </Select>
           </Field>

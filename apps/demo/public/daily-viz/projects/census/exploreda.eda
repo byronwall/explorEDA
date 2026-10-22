@@ -1,0 +1,21 @@
+project @census
+
+source @pop path=../../../datasets/us-population.csv {
+  field Year number
+  field Age number
+  field "Age group" string
+  field Sex string
+  field People number
+}
+
+query @pop "Census cells" glyph=◆ {
+  source pop
+  calc millions "People (millions)" = ["pop.People"] / 1000000
+  calc males "Men and boys" = ["pop.Sex"] == "Male" ? ["pop.People"] : 0
+  calc females "Women and girls" = ["pop.Sex"] == "Female" ? ["pop.People"] : 0
+  calc surplus "Men minus women (millions)" = ["pop.Sex"] == "Male" ? ["pop.People"] / 1000000 : 0 - ["pop.People"] / 1000000
+  calc under_15 "People under 15" = ["pop.Age"] < 15 ? ["pop.People"] : 0
+  calc over_64 "People 65 and over" = ["pop.Age"] >= 65 ? ["pop.People"] : 0
+  calc band "Age band" = ["pop.Age"] < 15 ? "Under 15" : ["pop.Age"] < 65 ? "15 to 64" : "65 and over"
+  calc census "Census" = ["pop.Year"] == 1850 ? "1850" : ["pop.Year"] == 1860 ? "1860" : ["pop.Year"] == 1870 ? "1870" : ["pop.Year"] == 1880 ? "1880" : ["pop.Year"] == 1900 ? "1900" : ["pop.Year"] == 1910 ? "1910" : ["pop.Year"] == 1920 ? "1920" : ["pop.Year"] == 1930 ? "1930" : ["pop.Year"] == 1940 ? "1940" : ["pop.Year"] == 1950 ? "1950" : ["pop.Year"] == 1960 ? "1960" : ["pop.Year"] == 1970 ? "1970" : ["pop.Year"] == 1980 ? "1980" : ["pop.Year"] == 1990 ? "1990" : "2000"
+}

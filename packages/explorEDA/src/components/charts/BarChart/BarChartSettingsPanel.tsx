@@ -1,3 +1,4 @@
+import { isAdditiveAggregation } from "@/lib/aggregates";
 import { FieldSelector } from "@/components/FieldSelector";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
@@ -20,6 +21,7 @@ export function BarChartSettingsPanel({
   const aggregate = useDataLayer((state) =>
     settings.aggregateId ? state.getAggregate(settings.aggregateId) : undefined
   );
+  const additive = !aggregate || isAdditiveAggregation(aggregate.aggregation);
   const addAggregate = useDataLayer((state) => state.addAggregate);
   const updateAggregate = useDataLayer((state) => state.updateAggregate);
   const { fieldNames, measureFields } = useMeasureFields(
@@ -73,23 +75,17 @@ export function BarChartSettingsPanel({
               }
             >
               <option value="grouped">Grouped</option>
-              <option
-                value="stacked"
-                disabled={aggregate?.aggregation === "average"}
-              >
+              <option value="stacked" disabled={!additive}>
                 Stacked
               </option>
-              <option
-                value="percent"
-                disabled={aggregate?.aggregation === "average"}
-              >
+              <option value="percent" disabled={!additive}>
                 100%
               </option>
             </select>
           </ActionTooltip>
           <p className="col-span-2 text-xs text-muted-foreground">
-            {aggregate?.aggregation === "average"
-              ? "Choose count or sum to stack series. Compare averages side by side."
+            {!additive
+              ? "Choose count or sum to stack series. Compare the bars side by side."
               : settings.seriesLayout === "percent"
                 ? "Each category totals 100%. Shares use its nonnegative series totals after other filters."
                 : settings.seriesLayout === "stacked"
@@ -104,7 +100,7 @@ export function BarChartSettingsPanel({
   const orderControl = (
     <>
       <Label htmlFor="bar-category-order">Order</Label>
-      <ActionTooltip content="Data order keeps categories in the order rows first show them. A to Z sorts by label, with numbers in numeric order.">
+      <ActionTooltip content="Data order keeps categories in the order rows first show them. A to Z sorts by label, with numbers in numeric order. Largest first sorts by each bar's value over all rows; binned bars keep their numeric order.">
         <select
           id="bar-category-order"
           className="h-9 rounded-md border-input bg-background px-2 text-sm"
@@ -112,12 +108,13 @@ export function BarChartSettingsPanel({
           onChange={(event) =>
             onSettingsChange({
               ...settings,
-              categoryOrder: event.target.value as "data" | "label",
+              categoryOrder: event.target.value as "data" | "label" | "value",
             })
           }
         >
           <option value="data">Data order</option>
           <option value="label">A to Z</option>
+          <option value="value">Largest first</option>
         </select>
       </ActionTooltip>
     </>

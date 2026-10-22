@@ -200,6 +200,38 @@ export function sortByLabel<T>(items: readonly T[], value: (item: T) => datum) {
   });
 }
 
+/** Sorts largest value first; rows without a finite value go last. */
+export function sortByValue<T>(
+  items: readonly T[],
+  value: (item: T) => number | undefined
+) {
+  const of = (item: T) => {
+    const number = value(item);
+    return number !== undefined && Number.isFinite(number) ? number : -Infinity;
+  };
+  return [...items].sort((a, b) => of(b) - of(a) || 0);
+}
+
+/**
+ * Each category's value over every source row, so a value order holds still
+ * while other charts filter: its count, or its summary over all rows.
+ */
+function allRowValue(mode: BarMode, snapshot: BarSnapshot) {
+  const values = new Map<string, number | undefined>();
+  if (mode === "aggregate")
+    for (const row of snapshot.domainAggregate?.rows ?? [])
+      values.set(categoryKey(row.groupValue), row.value);
+  else
+    for (const value of snapshot.allValues) {
+      const key = categoryKey(value);
+      values.set(key, (values.get(key) ?? 0) + 1);
+    }
+  return (row: AggregateResultRow) => {
+    const key = categoryKey(row.groupValue);
+    return values.has(key) ? values.get(key) : row.value;
+  };
+}
+
 function countRows(
   settings: BarChartSettings,
   snapshot: BarSnapshot
@@ -340,7 +372,9 @@ export function planBarChart({
       ? binRows(settings, snapshot)
       : settings.categoryOrder === "label"
         ? sortByLabel(result?.rows ?? [], (row) => row.groupValue)
-        : (result?.rows ?? []);
+        : settings.categoryOrder === "value"
+          ? sortByValue(result?.rows ?? [], allRowValue(mode, snapshot))
+          : (result?.rows ?? []);
 
   // Y domain: every source row, so bars keep their scale while other charts
   // filter. An aggregate also takes its current values, so a filtered value
@@ -462,10 +496,11 @@ export function planBarChart({
       padding: "5% on each side",
     };
   } else {
+    // Count rows hold every source category, so both modes band in row order.
     const labels =
       mode === "aggregate"
         ? rows.map((row) => row.groupLabel)
-        : Array.from(new Set(snapshot.allValues.map(categoryLabel)));
+        : rows.map((row) => categoryLabel(row.groupValue));
     xScale = scaleBand<string>()
       .domain(labels)
       .range([0, plotWidth])
