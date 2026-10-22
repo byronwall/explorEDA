@@ -5,7 +5,7 @@ Application source is unchanged. The scoped branch contains research additions o
 
 ## Original assets
 
-[Collection manifest](collection.json) records all six assets, byte counts, hashes, and five independent companion matches.
+Collection checked all six assets, byte counts, hashes, and five independent companion matches.
 Archive CRC, exact five-entry root inventory, flat safe paths, no symlinks, UTF-8, and report manifest checks pass.
 The ZIP event wait timed out; the normal browser download succeeded. No downloaded program ran.
 The four original reports were read in full. Raw originals remain separate from this review.
@@ -15,7 +15,7 @@ Pro's forty arithmetic assertions are not local product tests. No broad fixture 
 
 ## Current repository checks
 
-The [source receipts](evidence/source-receipts.json) authenticate baseline and pinned historical Git objects.
+Source receipts authenticated baseline and pinned historical Git objects.
 Current supplemental files match the same baseline. The application did not change between submission and review.
 
 - `aggregates.ts::summarizeGroup` uses typed entity values, nullish exclusion, and `Object.is` agreement.

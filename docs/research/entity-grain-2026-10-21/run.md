@@ -21,7 +21,7 @@ Keep larger changes proposed. Research one identity/reduction mission.
 
 ## Source and submission
 
-[Prompt](pro-prompt.md), [manifest](source-manifest.json), [queue](research-queue.md).
+[Prompt](pro-prompt.md), [queue](research-queue.md).
 Packet: `tmp/pro-entity-grain-2026-10-21/source-packet.txt`.
 340222 bytes, SHA256 `4c13e167ffed2a36c0cdd34b55986e445a9617a111a4b7bf35d64f897b42d6a4`.
 35 entries: 28 authenticated baseline files, two exact parsed catalogue projections,
@@ -101,7 +101,7 @@ Library250files/1656tests pass;3files/45conditional tests skipped. App8/32 and d
 Three separate research probes and submission baseline2files/17tests pass. No aggregate retry needed.
 PR gate,82 authored local links,JSON,36 source receipts,original hashes,archive and companion checks pass.
 Authored whitespace passes; original Markdown line breaks/trailing whitespace remain unchanged for integrity.
-See validation.json for exact commands, environment, logs, and unrun proof limits.
+Exact commands, environment, logs, and unrun proof limits were recorded in validation.json, removed before merge.
 No package behavior changed;no changeset or product screenshot applies.
 Documentation label available;codex and codex-automation labels unavailable. Scoped review PR is next.
 

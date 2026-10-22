@@ -20,9 +20,8 @@ A separate static-render probe confirms the entity-count card still uses row wor
 
 Read the [six decisions](decisions.md), [checked evidence](evidence.md), [probe results](evidence/local-results.json),
 [ranked catalogue queue](research-queue.md), and [run record](run.md).
-The [Pro report](originals/report.md), [recommendations](originals/recommendations.md), and [proof plan](originals/proof-plan.md)
-remain unchanged. The [collection record](collection.json) records safe archive and companion checks.
-[Validation](validation.json) separates executed checks from pending proofs.
+The Pro report, recommendations, and proof plan remain in the [Pro conversation](https://chatgpt.com/c/6ad90c45-7084-83ea-a952-3aaf3f1f16a7).
+The run record separates executed checks from pending proofs.
 
 R043 synthesis is complete in verified open [PR466](https://github.com/byronwall/explorEDA/pull/466). R077 remains the next eligible broad study.
 No new lesson, runnable project, application repair, SQL execution, or customer-demand claim is included.
