@@ -122,10 +122,12 @@ export class CalculationManager<T extends DatumObject> {
       const trace = this.traceRow(field, rowId);
       return trace ? [trace] : [];
     });
+    // Every input is defined, as in executeCalculation: a row without the
+    // field reads it as missing.
     const variables = new Map<string, CalculationValue>(Object.entries(row));
     for (const field of calc.expression.dependencies) {
       const dependency = dependencies.find((item) => item.field === field);
-      if (dependency) variables.set(field, dependency.value);
+      variables.set(field, dependency ? dependency.value : row[field]);
     }
     const steps: CalculationStep[] = [];
     const result = new Calculator(

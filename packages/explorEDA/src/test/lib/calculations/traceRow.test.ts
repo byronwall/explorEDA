@@ -23,3 +23,41 @@ it("traces only evaluated calculation steps and matches the stored value", () =>
     trace.steps.some((step) => step.label === "price" && step.value === 10)
   ).toBe(true);
 });
+
+it("traces an absent field the way the batch evaluates it", () => {
+  const rows = [{ __ID: 0 }, { __ID: 1, x: undefined }, { __ID: 2, x: 4 }];
+  const copy = { resultColumnName: "copy", expression: parseExpression("x") };
+  const manager = new CalculationManager(rows, [copy]);
+  const batch = manager.executeCalculation(copy);
+  for (const row of rows) {
+    const trace = manager.traceRow("copy", row.__ID)!;
+    expect(trace.value).toBe(batch.get(row.__ID));
+    expect(trace.error).toBe(manager.getErrors("copy").get(row.__ID));
+  }
+  expect(manager.traceRow("copy", 0)?.inputs).toEqual([
+    { field: "x", value: undefined },
+  ]);
+});
+
+it("keeps a dependency's error in the batch and the trace", () => {
+  const rows = [
+    { __ID: 0, price: 10, cost: 0 },
+    { __ID: 1, price: 10, cost: 5 },
+  ];
+  const calculations = [
+    { resultColumnName: "ratio", expression: parseExpression("price / cost") },
+    { resultColumnName: "scaled", expression: parseExpression("ratio * 2") },
+  ];
+  const manager = new CalculationManager(rows, calculations);
+  for (const row of rows) {
+    for (const name of ["ratio", "scaled"]) {
+      expect(manager.traceRow(name, row.__ID)?.error).toBe(
+        manager.getErrors(name).get(row.__ID)
+      );
+    }
+  }
+  expect(manager.getErrors("ratio").get(0)).toBe("Division by zero");
+  expect(manager.traceRow("scaled", 0)?.dependencies[0]?.error).toBe(
+    "Division by zero"
+  );
+});
