@@ -42,3 +42,8 @@ Four local probes passed; browser and repair work remain proposed. Historical ev
 [Research review](../../../research/entity-grain-2026-10-21/README.md), [decisions](../../../research/entity-grain-2026-10-21/decisions.md),
 and [local evidence](../../../research/entity-grain-2026-10-21/evidence.md) separate three executed probes from pending browser/author work.
 The source/reference and value-identity contracts remain distinct. No product implementation is approved by this review.
+
+## R077 replacement identity
+
+[Reviewed research](../../../research/selection-identity-2026-10-22/README.md) includes unchanged Pro originals and four local probes.
+Read its evidence limits and dispositions before proposing a replacement-identity repair.

@@ -3,7 +3,7 @@ title: "Reproduce an analysis beyond the current renderer"
 slug: "renderer-independent-replay"
 phase: intent
 status: current
-last_updated: "2026-10-06"
+last_updated: "2026-10-22"
 ---
 
 # Reproduce an analysis beyond the current renderer
@@ -47,3 +47,14 @@ Expand when an external export, independent verification process, or second rend
 Evaluate one active scatter plan twice from a fixed source and settings. Compare semantic output with the mounted trace. Decide whether a small headless API meets the need before designing a broader interchange format.
 
 See the [reference packet](references/README.md) and [comparison collection](../comparison-opportunities/README.md) for context.
+
+## R077 source-replacement review, October 22
+
+The [R077 research](../../research/selection-identity-2026-10-22/README.md) separates source records, positions, predicates, and query outputs.
+Four local probes reproduce owner mapping differences, plain positional restore, source-reference parsing, and expanded-output key collision.
+Existing chart/Rows mapping and ordinary keyed resolution pass their controls. No application repair was made.
+
+Review bounded mapper, restore, and key-resolution repairs before adding a plain-row key API.
+The full mutation matrix, browser, host, export, and pending-worker checks remain proposed.
+Any visible repair must include the developers docs section and one runnable replacement example in the same milestone.
+Keep the broader replay architecture deferred. See [decisions and proof gates](../../research/selection-identity-2026-10-22/decisions.md).
