@@ -36,3 +36,9 @@ keep current controls. Endpoint agreement needs a bounded proof after local trus
 
 [Research summary](../../../research/missing-state-accounting-2026-10-21/README.md), [evidence](../../../research/missing-state-accounting-2026-10-21/evidence.md), and [decisions](../../../research/missing-state-accounting-2026-10-21/decisions.md) preserve the new value-accounting result.
 Four local probes passed; browser and repair work remain proposed. Historical evidence above retains its original date and scope.
+
+## R043 follow-up
+
+[Research review](../../../research/entity-grain-2026-10-21/README.md), [decisions](../../../research/entity-grain-2026-10-21/decisions.md),
+and [local evidence](../../../research/entity-grain-2026-10-21/evidence.md) separate three executed probes from pending browser/author work.
+The source/reference and value-identity contracts remain distinct. No product implementation is approved by this review.

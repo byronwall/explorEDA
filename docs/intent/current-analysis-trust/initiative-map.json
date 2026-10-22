@@ -116,6 +116,13 @@
       "location": "../../research/missing-state-accounting-2026-10-21/evidence.md",
       "anchor": "MS01\u2013MS06; four local probes",
       "authority": "Research and helper/provider/manager evidence; no browser or implemented repair"
+    },
+    {
+      "id": "r043-research",
+      "type": "agent-authored-analysis",
+      "location": "../../research/entity-grain-2026-10-21/README.md",
+      "anchor": "EG01\u2013EG06, three local research probes, October21",
+      "authority": "Reviewed research constraints and repair proposals; no implementation approval"
     }
   ],
   "intent": {
@@ -373,6 +380,12 @@
       "action": "Reconciled R026 value accounting and three bounded consistency witnesses.",
       "evidence": "Four locally authored probes pass; no product repair or browser claim.",
       "reason": "Keep stage-specific counts and proposed repairs separate from a universal state model."
+    },
+    {
+      "date": "2026-10-21",
+      "action": "Reconciled R043 entity-grain research and three local probes.",
+      "evidence": "Measured-count conflict split, source/value partition controls, static trace wording; browser/author proofs remain pending.",
+      "reason": "Retain distinct identity contracts and bound repair proposals."
     }
   ],
   "closure": null,

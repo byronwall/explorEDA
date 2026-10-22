@@ -74,3 +74,14 @@ These are helper/provider/manager results, not browser confirmation or implement
 Review each repair locally. Keep the shared classifier deferred and the universal state model rejected for this mission.
 A visible repair must include fields/summary/calculated-fields guidance and its runnable example in the same milestone.
 See the [R026 research](../../research/missing-state-accounting-2026-10-21/README.md) and [six decisions](../../research/missing-state-accounting-2026-10-21/decisions.md).
+
+## R043 entity-grain review, October 21
+
+Keep source-occurrence identity and selected-value identity separate. Compare exact partitions before requiring aggregate agreement.
+Three local research probes reproduce measured-count conflict disagreement, intentional missing/duplicate-key differences, and card trace row wording.
+The proposed repair makes a measured count unavailable when one entity has conflicting values. Its policy remains for implementation review.
+Preserve ordinary count eligibility, independent equal-valued events, typed keys, and complete group references.
+Test diagnostic details and prior-stage navigation before expanding contributor records. Defer helper extraction and optional upstream recipes.
+No application repair, new lesson, or runnable example shipped. Browser and author proofs remain pending.
+Each visible milestone pairs project-folders or metric-card guidance with the proposed entity-grain example in the research folder.
+See the [R043 research](../../research/entity-grain-2026-10-21/README.md) and [six decisions](../../research/entity-grain-2026-10-21/decisions.md).
