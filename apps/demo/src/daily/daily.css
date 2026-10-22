@@ -115,3 +115,14 @@
 .daily-notebook .eda-notebook-sheet-tab[aria-selected="true"]::after {
   background: var(--site-accent);
 }
+
+/* A part whose day has not come is named, not linked. */
+.daily-book-tab-later {
+  color: var(--muted-foreground);
+  opacity: 0.6;
+  cursor: default;
+}
+
+.daily-book-tab-later:hover {
+  color: var(--muted-foreground);
+}

@@ -316,6 +316,9 @@ function DayLink({
  */
 function SeriesTabs({ entry, all }: { entry: DailyEntry; all: DailyEntry[] }) {
   if (!entry.series) return null;
+  // Every part counts, so "part 1 of 3" holds before the others' days; a
+  // part whose day has not come is named but not linked.
+  const today = todayKey();
   const parts = all
     .filter((item) => item.series?.id === entry.series!.id)
     .sort((a, b) => a.series!.part - b.series!.part);
@@ -328,21 +331,37 @@ function SeriesTabs({ entry, all }: { entry: DailyEntry; all: DailyEntry[] }) {
         {" · "}part {entry.series.part} of {parts.length}
       </p>
       <ol className="daily-book-tabs">
-        {parts.map((part) => (
-          <li key={part.id}>
-            <Link
-              to={dailyPath(part)}
-              aria-current={part.id === entry.id ? "page" : undefined}
-              aria-label={`Part ${part.series!.part}: ${part.title}`}
-              className="daily-book-tab"
-            >
-              <span className="daily-book-index" aria-hidden="true">
-                {part.series!.part}
-              </span>
-              {part.series!.label ?? `Part ${part.series!.part}`}
-            </Link>
-          </li>
-        ))}
+        {parts.map((part) => {
+          const label = part.series!.label ?? `Part ${part.series!.part}`;
+          const index = (
+            <span className="daily-book-index" aria-hidden="true">
+              {part.series!.part}
+            </span>
+          );
+          return (
+            <li key={part.id}>
+              {part.published > today && part.id !== entry.id ? (
+                <span
+                  className="daily-book-tab daily-book-tab-later"
+                  aria-label={`Part ${part.series!.part}, ${formatDay(part.published)}: ${part.title}`}
+                >
+                  {index}
+                  {label}
+                </span>
+              ) : (
+                <Link
+                  to={dailyPath(part)}
+                  aria-current={part.id === entry.id ? "page" : undefined}
+                  aria-label={`Part ${part.series!.part}: ${part.title}`}
+                  className="daily-book-tab"
+                >
+                  {index}
+                  {label}
+                </Link>
+              )}
+            </li>
+          );
+        })}
       </ol>
     </nav>
   );
@@ -467,7 +486,7 @@ export default function DailyEntryPage() {
               {source?.title ?? entry.family}
             </a>
           </p>
-          <SeriesTabs entry={entry} all={published} />
+          <SeriesTabs entry={entry} all={data.entries} />
         </header>
       </div>
       <main>
