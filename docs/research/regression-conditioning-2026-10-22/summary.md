@@ -31,7 +31,7 @@ Their binary64 reference arithmetic differs slightly from Pro's exact rational o
 Pro reports a 26-case matrix, including NIST Pontius and independent exact arithmetic.
 All22 available stable-basis candidates passed its finite probes. Those counts remain attributed to Pro.
 We verified embedded hashes and source copies. We did not rerun the downloaded harness or all26 cases.
-See [evidence and limits](evidence.md), [decisions](decisions.md), and [original reports](raw/R001-report.md).
+See [evidence and limits](evidence.md), [decisions](decisions.md), and [original reports](https://chatgpt.com/c/6ada0976-a8d4-83ea-9df8-c953d9d9b1c3).
 
 ## Proposed review work
 
@@ -53,7 +53,7 @@ Do not publish post-repair trace instructions before that trace exists and passe
 
 All required originals and independent standalone companions are collected and verified.
 No material follow-up was needed;0/2 sent.
-Full package and repository validation results are in [validation](validation.json).
+Full package and repository validation results are in the [run record](run.md).
 Browser, clipboard, exports, history/restore, full filtering/refitting, cross-engine and continuous-domain proof remain unrun.
 No product screenshot or changeset applies to this research-only change.
 

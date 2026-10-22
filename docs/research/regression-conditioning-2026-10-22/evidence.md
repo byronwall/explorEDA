@@ -4,7 +4,7 @@
 
 [Conversation](https://chatgpt.com/c/6ada0976-a8d4-83ea-9df8-c953d9d9b1c3) finished after115m14s.
 Collected four Markdown reports, the standalone manifest, and the ZIP under direct standing human download approval.
-[Collection manifest](raw/collection.json) records names, sizes, hashes, and all five independent companion matches.
+Collection checked names, sizes, hashes, and all five independent companion matches.
 Safe flat archive paths, no symlinks, CRC, exact inventory, UTF8, report hashes and published ZIP/manifest hashes pass.
 A duplicate source download matches. No downloaded program ran.
 
@@ -16,7 +16,7 @@ Selecting Original file or JSON completed standalone downloads. Archive collecti
 
 All four substantive reports were read, including the proof method, results, scope, and proposed edits.
 The proof report embeds13 payloads. All hashes, safe paths and JSON parse checks pass.
-Three embedded baseline source copies match Git objects. See [receipts](evidence/embedded-integrity.json).
+Three embedded baseline source copies match Git objects.
 Frozen oracle hash and recorded chronology remain separate: bytes verify; chronology is attributed, not independently attested.
 The 26-case counts,13 certificate-statistic audit, parser suite and stable-basis instrumentation remain Pro's executed evidence.
 We did not execute those downloaded scripts or assert a full local replay.

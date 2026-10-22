@@ -26,7 +26,7 @@ The checkout was clean before branching from refreshed origin/main. No unrelated
 
 ## Prompt and packet
 
-[Prompt](pro-prompt.md), [source manifest](source-manifest.json), [queue](research-queue.md).
+[Prompt](pro-prompt.md), [queue](research-queue.md).
 Packet: tmp/pro-regression-conditioning-2026-10-22/source-packet.txt.
 27 entries:20 complete baseline files,2 parsed catalogue projections,3 baseline excerpts,2 local additions.
 216314bytes; SHA256 `96a5c73689957c37fba380cf79cec32d60990fb02b645758e549c79130c98a1a`.
@@ -125,7 +125,7 @@ PRgate,52authored links,JSON,original/companion/embedded integrity,and25source r
 The root gate ran after removing the temporary probe; no package source or build output changed.
 Raw original whitespace is retained; authored whitespace passes.
 The full26-case harness, browser, actual copied-expression/export/refit/restore, cross-engine and continuous-domain proofs remain unrun.
-See validation.json and evidence.md. No changeset or product screenshot applies.
+See [evidence](evidence.md). No changeset or product screenshot applies.
 Scoped review PR,final verification,and collector stop remain due.
 
 ## Completion, October 22

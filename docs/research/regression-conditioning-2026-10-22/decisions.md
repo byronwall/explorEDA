@@ -1,6 +1,6 @@
 # Local dispositions for R001
 
-Read [the summary](summary.md) first. Original recommendations remain unchanged in [Pro's register](raw/R001-decisions.md).
+Read [the summary](summary.md) first. Original recommendations remain unchanged in [Pro's register](https://chatgpt.com/c/6ada0976-a8d4-83ea-9df8-c953d9d9b1c3).
 Adoption below means a research decision, not an implemented product change.
 
 | ID   | Disposition | Decision and evidence                                                                                                                     | Destination or next proof                                                                                                      |
