@@ -2793,9 +2793,9 @@
     "id": "nb-co2-seasonal-centering",
     "slug": "co2-seasonal-centering",
     "kind": "notebook",
-    "title": "Remove the annual level to see the CO₂ calendar",
-    "question": "Which calendar months sit above or below their own year’s measured-week mean?",
-    "summary": "Subtract each year's mean and the CO₂ calendar appears: highest in May, lowest in September, every year.",
+    "title": "CO₂ breathes: May sits 2.8 ppm above its year, September 2.8 below",
+    "question": "Why does the CO₂ curve wobble, and is the wobble changing?",
+    "summary": "Subtract each year's mean and the calendar appears: May weeks run 2.8 ppm above their year, September weeks 2.8 below, every year without exception. The swing widened from 5.2 ppm in the 1960s to 6.1 in the 1990s.",
     "family": "co2",
     "entry": "seasonal-centering.eda.md",
     "query": "r",
@@ -2803,7 +2803,7 @@
     "analysis": "Seasonality",
     "findings": [
       {
-        "text": "The mean centered value for May weeks was {value} ppm.",
+        "text": "May weeks averaged {value} ppm above their year's mean",
         "format": ".2f",
         "op": "mean",
         "field": "residual",
@@ -2816,7 +2816,7 @@
         ]
       },
       {
-        "text": "The mean centered value for September weeks was {value} ppm.",
+        "text": "and September weeks averaged {value} ppm.",
         "format": ".2f",
         "op": "mean",
         "field": "residual",
@@ -2827,6 +2827,126 @@
             9
           ]
         ]
+      },
+      {
+        "text": "In the 1960s, May weeks averaged {value} ppm above their year",
+        "format": ".2f",
+        "op": "mean",
+        "field": "residual",
+        "where": [
+          [
+            "decade",
+            "eq",
+            "1960s"
+          ],
+          [
+            "month",
+            "eq",
+            5
+          ]
+        ]
+      },
+      {
+        "text": "and September weeks {value} ppm",
+        "format": ".2f",
+        "op": "mean",
+        "field": "residual",
+        "where": [
+          [
+            "decade",
+            "eq",
+            "1960s"
+          ],
+          [
+            "month",
+            "eq",
+            9
+          ]
+        ]
+      },
+      {
+        "text": "In the 1990s, May averaged {value} ppm",
+        "format": ".2f",
+        "op": "mean",
+        "field": "residual",
+        "where": [
+          [
+            "decade",
+            "eq",
+            "1990s"
+          ],
+          [
+            "month",
+            "eq",
+            5
+          ]
+        ]
+      },
+      {
+        "text": "and September {value} ppm",
+        "format": ".2f",
+        "op": "mean",
+        "field": "residual",
+        "where": [
+          [
+            "decade",
+            "eq",
+            "1990s"
+          ],
+          [
+            "month",
+            "eq",
+            9
+          ]
+        ]
+      },
+      {
+        "text": "the weekly reading ran from {value} ppm, in September 1990",
+        "format": ".1f",
+        "op": "min",
+        "field": "co2",
+        "where": [
+          [
+            "date",
+            "ge",
+            "1990-01-01"
+          ],
+          [
+            "date",
+            "le",
+            "1991-12-31"
+          ]
+        ]
+      },
+      {
+        "text": "to {value} ppm, in May 1991",
+        "format": ".1f",
+        "op": "max",
+        "field": "co2",
+        "where": [
+          [
+            "date",
+            "ge",
+            "1990-01-01"
+          ],
+          [
+            "date",
+            "le",
+            "1991-12-31"
+          ]
+        ]
+      },
+      {
+        "text": "The widest departures are {value} ppm above the year's mean",
+        "format": ".2f",
+        "op": "max",
+        "field": "residual"
+      },
+      {
+        "text": "in May 1991, and {value} ppm, in September 1982",
+        "format": ".2f",
+        "op": "min",
+        "field": "residual"
       }
     ],
     "published": "2026-09-21"
