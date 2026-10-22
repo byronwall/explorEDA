@@ -1,0 +1,27 @@
+project @scotus
+
+source @scotus path=../../../datasets/scotus.csv {
+  field Justice string
+  field Surname string
+  field Number number
+  field Position string
+  field State string
+  field Seat number
+  field "Seat name" string
+  field Start date
+  field End date
+  field "Years served" number
+  field "Left by" string
+  field Appointer string
+  field Party string
+}
+
+query @justices "Justices, one row per term" glyph=◆ {
+  source scotus
+  calc start_year "Year of oath" = extractDateComponent(["scotus.Start"], "year")
+  calc end_year "Year the term ended" = ["scotus.End"] == null ? null : extractDateComponent(["scotus.End"], "year")
+  calc status "Status" = ["scotus.End"] == null ? "Sitting" : "Completed"
+  calc era "Era of appointment" = start_year < 1850 ? "1789–1849" : start_year < 1900 ? "1850–1899" : start_year < 1950 ? "1900–1949" : start_year < 2000 ? "1950–1999" : "2000 onward"
+  calc end_era "Era the term ended" = end_year == null ? "Still serving" : end_year < 1850 ? "1789–1849" : end_year < 1900 ? "1850–1899" : end_year < 1950 ? "1900–1949" : end_year < 2000 ? "1950–1999" : "2000 onward"
+  calc ended "How the term ended" = ["scotus.End"] == null ? "Still serving" : ["scotus.Left by"] == "Died" ? "Died in office" : ["scotus.Left by"] == "Retired" ? "Retired" : ["scotus.Left by"] == "Continued as chief justice" ? "Became chief justice" : "Resigned"
+}

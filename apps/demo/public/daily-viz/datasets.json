@@ -358,5 +358,65 @@
     "license_url": "https://github.com/vega/vega-datasets/blob/main/LICENSE",
     "version": "vega-datasets population.json, as shipped in the demo's us-population.csv",
     "notes": "One row per census year, five-year age group, and sex, with the number of people counted. Fifteen censuses from 1850 to 2000; the 1890 census is absent from the source. Ages are grouped to 90 and over."
+  },
+  {
+    "id": "covid",
+    "title": "Covid-19 case rates by state, weekly",
+    "publisher": "The New York Times",
+    "url": "https://github.com/nytimes/covid-19-data",
+    "license": "CC BY-NC 4.0, with credit to The New York Times",
+    "license_url": "https://github.com/nytimes/covid-19-data/blob/master/LICENSE",
+    "version": "rolling-averages/us-states.csv and us.csv, through 2023-03-20",
+    "notes": "Seven-day average new cases per 100,000 people, sampled every seventh day from March 2020 to March 2023. One table holds California, Florida, New York, Texas, Vermont, Washington, and the United States as code US; the other holds all 50 states and D.C. with each state’s row and column on an 8 × 11 tile grid."
+  },
+  {
+    "id": "scotus",
+    "title": "Justices of the Supreme Court of the United States",
+    "publisher": "Wikipedia contributors",
+    "url": "https://en.wikipedia.org/wiki/List_of_justices_of_the_Supreme_Court_of_the_United_States",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "version": "Article wikitext through the MediaWiki API, as prepared for the explorEDA timeline example",
+    "notes": "One row per term: 121 terms held by justices from 1789 on, with the seat, oath and departure dates (blank for sitting justices), years served, how the term ended, and the appointing president and party. A justice who held two seats has two rows."
+  },
+  {
+    "id": "media",
+    "title": "Deaths and media coverage by cause, 2023",
+    "publisher": "Our World in Data",
+    "url": "https://ourworldindata.org/does-the-news-reflect-what-we-die-from",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "version": "Analysis package media-deaths-analysis-data.zip, 2023 figures",
+    "notes": "Fifteen causes: the CDC’s twelve most common leading causes plus drug overdoses, homicides, and terrorism from the Global Terrorism Index. Deaths come from the CDC; article counts from Media Cloud for The New York Times, The Washington Post, and Fox News, counting an article only when it mentions a cause several times."
+  },
+  {
+    "id": "pew",
+    "title": "What makes life meaningful, by party",
+    "publisher": "Pew Research Center",
+    "url": "https://www.pewresearch.org/global/2021/11/18/what-makes-life-meaningful-views-from-17-advanced-economies/",
+    "license": "Free to use with attribution",
+    "license_url": "https://www.pewresearch.org/about/terms-and-conditions/",
+    "version": "November 2021 report, as transcribed for the R Graph Gallery dumbbell recreation",
+    "notes": "Seven topics that Republicans and Democrats mention at different rates when asked what makes life meaningful, with the share of each party’s respondents who mentioned the topic. Fourteen rows."
+  },
+  {
+    "id": "lincoln",
+    "title": "Lincoln, Nebraska daily weather, 2016",
+    "publisher": "Claus Wilke (ggridges), from Weather Underground",
+    "url": "https://github.com/wilkelab/ggridges",
+    "license": "Factual weather records, reused with credit; ggridges is GPL-2",
+    "license_url": "https://github.com/wilkelab/ggridges/blob/master/LICENSE.md",
+    "version": "ggridges raw lincoln-weather.csv",
+    "notes": "Daily mean, maximum, and minimum temperatures in degrees Fahrenheit for every day of 2016, with the month."
+  },
+  {
+    "id": "driving",
+    "title": "Driving shifts into reverse",
+    "publisher": "vega-datasets, after Hannah Fairfield (The New York Times, 2010)",
+    "url": "https://github.com/vega/vega-datasets",
+    "license": "BSD-3-Clause (vega-datasets); the figures are reused, not the graphic",
+    "license_url": "https://github.com/vega/vega-datasets/blob/main/LICENSE",
+    "version": "vega-datasets driving.json",
+    "notes": "One row per year from 1956 to 2010: miles driven per person and the inflation-adjusted price of a gallon of gas."
   }
 ]

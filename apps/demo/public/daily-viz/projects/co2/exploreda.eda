@@ -45,4 +45,5 @@ query @annual "annual" glyph=◆ {
 
 query @gaps "gaps" glyph=◆ {
   source gaps
+  calc change "Change across the gap" = ["gaps.after"] - ["gaps.before"]
 }

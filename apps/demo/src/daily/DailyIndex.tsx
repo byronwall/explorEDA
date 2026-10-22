@@ -6,6 +6,7 @@ import {
   chartWordOf,
   dailyPath,
   formatDay,
+  kindLabel,
   kindLabels,
   publishedEntries,
   type DailyEntry,
@@ -87,7 +88,7 @@ function TodayLead({ entry }: { entry: DailyEntry }) {
           {entry.summary}
         </p>
         <p className="mt-3 text-sm text-muted-foreground">
-          {kindLabels[entry.kind]} · {entry.industry} · {entry.analysis}
+          {kindLabel(entry)} · {entry.industry} · {entry.analysis}
         </p>
       </div>
     </article>

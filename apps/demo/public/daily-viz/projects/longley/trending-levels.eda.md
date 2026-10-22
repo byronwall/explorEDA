@@ -1,68 +1,55 @@
-# A small employment benchmark contains several rising trends
+# Anything that rose in the 1950s correlates with anything else that rose
 
-**How similar are employment, population, and nominal output after rebasing their starting values?** Each row is one historical US annual observation.
+**Does employment track output, or do both just track time?** Each row is one year from 1947 to 1962 in the Longley benchmark, with employment, nominal GNP, population, and the GNP price deflator. Every series rises. In levels they all correlate near 0.98. The honest test is the year-on-year changes, and there the link between employment and output survives, though weaker.
 
 ```eda
 eda query=r
 employment:num=r.employment label="Employed (thousands)"
 gnp:num=r.gnp label="GNP ($M, nominal)"
-population:num=r.population label="Population 14+ (thousands)"
+deflator:num=r.deflator label="GNP deflator (1954 = 100)"
 year:num=r.year label="Year"
-employment_change:num=r.employment_change label="Change in employed (thousands/year)"
-gnp_change:num=r.gnp_change label="Change in GNP ($M/year)"
-employment_index:num=r.employment_index label="Employment index (1947 = 100)"
-gnp_index:num=r.gnp_index label="GNP index (1947 = 100)"
-population_index:num=r.population_index label="Population index (1947 = 100)"
+employment_change:num=r.employment_change label="Change in employed (thousands)"
+gnp_change:num=r.gnp_change label="Change in GNP ($M)"
+employment_index:num=r.employment_index label="Employed (1947 = 100)"
+gnp_index:num=r.gnp_index label="GNP (1947 = 100)"
+population_index:num=r.population_index label="Population (1947 = 100)"
 ```
 
-## 1. Give each series the same starting index
+## Three series, three slopes, one direction
 
-A common start is imposed by the transformation. Different subsequent slopes describe proportional movement from that reference.
+Indexed to 1947, nominal GNP reached 236.84 by 1962, population reached 120.88, and employment reached 116.96. The slopes differ by a factor of seven, but none of the three lines ever turns down for long, and that shared direction is all a levels correlation needs.
 
 ```eda
-line @nb-longley-trending-levels-chart-1 x=year y=employment_index,gnp_index,population_index title="Give each series the same starting index" x.title="Year" y.title="Employment index (1947 = 100) / Gnp index (1947 = 100) / Population index (1947 = 100)"
+line @nb-longley-trending-levels-chart-1 x=year y=employment_index,gnp_index,population_index title="Employment, GNP, and population, indexed to 1947" x.title="Year" y.title="Index (1947 = 100)" {
+  rule y=100 "1947 level"
+}
 ```
 
-## 2. The strong-looking levels relationship
+## In levels, employment and GNP correlate at 0.98
 
-Both measurements move through the same short historical span. A close cloud alone does not validate a prediction model.
+Each point is one year. The points lie close to the fitted line: employment and nominal GNP in levels had correlation 0.984. The price level does almost as well: employment and the GNP deflator had correlation 0.971, and nobody argues that prices create jobs. Sixteen years of growth will line up almost anything.
 
 ```eda
-scatter @nb-longley-trending-levels-chart-2 x=gnp y=employment title="The strong-looking levels relationship" x.title="GNP ($M, nominal)" y.title="Employed (thousands)"
+scatter @nb-longley-trending-levels-chart-2 x=gnp y=employment regression=linear title="Employment against nominal GNP, one point per year" x.title="GNP ($M, nominal)" y.title="Employed (thousands)" {
+  callout "1962" pick=max
+}
 ```
 
-**Finding.** Employment and nominal GNP in levels had correlation 0.984.
+## In changes, the link survives at 0.89
 
-## 3. Compare changes between adjacent years
-
-The first year has no prior observation and is omitted from the paired-change statistic. Differencing changes the question rather than simply improving the first chart.
+Take each year's change from the year before. The trend is gone, and what remains is whether a good year for output was a good year for jobs. It was: the annual changes had correlation 0.892. Employment fell in 4 of the fifteen years, and GNP fell in 2 of them, both years when employment also fell.
 
 ```eda
-scatter @nb-longley-trending-levels-chart-3 x=gnp_change y=employment_change title="Compare changes between adjacent years" x.title="Change in GNP ($M/year)" y.title="Change in employed (thousands/year)"
-```
-
-## 4. The distribution of annual employment changes
-
-With a small number of differences, bins are only a rough descriptive device. Use the source table to inspect the individual changes.
-
-```eda
-hist @nb-longley-trending-levels-chart-4 employment_change bins=8 title="The distribution of annual employment changes" x.title="Change in employed (thousands/year)" y.title="Rows"
-```
-
-**Finding.** Their valid annual changes had correlation 0.892.
-
-## 5. The rows behind the charts
-
-Sort a column or select rows to check any value above. Selections in a notebook stay with their own chart.
-
-```eda
-table @nb-longley-trending-levels-records year,employment,gnp,population,employment_change,gnp_change title="Records behind this comparison"
+scatter @nb-longley-trending-levels-chart-3 x=gnp_change y=employment_change regression=linear title="Annual change in employment against annual change in GNP" x.title="Change in GNP ($M)" y.title="Change in employed (thousands)" {
+  rule x=0
+  rule y=0 "No change in either"
+}
 ```
 
 ## Takeaway
 
-Indices make proportional movement comparable while hiding original scale. The paired changes offer a different test of whether the levels association is mainly a shared historical trend.
+Employment and output moved together in postwar America, and the changes say so at 0.89. The levels correlation of 0.98 says less than it looks: the deflator scores 0.97 by the same test. Difference first, then correlate.
 
 ## Limits
 
-This is a small historical regression benchmark, not a current labor-market dataset. GNP is nominal and source units are retained. Similar trends do not establish a stable causal employment model.
+Sixteen annual rows, so the changes correlation rests on fifteen pairs. GNP is nominal, which folds inflation into the output series. The Longley data was built to stress regression software, not to describe the economy.
