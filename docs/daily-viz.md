@@ -59,13 +59,15 @@ The demo's `/daily` collection holds narrative notebooks, compositions, and dash
 
 ## Writing rules
 
+The [editorial standard](daily-editorial.md) is the bar: a finding-led title, a comparison with its difference stated, an annotated moment, numbers woven into sentences, and no boilerplate. The rules here are the mechanics.
+
 - **The title states the finding or the tension**, in plain words. Vary the form; a collection where every title reads "X is not Y" is monotonous.
 - **The question is one a person would ask**, not a description of the chart.
 - **Each heading is a claim the chart under it supports.** The paragraph says what to look at.
 - **Labels are readable names with units:** `CO₂ (ppm)`, not `Co2 (ppmv)` or `co2`. Don't label key or id fields.
 - **Say the source once.** The page prints the dataset's credit, license, tables, and downloads under every piece. Don't repeat them in prose, panel notes, or footnotes beyond one artboard credit line.
-- **Findings are computed, not typed from memory.** Copy the sentence `pnpm daily check` reports.
-- **Notebooks** have three to six charts. End with `## Takeaway` and `## Limits`. A records table is optional; add one when a reader would want to check rows.
+- **Findings are computed, not typed from memory.** Copy the sentence `pnpm daily check` reports into the paragraph that needs it; the check matches the sentence anywhere in the prose.
+- **Notebooks** have three to six charts. End with `## Takeaway` and `## Limits`. Add a records table only when the argument turns on specific rows, titled for those rows.
 - **Compositions** are designed graphics, not a default chart in a frame. Use the mark the question needs; the [composition mode](composition-mode.md) table lists them with reference examples. The design note says what a default chart would show and what this design gives up.
 - **Dashboards** link six or so views of one query. The guide lists two or three selections to try and what each should change. Don't spend a panel on instructions.
 
