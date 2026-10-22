@@ -16,8 +16,8 @@ Count the strikes by length. The tall bars are all short: a third of the strikes
 
 ```eda
 hist @nb-strikes-duration-tail-chart-1 duration bins=36 title="Strikes by duration, US manufacturing 1968 to 1976" x.title="Duration (days)" y.title="Strikes" {
-  rule x=27 "Median"
-  rule x=42.66 "Mean"
+  rule x=median "Median"
+  rule x=mean "Mean"
 }
 ```
 
@@ -26,7 +26,10 @@ hist @nb-strikes-duration-tail-chart-1 duration bins=36 title="Strikes by durati
 The cumulative curve gives the share of strikes that had ended by any length. It climbs steeply through the first month and then flattens: 33.9% of strikes ended within two weeks, and 22.6% of strikes lasted more than 60 days. The curve does not reach the top until the longest strike, at 216 days.
 
 ```eda
-ecdf @nb-strikes-duration-tail-chart-2 duration direction=below title="Share of strikes ended by each duration" x.title="Duration (days)"
+ecdf @nb-strikes-duration-tail-chart-2 duration direction=below title="Share of strikes ended by each duration" x.title="Duration (days)" {
+  rule x=14 "Two weeks"
+  rule x=60 "Two months"
+}
 ```
 
 ## Eight hundred-day strikes set the mean

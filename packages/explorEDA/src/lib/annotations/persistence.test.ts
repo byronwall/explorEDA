@@ -117,3 +117,33 @@ it("rejects a save whose annotation is malformed", () => {
   broken.charts[0].annotations[0].offset = { dx: "far" };
   expect(validateSavedData(broken)).toBe(false);
 });
+
+it("round-trips callouts on grid cells and rules on an ECDF through text", () => {
+  const cells = [
+    { day: "Mon", hour: "am", date: "2016-12-16", value: 1 },
+    { day: "Tue", hour: "pm", date: "2016-12-17", value: 2 },
+  ];
+  const text = `heatmap day columnField=hour {
+  callout "Busy" category=Tue,pm
+  callout "Quiet" on=day:Mon,hour:am
+}
+calendar date {
+  callout "Red alert" on=date:2016-12-16
+}
+ecdf value {
+  rule x=1.5 "Threshold"
+  rule y=0.5 "Half"
+  band x=1..2
+}`;
+  const first = compileDocument(text, { rows: cells });
+  expect(first.diagnostics).toEqual([]);
+  const { text: exported } = exportDocument(first.settings, { rows: cells });
+  const rebuilt = compileDocument(exported, { rows: cells });
+  expect(rebuilt.diagnostics).toEqual([]);
+  expect(rebuilt.settings.charts.map((chart) => chart.annotations)).toEqual(
+    first.settings.charts.map((chart) => chart.annotations)
+  );
+  expect(first.settings.charts[0]!.annotations![0]).toMatchObject({
+    attach: { kind: "category", value: "Tue,pm" },
+  });
+});

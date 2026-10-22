@@ -17,6 +17,7 @@ Each cell is one day, colored by the mean PM2.5 across the stations that reporte
 ```eda
 calendar @nb-beijing-calendar-1 date aggregation=average title="Daily PM2.5, mean of all stations" {
   measureField=pm25
+  callout "Red alert, Dec 16 to 21" on=date:2016-12-16 offset=-40,-36
 }
 ```
 

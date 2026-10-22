@@ -207,6 +207,9 @@ export const ANNOTATION_CHART_TYPES = [
   "bar",
   "row",
   "boxplot",
+  "ecdf",
+  "heatmap",
+  "calendar",
 ] as const;
 
 /** Whether this chart, as configured, draws saved annotations. */

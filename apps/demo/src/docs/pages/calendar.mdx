@@ -10,3 +10,7 @@
 - Each cell is one day of the date field, shaded by its count of rows or by a summary of a measure.
 - Each column is a week, starting on Sunday or Monday.
 - The chart shows one year: the year you choose, or the latest year with dates.
+
+## Annotations
+
+A callout attaches to one day, at the center of its cell, by its date: `callout "Red alert" on=date:2016-12-16`, or `category=2016-12-16`. A day holds many rows, so it never stands for one record. When the day falls outside the year or month on view, the Notes list marks the callout instead of drawing it. The grid has no value axis, so a calendar takes no lines or bands.
