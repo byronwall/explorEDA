@@ -14,29 +14,25 @@ calc conditions = precip == null ? "No weather record" : precip > 0 ? "Rain or s
 
 ## Wet hours run later
 
-Only about one departure in eighteen was scheduled into an hour with measurable rain or snow, but those flights left much later.
+Only about one departure in eighteen was scheduled into an hour with measurable rain or snow, but those flights left much later. In hours with rain or snow, the mean departure delay was 18.4 minutes. In dry hours, the mean departure delay was 9.6 minutes.
 
 ```eda
 boxplot @nb-flights-weather-1 delay color=conditions title="Departure delay in wet and dry hours" y.title="Departure delay (min)" y.min=-30 y.max=150
 ```
 
-**Finding.** In hours with rain or snow, the mean departure delay was 18.4 minutes.
-
-**Finding.** In dry hours, the mean departure delay was 9.6 minutes.
-
 ## Low visibility tells the same story
 
-Visibility is a different measurement of a similar problem. Below five miles, ground stops and wider spacing slow every departure.
+Visibility is a different measurement of a similar problem. Left of the five-mile line, ground stops and wider spacing slow every departure. With visibility under five miles, the mean departure delay was 15.9 minutes. With visibility of five miles or more, the mean departure delay was 9.4 minutes.
 
 ```eda
-scatter @nb-flights-weather-2 x=visibility y=delay color=origin title="Visibility and departure delay" x.title="Visibility (mi)" y.title="Departure delay (min)" y.min=-30 y.max=300
+scatter @nb-flights-weather-2 x=visibility y=delay color=origin title="Visibility and departure delay" x.title="Visibility (mi)" y.title="Departure delay (min)" y.min=-30 y.max=300 {
+  rule x=5 "Five miles"
+}
 ```
-
-**Finding.** With visibility under five miles, the mean departure delay was 15.9 minutes.
 
 ## Wind on its own does little
 
-Wind speed hardly separates late flights from on-time ones; most of January's windy hours were clear.
+Wind speed hardly separates late flights from on-time ones; most of January's windy hours were clear. Wind speed and departure delay had correlation 0.049.
 
 ```eda
 scatter @nb-flights-weather-3 x=wind y=delay title="Wind speed and departure delay" x.title="Wind speed (mph)" y.title="Departure delay (min)" y.min=-30 y.max=300

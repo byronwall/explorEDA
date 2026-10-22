@@ -409,3 +409,80 @@
 .eda-notebook-source .eda-dsl-input::selection {
   background: color-mix(in oklab, var(--ring) 28%, transparent);
 }
+
+/* A book's sheets: one row of tabs under the lede, read one sheet at a time.
+   The active tab carries a rule in the accent color; the rest are quiet. */
+.eda-notebook-sheets {
+  display: flex;
+  gap: 1.75rem;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--border);
+  scrollbar-width: none;
+}
+
+.eda-notebook-sheets::-webkit-scrollbar {
+  display: none;
+}
+
+.eda-notebook-sheet-tab {
+  position: relative;
+  flex: none;
+  padding: 0.55rem 0 0.7rem;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--muted-foreground);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 140ms ease;
+}
+
+.eda-notebook-sheet-tab:hover,
+.eda-notebook-sheet-tab[aria-selected="true"] {
+  color: var(--foreground);
+}
+
+.eda-notebook-sheet-tab[aria-selected="true"]::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 2px;
+  background: var(--primary);
+}
+
+.eda-notebook-sheet-tab:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.eda-notebook-sheet-index {
+  margin-right: 0.4em;
+  font-size: 0.8em;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted-foreground);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eda-notebook-sheet-tab {
+    transition: none;
+  }
+}
+
+/* A sheet's own contents keep the column's rhythm. */
+.eda-notebook-sheet > * + *,
+.eda-notebook-lede > * + * {
+  margin-top: 1.25rem;
+}
+
+.eda-notebook-column[data-wide]
+  :is(.eda-notebook-sheet, .eda-notebook-lede)
+  > *
+  + * {
+  margin-top: 2.5rem;
+}

@@ -1,65 +1,50 @@
-# Indexing investment changes the ranking question
+# Indexed to 1935, IBM's investment grew fastest; General Motors ranked fourth
 
-**How different do historical firm trajectories look after each starts at 100?** Each row is one firm-year.
+**Which firm grew its investment fastest?** Each row is one firm-year: eleven large American companies from 1935 to 1954, with gross investment in millions of 1947 dollars. In dollars the answer is General Motors and nothing else is visible. Set each firm's 1935 investment to 100 and a different order appears, with IBM on top.
 
 ```eda
 eda query=r
 invest:num=r.invest label="Investment ($M, 1947)"
-value:num=r.value label="Market value ($M, 1947)"
 firm:cat=r.firm label="Firm"
 year:num=r.year label="Year"
-invest_index:num=r.invest_index label="Investment index (first year = 100)"
-value_index:num=r.value_index label="Market value index (first year = 100)"
+invest_index:num=r.invest_index label="Investment (1935 = 100)"
 ```
 
-## 1. Raw investment over time, with firms identified
+## In dollars, General Motors is the chart
 
-This retains monetary scale but compresses smaller firms into the lower part of the chart. The compression reflects genuine size differences.
+One path per firm. General Motors' investment reached $1,486.7 million in 1954, and US Steel is the only other firm that leaves the floor. Diamond Match's investment never passed $6.5 million; on this axis its twenty years are a flat line at zero.
 
 ```eda
-scatter @nb-grunfeld-indexing-firms-chart-1 x=year y=invest color=firm title="Raw investment over time, with firms identified" x.title="Year" y.title="Investment ($M, 1947)"
+scatter @nb-grunfeld-indexing-firms-chart-1 x=year y=invest color=firm pointSize=3 title="Investment by year, one path per firm" x.title="Year" y.title="Investment ($M, 1947)" {
+  connect.groupField=r.firm connect.orderField=r.year connect.labels=end
+}
 ```
 
-## 2. Normalize each firm to its own first year
+## Indexed to 1935, IBM leads at 667
 
-Every firm starts at the same index by construction. Later vertical separation is proportional to its own starting value, not an absolute-dollar gap.
+Divide every firm's investment by its own 1935 figure. IBM's index reached 666.6 in 1954, General Electric's 572.8, and Westinghouse touched the panel's high of 696.67 in 1953 before falling back. General Motors' index peaked at 468.1: fourth. Goodyear grew least, ending 1954 at 185.3.
 
 ```eda
-scatter @nb-grunfeld-indexing-firms-chart-2 x=year y=invest_index color=firm title="Normalize each firm to its own first year" x.title="Year" y.title="Investment index (first year = 100)"
+scatter @nb-grunfeld-indexing-firms-chart-2 x=year y=invest_index color=firm pointSize=3 title="Investment indexed to each firm's 1935 level, one path per firm" x.title="Year" y.title="Investment (1935 = 100)" {
+  connect.groupField=r.firm connect.orderField=r.year connect.labels=end
+  rule y=100 "1935 level"
+  callout "Westinghouse 1953: 697" pick=max
+}
 ```
 
-**Finding.** The highest first-year-normalized investment index in the panel was 696.67.
+## Where each firm stood in 1954
 
-## 3. The distribution of indexed investment by firm
-
-These distributions summarize trajectories but lose their order. A wide box could reflect sustained growth or large reversals.
+The last year of the panel, one bar per firm. Ten of the eleven firms more than doubled their 1935 investment, and three more than quintupled it; only Goodyear fell short of doubling. The median firm-year index across the whole panel was 183.91, so a typical firm in a typical year was investing nearly twice what it did in 1935.
 
 ```eda
-boxplot @nb-grunfeld-indexing-firms-chart-3 invest_index color=firm title="The distribution of indexed investment by firm" y.title="Investment index (first year = 100)"
-```
-
-## 4. Market-value and investment indices
-
-Both axes use a firm-specific starting reference. That makes proportional movements visible while removing cross-firm level information.
-
-```eda
-scatter @nb-grunfeld-indexing-firms-chart-4 x=value_index y=invest_index color=firm title="Market-value and investment indices" x.title="Market value index (first year = 100)" y.title="Investment index (first year = 100)"
-```
-
-**Finding.** The median firm-year investment index was 183.91.
-
-## 5. The rows behind the charts
-
-Sort a column or select rows to check any value above. Selections in a notebook stay with their own chart.
-
-```eda
-table @nb-grunfeld-indexing-firms-records firm,year,invest,invest_index,value_index title="Records behind this comparison"
+group @end sum(invest_index) by=firm
+row @nb-grunfeld-indexing-firms-chart-3 firm group=end where.year=1954 topN=11 title="Investment index in 1954, by firm (1935 = 100)" x.title="Investment (1935 = 100)"
 ```
 
 ## Takeaway
 
-Use indexed traces for proportional movement and raw values for investment scale. A firm leading one comparison need not lead the other.
+In dollars General Motors invested more than the other ten firms combined in most years. In growth from its own 1935 base it ranked fourth, behind IBM, General Electric, and Westinghouse. The index answers "who grew" and the dollars answer "who spent"; they rank the same firms differently.
 
 ## Limits
 
-An index erases the absolute investment level and can magnify growth from a small base. The reference is each firm’s first year, not a market benchmark. The selected firms and years limit generalization.
+Eleven firms chosen for a 1958 textbook, with 1935 as the base year only because the panel starts there. A firm that invested little in 1935 gets a flattering index, and a firm with a big 1935 program gets a modest one.

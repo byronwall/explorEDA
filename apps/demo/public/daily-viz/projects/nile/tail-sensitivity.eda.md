@@ -1,6 +1,6 @@
-# How much do extreme flow years move the Nile average?
+# Trim the Nile's extreme years and the average moves by 4, because the tails cancel
 
-**How much do the wettest and driest years move the Nile average?** Each row is one annual flow observation at Aswan.
+**How much do the wettest and driest years move the Nile's average?** Each row is one year of flow past Aswan, 1871 to 1970, in hundreds of millions of cubic metres. The question matters because the record holds both a 1,370 flood and a 456 drought. The answer is that each tail pulls the average about 30 its own way, and together they almost cancel: the century average is 919, and the average of the middle eighty percent of years is 915.
 
 ```eda
 eda query=r
@@ -10,54 +10,53 @@ rank:num=r.rank label="Percentile rank"
 tail:cat=r.tail label="Tail"
 ```
 
-## 1. Annual flow has a distribution, not one typical value
+## The wet tail is nineteenth-century, the dry tail twentieth
 
-Start with all years. The bins make the tails visible without classifying any annual measurement as an error.
+The two dashed lines mark the cutoffs: the driest tenth of years sit below 725.2 and the wettest tenth above 1160.0. The wettest year on record was 1879, at 1370 (10⁸ m³), and the driest was 1913, at 456. Every year above the top line comes before 1900 except 1964; every year below the bottom line comes after.
 
 ```eda
-hist @nb-nile-tail-sensitivity-chart-1 volume bins=18 title="Annual flow has a distribution, not one typical value" x.title="Annual flow (10⁸ m³)" y.title="Rows"
+line @nb-nile-tail-sensitivity-chart-1 x=year y=volume title="Annual Nile flow at Aswan, 1871–1970" x.title="Year" y.title="Annual flow (10⁸ m³)" {
+  rule y=1160 "Wettest tenth above"
+  rule y=725.2 "Driest tenth below"
+  callout "1879: 1,370" on=r.id:nile-r-00009 offset=40,0
+  callout "1913: 456" on=r.id:nile-r-00043 offset=50,-30
+}
 ```
 
-## 2. Locate the tail years in time
+## Each tail pulls 30; together they pull 4
 
-Color adds the explicit analytical grouping while leaving chronology intact. It does not label the years using an external flood or drought definition.
+Three groups, one scale. The 9 wettest years averaged 1233.33 and the 10 driest 670.00, roughly 310 above and 250 below the century mean of 919.35. Drop only the wettest years and the average falls to 888.30; drop only the driest and it rises to 947.06. Drop both and it lands at 915.25, 4 below where it started.
 
 ```eda
-scatter @nb-nile-tail-sensitivity-chart-2 x=year y=volume color=tail title="Locate the tail years in time" x.title="Year" y.title="Annual flow (10⁸ m³)"
+boxplot @nb-nile-tail-sensitivity-chart-2 volume color=tail title="Annual flow by tail group" y.title="Annual flow (10⁸ m³)" {
+  rule y=mean "Century mean"
+}
 ```
 
-**Finding.** The mean across every year was 919.35 ×10^8 m³.
+## The tails are a timeline, not noise
 
-## 3. A threshold view of every annual value
-
-The cumulative curve allows direct inspection of tail boundaries. It retains every year, including values the sensitivity calculation does not average.
+Color the same years by group and the two tails separate in time. 8 of the 9 wettest years come before 1898, and 10 of the 10 driest come after. A trimmed mean treats these years as outliers; the calendar says they are the ends of a river that changed.
 
 ```eda
-ecdf @nb-nile-tail-sensitivity-chart-3 volume direction=below title="A threshold view of every annual value" x.title="Annual flow (10⁸ m³)"
+scatter @nb-nile-tail-sensitivity-chart-3 x=year y=volume color=tail title="Each year's flow, colored by tail group" x.title="Year" y.title="Annual flow (10⁸ m³)" {
+  rule x=1898 "1898"
+}
 ```
 
-## 4. The selected middle versus the two tails
+## The mean sits 26 above the median
 
-This is a view of subsets chosen by the outcome itself. Their separation is built into the rule and is not an independently discovered relationship.
-
-```eda
-boxplot @nb-nile-tail-sensitivity-chart-4 volume color=tail title="The selected middle versus the two tails" y.title="Annual flow (10⁸ m³)"
-```
-
-**Finding.** The mean between the declared tail cutoffs was 915.25 ×10^8 m³.
-
-## 5. The rows behind the charts
-
-Sort a column or select rows to check any value above. Selections in a notebook stay with their own chart.
+Count the years by flow and the stack leans right of the dashed mean: a long run of years between 700 and 950 and a stretched wet tail. The median year carried 893.5 against a mean of 919.35, so the wet tail does slightly more pulling than the dry one, even with 1913 in the record.
 
 ```eda
-table @nb-nile-tail-sensitivity-records year,volume,rank,tail title="Records behind this comparison"
+hist @nb-nile-tail-sensitivity-chart-4 volume bins=20 title="Years by annual flow" x.title="Annual flow (10⁸ m³)" y.title="Years" {
+  rule x=919.35 "Mean, 919"
+}
 ```
 
 ## Takeaway
 
-Keep the tail years visible and explain why a robust summary differs from the ordinary mean. Removing an inconvenient extreme without a stated rule would change the population silently.
+The Nile's average is robust to its extremes only because they are balanced: a wet tail before 1898 and a dry one after. Trimming both changes the century figure by 4, but it also throws away the years that carry the record's one real story, the drop at the turn of the century.
 
 ## Limits
 
-Tail labels use the sample’s linear 10th and 90th percentiles. They are not flood or drought standards. The middle group is a sensitivity comparison, not a corrected replacement dataset.
+Tail groups are the sample's own 10th and 90th percentiles, not flood or drought thresholds. Flow is measured at Aswan alone, and the century ends before the High Dam's reservoir changed what "flow past Aswan" means.

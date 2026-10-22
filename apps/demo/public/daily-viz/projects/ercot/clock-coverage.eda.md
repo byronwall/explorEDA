@@ -1,6 +1,6 @@
-# The clock-hour pattern depends on which days were supplied
+# February's forecast missed six times January's at every hour of the clock
 
-**Do recurring UTC hours have similar signed and absolute errors within each month?** Each row is one month and UTC clock hour.
+**Does the forecast have a bad time of day?** Each row is one calendar month and one UTC clock hour, holding the mean signed and absolute error over every day that hour was observed. January has 24 full cells. February's cells each hold 28 hours, including Winter Storm Uri, and March's five cells hold one hour each.
 
 ```eda
 eda query=clock
@@ -12,54 +12,48 @@ abs_error:num=clock.abs_error label="Absolute error (MWh)"
 hours:num=clock.hours label="Hours"
 ```
 
-## 1. Signed error by UTC clock hour and month
+## February darkens every row
 
-The position of each cell carries calendar structure. Signed values retain direction, while the shared unit keeps all cells comparable.
+Read across any row: the February cell is darker than the January cell at all 24 hours. In January the clock-hour cells averaged 783 MWh of absolute error. In February the clock-hour cells averaged 4,603 MWh of absolute error. The storm week sits inside every February cell, so no clock hour escapes it.
 
 ```eda
-heatmap @nb-ercot-clock-coverage-chart-1 hour_label maxCategories=24 columnField=month_label aggregation=average measureField=error showValues=true title="Signed error by UTC clock hour and month"
+heatmap @nb-ercot-clock-coverage-chart-1 hour_label maxCategories=24 columnField=month_label aggregation=average measureField=abs_error title="Mean absolute error by UTC clock hour and month"
 ```
 
-## 2. Absolute error asks a different question
+## January's bad hours are the Texas evening
 
-Absolute errors measure miss size regardless of sign. A cell can have a small signed mean even when its positive and negative errors are both substantial.
+Plot the same cells by hour and January has a shape of its own: a hump from 00:00 to 04:00 UTC, which is 6 to 10 in the evening in Texas, and a trough in the late Texas night. January's worst clock hour, 04:00 UTC, averaged 1,153 MWh of absolute error. January's best clock hour, 08:00 UTC, averaged 598 MWh. February's best clock hour, 12:00 UTC, still averaged 3,310 MWh.
 
 ```eda
-heatmap @nb-ercot-clock-coverage-chart-2 hour_label maxCategories=24 columnField=month_label aggregation=average measureField=abs_error title="Absolute error asks a different question"
+scatter @nb-ercot-clock-coverage-chart-2 x=hour y=abs_error color=month_label title="Mean absolute error by UTC clock hour, one point per cell" x.title="Hour (UTC)" y.title="Mean absolute error (MWh)" {
+  callout "Feb 19:00 UTC: 5,290 MWh" pick=max offset=-30,20
+}
 ```
 
-**Finding.** The best-supported month-hour cell contains 31 hours.
+## January ran high, February ran low
 
-## 3. How much support is behind each mean?
-
-Pair the estimated mean with the actual contributing-hour count. This makes unequal support visible rather than encoding a sparse cell as if it were a complete month.
+Signed errors tell the direction. In January the clock-hour cells averaged 209 MWh above forecast. In February the clock-hour cells averaged -2,850 MWh, served demand far below forecast, because the storm week's load shedding sits in every cell.
 
 ```eda
-scatter @nb-ercot-clock-coverage-chart-3 x=hours y=abs_error color=month_label title="How much support is behind each mean?" x.title="Hours" y.title="Absolute error (MWh)"
+scatter @nb-ercot-clock-coverage-chart-3 x=hour y=error color=month_label title="Mean signed error by UTC clock hour, one point per cell" x.title="Hour (UTC)" y.title="Mean error (MWh)" {
+  rule y=0 "Served equals forecast"
+}
 ```
 
-## 4. Variation across clock-hour means
+## Five cells are one hour each
 
-These boxes summarize cell means, not individual hourly errors. They help compare clock patterns but should not be substituted for the raw-hour distribution.
-
-```eda
-boxplot @nb-ercot-clock-coverage-chart-4 error color=month_label title="Variation across clock-hour means" y.title="Error (MWh)"
-```
-
-**Finding.** The least-supported month-hour cell contains 1 hour.
-
-## 5. The rows behind the charts
-
-Sort a column or select rows to check any value above. Selections in a notebook stay with their own chart.
+Each cell's mean rests on a different number of hours. The best-supported month-hour cell contains 31 hours. The least-supported month-hour cell contains 1 hour. The five March cells at the far left are single observations from the morning of March 1, and their small errors say nothing about March.
 
 ```eda
-table @nb-ercot-clock-coverage-records month_label,hour_label,hours,error,abs_error title="Records behind this comparison"
+scatter @nb-ercot-clock-coverage-chart-4 x=hours y=abs_error color=month_label title="Hours behind each cell and its mean absolute error" x.title="Hours in the cell" y.title="Mean absolute error (MWh)" {
+  region x=0..2 y=0..600 "March: one hour per cell"
+}
 ```
 
 ## Takeaway
 
-Read the count before comparing the error. The table preserves each cell denominator so an apparently unusual hour can be distinguished from a scarcely observed boundary cell.
+The forecast does have a time of day: in a normal month it misses most in the Texas evening peak and least in the small hours. But February's storm week dwarfs that pattern six times over at every hour, so a clock-hour average of these two months describes the storm, not the clock.
 
 ## Limits
 
-These are means over available dates for a UTC clock hour. Partial boundary months have fewer observations, and the clock is not local Texas time. A mean of these cells is not automatically an hour-weighted monthly mean.
+These are means over available days for a UTC clock hour; the clock is not local Texas time, and Central Standard Time is six hours behind. February's cells hold 28 hours each, and March's hold one. A mean of cells is not an hour-weighted monthly mean.

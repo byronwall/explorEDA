@@ -58,6 +58,10 @@ From 960 px wide, a daily notebook sets each `##` section's text in a 300 px col
 - **Time series are lines.** A scatter of year against value is a line that lost its order, unless the gaps are the subject.
 - **Calculations belong in the project or the notebook, not in the reader's head.** A `calc` for an era, a season, a share, or a label makes a chart group by what the paragraph says.
 
+## Sheets
+
+A notebook with two or more `#` headings after its lede is a book: each heading is a sheet, shown as a tab, read one at a time. Reach for it when a question has two or three faces that each need their own charts and share one query: the whole span, the storm week, the clock hour. Each sheet reads as a short notebook with two to four sections and its own closing claim; Takeaway and Limits sit at the end of the last sheet. Name sheets in two to four words, and order them so the first answers the headline question.
+
 ## Before `pnpm daily check`
 
 - The title, deck, and first heading each say something a reader could repeat at dinner.

@@ -154,7 +154,7 @@
     "kind": "notebook",
     "title": "Big firms invest more, but a firm's good year is a weaker signal",
     "question": "Does a firm invest more in a year its market value rises?",
-    "summary": "Across eleven firms, bigger market value goes with bigger investment (r = 0.86). Within one firm from year to year, the link is weaker (r = 0.56).",
+    "summary": "Across eleven firms and twenty years, bigger market value goes with bigger investment (r = 0.86), mostly because General Motors dwarfs the rest. Within a firm from year to year the link is 0.56, and it ranges from 0.98 at IBM to nothing at Diamond Match.",
     "family": "grunfeld",
     "entry": "within-firm.eda.md",
     "query": "r",
@@ -162,18 +162,72 @@
     "analysis": "Relationship",
     "findings": [
       {
-        "text": "Across firm-year levels, market value and investment had correlation {value}.",
+        "text": "Across firm-year levels, market value and investment had correlation {value}",
         "format": ".3f",
         "op": "corr",
         "field": "value",
         "other": "invest"
       },
       {
-        "text": "Across valid within-firm annual changes, the correlation was {value}.",
+        "text": "its mean market value was ${value} million",
+        "format": ",.0f",
+        "op": "mean",
+        "field": "value",
+        "where": [
+          [
+            "firm",
+            "eq",
+            "General Motors"
+          ]
+        ]
+      },
+      {
+        "text": "against ${value} million for Diamond Match",
+        "format": ",.0f",
+        "op": "mean",
+        "field": "value",
+        "where": [
+          [
+            "firm",
+            "eq",
+            "Diamond Match"
+          ]
+        ]
+      },
+      {
+        "text": "Across within-firm annual changes, the correlation was {value}.",
         "format": ".3f",
         "op": "corr",
         "field": "value_change",
         "other": "invest_change"
+      },
+      {
+        "text": "Inside IBM, market value and investment had correlation {value}",
+        "format": ".3f",
+        "op": "corr",
+        "field": "value",
+        "other": "invest",
+        "where": [
+          [
+            "firm",
+            "eq",
+            "IBM"
+          ]
+        ]
+      },
+      {
+        "text": "Inside Diamond Match, the correlation was {value}",
+        "format": ".3f",
+        "op": "corr",
+        "field": "value",
+        "other": "invest",
+        "where": [
+          [
+            "firm",
+            "eq",
+            "Diamond Match"
+          ]
+        ]
       }
     ],
     "published": "2026-07-16"
@@ -238,7 +292,8 @@
     "series": {
       "id": "flights-january",
       "title": "A month of New York flights",
-      "part": 1
+      "part": 1,
+      "label": "The delay tail"
     },
     "findings": [
       {
@@ -305,6 +360,19 @@
             "EWR"
           ]
         ]
+      },
+      {
+        "text": "LaGuardia's mean departure delay was {value} minutes.",
+        "format": ".1f",
+        "op": "mean",
+        "field": "dep_delay",
+        "where": [
+          [
+            "flights.origin",
+            "eq",
+            "LGA"
+          ]
+        ]
       }
     ],
     "published": "2026-07-18"
@@ -342,9 +410,9 @@
     "id": "nb-macro-level-versus-growth",
     "slug": "macro-level-versus-growth",
     "kind": "notebook",
-    "title": "A rising GDP level can conceal falling quarterly growth",
-    "question": "What does U.S. GDP look like once you chart its growth rate instead of its level?",
-    "summary": "U.S. GDP rose almost every quarter from 1959 to 2009, but its annualized growth swung from −8% to +17%. The level hides the recessions the growth rate shows.",
+    "title": "GDP grew almost fivefold; 28 quarters still shrank",
+    "question": "How much of fifty years of American growth was actually growth?",
+    "summary": "US real GDP rose from $2.7 trillion in 1959 to $13 trillion in 2009, but 28 of the 202 quarters shrank. In those quarters unemployment rose half a point on average; in growing quarters it barely moved.",
     "family": "macro",
     "entry": "level-versus-growth.eda.md",
     "query": "r",
@@ -352,16 +420,100 @@
     "analysis": "Trend",
     "findings": [
       {
-        "text": "The smallest derived annualized quarterly GDP growth rate was {value}%.",
+        "text": "Real GDP began at ${value} billion in 1959",
+        "format": ",.0f",
+        "op": "min",
+        "field": "realgdp"
+      },
+      {
+        "text": "stood at ${value} billion in the third quarter of 2009",
+        "format": ",.0f",
+        "op": "max",
+        "field": "realgdp",
+        "where": [
+          [
+            "date",
+            "eq",
+            "2009-07-01"
+          ]
+        ]
+      },
+      {
+        "text": "{value} of the 202 quarters shrank.",
+        "format": ".0f",
+        "op": "count",
+        "field": "gdp_growth",
+        "where": [
+          [
+            "gdp_growth",
+            "lt",
+            0
+          ]
+        ]
+      },
+      {
+        "text": "annualized GDP growth fell to {value}%.",
         "format": ".2f",
         "op": "min",
         "field": "gdp_growth"
       },
       {
-        "text": "The largest derived annualized quarterly GDP growth rate was {value}%.",
+        "text": "The fastest was 1978's second quarter, at {value}%.",
         "format": ".2f",
         "op": "max",
         "field": "gdp_growth"
+      },
+      {
+        "text": "In quarters when GDP shrank, unemployment rose by {value} points on average.",
+        "format": ".2f",
+        "op": "mean",
+        "field": "unemp_change",
+        "where": [
+          [
+            "gdp_growth",
+            "lt",
+            0
+          ]
+        ]
+      },
+      {
+        "text": "In quarters when GDP grew, unemployment changed by {value} points on average.",
+        "format": ".2f",
+        "op": "mean",
+        "field": "unemp_change",
+        "where": [
+          [
+            "gdp_growth",
+            "ge",
+            0
+          ]
+        ]
+      },
+      {
+        "text": "The mean annualized growth rate was {value}%",
+        "format": ".2f",
+        "op": "mean",
+        "field": "gdp_growth"
+      },
+      {
+        "text": "{value}% of quarters shrank",
+        "format": ".1f",
+        "op": "share",
+        "field": "gdp_growth",
+        "where": [
+          [
+            "gdp_growth",
+            "ne",
+            ""
+          ]
+        ],
+        "condition": [
+          [
+            "gdp_growth",
+            "lt",
+            0
+          ]
+        ]
       }
     ],
     "published": "2026-07-20"
@@ -415,7 +567,7 @@
     "kind": "notebook",
     "title": "Beijing's worst air came in a few winter weeks",
     "question": "Which days of 2016 did Beijing breathe its worst air?",
-    "summary": "More than a third of station-days broke China's 24-hour PM2.5 limit, but the worst readings came in multi-day winter episodes, led by December's red alert.",
+    "summary": "More than a third of station-days broke China's 24-hour PM2.5 limit, but the worst readings came in multi-day winter episodes. December's red alert, six days from the 16th, averaged 248 µg/m³ and peaked at a citywide 395.",
     "family": "beijing",
     "entry": "calendar.eda.md",
     "query": "days",
@@ -424,11 +576,12 @@
     "series": {
       "id": "beijing-2016",
       "title": "A year of Beijing air",
-      "part": 1
+      "part": 1,
+      "label": "The calendar"
     },
     "findings": [
       {
-        "text": "December's station-days averaged {value} µg/m³.",
+        "text": "December's station-days averaged {value} µg/m³",
         "format": ".1f",
         "op": "mean",
         "field": "pm25",
@@ -437,6 +590,56 @@
             "month",
             "eq",
             "12 Dec"
+          ]
+        ]
+      },
+      {
+        "text": "against {value} µg/m³ for the year.",
+        "format": ".1f",
+        "op": "mean",
+        "field": "pm25"
+      },
+      {
+        "text": "Across the six alert days, station-days averaged {value} µg/m³",
+        "format": ".1f",
+        "op": "mean",
+        "field": "pm25",
+        "where": [
+          [
+            "date",
+            "ge",
+            "2016-12-16"
+          ],
+          [
+            "date",
+            "le",
+            "2016-12-21"
+          ]
+        ]
+      },
+      {
+        "text": "on December 21 the citywide mean reached {value} µg/m³.",
+        "format": ".1f",
+        "op": "mean",
+        "field": "pm25",
+        "where": [
+          [
+            "date",
+            "eq",
+            "2016-12-21"
+          ]
+        ]
+      },
+      {
+        "text": "Two days later it was {value} µg/m³.",
+        "format": ".1f",
+        "op": "mean",
+        "field": "pm25",
+        "where": [
+          [
+            "date",
+            "eq",
+            "2016-12-23"
           ]
         ]
       },
@@ -461,7 +664,7 @@
         ]
       },
       {
-        "text": "The highest daily mean at any station was {value} µg/m³.",
+        "text": "the highest daily mean at any station was {value} µg/m³",
         "format": ".1f",
         "op": "max",
         "field": "pm25"
@@ -502,9 +705,9 @@
     "id": "nb-wine-cultivar-chemistry",
     "slug": "wine-cultivar-chemistry",
     "kind": "notebook",
-    "title": "Flavanoids pull three wine cultivars apart",
+    "title": "Two assays sort 178 wines into their three cultivars",
     "question": "How different is the chemistry of wines from three grape cultivars?",
-    "summary": "Wines from cultivar 1 average nearly four times the flavanoids of cultivar 3, with cultivar 2 in between.",
+    "summary": "Flavanoids and color intensity alone name the right cultivar for 92% of 178 Italian wines. Cultivar 1 averages nearly four times the flavanoids of cultivar 3, and the two never overlap.",
     "family": "wine",
     "entry": "cultivar-chemistry.eda.md",
     "query": "r",
@@ -512,7 +715,20 @@
     "analysis": "Comparison",
     "findings": [
       {
-        "text": "Mean flavanoids in Cultivar 1 were {value} source assay units.",
+        "text": "the two-assay rule names the right cultivar for {value}% of the wines.",
+        "format": ".1f",
+        "op": "share",
+        "field": "guess_ok",
+        "condition": [
+          [
+            "guess_ok",
+            "eq",
+            1
+          ]
+        ]
+      },
+      {
+        "text": "Mean flavanoids in Cultivar 1 were {value}.",
         "format": ".3f",
         "op": "mean",
         "field": "flavanoids",
@@ -525,7 +741,7 @@
         ]
       },
       {
-        "text": "Mean flavanoids in Cultivar 3 were {value} source assay units.",
+        "text": "Mean flavanoids in Cultivar 3 were {value}.",
         "format": ".3f",
         "op": "mean",
         "field": "flavanoids",
@@ -536,6 +752,52 @@
             "Cultivar 3"
           ]
         ]
+      },
+      {
+        "text": "The lowest cultivar 1 wine measured {value}",
+        "format": ".2f",
+        "op": "min",
+        "field": "flavanoids",
+        "where": [
+          [
+            "cultivar",
+            "eq",
+            "Cultivar 1"
+          ]
+        ]
+      },
+      {
+        "text": "above the highest cultivar 3 wine at {value}.",
+        "format": ".2f",
+        "op": "max",
+        "field": "flavanoids",
+        "where": [
+          [
+            "cultivar",
+            "eq",
+            "Cultivar 3"
+          ]
+        ]
+      },
+      {
+        "text": "Cultivar 2, with a mean of {value}, spans both ranges",
+        "format": ".3f",
+        "op": "mean",
+        "field": "flavanoids",
+        "where": [
+          [
+            "cultivar",
+            "eq",
+            "Cultivar 2"
+          ]
+        ]
+      },
+      {
+        "text": "Flavanoids and total phenols had correlation {value}",
+        "format": ".3f",
+        "op": "corr",
+        "field": "flavanoids",
+        "other": "total_phenols"
       }
     ],
     "published": "2026-07-24"
@@ -573,9 +835,9 @@
     "id": "nb-danish-logs-and-indices",
     "slug": "danish-logs-and-indices",
     "kind": "notebook",
-    "title": "Logs, levels, and rebased money in a historical Danish series",
-    "question": "Does the relationship between real money and real income persist after taking quarterly log changes?",
-    "summary": "Danish real money and real income move together in levels (r = 0.87). Their quarterly changes agree far less (r = 0.49).",
+    "title": "Danish real money grew 47% in 13 years; real income, 16%",
+    "question": "Do real money and real income move together?",
+    "summary": "Indexed to 1974, Danish real money reached 147 by 1987 while real income reached 116, and the two levels correlate at 0.87. Quarter to quarter the correlation falls to 0.49, and the two moved in the same direction only 56% of the time.",
     "family": "danish",
     "entry": "logs-and-indices.eda.md",
     "query": "r",
@@ -583,18 +845,70 @@
     "analysis": "Trend",
     "findings": [
       {
-        "text": "Logged real money and logged real income had correlation {value}.",
+        "text": "by the third quarter of 1987 the real money index stood at {value}",
+        "format": ".2f",
+        "op": "max",
+        "field": "money_index",
+        "where": [
+          [
+            "period",
+            "eq",
+            "1987Q3"
+          ]
+        ]
+      },
+      {
+        "text": "while the real income index stood at {value}.",
+        "format": ".2f",
+        "op": "max",
+        "field": "income_index",
+        "where": [
+          [
+            "period",
+            "eq",
+            "1987Q3"
+          ]
+        ]
+      },
+      {
+        "text": "Real money peaked at {value} in the second quarter of 1986.",
+        "format": ".2f",
+        "op": "max",
+        "field": "money_index"
+      },
+      {
+        "text": "logged real money and logged real income had correlation {value}.",
         "format": ".3f",
         "op": "corr",
         "field": "lrm",
         "other": "lry"
       },
       {
-        "text": "Their valid quarterly log changes had correlation {value}.",
+        "text": "the quarterly log changes had correlation {value}.",
         "format": ".3f",
         "op": "corr",
         "field": "dmoney",
         "other": "dincome"
+      },
+      {
+        "text": "In {value}% of quarters, real money and real income moved in the same direction",
+        "format": ".1f",
+        "op": "share",
+        "field": "same_sign",
+        "where": [
+          [
+            "same_sign",
+            "ne",
+            ""
+          ]
+        ],
+        "condition": [
+          [
+            "same_sign",
+            "eq",
+            1
+          ]
+        ]
       }
     ],
     "published": "2026-07-26"
@@ -646,9 +960,9 @@
     "id": "nb-engel-food-and-income",
     "slug": "engel-food-and-income",
     "kind": "notebook",
-    "title": "Food spending can rise while its income share falls",
-    "question": "How do absolute food spending and the food budget share differ across these households?",
-    "summary": "Richer Belgian households in 1857 spent more francs on food (r = 0.91) but a smaller share of their income on it (r = −0.42).",
+    "title": "Food took 70% of a poor household's income and 62% of a rich one's",
+    "question": "Do richer households spend more on food, or less?",
+    "summary": "In an 1857 survey of 235 Belgian working-class households, richer households spent more francs on food (r = 0.91) but a smaller share of their income on it (r = −0.42). The median food share fell from 70% in the poorest quartile to 62% in the richest.",
     "family": "engel",
     "entry": "food-and-income.eda.md",
     "query": "r",
@@ -656,18 +970,88 @@
     "analysis": "Relationship",
     "findings": [
       {
-        "text": "Income and food expenditure had correlation {value}.",
+        "text": "income and food spending had correlation {value}.",
         "format": ".3f",
         "op": "corr",
         "field": "income",
         "other": "foodexp"
       },
       {
-        "text": "Income and food share had correlation {value}.",
+        "text": "The median household spent {value} francs on food in a year",
+        "format": ",.0f",
+        "op": "median",
+        "field": "foodexp"
+      },
+      {
+        "text": "the biggest food budget was {value} francs.",
+        "format": ",.0f",
+        "op": "max",
+        "field": "foodexp"
+      },
+      {
+        "text": "which puts {value} household",
+        "format": ".0f",
+        "op": "count",
+        "field": "income",
+        "where": [
+          [
+            "income",
+            "gt",
+            3000
+          ]
+        ]
+      },
+      {
+        "text": "the richest at {value} francs",
+        "format": ",.0f",
+        "op": "max",
+        "field": "income"
+      },
+      {
+        "text": "income and food share had correlation {value}.",
         "format": ".3f",
         "op": "corr",
         "field": "income",
         "other": "food_share"
+      },
+      {
+        "text": "{value}% of households spent more than half their income on it.",
+        "format": ".1f",
+        "op": "share",
+        "field": "food_share",
+        "condition": [
+          [
+            "food_share",
+            "gt",
+            50
+          ]
+        ]
+      },
+      {
+        "text": "The median food share in the poorest quartile was {value}%",
+        "format": ".2f",
+        "op": "median",
+        "field": "food_share",
+        "where": [
+          [
+            "income_band",
+            "eq",
+            "Q1 lowest income"
+          ]
+        ]
+      },
+      {
+        "text": "in the richest quartile it was {value}%.",
+        "format": ".2f",
+        "op": "median",
+        "field": "food_share",
+        "where": [
+          [
+            "income_band",
+            "eq",
+            "Q4 highest income"
+          ]
+        ]
       }
     ],
     "published": "2026-07-28"
@@ -676,9 +1060,9 @@
     "id": "nb-strikes-duration-tail",
     "slug": "strikes-duration-tail",
     "kind": "notebook",
-    "title": "A typical strike and a long strike tell different stories",
-    "question": "How far apart are the mean and median durations in this selected strike sample?",
-    "summary": "The median U.S. manufacturing strike from 1968 to 1976 lasted 27 days; the mean, pulled up by a few very long ones, was 43.",
+    "title": "The average strike lasted 43 days; the typical one, 27",
+    "question": "How long does a strike last?",
+    "summary": "The median US manufacturing strike from 1968 to 1976 lasted 27 days; the mean was 43, because one strike in eight ran past a hundred days. The five longest strikes alone account for 29% of all strike days in the sample.",
     "family": "strikes",
     "entry": "duration-tail.eda.md",
     "query": "r",
@@ -686,16 +1070,68 @@
     "analysis": "Distribution",
     "findings": [
       {
-        "text": "The mean recorded duration was {value} days.",
+        "text": "The median recorded duration was {value} days",
+        "format": ".2f",
+        "op": "median",
+        "field": "duration"
+      },
+      {
+        "text": "the mean recorded duration was {value} days",
         "format": ".2f",
         "op": "mean",
         "field": "duration"
       },
       {
-        "text": "The median recorded duration was {value} days.",
-        "format": ".2f",
-        "op": "median",
+        "text": "{value}% of strikes ended within two weeks",
+        "format": ".1f",
+        "op": "share",
+        "field": "duration",
+        "condition": [
+          [
+            "duration",
+            "le",
+            14
+          ]
+        ]
+      },
+      {
+        "text": "{value}% of strikes lasted more than 60 days.",
+        "format": ".1f",
+        "op": "share",
+        "field": "duration",
+        "condition": [
+          [
+            "duration",
+            "gt",
+            60
+          ]
+        ]
+      },
+      {
+        "text": "the longest strike, at {value} days.",
+        "format": ".0f",
+        "op": "max",
         "field": "duration"
+      },
+      {
+        "text": "The {value} strikes that ran longer than 100 days",
+        "format": ".0f",
+        "op": "count",
+        "field": "duration",
+        "where": [
+          [
+            "duration",
+            "gt",
+            100
+          ]
+        ]
+      },
+      {
+        "text": "the five longest together account for {value}% of all strike days in the sample.",
+        "format": ".2f",
+        "op": "top_share",
+        "field": "duration",
+        "k": 5
       }
     ],
     "published": "2026-07-29"
@@ -747,9 +1183,9 @@
     "id": "nb-nile-tail-sensitivity",
     "slug": "nile-tail-sensitivity",
     "kind": "notebook",
-    "title": "How much do extreme flow years move the Nile average?",
-    "question": "How much do the wettest and driest years move the Nile average?",
-    "summary": "Trim the wettest and driest years and the Nile's century average barely moves, from 919 to 915 (10⁸ m³).",
+    "title": "Trim the Nile's extreme years and the average moves by 4, because the tails cancel",
+    "question": "How much do the wettest and driest years move the Nile's average?",
+    "summary": "The Nile's century average at Aswan is 919 (10⁸ m³); without its wettest and driest tenths it is 915. Each tail alone shifts the figure by about 30, in opposite directions, and the wet tail is all before 1898 while the dry tail is all after.",
     "family": "nile",
     "entry": "tail-sensitivity.eda.md",
     "query": "r",
@@ -757,13 +1193,91 @@
     "analysis": "Distribution",
     "findings": [
       {
-        "text": "The mean across every year was {value} ×10^8 m³.",
+        "text": "the driest tenth of years sit below {value}",
+        "format": ".1f",
+        "op": "quantile",
+        "field": "volume",
+        "q": 0.1
+      },
+      {
+        "text": "and the wettest tenth above {value}.",
+        "format": ".1f",
+        "op": "quantile",
+        "field": "volume",
+        "q": 0.9
+      },
+      {
+        "text": "The wettest year on record was 1879, at {value} (10⁸ m³)",
+        "format": ".0f",
+        "op": "max",
+        "field": "volume"
+      },
+      {
+        "text": "and the driest was 1913, at {value}.",
+        "format": ".0f",
+        "op": "min",
+        "field": "volume"
+      },
+      {
+        "text": "The 9 wettest years averaged {value}",
+        "format": ".2f",
+        "op": "mean",
+        "field": "volume",
+        "where": [
+          [
+            "tail",
+            "eq",
+            "Upper tail"
+          ]
+        ]
+      },
+      {
+        "text": "and the 10 driest {value}",
+        "format": ".2f",
+        "op": "mean",
+        "field": "volume",
+        "where": [
+          [
+            "tail",
+            "eq",
+            "Lower tail"
+          ]
+        ]
+      },
+      {
+        "text": "below the century mean of {value}.",
         "format": ".2f",
         "op": "mean",
         "field": "volume"
       },
       {
-        "text": "The mean between the declared tail cutoffs was {value} ×10^8 m³.",
+        "text": "Drop only the wettest years and the average falls to {value}",
+        "format": ".2f",
+        "op": "mean",
+        "field": "volume",
+        "where": [
+          [
+            "tail",
+            "ne",
+            "Upper tail"
+          ]
+        ]
+      },
+      {
+        "text": "drop only the driest and it rises to {value}.",
+        "format": ".2f",
+        "op": "mean",
+        "field": "volume",
+        "where": [
+          [
+            "tail",
+            "ne",
+            "Lower tail"
+          ]
+        ]
+      },
+      {
+        "text": "Drop both and it lands at {value}",
         "format": ".2f",
         "op": "mean",
         "field": "volume",
@@ -774,6 +1288,48 @@
             "Middle 80% cutoffs"
           ]
         ]
+      },
+      {
+        "text": "{value} of the 9 wettest years come before 1898",
+        "format": ".0f",
+        "op": "count",
+        "field": "volume",
+        "where": [
+          [
+            "tail",
+            "eq",
+            "Upper tail"
+          ],
+          [
+            "year",
+            "lt",
+            1898
+          ]
+        ]
+      },
+      {
+        "text": "and {value} of the 10 driest come after.",
+        "format": ".0f",
+        "op": "count",
+        "field": "volume",
+        "where": [
+          [
+            "tail",
+            "eq",
+            "Lower tail"
+          ],
+          [
+            "year",
+            "ge",
+            1898
+          ]
+        ]
+      },
+      {
+        "text": "The median year carried {value} against a mean of",
+        "format": ".1f",
+        "op": "median",
+        "field": "volume"
       }
     ],
     "published": "2026-07-31"
@@ -829,9 +1385,9 @@
         "field": "error"
       },
       {
-        "text": "The mean absolute error was {value} MWh per hour.",
-        "format": ",.1f",
-        "op": "mean",
+        "text": "The largest miss in one hour was {value} MWh.",
+        "format": ",.0f",
+        "op": "max",
         "field": "abs_error"
       },
       {
@@ -862,6 +1418,31 @@
             "date",
             "lt",
             "2021-02-14"
+          ]
+        ]
+      },
+      {
+        "text": "The mean absolute error was {value} MWh per hour.",
+        "format": ",.1f",
+        "op": "mean",
+        "field": "abs_error"
+      },
+      {
+        "text": "The median absolute error was {value} MWh per hour.",
+        "format": ",.0f",
+        "op": "median",
+        "field": "abs_error"
+      },
+      {
+        "text": "{value}% of hours missed by less than 2,000 MWh.",
+        "format": ".1f",
+        "op": "share",
+        "field": "abs_error",
+        "condition": [
+          [
+            "abs_error",
+            "lt",
+            2000
           ]
         ]
       }
@@ -995,9 +1576,9 @@
     "id": "nb-elnino-season-and-anomaly",
     "slug": "elnino-season-and-anomaly",
     "kind": "notebook",
-    "title": "A warm month and an unusually warm month are different questions",
-    "question": "How much of Niño 1+2 temperature is just the calendar?",
-    "summary": "Niño 1+2 waters swing about 5 °C between February and September every year. Subtract that calendar and the unusual months, the El Niños, stand out.",
+    "title": "Niño 1+2 water swings 5.7 °C every year; the El Niños are what's left",
+    "question": "How much of a warm month off Peru is just the calendar?",
+    "summary": "The sea off Peru runs 5.7 °C warmer in March than in September, so a raw temperature says little. Subtract each month's normal and the El Niños stand alone: June 1983 sat 4.35 °C above its calendar mean, and cool months outnumber warm ones two to one.",
     "family": "elnino",
     "entry": "season-and-anomaly.eda.md",
     "query": "r",
@@ -1005,7 +1586,7 @@
     "analysis": "Seasonality",
     "findings": [
       {
-        "text": "The mean February temperature across years was {value} °C.",
+        "text": "March months averaged {value} °C",
         "format": ".2f",
         "op": "mean",
         "field": "sst",
@@ -1013,12 +1594,12 @@
           [
             "month",
             "eq",
-            2
+            3
           ]
         ]
       },
       {
-        "text": "The mean September temperature across years was {value} °C.",
+        "text": "and September months {value} °C",
         "format": ".2f",
         "op": "mean",
         "field": "sst",
@@ -1029,6 +1610,99 @@
             9
           ]
         ]
+      },
+      {
+        "text": "The warmest month on record, {value} °C in March 1998",
+        "format": ".2f",
+        "op": "max",
+        "field": "sst"
+      },
+      {
+        "text": "The largest anomaly was {value} °C, in June 1983",
+        "format": ".2f",
+        "op": "max",
+        "field": "anomaly"
+      },
+      {
+        "text": "{value}% of months ran more than 2 °C warm.",
+        "format": ".1f",
+        "op": "share",
+        "field": "anomaly",
+        "condition": [
+          [
+            "anomaly",
+            "gt",
+            2
+          ]
+        ]
+      },
+      {
+        "text": "{value}% of months ran more than 1 °C cool",
+        "format": ".1f",
+        "op": "share",
+        "field": "anomaly",
+        "condition": [
+          [
+            "anomaly",
+            "lt",
+            -1
+          ]
+        ]
+      },
+      {
+        "text": "against {value}% that ran more than 1 °C warm",
+        "format": ".1f",
+        "op": "share",
+        "field": "anomaly",
+        "condition": [
+          [
+            "anomaly",
+            "gt",
+            1
+          ]
+        ]
+      },
+      {
+        "text": "in 1983, {value} months sat more than 2 °C warm",
+        "format": ".0f",
+        "op": "count",
+        "field": "anomaly",
+        "where": [
+          [
+            "year",
+            "eq",
+            1983
+          ],
+          [
+            "anomaly",
+            "gt",
+            2
+          ]
+        ]
+      },
+      {
+        "text": "and in 1997, {value} did",
+        "format": ".0f",
+        "op": "count",
+        "field": "anomaly",
+        "where": [
+          [
+            "year",
+            "eq",
+            1997
+          ],
+          [
+            "anomaly",
+            "gt",
+            2
+          ]
+        ]
+      },
+      {
+        "text": "the coldest anomaly, {value} °C in May 1954",
+        "format": ".2f",
+        "op": "min",
+        "field": "anomaly"
       }
     ],
     "published": "2026-08-06"
@@ -1082,7 +1756,7 @@
     "kind": "notebook",
     "title": "7,643 strong earthquakes, and where they cluster",
     "question": "Where and when did 2023's strong earthquakes strike?",
-    "summary": "The year's magnitude 4.5+ earthquakes trace the plate boundaries, arrive about twenty a day, and spike after each large shock. Fewer than one in fifty reached magnitude 6.",
+    "summary": "The year's magnitude 4.5+ earthquakes trace the plate boundaries, arrive about twenty a day, and spike after each large shock: 127 on the day of the Türkiye doublet and 164 after the Mindanao M7.6. Fewer than one in fifty reached magnitude 6.",
     "family": "earthquakes",
     "entry": "year-of-quakes.eda.md",
     "query": "events",
@@ -1090,13 +1764,52 @@
     "analysis": "Geography",
     "findings": [
       {
-        "text": "The year's largest earthquake was magnitude {value}.",
+        "text": "The year's largest earthquake was magnitude {value}",
         "format": ".1f",
         "op": "max",
         "field": "mag"
       },
       {
-        "text": "{value}% of the year's earthquakes reached magnitude 6 or more.",
+        "text": "The catalogue recorded {value} earthquakes on February 6",
+        "format": ".0f",
+        "op": "count",
+        "field": "mag",
+        "where": [
+          [
+            "date",
+            "eq",
+            "2023-02-06"
+          ]
+        ]
+      },
+      {
+        "text": "and {value} on December 2",
+        "format": ".0f",
+        "op": "count",
+        "field": "mag",
+        "where": [
+          [
+            "date",
+            "eq",
+            "2023-12-02"
+          ]
+        ]
+      },
+      {
+        "text": "{value}% of the year's earthquakes were below magnitude 5",
+        "format": ".1f",
+        "op": "share",
+        "field": "mag",
+        "condition": [
+          [
+            "mag",
+            "lt",
+            5
+          ]
+        ]
+      },
+      {
+        "text": "and {value}% reached magnitude 6 or more",
         "format": ".1f",
         "op": "share",
         "field": "mag",
@@ -1105,6 +1818,19 @@
             "mag",
             "ge",
             6
+          ]
+        ]
+      },
+      {
+        "text": "{value} reached magnitude 7.",
+        "format": ".0f",
+        "op": "count",
+        "field": "mag",
+        "where": [
+          [
+            "mag",
+            "ge",
+            7
           ]
         ]
       }
@@ -1144,17 +1870,17 @@
     "id": "nb-co2-trend-and-coverage",
     "slug": "co2-trend-and-coverage",
     "kind": "notebook",
-    "title": "A CO₂ trend with the missing weeks left visible",
-    "question": "What does five decades of weekly CO₂ look like when the missing weeks stay missing?",
-    "summary": "Weekly CO₂ at Mauna Loa rose from about 320 ppm in the 1960s to 360 in the 1990s. The missing weeks stay blank instead of being drawn over.",
+    "title": "CO₂ rose 40 ppm in three decades, and each decade's step was bigger",
+    "question": "How fast is carbon dioxide rising at Mauna Loa, and how much of the record is really there?",
+    "summary": "Weekly CO₂ at Mauna Loa averaged 320 ppm in the 1960s and 360 ppm in the 1990s, and every decade's step was larger than the last. The record is 97% complete, and nearly every missing week falls before 1970.",
     "family": "co2",
     "entry": "trend-and-coverage.eda.md",
     "query": "r",
     "industry": "Climate",
-    "analysis": "Data quality",
+    "analysis": "Trend",
     "findings": [
       {
-        "text": "The mean measured concentration in the 1960s was {value} ppm.",
+        "text": "The 1960s averaged {value} ppm.",
         "format": ".2f",
         "op": "mean",
         "field": "co2",
@@ -1167,7 +1893,7 @@
         ]
       },
       {
-        "text": "The mean measured concentration in the 1990s was {value} ppm.",
+        "text": "The 1990s averaged {value} ppm.",
         "format": ".2f",
         "op": "mean",
         "field": "co2",
@@ -1178,6 +1904,114 @@
             "1990s"
           ]
         ]
+      },
+      {
+        "text": "{value}% of weekly slots have a measurement.",
+        "format": ".1f",
+        "op": "share",
+        "field": "coverage",
+        "condition": [
+          [
+            "coverage",
+            "eq",
+            "Measured"
+          ]
+        ]
+      },
+      {
+        "text": "The 1960s account for {value} of the 59 missing weeks",
+        "format": ".0f",
+        "op": "count",
+        "field": "coverage",
+        "where": [
+          [
+            "decade",
+            "eq",
+            "1960s"
+          ],
+          [
+            "coverage",
+            "eq",
+            "Missing"
+          ]
+        ]
+      },
+      {
+        "text": "every one of the 1990s' {value} slots has a reading.",
+        "format": ".0f",
+        "op": "count",
+        "field": "coverage",
+        "where": [
+          [
+            "decade",
+            "eq",
+            "1990s"
+          ]
+        ]
+      },
+      {
+        "text": "The 1970s averaged {value} ppm",
+        "format": ".2f",
+        "op": "mean",
+        "field": "co2",
+        "where": [
+          [
+            "decade",
+            "eq",
+            "1970s"
+          ]
+        ]
+      },
+      {
+        "text": "the 1980s {value} ppm",
+        "format": ".2f",
+        "op": "mean",
+        "field": "co2",
+        "where": [
+          [
+            "decade",
+            "eq",
+            "1980s"
+          ]
+        ]
+      },
+      {
+        "text": "The 1990s' lowest week, {value} ppm",
+        "format": ".1f",
+        "op": "min",
+        "field": "co2",
+        "where": [
+          [
+            "decade",
+            "eq",
+            "1990s"
+          ]
+        ]
+      },
+      {
+        "text": "sits above the 1970s' highest, {value} ppm.",
+        "format": ".1f",
+        "op": "max",
+        "field": "co2",
+        "where": [
+          [
+            "decade",
+            "eq",
+            "1970s"
+          ]
+        ]
+      },
+      {
+        "text": "The highest weekly reading, {value} ppm",
+        "format": ".1f",
+        "op": "max",
+        "field": "co2"
+      },
+      {
+        "text": "and the lowest, {value} ppm",
+        "format": ".1f",
+        "op": "min",
+        "field": "co2"
       }
     ],
     "published": "2026-08-10"
@@ -1197,7 +2031,8 @@
     "series": {
       "id": "flights-january",
       "title": "A month of New York flights",
-      "part": 2
+      "part": 2,
+      "label": "By hour"
     },
     "findings": [
       {
@@ -1223,6 +2058,56 @@
             "sched_dep_hour",
             "eq",
             19
+          ]
+        ]
+      },
+      {
+        "text": "{value}% of 6:00 flights left more than an hour late.",
+        "format": ".1f",
+        "op": "share",
+        "field": "dep_delay",
+        "where": [
+          [
+            "sched_dep_hour",
+            "eq",
+            6
+          ],
+          [
+            "dep_delay",
+            "ge",
+            -10000
+          ]
+        ],
+        "condition": [
+          [
+            "dep_delay",
+            "gt",
+            60
+          ]
+        ]
+      },
+      {
+        "text": "{value}% of 19:00 flights left more than an hour late.",
+        "format": ".1f",
+        "op": "share",
+        "field": "dep_delay",
+        "where": [
+          [
+            "sched_dep_hour",
+            "eq",
+            19
+          ],
+          [
+            "dep_delay",
+            "ge",
+            -10000
+          ]
+        ],
+        "condition": [
+          [
+            "dep_delay",
+            "gt",
+            60
           ]
         ]
       }
@@ -1337,7 +2222,7 @@
     "kind": "notebook",
     "title": "PM2.5 travels with carbon monoxide, not ozone",
     "question": "Which pollutants rise and fall with Beijing's fine particles?",
-    "summary": "Fine particles, carbon monoxide, and nitrogen dioxide share combustion sources and peak together in winter. Ozone peaks on clear summer days, when particles are lowest.",
+    "summary": "Fine particles, carbon monoxide, and nitrogen dioxide share combustion sources and peak together in winter, with correlations of 0.85 and 0.76. Ozone runs against particles in winter and with them in summer.",
     "family": "beijing",
     "entry": "pollutants.eda.md",
     "query": "days",
@@ -1346,22 +2231,71 @@
     "series": {
       "id": "beijing-2016",
       "title": "A year of Beijing air",
-      "part": 2
+      "part": 2,
+      "label": "Pollutants"
     },
     "findings": [
       {
-        "text": "PM2.5 and carbon monoxide had correlation {value}.",
+        "text": "PM2.5 and carbon monoxide had correlation {value}",
         "format": ".3f",
         "op": "corr",
         "field": "pm25",
         "other": "co"
       },
       {
-        "text": "PM2.5 and ozone had correlation {value}.",
+        "text": "and PM2.5 and nitrogen dioxide {value}.",
+        "format": ".3f",
+        "op": "corr",
+        "field": "pm25",
+        "other": "no2"
+      },
+      {
+        "text": "{value} station-days, all in winter smog, sit beyond it.",
+        "format": ".0f",
+        "op": "count",
+        "field": "co",
+        "where": [
+          [
+            "co",
+            "gt",
+            6000
+          ]
+        ]
+      },
+      {
+        "text": "PM2.5 and ozone had correlation {value}",
         "format": ".3f",
         "op": "corr",
         "field": "pm25",
         "other": "o3"
+      },
+      {
+        "text": "in winter the correlation was {value}",
+        "format": ".3f",
+        "op": "corr",
+        "field": "pm25",
+        "other": "o3",
+        "where": [
+          [
+            "season",
+            "eq",
+            "Winter"
+          ]
+        ]
+      },
+      {
+        "text": "but in summer it was {value}",
+        "format": ".3f",
+        "op": "corr",
+        "field": "pm25",
+        "other": "o3",
+        "where": [
+          [
+            "season",
+            "eq",
+            "Summer"
+          ]
+        ]
       }
     ],
     "published": "2026-08-15"
@@ -1401,9 +2335,9 @@
     "id": "nb-grunfeld-indexing-firms",
     "slug": "grunfeld-indexing-firms",
     "kind": "notebook",
-    "title": "Indexing investment changes the ranking question",
-    "question": "How different do historical firm trajectories look after each starts at 100?",
-    "summary": "Start each firm at 100 and the ranking changes: the fastest-growing firm's investment rose almost sevenfold, while the median firm-year sat near 184.",
+    "title": "Indexed to 1935, IBM's investment grew fastest; General Motors ranked fourth",
+    "question": "Which firm grew its investment fastest?",
+    "summary": "In dollars, General Motors' investment dwarfs the other ten Grunfeld firms. Indexed to each firm's own 1935 level, IBM grew fastest, to 667 by 1954, with General Electric and Westinghouse ahead of GM's 468.",
     "family": "grunfeld",
     "entry": "indexing-firms.eda.md",
     "query": "r",
@@ -1411,13 +2345,91 @@
     "analysis": "Ranking",
     "findings": [
       {
-        "text": "The highest first-year-normalized investment index in the panel was {value}.",
+        "text": "General Motors' investment reached ${value} million in 1954",
+        "format": ",.1f",
+        "op": "max",
+        "field": "invest",
+        "where": [
+          [
+            "firm",
+            "eq",
+            "General Motors"
+          ]
+        ]
+      },
+      {
+        "text": "Diamond Match's investment never passed ${value} million",
+        "format": ".1f",
+        "op": "max",
+        "field": "invest",
+        "where": [
+          [
+            "firm",
+            "eq",
+            "Diamond Match"
+          ]
+        ]
+      },
+      {
+        "text": "IBM's index reached {value} in 1954",
+        "format": ".1f",
+        "op": "max",
+        "field": "invest_index",
+        "where": [
+          [
+            "firm",
+            "eq",
+            "IBM"
+          ]
+        ]
+      },
+      {
+        "text": "General Electric's {value}",
+        "format": ".1f",
+        "op": "max",
+        "field": "invest_index",
+        "where": [
+          [
+            "firm",
+            "eq",
+            "General Electric"
+          ]
+        ]
+      },
+      {
+        "text": "Westinghouse touched the panel's high of {value} in 1953",
         "format": ".2f",
         "op": "max",
         "field": "invest_index"
       },
       {
-        "text": "The median firm-year investment index was {value}.",
+        "text": "General Motors' index peaked at {value}",
+        "format": ".1f",
+        "op": "max",
+        "field": "invest_index",
+        "where": [
+          [
+            "firm",
+            "eq",
+            "General Motors"
+          ]
+        ]
+      },
+      {
+        "text": "Goodyear grew least, ending 1954 at {value}.",
+        "format": ".1f",
+        "op": "min",
+        "field": "invest_index",
+        "where": [
+          [
+            "year",
+            "eq",
+            1954
+          ]
+        ]
+      },
+      {
+        "text": "The median firm-year index across the whole panel was {value}",
         "format": ".2f",
         "op": "median",
         "field": "invest_index"
@@ -1429,9 +2441,9 @@
     "id": "nb-ercot-relative-error",
     "slug": "ercot-relative-error",
     "kind": "notebook",
-    "title": "Half of ERCOT hours missed by less than 2.3%",
-    "question": "Which hours look worse when the miss is measured as a share of the forecast?",
-    "summary": "Measured against the forecast, half of ERCOT's hours missed by under 2.3% and nine in ten by under 14%.",
+    "title": "Half of ERCOT's hours missed by under 2.3%; the storm week missed by 18%",
+    "question": "How big is a typical forecast miss once you measure it against the size of the forecast?",
+    "summary": "Half of ERCOT's hours missed by under 2.3% of the forecast and nine in ten by under 14%. The storm week missed by 17.5% on average, and the week after was still off by 7.7%.",
     "family": "ercot",
     "entry": "relative-error.eda.md",
     "query": "r",
@@ -1450,6 +2462,94 @@
         "op": "quantile",
         "field": "abs_pct_error",
         "q": 0.9
+      },
+      {
+        "text": "The worst hour missed by {value}% of forecast.",
+        "format": ".1f",
+        "op": "max",
+        "field": "abs_pct_error"
+      },
+      {
+        "text": "During the storm week, the mean absolute percentage error was {value}% of forecast.",
+        "format": ".1f",
+        "op": "mean",
+        "field": "abs_pct_error",
+        "where": [
+          [
+            "date",
+            "ge",
+            "2021-02-14"
+          ],
+          [
+            "date",
+            "lt",
+            "2021-02-21"
+          ]
+        ]
+      },
+      {
+        "text": "{value}% of storm-week hours missed by more than 10%.",
+        "format": ".1f",
+        "op": "share",
+        "field": "abs_pct_error",
+        "where": [
+          [
+            "date",
+            "ge",
+            "2021-02-14"
+          ],
+          [
+            "date",
+            "lt",
+            "2021-02-21"
+          ]
+        ],
+        "condition": [
+          [
+            "abs_pct_error",
+            "gt",
+            10
+          ]
+        ]
+      },
+      {
+        "text": "{value}% of hours missed by more than 10%.",
+        "format": ".1f",
+        "op": "share",
+        "field": "abs_pct_error",
+        "condition": [
+          [
+            "abs_pct_error",
+            "gt",
+            10
+          ]
+        ]
+      },
+      {
+        "text": "Before the storm, the median absolute percentage error was {value}% of forecast.",
+        "format": ".2f",
+        "op": "median",
+        "field": "abs_pct_error",
+        "where": [
+          [
+            "date",
+            "lt",
+            "2021-02-14"
+          ]
+        ]
+      },
+      {
+        "text": "After February 20, the median absolute percentage error was {value}% of forecast.",
+        "format": ".2f",
+        "op": "median",
+        "field": "abs_pct_error",
+        "where": [
+          [
+            "date",
+            "ge",
+            "2021-02-21"
+          ]
+        ]
       }
     ],
     "published": "2026-08-18"
@@ -1551,9 +2651,9 @@
     "id": "nb-longley-different-denominators",
     "slug": "longley-different-denominators",
     "kind": "notebook",
-    "title": "Unemployment swung 2.6-fold, with no labor force to divide by",
-    "question": "What can raw employment and unemployment counts tell you without a labor-force total?",
-    "summary": "U.S. unemployment counts ranged from 1.9 to 4.8 million between 1947 and 1962. Without a labor-force total, they can't become a rate.",
+    "title": "Unemployment swung 2.6-fold while employment rose 17%",
+    "question": "How did American joblessness move in the fifteen years after the war?",
+    "summary": "From 1947 to 1962 the number of Americans employed rose from 60.3 to 70.6 million, while the number unemployed ranged from 1.9 million in 1953 to 4.8 million in 1961. Each jump lines up with a recession, and the file has no labor-force total to turn either count into a rate.",
     "family": "longley",
     "entry": "different-denominators.eda.md",
     "query": "r",
@@ -1561,16 +2661,66 @@
     "analysis": "Data quality",
     "findings": [
       {
-        "text": "The smallest recorded unemployment count was {value} source count units.",
+        "text": "it was {value} thousand in 1947",
+        "format": ",.0f",
+        "op": "min",
+        "field": "employment"
+      },
+      {
+        "text": "{value} thousand in 1962.",
+        "format": ",.0f",
+        "op": "max",
+        "field": "employment"
+      },
+      {
+        "text": "reaching {value} thousand in 1952",
+        "format": ",.0f",
+        "op": "max",
+        "field": "armed"
+      },
+      {
+        "text": "the 1948 low of {value} thousand.",
+        "format": ",.0f",
+        "op": "min",
+        "field": "armed"
+      },
+      {
+        "text": "Unemployment fell to {value} thousand in 1953",
         "format": ",.0f",
         "op": "min",
         "field": "unemployed"
       },
       {
-        "text": "The largest recorded unemployment count was {value} source count units.",
+        "text": "reached {value} thousand in 1961",
         "format": ",.0f",
         "op": "max",
         "field": "unemployed"
+      },
+      {
+        "text": "mean unemployment was {value} thousand from 1947 to 1954",
+        "format": ",.0f",
+        "op": "mean",
+        "field": "unemployed",
+        "where": [
+          [
+            "era",
+            "eq",
+            "1947–1954"
+          ]
+        ]
+      },
+      {
+        "text": "{value} thousand from 1955 to 1962",
+        "format": ",.0f",
+        "op": "mean",
+        "field": "unemployed",
+        "where": [
+          [
+            "era",
+            "eq",
+            "1955–1962"
+          ]
+        ]
       }
     ],
     "published": "2026-08-22"
@@ -1622,9 +2772,9 @@
     "id": "nb-nile-before-and-after",
     "slug": "nile-before-and-after",
     "kind": "notebook",
-    "title": "The Nile carried 22% less water after 1898",
-    "question": "How different are Nile flows before and after 1898?",
-    "summary": "The Nile at Aswan averaged 1,098 (10⁸ m³) a year before 1898 and 853 after, a drop of 22%.",
+    "title": "After 1898 the Nile carried 22% less water, and 99 years in 100 fell below the old median",
+    "question": "How different was the Nile before and after 1898?",
+    "summary": "The Nile at Aswan averaged 1,098 (10⁸ m³) a year before 1898 and 853 after, a drop of 22% that arrived as a step, not a slide. From 1898 on, 98.6% of years fell below the earlier era's median.",
     "family": "nile",
     "entry": "before-and-after.eda.md",
     "query": "r",
@@ -1632,7 +2782,20 @@
     "analysis": "Comparison",
     "findings": [
       {
-        "text": "Mean annual volume before 1898 was {value} ×10^8 m³.",
+        "text": "The {value} years before 1898 averaged",
+        "format": ".0f",
+        "op": "count",
+        "field": "volume",
+        "where": [
+          [
+            "year",
+            "lt",
+            1898
+          ]
+        ]
+      },
+      {
+        "text": "The 27 years before 1898 averaged {value} (10⁸ m³) a year.",
         "format": ".2f",
         "op": "mean",
         "field": "volume",
@@ -1645,7 +2808,20 @@
         ]
       },
       {
-        "text": "Mean annual volume from 1898 onward was {value} ×10^8 m³.",
+        "text": "The {value} years from 1898 on averaged",
+        "format": ".0f",
+        "op": "count",
+        "field": "volume",
+        "where": [
+          [
+            "year",
+            "ge",
+            1898
+          ]
+        ]
+      },
+      {
+        "text": "The 73 years from 1898 on averaged {value}, a drop of 244",
         "format": ".2f",
         "op": "mean",
         "field": "volume",
@@ -1654,6 +2830,138 @@
             "year",
             "ge",
             1898
+          ]
+        ]
+      },
+      {
+        "text": "The median year before 1898 carried {value}; from 1898 on",
+        "format": ".0f",
+        "op": "median",
+        "field": "volume",
+        "where": [
+          [
+            "year",
+            "lt",
+            1898
+          ]
+        ]
+      },
+      {
+        "text": "from 1898 on, {value}% of years fell below that figure.",
+        "format": ".1f",
+        "op": "share",
+        "field": "volume",
+        "where": [
+          [
+            "year",
+            "ge",
+            1898
+          ]
+        ],
+        "condition": [
+          [
+            "volume",
+            "lt",
+            1140
+          ]
+        ]
+      },
+      {
+        "text": "Run it the other way and {value}% of pre-1898 years sat above the later era's median",
+        "format": ".1f",
+        "op": "share",
+        "field": "volume",
+        "where": [
+          [
+            "year",
+            "lt",
+            1898
+          ]
+        ],
+        "condition": [
+          [
+            "volume",
+            "gt",
+            845
+          ]
+        ]
+      },
+      {
+        "text": "sat above the later era's median of {value}.",
+        "format": ".0f",
+        "op": "median",
+        "field": "volume",
+        "where": [
+          [
+            "year",
+            "ge",
+            1898
+          ]
+        ]
+      },
+      {
+        "text": "The driest year before 1898 carried {value}, and",
+        "format": ".0f",
+        "op": "min",
+        "field": "volume",
+        "where": [
+          [
+            "year",
+            "lt",
+            1898
+          ]
+        ]
+      },
+      {
+        "text": "and {value}% of later years came in below it.",
+        "format": ".1f",
+        "op": "share",
+        "field": "volume",
+        "where": [
+          [
+            "year",
+            "ge",
+            1898
+          ]
+        ],
+        "condition": [
+          [
+            "volume",
+            "lt",
+            799
+          ]
+        ]
+      },
+      {
+        "text": "The wettest year from 1898 on carried {value}, and",
+        "format": ".0f",
+        "op": "max",
+        "field": "volume",
+        "where": [
+          [
+            "year",
+            "ge",
+            1898
+          ]
+        ]
+      },
+      {
+        "text": "and {value}% of earlier years came in above it.",
+        "format": ".1f",
+        "op": "share",
+        "field": "volume",
+        "where": [
+          [
+            "year",
+            "lt",
+            1898
+          ]
+        ],
+        "condition": [
+          [
+            "volume",
+            "gt",
+            1170
           ]
         ]
       }
@@ -1695,9 +3003,9 @@
     "id": "nb-stackloss-leave-one-out",
     "slug": "stackloss-leave-one-out",
     "kind": "notebook",
-    "title": "One operating day can change a small-sample fitted slope",
-    "question": "How much does the airflow–loss slope change when each observation is omitted in turn?",
-    "summary": "With only 21 operating days, leaving out one day moves the fitted airflow slope from 0.95 to 1.10.",
+    "title": "Drop one day and the airflow slope moves from 0.95 to 1.10",
+    "question": "How much does one operating day change the fitted airflow slope?",
+    "summary": "With 21 operating days, the airflow slope is 1.02; without day 21 it is 1.10, and without day 1 it is 0.95. The other 19 days each move it by less than 0.03.",
     "family": "stackloss",
     "entry": "leave-one-out.eda.md",
     "query": "r",
@@ -1705,16 +3013,66 @@
     "analysis": "Error and uncertainty",
     "findings": [
       {
-        "text": "The smallest leave-one-out airflow slope was {value} loss units per airflow unit.",
+        "text": "With all 21 days, the fit gains {value} units of loss per unit of airflow.",
+        "format": ".4f",
+        "op": "mean",
+        "field": "full_slope"
+      },
+      {
+        "text": "Without day 21, the slope rises to {value} units of loss per unit of airflow.",
+        "format": ".4f",
+        "op": "max",
+        "field": "loo_slope"
+      },
+      {
+        "text": "Without day 1, the slope falls to {value} units of loss per unit of airflow.",
         "format": ".4f",
         "op": "min",
         "field": "loo_slope"
       },
       {
-        "text": "The largest leave-one-out airflow slope was {value} loss units per airflow unit.",
-        "format": ".4f",
-        "op": "max",
-        "field": "loo_slope"
+        "text": "its residual, the largest in the sample, was {value}.",
+        "format": ".2f",
+        "op": "min",
+        "field": "residual"
+      },
+      {
+        "text": "{value} of the 21 days move the slope by less than 0.03.",
+        "format": ".0f",
+        "op": "count",
+        "field": "slope_shift",
+        "where": [
+          [
+            "slope_shift",
+            "gt",
+            -0.03
+          ],
+          [
+            "slope_shift",
+            "lt",
+            0.03
+          ]
+        ]
+      },
+      {
+        "text": "Residual and slope shift had correlation {value}.",
+        "format": ".3f",
+        "op": "corr",
+        "field": "residual",
+        "other": "slope_shift"
+      },
+      {
+        "text": "Day 1, at the top right, lost {value} more than the line predicts.",
+        "format": ".1f",
+        "op": "mean",
+        "field": "residual",
+        "where": [
+          [
+            "sequence",
+            "eq",
+            1
+          ]
+        ]
       }
     ],
     "published": "2026-08-26"
@@ -1735,7 +3093,8 @@
     "series": {
       "id": "flights-january",
       "title": "A month of New York flights",
-      "part": 3
+      "part": 3,
+      "label": "Airlines"
     },
     "findings": [
       {
@@ -1771,9 +3130,9 @@
     "id": "nb-sunspots-cycles",
     "slug": "sunspots-cycles",
     "kind": "notebook",
-    "title": "Sunspot peaks range from under 50 to 190",
-    "question": "How much does the height of the solar cycle vary from one peak to the next?",
-    "summary": "Solar cycles peak every eleven years or so, but the peaks range from under 50 sunspots to 190.",
+    "title": "The Sun peaks about every eleven years, at anything from 46 to 190",
+    "question": "How much does one solar maximum resemble the next?",
+    "summary": "Three centuries of annual sunspot numbers keep an eleven-year beat, but the peaks range from 46 in 1816 to 190 in 1957. The years 1950 to 1999 averaged 73 against 40 for 1800 to 1849, the busiest half-century in the record.",
     "family": "sunspots",
     "entry": "cycles.eda.md",
     "query": "r",
@@ -1781,16 +3140,126 @@
     "analysis": "Trend",
     "findings": [
       {
-        "text": "The largest annual sunspot number is {value}.",
+        "text": "The tallest, in 1957, reached {value}",
         "format": ".1f",
         "op": "max",
         "field": "activity"
       },
       {
-        "text": "The median annual sunspot number is {value}.",
+        "text": "reached only {value}, barely above the median year",
+        "format": ".1f",
+        "op": "max",
+        "field": "activity",
+        "where": [
+          [
+            "year",
+            "ge",
+            1810
+          ],
+          [
+            "year",
+            "le",
+            1822
+          ]
+        ]
+      },
+      {
+        "text": "barely above the median year of {value}.",
         "format": ".1f",
         "op": "median",
         "field": "activity"
+      },
+      {
+        "text": "its years averaged {value}, against",
+        "format": ".1f",
+        "op": "mean",
+        "field": "activity",
+        "where": [
+          [
+            "era",
+            "eq",
+            "1950–1999"
+          ]
+        ]
+      },
+      {
+        "text": "against {value} for 1800–1849.",
+        "format": ".1f",
+        "op": "mean",
+        "field": "activity",
+        "where": [
+          [
+            "era",
+            "eq",
+            "1800–1849"
+          ]
+        ]
+      },
+      {
+        "text": "In 1800–1849, {value}% of years had a sunspot number under 20",
+        "format": ".1f",
+        "op": "share",
+        "field": "activity",
+        "where": [
+          [
+            "era",
+            "eq",
+            "1800–1849"
+          ]
+        ],
+        "condition": [
+          [
+            "activity",
+            "lt",
+            20
+          ]
+        ]
+      },
+      {
+        "text": "in 1950–1999, {value}% did.",
+        "format": ".1f",
+        "op": "share",
+        "field": "activity",
+        "where": [
+          [
+            "era",
+            "eq",
+            "1950–1999"
+          ]
+        ],
+        "condition": [
+          [
+            "activity",
+            "lt",
+            20
+          ]
+        ]
+      },
+      {
+        "text": "{value}% of years had a sunspot number under 20, and",
+        "format": ".1f",
+        "op": "share",
+        "field": "activity",
+        "condition": [
+          [
+            "activity",
+            "lt",
+            20
+          ]
+        ]
+      },
+      {
+        "text": "and {value}% reached 100 or more.",
+        "format": ".1f",
+        "op": "share",
+        "field": "activity",
+        "condition": [
+          [
+            "activity",
+            "ge",
+            100
+          ]
+        ]
       }
     ],
     "published": "2026-08-28"
@@ -1880,7 +3349,7 @@
     "kind": "notebook",
     "title": "Measles nearly vanished within a decade of the vaccine",
     "question": "What happened to measles in the United States after 1963?",
-    "summary": "Before the vaccine, a state-year averaged over 300 cases per 100,000. By the 1970s the average was 17, a fall of about 95% in under a decade.",
+    "summary": "Before the vaccine, a state-year averaged over 300 measles cases per 100,000. By the 1970s the average was 17, by the 1980s 2, and in the 2000s most state-years reported none, a fall that hit every state in the same few years.",
     "family": "measles",
     "entry": "vaccine.eda.md",
     "query": "measles",
@@ -1906,7 +3375,7 @@
         ]
       },
       {
-        "text": "In the 1970s, it was {value}.",
+        "text": "In the 1970s, it was {value}",
         "format": ".1f",
         "op": "mean",
         "field": "Rate",
@@ -1920,6 +3389,145 @@
             "Year",
             "le",
             1979
+          ]
+        ]
+      },
+      {
+        "text": "and in the 1980s {value}.",
+        "format": ".1f",
+        "op": "mean",
+        "field": "Rate",
+        "where": [
+          [
+            "Year",
+            "ge",
+            1980
+          ],
+          [
+            "Year",
+            "le",
+            1989
+          ]
+        ]
+      },
+      {
+        "text": "California's 1990 rate, {value} per 100,000, was the highest of that year.",
+        "format": ".2f",
+        "op": "max",
+        "field": "Rate",
+        "where": [
+          [
+            "Year",
+            "eq",
+            1990
+          ]
+        ]
+      },
+      {
+        "text": "Before 1963, {value}% of state-years from 1950 on reported more than 100 cases per 100,000.",
+        "format": ".1f",
+        "op": "share",
+        "field": "Rate",
+        "where": [
+          [
+            "Year",
+            "ge",
+            1950
+          ],
+          [
+            "Year",
+            "le",
+            1962
+          ],
+          [
+            "Rate",
+            "ge",
+            0
+          ]
+        ],
+        "condition": [
+          [
+            "Rate",
+            "gt",
+            100
+          ]
+        ]
+      },
+      {
+        "text": "In the 1970s, {value}% did.",
+        "format": ".1f",
+        "op": "share",
+        "field": "Rate",
+        "where": [
+          [
+            "Year",
+            "ge",
+            1970
+          ],
+          [
+            "Year",
+            "le",
+            1979
+          ],
+          [
+            "Rate",
+            "ge",
+            0
+          ]
+        ],
+        "condition": [
+          [
+            "Rate",
+            "gt",
+            100
+          ]
+        ]
+      },
+      {
+        "text": "From 2000 to 2012, the average state-year reported {value} cases per 100,000",
+        "format": ".2f",
+        "op": "mean",
+        "field": "Rate",
+        "where": [
+          [
+            "Year",
+            "ge",
+            2000
+          ],
+          [
+            "Year",
+            "le",
+            2012
+          ]
+        ]
+      },
+      {
+        "text": "and {value}% of state-years reported none at all.",
+        "format": ".1f",
+        "op": "share",
+        "field": "Rate",
+        "where": [
+          [
+            "Year",
+            "ge",
+            2000
+          ],
+          [
+            "Year",
+            "le",
+            2012
+          ],
+          [
+            "Rate",
+            "ge",
+            0
+          ]
+        ],
+        "condition": [
+          [
+            "Rate",
+            "eq",
+            0
           ]
         ]
       }
@@ -2037,7 +3645,7 @@
     "analysis": "Trend",
     "findings": [
       {
-        "text": "Netflix's highest opening price in the sample was ${value}.",
+        "text": "Netflix's highest opening price in the sample was ${value}",
         "format": ".2f",
         "op": "max",
         "field": "Open",
@@ -2050,7 +3658,7 @@
         ]
       },
       {
-        "text": "IBM never opened above ${value}.",
+        "text": "IBM never opened above ${value}",
         "format": ".2f",
         "op": "max",
         "field": "Open",
@@ -2059,6 +3667,98 @@
             "Company",
             "eq",
             "International Business Machines"
+          ]
+        ]
+      },
+      {
+        "text": "Netflix's lowest open in the window was ${value}",
+        "format": ".2f",
+        "op": "min",
+        "field": "Open",
+        "where": [
+          [
+            "Company",
+            "eq",
+            "Netflix"
+          ],
+          [
+            "Date",
+            "ge",
+            "2021-11-01"
+          ],
+          [
+            "Date",
+            "le",
+            "2022-12-31"
+          ]
+        ]
+      },
+      {
+        "text": "Tesla's lowest was ${value}",
+        "format": ".2f",
+        "op": "min",
+        "field": "Open",
+        "where": [
+          [
+            "Company",
+            "eq",
+            "Tesla"
+          ],
+          [
+            "Date",
+            "ge",
+            "2021-11-01"
+          ],
+          [
+            "Date",
+            "le",
+            "2022-12-31"
+          ]
+        ]
+      },
+      {
+        "text": "Microsoft's lowest was ${value}",
+        "format": ".2f",
+        "op": "min",
+        "field": "Open",
+        "where": [
+          [
+            "Company",
+            "eq",
+            "Microsoft"
+          ],
+          [
+            "Date",
+            "ge",
+            "2021-11-01"
+          ],
+          [
+            "Date",
+            "le",
+            "2022-12-31"
+          ]
+        ]
+      },
+      {
+        "text": "Apple's ${value}.",
+        "format": ".2f",
+        "op": "min",
+        "field": "Open",
+        "where": [
+          [
+            "Company",
+            "eq",
+            "Apple"
+          ],
+          [
+            "Date",
+            "ge",
+            "2021-11-01"
+          ],
+          [
+            "Date",
+            "le",
+            "2022-12-31"
           ]
         ]
       }
@@ -2079,11 +3779,17 @@
     "analysis": "Comparison",
     "findings": [
       {
-        "text": "Flipper length and body mass had correlation {value}.",
+        "text": "flipper length and body mass had correlation {value}",
         "format": ".3f",
         "op": "corr",
         "field": "flipper_length_mm",
         "other": "body_mass_g"
+      },
+      {
+        "text": "The heaviest bird weighed {value} g",
+        "format": ",.0f",
+        "op": "max",
+        "field": "body_mass_g"
       },
       {
         "text": "Gentoo penguins averaged {value} g.",
@@ -2099,7 +3805,7 @@
         ]
       },
       {
-        "text": "Adélie penguins averaged {value} g.",
+        "text": "Adélie penguins averaged {value} g",
         "format": ",.0f",
         "op": "mean",
         "field": "body_mass_g",
@@ -2108,6 +3814,19 @@
             "species",
             "eq",
             "Adelie"
+          ]
+        ]
+      },
+      {
+        "text": "and Chinstrap penguins averaged {value} g",
+        "format": ",.0f",
+        "op": "mean",
+        "field": "body_mass_g",
+        "where": [
+          [
+            "species",
+            "eq",
+            "Chinstrap"
           ]
         ]
       }
@@ -2197,9 +3916,9 @@
     "id": "nb-danish-rate-spread",
     "slug": "danish-rate-spread",
     "kind": "notebook",
-    "title": "Two interest-rate lines become one historical spread",
-    "question": "How wide was the gap between Danish bond and deposit rates?",
-    "summary": "The gap between Danish bond and deposit rates ranged from 2.5 to 10.5 percentage points between 1974 and 1987.",
+    "title": "Danish bonds paid 2.5 to 10.5 points more than deposits",
+    "question": "How much more did a Danish bond pay than a bank deposit?",
+    "summary": "From 1974 to 1987 Danish bonds out-yielded bank deposits in every quarter, by 6.6 points on average and 10.5 at the 1978 peak. After 1981 the typical gap narrowed from 7.5 points to 5.",
     "family": "danish",
     "entry": "rate-spread.eda.md",
     "query": "r",
@@ -2207,16 +3926,79 @@
     "analysis": "Comparison",
     "findings": [
       {
-        "text": "The smallest recorded bond-minus-deposit spread was {value} in source rate fractions.",
-        "format": ".4f",
-        "op": "min",
-        "field": "spread"
+        "text": "by {value} points on average",
+        "format": ".2f",
+        "op": "mean",
+        "field": "spread_pct"
       },
       {
-        "text": "The largest recorded spread was {value} in source rate fractions.",
-        "format": ".4f",
+        "text": "The bond rate peaked at {value}% in the second quarter of 1982.",
+        "format": ".2f",
         "op": "max",
-        "field": "spread"
+        "field": "ibo_pct"
+      },
+      {
+        "text": "The deposit rate peaked at {value}% in the second quarter of 1980.",
+        "format": ".2f",
+        "op": "max",
+        "field": "ide_pct"
+      },
+      {
+        "text": "the mean bond rate was {value}%",
+        "format": ".2f",
+        "op": "mean",
+        "field": "ibo_pct"
+      },
+      {
+        "text": "the mean deposit rate was {value}%.",
+        "format": ".2f",
+        "op": "mean",
+        "field": "ide_pct"
+      },
+      {
+        "text": "The spread peaked at {value} points in the last quarter of 1978",
+        "format": ".2f",
+        "op": "max",
+        "field": "spread_pct"
+      },
+      {
+        "text": "fell to {value} points in the first quarter of 1986.",
+        "format": ".2f",
+        "op": "min",
+        "field": "spread_pct"
+      },
+      {
+        "text": "The median spread from 1974 to 1980 was {value} points",
+        "format": ".2f",
+        "op": "median",
+        "field": "spread_pct",
+        "where": [
+          [
+            "era",
+            "eq",
+            "1974–1980"
+          ]
+        ]
+      },
+      {
+        "text": "from 1981 to 1987 it was {value} points.",
+        "format": ".2f",
+        "op": "median",
+        "field": "spread_pct",
+        "where": [
+          [
+            "era",
+            "eq",
+            "1981–1987"
+          ]
+        ]
+      },
+      {
+        "text": "The deposit rate rose and fell with the bond rate (correlation {value})",
+        "format": ".3f",
+        "op": "corr",
+        "field": "ibo_pct",
+        "other": "ide_pct"
       }
     ],
     "published": "2026-09-07"
@@ -2254,26 +4036,66 @@
     "id": "nb-elnino-annual-range",
     "slug": "elnino-annual-range",
     "kind": "notebook",
-    "title": "The annual mean hides a 6 °C swing inside each year",
-    "question": "Do years with high means also have unusually wide within-year temperature ranges?",
-    "summary": "A year's mean sea-surface temperature hides a gap of about 6 °C between its warmest and coolest months.",
+    "title": "The warmest year off Peru had the narrowest seasonal swing",
+    "question": "Do hot years come with wider swings between their warm and cool months?",
+    "summary": "A year off Peru swings about 6 °C between its warmest and coolest months whatever its mean, and warmer years swing slightly less. 1997, the warmest year on record, had the narrowest swing, 3.47 °C; 1998, right after it, had the widest.",
     "family": "elnino",
     "entry": "annual-range.eda.md",
     "query": "annual",
     "industry": "Climate",
-    "analysis": "Distribution",
+    "analysis": "Relationship",
     "findings": [
       {
-        "text": "The average within-year observed monthly range was {value} °C.",
+        "text": "The average swing was {value} °C.",
         "format": ".2f",
         "op": "mean",
         "field": "range"
       },
       {
-        "text": "The largest within-year observed monthly range was {value} °C.",
+        "text": "The widest was {value} °C, in 1998",
         "format": ".2f",
         "op": "max",
         "field": "range"
+      },
+      {
+        "text": "and the narrowest {value} °C, in 1997",
+        "format": ".2f",
+        "op": "min",
+        "field": "range"
+      },
+      {
+        "text": "the correlation between a year's mean and its swing was {value}.",
+        "format": ".3f",
+        "op": "corr",
+        "field": "mean",
+        "other": "range"
+      },
+      {
+        "text": "their correlation was {value}.",
+        "format": ".3f",
+        "op": "corr",
+        "field": "low",
+        "other": "high"
+      },
+      {
+        "text": "Its correlation with the coolest month was {value}",
+        "format": ".3f",
+        "op": "corr",
+        "field": "mean",
+        "other": "low"
+      },
+      {
+        "text": "against {value} with the warmest.",
+        "format": ".3f",
+        "op": "corr",
+        "field": "mean",
+        "other": "high"
+      },
+      {
+        "text": "Every year has all {value} months",
+        "format": ".0f",
+        "op": "min",
+        "field": "months"
       }
     ],
     "published": "2026-09-09"
@@ -2311,9 +4133,9 @@
     "id": "nb-iris-pooled-versus-grouped",
     "slug": "iris-pooled-versus-grouped",
     "kind": "notebook",
-    "title": "Pooled, iris sepals look unrelated; within a species they move together",
+    "title": "Pooled, iris sepals look unrelated; within each species they grow together",
     "question": "Does sepal width rise with sepal length?",
-    "summary": "Pool all three species and sepal length and width look unrelated (r = −0.12). Within setosa they rise together (r = 0.74).",
+    "summary": "Pool all 150 irises and sepal length and width look unrelated (r = −0.12). Within setosa they rise together (r = 0.74), and so do versicolor and virginica; the species differ in the opposite direction.",
     "family": "iris",
     "entry": "pooled-versus-grouped.eda.md",
     "query": "r",
@@ -2321,7 +4143,14 @@
     "analysis": "Relationship",
     "findings": [
       {
-        "text": "The pooled sepal length–width correlation was {value}.",
+        "text": "Sepal length and sepal width had correlation {value} across all 150 flowers.",
+        "format": ".3f",
+        "op": "corr",
+        "field": "sepal_length",
+        "other": "sepal_width"
+      },
+      {
+        "text": "The pooled correlation was {value}",
         "format": ".3f",
         "op": "corr",
         "field": "sepal_length",
@@ -2340,6 +4169,106 @@
             "setosa"
           ]
         ]
+      },
+      {
+        "text": "within setosa it was {value}.",
+        "format": ".3f",
+        "op": "corr",
+        "field": "sepal_length",
+        "other": "sepal_width",
+        "where": [
+          [
+            "species",
+            "eq",
+            "setosa"
+          ]
+        ]
+      },
+      {
+        "text": "Within versicolor it was {value}",
+        "format": ".3f",
+        "op": "corr",
+        "field": "sepal_length",
+        "other": "sepal_width",
+        "where": [
+          [
+            "species",
+            "eq",
+            "versicolor"
+          ]
+        ]
+      },
+      {
+        "text": "and within virginica {value}.",
+        "format": ".3f",
+        "op": "corr",
+        "field": "sepal_length",
+        "other": "sepal_width",
+        "where": [
+          [
+            "species",
+            "eq",
+            "virginica"
+          ]
+        ]
+      },
+      {
+        "text": "Setosa's mean sepal width was {value} cm",
+        "format": ".2f",
+        "op": "mean",
+        "field": "sepal_width",
+        "where": [
+          [
+            "species",
+            "eq",
+            "setosa"
+          ]
+        ]
+      },
+      {
+        "text": "against {value} cm for versicolor",
+        "format": ".2f",
+        "op": "mean",
+        "field": "sepal_width",
+        "where": [
+          [
+            "species",
+            "eq",
+            "versicolor"
+          ]
+        ]
+      },
+      {
+        "text": "setosa's mean sepal length was {value} cm",
+        "format": ".2f",
+        "op": "mean",
+        "field": "sepal_length",
+        "where": [
+          [
+            "species",
+            "eq",
+            "setosa"
+          ]
+        ]
+      },
+      {
+        "text": "and virginica's {value} cm",
+        "format": ".2f",
+        "op": "mean",
+        "field": "sepal_length",
+        "where": [
+          [
+            "species",
+            "eq",
+            "virginica"
+          ]
+        ]
+      },
+      {
+        "text": "the mean sepal width of all 150 flowers was {value} cm.",
+        "format": ".2f",
+        "op": "mean",
+        "field": "sepal_width"
       }
     ],
     "published": "2026-09-11"
@@ -2360,7 +4289,8 @@
     "series": {
       "id": "beijing-2016",
       "title": "A year of Beijing air",
-      "part": 3
+      "part": 3,
+      "label": "Stations"
     },
     "findings": [
       {
@@ -2477,9 +4407,9 @@
     "id": "nb-wine-profile-scales",
     "slug": "wine-profile-scales",
     "kind": "notebook",
-    "title": "One wine assay reads in the thousands; another under two",
+    "title": "Proline reads in the thousands and hue under two, so each assay needs its own ruler",
     "question": "Why can't thirteen wine assays share one axis?",
-    "summary": "Proline reads up to 1,680 while hue stays under two. Put them on one axis and twelve assays flatten to nothing.",
+    "summary": "Proline runs to 1,680 while hue never reaches two, a ratio of 780 between the two assays' sums. Give each axis its own scale and both separate the cultivars; proline alone picks out cultivar 1 in 97% of cases.",
     "family": "wine",
     "entry": "profile-scales.eda.md",
     "query": "r",
@@ -2487,16 +4417,89 @@
     "analysis": "Comparison",
     "findings": [
       {
-        "text": "The maximum recorded proline value was {value} source units.",
+        "text": "The maximum recorded proline value was {value} mg/L.",
         "format": ".1f",
         "op": "max",
         "field": "proline"
       },
       {
-        "text": "The maximum recorded hue value was {value} source units.",
+        "text": "The maximum recorded hue value was {value}.",
         "format": ".3f",
         "op": "max",
         "field": "hue"
+      },
+      {
+        "text": "Summing proline over the wines gives {value} times the sum of hue.",
+        "format": ".0f",
+        "op": "ratio_sums",
+        "field": "proline",
+        "other": "hue"
+      },
+      {
+        "text": "Mean proline in Cultivar 1 was {value} mg/L.",
+        "format": ",.0f",
+        "op": "mean",
+        "field": "proline",
+        "where": [
+          [
+            "cultivar",
+            "eq",
+            "Cultivar 1"
+          ]
+        ]
+      },
+      {
+        "text": "Mean proline in Cultivar 2 was {value} mg/L.",
+        "format": ",.0f",
+        "op": "mean",
+        "field": "proline",
+        "where": [
+          [
+            "cultivar",
+            "eq",
+            "Cultivar 2"
+          ]
+        ]
+      },
+      {
+        "text": "{value}% of cultivar 1 wines are at or above 760 mg/L",
+        "format": ".1f",
+        "op": "share",
+        "field": "proline",
+        "where": [
+          [
+            "cultivar",
+            "eq",
+            "Cultivar 1"
+          ]
+        ],
+        "condition": [
+          [
+            "proline",
+            "ge",
+            760
+          ]
+        ]
+      },
+      {
+        "text": "against {value}% of the others.",
+        "format": ".1f",
+        "op": "share",
+        "field": "proline",
+        "where": [
+          [
+            "cultivar",
+            "ne",
+            "Cultivar 1"
+          ]
+        ],
+        "condition": [
+          [
+            "proline",
+            "ge",
+            760
+          ]
+        ]
       }
     ],
     "published": "2026-09-15"
@@ -2505,9 +4508,9 @@
     "id": "nb-longley-trending-levels",
     "slug": "longley-trending-levels",
     "kind": "notebook",
-    "title": "A small employment benchmark contains several rising trends",
-    "question": "How similar are employment, population, and nominal output after rebasing their starting values?",
-    "summary": "U.S. employment, population, and GNP all rose from 1947 to 1962, so their levels correlate almost perfectly (r = 0.98). Shared trends do that.",
+    "title": "Anything that rose in the 1950s correlates with anything else that rose",
+    "question": "Does employment track output, or do both just track time?",
+    "summary": "In levels, US employment and nominal GNP from 1947 to 1962 correlate at 0.98, but so do employment and the price level. In year-on-year changes, the employment–output link survives at 0.89.",
     "family": "longley",
     "entry": "trending-levels.eda.md",
     "query": "r",
@@ -2515,18 +4518,69 @@
     "analysis": "Trend",
     "findings": [
       {
-        "text": "Employment and nominal GNP in levels had correlation {value}.",
+        "text": "nominal GNP reached {value} by 1962",
+        "format": ".2f",
+        "op": "max",
+        "field": "gnp_index"
+      },
+      {
+        "text": "population reached {value}",
+        "format": ".2f",
+        "op": "max",
+        "field": "population_index"
+      },
+      {
+        "text": "employment reached {value}.",
+        "format": ".2f",
+        "op": "max",
+        "field": "employment_index"
+      },
+      {
+        "text": "employment and nominal GNP in levels had correlation {value}.",
         "format": ".3f",
         "op": "corr",
         "field": "employment",
         "other": "gnp"
       },
       {
-        "text": "Their valid annual changes had correlation {value}.",
+        "text": "employment and the GNP deflator had correlation {value}",
+        "format": ".3f",
+        "op": "corr",
+        "field": "employment",
+        "other": "deflator"
+      },
+      {
+        "text": "the annual changes had correlation {value}.",
         "format": ".3f",
         "op": "corr",
         "field": "employment_change",
         "other": "gnp_change"
+      },
+      {
+        "text": "Employment fell in {value} of the fifteen years",
+        "format": ".0f",
+        "op": "count",
+        "field": "employment_change",
+        "where": [
+          [
+            "employment_change",
+            "lt",
+            0
+          ]
+        ]
+      },
+      {
+        "text": "GNP fell in {value} of them",
+        "format": ".0f",
+        "op": "count",
+        "field": "gnp_change",
+        "where": [
+          [
+            "gnp_change",
+            "lt",
+            0
+          ]
+        ]
       }
     ],
     "published": "2026-09-16"
@@ -2546,7 +4600,8 @@
     "series": {
       "id": "flights-january",
       "title": "A month of New York flights",
-      "part": 4
+      "part": 4,
+      "label": "Weather"
     },
     "findings": [
       {
@@ -2587,6 +4642,26 @@
             5
           ]
         ]
+      },
+      {
+        "text": "With visibility of five miles or more, the mean departure delay was {value} minutes.",
+        "format": ".1f",
+        "op": "mean",
+        "field": "dep_delay",
+        "where": [
+          [
+            "weather.visib",
+            "ge",
+            5
+          ]
+        ]
+      },
+      {
+        "text": "Wind speed and departure delay had correlation {value}.",
+        "format": ".3f",
+        "op": "corr",
+        "field": "weather.wind_speed",
+        "other": "dep_delay"
       }
     ],
     "published": "2026-09-17"
@@ -2685,9 +4760,9 @@
     "id": "nb-co2-seasonal-centering",
     "slug": "co2-seasonal-centering",
     "kind": "notebook",
-    "title": "Remove the annual level to see the CO₂ calendar",
-    "question": "Which calendar months sit above or below their own year’s measured-week mean?",
-    "summary": "Subtract each year's mean and the CO₂ calendar appears: highest in May, lowest in September, every year.",
+    "title": "CO₂ breathes: May sits 2.8 ppm above its year, September 2.8 below",
+    "question": "Why does the CO₂ curve wobble, and is the wobble changing?",
+    "summary": "Subtract each year's mean and the calendar appears: May weeks run 2.8 ppm above their year, September weeks 2.8 below, every year without exception. The swing widened from 5.2 ppm in the 1960s to 6.1 in the 1990s.",
     "family": "co2",
     "entry": "seasonal-centering.eda.md",
     "query": "r",
@@ -2695,7 +4770,7 @@
     "analysis": "Seasonality",
     "findings": [
       {
-        "text": "The mean centered value for May weeks was {value} ppm.",
+        "text": "May weeks averaged {value} ppm above their year's mean",
         "format": ".2f",
         "op": "mean",
         "field": "residual",
@@ -2708,7 +4783,7 @@
         ]
       },
       {
-        "text": "The mean centered value for September weeks was {value} ppm.",
+        "text": "and September weeks averaged {value} ppm.",
         "format": ".2f",
         "op": "mean",
         "field": "residual",
@@ -2719,6 +4794,126 @@
             9
           ]
         ]
+      },
+      {
+        "text": "In the 1960s, May weeks averaged {value} ppm above their year",
+        "format": ".2f",
+        "op": "mean",
+        "field": "residual",
+        "where": [
+          [
+            "decade",
+            "eq",
+            "1960s"
+          ],
+          [
+            "month",
+            "eq",
+            5
+          ]
+        ]
+      },
+      {
+        "text": "and September weeks {value} ppm",
+        "format": ".2f",
+        "op": "mean",
+        "field": "residual",
+        "where": [
+          [
+            "decade",
+            "eq",
+            "1960s"
+          ],
+          [
+            "month",
+            "eq",
+            9
+          ]
+        ]
+      },
+      {
+        "text": "In the 1990s, May averaged {value} ppm",
+        "format": ".2f",
+        "op": "mean",
+        "field": "residual",
+        "where": [
+          [
+            "decade",
+            "eq",
+            "1990s"
+          ],
+          [
+            "month",
+            "eq",
+            5
+          ]
+        ]
+      },
+      {
+        "text": "and September {value} ppm",
+        "format": ".2f",
+        "op": "mean",
+        "field": "residual",
+        "where": [
+          [
+            "decade",
+            "eq",
+            "1990s"
+          ],
+          [
+            "month",
+            "eq",
+            9
+          ]
+        ]
+      },
+      {
+        "text": "the weekly reading ran from {value} ppm, in September 1990",
+        "format": ".1f",
+        "op": "min",
+        "field": "co2",
+        "where": [
+          [
+            "date",
+            "ge",
+            "1990-01-01"
+          ],
+          [
+            "date",
+            "le",
+            "1991-12-31"
+          ]
+        ]
+      },
+      {
+        "text": "to {value} ppm, in May 1991",
+        "format": ".1f",
+        "op": "max",
+        "field": "co2",
+        "where": [
+          [
+            "date",
+            "ge",
+            "1990-01-01"
+          ],
+          [
+            "date",
+            "le",
+            "1991-12-31"
+          ]
+        ]
+      },
+      {
+        "text": "The widest departures are {value} ppm above the year's mean",
+        "format": ".2f",
+        "op": "max",
+        "field": "residual"
+      },
+      {
+        "text": "in May 1991, and {value} ppm, in September 1982",
+        "format": ".2f",
+        "op": "min",
+        "field": "residual"
       }
     ],
     "published": "2026-09-21"
@@ -2960,9 +5155,9 @@
     "id": "nb-stackloss-operating-conditions",
     "slug": "stackloss-operating-conditions",
     "kind": "notebook",
-    "title": "Airflow tracks ammonia loss more closely than any other setting",
+    "title": "Airflow explains most of the ammonia lost up the stack",
     "question": "Which plant settings move with the ammonia lost up the stack?",
-    "summary": "Of the plant's settings, airflow tracks the ammonia lost most closely (r = 0.92), with cooling-water temperature close behind (r = 0.88).",
+    "summary": "Across 21 operating days, airflow tracks the ammonia lost most closely (r = 0.92), with cooling-water temperature close behind only because it rises with airflow. Days at or above median airflow lost 2.1% of their ammonia; days below lost 0.9%.",
     "family": "stackloss",
     "entry": "operating-conditions.eda.md",
     "query": "r",
@@ -2970,18 +5165,64 @@
     "analysis": "Relationship",
     "findings": [
       {
-        "text": "Airflow and source-scaled stack loss had correlation {value}.",
+        "text": "airflow and stack loss had correlation {value}",
         "format": ".3f",
         "op": "corr",
         "field": "airflow",
         "other": "stackloss"
       },
       {
-        "text": "Cooling-water temperature and source-scaled stack loss had correlation {value}.",
+        "text": "Cooling-water temperature and stack loss had correlation {value}.",
         "format": ".3f",
         "op": "corr",
         "field": "watertemp",
         "other": "stackloss"
+      },
+      {
+        "text": "airflow and cooling-water temperature had correlation {value}",
+        "format": ".3f",
+        "op": "corr",
+        "field": "airflow",
+        "other": "watertemp"
+      },
+      {
+        "text": "Acid concentration and stack loss had correlation {value}",
+        "format": ".3f",
+        "op": "corr",
+        "field": "acidconc",
+        "other": "stackloss"
+      },
+      {
+        "text": "On days at or above median airflow the plant lost {value}% of its ammonia",
+        "format": ".2f",
+        "op": "mean",
+        "field": "loss_pct",
+        "where": [
+          [
+            "air_band",
+            "eq",
+            "At/above median airflow"
+          ]
+        ]
+      },
+      {
+        "text": "on days below median airflow it lost {value}%.",
+        "format": ".2f",
+        "op": "mean",
+        "field": "loss_pct",
+        "where": [
+          [
+            "air_band",
+            "eq",
+            "Below median airflow"
+          ]
+        ]
+      },
+      {
+        "text": "Split the days at the median airflow of {value}.",
+        "format": ".0f",
+        "op": "median",
+        "field": "airflow"
       }
     ],
     "published": "2026-09-27"
@@ -3020,8 +5261,8 @@
     "slug": "engel-weighting",
     "kind": "notebook",
     "title": "Food took 64% of all income, but more of the typical household's",
-    "question": "Does the food share change when you weight by francs instead of households?",
-    "summary": "Pooled, food took 64% of all household income. The average household spent 66% of its own, because poorer households spend a larger share.",
+    "question": "What share of income went to food: 64% or 66%?",
+    "summary": "Pool every franc in the 1857 Engel survey and food took 63.5% of income; average the households and it took 65.6%. The gap is the richest quartile, which earned 42% of all income and had the lowest food share.",
     "family": "engel",
     "entry": "weighting.eda.md",
     "query": "bands",
@@ -3029,7 +5270,7 @@
     "analysis": "Part-to-whole",
     "findings": [
       {
-        "text": "Food expenditure divided by pooled income was {value}%.",
+        "text": "Pool every franc and food took {value}% of income.",
         "format": ".2f",
         "op": "ratio_sums",
         "field": "food_sum",
@@ -3037,11 +5278,43 @@
         "scale": 100
       },
       {
-        "text": "The household-count-weighted mean of the quartile household means was {value}%.",
+        "text": "the mean food share was {value}%.",
         "format": ".2f",
         "op": "weighted_mean",
         "field": "mean_share",
         "weight": "households"
+      },
+      {
+        "text": "In the poorest quartile the mean household share was {value}%",
+        "format": ".2f",
+        "op": "max",
+        "field": "mean_share"
+      },
+      {
+        "text": "in the richest it was {value}%",
+        "format": ".2f",
+        "op": "min",
+        "field": "mean_share"
+      },
+      {
+        "text": "the richest quartile's pooled share was {value}%.",
+        "format": ".2f",
+        "op": "min",
+        "field": "weighted_share"
+      },
+      {
+        "text": "The richest quartile earned {value}% of all income in the survey",
+        "format": ".2f",
+        "op": "top_share",
+        "field": "income_sum",
+        "k": 1
+      },
+      {
+        "text": "spent {value}% of all food francs.",
+        "format": ".2f",
+        "op": "top_share",
+        "field": "food_sum",
+        "k": 1
       }
     ],
     "published": "2026-09-29"
@@ -3093,9 +5366,9 @@
     "id": "nb-sunspots-smoothing-cost",
     "slug": "sunspots-smoothing-cost",
     "kind": "notebook",
-    "title": "What an eleven-year average removes from the sunspot record",
-    "question": "How different is annual activity from a centered eleven-observation mean?",
-    "summary": "An eleven-year moving average flattens the sunspot record; single years sit up to 102 above it and 91 below.",
+    "title": "An eleven-year average halves the solar peaks and misplaces the quiet years",
+    "question": "What does a smoothed sunspot curve throw away?",
+    "summary": "A centered eleven-year mean never rises above 96 in a record whose peak year reads 190, and it puts its own maximum at 1954, a year the Sun was almost blank. The typical year sits 30 away from its smoothed value.",
     "family": "sunspots",
     "entry": "smoothing-cost.eda.md",
     "query": "r",
@@ -3103,16 +5376,86 @@
     "analysis": "Trend",
     "findings": [
       {
-        "text": "The largest annual value above its centered mean was {value} sunspot-number units.",
+        "text": "The highest annual reading, {value} in 1957",
+        "format": ".1f",
+        "op": "max",
+        "field": "activity"
+      },
+      {
+        "text": "becomes a smoothed value of {value} at that year",
+        "format": ".1f",
+        "op": "max",
+        "field": "smooth11",
+        "where": [
+          [
+            "year",
+            "eq",
+            1957
+          ]
+        ]
+      },
+      {
+        "text": "the smoothed curve never rises above {value} anywhere in the record",
+        "format": ".1f",
+        "op": "max",
+        "field": "smooth11"
+      },
+      {
+        "text": "The largest departure above the average was {value}, in 1957",
         "format": ".2f",
         "op": "max",
         "field": "departure"
       },
       {
-        "text": "The largest annual value below its centered mean was {value} sunspot-number units.",
+        "text": "The largest below was {value}, in 1954",
         "format": ".2f",
         "op": "min",
         "field": "departure"
+      },
+      {
+        "text": "a year with a reading of {value} whose eleven-year window",
+        "format": ".1f",
+        "op": "max",
+        "field": "activity",
+        "where": [
+          [
+            "year",
+            "eq",
+            1954
+          ]
+        ]
+      },
+      {
+        "text": "the average year sits {value} from its eleven-year mean",
+        "format": ".2f",
+        "op": "mean",
+        "field": "abs_departure"
+      },
+      {
+        "text": "and {value}% of years sit more than 50 away",
+        "format": ".1f",
+        "op": "share",
+        "field": "abs_departure",
+        "where": [
+          [
+            "abs_departure",
+            "ge",
+            0
+          ]
+        ],
+        "condition": [
+          [
+            "abs_departure",
+            "gt",
+            50
+          ]
+        ]
+      },
+      {
+        "text": "For a series whose median year reads {value}",
+        "format": ".0f",
+        "op": "median",
+        "field": "activity"
       }
     ],
     "published": "2026-10-01"
@@ -3157,9 +5500,9 @@
     "id": "nb-strikes-production-context",
     "slug": "strikes-production-context",
     "kind": "notebook",
-    "title": "Strikes ran longer when production was below trend",
-    "question": "Do strikes last longer when industrial production is below trend?",
-    "summary": "Strikes that began when industrial production was below trend lasted a median 38 days, against 25 when it was above.",
+    "title": "Strikes ran 13 days longer when production was below trend",
+    "question": "Do strikes last longer in a slump?",
+    "summary": "Among 62 US manufacturing strikes from 1968 to 1976, those that began with industrial production below trend lasted a median 38 days, against 25 when production was at or above trend. Two in five of the slump strikes ran past two months; one in nine of the others did.",
     "family": "strikes",
     "entry": "production-context.eda.md",
     "query": "r",
@@ -3167,7 +5510,40 @@
     "analysis": "Relationship",
     "findings": [
       {
-        "text": "Median duration at negative production deviations was {value} days.",
+        "text": "{value} strikes began with production below trend",
+        "format": ".0f",
+        "op": "count",
+        "field": "duration",
+        "where": [
+          [
+            "iprod",
+            "lt",
+            0
+          ]
+        ]
+      },
+      {
+        "text": "{value} with production at or above it.",
+        "format": ".0f",
+        "op": "count",
+        "field": "duration",
+        "where": [
+          [
+            "iprod",
+            "ge",
+            0
+          ]
+        ]
+      },
+      {
+        "text": "production deviation and duration had correlation {value}.",
+        "format": ".3f",
+        "op": "corr",
+        "field": "iprod",
+        "other": "duration"
+      },
+      {
+        "text": "Median duration at negative production deviations was {value} days",
         "format": ".2f",
         "op": "median",
         "field": "duration",
@@ -3180,7 +5556,7 @@
         ]
       },
       {
-        "text": "Median duration at nonnegative production deviations was {value} days.",
+        "text": "median duration at nonnegative production deviations was {value} days.",
         "format": ".2f",
         "op": "median",
         "field": "duration",
@@ -3189,6 +5565,72 @@
             "iprod",
             "ge",
             0
+          ]
+        ]
+      },
+      {
+        "text": "The means are further apart: {value} days",
+        "format": ".1f",
+        "op": "mean",
+        "field": "duration",
+        "where": [
+          [
+            "iprod",
+            "lt",
+            0
+          ]
+        ]
+      },
+      {
+        "text": "against {value}, because",
+        "format": ".1f",
+        "op": "mean",
+        "field": "duration",
+        "where": [
+          [
+            "iprod",
+            "ge",
+            0
+          ]
+        ]
+      },
+      {
+        "text": "{value}% of strikes that began below trend lasted more than 60 days",
+        "format": ".1f",
+        "op": "share",
+        "field": "duration",
+        "where": [
+          [
+            "iprod",
+            "lt",
+            0
+          ]
+        ],
+        "condition": [
+          [
+            "duration",
+            "gt",
+            60
+          ]
+        ]
+      },
+      {
+        "text": "against {value}% of strikes that began at or above trend.",
+        "format": ".1f",
+        "op": "share",
+        "field": "duration",
+        "where": [
+          [
+            "iprod",
+            "ge",
+            0
+          ]
+        ],
+        "condition": [
+          [
+            "duration",
+            "gt",
+            60
           ]
         ]
       }
@@ -3211,7 +5653,8 @@
     "series": {
       "id": "beijing-2016",
       "title": "A year of Beijing air",
-      "part": 4
+      "part": 4,
+      "label": "Month by month"
     },
     "findings": [
       {
@@ -3247,15 +5690,67 @@
     "id": "nb-iris-measurement-choice",
     "slug": "iris-measurement-choice",
     "kind": "notebook",
-    "title": "Petals separate iris species; sepals blur them",
+    "title": "Petal length tells the three irises apart; sepal width cannot",
     "question": "Which flower measurements tell the three iris species apart?",
-    "summary": "Petal length alone separates setosa (1.5 cm) from virginica (5.6 cm). Sepal measurements overlap far more.",
+    "summary": "A single cut on petal length names the species of 95% of the 150 irises; the best cut on sepal width manages 59%. Setosa's petals average 1.5 cm against virginica's 5.6 cm, with a centimeter of clear air between them.",
     "family": "iris",
     "entry": "measurement-choice.eda.md",
     "query": "r",
     "industry": "Biology",
     "analysis": "Comparison",
     "findings": [
+      {
+        "text": "a single cut on petal length names the species correctly for {value}% of the flowers",
+        "format": ".1f",
+        "op": "share",
+        "field": "petal_guess_ok",
+        "condition": [
+          [
+            "petal_guess_ok",
+            "eq",
+            1
+          ]
+        ]
+      },
+      {
+        "text": "the best cut on sepal width is right for {value}%.",
+        "format": ".1f",
+        "op": "share",
+        "field": "sepal_guess_ok",
+        "condition": [
+          [
+            "sepal_guess_ok",
+            "eq",
+            1
+          ]
+        ]
+      },
+      {
+        "text": "The petal-length rule names the species correctly for {value}% of the flowers.",
+        "format": ".1f",
+        "op": "share",
+        "field": "petal_guess_ok",
+        "condition": [
+          [
+            "petal_guess_ok",
+            "eq",
+            1
+          ]
+        ]
+      },
+      {
+        "text": "The best sepal-width rule names the species correctly for {value}% of the flowers.",
+        "format": ".1f",
+        "op": "share",
+        "field": "sepal_guess_ok",
+        "condition": [
+          [
+            "sepal_guess_ok",
+            "eq",
+            1
+          ]
+        ]
+      },
       {
         "text": "Mean petal length for setosa was {value} cm.",
         "format": ".3f",
@@ -3270,7 +5765,7 @@
         ]
       },
       {
-        "text": "Mean petal length for virginica was {value} cm.",
+        "text": "Mean petal length for virginica was {value} cm",
         "format": ".3f",
         "op": "mean",
         "field": "petal_length",
@@ -3279,6 +5774,84 @@
             "species",
             "eq",
             "virginica"
+          ]
+        ]
+      },
+      {
+        "text": "Versicolor's mean sepal width was {value} cm",
+        "format": ".2f",
+        "op": "mean",
+        "field": "sepal_width",
+        "where": [
+          [
+            "species",
+            "eq",
+            "versicolor"
+          ]
+        ]
+      },
+      {
+        "text": "and virginica's was {value} cm",
+        "format": ".2f",
+        "op": "mean",
+        "field": "sepal_width",
+        "where": [
+          [
+            "species",
+            "eq",
+            "virginica"
+          ]
+        ]
+      },
+      {
+        "text": "The longest setosa petal was {value} cm",
+        "format": ".1f",
+        "op": "max",
+        "field": "petal_length",
+        "where": [
+          [
+            "species",
+            "eq",
+            "setosa"
+          ]
+        ]
+      },
+      {
+        "text": "and the shortest versicolor petal {value} cm",
+        "format": ".1f",
+        "op": "min",
+        "field": "petal_length",
+        "where": [
+          [
+            "species",
+            "eq",
+            "versicolor"
+          ]
+        ]
+      },
+      {
+        "text": "The shortest virginica petal was {value} cm",
+        "format": ".1f",
+        "op": "min",
+        "field": "petal_length",
+        "where": [
+          [
+            "species",
+            "eq",
+            "virginica"
+          ]
+        ]
+      },
+      {
+        "text": "and the longest versicolor petal {value} cm",
+        "format": ".1f",
+        "op": "max",
+        "field": "petal_length",
+        "where": [
+          [
+            "species",
+            "eq",
+            "versicolor"
           ]
         ]
       }
@@ -3378,15 +5951,106 @@
     "id": "nb-ercot-clock-coverage",
     "slug": "ercot-clock-coverage",
     "kind": "notebook",
-    "title": "The clock-hour pattern depends on which days were supplied",
-    "question": "Do recurring UTC hours have similar signed and absolute errors within each month?",
-    "summary": "The hour-by-hour error pattern depends on which days are in each cell: some month-hour cells hold 31 hours and one holds a single hour.",
+    "title": "February's forecast missed six times January's at every hour of the clock",
+    "question": "Does the ERCOT day-ahead forecast have a bad time of day?",
+    "summary": "In January the forecast missed most in the Texas evening and least in the small hours, by about 1,150 against 600 MWh. February's storm week put nearly six times January's error into every clock hour, and March's five cells hold one hour each.",
     "family": "ercot",
     "entry": "clock-coverage.eda.md",
     "query": "clock",
     "industry": "Energy",
     "analysis": "Data quality",
     "findings": [
+      {
+        "text": "In January the clock-hour cells averaged {value} MWh of absolute error.",
+        "format": ",.0f",
+        "op": "mean",
+        "field": "abs_error",
+        "where": [
+          [
+            "month_label",
+            "eq",
+            "01 Jan"
+          ]
+        ]
+      },
+      {
+        "text": "In February the clock-hour cells averaged {value} MWh of absolute error.",
+        "format": ",.0f",
+        "op": "mean",
+        "field": "abs_error",
+        "where": [
+          [
+            "month_label",
+            "eq",
+            "02 Feb"
+          ]
+        ]
+      },
+      {
+        "text": "January's worst clock hour, 04:00 UTC, averaged {value} MWh of absolute error.",
+        "format": ",.0f",
+        "op": "max",
+        "field": "abs_error",
+        "where": [
+          [
+            "month_label",
+            "eq",
+            "01 Jan"
+          ]
+        ]
+      },
+      {
+        "text": "January's best clock hour, 08:00 UTC, averaged {value} MWh.",
+        "format": ",.0f",
+        "op": "min",
+        "field": "abs_error",
+        "where": [
+          [
+            "month_label",
+            "eq",
+            "01 Jan"
+          ]
+        ]
+      },
+      {
+        "text": "February's best clock hour, 12:00 UTC, still averaged {value} MWh.",
+        "format": ",.0f",
+        "op": "min",
+        "field": "abs_error",
+        "where": [
+          [
+            "month_label",
+            "eq",
+            "02 Feb"
+          ]
+        ]
+      },
+      {
+        "text": "In January the clock-hour cells averaged {value} MWh above forecast.",
+        "format": ",.0f",
+        "op": "mean",
+        "field": "error",
+        "where": [
+          [
+            "month_label",
+            "eq",
+            "01 Jan"
+          ]
+        ]
+      },
+      {
+        "text": "In February the clock-hour cells averaged {value} MWh",
+        "format": ",.0f",
+        "op": "mean",
+        "field": "error",
+        "where": [
+          [
+            "month_label",
+            "eq",
+            "02 Feb"
+          ]
+        ]
+      },
       {
         "text": "The best-supported month-hour cell contains {value} hours.",
         "format": ".0f",
@@ -3406,9 +6070,9 @@
     "id": "nb-macro-inflation-unemployment",
     "slug": "macro-inflation-unemployment",
     "kind": "notebook",
-    "title": "Pooled, inflation and unemployment look unrelated; each decade tells its own story",
-    "question": "Does the pooled historical association resemble the association within the 1970s?",
-    "summary": "Across 1959 to 2009, inflation and unemployment look unrelated (r = 0.07). Within one decade the picture changes.",
+    "title": "The Phillips curve held in the 1960s, then broke",
+    "question": "Does higher inflation come with lower unemployment?",
+    "summary": "Across fifty years of US quarters, inflation and unemployment are unrelated (r = 0.07). Inside the 1960s the correlation was −0.74, the textbook trade-off; the 1970s pushed both up at once and the link never returned.",
     "family": "macro",
     "entry": "inflation-unemployment.eda.md",
     "query": "r",
@@ -3416,7 +6080,7 @@
     "analysis": "Relationship",
     "findings": [
       {
-        "text": "The pooled inflation–unemployment correlation, excluding the initial placeholder quarter, was {value}.",
+        "text": "the pooled correlation between inflation and unemployment was {value}.",
         "format": ".3f",
         "op": "corr",
         "field": "infl",
@@ -3430,7 +6094,21 @@
         ]
       },
       {
-        "text": "Within the 1970s quarters, the correlation was {value}.",
+        "text": "In the 1960s the correlation was {value}",
+        "format": ".3f",
+        "op": "corr",
+        "field": "infl",
+        "other": "unemp",
+        "where": [
+          [
+            "decade",
+            "eq",
+            "1960s"
+          ]
+        ]
+      },
+      {
+        "text": "In the 1970s the correlation was {value}",
         "format": ".3f",
         "op": "corr",
         "field": "infl",
@@ -3440,6 +6118,50 @@
             "decade",
             "eq",
             "1970s"
+          ]
+        ]
+      },
+      {
+        "text": "in the 1990s it was {value}",
+        "format": ".3f",
+        "op": "corr",
+        "field": "infl",
+        "other": "unemp",
+        "where": [
+          [
+            "decade",
+            "eq",
+            "1990s"
+          ]
+        ]
+      },
+      {
+        "text": "Inflation peaked at {value}% in the last quarter of 1979",
+        "format": ".2f",
+        "op": "max",
+        "field": "infl"
+      },
+      {
+        "text": "Unemployment peaked at {value}% in the last quarter of 1982",
+        "format": ".1f",
+        "op": "max",
+        "field": "unemp"
+      },
+      {
+        "text": "{value} quarters had inflation of 5% or more and unemployment of 7% or more",
+        "format": ".0f",
+        "op": "count",
+        "field": "infl",
+        "where": [
+          [
+            "infl",
+            "ge",
+            5
+          ],
+          [
+            "unemp",
+            "ge",
+            7
           ]
         ]
       }
@@ -3462,7 +6184,8 @@
     "series": {
       "id": "flights-january",
       "title": "A month of New York flights",
-      "part": 5
+      "part": 5,
+      "label": "Day by day"
     },
     "findings": [
       {
@@ -3498,9 +6221,9 @@
     "id": "nb-elnino-two-warm-windows",
     "slug": "elnino-two-warm-windows",
     "kind": "notebook",
-    "title": "Compare two warm-water windows on an aligned clock",
-    "question": "How do the 1982–1983 and 1997–1998 windows differ after seasonal centering?",
-    "summary": "The 1982–83 and 1997–98 El Niños, aligned month by month from their start, peaked 4.35 °C and 4.07 °C above normal.",
+    "title": "1982–83 peaked higher, but 1997–98 stayed hot four months longer",
+    "question": "Which of the two great El Niños was bigger off Peru?",
+    "summary": "Aligned month by month, the 1982–83 El Niño spiked to 4.35 °C above normal and fell away within four months, while 1997–98 peaked at 4.07 °C and held above 2 °C for 14 months. The later event averaged 0.57 °C warmer across its window.",
     "family": "elnino",
     "entry": "two-warm-windows.eda.md",
     "query": "episodes",
@@ -3508,7 +6231,7 @@
     "analysis": "Comparison",
     "findings": [
       {
-        "text": "The largest monthly anomaly in the 1982–1983 window was {value} °C.",
+        "text": "spikes in month 18, June 1983, at {value} °C above normal",
         "format": ".2f",
         "op": "max",
         "field": "anomaly",
@@ -3521,7 +6244,7 @@
         ]
       },
       {
-        "text": "The largest monthly anomaly in the 1997–1998 window was {value} °C.",
+        "text": "The 1997–98 path reaches {value} °C in month 12",
         "format": ".2f",
         "op": "max",
         "field": "anomaly",
@@ -3532,6 +6255,96 @@
             "1997–1998"
           ]
         ]
+      },
+      {
+        "text": "The 1982–83 window averaged {value} °C above normal",
+        "format": ".2f",
+        "op": "mean",
+        "field": "anomaly",
+        "where": [
+          [
+            "episode",
+            "eq",
+            "1982–1983"
+          ]
+        ]
+      },
+      {
+        "text": "and the 1997–98 window {value} °C.",
+        "format": ".2f",
+        "op": "mean",
+        "field": "anomaly",
+        "where": [
+          [
+            "episode",
+            "eq",
+            "1997–1998"
+          ]
+        ]
+      },
+      {
+        "text": "In the 1982–83 window, {value}% of months ran more than 2 °C warm",
+        "format": ".1f",
+        "op": "share",
+        "field": "anomaly",
+        "where": [
+          [
+            "episode",
+            "eq",
+            "1982–1983"
+          ]
+        ],
+        "condition": [
+          [
+            "anomaly",
+            "gt",
+            2
+          ]
+        ]
+      },
+      {
+        "text": "in the 1997–98 window, {value}% did",
+        "format": ".1f",
+        "op": "share",
+        "field": "anomaly",
+        "where": [
+          [
+            "episode",
+            "eq",
+            "1997–1998"
+          ]
+        ],
+        "condition": [
+          [
+            "anomaly",
+            "gt",
+            2
+          ]
+        ]
+      },
+      {
+        "text": "{value} months against 10",
+        "format": ".0f",
+        "op": "count",
+        "field": "anomaly",
+        "where": [
+          [
+            "episode",
+            "eq",
+            "1997–1998"
+          ],
+          [
+            "anomaly",
+            "gt",
+            2
+          ]
+        ]
+      },
+      {
+        "text": "The warmest month was {value} °C, in March 1998",
+        "format": ".2f",
+        "op": "max",
+        "field": "sst"
       }
     ],
     "published": "2026-10-11"
@@ -3540,9 +6353,9 @@
     "id": "nb-grunfeld-investment-concentration",
     "slug": "grunfeld-investment-concentration",
     "kind": "notebook",
-    "title": "A selected corporate panel can be dominated by a few firms",
-    "question": "How concentrated is cumulative recorded investment among the firms in this panel?",
-    "summary": "One firm made 41% of the panel's investment over twenty years, and the top three made 76%.",
+    "title": "One firm made 41% of the panel's investment; three made 76%",
+    "question": "How concentrated was investment among the eleven Grunfeld firms?",
+    "summary": "General Motors made 41% of the eleven firms' investment over 1935 to 1954, and the top three made 76%. Scaled by market value the order changes: US Steel invested $21 per $100 of value each year, General Motors $14, General Electric $5.",
     "family": "grunfeld",
     "entry": "investment-concentration.eda.md",
     "query": "firms",
@@ -3550,18 +6363,82 @@
     "analysis": "Part-to-whole",
     "findings": [
       {
-        "text": "The largest firm accounts for {value}% of cumulative panel investment.",
+        "text": "General Motors invested ${value} million",
+        "format": ",.0f",
+        "op": "max",
+        "field": "invest_total"
+      },
+      {
+        "text": "{value}% of everything the panel spent.",
         "format": ".2f",
         "op": "top_share",
         "field": "invest_total",
         "k": 1
       },
       {
-        "text": "The three largest firms together account for {value}% of cumulative panel investment.",
+        "text": "General Motors and US Steel together account for {value}% of cumulative panel investment",
+        "format": ".2f",
+        "op": "top_share",
+        "field": "invest_total",
+        "k": 2
+      },
+      {
+        "text": "the three largest firms together account for {value}%.",
         "format": ".2f",
         "op": "top_share",
         "field": "invest_total",
         "k": 3
+      },
+      {
+        "text": "with a mean market value of ${value} million.",
+        "format": ",.0f",
+        "op": "max",
+        "field": "value_mean"
+      },
+      {
+        "text": "US Steel invested ${value} per $100 of market value each year",
+        "format": ".2f",
+        "op": "ratio_sums",
+        "field": "invest_mean",
+        "other": "value_mean",
+        "scale": 100,
+        "where": [
+          [
+            "firm",
+            "eq",
+            "US Steel"
+          ]
+        ]
+      },
+      {
+        "text": "General Motors ${value}",
+        "format": ".2f",
+        "op": "ratio_sums",
+        "field": "invest_mean",
+        "other": "value_mean",
+        "scale": 100,
+        "where": [
+          [
+            "firm",
+            "eq",
+            "General Motors"
+          ]
+        ]
+      },
+      {
+        "text": "only ${value}.",
+        "format": ".2f",
+        "op": "ratio_sums",
+        "field": "invest_mean",
+        "other": "value_mean",
+        "scale": 100,
+        "where": [
+          [
+            "firm",
+            "eq",
+            "General Electric"
+          ]
+        ]
       }
     ],
     "published": "2026-10-12"
@@ -3691,9 +6568,9 @@
     "id": "nb-co2-missing-runs",
     "slug": "co2-missing-runs",
     "kind": "notebook",
-    "title": "Missing CO₂ weeks arrive in runs",
-    "question": "How long are the consecutive missing stretches in the weekly calendar?",
-    "summary": "The CO₂ record is missing 59 weeks, and they arrive in runs, the longest 18 weeks long.",
+    "title": "The CO₂ record is missing 59 weeks, and 35 of them are four outages",
+    "question": "When the Mauna Loa record goes blank, how long does it stay blank?",
+    "summary": "The weekly CO₂ record has 22 runs of missing weeks; most are a single week, but four outages of a month or more hold three in five of the 59 blanks, led by 18 weeks in early 1964. Readings on either side of every gap sit within 2.2 ppm of each other.",
     "family": "co2",
     "entry": "missing-runs.eda.md",
     "query": "gaps",
@@ -3701,13 +6578,64 @@
     "analysis": "Data quality",
     "findings": [
       {
-        "text": "The longest missing run spans {value} weekly slots.",
+        "text": "The longest run spans {value} weeks",
         "format": ".0f",
         "op": "max",
         "field": "length"
       },
       {
-        "text": "All missing runs together account for {value} weekly slots.",
+        "text": "Nineteen of the {value} runs fall before 1970",
+        "format": ".0f",
+        "op": "count",
+        "field": "length"
+      },
+      {
+        "text": "{value}% of runs are a single missing week",
+        "format": ".1f",
+        "op": "share",
+        "field": "length",
+        "condition": [
+          [
+            "length",
+            "eq",
+            1
+          ]
+        ]
+      },
+      {
+        "text": "and the median run is {value} week.",
+        "format": ".0f",
+        "op": "median",
+        "field": "length"
+      },
+      {
+        "text": "The four runs of four weeks or more hold {value}% of all missing weeks",
+        "format": ".1f",
+        "op": "top_share",
+        "field": "length",
+        "k": 4
+      },
+      {
+        "text": "the reading after averaged {value} ppm different from the reading before",
+        "format": ".2f",
+        "op": "mean",
+        "field": "change"
+      },
+      {
+        "text": "Even the four-month gap closed with CO₂ {value} ppm higher",
+        "format": ".1f",
+        "op": "max",
+        "field": "change",
+        "where": [
+          [
+            "length",
+            "eq",
+            18
+          ]
+        ]
+      },
+      {
+        "text": "{value} blanks in 2,284 weekly slots",
         "format": ".0f",
         "op": "sum",
         "field": "length"
@@ -3958,6 +6886,392 @@
     "published": "2026-10-22"
   },
   {
+    "id": "nb-earthquakes-four-questions",
+    "slug": "earthquakes-four-questions",
+    "kind": "notebook",
+    "title": "Twenty strong earthquakes a day, nearly all on the Pacific rim",
+    "question": "Where, when, how deep, and how big were 2023's strong earthquakes?",
+    "summary": "Twenty strong earthquakes a day traced the Pacific rim in 2023, four in five of them in the crust. The days after the Kahramanmaraş and Mindanao shocks held eight times the usual count, and only 19 of 7,643 reached magnitude 7.",
+    "family": "earthquakes",
+    "entry": "four-questions.eda.md",
+    "query": "events",
+    "industry": "Geoscience",
+    "analysis": "Geography",
+    "findings": [
+      {
+        "text": "The Philippines alone recorded {value} earthquakes",
+        "format": ",.0f",
+        "op": "count",
+        "field": "area",
+        "where": [
+          [
+            "area",
+            "eq",
+            "Philippines"
+          ]
+        ]
+      },
+      {
+        "text": "its share of the year's catalogue was {value}%",
+        "format": ".1f",
+        "op": "share",
+        "field": "area",
+        "condition": [
+          [
+            "area",
+            "eq",
+            "Philippines"
+          ]
+        ]
+      },
+      {
+        "text": "On December 2 the catalogue recorded {value} earthquakes",
+        "format": ",.0f",
+        "op": "count",
+        "field": "date",
+        "where": [
+          [
+            "date",
+            "eq",
+            "2023-12-02"
+          ]
+        ]
+      },
+      {
+        "text": "December as a whole holds {value}",
+        "format": ",.0f",
+        "op": "count",
+        "field": "date",
+        "where": [
+          [
+            "date",
+            "ge",
+            "2023-12-01"
+          ]
+        ]
+      },
+      {
+        "text": "February 6, the day of the Kahramanmaraş shocks, recorded {value}",
+        "format": ",.0f",
+        "op": "count",
+        "field": "date",
+        "where": [
+          [
+            "date",
+            "eq",
+            "2023-02-06"
+          ]
+        ]
+      },
+      {
+        "text": "The share that began shallower than 70 km was {value}%",
+        "format": ".1f",
+        "op": "share",
+        "field": "depth",
+        "condition": [
+          [
+            "depth",
+            "lt",
+            70
+          ]
+        ]
+      },
+      {
+        "text": "the median depth was {value} km",
+        "format": ".0f",
+        "op": "median",
+        "field": "depth"
+      },
+      {
+        "text": "Earthquakes 300 km or deeper numbered {value}",
+        "format": ",.0f",
+        "op": "count",
+        "field": "depth",
+        "where": [
+          [
+            "depth",
+            "ge",
+            300
+          ]
+        ]
+      },
+      {
+        "text": "the share east of 170°E was {value}%",
+        "format": ".1f",
+        "op": "share",
+        "field": "longitude",
+        "where": [
+          [
+            "depth",
+            "ge",
+            300
+          ]
+        ],
+        "condition": [
+          [
+            "longitude",
+            "ge",
+            170
+          ]
+        ]
+      },
+      {
+        "text": "the share west of 170°W was {value}%",
+        "format": ".1f",
+        "op": "share",
+        "field": "longitude",
+        "where": [
+          [
+            "depth",
+            "ge",
+            300
+          ]
+        ],
+        "condition": [
+          [
+            "longitude",
+            "le",
+            -170
+          ]
+        ]
+      },
+      {
+        "text": "The deepest of the year started {value} km down",
+        "format": ".1f",
+        "op": "max",
+        "field": "depth"
+      },
+      {
+        "text": "The median earthquake in this catalogue is a magnitude {value}",
+        "format": ".1f",
+        "op": "median",
+        "field": "mag"
+      },
+      {
+        "text": "The share that reached magnitude 6 was {value}%",
+        "format": ".1f",
+        "op": "share",
+        "field": "mag",
+        "condition": [
+          [
+            "mag",
+            "ge",
+            6
+          ]
+        ]
+      },
+      {
+        "text": "the number that reached 7 was {value}",
+        "format": ",.0f",
+        "op": "count",
+        "field": "mag",
+        "where": [
+          [
+            "mag",
+            "ge",
+            7
+          ]
+        ]
+      },
+      {
+        "text": "The year's largest earthquake was magnitude {value}",
+        "format": ".1f",
+        "op": "max",
+        "field": "mag"
+      }
+    ],
+    "published": "2026-10-23"
+  },
+  {
+    "id": "nb-ercot-storm-by-the-hour",
+    "slug": "ercot-storm-by-the-hour",
+    "kind": "notebook",
+    "title": "Before Uri, ERCOT's forecast missed by under 3%; during the storm, by 18%",
+    "question": "How did the day-ahead forecast fail, hour by hour, when Winter Storm Uri hit Texas?",
+    "summary": "For six weeks ERCOT's day-ahead forecast missed by under 3% of load. In the week of Winter Storm Uri the grid served 11,000 MWh an hour less than forecast, and the worst hour missed by 28,885 MWh.",
+    "family": "ercot",
+    "entry": "storm-by-the-hour.eda.md",
+    "query": "r",
+    "industry": "Energy",
+    "analysis": "Error and uncertainty",
+    "findings": [
+      {
+        "text": "the forecast's mean absolute miss was {value}% of the forecast",
+        "format": ".2f",
+        "op": "mean",
+        "field": "abs_pct_error",
+        "where": [
+          [
+            "date",
+            "lt",
+            "2021-02-14"
+          ]
+        ]
+      },
+      {
+        "text": "the mean signed error before February 14 was {value} MWh",
+        "format": ",.0f",
+        "op": "mean",
+        "field": "error",
+        "where": [
+          [
+            "date",
+            "lt",
+            "2021-02-14"
+          ]
+        ]
+      },
+      {
+        "text": "the mean signed error from February 14 to 20 was {value} MWh",
+        "format": ",.0f",
+        "op": "mean",
+        "field": "error",
+        "where": [
+          [
+            "date",
+            "ge",
+            "2021-02-14"
+          ],
+          [
+            "date",
+            "lt",
+            "2021-02-21"
+          ]
+        ]
+      },
+      {
+        "text": "the mean signed error from February 21 was {value} MWh",
+        "format": ",.0f",
+        "op": "mean",
+        "field": "error",
+        "where": [
+          [
+            "date",
+            "ge",
+            "2021-02-21"
+          ]
+        ]
+      },
+      {
+        "text": "The share of hours before February 14 that missed by 2% of the forecast or less was {value}%",
+        "format": ".1f",
+        "op": "share",
+        "field": "abs_pct_error",
+        "where": [
+          [
+            "date",
+            "lt",
+            "2021-02-14"
+          ]
+        ],
+        "condition": [
+          [
+            "abs_pct_error",
+            "le",
+            2
+          ]
+        ]
+      },
+      {
+        "text": "the 90th percentile miss before the storm was {value}% of the forecast",
+        "format": ".1f",
+        "op": "quantile",
+        "q": 0.9,
+        "field": "abs_pct_error",
+        "where": [
+          [
+            "date",
+            "lt",
+            "2021-02-14"
+          ]
+        ]
+      },
+      {
+        "text": "it peaked at {value} MWh for the hour of 21:00 UTC on February 15",
+        "format": ",.0f",
+        "op": "max",
+        "field": "forecast"
+      },
+      {
+        "text": "Served load peaked at {value} MWh",
+        "format": ",.0f",
+        "op": "max",
+        "field": "actual"
+      },
+      {
+        "text": "the deepest miss of the two months was {value} MWh",
+        "format": ",.0f",
+        "op": "min",
+        "field": "error"
+      },
+      {
+        "text": "The number of storm-week hours more than 10,000 MWh below forecast was {value}",
+        "format": ",.0f",
+        "op": "count",
+        "field": "error",
+        "where": [
+          [
+            "date",
+            "ge",
+            "2021-02-14"
+          ],
+          [
+            "date",
+            "lt",
+            "2021-02-21"
+          ],
+          [
+            "error",
+            "lt",
+            -10000
+          ]
+        ]
+      },
+      {
+        "text": "The mean absolute miss for the week was {value}% of the forecast",
+        "format": ".2f",
+        "op": "mean",
+        "field": "abs_pct_error",
+        "where": [
+          [
+            "date",
+            "ge",
+            "2021-02-14"
+          ],
+          [
+            "date",
+            "lt",
+            "2021-02-21"
+          ]
+        ]
+      },
+      {
+        "text": "the mean signed error at 19:00 UTC was {value} MWh",
+        "format": ",.0f",
+        "op": "mean",
+        "field": "error",
+        "where": [
+          [
+            "date",
+            "ge",
+            "2021-02-14"
+          ],
+          [
+            "date",
+            "lt",
+            "2021-02-21"
+          ],
+          [
+            "hour",
+            "eq",
+            19
+          ]
+        ]
+      }
+    ],
+    "published": "2026-10-24"
+  },
+  {
     "id": "nb-media-coverage",
     "slug": "media-coverage",
     "kind": "notebook",
@@ -4139,7 +7453,7 @@
         ]
       }
     ],
-    "published": "2026-10-23"
+    "published": "2026-10-25"
   },
   {
     "id": "nb-pew-partisan-gaps",
@@ -4232,7 +7546,7 @@
         ]
       }
     ],
-    "published": "2026-10-24"
+    "published": "2026-10-26"
   },
   {
     "id": "nb-lincoln-swings",
@@ -4337,7 +7651,7 @@
         ]
       }
     ],
-    "published": "2026-10-25"
+    "published": "2026-10-27"
   },
   {
     "id": "nb-driving-miles-and-gas",
@@ -4410,7 +7724,7 @@
         ]
       }
     ],
-    "published": "2026-10-26"
+    "published": "2026-10-28"
   },
   {
     "id": "nb-measles-resurgence",
@@ -4581,7 +7895,7 @@
         ]
       }
     ],
-    "published": "2026-10-27"
+    "published": "2026-10-29"
   },
   {
     "id": "nb-elections-drift",
@@ -4736,7 +8050,7 @@
         ]
       }
     ],
-    "published": "2026-10-28"
+    "published": "2026-10-30"
   },
   {
     "id": "nb-titanic-age-and-fare",
@@ -4997,7 +8311,7 @@
         ]
       }
     ],
-    "published": "2026-10-29"
+    "published": "2026-10-31"
   },
   {
     "id": "nb-penguins-bills",
@@ -5209,7 +8523,7 @@
         ]
       }
     ],
-    "published": "2026-10-30"
+    "published": "2026-11-01"
   },
   {
     "id": "nb-covid-vermont-florida",
@@ -5460,7 +8774,7 @@
       "title": "Three years of Covid case rates",
       "part": 2
     },
-    "published": "2026-10-31"
+    "published": "2026-11-02"
   },
   {
     "id": "nb-scotus-tenure",
@@ -5632,7 +8946,7 @@
         ]
       }
     ],
-    "published": "2026-11-01"
+    "published": "2026-11-03"
   },
   {
     "id": "nb-covid-fifty-states",
@@ -5812,6 +9126,6 @@
       "title": "Three years of Covid case rates",
       "part": 3
     },
-    "published": "2026-11-02"
+    "published": "2026-11-04"
   }
 ]
