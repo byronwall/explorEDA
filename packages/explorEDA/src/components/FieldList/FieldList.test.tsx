@@ -168,6 +168,29 @@ describe("FieldList", () => {
     ).toBeInTheDocument();
   });
 
+  it("counts the blank categories its missing filter selects", () => {
+    const summary = summaryTableDefinition.createDefaultSettings(layout);
+    renderWorkspace(
+      [summary],
+      [
+        { region: "North", revenue: 10 },
+        { region: null, revenue: 20 },
+        { region: "", revenue: 30 },
+        { region: "   ", revenue: 40 },
+        { region: "South", revenue: 50 },
+      ]
+    );
+    const list = openList();
+    fireEvent.click(
+      within(list).getByRole("button", {
+        name: "3 missing, 2 of them blank text. Show only rows missing region",
+      })
+    );
+    expect(
+      within(list).getByText("Values describe 3 of 5 rows after filters")
+    ).toBeInTheDocument();
+  });
+
   it("lists the charts that use an expanded field", () => {
     const scatter = {
       ...scatterPlotDefinition.createDefaultSettings(layout, "revenue"),

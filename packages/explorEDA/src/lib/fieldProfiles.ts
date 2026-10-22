@@ -40,6 +40,23 @@ export function buildValuesProfile(
   return { name, ...calculateValueStatistics(values, dataType) };
 }
 
+/**
+ * The rows a field's missing filter selects: rows without a value, plus blank
+ * text, which a non-numeric field also keeps as its own category.
+ */
+export function missingRowCount(profile: FieldProfile): number {
+  return profile.nullCount + (profile.blankCount ?? 0);
+}
+
+/** What a missing count counts, such as "3 missing, 2 of them blank text". */
+export function missingCountLabel(profile: FieldProfile): string {
+  const count = missingRowCount(profile).toLocaleString();
+  const blank = profile.blankCount ?? 0;
+  return blank > 0
+    ? `${count} missing, ${blank.toLocaleString()} of them blank text`
+    : `${count} missing`;
+}
+
 export function emptyFieldProfile(profile: FieldProfile): FieldProfile {
   return {
     name: profile.name,

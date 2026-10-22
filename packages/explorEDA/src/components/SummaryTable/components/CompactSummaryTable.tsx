@@ -12,7 +12,11 @@ import {
 } from "./FieldDistribution";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { useFieldFilter } from "@/hooks/useFieldFilter";
-import type { FieldProfile } from "@/lib/fieldProfiles";
+import {
+  type FieldProfile,
+  missingCountLabel,
+  missingRowCount,
+} from "@/lib/fieldProfiles";
 import type { datum } from "@/types/ChartTypes";
 import { ActionTooltip } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
@@ -168,8 +172,9 @@ export function CompactSummaryTable({
       <tbody>
         {rows.map(({ profile, summary }) => {
           const fieldLabel = label(profile.name);
+          const missingRows = missingRowCount(profile);
           const missingShare =
-            profile.totalCount > 0 ? profile.nullCount / profile.totalCount : 0;
+            profile.totalCount > 0 ? missingRows / profile.totalCount : 0;
           const active = filterFor(profile.name);
           const missingOnly =
             active?.type === "value" &&
@@ -195,22 +200,22 @@ export function CompactSummaryTable({
               <td
                 className={cn(
                   "eda-summary-num",
-                  profile.nullCount > 0 && "eda-summary-missing"
+                  missingRows > 0 && "eda-summary-missing"
                 )}
               >
-                {profile.nullCount > 0 ? (
+                {missingRows > 0 ? (
                   <ActionTooltip
-                    content={
+                    content={`${missingCountLabel(profile)}. ${
                       missingOnly
                         ? `Stop showing only rows missing ${fieldLabel}`
                         : `Show only rows missing ${fieldLabel}`
-                    }
+                    }`}
                   >
                     <button
                       type="button"
                       className="eda-summary-missing-filter"
                       aria-pressed={missingOnly}
-                      aria-label={`${profile.nullCount.toLocaleString()} missing. Show only rows missing ${fieldLabel}`}
+                      aria-label={`${missingCountLabel(profile)}. Show only rows missing ${fieldLabel}`}
                       onClick={() =>
                         toggleFilter(profile.name, {
                           type: "value",
@@ -218,7 +223,7 @@ export function CompactSummaryTable({
                         })
                       }
                     >
-                      {profile.nullCount.toLocaleString()}
+                      {missingRows.toLocaleString()}
                       <span className="eda-summary-share-label">
                         {missingShare < 0.01
                           ? "<1%"

@@ -1,6 +1,10 @@
 import type { FieldSummary } from "@/components/SummaryTable/components/FieldDistribution";
 import { ActionTooltip } from "@/components/ui/tooltip";
-import type { FieldProfile } from "@/lib/fieldProfiles";
+import {
+  type FieldProfile,
+  missingCountLabel,
+  missingRowCount,
+} from "@/lib/fieldProfiles";
 
 /** The short text reading beside a field's distribution. */
 export function fieldReading(
@@ -39,9 +43,11 @@ export function FieldRowReadings({
   /** Makes the missing count a button that filters to those rows. */
   onMissingFilter?: () => void;
 }) {
+  const missingRows = missingRowCount(profile);
   const missingShare =
-    profile.totalCount > 0 ? profile.nullCount / profile.totalCount : 0;
-  const missing = profile.nullCount.toLocaleString();
+    profile.totalCount > 0 ? missingRows / profile.totalCount : 0;
+  const missing = missingRows.toLocaleString();
+  const caption = missingCountLabel(profile);
   return (
     <>
       <span className="eda-field-row-count">
@@ -51,16 +57,16 @@ export function FieldRowReadings({
       <span
         className="eda-field-row-count"
         data-missing-column=""
-        data-missing={profile.nullCount > 0 || undefined}
+        data-missing={missingRows > 0 || undefined}
       >
-        {profile.nullCount === 0 ? (
+        {missingRows === 0 ? (
           <>
             <span aria-hidden="true">–</span>
             <span className="sr-only">No missing values</span>
           </>
         ) : onMissingFilter ? (
           <ActionTooltip
-            content={`${missing} missing (${
+            content={`${caption} (${
               missingShare < 0.01 ? "<1%" : `${Math.round(missingShare * 100)}%`
             }). ${missingOnly ? "Click to stop showing only these rows." : "Click to show only these rows."}`}
           >
@@ -68,7 +74,7 @@ export function FieldRowReadings({
               type="button"
               className="eda-summary-missing-filter"
               aria-pressed={missingOnly}
-              aria-label={`${missing} missing. Show only rows missing ${label}`}
+              aria-label={`${caption}. Show only rows missing ${label}`}
               onClick={onMissingFilter}
             >
               {missing}

@@ -2,7 +2,7 @@ import { categoryLabel } from "@/lib/categories";
 import type { BaseChartProps } from "@/types/ChartTypes";
 import { Button } from "@/components/ui/button";
 import { ActionTooltip } from "@/components/ui/tooltip";
-import type { FieldProfile } from "@/lib/fieldProfiles";
+import { type FieldProfile, missingRowCount } from "@/lib/fieldProfiles";
 import {
   useFilteredFieldProfiles,
   useFilteredRowCount,
@@ -37,7 +37,7 @@ const exportToCSV = (profiles: FieldProfile[]) => {
     profile.dataType,
     profile.totalCount,
     profile.uniqueCount,
-    profile.nullCount,
+    missingRowCount(profile),
     profile.statistics?.min ?? "",
     profile.statistics?.max ?? "",
     profile.statistics?.mean ?? "",
@@ -86,8 +86,12 @@ export function SummaryTable({
     }
 
     return [...allProfiles].sort((a, b) => {
-      const aValue = a[sortConfig.column!];
-      const bValue = b[sortConfig.column!];
+      const read = (profile: FieldProfile) =>
+        sortConfig.column === "nullCount"
+          ? missingRowCount(profile)
+          : profile[sortConfig.column!];
+      const aValue = read(a);
+      const bValue = read(b);
       if (aValue === bValue) {
         return 0;
       }
