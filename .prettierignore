@@ -5,3 +5,6 @@ docs/research/daily-viz-corpus-2026-10-15/handoff/
 
 # R077 frozen oracle keeps the bytes the local probe was written against.
 docs/research/selection-identity-2026-10-22/evidence/frozen-oracle.json
+
+# Pro's time-series axes proposal, kept as written.
+docs/intent/time-series-axes/raw/2026-10-18-pro/
