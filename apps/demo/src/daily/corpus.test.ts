@@ -18,7 +18,7 @@ import {
   type DailyCatalogEntry,
   type DailyIndex,
 } from "./corpus";
-import { evaluateFinding, formatValue } from "./findings";
+import { evaluateFinding, formatDate, formatValue } from "./findings";
 
 const root = path.resolve(__dirname, "../../public/daily-viz");
 const read = (file: string) => readFileSync(path.join(root, file), "utf8");
@@ -71,6 +71,35 @@ describe("daily visualization corpus", () => {
     expect(formatValue(0.911243, ".3f")).toBe("0.911");
     expect(formatValue(15.625, ".2f")).toBe("15.62");
     expect(formatValue(15.635, ".2f")).toBe("15.63");
+  });
+
+  it("reads the earliest or latest date that meets a condition", () => {
+    const rows = [
+      { date: "1986-04-19", co2: 349.8 },
+      { date: "1986-04-26", co2: 350.2 },
+      { date: "1986-05-03", co2: 351 },
+      { date: "", co2: 352 },
+    ];
+    const first = evaluateFinding(
+      {
+        text: "The first week above 350 ppm was {value}.",
+        format: "day",
+        op: "earliest",
+        field: "date",
+        where: [["co2", "ge", 350]],
+      },
+      rows
+    );
+    expect(first.statement).toBe(
+      "The first week above 350 ppm was 26 April 1986."
+    );
+    expect(first.rows).toHaveLength(2);
+    const last = evaluateFinding(
+      { text: "{value}", format: "month", op: "latest", field: "date" },
+      rows
+    );
+    expect(last.statement).toBe("May 1986");
+    expect(formatDate(Date.UTC(2021, 1, 16, 6), "iso")).toBe("2021-02-16");
   });
 
   it("gives every piece a unique id and slug, and a dataset record", () => {
