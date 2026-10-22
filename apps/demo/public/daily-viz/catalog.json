@@ -3714,5 +3714,883 @@
       }
     ],
     "published": "2026-10-16"
+  },
+  {
+    "id": "nb-gdp-league-table",
+    "slug": "gdp-league-table",
+    "kind": "notebook",
+    "title": "Only China broke into the top two in 44 years",
+    "question": "Which economies climbed the world GDP table since 1980, and how far?",
+    "summary": "Among the seventeen economies that ever made the world's top twelve, China grew ninety-five-fold from 1980 to 2023 and climbed from twelfth place to second. The United States grew tenfold and never left first.",
+    "family": "gdp",
+    "entry": "league-table.eda.md",
+    "query": "gdp",
+    "industry": "Economics",
+    "analysis": "Ranking",
+    "findings": [
+      {
+        "text": "China's GDP in 2023 was {value} times its 1980 figure.",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "gdp_2023",
+        "other": "gdp_1980",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "China"
+          ]
+        ]
+      },
+      {
+        "text": "The United States grew {value}-fold over the same years",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "gdp_2023",
+        "other": "gdp_1980",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "United States"
+          ]
+        ]
+      },
+      {
+        "text": "Japan {value}-fold.",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "gdp_2023",
+        "other": "gdp_1980",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "Japan"
+          ]
+        ]
+      },
+      {
+        "text": "South Korea, the other great climber, grew {value}-fold",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "gdp_2023",
+        "other": "gdp_1980",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "South Korea"
+          ]
+        ]
+      },
+      {
+        "text": "India {value}-fold.",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "gdp_2023",
+        "other": "gdp_1980",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "India"
+          ]
+        ]
+      },
+      {
+        "text": "China, in twelfth place with ${value} billion.",
+        "format": ".0f",
+        "op": "mean",
+        "field": "billions",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "China"
+          ],
+          [
+            "Year",
+            "eq",
+            1980
+          ]
+        ]
+      },
+      {
+        "text": "In 2023 the United States produced ${value} trillion",
+        "format": ".1f",
+        "op": "mean",
+        "field": "trillions",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "United States"
+          ],
+          [
+            "Year",
+            "eq",
+            2023
+          ]
+        ]
+      },
+      {
+        "text": "China ${value} trillion; the next largest, Germany,",
+        "format": ".1f",
+        "op": "mean",
+        "field": "trillions",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "China"
+          ],
+          [
+            "Year",
+            "eq",
+            2023
+          ]
+        ]
+      },
+      {
+        "text": "Japan's output peaked at ${value} trillion in 2012",
+        "format": ".2f",
+        "op": "max",
+        "field": "trillions",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "Japan"
+          ]
+        ]
+      }
+    ],
+    "series": {
+      "id": "gdp-table",
+      "title": "The world GDP table since 1980",
+      "part": 1
+    }
+  },
+  {
+    "id": "nb-gdp-leavers",
+    "slug": "gdp-leavers",
+    "kind": "notebook",
+    "title": "Spain, Mexico, and the Netherlands left the top twelve; India, Russia, and South Korea took their places",
+    "question": "Who dropped out of the world's twelve largest economies since 1980, and who replaced them?",
+    "summary": "Spain, Mexico, and the Netherlands grew six- to ninefold in dollars from 1980 to 2023 and still fell out of the world's top twelve, overtaken by India, Russia, and South Korea. In 2023 the three joiners produced $7.4 trillion to the leavers' $4.6 trillion.",
+    "family": "gdp",
+    "entry": "leavers.eda.md",
+    "query": "gdp",
+    "industry": "Economics",
+    "analysis": "Ranking",
+    "findings": [
+      {
+        "text": "Spain's economy grew {value}-fold from 1980 to 2023",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "gdp_2023",
+        "other": "gdp_1980",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "Spain"
+          ]
+        ]
+      },
+      {
+        "text": "Mexico's {value}-fold",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "gdp_2023",
+        "other": "gdp_1980",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "Mexico"
+          ]
+        ]
+      },
+      {
+        "text": "South Korea's grew {value}-fold",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "gdp_2023",
+        "other": "gdp_1980",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "South Korea"
+          ]
+        ]
+      },
+      {
+        "text": "India's {value}-fold.",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "gdp_2023",
+        "other": "gdp_1980",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "India"
+          ]
+        ]
+      },
+      {
+        "text": "The three economies that joined the top twelve produced ${value} trillion in 2023",
+        "format": ".2f",
+        "op": "sum",
+        "field": "trillions_2023",
+        "where": [
+          [
+            "status",
+            "eq",
+            "Joined"
+          ]
+        ]
+      },
+      {
+        "text": "the three that left produced ${value} trillion.",
+        "format": ".2f",
+        "op": "sum",
+        "field": "trillions_2023",
+        "where": [
+          [
+            "status",
+            "eq",
+            "Left"
+          ]
+        ]
+      },
+      {
+        "text": "India alone produced ${value} trillion",
+        "format": ".2f",
+        "op": "mean",
+        "field": "trillions",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "India"
+          ],
+          [
+            "Year",
+            "eq",
+            2023
+          ]
+        ]
+      },
+      {
+        "text": "more than Spain's ${value} trillion",
+        "format": ".2f",
+        "op": "mean",
+        "field": "trillions",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "Spain"
+          ],
+          [
+            "Year",
+            "eq",
+            2023
+          ]
+        ]
+      },
+      {
+        "text": "the Netherlands' ${value} trillion together.",
+        "format": ".2f",
+        "op": "mean",
+        "field": "trillions",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "Netherlands"
+          ],
+          [
+            "Year",
+            "eq",
+            2023
+          ]
+        ]
+      },
+      {
+        "text": "South Korea, which produced ${value} billion in 1980",
+        "format": ".0f",
+        "op": "mean",
+        "field": "billions",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "South Korea"
+          ],
+          [
+            "Year",
+            "eq",
+            1980
+          ]
+        ]
+      },
+      {
+        "text": "produced ${value} trillion in 2023.",
+        "format": ".2f",
+        "op": "mean",
+        "field": "trillions",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "South Korea"
+          ],
+          [
+            "Year",
+            "eq",
+            2023
+          ]
+        ]
+      }
+    ],
+    "series": {
+      "id": "gdp-table",
+      "title": "The world GDP table since 1980",
+      "part": 2
+    }
+  },
+  {
+    "id": "nb-gdp-shares",
+    "slug": "gdp-shares",
+    "kind": "notebook",
+    "title": "Japan once made a quarter of the big economies' output; now China does",
+    "question": "How have the United States, China, and Japan divided the output of the world's largest economies?",
+    "summary": "The United States made a third of the seventeen biggest economies' combined output in 1980 and still does. Beneath it, Japan's share fell from 22% in 1995 to 5% in 2023 while China's rose from 2% to 22%.",
+    "family": "gdp",
+    "entry": "shares.eda.md",
+    "query": "gdp",
+    "industry": "Economics",
+    "analysis": "Part-to-whole",
+    "findings": [
+      {
+        "text": "In 1995 Japan made {value}% of the combined total",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "japan_gdp",
+        "other": "GDP (current US$)",
+        "scale": 100,
+        "where": [
+          [
+            "Year",
+            "eq",
+            1995
+          ]
+        ]
+      },
+      {
+        "text": "by 2023 it made {value}%.",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "japan_gdp",
+        "other": "GDP (current US$)",
+        "scale": 100,
+        "where": [
+          [
+            "Year",
+            "eq",
+            2023
+          ]
+        ]
+      },
+      {
+        "text": "China made {value}% in 1980",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "china_gdp",
+        "other": "GDP (current US$)",
+        "scale": 100,
+        "where": [
+          [
+            "Year",
+            "eq",
+            1980
+          ]
+        ]
+      },
+      {
+        "text": "and {value}% in 2023.",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "china_gdp",
+        "other": "GDP (current US$)",
+        "scale": 100,
+        "where": [
+          [
+            "Year",
+            "eq",
+            2023
+          ]
+        ]
+      },
+      {
+        "text": "The United States made {value}% of the combined total in 1980",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "us_gdp",
+        "other": "GDP (current US$)",
+        "scale": 100,
+        "where": [
+          [
+            "Year",
+            "eq",
+            1980
+          ]
+        ]
+      },
+      {
+        "text": "and {value}% in 2023.",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "us_gdp",
+        "other": "GDP (current US$)",
+        "scale": 100,
+        "where": [
+          [
+            "Year",
+            "eq",
+            2023
+          ]
+        ]
+      },
+      {
+        "text": "Its share peaked at {value}% in 1985",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "us_gdp",
+        "other": "GDP (current US$)",
+        "scale": 100,
+        "where": [
+          [
+            "Year",
+            "eq",
+            1985
+          ]
+        ]
+      },
+      {
+        "text": "bottomed at {value}% in 2011.",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "us_gdp",
+        "other": "GDP (current US$)",
+        "scale": 100,
+        "where": [
+          [
+            "Year",
+            "eq",
+            2011
+          ]
+        ]
+      },
+      {
+        "text": "In 1980 the United States produced {value} times China's output",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "us_gdp",
+        "other": "china_gdp",
+        "where": [
+          [
+            "Year",
+            "eq",
+            1980
+          ]
+        ]
+      },
+      {
+        "text": "in 2023 it produced {value} times.",
+        "format": ".2f",
+        "op": "ratio_sums",
+        "field": "us_gdp",
+        "other": "china_gdp",
+        "where": [
+          [
+            "Year",
+            "eq",
+            2023
+          ]
+        ]
+      },
+      {
+        "text": "The combined total grew from ${value} trillion in 1980",
+        "format": ".1f",
+        "op": "sum",
+        "field": "trillions",
+        "where": [
+          [
+            "Year",
+            "eq",
+            1980
+          ]
+        ]
+      },
+      {
+        "text": "to ${value} trillion in 2023",
+        "format": ".1f",
+        "op": "sum",
+        "field": "trillions",
+        "where": [
+          [
+            "Year",
+            "eq",
+            2023
+          ]
+        ]
+      }
+    ],
+    "series": {
+      "id": "gdp-table",
+      "title": "The world GDP table since 1980",
+      "part": 3
+    }
+  },
+  {
+    "id": "nb-gapminder-income-and-years",
+    "slug": "gapminder-income-and-years",
+    "kind": "notebook",
+    "title": "Costa Rica outlives the United States on a third of the income",
+    "question": "Which economies live longer than their income predicts, and which fall short?",
+    "summary": "Across 197 economies in 2023, each doubling of income buys fewer years of life, and the median high-income economy lives 18 years longer than the median low-income one. Past $25,000 a person the band loosens: Costa Rica and Chile reach eighty on a third of American income, and the United States does not.",
+    "family": "gapminder",
+    "entry": "income-and-years.eda.md",
+    "query": "economies",
+    "industry": "Global development",
+    "analysis": "Comparison",
+    "findings": [
+      {
+        "text": "Nigeria sits furthest below the band, at {value} years",
+        "format": ".1f",
+        "op": "mean",
+        "field": "Life expectancy",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "Nigeria"
+          ]
+        ]
+      },
+      {
+        "text": "on ${value} a person; the Solomon Islands",
+        "format": ",.0f",
+        "op": "mean",
+        "field": "GDP per capita",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "Nigeria"
+          ]
+        ]
+      },
+      {
+        "text": "sit furthest above it, at {value} years",
+        "format": ".1f",
+        "op": "mean",
+        "field": "Life expectancy",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "Solomon Islands"
+          ]
+        ]
+      },
+      {
+        "text": "on ${value}.",
+        "format": ",.0f",
+        "op": "mean",
+        "field": "GDP per capita",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "Solomon Islands"
+          ]
+        ]
+      },
+      {
+        "text": "The median low-income economy's life expectancy was {value} years.",
+        "format": ".1f",
+        "op": "median",
+        "field": "Life expectancy",
+        "where": [
+          [
+            "Income",
+            "eq",
+            "Low income"
+          ]
+        ]
+      },
+      {
+        "text": "The median lower-middle-income economy's was {value} years",
+        "format": ".1f",
+        "op": "median",
+        "field": "Life expectancy",
+        "where": [
+          [
+            "Income",
+            "eq",
+            "Lower middle income"
+          ]
+        ]
+      },
+      {
+        "text": "the median upper-middle-income economy's {value} years",
+        "format": ".1f",
+        "op": "median",
+        "field": "Life expectancy",
+        "where": [
+          [
+            "Income",
+            "eq",
+            "Upper middle income"
+          ]
+        ]
+      },
+      {
+        "text": "the median high-income economy's {value} years.",
+        "format": ".1f",
+        "op": "median",
+        "field": "Life expectancy",
+        "where": [
+          [
+            "Income",
+            "eq",
+            "High income"
+          ]
+        ]
+      },
+      {
+        "text": "{value}% of high-income economies reached a life expectancy of 75 years",
+        "format": ".1f",
+        "op": "share",
+        "field": "Life expectancy",
+        "where": [
+          [
+            "Income",
+            "eq",
+            "High income"
+          ]
+        ],
+        "condition": [
+          [
+            "Life expectancy",
+            "ge",
+            75
+          ]
+        ]
+      },
+      {
+        "text": "{value}% of upper-middle-income economies did",
+        "format": ".1f",
+        "op": "share",
+        "field": "Life expectancy",
+        "where": [
+          [
+            "Income",
+            "eq",
+            "Upper middle income"
+          ]
+        ],
+        "condition": [
+          [
+            "Life expectancy",
+            "ge",
+            75
+          ]
+        ]
+      },
+      {
+        "text": "and {value}% of lower-middle-income economies.",
+        "format": ".1f",
+        "op": "share",
+        "field": "Life expectancy",
+        "where": [
+          [
+            "Income",
+            "eq",
+            "Lower middle income"
+          ]
+        ],
+        "condition": [
+          [
+            "Life expectancy",
+            "ge",
+            75
+          ]
+        ]
+      },
+      {
+        "text": "the United States stands apart: {value} years",
+        "format": ".1f",
+        "op": "mean",
+        "field": "Life expectancy",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "United States"
+          ]
+        ]
+      },
+      {
+        "text": "on ${value} a person. Costa Rica",
+        "format": ",.0f",
+        "op": "mean",
+        "field": "GDP per capita",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "United States"
+          ]
+        ]
+      },
+      {
+        "text": "Costa Rica reached {value} years",
+        "format": ".1f",
+        "op": "mean",
+        "field": "Life expectancy",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "Costa Rica"
+          ]
+        ]
+      },
+      {
+        "text": "on ${value} and Chile",
+        "format": ",.0f",
+        "op": "mean",
+        "field": "GDP per capita",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "Costa Rica"
+          ]
+        ]
+      },
+      {
+        "text": "Chile {value} years",
+        "format": ".1f",
+        "op": "mean",
+        "field": "Life expectancy",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "Chile"
+          ]
+        ]
+      },
+      {
+        "text": "on ${value}. Japan",
+        "format": ",.0f",
+        "op": "mean",
+        "field": "GDP per capita",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "Chile"
+          ]
+        ]
+      },
+      {
+        "text": "Japan, with ${value} a person",
+        "format": ",.0f",
+        "op": "mean",
+        "field": "GDP per capita",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "Japan"
+          ]
+        ]
+      },
+      {
+        "text": "reached {value} years, the longest of any large economy",
+        "format": ".1f",
+        "op": "mean",
+        "field": "Life expectancy",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "Japan"
+          ]
+        ]
+      },
+      {
+        "text": "Guyana, at {value} years",
+        "format": ".1f",
+        "op": "mean",
+        "field": "Life expectancy",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "Guyana"
+          ]
+        ]
+      },
+      {
+        "text": "on ${value}, and Russia",
+        "format": ",.0f",
+        "op": "mean",
+        "field": "GDP per capita",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "Guyana"
+          ]
+        ]
+      },
+      {
+        "text": "Russia, at {value} years",
+        "format": ".1f",
+        "op": "mean",
+        "field": "Life expectancy",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "Russian Federation"
+          ]
+        ]
+      },
+      {
+        "text": "on ${value}.",
+        "format": ",.0f",
+        "op": "mean",
+        "field": "GDP per capita",
+        "where": [
+          [
+            "Country",
+            "eq",
+            "Russian Federation"
+          ]
+        ]
+      }
+    ]
   }
 ]

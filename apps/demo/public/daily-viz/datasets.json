@@ -268,5 +268,95 @@
     "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
     "version": "U.S. President 1976–2020 state returns (1976–2016 file)",
     "notes": "Democratic and Republican shares of all votes cast in 51 jurisdictions for 11 elections. Margin is Democratic minus Republican share, in points."
+  },
+  {
+    "id": "gdp",
+    "title": "Largest economies by GDP, 1980 to 2023",
+    "publisher": "World Bank, World Development Indicators",
+    "url": "https://data.worldbank.org/indicator/NY.GDP.MKTP.CD",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "version": "Indicator NY.GDP.MKTP.CD through the World Bank API, as shipped in the demo's gdp-ranks.csv",
+    "notes": "One row per year for the 17 economies that ranked in the world's top twelve in any year from 1980 to 2023, with the World Bank region and GDP in current US dollars. Russia starts in 1988. Regional and income aggregates are left out."
+  },
+  {
+    "id": "gapminder",
+    "title": "Income, life expectancy, and population, 2023",
+    "publisher": "World Bank, World Development Indicators",
+    "url": "https://data.worldbank.org/",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "version": "World Development Indicators tables in the demo's worldbank folder, joined for 2023 by prepare/gapminder.ts",
+    "notes": "One row per economy with a 2023 population, GDP per capita (PPP, constant 2021 dollars), life expectancy at birth, World Bank region, and income group. Economies missing any of the three measures are left out, which drops Cuba, Venezuela, and Vietnam among others."
+  },
+  {
+    "id": "co2pc",
+    "title": "Carbon dioxide per person, 2020",
+    "publisher": "World Bank, World Development Indicators",
+    "url": "https://data.worldbank.org/indicator/EN.GHG.CO2.PC.CE.AR5",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "version": "Indicators EN.GHG.CO2.PC.CE.AR5 and SP.POP.TOTL for 2020 through the World Bank API, as shipped in the demo's co2-per-capita.csv",
+    "notes": "One row per economy with tonnes of CO2 per person (excluding land use change), population, World Bank region, and income group for 2020. Aggregates are left out. Total emissions here are per-person emissions multiplied by population."
+  },
+  {
+    "id": "bananas",
+    "title": "Banana yields by decade, fifteen top-yielding countries",
+    "publisher": "Our World in Data (FAO figures), as tabulated by Joel Soroos",
+    "url": "https://ourworldindata.org/grapher/banana-yields",
+    "license": "CC BY 4.0 (Our World in Data)",
+    "license_url": "https://ourworldindata.org/about#legal",
+    "version": "Decade averages from the 1960s to the 2010s as published in the tabulated sparkline table; shipped in the demo's banana-yields.csv",
+    "notes": "The fifteen countries with the highest long-term average banana yield, in tonnes per hectare. Only the decade averages are published figures; the yearly rows are drawn so that each decade's years average to its published value, so every chart and finding here reads decades, not years. The 2010s run 2010 to 2018. South Korea, Palestine, and Morocco have decades without a figure."
+  },
+  {
+    "id": "tax",
+    "title": "Central government tax revenue as a share of GDP, 2000 and 2023",
+    "publisher": "World Bank, World Development Indicators",
+    "url": "https://data.worldbank.org/indicator/GC.TAX.TOTL.GD.ZS",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "version": "Indicator GC.TAX.TOTL.GD.ZS through the World Bank API, as shipped in the demo's tax-slope.csv",
+    "notes": "Two rows per OECD member, for 2000 and 2023, with tax revenue as a percentage of GDP, the change across the span, and its direction. Members without both readings are left out: Japan, Australia, New Zealand, and Türkiye. The measure is central government revenue only, so federal countries read low."
+  },
+  {
+    "id": "confidence",
+    "title": "OECD consumer confidence indicator, nine countries",
+    "publisher": "OECD, as prepared for the R Graph Gallery",
+    "url": "https://r-graph-gallery.com/",
+    "license": "OECD data; the gallery's file carries no separate license statement",
+    "license_url": "https://www.oecd.org/en/about/terms-conditions.html",
+    "version": "Monthly, July 2018 to October 2022, as shipped in the demo's consumer-confidence.csv",
+    "notes": "One row per country and month for France, Germany, Italy, Japan, the United Kingdom, the United States, China, Australia, and South Korea. The indicator is an amplitude-adjusted index centred on 100, its long-run average; above 100 households expect to spend more, below 100 less. China ends in September 2022."
+  },
+  {
+    "id": "stocks",
+    "title": "Five technology stocks, monthly closing prices 2000 to 2010",
+    "publisher": "vega-datasets (stocks.csv)",
+    "url": "https://github.com/vega/vega-datasets",
+    "license": "BSD-3-Clause (vega-datasets)",
+    "license_url": "https://github.com/vega/vega-datasets/blob/main/LICENSE",
+    "version": "vega-datasets stocks.csv, as shipped in the demo's tech-stocks.csv",
+    "notes": "One row per company and month from January 2000 to March 2010 for Apple, Amazon, IBM, and Microsoft, and from August 2004 for Google, with the month's closing price. Prices are not adjusted for dividends or splits made after the file was prepared."
+  },
+  {
+    "id": "dubois",
+    "title": "Income and expenditure of 150 Black families in Atlanta, 1900",
+    "publisher": "W. E. B. Du Bois, plate for the 1900 Paris Exposition (Library of Congress); values as read for the #DuBoisChallenge",
+    "url": "https://www.loc.gov/item/2005676812/",
+    "license": "Public domain (Library of Congress); challenge data CC0",
+    "license_url": "https://www.loc.gov/item/2005676812/",
+    "version": "Values read from the plate, as shipped in the demo's du-bois-income.csv",
+    "notes": "One row per income class and spending category: seven annual income classes, each with its families' actual average income and the share of it spent on rent, food, clothes, direct taxes, and other expenses and savings. The two highest classes paid no rent and have no rent row, so the 33 rows cover 35 class-category cells."
+  },
+  {
+    "id": "census",
+    "title": "United States population by age and sex, 1850 to 2000",
+    "publisher": "U.S. Census Bureau decennial censuses, as packaged in vega-datasets (population.json)",
+    "url": "https://github.com/vega/vega-datasets",
+    "license": "BSD-3-Clause (vega-datasets); public US government statistics",
+    "license_url": "https://github.com/vega/vega-datasets/blob/main/LICENSE",
+    "version": "vega-datasets population.json, as shipped in the demo's us-population.csv",
+    "notes": "One row per census year, five-year age group, and sex, with the number of people counted. Fifteen censuses from 1850 to 2000; the 1890 census is absent from the source. Ages are grouped to 90 and over."
   }
 ]
