@@ -193,3 +193,46 @@ it("hides dense period dots until one is active, keeping them reachable", () => 
   expect(dots[5]).toHaveAttribute("opacity", "1");
   expect(dots[6]).toHaveAttribute("opacity", "0");
 });
+
+it("keeps the period axis when a filter elsewhere leaves fewer periods", () => {
+  const months = ["01", "02", "03", "04", "05", "06"];
+  const snapshot: TimeSeriesSnapshot = {
+    revision: "1",
+    allIds: months.map((_, id) => id),
+    liveIds: [2],
+    dates: Object.fromEntries(
+      months.map((month, id) => [id, `2024-${month}-15`])
+    ),
+    measures: Object.fromEntries(months.map((_, id) => [id, 10])),
+    groups: {},
+    rawDates: {},
+    rawInputs: {},
+    exclusionReasons: {},
+  };
+  const settings = {
+    ...chart,
+    time: {
+      ...chart.time!,
+      splitField: undefined,
+      missingPeriods: "zero" as const,
+    },
+  };
+  const plan = planTimeSeries(
+    settings,
+    snapshot,
+    650,
+    350,
+    (field) => field,
+    (_, value) => String(value)
+  );
+  expect(
+    plan.points.map(({ day, state, value }) => [day, state, value])
+  ).toEqual([
+    ["2024-01-01", "empty", 0],
+    ["2024-02-01", "empty", 0],
+    ["2024-03-01", "value", 10],
+    ["2024-04-01", "empty", 0],
+    ["2024-05-01", "empty", 0],
+    ["2024-06-01", "empty", 0],
+  ]);
+});

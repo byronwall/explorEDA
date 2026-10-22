@@ -134,7 +134,9 @@ export function planTimeSeries(
     time.aggregation === "count"
       ? value.toLocaleString("en-US")
       : format(time.measureField ?? "", value);
-  const range = snapshot.liveIds.flatMap((id) => {
+  // The chart's own rows set the periods, so filtering elsewhere never
+  // shrinks the time axis. Periods left without live rows show as empty.
+  const range = snapshot.allIds.flatMap((id) => {
     const period = utcPeriod(snapshot.dates[id], time.interval, time.weekStart);
     return period ? [period] : [];
   });
@@ -169,7 +171,7 @@ export function planTimeSeries(
   );
   const tooMany =
     periods.length > 2000
-      ? "Choose a larger interval or filter the dates in another view to show at most 2,000 periods."
+      ? "Choose a larger interval or limit the dates under Chart rows in Filters to show at most 2,000 periods."
       : liveGroups.size > 30
         ? "Filter the series field in another view to show at most 30 series."
         : undefined;
