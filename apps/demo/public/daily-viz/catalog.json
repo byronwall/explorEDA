@@ -1930,9 +1930,9 @@
     "id": "nb-stackloss-leave-one-out",
     "slug": "stackloss-leave-one-out",
     "kind": "notebook",
-    "title": "One operating day can change a small-sample fitted slope",
-    "question": "How much does the airflow–loss slope change when each observation is omitted in turn?",
-    "summary": "With only 21 operating days, leaving out one day moves the fitted airflow slope from 0.95 to 1.10.",
+    "title": "Drop one day and the airflow slope moves from 0.95 to 1.10",
+    "question": "How much does one operating day change the fitted airflow slope?",
+    "summary": "With 21 operating days, the airflow slope is 1.02; without day 21 it is 1.10, and without day 1 it is 0.95. The other 19 days each move it by less than 0.03.",
     "family": "stackloss",
     "entry": "leave-one-out.eda.md",
     "query": "r",
@@ -1940,16 +1940,66 @@
     "analysis": "Error and uncertainty",
     "findings": [
       {
-        "text": "The smallest leave-one-out airflow slope was {value} loss units per airflow unit.",
+        "text": "With all 21 days, the fit gains {value} units of loss per unit of airflow.",
+        "format": ".4f",
+        "op": "mean",
+        "field": "full_slope"
+      },
+      {
+        "text": "Without day 21, the slope rises to {value} units of loss per unit of airflow.",
+        "format": ".4f",
+        "op": "max",
+        "field": "loo_slope"
+      },
+      {
+        "text": "Without day 1, the slope falls to {value} units of loss per unit of airflow.",
         "format": ".4f",
         "op": "min",
         "field": "loo_slope"
       },
       {
-        "text": "The largest leave-one-out airflow slope was {value} loss units per airflow unit.",
-        "format": ".4f",
-        "op": "max",
-        "field": "loo_slope"
+        "text": "its residual, the largest in the sample, was {value}.",
+        "format": ".2f",
+        "op": "min",
+        "field": "residual"
+      },
+      {
+        "text": "{value} of the 21 days move the slope by less than 0.03.",
+        "format": ".0f",
+        "op": "count",
+        "field": "slope_shift",
+        "where": [
+          [
+            "slope_shift",
+            "gt",
+            -0.03
+          ],
+          [
+            "slope_shift",
+            "lt",
+            0.03
+          ]
+        ]
+      },
+      {
+        "text": "Residual and slope shift had correlation {value}.",
+        "format": ".3f",
+        "op": "corr",
+        "field": "residual",
+        "other": "slope_shift"
+      },
+      {
+        "text": "Day 1, at the top right, lost {value} more than the line predicts.",
+        "format": ".1f",
+        "op": "mean",
+        "field": "residual",
+        "where": [
+          [
+            "sequence",
+            "eq",
+            1
+          ]
+        ]
       }
     ],
     "published": "2026-08-26"
@@ -2546,9 +2596,9 @@
     "id": "nb-iris-pooled-versus-grouped",
     "slug": "iris-pooled-versus-grouped",
     "kind": "notebook",
-    "title": "Pooled, iris sepals look unrelated; within a species they move together",
+    "title": "Pooled, iris sepals look unrelated; within each species they grow together",
     "question": "Does sepal width rise with sepal length?",
-    "summary": "Pool all three species and sepal length and width look unrelated (r = −0.12). Within setosa they rise together (r = 0.74).",
+    "summary": "Pool all 150 irises and sepal length and width look unrelated (r = −0.12). Within setosa they rise together (r = 0.74), and so do versicolor and virginica; the species differ in the opposite direction.",
     "family": "iris",
     "entry": "pooled-versus-grouped.eda.md",
     "query": "r",
@@ -2556,7 +2606,14 @@
     "analysis": "Relationship",
     "findings": [
       {
-        "text": "The pooled sepal length–width correlation was {value}.",
+        "text": "Sepal length and sepal width had correlation {value} across all 150 flowers.",
+        "format": ".3f",
+        "op": "corr",
+        "field": "sepal_length",
+        "other": "sepal_width"
+      },
+      {
+        "text": "The pooled correlation was {value}",
         "format": ".3f",
         "op": "corr",
         "field": "sepal_length",
@@ -2575,6 +2632,106 @@
             "setosa"
           ]
         ]
+      },
+      {
+        "text": "within setosa it was {value}.",
+        "format": ".3f",
+        "op": "corr",
+        "field": "sepal_length",
+        "other": "sepal_width",
+        "where": [
+          [
+            "species",
+            "eq",
+            "setosa"
+          ]
+        ]
+      },
+      {
+        "text": "Within versicolor it was {value}",
+        "format": ".3f",
+        "op": "corr",
+        "field": "sepal_length",
+        "other": "sepal_width",
+        "where": [
+          [
+            "species",
+            "eq",
+            "versicolor"
+          ]
+        ]
+      },
+      {
+        "text": "and within virginica {value}.",
+        "format": ".3f",
+        "op": "corr",
+        "field": "sepal_length",
+        "other": "sepal_width",
+        "where": [
+          [
+            "species",
+            "eq",
+            "virginica"
+          ]
+        ]
+      },
+      {
+        "text": "Setosa's mean sepal width was {value} cm",
+        "format": ".2f",
+        "op": "mean",
+        "field": "sepal_width",
+        "where": [
+          [
+            "species",
+            "eq",
+            "setosa"
+          ]
+        ]
+      },
+      {
+        "text": "against {value} cm for versicolor",
+        "format": ".2f",
+        "op": "mean",
+        "field": "sepal_width",
+        "where": [
+          [
+            "species",
+            "eq",
+            "versicolor"
+          ]
+        ]
+      },
+      {
+        "text": "setosa's mean sepal length was {value} cm",
+        "format": ".2f",
+        "op": "mean",
+        "field": "sepal_length",
+        "where": [
+          [
+            "species",
+            "eq",
+            "setosa"
+          ]
+        ]
+      },
+      {
+        "text": "and virginica's {value} cm",
+        "format": ".2f",
+        "op": "mean",
+        "field": "sepal_length",
+        "where": [
+          [
+            "species",
+            "eq",
+            "virginica"
+          ]
+        ]
+      },
+      {
+        "text": "the mean sepal width of all 150 flowers was {value} cm.",
+        "format": ".2f",
+        "op": "mean",
+        "field": "sepal_width"
       }
     ],
     "published": "2026-09-11"
@@ -3288,9 +3445,9 @@
     "id": "nb-stackloss-operating-conditions",
     "slug": "stackloss-operating-conditions",
     "kind": "notebook",
-    "title": "Airflow tracks ammonia loss more closely than any other setting",
+    "title": "Airflow explains most of the ammonia lost up the stack",
     "question": "Which plant settings move with the ammonia lost up the stack?",
-    "summary": "Of the plant's settings, airflow tracks the ammonia lost most closely (r = 0.92), with cooling-water temperature close behind (r = 0.88).",
+    "summary": "Across 21 operating days, airflow tracks the ammonia lost most closely (r = 0.92), with cooling-water temperature close behind only because it rises with airflow. Days at or above median airflow lost 2.1% of their ammonia; days below lost 0.9%.",
     "family": "stackloss",
     "entry": "operating-conditions.eda.md",
     "query": "r",
@@ -3298,18 +3455,64 @@
     "analysis": "Relationship",
     "findings": [
       {
-        "text": "Airflow and source-scaled stack loss had correlation {value}.",
+        "text": "airflow and stack loss had correlation {value}",
         "format": ".3f",
         "op": "corr",
         "field": "airflow",
         "other": "stackloss"
       },
       {
-        "text": "Cooling-water temperature and source-scaled stack loss had correlation {value}.",
+        "text": "Cooling-water temperature and stack loss had correlation {value}.",
         "format": ".3f",
         "op": "corr",
         "field": "watertemp",
         "other": "stackloss"
+      },
+      {
+        "text": "airflow and cooling-water temperature had correlation {value}",
+        "format": ".3f",
+        "op": "corr",
+        "field": "airflow",
+        "other": "watertemp"
+      },
+      {
+        "text": "Acid concentration and stack loss had correlation {value}",
+        "format": ".3f",
+        "op": "corr",
+        "field": "acidconc",
+        "other": "stackloss"
+      },
+      {
+        "text": "On days at or above median airflow the plant lost {value}% of its ammonia",
+        "format": ".2f",
+        "op": "mean",
+        "field": "loss_pct",
+        "where": [
+          [
+            "air_band",
+            "eq",
+            "At/above median airflow"
+          ]
+        ]
+      },
+      {
+        "text": "on days below median airflow it lost {value}%.",
+        "format": ".2f",
+        "op": "mean",
+        "field": "loss_pct",
+        "where": [
+          [
+            "air_band",
+            "eq",
+            "Below median airflow"
+          ]
+        ]
+      },
+      {
+        "text": "Split the days at the median airflow of {value}.",
+        "format": ".0f",
+        "op": "median",
+        "field": "airflow"
       }
     ],
     "published": "2026-09-27"
@@ -3575,15 +3778,67 @@
     "id": "nb-iris-measurement-choice",
     "slug": "iris-measurement-choice",
     "kind": "notebook",
-    "title": "Petals separate iris species; sepals blur them",
+    "title": "Petal length tells the three irises apart; sepal width cannot",
     "question": "Which flower measurements tell the three iris species apart?",
-    "summary": "Petal length alone separates setosa (1.5 cm) from virginica (5.6 cm). Sepal measurements overlap far more.",
+    "summary": "A single cut on petal length names the species of 95% of the 150 irises; the best cut on sepal width manages 59%. Setosa's petals average 1.5 cm against virginica's 5.6 cm, with a centimeter of clear air between them.",
     "family": "iris",
     "entry": "measurement-choice.eda.md",
     "query": "r",
     "industry": "Biology",
     "analysis": "Comparison",
     "findings": [
+      {
+        "text": "a single cut on petal length names the species correctly for {value}% of the flowers",
+        "format": ".1f",
+        "op": "share",
+        "field": "petal_guess_ok",
+        "condition": [
+          [
+            "petal_guess_ok",
+            "eq",
+            1
+          ]
+        ]
+      },
+      {
+        "text": "the best cut on sepal width is right for {value}%.",
+        "format": ".1f",
+        "op": "share",
+        "field": "sepal_guess_ok",
+        "condition": [
+          [
+            "sepal_guess_ok",
+            "eq",
+            1
+          ]
+        ]
+      },
+      {
+        "text": "The petal-length rule names the species correctly for {value}% of the flowers.",
+        "format": ".1f",
+        "op": "share",
+        "field": "petal_guess_ok",
+        "condition": [
+          [
+            "petal_guess_ok",
+            "eq",
+            1
+          ]
+        ]
+      },
+      {
+        "text": "The best sepal-width rule names the species correctly for {value}% of the flowers.",
+        "format": ".1f",
+        "op": "share",
+        "field": "sepal_guess_ok",
+        "condition": [
+          [
+            "sepal_guess_ok",
+            "eq",
+            1
+          ]
+        ]
+      },
       {
         "text": "Mean petal length for setosa was {value} cm.",
         "format": ".3f",
@@ -3598,7 +3853,7 @@
         ]
       },
       {
-        "text": "Mean petal length for virginica was {value} cm.",
+        "text": "Mean petal length for virginica was {value} cm",
         "format": ".3f",
         "op": "mean",
         "field": "petal_length",
@@ -3607,6 +3862,84 @@
             "species",
             "eq",
             "virginica"
+          ]
+        ]
+      },
+      {
+        "text": "Versicolor's mean sepal width was {value} cm",
+        "format": ".2f",
+        "op": "mean",
+        "field": "sepal_width",
+        "where": [
+          [
+            "species",
+            "eq",
+            "versicolor"
+          ]
+        ]
+      },
+      {
+        "text": "and virginica's was {value} cm",
+        "format": ".2f",
+        "op": "mean",
+        "field": "sepal_width",
+        "where": [
+          [
+            "species",
+            "eq",
+            "virginica"
+          ]
+        ]
+      },
+      {
+        "text": "The longest setosa petal was {value} cm",
+        "format": ".1f",
+        "op": "max",
+        "field": "petal_length",
+        "where": [
+          [
+            "species",
+            "eq",
+            "setosa"
+          ]
+        ]
+      },
+      {
+        "text": "and the shortest versicolor petal {value} cm",
+        "format": ".1f",
+        "op": "min",
+        "field": "petal_length",
+        "where": [
+          [
+            "species",
+            "eq",
+            "versicolor"
+          ]
+        ]
+      },
+      {
+        "text": "The shortest virginica petal was {value} cm",
+        "format": ".1f",
+        "op": "min",
+        "field": "petal_length",
+        "where": [
+          [
+            "species",
+            "eq",
+            "virginica"
+          ]
+        ]
+      },
+      {
+        "text": "and the longest versicolor petal {value} cm",
+        "format": ".1f",
+        "op": "max",
+        "field": "petal_length",
+        "where": [
+          [
+            "species",
+            "eq",
+            "versicolor"
           ]
         ]
       }
