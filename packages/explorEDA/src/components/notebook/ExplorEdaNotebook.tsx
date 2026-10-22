@@ -102,11 +102,12 @@ function chartHeight(chart: ChartSettings, categories?: number) {
             640,
             150 + categories * Math.max(chart.minRowHeight, chart.maxRowHeight)
           );
-    // A heatmap with many rows, such as 24 clock hours, needs room for each.
+    // A heatmap with many rows, such as 24 clock hours or 51 states, needs
+    // room for each.
     case "heatmap":
       return categories === undefined
         ? 380
-        : Math.max(380, Math.min(640, 120 + categories * 20));
+        : Math.max(380, Math.min(1120, 120 + categories * 20));
     case "data-table":
     case "pivot":
     case "summary":
