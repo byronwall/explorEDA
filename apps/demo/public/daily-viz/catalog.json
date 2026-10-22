@@ -2129,7 +2129,7 @@
     "kind": "notebook",
     "title": "Most of the world's people live in middle-income countries",
     "question": "How does the world's population divide by region and income group?",
-    "summary": "Counted by economies, high-income countries are the largest group. Weighted by people, the world centers on middle-income Asia, with China and India alone holding over a third.",
+    "summary": "Counted by economies, high-income countries are the largest group. Weighted by people, three quarters of the world lives in middle-income economies, and East Asia, South Asia, and Sub-Saharan Africa hold two thirds of everyone.",
     "family": "worldbank",
     "entry": "income-groups.eda.md",
     "query": "latest",
@@ -2137,7 +2137,7 @@
     "analysis": "Part-to-whole",
     "findings": [
       {
-        "text": "China and India together held {value}% of the 2023 population of these 217 economies.",
+        "text": "China and India together held {value}% of the 2023 population of these 217 economies",
         "format": ".1f",
         "op": "top_share",
         "field": "population",
@@ -2151,7 +2151,23 @@
         ]
       },
       {
-        "text": "86 of the 217 economies were classed as high income, {value}% of the list.",
+        "text": "Middle-income economies held {value}% of the people.",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "pop_middle",
+        "other": "population",
+        "scale": 100
+      },
+      {
+        "text": "East Asia and the Pacific alone held {value}% of the world's 8 billion people",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "pop_east_asia",
+        "other": "population",
+        "scale": 100
+      },
+      {
+        "text": "86 of the 217 economies were classed as high income, {value}% of the list",
         "format": ".1f",
         "op": "share",
         "field": "income",
@@ -2167,6 +2183,27 @@
             "income",
             "eq",
             "High income"
+          ]
+        ]
+      },
+      {
+        "text": "but together they hold {value}% of the people.",
+        "format": ".1f",
+        "op": "ratio_sums",
+        "field": "pop_high",
+        "other": "population",
+        "scale": 100
+      },
+      {
+        "text": "Sub-Saharan Africa has {value} economies",
+        "format": ".0f",
+        "op": "count",
+        "field": "region",
+        "where": [
+          [
+            "region",
+            "eq",
+            "Sub-Saharan Africa"
           ]
         ]
       }
@@ -3711,7 +3748,7 @@
     "kind": "notebook",
     "title": "Richer countries live longer, with diminishing returns",
     "question": "How closely does a country's income track how long its people live?",
-    "summary": "Across 217 economies, log GDP per person and life expectancy move together closely. The average economy gained six years of life expectancy from 2000 to 2023, most of it in poorer regions.",
+    "summary": "Across 197 economies with both figures in 2023, log GDP per person and life expectancy move together closely, but the richest economy is not the longest-lived. The average economy gained six years of life expectancy from 2000 to 2023, and Sub-Saharan Africa gained eleven.",
     "family": "worldbank",
     "entry": "wealth-and-health.eda.md",
     "query": "years",
@@ -3719,7 +3756,7 @@
     "analysis": "Relationship",
     "findings": [
       {
-        "text": "In 2023, log GDP per person and life expectancy had correlation {value}.",
+        "text": "In 2023, log GDP per person and life expectancy had correlation {value}",
         "format": ".3f",
         "op": "corr",
         "field": "log10_gdp_pc",
@@ -3729,6 +3766,37 @@
             "year",
             "eq",
             2023
+          ]
+        ]
+      },
+      {
+        "text": "Singapore, the richest at ${value} per person",
+        "format": ",.0f",
+        "op": "max",
+        "field": "gdp_pc",
+        "where": [
+          [
+            "year",
+            "eq",
+            2023
+          ]
+        ]
+      },
+      {
+        "text": "San Marino does, at {value} years among the economies with a GDP figure.",
+        "format": ".1f",
+        "op": "max",
+        "field": "life_expectancy",
+        "where": [
+          [
+            "year",
+            "eq",
+            2023
+          ],
+          [
+            "gdp_pc",
+            "gt",
+            0
           ]
         ]
       },
@@ -3755,6 +3823,60 @@
             "year",
             "eq",
             2023
+          ]
+        ]
+      },
+      {
+        "text": "Sub-Saharan Africa's mean economy went from {value} years in 2000",
+        "format": ".1f",
+        "op": "mean",
+        "field": "life_expectancy",
+        "where": [
+          [
+            "year",
+            "eq",
+            2000
+          ],
+          [
+            "region",
+            "eq",
+            "Sub-Saharan Africa"
+          ]
+        ]
+      },
+      {
+        "text": "to {value} in 2023",
+        "format": ".1f",
+        "op": "mean",
+        "field": "life_expectancy",
+        "where": [
+          [
+            "year",
+            "eq",
+            2023
+          ],
+          [
+            "region",
+            "eq",
+            "Sub-Saharan Africa"
+          ]
+        ]
+      },
+      {
+        "text": "North America's went from {value}",
+        "format": ".1f",
+        "op": "mean",
+        "field": "life_expectancy",
+        "where": [
+          [
+            "year",
+            "eq",
+            2000
+          ],
+          [
+            "region",
+            "eq",
+            "North America"
           ]
         ]
       }
