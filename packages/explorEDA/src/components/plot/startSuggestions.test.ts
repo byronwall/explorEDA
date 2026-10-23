@@ -50,4 +50,16 @@ describe("startSuggestions", () => {
       ])
     ).toEqual([]);
   });
+
+  it("skips fields named like an ID but keeps words that end in id", () => {
+    const counts = range(40).map((i) => i);
+    expect(
+      startSuggestions([
+        buildValuesProfile("id", counts, "numeric"),
+        buildValuesProfile("customerId", counts, "numeric"),
+        buildValuesProfile("Order ID", counts, "numeric"),
+        buildValuesProfile("Amount paid", amounts, "numeric"),
+      ])
+    ).toEqual([{ type: "bar", field: "Amount paid" }]);
+  });
 });

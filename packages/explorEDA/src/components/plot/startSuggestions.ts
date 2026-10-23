@@ -9,8 +9,14 @@ export interface StartSuggestion {
   yField?: string;
 }
 
-/** Text that names each row, such as an order ID, says little. */
+/** An ID by name, such as `id`, `order_id`, `Order ID`, or `orderId`. */
+function namedLikeId(name: string) {
+  return /(^|[\s_-])id$/i.test(name) || /[a-z](Id|ID)$/.test(name);
+}
+
+/** A field that names each row, such as an order ID, says little. */
 function namesEachRow(profile: FieldProfile) {
+  if (namedLikeId(profile.name.trim())) return true;
   const present = profile.totalCount - profile.nullCount;
   return (
     profile.dataType === "categorical" &&

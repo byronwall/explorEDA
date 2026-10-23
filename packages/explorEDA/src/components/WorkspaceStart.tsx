@@ -15,6 +15,9 @@ import { ChartTypeMenuItems } from "./plot/ChartCreationButtons";
 import { useChartDraft } from "./plot/ChartDraftContext";
 import { startSuggestions } from "./plot/startSuggestions";
 
+/** Past this many characters a title may not fit two lines of the tile. */
+const LONG_LABEL = 56;
+
 interface WorkspaceStartProps {
   /** The grid spot this tile holds. A chart started here takes it. */
   slot?: ChartLayout;
@@ -64,14 +67,14 @@ export function WorkspaceStart({
       onClick={() => chartDraft.openDraft(undefined, slot)}
     >
       <Plus aria-hidden="true" />
-      {otherLabel}
+      <span>{otherLabel}</span>
     </button>
   ) : (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button type="button" className="eda-start-chart eda-start-other">
           <Plus aria-hidden="true" />
-          {otherLabel}
+          <span>{otherLabel}</span>
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start">
@@ -85,16 +88,24 @@ export function WorkspaceStart({
       <ul className="eda-start-charts" aria-label="Suggested charts">
         {suggestions.map(({ settings, label }) => {
           const Icon = getChartDefinition(settings.type).icon;
+          const button = (
+            <button
+              type="button"
+              className="eda-start-chart"
+              onClick={() => addChart(settings)}
+            >
+              <Icon aria-hidden="true" />
+              <span>{label}</span>
+            </button>
+          );
           return (
             <li key={settings.type}>
-              <button
-                type="button"
-                className="eda-start-chart"
-                onClick={() => addChart(settings)}
-              >
-                <Icon aria-hidden="true" />
-                {label}
-              </button>
+              {/* A long title clamps to two lines; hover shows all of it. */}
+              {label.length > LONG_LABEL ? (
+                <ActionTooltip content={label}>{button}</ActionTooltip>
+              ) : (
+                button
+              )}
             </li>
           );
         })}

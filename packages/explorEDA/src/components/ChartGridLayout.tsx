@@ -281,7 +281,9 @@ export function ChartGridLayout({
           data-grid-start
           className="eda-grid-start eda-grid-start-flow"
           style={{
-            padding: `${gridSettings.containerPadding}px ${gridSettings.containerPadding}px 0`,
+            // The grid below keeps its own top padding, so the gap between
+            // the tile and the first chart matches the gap between charts.
+            margin: `${gridSettings.containerPadding}px ${gridSettings.containerPadding}px ${-gridSettings.containerPadding}px`,
           }}
         >
           {start(undefined)}
