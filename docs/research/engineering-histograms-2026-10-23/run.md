@@ -1,6 +1,6 @@
 # Engineering histograms Design run
 
-Phase: integrated; opening planning PR. Mode: Design. Follow-ups: 0/1.
+Phase: complete; verified open planning PR #517. Mode: Design. Follow-ups: 0/1.
 
 Repository: https://github.com/byronwall/explorEDA.
 Source: `6d9130ba1c5242c15bbbeb9b20b7fd0707d0aa0e`, refreshed origin/main.
@@ -104,3 +104,14 @@ Docs, formatting, local links, whitespace, and PR checks are recorded below befo
 Validation: docs three files/73 tests pass, with existing React act warnings.
 Baseline bins/selection two files/11 tests, independent fixtures, six authored local links, Prettier, whitespace, and PR gate pass.
 Full pnpm check is not required for documentation-only work. No proposed runtime/browser acceptance is claimed.
+
+## Completion — October 23, 14:20 UTC
+
+PR: https://github.com/byronwall/explorEDA/pull/517.
+Verified OPEN, main base, scoped head, saved body, six authored documentation files, and description links.
+Attached to this chat. Documentation label applied; codex and codex-automation labels are unavailable.
+No raw Pro reports, archives, source packets, hashes, or receipts are committed.
+
+Deleted collect-exploreda-engineering-histograms-design through automation_update; deleteStatus=deleted.
+Six-hour exploreda-pro-research-pipeline remains ACTIVE indefinitely, verified through tool view and saved configuration.
+No follow-up, feature implementation, worktree, merge, deployment, or paid service. Stop for review.
