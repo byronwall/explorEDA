@@ -1,6 +1,6 @@
 # Engineering histograms Design run
 
-Phase: submitted; Pro is working. Mode: Design. Follow-ups: 0/1.
+Phase: integrated; opening planning PR. Mode: Design. Follow-ups: 0/1.
 
 Repository: https://github.com/byronwall/explorEDA.
 Source: `6d9130ba1c5242c15bbbeb9b20b7fd0707d0aa0e`, refreshed origin/main.
@@ -76,3 +76,31 @@ Docs checks pass: three files, 73 tests. Existing React act warnings remain.
 Prettier, whitespace, and PR gate pass. No package or demo code changed.
 Full pnpm check is not required for preparation. No feature behavior or browser acceptance is claimed.
 Reports, implementation plan, summary, dispositions, and PR remain pending.
+
+## Collection and local integration — October 23, 14:13 UTC
+
+Resumed the recorded conversation in Chrome byroni.us. Pro finished after 39m30s.
+Downloaded engineering-histograms.zip under standing direct human approval.
+The event wait timed out, but the normal download succeeded. No retry or follow-up was needed.
+Verified safe paths, no symlinks, CRC, exact two-file inventory, and complete UTF-8 Markdown.
+Read both reports. Originals remain under ignored tmp/pro-engineering-histograms-2026-10-23/collected/.
+No Library upload or downloaded program execution occurred.
+
+Refreshed origin/main to 95832bd4 and rebased the scoped branch. Preserve recent workspace-entry and intent-retirement changes.
+Reviewed decisive bin, renderer, series, filter, parsing, scope, provider, trace, preview, validation, and text sources.
+Checked primary D3, NumPy, Minitab, and NIST references.
+Independent arithmetic confirms fixtures A–D, exact key sets, group denominators, strict tails, density mass, decimal neighbors, replacement/Fit, and large Fit indices.
+
+Integrated a four-milestone plan, short summary, eleven local dispositions, and R008 status/link.
+Local review narrows Pro's global re-snapping change: freeze predicates only with explicit histogram settings.
+Keep ordinary histograms' current behavior. Use existing trace access and no plot-level Inspect button.
+Verify relevant settings/geometry changes invalidate exact Records; extend the revision key if required.
+Source measurement extents, chart population, and summary context remain explicit distinct inputs.
+
+Baseline bins and selection tests pass: two files, eleven tests. These do not prove proposed feature behavior.
+No package/demo code changed. No full pnpm check or feature browser acceptance is required for this planning PR.
+Docs, formatting, local links, whitespace, and PR checks are recorded below before completion.
+
+Validation: docs three files/73 tests pass, with existing React act warnings.
+Baseline bins/selection two files/11 tests, independent fixtures, six authored local links, Prettier, whitespace, and PR gate pass.
+Full pnpm check is not required for documentation-only work. No proposed runtime/browser acceptance is claimed.
