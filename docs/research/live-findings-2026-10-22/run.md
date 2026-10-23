@@ -1,6 +1,6 @@
 # Live findings design run
 
-Phase: submitted; Pro is working. Mode: Design. Follow-ups: 0/1.
+Phase: collected and integrated; checks and review PR pending. Mode: Design. Follow-ups: 0/1.
 
 Repository: https://github.com/byronwall/explorEDA.
 Source: `7f466fdebcf14c0fd87233aa634c0c74f91b4e93` from refreshed origin/main.
@@ -97,3 +97,33 @@ Docs checks pass: 3 files, 73 tests. Existing React act warnings remain.
 Prettier, git diff --check, and pnpm check:pr pass.
 No package or demo code changed, so full pnpm check is not required for this preparation.
 Pro reports that its access check passed. Research conclusions remain pending.
+
+## Collection and integration, October 22
+
+Resumed the same conversation in Chrome byroni.us. The old tab was absent; opened the recorded URL.
+Pro finished after 33m48s. Downloaded the two-report ZIP under standing human approval.
+The download-event wait timed out, but the normal download completed in Downloads.
+Copied the archive into ignored tmp/, checked safe paths, no symlinks, CRC, inventory, and UTF-8.
+Read both complete reports. No downloaded program ran. No Library upload or follow-up was needed.
+
+Refreshed main to 16b88f8a and rebased the unpushed preparation commit.
+Current notebook, Crossfilter, metric, DSL, trace, and project identity source checked.
+Confirmed the local-owner resolution gap and separate card denominator.
+The trace closes on revision change; it does not implement pinned historical inputs.
+Identity and histogram repairs are now merged. Existing key helpers do not establish a historical content revision.
+Checked Observable, Quarto, and Vega-Lite primary documentation.
+
+Integrated sixteen local dispositions, a staged implementation plan, short summary, intent status, and catalogue link.
+Local review keeps M1–M3 as live findings, authoring, and comparisons.
+Saved evidence becomes M4 Explore; shared selection and exact lasso form a separate M5.
+Use existing filters/field references and close current evidence on input changes before adding historical capture.
+No feature syntax, application behavior, docs-site lesson, or runnable example ships in this planning PR.
+Every future visible milestone names its docs section and runnable example.
+
+Exact synthetic arithmetic and memberships pass through a local fractions calculation.
+Existing notebook compilation and Crossfilter tests pass: two files, 21 tests.
+New finding behavior, Boolean syntax round-trip, browser interaction, capture, restore, and lasso acceptance remain unrun.
+Full pnpm check is not needed: package/demo code is unchanged.
+
+Integration checks pass: docs three files/73 tests, 117 local links, initiative JSON, and whitespace.
+Existing React act warnings remain. Format and PR checks run before push.
