@@ -13,6 +13,7 @@ import {
   LOESS_EXACT_ROWS,
   LOESS_VERTICES,
   fitEquation,
+  fitEquationTerms,
   formatR2,
   type RegressionFit,
 } from "./regression";
@@ -42,14 +43,23 @@ const precise = (value: number | undefined) =>
 
 const METHOD_HELP: Record<ScatterFitPlan["method"], string> = {
   linear:
-    "Ordinary least squares: the straight line that minimizes the squared vertical distances to the points. Slope is the change in Y for one unit of X. Offset is the fitted Y at X = 0, which may lie outside the data. R² is the share of Y variance the line explains; it does not show that the relationship is linear or causal.",
+    "Ordinary least squares: the straight line that minimizes the squared vertical distances to the points. Slope is the change in Y for one unit of X. Offset is the fitted Y at X = 0, which may lie outside the data. When X sits far from zero, the equation is written around a round center c near the mean X, and Y at c replaces the offset, so the rounded numbers still reproduce the line. R² is the share of Y variance the line explains; it does not show that the relationship is linear or causal.",
   polynomial:
-    "Least squares on powers of X up to the chosen degree. Coefficients are listed from the constant term up. Adding terms always raises R², so compare adjusted R², which charges for each term. The curve is drawn only across the observed X range; outside it a polynomial can turn sharply.",
+    "Least squares on powers of X up to the chosen degree. Coefficients are listed from the constant term up. When X sits far from zero, they are powers of x − c, for a round center c near the mean X, because expanded powers of x would need more digits than any label shows. Adding terms always raises R², so compare adjusted R², which charges for each term. The curve is drawn only across the observed X range; outside it a polynomial can turn sharply.",
   loess:
     "Locally weighted regression: each point on the curve comes from a straight line fitted to the nearest rows, weighted by distance with a tricube kernel. Span is the share of rows in each local fit; a larger span gives a smoother curve. LOESS has no single equation or slope. Pseudo R² is 1 − residual sum of squares / total sum of squares.",
 };
 
 const POWER_NAMES = ["Constant", "x", "x²", "x³", "x⁴", "x⁵", "x⁶"];
+const CENTERED_POWER_NAMES = [
+  "Constant",
+  "x − c",
+  "(x − c)²",
+  "(x − c)³",
+  "(x − c)⁴",
+  "(x − c)⁵",
+  "(x − c)⁶",
+];
 
 function Coefficients({ fit }: { fit: RegressionFit }) {
   if (fit.method === "loess")
@@ -69,12 +79,21 @@ function Coefficients({ fit }: { fit: RegressionFit }) {
         )}
       </>
     );
+  const terms = fitEquationTerms(fit)!;
+  const centered = terms.center !== 0;
+  const center = centered && (
+    <TraceReadout label="Center c">{terms.centerText}</TraceReadout>
+  );
   if (fit.method === "polynomial")
     return (
       <>
         <TraceReadout label="Degree">{fit.degree}</TraceReadout>
-        {fit.coefficients.map((value, power) => (
-          <TraceReadout key={power} label={POWER_NAMES[power]!}>
+        {center}
+        {terms.coefficients.map((value, power) => (
+          <TraceReadout
+            key={power}
+            label={(centered ? CENTERED_POWER_NAMES : POWER_NAMES)[power]!}
+          >
             {precise(value)}
           </TraceReadout>
         ))}
@@ -93,7 +112,16 @@ function Coefficients({ fit }: { fit: RegressionFit }) {
         {precise(fit.slope)}
         {fit.slopeSe !== undefined && ` ± ${precise(fit.slopeSe)} SE`}
       </TraceReadout>
-      <TraceReadout label="Offset">{precise(fit.intercept)}</TraceReadout>
+      {centered ? (
+        <>
+          {center}
+          <TraceReadout label="Y at c">
+            {precise(terms.coefficients[0])}
+          </TraceReadout>
+        </>
+      ) : (
+        <TraceReadout label="Offset">{precise(fit.intercept)}</TraceReadout>
+      )}
       <TraceReadout label="R²">{formatR2(fit.r2)}</TraceReadout>
       {fit.r !== undefined && (
         <TraceReadout label="Pearson r">{precise(fit.r)}</TraceReadout>
@@ -145,7 +173,10 @@ function FitDetails({
             <>
               <p className="font-mono text-sm">{fitEquation(outcome)}</p>
               <p className="text-muted-foreground">
-                y is {trace.yLabel}; x is {trace.xLabel}.
+                y is {trace.yLabel}; x is {trace.xLabel}
+                {fitEquationTerms(outcome)!.center !== 0 &&
+                  ", taken around the center c below so the rounded coefficients still reproduce the curve"}
+                .
               </p>
             </>
           )}

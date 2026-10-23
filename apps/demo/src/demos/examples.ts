@@ -12,6 +12,7 @@ import {
   bubbleDashboard,
   densityDashboard,
   scatterRegressionDashboard,
+  scatterRegressionUnitsDashboard,
   scatterMatrixDashboard,
   scatterSurfaceDashboard,
   pointMapDashboard,
@@ -551,6 +552,17 @@ export const examples: ExampleData[] = [
     icon: ScatterChart,
     data: "/datasets/palmer-penguins.csv",
     savedData: scatterRegressionDashboard,
+  },
+  {
+    id: "scatter-regression-units",
+    title: "A fitted curve far from zero",
+    description:
+      "Five sensor readings sit a billion millimetres from zero. The quadratic's equation is written around a round center, so its rounded numbers still give the curve, in millimetres or metres.",
+    dataset: { rows: "5 readings", fields: 4, source: "Synthetic" },
+    shows: ["Polynomial fit", "Centered equation", "Unit change"],
+    icon: ScatterChart,
+    data: "/datasets/regression-units.csv",
+    savedData: scatterRegressionUnitsDashboard,
   },
   {
     id: "scatter-matrix",

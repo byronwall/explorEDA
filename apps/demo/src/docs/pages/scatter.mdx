@@ -72,6 +72,13 @@ The **Fit** tab draws a regression for each color group in each facet: linear, p
   caption="A linear fit per species, from the scatter regression example."
 />
 
+A line or polynomial label states its equation with about three significant digits. When X sits far from zero, as with timestamps or positions measured from a distant origin, an equation in plain powers of x would need far more digits than that to reproduce the curve. The label then writes the equation around a round center near the mean X, such as `y = 0.0346(x − 1,000,000,000)² + 0.235(x − 1,000,000,000) + 1.23`, so the rounded numbers still give the drawn curve. The fit's trace lists the center c and the coefficients of each power of x − c, and a line shows Y at c in place of the offset at X = 0. Changing units, such as millimetres to metres, moves the center and rescales the coefficients but keeps the same curve.
+
+<LiveExample
+  id="scatter-regression-units"
+  caption="One quadratic in millimetres and in metres, from the curve far from zero example."
+/>
+
 ## Bubbles
 
 **Size by** a numeric field to draw bubbles. Bubble area stays proportional to value, and the largest radius is set in pixels.
