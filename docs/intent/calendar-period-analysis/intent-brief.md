@@ -50,6 +50,6 @@ See the [reference packet](references/README.md) and [comparison collection](../
 
 ## Retention boundary, 2026-10-21
 
-The [retention review](../../research/retention-observation-2026-10-21/README.md) distinguishes calendar maturity from observation coverage.
+The [retention observation seed](../retention-observation-window/intent-brief.md) distinguishes calendar maturity from observation coverage.
 Its day-rounded partial flag and reached-cohort All rule do not select rolling or stepping semantics here.
 Keep PR454's axis scope separate. Observation metadata and a changed summary denominator remain proposed.

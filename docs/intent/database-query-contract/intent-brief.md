@@ -8,7 +8,7 @@ last_updated: "2026-10-12"
 
 # Server-side queries for data too big to snapshot
 
-> **Reframed 2026-10-13.** Complete snapshots, connections, and drivers moved to [Database sources](../database-adapters/intent-brief.md). This initiative now covers only server-side queries for sources too big to snapshot, and comes later. The text below predates the reframe and will be rewritten when this work starts.
+> **Reframed 2026-10-13.** Complete snapshots, connections, and drivers moved to [Database sources](../../../apps/demo/src/docs/pages/database-sources.mdx). This initiative now covers only server-side queries for sources too big to snapshot, and comes later. The text below predates the reframe and will be rewritten when this work starts.
 
 ## My read
 

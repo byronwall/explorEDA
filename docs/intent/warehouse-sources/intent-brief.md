@@ -10,7 +10,7 @@ last_updated: "2026-10-13"
 
 ## My read
 
-After [database sources](../database-adapters/intent-brief.md) ship, authors will want the same table and SQL sources from cloud warehouses: Snowflake, BigQuery, Redshift, and Databricks. These are deferred because testing them needs real accounts. They also bring auth that a password connection doesn't cover, such as OAuth, key files, and service accounts, and they cost money per query.
+Now that [database sources](../../../apps/demo/src/docs/pages/database-sources.mdx) have shipped, authors will want the same table and SQL sources from cloud warehouses: Snowflake, BigQuery, Redshift, and Databricks. These are deferred because testing them needs real accounts. They also bring auth that a password connection doesn't cover, such as OAuth, key files, and service accounts, and they cost money per query.
 
 ## What matters most
 

@@ -1,0 +1,130 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "Retention observation window",
+    "slug": "retention-observation-window",
+    "scale": "capability",
+    "current_phase": "intent",
+    "last_updated": "2026-10-23",
+    "summary": "Two narrow checks from the retention observation review: the partial-period rounding rule and the All row's partial cells.",
+    "status": "planned",
+    "next_action": "Check the partial rule against the retention plan with an eight-row fixture."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-23"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "not-created",
+      "updated_at": null
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "not-created",
+      "updated_at": null
+    }
+  },
+  "sources": [
+    {
+      "id": "retirement-2026-10-23",
+      "type": "direct-user-input",
+      "location": "Claude Code session retiring docs/intent, 2026-10-23",
+      "anchor": "Follow-up work from retired domain-analysis-views; research pointing to more work becomes a thin new intent",
+      "authority": "Explicit human feedback"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "snapshot-contract",
+        "type": "goal",
+        "statement": "Keep the event-snapshot contract; never infer continuous collection.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "later",
+        "source_anchors": [
+          {
+            "source_id": "retirement-2026-10-23",
+            "anchor": "Follow-up work"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "partial-rule",
+        "type": "goal",
+        "statement": "Make the partial-period rule and the retention docs agree.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "later",
+        "source_anchors": [
+          {
+            "source_id": "retirement-2026-10-23",
+            "anchor": "Follow-up work"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      }
+    ],
+    "themes": [],
+    "conflicts": [],
+    "human_questions": []
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "not-started",
+    "appetite": null,
+    "problem": null,
+    "recommended_shape": null,
+    "success_moves": [],
+    "first_proof": null,
+    "rabbit_holes": [],
+    "open_decisions": []
+  },
+  "implementation": {
+    "status": "not-started",
+    "repository_snapshot": {
+      "root": null,
+      "revision": null,
+      "worktree_status": null,
+      "subsystems": [],
+      "test_commands": [],
+      "deployment_surfaces": []
+    },
+    "dependencies": [],
+    "fast_local_loop": null,
+    "milestones": [],
+    "cut_line": [],
+    "open_decisions": []
+  },
+  "history": [
+    {
+      "date": "2026-10-23",
+      "change": "Created from the retired domain-analysis-views initiative and its research."
+    }
+  ],
+  "closure": null,
+  "intake": {
+    "kind": "user-addition",
+    "audience": "End users and host developers (via API and batch tooling).",
+    "priority": "Seed; no scheduling.",
+    "related_initiatives": ["analysis-export", "renderer-independent-replay"]
+  }
+}
