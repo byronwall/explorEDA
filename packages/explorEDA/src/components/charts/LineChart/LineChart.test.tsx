@@ -172,3 +172,67 @@ it("draws one line per split value on a numeric x, each in x order", () => {
   // reads as 1936, not 1,936.
   expect(screen.getByRole("status")).toHaveTextContent("year1936GM40IBM4");
 });
+
+it("reads every series at each hovered x, whatever each line's reduction kept", () => {
+  window.PointerEvent = MouseEvent as typeof PointerEvent;
+  registerAllCharts();
+  const settings = {
+    ...lineChartDefinition.createDefaultSettings({ x: 0, y: 0, w: 6, h: 4 }),
+    id: "line-reduced-readout",
+    xField: "t",
+    seriesField: ["alpha", "beta"],
+    showLegend: false,
+  };
+  const cycle = [0, 10, 5, 3, 7];
+  const data = Array.from({ length: 3000 }, (_, t) => ({
+    t,
+    alpha: cycle[t % cycle.length]!,
+    beta: (t * 7) % 13,
+  }));
+  const { container } = render(
+    <DataLayerProvider data={data} charts={[settings]}>
+      <LineChart settings={settings} width={700} height={300} />
+    </DataLayerProvider>
+  );
+  const chart = container.firstElementChild!;
+  const missing: number[] = [];
+  for (let clientX = 80; clientX < 660; clientX += 3) {
+    fireEvent.pointerMove(chart, { clientX, clientY: 150 });
+    const text =
+      container.querySelector(".eda-chart-readout-inline")?.textContent ?? "";
+    if (!text.includes("alpha") || !text.includes("beta"))
+      missing.push(clientX);
+  }
+  expect(missing).toEqual([]);
+});
+
+it("lists every row at the hovered x", () => {
+  window.PointerEvent = MouseEvent as typeof PointerEvent;
+  registerAllCharts();
+  const settings = {
+    ...lineChartDefinition.createDefaultSettings({ x: 0, y: 0, w: 6, h: 4 }),
+    id: "line-tied-readout",
+    xField: "x",
+    seriesField: ["y"],
+    showLegend: false,
+  };
+  const { container } = render(
+    <DataLayerProvider
+      data={[
+        { x: 0, y: 1 },
+        { x: 1, y: 2 },
+        { x: 1, y: 5 },
+        { x: 2, y: 3 },
+      ]}
+      charts={[settings]}
+    >
+      <LineChart settings={settings} width={400} height={300} />
+    </DataLayerProvider>
+  );
+  fireEvent.pointerMove(container.firstElementChild!, {
+    clientX: 220,
+    clientY: 150,
+  });
+  // Both rows at x = 1 read, top of the plot first.
+  expect(screen.getByRole("status")).toHaveTextContent("x1y5y2");
+});
