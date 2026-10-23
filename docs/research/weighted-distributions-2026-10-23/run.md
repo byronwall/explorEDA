@@ -1,6 +1,6 @@
 # Weighted distributions Methods run
 
-Phase: submitted; Pro is working. Mode: Methods. Follow-ups: 0/1.
+Phase: collected and integrated; checks and PR pending. Mode: Methods. Follow-ups: 0/1.
 
 Repository: https://github.com/byronwall/explorEDA.
 Source: `6d9130ba1c5242c15bbbeb9b20b7fd0707d0aa0e`, refreshed origin/main.
@@ -76,4 +76,28 @@ Delete only the collector when the PR is open. The six-hour discovery task remai
 
 Docs checks pass: three files, 73 tests. Existing React act warnings remain.
 No package or demo code changed. Full pnpm check is not required for preparation.
-Reports, local review, implementation plan, summary, and PR remain pending.
+At submission, reports, local review, implementation plan, summary, and PR remained pending.
+
+## Collection and local review — October 23, 08:13 UTC
+
+Resumed the same recorded conversation in Chrome byroni.us. Pro finished after 27m09s.
+Downloaded the ZIP under standing direct human approval. The event wait timed out; the normal download succeeded.
+Copied it into ignored tmp/, verified safe flat paths, no symlinks, CRC, exact two-file inventory, and UTF-8.
+Read both complete reports. No downloaded program ran. No follow-up or Library upload was needed.
+
+Refreshed origin/main; it remains the submission baseline. Reviewed ECDF, box, parsing, aggregate, hook, validation, and annotation source.
+Checked NumPy and R method definitions and statsmodels' distinct exact-boundary behavior.
+The local plan keeps the native ECDF, inverse quantiles, evidence, grouping, and staged boxes.
+Defer the interpretation selector. A weight field and optional unit suffice initially.
+Scaled underflow uses one unavailable state locally, replacing Pro's approximate curve and partial quantile states.
+Only reference lines currently contain calculated annotation operands. Bands and regions use fixed numeric bounds.
+Preserve existing callout support; do not add ECDF record callouts as an incidental weighting change.
+
+Integrated fifteen dispositions, a concise implementation plan, short research summary, and the R009 link.
+No package, demo, docs-site lesson, or example code changed. Future milestones pair each feature with docs and runnable examples.
+Weighted runtime, mounted scope, restore, and browser acceptance remain proposed.
+
+Local fraction checks pass for all eight count/total/quantile rows, exact numerator and selection memberships,
+both inclusive tails, peer denominators, and interpolation counterexamples.
+Existing ECDF planner and box calculation tests pass: two files, sixteen tests.
+These checks protect the baseline and proposed arithmetic; they do not verify unbuilt weighted behavior.

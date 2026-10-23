@@ -4,11 +4,16 @@
 - Category: Distribution semantics
 - Priority: 92
 - Kind: new-direction
-- Status: candidate
+- Status: Methods plan ready for review
 - Confidence: medium
 - Baseline: `9b16d78e3ed0742ed4d5858c1939fec9e758b510`
 
 ## Research brief
+
+The October 23 Methods run recommends native weighted ECDFs, then configurable percentiles and weighted boxes.
+Use the [implementation plan](../../weighted-distributions/implementation-plan.md) and [reviewed summary](../../../research/weighted-distributions-2026-10-23/README.md).
+The current research direction supersedes the historical demand and rejection gates below.
+No weighted feature ships with this plan.
 
 Some measurement tables contain one row per sampled unit with a frequency or exposure weight. Counting those rows equally can answer a different question from counting the represented population. The current `EcdfCurve` denominator is the number of valid observations, and `buildSteps` accumulates source-row counts at tied values. Composition summaries are intentionally unweighted. This is a new analytical direction for a concrete weighted-distribution task, not a request to relabel existing curves or duplicate rows until their visual size looks correct.
 
