@@ -55,11 +55,11 @@ A normal Chrome download recovered the existing ZIP at about 2026-10-13 00:55 UT
 No research was resubmitted. All five original companions were extracted and verified; a separate report download matched exactly.
 Chrome blocked independent raw JSON destinations. The original JSON files are present in the verified archive.
 
-- [Collection manifest](../../intent/progressive-built-in-charts/raw/collection.json): paths, sizes, SHA-256, retrieval, and limits.
-- [Exhaustive review](../../intent/progressive-built-in-charts/example-review.md): all 29 examples, including current routes and exact gaps.
-- [Recommendation decisions](../../intent/progressive-built-in-charts/recommendation-decisions.md): all 26 proposals reconciled.
-- [Shape](../../intent/progressive-built-in-charts/shape-brief.md) and [plan](../../intent/progressive-built-in-charts/implementation-plan.md): four proposed milestones; lifecycle remains planned.
-- [Evidence checks](../../intent/progressive-built-in-charts/source-checks.md): independent code/data observations and executed checks.
+- [Collection manifest](pro/collection.json): paths, sizes, SHA-256, retrieval, and limits.
+- [Exhaustive review](example-review.md): all 29 examples, including current routes and exact gaps.
+- [Recommendation decisions](recommendation-decisions.md): all 26 proposals reconciled.
+- [Shape](https://github.com/byronwall/explorEDA/blob/6d9130ba1c5242c15bbbeb9b20b7fd0707d0aa0e/docs/intent/progressive-built-in-charts/shape-brief.md) and [plan](https://github.com/byronwall/explorEDA/blob/6d9130ba1c5242c15bbbeb9b20b7fd0707d0aa0e/docs/intent/progressive-built-in-charts/implementation-plan.md): four proposed milestones; lifecycle remains planned.
+- [Evidence checks](source-checks.md): independent code/data observations and executed checks.
 
 No material gap needed a follow-up. The integration retains four existing routes, fourteen bounded extensions, seven specialist examples, three mixed cases, and one clear composition case.
 “Small extension” is qualified as bounded ownership, often medium effort. Source corrections and output limits remain explicit.
@@ -88,7 +88,7 @@ Stop for review. Do not resume the heartbeat, merge, or begin implementation wit
 - [Source manifest](source-manifest.json): baseline files and local additions with hashes.
 - [Packet metadata](packet.json): ZIP path, size, hash, and upload status.
 - ZIP: `tmp/composition-review/source-packet.zip`. Selected snapshot; not a runnable checkout.
-- [Sleuth intent](../../intent/progressive-built-in-charts/intent-brief.md) and [initiative map](../../intent/progressive-built-in-charts/initiative-map.json).
+- [Sleuth intent](https://github.com/byronwall/explorEDA/blob/6d9130ba1c5242c15bbbeb9b20b7fd0707d0aa0e/docs/intent/progressive-built-in-charts/intent-brief.md) and [initiative map](https://github.com/byronwall/explorEDA/blob/6d9130ba1c5242c15bbbeb9b20b7fd0707d0aa0e/docs/intent/progressive-built-in-charts/initiative-map.json).
 
 The packet contains composition definitions, source datasets, built-in chart code, shared settings and data logic, tests, docs, and relevant intent.
 It excludes credentials, unrelated private files, dependencies, build output, and raw prior research.

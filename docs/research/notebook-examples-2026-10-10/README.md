@@ -15,4 +15,4 @@ The [research prompt](research-prompt.txt) records the brief given to Pro. The [
 
 Upstream datasets are linked in the source index. The Pro package does not contain copies of those datasets. Some availability claims describe loaded notebook rows rather than independently downloaded data.
 
-The Pro agent did not inspect explorEDA. Its compatibility statements and proposed controls are research hypotheses. This capture preserves those distinctions. The local [synthesis](../../research-synthesis.md) compares the findings with repository documentation and selected code. The [intent](../../intent-brief.md) remains the product review document.
+The Pro agent did not inspect explorEDA. Its compatibility statements and proposed controls are research hypotheses. This capture preserves those distinctions. The local [synthesis](synthesis.md) compares the findings with repository documentation and selected code. The [intent](https://github.com/byronwall/explorEDA/blob/6d9130ba1c5242c15bbbeb9b20b7fd0707d0aa0e/docs/intent/notebook-analysis/intent-brief.md) remains the product review document.

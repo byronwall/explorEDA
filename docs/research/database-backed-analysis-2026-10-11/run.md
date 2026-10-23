@@ -28,12 +28,12 @@ No application implementation, infrastructure provisioning, merging, or deployme
 All timestamps below use America/Indiana/Indianapolis (UTC−04:00).
 Submission times are approximate, based on the browser action sequence. Each submitted message and active response was verified.
 
-| Track | Prompt | Conversation | Submitted | State | Follow-ups |
-| --- | --- | --- | --- | --- | --- |
-| Query demands | [prompt](../../intent/database-query-contract/raw/2026-10-11-pro/prompt.md) | https://chatgpt.com/c/6acc5207-c9f8-83ea-9b50-5b5dae43afdf | Oct 11, 23:20 | Collected and reconciled | 0/2 |
-| Columnar transport | [prompt](../../intent/columnar-data-transport/raw/2026-10-11-pro/prompt.md) | https://chatgpt.com/c/6acc5239-824c-83ea-9a03-61e6f84b068c | Oct 11, 23:21 | Collected and reconciled | 0/2 |
-| Database adapters | [prompt](../../intent/database-adapters/raw/2026-10-11-pro/prompt.md) | https://chatgpt.com/c/6acc52ce-2a14-83ea-b9e0-01f54b8c3905 | Oct 11, 23:23 | Collected and reconciled | 0/2 |
-| Customer hosting | [prompt](../../intent/customer-instance-hosting/raw/2026-10-11-pro/prompt.md) | https://chatgpt.com/c/6acc52f9-15b8-83ea-9033-1fb171f62cc2 | Oct 11, 23:25 | Collected and reconciled | 0/2 |
+| Track              | Prompt                                                                        | Conversation                                               | Submitted     | State                    | Follow-ups |
+| ------------------ | ----------------------------------------------------------------------------- | ---------------------------------------------------------- | ------------- | ------------------------ | ---------- |
+| Query demands      | [prompt](../../intent/database-query-contract/raw/2026-10-11-pro/prompt.md)   | https://chatgpt.com/c/6acc5207-c9f8-83ea-9b50-5b5dae43afdf | Oct 11, 23:20 | Collected and reconciled | 0/2        |
+| Columnar transport | [prompt](../../intent/columnar-data-transport/raw/2026-10-11-pro/prompt.md)   | https://chatgpt.com/c/6acc5239-824c-83ea-9a03-61e6f84b068c | Oct 11, 23:21 | Collected and reconciled | 0/2        |
+| Database adapters  | [prompt](database-adapters/prompt.md)                                         | https://chatgpt.com/c/6acc52ce-2a14-83ea-b9e0-01f54b8c3905 | Oct 11, 23:23 | Collected and reconciled | 0/2        |
+| Customer hosting   | [prompt](../../intent/customer-instance-hosting/raw/2026-10-11-pro/prompt.md) | https://chatgpt.com/c/6acc52f9-15b8-83ea-9033-1fb171f62cc2 | Oct 11, 23:25 | Collected and reconciled | 0/2        |
 
 The live selector showed Pro for each run. The first two selectors also showed power 5 of 5.
 Each run receives its prompt as a separate Markdown attachment plus the source ZIP.
@@ -101,12 +101,12 @@ The app source is unchanged from the research baseline. No provider, database, o
 
 The full research and initial shaping workflow is complete. No implementation began.
 
-| Track | Review PR | Head | Base |
-| --- | --- | --- | --- |
-| Query demands | [#344](https://github.com/byronwall/explorEDA/pull/344) | `codex/database-query-contract-review` | `main` |
-| Columnar transport | [#345](https://github.com/byronwall/explorEDA/pull/345) | `codex/columnar-data-transport-review` | `codex/database-query-contract-review` |
-| Database adapters | [#346](https://github.com/byronwall/explorEDA/pull/346) | `codex/database-adapters-review` | `codex/columnar-data-transport-review` |
-| Customer hosting | [#347](https://github.com/byronwall/explorEDA/pull/347) | `codex/customer-instance-hosting-review` | `codex/database-adapters-review` |
+| Track              | Review PR                                               | Head                                     | Base                                   |
+| ------------------ | ------------------------------------------------------- | ---------------------------------------- | -------------------------------------- |
+| Query demands      | [#344](https://github.com/byronwall/explorEDA/pull/344) | `codex/database-query-contract-review`   | `main`                                 |
+| Columnar transport | [#345](https://github.com/byronwall/explorEDA/pull/345) | `codex/columnar-data-transport-review`   | `codex/database-query-contract-review` |
+| Database adapters  | [#346](https://github.com/byronwall/explorEDA/pull/346) | `codex/database-adapters-review`         | `codex/columnar-data-transport-review` |
+| Customer hosting   | [#347](https://github.com/byronwall/explorEDA/pull/347) | `codex/customer-instance-hosting-review` | `codex/database-adapters-review`       |
 
 Review in table order. Each PR contains its prompt, unchanged report/JSON/ZIP, collection manifest, intent, map, shape, and recommendation review.
 The first PR owns the shared notebook material, reconciliation, and validation. The last PR records this final completion state.

@@ -1,6 +1,6 @@
 # Notebook research: a useful first reproduction
 
-![Forecast analysis: explanation, signed differences, and interpretation](resources/pro-notebook-research/exploreda-notebook-research/assets/screenshots/forecast-03-definition.jpg)
+![Forecast analysis: explanation, signed differences, and interpretation](exploreda-notebook-research/assets/screenshots/forecast-03-definition.jpg)
 
 Captured from [Observable's forecast investigation](https://observablehq.com/@observablehq/whats-different-timeseries-forecast-performance). The prose explains a new measure before the graphic displays it.
 
@@ -16,7 +16,7 @@ This recommendation follows the Pro report. Byron selected it as the first proof
 
 ## What all eleven examples contribute
 
-The [complete illustrated report](resources/pro-notebook-research/exploreda-notebook-research/exploreda-notebook-examples.html) contains seven Observable examples and four external investigations. Each entry includes source links, data meaning, calculations, and reproduction elements. The table below gives each example a distinct role in this initiative.
+The [complete illustrated report](exploreda-notebook-research/exploreda-notebook-examples.html) contains seven Observable examples and four external investigations. Each entry includes source links, data meaning, calculations, and reproduction elements. The table below gives each example a distinct role in this initiative.
 
 | Example                                                                                                        | Useful reproduction elements                                                                           | Scope implication or limit                                                                                                                 |
 | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -34,13 +34,13 @@ The [complete illustrated report](resources/pro-notebook-research/exploreda-note
 
 ## A progression after the first proof
 
-![Calendar investigation with grouping controls and derived data](resources/pro-notebook-research/exploreda-notebook-research/assets/screenshots/date-patterns-06-quarter-day.jpg)
+![Calendar investigation with grouping controls and derived data](exploreda-notebook-research/assets/screenshots/date-patterns-06-quarter-day.jpg)
 
 [Date Patterns](https://observablehq.com/@observablehq/discovering-date-patterns) adds a useful second challenge: two calculation branches over the same source. Its line brush controls the visible line interval. It does not narrow the later grouped distribution. A reconstruction that applies every interaction globally would change the investigation.
 
 Retain the distribution marks when claiming a faithful reproduction. A group-mean chart can be an early simplification, but loses information. Local calendar fields also require more than the current UTC date functions.
 
-![Seattle cycling: a model result feeds a correction and another chart](resources/pro-notebook-research/exploreda-notebook-research/assets/screenshots/seattle-02.jpg)
+![Seattle cycling: a model result feeds a correction and another chart](exploreda-notebook-research/assets/screenshots/seattle-02.jpg)
 
 [Seattle cycling](https://jakevdp.github.io/blog/2014/06/10/is-seattle-really-seeing-an-uptick-in-cycling/) is the stretch case. Its question depends on adjustment for weather and temporal effects. Reproducing only the first time series would miss that argument. Use one reviewed model and explicit window rules before considering the full historical sequence.
 
@@ -71,4 +71,4 @@ Keep the first proof centered on that edit cycle, one prepared source, and a sim
 
 Pass the first proof when text edits, graphical edits, local scope, and reopening agree on the calculation and output. Failure to preserve that agreement should change the design before broader examples expand it.
 
-The scope decisions now live in the [intent brief](intent-brief.md) and [shape brief](shape-brief.md). Evidence, source qualifications, and original assets remain in the [research packet](resources/pro-notebook-research/README.md).
+The scope decisions now live in the [intent brief](https://github.com/byronwall/explorEDA/blob/6d9130ba1c5242c15bbbeb9b20b7fd0707d0aa0e/docs/intent/notebook-analysis/intent-brief.md) and [shape brief](https://github.com/byronwall/explorEDA/blob/6d9130ba1c5242c15bbbeb9b20b7fd0707d0aa0e/docs/intent/notebook-analysis/shape-brief.md). Evidence, source qualifications, and original assets remain in the [research packet](README.md).

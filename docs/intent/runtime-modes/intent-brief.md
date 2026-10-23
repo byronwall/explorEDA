@@ -30,12 +30,12 @@ The embedded React component stays a separate track: the host developer owns sto
 
 ## How the modes line up
 
-| Mode | Runs | Users | Data | Saved work |
-| --- | --- | --- | --- | --- |
-| Browser | demo, static | none | files | browser, or a picked project folder |
-| CLI | `apps/app` + local server | one local user | files; DB next | project folder on disk |
-| Self-hosted | same server, Compose | local accounts, author/viewer | files (upload or URL) | project folders on a volume |
-| Managed | same image per tenant | SSO, enterprise | files, DB, integrations | per-tenant store |
+| Mode        | Runs                      | Users                         | Data                    | Saved work                          |
+| ----------- | ------------------------- | ----------------------------- | ----------------------- | ----------------------------------- |
+| Browser     | demo, static              | none                          | files                   | browser, or a picked project folder |
+| CLI         | `apps/app` + local server | one local user                | files; DB next          | project folder on disk              |
+| Self-hosted | same server, Compose      | local accounts, author/viewer | files (upload or URL)   | project folders on a volume         |
+| Managed     | same image per tenant     | SSO, enterprise               | files, DB, integrations | per-tenant store                    |
 
 ## Boundaries
 
@@ -67,7 +67,7 @@ The embedded React component stays a separate track: the host developer owns sto
 
 ## Current reality that matters
 
-The demo is a Vite app on GitHub Pages that stores work in `localStorage`. `npx exploreda` runs a local single-user server over a project folder, and `exploreda server` adds accounts, roles, and projects for a team. [Database adapters](../database-adapters/intent-brief.md) plans a server read into the existing `tables` input, which fits the shared server.
+The demo is a Vite app on GitHub Pages that stores work in `localStorage`. `npx exploreda` runs a local single-user server over a project folder, and `exploreda server` adds accounts, roles, and projects for a team. [Database adapters](../../../apps/demo/src/docs/pages/database-sources.mdx) plans a server read into the existing `tables` input, which fits the shared server.
 
 ## Next step after confirmation
 
