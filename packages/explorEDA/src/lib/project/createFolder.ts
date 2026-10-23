@@ -137,8 +137,8 @@ export function addSourceText(
 
 /**
  * A new analysis that charts one query. `starter` opens it on a summary of
- * every field and the rows themselves, so charting a data file shows the
- * data at once.
+ * every field, so charting a data file shows the data at once; the rows
+ * open in their own drawer.
  */
 export function newAnalysisText(
   queryId: string,
@@ -151,10 +151,8 @@ export function newAnalysisText(
   return starter
     ? `${head}
 summary @fields title=Fields
-table @rows title=Rows
 layout {
   5: fields
-  5: rows
 }
 `
     : head;

@@ -68,6 +68,35 @@ export function findEmptyPlacement(
 }
 
 /**
+ * The spot a fresh workspace's start tile holds: beside the charts on the
+ * top row when there is room, otherwise under every chart.
+ */
+export function findStartPlacement(
+  occupied: ChartLayout[],
+  columnCount: number,
+  size: { w: number; h: number } = DEFAULT_CHART_SIZE
+): ChartLayout {
+  const topRight = Math.max(
+    0,
+    ...occupied
+      .filter((layout) => layout.y === 0)
+      .map((layout) => layout.x + layout.w)
+  );
+  const beside = { x: topRight, y: 0, ...size };
+  if (
+    topRight + size.w <= columnCount &&
+    !occupied.some((layout) => overlaps(layout, beside))
+  ) {
+    return beside;
+  }
+  return {
+    x: 0,
+    y: Math.max(0, ...occupied.map((layout) => layout.y + layout.h)),
+    ...size,
+  };
+}
+
+/**
  * Returns the largest size a chart may reach while one handle is dragged, so
  * a top or left resize stops at the nearest chart instead of pushing it.
  * Right and bottom edges may push neighboring charts down.

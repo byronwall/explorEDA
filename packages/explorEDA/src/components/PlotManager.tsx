@@ -15,10 +15,10 @@ import {
   type ExplorEdaSidePanel,
 } from "./WorkspaceSidePanel";
 
-import { Card, CardContent } from "@/components/ui/card";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { resolveThemeId } from "@/lib/themes";
 import { RowsPeek } from "./RowsPeek";
+import { WorkspaceStart } from "./WorkspaceStart";
 import { SchemaDrawer } from "./schema/SchemaDrawer";
 import type { SchemaGraph } from "@/lib/schema/schemaGraph";
 import type { SchemaProjectEditing } from "./schema/schemaEditing";
@@ -480,6 +480,11 @@ export function PlotManager({
   }, []);
 
   const isNarrowGrid = containerWidth > 0 && containerWidth < NARROW_GRID_WIDTH;
+  // A fresh workspace offers first steps in the grid until a chart lands.
+  const showStart =
+    !readOnly &&
+    data.length > 0 &&
+    charts.every((chart) => chart.type === "summary");
   const narrowColumns = narrowColumnCount(containerWidth);
   const chartGridSettings = {
     ...gridSettings,
@@ -1028,52 +1033,60 @@ export function PlotManager({
 
       <main className="eda-chart-area" ref={chartAreaRef}>
         <h2 className="sr-only">Charts</h2>
-        {charts.length === 0 ? (
-          <Card>
-            <CardContent className="space-y-2 pt-6">
-              <h3 className="font-medium">No charts yet</h3>
-              <p className="text-sm text-muted-foreground">
-                Add a chart to begin exploring this data.
-              </p>
-            </CardContent>
-          </Card>
-        ) : (
-          containerWidth > 0 && (
-            <ChartGridLayout charts={charts} containerWidth={containerWidth}>
-              {charts.map((chart) => {
-                if (!chart.layout) {
-                  return null;
+        {charts.length === 0 && !showStart
+          ? null
+          : containerWidth > 0 && (
+              <ChartGridLayout
+                charts={charts}
+                containerWidth={containerWidth}
+                start={
+                  showStart
+                    ? (slot) => (
+                        <WorkspaceStart
+                          slot={slot}
+                          onShowRows={() => setRowsOpen(true)}
+                          onShowFields={() => setFieldsOpen(true)}
+                          onShowSchema={() => setSchemaOpen(true)}
+                        />
+                      )
+                    : undefined
                 }
-                const size = gridToPixels(
-                  {
-                    ...chart.layout,
-                    ...(isNarrowGrid
-                      ? (flowedLayout?.get(chart.id) ?? { w: 1 })
-                      : {}),
-                  },
-                  containerWidth,
-                  chartGridSettings
-                );
-                return (
-                  <div key={chart.id} data-chart-id={chart.id} tabIndex={-1}>
-                    <GridChartPanel
-                      settings={chart}
-                      onDelete={() => removeChart(chart)}
-                      onDuplicate={() => {
-                        const chartWithoutId = Object.fromEntries(
-                          Object.entries(chart).filter(([key]) => key !== "id")
-                        ) as Omit<typeof chart, "id">;
-                        addChart(chartWithoutId);
-                      }}
-                      width={size.width}
-                      height={size.height}
-                    />
-                  </div>
-                );
-              })}
-            </ChartGridLayout>
-          )
-        )}
+              >
+                {charts.map((chart) => {
+                  if (!chart.layout) {
+                    return null;
+                  }
+                  const size = gridToPixels(
+                    {
+                      ...chart.layout,
+                      ...(isNarrowGrid
+                        ? (flowedLayout?.get(chart.id) ?? { w: 1 })
+                        : {}),
+                    },
+                    containerWidth,
+                    chartGridSettings
+                  );
+                  return (
+                    <div key={chart.id} data-chart-id={chart.id} tabIndex={-1}>
+                      <GridChartPanel
+                        settings={chart}
+                        onDelete={() => removeChart(chart)}
+                        onDuplicate={() => {
+                          const chartWithoutId = Object.fromEntries(
+                            Object.entries(chart).filter(
+                              ([key]) => key !== "id"
+                            )
+                          ) as Omit<typeof chart, "id">;
+                          addChart(chartWithoutId);
+                        }}
+                        width={size.width}
+                        height={size.height}
+                      />
+                    </div>
+                  );
+                })}
+              </ChartGridLayout>
+            )}
       </main>
 
       {/* The status bar keeps the row count and filter scope in view at the

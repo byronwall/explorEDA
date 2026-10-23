@@ -65,7 +65,7 @@ it("reads initial and edited chart settings from the same rendered state", async
   );
 
   const initial = workspace.current!.getSettings();
-  expect(initial.charts).toHaveLength(2);
+  expect(initial.charts).toHaveLength(1);
   expect(onStateChange).not.toHaveBeenCalled();
 
   fireEvent.click(screen.getByRole("button", { name: "Edit chart" }));

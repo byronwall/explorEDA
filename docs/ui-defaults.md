@@ -114,7 +114,7 @@ Keep a confirmation small and centered: a short question, one sentence that name
 - Chart type follows the workspace theme unless a chart overrides it on purpose. Size and weight controls offer a Theme choice that clears the override. The Theme tab lists every override by chart, with a reset for each property and for the whole chart. A reset changes type only, never fields, filters, scales, or layout.
 - Label filter bounds with their meaning and state where the filter applies.
 - Pair a filter's bounds side by side in one row, such as At least and At most, under its distribution.
-- Start new source imports with summary and data tables. Let users choose their first chart.
+- Start new source imports with a summary table. A dashed start tile holds the next free grid spot, not a banner above the grid: it lists up to three first charts drawn from the data's fields, Other chart, and links to the rows, fields, and schema. A chart started from it takes its spot, and the tile leaves once any chart other than a summary lands. Two-column grids put it beside the summary; a phone-width stack lists it first. Rows open in their drawer, not on the grid.
 - Preserve the order and layout in saved analyses.
 - “View chart data” opens a temporary preview. It must not add a chart or move existing charts.
 - Charts rise to fill empty rows above them, so the grid never leaves gaps at the top. A resize changes only the edge the user drags; the chart keeps its place among its neighbors.

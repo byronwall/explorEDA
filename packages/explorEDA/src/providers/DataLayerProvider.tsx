@@ -454,32 +454,22 @@ function createDefaultWorkspaceCharts(
     return [];
   }
 
+  // About one 100 px grid row per three fields, plus the title and header,
+  // so a short dataset doesn't open on a mostly empty summary.
+  const rows = Math.min(
+    6,
+    Math.max(3, Math.ceil((90 + 36 * fieldProfiles.length) / 100))
+  );
   const summary = chartRegistry.has("summary")
     ? getChartDefinition("summary").createDefaultSettings({
         x: 0,
         y: 0,
         w: 5,
-        h: 6,
+        h: rows,
       })
     : undefined;
-  const table = chartRegistry.has("data-table")
-    ? getChartDefinition("data-table").createDefaultSettings({
-        x: 5,
-        y: 0,
-        w: 7,
-        h: 6,
-      })
-    : undefined;
-  if (table?.type === "data-table") {
-    table.columns = fieldProfiles.map(({ name }) => ({
-      id: name,
-      field: name,
-    }));
-  }
-
-  return [summary, table].filter((item): item is ChartSettings =>
-    Boolean(item)
-  );
+  // Rows open in their own drawer, so the grid starts with the summary only.
+  return summary ? [summary] : [];
 }
 
 // Store creator

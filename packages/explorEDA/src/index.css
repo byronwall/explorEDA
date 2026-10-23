@@ -873,7 +873,8 @@
   min-width: 24px;
   height: 10px;
   border-radius: 2px;
-  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--foreground) 8%, transparent);
+  box-shadow: inset 0 0 0 1px
+    color-mix(in oklab, var(--foreground) 8%, transparent);
 }
 /* Short of room, the scale keeps its ends and the metric name goes; the
    panel header names it while a cell is under the pointer. */
@@ -1915,6 +1916,111 @@ html {
 }
 /* The status bar: row count and filter scope, kept in view at the bottom of
    the workspace while the charts scroll. */
+/* A fresh workspace's start tile holds the first free grid spot, drawn like
+   the spot a new chart previews: a quiet dashed outline that lists first
+   charts and the panels to open. A chart started here takes the spot. It
+   keeps the 6 px inset chart panels have inside their grid cells. */
+.eda-grid-start {
+  position: absolute;
+  z-index: 1;
+  padding: 6px;
+}
+.eda-grid-start-flow {
+  position: relative;
+}
+.eda-workspace-start {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 16px 14px;
+  border: 1.5px dashed
+    color-mix(in oklab, var(--muted-foreground) 30%, var(--border));
+  border-radius: var(--radius, 8px);
+  background: var(--background);
+  color: var(--muted-foreground);
+  transition: border-color 140ms ease;
+}
+.eda-workspace-start:hover,
+.eda-workspace-start:focus-within {
+  border-color: color-mix(in oklab, var(--primary) 45%, var(--border));
+}
+.eda-start-charts {
+  display: flex;
+  max-width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+.eda-start-chart {
+  display: inline-flex;
+  max-width: calc(100% + 8px);
+  align-items: flex-start;
+  gap: 8px;
+  padding: 5px 8px;
+  margin-left: -8px;
+  border-radius: calc(var(--radius) - 2px);
+  color: var(--foreground);
+  font-size: 13px;
+  line-height: 18px;
+  text-align: left;
+  transition:
+    background-color 140ms ease,
+    color 140ms ease;
+}
+/* Two lines at most; a longer title shows whole in its tooltip. A
+   -webkit-box line clamp here never settles inside the inline-flex row. */
+.eda-start-chart > span {
+  max-height: 36px;
+  overflow: hidden;
+}
+.eda-start-chart svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--muted-foreground);
+  transition: color 140ms ease;
+}
+.eda-start-chart:hover,
+.eda-start-chart[data-state="open"] {
+  background: color-mix(in oklab, var(--primary) 7%, transparent);
+  color: var(--primary);
+}
+.eda-start-chart:active {
+  background: color-mix(in oklab, var(--primary) 12%, transparent);
+}
+.eda-start-chart:hover svg,
+.eda-start-chart[data-state="open"] svg {
+  color: var(--primary);
+}
+.eda-start-chart:focus-visible,
+.eda-start-panels button:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+.eda-start-other {
+  color: var(--muted-foreground);
+}
+.eda-start-panels {
+  margin-top: 2px;
+  font-size: 12px;
+  line-height: 18px;
+}
+.eda-start-panels button {
+  padding: 3px 0;
+  margin: -3px 0;
+  border-radius: 3px;
+  color: var(--primary);
+  transition: color 140ms ease;
+}
+.eda-start-panels button:hover {
+  color: color-mix(in oklab, var(--primary) 75%, var(--foreground));
+}
+.eda-start-panels button:active {
+  color: color-mix(in oklab, var(--primary) 60%, var(--foreground));
+}
 .eda-workspace-status {
   position: sticky;
   bottom: 0;
