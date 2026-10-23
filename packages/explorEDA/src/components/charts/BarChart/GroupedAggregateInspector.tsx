@@ -45,16 +45,21 @@ export function AggregateContributorTable({
   row,
   showInputs = true,
   compact = false,
+  entityLabel,
 }: {
   row: AggregateResultRow;
   showInputs?: boolean;
   compact?: boolean;
+  /** Adds a column with each row's entity key, under this heading. */
+  entityLabel?: string;
 }) {
   const [page, setPage] = useState(0);
   const showRaw =
     !compact || row.contributors.some((item) => item.input !== item.rawInput);
   const cellClass = compact ? "px-2 py-1" : "p-2";
-  const numberClass = compact ? `${cellClass} text-right tabular-nums` : cellClass;
+  const numberClass = compact
+    ? `${cellClass} text-right tabular-nums`
+    : cellClass;
   const pageCount = Math.max(1, Math.ceil(row.contributors.length / PAGE_SIZE));
   const visibleContributors = row.contributors.slice(
     page * PAGE_SIZE,
@@ -73,6 +78,11 @@ export function AggregateContributorTable({
               <th className={numberClass} scope="col">
                 {compact ? "Row ID" : "Source row ID"}
               </th>
+              {entityLabel && (
+                <th className={cellClass} scope="col">
+                  {entityLabel}
+                </th>
+              )}
               {showInputs && (
                 <>
                   <th className={numberClass} scope="col">
@@ -99,6 +109,11 @@ export function AggregateContributorTable({
             {visibleContributors.map((contributor) => (
               <tr key={contributor.sourceId} className="border-t border-border">
                 <td className={numberClass}>{contributor.sourceId}</td>
+                {entityLabel && (
+                  <td className={cellClass}>
+                    {displayAggregateValue(contributor.entityKey)}
+                  </td>
+                )}
                 {showInputs && (
                   <>
                     <td className={numberClass}>
