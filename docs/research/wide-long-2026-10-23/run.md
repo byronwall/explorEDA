@@ -1,6 +1,6 @@
 # Wide-to-long Design run
 
-Phase: submitted; Pro is researching. Mode: Design. Follow-ups: 0/1.
+Phase: integrated; validation and planning PR pending. Mode: Design. Follow-ups: 0/1.
 
 Repository: https://github.com/byronwall/explorEDA.
 Source: `95832bd4`, refreshed origin/main.
@@ -78,3 +78,32 @@ Docs checks pass: three files, 73 tests. Existing React act warnings remain.
 No package or demo code changed. Full pnpm check is not required for preparation.
 No feature behavior or browser acceptance is claimed.
 Plan, summary, dispositions, and PR await the reports. No PR is open for this cycle yet.
+
+## Collection and integration — October 23, 20:41 UTC
+
+Reused the recorded Chrome conversation. Pro finished after 25m48s; no follow-up was needed.
+Downloaded wide-to-long-design.zip under standing direct human approval.
+The event wait timed out, but the normal download succeeded. No duplicate download was needed.
+Safe paths, no symlinks, CRC, exact two-file inventory, and complete UTF-8 Markdown passed.
+Read report.md and implementation-plan.md completely. Originals remain in ignored tmp/pro-wide-long-2026-10-23/collected/.
+No Library upload or downloaded program execution occurred.
+
+Refreshed origin/main; it remains 95832bd473884aeae23453af0888b4ca5187820d. Checkout had no unrelated edits.
+Checked decisive types, evaluator, parsing/counting, aliases, worker state/protocol, source inspection, settings compatibility,
+copy/edit helpers, project validation, project/analysis text, compiler schema, and public analysis exports.
+Checked tidyr, Power Query unpivot, Table.Unpivot, and Vega-Lite fold primary documentation.
+Existing evaluator and selection tests pass: two files, 18 tests.
+Independent shared-parser calculations confirm main counts/sums, exact memberships, key invariance, scalar presence,
+calculation/lookup/group arithmetic, and proposed budget boundaries. They do not execute an unbuilt unpivot feature.
+
+Wrote the feature plan, short summary, fifteen local dispositions, and R042/catalogue updates.
+Local review omits the redundant persisted compatibility attestation and special null-unit syntax.
+Current compiler inspection resolves Pro's open empty-result schema question into explicit schema-option work.
+The live workspace already accepts evaluation field names/types; preserve that existing path.
+Retain direct stage evidence rather than a separate provenance/execution platform.
+Each visible milestone includes docs and a runnable example. No feature implementation or browser acceptance is claimed.
+No package/demo code changed; full pnpm check is not required for this planning PR.
+
+Validation: docs three files/73 tests pass with existing React act warnings.
+Baseline evaluator/selection two files/18 tests, fixture calculations, and six authored local links pass.
+Whitespace passes. Formatting and the PR gate are checked after the normal formatting commit hook.
