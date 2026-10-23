@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { buildFieldProfiles, buildValuesProfile } from "./fieldProfiles";
+import { applyFilter } from "@/hooks/applyFilter";
+import type { datum } from "@/types/ChartTypes";
+import {
+  buildFieldProfiles,
+  buildValuesProfile,
+  missingCountLabel,
+  missingRowCount,
+} from "./fieldProfiles";
 
 describe("buildFieldProfiles", () => {
   it("keeps fields in first-seen order and profiles mixed values", () => {
@@ -96,5 +103,45 @@ describe("buildFieldProfiles", () => {
     });
     expect(profile.statistics?.mean).toBeCloseTo(mean, 10);
     expect(profile.statistics?.bins?.reduce((a, b) => a + b, 0)).toBe(5001);
+  });
+});
+
+describe("missingRowCount", () => {
+  // Absent, undefined, null, blank, and whitespace-only values, then values.
+  const values: datum[] = [
+    undefined,
+    undefined,
+    null,
+    "",
+    "   ",
+    "NA",
+    "oops",
+    Infinity,
+    0,
+    false,
+    "12.5",
+    "2025-02-30",
+  ];
+  const missingFilter = { type: "value" as const, field: "x", values: [null] };
+  const selected = values.filter((value) => applyFilter(value, missingFilter));
+
+  it.each(["categorical", "numeric"] as const)(
+    "counts the rows the %s missing filter selects",
+    (dataType) => {
+      const profile = buildValuesProfile("x", values, dataType);
+      expect(missingRowCount(profile)).toBe(selected.length);
+    }
+  );
+
+  it("keeps blank text as categories and names it in the caption", () => {
+    const profile = buildValuesProfile("x", values, "categorical");
+    expect(profile).toMatchObject({ nullCount: 3, blankCount: 2 });
+    expect(
+      profile.categories?.distribution.map((item) => item.value)
+    ).toContain("");
+    expect(missingCountLabel(profile)).toBe("5 missing, 2 of them blank text");
+    expect(missingCountLabel(buildValuesProfile("x", values, "numeric"))).toBe(
+      "5 missing"
+    );
   });
 });

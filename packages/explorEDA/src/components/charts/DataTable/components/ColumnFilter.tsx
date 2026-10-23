@@ -6,7 +6,7 @@ import {
 } from "@/lib/categories";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import type { FieldProfile } from "@/lib/fieldProfiles";
+import { type FieldProfile, missingRowCount } from "@/lib/fieldProfiles";
 import type { datum } from "@/types/ChartTypes";
 import type { Filter, TextFilter } from "@/types/FilterTypes";
 import { FilterX } from "lucide-react";
@@ -145,9 +145,12 @@ export function ColumnFilter({
     filter?.type === "value" &&
     filter.values.length === 1 &&
     filter.values[0] == null;
-  const missingCount = `${profile.nullCount.toLocaleString()} ${
-    profile.nullCount === 1 ? "row" : "rows"
-  }`;
+  // Blank text is a category of its own, but "missing" selects it too.
+  const missingRows = missingRowCount(profile);
+  const blankRows = profile.blankCount ?? 0;
+  const missingCount = `${missingRows.toLocaleString()} ${
+    missingRows === 1 ? "row" : "rows"
+  }${blankRows > 0 ? `, ${blankRows.toLocaleString()} of them blank text` : ""}`;
 
   // Checked values stay listed even when the profile has no such category.
   const listed = (profile.categories?.distribution ?? []).map(
@@ -332,7 +335,7 @@ export function ColumnFilter({
               </label>
             );
           })}
-          {profile.nullCount > 0 && (
+          {missingRows > 0 && (
             <label className="flex items-center gap-2 text-sm">
               <input
                 type="checkbox"
@@ -467,7 +470,7 @@ export function ColumnFilter({
           <input
             type="checkbox"
             checked={missingOnly}
-            disabled={profile.nullCount === 0 && !missingOnly}
+            disabled={missingRows === 0 && !missingOnly}
             onChange={(event) =>
               onChange(
                 columnId,
@@ -480,7 +483,7 @@ export function ColumnFilter({
           <span>
             Only missing values{" "}
             <span className="text-muted-foreground">
-              {profile.nullCount > 0 ? `· ${missingCount}` : "· none"}
+              {missingRows > 0 ? `· ${missingCount}` : "· none"}
             </span>
           </span>
         </label>

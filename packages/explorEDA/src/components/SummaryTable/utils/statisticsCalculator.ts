@@ -53,6 +53,11 @@ export interface ColumnStatistics {
   nullCount: number;
   /** Present values a numeric field cannot measure, such as Infinity. */
   excludedCount?: number;
+  /**
+   * Blank or whitespace-only text in a non-numeric field. Each stays its own
+   * category, but the missing filter selects it with the null rows.
+   */
+  blankCount?: number;
   statistics?: NumericStatistics;
   categories?: CategoryStatistics;
 }
@@ -141,12 +146,14 @@ export function calculateValueStatistics(
 
   // For non-numeric types, calculate category statistics
   let nullCount = 0;
+  let blankCount = 0;
   const counts = new Map<datum, number>();
   for (const value of values) {
     if (value == null) {
       nullCount += 1;
       continue;
     }
+    if (isMissingValue(value)) blankCount += 1;
     counts.set(value, (counts.get(value) ?? 0) + 1);
   }
   const distribution = [...counts].map(([value, count]) => ({
@@ -162,6 +169,7 @@ export function calculateValueStatistics(
     totalCount,
     uniqueCount: counts.size,
     nullCount,
+    ...(blankCount > 0 && { blankCount }),
     categories: {
       topValues,
       distribution,
