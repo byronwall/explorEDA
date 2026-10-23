@@ -66,10 +66,11 @@ it("labels adding the first chart to a new tab as a view change", async () => {
       viewName="Orders"
     />
   );
-  await screen.findByRole("button", { name: "Add chart" });
+  // A fresh tab also offers Add chart on its start card; the toolbar's comes first.
+  await screen.findAllByRole("button", { name: "Add chart" });
 
   fireEvent.click(screen.getByRole("button", { name: "New view" }));
-  const addChart = screen.getByRole("button", { name: "Add chart" });
+  const addChart = screen.getAllByRole("button", { name: "Add chart" })[0]!;
   fireEvent.click(addChart);
   const dialog = await screen.findByRole("dialog", { name: "Add a chart" });
   fireEvent.click(within(dialog).getByRole("button", { name: "Metric Card" }));
@@ -118,7 +119,7 @@ it("keeps order and item bindings through duplicate, undo, and local reload", as
       queryPresets={shopQueryPresets}
     />
   );
-  await screen.findByRole("button", { name: "Add chart" });
+  await screen.findAllByRole("button", { name: "Add chart" });
   fireEvent.click(screen.getByRole("tab", { name: "Items" }));
   await waitFor(() =>
     expect(
@@ -169,7 +170,7 @@ it("keeps order and item bindings through duplicate, undo, and local reload", as
       queryPresets={shopQueryPresets}
     />
   );
-  await screen.findByRole("button", { name: "Add chart" });
+  await screen.findAllByRole("button", { name: "Add chart" });
   const restored = readSavedViewsSessionResult(PROJECT_STORAGE_KEY).session!;
   const order = evaluateAnalysisQuery(
     restored.project!,
