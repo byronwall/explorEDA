@@ -4,11 +4,11 @@
     "title": "Keep explanations aligned with the selected data",
     "slug": "data-bound-narrative",
     "scale": "feature",
-    "current_phase": "intent",
-    "last_updated": "2026-10-09",
+    "current_phase": "plan",
+    "last_updated": "2026-10-22",
     "summary": "Analysts may want a short explanation beside a chart that updates when its population or measure changes.",
     "status": "planned",
-    "next_action": "Bind a single selected count beside a matching card. Check filtering, zero rows, and restore against exact IDs. Decide whether explicit bindings solve the task before introducing templates or generated language."
+    "next_action": "Start implementation-plan.md M1 when implementation is requested: named local-chart findings and exact current evidence."
   },
   "artifacts": {
     "intent_brief": {
@@ -28,8 +28,8 @@
     },
     "implementation_plan": {
       "path": "implementation-plan.md",
-      "status": "not-created",
-      "updated_at": null
+      "status": "current",
+      "updated_at": "2026-10-22"
     }
   },
   "sources": [
@@ -133,7 +133,7 @@
         "statement": "Expand when a recurring analysis needs manual explanation updates after filtering, and one existing metric can supply the statement.",
         "commitment": "tentative",
         "importance": "supporting",
-        "status": "active",
+        "status": "superseded",
         "time_horizon": "later",
         "source_anchors": [
           {
@@ -146,7 +146,7 @@
           }
         ],
         "confidence": "medium",
-        "notes": "Candidate interpretation; no feature implementation has been selected."
+        "notes": "The October 22 research direction replaces this expansion gate; see implementation-plan.md."
       },
       {
         "id": "priority-1",
@@ -267,7 +267,7 @@
     "open_decisions": []
   },
   "implementation": {
-    "status": "not-started",
+    "status": "planned",
     "repository_snapshot": {
       "root": "/Users/byronwall/.codex/worktrees/abcf/explorEDA",
       "revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
@@ -303,25 +303,30 @@
       "date": "2026-10-06",
       "action": "Reconciled annotated product feedback and priority.",
       "reason": "User provided clearer goals and indicated lower interest in unclear topics.",
-      "source_annotation_indices": [
-        3
-      ],
+      "source_annotation_indices": [3],
       "evidence": "Current brief changes where applicable; source inspection only. No implementation, pause, or cancellation."
     },
     {
       "date": "2026-10-09",
       "event": "status-checked",
       "status": "planned",
+      "evidence": ["No implementation of this scope found at 91b627d"]
+    },
+    {
+      "date": "2026-10-22",
+      "event": "design-planned",
       "evidence": [
-        "No implementation of this scope found at 91b627d"
-      ]
+        "implementation-plan.md",
+        "../../research/live-findings-2026-10-22/README.md"
+      ],
+      "notes": "Reviewed Pro design against current source. No product behavior implemented."
     }
   ],
   "closure": null,
   "intake": {
-    "kind": "seed",
-    "priority_basis": "Pro recommendations reconciled with current source; proposed priority, no implementation approval",
-    "expand_when": "Expand when a recurring analysis needs manual explanation updates after filtering, and one existing metric can supply the statement.",
+    "kind": "planned-feature",
+    "priority_basis": "Research direction and reviewed live-findings Design plan, October 22, 2026.",
+    "expand_when": "The plan defines the feature. Implementation remains a separate request; no outside demand gate.",
     "related_initiatives": [
       "in-app-analysis-agent",
       "composed-analytical-graphics"
