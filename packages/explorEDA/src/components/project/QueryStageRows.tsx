@@ -12,6 +12,9 @@ import type {
 import { Button } from "@/components/ui/button";
 import { buildFieldProfiles } from "@/lib/fieldProfiles";
 import { FieldMetadata } from "@/components/FieldMetadata";
+import { NullValue } from "@/components/NullValue";
+import { isMissingValue } from "@/lib/valueParsing";
+import type { datum } from "@/types/ChartTypes";
 import { cn } from "@/lib/utils";
 import { matchingSourceRows, resolveSourceRow } from "./sourceRowIdentity";
 import { rowLabel, sourceView } from "./queryEditing";
@@ -27,18 +30,20 @@ const PROFILE_TYPES = {
 } as const;
 
 function Cell({ value, numeric }: { value: unknown; numeric: boolean }) {
+  const missing = isMissingValue(value as datum);
   return (
     <td
+      data-null={missing || undefined}
       className={cn(
         "max-w-36 truncate px-2 py-1.5",
-        numeric ? "text-right tabular-nums" : "text-left"
+        missing
+          ? "text-center"
+          : numeric
+            ? "text-right tabular-nums"
+            : "text-left"
       )}
     >
-      {value == null ? (
-        <span className="text-muted-foreground">—</span>
-      ) : (
-        String(value)
-      )}
+      {missing ? <NullValue /> : String(value)}
     </td>
   );
 }

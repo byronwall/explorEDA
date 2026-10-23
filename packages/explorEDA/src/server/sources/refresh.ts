@@ -227,7 +227,11 @@ async function readAndWrite(
     );
     return snapshotInfo(snapshot);
   } finally {
-    await session.close();
+    // By now the new snapshot is live or the read has already failed, so a
+    // close error must not change what the refresh reports.
+    await session.close().catch((error: unknown) => {
+      console.warn(`Couldn't close the connection for ${sourceId}:`, error);
+    });
   }
 }
 
