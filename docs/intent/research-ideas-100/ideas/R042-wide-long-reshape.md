@@ -4,19 +4,31 @@
 - Category: Data preparation and relationships
 - Priority: 75
 - Kind: new-direction
-- Status: candidate
+- Status: design researched; implementation proposed
 - Confidence: medium
 - Baseline: `9b16d78e3ed0742ed4d5858c1939fec9e758b510`
 
 ## Research brief
 
-Repeated measurements often arrive as columns such as baseline, week one, and week two, while useful comparisons need a measure-name column and a value column. Project queries already support explicit source, lookup, expansion, calculation, filter, and aggregation stages. The `AnalysisStep` union does not define a general reshape stage. This leaves a research opportunity around one specific conversion rather than evidence that all data preparation is missing. A prepared long table can already enter as an ordinary source.
+The October 23 [Design review](../../../research/wide-long-2026-10-23/README.md) selects one saved `unpivot` query step.
+Read the [implementation plan](../../wide-long-reshape/implementation-plan.md) for its contract and milestones.
+This is proposed capability, not shipped behavior.
 
-Compare a bounded unpivot step with keeping reshaping outside explorEDA and documenting the expected source structure. The step would name identifier fields, selected value fields, output name/value fields, and a missing-value policy. Avoid assuming that all selected measurements have compatible units or scalar types. Investigate the reverse wide transformation only as a validation aid, not an automatic promise of arbitrary pivoting. The decisive question is whether the same user repeatedly needs this conversion inside a saved analysis.
+Repeated measurements arrive as columns while useful comparisons need a measurement-name field and a value field.
+Save explicit selected/kept fields, ordered mappings, stable output IDs, a declared value family, optional units, and a missing policy.
+Open a copied query in a fresh view. Keep exact input-cell evidence separate from original-record membership.
+Preserve raw scalars and missing pairs by default. Added source columns remain outside the saved selection.
 
-The initial experiment should reshape twelve observations with two repeated measures, missing values, duplicate identifiers, and one incompatible unit. Compare an independently prepared long source with the proposed step specification. Acceptance requires deterministic output keys, an explicit row grain, and a trace from each output back to both its source row and source field. Totals must reconcile under the chosen missing-value rule. Reject the extension if upstream preparation is simpler or if useful behavior immediately demands arbitrary nested restructuring.
+M1 includes evaluation, authoring, exact evidence, worker consistency, JSON/text restore, documentation, and a runnable example.
+M2 adds explicit refresh repair and broader selection by immediate input rows.
+Multiple value families and global unit metadata remain Explore; patterns and reverse pivot remain deferred.
+Keep ordinary prepared long sources supported. Do not create a general preparation graph or result catalogue.
 
-The reusable-analysis-outputs intent remains deliberately unprioritized until a concrete task appears. This candidate supplies a narrow task and a rejection criterion rather than overriding that caution. A new step would affect project validation, textual serialization, inspection, and examples, so its apparent simplicity should not hide maintenance cost. Confidence is medium because the architectural boundary is clear but recurring demand is not. The investigation earns its place by testing one broadly useful data shape while preserving the existing direct, inspectable query model.
+The five-record fixture yields ten pairs, three missing pairs, five finite measurements, and numeric sum 28.5.
+Drop mode yields seven pairs. Current non-nullish field count is eight in keep mode.
+These arithmetic checks and existing evaluator tests do not prove the unimplemented feature.
+Empty-result text restore, applied worker snapshots, exact cell evidence, and browser flows remain implementation requirements.
+The current research direction supersedes this candidate's earlier outside-demand gate. Byron is the demand.
 
 ## References
 
