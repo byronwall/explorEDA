@@ -1,6 +1,6 @@
 # Wide-to-long Design run
 
-Phase: integrated; validation and planning PR pending. Mode: Design. Follow-ups: 0/1.
+Phase: complete; verified open planning PR #518. Mode: Design. Follow-ups: 0/1.
 
 Repository: https://github.com/byronwall/explorEDA.
 Source: `95832bd4`, refreshed origin/main.
@@ -107,3 +107,14 @@ No package/demo code changed; full pnpm check is not required for this planning 
 Validation: docs three files/73 tests pass with existing React act warnings.
 Baseline evaluator/selection two files/18 tests, fixture calculations, and six authored local links pass.
 Whitespace passes. Formatting and the PR gate are checked after the normal formatting commit hook.
+
+## Completion — October 23, 20:49 UTC
+
+PR: https://github.com/byronwall/explorEDA/pull/518.
+Verified OPEN, main base, scoped head, saved body, six authored documentation files, and description links.
+Attached to this chat. Documentation label applied; codex and codex-automation labels are unavailable.
+Formatting and PR checks pass after the normal hook. No raw Pro artifacts or source receipts are committed.
+
+Deleted collect-exploreda-wide-long-design through automation_update; deleteStatus=deleted.
+Six-hour exploreda-pro-research-pipeline remains ACTIVE indefinitely, verified through tool view and saved configuration.
+No follow-up, feature implementation, worktree, merge, deployment, or paid service. Stop for review.
