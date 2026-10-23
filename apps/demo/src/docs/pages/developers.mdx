@@ -34,6 +34,14 @@ To reopen a saved analysis, pass what `onStateChange` gave you back as `savedDat
   edits.
 </Callout>
 
+### New rows, same saved analysis
+
+A brushed selection is saved by row position. If you pass new `data` and keep the same `savedData`, the workspace moves each saved position to the new row with the same values. A selection keeps its records when rows are reordered or added.
+
+If a selected record is gone, has changed, or now appears twice, its filter is dropped and every row shows. The filter never picks another record in that record's old place.
+
+New `savedData` passed together with the new `data` is applied as given, since it was saved for those rows. To start fresh, pass the new `data` without `savedData`.
+
 ## Props
 
 Every prop the `ExplorEda` component takes:

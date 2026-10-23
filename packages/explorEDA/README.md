@@ -103,6 +103,11 @@ storage-neutral JSON settings. They include Rows filters, search, sort, column
 order, widths, field settings, and grouped summary definitions, but do not
 include raw data rows.
 
+Selections are saved by row position. When new `data` arrives with the same
+`savedData`, each saved position moves to the new row with the same values. A
+filter whose record is gone, changed, or repeated is dropped rather than
+pointed at another row.
+
 Native settings JSON rejects nonfinite filter values during validation. Draft
 calculations remain session-local. `modifiedAt` records the snapshot time.
 
