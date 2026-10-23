@@ -7,6 +7,7 @@ import { parseExpression } from "@/lib/calculations/parser/semantics";
 export type FieldUsePlace =
   | { kind: "chart"; chartId: string; title: string; role: string }
   | { kind: "rows"; role: "column" | "filter" }
+  | { kind: "workspace"; role: "filter" }
   | { kind: "aggregate"; aggregateId: string; role: string }
   | { kind: "calculation"; name: string };
 
@@ -71,7 +72,7 @@ function chartUses(chart: ChartSettings): { field: string; role: string }[] {
 
 /**
  * Every place saved settings read a field: chart roles, filters, facets,
- * Rows, aggregates, and calculated fields.
+ * Rows, workspace filters, aggregates, and calculated fields.
  */
 export function settingsFieldUsage(
   settings: SavedDataStructure | undefined
@@ -96,6 +97,9 @@ export function settingsFieldUsage(
   );
   settings.rowsSettings?.filters.forEach((filter) =>
     add(filter.field, { kind: "rows", role: "filter" })
+  );
+  settings.workspaceFilters?.forEach((filter) =>
+    add(filter.field, { kind: "workspace", role: "filter" })
   );
   for (const aggregate of settings.aggregates ?? []) {
     const place = (role: string): FieldUsePlace => ({

@@ -52,21 +52,43 @@ export function sourceRowIdentities(
   });
 }
 
+/** The position a reference names, when it names a row by position. */
+function rowPosition(source: SourceDefinition, rowKey: string) {
+  // Keyed references read `<source>:<type>:<key>`, and a key's type is never
+  // "row", so only an exact `<source>:row:<n>` is a position. A key that
+  // ends in ":row:9" is still a key.
+  const prefix = `${source.id}:row:`;
+  if (!rowKey.startsWith(prefix)) return undefined;
+  const rest = rowKey.slice(prefix.length);
+  return /^\d+$/.test(rest) ? Number(rest) : undefined;
+}
+
 export function resolveSourceRow(
   source: SourceDefinition,
   rows: readonly AnalysisSourceRow[],
   ref: AnalysisSourceReference
 ): { row?: AnalysisSourceRow; issue?: "ambiguous" | "unresolved" } {
-  const indexMatch = ref.rowKey.match(/:row:(\d+)$/);
-  if (ref.rowKey.startsWith(`${source.id}:`) && indexMatch) {
-    const row = rows[Number(indexMatch[1])];
-    return row ? { row } : { issue: "unresolved" };
+  if (ref.entityKey != null) {
+    const matches = rows.filter(
+      (row) => row[source.entityKey] === ref.entityKey
+    );
+    if (matches.length === 1) return { row: matches[0] };
+    return { issue: matches.length > 1 ? "ambiguous" : "unresolved" };
   }
 
-  if (ref.entityKey == null) return { issue: "unresolved" };
-  const matches = rows.filter((row) => row[source.entityKey] === ref.entityKey);
-  if (matches.length === 1) return { row: matches[0] };
-  return { issue: matches.length > 1 ? "ambiguous" : "unresolved" };
+  const index = rowPosition(source, ref.rowKey);
+  const row = index == null ? undefined : rows[index];
+  if (!row) return { issue: "unresolved" };
+  // A position stands in for a record only while the record there has no
+  // key of its own. A uniquely keyed record at that position now is another
+  // record, so the old reference no longer finds anything.
+  const key = row[source.entityKey];
+  if (
+    validKey(key) &&
+    rows.filter((other) => other[source.entityKey] === key).length === 1
+  )
+    return { issue: "unresolved" };
+  return { row };
 }
 
 export function matchingSourceRows(

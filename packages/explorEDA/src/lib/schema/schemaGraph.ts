@@ -466,6 +466,7 @@ const PLACE_HEADINGS: Record<
   string
 > = {
   rows: "Rows",
+  workspace: "Workspace filters",
   aggregate: "Summaries",
   calculation: "Calculations",
 };
