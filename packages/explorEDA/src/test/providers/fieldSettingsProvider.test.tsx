@@ -65,4 +65,49 @@ describe("field settings provider", () => {
       undefined,
     ]);
   });
+
+  it("previews a host-declared number with the type Apply uses", async () => {
+    const data = [
+      {},
+      { x: undefined },
+      { x: null },
+      { x: "" },
+      { x: "   " },
+      { x: "NA" },
+      { x: "oops" },
+      { x: Infinity },
+      { x: 0 },
+      { x: false },
+      { x: "12.5" },
+      { x: "2025-02-30" },
+    ];
+    let latest: any;
+    function Probe() {
+      latest = useDataLayer((state) => state);
+      return null;
+    }
+    render(
+      <DataLayerProvider data={data} charts={[]} fieldTypes={{ x: "number" }}>
+        <Probe />
+      </DataLayerProvider>
+    );
+
+    // An Automatic type with only a missing token.
+    const draft = { nullTokens: ["NA"] };
+    const preview = latest.getFieldConversionPreview("x", draft);
+    expect(preview).toMatchObject({
+      inferredType: "numeric",
+      effectiveType: "numeric",
+      validCount: 2,
+      missingCount: 6,
+      failedCount: 4,
+    });
+
+    await act(async () => latest.updateFieldSettings("x", draft));
+    const profile = latest.fieldProfiles.find((p: any) => p.name === "x");
+    expect(profile.dataType).toBe(preview.effectiveType);
+    const applied = latest.data.filter((row: any) => row.x != null);
+    expect(applied.map((row: any) => row.x)).toEqual([0, 12.5]);
+    expect(applied).toHaveLength(preview.validCount);
+  });
 });
