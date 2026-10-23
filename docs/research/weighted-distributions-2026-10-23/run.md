@@ -1,6 +1,6 @@
 # Weighted distributions Methods run
 
-Phase: collected and integrated; checks and PR pending. Mode: Methods. Follow-ups: 0/1.
+Phase: complete; verified open planning PR #514. Mode: Methods. Follow-ups: 0/1.
 
 Repository: https://github.com/byronwall/explorEDA.
 Source: `6d9130ba1c5242c15bbbeb9b20b7fd0707d0aa0e`, refreshed origin/main.
@@ -101,3 +101,17 @@ Local fraction checks pass for all eight count/total/quantile rows, exact numera
 both inclusive tails, peer denominators, and interpolation counterexamples.
 Existing ECDF planner and box calculation tests pass: two files, sixteen tests.
 These checks protect the baseline and proposed arithmetic; they do not verify unbuilt weighted behavior.
+
+## Completion — October 23, 08:21 UTC
+
+PR: https://github.com/byronwall/explorEDA/pull/514.
+Verified OPEN, main base, scoped head, saved body, five authored documentation files, and description links.
+PR attached. Documentation label applied; codex and codex-automation labels are unavailable.
+Docs checks pass: three files, 73 tests, with existing React act warnings.
+Prettier, six local links, whitespace, PR gate, baseline tests, and exact fixture calculations pass.
+Full pnpm check is not required: package and demo code did not change.
+
+Deleted temporary collector collect-exploreda-weighted-distributions-methods through automation_update; deleteStatus=deleted.
+The six-hour pipeline remains ACTIVE indefinitely, verified through tool view and saved configuration.
+Originals remain under ignored tmp/. No follow-up, feature implementation, worktree, merge, deployment, or paid service.
+Stop for review.
