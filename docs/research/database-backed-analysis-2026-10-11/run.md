@@ -28,12 +28,12 @@ No application implementation, infrastructure provisioning, merging, or deployme
 All timestamps below use America/Indiana/Indianapolis (UTC−04:00).
 Submission times are approximate, based on the browser action sequence. Each submitted message and active response was verified.
 
-| Track              | Prompt                                                                        | Conversation                                               | Submitted     | State                    | Follow-ups |
-| ------------------ | ----------------------------------------------------------------------------- | ---------------------------------------------------------- | ------------- | ------------------------ | ---------- |
-| Query demands      | [prompt](../../intent/database-query-contract/raw/2026-10-11-pro/prompt.md)   | https://chatgpt.com/c/6acc5207-c9f8-83ea-9b50-5b5dae43afdf | Oct 11, 23:20 | Collected and reconciled | 0/2        |
-| Columnar transport | [prompt](../../intent/columnar-data-transport/raw/2026-10-11-pro/prompt.md)   | https://chatgpt.com/c/6acc5239-824c-83ea-9a03-61e6f84b068c | Oct 11, 23:21 | Collected and reconciled | 0/2        |
-| Database adapters  | [prompt](database-adapters/prompt.md)                                         | https://chatgpt.com/c/6acc52ce-2a14-83ea-b9e0-01f54b8c3905 | Oct 11, 23:23 | Collected and reconciled | 0/2        |
-| Customer hosting   | [prompt](../../intent/customer-instance-hosting/raw/2026-10-11-pro/prompt.md) | https://chatgpt.com/c/6acc52f9-15b8-83ea-9033-1fb171f62cc2 | Oct 11, 23:25 | Collected and reconciled | 0/2        |
+| Track              | Prompt                                                                                                                                                    | Conversation                                               | Submitted     | State                    | Follow-ups |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- | ------------- | ------------------------ | ---------- |
+| Query demands      | [prompt](../../intent/database-query-contract/raw/2026-10-11-pro/prompt.md)                                                                               | https://chatgpt.com/c/6acc5207-c9f8-83ea-9b50-5b5dae43afdf | Oct 11, 23:20 | Collected and reconciled | 0/2        |
+| Columnar transport | [prompt](../../intent/columnar-data-transport/raw/2026-10-11-pro/prompt.md)                                                                               | https://chatgpt.com/c/6acc5239-824c-83ea-9a03-61e6f84b068c | Oct 11, 23:21 | Collected and reconciled | 0/2        |
+| Database adapters  | [prompt](https://github.com/byronwall/explorEDA/blob/6d9130ba1c5242c15bbbeb9b20b7fd0707d0aa0e/docs/intent/database-adapters/raw/2026-10-11-pro/prompt.md) | https://chatgpt.com/c/6acc52ce-2a14-83ea-b9e0-01f54b8c3905 | Oct 11, 23:23 | Collected and reconciled | 0/2        |
+| Customer hosting   | [prompt](../../intent/customer-instance-hosting/raw/2026-10-11-pro/prompt.md)                                                                             | https://chatgpt.com/c/6acc52f9-15b8-83ea-9033-1fb171f62cc2 | Oct 11, 23:25 | Collected and reconciled | 0/2        |
 
 The live selector showed Pro for each run. The first two selectors also showed power 5 of 5.
 Each run receives its prompt as a separate Markdown attachment plus the source ZIP.

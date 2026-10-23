@@ -1,0 +1,130 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "Built-in chart extensions",
+    "slug": "built-in-chart-extensions",
+    "scale": "capability",
+    "current_phase": "intent",
+    "last_updated": "2026-10-23",
+    "summary": "Seed: bounded built-in settings and modes the composition review found, each behind its own proof.",
+    "status": "planned",
+    "next_action": "Pick a candidate with a real task and run its proof."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-23"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "not-created",
+      "updated_at": null
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "not-created",
+      "updated_at": null
+    }
+  },
+  "sources": [
+    {
+      "id": "retirement-2026-10-23",
+      "type": "direct-user-input",
+      "location": "Claude Code session retiring docs/intent, 2026-10-23",
+      "anchor": "Follow-up work from retired progressive-built-in-charts; research pointing to more work becomes a thin new intent",
+      "authority": "Explicit human feedback"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "progressive",
+        "type": "goal",
+        "statement": "Advanced behavior should be reachable through built-in settings; composition is for essential complexity.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "later",
+        "source_anchors": [
+          {
+            "source_id": "retirement-2026-10-23",
+            "anchor": "Follow-up work"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "per-candidate-proof",
+        "type": "goal",
+        "statement": "Each candidate ships only after its own proof passes, with docs and an example.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "later",
+        "source_anchors": [
+          {
+            "source_id": "retirement-2026-10-23",
+            "anchor": "Follow-up work"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      }
+    ],
+    "themes": [],
+    "conflicts": [],
+    "human_questions": []
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "not-started",
+    "appetite": null,
+    "problem": null,
+    "recommended_shape": null,
+    "success_moves": [],
+    "first_proof": null,
+    "rabbit_holes": [],
+    "open_decisions": []
+  },
+  "implementation": {
+    "status": "not-started",
+    "repository_snapshot": {
+      "root": null,
+      "revision": null,
+      "worktree_status": null,
+      "subsystems": [],
+      "test_commands": [],
+      "deployment_surfaces": []
+    },
+    "dependencies": [],
+    "fast_local_loop": null,
+    "milestones": [],
+    "cut_line": [],
+    "open_decisions": []
+  },
+  "history": [
+    {
+      "date": "2026-10-23",
+      "change": "Created from the retired progressive-built-in-charts initiative and its research."
+    }
+  ],
+  "closure": null,
+  "intake": {
+    "kind": "user-addition",
+    "audience": "End users and host developers (via API and batch tooling).",
+    "priority": "Seed; no scheduling.",
+    "related_initiatives": ["analysis-export", "renderer-independent-replay"]
+  }
+}

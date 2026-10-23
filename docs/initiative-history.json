@@ -128,7 +128,7 @@
     "slug": "analytical-chart-coverage",
     "outcome": "completed",
     "retired_at": "2026-10-04",
-    "summary": "Delivered analytical chart expansion. Byron waived remaining cross-view and browser-restore acceptance checks; no ongoing initiative obligations remain. Reconciled against 3873c2766be43a3f970a2ba62c80d459979234ea and the prior Node 24 pnpm check pass (530 library and 21 demo tests). Relevant uncommitted changes are this review’s durable chart documentation and planning cleanup. No new browser check ran.",
+    "summary": "Delivered analytical chart expansion. Byron waived remaining cross-view and browser-restore acceptance checks; no ongoing initiative obligations remain. Reconciled against 3873c2766be43a3f970a2ba62c80d459979234ea and the prior Node 24 pnpm check pass (530 library and 21 demo tests). Relevant uncommitted changes are this review\u2019s durable chart documentation and planning cleanup. No new browser check ran.",
     "reason": "Byron explicitly requested whole-initiative retirement and said the remaining work was not needed.",
     "documentation": [
       "docs/analytical-chart-coverage.md",
@@ -160,7 +160,7 @@
       {
         "claim_id": "c7",
         "disposition": "delivered",
-        "evidence": "Grouped-bar selection, heatmap, and Calendar initial slices are present; prior plan records #105, #103, and #104 with screenshots. Later stack #114–#123 is merged."
+        "evidence": "Grouped-bar selection, heatmap, and Calendar initial slices are present; prior plan records #105, #103, and #104 with screenshots. Later stack #114\u2013#123 is merged."
       }
     ],
     "waived_work": [
@@ -558,7 +558,7 @@
     "slug": "schema-diagram",
     "outcome": "completed",
     "retired_at": "2026-10-10",
-    "summary": "Delivered all seven milestones: a wide schema drawer with tables, fields, keys, and relationships; queries, calculations, and views with lineage both ways; in-place editing of fields, keys, relationships, and query steps; usage folded across every saved view; and Add source with single-table promotion. Every intent claim is covered by the package README section. Reconciled against 5cf144d; merged PRs #222, #225–#230. No new browser check ran during retirement; milestone evidence recorded Vitest suites and Playwright screenshots.",
+    "summary": "Delivered all seven milestones: a wide schema drawer with tables, fields, keys, and relationships; queries, calculations, and views with lineage both ways; in-place editing of fields, keys, relationships, and query steps; usage folded across every saved view; and Add source with single-table promotion. Every intent claim is covered by the package README section. Reconciled against 5cf144d; merged PRs #222, #225\u2013#230. No new browser check ran during retirement; milestone evidence recorded Vitest suites and Playwright screenshots.",
     "reason": "Byron asked on 2026-10-10 to retire the completed docs/intent initiatives and approved this one by name. Every planned milestone's PR merged into main.",
     "documentation": [
       "packages/explorEDA/README.md",
@@ -595,7 +595,7 @@
     "slug": "in-place-chart-editing",
     "outcome": "completed",
     "retired_at": "2026-10-10",
-    "summary": "Delivered titles, axis titles, and numeric axis ranges edited where they are drawn, plus axis pan and stretch by drag, each one undo step through updateChart and useChartEdit. Subtitle editing, a named target, is not built; Byron approved retirement with it moved to the Product Grid rather than gating closure. Reconciled against 5cf144d; merged PRs #203–#206.",
+    "summary": "Delivered titles, axis titles, and numeric axis ranges edited where they are drawn, plus axis pan and stretch by drag, each one undo step through updateChart and useChartEdit. Subtitle editing, a named target, is not built; Byron approved retirement with it moved to the Product Grid rather than gating closure. Reconciled against 5cf144d; merged PRs #203\u2013#206.",
     "reason": "Byron asked on 2026-10-10 to retire the completed docs/intent initiatives and approved this one by name. Every planned milestone's PR merged into main.",
     "documentation": [
       "docs/ui-defaults.md",
@@ -906,7 +906,7 @@
     "slug": "database-adapters",
     "outcome": "completed",
     "retired_at": "2026-10-23",
-    "summary": "Database sources shipped for the CLI and team server: SQLite, PostgreSQL, MySQL, SQL Server, and DuckDB tables or SQL become refreshable read-only snapshots with secrets outside the project, a 100,000-row default limit, and author-only refresh. Reconciled against origin/main 6d9130ba; the only uncommitted changes were this retirement's docs edits. No new browser or pnpm check ran for retirement. Not delivered as written: postgres-first changed: SQLite shipped first in M1 (#410) as the simpler fixture; PostgreSQL followed in M2 (#416) on the same contract. candidate-transport omitted: Columnar transport and server-side queries stay separate planned initiatives under docs/intent; the M2 100k-row measurement kept JSON snapshots. read-only changed: SQLite/DuckDB open read-only; PostgreSQL/MySQL use read-only transactions; SQL Server has none, so reads are described first and always rolled back. See database-sources.mdx Reads only.",
+    "summary": "Database sources shipped for the CLI and team server: SQLite, PostgreSQL, MySQL, SQL Server, and DuckDB tables or SQL become refreshable read-only snapshots with secrets outside the project, a 100,000-row default limit, and author-only refresh. Research gathered for it was condensed into the feature inventory and removed. Reconciled against origin/main 6d9130ba; the only uncommitted changes were this retirement's docs edits. No new browser or pnpm check ran for retirement. Not delivered as written: postgres-first changed: SQLite shipped first in M1 (#410) as the simpler fixture; PostgreSQL followed in M2 (#416) on the same contract. candidate-transport omitted: Columnar transport and server-side queries stay separate planned initiatives under docs/intent; the M2 100k-row measurement kept JSON snapshots. read-only changed: SQLite/DuckDB open read-only; PostgreSQL/MySQL use read-only transactions; SQL Server has none, so reads are described first and always rolled back. See database-sources.mdx Reads only.",
     "reason": "Outcome delivered and merged to main; Byron asked on 2026-10-23 to retire completed docs/intent work into durable docs.",
     "documentation": [
       "apps/demo/src/docs/pages/database-sources.mdx",
@@ -925,7 +925,7 @@
     "slug": "notebook-analysis",
     "outcome": "completed",
     "retired_at": "2026-10-23",
-    "summary": "Notebooks shipped: .eda.md files in project folders render prose and eda blocks in one column, share file-wide definitions, freeze invalid blocks, keep selections chart-local, write graph edits back as minimal token changes, and check from exploreda-dsl. Reconciled against origin/main 6d9130ba; the only uncommitted changes were this retirement's docs edits. No new browser or pnpm check ran for retirement. Not delivered as written: three-edit-surfaces changed: In-app block and prose editing (#419), external edits reload on save (#414), exploreda-dsl check/fmt accept .eda.md (#404). The outside editor gets reload-on-save rather than a live preview pane.",
+    "summary": "Notebooks shipped: .eda.md files in project folders render prose and eda blocks in one column, share file-wide definitions, freeze invalid blocks, keep selections chart-local, write graph edits back as minimal token changes, and check from exploreda-dsl. Research gathered for it was condensed into the feature inventory and removed. Reconciled against origin/main 6d9130ba; the only uncommitted changes were this retirement's docs edits. No new browser or pnpm check ran for retirement. Not delivered as written: three-edit-surfaces changed: In-app block and prose editing (#419), external edits reload on save (#414), exploreda-dsl check/fmt accept .eda.md (#404). The outside editor gets reload-on-save rather than a live preview pane.",
     "reason": "Outcome delivered and merged to main; Byron asked on 2026-10-23 to retire completed docs/intent work into durable docs.",
     "documentation": [
       "apps/demo/src/docs/pages/notebooks.mdx",
@@ -944,7 +944,7 @@
     "slug": "landing-docs-entry",
     "outcome": "completed",
     "retired_at": "2026-10-23",
-    "summary": "The landing page and docs home now lead with linked exploration, put npx exploreda in the hero, and route to local folders, databases, notebooks, the team server, and React, each with a walkthrough that was run end to end. Reconciled against origin/main 6d9130ba; the only uncommitted changes were this retirement's docs edits. No new browser or pnpm check ran for retirement.",
+    "summary": "The landing page and docs home now lead with linked exploration, put npx exploreda in the hero, and route to local folders, databases, notebooks, the team server, and React, each with a walkthrough that was run end to end. Research gathered for it was condensed into the feature inventory and removed. Reconciled against origin/main 6d9130ba; the only uncommitted changes were this retirement's docs edits. No new browser or pnpm check ran for retirement.",
     "reason": "Outcome delivered and merged to main; Byron asked on 2026-10-23 to retire completed docs/intent work into durable docs.",
     "documentation": [
       "apps/demo/src/docs/pages/developers.mdx",
@@ -955,6 +955,10 @@
       {
         "scope": "Deferred scope from the plan",
         "destination": "docs/application-feature-inventory.md#deferred-scope-from-2026-10-23"
+      },
+      {
+        "scope": "Follow-up work from the initiative's research",
+        "destination": "docs/intent/docs-walkthroughs/intent-brief.md"
       }
     ]
   },
@@ -963,13 +967,12 @@
     "slug": "progressive-built-in-charts",
     "outcome": "completed",
     "retired_at": "2026-10-23",
-    "summary": "Built-in charts gained the reusable pieces composition examples needed: built-in counterparts for four examples, ordered Scatter connections, supplied Line intervals that keep bounds and gaps, and Heatmap long histories with date bins and fixed color ends. Reconciled against origin/main 6d9130ba; the only uncommitted changes were this retirement's docs edits. No new browser or pnpm check ran for retirement. Not delivered as written: I-05 changed: The research-only boundary was later lifted: four milestones shipped (#447-#450). Composition examples were kept, not deleted.",
+    "summary": "Built-in charts gained the reusable pieces composition examples needed: built-in counterparts for four examples, ordered Scatter connections, supplied Line intervals that keep bounds and gaps, and Heatmap long histories with date bins and fixed color ends. Research gathered for it was condensed into the feature inventory and removed. Reconciled against origin/main 6d9130ba; the only uncommitted changes were this retirement's docs edits. No new browser or pnpm check ran for retirement. Not delivered as written: I-05 changed: The research-only boundary was later lifted: four milestones shipped (#447-#450). Composition examples were kept, not deleted.",
     "reason": "Outcome delivered and merged to main; Byron asked on 2026-10-23 to retire completed docs/intent work into durable docs.",
     "documentation": [
       "apps/demo/src/docs/pages/scatter.mdx",
       "apps/demo/src/docs/pages/line.mdx",
       "apps/demo/src/docs/pages/heatmap.mdx",
-      "docs/research/composition-builtins-2026-10-12/recommendation-decisions.md",
       "docs/application-feature-inventory.md"
     ],
     "revision": "6d9130ba1c5242c15bbbeb9b20b7fd0707d0aa0e",
@@ -977,6 +980,10 @@
       {
         "scope": "Deferred scope from the plan",
         "destination": "docs/application-feature-inventory.md#deferred-scope-from-2026-10-23"
+      },
+      {
+        "scope": "Follow-up work from the initiative's research",
+        "destination": "docs/intent/built-in-chart-extensions/intent-brief.md"
       }
     ]
   },
@@ -985,7 +992,7 @@
     "slug": "domain-analysis-views",
     "outcome": "completed",
     "retired_at": "2026-10-23",
-    "summary": "Funnel, Retention, and Timeline charts shipped with chart-owned, traced preparation over event logs and interval tables, linked selections stored as plain filters, docs pages, and examples. Reconciled against origin/main 6d9130ba; the only uncommitted changes were this retirement's docs edits. No new browser or pnpm check ran for retirement. Not delivered as written: priority-3 changed: Byron chose synthetic product-event and room-booking datasets with hand fixtures instead of waiting for a real dataset. keep-resources-local changed: Research now lives under docs/research (retention-observation-2026-10-21); the intent folder is retired.",
+    "summary": "Funnel, Retention, and Timeline charts shipped with chart-owned, traced preparation over event logs and interval tables, linked selections stored as plain filters, docs pages, and examples. Research gathered for it was condensed into the feature inventory and removed. Reconciled against origin/main 6d9130ba; the only uncommitted changes were this retirement's docs edits. No new browser or pnpm check ran for retirement. Not delivered as written: priority-3 changed: Byron chose synthetic product-event and room-booking datasets with hand fixtures instead of waiting for a real dataset. keep-resources-local changed: the research was condensed into the feature inventory and the retention-observation-window intent, then removed.",
     "reason": "Outcome delivered and merged to main; Byron asked on 2026-10-23 to retire completed docs/intent work into durable docs.",
     "documentation": [
       "apps/demo/src/docs/pages/funnel.mdx",
@@ -998,6 +1005,10 @@
       {
         "scope": "Deferred scope from the plan",
         "destination": "docs/application-feature-inventory.md#deferred-scope-from-2026-10-23"
+      },
+      {
+        "scope": "Follow-up work from the initiative's research",
+        "destination": "docs/intent/retention-observation-window/intent-brief.md"
       }
     ]
   }
