@@ -47,5 +47,8 @@ export default defineConfig({
     { name: "index", testMatch: /index\.e2e\.ts$/, dependencies: ["pages"] },
     // Opening a project folder, the same files `npx exploreda` writes.
     { name: "folder", testMatch: /folder\.e2e\.ts$/ },
+    // One category selection through bar, cards, table, CSV, undo, and a
+    // reopened save (docs/intent/current-analysis-trust).
+    { name: "trust", testMatch: /trust\.e2e\.ts$/ },
   ],
 });

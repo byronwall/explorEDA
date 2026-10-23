@@ -42,9 +42,15 @@ The registry has eighteen types. Shared reductions, chart traces, saved-view his
 
 Expand only when a fixture exposes disagreement, a restore changes the result, or a named workload misses an agreed response target.
 
-## Next step after confirmation
+## Local trust journey: covered
 
-First compare one category selection across bar, card, and exported rows. Continue only after their group membership, valid contributors, and values agree. Then add undo/restore and a second chart family.
+The first proof now runs as automated tests, and it passes. It is no longer a prerequisite for other work. The fixture has five orders; the selected category, Tools, has three source rows (O-101, O-102, O-103) and two numeric contributors, because O-103 has no revenue: sum 12, mean 6.
+
+- `packages/explorEDA/src/test/providers/localTrustJourney.test.tsx` clicks the Tools bar, then checks that the filtered row IDs, the bar's pressed state, the sum and average cards (with "1 excluded"), the table rows, and the table's CSV download agree. It reads the bar and card traces' contributor rows, saves the analysis through `saveAnalysisToStructure` and its JSON text, reopens it with `restoreAnalysisFromStructure` in an empty workspace, and repeats every check.
+- `apps/demo/src/localTrustJourney.test.tsx` makes the same selection in the demo's `SavedViewsWorkspace`, undoes and redoes it, and reopens the locally saved session to the same rows and values.
+- `apps/demo/e2e/trust.e2e.ts` (Playwright project `trust`, part of `pnpm --filter demo docs:verify`) does it with real clicks: it pastes the analysis JSON on the landing page, selects Tools, reads the cards and table, downloads the CSV, presses Undo and Redo, copies the full analysis JSON, and reopens it in a fresh browser.
+
+Further work can extend this fixture: a second chart family, a calculated measure, typed category keys, and dates at UTC boundaries.
 
 See the [reference packet](references/README.md) and [comparison collection](../comparison-opportunities/README.md) for context.
 
