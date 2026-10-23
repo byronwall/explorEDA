@@ -480,6 +480,11 @@ export function PlotManager({
   }, []);
 
   const isNarrowGrid = containerWidth > 0 && containerWidth < NARROW_GRID_WIDTH;
+  // A fresh workspace offers first steps in the grid until a chart lands.
+  const showStart =
+    !readOnly &&
+    data.length > 0 &&
+    charts.every((chart) => chart.type === "summary");
   const narrowColumns = narrowColumnCount(containerWidth);
   const chartGridSettings = {
     ...gridSettings,
@@ -1028,18 +1033,25 @@ export function PlotManager({
 
       <main className="eda-chart-area" ref={chartAreaRef}>
         <h2 className="sr-only">Charts</h2>
-        {!readOnly && charts.every((chart) => chart.type === "summary") && (
-          <WorkspaceStart
-            hasSummary={charts.length > 0}
-            onShowRows={() => setRowsOpen(true)}
-            onShowFields={() => setFieldsOpen(true)}
-            onShowSchema={() => setSchemaOpen(true)}
-          />
-        )}
-        {charts.length === 0
+        {charts.length === 0 && !showStart
           ? null
           : containerWidth > 0 && (
-              <ChartGridLayout charts={charts} containerWidth={containerWidth}>
+              <ChartGridLayout
+                charts={charts}
+                containerWidth={containerWidth}
+                start={
+                  showStart
+                    ? (slot) => (
+                        <WorkspaceStart
+                          slot={slot}
+                          onShowRows={() => setRowsOpen(true)}
+                          onShowFields={() => setFieldsOpen(true)}
+                          onShowSchema={() => setSchemaOpen(true)}
+                        />
+                      )
+                    : undefined
+                }
+              >
                 {charts.map((chart) => {
                   if (!chart.layout) {
                     return null;

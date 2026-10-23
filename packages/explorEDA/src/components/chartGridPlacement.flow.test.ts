@@ -1,5 +1,9 @@
 import { expect, it } from "vitest";
-import { flowTwoColumns, narrowColumnCount } from "./chartGridPlacement";
+import {
+  findStartPlacement,
+  flowTwoColumns,
+  narrowColumnCount,
+} from "./chartGridPlacement";
 
 it("flows narrow charts two to a row and gives wide charts the whole row", () => {
   const charts = [
@@ -18,4 +22,23 @@ it("flows narrow charts two to a row and gives wide charts the whole row", () =>
 it("stacks one chart per row on phones", () => {
   expect(narrowColumnCount(390)).toBe(1);
   expect(narrowColumnCount(783)).toBe(2);
+});
+
+it("puts the start tile beside the top row when it fits, otherwise below", () => {
+  expect(findStartPlacement([{ x: 0, y: 0, w: 5, h: 6 }], 12)).toEqual({
+    x: 5,
+    y: 0,
+    w: 6,
+    h: 4,
+  });
+  expect(findStartPlacement([], 12)).toEqual({ x: 0, y: 0, w: 6, h: 4 });
+  expect(findStartPlacement([{ x: 0, y: 0, w: 8, h: 6 }], 12)).toEqual({
+    x: 0,
+    y: 6,
+    w: 6,
+    h: 4,
+  });
+  expect(
+    findStartPlacement([{ x: 0, y: 0, w: 1, h: 6 }], 2, { w: 1, h: 4 })
+  ).toEqual({ x: 1, y: 0, w: 1, h: 4 });
 });

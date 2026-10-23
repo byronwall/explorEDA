@@ -17,7 +17,9 @@ import { ChartTypeMenuItems } from "./plot/ChartCreationButtons";
 import { useChartDraft } from "./plot/ChartDraftContext";
 import { ChartPlacementLayer } from "./plot/ChartPlacementLayer";
 import {
+  DEFAULT_CHART_SIZE,
   findEmptyPlacement,
+  findStartPlacement,
   flowTwoColumns,
   GridCell,
   NARROW_GRID_WIDTH,
@@ -34,6 +36,11 @@ interface ChartGridLayoutProps {
   children: ReactNode;
   charts: ChartSettings[];
   containerWidth: number;
+  /**
+   * A placeholder tile for a fresh workspace. Wide grids give it a free
+   * spot, which a chart started from it takes; narrow grids list it last.
+   */
+  start?: (slot: ChartLayout | undefined) => ReactNode;
 }
 
 interface AddTarget {
@@ -45,6 +52,7 @@ export function ChartGridLayout({
   children,
   charts,
   containerWidth,
+  start,
 }: ChartGridLayoutProps) {
   const gridSettings = useDataLayer((s) => s.gridSettings);
   const updateChartLayouts = useDataLayer((s) => s.updateChartLayouts);
@@ -99,7 +107,22 @@ export function ChartGridLayout({
     i: chart.id,
   }));
 
-  const contentRows = Math.max(0, ...layout.map((item) => item.y + item.h));
+  // Wide and two-column grids give the start tile a free spot; a phone-width
+  // stack lists it first.
+  const startColumns = isNarrow ? narrowColumns : gridSettings.columnCount;
+  const startSlot =
+    start && !placing && startColumns > 1
+      ? findStartPlacement(
+          layout,
+          startColumns,
+          isNarrow ? { w: 1, h: DEFAULT_CHART_SIZE.h } : DEFAULT_CHART_SIZE
+        )
+      : undefined;
+  const contentRows = Math.max(
+    0,
+    ...layout.map((item) => item.y + item.h),
+    startSlot ? startSlot.y + startSlot.h : 0
+  );
   // One spare row below the charts gives room to add a chart underneath.
   const gridRows = isNarrow ? contentRows : contentRows + 1;
   const totalHeight = Math.max(
@@ -109,6 +132,8 @@ export function ChartGridLayout({
   const columnWidth =
     (containerWidth - gridSettings.containerPadding * 2) /
     gridSettings.columnCount;
+  const startColumnWidth =
+    (containerWidth - gridSettings.containerPadding * 2) / startColumns;
 
   const clearHover = () => {
     // Removing a focused add button would drop focus to the page body.
@@ -140,6 +165,10 @@ export function ChartGridLayout({
     }
     const target = event.target as Element;
     if (target.closest("[data-grid-add-control]")) return;
+    if (target.closest("[data-grid-start]")) {
+      clearHover();
+      return;
+    }
     if (
       isNarrow ||
       event.pointerType !== "mouse" ||
@@ -169,6 +198,7 @@ export function ChartGridLayout({
     clearHover();
     if (cell.y >= gridRows) return;
     const occupied = charts.map((chart) => chart.layout);
+    if (startSlot) occupied.push(startSlot);
     const placement = findEmptyPlacement(
       cell,
       occupied,
@@ -243,124 +273,158 @@ export function ChartGridLayout({
   });
 
   return (
-    <div
-      ref={containerRef}
-      tabIndex={-1}
-      className="relative w-full outline-none"
-      style={{ minHeight: totalHeight }}
-      onPointerMove={handlePointerMove}
-      onPointerLeave={() => {
-        if (!menuOpenRef.current) clearHover();
-      }}
-    >
-      <GridBackground
-        settings={gridSettings}
-        width={containerWidth}
-        height={totalHeight}
-      />
-      {addTarget && previewVisible && (
+    <>
+      {/* A phone-width stack lists the start tile first, outside the grid
+          that measures the charts. */}
+      {start && !placing && startColumns === 1 && (
         <div
-          className="eda-grid-add-preview"
-          aria-hidden="true"
+          data-grid-start
+          className="eda-grid-start eda-grid-start-flow"
           style={{
-            ...toPixels(addTarget.placement),
-            width: addTarget.placement.w * columnWidth,
-            height: addTarget.placement.h * gridSettings.rowHeight,
-          }}
-        />
-      )}
-      <GridLayout
-        className="layout"
-        layout={layout}
-        cols={isNarrow ? narrowColumns : gridSettings.columnCount}
-        rowHeight={gridSettings.rowHeight}
-        width={Math.max(containerWidth, 1)}
-        margin={[0, 0]}
-        containerPadding={[
-          gridSettings.containerPadding,
-          gridSettings.containerPadding,
-        ]}
-        // Charts rise to fill empty rows above them, so the grid never
-        // leaves gaps at the top.
-        compactType="vertical"
-        // Top and left resizes keep neighbors in place.
-        preventCollision={
-          activeResize !== null &&
-          !activeResize.axis.includes("s") &&
-          !activeResize.axis.includes("e")
-        }
-        onLayoutChange={isNarrow || placing ? undefined : handleLayoutChange}
-        onDragStart={startInteraction}
-        onDragStop={stopInteraction}
-        onResizeStart={startResize}
-        onResizeStop={stopInteraction}
-        draggableHandle=".drag-handle"
-        // In-place editors sit inside the title, which is also the drag handle.
-        draggableCancel="[data-inplace-editor]"
-        isDraggable={!isNarrow}
-        isResizable={!isNarrow}
-        style={{ position: "relative" }}
-        resizeHandles={isNarrow ? [] : RESIZE_AXES}
-        // react-resizable calls this with (axis, ref); the published types
-        // omit the ref argument.
-        resizeHandle={
-          ((axis: ResizeAxis, ref: React.Ref<HTMLDivElement>) => (
-            <ResizeHandle axis={axis} ref={ref} />
-          )) as unknown as React.ReactElement
-        }
-      >
-        {children}
-      </GridLayout>
-      {placing && (
-        <ChartPlacementLayer
-          charts={charts}
-          columnCount={gridSettings.columnCount}
-          columnWidth={columnWidth}
-          rowHeight={gridSettings.rowHeight}
-          padding={gridSettings.containerPadding}
-          onProposal={setProposedMoves}
-        />
-      )}
-      {addTarget && (
-        <DropdownMenu
-          open={menuOpen}
-          onOpenChange={(open) => {
-            setMenuOpen(open);
-            setPreviewVisible(open);
+            padding: `${gridSettings.containerPadding}px ${gridSettings.containerPadding}px 0`,
           }}
         >
-          <DropdownMenuTrigger asChild>
-            <button
-              type="button"
-              data-grid-add-control
-              aria-label="Add chart here"
-              className="eda-grid-add"
-              style={{
-                left: toPixels(addTarget.cell).left + columnWidth / 2,
-                top: toPixels(addTarget.cell).top + gridSettings.rowHeight / 2,
-              }}
-              onPointerEnter={() => setPreviewVisible(true)}
-              onPointerLeave={() => {
-                if (!menuOpenRef.current) setPreviewVisible(false);
-              }}
-              onFocus={() => setPreviewVisible(true)}
-            >
-              <Plus className="h-4 w-4" aria-hidden="true" />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            align="start"
-            sideOffset={6}
-            onCloseAutoFocus={(event) => {
-              if (createdChart.current) event.preventDefault();
-              createdChart.current = false;
+          {start(undefined)}
+        </div>
+      )}
+      <div
+        ref={containerRef}
+        tabIndex={-1}
+        className="relative w-full outline-none"
+        style={{ minHeight: totalHeight }}
+        onPointerMove={handlePointerMove}
+        onPointerLeave={() => {
+          if (!menuOpenRef.current) clearHover();
+        }}
+      >
+        <GridBackground
+          settings={gridSettings}
+          width={containerWidth}
+          height={totalHeight}
+        />
+        {addTarget && previewVisible && (
+          <div
+            className="eda-grid-add-preview"
+            aria-hidden="true"
+            style={{
+              ...toPixels(addTarget.placement),
+              width: addTarget.placement.w * columnWidth,
+              height: addTarget.placement.h * gridSettings.rowHeight,
+            }}
+          />
+        )}
+        <GridLayout
+          className="layout"
+          layout={layout}
+          cols={isNarrow ? narrowColumns : gridSettings.columnCount}
+          rowHeight={gridSettings.rowHeight}
+          width={Math.max(containerWidth, 1)}
+          margin={[0, 0]}
+          containerPadding={[
+            gridSettings.containerPadding,
+            gridSettings.containerPadding,
+          ]}
+          // Charts rise to fill empty rows above them, so the grid never
+          // leaves gaps at the top.
+          compactType="vertical"
+          // Top and left resizes keep neighbors in place.
+          preventCollision={
+            activeResize !== null &&
+            !activeResize.axis.includes("s") &&
+            !activeResize.axis.includes("e")
+          }
+          onLayoutChange={isNarrow || placing ? undefined : handleLayoutChange}
+          onDragStart={startInteraction}
+          onDragStop={stopInteraction}
+          onResizeStart={startResize}
+          onResizeStop={stopInteraction}
+          draggableHandle=".drag-handle"
+          // In-place editors sit inside the title, which is also the drag handle.
+          draggableCancel="[data-inplace-editor]"
+          isDraggable={!isNarrow}
+          isResizable={!isNarrow}
+          style={{ position: "relative" }}
+          resizeHandles={isNarrow ? [] : RESIZE_AXES}
+          // react-resizable calls this with (axis, ref); the published types
+          // omit the ref argument.
+          resizeHandle={
+            ((axis: ResizeAxis, ref: React.Ref<HTMLDivElement>) => (
+              <ResizeHandle axis={axis} ref={ref} />
+            )) as unknown as React.ReactElement
+          }
+        >
+          {children}
+        </GridLayout>
+        {start && startSlot && (
+          <div
+            data-grid-start
+            className="eda-grid-start"
+            style={{
+              left:
+                gridSettings.containerPadding + startSlot.x * startColumnWidth,
+              top:
+                gridSettings.containerPadding +
+                startSlot.y * gridSettings.rowHeight,
+              width: startSlot.w * startColumnWidth,
+              height: startSlot.h * gridSettings.rowHeight,
             }}
           >
-            <ChartTypeMenuItems onSelect={handleCreate} />
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )}
-    </div>
+            {/* A narrow grid reflows charts, so its spot is not a saved one. */}
+            {start(isNarrow ? undefined : startSlot)}
+          </div>
+        )}
+        {placing && (
+          <ChartPlacementLayer
+            charts={charts}
+            columnCount={gridSettings.columnCount}
+            columnWidth={columnWidth}
+            rowHeight={gridSettings.rowHeight}
+            padding={gridSettings.containerPadding}
+            onProposal={setProposedMoves}
+          />
+        )}
+        {addTarget && (
+          <DropdownMenu
+            open={menuOpen}
+            onOpenChange={(open) => {
+              setMenuOpen(open);
+              setPreviewVisible(open);
+            }}
+          >
+            <DropdownMenuTrigger asChild>
+              <button
+                type="button"
+                data-grid-add-control
+                aria-label="Add chart here"
+                className="eda-grid-add"
+                style={{
+                  left: toPixels(addTarget.cell).left + columnWidth / 2,
+                  top:
+                    toPixels(addTarget.cell).top + gridSettings.rowHeight / 2,
+                }}
+                onPointerEnter={() => setPreviewVisible(true)}
+                onPointerLeave={() => {
+                  if (!menuOpenRef.current) setPreviewVisible(false);
+                }}
+                onFocus={() => setPreviewVisible(true)}
+              >
+                <Plus className="h-4 w-4" aria-hidden="true" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="start"
+              sideOffset={6}
+              onCloseAutoFocus={(event) => {
+                if (createdChart.current) event.preventDefault();
+                createdChart.current = false;
+              }}
+            >
+              <ChartTypeMenuItems onSelect={handleCreate} />
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
+      </div>
+    </>
   );
 }
 

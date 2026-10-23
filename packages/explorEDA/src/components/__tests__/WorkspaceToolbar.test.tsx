@@ -245,7 +245,6 @@ describe("workspace toolbar", () => {
       within(panel).getByRole("tab", { name: "Calculations" })
     ).toHaveAttribute("aria-selected", "true");
     expect(panel).toHaveTextContent("Calculated fields");
-    expect(screen.getByText("Explore this data")).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "Grid" }));
     expect(within(panel).getByRole("tab", { name: "Grid" })).toHaveAttribute(

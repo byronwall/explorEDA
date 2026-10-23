@@ -1916,36 +1916,87 @@ html {
 }
 /* The status bar: row count and filter scope, kept in view at the bottom of
    the workspace while the charts scroll. */
-/* A fresh workspace names its next steps above the grid until a chart lands. */
+/* A fresh workspace's start tile holds the first free grid spot, drawn like
+   the spot a new chart previews: a quiet dashed outline that lists first
+   charts and the panels to open. A chart started here takes the spot. */
+.eda-grid-start {
+  position: absolute;
+  z-index: 1;
+  padding: 6px;
+}
+.eda-grid-start-flow {
+  position: static;
+  padding: 0;
+}
 .eda-workspace-start {
   display: flex;
-  flex-wrap: wrap;
+  height: 100%;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px 20px;
+  border: 1.5px dashed var(--border);
+  border-radius: var(--radius, 8px);
+  background: var(--background);
+  color: var(--muted-foreground);
+  transition: border-color 140ms ease;
+}
+.eda-workspace-start:hover,
+.eda-workspace-start:focus-within {
+  border-color: color-mix(in oklab, var(--primary) 45%, var(--border));
+}
+.eda-start-charts {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+.eda-start-chart {
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 8px 24px;
-  margin: 0 10px 4px;
-  padding: 12px 14px;
-  border: 1px dashed var(--border);
-  border-radius: 8px;
-  background: var(--card);
+  gap: 8px;
+  min-height: 28px;
+  padding: 0 8px;
+  margin-left: -8px;
+  border-radius: calc(var(--radius) - 2px);
+  color: var(--foreground);
+  font-size: 13px;
+  transition:
+    background-color 140ms ease,
+    color 140ms ease;
 }
-.eda-workspace-start-text {
-  flex: 1 1 320px;
-  min-width: 0;
-  max-width: 68ch;
+.eda-start-chart svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: var(--muted-foreground);
+  transition: color 140ms ease;
 }
-.eda-workspace-start h3 {
-  font-size: 14px;
-  font-weight: 600;
+.eda-start-chart:hover,
+.eda-start-chart[data-state="open"] {
+  background: var(--muted);
+  color: var(--primary);
 }
-.eda-workspace-start p {
-  margin-top: 2px;
+.eda-start-chart:hover svg {
+  color: var(--primary);
+}
+.eda-start-chart:focus-visible,
+.eda-start-panels button:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+.eda-start-other {
   color: var(--muted-foreground);
 }
-.eda-workspace-start-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
+.eda-start-panels {
+  font-size: 12px;
+}
+.eda-start-panels button {
+  border-radius: 3px;
+  color: var(--primary);
+}
+.eda-start-panels button:hover {
+  color: color-mix(in oklab, var(--primary) 75%, var(--foreground));
 }
 .eda-workspace-status {
   position: sticky;

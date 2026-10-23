@@ -1,101 +1,125 @@
-import { useId } from "react";
-import { ListTree, Network, Plus, Rows3 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useMemo } from "react";
+import { Plus } from "lucide-react";
+import { getChartDefinition } from "@/charts/registry";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { ActionTooltip } from "@/components/ui/tooltip";
+import { getChartTitle } from "@/components/charts/chartAccessibility";
 import { useCreateCharts } from "@/hooks/useCreateCharts";
+import { useDataLayer } from "@/providers/DataLayerProvider";
+import type { ChartLayout } from "@/types/ChartTypes";
 import { ChartTypeMenuItems } from "./plot/ChartCreationButtons";
 import { useChartDraft } from "./plot/ChartDraftContext";
+import { startSuggestions } from "./plot/startSuggestions";
 
 interface WorkspaceStartProps {
-  /** The grid already shows a summary table beside this card. */
-  hasSummary: boolean;
+  /** The grid spot this tile holds. A chart started here takes it. */
+  slot?: ChartLayout;
   onShowRows: () => void;
   onShowFields: () => void;
   onShowSchema: () => void;
 }
 
 /**
- * The next steps a fresh workspace offers until the first chart lands. The
- * rows, fields, and schema open in their own panels, so the grid starts light.
+ * A placeholder tile in the first free grid spot of a fresh workspace. It
+ * offers first charts drawn from the data's own fields, and the rows, fields,
+ * and schema, until a chart other than a summary lands.
  */
 export function WorkspaceStart({
-  hasSummary,
+  slot,
   onShowRows,
   onShowFields,
   onShowSchema,
 }: WorkspaceStartProps) {
-  const titleId = useId();
+  const profiles = useDataLayer((state) => state.fieldProfiles);
+  const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
+  const addChart = useDataLayer((state) => state.addChart);
+  const { buildChart, createChart } = useCreateCharts();
   const chartDraft = useChartDraft();
-  const { createChart } = useCreateCharts();
-  const addLabel = (
-    <>
+  // Each suggestion is the chart it starts, labeled with that chart's title.
+  const suggestions = useMemo(
+    () =>
+      startSuggestions(profiles).map(({ type, field, yField }) => {
+        const settings = buildChart(type, field, slot);
+        if (settings.type === "scatter" && yField) {
+          settings.xField = field;
+          settings.yField = yField;
+        }
+        return { settings, label: getChartTitle(settings, getFieldLabel) };
+      }),
+    // buildChart is rebuilt each render; profiles and slot decide the result.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [profiles, slot?.x, slot?.y, slot?.w, slot?.h, getFieldLabel]
+  );
+
+  const otherLabel = suggestions.length > 0 ? "Other chart" : "Add a chart";
+  const other = chartDraft ? (
+    <button
+      type="button"
+      className="eda-start-chart eda-start-other"
+      aria-haspopup="dialog"
+      onClick={() => chartDraft.openDraft(undefined, slot)}
+    >
       <Plus aria-hidden="true" />
-      Add chart
-    </>
+      {otherLabel}
+    </button>
+  ) : (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button type="button" className="eda-start-chart eda-start-other">
+          <Plus aria-hidden="true" />
+          {otherLabel}
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start">
+        <ChartTypeMenuItems onSelect={(type) => createChart(type, "", slot)} />
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 
   return (
-    <section className="eda-workspace-start" aria-labelledby={titleId}>
-      <div className="eda-workspace-start-text">
-        <h3 id={titleId}>Explore this data</h3>
-        <p>
-          {hasSummary
-            ? "The summary lists each field's type, missing values, and spread. Add a chart to compare fields, or open the rows, fields, or schema to look closer."
-            : "Add a chart to compare fields, or open the rows, fields, or schema to look closer."}
-        </p>
-      </div>
-      <div className="eda-workspace-start-actions">
-        {chartDraft ? (
-          <Button
-            size="sm"
-            aria-haspopup="dialog"
-            tooltip="Pick a type and fields, preview the chart, then place it on the grid"
-            onClick={() => chartDraft.openDraft()}
-          >
-            {addLabel}
-          </Button>
-        ) : (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button size="sm">{addLabel}</Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <ChartTypeMenuItems onSelect={(type) => createChart(type, "")} />
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )}
-        <Button
-          variant="outline"
-          size="sm"
-          tooltip="Peek at the rows that pass every linked filter (R)"
-          onClick={onShowRows}
-        >
-          <Rows3 aria-hidden="true" />
-          Show rows
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          tooltip="Every field with search, quick stats, and chart actions (F)"
-          onClick={onShowFields}
-        >
-          <ListTree aria-hidden="true" />
-          Show fields
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          tooltip="Every table, field, and relationship"
-          onClick={onShowSchema}
-        >
-          <Network aria-hidden="true" />
-          Show schema
-        </Button>
-      </div>
+    <section className="eda-workspace-start" aria-label="Start exploring">
+      <ul className="eda-start-charts" aria-label="Suggested charts">
+        {suggestions.map(({ settings, label }) => {
+          const Icon = getChartDefinition(settings.type).icon;
+          return (
+            <li key={settings.type}>
+              <button
+                type="button"
+                className="eda-start-chart"
+                onClick={() => addChart(settings)}
+              >
+                <Icon aria-hidden="true" />
+                {label}
+              </button>
+            </li>
+          );
+        })}
+        <li>{other}</li>
+      </ul>
+      <p className="eda-start-panels">
+        Or open the{" "}
+        <ActionTooltip content="Peek at the rows that pass every linked filter (R)">
+          <button type="button" onClick={onShowRows}>
+            rows
+          </button>
+        </ActionTooltip>
+        ,{" "}
+        <ActionTooltip content="Every field with search, quick stats, and chart actions (F)">
+          <button type="button" onClick={onShowFields}>
+            fields
+          </button>
+        </ActionTooltip>
+        , or{" "}
+        <ActionTooltip content="Every table, field, and relationship">
+          <button type="button" onClick={onShowSchema}>
+            schema
+          </button>
+        </ActionTooltip>
+      </p>
     </section>
   );
 }
