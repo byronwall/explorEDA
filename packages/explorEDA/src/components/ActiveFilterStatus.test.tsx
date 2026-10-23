@@ -12,7 +12,7 @@ import {
   dataTableDefinition,
   DataTableSettings,
 } from "./charts/DataTable/definition";
-import { ActiveFilterStatus } from "./ActiveFilterStatus";
+import { ActiveFilterStatus, formatFilterLabel } from "./ActiveFilterStatus";
 
 const data = [
   { name: "A", category: "x", time: 0.2, z: 20 },
@@ -402,4 +402,19 @@ describe("ActiveFilterStatus", () => {
       ).not.toBeInTheDocument();
     });
   });
+});
+
+it("names a range that leaves out its upper edge", () => {
+  expect(
+    formatFilterLabel({
+      type: "range",
+      field: "Score",
+      min: 0,
+      max: 0.5,
+      maxExclusive: true,
+    })
+  ).toBe("Score: 0 to < 0.5");
+  expect(
+    formatFilterLabel({ type: "range", field: "Score", min: 0, max: 0.5 })
+  ).toBe("Score: 0–0.5");
 });

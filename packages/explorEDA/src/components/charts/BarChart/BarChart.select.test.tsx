@@ -3,6 +3,8 @@ import { beforeAll, expect, it } from "vitest";
 import { registerAllCharts } from "@/charts/registerAllCharts";
 import { DataLayerProvider, useDataLayer } from "@/providers/DataLayerProvider";
 import type { SavedDataStructure } from "@/types/SavedDataStructure";
+import { applyFilter } from "@/hooks/applyFilter";
+import type { Filter } from "@/types/FilterTypes";
 import { BarChart } from "./BarChart";
 import { barChartDefinition, type BarChartSettings } from "./definition";
 
@@ -114,4 +116,91 @@ it("clears the chart's filters on a click in empty plot space, but not after a d
 
   press(200, 200);
   expect(screen.getByTestId("filters").textContent).toBe("[]");
+});
+
+it("selects exactly a histogram bar's rows when values sit on its upper edge", () => {
+  window.PointerEvent = MouseEvent as typeof PointerEvent;
+  // Two bins, [0, 0.5) and [0.5, 1]; two rows sit on the shared edge.
+  const data = [0, 0.25, 0.5, 0.5, 1].map((Score) => ({ Score }));
+  const histogram: BarChartSettings = {
+    ...barChartDefinition.createDefaultSettings(
+      { x: 0, y: 0, w: 6, h: 4 },
+      "Score"
+    ),
+    id: "score",
+    binCount: 2,
+  };
+  const { container } = render(
+    <DataLayerProvider
+      data={data}
+      savedData={{ ...savedData, charts: [histogram], aggregates: [] }}
+    >
+      <LiveBar />
+      <Filters />
+    </DataLayerProvider>
+  );
+  const clickBar = (name: string) => clickHistogramBar(container, name);
+  const selectedRows = () => {
+    const filters = JSON.parse(
+      screen.getByTestId("filters").textContent!
+    ) as Filter[];
+    return data.filter((row) =>
+      filters.every((filter) => applyFilter(row.Score, filter))
+    ).length;
+  };
+
+  clickBar("0 to 0.5: 2 records");
+  expect(selectedRows()).toBe(2);
+  expect(container.textContent).toContain("2 of 5 rows selected: 0 to < 0.5");
+
+  clickBar("0.5 to 1: 3 records");
+  expect(selectedRows()).toBe(3);
+});
+
+/** Clicks a histogram bar where it is drawn, as a pointer would. */
+function clickHistogramBar(container: HTMLElement, name: string) {
+  const svg = container.querySelector<SVGSVGElement>("svg[role='group']")!;
+  const plot = svg.querySelector<SVGGElement>("g[transform]")!;
+  const [left, top] = plot
+    .getAttribute("transform")!
+    .match(/-?[\d.]+/g)!
+    .map(Number);
+  const bar = screen.getByRole("button", { name });
+  const clientX =
+    left! +
+    Number(bar.getAttribute("x")) +
+    Number(bar.getAttribute("width")) / 2;
+  const clientY =
+    top! +
+    Number(bar.getAttribute("y")) +
+    Number(bar.getAttribute("height")) / 2;
+  fireEvent.pointerDown(svg, { button: 0, clientX, clientY });
+  fireEvent.pointerUp(svg, { button: 0, clientX, clientY });
+  fireEvent.click(svg, { button: 0, clientX, clientY });
+}
+
+it("keeps whole-number bins' ranges inclusive, since no value sits on a half-step edge", () => {
+  window.PointerEvent = MouseEvent as typeof PointerEvent;
+  const histogram: BarChartSettings = {
+    ...barChartDefinition.createDefaultSettings(
+      { x: 0, y: 0, w: 6, h: 4 },
+      "Days"
+    ),
+    id: "days",
+    binCount: 4,
+  };
+  const { container } = render(
+    <DataLayerProvider
+      data={[1, 2, 2, 3, 4].map((Days) => ({ Days }))}
+      savedData={{ ...savedData, charts: [histogram], aggregates: [] }}
+    >
+      <LiveBar />
+      <Filters />
+    </DataLayerProvider>
+  );
+
+  clickHistogramBar(container, "2: 2 records");
+  expect(screen.getByTestId("filters").textContent).toBe(
+    JSON.stringify([{ type: "range", field: "Days", min: 1.5, max: 2.5 }])
+  );
 });

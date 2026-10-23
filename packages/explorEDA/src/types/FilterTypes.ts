@@ -12,6 +12,11 @@ export interface RangeFilter extends FilterBase {
   type: "range";
   min?: number;
   max?: number;
+  /**
+   * Leaves out values equal to `max`, as a histogram bar does for its upper
+   * edge. Typed ranges include both bounds.
+   */
+  maxExclusive?: boolean;
 }
 
 export interface TextFilter extends FilterBase {

@@ -1,5 +1,13 @@
 import { expect, it } from "vitest";
-import { binInRange, numericBins, sameRange, snapRangeToBins } from "./bins";
+import { applyFilter } from "@/hooks/applyFilter";
+import {
+  binIndex,
+  binInRange,
+  binRangeFilter,
+  numericBins,
+  sameRange,
+  snapRangeToBins,
+} from "./bins";
 
 it("keeps every valid observation, including the maximum and constant values", () => {
   expect(
@@ -67,4 +75,54 @@ it("counts a bin as in range only when the range covers all of it", () => {
   expect(binInRange({ start: 0, end: 10 }, range, edges)).toBe(false);
   expect(binInRange({ start: 20, end: 30 }, range, edges)).toBe(false);
   expect(sameRange({ min: 10, max: 20 }, range, edges)).toBe(true);
+});
+
+it("puts each value in exactly the bar whose range filter matches it", () => {
+  // Values on and beside interior edges, where float step arithmetic and a
+  // comparison against the edge can disagree.
+  for (const [low, high] of [
+    [0, 1.5],
+    [0.1, 0.7],
+    [-1.3, 4.9],
+  ] as const) {
+    for (let count = 2; count <= 40; count++) {
+      const bins = numericBins([low, high], [], count);
+      const edges = [bins[0]!.start, ...bins.map((bin) => bin.end)];
+      const values = edges.flatMap((edge) => [
+        edge,
+        Number(edge.toPrecision(12)),
+        Math.round(edge * 1000) / 1000,
+      ]);
+      for (const value of values) {
+        const matches = bins.flatMap((bin, index) =>
+          applyFilter(value, {
+            type: "range",
+            field: "x",
+            ...binRangeFilter(edges, { min: bin.start, max: bin.end }),
+          })
+            ? [index]
+            : []
+        );
+        const inside = value >= edges[0]! && value <= edges.at(-1)!;
+        expect(matches).toEqual(inside ? [binIndex(bins, value)] : []);
+      }
+    }
+  }
+});
+
+it("leaves out the upper edge of a range that ends before the last bar", () => {
+  const edges = [0, 0.5, 1];
+  expect(binRangeFilter(edges, { min: 0, max: 0.5 })).toEqual({
+    min: 0,
+    max: 0.5,
+    maxExclusive: true,
+  });
+  expect(binRangeFilter(edges, { min: 0.5, max: 1 })).toEqual({
+    min: 0.5,
+    max: 1,
+  });
+  // Whole-number bins have half-step edges that no value can sit on.
+  expect(binRangeFilter([0.5, 1.5, 2.5], { min: 0.5, max: 1.5 }, true)).toEqual(
+    { min: 0.5, max: 1.5 }
+  );
 });

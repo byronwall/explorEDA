@@ -27,7 +27,7 @@ import {
   type BarMark,
 } from "./barPlan";
 import { getRangeFilterForField } from "@/hooks/getAxisFilter";
-import { sameRange, snapRangeToBins } from "./bins";
+import { binRangeFilter, sameRange, snapRangeToBins } from "./bins";
 import { barTraceTargets, findBarTraceRow, resolveBarTrace } from "./barTrace";
 import { BarChartSettings } from "./definition";
 import { SeriesBarChart } from "./SeriesBarChart";
@@ -296,11 +296,15 @@ function SingleBarChart({
       );
       if (extent && plan.mode === "bin") {
         const linear = xScale as ScaleLinear<number, number>;
-        const { min, max } = snapRangeToBins(plan.binEdges, {
+        const range = snapRangeToBins(plan.binEdges, {
           min: linear.invert(extent[0][0]),
           max: linear.invert(extent[1][0]),
         });
-        newFilters.push({ type: "range", field: settings.field, min, max });
+        newFilters.push({
+          type: "range",
+          field: settings.field,
+          ...binRangeFilter(plan.binEdges, range, plan.wholeNumberBins),
+        });
       } else if (extent) {
         return;
       }
@@ -309,6 +313,7 @@ function SingleBarChart({
     [
       plan.mode,
       plan.binEdges,
+      plan.wholeNumberBins,
       settings.field,
       settings.filters,
       settings.id,
@@ -337,7 +342,11 @@ function SingleBarChart({
     if (!bin) return false;
     const rest = settings.filters.filter((f) => f.field !== settings.field);
     const current = getRangeFilterForField(settings.filters, settings.field);
-    const range = { min: bin.start, max: bin.end };
+    const range = binRangeFilter(
+      plan.binEdges,
+      { min: bin.start, max: bin.end },
+      plan.wholeNumberBins
+    );
     updateChart(settings.id, {
       filters:
         current && sameRange(current, range, plan.binEdges)
@@ -348,7 +357,8 @@ function SingleBarChart({
   };
 
   // When the bins change under a range filter, move its bounds to the nearest
-  // new edges so the filter still covers whole bars.
+  // new edges so the filter still covers whole bars, and leaves out the upper
+  // edge exactly when its last bar does.
   useEffect(() => {
     if (plan.mode !== "bin" || plan.binEdges.length < 2) return;
     const index = settings.filters.findIndex(
@@ -356,16 +366,26 @@ function SingleBarChart({
     );
     const filter = settings.filters[index];
     if (!filter || filter.type !== "range") return;
-    const snapped = snapRangeToBins(plan.binEdges, filter);
-    if (sameRange(snapped, filter, plan.binEdges)) return;
+    const snapped = binRangeFilter(
+      plan.binEdges,
+      snapRangeToBins(plan.binEdges, filter),
+      plan.wholeNumberBins
+    );
+    if (
+      sameRange(snapped, filter, plan.binEdges) &&
+      !snapped.maxExclusive === !filter.maxExclusive
+    ) {
+      return;
+    }
     updateChart(settings.id, {
       filters: settings.filters.map((f, i) =>
-        i === index ? { ...filter, ...snapped } : f
+        i === index ? { type: "range", field: filter.field, ...snapped } : f
       ),
     });
   }, [
     plan.mode,
     plan.binEdges,
+    plan.wholeNumberBins,
     settings.field,
     settings.filters,
     settings.id,
@@ -402,9 +422,9 @@ function SingleBarChart({
         ? first.label
         : first && last && !first.label.startsWith("[")
           ? `${first.label.split("–")[0]} to ${last.label.split("–").at(-1)}`
-          : `${formatField(
-              rangeFilter.min ?? plan.binEdges[0] ?? 0
-            )} to ${formatField(rangeFilter.max ?? plan.binEdges.at(-1) ?? 0)}`;
+          : `${formatField(rangeFilter.min ?? plan.binEdges[0] ?? 0)} to ${
+              rangeFilter.maxExclusive ? "< " : ""
+            }${formatField(rangeFilter.max ?? plan.binEdges.at(-1) ?? 0)}`;
   } else if (selectable && valueFilter?.values.length) {
     const names = selectedBars.map((bar) => bar.label);
     selectionText = `${

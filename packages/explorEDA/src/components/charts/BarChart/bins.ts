@@ -32,10 +32,34 @@ export function numericBins(all: number[], values: number[], count: number) {
     return { label, start, end, value: 0, isNumeric: true as const };
   });
   for (const value of values) {
-    if (!Number.isFinite(value) || value < min || value > max) continue;
-    bins[Math.min(size - 1, Math.floor((value - min) / step))]!.value++;
+    const index = binIndex(bins, value);
+    if (index !== undefined) bins[index]!.value++;
   }
   return bins;
+}
+
+/**
+ * The bin a value falls in: each bin leaves out its upper edge except the
+ * last, which keeps it. Compares against the stored edges, not only the step
+ * arithmetic, so a value on an edge lands where a range filter on those same
+ * edges puts it.
+ */
+export function binIndex(
+  bins: readonly { start: number; end: number }[],
+  value: number
+): number | undefined {
+  const first = bins[0];
+  const last = bins.at(-1);
+  if (!first || !last || !Number.isFinite(value)) return undefined;
+  if (value < first.start || value > last.end) return undefined;
+  const step = (last.end - first.start) / bins.length;
+  let index = Math.min(
+    bins.length - 1,
+    Math.max(0, Math.floor((value - first.start) / step))
+  );
+  while (index > 0 && value < bins[index]!.start) index--;
+  while (index < bins.length - 1 && value >= bins[index]!.end) index++;
+  return index;
 }
 
 /** Tolerance for comparing a bound to a bin edge after float arithmetic. */
@@ -88,6 +112,27 @@ export function snapRangeToBins(
     max = edges[bin + 1]!;
   }
   return { min, max };
+}
+
+/**
+ * A range over whole bins, as a filter. Bins leave out their upper edge, all
+ * but the last, so a range that ends inside the bins leaves out its max too.
+ * Whole-number bins skip that: no value sits on their half-step edges, and
+ * "1.5–4.5" reads better than "1.5 to < 4.5".
+ */
+export function binRangeFilter(
+  edges: number[],
+  range: { min?: number; max?: number },
+  wholeNumbers = false
+): { min?: number; max?: number; maxExclusive?: boolean } {
+  const tolerance = edges.length > 1 ? edgeTolerance(edges) : 0;
+  const last = edges.at(-1);
+  return !wholeNumbers &&
+    range.max !== undefined &&
+    last !== undefined &&
+    range.max < last - tolerance
+    ? { min: range.min, max: range.max, maxExclusive: true }
+    : { min: range.min, max: range.max };
 }
 
 /** True when two ranges have the same bounds within bin-edge tolerance. */

@@ -26,7 +26,8 @@ export function applyFilter(value: datum, filter: Filter): boolean {
         }
         return (
           (filter.min === undefined || number >= filter.min) &&
-          (filter.max === undefined || number <= filter.max)
+          (filter.max === undefined ||
+            (filter.maxExclusive ? number < filter.max : number <= filter.max))
         );
       }
       break;
