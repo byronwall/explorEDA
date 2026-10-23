@@ -873,7 +873,8 @@
   min-width: 24px;
   height: 10px;
   border-radius: 2px;
-  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--foreground) 8%, transparent);
+  box-shadow: inset 0 0 0 1px
+    color-mix(in oklab, var(--foreground) 8%, transparent);
 }
 /* Short of room, the scale keeps its ends and the metric name goes; the
    panel header names it while a cell is under the pointer. */
@@ -1915,6 +1916,37 @@ html {
 }
 /* The status bar: row count and filter scope, kept in view at the bottom of
    the workspace while the charts scroll. */
+/* A fresh workspace names its next steps above the grid until a chart lands. */
+.eda-workspace-start {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 24px;
+  margin: 0 10px 4px;
+  padding: 12px 14px;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  background: var(--card);
+}
+.eda-workspace-start-text {
+  flex: 1 1 320px;
+  min-width: 0;
+  max-width: 68ch;
+}
+.eda-workspace-start h3 {
+  font-size: 14px;
+  font-weight: 600;
+}
+.eda-workspace-start p {
+  margin-top: 2px;
+  color: var(--muted-foreground);
+}
+.eda-workspace-start-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
 .eda-workspace-status {
   position: sticky;
   bottom: 0;

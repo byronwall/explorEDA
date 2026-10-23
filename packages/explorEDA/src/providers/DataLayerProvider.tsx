@@ -462,24 +462,8 @@ function createDefaultWorkspaceCharts(
         h: 6,
       })
     : undefined;
-  const table = chartRegistry.has("data-table")
-    ? getChartDefinition("data-table").createDefaultSettings({
-        x: 5,
-        y: 0,
-        w: 7,
-        h: 6,
-      })
-    : undefined;
-  if (table?.type === "data-table") {
-    table.columns = fieldProfiles.map(({ name }) => ({
-      id: name,
-      field: name,
-    }));
-  }
-
-  return [summary, table].filter((item): item is ChartSettings =>
-    Boolean(item)
-  );
+  // Rows open in their own drawer, so the grid starts with the summary only.
+  return summary ? [summary] : [];
 }
 
 // Store creator

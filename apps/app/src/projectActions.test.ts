@@ -24,12 +24,12 @@ describe("project actions", () => {
     expect(folder.problems).toEqual([]);
     expect(folder.analyses[0]!.result.views[0]!.queryId).toBe("sales");
     expect(folder.analyses[0]!.result.name).toBe("Sales");
-    // It opens on a summary of the fields and the rows.
+    // It opens on a summary of the fields.
     expect(
       folder.analyses[0]!.result.views[0]!.settings.charts.map(
         (chart) => chart.type
       )
-    ).toEqual(["summary", "data-table"]);
+    ).toEqual(["summary"]);
   });
 
   it("keeps a hidden project's text in .exploreda", async () => {

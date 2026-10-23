@@ -47,6 +47,16 @@ const aggregateFixture = [
   { region: "South", Revenue: "25.25" },
 ];
 
+// A summary beside a rows table, so a probe can filter one chart and read
+// the live rows of the other.
+function summaryAndTable() {
+  const layout = { x: 0, y: 0, w: 6, h: 6 };
+  return [
+    getChartDefinition("summary").createDefaultSettings(layout),
+    getChartDefinition("data-table").createDefaultSettings(layout),
+  ];
+}
+
 function LiveIdsProbe() {
   const charts = useDataLayer((state) => state.charts);
   const updateChart = useDataLayer((state) => state.updateChart);
@@ -470,7 +480,7 @@ describe("DataLayerProvider", () => {
 
   it("refreshes live row ids when another chart changes or clears filters", () => {
     render(
-      <DataLayerProvider data={filteredSummaryData}>
+      <DataLayerProvider data={filteredSummaryData} charts={summaryAndTable()}>
         <LiveIdsProbe />
       </DataLayerProvider>
     );
@@ -483,7 +493,7 @@ describe("DataLayerProvider", () => {
 
   it("keeps live items when a chart's text changes and rebuilds them when its filters change", () => {
     render(
-      <DataLayerProvider data={filteredSummaryData}>
+      <DataLayerProvider data={filteredSummaryData} charts={summaryAndTable()}>
         <LiveItemsIdentityProbe />
       </DataLayerProvider>
     );
@@ -616,7 +626,7 @@ describe("DataLayerProvider", () => {
     );
   });
 
-  it("creates a summary and table from the union of source fields", () => {
+  it("creates only a summary by default", () => {
     render(
       <DataLayerProvider data={dataWithLateField}>
         <WorkspaceProbe />
@@ -626,14 +636,9 @@ describe("DataLayerProvider", () => {
     expect(screen.getByTestId("workspace")).toHaveTextContent(
       '"type":"summary"'
     );
-    expect(screen.getByTestId("workspace")).toHaveTextContent(
-      '"type":"data-table"'
-    );
-    expect(screen.getByTestId("workspace")).toHaveTextContent('"field":"late"');
     const charts = JSON.parse(screen.getByTestId("workspace").textContent!);
     expect(charts.map((chart: { type: string }) => chart.type)).toEqual([
       "summary",
-      "data-table",
     ]);
   });
 
@@ -680,7 +685,7 @@ describe("DataLayerProvider", () => {
 
     await waitFor(() =>
       expect(screen.getByTestId("workspace")).toHaveTextContent(
-        '"field":"value"'
+        '"type":"summary"'
       )
     );
     expect(screen.getByTestId("workspace")).not.toHaveTextContent("__ID");
@@ -709,7 +714,7 @@ describe("DataLayerProvider", () => {
 
   it("profiles only rows surviving chart filters and keeps fields when empty", () => {
     render(
-      <DataLayerProvider data={filteredSummaryData}>
+      <DataLayerProvider data={filteredSummaryData} charts={summaryAndTable()}>
         <FilteredSummaryProbe />
       </DataLayerProvider>
     );
@@ -736,7 +741,7 @@ describe("DataLayerProvider", () => {
 
     await waitFor(() =>
       expect(screen.getByTestId("workspace")).toHaveTextContent(
-        '"field":"replacement"'
+        '"type":"summary"'
       )
     );
     view.unmount();
@@ -857,7 +862,7 @@ describe("DataLayerProvider", () => {
     fireEvent.click(screen.getByRole("button", { name: "change chart" }));
     expect(onStateChange).toHaveBeenCalledTimes(1);
     const snapshot = onStateChange.mock.calls[0]![0] as SavedDataStructure;
-    expect(snapshot.charts).toHaveLength(2);
+    expect(snapshot.charts).toHaveLength(1);
     expect(snapshot.gridSettings).toBeDefined();
     expect(snapshot.calculations).toEqual([]);
     expect(snapshot.colorScales).toEqual([]);
