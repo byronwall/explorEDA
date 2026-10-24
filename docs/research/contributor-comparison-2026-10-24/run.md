@@ -1,6 +1,6 @@
 # Contributor comparison Design run
 
-Phase: submitted; Pro is researching. Mode: Design. Follow-ups: 0/1.
+Phase: integrated; planning PR pending. Mode: Design. Follow-ups: 0/1.
 
 Repository: https://github.com/byronwall/explorEDA.
 Source: `95832bd473884aeae23453af0888b4ca5187820d`, refreshed origin/main.
@@ -78,3 +78,29 @@ Docs checks pass: three files and 73 tests. Existing React act warnings remain.
 No package or demo code changed. Full pnpm check is not required for preparation.
 No feature behavior or browser acceptance is claimed.
 Plan, summary, dispositions, and PR await the reports. No PR exists for this cycle yet.
+
+## Collection and integration — October 24, 02:20 UTC
+
+The recorded conversation completed after 26m 2s. No follow-up was needed.
+The old tab was absent; opened the same conversation in Chrome byroni.us.
+Downloaded exploreda-comparison-design.zip under the standing direct human download approval.
+The event wait timed out, but the normal download succeeded. No duplicate download was needed.
+Safe paths, no symlinks, CRC, exact two-file inventory, and complete UTF-8 decoding pass.
+Read report.md and implementation-plan.md completely. Originals remain under ignored tmp/pro-contributor-comparison-2026-10-24/collected/.
+No Library upload or downloaded program execution occurred.
+
+Refreshed origin/main remains 95832bd4. No unrelated changes were present.
+Checked trace ownership/control, producer plans and consumer scope, aggregates, Crossfilter, preview, project mapping,
+field preparation, calculation refresh, data/restore paths, saved echo, docs registration, and Playwright configuration.
+Spot-checked Tableau Explain Data, Power BI drillthrough, and Mosaic selection primary documentation.
+Scratch checks using existing reducers and the metric planner confirm memberships, reductions, entity witnesses/conflicts,
+empty state, changed-data arithmetic, and denominator shares. They do not run the unbuilt comparison feature.
+The first scratch count helper retained a measure by default; corrected it to match MetricCard's measure-free count.
+This confirms the plan's distinction from named count specs. No reducer change was made.
+
+Integrated the feature plan, summary, seventeen local dispositions, and R056/catalogue/index.
+Local review corrects Pro's nonmatching browser test filename/project, makes table extraction optional,
+and requires measurement before asynchronous capture machinery. Docs/examples remain in each visible milestone.
+No feature implementation, mounted/browser acceptance, or performance result is claimed.
+Baseline checks passed 25 tests; docs passed 73 with existing React act warnings.
+Doc/format/PR checks are required before the planning PR. Full pnpm check is not required for documentation-only changes.
