@@ -4,11 +4,16 @@
 - Category: Types, quantities, and dates
 - Priority: 43
 - Kind: follow-up
-- Status: candidate
+- Status: Methods complete; implementation proposed
 - Confidence: medium
 - Baseline: `9b16d78e3ed0742ed4d5858c1939fec9e758b510`
 
 ## Research brief
+
+The [October 24 Methods study](../../../research/rolling-windows-2026-10-24/README.md) supersedes the old demand gate below.
+Build a pooled UTC calendar overlay first, with exact window-member selection and separate support facts.
+Then add explicitly named equal-period means. See the [implementation plan](../../rolling-windows/implementation-plan.md).
+No rolling feature is implemented by this research. Byron is the demand under DIRECTION.md.
 
 A moving average can look reasonable while assigning the wrong weight to periods with different observation counts. The repository already computes UTC period buckets with contributors and shared count, sum, and average reductions. `poolAggregateRows` demonstrates why combining underlying rows differs from averaging group results. The calendar-period intent identifies rolling measures as a future candidate. The valuable research is choosing their mathematical population and missing-period policy before adding a smoothing control.
 
