@@ -1,6 +1,6 @@
 # Category mappings Design run
 
-Phase: submitted; Pro is researching. Mode: Design. Follow-ups: 0/1.
+Phase: integrated; review PR pending. Mode: Design. Follow-ups: 0/1.
 
 Repository: https://github.com/byronwall/explorEDA.
 Source: `95832bd473884aeae23453af0888b4ca5187820d`, refreshed origin/main.
@@ -79,3 +79,26 @@ Docs checks pass: three files, 73 tests. Existing React act warnings remain.
 No package or demo code changed. Full pnpm check is not required for preparation.
 No new feature behavior or browser acceptance is claimed.
 Plan, summary, dispositions, and PR await reports. No PR exists for this cycle yet.
+
+## Collection and local review, October 24, 20:27 UTC
+
+The recorded conversation finished after 25m04s. No follow-up was needed.
+Reused Chrome byroni.us tab 2010998985. Downloaded category-mappings-design.zip under direct standing human approval.
+Verified its actual local path. Archive checks passed: safe paths, no symlinks, CRC, exact two-file inventory, and UTF-8.
+Read both complete reports, including the embedded oracle. No downloaded program was executed.
+Originals remain under ignored tmp/pro-category-mappings-2026-10-24/collected/.
+
+Refreshed origin/main remains 95832bd4. No unrelated edits or existing PR for this branch were present.
+Checked category identity, row-preserving calculation, structural validation/removal, categorical metadata,
+worker input freshness, project callbacks/history, source inspection, folder serialization/path/write ordering,
+notebook consumption, text parsing, and browser test discovery against current code.
+Spot-checked official OpenRefine, Tableau, Power Query, JMP, pandas, ECMAScript, and Unicode sources.
+Independent scratch checks using current categoryKey pass 52 assertions. They verify proposed arithmetic and identity, not the unbuilt feature.
+Baseline category/conversion/evaluator/selection/removal tests pass: five files, 50 tests.
+
+Integrated the feature plan, short summary, twenty local dispositions, R038, and catalogue links.
+Local review omits the saved purpose enum and narrows undo to a guarded owning-query snapshot.
+It corrects browser discovery to .e2e.ts plus an explicit project regex and keeps strict parsing scoped to map entries.
+M1 includes the complete manual feature, folder/notebook integration, docs, and project/folder examples.
+M2 adds reviewed suggestions and a field entry point. No new feature acceptance is claimed.
+Full pnpm check is not required for this docs-only PR.

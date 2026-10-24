@@ -2,6 +2,10 @@
 
 The catalogue is in priority order. IDs remain stable if a later authorized review changes the rank. The complete question, experiment, evidence, and rejection signal are in each linked brief and in the JSON index.
 
+R038 now has a [category mapping implementation plan](../category-mappings/implementation-plan.md)
+and an [October 24 Design summary](../../research/category-mappings-2026-10-24/README.md).
+The design is complete; feature implementation and acceptance remain proposed. DIRECTION.md governs new topic selection.
+
 | Priority | ID and title                                                                                                                                                  | Category                           | Kind           |
 | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- | -------------- |
 | 1        | [R026 — Reconcile missing, blank, invalid, and converted-value counts](ideas/R026-missing-state-accounting.md)                                                | Data quality and missingness       | robustness     |
