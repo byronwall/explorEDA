@@ -1,6 +1,6 @@
 # Regression diagnostics Design run
 
-Phase: collected and integrated; planning PR pending. Mode: Design. Follow-ups: 0/1.
+Phase: complete; verified open planning PR #520. Mode: Design. Follow-ups: 0/1.
 
 Repository: https://github.com/byronwall/explorEDA.
 Source: `95832bd473884aeae23453af0888b4ca5187820d`, refreshed origin/main.
@@ -105,3 +105,13 @@ Run doc/format/PR checks before opening the planning PR. Full pnpm check does no
 
 Collection docs checks pass: three files, 73 tests, with existing React act warnings.
 Six authored local file links resolve. No package changeset or product screenshots apply to this planning-only PR.
+
+## Completion, October 24, 08:28 UTC
+
+PR: https://github.com/byronwall/explorEDA/pull/520.
+Verified OPEN, main base, scoped head, saved body, seven authored documentation files, and description links.
+Attached to this chat. Documentation label applied; codex and codex-automation labels are unavailable.
+Formatting, whitespace, and PR checks pass. No raw reports, archive, receipts, or scratch code are committed.
+Deleted collect-exploreda-regression-diagnostics-design through the supported scheduler; deleteStatus=deleted.
+The six-hour exploreda-pro-research-pipeline remains ACTIVE indefinitely.
+No follow-up, feature implementation, worktree, merge, deployment, or paid service. Stop for review.
