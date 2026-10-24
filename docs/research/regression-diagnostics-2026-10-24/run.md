@@ -1,6 +1,6 @@
 # Regression diagnostics Design run
 
-Phase: submitted; Pro is researching. Mode: Design. Follow-ups: 0/1.
+Phase: collected and integrated; planning PR pending. Mode: Design. Follow-ups: 0/1.
 
 Repository: https://github.com/byronwall/explorEDA.
 Source: `95832bd473884aeae23453af0888b4ca5187820d`, refreshed origin/main.
@@ -78,3 +78,30 @@ Docs checks pass: three files, 73 tests. Existing React act warnings remain.
 No package or demo code changed. Full pnpm check is not required for preparation.
 No feature behavior or browser acceptance is claimed.
 Plan, summary, dispositions, and PR await the reports. No PR exists for this cycle yet.
+
+## Collection and local review, October 24, 08:20 UTC
+
+The recorded conversation finished after 24m44s. No follow-up was needed.
+Reused Chrome byroni.us tab 2010998966 and the recorded conversation.
+Downloaded regression-diagnostics-design.zip under standing direct human download approval.
+The first click was ambiguous and sent no action; the scoped download button succeeded.
+Safe relative paths, no symlinks, CRC, exact two-file inventory, and UTF-8 checks pass.
+Read report.md and implementation-plan.md completely. Originals remain under ignored tmp/pro-regression-diagnostics-2026-10-24/collected/.
+No Library upload or downloaded program execution occurred.
+
+Refreshed origin/main remains 95832bd4. No unrelated edits were present.
+Checked fit prediction/planning, exact membership, own/peer scope, trace revisions/shell, global nonce,
+facet identity/paging/visibility, source inspection, save validation, DSL setting paths, and browser discovery configuration.
+Spot-checked primary NIST, JMP, R diagnostic/deletion/LOESS, and statsmodels documentation.
+Existing regression/scatter-plan tests pass 42 tests. Local scratch checks pass 1,079 numeric assertions against current predictors.
+Those checks cover key fixtures and evaluator thresholds, not the unbuilt diagnostics feature.
+
+Integrated the feature plan, short summary, fifteen local dispositions, and R002/R003/catalogue links.
+Local review keeps capacity budgets provisional, requires measured blocking before workers, and challenges the proposed scale guard under response translation.
+It corrects browser project discovery and avoids a guessed screenshot action sequence.
+Each visible milestone includes docs and an example.
+No new runtime, mounted/browser acceptance, saved-recipe, or performance result is claimed.
+Run doc/format/PR checks before opening the planning PR. Full pnpm check does not apply to docs-only changes.
+
+Collection docs checks pass: three files, 73 tests, with existing React act warnings.
+Six authored local file links resolve. No package changeset or product screenshots apply to this planning-only PR.

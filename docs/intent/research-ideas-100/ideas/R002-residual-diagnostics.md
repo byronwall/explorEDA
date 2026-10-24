@@ -4,11 +4,19 @@
 - Category: Scientific analysis
 - Priority: 62
 - Kind: follow-up
-- Status: candidate
+- Status: design reviewed; implementation proposed
 - Confidence: high
 - Baseline: `9b16d78e3ed0742ed4d5858c1939fec9e758b510`
 
-## Research brief
+## Design review, October 24, 2026
+
+Build fit-attached residual inspection with a held reference, local selection, exact records, and explicit recomputation.
+The [review summary](../../../research/regression-diagnostics-2026-10-24/README.md) records source checks and dispositions.
+The [implementation plan](../../regression-diagnostics/implementation-plan.md) ships residual-versus-fitted and residual-versus-X together.
+It then adds comparisons, diagnostic views, and saved recipes with docs/examples in each milestone.
+No feature has shipped. DIRECTION.md supersedes the older demand and rejection gates below.
+
+## Original research brief
 
 An analyst can already fit a scatter relationship, inspect its equation, and trace its contributing rows. `planScatterFits` carries exact source IDs, and `fitInputKey` deliberately keeps the chart’s own brush from refitting the model. Those foundations make a focused diagnostic plausible. The remaining question is whether a residual view helps identify structure that the fitted curve and its summary score obscure. NIST’s residual-analysis guidance provides a primary reference for choosing a useful diagnostic rather than treating a fit score as a complete assessment.
 

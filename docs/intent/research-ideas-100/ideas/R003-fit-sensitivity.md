@@ -4,11 +4,20 @@
 - Category: Scientific analysis
 - Priority: 63
 - Kind: simplification
-- Status: candidate
+- Status: design reviewed; implementation proposed
 - Confidence: medium
 - Baseline: `9b16d78e3ed0742ed4d5858c1939fec9e758b510`
 
-## Research brief
+## Design review, October 24, 2026
+
+Plan bounded comparisons on identical fitted rows: one held baseline and at most two alternatives.
+An explicit OLS omission scenario keeps training and evaluation populations separate.
+Apply names its chart-wide effect across groups and facets. Defer LOESS omission and automatic model ranking.
+See the [review summary](../../../research/regression-diagnostics-2026-10-24/README.md) and
+[M2 plan](../../regression-diagnostics/implementation-plan.md#m2-compare-nearby-fits-on-fixed-rows).
+No feature has shipped. DIRECTION.md supersedes the older demand and rejection gates below.
+
+## Original research brief
 
 The current scatter tools already offer linear, polynomial, and LOESS fits. `fitPolynomial` reports adjusted R², while `fitLoess` has a span, a minimum neighbor count, and an interpolated path for larger groups. `fitSummary` labels the LOESS score as pseudo R². These are substantial capabilities. The product question is whether users understand how much their conclusion depends on a flexible setting before the library invests in additional methods, controls, or statistical claims.
 
