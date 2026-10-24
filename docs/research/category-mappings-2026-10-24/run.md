@@ -1,6 +1,6 @@
 # Category mappings Design run
 
-Phase: integrated; review PR pending. Mode: Design. Follow-ups: 0/1.
+Phase: complete; verified open planning PR #523. Mode: Design. Follow-ups: 0/1.
 
 Repository: https://github.com/byronwall/explorEDA.
 Source: `95832bd473884aeae23453af0888b4ca5187820d`, refreshed origin/main.
@@ -102,3 +102,15 @@ It corrects browser discovery to .e2e.ts plus an explicit project regex and keep
 M1 includes the complete manual feature, folder/notebook integration, docs, and project/folder examples.
 M2 adds reviewed suggestions and a field entry point. No new feature acceptance is claimed.
 Full pnpm check is not required for this docs-only PR.
+
+## Completion, October 24, 20:33 UTC
+
+PR: https://github.com/byronwall/explorEDA/pull/523.
+Verified OPEN, main base, scoped head, saved body and links, and six authored documentation files.
+Attached to this chat. Documentation label applied; codex and codex-automation labels are unavailable.
+Docs checks pass: three files, 73 tests. Existing React act warnings remain.
+Formatting, five authored relative links, whitespace, and PR checks pass.
+No originals, archives, manifests, scratch code, or receipts are committed.
+Saved collector memory and deleted collect-exploreda-category-mappings-design through the supported scheduler; deleteStatus=deleted.
+The six-hour exploreda-pro-research-pipeline remains ACTIVE indefinitely, verified through its tool and saved configuration.
+No follow-up, feature implementation, worktree, merge, deployment, or paid service. Stop for review.
