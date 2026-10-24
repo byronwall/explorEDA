@@ -4,11 +4,23 @@
 - Category: Inspection and provenance
 - Priority: 14
 - Kind: new-direction
-- Status: candidate
+- Status: Design complete; implementation proposed
 - Confidence: high
 - Baseline: `9b16d78e3ed0742ed4d5858c1939fec9e758b510`
 
-## Research brief
+## Design decision — October 24, 2026
+
+Build Compare values: pin one trace, inspect another, and compare exact shared and differing records.
+Keep in-scope input rows separate from rows used in calculation. Preserve captured definitions and filter context.
+Start with native row-grain cards and categorical bars; add entities and denominators in later milestones.
+
+Read the [implementation plan](../../contributor-comparison/implementation-plan.md),
+[summary and dispositions](../../../research/contributor-comparison-2026-10-24/README.md),
+and [Pro conversation](https://chatgpt.com/c/6adc0748-e1e0-83ea-8ef3-a8fe2b64340c).
+Research used current main `95832bd4`. No feature implementation or browser acceptance is claimed.
+DIRECTION.md supersedes the older study gates below. Byron is the demand.
+
+## Original research brief
 
 Two graphics can report different values for legitimate reasons, such as one excluding invalid measures or counting entities rather than rows. The baseline already records contributor arrays in `MetricCardPlan`, offers chart-specific trace bodies, and maps several trace kinds to row IDs through `traceRowIds`. `QueryRowsLink` can open those records in a project's query flow. The missing research decision is whether an analyst benefits from directly comparing two inspected contributor sets, rather than manually alternating traces and inferring the difference from totals.
 

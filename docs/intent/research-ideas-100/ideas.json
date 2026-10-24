@@ -2191,9 +2191,9 @@
     "path": "ideas/R056-contributor-set-comparison.md",
     "priority": 14,
     "research_kind": "new-direction",
-    "status": "candidate",
-    "summary": "Test a temporary comparison of two traces to explain legitimate and unexpected membership differences.",
-    "research_question": "Does comparing shared and differing contributors improve diagnosis beyond existing traces and Rows?",
+    "status": "design-complete",
+    "summary": "Build Compare values from two captured traces, with separate scope and included-row partitions. See docs/intent/contributor-comparison/implementation-plan.md; implementation remains proposed.",
+    "research_question": "How should exact value comparison preserve record scope, calculation eligibility, and captured context?",
     "why_now": "Trace records and project query-flow links already make the experiment inexpensive.",
     "repo_evidence": [
       {
@@ -2214,9 +2214,9 @@
     ],
     "related_intents": ["docs/intent/current-analysis-trust/intent-brief.md"],
     "dependencies": [],
-    "first_experiment": "Compare a bar and card with duplicate entities, invalid measures, local restrictions, and one deliberate mismatch.",
-    "acceptance_evidence": "Analysts identify precise differing records and correct semantic reasons with fewer transitions.",
-    "rejection_signal": "The comparison confuses members with numeric contributors or adds no value over existing inspectors.",
+    "first_experiment": "Implement the M1 native card/bar comparison with the eight-row fixture, docs, and runnable example.",
+    "acceptance_evidence": "Exact scope/included partitions, unchanged filters and saved state, synchronous invalidation, and pointer/keyboard completion at three widths.",
+    "rejection_signal": "Evidence uses the wrong scope or generation, confuses members with numeric contributors, or changes analytical selection.",
     "confidence": "high",
     "external_sources": []
   },
