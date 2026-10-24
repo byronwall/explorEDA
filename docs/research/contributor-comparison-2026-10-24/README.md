@@ -37,6 +37,8 @@ Local review makes three adjustments to Pro's implementation details:
 All source claims were checked at refreshed main `95832bd4`.
 The scratch fixture ran the existing reducers and metric planner for memberships, values, entities, conflicts, empty state, and revisions.
 Existing baseline checks passed 25 tests; docs passed 73 tests with existing React act warnings.
+The collection docs rerun passed 72 tests and hit one search timeout. That file passed six tests on retry.
+No all-green combined collection rerun is claimed. [Planning PR #519](https://github.com/byronwall/explorEDA/pull/519) is open.
 No new comparison runtime, mounted flow, browser acceptance, or performance result is claimed.
 Original reports and ZIP remain under ignored tmp, outside this PR.
 

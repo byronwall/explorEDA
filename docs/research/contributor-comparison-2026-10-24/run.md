@@ -1,6 +1,6 @@
 # Contributor comparison Design run
 
-Phase: integrated; planning PR pending. Mode: Design. Follow-ups: 0/1.
+Phase: complete; verified open planning PR #519. Mode: Design. Follow-ups: 0/1.
 
 Repository: https://github.com/byronwall/explorEDA.
 Source: `95832bd473884aeae23453af0888b4ca5187820d`, refreshed origin/main.
@@ -104,3 +104,18 @@ and requires measurement before asynchronous capture machinery. Docs/examples re
 No feature implementation, mounted/browser acceptance, or performance result is claimed.
 Baseline checks passed 25 tests; docs passed 73 with existing React act warnings.
 Doc/format/PR checks are required before the planning PR. Full pnpm check is not required for documentation-only changes.
+
+## Completion — October 24, 02:28 UTC
+
+PR: https://github.com/byronwall/explorEDA/pull/519.
+Verified OPEN, main base, scoped head, saved body, seven authored documentation/index files, and description links.
+Attached to this chat. Documentation label applied; codex and codex-automation are unavailable.
+
+Collection docs rerun passed 72 tests and timed out once in search ranking during a slow run.
+The failed search file passed all six tests on targeted retry. The earlier full docs run passed 73 tests.
+Existing React act warnings remain. No all-green combined collection rerun is claimed.
+Formatting, authored links, whitespace, and PR checks pass. No raw Pro artifacts are committed.
+
+Deleted collect-exploreda-contributor-comparison-design through automation_update; deleteStatus=deleted.
+The six-hour pipeline remains ACTIVE indefinitely, verified through the tool and saved configuration.
+No follow-up, feature implementation, worktree, merge, deployment, or paid service. Stop for review.
