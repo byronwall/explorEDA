@@ -1,6 +1,6 @@
 # Rolling windows Methods run
 
-Phase: submitted; Pro is researching. Mode: Methods. Follow-ups: 0/1.
+Phase: integrated; preparing planning PR. Mode: Methods. Follow-ups: 0/1.
 
 Repository: https://github.com/byronwall/explorEDA.
 Source: `95832bd473884aeae23453af0888b4ca5187820d`, refreshed origin/main.
@@ -78,3 +78,30 @@ Docs checks pass: three files, 73 tests. Existing React act warnings remain.
 No package or demo code changed. Full pnpm check is not required for preparation.
 No feature behavior or browser acceptance is claimed.
 Plan, summary, dispositions, and PR await reports. No PR exists for this cycle yet.
+
+## Collection and local review, October 24, 14:26 UTC
+
+The recorded conversation finished after 24m17s. No follow-up was needed.
+Reused Chrome byroni.us tab 2010998970. The observed ZIP link opened its existing file preview.
+Downloaded rolling-window-methods.zip under Byron's explicit standing download approval and the recorded conversation.
+No Library upload occurred. The download event returned its local file path.
+Archive checks passed: safe relative paths, no symlinks, CRC, exact two-file inventory, and UTF-8.
+Read report.md and implementation-plan.md completely. Originals remain under ignored tmp/pro-rolling-windows-2026-10-24/collected/.
+No downloaded program was executed.
+
+Refreshed origin/main remains 95832bd4. No unrelated edits were present, and no prior PR exists for this head.
+Checked calendar planning/selection, shared reducers, scope, trace target routing and nonce invalidation,
+row-ID filters, provider mount/refresh/restore/host echo, content remapping, validation, DSL, source preview, image export, and browser project discovery.
+Spot-checked primary Observable Plot, pandas rolling/precision, and slider period documentation.
+Independent local arithmetic and membership checks pass 66 assertions, including weights, affine conversion, and compensation components.
+These checks do not implement or accept the new rolling feature.
+
+Integrated the feature plan, short summary, twelve local dispositions, R035, and catalogue links.
+Local review removes a method-version field, narrows shared numerical changes, scopes unbound-ID clearing to explicit data imports,
+keeps Chart data as source records, identifies the small trace-export seam, and requires measured evidence before new capacity machinery.
+It corrects setting-description and browser discovery paths. Each visible milestone includes docs and a runnable example.
+No runtime, mounted/browser, persistence, export, or performance acceptance is claimed.
+
+Collection checks pass: calendar/chart two files, 13 tests; docs three files, 73 tests.
+Existing React act warnings remain. Full pnpm check is not required for this docs-only PR.
+Formatting, authored links, whitespace, and PR checks remain to verify before opening.
