@@ -1,6 +1,6 @@
 # Repeatable analysis Strategy run
 
-Phase: submitted; Pro is researching. Mode: Strategy. Follow-ups: 0/1.
+Phase: integrated; review PR pending. Mode: Strategy. Follow-ups: 0/1.
 
 Repository: https://github.com/byronwall/explorEDA.
 Source: `95832bd473884aeae23453af0888b4ca5187820d`, refreshed origin/main.
@@ -82,3 +82,33 @@ Docs checks pass: three files, 73 tests. Existing React act warnings remain.
 No package or demo code changed. Full pnpm check is not required for preparation.
 No new feature behavior, browser acceptance, or performance claim is made.
 Plan, summary, dispositions, and PR await the reports. No PR exists for this cycle yet.
+
+## Collection and local review, October 25, 02:24–02:29 UTC
+
+The recorded conversation completed. No follow-up was needed.
+Reused Chrome byroni.us tab 2010999042 and its existing download control.
+The download-event wait timed out, but the normal download succeeded at /Users/byronwall/Downloads/exploreda-strategy.zip.
+Verified the actual file before any retry. No second download or Library upload was needed.
+Direct standing human download approval and the recorded conversation were supplied with the tool action.
+Safe paths, no symlinks, CRC, exact two-file inventory, and UTF-8 checks passed.
+Read both complete reports, including fixtures and the complete recommendation list.
+Originals stay under ignored tmp/pro-repeatable-analysis-2026-10-25/collected/. No downloaded program was executed.
+
+Refreshed origin/main remains 95832bd4. Checked notebook loading and working text, typed view bindings,
+parameter controls/validation, compiler schema, current evaluation/worker behavior, chart/query source mapping,
+write-back exclusions, saver failures, navigation/reload, and explicit browser project discovery.
+Spot-checked official Observable Notebooks 2.0, Quarto parameters, JMP workflow packaging, and Orange report documentation.
+Independent arithmetic/membership checks confirm the proposed 6/200, updated 7/260, search 1/1000, zero, empty, and reordered cases.
+These checks establish expected values, not acceptance of an unbuilt feature.
+
+Integrated a two-milestone plan, short Strategy summary, all sixteen local dispositions, and catalogue links.
+M1 connects query inputs, current evidence, schema, save/reopen, source updates, docs, and a runnable example.
+M2 adds creation, copy-first named cases, narrow save acknowledgment, and host file/sheet return.
+Local review keeps save confirmation scoped to discarded working text and corrects explicit Playwright project registration.
+It preserves raw fixture values and keeps source records distinct from richer contributor ledgers.
+No open specialist feature PR blocks M1. No pipeline next topic is assigned.
+
+This is a docs-only PR. Full pnpm check is not required.
+No new runtime, mounted, browser, persistence, or performance acceptance is claimed.
+Collection checks pass: typed bindings, worker evaluation, and notebook write-back, three files and 17 tests.
+Docs checks pass again: three files and 73 tests, with existing React act warnings.

@@ -2,6 +2,10 @@
 
 The catalogue is in priority order. IDs remain stable if a later authorized review changes the rank. The complete question, experiment, evidence, and rejection signal are in each linked brief and in the JSON index.
 
+The [October 25 workflow Strategy review](../../research/repeatable-analysis-2026-10-25/README.md) recommends parameterized local investigation notebooks.
+Its [first implementation plan](../repeatable-analysis-workflows/implementation-plan.md) connects existing queries, notebook inputs, current records, and saved return.
+It does not depend on the open specialist feature plans or change catalogue ranks. DIRECTION.md still controls each new research selection.
+
 | Priority | ID and title                                                                                                                                                  | Category                           | Kind           |
 | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- | -------------- |
 | 1        | [R026 — Reconcile missing, blank, invalid, and converted-value counts](ideas/R026-missing-state-accounting.md)                                                | Data quality and missingness       | robustness     |
