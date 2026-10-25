@@ -1,6 +1,6 @@
 # Pooled and grouped relationships Methods run
 
-Phase: reports collected and reviewed; integration in progress. Mode: Methods. Follow-ups: 0/1.
+Phase: complete; verified open planning PR #526. Mode: Methods. Follow-ups: 0/1.
 
 Repository: https://github.com/byronwall/explorEDA.
 Source: `95832bd473884aeae23453af0888b4ca5187820d`, refreshed origin/main.
@@ -111,3 +111,14 @@ Collection checks pass: shared filter matching, Crossfilter populations, and DSL
 Docs checks pass again: three files and 73 tests, with existing React act warnings.
 Preparation already passed 45 regression/summary/matrix tests.
 Seven authored relative links resolve. Whitespace checks pass.
+
+## Completion, October 25, 14:37 UTC
+
+PR: https://github.com/byronwall/explorEDA/pull/526.
+Verified OPEN, main base, scoped head, saved body and links, and seven authored documentation files.
+Attached to this chat. Documentation label applied; codex and codex-automation labels are unavailable.
+Formatting and PR checks pass. No Pro originals, archives, manifests, hashes, or receipts are committed.
+Saved both automation memories before deleting the temporary collector through the supported scheduler.
+Deletion returned deleteStatus=deleted for collect-exploreda-pooled-group-methods.
+The six-hour pipeline remains ACTIVE indefinitely, GPT-6.1 Sol Medium, verified through tool and saved configuration.
+No feature implementation, worktree, merge, deployment, or paid service. Stop for review.
