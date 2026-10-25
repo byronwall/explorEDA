@@ -1,6 +1,6 @@
 # Explicit join-key preparation Design run
 
-Phase: submitted, Pro running. Mode: Design. Follow-ups: 0/1.
+Phase: integrated; planning PR pending. Mode: Design. Follow-ups: 0/1.
 
 Repository: https://github.com/byronwall/explorEDA.
 Source: `95832bd473884aeae23453af0888b4ca5187820d`, refreshed origin/main.
@@ -82,3 +82,33 @@ Docs checks pass: three files, 73 tests. Existing React act warnings remain.
 No package or demo code changed. Full pnpm check is not required for preparation.
 No feature behavior, browser acceptance, persistence, or performance claim is made.
 Plan, summary, dispositions, and PR await the reports. No PR exists for this cycle yet.
+
+## Collection and review, October 25, 2026
+
+The recorded Pro conversation finished after 21m13s. No follow-up was needed.
+Reused Chrome byroni.us tab 2010999268. Downloaded join-key-design.zip under direct standing human approval.
+Presented that approval and the recorded conversation with the download action.
+Verified the actual file at /Users/byronwall/Downloads/join-key-design.zip before any retry. No retry was needed.
+Safe paths, no symlinks, CRC, exact two-file inventory, and UTF-8 checks pass.
+Read both complete reports. Originals remain under tmp/pro-join-key-2026-10-25/collected/.
+No Library upload or downloaded program execution occurred.
+
+Refreshed origin/main remains 95832bd4.
+Checked endpoint types, evaluator/preview/inspection matching, source identities, row-key decoding,
+worker request timing/protocol, schema graph/inspector, JSON/text validation,
+folder declaration/availability, host callbacks, notebook ownership, and demo/browser registration.
+Spot-checked official Tableau, Power Query, Polars, and Unicode sources.
+An independent local manual-key oracle confirms fixture pairs, totals, deltas, reverse traversal,
+reorder, refresh, filters, and structural composites. Nine string/numeric boundary probes pass.
+These checks execute no downloaded program and import no proposed product matcher.
+
+Integrated three complete milestones, sixteen local dispositions, R041, and catalogue links.
+Local review replaces per-key source-array/action tracking with one applied-generation boundary for exact selections in prepared queries.
+Selections become unresolved after reevaluation/reopen, including stable IDs. Echoes cannot revive them.
+Keep existing folder placeholders and forward availability evidence to review instead of changing the folder representation.
+No feature/runtime/browser/persistence/performance acceptance is claimed.
+
+Collection checks pass: folder, notebook compilation, and writeback, three files and 36 tests.
+Docs checks pass again: three files and 73 tests, with existing React act warnings.
+Preparation already passed 20 evaluator/relationship/text tests.
+No package/demo source changed. Full pnpm check is not required for this docs-only PR.

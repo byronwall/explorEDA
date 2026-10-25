@@ -4,9 +4,22 @@
 - Category: Data preparation and relationships
 - Priority: 71
 - Kind: new-direction
-- Status: candidate
+- Status: Design researched; implementation proposed
 - Confidence: medium
-- Baseline: `9b16d78e3ed0742ed4d5858c1939fec9e758b510`
+- Baseline: `95832bd473884aeae23453af0888b4ca5187820d`
+
+## Design decision, October 25, 2026
+
+Build source-owned named keys with exact changed-match review.
+Ship text preparation, deliberate safe-integer identifiers, then ordered typed composites.
+Keep raw data and entity identity unchanged. Preserve strict matching for unprepared relationships.
+The [plan](../../join-key-preparation/implementation-plan.md) includes fixtures, docs, examples, persistence, and responsive acceptance.
+The [research summary](../../../research/join-key-2026-10-25/README.md) records local dispositions and source checks.
+
+Calculated query fields do not prepare raw targets or automatically become relationship endpoints.
+The earlier recipe-only possibility below is superseded by this feature design.
+DIRECTION.md makes Byron the demand; outside-demand evidence is not a prerequisite.
+No feature or browser acceptance has run. Build means planned, not approved to ship.
 
 ## Research brief
 
@@ -16,7 +29,9 @@ Compare creating an explicit derived canonical key before the relationship with 
 
 The first experiment should join two tiny tables containing number/text pairs, leading-zero codes, whitespace, nulls, and deliberately colliding candidate canonical forms. Specify intended matches independently, then compare each preparation route with the current strict baseline. Acceptance requires every new match to be explainable, every collision to be discoverable, and unchanged relationships to retain their original memberships. Reject automatic coercion if it merges distinct codes, treats missing keys as equal, or makes contributors impossible to explain from original values.
 
-This new preparation direction supports current-analysis-trust without treating exact matching as a bug. The cheapest outcome may be a documented recipe using existing calculated steps; a new key type would have larger validation and saved-project consequences. Keep the investigation to one relationship and one explicit convention. Confidence is medium because the conservative baseline is clear but the needed normalization conventions are unknown. Its place in the backlog is justified by a common integration boundary where convenience can otherwise undermine identity correctness.
+This direction supports current-analysis-trust without treating strict matching as a bug.
+The Design study now specifies source ownership and the saved-project changes it needs.
+Manual exceptions and broader Unicode casing remain separate exploration items.
 
 ## References
 

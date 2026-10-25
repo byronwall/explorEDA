@@ -1593,8 +1593,8 @@
     "path": "ideas/R041-join-key-preparation.md",
     "priority": 71,
     "research_kind": "new-direction",
-    "status": "candidate",
-    "summary": "Compare derived canonical keys and relationship-level mapping while keeping current typed and null-safe matching intact.",
+    "status": "Design researched; implementation proposed",
+    "summary": "Plan source-owned join keys with exact changed-match review; ship text preparation, deliberate integer identifiers, then typed composites.",
     "research_question": "How should users reconcile differently encoded keys without making every relationship silently coerce values?",
     "why_now": "Typed matching and null-key rejection already protect joins, but legitimate encoding differences can leave useful records unmatched.",
     "repo_evidence": [
@@ -1614,7 +1614,9 @@
         "observation": "Derived fields and relationship definitions are available design boundaries."
       }
     ],
-    "related_intents": ["docs/intent/current-analysis-trust/intent-brief.md"],
+    "related_intents": [
+      "docs/intent/join-key-preparation/implementation-plan.md"
+    ],
     "dependencies": [],
     "first_experiment": "Join tiny tables containing number/text keys, leading zeros, whitespace, nulls, and deliberate collisions under each proposed normalization.",
     "acceptance_evidence": "New matches are intentional, collisions are exposed, and unchanged strict joins retain their current memberships.",
