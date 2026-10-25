@@ -4,11 +4,17 @@
 - Category: Data preparation and relationships
 - Priority: 76
 - Kind: new-direction
-- Status: candidate
+- Status: design proposed; implementation not started
 - Confidence: medium
 - Baseline: `9b16d78e3ed0742ed4d5858c1939fec9e758b510`
 
 ## Research brief
+
+The [2026-10-25 Design review](../../../research/ordered-difference-2026-10-25/README.md) selects an explicit ordered query step.
+The [implementation plan](../../ordered-difference/implementation-plan.md) defines lag, numeric difference, exact predecessors, and two complete milestones.
+It supersedes the earlier demand gate and experimental acceptance proposal below. Byron is the demand.
+Missing measures keep positions; full-order ties block the affected partition.
+Exact selections require re-selection after refresh or reopen in the selected first implementation.
 
 Questions such as change since the previous reading need a predecessor, not just fields from the current row. The calculation registry deliberately operates within one row, and the current project-step union has no general ordered window step. Project evaluation does provide an explicit preparation sequence and source references. A bounded lag or difference investigation could support sensor and repeated-event analysis, provided it defines order and row meaning before adding a convenient formula name.
 
@@ -16,7 +22,9 @@ Compare preparing differences upstream with a project step that names an entity 
 
 The first experiment should use two entities with deliberately unsorted timestamps, a tied timestamp, a missing measure, and a filtered-out middle observation. For each output, enumerate its chosen predecessor independently. Acceptance requires deterministic values, a visible ordering rule, and no change when the user merely sorts the displayed table. The filter policy must explain every changed predecessor. Reject an implementation that relies on arrival order, chooses ties silently, or adds more saved state than a simple upstream preparation step warrants.
 
-This new direction narrows the reusable-output and calendar intents without rebuilding their rolling-mean proposal. It would add a distinct query-step contract, inspection needs, and examples, so demand should be demonstrated before introducing generalized window expressions. Keep cumulative statistics and ranking outside the first proof. Confidence is medium because a concrete analytical use exists but no supplied dataset establishes frequency. The research can establish a small, reproducible operation or a clear recommendation to keep ordered preparation outside explorEDA.
+This direction narrows the reusable-output and calendar intents without rebuilding their rolling-mean proposal.
+Build a dedicated ordered step rather than generalized window expressions.
+Keep cumulative statistics and ranking outside the selected scope.
 
 ## References
 

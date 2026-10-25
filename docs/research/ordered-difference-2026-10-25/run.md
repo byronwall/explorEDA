@@ -1,6 +1,6 @@
 # Ordered difference Design run
 
-Phase: submitted; Pro is researching. Mode: Design. Follow-ups: 0/1.
+Phase: integrated; review PR pending. Mode: Design. Follow-ups: 0/1.
 
 Repository: https://github.com/byronwall/explorEDA.
 Source: `95832bd473884aeae23453af0888b4ca5187820d`, refreshed origin/main.
@@ -81,3 +81,32 @@ Docs checks pass: three files, 73 tests. Existing React act warnings remain.
 No package or demo code changed. Full pnpm check is not required for preparation.
 No new feature behavior, browser acceptance, or performance claim is made.
 Plan, summary, dispositions, and PR await the reports. No PR exists for this cycle yet.
+
+## Collection and local review, October 25, 08:25 UTC
+
+The recorded conversation completed after 39m17s. No follow-up was needed.
+Reused Chrome byroni.us tab 2010999251 and downloaded ordered-lag-and-difference-design.zip.
+Presented direct standing human download approval and the recorded conversation with the action.
+Verified the actual downloaded file, safe paths, no symlinks, CRC, exact two-file inventory, and UTF-8.
+Read both complete reports. Originals stay under tmp/pro-ordered-difference-2026-10-25/collected/.
+No Library upload or downloaded program execution occurred.
+
+Refreshed origin/main remains 95832bd4.
+Checked evaluator/types, parsing, row-key encoding and source inference, pending evaluation and inspection props,
+native validation, implicit-query writing, notebook reading/compilation/export/write-back, and explicit browser-project registration.
+Spot-checked official PostgreSQL, Polars, and Tableau Prep documentation.
+A locally authored SQLite oracle confirms predecessor maps, totals 16/16/12, offset two, descending order,
+reversal, empty/singleton cases, tied records, and refreshed values 10/-2.
+These establish expected values, not product acceptance of an unbuilt feature.
+
+Integrated the plan, short summary, eighteen local dispositions, R049, and catalogue link.
+M1 covers text/API preparation, exact inspection, reuse, persistence, docs, and a runnable example.
+M2 adds visual authoring and dependency-checked adjacent-filter movement.
+Local review replaces Pro's broader selective identity system with a session/applied-generation guard in ordered queries.
+All exact selections require re-selection after refresh/reopen, including stable-key selections.
+Source-key provenance, generated-column reconstruction, and unrelated empty-key JSON validation remain outside this plan.
+No next topic is assigned. No package/demo code changed; full pnpm check is not required.
+
+Collection validation passes: project text, folder writing, notebook compilation, and write-back, four files and 37 tests.
+Docs checks pass again: three files and 73 tests, with existing React act warnings.
+Preparation's query evaluation, step editing, and text tests already passed 23 tests.
