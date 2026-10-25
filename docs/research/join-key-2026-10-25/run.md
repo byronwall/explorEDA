@@ -1,6 +1,6 @@
 # Explicit join-key preparation Design run
 
-Phase: integrated; planning PR pending. Mode: Design. Follow-ups: 0/1.
+Phase: complete; verified open planning PR #527. Mode: Design. Follow-ups: 0/1.
 
 Repository: https://github.com/byronwall/explorEDA.
 Source: `95832bd473884aeae23453af0888b4ca5187820d`, refreshed origin/main.
@@ -112,3 +112,15 @@ Collection checks pass: folder, notebook compilation, and writeback, three files
 Docs checks pass again: three files and 73 tests, with existing React act warnings.
 Preparation already passed 20 evaluator/relationship/text tests.
 No package/demo source changed. Full pnpm check is not required for this docs-only PR.
+
+## Completion, October 25, 21:28 UTC
+
+PR: https://github.com/byronwall/explorEDA/pull/527.
+Verified OPEN, main base, scoped head, saved body/links, and seven authored documentation files.
+Attached to this chat. Documentation label applied; codex and codex-automation labels are unavailable.
+Formatting, six authored relative links, whitespace, and PR checks pass.
+No Pro originals, archives, manifests, hashes, or source receipts are committed.
+Saved both automation memories before deleting the temporary collector through the supported scheduler.
+Deletion returned deleteStatus=deleted for collect-exploreda-join-key-design.
+Keep the six-hour pipeline ACTIVE indefinitely, GPT-6.1 Sol Medium, in this local checkout.
+No feature implementation, worktree, merge, deployment, or paid service. Stop for review.
