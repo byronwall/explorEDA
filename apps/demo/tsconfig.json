@@ -2,6 +2,7 @@
   "extends": "@repo/typescript-config/base.json",
   "compilerOptions": {
     "outDir": "dist",
+    "rootDir": "..",
     "paths": {
       "@/*": ["./src/*"],
       "exploreda/docs-kit": ["../../packages/explorEDA/dist/docs-kit.d.ts"]
