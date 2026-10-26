@@ -1,5 +1,4 @@
 import "exploreda";
-// @ts-expect-error The package uses export maps, but this project uses legacy module resolution.
 import { chartRegistry as packageRegistry } from "exploreda/core";
 import { describe, expect, it } from "vitest";
 import {

@@ -1,7 +1,6 @@
 {
   "extends": "@repo/typescript-config/base.json",
   "compilerOptions": {
-    "baseUrl": ".",
     "paths": { "@/*": ["./src/*"] },
     "jsx": "react-jsx",
     "lib": ["dom", "dom.iterable", "es2022"],
