@@ -38,6 +38,11 @@ Advanced scatter analysis retired on 2026-10-09 with fits, summaries, marginals,
 
 ## Current reality that matters
 
+The [covariance-region Design plan](../covariance-regions/implementation-plan.md) now specifies source-defined regions and exact inside/outside records.
+Its [research summary](../../research/covariance-regions-2026-10-25/README.md) records local dispositions and verified mathematical anchors.
+This remains unbuilt. The plan supersedes the older demand gate for this capability only.
+It keeps confidence, prediction, tolerance, and robust regions deferred.
+
 Native scatter files implement regression, fit planning, paired covariance, marginal histograms, hexagonal counts, and density contours. No native ellipse, distance or uncertainty overlay is established here. Existing scientific notebooks already display prepared residuals and observed bounds.
 
 ## Quantity meaning after existing formatting

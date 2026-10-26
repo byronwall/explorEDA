@@ -3,7 +3,7 @@
 ## Mission and state
 
 Design covariance regions for linked Scatter Plot analysis, exact record inspection, and saved meaning.
-Mode: Design. Phase: submitted, waiting for Pro. Follow-ups: 0/1.
+Mode: Design. Phase: integrated, validating before PR. Follow-ups: 0/1.
 Completion requires collected and read reports, local claim checks and dispositions,
 an implementation plan, a short summary, checks, and a verified open PR.
 
@@ -79,4 +79,41 @@ The first pnpm command tried to reconcile installed dependencies and stopped wit
 Checks then used installed dependencies with `--config.verify-deps-before-run=false`; no install or lockfile change occurred.
 No package or demo code changed. Full pnpm check is not required for this preparation.
 No proposed feature behavior, browser acceptance, persistence, or performance proof is claimed.
-Plan, summary, dispositions, and PR await the reports. No PR exists for this cycle yet.
+Preparation ended with plan, summary, dispositions, and PR pending.
+
+## Collection and local review, October 26
+
+Pro completed after 20m41s. Reopened the recorded conversation in Chrome byroni.us.
+The prior tab was absent; collection used tab 2010999387, without resubmission.
+Downloaded covariance-region-design.zip under Byron's direct standing download approval.
+Presented the approval and conversation with the download action.
+Verified the actual file in Downloads before any retry. None was needed.
+Both reports passed safe-path, no-symlink, CRC, exact inventory, and UTF-8 checks.
+Read both complete reports. Originals remain under `tmp/pro-covariance-regions-2026-10-25/collected/`.
+No downloaded program ran. No follow-up was needed.
+Pro's attempted persistent Library save was rejected; normal downloads were available.
+No Library upload was required or attempted during collection.
+
+Origin/main remains `9d64a021e35d312887b1bc848e307f42b6c3091f` after refresh.
+Checked source/local/live populations, full-source facets, typed grouping, empty ID matching, point/brush input,
+trace dispatch and row routing, save validation, DSL fallback, provider restore/host echo,
+project row-key encoding/decoding, folder writeback, notebook local selection, and explicit browser project discovery.
+Spot-checked primary R, JMP, ggplot2, LAPACK, scikit-learn, and D3 references.
+
+A locally authored rational Gaussian-elimination oracle confirms F1–F8 mathematical anchors:
+moments, exact memberships, Core reference edits, singular cases, affine invariance, near-singular distances,
+raw boundary points, and controlled log/symlog projection coordinates.
+It does not accept proposed floating-point thresholds or application behavior.
+
+Integrated the implementation plan, short summary, twenty local dispositions, R004/JSON/catalogue, and the scientific seed link.
+Local review corrects trace dispatch to ChartTracePanel and preserves project string-key serialization.
+Release marked results when project reevaluation or external-folder reopen cannot establish the same reference.
+Guard against stale host echoes within that evaluation. Do not add persisted generations or per-row metadata.
+Numerical thresholds and optional principal directions remain Explore.
+No feature implementation, browser acceptance, persistence acceptance, or performance result is claimed.
+
+Collection checks pass: selection identity, Dashboard text export, and notebook writeback, three files and 34 tests.
+Docs checks pass again: three files and 73 tests, with existing React act warnings.
+Preparation already passed 32 scatter/restore tests.
+Authored relative links resolve and whitespace checks pass.
+Only documentation changed; no changeset, product screenshot, or full pnpm check is required.
