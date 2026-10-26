@@ -3,7 +3,7 @@
 ## Mission and state
 
 Design civil dates, exact instants, and explicit epoch preparation for linked analysis.
-Mode: Design. Phase: collected, local integration in progress. Follow-ups: 0/1.
+Mode: Design. Phase: complete, open review PR. Follow-ups: 0/1.
 Repository: https://github.com/byronwall/explorEDA.
 Branch: `codex/temporal-preparation-design-2026-10-26`.
 Source: refreshed origin/main `9d64a021e35d312887b1bc848e307f42b6c3091f`.
@@ -103,3 +103,15 @@ three files and 21 tests. Docs checks pass again: three files and 73 tests, with
 Preparation already passed 55 parser/settings/preset tests. JSON and 112 relative links pass.
 No package/demo code changed. Full pnpm check is not required.
 No feature runtime, browser acceptance, persistence, or performance acceptance is claimed.
+
+## Completion, October 26, 21:02 UTC
+
+PR: https://github.com/byronwall/explorEDA/pull/532.
+Verified OPEN, main base, scoped head, saved body/links, and nine authored documentation files.
+Attached the PR to this chat. Documentation label applied; codex/codex-automation are unavailable.
+Integration commit `bf37d12f` is pushed. Formatting, JSON, relative-link, whitespace, and PR checks pass.
+No Pro originals, archives, hashes, manifests, or source receipts are committed.
+Saved both automation memories, then deleted `collect-exploreda-temporal-preparation-design` through the supported scheduler.
+Deletion returned `deleteStatus=deleted` for this collector.
+Keep the six-hour pipeline ACTIVE indefinitely, GPT-6.1 Sol Medium, in this checkout.
+No feature implementation, worktree, merge, deployment, or paid service. Stop for review.
