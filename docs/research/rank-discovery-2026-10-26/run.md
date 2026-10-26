@@ -3,7 +3,7 @@
 ## Mission and state
 
 Design rank-based relationship discovery in the existing mixed-type matrix, with original-measurement inspection.
-Mode: Design. Phase: submitted, Pro working. Follow-ups: 0/1.
+Mode: Design. Phase: collected and integrated; PR pending. Follow-ups: 0/1.
 Completion requires collected/read reports, local claim checks, dispositions, plan, summary, checks, and verified open PR.
 
 Repository: https://github.com/byronwall/explorEDA.
@@ -74,3 +74,34 @@ Used installed dependencies with `--config.verify-deps-before-run=false`; no ins
 Only authored documentation changed. Full pnpm check is not required for this preparation.
 No proposed feature behavior, browser acceptance, persistence, or performance result is claimed.
 Reports, local dispositions, implementation plan, summary, and PR remain pending.
+
+## Collection and review, October 26
+
+Pro completed after 30m43s. Reused the recorded conversation in Chrome byroni.us, tab 2010999571.
+The response and live composer identified Pro. No resubmission or follow-up was needed.
+Conversation link activation did not open the archive. Opened its observed Library file URL directly.
+This accessed an existing file; no Library upload or save was required.
+Presented direct human download approval and the conversation before downloading.
+Verified the actual Downloads archive before retrying collection.
+Safe paths, no symlinks, ZIP CRC, exact two-file inventory, and UTF-8 checks pass.
+Read both complete reports. Originals remain under `tmp/pro-rank-discovery-2026-10-26/collected/`.
+No downloaded program ran.
+
+Refreshed origin/main remains `9d64a021e35d312887b1bc848e307f42b6c3091f`.
+Checked matrix pairing/groups/own selection/trace, numeric summary and date-axis classification,
+live/source-local populations, wrapper self-exclusion, draft/preview/placement, provider batching/generated IDs,
+saved validation, host fingerprint, DSL roots, and current date parsing.
+Spot-checked official R, SciPy, and Orange primary sources.
+Independent rational arithmetic confirms ties, all three missing-data pair memberships/counts,
+pooled/groups/Other, equal-size opposite filters, nonlinear/U-shaped pairs, transforms/permutation,
+signed zero, and date-spacing/Pearson anchors. It does not prove production tolerances or feature behavior.
+
+Integrated the local plan, short summary, RD-01–RD-18 dispositions, R005, and catalogue/JSON.
+Local changes make workers/indexes conditional on measurement and leave a fixed endpoint clamp exploratory.
+Use one transient origin record in existing context. Time-axis support remains a separate milestone.
+No feature implementation or proposed browser/persistence/performance acceptance is claimed.
+
+Collection checks pass: wrapper, DSL export, and saved selection restore, three files and 27 tests.
+Docs checks pass again: three files and 73 tests, with existing React act warnings.
+Preparation already passed 29 matrix/summary/restore tests.
+Only authored documentation changed. No changeset, product screenshots, or full pnpm check is required.
