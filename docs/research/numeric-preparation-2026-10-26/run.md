@@ -3,7 +3,7 @@
 ## Mission and state
 
 Design explicit numeric input conventions, inspectable conversion, and saved interpretation.
-Mode: Design. Phase: collected and integrated, PR pending. Follow-ups: 0/1.
+Mode: Design. Phase: complete, open review PR. Follow-ups: 0/1.
 Completion requires collected/read reports, local claim checks, dispositions, plan, summary, checks, and verified open PR.
 
 Repository: https://github.com/byronwall/explorEDA.
@@ -101,3 +101,15 @@ Collection checks pass: multi-view text, notebook writeback, and saved selection
 Docs checks pass again: three files and 73 tests, with existing React act warnings.
 Preparation passed 54 parser/conversion/provider tests. No package/demo code changed.
 No full pnpm check, feature runtime, browser acceptance, persistence, or performance acceptance is claimed.
+
+## Completion, October 26, 14:46 UTC
+
+PR: https://github.com/byronwall/explorEDA/pull/531.
+Verified OPEN, main base, scoped head, saved body/links, and eight authored documentation files.
+Attached the PR to this chat. Documentation label applied; codex and codex-automation are unavailable.
+Integration commit `c1268b04` is pushed. Formatting, five authored relative links, JSON, whitespace, and PR checks pass.
+No Pro originals, archives, hashes, manifests, or source receipts are committed.
+Saved both automation memories, then deleted `collect-exploreda-numeric-preparation-design` through the supported scheduler.
+Deletion returned `deleteStatus=deleted` for this collector.
+Keep the six-hour pipeline ACTIVE indefinitely, GPT-6.1 Sol Medium, in the existing checkout.
+No feature implementation, worktree, merge, deployment, or paid service. Stop for review.
