@@ -1150,14 +1150,14 @@
   },
   {
     "id": "R030",
-    "title": "Evaluate explicit locale-aware numeric preparation",
+    "title": "Explicit numeric preparation",
     "category": "Types, quantities, and dates",
     "path": "ideas/R030-locale-numeric-conversion.md",
     "priority": 72,
     "research_kind": "new-direction",
-    "status": "candidate",
-    "summary": "Compare explicit numeric input presets with preprocessing guidance for decimal separators, grouping characters, and signed accounting text.",
-    "research_question": "Can a small explicit numeric preset handle common localized values without misreading ambiguous identifiers?",
+    "status": "designed, implementation proposed",
+    "summary": "Design complete: saved workspace numeric conventions and conversion review, then percent/accounting inputs and an ordered query measurement step.",
+    "research_question": "How should explicit numeric interpretation remain inspectable and durable across refresh, text, notebooks, and query evaluation?",
     "why_now": "Field settings already offer date presets and conversion previews, but numeric parsing intentionally rejects grouped and unit-bearing text.",
     "repo_evidence": [
       {

@@ -3,7 +3,7 @@
 ## Mission and state
 
 Design explicit numeric input conventions, inspectable conversion, and saved interpretation.
-Mode: Design. Phase: submitted, Pro is researching. Follow-ups: 0/1.
+Mode: Design. Phase: collected and integrated, PR pending. Follow-ups: 0/1.
 Completion requires collected/read reports, local claim checks, dispositions, plan, summary, checks, and verified open PR.
 
 Repository: https://github.com/byronwall/explorEDA.
@@ -72,4 +72,32 @@ Docs checks pass: three files, 73 tests, with existing React act warnings.
 Used installed dependencies with `--config.verify-deps-before-run=false`; no install or lockfile edit.
 Only authored documentation changed. Full pnpm check is not required for this preparation.
 No proposed feature behavior, browser acceptance, persistence, or performance result is claimed.
-Reports, dispositions, implementation plan, summary, and PR remain pending.
+At submission, reports, dispositions, implementation plan, summary, and PR remained pending.
+
+## Collection and local review, October 26
+
+Reused the recorded Chrome byroni.us conversation. Pro completed after 24m45s.
+No resubmission or follow-up. Downloaded the existing ZIP under direct standing human approval.
+Verified the actual Downloads file before any retry; no retry was needed.
+Safe paths, no symlinks, CRC, exact two-file inventory, and UTF-8 checks pass.
+Read both complete reports. Originals remain under `tmp/pro-numeric-preparation-2026-10-26/collected/`.
+Pro reported a rejected optional Library save. No Library upload is needed or performed for collection.
+No downloaded program ran.
+
+Refreshed origin/main remains `9d64a021e35d312887b1bc848e307f42b6c3091f`.
+Checked conversion/provider triggers, data replacement, host echo, saved validation and special-value encoding,
+DSL shared definitions and precedence, folder export, notebook writeback/callback order,
+calculation dependency access, field compatibility, positional selection remapping, and runtime CSV export.
+Spot-checked Power Query, readr, OpenRefine, and ECMAScript primary sources.
+Independent rational/numeric probes confirm fixture partitions, rounding boundaries, percent scaling, and query arithmetic.
+These checks do not execute the proposed parser or prove feature behavior.
+
+Integrated the local plan, short summary, NP-01–NP-14 dispositions, and R030/catalogue/JSON.
+Local corrections keep preflight internal, preserve the existing runtime CSV path, and clear unprovable positional identity.
+M1 completes workspace preparation and lifecycle; M2 adds percent/accounting; M3 adds ordered query measurements.
+Each feature milestone includes docs and runnable examples. No next topic is assigned.
+
+Collection checks pass: multi-view text, notebook writeback, and saved selection restore, three files and 28 tests.
+Docs checks pass again: three files and 73 tests, with existing React act warnings.
+Preparation passed 54 parser/conversion/provider tests. No package/demo code changed.
+No full pnpm check, feature runtime, browser acceptance, persistence, or performance acceptance is claimed.
