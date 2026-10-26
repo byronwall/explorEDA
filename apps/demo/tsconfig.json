@@ -2,24 +2,14 @@
   "extends": "@repo/typescript-config/base.json",
   "compilerOptions": {
     "outDir": "dist",
-    "baseUrl": ".",
+    "rootDir": "..",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ],
-      "exploreda/docs-kit": [
-        "../../packages/explorEDA/dist/docs-kit.d.ts"
-      ]
+      "@/*": ["./src/*"],
+      "exploreda/docs-kit": ["../../packages/explorEDA/dist/docs-kit.d.ts"]
     },
     "jsx": "react-jsx",
     "incremental": true
   },
-  "include": [
-    "src",
-    "e2e",
-    "playwright.config.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["src", "e2e", "playwright.config.ts"],
+  "exclude": ["node_modules"]
 }
