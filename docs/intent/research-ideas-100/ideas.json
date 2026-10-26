@@ -1233,9 +1233,9 @@
     "path": "ideas/R032-temporal-meaning-contract.md",
     "priority": 69,
     "research_kind": "follow-up",
-    "status": "candidate",
-    "summary": "Investigate the minimum temporal metadata needed to distinguish calendar labels from exact instants and numeric epoch inputs.",
-    "research_question": "Does explorEDA need explicit temporal meaning beyond datetime, or can documented conventions and conversion presets cover its tasks?",
+    "status": "design-researched; implementation proposed",
+    "summary": "Build scalar temporal values with authoritative metadata: UTC dates, instants and declared epochs; then authored zones and genuine month labels. See docs/research/temporal-preparation-2026-10-26/README.md and docs/intent/temporal-preparation/implementation-plan.md.",
+    "research_question": "How should explicit temporal meaning survive preparation, linked analysis, queries, notebooks, save/reopen, and refresh?",
     "why_now": "The current UTC contract is simple, but timestampOf and calendar-period preparation accept different input representations.",
     "repo_evidence": [
       {
