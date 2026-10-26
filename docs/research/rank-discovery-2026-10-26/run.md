@@ -3,7 +3,7 @@
 ## Mission and state
 
 Design rank-based relationship discovery in the existing mixed-type matrix, with original-measurement inspection.
-Mode: Design. Phase: collected and integrated; PR pending. Follow-ups: 0/1.
+Mode: Design. Phase: complete, open review PR. Follow-ups: 0/1.
 Completion requires collected/read reports, local claim checks, dispositions, plan, summary, checks, and verified open PR.
 
 Repository: https://github.com/byronwall/explorEDA.
@@ -105,3 +105,15 @@ Collection checks pass: wrapper, DSL export, and saved selection restore, three 
 Docs checks pass again: three files and 73 tests, with existing React act warnings.
 Preparation already passed 29 matrix/summary/restore tests.
 Only authored documentation changed. No changeset, product screenshots, or full pnpm check is required.
+
+## Completion, October 26, 09:37 UTC
+
+PR: https://github.com/byronwall/explorEDA/pull/530.
+Verified OPEN, main base, scoped head, saved body/links, and eight authored documentation files.
+Attached the PR to this chat. Documentation label applied; codex and codex-automation are unavailable.
+Integration commit `2fd72087` is pushed. Formatting, five authored relative links, JSON, whitespace, and PR checks pass.
+No Pro originals, archives, hashes, manifests, or source receipts are committed.
+Saved both automation memories before deleting `collect-exploreda-rank-discovery-design` through the supported scheduler.
+Deletion returned `deleteStatus=deleted` for this collector.
+Keep the six-hour pipeline ACTIVE indefinitely, GPT-6.1 Sol Medium, in this existing checkout.
+No feature implementation, worktree, merge, deployment, or paid service. Stop for review.
