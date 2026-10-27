@@ -2,6 +2,8 @@
 
 The catalogue is in priority order. IDs remain stable if a later authorized review changes the rank. The complete question, experiment, evidence, and rejection signal are in each linked brief and in the JSON index.
 
+R036 now has a [quantity-calculation Design plan](../quantity-calculations/implementation-plan.md) and [review summary](../../research/quantity-calculations-2026-10-27/README.md). This proposes new capability; it does not repeat the earlier adoption survey or approve implementation.
+
 | Priority | ID and title                                                                                                                                                  | Category                           | Kind           |
 | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- | -------------- |
 | 1        | [R026 — Reconcile missing, blank, invalid, and converted-value counts](ideas/R026-missing-state-accounting.md)                                                | Data quality and missingness       | robustness     |

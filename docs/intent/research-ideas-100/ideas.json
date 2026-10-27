@@ -1389,9 +1389,9 @@
     "path": "ideas/R036-quantity-unit-semantics.md",
     "priority": 91,
     "research_kind": "new-direction",
-    "status": "candidate",
-    "summary": "Compare descriptive units with a limited dimensional compatibility check for derived measurements.",
-    "research_question": "Would a small explicit unit contract prevent meaningful analytical mistakes without turning scalar calculations into a quantity engine?",
+    "status": "planned",
+    "summary": "Plan checked quantity formulas over scalar values, explicit conversion fields, temperature roles, and durable declarations.",
+    "research_question": "How should quantity analysis, result contracts, reducers, and notebook/project ownership work over the existing scalar expression engine?",
     "why_now": "Field settings already label units, but calculation expressions consume scalar values without dimensional metadata.",
     "repo_evidence": [
       {
@@ -1415,9 +1415,9 @@
       "docs/intent/reusable-analysis-metrics/intent-brief.md"
     ],
     "dependencies": [],
-    "first_experiment": "Use distance, elapsed time, temperature, and mixed-currency examples to compare labels-only guidance with explicit conversions and compatibility warnings.",
-    "acceptance_evidence": "The smallest approach prevents a demonstrated invalid combination, preserves valid formulas, and explains conversions in ordinary terms.",
-    "rejection_signal": "Reject dimensional inference if it requires a broad unit catalogue or produces warnings that users cannot resolve consistently.",
+    "first_experiment": "Start the quantity-calculations plan with a finite unit resolver and checked scalar AST fixtures, then prove preview, trace, and standalone persistence together.",
+    "acceptance_evidence": "Exact conversion fixtures, incompatible-operation rejection, scalar values with matching descriptors, and docs/examples in each complete milestone.",
+    "rejection_signal": "Reject hidden suffix inference, object-valued chart cells, contradictory result declarations, and a broad unit platform without a concrete vocabulary need.",
     "confidence": "medium",
     "external_sources": []
   },
