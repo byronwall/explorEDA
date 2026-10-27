@@ -42,7 +42,7 @@ Native scatter files implement regression, fit planning, paired covariance, marg
 
 ## Quantity meaning after existing formatting
 
-[The October 27 Design](../../research/quantity-calculations-2026-10-27/README.md) proposes checked scalar formulas, explicit conversions, temperature roles, and durable declarations. Its [implementation plan](../quantity-calculations/implementation-plan.md) includes docs and examples in every milestone. This supersedes the quantity adoption gates below under current research direction: Byron is the demand. No feature code or shipping approval follows from this plan.
+[The October 27 Design](../../research/quantity-calculations-2026-10-27/README.md) proposes checked scalar formulas, explicit conversions, temperature roles, and durable declarations. Its [implementation plan](../quantity-calculations/implementation-plan.md) includes docs and examples in every milestone. This supersedes earlier quantity adoption gates under current research direction: Byron is the demand. No feature code or shipping approval follows from this plan.
 
 Preserve original fields when deriving a quantity. Name its reference, row meaning and missing-value rule. A temperature difference needs a different conversion from a reading. A concentration residual keeps its scale but changes its reference. An annual total divided by a declared duration gives an interval mean. These distinctions do not approve automatic inference or propagation.
 

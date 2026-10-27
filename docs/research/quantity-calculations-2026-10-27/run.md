@@ -9,12 +9,12 @@ Design quantity-aware calculations, explicit conversion, and durable measurement
 - Source: `9d64a021e35d312887b1bc848e307f42b6c3091f`, refreshed origin/main October 27, 2026.
 - Branch: `codex/quantity-semantics-design-2026-10-27`.
 - Prompt: [pro-prompt.md](pro-prompt.md).
-- Phase: collected and integrated; PR verification pending. Never resubmit.
+- Phase: COMPLETE; stop for review. Never resubmit.
 - Conversation: https://chatgpt.com/c/6ae00040-195c-83ea-b113-b68ef0db9cd1
 - Submitted: October 27, 2026, about 01:38 UTC.
 - First collection check: October 27, 2026, 02:39 UTC, about one hour later.
-- Collector: `collect-exploreda-quantity-calculations-design`, ACTIVE hourly at minute 39; supported tool creation and view verified.
-- PR: pending collection and integration.
+- Collector: `collect-exploreda-quantity-calculations-design`, deleted after verified PR creation; tool returned `deleteStatus=deleted`.
+- PR: https://github.com/byronwall/explorEDA/pull/533 — verified OPEN, main ← research branch.
 - Follow-ups: 0/1.
 - Outputs: [implementation plan](../../intent/quantity-calculations/implementation-plan.md), [summary](README.md), [dispositions](decisions.md), and [evidence](evidence.md).
 - Local originals and packet: ignored `tmp/pro-quantity-calculations-2026-10-27/`.
@@ -58,5 +58,11 @@ Refreshed origin/main remains `9d64a021`. Checked decisive scalar/provider/query
 Integrated four milestones and QC01–QC23 local dispositions. Corrected the broad count-formatting implication: Pivot already treats counts separately. Keep that behavior while adding result roles/squared units. Helper module boundaries remain implementation choices. Quantity errors must not be treated as ordinary missing values. No unbuilt research PR is a prerequisite.
 
 Collection baseline tests pass: three files, 32 tests, covering Pivot, Composition calculations, and notebook writeback. Existing Pivot duplicate-key warnings remain. Docs/format/PR checks are recorded at completion. No feature/runtime/browser/persistence/performance acceptance was executed. Only authored research/intent/catalogue docs changed; no changeset or full `pnpm check` is required.
+
+## Completion — October 27, 2026
+
+Docs pass three files/73 tests with existing React act warnings. Formatting, 14 authored relative links, JSON indexes, whitespace, and PR checks pass. Integration commit `1a95b5cb` is pushed. Verified PR body, main/head branches, eleven authored-doc files, links, label, and OPEN state; attached it to this chat. Applied documentation label; codex/codex-automation labels are unavailable.
+
+Both automation memories saved. Deleted the temporary collector through the supported tool. Six-hour pipeline remains ACTIVE indefinitely at GPT-6.1 Sol Medium, confirmed through tool view and saved configuration. No merge, deployment, paid service, or implementation. Stop for review; next discovery run chooses independently.
 
 Existing calculator, trace, and field settings tests pass: three files, 41 tests. Docs checks pass: three files, 73 tests, with existing React act warnings. Formatting, whitespace, and PR checks pass. These checks establish the starting behavior, not the proposed feature. Full `pnpm check` is not required for this docs-only preparation.

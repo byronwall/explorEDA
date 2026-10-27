@@ -41,6 +41,6 @@ The design does not depend on exact library version numbers or unmeasured bundle
 
 ## Validation status
 
-Preparation passed calculator/trace/field-settings tests: three files, 41 tests. Collection checks target existing Pivot, Composition calculations, and notebook writeback. Docs/format and PR checks are recorded in the run record after integration.
+Preparation passed calculator/trace/field-settings tests: three files, 41 tests. Collection passed Pivot, Composition calculations, and notebook writeback: three files, 32 tests. Docs passed three files, 73 tests. Existing Pivot duplicate-key and React act warnings remain. Formatting, 14 authored relative links, JSON indexes, whitespace, and PR checks pass.
 
 No feature code changed. Quantity execution, browser acceptance, persistence acceptance, host-refresh behavior, dependency bundle costs, and performance proofs remain proposed. Existing passing tests do not establish those new behaviors.
