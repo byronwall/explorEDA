@@ -49,4 +49,4 @@ Uploaded names: `pro-prompt(20261027-013704).md` and `source-packet(20261027-013
 
 The collector owns collection, complete reading, current-code verification, decisive primary-source checks, dispositions, plan, summary, catalogue integration, doc/format checks, and verified attached PR. Delete it once the PR opens. Keep the six-hour pipeline active indefinitely. No follow-up or download has occurred.
 
-Existing calculator, trace, and field settings tests pass: three files, 41 tests. These checks establish the starting behavior, not the proposed feature. Docs checks and final formatting/PR checks follow before the preparation checkpoint. Full `pnpm check` is not required for this docs-only preparation.
+Existing calculator, trace, and field settings tests pass: three files, 41 tests. Docs checks pass: three files, 73 tests, with existing React act warnings. Formatting, whitespace, and PR checks pass. These checks establish the starting behavior, not the proposed feature. Full `pnpm check` is not required for this docs-only preparation.
