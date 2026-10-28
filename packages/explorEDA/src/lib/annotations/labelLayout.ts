@@ -289,7 +289,7 @@ function rows(top: number, plotHeight: number) {
   for (let k = 0; k < count; k++) {
     const y = top + k * ROW_STEP;
     const fromBottom = Math.floor((plotHeight - 4 - y) / ROW_STEP);
-    out.push({ y, cost: Math.min(k * 1.5, 2 + fromBottom * 1.5) });
+    out.push({ y, cost: Math.min(k * 0.6, 1.5 + fromBottom * 0.6) });
   }
   return out;
 }
