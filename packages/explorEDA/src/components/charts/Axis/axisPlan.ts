@@ -273,6 +273,27 @@ function logTicks(scale: ScaleLinear<number, number>, requested: number) {
   return scale.ticks(requested).filter((tick) => keep(tick) !== "");
 }
 
+/**
+ * A symlog axis spaces values by order of magnitude, so D3's even linear
+ * ticks crowd into its last decade. It labels 0 and powers of ten instead,
+ * adding 2s and 5s across three decades or fewer.
+ */
+function symlogTicks(scale: ScaleLinear<number, number>, requested: number) {
+  const [a, b] = scale.domain() as [number, number];
+  const lo = Math.min(a, b);
+  const hi = Math.max(a, b);
+  const largest = Math.max(Math.abs(lo), Math.abs(hi));
+  if (largest < 10) return scale.ticks(requested);
+  const top = Math.floor(Math.log10(largest));
+  const steps = top > 3 ? [1] : [1, 2, 5];
+  const ticks = lo <= 0 && hi >= 0 ? [0] : [];
+  for (let power = 0; power <= top; power++)
+    for (const step of steps)
+      for (const value of [step * 10 ** power, -step * 10 ** power])
+        if (value >= lo && value <= hi) ticks.push(value);
+  return ticks.sort((x, y) => x - y);
+}
+
 function position(scale: ChartScale, tick: number | string) {
   return "bandwidth" in scale
     ? (scale(String(tick)) ?? 0) + scale.bandwidth() / 2
@@ -319,7 +340,9 @@ function planAxis(
       ? scale.domain()
       : "base" in scale
         ? logTicks(scale, requested)
-        : scale.ticks(requested));
+        : input.scaleType === "symlog"
+          ? symlogTicks(scale, requested)
+          : scale.ticks(requested));
   const format = band
     ? input.format
     : trimZeroFractions(input.format, candidates);
@@ -496,7 +519,13 @@ function planAxis(
   }
   const gridRequested = input.density || 5;
   const linear = band ? undefined : scale;
-  const gridValues = input.grid && linear ? linear.ticks(gridRequested) : [];
+  // Grid lines follow the same magnitude steps as a symlog axis's ticks.
+  const gridValues =
+    input.grid && linear
+      ? input.scaleType === "symlog"
+        ? symlogTicks(linear, gridRequested)
+        : linear.ticks(gridRequested)
+      : [];
   const gridGuides = gridValues.map((tick): AxisGuide => {
     const at = linear!(tick);
     return {

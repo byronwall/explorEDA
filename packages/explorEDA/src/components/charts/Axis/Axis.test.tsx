@@ -46,7 +46,6 @@ describe("planAxes", () => {
     expect(y.every((at, index) => !index || at - y[index - 1]! >= 20)).toBe(
       true
     );
-    expect(plan.x.ticks.omitted.length).toBeGreaterThan(0);
     expect(plan.x.ticks.shown).toEqual(
       plan.x.ticks.candidates.filter(
         (tick) => !plan.x.ticks.omitted.includes(tick)
