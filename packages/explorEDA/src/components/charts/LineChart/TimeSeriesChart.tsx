@@ -281,6 +281,10 @@ export function TimeSeriesChart({
                   plotWidth: plan.xScale.range()[1]!,
                   plotHeight: plan.yScale.range()[0]!,
                   facetKey,
+                  marks: {
+                    points: marks.map(({ x, y }) => ({ x, y, r: 4 })),
+                    paths: plan.series.map((series) => series.path),
+                  },
                 }
               : undefined
           )}

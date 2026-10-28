@@ -168,6 +168,9 @@ function ScatterPoints({
       },
       plotWidth: plan.plotWidth,
       plotHeight: plan.plotHeight,
+      marks: {
+        points: plan.points.map(({ x, y, radius }) => ({ x, y, r: radius })),
+      },
       plotted: (id) => {
         const point = points.get(id);
         return (

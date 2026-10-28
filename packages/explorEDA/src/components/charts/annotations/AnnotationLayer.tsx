@@ -7,22 +7,25 @@ import {
 } from "react";
 import { useChartEdit } from "../InPlace/useChartEdit";
 import { useAxisTypography } from "../chartTypography";
-import { placeLabel } from "@/lib/annotations/placeLabel";
+import {
+  BRACKET_INSET,
+  LABEL_FONT_SIZE,
+  LEADER_MIN,
+  layoutLabels,
+  ruleText,
+  type AnnotationMarks,
+  type LabelPlace,
+} from "@/lib/annotations/labelLayout";
 import type { ProjectedAnnotation } from "@/lib/annotations/resolve";
 import {
   annotationLabel,
-  POPULATION_NAMES,
-  STATISTIC_NAMES,
   type CalloutAnnotation,
   type ChartAnnotation,
 } from "@/lib/annotations/types";
 import { useReportAnnotationStatus } from "./annotationStatus";
 
-const LABEL_FONT_SIZE = 11;
 /** A press must travel this far before it moves a label. */
 const DRAG_THRESHOLD = 3;
-/** How far a bracket sits inside the plot edge. */
-const BRACKET_INSET = 6;
 
 type Shown<T extends ChartAnnotation["type"]> = Extract<
   ProjectedAnnotation,
@@ -70,11 +73,13 @@ function Label({
 /** Shaded spans, or brackets along the plot edge, under everything else. */
 function Bands({
   bands,
+  places,
   plotWidth,
   plotHeight,
   clipPath,
 }: {
   bands: Shown<"band">[];
+  places: Map<string, LabelPlace>;
   plotWidth: number;
   plotHeight: number;
   clipPath: string;
@@ -119,17 +124,14 @@ function Bands({
           );
         })}
       </g>
-      {bands.map(({ annotation, start, end }) => {
+      {bands.map(({ annotation }) => {
         const text = annotation.label?.trim();
-        if (!text) return null;
-        const vertical = annotation.axis === "x";
-        const bracket = annotation.display === "bracket";
+        const place = places.get(annotation.id);
+        if (!text || !place) return null;
         return (
           <Label
             key={`${annotation.id}:label`}
-            x={vertical ? (start + end) / 2 : plotWidth - 4}
-            y={vertical ? (bracket ? BRACKET_INSET + 18 : 12) : start + 12}
-            anchor={vertical ? "middle" : "end"}
+            {...place}
             color={colorOf(annotation)}
           >
             {text}
@@ -190,54 +192,6 @@ function Intervals({
       })}
     </>
   );
-}
-
-const RULE_LABEL_STEP = LABEL_FONT_SIZE + 4;
-
-/**
- * Where each vertical rule's label goes: beside its line, flipped left near
- * the plot's right edge, and a line lower when it would run into a label
- * beside a nearby rule. Widths are estimated from the text's length.
- */
-function stackRuleLabels(rules: Shown<"reference-line">[], plotWidth: number) {
-  const places = new Map<
-    string,
-    { x: number; row: number; anchor: "start" | "end" }
-  >();
-  const rowEnds: number[] = [];
-  const vertical = rules
-    .filter((rule) => rule.annotation.axis === "x")
-    .sort((a, b) => a.position - b.position);
-  for (const { annotation, position, value } of vertical) {
-    const text = ruleText(annotation, value);
-    if (!text) continue;
-    const width = text.length * LABEL_FONT_SIZE * 0.6;
-    const flip = position + 4 + width > plotWidth && position - 4 - width >= 0;
-    const left = flip ? position - 4 - width : position + 4;
-    let row = rowEnds.findIndex((end) => end + 4 <= left);
-    if (row < 0) row = rowEnds.length;
-    rowEnds[row] = left + width;
-    places.set(annotation.id, {
-      x: flip ? position - 4 : position + 4,
-      row,
-      anchor: flip ? "end" : "start",
-    });
-  }
-  return places;
-}
-
-/** A rule's label; a calculated rule says what it read and the result. */
-function ruleText(
-  annotation: Shown<"reference-line">["annotation"],
-  value: number
-) {
-  const label = annotation.label?.trim();
-  if (!annotation.calculated) return label;
-  const { statistic, population } = annotation.calculated;
-  const what = label
-    ? `${label} (${POPULATION_NAMES[population]})`
-    : `${STATISTIC_NAMES[statistic]} of ${POPULATION_NAMES[population]}`;
-  return `${what}: ${Number(value.toPrecision(4)).toLocaleString()}`;
 }
 
 /** Rectangles and ellipses in data units, under the marks' labels. */
@@ -342,16 +296,17 @@ function RecordSets({ sets }: { sets: Shown<"record-set">[] }) {
 
 function Rules({
   rules,
+  places,
   plotWidth,
   plotHeight,
   clipPath,
 }: {
   rules: Shown<"reference-line">[];
+  places: Map<string, LabelPlace>;
   plotWidth: number;
   plotHeight: number;
   clipPath: string;
 }) {
-  const stacked = stackRuleLabels(rules, plotWidth);
   return (
     <>
       <g clipPath={clipPath} pointerEvents="none">
@@ -374,19 +329,14 @@ function Rules({
           );
         })}
       </g>
-      {rules.map(({ annotation, position, value }) => {
+      {rules.map(({ annotation, value }) => {
         const text = ruleText(annotation, value);
-        if (!text) return null;
-        const vertical = annotation.axis === "x";
-        const place = vertical ? stacked.get(annotation.id) : undefined;
+        const place = places.get(annotation.id);
+        if (!text || !place) return null;
         return (
           <Label
             key={`${annotation.id}:label`}
-            x={vertical ? (place?.x ?? position + 4) : plotWidth - 4}
-            y={
-              vertical ? 10 + (place?.row ?? 0) * RULE_LABEL_STEP : position - 4
-            }
-            anchor={vertical ? (place?.anchor ?? "start") : "end"}
+            {...place}
             color={colorOf(annotation)}
           >
             {text}
@@ -410,6 +360,7 @@ export function AnnotationLayer({
   plotWidth,
   plotHeight,
   clipPath,
+  marks,
 }: {
   chartId: string;
   /** Tells facet panels apart when they report what they drew. */
@@ -419,6 +370,8 @@ export function AnnotationLayer({
   plotWidth: number;
   plotHeight: number;
   clipPath: string;
+  /** What the chart draws, so labels can keep clear of it. */
+  marks?: AnnotationMarks;
 }) {
   const edit = useChartEdit(chartId);
   const typography = useAxisTypography();
@@ -436,6 +389,13 @@ export function AnnotationLayer({
   if (!shown.length) return null;
   const of = <T extends ChartAnnotation["type"]>(type: T) =>
     shown.filter((item) => item.annotation.type === type) as Shown<T>[];
+  const layout = layoutLabels({
+    projected,
+    plotWidth,
+    plotHeight,
+    marks,
+    measure: (text) => typography.measure(text, LABEL_FONT_SIZE),
+  });
 
   const setOffset = (
     callout: CalloutAnnotation,
@@ -445,6 +405,11 @@ export function AnnotationLayer({
       annotations: replaceAnnotation(annotations, { ...callout, offset }),
     });
 
+  // A label placed for the user moves from where it is drawn.
+  const drawnOffset = (callout: CalloutAnnotation) => {
+    const place = layout.callouts.get(callout.id);
+    return place ? { dx: place.dx, dy: place.dy } : callout.offset;
+  };
   const beginDrag = (
     event: PointerEvent<SVGGElement>,
     callout: CalloutAnnotation
@@ -457,7 +422,7 @@ export function AnnotationLayer({
       id: callout.id,
       startX: event.clientX,
       startY: event.clientY,
-      offset: callout.offset,
+      offset: drawnOffset(callout),
       moved: false,
     };
     event.currentTarget.setPointerCapture?.(event.pointerId);
@@ -510,16 +475,15 @@ export function AnnotationLayer({
     if (!move) return;
     event.preventDefault();
     event.stopPropagation();
-    setOffset(callout, {
-      dx: callout.offset.dx + move[0]!,
-      dy: callout.offset.dy + move[1]!,
-    });
+    const from = drawnOffset(callout);
+    setOffset(callout, { dx: from.dx + move[0]!, dy: from.dy + move[1]! });
   };
 
   return (
     <g className="eda-annotations">
       <Bands
         bands={of("band")}
+        places={layout.bands}
         plotWidth={plotWidth}
         plotHeight={plotHeight}
         clipPath={clipPath}
@@ -528,6 +492,7 @@ export function AnnotationLayer({
       <Intervals intervals={of("interval")} clipPath={clipPath} />
       <Rules
         rules={of("reference-line")}
+        places={layout.rules}
         plotWidth={plotWidth}
         plotHeight={plotHeight}
         clipPath={clipPath}
@@ -536,21 +501,13 @@ export function AnnotationLayer({
       {of("callout").map(({ annotation, x, y }) => {
         const color = colorOf(annotation);
         const lines = annotation.text.split("\n");
-        const { lx, ly, anchor } = placeLabel(
-          x + annotation.offset.dx,
-          y + annotation.offset.dy,
-          annotation.offset.dx < 0 ? "end" : "start",
-          Math.max(
-            ...lines.map((line) => typography.measure(line, LABEL_FONT_SIZE))
-          ),
-          lines.length,
-          plotWidth,
-          plotHeight,
-          LABEL_FONT_SIZE
-        );
+        const place = layout.callouts.get(annotation.id);
+        if (!place) return null;
+        const { x: lx, y: ly, anchor } = place;
         const leader =
           annotation.leader !== false &&
-          Math.hypot(annotation.offset.dx, annotation.offset.dy) > 10;
+          Math.hypot(place.dx, place.dy) >
+            (place.auto ? LEADER_MIN.auto : LEADER_MIN.saved);
         return (
           <g key={annotation.id} data-annotation-id={annotation.id}>
             {annotation.arrow && (

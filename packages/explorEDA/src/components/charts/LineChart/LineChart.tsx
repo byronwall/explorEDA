@@ -468,6 +468,20 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
     .range([innerHeight, 0])
     .nice();
 
+  // Create line generator with dynamic y-accessor
+  const createLineGenerator = (yField: string) =>
+    line<(typeof processedLiveSeriesData)[0]["data"][0]>()
+      .defined(
+        (d) => d.y != null && Number.isFinite(d.x) && !offScale(yField, d.y)
+      )
+      .x((d) => xScale(d.x))
+      .y((d) =>
+        settings.seriesSettings[yField]?.useRightAxis
+          ? rightYScale(d.y ?? 0)
+          : leftYScale(d.y ?? 0)
+      )
+      .curve(curveTypes[settings.styles.curveType as CurveType]);
+
   // Annotations place a record by its x and one series' value. A record
   // outside the selection reads as filtered.
   const annotationFrame = ((): ChartAnnotationFrame | undefined => {
@@ -482,6 +496,11 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
         : undefined,
       plotWidth: innerWidth,
       plotHeight: innerHeight,
+      marks: {
+        paths: processedLiveSeriesData.map(
+          (series) => createLineGenerator(series.field)(series.data) ?? ""
+        ),
+      },
       xField: settings.xField,
       yField: settings.seriesField.find(
         (field) => !settings.seriesSettings[field]?.useRightAxis
@@ -505,20 +524,6 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
       },
     };
   })();
-
-  // Create line generator with dynamic y-accessor
-  const createLineGenerator = (yField: string) =>
-    line<(typeof processedLiveSeriesData)[0]["data"][0]>()
-      .defined(
-        (d) => d.y != null && Number.isFinite(d.x) && !offScale(yField, d.y)
-      )
-      .x((d) => xScale(d.x))
-      .y((d) =>
-        settings.seriesSettings[yField]?.useRightAxis
-          ? rightYScale(d.y ?? 0)
-          : leftYScale(d.y ?? 0)
-      )
-      .curve(curveTypes[settings.styles.curveType as CurveType]);
 
   const renderLegend = () => {
     if (!fieldLegend) return null;

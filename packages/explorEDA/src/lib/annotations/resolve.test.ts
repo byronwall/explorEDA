@@ -11,7 +11,6 @@ import {
   type AnnotationFrame,
 } from "./resolve";
 import { createCallout, createInterval } from "./create";
-import { placeLabel } from "./placeLabel";
 import { isChartAnnotation } from "./validate";
 import type {
   BandAnnotation,
@@ -533,22 +532,6 @@ describe("highlights and calculated references", () => {
         offset: { dx: 0, dy: 0 },
       })
     ).toBe(false);
-  });
-});
-
-describe("label placement", () => {
-  it("reads a label from its other end at the plot edge and stops it at the top", () => {
-    expect(placeLabel(90, 50, "start", 40, 1, 100, 100, 11)).toMatchObject({
-      anchor: "end",
-      ly: 50,
-    });
-    expect(placeLabel(10, 50, "end", 40, 1, 100, 100, 11).anchor).toBe("start");
-    expect(placeLabel(50, -80, "start", 10, 1, 100, 100, 11).ly).toBe(-6.5);
-    expect(placeLabel(50, 50, "start", 10, 1, 100, 100, 11)).toEqual({
-      lx: 50,
-      ly: 50,
-      anchor: "start",
-    });
   });
 });
 
