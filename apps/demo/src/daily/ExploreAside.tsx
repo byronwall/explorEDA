@@ -60,7 +60,6 @@ export function ExploreAside({
           variant="ghost"
           size="icon"
           aria-label="Close explore"
-          title="Close explore"
           onClick={onClose}
         >
           <X />

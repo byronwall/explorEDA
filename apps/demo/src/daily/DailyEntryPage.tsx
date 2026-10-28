@@ -234,7 +234,6 @@ function NotebookContent({
         <Button
           variant="outline"
           size="sm"
-          title="Open every row behind this notebook beside it, to sort, search, and chart"
           onClick={() =>
             open(
               exploreChartCopy(
