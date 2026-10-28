@@ -351,3 +351,16 @@
     transition: none;
   }
 }
+
+/* A dashboard's text sits over its charts, which keep their full width;
+   the text scrolls on its own past a third of the screen. */
+.daily-workspace-source.daily-source-text {
+  position: static;
+  display: block;
+  max-height: none;
+}
+
+.daily-workspace-source .eda-notebook-source {
+  max-height: 36vh;
+  overflow-y: auto;
+}

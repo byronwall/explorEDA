@@ -7,6 +7,7 @@ import {
   useState,
   useSyncExternalStore,
   type CSSProperties,
+  type ReactNode,
 } from "react";
 import {
   Link,
@@ -26,6 +27,7 @@ import {
 } from "lucide-react";
 import {
   compileNotebook,
+  compileViews,
   ExplorEda,
   ExplorEdaNotebook,
   exploreChartCopy,
@@ -229,7 +231,7 @@ function EntryContent({
   tools,
 }: {
   entry: DailyEntry;
-  /** Where a notebook puts its view and Explore controls. */
+  /** Where the piece puts its view controls. */
   tools: HTMLElement | null;
 }) {
   const [loaded, setLoaded] = useState<LoadedEntry | null>(null);
@@ -277,7 +279,14 @@ function EntryContent({
     );
   if (entry.kind === "notebook")
     return <NotebookContent entry={entry} loaded={loaded} tools={tools} />;
-  return <WorkspaceContent entry={entry} loaded={loaded} attempt={attempt} />;
+  return (
+    <WorkspaceContent
+      entry={entry}
+      loaded={loaded}
+      attempt={attempt}
+      tools={tools}
+    />
+  );
 }
 
 function CopyText({ text }: { text: string }) {
@@ -302,6 +311,68 @@ function CopyText({ text }: { text: string }) {
       )}
       {copied ? "Copied" : "Copy"}
     </button>
+  );
+}
+
+/**
+ * Read or Source on the header's facts line, with a way back to the
+ * published text after edits. Hosts add their own actions after it.
+ */
+function ViewBar({
+  tools,
+  edited,
+  onReset,
+  children,
+}: {
+  tools: HTMLElement | null;
+  edited: boolean;
+  onReset: () => void;
+  children?: ReactNode;
+}) {
+  const [params, setParams] = useSearchParams();
+  const source = params.get("view") === "source";
+  const setView = (view: "" | "source") => {
+    const next = new URLSearchParams(params);
+    if (view) next.set("view", view);
+    else next.delete("view");
+    setParams(next, { replace: true });
+  };
+  if (!tools) return null;
+  return createPortal(
+    <div className="daily-notebook-bar">
+      <div role="group" aria-label="View" className="daily-segmented">
+        {(
+          [
+            ["", "Read", BookOpen],
+            ["source", "Source", Code2],
+          ] as const
+        ).map(([value, label, Icon]) => (
+          <button
+            key={label}
+            type="button"
+            aria-pressed={source === Boolean(value)}
+            onClick={() => setView(value)}
+          >
+            <Icon className="size-4" aria-hidden="true" />
+            {label}
+          </button>
+        ))}
+      </div>
+      {edited && (
+        <p className="text-sm text-muted-foreground">
+          Edited here only.{" "}
+          <button
+            type="button"
+            className="text-site-accent hover:text-foreground"
+            onClick={onReset}
+          >
+            Reset
+          </button>
+        </p>
+      )}
+      {children}
+    </div>,
+    tools
   );
 }
 
@@ -352,12 +423,6 @@ function NotebookContent({
     document.body.toggleAttribute("data-daily-aside", Boolean(aside));
     return () => document.body.removeAttribute("data-daily-aside");
   }, [aside]);
-  const setView = (view: "" | "source") => {
-    const next = new URLSearchParams(params);
-    if (view) next.set("view", view);
-    else next.delete("view");
-    setParams(next, { replace: true });
-  };
   const notebook = (
     <ExplorEdaNotebook
       onExploreChart={(id, settings) =>
@@ -384,62 +449,32 @@ function NotebookContent({
     <div
       className={`daily-notebook mx-auto px-4 sm:px-6 ${source ? "max-w-[1440px]" : "max-w-6xl"}`}
     >
-      {tools &&
-        createPortal(
-          <div className="daily-notebook-bar">
-            <div role="group" aria-label="View" className="daily-segmented">
-              {(
-                [
-                  ["", "Read", BookOpen],
-                  ["source", "Source", Code2],
-                ] as const
-              ).map(([value, label, Icon]) => (
-                <button
-                  key={label}
-                  type="button"
-                  aria-pressed={source === Boolean(value)}
-                  onClick={() => setView(value)}
-                >
-                  <Icon className="size-4" aria-hidden="true" />
-                  {label}
-                </button>
-              ))}
-            </div>
-            {edited && (
-              <p className="text-sm text-muted-foreground">
-                Edited here only.{" "}
-                <button
-                  type="button"
-                  className="text-site-accent hover:text-foreground"
-                  onClick={() => setText(loaded.text)}
-                >
-                  Reset
-                </button>
-              </p>
-            )}
-            <Button
-              className="ml-auto"
-              variant="outline"
-              size="sm"
-              onClick={() =>
-                open(
-                  exploreChartCopy(
-                    compileNotebook(text, {
-                      rows: loaded.rows,
-                      name: entry.title,
-                    }).settings,
-                    ""
-                  ),
-                  true
-                )
-              }
-            >
-              <Rows3 aria-hidden="true" />
-              Explore rows
-            </Button>
-          </div>,
-          tools
-        )}
+      <ViewBar
+        tools={tools}
+        edited={edited}
+        onReset={() => setText(loaded.text)}
+      >
+        <Button
+          className="ml-auto"
+          variant="outline"
+          size="sm"
+          onClick={() =>
+            open(
+              exploreChartCopy(
+                compileNotebook(text, {
+                  rows: loaded.rows,
+                  name: entry.title,
+                }).settings,
+                ""
+              ),
+              true
+            )
+          }
+        >
+          <Rows3 aria-hidden="true" />
+          Explore rows
+        </Button>
+      </ViewBar>
       {aside && (
         <ExploreAside
           data={loaded.rows}
@@ -480,12 +515,30 @@ function WorkspaceContent({
   entry,
   loaded,
   attempt,
+  tools,
 }: {
   entry: DailyEntry;
   loaded: LoadedEntry;
   attempt: number;
+  tools: HTMLElement | null;
 }) {
   const { ref, height } = useFittedHeight();
+  // Source shows the dashboard text over the charts. Edits redraw them and
+  // change this copy only; a line that doesn't compile keeps the last
+  // charts that did and names the problem.
+  const [params] = useSearchParams();
+  const source = params.get("view") === "source";
+  const [text, setText] = useState(loaded.text);
+  const [settings, setSettings] = useState(loaded.settings);
+  const [problem, setProblem] = useState("");
+  const edit = (next: string) => {
+    setText(next);
+    const result = compileViews(next, { rows: loaded.rows });
+    const [first] = result.diagnostics;
+    setProblem(first ? `Line ${first.line}: ${first.message}` : "");
+    const error = result.diagnostics.some((item) => item.severity === "error");
+    if (!error && result.views[0]) setSettings(result.views[0].settings);
+  };
   const guide =
     entry.kind === "dashboard" ? "How to explore it" : "Design notes";
   const wide = useWide();
@@ -515,23 +568,23 @@ function WorkspaceContent({
   const shown = loaded.findings.findIndex(
     (finding) => finding.ids && rowsKey(finding.ids) === filtered
   );
-  const heights = loaded.settings.charts
-    .map((chart) => artboardRows(chart, width, loaded.settings.gridSettings))
+  const heights = settings.charts
+    .map((chart) => artboardRows(chart, width, settings.gridSettings))
     .join();
   // Grid markers guide someone moving charts; a reader sees only the charts.
   const saved = useMemo(
     () => ({
-      ...loaded.settings,
+      ...settings,
       gridSettings: {
-        ...loaded.settings.gridSettings,
+        ...settings.gridSettings,
         showBackgroundMarkers: false,
       },
-      charts: loaded.settings.charts.map((chart, index) => ({
+      charts: settings.charts.map((chart, index) => ({
         ...chart,
         layout: { ...chart.layout, h: Number(heights.split(",")[index]) },
       })),
       workspaceFilters: [
-        ...(loaded.settings.workspaceFilters ?? []),
+        ...(settings.workspaceFilters ?? []),
         ...(picked.index >= 0
           ? [
               {
@@ -543,33 +596,65 @@ function WorkspaceContent({
           : []),
       ],
     }),
-    [loaded, heights, picked]
+    [settings, loaded.findings, heights, picked]
   );
   return (
     <>
+      <ViewBar
+        tools={tools}
+        edited={text !== loaded.text}
+        onReset={() => {
+          setText(loaded.text);
+          setSettings(loaded.settings);
+          setProblem("");
+        }}
+      />
       {/* What the data shows, beside how to check it: a dashboard's steps to
           try or a composition's design notes. Narrow screens read them after
           the charts, so the charts come first. */}
-      <div className="daily-brief mx-auto max-w-6xl px-4 sm:px-6">
-        <Findings
-          loaded={loaded}
-          shown={shown}
-          onShow={(index) => {
-            const next = index === shown ? -1 : index;
-            setPicked({ index: next });
-            // A restore from saved settings doesn't report back, so mark
-            // the filter here.
-            setFiltered(next < 0 ? "" : rowsKey(loaded.findings[next]!.ids));
-          }}
-        />
-        {wide && notes}
-      </div>
+      {source ? (
+        <section
+          aria-label={`${kindLabels[entry.kind]} text`}
+          className="daily-source-text daily-workspace-source mx-auto mb-4 max-w-[1440px] px-4 sm:px-6"
+        >
+          <header>
+            <span className="font-mono">{entry.entry}</span>
+            {problem && (
+              <span role="status" className="min-w-0 flex-1 text-destructive">
+                {problem}
+              </span>
+            )}
+            <CopyText text={text} />
+          </header>
+          <NotebookSourceEditor
+            value={text}
+            onChange={edit}
+            language="eda"
+            label={`${entry.entry} text`}
+          />
+        </section>
+      ) : (
+        <div className="daily-brief mx-auto max-w-6xl px-4 sm:px-6">
+          <Findings
+            loaded={loaded}
+            shown={shown}
+            onShow={(index) => {
+              const next = index === shown ? -1 : index;
+              setPicked({ index: next });
+              // A restore from saved settings doesn't report back, so mark
+              // the filter here.
+              setFiltered(next < 0 ? "" : rowsKey(loaded.findings[next]!.ids));
+            }}
+          />
+          {wide && notes}
+        </div>
+      )}
       <div className="daily-artboard-scroll mx-auto max-w-[1440px] px-4 sm:px-6">
         <div
           ref={ref}
           className="daily-workspace"
           style={{
-            ...workspaceHeights(loaded.settings),
+            ...workspaceHeights(settings),
             ...(height && { height }),
           }}
           aria-label={`${kindLabels[entry.kind]} workspace`}
@@ -595,7 +680,7 @@ function WorkspaceContent({
           )}
         </div>
       </div>
-      {!wide && notes && (
+      {!wide && !source && notes && (
         <div className="mx-auto mt-8 max-w-6xl px-4 sm:px-6">{notes}</div>
       )}
     </>
@@ -817,11 +902,9 @@ export default function DailyEntryPage() {
                 {source?.title ?? entry.family}
               </a>
             </p>
-            {/* A notebook's Read, Source, and Explore controls land here,
-                on the line its facts already take. */}
-            {entry.kind === "notebook" && (
-              <div ref={setTools} className="daily-tools" />
-            )}
+            {/* Read and Source, and a notebook's Explore rows, land here,
+                on the line the piece's facts already take. */}
+            <div ref={setTools} className="daily-tools" />
           </div>
           <SeriesTabs entry={entry} all={data.entries} />
         </header>
@@ -891,19 +974,13 @@ export default function DailyEntryPage() {
                       <Download className="size-3.5" aria-hidden="true" />
                       {entry.entry}
                     </a>{" "}
-                    {entry.kind === "notebook" ? (
-                      <Link
-                        to="?view=source"
-                        onClick={() => window.scrollTo(0, 0)}
-                        className="text-muted-foreground underline-offset-2 transition-colors duration-150 hover:text-foreground hover:underline"
-                      >
-                        view source
-                      </Link>
-                    ) : (
-                      <span className="text-muted-foreground">
-                        analysis text
-                      </span>
-                    )}
+                    <Link
+                      to="?view=source"
+                      onClick={() => window.scrollTo(0, 0)}
+                      className="text-muted-foreground underline-offset-2 transition-colors duration-150 hover:text-foreground hover:underline"
+                    >
+                      view source
+                    </Link>
                   </li>
                 </ul>
               </div>
