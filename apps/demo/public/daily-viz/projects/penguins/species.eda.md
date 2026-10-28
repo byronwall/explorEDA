@@ -11,6 +11,7 @@ bill_depth:num=penguins.bill_depth_mm label="Bill depth (mm)"
 flipper:num=penguins.flipper_length_mm label="Flipper length (mm)"
 mass:num=penguins.body_mass_g label="Body mass (g)"
 sex:cat=penguins.sex label="Sex"
+year:num=penguins.year label="Year"
 ```
 
 ## Every measurement at a glance

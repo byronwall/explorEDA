@@ -176,8 +176,13 @@ function chartHeight(chart: ChartSettings, width: number, categories?: number) {
       return categories === undefined
         ? 380
         : Math.max(380, Math.min(1120, 120 + categories * 20));
-    case "data-table":
+    // A pivot with one row field takes a row per category, its two header
+    // rows, and the total.
     case "pivot":
+      return categories === undefined
+        ? 420
+        : Math.min(420, 140 + (categories + 1) * 28);
+    case "data-table":
     case "summary":
       return 420;
     default:
@@ -934,7 +939,9 @@ function NotebookBlockView({
                             distinct(chart),
                             chart.maxCategories ?? Infinity
                           )
-                        : undefined
+                        : chart.type === "pivot" && chart.rowFields.length === 1
+                          ? distinct({ ...chart, field: chart.rowFields[0]! })
+                          : undefined
                   )
                 }
               />
