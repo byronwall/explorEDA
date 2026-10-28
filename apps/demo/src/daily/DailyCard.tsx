@@ -41,10 +41,13 @@ export function DailyThumb({
   entry,
   className = "",
   aspect = "aspect-[16/10]",
+  sizes = "(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw",
 }: {
   entry: DailyEntry;
   className?: string;
   aspect?: string;
+  /** How wide the frame shows, so the browser picks the 640 or 1440 copy. */
+  sizes?: string;
 }) {
   return (
     <div
@@ -53,6 +56,8 @@ export function DailyThumb({
       {entry.thumb && (
         <img
           src={assetPath(entry.thumb)}
+          srcSet={`${assetPath(entry.thumb.replace(".webp", "-640.webp"))} 640w, ${assetPath(entry.thumb)} 1440w`}
+          sizes={sizes}
           alt=""
           loading="lazy"
           decoding="async"
@@ -112,6 +117,7 @@ export function DailyRow({
     <li className="group relative grid grid-cols-[4.5rem_minmax(0,1fr)] items-start gap-x-3 py-2.5 sm:grid-cols-[6rem_minmax(0,1fr)_11rem] sm:gap-x-4">
       <DailyThumb
         entry={entry}
+        sizes="96px"
         className="transition-colors duration-150 group-hover:border-site-accent/60"
       />
       <div className="min-w-0">

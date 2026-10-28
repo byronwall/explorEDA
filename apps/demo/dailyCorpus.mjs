@@ -238,7 +238,7 @@ export async function buildIndex(corpusDir) {
     catalog.map(async (entry) => {
       const folder = `projects/${entry.family}`;
       const text = await readText(path.join(corpusDir, folder, entry.entry));
-      const thumb = `thumbs/${entry.slug}.jpg`;
+      const thumb = `thumbs/${entry.slug}.webp`;
       const hasThumb = await access(path.join(corpusDir, thumb)).then(
         () => true,
         () => false

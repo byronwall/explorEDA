@@ -13,8 +13,10 @@
 //   schedule                 give each piece without a date the next free day,
 //                            ordered so neighboring days differ; --reseed
 //                            reorders everything to end on --end (default today)
-//   thumbs [slug...]         capture the top of each piece's lead graphic as a
-//                            JPEG in daily-viz/thumbs/ (all pieces by default)
+//   thumbs [slug...]         capture the top of each piece's lead graphic at 2x
+//                            as WebPs 1440 and 640 px wide in daily-viz/thumbs/
+//                            (all pieces by default), and name any text the
+//                            page cuts off
 //   review <slug>...         screenshot pieces at 1280 px and tile them into
 //                            tmp/daily-review.png, to look over a batch at once
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -257,13 +259,14 @@ async function thumbs(slugs) {
   const folder = path.join(corpus, "thumbs");
   mkdirSync(folder, { recursive: true });
   const browser = await chromium.launch();
-  // Two-thirds scale keeps a full-width dashboard near 800 pixels.
+  // 2x pixels, so the Today lead (about 720 CSS px wide) stays sharp.
   const context = await browser.newContext({
     viewport: { width: 1280, height: 1200 },
-    deviceScaleFactor: 2 / 3,
+    deviceScaleFactor: 2,
     reducedMotion: "reduce",
   });
   const page = await context.newPage();
+  let bytes = 0;
   for (const entry of targets) {
     await page.goto(new URL(`/daily/${entry.slug}`, base).href);
     const lead = page.locator(LEAD[entry.kind]).first();
@@ -272,14 +275,36 @@ async function thumbs(slugs) {
     await page.waitForTimeout(800);
     await lead.scrollIntoViewIfNeeded();
     const box = await lead.boundingBox();
+    // Text that runs past the lead's sides is cut off on the page itself,
+    // so the picture can't show it either. Name it so the chart gets fixed.
+    const spill = await lead.evaluate((el) => {
+      const { left, right } = el.getBoundingClientRect();
+      return [...el.querySelectorAll("*")]
+        .filter((node) =>
+          [...node.childNodes].some(
+            (child) => child.nodeType === 3 && child.textContent.trim()
+          )
+        )
+        .filter(
+          (node) =>
+            !node.closest(".sr-only") &&
+            node.checkVisibility({ opacityProperty: true })
+        )
+        .filter((node) => {
+          const rect = node.getBoundingClientRect();
+          return rect.width && (rect.right > right + 1 || rect.left < left - 1);
+        })
+        .map((node) => node.textContent.trim().slice(0, 40));
+    });
+    if (spill.length)
+      console.warn(
+        `  ${entry.slug}: cut off on the page: ${spill.join(" | ")}`
+      );
     // A composition's whole artboard; otherwise the whole width, at most as
     // tall as the cards' 16:10 frame. Cards fit the image inside that frame.
     // A notebook panel's own border sits inside the card's, so step past it.
     const inset = entry.kind === "notebook" ? 2 : 0;
-    await page.screenshot({
-      path: path.join(folder, `${entry.slug}.jpg`),
-      type: "jpeg",
-      quality: 72,
+    const png = await page.screenshot({
       clip: {
         x: box.x + inset,
         y: box.y + inset,
@@ -291,9 +316,42 @@ async function thumbs(slugs) {
           inset * 2,
       },
     });
-    console.log(`thumbs/${entry.slug}.jpg`);
+    // The Today lead takes the large copy; cards and the series strips the
+    // small one (DailyThumb's srcset picks).
+    for (const [name, width] of [
+      [entry.slug, 1440],
+      [`${entry.slug}-640`, 640],
+    ]) {
+      const webp = await encodeWebp(page, png, width);
+      writeFileSync(path.join(folder, `${name}.webp`), webp);
+      bytes += webp.length;
+      console.log(`thumbs/${name}.webp ${Math.round(webp.length / 1024)} KB`);
+    }
   }
   await browser.close();
+  console.log(`${targets.length} thumbs, ${Math.round(bytes / 1024)} KB`);
+}
+
+/** Playwright writes only PNG and JPEG, so the page's own canvas makes the
+ * WebP, scaled down to at most `max` pixels wide. */
+async function encodeWebp(page, png, max) {
+  const url = await page.evaluate(
+    async ({ src, max }) => {
+      const image = new Image();
+      image.src = src;
+      await image.decode();
+      const scale = Math.min(1, max / image.width);
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.round(image.width * scale);
+      canvas.height = Math.round(image.height * scale);
+      const context = canvas.getContext("2d");
+      context.imageSmoothingQuality = "high";
+      context.drawImage(image, 0, 0, canvas.width, canvas.height);
+      return canvas.toDataURL("image/webp", 0.8);
+    },
+    { src: `data:image/png;base64,${png.toString("base64")}`, max }
+  );
+  return Buffer.from(url.slice(url.indexOf(",") + 1), "base64");
 }
 
 async function review(slugs) {
