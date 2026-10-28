@@ -358,6 +358,32 @@
   outline: none;
 }
 
+/* A whole notebook wraps its prose, and its colored copy wraps the same. */
+.eda-notebook-source[data-language="notebook"] .eda-notebook-source-colors,
+.eda-notebook-source[data-language="notebook"] .eda-notebook-source-input {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.eda-notebook-source[data-language="notebook"] .eda-notebook-source-input {
+  field-sizing: content;
+}
+
+/* The colored copy is as tall as the text, so it scrolls with it when a
+   host caps the editor's height. */
+.eda-notebook-source[data-language="notebook"] .eda-notebook-source-colors {
+  bottom: auto;
+  min-height: 100%;
+}
+
+.eda-md-heading {
+  font-weight: 700;
+}
+
+.eda-md-fence {
+  color: var(--muted-foreground);
+}
+
 .eda-notebook-source[data-language="markdown"] .eda-notebook-source-input {
   white-space: pre-wrap;
   font-family: inherit;
@@ -367,7 +393,8 @@
 
 /* Dashboard text colors, the same in every notebook host. Color only, so
    glyphs stay aligned under the text area. */
-.eda-notebook {
+.eda-notebook,
+.eda-notebook-source {
   --eda-dsl-keyword: hsl(262 55% 48%);
   --eda-dsl-type: hsl(190 75% 30%);
   --eda-dsl-key: hsl(215 70% 40%);
@@ -377,7 +404,8 @@
   --eda-dsl-constant: hsl(330 60% 44%);
 }
 
-.dark .eda-notebook {
+.dark .eda-notebook,
+.dark .eda-notebook-source {
   --eda-dsl-keyword: hsl(262 85% 78%);
   --eda-dsl-type: hsl(185 60% 62%);
   --eda-dsl-key: hsl(210 85% 74%);

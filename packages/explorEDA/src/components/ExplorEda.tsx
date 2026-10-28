@@ -314,6 +314,7 @@ export {
   type ExplorEdaNotebookProps,
 } from "./notebook/ExplorEdaNotebook";
 export { exploreChartCopy } from "./notebook/exploreCopy";
+export { NotebookSourceEditor } from "./notebook/NotebookSourceEditor";
 export {
   listBoundarySets,
   registerBoundarySet,

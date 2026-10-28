@@ -11,12 +11,22 @@ import {
   useParams,
   useSearchParams,
 } from "react-router-dom";
-import { ChevronLeft, ChevronRight, Download, Rows3 } from "lucide-react";
+import {
+  BookOpen,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  Code2,
+  Copy,
+  Download,
+  Rows3,
+} from "lucide-react";
 import {
   compileNotebook,
   ExplorEda,
   ExplorEdaNotebook,
   exploreChartCopy,
+  NotebookSourceEditor,
   notebookSheets,
   parseNotebook,
   type SavedDataStructure,
@@ -191,6 +201,31 @@ function EntryContent({ entry }: { entry: DailyEntry }) {
   return <WorkspaceContent entry={entry} loaded={loaded} attempt={attempt} />;
 }
 
+function CopyText({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false);
+  useEffect(() => {
+    if (!copied) return;
+    const timer = setTimeout(() => setCopied(false), 1500);
+    return () => clearTimeout(timer);
+  }, [copied]);
+  return (
+    <button
+      type="button"
+      className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground"
+      onClick={() =>
+        navigator.clipboard?.writeText(text).then(() => setCopied(true))
+      }
+    >
+      {copied ? (
+        <Check className="size-3.5" aria-hidden="true" />
+      ) : (
+        <Copy className="size-3.5" aria-hidden="true" />
+      )}
+      {copied ? "Copied" : "Copy"}
+    </button>
+  );
+}
+
 function NotebookContent({
   entry,
   loaded,
@@ -199,13 +234,21 @@ function NotebookContent({
   loaded: LoadedEntry;
 }) {
   const [params, setParams] = useSearchParams();
+  // Source shows the notebook's text beside it. Edits there, or to a chart,
+  // change this copy of the text only, until the page reloads.
+  const source = params.get("view") === "source";
+  const [text, setText] = useState(loaded.text);
+  const edited = text !== loaded.text;
   const sheets = useMemo(
-    () => notebookSheets(parseNotebook(loaded.text)).sheets,
-    [loaded.text]
+    () => notebookSheets(parseNotebook(text)).sheets,
+    [text]
   );
   // A book's sheets are named by its `#` headings and chosen in the URL, so
   // a link opens the sheet it points at.
   const book = sheets.length > 1;
+  const [, title = "", body = text] = book
+    ? []
+    : (text.match(/^(# .+\n)([\s\S]*)$/) ?? []);
   const first = sheets[0]?.id ?? "";
   const sheet = params.get("sheet") ?? first;
   // Explore holds copies of charts pulled aside, and keeps what someone
@@ -228,16 +271,83 @@ function NotebookContent({
     document.body.toggleAttribute("data-daily-aside", Boolean(aside));
     return () => document.body.removeAttribute("data-daily-aside");
   }, [aside]);
+  const setView = (view: "" | "source") => {
+    const next = new URLSearchParams(params);
+    if (view) next.set("view", view);
+    else next.delete("view");
+    setParams(next, { replace: true });
+  };
+  const notebook = (
+    <ExplorEdaNotebook
+      onExploreChart={(id, settings) =>
+        open(exploreChartCopy(settings, id, aside && latest.current))
+      }
+      // The page header shows the title; a notebook with one starts at its
+      // lede, and edits put the title back.
+      text={body}
+      onTextChange={source ? (next) => setText(title + next) : undefined}
+      data={loaded.rows}
+      fieldTypes={loaded.fieldTypes}
+      name={entry.title}
+      layout="sections"
+      sheet={sheet}
+      onSheetChange={(id) => {
+        const next = new URLSearchParams(params);
+        if (id === first) next.delete("sheet");
+        else next.set("sheet", id);
+        setParams(next);
+      }}
+    />
+  );
   return (
-    <div className="daily-notebook mx-auto max-w-6xl px-4 sm:px-6">
+    <div
+      className={`daily-notebook mx-auto px-4 sm:px-6 ${source ? "max-w-[1440px]" : "max-w-6xl"}`}
+    >
       <div className="daily-notebook-bar">
+        <div role="group" aria-label="View" className="daily-segmented">
+          {(
+            [
+              ["", "Read", BookOpen, "Read the notebook"],
+              [
+                "source",
+                "Source",
+                Code2,
+                "Show and edit the notebook's text beside it; charts update as you type",
+              ],
+            ] as const
+          ).map(([value, label, Icon, title]) => (
+            <button
+              key={label}
+              type="button"
+              title={title}
+              aria-pressed={source === Boolean(value)}
+              onClick={() => setView(value)}
+            >
+              <Icon className="size-4" aria-hidden="true" />
+              {label}
+            </button>
+          ))}
+        </div>
+        {edited && (
+          <p className="text-sm text-muted-foreground">
+            Edited here only.{" "}
+            <button
+              type="button"
+              className="text-site-accent hover:text-foreground"
+              onClick={() => setText(loaded.text)}
+            >
+              Reset
+            </button>
+          </p>
+        )}
         <Button
+          className="ml-auto"
           variant="outline"
           size="sm"
           onClick={() =>
             open(
               exploreChartCopy(
-                compileNotebook(loaded.text, {
+                compileNotebook(text, {
                   rows: loaded.rows,
                   name: entry.title,
                 }).settings,
@@ -264,25 +374,25 @@ function NotebookContent({
           onClose={() => setAside(undefined)}
         />
       )}
-      <ExplorEdaNotebook
-        onExploreChart={(id, settings) =>
-          open(exploreChartCopy(settings, id, aside && latest.current))
-        }
-        // The page header shows the title; a notebook with one starts at
-        // its lede.
-        text={book ? loaded.text : loaded.text.replace(/^# .+\n/, "")}
-        data={loaded.rows}
-        fieldTypes={loaded.fieldTypes}
-        name={entry.title}
-        layout="sections"
-        sheet={sheet}
-        onSheetChange={(id) => {
-          const next = new URLSearchParams(params);
-          if (id === first) next.delete("sheet");
-          else next.set("sheet", id);
-          setParams(next);
-        }}
-      />
+      {source ? (
+        <div className="daily-source">
+          <section aria-label="Notebook text" className="daily-source-text">
+            <header>
+              <span className="font-mono">{entry.entry}</span>
+              <CopyText text={text} />
+            </header>
+            <NotebookSourceEditor
+              value={text}
+              onChange={setText}
+              language="notebook"
+              label={`${entry.entry} text`}
+            />
+          </section>
+          <div className="min-w-0">{notebook}</div>
+        </div>
+      ) : (
+        notebook
+      )}
     </div>
   );
 }

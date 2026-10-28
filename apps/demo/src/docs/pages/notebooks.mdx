@@ -50,6 +50,10 @@ Each chart takes the height its contents need. A row chart or heatmap grows with
 
 Narrower notebooks, and notebooks you can edit with `onTextChange`, keep the single reading column. [Daily data viz](/daily) notebooks use this layout.
 
+## Show the text beside the notebook
+
+`NotebookSourceEditor` with `language="notebook"` edits a whole notebook's text: Markdown, with the dashboard text in each `eda` fence in color. Put it beside an `ExplorEdaNotebook` that gets the same text and `onTextChange`, and each side follows the other. Typing in the text updates the charts once typing pauses, and a chart edit rewrites its line in the text. [Daily data viz](/daily) notebooks do this under **Source**. Edits there stay on the page until it reloads, and **Reset** brings back the published text.
+
 ## Explore a copy of a chart
 
 A reader who finds a chart interesting can pull a copy aside and change it without changing the notebook. Pass `onExploreChart` to `ExplorEdaNotebook`, and each chart shows an Explore button in its header. The callback receives the chart's id and the notebook's settings as they are now. `exploreChartCopy(settings, id)` turns them into a workspace that holds the copy at full width, with the notebook's calculations, color scales, and field settings. Pass the workspace already open as a third argument to add the copy under the charts there, so several charts can sit side by side.
