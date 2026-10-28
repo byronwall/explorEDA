@@ -263,3 +263,53 @@
 .daily-aside-body {
   transform: translateZ(0);
 }
+
+/* Findings beside the guide or design notes, above the workspace. The
+   guide's headings read like "What the data shows". */
+.daily-brief {
+  display: grid;
+  gap: 1.25rem 3rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+  .daily-brief {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  }
+}
+
+.daily-guide > h2,
+.daily-guide .eda-notebook-prose h2 {
+  margin: 0 0 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.25rem;
+  color: var(--muted-foreground);
+}
+
+.daily-guide .eda-notebook-prose h2:not(:first-child) {
+  margin-top: 1rem;
+}
+
+.daily-guide .eda-notebook-column {
+  max-width: none;
+  padding: 0;
+}
+
+.daily-guide .eda-notebook {
+  min-height: 0;
+  padding: 0;
+}
+
+.daily-guide .eda-notebook-prose {
+  font-size: 0.9375rem;
+  line-height: 1.5rem;
+}
+
+.daily-guide .eda-notebook-prose :is(p, ol, ul) {
+  margin-block: 0;
+}
+
+.daily-guide .eda-notebook-prose li + li {
+  margin-top: 0.25rem;
+}

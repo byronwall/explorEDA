@@ -1,9 +1,11 @@
 import { createPortal } from "react-dom";
 import {
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
+  useSyncExternalStore,
   type CSSProperties,
 } from "react";
 import {
@@ -81,6 +83,32 @@ function workspaceHeights(settings: SavedDataStructure): CSSProperties {
 }
 
 /**
+ * A composition draws its artboard to fit its panel. Where the panel is
+ * narrower than the saved layout planned, as when the grid stacks on a
+ * phone, the saved height leaves blank space above and below the artboard,
+ * so the panel takes only the rows the artboard needs at this width.
+ */
+function artboardRows(
+  chart: SavedDataStructure["charts"][number],
+  width: number,
+  grid: SavedDataStructure["gridSettings"]
+) {
+  const { h, w } = chart.layout;
+  if (chart.type !== "composition" || !width) return h;
+  const { artboard } = chart.composition;
+  const inner = width - grid.containerPadding * 2;
+  // The stacked grid gives a chart wider than half the layout a whole row.
+  const panel =
+    width < 960 && w > grid.columnCount / 2
+      ? inner
+      : (inner * w) / grid.columnCount;
+  // Panel margin, border, and padding take 24 px across, and with its
+  // header 58 px down.
+  const tall = ((panel - 24) * artboard.height) / artboard.width + 58;
+  return Math.min(h, Math.ceil(tall / grid.rowHeight));
+}
+
+/**
  * Sizes the workspace to its content once charts lay out, so the page
  * scrolls instead of the grid. The estimate above sets the first frame.
  */
@@ -125,9 +153,23 @@ function useFittedHeight() {
   return { ref, height };
 }
 
+const WIDE = "(min-width: 1024px)";
+
+/** Whether the page lays the brief out in two columns. */
+function useWide() {
+  return useSyncExternalStore(
+    (change) => {
+      const query = matchMedia(WIDE);
+      query.addEventListener("change", change);
+      return () => query.removeEventListener("change", change);
+    },
+    () => matchMedia(WIDE).matches
+  );
+}
+
 function Findings({ loaded }: { loaded: LoadedEntry }) {
   return (
-    <section aria-labelledby="findings-heading" className="mb-6 max-w-3xl">
+    <section aria-labelledby="findings-heading">
       <h2
         id="findings-heading"
         className="text-sm font-semibold text-muted-foreground"
@@ -142,7 +184,7 @@ function Findings({ loaded }: { loaded: LoadedEntry }) {
             </span>
             <span>
               {finding.statement}{" "}
-              <span className="text-sm tabular-nums text-muted-foreground">
+              <span className="whitespace-nowrap text-sm tabular-nums text-muted-foreground">
                 {finding.rows.length.toLocaleString()} rows
               </span>
             </span>
@@ -415,6 +457,30 @@ function WorkspaceContent({
   attempt: number;
 }) {
   const { ref, height } = useFittedHeight();
+  const guide =
+    entry.kind === "dashboard" ? "How to explore it" : "Design notes";
+  const wide = useWide();
+  const notes = loaded.companion && (
+    <section aria-label={guide} className="daily-guide daily-notebook">
+      {entry.kind === "composition" && <h2>{guide}</h2>}
+      <ExplorEdaNotebook
+        text={loaded.companion}
+        data={loaded.rows}
+        name={guide}
+      />
+    </section>
+  );
+  const [width, setWidth] = useState(0);
+  useLayoutEffect(() => {
+    const host = ref.current!;
+    const observer = new ResizeObserver(() => setWidth(host.clientWidth));
+    setWidth(host.clientWidth);
+    observer.observe(host);
+    return () => observer.disconnect();
+  }, [ref]);
+  const heights = loaded.settings.charts
+    .map((chart) => artboardRows(chart, width, loaded.settings.gridSettings))
+    .join();
   // Grid markers guide someone moving charts; a reader sees only the charts.
   const saved = useMemo(
     () => ({
@@ -423,13 +489,21 @@ function WorkspaceContent({
         ...loaded.settings.gridSettings,
         showBackgroundMarkers: false,
       },
+      charts: loaded.settings.charts.map((chart, index) => ({
+        ...chart,
+        layout: { ...chart.layout, h: Number(heights.split(",")[index]) },
+      })),
     }),
-    [loaded.settings]
+    [loaded.settings, heights]
   );
   return (
     <>
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+      {/* What the data shows, beside how to check it: a dashboard's steps to
+          try or a composition's design notes. Narrow screens read them after
+          the charts, so the charts come first. */}
+      <div className="daily-brief mx-auto max-w-6xl px-4 sm:px-6">
         <Findings loaded={loaded} />
+        {wide && notes}
       </div>
       <div className="daily-artboard-scroll mx-auto max-w-[1440px] px-4 sm:px-6">
         <div
@@ -441,23 +515,19 @@ function WorkspaceContent({
           }}
           aria-label={`${kindLabels[entry.kind]} workspace`}
         >
-          <ExplorEda
-            key={`${entry.id}-${attempt}`}
-            data={loaded.rows}
-            fieldTypes={loaded.fieldTypes}
-            savedData={saved}
-          />
+          {width > 0 && (
+            <ExplorEda
+              key={`${entry.id}-${attempt}`}
+              data={loaded.rows}
+              fieldTypes={loaded.fieldTypes}
+              savedData={saved}
+            />
+          )}
         </div>
       </div>
-      <div className="daily-notebook mx-auto mt-8 max-w-6xl px-4 sm:px-6">
-        <ExplorEdaNotebook
-          text={loaded.companion}
-          data={loaded.rows}
-          name={
-            entry.kind === "dashboard" ? "How to explore it" : "Design notes"
-          }
-        />
-      </div>
+      {!wide && notes && (
+        <div className="mx-auto mt-8 max-w-6xl px-4 sm:px-6">{notes}</div>
+      )}
     </>
   );
 }
