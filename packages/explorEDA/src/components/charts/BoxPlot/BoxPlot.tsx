@@ -13,6 +13,7 @@ import {
   categoryValue,
 } from "@/lib/categories";
 import { formatFieldValue as formatValue } from "@/lib/fieldSettings";
+import { OTHER_COLOR } from "@/lib/colorPalettes";
 import {
   boundedDomain,
   countNonpositive,
@@ -445,6 +446,15 @@ export function BoxPlot({
     ? getFieldLabel(settings.colorField)
     : "Group";
   const shown = groupStats.filter(({ stats }) => stats.totalCount > 0);
+  // Color only repeats each box's own label, so when the palette runs out
+  // and grays some boxes, every box takes the one fill instead.
+  const paletted = shown.map(({ group }) =>
+    getColorForValue(settings.colorScaleId, group, settings.styles.boxFill)
+  );
+  const colorFor = (group: datum) =>
+    paletted.includes(OTHER_COLOR)
+      ? settings.styles.boxFill
+      : getColorForValue(settings.colorScaleId, group, settings.styles.boxFill);
   const hovered = shown.find(
     ({ group }) => categoryLabel(group) === hoveredGroup
   );
@@ -583,11 +593,7 @@ export function BoxPlot({
             {settings.showObservations &&
               shown.flatMap(({ group }) => {
                 const x = xScale(categoryLabel(group)) ?? 0;
-                const color = getColorForValue(
-                  settings.colorScaleId,
-                  group,
-                  settings.styles.boxFill
-                );
+                const color = colorFor(group);
                 return (traceGroups.get(categoryKey(group))?.contributors ?? [])
                   .filter((item) => item.included)
                   .slice(0, 300)
@@ -631,11 +637,7 @@ export function BoxPlot({
             !categoryIncludes(selectedGroups, group);
           const outlined =
             label === hoveredGroup || (selectedGroups.length === 1 && !dimmed);
-          const boxColor = getColorForValue(
-            settings.colorScaleId,
-            group,
-            settings.styles.boxFill
-          );
+          const boxColor = colorFor(group);
           const xPos = xScale(label) ?? 0;
           const kde = groupKDEs?.find((g) => g.group === group)?.kde;
           const firstKde = kde?.[0];

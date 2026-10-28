@@ -122,9 +122,11 @@ export function MetricCard({
   const [oneUnit, manyUnits] = settings.entityField
     ? ["ID", "IDs"]
     : ["row", "rows"];
-  const rowsText = comparison
-    ? ""
-    : `${plan.rowCount.toLocaleString()} ${plan.rowCount === 1 ? oneUnit : manyUnits}`;
+  // A count already is the number of rows, so it does not repeat it.
+  const rowsText =
+    comparison || plan.aggregation === "count"
+      ? ""
+      : `${plan.rowCount.toLocaleString()} ${plan.rowCount === 1 ? oneUnit : manyUnits}`;
   const filteredRows =
     comparison && plan.aggregation !== "count" && plan.totalRows !== undefined
       ? `${plan.rowCount.toLocaleString()} of ${plan.totalRows.toLocaleString()} ${manyUnits}`
