@@ -313,3 +313,41 @@
 .daily-guide .eda-notebook-prose li + li {
   margin-top: 0.25rem;
 }
+
+/* A finding's row count shows those rows in the charts. The finding it
+   shows keeps a pale tint until the filter clears. */
+.daily-finding {
+  margin-inline: -0.5rem;
+  padding-inline: 0.5rem;
+  border-radius: 0.25rem;
+  transition: background-color 140ms ease;
+}
+
+.daily-finding[data-shown] {
+  background: color-mix(in oklab, var(--site-accent) 9%, transparent);
+}
+
+.daily-finding-rows {
+  white-space: nowrap;
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--site-accent);
+  border-radius: 2px;
+  transition: color 140ms ease;
+}
+
+.daily-finding-rows:hover {
+  color: var(--foreground);
+}
+
+.daily-finding-rows:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .daily-finding,
+  .daily-finding-rows {
+    transition: none;
+  }
+}

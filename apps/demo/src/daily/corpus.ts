@@ -3,7 +3,11 @@ import { compileProjectText, evaluateAnalysisQuery } from "exploreda/analysis";
 import type { DeclaredFieldType } from "exploreda/readers";
 import { parseTable } from "../demos/analyses/loadAnalysis";
 import { corpusLinks, CORPUS_URL } from "../../dailyLinks.mjs";
-import { evaluateFinding, type DailyFinding } from "./findings";
+import {
+  evaluateFinding,
+  type DailyFinding,
+  type FindingResult,
+} from "./findings";
 
 export type DailyKind = "notebook" | "composition" | "dashboard";
 
@@ -123,6 +127,8 @@ async function read(file: string, signal?: AbortSignal) {
 }
 
 /** Reads the same project, local data, and text the folder viewer opens. */
+const ROW = "__dailyRow";
+
 export async function loadDailyEntry(entry: DailyEntry, signal?: AbortSignal) {
   const [text, projectText] = await Promise.all([
     read(entry.entryPath, signal),
@@ -162,13 +168,19 @@ export async function loadDailyEntry(entry: DailyEntry, signal?: AbortSignal) {
   const companion = entry.companionPath
     ? await read(entry.companionPath, signal)
     : "";
-  const findings = entry.findings.map((finding) =>
-    evaluateFinding(
-      finding,
-      finding.query && finding.query !== entry.query
-        ? queryRows(finding.query).rows.map((row) => row.data)
-        : rows
-    )
+  // Each row of the piece's own query carries its position, so a finding
+  // can name the workspace rows it read.
+  const placed = rows.map((row, index) => ({ ...row, [ROW]: index }));
+  const findings = entry.findings.map(
+    (finding): FindingResult & { ids?: number[] } => {
+      if (finding.query && finding.query !== entry.query)
+        return evaluateFinding(
+          finding,
+          queryRows(finding.query).rows.map((row) => row.data)
+        );
+      const result = evaluateFinding(finding, placed);
+      return { ...result, ids: result.rows.map((row) => row[ROW] as number) };
+    }
   );
   return {
     text: corpusLinks(text, entry.entryPath),

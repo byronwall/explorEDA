@@ -167,7 +167,20 @@ function useWide() {
   );
 }
 
-function Findings({ loaded }: { loaded: LoadedEntry }) {
+/** Names a row filter by its rows, to tell which finding it came from. */
+const rowsKey = (ids: readonly unknown[] = []) =>
+  ids.length ? `${ids.length}:${ids[0]}:${ids.at(-1)}` : "";
+
+function Findings({
+  loaded,
+  shown,
+  onShow,
+}: {
+  loaded: LoadedEntry;
+  /** The finding whose rows the workspace shows. */
+  shown: number;
+  onShow: (index: number) => void;
+}) {
   return (
     <section aria-labelledby="findings-heading">
       <h2
@@ -177,16 +190,32 @@ function Findings({ loaded }: { loaded: LoadedEntry }) {
         What the data shows
       </h2>
       <ul className="mt-2 space-y-1.5 text-base leading-relaxed">
-        {loaded.findings.map((finding) => (
-          <li key={finding.statement} className="flex gap-2">
+        {loaded.findings.map((finding, index) => (
+          <li
+            key={finding.statement}
+            className="daily-finding flex gap-2"
+            data-shown={index === shown || undefined}
+          >
             <span aria-hidden="true" className="text-site-accent">
               ·
             </span>
             <span>
               {finding.statement}{" "}
-              <span className="whitespace-nowrap text-sm tabular-nums text-muted-foreground">
-                {finding.rows.length.toLocaleString()} rows
-              </span>
+              {finding.ids ? (
+                <button
+                  type="button"
+                  aria-pressed={index === shown}
+                  aria-label={`Show these ${finding.rows.length.toLocaleString()} rows in the charts`}
+                  className="daily-finding-rows"
+                  onClick={() => onShow(index)}
+                >
+                  {finding.rows.length.toLocaleString()} rows
+                </button>
+              ) : (
+                <span className="whitespace-nowrap text-sm tabular-nums text-muted-foreground">
+                  {finding.rows.length.toLocaleString()} rows
+                </span>
+              )}
             </span>
           </li>
         ))}
@@ -478,6 +507,14 @@ function WorkspaceContent({
     observer.observe(host);
     return () => observer.disconnect();
   }, [ref]);
+  // A finding's row count filters the workspace to the rows it read, and
+  // pressing it again clears that. The workspace reports its filters back,
+  // so a filter cleared there unmarks the finding too.
+  const [picked, setPicked] = useState({ index: -1 });
+  const [filtered, setFiltered] = useState("");
+  const shown = loaded.findings.findIndex(
+    (finding) => finding.ids && rowsKey(finding.ids) === filtered
+  );
   const heights = loaded.settings.charts
     .map((chart) => artboardRows(chart, width, loaded.settings.gridSettings))
     .join();
@@ -493,8 +530,20 @@ function WorkspaceContent({
         ...chart,
         layout: { ...chart.layout, h: Number(heights.split(",")[index]) },
       })),
+      workspaceFilters: [
+        ...(loaded.settings.workspaceFilters ?? []),
+        ...(picked.index >= 0
+          ? [
+              {
+                type: "value" as const,
+                field: "__ID",
+                values: loaded.findings[picked.index]!.ids ?? [],
+              },
+            ]
+          : []),
+      ],
     }),
-    [loaded.settings, heights]
+    [loaded, heights, picked]
   );
   return (
     <>
@@ -502,7 +551,17 @@ function WorkspaceContent({
           try or a composition's design notes. Narrow screens read them after
           the charts, so the charts come first. */}
       <div className="daily-brief mx-auto max-w-6xl px-4 sm:px-6">
-        <Findings loaded={loaded} />
+        <Findings
+          loaded={loaded}
+          shown={shown}
+          onShow={(index) => {
+            const next = index === shown ? -1 : index;
+            setPicked({ index: next });
+            // A restore from saved settings doesn't report back, so mark
+            // the filter here.
+            setFiltered(next < 0 ? "" : rowsKey(loaded.findings[next]!.ids));
+          }}
+        />
         {wide && notes}
       </div>
       <div className="daily-artboard-scroll mx-auto max-w-[1440px] px-4 sm:px-6">
@@ -521,6 +580,17 @@ function WorkspaceContent({
               data={loaded.rows}
               fieldTypes={loaded.fieldTypes}
               savedData={saved}
+              onStateChange={(state) =>
+                setFiltered(
+                  rowsKey(
+                    state.workspaceFilters?.flatMap((filter) =>
+                      filter.type === "value" && filter.field === "__ID"
+                        ? filter.values
+                        : []
+                    )
+                  )
+                )
+              }
             />
           )}
         </div>
