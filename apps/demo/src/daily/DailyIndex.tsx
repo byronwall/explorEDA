@@ -95,7 +95,18 @@ function TodayLead({ entry }: { entry: DailyEntry }) {
   );
 }
 
-function Series({ entries }: { entries: DailyEntry[] }) {
+/**
+ * Each deep dive on one line: its name and progress, then its parts as a
+ * strip of pictures. A part still to come counts toward the total.
+ */
+function Series({
+  entries,
+  scheduled,
+}: {
+  entries: DailyEntry[];
+  /** Every entry, including parts whose day has not come. */
+  scheduled: DailyEntry[];
+}) {
   const series = new Map<string, DailyEntry[]>();
   for (const entry of entries)
     if (entry.series)
@@ -109,46 +120,85 @@ function Series({ entries }: { entries: DailyEntry[] }) {
       <h2 id="series-heading" className="text-lg font-semibold text-site-ink">
         Deep dives
       </h2>
-      <div className="mt-4 grid gap-6 lg:grid-cols-2">
+      <ul className="mt-2">
         {[...series.values()].map((parts) => {
           const ordered = [...parts].sort(
             (a, b) => a.series!.part - b.series!.part
           );
+          const { id, title } = ordered[0]!.series!;
+          const total = scheduled.filter(
+            (entry) => entry.series?.id === id
+          ).length;
+          const later = scheduled
+            .filter(
+              (entry) =>
+                entry.series?.id === id &&
+                !ordered.some((part) => part.id === entry.id)
+            )
+            .sort((a, b) => a.series!.part - b.series!.part);
+          const from = formatDay(ordered[0]!.published);
+          const to = formatDay(ordered.at(-1)!.published);
           return (
-            <section
-              key={ordered[0]!.series!.id}
-              aria-label={ordered[0]!.series!.title}
+            <li
+              key={id}
+              aria-label={title}
+              className="grid gap-x-6 gap-y-3 border-t border-border py-4 first:border-t-0 md:grid-cols-[13rem_minmax(0,1fr)]"
             >
-              <h3 className="font-semibold leading-snug">
-                {ordered[0]!.series!.title}
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                {ordered.length} parts · {formatDay(ordered[0]!.published)} to{" "}
-                {formatDay(ordered.at(-1)!.published)}
-              </p>
-              <ol className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-5">
+              <div>
+                <h3 className="font-semibold leading-snug text-balance">
+                  {title}
+                </h3>
+                <p className="mt-0.5 text-sm tabular-nums text-muted-foreground">
+                  {total > ordered.length
+                    ? `${ordered.length} of ${total} parts`
+                    : `${total} ${total === 1 ? "part" : "parts"}`}
+                  {" · "}
+                  {from === to ? from : `${from} to ${to}`}
+                </p>
+              </div>
+              <ol className="flex gap-3 overflow-x-auto pb-1">
                 {ordered.map((entry) => (
-                  <li key={entry.id} className="group relative min-w-0">
+                  <li
+                    key={entry.id}
+                    className="group relative w-36 shrink-0 sm:w-40"
+                  >
                     <DailyThumb
                       entry={entry}
                       className="transition-colors duration-150 group-hover:border-site-accent/60"
                     />
                     <Link
                       to={dailyPath(entry)}
-                      className="mt-1 block text-xs leading-snug text-foreground after:absolute after:inset-0 after:content-[''] group-hover:text-site-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      className="mt-1.5 line-clamp-2 text-xs leading-snug text-foreground after:absolute after:inset-0 after:content-[''] group-hover:text-site-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      title={entry.title}
                     >
-                      <span className="text-muted-foreground">
+                      <span className="tabular-nums text-muted-foreground">
                         {entry.series!.part}.{" "}
                       </span>
-                      {entry.title}
+                      {entry.series!.label ?? entry.title}
                     </Link>
                   </li>
                 ))}
+                {later.map((entry) => (
+                  <li
+                    key={entry.id}
+                    className="w-36 shrink-0 text-muted-foreground sm:w-40"
+                  >
+                    <div className="grid aspect-[16/10] place-items-center rounded-md border border-dashed border-border text-xs tabular-nums">
+                      {formatDay(entry.published)}
+                    </div>
+                    <p className="mt-1.5 line-clamp-2 text-xs leading-snug">
+                      <span className="tabular-nums">
+                        {entry.series!.part}.{" "}
+                      </span>
+                      {entry.series!.label ?? "Coming"}
+                    </p>
+                  </li>
+                ))}
               </ol>
-            </section>
+            </li>
           );
         })}
-      </div>
+      </ul>
     </section>
   );
 }
@@ -238,7 +288,9 @@ export default function DailyIndex() {
           </p>
         )}
         {data && !filtering && today && <TodayLead entry={today} />}
-        {data && !filtering && <Series entries={all} />}
+        {data && !filtering && (
+          <Series entries={all} scheduled={data.entries} />
+        )}
         {data && (
           <section aria-labelledby="archive-heading" className="mt-12">
             <div className="flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-border bg-background py-3 sm:sticky sm:top-0 sm:z-10">
