@@ -1,6 +1,8 @@
 import { ImageDown, Minus, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MapLayersControl } from "./MapLayersControl";
+import { formatTick } from "../Axis/Axis";
+import { bubbleSamples } from "../ScatterPlot/scatterPlan";
 import { useChartTraceApi } from "../trace/ChartTraceScope";
 import type { MapSettings, MapView } from "./definition";
 import type { PointMapPlan } from "./pointMapPlan";
@@ -144,8 +146,8 @@ export function MapToolbar({
           aria-label={`Point area: ${getFieldLabel(settings.sizeField)}, maximum ${plan.maxSize}`}
         >
           <span>Area: {getFieldLabel(settings.sizeField)}</span>
-          {(plan.maxSize > 0 ? [0.25, 1] : [0]).map((fraction) => (
-            <span key={fraction} className="inline-flex items-center gap-1">
+          {bubbleSamples(plan.maxSize).map((value) => (
+            <span key={value} className="inline-flex items-center gap-1">
               <svg
                 width={settings.pointRadius * 2 + 6}
                 height={settings.pointRadius * 2 + 4}
@@ -154,13 +156,17 @@ export function MapToolbar({
                 <circle
                   cx={settings.pointRadius + 3}
                   cy={settings.pointRadius + 2}
-                  r={fraction ? settings.pointRadius * Math.sqrt(fraction) : 2}
-                  fill={fraction ? "var(--muted-foreground)" : "none"}
+                  r={
+                    value
+                      ? settings.pointRadius * Math.sqrt(value / plan.maxSize)
+                      : 2
+                  }
+                  fill={value ? "var(--muted-foreground)" : "none"}
                   fillOpacity={0.4}
                   stroke="var(--muted-foreground)"
                 />
               </svg>
-              {Number((plan.maxSize * fraction).toPrecision(4))}
+              {formatTick(value)}
             </span>
           ))}
           <span className="text-muted-foreground">Zero is hollow</span>

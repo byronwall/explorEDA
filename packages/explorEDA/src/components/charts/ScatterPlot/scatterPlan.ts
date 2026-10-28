@@ -17,6 +17,7 @@ import {
 import type { IdType } from "@/providers/DataLayerProvider";
 import type { AxisSettings, datum, MarginSettings } from "@/types/ChartTypes";
 import { hiddenByBounds, labelHidden } from "../Axis/axisBounds";
+import { formatTick } from "../Axis/Axis";
 import type { ColorScaleType } from "@/types/ColorScaleTypes";
 import type { Filter, ValueFilter } from "@/types/FilterTypes";
 import type { DataType } from "@/components/SummaryTable/utils/dataTypeDetection";
@@ -228,6 +229,21 @@ function fieldLabel(field: string, settings: FieldSettingsMap) {
     : getFieldLabel(field, settings[field]);
 }
 
+/**
+ * Round sizes for the bubble legend, as a reader would name them: the
+ * largest 1, 2, or 5 step at or under a quarter, a half, and all of the
+ * largest size. 11,964 gives 2,000, 5,000, and 10,000.
+ */
+export function bubbleSamples(max: number): number[] {
+  if (!(max > 0)) return [0];
+  const round = (value: number) => {
+    const step = 10 ** Math.floor(Math.log10(value));
+    const lead = value / step;
+    return (lead >= 5 ? 5 : lead >= 2 ? 2 : 1) * step;
+  };
+  return [...new Set([max / 4, max / 2, max].map(round))];
+}
+
 /** A value as the chart shows it: the field's format, else plain text. */
 export function display(
   field: string,
@@ -237,7 +253,8 @@ export function display(
   return hasFieldDisplayFormat(settings[field])
     ? formatFieldValue(field, value, settings[field])
     : typeof value === "number"
-      ? String(value)
+      ? // Calculated values carry float noise such as 2991.1792249999994.
+        String(Number(value.toPrecision(12)))
       : categoryLabel(value);
 }
 
@@ -347,14 +364,14 @@ export function planScatter(
         max: sizeMax,
         radius: bubbleRadius,
         legendHeight: bubbleRadius * 2 + 30,
-        samples: (sizeMax > 0 ? [0.25, 0.5, 1] : [0]).map((fraction) => ({
-          value: sizeMax * fraction,
-          label: display(
-            settings.sizeField!,
-            sizeMax * fraction,
-            snapshot.fieldSettings
-          ),
-          radius: fraction === 0 ? 2 : bubbleRadius * Math.sqrt(fraction),
+        samples: bubbleSamples(sizeMax).map((value) => ({
+          value,
+          label: hasFieldDisplayFormat(
+            snapshot.fieldSettings[settings.sizeField!]
+          )
+            ? display(settings.sizeField!, value, snapshot.fieldSettings)
+            : formatTick(value),
+          radius: value === 0 ? 2 : bubbleRadius * Math.sqrt(value / sizeMax),
         })),
       }
     : undefined;

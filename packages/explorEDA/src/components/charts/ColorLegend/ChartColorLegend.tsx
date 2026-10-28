@@ -23,6 +23,24 @@ import type { LegendTrace, TraceSource } from "../trace/traceTypes";
 import { planNumericalLegend } from "@/lib/colorScaleMath";
 import { ChartRoleButton, ChartRoleScope } from "../roles/ChartRoleButton";
 
+/**
+ * Items sorted by where their value sits in a categorical scale's mapping.
+ * Values the scale doesn't name keep their order, after the named ones.
+ */
+export function inScaleOrder<T>(
+  items: readonly T[],
+  valueOf: (item: T) => datum,
+  mapping?: ReadonlyMap<string, string>
+): T[] {
+  if (!mapping?.size) return [...items];
+  const rank = new Map([...mapping.keys()].map((label, at) => [label, at]));
+  const at = (item: T) => rank.get(categoryLabel(valueOf(item))) ?? Infinity;
+  return items
+    .map((item, index) => ({ item, index }))
+    .sort((a, b) => at(a.item) - at(b.item) || a.index - b.index)
+    .map(({ item }) => item);
+}
+
 interface ChartColorLegendProps {
   settings: ChartSettings;
   width: number;
@@ -77,16 +95,24 @@ function ChartColorLegendBody({
   const liveIds = useGetLiveIds(settings);
 
   const values = getColumnData(field);
+  // A categorical scale lists its values in the order it was given, such as
+  // income groups from low to high; the legend reads in that order too.
+  const scaleOrder = scale?.type === "categorical" ? scale.mapping : undefined;
   const categories = useMemo(
-    () => [
-      ...new Map(
-        Object.values(values).map((value) => [
-          categoryKey(value),
-          categoryValue(value),
-        ])
-      ).values(),
-    ],
-    [values]
+    () =>
+      inScaleOrder(
+        [
+          ...new Map(
+            Object.values(values).map((value) => [
+              categoryKey(value),
+              categoryValue(value),
+            ])
+          ).values(),
+        ],
+        (value) => value,
+        scaleOrder
+      ),
+    [values, scaleOrder]
   );
   const counts = useMemo(() => {
     const next = new Map<string, number>();
@@ -103,7 +129,9 @@ function ChartColorLegendBody({
     )
     .flatMap((filter) => filter.values.map(categoryValue));
   // A chart that plans its legend decides the entries and colors shown here.
-  const plannedItems = trace?.legendItems;
+  const plannedItems =
+    trace?.legendItems &&
+    inScaleOrder(trace.legendItems, (item) => item.value, scaleOrder);
   const shownCategories = plannedItems?.map((item) => item.value) ?? categories;
   // Subscribe to fieldSettings so provider-stable label getters rerender after edits.
   void fieldSettings[field];
