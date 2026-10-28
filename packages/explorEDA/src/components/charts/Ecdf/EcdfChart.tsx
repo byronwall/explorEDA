@@ -2,6 +2,7 @@ import { useThemeColors } from "@/hooks/useDisplayColorScales";
 import { useDisplayColorScale } from "@/hooks/useDisplayColorScales";
 import { useAxisTypography } from "../chartTypography";
 import { useDataLayer } from "@/providers/DataLayerProvider";
+import { hasFieldDisplayFormat, readableNumber } from "@/lib/fieldSettings";
 import type { BaseChartProps } from "@/types/ChartTypes";
 import { ChartStatusLine, STATUS_HINT_MIN_WIDTH } from "../ChartStatusLine";
 import { ChartMessage, NO_MATCHING_ROWS } from "../ChartMessage";
@@ -397,7 +398,13 @@ export function EcdfChart({
       return median ? [{ label: curve.label, x: median.x }] : [];
     })
     .sort((a, b) => a.x - b.x)
-    .map((item) => ({ label: item.label, text: format(item.x) }));
+    // A summary line reads to a few figures unless the field sets a format.
+    .map((item) => ({
+      label: item.label,
+      text: hasFieldDisplayFormat(fieldSettings[settings.field])
+        ? format(item.x)
+        : readableNumber(item.x),
+    }));
   const statusParts = [
     selected
       ? `Selected ${selectedText}: ${selectedRows

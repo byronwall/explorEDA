@@ -24,6 +24,48 @@ function HighlightedDsl({ text }: { text: string }) {
 }
 
 /**
+ * A whole notebook in color: the dashboard text inside `eda` fences, and
+ * Markdown headings, laid out exactly as typed.
+ */
+function HighlightedNotebook({ text }: { text: string }) {
+  const parts: { eda: boolean; lines: string[] }[] = [];
+  let fenced = false;
+  for (const line of text.split("\n")) {
+    const fence = /^\s*(```|~~~)/.test(line);
+    // The fence lines themselves read as prose; the text between is eda.
+    const eda = fenced && !fence;
+    const last = parts[parts.length - 1];
+    if (last && last.eda === eda) last.lines.push(line);
+    else parts.push({ eda, lines: [line] });
+    if (fence) fenced = !fenced;
+  }
+  return parts.map((part, index) => (
+    <span key={index}>
+      {index > 0 && "\n"}
+      {part.eda ? (
+        <HighlightedDsl text={part.lines.join("\n")} />
+      ) : (
+        part.lines.map((line, at) => (
+          <span
+            key={at}
+            className={
+              /^#{1,6}\s/.test(line)
+                ? "eda-md-heading"
+                : /^\s*(```|~~~)/.test(line)
+                  ? "eda-md-fence"
+                  : undefined
+            }
+          >
+            {at > 0 && "\n"}
+            {line}
+          </span>
+        ))
+      )}
+    </span>
+  ));
+}
+
+/**
  * The text of one notebook segment, edited in place: an `eda` block's
  * dashboard text in color, or prose as Markdown. The editor keeps its own
  * draft and hands it on once typing pauses, so each key press doesn't
@@ -37,7 +79,8 @@ export function NotebookSourceEditor({
 }: {
   value: string;
   onChange: (text: string) => void;
-  language: "eda" | "markdown";
+  /** `notebook` is a whole notebook: Markdown with colored `eda` blocks. */
+  language: "eda" | "markdown" | "notebook";
   label: string;
 }) {
   const [draft, setDraft] = useState(value);
@@ -80,26 +123,31 @@ export function NotebookSourceEditor({
   const rows = Math.max(2, draft.split("\n").length);
   return (
     <div className="eda-notebook-source" data-language={language}>
-      {language === "eda" && (
+      {language !== "markdown" && (
         <pre
           ref={colors}
           aria-hidden="true"
           className="eda-notebook-source-colors"
         >
-          <HighlightedDsl text={draft} />
+          {language === "eda" ? (
+            <HighlightedDsl text={draft} />
+          ) : (
+            <HighlightedNotebook text={draft} />
+          )}
           {"\n"}
         </pre>
       )}
       <textarea
         aria-label={label}
         className={
-          language === "eda"
-            ? "eda-notebook-source-input eda-dsl-input"
-            : "eda-notebook-source-input"
+          language === "markdown"
+            ? "eda-notebook-source-input"
+            : "eda-notebook-source-input eda-dsl-input"
         }
         value={draft}
         rows={rows}
         spellCheck={language === "markdown"}
+        data-language={language}
         autoCapitalize="off"
         autoCorrect="off"
         wrap={language === "eda" ? "off" : "soft"}

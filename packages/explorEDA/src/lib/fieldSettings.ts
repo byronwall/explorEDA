@@ -301,7 +301,17 @@ export function formatFieldValue(
     const options: Intl.NumberFormatOptions = short
       ? { notation: "compact", maximumFractionDigits: 1 }
       : {
-          maximumFractionDigits: precision ?? (compact ? 2 : 3),
+          // A short label keeps about three figures, so 4,467 sits beside
+          // 12K and 41.3 beside 3.23, not 4,467.02.
+          maximumFractionDigits:
+            precision ??
+            (!compact
+              ? 3
+              : Math.abs(numberValue) >= 100
+                ? 0
+                : Math.abs(numberValue) >= 10
+                  ? 1
+                  : 2),
           minimumFractionDigits: precision,
         };
     if (format === "currency") {
@@ -392,4 +402,15 @@ export function buildConversionPreview(
     examples,
     failures,
   };
+}
+
+/**
+ * A number without float noise or more digits than a reader uses: whole
+ * numbers as they are, two decimals from 1 up, three significant digits
+ * below 1. 12.150452469000001 reads 12.15; 4467.0234 reads 4467.02.
+ */
+export function readableNumber(value: number) {
+  if (Number.isInteger(value) || !Number.isFinite(value)) return String(value);
+  const whole = Math.floor(Math.log10(Math.abs(value))) + 1;
+  return String(Number(value.toPrecision(whole > 0 ? whole + 2 : 3)));
 }

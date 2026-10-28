@@ -59,6 +59,8 @@ const PROPS: Record<keyof ExplorEdaProps, string> = {
     "What the Schema diagram shows: a project's schema, whether it can be edited, and which view it opens on. Without it, the diagram shows this workspace's table and its calculated fields.",
   onAddSource:
     "Shows Add source in the Schema diagram. The host reads the file with readTableFile from exploreda/readers, then can turn the workspace into a project with singleTableProject and addSourceFromRows from exploreda/analysis.",
+  defaultRowsOpen:
+    "Opens the Rows drawer when the workspace first shows, such as a workspace opened to look at a notebook's rows.",
 };
 
 export function PropsReference() {

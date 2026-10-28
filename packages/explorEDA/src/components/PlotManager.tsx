@@ -130,12 +130,15 @@ export interface ExplorEdaSchema {
 export function PlotManager({
   sidePanels = [],
   readOnly = false,
+  defaultRowsOpen = false,
   toolbarStart,
   toolbarEnd,
   schema,
 }: {
   sidePanels?: ExplorEdaSidePanel[];
   readOnly?: boolean;
+  /** Opens the Rows drawer on first show. */
+  defaultRowsOpen?: boolean;
   /** Host content that leads the toolbar line, such as view tabs. */
   toolbarStart?: ReactNode;
   /** Host actions that end the toolbar line. */
@@ -210,7 +213,7 @@ export function PlotManager({
   const schemaToggleRef = useRef<HTMLButtonElement>(null);
   const [fieldsOpen, setFieldsOpen] = useState(false);
   const [fieldsOverview, setFieldsOverview] = useState(false);
-  const [rowsOpen, setRowsOpenState] = useState(false);
+  const [rowsOpen, setRowsOpenState] = useState(defaultRowsOpen);
   const [rowsNarrow, setRowsNarrow] = useState(false);
   const [schemaOpenState, setSchemaOpenState] = useState(false);
   const schemaOpen = schema?.open ?? schemaOpenState;

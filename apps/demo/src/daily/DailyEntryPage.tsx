@@ -1,9 +1,13 @@
+import { createPortal } from "react-dom";
 import {
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
+  useSyncExternalStore,
   type CSSProperties,
+  type ReactNode,
 } from "react";
 import {
   Link,
@@ -11,10 +15,23 @@ import {
   useParams,
   useSearchParams,
 } from "react-router-dom";
-import { ChevronLeft, ChevronRight, Download } from "lucide-react";
 import {
+  BookOpen,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  Code2,
+  Copy,
+  Download,
+  Rows3,
+} from "lucide-react";
+import {
+  compileNotebook,
+  compileViews,
   ExplorEda,
   ExplorEdaNotebook,
+  exploreChartCopy,
+  NotebookSourceEditor,
   notebookSheets,
   parseNotebook,
   type SavedDataStructure,
@@ -35,12 +52,13 @@ import {
 import { DailyCard } from "./DailyCard";
 import { useDailyCatalog } from "./useDailyCatalog";
 import { DailyMeta } from "./DailyMeta";
+import { ExploreAside } from "./ExploreAside";
 import "./daily.css";
 
 type LoadedEntry = Awaited<ReturnType<typeof loadDailyEntry>>;
 
 /** The workspace's toolbar and status line, around the chart grid. */
-const WORKSPACE_CHROME = 174;
+const WORKSPACE_CHROME = 100;
 
 /**
  * Heights that fit the saved layout without an inner scroll: the grid's rows
@@ -50,7 +68,7 @@ const WORKSPACE_CHROME = 174;
 function workspaceHeights(settings: SavedDataStructure): CSSProperties {
   const { rowHeight, containerPadding } = settings.gridSettings;
   const layouts = settings.charts.map((chart) => chart.layout);
-  const rows = Math.max(...layouts.map((item) => item.y + item.h)) + 1;
+  const rows = Math.max(...layouts.map((item) => item.y + item.h));
   const stacked = layouts.reduce((sum, item) => sum + item.h, 0);
   const pairs = layouts.reduce(
     (sum, item, index) =>
@@ -64,6 +82,32 @@ function workspaceHeights(settings: SavedDataStructure): CSSProperties {
     "--daily-two": height(pairs),
     "--daily-one": height(stacked),
   } as CSSProperties;
+}
+
+/**
+ * A composition draws its artboard to fit its panel. Where the panel is
+ * narrower than the saved layout planned, as when the grid stacks on a
+ * phone, the saved height leaves blank space above and below the artboard,
+ * so the panel takes only the rows the artboard needs at this width.
+ */
+function artboardRows(
+  chart: SavedDataStructure["charts"][number],
+  width: number,
+  grid: SavedDataStructure["gridSettings"]
+) {
+  const { h, w } = chart.layout;
+  if (chart.type !== "composition" || !width) return h;
+  const { artboard } = chart.composition;
+  const inner = width - grid.containerPadding * 2;
+  // The stacked grid gives a chart wider than half the layout a whole row.
+  const panel =
+    width < 960 && w > grid.columnCount / 2
+      ? inner
+      : (inner * w) / grid.columnCount;
+  // Panel margin, border, and padding take 24 px across, and with its
+  // header 58 px down.
+  const tall = ((panel - 24) * artboard.height) / artboard.width + 58;
+  return Math.min(h, Math.ceil(tall / grid.rowHeight));
 }
 
 /**
@@ -111,9 +155,36 @@ function useFittedHeight() {
   return { ref, height };
 }
 
-function Findings({ loaded }: { loaded: LoadedEntry }) {
+const WIDE = "(min-width: 1024px)";
+
+/** Whether the page lays the brief out in two columns. */
+function useWide() {
+  return useSyncExternalStore(
+    (change) => {
+      const query = matchMedia(WIDE);
+      query.addEventListener("change", change);
+      return () => query.removeEventListener("change", change);
+    },
+    () => matchMedia(WIDE).matches
+  );
+}
+
+/** Names a row filter by its rows, to tell which finding it came from. */
+const rowsKey = (ids: readonly unknown[] = []) =>
+  ids.length ? `${ids.length}:${ids[0]}:${ids.at(-1)}` : "";
+
+function Findings({
+  loaded,
+  shown,
+  onShow,
+}: {
+  loaded: LoadedEntry;
+  /** The finding whose rows the workspace shows. */
+  shown: number;
+  onShow: (index: number) => void;
+}) {
   return (
-    <section aria-labelledby="findings-heading" className="mb-6 max-w-3xl">
+    <section aria-labelledby="findings-heading">
       <h2
         id="findings-heading"
         className="text-sm font-semibold text-muted-foreground"
@@ -121,16 +192,32 @@ function Findings({ loaded }: { loaded: LoadedEntry }) {
         What the data shows
       </h2>
       <ul className="mt-2 space-y-1.5 text-base leading-relaxed">
-        {loaded.findings.map((finding) => (
-          <li key={finding.statement} className="flex gap-2">
+        {loaded.findings.map((finding, index) => (
+          <li
+            key={finding.statement}
+            className="daily-finding flex gap-2"
+            data-shown={index === shown || undefined}
+          >
             <span aria-hidden="true" className="text-site-accent">
               ·
             </span>
             <span>
               {finding.statement}{" "}
-              <span className="text-sm tabular-nums text-muted-foreground">
-                {finding.rows.length.toLocaleString()} rows
-              </span>
+              {finding.ids ? (
+                <button
+                  type="button"
+                  aria-pressed={index === shown}
+                  aria-label={`Show these ${finding.rows.length.toLocaleString()} rows in the charts`}
+                  className="daily-finding-rows"
+                  onClick={() => onShow(index)}
+                >
+                  {finding.rows.length.toLocaleString()} rows
+                </button>
+              ) : (
+                <span className="whitespace-nowrap text-sm tabular-nums text-muted-foreground">
+                  {finding.rows.length.toLocaleString()} rows
+                </span>
+              )}
             </span>
           </li>
         ))}
@@ -139,7 +226,14 @@ function Findings({ loaded }: { loaded: LoadedEntry }) {
   );
 }
 
-function EntryContent({ entry }: { entry: DailyEntry }) {
+function EntryContent({
+  entry,
+  tools,
+}: {
+  entry: DailyEntry;
+  /** Where the piece puts its view controls. */
+  tools: HTMLElement | null;
+}) {
   const [loaded, setLoaded] = useState<LoadedEntry | null>(null);
   const [error, setError] = useState("");
   const [attempt, setAttempt] = useState(0);
@@ -184,45 +278,235 @@ function EntryContent({ entry }: { entry: DailyEntry }) {
       </p>
     );
   if (entry.kind === "notebook")
-    return <NotebookContent entry={entry} loaded={loaded} />;
-  return <WorkspaceContent entry={entry} loaded={loaded} attempt={attempt} />;
+    return <NotebookContent entry={entry} loaded={loaded} tools={tools} />;
+  return (
+    <WorkspaceContent
+      entry={entry}
+      loaded={loaded}
+      attempt={attempt}
+      tools={tools}
+    />
+  );
+}
+
+function CopyText({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false);
+  useEffect(() => {
+    if (!copied) return;
+    const timer = setTimeout(() => setCopied(false), 1500);
+    return () => clearTimeout(timer);
+  }, [copied]);
+  return (
+    <button
+      type="button"
+      className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground"
+      onClick={() =>
+        navigator.clipboard?.writeText(text).then(() => setCopied(true))
+      }
+    >
+      {copied ? (
+        <Check className="size-3.5" aria-hidden="true" />
+      ) : (
+        <Copy className="size-3.5" aria-hidden="true" />
+      )}
+      {copied ? "Copied" : "Copy"}
+    </button>
+  );
+}
+
+/**
+ * Read or Source on the header's facts line, with a way back to the
+ * published text after edits. Hosts add their own actions after it.
+ */
+function ViewBar({
+  tools,
+  edited,
+  onReset,
+  children,
+}: {
+  tools: HTMLElement | null;
+  edited: boolean;
+  onReset: () => void;
+  children?: ReactNode;
+}) {
+  const [params, setParams] = useSearchParams();
+  const source = params.get("view") === "source";
+  const setView = (view: "" | "source") => {
+    const next = new URLSearchParams(params);
+    if (view) next.set("view", view);
+    else next.delete("view");
+    setParams(next, { replace: true });
+  };
+  if (!tools) return null;
+  return createPortal(
+    <div className="daily-notebook-bar">
+      <div role="group" aria-label="View" className="daily-segmented">
+        {(
+          [
+            ["", "Read", BookOpen],
+            ["source", "Source", Code2],
+          ] as const
+        ).map(([value, label, Icon]) => (
+          <button
+            key={label}
+            type="button"
+            aria-pressed={source === Boolean(value)}
+            onClick={() => setView(value)}
+          >
+            <Icon className="size-4" aria-hidden="true" />
+            {label}
+          </button>
+        ))}
+      </div>
+      {edited && (
+        <p className="text-sm text-muted-foreground">
+          Edited here only.{" "}
+          <button
+            type="button"
+            className="text-site-accent hover:text-foreground"
+            onClick={onReset}
+          >
+            Reset
+          </button>
+        </p>
+      )}
+      {children}
+    </div>,
+    tools
+  );
 }
 
 function NotebookContent({
   entry,
   loaded,
+  tools,
 }: {
   entry: DailyEntry;
   loaded: LoadedEntry;
+  tools: HTMLElement | null;
 }) {
   const [params, setParams] = useSearchParams();
+  // Source shows the notebook's text beside it. Edits there, or to a chart,
+  // change this copy of the text only, until the page reloads.
+  const source = params.get("view") === "source";
+  const [text, setText] = useState(loaded.text);
+  const edited = text !== loaded.text;
   const sheets = useMemo(
-    () => notebookSheets(parseNotebook(loaded.text)).sheets,
-    [loaded.text]
+    () => notebookSheets(parseNotebook(text)).sheets,
+    [text]
   );
   // A book's sheets are named by its `#` headings and chosen in the URL, so
   // a link opens the sheet it points at.
   const book = sheets.length > 1;
+  const [, title = "", body = text] = book
+    ? []
+    : (text.match(/^(# .+\n)([\s\S]*)$/) ?? []);
   const first = sheets[0]?.id ?? "";
   const sheet = params.get("sheet") ?? first;
+  // Explore holds copies of charts pulled aside, and keeps what someone
+  // changed there when another chart joins them.
+  const [aside, setAside] = useState<{
+    settings: SavedDataStructure;
+    version: number;
+    rows: boolean;
+  }>();
+  const latest = useRef<SavedDataStructure>(undefined);
+  const open = (settings: SavedDataStructure, rows = false) => {
+    latest.current = settings;
+    setAside((current) => ({
+      settings,
+      version: (current?.version ?? 0) + 1,
+      rows,
+    }));
+  };
+  useEffect(() => {
+    document.body.toggleAttribute("data-daily-aside", Boolean(aside));
+    return () => document.body.removeAttribute("data-daily-aside");
+  }, [aside]);
+  const notebook = (
+    <ExplorEdaNotebook
+      onExploreChart={(id, settings) =>
+        open(exploreChartCopy(settings, id, aside && latest.current))
+      }
+      // The page header shows the title; a notebook with one starts at its
+      // lede, and edits put the title back.
+      text={body}
+      onTextChange={source ? (next) => setText(title + next) : undefined}
+      data={loaded.rows}
+      fieldTypes={loaded.fieldTypes}
+      name={entry.title}
+      layout="sections"
+      sheet={sheet}
+      onSheetChange={(id) => {
+        const next = new URLSearchParams(params);
+        if (id === first) next.delete("sheet");
+        else next.set("sheet", id);
+        setParams(next);
+      }}
+    />
+  );
   return (
-    <div className="daily-notebook mx-auto max-w-6xl px-4 sm:px-6">
-      <ExplorEdaNotebook
-        // The page header shows the title; a notebook with one starts at
-        // its lede.
-        text={book ? loaded.text : loaded.text.replace(/^# .+\n/, "")}
-        data={loaded.rows}
-        fieldTypes={loaded.fieldTypes}
-        name={entry.title}
-        layout="sections"
-        sheet={sheet}
-        onSheetChange={(id) => {
-          const next = new URLSearchParams(params);
-          if (id === first) next.delete("sheet");
-          else next.set("sheet", id);
-          setParams(next);
-        }}
-      />
+    <div
+      className={`daily-notebook mx-auto px-4 sm:px-6 ${source ? "max-w-[1440px]" : "max-w-6xl"}`}
+    >
+      <ViewBar
+        tools={tools}
+        edited={edited}
+        onReset={() => setText(loaded.text)}
+      >
+        <Button
+          className="ml-auto"
+          variant="outline"
+          size="sm"
+          onClick={() =>
+            open(
+              exploreChartCopy(
+                compileNotebook(text, {
+                  rows: loaded.rows,
+                  name: entry.title,
+                }).settings,
+                ""
+              ),
+              true
+            )
+          }
+        >
+          <Rows3 aria-hidden="true" />
+          Explore rows
+        </Button>
+      </ViewBar>
+      {aside && (
+        <ExploreAside
+          data={loaded.rows}
+          fieldTypes={loaded.fieldTypes}
+          settings={aside.settings}
+          version={aside.version}
+          rowsOpen={aside.rows}
+          onChange={(settings) => {
+            latest.current = settings;
+          }}
+          onClose={() => setAside(undefined)}
+        />
+      )}
+      {source ? (
+        <div className="daily-source">
+          <section aria-label="Notebook text" className="daily-source-text">
+            <header>
+              <span className="font-mono">{entry.entry}</span>
+              <CopyText text={text} />
+            </header>
+            <NotebookSourceEditor
+              value={text}
+              onChange={setText}
+              language="notebook"
+              label={`${entry.entry} text`}
+            />
+          </section>
+          <div className="min-w-0">{notebook}</div>
+        </div>
+      ) : (
+        notebook
+      )}
     </div>
   );
 }
@@ -231,44 +515,174 @@ function WorkspaceContent({
   entry,
   loaded,
   attempt,
+  tools,
 }: {
   entry: DailyEntry;
   loaded: LoadedEntry;
   attempt: number;
+  tools: HTMLElement | null;
 }) {
   const { ref, height } = useFittedHeight();
+  // Source shows the dashboard text over the charts. Edits redraw them and
+  // change this copy only; a line that doesn't compile keeps the last
+  // charts that did and names the problem.
+  const [params] = useSearchParams();
+  const source = params.get("view") === "source";
+  const [text, setText] = useState(loaded.text);
+  const [settings, setSettings] = useState(loaded.settings);
+  const [problem, setProblem] = useState("");
+  const edit = (next: string) => {
+    setText(next);
+    const result = compileViews(next, { rows: loaded.rows });
+    const [first] = result.diagnostics;
+    setProblem(first ? `Line ${first.line}: ${first.message}` : "");
+    const error = result.diagnostics.some((item) => item.severity === "error");
+    if (!error && result.views[0]) setSettings(result.views[0].settings);
+  };
+  const guide =
+    entry.kind === "dashboard" ? "How to explore it" : "Design notes";
+  const wide = useWide();
+  const notes = loaded.companion && (
+    <section aria-label={guide} className="daily-guide daily-notebook">
+      {entry.kind === "composition" && <h2>{guide}</h2>}
+      <ExplorEdaNotebook
+        text={loaded.companion}
+        data={loaded.rows}
+        name={guide}
+      />
+    </section>
+  );
+  const [width, setWidth] = useState(0);
+  useLayoutEffect(() => {
+    const host = ref.current!;
+    const observer = new ResizeObserver(() => setWidth(host.clientWidth));
+    setWidth(host.clientWidth);
+    observer.observe(host);
+    return () => observer.disconnect();
+  }, [ref]);
+  // A finding's row count filters the workspace to the rows it read, and
+  // pressing it again clears that. The workspace reports its filters back,
+  // so a filter cleared there unmarks the finding too.
+  const [picked, setPicked] = useState({ index: -1 });
+  const [filtered, setFiltered] = useState("");
+  const shown = loaded.findings.findIndex(
+    (finding) => finding.ids && rowsKey(finding.ids) === filtered
+  );
+  const heights = settings.charts
+    .map((chart) => artboardRows(chart, width, settings.gridSettings))
+    .join();
+  // Grid markers guide someone moving charts; a reader sees only the charts.
+  const saved = useMemo(
+    () => ({
+      ...settings,
+      gridSettings: {
+        ...settings.gridSettings,
+        showBackgroundMarkers: false,
+      },
+      charts: settings.charts.map((chart, index) => ({
+        ...chart,
+        layout: { ...chart.layout, h: Number(heights.split(",")[index]) },
+      })),
+      workspaceFilters: [
+        ...(settings.workspaceFilters ?? []),
+        ...(picked.index >= 0
+          ? [
+              {
+                type: "value" as const,
+                field: "__ID",
+                values: loaded.findings[picked.index]!.ids ?? [],
+              },
+            ]
+          : []),
+      ],
+    }),
+    [settings, loaded.findings, heights, picked]
+  );
   return (
     <>
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <Findings loaded={loaded} />
-      </div>
+      <ViewBar
+        tools={tools}
+        edited={text !== loaded.text}
+        onReset={() => {
+          setText(loaded.text);
+          setSettings(loaded.settings);
+          setProblem("");
+        }}
+      />
+      {/* What the data shows, beside how to check it: a dashboard's steps to
+          try or a composition's design notes. Narrow screens read them after
+          the charts, so the charts come first. */}
+      {source ? (
+        <section
+          aria-label={`${kindLabels[entry.kind]} text`}
+          className="daily-source-text daily-workspace-source mx-auto mb-4 max-w-[1440px] px-4 sm:px-6"
+        >
+          <header>
+            <span className="font-mono">{entry.entry}</span>
+            {problem && (
+              <span role="status" className="min-w-0 flex-1 text-destructive">
+                {problem}
+              </span>
+            )}
+            <CopyText text={text} />
+          </header>
+          <NotebookSourceEditor
+            value={text}
+            onChange={edit}
+            language="eda"
+            label={`${entry.entry} text`}
+          />
+        </section>
+      ) : (
+        <div className="daily-brief mx-auto max-w-6xl px-4 sm:px-6">
+          <Findings
+            loaded={loaded}
+            shown={shown}
+            onShow={(index) => {
+              const next = index === shown ? -1 : index;
+              setPicked({ index: next });
+              // A restore from saved settings doesn't report back, so mark
+              // the filter here.
+              setFiltered(next < 0 ? "" : rowsKey(loaded.findings[next]!.ids));
+            }}
+          />
+          {wide && notes}
+        </div>
+      )}
       <div className="daily-artboard-scroll mx-auto max-w-[1440px] px-4 sm:px-6">
         <div
           ref={ref}
           className="daily-workspace"
           style={{
-            ...workspaceHeights(loaded.settings),
+            ...workspaceHeights(settings),
             ...(height && { height }),
           }}
           aria-label={`${kindLabels[entry.kind]} workspace`}
         >
-          <ExplorEda
-            key={`${entry.id}-${attempt}`}
-            data={loaded.rows}
-            fieldTypes={loaded.fieldTypes}
-            savedData={loaded.settings}
-          />
+          {width > 0 && (
+            <ExplorEda
+              key={`${entry.id}-${attempt}`}
+              data={loaded.rows}
+              fieldTypes={loaded.fieldTypes}
+              savedData={saved}
+              onStateChange={(state) =>
+                setFiltered(
+                  rowsKey(
+                    state.workspaceFilters?.flatMap((filter) =>
+                      filter.type === "value" && filter.field === "__ID"
+                        ? filter.values
+                        : []
+                    )
+                  )
+                )
+              }
+            />
+          )}
         </div>
       </div>
-      <div className="daily-notebook mx-auto mt-8 max-w-6xl px-4 sm:px-6">
-        <ExplorEdaNotebook
-          text={loaded.companion}
-          data={loaded.rows}
-          name={
-            entry.kind === "dashboard" ? "How to explore it" : "Design notes"
-          }
-        />
-      </div>
+      {!wide && !source && notes && (
+        <div className="mx-auto mt-8 max-w-6xl px-4 sm:px-6">{notes}</div>
+      )}
     </>
   );
 }
@@ -419,6 +833,7 @@ export default function DailyEntryPage() {
       ? published[index + 1]
       : published[0];
   useDayKeys(older, newer);
+  const [tools, setTools] = useState<HTMLElement | null>(null);
   if (!data)
     return (
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
@@ -477,20 +892,25 @@ export default function DailyEntryPage() {
           <p className="mt-3 max-w-3xl text-lg leading-relaxed text-muted-foreground">
             {entry.summary}
           </p>
-          <p className="mt-3 text-sm text-muted-foreground">
-            {kindLabel(entry)} · {entry.industry} · {entry.analysis} ·{" "}
-            <a
-              href="#data"
-              className="text-site-accent transition-colors duration-150 hover:text-foreground"
-            >
-              {source?.title ?? entry.family}
-            </a>
-          </p>
+          <div className="mt-3 flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
+            <p className="text-sm text-muted-foreground">
+              {kindLabel(entry)} · {entry.industry} · {entry.analysis} ·{" "}
+              <a
+                href="#data"
+                className="text-site-accent transition-colors duration-150 hover:text-foreground"
+              >
+                {source?.title ?? entry.family}
+              </a>
+            </p>
+            {/* Read and Source, and a notebook's Explore rows, land here,
+                on the line the piece's facts already take. */}
+            <div ref={setTools} className="daily-tools" />
+          </div>
           <SeriesTabs entry={entry} all={data.entries} />
         </header>
       </div>
       <main>
-        <EntryContent key={entry.id} entry={entry} />
+        <EntryContent key={entry.id} entry={entry} tools={tools} />
         <footer className="mx-auto mt-12 max-w-6xl space-y-12 px-4 sm:px-6">
           {source && (
             <section
@@ -554,9 +974,13 @@ export default function DailyEntryPage() {
                       <Download className="size-3.5" aria-hidden="true" />
                       {entry.entry}
                     </a>{" "}
-                    <span className="text-muted-foreground">
-                      {entry.kind === "notebook" ? "notebook" : "analysis"} text
-                    </span>
+                    <Link
+                      to="?view=source"
+                      onClick={() => window.scrollTo(0, 0)}
+                      className="text-muted-foreground underline-offset-2 transition-colors duration-150 hover:text-foreground hover:underline"
+                    >
+                      view source
+                    </Link>
                   </li>
                 </ul>
               </div>

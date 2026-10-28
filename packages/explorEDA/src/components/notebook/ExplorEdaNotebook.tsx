@@ -1,4 +1,6 @@
 import {
+  createContext,
+  useContext,
   useEffect,
   useId,
   useMemo,
@@ -84,7 +86,18 @@ export interface ExplorEdaNotebookProps {
   defaultSheet?: string;
   /** Someone chose a sheet, by its id. */
   onSheetChange?: (id: string) => void;
+  /**
+   * Shows an Explore button on each chart. It reports the chart's id and the
+   * notebook's settings as they are now; `exploreChartCopy` turns them into
+   * a workspace to open beside the notebook.
+   */
+  onExploreChart?: (chartId: string, settings: SavedDataStructure) => void;
 }
+
+/** The host's Explore action for notebook charts, when it offers one. */
+const ExploreChart = createContext<
+  ExplorEdaNotebookProps["onExploreChart"] | undefined
+>(undefined);
 
 /** Below this width, a sections layout falls back to the reading column. */
 const SECTIONS_MIN_WIDTH = 960;
@@ -133,18 +146,29 @@ function facetHeight(chart: ChartSettings, width: number, rows: DatumObject[]) {
 }
 
 /** How tall each kind of chart draws in the reading column. */
-function chartHeight(chart: ChartSettings, categories?: number) {
+function chartHeight(chart: ChartSettings, width: number, categories?: number) {
   switch (chart.type) {
     case "metric-card":
       return 150;
-    // A few bars need a short chart; two dozen need a tall one.
-    case "row":
-      return categories === undefined
-        ? 380
-        : Math.min(
-            640,
-            150 + categories * Math.max(chart.minRowHeight, chart.maxRowHeight)
-          );
+    // A few bars need a short chart; two dozen need a tall one. A top N
+    // draws its N bars and one for the rest, however many categories exist.
+    case "row": {
+      if (categories === undefined) return 380;
+      const bars = chart.topN
+        ? Math.min(categories, chart.topN + 1)
+        : categories;
+      return Math.min(
+        640,
+        110 + bars * Math.max(chart.minRowHeight, chart.maxRowHeight)
+      );
+    }
+    // A scatter's legends sit above and below its plot, so it grows with
+    // the column to keep the plot near 3:2, plus room for a bubble legend.
+    case "scatter":
+      return (
+        Math.round(Math.max(360, Math.min(560, width * 0.62))) +
+        (chart.sizeField ? 80 : 0)
+      );
     // A heatmap with many rows, such as 24 clock hours or 51 states, needs
     // room for each.
     case "heatmap":
@@ -249,6 +273,7 @@ export function ExplorEdaNotebook({
   sheet,
   defaultSheet,
   onSheetChange,
+  onExploreChart,
 }: ExplorEdaNotebookProps) {
   const ownMemory = useRef<Record<number, string>>({});
   const memory = lastValid ?? ownMemory;
@@ -322,19 +347,21 @@ export function ExplorEdaNotebook({
     >
       <CalculationEditorProvider>
         <ChartDraftProvider>
-          <NotebookColumn
-            result={result}
-            layout={layout}
-            sheet={sheet}
-            defaultSheet={defaultSheet}
-            onSheetChange={onSheetChange}
-            onSegmentChange={
-              onTextChange
-                ? (segment, next) =>
-                    onTextChange(replaceSegment(text, segment, next))
-                : undefined
-            }
-          />
+          <ExploreChart.Provider value={onExploreChart}>
+            <NotebookColumn
+              result={result}
+              layout={layout}
+              sheet={sheet}
+              defaultSheet={defaultSheet}
+              onSheetChange={onSheetChange}
+              onSegmentChange={
+                onTextChange
+                  ? (segment, next) =>
+                      onTextChange(replaceSegment(text, segment, next))
+                  : undefined
+              }
+            />
+          </ExploreChart.Provider>
         </ChartDraftProvider>
       </CalculationEditorProvider>
       <GlobalAlertDialog />
@@ -830,6 +857,8 @@ function NotebookBlockView({
 }) {
   const charts = useDataLayer((state) => state.charts);
   const rows = useDataLayer((state) => state.data);
+  const saveToStructure = useDataLayer((state) => state.saveToStructure);
+  const explore = useContext(ExploreChart);
   const byId = useMemo(
     () => new Map(charts.map((chart) => [chart.id, chart])),
     [charts]
@@ -878,11 +907,13 @@ function NotebookBlockView({
             >
               <GridChartPanel
                 settings={chart}
+                onExplore={explore && (() => explore(id, saveToStructure()))}
                 width={width}
                 height={
                   facetHeight(chart, width, rows) ??
                   chartHeight(
                     chart,
+                    width,
                     chart.type === "row"
                       ? new Set(rows.map((row) => row[chart.field])).size
                       : chart.type === "heatmap"

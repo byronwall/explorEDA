@@ -358,9 +358,15 @@ export function HierarchyChart({
   const order = [...rects, ...arcs].map((mark) => mark.node.id);
   const measureField =
     settings.aggregation === "sum" ? settings.measureField : undefined;
+  // Totals of a measure read to about four figures, 34,923 rather than
+  // 34,922.793, unless the field sets its own precision.
   const format = (value: number) =>
     measureField
-      ? formatFieldValue(measureField, value)
+      ? formatWithSettings(measureField, value, {
+          precision:
+            Math.abs(value) >= 1000 ? 0 : Math.abs(value) >= 10 ? 1 : 2,
+          ...fieldSettings[measureField],
+        })
       : value.toLocaleString("en-US", { maximumFractionDigits: 2 });
   // Box labels are tight, so they use short numbers such as $46.5K.
   const formatShort = (value: number) =>

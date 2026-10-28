@@ -24,6 +24,7 @@ import {
   Scaling,
   Search,
   Settings2,
+  PanelRightOpen,
   Table2,
   Trash2,
   X,
@@ -100,6 +101,8 @@ interface PlotChartPanelProps {
   /** Omitted where charts come from text, such as a notebook. */
   onDelete?: () => void;
   onDuplicate?: () => void;
+  /** Opens a copy of the chart somewhere to explore it, such as beside a notebook. */
+  onExplore?: () => void;
   width: number;
   height: number;
 }
@@ -422,6 +425,7 @@ export function PlotChartPanel({
   settings,
   onDelete,
   onDuplicate,
+  onExplore,
   width,
   height,
 }: PlotChartPanelProps) {
@@ -934,6 +938,17 @@ export function PlotChartPanel({
             </Popover>
           )}
           <ChartImageMenu chartTitle={chartTitle} {...imageExport} />
+          {!expanded && onExplore && (
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label={`Explore a copy of ${chartTitle}`}
+              tooltip="Explore a copy: change it, add charts, and see its rows, without changing this one"
+              onClick={onExplore}
+            >
+              <PanelRightOpen className="h-4 w-4" />
+            </Button>
+          )}
           {!expanded && onDuplicate && (
             <Button
               variant="ghost"

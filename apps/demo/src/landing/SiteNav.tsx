@@ -6,7 +6,7 @@ import { EXAMPLES_PATH } from "../routes";
 import { ThemeToggle, useDocsTheme } from "../docs/components/theme";
 
 const navLinkClass =
-  "rounded-md px-2.5 py-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring aria-[current=page]:font-medium aria-[current=page]:text-foreground";
+  "whitespace-nowrap rounded-md px-2 py-1.5 md:px-2.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring aria-[current=page]:font-medium aria-[current=page]:text-foreground";
 
 /** The site's top bar: logo, then docs, examples, the daily collection, and code. */
 export function SiteNav({ current }: { current?: "examples" | "daily" }) {

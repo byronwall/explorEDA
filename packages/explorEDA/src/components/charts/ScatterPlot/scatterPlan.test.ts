@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { scatterPlotDefinition } from "./definition";
-import { brushFilters, paddedDomain, planScatter } from "./scatterPlan";
+import {
+  brushFilters,
+  bubbleSamples,
+  paddedDomain,
+  planScatter,
+} from "./scatterPlan";
 import type { datum } from "@/types/ChartTypes";
 import type { ScaleBand } from "d3-scale";
 import { buildScale, describeScale } from "../Axis/axisPlan";
@@ -291,5 +296,13 @@ describe("log scatter axes", () => {
     expect(describeScale(numericScale({ scaleType: "log" }, true)).type).toBe(
       "log"
     );
+  });
+});
+
+describe("bubbleSamples", () => {
+  it("names round sizes under a quarter, a half, and the largest", () => {
+    expect(bubbleSamples(11964.716899999998)).toEqual([2000, 5000, 10000]);
+    expect(bubbleSamples(1438.069596)).toEqual([200, 500, 1000]);
+    expect(bubbleSamples(0)).toEqual([0]);
   });
 });
