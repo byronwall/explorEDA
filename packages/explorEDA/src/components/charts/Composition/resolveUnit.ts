@@ -1951,7 +1951,7 @@ export function numericDomain(
   if (scale.nice) {
     const nice =
       scale.transform === "log"
-        ? scaleLog().domain([min, max]).nice().domain()
+        ? [logStep(min, Math.floor), logStep(max, Math.ceil)]
         : scaleLinear().domain([min, max]).nice().domain();
     min = nice[0]!;
     max = nice[1]!;
@@ -1960,6 +1960,21 @@ export function numericDomain(
   if (scale.max !== undefined) max = scale.max;
   if (min >= max) max = min + 1;
   return [min, max];
+}
+
+/**
+ * Rounds a positive value down or up to a 1, 2, or 5 step of its decade, so a
+ * log span over 1–210 ends at 500 rather than leaving half an empty decade.
+ */
+function logStep(value: number, round: (value: number) => number) {
+  const decade = 10 ** Math.floor(Math.log10(value));
+  const steps = [1, 2, 5, 10];
+  const share = value / decade;
+  const step =
+    round === Math.floor
+      ? steps.filter((step) => step <= share + 1e-9).at(-1)!
+      : steps.find((step) => step >= share - 1e-9)!;
+  return step * decade;
 }
 
 /** The extent of given values, after the scale's zero, nice, and limits. */
@@ -4048,15 +4063,23 @@ function numericAxisNodes(
     fill: MUTED_INK,
     anchor,
   });
-  const nodes = tickValues(xy.x, frame.width, 72).map((value) =>
-    label(
+  const nodes = tickValues(xy.x, frame.width, 72).map((value) => {
+    const x = numericPixel(xy.x, value);
+    // Ticks on the frame's ends align inward so they stay inside the artboard.
+    const anchor =
+      x <= frame.x + 0.5
+        ? "start"
+        : x >= frame.x + frame.width - 0.5
+          ? "end"
+          : "middle";
+    return label(
       formatTick(xy.x, value),
-      numericPixel(xy.x, value),
+      x,
       frame.y + frame.height + 14,
-      "middle",
+      anchor,
       `x:${value}`
-    )
-  );
+    );
+  });
   const titles = unit.axisTitles;
   if (titles?.x?.trim())
     nodes.push({

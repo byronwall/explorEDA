@@ -1,14 +1,14 @@
 eda query=r
 dashboard "Long strikes without crushing the short ones"
 grid columns=12 rowHeight=76
-composition @cp-strikes-duration-dot-rows width=960 height=670 at=0,0,12,9 {
+composition @cp-strikes-duration-dot-rows width=960 height=420 at=0,0,12,6 {
   title "Long strikes without crushing the short ones" at=32,28 fontSize=24
   subtitle "Each strike is one swarmed dot on a logarithmic duration scale, separated by the declared production-context split." at=32,78 fontSize=13
   scale numeric r.duration transform=log zero=false
-  unit Context at=42,185 size=710x105 axisTitles.x="Recorded strike duration (days; log scale)" {
-    repeat r.production_band arrangement=rows gap=70 order=label
+  unit Context at=42,140 size=670x70 axisTitles.x="Recorded strike duration (days; log scale)" {
+    repeat r.production_band arrangement=rows gap=36 order=label
     label width=205 fontSize=11
     point Strikes x=r.duration spread=swarm radius=4
   }
-  footnote "BLS / Kennan strike-duration sample via statsmodels; public domain." at=32,616 fontSize=10
+  footnote "BLS / Kennan strike-duration sample via statsmodels; public domain." at=32,396 fontSize=10
 }
