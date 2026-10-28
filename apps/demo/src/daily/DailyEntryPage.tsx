@@ -307,19 +307,13 @@ function NotebookContent({
         <div role="group" aria-label="View" className="daily-segmented">
           {(
             [
-              ["", "Read", BookOpen, "Read the notebook"],
-              [
-                "source",
-                "Source",
-                Code2,
-                "Show and edit the notebook's text beside it; charts update as you type",
-              ],
+              ["", "Read", BookOpen],
+              ["source", "Source", Code2],
             ] as const
-          ).map(([value, label, Icon, title]) => (
+          ).map(([value, label, Icon]) => (
             <button
               key={label}
               type="button"
-              title={title}
               aria-pressed={source === Boolean(value)}
               onClick={() => setView(value)}
             >
