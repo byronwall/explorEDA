@@ -385,10 +385,24 @@ export function planHeatmap({
           filter.type === "value" && filter.field === columnField
       );
   const hasSelection = Boolean(rowFilter || columnFilter);
+  // Cells share one precision, set by the largest value, so 1.3 sits beside
+  // 47.2 rather than 1.344 beside 47.2 and -7. A measure with its own display
+  // format keeps it.
+  const largest = Math.max(0, ...values.map(Math.abs));
+  const digits = values.every(Number.isInteger)
+    ? 0
+    : largest >= 100
+      ? 0
+      : largest >= 10
+        ? 1
+        : 2;
   const format = (value: number) =>
-    measureField && formatFieldValue
+    measureField && formatFieldValue && formatsCategory?.(measureField)
       ? formatFieldValue(measureField, value)
-      : value.toLocaleString("en-US", { maximumFractionDigits: 3 });
+      : value.toLocaleString("en-US", {
+          minimumFractionDigits: digits,
+          maximumFractionDigits: digits,
+        });
 
   const cells: HeatmapCell[] = [];
   for (const row of rows) {

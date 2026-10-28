@@ -30,6 +30,7 @@ import {
   type DatumObject,
 } from "@/providers/DataLayerProvider";
 import type { ChartSettings } from "@/types/ChartTypes";
+import { restrictToPopulation } from "@/lib/chartPopulation";
 import type { SavedDataStructure } from "@/types/SavedDataStructure";
 import { CalculationEditorProvider } from "../calculations/CalculationEditor";
 import { GlobalAlertDialog } from "../GlobalAlertDialog";
@@ -858,7 +859,19 @@ function NotebookBlockView({
   const charts = useDataLayer((state) => state.charts);
   const rows = useDataLayer((state) => state.data);
   const saveToStructure = useDataLayer((state) => state.saveToStructure);
+  const getColumnData = useDataLayer((state) => state.getColumnData);
   const explore = useContext(ExploreChart);
+  // Counts the categories a chart draws: a calculated field reads its own
+  // column, and a chart's where filter drops rows outside it.
+  const distinct = (chart: ChartSettings & { field: string }) => {
+    const column = getColumnData(chart.field);
+    const ids = restrictToPopulation(
+      rows.map((row) => row.__ID),
+      { localFilters: chart.localFilters },
+      getColumnData
+    );
+    return new Set(ids.map((id) => column[id])).size;
+  };
   const byId = useMemo(
     () => new Map(charts.map((chart) => [chart.id, chart])),
     [charts]
@@ -915,10 +928,10 @@ function NotebookBlockView({
                     chart,
                     width,
                     chart.type === "row"
-                      ? new Set(rows.map((row) => row[chart.field])).size
+                      ? distinct(chart)
                       : chart.type === "heatmap"
                         ? Math.min(
-                            new Set(rows.map((row) => row[chart.field])).size,
+                            distinct(chart),
                             chart.maxCategories ?? Infinity
                           )
                         : undefined
