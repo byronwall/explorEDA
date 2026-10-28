@@ -11,10 +11,12 @@ import {
   useParams,
   useSearchParams,
 } from "react-router-dom";
-import { ChevronLeft, ChevronRight, Download } from "lucide-react";
+import { ChevronLeft, ChevronRight, Download, Rows3 } from "lucide-react";
 import {
+  compileNotebook,
   ExplorEda,
   ExplorEdaNotebook,
+  exploreChartCopy,
   notebookSheets,
   parseNotebook,
   type SavedDataStructure,
@@ -35,6 +37,7 @@ import {
 import { DailyCard } from "./DailyCard";
 import { useDailyCatalog } from "./useDailyCatalog";
 import { DailyMeta } from "./DailyMeta";
+import { ExploreAside } from "./ExploreAside";
 import "./daily.css";
 
 type LoadedEntry = Awaited<ReturnType<typeof loadDailyEntry>>;
@@ -205,9 +208,67 @@ function NotebookContent({
   const book = sheets.length > 1;
   const first = sheets[0]?.id ?? "";
   const sheet = params.get("sheet") ?? first;
+  // Explore holds copies of charts pulled aside, and keeps what someone
+  // changed there when another chart joins them.
+  const [aside, setAside] = useState<{
+    settings: SavedDataStructure;
+    version: number;
+    rows: boolean;
+  }>();
+  const latest = useRef<SavedDataStructure>(undefined);
+  const open = (settings: SavedDataStructure, rows = false) => {
+    latest.current = settings;
+    setAside((current) => ({
+      settings,
+      version: (current?.version ?? 0) + 1,
+      rows,
+    }));
+  };
+  useEffect(() => {
+    document.body.toggleAttribute("data-daily-aside", Boolean(aside));
+    return () => document.body.removeAttribute("data-daily-aside");
+  }, [aside]);
   return (
     <div className="daily-notebook mx-auto max-w-6xl px-4 sm:px-6">
+      <div className="daily-notebook-bar">
+        <Button
+          variant="outline"
+          size="sm"
+          title="Open every row behind this notebook beside it, to sort, search, and chart"
+          onClick={() =>
+            open(
+              exploreChartCopy(
+                compileNotebook(loaded.text, {
+                  rows: loaded.rows,
+                  name: entry.title,
+                }).settings,
+                ""
+              ),
+              true
+            )
+          }
+        >
+          <Rows3 aria-hidden="true" />
+          Explore rows
+        </Button>
+      </div>
+      {aside && (
+        <ExploreAside
+          data={loaded.rows}
+          fieldTypes={loaded.fieldTypes}
+          settings={aside.settings}
+          version={aside.version}
+          rowsOpen={aside.rows}
+          onChange={(settings) => {
+            latest.current = settings;
+          }}
+          onClose={() => setAside(undefined)}
+        />
+      )}
       <ExplorEdaNotebook
+        onExploreChart={(id, settings) =>
+          open(exploreChartCopy(settings, id, aside && latest.current))
+        }
         // The page header shows the title; a notebook with one starts at
         // its lede.
         text={book ? loaded.text : loaded.text.replace(/^# .+\n/, "")}

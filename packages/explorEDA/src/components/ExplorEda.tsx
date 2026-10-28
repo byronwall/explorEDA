@@ -130,6 +130,8 @@ export interface ExplorEdaProps {
    * `addSourceFromRows` from `exploreda/analysis`.
    */
   onAddSource?: () => void;
+  /** Opens the Rows drawer when the workspace first shows. */
+  defaultRowsOpen?: boolean;
 }
 
 export const ExplorEda = forwardRef<ExplorEdaHandle, ExplorEdaProps>(
@@ -146,6 +148,7 @@ export const ExplorEda = forwardRef<ExplorEdaHandle, ExplorEdaProps>(
       toolbarEnd,
       schema,
       onAddSource,
+      defaultRowsOpen,
     },
     ref
   ) {
@@ -161,6 +164,7 @@ export const ExplorEda = forwardRef<ExplorEdaHandle, ExplorEdaProps>(
           ref={ref}
           sidePanels={sidePanels}
           readOnly={readOnly}
+          defaultRowsOpen={defaultRowsOpen}
           toolbarStart={toolbarStart}
           toolbarEnd={toolbarEnd}
           schema={
@@ -178,10 +182,15 @@ const Workspace = forwardRef<
   ExplorEdaHandle,
   Pick<
     ExplorEdaProps,
-    "sidePanels" | "readOnly" | "toolbarStart" | "toolbarEnd" | "schema"
+    | "sidePanels"
+    | "readOnly"
+    | "toolbarStart"
+    | "toolbarEnd"
+    | "schema"
+    | "defaultRowsOpen"
   >
 >(function Workspace(
-  { sidePanels, readOnly, toolbarStart, toolbarEnd, schema },
+  { sidePanels, readOnly, toolbarStart, toolbarEnd, schema, defaultRowsOpen },
   ref
 ) {
   const getSettings = useDataLayer((state) => state.saveToStructure);
@@ -204,6 +213,7 @@ const Workspace = forwardRef<
           <PlotManager
             sidePanels={sidePanels}
             readOnly={readOnly}
+            defaultRowsOpen={defaultRowsOpen}
             toolbarStart={toolbarStart}
             toolbarEnd={toolbarEnd}
             schema={schema}
@@ -303,6 +313,7 @@ export {
   useNotebookResult,
   type ExplorEdaNotebookProps,
 } from "./notebook/ExplorEdaNotebook";
+export { exploreChartCopy } from "./notebook/exploreCopy";
 export {
   listBoundarySets,
   registerBoundarySet,

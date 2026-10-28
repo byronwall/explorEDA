@@ -1,4 +1,6 @@
 import {
+  createContext,
+  useContext,
   useEffect,
   useId,
   useMemo,
@@ -84,7 +86,18 @@ export interface ExplorEdaNotebookProps {
   defaultSheet?: string;
   /** Someone chose a sheet, by its id. */
   onSheetChange?: (id: string) => void;
+  /**
+   * Shows an Explore button on each chart. It reports the chart's id and the
+   * notebook's settings as they are now; `exploreChartCopy` turns them into
+   * a workspace to open beside the notebook.
+   */
+  onExploreChart?: (chartId: string, settings: SavedDataStructure) => void;
 }
+
+/** The host's Explore action for notebook charts, when it offers one. */
+const ExploreChart = createContext<
+  ExplorEdaNotebookProps["onExploreChart"] | undefined
+>(undefined);
 
 /** Below this width, a sections layout falls back to the reading column. */
 const SECTIONS_MIN_WIDTH = 960;
@@ -260,6 +273,7 @@ export function ExplorEdaNotebook({
   sheet,
   defaultSheet,
   onSheetChange,
+  onExploreChart,
 }: ExplorEdaNotebookProps) {
   const ownMemory = useRef<Record<number, string>>({});
   const memory = lastValid ?? ownMemory;
@@ -333,19 +347,21 @@ export function ExplorEdaNotebook({
     >
       <CalculationEditorProvider>
         <ChartDraftProvider>
-          <NotebookColumn
-            result={result}
-            layout={layout}
-            sheet={sheet}
-            defaultSheet={defaultSheet}
-            onSheetChange={onSheetChange}
-            onSegmentChange={
-              onTextChange
-                ? (segment, next) =>
-                    onTextChange(replaceSegment(text, segment, next))
-                : undefined
-            }
-          />
+          <ExploreChart.Provider value={onExploreChart}>
+            <NotebookColumn
+              result={result}
+              layout={layout}
+              sheet={sheet}
+              defaultSheet={defaultSheet}
+              onSheetChange={onSheetChange}
+              onSegmentChange={
+                onTextChange
+                  ? (segment, next) =>
+                      onTextChange(replaceSegment(text, segment, next))
+                  : undefined
+              }
+            />
+          </ExploreChart.Provider>
         </ChartDraftProvider>
       </CalculationEditorProvider>
       <GlobalAlertDialog />
@@ -841,6 +857,8 @@ function NotebookBlockView({
 }) {
   const charts = useDataLayer((state) => state.charts);
   const rows = useDataLayer((state) => state.data);
+  const saveToStructure = useDataLayer((state) => state.saveToStructure);
+  const explore = useContext(ExploreChart);
   const byId = useMemo(
     () => new Map(charts.map((chart) => [chart.id, chart])),
     [charts]
@@ -889,6 +907,7 @@ function NotebookBlockView({
             >
               <GridChartPanel
                 settings={chart}
+                onExplore={explore && (() => explore(id, saveToStructure()))}
                 width={width}
                 height={
                   facetHeight(chart, width, rows) ??

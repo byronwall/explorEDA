@@ -126,3 +126,32 @@
 .daily-book-tab-later:hover {
   color: var(--muted-foreground);
 }
+
+/* Explore docks beside the notebook on wide screens, which keep reading in
+   the room left; narrower screens give it the whole window. */
+.daily-aside {
+  width: 100vw;
+}
+
+@media (min-width: 1100px) {
+  .daily-aside {
+    width: min(820px, 56vw);
+  }
+
+  body[data-daily-aside] .daily-page {
+    padding-right: min(820px, 56vw);
+  }
+}
+
+.daily-notebook-bar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+/* The workspace's drawers, such as Rows, are fixed to their containing
+   block; this keeps them inside Explore, under its header. */
+.daily-aside-body {
+  transform: translateZ(0);
+}
