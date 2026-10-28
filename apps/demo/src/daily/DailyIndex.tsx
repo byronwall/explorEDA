@@ -70,6 +70,7 @@ function TodayLead({ entry }: { entry: DailyEntry }) {
       <DailyThumb
         entry={entry}
         aspect="aspect-[2/1]"
+        sizes="(min-width: 1280px) 720px, (min-width: 768px) 60vw, 100vw"
         className="transition-colors duration-150 group-hover:border-site-accent/60"
       />
       <div className="min-w-0">
@@ -131,6 +132,7 @@ function Series({ entries }: { entries: DailyEntry[] }) {
                   <li key={entry.id} className="group relative min-w-0">
                     <DailyThumb
                       entry={entry}
+                      sizes="(min-width: 640px) 120px, 33vw"
                       className="transition-colors duration-150 group-hover:border-site-accent/60"
                     />
                     <Link

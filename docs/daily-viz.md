@@ -21,7 +21,7 @@ The demo's `/daily` collection holds narrative notebooks, compositions, and dash
 5. **Write it.** Follow [Writing rules](#writing-rules). Open `/daily/<family>-<slug>` on `pnpm dev:agent` and read it as a visitor would.
 6. **Declare findings** in the catalogue entry and type each computed sentence into the prose. Run `pnpm daily check`. It compiles every piece against its local rows and fails when a sentence in the prose differs from its computed value.
 7. **Schedule it:** `pnpm daily schedule` gives every piece without a `published` date the next free day after the latest one, choosing an order so neighboring days use different datasets, industries, and analyses, and series parts stay in order. A piece is listed from its day on, in the reader's time zone; until then its page works but nothing links to it. To publish a batch at once, schedule it and the days stack up after today.
-8. **Picture it:** `pnpm daily thumbs <slug>` captures the top of the piece's lead graphic for the archive cards. Rerun it after changing the first chart.
+8. **Picture it:** `pnpm daily thumbs <slug>` captures the top of the piece's lead graphic at 2x as two WebPs for the index: 1,440 px wide for the Today lead and 640 px wide for the cards. Rerun it after changing the first chart. When it prints "cut off on the page", the chart clips that text for readers too; fix the chart, not the picture.
 9. **Look at it.** `pnpm daily review <slug>...` screenshots each piece at 1280 px and tiles them into `tmp/daily-review.png`, one image to check a batch. Check the final ones at 1280, 783, and 390 px with `pnpm shot /daily/<slug> --name daily-<slug>`.
 
 ## Catalogue entry

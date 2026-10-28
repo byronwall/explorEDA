@@ -36,7 +36,8 @@ export interface DailyCatalogEntry {
 
 /** A catalogue entry plus what `dailyCorpus.mjs` derives from its files. */
 export interface DailyEntry extends DailyCatalogEntry {
-  /** `thumbs/<slug>.jpg`, written by `pnpm daily thumbs`. */
+  /** `thumbs/<slug>.webp`, written by `pnpm daily thumbs` with a 640 px
+   * `thumbs/<slug>-640.webp` beside it. */
   thumb?: string;
   entryPath: string;
   projectPath: string;
