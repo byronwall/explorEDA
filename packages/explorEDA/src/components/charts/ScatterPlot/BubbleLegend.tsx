@@ -19,7 +19,7 @@ export function BubbleLegend({
       style={{ height: size.legendHeight, bottom }}
       aria-label="Bubble size legend"
     >
-      <div className="max-w-28 shrink-0 pb-1">
+      <div className="max-w-44 shrink-0 pb-1">
         <ActionTooltip content={`Bubble area: ${size.label}`}>
           <div className="truncate font-medium">Area: {size.label}</div>
         </ActionTooltip>

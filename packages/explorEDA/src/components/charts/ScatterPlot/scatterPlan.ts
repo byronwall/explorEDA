@@ -4,6 +4,7 @@ import {
   getFieldLabel,
   formatFieldValue,
   hasFieldDisplayFormat,
+  readableNumber,
   type FieldSettingsMap,
 } from "@/lib/fieldSettings";
 import { makeColorScale } from "@/lib/colorScaleMath";
@@ -253,8 +254,7 @@ export function display(
   return hasFieldDisplayFormat(settings[field])
     ? formatFieldValue(field, value, settings[field])
     : typeof value === "number"
-      ? // Calculated values carry float noise such as 2991.1792249999994.
-        String(Number(value.toPrecision(12)))
+      ? readableNumber(value)
       : categoryLabel(value);
 }
 
@@ -531,8 +531,15 @@ export function planScatter(
       ? { ...ends, nonpositive: { count: nonpositive, unit: ["row", "rows"] } }
       : ends;
   };
+  // A title that already names its scale, such as "(log scale)", keeps it once.
   const axisLabel = (label: string, axis: ScatterAxisScale) =>
-    [label, axis.kind === "numeric" && axis.type !== "linear" && axis.type]
+    [
+      label,
+      axis.kind === "numeric" &&
+        axis.type !== "linear" &&
+        !new RegExp(`\\b${axis.type}\\b`, "i").test(label) &&
+        axis.type,
+    ]
       .filter(Boolean)
       .join(" · ");
   const labelSource = (local: string) =>
@@ -795,9 +802,7 @@ export function scatterHoverReadout(
   point: ScatterPoint
 ) {
   const value = (field: string, item: datum) =>
-    hasFieldDisplayFormat(snapshot.fieldSettings[field])
-      ? formatFieldValue(field, item, snapshot.fieldSettings[field])
-      : categoryLabel(item);
+    display(field, item, snapshot.fieldSettings);
   return {
     ...scatterPointReadout(plan, point),
     sizeText: settings.sizeField

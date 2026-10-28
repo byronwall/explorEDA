@@ -143,15 +143,17 @@
   }
 }
 
-/* Read or Source on the left, Explore rows on the right. */
+/* Read or Source, then Explore rows, on the header's facts line. The slot
+   keeps its height while the notebook loads, so the line doesn't jump. */
+.daily-tools {
+  min-height: 2rem;
+}
+
 .daily-notebook-bar {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.5rem 1rem;
-  margin-bottom: 1.5rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid var(--border);
+  gap: 0.5rem 0.75rem;
 }
 
 .daily-segmented {
@@ -227,6 +229,19 @@
   .daily-source-text .eda-notebook-source {
     min-height: 0;
     overflow-y: auto;
+  }
+}
+
+/* With Explore open beside it, Source stacks its text over the notebook
+   rather than squeezing three columns into the room left. */
+@media (min-width: 1024px) {
+  body[data-daily-aside] .daily-source {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  body[data-daily-aside] .daily-source-text {
+    position: static;
+    max-height: 50vh;
   }
 }
 

@@ -1,3 +1,4 @@
+import { createPortal } from "react-dom";
 import {
   useEffect,
   useMemo,
@@ -152,7 +153,14 @@ function Findings({ loaded }: { loaded: LoadedEntry }) {
   );
 }
 
-function EntryContent({ entry }: { entry: DailyEntry }) {
+function EntryContent({
+  entry,
+  tools,
+}: {
+  entry: DailyEntry;
+  /** Where a notebook puts its view and Explore controls. */
+  tools: HTMLElement | null;
+}) {
   const [loaded, setLoaded] = useState<LoadedEntry | null>(null);
   const [error, setError] = useState("");
   const [attempt, setAttempt] = useState(0);
@@ -197,7 +205,7 @@ function EntryContent({ entry }: { entry: DailyEntry }) {
       </p>
     );
   if (entry.kind === "notebook")
-    return <NotebookContent entry={entry} loaded={loaded} />;
+    return <NotebookContent entry={entry} loaded={loaded} tools={tools} />;
   return <WorkspaceContent entry={entry} loaded={loaded} attempt={attempt} />;
 }
 
@@ -229,9 +237,11 @@ function CopyText({ text }: { text: string }) {
 function NotebookContent({
   entry,
   loaded,
+  tools,
 }: {
   entry: DailyEntry;
   loaded: LoadedEntry;
+  tools: HTMLElement | null;
 }) {
   const [params, setParams] = useSearchParams();
   // Source shows the notebook's text beside it. Edits there, or to a chart,
@@ -303,58 +313,62 @@ function NotebookContent({
     <div
       className={`daily-notebook mx-auto px-4 sm:px-6 ${source ? "max-w-[1440px]" : "max-w-6xl"}`}
     >
-      <div className="daily-notebook-bar">
-        <div role="group" aria-label="View" className="daily-segmented">
-          {(
-            [
-              ["", "Read", BookOpen],
-              ["source", "Source", Code2],
-            ] as const
-          ).map(([value, label, Icon]) => (
-            <button
-              key={label}
-              type="button"
-              aria-pressed={source === Boolean(value)}
-              onClick={() => setView(value)}
+      {tools &&
+        createPortal(
+          <div className="daily-notebook-bar">
+            <div role="group" aria-label="View" className="daily-segmented">
+              {(
+                [
+                  ["", "Read", BookOpen],
+                  ["source", "Source", Code2],
+                ] as const
+              ).map(([value, label, Icon]) => (
+                <button
+                  key={label}
+                  type="button"
+                  aria-pressed={source === Boolean(value)}
+                  onClick={() => setView(value)}
+                >
+                  <Icon className="size-4" aria-hidden="true" />
+                  {label}
+                </button>
+              ))}
+            </div>
+            {edited && (
+              <p className="text-sm text-muted-foreground">
+                Edited here only.{" "}
+                <button
+                  type="button"
+                  className="text-site-accent hover:text-foreground"
+                  onClick={() => setText(loaded.text)}
+                >
+                  Reset
+                </button>
+              </p>
+            )}
+            <Button
+              className="ml-auto"
+              variant="outline"
+              size="sm"
+              onClick={() =>
+                open(
+                  exploreChartCopy(
+                    compileNotebook(text, {
+                      rows: loaded.rows,
+                      name: entry.title,
+                    }).settings,
+                    ""
+                  ),
+                  true
+                )
+              }
             >
-              <Icon className="size-4" aria-hidden="true" />
-              {label}
-            </button>
-          ))}
-        </div>
-        {edited && (
-          <p className="text-sm text-muted-foreground">
-            Edited here only.{" "}
-            <button
-              type="button"
-              className="text-site-accent hover:text-foreground"
-              onClick={() => setText(loaded.text)}
-            >
-              Reset
-            </button>
-          </p>
+              <Rows3 aria-hidden="true" />
+              Explore rows
+            </Button>
+          </div>,
+          tools
         )}
-        <Button
-          className="ml-auto"
-          variant="outline"
-          size="sm"
-          onClick={() =>
-            open(
-              exploreChartCopy(
-                compileNotebook(text, {
-                  rows: loaded.rows,
-                  name: entry.title,
-                }).settings,
-                ""
-              ),
-              true
-            )
-          }
-        >
-          <Rows3 aria-hidden="true" />
-          Explore rows
-        </Button>
-      </div>
       {aside && (
         <ExploreAside
           data={loaded.rows}
@@ -583,6 +597,7 @@ export default function DailyEntryPage() {
       ? published[index + 1]
       : published[0];
   useDayKeys(older, newer);
+  const [tools, setTools] = useState<HTMLElement | null>(null);
   if (!data)
     return (
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
@@ -641,20 +656,27 @@ export default function DailyEntryPage() {
           <p className="mt-3 max-w-3xl text-lg leading-relaxed text-muted-foreground">
             {entry.summary}
           </p>
-          <p className="mt-3 text-sm text-muted-foreground">
-            {kindLabel(entry)} · {entry.industry} · {entry.analysis} ·{" "}
-            <a
-              href="#data"
-              className="text-site-accent transition-colors duration-150 hover:text-foreground"
-            >
-              {source?.title ?? entry.family}
-            </a>
-          </p>
+          <div className="mt-3 flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
+            <p className="text-sm text-muted-foreground">
+              {kindLabel(entry)} · {entry.industry} · {entry.analysis} ·{" "}
+              <a
+                href="#data"
+                className="text-site-accent transition-colors duration-150 hover:text-foreground"
+              >
+                {source?.title ?? entry.family}
+              </a>
+            </p>
+            {/* A notebook's Read, Source, and Explore controls land here,
+                on the line its facts already take. */}
+            {entry.kind === "notebook" && (
+              <div ref={setTools} className="daily-tools" />
+            )}
+          </div>
           <SeriesTabs entry={entry} all={data.entries} />
         </header>
       </div>
       <main>
-        <EntryContent key={entry.id} entry={entry} />
+        <EntryContent key={entry.id} entry={entry} tools={tools} />
         <footer className="mx-auto mt-12 max-w-6xl space-y-12 px-4 sm:px-6">
           {source && (
             <section
@@ -718,9 +740,19 @@ export default function DailyEntryPage() {
                       <Download className="size-3.5" aria-hidden="true" />
                       {entry.entry}
                     </a>{" "}
-                    <span className="text-muted-foreground">
-                      {entry.kind === "notebook" ? "notebook" : "analysis"} text
-                    </span>
+                    {entry.kind === "notebook" ? (
+                      <Link
+                        to="?view=source"
+                        onClick={() => window.scrollTo(0, 0)}
+                        className="text-muted-foreground underline-offset-2 transition-colors duration-150 hover:text-foreground hover:underline"
+                      >
+                        view source
+                      </Link>
+                    ) : (
+                      <span className="text-muted-foreground">
+                        analysis text
+                      </span>
+                    )}
                   </li>
                 </ul>
               </div>
