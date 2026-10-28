@@ -169,7 +169,7 @@ function Series({
                     <Link
                       to={dailyPath(entry)}
                       className="mt-1.5 line-clamp-2 text-xs leading-snug text-foreground after:absolute after:inset-0 after:content-[''] group-hover:text-site-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                      title={entry.title}
+                      aria-label={`Part ${entry.series!.part}: ${entry.title}`}
                     >
                       <span className="tabular-nums text-muted-foreground">
                         {entry.series!.part}.{" "}
