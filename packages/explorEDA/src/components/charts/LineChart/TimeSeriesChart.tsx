@@ -2,6 +2,7 @@ import { useThemeColors } from "@/hooks/useDisplayColorScales";
 import { useDisplayColorScale } from "@/hooks/useDisplayColorScales";
 import { useAxisTypography } from "../chartTypography";
 import { useId, useMemo, useRef, useState } from "react";
+import { scaleUtc } from "d3-scale";
 import { Button } from "@/components/ui/button";
 import { convertFieldValue } from "@/lib/fieldSettings";
 import { utcPeriod } from "@/lib/dailyRollup";
@@ -149,11 +150,11 @@ export function TimeSeriesChart({
     typography,
   ]);
   const axes = useMemo(() => {
-    const periods = plan.series[0]?.points ?? [];
-    const step = Math.max(
-      1,
-      Math.ceil(periods.length / (settings.xGridLines || 5))
-    );
+    // Ticks fall on calendar boundaries, such as each new year or quarter,
+    // and read as 2021 or Apr rather than as the start of every nth period.
+    const calendar = scaleUtc().domain(plan.xScale.domain());
+    const count = settings.xGridLines || 5;
+    const tickText = calendar.tickFormat(count);
     return planAxes({
       plotWidth: plan.plotWidth,
       plotHeight: plan.plotHeight,
@@ -161,18 +162,13 @@ export function TimeSeriesChart({
       x: {
         typography,
         scale: plan.xScale,
-        tickValues: periods
-          .filter((_, i) => i % step === 0)
-          .map((point) => point.start),
+        tickValues: calendar.ticks(count).map((date) => date.getTime()),
         field: settings.xField,
         tickFontSize: settings.xAxis.tickFontSize,
         labelFontSize: settings.xAxis.labelFontSize,
         label: settings.xAxisLabel || `${plan.dateLabel} · UTC`,
         grid: settings.xAxis.grid,
-        format: (value) =>
-          new Date(Number(value))
-            .toISOString()
-            .slice(0, time.interval === "year" ? 4 : 10),
+        format: (value) => tickText(new Date(Number(value))),
       },
       y: {
         typography,

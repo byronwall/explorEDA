@@ -273,6 +273,27 @@ function logTicks(scale: ScaleLinear<number, number>, requested: number) {
   return scale.ticks(requested).filter((tick) => keep(tick) !== "");
 }
 
+/**
+ * A symlog axis spaces values by order of magnitude, so D3's even linear
+ * ticks crowd into its last decade. It labels 0 and powers of ten instead,
+ * adding 2s and 5s across three decades or fewer.
+ */
+function symlogTicks(scale: ScaleLinear<number, number>, requested: number) {
+  const [a, b] = scale.domain() as [number, number];
+  const lo = Math.min(a, b);
+  const hi = Math.max(a, b);
+  const largest = Math.max(Math.abs(lo), Math.abs(hi));
+  if (largest < 10) return scale.ticks(requested);
+  const top = Math.floor(Math.log10(largest));
+  const steps = top > 3 ? [1] : [1, 2, 5];
+  const ticks = lo <= 0 && hi >= 0 ? [0] : [];
+  for (let power = 0; power <= top; power++)
+    for (const step of steps)
+      for (const value of [step * 10 ** power, -step * 10 ** power])
+        if (value >= lo && value <= hi) ticks.push(value);
+  return ticks.sort((x, y) => x - y);
+}
+
 function position(scale: ChartScale, tick: number | string) {
   return "bandwidth" in scale
     ? (scale(String(tick)) ?? 0) + scale.bandwidth() / 2
@@ -280,6 +301,22 @@ function position(scale: ChartScale, tick: number | string) {
 }
 
 const AXIS_WORD = { x: "Horizontal", y: "Vertical" } as const;
+
+/**
+ * A field's precision pads every tick, so a round axis reads 0.0, 100.0,
+ * 200.0. When every tick's fraction is zero, the ticks drop it; ticks with a
+ * real fraction, such as 2.0 beside 2.5, keep it.
+ */
+function trimZeroFractions(
+  format: AxisInput["format"],
+  ticks: (number | string)[]
+): AxisInput["format"] {
+  const zero = /(\d)\.0+(?!\d)/;
+  const labels = ticks.map((tick) => format(tick));
+  if (!labels.length || !labels.every((label) => zero.test(label)))
+    return format;
+  return (value) => format(value).replace(zero, "$1");
+}
 
 function planAxis(
   axis: AxisName,
@@ -289,7 +326,7 @@ function planAxis(
   margin: MarginSettings,
   footer = 0
 ): AxisPlan {
-  const { scale, format } = input;
+  const { scale } = input;
   const band = "bandwidth" in scale;
   const typography = input.typography ?? DEFAULT_AXIS_TYPOGRAPHY;
   const tickFontSize = input.tickFontSize ?? typography.tickSize;
@@ -303,16 +340,24 @@ function planAxis(
       ? scale.domain()
       : "base" in scale
         ? logTicks(scale, requested)
-        : scale.ticks(requested));
+        : input.scaleType === "symlog"
+          ? symlogTicks(scale, requested)
+          : scale.ticks(requested));
+  const format = band
+    ? input.format
+    : trimZeroFractions(input.format, candidates);
   // Crowded band labels keep every stride-th category, so each shown label
-  // has room for about six characters instead of two or three.
+  // has room for about six characters instead of two or three. Past a dozen
+  // categories most labels drop anyway, so the kept ones get room for twelve
+  // and a date reads 2021-07-05, not 2021-….
+  const roomChars = candidates.length > 12 ? 12 : 6;
   const stride =
     axis === "x" && band
       ? Math.max(
           1,
           Math.ceil(
             (Math.min(
-              6 * tickFontSize * 0.7,
+              roomChars * tickFontSize * 0.7,
               Math.max(
                 0,
                 ...candidates.map((tick) =>
@@ -474,7 +519,13 @@ function planAxis(
   }
   const gridRequested = input.density || 5;
   const linear = band ? undefined : scale;
-  const gridValues = input.grid && linear ? linear.ticks(gridRequested) : [];
+  // Grid lines follow the same magnitude steps as a symlog axis's ticks.
+  const gridValues =
+    input.grid && linear
+      ? input.scaleType === "symlog"
+        ? symlogTicks(linear, gridRequested)
+        : linear.ticks(gridRequested)
+      : [];
   const gridGuides = gridValues.map((tick): AxisGuide => {
     const at = linear!(tick);
     return {

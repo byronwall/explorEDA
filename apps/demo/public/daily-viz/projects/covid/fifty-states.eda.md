@@ -43,7 +43,7 @@ heatmap @nb-covid-fifty-states-2 ym columnField=code aggregation=average measure
 Each dot is one state in one week. Delta’s dots spread across the autumn: Arkansas and Missouri peaked in early August 2021 and Connecticut, New Jersey, and Rhode Island not until the last week of November; Alaska’s Delta peak was 179.44 and Maryland’s was 20.30. Omicron’s dots rise as one column: every state peaked between January 3 and January 31, 2022. Rhode Island’s Omicron peak was 456.73 and Maine’s was 79.50, the lowest of the 51.
 
 ```eda
-scatter @nb-covid-fifty-states-3 x=date y=cases opacity=0.5 x.ticks=5 where.date=2021-07-05..2022-03-28 title="Every state’s weekly case rate, July 2021 to March 2022" y.title="New cases per 100,000 (7-day average)" x.title="Week" {
+scatter @nb-covid-fifty-states-3 x=date y=cases opacity=0.5 x.ticks=5 where.date=2021-07-05..2022-03-28 title="Every state’s weekly case rate, July 2021 to March 2022" y.title="Cases per 100,000, 7-day avg" x.title="Week" {
   band x=2021-08-09..2021-11-29 "Delta peaks"
   band x=2022-01-03..2022-01-31 "Omicron peaks"
   callout "Rhode Island, 456.7" pick=max

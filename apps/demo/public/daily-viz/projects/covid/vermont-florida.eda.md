@@ -17,7 +17,7 @@ field "compare.Cases per 100k" precision=1
 Florida climbed in summer and again in winter; Vermont stayed near zero until November. Vermont’s 2020 weeks averaged 3.71 new cases per 100,000, and Florida’s averaged 19.27. Up to the end of November 2021, Vermont averaged 12.47 a week against Florida’s 26.63.
 
 ```eda
-line @nb-covid-vermont-florida-1 x=date time.interval=week time.aggregation=average time.measureField=cases time.splitField=state title="Weekly case rate, Vermont, Florida, and the United States" y.title="New cases per 100,000 (7-day average)" x.title="Week" {
+line @nb-covid-vermont-florida-1 x=date time.interval=week time.aggregation=average time.measureField=cases time.splitField=state title="Weekly case rate, Vermont, Florida, and the United States" y.title="Cases per 100,000, 7-day avg" x.title="Week" {
   band x=2021-12-13..2022-02-14 "Omicron"
 }
 ```
@@ -37,7 +37,7 @@ ecdf @nb-covid-vermont-florida-2 cases color=state direction=below where.date=20
 Each box is one state’s weeks from December 2021 to March 2022. The state that spent two years lowest peaked highest: Vermont’s Omicron peak was 320.40 new cases per 100,000, and Florida’s was 275.95. Across the whole wave, Vermont’s weeks averaged 86.86 and Florida’s 82.59.
 
 ```eda
-boxplot @nb-covid-vermont-florida-3 cases color=state where.wave="Omicron 2022" title="Weekly case rates during Omicron, December 2021 to March 2022" y.title="New cases per 100,000 (7-day average)"
+boxplot @nb-covid-vermont-florida-3 cases color=state where.wave="Omicron 2022" title="Weekly case rates during Omicron, December 2021 to March 2022" y.title="Cases per 100,000, 7-day avg"
 ```
 
 ## Wave by wave, the gap closed and never reopened

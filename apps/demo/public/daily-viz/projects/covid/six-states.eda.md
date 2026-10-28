@@ -17,7 +17,7 @@ wave:cat=wave label="Wave"
 The first line to leave the floor is New York’s, and for two months it is the only one. New York’s spring 2020 peak was 48.38 new cases per 100,000 a day, and the nation’s was 9.29. The other five states never passed 6.57 that spring.
 
 ```eda
-line @nb-covid-six-states-1 x=date time.interval=week time.aggregation=average time.measureField=cases time.splitField=state title="Weekly case rate, six states and the United States" y.title="New cases per 100,000 (7-day average)" x.title="Week" {
+line @nb-covid-six-states-1 x=date time.interval=week time.aggregation=average time.measureField=cases time.splitField=state title="Weekly case rate, six states and the United States" y.title="Cases per 100,000, 7-day avg" x.title="Week" {
   band x=2020-03-16..2020-05-31 "Spring 2020"
   band x=2020-10-15..2021-03-15 "Winter wave"
   band x=2021-12-13..2022-02-14 "Omicron"
@@ -37,7 +37,7 @@ heatmap @nb-covid-six-states-2 state columnField=wave aggregation=average measur
 Zoom in on the winter of 2021–22 and the six lines rise and fall together. The earlier waves differed in timing by months; here all six states and the nation peaked within two weeks of each other in January 2022. New York’s Omicron peak was 379.44, Texas’s was 236.06, and the nation’s was 238.25. The lowest Omicron peak among the six was higher than any earlier peak anywhere.
 
 ```eda
-line @nb-covid-six-states-3 x=date time.interval=week time.aggregation=average time.measureField=cases time.splitField=state where.date=2021-11-01..2022-04-30 title="Weekly case rate, November 2021 to April 2022" y.title="New cases per 100,000 (7-day average)" x.title="Week" {
+line @nb-covid-six-states-3 x=date time.interval=week time.aggregation=average time.measureField=cases time.splitField=state where.date=2021-11-01..2022-04-30 title="Weekly case rate, November 2021 to April 2022" y.title="Cases per 100,000, 7-day avg" x.title="Week" {
   rule x=2022-01-17 "Peak week for four of six"
 }
 ```
