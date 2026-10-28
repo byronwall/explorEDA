@@ -51,10 +51,15 @@ function rank(categories: RowCategory[], maxRows: number): RowPlan {
 export function planRowCategories(
   column: Record<number, datum>,
   liveIds: number[],
-  maxRows: number
+  maxRows: number,
+  /** The rows the chart can draw, when its own filter narrows them. */
+  population?: number[]
 ): RowPlan {
   const categories = new Map<string, RowCategory & { total: number }>();
-  Object.values(column).forEach((input) => {
+  (population
+    ? population.map((id) => column[id])
+    : Object.values(column)
+  ).forEach((input) => {
     const value = categoryValue(input);
     const key = categoryKey(value);
     const category = categories.get(key) ?? {

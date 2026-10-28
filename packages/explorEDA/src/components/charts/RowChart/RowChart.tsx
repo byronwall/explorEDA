@@ -233,8 +233,24 @@ export function RowChart({
       : fitRows;
     if (liveSummary && allSummary)
       return planRowSummary(liveSummary, allSummary, maxRows);
-    return planRowCategories(column, liveIds, maxRows);
-  }, [column, liveIds, liveSummary, allSummary, fitRows, settings.topN]);
+    // Context bars count the rows the chart's own filter keeps, so a chart
+    // limited to 2023 is not measured against every year.
+    return planRowCategories(
+      column,
+      liveIds,
+      maxRows,
+      settings.localFilters?.length ? allIds : undefined
+    );
+  }, [
+    column,
+    liveIds,
+    liveSummary,
+    allSummary,
+    fitRows,
+    settings.topN,
+    settings.localFilters,
+    allIds,
+  ]);
   const displayCounts = useMemo(
     () => [
       ...plan.visible.map((item) => ({
