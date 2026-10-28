@@ -41,6 +41,7 @@ function ChartAnnotations({
       plotWidth={frame.plotWidth}
       plotHeight={frame.plotHeight}
       clipPath={clipPath}
+      marks={frame.marks}
     />
   );
 }

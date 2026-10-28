@@ -460,6 +460,7 @@ function SingleBarChart({
         annotations={annotationSlot(settings, {
           ...scaleFrame(xScale, yScale, { y: settings.yAxis.scaleType }),
           facetKey,
+          marks: { rects: plan.bars },
           // A histogram's x axis is its field, so rule x=mean reads its rows.
           ...(plan.mode === "bin" && {
             xField: settings.field,

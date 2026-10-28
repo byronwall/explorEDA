@@ -5,6 +5,7 @@ import {
 import { finiteNumber, isMissingValue, timestampOf } from "@/lib/valueParsing";
 import type { IdType } from "@/providers/DataLayerProvider";
 import type { datum } from "@/types/ChartTypes";
+import type { AnnotationMarks } from "./labelLayout";
 import type {
   AnnotationKeyValue,
   AnnotationPopulation,
@@ -250,6 +251,8 @@ export interface AnnotationFrame {
   ) => PlottedRecord | Exclude<AnnotationStatus, "shown">;
   /** The facet panel this frame draws, by its facet values. */
   facetKey?: string;
+  /** What the chart draws, so annotation labels keep clear of it. */
+  marks?: AnnotationMarks;
 }
 
 /** A statistic of a field over some rows, or undefined without values. */

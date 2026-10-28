@@ -259,6 +259,7 @@ export function SeriesBarChart({
             // Grouped marks have no single record or category subject.
             ...scaleFrame(plan.x, plan.y, { y: settings.yAxis.scaleType }),
             facetKey,
+            marks: { rects: plan.bars },
           })}
           brushingMode="none"
           onClearPlot={() => updateChart(settings.id, { filters: [] })}

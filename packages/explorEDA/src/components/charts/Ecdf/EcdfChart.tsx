@@ -176,6 +176,12 @@ export function EcdfChart({
       yScale: plan.yScale,
       plotWidth: plan.plotWidth,
       plotHeight: plan.plotHeight,
+      marks: {
+        paths: plan.curves.map((curve) => curve.path),
+        points: plan.curves.flatMap((curve) =>
+          curve.quantiles.map(({ px, py }) => ({ x: px, y: py, r: 4 }))
+        ),
+      },
       xField: settings.field,
       facetKey,
       population: {
