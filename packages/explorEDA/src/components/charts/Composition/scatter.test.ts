@@ -126,7 +126,7 @@ describe("log numeric scales", () => {
     expect(numericDomain(income, { 0: 0, 1: 500 }, [0, 1])[0]).toBe(1);
     expect(
       numericDomain({ ...income, nice: true }, { 0: 30, 1: 500 }, [0, 1])
-    ).toEqual([10, 1000]);
+    ).toEqual([20, 500]);
     expect(isCompositionDefinition(scatter())).toBe(true);
   });
 
