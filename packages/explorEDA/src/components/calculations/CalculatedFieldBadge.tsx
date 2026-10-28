@@ -31,6 +31,7 @@ export function CalculatedFieldBadge({
   const data = useDataLayer((state) => state.data);
   const fieldProfiles = useDataLayer((state) => state.fieldProfiles);
   const getColumnData = useDataLayer((state) => state.getColumnData);
+  const label = useDataLayer((state) => state.getFieldLabel(field));
   const editor = useCalculationEditor();
   const calc = calculations.find((item) => item.resultColumnName === field);
   const [open, setOpen] = useState(false);
@@ -67,7 +68,7 @@ export function CalculatedFieldBadge({
           }
           aria-label={
             "Inspect " +
-            field +
+            label +
             " calculation" +
             (children !== undefined ? ", row " + (rowId + 1) : "")
           }
@@ -94,7 +95,7 @@ export function CalculatedFieldBadge({
               <span className="eda-calc-symbol" aria-hidden="true">
                 ƒx
               </span>
-              {showName && <span>{field}</span>}
+              {showName && <span>{label}</span>}
             </>
           )}
         </button>
@@ -116,7 +117,7 @@ export function CalculatedFieldBadge({
         }}
       >
         <div className="eda-calc-peek-heading">
-          <FieldMetadata profile={profile} label={field} compact />
+          <FieldMetadata profile={profile} label={label} compact />
           <span>Calculated field</span>
         </div>
         <pre>{calc.expression.rawInput}</pre>

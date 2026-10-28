@@ -858,7 +858,11 @@ function NotebookBlockView({
   const charts = useDataLayer((state) => state.charts);
   const rows = useDataLayer((state) => state.data);
   const saveToStructure = useDataLayer((state) => state.saveToStructure);
+  const getColumnData = useDataLayer((state) => state.getColumnData);
   const explore = useContext(ExploreChart);
+  // Reads the column, so a calculated field counts its own values.
+  const distinct = (field: string) =>
+    new Set(Object.values(getColumnData(field))).size;
   const byId = useMemo(
     () => new Map(charts.map((chart) => [chart.id, chart])),
     [charts]
@@ -915,10 +919,10 @@ function NotebookBlockView({
                     chart,
                     width,
                     chart.type === "row"
-                      ? new Set(rows.map((row) => row[chart.field])).size
+                      ? distinct(chart.field)
                       : chart.type === "heatmap"
                         ? Math.min(
-                            new Set(rows.map((row) => row[chart.field])).size,
+                            distinct(chart.field),
                             chart.maxCategories ?? Infinity
                           )
                         : undefined
