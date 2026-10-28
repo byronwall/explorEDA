@@ -20,7 +20,7 @@ import {
 } from "../annotations/ChartAnnotations";
 import { BubbleLegend } from "./BubbleLegend";
 import { DensityScatter } from "./DensityScatter";
-import { FitLabels } from "./FitLabels";
+import { FitLabels, fitLabelBox } from "./FitLabels";
 import { useScatterFits } from "./useScatterFits";
 import { hexBinFilters, planHexbins, type HexTrace } from "./hexPlan";
 import { planContours, type ContourTrace } from "./contourPlan";
@@ -151,6 +151,8 @@ function ScatterPoints({
   };
   const annotationFrame = useMemo((): ChartAnnotationFrame | undefined => {
     if (!settings.annotations?.length) return undefined;
+    // Annotation labels keep clear of the fit equations in the corner.
+    const labelBox = fitLabelBox(fits.plan, fits.summary, plan);
     const points = new Map(plan.points.map((point) => [point.sourceId, point]));
     // A facet's calculations read only that facet's rows.
     const facet = snapshot.facetIds && new Set(snapshot.facetIds);
@@ -170,6 +172,7 @@ function ScatterPoints({
       plotHeight: plan.plotHeight,
       marks: {
         points: plan.points.map(({ x, y, radius }) => ({ x, y, r: radius })),
+        rects: labelBox ? [labelBox] : undefined,
       },
       plotted: (id) => {
         const point = points.get(id);
@@ -185,6 +188,8 @@ function ScatterPoints({
     plan,
     snapshot,
     facetKey,
+    fits.plan,
+    fits.summary,
   ]);
   const marginals = useMemo(
     () => planMarginals(settings, plan),

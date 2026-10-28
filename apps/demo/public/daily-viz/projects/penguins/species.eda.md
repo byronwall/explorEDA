@@ -39,7 +39,7 @@ Across all three species, flipper length tracks body mass closely: flipper lengt
 
 ```eda
 scatter @nb-penguins-species-3 x=flipper y=mass color=species regression=linear title="Flipper length and body mass" x.title="Flipper length (mm)" y.title="Body mass (g)" {
-  callout "Heaviest: 6.3 kg male Gentoo" pick=max offset=-60,30
+  callout "Heaviest: 6.3 kg male Gentoo" pick=max
 }
 ```
 
