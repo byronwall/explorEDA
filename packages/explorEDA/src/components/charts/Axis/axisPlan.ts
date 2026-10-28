@@ -281,6 +281,22 @@ function position(scale: ChartScale, tick: number | string) {
 
 const AXIS_WORD = { x: "Horizontal", y: "Vertical" } as const;
 
+/**
+ * A field's precision pads every tick, so a round axis reads 0.0, 100.0,
+ * 200.0. When every tick's fraction is zero, the ticks drop it; ticks with a
+ * real fraction, such as 2.0 beside 2.5, keep it.
+ */
+function trimZeroFractions(
+  format: AxisInput["format"],
+  ticks: (number | string)[]
+): AxisInput["format"] {
+  const zero = /(\d)\.0+(?!\d)/;
+  const labels = ticks.map((tick) => format(tick));
+  if (!labels.length || !labels.every((label) => zero.test(label)))
+    return format;
+  return (value) => format(value).replace(zero, "$1");
+}
+
 function planAxis(
   axis: AxisName,
   input: AxisInput,
@@ -289,7 +305,7 @@ function planAxis(
   margin: MarginSettings,
   footer = 0
 ): AxisPlan {
-  const { scale, format } = input;
+  const { scale } = input;
   const band = "bandwidth" in scale;
   const typography = input.typography ?? DEFAULT_AXIS_TYPOGRAPHY;
   const tickFontSize = input.tickFontSize ?? typography.tickSize;
@@ -304,15 +320,21 @@ function planAxis(
       : "base" in scale
         ? logTicks(scale, requested)
         : scale.ticks(requested));
+  const format = band
+    ? input.format
+    : trimZeroFractions(input.format, candidates);
   // Crowded band labels keep every stride-th category, so each shown label
-  // has room for about six characters instead of two or three.
+  // has room for about six characters instead of two or three. Past a dozen
+  // categories most labels drop anyway, so the kept ones get room for twelve
+  // and a date reads 2021-07-05, not 2021-….
+  const roomChars = candidates.length > 12 ? 12 : 6;
   const stride =
     axis === "x" && band
       ? Math.max(
           1,
           Math.ceil(
             (Math.min(
-              6 * tickFontSize * 0.7,
+              roomChars * tickFontSize * 0.7,
               Math.max(
                 0,
                 ...candidates.map((tick) =>
