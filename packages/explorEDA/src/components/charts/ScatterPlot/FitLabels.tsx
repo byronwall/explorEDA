@@ -33,6 +33,65 @@ function corner(plan: ScatterPlan, lines: number) {
   return right < left ? "right" : "left";
 }
 
+/** Which fits the stack lists, how many lines it takes, and its corner. */
+function stackLayout(
+  fits: ScatterFitPlan | undefined,
+  summary: PairedSummaryPlan | undefined,
+  plan: ScatterPlan
+) {
+  // LOESS states its method and span once; each group line keeps its fit quality.
+  const loessHeader =
+    fits && !fits.notice && fits.method === "loess"
+      ? `LOESS · span ${fits.settings.span ?? DEFAULT_SPAN}`
+      : undefined;
+  const maxLines = Math.max(
+    1,
+    Math.floor((plan.plotHeight * 0.4) / LINE_HEIGHT) -
+      (summary ? 1 : 0) -
+      (loessHeader ? 1 : 0)
+  );
+  const all = fits?.notice ? [] : (fits?.fits ?? []);
+  const overflow = all.length > maxLines;
+  const shown = overflow ? all.slice(0, maxLines - 1) : all;
+  const lines =
+    shown.length +
+    (overflow ? 1 : 0) +
+    (summary ? 1 : 0) +
+    (loessHeader ? 1 : 0) +
+    (fits?.notice ? 1 : 0);
+  return {
+    loessHeader,
+    all,
+    overflow,
+    shown,
+    lines,
+    side: corner(plan, lines),
+  };
+}
+
+/**
+ * The plot area the label stack covers, so annotation labels can keep
+ * clear of it. Undefined when the plot draws no stack.
+ */
+export function fitLabelBox(
+  fits: ScatterFitPlan | undefined,
+  summary: PairedSummaryPlan | undefined,
+  plan: ScatterPlan
+) {
+  if (!fits && !summary) return undefined;
+  if (plan.plotWidth < 60 || plan.plotHeight < 40) return undefined;
+  const { lines, side } = stackLayout(fits, summary, plan);
+  if (!lines) return undefined;
+  // Equations run as wide as the plot allows, up to about 280 px of text.
+  const width = Math.min(plan.plotWidth - 12, 280);
+  return {
+    x: side === "left" ? 6 : plan.plotWidth - 6 - width,
+    y: 4,
+    width,
+    height: lines * LINE_HEIGHT + 4,
+  };
+}
+
 /**
  * Equations sit in a quiet corner of the plot. When they would crowd it, the
  * last line opens every group's result in the chart trace instead.
@@ -53,32 +112,15 @@ export function FitLabels({
   onTrace: (kind: AnalysisTraceKind, id: string) => void;
 }) {
   if (plan.plotWidth < 60 || plan.plotHeight < 40) return null;
-  // LOESS states its method and span once; each group line keeps its fit quality.
-  const loessHeader =
-    fits && !fits.notice && fits.method === "loess"
-      ? `LOESS · span ${fits.settings.span ?? DEFAULT_SPAN}`
-      : undefined;
-  const maxLines = Math.max(
-    1,
-    Math.floor((plan.plotHeight * 0.4) / LINE_HEIGHT) -
-      (summary ? 1 : 0) -
-      (loessHeader ? 1 : 0)
+  const { loessHeader, all, overflow, shown, side } = stackLayout(
+    fits,
+    summary,
+    plan
   );
-  const all = fits?.notice ? [] : (fits?.fits ?? []);
-  const overflow = all.length > maxLines;
-  const shown = overflow ? all.slice(0, maxLines - 1) : all;
   // Small multiples keep the equation; R² stays in the label's trace.
   const narrow = plan.plotWidth < 300;
   // A facet that holds one group already names it in its heading.
   const named = all.length > 1;
-  const side = corner(
-    plan,
-    shown.length +
-      (overflow ? 1 : 0) +
-      (summary ? 1 : 0) +
-      (loessHeader ? 1 : 0) +
-      (fits?.notice ? 1 : 0)
-  );
   const trace =
     (kind: AnalysisTraceKind, id: string) =>
     (event: MouseEvent | KeyboardEvent) => {
