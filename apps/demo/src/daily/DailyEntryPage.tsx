@@ -85,10 +85,11 @@ function workspaceHeights(settings: SavedDataStructure): CSSProperties {
 }
 
 /**
- * A composition draws its artboard to fit its panel. Where the panel is
- * narrower than the saved layout planned, as when the grid stacks on a
- * phone, the saved height leaves blank space above and below the artboard,
- * so the panel takes only the rows the artboard needs at this width.
+ * A composition draws its artboard to fit its panel. The saved height only
+ * fits the width the layout planned: narrower, as when the grid stacks on a
+ * phone, it leaves blank space above and below the artboard; wider, it
+ * shrinks the artboard to a small figure in a wide box. So the panel takes
+ * the rows the artboard needs at this width.
  */
 function artboardRows(
   chart: SavedDataStructure["charts"][number],
@@ -107,7 +108,7 @@ function artboardRows(
   // Panel margin, border, and padding take 24 px across, and with its
   // header 58 px down.
   const tall = ((panel - 24) * artboard.height) / artboard.width + 58;
-  return Math.min(h, Math.ceil(tall / grid.rowHeight));
+  return Math.ceil(tall / grid.rowHeight);
 }
 
 /**

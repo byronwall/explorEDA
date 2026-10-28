@@ -4306,7 +4306,12 @@ function axisNodes(
   if (!bins.length) return [];
   const band = frame.width / bins.length;
   const y = frame.y + frame.height + 12;
-  const label = (text: string, x: number, key: string): SceneNode => ({
+  const label = (
+    text: string,
+    x: number,
+    key: string,
+    anchor: "start" | "middle" = "start"
+  ): SceneNode => ({
     type: "text",
     key: `${unit.id}:${instanceKey}:axis:${key}`,
     elementId: unit.id,
@@ -4315,7 +4320,7 @@ function axisNodes(
     fontSize: 10,
     fontWeight: 400,
     fill: MUTED_INK,
-    anchor: "start",
+    anchor,
   });
   // Months across years label each January with its year.
   if (scale.interval === "month" && bins.length > 12) {
@@ -4326,6 +4331,12 @@ function axisNodes(
     );
   }
   const step = Math.max(1, Math.ceil(56 / band));
+  // When every band has room for its label, it centers under its cell;
+  // thinned labels mark where their band starts.
+  if (step === 1)
+    return bins.map((bin, index) =>
+      label(bin.label, frame.x + (index + 0.5) * band, bin.key, "middle")
+    );
   return bins.flatMap((bin, index) =>
     index % step === 0
       ? [label(bin.label, frame.x + index * band, bin.key)]
