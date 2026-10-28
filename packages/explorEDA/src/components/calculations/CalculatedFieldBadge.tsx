@@ -31,7 +31,7 @@ export function CalculatedFieldBadge({
   const data = useDataLayer((state) => state.data);
   const fieldProfiles = useDataLayer((state) => state.fieldProfiles);
   const getColumnData = useDataLayer((state) => state.getColumnData);
-  const label = useDataLayer((state) => state.getFieldLabel(field));
+  const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
   const editor = useCalculationEditor();
   const calc = calculations.find((item) => item.resultColumnName === field);
   const [open, setOpen] = useState(false);
@@ -42,6 +42,7 @@ export function CalculatedFieldBadge({
   const cancelTimer = () => clearTimeout(timer.current);
   useEffect(() => () => clearTimeout(timer.current), []);
   if (!calc || !editor) return <>{children}</>;
+  const label = getFieldLabel(field);
   const leave = () => {
     cancelTimer();
     if (!pinned.current) timer.current = setTimeout(() => setOpen(false), 180);
