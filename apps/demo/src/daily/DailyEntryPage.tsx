@@ -54,7 +54,7 @@ import "./daily.css";
 type LoadedEntry = Awaited<ReturnType<typeof loadDailyEntry>>;
 
 /** The workspace's toolbar and status line, around the chart grid. */
-const WORKSPACE_CHROME = 174;
+const WORKSPACE_CHROME = 100;
 
 /**
  * Heights that fit the saved layout without an inner scroll: the grid's rows
@@ -64,7 +64,7 @@ const WORKSPACE_CHROME = 174;
 function workspaceHeights(settings: SavedDataStructure): CSSProperties {
   const { rowHeight, containerPadding } = settings.gridSettings;
   const layouts = settings.charts.map((chart) => chart.layout);
-  const rows = Math.max(...layouts.map((item) => item.y + item.h)) + 1;
+  const rows = Math.max(...layouts.map((item) => item.y + item.h));
   const stacked = layouts.reduce((sum, item) => sum + item.h, 0);
   const pairs = layouts.reduce(
     (sum, item, index) =>
@@ -415,6 +415,17 @@ function WorkspaceContent({
   attempt: number;
 }) {
   const { ref, height } = useFittedHeight();
+  // Grid markers guide someone moving charts; a reader sees only the charts.
+  const saved = useMemo(
+    () => ({
+      ...loaded.settings,
+      gridSettings: {
+        ...loaded.settings.gridSettings,
+        showBackgroundMarkers: false,
+      },
+    }),
+    [loaded.settings]
+  );
   return (
     <>
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
@@ -434,7 +445,7 @@ function WorkspaceContent({
             key={`${entry.id}-${attempt}`}
             data={loaded.rows}
             fieldTypes={loaded.fieldTypes}
-            savedData={loaded.settings}
+            savedData={saved}
           />
         </div>
       </div>

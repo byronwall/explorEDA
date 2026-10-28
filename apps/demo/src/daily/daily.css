@@ -17,6 +17,12 @@
   }
 }
 
+/* The editor keeps a spare row below the charts to add one; a reader's
+   page ends at the last chart. */
+.daily-workspace .eda-chart-area > div {
+  min-height: 0 !important;
+}
+
 .daily-notebook .eda-notebook {
   padding-inline: 0;
   padding-top: 0;
