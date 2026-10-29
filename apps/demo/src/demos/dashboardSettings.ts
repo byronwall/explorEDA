@@ -1670,6 +1670,32 @@ export const rankCorrelationDashboard = dashboard(
   ]
 );
 
+export const rankPairsDashboard = dashboard(
+  "Pairs that bend, curve, or hang on one row",
+  [
+    {
+      ...base,
+      id: "pair-shapes",
+      type: "scatter-matrix",
+      title: "Dose and four responses, r above ρ",
+      correlation: "both",
+      pairOrder: "difference",
+      fields: ["Dose", "Linear response", "Growth", "U response", "Spike"],
+      lower: { numeric: "points", mixed: "points", categorical: "shares" },
+      upper: { numeric: "correlation", mixed: "box", categorical: "tiles" },
+      diagonal: { continuous: "histogram", categorical: "bars" },
+      layout: layout(0, 0, 8, 9),
+      margin: { top: 4, right: 4, bottom: 4, left: 4 },
+    },
+    table(
+      "pair-batches",
+      "Batches",
+      ["Batch", "Dose", "Linear response", "Growth", "U response", "Spike"],
+      layout(8, 0, 4, 9)
+    ),
+  ]
+);
+
 export const scatterSurfaceDashboard = dashboard(
   "Ten thousand days, two ways to see density",
   [

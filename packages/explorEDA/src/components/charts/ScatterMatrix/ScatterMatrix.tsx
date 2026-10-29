@@ -832,7 +832,8 @@ function MatrixCellMarks({
 }) {
   const size = plan.cellSize;
   // Small gaps are noted in the status line; larger ones label the cell.
-  const reduced = cell.n < liveCount * 0.98;
+  // Both methods always name their rows, so two numbers never stand alone.
+  const reduced = cell.n < liveCount * 0.98 || cellMethods(cell).length > 1;
   const count = reduced && (
     <text
       x={cell.x + size - 4}
@@ -1194,7 +1195,11 @@ function CorrelationCell({
 }) {
   const size = plan.cellSize;
   const fontSize = Math.max(11, Math.min(20, size / 7));
-  const method = cellMethods(cell)[0] ?? "pearson";
+  const methods = cellMethods(cell);
+  if (methods.length > 1) {
+    return <BothCorrelations cell={cell} plan={plan} fontSize={fontSize} />;
+  }
+  const method = methods[0] ?? "pearson";
   const symbol = METHOD_SYMBOLS[method];
   const groups = plan.groups && cell.groupCorrelation ? plan.groups : undefined;
   const lineHeight = Math.max(10, Math.min(14, size / 9));
@@ -1253,6 +1258,60 @@ function CorrelationCell({
           {`${truncate(item.label, size * 0.6)}: ${formatR(item.r)}`}
         </text>
       ))}
+    </>
+  );
+}
+
+/**
+ * r above ρ, each with its symbol. Groups would not fit beside two numbers,
+ * so the cell counts them and the trace lists each.
+ */
+function BothCorrelations({
+  cell,
+  plan,
+  fontSize,
+}: {
+  cell: MatrixCell;
+  plan: MatrixPlan;
+  fontSize: number;
+}) {
+  const size = plan.cellSize;
+  const size2 = fontSize * 0.9;
+  const groups = plan.groups && cell.groupCorrelation ? plan.groups : undefined;
+  const lines = cellMethods(cell);
+  const top = cell.y + size / 2 - size2 * (groups ? 1.4 : 0.9);
+  return (
+    <>
+      {lines.map((method, index) => (
+        <text
+          key={method}
+          x={cell.x + size / 2}
+          y={top + size2 * 0.5 + index * size2 * 1.25}
+          textAnchor="middle"
+          dominantBaseline="central"
+          fontSize={size2}
+          className="fill-foreground"
+        >
+          <tspan fontStyle="italic" className="fill-muted-foreground">
+            {METHOD_SYMBOLS[method]}
+          </tspan>{" "}
+          <tspan fontWeight={600}>
+            {formatR(cell.correlation?.[method]?.value)}
+          </tspan>
+        </text>
+      ))}
+      {groups && (
+        <text
+          x={cell.x + size / 2}
+          y={top + size2 * 3}
+          textAnchor="middle"
+          dominantBaseline="central"
+          fontSize={9}
+          className="fill-muted-foreground"
+        >
+          {`${groups.labels.length} groups in trace`}
+        </text>
+      )}
     </>
   );
 }

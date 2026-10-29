@@ -17,6 +17,7 @@ import {
   pointMapDashboard,
   scatterMatrixDashboard,
   rankCorrelationDashboard,
+  rankPairsDashboard,
   scatterTraceDashboard,
   chartControlsDashboard,
   shopDashboard,
@@ -367,6 +368,20 @@ export const liveExamples = {
       { expectRows: 40 },
       { expectText: "r 0.85" },
       { expectText: "ρ 0.96" },
+    ],
+  },
+  "rank-pair-discovery": {
+    label: "Live matrix with both correlations",
+    data: "/datasets/pair-shapes.csv",
+    savedData: focus(rankPairsDashboard, { "pair-shapes": [0, 0, 12] }),
+    exampleId: "rank-pair-discovery",
+    shotAlt:
+      "A scatter matrix of dose and four responses with r above ρ in each correlation cell.",
+    steps: [
+      { expectRows: 40 },
+      { expectText: "r 0.84" },
+      { expectText: "ρ 1.00" },
+      { expectMark: "Pairs in Dose and four responses, r above ρ" },
     ],
   },
   calendar: {

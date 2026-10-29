@@ -394,7 +394,10 @@ function planGroups(
 export function correlationMethods(
   settings: Pick<ScatterMatrixSettings, "correlation">
 ): CorrelationMethod[] {
-  return [settings.correlation === "spearman" ? "spearman" : "pearson"];
+  const method = settings.correlation;
+  return method === "both"
+    ? ["pearson", "spearman"]
+    : [method === "spearman" ? "spearman" : "pearson"];
 }
 
 function cellKind(

@@ -58,6 +58,11 @@ const CORRELATIONS: Options = [
     "Spearman",
     "Spearman ρ: Pearson on each pair's ranks. Any steady rise or fall reads as ±1, and outliers count only by their order.",
   ],
+  [
+    "both",
+    "Both",
+    "Show r above ρ in each cell. A large gap marks a trend that bends or has outliers.",
+  ],
 ];
 const CATEGORICAL_CELLS: Options = [
   [

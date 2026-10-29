@@ -29,3 +29,17 @@
 - Alt-click a correlation cell for its trace: the method, how many rows are paired and which values the rest are missing, each group's result, and the first paired rows with their values and ranks.
 - Your own selection in the matrix highlights rows but never changes a coefficient. Filters on other charts do, since they change which rows are live.
 - A correlation of 0 means no straight-line or steady trend, not no relationship: a U shape scores 0 on both methods.
+
+## Compare and browse pairs
+
+<LiveExample
+  id="rank-pair-discovery"
+  caption="Dose and four responses, with r above ρ in each correlation cell."
+/>
+
+- Pick **Both** under Correlation to show _r_ above _ρ_ in each cell, with its row count. With a color field, the cell counts the groups and the trace lists each group's _r_ and _ρ_.
+- **Pairs** in the chart header lists every pair of number and date fields with _r_, _ρ_, and rows. It computes both methods without changing what the cells show.
+- Sort the list by field order, |ρ|, |r|, or |ρ − r|. Pairs without a value go last. The order you pick is saved with the chart.
+- A large gap between _ρ_ and _r_ is a lead, not a test. _ρ_ above _r_ often means a curve that keeps rising, such as Growth. _r_ above _ρ_ often means one row drives the trend, such as Spike's last batch.
+- Search filters the list by field name. **Trace** opens that pair's cell trace, so you can read its counts and paired rows.
+- In a faceted matrix, pick the facet whose rows the list uses.

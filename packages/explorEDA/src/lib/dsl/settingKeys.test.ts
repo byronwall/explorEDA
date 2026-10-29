@@ -68,7 +68,8 @@ const COMPLETE: Record<string, Record<string, unknown>> = {
   },
   "scatter-matrix": {
     fields: ["Revenue", "Cost", "Region"],
-    correlation: "spearman",
+    correlation: "both",
+    pairOrder: "difference",
   },
   heatmap: { columnField: "Channel" },
   map: { latitudeField: "Lat", longitudeField: "Lon" },

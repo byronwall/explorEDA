@@ -15,6 +15,7 @@ import {
   scatterRegressionUnitsDashboard,
   scatterMatrixDashboard,
   rankCorrelationDashboard,
+  rankPairsDashboard,
   scatterSurfaceDashboard,
   pointMapDashboard,
   regionMapDashboard,
@@ -586,6 +587,17 @@ export const examples: ExampleData[] = [
     icon: LayoutGrid,
     data: "/datasets/study-hours.csv",
     savedData: rankCorrelationDashboard,
+  },
+  {
+    id: "rank-pair-discovery",
+    title: "Pairs that bend, curve, or hang on one row",
+    description:
+      "Each cell shows Pearson r above Spearman ρ. Growth curves away from a line, the U response scores near 0 on both, and Spike rises only because of its last batch. Pairs lists every pair sorted by the gap between r and ρ.",
+    dataset: { rows: "40 batches", fields: 6, source: "Synthetic" },
+    shows: ["Pearson and Spearman", "Pairs list", "Outliers"],
+    icon: LayoutGrid,
+    data: "/datasets/pair-shapes.csv",
+    savedData: rankPairsDashboard,
   },
   {
     id: "scatter-surfaces",

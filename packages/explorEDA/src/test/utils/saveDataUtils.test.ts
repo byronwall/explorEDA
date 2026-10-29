@@ -259,6 +259,10 @@ describe("saveDataUtils", () => {
       expect(valid(matrix)).toBe(true);
       expect(valid({ ...matrix, correlation: "spearman" })).toBe(true);
       expect(valid({ ...matrix, correlation: "kendall" })).toBe(false);
+      expect(
+        valid({ ...matrix, correlation: "both", pairOrder: "difference" })
+      ).toBe(true);
+      expect(valid({ ...matrix, pairOrder: "name" })).toBe(false);
     });
 
     it("accepts serialized 3D camera vectors", () => {

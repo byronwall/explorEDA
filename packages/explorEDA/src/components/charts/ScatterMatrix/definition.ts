@@ -43,13 +43,21 @@ export interface ScatterMatrixSettings extends BaseChartSettings {
   jitter?: number;
   /** What correlation cells compute. Absent is Pearson. */
   correlation?: MatrixCorrelation;
+  /** How the Pairs list orders pairs. Absent keeps field order. */
+  pairOrder?: MatrixPairOrder;
 }
 
 /**
  * Pearson measures how close the points lie to a line; Spearman ranks each
  * pair's values first, so any steady rise or fall reads as ±1.
  */
-export type MatrixCorrelation = "pearson" | "spearman";
+export type MatrixCorrelation = "pearson" | "spearman" | "both";
+
+/**
+ * Field order, or largest first by |ρ|, |r|, or |ρ − r|. A large gap between
+ * the two marks a pair whose trend bends or has outliers.
+ */
+export type MatrixPairOrder = "fields" | "spearman" | "pearson" | "difference";
 
 export const MIN_MATRIX_FIELDS = 2;
 export const MAX_MATRIX_FIELDS = 10;

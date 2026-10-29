@@ -686,6 +686,15 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId: "rank-pair-discovery",
+    intent:
+      "Show r and ρ together, then sort every pair by their gap to find curves and outlier-driven trends.",
+    features: {
+      "chart:scatter-matrix": "shown",
+      "chart:data-table": "shown",
+    },
+  },
+  {
     exampleId: "rank-correlation-basics",
     intent:
       "Compare Pearson and Spearman on a curve that always rises, with tied ratings and missing practice-test counts.",

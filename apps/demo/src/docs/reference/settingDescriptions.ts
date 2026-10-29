@@ -213,7 +213,9 @@ export const CHART_SETTINGS: Readonly<
     jitter:
       "How much of a category's band jittered points spread across, from 0 to 1. Default 0.8.",
     correlation:
-      "What correlation cells compute: pearson (how close points lie to a line) or spearman (Pearson on each pair's ranks). Absent is pearson.",
+      "What correlation cells compute: pearson (how close points lie to a line), spearman (Pearson on each pair's ranks), or both, r above ρ. Absent is pearson.",
+    pairOrder:
+      "How the Pairs list sorts: fields keeps matrix order; spearman, pearson, and difference put the largest |ρ|, |r|, or |ρ − r| first. Absent is fields.",
   },
   calendar: {
     field: "Date field. Each day's cell summarizes its rows.",

@@ -193,6 +193,14 @@ describe("planScatterMatrix", () => {
       expect(cell.correlation!.spearman!.value).toBeCloseTo(1, 12);
       expect(cell.correlation!.pearson).toBeUndefined();
     }
+    const both = planScatterMatrix({
+      settings: { ...settings(["x", "y", "z"]), correlation: "both" },
+      snapshot: small,
+      width: 600,
+      height: 600,
+    }).cells.find((cell) => cell.kind === "correlation")!.correlation!;
+    expect(both.pearson!.value).toBeCloseTo(Math.sqrt(12 / 13), 12);
+    expect(both.spearman!.value).toBeCloseTo(1, 12);
     const selected = plan([{ type: "range", field: "x", min: 1, max: 2 }]);
     expect(selected.hasSelection).toBe(true);
     expect(
