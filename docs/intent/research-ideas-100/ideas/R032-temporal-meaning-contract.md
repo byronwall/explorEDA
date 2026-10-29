@@ -4,11 +4,21 @@
 - Category: Types, quantities, and dates
 - Priority: 69
 - Kind: follow-up
-- Status: candidate
+- Status: design-researched; implementation proposed
 - Confidence: medium
 - Baseline: `9b16d78e3ed0742ed4d5858c1939fec9e758b510`
 
 ## Research brief
+
+The October 26 Design run supersedes the conditional research brief below.
+Byron is demand; no outside-demand study is required.
+Build canonical scalar values with temporal metadata in three complete slices:
+UTC civil dates/instants/explicit epochs, authored zones, then genuine month labels.
+See the [review and dispositions](../../../research/temporal-preparation-2026-10-26/README.md)
+and [implementation plan](../../temporal-preparation/implementation-plan.md).
+No feature is implemented by this research.
+
+## Original candidate context
 
 A birthday, a monthly reporting label, and a sensor timestamp describe different temporal things. The repository currently uses a simple datetime interpretation with UTC parsing and formatting. `timestampOf` accepts finite numeric timestamps, while `utcPeriod` starts from nonblank strings; field conversion also produces ISO strings. Those observed boundaries raise a representation question rather than proving inconsistent results in normal flows. Analysts need to know when a number means epoch milliseconds and when a date is only a calendar label.
 

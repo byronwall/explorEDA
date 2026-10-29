@@ -187,9 +187,9 @@
   },
   {
     "id": "R032",
-    "disposition": "investigate",
-    "reason": "Investigate the minimum temporal metadata needed to distinguish calendar labels from exact instants and numeric epoch inputs. Start with the bounded experiment; keep the current design if the rejection signal applies.",
-    "destination": "ideas/R032-temporal-meaning-contract.md"
+    "disposition": "build-plan",
+    "reason": "October 26 Design selected canonical scalars plus temporal metadata in three complete slices. Local review preserves prop resets and clears unprovable exact identity. Byron is demand; implementation remains pending.",
+    "destination": "../temporal-preparation/implementation-plan.md"
   },
   {
     "id": "R033",

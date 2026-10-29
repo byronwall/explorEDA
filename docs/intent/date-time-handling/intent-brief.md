@@ -41,8 +41,13 @@ Not yet stated. Byron's ideas will define it.
 
 ## Current reality that matters
 
+- October 26 research provides a coherent [temporal preparation plan](../temporal-preparation/implementation-plan.md).
+  It covers civil dates, instants, epochs, authored zones, and month labels across consumers and persistence.
+  See the [local review](../../research/temporal-preparation-2026-10-26/README.md). This remains proposed work.
+
 - Numeric axis bounds (`xAxis.limits`, `yAxis.limits`) and axis drag work only on numeric axes. A time-series X axis is excluded (`numericAxes` in `components/charts/Axis/axisBounds.ts`).
-- The time-series date axis takes its range from the rows other charts leave in, so it moves on every brush. That breaks the stable-axes rule in `docs/ui-defaults.md`. A fix has to keep the "filter the dates in another view" route that the 2,000-period cap relies on.
+- `planTimeSeries` now uses `snapshot.allIds` for its period domain. Linked filters do not shrink that domain.
+  Preserve this behavior and the chart-local population route for the 2,000-period cap.
 - A field is typed as a date only when its values have a date shape (#231).
 - [Calendar and period analysis](../calendar-period-analysis/intent-brief.md) already covers stepping through periods and rolling measures. The two should be reconciled once this rework has a direction.
 
