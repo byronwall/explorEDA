@@ -689,9 +689,9 @@ export function liveExampleHeight(spec: LiveExampleSpec) {
 /** A step as an instruction for the reader. */
 export function describeStep(spec: LiveExampleSpec, step: LiveStep): string {
   if ("brush" in step) {
-    const chart = spec.savedData?.charts.find(
-      ({ id }) => id === step.brush.chart
-    );
+    const chart = (
+      spec.notebook === undefined ? spec.savedData.charts : []
+    ).find(({ id }) => id === step.brush.chart);
     return `Drag across “${chart?.title ?? step.brush.chart}” from ${step.brush.from} to ${step.brush.to}.`;
   }
   if ("select" in step) {
