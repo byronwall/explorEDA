@@ -136,3 +136,9 @@ Run focused ECDF, persistence, DSL, notebook, and export tests. Run demo coverag
 Each implementation milestone needs a user-facing changeset and full `pnpm check` before its PR. This research-only PR needs doc/format checks, without a changeset or full build. No runtime, browser, persistence, or performance acceptance is claimed here.
 
 Keep inference, weights, generated Other/Overall references, default normalization, frozen cohorts, cross-source comparison, and a generic result engine outside these milestones. The [local dispositions](../../research/distribution-distance-2026-10-28/README.md) explain each boundary.
+
+## Preserved Pro result materials
+
+[Original Pro reports and artifacts for #554](assets/pro-results/distribution-distance-2026-10-28/ASSET_INDEX.md)
+
+All extracted result materials are preserved without ZIP containers. Original bytes and attribution are unchanged.

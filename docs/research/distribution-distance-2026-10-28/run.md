@@ -70,3 +70,7 @@ Existing-behavior checks pass four files and 27 tests: ECDF planner/renderer, Cr
 Documentation tests pass three files and 73 tests, with existing React act warnings. Prettier, whitespace, PR checks, and 110 relative documentation links pass. Both collected originals are complete readable UTF-8 files. No originals or receipts are staged.
 
 PR #554 body, five-file scope, links, branches, and open state verified. Attached it to this chat. Applied documentation label; codex and codex-automation labels are unavailable. Deleted the temporary collector through the supported scheduler. The six-hour pipeline remains ACTIVE with GPT-6.1 Sol Medium, verified through its tool view and saved configuration. No merge, deployment, implementation, paid service, or worktree. Completion time: October 29, 2026, 01:08 UTC.
+
+## Preserved Pro result materials
+
+Backfill requested by Byron: [2 original result files](../../intent/distribution-comparison/assets/pro-results/distribution-distance-2026-10-28/ASSET_INDEX.md) are now committed under the intent entry. This supersedes earlier instructions to leave originals ignored. ZIPs and input source packets remain local. Byte equality and supplied manifest entries were checked; no downloaded code was executed.

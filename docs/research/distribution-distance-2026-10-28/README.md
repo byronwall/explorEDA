@@ -52,3 +52,7 @@ Build means included in the plan, not approved to ship.
 Local standalone exact-rational checks cover the plan's numerical vectors, swaps, replication, endpoint direction, and binary64 extremes. Existing-behavior tests and doc checks are recorded in [run.md](run.md). These do not prove the proposed feature.
 
 Implementation must measure exact-arithmetic latency, verify prepared CSV types, and prove the new save/notebook/input/export flows. No open product decision prevents M1. Weights research is separate and is not a shipped dependency. DIRECTION governs future topic choice; this run assigns no next topic.
+
+## Preserved Pro result materials
+
+[Complete original Pro artifacts](../../intent/distribution-comparison/assets/pro-results/distribution-distance-2026-10-28/ASSET_INDEX.md) are preserved under the intent entry. ZIP containers remain local.
