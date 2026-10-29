@@ -1,22 +1,22 @@
-# R005 — Rank correlation as a bounded pair-discovery option
+# R005 — Native rank correlation and original-record discovery
 
 - ID: R005
 - Category: Scientific analysis
 - Priority: 65
 - Kind: follow-up
-- Status: candidate
-- Confidence: medium
-- Baseline: `9b16d78e3ed0742ed4d5858c1939fec9e758b510`
+- Status: design complete; implementation proposed
+- Confidence: high in method; interaction and performance unverified
+- Baseline: `9d64a021e35d312887b1bc848e307f42b6c3091f`
 
 ## Research brief
 
-The delivered scatter matrix already helps choose among field pairs and can show Pearson r, including per-color-group values. `pairedCorrelation` extracts valid pairs and `pearson` computes the coefficient; standalone scatter summaries also report Pearson values. A new correlation matrix would repeat shipped work. The useful research question is narrower: whether a rank-based option changes which monotonic relationships an analyst notices when measurements have nonlinear scales or many repeated ordered values.
+Build native Spearman in the existing mixed Scatter Matrix, followed by Both mode, compact pair browsing, and original Scatter continuation. Preserve raw points and authored field order. Byron is the demand; DIRECTION.md supersedes the earlier experiment-only and outside-demand gates. See the [implementation plan](../../rank-discovery/implementation-plan.md) and [research decision](../../../research/rank-discovery-2026-10-26/README.md).
 
-Compare an explicitly named Spearman option in existing correlation cells with preserving Pearson and offering a prepared rank-transformed example. SciPy’s primary documentation identifies Spearman as a measure of monotonic relationship and specifies unavailable constant-input behavior; it can serve as a numerical reference. A rank option should define ties and missing pairs, display its method, and lead back to the original measurements in scatter. Adding p-values, significance stars, or a broad association-method chooser is outside this initial decision.
+Delete invalid pairs before assigning average ranks. Rerank within each color group and Other union. Compute pooled values directly. Keep the matrix's three-pair minimum and existing numeric summary's two-pair contract distinct. Expose unavailable reasons and disjoint exclusion counts. Do not use global field ranks after subsetting. Prepared ranks remain exploratory for a fixed-cohort lesson; Kendall, clustering, and broader shape discovery are deferred.
 
-The first experiment would use a strictly monotonic nonlinear relationship, tied ordinal measurements, a constant field, and a strong non-monotonic relationship. Compare coefficients with an independent calculation, then ask analysts which original scatter pairs merit inspection. Acceptance requires more successful discovery on the intended cases, correct tied ranks, and honest unavailable results. Reject the option if it changes rankings without improving analysis, encourages causal interpretation, or duplicates what existing points make obvious. Test small deterministic cases before considering a larger field count.
+The Design cycle supplies five milestones: native method, comparison/pairs, original Scatter/time axes, prepared continuation, and measured exact execution. Chronological Scatter is actual new work; current datetime axes use categories. A matrix selection can narrow the destination while leaving the matrix coefficient unchanged. The prepared draft must show that difference and clear only its source selection on explicit final acceptance.
 
-A method enum and reusable paired-rank calculation are modest additions, but method-specific labels and trace conventions must remain aligned between matrix and standalone summaries. This is a direct follow-up to relationship-discovery, whose intent already makes rank methods conditional on a monotonic nonlinear task. Confidence is medium: the numerical contract is well bounded, while demand and interaction value remain uncertain. The research earns its place by deciding whether one precise method adds analytical reach without creating a general statistics package.
+Independent rational checks confirm ties, pair-specific missingness, groups, nonlinear examples, and date anchors. These are fixture checks, not feature acceptance. Each milestone includes docs and a runnable example, state round trips, and interaction proof. Preserve exact results; add indexes or workers only after measurement. No p-values, causal scores, parser expansion, or new service. Pro originals remain ignored; the conversation records the source.
 
 ## References
 
@@ -26,3 +26,4 @@ A method enum and reusable paired-rank calculation are modest additions, but met
 - Related intent: `docs/intent/relationship-discovery/intent-brief.md`.
 - Related intent: `docs/intent/scientific-multivariate-analysis/intent-brief.md`.
 - External: <https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.spearmanr.html>. Accessed 2026-10-20; comparison or numerical reference only.
+- Design conversation: <https://chatgpt.com/c/6adf0075-3e48-83ea-86b8-605d87cfc376>, completed October 26, 2026.

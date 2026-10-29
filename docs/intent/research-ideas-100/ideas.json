@@ -160,15 +160,15 @@
   },
   {
     "id": "R005",
-    "title": "Rank correlation as a bounded pair-discovery option",
+    "title": "Native rank correlation and original-record discovery",
     "category": "Scientific analysis",
     "path": "ideas/R005-rank-correlation.md",
     "priority": 65,
     "research_kind": "follow-up",
-    "status": "candidate",
-    "summary": "Test whether rank correlation reveals useful monotonic relationships that the delivered Pearson matrix obscures.",
-    "research_question": "When does a Spearman option improve field-pair discovery enough to justify tie handling and another statistical label?",
-    "why_now": "The scatter matrix and Pearson summaries already exist; the remaining value must be demonstrated on a distinct relationship task.",
+    "status": "design complete; implementation proposed",
+    "summary": "Design complete: build native Spearman, comparison, compact pair browsing, and original-record Scatter continuation.",
+    "research_question": "How should exact pair/group ranks, original-value continuation, and saved scope ship in independent milestones?",
+    "why_now": "The delivered mixed matrix and linked Scatter support a concrete extension; the Design plan resolves ties, missingness, populations, dates, and persistence.",
     "repo_evidence": [
       {
         "path": "packages/explorEDA/src/components/charts/ScatterMatrix/matrixPlan.ts",
@@ -191,9 +191,9 @@
       "docs/intent/scientific-multivariate-analysis/intent-brief.md"
     ],
     "dependencies": [],
-    "first_experiment": "Compare Pearson and rank coefficients on monotonic nonlinear, tied ordinal, constant, and non-monotonic fixtures, then open the same scatter pairs.",
-    "acceptance_evidence": "Coefficients match an independent reference and users find useful pairs more reliably while understanding unavailable constant cases.",
-    "rejection_signal": "Users treat rank coefficients as causal strength, meaningful pairs do not change, or the feature mainly duplicates existing visual inspection.",
+    "first_experiment": "Implement M1 from docs/intent/rank-discovery/implementation-plan.md with exact tied, missing-pair, group, and state fixtures plus docs and a runnable example.",
+    "acceptance_evidence": "Exact memberships, counts, ranks, and unavailable reasons; correct coefficients; preserved own selection and save/text/echo/reopen behavior; accessible original-value inspection.",
+    "rejection_signal": "Incorrect population ranks, unlabeled destination-scope changes, causal interpretation, or unmeasured performance claims block feature acceptance.",
     "confidence": "medium",
     "external_sources": [
       "https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.spearmanr.html"

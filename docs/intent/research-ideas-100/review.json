@@ -26,7 +26,7 @@
   {
     "id": "R005",
     "disposition": "investigate",
-    "reason": "Test whether rank correlation reveals useful monotonic relationships that the delivered Pearson matrix obscures. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "reason": "Design complete in docs/intent/rank-discovery/implementation-plan.md: build native Spearman, comparison, pair browsing, and scope-aware original Scatter continuation. Implementation remains proposed; DIRECTION supersedes the old demand gate.",
     "destination": "ideas/R005-rank-correlation.md"
   },
   {
