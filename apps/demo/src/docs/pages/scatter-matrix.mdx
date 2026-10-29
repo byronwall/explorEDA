@@ -11,3 +11,35 @@
 - Each triangle draws its cells by the types of their two fields: numeric pairs as points or correlation; a numeric field against a category as points or boxes; two categories as points, tiles, or shares. Any cell can be blank.
 - The diagonal shows each field alone: a density, histogram, or label for numbers, and bars or a label for categories.
 - **Color** colors points, distributions, and correlations by a category field. Box plots and tiles keep one color.
+
+## Correlation methods and paired rows
+
+<LiveExample
+  id="rank-correlation-basics"
+  caption="The same four fields with Pearson on the left and Spearman on the right."
+/>
+
+- **Method**, under Correlation in the settings, sets what every correlation cell computes. Each cell names its method and shows its symbol: _r_ for Pearson, _ρ_ for Spearman.
+- **Pearson** measures how close the points lie to a straight line. A curve that always rises, such as exam scores that level off with more study, reads below 1.
+- **Spearman** is Pearson on ranks. Any steady rise or fall reads as ±1, and an outlier counts only by its place in the order.
+- A pair uses only the rows that have both of its values. Spearman ranks each pair's rows on their own, so a missing value in one field never shifts the ranks of another pair.
+- Tied values share the average of their ranks: two rows tied for first both rank 1.5.
+- With **Color**, each group is ranked again on its own rows. The pooled value is computed from every row, not averaged from the groups.
+- A cell shows — when it has fewer than 3 pairs or one of its fields has a single value. Alt-click the cell to see which.
+- Alt-click a correlation cell for its trace: the method, how many rows are paired and which values the rest are missing, each group's result, and the first paired rows with their values and ranks.
+- Your own selection in the matrix highlights rows but never changes a coefficient. Filters on other charts do, since they change which rows are live.
+- A correlation of 0 means no straight-line or steady trend, not no relationship: a U shape scores 0 on both methods.
+
+## Compare and browse pairs
+
+<LiveExample
+  id="rank-pair-discovery"
+  caption="Dose and four responses, with r above ρ in each correlation cell."
+/>
+
+- Pick **Both** under Correlation to show _r_ above _ρ_ in each cell, with its row count. With a color field, the cell counts the groups and the trace lists each group's _r_ and _ρ_.
+- **Pairs** in the chart header lists every pair of number and date fields with _r_, _ρ_, and rows. It computes both methods without changing what the cells show.
+- Sort the list by field order, |ρ|, |r|, or |ρ − r|. Pairs without a value go last. The order you pick is saved with the chart.
+- A large gap between _ρ_ and _r_ is a lead, not a test. _ρ_ above _r_ often means a curve that keeps rising, such as Growth. _r_ above _ρ_ often means one row drives the trend, such as Spike's last batch.
+- Search filters the list by field name. **Trace** opens that pair's cell trace, so you can read its counts and paired rows.
+- In a faceted matrix, pick the facet whose rows the list uses.

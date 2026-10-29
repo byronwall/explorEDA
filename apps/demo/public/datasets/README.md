@@ -510,6 +510,20 @@ Each quarter has a plan row and an actual row for twelve line items in three gro
 
 Each row is one hour's energy flow in kWh: solar and grid import are positive, and building load and grid export are negative. Hours with no flow of a kind have no row.
 
+## Study hours
+
+- File: `study-hours.csv`
+- Size: 40 rows and 6 fields
+- Use: a curve that always rises, so Pearson and Spearman differ; tied ratings and missing counts
+- Generation: hours from 0.5 to 18.05 in steps of 0.45; score = 40 + 58(1 − e^(−hours/3.5)) plus noise from a fixed-seed generator; practice tests = ⌊hours / 3⌋ with five blanks; confidence 1–5 from the score
+
+## Pair shapes
+
+- File: `pair-shapes.csv`
+- Size: 40 rows and 6 fields
+- Use: pairs where Pearson and Spearman disagree: a curve, a U shape, and one outlier
+- Generation: dose 1–40; linear response 2·dose plus noise; growth 1.15^dose; U response (dose − 20.5)² / 4 plus noise; spike near 50 with noise, plus 400 on the last batch. Noise comes from a fixed-seed generator.
+
 ## Regression units
 
 - File: `regression-units.csv`

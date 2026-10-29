@@ -14,6 +14,8 @@ import {
   scatterRegressionDashboard,
   scatterRegressionUnitsDashboard,
   scatterMatrixDashboard,
+  rankCorrelationDashboard,
+  rankPairsDashboard,
   scatterSurfaceDashboard,
   pointMapDashboard,
   regionMapDashboard,
@@ -574,6 +576,28 @@ export const examples: ExampleData[] = [
     icon: LayoutGrid,
     data: "/datasets/palmer-penguins.csv",
     savedData: scatterMatrixDashboard,
+  },
+  {
+    id: "rank-correlation-basics",
+    title: "Straight lines and steady rises",
+    description:
+      "Exam scores rise with study hours, then level off. Pearson reads the bend as a weaker link; Spearman ranks each pair first and reads the steady rise. Practice tests have gaps and Confidence has ties, so each pair ranks only its own rows.",
+    dataset: { rows: "40 students", fields: 6, source: "Synthetic" },
+    shows: ["Spearman correlation", "Tied ranks", "Missing values"],
+    icon: LayoutGrid,
+    data: "/datasets/study-hours.csv",
+    savedData: rankCorrelationDashboard,
+  },
+  {
+    id: "rank-pair-discovery",
+    title: "Pairs that bend, curve, or hang on one row",
+    description:
+      "Each cell shows Pearson r above Spearman ρ. Growth curves away from a line, the U response scores near 0 on both, and Spike rises only because of its last batch. Pairs lists every pair sorted by the gap between r and ρ.",
+    dataset: { rows: "40 batches", fields: 6, source: "Synthetic" },
+    shows: ["Pearson and Spearman", "Pairs list", "Outliers"],
+    icon: LayoutGrid,
+    data: "/datasets/pair-shapes.csv",
+    savedData: rankPairsDashboard,
   },
   {
     id: "scatter-surfaces",

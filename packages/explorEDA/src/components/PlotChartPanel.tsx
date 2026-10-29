@@ -41,6 +41,7 @@ import { ChartReadoutProvider } from "./charts/ChartReadout";
 import { ChartColorLegend } from "./charts/ColorLegend/ChartColorLegend";
 import { hasRoleLabels } from "./charts/roles/chartRoles";
 import { RolePickerPopover } from "./charts/roles/RolePickerPopover";
+import { MatrixPairsAction } from "./charts/ScatterMatrix/MatrixPairsAction";
 import { DropdownMenuItem } from "./ui/dropdown-menu";
 import { ChartTraceControl } from "./charts/ChartTraceControl";
 import {
@@ -915,6 +916,9 @@ export function PlotChartPanel({
             (settings.type !== "line" || settings.time) && (
               <ChartTraceInspector type={settings.type} />
             )}
+          {settings.type === "scatter-matrix" && (
+            <MatrixPairsAction settings={settings} chartTitle={chartTitle} />
+          )}
           {!expanded && canViewData && (
             <Popover open={dataOpen} onOpenChange={setDataOpen}>
               <ActionTooltip content="View data: preview the rows behind this chart (V)">

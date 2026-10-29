@@ -16,6 +16,8 @@ import {
   penguinDashboard,
   pointMapDashboard,
   scatterMatrixDashboard,
+  rankCorrelationDashboard,
+  rankPairsDashboard,
   scatterTraceDashboard,
   chartControlsDashboard,
   shopDashboard,
@@ -354,6 +356,33 @@ export const liveExamples = {
     exampleId: "scatter-matrix",
     shotAlt: "A grid of scatter plots for every pair of penguin measurements.",
     steps: [{ expectRows: 344 }],
+  },
+  "rank-correlation-basics": {
+    label: "Live Pearson and Spearman matrices",
+    data: "/datasets/study-hours.csv",
+    savedData: rankCorrelationDashboard,
+    exampleId: "rank-correlation-basics",
+    shotAlt:
+      "Two scatter matrices of study hours, exam score, practice tests, and confidence: Pearson r on the left, Spearman ρ on the right.",
+    steps: [
+      { expectRows: 40 },
+      { expectText: "r 0.85" },
+      { expectText: "ρ 0.96" },
+    ],
+  },
+  "rank-pair-discovery": {
+    label: "Live matrix with both correlations",
+    data: "/datasets/pair-shapes.csv",
+    savedData: focus(rankPairsDashboard, { "pair-shapes": [0, 0, 12] }),
+    exampleId: "rank-pair-discovery",
+    shotAlt:
+      "A scatter matrix of dose and four responses with r above ρ in each correlation cell.",
+    steps: [
+      { expectRows: 40 },
+      { expectText: "r 0.84" },
+      { expectText: "ρ 1.00" },
+      { expectMark: "Pairs in Dose and four responses, r above ρ" },
+    ],
   },
   calendar: {
     label: "Live calendar heatmap",

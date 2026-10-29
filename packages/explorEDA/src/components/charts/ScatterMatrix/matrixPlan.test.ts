@@ -14,11 +14,11 @@ import {
 import { sortedBoxStats } from "./matrixCells";
 import { findMatrixTraceRow, resolveMatrixTrace } from "./matrixTrace";
 import { OTHER_LABEL } from "./matrixBands";
+import { correlate } from "@/lib/pairCorrelation";
 import {
   brushFilters,
   filterOffsets,
   offsetFilter,
-  pearson,
   planScatterMatrix,
   replaceSelection,
   type MatrixSnapshot,
@@ -137,13 +137,77 @@ describe("planScatterMatrix", () => {
       width: 800,
       height: 800,
     });
-    const r = plan.cells.find(
+    const correlation = plan.cells.find(
       (cell) => cell.row === 0 && cell.column === 1
-    )!.r!;
+    )!.correlation!;
     // Bill length and body mass correlate at about 0.595 in this data.
-    expect(r).toBeCloseTo(0.595, 2);
-    expect(pearson([1, 2, 3, 4], [2, 4, 6, 8])).toBeCloseTo(1);
-    expect(pearson([1, 1, 1], [1, 2, 3])).toBeUndefined();
+    expect(correlation.pearson!.value).toBeCloseTo(0.595, 2);
+    expect(correlation.spearman).toBeUndefined();
+    expect(correlation.counts).toEqual({
+      paired: 342,
+      missingX: 0,
+      missingY: 0,
+      missingBoth: 2,
+    });
+  });
+
+  it("ranks each pair on its own rows and ignores its own selection", () => {
+    const missing = null;
+    const rows = [
+      [1, 1, 1],
+      [2, missing, 2],
+      [3, missing, 3],
+      [4, 2, missing],
+      [5, 3, missing],
+      [missing, 4, 4],
+      [missing, missing, missing],
+      ["Infinity", 5, 5],
+    ];
+    const ids = rows.map((_, id) => id);
+    const small: MatrixSnapshot = {
+      allIds: ids,
+      liveIds: ids,
+      columns: Object.fromEntries(
+        ["x", "y", "z"].map((field, column) => [
+          field,
+          Object.fromEntries(rows.map((row, id) => [id, row[column]!])),
+        ])
+      ),
+      types: { x: "numeric", y: "numeric", z: "numeric" },
+    };
+    const plan = (filters: Filter[] = []) =>
+      planScatterMatrix({
+        settings: {
+          ...settings(["x", "y", "z"]),
+          correlation: "spearman",
+          filters,
+        },
+        snapshot: small,
+        width: 600,
+        height: 600,
+      });
+    const upper = plan().cells.filter((cell) => cell.kind === "correlation");
+    expect(upper).toHaveLength(3);
+    for (const cell of upper) {
+      expect(cell.correlation!.spearman).toMatchObject({ status: "ok", n: 3 });
+      expect(cell.correlation!.spearman!.value).toBeCloseTo(1, 12);
+      expect(cell.correlation!.pearson).toBeUndefined();
+    }
+    const both = planScatterMatrix({
+      settings: { ...settings(["x", "y", "z"]), correlation: "both" },
+      snapshot: small,
+      width: 600,
+      height: 600,
+    }).cells.find((cell) => cell.kind === "correlation")!.correlation!;
+    expect(both.pearson!.value).toBeCloseTo(Math.sqrt(12 / 13), 12);
+    expect(both.spearman!.value).toBeCloseTo(1, 12);
+    const selected = plan([{ type: "range", field: "x", min: 1, max: 2 }]);
+    expect(selected.hasSelection).toBe(true);
+    expect(
+      selected.cells
+        .filter((cell) => cell.kind === "correlation")
+        .map((cell) => cell.correlation!.spearman!.value)
+    ).toEqual(upper.map((cell) => cell.correlation!.spearman!.value));
   });
 
   it("brushes a numeric pair into two range filters and keeps domains still", () => {
@@ -450,7 +514,7 @@ describe("planScatterMatrix", () => {
     expect(groups.labels).toEqual(["Adelie", "Chinstrap", "Gentoo"]);
     expect([...groups.index].filter((group) => group === 2)).toHaveLength(124);
     const r = plan.cells.find((cell) => cell.row === 0 && cell.column === 1)!;
-    expect(r.groupR).toHaveLength(3);
+    expect(r.groupCorrelation).toHaveLength(3);
     // Each group's r matches Pearson over that species alone.
     const gentoo = snapshot.liveIds.filter(
       (id) =>
@@ -458,11 +522,12 @@ describe("planScatterMatrix", () => {
         typeof snapshot.columns.bill_length_mm![id] === "number" &&
         typeof snapshot.columns.body_mass_g![id] === "number"
     );
-    expect(r.groupR![2]).toBeCloseTo(
-      pearson(
+    expect(r.groupCorrelation![2]!.pearson!.value).toBeCloseTo(
+      correlate(
         gentoo.map((id) => snapshot.columns.body_mass_g![id] as number),
-        gentoo.map((id) => snapshot.columns.bill_length_mm![id] as number)
-      )!,
+        gentoo.map((id) => snapshot.columns.bill_length_mm![id] as number),
+        "pearson"
+      ).value!,
       10
     );
     expect(groups.colors[2]).toBe("#0000ff");

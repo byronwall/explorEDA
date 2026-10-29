@@ -14,6 +14,11 @@ import type { datum } from "@/types/ChartTypes";
 import type { Filter } from "@/types/FilterTypes";
 import type { ColorScaleType } from "@/types/ColorScaleTypes";
 import { makeColorScale } from "@/lib/colorScaleMath";
+import {
+  pairCorrelation,
+  type CorrelationMethod,
+  type PairCorrelation,
+} from "@/lib/pairCorrelation";
 import { DEFAULT_AXIS_SETTINGS } from "@/utils/defaultSettings";
 import {
   jitter,
@@ -139,8 +144,8 @@ export interface MatrixCell {
   pairType?: MatrixPairType;
   /** Rows with values for both fields, or for the one diagonal field. */
   n: number;
-  /** Pearson r for two continuous fields; undefined when undefined. */
-  r?: number;
+  /** Correlation cells: pair counts and the result for each method shown. */
+  correlation?: PairCorrelation;
   bars?: MatrixBar[];
   /** Largest bar total, for scaling. */
   maxBar?: number;
@@ -159,8 +164,8 @@ export interface MatrixCell {
     selected?: Float64Array;
     groups?: Float64Array[];
   };
-  /** Correlation cells with a color field: r within each group. */
-  groupR?: (number | undefined)[];
+  /** Correlation cells with a color field: each group, ranked on its own. */
+  groupCorrelation?: PairCorrelation[];
   /** Tile and share cells: counts for each pair of bands. */
   pairs?: MatrixPairs;
   pairSelected?: Int32Array;
@@ -348,36 +353,6 @@ function planOffsets(
   return { offset, valid, value };
 }
 
-/** Pearson correlation of two continuous fields over rows that have both. */
-export function pearson(xs: ArrayLike<number>, ys: ArrayLike<number>) {
-  const n = xs.length;
-  if (n < 3) {
-    return undefined;
-  }
-  let mx = 0;
-  let my = 0;
-  for (let i = 0; i < n; i++) {
-    mx += xs[i]!;
-    my += ys[i]!;
-  }
-  mx /= n;
-  my /= n;
-  let sxy = 0;
-  let sxx = 0;
-  let syy = 0;
-  for (let i = 0; i < n; i++) {
-    const dx = xs[i]! - mx;
-    const dy = ys[i]! - my;
-    sxy += dx * dy;
-    sxx += dx * dx;
-    syy += dy * dy;
-  }
-  if (sxx === 0 || syy === 0) {
-    return undefined;
-  }
-  return sxy / Math.sqrt(sxx * syy);
-}
-
 /** Rows in the color field's Other group and missing values read gray. */
 const NEUTRAL_GROUP_COLOR = "#8a94a3";
 
@@ -415,25 +390,14 @@ function planGroups(
   return { field, labels: bands.labels, colors, index, rows };
 }
 
-/** Pearson r over the rows where both value arrays have a number. */
-function pairedCorrelation(
-  xs: Float64Array,
-  ys: Float64Array,
-  groups?: Int32Array,
-  group?: number
-) {
-  const a: number[] = [];
-  const b: number[] = [];
-  for (let i = 0; i < xs.length; i++) {
-    if (groups && groups[i] !== group) {
-      continue;
-    }
-    if (xs[i] === xs[i] && ys[i] === ys[i]) {
-      a.push(xs[i]!);
-      b.push(ys[i]!);
-    }
-  }
-  return pearson(a, b);
+/** The methods a matrix's correlation cells compute. */
+export function correlationMethods(
+  settings: Pick<ScatterMatrixSettings, "correlation">
+): CorrelationMethod[] {
+  const method = settings.correlation;
+  return method === "both"
+    ? ["pearson", "spearman"]
+    : [method === "spearman" ? "spearman" : "pearson"];
 }
 
 function cellKind(
@@ -663,6 +627,7 @@ export function planMatrixLayout({
   const liveIds = snapshot.liveIds;
   const groups = planGroups(settings, snapshot);
   const boxCache = new Map<string, MatrixBoxGroup[]>();
+  const methods = correlationMethods(settings);
   const cells: MatrixCell[] = [];
   for (let row = 0; row < fields.length; row++) {
     for (let column = 0; column < fields.length; column++) {
@@ -706,10 +671,12 @@ export function planMatrixLayout({
           }
         }
         if (kind === "correlation" && a.value && b.value) {
-          cell.r = pairedCorrelation(a.value, b.value);
+          // Rows outside the matrix's own selection still count, so a
+          // brush never changes a coefficient.
+          cell.correlation = pairCorrelation(a.value, b.value, methods);
           if (groups) {
-            cell.groupR = groups.labels.map((_, group) =>
-              pairedCorrelation(a.value!, b.value!, groups.index, group)
+            cell.groupCorrelation = groups.rows.map((rows) =>
+              pairCorrelation(a.value!, b.value!, methods, rows)
             );
           }
         } else if (kind === "box") {

@@ -620,7 +620,15 @@ function isChart(value: unknown): boolean {
         (value.pointSize === undefined || isFiniteNumber(value.pointSize)) &&
         (value.pointOpacity === undefined ||
           isFiniteNumber(value.pointOpacity)) &&
-        (value.jitter === undefined || isFiniteNumber(value.jitter))
+        (value.jitter === undefined || isFiniteNumber(value.jitter)) &&
+        (value.correlation === undefined ||
+          ["pearson", "spearman", "both"].includes(
+            value.correlation as string
+          )) &&
+        (value.pairOrder === undefined ||
+          ["fields", "spearman", "pearson", "difference"].includes(
+            value.pairOrder as string
+          ))
       );
     case "map":
       return (
