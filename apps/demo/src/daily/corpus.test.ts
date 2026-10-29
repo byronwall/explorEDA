@@ -248,11 +248,12 @@ describe("daily visualization corpus", () => {
       .filter(Boolean)
       .map((file) => read(`projects/${entry.family}/${file}`))
       .join("\n");
-    if (entry.kind === "notebook" && prose.includes("{{")) {
+    const live = entry.kind === "notebook" && prose.includes("{{");
+    if (live) {
       const result = readNotebookText(prose, ctx);
-      const live = evaluateNotebookFindings(result.settings, result.rows);
+      const values = evaluateNotebookFindings(result.settings, result.rows);
       prose = prose.replace(/\{\{([\w-]+)\}\}/g, (token, name: string) => {
-        const value = live.get(name);
+        const value = values.get(name);
         expect(value?.unavailable, token).toBeUndefined();
         return value!.text;
       });
@@ -263,8 +264,14 @@ describe("daily visualization corpus", () => {
         finding,
         ctx.rows(finding.query ?? entry.query)
       );
-      const lead = finding.text.slice(0, finding.text.indexOf("{value}"));
-      if (lead.length > 12 && prose.includes(lead))
+      const at = finding.text.indexOf("{value}");
+      const lead = finding.text.slice(0, at);
+      // A live value can open its sentence, so live text matches the rest.
+      const tail = finding.text.slice(at + "{value}".length);
+      if (
+        (lead.length > 12 && prose.includes(lead)) ||
+        (live && tail.length > 12 && prose.includes(tail))
+      )
         expect(prose).toContain(statement);
     }
   });

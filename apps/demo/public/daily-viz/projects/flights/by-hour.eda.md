@@ -12,6 +12,12 @@ field hour_label label="Scheduled hour"
 group @by-hour avg(delay) by=hour_label
 finding @six-mean average delay chart=@airports where.hour=6 digits=1
 finding @seven-mean average delay chart=@airports where.hour=19 digits=1
+finding @six-flown count chart=@airports where.hour=6 where.delay=-1000..
+finding @six-late count chart=@airports where.hour=6 where.delay=61..
+finding @six-late-share share six-late six-flown digits=1
+finding @seven-flown count chart=@airports where.hour=19 where.delay=-1000..
+finding @seven-late count chart=@airports where.hour=19 where.delay=61..
+finding @seven-late-share share seven-late seven-flown digits=1
 ```
 
 ## Morning flights leave close to schedule
@@ -35,7 +41,7 @@ bar @nb-flights-by-hour-2 hour_label group=by-hour categoryOrder=label title="Me
 
 ## The spread widens with the mean
 
-The average is not the only thing that grows. The boxes stay near zero all day, but the whiskers and outliers reach further each hour; evening flights are not uniformly late, they are more often very late. 3.3% of 6:00 flights left more than an hour late. 12.9% of 19:00 flights left more than an hour late.
+The average is not the only thing that grows. The boxes stay near zero all day, but the whiskers and outliers reach further each hour; evening flights are not uniformly late, they are more often very late. {{six-late-share}} of 6:00 flights left more than an hour late. {{seven-late-share}} of 19:00 flights left more than an hour late. Both shares follow the airport picked above.
 
 ```eda
 boxplot @nb-flights-by-hour-3 delay color=hour_label title="Departure delay by scheduled hour" y.title="Departure delay (min)" y.min=-30 y.max=150

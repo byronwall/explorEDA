@@ -184,18 +184,53 @@ function FindingRecords({
           <X className="h-4 w-4" aria-hidden="true" />
         </Button>
       </div>
-      {result.plan ? (
-        <MetricCardTraceBody
-          trace={{
-            kind: "metric-card",
-            id: `finding:${result.id}`,
-            revision: result.revision,
-            plan: result.plan,
-          }}
-        />
+      {result.operands ? (
+        <>
+          <p>
+            <span className="text-muted-foreground">Calculation </span>
+            {result.calculation}
+          </p>
+          {result.operands.map((operand, index) => (
+            <section
+              key={index}
+              className="space-y-1 border-t border-border pt-2"
+              aria-label={`Records for ${operand.id}`}
+            >
+              <p className="font-medium">
+                <span className="text-muted-foreground">
+                  {
+                    (result.kind === "share"
+                      ? ["Part ", "Whole "]
+                      : ["From ", "Minus "])[index]
+                  }
+                </span>
+                {operand.id}
+                <span className="text-muted-foreground"> · </span>
+                {operand.text}
+              </p>
+              <OperandRecords result={operand} />
+            </section>
+          ))}
+        </>
       ) : (
-        <p className="text-muted-foreground">{result.scope}</p>
+        <OperandRecords result={result} />
       )}
     </div>
+  );
+}
+
+/** One summary's calculation and contributors, as a metric card traces them. */
+function OperandRecords({ result }: { result: FindingResult }) {
+  return result.plan ? (
+    <MetricCardTraceBody
+      trace={{
+        kind: "metric-card",
+        id: `finding:${result.id}`,
+        revision: result.revision,
+        plan: result.plan,
+      }}
+    />
+  ) : (
+    <p className="text-muted-foreground">{result.scope}</p>
   );
 }

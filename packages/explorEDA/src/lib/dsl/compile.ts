@@ -37,7 +37,13 @@ import type {
   SerializedColorScale,
 } from "@/types/SavedDataTypes";
 import { validateSavedData } from "@/utils/saveDataUtils";
-import { FINDING_NAME, type FindingDefinition } from "@/lib/notebook/findings";
+import {
+  comparisonProblem,
+  FINDING_NAME,
+  type ComparisonFinding,
+  type FindingDefinition,
+  type MetricFinding,
+} from "@/lib/notebook/findings";
 import { parseDateText } from "@/lib/valueParsing";
 import { parsePath, setPath } from "./paths";
 import { settingWords } from "./schema";
@@ -65,6 +71,7 @@ import {
   parseDocument,
   type DslDeclaration,
   type DslPair,
+  type DslPositional,
   type DslSpan,
   type DslValue,
 } from "./parse";
@@ -1511,6 +1518,12 @@ export function compileDocument(
   // Findings: `finding @name average score chart=@regions`. Each follows
   // one named chart's own selection, or every row when it names none.
   const findings: FindingDefinition[] = [];
+  const comparisons: {
+    definition: ComparisonFinding;
+    declaration: DslDeclaration;
+    subject: string;
+    operands: DslPositional[];
+  }[] = [];
   for (const declaration of findingDeclarations) {
     const name = declaration.name;
     const subject = `finding${name ? ` @${name}` : ""} (line ${declaration.span.line})`;
@@ -1527,7 +1540,10 @@ export function compileDocument(
       );
       continue;
     }
-    if (findings.some((item) => item.id === name)) {
+    if (
+      findings.some((item) => item.id === name) ||
+      comparisons.some((item) => item.definition.id === name)
+    ) {
       fail(
         declaration.span,
         `@${name} names two findings, so this one was skipped.`,
@@ -1537,16 +1553,63 @@ export function compileDocument(
     }
     const [reducer, measure, ...extra] = declaration.positional;
     const word = reducer ? single(reducer.value).toLowerCase() : "";
+    if (word === "share" || word === "difference") {
+      // `share part whole` or `difference a b`, checked once every
+      // finding is known, so either may come first.
+      const operands = declaration.positional.slice(1);
+      if (operands.length !== 2) {
+        fail(
+          reducer!.span,
+          `${word} compares two findings, so ${subject} was skipped.`,
+          word === "share"
+            ? `Write it as finding @${name} share east-count all-count.`
+            : `Write it as finding @${name} difference a-mean b-mean.`
+        );
+        continue;
+      }
+      const definition: ComparisonFinding = {
+        id: name,
+        kind: word,
+        of: operands.map((item) => single(item.value).replace(/^@/, "")) as [
+          string,
+          string,
+        ],
+      };
+      for (const pair of declaration.pairs) {
+        const digits = numberValue(pair.value);
+        if (
+          pair.key === "digits" &&
+          digits !== undefined &&
+          Number.isInteger(digits) &&
+          digits >= 0 &&
+          digits <= 10
+        )
+          definition.digits = digits;
+        else
+          report(
+            "warning",
+            "setting-ignored",
+            pair.span,
+            `${pair.key}=${pair.value.raw} does not apply to a ${word}, so it was ignored.`,
+            {
+              subject,
+              suggestion: "A comparison takes only digits=, from 0 to 10.",
+            }
+          );
+      }
+      comparisons.push({ definition, declaration, subject, operands });
+      continue;
+    }
     const aggregation = word === "avg" || word === "mean" ? "average" : word;
     if (!isAggregation(aggregation)) {
       fail(
         reducer?.span ?? declaration.span,
         `${word || "Nothing"} is not a way to summarize rows, so ${subject} was skipped.`,
-        "Start with count, sum, average, min, or max."
+        "Start with count, sum, average, min, max, share, or difference."
       );
       continue;
     }
-    const definition: FindingDefinition = { id: name, aggregation };
+    const definition: MetricFinding = { id: name, aggregation };
     if (aggregation === "count") {
       if (measure) extra.unshift(measure);
     } else if (!measure) {
@@ -1650,6 +1713,57 @@ export function compileDocument(
     }
     if (!usable) continue;
     if (filters.length) definition.filters = filters;
+    findings.push(definition);
+  }
+  for (const { definition, subject, operands } of comparisons) {
+    const resolved = definition.of.map((id, index) => {
+      const found = findings.find((item) => item.id === id);
+      if (found && !found.kind) return found;
+      const near = closestName(
+        id,
+        findings.flatMap((item) => (item.kind ? [] : [item.id]))
+      );
+      report(
+        "error",
+        "setting-ignored",
+        operands[index]!.span,
+        found
+          ? `${id} is a ${found.kind}, so ${subject} was skipped.`
+          : `${id} is not a finding in this text, so ${subject} was skipped.`,
+        {
+          subject,
+          suggestion: found
+            ? "Compare two summaries, such as two counts or two averages."
+            : near
+              ? `Did you mean ${near}?`
+              : "Declare it on its own finding line.",
+        }
+      );
+      return undefined;
+    });
+    if (!resolved[0] || !resolved[1]) continue;
+    const pair = resolved as [MetricFinding, MetricFinding];
+    const problem = comparisonProblem(definition.kind, pair);
+    if (problem) {
+      report(
+        "error",
+        "setting-ignored",
+        operands[0]!.span,
+        `${problem}, so ${subject} was skipped.`,
+        {
+          subject,
+          suggestion:
+            definition.kind === "share"
+              ? "Count the part and its whole from the same chart, or the whole from every row."
+              : "Change only the where. filters between the two.",
+        }
+      );
+      continue;
+    }
+    if (definition.kind === "difference" && definition.digits === undefined) {
+      const digits = pair[0].digits ?? pair[1].digits;
+      if (digits !== undefined) definition.digits = digits;
+    }
     findings.push(definition);
   }
 

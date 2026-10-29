@@ -162,8 +162,21 @@ function isFiniteNumber(value: unknown): value is number {
 }
 
 function isFindingDefinition(value: unknown): boolean {
+  if (
+    isRecord(value) &&
+    (value.kind === "share" || value.kind === "difference")
+  )
+    return (
+      typeof value.id === "string" &&
+      Array.isArray(value.of) &&
+      value.of.length === 2 &&
+      value.of.every((item) => typeof item === "string") &&
+      (value.digits === undefined ||
+        (typeof value.digits === "number" && Number.isInteger(value.digits)))
+    );
   return (
     isRecord(value) &&
+    value.kind === undefined &&
     typeof value.id === "string" &&
     isAggregation(value.aggregation) &&
     (value.aggregation === "count" || typeof value.field === "string") &&

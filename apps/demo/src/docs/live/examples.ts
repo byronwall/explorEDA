@@ -131,7 +131,7 @@ const SHOP = "/datasets/shop-operations.csv";
 
 /** The live-findings fixture: one selection, a value, and its records. */
 const FINDINGS_NOTEBOOK = [
-  "Selected **{{n}}** of {{eligible}} active reviews. Their average score is {{mean-score}}; [show records](#finding:mean-score). Group A averages {{a-mean}} and group B {{b-mean}}.",
+  "Selected **{{n}}** of {{eligible}} active reviews. Their average score is {{mean-score}}; [show records](#finding:mean-score). Group A averages {{a-mean}} and group B {{b-mean}}, a difference of {{gap}}. The selection is {{active-share}} of active reviews and {{all-share}} of all {{all}}.",
   "",
   "```eda",
   "field score as=numeric",
@@ -140,6 +140,10 @@ const FINDINGS_NOTEBOOK = [
   "finding @mean-score average score chart=@regions digits=2",
   "finding @a-mean average score chart=@regions where.group=A digits=2",
   "finding @b-mean average score chart=@regions where.group=B digits=2",
+  "finding @all count",
+  "finding @gap difference a-mean b-mean",
+  "finding @active-share share n eligible",
+  "finding @all-share share n all digits=1",
   'row region @regions where.active=true title="Active reviews by region"',
   'row group @groups title="All reviews by group"',
   "```",
@@ -157,7 +161,10 @@ export const liveExamples = {
     steps: [
       { expectText: "Selected 10 of 10 active reviews" },
       { expectText: "average score is 34.38" },
+      { expectText: "a difference of \u22128.75" },
       { click: "East: 4 rows" },
+      { expectText: "a difference of +15.00" },
+      { expectText: "40% of active reviews and 33.3% of all 12" },
       { expectText: "Selected 4 of 10 active reviews" },
       { expectText: "average score is 80.00" },
       { link: "show records" },

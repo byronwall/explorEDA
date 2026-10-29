@@ -127,6 +127,23 @@ The value and its records always come from the same rows. Records list each row 
 
 When a finding has no value, the prose says why in place of a number: no rows, no valid values, not a finite number, or an unknown finding when the text names one it never declares. A broken `finding` line is reported at its line, as any block problem is. `{{name}}` stays as written inside code, after a backslash (`\{{name}}`), and in a link's address.
 
+## Compare two findings
+
+A comparison names two findings and reads their unrounded values from the same moment, so both sides always describe the same selection. There are two kinds:
+
+- **`finding @gap difference a-mean b-mean`** subtracts the second from the first and shows the sign: −8.75 for all active reviews, +15.00 once East is selected. Both sides must summarize the same field the same way, from the same chart; only their `where.` filters may differ. Without `digits=`, it takes the first side's.
+- **`finding @east-share share n eligible`** shows the first count as a percent of the second. The whole must hold the part: count it from the same chart with `population=eligible`, or from every row with no `chart=`. East's four rows are 40% of ten active reviews and 33.3% of all twelve. A part of no rows is 0%; a whole of no rows has no share.
+
+```eda
+finding @a-mean average score chart=@regions where.group=A digits=2
+finding @b-mean average score chart=@regions where.group=B digits=2
+finding @gap difference a-mean b-mean
+finding @all count
+finding @all-share share n all digits=1
+```
+
+The records for a comparison show its calculation, then each side's rows on their own. When either side has no value, the comparison says why in its place. Write the sentence around a comparison so it holds for any selection, such as `a difference of {{gap}}`. A number that changes can contradict a conclusion written around one value.
+
 ## Edit the text or the charts
 
 Both edits change the same file, and the notebook updates as you go.

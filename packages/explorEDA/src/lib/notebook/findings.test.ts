@@ -1,9 +1,13 @@
-import { describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
+import { registerAllCharts } from "@/charts/registerAllCharts";
 import type { datum } from "@/types/ChartTypes";
+import { compileNotebook } from "./compileNotebook";
 import {
   evaluateFinding,
+  evaluateFindings,
   type FindingContext,
   type FindingDefinition,
+  type MetricFinding,
 } from "./findings";
 
 // The acceptance fixture: one row per key, and the owner chart shows only
@@ -52,18 +56,18 @@ function context(
 
 const keys = (ids: number[]) => ids.map((id) => FIXTURE[id]!.key);
 
-const count: FindingDefinition = {
+const count: MetricFinding = {
   id: "n",
   aggregation: "count",
   chart: "regions",
 };
-const mean: FindingDefinition = {
+const mean: MetricFinding = {
   id: "mean",
   aggregation: "average",
   field: "score",
   chart: "regions",
 };
-const groupMean = (group: string): FindingDefinition => ({
+const groupMean = (group: string): MetricFinding => ({
   ...mean,
   id: `${group}-mean`,
   filters: [{ type: "value", field: "group", values: [group] }],
@@ -138,3 +142,108 @@ describe("evaluateFinding", () => {
     ).toBe(12);
   });
 });
+
+describe("comparisons", () => {
+  beforeAll(registerAllCharts);
+  const east = context((row) => row.region === "East");
+  const eastCount: MetricFinding = { ...count, id: "east-n" };
+  const eligible: MetricFinding = {
+    ...count,
+    id: "eligible",
+    population: "eligible",
+  };
+  const all: MetricFinding = { id: "all", aggregation: "count" };
+  const definitions: FindingDefinition[] = [
+    { id: "gap", kind: "difference", of: ["A-mean", "B-mean"], digits: 2 },
+    { id: "of-eligible", kind: "share", of: ["east-n", "eligible"] },
+    { id: "of-all", kind: "share", of: ["east-n", "all"], digits: 1 },
+    { id: "outside", kind: "share", of: ["all", "eligible"] },
+    groupMean("A"),
+    groupMean("B"),
+    eastCount,
+    eligible,
+    all,
+  ];
+  const at = (workspace: FindingContext) =>
+    evaluateFindings(definitions, workspace);
+
+  it("turns A minus B from −8.75 to +15 when East is selected", () => {
+    expect(at(context()).get("gap")).toMatchObject({
+      value: -8.75,
+      text: "\u22128.75",
+    });
+    const gap = at(east).get("gap")!;
+    expect(gap).toMatchObject({ value: 15, text: "+15.00" });
+    // Each side keeps its own records.
+    expect(gap.operands!.map((side) => keys(side.ids))).toEqual([
+      ["r01"],
+      ["r06", "r07", "r10"],
+    ]);
+  });
+
+  it("divides by the whole it names", () => {
+    const results = at(east);
+    expect(results.get("of-eligible")).toMatchObject({
+      value: 0.4,
+      text: "40%",
+    });
+    expect(results.get("of-all")).toMatchObject({ text: "33.3%" });
+    expect(results.get("of-all")!.value).toBeCloseTo(1 / 3);
+    expect(results.get("outside")!.unavailable).toBe("outside");
+
+    const none = at(context((row) => row.region === "North"));
+    expect(none.get("of-eligible")).toMatchObject({ value: 0, text: "0%" });
+    const empty = compareFindingsOver(
+      { ...eligible, id: "nothing", population: undefined },
+      context((row) => row.region === "North")
+    );
+    expect(empty.unavailable).toBe("empty");
+  });
+
+  it("has no value when an operand has none", () => {
+    const invalid = at(context((row) => ["r05", "r10"].includes(row.key)));
+    expect(invalid.get("gap")).toMatchObject({ unavailable: "invalid" });
+  });
+
+  it("checks operands in any order and rejects ones that don't compare", () => {
+    const text = (line: string) =>
+      [
+        "```eda",
+        line,
+        "finding @a average score chart=@regions where.group=A digits=2",
+        "finding @b average score chart=@regions where.group=B",
+        "finding @n count chart=@regions",
+        "row region @regions where.active=true",
+        "```",
+      ].join("\n");
+    const compiled = compileNotebook(text("finding @gap difference a b"), {
+      rows: FIXTURE,
+    });
+    expect(compiled.diagnostics).toEqual([]);
+    // The difference takes its first side's digits.
+    expect(compiled.settings.findings).toContainEqual({
+      id: "gap",
+      kind: "difference",
+      of: ["a", "b"],
+      digits: 2,
+    });
+    const mixed = compileNotebook(text("finding @gap difference a n"), {
+      rows: FIXTURE,
+    });
+    expect(mixed.diagnostics.map((item) => item.message)).toEqual([
+      expect.stringContaining("A difference compares one summary"),
+    ]);
+    const missing = compileNotebook(text("finding @gap share n nope"), {
+      rows: FIXTURE,
+    });
+    expect(missing.diagnostics[0]!.message).toContain("nope is not a finding");
+  });
+});
+
+/** A share of a count over a whole that counts no rows. */
+function compareFindingsOver(whole: MetricFinding, workspace: FindingContext) {
+  return evaluateFindings(
+    [whole, { id: "part", kind: "share", of: [whole.id, whole.id] }],
+    workspace
+  ).get("part")!;
+}

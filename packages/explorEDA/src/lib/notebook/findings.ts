@@ -25,8 +25,10 @@ import {
 /** A finding's name, as written after `@` and inside `{{ }}`. */
 export const FINDING_NAME = /^[A-Za-z_][\w-]*$/;
 
-export interface FindingDefinition {
+/** A summary of rows: a count, sum, average, minimum, or maximum. */
+export interface MetricFinding {
   id: string;
+  kind?: undefined;
   aggregation: AggregateAggregation;
   /** The measured field; absent for a count. */
   field?: string;
@@ -40,6 +42,50 @@ export interface FindingDefinition {
   digits?: number;
 }
 
+/**
+ * A comparison of two summaries, by name. A share divides one row count by
+ * another whose rows include it; a difference subtracts two summaries of
+ * one field, the same way, from the same chart.
+ */
+export interface ComparisonFinding {
+  id: string;
+  kind: "share" | "difference";
+  /** The numerator and denominator, or the two sides of the difference. */
+  of: [string, string];
+  /** Decimal places: of the percent for a share. */
+  digits?: number;
+}
+
+export type FindingDefinition = MetricFinding | ComparisonFinding;
+
+/**
+ * Why a comparison's two operands can't be compared, or undefined when they
+ * can. Partitions (`where.`) may differ; what they summarize may not.
+ */
+export function comparisonProblem(
+  kind: ComparisonFinding["kind"],
+  [a, b]: [MetricFinding, MetricFinding]
+): string | undefined {
+  if (kind === "share") {
+    if (a.aggregation !== "count" || b.aggregation !== "count")
+      return "A share divides two counts";
+    // The denominator's rows must hold the numerator's.
+    if (b.chart && b.chart !== a.chart)
+      return `@${b.id} follows another chart, so it can't hold @${a.id}'s rows`;
+    if (b.chart && b.population !== "eligible" && a.population === "eligible")
+      return `@${b.id} keeps only the selection, so it can't hold @${a.id}'s rows`;
+    return undefined;
+  }
+  if (
+    a.aggregation !== b.aggregation ||
+    a.field !== b.field ||
+    a.chart !== b.chart ||
+    a.population !== b.population
+  )
+    return "A difference compares one summary of one field, from the same chart and rows";
+  return undefined;
+}
+
 /** Why a finding has no value. Each one reads differently in prose. */
 export type FindingUnavailable =
   /** No rows reached a numeric measure. */
@@ -49,7 +95,9 @@ export type FindingUnavailable =
   /** The prose names a finding the text does not declare. */
   | "missing"
   /** The calculation gave an infinite or undefined number. */
-  | "nonfinite";
+  | "nonfinite"
+  /** A share's numerator has rows its denominator does not. */
+  | "outside";
 
 export interface FindingResult {
   id: string;
@@ -63,6 +111,11 @@ export interface FindingResult {
   ids: number[];
   /** The calculation and its contributors, as a metric card traces them. */
   plan?: MetricCardPlan;
+  /** A comparison's kind, with its two operands and their own records. */
+  kind?: ComparisonFinding["kind"];
+  operands?: [FindingResult, FindingResult];
+  /** How a comparison was worked out, such as "80 − 75". */
+  calculation?: string;
   /** Which rows the finding reads, in words. */
   scope: string;
 }
@@ -97,6 +150,7 @@ export const UNAVAILABLE_TEXT: Record<FindingUnavailable, string> = {
   invalid: "no valid values",
   missing: "unknown finding",
   nonfinite: "not a finite number",
+  outside: "not part of its whole",
 };
 
 /** A short, stable fingerprint of a list of row ids. */
@@ -133,7 +187,7 @@ function unavailable(
 
 /** Evaluates one finding against the workspace as it is now. */
 export function evaluateFinding(
-  definition: FindingDefinition,
+  definition: MetricFinding,
   context: FindingContext
 ): FindingResult {
   const { id, chart, field } = definition;
@@ -224,12 +278,98 @@ export function evaluateFindings(
   definitions: readonly FindingDefinition[],
   context: FindingContext
 ): Map<string, FindingResult> {
-  return new Map(
-    definitions.map((definition) => [
-      definition.id,
-      evaluateFinding(definition, context),
-    ])
-  );
+  const results = new Map<string, FindingResult>();
+  for (const definition of definitions)
+    if (!definition.kind)
+      results.set(definition.id, evaluateFinding(definition, context));
+  // Comparisons read their operands' results, so the two can never come
+  // from different rows or moments.
+  for (const definition of definitions)
+    if (definition.kind)
+      results.set(definition.id, compareFindings(definition, results));
+  return results;
+}
+
+const MINUS = "\u2212";
+
+function signed(value: number, text: string) {
+  return value > 0 ? `+${text}` : value < 0 ? `${MINUS}${text}` : text;
+}
+
+/** A share or difference from its operands' unrounded values. */
+export function compareFindings(
+  definition: ComparisonFinding,
+  results: ReadonlyMap<string, FindingResult>
+): FindingResult {
+  const { id, kind, digits } = definition;
+  const [a, b] = definition.of.map((name) => findingFor(results, name)) as [
+    FindingResult,
+    FindingResult,
+  ];
+  const revision = `${kind}:${a.revision}|${b.revision}`;
+  const scope =
+    kind === "share"
+      ? `@${a.id} as a share of @${b.id}.`
+      : `@${a.id} minus @${b.id}.`;
+  const base: Omit<FindingResult, "text"> = {
+    id,
+    kind,
+    revision,
+    ids: [],
+    scope,
+    operands: [a, b],
+  };
+  const blocked = a.unavailable ? a : b.unavailable ? b : undefined;
+  if (blocked)
+    return {
+      ...base,
+      text: blocked.text,
+      unavailable: blocked.unavailable,
+      calculation: `@${blocked.id} has no value: ${blocked.text}.`,
+    };
+  if (kind === "share") {
+    if (b.value === 0)
+      return {
+        ...base,
+        text: UNAVAILABLE_TEXT.empty,
+        unavailable: "empty",
+        calculation: `@${b.id} counts no rows, so there is nothing to share.`,
+      };
+    // A count's rows must sit inside the count it is a share of.
+    const whole = new Set(b.ids);
+    if (!a.ids.every((row) => whole.has(row)))
+      return {
+        ...base,
+        text: UNAVAILABLE_TEXT.outside,
+        unavailable: "outside",
+        calculation: `Some of @${a.id}'s rows are not among @${b.id}'s.`,
+      };
+    const value = a.value! / b.value!;
+    return {
+      ...base,
+      value,
+      text: `${formatDigits(value * 100, digits ?? 0)}%`,
+      calculation: `${a.text} ÷ ${b.text}`,
+    };
+  }
+  const value = a.value! - b.value!;
+  if (!Number.isFinite(value))
+    return {
+      ...base,
+      text: UNAVAILABLE_TEXT.nonfinite,
+      unavailable: "nonfinite",
+    };
+  return {
+    ...base,
+    value,
+    text: signed(
+      value,
+      digits === undefined
+        ? Math.abs(value).toLocaleString("en-US")
+        : formatDigits(Math.abs(value), digits)
+    ),
+    calculation: `${a.text} ${MINUS} ${b.text}`,
+  };
 }
 
 /** The result prose shows for a name, including one the text never declares. */

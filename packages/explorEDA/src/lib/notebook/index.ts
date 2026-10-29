@@ -39,9 +39,12 @@ export {
 export {
   evaluateFinding,
   evaluateFindings,
+  compareFindings,
   evaluateNotebookFindings,
   findingFor,
+  type ComparisonFinding,
   type FindingContext,
+  type MetricFinding,
   type FindingDefinition,
   type FindingResult,
   type FindingUnavailable,
