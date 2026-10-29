@@ -245,3 +245,9 @@ Use real input at 1280, 783, and 390 pixels. Open the fresh example, select [2,4
 Check keyboard selection and trace access, independent clearing, fixed domain, direction changes, and zero-group access.
 Keep settings, labels, status, and trace tables within the viewport. Use `pnpm shot` for PR screenshots.
 The planning PR runs doc and format checks only. These future acceptance checks have not passed for unbuilt behavior.
+
+## Preserved Pro result materials
+
+[Original Pro reports and artifacts for #514](assets/pro-results/weighted-distributions-2026-10-23/ASSET_INDEX.md)
+
+All extracted result materials are preserved without ZIP containers. Original bytes and attribution are unchanged.

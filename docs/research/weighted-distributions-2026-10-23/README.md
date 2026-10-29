@@ -66,3 +66,7 @@ The full Pro report also compares Hmisc, Julia StatsBase, and survey quantile ru
 No product decision blocks M1. Weight labels do not establish survey validity or turn total weight into sample size.
 Numerical limits must be visible. Compensation cannot recover information lost during parsing or scaling.
 Local review chooses one unavailable state for scaled underflow. A later implementation may justify a richer approximate mode separately.
+
+## Preserved Pro result materials
+
+[Complete original Pro artifacts](../../intent/weighted-distributions/assets/pro-results/weighted-distributions-2026-10-23/ASSET_INDEX.md) are preserved under the intent entry. ZIP containers remain local.
