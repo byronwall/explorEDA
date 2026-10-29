@@ -1,14 +1,27 @@
-# R030 — Evaluate explicit locale-aware numeric preparation
+# R030 — Explicit numeric preparation
 
 - ID: R030
 - Category: Types, quantities, and dates
 - Priority: 72
 - Kind: new-direction
-- Status: candidate
+- Status: designed, implementation proposed
 - Confidence: medium
 - Baseline: `9b16d78e3ed0742ed4d5858c1939fec9e758b510`
 
 ## Research brief
+
+The October 26 Design cycle selects saved workspace numeric input conventions, complete conversion review,
+and durable refresh. Follow with percent/accounting input and an ordered query measurement step.
+Byron is demand; DIRECTION supersedes this brief's earlier outside-demand and experiment gates.
+
+- [Implementation plan](../../numeric-preparation/implementation-plan.md): three complete feature milestones, exact fixtures, docs, and examples.
+- [Research and local dispositions](../../../research/numeric-preparation-2026-10-26/README.md).
+- [Pro conversation](https://chatgpt.com/c/6adf55b2-0884-83e9-947e-c0913a71d939).
+
+Keep automatic inference conservative. One explicit recipe controls a field; do not guess per row or strip punctuation.
+Raw text, prepared numbers, and display formatting remain distinct. No feature implementation is included in the research PR.
+
+## Earlier scope notes
 
 Files prepared in different locales can contain decimal commas, grouped thousands, narrow spaces, or accounting parentheses. The current `parseNumber` and `isExactNumberText` deliberately avoid treating grouping characters and units as ordinary numbers. That restraint protects labels and identifiers. Field settings already provide explicit date presets, null tokens, and conversion previews, which suggests a bounded place to investigate numeric preparation without making automatic inference increasingly permissive.
 
