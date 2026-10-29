@@ -221,3 +221,9 @@ Defer patterns, wildcard membership, reverse pivot, and automatic schema inclusi
 Avoid chart-only reshaping as this feature's saved representation, implicit coercion, automatic unit conversion,
 identity inferred from display labels, a general graph editor, and a separate execution platform.
 Ordinary prepared long sources remain useful throughout.
+
+## Preserved Pro result materials
+
+[Original Pro reports and artifacts for #518](assets/pro-results/wide-long-2026-10-23/ASSET_INDEX.md)
+
+All extracted result materials are preserved without ZIP containers. Original bytes and attribution are unchanged.

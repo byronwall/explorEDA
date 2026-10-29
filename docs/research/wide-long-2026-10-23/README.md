@@ -68,3 +68,7 @@ These checks validate plan assumptions, not an unimplemented reshape engine.
 Implementation must measure the growth ceiling and verify empty-result text restore, worker snapshots, and exact source filtering.
 All UI, persistence, and feature acceptance checks remain proposed.
 No material gap required a Pro follow-up; zero of one was used.
+
+## Preserved Pro result materials
+
+[Complete original Pro artifacts](../../intent/wide-long-reshape/assets/pro-results/wide-long-2026-10-23/ASSET_INDEX.md) are preserved under the intent entry. ZIP containers remain local.
