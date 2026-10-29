@@ -1,0 +1,103 @@
+{
+  "schema_version": "R001-research-manifest-v1",
+  "research_id": "R001",
+  "title": "Agreement between fitted predictions and reusable regression equations after unit and coordinate-offset changes",
+  "repository": "https://github.com/byronwall/explorEDA",
+  "baseline_commit": "63dfa75851ef57bb3782e6d7c1ef104784cd4064",
+  "research_date": "2026-10-22",
+  "user_timezone": "America/Indianapolis",
+  "created_at_utc": "2026-10-22T13:28:09.566767+00:00",
+  "access_status": "GO via authorized selected source packet; not a runnable application checkout",
+  "application_changes": false,
+  "report_files": [
+    {
+      "filename": "R001-report.md",
+      "size_bytes": 44596,
+      "sha256": "411e92037d7c3f3c5dd6046ce44b2297313efc868e38b2bd1b122cd6125f8130",
+      "media_type": "text/markdown; charset=utf-8"
+    },
+    {
+      "filename": "R001-sources.md",
+      "size_bytes": 34491,
+      "sha256": "6fadbaab8555ba8defa58a1ca4d76fb60ea320a4caa60965d134e98e6fd146c7",
+      "media_type": "text/markdown; charset=utf-8"
+    },
+    {
+      "filename": "R001-decisions.md",
+      "size_bytes": 33140,
+      "sha256": "aeb6b54ca835f9e6afa31546f70bcd257304e84f5fb526d4739b807194e5328b",
+      "media_type": "text/markdown; charset=utf-8"
+    },
+    {
+      "filename": "R001-proof-and-docs.md",
+      "size_bytes": 452774,
+      "sha256": "739e103ed149bd6f95673cc021ccef63f298fd51c555d30436e4fffe386859aa",
+      "media_type": "text/markdown; charset=utf-8"
+    }
+  ],
+  "inputs": [
+    {
+      "filename": "pro-prompt(20261022-130247).md",
+      "size_bytes": 10087,
+      "sha256": "23d2f690545c3659416e004a56e4d833239fca49790a0898ecb494b336c78094"
+    },
+    {
+      "filename": "source-packet(20261022-130247).txt",
+      "size_bytes": 216314,
+      "sha256": "96a5c73689957c37fba380cf79cec32d60990fb02b645758e549c79130c98a1a"
+    }
+  ],
+  "numerical_evidence": {
+    "unique_cases": 26,
+    "available_fits": 22,
+    "expected_unavailable_fits": 4,
+    "availability_matches": 26,
+    "baseline_internal_material_passes": 21,
+    "expanded_horner_material_passes": 15,
+    "actual_equation_text_material_passes": 3,
+    "trace_coefficients_material_passes": 12,
+    "centered6_material_passes": 21,
+    "centered17_material_passes": 22,
+    "frozen_fixture_sha256": "977a61ee606ed9dc0c98fd00fbc406bffe31fe9db02e8e3bd817500a9e9a2c75",
+    "original_executed_results_sha256": "39382428325ba96a186e427171ba7ef3633328f523abf5d6ab5d67711305329c",
+    "interpretation": "Bounded finite-probe checks under declared per-case measurement/fidelity budgets; not prevalence estimates or universal certification."
+  },
+  "validation": {
+    "replay_run_sheet_passed": true,
+    "embedded_payloads_verified": 13,
+    "replayed_cases_equal_to_original": 26,
+    "parser_controls_passed": 5,
+    "frozen_reference_rebuilt_identically": true,
+    "all_packet_sections_remain_unmodified": 27,
+    "application_changes": false,
+    "repository_tests_run": false,
+    "browser_checks_run": false
+  },
+  "unrun": [
+    "repository Vitest",
+    "library typecheck",
+    "pnpm check",
+    "application implementation",
+    "demo registration/build/docs checks",
+    "browser pointer/keyboard/layout",
+    "clipboard/calculator reuse",
+    "export",
+    "full filter/refit/restoration workflows",
+    "cross-engine execution",
+    "continuous-interval error certification"
+  ],
+  "archive": {
+    "filename": "R001-research.zip",
+    "member_count": 5,
+    "members": [
+      "R001-report.md",
+      "R001-sources.md",
+      "R001-decisions.md",
+      "R001-proof-and-docs.md",
+      "R001-manifest.json"
+    ],
+    "matching_rule": "Each archived report and manifest must be byte-identical to its standalone deliverable; no directory entries or extra files.",
+    "integrity_location": "ZIP size and SHA256 and standalone manifest size and SHA256 are reported outside the archive to avoid recursive self-hashes."
+  },
+  "manifest_self_hash_note": "report_files hashes the four report payloads. The manifest cannot include its own SHA256; its hash is supplied externally."
+}

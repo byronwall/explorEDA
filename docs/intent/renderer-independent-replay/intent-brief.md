@@ -58,3 +58,9 @@ Review bounded mapper, restore, and key-resolution repairs before adding a plain
 The full mutation matrix, browser, host, export, and pending-worker checks remain proposed.
 Any visible repair must include the developers docs section and one runnable replacement example in the same milestone.
 Keep the broader replay architecture deferred. See [decisions and proof gates](../../research/selection-identity-2026-10-22/decisions.md).
+
+## Preserved Pro result materials
+
+[Original Pro reports and artifacts for #484](assets/pro-results/selection-identity-2026-10-22/ASSET_INDEX.md)
+
+All extracted result materials are preserved without ZIP containers. Original bytes and attribution are unchanged.

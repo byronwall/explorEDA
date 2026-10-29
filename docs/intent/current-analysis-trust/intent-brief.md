@@ -140,3 +140,9 @@ Queue a narrow grouped-summary documentation correction with one native-JSON run
 Pair rendering/filter guidance and the related bar warning with the proposed FilterOwnershipExample and explicit browser coverage.
 The actual bar consumer flow, clear-one, trace, exports/history/restore and moderated predictions remain unrun.
 [Seven local decisions](../../research/filter-ownership-2026-10-22/decisions.md) retain the proof order and rejection gates.
+
+## Preserved Pro result materials
+
+[Original Pro reports and artifacts for #493](assets/pro-results/filter-ownership-2026-10-22/ASSET_INDEX.md)
+
+All extracted result materials are preserved without ZIP containers. Original bytes and attribution are unchanged.

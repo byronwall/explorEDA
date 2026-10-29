@@ -70,3 +70,9 @@ No application repair, precision control, or new solver is approved here.
 A visible milestone must include `/docs/scatter` and a focused runnable unit/offset example.
 Full browser, copy/export, refit/restore, and continuous-interval proof remain unrun.
 See the [local dispositions](../../research/regression-conditioning-2026-10-22/decisions.md) for the retained gates.
+
+## Preserved Pro result materials
+
+[Original Pro reports and artifacts for #492](assets/pro-results/regression-conditioning-2026-10-22/ASSET_INDEX.md)
+
+All extracted result materials are preserved without ZIP containers. Original bytes and attribution are unchanged.

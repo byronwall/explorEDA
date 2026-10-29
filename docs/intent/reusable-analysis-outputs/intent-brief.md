@@ -61,3 +61,9 @@ Current table CSV can include calculated values. Native files retain settings an
 Neither proves demand for a reusable grouped, modeled or density output.
 Keep this seed unprioritized until an actual repeated downstream task passes the existing gate.
 A guide or companion note does not pass it. No new result catalogue or larger bundle is selected.
+
+## Preserved Pro result materials
+
+[Original Pro reports and artifacts for #451](assets/pro-results/data-preparation-boundary-2026-10-16/ASSET_INDEX.md)
+
+All extracted result materials are preserved without ZIP containers. Original bytes and attribution are unchanged.
