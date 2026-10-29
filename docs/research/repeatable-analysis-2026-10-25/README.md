@@ -82,3 +82,7 @@ Later capture format, reader interaction, paired-case navigation, and measured c
 The first scope is chosen: one query, literal notebook inputs, current-data evaluation, local chart interaction, and native handoff.
 Each milestone includes its docs and runnable example. No further Pro response is needed to start implementation planning.
 This Strategy ranking does not assign the automation's next research topic.
+
+## Preserved Pro result materials
+
+[Complete original Pro artifacts](../../intent/repeatable-analysis-workflows/assets/pro-results/repeatable-analysis-2026-10-25/ASSET_INDEX.md) are preserved under the intent entry. ZIP containers remain local.

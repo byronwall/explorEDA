@@ -180,3 +180,9 @@ Stop when Byron can apply a saved question, inspect current records, reopen afte
 Pro estimates roughly 3–5 focused developer-weeks for both milestones. This is an unmeasured judgment, not a schedule commitment.
 Historical capture, paired-case navigation, reusable rates, and specialist chart methods remain separate proposals.
 No new Pro run or outside-demand gate blocks this plan's first milestone.
+
+## Preserved Pro result materials
+
+[Original Pro reports and artifacts for #524](assets/pro-results/repeatable-analysis-2026-10-25/ASSET_INDEX.md)
+
+All extracted result materials are preserved without ZIP containers. Original bytes and attribution are unchanged.
