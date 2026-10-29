@@ -8,12 +8,12 @@ Choose methods for comparing two empirical distributions, with exact mathematica
 - Source: https://github.com/byronwall/explorEDA at `9d64a021e35d312887b1bc848e307f42b6c3091f`.
 - Branch: `codex/distribution-distance-methods-2026-10-28` in the existing checkout. No worktree.
 - Prompt: [pro-prompt.md](pro-prompt.md).
-- Phase: reports collected and integrated; PR verification pending. Never resubmit.
+- Phase: complete; ready for review. Never resubmit.
 - Conversation: https://chatgpt.com/c/6ae1520d-9128-83ea-b4cc-da84bde1a972
 - Submitted: October 28, 2026, about 01:38 UTC.
-- Collector: `collect-exploreda-distribution-distance-methods`, ACTIVE; verified through the supported tool and saved configuration.
+- Collector: `collect-exploreda-distribution-distance-methods`, deleted after verified PR creation; supported tool returned `deleteStatus=deleted`.
 - First eligible check: October 28, 2026, 02:40 UTC, about one hour later. Do not collect before 02:38 UTC.
-- PR: pending research completion and integration.
+- PR: https://github.com/byronwall/explorEDA/pull/554, verified OPEN, main base and scoped research head.
 - Follow-ups: 0/1.
 - Completion: collect and read reports, check decisive claims, give local dispositions, write the implementation plan and summary, run doc/format checks, and verify an open PR.
 - Outputs: [implementation plan](../../intent/distribution-comparison/implementation-plan.md) and [research summary](README.md).
@@ -68,3 +68,5 @@ Independent locally authored exact-rational checks pass 12 numerical cases with 
 Existing-behavior checks pass four files and 27 tests: ECDF planner/renderer, Crossfilter ownership, and chart-image dispatch. Doc/format checks are recorded at completion. No new feature, browser, persistence, or performance acceptance is claimed. This PR changes authored documentation only; no changeset or full `pnpm check` is required.
 
 Documentation tests pass three files and 73 tests, with existing React act warnings. Prettier, whitespace, PR checks, and 110 relative documentation links pass. Both collected originals are complete readable UTF-8 files. No originals or receipts are staged.
+
+PR #554 body, five-file scope, links, branches, and open state verified. Attached it to this chat. Applied documentation label; codex and codex-automation labels are unavailable. Deleted the temporary collector through the supported scheduler. The six-hour pipeline remains ACTIVE with GPT-6.1 Sol Medium, verified through its tool view and saved configuration. No merge, deployment, implementation, paid service, or worktree. Completion time: October 29, 2026, 01:08 UTC.
