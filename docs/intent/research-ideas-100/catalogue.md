@@ -1,5 +1,9 @@
 # Research catalogue
 
+R002 and R003 have a [reviewed regression diagnostics design](../../research/regression-diagnostics-2026-10-24/README.md)
+and a [staged implementation plan](../regression-diagnostics/implementation-plan.md). Implementation remains proposed.
+The current [research direction](../../research/DIRECTION.md) controls topic choice ahead of this historical rank.
+
 The catalogue is in priority order. IDs remain stable if a later authorized review changes the rank. The complete question, experiment, evidence, and rejection signal are in each linked brief and in the JSON index.
 
 | Priority | ID and title                                                                                                                                                  | Category                           | Kind           |
