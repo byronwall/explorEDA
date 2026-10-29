@@ -58,25 +58,45 @@ export type LiveStep =
   /** Text that shows in the example, after the steps so far. */
   | { expectText: string }
   /** Pick the open menu's item with this name. */
-  | { choose: string };
+  | { choose: string }
+  /** Follow the link with this text. */
+  | { link: string }
+  /** Text that shows in the open popover, after the steps so far. */
+  | { expectPopover: string };
 
-export type LiveExampleSpec = {
+type LiveExampleBase = {
   /** The workspace region's accessible name. */
   label: string;
   /** A CSV under `public/`, such as `/datasets/shop-operations.csv`. */
   data: string;
-  savedData: SavedDataStructure;
-  /** The example to open in full, from `demos/examples.ts`. */
-  exampleId: string;
   /** Alt text for the screenshot shown on narrow screens. */
   shotAlt: string;
   steps: readonly LiveStep[];
+};
+
+export type LiveWorkspaceSpec = LiveExampleBase & {
+  savedData: SavedDataStructure;
+  /** The example to open in full, from `demos/examples.ts`. */
+  exampleId: string;
   /**
    * Shows one chart beside a real workspace surface instead of the whole
    * workspace. `chart` names the chart in `savedData`.
    */
   surface?: { kind: "settings"; chart: string };
+  notebook?: undefined;
 };
+
+/** A notebook over the data instead of a workspace. */
+export type LiveNotebookSpec = LiveExampleBase & {
+  /** The notebook's text. */
+  notebook: string;
+  /** A page that shows the same feature in full, such as a Daily piece. */
+  fullPath: string;
+  /** How tall the notebook draws before it loads. */
+  height: number;
+};
+
+export type LiveExampleSpec = LiveWorkspaceSpec | LiveNotebookSpec;
 
 /** Grid columns and rows; the height defaults to the chart's own. */
 type Placement = readonly [x: number, y: number, w: number, h?: number];
@@ -111,7 +131,52 @@ function withChart(
 
 const SHOP = "/datasets/shop-operations.csv";
 
+/** The live-findings fixture: one selection, a value, and its records. */
+const FINDINGS_NOTEBOOK = [
+  "Selected **{{n}}** of {{eligible}} active reviews. Their average score is {{mean-score}}; [show records](#finding:mean-score). Group A averages {{a-mean}} and group B {{b-mean}}, a difference of {{gap}} ([both sides](#finding:gap)). The selection is {{active-share}} of active reviews and {{all-share}} of all {{all}}.",
+  "",
+  "```eda",
+  "field score as=numeric",
+  "finding @n count chart=@regions",
+  "finding @eligible count chart=@regions population=eligible",
+  "finding @mean-score average score chart=@regions digits=2",
+  "finding @a-mean average score chart=@regions where.group=A digits=2",
+  "finding @b-mean average score chart=@regions where.group=B digits=2",
+  "finding @all count",
+  "finding @gap difference a-mean b-mean",
+  "finding @active-share share n eligible",
+  "finding @all-share share n all digits=1",
+  'row region @regions where.active=true title="Active reviews by region"',
+  'row group @groups title="All reviews by group"',
+  "```",
+].join("\n");
+
 export const liveExamples = {
+  "notebook-findings": {
+    label: "Live notebook findings",
+    data: "/datasets/live-findings.csv",
+    notebook: FINDINGS_NOTEBOOK,
+    fullPath: "/daily/flights-by-hour",
+    height: 560,
+    shotAlt:
+      "A sentence with live values above two row charts of reviews by region and by group.",
+    steps: [
+      { expectText: "Selected 10 of 10 active reviews" },
+      { expectText: "average score is 34.38" },
+      { expectText: "a difference of \u22128.75" },
+      { click: "East: 4 rows" },
+      { expectText: "a difference of +15.00" },
+      { expectText: "40% of active reviews and 33.3% of all 12" },
+      { expectText: "Selected 4 of 10 active reviews" },
+      { expectText: "average score is 80.00" },
+      { link: "show records" },
+      { expectPopover: "Conversion failed" },
+      { click: "A: 6 rows" },
+      { expectText: "average score is 80.00" },
+      { click: "Clear filters for Active reviews by region" },
+      { expectText: "average score is 34.38" },
+    ],
+  },
   "bar-histogram": {
     label: "Live delivery-time histogram",
     data: "/datasets/shop-operations.csv",
@@ -644,6 +709,9 @@ export const liveExamples = {
 
 /** Height that fits a layout's grid rows plus the workspace toolbar and count. */
 export function liveExampleHeight(spec: LiveExampleSpec) {
+  if (spec.notebook !== undefined) {
+    return spec.height;
+  }
   if (spec.surface) {
     return 400;
   }
@@ -657,9 +725,9 @@ export function liveExampleHeight(spec: LiveExampleSpec) {
 /** A step as an instruction for the reader. */
 export function describeStep(spec: LiveExampleSpec, step: LiveStep): string {
   if ("brush" in step) {
-    const chart = spec.savedData.charts.find(
-      ({ id }) => id === step.brush.chart
-    );
+    const chart = (
+      spec.notebook === undefined ? spec.savedData.charts : []
+    ).find(({ id }) => id === step.brush.chart);
     return `Drag across “${chart?.title ?? step.brush.chart}” from ${step.brush.from} to ${step.brush.to}.`;
   }
   if ("select" in step) {
@@ -670,6 +738,12 @@ export function describeStep(spec: LiveExampleSpec, step: LiveStep): string {
   }
   if ("choose" in step) {
     return `Choose “${step.choose}”.`;
+  }
+  if ("link" in step) {
+    return `Follow “${step.link}”.`;
+  }
+  if ("expectPopover" in step) {
+    return `The records show “${step.expectPopover}”.`;
   }
   if ("click" in step) {
     return `Click “${step.click}”.`;

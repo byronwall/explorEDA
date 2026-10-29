@@ -11,6 +11,7 @@ import type { AggregateSpec } from "@/lib/aggregates";
 
 import type { GeometryAsset } from "@/lib/geometryAssets";
 import type { WorkspaceTheme } from "@/lib/themes";
+import type { FindingDefinition } from "@/lib/notebook/findings";
 
 export interface SavedCalculation {
   resultColumnName: string;
@@ -52,6 +53,10 @@ export interface SavedDataStructure {
 
   // Workspace theme. Absent means Compact, so older saves look unchanged.
   theme?: WorkspaceTheme;
+
+  // Notebook findings, compiled from the notebook's text. Results are
+  // always derived; only definitions are saved.
+  findings?: FindingDefinition[];
 }
 
 export interface SavedAnalysisStructure {

@@ -19,7 +19,8 @@ export type DocsGateInput = {
     Record<
       string,
       {
-        exampleId: string;
+        /** Absent for a notebook example, which links elsewhere. */
+        exampleId?: string;
         data: string;
         charts: readonly string[];
         stepCharts: readonly string[];
@@ -165,7 +166,7 @@ export function findDocsErrors(input: DocsGateInput): string[] {
   }
   for (const [id, spec] of Object.entries(input.liveExamples)) {
     const where = `Live example "${id}"`;
-    if (!examples.has(spec.exampleId)) {
+    if (spec.exampleId !== undefined && !examples.has(spec.exampleId)) {
       errors.push(`${where} opens unknown example "${spec.exampleId}"`);
     }
     if (!publicFiles.has(spec.data)) {

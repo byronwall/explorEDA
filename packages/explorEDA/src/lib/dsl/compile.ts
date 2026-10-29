@@ -37,6 +37,13 @@ import type {
   SerializedColorScale,
 } from "@/types/SavedDataTypes";
 import { validateSavedData } from "@/utils/saveDataUtils";
+import {
+  comparisonProblem,
+  FINDING_NAME,
+  type ComparisonFinding,
+  type FindingDefinition,
+  type MetricFinding,
+} from "@/lib/notebook/findings";
 import { parseDateText } from "@/lib/valueParsing";
 import { parsePath, setPath } from "./paths";
 import { settingWords } from "./schema";
@@ -64,6 +71,7 @@ import {
   parseDocument,
   type DslDeclaration,
   type DslPair,
+  type DslPositional,
   type DslSpan,
   type DslValue,
 } from "./parse";
@@ -226,7 +234,10 @@ export const DSL_OTHER_KEYWORDS = [
   "chart",
   "view",
   "layout",
+  "finding",
 ];
+
+const FINDING_KEYS = ["chart", "where.<field>", "population", "digits"];
 
 /** Declarations that hold for every view, wherever they appear. */
 const SHARED_KEYWORDS = new Set([
@@ -500,6 +511,7 @@ export function compileDocument(
   const filterDeclarations: DslDeclaration[] = [];
   const chartDeclarations: DslDeclaration[] = [];
   const layoutDeclarations: DslDeclaration[] = [];
+  const findingDeclarations: DslDeclaration[] = [];
 
   const applyFieldPairs = (
     field: string,
@@ -826,6 +838,9 @@ export function compileDocument(
         break;
       case "layout":
         layoutDeclarations.push(declaration);
+        break;
+      case "finding":
+        findingDeclarations.push(declaration);
         break;
       default:
         if (DSL_CHART_KEYWORDS[keyword] || keyword === "chart") {
@@ -1498,6 +1513,258 @@ export function compileDocument(
     } else {
       skipped.push(summary);
     }
+  }
+
+  // Findings: `finding @name average score chart=@regions`. Each follows
+  // one named chart's own selection, or every row when it names none.
+  const findings: FindingDefinition[] = [];
+  const comparisons: {
+    definition: ComparisonFinding;
+    declaration: DslDeclaration;
+    subject: string;
+    operands: DslPositional[];
+  }[] = [];
+  for (const declaration of findingDeclarations) {
+    const name = declaration.name;
+    const subject = `finding${name ? ` @${name}` : ""} (line ${declaration.span.line})`;
+    const fail = (span: DslSpan, message: string, suggestion: string) =>
+      report("error", "setting-ignored", span, message, {
+        subject,
+        suggestion,
+      });
+    if (!name || !FINDING_NAME.test(name)) {
+      fail(
+        declaration.span,
+        "A finding needs a name of letters, digits, - or _, so this line was skipped.",
+        "Write it as finding @mean-score average score chart=@regions."
+      );
+      continue;
+    }
+    if (
+      findings.some((item) => item.id === name) ||
+      comparisons.some((item) => item.definition.id === name)
+    ) {
+      fail(
+        declaration.span,
+        `@${name} names two findings, so this one was skipped.`,
+        "Give each finding its own name."
+      );
+      continue;
+    }
+    const [reducer, measure, ...extra] = declaration.positional;
+    const word = reducer ? single(reducer.value).toLowerCase() : "";
+    if (word === "share" || word === "difference") {
+      // `share part whole` or `difference a b`, checked once every
+      // finding is known, so either may come first.
+      const operands = declaration.positional.slice(1);
+      if (operands.length !== 2) {
+        fail(
+          reducer!.span,
+          `${word} compares two findings, so ${subject} was skipped.`,
+          word === "share"
+            ? `Write it as finding @${name} share east-count all-count.`
+            : `Write it as finding @${name} difference a-mean b-mean.`
+        );
+        continue;
+      }
+      const definition: ComparisonFinding = {
+        id: name,
+        kind: word,
+        of: operands.map((item) => single(item.value).replace(/^@/, "")) as [
+          string,
+          string,
+        ],
+      };
+      for (const pair of declaration.pairs) {
+        const digits = numberValue(pair.value);
+        if (
+          pair.key === "digits" &&
+          digits !== undefined &&
+          Number.isInteger(digits) &&
+          digits >= 0 &&
+          digits <= 10
+        )
+          definition.digits = digits;
+        else
+          report(
+            "warning",
+            "setting-ignored",
+            pair.span,
+            `${pair.key}=${pair.value.raw} does not apply to a ${word}, so it was ignored.`,
+            {
+              subject,
+              suggestion: "A comparison takes only digits=, from 0 to 10.",
+            }
+          );
+      }
+      comparisons.push({ definition, declaration, subject, operands });
+      continue;
+    }
+    const aggregation = word === "avg" || word === "mean" ? "average" : word;
+    if (!isAggregation(aggregation)) {
+      fail(
+        reducer?.span ?? declaration.span,
+        `${word || "Nothing"} is not a way to summarize rows, so ${subject} was skipped.`,
+        "Start with count, sum, average, min, max, share, or difference."
+      );
+      continue;
+    }
+    const definition: MetricFinding = { id: name, aggregation };
+    if (aggregation === "count") {
+      if (measure) extra.unshift(measure);
+    } else if (!measure) {
+      fail(
+        reducer!.span,
+        `${aggregation} needs a field to measure, so ${subject} was skipped.`,
+        `Write it as finding @${name} ${aggregation} score.`
+      );
+      continue;
+    } else {
+      const field = resolveField(single(measure.value), measure.span, subject);
+      if (!field) continue;
+      definition.field = field;
+    }
+    for (const item of extra) {
+      report(
+        "warning",
+        "setting-ignored",
+        item.span,
+        `${item.value.raw} is not part of ${subject}, so it was ignored.`,
+        {
+          subject,
+          suggestion:
+            aggregation === "count"
+              ? "A count needs no field."
+              : "Name one field to measure.",
+        }
+      );
+    }
+    let usable = true;
+    const filters: Filter[] = [];
+    for (const pair of declaration.pairs) {
+      if (pair.key.startsWith("where.")) {
+        const filter = buildFilter(
+          pair.key.slice(6),
+          pair.value,
+          pair.span,
+          subject
+        );
+        if (filter) filters.push(filter);
+        else usable = false;
+      } else if (pair.key === "chart") {
+        const chartName = single(pair.value).replace(/^@/, "");
+        const id = ambiguousNames.has(chartName)
+          ? undefined
+          : chartNames.get(chartName);
+        if (!id) {
+          const near = closestName(chartName, [...chartNames.keys()]);
+          fail(
+            pair.span,
+            `${chartName} is not a chart in this text, so ${subject} was skipped.`,
+            near
+              ? `Did you mean @${near}?`
+              : "Name the chart, as in row Region @regions, and write chart=@regions."
+          );
+          usable = false;
+        } else definition.chart = id;
+      } else if (pair.key === "population") {
+        const value = single(pair.value);
+        if (value === "eligible") definition.population = "eligible";
+        else if (value !== "selected")
+          report(
+            "warning",
+            "setting-default",
+            pair.span,
+            `${value} is not a population, so ${subject} follows the chart's selection.`,
+            { subject, suggestion: "Use selected or eligible." }
+          );
+      } else if (pair.key === "digits") {
+        const digits = numberValue(pair.value);
+        if (
+          digits !== undefined &&
+          Number.isInteger(digits) &&
+          digits >= 0 &&
+          digits <= 10
+        )
+          definition.digits = digits;
+        else
+          report(
+            "warning",
+            "setting-default",
+            pair.span,
+            `digits needs a whole number from 0 to 10, so ${subject} uses the field's format.`,
+            { subject, suggestion: "Write digits=2." }
+          );
+      } else {
+        const near = closestName(pair.key, FINDING_KEYS);
+        report(
+          "warning",
+          "setting-ignored",
+          pair.span,
+          `${pair.key} is not a finding setting, so it was ignored.`,
+          {
+            subject,
+            suggestion: near
+              ? `Did you mean ${near}?`
+              : `Use ${FINDING_KEYS.join(", ")}.`,
+          }
+        );
+      }
+    }
+    if (!usable) continue;
+    if (filters.length) definition.filters = filters;
+    findings.push(definition);
+  }
+  for (const { definition, subject, operands } of comparisons) {
+    const resolved = definition.of.map((id, index) => {
+      const found = findings.find((item) => item.id === id);
+      if (found && !found.kind) return found;
+      const near = closestName(
+        id,
+        findings.flatMap((item) => (item.kind ? [] : [item.id]))
+      );
+      report(
+        "error",
+        "setting-ignored",
+        operands[index]!.span,
+        found
+          ? `${id} is a ${found.kind}, so ${subject} was skipped.`
+          : `${id} is not a finding in this text, so ${subject} was skipped.`,
+        {
+          subject,
+          suggestion: found
+            ? "Compare two summaries, such as two counts or two averages."
+            : near
+              ? `Did you mean ${near}?`
+              : "Declare it on its own finding line.",
+        }
+      );
+      return undefined;
+    });
+    if (!resolved[0] || !resolved[1]) continue;
+    const pair = resolved as [MetricFinding, MetricFinding];
+    const problem = comparisonProblem(definition.kind, pair);
+    if (problem) {
+      report(
+        "error",
+        "setting-ignored",
+        operands[0]!.span,
+        `${problem}, so ${subject} was skipped.`,
+        {
+          subject,
+          suggestion:
+            definition.kind === "share"
+              ? "Count the part and its whole from the same chart, or the whole from every row."
+              : "Change only the where. filters between the two.",
+        }
+      );
+      continue;
+    }
+    if (definition.kind === "difference" && definition.digits === undefined) {
+      const digits = pair[0].digits ?? pair[1].digits;
+      if (digits !== undefined) definition.digits = digits;
+    }
+    findings.push(definition);
   }
 
   /**
@@ -2615,6 +2882,7 @@ export function compileDocument(
     ...(rowsSettings ? { rowsSettings } : {}),
     ...(workspaceFilters.length ? { workspaceFilters } : {}),
     ...(theme ? { theme } : {}),
+    ...(findings.length ? { findings } : {}),
   };
   if (!validateSavedData(settings)) {
     // Every value above is checked; this guards a gap between the two.

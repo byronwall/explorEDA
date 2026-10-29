@@ -94,6 +94,56 @@ Sheets split the reading, not the analysis: every sheet charts the same rows, an
 - **The data comes from the project.** `eda query=demand` picks the query every block charts. Without one, the notebook charts the project's first query.
 - **Clicks and brushes stay with their chart.** Selecting a range in one chart doesn't narrow the others, so a zoomed window can sit below the full series. A `filter` line still narrows every chart.
 
+## Live findings
+
+A finding is a named value that follows one chart's selection. Declare it on a `finding` line in any `eda` block, then write `{{name}}` in the prose where the value goes. Select bars in the chart it names, and the sentence changes with them. A link to `#finding:name` opens the exact rows behind the value.
+
+````markdown
+Selected **{{n}}** of {{eligible}} active reviews. Their average score is {{mean-score}}; [show records](#finding:mean-score).
+
+```eda
+field score as=numeric
+finding @n count chart=@regions
+finding @eligible count chart=@regions population=eligible
+finding @mean-score average score chart=@regions digits=2
+row region @regions where.active=true
+```
+````
+
+<LiveExample
+  id="notebook-findings"
+  caption="Select East: four of the ten active reviews remain, and the average uses three of them, since one score is not a number. The group chart's selection changes nothing here."
+/>
+
+A `finding` line has a name, a summary, and a field to measure unless it counts:
+
+- **Summary:** `count`, `sum`, `average` (or `avg`), `min`, or `max`, the same summaries a metric card offers. A count of no rows is 0.
+- **`chart=@name`** names the chart to follow. The finding reads the rows that chart can show, after its own `where.` filters and any `filter` line, then keeps the ones its selection keeps. A cleared selection keeps them all. Other charts' selections never change it. Without `chart=`, the finding reads every row of the data, whatever any chart or filter selects.
+- **`population=eligible`** ignores the chart's selection but keeps its filters, so a finding can name the total a selection is part of.
+- **`where.field=value`** narrows the finding further, with the same values, ranges, and text tests as a chart's `where.`.
+- **`digits=2`** fixes the decimal places. Without it, the value uses the field's own format.
+
+The value and its records always come from the same rows. Records list each row the summary read and say why a row was left out, such as a missing value or text in a number field. A selection that changes those rows closes the records rather than showing rows from before.
+
+When a finding has no value, the prose says why in place of a number: no rows, no valid values, not a finite number, or an unknown finding when the text names one it never declares. A broken `finding` line is reported at its line, as any block problem is. `{{name}}` stays as written inside code, after a backslash (`\{{name}}`), and in a link's address.
+
+## Compare two findings
+
+A comparison names two findings and reads their unrounded values from the same moment, so both sides always describe the same selection. There are two kinds:
+
+- **`finding @gap difference a-mean b-mean`** subtracts the second from the first and shows the sign: −8.75 for all active reviews, +15.00 once East is selected. Both sides must summarize the same field the same way, from the same chart; only their `where.` filters may differ. Without `digits=`, it takes the first side's.
+- **`finding @east-share share n eligible`** shows the first count as a percent of the second. The whole must hold the part: count it from the same chart with `population=eligible`, or from every row with no `chart=`. East's four rows are 40% of ten active reviews and 33.3% of all twelve. A part of no rows is 0%; a whole of no rows has no share.
+
+```eda
+finding @a-mean average score chart=@regions where.group=A digits=2
+finding @b-mean average score chart=@regions where.group=B digits=2
+finding @gap difference a-mean b-mean
+finding @all count
+finding @all-share share n all digits=1
+```
+
+The records for a comparison show its calculation, then each side's rows on their own. When either side has no value, the comparison says why in its place. Write the sentence around a comparison so it holds for any selection, such as `a difference of {{gap}}`. A number that changes can contradict a conclusion written around one value.
+
 ## Edit the text or the charts
 
 Both edits change the same file, and the notebook updates as you go.

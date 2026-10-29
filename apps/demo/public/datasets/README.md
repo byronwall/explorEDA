@@ -530,3 +530,10 @@ Each row is one hour's energy flow in kWh: solar and grid import are positive, a
 - Size: 5 rows and 4 fields
 - Use: a quadratic fit whose X sits a billion millimetres from zero, stated in millimetres and metres
 - Generation: the curve y = 1.234567 + 0.234567u + 0.034567u², with u the offset from 1,000,000,000 mm, plus residuals (1, −4, 6, −4, 1) / 10,000 V that leave the fitted coefficients exact
+
+## Live findings
+
+- File: `live-findings.csv`
+- Size: 12 rows and 5 fields
+- Use: the acceptance fixture for live notebook findings: a missing score, a score that is not a number, and two inactive rows
+- Generation: written by hand from the live-findings implementation plan

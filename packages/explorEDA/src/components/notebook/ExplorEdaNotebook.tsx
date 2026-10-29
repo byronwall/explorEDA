@@ -43,6 +43,7 @@ import {
 import { GridChartPanel } from "../GridChartPanel";
 import { Button } from "../ui/button";
 import { Toaster } from "../ui/sonner";
+import { NotebookFindingsProvider } from "./NotebookFindings";
 import { NotebookProse } from "./NotebookProse";
 import { NotebookSourceEditor } from "./NotebookSourceEditor";
 import "./notebook.css";
@@ -153,6 +154,8 @@ function chartHeight(chart: ChartSettings, width: number, categories?: number) {
       return 150;
     // A few bars need a short chart; two dozen need a tall one. A top N
     // draws its N bars and one for the rest, however many categories exist.
+    // The header, axis, and status line take about 150 pixels, and a
+    // `where.` chip one more line.
     case "row": {
       if (categories === undefined) return 380;
       const bars = chart.topN
@@ -160,7 +163,9 @@ function chartHeight(chart: ChartSettings, width: number, categories?: number) {
         : categories;
       return Math.min(
         640,
-        110 + bars * Math.max(chart.minRowHeight, chart.maxRowHeight)
+        150 +
+          (chart.localFilters?.length ? 28 : 0) +
+          bars * Math.max(chart.minRowHeight, chart.maxRowHeight)
       );
     }
     // A scatter's legends sit above and below its plot, so it grows with
@@ -354,19 +359,21 @@ export function ExplorEdaNotebook({
       <CalculationEditorProvider>
         <ChartDraftProvider>
           <ExploreChart.Provider value={onExploreChart}>
-            <NotebookColumn
-              result={result}
-              layout={layout}
-              sheet={sheet}
-              defaultSheet={defaultSheet}
-              onSheetChange={onSheetChange}
-              onSegmentChange={
-                onTextChange
-                  ? (segment, next) =>
-                      onTextChange(replaceSegment(text, segment, next))
-                  : undefined
-              }
-            />
+            <NotebookFindingsProvider>
+              <NotebookColumn
+                result={result}
+                layout={layout}
+                sheet={sheet}
+                defaultSheet={defaultSheet}
+                onSheetChange={onSheetChange}
+                onSegmentChange={
+                  onTextChange
+                    ? (segment, next) =>
+                        onTextChange(replaceSegment(text, segment, next))
+                    : undefined
+                }
+              />
+            </NotebookFindingsProvider>
           </ExploreChart.Provider>
         </ChartDraftProvider>
       </CalculationEditorProvider>
@@ -884,7 +891,11 @@ function NotebookBlockView({
   const problems = block.diagnostics;
   const empty = !block.charts.length;
   if (empty && !problems.length && !open) {
-    const names = [...block.aliases, ...block.calculations];
+    const names = [
+      ...block.aliases,
+      ...block.calculations,
+      ...block.findings.map((name) => `@${name}`),
+    ];
     return names.length || edit ? (
       <div className="eda-notebook-segment">
         {edit}

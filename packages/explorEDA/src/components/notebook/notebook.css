@@ -525,3 +525,20 @@
   + * {
   margin-top: 2.5rem;
 }
+
+/* A live finding reads as part of its sentence; tabular figures keep the
+   line from shifting as the value changes. */
+.eda-notebook-prose .eda-finding-value {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.eda-notebook-prose .eda-finding-value[data-unavailable] {
+  color: var(--muted-foreground);
+  font-style: italic;
+  font-weight: 400;
+}
+
+.eda-notebook-prose .eda-finding-link {
+  cursor: pointer;
+}

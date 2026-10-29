@@ -1,7 +1,12 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { beforeAll, describe, expect, it } from "vitest";
-import { compileViews, DSL_CHART_KEYWORDS, readNotebookText } from "exploreda";
+import {
+  compileViews,
+  DSL_CHART_KEYWORDS,
+  evaluateNotebookFindings,
+  readNotebookText,
+} from "exploreda";
 import { compileProjectText, evaluateAnalysisQuery } from "exploreda/analysis";
 import { readTableText } from "exploreda/readers";
 import {
@@ -235,21 +240,38 @@ describe("daily visualization corpus", () => {
     }
   );
 
-  // Prose may quote a finding; a quoted number must be the computed one.
+  // Prose may quote a finding; a quoted number must be the computed one. A
+  // live finding ({{name}}) reads as the notebook first shows it.
   it.each(entries)("$id findings match its local data", async (entry) => {
     const ctx = await project(entry.family);
-    const prose = [entry.entry, entry.companion]
+    let prose = [entry.entry, entry.companion]
       .filter(Boolean)
       .map((file) => read(`projects/${entry.family}/${file}`))
       .join("\n");
+    const live = entry.kind === "notebook" && prose.includes("{{");
+    if (live) {
+      const result = readNotebookText(prose, ctx);
+      const values = evaluateNotebookFindings(result.settings, result.rows);
+      prose = prose.replace(/\{\{([\w-]+)\}\}/g, (token, name: string) => {
+        const value = values.get(name);
+        expect(value?.unavailable, token).toBeUndefined();
+        return value!.text;
+      });
+    }
     expect(entry.findings.length).toBeGreaterThan(0);
     for (const finding of entry.findings) {
       const { statement } = evaluateFinding(
         finding,
         ctx.rows(finding.query ?? entry.query)
       );
-      const lead = finding.text.slice(0, finding.text.indexOf("{value}"));
-      if (lead.length > 12 && prose.includes(lead))
+      const at = finding.text.indexOf("{value}");
+      const lead = finding.text.slice(0, at);
+      // A live value can open its sentence, so live text matches the rest.
+      const tail = finding.text.slice(at + "{value}".length);
+      if (
+        (lead.length > 12 && prose.includes(lead)) ||
+        (live && tail.length > 12 && prose.includes(tail))
+      )
         expect(prose).toContain(statement);
     }
   });

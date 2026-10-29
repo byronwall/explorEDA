@@ -60,14 +60,19 @@ function currentInput(): DocsGateInput {
         ([id, spec]) => [
           id,
           {
-            exampleId: spec.exampleId,
+            exampleId: spec.notebook === undefined ? spec.exampleId : undefined,
             data: spec.data,
-            charts: spec.savedData.charts.map((chart) => chart.id),
+            charts:
+              spec.notebook === undefined
+                ? spec.savedData.charts.map((chart) => chart.id)
+                : [],
             stepCharts: [
               ...spec.steps.flatMap((step) =>
                 "brush" in step ? [step.brush.chart] : []
               ),
-              ...(spec.surface ? [spec.surface.chart] : []),
+              ...(spec.notebook === undefined && spec.surface
+                ? [spec.surface.chart]
+                : []),
             ],
           },
         ]

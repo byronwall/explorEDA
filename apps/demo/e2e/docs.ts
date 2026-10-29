@@ -34,7 +34,9 @@ export function liveExample(page: Page, id: string) {
 /** Waits for a live workspace, or a live surface, to finish loading. */
 export async function waitForWorkspace(page: Page, id: string) {
   await expect(
-    liveExample(page, id).locator(".eda-row-count, [data-docs-surface]").first()
+    liveExample(page, id)
+      .locator(".eda-row-count, [data-docs-surface], .eda-notebook-output")
+      .first()
   ).toBeVisible();
 }
 
@@ -60,6 +62,8 @@ export type DocsStep =
   | { expectRows: number }
   | { select: { label: string; option: string } }
   | { choose: string }
+  | { link: string }
+  | { expectPopover: string }
   | { expectText: string }
   | { click: string }
   | { expectMark: string }
@@ -119,6 +123,12 @@ export async function runStep(page: Page, id: string, step: DocsStep) {
     await page
       .getByRole("menuitem", { name: step.choose, exact: true })
       .click();
+  } else if ("link" in step) {
+    await region.getByRole("link", { name: step.link, exact: true }).click();
+  } else if ("expectPopover" in step) {
+    await expect
+      .soft(page.locator('[data-slot="popover-content"]'))
+      .toContainText(step.expectPopover);
   } else if ("expectText" in step) {
     await expect.soft(region).toContainText(step.expectText);
   } else if ("click" in step) {
