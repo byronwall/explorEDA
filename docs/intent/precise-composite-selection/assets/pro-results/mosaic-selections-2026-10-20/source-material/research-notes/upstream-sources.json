@@ -1,0 +1,691 @@
+[
+  {
+    "id": "UP-REPO",
+    "type": "official_implementation",
+    "title": "Official Mosaic immutable revision and licensing",
+    "author": "UW Interactive Data Lab / Mosaic contributors",
+    "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/LICENSE",
+    "version_ref": "9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce",
+    "source_commit_timestamp": "2026-10-15T21:06:16Z",
+    "retrieval_date": "2026-10-20",
+    "retrieval_timezone": "America/Indianapolis",
+    "supported_claims": [
+      "BSD 3-Clause and embedded ISC notices",
+      "Core/SQL source package version 0.33.0 and exports/dependencies",
+      "Immutable revision pin and official repository identity"
+    ],
+    "exact_sections_or_symbols": [
+      "package manifests",
+      "index.ts exports"
+    ],
+    "access_limits": "Pinned raw source downloaded and statically inspected; no build, execution, bundle measurement, or upstream tests run. Live GitHub web reader failed but raw HTTPS download succeeded.",
+    "license": "BSD-3-Clause with Observable ISC notice; retain upstream LICENSE",
+    "original_filename": "LICENSE",
+    "collected_files": [
+      {
+        "path": "LICENSE",
+        "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/LICENSE",
+        "original_filename": "LICENSE",
+        "collected_file": "research-work/upstream/LICENSE",
+        "bytes": 2358,
+        "sha256": "1c0f0e462ae9a0c7688bb8c407a8bf3df990c3c0210390cc9ebcdab9242e18e0"
+      },
+      {
+        "path": "packages/mosaic/core/package.json",
+        "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/packages/mosaic/core/package.json",
+        "original_filename": "package.json",
+        "collected_file": "research-work/upstream/source/packages/mosaic/core/package.json",
+        "bytes": 1326,
+        "sha256": "d44c08d1486e2cf328029601e67ca1d568ce87cff6e4019c2ece3cf3f38b9252"
+      },
+      {
+        "path": "packages/mosaic/sql/package.json",
+        "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/packages/mosaic/sql/package.json",
+        "original_filename": "package.json",
+        "collected_file": "research-work/upstream/source/packages/mosaic/sql/package.json",
+        "bytes": 804,
+        "sha256": "98ccc3a1d3b317fa5791415b6fd902f8d188712f4235af75b38c937203bb771d"
+      },
+      {
+        "path": "packages/mosaic/core/src/index.ts",
+        "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/packages/mosaic/core/src/index.ts",
+        "original_filename": "index.ts",
+        "collected_file": "research-work/upstream/source/packages/mosaic/core/src/index.ts",
+        "bytes": 1605,
+        "sha256": "125506e1bbfffadc031a2f443737ffa7c655b3955c37f0caaf988f2407aaefbe"
+      }
+    ]
+  },
+  {
+    "id": "UP-SEL",
+    "type": "official_implementation",
+    "title": "Mosaic Selection implementation",
+    "author": "UW Interactive Data Lab / Mosaic contributors",
+    "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/packages/mosaic/core/src/Selection.ts",
+    "version_ref": "9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce",
+    "source_commit_timestamp": "2026-10-15T21:06:16Z",
+    "retrieval_date": "2026-10-20",
+    "retrieval_timezone": "America/Indianapolis",
+    "supported_claims": [
+      "Source-owned clauses and target-specific resolution",
+      "Crossfilter active-client undefined skip sentinel",
+      "Factories, include relays, reset/remove, async value queues"
+    ],
+    "exact_sections_or_symbols": [
+      "SelectionOptions",
+      "Selection.update",
+      "Selection.reset",
+      "Selection.remove",
+      "Selection.predicate",
+      "SelectionResolver.resolve",
+      "SelectionResolver.predicate",
+      "SelectionResolver.queueFilter"
+    ],
+    "access_limits": "Pinned raw source downloaded and statically inspected; no build, execution, bundle measurement, or upstream tests run. Live GitHub web reader failed but raw HTTPS download succeeded.",
+    "license": "BSD-3-Clause with Observable ISC notice; retain upstream LICENSE",
+    "original_filename": "Selection.ts",
+    "collected_files": [
+      {
+        "path": "packages/mosaic/core/src/Selection.ts",
+        "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/packages/mosaic/core/src/Selection.ts",
+        "original_filename": "Selection.ts",
+        "collected_file": "research-work/upstream/source/packages/mosaic/core/src/Selection.ts",
+        "bytes": 13852,
+        "sha256": "920c39c4d9bd02fee2a6220643259d3d78110d1ece1e7af87f9012b9be90e743"
+      }
+    ]
+  },
+  {
+    "id": "UP-CLAUSE",
+    "type": "official_implementation",
+    "title": "Mosaic typed selection clause interfaces and factories",
+    "author": "UW Interactive Data Lab / Mosaic contributors",
+    "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/packages/mosaic/core/src/clause/SelectionClause.ts",
+    "version_ref": "9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce",
+    "source_commit_timestamp": "2026-10-15T21:06:16Z",
+    "retrieval_date": "2026-10-20",
+    "retrieval_timezone": "America/Indianapolis",
+    "supported_claims": [
+      "Object source and Set client identity; fields/predicate/meta",
+      "Inclusive interval predicates",
+      "Null-safe point and tuple semantics; type-specific clearing",
+      "Optimization metadata for point/interval"
+    ],
+    "exact_sections_or_symbols": [
+      "SelectionClause",
+      "ClauseSource",
+      "clauseNone",
+      "clauseInterval",
+      "clauseIntervals",
+      "clausePoint",
+      "clausePoints",
+      "clauseList",
+      "clauseMatch"
+    ],
+    "access_limits": "Pinned raw source downloaded and statically inspected; no build, execution, bundle measurement, or upstream tests run. Live GitHub web reader failed but raw HTTPS download succeeded.",
+    "license": "BSD-3-Clause with Observable ISC notice; retain upstream LICENSE",
+    "original_filename": "SelectionClause.ts",
+    "collected_files": [
+      {
+        "path": "packages/mosaic/core/src/clause/SelectionClause.ts",
+        "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/packages/mosaic/core/src/clause/SelectionClause.ts",
+        "original_filename": "SelectionClause.ts",
+        "collected_file": "research-work/upstream/source/packages/mosaic/core/src/clause/SelectionClause.ts",
+        "bytes": 2277,
+        "sha256": "e839287ec7c3de16a228f396b6e21b84c5eee0d8c95c6a01302254d2f5fd214b"
+      },
+      {
+        "path": "packages/mosaic/core/src/clause/IntervalClause.ts",
+        "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/packages/mosaic/core/src/clause/IntervalClause.ts",
+        "original_filename": "IntervalClause.ts",
+        "collected_file": "research-work/upstream/source/packages/mosaic/core/src/clause/IntervalClause.ts",
+        "bytes": 4760,
+        "sha256": "ae98ac465bf3fb7cff91b08f482f8916e48b0286a8793ca0f213c69f03f47e4e"
+      },
+      {
+        "path": "packages/mosaic/core/src/clause/PointClause.ts",
+        "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/packages/mosaic/core/src/clause/PointClause.ts",
+        "original_filename": "PointClause.ts",
+        "collected_file": "research-work/upstream/source/packages/mosaic/core/src/clause/PointClause.ts",
+        "bytes": 3338,
+        "sha256": "ad2ce23bdf427a72cffbb2d98b453e8d55895cb4b4fd61ca25d7c7f6f6f4bef4"
+      },
+      {
+        "path": "packages/mosaic/core/src/clause/ListClause.ts",
+        "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/packages/mosaic/core/src/clause/ListClause.ts",
+        "original_filename": "ListClause.ts",
+        "collected_file": "research-work/upstream/source/packages/mosaic/core/src/clause/ListClause.ts",
+        "bytes": 2651,
+        "sha256": "e338d643f4f76722cc4f15bc8c5b8fb6de66bdc632a36983b8e5d591d1f3e3b1"
+      },
+      {
+        "path": "packages/mosaic/core/src/clause/MatchClause.ts",
+        "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/packages/mosaic/core/src/clause/MatchClause.ts",
+        "original_filename": "MatchClause.ts",
+        "collected_file": "research-work/upstream/source/packages/mosaic/core/src/clause/MatchClause.ts",
+        "bytes": 4174,
+        "sha256": "39885cf35a0c1bf10ee421e70111d6297ec5379eead21a71e22357e4997f1853"
+      }
+    ]
+  },
+  {
+    "id": "UP-DISPATCH",
+    "type": "official_implementation",
+    "title": "Mosaic reactive dispatch implementation",
+    "author": "UW Interactive Data Lab / Mosaic contributors",
+    "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/packages/mosaic/core/src/Param.ts",
+    "version_ref": "9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce",
+    "source_commit_timestamp": "2026-10-15T21:06:16Z",
+    "retrieval_date": "2026-10-20",
+    "retrieval_timezone": "America/Indianapolis",
+    "supported_claims": [
+      "Asynchronous callback completion and update coalescing",
+      "Reactive value update timing"
+    ],
+    "exact_sections_or_symbols": [
+      "Param.update",
+      "Param.willEmit",
+      "AsyncDispatch.emit",
+      "DispatchQueue.enqueue"
+    ],
+    "access_limits": "Pinned raw source downloaded and statically inspected; no build, execution, bundle measurement, or upstream tests run. Live GitHub web reader failed but raw HTTPS download succeeded.",
+    "license": "BSD-3-Clause with Observable ISC notice; retain upstream LICENSE",
+    "original_filename": "Param.ts",
+    "collected_files": [
+      {
+        "path": "packages/mosaic/core/src/Param.ts",
+        "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/packages/mosaic/core/src/Param.ts",
+        "original_filename": "Param.ts",
+        "collected_file": "research-work/upstream/source/packages/mosaic/core/src/Param.ts",
+        "bytes": 2569,
+        "sha256": "cb7b2c9eee7c4a5e04bbf769ae4bd3c0a969fb9307a8af132db80c4c278ddd52"
+      },
+      {
+        "path": "packages/mosaic/core/src/util/AsyncDispatch.ts",
+        "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/packages/mosaic/core/src/util/AsyncDispatch.ts",
+        "original_filename": "AsyncDispatch.ts",
+        "collected_file": "research-work/upstream/source/packages/mosaic/core/src/util/AsyncDispatch.ts",
+        "bytes": 6635,
+        "sha256": "add24a834c1a4afac922344681e06a3202881381ceec242ebb6f092010e00885"
+      }
+    ]
+  },
+  {
+    "id": "UP-COORD",
+    "type": "official_implementation",
+    "title": "Mosaic Coordinator and client implementation",
+    "author": "UW Interactive Data Lab / Mosaic contributors",
+    "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/packages/mosaic/core/src/Coordinator.ts",
+    "version_ref": "9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce",
+    "source_commit_timestamp": "2026-10-15T21:06:16Z",
+    "retrieval_date": "2026-10-20",
+    "retrieval_timezone": "America/Indianapolis",
+    "supported_claims": [
+      "Query/client lifecycle and crossfilter skips",
+      "Selection activation preaggregation",
+      "filterStable responsibility",
+      "clear versus drop materialized tables"
+    ],
+    "exact_sections_or_symbols": [
+      "Coordinator.clear",
+      "Coordinator.connect",
+      "Coordinator.disconnect",
+      "Coordinator.requestQuery",
+      "activateSelection",
+      "updateSelection",
+      "MosaicClient.filterStable",
+      "MosaicClient.destroy"
+    ],
+    "access_limits": "Pinned raw source downloaded and statically inspected; no build, execution, bundle measurement, or upstream tests run. Live GitHub web reader failed but raw HTTPS download succeeded.",
+    "license": "BSD-3-Clause with Observable ISC notice; retain upstream LICENSE",
+    "original_filename": "Coordinator.ts",
+    "collected_files": [
+      {
+        "path": "packages/mosaic/core/src/Coordinator.ts",
+        "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/packages/mosaic/core/src/Coordinator.ts",
+        "original_filename": "Coordinator.ts",
+        "collected_file": "research-work/upstream/source/packages/mosaic/core/src/Coordinator.ts",
+        "bytes": 12874,
+        "sha256": "2939ad076fea6593ec08cbbde8bffbfce311093738c633877beb6a2d9f1bc4bb"
+      },
+      {
+        "path": "packages/mosaic/core/src/MosaicClient.ts",
+        "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/packages/mosaic/core/src/MosaicClient.ts",
+        "original_filename": "MosaicClient.ts",
+        "collected_file": "research-work/upstream/source/packages/mosaic/core/src/MosaicClient.ts",
+        "bytes": 7846,
+        "sha256": "1451735737fb0e129ba5f334ed9ba15cd7f656ed461484c0da24b9c86e8bb39f"
+      }
+    ]
+  },
+  {
+    "id": "UP-PREAGG",
+    "type": "official_implementation",
+    "title": "Mosaic materialized-view optimizer",
+    "author": "UW Interactive Data Lab / Mosaic contributors",
+    "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/packages/mosaic/core/src/preagg/PreAggregator.ts",
+    "version_ref": "9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce",
+    "source_commit_timestamp": "2026-10-15T21:06:16Z",
+    "retrieval_date": "2026-10-20",
+    "retrieval_timezone": "America/Indianapolis",
+    "supported_claims": [
+      "Eligibility, active-source reuse and fallback",
+      "Pixel quantization differs from exact source predicates",
+      "Construction query hash and static-data invalidation",
+      "Point/interval only; missing union guard static concern"
+    ],
+    "exact_sections_or_symbols": [
+      "PreAggregator.request",
+      "PreAggregator.clear",
+      "PreAggregator.dropSchema",
+      "activeColumns",
+      "binInterval",
+      "preaggregateInfo",
+      "PreAggregateInfo.query"
+    ],
+    "access_limits": "Pinned raw source downloaded and statically inspected; no build, execution, bundle measurement, or upstream tests run. Live GitHub web reader failed but raw HTTPS download succeeded.",
+    "license": "BSD-3-Clause with Observable ISC notice; retain upstream LICENSE",
+    "original_filename": "PreAggregator.ts",
+    "collected_files": [
+      {
+        "path": "packages/mosaic/core/src/preagg/PreAggregator.ts",
+        "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/packages/mosaic/core/src/preagg/PreAggregator.ts",
+        "original_filename": "PreAggregator.ts",
+        "collected_file": "research-work/upstream/source/packages/mosaic/core/src/preagg/PreAggregator.ts",
+        "bytes": 17024,
+        "sha256": "fffcb2132b188dc785ff8247c37f3f807e01ff370046271eb20ccee01592495b"
+      }
+    ]
+  },
+  {
+    "id": "UP-PRECOL",
+    "type": "official_implementation",
+    "title": "Mosaic query compatibility analysis",
+    "author": "UW Interactive Data Lab / Mosaic contributors",
+    "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/packages/mosaic/core/src/preagg/preagg-columns.ts",
+    "version_ref": "9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce",
+    "source_commit_timestamp": "2026-10-15T21:06:16Z",
+    "retrieval_date": "2026-10-20",
+    "retrieval_timezone": "America/Indianapolis",
+    "supported_claims": [
+      "Structured SQL and stable domains needed",
+      "Supported aggregate and distinct restrictions",
+      "HAVING/QUALIFY/ORDER BY rewrite behavior"
+    ],
+    "exact_sections_or_symbols": [
+      "preaggColumns",
+      "analyzeExpression"
+    ],
+    "access_limits": "Pinned raw source downloaded and statically inspected; no build, execution, bundle measurement, or upstream tests run. Live GitHub web reader failed but raw HTTPS download succeeded.",
+    "license": "BSD-3-Clause with Observable ISC notice; retain upstream LICENSE",
+    "original_filename": "preagg-columns.ts",
+    "collected_files": [
+      {
+        "path": "packages/mosaic/core/src/preagg/preagg-columns.ts",
+        "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/packages/mosaic/core/src/preagg/preagg-columns.ts",
+        "original_filename": "preagg-columns.ts",
+        "collected_file": "research-work/upstream/source/packages/mosaic/core/src/preagg/preagg-columns.ts",
+        "bytes": 5257,
+        "sha256": "bf1c76ddbd38ec11ed1a2125e3a1468f1feda43f7086fb8516c787a49dde5829"
+      }
+    ]
+  },
+  {
+    "id": "UP-STATS",
+    "type": "official_implementation",
+    "title": "Mosaic sufficient-statistics implementation",
+    "author": "UW Interactive Data Lab / Mosaic contributors",
+    "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/packages/mosaic/core/src/preagg/sufficient-statistics.ts",
+    "version_ref": "9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce",
+    "source_commit_timestamp": "2026-10-15T21:06:16Z",
+    "retrieval_date": "2026-10-20",
+    "retrieval_timezone": "America/Indianapolis",
+    "supported_claims": [
+      "Supported aggregate set and fallback",
+      "Weighted average/non-null count",
+      "Mean-centered variance/covariance/correlation formulas",
+      "No sketch or exact quantile branch"
+    ],
+    "exact_sections_or_symbols": [
+      "sufficientStatistics",
+      "avgExpr",
+      "countExpr",
+      "varianceExpr",
+      "covarianceExpr",
+      "corrExpr"
+    ],
+    "access_limits": "Pinned raw source downloaded and statically inspected; no build, execution, bundle measurement, or upstream tests run. Live GitHub web reader failed but raw HTTPS download succeeded.",
+    "license": "BSD-3-Clause with Observable ISC notice; retain upstream LICENSE",
+    "original_filename": "sufficient-statistics.ts",
+    "collected_files": [
+      {
+        "path": "packages/mosaic/core/src/preagg/sufficient-statistics.ts",
+        "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/packages/mosaic/core/src/preagg/sufficient-statistics.ts",
+        "original_filename": "sufficient-statistics.ts",
+        "collected_file": "research-work/upstream/source/packages/mosaic/core/src/preagg/sufficient-statistics.ts",
+        "bytes": 20948,
+        "sha256": "8a9089e80757d7234bf3e579cf4e3c4ac7f9a8fa55f4e417e9f221888bd001ff"
+      }
+    ]
+  },
+  {
+    "id": "UP-LINEAGE",
+    "type": "official_implementation",
+    "title": "Mosaic relation lineage and subquery pushdown",
+    "author": "UW Interactive Data Lab / Mosaic contributors",
+    "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/packages/mosaic/core/src/preagg/lineage.ts",
+    "version_ref": "9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce",
+    "source_commit_timestamp": "2026-10-15T21:06:16Z",
+    "retrieval_date": "2026-10-20",
+    "retrieval_timezone": "America/Indianapolis",
+    "supported_claims": [
+      "Single base relation detection",
+      "CTE/subquery handling and aggregate dimensions",
+      "Unsupported joins are not generic preaggregation"
+    ],
+    "exact_sections_or_symbols": [
+      "baseTable",
+      "baseExpression",
+      "resolveRelation",
+      "subqueryPushdown"
+    ],
+    "access_limits": "Pinned raw source downloaded and statically inspected; no build, execution, bundle measurement, or upstream tests run. Live GitHub web reader failed but raw HTTPS download succeeded.",
+    "license": "BSD-3-Clause with Observable ISC notice; retain upstream LICENSE",
+    "original_filename": "lineage.ts",
+    "collected_files": [
+      {
+        "path": "packages/mosaic/core/src/preagg/lineage.ts",
+        "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/packages/mosaic/core/src/preagg/lineage.ts",
+        "original_filename": "lineage.ts",
+        "collected_file": "research-work/upstream/source/packages/mosaic/core/src/preagg/lineage.ts",
+        "bytes": 7374,
+        "sha256": "1bea2dfefb30d9124f695b1c0e5bdc0283dfdc24ac9f204269f6575bc4c7574b"
+      },
+      {
+        "path": "packages/mosaic/core/src/preagg/subquery-pushdown.ts",
+        "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/packages/mosaic/core/src/preagg/subquery-pushdown.ts",
+        "original_filename": "subquery-pushdown.ts",
+        "collected_file": "research-work/upstream/source/packages/mosaic/core/src/preagg/subquery-pushdown.ts",
+        "bytes": 4799,
+        "sha256": "808ca7742c9059f1c549003518914a10530ee80e9cadafdef092db25b5f46fb5"
+      }
+    ]
+  },
+  {
+    "id": "UP-QUERY",
+    "type": "official_implementation",
+    "title": "Mosaic query manager, consolidation, and cache",
+    "author": "UW Interactive Data Lab / Mosaic contributors",
+    "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/packages/mosaic/core/src/QueryManager.ts",
+    "version_ref": "9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce",
+    "source_commit_timestamp": "2026-10-15T21:06:16Z",
+    "retrieval_date": "2026-10-20",
+    "retrieval_timezone": "America/Indianapolis",
+    "supported_claims": [
+      "SQL-keyed caching/in-flight deduplication",
+      "Generation guard after clear",
+      "Conservative query consolidation and fan-out",
+      "256 MiB query-result LRU not materialized table cap"
+    ],
+    "exact_sections_or_symbols": [
+      "QueryManager.submit",
+      "QueryManager.clear",
+      "consolidationKey",
+      "consolidatedQuery",
+      "processResults",
+      "lruCache"
+    ],
+    "access_limits": "Pinned raw source downloaded and statically inspected; no build, execution, bundle measurement, or upstream tests run. Live GitHub web reader failed but raw HTTPS download succeeded.",
+    "license": "BSD-3-Clause with Observable ISC notice; retain upstream LICENSE",
+    "original_filename": "QueryManager.ts",
+    "collected_files": [
+      {
+        "path": "packages/mosaic/core/src/QueryManager.ts",
+        "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/packages/mosaic/core/src/QueryManager.ts",
+        "original_filename": "QueryManager.ts",
+        "collected_file": "research-work/upstream/source/packages/mosaic/core/src/QueryManager.ts",
+        "bytes": 9573,
+        "sha256": "e76cd0095eabb296fb721555e8ddc8cac3f790e4f41eadaaa8ee291e10278aa2"
+      },
+      {
+        "path": "packages/mosaic/core/src/QueryConsolidator.ts",
+        "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/packages/mosaic/core/src/QueryConsolidator.ts",
+        "original_filename": "QueryConsolidator.ts",
+        "collected_file": "research-work/upstream/source/packages/mosaic/core/src/QueryConsolidator.ts",
+        "bytes": 11330,
+        "sha256": "21bbdbc97019d8b04a8629d208a5a86df4fd4f8e0562a7da0d1b52be564ee2f0"
+      },
+      {
+        "path": "packages/mosaic/core/src/util/cache.ts",
+        "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/packages/mosaic/core/src/util/cache.ts",
+        "original_filename": "cache.ts",
+        "collected_file": "research-work/upstream/source/packages/mosaic/core/src/util/cache.ts",
+        "bytes": 1647,
+        "sha256": "54d4f2db22f1ec9a1868cbc5239f004deb6a0c620cff54880619eb5caa705788"
+      }
+    ]
+  },
+  {
+    "id": "UP-INTERACT",
+    "type": "official_implementation",
+    "title": "Mosaic vgplot interval and rectangular region interactors",
+    "author": "UW Interactive Data Lab / Mosaic contributors",
+    "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/packages/vgplot/plot/src/interactors/Interval1D.js",
+    "version_ref": "9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce",
+    "source_commit_timestamp": "2026-10-15T21:06:16Z",
+    "retrieval_date": "2026-10-20",
+    "retrieval_timezone": "America/Indianapolis",
+    "supported_claims": [
+      "Source-unit inversion from snapped screen pixels",
+      "Peers/client sets and pointer activation",
+      "Region selects rendered elements with a rectangle, not lasso"
+    ],
+    "exact_sections_or_symbols": [
+      "Interval1D.publish/clause",
+      "Interval2D.publish/clause",
+      "Region.publish",
+      "invert"
+    ],
+    "access_limits": "Pinned raw source downloaded and statically inspected; no build, execution, bundle measurement, or upstream tests run. Live GitHub web reader failed but raw HTTPS download succeeded.",
+    "license": "BSD-3-Clause with Observable ISC notice; retain upstream LICENSE",
+    "original_filename": "Interval1D.js",
+    "collected_files": [
+      {
+        "path": "packages/vgplot/plot/src/interactors/Interval1D.js",
+        "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/packages/vgplot/plot/src/interactors/Interval1D.js",
+        "original_filename": "Interval1D.js",
+        "collected_file": "research-work/upstream/source/packages/vgplot/plot/src/interactors/Interval1D.js",
+        "bytes": 2645,
+        "sha256": "cdbdafd39b78502aa51bc6cf220382695fe972f833b9e551a5585b0c407bab8c"
+      },
+      {
+        "path": "packages/vgplot/plot/src/interactors/Interval2D.js",
+        "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/packages/vgplot/plot/src/interactors/Interval2D.js",
+        "original_filename": "Interval2D.js",
+        "collected_file": "research-work/upstream/source/packages/vgplot/plot/src/interactors/Interval2D.js",
+        "bytes": 2837,
+        "sha256": "0ac2d4f7f086e04bd3e39df38c815ef88e73b5e65102127a84827b801613aaed"
+      },
+      {
+        "path": "packages/vgplot/plot/src/interactors/Region.js",
+        "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/packages/vgplot/plot/src/interactors/Region.js",
+        "original_filename": "Region.js",
+        "collected_file": "research-work/upstream/source/packages/vgplot/plot/src/interactors/Region.js",
+        "bytes": 2914,
+        "sha256": "c351b49e10d628f78e2ef436066c1657adb4e7212ea7190ff6375c47b8da6f0c"
+      },
+      {
+        "path": "packages/vgplot/plot/src/interactors/util/invert.js",
+        "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/packages/vgplot/plot/src/interactors/util/invert.js",
+        "original_filename": "invert.js",
+        "collected_file": "research-work/upstream/source/packages/vgplot/plot/src/interactors/util/invert.js",
+        "bytes": 122,
+        "sha256": "217ace649581dc01f6a4d1387770c034865c8d221ad9fbf42303deb04dec52f2"
+      }
+    ]
+  },
+  {
+    "id": "UP-SQL",
+    "type": "official_implementation",
+    "title": "Mosaic SQL predicate operators",
+    "author": "UW Interactive Data Lab / Mosaic contributors",
+    "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/packages/mosaic/sql/src/ast/between-op.ts",
+    "version_ref": "9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce",
+    "source_commit_timestamp": "2026-10-15T21:06:16Z",
+    "retrieval_date": "2026-10-20",
+    "retrieval_timezone": "America/Indianapolis",
+    "supported_claims": [
+      "BETWEEN form and null-safe equality operators",
+      "SQL AST representation requires translation for Crossfilter"
+    ],
+    "exact_sections_or_symbols": [
+      "BetweenOpNode",
+      "isBetween",
+      "isInDistinct",
+      "isNotDistinct"
+    ],
+    "access_limits": "Pinned raw source downloaded and statically inspected; no build, execution, bundle measurement, or upstream tests run. Live GitHub web reader failed but raw HTTPS download succeeded.",
+    "license": "BSD-3-Clause with Observable ISC notice; retain upstream LICENSE",
+    "original_filename": "between-op.ts",
+    "collected_files": [
+      {
+        "path": "packages/mosaic/sql/src/ast/between-op.ts",
+        "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/packages/mosaic/sql/src/ast/between-op.ts",
+        "original_filename": "between-op.ts",
+        "collected_file": "research-work/upstream/source/packages/mosaic/sql/src/ast/between-op.ts",
+        "bytes": 1440,
+        "sha256": "bee201ea85f7737ae06efbd39b9a9c97867557c80c5e86705924f97d8da73103"
+      },
+      {
+        "path": "packages/mosaic/sql/src/functions/operators.ts",
+        "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/packages/mosaic/sql/src/functions/operators.ts",
+        "original_filename": "operators.ts",
+        "collected_file": "research-work/upstream/source/packages/mosaic/sql/src/functions/operators.ts",
+        "bytes": 8603,
+        "sha256": "4a5cd8b18ecd485803f4a7482479bd5b0e0c7b4031340abd4fe150c16e4e6653"
+      },
+      {
+        "path": "packages/mosaic/sql/src/visit/codegen/sql.ts",
+        "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/packages/mosaic/sql/src/visit/codegen/sql.ts",
+        "original_filename": "sql.ts",
+        "collected_file": "research-work/upstream/source/packages/mosaic/sql/src/visit/codegen/sql.ts",
+        "bytes": 8787,
+        "sha256": "6b04d2970a449cbb69aaa7807445a75b5dcf53ee3bc366684eb55f2976dda5cf"
+      }
+    ]
+  },
+  {
+    "id": "UP-TEST",
+    "type": "official_implementation",
+    "title": "Relevant official Mosaic tests (read, not run)",
+    "author": "UW Interactive Data Lab / Mosaic contributors",
+    "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/packages/mosaic/core/test/selection.test.ts",
+    "version_ref": "9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce",
+    "source_commit_timestamp": "2026-10-15T21:06:16Z",
+    "retrieval_date": "2026-10-20",
+    "retrieval_timezone": "America/Indianapolis",
+    "supported_claims": [
+      "Upstream expected reset/list semantics",
+      "Aggregate parity examples and distinct fallback",
+      "Test source is not a session execution result"
+    ],
+    "exact_sections_or_symbols": [
+      "Selection test suite",
+      "clauseList test suite",
+      "PreAggregator test suite"
+    ],
+    "access_limits": "Pinned raw source downloaded and statically inspected; no build, execution, bundle measurement, or upstream tests run. Live GitHub web reader failed but raw HTTPS download succeeded.",
+    "license": "BSD-3-Clause with Observable ISC notice; retain upstream LICENSE",
+    "original_filename": "selection.test.ts",
+    "collected_files": [
+      {
+        "path": "packages/mosaic/core/test/selection.test.ts",
+        "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/packages/mosaic/core/test/selection.test.ts",
+        "original_filename": "selection.test.ts",
+        "collected_file": "research-work/upstream/source/packages/mosaic/core/test/selection.test.ts",
+        "bytes": 2473,
+        "sha256": "9d1f24a7fd3730d441dd26159921db7c6afa443993421e2ac2a3afd641519f35"
+      },
+      {
+        "path": "packages/mosaic/core/test/selection-clause.test.ts",
+        "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/packages/mosaic/core/test/selection-clause.test.ts",
+        "original_filename": "selection-clause.test.ts",
+        "collected_file": "research-work/upstream/source/packages/mosaic/core/test/selection-clause.test.ts",
+        "bytes": 1692,
+        "sha256": "df338b11fadbe4057fa59c33066de927b6f00639cc5c76d2645ca07efbb04626"
+      },
+      {
+        "path": "packages/mosaic/core/test/preaggregator.test.ts",
+        "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/packages/mosaic/core/test/preaggregator.test.ts",
+        "original_filename": "preaggregator.test.ts",
+        "collected_file": "research-work/upstream/source/packages/mosaic/core/test/preaggregator.test.ts",
+        "bytes": 15675,
+        "sha256": "93b7a4bb7365d486e862657e3de73ea572bc4d8c7c6774b34fecdf67d01a3a9b"
+      }
+    ]
+  },
+  {
+    "id": "UP-DOC-SEL",
+    "type": "official_documentation",
+    "title": "Official Selection API documentation at pinned revision",
+    "author": "UW Interactive Data Lab / Mosaic contributors",
+    "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/docs/api/core/selection.md",
+    "version_ref": "9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce",
+    "source_commit_timestamp": "2026-10-15T21:06:16Z",
+    "retrieval_date": "2026-10-20",
+    "retrieval_timezone": "America/Indianapolis",
+    "supported_claims": [
+      "Documented factories/resolution/empty/include",
+      "Documentation terminology drift: schema versus source meta"
+    ],
+    "exact_sections_or_symbols": [
+      "Selection",
+      "update",
+      "predicate"
+    ],
+    "access_limits": "Pinned raw source downloaded and statically inspected; no build, execution, bundle measurement, or upstream tests run. Live GitHub web reader failed but raw HTTPS download succeeded.",
+    "license": "BSD-3-Clause with Observable ISC notice; retain upstream LICENSE",
+    "original_filename": "selection.md",
+    "collected_files": [
+      {
+        "path": "docs/api/core/selection.md",
+        "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/docs/api/core/selection.md",
+        "original_filename": "selection.md",
+        "collected_file": "research-work/upstream/source/docs/api/core/selection.md",
+        "bytes": 6460,
+        "sha256": "6382bd4dd5dbbfe2b5ab687ab880be22decc1d3073fdba7c8e88e0dcc0bb413f"
+      }
+    ]
+  },
+  {
+    "id": "UP-DOC-REACT",
+    "type": "official_documentation",
+    "title": "Official framework-client integration documentation",
+    "author": "UW Interactive Data Lab / Mosaic contributors",
+    "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/docs/web-clients/index.md",
+    "version_ref": "9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce",
+    "source_commit_timestamp": "2026-10-15T21:06:16Z",
+    "retrieval_date": "2026-10-20",
+    "retrieval_timezone": "America/Indianapolis",
+    "supported_claims": [
+      "React integration supported without adopting vgplot rendering",
+      "Effects create and destroy clients; async pending/error handling"
+    ],
+    "exact_sections_or_symbols": [
+      "React Example"
+    ],
+    "access_limits": "Pinned raw source downloaded and statically inspected; no build, execution, bundle measurement, or upstream tests run. Live GitHub web reader failed but raw HTTPS download succeeded.",
+    "license": "BSD-3-Clause with Observable ISC notice; retain upstream LICENSE",
+    "original_filename": "index.md",
+    "collected_files": [
+      {
+        "path": "docs/web-clients/index.md",
+        "url": "https://github.com/uwdata/mosaic/blob/9ca1d860e30ed148d0b228b92ebf30f66cb9e2ce/docs/web-clients/index.md",
+        "original_filename": "index.md",
+        "collected_file": "research-work/upstream/source/docs/web-clients/index.md",
+        "bytes": 5519,
+        "sha256": "21f5ae63c17151f4a59dfe8e4541e07f78f6b3f22f9aed2616f9899cc3153fc7"
+      }
+    ]
+  }
+]

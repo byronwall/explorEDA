@@ -59,3 +59,9 @@ It preserves this intent’s lasso priority and separates source context from ex
 The proposed twelve-row proof links a histogram, Scatter, table, and selected-count finding.
 Reproduce the interval-boundary concern before extending selection shapes.
 Mosaic packages and a new backend remain deferred. No implementation was delivered by this study.
+
+## Preserved Pro result materials
+
+[Original Pro reports and artifacts for #462](assets/pro-results/mosaic-selections-2026-10-20/ASSET_INDEX.md)
+
+All extracted result materials are preserved without ZIP containers. Original bytes and attribution are unchanged.
