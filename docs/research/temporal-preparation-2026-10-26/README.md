@@ -79,3 +79,7 @@ Implementation must finish the finite consumer inventory, source/folder edit rou
 calculation operand metadata, and measured M2 cost. None requires an outside-demand study.
 Browser flows, exact refresh identity, new parser behavior, and dependency performance remain unproved.
 The current test and review record is in [run.md](run.md).
+
+## Preserved Pro result materials
+
+[Complete original Pro artifacts](../../intent/temporal-preparation/assets/pro-results/temporal-preparation-2026-10-26/ASSET_INDEX.md) are preserved under the intent entry. ZIP containers remain local.

@@ -233,3 +233,9 @@ Run demo example coverage/export-recompile and docs checks with each example cha
 Add a named Playwright project for new browser suites: current config has explicit project matchers.
 Run `pnpm check` once for the finished code change; add the package minor changeset.
 Use `pnpm shot` for implementation PR evidence. No feature/browser acceptance is claimed by this plan.
+
+## Preserved Pro result materials
+
+[Original Pro reports and artifacts for #532](assets/pro-results/temporal-preparation-2026-10-26/ASSET_INDEX.md)
+
+All extracted result materials are preserved without ZIP containers. Original bytes and attribution are unchanged.
