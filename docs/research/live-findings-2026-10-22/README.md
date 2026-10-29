@@ -70,3 +70,7 @@ Open choices concern saved-evidence payload limits, supported capture owners, an
 The original lasso coordinate table is needed before that later truth-table test.
 None blocks the first live-finding milestone. No participant study or outside-demand gate applies.
 Original reports and the ZIP stay under ignored `tmp/`.
+
+## Preserved Pro result materials
+
+[Complete original Pro artifacts](../../intent/data-bound-narrative/assets/pro-results/live-findings-2026-10-22/ASSET_INDEX.md) are preserved under the intent entry. ZIP containers remain local.

@@ -140,3 +140,7 @@ Deleted temporary collector collect-exploreda-live-findings-design through autom
 Six-hour exploreda-pro-research-pipeline remains ACTIVE indefinitely, verified through tool and saved configuration.
 Both reports are read and reconciled; originals remain in ignored tmp/.
 No follow-up, merge, deployment, worktree, or paid service. Stop for review.
+
+## Preserved Pro result materials
+
+Backfill requested by Byron: [2 original result files](../../intent/data-bound-narrative/assets/pro-results/live-findings-2026-10-22/ASSET_INDEX.md) are now committed under the intent entry. This supersedes earlier instructions to leave originals ignored. ZIPs and input source packets remain local. Byte equality and supplied manifest entries were checked; no downloaded code was executed.

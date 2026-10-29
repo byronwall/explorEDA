@@ -201,3 +201,9 @@ Run targeted notebook, Crossfilter, and affected reducer tests with pnpm, plus l
 Run the notebook docs example through the existing docs verification command.
 Before each implementation PR, run `pnpm check` once, add the required changeset, and attach screenshots with gh.
 Keep React and TypeScript. Do not add a new backend, generated prose, extra reducers, or entity grain in this plan.
+
+## Preserved Pro result materials
+
+[Original Pro reports and artifacts for #507](assets/pro-results/live-findings-2026-10-22/ASSET_INDEX.md)
+
+All extracted result materials are preserved without ZIP containers. Original bytes and attribution are unchanged.
