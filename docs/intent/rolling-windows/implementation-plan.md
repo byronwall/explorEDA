@@ -170,3 +170,9 @@ Verify real image/data downloads; screenshots do not prove IDs, focus, or arithm
 
 Explore coverage/exposure rates and reusable outputs later. Defer elapsed/local-time, last-N-row, centered, and observed-bucket windows.
 Keep lag/difference preparation separate. Avoid silent mean-of-means, synthetic observations, and general window expressions.
+
+## Preserved Pro result materials
+
+[Original Pro reports and artifacts for #521](assets/pro-results/rolling-windows-2026-10-24/ASSET_INDEX.md)
+
+All extracted result materials are preserved without ZIP containers. Original bytes and attribution are unchanged.

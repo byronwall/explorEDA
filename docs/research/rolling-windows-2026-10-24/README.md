@@ -66,3 +66,7 @@ The choice of UTC half-open calendar windows is a local design decision, not a c
 
 Implementation must prove the fresh-import boundary without changing same-data undo, and measure the proposed workload.
 Coverage metadata and duration-weighted physical-signal means remain separate capabilities.
+
+## Preserved Pro result materials
+
+[Complete original Pro artifacts](../../intent/rolling-windows/assets/pro-results/rolling-windows-2026-10-24/ASSET_INDEX.md) are preserved under the intent entry. ZIP containers remain local.
