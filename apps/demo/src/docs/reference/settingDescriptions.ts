@@ -212,6 +212,8 @@ export const CHART_SETTINGS: Readonly<
     pointOpacity: "Point opacity, from 0 to 1.",
     jitter:
       "How much of a category's band jittered points spread across, from 0 to 1. Default 0.8.",
+    correlation:
+      "What correlation cells compute: pearson (how close points lie to a line) or spearman (Pearson on each pair's ranks). Absent is pearson.",
   },
   calendar: {
     field: "Date field. Each day's cell summarizes its rows.",

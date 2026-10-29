@@ -11,6 +11,7 @@ import {
 import { SavedDataStructure } from "@/types/SavedDataStructure";
 import { boxPlotDefinition } from "@/components/charts/BoxPlot/definition";
 import { metricCardDefinition } from "@/components/charts/MetricCard/definition";
+import { scatterMatrixDefinition } from "@/components/charts/ScatterMatrix/definition";
 import {
   lineChartDefinition,
   DEFAULT_TIME_SERIES,
@@ -243,6 +244,21 @@ describe("saveDataUtils", () => {
           ],
         })
       ).toBe(false);
+    });
+
+    it("accepts a matrix correlation method and rejects unknown ones", () => {
+      const matrix = {
+        ...scatterMatrixDefinition.createDefaultSettings(
+          { x: 0, y: 0, w: 6, h: 6 },
+          "x"
+        ),
+        fields: ["x", "y"],
+      };
+      const valid = (chart: object) =>
+        validateSavedData({ ...mockValidData, charts: [chart] as never });
+      expect(valid(matrix)).toBe(true);
+      expect(valid({ ...matrix, correlation: "spearman" })).toBe(true);
+      expect(valid({ ...matrix, correlation: "kendall" })).toBe(false);
     });
 
     it("accepts serialized 3D camera vectors", () => {

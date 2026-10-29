@@ -16,6 +16,7 @@ import {
   MAX_MATRIX_CATEGORIES,
   MAX_MATRIX_FIELDS,
   MIN_MATRIX_FIELDS,
+  type MatrixCorrelation,
   type MatrixDiagonalCells,
   type MatrixTriangleCells,
   type ScatterMatrixSettings,
@@ -29,7 +30,7 @@ const NUMERIC_CELLS: Options = [
   [
     "correlation",
     "Corr",
-    "Show the Pearson correlation of the two fields and the rows it uses.",
+    "Show the correlation of the two fields, by the method under Correlation, and the rows it uses.",
   ],
   ["blank", "Blank", "Leave these cells empty."],
 ];
@@ -45,6 +46,18 @@ const MIXED_CELLS: Options = [
     "Show a box plot of the number for each category. Click a box to select its category.",
   ],
   ["blank", "Blank", "Leave these cells empty."],
+];
+const CORRELATIONS: Options = [
+  [
+    "pearson",
+    "Pearson",
+    "Pearson r: how close the points lie to a straight line. A curve that always rises reads below 1.",
+  ],
+  [
+    "spearman",
+    "Spearman",
+    "Spearman ρ: Pearson on each pair's ranks. Any steady rise or fall reads as ±1, and outliers count only by their order.",
+  ],
 ];
 const CATEGORICAL_CELLS: Options = [
   [
@@ -290,6 +303,21 @@ export function ScatterMatrixSettingsPanel({
           </section>
         );
       })}
+
+      <section className="eda-setting-section" aria-label="Correlation">
+        <h5>Correlation</h5>
+        <div className="eda-setting-grid">
+          <Segmented
+            label="Method"
+            help="What correlation cells compute, over the rows with both values. Each pair and color group is ranked on its own rows."
+            value={settings.correlation ?? "pearson"}
+            options={CORRELATIONS}
+            onChange={(value) =>
+              change({ correlation: value as MatrixCorrelation })
+            }
+          />
+        </div>
+      </section>
 
       <section className="eda-setting-section" aria-label="Diagonal">
         <h5>Diagonal</h5>

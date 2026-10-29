@@ -14,6 +14,7 @@ import {
   scatterRegressionDashboard,
   scatterRegressionUnitsDashboard,
   scatterMatrixDashboard,
+  rankCorrelationDashboard,
   scatterSurfaceDashboard,
   pointMapDashboard,
   regionMapDashboard,
@@ -574,6 +575,17 @@ export const examples: ExampleData[] = [
     icon: LayoutGrid,
     data: "/datasets/palmer-penguins.csv",
     savedData: scatterMatrixDashboard,
+  },
+  {
+    id: "rank-correlation-basics",
+    title: "Straight lines and steady rises",
+    description:
+      "Exam scores rise with study hours, then level off. Pearson reads the bend as a weaker link; Spearman ranks each pair first and reads the steady rise. Practice tests have gaps and Confidence has ties, so each pair ranks only its own rows.",
+    dataset: { rows: "40 students", fields: 6, source: "Synthetic" },
+    shows: ["Spearman correlation", "Tied ranks", "Missing values"],
+    icon: LayoutGrid,
+    data: "/datasets/study-hours.csv",
+    savedData: rankCorrelationDashboard,
   },
   {
     id: "scatter-surfaces",

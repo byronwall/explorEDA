@@ -1621,6 +1621,55 @@ export const scatterMatrixDashboard = dashboard(
   ]
 );
 
+const RANK_FIELDS = [
+  "Study hours",
+  "Exam score",
+  "Practice tests",
+  "Confidence",
+];
+const rankMatrix = (
+  id: string,
+  title: string,
+  correlation: "pearson" | "spearman",
+  at: Chart["layout"]
+): Chart => ({
+  ...base,
+  id,
+  type: "scatter-matrix",
+  title,
+  correlation,
+  fields: RANK_FIELDS,
+  lower: { numeric: "points", mixed: "points", categorical: "shares" },
+  upper: { numeric: "correlation", mixed: "box", categorical: "tiles" },
+  diagonal: { continuous: "histogram", categorical: "bars" },
+  layout: at,
+  margin: { top: 4, right: 4, bottom: 4, left: 4 },
+});
+
+export const rankCorrelationDashboard = dashboard(
+  "Straight lines and steady rises",
+  [
+    rankMatrix(
+      "rank-pearson",
+      "Pearson: how straight",
+      "pearson",
+      layout(0, 0, 6, 8)
+    ),
+    rankMatrix(
+      "rank-spearman",
+      "Spearman: how steady",
+      "spearman",
+      layout(6, 0, 6, 8)
+    ),
+    table(
+      "rank-records",
+      "Students",
+      ["Student", "Cohort", ...RANK_FIELDS],
+      layout(0, 8, 12, 4)
+    ),
+  ]
+);
+
 export const scatterSurfaceDashboard = dashboard(
   "Ten thousand days, two ways to see density",
   [

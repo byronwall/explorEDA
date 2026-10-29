@@ -41,7 +41,15 @@ export interface ScatterMatrixSettings extends BaseChartSettings {
   pointOpacity?: number;
   /** Share of a band that jittered points spread across, 0 to 1. Default 0.8. */
   jitter?: number;
+  /** What correlation cells compute. Absent is Pearson. */
+  correlation?: MatrixCorrelation;
 }
+
+/**
+ * Pearson measures how close the points lie to a line; Spearman ranks each
+ * pair's values first, so any steady rise or fall reads as ±1.
+ */
+export type MatrixCorrelation = "pearson" | "spearman";
 
 export const MIN_MATRIX_FIELDS = 2;
 export const MAX_MATRIX_FIELDS = 10;

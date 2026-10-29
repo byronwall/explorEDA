@@ -1,6 +1,12 @@
 import { applyFilter } from "@/hooks/applyFilter";
 import type { datum } from "@/types/ChartTypes";
 import type { Filter } from "@/types/FilterTypes";
+import {
+  averageRanks,
+  collectPairs,
+  type CorrelationMethod,
+  type PairCorrelation,
+} from "@/lib/pairCorrelation";
 import type { TraceTarget } from "../trace/traceTypes";
 import type {
   MatrixCell,
@@ -42,14 +48,27 @@ export interface MatrixCellTrace {
   liveCount: number;
   /** Live rows missing the column field, then the row field. */
   missing: [number, number];
-  groups?: { label: string; color: string; r?: number }[];
+  groups?: { label: string; color: string; correlation: PairCorrelation }[];
+  /** Correlation cells: the first paired rows, with their values and ranks. */
+  paired?: MatrixPairedRow[];
 }
+
+export interface MatrixPairedRow {
+  sourceId: number;
+  x: number;
+  y: number;
+  rankX: number;
+  rankY: number;
+}
+
+/** Correlation cells list this many of their paired rows. */
+export const PAIRED_ROWS_SHOWN = 10;
 
 export type MatrixTrace = MatrixRowTrace | MatrixCellTrace;
 
 const KIND_NAMES: Record<string, string> = {
   points: "points",
-  correlation: "Pearson correlation",
+  correlation: "correlation",
   box: "box plots by category",
   tiles: "count tiles",
   shares: "share bars",
@@ -60,7 +79,51 @@ const KIND_NAMES: Record<string, string> = {
   blank: "blank",
 };
 
-export const cellKindName = (kind: string) => KIND_NAMES[kind] ?? kind;
+export const METHOD_NAMES: Record<CorrelationMethod, string> = {
+  pearson: "Pearson",
+  spearman: "Spearman",
+};
+export const METHOD_SYMBOLS: Record<CorrelationMethod, string> = {
+  pearson: "r",
+  spearman: "ρ",
+};
+
+/** The methods a correlation cell computed, in display order. */
+export function cellMethods(cell: Pick<MatrixCell, "correlation">) {
+  return (["pearson", "spearman"] as const).filter(
+    (method) => cell.correlation?.[method]
+  );
+}
+
+export function cellKindName(cell: Pick<MatrixCell, "kind" | "correlation">) {
+  if (cell.kind === "correlation") {
+    const methods = cellMethods(cell).map((method) => METHOD_NAMES[method]);
+    return `${methods.join(" and ")} correlation`;
+  }
+  return KIND_NAMES[cell.kind] ?? cell.kind;
+}
+
+/** The first paired rows of a cell, ranked over every paired row. */
+function pairedRows(plan: MatrixPlan, cell: MatrixCell): MatrixPairedRow[] {
+  const xs = plan.fields[cell.column]!.value;
+  const ys = plan.fields[cell.row]!.value;
+  if (!xs || !ys) {
+    return [];
+  }
+  const pairs = collectPairs(xs, ys);
+  const rankX = averageRanks(pairs.x);
+  const rankY = averageRanks(pairs.y);
+  return Array.from(
+    { length: Math.min(PAIRED_ROWS_SHOWN, pairs.index.length) },
+    (_, k) => ({
+      sourceId: plan.liveIds[pairs.index[k]!]!,
+      x: pairs.x[k]!,
+      y: pairs.y[k]!,
+      rankX: rankX[k]!,
+      rankY: rankY[k]!,
+    })
+  );
+}
 
 function position(field: MatrixField, index: number) {
   if (index < 0 || field.offset[index] !== field.offset[index]) {
@@ -98,13 +161,14 @@ export function resolveMatrixTrace(
       liveCount: live,
       missing: [live - column.valid, live - row.valid],
       groups:
-        plan.groups && cell.groupR
+        plan.groups && cell.groupCorrelation
           ? plan.groups.labels.map((label, group) => ({
               label,
               color: plan.groups!.colors[group]!,
-              r: cell.groupR![group],
+              correlation: cell.groupCorrelation![group]!,
             }))
           : undefined,
+      paired: cell.correlation ? pairedRows(plan, cell) : undefined,
     };
   }
   if (kind !== "matrix-row") {
@@ -162,8 +226,8 @@ export function matrixTraceTargets(plan: MatrixPlan): TraceTarget[] {
     id: cell.id,
     label:
       cell.row === cell.column
-        ? `${plan.fields[cell.column]!.label}: ${cellKindName(cell.kind)}`
-        : `${plan.fields[cell.column]!.label} × ${plan.fields[cell.row]!.label}: ${cellKindName(cell.kind)}`,
+        ? `${plan.fields[cell.column]!.label}: ${cellKindName(cell)}`
+        : `${plan.fields[cell.column]!.label} × ${plan.fields[cell.row]!.label}: ${cellKindName(cell)}`,
   }));
 }
 

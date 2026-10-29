@@ -20,6 +20,9 @@ import {
 import type { TraceSource } from "../trace/traceTypes";
 import {
   cellKindName,
+  cellMethods,
+  METHOD_NAMES,
+  METHOD_SYMBOLS,
   findMatrixTraceRow,
   matrixTraceTargets,
   resolveMatrixTrace,
@@ -173,6 +176,7 @@ export function ScatterMatrix({
     pointOpacity,
     jitter,
     colorField,
+    correlation,
   } = settings;
   const layout = useMemo(
     () =>
@@ -188,6 +192,7 @@ export function ScatterMatrix({
           pointOpacity,
           jitter,
           colorField,
+          correlation,
         },
         snapshot,
         width,
@@ -206,6 +211,7 @@ export function ScatterMatrix({
       pointOpacity,
       jitter,
       colorField,
+      correlation,
       snapshot,
       width,
       plotHeight,
@@ -742,7 +748,7 @@ export function ScatterMatrix({
                   key={`hit-${cell.id}`}
                   tabIndex={0}
                   role="img"
-                  aria-label={`${cellName(cell)}: ${cellKindName(cell.kind)}, ${cell.n.toLocaleString()} rows`}
+                  aria-label={`${cellName(cell)}: ${cellKindName(cell)}, ${cell.n.toLocaleString()} rows`}
                   aria-description="Alt-Enter traces this cell. Escape clears the matrix's selection."
                   onKeyDown={(event) => cellKey(event, cell)}
                   x={cell.x}
@@ -1176,8 +1182,8 @@ const formatR = (r: number | undefined) =>
   r === undefined ? "—" : (Math.abs(r) < 0.005 ? 0 : r).toFixed(2);
 
 /**
- * Pearson r for the pair, then one line per color group in its color, as many
- * as fit the cell.
+ * The correlation for the pair with its method's symbol, then one line per
+ * color group in its color, as many as fit the cell.
  */
 function CorrelationCell({
   cell,
@@ -1188,14 +1194,20 @@ function CorrelationCell({
 }) {
   const size = plan.cellSize;
   const fontSize = Math.max(11, Math.min(20, size / 7));
-  const groups = plan.groups && cell.groupR ? plan.groups : undefined;
+  const method = cellMethods(cell)[0] ?? "pearson";
+  const symbol = METHOD_SYMBOLS[method];
+  const groups = plan.groups && cell.groupCorrelation ? plan.groups : undefined;
   const lineHeight = Math.max(10, Math.min(14, size / 9));
   const room = groups
     ? Math.max(0, Math.floor((size - fontSize * 2.4) / lineHeight))
     : 0;
   const shown = groups
     ? groups.labels
-        .map((label, group) => ({ label, group, r: cell.groupR![group] }))
+        .map((label, group) => ({
+          label,
+          group,
+          r: cell.groupCorrelation![group]![method]?.value,
+        }))
         .filter((item) => item.r !== undefined)
         .slice(0, room)
     : [];
@@ -1211,7 +1223,7 @@ function CorrelationCell({
         fontSize={fontSize * 0.6}
         className="fill-muted-foreground"
       >
-        Corr
+        {METHOD_NAMES[method]}
       </text>
       <text
         x={cell.x + size / 2}
@@ -1219,10 +1231,14 @@ function CorrelationCell({
         textAnchor="middle"
         dominantBaseline="central"
         fontSize={fontSize}
-        fontWeight={600}
         className="fill-foreground"
       >
-        {formatR(cell.r)}
+        <tspan fontStyle="italic" className="fill-muted-foreground">
+          {symbol}
+        </tspan>{" "}
+        <tspan fontWeight={600}>
+          {formatR(cell.correlation?.[method]?.value)}
+        </tspan>
       </text>
       {shown.map((item, index) => (
         <text
@@ -1331,7 +1347,7 @@ function CellReadout({
     <ChartReadout fallbackClassName="eda-chart-readout-inline">
       <span className="eda-readout-item">
         <span>{name(cell)}</span>
-        <b>{cellKindName(cell.kind)}</b>
+        <b>{cellKindName(cell)}</b>
       </span>
       <span className="eda-readout-item">
         <span>Rows</span>
