@@ -132,8 +132,8 @@
     "priority": 64,
     "research_kind": "follow-up",
     "status": "candidate",
-    "summary": "Define a useful descriptive ellipse without implying confidence in a mean or automatically classifying outliers.",
-    "research_question": "Which population and singular-case rules make a covariance ellipse useful beside existing grouped scatter summaries?",
+    "summary": "Design plan complete: source-defined covariance regions, exact member selection, and a full save/export journey; implementation remains proposed.",
+    "research_question": "How should source-defined covariance regions retain exact member selection through linked filtering, persistence, and nonlinear display scales?",
     "why_now": "Paired covariance already exists and the scientific seed explicitly leaves overlay meaning unresolved.",
     "repo_evidence": [
       {
@@ -152,9 +152,9 @@
       "docs/intent/population-baselines/intent-brief.md"
     ],
     "dependencies": [],
-    "first_experiment": "Hand-check a rotated cloud, a collinear cloud, and two differently sized groups; compare a live-group ellipse with a fixed-reference ellipse.",
-    "acceptance_evidence": "The geometry matches independent calculations, scope is understandable, and singular groups remain explicitly unavailable or degenerate.",
-    "rejection_signal": "Users read it as inferential certainty, source scope cannot be explained simply, or the current points and summaries answer equally well.",
+    "first_experiment": "Follow docs/intent/covariance-regions/implementation-plan.md: build the source-reference region journey with exact inside/outside selection, then nonlinear projection. Calibrate numerical tolerances against independent fixtures.",
+    "acceptance_evidence": "Exact covariance and member records, stable references through peer filtering, deliberate source-change release, project key serialization, save/export/undo, and docs plus example in each milestone.",
+    "rejection_signal": "Block release if geometry or membership disagrees with the independent fixtures, filters change the reference silently, or a region claims inferential coverage.",
     "confidence": "medium",
     "external_sources": []
   },

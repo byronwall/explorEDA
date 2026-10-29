@@ -8,7 +8,19 @@
 - Confidence: medium
 - Baseline: `9b16d78e3ed0742ed4d5858c1939fec9e758b510`
 
-## Research brief
+## Design decision, October 25, 2026
+
+Build descriptive covariance regions from chart-local source pairs, with radius 2 and exact inside/outside selection.
+Interactive filters change current matches without moving that reference. Singular models remain unclassified.
+Ship the complete linear-axis journey first, then nonlinear projection of the same raw region.
+See the [implementation plan](../../covariance-regions/implementation-plan.md) and [local dispositions](../../../research/covariance-regions-2026-10-25/README.md).
+
+The source review preserves project string-key serialization and releases marked results when reevaluation cannot establish the same reference.
+Numerical tolerance calibration remains Explore. No runtime or browser acceptance is claimed.
+`DIRECTION.md` supersedes the outside-demand and current-controls gates in the historical brief below.
+Byron is the demand. Implementation remains proposed.
+
+## Historical candidate brief
 
 Scientific users may want to compare the direction and spread of two measurement clouds without reading a covariance table. `pairedStats` already calculates an n−1 covariance matrix for finite pairs, and `planPairedSummary` separates pooled and grouped results. The scientific-multivariate intent explicitly reserves covariance ellipses as a future possibility. The missing decision is the meaning of the overlay and its reference population; the presence of covariance numbers does not establish a statistically appropriate confidence region.
 
