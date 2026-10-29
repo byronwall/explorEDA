@@ -183,16 +183,17 @@ export function evaluateFinding(
   if (definition.aggregation === "count") {
     // A count of no rows is zero, not missing.
     const value = plan.rowCount;
+    const text =
+      definition.digits === undefined
+        ? value.toLocaleString("en-US")
+        : formatDigits(value, definition.digits);
     return {
       id,
       revision,
       value,
-      text:
-        definition.digits === undefined
-          ? value.toLocaleString("en-US")
-          : formatDigits(value, definition.digits),
+      text,
       ids,
-      plan: { ...plan, state: "value", value, valueText: String(value) },
+      plan: { ...plan, state: "value", value, valueText: text },
       scope,
     };
   }
@@ -203,16 +204,17 @@ export function evaluateFinding(
   const value = plan.value!;
   if (!Number.isFinite(value))
     return unavailable(id, "nonfinite", revision, scope, { ids, plan });
+  const text =
+    definition.digits === undefined
+      ? plan.valueText
+      : formatDigits(value, definition.digits);
   return {
     id,
     revision,
     value,
-    text:
-      definition.digits === undefined
-        ? plan.valueText
-        : formatDigits(value, definition.digits),
+    text,
     ids,
-    plan,
+    plan: { ...plan, valueText: text },
     scope,
   };
 }

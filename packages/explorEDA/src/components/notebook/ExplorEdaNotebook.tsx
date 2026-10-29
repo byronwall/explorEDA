@@ -154,6 +154,8 @@ function chartHeight(chart: ChartSettings, width: number, categories?: number) {
       return 150;
     // A few bars need a short chart; two dozen need a tall one. A top N
     // draws its N bars and one for the rest, however many categories exist.
+    // The header, axis, and status line take about 150 pixels, and a
+    // `where.` chip one more line.
     case "row": {
       if (categories === undefined) return 380;
       const bars = chart.topN
@@ -161,7 +163,9 @@ function chartHeight(chart: ChartSettings, width: number, categories?: number) {
         : categories;
       return Math.min(
         640,
-        110 + bars * Math.max(chart.minRowHeight, chart.maxRowHeight)
+        150 +
+          (chart.localFilters?.length ? 28 : 0) +
+          bars * Math.max(chart.minRowHeight, chart.maxRowHeight)
       );
     }
     // A scatter's legends sit above and below its plot, so it grows with
