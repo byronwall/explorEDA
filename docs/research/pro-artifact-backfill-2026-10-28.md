@@ -5,6 +5,9 @@ This repair preserves original Pro result files under intent entries, including 
 Open research PRs receive their own artifacts. Merged or closed research PRs are restored in this follow-up.
 ZIP containers and repackaged input source packets stay local. Downloaded programs were not executed.
 
+Validation: the full `pnpm check` passed on the restoration branch. Original result bytes still match the recovered materials.
+The large PR file inventory was verified with pagination, including files beyond the first 100.
+
 | Original run                                            | State at audit | Original files | Asset index                                                                                                                                                                                                                |
 | ------------------------------------------------------- | -------------- | -------------: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [#525](https://github.com/byronwall/explorEDA/pull/525) | open           |              2 | [Original artifacts](https://github.com/byronwall/explorEDA/blob/codex/ordered-difference-design-2026-10-25/docs/intent/ordered-difference/assets/pro-results/ordered-difference-2026-10-25/ASSET_INDEX.md)                |
