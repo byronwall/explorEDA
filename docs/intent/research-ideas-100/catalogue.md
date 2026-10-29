@@ -2,6 +2,10 @@
 
 The catalogue is in priority order. IDs remain stable if a later authorized review changes the rank. The complete question, experiment, evidence, and rejection signal are in each linked brief and in the JSON index.
 
+R056 now has a [Compare values implementation plan](../contributor-comparison/implementation-plan.md)
+and [Design summary](../../research/contributor-comparison-2026-10-24/README.md).
+Research is complete; implementation remains proposed. Rank is unchanged.
+
 | Priority | ID and title                                                                                                                                                  | Category                           | Kind           |
 | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- | -------------- |
 | 1        | [R026 — Reconcile missing, blank, invalid, and converted-value counts](ideas/R026-missing-state-accounting.md)                                                | Data quality and missingness       | robustness     |
