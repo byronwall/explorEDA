@@ -23,3 +23,7 @@ The earlier October 20 study asked whether to add the capability under old deman
 [NIST](https://www.nist.gov/pml/special-publication-811/nist-guide-si-appendix-b-conversion-factors/nist-guide-si-appendix-b9) supports distinct reading/interval conversions. [Pint](https://pint.readthedocs.io/en/0.26.2/user/nonmult.html) provides a useful role comparison. [math.js](https://mathjs.org/docs/datatypes/units.html) documents browser-compatible units and affine cautions. These sources support the comparison; the chosen Kelvin restriction and immutable output contracts are product policy.
 
 No blocking product question remains for M1. Implementation must verify all reducer wrappers and measure bundle/interaction costs. Feature, browser, persistence, and performance acceptance remain unrun.
+
+## Preserved Pro result materials
+
+[Complete original Pro artifacts](../../intent/quantity-calculations/assets/pro-results/quantity-calculations-2026-10-27/ASSET_INDEX.md) are preserved under the intent entry. ZIP containers remain local.

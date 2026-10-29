@@ -180,3 +180,9 @@ Each milestone includes docs, a runnable example, and real pointer/keyboard chec
 Run focused quantity/calculation/provider tests during M1/M2, then the named project/folder/notebook/export tests as their milestones land. Add demo coverage and Dashboard round-trip checks when examples change. Use repository time limits. Run `pnpm check`, `pnpm check:pr`, and a package changeset before each implementation PR. Take screenshots with `pnpm shot` and attach them with `gh`.
 
 Defer large unit catalogues, thermodynamic equations, logarithmic units, uncertainty, calendar arithmetic, and in-place consumer migration. Explore a narrow math.js adapter only if vocabulary needs it. Measure latency before adding workers or incremental invalidation. Avoid hidden inference, automatic exchange/reference services, new sidecars, and object-valued chart cells.
+
+## Preserved Pro result materials
+
+[Original Pro reports and artifacts for #533](assets/pro-results/quantity-calculations-2026-10-27/ASSET_INDEX.md)
+
+All extracted result materials are preserved without ZIP containers. Original bytes and attribution are unchanged.

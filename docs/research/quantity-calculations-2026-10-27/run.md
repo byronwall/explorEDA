@@ -66,3 +66,7 @@ Docs pass three files/73 tests with existing React act warnings. Formatting, 14 
 Both automation memories saved. Deleted the temporary collector through the supported tool. Six-hour pipeline remains ACTIVE indefinitely at GPT-6.1 Sol Medium, confirmed through tool view and saved configuration. No merge, deployment, paid service, or implementation. Stop for review; next discovery run chooses independently.
 
 Existing calculator, trace, and field settings tests pass: three files, 41 tests. Docs checks pass: three files, 73 tests, with existing React act warnings. Formatting, whitespace, and PR checks pass. These checks establish the starting behavior, not the proposed feature. Full `pnpm check` is not required for this docs-only preparation.
+
+## Preserved Pro result materials
+
+Backfill requested by Byron: [2 original result files](../../intent/quantity-calculations/assets/pro-results/quantity-calculations-2026-10-27/ASSET_INDEX.md) are now committed under the intent entry. This supersedes earlier instructions to leave originals ignored. ZIPs and input source packets remain local. Byte equality and supplied manifest entries were checked; no downloaded code was executed.
