@@ -81,3 +81,7 @@ Decisive primary sources checked October 26:
 - [Orange Correlations](https://orangedatamining.com/widget-catalog/unsupervised/correlations/): Pearson/Spearman pair choice and field handoff to Scatter.
 
 No next topic is assigned. Review this plan before implementation.
+
+## Preserved Pro result materials
+
+[Complete original Pro artifacts](../../intent/rank-discovery/assets/pro-results/rank-discovery-2026-10-26/ASSET_INDEX.md) are preserved under the intent entry. ZIP containers remain local.

@@ -246,3 +246,9 @@ Run `pnpm check` once before a feature PR, after focused fixes. Use shared test 
 Use `pnpm shot` at 1280/783/390 and the export-proof runner for actual image behavior.
 Attach screenshots from `tmp/` to UI PRs. Library changes require a changeset.
 This documentation-only research PR requires doc/format checks and has no feature/browser/performance acceptance result.
+
+## Preserved Pro result materials
+
+[Original Pro reports and artifacts for #530](assets/pro-results/rank-discovery-2026-10-26/ASSET_INDEX.md)
+
+All extracted result materials are preserved without ZIP containers. Original bytes and attribution are unchanged.
