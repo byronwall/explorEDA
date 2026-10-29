@@ -1,0 +1,12 @@
+project @furnace
+
+source @furnace path=data/furnace.csv {
+  field Run number
+  field Zone string
+  field Wafer number
+  field "Thickness (Å)" number
+}
+
+query @furnace "furnace" glyph=◆ {
+  source furnace
+}
