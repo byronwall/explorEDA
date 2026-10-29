@@ -113,3 +113,7 @@ Saved both automation memories, then deleted `collect-exploreda-numeric-preparat
 Deletion returned `deleteStatus=deleted` for this collector.
 Keep the six-hour pipeline ACTIVE indefinitely, GPT-6.1 Sol Medium, in the existing checkout.
 No feature implementation, worktree, merge, deployment, or paid service. Stop for review.
+
+## Preserved Pro result materials
+
+Backfill requested by Byron: [2 original result files](../../intent/numeric-preparation/assets/pro-results/numeric-preparation-2026-10-26/ASSET_INDEX.md) are now committed under the intent entry. This supersedes earlier instructions to leave originals ignored. ZIPs and input source packets remain local. Byte equality and supplied manifest entries were checked; no downloaded code was executed.

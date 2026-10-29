@@ -15,3 +15,5 @@ docs/intent/selection-refresh/assets/pro-results/selection-refresh-design-2026-1
 
 # Original empty-selection Pro artifacts retain their supplied bytes.
 docs/intent/empty-selection-recovery/assets/pro-results/empty-selection-design-2026-11-01/originals/
+# Preserve original Pro artifact bytes.
+docs/intent/**/assets/pro-results/**
