@@ -243,3 +243,9 @@ Run targeted Vitest suites and library check-types during work. Run demo coverag
 Run docs browser acceptance and actual pointer/keyboard checks at the three required widths.
 Run `pnpm check` once before the feature PR, after targeted checks pass.
 This research PR changes only documentation and requires doc/format/PR checks, not feature acceptance or a package build.
+
+## Preserved Pro result materials
+
+[Original Pro reports and artifacts for #531](assets/pro-results/numeric-preparation-2026-10-26/ASSET_INDEX.md)
+
+All extracted result materials are preserved without ZIP containers. Original bytes and attribution are unchanged.

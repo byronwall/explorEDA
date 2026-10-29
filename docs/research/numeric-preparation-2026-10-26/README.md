@@ -60,3 +60,7 @@ Original reports stay under ignored tmp; the conversation is the source record. 
 
 Validation evidence and completion state are in the [run record](run.md).
 The proposed parser, UI, persistence, and refresh acceptance tests have not run because this PR implements no feature code.
+
+## Preserved Pro result materials
+
+[Complete original Pro artifacts](../../intent/numeric-preparation/assets/pro-results/numeric-preparation-2026-10-26/ASSET_INDEX.md) are preserved under the intent entry. ZIP containers remain local.

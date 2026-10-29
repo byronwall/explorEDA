@@ -8,3 +8,6 @@ docs/research/selection-identity-2026-10-22/evidence/frozen-oracle.json
 
 # Pro's time-series axes proposal, kept as written.
 docs/intent/time-series-axes/raw/2026-10-18-pro/
+
+# Preserve original Pro artifact bytes.
+docs/intent/**/assets/pro-results/**
