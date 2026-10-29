@@ -220,3 +220,9 @@ Run `pnpm check` once before each package-changing PR. Add a minor changeset for
 Use `pnpm shot` and attach screenshots with `gh --attach`; keep evidence under ignored tmp/.
 At 390 px retain compact label/control rows, stack panels, and bound table overflow to its region.
 Check image export includes limits, group labels, and scope. Ship no migration or generic filter framework.
+
+## Preserved Pro result materials
+
+[Original Pro reports and artifacts for #517](assets/pro-results/engineering-histograms-2026-10-23/ASSET_INDEX.md)
+
+All extracted result materials are preserved without ZIP containers. Original bytes and attribution are unchanged.

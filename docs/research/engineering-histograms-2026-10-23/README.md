@@ -69,3 +69,7 @@ Keep a full group table even when panels are hidden. Status segmentation remains
 
 Current tests and docs checks verify the baseline only. New filter/runtime, browser, exact Records, restore, and export acceptance remain proposed.
 No feature code, docs-site example, or package output changed in this planning PR.
+
+## Preserved Pro result materials
+
+[Complete original Pro artifacts](../../intent/engineering-histograms/assets/pro-results/engineering-histograms-2026-10-23/ASSET_INDEX.md) are preserved under the intent entry. ZIP containers remain local.
