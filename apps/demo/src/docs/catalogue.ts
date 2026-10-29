@@ -252,9 +252,10 @@ export const catalogue: readonly DocsPage[] = [
       "interaction:cross-filter",
       "mode:grouped-bars",
       "mode:stacked-bars",
+      "mode:engineering-histogram",
     ],
     chartType: "bar",
-    examples: ["shop-operations"],
+    examples: ["shop-operations", "engineering-histograms"],
     related: ["scatter", "rendering"],
   },
   {

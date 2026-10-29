@@ -13,6 +13,11 @@ export interface RangeFilter extends FilterBase {
   min?: number;
   max?: number;
   /**
+   * Leaves out values equal to `min`, as a histogram's upper coverage tail
+   * does for the last edge.
+   */
+  minExclusive?: boolean;
+  /**
    * Leaves out values equal to `max`, as a histogram bar does for its upper
    * edge. Typed ranges include both bounds.
    */

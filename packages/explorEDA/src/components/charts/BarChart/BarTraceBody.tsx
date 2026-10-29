@@ -77,10 +77,29 @@ export function BarTraceBody({ trace }: { trace: BarTrace }) {
                     : "Sum of valid inputs."}
           </TraceReadout>
         )}
-        {mark.bin && (
+        {mark.bin && !mark.tail && (
           <TraceReadout label="Bin interval">
             {mark.bin.start} to {mark.bin.end}
             {mark.bin.closed ? " (closed)" : " (end excluded)"}
+          </TraceReadout>
+        )}
+        {mark.tail && (
+          <TraceReadout label="Coverage tail">
+            {mark.tail === "below"
+              ? `Values below ${mark.bin!.end}, strictly`
+              : `Values above ${mark.bin!.start}, strictly`}
+          </TraceReadout>
+        )}
+        {mark.selectedPart && (
+          <TraceReadout label="Selected">
+            {mark.selectedPart.value} of {mark.value} by this chart's selection
+          </TraceReadout>
+        )}
+        {trace.histogram && (
+          <TraceReadout label="Measurements">
+            {trace.histogram.n} finite in scope, tails included ·{" "}
+            {trace.histogram.missing} missing · {trace.histogram.invalid} not
+            numbers
           </TraceReadout>
         )}
         {mark.stack && (

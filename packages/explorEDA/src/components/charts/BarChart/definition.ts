@@ -6,10 +6,22 @@ import { DEFAULT_CHART_SETTINGS } from "@/utils/defaultSettings";
 import { ChartColumnBig } from "lucide-react";
 import { BarChart } from "./BarChart";
 import { BarChartSettingsPanel } from "./BarChartSettingsPanel";
+import type { WidthBinning } from "./histogramBins";
+
+/**
+ * Engineering histogram settings. Their presence marks a numeric field's
+ * bars as authored: bins hold still, a selection keeps the exact range it
+ * was made with, and a bin that a selection cuts through shows its share.
+ */
+export interface HistogramSettings {
+  /** Auto keeps the bin-count algorithm; width repeats a saved grid. */
+  binning: { mode: "auto" } | WidthBinning;
+}
 
 export interface BarChartSettings extends BaseChartSettings {
   type: "bar";
   binCount?: number;
+  histogram?: HistogramSettings;
   forceString?: boolean;
   aggregateId?: string;
   seriesField?: string;
@@ -71,21 +83,16 @@ export const barChartDefinition: ChartDefinition<BarChartSettings> = {
       return (d: IdType) =>
         active.every(({ filter, data }) => applyFilter(data[d], filter));
     }
-    const filter = settings.filters.find(
+    // Every predicate on the measurement must hold: a bin range and a
+    // specification status can both narrow it.
+    const own = settings.filters.filter(
       (f): f is Filter => f.field === settings.field
     );
-    const dataHash = fieldGetter(filter?.field ?? settings.field);
+    const dataHash = fieldGetter(settings.field);
 
     return (d: IdType) => {
       const value = dataHash[d];
-
-      if (filter) {
-        if (!applyFilter(value, filter)) {
-          return false;
-        }
-      }
-
-      return true;
+      return own.every((filter) => applyFilter(value, filter));
     };
   },
 };

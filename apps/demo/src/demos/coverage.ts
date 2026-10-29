@@ -65,6 +65,15 @@ export const coverageFeatures = [
     status: "supported",
   },
   {
+    id: "mode:engineering-histogram",
+    label: "Engineering histogram bins",
+    family: "Chart modes",
+    description:
+      "Save equal bins by width and origin, count values past the range in strict coverage tails, and select exact intervals that hold still when data changes.",
+    required: true,
+    status: "supported",
+  },
+  {
     id: "mode:bubble-scatter",
     label: "Bubble scatter",
     family: "Chart modes",
@@ -596,6 +605,18 @@ export type ExampleCoverage = {
 };
 
 export const exampleCoverage = [
+  {
+    exampleId: "engineering-histograms",
+    intent:
+      "Count measurements in saved bins and coverage tails, and select exact intervals.",
+    features: {
+      "chart:bar": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+      "mode:engineering-histogram": "shown",
+      "interaction:cross-filter": "shown",
+    },
+  },
   {
     exampleId: "distribution-discovery",
     intent:

@@ -364,7 +364,7 @@ export function ColumnFilter({
           {histogram}
           <div className="grid grid-cols-2 gap-2">
             <label className="grid gap-0.5 text-xs">
-              At least
+              {rangeFilter?.minExclusive ? "Above" : "At least"}
               <Input
                 type="number"
                 aria-label={`Minimum ${columnLabel}`}

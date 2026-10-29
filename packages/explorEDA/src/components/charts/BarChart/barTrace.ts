@@ -21,6 +21,8 @@ export interface BarTrace {
   xScale: BarChartPlan["xScale"];
   yScale: BarChartPlan["yScale"];
   scopeNote: string;
+  /** Context count and exclusions of an engineering histogram. */
+  histogram?: { n: number; missing: number; invalid: number };
 }
 
 /** Explains one planned bar or guide. Returns undefined when the plan no longer draws it. */
@@ -48,6 +50,11 @@ export function resolveBarTrace(
     xScale: plan.xScale,
     yScale: plan.yScale,
     scopeNote: plan.scopeNote,
+    histogram: plan.histogram && {
+      n: plan.histogram.n,
+      missing: plan.histogram.missing.length,
+      invalid: plan.histogram.invalid.length,
+    },
   };
 }
 

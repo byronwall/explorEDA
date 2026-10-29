@@ -1689,12 +1689,17 @@ export function compileDocument(
       return { type: "text", field, operator, value: single(value) };
     }
     const item = value.items[0]!;
+    // [0..2) and (12..) mark strict ends; 0..2 includes both.
+    const interval = /^([[(])(.*)([\])])$/.exec(item.text);
+    const rangeBody = interval ? interval[2]! : item.text;
     const range =
-      value.items.length === 1 && !item.quoted && item.text.includes("..")
-        ? item.text.split("..")
+      value.items.length === 1 && !item.quoted && rangeBody.includes("..")
+        ? rangeBody.split("..")
         : undefined;
     if (range && range.length === 2) {
       const [low, high] = range.map((part) => part.trim());
+      const minExclusive = Boolean(interval && interval[1] === "(" && low);
+      const maxExclusive = Boolean(interval && interval[3] === ")" && high);
       if (fieldType(field) === "datetime") {
         return {
           type: "date-range",
@@ -1727,6 +1732,8 @@ export function compileDocument(
         field,
         ...(min !== undefined ? { min } : {}),
         ...(max !== undefined ? { max } : {}),
+        ...(minExclusive ? { minExclusive } : {}),
+        ...(maxExclusive ? { maxExclusive } : {}),
       };
     }
     // Match each value to the value the rows hold, so 3 finds the number 3.

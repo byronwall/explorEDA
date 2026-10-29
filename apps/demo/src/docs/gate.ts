@@ -30,6 +30,8 @@ export type DocsGateInput = {
   publicFiles: readonly string[];
   /** Every saved setting of each chart type, from the library. */
   settingKeys: Readonly<Record<string, readonly string[]>>;
+  /** Dashboard text words of each chart type, such as `bins.width`. */
+  settingWords?: Readonly<Record<string, readonly string[]>>;
   /** Chart types with an "At a glance" entry. */
   glanceTypes: readonly string[];
   /** Setting lines shared by every chart type. */
@@ -156,7 +158,8 @@ export function findDocsErrors(input: DocsGateInput): string[] {
     if (!source || !keys) continue;
     for (const [, path] of source.matchAll(/`([A-Za-z][\w.]*)=[^`]*`/g)) {
       const key = path?.split(".")[0];
-      if (key && !keys.includes(key)) {
+      const word = input.settingWords?.[page.chartType!]?.includes(path!);
+      if (key && !keys.includes(key) && !word) {
         errors.push(
           `pages/${page.topic}.mdx quotes "${path}=", but ${page.chartType} charts have no setting "${key}"`
         );

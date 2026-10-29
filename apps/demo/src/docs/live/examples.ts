@@ -22,6 +22,7 @@ import {
   timeSeriesDashboard,
 } from "@/demos/dashboardSettings";
 import { demoSettings as lorenzSettings } from "@/demos/lorenz";
+import { engineeringHistogramsDashboard } from "@/demos/engineeringHistograms";
 import {
   batteryDayDashboard,
   budgetBridgeDashboard,
@@ -132,6 +133,26 @@ export const liveExamples = {
       { brush: { chart: "shop-delivery", from: 1.5, to: 4.5 } },
       { expectChip: "Delivery Days: 1.5–4.5" },
       { expectRows: 265 },
+    ],
+  },
+  "engineering-width": {
+    label: "Live shaft-diameter histogram in saved bins",
+    data: "/shaft-diameters.csv",
+    savedData: focus(engineeringHistogramsDashboard, {
+      "diameter-bins": [0, 0, 8, 5],
+      "diameter-machines": [8, 0, 4, 5],
+    }),
+    exampleId: "engineering-histograms",
+    shotAlt:
+      "A histogram of shaft diameters in 0.01 mm bins with a dashed tail bar past 12.08, beside parts by machine.",
+    steps: [
+      { expectRows: 162 },
+      { click: "12.05 to < 12.06: 6 records" },
+      { expectChip: "Diameter (mm): 12.05 to < 12.06" },
+      { expectRows: 6 },
+      { click: "> 12.08: 2 records" },
+      { expectChip: "Diameter (mm): > 12.08" },
+      { expectRows: 2 },
     ],
   },
   "settings-bar": {

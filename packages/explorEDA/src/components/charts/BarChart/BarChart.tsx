@@ -28,6 +28,7 @@ import {
 } from "./barPlan";
 import { getRangeFilterForField } from "@/hooks/getAxisFilter";
 import { binRangeFilter, sameRange, snapRangeToBins } from "./bins";
+import { binSelection, samePredicate } from "./histogramPlan";
 import { barTraceTargets, findBarTraceRow, resolveBarTrace } from "./barTrace";
 import { BarChartSettings } from "./definition";
 import { SeriesBarChart } from "./SeriesBarChart";
@@ -52,11 +53,41 @@ type BarChartProps = BaseChartProps<BarChartSettings> & {
   aggregateScope?: string;
 };
 
-/** A bin reads as its formatted edges unless it holds whole numbers. */
-function barLabel(bar: BarMark, format: (value: number) => string) {
+/**
+ * A bin reads as its formatted edges unless it holds whole numbers. An
+ * engineering histogram also says which bins leave out their upper edge.
+ */
+function barLabel(
+  bar: BarMark,
+  format: (value: number) => string,
+  exact = false
+) {
   return bar.bin && bar.label.startsWith("[")
-    ? `${format(bar.bin.start)} to ${format(bar.bin.end)}`
+    ? `${format(bar.bin.start)} to ${exact && !bar.bin.closed ? "< " : ""}${format(bar.bin.end)}`
     : bar.label;
+}
+
+/** A measurement range in words: "2 to < 4", "> 12". */
+function rangeText(
+  filter: {
+    min?: number;
+    max?: number;
+    minExclusive?: boolean;
+    maxExclusive?: boolean;
+  },
+  format: (value: number) => string
+) {
+  const low =
+    filter.min === undefined
+      ? undefined
+      : `${filter.minExclusive ? "> " : ""}${format(filter.min)}`;
+  const high =
+    filter.max === undefined
+      ? undefined
+      : `${filter.maxExclusive ? "< " : ""}${format(filter.max)}`;
+  if (low && high) return `${low} to ${high}`;
+  if (low) return filter.minExclusive ? low : `≥ ${low}`;
+  return filter.maxExclusive ? high : `≤ ${high}`;
 }
 
 /** Field and value pairs for the hovered bar, in the panel header. */
@@ -76,7 +107,7 @@ function HoverReadout({
     <ChartReadout fallbackClassName="eda-chart-readout-inline">
       <span className="eda-readout-item">
         <span>{plan.fieldLabel}</span>
-        <b>{barLabel(bar, format)}</b>
+        <b>{barLabel(bar, format, Boolean(plan.histogram))}</b>
       </span>
       {plan.mode === "aggregate" && (
         <span className="eda-readout-item">
@@ -91,6 +122,12 @@ function HoverReadout({
           {bar.total ? ` of ${bar.total.value.toLocaleString()}` : ""}
         </b>
       </span>
+      {bar.selectedPart && (
+        <span className="eda-readout-item">
+          <span>Selected</span>
+          <b>{bar.selectedPart.value.toLocaleString()}</b>
+        </span>
+      )}
     </ChartReadout>
   );
 }
@@ -191,7 +228,11 @@ function SingleBarChart({
         height,
         typography,
         snapshot: {
-          revision,
+          // Authored edges and limits change what a tail or status holds,
+          // so an open trace of the old geometry closes.
+          revision: settings.histogram
+            ? `${revision}:${JSON.stringify(settings.histogram)}`
+            : revision,
           allValues,
           liveIds,
           fieldData,
@@ -294,7 +335,7 @@ function SingleBarChart({
       const newFilters = settings.filters.filter(
         (f) => f.field !== settings.field
       );
-      if (extent && plan.mode === "bin") {
+      if (extent && plan.mode === "bin" && plan.binEdges.length > 1) {
         const linear = xScale as ScaleLinear<number, number>;
         const range = snapRangeToBins(plan.binEdges, {
           min: linear.invert(extent[0][0]),
@@ -326,7 +367,7 @@ function SingleBarChart({
   // selected bin clears the filter. A click above a bar is empty space, but a
   // short bar keeps a few pixels of target.
   const selectBinAt = ([x, y]: [number, number]) => {
-    const bin = plan.bars.find(
+    const bar = plan.bars.find(
       (bar) =>
         bar.bin &&
         x >= bar.x &&
@@ -338,9 +379,32 @@ function SingleBarChart({
             bar.y + bar.height - MIN_BIN_TARGET
           ) &&
         y <= bar.y + bar.height
-    )?.bin;
-    if (!bin) return false;
+    );
+    if (!bar) return false;
+    selectBin(bar);
+    return true;
+  };
+
+  // An engineering histogram selects a bin's exact interval, or a tail's
+  // strict range, and replaces any other selection on the measurement.
+  const selectBin = (bar: BarMark) => {
+    const bin = bar.bin;
+    if (!bin) return;
     const rest = settings.filters.filter((f) => f.field !== settings.field);
+    if (plan.histogram) {
+      const range = binSelection({ key: bar.tail ?? 0, ...bin });
+      const own = settings.filters.filter((f) => f.field === settings.field);
+      const same =
+        own.length === 1 &&
+        own[0]!.type === "range" &&
+        samePredicate(own[0]!, range);
+      updateChart(settings.id, {
+        filters: same
+          ? rest
+          : [...rest, { type: "range", field: settings.field, ...range }],
+      });
+      return;
+    }
     const current = getRangeFilterForField(settings.filters, settings.field);
     const range = binRangeFilter(
       plan.binEdges,
@@ -353,14 +417,15 @@ function SingleBarChart({
           ? rest
           : [...rest, { type: "range", field: settings.field, ...range }],
     });
-    return true;
   };
 
   // When the bins change under a range filter, move its bounds to the nearest
   // new edges so the filter still covers whole bars, and leaves out the upper
   // edge exactly when its last bar does.
+  // Engineering histograms keep the range a selection was made with.
   useEffect(() => {
-    if (plan.mode !== "bin" || plan.binEdges.length < 2) return;
+    if (plan.mode !== "bin" || plan.histogram || plan.binEdges.length < 2)
+      return;
     const index = settings.filters.findIndex(
       (f) => f.type === "range" && f.field === settings.field
     );
@@ -384,6 +449,7 @@ function SingleBarChart({
     });
   }, [
     plan.mode,
+    plan.histogram,
     plan.binEdges,
     plan.wholeNumberBins,
     settings.field,
@@ -413,7 +479,15 @@ function SingleBarChart({
     (f) => f.type === "range" && f.field === settings.field
   );
   let selectionText: string | undefined;
-  if (plan.mode === "bin" && rangeFilter?.type === "range") {
+  const histogram = plan.histogram;
+  if (histogram) {
+    selectionText = histogram.selection?.filters
+      .map((filter) =>
+        filter.type === "range" ? rangeText(filter, formatField) : undefined
+      )
+      .filter(Boolean)
+      .join(" and ");
+  } else if (plan.mode === "bin" && rangeFilter?.type === "range") {
     const first = selectedBars[0];
     const last = selectedBars.at(-1);
     // Whole-number bins name their first and last values, not the half-step edges.
@@ -433,13 +507,24 @@ function SingleBarChart({
         : names.join(", ")
     }`;
   }
-  const statusParts = [
-    // Counts lead, so a narrow chart that cuts the line keeps them.
-    selectionText &&
-      `${rowsOf(selectedBars).toLocaleString()} of ${rowsOf(plan.bars).toLocaleString()} rows selected: ${selectionText}`,
-    plan.unplotted.length > 0 &&
-      `${plan.unplotted.length} ${plan.unplotted.length === 1 ? "group" : "groups"} without a number left out`,
-  ];
+  const statusParts = histogram
+    ? [
+        histogram.problem,
+        histogram.selection
+          ? `${histogram.selection.ids.length.toLocaleString()} of ${histogram.n.toLocaleString()} selected${selectionText ? `: ${selectionText}` : ""}`
+          : `n ${histogram.n.toLocaleString()}`,
+        histogram.missing.length > 0 &&
+          `${histogram.missing.length.toLocaleString()} missing`,
+        histogram.invalid.length > 0 &&
+          `${histogram.invalid.length.toLocaleString()} not numbers`,
+      ]
+    : [
+        // Counts lead, so a narrow chart that cuts the line keeps them.
+        selectionText &&
+          `${rowsOf(selectedBars).toLocaleString()} of ${rowsOf(plan.bars).toLocaleString()} rows selected: ${selectionText}`,
+        plan.unplotted.length > 0 &&
+          `${plan.unplotted.length} ${plan.unplotted.length === 1 ? "group" : "groups"} without a number left out`,
+      ];
   const statusHint =
     !selectionText &&
     !facetIds &&
@@ -575,18 +660,23 @@ function SingleBarChart({
                 rx={1.5}
                 role="button"
                 tabIndex={0}
-                aria-label={`${barLabel(bar, formatField)}: ${measureLabel}`}
+                aria-label={`${barLabel(bar, formatField, Boolean(plan.histogram))}: ${measureLabel}${bar.selectedPart ? `, ${bar.selectedPart.value.toLocaleString()} selected` : ""}`}
                 aria-pressed={bar.selected}
                 className={`chart-mark eda-bar ${clickable ? "cursor-pointer" : ""}`}
                 style={{
                   fill: bar.fill,
-                  opacity: isHovered ? 1 : bar.opacity,
+                  opacity: isHovered && !bar.selectedPart ? 1 : bar.opacity,
                   stroke: outlined
                     ? "var(--foreground)"
                     : isHovered
                       ? "var(--foreground)"
-                      : undefined,
+                      : bar.tail
+                        ? "var(--muted-foreground)"
+                        : undefined,
                   strokeWidth: outlined ? 2 : isHovered ? 1.5 : undefined,
+                  // A coverage tail counts everything past an edge, so it
+                  // reads as open rather than as one more bin.
+                  strokeDasharray: bar.tail && !outlined ? "3 2" : undefined,
                 }}
                 onFocus={() => setHovered({ id: bar.id, altKey: false })}
                 onBlur={() => setHovered({ id: null, altKey: false })}
@@ -598,6 +688,9 @@ function SingleBarChart({
                   } else if (selectable && !event.altKey) {
                     event.preventDefault();
                     toggleCategory(bar.groupValue);
+                  } else if (plan.mode === "bin" && !event.altKey) {
+                    event.preventDefault();
+                    selectBin(bar);
                   }
                 }}
                 onClick={(event) => {
@@ -612,6 +705,21 @@ function SingleBarChart({
               />
             );
           })}
+        </g>
+        <g pointerEvents="none" aria-hidden="true">
+          {plan.bars.map((bar) =>
+            bar.selectedPart ? (
+              <rect
+                key={`${bar.id}:selected`}
+                x={bar.x}
+                y={bar.selectedPart.y}
+                width={bar.width}
+                height={bar.selectedPart.height}
+                rx={1.5}
+                style={{ fill: bar.fill }}
+              />
+            ) : null
+          )}
         </g>
       </BaseChart>
       {hovered.id && (
