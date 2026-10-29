@@ -418,5 +418,15 @@
     "license_url": "https://github.com/vega/vega-datasets/blob/main/LICENSE",
     "version": "vega-datasets driving.json",
     "notes": "One row per year from 1956 to 2010: miles driven per person and the inflation-adjusted price of a gallon of gas."
+  },
+  {
+    "id": "furnace",
+    "title": "Furnace oxide film thickness (FURNACE.DAT)",
+    "publisher": "NIST/SEMATECH e-Handbook of Statistical Methods; data contributed by Barry Hembree, AMD",
+    "url": "https://www.itl.nist.gov/div898/handbook/ppc/section5/ppc511.htm",
+    "license": "U.S. Government work, not subject to copyright in the United States; credit NIST as the source",
+    "license_url": "https://www.nist.gov/open/copyright-fair-use-and-licensing-statements-srd-data-software-and-technical-series-publications",
+    "version": "FURNACE.DAT retrieved 2026-10-28; zone numbers relabeled as \"Zone 1\" to \"Zone 4\"",
+    "notes": "168 oxide thickness readings in angstroms: 21 furnace runs, 4 zones per run, 2 wafers per zone. The case study states the goal as 560 Å ± 100 Å."
   }
 ]

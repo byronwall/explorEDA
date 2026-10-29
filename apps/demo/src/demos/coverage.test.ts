@@ -64,6 +64,7 @@ describe("example coverage manifest", () => {
       "reviewed"
     );
     expect(getExamplesUsingFeature("chart:row")).toEqual([
+      "engineering-histograms",
       "distribution-discovery",
       "wine-chemistry",
       "scatter-regression",

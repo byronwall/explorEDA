@@ -10,6 +10,7 @@ import { CHART_SETTING_KEYS } from "@/lib/dsl/settingKeys";
 import type { ChartType } from "@/types/ChartTypes";
 
 export { CHART_SETTING_KEYS };
+export { settingWords } from "@/lib/dsl/schema";
 
 export type SettingReference = {
   /** The saved setting, which is also its Dashboard text path. */

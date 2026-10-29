@@ -6,7 +6,7 @@ import { DistributionTraceBody } from "../BoxPlot/DistributionTraceBody";
 import { RegionTraceBody } from "../Map/RegionTraceBody";
 import { MapTraceBody } from "../Map/MapTraceBody";
 import { useState } from "react";
-import { BarTraceBody } from "../BarChart/BarTraceBody";
+import { BarTraceBody, SpecStatusTraceBody } from "../BarChart/BarTraceBody";
 import { SankeyTraceBody } from "../Sankey/SankeyTraceBody";
 import { HierarchyTraceBody } from "../Hierarchy/HierarchyTraceBody";
 import { ParallelTraceBody } from "../ParallelCoordinates/ParallelTraceBody";
@@ -90,6 +90,8 @@ function TraceBody({ trace }: { trace: ChartTrace }) {
       return <TimelineTraceBody trace={trace} />;
     case "bar":
       return <BarTraceBody trace={trace} />;
+    case "spec-status":
+      return <SpecStatusTraceBody trace={trace} />;
     case "sankey-node":
     case "sankey-link":
       return <SankeyTraceBody trace={trace} />;

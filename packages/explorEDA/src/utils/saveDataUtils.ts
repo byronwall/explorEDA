@@ -204,7 +204,14 @@ function isFilter(value: unknown): boolean {
       (value.min === undefined || isFiniteNumber(value.min)) &&
       (value.max === undefined || isFiniteNumber(value.max)) &&
       (value.maxExclusive === undefined ||
-        typeof value.maxExclusive === "boolean")
+        typeof value.maxExclusive === "boolean") &&
+      (value.minExclusive === undefined ||
+        typeof value.minExclusive === "boolean")
+    );
+  }
+  if (value.type === "spec-status") {
+    return ["below", "within", "above", "outside"].includes(
+      value.region as string
     );
   }
   if (value.type === "date-range") {
@@ -414,6 +421,35 @@ function isSeriesSettings(value: unknown): boolean {
   );
 }
 
+/** A bar chart's engineering histogram: auto or a saved width grid. */
+function isHistogram(value: unknown): boolean {
+  if (!isRecord(value) || !isRecord(value.binning)) return false;
+  const binning = value.binning;
+  const spec = value.spec;
+  if (
+    spec !== undefined &&
+    !(
+      isRecord(spec) &&
+      (spec.lower === undefined || isFiniteNumber(spec.lower)) &&
+      (spec.upper === undefined || isFiniteNumber(spec.upper)) &&
+      (spec.lower === undefined ||
+        spec.upper === undefined ||
+        (spec.lower as number) <= (spec.upper as number))
+    )
+  )
+    return false;
+  return (
+    binning.mode === "auto" ||
+    (binning.mode === "width" &&
+      isFiniteNumber(binning.width) &&
+      binning.width > 0 &&
+      isFiniteNumber(binning.origin) &&
+      Number.isSafeInteger(binning.firstIndex) &&
+      Number.isSafeInteger(binning.lastIndex) &&
+      (binning.lastIndex as number) > (binning.firstIndex as number))
+  );
+}
+
 function isChart(value: unknown): boolean {
   if (!isRecord(value)) {
     return false;
@@ -435,6 +471,7 @@ function isChart(value: unknown): boolean {
     case "bar":
       return (
         (value.binCount === undefined || isFiniteNumber(value.binCount)) &&
+        (value.histogram === undefined || isHistogram(value.histogram)) &&
         (value.forceString === undefined ||
           typeof value.forceString === "boolean") &&
         (value.seriesField === undefined ||

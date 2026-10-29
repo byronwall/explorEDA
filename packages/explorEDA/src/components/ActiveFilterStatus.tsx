@@ -72,16 +72,18 @@ export function formatFilterLabel(
     case "range":
     case "date-range": {
       const { min, max } = filter;
-      // A histogram bar's range leaves out its upper edge.
+      // A histogram bar's range leaves out its upper edge, and an upper
+      // coverage tail leaves out its lower one.
       const below = filter.type === "range" && filter.maxExclusive;
+      const above = filter.type === "range" && filter.minExclusive;
       if (min !== undefined && max !== undefined) {
         const [low, high] = format.bounds(filter.field, min, max);
-        return below
-          ? `${name}: ${low} to < ${high}`
+        return below || above
+          ? `${name}: ${above ? "> " : ""}${low} to ${below ? "< " : ""}${high}`
           : `${name}: ${low}–${high}`;
       }
       if (min !== undefined) {
-        return `${name}: ≥ ${format.value(filter.field, min)}`;
+        return `${name}: ${above ? ">" : "≥"} ${format.value(filter.field, min)}`;
       }
       if (max !== undefined) {
         return `${name}: ${below ? "<" : "≤"} ${format.value(filter.field, max)}`;
@@ -90,6 +92,8 @@ export function formatFilterLabel(
     }
     case "text":
       return `${name} ${filter.operator} “${filter.value}”`;
+    case "spec-status":
+      return `${name}: ${filter.region} spec`;
     default:
       return assertNever(filter);
   }
@@ -117,6 +121,8 @@ export function isActiveFilter(filter: Filter) {
       return filter.min !== undefined || filter.max !== undefined;
     case "text":
       return filter.value.length > 0;
+    case "spec-status":
+      return true;
     default:
       return assertNever(filter);
   }

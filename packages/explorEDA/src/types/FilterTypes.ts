@@ -13,6 +13,11 @@ export interface RangeFilter extends FilterBase {
   min?: number;
   max?: number;
   /**
+   * Leaves out values equal to `min`, as a histogram's upper coverage tail
+   * does for the last edge.
+   */
+  minExclusive?: boolean;
+  /**
    * Leaves out values equal to `max`, as a histogram bar does for its upper
    * edge. Typed ranges include both bounds.
    */
@@ -31,7 +36,25 @@ export interface DateRangeFilter extends FilterBase {
   max?: string;
 }
 
-export type Filter = ValueFilter | RangeFilter | TextFilter | DateRangeFilter;
+/** Where a measurement sits against a chart's specification limits. */
+export type SpecRegion = "below" | "within" | "above" | "outside";
+
+/**
+ * Rows whose measurement falls in one region of the specification limits.
+ * It saves no limits: it reads the current limits of the histogram that owns
+ * it, so moving a limit moves the selection with it.
+ */
+export interface SpecStatusFilter extends FilterBase {
+  type: "spec-status";
+  region: SpecRegion;
+}
+
+export type Filter =
+  | ValueFilter
+  | RangeFilter
+  | TextFilter
+  | DateRangeFilter
+  | SpecStatusFilter;
 
 export interface ChartFilters {
   filters: Filter[];

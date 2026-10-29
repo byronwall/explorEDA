@@ -351,6 +351,8 @@ export const CHART_SETTINGS: Readonly<
   bar: {
     field: "Field to count by category, or to bin when it is numeric.",
     binCount: "Number of bins when the field is binned, from 2 to 50.",
+    histogram:
+      "Engineering histogram settings. binning is auto, or width with a width, an origin, and first and last grid indices (edges at origin + index × width, 1 to 512 bins). With it, bins and selections hold still when data changes. spec holds inclusive lower and upper limits; either may be absent.",
     forceString:
       "Counts each distinct value as its own bar, even for a numeric field.",
     categoryOrder:

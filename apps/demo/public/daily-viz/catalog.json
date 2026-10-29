@@ -12466,5 +12466,109 @@
       "label": "Fifty states"
     },
     "published": "2026-11-15"
+  },
+  {
+    "id": "nb-furnace-oxide-window",
+    "slug": "furnace-oxide-window",
+    "kind": "notebook",
+    "title": "Every wafer met spec; the furnace run decided where it landed",
+    "question": "Does the oxide furnace hold 560 ± 100 Å, and what moves the thickness?",
+    "summary": "All 168 wafers in a NIST furnace case study grew oxide inside the 560 ± 100 Å goal. Within that window, the furnace run, not the zone, sets how thick a wafer comes out.",
+    "family": "furnace",
+    "entry": "oxide-window.eda.md",
+    "query": "furnace",
+    "industry": "Manufacturing",
+    "analysis": "Distribution",
+    "findings": [
+      {
+        "text": "{value}% of the 168 wafers fell inside 460 to 660 Å.",
+        "format": ".1f",
+        "op": "share",
+        "field": "Thickness (Å)",
+        "condition": [
+          [
+            "Thickness (Å)",
+            "ge",
+            460
+          ],
+          [
+            "Thickness (Å)",
+            "le",
+            660
+          ]
+        ]
+      },
+      {
+        "text": "The thinnest wafer measured {value} Å",
+        "format": ".0f",
+        "op": "min",
+        "field": "Thickness (Å)"
+      },
+      {
+        "text": "the thickest {value} Å",
+        "format": ".0f",
+        "op": "max",
+        "field": "Thickness (Å)"
+      },
+      {
+        "text": "The median wafer measured {value} Å",
+        "format": ".1f",
+        "op": "median",
+        "field": "Thickness (Å)"
+      },
+      {
+        "text": "Run 3 averaged {value} Å",
+        "format": ".1f",
+        "op": "mean",
+        "field": "Thickness (Å)",
+        "where": [
+          [
+            "Run",
+            "eq",
+            3
+          ]
+        ]
+      },
+      {
+        "text": "run 7 averaged {value} Å",
+        "format": ".1f",
+        "op": "mean",
+        "field": "Thickness (Å)",
+        "where": [
+          [
+            "Run",
+            "eq",
+            7
+          ]
+        ]
+      },
+      {
+        "text": "Zone 1 averaged {value} Å",
+        "format": ".1f",
+        "op": "mean",
+        "field": "Thickness (Å)",
+        "where": [
+          [
+            "Zone",
+            "eq",
+            "Zone 1"
+          ]
+        ]
+      },
+      {
+        "text": "Zone 2 averaged {value} Å",
+        "format": ".1f",
+        "op": "mean",
+        "field": "Thickness (Å)",
+        "where": [
+          [
+            "Zone",
+            "eq",
+            "Zone 2"
+          ]
+        ]
+      }
+    ],
+    "published": "2026-11-16"
   }
 ]

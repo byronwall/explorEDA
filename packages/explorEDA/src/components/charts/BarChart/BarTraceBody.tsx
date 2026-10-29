@@ -5,7 +5,7 @@ import {
   TraceScaleReadout,
   TraceSection,
 } from "../ChartTraceDetails";
-import type { BarTrace } from "./barTrace";
+import type { BarTrace, SpecStatusTrace } from "./barTrace";
 import { AggregateContributorTable } from "./GroupedAggregateInspector";
 
 export function BarTraceBody({ trace }: { trace: BarTrace }) {
@@ -77,10 +77,29 @@ export function BarTraceBody({ trace }: { trace: BarTrace }) {
                     : "Sum of valid inputs."}
           </TraceReadout>
         )}
-        {mark.bin && (
+        {mark.bin && !mark.tail && (
           <TraceReadout label="Bin interval">
             {mark.bin.start} to {mark.bin.end}
             {mark.bin.closed ? " (closed)" : " (end excluded)"}
+          </TraceReadout>
+        )}
+        {mark.tail && (
+          <TraceReadout label="Coverage tail">
+            {mark.tail === "below"
+              ? `Values below ${mark.bin!.end}, strictly`
+              : `Values above ${mark.bin!.start}, strictly`}
+          </TraceReadout>
+        )}
+        {mark.selectedPart && (
+          <TraceReadout label="Selected">
+            {mark.selectedPart.value} of {mark.value} by this chart's selection
+          </TraceReadout>
+        )}
+        {trace.histogram && (
+          <TraceReadout label="Measurements">
+            {trace.histogram.n} finite in scope, tails included ·{" "}
+            {trace.histogram.missing} missing · {trace.histogram.invalid} not
+            numbers
           </TraceReadout>
         )}
         {mark.stack && (
@@ -165,6 +184,51 @@ export function BarTraceBody({ trace }: { trace: BarTrace }) {
       )}
       <TraceSection muted>
         <div>{trace.scopeNote}</div>
+      </TraceSection>
+    </div>
+  );
+}
+
+const REGION_RULE = {
+  below: (limits: SpecStatusTrace["limits"]) => `x < ${limits.lower}`,
+  above: (limits: SpecStatusTrace["limits"]) => `x > ${limits.upper}`,
+  within: (limits: SpecStatusTrace["limits"]) =>
+    [
+      limits.lower !== undefined && `x ≥ ${limits.lower}`,
+      limits.upper !== undefined && `x ≤ ${limits.upper}`,
+    ]
+      .filter(Boolean)
+      .join(" and "),
+  outside: (limits: SpecStatusTrace["limits"]) =>
+    [
+      limits.lower !== undefined && `x < ${limits.lower}`,
+      limits.upper !== undefined && `x > ${limits.upper}`,
+    ]
+      .filter(Boolean)
+      .join(" or "),
+};
+
+/** The rows in one specification status, with the rule that picks them. */
+export function SpecStatusTraceBody({ trace }: { trace: SpecStatusTrace }) {
+  const count = trace.row.contributors.length;
+  return (
+    <div className="space-y-2" aria-label="Specification status trace">
+      <TraceSection heading={`${trace.fieldLabel} · ${trace.id} spec`}>
+        <TraceReadout label="Limits">
+          {trace.limits.lower ?? "none"} to {trace.limits.upper ?? "none"}, each
+          limit included
+        </TraceReadout>
+        <TraceReadout label="Rule">
+          {REGION_RULE[trace.id](trace.limits)}
+        </TraceReadout>
+        <TraceReadout label="Count">
+          {count} of {trace.n} finite measurements
+          {trace.n > 0 && ` · ${((count / trace.n) * 100).toFixed(1)}%`}
+        </TraceReadout>
+        <TraceReadout label="Left out">
+          {trace.missing} missing · {trace.invalid} not numbers
+        </TraceReadout>
+        <AggregateContributorTable row={trace.row} />
       </TraceSection>
     </div>
   );

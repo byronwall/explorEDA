@@ -9,7 +9,7 @@ import { catalogue } from "./catalogue";
 import { GLANCES } from "./glance";
 import { findDocsErrors, type DocsGateInput } from "./gate";
 import { allTargets } from "./targets";
-import { CHART_SETTING_KEYS } from "exploreda/docs-kit";
+import { CHART_SETTING_KEYS, settingWords } from "exploreda/docs-kit";
 import { liveExamples, type LiveExampleSpec } from "./live/examples";
 import {
   CHART_SETTINGS,
@@ -80,6 +80,12 @@ function currentInput(): DocsGateInput {
     ),
     publicFiles: publicFiles(),
     settingKeys: CHART_SETTING_KEYS,
+    settingWords: Object.fromEntries(
+      Object.keys(CHART_SETTING_KEYS).map((type) => [
+        type,
+        Object.keys(settingWords(type)),
+      ])
+    ),
     glanceTypes: Object.keys(GLANCES),
     commonDescriptions: COMMON_SETTINGS,
     chartDescriptions: CHART_SETTINGS,

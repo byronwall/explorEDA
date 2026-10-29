@@ -44,6 +44,24 @@ const IDENTIFIER = /^[A-Za-z_][\w]*$/;
 const GENERATED_ID =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 /**
+ * A range as text: `0..2` includes both ends. A strict end reads as
+ * interval brackets, `[0..2)` or `(12..)`, and an open end takes a
+ * parenthesis.
+ */
+export function rangeText(filter: {
+  min?: number | string;
+  max?: number | string;
+  minExclusive?: boolean;
+  maxExclusive?: boolean;
+}) {
+  const body = `${filter.min ?? ""}..${filter.max ?? ""}`;
+  if (!filter.minExclusive && !filter.maxExclusive) return body;
+  const open = filter.minExclusive || filter.min === undefined ? "(" : "[";
+  const close = filter.maxExclusive || filter.max === undefined ? ")" : "]";
+  return `${open}${body}${close}`;
+}
+
+/**
  * `where.` text for a chart's filters, or the bare `field=` pairs of a
  * `filter` line, or undefined when one needs records.
  */
@@ -80,9 +98,12 @@ function filterPairs(
         if (filter.min === undefined && filter.max === undefined) {
           return undefined;
         }
-        pairs.push(`${field}=${filter.min ?? ""}..${filter.max ?? ""}`);
+        pairs.push(`${field}=${rangeText(filter)}`);
         break;
       }
+      case "spec-status":
+        pairs.push(`${field}.spec=${filter.region}`);
+        break;
       case "text":
         pairs.push(
           `${field}.${filter.operator}=${JSON.stringify(filter.value)}`

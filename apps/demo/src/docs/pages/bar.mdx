@@ -45,6 +45,52 @@ Set the grouping field, choose category counts or numeric bins, and adjust the b
 - Missing or non-finite measurements do not enter numeric bins.
 - Alt-click a bar or use the chart trace action to inspect how it was computed.
 
+## Authored boundaries
+
+Auto bins come from the data, so their edges move when rows change. To keep the same intervals from one refresh to the next, set **Edges** to **Width** in the **Bins** section. Each edge is `origin + index × width`, so a width of 0.01 and an origin of 0 puts edges at 11.94, 11.95, and so on.
+
+- **Width** and **Origin** change the grid and keep the range of bin positions.
+- **Range** sets the first and last edge. A typed edge moves outward to the nearest grid edge.
+- **Fit** sets the range to the smallest run of bins that covers every source value, with at least one bin.
+- A grid holds 1 to 512 bins. Edges that would collapse at a large magnitude are rejected.
+
+In dashboard text, the grid reads `bins.mode=width bins.width=0.01 bins.origin=0 bins.first=1194 bins.last=1208`.
+
+<LiveExample
+  id="engineering-width"
+  caption="Shaft diameters in saved 0.01 mm bins, from the engineering histograms example. Click the 12.05 bin, then the dashed tail past 12.08."
+/>
+
+## Coverage and exact edges
+
+Each bin keeps its lower edge and leaves out its upper edge. Only the last bin keeps both edges. A value past the first or last edge counts in a **coverage tail**: a dashed bar outside the range. The tails use strict comparisons, so a value equal to the last edge is in the last bin, not in the upper tail.
+
+Edges are built from the decimal text of the width and origin, and each edge converts to a number once. Measurements are compared with the edges exactly. No measurement is rounded, so 0.30000000000000004 is above an edge at 0.3.
+
+The status line shows **n**, the finite measurements in scope with the tails included. Missing values and values that are not numbers are counted separately and enter no bin.
+
+## Saved selections
+
+A click on a bin selects its exact interval, such as `Diameter (mm): 12.05 to < 12.06`. A click on a tail selects a strict range, such as `> 12.08`. Click the same bar again to clear it. A drag selects the bins it crosses.
+
+With saved edges, a selection keeps the range it was made with. When the data or the edges change, the range does not move. A bin that the range covers in part shows its selected rows solid over a faded bar, and the readout and trace give both counts. In dashboard text, a strict end uses interval brackets: `select."Diameter (mm)"=[12.05..12.06)` and `select."Diameter (mm)"=(12.08..)`. A range without brackets, such as `0..2`, includes both ends.
+
+## Specification limits
+
+Set **Limits** in the **Specification** section to compare measurements with a lower and an upper specification limit. Either side can be blank. Each limit includes equality: a value equal to a limit passes.
+
+- **Below** counts values less than the lower limit, and **Above** counts values greater than the upper limit. **Within** counts the rest. **Outside** joins Below and Above.
+- A dashed guide marks each limit, labeled LSL and USL. A light tint covers the plot past each limit. Bars keep their own color, because one bin can hold parts of more than one status.
+- The counts under the plot are exact. Each count and share uses **n**, the finite measurements in scope, with the coverage tails included. Missing values and values that are not numbers are not in n.
+- With one limit, the chart shows only the statuses that limit can make. Equal limits count an exact value: Within is every value equal to it.
+
+Click a status to select its rows. Alt-click it, or press Alt+Enter, to trace them: the trace lists the rule, the count, and every row. The selection saves only the status, not the limits, so it follows the chart's current limits. Move the upper limit from 12.05 to 12.06 and the Outside selection updates at once. In dashboard text, limits read `spec.lower=11.95 spec.upper=12.05`, and the selection reads `select."Diameter (mm)".spec=outside`. A `where.` filter on the same chart can also take `.spec=within`. Workspace and Rows filters have no histogram to read limits from, so they do not take `.spec`.
+
+<LiveExample
+  id="engineering-specs"
+  caption="Shaft diameters against limits of 12.00 ± 0.05 mm. Click Outside to select the seven parts that fail."
+/>
+
 ## Series
 
 **Split by** a second field to divide each bar into series.

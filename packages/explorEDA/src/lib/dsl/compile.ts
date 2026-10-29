@@ -27,7 +27,8 @@ import type {
   ChartType,
   datum,
 } from "@/types/ChartTypes";
-import type { Filter } from "@/types/FilterTypes";
+import type { Filter, SpecRegion } from "@/types/FilterTypes";
+import { SPEC_REGIONS } from "@/lib/specification";
 import type {
   SavedCalculation,
   SavedDataStructure,
@@ -1938,11 +1939,43 @@ export function compileDocument(
     path: string,
     value: DslValue,
     span: DslSpan,
-    subject: string
+    subject: string,
+    /** The chart type that owns the filter, for a spec-status filter. */
+    owner?: string
   ): Filter | undefined {
     const operators = ["contains", "equals", "startsWith", "endsWith"] as const;
     // Quote a field name with dots or spaces: where."Order Date"=2024-01-01..
     const segments = parsePath(path)?.segments ?? [path];
+    // select."Diameter".spec=outside reads the owning histogram's limits.
+    if (segments.length === 2 && segments[1] === "spec") {
+      const field = resolveField(segments[0]!, span, subject);
+      if (!field) return undefined;
+      const region = single(value);
+      if (owner !== "bar") {
+        report(
+          "error",
+          "setting-ignored",
+          span,
+          `.spec reads a histogram's limits, so it works only on a bar chart's select. or where. filters. ${subject} ignores it.`,
+          {
+            subject,
+            suggestion: `Write it on the histogram: bar ${segments[0]} spec.upper=6 select.${segments[0]}.spec=${region}`,
+          }
+        );
+        return undefined;
+      }
+      if (!SPEC_REGIONS.includes(region as SpecRegion)) {
+        report(
+          "error",
+          "chart-skipped",
+          span,
+          `${region} is not a spec region, so ${subject} was skipped rather than drawn with more rows.`,
+          { subject, suggestion: `Use ${SPEC_REGIONS.join(", ")}.` }
+        );
+        return undefined;
+      }
+      return { type: "spec-status", field, region: region as SpecRegion };
+    }
     const operator =
       segments.length === 2
         ? operators.find((item) => segments[1] === item)
@@ -1956,12 +1989,17 @@ export function compileDocument(
       return { type: "text", field, operator, value: single(value) };
     }
     const item = value.items[0]!;
+    // [0..2) and (12..) mark strict ends; 0..2 includes both.
+    const interval = /^([[(])(.*)([\])])$/.exec(item.text);
+    const rangeBody = interval ? interval[2]! : item.text;
     const range =
-      value.items.length === 1 && !item.quoted && item.text.includes("..")
-        ? item.text.split("..")
+      value.items.length === 1 && !item.quoted && rangeBody.includes("..")
+        ? rangeBody.split("..")
         : undefined;
     if (range && range.length === 2) {
       const [low, high] = range.map((part) => part.trim());
+      const minExclusive = Boolean(interval && interval[1] === "(" && low);
+      const maxExclusive = Boolean(interval && interval[3] === ")" && high);
       if (fieldType(field) === "datetime") {
         return {
           type: "date-range",
@@ -1994,6 +2032,8 @@ export function compileDocument(
         field,
         ...(min !== undefined ? { min } : {}),
         ...(max !== undefined ? { max } : {}),
+        ...(minExclusive ? { minExclusive } : {}),
+        ...(maxExclusive ? { maxExclusive } : {}),
       };
     }
     // Match each value to the value the rows hold, so 3 finds the number 3.
@@ -2343,7 +2383,8 @@ export function compileDocument(
         key.slice(key.indexOf(".") + 1),
         pair.value,
         pair.span,
-        subject
+        subject,
+        chart.type
       );
       if (!filter) {
         return undefined;

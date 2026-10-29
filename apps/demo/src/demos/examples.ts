@@ -113,6 +113,7 @@ import {
   LineChart,
   LucideIcon,
   Orbit,
+  Ruler,
   Plane,
   ScatterChart,
   ShoppingCart,
@@ -128,6 +129,7 @@ import { earthquakesAnalysis } from "./analyses/earthquakes";
 import { flightsAnalysis } from "./analyses/flights";
 import { shopText } from "./analyses/shop";
 import { wineText } from "./analyses/wine";
+import { engineeringHistogramsDashboard } from "./engineeringHistograms";
 import {
   batteryDayDashboard,
   budgetBridgeDashboard,
@@ -499,6 +501,17 @@ export const examples: ExampleData[] = [
     ],
     data: "/lorenz_3d_small.csv",
     savedData: demoSettings,
+  },
+  {
+    id: "engineering-histograms",
+    title: "Shaft diameters in saved bins",
+    description:
+      "162 synthetic turned shafts from three lathes, measured in millimetres. Bins 0.01 mm wide stay where they are saved; parts past the range count in coverage tails, and limits of 12.00 ± 0.05 mm count every part below, within, and above specification.",
+    dataset: { rows: "162 parts", fields: 4, source: "Synthetic" },
+    shows: ["Saved bin width", "Coverage tails", "Specification limits"],
+    icon: Ruler,
+    data: "/shaft-diameters.csv",
+    savedData: engineeringHistogramsDashboard,
   },
   {
     id: "distribution-discovery",

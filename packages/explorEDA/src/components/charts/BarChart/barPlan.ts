@@ -36,6 +36,12 @@ import { numericScale } from "../Axis/numericScale";
 import { getChartAxisLabel } from "../chartAccessibility";
 import { binIndex, binInRange, numericBins } from "./bins";
 import type { BarChartSettings } from "./definition";
+import {
+  planHistogram,
+  type HistogramBin,
+  type HistogramPlan,
+  type TailSide,
+} from "./histogramPlan";
 
 /** Grouped aggregate, count per category, or count per numeric bin. */
 export type BarMode = "aggregate" | "count" | "bin";
@@ -110,6 +116,13 @@ export interface BarMark {
     parts: { label: string; row: AggregateResultRow }[];
   };
   bin?: { start: number; end: number; closed: boolean };
+  /** A coverage tail of an engineering histogram, past the first or last edge. */
+  tail?: TailSide;
+  /**
+   * The part of an engineering histogram bar the chart's own selection keeps,
+   * drawn solid over the faded whole when a selection cuts through the bin.
+   */
+  selectedPart?: { value: number; y: number; height: number };
   value: number;
   x: number;
   y: number;
@@ -166,6 +179,8 @@ export interface BarChartPlan {
    */
   wholeNumberBins: boolean;
   groupOrder: string[];
+  /** Exact bins, tails, and exclusions when the chart has histogram settings. */
+  histogram?: HistogramPlan;
   /** Rows without a finite value have no bar. */
   unplotted: { row: AggregateResultRow; reason: string }[];
   domain: BarDomain;
@@ -177,15 +192,18 @@ export function isNumericBarField(
   settings: BarChartSettings,
   snapshot: Pick<BarSnapshot, "allValues" | "fieldType">
 ) {
-  // A numeric field needs one finite value; Infinity and NaN still count as numbers.
+  // A numeric field needs one finite value; Infinity and NaN still count as
+  // numbers. Histogram settings declare the field numeric, so a stray text
+  // value is reported as invalid instead of turning bins into categories.
   return (
     !settings.aggregateId &&
     snapshot.fieldType !== "categorical" &&
     !settings.forceString &&
     snapshot.allValues.some((value) => finiteNumber(value) !== undefined) &&
-    snapshot.allValues
-      .filter((value) => !isMissingValue(value))
-      .every(isNumberLike)
+    (Boolean(settings.histogram) ||
+      snapshot.allValues
+        .filter((value) => !isMissingValue(value))
+        .every(isNumberLike))
   );
 }
 
@@ -278,7 +296,54 @@ function countRows(
   return { ...result, rows };
 }
 
-type BinRow = AggregateResultRow & { bin: { start: number; end: number } };
+type BinRow = AggregateResultRow & {
+  bin: { start: number; end: number; closed?: boolean };
+  tail?: TailSide;
+  /** Rows the chart's own selection keeps, in engineering histograms. */
+  selected?: number;
+  sourceCount?: number;
+};
+
+function histogramRowId(bin: HistogramBin) {
+  return typeof bin.key === "number"
+    ? `bin:${bin.start}:${bin.end}`
+    : `tail:${bin.key}`;
+}
+
+/** Engineering histogram rows: the lower tail, every bin, the upper tail. */
+function histogramRows(
+  plan: HistogramPlan,
+  snapshot: BarSnapshot,
+  format: (value: number) => string
+): BinRow[] {
+  const bins = [
+    ...(plan.tails.below ? [plan.tails.below] : []),
+    ...plan.bins,
+    ...(plan.tails.above ? [plan.tails.above] : []),
+  ];
+  return bins.map((bin) => ({
+    bin: { start: bin.start, end: bin.end, closed: bin.closed },
+    tail: typeof bin.key === "number" ? undefined : bin.key,
+    selected: bin.selected,
+    sourceCount: bin.sourceCount,
+    id: histogramRowId(bin),
+    groupValue: bin.start,
+    groupLabel:
+      bin.key === "below"
+        ? `< ${format(bin.end)}`
+        : bin.key === "above"
+          ? `> ${format(bin.start)}`
+          : `[${bin.start}, ${bin.end}${bin.closed ? "]" : ")"}`,
+    value: bin.ids.length,
+    rowCount: bin.ids.length,
+    contributors: bin.ids.map((id) => ({
+      sourceId: id,
+      input: snapshot.fieldData[id],
+      rawInput: snapshot.fieldData[id],
+      included: true,
+    })),
+  }));
+}
 
 function binRows(settings: BarChartSettings, snapshot: BarSnapshot): BinRow[] {
   const all = finiteNumbers(snapshot.allValues);
@@ -359,6 +424,19 @@ export function planBarChart({
       ? "bin"
       : "count";
   const spec = snapshot.aggregate?.spec;
+  const histogram =
+    mode === "bin" && settings.histogram
+      ? planHistogram(
+          settings,
+          snapshot.allValues,
+          snapshot.liveIds,
+          snapshot.fieldData
+        )
+      : undefined;
+  const formatMeasure = (value: number) =>
+    formatFieldValue
+      ? formatFieldValue(settings.field, value)
+      : formatTick(value);
   const result =
     mode === "aggregate"
       ? snapshot.aggregate
@@ -367,7 +445,9 @@ export function planBarChart({
         : undefined;
   const rows: (AggregateResultRow & Partial<Pick<BinRow, "bin">>)[] =
     mode === "bin"
-      ? binRows(settings, snapshot)
+      ? histogram
+        ? histogramRows(histogram, snapshot, formatMeasure)
+        : binRows(settings, snapshot)
       : settings.categoryOrder === "label"
         ? sortByLabel(result?.rows ?? [], (row) => row.groupValue)
         : settings.categoryOrder === "value"
@@ -395,6 +475,12 @@ export function planBarChart({
       ...values(snapshot.domainAggregate?.rows ?? [], "all:"),
       ...values(rows),
     ];
+  } else if (histogram) {
+    domainValues = (rows as BinRow[]).map((row) => ({
+      id: row.id,
+      label: row.groupLabel,
+      value: row.sourceCount ?? 0,
+    }));
   } else if (mode === "bin") {
     const all = finiteNumbers(snapshot.allValues);
     domainValues = numericBins(all, all, settings.binCount || 20).map(
@@ -612,9 +698,15 @@ export function planBarChart({
     mode === "bin"
       ? getRangeFilterForField(settings.filters, settings.field)
       : undefined;
-  const binEdges = rows.flatMap((row, index) =>
-    row.bin ? (index === 0 ? [row.bin.start, row.bin.end] : [row.bin.end]) : []
-  );
+  const binEdges =
+    histogram?.edges ??
+    rows.flatMap((row, index) =>
+      row.bin
+        ? index === 0
+          ? [row.bin.start, row.bin.end]
+          : [row.bin.end]
+        : []
+    );
   // Counts over every source row, by bar row id, for the faint bars behind.
   const totals =
     mode === "aggregate" || !showTotals
@@ -640,7 +732,7 @@ export function planBarChart({
     if (row.bin) {
       const linear = xScale as ReturnType<typeof numericScale>;
       const { start, end } = row.bin;
-      bin = { start, end, closed: order === rows.length - 1 };
+      bin = { start, end, closed: row.bin.closed ?? order === rows.length - 1 };
       x = linear(start);
       const span = linear(end) - x;
       if (span < 1) return;
@@ -664,20 +756,37 @@ export function planBarChart({
         : undefined;
     const baseFill = getColor(row.groupValue) || DEFAULT_FILL;
     // A bin passes only when the range covers all of it, which snapped
-    // filters always do.
-    const passes = rangeFilter
-      ? row.bin
-        ? binInRange(row.bin, rangeFilter, binEdges)
-        : applyFilter(row.groupValue, rangeFilter)
-      : valueFilter
-        ? applyFilter(row.groupValue, valueFilter)
-        : true;
+    // filters always do. An engineering histogram fades every bar under a
+    // selection and draws the kept part solid on top.
+    const selectedCount = histogram?.selection
+      ? ((row as BinRow).selected ?? 0)
+      : undefined;
+    const selectedPosition =
+      selectedCount === undefined ? undefined : yScale(selectedCount);
+    const passes = histogram
+      ? !histogram.selection
+      : rangeFilter
+        ? row.bin
+          ? binInRange(row.bin, rangeFilter, binEdges)
+          : applyFilter(row.groupValue, rangeFilter)
+        : valueFilter
+          ? applyFilter(row.groupValue, valueFilter)
+          : true;
     bars.push({
       id: `bar:${row.id}`,
       order,
       label: row.groupLabel,
       groupValue: row.groupValue,
       bin,
+      tail: (row as BinRow).tail,
+      selectedPart:
+        selectedCount && selectedPosition !== undefined
+          ? {
+              value: selectedCount,
+              y: Math.min(baseline, selectedPosition),
+              height: Math.max(1, Math.abs(baseline - selectedPosition)),
+            }
+          : undefined,
       value: row.value,
       valueText: format(yField)(row.value),
       x,
@@ -725,8 +834,12 @@ export function planBarChart({
     yScale: describeScale(yScale, settings.yAxis.scaleType),
     bars,
     binEdges,
+    histogram,
     wholeNumberBins:
-      mode === "bin" && rows.length > 0 && !rows[0]!.groupLabel.startsWith("["),
+      mode === "bin" &&
+      !histogram &&
+      rows.length > 0 &&
+      !rows[0]!.groupLabel.startsWith("["),
     groupOrder: rows.map((row) => row.groupLabel),
     unplotted,
     domain: {

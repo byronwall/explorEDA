@@ -1,7 +1,6 @@
 import { isAdditiveAggregation } from "@/lib/aggregates";
 import { FieldSelector } from "@/components/FieldSelector";
 import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { ActionTooltip } from "@/components/ui/tooltip";
 import { ChartSettingsPanelProps } from "@/types/ChartTypes";
@@ -12,6 +11,10 @@ import { useDataLayer } from "@/providers/DataLayerProvider";
 import { useState } from "react";
 import { getAggregateName, useMeasureFields } from "../aggregateFields";
 import { ColorScaleControl } from "@/components/colorScales/ColorScaleControl";
+import {
+  HistogramSettingsSection,
+  SpecSettingsSection,
+} from "./HistogramSettings";
 
 export function BarChartSettingsPanel({
   settings,
@@ -338,7 +341,22 @@ export function BarChartSettingsPanel({
           label=""
           placeholder="Chart field"
           value={settings.field}
-          onChange={(value) => onSettingsChange({ ...settings, field: value })}
+          onChange={(value) =>
+            onSettingsChange({
+              ...settings,
+              field: value,
+              // Bins, limits, and a selection are in the old field's units.
+              ...(settings.histogram && value !== settings.field
+                ? {
+                    histogram: undefined,
+                    filters: settings.filters.filter(
+                      (filter) => filter.field !== settings.field
+                    ),
+                    xAxis: { ...settings.xAxis, limits: undefined },
+                  }
+                : {}),
+            })
+          }
         />
 
         <Label htmlFor="bar-operation">Operation</Label>
@@ -371,23 +389,6 @@ export function BarChartSettingsPanel({
             <ColorScaleControl scaleId={settings.colorScaleId} />
           </div>
         )}
-        {!settings.seriesField &&
-          !settings.forceString &&
-          measureFields.includes(settings.field) && (
-            <>
-              <Label>Bins · {settings.binCount ?? 20}</Label>
-              <Slider
-                aria-label="Histogram bin count"
-                value={[settings.binCount ?? 20]}
-                min={2}
-                max={50}
-                step={1}
-                onValueChange={([value]) =>
-                  onSettingsChange({ ...settings, binCount: value })
-                }
-              />
-            </>
-          )}
         {!settings.seriesField && (
           <div className="col-start-2">
             <div className="flex items-center space-x-2">
@@ -416,6 +417,20 @@ export function BarChartSettingsPanel({
           series.
         </p>
       )}
+      {!settings.seriesField &&
+        !settings.forceString &&
+        measureFields.includes(settings.field) && (
+          <>
+            <HistogramSettingsSection
+              settings={settings}
+              onSettingsChange={onSettingsChange}
+            />
+            <SpecSettingsSection
+              settings={settings}
+              onSettingsChange={onSettingsChange}
+            />
+          </>
+        )}
     </div>
   );
 }

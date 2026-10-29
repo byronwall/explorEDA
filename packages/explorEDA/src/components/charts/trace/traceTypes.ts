@@ -10,7 +10,7 @@ import {
   type ChartAxesPlan,
 } from "../Axis/axisPlan";
 import type { FacetLayoutPlan } from "../FacetRelated/facetLayout";
-import type { BarTrace } from "../BarChart/barTrace";
+import type { BarTrace, SpecStatusTrace } from "../BarChart/barTrace";
 import type { SankeyTrace } from "../Sankey/sankeyTrace";
 import type { HierarchyTrace } from "../Hierarchy/hierarchyTrace";
 import type { ParallelTrace } from "../ParallelCoordinates/parallelTrace";
@@ -124,6 +124,7 @@ export type ChartTrace =
   | ContourTrace
   | ScatterTrace
   | BarTrace
+  | SpecStatusTrace
   | SankeyTrace
   | HierarchyTrace
   | ParallelTrace

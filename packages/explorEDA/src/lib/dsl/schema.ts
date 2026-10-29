@@ -67,6 +67,35 @@ export const TYPE_WORDS: Readonly<
 > = {
   bar: {
     bins: { path: "binCount", help: "Number of bins for a numeric field" },
+    "bins.mode": {
+      path: "histogram.binning.mode",
+      help: "auto counts bins; width repeats a saved grid of equal bins",
+      values: ["auto", "width"],
+    },
+    "bins.width": {
+      path: "histogram.binning.width",
+      help: "Width of each authored bin",
+    },
+    "bins.origin": {
+      path: "histogram.binning.origin",
+      help: "A value the bin edges line up with",
+    },
+    "bins.first": {
+      path: "histogram.binning.firstIndex",
+      help: "First edge, as origin + first × width",
+    },
+    "bins.last": {
+      path: "histogram.binning.lastIndex",
+      help: "Last edge, as origin + last × width",
+    },
+    "spec.lower": {
+      path: "histogram.spec.lower",
+      help: "Lower specification limit; a value equal to it passes",
+    },
+    "spec.upper": {
+      path: "histogram.spec.upper",
+      help: "Upper specification limit; a value equal to it passes",
+    },
     group: { path: "aggregateId", help: "Grouped summary to show" },
   },
   line: {
