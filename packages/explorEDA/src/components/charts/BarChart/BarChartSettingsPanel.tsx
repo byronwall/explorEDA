@@ -11,7 +11,10 @@ import { useDataLayer } from "@/providers/DataLayerProvider";
 import { useState } from "react";
 import { getAggregateName, useMeasureFields } from "../aggregateFields";
 import { ColorScaleControl } from "@/components/colorScales/ColorScaleControl";
-import { HistogramSettingsSection } from "./HistogramSettings";
+import {
+  HistogramSettingsSection,
+  SpecSettingsSection,
+} from "./HistogramSettings";
 
 export function BarChartSettingsPanel({
   settings,
@@ -417,10 +420,16 @@ export function BarChartSettingsPanel({
       {!settings.seriesField &&
         !settings.forceString &&
         measureFields.includes(settings.field) && (
-          <HistogramSettingsSection
-            settings={settings}
-            onSettingsChange={onSettingsChange}
-          />
+          <>
+            <HistogramSettingsSection
+              settings={settings}
+              onSettingsChange={onSettingsChange}
+            />
+            <SpecSettingsSection
+              settings={settings}
+              onSettingsChange={onSettingsChange}
+            />
+          </>
         )}
     </div>
   );

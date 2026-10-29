@@ -29,6 +29,11 @@ import {
 import { getRangeFilterForField } from "@/hooks/getAxisFilter";
 import { binRangeFilter, sameRange, snapRangeToBins } from "./bins";
 import { binSelection, samePredicate } from "./histogramPlan";
+import { HistogramSummary } from "./HistogramSummary";
+import type { SpecRegion } from "@/types/FilterTypes";
+
+/** Room for the specification summary row above the status line. */
+const SUMMARY_HEIGHT = 24;
 import { barTraceTargets, findBarTraceRow, resolveBarTrace } from "./barTrace";
 import { BarChartSettings } from "./definition";
 import { SeriesBarChart } from "./SeriesBarChart";
@@ -254,7 +259,13 @@ function SingleBarChart({
               : fieldSettings[field],
             { compact: true }
           ),
-        footer: STATUS_LINE_HEIGHT,
+        footer:
+          STATUS_LINE_HEIGHT +
+          (settings.histogram?.spec &&
+          (settings.histogram.spec.lower !== undefined ||
+            settings.histogram.spec.upper !== undefined)
+            ? SUMMARY_HEIGHT
+            : 0),
         showTotals: !facetIds,
         aggregateScope,
       }),
@@ -385,6 +396,26 @@ function SingleBarChart({
     return true;
   };
 
+  // A status button selects its rows by the chart's current limits, and
+  // replaces any other selection on the measurement.
+  const specFilter = settings.filters.find(
+    (f) => f.type === "spec-status" && f.field === settings.field
+  );
+  const selectedRegion =
+    specFilter?.type === "spec-status" &&
+    settings.filters.filter((f) => f.field === settings.field).length === 1
+      ? specFilter.region
+      : undefined;
+  const selectRegion = (region: SpecRegion) => {
+    const rest = settings.filters.filter((f) => f.field !== settings.field);
+    updateChart(settings.id, {
+      filters:
+        selectedRegion === region
+          ? rest
+          : [...rest, { type: "spec-status", field: settings.field, region }],
+    });
+  };
+
   // An engineering histogram selects a bin's exact interval, or a tail's
   // strict range, and replaces any other selection on the measurement.
   const selectBin = (bar: BarMark) => {
@@ -483,7 +514,11 @@ function SingleBarChart({
   if (histogram) {
     selectionText = histogram.selection?.filters
       .map((filter) =>
-        filter.type === "range" ? rangeText(filter, formatField) : undefined
+        filter.type === "range"
+          ? rangeText(filter, formatField)
+          : filter.type === "spec-status"
+            ? `${filter.region} spec`
+            : undefined
       )
       .filter(Boolean)
       .join(" and ");
@@ -533,6 +568,96 @@ function SingleBarChart({
       ? "Click a bar or drag across bars to select a range · Alt-click to inspect"
       : "Click bars or labels to select · Alt-click to inspect");
   const band = selectable && "bandwidth" in xScale ? xScale : undefined;
+
+  // Specification limits: a neutral guide at each limit, and a light tint
+  // over the plot past it. Bars keep their own color; the summary gives
+  // exact counts, since one bin can hold rows of both statuses.
+  const limits = histogram?.spec?.limits;
+  const limitMarks =
+    !limits || plan.mode !== "bin"
+      ? undefined
+      : (() => {
+          const linear = xScale as ScaleLinear<number, number>;
+          const { plotWidth, plotHeight } = plan.axes;
+          const at = (value: number | undefined) =>
+            value === undefined ? undefined : linear(value);
+          const low = at(limits.lower);
+          const high = at(limits.upper);
+          const tint = (from: number, to: number, key: string) =>
+            to > from && (
+              <rect
+                key={key}
+                x={from}
+                y={0}
+                width={to - from}
+                height={plotHeight}
+                style={{ fill: "var(--foreground)", fillOpacity: 0.06 }}
+              />
+            );
+          const guide = (
+            x: number | undefined,
+            name: string,
+            preferred: 1 | -1
+          ) => {
+            if (x === undefined || x < 0 || x > plotWidth) return null;
+            const text = `${name} ${formatField(name === "LSL" ? limits.lower! : limits.upper!)}`;
+            // A label that would leave the plot sits on the line's other side.
+            const room = text.length * 6 + 6;
+            const side =
+              preferred === -1 && x < room
+                ? 1
+                : preferred === 1 && plotWidth - x < room
+                  ? -1
+                  : preferred;
+            return (
+              <g key={name}>
+                <line
+                  x1={x}
+                  x2={x}
+                  y1={0}
+                  y2={plotHeight}
+                  style={{
+                    stroke: "var(--muted-foreground)",
+                    strokeWidth: 1.25,
+                    strokeDasharray: "4 3",
+                  }}
+                />
+                <text
+                  x={x + 4 * side}
+                  y={10}
+                  textAnchor={side === 1 ? "start" : "end"}
+                  style={{ fill: "var(--muted-foreground)", fontSize: 10 }}
+                >
+                  {text}
+                </text>
+              </g>
+            );
+          };
+          return {
+            tints: (
+              <g
+                pointerEvents="none"
+                aria-hidden="true"
+                className="eda-spec-tint"
+              >
+                {low !== undefined &&
+                  tint(0, Math.min(low, plotWidth), "below")}
+                {high !== undefined &&
+                  tint(Math.max(high, 0), plotWidth, "above")}
+              </g>
+            ),
+            guides: (
+              <g
+                pointerEvents="none"
+                aria-hidden="true"
+                className="eda-spec-guides"
+              >
+                {guide(low, "LSL", -1)}
+                {guide(high, "USL", 1)}
+              </g>
+            ),
+          };
+        })();
 
   return (
     <div className="relative" style={{ width, height }}>
@@ -615,6 +740,7 @@ function SingleBarChart({
           )
         }
       >
+        {limitMarks?.tints}
         <g>
           {plan.bars.map((bar) =>
             bar.total ? (
@@ -721,9 +847,23 @@ function SingleBarChart({
             ) : null
           )}
         </g>
+        {limitMarks?.guides}
       </BaseChart>
       {hovered.id && (
         <HoverReadout plan={plan} id={hovered.id} format={formatField} />
+      )}
+      {histogram?.spec && (
+        <HistogramSummary
+          plan={histogram}
+          selected={selectedRegion}
+          // A narrow chart gives the buttons its full width.
+          left={width < 520 ? 8 : margin.left}
+          right={width < 520 ? 8 : margin.right}
+          bottom={STATUS_LINE_HEIGHT + 2}
+          compact={width < 520}
+          onSelect={selectRegion}
+          onInspect={(region) => inspect("spec-status", region)}
+        />
       )}
       <ChartStatusLine
         parts={statusParts}

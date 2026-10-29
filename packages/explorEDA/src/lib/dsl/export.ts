@@ -101,6 +101,9 @@ function filterPairs(
         pairs.push(`${field}=${rangeText(filter)}`);
         break;
       }
+      case "spec-status":
+        pairs.push(`${field}.spec=${filter.region}`);
+        break;
       case "text":
         pairs.push(
           `${field}.${filter.operator}=${JSON.stringify(filter.value)}`

@@ -1,4 +1,5 @@
 import { applyFilter } from "@/hooks/applyFilter";
+import { chartSpec } from "@/lib/specification";
 import type { IdType } from "@/providers/lib/dataLayerState";
 import type { BaseChartSettings, datum } from "@/types/ChartTypes";
 
@@ -27,8 +28,10 @@ export function getPopulationTest(
     filter,
     values: fieldGetter(filter.field),
   }));
+  // A spec-status restriction reads this chart's own limits.
+  const spec = chartSpec(chart);
   return (id) =>
-    active.every(({ filter, values }) => applyFilter(values[id], filter));
+    active.every(({ filter, values }) => applyFilter(values[id], filter, spec));
 }
 
 /** Keeps the ids in the chart's population, or every id without one. */

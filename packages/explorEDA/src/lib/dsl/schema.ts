@@ -88,6 +88,14 @@ export const TYPE_WORDS: Readonly<
       path: "histogram.binning.lastIndex",
       help: "Last edge, as origin + last × width",
     },
+    "spec.lower": {
+      path: "histogram.spec.lower",
+      help: "Lower specification limit; a value equal to it passes",
+    },
+    "spec.upper": {
+      path: "histogram.spec.upper",
+      help: "Upper specification limit; a value equal to it passes",
+    },
     group: { path: "aggregateId", help: "Grouped summary to show" },
   },
   line: {

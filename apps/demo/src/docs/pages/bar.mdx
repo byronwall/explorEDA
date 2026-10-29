@@ -75,6 +75,22 @@ A click on a bin selects its exact interval, such as `Diameter (mm): 12.05 to < 
 
 With saved edges, a selection keeps the range it was made with. When the data or the edges change, the range does not move. A bin that the range covers in part shows its selected rows solid over a faded bar, and the readout and trace give both counts. In dashboard text, a strict end uses interval brackets: `select."Diameter (mm)"=[12.05..12.06)` and `select."Diameter (mm)"=(12.08..)`. A range without brackets, such as `0..2`, includes both ends.
 
+## Specification limits
+
+Set **Limits** in the **Specification** section to compare measurements with a lower and an upper specification limit. Either side can be blank. Each limit includes equality: a value equal to a limit passes.
+
+- **Below** counts values less than the lower limit, and **Above** counts values greater than the upper limit. **Within** counts the rest. **Outside** joins Below and Above.
+- A dashed guide marks each limit, labeled LSL and USL. A light tint covers the plot past each limit. Bars keep their own color, because one bin can hold parts of more than one status.
+- The counts under the plot are exact. Each count and share uses **n**, the finite measurements in scope, with the coverage tails included. Missing values and values that are not numbers are not in n.
+- With one limit, the chart shows only the statuses that limit can make. Equal limits count an exact value: Within is every value equal to it.
+
+Click a status to select its rows. Alt-click it, or press Alt+Enter, to trace them: the trace lists the rule, the count, and every row. The selection saves only the status, not the limits, so it follows the chart's current limits. Move the upper limit from 12.05 to 12.06 and the Outside selection updates at once. In dashboard text, limits read `spec.lower=11.95 spec.upper=12.05`, and the selection reads `select."Diameter (mm)".spec=outside`. A `where.` filter on the same chart can also take `.spec=within`. Workspace and Rows filters have no histogram to read limits from, so they do not take `.spec`.
+
+<LiveExample
+  id="engineering-specs"
+  caption="Shaft diameters against limits of 12.00 ± 0.05 mm. Click Outside to select the seven parts that fail."
+/>
+
 ## Series
 
 **Split by** a second field to divide each bar into series.

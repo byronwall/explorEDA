@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { Choice } from "@/components/settings/annotations/annotationInputs";
+import { ActionTooltip } from "@/components/ui/tooltip";
+import type { SpecLimits } from "@/lib/specification";
 import { finiteNumbers, parseNumber } from "@/lib/valueParsing";
 import { useGetColumnDataForIds } from "../useGetColumnData";
 import type { BarChartSettings, HistogramSettings } from "./definition";
@@ -119,7 +121,13 @@ export function HistogramSettingsSection({
             },
           ]}
           onChange={(mode) => {
-            if (mode === "auto") setHistogram(undefined);
+            // Limits stay with auto bins; without them auto needs no setting.
+            if (mode === "auto")
+              setHistogram(
+                settings.histogram?.spec
+                  ? { binning: { mode: "auto" }, spec: settings.histogram.spec }
+                  : undefined
+              );
             else
               fit({
                 width: startingWidth(source, settings.binCount ?? 20),
@@ -208,6 +216,123 @@ export function HistogramSettingsSection({
             </p>
           </>
         )}
+      </div>
+    </section>
+  );
+}
+
+/**
+ * A limit typed in place. Blank removes it, and valid text applies at once.
+ * Text that is not a number, or a limit past the other one, stays marked
+ * and changes nothing.
+ */
+function LimitField({
+  label,
+  value,
+  valid,
+  onCommit,
+}: {
+  label: string;
+  value: number | undefined;
+  valid: (value: number | undefined) => boolean;
+  onCommit: (value: number | undefined) => void;
+}) {
+  const typing = useHeldTyping();
+  const [text, setText] = useState(value === undefined ? "" : String(value));
+  const [focused, setFocused] = useState(false);
+  useEffect(() => {
+    if (!focused) setText(value === undefined ? "" : String(value));
+  }, [value, focused]);
+  const read = (raw: string) => {
+    if (raw.trim() === "") return { ok: true, value: undefined };
+    const number = parseNumber(raw);
+    return { ok: Number.isFinite(number), value: number };
+  };
+  const current = read(text);
+  return (
+    <Input
+      aria-label={label}
+      inputMode="decimal"
+      placeholder="None"
+      value={text}
+      aria-invalid={!current.ok || !valid(current.value)}
+      className="h-7 min-w-0 aria-[invalid=true]:border-destructive"
+      onFocus={() => {
+        setFocused(true);
+        typing.onFocus();
+      }}
+      onBlur={() => {
+        setFocused(false);
+        typing.onBlur();
+      }}
+      onChange={(event) => {
+        setText(event.target.value);
+        const next = read(event.target.value);
+        if (next.ok && valid(next.value)) onCommit(next.value);
+      }}
+    />
+  );
+}
+
+/**
+ * Inclusive specification limits. Either side may be blank. They draw guide
+ * lines, and status selections read them live.
+ */
+export function SpecSettingsSection({
+  settings,
+  onSettingsChange,
+}: {
+  settings: BarChartSettings;
+  onSettingsChange: (settings: BarChartSettings) => void;
+}) {
+  const spec = settings.histogram?.spec ?? {};
+  const set = (next: SpecLimits) => {
+    const empty = next.lower === undefined && next.upper === undefined;
+    const binning = settings.histogram?.binning ?? { mode: "auto" as const };
+    onSettingsChange({
+      ...settings,
+      histogram:
+        empty && binning.mode === "auto"
+          ? undefined
+          : { binning, ...(empty ? {} : { spec: next }) },
+    });
+  };
+  return (
+    <section aria-label="Specification limits" className="eda-setting-section">
+      <h5>Specification</h5>
+      <div className="eda-setting-grid">
+        <span className="eda-setting-label">Limits</span>
+        <div className="flex min-w-0 items-center gap-1">
+          <ActionTooltip content="Lower specification limit (LSL). A value equal to it passes. Leave blank for none.">
+            <span className="min-w-0 flex-1">
+              <LimitField
+                label="Lower specification limit"
+                value={spec.lower}
+                valid={(lower) =>
+                  lower === undefined ||
+                  spec.upper === undefined ||
+                  lower <= spec.upper
+                }
+                onCommit={(lower) => set({ ...spec, lower })}
+              />
+            </span>
+          </ActionTooltip>
+          <span className="text-xs text-muted-foreground">to</span>
+          <ActionTooltip content="Upper specification limit (USL). A value equal to it passes. Leave blank for none.">
+            <span className="min-w-0 flex-1">
+              <LimitField
+                label="Upper specification limit"
+                value={spec.upper}
+                valid={(upper) =>
+                  upper === undefined ||
+                  spec.lower === undefined ||
+                  upper >= spec.lower
+                }
+                onCommit={(upper) => set({ ...spec, upper })}
+              />
+            </span>
+          </ActionTooltip>
+        </div>
       </div>
     </section>
   );

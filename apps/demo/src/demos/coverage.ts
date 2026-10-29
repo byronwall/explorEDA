@@ -74,6 +74,15 @@ export const coverageFeatures = [
     status: "supported",
   },
   {
+    id: "mode:spec-compliance",
+    label: "Specification compliance",
+    family: "Chart modes",
+    description:
+      "Draw inclusive limits on a histogram, count Below, Within, and Above exactly, and select a status that follows the current limits.",
+    required: true,
+    status: "supported",
+  },
+  {
     id: "mode:bubble-scatter",
     label: "Bubble scatter",
     family: "Chart modes",
@@ -614,6 +623,7 @@ export const exampleCoverage = [
       "chart:row": "shown",
       "chart:data-table": "shown",
       "mode:engineering-histogram": "shown",
+      "mode:spec-compliance": "shown",
       "interaction:cross-filter": "shown",
     },
   },

@@ -92,6 +92,8 @@ export function formatFilterLabel(
     }
     case "text":
       return `${name} ${filter.operator} “${filter.value}”`;
+    case "spec-status":
+      return `${name}: ${filter.region} spec`;
     default:
       return assertNever(filter);
   }
@@ -119,6 +121,8 @@ export function isActiveFilter(filter: Filter) {
       return filter.min !== undefined || filter.max !== undefined;
     case "text":
       return filter.value.length > 0;
+    case "spec-status":
+      return true;
     default:
       return assertNever(filter);
   }

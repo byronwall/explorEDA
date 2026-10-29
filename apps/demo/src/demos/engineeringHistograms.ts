@@ -25,7 +25,8 @@ const chartBase = {
 /**
  * Shaft diameters in 0.01 mm bins from 11.94 to 12.08: the edges are saved,
  * so a refresh or a filter elsewhere never moves them, and two parts past
- * 12.08 count in the upper tail instead of stretching the bins.
+ * 12.08 count in the upper tail instead of stretching the bins. The drawing
+ * allows 12.00 ± 0.05 mm; parts at exactly 12.05 pass.
  */
 export const diameterHistogram: Chart = {
   ...histogram(
@@ -43,6 +44,7 @@ export const diameterHistogram: Chart = {
       firstIndex: 1194,
       lastIndex: 1208,
     },
+    spec: { lower: 11.95, upper: 12.05 },
   },
 };
 

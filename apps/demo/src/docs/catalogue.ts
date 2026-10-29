@@ -253,6 +253,7 @@ export const catalogue: readonly DocsPage[] = [
       "mode:grouped-bars",
       "mode:stacked-bars",
       "mode:engineering-histogram",
+      "mode:spec-compliance",
     ],
     chartType: "bar",
     examples: ["shop-operations", "engineering-histograms"],

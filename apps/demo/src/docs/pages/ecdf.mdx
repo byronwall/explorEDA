@@ -11,6 +11,7 @@
 - **Split by** draws one curve per value of a field. Each curve uses its own rows as 100%, so groups of different sizes compare fairly. A dashed curve can show all rows together.
 - Quantile marks show where each curve crosses 50% and 90%.
 - When every value is positive, the X axis can use a log scale.
+- An ECDF at a limit includes the values equal to it. The share at or below an upper limit is the share that passes it. A [histogram's specification limits](/docs/bar#specification-limits) count the parts that fail, strictly past each limit, so the two readings add up to 100%.
 
 ## Annotations
 

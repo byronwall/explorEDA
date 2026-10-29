@@ -10,6 +10,11 @@ import type { Filter } from "@/types/FilterTypes";
 import { numericBins } from "./bins";
 import type { BarChartSettings } from "./definition";
 import { locate, widthEdges } from "./histogramBins";
+import {
+  specStatus,
+  type SpecLimits,
+  type SpecStatus,
+} from "@/lib/specification";
 
 export type TailSide = "below" | "above";
 
@@ -43,6 +48,11 @@ export interface HistogramPlan {
   n: number;
   /** Selection on the measurement field, or undefined without one. */
   selection?: { filters: Filter[]; ids: IdType[] };
+  /**
+   * Context rows by specification status, when the chart has a limit. A
+   * one-sided limit leaves the absent side's list empty.
+   */
+  spec?: { limits: SpecLimits } & Record<SpecStatus, IdType[]>;
 }
 
 /** The chart's own filters on its measurement field. */
@@ -123,6 +133,16 @@ export function planHistogram(
   const missing: IdType[] = [];
   const invalid: IdType[] = [];
   const selected: IdType[] = [];
+  const limits = settings.histogram?.spec;
+  const spec =
+    limits && (limits.lower !== undefined || limits.upper !== undefined)
+      ? {
+          limits,
+          below: [] as IdType[],
+          within: [] as IdType[],
+          above: [] as IdType[],
+        }
+      : undefined;
   let n = 0;
   for (const id of liveIds) {
     const raw = fieldData[id];
@@ -132,10 +152,11 @@ export function planHistogram(
       continue;
     }
     n++;
+    if (spec) spec[specStatus(value, spec.limits)!].push(id);
     if (edges.length < 2) continue;
     const bin = slot(value);
     bin.ids.push(id);
-    if (own.length && own.every((filter) => applyFilter(raw, filter))) {
+    if (own.length && own.every((filter) => applyFilter(raw, filter, limits))) {
       bin.selected++;
       selected.push(id);
     }
@@ -156,6 +177,7 @@ export function planHistogram(
     invalid,
     n,
     selection: own.length ? { filters: own, ids: selected } : undefined,
+    spec,
   };
 }
 

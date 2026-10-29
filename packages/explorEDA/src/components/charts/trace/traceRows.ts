@@ -23,6 +23,8 @@ export function traceRowIds(trace: ChartTrace): number[] | undefined {
       ].flatMap((state) => state.contributors.map((item) => item.sourceId));
     case "bar":
       return trace.mark.row.contributors.map((item) => item.sourceId);
+    case "spec-status":
+      return trace.row.contributors.map((item) => item.sourceId);
     case "time-bucket":
       return trace.point?.contributors.map((item) => item.sourceId);
     case "point":

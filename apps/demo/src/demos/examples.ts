@@ -504,9 +504,9 @@ export const examples: ExampleData[] = [
     id: "engineering-histograms",
     title: "Shaft diameters in saved bins",
     description:
-      "162 synthetic turned shafts from three lathes, measured in millimetres. Bins 0.01 mm wide stay where they are saved; parts past the range count in coverage tails, and each bin selects its exact interval.",
+      "162 synthetic turned shafts from three lathes, measured in millimetres. Bins 0.01 mm wide stay where they are saved; parts past the range count in coverage tails, and limits of 12.00 ± 0.05 mm count every part below, within, and above specification.",
     dataset: { rows: "162 parts", fields: 4, source: "Synthetic" },
-    shows: ["Saved bin width", "Coverage tails", "Exact intervals"],
+    shows: ["Saved bin width", "Coverage tails", "Specification limits"],
     icon: Ruler,
     data: "/shaft-diameters.csv",
     savedData: engineeringHistogramsDashboard,

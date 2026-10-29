@@ -76,6 +76,14 @@ export const CASES = [
     own: true,
   },
   {
+    // Limit guides and the tints past them must come through the export.
+    name: "engineering-histogram",
+    example: "engineering-histograms",
+    title: "Shaft diameter in 0.01 mm bins",
+    dark: true,
+    limit: 1,
+  },
+  {
     name: "data-table-scrolled",
     example: "palmer-penguins",
     title: "Selected observations",

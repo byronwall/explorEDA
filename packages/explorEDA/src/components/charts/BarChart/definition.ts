@@ -7,6 +7,7 @@ import { ChartColumnBig } from "lucide-react";
 import { BarChart } from "./BarChart";
 import { BarChartSettingsPanel } from "./BarChartSettingsPanel";
 import type { WidthBinning } from "./histogramBins";
+import type { SpecLimits } from "@/lib/specification";
 
 /**
  * Engineering histogram settings. Their presence marks a numeric field's
@@ -16,6 +17,11 @@ import type { WidthBinning } from "./histogramBins";
 export interface HistogramSettings {
   /** Auto keeps the bin-count algorithm; width repeats a saved grid. */
   binning: { mode: "auto" } | WidthBinning;
+  /**
+   * Inclusive specification limits. Either may be absent. A spec-status
+   * selection reads them live.
+   */
+  spec?: SpecLimits;
 }
 
 export interface BarChartSettings extends BaseChartSettings {
@@ -89,10 +95,11 @@ export const barChartDefinition: ChartDefinition<BarChartSettings> = {
       (f): f is Filter => f.field === settings.field
     );
     const dataHash = fieldGetter(settings.field);
+    const spec = settings.histogram?.spec;
 
     return (d: IdType) => {
       const value = dataHash[d];
-      return own.every((filter) => applyFilter(value, filter));
+      return own.every((filter) => applyFilter(value, filter, spec));
     };
   },
 };

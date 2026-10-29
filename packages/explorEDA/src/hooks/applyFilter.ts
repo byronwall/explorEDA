@@ -5,10 +5,22 @@ import {
   timestampOf,
 } from "@/lib/valueParsing";
 import { categoryIncludes } from "@/lib/categories";
+import { inSpecRegion, type SpecLimits } from "@/lib/specification";
 import { datum, Filter } from "@/types/FilterTypes";
 
-export function applyFilter(value: datum, filter: Filter): boolean {
+/**
+ * Whether a value passes a filter. A spec-status filter reads the limits of
+ * the chart that owns it, passed as `spec`; without limits only Within can
+ * match.
+ */
+export function applyFilter(
+  value: datum,
+  filter: Filter,
+  spec?: SpecLimits
+): boolean {
   switch (filter.type) {
+    case "spec-status":
+      return inSpecRegion(value, filter.region, spec);
     case "value":
       // A missing entry matches every missing value, blank text included.
       return (

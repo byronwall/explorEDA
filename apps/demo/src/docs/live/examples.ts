@@ -155,6 +155,24 @@ export const liveExamples = {
       { expectRows: 2 },
     ],
   },
+  "engineering-specs": {
+    label: "Live shaft-diameter histogram with specification limits",
+    data: "/shaft-diameters.csv",
+    savedData: focus(engineeringHistogramsDashboard, {
+      "diameter-bins": [0, 0, 8, 5],
+      "diameter-machines": [8, 0, 4, 5],
+    }),
+    exampleId: "engineering-histograms",
+    shotAlt:
+      "A shaft-diameter histogram with dashed limit lines at 11.95 and 12.05, light tints past them, and Below, Within, Above, and Outside counts under the plot.",
+    steps: [
+      { expectRows: 162 },
+      { expectText: "Within 152" },
+      { click: "Outside spec: 7 of 159, 4.4%" },
+      { expectChip: "Diameter (mm): outside spec" },
+      { expectRows: 7 },
+    ],
+  },
   "settings-bar": {
     label: "Live chart settings for the delivery-time histogram",
     data: "/datasets/shop-operations.csv",

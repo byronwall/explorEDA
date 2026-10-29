@@ -181,6 +181,11 @@ function isFilter(value: unknown): boolean {
         typeof value.minExclusive === "boolean")
     );
   }
+  if (value.type === "spec-status") {
+    return ["below", "within", "above", "outside"].includes(
+      value.region as string
+    );
+  }
   if (value.type === "date-range") {
     const isIsoDate = (date: unknown) =>
       typeof date === "string" && isDateText(date, "iso");
@@ -392,6 +397,19 @@ function isSeriesSettings(value: unknown): boolean {
 function isHistogram(value: unknown): boolean {
   if (!isRecord(value) || !isRecord(value.binning)) return false;
   const binning = value.binning;
+  const spec = value.spec;
+  if (
+    spec !== undefined &&
+    !(
+      isRecord(spec) &&
+      (spec.lower === undefined || isFiniteNumber(spec.lower)) &&
+      (spec.upper === undefined || isFiniteNumber(spec.upper)) &&
+      (spec.lower === undefined ||
+        spec.upper === undefined ||
+        (spec.lower as number) <= (spec.upper as number))
+    )
+  )
+    return false;
   return (
     binning.mode === "auto" ||
     (binning.mode === "width" &&

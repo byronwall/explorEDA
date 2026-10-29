@@ -339,6 +339,7 @@ function histogramRows(
     contributors: bin.ids.map((id) => ({
       sourceId: id,
       input: snapshot.fieldData[id],
+      rawInput: snapshot.fieldData[id],
       included: true,
     })),
   }));

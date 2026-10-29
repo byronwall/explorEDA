@@ -272,3 +272,84 @@ bar M @hist where.M=(..0) select.M=[0..2) bins.mode=width bins.width=2 bins.orig
     expect(validateSavedData(saved)).toBe(false);
   });
 });
+
+describe("specification limits", () => {
+  const limited = (spec: { lower?: number; upper?: number }, filters = []) =>
+    chart({
+      filters,
+      histogram: { ...chart().histogram!, spec },
+    });
+  const statuses = (settings: BarChartSettings) => {
+    const { plan, named } = run(A, settings);
+    return {
+      below: named(plan.spec!.below),
+      within: named(plan.spec!.within),
+      above: named(plan.spec!.above),
+      counts: [
+        plan.spec!.below.length,
+        plan.spec!.within.length,
+        plan.spec!.above.length,
+      ],
+    };
+  };
+
+  it("counts fixture A as 3 below, 9 within, and 3 above, equality passing", () => {
+    const result = statuses(limited({ lower: 2, upper: 6 }));
+    expect(result.below).toEqual(["a0", "a1", "b0"]);
+    expect(result.above).toEqual(["a6", "b4", "b5"]);
+    expect(result.counts).toEqual([3, 9, 3]);
+    expect(statuses(limited({ lower: 2, upper: 2 })).counts).toEqual([3, 3, 9]);
+    expect(statuses(limited({ lower: 2 })).counts).toEqual([3, 12, 0]);
+    expect(statuses(limited({ upper: 6 })).counts).toEqual([0, 12, 3]);
+  });
+
+  it("keeps an Outside selection on the chart's current limits", () => {
+    const outside: Filter[] = [
+      { type: "spec-status", field: "M", region: "outside" },
+    ];
+    const keys = A.map(([key]) => key);
+    const data = Object.fromEntries(A.map(([, value], id) => [id, value]));
+    const selected = (settings: BarChartSettings) => {
+      const test = barChartDefinition.getFilterFunction(settings, () => data);
+      return keys.filter((_, id) => test(id)).sort();
+    };
+    const before = limited({ lower: 2, upper: 6 }, outside as never);
+    expect(selected(before)).toEqual(["a0", "a1", "a6", "b0", "b4", "b5"]);
+    expect(run(A, before).plan.selection!.ids).toHaveLength(6);
+
+    const after = limited({ lower: 2, upper: 7 }, outside as never);
+    expect(statuses(after).counts).toEqual([3, 10, 2]);
+    expect(selected(after)).toEqual(["a0", "a1", "a6", "b0", "b5"]);
+    // The [6, 8) bin holds a5, b3, c1, and b4; at upper 6 only b4 fails.
+    expect(run(A, before).plan.bins[3]!.selected).toBe(1);
+    expect(run(A, after).plan.bins[3]!.selected).toBe(0);
+  });
+
+  it("round-trips limits and spec selections through chart text", () => {
+    const rows = A.map(([key, value]) => ({ key, M: value }));
+    const text = `bar M @hist where.M.spec=within select.M.spec=outside bins.mode=width bins.width=2 bins.origin=0 bins.first=0 bins.last=6 spec.lower=2 spec.upper=6`;
+    const built = compileDocument(text, { rows });
+    expect(built.diagnostics).toEqual([]);
+    const bar = built.settings.charts[0] as BarChartSettings;
+    expect(bar.histogram?.spec).toEqual({ lower: 2, upper: 6 });
+    expect(bar.filters).toEqual([
+      { type: "spec-status", field: "M", region: "outside" },
+    ]);
+    expect(bar.localFilters).toEqual([
+      { type: "spec-status", field: "M", region: "within" },
+    ]);
+    expect(validateSavedData(built.settings)).toBe(true);
+    const again = exportDocument(built.settings, { rows });
+    expect(again.text).toContain("select.M.spec=outside");
+    expect(again.text).toContain("spec.upper=6");
+    const rebuilt = compileDocument(again.text, { rows }).settings;
+    expect({ ...rebuilt, metadata: built.settings.metadata }).toEqual(
+      built.settings
+    );
+
+    // Workspace and Rows filters have no histogram to read limits from.
+    const loose = compileDocument("filter M.spec=outside\nbar M", { rows });
+    expect(loose.settings.workspaceFilters ?? []).toEqual([]);
+    expect(loose.diagnostics[0]?.severity).toBe("error");
+  });
+});
