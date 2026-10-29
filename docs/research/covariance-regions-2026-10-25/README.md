@@ -75,3 +75,7 @@ Originals and scratch stay under ignored `tmp/`; the conversation is their durab
 Baseline scatter/restore tests and docs checks passed during preparation.
 Collection checks and final PR status are recorded in [run.md](run.md).
 No feature implementation, browser acceptance, persistence acceptance, or performance result is claimed.
+
+## Preserved Pro result materials
+
+[Complete original Pro artifacts](../../intent/covariance-regions/assets/pro-results/covariance-regions-2026-10-25/ASSET_INDEX.md) are preserved under the intent entry. ZIP containers remain local.

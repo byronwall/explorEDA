@@ -210,3 +210,9 @@ Avoid error/anomaly labels, automatic trimming, percentage promises, pixel membe
 Measure row/group interaction cost before adding workers or indexes.
 Neither milestone depends on unbuilt research PRs #520, #524, or #526.
 No application implementation or browser acceptance is claimed by this research plan.
+
+## Preserved Pro result materials
+
+[Original Pro reports and artifacts for #529](assets/pro-results/covariance-regions-2026-10-25/ASSET_INDEX.md)
+
+All extracted result materials are preserved without ZIP containers. Original bytes and attribution are unchanged.
