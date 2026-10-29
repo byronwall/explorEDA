@@ -235,3 +235,9 @@ Use `pnpm shot` for PR screenshots; a header trace click alone does not choose a
 Resolve the actual target controls before scripting screenshots.
 Run `pnpm check` once before each feature PR and add its required changeset.
 No browser, saved-state, performance, or new diagnostic feature acceptance is claimed by this planning PR.
+
+## Preserved Pro result materials
+
+[Original Pro reports and artifacts for #520](assets/pro-results/regression-diagnostics-2026-10-24/ASSET_INDEX.md)
+
+All extracted result materials are preserved without ZIP containers. Original bytes and attribution are unchanged.

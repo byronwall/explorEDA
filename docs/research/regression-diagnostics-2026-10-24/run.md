@@ -115,3 +115,7 @@ Formatting, whitespace, and PR checks pass. No raw reports, archive, receipts, o
 Deleted collect-exploreda-regression-diagnostics-design through the supported scheduler; deleteStatus=deleted.
 The six-hour exploreda-pro-research-pipeline remains ACTIVE indefinitely.
 No follow-up, feature implementation, worktree, merge, deployment, or paid service. Stop for review.
+
+## Preserved Pro result materials
+
+Backfill requested by Byron: [2 original result files](../../intent/regression-diagnostics/assets/pro-results/regression-diagnostics-2026-10-24/ASSET_INDEX.md) are now committed under the intent entry. This supersedes earlier instructions to leave originals ignored. ZIPs and input source packets remain local. Byte equality and supplied manifest entries were checked; no downloaded code was executed.

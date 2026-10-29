@@ -60,6 +60,6 @@ Use the Design, Methods, or Strategy mode of the global `prepare-chatgpt-pro-rep
 - A short summary in `docs/research/<topic>-<date>/README.md`: the decision, key findings, sources, open questions, and the Pro conversation link.
 - A small PR that leads with what to build.
 
-Don't commit Pro originals, ZIPs, hash manifests, or source receipts. The conversation link is the record of the source.
+Commit every extracted Pro result artifact under the relevant intent entry, with a linked asset index. Preserve reports, images, mockups, data, code companions, source registers, and supplied manifests. Keep ZIPs and input source packets in ignored local storage. Summaries and conversation links supplement the original artifacts.
 
 Don't end a run by naming the next topic. The next run chooses for itself from this page.

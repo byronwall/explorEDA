@@ -77,3 +77,7 @@ Original reports, ZIP, and scratch evidence remain under ignored `tmp/pro-regres
 Open questions are implementation measurements: supported row capacity, interaction latency, and numerical guards.
 Durable business-key export metadata can wait for a concrete consumer.
 No demand study, solver replacement, or new modeling service blocks M1.
+
+## Preserved Pro result materials
+
+[Complete original Pro artifacts](../../intent/regression-diagnostics/assets/pro-results/regression-diagnostics-2026-10-24/ASSET_INDEX.md) are preserved under the intent entry. ZIP containers remain local.
