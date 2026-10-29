@@ -79,3 +79,7 @@ Original reports remain under ignored tmp/. No follow-up was needed.
 
 Open tradeoff: refresh/reopen requires exact re-selection, including stable keyed rows.
 The plan chooses this simpler boundary. Duration, rate, and selective selection survival remain deferred.
+
+## Preserved Pro result materials
+
+[Complete original Pro artifacts](../../intent/ordered-difference/assets/pro-results/ordered-difference-2026-10-25/ASSET_INDEX.md) are preserved under the intent entry. ZIP containers remain local.

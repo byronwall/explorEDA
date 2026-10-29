@@ -122,3 +122,7 @@ Saved automation memories and deleted the temporary collector through the suppor
 Deletion returned deleteStatus=deleted for collect-exploreda-ordered-difference-design.
 The six-hour pipeline remains ACTIVE indefinitely, verified through its tool and saved configuration.
 No feature implementation, worktree, merge, deployment, or paid service. Stop for review.
+
+## Preserved Pro result materials
+
+Backfill requested by Byron: [2 original result files](../../intent/ordered-difference/assets/pro-results/ordered-difference-2026-10-25/ASSET_INDEX.md) are now committed under the intent entry. This supersedes earlier instructions to leave originals ignored. ZIPs and input source packets remain local. Byte equality and supplied manifest entries were checked; no downloaded code was executed.

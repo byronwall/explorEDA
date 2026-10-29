@@ -280,3 +280,9 @@ One predecessor mapping serves every output. Expected sort work is proportional 
 Pro's synthetic probe is not a product benchmark. Add no cache, index, row cap, or backend from that evidence.
 
 Duration/rate, skip-missing neighbors, lead, calendar comparisons, and broader selection survival remain separate work.
+
+## Preserved Pro result materials
+
+[Original Pro reports and artifacts for #525](assets/pro-results/ordered-difference-2026-10-25/ASSET_INDEX.md)
+
+All extracted result materials are preserved without ZIP containers. Original bytes and attribution are unchanged.
