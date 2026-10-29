@@ -261,3 +261,9 @@ Its current projects match only named suites; a new file alone will not run.
 Capture screenshots with `pnpm shot` at all three widths and attach them to each visible implementation PR.
 Each implementation milestone needs a minor changeset and one `pnpm check` before its PR, plus `pnpm check:pr`.
 This planning PR is docs-only. No product test, browser acceptance, or performance claim is made here.
+
+## Preserved Pro result materials
+
+[Original Pro reports and artifacts for #526](assets/pro-results/pooled-group-2026-10-25/ASSET_INDEX.md)
+
+All extracted result materials are preserved without ZIP containers. Original bytes and attribution are unchanged.

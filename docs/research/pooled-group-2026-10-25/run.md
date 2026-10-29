@@ -122,3 +122,7 @@ Saved both automation memories before deleting the temporary collector through t
 Deletion returned deleteStatus=deleted for collect-exploreda-pooled-group-methods.
 The six-hour pipeline remains ACTIVE indefinitely, GPT-6.1 Sol Medium, verified through tool and saved configuration.
 No feature implementation, worktree, merge, deployment, or paid service. Stop for review.
+
+## Preserved Pro result materials
+
+Backfill requested by Byron: [2 original result files](../../intent/pooled-group-relationships/assets/pro-results/pooled-group-2026-10-25/ASSET_INDEX.md) are now committed under the intent entry. This supersedes earlier instructions to leave originals ignored. ZIPs and input source packets remain local. Byte equality and supplied manifest entries were checked; no downloaded code was executed.

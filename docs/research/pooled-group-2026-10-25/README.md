@@ -61,3 +61,7 @@ These decisive sources were spot-checked locally; not every report citation was 
 No mathematical or demand choice blocks milestone one.
 Implementation must validate numerical error accounting, complete the typed-filter lifecycle, and measure actual product costs.
 Mean-point overlays remain Explore. Equal-weight means, arbitrary observation weights, rank methods, and inference remain separate.
+
+## Preserved Pro result materials
+
+[Complete original Pro artifacts](../../intent/pooled-group-relationships/assets/pro-results/pooled-group-2026-10-25/ASSET_INDEX.md) are preserved under the intent entry. ZIP containers remain local.
