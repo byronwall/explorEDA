@@ -249,3 +249,9 @@ Verify both role views and exact records at all three widths with pointer and ke
 Explore a two-slot launcher after the core flow exists.
 Defer broader trace adapters, full Rows integration, live pairs, persistence/export/history, deleted-source retention, and cross-refresh/query matching.
 Keep saved schemas and filtering behavior unchanged. Do not add another reducer or provenance engine.
+
+## Preserved Pro result materials
+
+[Original Pro reports and artifacts for #519](assets/pro-results/contributor-comparison-2026-10-24/ASSET_INDEX.md)
+
+All extracted result materials are preserved without ZIP containers. Original bytes and attribution are unchanged.

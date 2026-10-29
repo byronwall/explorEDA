@@ -75,3 +75,7 @@ These spot-checked sources support exact-target inspection and explicit scope; t
 
 Later implementation can choose whether a launcher improves discovery and which additional adapter follows M3.
 Neither choice blocks M1. Stable comparison across refresh needs a separate identity contract.
+
+## Preserved Pro result materials
+
+[Complete original Pro artifacts](../../intent/contributor-comparison/assets/pro-results/contributor-comparison-2026-10-24/ASSET_INDEX.md) are preserved under the intent entry. ZIP containers remain local.
