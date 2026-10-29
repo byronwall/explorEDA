@@ -12,8 +12,11 @@
  */
 import { applyFilter } from "@/hooks/applyFilter";
 import type { AggregateAggregation } from "@/lib/aggregates";
-import type { datum } from "@/types/ChartTypes";
+import { getChartDefinition } from "@/charts/registry";
+import { restrictToPopulation } from "@/lib/chartPopulation";
+import type { ChartSettings, datum } from "@/types/ChartTypes";
 import type { Filter } from "@/types/FilterTypes";
+import type { SavedDataStructure } from "@/types/SavedDataStructure";
 import {
   planMetricCard,
   type MetricCardPlan,
@@ -236,4 +239,54 @@ export function findingFor(
     results.get(id) ??
     unavailable(id, "missing", "missing", `No finding is named ${id}.`)
   );
+}
+
+/**
+ * Every finding's value as a notebook first shows it, from saved settings
+ * and source rows, without a workspace: the charts' saved selections and
+ * the workspace filters apply. It reads source fields only, so a finding
+ * that measures or filters on a calculation has no values here.
+ */
+export function evaluateNotebookFindings(
+  settings: SavedDataStructure,
+  rows: readonly Record<string, datum>[]
+): Map<string, FindingResult> {
+  const columns = new Map<string, Record<number, datum>>();
+  const column = (field: string) => {
+    let values = columns.get(field);
+    if (!values) {
+      values = Object.fromEntries(rows.map((row, id) => [id, row[field]]));
+      columns.set(field, values);
+    }
+    return values;
+  };
+  const allIds = rows.map((_, id) => id);
+  const workspace = (settings.workspaceFilters ?? []).map((filter) => ({
+    filter,
+    values: column(filter.field),
+  }));
+  const shown = allIds.filter((id) =>
+    workspace.every(({ filter, values }) => applyFilter(values[id], filter))
+  );
+  const byId = new Map(settings.charts.map((chart) => [chart.id, chart]));
+  return evaluateFindings(settings.findings ?? [], {
+    allIds,
+    eligible: (id) => {
+      const chart = byId.get(id);
+      return chart
+        ? restrictToPopulation(shown, chart as ChartSettings, column)
+        : undefined;
+    },
+    selection: (id) => {
+      const chart = byId.get(id) as ChartSettings | undefined;
+      return chart
+        ? getChartDefinition(chart.type).getFilterFunction(chart, column)
+        : undefined;
+    },
+    column,
+    label: (field) => field,
+    format: (_field, value) =>
+      typeof value === "number" ? value.toLocaleString("en-US") : String(value),
+    revision: "rest",
+  });
 }

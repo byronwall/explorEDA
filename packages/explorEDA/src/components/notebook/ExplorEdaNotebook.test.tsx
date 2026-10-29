@@ -521,7 +521,9 @@ describe("live findings", () => {
 
     fireEvent.click(link);
     const records = screen.getByRole("dialog", { name: "Records for mean" });
-    const rows = within(records).getAllByRole("row").slice(1);
+    const rows = within(records)
+      .getAllByRole("row")
+      .slice(1) as HTMLTableRowElement[];
     // East's four rows, by source row ID; r10 is read but not used.
     expect(rows.map((row) => row.cells[0]!.textContent)).toEqual([
       "0",
@@ -530,7 +532,7 @@ describe("live findings", () => {
       "9",
     ]);
     expect(
-      rows.at(-1)!.cells.item(rows.at(-1)!.cells.length - 1)
-    ).not.toHaveTextContent("Yes");
+      rows.map((row) => row.cells[row.cells.length - 1]!.textContent)
+    ).toEqual(["Yes", "Yes", "Yes", expect.not.stringMatching("Yes")]);
   });
 });

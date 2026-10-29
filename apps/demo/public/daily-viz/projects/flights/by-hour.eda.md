@@ -10,14 +10,17 @@ origin:cat=flights.origin label="Airport"
 calc hour_label = hour == 5 ? "05:00" : hour == 6 ? "06:00" : hour == 7 ? "07:00" : hour == 8 ? "08:00" : hour == 9 ? "09:00" : hour == 10 ? "10:00" : hour == 11 ? "11:00" : hour == 12 ? "12:00" : hour == 13 ? "13:00" : hour == 14 ? "14:00" : hour == 15 ? "15:00" : hour == 16 ? "16:00" : hour == 17 ? "17:00" : hour == 18 ? "18:00" : hour == 19 ? "19:00" : hour == 20 ? "20:00" : hour == 21 ? "21:00" : hour == 22 ? "22:00" : "23:00"
 field hour_label label="Scheduled hour"
 group @by-hour avg(delay) by=hour_label
+finding @six-mean average delay chart=@airports where.hour=6 digits=1
+finding @seven-mean average delay chart=@airports where.hour=19 digits=1
 ```
 
 ## Morning flights leave close to schedule
 
-Each cell is one airport and scheduled hour, colored by the mean departure delay. Read down a column: the cells darken from early morning to evening at every airport. Red marks the rare hour whose flights left early on average. Flights scheduled at 6:00 left 3.0 minutes late on average. Flights scheduled at 19:00 left 19.1 minutes late on average.
+Each cell is one airport and scheduled hour, colored by the mean departure delay. Read down a column: the cells darken from early morning to evening at every airport. Red marks the rare hour whose flights left early on average. Flights scheduled at 6:00 left {{six-mean}} minutes late on average. Flights scheduled at 19:00 left {{seven-mean}} minutes late on average. Pick an airport under the heatmap and both averages follow it; [see the 19:00 flights](#finding:seven-mean) behind the second.
 
 ```eda
 heatmap @nb-flights-by-hour-1 hour_label columnField=origin aggregation=average measureField=delay sortBy=label title="Mean departure delay by scheduled hour" x.title="Airport"
+row origin @airports title="Departures by airport"
 ```
 
 ## The average climbs all afternoon and peaks at 19:00

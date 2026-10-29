@@ -282,10 +282,15 @@ const shell = (body) =>
 /** One article's text and links, readable before the chart app loads. */
 export function dailyHtml(template, entry, text) {
   const url = `${SITE}/daily/${entry.slug}`;
-  const prose = corpusLinks(text, entry.textPath).replace(
-    /^```eda\s*\n[\s\S]*?^```\s*$/gm,
-    "\n_Interactive chart available when JavaScript loads._\n"
-  );
+  const prose = corpusLinks(text, entry.textPath)
+    .replace(
+      /^```eda\s*\n[\s\S]*?^```\s*$/gm,
+      "\n_Interactive chart available when JavaScript loads._\n"
+    )
+    // Live findings fill in when the notebook loads; their records links
+    // need it too.
+    .replace(/\{\{\s*[\w-]+\s*\}\}/g, "(live value)")
+    .replace(/\[([^\]]*)\]\(#finding:[\w-]+\)/g, "$1");
   // A notebook with one title carries it; a book's headings name its sheets.
   const title =
     entry.kind === "notebook" && /^# /.test(text)

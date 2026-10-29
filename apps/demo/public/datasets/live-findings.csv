@@ -1,0 +1,13 @@
+key,group,region,score,active
+r01,A,East,90,true
+r02,A,West,10,true
+r03,A,West,20,true
+r04,A,West,0,true
+r05,A,West,,true
+r06,B,East,80,true
+r07,B,East,70,true
+r08,B,West,5,true
+r09,B,West,0,true
+r10,B,East,bad,true
+r11,A,East,100,false
+r12,B,West,100,false

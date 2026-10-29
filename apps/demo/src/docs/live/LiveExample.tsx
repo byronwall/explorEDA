@@ -21,6 +21,8 @@ const ExplorEda = lazy(() =>
   }))
 );
 
+const NotebookFindingsExample = lazy(() => import("./NotebookFindingsExample"));
+
 const ChartSettingsSurface = lazy(() =>
   import("exploreda/docs-kit").then(({ ChartSettingsSurface: Surface }) => ({
     default: Surface,
@@ -168,9 +170,15 @@ export function LiveExample({
               </Button>
             )}
             <Button asChild variant="ghost" size="sm">
-              <Link to={examplePath(spec.exampleId)}>
+              <Link
+                to={
+                  spec.notebook !== undefined
+                    ? spec.fullPath
+                    : examplePath(spec.exampleId)
+                }
+              >
                 <Maximize2 aria-hidden="true" />
-                Full example
+                {spec.notebook !== undefined ? "Daily example" : "Full example"}
               </Link>
             </Button>
           </div>
@@ -191,7 +199,14 @@ export function LiveExample({
               <Status>Could not load the example data.</Status>
             ) : rows ? (
               <Suspense fallback={<Status>Loading workspace…</Status>}>
-                {spec.surface ? (
+                {spec.notebook !== undefined ? (
+                  <NotebookFindingsExample
+                    key={mount}
+                    text={spec.notebook}
+                    rows={rows}
+                    onEdit={() => setEdited(true)}
+                  />
+                ) : spec.surface ? (
                   <div
                     key={mount}
                     className="h-full overflow-auto"

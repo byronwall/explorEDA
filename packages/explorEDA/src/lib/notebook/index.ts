@@ -36,3 +36,13 @@ export {
   type WriteBackKind,
   type WriteBackResult,
 } from "./writeBack";
+export {
+  evaluateFinding,
+  evaluateFindings,
+  evaluateNotebookFindings,
+  findingFor,
+  type FindingContext,
+  type FindingDefinition,
+  type FindingResult,
+  type FindingUnavailable,
+} from "./findings";
