@@ -251,3 +251,9 @@ Record runtime/hardware, distributions, p50/p95, memory, and responsiveness duri
 Keep count-only stress separate from allocated expansion. Pro's scratch timings are not product measurements.
 Choose caching or expansion limits only after a measured need. Never silently sample counts or truncate output.
 No merge, deployment, paid service, or feature implementation is part of this research run.
+
+## Preserved Pro result materials
+
+[Original Pro reports and artifacts for #527](assets/pro-results/join-key-2026-10-25/ASSET_INDEX.md)
+
+All extracted result materials are preserved without ZIP containers. Original bytes and attribution are unchanged.

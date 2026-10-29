@@ -54,3 +54,7 @@ Source-owned keys and matched-multiplicity cardinality are local design choices,
 
 Open questions: later manual exception precedence, broader casing, and measured performance policy.
 None blocks M1. No outside-demand gate or next topic is assigned.
+
+## Preserved Pro result materials
+
+[Complete original Pro artifacts](../../intent/join-key-preparation/assets/pro-results/join-key-2026-10-25/ASSET_INDEX.md) are preserved under the intent entry. ZIP containers remain local.
