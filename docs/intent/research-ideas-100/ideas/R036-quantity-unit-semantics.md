@@ -4,7 +4,7 @@
 - Category: Types, quantities, and dates
 - Priority: 91
 - Kind: new-direction
-- Status: candidate
+- Status: planned for review
 - Confidence: medium
 - Baseline: `9b16d78e3ed0742ed4d5858c1939fec9e758b510`
 
@@ -18,7 +18,13 @@ The first experiment should use distance divided by elapsed time, incompatible a
 
 This is a new direction informed by existing intent, not a missing shipped feature or a request for framework migration. A metadata-only proof is cheap; propagating dimensions through expressions would affect saved definitions, formatter expectations, and the public calculation API. Keep adoption conditional on a real scientific task. Confidence is medium because the scalar boundary is clear but the value of enforcement is unknown. The investigation earns its place by separating useful measurement semantics from attractive but costly generality.
 
-## References
+## October 27 Design decision
+
+The [new Design review](../../../research/quantity-calculations-2026-10-27/README.md) proposes explicit Quantity mode over the scalar AST. Its [implementation plan](../../quantity-calculations/implementation-plan.md) covers linear conversions, temperature roles and reducers, project/folder owners, and notebook/export persistence. Each milestone includes docs and a runnable example.
+
+This supersedes the historical demand gates in the brief above. Byron is the demand under current research direction. No outside author trial or failed lesson is required. The earlier October 20 adoption survey remains historical evidence. No feature code changed; Build dispositions mean a plan for review.
+
+## Source references
 
 - Repository: `packages/explorEDA/src/lib/fieldSettings.ts` — `FieldSettings`, `getFieldLabel`, `formatFieldValue`. Units currently participate in labels and formatting.
 - Repository: `packages/explorEDA/src/lib/calculations/types.ts` — `CalculationValue`. Calculation values are scalar rather than quantity objects.

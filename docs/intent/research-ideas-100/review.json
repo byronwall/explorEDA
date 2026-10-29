@@ -211,9 +211,9 @@
   },
   {
     "id": "R036",
-    "disposition": "investigate",
-    "reason": "Compare descriptive units with a limited dimensional compatibility check for derived measurements. Start with the bounded experiment; keep the current design if the rejection signal applies.",
-    "destination": "ideas/R036-quantity-unit-semantics.md"
+    "disposition": "build",
+    "reason": "October 27 Design proposes checked scalar formulas, explicit conversion, temperature roles, and complete persistence milestones. Build means a plan for review, not approval to ship; current DIRECTION supersedes historical external-demand gates.",
+    "destination": "../quantity-calculations/implementation-plan.md"
   },
   {
     "id": "R037",
