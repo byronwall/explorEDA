@@ -82,3 +82,7 @@ These checks do not accept an unbuilt feature. No downloaded program was execute
 Mounted callbacks, actual new-step evaluation, persistence, save failure, worker freshness, browser/touch flows, and performance remain proposed.
 The first implementation must prove the categorical hint through every host path and first-save source declarations without rewriting data.
 No product decision blocks M1. Recheck changed code and derive browser selectors from the implemented UI.
+
+## Preserved Pro result materials
+
+[Complete original Pro artifacts](../../intent/category-mappings/assets/pro-results/category-mappings-2026-10-24/ASSET_INDEX.md) are preserved under the intent entry. ZIP containers remain local.

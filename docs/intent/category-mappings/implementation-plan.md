@@ -230,3 +230,9 @@ Explore fuzzy ranking or separately named Unicode normalization only after M2. M
 Any prototype includes its own docs/example and never delays manual mapping.
 Defer automatic standalone promotion, shared registries, external lookup maps, formula authoring, and locale settings.
 Avoid source rewriting, automatic merging, join-key coercion, global category identity changes, and version coexistence.
+
+## Preserved Pro result materials
+
+[Original Pro reports and artifacts for #523](assets/pro-results/category-mappings-2026-10-24/ASSET_INDEX.md)
+
+All extracted result materials are preserved without ZIP containers. Original bytes and attribution are unchanged.

@@ -114,3 +114,7 @@ No originals, archives, manifests, scratch code, or receipts are committed.
 Saved collector memory and deleted collect-exploreda-category-mappings-design through the supported scheduler; deleteStatus=deleted.
 The six-hour exploreda-pro-research-pipeline remains ACTIVE indefinitely, verified through its tool and saved configuration.
 No follow-up, feature implementation, worktree, merge, deployment, or paid service. Stop for review.
+
+## Preserved Pro result materials
+
+Backfill requested by Byron: [2 original result files](../../intent/category-mappings/assets/pro-results/category-mappings-2026-10-24/ASSET_INDEX.md) are now committed under the intent entry. This supersedes earlier instructions to leave originals ignored. ZIPs and input source packets remain local. Byte equality and supplied manifest entries were checked; no downloaded code was executed.
