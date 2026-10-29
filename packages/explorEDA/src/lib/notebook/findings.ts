@@ -193,7 +193,7 @@ export function evaluateFinding(
   const { id, chart, field } = definition;
   const chartName = chart ? (context.chartLabel?.(chart) ?? chart) : "";
   const where = definition.filters?.length
-    ? `, where ${definition.filters.map((filter) => context.label(filter.field)).join(" and ")} match`
+    ? `, with the finding's ${definition.filters.map((filter) => context.label(filter.field)).join(" and ")} filter${definition.filters.length > 1 ? "s" : ""}`
     : "";
   const scope = !chart
     ? `Every source row${where}. Chart selections and workspace filters do not change it.`

@@ -131,7 +131,7 @@ const SHOP = "/datasets/shop-operations.csv";
 
 /** The live-findings fixture: one selection, a value, and its records. */
 const FINDINGS_NOTEBOOK = [
-  "Selected **{{n}}** of {{eligible}} active reviews. Their average score is {{mean-score}}; [show records](#finding:mean-score). Group A averages {{a-mean}} and group B {{b-mean}}, a difference of {{gap}}. The selection is {{active-share}} of active reviews and {{all-share}} of all {{all}}.",
+  "Selected **{{n}}** of {{eligible}} active reviews. Their average score is {{mean-score}}; [show records](#finding:mean-score). Group A averages {{a-mean}} and group B {{b-mean}}, a difference of {{gap}} ([both sides](#finding:gap)). The selection is {{active-share}} of active reviews and {{all-share}} of all {{all}}.",
   "",
   "```eda",
   "field score as=numeric",
