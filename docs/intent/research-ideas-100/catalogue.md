@@ -2,6 +2,8 @@
 
 The catalogue is in priority order. IDs remain stable if a later authorized review changes the rank. The complete question, experiment, evidence, and rejection signal are in each linked brief and in the JSON index.
 
+The [live-findings design](../../research/live-findings-2026-10-22/README.md) turns R067/R068 into a [staged implementation plan](../data-bound-narrative/implementation-plan.md). Shared selection and R054 lasso follow the live-value release. [Research direction](../../research/DIRECTION.md) governs new topic selection ahead of this rank.
+
 | Priority | ID and title                                                                                                                                                  | Category                           | Kind           |
 | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- | -------------- |
 | 1        | [R026 — Reconcile missing, blank, invalid, and converted-value counts](ideas/R026-missing-state-accounting.md)                                                | Data quality and missingness       | robustness     |

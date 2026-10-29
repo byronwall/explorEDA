@@ -1,9 +1,9 @@
 ---
 title: "Keep explanations aligned with the selected data"
 slug: "data-bound-narrative"
-phase: intent
+phase: plan
 status: current
-last_updated: "2026-10-21"
+last_updated: "2026-10-22"
 ---
 
 # Keep explanations aligned with the selected data
@@ -14,7 +14,7 @@ Analysts may want a short explanation beside a chart that updates when its popul
 
 The durable outcome is accurate analytical context without manual edits after each filter. It does not require generated prose or an agent. A sentence should identify the population behind its value and avoid implying a conclusion the metric cannot support. Start with one transparent binding rather than a full report template language.
 
-This remains a future seed. Its expansion trigger is a proposed decision rule, not a release commitment.
+The [live-finding plan](implementation-plan.md) now defines a staged feature. Implementation remains a separate request.
 
 ## What matters most
 
@@ -32,19 +32,19 @@ Do not insert arbitrary code, remote model calls, or hidden calculations into Ma
 
 ## What seems settled
 
-This is a later explanatory-content seed. Static Markdown is delivered. No narrative grammar or automatic interpretation behavior is selected by the comparison request.
+Static Markdown is delivered. The reviewed plan proposes named findings, local chart bindings, and reference-only prose tokens. It preserves current notebook selection defaults.
 
 ## Current reality that matters
 
 The registry includes Markdown and Metric Card. Shared reductions and formatting can support one bounded binding. The Pro gap register distinguishes static text from a live data-bound narrative and warns that every supporting view needs clear population meaning.
 
-## Expansion trigger
+## Planning direction
 
-Expand when a recurring analysis needs manual explanation updates after filtering, and one existing metric can supply the statement.
+[Pro research direction](../../research/DIRECTION.md) replaces the earlier demand gate. Byron is the demand. Start with live values and exact current evidence; prototype saved evidence separately.
 
-## Next step after confirmation
+## First implementation step
 
-Bind a single selected count beside a matching card. Check filtering, zero rows, and restore against exact IDs. Decide whether explicit bindings solve the task before introducing templates or generated language.
+Follow M1 in the [implementation plan](implementation-plan.md). Resolve a named chart’s local selection, then derive a count and average with exact contributor records.
 
 See the [reference packet](references/README.md) and [comparison collection](../comparison-opportunities/README.md) for context.
 
@@ -54,4 +54,4 @@ The [Mosaic study](../../research/mosaic-selections-2026-10-20/README.md) gives 
 Bind one selected-row count to the same exact population as an evidence table.
 Name the eligible denominator and provide the existing inspection route.
 Keep authored daily findings separate; their current condition evaluator does not follow workspace selection.
-This is proposed research guidance. The future-seed status and expansion trigger remain unchanged.
+The [live-findings design](../../research/live-findings-2026-10-22/README.md) extends this study with authoring and persistence decisions. The implementation plan now sets the sequence.
