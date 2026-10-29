@@ -2,6 +2,8 @@
 
 The catalogue is in priority order. IDs remain stable if a later authorized review changes the rank. The complete question, experiment, evidence, and rejection signal are in each linked brief and in the JSON index.
 
+The [distribution-distance Methods decision](../../research/distribution-distance-2026-10-28/README.md) adds a separate unweighted two-group capability. Its [implementation plan](../distribution-comparison/implementation-plan.md) starts with an ECDF maximum-gap comparison. It does not depend on R009 weights or R064 frozen references. DIRECTION governs topic choice ahead of this historical rank.
+
 | Priority | ID and title                                                                                                                                                  | Category                           | Kind           |
 | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- | -------------- |
 | 1        | [R026 — Reconcile missing, blank, invalid, and converted-value counts](ideas/R026-missing-state-accounting.md)                                                | Data quality and missingness       | robustness     |
