@@ -98,6 +98,7 @@ const TOP_LEVEL = new Set([
   "relate",
   "query",
   "param",
+  "finding",
 ]);
 
 /**

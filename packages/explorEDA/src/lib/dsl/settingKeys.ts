@@ -783,6 +783,10 @@ export const DASHBOARD_COVERAGE: Record<keyof SavedDataStructure, DslCoverage> =
       excluded:
         "Map shapes are data, not settings. The host passes them to the compiler, and charts refer to them by geometryAssetId.",
     },
+    findings: {
+      excluded:
+        "Findings are notebook text: finding lines compile from the notebook, which stays their source. A dashboard export does not write them.",
+    },
   };
 
 export const METADATA_COVERAGE: Record<keyof ViewMetadata, DslCoverage> = {

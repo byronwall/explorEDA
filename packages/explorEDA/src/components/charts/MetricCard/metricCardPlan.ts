@@ -49,7 +49,10 @@ export interface MetricCardSnapshot {
 }
 
 export function planMetricCard(
-  settings: MetricCardSettings,
+  settings: Pick<
+    MetricCardSettings,
+    "aggregation" | "measureField" | "entityField"
+  >,
   snapshot: MetricCardSnapshot,
   getFieldLabel: (field: string) => string,
   formatFieldValue: (field: string, value: datum) => string

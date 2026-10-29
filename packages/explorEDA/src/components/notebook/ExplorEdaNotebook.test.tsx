@@ -438,3 +438,99 @@ describe("ExplorEdaNotebook sheets", () => {
     }
   });
 });
+
+describe("live findings", () => {
+  const fixture = [
+    ["r01", "A", "East", 90, true],
+    ["r02", "A", "West", 10, true],
+    ["r03", "A", "West", 20, true],
+    ["r04", "A", "West", 0, true],
+    ["r05", "A", "West", null, true],
+    ["r06", "B", "East", 80, true],
+    ["r07", "B", "East", 70, true],
+    ["r08", "B", "West", 5, true],
+    ["r09", "B", "West", 0, true],
+    ["r10", "B", "East", "bad", true],
+    ["r11", "A", "East", 100, false],
+    ["r12", "B", "West", 100, false],
+  ].map(([key, group, region, score, active]) => ({
+    key,
+    group,
+    region,
+    score,
+    active,
+  }));
+  // Findings come before the charts they follow, in an earlier block.
+  const notebook = (select = "") =>
+    [
+      "Selected {{n}} rows; the average is {{mean}}. [Show records](#finding:mean).",
+      "",
+      "Literal: `{{n}}`, \\{{n}}, [a link](https://example.com/?q={{n}}). Broken: {{broken}} and {{nothing}}.",
+      "",
+      "```eda",
+      "finding @n count chart=@regions",
+      "finding @mean average score chart=@regions digits=2",
+      "finding @broken count chart=@nope",
+      "```",
+      "",
+      "```eda",
+      "field score as=numeric",
+      `row region @regions where.active=true ${select}`,
+      "row group @groups select.group=A",
+      "```",
+    ].join("\n");
+  const value = (container: HTMLElement, name: string) =>
+    container.querySelector(`[data-finding="${name}"]`);
+
+  it("shows each value from its chart's selection, and keeps literal text literal", () => {
+    const { container } = render(
+      <ExplorEdaNotebook text={notebook()} data={fixture} />
+    );
+    // The groups chart selects A, but n follows only @regions.
+    expect(value(container, "n")).toHaveTextContent(/^10$/);
+    expect(value(container, "mean")).toHaveTextContent(/^34\.38$/);
+    expect(value(container, "broken")).toHaveAttribute(
+      "data-unavailable",
+      "missing"
+    );
+    expect(value(container, "nothing")).toHaveTextContent("unknown finding");
+    expect(container).toHaveTextContent("nope is not a chart");
+    expect(container.querySelector("code")).toHaveTextContent("{{n}}");
+    expect(container).toHaveTextContent("Literal: {{n}}, {{n}}");
+    expect(container.querySelectorAll("[data-finding]")).toHaveLength(4);
+    expect(screen.getByRole("link", { name: "a link" })).toHaveAttribute(
+      "href",
+      "https://example.com/?q=%7B%7Bn%7D%7D"
+    );
+  });
+
+  it("updates values in place and opens the exact records", () => {
+    const { container, rerender } = render(
+      <ExplorEdaNotebook text={notebook()} data={fixture} />
+    );
+    const link = screen.getByRole("link", { name: "Show records" });
+    link.focus();
+    rerender(
+      <ExplorEdaNotebook text={notebook("select.region=East")} data={fixture} />
+    );
+    // The paragraph is the same element, so focus stays on its link.
+    expect(screen.getByRole("link", { name: "Show records" })).toBe(link);
+    expect(document.activeElement).toBe(link);
+    expect(value(container, "n")).toHaveTextContent(/^4$/);
+    expect(value(container, "mean")).toHaveTextContent(/^80\.00$/);
+
+    fireEvent.click(link);
+    const records = screen.getByRole("dialog", { name: "Records for mean" });
+    const rows = within(records).getAllByRole("row").slice(1);
+    // East's four rows, by source row ID; r10 is read but not used.
+    expect(rows.map((row) => row.cells[0]!.textContent)).toEqual([
+      "0",
+      "5",
+      "6",
+      "9",
+    ]);
+    expect(
+      rows.at(-1)!.cells.item(rows.at(-1)!.cells.length - 1)
+    ).not.toHaveTextContent("Yes");
+  });
+});

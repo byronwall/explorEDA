@@ -169,6 +169,7 @@ describe("dashboard text coverage", () => {
         geometryAssets: 1,
         theme: 1,
         workspaceFilters: 1,
+        findings: 1,
       }).sort()
     );
   });

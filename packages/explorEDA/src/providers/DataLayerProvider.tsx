@@ -1,4 +1,5 @@
 import { isGeometryAsset, type GeometryAsset } from "@/lib/geometryAssets";
+import type { FindingDefinition } from "@/lib/notebook/findings";
 import {
   resolveThemeId,
   type WorkspaceTheme,
@@ -304,6 +305,8 @@ interface DataLayerState<T extends DatumObject> extends DataLayerProps<T> {
   fieldSettings: FieldSettingsMap;
   aggregates: AggregateSpec[];
   geometryAssets: GeometryAsset[];
+  /** Notebook findings from the notebook's text; empty elsewhere. */
+  findings: FindingDefinition[];
   /** Saved workspace theme. Undefined draws Compact. */
   theme: WorkspaceTheme | undefined;
   setTheme: (id: WorkspaceThemeId) => void;
@@ -501,6 +504,7 @@ const getInitialStoreState = <T extends DatumObject>(
     | "aggregates"
     | "geometryAssets"
     | "theme"
+    | "findings"
   >
 > => {
   const rawData = initProps?.data ?? [];
@@ -595,6 +599,7 @@ const getInitialStoreState = <T extends DatumObject>(
       aggregates: savedData.aggregates ?? [],
       geometryAssets: savedData.geometryAssets ?? [],
       theme: savedData.theme,
+      findings: savedData.findings ?? [],
     };
   }
 
@@ -635,6 +640,7 @@ const getInitialStoreState = <T extends DatumObject>(
     aggregates: [],
     geometryAssets: [],
     theme: undefined,
+    findings: [],
   };
 };
 
@@ -736,6 +742,7 @@ const createDataLayerStore = <T extends DatumObject>(
           fieldSettings: {},
           aggregates: [],
           geometryAssets: [],
+          findings: [],
           nonce: get().nonce + 1,
           filterReset: get().filterReset + 1,
         });
@@ -1327,6 +1334,7 @@ const createDataLayerStore = <T extends DatumObject>(
           aggregates: state.aggregates,
           geometryAssets: state.geometryAssets,
           ...(state.theme ? { theme: state.theme } : {}),
+          ...(state.findings.length ? { findings: state.findings } : {}),
         };
       },
 
@@ -1468,6 +1476,7 @@ const createDataLayerStore = <T extends DatumObject>(
           aggregates: savedData.settings.aggregates ?? [],
           geometryAssets: savedData.settings.geometryAssets ?? [],
           theme: savedData.settings.theme,
+          findings: savedData.settings.findings ?? [],
         }));
         nextCrossfilter.setFieldGetter(get().getColumnData);
       },

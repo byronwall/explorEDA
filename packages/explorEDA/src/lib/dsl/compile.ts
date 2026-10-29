@@ -37,6 +37,7 @@ import type {
   SerializedColorScale,
 } from "@/types/SavedDataTypes";
 import { validateSavedData } from "@/utils/saveDataUtils";
+import { FINDING_NAME, type FindingDefinition } from "@/lib/notebook/findings";
 import { parseDateText } from "@/lib/valueParsing";
 import { parsePath, setPath } from "./paths";
 import { settingWords } from "./schema";
@@ -226,7 +227,10 @@ export const DSL_OTHER_KEYWORDS = [
   "chart",
   "view",
   "layout",
+  "finding",
 ];
+
+const FINDING_KEYS = ["chart", "where.<field>", "population", "digits"];
 
 /** Declarations that hold for every view, wherever they appear. */
 const SHARED_KEYWORDS = new Set([
@@ -500,6 +504,7 @@ export function compileDocument(
   const filterDeclarations: DslDeclaration[] = [];
   const chartDeclarations: DslDeclaration[] = [];
   const layoutDeclarations: DslDeclaration[] = [];
+  const findingDeclarations: DslDeclaration[] = [];
 
   const applyFieldPairs = (
     field: string,
@@ -826,6 +831,9 @@ export function compileDocument(
         break;
       case "layout":
         layoutDeclarations.push(declaration);
+        break;
+      case "finding":
+        findingDeclarations.push(declaration);
         break;
       default:
         if (DSL_CHART_KEYWORDS[keyword] || keyword === "chart") {
@@ -1498,6 +1506,151 @@ export function compileDocument(
     } else {
       skipped.push(summary);
     }
+  }
+
+  // Findings: `finding @name average score chart=@regions`. Each follows
+  // one named chart's own selection, or every row when it names none.
+  const findings: FindingDefinition[] = [];
+  for (const declaration of findingDeclarations) {
+    const name = declaration.name;
+    const subject = `finding${name ? ` @${name}` : ""} (line ${declaration.span.line})`;
+    const fail = (span: DslSpan, message: string, suggestion: string) =>
+      report("error", "setting-ignored", span, message, {
+        subject,
+        suggestion,
+      });
+    if (!name || !FINDING_NAME.test(name)) {
+      fail(
+        declaration.span,
+        "A finding needs a name of letters, digits, - or _, so this line was skipped.",
+        "Write it as finding @mean-score average score chart=@regions."
+      );
+      continue;
+    }
+    if (findings.some((item) => item.id === name)) {
+      fail(
+        declaration.span,
+        `@${name} names two findings, so this one was skipped.`,
+        "Give each finding its own name."
+      );
+      continue;
+    }
+    const [reducer, measure, ...extra] = declaration.positional;
+    const word = reducer ? single(reducer.value).toLowerCase() : "";
+    const aggregation = word === "avg" || word === "mean" ? "average" : word;
+    if (!isAggregation(aggregation)) {
+      fail(
+        reducer?.span ?? declaration.span,
+        `${word || "Nothing"} is not a way to summarize rows, so ${subject} was skipped.`,
+        "Start with count, sum, average, min, or max."
+      );
+      continue;
+    }
+    const definition: FindingDefinition = { id: name, aggregation };
+    if (aggregation === "count") {
+      if (measure) extra.unshift(measure);
+    } else if (!measure) {
+      fail(
+        reducer!.span,
+        `${aggregation} needs a field to measure, so ${subject} was skipped.`,
+        `Write it as finding @${name} ${aggregation} score.`
+      );
+      continue;
+    } else {
+      const field = resolveField(single(measure.value), measure.span, subject);
+      if (!field) continue;
+      definition.field = field;
+    }
+    for (const item of extra) {
+      report(
+        "warning",
+        "setting-ignored",
+        item.span,
+        `${item.value.raw} is not part of ${subject}, so it was ignored.`,
+        {
+          subject,
+          suggestion:
+            aggregation === "count"
+              ? "A count needs no field."
+              : "Name one field to measure.",
+        }
+      );
+    }
+    let usable = true;
+    const filters: Filter[] = [];
+    for (const pair of declaration.pairs) {
+      if (pair.key.startsWith("where.")) {
+        const filter = buildFilter(
+          pair.key.slice(6),
+          pair.value,
+          pair.span,
+          subject
+        );
+        if (filter) filters.push(filter);
+        else usable = false;
+      } else if (pair.key === "chart") {
+        const chartName = single(pair.value).replace(/^@/, "");
+        const id = ambiguousNames.has(chartName)
+          ? undefined
+          : chartNames.get(chartName);
+        if (!id) {
+          const near = closestName(chartName, [...chartNames.keys()]);
+          fail(
+            pair.span,
+            `${chartName} is not a chart in this text, so ${subject} was skipped.`,
+            near
+              ? `Did you mean @${near}?`
+              : "Name the chart, as in row Region @regions, and write chart=@regions."
+          );
+          usable = false;
+        } else definition.chart = id;
+      } else if (pair.key === "population") {
+        const value = single(pair.value);
+        if (value === "eligible") definition.population = "eligible";
+        else if (value !== "selected")
+          report(
+            "warning",
+            "setting-default",
+            pair.span,
+            `${value} is not a population, so ${subject} follows the chart's selection.`,
+            { subject, suggestion: "Use selected or eligible." }
+          );
+      } else if (pair.key === "digits") {
+        const digits = numberValue(pair.value);
+        if (
+          digits !== undefined &&
+          Number.isInteger(digits) &&
+          digits >= 0 &&
+          digits <= 10
+        )
+          definition.digits = digits;
+        else
+          report(
+            "warning",
+            "setting-default",
+            pair.span,
+            `digits needs a whole number from 0 to 10, so ${subject} uses the field's format.`,
+            { subject, suggestion: "Write digits=2." }
+          );
+      } else {
+        const near = closestName(pair.key, FINDING_KEYS);
+        report(
+          "warning",
+          "setting-ignored",
+          pair.span,
+          `${pair.key} is not a finding setting, so it was ignored.`,
+          {
+            subject,
+            suggestion: near
+              ? `Did you mean ${near}?`
+              : `Use ${FINDING_KEYS.join(", ")}.`,
+          }
+        );
+      }
+    }
+    if (!usable) continue;
+    if (filters.length) definition.filters = filters;
+    findings.push(definition);
   }
 
   /**
@@ -2615,6 +2768,7 @@ export function compileDocument(
     ...(rowsSettings ? { rowsSettings } : {}),
     ...(workspaceFilters.length ? { workspaceFilters } : {}),
     ...(theme ? { theme } : {}),
+    ...(findings.length ? { findings } : {}),
   };
   if (!validateSavedData(settings)) {
     // Every value above is checked; this guards a gap between the two.

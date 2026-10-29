@@ -43,6 +43,7 @@ import {
 import { GridChartPanel } from "../GridChartPanel";
 import { Button } from "../ui/button";
 import { Toaster } from "../ui/sonner";
+import { NotebookFindingsProvider } from "./NotebookFindings";
 import { NotebookProse } from "./NotebookProse";
 import { NotebookSourceEditor } from "./NotebookSourceEditor";
 import "./notebook.css";
@@ -354,19 +355,21 @@ export function ExplorEdaNotebook({
       <CalculationEditorProvider>
         <ChartDraftProvider>
           <ExploreChart.Provider value={onExploreChart}>
-            <NotebookColumn
-              result={result}
-              layout={layout}
-              sheet={sheet}
-              defaultSheet={defaultSheet}
-              onSheetChange={onSheetChange}
-              onSegmentChange={
-                onTextChange
-                  ? (segment, next) =>
-                      onTextChange(replaceSegment(text, segment, next))
-                  : undefined
-              }
-            />
+            <NotebookFindingsProvider>
+              <NotebookColumn
+                result={result}
+                layout={layout}
+                sheet={sheet}
+                defaultSheet={defaultSheet}
+                onSheetChange={onSheetChange}
+                onSegmentChange={
+                  onTextChange
+                    ? (segment, next) =>
+                        onTextChange(replaceSegment(text, segment, next))
+                    : undefined
+                }
+              />
+            </NotebookFindingsProvider>
           </ExploreChart.Provider>
         </ChartDraftProvider>
       </CalculationEditorProvider>
@@ -884,7 +887,11 @@ function NotebookBlockView({
   const problems = block.diagnostics;
   const empty = !block.charts.length;
   if (empty && !problems.length && !open) {
-    const names = [...block.aliases, ...block.calculations];
+    const names = [
+      ...block.aliases,
+      ...block.calculations,
+      ...block.findings.map((name) => `@${name}`),
+    ];
     return names.length || edit ? (
       <div className="eda-notebook-segment">
         {edit}

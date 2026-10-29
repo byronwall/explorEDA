@@ -161,6 +161,21 @@ function isFiniteNumber(value: unknown): value is number {
   return typeof value === "number" && Number.isFinite(value);
 }
 
+function isFindingDefinition(value: unknown): boolean {
+  return (
+    isRecord(value) &&
+    typeof value.id === "string" &&
+    isAggregation(value.aggregation) &&
+    (value.aggregation === "count" || typeof value.field === "string") &&
+    (value.chart === undefined || typeof value.chart === "string") &&
+    (value.population === undefined || value.population === "eligible") &&
+    (value.filters === undefined ||
+      (Array.isArray(value.filters) && value.filters.every(isFilter))) &&
+    (value.digits === undefined ||
+      (typeof value.digits === "number" && Number.isInteger(value.digits)))
+  );
+}
+
 function isFilter(value: unknown): boolean {
   if (!isRecord(value) || typeof value.type !== "string") {
     return false;
@@ -928,6 +943,15 @@ export function validateSavedData(data: unknown): data is SavedDataStructure {
   }
 
   if (data.theme !== undefined && !isSavedTheme(data.theme)) return false;
+
+  if (
+    data.findings !== undefined &&
+    (!Array.isArray(data.findings) ||
+      !data.findings.every(isFindingDefinition) ||
+      new Set(data.findings.map((item) => item.id)).size !==
+        data.findings.length)
+  )
+    return false;
 
   if (
     data.geometryAssets !== undefined &&

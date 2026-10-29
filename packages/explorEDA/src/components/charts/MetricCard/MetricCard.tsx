@@ -1,7 +1,6 @@
 import { useId, useMemo } from "react";
-import { convertFieldValue } from "@/lib/fieldSettings";
 import { useDataLayer } from "@/providers/DataLayerProvider";
-import type { BaseChartProps, datum } from "@/types/ChartTypes";
+import type { BaseChartProps } from "@/types/ChartTypes";
 import {
   useChartTraceApi,
   useTraceRevision,
@@ -10,6 +9,7 @@ import {
 import type { TraceSource } from "../trace/traceTypes";
 import { useGetAllIds } from "../useGetLiveData";
 import type { MetricCardSettings } from "./definition";
+import { measureInputs } from "./measureInputs";
 import { planMetricCard } from "./metricCardPlan";
 import { makeMetricCardTraceSource } from "./metricCardTrace";
 
@@ -40,25 +40,12 @@ export function MetricCard({
     const entityData = settings.entityField
       ? getColumnData(settings.entityField)
       : undefined;
-    const rawInputs: Record<number, datum> = {};
-    const exclusionReasons: Record<number, string> = {};
-    if (
-      field &&
-      !calculations.some((calc) => calc.resultColumnName === field)
-    ) {
-      const format = fieldSettings[field] ?? {};
-      const type =
-        format.type ??
-        profiles.find((profile) => profile.name === field)?.dataType ??
-        "categorical";
-      for (const id of liveIds) {
-        const raw = (rawData[id] as Record<string, datum> | undefined)?.[field];
-        rawInputs[id] = raw;
-        const converted = convertFieldValue(raw, type, format);
-        if (converted.error)
-          exclusionReasons[id] = `Conversion failed: ${converted.error}`;
-      }
-    }
+    const { rawInputs, exclusionReasons } = measureInputs(field, liveIds, {
+      rawData,
+      fieldSettings,
+      profiles,
+      calculations,
+    });
     return planMetricCard(
       settings,
       {

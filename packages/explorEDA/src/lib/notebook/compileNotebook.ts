@@ -43,6 +43,8 @@ export interface NotebookBlockResult {
   calculations: string[];
   /** Field aliases the block defines, such as `actual:num=demand.actual`. */
   aliases: string[];
+  /** Findings the block declares, by name. */
+  findings: string[];
   diagnostics: DslDiagnostic[];
 }
 
@@ -262,7 +264,13 @@ export function compileNotebook(
   const parsed = parseDocument(compiledText);
   const calculations = new Map<number, string[]>();
   const aliases = new Map<number, string[]>();
+  const findings = new Map<number, string[]>();
   for (const declaration of parsed.declarations) {
+    if (declaration.keyword === "finding" && declaration.name) {
+      const owner = ownerOf(declaration.span.line);
+      if (owner !== undefined)
+        findings.set(owner, [...(findings.get(owner) ?? []), declaration.name]);
+    }
     const aliasOwner = declaration.alias
       ? ownerOf(declaration.span.line)
       : undefined;
@@ -324,6 +332,7 @@ export function compileNotebook(
       .map(({ id, line }) => ({ id: id!, line })),
     calculations: calculations.get(block.index) ?? [],
     aliases: aliases.get(block.index) ?? [],
+    findings: findings.get(block.index) ?? [],
     diagnostics: fileDiagnostics.filter(
       (item) => blockAt(notebook, item.line)?.index === block.index
     ),
