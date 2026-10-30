@@ -106,7 +106,7 @@ row sales.region title="By region"
 
   it("keeps an edit to a query made for one source", async () => {
     const data = "order_id,region\nA1,West\nA2,west\n";
-    for (const start of [
+    const starts: Record<string, string>[] = [
       // The project file declares the source.
       {
         "sales.csv": data,
@@ -118,7 +118,8 @@ row sales.region title="By region"
         "sales.csv": data,
         "sales.eda": "source @sales path=sales.csv\nrow sales.region\n",
       },
-    ]) {
+    ];
+    for (const start of starts) {
       const files = memoryProjectFiles(start);
       const folder = await readProjectFolder(files);
       expect(folder.implicitQueries).toEqual(["sales"]);
