@@ -2,15 +2,15 @@
 
 ## State
 
-- Phase: **prepared; submission blocked on local Chrome access**.
+- Phase: **submitted; Pro thinking; collection scheduled**.
 - Mode: Design.
 - Mission: keep selected keyed records and current notebook findings through data refresh.
 - Repository: https://github.com/byronwall/explorEDA.
 - Branch: `codex/selection-refresh-design-2026-10-29`, existing checkout. No worktree.
 - Source baseline: `5594c95690859e8ce456aa3228fa9265ba686d12`.
 - Prompt: [pro-prompt.md](pro-prompt.md).
-- Conversation: none. No message sent; follow-ups 0/1.
-- Collector: none. Create and verify an hourly heartbeat only after verified submission.
+- Conversation: https://chatgpt.com/c/6ae3f166-ff88-83ea-b255-40afef7942a8. Submitted October 30 about 01:22 UTC; follow-ups 0/1. Never resubmit.
+- Collector: `collect-exploreda-selection-refresh-design`, ACTIVE hourly at minute 24. First eligible check: October 30 02:24 UTC.
 - Plan destination: `docs/intent/selection-refresh/implementation-plan.md` (pending Pro).
 - Summary destination: `docs/research/selection-refresh-design-2026-10-29/README.md` (pending Pro).
 - Result assets: `docs/intent/selection-refresh/assets/pro-results/selection-refresh-design-2026-10-29/` (pending Pro).
@@ -73,7 +73,25 @@ After collection, read all reports, check decisive claims, write dispositions an
 verify the committed asset inventory, and open the small review PR. Delete the collector after the PR is open.
 Keep the six-hour pipeline active indefinitely. Do not merge, deploy, or provision services.
 
-## Source packet
+## Submission checkpoint — October 30
+
+Chrome browser access returned in the `byroni.us` profile while native access still reported a locked Mac.
+Verified Byron Wall Pro account and the live Pro selector at 5/5 effort.
+Refreshed origin/main, unchanged at the recorded baseline. Checked open PRs through #565; no duplicate Design cycle.
+Rebuilt the source packet: all 46 files still match the exact baseline; scoped credential-pattern checks pass.
+
+Uploaded `pro-prompt(20261030-011412).md` and `source-packet(20261030-011412).txt` under standing human upload approval.
+Verified both completed attachments, the sent user message, durable conversation URL, Thinking text, and Stop control.
+Chrome tab `2011000455` is marked for handoff. No download or follow-up occurred.
+
+Created and verified collector `collect-exploreda-selection-refresh-design` through the supported scheduler and saved configuration.
+It targets this chat, `01a18a5d-ad1c-7462-8c38-5a143115e792`, hourly at minute 24.
+Do not inspect or collect before October 30 02:22 UTC; first eligible check is 02:24 UTC.
+The collector owns collection, original assets, claim checks, dispositions, plan, summary, and verified review PR.
+Delete it after opening the PR. The six-hour pipeline remains ACTIVE on GPT-6.1 Sol, Medium.
+Plan, summary, result assets, and PR remain pending. No worktree, merge, deployment, or paid service.
+
+## Source packet inventory
 
 Ignored local packet: `tmp/pro-selection-refresh-2026-10-29/source-packet.txt`.
 Inventory: `tmp/pro-selection-refresh-2026-10-29/inventory.json`.
