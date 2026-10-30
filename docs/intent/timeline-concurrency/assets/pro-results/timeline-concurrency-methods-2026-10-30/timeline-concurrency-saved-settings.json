@@ -1,0 +1,66 @@
+{
+  "charts": [
+    {
+      "id": "bookings",
+      "type": "timeline",
+      "title": "Lane A occupancy",
+      "note": "2026-01-15 09:00 to 09:12 UTC; half-open occupancy; threshold 1",
+      "field": "lane",
+      "startField": "start",
+      "endField": "end",
+      "layout": { "x": 0, "y": 0, "w": 12, "h": 6 },
+      "facet": {
+        "enabled": false,
+        "type": "wrap",
+        "rowVariable": "",
+        "columnCount": 2
+      },
+      "xAxis": { "scaleType": "linear", "grid": false, "min": 0, "max": 100 },
+      "yAxis": { "scaleType": "linear", "grid": true, "min": 0, "max": 100 },
+      "margin": { "top": 16, "right": 24, "bottom": 44, "left": 62 },
+      "xAxisLabel": "",
+      "yAxisLabel": "",
+      "xGridLines": 5,
+      "yGridLines": 4,
+      "localFilters": [
+        { "type": "value", "field": "included", "values": [true] }
+      ],
+      "filters": [
+        {
+          "type": "interval-contributors",
+          "version": 1,
+          "field": "lane",
+          "startField": "start",
+          "endField": "end",
+          "window": { "startMs": 1768467600000, "endMs": 1768468320000 },
+          "relation": "active-at",
+          "atMs": 1768467840000,
+          "laneValue": "A",
+          "facets": []
+        }
+      ],
+      "concurrency": {
+        "version": 1,
+        "enabled": true,
+        "window": { "startMs": 1768467600000, "endMs": 1768468320000 },
+        "threshold": 1,
+        "measure": "rows",
+        "scope": { "kind": "lane", "value": "A" }
+      }
+    }
+  ],
+  "calculations": [],
+  "gridSettings": {
+    "columnCount": 12,
+    "rowHeight": 100,
+    "containerPadding": 10,
+    "showBackgroundMarkers": true
+  },
+  "metadata": {
+    "name": "Timeline concurrency - Lane A",
+    "version": 1,
+    "createdAt": "2026-10-30T00:00:00.000Z",
+    "modifiedAt": "2026-10-30T00:00:00.000Z"
+  },
+  "colorScales": []
+}

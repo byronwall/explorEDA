@@ -1,5 +1,8 @@
 # Research catalogue
 
+Methods follow-up: [exact Timeline concurrency and contributors](../../research/timeline-concurrency-methods-2026-10-30/README.md)
+gives R013 a finite-window implementation plan. It does not approve implementation or select the next topic.
+
 Design follow-up: [selections and live findings through refresh](../../research/selection-refresh-design-2026-10-29/README.md)
 adds a keyed-refresh capability plan to R077's earlier audit. It does not change catalogue rank or set the next topic.
 

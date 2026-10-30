@@ -1,0 +1,4489 @@
+{
+  "expectedVersion": 1,
+  "contract": "Proposed semantics. Exact integers. Contributor arrays are intentionally exhaustive in this tiny acceptance fixture, not a production storage recommendation.",
+  "peakZeroNote": "If every count is zero, peak is zero and durationAtPeakMs equals the full finite window; meanCountWhileBusy is null because its denominator is zero.",
+  "scenarios": {
+    "base": {
+      "sourceRevision": "fixture-v1",
+      "window": {
+        "start": "2026-01-15T09:00:00.000Z",
+        "end": "2026-01-15T09:12:00.000Z",
+        "startMs": 1768467600000,
+        "endMs": 1768468320000,
+        "durationMs": 720000
+      },
+      "threshold": 1,
+      "referenceLaneKeys": [
+        "[\"string\",\"A\"]",
+        "[\"string\",\"B\"]"
+      ],
+      "sourceIdMap": {
+        "A1": 0,
+        "A2": 1,
+        "A3": 2,
+        "A4": 3,
+        "A5": 4,
+        "A6": 5,
+        "A7": 6,
+        "B1": 7,
+        "B2": 8,
+        "B3": 9,
+        "B4": 10,
+        "Z1": 11,
+        "ML1": 12,
+        "MS1": 13,
+        "IS1": 14,
+        "IE1": 15,
+        "RE1": 16,
+        "OUT1": 17,
+        "OUT2": 18,
+        "POL1": 19
+      },
+      "sourceRowCount": 20,
+      "populationRowCount": 19,
+      "populationExcludedIds": [
+        "POL1"
+      ],
+      "facetExcludedIds": [],
+      "semanticExclusions": {
+        "missing-lane": [
+          "ML1"
+        ],
+        "reversed-end": [
+          "RE1"
+        ],
+        "unreadable-end": [
+          "IE1"
+        ],
+        "unreadable-start": [
+          "IS1",
+          "MS1"
+        ]
+      },
+      "zeroDurationEvents": [
+        {
+          "fixtureId": "Z1",
+          "sourceId": 11,
+          "atMs": 1768467840000,
+          "insideWindow": true
+        }
+      ],
+      "outsideAnalyticalWindow": [
+        "OUT1",
+        "OUT2"
+      ],
+      "positiveIntervalIds": [
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6",
+        "A7",
+        "B1",
+        "B2",
+        "B3",
+        "B4"
+      ],
+      "openContributors": [
+        "A7"
+      ],
+      "clippedContributors": [
+        "A1",
+        "B4"
+      ],
+      "segments": [
+        {
+          "start": "2026-01-15T09:00:00.000Z",
+          "end": "2026-01-15T09:01:00.000Z",
+          "startMs": 1768467600000,
+          "endMs": 1768467660000,
+          "durationMs": 60000,
+          "rowCount": 1,
+          "occupiedLaneCount": 1,
+          "contributors": [
+            "A1"
+          ],
+          "sourceIds": [
+            0
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "A1"
+              ],
+              "sourceIds": [
+                0
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 0,
+              "contributors": [],
+              "sourceIds": []
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:01:00.000Z",
+          "end": "2026-01-15T09:02:00.000Z",
+          "startMs": 1768467660000,
+          "endMs": 1768467720000,
+          "durationMs": 60000,
+          "rowCount": 2,
+          "occupiedLaneCount": 2,
+          "contributors": [
+            "A1",
+            "B1"
+          ],
+          "sourceIds": [
+            0,
+            7
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "A1"
+              ],
+              "sourceIds": [
+                0
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "B1"
+              ],
+              "sourceIds": [
+                7
+              ]
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:02:00.000Z",
+          "end": "2026-01-15T09:03:00.000Z",
+          "startMs": 1768467720000,
+          "endMs": 1768467780000,
+          "durationMs": 60000,
+          "rowCount": 2,
+          "occupiedLaneCount": 2,
+          "contributors": [
+            "A2",
+            "B1"
+          ],
+          "sourceIds": [
+            1,
+            7
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "A2"
+              ],
+              "sourceIds": [
+                1
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "B1"
+              ],
+              "sourceIds": [
+                7
+              ]
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:03:00.000Z",
+          "end": "2026-01-15T09:04:00.000Z",
+          "startMs": 1768467780000,
+          "endMs": 1768467840000,
+          "durationMs": 60000,
+          "rowCount": 4,
+          "occupiedLaneCount": 2,
+          "contributors": [
+            "A2",
+            "A3",
+            "A4",
+            "B1"
+          ],
+          "sourceIds": [
+            1,
+            2,
+            3,
+            7
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 3,
+              "contributors": [
+                "A2",
+                "A3",
+                "A4"
+              ],
+              "sourceIds": [
+                1,
+                2,
+                3
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "B1"
+              ],
+              "sourceIds": [
+                7
+              ]
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:04:00.000Z",
+          "end": "2026-01-15T09:05:00.000Z",
+          "startMs": 1768467840000,
+          "endMs": 1768467900000,
+          "durationMs": 60000,
+          "rowCount": 4,
+          "occupiedLaneCount": 2,
+          "contributors": [
+            "A2",
+            "A3",
+            "A4",
+            "B2"
+          ],
+          "sourceIds": [
+            1,
+            2,
+            3,
+            8
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 3,
+              "contributors": [
+                "A2",
+                "A3",
+                "A4"
+              ],
+              "sourceIds": [
+                1,
+                2,
+                3
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "B2"
+              ],
+              "sourceIds": [
+                8
+              ]
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:05:00.000Z",
+          "end": "2026-01-15T09:06:00.000Z",
+          "startMs": 1768467900000,
+          "endMs": 1768467960000,
+          "durationMs": 60000,
+          "rowCount": 3,
+          "occupiedLaneCount": 2,
+          "contributors": [
+            "A2",
+            "A5",
+            "B2"
+          ],
+          "sourceIds": [
+            1,
+            4,
+            8
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 2,
+              "contributors": [
+                "A2",
+                "A5"
+              ],
+              "sourceIds": [
+                1,
+                4
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "B2"
+              ],
+              "sourceIds": [
+                8
+              ]
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:06:00.000Z",
+          "end": "2026-01-15T09:07:00.000Z",
+          "startMs": 1768467960000,
+          "endMs": 1768468020000,
+          "durationMs": 60000,
+          "rowCount": 2,
+          "occupiedLaneCount": 1,
+          "contributors": [
+            "A5",
+            "A6"
+          ],
+          "sourceIds": [
+            4,
+            5
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 2,
+              "contributors": [
+                "A5",
+                "A6"
+              ],
+              "sourceIds": [
+                4,
+                5
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 0,
+              "contributors": [],
+              "sourceIds": []
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:07:00.000Z",
+          "end": "2026-01-15T09:08:00.000Z",
+          "startMs": 1768468020000,
+          "endMs": 1768468080000,
+          "durationMs": 60000,
+          "rowCount": 2,
+          "occupiedLaneCount": 2,
+          "contributors": [
+            "A6",
+            "B3"
+          ],
+          "sourceIds": [
+            5,
+            9
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "A6"
+              ],
+              "sourceIds": [
+                5
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "B3"
+              ],
+              "sourceIds": [
+                9
+              ]
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:08:00.000Z",
+          "end": "2026-01-15T09:09:00.000Z",
+          "startMs": 1768468080000,
+          "endMs": 1768468140000,
+          "durationMs": 60000,
+          "rowCount": 1,
+          "occupiedLaneCount": 1,
+          "contributors": [
+            "B3"
+          ],
+          "sourceIds": [
+            9
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 0,
+              "contributors": [],
+              "sourceIds": []
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "B3"
+              ],
+              "sourceIds": [
+                9
+              ]
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:09:00.000Z",
+          "end": "2026-01-15T09:10:00.000Z",
+          "startMs": 1768468140000,
+          "endMs": 1768468200000,
+          "durationMs": 60000,
+          "rowCount": 0,
+          "occupiedLaneCount": 0,
+          "contributors": [],
+          "sourceIds": [],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 0,
+              "contributors": [],
+              "sourceIds": []
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 0,
+              "contributors": [],
+              "sourceIds": []
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:10:00.000Z",
+          "end": "2026-01-15T09:11:00.000Z",
+          "startMs": 1768468200000,
+          "endMs": 1768468260000,
+          "durationMs": 60000,
+          "rowCount": 1,
+          "occupiedLaneCount": 1,
+          "contributors": [
+            "A7"
+          ],
+          "sourceIds": [
+            6
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "A7"
+              ],
+              "sourceIds": [
+                6
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 0,
+              "contributors": [],
+              "sourceIds": []
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:11:00.000Z",
+          "end": "2026-01-15T09:12:00.000Z",
+          "startMs": 1768468260000,
+          "endMs": 1768468320000,
+          "durationMs": 60000,
+          "rowCount": 2,
+          "occupiedLaneCount": 2,
+          "contributors": [
+            "A7",
+            "B4"
+          ],
+          "sourceIds": [
+            6,
+            10
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "A7"
+              ],
+              "sourceIds": [
+                6
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "B4"
+              ],
+              "sourceIds": [
+                10
+              ]
+            }
+          }
+        }
+      ],
+      "summary": {
+        "allRows": {
+          "unionBusyDurationMs": 660000,
+          "totalIntervalDurationMs": 1440000,
+          "durationAboveThresholdMs": 480000,
+          "excessRowDurationMs": 780000,
+          "peak": 4,
+          "durationAtPeakMs": 120000,
+          "busyFraction": {
+            "numeratorMs": 660000,
+            "denominatorMs": 720000
+          },
+          "meanCount": {
+            "integralMs": 1440000,
+            "durationMs": 720000
+          },
+          "meanCountWhileBusy": {
+            "integralMs": 1440000,
+            "durationMs": 660000
+          }
+        },
+        "occupiedLanes": {
+          "unionBusyDurationMs": 660000,
+          "totalLaneBusyDurationMs": 1080000,
+          "durationAboveThresholdMs": 420000,
+          "excessLaneDurationMs": 420000,
+          "peak": 2,
+          "durationAtPeakMs": 420000,
+          "busyFraction": {
+            "numeratorMs": 660000,
+            "denominatorMs": 720000
+          },
+          "meanCount": {
+            "integralMs": 1080000,
+            "durationMs": 720000
+          },
+          "meanCountWhileBusy": {
+            "integralMs": 1080000,
+            "durationMs": 660000
+          }
+        },
+        "perLane": {
+          "[\"string\",\"A\"]": {
+            "unionBusyDurationMs": 600000,
+            "totalIntervalDurationMs": 960000,
+            "durationAboveThresholdMs": 240000,
+            "excessRowDurationMs": 360000,
+            "peak": 3,
+            "durationAtPeakMs": 120000,
+            "busyFraction": {
+              "numeratorMs": 600000,
+              "denominatorMs": 720000
+            },
+            "meanCount": {
+              "integralMs": 960000,
+              "durationMs": 720000
+            },
+            "meanCountWhileBusy": {
+              "integralMs": 960000,
+              "durationMs": 600000
+            }
+          },
+          "[\"string\",\"B\"]": {
+            "unionBusyDurationMs": 480000,
+            "totalIntervalDurationMs": 480000,
+            "durationAboveThresholdMs": 0,
+            "excessRowDurationMs": 0,
+            "peak": 1,
+            "durationAtPeakMs": 480000,
+            "busyFraction": {
+              "numeratorMs": 480000,
+              "denominatorMs": 720000
+            },
+            "meanCount": {
+              "integralMs": 480000,
+              "durationMs": 720000
+            },
+            "meanCountWhileBusy": {
+              "integralMs": 480000,
+              "durationMs": 480000
+            }
+          }
+        },
+        "laneConflicts": {
+          "anyLaneAboveThresholdDurationMs": 240000,
+          "sumLaneAboveThresholdDurationMs": 240000,
+          "sumLaneExcessRowDurationMs": 360000,
+          "intervalIdsInvolvedInAnyLaneConflict": [
+            "A2",
+            "A3",
+            "A4",
+            "A5",
+            "A6"
+          ]
+        }
+      }
+    },
+    "confirmed_only": {
+      "sourceRevision": "fixture-v1",
+      "window": {
+        "start": "2026-01-15T09:00:00.000Z",
+        "end": "2026-01-15T09:12:00.000Z",
+        "startMs": 1768467600000,
+        "endMs": 1768468320000,
+        "durationMs": 720000
+      },
+      "threshold": 1,
+      "referenceLaneKeys": [
+        "[\"string\",\"A\"]",
+        "[\"string\",\"B\"]"
+      ],
+      "sourceIdMap": {
+        "A1": 0,
+        "A2": 1,
+        "A3": 2,
+        "A4": 3,
+        "A5": 4,
+        "A6": 5,
+        "A7": 6,
+        "B1": 7,
+        "B2": 8,
+        "B3": 9,
+        "B4": 10,
+        "Z1": 11,
+        "ML1": 12,
+        "MS1": 13,
+        "IS1": 14,
+        "IE1": 15,
+        "RE1": 16,
+        "OUT1": 17,
+        "OUT2": 18,
+        "POL1": 19
+      },
+      "sourceRowCount": 20,
+      "populationRowCount": 17,
+      "populationExcludedIds": [
+        "A7",
+        "B4",
+        "POL1"
+      ],
+      "facetExcludedIds": [],
+      "semanticExclusions": {
+        "missing-lane": [
+          "ML1"
+        ],
+        "reversed-end": [
+          "RE1"
+        ],
+        "unreadable-end": [
+          "IE1"
+        ],
+        "unreadable-start": [
+          "IS1",
+          "MS1"
+        ]
+      },
+      "zeroDurationEvents": [
+        {
+          "fixtureId": "Z1",
+          "sourceId": 11,
+          "atMs": 1768467840000,
+          "insideWindow": true
+        }
+      ],
+      "outsideAnalyticalWindow": [
+        "OUT1",
+        "OUT2"
+      ],
+      "positiveIntervalIds": [
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6",
+        "B1",
+        "B2",
+        "B3"
+      ],
+      "openContributors": [],
+      "clippedContributors": [
+        "A1"
+      ],
+      "segments": [
+        {
+          "start": "2026-01-15T09:00:00.000Z",
+          "end": "2026-01-15T09:01:00.000Z",
+          "startMs": 1768467600000,
+          "endMs": 1768467660000,
+          "durationMs": 60000,
+          "rowCount": 1,
+          "occupiedLaneCount": 1,
+          "contributors": [
+            "A1"
+          ],
+          "sourceIds": [
+            0
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "A1"
+              ],
+              "sourceIds": [
+                0
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 0,
+              "contributors": [],
+              "sourceIds": []
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:01:00.000Z",
+          "end": "2026-01-15T09:02:00.000Z",
+          "startMs": 1768467660000,
+          "endMs": 1768467720000,
+          "durationMs": 60000,
+          "rowCount": 2,
+          "occupiedLaneCount": 2,
+          "contributors": [
+            "A1",
+            "B1"
+          ],
+          "sourceIds": [
+            0,
+            7
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "A1"
+              ],
+              "sourceIds": [
+                0
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "B1"
+              ],
+              "sourceIds": [
+                7
+              ]
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:02:00.000Z",
+          "end": "2026-01-15T09:03:00.000Z",
+          "startMs": 1768467720000,
+          "endMs": 1768467780000,
+          "durationMs": 60000,
+          "rowCount": 2,
+          "occupiedLaneCount": 2,
+          "contributors": [
+            "A2",
+            "B1"
+          ],
+          "sourceIds": [
+            1,
+            7
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "A2"
+              ],
+              "sourceIds": [
+                1
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "B1"
+              ],
+              "sourceIds": [
+                7
+              ]
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:03:00.000Z",
+          "end": "2026-01-15T09:04:00.000Z",
+          "startMs": 1768467780000,
+          "endMs": 1768467840000,
+          "durationMs": 60000,
+          "rowCount": 4,
+          "occupiedLaneCount": 2,
+          "contributors": [
+            "A2",
+            "A3",
+            "A4",
+            "B1"
+          ],
+          "sourceIds": [
+            1,
+            2,
+            3,
+            7
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 3,
+              "contributors": [
+                "A2",
+                "A3",
+                "A4"
+              ],
+              "sourceIds": [
+                1,
+                2,
+                3
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "B1"
+              ],
+              "sourceIds": [
+                7
+              ]
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:04:00.000Z",
+          "end": "2026-01-15T09:05:00.000Z",
+          "startMs": 1768467840000,
+          "endMs": 1768467900000,
+          "durationMs": 60000,
+          "rowCount": 4,
+          "occupiedLaneCount": 2,
+          "contributors": [
+            "A2",
+            "A3",
+            "A4",
+            "B2"
+          ],
+          "sourceIds": [
+            1,
+            2,
+            3,
+            8
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 3,
+              "contributors": [
+                "A2",
+                "A3",
+                "A4"
+              ],
+              "sourceIds": [
+                1,
+                2,
+                3
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "B2"
+              ],
+              "sourceIds": [
+                8
+              ]
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:05:00.000Z",
+          "end": "2026-01-15T09:06:00.000Z",
+          "startMs": 1768467900000,
+          "endMs": 1768467960000,
+          "durationMs": 60000,
+          "rowCount": 3,
+          "occupiedLaneCount": 2,
+          "contributors": [
+            "A2",
+            "A5",
+            "B2"
+          ],
+          "sourceIds": [
+            1,
+            4,
+            8
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 2,
+              "contributors": [
+                "A2",
+                "A5"
+              ],
+              "sourceIds": [
+                1,
+                4
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "B2"
+              ],
+              "sourceIds": [
+                8
+              ]
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:06:00.000Z",
+          "end": "2026-01-15T09:07:00.000Z",
+          "startMs": 1768467960000,
+          "endMs": 1768468020000,
+          "durationMs": 60000,
+          "rowCount": 2,
+          "occupiedLaneCount": 1,
+          "contributors": [
+            "A5",
+            "A6"
+          ],
+          "sourceIds": [
+            4,
+            5
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 2,
+              "contributors": [
+                "A5",
+                "A6"
+              ],
+              "sourceIds": [
+                4,
+                5
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 0,
+              "contributors": [],
+              "sourceIds": []
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:07:00.000Z",
+          "end": "2026-01-15T09:08:00.000Z",
+          "startMs": 1768468020000,
+          "endMs": 1768468080000,
+          "durationMs": 60000,
+          "rowCount": 2,
+          "occupiedLaneCount": 2,
+          "contributors": [
+            "A6",
+            "B3"
+          ],
+          "sourceIds": [
+            5,
+            9
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "A6"
+              ],
+              "sourceIds": [
+                5
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "B3"
+              ],
+              "sourceIds": [
+                9
+              ]
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:08:00.000Z",
+          "end": "2026-01-15T09:09:00.000Z",
+          "startMs": 1768468080000,
+          "endMs": 1768468140000,
+          "durationMs": 60000,
+          "rowCount": 1,
+          "occupiedLaneCount": 1,
+          "contributors": [
+            "B3"
+          ],
+          "sourceIds": [
+            9
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 0,
+              "contributors": [],
+              "sourceIds": []
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "B3"
+              ],
+              "sourceIds": [
+                9
+              ]
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:09:00.000Z",
+          "end": "2026-01-15T09:12:00.000Z",
+          "startMs": 1768468140000,
+          "endMs": 1768468320000,
+          "durationMs": 180000,
+          "rowCount": 0,
+          "occupiedLaneCount": 0,
+          "contributors": [],
+          "sourceIds": [],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 0,
+              "contributors": [],
+              "sourceIds": []
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 0,
+              "contributors": [],
+              "sourceIds": []
+            }
+          }
+        }
+      ],
+      "summary": {
+        "allRows": {
+          "unionBusyDurationMs": 540000,
+          "totalIntervalDurationMs": 1260000,
+          "durationAboveThresholdMs": 420000,
+          "excessRowDurationMs": 720000,
+          "peak": 4,
+          "durationAtPeakMs": 120000,
+          "busyFraction": {
+            "numeratorMs": 540000,
+            "denominatorMs": 720000
+          },
+          "meanCount": {
+            "integralMs": 1260000,
+            "durationMs": 720000
+          },
+          "meanCountWhileBusy": {
+            "integralMs": 1260000,
+            "durationMs": 540000
+          }
+        },
+        "occupiedLanes": {
+          "unionBusyDurationMs": 540000,
+          "totalLaneBusyDurationMs": 900000,
+          "durationAboveThresholdMs": 360000,
+          "excessLaneDurationMs": 360000,
+          "peak": 2,
+          "durationAtPeakMs": 360000,
+          "busyFraction": {
+            "numeratorMs": 540000,
+            "denominatorMs": 720000
+          },
+          "meanCount": {
+            "integralMs": 900000,
+            "durationMs": 720000
+          },
+          "meanCountWhileBusy": {
+            "integralMs": 900000,
+            "durationMs": 540000
+          }
+        },
+        "perLane": {
+          "[\"string\",\"A\"]": {
+            "unionBusyDurationMs": 480000,
+            "totalIntervalDurationMs": 840000,
+            "durationAboveThresholdMs": 240000,
+            "excessRowDurationMs": 360000,
+            "peak": 3,
+            "durationAtPeakMs": 120000,
+            "busyFraction": {
+              "numeratorMs": 480000,
+              "denominatorMs": 720000
+            },
+            "meanCount": {
+              "integralMs": 840000,
+              "durationMs": 720000
+            },
+            "meanCountWhileBusy": {
+              "integralMs": 840000,
+              "durationMs": 480000
+            }
+          },
+          "[\"string\",\"B\"]": {
+            "unionBusyDurationMs": 420000,
+            "totalIntervalDurationMs": 420000,
+            "durationAboveThresholdMs": 0,
+            "excessRowDurationMs": 0,
+            "peak": 1,
+            "durationAtPeakMs": 420000,
+            "busyFraction": {
+              "numeratorMs": 420000,
+              "denominatorMs": 720000
+            },
+            "meanCount": {
+              "integralMs": 420000,
+              "durationMs": 720000
+            },
+            "meanCountWhileBusy": {
+              "integralMs": 420000,
+              "durationMs": 420000
+            }
+          }
+        },
+        "laneConflicts": {
+          "anyLaneAboveThresholdDurationMs": 240000,
+          "sumLaneAboveThresholdDurationMs": 240000,
+          "sumLaneExcessRowDurationMs": 360000,
+          "intervalIdsInvolvedInAnyLaneConflict": [
+            "A2",
+            "A3",
+            "A4",
+            "A5",
+            "A6"
+          ]
+        }
+      }
+    },
+    "facet_A": {
+      "sourceRevision": "fixture-v1",
+      "window": {
+        "start": "2026-01-15T09:00:00.000Z",
+        "end": "2026-01-15T09:12:00.000Z",
+        "startMs": 1768467600000,
+        "endMs": 1768468320000,
+        "durationMs": 720000
+      },
+      "threshold": 1,
+      "referenceLaneKeys": [
+        "[\"string\",\"A\"]",
+        "[\"string\",\"B\"]"
+      ],
+      "sourceIdMap": {
+        "A1": 0,
+        "A2": 1,
+        "A3": 2,
+        "A4": 3,
+        "A5": 4,
+        "A6": 5,
+        "A7": 6,
+        "B1": 7,
+        "B2": 8,
+        "B3": 9,
+        "B4": 10,
+        "Z1": 11,
+        "ML1": 12,
+        "MS1": 13,
+        "IS1": 14,
+        "IE1": 15,
+        "RE1": 16,
+        "OUT1": 17,
+        "OUT2": 18,
+        "POL1": 19
+      },
+      "sourceRowCount": 20,
+      "populationRowCount": 12,
+      "populationExcludedIds": [
+        "POL1"
+      ],
+      "facetExcludedIds": [
+        "B1",
+        "B2",
+        "B3",
+        "B4",
+        "ML1",
+        "OUT1",
+        "OUT2"
+      ],
+      "semanticExclusions": {
+        "reversed-end": [
+          "RE1"
+        ],
+        "unreadable-end": [
+          "IE1"
+        ],
+        "unreadable-start": [
+          "IS1",
+          "MS1"
+        ]
+      },
+      "zeroDurationEvents": [
+        {
+          "fixtureId": "Z1",
+          "sourceId": 11,
+          "atMs": 1768467840000,
+          "insideWindow": true
+        }
+      ],
+      "outsideAnalyticalWindow": [],
+      "positiveIntervalIds": [
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6",
+        "A7"
+      ],
+      "openContributors": [
+        "A7"
+      ],
+      "clippedContributors": [
+        "A1"
+      ],
+      "segments": [
+        {
+          "start": "2026-01-15T09:00:00.000Z",
+          "end": "2026-01-15T09:02:00.000Z",
+          "startMs": 1768467600000,
+          "endMs": 1768467720000,
+          "durationMs": 120000,
+          "rowCount": 1,
+          "occupiedLaneCount": 1,
+          "contributors": [
+            "A1"
+          ],
+          "sourceIds": [
+            0
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "A1"
+              ],
+              "sourceIds": [
+                0
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 0,
+              "contributors": [],
+              "sourceIds": []
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:02:00.000Z",
+          "end": "2026-01-15T09:03:00.000Z",
+          "startMs": 1768467720000,
+          "endMs": 1768467780000,
+          "durationMs": 60000,
+          "rowCount": 1,
+          "occupiedLaneCount": 1,
+          "contributors": [
+            "A2"
+          ],
+          "sourceIds": [
+            1
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "A2"
+              ],
+              "sourceIds": [
+                1
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 0,
+              "contributors": [],
+              "sourceIds": []
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:03:00.000Z",
+          "end": "2026-01-15T09:05:00.000Z",
+          "startMs": 1768467780000,
+          "endMs": 1768467900000,
+          "durationMs": 120000,
+          "rowCount": 3,
+          "occupiedLaneCount": 1,
+          "contributors": [
+            "A2",
+            "A3",
+            "A4"
+          ],
+          "sourceIds": [
+            1,
+            2,
+            3
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 3,
+              "contributors": [
+                "A2",
+                "A3",
+                "A4"
+              ],
+              "sourceIds": [
+                1,
+                2,
+                3
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 0,
+              "contributors": [],
+              "sourceIds": []
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:05:00.000Z",
+          "end": "2026-01-15T09:06:00.000Z",
+          "startMs": 1768467900000,
+          "endMs": 1768467960000,
+          "durationMs": 60000,
+          "rowCount": 2,
+          "occupiedLaneCount": 1,
+          "contributors": [
+            "A2",
+            "A5"
+          ],
+          "sourceIds": [
+            1,
+            4
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 2,
+              "contributors": [
+                "A2",
+                "A5"
+              ],
+              "sourceIds": [
+                1,
+                4
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 0,
+              "contributors": [],
+              "sourceIds": []
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:06:00.000Z",
+          "end": "2026-01-15T09:07:00.000Z",
+          "startMs": 1768467960000,
+          "endMs": 1768468020000,
+          "durationMs": 60000,
+          "rowCount": 2,
+          "occupiedLaneCount": 1,
+          "contributors": [
+            "A5",
+            "A6"
+          ],
+          "sourceIds": [
+            4,
+            5
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 2,
+              "contributors": [
+                "A5",
+                "A6"
+              ],
+              "sourceIds": [
+                4,
+                5
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 0,
+              "contributors": [],
+              "sourceIds": []
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:07:00.000Z",
+          "end": "2026-01-15T09:08:00.000Z",
+          "startMs": 1768468020000,
+          "endMs": 1768468080000,
+          "durationMs": 60000,
+          "rowCount": 1,
+          "occupiedLaneCount": 1,
+          "contributors": [
+            "A6"
+          ],
+          "sourceIds": [
+            5
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "A6"
+              ],
+              "sourceIds": [
+                5
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 0,
+              "contributors": [],
+              "sourceIds": []
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:08:00.000Z",
+          "end": "2026-01-15T09:10:00.000Z",
+          "startMs": 1768468080000,
+          "endMs": 1768468200000,
+          "durationMs": 120000,
+          "rowCount": 0,
+          "occupiedLaneCount": 0,
+          "contributors": [],
+          "sourceIds": [],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 0,
+              "contributors": [],
+              "sourceIds": []
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 0,
+              "contributors": [],
+              "sourceIds": []
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:10:00.000Z",
+          "end": "2026-01-15T09:12:00.000Z",
+          "startMs": 1768468200000,
+          "endMs": 1768468320000,
+          "durationMs": 120000,
+          "rowCount": 1,
+          "occupiedLaneCount": 1,
+          "contributors": [
+            "A7"
+          ],
+          "sourceIds": [
+            6
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "A7"
+              ],
+              "sourceIds": [
+                6
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 0,
+              "contributors": [],
+              "sourceIds": []
+            }
+          }
+        }
+      ],
+      "summary": {
+        "allRows": {
+          "unionBusyDurationMs": 600000,
+          "totalIntervalDurationMs": 960000,
+          "durationAboveThresholdMs": 240000,
+          "excessRowDurationMs": 360000,
+          "peak": 3,
+          "durationAtPeakMs": 120000,
+          "busyFraction": {
+            "numeratorMs": 600000,
+            "denominatorMs": 720000
+          },
+          "meanCount": {
+            "integralMs": 960000,
+            "durationMs": 720000
+          },
+          "meanCountWhileBusy": {
+            "integralMs": 960000,
+            "durationMs": 600000
+          }
+        },
+        "occupiedLanes": {
+          "unionBusyDurationMs": 600000,
+          "totalLaneBusyDurationMs": 600000,
+          "durationAboveThresholdMs": 0,
+          "excessLaneDurationMs": 0,
+          "peak": 1,
+          "durationAtPeakMs": 600000,
+          "busyFraction": {
+            "numeratorMs": 600000,
+            "denominatorMs": 720000
+          },
+          "meanCount": {
+            "integralMs": 600000,
+            "durationMs": 720000
+          },
+          "meanCountWhileBusy": {
+            "integralMs": 600000,
+            "durationMs": 600000
+          }
+        },
+        "perLane": {
+          "[\"string\",\"A\"]": {
+            "unionBusyDurationMs": 600000,
+            "totalIntervalDurationMs": 960000,
+            "durationAboveThresholdMs": 240000,
+            "excessRowDurationMs": 360000,
+            "peak": 3,
+            "durationAtPeakMs": 120000,
+            "busyFraction": {
+              "numeratorMs": 600000,
+              "denominatorMs": 720000
+            },
+            "meanCount": {
+              "integralMs": 960000,
+              "durationMs": 720000
+            },
+            "meanCountWhileBusy": {
+              "integralMs": 960000,
+              "durationMs": 600000
+            }
+          },
+          "[\"string\",\"B\"]": {
+            "unionBusyDurationMs": 0,
+            "totalIntervalDurationMs": 0,
+            "durationAboveThresholdMs": 0,
+            "excessRowDurationMs": 0,
+            "peak": 0,
+            "durationAtPeakMs": 720000,
+            "busyFraction": {
+              "numeratorMs": 0,
+              "denominatorMs": 720000
+            },
+            "meanCount": {
+              "integralMs": 0,
+              "durationMs": 720000
+            },
+            "meanCountWhileBusy": null
+          }
+        },
+        "laneConflicts": {
+          "anyLaneAboveThresholdDurationMs": 240000,
+          "sumLaneAboveThresholdDurationMs": 240000,
+          "sumLaneExcessRowDurationMs": 360000,
+          "intervalIdsInvolvedInAnyLaneConflict": [
+            "A2",
+            "A3",
+            "A4",
+            "A5",
+            "A6"
+          ]
+        }
+      }
+    },
+    "empty_facet": {
+      "sourceRevision": "fixture-v1",
+      "window": {
+        "start": "2026-01-15T09:00:00.000Z",
+        "end": "2026-01-15T09:12:00.000Z",
+        "startMs": 1768467600000,
+        "endMs": 1768468320000,
+        "durationMs": 720000
+      },
+      "threshold": 1,
+      "referenceLaneKeys": [
+        "[\"string\",\"A\"]",
+        "[\"string\",\"B\"]"
+      ],
+      "sourceIdMap": {
+        "A1": 0,
+        "A2": 1,
+        "A3": 2,
+        "A4": 3,
+        "A5": 4,
+        "A6": 5,
+        "A7": 6,
+        "B1": 7,
+        "B2": 8,
+        "B3": 9,
+        "B4": 10,
+        "Z1": 11,
+        "ML1": 12,
+        "MS1": 13,
+        "IS1": 14,
+        "IE1": 15,
+        "RE1": 16,
+        "OUT1": 17,
+        "OUT2": 18,
+        "POL1": 19
+      },
+      "sourceRowCount": 20,
+      "populationRowCount": 0,
+      "populationExcludedIds": [
+        "POL1"
+      ],
+      "facetExcludedIds": [
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6",
+        "A7",
+        "B1",
+        "B2",
+        "B3",
+        "B4",
+        "IE1",
+        "IS1",
+        "ML1",
+        "MS1",
+        "OUT1",
+        "OUT2",
+        "RE1",
+        "Z1"
+      ],
+      "semanticExclusions": {},
+      "zeroDurationEvents": [],
+      "outsideAnalyticalWindow": [],
+      "positiveIntervalIds": [],
+      "openContributors": [],
+      "clippedContributors": [],
+      "segments": [
+        {
+          "start": "2026-01-15T09:00:00.000Z",
+          "end": "2026-01-15T09:12:00.000Z",
+          "startMs": 1768467600000,
+          "endMs": 1768468320000,
+          "durationMs": 720000,
+          "rowCount": 0,
+          "occupiedLaneCount": 0,
+          "contributors": [],
+          "sourceIds": [],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 0,
+              "contributors": [],
+              "sourceIds": []
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 0,
+              "contributors": [],
+              "sourceIds": []
+            }
+          }
+        }
+      ],
+      "summary": {
+        "allRows": {
+          "unionBusyDurationMs": 0,
+          "totalIntervalDurationMs": 0,
+          "durationAboveThresholdMs": 0,
+          "excessRowDurationMs": 0,
+          "peak": 0,
+          "durationAtPeakMs": 720000,
+          "busyFraction": {
+            "numeratorMs": 0,
+            "denominatorMs": 720000
+          },
+          "meanCount": {
+            "integralMs": 0,
+            "durationMs": 720000
+          },
+          "meanCountWhileBusy": null
+        },
+        "occupiedLanes": {
+          "unionBusyDurationMs": 0,
+          "totalLaneBusyDurationMs": 0,
+          "durationAboveThresholdMs": 0,
+          "excessLaneDurationMs": 0,
+          "peak": 0,
+          "durationAtPeakMs": 720000,
+          "busyFraction": {
+            "numeratorMs": 0,
+            "denominatorMs": 720000
+          },
+          "meanCount": {
+            "integralMs": 0,
+            "durationMs": 720000
+          },
+          "meanCountWhileBusy": null
+        },
+        "perLane": {
+          "[\"string\",\"A\"]": {
+            "unionBusyDurationMs": 0,
+            "totalIntervalDurationMs": 0,
+            "durationAboveThresholdMs": 0,
+            "excessRowDurationMs": 0,
+            "peak": 0,
+            "durationAtPeakMs": 720000,
+            "busyFraction": {
+              "numeratorMs": 0,
+              "denominatorMs": 720000
+            },
+            "meanCount": {
+              "integralMs": 0,
+              "durationMs": 720000
+            },
+            "meanCountWhileBusy": null
+          },
+          "[\"string\",\"B\"]": {
+            "unionBusyDurationMs": 0,
+            "totalIntervalDurationMs": 0,
+            "durationAboveThresholdMs": 0,
+            "excessRowDurationMs": 0,
+            "peak": 0,
+            "durationAtPeakMs": 720000,
+            "busyFraction": {
+              "numeratorMs": 0,
+              "denominatorMs": 720000
+            },
+            "meanCount": {
+              "integralMs": 0,
+              "durationMs": 720000
+            },
+            "meanCountWhileBusy": null
+          }
+        },
+        "laneConflicts": {
+          "anyLaneAboveThresholdDurationMs": 0,
+          "sumLaneAboveThresholdDurationMs": 0,
+          "sumLaneExcessRowDurationMs": 0,
+          "intervalIdsInvolvedInAnyLaneConflict": []
+        }
+      }
+    },
+    "zero_event_only": {
+      "sourceRevision": "fixture-v1",
+      "window": {
+        "start": "2026-01-15T09:00:00.000Z",
+        "end": "2026-01-15T09:12:00.000Z",
+        "startMs": 1768467600000,
+        "endMs": 1768468320000,
+        "durationMs": 720000
+      },
+      "threshold": 1,
+      "referenceLaneKeys": [
+        "[\"string\",\"A\"]",
+        "[\"string\",\"B\"]"
+      ],
+      "sourceIdMap": {
+        "A1": 0,
+        "A2": 1,
+        "A3": 2,
+        "A4": 3,
+        "A5": 4,
+        "A6": 5,
+        "A7": 6,
+        "B1": 7,
+        "B2": 8,
+        "B3": 9,
+        "B4": 10,
+        "Z1": 11,
+        "ML1": 12,
+        "MS1": 13,
+        "IS1": 14,
+        "IE1": 15,
+        "RE1": 16,
+        "OUT1": 17,
+        "OUT2": 18,
+        "POL1": 19
+      },
+      "sourceRowCount": 20,
+      "populationRowCount": 1,
+      "populationExcludedIds": [
+        "POL1"
+      ],
+      "facetExcludedIds": [
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6",
+        "A7",
+        "B1",
+        "B2",
+        "B3",
+        "B4",
+        "IE1",
+        "IS1",
+        "ML1",
+        "MS1",
+        "OUT1",
+        "OUT2",
+        "RE1"
+      ],
+      "semanticExclusions": {},
+      "zeroDurationEvents": [
+        {
+          "fixtureId": "Z1",
+          "sourceId": 11,
+          "atMs": 1768467840000,
+          "insideWindow": true
+        }
+      ],
+      "outsideAnalyticalWindow": [],
+      "positiveIntervalIds": [],
+      "openContributors": [],
+      "clippedContributors": [],
+      "segments": [
+        {
+          "start": "2026-01-15T09:00:00.000Z",
+          "end": "2026-01-15T09:12:00.000Z",
+          "startMs": 1768467600000,
+          "endMs": 1768468320000,
+          "durationMs": 720000,
+          "rowCount": 0,
+          "occupiedLaneCount": 0,
+          "contributors": [],
+          "sourceIds": [],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 0,
+              "contributors": [],
+              "sourceIds": []
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 0,
+              "contributors": [],
+              "sourceIds": []
+            }
+          }
+        }
+      ],
+      "summary": {
+        "allRows": {
+          "unionBusyDurationMs": 0,
+          "totalIntervalDurationMs": 0,
+          "durationAboveThresholdMs": 0,
+          "excessRowDurationMs": 0,
+          "peak": 0,
+          "durationAtPeakMs": 720000,
+          "busyFraction": {
+            "numeratorMs": 0,
+            "denominatorMs": 720000
+          },
+          "meanCount": {
+            "integralMs": 0,
+            "durationMs": 720000
+          },
+          "meanCountWhileBusy": null
+        },
+        "occupiedLanes": {
+          "unionBusyDurationMs": 0,
+          "totalLaneBusyDurationMs": 0,
+          "durationAboveThresholdMs": 0,
+          "excessLaneDurationMs": 0,
+          "peak": 0,
+          "durationAtPeakMs": 720000,
+          "busyFraction": {
+            "numeratorMs": 0,
+            "denominatorMs": 720000
+          },
+          "meanCount": {
+            "integralMs": 0,
+            "durationMs": 720000
+          },
+          "meanCountWhileBusy": null
+        },
+        "perLane": {
+          "[\"string\",\"A\"]": {
+            "unionBusyDurationMs": 0,
+            "totalIntervalDurationMs": 0,
+            "durationAboveThresholdMs": 0,
+            "excessRowDurationMs": 0,
+            "peak": 0,
+            "durationAtPeakMs": 720000,
+            "busyFraction": {
+              "numeratorMs": 0,
+              "denominatorMs": 720000
+            },
+            "meanCount": {
+              "integralMs": 0,
+              "durationMs": 720000
+            },
+            "meanCountWhileBusy": null
+          },
+          "[\"string\",\"B\"]": {
+            "unionBusyDurationMs": 0,
+            "totalIntervalDurationMs": 0,
+            "durationAboveThresholdMs": 0,
+            "excessRowDurationMs": 0,
+            "peak": 0,
+            "durationAtPeakMs": 720000,
+            "busyFraction": {
+              "numeratorMs": 0,
+              "denominatorMs": 720000
+            },
+            "meanCount": {
+              "integralMs": 0,
+              "durationMs": 720000
+            },
+            "meanCountWhileBusy": null
+          }
+        },
+        "laneConflicts": {
+          "anyLaneAboveThresholdDurationMs": 0,
+          "sumLaneAboveThresholdDurationMs": 0,
+          "sumLaneExcessRowDurationMs": 0,
+          "intervalIdsInvolvedInAnyLaneConflict": []
+        }
+      }
+    },
+    "no_population_filter": {
+      "sourceRevision": "fixture-v1",
+      "window": {
+        "start": "2026-01-15T09:00:00.000Z",
+        "end": "2026-01-15T09:12:00.000Z",
+        "startMs": 1768467600000,
+        "endMs": 1768468320000,
+        "durationMs": 720000
+      },
+      "threshold": 1,
+      "referenceLaneKeys": [
+        "[\"string\",\"A\"]",
+        "[\"string\",\"B\"]"
+      ],
+      "sourceIdMap": {
+        "A1": 0,
+        "A2": 1,
+        "A3": 2,
+        "A4": 3,
+        "A5": 4,
+        "A6": 5,
+        "A7": 6,
+        "B1": 7,
+        "B2": 8,
+        "B3": 9,
+        "B4": 10,
+        "Z1": 11,
+        "ML1": 12,
+        "MS1": 13,
+        "IS1": 14,
+        "IE1": 15,
+        "RE1": 16,
+        "OUT1": 17,
+        "OUT2": 18,
+        "POL1": 19
+      },
+      "sourceRowCount": 20,
+      "populationRowCount": 20,
+      "populationExcludedIds": [],
+      "facetExcludedIds": [],
+      "semanticExclusions": {
+        "missing-lane": [
+          "ML1"
+        ],
+        "reversed-end": [
+          "RE1"
+        ],
+        "unreadable-end": [
+          "IE1"
+        ],
+        "unreadable-start": [
+          "IS1",
+          "MS1"
+        ]
+      },
+      "zeroDurationEvents": [
+        {
+          "fixtureId": "Z1",
+          "sourceId": 11,
+          "atMs": 1768467840000,
+          "insideWindow": true
+        }
+      ],
+      "outsideAnalyticalWindow": [
+        "OUT1",
+        "OUT2"
+      ],
+      "positiveIntervalIds": [
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6",
+        "A7",
+        "B1",
+        "B2",
+        "B3",
+        "B4",
+        "POL1"
+      ],
+      "openContributors": [
+        "A7"
+      ],
+      "clippedContributors": [
+        "A1",
+        "B4"
+      ],
+      "segments": [
+        {
+          "start": "2026-01-15T09:00:00.000Z",
+          "end": "2026-01-15T09:01:00.000Z",
+          "startMs": 1768467600000,
+          "endMs": 1768467660000,
+          "durationMs": 60000,
+          "rowCount": 1,
+          "occupiedLaneCount": 1,
+          "contributors": [
+            "A1"
+          ],
+          "sourceIds": [
+            0
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "A1"
+              ],
+              "sourceIds": [
+                0
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 0,
+              "contributors": [],
+              "sourceIds": []
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:01:00.000Z",
+          "end": "2026-01-15T09:02:00.000Z",
+          "startMs": 1768467660000,
+          "endMs": 1768467720000,
+          "durationMs": 60000,
+          "rowCount": 2,
+          "occupiedLaneCount": 2,
+          "contributors": [
+            "A1",
+            "B1"
+          ],
+          "sourceIds": [
+            0,
+            7
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "A1"
+              ],
+              "sourceIds": [
+                0
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "B1"
+              ],
+              "sourceIds": [
+                7
+              ]
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:02:00.000Z",
+          "end": "2026-01-15T09:03:00.000Z",
+          "startMs": 1768467720000,
+          "endMs": 1768467780000,
+          "durationMs": 60000,
+          "rowCount": 2,
+          "occupiedLaneCount": 2,
+          "contributors": [
+            "A2",
+            "B1"
+          ],
+          "sourceIds": [
+            1,
+            7
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "A2"
+              ],
+              "sourceIds": [
+                1
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "B1"
+              ],
+              "sourceIds": [
+                7
+              ]
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:03:00.000Z",
+          "end": "2026-01-15T09:04:00.000Z",
+          "startMs": 1768467780000,
+          "endMs": 1768467840000,
+          "durationMs": 60000,
+          "rowCount": 4,
+          "occupiedLaneCount": 2,
+          "contributors": [
+            "A2",
+            "A3",
+            "A4",
+            "B1"
+          ],
+          "sourceIds": [
+            1,
+            2,
+            3,
+            7
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 3,
+              "contributors": [
+                "A2",
+                "A3",
+                "A4"
+              ],
+              "sourceIds": [
+                1,
+                2,
+                3
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "B1"
+              ],
+              "sourceIds": [
+                7
+              ]
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:04:00.000Z",
+          "end": "2026-01-15T09:05:00.000Z",
+          "startMs": 1768467840000,
+          "endMs": 1768467900000,
+          "durationMs": 60000,
+          "rowCount": 4,
+          "occupiedLaneCount": 2,
+          "contributors": [
+            "A2",
+            "A3",
+            "A4",
+            "B2"
+          ],
+          "sourceIds": [
+            1,
+            2,
+            3,
+            8
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 3,
+              "contributors": [
+                "A2",
+                "A3",
+                "A4"
+              ],
+              "sourceIds": [
+                1,
+                2,
+                3
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "B2"
+              ],
+              "sourceIds": [
+                8
+              ]
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:05:00.000Z",
+          "end": "2026-01-15T09:06:00.000Z",
+          "startMs": 1768467900000,
+          "endMs": 1768467960000,
+          "durationMs": 60000,
+          "rowCount": 3,
+          "occupiedLaneCount": 2,
+          "contributors": [
+            "A2",
+            "A5",
+            "B2"
+          ],
+          "sourceIds": [
+            1,
+            4,
+            8
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 2,
+              "contributors": [
+                "A2",
+                "A5"
+              ],
+              "sourceIds": [
+                1,
+                4
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "B2"
+              ],
+              "sourceIds": [
+                8
+              ]
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:06:00.000Z",
+          "end": "2026-01-15T09:07:00.000Z",
+          "startMs": 1768467960000,
+          "endMs": 1768468020000,
+          "durationMs": 60000,
+          "rowCount": 2,
+          "occupiedLaneCount": 1,
+          "contributors": [
+            "A5",
+            "A6"
+          ],
+          "sourceIds": [
+            4,
+            5
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 2,
+              "contributors": [
+                "A5",
+                "A6"
+              ],
+              "sourceIds": [
+                4,
+                5
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 0,
+              "contributors": [],
+              "sourceIds": []
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:07:00.000Z",
+          "end": "2026-01-15T09:08:00.000Z",
+          "startMs": 1768468020000,
+          "endMs": 1768468080000,
+          "durationMs": 60000,
+          "rowCount": 2,
+          "occupiedLaneCount": 2,
+          "contributors": [
+            "A6",
+            "B3"
+          ],
+          "sourceIds": [
+            5,
+            9
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "A6"
+              ],
+              "sourceIds": [
+                5
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "B3"
+              ],
+              "sourceIds": [
+                9
+              ]
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:08:00.000Z",
+          "end": "2026-01-15T09:09:00.000Z",
+          "startMs": 1768468080000,
+          "endMs": 1768468140000,
+          "durationMs": 60000,
+          "rowCount": 1,
+          "occupiedLaneCount": 1,
+          "contributors": [
+            "B3"
+          ],
+          "sourceIds": [
+            9
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 0,
+              "contributors": [],
+              "sourceIds": []
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "B3"
+              ],
+              "sourceIds": [
+                9
+              ]
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:09:00.000Z",
+          "end": "2026-01-15T09:10:00.000Z",
+          "startMs": 1768468140000,
+          "endMs": 1768468200000,
+          "durationMs": 60000,
+          "rowCount": 1,
+          "occupiedLaneCount": 1,
+          "contributors": [
+            "POL1"
+          ],
+          "sourceIds": [
+            19
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "POL1"
+              ],
+              "sourceIds": [
+                19
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 0,
+              "contributors": [],
+              "sourceIds": []
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:10:00.000Z",
+          "end": "2026-01-15T09:11:00.000Z",
+          "startMs": 1768468200000,
+          "endMs": 1768468260000,
+          "durationMs": 60000,
+          "rowCount": 1,
+          "occupiedLaneCount": 1,
+          "contributors": [
+            "A7"
+          ],
+          "sourceIds": [
+            6
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "A7"
+              ],
+              "sourceIds": [
+                6
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 0,
+              "contributors": [],
+              "sourceIds": []
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:11:00.000Z",
+          "end": "2026-01-15T09:12:00.000Z",
+          "startMs": 1768468260000,
+          "endMs": 1768468320000,
+          "durationMs": 60000,
+          "rowCount": 2,
+          "occupiedLaneCount": 2,
+          "contributors": [
+            "A7",
+            "B4"
+          ],
+          "sourceIds": [
+            6,
+            10
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "A7"
+              ],
+              "sourceIds": [
+                6
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "B4"
+              ],
+              "sourceIds": [
+                10
+              ]
+            }
+          }
+        }
+      ],
+      "summary": {
+        "allRows": {
+          "unionBusyDurationMs": 720000,
+          "totalIntervalDurationMs": 1500000,
+          "durationAboveThresholdMs": 480000,
+          "excessRowDurationMs": 780000,
+          "peak": 4,
+          "durationAtPeakMs": 120000,
+          "busyFraction": {
+            "numeratorMs": 720000,
+            "denominatorMs": 720000
+          },
+          "meanCount": {
+            "integralMs": 1500000,
+            "durationMs": 720000
+          },
+          "meanCountWhileBusy": {
+            "integralMs": 1500000,
+            "durationMs": 720000
+          }
+        },
+        "occupiedLanes": {
+          "unionBusyDurationMs": 720000,
+          "totalLaneBusyDurationMs": 1140000,
+          "durationAboveThresholdMs": 420000,
+          "excessLaneDurationMs": 420000,
+          "peak": 2,
+          "durationAtPeakMs": 420000,
+          "busyFraction": {
+            "numeratorMs": 720000,
+            "denominatorMs": 720000
+          },
+          "meanCount": {
+            "integralMs": 1140000,
+            "durationMs": 720000
+          },
+          "meanCountWhileBusy": {
+            "integralMs": 1140000,
+            "durationMs": 720000
+          }
+        },
+        "perLane": {
+          "[\"string\",\"A\"]": {
+            "unionBusyDurationMs": 660000,
+            "totalIntervalDurationMs": 1020000,
+            "durationAboveThresholdMs": 240000,
+            "excessRowDurationMs": 360000,
+            "peak": 3,
+            "durationAtPeakMs": 120000,
+            "busyFraction": {
+              "numeratorMs": 660000,
+              "denominatorMs": 720000
+            },
+            "meanCount": {
+              "integralMs": 1020000,
+              "durationMs": 720000
+            },
+            "meanCountWhileBusy": {
+              "integralMs": 1020000,
+              "durationMs": 660000
+            }
+          },
+          "[\"string\",\"B\"]": {
+            "unionBusyDurationMs": 480000,
+            "totalIntervalDurationMs": 480000,
+            "durationAboveThresholdMs": 0,
+            "excessRowDurationMs": 0,
+            "peak": 1,
+            "durationAtPeakMs": 480000,
+            "busyFraction": {
+              "numeratorMs": 480000,
+              "denominatorMs": 720000
+            },
+            "meanCount": {
+              "integralMs": 480000,
+              "durationMs": 720000
+            },
+            "meanCountWhileBusy": {
+              "integralMs": 480000,
+              "durationMs": 480000
+            }
+          }
+        },
+        "laneConflicts": {
+          "anyLaneAboveThresholdDurationMs": 240000,
+          "sumLaneAboveThresholdDurationMs": 240000,
+          "sumLaneExcessRowDurationMs": 360000,
+          "intervalIdsInvolvedInAnyLaneConflict": [
+            "A2",
+            "A3",
+            "A4",
+            "A5",
+            "A6"
+          ]
+        }
+      }
+    },
+    "restored_base": {
+      "sourceRevision": "fixture-v1",
+      "window": {
+        "start": "2026-01-15T09:00:00.000Z",
+        "end": "2026-01-15T09:12:00.000Z",
+        "startMs": 1768467600000,
+        "endMs": 1768468320000,
+        "durationMs": 720000
+      },
+      "threshold": 1,
+      "referenceLaneKeys": [
+        "[\"string\",\"A\"]",
+        "[\"string\",\"B\"]"
+      ],
+      "sourceIdMap": {
+        "A1": 0,
+        "A2": 1,
+        "A3": 2,
+        "A4": 3,
+        "A5": 4,
+        "A6": 5,
+        "A7": 6,
+        "B1": 7,
+        "B2": 8,
+        "B3": 9,
+        "B4": 10,
+        "Z1": 11,
+        "ML1": 12,
+        "MS1": 13,
+        "IS1": 14,
+        "IE1": 15,
+        "RE1": 16,
+        "OUT1": 17,
+        "OUT2": 18,
+        "POL1": 19
+      },
+      "sourceRowCount": 20,
+      "populationRowCount": 19,
+      "populationExcludedIds": [
+        "POL1"
+      ],
+      "facetExcludedIds": [],
+      "semanticExclusions": {
+        "missing-lane": [
+          "ML1"
+        ],
+        "reversed-end": [
+          "RE1"
+        ],
+        "unreadable-end": [
+          "IE1"
+        ],
+        "unreadable-start": [
+          "IS1",
+          "MS1"
+        ]
+      },
+      "zeroDurationEvents": [
+        {
+          "fixtureId": "Z1",
+          "sourceId": 11,
+          "atMs": 1768467840000,
+          "insideWindow": true
+        }
+      ],
+      "outsideAnalyticalWindow": [
+        "OUT1",
+        "OUT2"
+      ],
+      "positiveIntervalIds": [
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6",
+        "A7",
+        "B1",
+        "B2",
+        "B3",
+        "B4"
+      ],
+      "openContributors": [
+        "A7"
+      ],
+      "clippedContributors": [
+        "A1",
+        "B4"
+      ],
+      "segments": [
+        {
+          "start": "2026-01-15T09:00:00.000Z",
+          "end": "2026-01-15T09:01:00.000Z",
+          "startMs": 1768467600000,
+          "endMs": 1768467660000,
+          "durationMs": 60000,
+          "rowCount": 1,
+          "occupiedLaneCount": 1,
+          "contributors": [
+            "A1"
+          ],
+          "sourceIds": [
+            0
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "A1"
+              ],
+              "sourceIds": [
+                0
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 0,
+              "contributors": [],
+              "sourceIds": []
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:01:00.000Z",
+          "end": "2026-01-15T09:02:00.000Z",
+          "startMs": 1768467660000,
+          "endMs": 1768467720000,
+          "durationMs": 60000,
+          "rowCount": 2,
+          "occupiedLaneCount": 2,
+          "contributors": [
+            "A1",
+            "B1"
+          ],
+          "sourceIds": [
+            0,
+            7
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "A1"
+              ],
+              "sourceIds": [
+                0
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "B1"
+              ],
+              "sourceIds": [
+                7
+              ]
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:02:00.000Z",
+          "end": "2026-01-15T09:03:00.000Z",
+          "startMs": 1768467720000,
+          "endMs": 1768467780000,
+          "durationMs": 60000,
+          "rowCount": 2,
+          "occupiedLaneCount": 2,
+          "contributors": [
+            "A2",
+            "B1"
+          ],
+          "sourceIds": [
+            1,
+            7
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "A2"
+              ],
+              "sourceIds": [
+                1
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "B1"
+              ],
+              "sourceIds": [
+                7
+              ]
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:03:00.000Z",
+          "end": "2026-01-15T09:04:00.000Z",
+          "startMs": 1768467780000,
+          "endMs": 1768467840000,
+          "durationMs": 60000,
+          "rowCount": 4,
+          "occupiedLaneCount": 2,
+          "contributors": [
+            "A2",
+            "A3",
+            "A4",
+            "B1"
+          ],
+          "sourceIds": [
+            1,
+            2,
+            3,
+            7
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 3,
+              "contributors": [
+                "A2",
+                "A3",
+                "A4"
+              ],
+              "sourceIds": [
+                1,
+                2,
+                3
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "B1"
+              ],
+              "sourceIds": [
+                7
+              ]
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:04:00.000Z",
+          "end": "2026-01-15T09:05:00.000Z",
+          "startMs": 1768467840000,
+          "endMs": 1768467900000,
+          "durationMs": 60000,
+          "rowCount": 4,
+          "occupiedLaneCount": 2,
+          "contributors": [
+            "A2",
+            "A3",
+            "A4",
+            "B2"
+          ],
+          "sourceIds": [
+            1,
+            2,
+            3,
+            8
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 3,
+              "contributors": [
+                "A2",
+                "A3",
+                "A4"
+              ],
+              "sourceIds": [
+                1,
+                2,
+                3
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "B2"
+              ],
+              "sourceIds": [
+                8
+              ]
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:05:00.000Z",
+          "end": "2026-01-15T09:06:00.000Z",
+          "startMs": 1768467900000,
+          "endMs": 1768467960000,
+          "durationMs": 60000,
+          "rowCount": 3,
+          "occupiedLaneCount": 2,
+          "contributors": [
+            "A2",
+            "A5",
+            "B2"
+          ],
+          "sourceIds": [
+            1,
+            4,
+            8
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 2,
+              "contributors": [
+                "A2",
+                "A5"
+              ],
+              "sourceIds": [
+                1,
+                4
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "B2"
+              ],
+              "sourceIds": [
+                8
+              ]
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:06:00.000Z",
+          "end": "2026-01-15T09:07:00.000Z",
+          "startMs": 1768467960000,
+          "endMs": 1768468020000,
+          "durationMs": 60000,
+          "rowCount": 2,
+          "occupiedLaneCount": 1,
+          "contributors": [
+            "A5",
+            "A6"
+          ],
+          "sourceIds": [
+            4,
+            5
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 2,
+              "contributors": [
+                "A5",
+                "A6"
+              ],
+              "sourceIds": [
+                4,
+                5
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 0,
+              "contributors": [],
+              "sourceIds": []
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:07:00.000Z",
+          "end": "2026-01-15T09:08:00.000Z",
+          "startMs": 1768468020000,
+          "endMs": 1768468080000,
+          "durationMs": 60000,
+          "rowCount": 2,
+          "occupiedLaneCount": 2,
+          "contributors": [
+            "A6",
+            "B3"
+          ],
+          "sourceIds": [
+            5,
+            9
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "A6"
+              ],
+              "sourceIds": [
+                5
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "B3"
+              ],
+              "sourceIds": [
+                9
+              ]
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:08:00.000Z",
+          "end": "2026-01-15T09:09:00.000Z",
+          "startMs": 1768468080000,
+          "endMs": 1768468140000,
+          "durationMs": 60000,
+          "rowCount": 1,
+          "occupiedLaneCount": 1,
+          "contributors": [
+            "B3"
+          ],
+          "sourceIds": [
+            9
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 0,
+              "contributors": [],
+              "sourceIds": []
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "B3"
+              ],
+              "sourceIds": [
+                9
+              ]
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:09:00.000Z",
+          "end": "2026-01-15T09:10:00.000Z",
+          "startMs": 1768468140000,
+          "endMs": 1768468200000,
+          "durationMs": 60000,
+          "rowCount": 0,
+          "occupiedLaneCount": 0,
+          "contributors": [],
+          "sourceIds": [],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 0,
+              "contributors": [],
+              "sourceIds": []
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 0,
+              "contributors": [],
+              "sourceIds": []
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:10:00.000Z",
+          "end": "2026-01-15T09:11:00.000Z",
+          "startMs": 1768468200000,
+          "endMs": 1768468260000,
+          "durationMs": 60000,
+          "rowCount": 1,
+          "occupiedLaneCount": 1,
+          "contributors": [
+            "A7"
+          ],
+          "sourceIds": [
+            6
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "A7"
+              ],
+              "sourceIds": [
+                6
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 0,
+              "contributors": [],
+              "sourceIds": []
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:11:00.000Z",
+          "end": "2026-01-15T09:12:00.000Z",
+          "startMs": 1768468260000,
+          "endMs": 1768468320000,
+          "durationMs": 60000,
+          "rowCount": 2,
+          "occupiedLaneCount": 2,
+          "contributors": [
+            "A7",
+            "B4"
+          ],
+          "sourceIds": [
+            6,
+            10
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "A7"
+              ],
+              "sourceIds": [
+                6
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "B4"
+              ],
+              "sourceIds": [
+                10
+              ]
+            }
+          }
+        }
+      ],
+      "summary": {
+        "allRows": {
+          "unionBusyDurationMs": 660000,
+          "totalIntervalDurationMs": 1440000,
+          "durationAboveThresholdMs": 480000,
+          "excessRowDurationMs": 780000,
+          "peak": 4,
+          "durationAtPeakMs": 120000,
+          "busyFraction": {
+            "numeratorMs": 660000,
+            "denominatorMs": 720000
+          },
+          "meanCount": {
+            "integralMs": 1440000,
+            "durationMs": 720000
+          },
+          "meanCountWhileBusy": {
+            "integralMs": 1440000,
+            "durationMs": 660000
+          }
+        },
+        "occupiedLanes": {
+          "unionBusyDurationMs": 660000,
+          "totalLaneBusyDurationMs": 1080000,
+          "durationAboveThresholdMs": 420000,
+          "excessLaneDurationMs": 420000,
+          "peak": 2,
+          "durationAtPeakMs": 420000,
+          "busyFraction": {
+            "numeratorMs": 660000,
+            "denominatorMs": 720000
+          },
+          "meanCount": {
+            "integralMs": 1080000,
+            "durationMs": 720000
+          },
+          "meanCountWhileBusy": {
+            "integralMs": 1080000,
+            "durationMs": 660000
+          }
+        },
+        "perLane": {
+          "[\"string\",\"A\"]": {
+            "unionBusyDurationMs": 600000,
+            "totalIntervalDurationMs": 960000,
+            "durationAboveThresholdMs": 240000,
+            "excessRowDurationMs": 360000,
+            "peak": 3,
+            "durationAtPeakMs": 120000,
+            "busyFraction": {
+              "numeratorMs": 600000,
+              "denominatorMs": 720000
+            },
+            "meanCount": {
+              "integralMs": 960000,
+              "durationMs": 720000
+            },
+            "meanCountWhileBusy": {
+              "integralMs": 960000,
+              "durationMs": 600000
+            }
+          },
+          "[\"string\",\"B\"]": {
+            "unionBusyDurationMs": 480000,
+            "totalIntervalDurationMs": 480000,
+            "durationAboveThresholdMs": 0,
+            "excessRowDurationMs": 0,
+            "peak": 1,
+            "durationAtPeakMs": 480000,
+            "busyFraction": {
+              "numeratorMs": 480000,
+              "denominatorMs": 720000
+            },
+            "meanCount": {
+              "integralMs": 480000,
+              "durationMs": 720000
+            },
+            "meanCountWhileBusy": {
+              "integralMs": 480000,
+              "durationMs": 480000
+            }
+          }
+        },
+        "laneConflicts": {
+          "anyLaneAboveThresholdDurationMs": 240000,
+          "sumLaneAboveThresholdDurationMs": 240000,
+          "sumLaneExcessRowDurationMs": 360000,
+          "intervalIdsInvolvedInAnyLaneConflict": [
+            "A2",
+            "A3",
+            "A4",
+            "A5",
+            "A6"
+          ]
+        }
+      }
+    },
+    "source_refresh": {
+      "sourceRevision": "fixture-v2",
+      "window": {
+        "start": "2026-01-15T09:00:00.000Z",
+        "end": "2026-01-15T09:12:00.000Z",
+        "startMs": 1768467600000,
+        "endMs": 1768468320000,
+        "durationMs": 720000
+      },
+      "threshold": 1,
+      "referenceLaneKeys": [
+        "[\"string\",\"A\"]",
+        "[\"string\",\"B\"]"
+      ],
+      "sourceIdMap": {
+        "A8": 0,
+        "POL1": 1,
+        "OUT2": 2,
+        "OUT1": 3,
+        "RE1": 4,
+        "IE1": 5,
+        "IS1": 6,
+        "MS1": 7,
+        "ML1": 8,
+        "Z1": 9,
+        "B3": 10,
+        "B2": 11,
+        "B1": 12,
+        "A7": 13,
+        "A6": 14,
+        "A5": 15,
+        "A4": 16,
+        "A3": 17,
+        "A2": 18,
+        "A1": 19
+      },
+      "sourceRowCount": 20,
+      "populationRowCount": 19,
+      "populationExcludedIds": [
+        "POL1"
+      ],
+      "facetExcludedIds": [],
+      "semanticExclusions": {
+        "missing-lane": [
+          "ML1"
+        ],
+        "reversed-end": [
+          "RE1"
+        ],
+        "unreadable-end": [
+          "IE1"
+        ],
+        "unreadable-start": [
+          "IS1",
+          "MS1"
+        ]
+      },
+      "zeroDurationEvents": [
+        {
+          "fixtureId": "Z1",
+          "sourceId": 9,
+          "atMs": 1768467840000,
+          "insideWindow": true
+        }
+      ],
+      "outsideAnalyticalWindow": [
+        "OUT1",
+        "OUT2"
+      ],
+      "positiveIntervalIds": [
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6",
+        "A7",
+        "A8",
+        "B1",
+        "B2",
+        "B3"
+      ],
+      "openContributors": [],
+      "clippedContributors": [
+        "A1"
+      ],
+      "segments": [
+        {
+          "start": "2026-01-15T09:00:00.000Z",
+          "end": "2026-01-15T09:01:00.000Z",
+          "startMs": 1768467600000,
+          "endMs": 1768467660000,
+          "durationMs": 60000,
+          "rowCount": 1,
+          "occupiedLaneCount": 1,
+          "contributors": [
+            "A1"
+          ],
+          "sourceIds": [
+            19
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "A1"
+              ],
+              "sourceIds": [
+                19
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 0,
+              "contributors": [],
+              "sourceIds": []
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:01:00.000Z",
+          "end": "2026-01-15T09:02:00.000Z",
+          "startMs": 1768467660000,
+          "endMs": 1768467720000,
+          "durationMs": 60000,
+          "rowCount": 2,
+          "occupiedLaneCount": 2,
+          "contributors": [
+            "A1",
+            "B1"
+          ],
+          "sourceIds": [
+            19,
+            12
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "A1"
+              ],
+              "sourceIds": [
+                19
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "B1"
+              ],
+              "sourceIds": [
+                12
+              ]
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:02:00.000Z",
+          "end": "2026-01-15T09:03:00.000Z",
+          "startMs": 1768467720000,
+          "endMs": 1768467780000,
+          "durationMs": 60000,
+          "rowCount": 2,
+          "occupiedLaneCount": 2,
+          "contributors": [
+            "A2",
+            "B1"
+          ],
+          "sourceIds": [
+            18,
+            12
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "A2"
+              ],
+              "sourceIds": [
+                18
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "B1"
+              ],
+              "sourceIds": [
+                12
+              ]
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:03:00.000Z",
+          "end": "2026-01-15T09:04:00.000Z",
+          "startMs": 1768467780000,
+          "endMs": 1768467840000,
+          "durationMs": 60000,
+          "rowCount": 4,
+          "occupiedLaneCount": 2,
+          "contributors": [
+            "A2",
+            "A3",
+            "A4",
+            "B1"
+          ],
+          "sourceIds": [
+            18,
+            17,
+            16,
+            12
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 3,
+              "contributors": [
+                "A2",
+                "A3",
+                "A4"
+              ],
+              "sourceIds": [
+                18,
+                17,
+                16
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "B1"
+              ],
+              "sourceIds": [
+                12
+              ]
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:04:00.000Z",
+          "end": "2026-01-15T09:04:30.000Z",
+          "startMs": 1768467840000,
+          "endMs": 1768467870000,
+          "durationMs": 30000,
+          "rowCount": 4,
+          "occupiedLaneCount": 2,
+          "contributors": [
+            "A2",
+            "A3",
+            "A4",
+            "B2"
+          ],
+          "sourceIds": [
+            18,
+            17,
+            16,
+            11
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 3,
+              "contributors": [
+                "A2",
+                "A3",
+                "A4"
+              ],
+              "sourceIds": [
+                18,
+                17,
+                16
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "B2"
+              ],
+              "sourceIds": [
+                11
+              ]
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:04:30.000Z",
+          "end": "2026-01-15T09:05:00.000Z",
+          "startMs": 1768467870000,
+          "endMs": 1768467900000,
+          "durationMs": 30000,
+          "rowCount": 5,
+          "occupiedLaneCount": 2,
+          "contributors": [
+            "A2",
+            "A3",
+            "A4",
+            "A8",
+            "B2"
+          ],
+          "sourceIds": [
+            18,
+            17,
+            16,
+            0,
+            11
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 4,
+              "contributors": [
+                "A2",
+                "A3",
+                "A4",
+                "A8"
+              ],
+              "sourceIds": [
+                18,
+                17,
+                16,
+                0
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "B2"
+              ],
+              "sourceIds": [
+                11
+              ]
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:05:00.000Z",
+          "end": "2026-01-15T09:05:30.000Z",
+          "startMs": 1768467900000,
+          "endMs": 1768467930000,
+          "durationMs": 30000,
+          "rowCount": 4,
+          "occupiedLaneCount": 2,
+          "contributors": [
+            "A2",
+            "A5",
+            "A8",
+            "B2"
+          ],
+          "sourceIds": [
+            18,
+            15,
+            0,
+            11
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 3,
+              "contributors": [
+                "A2",
+                "A5",
+                "A8"
+              ],
+              "sourceIds": [
+                18,
+                15,
+                0
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "B2"
+              ],
+              "sourceIds": [
+                11
+              ]
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:05:30.000Z",
+          "end": "2026-01-15T09:06:00.000Z",
+          "startMs": 1768467930000,
+          "endMs": 1768467960000,
+          "durationMs": 30000,
+          "rowCount": 3,
+          "occupiedLaneCount": 2,
+          "contributors": [
+            "A2",
+            "A5",
+            "B2"
+          ],
+          "sourceIds": [
+            18,
+            15,
+            11
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 2,
+              "contributors": [
+                "A2",
+                "A5"
+              ],
+              "sourceIds": [
+                18,
+                15
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "B2"
+              ],
+              "sourceIds": [
+                11
+              ]
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:06:00.000Z",
+          "end": "2026-01-15T09:07:00.000Z",
+          "startMs": 1768467960000,
+          "endMs": 1768468020000,
+          "durationMs": 60000,
+          "rowCount": 2,
+          "occupiedLaneCount": 1,
+          "contributors": [
+            "A5",
+            "A6"
+          ],
+          "sourceIds": [
+            15,
+            14
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 2,
+              "contributors": [
+                "A5",
+                "A6"
+              ],
+              "sourceIds": [
+                15,
+                14
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 0,
+              "contributors": [],
+              "sourceIds": []
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:07:00.000Z",
+          "end": "2026-01-15T09:08:00.000Z",
+          "startMs": 1768468020000,
+          "endMs": 1768468080000,
+          "durationMs": 60000,
+          "rowCount": 2,
+          "occupiedLaneCount": 2,
+          "contributors": [
+            "A6",
+            "B3"
+          ],
+          "sourceIds": [
+            14,
+            10
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "A6"
+              ],
+              "sourceIds": [
+                14
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "B3"
+              ],
+              "sourceIds": [
+                10
+              ]
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:08:00.000Z",
+          "end": "2026-01-15T09:09:00.000Z",
+          "startMs": 1768468080000,
+          "endMs": 1768468140000,
+          "durationMs": 60000,
+          "rowCount": 1,
+          "occupiedLaneCount": 1,
+          "contributors": [
+            "B3"
+          ],
+          "sourceIds": [
+            10
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 0,
+              "contributors": [],
+              "sourceIds": []
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "B3"
+              ],
+              "sourceIds": [
+                10
+              ]
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:09:00.000Z",
+          "end": "2026-01-15T09:10:00.000Z",
+          "startMs": 1768468140000,
+          "endMs": 1768468200000,
+          "durationMs": 60000,
+          "rowCount": 0,
+          "occupiedLaneCount": 0,
+          "contributors": [],
+          "sourceIds": [],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 0,
+              "contributors": [],
+              "sourceIds": []
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 0,
+              "contributors": [],
+              "sourceIds": []
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:10:00.000Z",
+          "end": "2026-01-15T09:11:00.000Z",
+          "startMs": 1768468200000,
+          "endMs": 1768468260000,
+          "durationMs": 60000,
+          "rowCount": 1,
+          "occupiedLaneCount": 1,
+          "contributors": [
+            "A7"
+          ],
+          "sourceIds": [
+            13
+          ],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 1,
+              "contributors": [
+                "A7"
+              ],
+              "sourceIds": [
+                13
+              ]
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 0,
+              "contributors": [],
+              "sourceIds": []
+            }
+          }
+        },
+        {
+          "start": "2026-01-15T09:11:00.000Z",
+          "end": "2026-01-15T09:12:00.000Z",
+          "startMs": 1768468260000,
+          "endMs": 1768468320000,
+          "durationMs": 60000,
+          "rowCount": 0,
+          "occupiedLaneCount": 0,
+          "contributors": [],
+          "sourceIds": [],
+          "byLane": {
+            "[\"string\",\"A\"]": {
+              "rowCount": 0,
+              "contributors": [],
+              "sourceIds": []
+            },
+            "[\"string\",\"B\"]": {
+              "rowCount": 0,
+              "contributors": [],
+              "sourceIds": []
+            }
+          }
+        }
+      ],
+      "summary": {
+        "allRows": {
+          "unionBusyDurationMs": 600000,
+          "totalIntervalDurationMs": 1380000,
+          "durationAboveThresholdMs": 420000,
+          "excessRowDurationMs": 780000,
+          "peak": 5,
+          "durationAtPeakMs": 30000,
+          "busyFraction": {
+            "numeratorMs": 600000,
+            "denominatorMs": 720000
+          },
+          "meanCount": {
+            "integralMs": 1380000,
+            "durationMs": 720000
+          },
+          "meanCountWhileBusy": {
+            "integralMs": 1380000,
+            "durationMs": 600000
+          }
+        },
+        "occupiedLanes": {
+          "unionBusyDurationMs": 600000,
+          "totalLaneBusyDurationMs": 960000,
+          "durationAboveThresholdMs": 360000,
+          "excessLaneDurationMs": 360000,
+          "peak": 2,
+          "durationAtPeakMs": 360000,
+          "busyFraction": {
+            "numeratorMs": 600000,
+            "denominatorMs": 720000
+          },
+          "meanCount": {
+            "integralMs": 960000,
+            "durationMs": 720000
+          },
+          "meanCountWhileBusy": {
+            "integralMs": 960000,
+            "durationMs": 600000
+          }
+        },
+        "perLane": {
+          "[\"string\",\"A\"]": {
+            "unionBusyDurationMs": 540000,
+            "totalIntervalDurationMs": 960000,
+            "durationAboveThresholdMs": 240000,
+            "excessRowDurationMs": 420000,
+            "peak": 4,
+            "durationAtPeakMs": 30000,
+            "busyFraction": {
+              "numeratorMs": 540000,
+              "denominatorMs": 720000
+            },
+            "meanCount": {
+              "integralMs": 960000,
+              "durationMs": 720000
+            },
+            "meanCountWhileBusy": {
+              "integralMs": 960000,
+              "durationMs": 540000
+            }
+          },
+          "[\"string\",\"B\"]": {
+            "unionBusyDurationMs": 420000,
+            "totalIntervalDurationMs": 420000,
+            "durationAboveThresholdMs": 0,
+            "excessRowDurationMs": 0,
+            "peak": 1,
+            "durationAtPeakMs": 420000,
+            "busyFraction": {
+              "numeratorMs": 420000,
+              "denominatorMs": 720000
+            },
+            "meanCount": {
+              "integralMs": 420000,
+              "durationMs": 720000
+            },
+            "meanCountWhileBusy": {
+              "integralMs": 420000,
+              "durationMs": 420000
+            }
+          }
+        },
+        "laneConflicts": {
+          "anyLaneAboveThresholdDurationMs": 240000,
+          "sumLaneAboveThresholdDurationMs": 240000,
+          "sumLaneExcessRowDurationMs": 420000,
+          "intervalIdsInvolvedInAnyLaneConflict": [
+            "A2",
+            "A3",
+            "A4",
+            "A5",
+            "A6",
+            "A8"
+          ]
+        }
+      }
+    }
+  },
+  "selectionProbes": {
+    "base": {
+      "activeAtIds": [
+        "A2",
+        "A3",
+        "A4"
+      ],
+      "activeAtSourceIds": [
+        1,
+        2,
+        3
+      ],
+      "activeAtEnclosingGlobalAtom": {
+        "start": "2026-01-15T09:04:00.000Z",
+        "end": "2026-01-15T09:05:00.000Z",
+        "startMs": 1768467840000,
+        "endMs": 1768467900000,
+        "durationMs": 60000
+      },
+      "positiveOverlapWindowIds": [
+        "A2",
+        "A3",
+        "A4"
+      ],
+      "allIntervalsInvolvedInWindowIds": [
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6",
+        "B1",
+        "B2"
+      ],
+      "peakSimultaneousRowsInInvolvedWindow": 4,
+      "legacyBrushRawLinkedMatchIds": [
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6",
+        "B1",
+        "B2",
+        "ML1",
+        "RE1",
+        "Z1"
+      ],
+      "legacyBrushDrawableMatchIds": [
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6",
+        "B1",
+        "B2",
+        "Z1"
+      ],
+      "ownSelectionAnalyticalSummary": "unchanged from this scenario summary; selection filters linked targets only"
+    },
+    "source_refresh": {
+      "activeAtIds": [
+        "A2",
+        "A3",
+        "A4"
+      ],
+      "activeAtSourceIds": [
+        18,
+        17,
+        16
+      ],
+      "activeAtEnclosingGlobalAtom": {
+        "start": "2026-01-15T09:04:00.000Z",
+        "end": "2026-01-15T09:04:30.000Z",
+        "startMs": 1768467840000,
+        "endMs": 1768467870000,
+        "durationMs": 30000
+      },
+      "positiveOverlapWindowIds": [
+        "A2",
+        "A3",
+        "A4",
+        "A8"
+      ],
+      "allIntervalsInvolvedInWindowIds": [
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6",
+        "A8",
+        "B1",
+        "B2"
+      ],
+      "peakSimultaneousRowsInInvolvedWindow": 5,
+      "legacyBrushRawLinkedMatchIds": [
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6",
+        "A8",
+        "B1",
+        "B2",
+        "ML1",
+        "RE1",
+        "Z1"
+      ],
+      "legacyBrushDrawableMatchIds": [
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6",
+        "A8",
+        "B1",
+        "B2",
+        "Z1"
+      ],
+      "ownSelectionAnalyticalSummary": "unchanged from this scenario summary; selection filters linked targets only"
+    }
+  },
+  "analysisSubwindow": {
+    "sourceRevision": "fixture-v1",
+    "window": {
+      "start": "2026-01-15T09:03:00.000Z",
+      "end": "2026-01-15T09:07:00.000Z",
+      "startMs": 1768467780000,
+      "endMs": 1768468020000,
+      "durationMs": 240000
+    },
+    "threshold": 1,
+    "referenceLaneKeys": [
+      "[\"string\",\"A\"]",
+      "[\"string\",\"B\"]"
+    ],
+    "sourceIdMap": {
+      "A1": 0,
+      "A2": 1,
+      "A3": 2,
+      "A4": 3,
+      "A5": 4,
+      "A6": 5,
+      "A7": 6,
+      "B1": 7,
+      "B2": 8,
+      "B3": 9,
+      "B4": 10,
+      "Z1": 11,
+      "ML1": 12,
+      "MS1": 13,
+      "IS1": 14,
+      "IE1": 15,
+      "RE1": 16,
+      "OUT1": 17,
+      "OUT2": 18,
+      "POL1": 19
+    },
+    "sourceRowCount": 20,
+    "populationRowCount": 19,
+    "populationExcludedIds": [
+      "POL1"
+    ],
+    "facetExcludedIds": [],
+    "semanticExclusions": {
+      "missing-lane": [
+        "ML1"
+      ],
+      "reversed-end": [
+        "RE1"
+      ],
+      "unreadable-end": [
+        "IE1"
+      ],
+      "unreadable-start": [
+        "IS1",
+        "MS1"
+      ]
+    },
+    "zeroDurationEvents": [
+      {
+        "fixtureId": "Z1",
+        "sourceId": 11,
+        "atMs": 1768467840000,
+        "insideWindow": true
+      }
+    ],
+    "outsideAnalyticalWindow": [
+      "A1",
+      "A7",
+      "B3",
+      "B4",
+      "OUT1",
+      "OUT2"
+    ],
+    "positiveIntervalIds": [
+      "A2",
+      "A3",
+      "A4",
+      "A5",
+      "A6",
+      "B1",
+      "B2"
+    ],
+    "openContributors": [],
+    "clippedContributors": [
+      "A2",
+      "A6",
+      "B1"
+    ],
+    "segments": [
+      {
+        "start": "2026-01-15T09:03:00.000Z",
+        "end": "2026-01-15T09:04:00.000Z",
+        "startMs": 1768467780000,
+        "endMs": 1768467840000,
+        "durationMs": 60000,
+        "rowCount": 4,
+        "occupiedLaneCount": 2,
+        "contributors": [
+          "A2",
+          "A3",
+          "A4",
+          "B1"
+        ],
+        "sourceIds": [
+          1,
+          2,
+          3,
+          7
+        ],
+        "byLane": {
+          "[\"string\",\"A\"]": {
+            "rowCount": 3,
+            "contributors": [
+              "A2",
+              "A3",
+              "A4"
+            ],
+            "sourceIds": [
+              1,
+              2,
+              3
+            ]
+          },
+          "[\"string\",\"B\"]": {
+            "rowCount": 1,
+            "contributors": [
+              "B1"
+            ],
+            "sourceIds": [
+              7
+            ]
+          }
+        }
+      },
+      {
+        "start": "2026-01-15T09:04:00.000Z",
+        "end": "2026-01-15T09:05:00.000Z",
+        "startMs": 1768467840000,
+        "endMs": 1768467900000,
+        "durationMs": 60000,
+        "rowCount": 4,
+        "occupiedLaneCount": 2,
+        "contributors": [
+          "A2",
+          "A3",
+          "A4",
+          "B2"
+        ],
+        "sourceIds": [
+          1,
+          2,
+          3,
+          8
+        ],
+        "byLane": {
+          "[\"string\",\"A\"]": {
+            "rowCount": 3,
+            "contributors": [
+              "A2",
+              "A3",
+              "A4"
+            ],
+            "sourceIds": [
+              1,
+              2,
+              3
+            ]
+          },
+          "[\"string\",\"B\"]": {
+            "rowCount": 1,
+            "contributors": [
+              "B2"
+            ],
+            "sourceIds": [
+              8
+            ]
+          }
+        }
+      },
+      {
+        "start": "2026-01-15T09:05:00.000Z",
+        "end": "2026-01-15T09:06:00.000Z",
+        "startMs": 1768467900000,
+        "endMs": 1768467960000,
+        "durationMs": 60000,
+        "rowCount": 3,
+        "occupiedLaneCount": 2,
+        "contributors": [
+          "A2",
+          "A5",
+          "B2"
+        ],
+        "sourceIds": [
+          1,
+          4,
+          8
+        ],
+        "byLane": {
+          "[\"string\",\"A\"]": {
+            "rowCount": 2,
+            "contributors": [
+              "A2",
+              "A5"
+            ],
+            "sourceIds": [
+              1,
+              4
+            ]
+          },
+          "[\"string\",\"B\"]": {
+            "rowCount": 1,
+            "contributors": [
+              "B2"
+            ],
+            "sourceIds": [
+              8
+            ]
+          }
+        }
+      },
+      {
+        "start": "2026-01-15T09:06:00.000Z",
+        "end": "2026-01-15T09:07:00.000Z",
+        "startMs": 1768467960000,
+        "endMs": 1768468020000,
+        "durationMs": 60000,
+        "rowCount": 2,
+        "occupiedLaneCount": 1,
+        "contributors": [
+          "A5",
+          "A6"
+        ],
+        "sourceIds": [
+          4,
+          5
+        ],
+        "byLane": {
+          "[\"string\",\"A\"]": {
+            "rowCount": 2,
+            "contributors": [
+              "A5",
+              "A6"
+            ],
+            "sourceIds": [
+              4,
+              5
+            ]
+          },
+          "[\"string\",\"B\"]": {
+            "rowCount": 0,
+            "contributors": [],
+            "sourceIds": []
+          }
+        }
+      }
+    ],
+    "summary": {
+      "allRows": {
+        "unionBusyDurationMs": 240000,
+        "totalIntervalDurationMs": 780000,
+        "durationAboveThresholdMs": 240000,
+        "excessRowDurationMs": 540000,
+        "peak": 4,
+        "durationAtPeakMs": 120000,
+        "busyFraction": {
+          "numeratorMs": 240000,
+          "denominatorMs": 240000
+        },
+        "meanCount": {
+          "integralMs": 780000,
+          "durationMs": 240000
+        },
+        "meanCountWhileBusy": {
+          "integralMs": 780000,
+          "durationMs": 240000
+        }
+      },
+      "occupiedLanes": {
+        "unionBusyDurationMs": 240000,
+        "totalLaneBusyDurationMs": 420000,
+        "durationAboveThresholdMs": 180000,
+        "excessLaneDurationMs": 180000,
+        "peak": 2,
+        "durationAtPeakMs": 180000,
+        "busyFraction": {
+          "numeratorMs": 240000,
+          "denominatorMs": 240000
+        },
+        "meanCount": {
+          "integralMs": 420000,
+          "durationMs": 240000
+        },
+        "meanCountWhileBusy": {
+          "integralMs": 420000,
+          "durationMs": 240000
+        }
+      },
+      "perLane": {
+        "[\"string\",\"A\"]": {
+          "unionBusyDurationMs": 240000,
+          "totalIntervalDurationMs": 600000,
+          "durationAboveThresholdMs": 240000,
+          "excessRowDurationMs": 360000,
+          "peak": 3,
+          "durationAtPeakMs": 120000,
+          "busyFraction": {
+            "numeratorMs": 240000,
+            "denominatorMs": 240000
+          },
+          "meanCount": {
+            "integralMs": 600000,
+            "durationMs": 240000
+          },
+          "meanCountWhileBusy": {
+            "integralMs": 600000,
+            "durationMs": 240000
+          }
+        },
+        "[\"string\",\"B\"]": {
+          "unionBusyDurationMs": 180000,
+          "totalIntervalDurationMs": 180000,
+          "durationAboveThresholdMs": 0,
+          "excessRowDurationMs": 0,
+          "peak": 1,
+          "durationAtPeakMs": 180000,
+          "busyFraction": {
+            "numeratorMs": 180000,
+            "denominatorMs": 240000
+          },
+          "meanCount": {
+            "integralMs": 180000,
+            "durationMs": 240000
+          },
+          "meanCountWhileBusy": {
+            "integralMs": 180000,
+            "durationMs": 180000
+          }
+        }
+      },
+      "laneConflicts": {
+        "anyLaneAboveThresholdDurationMs": 240000,
+        "sumLaneAboveThresholdDurationMs": 240000,
+        "sumLaneExcessRowDurationMs": 360000,
+        "intervalIdsInvolvedInAnyLaneConflict": [
+          "A2",
+          "A3",
+          "A4",
+          "A5",
+          "A6"
+        ]
+      }
+    }
+  },
+  "viewportOnly": {
+    "requestedViewport": {
+      "start": "2026-01-15T09:03:00.000Z",
+      "end": "2026-01-15T09:07:00.000Z"
+    },
+    "expectedAnalyticalScenario": "base",
+    "summary": {
+      "allRows": {
+        "unionBusyDurationMs": 660000,
+        "totalIntervalDurationMs": 1440000,
+        "durationAboveThresholdMs": 480000,
+        "excessRowDurationMs": 780000,
+        "peak": 4,
+        "durationAtPeakMs": 120000,
+        "busyFraction": {
+          "numeratorMs": 660000,
+          "denominatorMs": 720000
+        },
+        "meanCount": {
+          "integralMs": 1440000,
+          "durationMs": 720000
+        },
+        "meanCountWhileBusy": {
+          "integralMs": 1440000,
+          "durationMs": 660000
+        }
+      },
+      "occupiedLanes": {
+        "unionBusyDurationMs": 660000,
+        "totalLaneBusyDurationMs": 1080000,
+        "durationAboveThresholdMs": 420000,
+        "excessLaneDurationMs": 420000,
+        "peak": 2,
+        "durationAtPeakMs": 420000,
+        "busyFraction": {
+          "numeratorMs": 660000,
+          "denominatorMs": 720000
+        },
+        "meanCount": {
+          "integralMs": 1080000,
+          "durationMs": 720000
+        },
+        "meanCountWhileBusy": {
+          "integralMs": 1080000,
+          "durationMs": 660000
+        }
+      },
+      "perLane": {
+        "[\"string\",\"A\"]": {
+          "unionBusyDurationMs": 600000,
+          "totalIntervalDurationMs": 960000,
+          "durationAboveThresholdMs": 240000,
+          "excessRowDurationMs": 360000,
+          "peak": 3,
+          "durationAtPeakMs": 120000,
+          "busyFraction": {
+            "numeratorMs": 600000,
+            "denominatorMs": 720000
+          },
+          "meanCount": {
+            "integralMs": 960000,
+            "durationMs": 720000
+          },
+          "meanCountWhileBusy": {
+            "integralMs": 960000,
+            "durationMs": 600000
+          }
+        },
+        "[\"string\",\"B\"]": {
+          "unionBusyDurationMs": 480000,
+          "totalIntervalDurationMs": 480000,
+          "durationAboveThresholdMs": 0,
+          "excessRowDurationMs": 0,
+          "peak": 1,
+          "durationAtPeakMs": 480000,
+          "busyFraction": {
+            "numeratorMs": 480000,
+            "denominatorMs": 720000
+          },
+          "meanCount": {
+            "integralMs": 480000,
+            "durationMs": 720000
+          },
+          "meanCountWhileBusy": {
+            "integralMs": 480000,
+            "durationMs": 480000
+          }
+        }
+      },
+      "laneConflicts": {
+        "anyLaneAboveThresholdDurationMs": 240000,
+        "sumLaneAboveThresholdDurationMs": 240000,
+        "sumLaneExcessRowDurationMs": 360000,
+        "intervalIdsInvolvedInAnyLaneConflict": [
+          "A2",
+          "A3",
+          "A4",
+          "A5",
+          "A6"
+        ]
+      }
+    }
+  },
+  "durationProbes": [
+    {
+      "id": "spring_dst_elapsed",
+      "elapsedMs": 3600000
+    },
+    {
+      "id": "autumn_dst_elapsed",
+      "elapsedMs": 3600000
+    }
+  ]
+}
