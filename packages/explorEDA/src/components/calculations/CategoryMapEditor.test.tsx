@@ -136,3 +136,47 @@ it("reviews suggestions without accepting any, and saves accepted ones as explic
     'recode(["Region"], "north", "North", "North ", "North")',
   ]);
 });
+
+it("renames a result category to merge it, and Enter never applies", async () => {
+  let state!: ReturnType<typeof useStateLayer>;
+  let mapCategories!: ReturnType<typeof useMapCategories>;
+  function Workspace() {
+    state = useStateLayer();
+    mapCategories = useMapCategories();
+    return null;
+  }
+  render(
+    <DataLayerProvider
+      data={[{ Country: "USA" }, { Country: "US" }, { Country: "Canada" }]}
+      charts={[]}
+    >
+      <CalculationEditorProvider>
+        <Workspace />
+      </CalculationEditorProvider>
+    </DataLayerProvider>
+  );
+  act(() => mapCategories!("Country"));
+  const target = screen.getByLabelText("New category for “USA”");
+  fireEvent.change(target, { target: { value: "United States" } });
+  fireEvent.keyDown(target, { key: "Enter" });
+  expect(screen.getByLabelText("New category for “US”")).toHaveFocus();
+  expect(screen.getByRole("dialog")).toBeInTheDocument();
+
+  // Renaming "US" to an existing name merges the two groups.
+  fireEvent.click(screen.getByRole("button", { name: "Rename “US”" }));
+  const rename = screen.getByRole("textbox", { name: "Rename “US”" });
+  fireEvent.change(rename, { target: { value: "United States" } });
+  fireEvent.keyDown(rename, { key: "Enter" });
+  const result = screen.getByRole("region", { name: /Result/ });
+  expect(within(result).getByText(/3 → 2 categories/)).toBeInTheDocument();
+
+  await act(async () => {
+    fireEvent.keyDown(screen.getByLabelText("New field"), {
+      key: "Enter",
+      metaKey: true,
+    });
+  });
+  expect(state.calculations.map((calc) => calc.expression.rawInput)).toEqual([
+    'recode(["Country"], "USA", "United States", "US", "United States")',
+  ]);
+});

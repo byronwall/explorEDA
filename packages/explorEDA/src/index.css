@@ -5135,6 +5135,76 @@ html {
 .eda-catmap-settings .eda-setting-grid {
   max-width: 560px;
 }
+@media (min-width: 960px) {
+  /* One line: Field, New field, Unmatched. */
+  .eda-catmap-settings .eda-catmap-setting-row {
+    max-width: none;
+    grid-template-columns:
+      auto minmax(140px, 240px) auto minmax(140px, 240px)
+      auto minmax(0, 1fr);
+    gap: 6px 10px;
+  }
+  .eda-catmap-setting-row > label:not(:first-child),
+  .eda-catmap-setting-row > .eda-catmap-label {
+    margin-left: 14px;
+  }
+}
+.eda-catmap-match {
+  background: color-mix(in oklab, var(--primary) 18%, transparent);
+  color: inherit;
+  border-radius: 2px;
+}
+.eda-catmap-segment-label {
+  align-self: center;
+  padding: 0 4px 0 6px;
+  font-size: 11px;
+  color: var(--muted-foreground);
+}
+.eda-catmap-tally {
+  margin-left: 4px;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted-foreground);
+}
+/* Row actions show on hover and focus, and stay on touch screens. */
+.eda-catmap-row-action {
+  transition: opacity 140ms ease-out;
+}
+@media (hover: hover) {
+  .eda-catmap-table
+    tr:not(:hover):not(:focus-within)
+    .eda-catmap-row-action:not([aria-pressed="true"]),
+  .eda-catmap-group-line:not(:hover):not(:focus-within) .eda-catmap-row-action {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .eda-catmap-row-action {
+    transition: none;
+  }
+}
+.eda-catmap-group-line {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.eda-catmap-group-line > .eda-catmap-row-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  border-radius: 4px;
+  color: var(--muted-foreground);
+}
+.eda-catmap-group-line > .eda-catmap-row-action:hover {
+  background: var(--accent);
+  color: var(--foreground);
+}
+.eda-catmap-rename {
+  height: 26px;
+  font-size: 13px;
+}
 .eda-catmap-settings label,
 .eda-catmap-label {
   font-size: 12px;
@@ -5189,8 +5259,13 @@ html {
 }
 .eda-catmap-toolbar {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 8px;
+}
+.eda-catmap-toolbar > input {
+  flex: 1 1 160px;
+  min-width: 0;
 }
 .eda-catmap-toolbar input {
   height: 28px;
