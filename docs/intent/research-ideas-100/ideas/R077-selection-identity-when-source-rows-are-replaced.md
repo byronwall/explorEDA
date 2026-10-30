@@ -33,3 +33,11 @@ The implementation cost would be moderate if a new public prop were justified, b
 Use existing project keys conditionally; defer a new key API. Four local probes reproduce mapping, restore, resolver, and output-key boundaries.
 No repair is implemented. Browser, host, exports, worker scheduling, and full mutation proofs remain due for any chosen implementation.
 Review [SI01–SI08](../../../research/selection-identity-2026-10-22/decisions.md). Continue catalogue discovery with R001, then R051.
+
+## Design follow-up, October 30, 2026
+
+[Selection refresh Design](../../../research/selection-refresh-design-2026-10-29/README.md) replaces the historical no-API gate with a buildable capability plan.
+Keep typed keys through edited measures, absence, repeated refresh, and notebook reopening.
+Require repair after an observed duplicate. Reuse project identity and current folder save work.
+Read the [implementation plan](../../selection-refresh/implementation-plan.md) and its linked original Pro assets.
+No feature is implemented. Future topic choice follows `docs/research/DIRECTION.md`, not this page's old queue.

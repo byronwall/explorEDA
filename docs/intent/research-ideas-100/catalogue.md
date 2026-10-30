@@ -1,5 +1,8 @@
 # Research catalogue
 
+Design follow-up: [selections and live findings through refresh](../../research/selection-refresh-design-2026-10-29/README.md)
+adds a keyed-refresh capability plan to R077's earlier audit. It does not change catalogue rank or set the next topic.
+
 The catalogue is in priority order. IDs remain stable if a later authorized review changes the rank. The complete question, experiment, evidence, and rejection signal are in each linked brief and in the JSON index.
 
 | Priority | ID and title                                                                                                                                                  | Category                           | Kind           |
