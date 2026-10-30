@@ -2,7 +2,7 @@
 
 ## State
 
-- Phase: Pro complete; originals collected; local integration ready for review PR.
+- Phase: complete; review PR open.
 - Mode: Design.
 - Mission: share one grouped result across analyses while preserving grain and original observations.
 - Repository: https://github.com/byronwall/explorEDA.
@@ -11,12 +11,12 @@
 - Prompt: [pro-prompt.md](pro-prompt.md).
 - Conversation: https://chatgpt.com/c/6ae4577a-90a4-83ea-831b-8a38130406d9. Follow-ups: 0/1. Never resubmit.
 - Submitted: October 30 about 08:38 UTC, Pro at 5/5 effort.
-- Collector: `collect-exploreda-reusable-outputs-design`, ACTIVE hourly at minute 40.
+- Collector: `collect-exploreda-reusable-outputs-design`, deleted after verified PR opening.
 - First eligible check: October 30 09:40 UTC. Do not inspect or collect before 09:38 UTC.
 - Plan target: `docs/intent/reusable-analysis-outputs/implementation-plan.md`.
 - Summary target: `docs/research/reusable-outputs-design-2026-10-30/README.md`.
 - Assets target: `docs/intent/reusable-analysis-outputs/assets/pro-results/reusable-outputs-design-2026-10-30/`.
-- PR: pending finished Pro result and integration. No preparation-only PR.
+- PR: https://github.com/byronwall/explorEDA/pull/573, OPEN, `main` ← `codex/reusable-outputs-design-2026-10-30`.
 
 ## Topic choice
 
@@ -121,3 +121,14 @@ Original report ZIP links remain documented immutable exceptions; no archive is 
 Existing evaluator/entity/DSL/worker tests passed: four files, 23 tests.
 Docs checks, final authored formatting/whitespace, commit identity, PR checks, and committed inventory are verified before completion.
 No package/demo changes, changeset, full `pnpm check`, or feature/browser/persistence/performance acceptance is claimed.
+
+## Completion — October 30, 09:50 UTC
+
+Integration commit `52d6c3f3` pushed. PR #573 is open with the correct branches and complete 16-file inventory.
+Verified all six originals in the commit against the archive after the formatting hook.
+The PR body uses direct repository links for plan, summary, evidence, asset index, and run record.
+Applied `documentation`; `codex` and `codex-automation` labels are unavailable.
+Docs checks passed: three files, 73 tests, with existing React `act` warnings.
+Authored formatting/whitespace and PR author/changeset checks passed. Original trailing whitespace remains unchanged.
+Collector deletion returned `deleteStatus=deleted`. The supported six-hour pipeline view confirms it remains ACTIVE.
+Only this completion record changes after verification. Stop for review; no merge or feature implementation.
