@@ -2,7 +2,7 @@
 
 ## State
 
-- Phase: **submitted; Pro thinking; collection scheduled**.
+- Phase: **collected and integrated; review PR pending**.
 - Mode: Design.
 - Mission: keep selected keyed records and current notebook findings through data refresh.
 - Repository: https://github.com/byronwall/explorEDA.
@@ -11,9 +11,9 @@
 - Prompt: [pro-prompt.md](pro-prompt.md).
 - Conversation: https://chatgpt.com/c/6ae3f166-ff88-83ea-b255-40afef7942a8. Submitted October 30 about 01:22 UTC; follow-ups 0/1. Never resubmit.
 - Collector: `collect-exploreda-selection-refresh-design`, ACTIVE hourly at minute 24. First eligible check: October 30 02:24 UTC.
-- Plan destination: `docs/intent/selection-refresh/implementation-plan.md` (pending Pro).
-- Summary destination: `docs/research/selection-refresh-design-2026-10-29/README.md` (pending Pro).
-- Result assets: `docs/intent/selection-refresh/assets/pro-results/selection-refresh-design-2026-10-29/` (pending Pro).
+- Plan: [implementation-plan.md](../../intent/selection-refresh/implementation-plan.md).
+- Summary: [README.md](README.md).
+- Result assets: [original report and plan index](../../intent/selection-refresh/assets/pro-results/selection-refresh-design-2026-10-29/index.md).
 - PR: pending collection and integration. No preparation-only PR.
 
 ## Topic choice
@@ -55,7 +55,7 @@ Existing tests cover reordered rows, content clones, removed/twin rows, explicit
 Notebook findings are current derived values. The notebook receives query rows without the project view adapter.
 The prompt asks Pro to inspect that boundary rather than assume project identity reaches notebook findings.
 
-## Blocker and resume
+## Historical preparation blocker
 
 At 2026-10-29 07:22 UTC, `cua.getState()` showed only in-app and MCP Apps browsers.
 Chrome was absent. Native app inventory reported: “The Mac is locked and automatic unlock could not unlock it.”
@@ -100,6 +100,43 @@ SHA256: `718cd6bef058a6235d3db2bd16edcb5eaa4a464f60a7e5eea814912e7a057fdb`.
 Scoped credential-pattern checks passed. It includes selected repository source, tests, instructions, and docs only.
 No credentials, dependencies, archives, build output, or unrelated personal files were selected.
 Review and regenerate the packet after any source refresh before uploading.
+
+## Collection and integration — October 30
+
+Resumed the recorded conversation in Chrome `byroni.us`. Pro finished after 36 minutes 46 seconds.
+The conversation also contains a human “You going?” message; this automation sent no follow-up or resubmission.
+Follow-ups remain 0/1 for this automation.
+
+Collected `selection-refresh-design.zip` through its existing preview under standing human download approval.
+The initial download had no immediate file; a later bounded download event wait timed out.
+Both actual ZIP and separate Markdown download then appeared in Downloads. No regeneration was needed.
+Do not treat the earlier event timeout as a missing asset; the local files were checked before any further retry.
+
+ZIP paths, duplicate entries, symlinks, CRC, exact two-file inventory, and UTF-8 checks passed.
+The separate `selection-refresh-design.md` download matches its ZIP member byte for byte.
+Read both complete reports. Preserved the two originals under the linked asset index, including hashes and sizes.
+The ZIP, packet, and working copies stay ignored under `tmp/pro-selection-refresh-2026-10-29/`.
+No Library upload, downloaded-code execution, extra companion, or missing result artifact.
+
+Refreshed main, unchanged at `5594c95690859e8ce456aa3228fa9265ba686d12`. Checked open PRs through #568.
+Checked provider restoration, four-owner traversal, project typed keys/fallbacks, saved types, typed text boundaries,
+notebook identity loss/local scope, finding revisions, app remounts, saver ordering, and failed query behavior.
+AG Grid and TanStack primary-source spot checks support the boundary. Perspective guide unavailable; not decisive.
+
+Read open PR #566's body, file list, and fetched saver implementation at `1bb9d56033981afa916af15ef67a2ca8561efa77`.
+The local plan reuses that pending global save queue where sufficient; it does not demand another per-path queue.
+Wrote the local four-milestone plan, summary, evidence, SR01–SR16 dispositions, original asset index, and R077/catalogue links.
+Build is a planning disposition, not implementation approval. No feature was built.
+
+Locally authored reference probe: 21 contract/arithmetic assertions pass, covering A/C, duplicate review, save/reopen,
+empty versus unavailable, typed tuples, ledger totals, and current-East totals. It imports no downloaded or repository program.
+This checks proposed policy arithmetic, not implemented feature acceptance.
+Existing selection/findings tests pass: three files, 29 tests. Docs tests pass: three files, 73 tests, with existing React `act` warnings.
+Verified 119 relative links and staged original hashes/inventory. The directory contains exactly two originals and the authored index.
+The hook formats authored files and excludes only the two original reports.
+Original reports retain their supplied trailing blank lines; whitespace checks exclude those immutable artifacts.
+Authored whitespace, formatting, PR author/changeset checks, and final committed inventory are checked before reporting.
+Full `pnpm check` and changeset are not required for this docs-only PR.
 
 ## Validation
 
