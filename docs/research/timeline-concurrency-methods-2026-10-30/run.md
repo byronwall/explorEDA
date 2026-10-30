@@ -2,7 +2,7 @@
 
 ## State
 
-- Phase: collected and reviewed; integration and PR verification in progress.
+- Phase: complete; verified review PR open.
 - Mode: Methods.
 - Mission: occupancy, overlap duration, and exact interval contributors.
 - Repository: https://github.com/byronwall/explorEDA.
@@ -11,13 +11,13 @@
 - Prompt: [pro-prompt.md](pro-prompt.md).
 - Conversation: https://chatgpt.com/c/6ae505ec-b0f4-83ea-a271-c0a84a70bed1. Never resubmit.
 - Submitted: October 30 about 21:03 UTC, Pro at effort 5/5.
-- Collector: `collect-exploreda-timeline-concurrency-methods`, ACTIVE, hourly at minute 05.
+- Collector: `collect-exploreda-timeline-concurrency-methods`, deleted after verified PR opening.
 - First eligible check: October 30 22:05 UTC. Do not inspect or collect before 22:03 UTC.
 - Follow-ups: 0/1.
 - Plan: [implementation-plan.md](../../intent/timeline-concurrency/implementation-plan.md).
 - Summary: [README.md](README.md).
 - Assets: [eight original files and index](../../intent/timeline-concurrency/assets/pro-results/timeline-concurrency-methods-2026-10-30/README.md).
-- PR: pending Pro completion and integration.
+- PR: https://github.com/byronwall/explorEDA/pull/578, OPEN, `main` ← `codex/timeline-concurrency-methods-2026-10-30`.
 
 ## Topic choice
 
@@ -116,3 +116,16 @@ Pro's separate 500 randomized checks remain Pro-reported. Proposed companions do
 Local plan, summary, intent, catalogue links, and asset index are written.
 Collection checks passed 32 ownership/findings/writeback tests and 74 docs tests, with existing React act warnings.
 All 25 authored local Markdown links resolve. Format, committed inventory, and PR verification remain in progress.
+
+## Completion
+
+Integration commit `984705fd` is pushed. PR #578 is open, verified, and attached to this chat.
+Checked its body, main/head branches, and 21-file inventory. All eight original artifacts match archive and committed bytes.
+Only R013 changes among the 100 catalogue JSON entries. No ZIP, input packet, or screenshot is committed.
+Authored formatting, whitespace, local links, and PR author/changeset checks pass.
+An initial format command included `.prettierignore`, which has no formatter parser; the corrected authored-file check passed.
+The PR has the documentation label. The repository has no codex or codex-automation labels.
+
+Collector deletion confirmed `deleteStatus=deleted`. The six-hour pipeline remains ACTIVE indefinitely, GPT-6.1 Sol at Medium reasoning.
+No merge, deployment, paid provisioning, feature implementation, or new topic selection occurred.
+Completion recorded October 30 at 22:35 UTC. Stop for review.
