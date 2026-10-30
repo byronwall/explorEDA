@@ -1,0 +1,19 @@
+project @seattle-permits
+
+source @permits key=Permit path=data/permits.csv {
+  field Permit string
+  field Class string
+  field Applied date
+  field Contractor string
+}
+
+query @permits "Permits naming a contractor" glyph=◆ {
+  source permits
+}
+
+query @split "Firms typed more than one way" glyph=◆ {
+  source permits
+  calc firm "Firm" = recode(["permits.Contractor"], "AMAZON.COM", "Amazon.com", "AMAZONCOM", "Amazon.com", "WESTOWER COMMUNICATIONS INC.", "Westower Communications", "WESTOWER COMMUNICATIONS INC", "Westower Communications", "MSRE MANAGEMENT, LLC", "MSRE Management", "MSRE Management LLC", "MSRE Management", "MSRE MANAGEMENT LLC", "MSRE Management", "J A S DESIGN BUILD INC", "J A S Design Build", "JAS DESIGN BUILD, INC.", "J A S Design Build", "J.A.S. DESIGN BUILD INC", "J A S Design Build", "MASTEC NETWORK SOLUTIONS INC", "MasTec Network Solutions", "MasTec Network Solutions, Inc.", "MasTec Network Solutions", "STS Construction Services", "STS Construction Services", "STS CONSTRUCTION SERVICES", "STS Construction Services", "WILCOX CONSTRUCTION INC", "Wilcox Construction", "WILCOX CONSTRUCTION, INC.", "Wilcox Construction", "Wilcox Construction, Inc.", "Wilcox Construction", "B N BUILDERS INC", "BNBuilders", "BNBUILDERS INC", "BNBuilders", "BNBuilders Inc", "BNBuilders", "CHAFFEY BUILDING GROUP LLC", "Chaffey Building Group", "Chaffey Building Group LLC", "Chaffey Building Group", "TURNER CONSTRUCTION COMPANY", "Turner Construction", "Turner Construction Company", "Turner Construction", "HOWARD S WRIGHT", "Howard S. Wright", "Howard S Wright", "Howard S. Wright", "J T M CONSTRUCTION", "JTM Construction", "JTM Construction", "JTM Construction", "JTM CONSTRUCTION", "JTM Construction", "Sierra Construction Company, Inc.", "Sierra Construction", "Sierra Construction Company Inc.", "Sierra Construction", "SWINERTON BUILDERS", "Swinerton Builders", "Swinerton Builders", "Swinerton Builders", "LEASE CRUTCHER LEWIS", "Lease Crutcher Lewis", "Lease Crutcher Lewis", "Lease Crutcher Lewis", "SAGE HOMES NORTHWEST, LLC", "Sage Homes Northwest", "SAGE HOMES NORTHWEST LLC", "Sage Homes Northwest", "WALSH CONSTRUCTION CO", "Walsh Construction", "Walsh Construction Co.", "Walsh Construction", "Walsh Construction Co", "Walsh Construction", null)
+  calc spelling "Spelling" = recode(["permits.Contractor"], "AMAZON.COM", "Most common spelling", "WESTOWER COMMUNICATIONS INC.", "Most common spelling", "MSRE MANAGEMENT, LLC", "Most common spelling", "J A S DESIGN BUILD INC", "Most common spelling", "MASTEC NETWORK SOLUTIONS INC", "Most common spelling", "STS Construction Services", "Most common spelling", "WILCOX CONSTRUCTION INC", "Most common spelling", "B N BUILDERS INC", "Most common spelling", "CHAFFEY BUILDING GROUP LLC", "Most common spelling", "TURNER CONSTRUCTION COMPANY", "Most common spelling", "HOWARD S WRIGHT", "Most common spelling", "J T M CONSTRUCTION", "Most common spelling", "Sierra Construction Company, Inc.", "Most common spelling", "SWINERTON BUILDERS", "Most common spelling", "LEASE CRUTCHER LEWIS", "Most common spelling", "SAGE HOMES NORTHWEST, LLC", "Most common spelling", "WALSH CONSTRUCTION CO", "Most common spelling", "Another spelling")
+  filter @split-only firm not-null
+}

@@ -428,5 +428,15 @@
     "license_url": "https://www.nist.gov/open/copyright-fair-use-and-licensing-statements-srd-data-software-and-technical-series-publications",
     "version": "FURNACE.DAT retrieved 2026-10-28; zone numbers relabeled as \"Zone 1\" to \"Zone 4\"",
     "notes": "168 oxide thickness readings in angstroms: 21 furnace runs, 4 zones per run, 2 wafers per zone. The case study states the goal as 560 Å ± 100 Å."
+  },
+  {
+    "id": "seattle-permits",
+    "title": "Building Permits",
+    "publisher": "City of Seattle, Seattle Department of Construction and Inspections",
+    "url": "https://data.seattle.gov/Permitting/Building-Permits/76t5-zqzr",
+    "license": "Public Domain (as published by the City of Seattle)",
+    "license_url": "https://data.seattle.gov/api/views/76t5-zqzr.json",
+    "version": "API extract retrieved 2026-10-29: permits applied for 2014-01-01 to 2019-12-31 that name a contractor",
+    "notes": "9,498 permits, one row each: permit number, permit class, application date, and the contractor's company name exactly as typed. Permits without a contractor are left out."
   }
 ]

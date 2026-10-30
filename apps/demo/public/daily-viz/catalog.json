@@ -12570,5 +12570,99 @@
       }
     ],
     "published": "2026-11-16"
+  },
+  {
+    "id": "nb-seattle-permits-contractor-spellings",
+    "slug": "seattle-permits-contractor-spellings",
+    "kind": "notebook",
+    "title": "Seventeen Seattle contractors, each typed more than one way",
+    "question": "How often does one Seattle contractor show up under different spellings?",
+    "summary": "Seventeen Seattle contractors appear under two or three spellings each in six years of building permits. Merging each firm's spellings with an explicit list changes how many permits it filed.",
+    "family": "seattle-permits",
+    "entry": "contractor-spellings.eda.md",
+    "query": "split",
+    "industry": "Construction",
+    "analysis": "Data quality",
+    "findings": [
+      {
+        "text": "Across 2014 through 2019, {value} building permits name a contractor.",
+        "format": ",.0f",
+        "op": "count",
+        "field": "Permit",
+        "query": "permits"
+      },
+      {
+        "text": "The seventeen firms filed {value} of them.",
+        "format": ",.0f",
+        "op": "count",
+        "field": "Permit"
+      },
+      {
+        "text": "J A S Design Build filed {value} permits under its most common spelling",
+        "format": ",.0f",
+        "op": "count",
+        "field": "Permit",
+        "where": [
+          [
+            "Contractor",
+            "eq",
+            "J A S DESIGN BUILD INC"
+          ]
+        ]
+      },
+      {
+        "text": "Counting all three spellings, it filed {value}.",
+        "format": ",.0f",
+        "op": "count",
+        "field": "Permit",
+        "where": [
+          [
+            "firm",
+            "eq",
+            "J A S Design Build"
+          ]
+        ]
+      },
+      {
+        "text": "BNBuilders filed {value} permits as B N BUILDERS INC",
+        "format": ",.0f",
+        "op": "count",
+        "field": "Permit",
+        "where": [
+          [
+            "Contractor",
+            "eq",
+            "B N BUILDERS INC"
+          ]
+        ]
+      },
+      {
+        "text": "Counting all three of its spellings, BNBuilders filed {value}.",
+        "format": ",.0f",
+        "op": "count",
+        "field": "Permit",
+        "where": [
+          [
+            "firm",
+            "eq",
+            "BNBuilders"
+          ]
+        ]
+      },
+      {
+        "text": "Across the seventeen firms, {value}% of permits use a spelling other than the firm's most common one.",
+        "format": ".1f",
+        "op": "share",
+        "field": "Permit",
+        "condition": [
+          [
+            "spelling",
+            "eq",
+            "Another spelling"
+          ]
+        ]
+      }
+    ],
+    "published": "2026-11-17"
   }
 ]
