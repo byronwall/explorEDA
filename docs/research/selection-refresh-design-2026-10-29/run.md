@@ -2,7 +2,7 @@
 
 ## State
 
-- Phase: **collected and integrated; review PR pending**.
+- Phase: **complete; review PR open**.
 - Mode: Design.
 - Mission: keep selected keyed records and current notebook findings through data refresh.
 - Repository: https://github.com/byronwall/explorEDA.
@@ -10,11 +10,11 @@
 - Source baseline: `5594c95690859e8ce456aa3228fa9265ba686d12`.
 - Prompt: [pro-prompt.md](pro-prompt.md).
 - Conversation: https://chatgpt.com/c/6ae3f166-ff88-83ea-b255-40afef7942a8. Submitted October 30 about 01:22 UTC; follow-ups 0/1. Never resubmit.
-- Collector: `collect-exploreda-selection-refresh-design`, ACTIVE hourly at minute 24. First eligible check: October 30 02:24 UTC.
+- Collector: `collect-exploreda-selection-refresh-design`, deleted after the verified PR opened.
 - Plan: [implementation-plan.md](../../intent/selection-refresh/implementation-plan.md).
 - Summary: [README.md](README.md).
 - Result assets: [original report and plan index](../../intent/selection-refresh/assets/pro-results/selection-refresh-design-2026-10-29/index.md).
-- PR: pending collection and integration. No preparation-only PR.
+- PR: https://github.com/byronwall/explorEDA/pull/571, OPEN, `main` ← `codex/selection-refresh-design-2026-10-29`.
 
 ## Topic choice
 
@@ -137,6 +137,14 @@ The hook formats authored files and excludes only the two original reports.
 Original reports retain their supplied trailing blank lines; whitespace checks exclude those immutable artifacts.
 Authored whitespace, formatting, PR author/changeset checks, and final committed inventory are checked before reporting.
 Full `pnpm check` and changeset are not required for this docs-only PR.
+
+## Completion — 2026-10-30 03:35 UTC
+
+Integration commit `b1339703` pushed. PR #571 body, branches, state, linked assets, and complete 11-file list verified.
+Attached the PR to this chat. Applied `documentation`; `codex` and `codex-automation` labels are unavailable.
+Verified original committed hashes after formatting. No ZIP or input packet is in the PR.
+Collector deletion returned `deleteStatus=deleted`. The supported pipeline view confirms the six-hour task remains ACTIVE.
+Only this run record changes after completion verification. Stop for review; no merge or feature implementation.
 
 ## Validation
 
