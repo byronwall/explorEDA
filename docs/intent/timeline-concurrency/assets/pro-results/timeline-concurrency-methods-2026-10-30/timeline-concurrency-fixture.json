@@ -1,0 +1,83 @@
+{
+  "fixtureVersion": 1,
+  "name": "Exact timeline occupancy with source contributors",
+  "baselineCommit": "ab4ecd2aa98f3fd1da11e8f552efdb269f4b65a6",
+  "status": "Proposed analytical acceptance contract; not an installed explorEDA file format",
+  "unit": "integer Unix epoch milliseconds",
+  "identityNote": "fixtureId labels are test-only envelope identifiers, not fields in the source data or a proposed stable-row API. sourceId is the current zero-based source row index. A3.data and A4.data are exact duplicates and count independently.",
+  "window": {
+    "start": "2026-01-15T09:00:00.000Z",
+    "end": "2026-01-15T09:12:00.000Z"
+  },
+  "threshold": 1,
+  "fields": {"lane": "lane", "start": "start", "end": "end"},
+  "policies": {
+    "occupancy": "half-open [start,end)",
+    "window": "finite half-open analytical window, independent of viewport and brush",
+    "missingLane": "exclude from every analytical measure; expose reason",
+    "missingStart": "exclude; expose reason",
+    "invalidStart": "exclude; expose reason",
+    "missingEnd": "open; effective end is analytical window end",
+    "invalidEnd": "exclude; never reinterpret as open",
+    "reversedEnd": "exclude; never swap",
+    "zeroLength": "retain in event/exclusion disclosure; zero occupancy and no endpoint cut required",
+    "duplicates": "count each source row independently",
+    "status": "no implicit status exclusions",
+    "facet": "undefined means unconstrained; empty list means empty population",
+    "referenceLanes": "typed lanes of all semantically valid source rows, before linked filters and facets",
+    "atomicSegments": "common refinement of positive clipped interval endpoints across all lanes, including idle cells; omit zero-length cells",
+    "ownSelection": "ignored while computing owning Timeline analytical population; applied to linked targets",
+    "savedSelection": "active at declared instant; refresh may split the old segment without changing that instant"
+  },
+  "rows": [
+    {"fixtureId":"A1","sourceId":0,"data":{"lane":"A","start":"2026-01-15T08:58:00.000Z","end":"2026-01-15T09:02:00.000Z","status":"confirmed","included":true}},
+    {"fixtureId":"A2","sourceId":1,"data":{"lane":"A","start":"2026-01-15T09:02:00.000Z","end":"2026-01-15T09:06:00.000Z","status":"confirmed","included":true}},
+    {"fixtureId":"A3","sourceId":2,"data":{"lane":"A","start":"2026-01-15T09:03:00.000Z","end":"2026-01-15T09:05:00.000Z","status":"confirmed","included":true}},
+    {"fixtureId":"A4","sourceId":3,"data":{"lane":"A","start":"2026-01-15T09:03:00.000Z","end":"2026-01-15T09:05:00.000Z","status":"confirmed","included":true}},
+    {"fixtureId":"A5","sourceId":4,"data":{"lane":"A","start":"2026-01-15T09:05:00.000Z","end":"2026-01-15T09:07:00.000Z","status":"confirmed","included":true}},
+    {"fixtureId":"A6","sourceId":5,"data":{"lane":"A","start":"2026-01-15T09:06:00.000Z","end":"2026-01-15T09:08:00.000Z","status":"confirmed","included":true}},
+    {"fixtureId":"A7","sourceId":6,"data":{"lane":"A","start":"2026-01-15T09:10:00.000Z","end":null,"status":"hold","included":true}},
+    {"fixtureId":"B1","sourceId":7,"data":{"lane":"B","start":"2026-01-15T09:01:00.000Z","end":"2026-01-15T09:04:00.000Z","status":"confirmed","included":true}},
+    {"fixtureId":"B2","sourceId":8,"data":{"lane":"B","start":"2026-01-15T09:04:00.000Z","end":"2026-01-15T09:06:00.000Z","status":"confirmed","included":true}},
+    {"fixtureId":"B3","sourceId":9,"data":{"lane":"B","start":"2026-01-15T09:07:00.000Z","end":"2026-01-15T09:09:00.000Z","status":"confirmed","included":true}},
+    {"fixtureId":"B4","sourceId":10,"data":{"lane":"B","start":"2026-01-15T09:11:00.000Z","end":"2026-01-15T09:14:00.000Z","status":"cancelled","included":true}},
+    {"fixtureId":"Z1","sourceId":11,"data":{"lane":"A","start":"2026-01-15T09:04:00.000Z","end":"2026-01-15T09:04:00.000Z","status":"confirmed","included":true}},
+    {"fixtureId":"ML1","sourceId":12,"data":{"lane":null,"start":"2026-01-15T09:01:00.000Z","end":"2026-01-15T09:03:00.000Z","status":"confirmed","included":true}},
+    {"fixtureId":"MS1","sourceId":13,"data":{"lane":"A","start":null,"end":"2026-01-15T09:03:00.000Z","status":"confirmed","included":true}},
+    {"fixtureId":"IS1","sourceId":14,"data":{"lane":"A","start":"not-a-date","end":"2026-01-15T09:03:00.000Z","status":"confirmed","included":true}},
+    {"fixtureId":"IE1","sourceId":15,"data":{"lane":"A","start":"2026-01-15T09:01:00.000Z","end":"not-a-date","status":"confirmed","included":true}},
+    {"fixtureId":"RE1","sourceId":16,"data":{"lane":"A","start":"2026-01-15T09:05:00.000Z","end":"2026-01-15T09:04:00.000Z","status":"confirmed","included":true}},
+    {"fixtureId":"OUT1","sourceId":17,"data":{"lane":"B","start":"2026-01-15T08:56:00.000Z","end":"2026-01-15T08:58:00.000Z","status":"confirmed","included":true}},
+    {"fixtureId":"OUT2","sourceId":18,"data":{"lane":"B","start":"2026-01-15T09:12:00.000Z","end":"2026-01-15T09:13:00.000Z","status":"confirmed","included":true}},
+    {"fixtureId":"POL1","sourceId":19,"data":{"lane":"A","start":"2026-01-15T09:09:00.000Z","end":"2026-01-15T09:10:00.000Z","status":"confirmed","included":false}}
+  ],
+  "scenarios": [
+    {"id":"base","sourceRevision":"fixture-v1","population":[{"field":"included","equals":true}],"facet":null},
+    {"id":"confirmed_only","sourceRevision":"fixture-v1","population":[{"field":"included","equals":true},{"field":"status","equals":"confirmed"}],"facet":null},
+    {"id":"facet_A","sourceRevision":"fixture-v1","population":[{"field":"included","equals":true}],"facet":{"field":"lane","equals":"A"}},
+    {"id":"empty_facet","sourceRevision":"fixture-v1","population":[{"field":"included","equals":true}],"facet":{"fixtureIds":[]}},
+    {"id":"zero_event_only","sourceRevision":"fixture-v1","population":[{"field":"included","equals":true}],"facet":{"fixtureIds":["Z1"]}},
+    {"id":"no_population_filter","sourceRevision":"fixture-v1","population":[],"facet":null},
+    {"id":"restored_base","sourceRevision":"fixture-v1","population":[{"field":"included","equals":true}],"facet":null,"roundTripSettingsThroughJson":true},
+    {"id":"source_refresh","sourceRevision":"fixture-v2","population":[{"field":"included","equals":true}],"facet":null}
+  ],
+  "sourceRefresh": {
+    "removeFixtureIds":["B4"],
+    "changes":[{"fixtureId":"A7","data":{"end":"2026-01-15T09:11:00.000Z"}}],
+    "append":[{"fixtureId":"A8","data":{"lane":"A","start":"2026-01-15T09:04:30.000Z","end":"2026-01-15T09:05:30.000Z","status":"confirmed","included":true}}],
+    "reverseSourceOrder":true,
+    "reassignSourceIdsByArrayIndex":true
+  },
+  "selectionProbes": {
+    "savedActiveAt":{"at":"2026-01-15T09:04:00.000Z","laneValue":"A","facetPredicates":[]},
+    "positiveOverlapWindow":{"start":"2026-01-15T09:04:00.000Z","end":"2026-01-15T09:05:00.000Z","laneValue":"A"},
+    "involvedWindow":{"start":"2026-01-15T09:03:00.000Z","end":"2026-01-15T09:07:00.000Z"},
+    "legacyInclusiveBrush":{"start":"2026-01-15T09:02:00.000Z","end":"2026-01-15T09:06:00.000Z"},
+    "viewportOnly":{"start":"2026-01-15T09:03:00.000Z","end":"2026-01-15T09:07:00.000Z"},
+    "analysisSubwindow":{"start":"2026-01-15T09:03:00.000Z","end":"2026-01-15T09:07:00.000Z"}
+  },
+  "durationProbes": [
+    {"id":"spring_dst_elapsed","localStartWithOffset":"2026-03-08T01:30:00.000-05:00","localEndWithOffset":"2026-03-08T03:30:00.000-04:00","start":"2026-03-08T06:30:00.000Z","end":"2026-03-08T07:30:00.000Z","expectedMs":3600000},
+    {"id":"autumn_dst_elapsed","localStartWithOffset":"2026-11-01T01:30:00.000-04:00","localEndWithOffset":"2026-11-01T01:30:00.000-05:00","start":"2026-11-01T05:30:00.000Z","end":"2026-11-01T06:30:00.000Z","expectedMs":3600000}
+  ]
+}

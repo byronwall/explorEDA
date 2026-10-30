@@ -1,0 +1,38 @@
+# PROPOSED CAPABILITY: implementation acceptance example, not runnable at the baseline.
+# Baseline: ab4ecd2aa98f3fd1da11e8f552efdb269f4b65a6.
+# Input rows: timeline-concurrency-fixture.json rows[].data, in recorded order.
+# The generic `chart timeline` head is existing syntax. concurrency.* and
+# interval-contributors are proposed additions. The explicit filters=[{...}]
+# JSON-array form below is a proposed supported export path: Codex must implement
+# or verify it, validate the whole multi-field predicate, and test round-trip.
+# Compare semantic settings with timeline-concurrency-saved-settings.json;
+# metadata timestamps are regenerated unless a deterministic compiler clock is supplied.
+# No findings are carried here: existing Dashboard export excludes them.
+# Existing xAxis/yAxis min=0,max=100 defaults are inert legacy placeholders,
+# not this analysis's horizon. The finite horizon is concurrency.window only.
+
+dashboard "Timeline concurrency - Lane A"
+
+chart timeline @bookings field=lane startField=start endField=end at=0,0,12,6 {
+  title="Lane A occupancy"
+  note="2026-01-15 09:00 to 09:12 UTC; half-open occupancy; threshold 1"
+  where.included=true
+  concurrency.version=1
+  concurrency.enabled=true
+  concurrency.window.startMs=1768467600000
+  concurrency.window.endMs=1768468320000
+  concurrency.threshold=1
+  concurrency.measure=rows
+  concurrency.scope.kind=lane
+  concurrency.scope.value="A"
+  filters=[{"type":"interval-contributors","version":1,"field":"lane","startField":"start","endField":"end","window":{"startMs":1768467600000,"endMs":1768468320000},"relation":"active-at","atMs":1768467840000,"laneValue":"A","facets":[]}]
+}
+
+# Expected analytical results for lane A over the whole saved window:
+# durationAboveThresholdMs=240000; totalIntervalDurationMs=960000; peak=3.
+# The owner's active-at selection is excluded from its own measurement population.
+# Exact selected contributors at 09:04 UTC: fixture A2,A3,A4; source IDs 1,2,3.
+# They are current source IDs, not saved identities. A3 and A4 are separate rows.
+# The zero-duration event Z1 at 09:04 does not contribute occupancy.
+# A setting edit to the window, field mapping, or scope atomically clears this
+# interval-contributors filter; a threshold edit may preserve its active-at time.

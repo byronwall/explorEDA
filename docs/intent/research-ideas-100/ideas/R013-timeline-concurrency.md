@@ -4,11 +4,18 @@
 - Category: Domain analysis
 - Priority: 94
 - Kind: follow-up
-- Status: candidate
+- Status: planned; Methods research complete, implementation unapproved
 - Confidence: medium
 - Baseline: `9b16d78e3ed0742ed4d5858c1939fec9e758b510`
 
 ## Research brief
+
+October 30 Methods result: build a finite-window concurrency strip with half-open occupancy and exact contributor queries.
+The [local plan](../../timeline-concurrency/implementation-plan.md) defines three increments, each with docs and examples.
+Read the [research summary](../../../research/timeline-concurrency-methods-2026-10-30/README.md) and
+[eight original artifacts](../../timeline-concurrency/assets/pro-results/timeline-concurrency-methods-2026-10-30/README.md).
+Current DIRECTION supersedes this historical brief's outside-demand gate.
+The retired domain-analysis paths below are historical references, not prerequisites.
 
 A timeline can show bookings without making it easy to answer when a resource is double-booked or how long its occupancy exceeds a threshold. `planTimeline` already prepares intervals and stable lanes. `overlapsWindow` deliberately keeps intervals that merely touch a selected window, and open ends remain eligible. That record-selection rule is useful, but it does not decide whether two adjacent bookings occupy a resource simultaneously. The domain-analysis shape names a concurrency strip as later work.
 

@@ -2,7 +2,7 @@
 
 ## State
 
-- Phase: submitted; awaiting Pro completion and scheduled collection.
+- Phase: collected and reviewed; integration and PR verification in progress.
 - Mode: Methods.
 - Mission: occupancy, overlap duration, and exact interval contributors.
 - Repository: https://github.com/byronwall/explorEDA.
@@ -14,9 +14,9 @@
 - Collector: `collect-exploreda-timeline-concurrency-methods`, ACTIVE, hourly at minute 05.
 - First eligible check: October 30 22:05 UTC. Do not inspect or collect before 22:03 UTC.
 - Follow-ups: 0/1.
-- Plan target: `docs/intent/timeline-concurrency/implementation-plan.md`.
-- Summary target: `docs/research/timeline-concurrency-methods-2026-10-30/README.md`.
-- Assets target: `docs/intent/timeline-concurrency/assets/pro-results/timeline-concurrency-methods-2026-10-30/`.
+- Plan: [implementation-plan.md](../../intent/timeline-concurrency/implementation-plan.md).
+- Summary: [README.md](README.md).
+- Assets: [eight original files and index](../../intent/timeline-concurrency/assets/pro-results/timeline-concurrency-methods-2026-10-30/README.md).
 - PR: pending Pro completion and integration.
 
 ## Topic choice
@@ -89,3 +89,30 @@ No package or demo code changed, so full `pnpm check` is not required.
 These checks validate the baseline only; they do not prove the proposed feature.
 Plan, summary, original assets, local dispositions, and PR remain pending Pro completion.
 No preparation-only PR is open.
+
+## Collection and integration
+
+At the October 30 22:03 UTC check, Pro had completed in 23m 37s. No follow-up was needed.
+Verified connected Chrome profile `byroni.us`, Byron Wall Pro account, and the same recorded conversation.
+Read the complete final response and collected its linked original archive under standing direct human download approval.
+The first header download had no immediate file. One bounded recovery wait timed out; the local ZIP then appeared.
+Checked actual local files before further retry. No approval rejection or Library upload occurred.
+
+Archive safety, unique paths, no symlinks, CRC, UTF-8, size, and exact eight-file inventory passed.
+ZIP SHA-256: `be65bf4c9e2e26cfc1b6bd65f0a14d2fed5549cd4905b59a20c1c8eb67464e3b`.
+Read both full reports, fixture/expected JSON, proposed settings, Dashboard, notebook, and Python companion.
+Preserved all eight originals byte for byte; no downloaded program was executed.
+The archive supplies no image, diagram, or separate manifest. ZIP and input packet remain ignored in `tmp/`.
+
+Refreshed origin/main remains at the baseline. Checked all open PRs through #577.
+Checked ownership, local/facet population, parser/category rules, multi-field filter/export boundaries, callbacks,
+trace routing, positional refresh, initial/mounted findings, notebook writeback, and actual folder/saver routes.
+PostgreSQL, Perfetto, and Splunk primary-source spot checks support the method comparison.
+Local evidence records TC01–TC26 dispositions and corrections. No feature implementation occurred.
+
+Locally authored arithmetic checks passed 971 assertions across eight scenarios and the analytical subwindow.
+The checker imports neither supplied programs nor repository programs.
+Pro's separate 500 randomized checks remain Pro-reported. Proposed companions do not claim baseline runtime acceptance.
+Local plan, summary, intent, catalogue links, and asset index are written.
+Collection checks passed 32 ownership/findings/writeback tests and 74 docs tests, with existing React act warnings.
+All 25 authored local Markdown links resolve. Format, committed inventory, and PR verification remain in progress.

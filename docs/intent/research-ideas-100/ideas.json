@@ -470,8 +470,8 @@
     "path": "ideas/R013-timeline-concurrency.md",
     "priority": 94,
     "research_kind": "follow-up",
-    "status": "candidate",
-    "summary": "Investigate a bounded occupancy or overlap summary on top of the delivered interval timeline.",
+    "status": "planned",
+    "summary": "Build finite-window Timeline occupancy, exact contributor queries, lane summaries, and typed notebook interval findings.",
     "research_question": "Can a concurrency strip answer resource-use questions without confusing record-selection overlap with simultaneous occupancy?",
     "why_now": "Timeline intervals and inclusive window selection already exist; selecting touching intervals does not settle occupancy semantics.",
     "repo_evidence": [
@@ -494,16 +494,15 @@
         "observation": "The shape lists concurrency as later scope."
       }
     ],
-    "related_intents": [
-      "docs/intent/domain-analysis-views/intent-brief.md",
-      "docs/intent/domain-analysis-views/shape-brief.md"
-    ],
+    "related_intents": ["docs/intent/timeline-concurrency/intent-brief.md"],
     "dependencies": [],
     "first_experiment": "Hand-check adjacent, overlapping, zero-duration, and open-ended bookings against a sweep over interval boundaries.",
     "acceptance_evidence": "Displayed concurrency and duration agree with hand totals and every segment traces to the relevant bookings.",
     "rejection_signal": "The task needs capacities, recurrence, or scheduling operations, or an existing grouped table is sufficient.",
     "confidence": "medium",
-    "external_sources": []
+    "external_sources": [],
+    "implementation_plan": "docs/intent/timeline-concurrency/implementation-plan.md",
+    "research_summary": "docs/research/timeline-concurrency-methods-2026-10-30/README.md"
   },
   {
     "id": "R014",
