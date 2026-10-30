@@ -3,6 +3,8 @@ import {
   analysisFileText,
   ExplorEdaNotebook,
   ExplorEdaProject,
+  HIDDEN_PROJECT_FILE,
+  PROJECT_FILE,
   projectFileText,
   type AnalysisProject,
   type AnalysisView,
@@ -149,12 +151,18 @@ export function ProjectWorkspace({
     [folder]
   );
 
+  // Where project text goes; a folder without it gets it on the first
+  // definition edit, such as a calculation on a source's own query.
+  const projectPath =
+    folder.projectPath ??
+    (folder.layout === "hidden" ? HIDDEN_PROJECT_FILE : PROJECT_FILE);
+
   /** The text each file would hold for the project and views as they are. */
   const fileText = (
     path: string,
     state: { project: AnalysisProject; views: Map<string, AnalysisView[]> }
   ) =>
-    path === folder.projectPath
+    path === projectPath
       ? projectFileText(folder, state.project)
       : analysisFileText(
           folder,
@@ -171,9 +179,8 @@ export function ProjectWorkspace({
     for (const analysis of folder.analyses) {
       saver.known(analysis.path, fileText(analysis.path, initial));
     }
-    if (folder.projectPath) {
-      saver.known(folder.projectPath, fileText(folder.projectPath, initial));
-    }
+    // Missing project text that would say nothing new stays unwritten.
+    saver.known(projectPath, fileText(projectPath, initial));
     for (const item of folder.notebooks) {
       saver.known(item.path, item.text);
     }
@@ -194,7 +201,19 @@ export function ProjectWorkspace({
   const analysisViews =
     selected.path && !notebook ? (views.get(selected.path) ?? []) : [];
   const view = analysisViews[selected.index] ?? analysisViews[0];
-  const allViews = useMemo(() => [...views.values()].flat(), [views]);
+  // Notebooks read queries too, so checks before removing one count them.
+  const allViews = useMemo(
+    () => [
+      ...[...views.values()].flat(),
+      ...folder.notebooks.map((item) => ({
+        id: viewId(item.path, 0),
+        name: item.result.settings.metadata.name || item.path,
+        queryId: item.result.queryId,
+        settings: item.result.settings,
+      })),
+    ],
+    [views, folder.notebooks]
+  );
 
   const updateView = (id: string, change: Partial<AnalysisView>) => {
     const path = id.slice(0, id.lastIndexOf("#"));
@@ -216,9 +235,7 @@ export function ProjectWorkspace({
     project: next,
     view: changed,
   }: ExplorEdaProjectChange) => {
-    if (folder.projectPath) {
-      dirty.current.add(folder.projectPath);
-    }
+    dirty.current.add(projectPath);
     // An analysis that brings its own source writes it in its own file.
     for (const path of new Set(Object.values(folder.localSources))) {
       dirty.current.add(path);

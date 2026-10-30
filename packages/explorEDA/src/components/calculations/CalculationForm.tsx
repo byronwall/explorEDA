@@ -32,6 +32,7 @@ type Props = {
   onApply: () => void;
   onDiscard: () => void;
   onClose: () => void;
+  onMapCategories: () => void;
 };
 
 export function CalculationForm({
@@ -51,6 +52,7 @@ export function CalculationForm({
   onApply,
   onDiscard,
   onClose,
+  onMapCategories,
 }: Props) {
   const fieldProfiles = useDataLayer((state) => state.fieldProfiles);
   const getColumnData = useDataLayer((state) => state.getColumnData);
@@ -138,13 +140,22 @@ export function CalculationForm({
             <p id="calculation-syntax" className="eda-calc-help">
               Use ["Field name"] for a field and "text" for a literal.
             </p>
-            <button
-              type="button"
-              className="eda-calc-text-button"
-              onClick={() => setTab("functions")}
-            >
-              Function help
-            </button>
+            <span className="flex shrink-0 gap-3">
+              <button
+                type="button"
+                className="eda-calc-text-button"
+                onClick={onMapCategories}
+              >
+                Map categories…
+              </button>
+              <button
+                type="button"
+                className="eda-calc-text-button"
+                onClick={() => setTab("functions")}
+              >
+                Function help
+              </button>
+            </span>
           </div>
           <div
             id="calculation-validation"

@@ -431,3 +431,42 @@ describe("multi-source analysis", () => {
     });
   });
 });
+
+describe("recode() in a calculate step", () => {
+  it("maps typed codes into a text field", () => {
+    const { project, diagnostics } = compileProjectText(`project @p
+
+source @sales key=id {
+  field id type=string
+  field code type=unknown
+}
+
+query @q "Codes" glyph=Q {
+  source sales
+  calc @group code_group = recode(["sales.code"], 1, "one", "1", "text one", null, "none", "other")
+}
+`);
+    expect(diagnostics).toEqual([]);
+    const result = evaluateAnalysisQuery(
+      project,
+      {
+        sales: [
+          { id: "a", code: 1 },
+          { id: "b", code: "1" },
+          { id: "c", code: null },
+          { id: "d", code: 2 },
+        ],
+      },
+      "q"
+    );
+    expect(result.rows.map((row) => row.values.code_group)).toEqual([
+      "one",
+      "text one",
+      "none",
+      "other",
+    ]);
+    expect(result.fields.find((field) => field.id === "code_group")?.type).toBe(
+      "string"
+    );
+  });
+});

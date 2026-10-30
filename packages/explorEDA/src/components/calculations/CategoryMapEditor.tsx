@@ -1,0 +1,1177 @@
+/*
+ * Map categories: pick a field's values, merge them into new names, and see
+ * every output category with its members and rows before applying. The
+ * result is one recode() calculation; Cancel and the draft change nothing.
+ */
+import { useMemo, useState } from "react";
+import { ChevronDown, ChevronRight, CircleAlert, Pencil } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ActionTooltip } from "@/components/ui/tooltip";
+import { parseExpression } from "@/lib/calculations/parser/semantics";
+import {
+  categoryLiteral,
+  categoryOf,
+  readRecode,
+  recodeLookup,
+  recodeText,
+  suggestGroups,
+  type CategoryValue,
+  type SuggestMode,
+  type Suggestion,
+  type Recode,
+} from "@/lib/calculations/recode";
+import { useDataLayer } from "@/providers/DataLayerProvider";
+import { cn } from "@/lib/utils";
+
+/** What the editor opens on: a field, a saved calculation, or draft text. */
+export interface CategoryMapTarget {
+  field?: string;
+  /** A saved calculation to edit. */
+  name?: string;
+  /** recode() text to start from, such as a formula draft. */
+  text?: string;
+}
+
+const PAGE = 200;
+const ROW_PAGE = 50;
+
+/** A key that keeps 1, "1", true, and "true" apart. */
+const keyOf = (value: CategoryValue) =>
+  value === null ? "null" : `${typeof value}:${String(value)}`;
+
+/** A value's name for screen readers: text quoted, so edge spaces show. */
+const labelOf = (value: CategoryValue) =>
+  value === null
+    ? "missing"
+    : typeof value === "string"
+      ? `“${value}”`
+      : String(value);
+
+/** A value as the data holds it: text quoted, missing as null. */
+export function CategoryChip({
+  value,
+  match,
+}: {
+  value: CategoryValue;
+  /** Search text to mark inside the value. */
+  match?: string;
+}) {
+  if (value === null) return <span className="eda-null">null</span>;
+  if (typeof value === "string") {
+    const at = match ? value.toLowerCase().indexOf(match) : -1;
+    return (
+      <span className="eda-catmap-value" data-type="text">
+        “
+        {at < 0 ? (
+          value
+        ) : (
+          <>
+            {value.slice(0, at)}
+            <mark className="eda-catmap-match">
+              {value.slice(at, at + match!.length)}
+            </mark>
+            {value.slice(at + match!.length)}
+          </>
+        )}
+        ”
+      </span>
+    );
+  }
+  return (
+    <span className="eda-catmap-value" data-type={typeof value}>
+      {String(value)}
+    </span>
+  );
+}
+
+interface ValueCount {
+  value: CategoryValue;
+  count: number;
+}
+
+export function CategoryMapDialog({
+  target,
+  onClose,
+  onEditFormula,
+}: {
+  target: CategoryMapTarget | undefined;
+  onClose: () => void;
+  onEditFormula: (
+    name: string | undefined,
+    draft: { name: string; expression: string }
+  ) => void;
+}) {
+  return (
+    <Dialog open={Boolean(target)} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent
+        className="eda-calc-editor eda-catmap"
+        // A draft closes only with Cancel, ×, or Escape.
+        onInteractOutside={(event) => event.preventDefault()}
+        // A field that cancels its own edit on Escape keeps the dialog open.
+        onEscapeKeyDown={(event) => {
+          if (
+            (event.target as Element | null)?.closest?.("[data-catmap-escape]")
+          )
+            event.preventDefault();
+        }}
+      >
+        {target && (
+          <CategoryMapForm
+            target={target}
+            onClose={onClose}
+            onEditFormula={onEditFormula}
+          />
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function CategoryMapForm({
+  target,
+  onClose,
+  onEditFormula,
+}: {
+  target: CategoryMapTarget;
+  onClose: () => void;
+  onEditFormula: (
+    name: string | undefined,
+    draft: { name: string; expression: string }
+  ) => void;
+}) {
+  const calculations = useDataLayer((state) => state.calculations);
+  const data = useDataLayer((state) => state.data);
+  const getColumnNames = useDataLayer((state) => state.getColumnNames);
+  const getColumnData = useDataLayer((state) => state.getColumnData);
+  const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
+  const addCalculation = useDataLayer((state) => state.addCalculation);
+  const updateCalculation = useDataLayer((state) => state.updateCalculation);
+
+  const saved = calculations.find(
+    (calc) => calc.resultColumnName === target.name
+  );
+  const initial = useMemo(
+    () =>
+      readRecode(target.text ?? saved?.expression.rawInput ?? "") ?? undefined,
+    // The draft starts once, when the editor opens.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
+  const fields = getColumnNames().filter((field) => field !== target.name);
+  const [field, setField] = useState(
+    initial?.field ?? target.field ?? fields[0] ?? ""
+  );
+  const [name, setName] = useState(() => {
+    if (target.name) return target.name;
+    const base = `${getFieldLabel(field)} group`;
+    const taken = new Set(getColumnNames());
+    let next = base;
+    for (let index = 2; taken.has(next); index += 1) next = `${base} ${index}`;
+    return next;
+  });
+  const [targets, setTargets] = useState(
+    () =>
+      new Map<string, { source: CategoryValue; target: string | null }>(
+        (initial?.entries ?? []).map((entry) => [keyOf(entry.source), entry])
+      )
+  );
+  const [fallback, setFallback] = useState<Recode["fallback"]>(
+    initial?.fallback
+  );
+  const [search, setSearch] = useState("");
+  const [selected, setSelected] = useState(new Set<string>());
+  const [merge, setMerge] = useState("");
+  const [shown, setShown] = useState(PAGE);
+  const [error, setError] = useState("");
+  const [suggest, setSuggest] = useState<SuggestMode>({
+    trim: false,
+    ignoreCase: false,
+  });
+  const [dismissed, setDismissed] = useState(new Set<string>());
+  // Unmapped only; values mapped while it is on stay listed until it is off,
+  // so a row never vanishes under the cursor.
+  const [unmappedOnly, setUnmappedOnly] = useState(false);
+  const [pinned, setPinned] = useState(new Set<string>());
+
+  // Every row's value, read once per field.
+  const column = useMemo(() => getColumnData(field), [getColumnData, field]);
+  const rows = useMemo(
+    () =>
+      data.map((row) => ({
+        id: row.__ID,
+        value: categoryOf(column[row.__ID] ?? null),
+      })),
+    [data, column]
+  );
+  const inventory = useMemo(() => {
+    const counts = new Map<string, ValueCount>();
+    for (const row of rows) {
+      if (row.value === undefined) continue;
+      const key = keyOf(row.value);
+      const item = counts.get(key);
+      if (item) item.count += 1;
+      else counts.set(key, { value: row.value, count: 1 });
+    }
+    // Saved entries stay listed when no row holds their value now.
+    for (const [key, entry] of targets) {
+      if (!counts.has(key)) counts.set(key, { value: entry.source, count: 0 });
+    }
+    return [...counts.values()].sort((a, b) => b.count - a.count);
+    // Entries added in this draft come from listed values already.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rows]);
+  const unmappable = rows.filter((row) => row.value === undefined).length;
+
+  const recode: Recode = {
+    field,
+    entries: inventory.flatMap((item) => {
+      const entry = targets.get(keyOf(item.value));
+      return entry ? [entry] : [];
+    }),
+    ...(fallback ? { fallback } : {}),
+  };
+  const map = recodeLookup(recode);
+  const groups = useMemo(() => {
+    const byOutput = new Map<
+      string,
+      { output: CategoryValue; count: number; members: ValueCount[] }
+    >();
+    for (const item of inventory) {
+      if (!item.count) continue;
+      const output = map(item.value);
+      const key = keyOf(output);
+      const group = byOutput.get(key) ?? { output, count: 0, members: [] };
+      group.count += item.count;
+      group.members.push(item);
+      byOutput.set(key, group);
+    }
+    return [...byOutput.values()].sort((a, b) => b.count - a.count);
+    // map is rebuilt from targets and fallback each render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inventory, targets, fallback]);
+
+  const query = search.trim().toLowerCase();
+  const unmapped = inventory.filter(
+    (item) => item.count > 0 && !targets.has(keyOf(item.value))
+  ).length;
+  const matches = inventory.filter(
+    (item) =>
+      (!query ||
+        String(item.value ?? "null")
+          .toLowerCase()
+          .includes(query)) &&
+      (!unmappedOnly ||
+        !targets.has(keyOf(item.value)) ||
+        pinned.has(keyOf(item.value)))
+  );
+  const visible = matches.slice(0, shown);
+  const allShown =
+    visible.length > 0 &&
+    visible.every((item) => selected.has(keyOf(item.value)));
+
+  const setTarget = (value: CategoryValue, next: string | null | undefined) => {
+    if (unmappedOnly)
+      setPinned((previous) => new Set(previous).add(keyOf(value)));
+    setTargets((previous) => {
+      const copy = new Map(previous);
+      if (next === undefined) copy.delete(keyOf(value));
+      else copy.set(keyOf(value), { source: value, target: next });
+      return copy;
+    });
+  };
+  /**
+   * Renames an output category: every value mapped to it takes the new name,
+   * and a name already in use merges the two. Unmatched values follow a
+   * renamed fallback.
+   */
+  const renameOutput = (
+    group: { output: CategoryValue; members: ValueCount[] },
+    next: string
+  ) => {
+    if (next === group.output) return;
+    setTargets((previous) => {
+      const copy = new Map(previous);
+      for (const member of group.members) {
+        const key = keyOf(member.value);
+        if (!copy.has(key) && fallback) continue;
+        // A value renamed to itself needs no entry unless a fallback would
+        // otherwise replace it.
+        if (member.value === next && !fallback) copy.delete(key);
+        else copy.set(key, { source: member.value, target: next });
+      }
+      return copy;
+    });
+    if (
+      fallback &&
+      group.members.some((member) => !targets.has(keyOf(member.value)))
+    ) {
+      setFallback({ value: next });
+    }
+  };
+  const toggle = (value: CategoryValue) =>
+    setSelected((previous) => {
+      const copy = new Set(previous);
+      const key = keyOf(value);
+      if (copy.has(key)) copy.delete(key);
+      else copy.add(key);
+      return copy;
+    });
+  // The most common selected text is the default name to merge into.
+  const mergeDefault = inventory.find(
+    (item) => typeof item.value === "string" && selected.has(keyOf(item.value))
+  )?.value as string | undefined;
+  const mergeTarget = merge.trim()
+    ? merge
+    : selected.size > 1
+      ? mergeDefault
+      : undefined;
+  const mergeSelected = () => {
+    const into = mergeTarget;
+    if (into === undefined) return;
+    setTargets((previous) => {
+      const copy = new Map(previous);
+      for (const item of inventory) {
+        const key = keyOf(item.value);
+        if (!selected.has(key)) continue;
+        // The value that names the group needs no entry of its own.
+        if (item.value === into && !fallback) copy.delete(key);
+        else copy.set(key, { source: item.value, target: into });
+      }
+      return copy;
+    });
+    setSelected(new Set());
+    setMerge("");
+  };
+
+  // Proposals read every value, not just the page shown; none is accepted
+  // until someone accepts it, and accepting only changes the draft.
+  const suggestions = useMemo(
+    () =>
+      suggest.trim || suggest.ignoreCase
+        ? suggestGroups(inventory, suggest)
+        : [],
+    [inventory, suggest]
+  );
+  const settled = (proposal: Suggestion) =>
+    proposal.members.every((member) => {
+      const entry = targets.get(keyOf(member.value));
+      return entry
+        ? entry.target === proposal.target
+        : member.value === proposal.target;
+    });
+  // A group whose most common value is already mapped proposes that target.
+  const proposals = suggestions
+    .map((proposal) => {
+      const mapped = targets.get(keyOf(proposal.members[0]!.value))?.target;
+      return typeof mapped === "string"
+        ? { ...proposal, target: mapped }
+        : proposal;
+    })
+    .filter((proposal) => !dismissed.has(proposal.key) && !settled(proposal));
+  const accept = (proposal: Suggestion, target: string) =>
+    setTargets((previous) => {
+      const copy = new Map(previous);
+      for (const member of proposal.members) {
+        const key = keyOf(member.value);
+        if (member.value === target) copy.delete(key);
+        else copy.set(key, { source: member.value, target });
+      }
+      return copy;
+    });
+  const toggleSuggest = (part: keyof SuggestMode) => {
+    setSuggest((previous) => ({ ...previous, [part]: !previous[part] }));
+    setDismissed(new Set());
+  };
+
+  const trimmedName = name.trim();
+  const nameTaken =
+    trimmedName !== saved?.resultColumnName &&
+    getColumnNames().includes(trimmedName);
+  const text = recodeText(recode);
+  const unwritable = recode.entries.some(
+    (entry) => categoryLiteral(entry.source) === undefined
+  );
+  const unchanged =
+    text === saved?.expression.rawInput.trim() &&
+    trimmedName === saved.resultColumnName;
+  const empty = recode.entries.length + (fallback ? 1 : 0) === 0;
+  // Why Apply is off, in the footer; nothing when it is on.
+  const blocked = !trimmedName
+    ? "Name the new field to apply."
+    : nameTaken
+      ? `A field named ${trimmedName} already exists.`
+      : empty
+        ? "Give a value a target, or replace unmatched values, to apply."
+        : unchanged
+          ? "No changes since this mapping was saved."
+          : unwritable
+            ? "A value here can't be written in a formula."
+            : undefined;
+  const canApply = Boolean(field) && !blocked;
+  const apply = async () => {
+    if (!canApply) return;
+    try {
+      const calculation = {
+        resultColumnName: name.trim(),
+        expression: parseExpression(text),
+      };
+      if (saved) updateCalculation(saved.resultColumnName, calculation);
+      else await addCalculation(calculation);
+      onClose();
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : String(cause));
+    }
+  };
+
+  const mapped = recode.entries.length;
+  const outputs = groups.length;
+  const inputs = inventory.filter((item) => item.count > 0).length;
+
+  return (
+    <form
+      className="eda-calc-form"
+      onSubmit={(event) => {
+        event.preventDefault();
+        void apply();
+      }}
+      onKeyDown={(event) => {
+        // Enter edits; only Cmd/Ctrl+Enter or the button applies.
+        if (event.key !== "Enter" || event.target === event.currentTarget)
+          return;
+        if (event.metaKey || event.ctrlKey) {
+          event.preventDefault();
+          void apply();
+        } else if ((event.target as HTMLElement).tagName === "INPUT") {
+          event.preventDefault();
+        }
+      }}
+    >
+      <DialogHeader className="eda-calc-editor-header">
+        <DialogTitle>Map categories</DialogTitle>
+        <DialogDescription className="sr-only">
+          Merge a field's categories into new names. Apply saves one calculated
+          field; the original field keeps its values.
+        </DialogDescription>
+      </DialogHeader>
+      <div className="eda-catmap-settings">
+        <div className="eda-setting-grid eda-catmap-setting-row">
+          <Label htmlFor="catmap-field">Field</Label>
+          <Select
+            value={field}
+            onValueChange={(next) => {
+              setField(next);
+              setTargets(new Map());
+              setSelected(new Set());
+              setShown(PAGE);
+            }}
+          >
+            <SelectTrigger id="catmap-field" aria-label="Field to map">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {fields.map((item) => (
+                <SelectItem key={item} value={item}>
+                  {getFieldLabel(item)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Label htmlFor="catmap-name">New field</Label>
+          <Input
+            id="catmap-name"
+            value={name}
+            aria-invalid={nameTaken || !trimmedName || undefined}
+            aria-describedby="catmap-status"
+            onChange={(event) => {
+              setName(event.target.value);
+              setError("");
+            }}
+          />
+          <span id="catmap-unmatched-label" className="eda-catmap-label">
+            Unmatched
+          </span>
+          <div className="eda-catmap-unmatched">
+            <div
+              role="radiogroup"
+              aria-labelledby="catmap-unmatched-label"
+              className="eda-catmap-segment"
+            >
+              <ActionTooltip content="Values without a target keep their category.">
+                <button
+                  type="button"
+                  role="radio"
+                  aria-checked={!fallback}
+                  onClick={() => setFallback(undefined)}
+                >
+                  Keep
+                </button>
+              </ActionTooltip>
+              <ActionTooltip content="Every value without a target, missing too, becomes one category.">
+                <button
+                  type="button"
+                  role="radio"
+                  aria-checked={Boolean(fallback)}
+                  onClick={() => setFallback(fallback ?? { value: "Other" })}
+                >
+                  Replace
+                </button>
+              </ActionTooltip>
+            </div>
+            {fallback && (
+              <Input
+                aria-label="Category for unmatched values"
+                value={fallback.value ?? ""}
+                onChange={(event) => setFallback({ value: event.target.value })}
+              />
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="eda-catmap-grid">
+        <section className="eda-catmap-values" aria-label="Values">
+          <div className="eda-catmap-toolbar">
+            <Input
+              type="search"
+              aria-label="Search values"
+              placeholder={`Search ${inputs.toLocaleString()} values…`}
+              value={search}
+              onChange={(event) => {
+                setSearch(event.target.value);
+                setShown(PAGE);
+              }}
+              onKeyDown={(event) => {
+                if (event.key !== "ArrowDown") return;
+                event.preventDefault();
+                event.currentTarget
+                  .closest("section")
+                  ?.querySelector<HTMLInputElement>("[data-target-input]")
+                  ?.focus();
+              }}
+            />
+            <div
+              role="radiogroup"
+              aria-label="Show values"
+              className="eda-catmap-segment"
+            >
+              <button
+                type="button"
+                role="radio"
+                aria-checked={!unmappedOnly}
+                onClick={() => {
+                  setUnmappedOnly(false);
+                  setPinned(new Set());
+                }}
+              >
+                All
+              </button>
+              <ActionTooltip content="Show only values without a target, to work through the rest of the list.">
+                <button
+                  type="button"
+                  role="radio"
+                  aria-checked={unmappedOnly}
+                  onClick={() => {
+                    setUnmappedOnly(true);
+                    setPinned(new Set());
+                    setShown(PAGE);
+                  }}
+                >
+                  Unmapped <span className="eda-catmap-tally">{unmapped}</span>
+                </button>
+              </ActionTooltip>
+            </div>
+            <span className="eda-catmap-segment-label" aria-hidden="true">
+              Suggest
+            </span>
+            <div
+              role="group"
+              aria-label="Suggest groups"
+              className="eda-catmap-segment"
+            >
+              <ActionTooltip content="Suggest groups of text that differs only in spaces at its start or end.">
+                <button
+                  type="button"
+                  aria-pressed={suggest.trim}
+                  onClick={() => toggleSuggest("trim")}
+                >
+                  Trim edges
+                </button>
+              </ActionTooltip>
+              <ActionTooltip content="Suggest groups of text that differs only in letter case. Accents and punctuation still count.">
+                <button
+                  type="button"
+                  aria-pressed={suggest.ignoreCase}
+                  onClick={() => toggleSuggest("ignoreCase")}
+                >
+                  Ignore case
+                </button>
+              </ActionTooltip>
+            </div>
+          </div>
+          {(suggest.trim || suggest.ignoreCase) && (
+            <SuggestionList
+              proposals={proposals}
+              total={suggestions.length}
+              targets={targets}
+              onAccept={accept}
+              onDismiss={(proposal) =>
+                setDismissed((previous) => new Set(previous).add(proposal.key))
+              }
+            />
+          )}
+          <div
+            className="eda-catmap-merge"
+            data-active={selected.size > 0 || undefined}
+          >
+            <span>
+              {selected.size
+                ? `${selected.size.toLocaleString()} selected`
+                : "Select to merge"}
+            </span>
+            <Input
+              aria-label="Merge selected into"
+              placeholder={
+                selected.size > 1 && mergeDefault
+                  ? `Merge into “${mergeDefault}”`
+                  : "Merge into…"
+              }
+              value={merge}
+              onChange={(event) => setMerge(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  event.preventDefault();
+                  if (selected.size && mergeTarget) mergeSelected();
+                }
+              }}
+            />
+            <ActionTooltip
+              content={
+                selected.size
+                  ? "Give every selected value this name."
+                  : "Select values to merge first."
+              }
+            >
+              {/* A disabled button gets no hover, so the span carries it. */}
+              <span>
+                <Button
+                  type="button"
+                  size="sm"
+                  disabled={!selected.size || !mergeTarget}
+                  onClick={mergeSelected}
+                >
+                  Merge
+                </Button>
+              </span>
+            </ActionTooltip>
+          </div>
+          <table className="eda-catmap-table">
+            <thead>
+              <tr>
+                <th className="eda-catmap-check">
+                  <input
+                    type="checkbox"
+                    aria-label="Select shown values"
+                    checked={allShown}
+                    disabled={!visible.length}
+                    onChange={() =>
+                      setSelected((previous) => {
+                        const copy = new Set(previous);
+                        for (const item of visible) {
+                          const key = keyOf(item.value);
+                          if (allShown) copy.delete(key);
+                          else copy.add(key);
+                        }
+                        return copy;
+                      })
+                    }
+                  />
+                </th>
+                <th>Value</th>
+                <th className="eda-catmap-count">Rows</th>
+                <th>Becomes</th>
+              </tr>
+            </thead>
+            <tbody>
+              {visible.map((item) => {
+                const key = keyOf(item.value);
+                const entry = targets.get(key);
+                const label = labelOf(item.value);
+                return (
+                  <tr
+                    key={key}
+                    data-mapped={entry ? "" : undefined}
+                    data-selected={selected.has(key) || undefined}
+                  >
+                    <td className="eda-catmap-check">
+                      <input
+                        type="checkbox"
+                        aria-label={`Select ${label}`}
+                        checked={selected.has(key)}
+                        onChange={() => toggle(item.value)}
+                      />
+                    </td>
+                    <td>
+                      <CategoryChip value={item.value} match={query} />
+                    </td>
+                    <td className="eda-catmap-count">
+                      {item.count.toLocaleString()}
+                    </td>
+                    <td>
+                      <TargetCell
+                        label={label}
+                        value={item.value}
+                        entry={entry}
+                        fallback={fallback}
+                        onChange={(next) => setTarget(item.value, next)}
+                      />
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+          {!matches.length && (
+            <div className="eda-catmap-note">
+              <span className="eda-calc-help">
+                {query
+                  ? `No ${unmappedOnly ? "unmapped " : ""}values match “${search}”.`
+                  : "Every value has a target."}
+              </span>
+              {query && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setSearch("")}
+                >
+                  Clear search
+                </Button>
+              )}
+            </div>
+          )}
+          {matches.length > visible.length && (
+            <div className="eda-catmap-note">
+              <span className="eda-calc-help">
+                First {visible.length.toLocaleString()} of{" "}
+                {matches.length.toLocaleString()} shown.
+              </span>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => setShown((count) => count + PAGE)}
+              >
+                Show {Math.min(PAGE, matches.length - visible.length)} more
+              </Button>
+            </div>
+          )}
+          {unmappable > 0 && (
+            <p className="eda-calc-help eda-catmap-note">
+              {unmappable.toLocaleString()} rows hold dates or other values that
+              can't be mapped; they keep their value.
+            </p>
+          )}
+        </section>
+
+        <section
+          className="eda-catmap-preview"
+          aria-labelledby="catmap-preview"
+        >
+          <h3 id="catmap-preview" className="eda-catmap-heading">
+            Result
+            <span>
+              {inputs.toLocaleString()} → {outputs.toLocaleString()} categories
+            </span>
+          </h3>
+          <ul className="eda-catmap-groups">
+            {groups.slice(0, PAGE).map((group) => (
+              <OutputGroup
+                key={keyOf(group.output)}
+                group={group}
+                rows={rows}
+                map={map}
+                field={getFieldLabel(field)}
+                onRename={(next) => renameOutput(group, next)}
+              />
+            ))}
+          </ul>
+          {groups.length > PAGE && (
+            <p className="eda-calc-help eda-catmap-note">
+              First {PAGE} of {groups.length.toLocaleString()} categories shown,
+              largest first.
+            </p>
+          )}
+        </section>
+      </div>
+
+      <footer className="eda-calc-editor-footer">
+        <div className="min-w-0">
+          <p>
+            {mapped.toLocaleString()} {mapped === 1 ? "value" : "values"} mapped
+            {fallback ? " · others replaced" : " · others kept"}
+          </p>
+          {error ? (
+            <p id="catmap-status" role="alert" className="eda-calc-error">
+              <CircleAlert aria-hidden="true" size={14} />
+              <span>{error}</span>
+            </p>
+          ) : (
+            <p id="catmap-status" className="eda-calc-help">
+              {blocked ??
+                `Draft only. Apply adds ${trimmedName} as one calculation; ${getFieldLabel(field)} keeps its values.`}
+            </p>
+          )}
+        </div>
+        <div className="flex shrink-0 flex-wrap items-center gap-2">
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() =>
+              onEditFormula(saved?.resultColumnName, {
+                name,
+                expression: text,
+              })
+            }
+          >
+            Edit as formula
+          </Button>
+          <Button type="button" variant="outline" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button type="submit" disabled={!canApply}>
+            Apply
+          </Button>
+        </div>
+      </footer>
+    </form>
+  );
+}
+
+/** A value's target: empty keeps it, text renames it, missing clears it. */
+function TargetCell({
+  label,
+  value,
+  entry,
+  fallback,
+  onChange,
+}: {
+  label: string;
+  value: CategoryValue;
+  entry: { target: string | null } | undefined;
+  fallback: Recode["fallback"];
+  onChange: (next: string | null | undefined) => void;
+}) {
+  const missing = entry?.target === null;
+  const placeholder = fallback
+    ? fallback.value === null
+      ? "null"
+      : fallback.value
+    : value === null
+      ? "null"
+      : String(value);
+  return (
+    <div className="eda-catmap-target">
+      <Input
+        aria-label={`New category for ${label}`}
+        value={missing ? "" : (entry?.target ?? "")}
+        placeholder={missing ? "null" : placeholder}
+        className={cn(
+          (missing || placeholder === "null") && "eda-catmap-missing",
+          missing && "eda-catmap-missing-set"
+        )}
+        onChange={(event) =>
+          onChange(event.target.value === "" ? undefined : event.target.value)
+        }
+        onKeyDown={(event) => {
+          // Enter moves down the list, Shift+Enter up, like a spreadsheet.
+          if (event.key !== "Enter" || event.metaKey || event.ctrlKey) return;
+          const row = event.currentTarget.closest("tr");
+          const next = event.shiftKey
+            ? row?.previousElementSibling
+            : row?.nextElementSibling;
+          next?.querySelector<HTMLInputElement>("[data-target-input]")?.focus();
+        }}
+        data-target-input=""
+      />
+      <ActionTooltip
+        content={
+          missing ? "Keep a category instead" : "Make these rows missing"
+        }
+      >
+        <button
+          type="button"
+          className="eda-catmap-null eda-catmap-row-action"
+          aria-label={`Make ${label} missing`}
+          aria-pressed={missing}
+          onClick={() => onChange(missing ? undefined : null)}
+        >
+          null
+        </button>
+      </ActionTooltip>
+    </div>
+  );
+}
+
+function OutputGroup({
+  group,
+  rows,
+  map,
+  field,
+  onRename,
+}: {
+  group: { output: CategoryValue; count: number; members: ValueCount[] };
+  rows: { id: number; value: CategoryValue | undefined }[];
+  map: (value: CategoryValue) => CategoryValue;
+  field: string;
+  onRename: (next: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [renaming, setRenaming] = useState<string>();
+  const [limit, setLimit] = useState(ROW_PAGE);
+  const merged = group.members.length > 1;
+  const changed = group.members.some(
+    (member) => keyOf(member.value) !== keyOf(group.output)
+  );
+  const members = open
+    ? rows.filter(
+        (row) =>
+          row.value !== undefined &&
+          keyOf(map(row.value)) === keyOf(group.output)
+      )
+    : [];
+  return (
+    <li className="eda-catmap-group" data-changed={changed || undefined}>
+      <div className="eda-catmap-group-line">
+        {renaming === undefined ? (
+          <button
+            type="button"
+            className="eda-catmap-group-head"
+            aria-expanded={open}
+            onClick={() => setOpen(!open)}
+          >
+            {open ? (
+              <ChevronDown aria-hidden="true" className="eda-catmap-chevron" />
+            ) : (
+              <ChevronRight aria-hidden="true" className="eda-catmap-chevron" />
+            )}
+            <CategoryChip value={group.output} />
+            <span className="eda-catmap-count">
+              {group.count.toLocaleString()} rows
+            </span>
+          </button>
+        ) : (
+          <div className="eda-catmap-group-head" data-renaming="">
+            <ChevronRight aria-hidden="true" className="eda-catmap-chevron" />
+            <Input
+              autoFocus
+              aria-label={`Rename ${labelOf(group.output)}`}
+              className="eda-catmap-rename"
+              data-catmap-escape=""
+              placeholder={
+                group.output === null ? "Name for missing values" : undefined
+              }
+              value={renaming}
+              onFocus={(event) => event.currentTarget.select()}
+              onChange={(event) => setRenaming(event.target.value)}
+              onBlur={() => {
+                if (renaming) onRename(renaming);
+                setRenaming(undefined);
+              }}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") event.currentTarget.blur();
+                if (event.key === "Escape") {
+                  // Close the field, not the dialog.
+                  event.stopPropagation();
+                  event.preventDefault();
+                  setRenaming(undefined);
+                }
+              }}
+            />
+            <span className="eda-catmap-count">
+              {group.count.toLocaleString()} rows
+            </span>
+          </div>
+        )}
+        <ActionTooltip content="Rename this category. A name already in the list merges the two.">
+          <button
+            type="button"
+            className="eda-catmap-row-action"
+            aria-label={`Rename ${labelOf(group.output)}`}
+            onClick={() =>
+              setRenaming(
+                typeof group.output === "string"
+                  ? group.output
+                  : group.output === null
+                    ? ""
+                    : String(group.output)
+              )
+            }
+          >
+            <Pencil aria-hidden="true" size={13} />
+          </button>
+        </ActionTooltip>
+      </div>
+      {(merged || changed) && (
+        <p className="eda-catmap-members">
+          {group.members.map((member) => (
+            <span key={keyOf(member.value)}>
+              <CategoryChip value={member.value} />
+              <span className="eda-catmap-member-count">
+                {member.count.toLocaleString()}
+              </span>
+            </span>
+          ))}
+        </p>
+      )}
+      {open && (
+        <div className="eda-catmap-rows">
+          <table>
+            <thead>
+              <tr>
+                <th className="eda-catmap-count">Row</th>
+                <th>{field}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {members.slice(0, limit).map((row) => (
+                <tr key={row.id}>
+                  <td className="eda-catmap-count">
+                    {(row.id + 1).toLocaleString()}
+                  </td>
+                  <td>
+                    <CategoryChip value={row.value as CategoryValue} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {members.length > limit && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setLimit((count) => count + ROW_PAGE)}
+            >
+              Show {Math.min(ROW_PAGE, members.length - limit)} more of{" "}
+              {(members.length - limit).toLocaleString()}
+            </Button>
+          )}
+        </div>
+      )}
+    </li>
+  );
+}
+
+/** Proposed groups to review: each shows its members and a target to edit. */
+function SuggestionList({
+  proposals,
+  total,
+  targets,
+  onAccept,
+  onDismiss,
+}: {
+  proposals: Suggestion[];
+  total: number;
+  targets: Map<string, { target: string | null }>;
+  onAccept: (proposal: Suggestion, target: string) => void;
+  onDismiss: (proposal: Suggestion) => void;
+}) {
+  const [edits, setEdits] = useState<Record<string, string>>({});
+  if (!proposals.length) {
+    return (
+      <p className="eda-calc-help eda-catmap-note">
+        {total
+          ? "Every suggestion is accepted or dismissed."
+          : "No values differ only that way."}
+      </p>
+    );
+  }
+  return (
+    <section className="eda-catmap-suggestions" aria-label="Suggested groups">
+      <h3 className="eda-catmap-heading">
+        Suggested groups
+        <span>{proposals.length.toLocaleString()} to review</span>
+      </h3>
+      <ul>
+        {proposals.slice(0, PAGE).map((proposal) => {
+          const target = edits[proposal.key] ?? proposal.target;
+          const moved = proposal.members.filter((member) => {
+            const entry = targets.get(keyOf(member.value));
+            return entry && entry.target !== target;
+          }).length;
+          const rows = proposal.members.reduce(
+            (sum, member) => sum + member.count,
+            0
+          );
+          return (
+            <li key={proposal.key} className="eda-catmap-suggestion">
+              <p className="eda-catmap-members">
+                {proposal.members.map((member) => (
+                  <span key={member.value}>
+                    <CategoryChip value={member.value} />
+                    <span className="eda-catmap-member-count">
+                      {member.count.toLocaleString()}
+                    </span>
+                  </span>
+                ))}
+              </p>
+              <div className="eda-catmap-suggestion-actions">
+                <Input
+                  aria-label={`Target for ${labelOf(proposal.members[0]!.value)} group`}
+                  value={target}
+                  onChange={(event) =>
+                    setEdits((previous) => ({
+                      ...previous,
+                      [proposal.key]: event.target.value,
+                    }))
+                  }
+                />
+                <ActionTooltip
+                  content={
+                    moved
+                      ? `Adds ${rows.toLocaleString()} rows to the draft and moves ${moved} already mapped ${moved === 1 ? "value" : "values"}.`
+                      : `Adds ${rows.toLocaleString()} rows to the draft. Nothing changes until Apply.`
+                  }
+                >
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    disabled={!target}
+                    onClick={() => onAccept(proposal, target)}
+                  >
+                    Accept
+                  </Button>
+                </ActionTooltip>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => onDismiss(proposal)}
+                >
+                  Dismiss
+                </Button>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  );
+}

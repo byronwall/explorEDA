@@ -15,6 +15,7 @@ import {
   scatterRegressionUnitsDashboard,
   scatterMatrixDashboard,
   rankCorrelationDashboard,
+  categoryMappingsDashboard,
   rankPairsDashboard,
   scatterSurfaceDashboard,
   pointMapDashboard,
@@ -589,6 +590,17 @@ export const examples: ExampleData[] = [
     icon: LayoutGrid,
     data: "/datasets/palmer-penguins.csv",
     savedData: scatterMatrixDashboard,
+  },
+  {
+    id: "category-mappings",
+    title: "Hand-typed countries",
+    description:
+      "Support agents typed each ticket's country by hand: USA, US, U.S., us, and a stray space. One mapping merges the spellings someone has checked into United States and Canada. Open it to map the rest, or let Trim edges and Ignore case suggest groups to review.",
+    dataset: { rows: "240 tickets", fields: 5, source: "Synthetic" },
+    shows: ["Map categories", "Suggested groups", "Exact matches"],
+    icon: Tags,
+    data: "/datasets/support-tickets.csv",
+    savedData: categoryMappingsDashboard,
   },
   {
     id: "rank-correlation-basics",

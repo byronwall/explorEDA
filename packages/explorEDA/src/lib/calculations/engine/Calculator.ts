@@ -1,10 +1,18 @@
-import { getFunction, numericValue } from "../functions/registry";
+import { getFunction, numericValue, recodeTarget } from "../functions/registry";
 import type {
   CalculationContext,
   CalculationResult,
   CalculationValue,
   Expression,
+  FunctionExpression,
 } from "../types";
+
+/** A recode whose pairs are constants, read once into a lookup. */
+interface RecodeTable {
+  targets: Map<CalculationValue, string | null>;
+  fallback?: string | null;
+}
+const recodeTables = new WeakMap<FunctionExpression, RecodeTable | null>();
 
 export interface CalculationStep {
   id: string;
@@ -100,11 +108,21 @@ export class Calculator {
           throw new Error(`Undefined variable: ${field}`);
         return this.context.variables.get(field);
       }
-      case "function":
+      case "function": {
+        const table = this.steps ? undefined : this.recodeTable(expression);
+        if (table) {
+          const value = this.value(expression.arguments[0]!);
+          const target = table.targets.get(value ?? null);
+          if (target !== undefined) return target;
+          return table.fallback === undefined
+            ? (value ?? null)
+            : table.fallback;
+        }
         return getFunction(
           expression.functionName,
           expression.arguments.length
         ).evaluate(...expression.arguments.map((arg) => this.value(arg)));
+      }
       case "ternary":
         if (
           !expression.condition ||
@@ -176,5 +194,37 @@ export class Calculator {
       default:
         throw new Error("Unknown expression type");
     }
+  }
+
+  /**
+   * A lookup for recode() when every pair is a constant, so each row reads
+   * one map entry instead of every pair. A trace takes the plain path.
+   */
+  private recodeTable(expression: FunctionExpression) {
+    if (expression.functionName.toLowerCase() !== "recode") return undefined;
+    if (!recodeTables.has(expression)) {
+      const pairs = expression.arguments.slice(1);
+      if (
+        pairs.length < 2 ||
+        pairs.some((arg) => arg.dependencies.length > 0)
+      ) {
+        recodeTables.set(expression, null);
+      } else {
+        const values = pairs.map((arg) => this.value(arg));
+        const targets = new Map<CalculationValue, string | null>();
+        for (let index = 0; index + 1 < values.length; index += 2) {
+          const source = values[index] ?? null;
+          const target = recodeTarget(values[index + 1]!);
+          if (!targets.has(source)) targets.set(source, target);
+        }
+        recodeTables.set(expression, {
+          targets,
+          ...(values.length % 2
+            ? { fallback: recodeTarget(values.at(-1)!) }
+            : {}),
+        });
+      }
+    }
+    return recodeTables.get(expression) ?? undefined;
   }
 }

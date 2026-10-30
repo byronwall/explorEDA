@@ -17,6 +17,13 @@ export interface FieldProfile extends ColumnStatistics {
   dataType: DataType;
 }
 
+/**
+ * Column data whose type is declared rather than read from its values,
+ * such as a recode() result: its categories stay categories even when the
+ * text looks like numbers.
+ */
+export const declaredColumnTypes = new WeakMap<object, DataType>();
+
 export function buildFieldProfile(
   name: string,
   columnData: Record<number, datum>,
@@ -26,7 +33,9 @@ export function buildFieldProfile(
     name,
     ...calculateColumnStatistics(
       columnData,
-      typeOverride ?? detectColumnType(columnData)
+      typeOverride ??
+        declaredColumnTypes.get(columnData) ??
+        detectColumnType(columnData)
     ),
   };
 }

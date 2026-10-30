@@ -5126,10 +5126,468 @@ html {
   font-size: 12px;
   line-height: 1.45;
 }
+/* Map categories */
+.eda-catmap-settings {
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.eda-catmap-settings .eda-setting-grid {
+  max-width: 560px;
+}
+@media (min-width: 960px) {
+  /* One line: Field, New field, Unmatched. */
+  .eda-catmap-settings .eda-catmap-setting-row {
+    max-width: none;
+    grid-template-columns:
+      auto minmax(140px, 240px) auto minmax(140px, 240px)
+      auto minmax(0, 1fr);
+    gap: 6px 10px;
+  }
+  .eda-catmap-setting-row > label:not(:first-child),
+  .eda-catmap-setting-row > .eda-catmap-label {
+    margin-left: 14px;
+  }
+}
+.eda-catmap-match {
+  background: color-mix(in oklab, var(--primary) 18%, transparent);
+  color: inherit;
+  border-radius: 2px;
+}
+.eda-catmap-segment-label {
+  align-self: center;
+  margin-right: -4px;
+  font-size: 11px;
+  color: var(--muted-foreground);
+}
+.eda-catmap-tally {
+  margin-left: 4px;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted-foreground);
+}
+/* Row actions show on hover and focus, and stay on touch screens. */
+.eda-catmap-row-action {
+  transition: opacity 140ms ease-out;
+}
+@media (hover: hover) {
+  .eda-catmap-table
+    tr:not(:hover):not(:focus-within)
+    .eda-catmap-row-action:not([aria-pressed="true"]),
+  .eda-catmap-group-line:not(:hover):not(:focus-within) .eda-catmap-row-action {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .eda-catmap-row-action {
+    transition: none;
+  }
+}
+.eda-catmap-group-line {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.eda-catmap-group-line > .eda-catmap-row-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  border-radius: 4px;
+  color: var(--muted-foreground);
+}
+.eda-catmap-group-line > .eda-catmap-row-action:hover {
+  background: var(--accent);
+  color: var(--foreground);
+}
+.eda-catmap-rename {
+  height: 24px;
+  padding: 0 6px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.eda-catmap-settings label,
+.eda-catmap-label {
+  font-size: 12px;
+  color: var(--muted-foreground);
+}
+.eda-catmap-settings button[role="combobox"],
+.eda-catmap-settings input {
+  height: 28px;
+  font-size: 13px;
+}
+.eda-catmap-unmatched {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.eda-catmap-unmatched input {
+  max-width: 220px;
+}
+.eda-catmap-segment {
+  display: inline-flex;
+  flex-shrink: 0;
+  border: 1px solid var(--input);
+  border-radius: 6px;
+  padding: 2px;
+  gap: 2px;
+}
+.eda-catmap-segment button {
+  height: 22px;
+  padding: 0 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: var(--muted-foreground);
+}
+.eda-catmap-segment button[aria-checked="true"] {
+  background: var(--accent);
+  color: var(--foreground);
+  font-weight: 500;
+}
+.eda-catmap-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  flex: 1;
+  min-height: 0;
+}
+.eda-catmap-values,
+.eda-catmap-preview {
+  min-width: 0;
+  overflow: auto;
+  padding: 12px 20px 16px;
+}
+.eda-catmap-preview {
+  border-left: 1px solid var(--border);
+  background: color-mix(in oklab, var(--muted) 35%, transparent);
+}
+.eda-catmap-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.eda-catmap-toolbar > input {
+  flex: 1 1 160px;
+  min-width: 0;
+}
+.eda-catmap-toolbar input {
+  height: 28px;
+  font-size: 13px;
+}
+.eda-catmap-segment button[aria-pressed="true"] {
+  background: var(--accent);
+  color: var(--foreground);
+  font-weight: 500;
+}
+.eda-catmap-suggestions {
+  margin-top: 10px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: color-mix(in oklab, var(--muted) 35%, transparent);
+}
+.eda-catmap-suggestions ul {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 260px;
+  overflow: auto;
+}
+.eda-catmap-suggestion {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px 10px;
+  padding-top: 6px;
+  border-top: 1px solid var(--border);
+}
+.eda-catmap-suggestion:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+.eda-catmap-suggestion .eda-catmap-members {
+  padding: 0;
+  font-size: 13px;
+  color: var(--foreground);
+}
+.eda-catmap-suggestion-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+}
+.eda-catmap-suggestion-actions input {
+  width: 140px;
+  height: 28px;
+  font-size: 13px;
+}
+.eda-catmap-merge {
+  position: sticky;
+  top: -12px;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 4px;
+  padding: 6px 0;
+  background: var(--background);
+  font-size: 12px;
+  color: var(--muted-foreground);
+}
+.eda-catmap-merge > span {
+  flex-shrink: 0;
+  min-width: 112px;
+}
+.eda-catmap-merge[data-active] > span {
+  color: var(--foreground);
+  font-weight: 500;
+}
+.eda-catmap-merge input {
+  height: 28px;
+  font-size: 13px;
+}
+.eda-catmap-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.eda-catmap-table th {
+  text-align: left;
+  font-weight: 500;
+  font-size: 11px;
+  color: var(--muted-foreground);
+  padding: 4px 6px;
+  border-bottom: 1px solid var(--border);
+}
+.eda-catmap-table td {
+  padding: 3px 6px;
+  border-bottom: 1px solid color-mix(in oklab, var(--border) 60%, transparent);
+  vertical-align: middle;
+}
+.eda-catmap-table tbody tr:hover td {
+  background: color-mix(in oklab, var(--muted) 45%, transparent);
+}
+.eda-catmap-table tbody tr[data-selected] td {
+  background: color-mix(in oklab, var(--primary) 8%, transparent);
+}
+/* A mapped value's target reads as set: a soft tint, not a rule. */
+.eda-catmap-table tr[data-mapped] [data-target-input] {
+  background: color-mix(in oklab, var(--primary) 7%, var(--background));
+}
+.eda-catmap-table thead th {
+  position: sticky;
+  top: var(--catmap-head-top, 28px);
+  z-index: 1;
+  background: var(--background);
+}
+.eda-catmap-check {
+  width: 28px;
+}
+.eda-catmap-check input {
+  display: block;
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  accent-color: var(--primary);
+}
+.eda-catmap-count {
+  text-align: right !important;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted-foreground);
+  white-space: nowrap;
+}
+.eda-catmap-value {
+  white-space: pre;
+  overflow-wrap: anywhere;
+}
+.eda-catmap-value[data-type="number"],
+.eda-catmap-value[data-type="boolean"] {
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: 12px;
+  color: var(--primary);
+}
+.eda-catmap-target {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 120px;
+  max-width: 320px;
+}
+.eda-catmap-target input {
+  height: 26px;
+  font-size: 13px;
+}
+.eda-catmap-target input::placeholder {
+  color: color-mix(in oklab, var(--muted-foreground) 70%, transparent);
+}
+.eda-catmap-missing::placeholder {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+}
+/* Set to missing reads as a value; a null that is only kept stays muted. */
+.eda-catmap-missing-set::placeholder {
+  color: var(--foreground) !important;
+}
+.dark .eda-catmap input[type="checkbox"] {
+  color-scheme: dark;
+}
+.eda-catmap-null {
+  flex-shrink: 0;
+  height: 22px;
+  padding: 0 5px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 10px;
+  color: var(--muted-foreground);
+}
+.eda-catmap-null:hover {
+  border-color: var(--border);
+}
+.eda-catmap-null[aria-pressed="true"] {
+  background: var(--accent);
+  border-color: var(--input);
+  color: var(--foreground);
+}
+.eda-catmap-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+.eda-catmap-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.eda-catmap-heading span {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--muted-foreground);
+}
+.eda-catmap-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.eda-catmap-group {
+  border-radius: 6px;
+  padding: 2px 4px 4px;
+}
+.eda-catmap-group {
+  --catmap-group-bg: color-mix(in oklab, var(--muted) 35%, var(--background));
+}
+.eda-catmap-group[data-changed] {
+  --catmap-group-bg: color-mix(in oklab, var(--primary) 6%, var(--background));
+  background: var(--catmap-group-bg);
+}
+.eda-catmap-group-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  min-height: 26px;
+  text-align: left;
+  font-size: 13px;
+  font-weight: 500;
+}
+.eda-catmap-group-head .eda-catmap-count {
+  margin-left: auto;
+  font-weight: 400;
+  font-size: 12px;
+}
+.eda-catmap-chevron {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  color: var(--muted-foreground);
+}
+.eda-catmap-members {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 10px;
+  padding: 0 0 2px 20px;
+  font-size: 12px;
+  color: var(--muted-foreground);
+}
+.eda-catmap-member-count {
+  margin-left: 4px;
+  font-variant-numeric: tabular-nums;
+  font-size: 11px;
+}
+.eda-catmap-rows {
+  max-height: 240px;
+  overflow: auto;
+  margin: 4px 0 0 20px;
+  font-size: 12px;
+}
+.eda-catmap-rows thead th {
+  position: sticky;
+  top: 0;
+  background: var(--catmap-group-bg);
+}
+.eda-catmap-rows table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.eda-catmap-rows th {
+  text-align: left;
+  font-weight: 500;
+  font-size: 11px;
+  color: var(--muted-foreground);
+  padding: 2px 6px;
+  border-bottom: 1px solid var(--border);
+}
+.eda-catmap-rows td {
+  padding: 2px 6px;
+}
+.eda-catmap-rows th.eda-catmap-count,
+.eda-catmap-rows td.eda-catmap-count {
+  width: 64px;
+}
 @media (max-width: 800px) {
   .eda-calc-editor {
     width: calc(100vw - 20px);
     height: calc(100dvh - 20px);
+  }
+  .eda-catmap-settings {
+    padding: 10px 16px;
+  }
+  .eda-catmap-grid {
+    display: block;
+    overflow: auto;
+  }
+  .eda-catmap-values,
+  .eda-catmap-preview {
+    overflow: visible;
+    padding: 12px 16px;
+  }
+  .eda-catmap-preview {
+    border-left: none;
+    border-top: 1px solid var(--border);
+  }
+  .eda-catmap-merge {
+    top: 0;
+  }
+  .eda-catmap-values {
+    --catmap-head-top: 40px;
+  }
+  .eda-catmap-merge > span {
+    min-width: 0;
+  }
+  .eda-catmap-toolbar {
+    flex-wrap: wrap;
+  }
+  .eda-catmap-suggestion-actions input {
+    width: 120px;
   }
   .eda-calc-editor-grid {
     grid-template-columns: minmax(0, 1fr);

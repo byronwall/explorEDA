@@ -22,6 +22,7 @@ import {
   chartControlsDashboard,
   shopDashboard,
   timeSeriesDashboard,
+  categoryMappingsDashboard,
 } from "@/demos/dashboardSettings";
 import { demoSettings as lorenzSettings } from "@/demos/lorenz";
 import { engineeringHistogramsDashboard } from "@/demos/engineeringHistograms";
@@ -734,6 +735,22 @@ export const liveExamples = {
       { click: "Add a chart of Region" },
       { choose: "Row chart" },
       { expectMark: "North: 125 rows" },
+    ],
+  },
+  "category-mappings": {
+    label: "Live category mapping",
+    data: "/datasets/support-tickets.csv",
+    savedData: focus(categoryMappingsDashboard, {
+      "tickets-country": [0, 0, 6, 6],
+      "tickets-country-group": [6, 0, 6, 6],
+    }),
+    exampleId: "category-mappings",
+    shotAlt:
+      "Two row charts of ticket countries: as typed, with USA, US, and U.S. apart, and mapped, with them merged into United States.",
+    steps: [
+      { expectRows: 240 },
+      { expectText: "Country, mapped" },
+      { expectText: "114" },
     ],
   },
   calculations: {

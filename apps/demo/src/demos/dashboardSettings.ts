@@ -1834,6 +1834,36 @@ export const wineChemistryDashboard: SavedDataStructure = {
 };
 
 /**
+ * Support tickets whose countries were typed by hand. One recode() maps
+ * the spellings someone has reviewed; the rest keep their value.
+ */
+export const categoryMappingsDashboard: SavedDataStructure = {
+  ...dashboard("Hand-typed countries", [
+    row("tickets-country", "Country as typed", "Country", layout(0, 0, 4, 6)),
+    row(
+      "tickets-country-group",
+      "Country, mapped",
+      "Country group",
+      layout(4, 0, 4, 6)
+    ),
+    row("tickets-channel", "Channel as typed", "Channel", layout(8, 0, 4, 6)),
+    table(
+      "tickets-records",
+      "Tickets",
+      ["Ticket", "Country", "Country group", "Channel", "Priority"],
+      layout(0, 6, 12, 4)
+    ),
+  ]),
+  calculations: [
+    {
+      resultColumnName: "Country group",
+      expression:
+        'recode(["Country"], "USA", "United States", "US", "United States", "U.S.", "United States", "CA", "Canada")',
+    },
+  ],
+};
+
+/**
  * Six years of correspondence: one strip of monthly squares per
  * correspondent, colored by a log ramp of messages, beside linked views of
  * the same rows.

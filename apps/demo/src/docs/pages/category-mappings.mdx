@@ -1,0 +1,58 @@
+## Merge spellings into categories
+
+A field typed by hand often holds one thing under several names: `USA`, `US`, `U.S.`, and `us`. **Map categories** merges the spellings you choose into new names and saves the result as a new field. The original field keeps its values, so you can compare the two side by side.
+
+Open it from a field's **Map categories** button in the field list, from **Map categories…** in a categorical axis label's right-click menu, or from **Map categories…** under a formula in the [calculation editor](/docs/calculated-fields).
+
+## Try it
+
+<LiveExample
+  id="category-mappings"
+  caption="Support tickets whose countries were typed by hand. Country group merges the reviewed spellings; the rest keep their value."
+/>
+
+Open [the full example](/examples/category-mappings), then press the **Map categories** button on **Country group** to see its mapping.
+
+## Map values
+
+- The list shows every value of the field with its row count, most common first. Text shows in quotes, so `"Canada "` with a trailing space is a separate row from `"Canada"`. Missing values show as `null`.
+- Check the values to merge, type a name in **Merge into…**, and press **Merge** or Enter. With two or more values checked and the box empty, Merge uses the most common of them. **Search** narrows the list and marks the matching text, and the header checkbox selects only the values shown. **Unmapped** lists only the values without a target, with their count, so you can work down the rest of the list.
+- Each value's **Becomes** cell is editable. Leave it empty to keep the value, type a new name, or press `null`, beside the cell, to make those rows missing. Enter moves to the next value and Shift+Enter to the one above.
+- **Unmatched** decides what happens to values without a target. **Keep** leaves them as they are. **Replace** sends all of them, missing values too, to one category, such as `Other`.
+- **Result** lists every category the new field will have, with its row count and the values merged into it. Open a category to see its exact rows. The pencil beside a category renames it; a name already in the list merges the two.
+- The draft changes nothing. **Cancel**, ×, or Escape closes it; a click outside does not. **Apply**, or Cmd/Ctrl+Enter, saves one calculation.
+
+## Suggested groups
+
+**Trim edges** and **Ignore case**, beside the search, propose groups of text values that differ only in spaces at their start or end, only in letter case, or both when both are on. In the example, Ignore case proposes `"Canada"` with `"canada"`, and Trim edges proposes `"Canada"` with `"Canada "`.
+
+- Nothing is accepted for you. Each group lists its values with their row counts and a target, which is the most common spelling. Edit the target, then **Accept** or **Dismiss** it.
+- **Accept** changes the draft only: each value in the group gets the target as an ordinary entry, as if you had typed it. A value you had already mapped elsewhere moves, and the button's tooltip says so. **Apply** still saves the draft.
+- The saved formula lists each value. It never stores a rule, so data added later with a new spelling keeps its value until you map it.
+- Only spaces and case count. `"E-mail"` and `"Email"`, `"México"` and `"Mexico"`, an accent typed as one character or as a letter plus a combining mark, and letters from another script that look the same all stay apart.
+
+## What counts as the same value
+
+Values match exactly, by type and by every character:
+
+- The number `1`, the text `"1"`, the boolean `true`, and the text `"true"` are four different values.
+- Case, edge spaces, punctuation, and accents count: `"us"`, `" USA"`, `"E-mail"`, and `"México"` each need their own target.
+- Empty text and text of only spaces are values of their own, apart from missing.
+
+Targets are text or missing. A mapping replaces values in one pass, so mapping `A` to `B` and `B` to `C` turns `A` into `B`, not `C`.
+
+## The saved formula
+
+**Apply** saves a calculation such as this one:
+
+```text
+recode(["Country"], "USA", "United States", "US", "United States", "CA", "Canada")
+```
+
+The first argument is the field. Then come pairs of a value and its new name. An odd last value is the category for every unmatched value; without it, unmatched values keep their category. The new field is always categorical, even when the new names look like numbers.
+
+`recode()` works anywhere a formula does: in the workspace's calculations and in a project query's **Calculate a field** step. **Edit as formula** opens the same mapping in the calculation editor. A `recode()` the map editor can't show, such as one whose value is another field, opens as a formula instead.
+
+## Remove a mapping
+
+Delete the calculation in **Calculations**. While a chart, filter, or grouped summary uses the field, the delete is refused with a message that names what to change first.

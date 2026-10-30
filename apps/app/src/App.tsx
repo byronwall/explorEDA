@@ -157,7 +157,20 @@ export function App({
     notice?: string,
     panel?: OpenPanel
   ) => {
-    await saver.flush();
+    try {
+      await saver.flush();
+    } catch (error) {
+      // Reading the folder now would drop the edits that didn't save.
+      setLoaded((previous) =>
+        previous.status === "ready"
+          ? {
+              ...previous,
+              notice: `${error instanceof Error ? error.message : String(error)}. Your edits are kept here; the folder wasn't read again.`,
+            }
+          : previous
+      );
+      return;
+    }
     const { folder, fetched } = await readAll(files);
     selection.current = path ? { path, index: 0 } : selection.current;
     setLoaded((previous) =>
@@ -217,7 +230,15 @@ export function App({
         for (const path of changed) {
           saver.cancel(path);
         }
-        await saver.flush();
+        // A change that didn't save stays on screen, with its failure.
+        if (
+          !(await saver.flush().then(
+            () => true,
+            () => false
+          ))
+        ) {
+          return;
+        }
         const { folder, fetched } = await readAll(files);
         setLoaded((previous) =>
           previous.status === "ready"
@@ -256,7 +277,7 @@ export function App({
 
   // Leaving the page writes what is still waiting.
   useEffect(() => {
-    const flush = () => void saver.flush();
+    const flush = () => void saver.flush().catch(() => {});
     window.addEventListener("pagehide", flush);
     return () => window.removeEventListener("pagehide", flush);
   }, [saver]);

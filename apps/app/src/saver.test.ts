@@ -35,8 +35,40 @@ describe("FolderSaver", () => {
     let last: SaveState | undefined;
     const saver = new FolderSaver(files, (state) => (last = state), 0);
     saver.queue("a.eda", "x\n");
-    await saver.flush();
+    await saver.flush().catch(() => {});
     expect(last).toMatchObject({ status: "failed", path: "a.eda" });
+  });
+
+  it("writes in queue order, one file at a time", async () => {
+    const order: string[] = [];
+    let open = 0;
+    const write = vi.fn(async (path: string) => {
+      open += 1;
+      expect(open).toBe(1);
+      await new Promise((resolve) => setTimeout(resolve, path === "p" ? 5 : 0));
+      order.push(path);
+      open -= 1;
+    });
+    const saver = new FolderSaver(
+      { ...memoryProjectFiles(), write },
+      () => {},
+      0
+    );
+    saver.queue("p", "project\n");
+    saver.queue("a.eda", "analysis\n");
+    await saver.flush();
+    expect(order).toEqual(["p", "a.eda"]);
+  });
+
+  it("rejects a flush that couldn't write, and keeps the change to retry", async () => {
+    let refuse = true;
+    const files = memoryProjectFiles({}, { refuse: () => refuse });
+    const saver = new FolderSaver(files, () => {}, 0);
+    saver.queue("a.eda", "x\n");
+    await expect(saver.flush()).rejects.toThrow("a.eda");
+    refuse = false;
+    await saver.flush();
+    expect(files.snapshot()["a.eda"]).toBe("x\n");
   });
 
   it("never writes when it is read-only", async () => {

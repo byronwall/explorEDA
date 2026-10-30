@@ -44,6 +44,7 @@ import {
   Users,
   Database,
   type LucideIcon,
+  Merge,
 } from "lucide-react";
 import type { MDXContent } from "mdx/types";
 import type { DocsTarget } from "./targets";
@@ -664,6 +665,18 @@ export const catalogue: readonly DocsPage[] = [
     covers: ["flow:calculated-fields"],
     examples: ["scatter-trace"],
     related: ["rendering", "dashboard-text"],
+  },
+  {
+    topic: "category-mappings",
+    title: "Category mappings",
+    group: "tasks",
+    icon: Merge,
+    lede: "Merge a field's spellings into clean categories, and see every row before you apply.",
+    summary: "Map hand-typed values into a new categorical field.",
+    highlights: ["Map categories", "recode()"],
+    covers: ["flow:category-mappings"],
+    examples: ["category-mappings"],
+    related: ["calculated-fields", "fields"],
   },
   {
     topic: "dashboard-text",

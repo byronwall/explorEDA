@@ -25,6 +25,30 @@ function dateValue(value: CalculationValue): Date {
   return date;
 }
 
+/** A category target: text, or null for missing. */
+export function recodeTarget(value: CalculationValue) {
+  if (value === null || typeof value === "string") return value;
+  throw new Error(
+    `recode targets must be text or null, not ${JSON.stringify(value)}`
+  );
+}
+
+/**
+ * One pass over the pairs: the first source that equals the value, by type
+ * and exactly, gives the result. null matches a missing value. Without a
+ * fallback, an unmatched value keeps its category.
+ */
+function recodeValue(value: CalculationValue, pairs: CalculationValue[]) {
+  const fallback = pairs.length % 2 ? pairs.at(-1) : undefined;
+  for (let index = 0; index + 1 < pairs.length; index += 2) {
+    const source = pairs[index];
+    if (source === null ? value == null : value === source) {
+      return recodeTarget(pairs[index + 1]!);
+    }
+  }
+  return fallback === undefined ? (value ?? null) : recodeTarget(fallback);
+}
+
 interface CalculationFunction {
   syntax: string;
   description: string;
@@ -67,6 +91,13 @@ export const calculationFunctions: Record<string, CalculationFunction> = {
     syntax: "count(x, y, …)",
     minArgs: 0,
     evaluate: (...values) => values.length,
+  },
+  recode: {
+    description:
+      "Replace categories: each value matches by exact type. A last odd value replaces every other category.",
+    syntax: 'recode(field, "from", "to", …, "otherwise")',
+    minArgs: 3,
+    evaluate: (value, ...pairs) => recodeValue(value, pairs),
   },
   formatdate: {
     description: "Format a UTC date. Use %Y-%m for a month label.",
