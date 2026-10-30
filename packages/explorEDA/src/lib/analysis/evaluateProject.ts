@@ -6,6 +6,7 @@ import {
 } from "@/lib/valueParsing";
 import { Calculator } from "@/lib/calculations/engine/Calculator";
 import { parseExpression } from "@/lib/calculations/parser/semantics";
+import { isRecodeExpression } from "@/lib/calculations/recode";
 import type {
   AnalysisDiagnostic,
   AnalysisEvaluation,
@@ -468,7 +469,13 @@ function calculateFrame(
     rows,
     fields: [
       ...input.fields.filter((field) => field.id !== step.fieldId),
-      { id: step.fieldId, name: step.label, origin: { stepId: step.id } },
+      {
+        id: step.fieldId,
+        name: step.label,
+        // recode() makes categories, even from number codes.
+        ...(isRecodeExpression(expression) ? { type: "string" as const } : {}),
+        origin: { stepId: step.id },
+      },
     ],
   };
 }

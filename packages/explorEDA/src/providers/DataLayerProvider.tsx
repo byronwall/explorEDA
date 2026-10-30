@@ -18,7 +18,12 @@ import {
   CalculationManager,
 } from "@/lib/calculations/CalculationState";
 import { parseExpression } from "@/lib/calculations/parser/semantics";
-import { FieldProfile, buildFieldProfiles } from "@/lib/fieldProfiles";
+import {
+  FieldProfile,
+  buildFieldProfiles,
+  declaredColumnTypes,
+} from "@/lib/fieldProfiles";
+import { isRecodeExpression } from "@/lib/calculations/recode";
 import type { DataType } from "@/components/SummaryTable/utils/dataTypeDetection";
 import {
   AggregateResult,
@@ -1226,6 +1231,9 @@ const createDataLayerStore = <T extends DatumObject>(
           resultMap.forEach((value, key) => {
             columnData[key] = value;
           });
+          if (isRecodeExpression(calculation.expression)) {
+            declaredColumnTypes.set(columnData, "categorical");
+          }
 
           // Caches are read through getters; nonce carries visible data changes.
           Object.defineProperty(calcColumnCache, field, {

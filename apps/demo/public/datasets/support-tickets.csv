@@ -1,0 +1,241 @@
+Ticket,Country,Channel,Priority,Hours to resolve
+T-0001,U.S.,Email,1,14.1
+T-0002,CA,Phone,2,37.0
+T-0003,Canada,Email,2,8.4
+T-0004,México,Phone,2,3.2
+T-0005,United States,E-mail,1,2.4
+T-0006,United States,Email,2,7.1
+T-0007,,Email,2,14.0
+T-0008,US,Chat,2,8.0
+T-0009,Canada,Chat,2,2.5
+T-0010,USA,Phone,1,9.4
+T-0011,Canada ,Chat,2,14.3
+T-0012,,Email,2,4.3
+T-0013,USA,phone,1,4.5
+T-0014,Canada,E-mail,2,11.2
+T-0015,USA,Email,2,5.0
+T-0016,Canada ,Chat,1,8.1
+T-0017, USA,chat ,2,13.6
+T-0018,,Chat,1,7.7
+T-0019,United States,Phone,2,11.3
+T-0020,Canada,Chat,2,3.7
+T-0021,U.S.,Email,3,5.3
+T-0022,Canada,Email,3,0.6
+T-0023,Canada,Phone,3,2.9
+T-0024,Canada,Email,3,25.1
+T-0025,Canada ,Phone,1,9.2
+T-0026,México,Phone,1,3.1
+T-0027,U.S.,Email,2,10.2
+T-0028,Canada,Email,1,4.4
+T-0029,United States,Email,3,5.3
+T-0030,USA,Email,1,5.3
+T-0031,United States,Email,3,8.8
+T-0032,United States,email,1,3.4
+T-0033,Canada,Phone,1,1.8
+T-0034,US,Email,1,9.4
+T-0035,Canada,Email,2,6.5
+T-0036,Canada,Chat,2,6.0
+T-0037,Mexico,Chat,2,2.6
+T-0038,Canada,Phone,3,1.4
+T-0039,US,Phone,2,19.2
+T-0040,US,Phone,1,5.3
+T-0041,USA,Chat,2,3.0
+T-0042,Mexico,Phone,2,4.2
+T-0043,,Email,1,14.0
+T-0044,USA,Phone,1,6.9
+T-0045,United States,Chat,2,6.3
+T-0046,,Chat,2,6.0
+T-0047,México,Chat,3,5.3
+T-0048,United States,Chat,2,4.7
+T-0049,United States,Phone,2,6.2
+T-0050,United States,Email,1,6.7
+T-0051,United States,Chat,1,10.6
+T-0052,Canada,,3,4.3
+T-0053,United States,email,3,3.0
+T-0054,Canada,Phone,1,10.1
+T-0055,USA,Chat,2,2.8
+T-0056,US,Phone,2,4.9
+T-0057,United States,Email,3,27.7
+T-0058,Canada,Chat,1,2.2
+T-0059,United States,phone,2,0.8
+T-0060,United States,Chat,2,2.3
+T-0061,Mexico,E-mail,2,2.2
+T-0062,US,Chat,2,6.1
+T-0063,Canada,Phone,2,22.0
+T-0064,U.S.,Chat,1,5.8
+T-0065,MEXICO,Phone,2,0.8
+T-0066,Canada,email,1,7.2
+T-0067,United States,Chat,1,4.5
+T-0068,US,Email,1,5.5
+T-0069,CA,Phone,2,6.7
+T-0070,US,Chat,2,9.0
+T-0071,U.S.,email,2,3.5
+T-0072,United States,E-mail,2,5.1
+T-0073,United States,Chat,2,6.7
+T-0074,US,Chat,2,7.3
+T-0075,Mexico,Email,3,3.5
+T-0076, USA,Phone,1,3.8
+T-0077,USA,email,2,3.9
+T-0078,MEXICO,Email,1,5.3
+T-0079,Canada,email,2,2.4
+T-0080,U.S.,Phone,2,4.2
+T-0081,,Email,2,7.0
+T-0082,USA,Email,3,3.2
+T-0083,Mexico,Email,2,5.4
+T-0084,us,Phone,2,22.7
+T-0085,us,Chat,2,7.8
+T-0086,United States,E-mail,3,5.1
+T-0087,México,email,3,14.5
+T-0088,Mexico,Chat,2,2.2
+T-0089,USA,Email,2,3.9
+T-0090,Canada ,phone,3,12.3
+T-0091,CA,Email,1,26.7
+T-0092,CA,Phone,3,5.0
+T-0093,,Phone,1,6.2
+T-0094,canada,E-mail,1,2.5
+T-0095,USA,Chat,2,7.4
+T-0096,United States,phone,2,7.6
+T-0097,MEXICO,Phone,3,6.2
+T-0098,USA,Phone,1,3.9
+T-0099,US,Chat,1,31.9
+T-0100,USA,email,2,4.8
+T-0101,United States,Email,1,22.7
+T-0102,canada,Phone,2,4.4
+T-0103,USA,email,3,4.1
+T-0104,Canada,chat ,2,11.5
+T-0105, USA,E-mail,2,24.1
+T-0106,US,Phone,2,3.4
+T-0107,U.S.,Email,2,2.7
+T-0108,CA,Phone,2,5.7
+T-0109,MEXICO,Phone,2,4.9
+T-0110,us,Chat,2,3.6
+T-0111,United States,E-mail,1,8.3
+T-0112,MEXICO,Email,1,5.2
+T-0113,United States,Email,2,7.7
+T-0114, USA,Email,3,2.5
+T-0115,Mexico,Email,2,5.8
+T-0116,,Phone,1,15.8
+T-0117,United States,Email,1,2.6
+T-0118,USA,phone,1,2.9
+T-0119,México,Chat,1,5.9
+T-0120,United States,Chat,2,4.0
+T-0121,United States,Phone,2,7.9
+T-0122,CA,phone,1,3.7
+T-0123,MEXICO,phone,2,4.2
+T-0124,Canada,Phone,1,3.1
+T-0125,USA,Chat,3,2.5
+T-0126,United States,Phone,2,3.6
+T-0127,México,Email,3,5.7
+T-0128,Mexico,email,1,7.1
+T-0129,Canada,phone,2,13.4
+T-0130,Mexico,Chat,1,2.4
+T-0131,Canada,Chat,2,9.3
+T-0132,U.S.,Email,2,5.8
+T-0133,Mexico,chat ,3,16.4
+T-0134,Mexico,Chat,2,14.4
+T-0135,United States,Chat,1,8.4
+T-0136,U.S.,email,3,7.5
+T-0137,United States,Phone,2,4.6
+T-0138,,Chat,2,4.7
+T-0139,USA,phone,2,2.0
+T-0140,USA,Chat,2,3.9
+T-0141,US,Email,1,2.7
+T-0142,US,Chat,1,4.3
+T-0143,United States,Email,2,9.4
+T-0144,Canada ,Email,2,4.3
+T-0145,Canada,Email,3,5.4
+T-0146,canada,Chat,2,9.5
+T-0147,USA,Email,1,11.4
+T-0148,USA,Phone,3,6.2
+T-0149,México,Phone,2,5.1
+T-0150,us,,2,2.9
+T-0151,US,Chat,2,5.3
+T-0152,Canada ,Email,2,2.0
+T-0153,United States,Chat,3,6.4
+T-0154,Mexico,Phone,1,9.9
+T-0155,United States,Chat,1,1.8
+T-0156,United States,Email,2,3.9
+T-0157,U.S.,phone,3,4.9
+T-0158,United States,Phone,1,5.2
+T-0159,CA,Phone,1,6.8
+T-0160, USA,Email,2,8.8
+T-0161,US,Phone,1,13.1
+T-0162,U.S.,Chat,2,6.6
+T-0163,CA,email,1,2.5
+T-0164,us,Email,3,4.6
+T-0165,Canada,Chat,1,2.2
+T-0166,USA,E-mail,1,3.5
+T-0167,USA,Email,3,8.9
+T-0168,Canada,Email,2,2.2
+T-0169,Canada,Email,3,8.6
+T-0170,CA,Phone,2,1.4
+T-0171,United States,,2,11.0
+T-0172,US,Email,3,2.5
+T-0173,Canada,Phone,2,4.0
+T-0174,U.S.,Email,1,3.7
+T-0175,canada,chat ,1,6.0
+T-0176,Canada,Phone,3,23.9
+T-0177,United States,Phone,2,2.0
+T-0178,United States,chat ,1,3.4
+T-0179,Canada,Phone,2,6.1
+T-0180,CA,Phone,3,5.0
+T-0181,United States,Phone,3,5.2
+T-0182,USA,chat ,2,7.3
+T-0183,United States,Email,2,13.1
+T-0184,Canada,email,2,4.3
+T-0185,Canada,chat ,2,3.6
+T-0186,USA,Chat,3,7.9
+T-0187,us,Chat,2,9.7
+T-0188,United States,Phone,1,15.1
+T-0189,CA,Phone,2,4.1
+T-0190,United States,Chat,3,7.4
+T-0191,Canada,phone,1,6.3
+T-0192,CA,Email,2,15.5
+T-0193,Canada,phone,2,6.7
+T-0194,US,E-mail,3,15.5
+T-0195,Mexico,chat ,1,5.8
+T-0196,Canada,Phone,2,6.8
+T-0197,Canada,Chat,2,2.8
+T-0198,United States,Chat,3,3.1
+T-0199,Canada,Email,1,7.4
+T-0200,us,Email,2,6.6
+T-0201,USA,Phone,2,2.1
+T-0202,United States,Email,2,1.1
+T-0203,Mexico,chat ,3,4.7
+T-0204,United States,Chat,2,3.9
+T-0205,U.S.,,1,3.2
+T-0206,México,Chat,1,10.6
+T-0207,US,Phone,3,31.1
+T-0208,USA,Chat,2,3.3
+T-0209,Mexico,Phone,1,2.6
+T-0210,MEXICO,email,3,6.8
+T-0211,US,Email,3,15.8
+T-0212,,Phone,1,1.3
+T-0213,United States,chat ,3,2.8
+T-0214,México,Chat,2,9.5
+T-0215,,chat ,2,3.7
+T-0216,Canada,Chat,2,8.3
+T-0217,Canada,phone,2,3.4
+T-0218,US,Chat,2,3.0
+T-0219, USA,Email,2,3.6
+T-0220,Canada,phone,1,4.1
+T-0221,United States,Phone,1,3.8
+T-0222,United States,email,2,10.0
+T-0223,Canada,Phone,3,1.3
+T-0224,Mexico,Phone,2,3.4
+T-0225,Canada,Phone,3,6.1
+T-0226,United States,Email,2,18.1
+T-0227,United States,Phone,2,9.1
+T-0228,MEXICO,Email,1,2.7
+T-0229,México,email,2,12.2
+T-0230,US,E-mail,1,11.2
+T-0231,USA,phone,3,4.8
+T-0232,canada,E-mail,1,1.7
+T-0233,Canada,Chat,3,3.5
+T-0234,United States,Chat,2,5.1
+T-0235,USA,Email,2,8.9
+T-0236,Mexico,Phone,2,2.5
+T-0237,CA,chat ,2,4.9
+T-0238,us,Email,3,7.4
+T-0239,United States,Email,2,7.7
+T-0240,United States,Email,2,2.5

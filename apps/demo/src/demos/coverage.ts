@@ -726,6 +726,15 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId: "category-mappings",
+    intent:
+      "Merge hand-typed country spellings into clean categories with one recode() calculation, beside the field as typed.",
+    features: {
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+    },
+  },
+  {
     exampleId: "rank-correlation-basics",
     intent:
       "Compare Pearson and Spearman on a curve that always rises, with tied ratings and missing practice-test counts.",

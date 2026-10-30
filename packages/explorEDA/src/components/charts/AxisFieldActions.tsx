@@ -6,7 +6,8 @@ import {
   type ReactNode,
 } from "react";
 import { createPortal } from "react-dom";
-import { BarChart, Copy, Settings2 } from "lucide-react";
+import { BarChart, Copy, Merge, Settings2 } from "lucide-react";
+import { useMapCategories } from "@/components/calculations/CalculationEditor";
 import { resolveFieldProfile } from "@/components/FieldMetadata";
 import { FieldInspector } from "@/components/SummaryTable/components/FieldInspector";
 import { ChartImageMenuSection } from "./export/ChartImageMenu";
@@ -51,6 +52,7 @@ export function useAxisFieldActions(
   const fieldProfiles = useDataLayer((state) => state.fieldProfiles);
   const getColumnData = useDataLayer((state) => state.getColumnData);
   const { createChart } = useCreateCharts();
+  const mapCategories = useMapCategories();
   const inspecting = useRef(false);
 
   const openMenu = (target: Omit<Menu, "x" | "y">, x: number, y: number) => {
@@ -172,6 +174,16 @@ export function useAxisFieldActions(
                     className={chartType === "row" ? "rotate-90" : undefined}
                   />
                   <span className="truncate">New chart of {label}</span>
+                </DropdownMenuItem>
+              )}
+              {menu.field && mapCategories && chartType === "row" && (
+                <DropdownMenuItem
+                  onSelect={() =>
+                    mapCategories(menu.field!, menu.element as HTMLElement)
+                  }
+                >
+                  <Merge aria-hidden="true" />
+                  <span className="truncate">Map categories…</span>
                 </DropdownMenuItem>
               )}
               {menu.field && (

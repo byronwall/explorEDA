@@ -537,3 +537,10 @@ Each row is one hour's energy flow in kWh: solar and grid import are positive, a
 - Size: 12 rows and 5 fields
 - Use: the acceptance fixture for live notebook findings: a missing score, a score that is not a number, and two inactive rows
 - Generation: written by hand from the live-findings implementation plan
+
+## Support tickets
+
+- File: `support-tickets.csv`
+- Size: 240 rows and 5 fields
+- Use: hand-typed country and channel names to map into clean categories: abbreviations, case, edge spaces, and an accented spelling
+- Generation: synthetic; each row picks a country spelling and a channel spelling by fixed weights from a fixed-seed generator, a priority from 1 to 3, and log-normal hours to resolve

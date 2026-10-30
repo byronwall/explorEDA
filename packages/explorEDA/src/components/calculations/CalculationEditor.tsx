@@ -30,16 +30,43 @@ import { CalculationPreview } from "./CalculationPreview";
 import { CalculationTrace } from "./CalculationTrace";
 import { dependentCalculations } from "./calculationHelpers";
 import { CheckCircle2, CircleAlert } from "lucide-react";
+import { readRecode } from "@/lib/calculations/recode";
+import { CategoryMapDialog, type CategoryMapTarget } from "./CategoryMapEditor";
 
 type Editor = {
+  /** Opens a calculation; a recode() the map editor can read opens there. */
   open: (
     name?: string,
     rowId?: number,
     returnFocus?: HTMLElement | null
   ) => void;
+  /** Opens Map categories on a field or a saved calculation. */
+  openMap: (
+    target: CategoryMapTarget,
+    returnFocus?: HTMLElement | null
+  ) => void;
 };
 const EditorContext = createContext<Editor | null>(null);
 export const useCalculationEditor = () => useContext(EditorContext);
+
+/**
+ * Opens Map categories for a field; a field that is already a recode()
+ * opens its own mapping. Undefined outside a calculation editor.
+ */
+export function useMapCategories() {
+  const editor = useContext(EditorContext);
+  const calculations = useDataLayer((state) => state.calculations);
+  if (!editor) return undefined;
+  return (field: string, focus?: HTMLElement | null) => {
+    const calc = calculations.find((item) => item.resultColumnName === field);
+    editor.openMap(
+      calc && readRecode(calc.expression.rawInput)
+        ? { name: field }
+        : { field },
+      focus
+    );
+  };
+}
 type Preview = {
   key: string;
   manager?: CalculationManager<DatumObject>;
@@ -68,10 +95,20 @@ export function CalculationEditorProvider({
   const [preview, setPreview] = useState<Preview>();
   const [saveError, setSaveError] = useState("");
   const [savedMessage, setSavedMessage] = useState("");
+  const [mapTarget, setMapTarget] = useState<CategoryMapTarget>();
   const returnFocus = useRef<HTMLElement | null>(null);
-  const open = useCallback(
+  const openMap = useCallback(
+    (target: CategoryMapTarget, focus?: HTMLElement | null) => {
+      returnFocus.current = focus ?? (document.activeElement as HTMLElement);
+      setVisible(false);
+      setMapTarget(target);
+    },
+    []
+  );
+  const openFormula = useCallback(
     (name?: string, row?: number, target?: HTMLElement | null) => {
       returnFocus.current = target ?? (document.activeElement as HTMLElement);
+      setMapTarget(undefined);
       setSelected(name);
       setRoot(name);
       setRowId(row ?? 0);
@@ -81,7 +118,18 @@ export function CalculationEditorProvider({
     },
     []
   );
-  const editor = useMemo(() => ({ open }), [open]);
+  const open = useCallback(
+    (name?: string, row?: number, target?: HTMLElement | null) => {
+      const calc = calculations.find((item) => item.resultColumnName === name);
+      if (calc && readRecode(calc.expression.rawInput)) {
+        openMap({ name }, target);
+      } else {
+        openFormula(name, row, target);
+      }
+    },
+    [calculations, openMap, openFormula]
+  );
+  const editor = useMemo(() => ({ open, openMap }), [open, openMap]);
   useEffect(() => {
     setDrafts({});
     setVisible(false);
@@ -269,6 +317,13 @@ export function CalculationEditorProvider({
               setSavedMessage("");
             }}
             onClose={() => setVisible(false)}
+            onMapCategories={() =>
+              openMap(
+                readRecode(draft.expression)
+                  ? { name: selected, text: draft.expression }
+                  : { name: selected }
+              )
+            }
             preview={
               current?.manager && current.calculation ? (
                 <CalculationPreview
@@ -343,6 +398,21 @@ export function CalculationEditorProvider({
           />
         </DialogContent>
       </Dialog>
+      <CategoryMapDialog
+        target={mapTarget}
+        onClose={() => {
+          setMapTarget(undefined);
+          const focus = returnFocus.current;
+          requestAnimationFrame(() => {
+            if (focus?.isConnected) focus.focus();
+          });
+        }}
+        onEditFormula={(name, next) => {
+          const focus = returnFocus.current;
+          setDrafts((previous) => ({ ...previous, [name ?? ""]: next }));
+          openFormula(name, undefined, focus);
+        }}
+      />
     </EditorContext.Provider>
   );
 }

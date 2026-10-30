@@ -1,5 +1,6 @@
 import { useRef, useState, type RefObject } from "react";
-import { ChevronRight, Crosshair, Plus, Settings2 } from "lucide-react";
+import { ChevronRight, Crosshair, Merge, Plus, Settings2 } from "lucide-react";
+import { useMapCategories } from "@/components/calculations/CalculationEditor";
 import { FieldMetadata } from "@/components/FieldMetadata";
 import { CalculatedFieldBadge } from "@/components/calculations/CalculatedFieldBadge";
 import { chartOptionsForField } from "@/components/SummaryTable/components/ChartActions";
@@ -273,6 +274,7 @@ export function FieldListRow({
 }) {
   const formatValue = useDataLayer((state) => state.formatFieldValue);
   const [inspecting, setInspecting] = useState(false);
+  const mapCategories = useMapCategories();
   const rowRef = useRef<HTMLDivElement>(null);
   const drag = useFieldDrag(profile.name);
   const detailsId = `eda-field-${profile.name.replace(/[^\w-]/g, "_")}-details`;
@@ -339,6 +341,22 @@ export function FieldListRow({
               <Settings2 />
             </Button>
           </ActionTooltip>
+          {mapCategories &&
+            (profile.dataType === "categorical" ||
+              profile.dataType === "boolean") && (
+              <ActionTooltip content="Map categories: merge or rename values into a new field">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label={`Map categories of ${label}`}
+                  onClick={(event) =>
+                    mapCategories(profile.name, event.currentTarget)
+                  }
+                >
+                  <Merge />
+                </Button>
+              </ActionTooltip>
+            )}
           <AddChartMenu
             field={profile.name}
             label={label}

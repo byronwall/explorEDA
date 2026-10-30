@@ -12,6 +12,7 @@ export const FLOWS = {
   "flow:trace": "Trace a mark back to its rows",
   "flow:in-place-edit": "Edit titles and axes in place",
   "flow:calculated-fields": "Add calculated fields",
+  "flow:category-mappings": "Map a field's values into new categories",
   "flow:dashboard-text": "Write a dashboard as text",
   "flow:saved-views": "Save views and undo changes",
   "flow:projects": "Join tables in a project",
