@@ -1,5 +1,9 @@
 # Research catalogue
 
+Design follow-up: [reusable grouped outputs](../../research/reusable-outputs-design-2026-10-30/README.md)
+plans shared query outputs, downstream grain, and exact original-record tracing from the reusable-analysis-outputs seed.
+It supersedes that seed's historical outside-demand gate without changing catalogue rank or choosing the next topic.
+
 The catalogue is in priority order. IDs remain stable if a later authorized review changes the rank. The complete question, experiment, evidence, and rejection signal are in each linked brief and in the JSON index.
 
 | Priority | ID and title                                                                                                                                                  | Category                           | Kind           |

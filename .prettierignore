@@ -8,3 +8,9 @@ docs/research/selection-identity-2026-10-22/evidence/frozen-oracle.json
 
 # Pro's time-series axes proposal, kept as written.
 docs/intent/time-series-axes/raw/2026-10-18-pro/
+
+# Original Pro result files; retain supplied bytes. The authored index is formatted.
+docs/intent/reusable-analysis-outputs/assets/pro-results/reusable-outputs-design-2026-10-30/reusable-outputs-design.md
+docs/intent/reusable-analysis-outputs/assets/pro-results/reusable-outputs-design-2026-10-30/implementation-plan.md
+docs/intent/reusable-analysis-outputs/assets/pro-results/reusable-outputs-design-2026-10-30/proof-fixtures.json
+docs/intent/reusable-analysis-outputs/assets/pro-results/reusable-outputs-design-2026-10-30/grouped-results-ui.svg

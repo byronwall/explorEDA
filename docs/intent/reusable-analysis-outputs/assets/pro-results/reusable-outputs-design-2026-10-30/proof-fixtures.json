@@ -1,0 +1,205 @@
+{
+  "title": "Reusable grouped results: exact proof fixtures",
+  "repository": "https://github.com/byronwall/explorEDA",
+  "baseline": "5594c95690859e8ce456aa3228fa9265ba686d12",
+  "purpose": "Reviewable input data and exact expected mathematical results for the proposed reusable-query-output design.",
+  "checkBoundary": {
+    "executable": "verify-proof-fixtures.py checks the supplied data, arithmetic, typed grouping, occurrence multiplicity, and expected empty-population contract with Python standard-library arithmetic.",
+    "notExecutableHere": "No explorEDA evaluator, parser, worker, persistence, React, notebook, or browser test is executed by this oracle. Those acceptance cases remain proposed.",
+    "numericPolicy": "For these fixtures, finite numbers and finite decimal-number text are eligible; null, blank text, nonnumeric text, booleans, and nonfinite text are excluded. Production code must reuse lib/valueParsing.ts.",
+    "countPolicy": "count(*) counts input occurrences; count(field) counts non-null/non-undefined values, including invalid text and blanks; numericCount counts the exact eligible inputs of a numeric measure.",
+    "unavailableEncoding": "JSON null in expected statistics means unavailable, corresponding to undefined numeric results in the evaluator. An observed zero is the string '0', never null.",
+    "rationalEncoding": "Exact expected numeric statistics are strings, such as '25' or '40/3'. The oracle uses Fraction and does not compare rounded floating-point output.",
+    "nonfiniteInputEncoding": "The raw nonfinite input is the JSON-safe string 'Infinity'.",
+    "occurrencePolicy": "Array entries are source occurrences. Equal values and duplicate measurement IDs do not collapse entries. Durable row identity across refresh is outside this oracle."
+  },
+  "primary": {
+    "id": "PF-01",
+    "description": "One result row per observed experiment ID; unequal numeric sample sizes and an all-ineligible group.",
+    "rows": [
+      { "measurementId": "a1", "experimentId": "A", "value": 0 },
+      { "measurementId": "a2", "experimentId": "A", "value": 20 },
+      { "measurementId": "a3", "experimentId": "A", "value": null },
+      { "measurementId": "b1", "experimentId": "B", "value": 20 },
+      { "measurementId": "b2", "experimentId": "B", "value": 40 },
+      { "measurementId": "b3", "experimentId": "B", "value": 60 },
+      { "measurementId": "b4", "experimentId": "B", "value": "n/a" },
+      { "measurementId": "b5", "experimentId": "B", "value": "" },
+      { "measurementId": "c1", "experimentId": "C", "value": null },
+      { "measurementId": "c2", "experimentId": "C", "value": " " },
+      { "measurementId": "c3", "experimentId": "C", "value": "Infinity" },
+      { "measurementId": "c4", "experimentId": "C", "value": true }
+    ],
+    "expected": {
+      "sourceOccurrenceCount": 12,
+      "groups": {
+        "string:A": {
+          "rowCount": 3, "presentCount": 2, "numericCount": 2,
+          "sum": "20", "mean": "10", "min": "0", "max": "20",
+          "memberIds": ["a1", "a2", "a3"], "eligibleIds": ["a1", "a2"]
+        },
+        "string:B": {
+          "rowCount": 5, "presentCount": 5, "numericCount": 3,
+          "sum": "120", "mean": "40", "min": "20", "max": "60",
+          "memberIds": ["b1", "b2", "b3", "b4", "b5"], "eligibleIds": ["b1", "b2", "b3"]
+        },
+        "string:C": {
+          "rowCount": 4, "presentCount": 3, "numericCount": 0,
+          "sum": null, "mean": null, "min": null, "max": null,
+          "memberIds": ["c1", "c2", "c3", "c4"], "eligibleIds": []
+        }
+      },
+      "observedGroupKeys": ["string:A", "string:B", "string:C"],
+      "unobservedExperimentDHasRow": false,
+      "resultRowCount": 3,
+      "finiteMeanCount": 2,
+      "equalExperimentMean": "25",
+      "sumOfGroupSums": "140",
+      "sumOfNumericCounts": 5,
+      "pooledMeasurementMean": "28",
+      "sumOfPresentCounts": 10,
+      "incorrectRatioUsingPresentCounts": "14"
+    }
+  },
+  "resultFilter": {
+    "id": "PF-02",
+    "description": "Filter the result rows by mean >= 20. This is not a producer input filter.",
+    "minimumMean": "20",
+    "expected": {
+      "selectedGroupKeys": ["string:B"],
+      "selectedResultRowCount": 1,
+      "memberOccurrenceCount": 5,
+      "numericContributorCount": 3,
+      "mean": "40",
+      "producerGroupMeans": { "string:A": "10", "string:B": "40", "string:C": null }
+    }
+  },
+  "sourceRefresh": {
+    "id": "PF-03",
+    "description": "Replace B's measurement b3 value 60 with 90 in a new source revision.",
+    "change": { "measurementId": "b3", "value": 90 },
+    "expected": {
+      "groupMeans": { "string:A": "10", "string:B": "50", "string:C": null },
+      "equalExperimentMean": "30",
+      "pooledMeasurementMean": "34"
+    }
+  },
+  "producerInputFilter": {
+    "id": "PF-04",
+    "description": "Explicitly retain numeric measurements <= 20 before grouping. Groups with no retained occurrences disappear.",
+    "maximumValue": "20",
+    "expected": {
+      "retainedMeasurementIds": ["a1", "a2", "b1"],
+      "groupMeans": { "string:A": "10", "string:B": "20" },
+      "equalExperimentMean": "15",
+      "pooledMeasurementMean": "40/3"
+    }
+  },
+  "duplicateSourceIds": {
+    "id": "PF-05",
+    "description": "Change a2's measurement ID to a1. The two physical occurrences remain distinct and neither is dropped.",
+    "change": { "fromMeasurementId": "a2", "toMeasurementId": "a1" },
+    "expected": {
+      "duplicateIdCounts": { "a1": 2 },
+      "sourceOccurrenceCount": 12,
+      "groupARowCount": 3,
+      "groupANumericCount": 2,
+      "groupAMean": "10",
+      "equalExperimentMean": "25",
+      "pooledMeasurementMean": "28"
+    }
+  },
+  "typedKeysAndEqualReadings": {
+    "id": "PF-06",
+    "description": "Numeric 1 and text '1' are different group keys. Independent equal readings are separate occurrences.",
+    "rows": [
+      { "measurementId": "t1", "experimentId": 1, "value": 4 },
+      { "measurementId": "t2", "experimentId": "1", "value": 4 },
+      { "measurementId": "t3", "experimentId": 1, "value": 4 }
+    ],
+    "expected": {
+      "groupKeys": ["number:1", "string:1"],
+      "numericKeyOccurrenceCount": 2,
+      "textKeyOccurrenceCount": 1,
+      "numericKeySum": "8",
+      "numericKeyMean": "4",
+      "allOccurrenceCount": 3
+    }
+  },
+  "observedZero": {
+    "id": "PF-07",
+    "rows": [{ "measurementId": "z1", "experimentId": "Z", "value": 0 }],
+    "expected": { "numericCount": 1, "sum": "0", "mean": "0", "min": "0", "max": "0" }
+  },
+  "emptyPopulation": {
+    "id": "PF-08",
+    "description": "An empty input and an input filtered to zero rows have the same ready-empty mathematics. A missing source is a different proposed blocked state.",
+    "rows": [],
+    "allFilteredMinimum": "1000",
+    "expected": {
+      "keyedGroupRowCount": 0,
+      "globalSummaryRowCount": 1,
+      "globalSummary": { "rowCount": 0, "presentCount": 0, "numericCount": 0, "sum": null, "mean": null, "min": null, "max": null },
+      "allFilteredRowCount": 0
+    }
+  },
+  "overlapCounterexample": {
+    "id": "PF-09",
+    "description": "A provenance-only counterexample, not a second product workflow. The same source occurrence m2 is reached by two immediate result rows; leaf-set union cannot substitute for immediate membership or weighted occurrence count.",
+    "observations": [
+      { "measurementId": "m1", "value": 0 },
+      { "measurementId": "m2", "value": 20 },
+      { "measurementId": "m3", "value": 20 }
+    ],
+    "resultRows": [
+      { "rowId": "X", "memberIds": ["m1", "m2"] },
+      { "rowId": "Y", "memberIds": ["m2", "m3"] }
+    ],
+    "expected": {
+      "immediateResultRowCount": 2,
+      "groupMeans": { "X": "10", "Y": "20" },
+      "leafMembershipVisits": 4,
+      "uniqueLeafOccurrenceCount": 3,
+      "equalResultMean": "15",
+      "sumOfGroupSums": "60",
+      "sumOfNumericCounts": 4,
+      "occurrenceWeightedMean": "15",
+      "uniqueLeafMean": "40/3",
+      "disjoint": false
+    }
+  },
+  "orderCategoryMembership": {
+    "id": "PF-10",
+    "description": "A constrained second workflow: orders represented in product categories. An order spanning two categories is a member of both groups. Summing the grouped counts or amounts measures order-category membership, not unique original orders.",
+    "orders": [
+      { "orderId": "O1", "amount": 100 },
+      { "orderId": "O2", "amount": 20 }
+    ],
+    "lineItems": [
+      { "itemId": "L1", "orderId": "O1", "category": "Red" },
+      { "itemId": "L2", "orderId": "O1", "category": "Blue" },
+      { "itemId": "L3", "orderId": "O2", "category": "Red" }
+    ],
+    "expected": {
+      "memberOrdersByCategory": { "Red": ["O1", "O2"], "Blue": ["O1"] },
+      "orderCountByCategory": { "Red": 2, "Blue": 1 },
+      "orderAmountByCategory": { "Red": "120", "Blue": "100" },
+      "summedOrderCategoryMembershipCount": 3,
+      "summedAmountByMembership": "220",
+      "uniquePhysicalOrderOccurrences": 2,
+      "uniqueOrderAmount": "120",
+      "itemOccurrences": 3
+    }
+  },
+  "proposedApplicationAcceptance": [
+    { "id": "PA-01", "case": "Two consumers reference the same producer definition and reflect its definition/source updates. Memoization is limited to an evaluation context; separate mounted views have no global once-only computation guarantee.", "status": "proposed; not executed by oracle" },
+    { "id": "PA-02", "case": "A self reference and a two-query cycle fail with a named dependency path.", "status": "proposed; not executed by oracle" },
+    { "id": "PA-03", "case": "Missing source, removed producer, and removed required producer field block the affected consumer rather than fabricating an empty successful result.", "status": "proposed; not executed by oracle" },
+    { "id": "PA-04", "case": "Late completion of evaluation N cannot replace completed evaluation N+1; pending rows and traces use one complete previous snapshot.", "status": "proposed; not executed by oracle" },
+    { "id": "PA-05", "case": "An output filter or contributor highlight never becomes an upstream producer-input predicate.", "status": "proposed; not executed by oracle" },
+    { "id": "PA-06", "case": "Saved reference IDs and explicit bindings round trip through portable project files, project text, local folders, and notebook compilation. Selected-view export retains transitive producer definitions, sources, relationships, selected-view binding definitions, and parameter-option sources; reopened summary remains 25/28.", "status": "proposed; not executed by oracle" },
+    { "id": "PA-07", "case": "Existing same-query views with different bindings remain distinct instances. Build 24 phase-prefixed occurrences from PF-01 baseline and PF-03 followup. B1/B2 and C begin at 25/28; changing B's reference to followup makes B1/B2 30/34 while C stays 25/28. A direct producer-view binding edit changes neither reference. A shared pre-group numeric <=20 filter makes both bound instances 15 and 40/3.", "status": "proposed; not executed by oracle" },
+    { "id": "PA-08", "case": "Source occurrence keys and immediate result-row addresses remain separately traceable through aggregate-on-aggregate and count measures. Producer/consumer local step-ID collisions cannot redirect imported field traces; physical endpoint origin survives for grouped-key lookups. Numeric aggregate field metadata survives empty/all-missing output.", "status": "proposed; not executed by oracle" },
+    { "id": "PA-09", "case": "Pointer and keyboard workflows pass at widths 1280, 783, and 390 pixels, including focus return, visible scope, and bounded editors.", "status": "proposed; not executed by oracle" }
+  ]
+}

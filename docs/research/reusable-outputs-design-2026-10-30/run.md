@@ -2,7 +2,7 @@
 
 ## State
 
-- Phase: submitted; Pro is processing; collection scheduled.
+- Phase: Pro complete; originals collected; local integration ready for review PR.
 - Mode: Design.
 - Mission: share one grouped result across analyses while preserving grain and original observations.
 - Repository: https://github.com/byronwall/explorEDA.
@@ -90,3 +90,34 @@ Command: `pnpm --config.verify-deps-before-run=false --filter demo docs:check`.
 The flag uses installed dependencies without triggering a reinstall.
 Only authored prompt and run record changed. No full `pnpm check` or changeset is required.
 No feature, proposed design, browser acceptance, or persistence acceptance is claimed.
+
+## Collection and integration — October 30
+
+Resumed the recorded conversation in Chrome `byroni.us`. Pro finished in 35m57s.
+No follow-up or resubmission was needed. Follow-ups remain 0/1.
+Collected the existing ZIP through its linked preview under Byron's standing direct download approval.
+The initial click produced no immediate file. A bounded download-event retry timed out; the actual ZIP then appeared in Downloads.
+Verified the actual file before any further retry. No result was missing and no regeneration was needed.
+
+Verified archive paths, duplicates, symlinks, CRC, size bounds, and exact six-file inventory before extraction.
+Read both complete reports, JSON fixture, Python companion, and SVG; visually inspected the supplied PNG.
+Preserved all six originals byte for byte under the planned result directory, with a linked index.
+The Python program was not executed. Its 65 checks are Pro-reported; nine application cases remain proposed.
+The ZIP, input packet, builder, inventory, and working copies remain ignored under `tmp/`.
+No Library upload, ZIP upload, or downloaded-program execution occurred.
+
+Refreshed origin/main, unchanged at the recorded baseline, and checked open PRs through #572.
+Checked model/evaluator, counts and numeric eligibility, origins, local copies, worker snapshots, trace context,
+portable selected-view export, source availability, folder ownership, host view callbacks, and notebook lineage loss.
+Vega, DuckDB, and Perspective primary documentation support the decisive external comparisons.
+Read current saver; M3 reuses pending #566 where sufficient and does not add a competing transaction system.
+The local plan chooses project-owned sources as the initial folder prerequisite, leaving guided promotion optional.
+
+Wrote four local milestones, RO-01–RO-20 dispositions, summary, checked evidence, asset index, and catalogue/intent links.
+No feature was implemented. Build is a planning disposition, not implementation approval.
+Twelve locally authored arithmetic/fixture assertions passed without importing downloaded or repository programs.
+All six original file hashes match the ZIP. Seventeen authored plan/summary/evidence/index links resolve.
+Original report ZIP links remain documented immutable exceptions; no archive is committed.
+Existing evaluator/entity/DSL/worker tests passed: four files, 23 tests.
+Docs checks, final authored formatting/whitespace, commit identity, PR checks, and committed inventory are verified before completion.
+No package/demo changes, changeset, full `pnpm check`, or feature/browser/persistence/performance acceptance is claimed.

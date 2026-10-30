@@ -3,10 +3,18 @@ title: "Use one analytical result as another view’s input"
 slug: "reusable-analysis-outputs"
 phase: intent
 status: current
-last_updated: "2026-10-20"
+last_updated: "2026-10-30"
 ---
 
 # Use one analytical result as another view’s input
+
+## Current direction — October 30, 2026
+
+The [Design research](../../research/reusable-outputs-design-2026-10-30/README.md) now selects live references to grouped query outputs.
+Read the [implementation plan](implementation-plan.md), its local dispositions, and the [original result assets](assets/pro-results/reusable-outputs-design-2026-10-30/index.md).
+The current research direction and Byron's pipeline request supersede the historical outside-demand gates below.
+The plan adds cross-query reuse, explicit grain, and intermediate operands while keeping original measurements reachable.
+It is ready for implementation review; no feature implementation is approved or complete.
 
 ## My read
 
