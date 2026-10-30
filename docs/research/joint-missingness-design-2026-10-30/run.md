@@ -2,7 +2,7 @@
 
 ## State
 
-- Phase: collected and integrated; review PR verification pending.
+- Phase: complete; verified review PR open.
 - Mode: Design.
 - Mission: exact joint patterns, affected records, and saved notebook interpretation.
 - Repository: https://github.com/byronwall/explorEDA.
@@ -11,12 +11,12 @@
 - Prompt: [pro-prompt.md](pro-prompt.md).
 - Conversation: https://chatgpt.com/c/6ae4ab2c-5840-83ea-a089-c2fc4d70681e. Follow-ups: 0/1. Never resubmit.
 - Submitted: October 30 about 14:35 UTC, Pro at 5/5 effort.
-- Collector: `collect-exploreda-joint-missingness-design`, ACTIVE, hourly at minute 37, targeting this chat.
+- Collector: `collect-exploreda-joint-missingness-design`, deleted after verified PR opening.
 - First eligible check: October 30 15:37 UTC. Do not inspect or collect before 15:35 UTC.
 - Plan target: `docs/intent/missingness-and-expected-records/implementation-plan.md`.
 - Summary target: `docs/research/joint-missingness-design-2026-10-30/README.md`.
 - Assets target: `docs/intent/missingness-and-expected-records/assets/pro-results/joint-missingness-design-2026-10-30/`.
-- PR: pending collected results and integration. No preparation-only PR.
+- PR: https://github.com/byronwall/explorEDA/pull/577, OPEN, `main` ← `codex/joint-missingness-design-2026-10-30`.
 
 ## Topic choice
 
@@ -122,3 +122,16 @@ Twenty-nine independent arithmetic checks passed without importing supplied or r
 Existing profile/conversion/finding/writeback tests passed: four files, 42 tests.
 Docs, authored format/whitespace/links, original byte inventory, commit identities, and PR checks are verified before completion.
 No package/demo code changes, changeset, full `pnpm check`, or proposed feature/browser/persistence/performance acceptance is claimed.
+
+## Completion — October 30, 16:11 UTC
+
+Integration commit `f8a28349` pushed. PR #577 is OPEN with the correct branches and verified twenty-file inventory.
+The body links the local plan, summary, evidence/dispositions, original asset index, and Pro conversation.
+Applied `documentation`; `codex` and `codex-automation` labels are unavailable.
+Verified all nine original committed files against archive sizes and hashes after the formatting hook.
+Twenty-two authored local plan/summary/evidence/index links resolve. Original relative companion links remain intact.
+Docs checks passed: three files, 74 tests, with existing React `act` warnings.
+Existing behavior checks passed: four files, 42 tests. Independent fixture arithmetic passed 29 checks.
+Authored formatting/whitespace and PR identity/changeset checks passed.
+The six-hour pipeline supported view confirms ACTIVE indefinitely on GPT-6.1 Sol, Medium.
+Collector deletion returned `deleteStatus=deleted`. Stop for review; no merge or feature implementation.
