@@ -1,0 +1,169 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1110" viewBox="0 0 1440 1110">
+<rect width="1440" height="1110" fill="#f3f5f7"/>
+<text x="32" y="40" font-family="DejaVu Sans, sans-serif" font-size="26" font-weight="700" fill="#243244">Joint missingness — design proposal</text>
+<text x="32" y="68" font-family="DejaVu Sans, sans-serif" font-size="14" font-weight="400" fill="#5d6b7c">Low-fidelity layout · exact fixture values · panels are alternatives to show at once, not a required fixed dashboard</text>
+<rect x="28" y="94" width="910" height="614" rx="8" fill="#ffffff" stroke="#d9dfe6"/>
+<text x="50" y="129" font-family="DejaVu Sans, sans-serif" font-size="21" font-weight="700" fill="#243244">Which fields are missing together?</text>
+<text x="50" y="157" font-family="DejaVu Sans, sans-serif" font-size="14" font-weight="400" fill="#243244">Effective values  ·  Exact patterns  ·  12 current rows / 12 source rows</text>
+<rect x="50" y="174" width="119" height="31" rx="8" fill="#f4f6f8" stroke="#d9dfe6"/>
+<text x="63" y="195" font-family="DejaVu Sans, sans-serif" font-size="13" font-weight="600" fill="#243244">Fields (6)</text>
+<text x="186" y="194" font-family="DejaVu Sans, sans-serif" font-size="14" font-weight="600" fill="#245dc1">2 patterns selected · 4 of 12 rows (33.3%)</text>
+<text x="50" y="237" font-family="DejaVu Sans, sans-serif" font-size="13" font-weight="600" fill="#243244">Exact missing set</text>
+<text x="318" y="237" font-family="DejaVu Sans, sans-serif" font-size="13" font-weight="600" fill="#243244">x</text>
+<text x="368" y="237" font-family="DejaVu Sans, sans-serif" font-size="13" font-weight="600" fill="#243244">y</text>
+<text x="418" y="237" font-family="DejaVu Sans, sans-serif" font-size="13" font-weight="600" fill="#243244">z</text>
+<text x="468" y="237" font-family="DejaVu Sans, sans-serif" font-size="13" font-weight="600" fill="#243244">note</text>
+<text x="518" y="237" font-family="DejaVu Sans, sans-serif" font-size="13" font-weight="600" fill="#243244">flag</text>
+<text x="568" y="237" font-family="DejaVu Sans, sans-serif" font-size="13" font-weight="600" fill="#243244">w</text>
+<text x="639" y="237" font-family="DejaVu Sans, sans-serif" font-size="13" font-weight="600" fill="#243244">Rows</text>
+<text x="843" y="237" font-family="DejaVu Sans, sans-serif" font-size="13" font-weight="600" fill="#243244">Share</text>
+<text x="55" y="270" font-family="DejaVu Sans, sans-serif" font-size="15" font-weight="400" fill="#243244">All present</text>
+<circle cx="328" cy="265" r="6" fill="#ffffff" stroke="#c0cad5" stroke-width="2"/>
+<circle cx="378" cy="265" r="6" fill="#ffffff" stroke="#c0cad5" stroke-width="2"/>
+<circle cx="428" cy="265" r="6" fill="#ffffff" stroke="#c0cad5" stroke-width="2"/>
+<circle cx="478" cy="265" r="6" fill="#ffffff" stroke="#c0cad5" stroke-width="2"/>
+<circle cx="528" cy="265" r="6" fill="#ffffff" stroke="#c0cad5" stroke-width="2"/>
+<circle cx="578" cy="265" r="6" fill="#ffffff" stroke="#c0cad5" stroke-width="2"/>
+<rect x="638" y="256" width="56" height="16" rx="2" fill="#a7b7ce" stroke="#ffffff"/>
+<text x="705" y="270" font-family="DejaVu Sans, sans-serif" font-size="13" font-weight="600" fill="#243244">1</text>
+<text x="845" y="270" font-family="DejaVu Sans, sans-serif" font-size="14" font-weight="400" fill="#243244">8.3%</text>
+<text x="55" y="315" font-family="DejaVu Sans, sans-serif" font-size="15" font-weight="400" fill="#243244">x</text>
+<circle cx="328" cy="310" r="6" fill="#314b72" stroke="#314b72" stroke-width="2"/>
+<circle cx="378" cy="310" r="6" fill="#ffffff" stroke="#c0cad5" stroke-width="2"/>
+<circle cx="428" cy="310" r="6" fill="#ffffff" stroke="#c0cad5" stroke-width="2"/>
+<circle cx="478" cy="310" r="6" fill="#ffffff" stroke="#c0cad5" stroke-width="2"/>
+<circle cx="528" cy="310" r="6" fill="#ffffff" stroke="#c0cad5" stroke-width="2"/>
+<circle cx="578" cy="310" r="6" fill="#ffffff" stroke="#c0cad5" stroke-width="2"/>
+<rect x="638" y="301" width="168" height="16" rx="2" fill="#a7b7ce" stroke="#ffffff"/>
+<text x="817" y="315" font-family="DejaVu Sans, sans-serif" font-size="13" font-weight="600" fill="#243244">3</text>
+<text x="845" y="315" font-family="DejaVu Sans, sans-serif" font-size="14" font-weight="400" fill="#243244">25.0%</text>
+<rect x="41" y="336" width="884" height="39" rx="4" fill="#edf4ff" stroke="#b8cef4"/>
+<text x="55" y="360" font-family="DejaVu Sans, sans-serif" font-size="15" font-weight="600" fill="#243244">x, y</text>
+<line x1="328" y1="355" x2="378" y2="355" stroke="#394d69" stroke-width="2"/>
+<circle cx="328" cy="355" r="6" fill="#314b72" stroke="#314b72" stroke-width="2"/>
+<circle cx="378" cy="355" r="6" fill="#314b72" stroke="#314b72" stroke-width="2"/>
+<circle cx="428" cy="355" r="6" fill="#ffffff" stroke="#c0cad5" stroke-width="2"/>
+<circle cx="478" cy="355" r="6" fill="#ffffff" stroke="#c0cad5" stroke-width="2"/>
+<circle cx="528" cy="355" r="6" fill="#ffffff" stroke="#c0cad5" stroke-width="2"/>
+<circle cx="578" cy="355" r="6" fill="#ffffff" stroke="#c0cad5" stroke-width="2"/>
+<rect x="638" y="346" width="112" height="16" rx="2" fill="#3b6fc5" stroke="#ffffff"/>
+<text x="761" y="360" font-family="DejaVu Sans, sans-serif" font-size="13" font-weight="600" fill="#243244">2</text>
+<text x="845" y="360" font-family="DejaVu Sans, sans-serif" font-size="14" font-weight="400" fill="#243244">16.7%</text>
+<rect x="41" y="381" width="884" height="39" rx="4" fill="#edf4ff" stroke="#b8cef4"/>
+<text x="55" y="405" font-family="DejaVu Sans, sans-serif" font-size="15" font-weight="600" fill="#243244">note</text>
+<circle cx="328" cy="400" r="6" fill="#ffffff" stroke="#c0cad5" stroke-width="2"/>
+<circle cx="378" cy="400" r="6" fill="#ffffff" stroke="#c0cad5" stroke-width="2"/>
+<circle cx="428" cy="400" r="6" fill="#ffffff" stroke="#c0cad5" stroke-width="2"/>
+<circle cx="478" cy="400" r="6" fill="#314b72" stroke="#314b72" stroke-width="2"/>
+<circle cx="528" cy="400" r="6" fill="#ffffff" stroke="#c0cad5" stroke-width="2"/>
+<circle cx="578" cy="400" r="6" fill="#ffffff" stroke="#c0cad5" stroke-width="2"/>
+<rect x="638" y="391" width="112" height="16" rx="2" fill="#3b6fc5" stroke="#ffffff"/>
+<text x="761" y="405" font-family="DejaVu Sans, sans-serif" font-size="13" font-weight="600" fill="#243244">2</text>
+<text x="845" y="405" font-family="DejaVu Sans, sans-serif" font-size="14" font-weight="400" fill="#243244">16.7%</text>
+<text x="55" y="450" font-family="DejaVu Sans, sans-serif" font-size="15" font-weight="400" fill="#243244">y</text>
+<circle cx="328" cy="445" r="6" fill="#ffffff" stroke="#c0cad5" stroke-width="2"/>
+<circle cx="378" cy="445" r="6" fill="#314b72" stroke="#314b72" stroke-width="2"/>
+<circle cx="428" cy="445" r="6" fill="#ffffff" stroke="#c0cad5" stroke-width="2"/>
+<circle cx="478" cy="445" r="6" fill="#ffffff" stroke="#c0cad5" stroke-width="2"/>
+<circle cx="528" cy="445" r="6" fill="#ffffff" stroke="#c0cad5" stroke-width="2"/>
+<circle cx="578" cy="445" r="6" fill="#ffffff" stroke="#c0cad5" stroke-width="2"/>
+<rect x="638" y="436" width="56" height="16" rx="2" fill="#a7b7ce" stroke="#ffffff"/>
+<text x="705" y="450" font-family="DejaVu Sans, sans-serif" font-size="13" font-weight="600" fill="#243244">1</text>
+<text x="845" y="450" font-family="DejaVu Sans, sans-serif" font-size="14" font-weight="400" fill="#243244">8.3%</text>
+<text x="55" y="495" font-family="DejaVu Sans, sans-serif" font-size="15" font-weight="400" fill="#243244">x, y, z</text>
+<line x1="328" y1="490" x2="428" y2="490" stroke="#394d69" stroke-width="2"/>
+<circle cx="328" cy="490" r="6" fill="#314b72" stroke="#314b72" stroke-width="2"/>
+<circle cx="378" cy="490" r="6" fill="#314b72" stroke="#314b72" stroke-width="2"/>
+<circle cx="428" cy="490" r="6" fill="#314b72" stroke="#314b72" stroke-width="2"/>
+<circle cx="478" cy="490" r="6" fill="#ffffff" stroke="#c0cad5" stroke-width="2"/>
+<circle cx="528" cy="490" r="6" fill="#ffffff" stroke="#c0cad5" stroke-width="2"/>
+<circle cx="578" cy="490" r="6" fill="#ffffff" stroke="#c0cad5" stroke-width="2"/>
+<rect x="638" y="481" width="56" height="16" rx="2" fill="#a7b7ce" stroke="#ffffff"/>
+<text x="705" y="495" font-family="DejaVu Sans, sans-serif" font-size="13" font-weight="600" fill="#243244">1</text>
+<text x="845" y="495" font-family="DejaVu Sans, sans-serif" font-size="14" font-weight="400" fill="#243244">8.3%</text>
+<text x="55" y="540" font-family="DejaVu Sans, sans-serif" font-size="15" font-weight="400" fill="#243244">note, flag</text>
+<line x1="478" y1="535" x2="528" y2="535" stroke="#394d69" stroke-width="2"/>
+<circle cx="328" cy="535" r="6" fill="#ffffff" stroke="#c0cad5" stroke-width="2"/>
+<circle cx="378" cy="535" r="6" fill="#ffffff" stroke="#c0cad5" stroke-width="2"/>
+<circle cx="428" cy="535" r="6" fill="#ffffff" stroke="#c0cad5" stroke-width="2"/>
+<circle cx="478" cy="535" r="6" fill="#314b72" stroke="#314b72" stroke-width="2"/>
+<circle cx="528" cy="535" r="6" fill="#314b72" stroke="#314b72" stroke-width="2"/>
+<circle cx="578" cy="535" r="6" fill="#ffffff" stroke="#c0cad5" stroke-width="2"/>
+<rect x="638" y="526" width="56" height="16" rx="2" fill="#a7b7ce" stroke="#ffffff"/>
+<text x="705" y="540" font-family="DejaVu Sans, sans-serif" font-size="13" font-weight="600" fill="#243244">1</text>
+<text x="845" y="540" font-family="DejaVu Sans, sans-serif" font-size="14" font-weight="400" fill="#243244">8.3%</text>
+<text x="55" y="585" font-family="DejaVu Sans, sans-serif" font-size="15" font-weight="400" fill="#243244">w</text>
+<circle cx="328" cy="580" r="6" fill="#ffffff" stroke="#c0cad5" stroke-width="2"/>
+<circle cx="378" cy="580" r="6" fill="#ffffff" stroke="#c0cad5" stroke-width="2"/>
+<circle cx="428" cy="580" r="6" fill="#ffffff" stroke="#c0cad5" stroke-width="2"/>
+<circle cx="478" cy="580" r="6" fill="#ffffff" stroke="#c0cad5" stroke-width="2"/>
+<circle cx="528" cy="580" r="6" fill="#ffffff" stroke="#c0cad5" stroke-width="2"/>
+<circle cx="578" cy="580" r="6" fill="#314b72" stroke="#314b72" stroke-width="2"/>
+<rect x="638" y="571" width="56" height="16" rx="2" fill="#a7b7ce" stroke="#ffffff"/>
+<text x="705" y="585" font-family="DejaVu Sans, sans-serif" font-size="13" font-weight="600" fill="#243244">1</text>
+<text x="845" y="585" font-family="DejaVu Sans, sans-serif" font-size="14" font-weight="400" fill="#243244">8.3%</text>
+<line x1="50" y1="644" x2="915" y2="644" stroke="#d9dfe6" stroke-width="1"/>
+<text x="50" y="670" font-family="DejaVu Sans, sans-serif" font-size="13" font-weight="400" fill="#243244">● Missing    ○ Present     All other chosen fields are present in each exact row.</text>
+<text x="50" y="694" font-family="DejaVu Sans, sans-serif" font-size="12" font-weight="400" fill="#5d6b7c">All 8 observed patterns shown · Selecting patterns leaves this denominator unchanged.</text>
+<rect x="960" y="94" width="452" height="292" rx="8" fill="#ffffff" stroke="#d9dfe6"/>
+<text x="981" y="129" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="700" fill="#243244">Compare groups</text>
+<text x="981" y="157" font-family="DejaVu Sans, sans-serif" font-size="13" font-weight="400" fill="#243244">The same 2 selected patterns in each group</text>
+<text x="981" y="197" font-family="DejaVu Sans, sans-serif" font-size="13" font-weight="600" fill="#243244">Group</text>
+<text x="1083" y="197" font-family="DejaVu Sans, sans-serif" font-size="13" font-weight="600" fill="#243244">Selected / rows</text>
+<text x="1269" y="197" font-family="DejaVu Sans, sans-serif" font-size="13" font-weight="600" fill="#243244">Share</text>
+<line x1="981" y1="209" x2="1391" y2="209" stroke="#d9dfe6" stroke-width="1"/>
+<text x="984" y="233" font-family="DejaVu Sans, sans-serif" font-size="16" font-weight="600" fill="#243244">A</text>
+<text x="1111" y="233" font-family="DejaVu Sans, sans-serif" font-size="16" font-weight="400" fill="#243244">3 / 8</text>
+<text x="1280" y="233" font-family="DejaVu Sans, sans-serif" font-size="16" font-weight="600" fill="#243244">37.5%</text>
+<line x1="981" y1="253" x2="1391" y2="253" stroke="#d9dfe6" stroke-width="1"/>
+<text x="984" y="277" font-family="DejaVu Sans, sans-serif" font-size="16" font-weight="600" fill="#243244">B</text>
+<text x="1111" y="277" font-family="DejaVu Sans, sans-serif" font-size="16" font-weight="400" fill="#243244">1 / 4</text>
+<text x="1280" y="277" font-family="DejaVu Sans, sans-serif" font-size="16" font-weight="600" fill="#243244">25.0%</text>
+<text x="981" y="319" font-family="DejaVu Sans, sans-serif" font-size="14" font-weight="600" fill="#243244">A − B: 12.5 percentage points</text>
+<text x="981" y="346" font-family="DejaVu Sans, sans-serif" font-size="13" font-weight="400" fill="#5d6b7c">Counts and rates describe these rows.</text>
+<text x="981" y="368" font-family="DejaVu Sans, sans-serif" font-size="13" font-weight="400" fill="#5d6b7c">They do not establish a cause.</text>
+<rect x="960" y="404" width="452" height="304" rx="8" fill="#ffffff" stroke="#d9dfe6"/>
+<text x="981" y="440" font-family="DejaVu Sans, sans-serif" font-size="19" font-weight="700" fill="#243244">Rows usable for chosen inputs</text>
+<text x="981" y="469" font-family="DejaVu Sans, sans-serif" font-size="14" font-weight="400" fill="#243244">Required fields: x, y, w</text>
+<line x1="981" y1="487" x2="1391" y2="487" stroke="#d9dfe6" stroke-width="1"/>
+<text x="981" y="517" font-family="DejaVu Sans, sans-serif" font-size="15" font-weight="600" fill="#243244">Have values</text>
+<text x="1269" y="517" font-family="DejaVu Sans, sans-serif" font-size="16" font-weight="600" fill="#243244">4 / 12</text>
+<text x="981" y="547" font-family="DejaVu Sans, sans-serif" font-size="13" font-weight="400" fill="#243244">r01, r07, r10, r12</text>
+<text x="981" y="588" font-family="DejaVu Sans, sans-serif" font-size="15" font-weight="600" fill="#243244">Finite numbers</text>
+<text x="1269" y="588" font-family="DejaVu Sans, sans-serif" font-size="16" font-weight="600" fill="#243244">3 / 12</text>
+<text x="981" y="618" font-family="DejaVu Sans, sans-serif" font-size="13" font-weight="400" fill="#243244">r01, r07, r10</text>
+<text x="981" y="659" font-family="DejaVu Sans, sans-serif" font-size="13" font-weight="400" fill="#5d6b7c">r12 has w = &quot;Infinity&quot;: present,</text>
+<text x="981" y="682" font-family="DejaVu Sans, sans-serif" font-size="13" font-weight="400" fill="#5d6b7c">but not a finite numeric input.</text>
+<rect x="28" y="730" width="910" height="345" rx="8" fill="#ffffff" stroke="#d9dfe6"/>
+<text x="50" y="766" font-family="DejaVu Sans, sans-serif" font-size="19" font-weight="700" fill="#243244">Pattern trace: x and y missing; z, note, flag, w present</text>
+<text x="50" y="795" font-family="DejaVu Sans, sans-serif" font-size="13" font-weight="400" fill="#243244">2 / 12 current rows · exact record set · opened by Alt-click or Alt-Enter</text>
+<text x="55" y="834" font-family="DejaVu Sans, sans-serif" font-size="13" font-weight="600" fill="#243244">Source ID</text>
+<text x="203" y="834" font-family="DejaVu Sans, sans-serif" font-size="13" font-weight="600" fill="#243244">x: raw → effective</text>
+<text x="439" y="834" font-family="DejaVu Sans, sans-serif" font-size="13" font-weight="600" fill="#243244">y: raw → effective</text>
+<text x="680" y="834" font-family="DejaVu Sans, sans-serif" font-size="13" font-weight="600" fill="#243244">Other chosen fields</text>
+<line x1="50" y1="846" x2="914" y2="846" stroke="#d9dfe6" stroke-width="1"/>
+<text x="55" y="870" font-family="DejaVu Sans, sans-serif" font-size="15" font-weight="600" fill="#243244">r05</text>
+<text x="203" y="870" font-family="DejaVu Sans, sans-serif" font-size="14" font-weight="400" fill="#243244">null → missing</text>
+<text x="439" y="870" font-family="DejaVu Sans, sans-serif" font-size="14" font-weight="400" fill="#243244">null → missing</text>
+<text x="680" y="870" font-family="DejaVu Sans, sans-serif" font-size="14" font-weight="400" fill="#243244">present</text>
+<line x1="50" y1="888" x2="914" y2="888" stroke="#d9dfe6" stroke-width="1"/>
+<text x="55" y="912" font-family="DejaVu Sans, sans-serif" font-size="15" font-weight="600" fill="#243244">r06</text>
+<text x="203" y="912" font-family="DejaVu Sans, sans-serif" font-size="14" font-weight="400" fill="#243244">null → missing</text>
+<text x="439" y="912" font-family="DejaVu Sans, sans-serif" font-size="14" font-weight="400" fill="#243244">null → missing</text>
+<text x="680" y="912" font-family="DejaVu Sans, sans-serif" font-size="14" font-weight="400" fill="#243244">present</text>
+<text x="50" y="956" font-family="DejaVu Sans, sans-serif" font-size="13" font-weight="600" fill="#243244">Page 1 · 2 of 2 records shown</text>
+<text x="50" y="991" font-family="DejaVu Sans, sans-serif" font-size="13" font-weight="400" fill="#243244">The same record table can show 50 rows per page without truncating membership.</text>
+<text x="50" y="1020" font-family="DejaVu Sans, sans-serif" font-size="12" font-weight="400" fill="#5d6b7c">Source references open the current query lineage; row positions are not saved as meaning.</text>
+<text x="50" y="1052" font-family="DejaVu Sans, sans-serif" font-size="13" font-weight="400" fill="#243244">r08 trace separately shows raw &quot;bad&quot; → missing after numeric conversion.</text>
+<rect x="960" y="730" width="452" height="345" rx="8" fill="#ffffff" stroke="#d9dfe6"/>
+<text x="981" y="766" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="700" fill="#243244">Notebook continuation</text>
+<rect x="981" y="786" width="181" height="31" rx="8" fill="#eaf2ff" stroke="#b8cef4"/>
+<text x="993" y="808" font-family="DejaVu Sans, sans-serif" font-size="12" font-weight="600" fill="#245dc1">Kept in notebook text</text>
+<text x="981" y="849" font-family="DejaVu Sans, sans-serif" font-size="15" font-weight="600" fill="#243244">4 of 12 records (33.3%) match</text>
+<text x="981" y="875" font-family="DejaVu Sans, sans-serif" font-size="15" font-weight="600" fill="#243244">the two exact patterns.</text>
+<text x="981" y="912" font-family="DejaVu Sans, sans-serif" font-size="14" font-weight="400" fill="#243244">A: 3 of 8 (37.5%).</text>
+<text x="981" y="938" font-family="DejaVu Sans, sans-serif" font-size="14" font-weight="400" fill="#243244">B: 1 of 4 (25.0%).</text>
+<text x="981" y="978" font-family="DejaVu Sans, sans-serif" font-size="14" font-weight="600" fill="#245dc1">Selected records</text>
+<text x="981" y="1004" font-family="DejaVu Sans, sans-serif" font-size="13" font-weight="400" fill="#243244">r05, r06, r07, r12</text>
+<text x="981" y="1045" font-family="DejaVu Sans, sans-serif" font-size="12" font-weight="400" fill="#5d6b7c">Findings follow this chart’s local selection.</text>
+</svg>

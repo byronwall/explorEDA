@@ -1,12 +1,29 @@
 ---
 title: "Find missing values and missing observations"
 slug: "missingness-and-expected-records"
-phase: intent
+phase: plan
 status: current
-last_updated: "2026-10-21"
+last_updated: "2026-10-30"
 ---
 
 # Find missing values and missing observations
+
+## Current design decision — October 30
+
+Build exact effective-value pattern exploration, complete current-record traces, and kept notebook findings.
+Then add within-group shares and chosen-field presence/finite checks.
+See the [implementation plan](implementation-plan.md),
+[research summary](../../research/joint-missingness-design-2026-10-30/README.md), and
+[original Pro assets](assets/pro-results/joint-missingness-design-2026-10-30/README.md).
+Build is a planning disposition, not implementation approval.
+
+Current DIRECTION and Byron's Design mission replace the historical outside-demand gates below.
+Expected-record reconciliation remains separate and requires an explicit expected set.
+Retain the historical value-stage distinctions. Do not infer mechanisms, impute, or assign quality grades.
+M1 works on current main without waiting for the keyed-selection feature.
+The next implementation proof is the mounted exact-union, trace, Keep, and reopen case in the plan.
+
+The sections below preserve earlier intent and research history. Their demand gates no longer govern this feature.
 
 ## My read
 
