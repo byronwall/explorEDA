@@ -35,8 +35,27 @@ export function projectFileText(
   folder: ProjectFolder,
   project: AnalysisProject
 ): string {
-  const local = new Set(Object.keys(folder.localSources));
-  const implicit = new Set(folder.implicitQueries);
+  // A query made for one source stays unwritten until someone edits it.
+  const loaded = new Map(
+    folder.project.queries.map((query) => [query.id, query])
+  );
+  const queries = project.queries.filter(
+    (query) =>
+      !folder.implicitQueries.includes(query.id) ||
+      !sameJson(query, loaded.get(query.id))
+  );
+  // A written query reads its sources from this file, since the project
+  // file compiles before analyses that declare their own.
+  const read = new Set(
+    queries.flatMap((query) =>
+      query.steps.flatMap((step) =>
+        step.kind === "source" ? [step.sourceId] : []
+      )
+    )
+  );
+  const local = new Set(
+    Object.keys(folder.localSources).filter((id) => !read.has(id))
+  );
   const sources = project.sources
     .filter((source) => !local.has(source.id))
     .map((source) => declaredSource(folder, source));
@@ -50,7 +69,7 @@ export function projectFileText(
       ...project,
       id: project.id || "project",
       sources,
-      queries: project.queries.filter((query) => !implicit.has(query.id)),
+      queries,
     },
     {
       paths,

@@ -103,4 +103,72 @@ row sales.region title="By region"
     );
     expect(again.problems).toEqual([]);
   });
+
+  it("keeps an edit to a query made for one source", async () => {
+    const data = "order_id,region\nA1,West\nA2,west\n";
+    for (const start of [
+      // The project file declares the source.
+      {
+        "sales.csv": data,
+        "exploreda.eda": "project @shop\n\nsource @sales path=sales.csv\n",
+        "sales.eda": "row sales.region\n",
+      },
+      // Only the analysis declares it, and there is no project file yet.
+      {
+        "sales.csv": data,
+        "sales.eda": "source @sales path=sales.csv\nrow sales.region\n",
+      },
+    ]) {
+      const files = memoryProjectFiles(start);
+      const folder = await readProjectFolder(files);
+      expect(folder.implicitQueries).toEqual(["sales"]);
+      const projectPath = folder.projectPath ?? "exploreda.eda";
+      // Unchanged, the query isn't written.
+      expect(projectFileText(folder, folder.project)).not.toContain("query");
+
+      const query = folder.project.queries[0]!;
+      const project = {
+        ...folder.project,
+        queries: [
+          {
+            ...query,
+            steps: [
+              ...query.steps,
+              {
+                id: "upper",
+                kind: "calculate" as const,
+                inputStepId: query.outputStepId,
+                fieldId: "region_group",
+                label: "Region group",
+                expression:
+                  'if ["region"] == "west" then "West" else ["region"]',
+              },
+            ],
+            outputStepId: "upper",
+          },
+        ],
+      };
+      await files.write(projectPath, projectFileText(folder, project));
+      const analysis = folder.analyses[0]!;
+      await files.write(
+        analysis.path,
+        analysisFileText(
+          folder,
+          analysis.path,
+          analysis.result.views,
+          project,
+          analysis.result.name
+        )
+      );
+
+      const again = await readProjectFolder(files);
+      expect(again.problems).toEqual([]);
+      expect(again.implicitQueries).toEqual([]);
+      const saved = again.project.queries.find((item) => item.id === "sales");
+      expect(saved?.steps.map((step) => step.kind)).toEqual([
+        "source",
+        "calculate",
+      ]);
+    }
+  });
 });

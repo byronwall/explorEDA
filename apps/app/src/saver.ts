@@ -10,14 +10,20 @@ export type SaveState =
  * matches what is on disk isn't written, so opening a project, or undoing
  * back to the saved state, leaves the folder alone. A read-only saver,
  * for someone who may only view the project, never writes.
+ *
+ * Writes run one at a time, in the order files were queued, so a project
+ * file queued before an analysis that reads it is on disk first. A write
+ * that fails keeps its text, and the next flush tries it again.
  */
 export class FolderSaver {
   private readonly onDisk = new Map<string, string>();
   private readonly pending = new Map<
     string,
-    { text: string; timer: ReturnType<typeof setTimeout> }
+    { text: string; timer?: ReturnType<typeof setTimeout> }
   >();
+  private chain: Promise<void> = Promise.resolve();
   private writing = 0;
+  private failure?: { path: string; message: string };
 
   constructor(
     private readonly files: ProjectFiles,
@@ -47,7 +53,7 @@ export class FolderSaver {
     this.onState({ status: "saving" });
     this.pending.set(path, {
       text,
-      timer: setTimeout(() => void this.write(path, text), this.delay),
+      timer: setTimeout(() => void this.start([path]), this.delay),
     });
   }
 
@@ -59,41 +65,64 @@ export class FolderSaver {
       this.pending.delete(path);
     }
     this.onDisk.delete(path);
+    if (this.failure?.path === path) {
+      this.failure = undefined;
+    }
     this.settle();
   }
 
-  /** Writes every waiting change now. */
+  /**
+   * Writes every waiting change now, after any write already under way.
+   * Rejects when a file couldn't be written; its change stays waiting.
+   */
   async flush() {
-    const waiting = [...this.pending.entries()];
-    for (const [path, { timer }] of waiting) {
-      clearTimeout(timer);
-      this.pending.delete(path);
+    this.start([...this.pending.keys()]);
+    await this.chain;
+    if (this.failure) {
+      throw new Error(
+        `Couldn't save ${this.failure.path}: ${this.failure.message}`
+      );
     }
-    await Promise.all(
-      waiting.map(([path, { text }]) => this.write(path, text))
-    );
+  }
+
+  /** Adds the waiting changes to these files to the write queue. */
+  private start(paths: string[]) {
+    for (const path of paths) {
+      const waiting = this.pending.get(path);
+      if (!waiting) {
+        continue;
+      }
+      clearTimeout(waiting.timer);
+      this.pending.delete(path);
+      this.writing += 1;
+      this.chain = this.chain.then(() => this.write(path, waiting.text));
+    }
   }
 
   private async write(path: string, text: string) {
-    this.pending.delete(path);
-    this.writing += 1;
     try {
       await this.files.write(path, text);
       this.onDisk.set(path, text);
+      if (this.failure?.path === path) {
+        this.failure = undefined;
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      this.failure = { path, message };
+      // A newer edit to the file replaces this text; otherwise keep it.
+      if (!this.pending.has(path)) {
+        this.pending.set(path, { text });
+      }
+    } finally {
       this.writing -= 1;
       this.settle();
-    } catch (error) {
-      this.writing -= 1;
-      this.onState({
-        status: "failed",
-        path,
-        message: error instanceof Error ? error.message : String(error),
-      });
     }
   }
 
   private settle() {
-    if (!this.pending.size && !this.writing) {
+    if (this.failure) {
+      this.onState({ status: "failed", ...this.failure });
+    } else if (!this.pending.size && !this.writing) {
       this.onState({ status: "saved" });
     }
   }
