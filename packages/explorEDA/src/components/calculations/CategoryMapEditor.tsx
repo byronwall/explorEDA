@@ -123,6 +123,13 @@ export function CategoryMapDialog({
         className="eda-calc-editor eda-catmap"
         // A draft closes only with Cancel, ×, or Escape.
         onInteractOutside={(event) => event.preventDefault()}
+        // A field that cancels its own edit on Escape keeps the dialog open.
+        onEscapeKeyDown={(event) => {
+          if (
+            (event.target as Element | null)?.closest?.("[data-catmap-escape]")
+          )
+            event.preventDefault();
+        }}
       >
         {target && (
           <CategoryMapForm
@@ -297,13 +304,16 @@ function CategoryMapForm({
     group: { output: CategoryValue; members: ValueCount[] },
     next: string
   ) => {
+    if (next === group.output) return;
     setTargets((previous) => {
       const copy = new Map(previous);
       for (const member of group.members) {
         const key = keyOf(member.value);
-        if (copy.has(key) || !fallback) {
-          copy.set(key, { source: member.value, target: next });
-        }
+        if (!copy.has(key) && fallback) continue;
+        // A value renamed to itself needs no entry unless a fallback would
+        // otherwise replace it.
+        if (member.value === next && !fallback) copy.delete(key);
+        else copy.set(key, { source: member.value, target: next });
       }
       return copy;
     });
@@ -322,15 +332,26 @@ function CategoryMapForm({
       else copy.add(key);
       return copy;
     });
+  // The most common selected text is the default name to merge into.
+  const mergeDefault = inventory.find(
+    (item) => typeof item.value === "string" && selected.has(keyOf(item.value))
+  )?.value as string | undefined;
+  const mergeTarget = merge.trim()
+    ? merge
+    : selected.size > 1
+      ? mergeDefault
+      : undefined;
   const mergeSelected = () => {
-    const into = merge;
+    const into = mergeTarget;
+    if (into === undefined) return;
     setTargets((previous) => {
       const copy = new Map(previous);
       for (const item of inventory) {
         const key = keyOf(item.value);
-        if (selected.has(key)) {
-          copy.set(key, { source: item.value, target: into });
-        }
+        if (!selected.has(key)) continue;
+        // The value that names the group needs no entry of its own.
+        if (item.value === into && !fallback) copy.delete(key);
+        else copy.set(key, { source: item.value, target: into });
       }
       return copy;
     });
@@ -378,15 +399,31 @@ function CategoryMapForm({
     setDismissed(new Set());
   };
 
+  const trimmedName = name.trim();
+  const nameTaken =
+    trimmedName !== saved?.resultColumnName &&
+    getColumnNames().includes(trimmedName);
   const text = recodeText(recode);
   const unwritable = recode.entries.some(
     (entry) => categoryLiteral(entry.source) === undefined
   );
-  const canApply =
-    Boolean(field && name.trim()) &&
-    recode.entries.length + (fallback ? 1 : 0) > 0 &&
-    !unwritable &&
-    text !== saved?.expression.rawInput.trim();
+  const unchanged =
+    text === saved?.expression.rawInput.trim() &&
+    trimmedName === saved.resultColumnName;
+  const empty = recode.entries.length + (fallback ? 1 : 0) === 0;
+  // Why Apply is off, in the footer; nothing when it is on.
+  const blocked = !trimmedName
+    ? "Name the new field to apply."
+    : nameTaken
+      ? `A field named ${trimmedName} already exists.`
+      : empty
+        ? "Give a value a target, or replace unmatched values, to apply."
+        : unchanged
+          ? "No changes since this mapping was saved."
+          : unwritable
+            ? "A value here can't be written in a formula."
+            : undefined;
+  const canApply = Boolean(field) && !blocked;
   const apply = async () => {
     if (!canApply) return;
     try {
@@ -459,7 +496,12 @@ function CategoryMapForm({
           <Input
             id="catmap-name"
             value={name}
-            onChange={(event) => setName(event.target.value)}
+            aria-invalid={nameTaken || !trimmedName || undefined}
+            aria-describedby="catmap-status"
+            onChange={(event) => {
+              setName(event.target.value);
+              setError("");
+            }}
           />
           <span id="catmap-unmatched-label" className="eda-catmap-label">
             Unmatched
@@ -514,6 +556,14 @@ function CategoryMapForm({
                 setSearch(event.target.value);
                 setShown(PAGE);
               }}
+              onKeyDown={(event) => {
+                if (event.key !== "ArrowDown") return;
+                event.preventDefault();
+                event.currentTarget
+                  .closest("section")
+                  ?.querySelector<HTMLInputElement>("[data-target-input]")
+                  ?.focus();
+              }}
             />
             <div
               role="radiogroup"
@@ -546,14 +596,14 @@ function CategoryMapForm({
                 </button>
               </ActionTooltip>
             </div>
+            <span className="eda-catmap-segment-label" aria-hidden="true">
+              Suggest
+            </span>
             <div
               role="group"
               aria-label="Suggest groups"
               className="eda-catmap-segment"
             >
-              <span className="eda-catmap-segment-label" aria-hidden="true">
-                Suggest
-              </span>
               <ActionTooltip content="Suggest groups of text that differs only in spaces at its start or end.">
                 <button
                   type="button"
@@ -596,24 +646,39 @@ function CategoryMapForm({
             </span>
             <Input
               aria-label="Merge selected into"
-              placeholder="Merge into…"
+              placeholder={
+                selected.size > 1 && mergeDefault
+                  ? `Merge into “${mergeDefault}”`
+                  : "Merge into…"
+              }
               value={merge}
               onChange={(event) => setMerge(event.target.value)}
               onKeyDown={(event) => {
                 if (event.key === "Enter") {
                   event.preventDefault();
-                  if (selected.size && merge.trim()) mergeSelected();
+                  if (selected.size && mergeTarget) mergeSelected();
                 }
               }}
             />
-            <Button
-              type="button"
-              size="sm"
-              disabled={!selected.size || !merge.trim()}
-              onClick={mergeSelected}
+            <ActionTooltip
+              content={
+                selected.size
+                  ? "Give every selected value this name."
+                  : "Select values to merge first."
+              }
             >
-              Merge
-            </Button>
+              {/* A disabled button gets no hover, so the span carries it. */}
+              <span>
+                <Button
+                  type="button"
+                  size="sm"
+                  disabled={!selected.size || !mergeTarget}
+                  onClick={mergeSelected}
+                >
+                  Merge
+                </Button>
+              </span>
+            </ActionTooltip>
           </div>
           <table className="eda-catmap-table">
             <thead>
@@ -623,6 +688,7 @@ function CategoryMapForm({
                     type="checkbox"
                     aria-label="Select shown values"
                     checked={allShown}
+                    disabled={!visible.length}
                     onChange={() =>
                       setSelected((previous) => {
                         const copy = new Set(previous);
@@ -647,7 +713,11 @@ function CategoryMapForm({
                 const entry = targets.get(key);
                 const label = labelOf(item.value);
                 return (
-                  <tr key={key} data-mapped={entry ? "" : undefined}>
+                  <tr
+                    key={key}
+                    data-mapped={entry ? "" : undefined}
+                    data-selected={selected.has(key) || undefined}
+                  >
                     <td className="eda-catmap-check">
                       <input
                         type="checkbox"
@@ -677,11 +747,23 @@ function CategoryMapForm({
             </tbody>
           </table>
           {!matches.length && (
-            <p className="eda-calc-help eda-catmap-note">
-              {query
-                ? `No values match “${search}”.`
-                : "Every value has a target."}
-            </p>
+            <div className="eda-catmap-note">
+              <span className="eda-calc-help">
+                {query
+                  ? `No ${unmappedOnly ? "unmapped " : ""}values match “${search}”.`
+                  : "Every value has a target."}
+              </span>
+              {query && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setSearch("")}
+                >
+                  Clear search
+                </Button>
+              )}
+            </div>
           )}
           {matches.length > visible.length && (
             <div className="eda-catmap-note">
@@ -695,7 +777,7 @@ function CategoryMapForm({
                 size="sm"
                 onClick={() => setShown((count) => count + PAGE)}
               >
-                Show {PAGE} more
+                Show {Math.min(PAGE, matches.length - visible.length)} more
               </Button>
             </div>
           )}
@@ -745,14 +827,14 @@ function CategoryMapForm({
             {fallback ? " · others replaced" : " · others kept"}
           </p>
           {error ? (
-            <p role="alert" className="eda-calc-error">
+            <p id="catmap-status" role="alert" className="eda-calc-error">
               <CircleAlert aria-hidden="true" size={14} />
               <span>{error}</span>
             </p>
           ) : (
-            <p className="eda-calc-help">
-              Draft only. Apply adds {name.trim() || "the field"} as one
-              calculation; {getFieldLabel(field)} keeps its values.
+            <p id="catmap-status" className="eda-calc-help">
+              {blocked ??
+                `Draft only. Apply adds ${trimmedName} as one calculation; ${getFieldLabel(field)} keeps its values.`}
             </p>
           )}
         </div>
@@ -798,18 +880,21 @@ function TargetCell({
   const missing = entry?.target === null;
   const placeholder = fallback
     ? fallback.value === null
-      ? "missing"
+      ? "null"
       : fallback.value
     : value === null
-      ? "missing"
+      ? "null"
       : String(value);
   return (
     <div className="eda-catmap-target">
       <Input
         aria-label={`New category for ${label}`}
         value={missing ? "" : (entry?.target ?? "")}
-        placeholder={missing ? "missing" : placeholder}
-        className={cn(missing && "eda-catmap-missing")}
+        placeholder={missing ? "null" : placeholder}
+        className={cn(
+          (missing || placeholder === "null") && "eda-catmap-missing",
+          missing && "eda-catmap-missing-set"
+        )}
         onChange={(event) =>
           onChange(event.target.value === "" ? undefined : event.target.value)
         }
@@ -891,27 +976,37 @@ function OutputGroup({
             </span>
           </button>
         ) : (
-          <Input
-            autoFocus
-            aria-label={`Rename ${labelOf(group.output)}`}
-            className="eda-catmap-rename"
-            value={renaming}
-            onFocus={(event) => event.currentTarget.select()}
-            onChange={(event) => setRenaming(event.target.value)}
-            onBlur={() => {
-              if (renaming) onRename(renaming);
-              setRenaming(undefined);
-            }}
-            onKeyDown={(event) => {
-              if (event.key === "Enter") event.currentTarget.blur();
-              if (event.key === "Escape") {
-                // Close the field, not the dialog.
-                event.stopPropagation();
-                event.preventDefault();
-                setRenaming(undefined);
+          <div className="eda-catmap-group-head" data-renaming="">
+            <ChevronRight aria-hidden="true" className="eda-catmap-chevron" />
+            <Input
+              autoFocus
+              aria-label={`Rename ${labelOf(group.output)}`}
+              className="eda-catmap-rename"
+              data-catmap-escape=""
+              placeholder={
+                group.output === null ? "Name for missing values" : undefined
               }
-            }}
-          />
+              value={renaming}
+              onFocus={(event) => event.currentTarget.select()}
+              onChange={(event) => setRenaming(event.target.value)}
+              onBlur={() => {
+                if (renaming) onRename(renaming);
+                setRenaming(undefined);
+              }}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") event.currentTarget.blur();
+                if (event.key === "Escape") {
+                  // Close the field, not the dialog.
+                  event.stopPropagation();
+                  event.preventDefault();
+                  setRenaming(undefined);
+                }
+              }}
+            />
+            <span className="eda-catmap-count">
+              {group.count.toLocaleString()} rows
+            </span>
+          </div>
         )}
         <ActionTooltip content="Rename this category. A name already in the list merges the two.">
           <button

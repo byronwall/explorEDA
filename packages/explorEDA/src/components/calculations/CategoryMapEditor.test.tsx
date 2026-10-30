@@ -180,3 +180,49 @@ it("renames a result category to merge it, and Enter never applies", async () =>
     'recode(["Country"], "USA", "United States", "US", "United States")',
   ]);
 });
+
+it("keeps the draft when a rename is cancelled or unchanged, and checks the new name", () => {
+  let mapCategories!: ReturnType<typeof useMapCategories>;
+  function Workspace() {
+    mapCategories = useMapCategories();
+    return null;
+  }
+  render(
+    <DataLayerProvider
+      data={[{ Country: "USA" }, { Country: "US" }]}
+      charts={[]}
+    >
+      <CalculationEditorProvider>
+        <Workspace />
+      </CalculationEditorProvider>
+    </DataLayerProvider>
+  );
+  act(() => mapCategories!("Country"));
+  const rename = () =>
+    fireEvent.click(screen.getByRole("button", { name: "Rename “USA”" }));
+
+  // Escape closes the field, not the dialog.
+  rename();
+  fireEvent.keyDown(screen.getByRole("textbox", { name: "Rename “USA”" }), {
+    key: "Escape",
+  });
+  expect(screen.getByRole("dialog")).toBeInTheDocument();
+
+  // Enter without a change maps nothing.
+  rename();
+  fireEvent.keyDown(screen.getByRole("textbox", { name: "Rename “USA”" }), {
+    key: "Enter",
+  });
+  expect(screen.getByText("0 values mapped · others kept")).toBeInTheDocument();
+
+  fireEvent.change(screen.getByLabelText("New category for “US”"), {
+    target: { value: "USA" },
+  });
+  fireEvent.change(screen.getByLabelText("New field"), {
+    target: { value: "Country" },
+  });
+  expect(
+    screen.getByText("A field named Country already exists.")
+  ).toBeInTheDocument();
+  expect(screen.getByRole("button", { name: "Apply" })).toBeDisabled();
+});

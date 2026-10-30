@@ -5156,7 +5156,7 @@ html {
 }
 .eda-catmap-segment-label {
   align-self: center;
-  padding: 0 4px 0 6px;
+  margin-right: -4px;
   font-size: 11px;
   color: var(--muted-foreground);
 }
@@ -5202,8 +5202,10 @@ html {
   color: var(--foreground);
 }
 .eda-catmap-rename {
-  height: 26px;
+  height: 24px;
+  padding: 0 6px;
   font-size: 13px;
+  font-weight: 500;
 }
 .eda-catmap-settings label,
 .eda-catmap-label {
@@ -5220,6 +5222,9 @@ html {
   align-items: center;
   gap: 8px;
   min-width: 0;
+}
+.eda-catmap-unmatched input {
+  max-width: 220px;
 }
 .eda-catmap-segment {
   display: inline-flex;
@@ -5362,15 +5367,30 @@ html {
   border-bottom: 1px solid color-mix(in oklab, var(--border) 60%, transparent);
   vertical-align: middle;
 }
-.eda-catmap-table tr[data-mapped] td:nth-child(2) {
-  box-shadow: inset 2px 0 0 var(--primary);
+.eda-catmap-table tbody tr:hover td {
+  background: color-mix(in oklab, var(--muted) 45%, transparent);
+}
+.eda-catmap-table tbody tr[data-selected] td {
+  background: color-mix(in oklab, var(--primary) 8%, transparent);
+}
+/* A mapped value's target reads as set: a soft tint, not a rule. */
+.eda-catmap-table tr[data-mapped] [data-target-input] {
+  background: color-mix(in oklab, var(--primary) 7%, var(--background));
+}
+.eda-catmap-table thead th {
+  position: sticky;
+  top: var(--catmap-head-top, 28px);
+  z-index: 1;
+  background: var(--background);
 }
 .eda-catmap-check {
   width: 28px;
 }
 .eda-catmap-check input {
+  display: block;
   width: 14px;
   height: 14px;
+  margin: 0;
   accent-color: var(--primary);
 }
 .eda-catmap-count {
@@ -5395,6 +5415,7 @@ html {
   align-items: center;
   gap: 4px;
   min-width: 120px;
+  max-width: 320px;
 }
 .eda-catmap-target input {
   height: 26px;
@@ -5405,7 +5426,14 @@ html {
 }
 .eda-catmap-missing::placeholder {
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+}
+/* Set to missing reads as a value; a null that is only kept stays muted. */
+.eda-catmap-missing-set::placeholder {
   color: var(--foreground) !important;
+}
+.dark .eda-catmap input[type="checkbox"] {
+  color-scheme: dark;
 }
 .eda-catmap-null {
   flex-shrink: 0;
@@ -5454,10 +5482,12 @@ html {
   border-radius: 6px;
   padding: 2px 4px 4px;
 }
+.eda-catmap-group {
+  --catmap-group-bg: color-mix(in oklab, var(--muted) 35%, var(--background));
+}
 .eda-catmap-group[data-changed] {
-  background: var(--background);
-  box-shadow: 0 0 0 1px var(--border);
-  margin: 2px 0;
+  --catmap-group-bg: color-mix(in oklab, var(--primary) 6%, var(--background));
+  background: var(--catmap-group-bg);
 }
 .eda-catmap-group-head {
   display: flex;
@@ -5494,8 +5524,15 @@ html {
   font-size: 11px;
 }
 .eda-catmap-rows {
-  padding: 4px 0 0 20px;
+  max-height: 240px;
+  overflow: auto;
+  margin: 4px 0 0 20px;
   font-size: 12px;
+}
+.eda-catmap-rows thead th {
+  position: sticky;
+  top: 0;
+  background: var(--catmap-group-bg);
 }
 .eda-catmap-rows table {
   width: 100%;
@@ -5539,6 +5576,9 @@ html {
   }
   .eda-catmap-merge {
     top: 0;
+  }
+  .eda-catmap-values {
+    --catmap-head-top: 40px;
   }
   .eda-catmap-merge > span {
     min-width: 0;
