@@ -83,3 +83,56 @@ it("merges selected values in a draft, changes nothing on Cancel, and applies on
     "categorical"
   );
 });
+
+it("reviews suggestions without accepting any, and saves accepted ones as explicit entries", async () => {
+  let state!: ReturnType<typeof useStateLayer>;
+  let mapCategories!: ReturnType<typeof useMapCategories>;
+  function Workspace() {
+    state = useStateLayer();
+    mapCategories = useMapCategories();
+    return null;
+  }
+  render(
+    <DataLayerProvider
+      data={[
+        { Region: "North" },
+        { Region: "North" },
+        { Region: "north" },
+        { Region: "North " },
+        { Region: "US" },
+        { Region: "us" },
+        { Region: "Café" },
+        { Region: "Café" },
+      ]}
+      charts={[]}
+    >
+      <CalculationEditorProvider>
+        <Workspace />
+      </CalculationEditorProvider>
+    </DataLayerProvider>
+  );
+  act(() => mapCategories!("Region"));
+  fireEvent.click(screen.getByRole("button", { name: "Trim edges" }));
+  fireEvent.click(screen.getByRole("button", { name: "Ignore case" }));
+  const list = () => screen.getByRole("region", { name: "Suggested groups" });
+  // North with its case and space variants, and US with us; the two
+  // spellings of Café stay apart.
+  expect(within(list()).getAllByRole("listitem")).toHaveLength(2);
+  expect(screen.getByText("0 values mapped · others kept")).toBeInTheDocument();
+
+  const [north, us] = within(list()).getAllByRole("listitem");
+  fireEvent.click(within(us!).getByRole("button", { name: "Dismiss" }));
+  fireEvent.click(within(north!).getByRole("button", { name: "Accept" }));
+  expect(
+    screen.getByText("Every suggestion is accepted or dismissed.")
+  ).toBeInTheDocument();
+  expect(screen.getByText("2 values mapped · others kept")).toBeInTheDocument();
+  expect(state.calculations).toEqual([]);
+
+  await act(async () => {
+    fireEvent.click(screen.getByRole("button", { name: "Apply" }));
+  });
+  expect(state.calculations.map((calc) => calc.expression.rawInput)).toEqual([
+    'recode(["Region"], "north", "North", "North ", "North")',
+  ]);
+});

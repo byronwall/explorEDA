@@ -22,6 +22,15 @@ Open [the full example](/examples/category-mappings), then press the **Map categ
 - **Result** lists every category the new field will have, with its row count and the values merged into it. Open a category to see its exact rows.
 - The draft changes nothing. **Cancel** closes it, and **Apply** saves one calculation.
 
+## Suggested groups
+
+**Trim edges** and **Ignore case**, beside the search, propose groups of text values that differ only in spaces at their start or end, only in letter case, or both when both are on. In the example, Ignore case proposes `"Canada"` with `"canada"`, and Trim edges proposes `"Canada"` with `"Canada "`.
+
+- Nothing is accepted for you. Each group lists its values with their row counts and a target, which is the most common spelling. Edit the target, then **Accept** or **Dismiss** it.
+- **Accept** changes the draft only: each value in the group gets the target as an ordinary entry, as if you had typed it. A value you had already mapped elsewhere moves, and the button's tooltip says so. **Apply** still saves the draft.
+- The saved formula lists each value. It never stores a rule, so data added later with a new spelling keeps its value until you map it.
+- Only spaces and case count. `"E-mail"` and `"Email"`, `"México"` and `"Mexico"`, an accent typed as one character or as a letter plus a combining mark, and letters from another script that look the same all stay apart.
+
 ## What counts as the same value
 
 Values match exactly, by type and by every character:

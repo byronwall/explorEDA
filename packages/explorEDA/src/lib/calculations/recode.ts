@@ -141,3 +141,58 @@ export function recodeLookup(recode: Recode) {
     return recode.fallback ? recode.fallback.value : value;
   };
 }
+
+/** How suggestions compare text: trim the ends, ignore letter case, or both. */
+export interface SuggestMode {
+  trim: boolean;
+  ignoreCase: boolean;
+}
+
+export interface Suggestion {
+  /** The compared form the members share. */
+  key: string;
+  /** Members, most rows first. */
+  members: { value: string; count: number }[];
+  /** The most common member, trimmed when trimming. */
+  target: string;
+}
+
+/**
+ * Groups text values that become equal after trimming their ends or
+ * lowering their case. Only those two changes: punctuation, accents, and
+ * lookalike letters from other scripts stay distinct, and numbers,
+ * booleans, and missing values never join a group.
+ */
+export function suggestGroups(
+  values: { value: CategoryValue; count: number }[],
+  mode: SuggestMode
+): Suggestion[] {
+  const compare = (text: string) => {
+    const trimmed = mode.trim ? text.trim() : text;
+    return mode.ignoreCase ? trimmed.toLowerCase() : trimmed;
+  };
+  const groups = new Map<string, Suggestion["members"]>();
+  for (const item of values) {
+    if (typeof item.value !== "string") continue;
+    const key = compare(item.value);
+    const members = groups.get(key) ?? [];
+    members.push({ value: item.value, count: item.count });
+    groups.set(key, members);
+  }
+  return [...groups.entries()]
+    .filter(([, members]) => members.length > 1)
+    .map(([key, members]) => {
+      const sorted = [...members].sort((a, b) => b.count - a.count);
+      const first = sorted[0]!.value;
+      return {
+        key,
+        members: sorted,
+        target: mode.trim ? first.trim() : first,
+      };
+    })
+    .sort(
+      (a, b) =>
+        b.members.reduce((sum, item) => sum + item.count, 0) -
+        a.members.reduce((sum, item) => sum + item.count, 0)
+    );
+}

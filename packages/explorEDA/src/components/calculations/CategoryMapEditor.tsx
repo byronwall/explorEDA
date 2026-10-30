@@ -30,7 +30,10 @@ import {
   readRecode,
   recodeLookup,
   recodeText,
+  suggestGroups,
   type CategoryValue,
+  type SuggestMode,
+  type Suggestion,
   type Recode,
 } from "@/lib/calculations/recode";
 import { useDataLayer } from "@/providers/DataLayerProvider";
@@ -165,6 +168,11 @@ function CategoryMapForm({
   const [merge, setMerge] = useState("");
   const [shown, setShown] = useState(PAGE);
   const [error, setError] = useState("");
+  const [suggest, setSuggest] = useState<SuggestMode>({
+    trim: false,
+    ignoreCase: false,
+  });
+  const [dismissed, setDismissed] = useState(new Set<string>());
 
   // Every row's value, read once per field.
   const column = useMemo(() => getColumnData(field), [getColumnData, field]);
@@ -265,6 +273,46 @@ function CategoryMapForm({
     });
     setSelected(new Set());
     setMerge("");
+  };
+
+  // Proposals read every value, not just the page shown; none is accepted
+  // until someone accepts it, and accepting only changes the draft.
+  const suggestions = useMemo(
+    () =>
+      suggest.trim || suggest.ignoreCase
+        ? suggestGroups(inventory, suggest)
+        : [],
+    [inventory, suggest]
+  );
+  const settled = (proposal: Suggestion) =>
+    proposal.members.every((member) => {
+      const entry = targets.get(keyOf(member.value));
+      return entry
+        ? entry.target === proposal.target
+        : member.value === proposal.target;
+    });
+  // A group whose most common value is already mapped proposes that target.
+  const proposals = suggestions
+    .map((proposal) => {
+      const mapped = targets.get(keyOf(proposal.members[0]!.value))?.target;
+      return typeof mapped === "string"
+        ? { ...proposal, target: mapped }
+        : proposal;
+    })
+    .filter((proposal) => !dismissed.has(proposal.key) && !settled(proposal));
+  const accept = (proposal: Suggestion, target: string) =>
+    setTargets((previous) => {
+      const copy = new Map(previous);
+      for (const member of proposal.members) {
+        const key = keyOf(member.value);
+        if (member.value === target) copy.delete(key);
+        else copy.set(key, { source: member.value, target });
+      }
+      return copy;
+    });
+  const toggleSuggest = (part: keyof SuggestMode) => {
+    setSuggest((previous) => ({ ...previous, [part]: !previous[part] }));
+    setDismissed(new Set());
   };
 
   const text = recodeText(recode);
@@ -393,7 +441,42 @@ function CategoryMapForm({
                 setShown(PAGE);
               }}
             />
+            <div
+              role="group"
+              aria-label="Suggest groups"
+              className="eda-catmap-segment"
+            >
+              <ActionTooltip content="Suggest groups of text that differs only in spaces at its start or end.">
+                <button
+                  type="button"
+                  aria-pressed={suggest.trim}
+                  onClick={() => toggleSuggest("trim")}
+                >
+                  Trim edges
+                </button>
+              </ActionTooltip>
+              <ActionTooltip content="Suggest groups of text that differs only in letter case. Accents and punctuation still count.">
+                <button
+                  type="button"
+                  aria-pressed={suggest.ignoreCase}
+                  onClick={() => toggleSuggest("ignoreCase")}
+                >
+                  Ignore case
+                </button>
+              </ActionTooltip>
+            </div>
           </div>
+          {(suggest.trim || suggest.ignoreCase) && (
+            <SuggestionList
+              proposals={proposals}
+              total={suggestions.length}
+              targets={targets}
+              onAccept={accept}
+              onDismiss={(proposal) =>
+                setDismissed((previous) => new Set(previous).add(proposal.key))
+              }
+            />
+          )}
           <div
             className="eda-catmap-merge"
             data-active={selected.size > 0 || undefined}
@@ -729,5 +812,103 @@ function OutputGroup({
         </div>
       )}
     </li>
+  );
+}
+
+/** Proposed groups to review: each shows its members and a target to edit. */
+function SuggestionList({
+  proposals,
+  total,
+  targets,
+  onAccept,
+  onDismiss,
+}: {
+  proposals: Suggestion[];
+  total: number;
+  targets: Map<string, { target: string | null }>;
+  onAccept: (proposal: Suggestion, target: string) => void;
+  onDismiss: (proposal: Suggestion) => void;
+}) {
+  const [edits, setEdits] = useState<Record<string, string>>({});
+  if (!proposals.length) {
+    return (
+      <p className="eda-calc-help eda-catmap-note">
+        {total
+          ? "Every suggestion is accepted or dismissed."
+          : "No values differ only that way."}
+      </p>
+    );
+  }
+  return (
+    <section className="eda-catmap-suggestions" aria-label="Suggested groups">
+      <h3 className="eda-catmap-heading">
+        Suggested groups
+        <span>{proposals.length.toLocaleString()} to review</span>
+      </h3>
+      <ul>
+        {proposals.slice(0, PAGE).map((proposal) => {
+          const target = edits[proposal.key] ?? proposal.target;
+          const moved = proposal.members.filter((member) => {
+            const entry = targets.get(keyOf(member.value));
+            return entry && entry.target !== target;
+          }).length;
+          const rows = proposal.members.reduce(
+            (sum, member) => sum + member.count,
+            0
+          );
+          return (
+            <li key={proposal.key} className="eda-catmap-suggestion">
+              <p className="eda-catmap-members">
+                {proposal.members.map((member) => (
+                  <span key={member.value}>
+                    <CategoryChip value={member.value} />
+                    <span className="eda-catmap-member-count">
+                      {member.count.toLocaleString()}
+                    </span>
+                  </span>
+                ))}
+              </p>
+              <div className="eda-catmap-suggestion-actions">
+                <Input
+                  aria-label={`Target for ${labelOf(proposal.members[0]!.value)} group`}
+                  value={target}
+                  onChange={(event) =>
+                    setEdits((previous) => ({
+                      ...previous,
+                      [proposal.key]: event.target.value,
+                    }))
+                  }
+                />
+                <ActionTooltip
+                  content={
+                    moved
+                      ? `Adds ${rows.toLocaleString()} rows to the draft and moves ${moved} already mapped ${moved === 1 ? "value" : "values"}.`
+                      : `Adds ${rows.toLocaleString()} rows to the draft. Nothing changes until Apply.`
+                  }
+                >
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    disabled={!target}
+                    onClick={() => onAccept(proposal, target)}
+                  >
+                    Accept
+                  </Button>
+                </ActionTooltip>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => onDismiss(proposal)}
+                >
+                  Dismiss
+                </Button>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
   );
 }
