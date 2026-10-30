@@ -4,11 +4,11 @@
     "title": "Use one analytical result as another view’s input",
     "slug": "reusable-analysis-outputs",
     "scale": "feature",
-    "current_phase": "intent",
-    "last_updated": "2026-10-20",
-    "summary": "Analysts may want to inspect a grouped, pivoted, modeled, or density result and then use it in another view.",
+    "current_phase": "plan",
+    "last_updated": "2026-10-30",
+    "summary": "Define a grouped query once, reuse its rows in downstream analyses, and trace through immediate operands to original observations.",
     "status": "planned",
-    "next_action": "Retain as an unprioritized seed until tool use reveals a concrete unmet task."
+    "next_action": "Review the reusable grouped outputs plan; implementation is not yet approved."
   },
   "artifacts": {
     "intent_brief": {
@@ -28,8 +28,8 @@
     },
     "implementation_plan": {
       "path": "implementation-plan.md",
-      "status": "not-created",
-      "updated_at": null
+      "status": "current",
+      "updated_at": "2026-10-30"
     }
   },
   "sources": [

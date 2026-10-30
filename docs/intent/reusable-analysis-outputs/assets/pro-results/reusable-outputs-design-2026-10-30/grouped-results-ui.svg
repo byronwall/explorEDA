@@ -1,0 +1,190 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="800" viewBox="0 0 1280 800" role="img" aria-labelledby="concept-label" aria-describedby="description">
+  <desc id="description">Conceptual proposed explorEDA interface. A shared Experiment means result has three experiment rows. A scatter plot places A at two valid readings and mean ten, and B at three valid readings and mean forty. C remains in the result table with no numeric mean. The Query panel traces B's five original measurements: three valid and two excluded. Tracing is focus only; no view filter is applied.</desc>
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #263445; }
+      .muted { fill: #667386; }
+      .small { font-size: 12px; }
+      .tiny { font-size: 11px; }
+      .label { font-size: 13px; }
+      .body { font-size: 14px; }
+      .heading { font-size: 15px; font-weight: 600; }
+      .mono { font-family: 'DejaVu Sans Mono', monospace; }
+      .line { stroke: #dde3e9; stroke-width: 1; }
+      .grid { stroke: #edf0f4; stroke-width: 1; }
+      .control { fill: #fff; stroke: #cdd6df; stroke-width: 1; }
+      .blue { fill: #2867b6; }
+    </style>
+  </defs>
+
+  <!-- Context label sits outside the proposed product surface. -->
+  <rect width="1280" height="800" fill="#eef2f5"/>
+  <text id="concept-label" x="25" y="29" class="tiny muted" letter-spacing="1.2">CONCEPT · PROPOSED INTERFACE</text>
+  <text x="1255" y="29" text-anchor="end" class="small muted">Reusable grouped results · explorEDA</text>
+
+  <rect x="24" y="52" width="1232" height="716" rx="10" fill="#f8fafc" stroke="#ccd5de"/>
+  <path d="M34 52 H1246 Q1256 52 1256 62 V100 H24 V62 Q24 52 34 52Z" fill="#fff"/>
+  <line x1="24" y1="100" x2="1256" y2="100" class="line"/>
+
+  <!-- Shared scope and applied state. -->
+  <text x="44" y="82" font-size="16" fill="#2867b6">◆</text>
+  <text x="67" y="81" class="body" font-weight="600">Experiment means</text>
+  <text x="208" y="81" class="body muted">· rows are experiments · 3</text>
+  <rect x="445" y="66" width="121" height="23" rx="5" fill="#eaf1fa"/>
+  <text x="505.5" y="82" text-anchor="middle" class="tiny blue">Shared definition</text>
+  <text x="579" y="81" class="small muted">Uses 3</text>
+  <circle cx="1170" cy="77" r="3.5" fill="#3d8865"/>
+  <text x="1182" y="81" class="small muted">Current</text>
+
+  <!-- Existing view toolbar. -->
+  <rect x="44" y="111" width="159" height="32" rx="5" fill="#fff" stroke="#c5d3e2"/>
+  <text x="123.5" y="132" text-anchor="middle" class="label" font-weight="600">Experiment means</text>
+  <text x="228" y="132" class="label muted">Summary</text>
+  <text x="318" y="132" class="label muted">High means</text>
+  <rect x="617" y="113" width="94" height="28" rx="4" class="control"/>
+  <text x="664" y="132" text-anchor="middle" class="small">+ Add chart</text>
+  <rect x="721" y="113" width="62" height="28" rx="4" class="control"/>
+  <text x="752" y="132" text-anchor="middle" class="small">Rows</text>
+  <rect x="793" y="113" width="71" height="28" rx="4" fill="#e9f1fb" stroke="#8daecc"/>
+  <text x="828.5" y="132" text-anchor="middle" class="small blue">Query</text>
+
+  <!-- The data stays visible beside one temporary Query inspector. -->
+  <rect x="44" y="156" width="820" height="328" rx="6" fill="#fff" stroke="#d8e0e8"/>
+  <text x="64" y="181" class="heading">Experiment mean and sample size</text>
+  <text x="844" y="181" text-anchor="end" class="small muted">B · mean 40 · valid 3</text>
+
+  <line x1="112" y1="220" x2="812" y2="220" class="grid"/>
+  <line x1="112" y1="260" x2="812" y2="260" class="grid"/>
+  <line x1="112" y1="300" x2="812" y2="300" class="grid"/>
+  <line x1="112" y1="340" x2="812" y2="340" class="grid"/>
+  <line x1="112" y1="380" x2="812" y2="380" class="grid"/>
+  <line x1="112" y1="420" x2="812" y2="420" stroke="#aebbc9"/>
+  <line x1="112" y1="220" x2="112" y2="420" stroke="#aebbc9"/>
+  <line x1="287" y1="220" x2="287" y2="420" class="grid"/>
+  <line x1="462" y1="220" x2="462" y2="420" class="grid"/>
+  <line x1="637" y1="220" x2="637" y2="420" class="grid"/>
+  <line x1="812" y1="220" x2="812" y2="420" class="grid"/>
+
+  <g class="small muted" text-anchor="end">
+    <text x="100" y="424">0</text><text x="100" y="384">10</text>
+    <text x="100" y="344">20</text><text x="100" y="304">30</text>
+    <text x="100" y="264">40</text><text x="100" y="224">50</text>
+  </g>
+  <g class="small muted" text-anchor="middle">
+    <text x="112" y="437">0</text><text x="287" y="437">1</text>
+    <text x="462" y="437">2</text><text x="637" y="437">3</text>
+    <text x="812" y="437">4</text>
+  </g>
+  <text x="462" y="456" text-anchor="middle" class="small muted">Valid readings</text>
+  <text x="72" y="320" transform="rotate(-90 72 320)" text-anchor="middle" class="small muted">Mean reading</text>
+
+  <circle cx="462" cy="380" r="6" fill="#2867b6"/>
+  <text x="476" y="374" class="label" font-weight="600">A</text>
+  <circle cx="637" cy="260" r="14" fill="none" stroke="#7b9ec3" stroke-dasharray="3 3"/>
+  <circle cx="637" cy="260" r="6" fill="#2867b6"/>
+  <text x="655" y="252" class="label" font-weight="600">B</text>
+  <text x="64" y="474" class="tiny muted">C has no numeric mean · 1 result row omitted from plot</text>
+
+  <!-- Result rows, including the all-invalid experiment. -->
+  <rect x="44" y="500" width="820" height="206" rx="6" fill="#fff" stroke="#d8e0e8"/>
+  <text x="64" y="526" class="heading">Result rows</text>
+  <text x="844" y="526" text-anchor="end" class="small muted">3 experiments</text>
+  <rect x="45" y="540" width="818" height="28" fill="#f6f8fa"/>
+  <line x1="44" y1="568" x2="864" y2="568" class="line"/>
+  <text x="64" y="559" class="small muted">Experiment</text>
+  <text x="410" y="559" text-anchor="end" class="small muted">Mean reading</text>
+  <text x="617" y="559" text-anchor="end" class="small muted">Valid readings</text>
+  <text x="841" y="559" text-anchor="end" class="small muted">Members</text>
+
+  <text x="64" y="593" class="label">A</text>
+  <text x="410" y="593" text-anchor="end" class="label">10</text>
+  <text x="617" y="593" text-anchor="end" class="label">2</text>
+  <text x="841" y="593" text-anchor="end" class="label">3</text>
+  <line x1="44" y1="604" x2="864" y2="604" class="grid"/>
+  <rect x="45" y="605" width="818" height="35" fill="#f0f5fb"/>
+  <text x="64" y="629" class="label">B</text>
+  <rect x="88" y="611" width="79" height="22" rx="4" fill="#e6edf6"/>
+  <text x="127.5" y="626" text-anchor="middle" class="tiny muted">Trace focus</text>
+  <text x="410" y="629" text-anchor="end" class="label">40</text>
+  <text x="617" y="629" text-anchor="end" class="label">3</text>
+  <text x="841" y="629" text-anchor="end" class="label">5</text>
+  <line x1="44" y1="640" x2="864" y2="640" class="grid"/>
+  <text x="64" y="665" class="label">C</text>
+  <text x="394" y="665" text-anchor="middle" class="small muted mono">null</text>
+  <text x="617" y="665" text-anchor="end" class="label">0</text>
+  <text x="841" y="665" text-anchor="end" class="label">4</text>
+  <text x="64" y="694" class="tiny muted">One row per Experiment ID · all 3 rows shown</text>
+
+  <!-- Query side inspector: one panel; no feedback from trace focus. -->
+  <rect x="888" y="111" width="348" height="595" rx="6" fill="#fff" stroke="#cdd7e1"/>
+  <text x="904" y="134" class="heading">Query</text>
+  <rect x="1060" y="119" width="100" height="28" rx="4" class="control"/>
+  <text x="1110" y="138" text-anchor="middle" class="small">Use result</text>
+  <rect x="1170" y="119" width="28" height="28" rx="4" fill="#fff"/>
+  <path d="M1178 138 L1190 126 M1178 126 H1190 V138" fill="none" stroke="#667386" stroke-width="1.3"/>
+  <path d="M1210 128 L1220 138 M1220 128 L1210 138" fill="none" stroke="#667386" stroke-width="1.5"/>
+  <line x1="888" y1="158" x2="1236" y2="158" class="line"/>
+
+  <text x="904" y="183" class="label" font-weight="600">◆ Experiment means</text>
+  <text x="904" y="206" class="small muted">Input</text>
+  <rect x="1004" y="188" width="216" height="28" rx="4" class="control"/>
+  <text x="1014" y="207" class="small">Measurements</text>
+  <path d="M1203 199 L1207 203 L1211 199" fill="none" stroke="#667386" stroke-width="1.3"/>
+  <text x="904" y="240" class="small muted">Group by</text>
+  <rect x="1004" y="222" width="216" height="28" rx="4" class="control"/>
+  <text x="1014" y="241" class="small">Experiment ID</text>
+  <path d="M1203 233 L1207 237 L1211 233" fill="none" stroke="#667386" stroke-width="1.3"/>
+  <text x="904" y="270" class="tiny muted">Rows are experiments · one per Experiment ID</text>
+  <line x1="904" y1="285" x2="1220" y2="285" class="line"/>
+
+  <text x="904" y="310" class="label" font-weight="600">Trace · Experiment B</text>
+  <rect x="1147" y="294" width="73" height="23" rx="4" fill="#f1f4f7"/>
+  <text x="1183.5" y="310" text-anchor="middle" class="tiny muted">Focus only</text>
+  <rect x="904" y="329" width="316" height="28" rx="4" fill="#f6f8fa" stroke="#d7e0e8"/>
+  <rect x="985" y="330" width="98" height="26" rx="3" fill="#fff" stroke="#aebfd2"/>
+  <text x="944" y="347" text-anchor="middle" class="tiny muted">Members</text>
+  <text x="1034" y="347" text-anchor="middle" class="tiny blue">This measure</text>
+  <text x="1151" y="347" text-anchor="middle" class="tiny muted">Original measurements</text>
+
+  <text x="904" y="384" class="small muted">5 members · 3 valid · 2 excluded</text>
+  <text x="904" y="421" font-size="28" font-weight="600">40</text>
+  <text x="951" y="419" font-size="12" class="mono muted">= (20 + 40 + 60) / 3</text>
+  <text x="904" y="446" class="tiny muted">Mean reading · equal weight per valid reading</text>
+
+  <line x1="904" y1="463" x2="1220" y2="463" class="line"/>
+  <text x="904" y="484" class="tiny muted">Occurrence</text>
+  <text x="1076" y="484" text-anchor="end" class="tiny muted">Reading</text>
+  <text x="1097" y="484" class="tiny muted">Contribution</text>
+  <line x1="904" y1="492" x2="1220" y2="492" class="line"/>
+
+  <text x="904" y="513" class="small mono">b1</text>
+  <text x="1076" y="513" text-anchor="end" class="small">20</text>
+  <text x="1097" y="513" class="small">Included</text>
+  <line x1="904" y1="520" x2="1220" y2="520" class="grid"/>
+  <text x="904" y="541" class="small mono">b2</text>
+  <text x="1076" y="541" text-anchor="end" class="small">40</text>
+  <text x="1097" y="541" class="small">Included</text>
+  <line x1="904" y1="548" x2="1220" y2="548" class="grid"/>
+  <text x="904" y="569" class="small mono">b3</text>
+  <text x="1076" y="569" text-anchor="end" class="small">60</text>
+  <text x="1097" y="569" class="small">Included</text>
+  <line x1="904" y1="576" x2="1220" y2="576" class="grid"/>
+  <text x="904" y="597" class="small mono">b4</text>
+  <text x="1076" y="597" text-anchor="end" class="small mono">"n/a"</text>
+  <text x="1097" y="597" class="small muted">Not numeric</text>
+  <line x1="904" y1="604" x2="1220" y2="604" class="grid"/>
+  <text x="904" y="625" class="small mono">b5</text>
+  <text x="1076" y="625" text-anchor="end" class="small mono">""</text>
+  <text x="1097" y="625" class="small muted">Blank</text>
+  <line x1="904" y1="637" x2="1220" y2="637" class="line"/>
+  <rect x="904" y="654" width="177" height="28" rx="4" class="control"/>
+  <text x="992.5" y="673" text-anchor="middle" class="small">Edit shared definition</text>
+  <text x="1220" y="673" text-anchor="end" class="tiny muted">Uses 3</text>
+
+  <!-- Status remains unfiltered while the trace focuses B. -->
+  <line x1="24" y1="724" x2="1256" y2="724" class="line"/>
+  <text x="44" y="750" class="label">3 experiments · 2 numeric means</text>
+  <text x="864" y="750" text-anchor="end" class="small muted">No view filters</text>
+  <text x="1236" y="750" text-anchor="end" class="small muted">Trace focus: B</text>
+  <text x="25" y="791" class="tiny muted">Proposed layout, not a tested application screen. Values match proof fixture PF-01.</text>
+</svg>
