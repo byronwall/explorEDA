@@ -2,7 +2,7 @@
 
 ## State
 
-- Phase: submitted; Pro is processing. Collection and integration pending.
+- Phase: collected and integrated; review PR verification pending.
 - Mode: Design.
 - Mission: exact joint patterns, affected records, and saved notebook interpretation.
 - Repository: https://github.com/byronwall/explorEDA.
@@ -88,3 +88,37 @@ Command: `pnpm --config.verify-deps-before-run=false --filter demo docs:check`.
 The flag uses installed dependencies without a reinstall. Only the prompt and run record changed.
 No package/demo changes, changeset, full `pnpm check`, or feature/browser acceptance is claimed.
 Plans, summary, result assets, local dispositions, and PR remain pending Pro completion.
+
+## Collection and integration — October 30
+
+Resumed the recorded conversation in Chrome `byroni.us`. Pro completed in 51m38s.
+No follow-up or resubmission was needed. Follow-ups remain 0/1.
+The final response links two reports and seven companions, all included in the original ZIP.
+Collected the existing archive through its linked preview under standing direct human download approval.
+Two center-control attempts initially produced no file; a bounded download-event wait timed out.
+The header Download control then produced the actual file after a delay. Checked actual Downloads files before retries.
+An attempted Chrome internal download-status page was blocked by browser URL policy. It was not accessed or bypassed.
+An individual report preview was opened as a safer alternative; no separate report download was needed once the ZIP arrived.
+
+Verified safe paths, no duplicate entries, no symlinks, CRC, size bounds, and exactly nine files before extraction.
+Read both full reports, notebook specification, JSON fixtures, original verifier/log, and SVG. Visually inspected the PNG.
+Preserved all nine originals under the planned intent asset directory, with a linked index.
+The supplied verifier remains unexecuted. Its 41 checks are Pro-reported, not local execution.
+ZIP, input packet, working inventory, independent arithmetic checker, and collected working copies stay ignored under `tmp/`.
+No ZIP upload, Library upload prerequisite, or downloaded-program execution occurred.
+
+Refreshed origin/main, unchanged at the baseline. Checked all open PRs through #573.
+Checked value stages, profile ownership, Crossfilter population, registry forwarding, schema, calculations,
+live/headless findings, writeback/echo, record-preview limits, common save validation, DSL typed values,
+query output grain, notebook schema/provenance loss, and actual folder saver/flush behavior.
+UpSet, naniar, and VIM primary sources support the representation and bounded display choices.
+
+Wrote local M1 exact patterns/records/kept notebooks and M2 group/input checks, with docs/examples in each.
+Recorded JM-D01–JM-D18 dispositions. Defer separate section export and unmeasured computation cutoff.
+Original-source notebook lineage remains Explore; M1 accurately traces current output records.
+Updated intent, initiative map, R027, and catalogue. Build is a planning disposition, not implementation approval.
+
+Twenty-nine independent arithmetic checks passed without importing supplied or repository programs.
+Existing profile/conversion/finding/writeback tests passed: four files, 42 tests.
+Docs, authored format/whitespace/links, original byte inventory, commit identities, and PR checks are verified before completion.
+No package/demo code changes, changeset, full `pnpm check`, or proposed feature/browser/persistence/performance acceptance is claimed.

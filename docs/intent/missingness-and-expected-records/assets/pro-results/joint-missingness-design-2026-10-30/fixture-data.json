@@ -1,0 +1,44 @@
+{
+  "baseline": "ab4ecd2aa98f3fd1da11e8f552efdb269f4b65a6",
+  "purpose": "Research fixtures for proposed joint missingness; not a saved explorEDA analysis.",
+  "sixField": {
+    "fields": ["x", "y", "z", "note", "flag", "w"],
+    "idField": "id",
+    "groupField": "group",
+    "fieldSettings": {
+      "x": { "type": "numeric" },
+      "note": { "type": "categorical", "nullTokens": ["NA"] }
+    },
+    "inferredTypes": {
+      "x": "categorical", "y": "numeric", "z": "numeric",
+      "note": "categorical", "flag": "boolean", "w": "numeric"
+    },
+    "rows": [
+      { "id": "r01", "group": "A", "x": 0, "y": 10, "z": 1, "note": "ok", "flag": false, "w": 5 },
+      { "id": "r02", "group": "A", "x": null, "y": 20, "z": 2, "note": "ok", "flag": true, "w": 6 },
+      { "id": "r03", "group": "A", "x": null, "y": 30, "z": 3, "note": "ok", "flag": false, "w": 7 },
+      { "id": "r04", "group": "A", "x": 40, "y": null, "z": 4, "note": "ok", "flag": true, "w": 8 },
+      { "id": "r05", "group": "A", "x": null, "y": null, "z": 5, "note": "ok", "flag": true, "w": 9 },
+      { "id": "r06", "group": "A", "x": null, "y": null, "z": 6, "note": "ok", "flag": true, "w": 10 },
+      { "id": "r07", "group": "A", "x": 70, "y": 70, "z": 7, "note": "  ", "flag": true, "w": 11 },
+      { "id": "r08", "group": "A", "x": "bad", "y": 80, "z": 8, "note": "ok", "flag": true, "w": 12 },
+      { "id": "r09", "group": "B", "x": null, "y": null, "z": null, "note": "ok", "flag": false, "w": 13 },
+      { "id": "r10", "group": "B", "x": 100, "y": 100, "z": 10, "note": "NA", "flag": null, "w": 14 },
+      { "id": "r11", "group": "B", "x": 110, "y": 110, "z": 11, "note": "ok", "flag": true },
+      { "id": "r12", "group": "B", "x": 120, "y": 120, "z": 12, "note": "", "flag": true, "w": "Infinity" }
+    ]
+  },
+  "equalMarginals": {
+    "fields": ["x", "y", "z"],
+    "rows": [
+      { "id": "s1", "group": "spread", "x": null, "y": 1, "z": 1 },
+      { "id": "s2", "group": "spread", "x": 1, "y": null, "z": 1 },
+      { "id": "s3", "group": "spread", "x": 1, "y": 1, "z": null },
+      { "id": "s4", "group": "spread", "x": 1, "y": 1, "z": 1 },
+      { "id": "c1", "group": "cluster", "x": null, "y": null, "z": null },
+      { "id": "c2", "group": "cluster", "x": 1, "y": 1, "z": 1 },
+      { "id": "c3", "group": "cluster", "x": 1, "y": 1, "z": 1 },
+      { "id": "c4", "group": "cluster", "x": 1, "y": 1, "z": 1 }
+    ]
+  }
+}
