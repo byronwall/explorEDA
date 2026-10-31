@@ -3,6 +3,9 @@
 Design follow-up: [selections and live findings through refresh](../../research/selection-refresh-design-2026-10-29/README.md)
 adds a keyed-refresh capability plan to R077's earlier audit. It does not change catalogue rank or set the next topic.
 
+Design follow-up: [regional comparisons with explicit exposure](../../research/regional-rates-design-2026-10-31/README.md)
+adds a staged capability plan to R016. Prepared totals come first, then events with separate exposure and source evidence.
+
 The catalogue is in priority order. IDs remain stable if a later authorized review changes the rank. The complete question, experiment, evidence, and rejection signal are in each linked brief and in the JSON index.
 
 | Priority | ID and title                                                                                                                                                  | Category                           | Kind           |

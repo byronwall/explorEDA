@@ -1,6 +1,29 @@
 # Regional rates Design run
 
-Phase: submitted. Follow-ups: 0/1. Integration awaits Pro.
+Phase: integrated locally; PR opening pending. Follow-ups: 0/1.
+
+Collected October 31, 2026 after 10:42 UTC. Pro finished in 22m28s.
+Downloaded the existing regional-rates-design.zip through its linked preview under Byron's standing approval.
+The initial click had no immediate file. A bounded download-event recovery timed out, then the actual ZIP appeared.
+Verified the local file before any further action. No regeneration, Library upload, approval rejection, or downloaded-program execution.
+
+All eight originals pass safe-path, unique-entry, no-symlink, CRC, size, and relevant UTF-8 checks.
+Both reports and the guide were read; the contract, verifier, fixtures, SVG, and PNG were inspected.
+All eight original disk files match archive bytes. Their index is linked from the local plan and summary.
+ZIP and input packet remain ignored. Committed inventory verification follows staging.
+
+Local plan: docs/intent/regional-rate-comparisons/implementation-plan.md.
+Summary: docs/research/regional-rates-design-2026-10-31/README.md.
+Original index: docs/intent/regional-rate-comparisons/assets/pro-results/README.md.
+All RR-01–RR-23 have local Build/Explore/Defer/Avoid dispositions.
+Prepared totals ship first, events with separate exposure second, supported scopes/preparation third, richer live findings fourth.
+Resolved host and worker seams against current code; reuse the project callback, trace context, request-ID coordinator, and folder saver.
+Main remains ab4ecd2a. Open PRs through #579 checked. No next topic selected.
+
+Independent local fixture checks pass 439 assertions across 46 cases without importing supplied or repository programs.
+Pro's reported 2,849 verifier assertions and contract syntax/example check remain Pro evidence.
+Existing map/evaluator/findings tests pass: 3 files, 27 tests. Docs checks and final PR checks follow.
+Authored local links pass; original disk inventory matches ZIP. No feature, browser, persistence, or performance acceptance is claimed.
 
 Conversation: https://chatgpt.com/c/6ae5a920-2a18-83ea-84be-25b88b06d492. Never resubmit.
 Submitted October 31, 2026 about 08:39 UTC. Chrome byroni.us and Byron Wall Pro account verified.

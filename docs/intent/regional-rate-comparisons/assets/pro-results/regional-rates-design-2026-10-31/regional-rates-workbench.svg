@@ -1,0 +1,170 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1540" height="1120" viewBox="0 0 1540 1120">
+<title>Regional comparison — proposed explorEDA workbench</title>
+<desc>Original conceptual light-mode design, not a running application. Synthetic regions show A with 12 events and 1200 residents, B with 8 events and 200 residents, C with zero events and 400 residents under complete collection, and D with zero observed events and 500 residents under unknown collection. Rates per 1000 residents are 10, 40, 0, and unavailable. B is selected. Its eight event keys and one exposure key are shown separately.</desc>
+<defs>
+  <pattern id="unobserved" patternUnits="userSpaceOnUse" width="10" height="10"><rect width="10" height="10" fill="#f1f3f5"/><path d="M-2 2L2-2M0 10L10 0M8 12L12 8" stroke="#b9c2c9" stroke-width="1.3"/></pattern>
+  <linearGradient id="ramp"><stop offset="0" stop-color="#e8f3ef"/><stop offset="0.25" stop-color="#b4dace"/><stop offset="1" stop-color="#165f58"/></linearGradient>
+</defs>
+<style>
+  text {font-family:'DejaVu Sans',sans-serif;fill:#223431}
+  .muted {fill:#61726e}
+  .small {font-size:13px}
+  .tiny {font-size:12px}
+  .body {font-size:15px}
+  .label {font-size:13px;font-weight:600}
+  .title {font-size:18px;font-weight:600}
+  .mono {font-family:'DejaVu Sans Mono',monospace}
+  .white {fill:#fff}
+  .teal {fill:#165f58}
+  .strong {font-weight:700}
+</style>
+<rect width="1540" height="1120" fill="#f4f7f5"/>
+
+<text x="40" y="34" class="small teal strong">explorEDA  /  analysis notebook</text>
+<text x="40" y="80" font-size="31" font-weight="700" style="fill:#153a32">Regional comparison</text>
+<text x="40" y="110" class="body muted">Service requests in four synthetic districts</text>
+<rect x="1172" y="47" width="328" height="26" fill="#e9eeeb" stroke="#e9eeeb" rx="13" stroke-width="1"/>
+<text x="1336.0" y="65" class="tiny strong" text-anchor="middle" style="fill:#586960">DESIGN PROPOSAL · SYNTHETIC DATA</text>
+<rect x="40" y="134" width="1460" height="66" fill="#fff" stroke="#dce5e0" rx="12" stroke-width="1"/>
+<text x="60" y="160" class="tiny muted">Events</text>
+<text x="60" y="182" class="body mono">events</text>
+<path d="M202 147L202 188" stroke="#e2e9e5" stroke-width="1" fill="none"/>
+<text x="222" y="160" class="tiny muted">Exposure</text>
+<text x="222" y="182" class="body">exposure · residents</text>
+<path d="M475 147L475 188" stroke="#e2e9e5" stroke-width="1" fill="none"/>
+<text x="495" y="160" class="tiny muted">Period</text>
+<text x="495" y="182" class="body">October 2026</text>
+<path d="M720 147L720 188" stroke="#e2e9e5" stroke-width="1" fill="none"/>
+<text x="740" y="160" class="tiny muted">Numerator scope</text>
+<text x="740" y="182" class="body">All event types</text>
+<path d="M987 147L987 188" stroke="#e2e9e5" stroke-width="1" fill="none"/>
+<text x="1007" y="160" class="tiny muted">Geography</text>
+<text x="1007" y="182" class="body">districts-v1 · pinned</text>
+<rect x="1281" y="151" width="197" height="32" fill="#165f58" stroke="#165f58" rx="7" stroke-width="1"/>
+<text x="1379" y="172" class="label white" text-anchor="middle">Save to notebook</text>
+<rect x="40" y="216" width="1460" height="44" fill="#edf5f0" stroke="#d6e5dc" rx="8" stroke-width="1"/>
+<text x="57" y="244" class="label teal">Subset: A + B + C</text>
+<text x="247" y="244" class="body">20 events / 1,800 residents</text>
+<text x="538" y="244" class="body strong">Subset pooled rate 11.111 per 1,000</text>
+<rect x="1136" y="225" width="343" height="26" fill="#f9f0df" stroke="#f9f0df" rx="13" stroke-width="1"/>
+<text x="1307.5" y="243" class="tiny strong" text-anchor="middle" style="fill:#805b17">D unavailable: collection coverage unknown</text>
+<rect x="40" y="278" width="680" height="388" fill="#fff" stroke="#dce5e0" rx="12" stroke-width="1"/>
+<text x="62" y="309" class="title">Rate by district</text>
+<rect x="535" y="292" width="163" height="29" fill="#f2f6f3" stroke="#e2e9e5" rx="6" stroke-width="1"/>
+<rect x="537" y="294" width="80" height="25" fill="#fff" stroke="#d8e4dd" rx="5" stroke-width="1"/>
+<text x="577" y="312" class="small strong" text-anchor="middle">Rate</text>
+<text x="657" y="312" class="small muted" text-anchor="middle">Count</text>
+<text x="62" y="334" class="small muted">Events per 1,000 residents · shared reference scale</text>
+<path d="M89 402L261 365L322 410L305 518L155 552L93 487Z" fill="#b4dace" stroke="#7a9c90" stroke-width="1.6"/>
+<path d="M329 379L448 366L486 418L443 473L321 432Z" fill="#165f58" stroke="#173f37" stroke-width="3.2"/>
+<path d="M318 444L438 485L483 557L381 584L304 526Z" fill="#e8f3ef" stroke="#7a9c90" stroke-width="1.6"/>
+<path d="M163 563L300 537L365 594L310 623L187 615Z" fill="url(#unobserved)" stroke="#9aa9a1" stroke-width="1.6"/>
+<text x="203" y="440" font-size="22" font-weight="700" text-anchor="middle">A</text>
+<text x="203" y="465" class="body strong" text-anchor="middle">10</text>
+<text x="203" y="486" class="small" text-anchor="middle">12 / 1,200</text>
+<text x="396" y="407" class="white" font-size="22" font-weight="700" text-anchor="middle">B</text>
+<text x="396" y="432" class="body strong white" text-anchor="middle">40</text>
+<text x="397" y="452" class="small white" text-anchor="middle">8 / 200</text>
+<text x="390" y="529" font-size="21" font-weight="700" text-anchor="middle">C</text>
+<text x="390" y="551" class="small" text-anchor="middle">0 · complete</text>
+<text x="261" y="581" class="body strong" text-anchor="middle">D</text>
+<text x="261" y="602" class="tiny" text-anchor="middle">Unavailable</text>
+<text x="535" y="380" class="label">Rate / 1,000</text>
+<rect x="535" y="400" width="24" height="22" fill="#165f58" stroke="#b7c9c0" rx="3" stroke-width="1"/>
+<text x="572" y="416" class="body">40</text>
+<rect x="535" y="439" width="24" height="22" fill="#b4dace" stroke="#b7c9c0" rx="3" stroke-width="1"/>
+<text x="572" y="455" class="body">10</text>
+<rect x="535" y="478" width="24" height="22" fill="#e8f3ef" stroke="#b7c9c0" rx="3" stroke-width="1"/>
+<text x="572" y="494" class="body">0</text>
+<rect x="535" y="526" width="24" height="22" fill="url(#unobserved)" stroke="#b7c9c0" rx="3" stroke-width="1"/>
+<text x="572" y="542" class="small">Unknown</text>
+<text x="572" y="560" class="small muted">coverage</text>
+<text x="62" y="647" class="tiny muted">Schematic geometry · not actual district boundaries</text>
+<rect x="740" y="278" width="760" height="388" fill="#fff" stroke="#dce5e0" rx="12" stroke-width="1"/>
+<text x="762" y="309" class="title">Compare rates and their inputs</text>
+<text x="762" y="334" class="small muted">B has the highest rate. A has the largest event count.</text>
+<rect x="753" y="350" width="734" height="31" fill="#f5f8f6" stroke="#f5f8f6" rx="4" stroke-width="1"/>
+<text x="768" y="371" class="tiny strong">District</text>
+<text x="949" y="371" class="tiny strong" text-anchor="end">Events</text>
+<text x="1083" y="371" class="tiny strong" text-anchor="end">Residents</text>
+<text x="1232" y="371" class="tiny strong" text-anchor="end">Rate / 1,000</text>
+<text x="1379" y="371" class="tiny strong">Status</text>
+<rect x="754" y="386" width="732" height="49" fill="#edf5f0" stroke="#edf5f0" rx="5" stroke-width="1"/>
+<rect x="754" y="386" width="4" height="49" fill="#165f58" rx="2"/>
+<text x="770" y="416" class="body strong">B</text>
+<text x="806" y="416" class="tiny teal">Selected</text>
+<text x="949" y="416" class="body" text-anchor="end">8</text>
+<text x="1083" y="416" class="body" text-anchor="end">200</text>
+<text x="1232" y="416" class="body strong" text-anchor="end">40</text>
+<text x="1379" y="416" class="tiny" style="fill:#526c60">Complete</text>
+<rect x="754" y="439" width="732" height="49" fill="#fff" stroke="#fff" rx="5" stroke-width="1"/>
+<text x="770" y="469" class="body strong">A</text>
+<text x="949" y="469" class="body" text-anchor="end">12</text>
+<text x="1083" y="469" class="body" text-anchor="end">1,200</text>
+<text x="1232" y="469" class="body strong" text-anchor="end">10</text>
+<text x="1379" y="469" class="tiny" style="fill:#526c60">Complete</text>
+<rect x="754" y="492" width="732" height="49" fill="#fff" stroke="#fff" rx="5" stroke-width="1"/>
+<text x="770" y="522" class="body strong">C</text>
+<text x="949" y="522" class="body" text-anchor="end">0</text>
+<text x="1083" y="522" class="body" text-anchor="end">400</text>
+<text x="1232" y="522" class="body strong" text-anchor="end">0</text>
+<text x="1379" y="522" class="tiny" style="fill:#526c60">Complete</text>
+<rect x="754" y="545" width="732" height="49" fill="#faf8f3" stroke="#faf8f3" rx="5" stroke-width="1"/>
+<text x="770" y="575" class="body strong">D</text>
+<text x="949" y="575" class="small" text-anchor="end">0 observed</text>
+<text x="1083" y="575" class="body" text-anchor="end">500</text>
+<text x="1232" y="575" class="small strong" text-anchor="end">Unavailable</text>
+<text x="1379" y="575" class="tiny" style="fill:#805b17">Unknown</text>
+<text x="762" y="647" class="tiny muted">D is explicitly outside the chosen pool; its unknown rate is not zero.</text>
+<rect x="40" y="684" width="1460" height="332" fill="#fff" stroke="#dce5e0" rx="12" stroke-width="1"/>
+<text x="62" y="717" class="title">B · calculation evidence</text>
+<text x="62" y="741" class="body strong teal">8 events ÷ 200 residents × 1,000 = 40 events per 1,000 residents</text>
+<rect x="1236" y="700" width="242" height="26" fill="#edf5f0" stroke="#edf5f0" rx="13" stroke-width="1"/>
+<text x="1357.0" y="718" class="tiny strong" text-anchor="middle" style="fill:#165f58">Exposure stays fixed by region</text>
+<path d="M62 757L1478 757" stroke="#e2e9e5" stroke-width="1" fill="none"/>
+<text x="62" y="784" class="tiny strong muted">NUMERATOR</text>
+<text x="62" y="807" class="body">events · eight included event keys</text>
+<rect x="62" y="822" width="92" height="29" fill="#f4f7f5" stroke="#dde7e0" rx="5" stroke-width="1"/>
+<text x="108" y="842" class="small mono" text-anchor="middle">b01</text>
+<rect x="167" y="822" width="92" height="29" fill="#f4f7f5" stroke="#dde7e0" rx="5" stroke-width="1"/>
+<text x="213" y="842" class="small mono" text-anchor="middle">b02</text>
+<rect x="272" y="822" width="92" height="29" fill="#f4f7f5" stroke="#dde7e0" rx="5" stroke-width="1"/>
+<text x="318" y="842" class="small mono" text-anchor="middle">b03</text>
+<rect x="377" y="822" width="92" height="29" fill="#f4f7f5" stroke="#dde7e0" rx="5" stroke-width="1"/>
+<text x="423" y="842" class="small mono" text-anchor="middle">b04</text>
+<rect x="62" y="861" width="92" height="29" fill="#f4f7f5" stroke="#dde7e0" rx="5" stroke-width="1"/>
+<text x="108" y="881" class="small mono" text-anchor="middle">b05</text>
+<rect x="167" y="861" width="92" height="29" fill="#f4f7f5" stroke="#dde7e0" rx="5" stroke-width="1"/>
+<text x="213" y="881" class="small mono" text-anchor="middle">b06</text>
+<rect x="272" y="861" width="92" height="29" fill="#f4f7f5" stroke="#dde7e0" rx="5" stroke-width="1"/>
+<text x="318" y="881" class="small mono" text-anchor="middle">b07</text>
+<rect x="377" y="861" width="92" height="29" fill="#f4f7f5" stroke="#dde7e0" rx="5" stroke-width="1"/>
+<text x="423" y="881" class="small mono" text-anchor="middle">b08</text>
+<text x="62" y="921" class="small muted">Selected region: B · event type: all</text>
+<text x="62" y="944" class="tiny muted">Numerator eligibility is separate from exposure scope.</text>
+<path d="M531 779L531 956" stroke="#e2e9e5" stroke-width="1" fill="none"/>
+<text x="555" y="784" class="tiny strong muted">DENOMINATOR</text>
+<text x="555" y="807" class="body">exposure · one included source row</text>
+<rect x="555" y="822" width="420" height="71" fill="#f4f7f5" stroke="#dde7e0" rx="6" stroke-width="1"/>
+<text x="571" y="847" class="small mono strong">dB</text>
+<text x="956" y="847" class="body strong" text-anchor="end">200 residents</text>
+<text x="571" y="876" class="tiny muted">B · one region-period-population value</text>
+<text x="555" y="921" class="small muted">Exposure key counted once; never once per event.</text>
+<text x="555" y="944" class="tiny muted">Both inputs retain their original source identities.</text>
+<path d="M1001 779L1001 956" stroke="#e2e9e5" stroke-width="1" fill="none"/>
+<text x="1024" y="784" class="tiny strong muted">ALIGNMENT &amp; COVERAGE</text>
+<text x="1024" y="810" class="body strong">coverage-B · complete collection</text>
+<text x="1024" y="839" class="small">Period: 1 Oct–1 Nov 2026 (UTC)</text>
+<text x="1024" y="866" class="small">Population: all residents</text>
+<text x="1024" y="893" class="small">Boundaries: districts-v1</text>
+<text x="1024" y="921" class="small muted">No inference from the last observed event.</text>
+<text x="1024" y="944" class="tiny muted">Declaration is part of the saved comparison.</text>
+<rect x="62" y="972" width="1416" height="28" fill="#f5f8f6" stroke="#f5f8f6" rx="4" stroke-width="1"/>
+<text x="77" y="991" class="small strong">Selected: Region B</text>
+<text x="291" y="991" class="small">8 event rows</text>
+<text x="449" y="991" class="small">1 exposure row</text>
+<text x="665" y="991" class="small muted">Typed group identity persists even if a later filter leaves zero events.</text>
+<text x="40" y="1045" class="small muted">Click a region to select its comparison group. Alt-click or Alt-Enter opens calculation evidence.</text>
+<text x="40" y="1073" class="small muted">Proposed interaction and layout — original design companion, not an executed repository UI.</text>
+<text x="1500" y="1073" class="tiny muted" text-anchor="end">ab4ecd2 · Design mission</text>
+</svg>
