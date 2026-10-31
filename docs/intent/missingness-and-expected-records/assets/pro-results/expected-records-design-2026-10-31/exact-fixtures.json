@@ -1,0 +1,3732 @@
+{
+  "format": "exploreda-reconciliation-design-fixtures",
+  "version": 1,
+  "baseline": "ab4ecd2aa98f3fd1da11e8f552efdb269f4b65a6",
+  "status": "proposed semantics; the companion oracle is independent of explorEDA and does not test an implemented feature",
+  "notes": [
+    "All expected memberships, row IDs, counts, and rational metric pairs were authored explicitly; the oracle derives actual outputs independently.",
+    "Raw scalar equality preserves type. Empty, whitespace-only, null, undefined, and nonfinite components are invalid. Nonblank whitespace remains significant.",
+    "Expected keys group duplicate declarations into one obligation. Duplicate/repeated flags overlap presence memberships.",
+    "Global observationPolicy applies only to required keys. Keyed exclusions require a reason and apply only to declared expected keys; valid unused entries are warnings and cannot suppress actual-only keys.",
+    "Dense bounded schedule candidates are a chosen product proposal: non-due weekdays and exact skips are excluded keys, never inferred from actual observations.",
+    "Fixture IDs are human labels. Per-input row IDs are stable test occurrence IDs, not claims that baseline positional source references survive refresh.",
+    "Metric fractions are exact. available=false for zero denominator. JSON fixture output order is not a public ordering guarantee.",
+    "The runtime-only codec vectors use out-of-band hydrate metadata; user row objects never act as magic sentinels."
+  ],
+  "fixtures": [
+    {
+      "id": "F01-core",
+      "description": "Composite keys; zero and null measurements still present; duplicate flags overlap memberships; absent, unexpected, exclusions and invalids.",
+      "keyModes": [
+        "scalar",
+        "date-only"
+      ],
+      "observationPolicy": {
+        "min": 1,
+        "max": 1
+      },
+      "expectedSource": {
+        "state": "loaded",
+        "rows": [
+          {
+            "id": "e1",
+            "key": [
+              "A",
+              "2026-10-26"
+            ]
+          },
+          {
+            "id": "e2",
+            "key": [
+              "A",
+              "2026-10-27"
+            ]
+          },
+          {
+            "id": "e3",
+            "key": [
+              "A",
+              "2026-10-28"
+            ]
+          },
+          {
+            "id": "e4",
+            "key": [
+              "A",
+              "2026-10-28"
+            ]
+          },
+          {
+            "id": "e5",
+            "key": [
+              "B",
+              "2026-10-26"
+            ]
+          },
+          {
+            "id": "e6",
+            "key": [
+              "B",
+              "2026-10-27"
+            ]
+          },
+          {
+            "id": "e7",
+            "key": [
+              "B",
+              "2026-10-27"
+            ]
+          },
+          {
+            "id": "e8",
+            "key": [
+              "A",
+              "2026-10-29"
+            ]
+          },
+          {
+            "id": "e9",
+            "key": [
+              null,
+              "2026-10-26"
+            ]
+          }
+        ]
+      },
+      "actualSource": {
+        "state": "loaded",
+        "rows": [
+          {
+            "id": "a1",
+            "key": [
+              "A",
+              "2026-10-26"
+            ],
+            "value": 0
+          },
+          {
+            "id": "a2",
+            "key": [
+              "A",
+              "2026-10-27"
+            ],
+            "value": 5
+          },
+          {
+            "id": "a3",
+            "key": [
+              "A",
+              "2026-10-27"
+            ],
+            "value": 7
+          },
+          {
+            "id": "a4",
+            "key": [
+              "A",
+              "2026-10-28"
+            ],
+            "value": null
+          },
+          {
+            "id": "a5",
+            "key": [
+              "B",
+              "2026-10-26"
+            ],
+            "value": 9
+          },
+          {
+            "id": "a6",
+            "key": [
+              "Z",
+              "2026-10-26"
+            ],
+            "value": 3
+          },
+          {
+            "id": "a7",
+            "key": [
+              "Z",
+              "2026-10-26"
+            ],
+            "value": 4
+          },
+          {
+            "id": "a8",
+            "key": [
+              "A",
+              "2026-10-29"
+            ],
+            "value": 8
+          },
+          {
+            "id": "a9",
+            "key": [
+              null,
+              "2026-10-26"
+            ],
+            "value": 1
+          },
+          {
+            "id": "a10",
+            "key": [
+              "A",
+              "not-a-date"
+            ],
+            "value": 1
+          }
+        ]
+      },
+      "exclusions": [
+        {
+          "key": [
+            "A",
+            "2026-10-29"
+          ],
+          "reason": "Planned closure"
+        }
+      ],
+      "expectedResult": {
+        "status": "ready",
+        "groups": [
+          {
+            "key": [
+              "A",
+              "2026-10-26"
+            ],
+            "expectedRows": [
+              "e1"
+            ],
+            "actualRows": [
+              "a1"
+            ],
+            "presence": "matched",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": "within",
+            "exclusionReason": null
+          },
+          {
+            "key": [
+              "A",
+              "2026-10-27"
+            ],
+            "expectedRows": [
+              "e2"
+            ],
+            "actualRows": [
+              "a2",
+              "a3"
+            ],
+            "presence": "matched",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": true,
+            "cardinality": "over",
+            "exclusionReason": null
+          },
+          {
+            "key": [
+              "A",
+              "2026-10-28"
+            ],
+            "expectedRows": [
+              "e3",
+              "e4"
+            ],
+            "actualRows": [
+              "a4"
+            ],
+            "presence": "matched",
+            "duplicateExpectedKey": true,
+            "repeatedActualKey": false,
+            "cardinality": "within",
+            "exclusionReason": null
+          },
+          {
+            "key": [
+              "B",
+              "2026-10-26"
+            ],
+            "expectedRows": [
+              "e5"
+            ],
+            "actualRows": [
+              "a5"
+            ],
+            "presence": "matched",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": "within",
+            "exclusionReason": null
+          },
+          {
+            "key": [
+              "B",
+              "2026-10-27"
+            ],
+            "expectedRows": [
+              "e6",
+              "e7"
+            ],
+            "actualRows": [],
+            "presence": "absent",
+            "duplicateExpectedKey": true,
+            "repeatedActualKey": false,
+            "cardinality": "short",
+            "exclusionReason": null
+          },
+          {
+            "key": [
+              "A",
+              "2026-10-29"
+            ],
+            "expectedRows": [
+              "e8"
+            ],
+            "actualRows": [
+              "a8"
+            ],
+            "presence": "excluded",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": null,
+            "exclusionReason": "Planned closure"
+          },
+          {
+            "key": [
+              "Z",
+              "2026-10-26"
+            ],
+            "expectedRows": [],
+            "actualRows": [
+              "a6",
+              "a7"
+            ],
+            "presence": "unexpected",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": true,
+            "cardinality": null,
+            "exclusionReason": null
+          }
+        ],
+        "invalidExpected": [
+          {
+            "rowId": "e9",
+            "component": 0,
+            "reason": "missing"
+          }
+        ],
+        "invalidActual": [
+          {
+            "rowId": "a9",
+            "component": 0,
+            "reason": "missing"
+          },
+          {
+            "rowId": "a10",
+            "component": 1,
+            "reason": "invalid-date"
+          }
+        ],
+        "unusedExclusions": [],
+        "counts": {
+          "expectedRows": 9,
+          "actualRows": 10,
+          "validExpectedRows": 8,
+          "invalidExpectedRows": 1,
+          "validActualRows": 8,
+          "invalidActualRows": 2,
+          "expectedKeys": 6,
+          "requiredKeys": 5,
+          "excludedKeys": 1,
+          "matchedKeys": 4,
+          "absentKeys": 1,
+          "unexpectedKeys": 1,
+          "keyGroups": 7,
+          "duplicateExpectedKeys": 2,
+          "repeatedActualKeys": 2,
+          "duplicateExpectedRows": 4,
+          "repeatedActualRows": 4,
+          "extraExpectedOccurrences": 2,
+          "extraActualOccurrences": 2,
+          "requiredActualRows": 5,
+          "excludedActualRows": 1,
+          "unexpectedActualRows": 2,
+          "excludedObservedKeys": 1,
+          "shortKeys": 1,
+          "withinKeys": 3,
+          "overKeys": 1,
+          "minimumCompleteKeys": 4,
+          "minimumUnits": 5,
+          "attainedUnits": 4,
+          "shortfallUnits": 1,
+          "beyondMinimumUnits": 1,
+          "surplusUnits": 1
+        },
+        "metrics": {
+          "presenceCoverage": {
+            "numerator": 4,
+            "denominator": 5,
+            "available": true
+          },
+          "minimumAttainment": {
+            "numerator": 4,
+            "denominator": 5,
+            "available": true
+          },
+          "minimumComplete": {
+            "numerator": 4,
+            "denominator": 5,
+            "available": true
+          },
+          "withinBounds": {
+            "numerator": 3,
+            "denominator": 5,
+            "available": true
+          }
+        }
+      }
+    },
+    {
+      "id": "F02-typed",
+      "description": "Numeric, text and Boolean keys remain distinct; nonblank whitespace is preserved.",
+      "keyModes": [
+        "scalar"
+      ],
+      "observationPolicy": {
+        "min": 1,
+        "max": 1
+      },
+      "expectedSource": {
+        "state": "loaded",
+        "rows": [
+          {
+            "id": "e1",
+            "key": [
+              1
+            ]
+          },
+          {
+            "id": "e2",
+            "key": [
+              "1"
+            ]
+          },
+          {
+            "id": "e3",
+            "key": [
+              false
+            ]
+          },
+          {
+            "id": "e4",
+            "key": [
+              0
+            ]
+          },
+          {
+            "id": "e5",
+            "key": [
+              "001"
+            ]
+          },
+          {
+            "id": "e6",
+            "key": [
+              " A "
+            ]
+          },
+          {
+            "id": "e7",
+            "key": [
+              ""
+            ]
+          }
+        ]
+      },
+      "actualSource": {
+        "state": "loaded",
+        "rows": [
+          {
+            "id": "a1",
+            "key": [
+              "1"
+            ]
+          },
+          {
+            "id": "a2",
+            "key": [
+              false
+            ]
+          },
+          {
+            "id": "a3",
+            "key": [
+              0
+            ]
+          },
+          {
+            "id": "a4",
+            "key": [
+              "001"
+            ]
+          },
+          {
+            "id": "a5",
+            "key": [
+              "A"
+            ]
+          },
+          {
+            "id": "a6",
+            "key": [
+              null
+            ]
+          },
+          {
+            "id": "a7",
+            "key": [
+              "  "
+            ]
+          },
+          {
+            "id": "a8",
+            "key": [
+              "false"
+            ]
+          }
+        ]
+      },
+      "exclusions": [],
+      "expectedResult": {
+        "status": "ready",
+        "groups": [
+          {
+            "key": [
+              1
+            ],
+            "expectedRows": [
+              "e1"
+            ],
+            "actualRows": [],
+            "presence": "absent",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": "short",
+            "exclusionReason": null
+          },
+          {
+            "key": [
+              "1"
+            ],
+            "expectedRows": [
+              "e2"
+            ],
+            "actualRows": [
+              "a1"
+            ],
+            "presence": "matched",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": "within",
+            "exclusionReason": null
+          },
+          {
+            "key": [
+              false
+            ],
+            "expectedRows": [
+              "e3"
+            ],
+            "actualRows": [
+              "a2"
+            ],
+            "presence": "matched",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": "within",
+            "exclusionReason": null
+          },
+          {
+            "key": [
+              0
+            ],
+            "expectedRows": [
+              "e4"
+            ],
+            "actualRows": [
+              "a3"
+            ],
+            "presence": "matched",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": "within",
+            "exclusionReason": null
+          },
+          {
+            "key": [
+              "001"
+            ],
+            "expectedRows": [
+              "e5"
+            ],
+            "actualRows": [
+              "a4"
+            ],
+            "presence": "matched",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": "within",
+            "exclusionReason": null
+          },
+          {
+            "key": [
+              " A "
+            ],
+            "expectedRows": [
+              "e6"
+            ],
+            "actualRows": [],
+            "presence": "absent",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": "short",
+            "exclusionReason": null
+          },
+          {
+            "key": [
+              "A"
+            ],
+            "expectedRows": [],
+            "actualRows": [
+              "a5"
+            ],
+            "presence": "unexpected",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": null,
+            "exclusionReason": null
+          },
+          {
+            "key": [
+              "false"
+            ],
+            "expectedRows": [],
+            "actualRows": [
+              "a8"
+            ],
+            "presence": "unexpected",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": null,
+            "exclusionReason": null
+          }
+        ],
+        "invalidExpected": [
+          {
+            "rowId": "e7",
+            "component": 0,
+            "reason": "missing"
+          }
+        ],
+        "invalidActual": [
+          {
+            "rowId": "a6",
+            "component": 0,
+            "reason": "missing"
+          },
+          {
+            "rowId": "a7",
+            "component": 0,
+            "reason": "missing"
+          }
+        ],
+        "unusedExclusions": [],
+        "counts": {
+          "expectedRows": 7,
+          "actualRows": 8,
+          "validExpectedRows": 6,
+          "invalidExpectedRows": 1,
+          "validActualRows": 6,
+          "invalidActualRows": 2,
+          "expectedKeys": 6,
+          "requiredKeys": 6,
+          "excludedKeys": 0,
+          "matchedKeys": 4,
+          "absentKeys": 2,
+          "unexpectedKeys": 2,
+          "keyGroups": 8,
+          "duplicateExpectedKeys": 0,
+          "repeatedActualKeys": 0,
+          "duplicateExpectedRows": 0,
+          "repeatedActualRows": 0,
+          "extraExpectedOccurrences": 0,
+          "extraActualOccurrences": 0,
+          "requiredActualRows": 4,
+          "excludedActualRows": 0,
+          "unexpectedActualRows": 2,
+          "excludedObservedKeys": 0,
+          "shortKeys": 2,
+          "withinKeys": 4,
+          "overKeys": 0,
+          "minimumCompleteKeys": 4,
+          "minimumUnits": 6,
+          "attainedUnits": 4,
+          "shortfallUnits": 2,
+          "beyondMinimumUnits": 0,
+          "surplusUnits": 0
+        },
+        "metrics": {
+          "presenceCoverage": {
+            "numerator": 4,
+            "denominator": 6,
+            "available": true
+          },
+          "minimumAttainment": {
+            "numerator": 4,
+            "denominator": 6,
+            "available": true
+          },
+          "minimumComplete": {
+            "numerator": 4,
+            "denominator": 6,
+            "available": true
+          },
+          "withinBounds": {
+            "numerator": 4,
+            "denominator": 6,
+            "available": true
+          }
+        }
+      }
+    },
+    {
+      "id": "F03-composite",
+      "description": "Ordered typed tuples resist delimiter and type collisions.",
+      "keyModes": [
+        "scalar",
+        "scalar"
+      ],
+      "observationPolicy": {
+        "min": 1,
+        "max": 1
+      },
+      "expectedSource": {
+        "state": "loaded",
+        "rows": [
+          {
+            "id": "e1",
+            "key": [
+              "a|b",
+              "c"
+            ]
+          },
+          {
+            "id": "e2",
+            "key": [
+              "a",
+              "b|c"
+            ]
+          },
+          {
+            "id": "e3",
+            "key": [
+              1,
+              "2"
+            ]
+          },
+          {
+            "id": "e4",
+            "key": [
+              "1",
+              2
+            ]
+          },
+          {
+            "id": "e5",
+            "key": [
+              0,
+              false
+            ]
+          }
+        ]
+      },
+      "actualSource": {
+        "state": "loaded",
+        "rows": [
+          {
+            "id": "a1",
+            "key": [
+              "a",
+              "b|c"
+            ]
+          },
+          {
+            "id": "a2",
+            "key": [
+              1,
+              2
+            ]
+          },
+          {
+            "id": "a3",
+            "key": [
+              0,
+              false
+            ],
+            "value": 0
+          },
+          {
+            "id": "a4",
+            "key": [
+              null,
+              "c"
+            ]
+          }
+        ]
+      },
+      "exclusions": [],
+      "expectedResult": {
+        "status": "ready",
+        "groups": [
+          {
+            "key": [
+              "a|b",
+              "c"
+            ],
+            "expectedRows": [
+              "e1"
+            ],
+            "actualRows": [],
+            "presence": "absent",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": "short",
+            "exclusionReason": null
+          },
+          {
+            "key": [
+              "a",
+              "b|c"
+            ],
+            "expectedRows": [
+              "e2"
+            ],
+            "actualRows": [
+              "a1"
+            ],
+            "presence": "matched",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": "within",
+            "exclusionReason": null
+          },
+          {
+            "key": [
+              1,
+              "2"
+            ],
+            "expectedRows": [
+              "e3"
+            ],
+            "actualRows": [],
+            "presence": "absent",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": "short",
+            "exclusionReason": null
+          },
+          {
+            "key": [
+              "1",
+              2
+            ],
+            "expectedRows": [
+              "e4"
+            ],
+            "actualRows": [],
+            "presence": "absent",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": "short",
+            "exclusionReason": null
+          },
+          {
+            "key": [
+              0,
+              false
+            ],
+            "expectedRows": [
+              "e5"
+            ],
+            "actualRows": [
+              "a3"
+            ],
+            "presence": "matched",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": "within",
+            "exclusionReason": null
+          },
+          {
+            "key": [
+              1,
+              2
+            ],
+            "expectedRows": [],
+            "actualRows": [
+              "a2"
+            ],
+            "presence": "unexpected",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": null,
+            "exclusionReason": null
+          }
+        ],
+        "invalidExpected": [],
+        "invalidActual": [
+          {
+            "rowId": "a4",
+            "component": 0,
+            "reason": "missing"
+          }
+        ],
+        "unusedExclusions": [],
+        "counts": {
+          "expectedRows": 5,
+          "actualRows": 4,
+          "validExpectedRows": 5,
+          "invalidExpectedRows": 0,
+          "validActualRows": 3,
+          "invalidActualRows": 1,
+          "expectedKeys": 5,
+          "requiredKeys": 5,
+          "excludedKeys": 0,
+          "matchedKeys": 2,
+          "absentKeys": 3,
+          "unexpectedKeys": 1,
+          "keyGroups": 6,
+          "duplicateExpectedKeys": 0,
+          "repeatedActualKeys": 0,
+          "duplicateExpectedRows": 0,
+          "repeatedActualRows": 0,
+          "extraExpectedOccurrences": 0,
+          "extraActualOccurrences": 0,
+          "requiredActualRows": 2,
+          "excludedActualRows": 0,
+          "unexpectedActualRows": 1,
+          "excludedObservedKeys": 0,
+          "shortKeys": 3,
+          "withinKeys": 2,
+          "overKeys": 0,
+          "minimumCompleteKeys": 2,
+          "minimumUnits": 5,
+          "attainedUnits": 2,
+          "shortfallUnits": 3,
+          "beyondMinimumUnits": 0,
+          "surplusUnits": 0
+        },
+        "metrics": {
+          "presenceCoverage": {
+            "numerator": 2,
+            "denominator": 5,
+            "available": true
+          },
+          "minimumAttainment": {
+            "numerator": 2,
+            "denominator": 5,
+            "available": true
+          },
+          "minimumComplete": {
+            "numerator": 2,
+            "denominator": 5,
+            "available": true
+          },
+          "withinBounds": {
+            "numerator": 2,
+            "denominator": 5,
+            "available": true
+          }
+        }
+      }
+    },
+    {
+      "id": "F04-count-policy",
+      "description": "Global min2/max3 distinguishes presence, minimum attainment and legitimate repeated observations.",
+      "keyModes": [
+        "scalar"
+      ],
+      "observationPolicy": {
+        "min": 2,
+        "max": 3
+      },
+      "expectedSource": {
+        "state": "loaded",
+        "rows": [
+          {
+            "id": "eA",
+            "key": [
+              "A"
+            ]
+          },
+          {
+            "id": "eB",
+            "key": [
+              "B"
+            ]
+          },
+          {
+            "id": "eC",
+            "key": [
+              "C"
+            ]
+          },
+          {
+            "id": "eD",
+            "key": [
+              "D"
+            ]
+          }
+        ]
+      },
+      "actualSource": {
+        "state": "loaded",
+        "rows": [
+          {
+            "id": "a1",
+            "key": [
+              "A"
+            ]
+          },
+          {
+            "id": "a2",
+            "key": [
+              "A"
+            ]
+          },
+          {
+            "id": "a3",
+            "key": [
+              "A"
+            ]
+          },
+          {
+            "id": "a4",
+            "key": [
+              "A"
+            ]
+          },
+          {
+            "id": "b1",
+            "key": [
+              "B"
+            ]
+          },
+          {
+            "id": "b2",
+            "key": [
+              "B"
+            ]
+          },
+          {
+            "id": "c1",
+            "key": [
+              "C"
+            ]
+          }
+        ]
+      },
+      "exclusions": [],
+      "expectedResult": {
+        "status": "ready",
+        "groups": [
+          {
+            "key": [
+              "A"
+            ],
+            "expectedRows": [
+              "eA"
+            ],
+            "actualRows": [
+              "a1",
+              "a2",
+              "a3",
+              "a4"
+            ],
+            "presence": "matched",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": true,
+            "cardinality": "over",
+            "exclusionReason": null
+          },
+          {
+            "key": [
+              "B"
+            ],
+            "expectedRows": [
+              "eB"
+            ],
+            "actualRows": [
+              "b1",
+              "b2"
+            ],
+            "presence": "matched",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": true,
+            "cardinality": "within",
+            "exclusionReason": null
+          },
+          {
+            "key": [
+              "C"
+            ],
+            "expectedRows": [
+              "eC"
+            ],
+            "actualRows": [
+              "c1"
+            ],
+            "presence": "matched",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": "short",
+            "exclusionReason": null
+          },
+          {
+            "key": [
+              "D"
+            ],
+            "expectedRows": [
+              "eD"
+            ],
+            "actualRows": [],
+            "presence": "absent",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": "short",
+            "exclusionReason": null
+          }
+        ],
+        "invalidExpected": [],
+        "invalidActual": [],
+        "unusedExclusions": [],
+        "counts": {
+          "expectedRows": 4,
+          "actualRows": 7,
+          "validExpectedRows": 4,
+          "invalidExpectedRows": 0,
+          "validActualRows": 7,
+          "invalidActualRows": 0,
+          "expectedKeys": 4,
+          "requiredKeys": 4,
+          "excludedKeys": 0,
+          "matchedKeys": 3,
+          "absentKeys": 1,
+          "unexpectedKeys": 0,
+          "keyGroups": 4,
+          "duplicateExpectedKeys": 0,
+          "repeatedActualKeys": 2,
+          "duplicateExpectedRows": 0,
+          "repeatedActualRows": 6,
+          "extraExpectedOccurrences": 0,
+          "extraActualOccurrences": 4,
+          "requiredActualRows": 7,
+          "excludedActualRows": 0,
+          "unexpectedActualRows": 0,
+          "excludedObservedKeys": 0,
+          "shortKeys": 2,
+          "withinKeys": 1,
+          "overKeys": 1,
+          "minimumCompleteKeys": 2,
+          "minimumUnits": 8,
+          "attainedUnits": 5,
+          "shortfallUnits": 3,
+          "beyondMinimumUnits": 2,
+          "surplusUnits": 1
+        },
+        "metrics": {
+          "presenceCoverage": {
+            "numerator": 3,
+            "denominator": 4,
+            "available": true
+          },
+          "minimumAttainment": {
+            "numerator": 5,
+            "denominator": 8,
+            "available": true
+          },
+          "minimumComplete": {
+            "numerator": 2,
+            "denominator": 4,
+            "available": true
+          },
+          "withinBounds": {
+            "numerator": 1,
+            "denominator": 4,
+            "available": true
+          }
+        }
+      }
+    },
+    {
+      "id": "F05-unbounded",
+      "description": "An unbounded maximum allows several observations at one expectation.",
+      "keyModes": [
+        "scalar"
+      ],
+      "observationPolicy": {
+        "min": 1,
+        "max": null
+      },
+      "expectedSource": {
+        "state": "loaded",
+        "rows": [
+          {
+            "id": "eA",
+            "key": [
+              "A"
+            ]
+          },
+          {
+            "id": "eB",
+            "key": [
+              "B"
+            ]
+          }
+        ]
+      },
+      "actualSource": {
+        "state": "loaded",
+        "rows": [
+          {
+            "id": "a1",
+            "key": [
+              "A"
+            ]
+          },
+          {
+            "id": "a2",
+            "key": [
+              "A"
+            ]
+          },
+          {
+            "id": "a3",
+            "key": [
+              "A"
+            ]
+          },
+          {
+            "id": "b1",
+            "key": [
+              "B"
+            ]
+          }
+        ]
+      },
+      "exclusions": [],
+      "expectedResult": {
+        "status": "ready",
+        "groups": [
+          {
+            "key": [
+              "A"
+            ],
+            "expectedRows": [
+              "eA"
+            ],
+            "actualRows": [
+              "a1",
+              "a2",
+              "a3"
+            ],
+            "presence": "matched",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": true,
+            "cardinality": "within",
+            "exclusionReason": null
+          },
+          {
+            "key": [
+              "B"
+            ],
+            "expectedRows": [
+              "eB"
+            ],
+            "actualRows": [
+              "b1"
+            ],
+            "presence": "matched",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": "within",
+            "exclusionReason": null
+          }
+        ],
+        "invalidExpected": [],
+        "invalidActual": [],
+        "unusedExclusions": [],
+        "counts": {
+          "expectedRows": 2,
+          "actualRows": 4,
+          "validExpectedRows": 2,
+          "invalidExpectedRows": 0,
+          "validActualRows": 4,
+          "invalidActualRows": 0,
+          "expectedKeys": 2,
+          "requiredKeys": 2,
+          "excludedKeys": 0,
+          "matchedKeys": 2,
+          "absentKeys": 0,
+          "unexpectedKeys": 0,
+          "keyGroups": 2,
+          "duplicateExpectedKeys": 0,
+          "repeatedActualKeys": 1,
+          "duplicateExpectedRows": 0,
+          "repeatedActualRows": 3,
+          "extraExpectedOccurrences": 0,
+          "extraActualOccurrences": 2,
+          "requiredActualRows": 4,
+          "excludedActualRows": 0,
+          "unexpectedActualRows": 0,
+          "excludedObservedKeys": 0,
+          "shortKeys": 0,
+          "withinKeys": 2,
+          "overKeys": 0,
+          "minimumCompleteKeys": 2,
+          "minimumUnits": 2,
+          "attainedUnits": 2,
+          "shortfallUnits": 0,
+          "beyondMinimumUnits": 2,
+          "surplusUnits": 0
+        },
+        "metrics": {
+          "presenceCoverage": {
+            "numerator": 2,
+            "denominator": 2,
+            "available": true
+          },
+          "minimumAttainment": {
+            "numerator": 2,
+            "denominator": 2,
+            "available": true
+          },
+          "minimumComplete": {
+            "numerator": 2,
+            "denominator": 2,
+            "available": true
+          },
+          "withinBounds": {
+            "numerator": 2,
+            "denominator": 2,
+            "available": true
+          }
+        }
+      }
+    },
+    {
+      "id": "F06-no-expectations",
+      "description": "No required keys gives an unavailable percentage, not a perfect score.",
+      "keyModes": [
+        "scalar"
+      ],
+      "observationPolicy": {
+        "min": 1,
+        "max": 1
+      },
+      "expectedSource": {
+        "state": "loaded",
+        "rows": []
+      },
+      "actualSource": {
+        "state": "loaded",
+        "rows": [
+          {
+            "id": "u1",
+            "key": [
+              "U"
+            ]
+          }
+        ]
+      },
+      "exclusions": [],
+      "expectedResult": {
+        "status": "ready",
+        "groups": [
+          {
+            "key": [
+              "U"
+            ],
+            "expectedRows": [],
+            "actualRows": [
+              "u1"
+            ],
+            "presence": "unexpected",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": null,
+            "exclusionReason": null
+          }
+        ],
+        "invalidExpected": [],
+        "invalidActual": [],
+        "unusedExclusions": [],
+        "counts": {
+          "expectedRows": 0,
+          "actualRows": 1,
+          "validExpectedRows": 0,
+          "invalidExpectedRows": 0,
+          "validActualRows": 1,
+          "invalidActualRows": 0,
+          "expectedKeys": 0,
+          "requiredKeys": 0,
+          "excludedKeys": 0,
+          "matchedKeys": 0,
+          "absentKeys": 0,
+          "unexpectedKeys": 1,
+          "keyGroups": 1,
+          "duplicateExpectedKeys": 0,
+          "repeatedActualKeys": 0,
+          "duplicateExpectedRows": 0,
+          "repeatedActualRows": 0,
+          "extraExpectedOccurrences": 0,
+          "extraActualOccurrences": 0,
+          "requiredActualRows": 0,
+          "excludedActualRows": 0,
+          "unexpectedActualRows": 1,
+          "excludedObservedKeys": 0,
+          "shortKeys": 0,
+          "withinKeys": 0,
+          "overKeys": 0,
+          "minimumCompleteKeys": 0,
+          "minimumUnits": 0,
+          "attainedUnits": 0,
+          "shortfallUnits": 0,
+          "beyondMinimumUnits": 0,
+          "surplusUnits": 0
+        },
+        "metrics": {
+          "presenceCoverage": {
+            "numerator": 0,
+            "denominator": 0,
+            "available": false
+          },
+          "minimumAttainment": {
+            "numerator": 0,
+            "denominator": 0,
+            "available": false
+          },
+          "minimumComplete": {
+            "numerator": 0,
+            "denominator": 0,
+            "available": false
+          },
+          "withinBounds": {
+            "numerator": 0,
+            "denominator": 0,
+            "available": false
+          }
+        }
+      }
+    },
+    {
+      "id": "F07-known-empty-actual",
+      "description": "A successfully loaded empty actual table makes each required key absent.",
+      "keyModes": [
+        "scalar"
+      ],
+      "observationPolicy": {
+        "min": 1,
+        "max": 1
+      },
+      "expectedSource": {
+        "state": "loaded",
+        "rows": [
+          {
+            "id": "e1",
+            "key": [
+              "A"
+            ]
+          },
+          {
+            "id": "e2",
+            "key": [
+              "B"
+            ]
+          }
+        ]
+      },
+      "actualSource": {
+        "state": "loaded",
+        "rows": []
+      },
+      "exclusions": [],
+      "expectedResult": {
+        "status": "ready",
+        "groups": [
+          {
+            "key": [
+              "A"
+            ],
+            "expectedRows": [
+              "e1"
+            ],
+            "actualRows": [],
+            "presence": "absent",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": "short",
+            "exclusionReason": null
+          },
+          {
+            "key": [
+              "B"
+            ],
+            "expectedRows": [
+              "e2"
+            ],
+            "actualRows": [],
+            "presence": "absent",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": "short",
+            "exclusionReason": null
+          }
+        ],
+        "invalidExpected": [],
+        "invalidActual": [],
+        "unusedExclusions": [],
+        "counts": {
+          "expectedRows": 2,
+          "actualRows": 0,
+          "validExpectedRows": 2,
+          "invalidExpectedRows": 0,
+          "validActualRows": 0,
+          "invalidActualRows": 0,
+          "expectedKeys": 2,
+          "requiredKeys": 2,
+          "excludedKeys": 0,
+          "matchedKeys": 0,
+          "absentKeys": 2,
+          "unexpectedKeys": 0,
+          "keyGroups": 2,
+          "duplicateExpectedKeys": 0,
+          "repeatedActualKeys": 0,
+          "duplicateExpectedRows": 0,
+          "repeatedActualRows": 0,
+          "extraExpectedOccurrences": 0,
+          "extraActualOccurrences": 0,
+          "requiredActualRows": 0,
+          "excludedActualRows": 0,
+          "unexpectedActualRows": 0,
+          "excludedObservedKeys": 0,
+          "shortKeys": 2,
+          "withinKeys": 0,
+          "overKeys": 0,
+          "minimumCompleteKeys": 0,
+          "minimumUnits": 2,
+          "attainedUnits": 0,
+          "shortfallUnits": 2,
+          "beyondMinimumUnits": 0,
+          "surplusUnits": 0
+        },
+        "metrics": {
+          "presenceCoverage": {
+            "numerator": 0,
+            "denominator": 2,
+            "available": true
+          },
+          "minimumAttainment": {
+            "numerator": 0,
+            "denominator": 2,
+            "available": true
+          },
+          "minimumComplete": {
+            "numerator": 0,
+            "denominator": 2,
+            "available": true
+          },
+          "withinBounds": {
+            "numerator": 0,
+            "denominator": 2,
+            "available": true
+          }
+        }
+      }
+    },
+    {
+      "id": "F08-unavailable-actual",
+      "description": "An unavailable source cannot support any absence claim.",
+      "keyModes": [
+        "scalar"
+      ],
+      "observationPolicy": {
+        "min": 1,
+        "max": 1
+      },
+      "expectedSource": {
+        "state": "loaded",
+        "rows": [
+          {
+            "id": "e1",
+            "key": [
+              "A"
+            ]
+          },
+          {
+            "id": "e2",
+            "key": [
+              "B"
+            ]
+          }
+        ]
+      },
+      "actualSource": {
+        "state": "unavailable"
+      },
+      "exclusions": [],
+      "expectedResult": {
+        "status": "unavailable",
+        "missingSides": [
+          "actual"
+        ],
+        "groups": [],
+        "invalidExpected": [],
+        "invalidActual": [],
+        "unusedExclusions": [],
+        "counts": null,
+        "metrics": null
+      }
+    },
+    {
+      "id": "F09-actual-input-filter",
+      "description": "The saved actual population is value > 0; expectations remain unchanged. This is not a display filter.",
+      "keyModes": [
+        "scalar",
+        "date-only"
+      ],
+      "observationPolicy": {
+        "min": 1,
+        "max": 1
+      },
+      "expectedSource": {
+        "state": "loaded",
+        "rows": [
+          {
+            "id": "e1",
+            "key": [
+              "A",
+              "2026-10-26"
+            ]
+          },
+          {
+            "id": "e2",
+            "key": [
+              "A",
+              "2026-10-27"
+            ]
+          },
+          {
+            "id": "e3",
+            "key": [
+              "A",
+              "2026-10-28"
+            ]
+          },
+          {
+            "id": "e4",
+            "key": [
+              "A",
+              "2026-10-28"
+            ]
+          },
+          {
+            "id": "e5",
+            "key": [
+              "B",
+              "2026-10-26"
+            ]
+          },
+          {
+            "id": "e6",
+            "key": [
+              "B",
+              "2026-10-27"
+            ]
+          },
+          {
+            "id": "e7",
+            "key": [
+              "B",
+              "2026-10-27"
+            ]
+          },
+          {
+            "id": "e8",
+            "key": [
+              "A",
+              "2026-10-29"
+            ]
+          },
+          {
+            "id": "e9",
+            "key": [
+              null,
+              "2026-10-26"
+            ]
+          }
+        ]
+      },
+      "actualSource": {
+        "state": "loaded",
+        "rows": [
+          {
+            "id": "a2",
+            "key": [
+              "A",
+              "2026-10-27"
+            ],
+            "value": 5
+          },
+          {
+            "id": "a3",
+            "key": [
+              "A",
+              "2026-10-27"
+            ],
+            "value": 7
+          },
+          {
+            "id": "a5",
+            "key": [
+              "B",
+              "2026-10-26"
+            ],
+            "value": 9
+          },
+          {
+            "id": "a6",
+            "key": [
+              "Z",
+              "2026-10-26"
+            ],
+            "value": 3
+          },
+          {
+            "id": "a7",
+            "key": [
+              "Z",
+              "2026-10-26"
+            ],
+            "value": 4
+          },
+          {
+            "id": "a8",
+            "key": [
+              "A",
+              "2026-10-29"
+            ],
+            "value": 8
+          },
+          {
+            "id": "a9",
+            "key": [
+              null,
+              "2026-10-26"
+            ],
+            "value": 1
+          },
+          {
+            "id": "a10",
+            "key": [
+              "A",
+              "not-a-date"
+            ],
+            "value": 1
+          }
+        ]
+      },
+      "exclusions": [
+        {
+          "key": [
+            "A",
+            "2026-10-29"
+          ],
+          "reason": "Planned closure"
+        }
+      ],
+      "expectedResult": {
+        "status": "ready",
+        "groups": [
+          {
+            "key": [
+              "A",
+              "2026-10-26"
+            ],
+            "expectedRows": [
+              "e1"
+            ],
+            "actualRows": [],
+            "presence": "absent",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": "short",
+            "exclusionReason": null
+          },
+          {
+            "key": [
+              "A",
+              "2026-10-27"
+            ],
+            "expectedRows": [
+              "e2"
+            ],
+            "actualRows": [
+              "a2",
+              "a3"
+            ],
+            "presence": "matched",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": true,
+            "cardinality": "over",
+            "exclusionReason": null
+          },
+          {
+            "key": [
+              "A",
+              "2026-10-28"
+            ],
+            "expectedRows": [
+              "e3",
+              "e4"
+            ],
+            "actualRows": [],
+            "presence": "absent",
+            "duplicateExpectedKey": true,
+            "repeatedActualKey": false,
+            "cardinality": "short",
+            "exclusionReason": null
+          },
+          {
+            "key": [
+              "B",
+              "2026-10-26"
+            ],
+            "expectedRows": [
+              "e5"
+            ],
+            "actualRows": [
+              "a5"
+            ],
+            "presence": "matched",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": "within",
+            "exclusionReason": null
+          },
+          {
+            "key": [
+              "B",
+              "2026-10-27"
+            ],
+            "expectedRows": [
+              "e6",
+              "e7"
+            ],
+            "actualRows": [],
+            "presence": "absent",
+            "duplicateExpectedKey": true,
+            "repeatedActualKey": false,
+            "cardinality": "short",
+            "exclusionReason": null
+          },
+          {
+            "key": [
+              "A",
+              "2026-10-29"
+            ],
+            "expectedRows": [
+              "e8"
+            ],
+            "actualRows": [
+              "a8"
+            ],
+            "presence": "excluded",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": null,
+            "exclusionReason": "Planned closure"
+          },
+          {
+            "key": [
+              "Z",
+              "2026-10-26"
+            ],
+            "expectedRows": [],
+            "actualRows": [
+              "a6",
+              "a7"
+            ],
+            "presence": "unexpected",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": true,
+            "cardinality": null,
+            "exclusionReason": null
+          }
+        ],
+        "invalidExpected": [
+          {
+            "rowId": "e9",
+            "component": 0,
+            "reason": "missing"
+          }
+        ],
+        "invalidActual": [
+          {
+            "rowId": "a9",
+            "component": 0,
+            "reason": "missing"
+          },
+          {
+            "rowId": "a10",
+            "component": 1,
+            "reason": "invalid-date"
+          }
+        ],
+        "unusedExclusions": [],
+        "counts": {
+          "expectedRows": 9,
+          "actualRows": 8,
+          "validExpectedRows": 8,
+          "invalidExpectedRows": 1,
+          "validActualRows": 6,
+          "invalidActualRows": 2,
+          "expectedKeys": 6,
+          "requiredKeys": 5,
+          "excludedKeys": 1,
+          "matchedKeys": 2,
+          "absentKeys": 3,
+          "unexpectedKeys": 1,
+          "keyGroups": 7,
+          "duplicateExpectedKeys": 2,
+          "repeatedActualKeys": 2,
+          "duplicateExpectedRows": 4,
+          "repeatedActualRows": 4,
+          "extraExpectedOccurrences": 2,
+          "extraActualOccurrences": 2,
+          "requiredActualRows": 3,
+          "excludedActualRows": 1,
+          "unexpectedActualRows": 2,
+          "excludedObservedKeys": 1,
+          "shortKeys": 3,
+          "withinKeys": 1,
+          "overKeys": 1,
+          "minimumCompleteKeys": 2,
+          "minimumUnits": 5,
+          "attainedUnits": 2,
+          "shortfallUnits": 3,
+          "beyondMinimumUnits": 1,
+          "surplusUnits": 1
+        },
+        "metrics": {
+          "presenceCoverage": {
+            "numerator": 2,
+            "denominator": 5,
+            "available": true
+          },
+          "minimumAttainment": {
+            "numerator": 2,
+            "denominator": 5,
+            "available": true
+          },
+          "minimumComplete": {
+            "numerator": 2,
+            "denominator": 5,
+            "available": true
+          },
+          "withinBounds": {
+            "numerator": 1,
+            "denominator": 5,
+            "available": true
+          }
+        }
+      },
+      "population": {
+        "expected": "all rows",
+        "actual": "value > 0",
+        "originalActualRowCount": 10,
+        "outOfScopeActualRows": [
+          "a1",
+          "a4"
+        ]
+      }
+    },
+    {
+      "id": "F10-refresh",
+      "description": "Adding a matching B27 observation changes the prior absent key to matched, preserving its matching key.",
+      "keyModes": [
+        "scalar",
+        "date-only"
+      ],
+      "observationPolicy": {
+        "min": 1,
+        "max": 1
+      },
+      "expectedSource": {
+        "state": "loaded",
+        "rows": [
+          {
+            "id": "e1",
+            "key": [
+              "A",
+              "2026-10-26"
+            ]
+          },
+          {
+            "id": "e2",
+            "key": [
+              "A",
+              "2026-10-27"
+            ]
+          },
+          {
+            "id": "e3",
+            "key": [
+              "A",
+              "2026-10-28"
+            ]
+          },
+          {
+            "id": "e4",
+            "key": [
+              "A",
+              "2026-10-28"
+            ]
+          },
+          {
+            "id": "e5",
+            "key": [
+              "B",
+              "2026-10-26"
+            ]
+          },
+          {
+            "id": "e6",
+            "key": [
+              "B",
+              "2026-10-27"
+            ]
+          },
+          {
+            "id": "e7",
+            "key": [
+              "B",
+              "2026-10-27"
+            ]
+          },
+          {
+            "id": "e8",
+            "key": [
+              "A",
+              "2026-10-29"
+            ]
+          },
+          {
+            "id": "e9",
+            "key": [
+              null,
+              "2026-10-26"
+            ]
+          }
+        ]
+      },
+      "actualSource": {
+        "state": "loaded",
+        "rows": [
+          {
+            "id": "a1",
+            "key": [
+              "A",
+              "2026-10-26"
+            ],
+            "value": 0
+          },
+          {
+            "id": "a2",
+            "key": [
+              "A",
+              "2026-10-27"
+            ],
+            "value": 5
+          },
+          {
+            "id": "a3",
+            "key": [
+              "A",
+              "2026-10-27"
+            ],
+            "value": 7
+          },
+          {
+            "id": "a4",
+            "key": [
+              "A",
+              "2026-10-28"
+            ],
+            "value": null
+          },
+          {
+            "id": "a5",
+            "key": [
+              "B",
+              "2026-10-26"
+            ],
+            "value": 9
+          },
+          {
+            "id": "a6",
+            "key": [
+              "Z",
+              "2026-10-26"
+            ],
+            "value": 3
+          },
+          {
+            "id": "a7",
+            "key": [
+              "Z",
+              "2026-10-26"
+            ],
+            "value": 4
+          },
+          {
+            "id": "a8",
+            "key": [
+              "A",
+              "2026-10-29"
+            ],
+            "value": 8
+          },
+          {
+            "id": "a9",
+            "key": [
+              null,
+              "2026-10-26"
+            ],
+            "value": 1
+          },
+          {
+            "id": "a10",
+            "key": [
+              "A",
+              "not-a-date"
+            ],
+            "value": 1
+          },
+          {
+            "id": "a11",
+            "key": [
+              "B",
+              "2026-10-27"
+            ],
+            "value": 0
+          }
+        ]
+      },
+      "exclusions": [
+        {
+          "key": [
+            "A",
+            "2026-10-29"
+          ],
+          "reason": "Planned closure"
+        }
+      ],
+      "expectedResult": {
+        "status": "ready",
+        "groups": [
+          {
+            "key": [
+              "A",
+              "2026-10-26"
+            ],
+            "expectedRows": [
+              "e1"
+            ],
+            "actualRows": [
+              "a1"
+            ],
+            "presence": "matched",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": "within",
+            "exclusionReason": null
+          },
+          {
+            "key": [
+              "A",
+              "2026-10-27"
+            ],
+            "expectedRows": [
+              "e2"
+            ],
+            "actualRows": [
+              "a2",
+              "a3"
+            ],
+            "presence": "matched",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": true,
+            "cardinality": "over",
+            "exclusionReason": null
+          },
+          {
+            "key": [
+              "A",
+              "2026-10-28"
+            ],
+            "expectedRows": [
+              "e3",
+              "e4"
+            ],
+            "actualRows": [
+              "a4"
+            ],
+            "presence": "matched",
+            "duplicateExpectedKey": true,
+            "repeatedActualKey": false,
+            "cardinality": "within",
+            "exclusionReason": null
+          },
+          {
+            "key": [
+              "B",
+              "2026-10-26"
+            ],
+            "expectedRows": [
+              "e5"
+            ],
+            "actualRows": [
+              "a5"
+            ],
+            "presence": "matched",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": "within",
+            "exclusionReason": null
+          },
+          {
+            "key": [
+              "B",
+              "2026-10-27"
+            ],
+            "expectedRows": [
+              "e6",
+              "e7"
+            ],
+            "actualRows": [
+              "a11"
+            ],
+            "presence": "matched",
+            "duplicateExpectedKey": true,
+            "repeatedActualKey": false,
+            "cardinality": "within",
+            "exclusionReason": null
+          },
+          {
+            "key": [
+              "A",
+              "2026-10-29"
+            ],
+            "expectedRows": [
+              "e8"
+            ],
+            "actualRows": [
+              "a8"
+            ],
+            "presence": "excluded",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": null,
+            "exclusionReason": "Planned closure"
+          },
+          {
+            "key": [
+              "Z",
+              "2026-10-26"
+            ],
+            "expectedRows": [],
+            "actualRows": [
+              "a6",
+              "a7"
+            ],
+            "presence": "unexpected",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": true,
+            "cardinality": null,
+            "exclusionReason": null
+          }
+        ],
+        "invalidExpected": [
+          {
+            "rowId": "e9",
+            "component": 0,
+            "reason": "missing"
+          }
+        ],
+        "invalidActual": [
+          {
+            "rowId": "a9",
+            "component": 0,
+            "reason": "missing"
+          },
+          {
+            "rowId": "a10",
+            "component": 1,
+            "reason": "invalid-date"
+          }
+        ],
+        "unusedExclusions": [],
+        "counts": {
+          "expectedRows": 9,
+          "actualRows": 11,
+          "validExpectedRows": 8,
+          "invalidExpectedRows": 1,
+          "validActualRows": 9,
+          "invalidActualRows": 2,
+          "expectedKeys": 6,
+          "requiredKeys": 5,
+          "excludedKeys": 1,
+          "matchedKeys": 5,
+          "absentKeys": 0,
+          "unexpectedKeys": 1,
+          "keyGroups": 7,
+          "duplicateExpectedKeys": 2,
+          "repeatedActualKeys": 2,
+          "duplicateExpectedRows": 4,
+          "repeatedActualRows": 4,
+          "extraExpectedOccurrences": 2,
+          "extraActualOccurrences": 2,
+          "requiredActualRows": 6,
+          "excludedActualRows": 1,
+          "unexpectedActualRows": 2,
+          "excludedObservedKeys": 1,
+          "shortKeys": 0,
+          "withinKeys": 4,
+          "overKeys": 1,
+          "minimumCompleteKeys": 5,
+          "minimumUnits": 5,
+          "attainedUnits": 5,
+          "shortfallUnits": 0,
+          "beyondMinimumUnits": 1,
+          "surplusUnits": 1
+        },
+        "metrics": {
+          "presenceCoverage": {
+            "numerator": 5,
+            "denominator": 5,
+            "available": true
+          },
+          "minimumAttainment": {
+            "numerator": 5,
+            "denominator": 5,
+            "available": true
+          },
+          "minimumComplete": {
+            "numerator": 5,
+            "denominator": 5,
+            "available": true
+          },
+          "withinBounds": {
+            "numerator": 4,
+            "denominator": 5,
+            "available": true
+          }
+        }
+      }
+    },
+    {
+      "id": "F11-instant-precision",
+      "description": "Equivalent explicit-offset instants match; naive, invalid, and unsupported submillisecond inputs do not.",
+      "keyModes": [
+        "instant-ms"
+      ],
+      "observationPolicy": {
+        "min": 1,
+        "max": 1
+      },
+      "expectedSource": {
+        "state": "loaded",
+        "rows": [
+          {
+            "id": "e1",
+            "key": [
+              "2026-10-26T12:00:00.000Z"
+            ]
+          },
+          {
+            "id": "e2",
+            "key": [
+              "2026-10-26T12:00:00.001Z"
+            ]
+          },
+          {
+            "id": "e3",
+            "key": [
+              "2026-10-26T12:00:00.0001Z"
+            ]
+          },
+          {
+            "id": "e4",
+            "key": [
+              "2026-10-26"
+            ]
+          }
+        ]
+      },
+      "actualSource": {
+        "state": "loaded",
+        "rows": [
+          {
+            "id": "a1",
+            "key": [
+              "2026-10-26T08:00:00-04:00"
+            ]
+          },
+          {
+            "id": "a2",
+            "key": [
+              "2026-10-26T12:00:00.001Z"
+            ]
+          },
+          {
+            "id": "a3",
+            "key": [
+              "2026-10-26T12:00:00"
+            ]
+          },
+          {
+            "id": "a4",
+            "key": [
+              "2026-02-30T12:00:00Z"
+            ]
+          },
+          {
+            "id": "a5",
+            "key": [
+              "2026-10-26T12:00:00.0005Z"
+            ]
+          },
+          {
+            "id": "a6",
+            "key": [
+              "2026-10-26T12:00:00.002Z"
+            ]
+          }
+        ]
+      },
+      "exclusions": [],
+      "expectedResult": {
+        "status": "ready",
+        "groups": [
+          {
+            "key": [
+              "2026-10-26T12:00:00.000Z"
+            ],
+            "expectedRows": [
+              "e1"
+            ],
+            "actualRows": [
+              "a1"
+            ],
+            "presence": "matched",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": "within",
+            "exclusionReason": null
+          },
+          {
+            "key": [
+              "2026-10-26T12:00:00.001Z"
+            ],
+            "expectedRows": [
+              "e2"
+            ],
+            "actualRows": [
+              "a2"
+            ],
+            "presence": "matched",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": "within",
+            "exclusionReason": null
+          },
+          {
+            "key": [
+              "2026-10-26T12:00:00.002Z"
+            ],
+            "expectedRows": [],
+            "actualRows": [
+              "a6"
+            ],
+            "presence": "unexpected",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": null,
+            "exclusionReason": null
+          }
+        ],
+        "invalidExpected": [
+          {
+            "rowId": "e3",
+            "component": 0,
+            "reason": "unsupported-precision"
+          },
+          {
+            "rowId": "e4",
+            "component": 0,
+            "reason": "invalid-instant"
+          }
+        ],
+        "invalidActual": [
+          {
+            "rowId": "a3",
+            "component": 0,
+            "reason": "invalid-instant"
+          },
+          {
+            "rowId": "a4",
+            "component": 0,
+            "reason": "invalid-instant"
+          },
+          {
+            "rowId": "a5",
+            "component": 0,
+            "reason": "unsupported-precision"
+          }
+        ],
+        "unusedExclusions": [],
+        "counts": {
+          "expectedRows": 4,
+          "actualRows": 6,
+          "validExpectedRows": 2,
+          "invalidExpectedRows": 2,
+          "validActualRows": 3,
+          "invalidActualRows": 3,
+          "expectedKeys": 2,
+          "requiredKeys": 2,
+          "excludedKeys": 0,
+          "matchedKeys": 2,
+          "absentKeys": 0,
+          "unexpectedKeys": 1,
+          "keyGroups": 3,
+          "duplicateExpectedKeys": 0,
+          "repeatedActualKeys": 0,
+          "duplicateExpectedRows": 0,
+          "repeatedActualRows": 0,
+          "extraExpectedOccurrences": 0,
+          "extraActualOccurrences": 0,
+          "requiredActualRows": 2,
+          "excludedActualRows": 0,
+          "unexpectedActualRows": 1,
+          "excludedObservedKeys": 0,
+          "shortKeys": 0,
+          "withinKeys": 2,
+          "overKeys": 0,
+          "minimumCompleteKeys": 2,
+          "minimumUnits": 2,
+          "attainedUnits": 2,
+          "shortfallUnits": 0,
+          "beyondMinimumUnits": 0,
+          "surplusUnits": 0
+        },
+        "metrics": {
+          "presenceCoverage": {
+            "numerator": 2,
+            "denominator": 2,
+            "available": true
+          },
+          "minimumAttainment": {
+            "numerator": 2,
+            "denominator": 2,
+            "available": true
+          },
+          "minimumComplete": {
+            "numerator": 2,
+            "denominator": 2,
+            "available": true
+          },
+          "withinBounds": {
+            "numerator": 2,
+            "denominator": 2,
+            "available": true
+          }
+        }
+      }
+    },
+    {
+      "id": "F12-explicit-schedule-table",
+      "description": "An explicit candidate table retaining planned skips and non-due weekdays.",
+      "keyModes": [
+        "scalar",
+        "date-only"
+      ],
+      "observationPolicy": {
+        "min": 1,
+        "max": 1
+      },
+      "expectedSource": {
+        "state": "loaded",
+        "rows": [
+          {
+            "id": "e26",
+            "key": [
+              "West",
+              "2026-10-26"
+            ]
+          },
+          {
+            "id": "e27",
+            "key": [
+              "West",
+              "2026-10-27"
+            ]
+          },
+          {
+            "id": "e28",
+            "key": [
+              "West",
+              "2026-10-28"
+            ]
+          },
+          {
+            "id": "e29",
+            "key": [
+              "West",
+              "2026-10-29"
+            ]
+          },
+          {
+            "id": "e30",
+            "key": [
+              "West",
+              "2026-10-30"
+            ]
+          },
+          {
+            "id": "e31",
+            "key": [
+              "West",
+              "2026-10-31"
+            ]
+          },
+          {
+            "id": "e01",
+            "key": [
+              "West",
+              "2026-11-01"
+            ]
+          }
+        ]
+      },
+      "actualSource": {
+        "state": "loaded",
+        "rows": [
+          {
+            "id": "s1",
+            "key": [
+              "West",
+              "2026-10-26"
+            ],
+            "value": 0
+          },
+          {
+            "id": "s2",
+            "key": [
+              "West",
+              "2026-10-27"
+            ],
+            "value": 10
+          },
+          {
+            "id": "s3",
+            "key": [
+              "West",
+              "2026-10-27"
+            ],
+            "value": 11
+          },
+          {
+            "id": "s4",
+            "key": [
+              "West",
+              "2026-10-30"
+            ],
+            "value": 12
+          },
+          {
+            "id": "s5",
+            "key": [
+              "West",
+              "2026-10-31"
+            ],
+            "value": 4
+          },
+          {
+            "id": "s6",
+            "key": [
+              "East",
+              "2026-10-26"
+            ],
+            "value": 7
+          }
+        ]
+      },
+      "exclusions": [
+        {
+          "key": [
+            "West",
+            "2026-10-28"
+          ],
+          "reason": "Planned maintenance"
+        },
+        {
+          "key": [
+            "West",
+            "2026-10-31"
+          ],
+          "reason": "Not a scheduled weekday"
+        },
+        {
+          "key": [
+            "West",
+            "2026-11-01"
+          ],
+          "reason": "Not a scheduled weekday"
+        }
+      ],
+      "expectedResult": {
+        "status": "ready",
+        "groups": [
+          {
+            "key": [
+              "West",
+              "2026-10-26"
+            ],
+            "expectedRows": [
+              "e26"
+            ],
+            "actualRows": [
+              "s1"
+            ],
+            "presence": "matched",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": "within",
+            "exclusionReason": null
+          },
+          {
+            "key": [
+              "West",
+              "2026-10-27"
+            ],
+            "expectedRows": [
+              "e27"
+            ],
+            "actualRows": [
+              "s2",
+              "s3"
+            ],
+            "presence": "matched",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": true,
+            "cardinality": "over",
+            "exclusionReason": null
+          },
+          {
+            "key": [
+              "West",
+              "2026-10-28"
+            ],
+            "expectedRows": [
+              "e28"
+            ],
+            "actualRows": [],
+            "presence": "excluded",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": null,
+            "exclusionReason": "Planned maintenance"
+          },
+          {
+            "key": [
+              "West",
+              "2026-10-29"
+            ],
+            "expectedRows": [
+              "e29"
+            ],
+            "actualRows": [],
+            "presence": "absent",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": "short",
+            "exclusionReason": null
+          },
+          {
+            "key": [
+              "West",
+              "2026-10-30"
+            ],
+            "expectedRows": [
+              "e30"
+            ],
+            "actualRows": [
+              "s4"
+            ],
+            "presence": "matched",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": "within",
+            "exclusionReason": null
+          },
+          {
+            "key": [
+              "West",
+              "2026-10-31"
+            ],
+            "expectedRows": [
+              "e31"
+            ],
+            "actualRows": [
+              "s5"
+            ],
+            "presence": "excluded",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": null,
+            "exclusionReason": "Not a scheduled weekday"
+          },
+          {
+            "key": [
+              "West",
+              "2026-11-01"
+            ],
+            "expectedRows": [
+              "e01"
+            ],
+            "actualRows": [],
+            "presence": "excluded",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": null,
+            "exclusionReason": "Not a scheduled weekday"
+          },
+          {
+            "key": [
+              "East",
+              "2026-10-26"
+            ],
+            "expectedRows": [],
+            "actualRows": [
+              "s6"
+            ],
+            "presence": "unexpected",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": null,
+            "exclusionReason": null
+          }
+        ],
+        "invalidExpected": [],
+        "invalidActual": [],
+        "unusedExclusions": [],
+        "counts": {
+          "expectedRows": 7,
+          "actualRows": 6,
+          "validExpectedRows": 7,
+          "invalidExpectedRows": 0,
+          "validActualRows": 6,
+          "invalidActualRows": 0,
+          "expectedKeys": 7,
+          "requiredKeys": 4,
+          "excludedKeys": 3,
+          "matchedKeys": 3,
+          "absentKeys": 1,
+          "unexpectedKeys": 1,
+          "keyGroups": 8,
+          "duplicateExpectedKeys": 0,
+          "repeatedActualKeys": 1,
+          "duplicateExpectedRows": 0,
+          "repeatedActualRows": 2,
+          "extraExpectedOccurrences": 0,
+          "extraActualOccurrences": 1,
+          "requiredActualRows": 4,
+          "excludedActualRows": 1,
+          "unexpectedActualRows": 1,
+          "excludedObservedKeys": 1,
+          "shortKeys": 1,
+          "withinKeys": 2,
+          "overKeys": 1,
+          "minimumCompleteKeys": 3,
+          "minimumUnits": 4,
+          "attainedUnits": 3,
+          "shortfallUnits": 1,
+          "beyondMinimumUnits": 1,
+          "surplusUnits": 1
+        },
+        "metrics": {
+          "presenceCoverage": {
+            "numerator": 3,
+            "denominator": 4,
+            "available": true
+          },
+          "minimumAttainment": {
+            "numerator": 3,
+            "denominator": 4,
+            "available": true
+          },
+          "minimumComplete": {
+            "numerator": 3,
+            "denominator": 4,
+            "available": true
+          },
+          "withinBounds": {
+            "numerator": 2,
+            "denominator": 4,
+            "available": true
+          }
+        }
+      }
+    },
+    {
+      "id": "F13-generated-schedule",
+      "description": "A bounded declared roster plus daily candidates and weekday/skip eligibility matches F12 exactly apart from expected provenance.",
+      "keyModes": [
+        "scalar",
+        "date-only"
+      ],
+      "observationPolicy": {
+        "min": 1,
+        "max": 1
+      },
+      "expectedSource": {
+        "state": "loaded",
+        "generator": {
+          "kind": "daily-date-candidates",
+          "roster": [
+            {
+              "id": "West",
+              "key": [
+                "West"
+              ]
+            }
+          ],
+          "start": "2026-10-26",
+          "endExclusive": "2026-11-02",
+          "weekdays": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "skips": [
+            {
+              "key": [
+                "West",
+                "2026-10-28"
+              ],
+              "reason": "Planned maintenance"
+            }
+          ],
+          "maxCandidates": 1000
+        }
+      },
+      "actualSource": {
+        "state": "loaded",
+        "rows": [
+          {
+            "id": "s1",
+            "key": [
+              "West",
+              "2026-10-26"
+            ],
+            "value": 0
+          },
+          {
+            "id": "s2",
+            "key": [
+              "West",
+              "2026-10-27"
+            ],
+            "value": 10
+          },
+          {
+            "id": "s3",
+            "key": [
+              "West",
+              "2026-10-27"
+            ],
+            "value": 11
+          },
+          {
+            "id": "s4",
+            "key": [
+              "West",
+              "2026-10-30"
+            ],
+            "value": 12
+          },
+          {
+            "id": "s5",
+            "key": [
+              "West",
+              "2026-10-31"
+            ],
+            "value": 4
+          },
+          {
+            "id": "s6",
+            "key": [
+              "East",
+              "2026-10-26"
+            ],
+            "value": 7
+          }
+        ]
+      },
+      "exclusions": [],
+      "expectedResult": {
+        "status": "ready",
+        "groups": [
+          {
+            "key": [
+              "West",
+              "2026-10-26"
+            ],
+            "expectedRows": [
+              "schedule:West:2026-10-26"
+            ],
+            "actualRows": [
+              "s1"
+            ],
+            "presence": "matched",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": "within",
+            "exclusionReason": null
+          },
+          {
+            "key": [
+              "West",
+              "2026-10-27"
+            ],
+            "expectedRows": [
+              "schedule:West:2026-10-27"
+            ],
+            "actualRows": [
+              "s2",
+              "s3"
+            ],
+            "presence": "matched",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": true,
+            "cardinality": "over",
+            "exclusionReason": null
+          },
+          {
+            "key": [
+              "West",
+              "2026-10-28"
+            ],
+            "expectedRows": [
+              "schedule:West:2026-10-28"
+            ],
+            "actualRows": [],
+            "presence": "excluded",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": null,
+            "exclusionReason": "Planned maintenance"
+          },
+          {
+            "key": [
+              "West",
+              "2026-10-29"
+            ],
+            "expectedRows": [
+              "schedule:West:2026-10-29"
+            ],
+            "actualRows": [],
+            "presence": "absent",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": "short",
+            "exclusionReason": null
+          },
+          {
+            "key": [
+              "West",
+              "2026-10-30"
+            ],
+            "expectedRows": [
+              "schedule:West:2026-10-30"
+            ],
+            "actualRows": [
+              "s4"
+            ],
+            "presence": "matched",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": "within",
+            "exclusionReason": null
+          },
+          {
+            "key": [
+              "West",
+              "2026-10-31"
+            ],
+            "expectedRows": [
+              "schedule:West:2026-10-31"
+            ],
+            "actualRows": [
+              "s5"
+            ],
+            "presence": "excluded",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": null,
+            "exclusionReason": "Not a scheduled weekday"
+          },
+          {
+            "key": [
+              "West",
+              "2026-11-01"
+            ],
+            "expectedRows": [
+              "schedule:West:2026-11-01"
+            ],
+            "actualRows": [],
+            "presence": "excluded",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": null,
+            "exclusionReason": "Not a scheduled weekday"
+          },
+          {
+            "key": [
+              "East",
+              "2026-10-26"
+            ],
+            "expectedRows": [],
+            "actualRows": [
+              "s6"
+            ],
+            "presence": "unexpected",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": null,
+            "exclusionReason": null
+          }
+        ],
+        "invalidExpected": [],
+        "invalidActual": [],
+        "unusedExclusions": [],
+        "counts": {
+          "expectedRows": 7,
+          "actualRows": 6,
+          "validExpectedRows": 7,
+          "invalidExpectedRows": 0,
+          "validActualRows": 6,
+          "invalidActualRows": 0,
+          "expectedKeys": 7,
+          "requiredKeys": 4,
+          "excludedKeys": 3,
+          "matchedKeys": 3,
+          "absentKeys": 1,
+          "unexpectedKeys": 1,
+          "keyGroups": 8,
+          "duplicateExpectedKeys": 0,
+          "repeatedActualKeys": 1,
+          "duplicateExpectedRows": 0,
+          "repeatedActualRows": 2,
+          "extraExpectedOccurrences": 0,
+          "extraActualOccurrences": 1,
+          "requiredActualRows": 4,
+          "excludedActualRows": 1,
+          "unexpectedActualRows": 1,
+          "excludedObservedKeys": 1,
+          "shortKeys": 1,
+          "withinKeys": 2,
+          "overKeys": 1,
+          "minimumCompleteKeys": 3,
+          "minimumUnits": 4,
+          "attainedUnits": 3,
+          "shortfallUnits": 1,
+          "beyondMinimumUnits": 1,
+          "surplusUnits": 1
+        },
+        "metrics": {
+          "presenceCoverage": {
+            "numerator": 3,
+            "denominator": 4,
+            "available": true
+          },
+          "minimumAttainment": {
+            "numerator": 3,
+            "denominator": 4,
+            "available": true
+          },
+          "minimumComplete": {
+            "numerator": 3,
+            "denominator": 4,
+            "available": true
+          },
+          "withinBounds": {
+            "numerator": 2,
+            "denominator": 4,
+            "available": true
+          }
+        }
+      }
+    },
+    {
+      "id": "F14-unused-exclusion",
+      "description": "A valid unused exclusion is a warning; it cannot suppress an actual-only key.",
+      "keyModes": [
+        "scalar"
+      ],
+      "observationPolicy": {
+        "min": 1,
+        "max": 1
+      },
+      "expectedSource": {
+        "state": "loaded",
+        "rows": [
+          {
+            "id": "e1",
+            "key": [
+              "A"
+            ]
+          }
+        ]
+      },
+      "actualSource": {
+        "state": "loaded",
+        "rows": [
+          {
+            "id": "a1",
+            "key": [
+              "B"
+            ]
+          }
+        ]
+      },
+      "exclusions": [
+        {
+          "key": [
+            "B"
+          ],
+          "reason": "Not in current expected scope"
+        }
+      ],
+      "expectedResult": {
+        "status": "ready",
+        "groups": [
+          {
+            "key": [
+              "A"
+            ],
+            "expectedRows": [
+              "e1"
+            ],
+            "actualRows": [],
+            "presence": "absent",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": "short",
+            "exclusionReason": null
+          },
+          {
+            "key": [
+              "B"
+            ],
+            "expectedRows": [],
+            "actualRows": [
+              "a1"
+            ],
+            "presence": "unexpected",
+            "duplicateExpectedKey": false,
+            "repeatedActualKey": false,
+            "cardinality": null,
+            "exclusionReason": null
+          }
+        ],
+        "invalidExpected": [],
+        "invalidActual": [],
+        "unusedExclusions": [
+          {
+            "key": [
+              "B"
+            ],
+            "reason": "Not in current expected scope"
+          }
+        ],
+        "counts": {
+          "expectedRows": 1,
+          "actualRows": 1,
+          "validExpectedRows": 1,
+          "invalidExpectedRows": 0,
+          "validActualRows": 1,
+          "invalidActualRows": 0,
+          "expectedKeys": 1,
+          "requiredKeys": 1,
+          "excludedKeys": 0,
+          "matchedKeys": 0,
+          "absentKeys": 1,
+          "unexpectedKeys": 1,
+          "keyGroups": 2,
+          "duplicateExpectedKeys": 0,
+          "repeatedActualKeys": 0,
+          "duplicateExpectedRows": 0,
+          "repeatedActualRows": 0,
+          "extraExpectedOccurrences": 0,
+          "extraActualOccurrences": 0,
+          "requiredActualRows": 0,
+          "excludedActualRows": 0,
+          "unexpectedActualRows": 1,
+          "excludedObservedKeys": 0,
+          "shortKeys": 1,
+          "withinKeys": 0,
+          "overKeys": 0,
+          "minimumCompleteKeys": 0,
+          "minimumUnits": 1,
+          "attainedUnits": 0,
+          "shortfallUnits": 1,
+          "beyondMinimumUnits": 0,
+          "surplusUnits": 0
+        },
+        "metrics": {
+          "presenceCoverage": {
+            "numerator": 0,
+            "denominator": 1,
+            "available": true
+          },
+          "minimumAttainment": {
+            "numerator": 0,
+            "denominator": 1,
+            "available": true
+          },
+          "minimumComplete": {
+            "numerator": 0,
+            "denominator": 1,
+            "available": true
+          },
+          "withinBounds": {
+            "numerator": 0,
+            "denominator": 1,
+            "available": true
+          }
+        }
+      }
+    },
+    {
+      "id": "F15-known-partial-actual",
+      "description": "Known partial reads block absence claims even when some actual rows are available.",
+      "keyModes": [
+        "scalar"
+      ],
+      "observationPolicy": {
+        "min": 1,
+        "max": 1
+      },
+      "expectedSource": {
+        "state": "loaded",
+        "rows": [
+          {
+            "id": "e1",
+            "key": [
+              "A"
+            ]
+          },
+          {
+            "id": "e2",
+            "key": [
+              "B"
+            ]
+          }
+        ]
+      },
+      "actualSource": {
+        "state": "partial",
+        "rows": [
+          {
+            "id": "a1",
+            "key": [
+              "A"
+            ]
+          }
+        ],
+        "reason": "Read ended before the declared population was complete"
+      },
+      "exclusions": [],
+      "expectedResult": {
+        "status": "unavailable",
+        "missingSides": [
+          "actual"
+        ],
+        "groups": [],
+        "invalidExpected": [],
+        "invalidActual": [],
+        "unusedExclusions": [],
+        "counts": null,
+        "metrics": null
+      }
+    }
+  ],
+  "codecVectors": [
+    {
+      "id": "numeric-one",
+      "modes": [
+        "scalar"
+      ],
+      "input": [
+        1
+      ],
+      "expectedToken": "[[\"n\",1]]"
+    },
+    {
+      "id": "text-one",
+      "modes": [
+        "scalar"
+      ],
+      "input": [
+        "1"
+      ],
+      "expectedToken": "[[\"s\",\"1\"]]"
+    },
+    {
+      "id": "false-is-not-zero",
+      "modes": [
+        "scalar"
+      ],
+      "input": [
+        false
+      ],
+      "expectedToken": "[[\"b\",false]]"
+    },
+    {
+      "id": "valid-zero",
+      "modes": [
+        "scalar"
+      ],
+      "input": [
+        0
+      ],
+      "expectedToken": "[[\"n\",0]]"
+    },
+    {
+      "id": "negative-zero",
+      "modes": [
+        "scalar"
+      ],
+      "input": [
+        0
+      ],
+      "hydrate": [
+        {
+          "component": 0,
+          "kind": "negative-zero"
+        }
+      ],
+      "expectedToken": "[[\"n\",0]]"
+    },
+    {
+      "id": "delimiter-left",
+      "modes": [
+        "scalar",
+        "scalar"
+      ],
+      "input": [
+        "a|b",
+        "c"
+      ],
+      "expectedToken": "[[\"s\",\"a|b\"],[\"s\",\"c\"]]"
+    },
+    {
+      "id": "delimiter-right",
+      "modes": [
+        "scalar",
+        "scalar"
+      ],
+      "input": [
+        "a",
+        "b|c"
+      ],
+      "expectedToken": "[[\"s\",\"a\"],[\"s\",\"b|c\"]]"
+    },
+    {
+      "id": "blank",
+      "modes": [
+        "scalar"
+      ],
+      "input": [
+        "   "
+      ],
+      "expectedInvalid": {
+        "component": 0,
+        "reason": "missing"
+      }
+    },
+    {
+      "id": "undefined",
+      "modes": [
+        "scalar"
+      ],
+      "input": [
+        null
+      ],
+      "hydrate": [
+        {
+          "component": 0,
+          "kind": "undefined"
+        }
+      ],
+      "expectedInvalid": {
+        "component": 0,
+        "reason": "missing"
+      }
+    },
+    {
+      "id": "nan",
+      "modes": [
+        "scalar"
+      ],
+      "input": [
+        null
+      ],
+      "hydrate": [
+        {
+          "component": 0,
+          "kind": "nan"
+        }
+      ],
+      "expectedInvalid": {
+        "component": 0,
+        "reason": "non-finite"
+      }
+    },
+    {
+      "id": "infinity",
+      "modes": [
+        "scalar"
+      ],
+      "input": [
+        null
+      ],
+      "hydrate": [
+        {
+          "component": 0,
+          "kind": "positive-infinity"
+        }
+      ],
+      "expectedInvalid": {
+        "component": 0,
+        "reason": "non-finite"
+      }
+    },
+    {
+      "id": "negative-infinity",
+      "modes": [
+        "scalar"
+      ],
+      "input": [
+        null
+      ],
+      "hydrate": [
+        {
+          "component": 0,
+          "kind": "negative-infinity"
+        }
+      ],
+      "expectedInvalid": {
+        "component": 0,
+        "reason": "non-finite"
+      }
+    },
+    {
+      "id": "unsupported-object",
+      "modes": [
+        "scalar"
+      ],
+      "input": [
+        {
+          "id": 1
+        }
+      ],
+      "expectedInvalid": {
+        "component": 0,
+        "reason": "unsupported-type"
+      }
+    },
+    {
+      "id": "calendar-date",
+      "modes": [
+        "date-only"
+      ],
+      "input": [
+        "2026-10-26"
+      ],
+      "expectedToken": "[[\"d\",\"2026-10-26\"]]"
+    },
+    {
+      "id": "date-only-rejects-instant",
+      "modes": [
+        "date-only"
+      ],
+      "input": [
+        "2026-10-26T00:00:00Z"
+      ],
+      "expectedInvalid": {
+        "component": 0,
+        "reason": "invalid-date"
+      }
+    },
+    {
+      "id": "impossible-date",
+      "modes": [
+        "date-only"
+      ],
+      "input": [
+        "2026-02-30"
+      ],
+      "expectedInvalid": {
+        "component": 0,
+        "reason": "invalid-date"
+      }
+    },
+    {
+      "id": "offset-instant",
+      "modes": [
+        "instant-ms"
+      ],
+      "input": [
+        "2026-10-26T08:00:00-04:00"
+      ],
+      "expectedToken": "[[\"t\",1793016000000]]"
+    },
+    {
+      "id": "sub-ms-rejected",
+      "modes": [
+        "instant-ms"
+      ],
+      "input": [
+        "2026-10-26T12:00:00.0001Z"
+      ],
+      "expectedInvalid": {
+        "component": 0,
+        "reason": "unsupported-precision"
+      }
+    },
+    {
+      "id": "naive-instant-rejected",
+      "modes": [
+        "instant-ms"
+      ],
+      "input": [
+        "2026-10-26T12:00:00"
+      ],
+      "expectedInvalid": {
+        "component": 0,
+        "reason": "invalid-instant"
+      }
+    },
+    {
+      "id": "numeric-epoch-rejected",
+      "modes": [
+        "instant-ms"
+      ],
+      "input": [
+        1793016000000
+      ],
+      "expectedInvalid": {
+        "component": 0,
+        "reason": "invalid-instant"
+      }
+    }
+  ],
+  "crossChecks": [
+    {
+      "kind": "schedule-equivalence",
+      "left": "F12-explicit-schedule-table",
+      "right": "F13-generated-schedule",
+      "ignore": "expectedRows provenance identifiers only"
+    },
+    {
+      "kind": "refresh",
+      "before": "F01-core",
+      "after": "F10-refresh",
+      "key": [
+        "B",
+        "2026-10-27"
+      ],
+      "beforePresence": "absent",
+      "afterPresence": "matched"
+    },
+    {
+      "kind": "display-filter-isolation",
+      "fixture": "F01-core",
+      "note": "Display filtering is downstream; it cannot re-evaluate or modify this saved reconciliation population."
+    },
+    {
+      "kind": "bounded-generation",
+      "fixture": "F13-generated-schedule",
+      "maxCandidates": 6,
+      "expectedError": "candidate-limit-exceeded"
+    },
+    {
+      "kind": "measure-value-invariance",
+      "fixture": "F01-core",
+      "rowId": "a5",
+      "variants": [
+        {
+          "present": true,
+          "value": "not-a-number"
+        },
+        {
+          "present": false
+        }
+      ],
+      "expected": "exact same groups, invalid-key lists, counts and metrics as F01-core"
+    },
+    {
+      "kind": "stale-schedule-skip",
+      "fixture": "F13-generated-schedule",
+      "skip": {
+        "key": [
+          "West",
+          "2026-11-02"
+        ],
+        "reason": "Saved skip outside current horizon"
+      },
+      "expectedUnused": [
+        {
+          "key": [
+            "West",
+            "2026-11-02"
+          ],
+          "reason": "Saved skip outside current horizon"
+        }
+      ]
+    },
+    {
+      "kind": "unused-exclusion-validation",
+      "fixture": "F14-unused-exclusion",
+      "duplicateExpectedError": "duplicate-exclusion-key",
+      "blankReasonExpectedError": "exclusion-reason-required"
+    }
+  ]
+}
