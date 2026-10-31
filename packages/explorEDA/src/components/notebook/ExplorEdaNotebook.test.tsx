@@ -149,6 +149,27 @@ describe("ExplorEdaNotebook", () => {
     expect(block.querySelectorAll("[data-chart-id]")).toHaveLength(2);
   });
 
+  it("shows a compiler error while retaining the last-valid chart, then clears it", () => {
+    const memory = { current: {} as Record<number, string> };
+    const { container, rerender } = render(
+      <ExplorEdaNotebook text={TEXT} data={rows} lastValid={memory} />
+    );
+    const invalid = TEXT.replace("line @delta", "audit_invalid @delta");
+    rerender(
+      <ExplorEdaNotebook text={invalid} data={rows} lastValid={memory} />
+    );
+    const block = container.querySelector<HTMLElement>('[data-block="1"]')!;
+    expect(block.dataset.status).toBe("frozen");
+    expect(within(block).getByRole("alert")).toHaveTextContent("Line 10");
+    expect(within(block).getByRole("alert")).toHaveTextContent(
+      "last version that worked"
+    );
+    expect(block.querySelector('[data-chart-id="delta"]')).not.toBeNull();
+    rerender(<ExplorEdaNotebook text={TEXT} data={rows} lastValid={memory} />);
+    expect(block.dataset.status).toBe("ok");
+    expect(within(block).queryByRole("alert")).toBeNull();
+  });
+
   it("edits a block's text in place and hands on the new notebook text", () => {
     vi.useFakeTimers();
     try {

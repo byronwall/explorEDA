@@ -185,6 +185,8 @@ export async function loadDailyEntry(entry: DailyEntry, signal?: AbortSignal) {
   );
   return {
     text: corpusLinks(text, entry.entryPath),
+    project: compiled.project,
+    tables,
     rows,
     fieldTypes,
     findings,
