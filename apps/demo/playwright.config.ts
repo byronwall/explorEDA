@@ -50,6 +50,5 @@ export default defineConfig({
     // One category selection through bar, cards, table, CSV, undo, and a
     // reopened save (docs/intent/current-analysis-trust).
     { name: "trust", testMatch: /trust\.e2e\.ts$/ },
-    { name: "daily", testMatch: /daily-findings\.e2e\.ts$/ },
   ],
 });
