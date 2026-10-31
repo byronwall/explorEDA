@@ -1,0 +1,86 @@
+{
+  "captured_on": "2026-10-10",
+  "source_chat": {
+    "title": "Research deliverables complete",
+    "url": "https://chatgpt.com/c/6ac9a75b-5704-83ea-b5a1-09d3bea6a96d"
+  },
+  "retrieval": "Chrome download button; archive found in the default Downloads folder after the download event wait timed out.",
+  "downloaded_archive": "/Users/byronwall/Downloads/exploreda-monetization-research.zip",
+  "report_research_date": "2026-10-10 UTC",
+  "report_claimed_repository_revision": "c66d8bfe2992081ed5ecb341d96e8ab927b41385",
+  "local_repository_revision": "b3acd0bbe95702523cf1a1f2a19a436b37d1828d",
+  "files": [
+    {
+      "path": "chatgpt-pro-research-prompt.md",
+      "bytes": 34105,
+      "sha256": "8fa1f8f050f20451189d4fce579d57f95c402fa3fd803463a1620f9d79707cc9"
+    },
+    {
+      "path": "exploreda-monetization-research/exploreda-monetization-opportunities.md",
+      "bytes": 791815,
+      "sha256": "8d612c565d2f4c83343c227c0dc7d46fb2bc10de47eb51ee9f92ce1c8b26d4b8"
+    },
+    {
+      "path": "exploreda-monetization-research/opportunity-catalog.csv",
+      "bytes": 96021,
+      "sha256": "ed4ccbc23fabdde1b08e235bc5388df5a3a365039a18c793d170ff8ff8090a79"
+    },
+    {
+      "path": "exploreda-monetization-research.zip",
+      "bytes": 262991,
+      "sha256": "a7415885b21c93727fdba0b7aec729367af3d56ed54852e4a307f620bc26839a"
+    },
+    {
+      "path": "pro-completion-note.txt",
+      "bytes": 2469,
+      "sha256": "f7459fae3c44918f1f29066a1f58eca52a5c88166301a53796342de86e6da44c"
+    },
+    {
+      "path": "user-requests.md",
+      "bytes": 2029,
+      "sha256": "43aa7bb7b685c1f0ff1a96bc72740679bb04ae6bf3922c720196198cbf7cc62c"
+    }
+  ],
+  "verified": {
+    "archive_crc": "passed",
+    "archive_members": 2,
+    "extracted_bytes_match_archive": true,
+    "archive_bytes_match_download": true,
+    "prompt_bytes_match_original": true,
+    "opportunities": 75,
+    "families": 12,
+    "csv_columns": 26,
+    "verdicts": {
+      "GO—validate": 29,
+      "HOLD—resolve dependency": 32,
+      "NO-GO": 14
+    },
+    "family_counts": {
+      "F01": 7,
+      "F02": 6,
+      "F03": 6,
+      "F04": 6,
+      "F05": 7,
+      "F06": 6,
+      "F07": 6,
+      "F08": 6,
+      "F09": 6,
+      "F10": 6,
+      "F11": 7,
+      "F12": 6
+    },
+    "individual_brief_sections": 600,
+    "source_records": 250,
+    "recalculated_weighted_scores": 59,
+    "blank_scores": 16,
+    "catalogue_source_refs_resolve": true,
+    "report_word_count_whitespace": 98781
+  },
+  "not_verified": [
+    "External source claims were not independently re-researched.",
+    "Customer demand and pricing remain untested.",
+    "No repository runtime checks or current-main audit ran during intake.",
+    "Underlying external webpages and browser thinking trace are not included in the archive."
+  ],
+  "completion_note_format": "Visible DOM text from the final response; no preserved browser layout or link destinations."
+}
