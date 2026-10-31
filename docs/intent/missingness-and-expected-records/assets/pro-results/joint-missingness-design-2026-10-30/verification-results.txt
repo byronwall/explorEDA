@@ -1,0 +1,45 @@
+Baseline: ab4ecd2aa98f3fd1da11e8f552efdb269f4b65a6
+Scope: baseline pure parsing/conversion helpers and independent fixture arithmetic only.
+PASS 01 six-field population
+PASS 02 unequal groups
+PASS 03 all exact effective patterns
+PASS 04 all exact raw patterns
+PASS 05 effective marginal memberships
+PASS 06 exact xy OR exact note
+PASS 07 exact x OR exact y excludes both-missing and complete
+PASS 08 inclusive xy differs from exact xy
+PASS 09 presence in x y w
+PASS 10 finite numbers in x y w
+PASS 11 finite complement
+PASS 12 x raw conversion preview
+PASS 13 note raw conversion preview
+PASS 14 edit r08: exact x membership changes
+PASS 15 edit r08: complete membership changes
+PASS 16 group A selected membership
+PASS 17 group B selected membership
+PASS 18 local A guard with active predicate
+PASS 19 row reorder preserves semantic IDs
+PASS 20 active-empty selection matches none
+PASS 21 zero-match selected signature remains empty
+PASS 22 empty population has no observed patterns
+PASS 23 new matching row joins saved semantic predicate
+PASS 24 categorical blank remains literal
+PASS 25 authored null token becomes missing
+PASS 26 absent property stays absent
+PASS 27 unconverted nonfinite text stays present
+PASS 28 native absence/undefined/null/blank/zero/false/nonfinite
+PASS 29 zero and false have different numeric eligibility
+PASS 30 explicit null tokens may override zero/false
+PASS 31 numeric conversion failure has error and missing result
+PASS 32 numeric nonfinite conversion failure
+PASS 33 boolean false conversion succeeds
+PASS 34 second-case population
+PASS 35 second-case exact patterns
+PASS 36 spread marginal membership
+PASS 37 spread complete membership
+PASS 38 spread x y present membership
+PASS 39 cluster marginal membership
+PASS 40 cluster complete membership
+PASS 41 cluster x y present membership
+Completed: 41 checks passed.
+Not executed: chart renderer, Crossfilter integration, notebook Keep, JSON/DSL round trips, folder reopen, browser acceptance, performance.

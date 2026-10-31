@@ -4,11 +4,19 @@
 - Category: Data quality and missingness
 - Priority: 49
 - Kind: follow-up
-- Status: candidate
+- Status: design-researched; implementation planned
 - Confidence: medium
 - Baseline: `9b16d78e3ed0742ed4d5858c1939fec9e758b510`
 
 ## Research brief
+
+The October 30 Design run replaces the historical outside-demand gate below.
+Build a registered exact-pattern chart over effective values, with complete record traces and kept notebook selections.
+Then add bounded group shares and presence/finite input checks.
+See the [research summary](../../../research/joint-missingness-design-2026-10-30/README.md),
+[implementation plan](../../missingness-and-expected-records/implementation-plan.md), and
+[original artifacts](../../missingness-and-expected-records/assets/pro-results/joint-missingness-design-2026-10-30/README.md).
+No feature has been implemented by this research. The following brief remains historical context.
 
 An analyst may see modest missing counts in several columns while overlooking that the same observations lack all of them. `buildFieldProfiles` already provides individual summaries, and field conversion previews expose invalid inputs. The missingness intent explicitly proposes joint patterns, so requesting another missing-count display would repeat delivered work. The useful follow-up is choosing a representation that helps someone identify the affected records and judge whether the pattern changes a planned analysis.
 

@@ -4,17 +4,17 @@
     "title": "Find missing values and missing observations",
     "slug": "missingness-and-expected-records",
     "scale": "feature",
-    "current_phase": "intent",
-    "last_updated": "2026-10-21",
+    "current_phase": "plan",
+    "last_updated": "2026-10-30",
     "summary": "Analysts may need to see whether missing values cluster together, or discover records that should exist but do not.",
     "status": "planned",
-    "next_action": "Use a small fixture with missing X, missing Y, both missing, and valid zero. Show exact pattern counts and source IDs. Add one absent expected key only in a separate proof with an explicit expected set."
+    "next_action": "Implement the exact-pattern, record, Keep, and reopen proof in implementation-plan.md after review."
   },
   "artifacts": {
     "intent_brief": {
       "path": "intent-brief.md",
       "status": "current",
-      "updated_at": "2026-10-21"
+      "updated_at": "2026-10-30"
     },
     "brainstorm": {
       "path": "brainstorm.md",
@@ -28,8 +28,8 @@
     },
     "implementation_plan": {
       "path": "implementation-plan.md",
-      "status": "not-created",
-      "updated_at": null
+      "status": "current",
+      "updated_at": "2026-10-30"
     }
   },
   "sources": [
@@ -86,8 +86,15 @@
       "id": "r026-accounting",
       "type": "agent-authored-analysis",
       "location": "../../research/missing-state-accounting-2026-10-21/evidence.md",
-      "anchor": "MS01\u2013MS06; four local probes",
+      "anchor": "MS01–MS06; four local probes",
       "authority": "Research and helper/provider/manager evidence; no browser or implemented repair"
+    },
+    {
+      "id": "joint-missingness-design-2026-10-30",
+      "type": "agent-authored-analysis",
+      "location": "../../research/joint-missingness-design-2026-10-30/evidence.md",
+      "anchor": "Decisive current-code checks and JM-D01–JM-D18 dispositions",
+      "authority": "Research plan with original Pro assets; no implementation approval"
     }
   ],
   "intent": {
@@ -140,7 +147,7 @@
         "statement": "Expand when field summaries hide a recurring pattern, or a real source includes a known expected sampling plan or key catalogue.",
         "commitment": "tentative",
         "importance": "supporting",
-        "status": "active",
+        "status": "superseded",
         "time_horizon": "later",
         "source_anchors": [
           {
@@ -153,7 +160,7 @@
           }
         ],
         "confidence": "medium",
-        "notes": "Candidate interpretation; no feature implementation has been selected."
+        "notes": "Historical expansion gate; current DIRECTION and October30 owner Design mission supersede it."
       },
       {
         "id": "priority-1",
@@ -274,22 +281,36 @@
     "open_decisions": []
   },
   "implementation": {
-    "status": "not-started",
+    "status": "planned",
     "repository_snapshot": {
-      "root": "/Users/byronwall/.codex/worktrees/abcf/explorEDA",
-      "revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927",
-      "worktree_status": "clean before intent capture; detached HEAD",
+      "root": "/Users/byronwall/Projects/explorEDA",
+      "revision": "ab4ecd2aa98f3fd1da11e8f552efdb269f4b65a6",
+      "worktree_status": "existing checkout; research docs only",
       "subsystems": [
-        "packages/explorEDA/src/lib/fieldProfiles.ts",
-        "packages/explorEDA/src/components/charts/Heatmap/definition.ts",
-        "packages/explorEDA/src/charts/registerAllCharts.ts"
+        "packages/explorEDA/src/providers/DataLayerProvider.tsx",
+        "packages/explorEDA/src/hooks/CrossfilterWrapper.ts",
+        "packages/explorEDA/src/lib/notebook/findings.ts",
+        "packages/explorEDA/src/lib/notebook/writeBack.ts"
       ],
       "test_commands": [],
       "deployment_surfaces": []
     },
     "dependencies": [],
     "fast_local_loop": null,
-    "milestones": [],
+    "milestones": [
+      {
+        "id": "M1",
+        "title": "Exact patterns, records, and kept notebooks",
+        "status": "planned",
+        "plan": "implementation-plan.md"
+      },
+      {
+        "id": "M2",
+        "title": "Group consequences and chosen inputs",
+        "status": "planned",
+        "plan": "implementation-plan.md"
+      }
+    ],
     "cut_line": [],
     "open_decisions": []
   },
@@ -324,15 +345,21 @@
       "action": "Reconciled R026 value accounting and three bounded consistency witnesses.",
       "evidence": "Four locally authored probes pass; no product repair or browser claim.",
       "reason": "Keep stage-specific counts and proposed repairs separate from a universal state model."
+    },
+    {
+      "date": "2026-10-30",
+      "action": "Planned exact effective missingness patterns and kept notebook findings.",
+      "reason": "Owner Design mission supersedes outside-demand gates; expected-record scope stays separate.",
+      "evidence": "Source review, independent fixture arithmetic, preserved nine Pro originals; no feature implementation or browser acceptance."
     }
   ],
   "closure": null,
   "intake": {
     "kind": "seed",
     "priority_basis": "Pro recommendations reconciled with current source; proposed priority, no implementation approval",
-    "expand_when": "Expand when field summaries hide a recurring pattern, or a real source includes a known expected sampling plan or key catalogue.",
+    "expand_when": "Current DIRECTION and owner Design mission replace historical outside-demand gates; implementation follows plan review.",
     "related_initiatives": [],
     "audience": "End users; developers deliver their experience.",
-    "priority": "Unranked candidate or future seed"
+    "priority": "Design reviewed; implementation awaits plan review"
   }
 }

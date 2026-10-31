@@ -1,5 +1,10 @@
 # Research catalogue
 
+R027 now has an October 30 [Design review](../../research/joint-missingness-design-2026-10-30/README.md)
+and an [implementation plan](../missingness-and-expected-records/implementation-plan.md).
+Build exact patterns, record traces, and kept notebook findings before group/input extensions.
+This supersedes its earlier outside-demand gate. The feature remains unbuilt.
+
 Design follow-up: [selections and live findings through refresh](../../research/selection-refresh-design-2026-10-29/README.md)
 adds a keyed-refresh capability plan to R077's earlier audit. It does not change catalogue rank or set the next topic.
 
