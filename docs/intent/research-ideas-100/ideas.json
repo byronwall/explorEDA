@@ -1070,7 +1070,7 @@
     "path": "ideas/R028-expected-record-reconciliation.md",
     "priority": 48,
     "research_kind": "follow-up",
-    "status": "candidate",
+    "status": "Design plan ready for review; implementation unstarted",
     "summary": "Investigate a small expected-key or schedule comparison that distinguishes absent observations from incomplete existing rows.",
     "research_question": "What minimum expected-set contract makes missing-record claims valid without generating misleading Cartesian combinations?",
     "why_now": "The missingness intent separates absent records from missing cells but leaves the expected-set model open.",

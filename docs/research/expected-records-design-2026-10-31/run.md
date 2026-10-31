@@ -1,6 +1,10 @@
 # Expected-record reconciliation Design run
 
-Phase: submitted. Follow-ups: 0/1. Integration pending Pro.
+Phase: integrated; PR verification pending. Follow-ups: 0/1.
+
+Collected October 31 after 03:43 UTC. Pro finished in 22m29s. Downloaded existing expected-record-reconciliation.zip under Byron's direct standing approval. No regeneration, Library upload, or downloaded program execution. Exact five-file inventory, safe paths, no symlinks, CRC, UTF-8, and hashes passed. Original files remain byte-for-byte under the linked intent assets. ZIP and source packet remain ignored.
+
+Local plan and summary are written. Reviewed code corrects notebook binding to existing `eda query=` and resolves absent snapshot partial metadata. Local independent fixture checks passed 74 assertions across 14 non-generated cases. Pro's 15-case/20-vector verifier was inspected, not executed. No feature/browser/performance acceptance claimed.
 
 Conversation: https://chatgpt.com/c/6ae554c9-6f0c-83ea-a8dd-351611d0c2b1. Never resubmit.
 Submitted October 31, 2026 about 02:39 UTC. Chrome byroni.us and Byron Wall Pro account verified. Live selector showed Pro 5/5. Both completed attachment chips, sent message, durable URL, and Stop control verified.
