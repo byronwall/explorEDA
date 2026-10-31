@@ -58,4 +58,7 @@ Production parser, persistence, worker, browser, transaction, performance, and r
 Existing baseline evaluator/entity-grain/source-identity tests pass: three files, 13 tests.
 Docs checks pass: three files, 74 tests, with existing React act warnings.
 This PR changes docs and original result assets only. No full package check or changeset applies.
-Authored formatting, links, whitespace, commit authors, and original ZIP/disk/Git inventory are checked before completion.
+Authored formatting, 147 local links, whitespace, commit authors, and nine-file ZIP/disk/Git inventory pass.
+The original report has one blank EOF line flagged by the broad whitespace check; its original bytes remain unchanged.
+The authored-only whitespace check passes. The initial Prettier call included `.prettierignore`, which has no parser;
+the corrected authored-document check passes. No original result was reformatted.

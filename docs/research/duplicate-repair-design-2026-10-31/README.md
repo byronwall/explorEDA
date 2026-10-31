@@ -39,3 +39,6 @@ Existing evaluator/entity-grain/identity tests and docs checks pass. No producti
 Implementation choices remain: exact format discriminator, evidence storage layout, default output name, and legacy technical-field classification UI.
 Use complete snapshots initially. Measure storage and grouping cost before considering compaction or automated refresh.
 No next topic is selected. See the [run record](run.md) for collection and PR status.
+
+Integrated in open [PR #581](https://github.com/byronwall/explorEDA/pull/581). The temporary collector is deleted.
+The six-hour pipeline remains active. Review the first milestone before authorizing implementation.

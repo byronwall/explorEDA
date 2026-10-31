@@ -1,6 +1,15 @@
 # Duplicate-key repair Design run
 
-Phase: integrated; checks and PR opening pending. Follow-ups: 0/1.
+Phase: complete. Follow-ups: 0/1.
+
+Verified OPEN PR: https://github.com/byronwall/explorEDA/pull/581, main <- codex/duplicate-repair-design-2026-10-31.
+Integration commit: 0d475855. Saved body and 22-file PR inventory were verified, including all nine original artifacts.
+Original ZIP, disk, and committed Git bytes match exactly. Authored formatting and 147 local links pass.
+Authored whitespace and PR author/changeset checks pass. One original report blank EOF line remains unchanged for preservation.
+Documentation label applied; codex and codex-automation labels are unavailable.
+Collector deletion confirmed through the supported scheduler: deleteStatus=deleted.
+Six-hour parent remains ACTIVE indefinitely. Completion time: October 31, 2026 about 15:55 UTC.
+No merge or deployment. Stop for review.
 
 Collected October 31, 2026 after 15:46 UTC. Pro finished in 27m6s.
 Downloaded the existing ZIP through its linked preview under direct human standing approval.
@@ -23,7 +32,7 @@ Independent locally authored fixture checks pass 236 assertions over 21 repair v
 All 16 cases and 25 snapshot structures were inspected. No supplied or repository programs were imported by those checks.
 Pro's full verifier and TypeScript checks remain Pro-reported. No production acceptance is claimed.
 Existing baseline tests pass again: 3 files/13 tests. Docs checks pass again: 3 files/74 tests, existing React act warnings.
-Authored formatting, local links, whitespace, PR author checks, and committed inventory verification follow staging.
+Authored formatting, local links, whitespace, PR author checks, and committed inventory verification pass.
 
 Conversation: https://chatgpt.com/c/6ae5fdfa-7aa0-83e9-b5d6-9603c7e92c6b. Never resubmit.
 Submitted October 31, 2026 about 14:41 UTC. Chrome byroni.us and Byron Wall Pro account verified.
@@ -48,7 +57,7 @@ Validation: baseline evaluator/entity-grain/source-identity tests pass, 3 files 
 Docs checks pass, 3 files and 74 tests, with existing React act warnings.
 Installed dependencies used verify-deps-before-run=false; no dependency or lockfile change.
 This checkpoint changes only prompt and run documentation. No full pnpm check or changeset is required.
-Preparation was docs-only. Plan, summary, dispositions, and original assets are now integrated; final PR checks remain.
+Preparation was docs-only. Plan, summary, dispositions, and original assets are integrated and verified in PR581.
 No preparation-only PR was opened. No feature, browser, persistence, or performance acceptance is claimed.
 
 Mission: explicit duplicate repair with reusable relationship targets and original-record evidence.
