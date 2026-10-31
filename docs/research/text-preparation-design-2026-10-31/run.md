@@ -1,6 +1,15 @@
 # Text preparation Design run
 
-Phase: collected and integrated locally; PR opening pending. Follow-ups: 0/1.
+Phase: complete. Follow-ups: 0/1.
+
+Verified OPEN PR: https://github.com/byronwall/explorEDA/pull/586, main <- codex/text-preparation-design-2026-10-31.
+Integration commit: 788e700f. Saved body, branches, documentation label, and 20-file inventory were verified.
+All seven originals match archive, disk, and committed Git bytes. All 153 local Markdown links pass.
+Authored formatting, whitespace, and PR author/changeset checks pass. Original formatting stays unchanged.
+The codex and codex-automation labels are unavailable in this repository.
+Temporary collector deletion confirmed by the supported scheduler: deleteStatus=deleted.
+Six-hour parent remains ACTIVE indefinitely. Completion time: October 31, 2026 about 21:51 UTC.
+No merge or deployment. Stop for review.
 
 Collected October 31, 2026 after 21:44 UTC. Pro finished in 17m51s.
 Downloaded the existing text-preparation-design-2026-10-31.zip under direct human standing approval.
@@ -50,7 +59,7 @@ Validation: existing calculation engine/parser/trace/recode tests pass, 4 files 
 Docs tests pass, 3 files and 74 tests, with existing React act warnings.
 Installed dependencies used verify-deps-before-run=false; no dependency or lockfile changes.
 Only prompt and run documentation change. Full pnpm check and a changeset are not required.
-Plan, summary, dispositions, and original assets are integrated; PR opening remains pending.
+Plan, summary, dispositions, and original assets are integrated in verified PR #586.
 No feature, browser, persistence, or performance acceptance is claimed.
 
 Mission: reusable text cleaning, extraction, and composition with explicit semantics and exact record review.
