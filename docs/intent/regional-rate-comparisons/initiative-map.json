@@ -1,0 +1,53 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "Regional comparisons with explicit exposure",
+    "slug": "regional-rate-comparisons",
+    "scale": "feature",
+    "current_phase": "plan",
+    "last_updated": "2026-10-31",
+    "summary": "Compare regional event counts and rates with explicit exposure, coverage, and inspectable source evidence.",
+    "status": "planned",
+    "next_action": "Review the prepared-first implementation plan. No implementation is approved."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-31"
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "current",
+      "updated_at": "2026-10-31"
+    },
+    "pro_results": {
+      "path": "assets/pro-results/README.md",
+      "status": "current",
+      "updated_at": "2026-10-31"
+    }
+  },
+  "sources": [
+    {
+      "id": "research-direction",
+      "type": "repository",
+      "location": "../../research/DIRECTION.md",
+      "authority": "Research direction; Byron is the demand"
+    },
+    {
+      "id": "regional-rates-design",
+      "type": "agent-authored-analysis",
+      "location": "../../research/regional-rates-design-2026-10-31/README.md",
+      "authority": "Reviewed proposal; no implementation approval"
+    }
+  ],
+  "history": [
+    {
+      "date": "2026-10-31",
+      "action": "Reviewed 23 recommendations and all eight original Pro artifacts.",
+      "evidence": "439 independent fixture anchors; refreshed baseline source review.",
+      "decision": "Prepared comparison first, event/exposure second, then supported scopes and richer findings."
+    }
+  ],
+  "closure": null
+}

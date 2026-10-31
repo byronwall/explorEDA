@@ -4,7 +4,7 @@
 - Category: Domain analysis
 - Priority: 66
 - Kind: follow-up
-- Status: candidate
+- Status: researched
 - Confidence: medium
 - Baseline: `9b16d78e3ed0742ed4d5858c1939fec9e758b510`
 
@@ -24,3 +24,17 @@ The simplest outcome is a focused preparation and inspection recipe, with low ma
 - Repository: `packages/explorEDA/src/components/charts/Map/RegionTraceBody.tsx` — `RegionTraceBody`. The region trace is the existing place for analytical join and contributor evidence.
 - Related intent: `docs/intent/reusable-analysis-metrics/intent-brief.md`.
 - Related intent: `docs/intent/current-analysis-trust/intent-brief.md`.
+
+## October 31 Design result
+
+Build a saved regional comparison with explicit exposure, collection coverage, scope, and source evidence.
+The new Design mission supersedes this brief's earlier demand gate for the geographic feature.
+Ship prepared regional totals first, then events with separate exposure and numerator-only filters.
+Keep map, ranked table, and notebook findings on one evaluated result.
+Explore interval methods and eligible-entity proportions; defer a universal semantic layer.
+
+Read the [implementation plan](../../regional-rate-comparisons/implementation-plan.md),
+[research summary](../../../research/regional-rates-design-2026-10-31/README.md), and
+[original artifact index](../../regional-rate-comparisons/assets/pro-results/README.md).
+Local checks pass 439 fixture anchors; Pro reports 2,849 verifier assertions.
+This is a reviewed plan, not implementation approval or a shipped capability.

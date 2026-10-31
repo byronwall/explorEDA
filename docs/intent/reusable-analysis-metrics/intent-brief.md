@@ -56,6 +56,14 @@ See the [reviewed research](../../research/grouped-rates-2026-10-19/README.md), 
 
 See the [reference packet](references/README.md) and [comparison collection](../comparison-opportunities/README.md) for context.
 
+## Regional comparison Design, October 31
+
+The [regional comparison plan](../regional-rate-comparisons/implementation-plan.md) selects a bounded grouped-rate query operation for geographic comparisons.
+It preserves numerator/exposure roles, collection coverage, scope, and pooled evidence across map, table, and notebook findings.
+The earlier outside-demand gate does not govern that new Design mission; Byron is the demand under the current research direction.
+This does not select a universal measure grammar or approve implementation.
+See its [research summary](../../research/regional-rates-design-2026-10-31/README.md) and [original artifacts](../regional-rate-comparisons/assets/pro-results/README.md).
+
 ## R043 entity-grain review, October 21
 
 Keep source-occurrence identity and selected-value identity separate. Compare exact partitions before requiring aggregate agreement.

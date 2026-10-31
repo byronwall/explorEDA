@@ -577,9 +577,9 @@
     "path": "ideas/R016-regional-rate-denominators.md",
     "priority": 66,
     "research_kind": "follow-up",
-    "status": "candidate",
-    "summary": "Determine whether geographic rate comparisons need native denominator support or a clearer prepared-data contract.",
-    "research_question": "What is the smallest workflow that makes regional numerator, denominator, coverage, and comparison period explicit?",
+    "status": "researched",
+    "summary": "Build a saved regional comparison with explicit exposure, collection coverage, scope, and two-role source evidence.",
+    "research_question": "How should prepared regional totals and event/exposure inputs share comparable rates across maps, ranked tables, and notebook findings?",
     "why_now": "Region maps already aggregate and trace typed joins; a geographic rate requires information beyond a count or average.",
     "repo_evidence": [
       {
@@ -595,14 +595,25 @@
     ],
     "related_intents": [
       "docs/intent/reusable-analysis-metrics/intent-brief.md",
-      "docs/intent/current-analysis-trust/intent-brief.md"
+      "docs/intent/current-analysis-trust/intent-brief.md",
+      "docs/intent/regional-rate-comparisons/intent-brief.md"
     ],
     "dependencies": [],
     "first_experiment": "Compare regions with unequal populations, a repeated denominator, a missing denominator, and a boundary mismatch using prepared rates and a bounded ratio proposal.",
     "acceptance_evidence": "Users can distinguish count from rate, verify denominator provenance, and identify regions that are not comparable.",
     "rejection_signal": "A native contract duplicates general metric work or cannot establish that numerator and denominator refer to the same population and period.",
     "confidence": "medium",
-    "external_sources": []
+    "external_sources": [],
+    "research_result": {
+      "date": "2026-10-31",
+      "mode": "Design",
+      "score": 17,
+      "summary_path": "docs/research/regional-rates-design-2026-10-31/README.md",
+      "plan_path": "docs/intent/regional-rate-comparisons/implementation-plan.md",
+      "asset_index": "docs/intent/regional-rate-comparisons/assets/pro-results/README.md",
+      "conversation": "https://chatgpt.com/c/6ae5a920-2a18-83ea-84be-25b88b06d492",
+      "decision": "Build prepared comparisons, then event/exposure comparisons; implementation remains proposed."
+    }
   },
   {
     "id": "R017",
