@@ -4,11 +4,25 @@
 - Category: Calculations and expressions
 - Priority: 77
 - Kind: new-direction
-- Status: candidate
+- Status: Design researched; implementation planned
 - Confidence: medium
 - Baseline: `9b16d78e3ed0742ed4d5858c1939fec9e758b510`
 
-## Research brief
+## Design decision — October 31, 2026
+
+Build guided text preparation that emits ordinary formulas for the existing Calculator.
+First ship trim, literal part extraction/replacement, and strict concatenation with exact record review,
+text-preserving types, trace, and complete chart/project/notebook save–reopen–refresh support.
+Add explicit NFC/casing next, then code-point length/slicing. Do not depend on unbuilt prepared join keys.
+
+[Implementation plan](../../text-preparation/implementation-plan.md) ·
+[Research summary](../../../research/text-preparation-design-2026-10-31/README.md) ·
+[Original results](../../text-preparation/assets/pro-results/text-preparation-design-2026-10-31/index.md).
+R048 scored 18/20. Local dispositions cover TP-01 through TP-25.
+This is a build plan, not an implemented capability. No outside-demand or reviewer study gate applies.
+The current direction supersedes the historical brief's narrower appetite and demand gates below.
+
+## Historical candidate brief
 
 An analyst may need to trim a code, extract a prefix, or produce a consistent label before grouping. The active calculation registry already supports row-wise arithmetic and date functions, and the separate `region` registration demonstrates a focused domain extension. Formula parsing and function validation also exist. The inspected registry does not provide a general text-cleaning family. The opportunity is to identify a small recurring preparation need, not to replace a programming language inside the workspace.
 

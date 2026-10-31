@@ -1,5 +1,8 @@
 # Research catalogue
 
+Design result: [reusable text preparation](../../research/text-preparation-design-2026-10-31/README.md)
+adds a complete clean/extract/compose plan to R048. Rank stays unchanged; no next topic is assigned.
+
 Design follow-up: [selections and live findings through refresh](../../research/selection-refresh-design-2026-10-29/README.md)
 adds a keyed-refresh capability plan to R077's earlier audit. It does not change catalogue rank or set the next topic.
 

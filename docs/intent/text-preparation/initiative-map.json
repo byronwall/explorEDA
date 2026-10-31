@@ -1,0 +1,73 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "Reusable text preparation",
+    "slug": "text-preparation",
+    "scale": "feature",
+    "current_phase": "implementation-plan",
+    "last_updated": "2026-10-31",
+    "summary": "Clean, extract, and compose text through saved formulas with exact record review and complete reuse.",
+    "status": "planned",
+    "next_action": "Review the complete M1 plan before implementation."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-31"
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "current",
+      "updated_at": "2026-10-31"
+    },
+    "pro_results": {
+      "path": "assets/pro-results/text-preparation-design-2026-10-31/index.md",
+      "status": "preserved",
+      "updated_at": "2026-10-31"
+    }
+  },
+  "sources": [
+    {
+      "id": "pipeline-direction",
+      "type": "direct-user-input",
+      "location": "../../research/DIRECTION.md",
+      "authority": "topic direction; human artifact-preservation instruction overrides older archival wording"
+    },
+    {
+      "id": "r048-design",
+      "type": "agent-authored-analysis",
+      "location": "../../research/text-preparation-design-2026-10-31/README.md",
+      "authority": "checked design proposal, not shipped behavior"
+    }
+  ],
+  "implementation": {
+    "status": "not-started",
+    "milestones": [
+      {
+        "id": "M1",
+        "title": "Complete clean, extract, compose, and reuse workflow",
+        "status": "planned"
+      },
+      {
+        "id": "M2",
+        "title": "Explicit NFC and whole-string casing",
+        "status": "planned"
+      },
+      {
+        "id": "M3",
+        "title": "Code-point length and slicing",
+        "status": "planned"
+      }
+    ]
+  },
+  "history": [
+    {
+      "date": "2026-10-31",
+      "action": "Integrated R048 Pro Design",
+      "reason": "Add reusable preparation without another expression engine",
+      "status": "planned"
+    }
+  ],
+  "closure": null
+}

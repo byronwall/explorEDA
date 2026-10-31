@@ -1,0 +1,1200 @@
+{
+  "fixtureId": "TP-PROJECT-001",
+  "status": "proposed-contract-fixture; not executed against explorEDA",
+  "baseline": "ab4ecd2aa98f3fd1da11e8f552efdb269f4b65a6",
+  "schemaNote": "project is a complete structurally valid baseline AnalysisProject v1 object. Its text-family calls and structured error sidecars are proposed behavior and are not registered in the supplied baseline. Expected outputs below are hand specified.",
+  "encoding": {
+    "undefined": {
+      "tag": {
+        "$type": "undefined"
+      },
+      "meaning": "Actual JavaScript undefined. This tagged object appears only in expected data; it is not a source value or a product-saved format."
+    },
+    "null": "Actual JSON null. For this proposed family, a successful missing result has logical value null; CalculationManager exposes a missing field as undefined, while project calculateFrame preserves successful null.",
+    "membershipOrder": "Record-key arrays use the stated source order. Membership assertions compare exact sets; expectedRows additionally specifies display/evaluation order."
+  },
+  "project": {
+    "id": "text-preparation-project-fixture",
+    "version": 1,
+    "sources": [
+      {
+        "id": "records",
+        "name": "Records",
+        "glyph": "R",
+        "entityKey": "id",
+        "fields": [
+          {
+            "id": "id",
+            "name": "Record ID",
+            "type": "string"
+          },
+          {
+            "id": "code",
+            "name": "Raw code",
+            "type": "unknown"
+          }
+        ]
+      }
+    ],
+    "relationships": [],
+    "queries": [
+      {
+        "id": "prepared",
+        "name": "Prepared codes",
+        "glyph": "P",
+        "frameLabel": "records",
+        "steps": [
+          {
+            "id": "source-records",
+            "kind": "source",
+            "sourceId": "records"
+          },
+          {
+            "id": "clean-step",
+            "kind": "calculate",
+            "inputStepId": "source-records",
+            "fieldId": "clean",
+            "label": "Clean code",
+            "expression": "textTrim([\"records.code\"])"
+          },
+          {
+            "id": "label-step",
+            "kind": "calculate",
+            "inputStepId": "clean-step",
+            "fieldId": "label",
+            "label": "Analysis label",
+            "expression": "textConcat(\"Code \", [\"clean\"])"
+          }
+        ],
+        "outputStepId": "label-step"
+      },
+      {
+        "id": "prepared-counts",
+        "name": "Prepared code counts",
+        "glyph": "C",
+        "frameLabel": "records",
+        "steps": [
+          {
+            "id": "source-records",
+            "kind": "source",
+            "sourceId": "records"
+          },
+          {
+            "id": "clean-step",
+            "kind": "calculate",
+            "inputStepId": "source-records",
+            "fieldId": "clean",
+            "label": "Clean code",
+            "expression": "textTrim([\"records.code\"])"
+          },
+          {
+            "id": "label-step",
+            "kind": "calculate",
+            "inputStepId": "clean-step",
+            "fieldId": "label",
+            "label": "Analysis label",
+            "expression": "textConcat(\"Code \", [\"clean\"])"
+          },
+          {
+            "id": "only-values",
+            "kind": "filter",
+            "inputStepId": "label-step",
+            "fieldId": "clean",
+            "operator": "is-not-null"
+          },
+          {
+            "id": "by-clean",
+            "kind": "aggregate",
+            "inputStepId": "only-values",
+            "groupBy": [
+              "clean"
+            ],
+            "measures": [
+              {
+                "id": "records",
+                "label": "Records",
+                "operation": "count"
+              }
+            ]
+          }
+        ],
+        "outputStepId": "by-clean"
+      }
+    ]
+  },
+  "sourceTables": {
+    "records": [
+      {
+        "id": "r1",
+        "code": " A"
+      },
+      {
+        "id": "r2",
+        "code": "A "
+      },
+      {
+        "id": "r3",
+        "code": "A"
+      },
+      {
+        "id": "r4",
+        "code": "B"
+      },
+      {
+        "id": "r5",
+        "code": null
+      },
+      {
+        "id": "r6",
+        "code": 17
+      }
+    ]
+  },
+  "projectTextOptions": {
+    "paths": {
+      "records": "data/records.json"
+    }
+  },
+  "projectText": "project @text-preparation-project-fixture\n\nsource @records Records glyph=R key=id path=data/records.json {\n  field id \"Record ID\" string\n  field code \"Raw code\" unknown\n}\n\nquery @prepared \"Prepared codes\" glyph=P frame=records {\n  source @source-records records\n  calc @clean-step clean \"Clean code\" = textTrim([\"records.code\"])\n  calc @label-step label \"Analysis label\" = textConcat(\"Code \", [\"clean\"])\n}\n\nquery @prepared-counts \"Prepared code counts\" glyph=C frame=records {\n  source @source-records records\n  calc @clean-step clean \"Clean code\" = textTrim([\"records.code\"])\n  calc @label-step label \"Analysis label\" = textConcat(\"Code \", [\"clean\"])\n  filter @only-values clean not-null\n  aggregate @by-clean by=clean {\n    count @records\n  }\n}\n",
+  "folderDataText": "[\n  {\n    \"id\": \"r1\",\n    \"code\": \" A\"\n  },\n  {\n    \"id\": \"r2\",\n    \"code\": \"A \"\n  },\n  {\n    \"id\": \"r3\",\n    \"code\": \"A\"\n  },\n  {\n    \"id\": \"r4\",\n    \"code\": \"B\"\n  },\n  {\n    \"id\": \"r5\",\n    \"code\": null\n  },\n  {\n    \"id\": \"r6\",\n    \"code\": 17\n  }\n]\n",
+  "expected": {
+    "prepared": {
+      "rowCount": 6,
+      "sourceCount": 6,
+      "excludedCount": 0,
+      "rows": [
+        {
+          "recordId": "r1",
+          "key": "records:string:r1",
+          "sourceRows": [
+            {
+              "sourceId": "records",
+              "rowKey": "records:string:r1",
+              "entityKey": "r1"
+            }
+          ],
+          "contributors": [
+            {
+              "sourceId": "records",
+              "rowKey": "records:string:r1",
+              "entityKey": "r1"
+            }
+          ],
+          "values": {
+            "records.id": "r1",
+            "records.code": " A",
+            "clean": "A",
+            "label": "Code A"
+          },
+          "data": {
+            "records.id": "r1",
+            "records.code": " A",
+            "clean": "A",
+            "label": "Code A"
+          },
+          "rawSourceRecord": {
+            "id": "r1",
+            "code": " A"
+          },
+          "cleanOutcome": {
+            "status": "value",
+            "logicalResult": {
+              "success": true,
+              "value": "A"
+            },
+            "storage": {
+              "project": "A",
+              "manager": "A"
+            }
+          },
+          "labelOutcome": {
+            "status": "value",
+            "logicalResult": {
+              "success": true,
+              "value": "Code A"
+            },
+            "storage": {
+              "project": "Code A",
+              "manager": "Code A"
+            }
+          },
+          "cleanClassification": "changed"
+        },
+        {
+          "recordId": "r2",
+          "key": "records:string:r2",
+          "sourceRows": [
+            {
+              "sourceId": "records",
+              "rowKey": "records:string:r2",
+              "entityKey": "r2"
+            }
+          ],
+          "contributors": [
+            {
+              "sourceId": "records",
+              "rowKey": "records:string:r2",
+              "entityKey": "r2"
+            }
+          ],
+          "values": {
+            "records.id": "r2",
+            "records.code": "A ",
+            "clean": "A",
+            "label": "Code A"
+          },
+          "data": {
+            "records.id": "r2",
+            "records.code": "A ",
+            "clean": "A",
+            "label": "Code A"
+          },
+          "rawSourceRecord": {
+            "id": "r2",
+            "code": "A "
+          },
+          "cleanOutcome": {
+            "status": "value",
+            "logicalResult": {
+              "success": true,
+              "value": "A"
+            },
+            "storage": {
+              "project": "A",
+              "manager": "A"
+            }
+          },
+          "labelOutcome": {
+            "status": "value",
+            "logicalResult": {
+              "success": true,
+              "value": "Code A"
+            },
+            "storage": {
+              "project": "Code A",
+              "manager": "Code A"
+            }
+          },
+          "cleanClassification": "changed"
+        },
+        {
+          "recordId": "r3",
+          "key": "records:string:r3",
+          "sourceRows": [
+            {
+              "sourceId": "records",
+              "rowKey": "records:string:r3",
+              "entityKey": "r3"
+            }
+          ],
+          "contributors": [
+            {
+              "sourceId": "records",
+              "rowKey": "records:string:r3",
+              "entityKey": "r3"
+            }
+          ],
+          "values": {
+            "records.id": "r3",
+            "records.code": "A",
+            "clean": "A",
+            "label": "Code A"
+          },
+          "data": {
+            "records.id": "r3",
+            "records.code": "A",
+            "clean": "A",
+            "label": "Code A"
+          },
+          "rawSourceRecord": {
+            "id": "r3",
+            "code": "A"
+          },
+          "cleanOutcome": {
+            "status": "value",
+            "logicalResult": {
+              "success": true,
+              "value": "A"
+            },
+            "storage": {
+              "project": "A",
+              "manager": "A"
+            }
+          },
+          "labelOutcome": {
+            "status": "value",
+            "logicalResult": {
+              "success": true,
+              "value": "Code A"
+            },
+            "storage": {
+              "project": "Code A",
+              "manager": "Code A"
+            }
+          },
+          "cleanClassification": "unchanged"
+        },
+        {
+          "recordId": "r4",
+          "key": "records:string:r4",
+          "sourceRows": [
+            {
+              "sourceId": "records",
+              "rowKey": "records:string:r4",
+              "entityKey": "r4"
+            }
+          ],
+          "contributors": [
+            {
+              "sourceId": "records",
+              "rowKey": "records:string:r4",
+              "entityKey": "r4"
+            }
+          ],
+          "values": {
+            "records.id": "r4",
+            "records.code": "B",
+            "clean": "B",
+            "label": "Code B"
+          },
+          "data": {
+            "records.id": "r4",
+            "records.code": "B",
+            "clean": "B",
+            "label": "Code B"
+          },
+          "rawSourceRecord": {
+            "id": "r4",
+            "code": "B"
+          },
+          "cleanOutcome": {
+            "status": "value",
+            "logicalResult": {
+              "success": true,
+              "value": "B"
+            },
+            "storage": {
+              "project": "B",
+              "manager": "B"
+            }
+          },
+          "labelOutcome": {
+            "status": "value",
+            "logicalResult": {
+              "success": true,
+              "value": "Code B"
+            },
+            "storage": {
+              "project": "Code B",
+              "manager": "Code B"
+            }
+          },
+          "cleanClassification": "unchanged"
+        },
+        {
+          "recordId": "r5",
+          "key": "records:string:r5",
+          "sourceRows": [
+            {
+              "sourceId": "records",
+              "rowKey": "records:string:r5",
+              "entityKey": "r5"
+            }
+          ],
+          "contributors": [
+            {
+              "sourceId": "records",
+              "rowKey": "records:string:r5",
+              "entityKey": "r5"
+            }
+          ],
+          "values": {
+            "records.id": "r5",
+            "records.code": null,
+            "clean": null,
+            "label": null
+          },
+          "data": {
+            "records.id": "r5",
+            "records.code": null,
+            "clean": null,
+            "label": null
+          },
+          "rawSourceRecord": {
+            "id": "r5",
+            "code": null
+          },
+          "cleanOutcome": {
+            "status": "missing",
+            "logicalResult": {
+              "success": true,
+              "value": null
+            },
+            "storage": {
+              "project": null,
+              "manager": {
+                "$type": "undefined"
+              }
+            }
+          },
+          "labelOutcome": {
+            "status": "missing",
+            "logicalResult": {
+              "success": true,
+              "value": null
+            },
+            "storage": {
+              "project": null,
+              "manager": {
+                "$type": "undefined"
+              }
+            }
+          },
+          "cleanClassification": "missing"
+        },
+        {
+          "recordId": "r6",
+          "key": "records:string:r6",
+          "sourceRows": [
+            {
+              "sourceId": "records",
+              "rowKey": "records:string:r6",
+              "entityKey": "r6"
+            }
+          ],
+          "contributors": [
+            {
+              "sourceId": "records",
+              "rowKey": "records:string:r6",
+              "entityKey": "r6"
+            }
+          ],
+          "values": {
+            "records.id": "r6",
+            "records.code": 17,
+            "clean": {
+              "$type": "undefined"
+            },
+            "label": {
+              "$type": "undefined"
+            }
+          },
+          "data": {
+            "records.id": "r6",
+            "records.code": 17,
+            "clean": {
+              "$type": "undefined"
+            },
+            "label": {
+              "$type": "undefined"
+            }
+          },
+          "rawSourceRecord": {
+            "id": "r6",
+            "code": 17
+          },
+          "cleanOutcome": {
+            "status": "error",
+            "logicalResult": {
+              "success": false,
+              "value": null,
+              "errorCode": "TEXT_TYPE",
+              "error": "textTrim argument 1 must be text or missing; received number."
+            },
+            "storage": {
+              "project": {
+                "$type": "undefined"
+              },
+              "manager": {
+                "$type": "undefined"
+              }
+            }
+          },
+          "labelOutcome": {
+            "status": "error",
+            "logicalResult": {
+              "success": false,
+              "value": null,
+              "errorCode": "DEPENDENCY_ERROR",
+              "error": "Dependency \"clean\" failed: textTrim argument 1 must be text or missing; received number."
+            },
+            "dependencyFieldId": "clean",
+            "storage": {
+              "project": {
+                "$type": "undefined"
+              },
+              "manager": {
+                "$type": "undefined"
+              }
+            }
+          },
+          "cleanClassification": "error"
+        }
+      ],
+      "diagnosticAssertions": [
+        {
+          "code": "calculation-error",
+          "stepId": "clean-step",
+          "rowKey": "records:string:r6",
+          "fieldId": "clean",
+          "message": "textTrim argument 1 must be text or missing; received number.",
+          "structuredErrorCode": "TEXT_TYPE"
+        },
+        {
+          "code": "calculation-error",
+          "stepId": "label-step",
+          "rowKey": "records:string:r6",
+          "fieldId": "label",
+          "message": "Dependency \"clean\" failed: textTrim argument 1 must be text or missing; received number.",
+          "structuredErrorCode": "DEPENDENCY_ERROR"
+        }
+      ],
+      "structuredDiagnosticNote": "code=calculation-error is the existing AnalysisDiagnostic envelope. structuredErrorCode describes the proposed companion outcome; this fixture does not require changing the saved AnalysisProject schema."
+    },
+    "review": {
+      "scope": {
+        "queryId": "prepared",
+        "stepId": "clean-step",
+        "population": "all input rows to clean-step; no chart filters",
+        "inputCount": 6
+      },
+      "comparison": {
+        "inputFieldId": "records.code",
+        "outputFieldId": "clean",
+        "equality": "exact strings; no implicit normalization, locale collation, or case folding"
+      },
+      "counts": {
+        "input": 6,
+        "successfulValues": 4,
+        "changed": 2,
+        "unchanged": 2,
+        "missing": 1,
+        "error": 1,
+        "emptyText": 0
+      },
+      "recordKeys": {
+        "changed": [
+          "records:string:r1",
+          "records:string:r2"
+        ],
+        "unchanged": [
+          "records:string:r3",
+          "records:string:r4"
+        ],
+        "missing": [
+          "records:string:r5"
+        ],
+        "error": [
+          "records:string:r6"
+        ],
+        "successfulValues": [
+          "records:string:r1",
+          "records:string:r2",
+          "records:string:r3",
+          "records:string:r4"
+        ]
+      },
+      "collisions": {
+        "definition": "One successful output text from more than one distinct exact original input string. All member rows participate, including unchanged rows. Missing and failed outputs are excluded.",
+        "groupCount": 1,
+        "memberRecordCount": 3,
+        "changedMemberCount": 2,
+        "groups": [
+          {
+            "output": "A",
+            "distinctInputs": [
+              " A",
+              "A ",
+              "A"
+            ],
+            "distinctInputCount": 3,
+            "recordKeys": [
+              "records:string:r1",
+              "records:string:r2",
+              "records:string:r3"
+            ],
+            "sourceRows": [
+              {
+                "sourceId": "records",
+                "rowKey": "records:string:r1",
+                "entityKey": "r1"
+              },
+              {
+                "sourceId": "records",
+                "rowKey": "records:string:r2",
+                "entityKey": "r2"
+              },
+              {
+                "sourceId": "records",
+                "rowKey": "records:string:r3",
+                "entityKey": "r3"
+              }
+            ],
+            "changedRecordKeys": [
+              "records:string:r1",
+              "records:string:r2"
+            ],
+            "unchangedRecordKeys": [
+              "records:string:r3"
+            ]
+          }
+        ]
+      },
+      "compositionReview": {
+        "fieldId": "label",
+        "basis": "full tuple of immediate arguments [literal \"Code \", calculated clean]",
+        "changedCount": null,
+        "unchangedCount": null,
+        "reason": "Composition has no single before-value comparator. Show produced values and each input; changed/unchanged does not apply.",
+        "producedCount": 4,
+        "missingCount": 1,
+        "errorCount": 1,
+        "collisionGroupCount": 0,
+        "sameOutputGroups": [
+          {
+            "output": "Code A",
+            "recordKeys": [
+              "records:string:r1",
+              "records:string:r2",
+              "records:string:r3"
+            ],
+            "distinctImmediateInputTuples": [
+              [
+                "Code ",
+                "A"
+              ]
+            ],
+            "isNewTransformationCollision": false
+          }
+        ]
+      }
+    },
+    "preparedCounts": {
+      "groupCount": 2,
+      "includedRecordCount": 4,
+      "excludedByOnlyValues": [
+        "records:string:r5",
+        "records:string:r6"
+      ],
+      "rows": [
+        {
+          "key": "by-clean:[\"string:A\"]",
+          "values": {
+            "clean": "A",
+            "records": 3
+          },
+          "data": {
+            "clean": "A",
+            "records": 3
+          },
+          "sourceRows": [
+            {
+              "sourceId": "records",
+              "rowKey": "records:string:r1",
+              "entityKey": "r1"
+            },
+            {
+              "sourceId": "records",
+              "rowKey": "records:string:r2",
+              "entityKey": "r2"
+            },
+            {
+              "sourceId": "records",
+              "rowKey": "records:string:r3",
+              "entityKey": "r3"
+            }
+          ],
+          "contributors": [
+            {
+              "sourceId": "records",
+              "rowKey": "records:string:r1",
+              "entityKey": "r1"
+            },
+            {
+              "sourceId": "records",
+              "rowKey": "records:string:r2",
+              "entityKey": "r2"
+            },
+            {
+              "sourceId": "records",
+              "rowKey": "records:string:r3",
+              "entityKey": "r3"
+            }
+          ],
+          "measureContributors": {}
+        },
+        {
+          "key": "by-clean:[\"string:B\"]",
+          "values": {
+            "clean": "B",
+            "records": 1
+          },
+          "data": {
+            "clean": "B",
+            "records": 1
+          },
+          "sourceRows": [
+            {
+              "sourceId": "records",
+              "rowKey": "records:string:r4",
+              "entityKey": "r4"
+            }
+          ],
+          "contributors": [
+            {
+              "sourceId": "records",
+              "rowKey": "records:string:r4",
+              "entityKey": "r4"
+            }
+          ],
+          "measureContributors": {}
+        }
+      ],
+      "nullAndErrorNote": "is-not-null excludes both null and undefined before aggregation. Their distinct missing/error reasons remain available in preparation outcomes; the count result must not erase those reasons."
+    },
+    "originalEvidence": {
+      "sourceTablesDeepEqualInput": true,
+      "sourceRowOrderUnchanged": true,
+      "sourceEntityKeysUnchanged": true,
+      "sourceReferencesUnchangedByCalculateSteps": true,
+      "rawNonTextRecord": {
+        "id": "r6",
+        "code": 17
+      },
+      "rawMissingRecord": {
+        "id": "r5",
+        "code": null
+      }
+    }
+  },
+  "reordering": {
+    "sourceTables": {
+      "records": [
+        {
+          "id": "r6",
+          "code": 17
+        },
+        {
+          "id": "r3",
+          "code": "A"
+        },
+        {
+          "id": "r1",
+          "code": " A"
+        },
+        {
+          "id": "r5",
+          "code": null
+        },
+        {
+          "id": "r4",
+          "code": "B"
+        },
+        {
+          "id": "r2",
+          "code": "A "
+        }
+      ]
+    },
+    "expectedOutputRecordOrder": [
+      "r6",
+      "r3",
+      "r1",
+      "r5",
+      "r4",
+      "r2"
+    ],
+    "expectedOutputKeys": [
+      "records:string:r6",
+      "records:string:r3",
+      "records:string:r1",
+      "records:string:r5",
+      "records:string:r4",
+      "records:string:r2"
+    ],
+    "expectedCleanValues": [
+      {
+        "$type": "undefined"
+      },
+      "A",
+      "A",
+      null,
+      "B",
+      "A"
+    ],
+    "expectedLabels": [
+      {
+        "$type": "undefined"
+      },
+      "Code A",
+      "Code A",
+      null,
+      "Code B",
+      "Code A"
+    ],
+    "expectedOutcomeByRecordId": "Identical to expected.prepared.rows; compare by key, not index.",
+    "expectedReviewCounts": {
+      "input": 6,
+      "successfulValues": 4,
+      "changed": 2,
+      "unchanged": 2,
+      "missing": 1,
+      "error": 1,
+      "emptyText": 0
+    },
+    "expectedCollisionRecordKeys": [
+      "records:string:r3",
+      "records:string:r1",
+      "records:string:r2"
+    ],
+    "expectedGroupedRows": [
+      {
+        "key": "by-clean:[\"string:A\"]",
+        "values": {
+          "clean": "A",
+          "records": 3
+        },
+        "data": {
+          "clean": "A",
+          "records": 3
+        },
+        "sourceRows": [
+          {
+            "sourceId": "records",
+            "rowKey": "records:string:r3",
+            "entityKey": "r3"
+          },
+          {
+            "sourceId": "records",
+            "rowKey": "records:string:r1",
+            "entityKey": "r1"
+          },
+          {
+            "sourceId": "records",
+            "rowKey": "records:string:r2",
+            "entityKey": "r2"
+          }
+        ],
+        "contributors": [
+          {
+            "sourceId": "records",
+            "rowKey": "records:string:r3",
+            "entityKey": "r3"
+          },
+          {
+            "sourceId": "records",
+            "rowKey": "records:string:r1",
+            "entityKey": "r1"
+          },
+          {
+            "sourceId": "records",
+            "rowKey": "records:string:r2",
+            "entityKey": "r2"
+          }
+        ],
+        "measureContributors": {}
+      },
+      {
+        "key": "by-clean:[\"string:B\"]",
+        "values": {
+          "clean": "B",
+          "records": 1
+        },
+        "data": {
+          "clean": "B",
+          "records": 1
+        },
+        "sourceRows": [
+          {
+            "sourceId": "records",
+            "rowKey": "records:string:r4",
+            "entityKey": "r4"
+          }
+        ],
+        "contributors": [
+          {
+            "sourceId": "records",
+            "rowKey": "records:string:r4",
+            "entityKey": "r4"
+          }
+        ],
+        "measureContributors": {}
+      }
+    ],
+    "revisionExpectation": "A new immutable source array yields a new evaluation revision; all memberships are recomputed. Stable original keys continue to name the same records."
+  },
+  "refresh": {
+    "change": {
+      "recordId": "r2",
+      "fieldId": "code",
+      "before": "A ",
+      "after": "A"
+    },
+    "sourceTables": {
+      "records": [
+        {
+          "id": "r1",
+          "code": " A"
+        },
+        {
+          "id": "r2",
+          "code": "A"
+        },
+        {
+          "id": "r3",
+          "code": "A"
+        },
+        {
+          "id": "r4",
+          "code": "B"
+        },
+        {
+          "id": "r5",
+          "code": null
+        },
+        {
+          "id": "r6",
+          "code": 17
+        }
+      ]
+    },
+    "expectedOutputKeys": [
+      "records:string:r1",
+      "records:string:r2",
+      "records:string:r3",
+      "records:string:r4",
+      "records:string:r5",
+      "records:string:r6"
+    ],
+    "expectedCleanValues": [
+      "A",
+      "A",
+      "A",
+      "B",
+      null,
+      {
+        "$type": "undefined"
+      }
+    ],
+    "expectedLabels": [
+      "Code A",
+      "Code A",
+      "Code A",
+      "Code B",
+      null,
+      {
+        "$type": "undefined"
+      }
+    ],
+    "expectedReviewCounts": {
+      "input": 6,
+      "successfulValues": 4,
+      "changed": 1,
+      "unchanged": 3,
+      "missing": 1,
+      "error": 1,
+      "emptyText": 0
+    },
+    "expectedRecordKeys": {
+      "changed": [
+        "records:string:r1"
+      ],
+      "unchanged": [
+        "records:string:r2",
+        "records:string:r3",
+        "records:string:r4"
+      ],
+      "missing": [
+        "records:string:r5"
+      ],
+      "error": [
+        "records:string:r6"
+      ]
+    },
+    "expectedCollisions": {
+      "groupCount": 1,
+      "memberRecordCount": 3,
+      "groups": [
+        {
+          "output": "A",
+          "distinctInputs": [
+            " A",
+            "A"
+          ],
+          "distinctInputCount": 2,
+          "recordKeys": [
+            "records:string:r1",
+            "records:string:r2",
+            "records:string:r3"
+          ],
+          "changedRecordKeys": [
+            "records:string:r1"
+          ],
+          "unchangedRecordKeys": [
+            "records:string:r2",
+            "records:string:r3"
+          ]
+        }
+      ]
+    },
+    "expectedGroupedRows": [
+      {
+        "key": "by-clean:[\"string:A\"]",
+        "values": {
+          "clean": "A",
+          "records": 3
+        },
+        "data": {
+          "clean": "A",
+          "records": 3
+        },
+        "sourceRows": [
+          {
+            "sourceId": "records",
+            "rowKey": "records:string:r1",
+            "entityKey": "r1"
+          },
+          {
+            "sourceId": "records",
+            "rowKey": "records:string:r2",
+            "entityKey": "r2"
+          },
+          {
+            "sourceId": "records",
+            "rowKey": "records:string:r3",
+            "entityKey": "r3"
+          }
+        ],
+        "contributors": [
+          {
+            "sourceId": "records",
+            "rowKey": "records:string:r1",
+            "entityKey": "r1"
+          },
+          {
+            "sourceId": "records",
+            "rowKey": "records:string:r2",
+            "entityKey": "r2"
+          },
+          {
+            "sourceId": "records",
+            "rowKey": "records:string:r3",
+            "entityKey": "r3"
+          }
+        ],
+        "measureContributors": {}
+      },
+      {
+        "key": "by-clean:[\"string:B\"]",
+        "values": {
+          "clean": "B",
+          "records": 1
+        },
+        "data": {
+          "clean": "B",
+          "records": 1
+        },
+        "sourceRows": [
+          {
+            "sourceId": "records",
+            "rowKey": "records:string:r4",
+            "entityKey": "r4"
+          }
+        ],
+        "contributors": [
+          {
+            "sourceId": "records",
+            "rowKey": "records:string:r4",
+            "entityKey": "r4"
+          }
+        ],
+        "measureContributors": {}
+      }
+    ],
+    "baselineSourceTablesRemainUnmodified": true,
+    "reviewExpectation": "Recompute outcomes against the new raw revision. Do not preserve old changed memberships or old distinct-input counts."
+  },
+  "emptyTableDefinitionValidation": {
+    "sourceTables": {
+      "records": []
+    },
+    "fixtureApplication": "For each case, copy project, keep the prepared query through clean-step, replace that step expression with expression, and set outputStepId=clean-step. Validation is required before iterating rows.",
+    "cases": [
+      {
+        "id": "TP-PROJECT-EMPTY-VALID",
+        "expression": "textTrim([\"records.code\"])",
+        "expected": {
+          "definitionValid": true,
+          "rowCount": 0,
+          "rowErrorCount": 0,
+          "resultFieldType": "string"
+        }
+      },
+      {
+        "id": "TP-PROJECT-EMPTY-PATTERN",
+        "expression": "textPart([\"records.code\"], \"\", 0)",
+        "expected": {
+          "definitionValid": false,
+          "errorCode": "TEXT_EMPTY_PATTERN",
+          "message": "textPart argument 2 must not be empty.",
+          "rowCount": 0,
+          "rowErrorCount": 0
+        }
+      },
+      {
+        "id": "TP-PROJECT-EMPTY-NEGATIVE-INDEX",
+        "expression": "textPart([\"records.code\"], \"-\", -1)",
+        "expected": {
+          "definitionValid": false,
+          "errorCode": "TEXT_INDEX",
+          "message": "textPart argument 3 must be a non-negative safe integer number.",
+          "rowCount": 0,
+          "rowErrorCount": 0
+        }
+      },
+      {
+        "id": "TP-PROJECT-EMPTY-FRACTIONAL-INDEX",
+        "expression": "textPart([\"records.code\"], \"-\", 1.5)",
+        "expected": {
+          "definitionValid": false,
+          "errorCode": "TEXT_INDEX",
+          "message": "textPart argument 3 must be a non-negative safe integer number.",
+          "rowCount": 0,
+          "rowErrorCount": 0
+        }
+      },
+      {
+        "id": "TP-PROJECT-EMPTY-ARITY",
+        "expression": "textPart([\"records.code\"], \"-\")",
+        "expected": {
+          "definitionValid": false,
+          "message": "Invalid arguments. Use textPart(text, delimiter, index)",
+          "errorCode": null,
+          "errorCodeNote": "Retain the existing getFunction validation-error convention; no new stable code is claimed for this existing engine error.",
+          "rowCount": 0,
+          "rowErrorCount": 0
+        }
+      }
+    ]
+  },
+  "integrationAcceptance": {
+    "projectTextRoundTrip": "compileProjectText(projectText).project equals project; paths equals projectTextOptions.paths. Compare project objects, not exporter whitespace. This is proposed for implementation validation, not a performed compile.",
+    "folderReopen": "Load the project text and the data/records.json content from folderDataText, rerun prepared and prepared-counts, and obtain the exact expected rows, source references, diagnostics, and groups.",
+    "notebook": "Bind a notebook sheet to the prepared query and a count finding or grouped sheet to prepared-counts through existing query bindings. Expect six prepared rows, four successful labels, two successful-value groups (A=3, B=1), one missing input and one failed preparation with dependency cause. Retain original records for inspection. This is an integration acceptance statement, not an invented notebook syntax example.",
+    "export": "Export derived text alongside the original code and key. Provide an outcome/reason column or lossless structured export so missing r5 and error r6 are distinguishable; ordinary empty CSV fields alone cannot carry that distinction.",
+    "workerParity": "Run this same fixture through the actual main-thread and project-worker entry points; require identical values, outcome codes/messages, row keys, source references, and review sets."
+  },
+  "checksPerformed": [
+    "JSON serialization/deserialization",
+    "Hand-specified expectation assembly",
+    "Project v1 keys and query step references checked against supplied TypeScript definitions",
+    "Project text syntax checked by source inspection of supplied compiler; compiler itself was not executed"
+  ],
+  "checksNotPerformed": [
+    "explorEDA runtime execution",
+    "project text compile/export execution",
+    "folder loader execution",
+    "worker execution",
+    "browser or notebook rendering"
+  ]
+}

@@ -1,6 +1,29 @@
 # Text preparation Design run
 
-Phase: submitted; waiting for the scheduled collector. Follow-ups: 0/1.
+Phase: collected and integrated locally; PR opening pending. Follow-ups: 0/1.
+
+Collected October 31, 2026 after 21:44 UTC. Pro finished in 17m51s.
+Downloaded the existing text-preparation-design-2026-10-31.zip under direct human standing approval.
+Header click had no immediate file; bounded 15-second download-event recovery timed out.
+The actual Downloads file then appeared and was checked before extraction. No regeneration, Library upload,
+approval rejection, or downloaded program execution occurred.
+Safe unique paths, no symlinks, CRC, size, UTF-8, and all seven archive/disk comparisons pass.
+Both reports and recommendations were fully read. Both JSON companions and both supplied programs were inspected.
+Seven original files live unchanged under docs/intent/text-preparation/assets/pro-results/text-preparation-design-2026-10-31/originals/.
+The asset index is linked from the local plan and summary. ZIP and source packet remain ignored.
+
+Local plan: docs/intent/text-preparation/implementation-plan.md.
+Summary: docs/research/text-preparation-design-2026-10-31/README.md.
+Local TP-01–TP-25 dispositions are recorded. M1 completes clean/extract/compose and reuse; M2 NFC/casing; M3 code points.
+Resolved omitted worker, analysis/notebook, project host, and folder notebook adapters against current code.
+Refreshed origin/main remains ab4ecd2a. No follow-up was needed. No next topic is assigned.
+
+Independent locally authored checks pass 479 assertions without importing supplied or repository programs.
+They verify 130 successful direct cases, 155 code-point annotations, exact workflow memberships/collisions/reorder/refresh,
+and six-record project arithmetic/references. Forty direct errors, 19 engine cases, and reason/empty-input contracts were inspected.
+Pro's 323 assertions remain Pro-reported. No proposed feature acceptance is claimed.
+Existing baseline tests pass: 5 files/76 tests. Docs checks pass: 3 files/74 tests, existing React act warnings.
+No full pnpm check, changeset, feature/browser/persistence/worker/performance acceptance applies to this docs-only PR.
 
 Conversation: https://chatgpt.com/c/6ae6522c-cde4-83e8-a3b7-7efa15b64b0c. Never resubmit.
 Submitted October 31, 2026 about 20:40 UTC. Signed-in Chrome profile byroni.us and Byron Wall Pro account verified.
@@ -27,7 +50,7 @@ Validation: existing calculation engine/parser/trace/recode tests pass, 4 files 
 Docs tests pass, 3 files and 74 tests, with existing React act warnings.
 Installed dependencies used verify-deps-before-run=false; no dependency or lockfile changes.
 Only prompt and run documentation change. Full pnpm check and a changeset are not required.
-Plan, summary, dispositions, original assets, and PR remain pending Pro completion.
+Plan, summary, dispositions, and original assets are integrated; PR opening remains pending.
 No feature, browser, persistence, or performance acceptance is claimed.
 
 Mission: reusable text cleaning, extraction, and composition with explicit semantics and exact record review.
