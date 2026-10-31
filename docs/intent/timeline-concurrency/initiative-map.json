@@ -1,0 +1,39 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "Measure Timeline occupancy and exact conflicts",
+    "slug": "timeline-concurrency",
+    "scale": "feature",
+    "current_phase": "plan",
+    "last_updated": "2026-10-30",
+    "status": "planned",
+    "summary": "Finite-window concurrency, exact contributor records, lane summaries, and notebook interval findings.",
+    "next_action": "Review the Methods plan. Build dispositions do not approve implementation."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-30"
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "current",
+      "updated_at": "2026-10-30"
+    }
+  },
+  "sources": [
+    {
+      "id": "methods-result",
+      "type": "agent-authored-analysis",
+      "location": "assets/pro-results/timeline-concurrency-methods-2026-10-30/README.md",
+      "authority": "Pro proposals, reviewed locally; not runtime acceptance"
+    },
+    {
+      "id": "local-review",
+      "type": "repository",
+      "location": "../../research/timeline-concurrency-methods-2026-10-30/evidence.md",
+      "authority": "Current code inspection and independent fixture arithmetic"
+    }
+  ]
+}

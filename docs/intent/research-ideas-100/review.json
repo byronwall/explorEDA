@@ -73,8 +73,8 @@
   },
   {
     "id": "R013",
-    "disposition": "investigate",
-    "reason": "Investigate a bounded occupancy or overlap summary on top of the delivered interval timeline. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "disposition": "build",
+    "reason": "Methods complete October 30: local plan checks half-open occupancy, exact contributors, persistence, and notebook scope. Build is planning, not implementation approval.",
     "destination": "ideas/R013-timeline-concurrency.md"
   },
   {
