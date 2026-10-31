@@ -4,11 +4,13 @@
 - Category: Data quality and missingness
 - Priority: 48
 - Kind: follow-up
-- Status: candidate
+- Status: Design plan ready for review; implementation unstarted
 - Confidence: medium
 - Baseline: `9b16d78e3ed0742ed4d5858c1939fec9e758b510`
 
 ## Research brief
+
+The [October 31 Design run](../../../research/expected-records-design-2026-10-31/README.md) replaces the older demand gate below. Read the [reviewed expected-record plan](../../missingness-and-expected-records/expected-records-implementation-plan.md) for explicit tables, saved reconciliation, notebook findings, and bounded calendars. Build is a planning disposition. No feature shipped in this run.
 
 A missing cell belongs to an observation that exists; an absent observation needs an independent reason to expect it. The repository already models source keys and relationships, while `sourceReferences` and `lookupFrame` report missing or ambiguous identities. These are useful ingredients, not proof that an expected-record workflow exists. The current missingness intent explicitly requires an expected set. The research opportunity is deciding how little additional structure can make a defensible absence claim.
 

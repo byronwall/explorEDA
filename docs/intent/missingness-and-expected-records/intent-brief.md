@@ -8,6 +8,10 @@ last_updated: "2026-10-21"
 
 # Find missing values and missing observations
 
+## Expected-record Design plan, October 31
+
+The [expected-record plan](expected-records-implementation-plan.md) defines explicit expected/actual populations, grouped typed keys, exact evidence, and notebook coverage. It supersedes the older outside-demand expansion gate for this capability. Review the plan and [original assets](assets/pro-results/expected-records-design-2026-10-31/index.md). Implementation remains unstarted. Joint missingness is separate; this plan does not replace its open proposal.
+
 ## My read
 
 Analysts may need to see whether missing values cluster together, or discover records that should exist but do not. Current field profiles report missing counts. A missingness matrix could reveal combinations across fields and lead to the affected source records. Expected-record analysis is a later related task with a different denominator.

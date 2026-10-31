@@ -295,6 +295,12 @@
   },
   "history": [
     {
+      "date": "2026-10-31",
+      "action": "Planned explicit expected-record reconciliation through a Pro Design run.",
+      "evidence": "expected-records-implementation-plan.md and original assets under assets/pro-results/expected-records-design-2026-10-31.",
+      "reason": "Byron demand supersedes the historical demand gate. Implementation remains unstarted."
+    },
+    {
       "date": "2026-10-06",
       "action": "Created a new intent brief and local reference packet.",
       "reason": "Current request for actionable comparison gaps and future seeds.",
