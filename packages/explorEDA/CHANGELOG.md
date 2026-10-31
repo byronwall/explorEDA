@@ -1,5 +1,11 @@
 # exploreda
 
+## 0.3.1
+
+### Patch Changes
+
+- 65da58e: Notebook blocks now show errors when they keep their last valid results.
+
 ## 0.3.0
 
 ### Minor Changes
