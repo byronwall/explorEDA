@@ -18,7 +18,16 @@ The first experiment should contain an exact duplicate, conflicting attributes u
 
 This follow-up extends current-analysis-trust and the reusable-output discussion without treating diagnostics as absent. An inspection-only recommendation has little API cost; saved deduplication or composite-key definitions would add preparation semantics and require contributor preservation. Keep scope local to one source and one relationship. Confidence is medium because the implementation exposes a concrete stop point, but user demand for in-app repair is unknown. The investigation earns its place by seeking a small continuation from an existing correctness safeguard rather than weakening that safeguard.
 
-## References
+## Design result, October 31, 2026
+
+The [Design study](../../../research/duplicate-repair-design-2026-10-31/README.md) recommends a named reusable repaired source.
+Read the [implementation plan](../../duplicate-key-repair/implementation-plan.md) and
+[original results](../../duplicate-key-repair/assets/pro-results/README.md).
+Start with exact/manual whole-record choices, full evidence, relationship reuse, saving, and current notebook results.
+Add declared ordering next, then composite grain and endpoints together. This is a plan, not shipped behavior or implementation approval.
+The older outside-demand gate above is superseded by DIRECTION.md. R039 rank remains unchanged.
+
+### Original references
 
 - Repository: `packages/explorEDA/src/lib/analysis/sources.ts` — `sourceFromRows`. Source creation chooses unique keys or supplies row numbers.
 - Repository: `packages/explorEDA/src/lib/analysis/evaluateProject.ts` — `sourceReferences`, `lookupFrame`. Duplicate identities receive diagnostics and ambiguous lookups do not pick one match.

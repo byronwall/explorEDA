@@ -1,0 +1,11 @@
+flowchart TD
+    R["Raw source: every occurrence"] --> V["Shared source resolver"]
+    D["Repair definition and accepted run"] --> V
+    A["Immutable original snapshot and decisions"] --> V
+    V --> S{"Source ready?"}
+    S -->|Yes| E["Existing query evaluator"]
+    S -->|No| B["Unavailable with reviewable evidence"]
+    E --> Q["Source, lookup, and expansion"]
+    Q --> N["Charts and notebook findings"]
+    N --> T["Logical entity → original occurrence roles"]
+    A --> T
