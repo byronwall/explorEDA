@@ -191,8 +191,12 @@ function Findings({
         id="findings-heading"
         className="text-sm font-semibold text-muted-foreground"
       >
-        What the data shows
+        Published findings
       </h2>
+      <p className="mt-1 text-sm text-muted-foreground">
+        Calculated from the published data; chart selections do not change these
+        findings.
+      </p>
       <ul className="mt-2 space-y-1.5 text-base leading-relaxed">
         {loaded.findings.map((finding, index) => (
           <li
