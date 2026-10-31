@@ -1,6 +1,29 @@
 # Duplicate-key repair Design run
 
-Phase: submitted. Follow-ups: 0/1.
+Phase: integrated; checks and PR opening pending. Follow-ups: 0/1.
+
+Collected October 31, 2026 after 15:46 UTC. Pro finished in 27m6s.
+Downloaded the existing ZIP through its linked preview under direct human standing approval.
+Header click had no immediate local file. A bounded 15-second recovery event timed out, then the actual ZIP appeared.
+Verified it before further action. No regeneration, Library upload, approval rejection, or downloaded program execution.
+Safe unique paths, no symlinks, CRC, size, UTF-8, and all nine original archive/disk comparisons pass.
+Original reports, recommendations, guide, fixtures, verifier, contracts, SVG XML, and Mermaid were read or inspected.
+All nine originals live under docs/intent/duplicate-key-repair/assets/pro-results/duplicate-repair-design-2026-10-31/duplicate-key-repair/.
+The original asset index is linked from the local plan and summary. ZIP and input packet remain ignored.
+
+Local plan: docs/intent/duplicate-key-repair/implementation-plan.md.
+Summary: docs/research/duplicate-repair-design-2026-10-31/README.md.
+All 25 recommendations have local dispositions. M1 complete exact/manual reuse; M2 ordering; M3 composite grain and relationships.
+Deferred unrequested legacy adapters and automatic relationship-chain repair.
+Corrected DR-F06: explicit exclusions retain valid zero/false as two rows. A separate invalid-only case must test zero.
+Checked source-resolution, entity identity/reduction, downstream origins, worker guards, current notebook binding, and failed-write behavior.
+Refreshed origin/main remains ab4ecd2a. All open PRs through #580 were checked. No new topic selected.
+
+Independent locally authored fixture checks pass 236 assertions over 21 repair variants and seven relationship vectors.
+All 16 cases and 25 snapshot structures were inspected. No supplied or repository programs were imported by those checks.
+Pro's full verifier and TypeScript checks remain Pro-reported. No production acceptance is claimed.
+Existing baseline tests pass again: 3 files/13 tests. Docs checks pass again: 3 files/74 tests, existing React act warnings.
+Authored formatting, local links, whitespace, PR author checks, and committed inventory verification follow staging.
 
 Conversation: https://chatgpt.com/c/6ae5fdfa-7aa0-83e9-b5d6-9603c7e92c6b. Never resubmit.
 Submitted October 31, 2026 about 14:41 UTC. Chrome byroni.us and Byron Wall Pro account verified.
@@ -25,8 +48,8 @@ Validation: baseline evaluator/entity-grain/source-identity tests pass, 3 files 
 Docs checks pass, 3 files and 74 tests, with existing React act warnings.
 Installed dependencies used verify-deps-before-run=false; no dependency or lockfile change.
 This checkpoint changes only prompt and run documentation. No full pnpm check or changeset is required.
-Plan, summary, dispositions, original-result inventory, and PR remain pending Pro completion.
-No preparation-only PR is open. No feature, browser, persistence, or performance acceptance is claimed.
+Preparation was docs-only. Plan, summary, dispositions, and original assets are now integrated; final PR checks remain.
+No preparation-only PR was opened. No feature, browser, persistence, or performance acceptance is claimed.
 
 Mission: explicit duplicate repair with reusable relationship targets and original-record evidence.
 Repository: https://github.com/byronwall/explorEDA

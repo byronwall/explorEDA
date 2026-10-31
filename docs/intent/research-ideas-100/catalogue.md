@@ -1,5 +1,8 @@
 # Research catalogue
 
+R039 [duplicate-key repair Design](../../research/duplicate-repair-design-2026-10-31/README.md) adds a reusable-source implementation plan.
+It preserves exact originals and separates valid repeated events from conflicting entity records. Rank remains unchanged.
+
 Design follow-up: [selections and live findings through refresh](../../research/selection-refresh-design-2026-10-29/README.md)
 adds a keyed-refresh capability plan to R077's earlier audit. It does not change catalogue rank or set the next topic.
 

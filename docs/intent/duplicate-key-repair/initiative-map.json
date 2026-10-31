@@ -1,0 +1,39 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "Repair duplicate entity keys without losing original records",
+    "slug": "duplicate-key-repair",
+    "scale": "feature",
+    "current_phase": "plan",
+    "last_updated": "2026-10-31",
+    "status": "planned",
+    "summary": "Reuse explicit whole-record repairs in relationships and notebooks with original evidence.",
+    "next_action": "Review the exact/manual source-resolution and persistence milestone before authorizing implementation."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-10-31"
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "current",
+      "updated_at": "2026-10-31"
+    }
+  },
+  "sources": [
+    {
+      "id": "pro-design",
+      "type": "agent-authored-analysis",
+      "location": "assets/pro-results/README.md",
+      "authority": "Research proposals; not implementation approval"
+    },
+    {
+      "id": "local-review",
+      "type": "agent-authored-analysis",
+      "location": "../../research/duplicate-repair-design-2026-10-31/evidence.md",
+      "authority": "Current-code checks and independent fixture anchors; not feature acceptance"
+    }
+  ]
+}

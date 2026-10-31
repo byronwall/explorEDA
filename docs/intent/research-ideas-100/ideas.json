@@ -1515,7 +1515,7 @@
     "priority": 53,
     "research_kind": "follow-up",
     "status": "candidate",
-    "summary": "Compare alternate keys, grouped duplicate inspection, and explicit deduplication while preserving evidence about distinct observations.",
+    "summary": "Design complete: plan explicit whole-record repair as a reusable source, with preserved originals, relationship targets, and notebook evidence.",
     "research_question": "Which duplicate-key repair path can restore a useful relationship without silently choosing or discarding source rows?",
     "why_now": "The evaluator already detects duplicate identities and refuses ambiguous lookups, so the next question is guided repair.",
     "repo_evidence": [

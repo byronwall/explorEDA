@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="830" viewBox="0 0 1180 830" role="img" aria-labelledby="title desc">
+  <title id="title">Reusable duplicate repair with complete original evidence</title>
+  <desc id="desc">Raw input, a saved repair definition, and an immutable accepted evidence archive feed one shared source resolver. Ready rows enter the existing query evaluator and notebooks; unresolved repairs remain unavailable. Traces distinguish logical entities from represented and excluded originals.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8" fill="none" stroke="#53677d" stroke-width="1.5"/></marker>
+    <marker id="evidence-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8" fill="none" stroke="#0c7a74" stroke-width="1.5"/></marker>
+    <style>
+      text{font-family:Inter,Arial,sans-serif;fill:#182c43}
+      .heading{font-size:29px;font-weight:700}
+      .sub{font-size:17px;fill:#53677d}
+      .box-title{font-size:20px;font-weight:700}
+      .body{font-size:16px;fill:#40556c}
+      .small{font-size:14px;fill:#53677d}
+      .card{fill:#fff;stroke:#cbd5df;stroke-width:1.5;rx:12}
+      .edge{fill:none;stroke:#53677d;stroke-width:2;marker-end:url(#arrow)}
+      .evidence{fill:none;stroke:#0c7a74;stroke-width:2;stroke-dasharray:6 5;marker-end:url(#evidence-arrow)}
+    </style>
+  </defs>
+  <rect width="1180" height="830" fill="#f7f9fc"/>
+  <text x="40" y="48" class="heading">Reusable duplicate repair</text>
+  <text x="40" y="78" class="sub">One accepted source interpretation, with every original occurrence accounted for</text>
+
+  <rect x="40" y="116" width="320" height="126" class="card"/>
+  <text x="60" y="149" class="box-title">Raw source</text>
+  <text x="60" y="179" class="body"><tspan x="60">All loaded records and fields</tspan><tspan x="60" dy="24">Example: 8 customer occurrences</tspan></text>
+  <text x="60" y="226" class="small">Read-only input</text>
+
+  <rect x="430" y="116" width="320" height="126" class="card"/>
+  <text x="450" y="149" class="box-title">Saved repair definition</text>
+  <text x="450" y="179" class="body"><tspan x="450">Entity key and explicit policy</tspan><tspan x="450" dy="24">Prepared source + accepted run ID</tspan></text>
+  <text x="450" y="226" class="small">Project JSON or project text</text>
+
+  <rect x="820" y="116" width="320" height="126" rx="12" fill="#edf8f6" stroke="#70b0a8" stroke-width="1.5"/>
+  <text x="840" y="149" class="box-title">Original evidence archive</text>
+  <text x="840" y="179" class="body"><tspan x="840">Full input snapshots and decisions</tspan><tspan x="840" dy="24">Every original and its decision</tspan></text>
+  <text x="840" y="226" class="small">Old records survive accepted refreshes</text>
+
+  <path d="M200 242 V268 H430 V290" class="edge"/>
+  <path d="M590 242 V290" class="edge"/>
+  <path d="M980 242 V268 H750 V290" class="edge"/>
+  <rect x="350" y="290" width="480" height="110" class="card"/>
+  <text x="375" y="325" class="box-title">Shared source resolver</text>
+  <text x="375" y="355" class="body"><tspan x="375">Checks source, rule, evidence, and refresh state</tspan><tspan x="375" dy="24">One path for source reads and relationship targets</tspan></text>
+
+  <path d="M350 345 H170 V450" class="edge"/>
+  <text x="181" y="423" class="small">Unresolved / stale / missing</text>
+  <rect x="40" y="450" width="260" height="126" rx="12" fill="#fff6e9" stroke="#d1ad72" stroke-width="1.5"/>
+  <text x="60" y="483" class="box-title">Unavailable</text>
+  <text x="60" y="512" class="body"><tspan x="60">Review the exact evidence</tspan><tspan x="60" dy="24">No current count or metric</tspan><tspan x="60" dy="24">Empty is a separate state</tspan></text>
+
+  <path d="M590 400 V450" class="edge"/>
+  <text x="606" y="430" class="small">Ready</text>
+  <rect x="350" y="450" width="480" height="126" rx="12" fill="#edf8f6" stroke="#70b0a8" stroke-width="1.5"/>
+  <text x="375" y="483" class="box-title">Existing query evaluator</text>
+  <text x="375" y="512" class="body"><tspan x="375">Source → lookup / expand → calculate / aggregate</tspan><tspan x="375" dy="24">4 logical customers, representing 5 originals</tspan><tspan x="375" dy="24">3 excluded originals remain in the archive</tspan></text>
+
+  <path d="M590 576 V640" class="edge"/>
+  <rect x="350" y="640" width="480" height="114" class="card"/>
+  <text x="375" y="674" class="box-title">Charts and notebook findings</text>
+  <text x="375" y="704" class="body"><tspan x="375">Current values, scope, readiness, and row identity</tspan><tspan x="375" dy="24">Traces follow the accepted run</tspan></text>
+
+  <path d="M980 242 V640" class="evidence"/>
+  <path d="M830 698 H862" class="evidence"/>
+  <rect x="870" y="640" width="270" height="114" rx="12" fill="#edf8f6" stroke="#70b0a8" stroke-width="1.5"/>
+  <text x="890" y="674" class="box-title">Original records</text>
+  <text x="890" y="704" class="body"><tspan x="890">Snapshot + ordinal + role</tspan><tspan x="890" dy="24">No positional remapping</tspan></text>
+
+  <text x="40" y="801" class="small">Solid arrows: execution dependencies. Dashed arrows: evidence navigation. Diagram describes the proposed design.</text>
+</svg>

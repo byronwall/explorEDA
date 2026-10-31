@@ -1,0 +1,4730 @@
+{
+  "format": "exploreda-duplicate-repair-fixtures",
+  "version": 1,
+  "baseline": "ab4ecd2aa98f3fd1da11e8f552efdb269f4b65a6",
+  "status": "Proposed design expectations; no production repair evaluator was executed.",
+  "contract": {
+    "refAliases": "A row ref such as c1 is a test alias only. Resolve it through the named snapshot to (sourceId,snapshotId,zeroBasedOrdinal). Never persist the alias or infer cross-refresh occurrence identity from it.",
+    "scalarTags": "A one-property object {$scalar: NAME} represents the runtime scalar undefined, NaN, Infinity, -Infinity, or -0. It is fixture notation, not a proposed unescaped production JSON codec.",
+    "keys": "Ordered tuples of actual scalar values. Finite numbers, booleans, and nonblank strings only. No coercion or trim of nonblank text. -0 and +0 share key identity; raw row equality distinguishes them.",
+    "exact": "All data fields and own-property presence, preserving scalar type, undefined/null/absence, nonfinite atoms, and signed zero. Positively marked generated source-row-number metadata alone is omitted from equality and prepared output, but preserved in original archives. A mere field name never excludes it. Test alias refs do not participate.",
+    "winnerRefs": "All exact original copies of the selected whole-row value class. No copy is semantically privileged.",
+    "representedRefs": "Equal to winnerRefs in this bounded design. Losing conflicting rows are excluded, not represented as if their values survived.",
+    "excluded": "Every intentionally excluded original has an explicit reason; unresolved originals remain separately listed.",
+    "blocked": "previewOutputs are inspection candidates only. usableOutputCount=null means no current usable prepared target, not an empty table and not a partial subset.",
+    "relationshipCounts": "matched includes ambiguous; expandedExtra sums max(matchCount-1,0). innerRows sums matchCount; leftRows adds one row for every unmatched input.",
+    "refresh": "Reorder-only with the same semantic multiset stays ready and retains its accepted evidence snapshot. Any content change leaves current dependent results unavailable until an accepted refresh. Prior values and every prior original are retained as labeled historical evidence.",
+    "expectations": "Expected winners, memberships, counts, and aggregates were hand-enumerated. verify_fixtures.py checks internal invariants and arithmetic; it is not the proposed repair implementation."
+  },
+  "snapshots": {
+    "customers_s0": {
+      "sourceId": "customers",
+      "snapshotId": "customers-s0",
+      "fields": [
+        "id",
+        "name",
+        "credit",
+        "updated"
+      ],
+      "rows": [
+        {
+          "ref": "c1",
+          "values": {
+            "id": "A",
+            "name": "Aster",
+            "credit": 10,
+            "updated": "2026-01-01"
+          }
+        },
+        {
+          "ref": "c2",
+          "values": {
+            "id": "A",
+            "name": "Aster",
+            "credit": 10,
+            "updated": "2026-01-01"
+          }
+        },
+        {
+          "ref": "c3",
+          "values": {
+            "id": "B",
+            "name": "Birch",
+            "credit": 20,
+            "updated": "2026-01-01"
+          }
+        },
+        {
+          "ref": "c4",
+          "values": {
+            "id": "B",
+            "name": "Birch",
+            "credit": 25,
+            "updated": "2026-02-01"
+          }
+        },
+        {
+          "ref": "c5",
+          "values": {
+            "id": "C",
+            "name": "Cedar",
+            "credit": 30,
+            "updated": "2026-03-01"
+          }
+        },
+        {
+          "ref": "c6",
+          "values": {
+            "id": "C",
+            "name": "Cedar",
+            "credit": 35,
+            "updated": "2026-03-01"
+          }
+        },
+        {
+          "ref": "c7",
+          "values": {
+            "id": "E",
+            "name": "Elm",
+            "credit": 50,
+            "updated": "2026-04-01"
+          }
+        },
+        {
+          "ref": "c8",
+          "values": {
+            "id": null,
+            "name": "Unknown",
+            "credit": 60,
+            "updated": "2026-04-01"
+          }
+        }
+      ]
+    },
+    "orders_s0": {
+      "sourceId": "orders",
+      "snapshotId": "orders-s0",
+      "fields": [
+        "id",
+        "customer",
+        "amount"
+      ],
+      "rows": [
+        {
+          "ref": "o1",
+          "values": {
+            "id": "O1",
+            "customer": "A",
+            "amount": 7
+          }
+        },
+        {
+          "ref": "o2",
+          "values": {
+            "id": "O2",
+            "customer": "A",
+            "amount": 11
+          }
+        },
+        {
+          "ref": "o3",
+          "values": {
+            "id": "O3",
+            "customer": "B",
+            "amount": 13
+          }
+        },
+        {
+          "ref": "o4",
+          "values": {
+            "id": "O4",
+            "customer": "C",
+            "amount": 17
+          }
+        },
+        {
+          "ref": "o5",
+          "values": {
+            "id": "O5",
+            "customer": "MISSING",
+            "amount": 19
+          }
+        },
+        {
+          "ref": "o6",
+          "values": {
+            "id": "O6",
+            "customer": null,
+            "amount": 23
+          }
+        }
+      ]
+    },
+    "selected_fields_s0": {
+      "sourceId": "contacts",
+      "snapshotId": "contacts-s0",
+      "fields": [
+        "id",
+        "name",
+        "email",
+        "credit"
+      ],
+      "rows": [
+        {
+          "ref": "x1",
+          "values": {
+            "id": "A",
+            "name": "Ada",
+            "email": "old",
+            "credit": 5
+          }
+        },
+        {
+          "ref": "x2",
+          "values": {
+            "id": "A",
+            "name": "Ada",
+            "email": "new",
+            "credit": 5
+          }
+        },
+        {
+          "ref": "x3",
+          "values": {
+            "id": "A",
+            "name": "Ada",
+            "email": "new",
+            "credit": 5
+          }
+        }
+      ]
+    },
+    "events_s0": {
+      "sourceId": "events",
+      "snapshotId": "events-s0",
+      "fields": [
+        "eventId",
+        "customer",
+        "at",
+        "amount"
+      ],
+      "rows": [
+        {
+          "ref": "e1",
+          "values": {
+            "eventId": "E1",
+            "customer": "A",
+            "at": "2026-01-01",
+            "amount": 10
+          }
+        },
+        {
+          "ref": "e2",
+          "values": {
+            "eventId": "E2",
+            "customer": "A",
+            "at": "2026-01-01",
+            "amount": 10
+          }
+        }
+      ]
+    },
+    "event_parent_s0": {
+      "sourceId": "entities",
+      "snapshotId": "entity-s0",
+      "fields": [
+        "id"
+      ],
+      "rows": [
+        {
+          "ref": "p1",
+          "values": {
+            "id": "A"
+          }
+        }
+      ]
+    },
+    "typed_s0": {
+      "sourceId": "typed",
+      "snapshotId": "typed-s0",
+      "fields": [
+        "key",
+        "label"
+      ],
+      "rows": [
+        {
+          "ref": "t1",
+          "values": {
+            "key": 1,
+            "label": "number one"
+          }
+        },
+        {
+          "ref": "t2",
+          "values": {
+            "key": "1",
+            "label": "text one"
+          }
+        },
+        {
+          "ref": "t3",
+          "values": {
+            "key": true,
+            "label": "boolean true"
+          }
+        },
+        {
+          "ref": "t4",
+          "values": {
+            "key": "true",
+            "label": "text true"
+          }
+        },
+        {
+          "ref": "t5",
+          "values": {
+            "key": 0,
+            "label": "number zero"
+          }
+        },
+        {
+          "ref": "t6",
+          "values": {
+            "key": false,
+            "label": "boolean false"
+          }
+        },
+        {
+          "ref": "t7",
+          "values": {
+            "key": "001",
+            "label": "leading zeros"
+          }
+        },
+        {
+          "ref": "t8",
+          "values": {
+            "key": "A",
+            "label": "plain A"
+          }
+        },
+        {
+          "ref": "t9",
+          "values": {
+            "key": " A ",
+            "label": "spaced A"
+          }
+        },
+        {
+          "ref": "t10",
+          "values": {
+            "key": "NaN",
+            "label": "text NaN"
+          }
+        },
+        {
+          "ref": "t11",
+          "values": {
+            "key": "Infinity",
+            "label": "text Infinity"
+          }
+        }
+      ]
+    },
+    "composite_s0": {
+      "sourceId": "accounts",
+      "snapshotId": "accounts-s0",
+      "fields": [
+        "tenant",
+        "id",
+        "value"
+      ],
+      "rows": [
+        {
+          "ref": "k1",
+          "values": {
+            "tenant": "a|b",
+            "id": "c",
+            "value": 11
+          }
+        },
+        {
+          "ref": "k2",
+          "values": {
+            "tenant": "a",
+            "id": "b|c",
+            "value": 22
+          }
+        },
+        {
+          "ref": "k3",
+          "values": {
+            "tenant": 1,
+            "id": "x",
+            "value": 33
+          }
+        },
+        {
+          "ref": "k4",
+          "values": {
+            "tenant": "1",
+            "id": "x",
+            "value": 44
+          }
+        },
+        {
+          "ref": "k5",
+          "values": {
+            "tenant": "x",
+            "id": 1,
+            "value": 55
+          }
+        }
+      ]
+    },
+    "missing_s0": {
+      "sourceId": "missing",
+      "snapshotId": "missing-s0",
+      "fields": [
+        "key",
+        "value"
+      ],
+      "rows": [
+        {
+          "ref": "m1",
+          "values": {
+            "key": null,
+            "value": 1
+          }
+        },
+        {
+          "ref": "m2",
+          "values": {
+            "key": {
+              "$scalar": "undefined"
+            },
+            "value": 2
+          }
+        },
+        {
+          "ref": "m3",
+          "values": {
+            "value": 3
+          }
+        },
+        {
+          "ref": "m4",
+          "values": {
+            "key": "",
+            "value": 4
+          }
+        },
+        {
+          "ref": "m5",
+          "values": {
+            "key": " \t",
+            "value": 5
+          }
+        },
+        {
+          "ref": "m6",
+          "values": {
+            "key": {
+              "$scalar": "NaN"
+            },
+            "value": 6
+          }
+        },
+        {
+          "ref": "m7",
+          "values": {
+            "key": {
+              "$scalar": "Infinity"
+            },
+            "value": 7
+          }
+        },
+        {
+          "ref": "m8",
+          "values": {
+            "key": {
+              "$scalar": "-Infinity"
+            },
+            "value": 8
+          }
+        },
+        {
+          "ref": "m9",
+          "values": {
+            "key": 0,
+            "value": 9
+          }
+        },
+        {
+          "ref": "m10",
+          "values": {
+            "key": false,
+            "value": 10
+          }
+        }
+      ]
+    },
+    "ordered_s0": {
+      "sourceId": "versions",
+      "snapshotId": "versions-s0",
+      "fields": [
+        "id",
+        "at",
+        "value"
+      ],
+      "rows": [
+        {
+          "ref": "v1",
+          "values": {
+            "id": "A",
+            "at": "2026-01-01",
+            "value": 10
+          }
+        },
+        {
+          "ref": "v2",
+          "values": {
+            "id": "A",
+            "at": "2026-02-01",
+            "value": 20
+          }
+        },
+        {
+          "ref": "v3",
+          "values": {
+            "id": "B",
+            "at": "2026-01-01T00:00:00Z",
+            "value": 30
+          }
+        },
+        {
+          "ref": "v4",
+          "values": {
+            "id": "B",
+            "at": "2025-12-31T19:00:00-05:00",
+            "value": 40
+          }
+        },
+        {
+          "ref": "v5",
+          "values": {
+            "id": "C",
+            "at": "2026-01-01",
+            "value": 50
+          }
+        },
+        {
+          "ref": "v6",
+          "values": {
+            "id": "C",
+            "at": "2026-01-01",
+            "value": 50
+          }
+        }
+      ]
+    },
+    "invalid_order_s0": {
+      "sourceId": "ranking",
+      "snapshotId": "ranking-s0",
+      "fields": [
+        "id",
+        "rank",
+        "value"
+      ],
+      "rows": [
+        {
+          "ref": "n1",
+          "values": {
+            "id": "A",
+            "rank": "2",
+            "value": 2
+          }
+        },
+        {
+          "ref": "n2",
+          "values": {
+            "id": "A",
+            "rank": "10",
+            "value": 10
+          }
+        },
+        {
+          "ref": "n3",
+          "values": {
+            "id": "B",
+            "rank": 2,
+            "value": 20
+          }
+        },
+        {
+          "ref": "n4",
+          "values": {
+            "id": "B",
+            "rank": "2",
+            "value": 21
+          }
+        },
+        {
+          "ref": "n5",
+          "values": {
+            "id": "C",
+            "rank": "0x10",
+            "value": 30
+          }
+        },
+        {
+          "ref": "n6",
+          "values": {
+            "id": "C",
+            "rank": 3,
+            "value": 31
+          }
+        },
+        {
+          "ref": "n7",
+          "values": {
+            "id": "D",
+            "rank": {
+              "$scalar": "Infinity"
+            },
+            "value": 40
+          }
+        },
+        {
+          "ref": "n8",
+          "values": {
+            "id": "D",
+            "rank": 4,
+            "value": 41
+          }
+        }
+      ]
+    },
+    "alternate_key_s0": {
+      "sourceId": "alternate",
+      "snapshotId": "alternate-s0",
+      "fields": [
+        "id",
+        "email"
+      ],
+      "rows": [
+        {
+          "ref": "z1",
+          "values": {
+            "id": "A",
+            "email": "same"
+          }
+        },
+        {
+          "ref": "z2",
+          "values": {
+            "id": "B",
+            "email": "same"
+          }
+        }
+      ]
+    },
+    "alternate_input_s0": {
+      "sourceId": "requests",
+      "snapshotId": "requests-s0",
+      "fields": [
+        "email"
+      ],
+      "rows": [
+        {
+          "ref": "zq1",
+          "values": {
+            "email": "same"
+          }
+        }
+      ]
+    },
+    "witnesses_conflict_s0": {
+      "sourceId": "witnesses",
+      "snapshotId": "witnesses-conflict-s0",
+      "fields": [
+        "id",
+        "entity",
+        "amount"
+      ],
+      "rows": [
+        {
+          "ref": "w1",
+          "values": {
+            "id": "x1",
+            "entity": "x",
+            "amount": 10
+          }
+        },
+        {
+          "ref": "w2",
+          "values": {
+            "id": "x2",
+            "entity": "x",
+            "amount": 20
+          }
+        },
+        {
+          "ref": "w3",
+          "values": {
+            "id": "y1",
+            "entity": "y",
+            "amount": 5
+          }
+        }
+      ]
+    },
+    "witnesses_equal_s0": {
+      "sourceId": "witnesses",
+      "snapshotId": "witnesses-equal-s0",
+      "fields": [
+        "id",
+        "entity",
+        "amount"
+      ],
+      "rows": [
+        {
+          "ref": "w1",
+          "values": {
+            "id": "x1",
+            "entity": "x",
+            "amount": 10
+          }
+        },
+        {
+          "ref": "w2",
+          "values": {
+            "id": "x2",
+            "entity": "x",
+            "amount": 10
+          }
+        },
+        {
+          "ref": "w3",
+          "values": {
+            "id": "y1",
+            "entity": "y",
+            "amount": 5
+          }
+        }
+      ]
+    },
+    "equality_s0": {
+      "sourceId": "equality",
+      "snapshotId": "equality-s0",
+      "fields": [
+        "id",
+        "value"
+      ],
+      "rows": [
+        {
+          "ref": "q1",
+          "values": {
+            "id": "A",
+            "value": null
+          }
+        },
+        {
+          "ref": "q2",
+          "values": {
+            "id": "A",
+            "value": {
+              "$scalar": "undefined"
+            }
+          }
+        },
+        {
+          "ref": "q3",
+          "values": {
+            "id": "A"
+          }
+        },
+        {
+          "ref": "q4",
+          "values": {
+            "id": "B",
+            "value": 2
+          }
+        },
+        {
+          "ref": "q5",
+          "values": {
+            "id": "B",
+            "value": "2"
+          }
+        },
+        {
+          "ref": "q6",
+          "values": {
+            "id": "C",
+            "value": {
+              "$scalar": "-0"
+            }
+          }
+        },
+        {
+          "ref": "q7",
+          "values": {
+            "id": "C",
+            "value": 0
+          }
+        },
+        {
+          "ref": "q8",
+          "values": {
+            "id": "D",
+            "value": {
+              "$scalar": "NaN"
+            }
+          }
+        },
+        {
+          "ref": "q9",
+          "values": {
+            "id": "D",
+            "value": {
+              "$scalar": "NaN"
+            }
+          }
+        }
+      ]
+    },
+    "row_number_s0": {
+      "sourceId": "numbered",
+      "snapshotId": "numbered-s0",
+      "fields": [
+        "id",
+        "row_number",
+        "value"
+      ],
+      "rows": [
+        {
+          "ref": "r1",
+          "values": {
+            "id": "A",
+            "row_number": 1,
+            "value": 10
+          }
+        },
+        {
+          "ref": "r2",
+          "values": {
+            "id": "A",
+            "row_number": 2,
+            "value": 10
+          }
+        }
+      ]
+    },
+    "customers_reordered": {
+      "sourceId": "customers",
+      "snapshotId": "customers-s1",
+      "fields": [
+        "id",
+        "name",
+        "credit",
+        "updated"
+      ],
+      "rows": [
+        {
+          "ref": "c8",
+          "values": {
+            "id": null,
+            "name": "Unknown",
+            "credit": 60,
+            "updated": "2026-04-01"
+          }
+        },
+        {
+          "ref": "c7",
+          "values": {
+            "id": "E",
+            "name": "Elm",
+            "credit": 50,
+            "updated": "2026-04-01"
+          }
+        },
+        {
+          "ref": "c6",
+          "values": {
+            "id": "C",
+            "name": "Cedar",
+            "credit": 35,
+            "updated": "2026-03-01"
+          }
+        },
+        {
+          "ref": "c5",
+          "values": {
+            "id": "C",
+            "name": "Cedar",
+            "credit": 30,
+            "updated": "2026-03-01"
+          }
+        },
+        {
+          "ref": "c4",
+          "values": {
+            "id": "B",
+            "name": "Birch",
+            "credit": 25,
+            "updated": "2026-02-01"
+          }
+        },
+        {
+          "ref": "c3",
+          "values": {
+            "id": "B",
+            "name": "Birch",
+            "credit": 20,
+            "updated": "2026-01-01"
+          }
+        },
+        {
+          "ref": "c2",
+          "values": {
+            "id": "A",
+            "name": "Aster",
+            "credit": 10,
+            "updated": "2026-01-01"
+          }
+        },
+        {
+          "ref": "c1",
+          "values": {
+            "id": "A",
+            "name": "Aster",
+            "credit": 10,
+            "updated": "2026-01-01"
+          }
+        }
+      ]
+    },
+    "customers_unrelated_added": {
+      "sourceId": "customers",
+      "snapshotId": "customers-s2",
+      "fields": [
+        "id",
+        "name",
+        "credit",
+        "updated"
+      ],
+      "rows": [
+        {
+          "ref": "c1",
+          "values": {
+            "id": "A",
+            "name": "Aster",
+            "credit": 10,
+            "updated": "2026-01-01"
+          }
+        },
+        {
+          "ref": "c2",
+          "values": {
+            "id": "A",
+            "name": "Aster",
+            "credit": 10,
+            "updated": "2026-01-01"
+          }
+        },
+        {
+          "ref": "c3",
+          "values": {
+            "id": "B",
+            "name": "Birch",
+            "credit": 20,
+            "updated": "2026-01-01"
+          }
+        },
+        {
+          "ref": "c4",
+          "values": {
+            "id": "B",
+            "name": "Birch",
+            "credit": 25,
+            "updated": "2026-02-01"
+          }
+        },
+        {
+          "ref": "c5",
+          "values": {
+            "id": "C",
+            "name": "Cedar",
+            "credit": 30,
+            "updated": "2026-03-01"
+          }
+        },
+        {
+          "ref": "c6",
+          "values": {
+            "id": "C",
+            "name": "Cedar",
+            "credit": 35,
+            "updated": "2026-03-01"
+          }
+        },
+        {
+          "ref": "c7",
+          "values": {
+            "id": "E",
+            "name": "Elm",
+            "credit": 50,
+            "updated": "2026-04-01"
+          }
+        },
+        {
+          "ref": "c8",
+          "values": {
+            "id": null,
+            "name": "Unknown",
+            "credit": 60,
+            "updated": "2026-04-01"
+          }
+        },
+        {
+          "ref": "c9",
+          "values": {
+            "id": "F",
+            "name": "Fir",
+            "credit": 5,
+            "updated": "2026-04-02"
+          }
+        }
+      ]
+    },
+    "customers_later_B": {
+      "sourceId": "customers",
+      "snapshotId": "customers-s3",
+      "fields": [
+        "id",
+        "name",
+        "credit",
+        "updated"
+      ],
+      "rows": [
+        {
+          "ref": "c1",
+          "values": {
+            "id": "A",
+            "name": "Aster",
+            "credit": 10,
+            "updated": "2026-01-01"
+          }
+        },
+        {
+          "ref": "c2",
+          "values": {
+            "id": "A",
+            "name": "Aster",
+            "credit": 10,
+            "updated": "2026-01-01"
+          }
+        },
+        {
+          "ref": "c3",
+          "values": {
+            "id": "B",
+            "name": "Birch",
+            "credit": 20,
+            "updated": "2026-01-01"
+          }
+        },
+        {
+          "ref": "c4",
+          "values": {
+            "id": "B",
+            "name": "Birch",
+            "credit": 25,
+            "updated": "2026-02-01"
+          }
+        },
+        {
+          "ref": "c5",
+          "values": {
+            "id": "C",
+            "name": "Cedar",
+            "credit": 30,
+            "updated": "2026-03-01"
+          }
+        },
+        {
+          "ref": "c6",
+          "values": {
+            "id": "C",
+            "name": "Cedar",
+            "credit": 35,
+            "updated": "2026-03-01"
+          }
+        },
+        {
+          "ref": "c7",
+          "values": {
+            "id": "E",
+            "name": "Elm",
+            "credit": 50,
+            "updated": "2026-04-01"
+          }
+        },
+        {
+          "ref": "c8",
+          "values": {
+            "id": null,
+            "name": "Unknown",
+            "credit": 60,
+            "updated": "2026-04-01"
+          }
+        },
+        {
+          "ref": "c9",
+          "values": {
+            "id": "B",
+            "name": "Birch",
+            "credit": 28,
+            "updated": "2026-03-01"
+          }
+        }
+      ]
+    },
+    "customers_added_C": {
+      "sourceId": "customers",
+      "snapshotId": "customers-s4",
+      "fields": [
+        "id",
+        "name",
+        "credit",
+        "updated"
+      ],
+      "rows": [
+        {
+          "ref": "c1",
+          "values": {
+            "id": "A",
+            "name": "Aster",
+            "credit": 10,
+            "updated": "2026-01-01"
+          }
+        },
+        {
+          "ref": "c2",
+          "values": {
+            "id": "A",
+            "name": "Aster",
+            "credit": 10,
+            "updated": "2026-01-01"
+          }
+        },
+        {
+          "ref": "c3",
+          "values": {
+            "id": "B",
+            "name": "Birch",
+            "credit": 20,
+            "updated": "2026-01-01"
+          }
+        },
+        {
+          "ref": "c4",
+          "values": {
+            "id": "B",
+            "name": "Birch",
+            "credit": 25,
+            "updated": "2026-02-01"
+          }
+        },
+        {
+          "ref": "c5",
+          "values": {
+            "id": "C",
+            "name": "Cedar",
+            "credit": 30,
+            "updated": "2026-03-01"
+          }
+        },
+        {
+          "ref": "c6",
+          "values": {
+            "id": "C",
+            "name": "Cedar",
+            "credit": 35,
+            "updated": "2026-03-01"
+          }
+        },
+        {
+          "ref": "c7",
+          "values": {
+            "id": "E",
+            "name": "Elm",
+            "credit": 50,
+            "updated": "2026-04-01"
+          }
+        },
+        {
+          "ref": "c8",
+          "values": {
+            "id": null,
+            "name": "Unknown",
+            "credit": 60,
+            "updated": "2026-04-01"
+          }
+        },
+        {
+          "ref": "c9",
+          "values": {
+            "id": "C",
+            "name": "Cedar",
+            "credit": 37,
+            "updated": "2026-03-01"
+          }
+        }
+      ]
+    },
+    "customers_changed_winner": {
+      "sourceId": "customers",
+      "snapshotId": "customers-s5",
+      "fields": [
+        "id",
+        "name",
+        "credit",
+        "updated"
+      ],
+      "rows": [
+        {
+          "ref": "c1",
+          "values": {
+            "id": "A",
+            "name": "Aster",
+            "credit": 10,
+            "updated": "2026-01-01"
+          }
+        },
+        {
+          "ref": "c2",
+          "values": {
+            "id": "A",
+            "name": "Aster",
+            "credit": 10,
+            "updated": "2026-01-01"
+          }
+        },
+        {
+          "ref": "c3",
+          "values": {
+            "id": "B",
+            "name": "Birch",
+            "credit": 20,
+            "updated": "2026-01-01"
+          }
+        },
+        {
+          "ref": "c4",
+          "values": {
+            "id": "B",
+            "name": "Birch",
+            "credit": 25,
+            "updated": "2026-02-01"
+          }
+        },
+        {
+          "ref": "c5",
+          "values": {
+            "id": "C",
+            "name": "Cedar",
+            "credit": 30,
+            "updated": "2026-03-01"
+          }
+        },
+        {
+          "ref": "c6",
+          "values": {
+            "id": "C",
+            "name": "Cedar",
+            "credit": 36,
+            "updated": "2026-03-01"
+          }
+        },
+        {
+          "ref": "c7",
+          "values": {
+            "id": "E",
+            "name": "Elm",
+            "credit": 50,
+            "updated": "2026-04-01"
+          }
+        },
+        {
+          "ref": "c8",
+          "values": {
+            "id": null,
+            "name": "Unknown",
+            "credit": 60,
+            "updated": "2026-04-01"
+          }
+        }
+      ]
+    },
+    "customers_changed_loser": {
+      "sourceId": "customers",
+      "snapshotId": "customers-s6",
+      "fields": [
+        "id",
+        "name",
+        "credit",
+        "updated"
+      ],
+      "rows": [
+        {
+          "ref": "c1",
+          "values": {
+            "id": "A",
+            "name": "Aster",
+            "credit": 10,
+            "updated": "2026-01-01"
+          }
+        },
+        {
+          "ref": "c2",
+          "values": {
+            "id": "A",
+            "name": "Aster",
+            "credit": 10,
+            "updated": "2026-01-01"
+          }
+        },
+        {
+          "ref": "c3",
+          "values": {
+            "id": "B",
+            "name": "Birch",
+            "credit": 20,
+            "updated": "2026-01-01"
+          }
+        },
+        {
+          "ref": "c4",
+          "values": {
+            "id": "B",
+            "name": "Birch",
+            "credit": 25,
+            "updated": "2026-02-01"
+          }
+        },
+        {
+          "ref": "c5",
+          "values": {
+            "id": "C",
+            "name": "Cedar",
+            "credit": 31,
+            "updated": "2026-03-01"
+          }
+        },
+        {
+          "ref": "c6",
+          "values": {
+            "id": "C",
+            "name": "Cedar",
+            "credit": 35,
+            "updated": "2026-03-01"
+          }
+        },
+        {
+          "ref": "c7",
+          "values": {
+            "id": "E",
+            "name": "Elm",
+            "credit": 50,
+            "updated": "2026-04-01"
+          }
+        },
+        {
+          "ref": "c8",
+          "values": {
+            "id": null,
+            "name": "Unknown",
+            "credit": 60,
+            "updated": "2026-04-01"
+          }
+        }
+      ]
+    },
+    "customers_removed_winner": {
+      "sourceId": "customers",
+      "snapshotId": "customers-s7",
+      "fields": [
+        "id",
+        "name",
+        "credit",
+        "updated"
+      ],
+      "rows": [
+        {
+          "ref": "c1",
+          "values": {
+            "id": "A",
+            "name": "Aster",
+            "credit": 10,
+            "updated": "2026-01-01"
+          }
+        },
+        {
+          "ref": "c2",
+          "values": {
+            "id": "A",
+            "name": "Aster",
+            "credit": 10,
+            "updated": "2026-01-01"
+          }
+        },
+        {
+          "ref": "c3",
+          "values": {
+            "id": "B",
+            "name": "Birch",
+            "credit": 20,
+            "updated": "2026-01-01"
+          }
+        },
+        {
+          "ref": "c4",
+          "values": {
+            "id": "B",
+            "name": "Birch",
+            "credit": 25,
+            "updated": "2026-02-01"
+          }
+        },
+        {
+          "ref": "c5",
+          "values": {
+            "id": "C",
+            "name": "Cedar",
+            "credit": 30,
+            "updated": "2026-03-01"
+          }
+        },
+        {
+          "ref": "c7",
+          "values": {
+            "id": "E",
+            "name": "Elm",
+            "credit": 50,
+            "updated": "2026-04-01"
+          }
+        },
+        {
+          "ref": "c8",
+          "values": {
+            "id": null,
+            "name": "Unknown",
+            "credit": 60,
+            "updated": "2026-04-01"
+          }
+        }
+      ]
+    },
+    "customers_twin_added": {
+      "sourceId": "customers",
+      "snapshotId": "customers-s8",
+      "fields": [
+        "id",
+        "name",
+        "credit",
+        "updated"
+      ],
+      "rows": [
+        {
+          "ref": "c1",
+          "values": {
+            "id": "A",
+            "name": "Aster",
+            "credit": 10,
+            "updated": "2026-01-01"
+          }
+        },
+        {
+          "ref": "c2",
+          "values": {
+            "id": "A",
+            "name": "Aster",
+            "credit": 10,
+            "updated": "2026-01-01"
+          }
+        },
+        {
+          "ref": "c3",
+          "values": {
+            "id": "B",
+            "name": "Birch",
+            "credit": 20,
+            "updated": "2026-01-01"
+          }
+        },
+        {
+          "ref": "c4",
+          "values": {
+            "id": "B",
+            "name": "Birch",
+            "credit": 25,
+            "updated": "2026-02-01"
+          }
+        },
+        {
+          "ref": "c5",
+          "values": {
+            "id": "C",
+            "name": "Cedar",
+            "credit": 30,
+            "updated": "2026-03-01"
+          }
+        },
+        {
+          "ref": "c6",
+          "values": {
+            "id": "C",
+            "name": "Cedar",
+            "credit": 35,
+            "updated": "2026-03-01"
+          }
+        },
+        {
+          "ref": "c7",
+          "values": {
+            "id": "E",
+            "name": "Elm",
+            "credit": 50,
+            "updated": "2026-04-01"
+          }
+        },
+        {
+          "ref": "c8",
+          "values": {
+            "id": null,
+            "name": "Unknown",
+            "credit": 60,
+            "updated": "2026-04-01"
+          }
+        },
+        {
+          "ref": "c9",
+          "values": {
+            "id": "C",
+            "name": "Cedar",
+            "credit": 35,
+            "updated": "2026-03-01"
+          }
+        }
+      ]
+    },
+    "row_number_generated_s0": {
+      "sourceId": "numbered",
+      "snapshotId": "numbered-generated-s0",
+      "fields": [
+        "id",
+        "row_number",
+        "value"
+      ],
+      "rows": [
+        {
+          "ref": "r1",
+          "values": {
+            "id": "A",
+            "row_number": 1,
+            "value": 10
+          }
+        },
+        {
+          "ref": "r2",
+          "values": {
+            "id": "A",
+            "row_number": 2,
+            "value": 10
+          }
+        }
+      ],
+      "fieldMetadata": {
+        "row_number": {
+          "generated": "source-row-number"
+        }
+      }
+    }
+  },
+  "cases": [
+    {
+      "id": "DR-F01",
+      "title": "Ambiguous relationship to reusable repaired target and notebook",
+      "kind": "repair",
+      "inputSnapshot": "customers_s0",
+      "keyFields": [
+        "id"
+      ],
+      "runs": [
+        {
+          "id": "exact-review",
+          "policy": {
+            "mode": "exact-only",
+            "missingKeys": "block"
+          },
+          "expected": {
+            "status": "blocked",
+            "usableOutputCount": null,
+            "previewOutputs": [
+              {
+                "key": [
+                  "A"
+                ],
+                "values": {
+                  "id": "A",
+                  "name": "Aster",
+                  "credit": 10,
+                  "updated": "2026-01-01"
+                },
+                "winnerRefs": [
+                  "c1",
+                  "c2"
+                ],
+                "representedRefs": [
+                  "c1",
+                  "c2"
+                ],
+                "excludedRefs": []
+              },
+              {
+                "key": [
+                  "E"
+                ],
+                "values": {
+                  "id": "E",
+                  "name": "Elm",
+                  "credit": 50,
+                  "updated": "2026-04-01"
+                },
+                "winnerRefs": [
+                  "c7"
+                ],
+                "representedRefs": [
+                  "c7"
+                ],
+                "excludedRefs": []
+              }
+            ],
+            "excluded": [],
+            "unresolved": [
+              {
+                "refs": [
+                  "c3",
+                  "c4"
+                ],
+                "reason": "conflicting-whole-rows"
+              },
+              {
+                "refs": [
+                  "c5",
+                  "c6"
+                ],
+                "reason": "conflicting-whole-rows"
+              },
+              {
+                "refs": [
+                  "c8"
+                ],
+                "reason": "missing-key"
+              }
+            ]
+          }
+        },
+        {
+          "id": "manual-first-release",
+          "policy": {
+            "mode": "manual",
+            "choices": {
+              "B": [
+                "c4"
+              ],
+              "C": [
+                "c6"
+              ]
+            },
+            "missingKeys": "exclude-explicitly"
+          },
+          "expected": {
+            "status": "ready",
+            "usableOutputCount": 4,
+            "previewOutputs": [
+              {
+                "key": [
+                  "A"
+                ],
+                "values": {
+                  "id": "A",
+                  "name": "Aster",
+                  "credit": 10,
+                  "updated": "2026-01-01"
+                },
+                "winnerRefs": [
+                  "c1",
+                  "c2"
+                ],
+                "representedRefs": [
+                  "c1",
+                  "c2"
+                ],
+                "excludedRefs": []
+              },
+              {
+                "key": [
+                  "B"
+                ],
+                "values": {
+                  "id": "B",
+                  "name": "Birch",
+                  "credit": 25,
+                  "updated": "2026-02-01"
+                },
+                "winnerRefs": [
+                  "c4"
+                ],
+                "representedRefs": [
+                  "c4"
+                ],
+                "excludedRefs": [
+                  "c3"
+                ]
+              },
+              {
+                "key": [
+                  "C"
+                ],
+                "values": {
+                  "id": "C",
+                  "name": "Cedar",
+                  "credit": 35,
+                  "updated": "2026-03-01"
+                },
+                "winnerRefs": [
+                  "c6"
+                ],
+                "representedRefs": [
+                  "c6"
+                ],
+                "excludedRefs": [
+                  "c5"
+                ]
+              },
+              {
+                "key": [
+                  "E"
+                ],
+                "values": {
+                  "id": "E",
+                  "name": "Elm",
+                  "credit": 50,
+                  "updated": "2026-04-01"
+                },
+                "winnerRefs": [
+                  "c7"
+                ],
+                "representedRefs": [
+                  "c7"
+                ],
+                "excludedRefs": []
+              }
+            ],
+            "excluded": [
+              {
+                "ref": "c3",
+                "reason": "manual-other-value-class"
+              },
+              {
+                "ref": "c5",
+                "reason": "manual-other-value-class"
+              },
+              {
+                "ref": "c8",
+                "reason": "explicit-missing-key-exclusion"
+              }
+            ],
+            "unresolved": []
+          }
+        },
+        {
+          "id": "latest-review",
+          "policy": {
+            "mode": "latest",
+            "field": "updated",
+            "parser": "shared-date",
+            "missingKeys": "exclude-explicitly"
+          },
+          "expected": {
+            "status": "blocked",
+            "usableOutputCount": null,
+            "previewOutputs": [
+              {
+                "key": [
+                  "A"
+                ],
+                "values": {
+                  "id": "A",
+                  "name": "Aster",
+                  "credit": 10,
+                  "updated": "2026-01-01"
+                },
+                "winnerRefs": [
+                  "c1",
+                  "c2"
+                ],
+                "representedRefs": [
+                  "c1",
+                  "c2"
+                ],
+                "excludedRefs": []
+              },
+              {
+                "key": [
+                  "B"
+                ],
+                "values": {
+                  "id": "B",
+                  "name": "Birch",
+                  "credit": 25,
+                  "updated": "2026-02-01"
+                },
+                "winnerRefs": [
+                  "c4"
+                ],
+                "representedRefs": [
+                  "c4"
+                ],
+                "excludedRefs": [
+                  "c3"
+                ]
+              },
+              {
+                "key": [
+                  "E"
+                ],
+                "values": {
+                  "id": "E",
+                  "name": "Elm",
+                  "credit": 50,
+                  "updated": "2026-04-01"
+                },
+                "winnerRefs": [
+                  "c7"
+                ],
+                "representedRefs": [
+                  "c7"
+                ],
+                "excludedRefs": []
+              }
+            ],
+            "excluded": [
+              {
+                "ref": "c3",
+                "reason": "lower-ordering-value"
+              },
+              {
+                "ref": "c8",
+                "reason": "explicit-missing-key-exclusion"
+              }
+            ],
+            "unresolved": [
+              {
+                "refs": [
+                  "c5",
+                  "c6"
+                ],
+                "reason": "tied-distinct-top-value-classes"
+              }
+            ]
+          }
+        },
+        {
+          "id": "latest-with-manual-C",
+          "policy": {
+            "mode": "latest",
+            "field": "updated",
+            "parser": "shared-date",
+            "manualChoices": {
+              "C": [
+                "c6"
+              ]
+            },
+            "missingKeys": "exclude-explicitly"
+          },
+          "expected": {
+            "status": "ready",
+            "usableOutputCount": 4,
+            "previewOutputs": [
+              {
+                "key": [
+                  "A"
+                ],
+                "values": {
+                  "id": "A",
+                  "name": "Aster",
+                  "credit": 10,
+                  "updated": "2026-01-01"
+                },
+                "winnerRefs": [
+                  "c1",
+                  "c2"
+                ],
+                "representedRefs": [
+                  "c1",
+                  "c2"
+                ],
+                "excludedRefs": []
+              },
+              {
+                "key": [
+                  "B"
+                ],
+                "values": {
+                  "id": "B",
+                  "name": "Birch",
+                  "credit": 25,
+                  "updated": "2026-02-01"
+                },
+                "winnerRefs": [
+                  "c4"
+                ],
+                "representedRefs": [
+                  "c4"
+                ],
+                "excludedRefs": [
+                  "c3"
+                ]
+              },
+              {
+                "key": [
+                  "C"
+                ],
+                "values": {
+                  "id": "C",
+                  "name": "Cedar",
+                  "credit": 35,
+                  "updated": "2026-03-01"
+                },
+                "winnerRefs": [
+                  "c6"
+                ],
+                "representedRefs": [
+                  "c6"
+                ],
+                "excludedRefs": [
+                  "c5"
+                ]
+              },
+              {
+                "key": [
+                  "E"
+                ],
+                "values": {
+                  "id": "E",
+                  "name": "Elm",
+                  "credit": 50,
+                  "updated": "2026-04-01"
+                },
+                "winnerRefs": [
+                  "c7"
+                ],
+                "representedRefs": [
+                  "c7"
+                ],
+                "excludedRefs": []
+              }
+            ],
+            "excluded": [
+              {
+                "ref": "c3",
+                "reason": "lower-ordering-value"
+              },
+              {
+                "ref": "c5",
+                "reason": "manual-other-value-class"
+              },
+              {
+                "ref": "c8",
+                "reason": "explicit-missing-key-exclusion"
+              }
+            ],
+            "unresolved": []
+          }
+        }
+      ],
+      "relationships": [
+        {
+          "id": "raw",
+          "fromSnapshot": "orders_s0",
+          "fromFields": [
+            "customer"
+          ],
+          "toSnapshot": "customers_s0",
+          "toFields": [
+            "id"
+          ],
+          "expected": {
+            "matched": 4,
+            "unmatched": 2,
+            "ambiguous": 4,
+            "expandedExtra": 4,
+            "innerRows": 8,
+            "leftRows": 10
+          },
+          "lookupOutputCount": 6,
+          "lookupValues": [
+            {
+              "$scalar": "undefined"
+            },
+            {
+              "$scalar": "undefined"
+            },
+            {
+              "$scalar": "undefined"
+            },
+            {
+              "$scalar": "undefined"
+            },
+            {
+              "$scalar": "undefined"
+            },
+            {
+              "$scalar": "undefined"
+            }
+          ]
+        },
+        {
+          "id": "repaired",
+          "fromSnapshot": "orders_s0",
+          "fromFields": [
+            "customer"
+          ],
+          "toRun": "manual-first-release",
+          "toFields": [
+            "id"
+          ],
+          "expected": {
+            "matched": 4,
+            "unmatched": 2,
+            "ambiguous": 0,
+            "expandedExtra": 0,
+            "innerRows": 4,
+            "leftRows": 6
+          },
+          "lookupOutputCount": 6,
+          "lookupValueField": "credit",
+          "lookupValues": [
+            10,
+            10,
+            25,
+            35,
+            {
+              "$scalar": "undefined"
+            },
+            {
+              "$scalar": "undefined"
+            }
+          ]
+        }
+      ],
+      "aggregateExpectations": {
+        "orderAmount": 90,
+        "naiveLookupCredit": 80,
+        "oncePerPreparedCustomerCredit": 70,
+        "allPreparedCustomerCredit": 120,
+        "representedOriginalRefs": [
+          "c1",
+          "c2",
+          "c4",
+          "c6",
+          "c7"
+        ],
+        "excludedOriginalRefs": [
+          "c3",
+          "c5",
+          "c8"
+        ],
+        "numericEntityInputKeys": [
+          [
+            "A"
+          ],
+          [
+            "B"
+          ],
+          [
+            "C"
+          ]
+        ],
+        "numericEntityInputValues": [
+          10,
+          25,
+          35
+        ]
+      },
+      "notebookExpected": {
+        "source": "customers_repaired",
+        "rowCount": 4,
+        "creditTotal": 120,
+        "ordersRowCount": 6,
+        "orderAmount": 90,
+        "traceIncludesAllEightOriginals": true
+      }
+    },
+    {
+      "id": "DR-F02",
+      "title": "Chosen equal fields do not authorize exact-record collapse",
+      "kind": "repair",
+      "inputSnapshot": "selected_fields_s0",
+      "keyFields": [
+        "id"
+      ],
+      "displayComparisonFields": [
+        "name",
+        "credit"
+      ],
+      "expectedConflictFields": [
+        "email"
+      ],
+      "runs": [
+        {
+          "id": "review",
+          "policy": {
+            "mode": "exact-only"
+          },
+          "expected": {
+            "status": "blocked",
+            "usableOutputCount": null,
+            "previewOutputs": [],
+            "excluded": [],
+            "unresolved": [
+              {
+                "refs": [
+                  "x1",
+                  "x2",
+                  "x3"
+                ],
+                "reason": "email-conflict"
+              }
+            ]
+          }
+        },
+        {
+          "id": "choose-new-email",
+          "policy": {
+            "mode": "manual",
+            "choices": {
+              "A": [
+                "x2",
+                "x3"
+              ]
+            }
+          },
+          "expected": {
+            "status": "ready",
+            "usableOutputCount": 1,
+            "previewOutputs": [
+              {
+                "key": [
+                  "A"
+                ],
+                "values": {
+                  "id": "A",
+                  "name": "Ada",
+                  "email": "new",
+                  "credit": 5
+                },
+                "winnerRefs": [
+                  "x2",
+                  "x3"
+                ],
+                "representedRefs": [
+                  "x2",
+                  "x3"
+                ],
+                "excludedRefs": [
+                  "x1"
+                ]
+              }
+            ],
+            "excluded": [
+              {
+                "ref": "x1",
+                "reason": "manual-other-value-class"
+              }
+            ],
+            "unresolved": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "DR-F03",
+      "title": "Legitimate repeated events survive a change of declared grain",
+      "kind": "repair",
+      "inputSnapshot": "events_s0",
+      "keyFields": [
+        "eventId"
+      ],
+      "runs": [
+        {
+          "id": "correct-event-grain",
+          "policy": {
+            "mode": "exact-only"
+          },
+          "expected": {
+            "status": "ready",
+            "usableOutputCount": 2,
+            "previewOutputs": [
+              {
+                "key": [
+                  "E1"
+                ],
+                "values": {
+                  "eventId": "E1",
+                  "customer": "A",
+                  "at": "2026-01-01",
+                  "amount": 10
+                },
+                "winnerRefs": [
+                  "e1"
+                ],
+                "representedRefs": [
+                  "e1"
+                ],
+                "excludedRefs": []
+              },
+              {
+                "key": [
+                  "E2"
+                ],
+                "values": {
+                  "eventId": "E2",
+                  "customer": "A",
+                  "at": "2026-01-01",
+                  "amount": 10
+                },
+                "winnerRefs": [
+                  "e2"
+                ],
+                "representedRefs": [
+                  "e2"
+                ],
+                "excludedRefs": []
+              }
+            ],
+            "excluded": [],
+            "unresolved": []
+          }
+        },
+        {
+          "id": "wrong-customer-grain",
+          "keyFields": [
+            "customer"
+          ],
+          "policy": {
+            "mode": "exact-only"
+          },
+          "expected": {
+            "status": "blocked",
+            "usableOutputCount": null,
+            "previewOutputs": [],
+            "excluded": [],
+            "unresolved": [
+              {
+                "refs": [
+                  "e1",
+                  "e2"
+                ],
+                "reason": "distinct-events"
+              }
+            ]
+          }
+        }
+      ],
+      "relationships": [
+        {
+          "id": "events-expansion",
+          "fromSnapshot": "event_parent_s0",
+          "fromFields": [
+            "id"
+          ],
+          "toSnapshot": "events_s0",
+          "toFields": [
+            "customer"
+          ],
+          "expected": {
+            "matched": 1,
+            "unmatched": 0,
+            "ambiguous": 1,
+            "expandedExtra": 1,
+            "innerRows": 2,
+            "leftRows": 2
+          },
+          "selectedOperation": "expand",
+          "expectedAmount": 20
+        }
+      ],
+      "expectedNoRawRowsChanged": true
+    },
+    {
+      "id": "DR-F04",
+      "title": "Typed scalar keys never coerce",
+      "kind": "repair",
+      "inputSnapshot": "typed_s0",
+      "keyFields": [
+        "key"
+      ],
+      "runs": [
+        {
+          "id": "keep-eleven-types",
+          "policy": {
+            "mode": "exact-only"
+          },
+          "expected": {
+            "status": "ready",
+            "usableOutputCount": 11,
+            "previewOutputs": [
+              {
+                "key": [
+                  1
+                ],
+                "values": {
+                  "key": 1,
+                  "label": "number one"
+                },
+                "winnerRefs": [
+                  "t1"
+                ],
+                "representedRefs": [
+                  "t1"
+                ],
+                "excludedRefs": []
+              },
+              {
+                "key": [
+                  "1"
+                ],
+                "values": {
+                  "key": "1",
+                  "label": "text one"
+                },
+                "winnerRefs": [
+                  "t2"
+                ],
+                "representedRefs": [
+                  "t2"
+                ],
+                "excludedRefs": []
+              },
+              {
+                "key": [
+                  true
+                ],
+                "values": {
+                  "key": true,
+                  "label": "boolean true"
+                },
+                "winnerRefs": [
+                  "t3"
+                ],
+                "representedRefs": [
+                  "t3"
+                ],
+                "excludedRefs": []
+              },
+              {
+                "key": [
+                  "true"
+                ],
+                "values": {
+                  "key": "true",
+                  "label": "text true"
+                },
+                "winnerRefs": [
+                  "t4"
+                ],
+                "representedRefs": [
+                  "t4"
+                ],
+                "excludedRefs": []
+              },
+              {
+                "key": [
+                  0
+                ],
+                "values": {
+                  "key": 0,
+                  "label": "number zero"
+                },
+                "winnerRefs": [
+                  "t5"
+                ],
+                "representedRefs": [
+                  "t5"
+                ],
+                "excludedRefs": []
+              },
+              {
+                "key": [
+                  false
+                ],
+                "values": {
+                  "key": false,
+                  "label": "boolean false"
+                },
+                "winnerRefs": [
+                  "t6"
+                ],
+                "representedRefs": [
+                  "t6"
+                ],
+                "excludedRefs": []
+              },
+              {
+                "key": [
+                  "001"
+                ],
+                "values": {
+                  "key": "001",
+                  "label": "leading zeros"
+                },
+                "winnerRefs": [
+                  "t7"
+                ],
+                "representedRefs": [
+                  "t7"
+                ],
+                "excludedRefs": []
+              },
+              {
+                "key": [
+                  "A"
+                ],
+                "values": {
+                  "key": "A",
+                  "label": "plain A"
+                },
+                "winnerRefs": [
+                  "t8"
+                ],
+                "representedRefs": [
+                  "t8"
+                ],
+                "excludedRefs": []
+              },
+              {
+                "key": [
+                  " A "
+                ],
+                "values": {
+                  "key": " A ",
+                  "label": "spaced A"
+                },
+                "winnerRefs": [
+                  "t9"
+                ],
+                "representedRefs": [
+                  "t9"
+                ],
+                "excludedRefs": []
+              },
+              {
+                "key": [
+                  "NaN"
+                ],
+                "values": {
+                  "key": "NaN",
+                  "label": "text NaN"
+                },
+                "winnerRefs": [
+                  "t10"
+                ],
+                "representedRefs": [
+                  "t10"
+                ],
+                "excludedRefs": []
+              },
+              {
+                "key": [
+                  "Infinity"
+                ],
+                "values": {
+                  "key": "Infinity",
+                  "label": "text Infinity"
+                },
+                "winnerRefs": [
+                  "t11"
+                ],
+                "representedRefs": [
+                  "t11"
+                ],
+                "excludedRefs": []
+              }
+            ],
+            "excluded": [],
+            "unresolved": []
+          }
+        }
+      ],
+      "relationships": [
+        {
+          "id": "same-typed-keys",
+          "fromSnapshot": "typed_s0",
+          "fromFields": [
+            "key"
+          ],
+          "toRun": "keep-eleven-types",
+          "toFields": [
+            "key"
+          ],
+          "expected": {
+            "matched": 11,
+            "unmatched": 0,
+            "ambiguous": 0,
+            "expandedExtra": 0,
+            "innerRows": 11,
+            "leftRows": 11
+          }
+        }
+      ],
+      "keyEqualities": [
+        {
+          "left": 0,
+          "right": {
+            "$scalar": "-0"
+          },
+          "equal": true
+        },
+        {
+          "left": 1,
+          "right": "1",
+          "equal": false
+        },
+        {
+          "left": false,
+          "right": 0,
+          "equal": false
+        },
+        {
+          "left": " A ",
+          "right": "A",
+          "equal": false
+        }
+      ]
+    },
+    {
+      "id": "DR-F05",
+      "title": "Ordered composite tuples avoid delimiters and type collisions",
+      "kind": "repair",
+      "inputSnapshot": "composite_s0",
+      "keyFields": [
+        "tenant",
+        "id"
+      ],
+      "runs": [
+        {
+          "id": "five-composite-entities",
+          "policy": {
+            "mode": "exact-only"
+          },
+          "expected": {
+            "status": "ready",
+            "usableOutputCount": 5,
+            "previewOutputs": [
+              {
+                "key": [
+                  "a|b",
+                  "c"
+                ],
+                "values": {
+                  "tenant": "a|b",
+                  "id": "c",
+                  "value": 11
+                },
+                "winnerRefs": [
+                  "k1"
+                ],
+                "representedRefs": [
+                  "k1"
+                ],
+                "excludedRefs": []
+              },
+              {
+                "key": [
+                  "a",
+                  "b|c"
+                ],
+                "values": {
+                  "tenant": "a",
+                  "id": "b|c",
+                  "value": 22
+                },
+                "winnerRefs": [
+                  "k2"
+                ],
+                "representedRefs": [
+                  "k2"
+                ],
+                "excludedRefs": []
+              },
+              {
+                "key": [
+                  1,
+                  "x"
+                ],
+                "values": {
+                  "tenant": 1,
+                  "id": "x",
+                  "value": 33
+                },
+                "winnerRefs": [
+                  "k3"
+                ],
+                "representedRefs": [
+                  "k3"
+                ],
+                "excludedRefs": []
+              },
+              {
+                "key": [
+                  "1",
+                  "x"
+                ],
+                "values": {
+                  "tenant": "1",
+                  "id": "x",
+                  "value": 44
+                },
+                "winnerRefs": [
+                  "k4"
+                ],
+                "representedRefs": [
+                  "k4"
+                ],
+                "excludedRefs": []
+              },
+              {
+                "key": [
+                  "x",
+                  1
+                ],
+                "values": {
+                  "tenant": "x",
+                  "id": 1,
+                  "value": 55
+                },
+                "winnerRefs": [
+                  "k5"
+                ],
+                "representedRefs": [
+                  "k5"
+                ],
+                "excludedRefs": []
+              }
+            ],
+            "excluded": [],
+            "unresolved": []
+          }
+        }
+      ],
+      "relationships": [
+        {
+          "id": "composite-match",
+          "fromSnapshot": "composite_s0",
+          "fromFields": [
+            "tenant",
+            "id"
+          ],
+          "toRun": "five-composite-entities",
+          "toFields": [
+            "tenant",
+            "id"
+          ],
+          "expected": {
+            "matched": 5,
+            "unmatched": 0,
+            "ambiguous": 0,
+            "expandedExtra": 0,
+            "innerRows": 5,
+            "leftRows": 5
+          }
+        }
+      ],
+      "invalidDefinitions": [
+        {
+          "keyFields": [],
+          "error": "empty-key"
+        },
+        {
+          "keyFields": [
+            "tenant",
+            "tenant"
+          ],
+          "error": "repeated-key-field"
+        },
+        {
+          "keyFields": [
+            "tenant",
+            "absent"
+          ],
+          "error": "missing-key-field"
+        }
+      ]
+    },
+    {
+      "id": "DR-F06",
+      "title": "Missing blank and nonfinite keys retain separate original evidence",
+      "kind": "repair",
+      "inputSnapshot": "missing_s0",
+      "keyFields": [
+        "key"
+      ],
+      "runs": [
+        {
+          "id": "block-invalid-keys",
+          "policy": {
+            "mode": "exact-only",
+            "missingKeys": "block"
+          },
+          "expected": {
+            "status": "blocked",
+            "usableOutputCount": null,
+            "previewOutputs": [
+              {
+                "key": [
+                  0
+                ],
+                "values": {
+                  "key": 0,
+                  "value": 9
+                },
+                "winnerRefs": [
+                  "m9"
+                ],
+                "representedRefs": [
+                  "m9"
+                ],
+                "excludedRefs": []
+              },
+              {
+                "key": [
+                  false
+                ],
+                "values": {
+                  "key": false,
+                  "value": 10
+                },
+                "winnerRefs": [
+                  "m10"
+                ],
+                "representedRefs": [
+                  "m10"
+                ],
+                "excludedRefs": []
+              }
+            ],
+            "excluded": [],
+            "unresolved": [
+              {
+                "refs": [
+                  "m1"
+                ],
+                "reason": "invalid-key"
+              },
+              {
+                "refs": [
+                  "m2"
+                ],
+                "reason": "invalid-key"
+              },
+              {
+                "refs": [
+                  "m3"
+                ],
+                "reason": "invalid-key"
+              },
+              {
+                "refs": [
+                  "m4"
+                ],
+                "reason": "invalid-key"
+              },
+              {
+                "refs": [
+                  "m5"
+                ],
+                "reason": "invalid-key"
+              },
+              {
+                "refs": [
+                  "m6"
+                ],
+                "reason": "invalid-key"
+              },
+              {
+                "refs": [
+                  "m7"
+                ],
+                "reason": "invalid-key"
+              },
+              {
+                "refs": [
+                  "m8"
+                ],
+                "reason": "invalid-key"
+              }
+            ]
+          }
+        },
+        {
+          "id": "explicit-exclusion",
+          "policy": {
+            "mode": "exact-only",
+            "missingKeys": "exclude-explicitly"
+          },
+          "expected": {
+            "status": "ready",
+            "usableOutputCount": 2,
+            "previewOutputs": [
+              {
+                "key": [
+                  0
+                ],
+                "values": {
+                  "key": 0,
+                  "value": 9
+                },
+                "winnerRefs": [
+                  "m9"
+                ],
+                "representedRefs": [
+                  "m9"
+                ],
+                "excludedRefs": []
+              },
+              {
+                "key": [
+                  false
+                ],
+                "values": {
+                  "key": false,
+                  "value": 10
+                },
+                "winnerRefs": [
+                  "m10"
+                ],
+                "representedRefs": [
+                  "m10"
+                ],
+                "excludedRefs": []
+              }
+            ],
+            "excluded": [
+              {
+                "ref": "m1",
+                "reason": "explicit-invalid-key-exclusion"
+              },
+              {
+                "ref": "m2",
+                "reason": "explicit-invalid-key-exclusion"
+              },
+              {
+                "ref": "m3",
+                "reason": "explicit-invalid-key-exclusion"
+              },
+              {
+                "ref": "m4",
+                "reason": "explicit-invalid-key-exclusion"
+              },
+              {
+                "ref": "m5",
+                "reason": "explicit-invalid-key-exclusion"
+              },
+              {
+                "ref": "m6",
+                "reason": "explicit-invalid-key-exclusion"
+              },
+              {
+                "ref": "m7",
+                "reason": "explicit-invalid-key-exclusion"
+              },
+              {
+                "ref": "m8",
+                "reason": "explicit-invalid-key-exclusion"
+              }
+            ],
+            "unresolved": []
+          }
+        }
+      ],
+      "relationships": [
+        {
+          "id": "invalid-does-not-match-invalid",
+          "fromSnapshot": "missing_s0",
+          "fromFields": [
+            "key"
+          ],
+          "toRun": "explicit-exclusion",
+          "toFields": [
+            "key"
+          ],
+          "expected": {
+            "matched": 2,
+            "unmatched": 8,
+            "ambiguous": 0,
+            "expandedExtra": 0,
+            "innerRows": 2,
+            "leftRows": 10
+          }
+        }
+      ],
+      "expectedInvalidKeyGroups": 0,
+      "expectedInvalidOccurrences": 8
+    },
+    {
+      "id": "DR-F07",
+      "title": "Latest earliest equivalent timestamps and exact top twins",
+      "kind": "repair",
+      "inputSnapshot": "ordered_s0",
+      "keyFields": [
+        "id"
+      ],
+      "runs": [
+        {
+          "id": "latest-tie",
+          "policy": {
+            "mode": "latest",
+            "field": "at",
+            "parser": "shared-date"
+          },
+          "expected": {
+            "status": "blocked",
+            "usableOutputCount": null,
+            "previewOutputs": [
+              {
+                "key": [
+                  "A"
+                ],
+                "values": {
+                  "id": "A",
+                  "at": "2026-02-01",
+                  "value": 20
+                },
+                "winnerRefs": [
+                  "v2"
+                ],
+                "representedRefs": [
+                  "v2"
+                ],
+                "excludedRefs": [
+                  "v1"
+                ]
+              },
+              {
+                "key": [
+                  "C"
+                ],
+                "values": {
+                  "id": "C",
+                  "at": "2026-01-01",
+                  "value": 50
+                },
+                "winnerRefs": [
+                  "v5",
+                  "v6"
+                ],
+                "representedRefs": [
+                  "v5",
+                  "v6"
+                ],
+                "excludedRefs": []
+              }
+            ],
+            "excluded": [
+              {
+                "ref": "v1",
+                "reason": "lower-ordering-value"
+              }
+            ],
+            "unresolved": [
+              {
+                "refs": [
+                  "v3",
+                  "v4"
+                ],
+                "reason": "tied-distinct-top-value-classes"
+              }
+            ]
+          }
+        },
+        {
+          "id": "earliest-tie",
+          "policy": {
+            "mode": "earliest",
+            "field": "at",
+            "parser": "shared-date"
+          },
+          "expected": {
+            "status": "blocked",
+            "usableOutputCount": null,
+            "previewOutputs": [
+              {
+                "key": [
+                  "A"
+                ],
+                "values": {
+                  "id": "A",
+                  "at": "2026-01-01",
+                  "value": 10
+                },
+                "winnerRefs": [
+                  "v1"
+                ],
+                "representedRefs": [
+                  "v1"
+                ],
+                "excludedRefs": [
+                  "v2"
+                ]
+              },
+              {
+                "key": [
+                  "C"
+                ],
+                "values": {
+                  "id": "C",
+                  "at": "2026-01-01",
+                  "value": 50
+                },
+                "winnerRefs": [
+                  "v5",
+                  "v6"
+                ],
+                "representedRefs": [
+                  "v5",
+                  "v6"
+                ],
+                "excludedRefs": []
+              }
+            ],
+            "excluded": [
+              {
+                "ref": "v2",
+                "reason": "higher-ordering-value"
+              }
+            ],
+            "unresolved": [
+              {
+                "refs": [
+                  "v3",
+                  "v4"
+                ],
+                "reason": "tied-distinct-top-value-classes"
+              }
+            ]
+          }
+        },
+        {
+          "id": "latest-manual-B",
+          "policy": {
+            "mode": "latest",
+            "field": "at",
+            "parser": "shared-date",
+            "manualChoices": {
+              "B": [
+                "v4"
+              ]
+            }
+          },
+          "expected": {
+            "status": "ready",
+            "usableOutputCount": 3,
+            "previewOutputs": [
+              {
+                "key": [
+                  "A"
+                ],
+                "values": {
+                  "id": "A",
+                  "at": "2026-02-01",
+                  "value": 20
+                },
+                "winnerRefs": [
+                  "v2"
+                ],
+                "representedRefs": [
+                  "v2"
+                ],
+                "excludedRefs": [
+                  "v1"
+                ]
+              },
+              {
+                "key": [
+                  "B"
+                ],
+                "values": {
+                  "id": "B",
+                  "at": "2025-12-31T19:00:00-05:00",
+                  "value": 40
+                },
+                "winnerRefs": [
+                  "v4"
+                ],
+                "representedRefs": [
+                  "v4"
+                ],
+                "excludedRefs": [
+                  "v3"
+                ]
+              },
+              {
+                "key": [
+                  "C"
+                ],
+                "values": {
+                  "id": "C",
+                  "at": "2026-01-01",
+                  "value": 50
+                },
+                "winnerRefs": [
+                  "v5",
+                  "v6"
+                ],
+                "representedRefs": [
+                  "v5",
+                  "v6"
+                ],
+                "excludedRefs": []
+              }
+            ],
+            "excluded": [
+              {
+                "ref": "v1",
+                "reason": "lower-ordering-value"
+              },
+              {
+                "ref": "v3",
+                "reason": "manual-other-value-class"
+              }
+            ],
+            "unresolved": []
+          }
+        }
+      ],
+      "orderingExpectations": [
+        {
+          "refs": [
+            "v3",
+            "v4"
+          ],
+          "timestampsMilliseconds": [
+            1767225600000,
+            1767225600000
+          ],
+          "comparison": 0,
+          "wholeRowsEqual": false
+        }
+      ]
+    },
+    {
+      "id": "DR-F08",
+      "title": "Ordering parsing is explicit and does not redefine exact equality",
+      "kind": "repair",
+      "inputSnapshot": "invalid_order_s0",
+      "keyFields": [
+        "id"
+      ],
+      "runs": [
+        {
+          "id": "block-invalid-ranking",
+          "policy": {
+            "mode": "latest",
+            "field": "rank",
+            "parser": "finite-number",
+            "invalidOrder": "block-group"
+          },
+          "expected": {
+            "status": "blocked",
+            "usableOutputCount": null,
+            "previewOutputs": [
+              {
+                "key": [
+                  "A"
+                ],
+                "values": {
+                  "id": "A",
+                  "rank": "10",
+                  "value": 10
+                },
+                "winnerRefs": [
+                  "n2"
+                ],
+                "representedRefs": [
+                  "n2"
+                ],
+                "excludedRefs": [
+                  "n1"
+                ]
+              }
+            ],
+            "excluded": [
+              {
+                "ref": "n1",
+                "reason": "lower-ordering-value"
+              }
+            ],
+            "unresolved": [
+              {
+                "refs": [
+                  "n3",
+                  "n4"
+                ],
+                "reason": "tied-distinct-top-value-classes"
+              },
+              {
+                "refs": [
+                  "n5",
+                  "n6"
+                ],
+                "reason": "invalid-ordering-value"
+              },
+              {
+                "refs": [
+                  "n7",
+                  "n8"
+                ],
+                "reason": "invalid-ordering-value"
+              }
+            ]
+          }
+        },
+        {
+          "id": "audited-invalid-exclusion",
+          "policy": {
+            "mode": "latest",
+            "field": "rank",
+            "parser": "finite-number",
+            "invalidOrder": "exclude-explicitly",
+            "manualChoices": {
+              "B": [
+                "n4"
+              ]
+            }
+          },
+          "expected": {
+            "status": "ready",
+            "usableOutputCount": 4,
+            "previewOutputs": [
+              {
+                "key": [
+                  "A"
+                ],
+                "values": {
+                  "id": "A",
+                  "rank": "10",
+                  "value": 10
+                },
+                "winnerRefs": [
+                  "n2"
+                ],
+                "representedRefs": [
+                  "n2"
+                ],
+                "excludedRefs": [
+                  "n1"
+                ]
+              },
+              {
+                "key": [
+                  "B"
+                ],
+                "values": {
+                  "id": "B",
+                  "rank": "2",
+                  "value": 21
+                },
+                "winnerRefs": [
+                  "n4"
+                ],
+                "representedRefs": [
+                  "n4"
+                ],
+                "excludedRefs": [
+                  "n3"
+                ]
+              },
+              {
+                "key": [
+                  "C"
+                ],
+                "values": {
+                  "id": "C",
+                  "rank": 3,
+                  "value": 31
+                },
+                "winnerRefs": [
+                  "n6"
+                ],
+                "representedRefs": [
+                  "n6"
+                ],
+                "excludedRefs": [
+                  "n5"
+                ]
+              },
+              {
+                "key": [
+                  "D"
+                ],
+                "values": {
+                  "id": "D",
+                  "rank": 4,
+                  "value": 41
+                },
+                "winnerRefs": [
+                  "n8"
+                ],
+                "representedRefs": [
+                  "n8"
+                ],
+                "excludedRefs": [
+                  "n7"
+                ]
+              }
+            ],
+            "excluded": [
+              {
+                "ref": "n1",
+                "reason": "lower-ordering-value"
+              },
+              {
+                "ref": "n3",
+                "reason": "manual-other-value-class"
+              },
+              {
+                "ref": "n5",
+                "reason": "explicit-invalid-order-exclusion"
+              },
+              {
+                "ref": "n7",
+                "reason": "explicit-invalid-order-exclusion"
+              }
+            ],
+            "unresolved": []
+          }
+        }
+      ],
+      "parserVectors": [
+        {
+          "kind": "number",
+          "raw": "2",
+          "expected": 2
+        },
+        {
+          "kind": "number",
+          "raw": "10",
+          "expected": 10
+        },
+        {
+          "kind": "number",
+          "raw": "0x10",
+          "expected": null
+        },
+        {
+          "kind": "number",
+          "raw": true,
+          "expected": null
+        },
+        {
+          "kind": "number",
+          "raw": " ",
+          "expected": null
+        },
+        {
+          "kind": "number",
+          "raw": {
+            "$scalar": "NaN"
+          },
+          "expected": null
+        },
+        {
+          "kind": "number",
+          "raw": "Infinity",
+          "expected": null
+        },
+        {
+          "kind": "date",
+          "raw": "2025-02-30",
+          "expected": null
+        },
+        {
+          "kind": "date",
+          "raw": "Depot 2",
+          "expected": null
+        },
+        {
+          "kind": "date",
+          "raw": "2026-01-01T00:00:00Z",
+          "expected": 1767225600000
+        }
+      ],
+      "textOrderingVector": {
+        "comparator": "verbatim-lexicographic-utf16-code-units",
+        "eligibleInputs": [
+          "2",
+          "a",
+          " A",
+          "10",
+          "",
+          "A ",
+          "😀",
+          "A"
+        ],
+        "expectedAscending": [
+          " A",
+          "10",
+          "2",
+          "A",
+          "A ",
+          "a",
+          "😀",
+          ""
+        ],
+        "expectedDescending": [
+          "",
+          "😀",
+          "a",
+          "A ",
+          "A",
+          "2",
+          "10",
+          " A"
+        ],
+        "ineligibleInputs": [
+          null,
+          {
+            "$scalar": "undefined"
+          },
+          "",
+          " \t",
+          2,
+          true
+        ],
+        "pairExpectations": [
+          {
+            "left": "10",
+            "right": "2",
+            "comparison": -1
+          },
+          {
+            "left": "A",
+            "right": "a",
+            "comparison": -1
+          },
+          {
+            "left": " A",
+            "right": "A",
+            "comparison": -1
+          },
+          {
+            "left": "A",
+            "right": "A ",
+            "comparison": -1
+          },
+          {
+            "left": "😀",
+            "right": "",
+            "comparison": -1
+          },
+          {
+            "left": "A",
+            "right": "A",
+            "comparison": 0
+          }
+        ],
+        "unicodeWitness": {
+          "supplementary": "😀",
+          "supplementaryCodePoint": "U+1F600",
+          "supplementaryUtf16CodeUnits": [
+            55357,
+            56832
+          ],
+          "bmp": "",
+          "bmpCodePoint": "U+E000",
+          "bmpUtf16CodeUnits": [
+            57344
+          ],
+          "expectedUtf16Comparison": -1,
+          "expectedUnicodeCodePointComparison": 1
+        },
+        "normalization": "none; whitespace is tested only for all-blank eligibility and otherwise retained verbatim",
+        "localeCollation": false,
+        "coercion": false,
+        "productionOrderingEngineExecuted": false,
+        "dateOrderingBoundary": "Date order accepts string values under the rule's saved parser preset; numeric epoch date interpretation is deferred. Numeric ordering remains a separate supported mode."
+      }
+    },
+    {
+      "id": "DR-F09",
+      "title": "Refresh preserves history and revalidates manual group guards",
+      "kind": "refresh",
+      "baselineSnapshot": "customers_s0",
+      "baselineRun": {
+        "caseId": "DR-F01",
+        "runId": "latest-with-manual-C"
+      },
+      "keyFields": [
+        "id"
+      ],
+      "manualGuard": {
+        "key": [
+          "C"
+        ],
+        "schemaFields": [
+          "id",
+          "name",
+          "credit",
+          "updated"
+        ],
+        "groupRefs": [
+          "c5",
+          "c6"
+        ],
+        "chosenRefs": [
+          "c6"
+        ],
+        "includesMultiplicity": true,
+        "includesAllUserFieldPresence": true
+      },
+      "transitions": [
+        {
+          "id": "reorder",
+          "nextSnapshot": "customers_reordered",
+          "expectedGuard": "valid",
+          "currentStatusBeforeAcceptance": "ready",
+          "acceptedEvidenceSnapshot": "customers_s0",
+          "currentUsableOutputCount": 4,
+          "requiresAcceptance": false,
+          "afterAcceptanceExpectedOutputCount": 4,
+          "afterAcceptanceCredit": 120,
+          "expectedSemanticOutputKeys": [
+            [
+              "A"
+            ],
+            [
+              "B"
+            ],
+            [
+              "C"
+            ],
+            [
+              "E"
+            ]
+          ]
+        },
+        {
+          "id": "unrelated-append",
+          "nextSnapshot": "customers_unrelated_added",
+          "expectedGuard": "valid",
+          "currentStatusBeforeAcceptance": "refresh-pending",
+          "historicalSnapshot": "customers_s0",
+          "currentUsableOutputCount": null,
+          "afterAcceptanceExpectedOutputCount": 5,
+          "afterAcceptanceCredit": 125,
+          "newOutput": {
+            "key": [
+              "F"
+            ],
+            "values": {
+              "id": "F",
+              "name": "Fir",
+              "credit": 5,
+              "updated": "2026-04-02"
+            },
+            "winnerRefs": [
+              "c9"
+            ],
+            "representedRefs": [
+              "c9"
+            ],
+            "excludedRefs": []
+          }
+        },
+        {
+          "id": "later-B",
+          "nextSnapshot": "customers_later_B",
+          "expectedGuard": "valid",
+          "currentStatusBeforeAcceptance": "refresh-pending",
+          "historicalSnapshot": "customers_s0",
+          "currentUsableOutputCount": null,
+          "afterAcceptanceExpectedOutputCount": 4,
+          "afterAcceptanceCredit": 123,
+          "changedOutput": {
+            "key": [
+              "B"
+            ],
+            "values": {
+              "id": "B",
+              "name": "Birch",
+              "credit": 28,
+              "updated": "2026-03-01"
+            },
+            "winnerRefs": [
+              "c9"
+            ],
+            "representedRefs": [
+              "c9"
+            ],
+            "excludedRefs": [
+              "c3",
+              "c4"
+            ]
+          },
+          "afterAcceptanceNaiveLookupCredit": 83,
+          "afterAcceptanceEntityCredit": 73
+        },
+        {
+          "id": "same-group-append",
+          "nextSnapshot": "customers_added_C",
+          "expectedGuard": "stale",
+          "currentStatusBeforeAcceptance": "blocked",
+          "historicalSnapshot": "customers_s0",
+          "currentUsableOutputCount": null,
+          "afterAcceptanceExpectedOutputCount": null
+        },
+        {
+          "id": "chosen-row-change",
+          "nextSnapshot": "customers_changed_winner",
+          "expectedGuard": "stale",
+          "currentStatusBeforeAcceptance": "blocked",
+          "historicalSnapshot": "customers_s0",
+          "currentUsableOutputCount": null,
+          "afterAcceptanceExpectedOutputCount": null
+        },
+        {
+          "id": "losing-row-change",
+          "nextSnapshot": "customers_changed_loser",
+          "expectedGuard": "stale",
+          "currentStatusBeforeAcceptance": "blocked",
+          "historicalSnapshot": "customers_s0",
+          "currentUsableOutputCount": null,
+          "afterAcceptanceExpectedOutputCount": null
+        },
+        {
+          "id": "chosen-row-removed",
+          "nextSnapshot": "customers_removed_winner",
+          "expectedGuard": "stale",
+          "currentStatusBeforeAcceptance": "blocked",
+          "historicalSnapshot": "customers_s0",
+          "currentUsableOutputCount": null,
+          "afterAcceptanceExpectedOutputCount": null
+        },
+        {
+          "id": "exact-twin-added",
+          "nextSnapshot": "customers_twin_added",
+          "expectedGuard": "stale",
+          "currentStatusBeforeAcceptance": "blocked",
+          "historicalSnapshot": "customers_s0",
+          "currentUsableOutputCount": null,
+          "afterAcceptanceExpectedOutputCount": null
+        }
+      ],
+      "navigationExpected": {
+        "oldRef": {
+          "snapshot": "customers_s0",
+          "ref": "c6",
+          "ordinal": 5
+        },
+        "sameOrdinalInReorderedSnapshot": "c3",
+        "mustResolveOldRefOnlyInOriginalSnapshot": true
+      },
+      "schemaChangeExpected": {
+        "addedField": "region",
+        "manualGuard": "stale"
+      }
+    },
+    {
+      "id": "DR-F10",
+      "title": "Dependency failures cannot masquerade as a valid empty repaired source",
+      "kind": "dependency-failures",
+      "fixtures": [
+        {
+          "id": "source-missing",
+          "definition": {
+            "sourceId": "customers_repaired",
+            "inputSourceId": "not-present",
+            "keyFields": [
+              "id"
+            ]
+          },
+          "expectedDiagnostic": "missing-source"
+        },
+        {
+          "id": "table-missing",
+          "definition": {
+            "sourceId": "customers_repaired",
+            "inputSourceId": "customers",
+            "keyFields": [
+              "id"
+            ]
+          },
+          "removedTable": "customers",
+          "expectedDiagnostic": "missing-source-table"
+        },
+        {
+          "id": "key-field-missing",
+          "definition": {
+            "sourceId": "customers_repaired",
+            "inputSourceId": "customers",
+            "keyFields": [
+              "absent"
+            ]
+          },
+          "expectedDiagnostic": "missing-repair-field"
+        },
+        {
+          "id": "order-field-missing",
+          "definition": {
+            "sourceId": "customers_repaired",
+            "inputSourceId": "customers",
+            "keyFields": [
+              "id"
+            ],
+            "orderField": "absent"
+          },
+          "expectedDiagnostic": "missing-repair-field"
+        },
+        {
+          "id": "self-cycle",
+          "definition": {
+            "sourceId": "customers_repaired",
+            "inputSourceId": "customers_repaired",
+            "keyFields": [
+              "id"
+            ]
+          },
+          "expectedDiagnostic": "repair-dependency-cycle"
+        },
+        {
+          "id": "derived-chain",
+          "definitions": [
+            {
+              "sourceId": "r1",
+              "inputSourceId": "customers"
+            },
+            {
+              "sourceId": "r2",
+              "inputSourceId": "r1"
+            }
+          ],
+          "expectedDiagnostic": "repair-input-must-be-raw"
+        },
+        {
+          "id": "two-node-cycle",
+          "definitions": [
+            {
+              "sourceId": "r1",
+              "inputSourceId": "r2"
+            },
+            {
+              "sourceId": "r2",
+              "inputSourceId": "r1"
+            }
+          ],
+          "expectedDiagnostic": "repair-dependency-cycle"
+        },
+        {
+          "id": "relationship-target-missing",
+          "relationship": {
+            "from": "orders",
+            "to": "missing_repaired"
+          },
+          "expectedDiagnostic": "missing-source"
+        },
+        {
+          "id": "undeclared-own-data-field-differs",
+          "declaredFields": [
+            "id",
+            "name"
+          ],
+          "keyFields": [
+            "id"
+          ],
+          "inputRows": [
+            {
+              "ref": "u1",
+              "values": {
+                "id": "A",
+                "name": "Ada",
+                "hiddenRole": "reader"
+              }
+            },
+            {
+              "ref": "u2",
+              "values": {
+                "id": "A",
+                "name": "Ada",
+                "hiddenRole": "admin"
+              }
+            }
+          ],
+          "expectedDiagnostic": "repair-schema-problem",
+          "expectedUndeclaredFields": [
+            "hiddenRole"
+          ],
+          "beforeDiscoveryExpected": {
+            "status": "unavailable",
+            "usableOutputCount": null,
+            "exactCollapseAllowed": false,
+            "preservedOriginalRefs": [
+              "u1",
+              "u2"
+            ]
+          },
+          "afterDiscoveryExpected": {
+            "fields": [
+              "id",
+              "name",
+              "hiddenRole"
+            ],
+            "status": "blocked",
+            "usableOutputCount": null,
+            "conflictFields": [
+              "hiddenRole"
+            ],
+            "winnerRefs": [],
+            "representedRefs": [],
+            "excludedRefs": [],
+            "unresolvedRefs": [
+              "u1",
+              "u2"
+            ]
+          },
+          "productionAcceptanceExecuted": false
+        }
+      ],
+      "commonExpected": {
+        "status": "unavailable",
+        "dependentLookupOutputCount": null,
+        "dependentNotebookValue": {
+          "$scalar": "undefined"
+        },
+        "savedDefinitionPreserved": true,
+        "historicalEvidencePreserved": true,
+        "unrelatedOrderAmount": 90
+      }
+    },
+    {
+      "id": "DR-F11",
+      "title": "A repaired entity key does not make every relationship field unique",
+      "kind": "repair",
+      "inputSnapshot": "alternate_key_s0",
+      "keyFields": [
+        "id"
+      ],
+      "runs": [
+        {
+          "id": "unique-by-id",
+          "policy": {
+            "mode": "exact-only"
+          },
+          "expected": {
+            "status": "ready",
+            "usableOutputCount": 2,
+            "previewOutputs": [
+              {
+                "key": [
+                  "A"
+                ],
+                "values": {
+                  "id": "A",
+                  "email": "same"
+                },
+                "winnerRefs": [
+                  "z1"
+                ],
+                "representedRefs": [
+                  "z1"
+                ],
+                "excludedRefs": []
+              },
+              {
+                "key": [
+                  "B"
+                ],
+                "values": {
+                  "id": "B",
+                  "email": "same"
+                },
+                "winnerRefs": [
+                  "z2"
+                ],
+                "representedRefs": [
+                  "z2"
+                ],
+                "excludedRefs": []
+              }
+            ],
+            "excluded": [],
+            "unresolved": []
+          }
+        }
+      ],
+      "relationships": [
+        {
+          "id": "still-ambiguous-email",
+          "fromSnapshot": "alternate_input_s0",
+          "fromFields": [
+            "email"
+          ],
+          "toRun": "unique-by-id",
+          "toFields": [
+            "email"
+          ],
+          "expected": {
+            "matched": 1,
+            "unmatched": 0,
+            "ambiguous": 1,
+            "expandedExtra": 1,
+            "innerRows": 2,
+            "leftRows": 2
+          },
+          "lookupOutputCount": 1,
+          "lookupValueField": "id",
+          "lookupValues": [
+            {
+              "$scalar": "undefined"
+            }
+          ],
+          "ambiguousEvidenceRefs": [
+            "z1",
+            "z2"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "DR-F12",
+      "title": "Entity-aware measure conflict policy stays independent of duplicate repair",
+      "kind": "aggregation",
+      "runs": [
+        {
+          "id": "conflicting-witnesses",
+          "inputSnapshot": "witnesses_conflict_s0",
+          "entityField": "entity",
+          "measureField": "amount",
+          "expected": {
+            "entityCount": 2,
+            "measuredCount": {
+              "$scalar": "undefined"
+            },
+            "sum": {
+              "$scalar": "undefined"
+            },
+            "average": {
+              "$scalar": "undefined"
+            },
+            "conflictingEntityMeasureDiagnostics": 3,
+            "allWitnessRefs": [
+              "w1",
+              "w2",
+              "w3"
+            ]
+          }
+        },
+        {
+          "id": "agreeing-witnesses",
+          "inputSnapshot": "witnesses_equal_s0",
+          "entityField": "entity",
+          "measureField": "amount",
+          "expected": {
+            "entityCount": 2,
+            "measuredCount": 2,
+            "sum": 15,
+            "average": 7.5,
+            "conflictingEntityMeasureDiagnostics": 0,
+            "allWitnessRefs": [
+              "w1",
+              "w2",
+              "w3"
+            ],
+            "numericEntityValues": [
+              10,
+              5
+            ]
+          }
+        }
+      ],
+      "repairLedgerNeverBecomesNumericInput": true
+    },
+    {
+      "id": "DR-F13",
+      "title": "Persistence keeps original scalar evidence and transitive dependencies",
+      "kind": "persistence",
+      "roundTrips": [
+        "project-json",
+        "project-text-plus-evidence",
+        "folder-plus-evidence"
+      ],
+      "inputCaseId": "DR-F01",
+      "inputRunId": "manual-first-release",
+      "expected": {
+        "definitionPreserved": true,
+        "manualChoicesPreserved": true,
+        "rawRowsPreserved": 8,
+        "repairedOutputRows": 4,
+        "allPreparedCredit": 120,
+        "orderAmount": 90,
+        "relationshipCounts": {
+          "matched": 4,
+          "unmatched": 2,
+          "ambiguous": 0,
+          "expandedExtra": 0,
+          "innerRows": 4,
+          "leftRows": 6
+        },
+        "historicalSnapshotPreserved": true,
+        "selectionKeyPreserved": true
+      },
+      "scalarEvidenceVectors": [
+        {
+          "label": "undefined",
+          "input": {
+            "value": {
+              "$scalar": "undefined"
+            }
+          },
+          "expected": {
+            "value": {
+              "$scalar": "undefined"
+            }
+          }
+        },
+        {
+          "label": "absent",
+          "input": {},
+          "expected": {}
+        },
+        {
+          "label": "null",
+          "input": {
+            "value": null
+          },
+          "expected": {
+            "value": null
+          }
+        },
+        {
+          "label": "NaN",
+          "input": {
+            "value": {
+              "$scalar": "NaN"
+            }
+          },
+          "expected": {
+            "value": {
+              "$scalar": "NaN"
+            }
+          }
+        },
+        {
+          "label": "positive infinity",
+          "input": {
+            "value": {
+              "$scalar": "Infinity"
+            }
+          },
+          "expected": {
+            "value": {
+              "$scalar": "Infinity"
+            }
+          }
+        },
+        {
+          "label": "negative infinity",
+          "input": {
+            "value": {
+              "$scalar": "-Infinity"
+            }
+          },
+          "expected": {
+            "value": {
+              "$scalar": "-Infinity"
+            }
+          }
+        },
+        {
+          "label": "negative zero",
+          "input": {
+            "value": {
+              "$scalar": "-0"
+            }
+          },
+          "expected": {
+            "value": {
+              "$scalar": "-0"
+            }
+          }
+        },
+        {
+          "label": "codec-reserved user column",
+          "input": {
+            "__exploreda_value__": "NaN"
+          },
+          "expected": {
+            "__exploreda_value__": "NaN"
+          }
+        },
+        {
+          "label": "quoted and delimiter key",
+          "input": {
+            "id": "a:\"|b"
+          },
+          "expected": {
+            "id": "a:\"|b"
+          }
+        }
+      ],
+      "selectedViewClosure": {
+        "querySources": [
+          "orders"
+        ],
+        "relationshipTargets": [
+          "customers_repaired"
+        ],
+        "expectedDefinitions": [
+          "orders",
+          "customers_repaired",
+          "customers"
+        ],
+        "expectedRawTables": [
+          "orders",
+          "customers"
+        ],
+        "expectedEvidenceSnapshots": [
+          "customers-s0"
+        ],
+        "mustNotReplaceRawTableWithComputedRows": true
+      },
+      "baselineCodecLimitation": "Baseline projectFile handles undefined/NaN/+Infinity/-Infinity and escapes its reserved marker; -0 requires a proposed extension for lossless evidence. Fixture tags are not a claim of a shipped wire format.",
+      "productionRoundTripsExecuted": false
+    },
+    {
+      "id": "DR-F14",
+      "title": "Exact whole-row equality preserves property presence types and signed zero",
+      "kind": "repair",
+      "inputSnapshot": "equality_s0",
+      "keyFields": [
+        "id"
+      ],
+      "runs": [
+        {
+          "id": "raw-presence-sensitive-review",
+          "policy": {
+            "mode": "exact-only"
+          },
+          "expected": {
+            "status": "blocked",
+            "usableOutputCount": null,
+            "previewOutputs": [
+              {
+                "key": [
+                  "D"
+                ],
+                "values": {
+                  "id": "D",
+                  "value": {
+                    "$scalar": "NaN"
+                  }
+                },
+                "winnerRefs": [
+                  "q8",
+                  "q9"
+                ],
+                "representedRefs": [
+                  "q8",
+                  "q9"
+                ],
+                "excludedRefs": []
+              }
+            ],
+            "excluded": [],
+            "unresolved": [
+              {
+                "refs": [
+                  "q1",
+                  "q2",
+                  "q3"
+                ],
+                "reason": "null-undefined-absent-differ"
+              },
+              {
+                "refs": [
+                  "q4",
+                  "q5"
+                ],
+                "reason": "number-string-differ"
+              },
+              {
+                "refs": [
+                  "q6",
+                  "q7"
+                ],
+                "reason": "negative-positive-zero-raw-evidence-differs"
+              }
+            ]
+          }
+        }
+      ],
+      "exactEqualityVectors": [
+        {
+          "left": {},
+          "right": {
+            "value": {
+              "$scalar": "undefined"
+            }
+          },
+          "equal": false
+        },
+        {
+          "left": {
+            "value": null
+          },
+          "right": {
+            "value": {
+              "$scalar": "undefined"
+            }
+          },
+          "equal": false
+        },
+        {
+          "left": {
+            "value": 2
+          },
+          "right": {
+            "value": "2"
+          },
+          "equal": false
+        },
+        {
+          "left": {
+            "value": {
+              "$scalar": "-0"
+            }
+          },
+          "right": {
+            "value": 0
+          },
+          "equal": false
+        },
+        {
+          "left": {
+            "value": {
+              "$scalar": "NaN"
+            }
+          },
+          "right": {
+            "value": {
+              "$scalar": "NaN"
+            }
+          },
+          "equal": true
+        }
+      ]
+    },
+    {
+      "id": "DR-F15",
+      "title": "Generated row numbers require metadata and never a name heuristic",
+      "kind": "repair",
+      "inputSnapshot": "row_number_s0",
+      "keyFields": [
+        "id"
+      ],
+      "runs": [
+        {
+          "id": "ordinary-user-column",
+          "policy": {
+            "mode": "exact-only",
+            "equalityFields": "all-user-fields"
+          },
+          "expected": {
+            "status": "blocked",
+            "usableOutputCount": null,
+            "previewOutputs": [],
+            "excluded": [],
+            "unresolved": [
+              {
+                "refs": [
+                  "r1",
+                  "r2"
+                ],
+                "reason": "user-row-number-differs"
+              }
+            ]
+          }
+        },
+        {
+          "id": "positively-marked-technical-field",
+          "inputSnapshot": "row_number_generated_s0",
+          "policy": {
+            "mode": "exact-only",
+            "equalityFields": "all-data-fields-omit-marked-technical-only"
+          },
+          "expected": {
+            "status": "ready",
+            "usableOutputCount": 1,
+            "previewOutputs": [
+              {
+                "key": [
+                  "A"
+                ],
+                "values": {
+                  "id": "A",
+                  "value": 10
+                },
+                "winnerRefs": [
+                  "r1",
+                  "r2"
+                ],
+                "representedRefs": [
+                  "r1",
+                  "r2"
+                ],
+                "excludedRefs": []
+              }
+            ],
+            "excluded": [],
+            "unresolved": []
+          }
+        }
+      ],
+      "generatedFieldVariant": {
+        "field": "row_number",
+        "requiredMetadata": {
+          "generated": "source-row-number"
+        },
+        "expectedClassification": "equal-data-values-with-distinct-generated-occurrences",
+        "expectedOriginalEvidenceRefs": [
+          "r1",
+          "r2"
+        ],
+        "expectedRawGeneratedValues": [
+          1,
+          2
+        ],
+        "expectedOutputFields": [
+          "id",
+          "value"
+        ],
+        "automaticNameBasedExclusionAllowed": false,
+        "archivePreservesTechnicalField": true
+      }
+    },
+    {
+      "id": "DR-F16",
+      "title": "Full-source apply cancel undo and concurrent refresh",
+      "kind": "interaction",
+      "inputSnapshot": "customers_s0",
+      "inputCaseId": "DR-F01",
+      "inputRunId": "manual-first-release",
+      "steps": [
+        {
+          "action": "open-from-selected-old-B",
+          "selectedRefs": [
+            "c3"
+          ],
+          "expectedFullSourceOccurrences": 8,
+          "expectedFullKeyBRefs": [
+            "c3",
+            "c4"
+          ],
+          "expectedPersistedMutations": 0
+        },
+        {
+          "action": "cancel",
+          "expectedHostCallbacks": 0,
+          "expectedUndoCheckpoints": 0,
+          "expectedRawRowsChanged": 0
+        },
+        {
+          "action": "apply-resolved-draft",
+          "expectedHostCallbacks": 1,
+          "expectedUndoCheckpoints": 1,
+          "expectedRawRowsChanged": 0,
+          "expectedRelationshipTarget": "customers_repaired",
+          "expectedOutputCount": 4
+        },
+        {
+          "action": "undo",
+          "expectedRelationshipTarget": "customers",
+          "expectedAmbiguousInputs": 4,
+          "expectedRawRowsChanged": 0
+        },
+        {
+          "action": "redo",
+          "expectedRelationshipTarget": "customers_repaired",
+          "expectedAmbiguousInputs": 0,
+          "expectedRawRowsChanged": 0
+        },
+        {
+          "action": "refresh-arrives-before-apply",
+          "nextSnapshot": "customers_added_C",
+          "expectedApply": "repreview-required",
+          "expectedHostCallbacks": 0,
+          "expectedCurrentResultStatus": "blocked",
+          "expectedHistoricalSnapshot": "customers_s0"
+        },
+        {
+          "action": "async-host-commit-publishes-before-acknowledgement",
+          "callback": "onProjectChange",
+          "callbackReturnType": "Promise<void>",
+          "callbackResolvedValue": {
+            "$scalar": "undefined"
+          },
+          "baseProjectRevision": "P0",
+          "desiredProjectRevision": "P1",
+          "transactionId": "repair-tx-1",
+          "observedRevisionAtFinalBaseRecheck": "P0",
+          "publishedProjectRevisionBeforeResolve": "P1",
+          "publishedTransactionIdBeforeResolve": "repair-tx-1",
+          "expectedPostAcknowledgementComparison": {
+            "projectRevision": "P1",
+            "transactionId": "repair-tx-1"
+          },
+          "postAcknowledgementMustNotRequireOldBaseRevision": "P0",
+          "expectedOnProjectChangeCalls": 1,
+          "expectedEvidenceSnapshotWrites": 1,
+          "expectedProjectPointerWrites": 1,
+          "expectedUndoCheckpoints": 1,
+          "expectedCommitResult": "committed",
+          "expectedCurrentResultStatus": "ready",
+          "productionAcceptanceExecuted": false
+        },
+        {
+          "action": "base-changes-before-final-project-pointer-write",
+          "callback": "onProjectChange",
+          "callbackReturnType": "Promise<void>",
+          "baseProjectRevision": "P0",
+          "desiredProjectRevision": "P1",
+          "transactionId": "repair-tx-2",
+          "observedRevisionAtFinalBaseRecheck": "P-external",
+          "expectedOnProjectChangeCalls": 1,
+          "expectedCallbackOutcome": "reject",
+          "expectedProjectPointerWrites": 0,
+          "expectedPublishedProjectChanges": 0,
+          "expectedUndoCheckpoints": 0,
+          "expectedCommitResult": "stale-base",
+          "productionAcceptanceExecuted": false
+        },
+        {
+          "action": "drain-older-pointer-save-before-serialized-repair-commit",
+          "callback": "onProjectChange",
+          "callbackReturnType": "Promise<void>",
+          "baseProjectRevision": "P0",
+          "desiredProjectRevision": "P1",
+          "transactionId": "repair-tx-3",
+          "alreadyQueuedPointerRevision": "P0",
+          "queuePolicy": "await-existing-write-before-entering-repair-commit",
+          "expectedProjectDefinitionEditConcurrency": 1,
+          "expectedPointerWriteOrder": [
+            "P0",
+            "P1"
+          ],
+          "expectedProjectPointerWrites": 2,
+          "expectedLateStalePointerWrites": 0,
+          "expectedFinalPointerRevision": "P1",
+          "expectedOnProjectChangeCalls": 1,
+          "expectedUndoCheckpoints": 1,
+          "expectedCommitResult": "committed",
+          "productionAcceptanceExecuted": false
+        },
+        {
+          "action": "source-content-changes-during-final-pointer-write",
+          "callback": "onProjectChange",
+          "callbackReturnType": "Promise<void>",
+          "baseProjectRevision": "P0",
+          "desiredProjectRevision": "P1",
+          "transactionId": "repair-tx-4",
+          "acceptedEvidenceSnapshot": "customers_s0",
+          "sourceSnapshotAtFinalBaseRecheck": "customers_s0",
+          "sourceSnapshotAfterPointerWrite": "customers_added_C",
+          "publishedProjectRevisionBeforeResolve": "P1",
+          "publishedTransactionIdBeforeResolve": "repair-tx-4",
+          "expectedPostAcknowledgementComparison": {
+            "projectRevision": "P1",
+            "transactionId": "repair-tx-4"
+          },
+          "expectedOnProjectChangeCalls": 1,
+          "expectedCallbackOutcome": "resolve",
+          "expectedProjectPointerWrites": 1,
+          "expectedUndoCheckpoints": 1,
+          "expectedCommitResult": "committed-historical",
+          "expectedSavedEvidenceSnapshot": "customers_s0",
+          "expectedCurrentResultStatus": "unavailable",
+          "expectedCurrentOutputCount": null,
+          "expectedHistoricalOutputCount": 4,
+          "expectedHistoricalOriginalOccurrences": 8,
+          "productionAcceptanceExecuted": false
+        }
+      ],
+      "keyboardAcceptance": [
+        "Enter opens group",
+        "Arrow keys move between whole-row alternatives",
+        "Space chooses highlighted value class",
+        "Escape cancels draft without callback",
+        "Apply reachable by Tab and named by visible text"
+      ],
+      "productionInteractionTestsExecuted": false,
+      "chainedRetargetVector": {
+        "id": "retarget-changes-field-origin-even-when-alias-stays",
+        "inputRows": {
+          "orders": [
+            {
+              "ref": "h_o1",
+              "values": {
+                "id": "O1",
+                "customerId": "C1",
+                "amount": 7
+              }
+            },
+            {
+              "ref": "h_o2",
+              "values": {
+                "id": "O2",
+                "customerId": "C2",
+                "amount": 11
+              }
+            }
+          ],
+          "customers": [
+            {
+              "ref": "h_c1",
+              "values": {
+                "id": "C1",
+                "regionId": "R1"
+              }
+            },
+            {
+              "ref": "h_c2",
+              "values": {
+                "id": "C1",
+                "regionId": "R1"
+              }
+            },
+            {
+              "ref": "h_c3",
+              "values": {
+                "id": "C2",
+                "regionId": "R2"
+              }
+            }
+          ],
+          "regions": [
+            {
+              "ref": "h_r1",
+              "values": {
+                "id": "R1",
+                "name": "North"
+              }
+            },
+            {
+              "ref": "h_r2",
+              "values": {
+                "id": "R2",
+                "name": "South"
+              }
+            }
+          ]
+        },
+        "preparedExpectedOutputs": [
+          {
+            "key": [
+              "C1"
+            ],
+            "values": {
+              "id": "C1",
+              "regionId": "R1"
+            },
+            "winnerRefs": [
+              "h_c1",
+              "h_c2"
+            ],
+            "representedRefs": [
+              "h_c1",
+              "h_c2"
+            ],
+            "excludedRefs": []
+          },
+          {
+            "key": [
+              "C2"
+            ],
+            "values": {
+              "id": "C2",
+              "regionId": "R2"
+            },
+            "winnerRefs": [
+              "h_c3"
+            ],
+            "representedRefs": [
+              "h_c3"
+            ],
+            "excludedRefs": []
+          }
+        ],
+        "initialRelationships": [
+          {
+            "id": "order-customer",
+            "from": {
+              "sourceId": "orders",
+              "fieldId": "customerId"
+            },
+            "to": {
+              "sourceId": "customers",
+              "fieldId": "id"
+            }
+          },
+          {
+            "id": "customer-region",
+            "from": {
+              "sourceId": "customers",
+              "fieldId": "regionId"
+            },
+            "to": {
+              "sourceId": "regions",
+              "fieldId": "id"
+            }
+          }
+        ],
+        "steps": [
+          {
+            "id": "customer-lookup",
+            "relationshipId": "order-customer",
+            "as": "customer"
+          },
+          {
+            "id": "region-lookup",
+            "relationshipId": "customer-region",
+            "inputFieldId": "customer.regionId",
+            "as": "region"
+          }
+        ],
+        "beforeField": {
+          "id": "customer.regionId",
+          "origin": {
+            "sourceId": "customers",
+            "fieldId": "regionId"
+          }
+        },
+        "afterFirstRetargetField": {
+          "id": "customer.regionId",
+          "origin": {
+            "sourceId": "customers_repaired",
+            "fieldId": "regionId"
+          }
+        },
+        "rawExpected": {
+          "firstRelationshipCounts": {
+            "matched": 2,
+            "unmatched": 0,
+            "ambiguous": 1,
+            "expandedExtra": 1,
+            "innerRows": 3,
+            "leftRows": 3
+          },
+          "secondRelationshipCounts": {
+            "matched": 1,
+            "unmatched": 1,
+            "ambiguous": 0,
+            "expandedExtra": 0,
+            "innerRows": 1,
+            "leftRows": 2
+          },
+          "lookupOutputCount": 2,
+          "regionNames": [
+            {
+              "$scalar": "undefined"
+            },
+            "South"
+          ],
+          "orderAmount": 18
+        },
+        "retargetFirstOnlyExpected": {
+          "status": "blocked-proposal",
+          "diagnostic": "invalid-relationship-input-origin",
+          "affectedStepIds": [
+            "region-lookup"
+          ],
+          "expectedProjectWrites": 0,
+          "expectedHostCallbacks": 0,
+          "committedRawQueryRemainsUsable": true,
+          "implicitAliasStringMatchAllowed": false
+        },
+        "createPreparedSourceAloneExpected": {
+          "allowed": true,
+          "retargetedRelationshipIds": [],
+          "rawQueryRegionNames": [
+            {
+              "$scalar": "undefined"
+            },
+            "South"
+          ]
+        },
+        "explicitRewire": {
+          "cloneRelationship": {
+            "id": "prepared-customer-region",
+            "from": {
+              "sourceId": "customers_repaired",
+              "fieldId": "regionId"
+            },
+            "to": {
+              "sourceId": "regions",
+              "fieldId": "id"
+            }
+          },
+          "setStepRelationship": {
+            "stepId": "region-lookup",
+            "relationshipId": "prepared-customer-region"
+          },
+          "expected": {
+            "status": "ready",
+            "fieldAlias": "customer.regionId",
+            "originalCustomerRegionRelationshipPreserved": true,
+            "affectedStepIds": [],
+            "firstRelationshipCounts": {
+              "matched": 2,
+              "unmatched": 0,
+              "ambiguous": 0,
+              "expandedExtra": 0,
+              "innerRows": 2,
+              "leftRows": 2
+            },
+            "secondRelationshipCounts": {
+              "matched": 2,
+              "unmatched": 0,
+              "ambiguous": 0,
+              "expandedExtra": 0,
+              "innerRows": 2,
+              "leftRows": 2
+            },
+            "lookupOutputCount": 2,
+            "regionNames": [
+              "North",
+              "South"
+            ],
+            "orderAmount": 18,
+            "expectedHostCallbacks": 1,
+            "expectedUndoCheckpoints": 1
+          }
+        },
+        "productionAcceptanceExecuted": false
+      }
+    }
+  ]
+}
