@@ -34,6 +34,7 @@ import {
   NotebookSourceEditor,
   notebookSheets,
   parseNotebook,
+  readNotebookText,
   type SavedDataStructure,
 } from "exploreda";
 import { Button } from "@/components/ui/button";
@@ -392,6 +393,28 @@ function NotebookContent({
   const source = params.get("view") === "source";
   const [text, setText] = useState(loaded.text);
   const edited = text !== loaded.text;
+  const sourceResult = useMemo(
+    () =>
+      readNotebookText(text, {
+        project: loaded.project,
+        tables: loaded.tables,
+        name: entry.title,
+      }),
+    [text, loaded.project, loaded.tables, entry.title]
+  );
+  const queryProblem = sourceResult.diagnostics.find(
+    (item) => item.effect === "rows-missing"
+  );
+  const lastRows = useRef({ queryId: entry.query, rows: loaded.rows });
+  if (!queryProblem && lastRows.current.queryId !== sourceResult.queryId) {
+    lastRows.current = {
+      queryId: sourceResult.queryId,
+      rows: sourceResult.rows,
+    };
+  }
+  const sourceInvalid = sourceResult.diagnostics.some(
+    (item) => item.severity === "error"
+  );
   const sheets = useMemo(
     () => notebookSheets(parseNotebook(text)).sheets,
     [text]
@@ -433,8 +456,10 @@ function NotebookContent({
       // lede, and edits put the title back.
       text={body}
       onTextChange={source ? (next) => setText(title + next) : undefined}
-      data={loaded.rows}
-      fieldTypes={loaded.fieldTypes}
+      data={lastRows.current.rows}
+      fieldTypes={
+        lastRows.current.queryId === entry.query ? loaded.fieldTypes : undefined
+      }
       name={entry.title}
       layout="sections"
       sheet={sheet}
@@ -459,23 +484,33 @@ function NotebookContent({
           className="ml-auto"
           variant="outline"
           size="sm"
+          disabled={sourceInvalid}
+          aria-describedby={
+            sourceInvalid ? "daily-explore-unavailable" : undefined
+          }
           onClick={() =>
-            open(
-              exploreChartCopy(
-                compileNotebook(text, {
-                  rows: loaded.rows,
-                  name: entry.title,
-                }).settings,
-                ""
-              ),
-              true
-            )
+            open(exploreChartCopy(sourceResult.settings, ""), true)
           }
         >
           <Rows3 aria-hidden="true" />
           Explore rows
         </Button>
+        {sourceInvalid && (
+          <span
+            id="daily-explore-unavailable"
+            role="status"
+            className="text-sm text-destructive"
+          >
+            Fix the source errors to explore rows.
+          </span>
+        )}
       </ViewBar>
+      {queryProblem && (
+        <p role="alert" className="text-sm text-destructive">
+          Line {queryProblem.line}: {queryProblem.message} Showing the last
+          valid data.
+        </p>
+      )}
       {aside && (
         <ExploreAside
           data={loaded.rows}

@@ -205,6 +205,7 @@ export function compileNotebook(
       .map(([index]) => index)
   );
   let pass = build(frozen);
+  const frozenDiagnostics: DslDiagnostic[] = [];
   for (;;) {
     const more = [...errorBlocks(pass.result.diagnostics)].filter(
       (index) => !frozen.has(index) && canStandIn(index)
@@ -212,6 +213,12 @@ export function compileNotebook(
     if (!more.length) {
       break;
     }
+    frozenDiagnostics.push(
+      ...pass.result.diagnostics.filter((item) => {
+        const block = blockAt(notebook, item.line);
+        return block && more.includes(block.index);
+      })
+    );
     more.forEach((index) => frozen.add(index));
     pass = build(frozen);
   }
@@ -315,6 +322,7 @@ export function compileNotebook(
   // Stand-in text already reported its problems when it was the file's.
   const fileDiagnostics = [
     ...[...own.values()].flat(),
+    ...frozenDiagnostics,
     ...result.diagnostics.filter((item) => item.line <= notebook.lines.length),
     ...duplicates,
   ].sort((a, b) => a.line - b.line || a.column - b.column);

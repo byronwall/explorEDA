@@ -154,6 +154,24 @@ describe("compileNotebook", () => {
     ).toBe(true);
   });
 
+  it("keeps diagnostics from the invalid text when showing last-valid output", () => {
+    const valid = "line @d x=time y=actual";
+    const invalid = fence("audit_invalid @d x=time y=actual");
+    const result = compileNotebook(invalid, { rows, lastValid: { 0: valid } });
+    expect(result.blocks[0]!.status).toBe("frozen");
+    expect(result.blocks[0]!.charts.map((chart) => chart.id)).toEqual(["d"]);
+    expect(result.blocks[0]!.diagnostics).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ line: 2, severity: "error" }),
+      ])
+    );
+    expect(result.complete).toBe(false);
+    expect(
+      compileNotebook(fence(valid), { rows, lastValid: { 0: valid } })
+        .blocks[0]!.status
+    ).toBe("ok");
+  });
+
   it("freezes only the broken block when others depend on it", () => {
     const text = [
       fence("calc delta = actual - forecast\nhist @d delta {"),
