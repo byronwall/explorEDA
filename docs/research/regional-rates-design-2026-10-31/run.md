@@ -1,6 +1,19 @@
 # Regional rates Design run
 
-Phase: integrated locally; PR opening pending. Follow-ups: 0/1.
+Phase: complete. Follow-ups: 0/1.
+
+Verified open PR: https://github.com/byronwall/explorEDA/pull/580, main <- codex/regional-rates-design-2026-10-31.
+Integration commit: 2cbd6ad5. Saved body links the plan, summary, decisions, conversation, and original asset index.
+The 23-file PR inventory includes all eight originals; each matches ZIP, disk, and Git bytes.
+Documentation label applied. The codex and codex-automation labels are unavailable.
+
+Temporary collector deletion confirmed through the supported scheduler: deleteStatus=deleted.
+The six-hour pipeline remains ACTIVE indefinitely. No merge or deployment. Stop for review.
+Completion time: October 31, 2026 about 10:51 UTC.
+
+Final checks: 27 baseline tests, 74 docs tests, 439 independent fixture anchors, 143 authored local links,
+formatting, authored whitespace, PR authors/changesets, and exact original inventory pass.
+Docs tests emit existing React act warnings. Docs-only: no full pnpm check or changeset.
 
 Collected October 31, 2026 after 10:42 UTC. Pro finished in 22m28s.
 Downloaded the existing regional-rates-design.zip through its linked preview under Byron's standing approval.
@@ -25,6 +38,8 @@ Pro's reported 2,849 verifier assertions and contract syntax/example check remai
 Existing map/evaluator/findings tests pass: 3 files, 27 tests. Docs checks and final PR checks follow.
 Authored local links pass; original disk inventory matches ZIP. No feature, browser, persistence, or performance acceptance is claimed.
 
+## Submission record
+
 Conversation: https://chatgpt.com/c/6ae5a920-2a18-83ea-84be-25b88b06d492. Never resubmit.
 Submitted October 31, 2026 about 08:39 UTC. Chrome byroni.us and Byron Wall Pro account verified.
 The live model selector showed Pro 5/5. Both completed attachments, the sent message, and Stop control were verified.
@@ -44,7 +59,7 @@ The six-hour pipeline remains ACTIVE indefinitely, using GPT-6.1 Sol at Medium r
 
 Validation: docs checks passed, 3 files and 74 tests, with existing React act warnings.
 Docs-only preparation; no full package check, changeset, or feature acceptance is claimed.
-No preparation-only PR. The plan, summary, original assets, and integration PR remain pending.
+No preparation-only PR was opened. The integrated outputs are now complete in PR #580.
 
 Mission: design comparable regional rates with explicit exposure, two-input evidence, and notebook reuse.
 
@@ -74,7 +89,7 @@ Other candidates have less Pro advantage or overlap recent preparation work.
 
 Prompt: [pro-prompt.md](pro-prompt.md). Input packet stays ignored under tmp/pro-regional-rates-2026-10-31/.
 
-Pending outputs: docs/intent/regional-rate-comparisons/implementation-plan.md and README.md beside this run.
+Outputs: docs/intent/regional-rate-comparisons/implementation-plan.md and README.md beside this run.
 Preserve all original artifacts under docs/intent/regional-rate-comparisons/assets/pro-results/regional-rates-design-2026-10-31/.
 Link their asset index from the plan, summary, and PR. Keep ZIPs and input packets ignored.
 
