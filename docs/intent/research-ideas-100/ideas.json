@@ -1876,7 +1876,7 @@
     "priority": 77,
     "research_kind": "new-direction",
     "status": "candidate",
-    "summary": "Compare a few deterministic string functions with explicit upstream preparation, using real cleaning tasks to bound scope.",
+    "summary": "Design researched October 31: guided text preparation emits saved formulas with strict semantics, exact record review, and complete chart/project/notebook reuse. See docs/intent/text-preparation/implementation-plan.md; implementation remains planned.",
     "research_question": "Which minimal string operations would remove repeated preparation work without turning the calculator into a general scripting language?",
     "why_now": "The active registry supports scalar arithmetic and date functions, plus a separately registered region function, but no general text-cleaning family.",
     "repo_evidence": [

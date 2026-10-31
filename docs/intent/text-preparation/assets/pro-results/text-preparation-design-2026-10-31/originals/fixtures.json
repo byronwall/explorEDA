@@ -1,0 +1,4336 @@
+{
+  "format": "exploreda-text-preparation-fixtures-v1",
+  "baseline": "ab4ecd2aa98f3fd1da11e8f552efdb269f4b65a6",
+  "status": "Proposed acceptance contracts, not shipped behavior. Direct helper and workflow arithmetic can be checked by the supplied reference oracle; engine/host integration cases require implementation.",
+  "encoding": {
+    "plain": "JSON scalar values are exact; absent object properties remain absent.",
+    "tags": "Objects with $type occur only in fixture transport; decode them before calling the functions. Do not treat tag objects as row data.",
+    "logicalMissing": "Successful null is the semantic expectation. CalculationManager stores it as undefined; baseline project calculateFrame retains null. Failure also has null value but success=false and an error.",
+    "unicode": "Escaped JSON and code-point arrays identify exact sequences; equality is exact after explicitly requested operations."
+  },
+  "validationPhases": [
+    "Definition: validate known fields, functions, arity, and literal/signed-numeric-literal control arguments; do not evaluate general constant subtrees.",
+    "Row: the existing Calculator evaluates function argument expressions left-to-right. Failure here precedes helper checks.",
+    "Helper: validate supplied value arguments left-to-right, including every nonnull concat argument and all nonnullable controls.",
+    "Then return logical missing or perform the operation. Ternary and boolean short circuit remain unchanged."
+  ],
+  "trimCodePoints": [
+    "U+0009",
+    "U+000A",
+    "U+000B",
+    "U+000C",
+    "U+000D",
+    "U+0020",
+    "U+00A0",
+    "U+1680",
+    "U+2000",
+    "U+2001",
+    "U+2002",
+    "U+2003",
+    "U+2004",
+    "U+2005",
+    "U+2006",
+    "U+2007",
+    "U+2008",
+    "U+2009",
+    "U+200A",
+    "U+2028",
+    "U+2029",
+    "U+202F",
+    "U+205F",
+    "U+3000",
+    "U+FEFF"
+  ],
+  "missingReasonContract": {
+    "status": "Unexecuted shared-evaluator metadata acceptance. The direct-value oracle returns only values/errors.",
+    "reasons": {
+      "source-missing": "A nullish effective input, displayed as Missing input; not necessarily a missing original cell.",
+      "part-absent": "A present input has no component at the requested valid index."
+    },
+    "precedence": "After argument validation, preserve the reason/origin of the first missing operand in argument order. A named dependency preserves its known originating call/field. Unrelated existing functions with no reason evidence remain unclassified missing."
+  },
+  "missingReasonCases": [
+    {
+      "id": "REASON-01",
+      "formula": "textPart([\"code\"], \"-\", 1)",
+      "variables": {
+        "code": "A"
+      },
+      "expectedValue": null,
+      "expectedReason": "part-absent",
+      "expectedOrigin": {
+        "function": "textPart",
+        "inputField": "code"
+      }
+    },
+    {
+      "id": "REASON-02",
+      "formula": "textConcat([\"component\"], [\"site\"])",
+      "variables": {
+        "component": null,
+        "site": null
+      },
+      "inputMissingDetails": {
+        "component": {
+          "reason": "part-absent",
+          "originField": "code"
+        },
+        "site": {
+          "reason": "source-missing",
+          "originField": "site"
+        }
+      },
+      "expectedValue": null,
+      "expectedReason": "part-absent",
+      "expectedOriginField": "code"
+    },
+    {
+      "id": "REASON-03",
+      "formula": "textConcat([\"site\"], [\"component\"])",
+      "variables": {
+        "component": null,
+        "site": null
+      },
+      "inputMissingDetails": {
+        "component": {
+          "reason": "part-absent",
+          "originField": "code"
+        },
+        "site": {
+          "reason": "source-missing",
+          "originField": "site"
+        }
+      },
+      "expectedValue": null,
+      "expectedReason": "source-missing",
+      "expectedOriginField": "site"
+    }
+  ],
+  "primitiveCases": [
+    {
+      "id": "TRIM-01",
+      "function": "textTrim",
+      "args": [
+        "  AB-001  "
+      ],
+      "formula": "textTrim(\"  AB-001  \")",
+      "expected": {
+        "success": true,
+        "value": "AB-001"
+      }
+    },
+    {
+      "id": "TRIM-02",
+      "function": "textTrim",
+      "args": [
+        "A  B"
+      ],
+      "formula": "textTrim(\"A  B\")",
+      "expected": {
+        "success": true,
+        "value": "A  B"
+      }
+    },
+    {
+      "id": "TRIM-03",
+      "function": "textTrim",
+      "args": [
+        ""
+      ],
+      "formula": "textTrim(\"\")",
+      "expected": {
+        "success": true,
+        "value": ""
+      }
+    },
+    {
+      "id": "TRIM-04",
+      "function": "textTrim",
+      "args": [
+        " \t\n"
+      ],
+      "formula": "textTrim(\" \\t\\n\")",
+      "expected": {
+        "success": true,
+        "value": ""
+      },
+      "argumentCodePoints": [
+        [
+          "U+0020",
+          "U+0009",
+          "U+000A"
+        ]
+      ],
+      "resultCodePoints": []
+    },
+    {
+      "id": "TRIM-05",
+      "function": "textTrim",
+      "args": [
+        null
+      ],
+      "formula": "textTrim(null)",
+      "expected": {
+        "success": true,
+        "value": null
+      }
+    },
+    {
+      "id": "TRIM-06",
+      "function": "textTrim",
+      "args": [
+        {
+          "$type": "undefined"
+        }
+      ],
+      "formula": "textTrim([\"arg1\"])",
+      "expected": {
+        "success": true,
+        "value": null
+      },
+      "variables": {
+        "arg1": {
+          "$type": "undefined"
+        }
+      }
+    },
+    {
+      "id": "TRIM-07",
+      "function": "textTrim",
+      "args": [
+        12
+      ],
+      "formula": "textTrim(12)",
+      "expected": {
+        "success": false,
+        "value": null,
+        "errorCode": "TEXT_TYPE",
+        "error": "textTrim argument 1 must be text or missing; received number."
+      }
+    },
+    {
+      "id": "TRIM-08",
+      "function": "textTrim",
+      "args": [
+        true
+      ],
+      "formula": "textTrim(true)",
+      "expected": {
+        "success": false,
+        "value": null,
+        "errorCode": "TEXT_TYPE",
+        "error": "textTrim argument 1 must be text or missing; received boolean."
+      }
+    },
+    {
+      "id": "TRIM-09",
+      "function": "textTrim",
+      "args": [
+        {
+          "$type": "date",
+          "iso": "2026-10-31T00:00:00.000Z"
+        }
+      ],
+      "formula": "textTrim([\"arg1\"])",
+      "expected": {
+        "success": false,
+        "value": null,
+        "errorCode": "TEXT_TYPE",
+        "error": "textTrim argument 1 must be text or missing; received date."
+      },
+      "variables": {
+        "arg1": {
+          "$type": "date",
+          "iso": "2026-10-31T00:00:00.000Z"
+        }
+      }
+    },
+    {
+      "id": "TRIM-10",
+      "function": "textTrim",
+      "args": [
+        "\u00a0A\u00a0"
+      ],
+      "formula": "textTrim(\"\\u00a0A\\u00a0\")",
+      "expected": {
+        "success": true,
+        "value": "A"
+      },
+      "argumentCodePoints": [
+        [
+          "U+00A0",
+          "U+0041",
+          "U+00A0"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+0041"
+      ]
+    },
+    {
+      "id": "TRIM-11",
+      "function": "textTrim",
+      "args": [
+        "\ufeffA\ufeff"
+      ],
+      "formula": "textTrim(\"\\ufeffA\\ufeff\")",
+      "expected": {
+        "success": true,
+        "value": "A"
+      },
+      "argumentCodePoints": [
+        [
+          "U+FEFF",
+          "U+0041",
+          "U+FEFF"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+0041"
+      ]
+    },
+    {
+      "id": "TRIM-12",
+      "function": "textTrim",
+      "args": [
+        "\u0085A\u0085"
+      ],
+      "formula": "textTrim(\"\\u0085A\\u0085\")",
+      "expected": {
+        "success": true,
+        "value": "\u0085A\u0085"
+      },
+      "argumentCodePoints": [
+        [
+          "U+0085",
+          "U+0041",
+          "U+0085"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+0085",
+        "U+0041",
+        "U+0085"
+      ]
+    },
+    {
+      "id": "TRIM-13",
+      "function": "textTrim",
+      "args": [
+        "\u200bA\u200b"
+      ],
+      "formula": "textTrim(\"\\u200bA\\u200b\")",
+      "expected": {
+        "success": true,
+        "value": "\u200bA\u200b"
+      },
+      "argumentCodePoints": [
+        [
+          "U+200B",
+          "U+0041",
+          "U+200B"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+200B",
+        "U+0041",
+        "U+200B"
+      ]
+    },
+    {
+      "id": "TRIM-14",
+      "function": "textTrim",
+      "args": [
+        "\u200cA\u200d"
+      ],
+      "formula": "textTrim(\"\\u200cA\\u200d\")",
+      "expected": {
+        "success": true,
+        "value": "\u200cA\u200d"
+      },
+      "argumentCodePoints": [
+        [
+          "U+200C",
+          "U+0041",
+          "U+200D"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+200C",
+        "U+0041",
+        "U+200D"
+      ]
+    },
+    {
+      "id": "TRIM-15",
+      "function": "textTrim",
+      "args": [
+        "\u180eA\u2060"
+      ],
+      "formula": "textTrim(\"\\u180eA\\u2060\")",
+      "expected": {
+        "success": true,
+        "value": "\u180eA\u2060"
+      },
+      "argumentCodePoints": [
+        [
+          "U+180E",
+          "U+0041",
+          "U+2060"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+180E",
+        "U+0041",
+        "U+2060"
+      ]
+    },
+    {
+      "id": "TRIM-16",
+      "function": "textTrim",
+      "args": [
+        " A\u00a0B\ufeffC "
+      ],
+      "formula": "textTrim(\" A\\u00a0B\\ufeffC \")",
+      "expected": {
+        "success": true,
+        "value": "A\u00a0B\ufeffC"
+      },
+      "argumentCodePoints": [
+        [
+          "U+0020",
+          "U+0041",
+          "U+00A0",
+          "U+0042",
+          "U+FEFF",
+          "U+0043",
+          "U+0020"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+0041",
+        "U+00A0",
+        "U+0042",
+        "U+FEFF",
+        "U+0043"
+      ]
+    },
+    {
+      "id": "TRIM-17",
+      "function": "textTrim",
+      "args": [
+        "\ud800"
+      ],
+      "formula": "textTrim(\"\\ud800\")",
+      "expected": {
+        "success": false,
+        "value": null,
+        "errorCode": "TEXT_UNICODE",
+        "error": "textTrim argument 1 contains an unpaired UTF-16 surrogate."
+      },
+      "argumentCodePoints": [
+        [
+          "U+D800"
+        ]
+      ]
+    },
+    {
+      "id": "TRIM-18",
+      "function": "textTrim",
+      "args": [
+        "\udc00"
+      ],
+      "formula": "textTrim(\"\\udc00\")",
+      "expected": {
+        "success": false,
+        "value": null,
+        "errorCode": "TEXT_UNICODE",
+        "error": "textTrim argument 1 contains an unpaired UTF-16 surrogate."
+      },
+      "argumentCodePoints": [
+        [
+          "U+DC00"
+        ]
+      ]
+    },
+    {
+      "id": "TRIM-19",
+      "function": "textTrim",
+      "args": [
+        " \ud83d\ude00 "
+      ],
+      "formula": "textTrim(\" \\ud83d\\ude00 \")",
+      "expected": {
+        "success": true,
+        "value": "\ud83d\ude00"
+      },
+      "argumentCodePoints": [
+        [
+          "U+0020",
+          "U+1F600",
+          "U+0020"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+1F600"
+      ]
+    },
+    {
+      "id": "TRIM-20",
+      "function": "TeXtTrIm",
+      "args": [
+        " 0012 "
+      ],
+      "formula": "TeXtTrIm(\" 0012 \")",
+      "expected": {
+        "success": true,
+        "value": "0012"
+      }
+    },
+    {
+      "id": "TRIM-U0009",
+      "function": "textTrim",
+      "args": [
+        "\tA\t"
+      ],
+      "formula": "textTrim(\"\\tA\\t\")",
+      "expected": {
+        "success": true,
+        "value": "A"
+      },
+      "argumentCodePoints": [
+        [
+          "U+0009",
+          "U+0041",
+          "U+0009"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+0041"
+      ]
+    },
+    {
+      "id": "TRIM-U000A",
+      "function": "textTrim",
+      "args": [
+        "\nA\n"
+      ],
+      "formula": "textTrim(\"\\nA\\n\")",
+      "expected": {
+        "success": true,
+        "value": "A"
+      },
+      "argumentCodePoints": [
+        [
+          "U+000A",
+          "U+0041",
+          "U+000A"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+0041"
+      ]
+    },
+    {
+      "id": "TRIM-U000B",
+      "function": "textTrim",
+      "args": [
+        "\u000bA\u000b"
+      ],
+      "formula": "textTrim(\"\\u000bA\\u000b\")",
+      "expected": {
+        "success": true,
+        "value": "A"
+      },
+      "argumentCodePoints": [
+        [
+          "U+000B",
+          "U+0041",
+          "U+000B"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+0041"
+      ]
+    },
+    {
+      "id": "TRIM-U000C",
+      "function": "textTrim",
+      "args": [
+        "\fA\f"
+      ],
+      "formula": "textTrim(\"\\fA\\f\")",
+      "expected": {
+        "success": true,
+        "value": "A"
+      },
+      "argumentCodePoints": [
+        [
+          "U+000C",
+          "U+0041",
+          "U+000C"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+0041"
+      ]
+    },
+    {
+      "id": "TRIM-U000D",
+      "function": "textTrim",
+      "args": [
+        "\rA\r"
+      ],
+      "formula": "textTrim(\"\\rA\\r\")",
+      "expected": {
+        "success": true,
+        "value": "A"
+      },
+      "argumentCodePoints": [
+        [
+          "U+000D",
+          "U+0041",
+          "U+000D"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+0041"
+      ]
+    },
+    {
+      "id": "TRIM-U0020",
+      "function": "textTrim",
+      "args": [
+        " A "
+      ],
+      "formula": "textTrim(\" A \")",
+      "expected": {
+        "success": true,
+        "value": "A"
+      }
+    },
+    {
+      "id": "TRIM-U00A0",
+      "function": "textTrim",
+      "args": [
+        "\u00a0A\u00a0"
+      ],
+      "formula": "textTrim(\"\\u00a0A\\u00a0\")",
+      "expected": {
+        "success": true,
+        "value": "A"
+      },
+      "argumentCodePoints": [
+        [
+          "U+00A0",
+          "U+0041",
+          "U+00A0"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+0041"
+      ]
+    },
+    {
+      "id": "TRIM-U1680",
+      "function": "textTrim",
+      "args": [
+        "\u1680A\u1680"
+      ],
+      "formula": "textTrim(\"\\u1680A\\u1680\")",
+      "expected": {
+        "success": true,
+        "value": "A"
+      },
+      "argumentCodePoints": [
+        [
+          "U+1680",
+          "U+0041",
+          "U+1680"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+0041"
+      ]
+    },
+    {
+      "id": "TRIM-U2000",
+      "function": "textTrim",
+      "args": [
+        "\u2000A\u2000"
+      ],
+      "formula": "textTrim(\"\\u2000A\\u2000\")",
+      "expected": {
+        "success": true,
+        "value": "A"
+      },
+      "argumentCodePoints": [
+        [
+          "U+2000",
+          "U+0041",
+          "U+2000"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+0041"
+      ]
+    },
+    {
+      "id": "TRIM-U2001",
+      "function": "textTrim",
+      "args": [
+        "\u2001A\u2001"
+      ],
+      "formula": "textTrim(\"\\u2001A\\u2001\")",
+      "expected": {
+        "success": true,
+        "value": "A"
+      },
+      "argumentCodePoints": [
+        [
+          "U+2001",
+          "U+0041",
+          "U+2001"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+0041"
+      ]
+    },
+    {
+      "id": "TRIM-U2002",
+      "function": "textTrim",
+      "args": [
+        "\u2002A\u2002"
+      ],
+      "formula": "textTrim(\"\\u2002A\\u2002\")",
+      "expected": {
+        "success": true,
+        "value": "A"
+      },
+      "argumentCodePoints": [
+        [
+          "U+2002",
+          "U+0041",
+          "U+2002"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+0041"
+      ]
+    },
+    {
+      "id": "TRIM-U2003",
+      "function": "textTrim",
+      "args": [
+        "\u2003A\u2003"
+      ],
+      "formula": "textTrim(\"\\u2003A\\u2003\")",
+      "expected": {
+        "success": true,
+        "value": "A"
+      },
+      "argumentCodePoints": [
+        [
+          "U+2003",
+          "U+0041",
+          "U+2003"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+0041"
+      ]
+    },
+    {
+      "id": "TRIM-U2004",
+      "function": "textTrim",
+      "args": [
+        "\u2004A\u2004"
+      ],
+      "formula": "textTrim(\"\\u2004A\\u2004\")",
+      "expected": {
+        "success": true,
+        "value": "A"
+      },
+      "argumentCodePoints": [
+        [
+          "U+2004",
+          "U+0041",
+          "U+2004"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+0041"
+      ]
+    },
+    {
+      "id": "TRIM-U2005",
+      "function": "textTrim",
+      "args": [
+        "\u2005A\u2005"
+      ],
+      "formula": "textTrim(\"\\u2005A\\u2005\")",
+      "expected": {
+        "success": true,
+        "value": "A"
+      },
+      "argumentCodePoints": [
+        [
+          "U+2005",
+          "U+0041",
+          "U+2005"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+0041"
+      ]
+    },
+    {
+      "id": "TRIM-U2006",
+      "function": "textTrim",
+      "args": [
+        "\u2006A\u2006"
+      ],
+      "formula": "textTrim(\"\\u2006A\\u2006\")",
+      "expected": {
+        "success": true,
+        "value": "A"
+      },
+      "argumentCodePoints": [
+        [
+          "U+2006",
+          "U+0041",
+          "U+2006"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+0041"
+      ]
+    },
+    {
+      "id": "TRIM-U2007",
+      "function": "textTrim",
+      "args": [
+        "\u2007A\u2007"
+      ],
+      "formula": "textTrim(\"\\u2007A\\u2007\")",
+      "expected": {
+        "success": true,
+        "value": "A"
+      },
+      "argumentCodePoints": [
+        [
+          "U+2007",
+          "U+0041",
+          "U+2007"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+0041"
+      ]
+    },
+    {
+      "id": "TRIM-U2008",
+      "function": "textTrim",
+      "args": [
+        "\u2008A\u2008"
+      ],
+      "formula": "textTrim(\"\\u2008A\\u2008\")",
+      "expected": {
+        "success": true,
+        "value": "A"
+      },
+      "argumentCodePoints": [
+        [
+          "U+2008",
+          "U+0041",
+          "U+2008"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+0041"
+      ]
+    },
+    {
+      "id": "TRIM-U2009",
+      "function": "textTrim",
+      "args": [
+        "\u2009A\u2009"
+      ],
+      "formula": "textTrim(\"\\u2009A\\u2009\")",
+      "expected": {
+        "success": true,
+        "value": "A"
+      },
+      "argumentCodePoints": [
+        [
+          "U+2009",
+          "U+0041",
+          "U+2009"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+0041"
+      ]
+    },
+    {
+      "id": "TRIM-U200A",
+      "function": "textTrim",
+      "args": [
+        "\u200aA\u200a"
+      ],
+      "formula": "textTrim(\"\\u200aA\\u200a\")",
+      "expected": {
+        "success": true,
+        "value": "A"
+      },
+      "argumentCodePoints": [
+        [
+          "U+200A",
+          "U+0041",
+          "U+200A"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+0041"
+      ]
+    },
+    {
+      "id": "TRIM-U2028",
+      "function": "textTrim",
+      "args": [
+        "\u2028A\u2028"
+      ],
+      "formula": "textTrim(\"\\u2028A\\u2028\")",
+      "expected": {
+        "success": true,
+        "value": "A"
+      },
+      "argumentCodePoints": [
+        [
+          "U+2028",
+          "U+0041",
+          "U+2028"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+0041"
+      ]
+    },
+    {
+      "id": "TRIM-U2029",
+      "function": "textTrim",
+      "args": [
+        "\u2029A\u2029"
+      ],
+      "formula": "textTrim(\"\\u2029A\\u2029\")",
+      "expected": {
+        "success": true,
+        "value": "A"
+      },
+      "argumentCodePoints": [
+        [
+          "U+2029",
+          "U+0041",
+          "U+2029"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+0041"
+      ]
+    },
+    {
+      "id": "TRIM-U202F",
+      "function": "textTrim",
+      "args": [
+        "\u202fA\u202f"
+      ],
+      "formula": "textTrim(\"\\u202fA\\u202f\")",
+      "expected": {
+        "success": true,
+        "value": "A"
+      },
+      "argumentCodePoints": [
+        [
+          "U+202F",
+          "U+0041",
+          "U+202F"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+0041"
+      ]
+    },
+    {
+      "id": "TRIM-U205F",
+      "function": "textTrim",
+      "args": [
+        "\u205fA\u205f"
+      ],
+      "formula": "textTrim(\"\\u205fA\\u205f\")",
+      "expected": {
+        "success": true,
+        "value": "A"
+      },
+      "argumentCodePoints": [
+        [
+          "U+205F",
+          "U+0041",
+          "U+205F"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+0041"
+      ]
+    },
+    {
+      "id": "TRIM-U3000",
+      "function": "textTrim",
+      "args": [
+        "\u3000A\u3000"
+      ],
+      "formula": "textTrim(\"\\u3000A\\u3000\")",
+      "expected": {
+        "success": true,
+        "value": "A"
+      },
+      "argumentCodePoints": [
+        [
+          "U+3000",
+          "U+0041",
+          "U+3000"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+0041"
+      ]
+    },
+    {
+      "id": "TRIM-UFEFF",
+      "function": "textTrim",
+      "args": [
+        "\ufeffA\ufeff"
+      ],
+      "formula": "textTrim(\"\\ufeffA\\ufeff\")",
+      "expected": {
+        "success": true,
+        "value": "A"
+      },
+      "argumentCodePoints": [
+        [
+          "U+FEFF",
+          "U+0041",
+          "U+FEFF"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+0041"
+      ]
+    },
+    {
+      "id": "PART-01",
+      "function": "textPart",
+      "args": [
+        "AA::BB::CC",
+        "::",
+        1
+      ],
+      "formula": "textPart(\"AA::BB::CC\", \"::\", 1)",
+      "expected": {
+        "success": true,
+        "value": "BB"
+      }
+    },
+    {
+      "id": "PART-02",
+      "function": "textPart",
+      "args": [
+        "A--B",
+        "-",
+        1
+      ],
+      "formula": "textPart(\"A--B\", \"-\", 1)",
+      "expected": {
+        "success": true,
+        "value": ""
+      }
+    },
+    {
+      "id": "PART-03",
+      "function": "textPart",
+      "args": [
+        "-A-",
+        "-",
+        0
+      ],
+      "formula": "textPart(\"-A-\", \"-\", 0)",
+      "expected": {
+        "success": true,
+        "value": ""
+      }
+    },
+    {
+      "id": "PART-04",
+      "function": "textPart",
+      "args": [
+        "-A-",
+        "-",
+        2
+      ],
+      "formula": "textPart(\"-A-\", \"-\", 2)",
+      "expected": {
+        "success": true,
+        "value": ""
+      }
+    },
+    {
+      "id": "PART-05",
+      "function": "textPart",
+      "args": [
+        "-A-",
+        "-",
+        3
+      ],
+      "formula": "textPart(\"-A-\", \"-\", 3)",
+      "expected": {
+        "success": true,
+        "value": null
+      }
+    },
+    {
+      "id": "PART-06",
+      "function": "textPart",
+      "args": [
+        "ABC",
+        "-",
+        0
+      ],
+      "formula": "textPart(\"ABC\", \"-\", 0)",
+      "expected": {
+        "success": true,
+        "value": "ABC"
+      }
+    },
+    {
+      "id": "PART-07",
+      "function": "textPart",
+      "args": [
+        "ABC",
+        "-",
+        1
+      ],
+      "formula": "textPart(\"ABC\", \"-\", 1)",
+      "expected": {
+        "success": true,
+        "value": null
+      }
+    },
+    {
+      "id": "PART-08",
+      "function": "textPart",
+      "args": [
+        "",
+        "-",
+        0
+      ],
+      "formula": "textPart(\"\", \"-\", 0)",
+      "expected": {
+        "success": true,
+        "value": ""
+      }
+    },
+    {
+      "id": "PART-09",
+      "function": "textPart",
+      "args": [
+        "",
+        "-",
+        1
+      ],
+      "formula": "textPart(\"\", \"-\", 1)",
+      "expected": {
+        "success": true,
+        "value": null
+      }
+    },
+    {
+      "id": "PART-10",
+      "function": "textPart",
+      "args": [
+        "A::B",
+        ":",
+        1
+      ],
+      "formula": "textPart(\"A::B\", \":\", 1)",
+      "expected": {
+        "success": true,
+        "value": ""
+      }
+    },
+    {
+      "id": "PART-11",
+      "function": "textPart",
+      "args": [
+        "aaaa",
+        "aa",
+        1
+      ],
+      "formula": "textPart(\"aaaa\", \"aa\", 1)",
+      "expected": {
+        "success": true,
+        "value": ""
+      }
+    },
+    {
+      "id": "PART-12",
+      "function": "textPart",
+      "args": [
+        "A\ud83d\ude00B\ud83d\ude00C",
+        "\ud83d\ude00",
+        2
+      ],
+      "formula": "textPart(\"A\\ud83d\\ude00B\\ud83d\\ude00C\", \"\\ud83d\\ude00\", 2)",
+      "expected": {
+        "success": true,
+        "value": "C"
+      },
+      "argumentCodePoints": [
+        [
+          "U+0041",
+          "U+1F600",
+          "U+0042",
+          "U+1F600",
+          "U+0043"
+        ],
+        [
+          "U+1F600"
+        ],
+        null
+      ],
+      "resultCodePoints": [
+        "U+0043"
+      ]
+    },
+    {
+      "id": "PART-13",
+      "function": "textPart",
+      "args": [
+        null,
+        "-",
+        0
+      ],
+      "formula": "textPart(null, \"-\", 0)",
+      "expected": {
+        "success": true,
+        "value": null
+      }
+    },
+    {
+      "id": "PART-14",
+      "function": "textPart",
+      "args": [
+        "a.b",
+        ". ",
+        0
+      ],
+      "formula": "textPart(\"a.b\", \". \", 0)",
+      "expected": {
+        "success": true,
+        "value": "a.b"
+      }
+    },
+    {
+      "id": "PART-15",
+      "function": "textPart",
+      "args": [
+        "a.b",
+        ".",
+        1
+      ],
+      "formula": "textPart(\"a.b\", \".\", 1)",
+      "expected": {
+        "success": true,
+        "value": "b"
+      }
+    },
+    {
+      "id": "PART-16",
+      "function": "textPart",
+      "args": [
+        "Cafe\u0301",
+        "\u00e9",
+        1
+      ],
+      "formula": "textPart(\"Cafe\\u0301\", \"\\u00e9\", 1)",
+      "expected": {
+        "success": true,
+        "value": null
+      },
+      "argumentCodePoints": [
+        [
+          "U+0043",
+          "U+0061",
+          "U+0066",
+          "U+0065",
+          "U+0301"
+        ],
+        [
+          "U+00E9"
+        ],
+        null
+      ]
+    },
+    {
+      "id": "PART-17",
+      "function": "textPart",
+      "args": [
+        "\u00e9\u00e9",
+        "\u00e9",
+        2
+      ],
+      "formula": "textPart(\"\\u00e9\\u00e9\", \"\\u00e9\", 2)",
+      "expected": {
+        "success": true,
+        "value": ""
+      },
+      "argumentCodePoints": [
+        [
+          "U+00E9",
+          "U+00E9"
+        ],
+        [
+          "U+00E9"
+        ],
+        null
+      ],
+      "resultCodePoints": []
+    },
+    {
+      "id": "PART-18",
+      "function": "textPart",
+      "args": [
+        "x",
+        "-",
+        9007199254740991
+      ],
+      "formula": "textPart(\"x\", \"-\", 9007199254740991)",
+      "expected": {
+        "success": true,
+        "value": null
+      }
+    },
+    {
+      "id": "PART-19",
+      "function": "textPart",
+      "args": [
+        "A",
+        "",
+        0
+      ],
+      "formula": "textPart(\"A\", \"\", 0)",
+      "expected": {
+        "success": false,
+        "value": null,
+        "errorCode": "TEXT_EMPTY_PATTERN",
+        "error": "textPart argument 2 must not be empty."
+      }
+    },
+    {
+      "id": "PART-20",
+      "function": "textPart",
+      "args": [
+        null,
+        "",
+        0
+      ],
+      "formula": "textPart(null, \"\", 0)",
+      "expected": {
+        "success": false,
+        "value": null,
+        "errorCode": "TEXT_EMPTY_PATTERN",
+        "error": "textPart argument 2 must not be empty."
+      }
+    },
+    {
+      "id": "PART-21",
+      "function": "textPart",
+      "args": [
+        "A-B",
+        "-",
+        -1
+      ],
+      "formula": "textPart(\"A-B\", \"-\", -1)",
+      "expected": {
+        "success": false,
+        "value": null,
+        "errorCode": "TEXT_INDEX",
+        "error": "textPart argument 3 must be a non-negative safe integer number."
+      }
+    },
+    {
+      "id": "PART-22",
+      "function": "textPart",
+      "args": [
+        "A-B",
+        "-",
+        1.5
+      ],
+      "formula": "textPart(\"A-B\", \"-\", 1.5)",
+      "expected": {
+        "success": false,
+        "value": null,
+        "errorCode": "TEXT_INDEX",
+        "error": "textPart argument 3 must be a non-negative safe integer number."
+      }
+    },
+    {
+      "id": "PART-23",
+      "function": "textPart",
+      "args": [
+        "A-B",
+        "-",
+        "1"
+      ],
+      "formula": "textPart(\"A-B\", \"-\", \"1\")",
+      "expected": {
+        "success": false,
+        "value": null,
+        "errorCode": "TEXT_INDEX",
+        "error": "textPart argument 3 must be a non-negative safe integer number."
+      }
+    },
+    {
+      "id": "PART-24",
+      "function": "textPart",
+      "args": [
+        "A-B",
+        "-",
+        true
+      ],
+      "formula": "textPart(\"A-B\", \"-\", true)",
+      "expected": {
+        "success": false,
+        "value": null,
+        "errorCode": "TEXT_INDEX",
+        "error": "textPart argument 3 must be a non-negative safe integer number."
+      }
+    },
+    {
+      "id": "PART-25",
+      "function": "textPart",
+      "args": [
+        "A-B",
+        "-",
+        9007199254740992
+      ],
+      "formula": "textPart(\"A-B\", \"-\", 9007199254740992)",
+      "expected": {
+        "success": false,
+        "value": null,
+        "errorCode": "TEXT_INDEX",
+        "error": "textPart argument 3 must be a non-negative safe integer number."
+      }
+    },
+    {
+      "id": "PART-26",
+      "function": "textPart",
+      "args": [
+        "A-B",
+        "-",
+        null
+      ],
+      "formula": "textPart(\"A-B\", \"-\", null)",
+      "expected": {
+        "success": false,
+        "value": null,
+        "errorCode": "TEXT_INDEX",
+        "error": "textPart argument 3 must be a non-negative safe integer number."
+      }
+    },
+    {
+      "id": "PART-27",
+      "function": "textPart",
+      "args": [
+        "A-B",
+        null,
+        0
+      ],
+      "formula": "textPart(\"A-B\", null, 0)",
+      "expected": {
+        "success": false,
+        "value": null,
+        "errorCode": "TEXT_TYPE",
+        "error": "textPart argument 2 must be text; received null."
+      }
+    },
+    {
+      "id": "PART-28",
+      "function": "textPart",
+      "args": [
+        "AB",
+        "\ud800",
+        0
+      ],
+      "formula": "textPart(\"AB\", \"\\ud800\", 0)",
+      "expected": {
+        "success": false,
+        "value": null,
+        "errorCode": "TEXT_UNICODE",
+        "error": "textPart argument 2 contains an unpaired UTF-16 surrogate."
+      },
+      "argumentCodePoints": [
+        [
+          "U+0041",
+          "U+0042"
+        ],
+        [
+          "U+D800"
+        ],
+        null
+      ]
+    },
+    {
+      "id": "REPLACE-01",
+      "function": "textReplace",
+      "args": [
+        "a.a.a",
+        ".",
+        "-"
+      ],
+      "formula": "textReplace(\"a.a.a\", \".\", \"-\")",
+      "expected": {
+        "success": true,
+        "value": "a-a-a"
+      }
+    },
+    {
+      "id": "REPLACE-02",
+      "function": "textReplace",
+      "args": [
+        "aaa",
+        "aa",
+        "X"
+      ],
+      "formula": "textReplace(\"aaa\", \"aa\", \"X\")",
+      "expected": {
+        "success": true,
+        "value": "Xa"
+      }
+    },
+    {
+      "id": "REPLACE-03",
+      "function": "textReplace",
+      "args": [
+        "aaaa",
+        "aa",
+        "a"
+      ],
+      "formula": "textReplace(\"aaaa\", \"aa\", \"a\")",
+      "expected": {
+        "success": true,
+        "value": "aa"
+      }
+    },
+    {
+      "id": "REPLACE-04",
+      "function": "textReplace",
+      "args": [
+        "aaa",
+        "a",
+        "aa"
+      ],
+      "formula": "textReplace(\"aaa\", \"a\", \"aa\")",
+      "expected": {
+        "success": true,
+        "value": "aaaaaa"
+      }
+    },
+    {
+      "id": "REPLACE-05",
+      "function": "textReplace",
+      "args": [
+        "ABab",
+        "ab",
+        "X"
+      ],
+      "formula": "textReplace(\"ABab\", \"ab\", \"X\")",
+      "expected": {
+        "success": true,
+        "value": "ABX"
+      }
+    },
+    {
+      "id": "REPLACE-06",
+      "function": "textReplace",
+      "args": [
+        "a.b",
+        ".",
+        "$&"
+      ],
+      "formula": "textReplace(\"a.b\", \".\", \"$&\")",
+      "expected": {
+        "success": true,
+        "value": "a$&b"
+      }
+    },
+    {
+      "id": "REPLACE-07",
+      "function": "textReplace",
+      "args": [
+        "$x$",
+        "$",
+        "$&"
+      ],
+      "formula": "textReplace(\"$x$\", \"$\", \"$&\")",
+      "expected": {
+        "success": true,
+        "value": "$&x$&"
+      }
+    },
+    {
+      "id": "REPLACE-08",
+      "function": "textReplace",
+      "args": [
+        "a/b",
+        "/",
+        "\\"
+      ],
+      "formula": "textReplace(\"a/b\", \"/\", \"\\\\\")",
+      "expected": {
+        "success": true,
+        "value": "a\\b"
+      }
+    },
+    {
+      "id": "REPLACE-09",
+      "function": "textReplace",
+      "args": [
+        "aaa",
+        "a",
+        ""
+      ],
+      "formula": "textReplace(\"aaa\", \"a\", \"\")",
+      "expected": {
+        "success": true,
+        "value": ""
+      }
+    },
+    {
+      "id": "REPLACE-10",
+      "function": "textReplace",
+      "args": [
+        "",
+        "x",
+        "y"
+      ],
+      "formula": "textReplace(\"\", \"x\", \"y\")",
+      "expected": {
+        "success": true,
+        "value": ""
+      }
+    },
+    {
+      "id": "REPLACE-11",
+      "function": "textReplace",
+      "args": [
+        null,
+        "x",
+        "y"
+      ],
+      "formula": "textReplace(null, \"x\", \"y\")",
+      "expected": {
+        "success": true,
+        "value": null
+      }
+    },
+    {
+      "id": "REPLACE-12",
+      "function": "textReplace",
+      "args": [
+        "e\u0301",
+        "\u00e9",
+        "E"
+      ],
+      "formula": "textReplace(\"e\\u0301\", \"\\u00e9\", \"E\")",
+      "expected": {
+        "success": true,
+        "value": "e\u0301"
+      },
+      "argumentCodePoints": [
+        [
+          "U+0065",
+          "U+0301"
+        ],
+        [
+          "U+00E9"
+        ],
+        [
+          "U+0045"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+0065",
+        "U+0301"
+      ]
+    },
+    {
+      "id": "REPLACE-13",
+      "function": "textReplace",
+      "args": [
+        "A\u200bB",
+        "\u200b",
+        ""
+      ],
+      "formula": "textReplace(\"A\\u200bB\", \"\\u200b\", \"\")",
+      "expected": {
+        "success": true,
+        "value": "AB"
+      },
+      "argumentCodePoints": [
+        [
+          "U+0041",
+          "U+200B",
+          "U+0042"
+        ],
+        [
+          "U+200B"
+        ],
+        []
+      ],
+      "resultCodePoints": [
+        "U+0041",
+        "U+0042"
+      ]
+    },
+    {
+      "id": "REPLACE-14",
+      "function": "textReplace",
+      "args": [
+        "A",
+        "",
+        "x"
+      ],
+      "formula": "textReplace(\"A\", \"\", \"x\")",
+      "expected": {
+        "success": false,
+        "value": null,
+        "errorCode": "TEXT_EMPTY_PATTERN",
+        "error": "textReplace argument 2 must not be empty."
+      }
+    },
+    {
+      "id": "REPLACE-15",
+      "function": "textReplace",
+      "args": [
+        null,
+        "",
+        "x"
+      ],
+      "formula": "textReplace(null, \"\", \"x\")",
+      "expected": {
+        "success": false,
+        "value": null,
+        "errorCode": "TEXT_EMPTY_PATTERN",
+        "error": "textReplace argument 2 must not be empty."
+      }
+    },
+    {
+      "id": "REPLACE-16",
+      "function": "textReplace",
+      "args": [
+        "A",
+        "A",
+        null
+      ],
+      "formula": "textReplace(\"A\", \"A\", null)",
+      "expected": {
+        "success": false,
+        "value": null,
+        "errorCode": "TEXT_TYPE",
+        "error": "textReplace argument 3 must be text; received null."
+      }
+    },
+    {
+      "id": "REPLACE-17",
+      "function": "textReplace",
+      "args": [
+        "A",
+        1,
+        "x"
+      ],
+      "formula": "textReplace(\"A\", 1, \"x\")",
+      "expected": {
+        "success": false,
+        "value": null,
+        "errorCode": "TEXT_TYPE",
+        "error": "textReplace argument 2 must be text; received number."
+      }
+    },
+    {
+      "id": "REPLACE-18",
+      "function": "textReplace",
+      "args": [
+        "A",
+        "A",
+        "\ud800"
+      ],
+      "formula": "textReplace(\"A\", \"A\", \"\\ud800\")",
+      "expected": {
+        "success": false,
+        "value": null,
+        "errorCode": "TEXT_UNICODE",
+        "error": "textReplace argument 3 contains an unpaired UTF-16 surrogate."
+      },
+      "argumentCodePoints": [
+        [
+          "U+0041"
+        ],
+        [
+          "U+0041"
+        ],
+        [
+          "U+D800"
+        ]
+      ]
+    },
+    {
+      "id": "CONCAT-01",
+      "function": "textConcat",
+      "args": [
+        "North",
+        " \u00b7 ",
+        "001"
+      ],
+      "formula": "textConcat(\"North\", \" \\u00b7 \", \"001\")",
+      "expected": {
+        "success": true,
+        "value": "North \u00b7 001"
+      },
+      "argumentCodePoints": [
+        [
+          "U+004E",
+          "U+006F",
+          "U+0072",
+          "U+0074",
+          "U+0068"
+        ],
+        [
+          "U+0020",
+          "U+00B7",
+          "U+0020"
+        ],
+        [
+          "U+0030",
+          "U+0030",
+          "U+0031"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+004E",
+        "U+006F",
+        "U+0072",
+        "U+0074",
+        "U+0068",
+        "U+0020",
+        "U+00B7",
+        "U+0020",
+        "U+0030",
+        "U+0030",
+        "U+0031"
+      ]
+    },
+    {
+      "id": "CONCAT-02",
+      "function": "textConcat",
+      "args": [
+        "",
+        "A"
+      ],
+      "formula": "textConcat(\"\", \"A\")",
+      "expected": {
+        "success": true,
+        "value": "A"
+      }
+    },
+    {
+      "id": "CONCAT-03",
+      "function": "textConcat",
+      "args": [
+        "",
+        ""
+      ],
+      "formula": "textConcat(\"\", \"\")",
+      "expected": {
+        "success": true,
+        "value": ""
+      }
+    },
+    {
+      "id": "CONCAT-04",
+      "function": "textConcat",
+      "args": [
+        "A",
+        null
+      ],
+      "formula": "textConcat(\"A\", null)",
+      "expected": {
+        "success": true,
+        "value": null
+      }
+    },
+    {
+      "id": "CONCAT-05",
+      "function": "textConcat",
+      "args": [
+        null,
+        null
+      ],
+      "formula": "textConcat(null, null)",
+      "expected": {
+        "success": true,
+        "value": null
+      }
+    },
+    {
+      "id": "CONCAT-06",
+      "function": "textConcat",
+      "args": [
+        "A",
+        {
+          "$type": "undefined"
+        }
+      ],
+      "formula": "textConcat(\"A\", [\"arg2\"])",
+      "expected": {
+        "success": true,
+        "value": null
+      },
+      "variables": {
+        "arg2": {
+          "$type": "undefined"
+        }
+      }
+    },
+    {
+      "id": "CONCAT-07",
+      "function": "textConcat",
+      "args": [
+        "e",
+        "\u0301"
+      ],
+      "formula": "textConcat(\"e\", \"\\u0301\")",
+      "expected": {
+        "success": true,
+        "value": "e\u0301"
+      },
+      "argumentCodePoints": [
+        [
+          "U+0065"
+        ],
+        [
+          "U+0301"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+0065",
+        "U+0301"
+      ]
+    },
+    {
+      "id": "CONCAT-08",
+      "function": "textConcat",
+      "args": [
+        "AB",
+        "C"
+      ],
+      "formula": "textConcat(\"AB\", \"C\")",
+      "expected": {
+        "success": true,
+        "value": "ABC"
+      }
+    },
+    {
+      "id": "CONCAT-09",
+      "function": "textConcat",
+      "args": [
+        "A",
+        "BC"
+      ],
+      "formula": "textConcat(\"A\", \"BC\")",
+      "expected": {
+        "success": true,
+        "value": "ABC"
+      }
+    },
+    {
+      "id": "CONCAT-10",
+      "function": "textConcat",
+      "args": [
+        "A",
+        17
+      ],
+      "formula": "textConcat(\"A\", 17)",
+      "expected": {
+        "success": false,
+        "value": null,
+        "errorCode": "TEXT_TYPE",
+        "error": "textConcat argument 2 must be text or missing; received number."
+      }
+    },
+    {
+      "id": "CONCAT-11",
+      "function": "textConcat",
+      "args": [
+        null,
+        17
+      ],
+      "formula": "textConcat(null, 17)",
+      "expected": {
+        "success": false,
+        "value": null,
+        "errorCode": "TEXT_TYPE",
+        "error": "textConcat argument 2 must be text or missing; received number."
+      }
+    },
+    {
+      "id": "CONCAT-12",
+      "function": "textConcat",
+      "args": [
+        false,
+        "A"
+      ],
+      "formula": "textConcat(false, \"A\")",
+      "expected": {
+        "success": false,
+        "value": null,
+        "errorCode": "TEXT_TYPE",
+        "error": "textConcat argument 1 must be text or missing; received boolean."
+      }
+    },
+    {
+      "id": "CONCAT-13",
+      "function": "textConcat",
+      "args": [
+        "A",
+        "\ud800"
+      ],
+      "formula": "textConcat(\"A\", \"\\ud800\")",
+      "expected": {
+        "success": false,
+        "value": null,
+        "errorCode": "TEXT_UNICODE",
+        "error": "textConcat argument 2 contains an unpaired UTF-16 surrogate."
+      },
+      "argumentCodePoints": [
+        [
+          "U+0041"
+        ],
+        [
+          "U+D800"
+        ]
+      ]
+    },
+    {
+      "id": "NFC-01",
+      "function": "textNormalize",
+      "args": [
+        "e\u0301"
+      ],
+      "formula": "textNormalize(\"e\\u0301\")",
+      "expected": {
+        "success": true,
+        "value": "\u00e9"
+      },
+      "argumentCodePoints": [
+        [
+          "U+0065",
+          "U+0301"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+00E9"
+      ]
+    },
+    {
+      "id": "NFC-02",
+      "function": "textNormalize",
+      "args": [
+        "\u00e9"
+      ],
+      "formula": "textNormalize(\"\\u00e9\")",
+      "expected": {
+        "success": true,
+        "value": "\u00e9"
+      },
+      "argumentCodePoints": [
+        [
+          "U+00E9"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+00E9"
+      ]
+    },
+    {
+      "id": "NFC-03",
+      "function": "textNormalize",
+      "args": [
+        "\uff21"
+      ],
+      "formula": "textNormalize(\"\\uff21\")",
+      "expected": {
+        "success": true,
+        "value": "\uff21"
+      },
+      "argumentCodePoints": [
+        [
+          "U+FF21"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+FF21"
+      ]
+    },
+    {
+      "id": "NFC-04",
+      "function": "textNormalize",
+      "args": [
+        "\ufb01"
+      ],
+      "formula": "textNormalize(\"\\ufb01\")",
+      "expected": {
+        "success": true,
+        "value": "\ufb01"
+      },
+      "argumentCodePoints": [
+        [
+          "U+FB01"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+FB01"
+      ]
+    },
+    {
+      "id": "NFC-05",
+      "function": "textNormalize",
+      "args": [
+        "\u2460"
+      ],
+      "formula": "textNormalize(\"\\u2460\")",
+      "expected": {
+        "success": true,
+        "value": "\u2460"
+      },
+      "argumentCodePoints": [
+        [
+          "U+2460"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+2460"
+      ]
+    },
+    {
+      "id": "NFC-06",
+      "function": "textNormalize",
+      "args": [
+        "\u00a0"
+      ],
+      "formula": "textNormalize(\"\\u00a0\")",
+      "expected": {
+        "success": true,
+        "value": "\u00a0"
+      },
+      "argumentCodePoints": [
+        [
+          "U+00A0"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+00A0"
+      ]
+    },
+    {
+      "id": "NFC-07",
+      "function": "textNormalize",
+      "args": [
+        "\u1100\u1161"
+      ],
+      "formula": "textNormalize(\"\\u1100\\u1161\")",
+      "expected": {
+        "success": true,
+        "value": "\uac00"
+      },
+      "argumentCodePoints": [
+        [
+          "U+1100",
+          "U+1161"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+AC00"
+      ]
+    },
+    {
+      "id": "NFC-08",
+      "function": "textNormalize",
+      "args": [
+        "a\u0315\u0300"
+      ],
+      "formula": "textNormalize(\"a\\u0315\\u0300\")",
+      "expected": {
+        "success": true,
+        "value": "\u00e0\u0315"
+      },
+      "argumentCodePoints": [
+        [
+          "U+0061",
+          "U+0315",
+          "U+0300"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+00E0",
+        "U+0315"
+      ]
+    },
+    {
+      "id": "NFC-09",
+      "function": "textNormalize",
+      "args": [
+        "\ud83d\udc69\u200d\ud83d\udcbb"
+      ],
+      "formula": "textNormalize(\"\\ud83d\\udc69\\u200d\\ud83d\\udcbb\")",
+      "expected": {
+        "success": true,
+        "value": "\ud83d\udc69\u200d\ud83d\udcbb"
+      },
+      "argumentCodePoints": [
+        [
+          "U+1F469",
+          "U+200D",
+          "U+1F4BB"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+1F469",
+        "U+200D",
+        "U+1F4BB"
+      ]
+    },
+    {
+      "id": "NFC-10",
+      "function": "textNormalize",
+      "args": [
+        null
+      ],
+      "formula": "textNormalize(null)",
+      "expected": {
+        "success": true,
+        "value": null
+      }
+    },
+    {
+      "id": "NFC-11",
+      "function": "textNormalize",
+      "args": [
+        ""
+      ],
+      "formula": "textNormalize(\"\")",
+      "expected": {
+        "success": true,
+        "value": ""
+      }
+    },
+    {
+      "id": "NFC-12",
+      "function": "textNormalize",
+      "args": [
+        "x",
+        "NFKC"
+      ],
+      "formula": "textNormalize(\"x\", \"NFKC\")",
+      "expected": {
+        "success": false,
+        "value": null,
+        "errorCode": "TEXT_ARITY",
+        "error": "Invalid arguments. Use textNormalize(text)"
+      },
+      "note": "This API accepts NFC only; it has no form argument."
+    },
+    {
+      "id": "CASE-01",
+      "function": "textLower",
+      "args": [
+        "I"
+      ],
+      "formula": "textLower(\"I\")",
+      "expected": {
+        "success": true,
+        "value": "i"
+      }
+    },
+    {
+      "id": "CASE-02",
+      "function": "textLower",
+      "args": [
+        "\u0130"
+      ],
+      "formula": "textLower(\"\\u0130\")",
+      "expected": {
+        "success": true,
+        "value": "i\u0307"
+      },
+      "argumentCodePoints": [
+        [
+          "U+0130"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+0069",
+        "U+0307"
+      ]
+    },
+    {
+      "id": "CASE-03",
+      "function": "textLower",
+      "args": [
+        "\u0131"
+      ],
+      "formula": "textLower(\"\\u0131\")",
+      "expected": {
+        "success": true,
+        "value": "\u0131"
+      },
+      "argumentCodePoints": [
+        [
+          "U+0131"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+0131"
+      ]
+    },
+    {
+      "id": "CASE-04",
+      "function": "textUpper",
+      "args": [
+        "i"
+      ],
+      "formula": "textUpper(\"i\")",
+      "expected": {
+        "success": true,
+        "value": "I"
+      }
+    },
+    {
+      "id": "CASE-05",
+      "function": "textUpper",
+      "args": [
+        "\u0131"
+      ],
+      "formula": "textUpper(\"\\u0131\")",
+      "expected": {
+        "success": true,
+        "value": "I"
+      },
+      "argumentCodePoints": [
+        [
+          "U+0131"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+0049"
+      ]
+    },
+    {
+      "id": "CASE-06",
+      "function": "textUpper",
+      "args": [
+        "stra\u00dfe"
+      ],
+      "formula": "textUpper(\"stra\\u00dfe\")",
+      "expected": {
+        "success": true,
+        "value": "STRASSE"
+      },
+      "argumentCodePoints": [
+        [
+          "U+0073",
+          "U+0074",
+          "U+0072",
+          "U+0061",
+          "U+00DF",
+          "U+0065"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+0053",
+        "U+0054",
+        "U+0052",
+        "U+0041",
+        "U+0053",
+        "U+0053",
+        "U+0045"
+      ]
+    },
+    {
+      "id": "CASE-07",
+      "function": "textLower",
+      "args": [
+        "STRASSE"
+      ],
+      "formula": "textLower(\"STRASSE\")",
+      "expected": {
+        "success": true,
+        "value": "strasse"
+      }
+    },
+    {
+      "id": "CASE-08",
+      "function": "textLower",
+      "args": [
+        "Stra\u00dfe"
+      ],
+      "formula": "textLower(\"Stra\\u00dfe\")",
+      "expected": {
+        "success": true,
+        "value": "stra\u00dfe"
+      },
+      "argumentCodePoints": [
+        [
+          "U+0053",
+          "U+0074",
+          "U+0072",
+          "U+0061",
+          "U+00DF",
+          "U+0065"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+0073",
+        "U+0074",
+        "U+0072",
+        "U+0061",
+        "U+00DF",
+        "U+0065"
+      ]
+    },
+    {
+      "id": "CASE-09",
+      "function": "textLower",
+      "args": [
+        "\u039f\u03a3"
+      ],
+      "formula": "textLower(\"\\u039f\\u03a3\")",
+      "expected": {
+        "success": true,
+        "value": "\u03bf\u03c2"
+      },
+      "argumentCodePoints": [
+        [
+          "U+039F",
+          "U+03A3"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+03BF",
+        "U+03C2"
+      ]
+    },
+    {
+      "id": "CASE-10",
+      "function": "textLower",
+      "args": [
+        "\u039f\u03a3\u0391"
+      ],
+      "formula": "textLower(\"\\u039f\\u03a3\\u0391\")",
+      "expected": {
+        "success": true,
+        "value": "\u03bf\u03c3\u03b1"
+      },
+      "argumentCodePoints": [
+        [
+          "U+039F",
+          "U+03A3",
+          "U+0391"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+03BF",
+        "U+03C3",
+        "U+03B1"
+      ]
+    },
+    {
+      "id": "CASE-11",
+      "function": "textLower",
+      "args": [
+        "\u03a3"
+      ],
+      "formula": "textLower(\"\\u03a3\")",
+      "expected": {
+        "success": true,
+        "value": "\u03c3"
+      },
+      "argumentCodePoints": [
+        [
+          "U+03A3"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+03C3"
+      ]
+    },
+    {
+      "id": "CASE-12",
+      "function": "textUpper",
+      "args": [
+        "\u1e9e"
+      ],
+      "formula": "textUpper(\"\\u1e9e\")",
+      "expected": {
+        "success": true,
+        "value": "\u1e9e"
+      },
+      "argumentCodePoints": [
+        [
+          "U+1E9E"
+        ]
+      ],
+      "resultCodePoints": [
+        "U+1E9E"
+      ]
+    },
+    {
+      "id": "CASE-13",
+      "function": "textLower",
+      "args": [
+        null
+      ],
+      "formula": "textLower(null)",
+      "expected": {
+        "success": true,
+        "value": null
+      }
+    },
+    {
+      "id": "CASE-14",
+      "function": "textUpper",
+      "args": [
+        ""
+      ],
+      "formula": "textUpper(\"\")",
+      "expected": {
+        "success": true,
+        "value": ""
+      }
+    },
+    {
+      "id": "CASE-15",
+      "function": "textLower",
+      "args": [
+        "I",
+        "tr"
+      ],
+      "formula": "textLower(\"I\", \"tr\")",
+      "expected": {
+        "success": false,
+        "value": null,
+        "errorCode": "TEXT_ARITY",
+        "error": "Invalid arguments. Use textLower(text)"
+      }
+    },
+    {
+      "id": "LENGTH-01",
+      "function": "textLength",
+      "args": [
+        ""
+      ],
+      "formula": "textLength(\"\")",
+      "expected": {
+        "success": true,
+        "value": 0
+      }
+    },
+    {
+      "id": "LENGTH-02",
+      "function": "textLength",
+      "args": [
+        "A\ud83d\ude00B"
+      ],
+      "formula": "textLength(\"A\\ud83d\\ude00B\")",
+      "expected": {
+        "success": true,
+        "value": 3
+      },
+      "argumentCodePoints": [
+        [
+          "U+0041",
+          "U+1F600",
+          "U+0042"
+        ]
+      ]
+    },
+    {
+      "id": "LENGTH-03",
+      "function": "textLength",
+      "args": [
+        "e\u0301"
+      ],
+      "formula": "textLength(\"e\\u0301\")",
+      "expected": {
+        "success": true,
+        "value": 2
+      },
+      "argumentCodePoints": [
+        [
+          "U+0065",
+          "U+0301"
+        ]
+      ]
+    },
+    {
+      "id": "LENGTH-04",
+      "function": "textLength",
+      "args": [
+        "\u00e9"
+      ],
+      "formula": "textLength(\"\\u00e9\")",
+      "expected": {
+        "success": true,
+        "value": 1
+      },
+      "argumentCodePoints": [
+        [
+          "U+00E9"
+        ]
+      ]
+    },
+    {
+      "id": "LENGTH-05",
+      "function": "textLength",
+      "args": [
+        "\ud83d\udc69\u200d\ud83d\udcbb"
+      ],
+      "formula": "textLength(\"\\ud83d\\udc69\\u200d\\ud83d\\udcbb\")",
+      "expected": {
+        "success": true,
+        "value": 3
+      },
+      "argumentCodePoints": [
+        [
+          "U+1F469",
+          "U+200D",
+          "U+1F4BB"
+        ]
+      ]
+    },
+    {
+      "id": "LENGTH-06",
+      "function": "textLength",
+      "args": [
+        "\ud83c\uddfa\ud83c\uddf8"
+      ],
+      "formula": "textLength(\"\\ud83c\\uddfa\\ud83c\\uddf8\")",
+      "expected": {
+        "success": true,
+        "value": 2
+      },
+      "argumentCodePoints": [
+        [
+          "U+1F1FA",
+          "U+1F1F8"
+        ]
+      ]
+    },
+    {
+      "id": "LENGTH-07",
+      "function": "textLength",
+      "args": [
+        "\ud83d\udc68\u200d\ud83d\udc69\u200d\ud83d\udc67\u200d\ud83d\udc66"
+      ],
+      "formula": "textLength(\"\\ud83d\\udc68\\u200d\\ud83d\\udc69\\u200d\\ud83d\\udc67\\u200d\\ud83d\\udc66\")",
+      "expected": {
+        "success": true,
+        "value": 7
+      },
+      "argumentCodePoints": [
+        [
+          "U+1F468",
+          "U+200D",
+          "U+1F469",
+          "U+200D",
+          "U+1F467",
+          "U+200D",
+          "U+1F466"
+        ]
+      ]
+    },
+    {
+      "id": "LENGTH-08",
+      "function": "textLength",
+      "args": [
+        "\ud83d\udc4d\ud83c\udffd"
+      ],
+      "formula": "textLength(\"\\ud83d\\udc4d\\ud83c\\udffd\")",
+      "expected": {
+        "success": true,
+        "value": 2
+      },
+      "argumentCodePoints": [
+        [
+          "U+1F44D",
+          "U+1F3FD"
+        ]
+      ]
+    },
+    {
+      "id": "LENGTH-09",
+      "function": "textLength",
+      "args": [
+        null
+      ],
+      "formula": "textLength(null)",
+      "expected": {
+        "success": true,
+        "value": null
+      }
+    },
+    {
+      "id": "LENGTH-10",
+      "function": "textLength",
+      "args": [
+        "\r\n"
+      ],
+      "formula": "textLength(\"\\r\\n\")",
+      "expected": {
+        "success": true,
+        "value": 2
+      },
+      "argumentCodePoints": [
+        [
+          "U+000D",
+          "U+000A"
+        ]
+      ]
+    },
+    {
+      "id": "LENGTH-11",
+      "function": "textLength",
+      "args": [
+        "\ud800"
+      ],
+      "formula": "textLength(\"\\ud800\")",
+      "expected": {
+        "success": false,
+        "value": null,
+        "errorCode": "TEXT_UNICODE",
+        "error": "textLength argument 1 contains an unpaired UTF-16 surrogate."
+      },
+      "argumentCodePoints": [
+        [
+          "U+D800"
+        ]
+      ]
+    },
+    {
+      "id": "SLICE-01",
+      "function": "textSlice",
+      "args": [
+        "ABCDE",
+        1,
+        2
+      ],
+      "formula": "textSlice(\"ABCDE\", 1, 2)",
+      "expected": {
+        "success": true,
+        "value": "BC"
+      }
+    },
+    {
+      "id": "SLICE-02",
+      "function": "textSlice",
+      "args": [
+        "ABCDE",
+        3
+      ],
+      "formula": "textSlice(\"ABCDE\", 3)",
+      "expected": {
+        "success": true,
+        "value": "DE"
+      }
+    },
+    {
+      "id": "SLICE-03",
+      "function": "textSlice",
+      "args": [
+        "A\ud83d\ude00B",
+        1,
+        1
+      ],
+      "formula": "textSlice(\"A\\ud83d\\ude00B\", 1, 1)",
+      "expected": {
+        "success": true,
+        "value": "\ud83d\ude00"
+      },
+      "argumentCodePoints": [
+        [
+          "U+0041",
+          "U+1F600",
+          "U+0042"
+        ],
+        null,
+        null
+      ],
+      "resultCodePoints": [
+        "U+1F600"
+      ]
+    },
+    {
+      "id": "SLICE-04",
+      "function": "textSlice",
+      "args": [
+        "e\u0301",
+        0,
+        1
+      ],
+      "formula": "textSlice(\"e\\u0301\", 0, 1)",
+      "expected": {
+        "success": true,
+        "value": "e"
+      },
+      "argumentCodePoints": [
+        [
+          "U+0065",
+          "U+0301"
+        ],
+        null,
+        null
+      ],
+      "resultCodePoints": [
+        "U+0065"
+      ]
+    },
+    {
+      "id": "SLICE-05",
+      "function": "textSlice",
+      "args": [
+        "e\u0301",
+        1,
+        1
+      ],
+      "formula": "textSlice(\"e\\u0301\", 1, 1)",
+      "expected": {
+        "success": true,
+        "value": "\u0301"
+      },
+      "argumentCodePoints": [
+        [
+          "U+0065",
+          "U+0301"
+        ],
+        null,
+        null
+      ],
+      "resultCodePoints": [
+        "U+0301"
+      ]
+    },
+    {
+      "id": "SLICE-06",
+      "function": "textSlice",
+      "args": [
+        "\ud83d\udc69\u200d\ud83d\udcbb",
+        0,
+        1
+      ],
+      "formula": "textSlice(\"\\ud83d\\udc69\\u200d\\ud83d\\udcbb\", 0, 1)",
+      "expected": {
+        "success": true,
+        "value": "\ud83d\udc69"
+      },
+      "argumentCodePoints": [
+        [
+          "U+1F469",
+          "U+200D",
+          "U+1F4BB"
+        ],
+        null,
+        null
+      ],
+      "resultCodePoints": [
+        "U+1F469"
+      ]
+    },
+    {
+      "id": "SLICE-07",
+      "function": "textSlice",
+      "args": [
+        "\ud83d\udc69\u200d\ud83d\udcbb",
+        1,
+        1
+      ],
+      "formula": "textSlice(\"\\ud83d\\udc69\\u200d\\ud83d\\udcbb\", 1, 1)",
+      "expected": {
+        "success": true,
+        "value": "\u200d"
+      },
+      "argumentCodePoints": [
+        [
+          "U+1F469",
+          "U+200D",
+          "U+1F4BB"
+        ],
+        null,
+        null
+      ],
+      "resultCodePoints": [
+        "U+200D"
+      ]
+    },
+    {
+      "id": "SLICE-08",
+      "function": "textSlice",
+      "args": [
+        "\ud83c\uddfa\ud83c\uddf8",
+        0,
+        1
+      ],
+      "formula": "textSlice(\"\\ud83c\\uddfa\\ud83c\\uddf8\", 0, 1)",
+      "expected": {
+        "success": true,
+        "value": "\ud83c\uddfa"
+      },
+      "argumentCodePoints": [
+        [
+          "U+1F1FA",
+          "U+1F1F8"
+        ],
+        null,
+        null
+      ],
+      "resultCodePoints": [
+        "U+1F1FA"
+      ]
+    },
+    {
+      "id": "SLICE-09",
+      "function": "textSlice",
+      "args": [
+        "ABC",
+        2,
+        50
+      ],
+      "formula": "textSlice(\"ABC\", 2, 50)",
+      "expected": {
+        "success": true,
+        "value": "C"
+      }
+    },
+    {
+      "id": "SLICE-10",
+      "function": "textSlice",
+      "args": [
+        "ABC",
+        3,
+        1
+      ],
+      "formula": "textSlice(\"ABC\", 3, 1)",
+      "expected": {
+        "success": true,
+        "value": ""
+      }
+    },
+    {
+      "id": "SLICE-11",
+      "function": "textSlice",
+      "args": [
+        "ABC",
+        50
+      ],
+      "formula": "textSlice(\"ABC\", 50)",
+      "expected": {
+        "success": true,
+        "value": ""
+      }
+    },
+    {
+      "id": "SLICE-12",
+      "function": "textSlice",
+      "args": [
+        "ABC",
+        1,
+        0
+      ],
+      "formula": "textSlice(\"ABC\", 1, 0)",
+      "expected": {
+        "success": true,
+        "value": ""
+      }
+    },
+    {
+      "id": "SLICE-13",
+      "function": "textSlice",
+      "args": [
+        "",
+        0,
+        1
+      ],
+      "formula": "textSlice(\"\", 0, 1)",
+      "expected": {
+        "success": true,
+        "value": ""
+      }
+    },
+    {
+      "id": "SLICE-14",
+      "function": "textSlice",
+      "args": [
+        null,
+        0,
+        1
+      ],
+      "formula": "textSlice(null, 0, 1)",
+      "expected": {
+        "success": true,
+        "value": null
+      }
+    },
+    {
+      "id": "SLICE-15",
+      "function": "textSlice",
+      "args": [
+        "ABC",
+        1,
+        9007199254740991
+      ],
+      "formula": "textSlice(\"ABC\", 1, 9007199254740991)",
+      "expected": {
+        "success": true,
+        "value": "BC"
+      }
+    },
+    {
+      "id": "SLICE-16",
+      "function": "textSlice",
+      "args": [
+        "ABC",
+        -1
+      ],
+      "formula": "textSlice(\"ABC\", -1)",
+      "expected": {
+        "success": false,
+        "value": null,
+        "errorCode": "TEXT_INDEX",
+        "error": "textSlice argument 2 must be a non-negative safe integer number."
+      }
+    },
+    {
+      "id": "SLICE-17",
+      "function": "textSlice",
+      "args": [
+        "ABC",
+        1.5
+      ],
+      "formula": "textSlice(\"ABC\", 1.5)",
+      "expected": {
+        "success": false,
+        "value": null,
+        "errorCode": "TEXT_INDEX",
+        "error": "textSlice argument 2 must be a non-negative safe integer number."
+      }
+    },
+    {
+      "id": "SLICE-18",
+      "function": "textSlice",
+      "args": [
+        "ABC",
+        "1"
+      ],
+      "formula": "textSlice(\"ABC\", \"1\")",
+      "expected": {
+        "success": false,
+        "value": null,
+        "errorCode": "TEXT_INDEX",
+        "error": "textSlice argument 2 must be a non-negative safe integer number."
+      }
+    },
+    {
+      "id": "SLICE-19",
+      "function": "textSlice",
+      "args": [
+        "ABC",
+        0,
+        -1
+      ],
+      "formula": "textSlice(\"ABC\", 0, -1)",
+      "expected": {
+        "success": false,
+        "value": null,
+        "errorCode": "TEXT_INDEX",
+        "error": "textSlice argument 3 must be a non-negative safe integer number."
+      }
+    },
+    {
+      "id": "SLICE-20",
+      "function": "textSlice",
+      "args": [
+        "ABC",
+        0,
+        null
+      ],
+      "formula": "textSlice(\"ABC\", 0, null)",
+      "expected": {
+        "success": false,
+        "value": null,
+        "errorCode": "TEXT_INDEX",
+        "error": "textSlice argument 3 must be a non-negative safe integer number."
+      }
+    },
+    {
+      "id": "SLICE-21",
+      "function": "textSlice",
+      "args": [
+        null,
+        -1
+      ],
+      "formula": "textSlice(null, -1)",
+      "expected": {
+        "success": false,
+        "value": null,
+        "errorCode": "TEXT_INDEX",
+        "error": "textSlice argument 2 must be a non-negative safe integer number."
+      }
+    },
+    {
+      "id": "SLICE-22",
+      "function": "textSlice",
+      "args": [
+        "ABC",
+        9007199254740992
+      ],
+      "formula": "textSlice(\"ABC\", 9007199254740992)",
+      "expected": {
+        "success": false,
+        "value": null,
+        "errorCode": "TEXT_INDEX",
+        "error": "textSlice argument 2 must be a non-negative safe integer number."
+      }
+    },
+    {
+      "id": "ARITY-01",
+      "function": "textTrim",
+      "args": [],
+      "formula": "textTrim()",
+      "expected": {
+        "success": false,
+        "value": null,
+        "errorCode": "TEXT_ARITY",
+        "error": "Invalid arguments. Use textTrim(text)"
+      }
+    },
+    {
+      "id": "ARITY-02",
+      "function": "textPart",
+      "args": [
+        "A",
+        "-"
+      ],
+      "formula": "textPart(\"A\", \"-\")",
+      "expected": {
+        "success": false,
+        "value": null,
+        "errorCode": "TEXT_ARITY",
+        "error": "Invalid arguments. Use textPart(text, delimiter, index)"
+      }
+    },
+    {
+      "id": "ARITY-03",
+      "function": "textReplace",
+      "args": [
+        "A",
+        "A"
+      ],
+      "formula": "textReplace(\"A\", \"A\")",
+      "expected": {
+        "success": false,
+        "value": null,
+        "errorCode": "TEXT_ARITY",
+        "error": "Invalid arguments. Use textReplace(text, search, replacement)"
+      }
+    },
+    {
+      "id": "ARITY-04",
+      "function": "textConcat",
+      "args": [
+        "A"
+      ],
+      "formula": "textConcat(\"A\")",
+      "expected": {
+        "success": false,
+        "value": null,
+        "errorCode": "TEXT_ARITY",
+        "error": "Invalid arguments. Use textConcat(text1, text2, \u2026)"
+      }
+    },
+    {
+      "id": "ARITY-05",
+      "function": "textLength",
+      "args": [
+        "A",
+        "grapheme"
+      ],
+      "formula": "textLength(\"A\", \"grapheme\")",
+      "expected": {
+        "success": false,
+        "value": null,
+        "errorCode": "TEXT_ARITY",
+        "error": "Invalid arguments. Use textLength(text)"
+      }
+    },
+    {
+      "id": "ARITY-06",
+      "function": "textSlice",
+      "args": [
+        "A"
+      ],
+      "formula": "textSlice(\"A\")",
+      "expected": {
+        "success": false,
+        "value": null,
+        "errorCode": "TEXT_ARITY",
+        "error": "Invalid arguments. Use textSlice(text, start, count?)"
+      }
+    }
+  ],
+  "engineIntegrationCases": [
+    {
+      "id": "ENGINE-01",
+      "formula": "textConcat(17, 1 / 0)",
+      "expected": {
+        "success": false,
+        "value": null,
+        "error": "Division by zero"
+      },
+      "phase": "row expression evaluation before text value validation"
+    },
+    {
+      "id": "ENGINE-02",
+      "formula": "textTrim([\"v\"])",
+      "variables": {
+        "v": {
+          "$type": "number",
+          "value": "NaN"
+        }
+      },
+      "expected": {
+        "success": false,
+        "value": null,
+        "error": "Calculation produced a non-finite number"
+      },
+      "phase": "field read before text helper"
+    },
+    {
+      "id": "ENGINE-03",
+      "formula": "textTrim([\"v\"])",
+      "variables": {
+        "v": {
+          "$type": "number",
+          "value": "Infinity"
+        }
+      },
+      "expected": {
+        "success": false,
+        "value": null,
+        "error": "Calculation produced a non-finite number"
+      },
+      "phase": "field read before text helper"
+    },
+    {
+      "id": "ENGINE-04",
+      "formula": "textTrim([\"v\"])",
+      "variables": {
+        "v": {
+          "$type": "undefined"
+        }
+      },
+      "expected": {
+        "success": true,
+        "value": null
+      },
+      "phase": "logical result; manager stores undefined; project keeps null"
+    },
+    {
+      "id": "ENGINE-05",
+      "formula": "false ? textTrim([\"v\"]) : \"safe\"",
+      "variables": {
+        "v": 17
+      },
+      "expected": {
+        "success": true,
+        "value": "safe"
+      },
+      "phase": "unchosen branch is not evaluated"
+    },
+    {
+      "id": "ENGINE-06",
+      "formula": "false ? textPart(\"x\", \"\", 0) : \"safe\"",
+      "expectedValidation": {
+        "success": false,
+        "errorCode": "TEXT_EMPTY_PATTERN",
+        "error": "textPart argument 2 must not be empty."
+      },
+      "phase": "static literal controls checked even in dead branches"
+    },
+    {
+      "id": "ENGINE-07",
+      "formula": "false ? textPart(\"x\", [\"d\"], 0) : \"safe\"",
+      "variables": {
+        "d": ""
+      },
+      "expected": {
+        "success": true,
+        "value": "safe"
+      },
+      "phase": "dynamic control in unchosen branch not evaluated"
+    },
+    {
+      "id": "ENGINE-08",
+      "formula": "textPart(null, \"-\", -1)",
+      "expectedValidation": {
+        "success": false,
+        "errorCode": "TEXT_INDEX",
+        "error": "textPart argument 3 must be a non-negative safe integer number."
+      },
+      "phase": "signed numeric literal static check"
+    },
+    {
+      "id": "ENGINE-09",
+      "formula": "textConcat(null, 17)",
+      "expected": {
+        "success": false,
+        "value": null,
+        "errorCode": "TEXT_TYPE",
+        "error": "textConcat argument 2 must be text or missing; received number."
+      },
+      "phase": "null does not hide another evaluated non-text argument"
+    },
+    {
+      "id": "ENGINE-10",
+      "formula": "textConcat([\"bad\"], \"!\")",
+      "variables": {
+        "bad": {
+          "$type": "undefined"
+        }
+      },
+      "variableErrors": {
+        "bad": {
+          "code": "TEXT_TYPE",
+          "message": "textTrim argument 1 must be text or missing; received number."
+        }
+      },
+      "expected": {
+        "success": false,
+        "value": null,
+        "errorCode": "DEPENDENCY_ERROR",
+        "error": "Dependency \"bad\" failed: textTrim argument 1 must be text or missing; received number."
+      },
+      "phase": "failed reference is read"
+    },
+    {
+      "id": "ENGINE-11",
+      "formula": "false ? textConcat([\"bad\"], \"!\") : \"safe\"",
+      "variables": {
+        "bad": {
+          "$type": "undefined"
+        }
+      },
+      "variableErrors": {
+        "bad": {
+          "code": "TEXT_TYPE",
+          "message": "textTrim argument 1 must be text or missing; received number."
+        }
+      },
+      "expected": {
+        "success": true,
+        "value": "safe"
+      },
+      "phase": "failed reference not read"
+    },
+    {
+      "id": "ENGINE-12",
+      "formula": "[\"bad\"] == null ? \"fallback\" : [\"bad\"]",
+      "variables": {
+        "bad": {
+          "$type": "undefined"
+        }
+      },
+      "variableErrors": {
+        "bad": {
+          "code": "TEXT_TYPE",
+          "message": "textTrim argument 1 must be text or missing; received number."
+        }
+      },
+      "expected": {
+        "success": false,
+        "value": null,
+        "errorCode": "DEPENDENCY_ERROR",
+        "error": "Dependency \"bad\" failed: textTrim argument 1 must be text or missing; received number."
+      },
+      "phase": "a missing guard must not mask an error"
+    },
+    {
+      "id": "ENGINE-13",
+      "formula": "\"1\" + \"2\"",
+      "expected": {
+        "success": true,
+        "value": 3
+      },
+      "phase": "existing numeric plus remains unchanged"
+    },
+    {
+      "id": "ENGINE-14",
+      "formula": "\"A\" + \"B\"",
+      "expected": {
+        "success": false,
+        "value": null,
+        "error": "Invalid numeric value: A"
+      },
+      "phase": "no plus overloading"
+    },
+    {
+      "id": "ENGINE-15",
+      "formula": "textNormalize(textConcat(\"e\", \"\\u0301\"))",
+      "expected": {
+        "success": true,
+        "value": "\u00e9"
+      },
+      "phase": "explicit NFC after composition"
+    },
+    {
+      "id": "ENGINE-16",
+      "formula": "textPart(textTrim([\"code\"]), \"-\", 1)",
+      "variables": {
+        "code": " AB-001 "
+      },
+      "expected": {
+        "success": true,
+        "value": "001"
+      },
+      "phase": "nested calls; argument and intermediate trace"
+    },
+    {
+      "id": "ENGINE-17",
+      "formula": "textTrim([\"undefined\"])",
+      "variables": {
+        "undefined": " A "
+      },
+      "expected": {
+        "success": true,
+        "value": "A"
+      },
+      "phase": "undefined is a field name, not a language literal"
+    },
+    {
+      "id": "ENGINE-18",
+      "formula": "false && [\"bad\"] == \"x\"",
+      "variables": {
+        "bad": {
+          "$type": "undefined"
+        }
+      },
+      "variableErrors": {
+        "bad": {
+          "code": "TEXT_TYPE",
+          "message": "textTrim argument 1 must be text or missing; received number."
+        }
+      },
+      "expected": {
+        "success": true,
+        "value": false
+      },
+      "phase": "existing boolean short circuit preserved"
+    },
+    {
+      "id": "ENGINE-19",
+      "formula": "true || [\"bad\"] == \"x\"",
+      "variables": {
+        "bad": {
+          "$type": "undefined"
+        }
+      },
+      "variableErrors": {
+        "bad": {
+          "code": "TEXT_TYPE",
+          "message": "textTrim argument 1 must be text or missing; received number."
+        }
+      },
+      "expected": {
+        "success": true,
+        "value": true
+      },
+      "phase": "existing boolean short circuit preserved"
+    }
+  ],
+  "workflow": {
+    "name": "Imported product codes and analysis labels",
+    "inputScope": "All 18 loaded records before chart filters; rows are unmodified originals.",
+    "sourceKey": "id",
+    "rows": [
+      {
+        "id": "r01",
+        "code": " AB-001 ",
+        "site": "North"
+      },
+      {
+        "id": "r02",
+        "code": "AB-001",
+        "site": "North"
+      },
+      {
+        "id": "r03",
+        "code": "\u00a0AB-001\u00a0",
+        "site": "North"
+      },
+      {
+        "id": "r04",
+        "code": "CD--002",
+        "site": "South"
+      },
+      {
+        "id": "r05",
+        "code": " EF-003-",
+        "site": "South"
+      },
+      {
+        "id": "r06",
+        "code": "",
+        "site": "West"
+      },
+      {
+        "id": "r07",
+        "code": "   ",
+        "site": "West"
+      },
+      {
+        "id": "r08",
+        "code": null,
+        "site": "West"
+      },
+      {
+        "id": "r09",
+        "site": "West"
+      },
+      {
+        "id": "r10",
+        "code": 12,
+        "site": "West"
+      },
+      {
+        "id": "r11",
+        "code": true,
+        "site": "West"
+      },
+      {
+        "id": "r12",
+        "code": "0012",
+        "site": "East"
+      },
+      {
+        "id": "r13",
+        "code": "A\u200bB-004",
+        "site": "East"
+      },
+      {
+        "id": "r14",
+        "code": "\u00e9-005",
+        "site": "East"
+      },
+      {
+        "id": "r15",
+        "code": "e\u0301-005",
+        "site": "East"
+      },
+      {
+        "id": "r16",
+        "code": "ab-001",
+        "site": "North"
+      },
+      {
+        "id": "r17",
+        "code": "AB-001",
+        "site": null
+      },
+      {
+        "id": "r18",
+        "code": "A::B",
+        "site": "East"
+      }
+    ],
+    "calculations": [
+      {
+        "resultColumnName": "cleanCode",
+        "expression": "textTrim([\"code\"])",
+        "comparisonField": "code"
+      },
+      {
+        "resultColumnName": "component",
+        "expression": "textPart([\"cleanCode\"], \"-\", 1)",
+        "comparisonField": "cleanCode"
+      },
+      {
+        "resultColumnName": "label",
+        "expression": "textConcat([\"site\"], \" \u00b7 \", [\"component\"])",
+        "comparisonField": null
+      }
+    ],
+    "expectedRows": [
+      {
+        "id": "r01",
+        "cleanCode": {
+          "success": true,
+          "value": "AB-001"
+        },
+        "component": {
+          "success": true,
+          "value": "001"
+        },
+        "label": {
+          "success": true,
+          "value": "North \u00b7 001"
+        }
+      },
+      {
+        "id": "r02",
+        "cleanCode": {
+          "success": true,
+          "value": "AB-001"
+        },
+        "component": {
+          "success": true,
+          "value": "001"
+        },
+        "label": {
+          "success": true,
+          "value": "North \u00b7 001"
+        }
+      },
+      {
+        "id": "r03",
+        "cleanCode": {
+          "success": true,
+          "value": "AB-001"
+        },
+        "component": {
+          "success": true,
+          "value": "001"
+        },
+        "label": {
+          "success": true,
+          "value": "North \u00b7 001"
+        }
+      },
+      {
+        "id": "r04",
+        "cleanCode": {
+          "success": true,
+          "value": "CD--002"
+        },
+        "component": {
+          "success": true,
+          "value": ""
+        },
+        "label": {
+          "success": true,
+          "value": "South \u00b7 "
+        }
+      },
+      {
+        "id": "r05",
+        "cleanCode": {
+          "success": true,
+          "value": "EF-003-"
+        },
+        "component": {
+          "success": true,
+          "value": "003"
+        },
+        "label": {
+          "success": true,
+          "value": "South \u00b7 003"
+        }
+      },
+      {
+        "id": "r06",
+        "cleanCode": {
+          "success": true,
+          "value": ""
+        },
+        "component": {
+          "success": true,
+          "value": null
+        },
+        "label": {
+          "success": true,
+          "value": null
+        }
+      },
+      {
+        "id": "r07",
+        "cleanCode": {
+          "success": true,
+          "value": ""
+        },
+        "component": {
+          "success": true,
+          "value": null
+        },
+        "label": {
+          "success": true,
+          "value": null
+        }
+      },
+      {
+        "id": "r08",
+        "cleanCode": {
+          "success": true,
+          "value": null
+        },
+        "component": {
+          "success": true,
+          "value": null
+        },
+        "label": {
+          "success": true,
+          "value": null
+        }
+      },
+      {
+        "id": "r09",
+        "cleanCode": {
+          "success": true,
+          "value": null
+        },
+        "component": {
+          "success": true,
+          "value": null
+        },
+        "label": {
+          "success": true,
+          "value": null
+        }
+      },
+      {
+        "id": "r10",
+        "cleanCode": {
+          "success": false,
+          "value": null,
+          "errorCode": "TEXT_TYPE",
+          "error": "textTrim argument 1 must be text or missing; received number."
+        },
+        "component": {
+          "success": false,
+          "value": null,
+          "errorCode": "DEPENDENCY_ERROR",
+          "error": "Dependency \"cleanCode\" failed: textTrim argument 1 must be text or missing; received number."
+        },
+        "label": {
+          "success": false,
+          "value": null,
+          "errorCode": "DEPENDENCY_ERROR",
+          "error": "Dependency \"component\" failed: Dependency \"cleanCode\" failed: textTrim argument 1 must be text or missing; received number."
+        }
+      },
+      {
+        "id": "r11",
+        "cleanCode": {
+          "success": false,
+          "value": null,
+          "errorCode": "TEXT_TYPE",
+          "error": "textTrim argument 1 must be text or missing; received boolean."
+        },
+        "component": {
+          "success": false,
+          "value": null,
+          "errorCode": "DEPENDENCY_ERROR",
+          "error": "Dependency \"cleanCode\" failed: textTrim argument 1 must be text or missing; received boolean."
+        },
+        "label": {
+          "success": false,
+          "value": null,
+          "errorCode": "DEPENDENCY_ERROR",
+          "error": "Dependency \"component\" failed: Dependency \"cleanCode\" failed: textTrim argument 1 must be text or missing; received boolean."
+        }
+      },
+      {
+        "id": "r12",
+        "cleanCode": {
+          "success": true,
+          "value": "0012"
+        },
+        "component": {
+          "success": true,
+          "value": null
+        },
+        "label": {
+          "success": true,
+          "value": null
+        }
+      },
+      {
+        "id": "r13",
+        "cleanCode": {
+          "success": true,
+          "value": "A\u200bB-004"
+        },
+        "component": {
+          "success": true,
+          "value": "004"
+        },
+        "label": {
+          "success": true,
+          "value": "East \u00b7 004"
+        }
+      },
+      {
+        "id": "r14",
+        "cleanCode": {
+          "success": true,
+          "value": "\u00e9-005"
+        },
+        "component": {
+          "success": true,
+          "value": "005"
+        },
+        "label": {
+          "success": true,
+          "value": "East \u00b7 005"
+        }
+      },
+      {
+        "id": "r15",
+        "cleanCode": {
+          "success": true,
+          "value": "e\u0301-005"
+        },
+        "component": {
+          "success": true,
+          "value": "005"
+        },
+        "label": {
+          "success": true,
+          "value": "East \u00b7 005"
+        }
+      },
+      {
+        "id": "r16",
+        "cleanCode": {
+          "success": true,
+          "value": "ab-001"
+        },
+        "component": {
+          "success": true,
+          "value": "001"
+        },
+        "label": {
+          "success": true,
+          "value": "North \u00b7 001"
+        }
+      },
+      {
+        "id": "r17",
+        "cleanCode": {
+          "success": true,
+          "value": "AB-001"
+        },
+        "component": {
+          "success": true,
+          "value": "001"
+        },
+        "label": {
+          "success": true,
+          "value": null
+        }
+      },
+      {
+        "id": "r18",
+        "cleanCode": {
+          "success": true,
+          "value": "A::B"
+        },
+        "component": {
+          "success": true,
+          "value": null
+        },
+        "label": {
+          "success": true,
+          "value": null
+        }
+      }
+    ],
+    "expectedReview": {
+      "cleanCode": {
+        "total": 18,
+        "changed": [
+          "r01",
+          "r03",
+          "r05",
+          "r07"
+        ],
+        "unchanged": [
+          "r02",
+          "r04",
+          "r06",
+          "r12",
+          "r13",
+          "r14",
+          "r15",
+          "r16",
+          "r17",
+          "r18"
+        ],
+        "missing": [
+          "r08",
+          "r09"
+        ],
+        "errors": [
+          "r10",
+          "r11"
+        ],
+        "empty": [
+          "r06",
+          "r07"
+        ],
+        "presentCount": 14,
+        "distinctPresentCount": 10,
+        "distinctEligibleInputTextCount": 13
+      },
+      "component": {
+        "total": 18,
+        "changed": [
+          "r01",
+          "r02",
+          "r03",
+          "r04",
+          "r05",
+          "r13",
+          "r14",
+          "r15",
+          "r16",
+          "r17"
+        ],
+        "unchanged": [],
+        "missing": [
+          "r06",
+          "r07",
+          "r08",
+          "r09",
+          "r12",
+          "r18"
+        ],
+        "errors": [
+          "r10",
+          "r11"
+        ],
+        "empty": [
+          "r04"
+        ],
+        "presentCount": 10,
+        "distinctPresentCount": 5
+      },
+      "label": {
+        "total": 18,
+        "produced": [
+          "r01",
+          "r02",
+          "r03",
+          "r04",
+          "r05",
+          "r13",
+          "r14",
+          "r15",
+          "r16"
+        ],
+        "missing": [
+          "r06",
+          "r07",
+          "r08",
+          "r09",
+          "r12",
+          "r17",
+          "r18"
+        ],
+        "errors": [
+          "r10",
+          "r11"
+        ],
+        "empty": [],
+        "presentCount": 9,
+        "distinctPresentCount": 5
+      }
+    },
+    "cleanCodeOutputGroups": [
+      {
+        "value": "AB-001",
+        "ids": [
+          "r01",
+          "r02",
+          "r03",
+          "r17"
+        ]
+      },
+      {
+        "value": "CD--002",
+        "ids": [
+          "r04"
+        ]
+      },
+      {
+        "value": "EF-003-",
+        "ids": [
+          "r05"
+        ]
+      },
+      {
+        "value": "",
+        "ids": [
+          "r06",
+          "r07"
+        ]
+      },
+      {
+        "value": "0012",
+        "ids": [
+          "r12"
+        ]
+      },
+      {
+        "value": "A\u200bB-004",
+        "ids": [
+          "r13"
+        ]
+      },
+      {
+        "value": "\u00e9-005",
+        "ids": [
+          "r14"
+        ]
+      },
+      {
+        "value": "e\u0301-005",
+        "ids": [
+          "r15"
+        ]
+      },
+      {
+        "value": "ab-001",
+        "ids": [
+          "r16"
+        ]
+      },
+      {
+        "value": "A::B",
+        "ids": [
+          "r18"
+        ]
+      }
+    ],
+    "cleanCodeCollisions": [
+      {
+        "output": "AB-001",
+        "distinctInputs": [
+          " AB-001 ",
+          "AB-001",
+          "\u00a0AB-001\u00a0"
+        ],
+        "ids": [
+          "r01",
+          "r02",
+          "r03",
+          "r17"
+        ],
+        "changedIds": [
+          "r01",
+          "r03"
+        ]
+      },
+      {
+        "output": "",
+        "distinctInputs": [
+          "",
+          "   "
+        ],
+        "ids": [
+          "r06",
+          "r07"
+        ],
+        "changedIds": [
+          "r07"
+        ]
+      }
+    ],
+    "partMissingReasons": {
+      "source-missing": [
+        "r08",
+        "r09"
+      ],
+      "part-absent": [
+        "r06",
+        "r07",
+        "r12",
+        "r18"
+      ]
+    },
+    "chartFilterExample": {
+      "predicate": "site == \"North\"",
+      "visibleIds": [
+        "r01",
+        "r02",
+        "r03",
+        "r16"
+      ],
+      "reviewStillUses": 18
+    },
+    "reorderIds": [
+      "r18",
+      "r09",
+      "r03",
+      "r01",
+      "r12",
+      "r10",
+      "r05",
+      "r14",
+      "r02",
+      "r17",
+      "r06",
+      "r04",
+      "r11",
+      "r16",
+      "r08",
+      "r15",
+      "r07",
+      "r13"
+    ],
+    "reorderExpectation": "All expectedRows and memberships are unchanged by stable id; display order follows new source order. No persistent __ID guarantee.",
+    "refresh": {
+      "changes": [
+        {
+          "id": "r01",
+          "set": {
+            "code": "AB-001"
+          }
+        },
+        {
+          "id": "r09",
+          "set": {
+            "code": " GH-006 "
+          }
+        },
+        {
+          "id": "r10",
+          "set": {
+            "code": "12"
+          }
+        }
+      ],
+      "removeIds": [
+        "r07"
+      ],
+      "append": [
+        {
+          "id": "r19",
+          "code": "AB-001 ",
+          "site": "North"
+        }
+      ],
+      "expectedCleanReview": {
+        "total": 18,
+        "changed": [
+          "r03",
+          "r05",
+          "r09",
+          "r19"
+        ],
+        "unchanged": [
+          "r01",
+          "r02",
+          "r04",
+          "r06",
+          "r10",
+          "r12",
+          "r13",
+          "r14",
+          "r15",
+          "r16",
+          "r17",
+          "r18"
+        ],
+        "missing": [
+          "r08"
+        ],
+        "errors": [
+          "r11"
+        ],
+        "empty": [
+          "r06"
+        ],
+        "presentCount": 16,
+        "distinctPresentCount": 12,
+        "distinctEligibleInputTextCount": 14
+      },
+      "expectedComponentCounts": {
+        "present": 12,
+        "missing": 5,
+        "errors": 1
+      },
+      "expectedLabelCounts": {
+        "present": 11,
+        "missing": 6,
+        "errors": 1,
+        "distinctPresent": 6
+      },
+      "expectedCleanCollisions": [
+        {
+          "output": "AB-001",
+          "distinctInputs": [
+            "AB-001",
+            "\u00a0AB-001\u00a0",
+            "AB-001 "
+          ],
+          "ids": [
+            "r01",
+            "r02",
+            "r03",
+            "r17",
+            "r19"
+          ],
+          "changedIds": [
+            "r03",
+            "r19"
+          ]
+        }
+      ]
+    }
+  },
+  "compositionCollision": {
+    "formula": "textConcat([\"a\"], [\"b\"])",
+    "rows": [
+      {
+        "id": "c1",
+        "a": "AB",
+        "b": "C"
+      },
+      {
+        "id": "c2",
+        "a": "A",
+        "b": "BC"
+      },
+      {
+        "id": "c3",
+        "a": "AB",
+        "b": "C"
+      }
+    ],
+    "expected": {
+      "value": "ABC",
+      "ids": [
+        "c1",
+        "c2",
+        "c3"
+      ],
+      "distinctInputTuples": [
+        [
+          "AB",
+          "C"
+        ],
+        [
+          "A",
+          "BC"
+        ]
+      ],
+      "distinctInputTupleCount": 2
+    },
+    "note": "Typed ordered tuples are compared structurally, never by delimiter concatenation. Identical tuples c1/c3 are duplicates; c2 establishes a collision. These labels are not join keys."
+  },
+  "typePreservation": {
+    "textOutputs": [
+      "0012",
+      "2026",
+      "1e3",
+      "NaN",
+      "true",
+      "2026-10-31"
+    ],
+    "required": "Keep each string categorical through direct text calls, references, text-or-null conditionals, ordinary construction, saved restore, project field metadata, notebook binding, and export. Explicit incompatible user field conversion takes precedence and must remain visible.",
+    "numberOutput": {
+      "formula": "textLength(\"0012\")",
+      "value": 4,
+      "kind": "numeric"
+    }
+  },
+  "persistence": {
+    "formulaText": "textConcat(textTrim([\"Field \\\"A\\\"\\\\B\"]), \"\\u00a0\", \"\u00e9\")",
+    "originalRows": [
+      {
+        "id": "p1",
+        "v": null
+      },
+      {
+        "id": "p2",
+        "v": {
+          "$type": "undefined"
+        }
+      },
+      {
+        "id": "p3"
+      },
+      {
+        "id": "p4",
+        "v": ""
+      },
+      {
+        "id": "p5",
+        "v": " "
+      },
+      {
+        "id": "p6",
+        "v": {
+          "$type": "number",
+          "value": "NaN"
+        }
+      },
+      {
+        "id": "p7",
+        "v": {
+          "$type": "number",
+          "value": "Infinity"
+        }
+      },
+      {
+        "id": "p8",
+        "v": "e\u0301"
+      },
+      {
+        "id": "p9",
+        "v": "\u00e9"
+      },
+      {
+        "id": "p10",
+        "v": "\ud800"
+      }
+    ],
+    "assertions": [
+      "Use stringifySavedAnalysis/parseSavedAnalysis for source-preserving full analysis JSON. An own property with undefined stays present; an absent property stays absent.",
+      "Settings save/reopen retains exact rawInput expression text. Parse emitted formula text to obtain its AST; never hand-author a different AST.",
+      "Project JSON and .eda text retain expressions and raw source file contents. Recompute runtime review after reopening.",
+      "Typed review JSON includes presence/type/escaped text and error separately; plain CSV is a convenience export, not evidence for undefined versus null or absent properties.",
+      "No runtime counts, __ID memberships, preview cache, or extra guided recipe is persisted."
+    ]
+  },
+  "projectFixtureFile": "project-fixture.json",
+  "unexecutedIntegrationChecks": [
+    "Actual expression parsing/evaluation; manager and trace parity; project and worker parity; typed chart grouping; JSON/text/folder and notebook round trips; refresh invalidation; browser pointer/keyboard behavior at 1280,783,390px; performance under supported browser runtimes."
+  ]
+}
