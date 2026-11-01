@@ -1,0 +1,185 @@
+{
+  "baseline": "d3920a285f3755a8324998775deb131747e959f5",
+  "status": "passed",
+  "scenarioCount": 29,
+  "assertionCount": 422,
+  "previewCaseCount": 72,
+  "checks": "Exact baseline pure predicates, exact DataTable/Bar selection compiler bodies, and original population/candidate oracle against separately hand-authored expected records.",
+  "limits": "No live Crossfilter, React/browser rendering, real store callbacks, saved-data writeback, held-edit lifecycle or history integration was executed. Finding count/average and state classification checks are explicit test oracles.",
+  "results": [
+    {
+      "id": "ESR-F01",
+      "title": "Conflicting same-field owners preserve ownership",
+      "status": "passed",
+      "previewCases": 2
+    },
+    {
+      "id": "ESR-F02",
+      "title": "One chart owns two coupled brush clauses",
+      "status": "passed",
+      "previewCases": 4
+    },
+    {
+      "id": "ESR-F03",
+      "title": "Inclusive UTC date-only limits and offset crossing",
+      "status": "passed",
+      "previewCases": 2
+    },
+    {
+      "id": "ESR-F04",
+      "title": "Missing bucket, typed categories, and nonfinite values",
+      "status": "passed",
+      "previewCases": 2
+    },
+    {
+      "id": "ESR-F05",
+      "title": "Exclusive numeric edges retain exact interval semantics",
+      "status": "passed",
+      "previewCases": 2
+    },
+    {
+      "id": "ESR-F06",
+      "title": "Rows-only text search does not empty the workspace",
+      "status": "passed",
+      "previewCases": 2
+    },
+    {
+      "id": "ESR-F07",
+      "title": "Hidden raw and derived columns participate in table search",
+      "status": "passed",
+      "previewCases": 1
+    },
+    {
+      "id": "ESR-F08",
+      "title": "Rows field restriction is local and distinct from search",
+      "status": "passed",
+      "previewCases": 3
+    },
+    {
+      "id": "ESR-F09",
+      "title": "Chart-local population restriction has no global effect",
+      "status": "passed",
+      "previewCases": 3
+    },
+    {
+      "id": "ESR-F10",
+      "title": "Two independent conflicts require a pair; every single fails",
+      "status": "passed",
+      "previewCases": 10
+    },
+    {
+      "id": "ESR-F11",
+      "title": "Specification selection reads owner limits; limits survive removal",
+      "status": "passed",
+      "previewCases": 2
+    },
+    {
+      "id": "ESR-F12",
+      "title": "Current derived values, not raw rows, determine recovery",
+      "status": "passed",
+      "previewCases": 2
+    },
+    {
+      "id": "ESR-F13",
+      "title": "Notebook chart selections remain local",
+      "status": "passed",
+      "previewCases": 3
+    },
+    {
+      "id": "ESR-F14",
+      "title": "Empty source is not a filter conflict",
+      "status": "passed",
+      "previewCases": 1
+    },
+    {
+      "id": "ESR-F15",
+      "title": "Rows exist but no finite coordinate pairs are plottable",
+      "status": "passed",
+      "previewCases": 0
+    },
+    {
+      "id": "ESR-F16",
+      "title": "Chart missing required field is a setup state",
+      "status": "passed",
+      "previewCases": 0
+    },
+    {
+      "id": "ESR-F17",
+      "title": "Intentional empty selection remains untouched until Apply",
+      "status": "passed",
+      "previewCases": 1
+    },
+    {
+      "id": "ESR-F18",
+      "title": "Aggregate last-range fallback can make removal non-monotonic",
+      "status": "passed",
+      "previewCases": 3
+    },
+    {
+      "id": "ESR-F19",
+      "title": "Simple bar ignores off-field selection clauses",
+      "status": "passed",
+      "previewCases": 2
+    },
+    {
+      "id": "ESR-F20",
+      "title": "Invalid date bound fails rather than becoming unbounded",
+      "status": "passed",
+      "previewCases": 1
+    },
+    {
+      "id": "ESR-F21",
+      "title": "Three conflicts exceed the bounded-pair search",
+      "status": "passed",
+      "previewCases": 7
+    },
+    {
+      "id": "ESR-F22",
+      "title": "Missing referenced field uses actual undefined-value semantics",
+      "status": "passed",
+      "previewCases": 1
+    },
+    {
+      "id": "ESR-F23",
+      "title": "Finite numeric timestamps and zone-less date-times are UTC",
+      "status": "passed",
+      "previewCases": 1
+    },
+    {
+      "id": "ESR-F24",
+      "title": "Table filters are linked but table search is local",
+      "status": "passed",
+      "previewCases": 3
+    },
+    {
+      "id": "ESR-F25",
+      "title": "Empty target containment is vacuous: check the full owner predicate",
+      "status": "passed",
+      "previewCases": 2
+    },
+    {
+      "id": "ESR-F26",
+      "title": "Notebook selected, eligible, unbound findings and numeric empty states",
+      "status": "passed",
+      "previewCases": 3
+    },
+    {
+      "id": "ESR-F27",
+      "title": "One histogram owns a bin range and specification status on the same field",
+      "status": "passed",
+      "previewCases": 3
+    },
+    {
+      "id": "ESR-F28",
+      "title": "Stored boundless and empty-string restrictions remain effective",
+      "status": "passed",
+      "previewCases": 3
+    },
+    {
+      "id": "ESR-F29",
+      "title": "A valid range pair must survive an individually non-monotone removal",
+      "status": "passed",
+      "previewCases": 3
+    }
+  ]
+}

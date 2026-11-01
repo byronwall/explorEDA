@@ -2032,9 +2032,9 @@
     "path": "ideas/R052-empty-selection-recovery.md",
     "priority": 50,
     "research_kind": "new-direction",
-    "status": "candidate",
-    "summary": "Compare bounded, reversible explanations of conflicting filters when a result is empty.",
-    "research_question": "Should empty-result recovery explain the effect of removing one filter or point to the latest narrowing action?",
+    "status": "researched",
+    "summary": "Build Recover rows with named populations, detached previews, guarded Apply, and bounded pair alternatives.",
+    "research_question": "How should exact-record previews and explicit removal recover empty workspace and local results?",
     "why_now": "The existing empty message and filter controls are a usable baseline for a small investigation.",
     "repo_evidence": [
       {
@@ -2053,11 +2053,14 @@
         "observation": "Global and chart-population membership are distinguishable."
       }
     ],
-    "related_intents": ["docs/intent/current-analysis-trust/intent-brief.md"],
+    "related_intents": [
+      "docs/intent/current-analysis-trust/intent-brief.md",
+      "docs/intent/empty-selection-recovery/implementation-plan.md"
+    ],
     "dependencies": [],
-    "first_experiment": "Enumerate eight empty-result scenarios and compare leave-one-out counts with action-based undo explanations.",
+    "first_experiment": "Implement workspace single-removal preview and exact records with one guarded provider publication.",
     "acceptance_evidence": "Recovery suggestions preserve scope and return exactly the enumerated rows; joint conflicts are acknowledged.",
-    "rejection_signal": "Suggestions confuse local and global emptiness, or current chips already support recovery.",
+    "rejection_signal": "Do not accept incorrect scope, speculative live mutation, stale Apply, or partial persistence.",
     "confidence": "medium",
     "external_sources": []
   },
