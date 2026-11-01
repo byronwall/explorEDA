@@ -64,3 +64,13 @@ R052 brief/JSON/catalogue updated without rank changes. No next topic assigned.
 Collection docs check passed: 3 files, 74 tests, existing React act warnings.
 Authored formatting and 22 local links pass. Pre-commit initially formatted six originals;
 restored all original bytes and added a scoped `.prettierignore` entry before final inventory verification.
+
+## Complete
+
+Verified OPEN PR https://github.com/byronwall/explorEDA/pull/589,
+`main` ← `codex/empty-selection-design-2026-11-01`. Saved PR body and all 21 files verified.
+All ten ZIP/disk/committed Git blobs match. Authored format/whitespace, links, docs and PR checks pass.
+Documentation label applied; codex and codex-automation labels are unavailable in this repository.
+No full check or changeset: no package/demo code changed. Nothing merged or deployed.
+Temporary collector deletion confirmed (`deleteStatus=deleted`); parent supported view confirms it remains active.
+Current completion time: 2026-11-01 about 21:50 UTC.
