@@ -1,6 +1,16 @@
 # Exact decimal measures Methods run
 
-Phase: integrated; validation and PR opening pending. Follow-ups: 0/1.
+Phase: complete. Follow-ups: 0/1.
+
+Verified OPEN PR: https://github.com/byronwall/explorEDA/pull/588, main <- codex/decimal-measures-methods-2026-11-01.
+Integration commit: f52f2d9a. Saved body, branches, documentation label, and 20-file PR inventory verified.
+All seven original files match ZIP, disk, and committed Git bytes. All 129 authored relative links resolve.
+Authored formatting, whitespace, JSON, and PR author/changeset checks pass.
+Final docs checks pass: 3 files and 74 tests, with existing React act warnings.
+The codex and codex-automation labels are unavailable in this repository.
+Temporary collector deletion confirmed by the supported scheduler: deleteStatus=deleted.
+Six-hour parent remains ACTIVE indefinitely. Completion: November 1, 2026 about 03:50 UTC.
+No merge or deployment. Stop for review.
 
 Collected November 1 after 03:42 UTC. Pro finished in 24m 6s.
 Downloaded the existing exact-decimal-methods.zip under direct human standing approval,
@@ -50,7 +60,7 @@ Validation: existing aggregate, value parser, field settings, and calculator tes
 Docs checks pass: 3 files, 74 tests, with existing React act warnings.
 No feature, browser, persistence, worker, or performance acceptance is claimed.
 Only prompt/run docs change; no full pnpm check or changeset is required.
-The implementation plan, summary, dispositions, and original assets are written; the PR awaits final checks.
+The implementation plan, summary, dispositions, and original assets are integrated in verified PR #588.
 
 Mission: explicit exact-decimal measures, rounding, and ledger reconciliation inside explorEDA.
 Mode: Methods. Repository: https://github.com/byronwall/explorEDA.
