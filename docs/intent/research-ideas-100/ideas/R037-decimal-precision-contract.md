@@ -1,5 +1,14 @@
 # R037 — Choose a precision contract for financial and exact-decimal work
 
+## November 1 Methods result
+
+Build explicit exact-decimal calculations, saved rounding, and exact reconciliation in complete stages.
+[Plan](../../decimal-measures/implementation-plan.md), [summary](../../../research/decimal-measures-methods-2026-11-01/README.md),
+and [original Pro artifacts](../../decimal-measures/assets/pro-results/decimal-measures-methods-2026-11-01/ASSET_INDEX.md).
+R037 scored 17/20. Local review passed 573 assertions and checked decisive code claims.
+This is a reviewed proposal, not implementation approval. Current DIRECTION replaces the historical demand gates below.
+No next topic is assigned; catalogue rank remains unchanged.
+
 - ID: R037
 - Category: Types, quantities, and dates
 - Priority: 90

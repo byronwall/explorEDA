@@ -1,0 +1,83 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "Exact decimal measures and ledger reconciliation",
+    "slug": "decimal-measures",
+    "scale": "feature",
+    "current_phase": "implementation-plan",
+    "last_updated": "2026-11-01",
+    "summary": "Explicit decimal calculations, rounding, exact membership, and saved reconciliation.",
+    "status": "planned",
+    "next_action": "Review the complete standalone line-check milestone before implementation."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-11-01"
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "current",
+      "updated_at": "2026-11-01"
+    }
+  },
+  "sources": [
+    {
+      "id": "direction",
+      "type": "repository",
+      "location": "../../research/DIRECTION.md",
+      "authority": "Topic choice; direct user preservation requirements override archival advice."
+    },
+    {
+      "id": "methods",
+      "type": "agent-authored-analysis",
+      "location": "assets/pro-results/decimal-measures-methods-2026-11-01/ASSET_INDEX.md",
+      "authority": "Reviewed proposal; no implementation approval."
+    },
+    {
+      "id": "local-review",
+      "type": "agent-authored-analysis",
+      "location": "../../research/decimal-measures-methods-2026-11-01/evidence.md",
+      "authority": "Current source and local arithmetic evidence; feature acceptance remains proposed."
+    }
+  ],
+  "implementation": {
+    "status": "not-started",
+    "repository_snapshot": {
+      "revision": "d3920a285f3755a8324998775deb131747e959f5",
+      "root": "/Users/byronwall/Projects/explorEDA"
+    },
+    "dependencies": [],
+    "milestones": [
+      {
+        "id": "M1",
+        "title": "Complete standalone exact line checks",
+        "status": "planned"
+      },
+      {
+        "id": "M2",
+        "title": "Grouped projects, entity measures, Pivot, and folders",
+        "status": "planned"
+      },
+      {
+        "id": "M3",
+        "title": "Saved exact notebook findings",
+        "status": "planned"
+      },
+      {
+        "id": "M4",
+        "title": "Selected approximate chart projections",
+        "status": "explore"
+      }
+    ]
+  },
+  "history": [
+    {
+      "date": "2026-11-01",
+      "action": "Integrated R037 Methods with original assets and local dispositions.",
+      "evidence": "573 local assertions and current-code checks; no feature implementation."
+    }
+  ],
+  "closure": null
+}

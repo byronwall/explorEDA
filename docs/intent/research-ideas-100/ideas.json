@@ -1429,7 +1429,7 @@
     "priority": 90,
     "research_kind": "new-direction",
     "status": "candidate",
-    "summary": "Compare ordinary numeric arithmetic, scaled integers, and exact-decimal preparation against a concrete precision requirement.",
+    "summary": "Methods reviewed November 1: plan explicit exact decimal calculations, saved rounding, complete populations, and staged ledger reconciliation; see docs/intent/decimal-measures/implementation-plan.md.",
     "research_question": "When should explorEDA preserve decimal exactness, and which smallest representation satisfies the actual analytical task?",
     "why_now": "Currency formatting is delivered, but presentation precision does not itself define arithmetic precision.",
     "repo_evidence": [

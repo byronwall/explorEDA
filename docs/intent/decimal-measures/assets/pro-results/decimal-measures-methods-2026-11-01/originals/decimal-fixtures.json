@@ -1,0 +1,4744 @@
+{
+  "format": "exploreda-decimal-methods-fixtures",
+  "version": 1,
+  "baseline": "d3920a285f3755a8324998775deb131747e959f5",
+  "purpose": "Portable exact expectations for a proposed capability; these are not a claim that the baseline implements decimal operations.",
+  "contract": {
+    "scalar": {
+      "kind": "decimal",
+      "coefficient": "canonical signed base-10 integer string, no plus, leading zeros, or negative zero",
+      "scale": "integer from 0 through 38"
+    },
+    "limits": {
+      "coefficientDigits": 128,
+      "scale": 38,
+      "rawInputCharacters": 256,
+      "absoluteExponent": 128,
+      "internalAggregateCoefficientDigits": 256
+    },
+    "grammar": "[+-]?(?:[0-9]+(?:\\.[0-9]+)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?",
+    "trim": "ASCII space, tab, CR, LF at the two ends only",
+    "roundingModes": [
+      "ceiling",
+      "floor",
+      "halfAwayFromZero",
+      "halfEven",
+      "towardZero",
+      "unnecessary"
+    ],
+    "policyDefault": "halfEven may be the UI choice, but every rounding/division policy must be written in the saved recipe. No implicit scale is supplied.",
+    "equality": "Numeric equality compares rational values. scaleEqual compares normalized coefficients and scales. Original lexical spelling remains in source records.",
+    "division": "divideExact (the exact formula / operator) emits a minimal finite decimal, or rejects non-terminating results. divide requires explicit scale and mode and quantizes once.",
+    "missing": "null, undefined sentinel, and blank ASCII text are missing, never zero.",
+    "nativeNumbers": "parse refuses all native Number inputs. exactInteger explicitly accepts only safe integer Numbers and records currentNumberInteger provenance.",
+    "sum": "Use widened internal accumulation. Without an output policy, preserve maximum valid input scale (including zero contributions) and then enforce public bounds. With an explicit output policy, quantize the wide state first and only then enforce the 128-digit public coefficient bound. A separate public sum expression remains a bounded intermediate before any later round call.",
+    "average": "Sum exact valid values with a widened internal accumulator, then divide by valid count and round once to an explicit scale/mode; do not enforce public sum bounds before averaging.",
+    "emptyAggregates": "Empty or no-valid-value populations return null with counts. Three valid zeros return a zero decimal.",
+    "minMax": "For numerically tied extrema choose the largest input scale.",
+    "reconciliation": "An exact zero difference is necessary but not sufficient for a pass. Unresolved missing/invalid/conflicting inputs block a pass; an explicit upstream exclusion defines a smaller declared population.",
+    "fixtureStates": "complete, partial, noValidValues, and empty name semantic states; implementations may map these to the existing result/diagnostic structures."
+  },
+  "derivationMethod": {
+    "arithmetic": "Independent integer and fractions.Fraction reasoning; no decimal library produced the expected arithmetic.",
+    "expectedValues": "Amount outputs are literal decimal strings plus their exact tagged representation. Derivations record the integer or rational calculation.",
+    "verification": "verify-fixtures.py checks this contract as an inspection companion, not product implementation. Only projection/source-loss demonstrations intentionally use binary float."
+  },
+  "caseCount": 215,
+  "cases": [
+    {
+      "id": "D-P001",
+      "op": "parse",
+      "input": "0.1",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "1",
+          "scale": 1
+        },
+        "text": "0.1"
+      },
+      "derivation": "One tenth = 1 / 10."
+    },
+    {
+      "id": "D-P002",
+      "op": "parse",
+      "input": "+001.2300",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "12300",
+          "scale": 4
+        },
+        "text": "1.2300"
+      },
+      "derivation": "Leading zeros and plus are lexical; four fractional positions remain."
+    },
+    {
+      "id": "D-P003",
+      "op": "parse",
+      "input": " \t-001.2300\r\n",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "-12300",
+          "scale": 4
+        },
+        "text": "-1.2300"
+      },
+      "derivation": "Only surrounding ASCII space, tab, CR, and LF are removed."
+    },
+    {
+      "id": "D-P004",
+      "op": "parse",
+      "input": ".5",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "5",
+          "scale": 1
+        },
+        "text": "0.5"
+      },
+      "derivation": "Five tenths = 1 / 2."
+    },
+    {
+      "id": "D-P005",
+      "op": "parse",
+      "input": "+.5",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "5",
+          "scale": 1
+        },
+        "text": "0.5"
+      },
+      "derivation": "The explicit positive sign does not change the coefficient."
+    },
+    {
+      "id": "D-P006",
+      "op": "parse",
+      "input": "1.2300e2",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "12300",
+          "scale": 2
+        },
+        "text": "123.00"
+      },
+      "derivation": "Fractional digits 4 minus exponent 2 gives scale 2; coefficient 12300."
+    },
+    {
+      "id": "D-P007",
+      "op": "parse",
+      "input": "1.2300e-2",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "12300",
+          "scale": 6
+        },
+        "text": "0.012300"
+      },
+      "derivation": "Fractional digits 4 minus exponent -2 gives scale 6; coefficient 12300."
+    },
+    {
+      "id": "D-P008",
+      "op": "parse",
+      "input": "1E+3",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "1000",
+          "scale": 0
+        },
+        "text": "1000"
+      },
+      "derivation": "Scale would be -3, so append three coefficient zeros and use scale 0."
+    },
+    {
+      "id": "D-P009",
+      "op": "parse",
+      "input": "000",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "0",
+          "scale": 0
+        },
+        "text": "0"
+      },
+      "derivation": "Leading zeros do not change zero."
+    },
+    {
+      "id": "D-P010",
+      "op": "parse",
+      "input": "-0.00",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "0",
+          "scale": 2
+        },
+        "text": "0.00"
+      },
+      "derivation": "Numeric zero is unsigned; source text still records the negative spelling."
+    },
+    {
+      "id": "D-P011",
+      "op": "parse",
+      "input": "9007199254740993",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "9007199254740993",
+          "scale": 0
+        },
+        "text": "9007199254740993"
+      },
+      "derivation": "Source string carries an odd integer above the binary64 safe integer range."
+    },
+    {
+      "id": "D-P012",
+      "op": "parse",
+      "input": "9007199254740993.01",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "900719925474099301",
+          "scale": 2
+        },
+        "text": "9007199254740993.01"
+      },
+      "derivation": "Coefficient 900719925474099301 at scale 2 remains an integer."
+    },
+    {
+      "id": "D-P013",
+      "op": "parse",
+      "input": "1e-38",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "1",
+          "scale": 38
+        },
+        "text": "0.00000000000000000000000000000000000001"
+      },
+      "derivation": "Scale 38 is accepted."
+    },
+    {
+      "id": "D-P014",
+      "op": "parse",
+      "input": "1e127",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+          "scale": 0
+        },
+        "text": "10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "derivation": "Exactly 128 coefficient digits are accepted."
+    },
+    {
+      "id": "D-P015",
+      "op": "parse",
+      "input": "99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+          "scale": 0
+        },
+        "text": "99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
+      },
+      "derivation": "The largest positive coefficient permitted by the contract."
+    },
+    {
+      "id": "D-P016",
+      "op": "parse",
+      "input": "0e128",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "0",
+          "scale": 0
+        },
+        "text": "0"
+      },
+      "derivation": "Zero remains coefficient 0 and scale 0 after expansion."
+    },
+    {
+      "id": "D-P017",
+      "op": "parse",
+      "input": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "1",
+          "scale": 0
+        },
+        "text": "1"
+      },
+      "derivation": "A 256-character source is accepted; normalized coefficient has one digit."
+    },
+    {
+      "id": "D-P018",
+      "op": "parse",
+      "input": null,
+      "expected": {
+        "status": "missing"
+      },
+      "derivation": "Missing input never becomes zero."
+    },
+    {
+      "id": "D-P019",
+      "op": "parse",
+      "input": {
+        "special": "undefined"
+      },
+      "expected": {
+        "status": "missing"
+      },
+      "derivation": "Missing input never becomes zero."
+    },
+    {
+      "id": "D-P020",
+      "op": "parse",
+      "input": "",
+      "expected": {
+        "status": "missing"
+      },
+      "derivation": "Missing input never becomes zero."
+    },
+    {
+      "id": "D-P021",
+      "op": "parse",
+      "input": " \t\r\n",
+      "expected": {
+        "status": "missing"
+      },
+      "derivation": "Missing input never becomes zero."
+    },
+    {
+      "id": "D-P022",
+      "op": "parse",
+      "input": "1.",
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INVALID_TEXT"
+      },
+      "derivation": "The whole trimmed input must match the ASCII decimal grammar."
+    },
+    {
+      "id": "D-P023",
+      "op": "parse",
+      "input": ".",
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INVALID_TEXT"
+      },
+      "derivation": "The whole trimmed input must match the ASCII decimal grammar."
+    },
+    {
+      "id": "D-P024",
+      "op": "parse",
+      "input": "+",
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INVALID_TEXT"
+      },
+      "derivation": "The whole trimmed input must match the ASCII decimal grammar."
+    },
+    {
+      "id": "D-P025",
+      "op": "parse",
+      "input": "1,000.00",
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INVALID_TEXT"
+      },
+      "derivation": "The whole trimmed input must match the ASCII decimal grammar."
+    },
+    {
+      "id": "D-P026",
+      "op": "parse",
+      "input": "12%",
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INVALID_TEXT"
+      },
+      "derivation": "The whole trimmed input must match the ASCII decimal grammar."
+    },
+    {
+      "id": "D-P027",
+      "op": "parse",
+      "input": "(12.00)",
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INVALID_TEXT"
+      },
+      "derivation": "The whole trimmed input must match the ASCII decimal grammar."
+    },
+    {
+      "id": "D-P028",
+      "op": "parse",
+      "input": "NaN",
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INVALID_TEXT"
+      },
+      "derivation": "The whole trimmed input must match the ASCII decimal grammar."
+    },
+    {
+      "id": "D-P029",
+      "op": "parse",
+      "input": "Infinity",
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INVALID_TEXT"
+      },
+      "derivation": "The whole trimmed input must match the ASCII decimal grammar."
+    },
+    {
+      "id": "D-P030",
+      "op": "parse",
+      "input": "0x10",
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INVALID_TEXT"
+      },
+      "derivation": "The whole trimmed input must match the ASCII decimal grammar."
+    },
+    {
+      "id": "D-P031",
+      "op": "parse",
+      "input": "1_000",
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INVALID_TEXT"
+      },
+      "derivation": "The whole trimmed input must match the ASCII decimal grammar."
+    },
+    {
+      "id": "D-P032",
+      "op": "parse",
+      "input": "١٢.٣",
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INVALID_TEXT"
+      },
+      "derivation": "The whole trimmed input must match the ASCII decimal grammar."
+    },
+    {
+      "id": "D-P033",
+      "op": "parse",
+      "input": "−1.00",
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INVALID_TEXT"
+      },
+      "derivation": "The whole trimmed input must match the ASCII decimal grammar."
+    },
+    {
+      "id": "D-P034",
+      "op": "parse",
+      "input": " 1.00",
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INVALID_TEXT"
+      },
+      "derivation": "The whole trimmed input must match the ASCII decimal grammar."
+    },
+    {
+      "id": "D-P035",
+      "op": "parse",
+      "input": "1 2",
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INVALID_TEXT"
+      },
+      "derivation": "The whole trimmed input must match the ASCII decimal grammar."
+    },
+    {
+      "id": "D-P036",
+      "op": "parse",
+      "input": "1e",
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INVALID_TEXT"
+      },
+      "derivation": "The whole trimmed input must match the ASCII decimal grammar."
+    },
+    {
+      "id": "D-P037",
+      "op": "parse",
+      "input": "1e+",
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INVALID_TEXT"
+      },
+      "derivation": "The whole trimmed input must match the ASCII decimal grammar."
+    },
+    {
+      "id": "D-P038",
+      "op": "parse",
+      "input": "text 1.0",
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INVALID_TEXT"
+      },
+      "derivation": "The whole trimmed input must match the ASCII decimal grammar."
+    },
+    {
+      "id": "D-P039",
+      "op": "parse",
+      "input": "1\n2",
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INVALID_TEXT"
+      },
+      "derivation": "The whole trimmed input must match the ASCII decimal grammar."
+    },
+    {
+      "id": "D-P040",
+      "op": "parse",
+      "input": 0.1,
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_TEXT_REQUIRED"
+      },
+      "derivation": "An existing Number is not proof of its original decimal text."
+    },
+    {
+      "id": "D-P041",
+      "op": "parse",
+      "input": 1,
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_TEXT_REQUIRED"
+      },
+      "derivation": "An existing Number is not proof of its original decimal text."
+    },
+    {
+      "id": "D-P042",
+      "op": "parse",
+      "input": 9007199254740992,
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_TEXT_REQUIRED"
+      },
+      "derivation": "An existing Number is not proof of its original decimal text."
+    },
+    {
+      "id": "D-P043",
+      "op": "parse",
+      "input": {
+        "nativeNumber": "NaN"
+      },
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_TEXT_REQUIRED"
+      },
+      "derivation": "An existing Number is not proof of its original decimal text."
+    },
+    {
+      "id": "D-P044",
+      "op": "parse",
+      "input": {
+        "nativeNumber": "Infinity"
+      },
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_TEXT_REQUIRED"
+      },
+      "derivation": "An existing Number is not proof of its original decimal text."
+    },
+    {
+      "id": "D-P045",
+      "op": "parse",
+      "input": true,
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INVALID_TEXT"
+      },
+      "derivation": "Booleans are not decimal source text."
+    },
+    {
+      "id": "D-P046",
+      "op": "parse",
+      "input": "11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INPUT_LIMIT"
+      },
+      "derivation": "Raw source length 257 exceeds 256 before conversion."
+    },
+    {
+      "id": "D-P047",
+      "op": "parse",
+      "input": "1e129",
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INPUT_LIMIT"
+      },
+      "derivation": "Absolute exponent 129 exceeds 128."
+    },
+    {
+      "id": "D-P048",
+      "op": "parse",
+      "input": "1e-129",
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INPUT_LIMIT"
+      },
+      "derivation": "Absolute exponent 129 exceeds 128; reject before expansion."
+    },
+    {
+      "id": "D-P049",
+      "op": "parse",
+      "input": "1e-39",
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_SCALE_LIMIT"
+      },
+      "derivation": "Effective scale 39 exceeds 38."
+    },
+    {
+      "id": "D-P050",
+      "op": "parse",
+      "input": "0e-39",
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_SCALE_LIMIT"
+      },
+      "derivation": "Zero does not bypass the explicit scale bound."
+    },
+    {
+      "id": "D-P051",
+      "op": "parse",
+      "input": "1e128",
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_COEFFICIENT_LIMIT"
+      },
+      "derivation": "Expansion needs 129 coefficient digits."
+    },
+    {
+      "id": "D-P052",
+      "op": "parse",
+      "input": "999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_COEFFICIENT_LIMIT"
+      },
+      "derivation": "Normalized nonzero coefficient has 129 digits."
+    },
+    {
+      "id": "D-I001",
+      "op": "exactInteger",
+      "input": 12,
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "12",
+          "scale": 0
+        },
+        "text": "12",
+        "origin": "currentNumberInteger"
+      },
+      "derivation": "This explicitly adopts the exact current safe integer; it makes no claim about the lost original lexeme."
+    },
+    {
+      "id": "D-I002",
+      "op": "exactInteger",
+      "input": 9007199254740991,
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "9007199254740991",
+          "scale": 0
+        },
+        "text": "9007199254740991",
+        "origin": "currentNumberInteger"
+      },
+      "derivation": "This explicitly adopts the exact current safe integer; it makes no claim about the lost original lexeme."
+    },
+    {
+      "id": "D-I003",
+      "op": "exactInteger",
+      "input": -9007199254740991,
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "-9007199254740991",
+          "scale": 0
+        },
+        "text": "-9007199254740991",
+        "origin": "currentNumberInteger"
+      },
+      "derivation": "This explicitly adopts the exact current safe integer; it makes no claim about the lost original lexeme."
+    },
+    {
+      "id": "D-I004",
+      "op": "exactInteger",
+      "input": -0.0,
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "0",
+          "scale": 0
+        },
+        "text": "0",
+        "origin": "currentNumberInteger"
+      },
+      "derivation": "This explicitly adopts the exact current safe integer; it makes no claim about the lost original lexeme."
+    },
+    {
+      "id": "D-I005",
+      "op": "exactInteger",
+      "input": 9007199254740992,
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_UNSAFE_INTEGER"
+      },
+      "derivation": "Only a native safe integer Number can use this explicit bridge."
+    },
+    {
+      "id": "D-I006",
+      "op": "exactInteger",
+      "input": 0.1,
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_UNSAFE_INTEGER"
+      },
+      "derivation": "Only a native safe integer Number can use this explicit bridge."
+    },
+    {
+      "id": "D-I007",
+      "op": "exactInteger",
+      "input": true,
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_UNSAFE_INTEGER"
+      },
+      "derivation": "Only a native safe integer Number can use this explicit bridge."
+    },
+    {
+      "id": "D-I008",
+      "op": "exactInteger",
+      "input": "12",
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_UNSAFE_INTEGER"
+      },
+      "derivation": "Only a native safe integer Number can use this explicit bridge."
+    },
+    {
+      "id": "D-A001",
+      "op": "add",
+      "inputs": [
+        "0.1",
+        "0.2"
+      ],
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "3",
+          "scale": 1
+        },
+        "text": "0.3"
+      },
+      "derivation": "1/10 + 2/10 = 3/10."
+    },
+    {
+      "id": "D-A002",
+      "op": "add",
+      "inputs": [
+        "1.20",
+        "2.003"
+      ],
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "3203",
+          "scale": 3
+        },
+        "text": "3.203"
+      },
+      "derivation": "1200/1000 + 2003/1000 = 3203/1000."
+    },
+    {
+      "id": "D-A003",
+      "op": "subtract",
+      "inputs": [
+        "1.20",
+        "1.200"
+      ],
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "0",
+          "scale": 3
+        },
+        "text": "0.000"
+      },
+      "derivation": "Aligned coefficients 1200 - 1200 = 0, at scale 3."
+    },
+    {
+      "id": "D-A004",
+      "op": "multiply",
+      "inputs": [
+        "1.20",
+        "2.0"
+      ],
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "2400",
+          "scale": 3
+        },
+        "text": "2.400"
+      },
+      "derivation": "120 × 20 = 2400; output scale 2 + 1 = 3."
+    },
+    {
+      "id": "D-A005",
+      "op": "multiply",
+      "inputs": [
+        "19.99",
+        "3"
+      ],
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "5997",
+          "scale": 2
+        },
+        "text": "59.97"
+      },
+      "derivation": "1999 × 3 = 5997; output scale 2."
+    },
+    {
+      "id": "D-A006",
+      "op": "multiply",
+      "inputs": [
+        "19.99",
+        "0.10"
+      ],
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "19990",
+          "scale": 4
+        },
+        "text": "1.9990"
+      },
+      "derivation": "1999 × 10 = 19990; output scale 4."
+    },
+    {
+      "id": "D-A007",
+      "op": "add",
+      "inputs": [
+        "9007199254740993",
+        "0.01"
+      ],
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "900719925474099301",
+          "scale": 2
+        },
+        "text": "9007199254740993.01"
+      },
+      "derivation": "900719925474099300 + 1 at scale 2."
+    },
+    {
+      "id": "D-A008",
+      "op": "subtract",
+      "inputs": [
+        "10000000000000000.01",
+        "10000000000000000.00"
+      ],
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "1",
+          "scale": 2
+        },
+        "text": "0.01"
+      },
+      "derivation": "Aligned integer coefficients differ by exactly one cent."
+    },
+    {
+      "id": "D-A009",
+      "op": "multiply",
+      "inputs": [
+        "-19.99",
+        "3"
+      ],
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "-5997",
+          "scale": 2
+        },
+        "text": "-59.97"
+      },
+      "derivation": "The sign is applied after exact coefficient multiplication."
+    },
+    {
+      "id": "D-A010",
+      "op": "add",
+      "inputs": [
+        "-0.00",
+        "0.0"
+      ],
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "0",
+          "scale": 2
+        },
+        "text": "0.00"
+      },
+      "derivation": "Zero sign normalizes; maximum input scale 2 survives."
+    },
+    {
+      "id": "D-A011",
+      "op": "multiply",
+      "inputs": [
+        "7.5",
+        "0.01"
+      ],
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "75",
+          "scale": 3
+        },
+        "text": "0.075"
+      },
+      "derivation": "An explicitly entered percent number 7.5 is scaled by exactly one hundredth."
+    },
+    {
+      "id": "D-A012",
+      "op": "multiply",
+      "inputs": [
+        "100.00",
+        "0.075"
+      ],
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "750000",
+          "scale": 5
+        },
+        "text": "7.50000"
+      },
+      "derivation": "10000 × 75 at scale 2 + 3 = 5; business rounding is a later operation."
+    },
+    {
+      "id": "D-A013",
+      "op": "add",
+      "inputs": [
+        "99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+        "1"
+      ],
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_COEFFICIENT_LIMIT"
+      },
+      "derivation": "A binary row operation must materialize its 129-digit result."
+    },
+    {
+      "id": "D-A014",
+      "op": "add",
+      "inputs": [
+        "99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+        "0.0"
+      ],
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_COEFFICIENT_LIMIT"
+      },
+      "derivation": "Preserving scale 1 requires 129 coefficient digits even though the numeric value is unchanged."
+    },
+    {
+      "id": "D-A015",
+      "op": "multiply",
+      "inputs": [
+        "1e-38",
+        "0.1"
+      ],
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_SCALE_LIMIT"
+      },
+      "derivation": "Multiplication adds scales: 38 + 1 exceeds 38."
+    },
+    {
+      "id": "D-A016",
+      "op": "multiply",
+      "inputs": [
+        "99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+        "10"
+      ],
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_COEFFICIENT_LIMIT"
+      },
+      "derivation": "The exact product needs 129 coefficient digits."
+    },
+    {
+      "id": "D-A017",
+      "op": "add",
+      "inputs": [
+        "0.1",
+        0.2
+      ],
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_MIXED_OPERAND"
+      },
+      "derivation": "A native approximate operand never enters an exact operation implicitly."
+    },
+    {
+      "id": "D-A018",
+      "op": "multiply",
+      "inputs": [
+        "2.00",
+        3
+      ],
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_MIXED_OPERAND"
+      },
+      "derivation": "Use explicit exactInteger for a safe integer Number before multiplication."
+    },
+    {
+      "id": "D-R001",
+      "op": "round",
+      "inputs": [
+        "1.005"
+      ],
+      "scale": 2,
+      "mode": "halfEven",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "100",
+          "scale": 2
+        },
+        "text": "1.00",
+        "inexact": true
+      },
+      "derivation": "Exact input 201/200. At scale 2, magnitude quotient 100, remainder 100, denominator 200; compare twice the remainder to the denominator and apply halfEven to the original sign."
+    },
+    {
+      "id": "D-R002",
+      "op": "round",
+      "inputs": [
+        "1.005"
+      ],
+      "scale": 2,
+      "mode": "halfAwayFromZero",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "101",
+          "scale": 2
+        },
+        "text": "1.01",
+        "inexact": true
+      },
+      "derivation": "Exact input 201/200. At scale 2, magnitude quotient 100, remainder 100, denominator 200; compare twice the remainder to the denominator and apply halfAwayFromZero to the original sign."
+    },
+    {
+      "id": "D-R003",
+      "op": "round",
+      "inputs": [
+        "1.005"
+      ],
+      "scale": 2,
+      "mode": "towardZero",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "100",
+          "scale": 2
+        },
+        "text": "1.00",
+        "inexact": true
+      },
+      "derivation": "Exact input 201/200. At scale 2, magnitude quotient 100, remainder 100, denominator 200; compare twice the remainder to the denominator and apply towardZero to the original sign."
+    },
+    {
+      "id": "D-R004",
+      "op": "round",
+      "inputs": [
+        "1.005"
+      ],
+      "scale": 2,
+      "mode": "floor",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "100",
+          "scale": 2
+        },
+        "text": "1.00",
+        "inexact": true
+      },
+      "derivation": "Exact input 201/200. At scale 2, magnitude quotient 100, remainder 100, denominator 200; compare twice the remainder to the denominator and apply floor to the original sign."
+    },
+    {
+      "id": "D-R005",
+      "op": "round",
+      "inputs": [
+        "1.005"
+      ],
+      "scale": 2,
+      "mode": "ceiling",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "101",
+          "scale": 2
+        },
+        "text": "1.01",
+        "inexact": true
+      },
+      "derivation": "Exact input 201/200. At scale 2, magnitude quotient 100, remainder 100, denominator 200; compare twice the remainder to the denominator and apply ceiling to the original sign."
+    },
+    {
+      "id": "D-R006",
+      "op": "round",
+      "inputs": [
+        "2.675"
+      ],
+      "scale": 2,
+      "mode": "halfEven",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "268",
+          "scale": 2
+        },
+        "text": "2.68",
+        "inexact": true
+      },
+      "derivation": "Exact input 107/40. At scale 2, magnitude quotient 267, remainder 20, denominator 40; compare twice the remainder to the denominator and apply halfEven to the original sign."
+    },
+    {
+      "id": "D-R007",
+      "op": "round",
+      "inputs": [
+        "2.675"
+      ],
+      "scale": 2,
+      "mode": "halfAwayFromZero",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "268",
+          "scale": 2
+        },
+        "text": "2.68",
+        "inexact": true
+      },
+      "derivation": "Exact input 107/40. At scale 2, magnitude quotient 267, remainder 20, denominator 40; compare twice the remainder to the denominator and apply halfAwayFromZero to the original sign."
+    },
+    {
+      "id": "D-R008",
+      "op": "round",
+      "inputs": [
+        "2.675"
+      ],
+      "scale": 2,
+      "mode": "towardZero",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "267",
+          "scale": 2
+        },
+        "text": "2.67",
+        "inexact": true
+      },
+      "derivation": "Exact input 107/40. At scale 2, magnitude quotient 267, remainder 20, denominator 40; compare twice the remainder to the denominator and apply towardZero to the original sign."
+    },
+    {
+      "id": "D-R009",
+      "op": "round",
+      "inputs": [
+        "2.675"
+      ],
+      "scale": 2,
+      "mode": "floor",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "267",
+          "scale": 2
+        },
+        "text": "2.67",
+        "inexact": true
+      },
+      "derivation": "Exact input 107/40. At scale 2, magnitude quotient 267, remainder 20, denominator 40; compare twice the remainder to the denominator and apply floor to the original sign."
+    },
+    {
+      "id": "D-R010",
+      "op": "round",
+      "inputs": [
+        "2.675"
+      ],
+      "scale": 2,
+      "mode": "ceiling",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "268",
+          "scale": 2
+        },
+        "text": "2.68",
+        "inexact": true
+      },
+      "derivation": "Exact input 107/40. At scale 2, magnitude quotient 267, remainder 20, denominator 40; compare twice the remainder to the denominator and apply ceiling to the original sign."
+    },
+    {
+      "id": "D-R011",
+      "op": "round",
+      "inputs": [
+        "-1.005"
+      ],
+      "scale": 2,
+      "mode": "halfEven",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "-100",
+          "scale": 2
+        },
+        "text": "-1.00",
+        "inexact": true
+      },
+      "derivation": "Exact input -201/200. At scale 2, magnitude quotient 100, remainder 100, denominator 200; compare twice the remainder to the denominator and apply halfEven to the original sign."
+    },
+    {
+      "id": "D-R012",
+      "op": "round",
+      "inputs": [
+        "-1.005"
+      ],
+      "scale": 2,
+      "mode": "halfAwayFromZero",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "-101",
+          "scale": 2
+        },
+        "text": "-1.01",
+        "inexact": true
+      },
+      "derivation": "Exact input -201/200. At scale 2, magnitude quotient 100, remainder 100, denominator 200; compare twice the remainder to the denominator and apply halfAwayFromZero to the original sign."
+    },
+    {
+      "id": "D-R013",
+      "op": "round",
+      "inputs": [
+        "-1.005"
+      ],
+      "scale": 2,
+      "mode": "towardZero",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "-100",
+          "scale": 2
+        },
+        "text": "-1.00",
+        "inexact": true
+      },
+      "derivation": "Exact input -201/200. At scale 2, magnitude quotient 100, remainder 100, denominator 200; compare twice the remainder to the denominator and apply towardZero to the original sign."
+    },
+    {
+      "id": "D-R014",
+      "op": "round",
+      "inputs": [
+        "-1.005"
+      ],
+      "scale": 2,
+      "mode": "floor",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "-101",
+          "scale": 2
+        },
+        "text": "-1.01",
+        "inexact": true
+      },
+      "derivation": "Exact input -201/200. At scale 2, magnitude quotient 100, remainder 100, denominator 200; compare twice the remainder to the denominator and apply floor to the original sign."
+    },
+    {
+      "id": "D-R015",
+      "op": "round",
+      "inputs": [
+        "-1.005"
+      ],
+      "scale": 2,
+      "mode": "ceiling",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "-100",
+          "scale": 2
+        },
+        "text": "-1.00",
+        "inexact": true
+      },
+      "derivation": "Exact input -201/200. At scale 2, magnitude quotient 100, remainder 100, denominator 200; compare twice the remainder to the denominator and apply ceiling to the original sign."
+    },
+    {
+      "id": "D-R016",
+      "op": "round",
+      "inputs": [
+        "-2.675"
+      ],
+      "scale": 2,
+      "mode": "halfEven",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "-268",
+          "scale": 2
+        },
+        "text": "-2.68",
+        "inexact": true
+      },
+      "derivation": "Exact input -107/40. At scale 2, magnitude quotient 267, remainder 20, denominator 40; compare twice the remainder to the denominator and apply halfEven to the original sign."
+    },
+    {
+      "id": "D-R017",
+      "op": "round",
+      "inputs": [
+        "-2.675"
+      ],
+      "scale": 2,
+      "mode": "halfAwayFromZero",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "-268",
+          "scale": 2
+        },
+        "text": "-2.68",
+        "inexact": true
+      },
+      "derivation": "Exact input -107/40. At scale 2, magnitude quotient 267, remainder 20, denominator 40; compare twice the remainder to the denominator and apply halfAwayFromZero to the original sign."
+    },
+    {
+      "id": "D-R018",
+      "op": "round",
+      "inputs": [
+        "-2.675"
+      ],
+      "scale": 2,
+      "mode": "towardZero",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "-267",
+          "scale": 2
+        },
+        "text": "-2.67",
+        "inexact": true
+      },
+      "derivation": "Exact input -107/40. At scale 2, magnitude quotient 267, remainder 20, denominator 40; compare twice the remainder to the denominator and apply towardZero to the original sign."
+    },
+    {
+      "id": "D-R019",
+      "op": "round",
+      "inputs": [
+        "-2.675"
+      ],
+      "scale": 2,
+      "mode": "floor",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "-268",
+          "scale": 2
+        },
+        "text": "-2.68",
+        "inexact": true
+      },
+      "derivation": "Exact input -107/40. At scale 2, magnitude quotient 267, remainder 20, denominator 40; compare twice the remainder to the denominator and apply floor to the original sign."
+    },
+    {
+      "id": "D-R020",
+      "op": "round",
+      "inputs": [
+        "-2.675"
+      ],
+      "scale": 2,
+      "mode": "ceiling",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "-267",
+          "scale": 2
+        },
+        "text": "-2.67",
+        "inexact": true
+      },
+      "derivation": "Exact input -107/40. At scale 2, magnitude quotient 267, remainder 20, denominator 40; compare twice the remainder to the denominator and apply ceiling to the original sign."
+    },
+    {
+      "id": "D-R021",
+      "op": "round",
+      "inputs": [
+        "0.005"
+      ],
+      "scale": 2,
+      "mode": "halfEven",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "0",
+          "scale": 2
+        },
+        "text": "0.00",
+        "inexact": true
+      },
+      "derivation": "Exact input 1/200. At scale 2, magnitude quotient 0, remainder 100, denominator 200; compare twice the remainder to the denominator and apply halfEven to the original sign."
+    },
+    {
+      "id": "D-R022",
+      "op": "round",
+      "inputs": [
+        "0.005"
+      ],
+      "scale": 2,
+      "mode": "halfAwayFromZero",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "1",
+          "scale": 2
+        },
+        "text": "0.01",
+        "inexact": true
+      },
+      "derivation": "Exact input 1/200. At scale 2, magnitude quotient 0, remainder 100, denominator 200; compare twice the remainder to the denominator and apply halfAwayFromZero to the original sign."
+    },
+    {
+      "id": "D-R023",
+      "op": "round",
+      "inputs": [
+        "0.005"
+      ],
+      "scale": 2,
+      "mode": "towardZero",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "0",
+          "scale": 2
+        },
+        "text": "0.00",
+        "inexact": true
+      },
+      "derivation": "Exact input 1/200. At scale 2, magnitude quotient 0, remainder 100, denominator 200; compare twice the remainder to the denominator and apply towardZero to the original sign."
+    },
+    {
+      "id": "D-R024",
+      "op": "round",
+      "inputs": [
+        "0.005"
+      ],
+      "scale": 2,
+      "mode": "floor",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "0",
+          "scale": 2
+        },
+        "text": "0.00",
+        "inexact": true
+      },
+      "derivation": "Exact input 1/200. At scale 2, magnitude quotient 0, remainder 100, denominator 200; compare twice the remainder to the denominator and apply floor to the original sign."
+    },
+    {
+      "id": "D-R025",
+      "op": "round",
+      "inputs": [
+        "0.005"
+      ],
+      "scale": 2,
+      "mode": "ceiling",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "1",
+          "scale": 2
+        },
+        "text": "0.01",
+        "inexact": true
+      },
+      "derivation": "Exact input 1/200. At scale 2, magnitude quotient 0, remainder 100, denominator 200; compare twice the remainder to the denominator and apply ceiling to the original sign."
+    },
+    {
+      "id": "D-R026",
+      "op": "round",
+      "inputs": [
+        "-0.005"
+      ],
+      "scale": 2,
+      "mode": "halfEven",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "0",
+          "scale": 2
+        },
+        "text": "0.00",
+        "inexact": true
+      },
+      "derivation": "Exact input -1/200. At scale 2, magnitude quotient 0, remainder 100, denominator 200; compare twice the remainder to the denominator and apply halfEven to the original sign."
+    },
+    {
+      "id": "D-R027",
+      "op": "round",
+      "inputs": [
+        "-0.005"
+      ],
+      "scale": 2,
+      "mode": "halfAwayFromZero",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "-1",
+          "scale": 2
+        },
+        "text": "-0.01",
+        "inexact": true
+      },
+      "derivation": "Exact input -1/200. At scale 2, magnitude quotient 0, remainder 100, denominator 200; compare twice the remainder to the denominator and apply halfAwayFromZero to the original sign."
+    },
+    {
+      "id": "D-R028",
+      "op": "round",
+      "inputs": [
+        "-0.005"
+      ],
+      "scale": 2,
+      "mode": "towardZero",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "0",
+          "scale": 2
+        },
+        "text": "0.00",
+        "inexact": true
+      },
+      "derivation": "Exact input -1/200. At scale 2, magnitude quotient 0, remainder 100, denominator 200; compare twice the remainder to the denominator and apply towardZero to the original sign."
+    },
+    {
+      "id": "D-R029",
+      "op": "round",
+      "inputs": [
+        "-0.005"
+      ],
+      "scale": 2,
+      "mode": "floor",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "-1",
+          "scale": 2
+        },
+        "text": "-0.01",
+        "inexact": true
+      },
+      "derivation": "Exact input -1/200. At scale 2, magnitude quotient 0, remainder 100, denominator 200; compare twice the remainder to the denominator and apply floor to the original sign."
+    },
+    {
+      "id": "D-R030",
+      "op": "round",
+      "inputs": [
+        "-0.005"
+      ],
+      "scale": 2,
+      "mode": "ceiling",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "0",
+          "scale": 2
+        },
+        "text": "0.00",
+        "inexact": true
+      },
+      "derivation": "Exact input -1/200. At scale 2, magnitude quotient 0, remainder 100, denominator 200; compare twice the remainder to the denominator and apply ceiling to the original sign."
+    },
+    {
+      "id": "D-R031",
+      "op": "round",
+      "inputs": [
+        "2.5"
+      ],
+      "scale": 0,
+      "mode": "halfEven",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "2",
+          "scale": 0
+        },
+        "text": "2",
+        "inexact": true
+      },
+      "derivation": "At a tie select the even integer magnitude, then restore the sign."
+    },
+    {
+      "id": "D-R032",
+      "op": "round",
+      "inputs": [
+        "3.5"
+      ],
+      "scale": 0,
+      "mode": "halfEven",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "4",
+          "scale": 0
+        },
+        "text": "4",
+        "inexact": true
+      },
+      "derivation": "At a tie select the even integer magnitude, then restore the sign."
+    },
+    {
+      "id": "D-R033",
+      "op": "round",
+      "inputs": [
+        "-2.5"
+      ],
+      "scale": 0,
+      "mode": "halfEven",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "-2",
+          "scale": 0
+        },
+        "text": "-2",
+        "inexact": true
+      },
+      "derivation": "At a tie select the even integer magnitude, then restore the sign."
+    },
+    {
+      "id": "D-R034",
+      "op": "round",
+      "inputs": [
+        "-3.5"
+      ],
+      "scale": 0,
+      "mode": "halfEven",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "-4",
+          "scale": 0
+        },
+        "text": "-4",
+        "inexact": true
+      },
+      "derivation": "At a tie select the even integer magnitude, then restore the sign."
+    },
+    {
+      "id": "D-R035",
+      "op": "round",
+      "inputs": [
+        "1.2300"
+      ],
+      "scale": 2,
+      "mode": "unnecessary",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "123",
+          "scale": 2
+        },
+        "text": "1.23",
+        "inexact": false
+      },
+      "derivation": "Removing or appending zero digits changes scale without changing the rational value."
+    },
+    {
+      "id": "D-R036",
+      "op": "round",
+      "inputs": [
+        "1.23"
+      ],
+      "scale": 4,
+      "mode": "unnecessary",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "12300",
+          "scale": 4
+        },
+        "text": "1.2300",
+        "inexact": false
+      },
+      "derivation": "Removing or appending zero digits changes scale without changing the rational value."
+    },
+    {
+      "id": "D-R037",
+      "op": "round",
+      "inputs": [
+        "-0.000"
+      ],
+      "scale": 2,
+      "mode": "unnecessary",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "0",
+          "scale": 2
+        },
+        "text": "0.00",
+        "inexact": false
+      },
+      "derivation": "Removing or appending zero digits changes scale without changing the rational value."
+    },
+    {
+      "id": "D-R038",
+      "op": "round",
+      "inputs": [
+        "1.234"
+      ],
+      "scale": 2,
+      "mode": "unnecessary",
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INEXACT"
+      },
+      "derivation": "A nonzero remainder cannot be discarded under unnecessary."
+    },
+    {
+      "id": "D-R039",
+      "op": "round",
+      "inputs": [
+        "1.005"
+      ],
+      "scale": 2,
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_POLICY_REQUIRED"
+      },
+      "derivation": "A scale without a rounding mode is not an arithmetic contract."
+    },
+    {
+      "id": "D-R040",
+      "op": "round",
+      "inputs": [
+        "1.005"
+      ],
+      "mode": "halfEven",
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_POLICY_REQUIRED"
+      },
+      "derivation": "A rounding mode without an output scale is incomplete."
+    },
+    {
+      "id": "D-R041",
+      "op": "round",
+      "inputs": [
+        "123.4"
+      ],
+      "scale": -1,
+      "mode": "halfEven",
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_SCALE_LIMIT"
+      },
+      "derivation": "Negative scale is deliberately outside this capability."
+    },
+    {
+      "id": "D-R042",
+      "op": "round",
+      "inputs": [
+        "1"
+      ],
+      "scale": 39,
+      "mode": "halfEven",
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_SCALE_LIMIT"
+      },
+      "derivation": "Requested scale 39 exceeds the contract."
+    },
+    {
+      "id": "D-R043",
+      "op": "round",
+      "inputs": [
+        "99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
+      ],
+      "scale": 1,
+      "mode": "unnecessary",
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_COEFFICIENT_LIMIT"
+      },
+      "derivation": "Adding a display-looking zero is an explicit arithmetic rescale and is still subject to the coefficient bound."
+    },
+    {
+      "id": "D-D001",
+      "op": "divideExact",
+      "inputs": [
+        "1",
+        "8"
+      ],
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "125",
+          "scale": 3
+        },
+        "text": "0.125"
+      },
+      "derivation": "Reduce the rational quotient; a denominator containing only factors 2 and 5 has a finite decimal expansion. Use its minimal scale."
+    },
+    {
+      "id": "D-D002",
+      "op": "divideExact",
+      "inputs": [
+        "1.00",
+        "2"
+      ],
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "5",
+          "scale": 1
+        },
+        "text": "0.5"
+      },
+      "derivation": "Reduce the rational quotient; a denominator containing only factors 2 and 5 has a finite decimal expansion. Use its minimal scale."
+    },
+    {
+      "id": "D-D003",
+      "op": "divideExact",
+      "inputs": [
+        "1.20",
+        "0.03"
+      ],
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "40",
+          "scale": 0
+        },
+        "text": "40"
+      },
+      "derivation": "Reduce the rational quotient; a denominator containing only factors 2 and 5 has a finite decimal expansion. Use its minimal scale."
+    },
+    {
+      "id": "D-D004",
+      "op": "divideExact",
+      "inputs": [
+        "0.00",
+        "3"
+      ],
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "0",
+          "scale": 0
+        },
+        "text": "0"
+      },
+      "derivation": "Reduce the rational quotient; a denominator containing only factors 2 and 5 has a finite decimal expansion. Use its minimal scale."
+    },
+    {
+      "id": "D-D005",
+      "op": "divideExact",
+      "inputs": [
+        "-1",
+        "8"
+      ],
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "-125",
+          "scale": 3
+        },
+        "text": "-0.125"
+      },
+      "derivation": "Reduce the rational quotient; a denominator containing only factors 2 and 5 has a finite decimal expansion. Use its minimal scale."
+    },
+    {
+      "id": "D-D006",
+      "op": "divideExact",
+      "inputs": [
+        "1",
+        "-8"
+      ],
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "-125",
+          "scale": 3
+        },
+        "text": "-0.125"
+      },
+      "derivation": "Reduce the rational quotient; a denominator containing only factors 2 and 5 has a finite decimal expansion. Use its minimal scale."
+    },
+    {
+      "id": "D-D007",
+      "op": "divideExact",
+      "inputs": [
+        "1",
+        "3"
+      ],
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_NON_TERMINATING"
+      },
+      "derivation": "Reduced denominator 3 contains a prime factor other than 2 or 5."
+    },
+    {
+      "id": "D-D008",
+      "op": "divideExact",
+      "inputs": [
+        "2",
+        "7"
+      ],
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_NON_TERMINATING"
+      },
+      "derivation": "Reduced denominator 7 cannot be represented by a finite decimal."
+    },
+    {
+      "id": "D-D009",
+      "op": "divideExact",
+      "inputs": [
+        "1",
+        "0"
+      ],
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_DIVIDE_BY_ZERO"
+      },
+      "derivation": "A zero denominator never produces Infinity."
+    },
+    {
+      "id": "D-D010",
+      "op": "divideExact",
+      "inputs": [
+        "0",
+        "0"
+      ],
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_DIVIDE_BY_ZERO"
+      },
+      "derivation": "Undefined division never produces NaN or a zero amount."
+    },
+    {
+      "id": "D-D011",
+      "op": "divideExact",
+      "inputs": [
+        "1",
+        "549755813888"
+      ],
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_SCALE_LIMIT"
+      },
+      "derivation": "549755813888 = 2^39; the minimal exact decimal scale is 39."
+    },
+    {
+      "id": "D-D012",
+      "op": "divideExact",
+      "inputs": [
+        "1e127",
+        "0.1"
+      ],
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_COEFFICIENT_LIMIT"
+      },
+      "derivation": "The quotient 10^128 needs 129 coefficient digits."
+    },
+    {
+      "id": "D-D013",
+      "op": "divide",
+      "inputs": [
+        "1",
+        "3"
+      ],
+      "scale": 6,
+      "mode": "halfEven",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "333333",
+          "scale": 6
+        },
+        "text": "0.333333",
+        "inexact": true
+      },
+      "derivation": "Exact quotient 1/3; scaled integer divmod(1000000, 3) = (333333, 1). Round once at the requested scale."
+    },
+    {
+      "id": "D-D014",
+      "op": "divide",
+      "inputs": [
+        "1",
+        "8"
+      ],
+      "scale": 3,
+      "mode": "halfEven",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "125",
+          "scale": 3
+        },
+        "text": "0.125",
+        "inexact": false
+      },
+      "derivation": "Exact quotient 1/8; scaled integer divmod(1000, 8) = (125, 0). Round once at the requested scale."
+    },
+    {
+      "id": "D-D015",
+      "op": "divide",
+      "inputs": [
+        "1",
+        "8"
+      ],
+      "scale": 2,
+      "mode": "halfEven",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "12",
+          "scale": 2
+        },
+        "text": "0.12",
+        "inexact": true
+      },
+      "derivation": "Exact quotient 1/8; scaled integer divmod(100, 8) = (12, 4). Round once at the requested scale."
+    },
+    {
+      "id": "D-D016",
+      "op": "divide",
+      "inputs": [
+        "1",
+        "8"
+      ],
+      "scale": 2,
+      "mode": "halfAwayFromZero",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "13",
+          "scale": 2
+        },
+        "text": "0.13",
+        "inexact": true
+      },
+      "derivation": "Exact quotient 1/8; scaled integer divmod(100, 8) = (12, 4). Round once at the requested scale."
+    },
+    {
+      "id": "D-D017",
+      "op": "divide",
+      "inputs": [
+        "-1",
+        "8"
+      ],
+      "scale": 2,
+      "mode": "halfEven",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "-12",
+          "scale": 2
+        },
+        "text": "-0.12",
+        "inexact": true
+      },
+      "derivation": "Exact quotient -1/8; scaled integer divmod(100, 8) = (12, 4). Round once at the requested scale."
+    },
+    {
+      "id": "D-D018",
+      "op": "divide",
+      "inputs": [
+        "1",
+        "-8"
+      ],
+      "scale": 2,
+      "mode": "halfAwayFromZero",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "-13",
+          "scale": 2
+        },
+        "text": "-0.13",
+        "inexact": true
+      },
+      "derivation": "Exact quotient -1/8; scaled integer divmod(100, 8) = (12, 4). Round once at the requested scale."
+    },
+    {
+      "id": "D-D019",
+      "op": "divide",
+      "inputs": [
+        "2",
+        "3"
+      ],
+      "scale": 2,
+      "mode": "halfEven",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "67",
+          "scale": 2
+        },
+        "text": "0.67",
+        "inexact": true
+      },
+      "derivation": "Exact quotient 2/3; scaled integer divmod(200, 3) = (66, 2). Round once at the requested scale."
+    },
+    {
+      "id": "D-D020",
+      "op": "divide",
+      "inputs": [
+        "-1",
+        "3"
+      ],
+      "scale": 2,
+      "mode": "floor",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "-34",
+          "scale": 2
+        },
+        "text": "-0.34",
+        "inexact": true
+      },
+      "derivation": "Exact quotient -1/3; scaled integer divmod(100, 3) = (33, 1). Round once at the requested scale."
+    },
+    {
+      "id": "D-D021",
+      "op": "divide",
+      "inputs": [
+        "-1",
+        "3"
+      ],
+      "scale": 2,
+      "mode": "ceiling",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "-33",
+          "scale": 2
+        },
+        "text": "-0.33",
+        "inexact": true
+      },
+      "derivation": "Exact quotient -1/3; scaled integer divmod(100, 3) = (33, 1). Round once at the requested scale."
+    },
+    {
+      "id": "D-D022",
+      "op": "divide",
+      "inputs": [
+        "1",
+        "40"
+      ],
+      "scale": 2,
+      "mode": "halfEven",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "2",
+          "scale": 2
+        },
+        "text": "0.02",
+        "inexact": true
+      },
+      "derivation": "Exact quotient 1/40; scaled integer divmod(100, 40) = (2, 20). Round once at the requested scale."
+    },
+    {
+      "id": "D-D023",
+      "op": "divide",
+      "inputs": [
+        "1",
+        "40"
+      ],
+      "scale": 2,
+      "mode": "halfAwayFromZero",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "3",
+          "scale": 2
+        },
+        "text": "0.03",
+        "inexact": true
+      },
+      "derivation": "Exact quotient 1/40; scaled integer divmod(100, 40) = (2, 20). Round once at the requested scale."
+    },
+    {
+      "id": "D-D024",
+      "op": "divide",
+      "inputs": [
+        "1",
+        "8"
+      ],
+      "scale": 3,
+      "mode": "unnecessary",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "125",
+          "scale": 3
+        },
+        "text": "0.125",
+        "inexact": false
+      },
+      "derivation": "Exact quotient 1/8; scaled integer divmod(1000, 8) = (125, 0). Round once at the requested scale."
+    },
+    {
+      "id": "D-D025",
+      "op": "divide",
+      "inputs": [
+        "1",
+        "8"
+      ],
+      "scale": 2,
+      "mode": "unnecessary",
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INEXACT"
+      },
+      "derivation": "The exact terminating quotient 0.125 still needs more than two places."
+    },
+    {
+      "id": "D-D026",
+      "op": "divide",
+      "inputs": [
+        "1",
+        "3"
+      ],
+      "scale": 6,
+      "mode": "unnecessary",
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INEXACT"
+      },
+      "derivation": "No finite requested scale can represent one third exactly."
+    },
+    {
+      "id": "D-D027",
+      "op": "divide",
+      "inputs": [
+        "1",
+        "3"
+      ],
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_POLICY_REQUIRED"
+      },
+      "derivation": "Quantized division requires a declared output scale and rounding mode."
+    },
+    {
+      "id": "D-D028",
+      "op": "divide",
+      "inputs": [
+        "1",
+        "0"
+      ],
+      "scale": 2,
+      "mode": "halfEven",
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_DIVIDE_BY_ZERO"
+      },
+      "derivation": "A rounding policy cannot make division by zero meaningful."
+    },
+    {
+      "id": "D-C001",
+      "op": "numericEqual",
+      "inputs": [
+        "1.0",
+        "1.00"
+      ],
+      "expected": {
+        "status": "ok",
+        "result": true
+      },
+      "derivation": "10/10 = 100/100; numeric equality ignores scale."
+    },
+    {
+      "id": "D-C002",
+      "op": "scaleEqual",
+      "inputs": [
+        "1.0",
+        "1.00"
+      ],
+      "expected": {
+        "status": "ok",
+        "result": false
+      },
+      "derivation": "The scales 1 and 2 differ."
+    },
+    {
+      "id": "D-C003",
+      "op": "scaleEqual",
+      "inputs": [
+        "01.00",
+        "1.00"
+      ],
+      "expected": {
+        "status": "ok",
+        "result": true
+      },
+      "derivation": "Leading zeros are lexical, so normalized coefficient and scale agree."
+    },
+    {
+      "id": "D-C004",
+      "op": "numericEqual",
+      "inputs": [
+        "-0.00",
+        "0"
+      ],
+      "expected": {
+        "status": "ok",
+        "result": true
+      },
+      "derivation": "All signed/scale spellings of zero have the same rational value."
+    },
+    {
+      "id": "D-C005",
+      "op": "compare",
+      "inputs": [
+        "9007199254740993.00",
+        "9007199254740992.00"
+      ],
+      "expected": {
+        "status": "ok",
+        "result": 1
+      },
+      "derivation": "Aligned coefficients differ by 100 at scale 2."
+    },
+    {
+      "id": "D-C006",
+      "op": "compare",
+      "inputs": [
+        "-10.00",
+        "-2.00"
+      ],
+      "expected": {
+        "status": "ok",
+        "result": -1
+      },
+      "derivation": "Exact signed numeric ordering puts -10 before -2."
+    },
+    {
+      "id": "D-C007",
+      "op": "key",
+      "inputs": [
+        "1.00"
+      ],
+      "expected": {
+        "status": "ok",
+        "result": "decimal:1:0"
+      },
+      "derivation": "Remove trailing coefficient zeros while scale is positive."
+    },
+    {
+      "id": "D-C008",
+      "op": "key",
+      "inputs": [
+        "1.0"
+      ],
+      "expected": {
+        "status": "ok",
+        "result": "decimal:1:0"
+      },
+      "derivation": "Numerically equal values share a key across different scales."
+    },
+    {
+      "id": "D-C009",
+      "op": "key",
+      "inputs": [
+        "-0.00"
+      ],
+      "expected": {
+        "status": "ok",
+        "result": "decimal:0:0"
+      },
+      "derivation": "All zero variants use the same numeric key."
+    },
+    {
+      "id": "D-C010",
+      "op": "sort",
+      "rows": [
+        {
+          "id": "s1",
+          "value": "10.0"
+        },
+        {
+          "id": "s2",
+          "value": "2.0"
+        },
+        {
+          "id": "s3",
+          "value": "-1.00"
+        },
+        {
+          "id": "s4",
+          "value": "2.00"
+        }
+      ],
+      "expected": {
+        "status": "ok",
+        "orderedIds": [
+          "s3",
+          "s2",
+          "s4",
+          "s1"
+        ]
+      },
+      "derivation": "Sort exact rational values; equal values use stable occurrence ID. This is not lexical amount ordering."
+    },
+    {
+      "id": "D-G001",
+      "op": "sum",
+      "rows": [
+        {
+          "id": "r01",
+          "value": "0.1"
+        },
+        {
+          "id": "r02",
+          "value": "0.1"
+        },
+        {
+          "id": "r03",
+          "value": "0.1"
+        },
+        {
+          "id": "r04",
+          "value": "0.1"
+        },
+        {
+          "id": "r05",
+          "value": "0.1"
+        },
+        {
+          "id": "r06",
+          "value": "0.1"
+        },
+        {
+          "id": "r07",
+          "value": "0.1"
+        },
+        {
+          "id": "r08",
+          "value": "0.1"
+        },
+        {
+          "id": "r09",
+          "value": "0.1"
+        },
+        {
+          "id": "r10",
+          "value": "0.1"
+        }
+      ],
+      "expected": {
+        "status": "complete",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "10",
+          "scale": 1
+        },
+        "text": "1.0",
+        "counts": {
+          "rows": 10,
+          "valid": 10,
+          "missing": 0,
+          "invalid": 0
+        },
+        "members": {
+          "valid": [
+            "r01",
+            "r02",
+            "r03",
+            "r04",
+            "r05",
+            "r06",
+            "r07",
+            "r08",
+            "r09",
+            "r10"
+          ],
+          "missing": [],
+          "invalid": []
+        },
+        "diagnostics": []
+      },
+      "derivation": "Ten tenths sum to 10/10; output scale remains 1."
+    },
+    {
+      "id": "D-G002",
+      "op": "sum",
+      "rows": [
+        {
+          "id": "r01",
+          "value": "10000000000000000.00"
+        },
+        {
+          "id": "r02",
+          "value": "0.01"
+        },
+        {
+          "id": "r03",
+          "value": "-10000000000000000.00"
+        }
+      ],
+      "expected": {
+        "status": "complete",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "1",
+          "scale": 2
+        },
+        "text": "0.01",
+        "counts": {
+          "rows": 3,
+          "valid": 3,
+          "missing": 0,
+          "invalid": 0
+        },
+        "members": {
+          "valid": [
+            "r01",
+            "r02",
+            "r03"
+          ],
+          "missing": [],
+          "invalid": []
+        },
+        "diagnostics": []
+      },
+      "derivation": "At scale 2 the two large integer coefficients cancel exactly, leaving one."
+    },
+    {
+      "id": "D-G003",
+      "op": "sum",
+      "rows": [],
+      "expected": {
+        "status": "empty",
+        "value": null,
+        "text": null,
+        "counts": {
+          "rows": 0,
+          "valid": 0,
+          "missing": 0,
+          "invalid": 0
+        },
+        "members": {
+          "valid": [],
+          "missing": [],
+          "invalid": []
+        },
+        "diagnostics": []
+      },
+      "derivation": "An empty analytical population has no amount; it is not evidence of a balanced zero ledger."
+    },
+    {
+      "id": "D-G004",
+      "op": "sum",
+      "rows": [
+        {
+          "id": "r01",
+          "value": ""
+        },
+        {
+          "id": "r02",
+          "value": null
+        },
+        {
+          "id": "r03",
+          "value": " \t"
+        }
+      ],
+      "expected": {
+        "status": "noValidValues",
+        "value": null,
+        "text": null,
+        "counts": {
+          "rows": 3,
+          "valid": 0,
+          "missing": 3,
+          "invalid": 0
+        },
+        "members": {
+          "valid": [],
+          "missing": [
+            "r01",
+            "r02",
+            "r03"
+          ],
+          "invalid": []
+        },
+        "diagnostics": []
+      },
+      "derivation": "All three source occurrences are missing; the valid count is zero."
+    },
+    {
+      "id": "D-G005",
+      "op": "sum",
+      "rows": [
+        {
+          "id": "r01",
+          "value": "bad"
+        },
+        {
+          "id": "r02",
+          "value": "NaN"
+        }
+      ],
+      "expected": {
+        "status": "noValidValues",
+        "value": null,
+        "text": null,
+        "counts": {
+          "rows": 2,
+          "valid": 0,
+          "missing": 0,
+          "invalid": 2
+        },
+        "members": {
+          "valid": [],
+          "missing": [],
+          "invalid": [
+            "r01",
+            "r02"
+          ]
+        },
+        "diagnostics": [
+          {
+            "rowId": "r01",
+            "code": "DECIMAL_INVALID_TEXT"
+          },
+          {
+            "rowId": "r02",
+            "code": "DECIMAL_INVALID_TEXT"
+          }
+        ]
+      },
+      "derivation": "Both source occurrences are invalid; no decimal total is produced."
+    },
+    {
+      "id": "D-G006",
+      "op": "sum",
+      "rows": [
+        {
+          "id": "r01",
+          "value": "1.00"
+        },
+        {
+          "id": "r02",
+          "value": ""
+        },
+        {
+          "id": "r03",
+          "value": "bad"
+        },
+        {
+          "id": "r04",
+          "value": "2.0"
+        },
+        {
+          "id": "r05",
+          "value": null
+        }
+      ],
+      "expected": {
+        "status": "partial",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "300",
+          "scale": 2
+        },
+        "text": "3.00",
+        "counts": {
+          "rows": 5,
+          "valid": 2,
+          "missing": 2,
+          "invalid": 1
+        },
+        "members": {
+          "valid": [
+            "r01",
+            "r04"
+          ],
+          "missing": [
+            "r02",
+            "r05"
+          ],
+          "invalid": [
+            "r03"
+          ]
+        },
+        "diagnostics": [
+          {
+            "rowId": "r03",
+            "code": "DECIMAL_INVALID_TEXT"
+          }
+        ]
+      },
+      "derivation": "Valid coefficients total 300 at scale 2; missing and invalid source IDs remain explicit."
+    },
+    {
+      "id": "D-G007",
+      "op": "sum",
+      "rows": [
+        {
+          "id": "r01",
+          "value": "0"
+        },
+        {
+          "id": "r02",
+          "value": "0.00"
+        },
+        {
+          "id": "r03",
+          "value": "-0.0"
+        }
+      ],
+      "expected": {
+        "status": "complete",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "0",
+          "scale": 2
+        },
+        "text": "0.00",
+        "counts": {
+          "rows": 3,
+          "valid": 3,
+          "missing": 0,
+          "invalid": 0
+        },
+        "members": {
+          "valid": [
+            "r01",
+            "r02",
+            "r03"
+          ],
+          "missing": [],
+          "invalid": []
+        },
+        "diagnostics": []
+      },
+      "derivation": "Three valid zeros produce an actual exact zero at maximum scale 2."
+    },
+    {
+      "id": "D-G008",
+      "op": "average",
+      "rows": [
+        {
+          "id": "r01",
+          "value": "1"
+        },
+        {
+          "id": "r02",
+          "value": "2"
+        },
+        {
+          "id": "r03",
+          "value": "10"
+        }
+      ],
+      "scale": 6,
+      "mode": "halfEven",
+      "expected": {
+        "status": "complete",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "4333333",
+          "scale": 6
+        },
+        "text": "4.333333",
+        "counts": {
+          "rows": 3,
+          "valid": 3,
+          "missing": 0,
+          "invalid": 0
+        },
+        "members": {
+          "valid": [
+            "r01",
+            "r02",
+            "r03"
+          ],
+          "missing": [],
+          "invalid": []
+        },
+        "diagnostics": [],
+        "inexact": true
+      },
+      "derivation": "Exact sum 13 divided by count 3 is rounded once to six places."
+    },
+    {
+      "id": "D-G009",
+      "op": "average",
+      "rows": [
+        {
+          "id": "r01",
+          "value": "1.00"
+        },
+        {
+          "id": "r02",
+          "value": "2.00"
+        }
+      ],
+      "scale": 2,
+      "mode": "halfEven",
+      "expected": {
+        "status": "complete",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "150",
+          "scale": 2
+        },
+        "text": "1.50",
+        "counts": {
+          "rows": 2,
+          "valid": 2,
+          "missing": 0,
+          "invalid": 0
+        },
+        "members": {
+          "valid": [
+            "r01",
+            "r02"
+          ],
+          "missing": [],
+          "invalid": []
+        },
+        "diagnostics": [],
+        "inexact": false
+      },
+      "derivation": "3/2 is exactly representable at scale 2."
+    },
+    {
+      "id": "D-G010",
+      "op": "average",
+      "rows": [
+        {
+          "id": "r01",
+          "value": "99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
+        },
+        {
+          "id": "r02",
+          "value": "99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
+        }
+      ],
+      "scale": 0,
+      "mode": "halfEven",
+      "expected": {
+        "status": "complete",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+          "scale": 0
+        },
+        "text": "99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+        "counts": {
+          "rows": 2,
+          "valid": 2,
+          "missing": 0,
+          "invalid": 0
+        },
+        "members": {
+          "valid": [
+            "r01",
+            "r02"
+          ],
+          "missing": [],
+          "invalid": []
+        },
+        "diagnostics": [],
+        "inexact": false
+      },
+      "derivation": "The widened sum has 129 digits; dividing by two before the final output-bound check returns the allowed 128-digit value."
+    },
+    {
+      "id": "D-G011",
+      "op": "average",
+      "rows": [],
+      "scale": 2,
+      "mode": "halfEven",
+      "expected": {
+        "status": "empty",
+        "value": null,
+        "text": null,
+        "counts": {
+          "rows": 0,
+          "valid": 0,
+          "missing": 0,
+          "invalid": 0
+        },
+        "members": {
+          "valid": [],
+          "missing": [],
+          "invalid": []
+        },
+        "diagnostics": []
+      },
+      "derivation": "No division by zero is attempted for an empty population."
+    },
+    {
+      "id": "D-G012",
+      "op": "average",
+      "rows": [
+        {
+          "id": "r01",
+          "value": "1.00"
+        },
+        {
+          "id": "r02",
+          "value": ""
+        },
+        {
+          "id": "r03",
+          "value": "bad"
+        },
+        {
+          "id": "r04",
+          "value": "2.0"
+        },
+        {
+          "id": "r05",
+          "value": null
+        }
+      ],
+      "scale": 2,
+      "mode": "halfEven",
+      "expected": {
+        "status": "partial",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "150",
+          "scale": 2
+        },
+        "text": "1.50",
+        "counts": {
+          "rows": 5,
+          "valid": 2,
+          "missing": 2,
+          "invalid": 1
+        },
+        "members": {
+          "valid": [
+            "r01",
+            "r04"
+          ],
+          "missing": [
+            "r02",
+            "r05"
+          ],
+          "invalid": [
+            "r03"
+          ]
+        },
+        "diagnostics": [
+          {
+            "rowId": "r03",
+            "code": "DECIMAL_INVALID_TEXT"
+          }
+        ],
+        "inexact": false
+      },
+      "derivation": "The partial mean is 3/2 using the valid count 2, not the source count 5."
+    },
+    {
+      "id": "D-G013",
+      "op": "min",
+      "rows": [
+        {
+          "id": "r01",
+          "value": "-1.0"
+        },
+        {
+          "id": "r02",
+          "value": "-1.000"
+        },
+        {
+          "id": "r03",
+          "value": "0"
+        }
+      ],
+      "expected": {
+        "status": "complete",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "-1000",
+          "scale": 3
+        },
+        "text": "-1.000",
+        "counts": {
+          "rows": 3,
+          "valid": 3,
+          "missing": 0,
+          "invalid": 0
+        },
+        "members": {
+          "valid": [
+            "r01",
+            "r02",
+            "r03"
+          ],
+          "missing": [],
+          "invalid": []
+        },
+        "diagnostics": []
+      },
+      "derivation": "The numeric minimum is -1; among tied extrema retain maximum scale 3."
+    },
+    {
+      "id": "D-G014",
+      "op": "max",
+      "rows": [
+        {
+          "id": "r01",
+          "value": "2.0"
+        },
+        {
+          "id": "r02",
+          "value": "2.000"
+        },
+        {
+          "id": "r03",
+          "value": "1"
+        }
+      ],
+      "expected": {
+        "status": "complete",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "2000",
+          "scale": 3
+        },
+        "text": "2.000",
+        "counts": {
+          "rows": 3,
+          "valid": 3,
+          "missing": 0,
+          "invalid": 0
+        },
+        "members": {
+          "valid": [
+            "r01",
+            "r02",
+            "r03"
+          ],
+          "missing": [],
+          "invalid": []
+        },
+        "diagnostics": []
+      },
+      "derivation": "The numeric maximum is 2; maximum tied scale makes its representation independent of row order."
+    },
+    {
+      "id": "D-G015",
+      "op": "min",
+      "rows": [
+        {
+          "id": "r01",
+          "value": ""
+        },
+        {
+          "id": "r02",
+          "value": null
+        }
+      ],
+      "expected": {
+        "status": "noValidValues",
+        "value": null,
+        "text": null,
+        "counts": {
+          "rows": 2,
+          "valid": 0,
+          "missing": 2,
+          "invalid": 0
+        },
+        "members": {
+          "valid": [],
+          "missing": [
+            "r01",
+            "r02"
+          ],
+          "invalid": []
+        },
+        "diagnostics": []
+      },
+      "derivation": "There is no minimum when no valid value exists."
+    },
+    {
+      "id": "D-G016",
+      "op": "sum",
+      "rows": [
+        {
+          "id": "r01",
+          "value": "99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
+        },
+        {
+          "id": "r02",
+          "value": "1"
+        },
+        {
+          "id": "r03",
+          "value": "-99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
+        }
+      ],
+      "expected": {
+        "status": "complete",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "1",
+          "scale": 0
+        },
+        "text": "1",
+        "counts": {
+          "rows": 3,
+          "valid": 3,
+          "missing": 0,
+          "invalid": 0
+        },
+        "members": {
+          "valid": [
+            "r01",
+            "r02",
+            "r03"
+          ],
+          "missing": [],
+          "invalid": []
+        },
+        "diagnostics": []
+      },
+      "derivation": "Every permutation has widened integer sum 1. Rejecting an intermediate prefix would make the result order-dependent."
+    },
+    {
+      "id": "D-G017",
+      "op": "sum",
+      "rows": [
+        {
+          "id": "r01",
+          "value": "99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
+        },
+        {
+          "id": "r02",
+          "value": "-99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
+        },
+        {
+          "id": "r03",
+          "value": "1"
+        }
+      ],
+      "expected": {
+        "status": "complete",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "1",
+          "scale": 0
+        },
+        "text": "1",
+        "counts": {
+          "rows": 3,
+          "valid": 3,
+          "missing": 0,
+          "invalid": 0
+        },
+        "members": {
+          "valid": [
+            "r01",
+            "r02",
+            "r03"
+          ],
+          "missing": [],
+          "invalid": []
+        },
+        "diagnostics": []
+      },
+      "derivation": "Every permutation has widened integer sum 1. Rejecting an intermediate prefix would make the result order-dependent."
+    },
+    {
+      "id": "D-G018",
+      "op": "sum",
+      "rows": [
+        {
+          "id": "r01",
+          "value": "1"
+        },
+        {
+          "id": "r02",
+          "value": "99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
+        },
+        {
+          "id": "r03",
+          "value": "-99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
+        }
+      ],
+      "expected": {
+        "status": "complete",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "1",
+          "scale": 0
+        },
+        "text": "1",
+        "counts": {
+          "rows": 3,
+          "valid": 3,
+          "missing": 0,
+          "invalid": 0
+        },
+        "members": {
+          "valid": [
+            "r01",
+            "r02",
+            "r03"
+          ],
+          "missing": [],
+          "invalid": []
+        },
+        "diagnostics": []
+      },
+      "derivation": "Every permutation has widened integer sum 1. Rejecting an intermediate prefix would make the result order-dependent."
+    },
+    {
+      "id": "D-G019",
+      "op": "sum",
+      "rows": [
+        {
+          "id": "r01",
+          "value": "1"
+        },
+        {
+          "id": "r02",
+          "value": "-99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
+        },
+        {
+          "id": "r03",
+          "value": "99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
+        }
+      ],
+      "expected": {
+        "status": "complete",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "1",
+          "scale": 0
+        },
+        "text": "1",
+        "counts": {
+          "rows": 3,
+          "valid": 3,
+          "missing": 0,
+          "invalid": 0
+        },
+        "members": {
+          "valid": [
+            "r01",
+            "r02",
+            "r03"
+          ],
+          "missing": [],
+          "invalid": []
+        },
+        "diagnostics": []
+      },
+      "derivation": "Every permutation has widened integer sum 1. Rejecting an intermediate prefix would make the result order-dependent."
+    },
+    {
+      "id": "D-G020",
+      "op": "sum",
+      "rows": [
+        {
+          "id": "r01",
+          "value": "-99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
+        },
+        {
+          "id": "r02",
+          "value": "99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
+        },
+        {
+          "id": "r03",
+          "value": "1"
+        }
+      ],
+      "expected": {
+        "status": "complete",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "1",
+          "scale": 0
+        },
+        "text": "1",
+        "counts": {
+          "rows": 3,
+          "valid": 3,
+          "missing": 0,
+          "invalid": 0
+        },
+        "members": {
+          "valid": [
+            "r01",
+            "r02",
+            "r03"
+          ],
+          "missing": [],
+          "invalid": []
+        },
+        "diagnostics": []
+      },
+      "derivation": "Every permutation has widened integer sum 1. Rejecting an intermediate prefix would make the result order-dependent."
+    },
+    {
+      "id": "D-G021",
+      "op": "sum",
+      "rows": [
+        {
+          "id": "r01",
+          "value": "-99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
+        },
+        {
+          "id": "r02",
+          "value": "1"
+        },
+        {
+          "id": "r03",
+          "value": "99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
+        }
+      ],
+      "expected": {
+        "status": "complete",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "1",
+          "scale": 0
+        },
+        "text": "1",
+        "counts": {
+          "rows": 3,
+          "valid": 3,
+          "missing": 0,
+          "invalid": 0
+        },
+        "members": {
+          "valid": [
+            "r01",
+            "r02",
+            "r03"
+          ],
+          "missing": [],
+          "invalid": []
+        },
+        "diagnostics": []
+      },
+      "derivation": "Every permutation has widened integer sum 1. Rejecting an intermediate prefix would make the result order-dependent."
+    },
+    {
+      "id": "D-G022",
+      "op": "sum",
+      "rows": [
+        {
+          "id": "r01",
+          "value": "99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
+        },
+        {
+          "id": "r02",
+          "value": "1"
+        }
+      ],
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_COEFFICIENT_LIMIT"
+      },
+      "derivation": "Only the final sum is checked: this uncancelled sum really needs 129 coefficient digits."
+    },
+    {
+      "id": "D-G023",
+      "op": "sum",
+      "rows": [
+        {
+          "id": "r01",
+          "value": "99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
+        },
+        {
+          "id": "r02",
+          "value": "0.0"
+        }
+      ],
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_COEFFICIENT_LIMIT"
+      },
+      "derivation": "Final scale is 1, so the unchanged large value still needs 129 coefficient digits under the stated representation policy."
+    },
+    {
+      "id": "D-G024",
+      "op": "repeatSum",
+      "input": "0.1",
+      "repeat": 1000000,
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "1000000",
+          "scale": 1
+        },
+        "text": "100000.0",
+        "validCount": 1000000
+      },
+      "derivation": "1,000,000 × 1/10 = 100,000. The compact repetition form avoids a million-line fixture."
+    },
+    {
+      "id": "D-A019",
+      "op": "add",
+      "inputs": [
+        "1.00",
+        null
+      ],
+      "expected": {
+        "status": "missing"
+      },
+      "derivation": "A missing operand propagates a missing result; its source occurrence and reason remain in sidecar diagnostics."
+    },
+    {
+      "id": "D-A020",
+      "op": "multiply",
+      "inputs": [
+        "2.0",
+        ""
+      ],
+      "expected": {
+        "status": "missing"
+      },
+      "derivation": "Blank source text is missing and cannot become a zero-valued multiplicand."
+    },
+    {
+      "id": "D-A021",
+      "op": "add",
+      "inputs": [
+        "bad",
+        "1.0"
+      ],
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INVALID_TEXT"
+      },
+      "derivation": "Invalid source text propagates its original diagnostic rather than a fabricated decimal."
+    },
+    {
+      "id": "D-R044",
+      "op": "round",
+      "inputs": [
+        "1.2451"
+      ],
+      "scale": 2,
+      "mode": "halfEven",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "125",
+          "scale": 2
+        },
+        "text": "1.25",
+        "inexact": true
+      },
+      "derivation": "Direct cents rounding of 12451/10000: scaled quotient 124 with remainder 51/100, so increment to 125."
+    },
+    {
+      "id": "D-R045",
+      "op": "round",
+      "inputs": [
+        "1.2451"
+      ],
+      "scale": 3,
+      "mode": "halfEven",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "1245",
+          "scale": 3
+        },
+        "text": "1.245",
+        "inexact": true
+      },
+      "derivation": "First rounding of 1.2451 to three places produces 1.245; the discarded part is below half."
+    },
+    {
+      "id": "D-R046",
+      "op": "round",
+      "inputs": [
+        "1.245"
+      ],
+      "scale": 2,
+      "mode": "halfEven",
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "124",
+          "scale": 2
+        },
+        "text": "1.24",
+        "inexact": true
+      },
+      "derivation": "Rounding that already-rounded 1.245 to cents creates a tie with even quotient 124, producing 1.24, unlike the direct result 1.25."
+    },
+    {
+      "id": "D-W001",
+      "op": "validateWire",
+      "input": {
+        "kind": "decimal",
+        "coefficient": "12300",
+        "scale": 4
+      },
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "12300",
+          "scale": 4
+        },
+        "text": "1.2300"
+      },
+      "derivation": "A wire value must be exactly the declared tagged object with a canonical coefficient and bounded integer scale. Do not trim, coerce, repair, or accept arbitrary objects at restore."
+    },
+    {
+      "id": "D-W002",
+      "op": "validateWire",
+      "input": {
+        "kind": "decimal",
+        "coefficient": "0",
+        "scale": 2
+      },
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "0",
+          "scale": 2
+        },
+        "text": "0.00"
+      },
+      "derivation": "A wire value must be exactly the declared tagged object with a canonical coefficient and bounded integer scale. Do not trim, coerce, repair, or accept arbitrary objects at restore."
+    },
+    {
+      "id": "D-W003",
+      "op": "validateWire",
+      "input": {
+        "kind": "decimal",
+        "coefficient": "-1",
+        "scale": 0
+      },
+      "expected": {
+        "status": "ok",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "-1",
+          "scale": 0
+        },
+        "text": "-1"
+      },
+      "derivation": "A wire value must be exactly the declared tagged object with a canonical coefficient and bounded integer scale. Do not trim, coerce, repair, or accept arbitrary objects at restore."
+    },
+    {
+      "id": "D-W004",
+      "op": "validateWire",
+      "input": {
+        "kind": "number",
+        "coefficient": "1",
+        "scale": 0
+      },
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INVALID_WIRE"
+      },
+      "derivation": "A wire value must be exactly the declared tagged object with a canonical coefficient and bounded integer scale. Do not trim, coerce, repair, or accept arbitrary objects at restore."
+    },
+    {
+      "id": "D-W005",
+      "op": "validateWire",
+      "input": {
+        "coefficient": "1",
+        "scale": 0
+      },
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INVALID_WIRE"
+      },
+      "derivation": "A wire value must be exactly the declared tagged object with a canonical coefficient and bounded integer scale. Do not trim, coerce, repair, or accept arbitrary objects at restore."
+    },
+    {
+      "id": "D-W006",
+      "op": "validateWire",
+      "input": {
+        "kind": "decimal",
+        "coefficient": "1",
+        "scale": 0,
+        "extra": true
+      },
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INVALID_WIRE"
+      },
+      "derivation": "A wire value must be exactly the declared tagged object with a canonical coefficient and bounded integer scale. Do not trim, coerce, repair, or accept arbitrary objects at restore."
+    },
+    {
+      "id": "D-W007",
+      "op": "validateWire",
+      "input": {
+        "kind": "decimal",
+        "coefficient": 123,
+        "scale": 0
+      },
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INVALID_WIRE"
+      },
+      "derivation": "A wire value must be exactly the declared tagged object with a canonical coefficient and bounded integer scale. Do not trim, coerce, repair, or accept arbitrary objects at restore."
+    },
+    {
+      "id": "D-W008",
+      "op": "validateWire",
+      "input": {
+        "kind": "decimal",
+        "coefficient": "01",
+        "scale": 0
+      },
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INVALID_WIRE"
+      },
+      "derivation": "A wire value must be exactly the declared tagged object with a canonical coefficient and bounded integer scale. Do not trim, coerce, repair, or accept arbitrary objects at restore."
+    },
+    {
+      "id": "D-W009",
+      "op": "validateWire",
+      "input": {
+        "kind": "decimal",
+        "coefficient": "+1",
+        "scale": 0
+      },
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INVALID_WIRE"
+      },
+      "derivation": "A wire value must be exactly the declared tagged object with a canonical coefficient and bounded integer scale. Do not trim, coerce, repair, or accept arbitrary objects at restore."
+    },
+    {
+      "id": "D-W010",
+      "op": "validateWire",
+      "input": {
+        "kind": "decimal",
+        "coefficient": "-0",
+        "scale": 2
+      },
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INVALID_WIRE"
+      },
+      "derivation": "A wire value must be exactly the declared tagged object with a canonical coefficient and bounded integer scale. Do not trim, coerce, repair, or accept arbitrary objects at restore."
+    },
+    {
+      "id": "D-W011",
+      "op": "validateWire",
+      "input": {
+        "kind": "decimal",
+        "coefficient": "1.0",
+        "scale": 0
+      },
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INVALID_WIRE"
+      },
+      "derivation": "A wire value must be exactly the declared tagged object with a canonical coefficient and bounded integer scale. Do not trim, coerce, repair, or accept arbitrary objects at restore."
+    },
+    {
+      "id": "D-W012",
+      "op": "validateWire",
+      "input": {
+        "kind": "decimal",
+        "coefficient": "1e3",
+        "scale": 0
+      },
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INVALID_WIRE"
+      },
+      "derivation": "A wire value must be exactly the declared tagged object with a canonical coefficient and bounded integer scale. Do not trim, coerce, repair, or accept arbitrary objects at restore."
+    },
+    {
+      "id": "D-W013",
+      "op": "validateWire",
+      "input": {
+        "kind": "decimal",
+        "coefficient": "999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+        "scale": 0
+      },
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INVALID_WIRE"
+      },
+      "derivation": "A wire value must be exactly the declared tagged object with a canonical coefficient and bounded integer scale. Do not trim, coerce, repair, or accept arbitrary objects at restore."
+    },
+    {
+      "id": "D-W014",
+      "op": "validateWire",
+      "input": {
+        "kind": "decimal",
+        "coefficient": "1",
+        "scale": "2"
+      },
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INVALID_WIRE"
+      },
+      "derivation": "A wire value must be exactly the declared tagged object with a canonical coefficient and bounded integer scale. Do not trim, coerce, repair, or accept arbitrary objects at restore."
+    },
+    {
+      "id": "D-W015",
+      "op": "validateWire",
+      "input": {
+        "kind": "decimal",
+        "coefficient": "1",
+        "scale": -1
+      },
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INVALID_WIRE"
+      },
+      "derivation": "A wire value must be exactly the declared tagged object with a canonical coefficient and bounded integer scale. Do not trim, coerce, repair, or accept arbitrary objects at restore."
+    },
+    {
+      "id": "D-W016",
+      "op": "validateWire",
+      "input": {
+        "kind": "decimal",
+        "coefficient": "1",
+        "scale": 39
+      },
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INVALID_WIRE"
+      },
+      "derivation": "A wire value must be exactly the declared tagged object with a canonical coefficient and bounded integer scale. Do not trim, coerce, repair, or accept arbitrary objects at restore."
+    },
+    {
+      "id": "D-W017",
+      "op": "validateWire",
+      "input": {
+        "kind": "decimal",
+        "coefficient": "1",
+        "scale": 0.5
+      },
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INVALID_WIRE"
+      },
+      "derivation": "A wire value must be exactly the declared tagged object with a canonical coefficient and bounded integer scale. Do not trim, coerce, repair, or accept arbitrary objects at restore."
+    },
+    {
+      "id": "D-W018",
+      "op": "validateWire",
+      "input": {
+        "kind": "decimal",
+        "coefficient": "1",
+        "scale": true
+      },
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INVALID_WIRE"
+      },
+      "derivation": "A wire value must be exactly the declared tagged object with a canonical coefficient and bounded integer scale. Do not trim, coerce, repair, or accept arbitrary objects at restore."
+    },
+    {
+      "id": "D-W019",
+      "op": "validateWire",
+      "input": null,
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INVALID_WIRE"
+      },
+      "derivation": "A wire value must be exactly the declared tagged object with a canonical coefficient and bounded integer scale. Do not trim, coerce, repair, or accept arbitrary objects at restore."
+    },
+    {
+      "id": "D-W020",
+      "op": "validateWire",
+      "input": [],
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INVALID_WIRE"
+      },
+      "derivation": "A wire value must be exactly the declared tagged object with a canonical coefficient and bounded integer scale. Do not trim, coerce, repair, or accept arbitrary objects at restore."
+    },
+    {
+      "id": "D-W021",
+      "op": "validateWire",
+      "input": {
+        "value": "1.00"
+      },
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INVALID_WIRE"
+      },
+      "derivation": "A wire value must be exactly the declared tagged object with a canonical coefficient and bounded integer scale. Do not trim, coerce, repair, or accept arbitrary objects at restore."
+    },
+    {
+      "id": "D-W022",
+      "op": "validateWire",
+      "input": {
+        "kind": "decimal",
+        "coefficient": "1\n",
+        "scale": 0
+      },
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INVALID_WIRE"
+      },
+      "derivation": "A wire value must be exactly the declared tagged object with a canonical coefficient and bounded integer scale. Do not trim, coerce, repair, or accept arbitrary objects at restore."
+    },
+    {
+      "id": "D-W023",
+      "op": "validateWire",
+      "input": {
+        "kind": "decimal",
+        "coefficient": "-01",
+        "scale": 0
+      },
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INVALID_WIRE"
+      },
+      "derivation": "A wire value must be exactly the declared tagged object with a canonical coefficient and bounded integer scale. Do not trim, coerce, repair, or accept arbitrary objects at restore."
+    },
+    {
+      "id": "D-W024",
+      "op": "validateWire",
+      "input": {
+        "kind": "decimal",
+        "coefficient": "1"
+      },
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INVALID_WIRE"
+      },
+      "derivation": "A wire value must be exactly the declared tagged object with a canonical coefficient and bounded integer scale. Do not trim, coerce, repair, or accept arbitrary objects at restore."
+    },
+    {
+      "id": "D-W025",
+      "op": "validateWire",
+      "input": {
+        "kind": "decimal",
+        "scale": 0
+      },
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_INVALID_WIRE"
+      },
+      "derivation": "A wire value must be exactly the declared tagged object with a canonical coefficient and bounded integer scale. Do not trim, coerce, repair, or accept arbitrary objects at restore."
+    },
+    {
+      "id": "D-G025",
+      "op": "sum",
+      "rows": [
+        {
+          "id": "r01",
+          "value": "99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
+        },
+        {
+          "id": "r02",
+          "value": "0.0"
+        }
+      ],
+      "output": {
+        "scale": 0,
+        "rounding": "unnecessary"
+      },
+      "expected": {
+        "status": "complete",
+        "value": {
+          "kind": "decimal",
+          "coefficient": "99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+          "scale": 0
+        },
+        "text": "99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+        "counts": {
+          "rows": 2,
+          "valid": 2,
+          "missing": 0,
+          "invalid": 0
+        },
+        "members": {
+          "valid": [
+            "r01",
+            "r02"
+          ],
+          "missing": [],
+          "invalid": []
+        },
+        "diagnostics": [],
+        "inexact": false
+      },
+      "derivation": "The wide sum retains scale 1 and a 129-digit coefficient, just as D-G023. This single aggregate has an explicit output policy: quantize the wide state to scale 0 with unnecessary, then enforce the 128-digit public bound. The discarded digit is zero, so the result is exact and succeeds. A separate bounded sum without this output policy still fails.",
+      "pairedWith": "D-G023"
+    }
+  ],
+  "ledgers": {
+    "lineVersusTotal": {
+      "id": "D-L001",
+      "rule": {
+        "scale": 2,
+        "mode": "halfEven"
+      },
+      "rate": "0.10",
+      "rows": [
+        {
+          "id": "tax-1",
+          "base": "0.05"
+        },
+        {
+          "id": "tax-2",
+          "base": "0.05"
+        },
+        {
+          "id": "tax-3",
+          "base": "0.05"
+        }
+      ],
+      "expected": {
+        "rawTaxPerLine": [
+          "0.0050",
+          "0.0050",
+          "0.0050"
+        ],
+        "lineTaxPerLine": [
+          "0.00",
+          "0.00",
+          "0.00"
+        ],
+        "lineTaxTotal": "0.00",
+        "totalTax": "0.02",
+        "lineInvoiceTotal": "0.15",
+        "totalInvoiceTotal": "0.17",
+        "differenceTotalMinusLines": "0.02"
+      },
+      "derivation": "Each exact tax is (5/100)(10/100)=1/200. Three taxes sum to 3/200=0.015. At cents, each line is the tie 0.5 and rounds to 0; the total is the tie 1.5 and rounds to the even integer 2."
+    },
+    "discountAndTax": {
+      "id": "D-L002",
+      "rule": {
+        "scale": 2,
+        "mode": "halfEven",
+        "sequence": [
+          "gross = price * quantity",
+          "discount = round(gross * discountRate, 2, halfEven)",
+          "taxable = gross - discount",
+          "tax = round(taxable * taxRate, 2, halfEven)",
+          "total = taxable + tax"
+        ]
+      },
+      "scenarios": [
+        {
+          "id": "D-L002-sale",
+          "price": "19.99",
+          "quantity": "3",
+          "discountRate": "0.10",
+          "taxRate": "0.07",
+          "expected": {
+            "gross": "59.97",
+            "discountUnrounded": "5.9970",
+            "discount": "6.00",
+            "taxable": "53.97",
+            "taxUnrounded": "3.7779",
+            "tax": "3.78",
+            "total": "57.75"
+          }
+        },
+        {
+          "id": "D-L002-refund",
+          "price": "19.99",
+          "quantity": "-3",
+          "discountRate": "0.10",
+          "taxRate": "0.07",
+          "expected": {
+            "gross": "-59.97",
+            "discountUnrounded": "-5.9970",
+            "discount": "-6.00",
+            "taxable": "-53.97",
+            "taxUnrounded": "-3.7779",
+            "tax": "-3.78",
+            "total": "-57.75"
+          }
+        }
+      ],
+      "derivation": "1999 cents × 3 = 5997 cents. The signed discount is 5997/1000, quantized to 6.00; taxable value is 53.97; tax is 37779/10000, quantized to 3.78. Half-even is sign-symmetric, so the exact reversal totals -57.75."
+    },
+    "taxOrder": {
+      "id": "D-L003",
+      "gross": "10.00",
+      "fixedDiscount": "2.00",
+      "rate": "0.07",
+      "rule": {
+        "scale": 2,
+        "mode": "halfEven"
+      },
+      "expected": {
+        "discountBeforeTax": "8.56",
+        "taxBeforeDiscount": "8.70"
+      },
+      "derivation": "Tax on the discounted base is 8 × 7/100 = 0.56; tax on the original base is 10 × 7/100 = 0.70. These are different declared arithmetic rules, not tax-compliance recommendations."
+    },
+    "discountRoundingPlacement": {
+      "id": "D-L004",
+      "gross": "0.05",
+      "discountRate": "0.10",
+      "rule": {
+        "scale": 2,
+        "mode": "halfEven"
+      },
+      "expected": {
+        "roundDiscountThenSubtract": "0.05",
+        "subtractExactDiscountThenRoundNet": "0.04"
+      },
+      "derivation": "Exact discount is 0.005. Round the discount first: 0.05 - 0.00 = 0.05. Subtract first: 0.05 - 0.005 = 0.045, whose cents tie goes to the even coefficient 4."
+    },
+    "additionalTaxOrderCases": [
+      {
+        "id": "D-L006",
+        "gross": "100.00",
+        "fixedDiscount": "10.00",
+        "rate": "0.10",
+        "rule": {
+          "scale": 2,
+          "mode": "halfEven"
+        },
+        "expected": {
+          "discountBeforeTax": "99.00",
+          "taxBeforeDiscount": "100.00"
+        },
+        "derivation": "Discounted base90 gives tax9 and total99. Original base100 gives tax10 and total110-10=100. Different bases, not noncommutativity of multiplying two percentages."
+      }
+    ]
+  },
+  "population": {
+    "id": "D-L005",
+    "rule": {
+      "scale": 2,
+      "mode": "halfEven"
+    },
+    "rows": [
+      {
+        "id": "L01",
+        "group": "A",
+        "amount": "10.005"
+      },
+      {
+        "id": "L02",
+        "group": "A",
+        "amount": "20.005"
+      },
+      {
+        "id": "L03",
+        "group": "B",
+        "amount": "-5.005"
+      },
+      {
+        "id": "L04",
+        "group": "B",
+        "amount": "0.000"
+      },
+      {
+        "id": "L05",
+        "group": "B",
+        "amount": "1.005"
+      },
+      {
+        "id": "L06",
+        "group": "A",
+        "amount": ""
+      },
+      {
+        "id": "L07",
+        "group": "A",
+        "amount": "bad"
+      },
+      {
+        "id": "L08",
+        "group": "C",
+        "amount": "2.675"
+      }
+    ],
+    "rowAmountsAfterRounding": {
+      "L01": "10.00",
+      "L02": "20.00",
+      "L03": "-5.00",
+      "L04": "0.00",
+      "L05": "1.00",
+      "L06": null,
+      "L07": null,
+      "L08": "2.68"
+    },
+    "expected": {
+      "rawSum": "28.685",
+      "sumRoundedLines": "28.68",
+      "roundedGrandTotal": "28.68",
+      "sumRoundedGroupSubtotals": "28.69",
+      "averageScale6": "4.780833",
+      "groupRawSums": {
+        "A": "30.010",
+        "B": "-4.000",
+        "C": "2.675"
+      },
+      "groupRoundedSubtotals": {
+        "A": "30.01",
+        "B": "-4.00",
+        "C": "2.68"
+      }
+    },
+    "views": [
+      {
+        "id": "D-L005-full",
+        "reference": "28.68",
+        "expected": {
+          "sourceCount": 8,
+          "matchedCount": 8,
+          "validCount": 6,
+          "missingCount": 1,
+          "invalidCount": 1,
+          "validIds": [
+            "L01",
+            "L02",
+            "L03",
+            "L04",
+            "L05",
+            "L08"
+          ],
+          "missingIds": [
+            "L06"
+          ],
+          "invalidIds": [
+            "L07"
+          ],
+          "filteredOutIds": [],
+          "rawSum": "28.685",
+          "sumRoundedLines": "28.68",
+          "roundedTotal": "28.68",
+          "deltaTotalToReference": "0.00",
+          "deltaLinesToReference": "0.00",
+          "eligibleToPass": false
+        }
+      },
+      {
+        "id": "D-L005-group-a",
+        "group": "A",
+        "reference": "30.01",
+        "expected": {
+          "sourceCount": 8,
+          "matchedCount": 4,
+          "validCount": 2,
+          "missingCount": 1,
+          "invalidCount": 1,
+          "validIds": [
+            "L01",
+            "L02"
+          ],
+          "missingIds": [
+            "L06"
+          ],
+          "invalidIds": [
+            "L07"
+          ],
+          "filteredOutIds": [
+            "L03",
+            "L04",
+            "L05",
+            "L08"
+          ],
+          "rawSum": "30.010",
+          "sumRoundedLines": "30.00",
+          "roundedTotal": "30.01",
+          "deltaTotalToReference": "0.00",
+          "deltaLinesToReference": "-0.01",
+          "eligibleToPass": false
+        }
+      },
+      {
+        "id": "D-L005-group-a-valid-only",
+        "group": "A",
+        "validOnly": true,
+        "reference": "30.01",
+        "exclusionDeclaration": "The saved upstream status predicate explicitly excludes missing and invalid amounts. Its result reconciles only this declared population, never all source records.",
+        "expected": {
+          "sourceCount": 8,
+          "matchedCount": 2,
+          "validCount": 2,
+          "missingCount": 0,
+          "invalidCount": 0,
+          "validIds": [
+            "L01",
+            "L02"
+          ],
+          "missingIds": [],
+          "invalidIds": [],
+          "filteredOutIds": [
+            "L03",
+            "L04",
+            "L05",
+            "L06",
+            "L07",
+            "L08"
+          ],
+          "rawSum": "30.010",
+          "sumRoundedLines": "30.00",
+          "roundedTotal": "30.01",
+          "deltaTotalToReference": "0.00",
+          "deltaLinesToReference": "-0.01",
+          "eligibleToPass": true
+        }
+      },
+      {
+        "id": "D-L005-exact-threshold",
+        "minimum": "1.005",
+        "reference": "33.69",
+        "exclusionDeclaration": "The saved exact predicate amount >= decimal(\"1.005\") intentionally excludes missing, invalid, zero, and negative amounts. Membership comes from exact values.",
+        "expected": {
+          "sourceCount": 8,
+          "matchedCount": 4,
+          "validCount": 4,
+          "missingCount": 0,
+          "invalidCount": 0,
+          "validIds": [
+            "L01",
+            "L02",
+            "L05",
+            "L08"
+          ],
+          "missingIds": [],
+          "invalidIds": [],
+          "filteredOutIds": [
+            "L03",
+            "L04",
+            "L06",
+            "L07"
+          ],
+          "rawSum": "33.690",
+          "sumRoundedLines": "33.68",
+          "roundedTotal": "33.69",
+          "deltaTotalToReference": "0.00",
+          "deltaLinesToReference": "-0.01",
+          "eligibleToPass": true
+        }
+      },
+      {
+        "id": "D-L005-full-valid-only",
+        "validOnly": true,
+        "reference": "28.68",
+        "exclusionDeclaration": "A saved upstream decimal-state valid filter defines an active complete population of six. Retain missingL06 andinvalidL07 as upstream excluded source evidence; do not call the original eight-row population complete.",
+        "upstreamExclusions": {
+          "missingIds": [
+            "L06"
+          ],
+          "invalidIds": [
+            "L07"
+          ]
+        },
+        "expected": {
+          "sourceCount": 8,
+          "matchedCount": 6,
+          "validCount": 6,
+          "missingCount": 0,
+          "invalidCount": 0,
+          "validIds": [
+            "L01",
+            "L02",
+            "L03",
+            "L04",
+            "L05",
+            "L08"
+          ],
+          "missingIds": [],
+          "invalidIds": [],
+          "filteredOutIds": [
+            "L06",
+            "L07"
+          ],
+          "rawSum": "28.685",
+          "sumRoundedLines": "28.68",
+          "roundedTotal": "28.68",
+          "deltaTotalToReference": "0.00",
+          "deltaLinesToReference": "0.00",
+          "eligibleToPass": true
+        }
+      }
+    ],
+    "derivation": "In thousandths, valid values sum to 10005+20005-5005+0+1005+2675=28685. The grand cents tie 2868.5 goes to 2868. Group A already totals 30.010, B totals -4.000, and C rounds from 2.675 to 2.68; their rounded subtotals add to 28.69. Equal totals cannot override unresolved source exclusions."
+  },
+  "entityReconciliation": {
+    "id": "D-E001",
+    "rows": [
+      {
+        "id": "e01",
+        "entityId": "I1",
+        "amount": "1.0"
+      },
+      {
+        "id": "e02",
+        "entityId": "I1",
+        "amount": "1.00"
+      },
+      {
+        "id": "e03",
+        "entityId": "I2",
+        "amount": "2.00"
+      },
+      {
+        "id": "e04",
+        "entityId": "I2",
+        "amount": "2.01"
+      },
+      {
+        "id": "e05",
+        "entityId": "I3",
+        "amount": "0.00"
+      },
+      {
+        "id": "e06",
+        "entityId": "I4",
+        "amount": ""
+      },
+      {
+        "id": "e07",
+        "entityId": "I5",
+        "amount": "bad"
+      },
+      {
+        "id": "e08",
+        "entityId": null,
+        "amount": "4.00"
+      },
+      {
+        "id": "e09",
+        "entityId": 1,
+        "amount": "2.00"
+      },
+      {
+        "id": "e10",
+        "entityId": "1",
+        "amount": "3.00"
+      },
+      {
+        "id": "e11",
+        "entityId": "I6",
+        "amount": "4.00"
+      },
+      {
+        "id": "e12",
+        "entityId": "I6",
+        "amount": null
+      }
+    ],
+    "expected": {
+      "status": "unavailable",
+      "sourceCount": 12,
+      "keyedEntityCount": 8,
+      "eligibleEntityCount": 4,
+      "eligibleOccurrenceCount": 5,
+      "missingEntityIds": [
+        "e08"
+      ],
+      "groups": [
+        {
+          "entityKey": "string:I1",
+          "status": "eligible",
+          "sourceIds": [
+            "e01",
+            "e02"
+          ],
+          "representativeId": "e01",
+          "value": {
+            "kind": "decimal",
+            "coefficient": "100",
+            "scale": 2
+          },
+          "text": "1.00"
+        },
+        {
+          "entityKey": "string:I2",
+          "status": "conflict",
+          "sourceIds": [
+            "e03",
+            "e04"
+          ],
+          "representativeId": null,
+          "value": null,
+          "text": null,
+          "code": "DECIMAL_ENTITY_CONFLICT"
+        },
+        {
+          "entityKey": "string:I3",
+          "status": "eligible",
+          "sourceIds": [
+            "e05"
+          ],
+          "representativeId": "e05",
+          "value": {
+            "kind": "decimal",
+            "coefficient": "0",
+            "scale": 2
+          },
+          "text": "0.00"
+        },
+        {
+          "entityKey": "string:I4",
+          "status": "missing",
+          "sourceIds": [
+            "e06"
+          ],
+          "representativeId": null,
+          "value": null,
+          "text": null
+        },
+        {
+          "entityKey": "string:I5",
+          "status": "invalid",
+          "sourceIds": [
+            "e07"
+          ],
+          "representativeId": null,
+          "value": null,
+          "text": null
+        },
+        {
+          "entityKey": "number:1",
+          "status": "eligible",
+          "sourceIds": [
+            "e09"
+          ],
+          "representativeId": "e09",
+          "value": {
+            "kind": "decimal",
+            "coefficient": "200",
+            "scale": 2
+          },
+          "text": "2.00"
+        },
+        {
+          "entityKey": "string:1",
+          "status": "eligible",
+          "sourceIds": [
+            "e10"
+          ],
+          "representativeId": "e10",
+          "value": {
+            "kind": "decimal",
+            "coefficient": "300",
+            "scale": 2
+          },
+          "text": "3.00"
+        },
+        {
+          "entityKey": "string:I6",
+          "status": "inconsistentAvailability",
+          "sourceIds": [
+            "e11",
+            "e12"
+          ],
+          "representativeId": null,
+          "value": null,
+          "text": null
+        }
+      ],
+      "eligibleToPass": false,
+      "value": null,
+      "diagnosticPartialSum": "6.00",
+      "diagnosticPartialAverage": "1.50"
+    },
+    "derivation": "I1 contributes one numerically agreed amount at the maximum observed scale, with lexical-minimum occurrence e01 as its representative and both rows in lineage. I2 contributes no amount because 2.00 differs from 2.01. Native numeric ID 1 and string ID \"1\" identify separate entities. I6 has inconsistent availability and cannot silently select its valid occurrence. The four eligible entity values are 1 + 0 + 2 + 3 = 6, mean 6/4 = 1.50. Because an unresolved conflict exists, the authoritative grouped measure is unavailable (value null). The displayed eligible subtotal and average are diagnostics only and cannot feed a passed reconciliation or downstream exact amount."
+  },
+  "regrouping": [
+    {
+      "id": "D-GR001",
+      "groups": [
+        [
+          "1",
+          "2"
+        ],
+        [
+          "10"
+        ]
+      ],
+      "expected": {
+        "pooledAverage": "4.333333",
+        "unweightedMeanOfGroupAverages": "5.750000"
+      },
+      "derivation": "Retain sum/count states (3,2) and (10,1). Merge to (13,3), then divide once. Averaging 1.5 and 10 gives 5.75 and uses the wrong weights."
+    },
+    {
+      "id": "D-GR002",
+      "groups": [
+        [
+          "0.00",
+          "0.01"
+        ],
+        [
+          "0.01"
+        ]
+      ],
+      "expected": {
+        "pooledAverage": "0.006667",
+        "unweightedMeanOfGroupAverages": "0.007500"
+      },
+      "additionalExpected": {
+        "groupMeansRoundedTo2": [
+          "0.00",
+          "0.01"
+        ],
+        "weightedAverageOfRoundedGroupMeansScale6": "0.003333"
+      },
+      "derivation": "Exact total 0.02 over three values is 1/150. Rounding the first group mean 0.005 to 0.00 destroys half a cent before merging. Weighting those already-rounded means still gives the wrong total."
+    },
+    {
+      "id": "D-GR003",
+      "groups": [
+        [
+          "1",
+          "3"
+        ],
+        [
+          "9"
+        ]
+      ],
+      "expected": {
+        "pooledAverage": "4.333333",
+        "unweightedMeanOfGroupAverages": "5.500000"
+      },
+      "additionalExpected": {
+        "pooledAverageScale2": "4.33",
+        "groupAverages": [
+          "2",
+          "9"
+        ]
+      },
+      "derivation": "Merge sufficient states(4,2) and(9,1) to(13,3). Mean of group means(2+9)/2=5.50 has the wrong population weights."
+    }
+  ],
+  "projectionCases": [
+    {
+      "id": "D-X001",
+      "rows": [
+        {
+          "id": "p-low",
+          "amount": "9007199254740992.00"
+        },
+        {
+          "id": "p-high",
+          "amount": "9007199254740993.00"
+        }
+      ],
+      "exactLowerBound": "9007199254740993.00",
+      "expected": {
+        "coordinatesCoincide": true,
+        "exactMemberIds": [
+          "p-high"
+        ]
+      },
+      "derivation": "Binary64 cannot distinguish adjacent integers at 2^53 in this pair. Exact coefficients differ by 100 at scale 2; the exact lower-bound predicate includes only p-high. Projected geometry must never be reused as exact membership."
+    }
+  ],
+  "sourceReaderLoss": [
+    {
+      "id": "D-X002",
+      "sourceText": "9007199254740993",
+      "observedNumber": 9007199254740992,
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_TEXT_REQUIRED"
+      },
+      "recovery": "Reload the original text through an explicit text-preserving column reader; do not infer the missing digit. The exactInteger bridge also rejects this unsafe current integer."
+    },
+    {
+      "id": "D-X003",
+      "sourceText": "0.100000000000000005",
+      "observedNumber": 0.1,
+      "expected": {
+        "status": "error",
+        "code": "DECIMAL_TEXT_REQUIRED"
+      },
+      "recovery": "Reload source text. Shortest Number spelling 0.1 cannot establish the original decimal coefficient."
+    }
+  ],
+  "scopeNotes": [
+    "Taxes and discounts illustrate declared arithmetic, not legal tax rules.",
+    "No ledger allocation algorithm is included in the first capability. A rounded total remains a total; the fixture does not secretly redistribute cents.",
+    "Population IDs are source occurrence IDs, not decimal amount hashes.",
+    "The exact policy is separate from display precision; changing display digits cannot change these expected memberships or totals.",
+    "Without intermediate quantization, applying two percentage factors multiplies rationals and commutes. Tax-order differences in these fixtures deliberately use different tax bases or explicit rounding stages."
+  ],
+  "pairedReconciliation": {
+    "id": "D-L007",
+    "scope": "Compare computed and posted exact amounts over identical occurrences. Total and line checks answer different questions.",
+    "rows": [
+      {
+        "id": "c1",
+        "computed": "1.01",
+        "posted": "1.00"
+      },
+      {
+        "id": "c2",
+        "computed": "1.99",
+        "posted": "2.00"
+      }
+    ],
+    "expected": {
+      "sourceIds": [
+        "c1",
+        "c2"
+      ],
+      "rowResiduals": {
+        "c1": "0.01",
+        "c2": "-0.01"
+      },
+      "leftTotal": "3.00",
+      "rightTotal": "3.00",
+      "totalDelta": "0.00",
+      "complete": true,
+      "samePopulation": true,
+      "nonzeroResidualCount": 2,
+      "nonzeroResidualIds": [
+        "c1",
+        "c2"
+      ],
+      "totalsStatus": "matched",
+      "linesStatus": "different",
+      "totalsLabel": "Totals match",
+      "linesLabel": "Lines differ",
+      "eligibleTotalsPass": true,
+      "eligibleLinesPass": false
+    },
+    "derivation": "Computed coefficients101+199=300cents and posted100+200=300cents. Individual differences+1and-1cent cancel in the total. A complete total check can pass, while a line check reports two exact differences. No cent allocation is implied."
+  }
+}

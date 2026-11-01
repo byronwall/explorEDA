@@ -1,5 +1,8 @@
 # Research catalogue
 
+Methods follow-up: [exact decimal measures and rounding](../../research/decimal-measures-methods-2026-11-01/README.md)
+adds a complete reconciliation plan to R037. Rank stays unchanged; no next topic is assigned.
+
 Design follow-up: [selections and live findings through refresh](../../research/selection-refresh-design-2026-10-29/README.md)
 adds a keyed-refresh capability plan to R077's earlier audit. It does not change catalogue rank or set the next topic.
 

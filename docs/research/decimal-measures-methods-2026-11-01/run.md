@@ -1,6 +1,29 @@
 # Exact decimal measures Methods run
 
-Phase: submitted; awaiting the first collector check. Follow-ups: 0/1.
+Phase: integrated; validation and PR opening pending. Follow-ups: 0/1.
+
+Collected November 1 after 03:42 UTC. Pro finished in 24m 6s.
+Downloaded the existing exact-decimal-methods.zip under direct human standing approval,
+with the recorded conversation URL supplied in the download action. The file appeared immediately.
+No approval rejection, regeneration, Library upload, or downloaded-program execution occurred.
+Seven unique safe UTF-8 files passed path/symlink/CRC/size and archive-to-disk checks.
+Original reports, plan, recommendations, and proofs were fully read. Both code companions were fully inspected.
+All originals are preserved under docs/intent/decimal-measures/assets/pro-results/decimal-measures-methods-2026-11-01/originals/.
+The asset index is linked from the local plan and summary. ZIP/input packet remain ignored.
+
+Local integration checks the decisive source claims against unchanged refreshed origin/main d3920a28.
+ED-01–ED-20/ED-28 Build; ED-21/22 Explore; ED-23/24 Defer; ED-25–27 Avoid.
+The local plan stages complete standalone line checks, grouped projects/folders/Pivot, then notebook findings.
+Selected plot projections remain optional. Every visible stage pairs docs with a runnable example.
+Local correction clears positional selections on decimal refresh; the existing JSON-content remapper is not lossless identity proof.
+Additional acceptance covers both error-plus-missing operand orders and reversed sort ties.
+
+Independent locally authored Decimal-1024 checks passed 573 assertions over 112 numerical cases,
+nine comparison/key cases, ledgers, five selected populations, typed entities, regrouping, and source/projection loss.
+All 82 error contracts were inspected; a complete independent error validator was not run.
+Pro's full 215-case verifier result remains Pro-reported. No supplied program was executed.
+ECMAScript Number/JSON, General Decimal Arithmetic, big.js, PostgreSQL numeric, and DuckDB decimal division were spot-checked.
+No feature/browser/persistence/worker/notebook/performance acceptance is claimed.
 
 Conversation: https://chatgpt.com/c/6ae6a646-0d34-83ea-b5eb-cceb8c81fc51. Never resubmit.
 Submitted November 1, 2026 about 02:39 UTC (October 31 at 22:39 Eastern).
@@ -27,7 +50,7 @@ Validation: existing aggregate, value parser, field settings, and calculator tes
 Docs checks pass: 3 files, 74 tests, with existing React act warnings.
 No feature, browser, persistence, worker, or performance acceptance is claimed.
 Only prompt/run docs change; no full pnpm check or changeset is required.
-The implementation plan, summary, dispositions, original assets, and PR await Pro's response.
+The implementation plan, summary, dispositions, and original assets are written; the PR awaits final checks.
 
 Mission: explicit exact-decimal measures, rounding, and ledger reconciliation inside explorEDA.
 Mode: Methods. Repository: https://github.com/byronwall/explorEDA.

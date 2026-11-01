@@ -12,3 +12,6 @@ docs/intent/time-series-axes/raw/2026-10-18-pro/
 # Original Pro result bytes; the local plan and asset index are separate.
 docs/intent/selection-refresh/assets/pro-results/selection-refresh-design-2026-10-29/selection-refresh-design.md
 docs/intent/selection-refresh/assets/pro-results/selection-refresh-design-2026-10-29/implementation-plan.md
+
+# Exact decimal Methods originals remain byte for byte.
+docs/intent/decimal-measures/assets/pro-results/decimal-measures-methods-2026-11-01/originals/
