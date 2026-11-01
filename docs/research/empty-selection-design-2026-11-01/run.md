@@ -1,6 +1,6 @@
 # Empty-selection recovery Design run
 
-Phase: prepared; not submitted. Follow-ups: 0/1. No collector yet.
+Phase: results collected and integrated; PR pending. Follow-ups: 0/1.
 
 Repository: https://github.com/byronwall/explorEDA. Baseline `d3920a285f3755a8324998775deb131747e959f5`.
 Branch: `codex/empty-selection-design-2026-11-01`. Existing checkout; no worktree.
@@ -39,3 +39,28 @@ Phase: Pro running. Both completed attachment chips and sent message verified. P
 Collector `collect-exploreda-empty-selection-design` created ACTIVE, hourly minute 44, target current chat `01a198d7-9dea-73f1-ae80-49b459d2e46c`. First intended check 21:44 UTC; no inspection before 21:43:10 UTC. Collector owns collection, verification, originals inventory, dispositions, plan, summary, PR and deletion. Parent six-hour automation remains ACTIVE, GPT-6.1 Sol Medium, supported view and saved config checked.
 
 Baseline tests: applyFilter, CrossfilterWrapper and ActiveFilterStatus: 3 files, 28 tests pass. Initial pnpm dependency verification attempted an install and stopped without a TTY; used installed dependencies with `--config.verify-deps-before-run=false`. No dependency changes. No feature/browser/persistence/performance acceptance claimed. No full pnpm check required for prompt/run docs. Results and PR remain pending; no preparation-only PR.
+
+## Collection and integration — November 1, 2026
+
+Pro completed in 24m24s. Same conversation; no follow-up or resubmission.
+Downloaded existing ZIP under direct human standing approval with conversation URL presented before the action.
+Actual Downloads file appeared immediately. No retry, rejection, regeneration, or Library upload.
+Ten safe unique files; path, size, symlink, CRC checks pass. All ten original reports/companions/mockups copied byte for byte.
+Asset index links each original. ZIP, input packet, extraction, local review code, and rendered PNGs remain ignored.
+Read all reports, recommendations, plan, fixture guide; inspected both JSONs, full verifier, and SVGs. No downloaded program executed.
+
+Refreshed origin/main, still d3920a285f3755a8324998775deb131747e959f5. Checked decisive code boundaries; see evidence.md.
+Independent locally authored check used actual Crossfilter and registered Bar/DataTable definitions: 29 tests pass,
+covering all fixture baselines, 72 previews, population checks and replacement variants.
+Pro's 422 assertions remain attributed; findings reductions, classification and monotonicity were not independently rerun.
+Viewed all three complete static SVG renders after replacing cropped Quick Look previews.
+No product feature, Apply/history/persistence/performance or browser acceptance claimed.
+
+Local plan retains five independent milestones with docs and examples in each. ESR001–016 Build,017–020 Explore,
+021–024 Defer,025–030 Avoid. Build is planning, not approval to implement.
+Local adjustments standardize Recover rows, keep module split/budgets/effort provisional, and correct the cited VLDB paper title.
+R052 brief/JSON/catalogue updated without rank changes. No next topic assigned.
+
+Collection docs check passed: 3 files, 74 tests, existing React act warnings.
+Authored formatting and 22 local links pass. Pre-commit initially formatted six originals;
+restored all original bytes and added a scoped `.prettierignore` entry before final inventory verification.

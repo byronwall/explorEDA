@@ -4,7 +4,7 @@
 - Category: Selection and analytical scope
 - Priority: 50
 - Kind: new-direction
-- Status: candidate
+- Status: researched
 - Confidence: medium
 - Baseline: `9b16d78e3ed0742ed4d5858c1939fec9e758b510`
 
@@ -24,3 +24,10 @@ Current-analysis-trust calls for checking empty results, but its proposed proof 
 - `packages/explorEDA/src/components/ActiveFilterStatus.tsx` — `ActiveFilterStatus`. Individual removal and clear-all controls already exist.
 - `packages/explorEDA/src/hooks/CrossfilterWrapper.ts` — `getFilteredRowIds`, `getChartFilteredRowIds`. Global and chart-population membership are distinguishable.
 - `docs/intent/current-analysis-trust/intent-brief.md` — related intent; status and overlap are discussed above.
+
+## Design follow-up — November 1, 2026
+
+Build [Recover rows](../../empty-selection-recovery/implementation-plan.md) with exact previews, named populations, and guarded Apply.
+The [research summary](../../../research/empty-selection-design-2026-11-01/README.md) links all ten originals and local evidence.
+DIRECTION and this Design supersede the old demand gates and keep-current rejection rule above.
+Rank remains unchanged. No next topic is assigned.
